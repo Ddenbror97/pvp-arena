@@ -27,6 +27,7 @@ async function rpc<T>(fn: string, args: Record<string, unknown>): Promise<T> {
   return data;
 }
 
+const DEFAULT_FROM = "PVPspinArena <codigo@pvpspinarena.com>";
 const EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
 
 /** Normalise a configured sender into a strict `Name <addr>` that Resend accepts. */
@@ -40,10 +41,11 @@ export function normaliseFrom(raw: string, fallbackName = "PVPspinArena"): strin
 }
 
 async function sendCodeEmail(to: string, code: string, challengeId: string) {
-  const from = normaliseFrom(env("AUTH_EMAIL_FROM"));
+  // Sender is not secret; a malformed AUTH_EMAIL_FROM falls back to the verified default.
+  let from = normaliseFrom(process.env["AUTH_EMAIL_FROM"] ?? "");
   if (!from) {
-    console.error("AUTH_EMAIL_FROM is not a valid sender address");
-    return { ok: false as const, error: "invalid_from_config" };
+    console.warn("AUTH_EMAIL_FROM missing or malformed; using default sender");
+    from = DEFAULT_FROM;
   }
   const replyRaw = process.env["AUTH_EMAIL_REPLY_TO"];
   const replyTo = replyRaw && EMAIL_RE.test(replyRaw.trim()) ? replyRaw.trim() : undefined;
