@@ -86,7 +86,9 @@ export function JackpotWheel({ players, spin, onSpinEnd, highlightId, children }
       <div className="absolute left-1/2 top-[-6px] z-20 -translate-x-1/2">
         <div className="h-0 w-0 border-x-[14px] border-t-[22px] border-x-transparent border-t-primary drop-shadow-[0_0_10px_var(--primary)]" />
       </div>
-      <div className="absolute inset-0 rounded-full bg-surface/60 ring-1 ring-border" />
+      <div aria-hidden className="rgb-ring rgb-ring-blur" />
+      <div aria-hidden className="rgb-ring" />
+      <div className="absolute inset-0 rounded-full bg-surface ring-1 ring-border" />
       <svg
         viewBox={`0 0 ${R * 2} ${R * 2}`}
         className="absolute inset-0 h-full w-full will-change-transform"
