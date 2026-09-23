@@ -1,0 +1,269 @@
+import { useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { CheckCircle2, ShieldCheck, XCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
+import { useNow, useServerClock, useWalletRealtime } from "@/lib/jackpot/api";
+import { formatUsd } from "@/lib/jackpot/math";
+import { friendlyError } from "@/lib/jackpot/errors";
+import { APP } from "@/lib/config";
+import { emitSound } from "@/lib/sound";
+import { fetchCoinflip, opposite, tickCoinflip, useCoinflipRealtime, type CfGameView, type CoinSide } from "@/lib/coinflip/api";
+import { verifyCoinflip, type CoinflipCheck } from "@/lib/fairness/coinflip";
+import { PlayerAvatar } from "@/components/jackpot/Avatar";
+import { Celebration } from "@/components/jackpot/Celebration";
+import { Button } from "@/components/ui/button";
+import { Coin } from "./Coin";
+import { SideChip } from "./OpenGames";
+
+const IN_PROGRESS = ["READY", "FLIPPING", "SETTLEMENT"];
+
+export function CoinflipRoom({ id }: { id: number }) {
+  const { userId } = useAuth();
+  useWalletRealtime(userId);
+  useCoinflipRealtime();
+  const qc = useQueryClient();
+  const serverNow = useServerClock();
+  useNow(100);
+  const q = useQuery({
+    queryKey: ["coinflip", id],
+    queryFn: () => fetchCoinflip(id),
+    // Realtime is a hint only: poll authoritative state while the game is live.
+    refetchInterval: (query) => {
+      const s = query.state.data?.status;
+      return s === "WAITING" ? 4000 : s && IN_PROGRESS.includes(s) ? 800 : false;
+    },
+  });
+  const g = q.data ?? null;
+
+  const now = serverNow();
+  const start = g?.animation_start_at ? new Date(g.animation_start_at).getTime() : null;
+  const end = g?.animation_end_at ? new Date(g.animation_end_at).getTime() : null;
+  const expires = g ? new Date(g.expires_at).getTime() : null;
+
+  // Accelerate the server worker once an authoritative deadline passes. The
+  // server re-checks every deadline itself; the game finishes without us too.
+  const due =
+    !!g &&
+    ((g.status === "WAITING" && expires != null && now >= expires) ||
+      (g.status === "READY" && start != null && now >= start) ||
+      ((g.status === "FLIPPING" || g.status === "SETTLEMENT") && end != null && now >= end));
+  useEffect(() => {
+    if (!due) return;
+    const run = async () => {
+      await tickCoinflip();
+      qc.invalidateQueries({ queryKey: ["coinflip", id] });
+    };
+    void run();
+    const t = setInterval(run, 1000);
+    return () => clearInterval(t);
+  }, [due, id, qc]);
+
+  useEffect(() => {
+    if (g?.status === "COMPLETED") qc.invalidateQueries({ queryKey: ["wallet"] });
+  }, [g?.status, qc]);
+
+  if (q.isLoading) return <div className="h-[520px] animate-pulse rounded-2xl bg-card" />;
+  if (!g) return <p className="text-muted-foreground">Game not found.</p>;
+
+  let phase: "waiting" | "cancelled" | "found" | "flipping" | "result";
+  if (g.status === "CANCELLED") phase = "cancelled";
+  else if (g.status === "WAITING") phase = "waiting";
+  else if (start != null && now < start) phase = "found";
+  else if (end != null && now < end) phase = "flipping";
+  else phase = "result";
+
+  return (
+    <div className="mx-auto max-w-4xl">
+      <div className="flex items-center justify-between">
+        <Link to="/coinflip" className="text-sm text-muted-foreground hover:text-foreground">← Coinflip lobby</Link>
+        <span className="rounded bg-gold/15 px-2 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>
+      </div>
+      <div className="mt-3 flex flex-wrap items-baseline gap-3">
+        <h1 className="font-display text-2xl">Coinflip #{g.id}</h1>
+        <span className="rounded bg-secondary px-2 py-0.5 text-xs">{g.status}</span>
+      </div>
+
+      <div className="relative mt-6 overflow-hidden rounded-3xl border border-border bg-card p-6 sm:p-10">
+        <div className="grid items-center gap-6 sm:grid-cols-[1fr_auto_1fr]">
+          <PlayerSlot g={g} slot="creator" phase={phase} me={userId} />
+          <Center g={g} phase={phase} start={start} serverNow={serverNow} now={now} me={userId} />
+          <PlayerSlot g={g} slot="opponent" phase={phase} me={userId} />
+        </div>
+      </div>
+
+      {phase === "result" && <ResultCard g={g} me={userId} />}
+      <FairnessPanel g={g} />
+    </div>
+  );
+}
+
+function PlayerSlot({ g, slot, phase, me }: { g: CfGameView; slot: "creator" | "opponent"; phase: string; me: string | null }) {
+  const side = (slot === "creator" ? g.creator_side : opposite(g.creator_side as CoinSide)) as CoinSide;
+  const p = slot === "creator" ? g.creator : g.opponent;
+  const uid = slot === "creator" ? g.creator_id : g.opponent_id;
+  const won = phase === "result" && g.winner_id && g.winner_id === uid;
+  const lost = phase === "result" && g.winner_id && g.winner_id !== uid;
+  return (
+    <div className={`flex flex-col items-center text-center transition ${lost ? "opacity-40" : ""} ${slot === "opponent" ? "sm:order-last" : ""}`}>
+      {uid ? (
+        <PlayerAvatar src={p?.avatar_url} name={p?.username} className={`h-20 w-20 ${won ? "glow-gold" : ""}`} color={won ? "var(--gold)" : side === "HEADS" ? "var(--primary)" : "var(--rival)"} />
+      ) : (
+        <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-dashed border-border text-2xl text-muted-foreground animate-pulse">?</div>
+      )}
+      <div className="mt-3 truncate text-sm font-semibold">{uid ? `@${p?.username ?? "player"}${uid === me ? " (you)" : ""}` : "Waiting..."}</div>
+      <div className="tabular mt-1 font-display text-lg">{formatUsd(g.amount)}</div>
+      <SideChip side={side} className="mt-2" />
+    </div>
+  );
+}
+
+function Center({ g, phase, start, serverNow, now, me }: { g: CfGameView; phase: string; start: number | null; serverNow: () => number; now: number; me: string | null }) {
+  const qc = useQueryClient();
+  const [pending, setPending] = useState(false);
+  const played = useRef<string | null>(null);
+  useEffect(() => {
+    if (played.current === phase) return;
+    played.current = phase;
+    if (phase === "flipping") emitSound("spin_start");
+    if (phase === "result" && g.winner_id) emitSound(g.winner_id === me ? "win" : "lose");
+  }, [phase, g.winner_id, me]);
+
+  if (phase === "waiting") {
+    const left = Math.max(0, Math.ceil((new Date(g.expires_at).getTime() - now) / 1000));
+    async function cancel() {
+      setPending(true);
+      const { error } = await supabase.rpc("coinflip_cancel", { p_game_id: g.id });
+      setPending(false);
+      if (error) toast.error(friendlyError(error));
+      else toast.success("Game cancelled. Your wager was returned.");
+      qc.invalidateQueries({ queryKey: ["coinflip", g.id] });
+      qc.invalidateQueries({ queryKey: ["wallet"] });
+    }
+    return (
+      <div className="flex flex-col items-center text-center">
+        <Coin startMs={null} side={null} serverNow={serverNow} restSide={g.creator_side as CoinSide} size={140} />
+        <div className="font-display text-lg">Waiting for opponent...</div>
+        <div className="mt-1 text-sm text-muted-foreground">Waiting for <b>{opposite(g.creator_side as CoinSide)}</b> · expires in <span className="tabular">{left}s</span></div>
+        {g.creator_id === me && (
+          <Button variant="secondary" size="sm" className="mt-4" onClick={cancel} disabled={pending}>Cancel and refund</Button>
+        )}
+      </div>
+    );
+  }
+  if (phase === "cancelled") {
+    return (
+      <div className="text-center">
+        <div className="font-display text-lg">Game cancelled</div>
+        <div className="mt-1 text-sm text-muted-foreground">
+          {g.cancel_reason === "EXPIRED" ? "No opponent joined in time." : "Cancelled by the creator."} The wager was returned.
+        </div>
+      </div>
+    );
+  }
+  if (phase === "found") {
+    const n = Math.max(1, Math.ceil((start! - now) / 1000));
+    return (
+      <div className="flex flex-col items-center text-center">
+        <div className="text-xs font-bold tracking-[0.4em] text-primary">OPPONENT FOUND</div>
+        <div className="tabular mt-2 text-sm text-muted-foreground">{formatUsd(g.amount)} VS {formatUsd(g.amount)}</div>
+        <div key={n} className="animate-count-pop mt-4 font-display text-7xl">{n}</div>
+        <div className="mt-2 text-xs text-muted-foreground">Starting in {n}...</div>
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-col items-center text-center">
+      <Coin startMs={start} side={(g.winning_side as CoinSide | null) ?? null} serverNow={serverNow} size={180} />
+      {phase === "flipping" ? (
+        <div className="font-display text-sm tracking-[0.4em] text-muted-foreground">FLIPPING</div>
+      ) : (
+        <div className={`animate-rise-in font-display text-3xl ${g.winning_side === "HEADS" ? "text-primary" : "text-rival"}`}>{g.winning_side ?? "..."}</div>
+      )}
+    </div>
+  );
+}
+
+function ResultCard({ g, me }: { g: CfGameView; me: string | null }) {
+  const winner = g.winner_id === g.creator_id ? g.creator : g.opponent;
+  const settled = g.status === "COMPLETED";
+  const involved = me && (me === g.creator_id || me === g.opponent_id);
+  const iWon = involved && g.winner_id === me;
+  return (
+    <div className="animate-rise-in mt-6 rounded-2xl border border-gold/30 bg-gold/5 p-6">
+      {settled && iWon && <Celebration />}
+      <div className="flex flex-wrap items-center gap-5">
+        <PlayerAvatar src={winner?.avatar_url} name={winner?.username} className="h-16 w-16" color="var(--gold)" />
+        <div className="min-w-0 flex-1">
+          <div className="text-xs tracking-[0.3em] text-gold">WINNER</div>
+          <div className="font-display text-xl">@{winner?.username ?? "player"}</div>
+          {g.winning_side && <SideChip side={g.winning_side as CoinSide} className="mt-1" />}
+        </div>
+        {involved && settled && (
+          <div className="text-right">
+            <div className="font-display text-2xl">{iWon ? "YOU WON" : "YOU LOST"}</div>
+            <div className={`tabular text-lg ${iWon ? "text-primary" : "text-rival"}`}>
+              {iWon ? `+${formatUsd(g.payout_amount ?? 0)}` : `-${formatUsd(g.amount)}`} <span className="text-xs">{APP.creditsLabel}</span>
+            </div>
+          </div>
+        )}
+      </div>
+      <dl className="tabular mt-5 grid grid-cols-3 gap-3 text-sm">
+        <div><dt className="text-xs text-muted-foreground">Wager</dt><dd>{formatUsd(g.amount)} each</dd></div>
+        <div><dt className="text-xs text-muted-foreground">Total pot</dt><dd>{formatUsd(g.pot_amount)}</dd></div>
+        <div><dt className="text-xs text-muted-foreground">Payout</dt><dd>{settled ? formatUsd(g.payout_amount ?? 0) : "Settling..."}</dd></div>
+      </dl>
+    </div>
+  );
+}
+
+function FairnessPanel({ g }: { g: CfGameView }) {
+  const [res, setRes] = useState<{ ok: boolean; checks: CoinflipCheck[] } | null>(null);
+  return (
+    <section className="mt-6 rounded-2xl border border-border bg-card p-5 text-sm">
+      <div className="flex items-center gap-2 font-display text-sm uppercase tracking-widest">
+        <ShieldCheck className="h-4 w-4 text-primary" /> Provably fair · Coinflip v1
+      </div>
+      <dl className="mt-3 grid gap-2">
+        <Row k="Server seed hash (committed at creation)" v={g.server_seed_hash} />
+        <Row k="Message" v={`PVPCasino:coinflip:${g.protocol_version}:${g.id}:${g.draw_version}`} />
+        <Row k="Server seed" v={g.server_seed ?? "Revealed when the game completes"} />
+        <Row k="Created" v={new Date(g.created_at).toLocaleString()} />
+        {g.joined_at && <Row k="Opponent joined" v={new Date(g.joined_at).toLocaleString()} />}
+        {g.completed_at && <Row k="Completed" v={new Date(g.completed_at).toLocaleString()} />}
+      </dl>
+      {g.status === "COMPLETED" && (
+        <Button
+          size="sm"
+          className="mt-4"
+          onClick={async () =>
+            setRes(await verifyCoinflip({ id: String(g.id), draw_version: g.draw_version, server_seed_hash: g.server_seed_hash, server_seed: g.server_seed, winning_side: g.winning_side as CoinSide | null }))
+          }
+        >
+          Verify in my browser
+        </Button>
+      )}
+      {res && (
+        <ul className="mt-4 space-y-2">
+          {res.checks.map((c) => (
+            <li key={c.label} className="flex gap-2">
+              {c.ok ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> : <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-rival" />}
+              <div className="min-w-0"><div>{c.label}</div><div className="tabular break-all text-xs text-muted-foreground">{c.detail}</div></div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function Row({ k, v }: { k: string; v: string }) {
+  return (
+    <div>
+      <dt className="text-xs text-muted-foreground">{k}</dt>
+      <dd className="tabular break-all text-xs">{v}</dd>
+    </div>
+  );
+}

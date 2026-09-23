@@ -17,6 +17,7 @@ export function SiteHeader() {
         </Link>
         <nav className="flex items-center gap-4 sm:gap-5">
           <Link to="/" className={`${link} hidden sm:inline`} activeOptions={{ exact: true }}>Jackpot</Link>
+          <Link to="/coinflip" className={link}>Coinflip</Link>
           <Link to="/fairness" className={`${link} hidden sm:inline`}>Fairness</Link>
         </nav>
         <div className="ml-auto flex items-center gap-3">
