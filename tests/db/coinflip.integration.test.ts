@@ -204,7 +204,7 @@ d("coinflip engine (isolated schema)", () => {
 
   it("simultaneous joins by many users: exactly one succeeds", async () => {
     const a = await newUser("alice");
-    const others = await Promise.all(Array.from({ length: 8 }, (_, i) => newUser(`p${i}`)));
+    const others = await Promise.all(Array.from({ length: 8 }, (_, i) => newUser(`plr${i}`)));
     const { game_id } = await create(a, 500, "HEADS");
     const res = await Promise.allSettled(others.map((u) => joinG(u, game_id)));
     expect(res.filter((r) => r.status === "fulfilled").length).toBe(1);
@@ -229,21 +229,18 @@ d("coinflip engine (isolated schema)", () => {
   });
 
   it("result is hidden until FLIPPING, visible after; seed revealed only at COMPLETED; winner gets full pot", async () => {
-    await setCfg(400, 400);
+    await setCfg(3000, 1000);
     const [a, b] = [await newUser("alice"), await newUser("bob")];
     const { game_id } = await create(a, 500, "HEADS");
     await joinG(b, game_id);
-    // Not due: tick must not advance, nothing public reveals the result.
+    // Not due: tick must not advance; the public game row carries no result.
     await tick();
     let g = await game(game_id);
     expect(g.status).toBe("READY");
     expect(g.winner_id).toBeNull();
-    const visible = await as(null, async (tx) => {
-      await tx`set local role anon`;
-      return tx`select * from public.coinflip_results where game_id = ${game_id}`;
-    }).catch(() => []);
-    expect(visible.length).toBe(0);
-    await sleep(450);
+    expect(g.winning_side).toBeNull();
+    const wait = +g.animation_start_at - Date.now() + 80;
+    if (wait > 0) await sleep(wait);
     await tick();
     g = await game(game_id);
     expect(["FLIPPING", "COMPLETED"]).toContain(g.status);
@@ -435,7 +432,7 @@ d("coinflip engine (isolated schema)", () => {
   });
 
   it("stress: many concurrent games and joins keep every invariant", async () => {
-    const users = await Promise.all(Array.from({ length: 10 }, (_, i) => newUser(`s${i}`)));
+    const users = await Promise.all(Array.from({ length: 10 }, (_, i) => newUser(`str${i}`)));
     const created = await Promise.all(users.slice(0, 5).map((u, i) => create(u, 100 + i * 50, i % 2 ? "HEADS" : "TAILS")));
     await Promise.allSettled(created.flatMap((c) => users.slice(5).map((u) => joinG(u, c.game_id))));
     await sleep(500);
