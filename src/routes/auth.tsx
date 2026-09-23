@@ -1,5 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { OtpInput } from "@/components/auth/OtpInput";
+import { resendSignupCodeFn, startSignupFn, verifySignupCodeFn } from "@/lib/auth-otp/signup.functions";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -151,6 +154,101 @@ function AuthPage() {
       >
         {mode === "signin" ? "No account? Create one" : "Have an account? Sign in"}
       </button>
+    </div>
+  );
+}
+
+function VerifyStep({
+  pending,
+  onPending,
+  onVerified,
+  onChangeEmail,
+}: {
+  pending: Pending;
+  onPending: (p: Pending) => void;
+  onVerified: () => Promise<void>;
+  onChangeEmail: () => void;
+}) {
+  const verify = useServerFn(verifySignupCodeFn);
+  const resend = useServerFn(resendSignupCodeFn);
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(60);
+  const inflight = useRef(false);
+
+  useEffect(() => {
+    const t = setInterval(() => setCooldown((c) => (c > 0 ? c - 1 : 0)), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    if (code.length !== 6 || inflight.current) return;
+    inflight.current = true;
+    setBusy(true);
+    setError(null);
+    verify({ data: { challengeId: pending.challengeId, code } })
+      .then(async (r) => {
+        if (r.ok) await onVerified();
+        else {
+          setError(r.error);
+          setCode("");
+        }
+      })
+      .catch(() => setError("Não foi possível verificar agora. Tente novamente."))
+      .finally(() => {
+        inflight.current = false;
+        setBusy(false);
+      });
+  }, [code, pending.challengeId, verify, onVerified]);
+
+  async function doResend() {
+    setBusy(true);
+    setError(null);
+    try {
+      const r = await resend({ data: { challengeId: pending.challengeId } });
+      if (!r.ok) setError(r.error);
+      else {
+        onPending({ ...pending, challengeId: r.challengeId });
+        setCode("");
+        setCooldown(60);
+        toast.success("Novo código enviado.");
+      }
+    } catch {
+      setError("Não foi possível enviar o código agora.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mx-auto max-w-sm py-10">
+      <h1 className="font-display text-2xl">Verifique seu e-mail</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Enviamos um código de 6 dígitos para <span className="font-mono text-foreground">{pending.maskedEmail}</span>. Ele expira em 10 minutos.
+      </p>
+      <div className="mt-6">
+        <OtpInput value={code} onChange={setCode} disabled={busy} />
+      </div>
+      <p className="mt-3 min-h-5 text-sm text-destructive" role="alert" aria-live="polite">
+        {error}
+      </p>
+      <Button
+        className="mt-2 w-full font-display"
+        size="lg"
+        disabled={busy || code.length !== 6}
+        onClick={() => setCode((c) => c)}
+      >
+        {busy ? "Verificando…" : "Verificar"}
+      </Button>
+      <div className="mt-4 flex items-center justify-between text-sm">
+        <button type="button" onClick={doResend} disabled={busy || cooldown > 0} className="text-muted-foreground hover:text-foreground disabled:opacity-50">
+          {cooldown > 0 ? `Reenviar código em ${cooldown}s` : "Reenviar código"}
+        </button>
+        <button type="button" onClick={onChangeEmail} className="text-muted-foreground hover:text-foreground">
+          Alterar e-mail
+        </button>
+      </div>
     </div>
   );
 }
