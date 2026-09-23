@@ -9,7 +9,7 @@ import { randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
 import { drawTicket, verifyGame } from "../../src/lib/jackpot/fairness";
 
-const url = process.env.SUPABASE_DB_URL;
+const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
 const d = url ? describe : describe.skip;
 const sql = url ? postgres(url, { max: 30, prepare: false, onnotice: () => {}, idle_timeout: 5 }) : (null as never);
 
