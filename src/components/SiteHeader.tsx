@@ -12,12 +12,12 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4">
-        <Link to="/" className="font-display text-lg tracking-tight">
+        <Link to="/" className="shrink-0 font-display text-base tracking-tight sm:text-lg">
           PVP<span className="text-primary">Casino</span>
         </Link>
-        <nav className="hidden items-center gap-5 sm:flex">
-          <Link to="/" className={link} activeOptions={{ exact: true }}>Jackpot</Link>
-          <Link to="/fairness" className={link}>Fairness</Link>
+        <nav className="flex items-center gap-4 sm:gap-5">
+          <Link to="/" className={`${link} hidden sm:inline`} activeOptions={{ exact: true }}>Jackpot</Link>
+          <Link to="/fairness" className={`${link} hidden sm:inline`}>Fairness</Link>
         </nav>
         <div className="ml-auto flex items-center gap-3">
           {!ready ? null : userId ? (
