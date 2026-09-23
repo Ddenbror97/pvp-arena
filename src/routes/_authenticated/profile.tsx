@@ -42,7 +42,10 @@ function ProfilePage() {
     if (!profile) return;
     const url = `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(profile.username)}`;
     const { error } = await supabase.rpc("update_avatar", { p_avatar_url: url });
-    if (error) return toast.error(friendlyError(error));
+    if (error) {
+      toast.error(friendlyError(error));
+      return;
+    }
     await refreshProfile();
   }
 

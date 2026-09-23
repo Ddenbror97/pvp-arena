@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-export function PlayerAvatar({ src, name, className, color }: { src?: string | null; name?: string; className?: string; color?: string }) {
+export function PlayerAvatar({ src, name, className, color }: { src?: string | null | undefined; name?: string | undefined; className?: string | undefined; color?: string | undefined }) {
   return (
     <span
       className={cn("inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted ring-2", className)}

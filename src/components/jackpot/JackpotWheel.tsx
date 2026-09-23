@@ -38,7 +38,7 @@ interface Props {
   players: PlayerRow[];
   spin: SpinTarget | null;
   onSpinEnd?: () => void;
-  highlightId?: string | null;
+  highlightId?: string | null | undefined;
   children?: React.ReactNode;
 }
 

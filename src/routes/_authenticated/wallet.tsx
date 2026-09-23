@@ -57,7 +57,10 @@ function WalletPage() {
 
   async function claim() {
     const { error } = await supabase.rpc("claim_test_credits");
-    if (error) return toast.error(friendlyError(error));
+    if (error) {
+      toast.error(friendlyError(error));
+      return;
+    }
     toast.success("Test credits added");
     qc.invalidateQueries({ queryKey: ["wallet"] });
     qc.invalidateQueries({ queryKey: ["ledger"] });

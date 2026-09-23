@@ -19,7 +19,10 @@ export function ProfileSetupDialog() {
     setBusy(true);
     const { error } = await supabase.rpc("ensure_profile", { p_username: username, p_age_confirmed: age });
     setBusy(false);
-    if (error) return toast.error(friendlyError(error));
+    if (error) {
+      toast.error(friendlyError(error));
+      return;
+    }
     await refreshProfile();
   }
 

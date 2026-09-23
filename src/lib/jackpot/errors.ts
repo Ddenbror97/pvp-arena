@@ -16,6 +16,6 @@ const MESSAGES: Record<string, string> = {
 
 export function friendlyError(e: unknown): string {
   const msg = e instanceof Error ? e.message : typeof e === "object" && e && "message" in e ? String((e as { message: unknown }).message) : String(e);
-  for (const code of Object.keys(MESSAGES)) if (msg.includes(code)) return MESSAGES[code];
+  for (const code of Object.keys(MESSAGES)) if (msg.includes(code)) return MESSAGES[code]!;
   return "Something went wrong. Please try again.";
 }

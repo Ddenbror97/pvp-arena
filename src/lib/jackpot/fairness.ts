@@ -66,7 +66,7 @@ export async function drawTicket(
       await subtle().sign("HMAC", key, enc.encode(drawMessage(gameId, drawVersion, counter))),
     );
     let r = 0n;
-    for (let i = 0; i < 8; i++) r = (r << 8n) | BigInt(sig[i]);
+    for (let i = 0; i < 8; i++) r = (r << 8n) | BigInt(sig[i]!);
     if (r < limit) return { ticket: r % n, counter };
   }
   throw new Error("DRAW_EXHAUSTED");
@@ -92,7 +92,7 @@ export interface VerificationResult {
   ok: boolean;
   checks: { label: string; ok: boolean; detail: string }[];
   computedTicket?: bigint;
-  computedWinner?: string;
+  computedWinner?: string | undefined;
 }
 
 export async function verifyGame(
