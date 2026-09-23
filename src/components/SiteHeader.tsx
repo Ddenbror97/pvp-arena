@@ -4,6 +4,7 @@ import { useWallet } from "@/lib/jackpot/api";
 import { formatUsd } from "@/lib/jackpot/math";
 import { Button } from "@/components/ui/button";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
+import arenaLogo from "@/assets/arena-logo.png.asset.json";
 
 export function SiteHeader() {
   const { userId, profile, ready } = useAuth();
@@ -12,8 +13,8 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4">
-        <Link to="/" className="shrink-0 font-display text-base tracking-tight sm:text-lg">
-          PVP<span className="text-primary">Casino</span>
+        <Link to="/" className="shrink-0" aria-label="PVPspinArena">
+          <img src={arenaLogo.url} alt="PVPspinArena" className="h-10 w-auto" />
         </Link>
         <nav className="flex items-center gap-4 sm:gap-5">
           <Link to="/" className={`${link} hidden sm:inline`} activeOptions={{ exact: true }}>Jackpot</Link>
