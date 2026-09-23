@@ -15,31 +15,11 @@
  *   winner          = entry with ticket_start <= winning_ticket < ticket_end
  */
 
+import { hexToBytes, hmacKey, hmacSha256, sha256Hex, bytesToHex } from "@/lib/fairness/core";
+export { hexToBytes, sha256Hex, bytesToHex };
+
 export const PROTOCOL_VERSION = "v1";
 const TWO_64 = 1n << 64n;
-
-function subtle(): SubtleCrypto {
-  const c = globalThis.crypto;
-  if (!c?.subtle) throw new Error("Web Crypto is not available");
-  return c.subtle;
-}
-
-export function hexToBytes(hex: string): Uint8Array {
-  const clean = hex.trim().toLowerCase();
-  if (!/^([0-9a-f]{2})*$/.test(clean)) throw new Error("Invalid hex string");
-  const out = new Uint8Array(clean.length / 2);
-  for (let i = 0; i < out.length; i++) out[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
-  return out;
-}
-
-export function bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-export async function sha256Hex(bytes: Uint8Array): Promise<string> {
-  const d = await subtle().digest("SHA-256", bytes as BufferSource);
-  return bytesToHex(new Uint8Array(d));
-}
 
 export function drawMessage(gameId: number | bigint, drawVersion: number, counter: number): string {
   return `PVPCasino:jackpot:${PROTOCOL_VERSION}:${gameId}:${drawVersion}:${counter}`;
@@ -52,19 +32,10 @@ export async function drawTicket(
   n: bigint,
 ): Promise<{ ticket: bigint; counter: number }> {
   if (n <= 0n) throw new Error("INVALID_RANGE");
-  const key = await subtle().importKey(
-    "raw",
-    hexToBytes(seedHex) as BufferSource,
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
+  const key = await hmacKey(seedHex);
   const limit = (TWO_64 / n) * n;
-  const enc = new TextEncoder();
   for (let counter = 0; counter <= 1000; counter++) {
-    const sig = new Uint8Array(
-      await subtle().sign("HMAC", key, enc.encode(drawMessage(gameId, drawVersion, counter))),
-    );
+    const sig = await hmacSha256(key, drawMessage(gameId, drawVersion, counter));
     let r = 0n;
     for (let i = 0; i < 8; i++) r = (r << 8n) | BigInt(sig[i]!);
     if (r < limit) return { ticket: r % n, counter };
