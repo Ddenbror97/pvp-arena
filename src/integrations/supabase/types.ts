@@ -44,6 +44,39 @@ export type Database = {
         }
         Relationships: []
       }
+      auth_events: {
+        Row: {
+          challenge_id: string | null
+          created_at: string
+          details: Json
+          event: string
+          id: number
+          purpose: Database["public"]["Enums"]["otp_purpose"] | null
+          request_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          challenge_id?: string | null
+          created_at?: string
+          details?: Json
+          event: string
+          id?: never
+          purpose?: Database["public"]["Enums"]["otp_purpose"] | null
+          request_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          challenge_id?: string | null
+          created_at?: string
+          details?: Json
+          event?: string
+          id?: never
+          purpose?: Database["public"]["Enums"]["otp_purpose"] | null
+          request_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       coinflip_config: {
         Row: {
           animation_ms: number
@@ -392,6 +425,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_otp_challenges: {
+        Row: {
+          attempt_count: number
+          consumed_at: string | null
+          created_at: string
+          created_by_request_id: string
+          email: string
+          expires_at: string
+          id: string
+          ip_hash: string | null
+          last_sent_at: string | null
+          max_attempts: number
+          otp_digest: string
+          purpose: Database["public"]["Enums"]["otp_purpose"]
+          resend_count: number
+          status: Database["public"]["Enums"]["otp_status"]
+          user_agent_hash: string | null
+          user_id: string
+        }
+        Insert: {
+          attempt_count?: number
+          consumed_at?: string | null
+          created_at?: string
+          created_by_request_id: string
+          email: string
+          expires_at: string
+          id: string
+          ip_hash?: string | null
+          last_sent_at?: string | null
+          max_attempts?: number
+          otp_digest: string
+          purpose: Database["public"]["Enums"]["otp_purpose"]
+          resend_count?: number
+          status?: Database["public"]["Enums"]["otp_status"]
+          user_agent_hash?: string | null
+          user_id: string
+        }
+        Update: {
+          attempt_count?: number
+          consumed_at?: string | null
+          created_at?: string
+          created_by_request_id?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          ip_hash?: string | null
+          last_sent_at?: string | null
+          max_attempts?: number
+          otp_digest?: string
+          purpose?: Database["public"]["Enums"]["otp_purpose"]
+          resend_count?: number
+          status?: Database["public"]["Enums"]["otp_status"]
+          user_agent_hash?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       jackpot_config: {
         Row: {
@@ -920,6 +1010,7 @@ export type Database = {
       }
       admin_coinflip_overview: { Args: never; Returns: Json }
       admin_overview: { Args: never; Returns: Json }
+      auth_user_by_email: { Args: { p_email: string }; Returns: Json }
       claim_test_credits: { Args: never; Returns: Json }
       coinflip_advance: { Args: { p_game_id: number }; Returns: string }
       coinflip_cancel: { Args: { p_game_id: number }; Returns: Json }
@@ -967,6 +1058,50 @@ export type Database = {
       }
       jackpot_settle: { Args: { p_game_id: number }; Returns: string }
       jackpot_tick: { Args: never; Returns: Json }
+      otp_challenge_info: { Args: { p_id: string }; Returns: Json }
+      otp_cleanup: { Args: never; Returns: undefined }
+      otp_issue: {
+        Args: {
+          p_digest: string
+          p_email: string
+          p_id: string
+          p_ip_hash: string
+          p_purpose: Database["public"]["Enums"]["otp_purpose"]
+          p_request: string
+          p_ua_hash: string
+          p_user: string
+        }
+        Returns: Json
+      }
+      otp_log: {
+        Args: {
+          p_challenge: string
+          p_details: Json
+          p_event: string
+          p_purpose: Database["public"]["Enums"]["otp_purpose"]
+          p_request: string
+          p_user: string
+        }
+        Returns: undefined
+      }
+      otp_mark_sent: {
+        Args: {
+          p_error: string
+          p_id: string
+          p_ok: boolean
+          p_request: string
+        }
+        Returns: undefined
+      }
+      otp_verify: {
+        Args: {
+          p_digest: string
+          p_id: string
+          p_purpose: Database["public"]["Enums"]["otp_purpose"]
+          p_request: string
+        }
+        Returns: Json
+      }
       server_time: { Args: never; Returns: string }
       update_avatar: { Args: { p_avatar_url: string }; Returns: undefined }
     }
@@ -988,6 +1123,15 @@ export type Database = {
         | "COMPLETED"
         | "CANCELLED"
       game_status: "WAITING" | "ACTIVE" | "DRAWING" | "COMPLETED" | "CANCELLED"
+      otp_purpose: "SIGNUP_EMAIL_VERIFICATION"
+      otp_status:
+        | "PENDING_SEND"
+        | "ACTIVE"
+        | "CONSUMED"
+        | "INVALIDATED"
+        | "SUPERSEDED"
+        | "EXPIRED"
+        | "SEND_FAILED"
       payout_status: "PENDING" | "SETTLED" | "FAILED"
       tx_kind:
         | "test_credit_grant"
@@ -1145,6 +1289,16 @@ export const Constants = {
         "CANCELLED",
       ],
       game_status: ["WAITING", "ACTIVE", "DRAWING", "COMPLETED", "CANCELLED"],
+      otp_purpose: ["SIGNUP_EMAIL_VERIFICATION"],
+      otp_status: [
+        "PENDING_SEND",
+        "ACTIVE",
+        "CONSUMED",
+        "INVALIDATED",
+        "SUPERSEDED",
+        "EXPIRED",
+        "SEND_FAILED",
+      ],
       payout_status: ["PENDING", "SETTLED", "FAILED"],
       tx_kind: [
         "test_credit_grant",
