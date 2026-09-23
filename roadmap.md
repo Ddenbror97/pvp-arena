@@ -16,4 +16,5 @@
 - [ ] Review: Jackpot settle locks wallets in a different order than joins (possible deadlock under heavy load; retry-safe)
 - [ ] Live two-player Coinflip round in the browser (user testing themselves)
 - [x] Replace favicon with PVP logo, remove Lovable icon
-- [x] Resend 6-digit sign-up codes (built) — [ ] sending blocked until AUTH_EMAIL_FROM (verified Resend sender) is saved
+- [x] Resend 6-digit sign-up codes (built)
+- [ ] Live sign-up with a real inbox (user testing themselves)
