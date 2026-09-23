@@ -124,10 +124,8 @@ export function useLiveJackpot() {
           qc.invalidateQueries({ queryKey: ["wallet"] });
           return;
         }
-        if (row.id === shownId.current || row.status === "WAITING" || row.status === "ACTIVE") {
-          qc.setQueryData(["open-game"], (old: Game | null | undefined) =>
-            !old || row.id >= old.id || old.status === "COMPLETED" ? (row.status === "COMPLETED" ? old : row) : old,
-          );
+        if (row.status === "WAITING" || row.status === "ACTIVE" || row.status === "DRAWING") {
+          qc.setQueryData(["open-game"], (old: Game | null | undefined) => (!old || row.id >= old.id ? row : old));
         }
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "jackpot_players" }, (payload) => {
