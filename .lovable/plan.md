@@ -1,6 +1,13 @@
 # PVPCasino — Jackpot (first release)
 
-One game, built properly: a live multiplayer jackpot where the server owns every number that matters. Winner takes the pot (house fee exists in config, set to 0%). Wallets hold clearly-labelled TEST CREDITS only, amounts shown in USD. This release is not production-ready for real money and will not be described as such until it passes security, accounting, concurrency and fairness verification.
+One game, built properly: a live multiplayer jackpot where the server owns every number that matters. Winner takes the pot (house fee exists in config, set to 0%). Built as production-quality software with production-grade security, accounting, concurrency and testing standards. The release is TEST CREDITS ONLY (amounts shown in USD) and must not be presented as production-ready real-money gambling.
+
+## Verification gates (block deployment on failure)
+
+- Cryptography and accounting use well-tested standard libraries and database primitives only (Web Crypto / Node crypto, Postgres `pgcrypto`, row locks, constraints). No hand-rolled crypto primitives.
+- Independent verification tests compare the production draw against the published deterministic test vectors; any mismatch blocks deployment.
+- Failure-injection and concurrency suite: simultaneous joins, join-vs-close races, duplicate workers, worker interrupted mid-settlement, transaction rollback, repeated payout attempts, recovery after partial settlement. Any broken financial invariant blocks deployment.
+- Deliverables after build: test results, schema/migrations, access-rule policies, and the security/concurrency report.
 
 ## What you'll be able to do
 
