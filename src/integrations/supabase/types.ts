@@ -21,6 +21,7 @@ export type Database = {
           created_at: string
           details: Json
           game_id: number | null
+          game_type: string
           id: number
         }
         Insert: {
@@ -29,6 +30,7 @@ export type Database = {
           created_at?: string
           details?: Json
           game_id?: number | null
+          game_type?: string
           id?: never
         }
         Update: {
@@ -37,9 +39,359 @@ export type Database = {
           created_at?: string
           details?: Json
           game_id?: number | null
+          game_type?: string
           id?: never
         }
         Relationships: []
+      }
+      coinflip_config: {
+        Row: {
+          animation_ms: number
+          create_rate_limit: number
+          create_rate_window_seconds: number
+          fee_bps: number
+          id: boolean
+          max_open_per_user: number
+          max_wager: number
+          min_wager: number
+          pre_delay_ms: number
+          updated_at: string
+          waiting_timeout_seconds: number
+        }
+        Insert: {
+          animation_ms?: number
+          create_rate_limit?: number
+          create_rate_window_seconds?: number
+          fee_bps?: number
+          id?: boolean
+          max_open_per_user?: number
+          max_wager?: number
+          min_wager?: number
+          pre_delay_ms?: number
+          updated_at?: string
+          waiting_timeout_seconds?: number
+        }
+        Update: {
+          animation_ms?: number
+          create_rate_limit?: number
+          create_rate_window_seconds?: number
+          fee_bps?: number
+          id?: boolean
+          max_open_per_user?: number
+          max_wager?: number
+          min_wager?: number
+          pre_delay_ms?: number
+          updated_at?: string
+          waiting_timeout_seconds?: number
+        }
+        Relationships: []
+      }
+      coinflip_entries: {
+        Row: {
+          amount: number
+          created_at: string
+          game_id: number
+          id: string
+          idempotency_key: string
+          ledger_tx_id: string
+          side: Database["public"]["Enums"]["coin_side"]
+          slot: number
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          game_id: number
+          id?: string
+          idempotency_key: string
+          ledger_tx_id: string
+          side: Database["public"]["Enums"]["coin_side"]
+          slot: number
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          game_id?: number
+          id?: string
+          idempotency_key?: string
+          ledger_tx_id?: string
+          side?: Database["public"]["Enums"]["coin_side"]
+          slot?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coinflip_entries_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "coinflip_games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coinflip_entries_ledger_tx_id_fkey"
+            columns: ["ledger_tx_id"]
+            isOneToOne: true
+            referencedRelation: "ledger_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coinflip_entries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coinflip_game_secrets: {
+        Row: {
+          game_id: number
+          server_seed: string
+        }
+        Insert: {
+          game_id: number
+          server_seed: string
+        }
+        Update: {
+          game_id?: number
+          server_seed?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coinflip_game_secrets_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: true
+            referencedRelation: "coinflip_games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coinflip_games: {
+        Row: {
+          account_type: string
+          amount: number
+          animation_end_at: string | null
+          animation_start_at: string | null
+          asset: string
+          cancel_reason: string | null
+          cancelled_at: string | null
+          completed_at: string | null
+          created_at: string
+          creator_id: string
+          creator_side: Database["public"]["Enums"]["coin_side"]
+          draw_version: number
+          expires_at: string
+          fee_amount: number | null
+          fee_bps: number
+          id: number
+          joined_at: string | null
+          opponent_id: string | null
+          payout_amount: number | null
+          pot_amount: number
+          protocol_version: string
+          server_seed: string | null
+          server_seed_hash: string
+          settlement_started_at: string | null
+          status: Database["public"]["Enums"]["coinflip_status"]
+          updated_at: string
+          winner_id: string | null
+          winning_side: Database["public"]["Enums"]["coin_side"] | null
+        }
+        Insert: {
+          account_type: string
+          amount: number
+          animation_end_at?: string | null
+          animation_start_at?: string | null
+          asset: string
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          creator_id: string
+          creator_side: Database["public"]["Enums"]["coin_side"]
+          draw_version?: number
+          expires_at: string
+          fee_amount?: number | null
+          fee_bps: number
+          id?: never
+          joined_at?: string | null
+          opponent_id?: string | null
+          payout_amount?: number | null
+          pot_amount: number
+          protocol_version?: string
+          server_seed?: string | null
+          server_seed_hash: string
+          settlement_started_at?: string | null
+          status?: Database["public"]["Enums"]["coinflip_status"]
+          updated_at?: string
+          winner_id?: string | null
+          winning_side?: Database["public"]["Enums"]["coin_side"] | null
+        }
+        Update: {
+          account_type?: string
+          amount?: number
+          animation_end_at?: string | null
+          animation_start_at?: string | null
+          asset?: string
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          creator_id?: string
+          creator_side?: Database["public"]["Enums"]["coin_side"]
+          draw_version?: number
+          expires_at?: string
+          fee_amount?: number | null
+          fee_bps?: number
+          id?: never
+          joined_at?: string | null
+          opponent_id?: string | null
+          payout_amount?: number | null
+          pot_amount?: number
+          protocol_version?: string
+          server_seed?: string | null
+          server_seed_hash?: string
+          settlement_started_at?: string | null
+          status?: Database["public"]["Enums"]["coinflip_status"]
+          updated_at?: string
+          winner_id?: string | null
+          winning_side?: Database["public"]["Enums"]["coin_side"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coinflip_games_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coinflip_games_opponent_id_fkey"
+            columns: ["opponent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coinflip_payouts: {
+        Row: {
+          amount: number
+          attempts: number
+          beneficiary_id: string
+          created_at: string
+          game_id: number
+          idempotency_key: string
+          kind: Database["public"]["Enums"]["coinflip_payout_kind"]
+          last_error: string | null
+          ledger_tx_id: string | null
+          settled_at: string | null
+          status: Database["public"]["Enums"]["payout_status"]
+        }
+        Insert: {
+          amount: number
+          attempts?: number
+          beneficiary_id: string
+          created_at?: string
+          game_id: number
+          idempotency_key: string
+          kind: Database["public"]["Enums"]["coinflip_payout_kind"]
+          last_error?: string | null
+          ledger_tx_id?: string | null
+          settled_at?: string | null
+          status?: Database["public"]["Enums"]["payout_status"]
+        }
+        Update: {
+          amount?: number
+          attempts?: number
+          beneficiary_id?: string
+          created_at?: string
+          game_id?: number
+          idempotency_key?: string
+          kind?: Database["public"]["Enums"]["coinflip_payout_kind"]
+          last_error?: string | null
+          ledger_tx_id?: string | null
+          settled_at?: string | null
+          status?: Database["public"]["Enums"]["payout_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coinflip_payouts_beneficiary_id_fkey"
+            columns: ["beneficiary_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coinflip_payouts_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: true
+            referencedRelation: "coinflip_games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coinflip_payouts_ledger_tx_id_fkey"
+            columns: ["ledger_tx_id"]
+            isOneToOne: true
+            referencedRelation: "ledger_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coinflip_results: {
+        Row: {
+          created_at: string
+          draw_version: number
+          first_byte: number
+          game_id: number
+          hmac_hex: string
+          message: string
+          protocol_version: string
+          server_seed_hash: string
+          winner_id: string
+          winning_side: Database["public"]["Enums"]["coin_side"]
+        }
+        Insert: {
+          created_at?: string
+          draw_version: number
+          first_byte: number
+          game_id: number
+          hmac_hex: string
+          message: string
+          protocol_version: string
+          server_seed_hash: string
+          winner_id: string
+          winning_side: Database["public"]["Enums"]["coin_side"]
+        }
+        Update: {
+          created_at?: string
+          draw_version?: number
+          first_byte?: number
+          game_id?: number
+          hmac_hex?: string
+          message?: string
+          protocol_version?: string
+          server_seed_hash?: string
+          winner_id?: string
+          winning_side?: Database["public"]["Enums"]["coin_side"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coinflip_results_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: true
+            referencedRelation: "coinflip_games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coinflip_results_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       jackpot_config: {
         Row: {
@@ -523,7 +875,28 @@ export type Database = {
         }
         Returns: undefined
       }
+      _audit_cf: {
+        Args: {
+          p_action: string
+          p_actor: string
+          p_details: Json
+          p_game: number
+        }
+        Returns: undefined
+      }
+      _coinflip_lock_wallets: {
+        Args: { p_asset: string; p_type: string; p_users: string[] }
+        Returns: undefined
+      }
+      _coinflip_refund: {
+        Args: { p_game_id: number; p_reason: string }
+        Returns: undefined
+      }
       _ensure_open_game: { Args: never; Returns: number }
+      _fair_hmac: {
+        Args: { p_message: string; p_seed: string }
+        Returns: string
+      }
       _post: {
         Args: { p_account: string; p_amount: number; p_tx: string }
         Returns: undefined
@@ -545,8 +918,28 @@ export type Database = {
         }
         Returns: string
       }
+      admin_coinflip_overview: { Args: never; Returns: Json }
       admin_overview: { Args: never; Returns: Json }
       claim_test_credits: { Args: never; Returns: Json }
+      coinflip_advance: { Args: { p_game_id: number }; Returns: string }
+      coinflip_cancel: { Args: { p_game_id: number }; Returns: Json }
+      coinflip_create: {
+        Args: {
+          p_amount: number
+          p_idempotency_key: string
+          p_side: Database["public"]["Enums"]["coin_side"]
+        }
+        Returns: Json
+      }
+      coinflip_join: {
+        Args: { p_game_id: number; p_idempotency_key: string }
+        Returns: Json
+      }
+      coinflip_outcome: {
+        Args: { p_draw_version: number; p_game_id: number; p_seed: string }
+        Returns: Record<string, unknown>
+      }
+      coinflip_tick: { Args: never; Returns: Json }
       ensure_profile: {
         Args: { p_age_confirmed: boolean; p_username: string }
         Returns: Json
@@ -585,6 +978,15 @@ export type Database = {
         | "house_revenue"
         | "test_faucet"
       app_role: "admin" | "moderator" | "user"
+      coin_side: "HEADS" | "TAILS"
+      coinflip_payout_kind: "WINNER" | "REFUND"
+      coinflip_status:
+        | "WAITING"
+        | "READY"
+        | "FLIPPING"
+        | "SETTLEMENT"
+        | "COMPLETED"
+        | "CANCELLED"
       game_status: "WAITING" | "ACTIVE" | "DRAWING" | "COMPLETED" | "CANCELLED"
       payout_status: "PENDING" | "SETTLED" | "FAILED"
       tx_kind:
@@ -594,6 +996,9 @@ export type Database = {
         | "deposit"
         | "withdrawal"
         | "refund"
+        | "coinflip_entry"
+        | "coinflip_settlement"
+        | "coinflip_refund"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -729,6 +1134,16 @@ export const Constants = {
         "test_faucet",
       ],
       app_role: ["admin", "moderator", "user"],
+      coin_side: ["HEADS", "TAILS"],
+      coinflip_payout_kind: ["WINNER", "REFUND"],
+      coinflip_status: [
+        "WAITING",
+        "READY",
+        "FLIPPING",
+        "SETTLEMENT",
+        "COMPLETED",
+        "CANCELLED",
+      ],
       game_status: ["WAITING", "ACTIVE", "DRAWING", "COMPLETED", "CANCELLED"],
       payout_status: ["PENDING", "SETTLED", "FAILED"],
       tx_kind: [
@@ -738,6 +1153,9 @@ export const Constants = {
         "deposit",
         "withdrawal",
         "refund",
+        "coinflip_entry",
+        "coinflip_settlement",
+        "coinflip_refund",
       ],
     },
   },
