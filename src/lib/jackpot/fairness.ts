@@ -15,7 +15,7 @@
  *   winner          = entry with ticket_start <= winning_ticket < ticket_end
  */
 
-import { hexToBytes, hmacKey, hmacSha256, sha256Hex, bytesToHex } from "@/lib/fairness/core";
+import { hexToBytes, hmacKey, hmacSha256, sha256Hex, bytesToHex } from "../fairness/core";
 export { hexToBytes, sha256Hex, bytesToHex };
 
 export const PROTOCOL_VERSION = "v1";
