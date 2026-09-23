@@ -27,7 +27,7 @@ async function rpc<T>(fn: string, args: Record<string, unknown>): Promise<T> {
   return data;
 }
 
-const DEFAULT_FROM = "PVPspinArena <codigo@pvpspinarena.com>";
+const DEFAULT_FROM = "PVPspinArena <noreply@pvpspinarena.com>";
 const EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
 
 /** Normalise a configured sender into a strict `Name <addr>` that Resend accepts. */
