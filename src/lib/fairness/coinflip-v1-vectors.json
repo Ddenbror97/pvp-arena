@@ -1,0 +1,322 @@
+[
+ {
+  "game_id": "1",
+  "server_seed": "0000000000000000000000000000000000000000000000000000000000000000",
+  "server_seed_hash": "66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "654deb19e7bf0aaf32c890d3c82f40e7340cf6fa81886fdc81913b5835d3c7f5",
+  "first_byte": 101,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "100",
+  "server_seed": "0000000000000000000000000000000000000000000000000000000000000000",
+  "server_seed_hash": "66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "b68a1d5280e9e5802d9ebe6b0dd30cf5513409061cc08fcd8f7c02dd4aeee262",
+  "first_byte": 182,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "1",
+  "server_seed": "0000000000000000000000000000000000000000000000000000000000000000",
+  "server_seed_hash": "66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "654deb19e7bf0aaf32c890d3c82f40e7340cf6fa81886fdc81913b5835d3c7f5",
+  "first_byte": 101,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "100",
+  "server_seed": "0000000000000000000000000000000000000000000000000000000000000000",
+  "server_seed_hash": "66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "b68a1d5280e9e5802d9ebe6b0dd30cf5513409061cc08fcd8f7c02dd4aeee262",
+  "first_byte": 182,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "12345",
+  "server_seed": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "server_seed_hash": "af9613760f72635fbdb44a5a0a63c39f12af30f950a6ee5c971be188e89c4051",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "f261d3295cba04450dee89c9916a3084ceb2d4b3f78ec63974584463000fb281",
+  "first_byte": 242,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "7",
+  "server_seed": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "server_seed_hash": "af9613760f72635fbdb44a5a0a63c39f12af30f950a6ee5c971be188e89c4051",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "4d105c6379d3cd7a59df39a49d9584e76527026880862306ee7f111769f9bc2c",
+  "first_byte": 77,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "12345",
+  "server_seed": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "server_seed_hash": "af9613760f72635fbdb44a5a0a63c39f12af30f950a6ee5c971be188e89c4051",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "f261d3295cba04450dee89c9916a3084ceb2d4b3f78ec63974584463000fb281",
+  "first_byte": 242,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "7",
+  "server_seed": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "server_seed_hash": "af9613760f72635fbdb44a5a0a63c39f12af30f950a6ee5c971be188e89c4051",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "4d105c6379d3cd7a59df39a49d9584e76527026880862306ee7f111769f9bc2c",
+  "first_byte": 77,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "42",
+  "server_seed": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "server_seed_hash": "630dcd2966c4336691125448bbb25b4ff412a49c732db2c8abc1b8581bd710dd",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "441afba917121b3ae432a93918f861a6b15a518afa5941004252c9d7d0d45694",
+  "first_byte": 68,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "2147483648",
+  "server_seed": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "server_seed_hash": "630dcd2966c4336691125448bbb25b4ff412a49c732db2c8abc1b8581bd710dd",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "19c55c4d29b2d6cfd7c8116ba7ab0a1a5c53f20f3481691fa99d3dec08a5ae75",
+  "first_byte": 25,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "42",
+  "server_seed": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "server_seed_hash": "630dcd2966c4336691125448bbb25b4ff412a49c732db2c8abc1b8581bd710dd",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "441afba917121b3ae432a93918f861a6b15a518afa5941004252c9d7d0d45694",
+  "first_byte": 68,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "2147483648",
+  "server_seed": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "server_seed_hash": "630dcd2966c4336691125448bbb25b4ff412a49c732db2c8abc1b8581bd710dd",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "19c55c4d29b2d6cfd7c8116ba7ab0a1a5c53f20f3481691fa99d3dec08a5ae75",
+  "first_byte": 25,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "1",
+  "server_seed": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+  "server_seed_hash": "8200cf0ce11447bf6353cbac964d07d1c390d61d07e6c5d0214450b3add6449b",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "5aca033f86460ba3e7c56dfeecc5c3e6558fb47bdbf1e666aa4ddf2f1232cb5f",
+  "first_byte": 90,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "100",
+  "server_seed": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+  "server_seed_hash": "8200cf0ce11447bf6353cbac964d07d1c390d61d07e6c5d0214450b3add6449b",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "e7fc103c2eebabaea229ac6ee8e62bea3a374cabb3b947c8120bbbc6213305ca",
+  "first_byte": 231,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "1",
+  "server_seed": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+  "server_seed_hash": "8200cf0ce11447bf6353cbac964d07d1c390d61d07e6c5d0214450b3add6449b",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "5aca033f86460ba3e7c56dfeecc5c3e6558fb47bdbf1e666aa4ddf2f1232cb5f",
+  "first_byte": 90,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "100",
+  "server_seed": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+  "server_seed_hash": "8200cf0ce11447bf6353cbac964d07d1c390d61d07e6c5d0214450b3add6449b",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "e7fc103c2eebabaea229ac6ee8e62bea3a374cabb3b947c8120bbbc6213305ca",
+  "first_byte": 231,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "12345",
+  "server_seed": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+  "server_seed_hash": "954d5a49fd70d9b8bcdb35d252267829957f7ef7fa6c74f88419bdc5e82209f4",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "31b8eea2c17c55a3dbf34614de9d204bcdd80dc69826fb10b1e83dc3a861d04b",
+  "first_byte": 49,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "7",
+  "server_seed": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+  "server_seed_hash": "954d5a49fd70d9b8bcdb35d252267829957f7ef7fa6c74f88419bdc5e82209f4",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "64c1ef0dc60b8412d222add77c138440a9f8666c0b052e776b2bdc9ed8c4b47f",
+  "first_byte": 100,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "12345",
+  "server_seed": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+  "server_seed_hash": "954d5a49fd70d9b8bcdb35d252267829957f7ef7fa6c74f88419bdc5e82209f4",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "31b8eea2c17c55a3dbf34614de9d204bcdd80dc69826fb10b1e83dc3a861d04b",
+  "first_byte": 49,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "7",
+  "server_seed": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+  "server_seed_hash": "954d5a49fd70d9b8bcdb35d252267829957f7ef7fa6c74f88419bdc5e82209f4",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "64c1ef0dc60b8412d222add77c138440a9f8666c0b052e776b2bdc9ed8c4b47f",
+  "first_byte": 100,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "42",
+  "server_seed": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "server_seed_hash": "4884fdaafea47c29fea7159d0daddd9c085d6200e1359e85bb81736af6b7c837",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "daa9df95560fa74c1ba67e3e6fa9864aec97962bce41d220d44d81d02ede250d",
+  "first_byte": 218,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "2147483648",
+  "server_seed": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "server_seed_hash": "4884fdaafea47c29fea7159d0daddd9c085d6200e1359e85bb81736af6b7c837",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "cb5f21fb80f31f47643dee9ee5b3ef97b5224e5f306a858340713bb25009d12e",
+  "first_byte": 203,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "42",
+  "server_seed": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "server_seed_hash": "4884fdaafea47c29fea7159d0daddd9c085d6200e1359e85bb81736af6b7c837",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "daa9df95560fa74c1ba67e3e6fa9864aec97962bce41d220d44d81d02ede250d",
+  "first_byte": 218,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "2147483648",
+  "server_seed": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "server_seed_hash": "4884fdaafea47c29fea7159d0daddd9c085d6200e1359e85bb81736af6b7c837",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "cb5f21fb80f31f47643dee9ee5b3ef97b5224e5f306a858340713bb25009d12e",
+  "first_byte": 203,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "1",
+  "server_seed": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+  "server_seed_hash": "fc8b64001c5fdd0f2f40fb67dae4a865a2c5bd17836676d6d5b58b7917e33717",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "007484e5e2de62efec3d297a5d85bc3a24cba5a71566eb0b7db81b1eddc9b414",
+  "first_byte": 0,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "100",
+  "server_seed": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+  "server_seed_hash": "fc8b64001c5fdd0f2f40fb67dae4a865a2c5bd17836676d6d5b58b7917e33717",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "c56d52ae7a977bd7d836842d6c67b83acbf8b14c729fe5c87ff7bf35d391f542",
+  "first_byte": 197,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "1",
+  "server_seed": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+  "server_seed_hash": "fc8b64001c5fdd0f2f40fb67dae4a865a2c5bd17836676d6d5b58b7917e33717",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "007484e5e2de62efec3d297a5d85bc3a24cba5a71566eb0b7db81b1eddc9b414",
+  "first_byte": 0,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "100",
+  "server_seed": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+  "server_seed_hash": "fc8b64001c5fdd0f2f40fb67dae4a865a2c5bd17836676d6d5b58b7917e33717",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "c56d52ae7a977bd7d836842d6c67b83acbf8b14c729fe5c87ff7bf35d391f542",
+  "first_byte": 197,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "12345",
+  "server_seed": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+  "server_seed_hash": "60bf07c488aad18fda339df07e4fbc47b4f00be71711936f18d04d352ad01890",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "b91dbd484d4bf457733f68245e23c04e6aeff47581ec986ddb5f3d89a7d629a4",
+  "first_byte": 185,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "7",
+  "server_seed": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+  "server_seed_hash": "60bf07c488aad18fda339df07e4fbc47b4f00be71711936f18d04d352ad01890",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "986bee29f99f5fc4eafb2d444c650b1a823f9e73bd90663a1f076c6d7e6e0bae",
+  "first_byte": 152,
+  "side": "HEADS"
+ },
+ {
+  "game_id": "12345",
+  "server_seed": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+  "server_seed_hash": "60bf07c488aad18fda339df07e4fbc47b4f00be71711936f18d04d352ad01890",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "b91dbd484d4bf457733f68245e23c04e6aeff47581ec986ddb5f3d89a7d629a4",
+  "first_byte": 185,
+  "side": "TAILS"
+ },
+ {
+  "game_id": "7",
+  "server_seed": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+  "server_seed_hash": "60bf07c488aad18fda339df07e4fbc47b4f00be71711936f18d04d352ad01890",
+  "draw_version": 1,
+  "protocol_version": "v1",
+  "hmac": "986bee29f99f5fc4eafb2d444c650b1a823f9e73bd90663a1f076c6d7e6e0bae",
+  "first_byte": 152,
+  "side": "HEADS"
+ }
+]

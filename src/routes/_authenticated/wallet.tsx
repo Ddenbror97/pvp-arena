@@ -115,9 +115,15 @@ function WalletPage() {
                       {tx?.game_id && (
                         <>
                           {" · "}
-                          <Link to="/games/$gameId" params={{ gameId: String(tx.game_id) }} className="hover:text-foreground">
-                            Game #{tx.game_id}
-                          </Link>
+                          {tx.kind.startsWith("coinflip") ? (
+                            <Link to="/coinflip/$gameId" params={{ gameId: String(tx.game_id) }} className="hover:text-foreground">
+                              Coinflip #{tx.game_id}
+                            </Link>
+                          ) : (
+                            <Link to="/games/$gameId" params={{ gameId: String(tx.game_id) }} className="hover:text-foreground">
+                              Jackpot #{tx.game_id}
+                            </Link>
+                          )}
                         </>
                       )}
                     </div>

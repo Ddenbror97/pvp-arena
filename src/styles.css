@@ -175,3 +175,23 @@
 }
 .animate-rise-in { animation: rise-in 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
 .animate-pulse-ring { animation: pulse-ring 1.6s ease-in-out infinite; }
+
+/* Coinflip coin faces */
+.coin-face {
+  border: 6px solid oklch(1 0 0 / 18%);
+  box-shadow: inset 0 0 0 10px oklch(0 0 0 / 18%), inset 0 -18px 40px oklch(0 0 0 / 35%), 0 20px 60px oklch(0 0 0 / 45%);
+}
+.coin-heads {
+  background: radial-gradient(circle at 35% 30%, oklch(0.97 0.15 128), var(--primary) 55%, oklch(0.62 0.17 128));
+  color: var(--primary-foreground);
+}
+.coin-tails {
+  background: radial-gradient(circle at 35% 30%, oklch(0.85 0.14 25), var(--rival) 55%, oklch(0.48 0.17 25));
+  color: var(--rival-foreground);
+}
+@keyframes count-pop {
+  0% { transform: scale(1.8); opacity: 0; }
+  30% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.85; }
+}
+.animate-count-pop { animation: count-pop 1s cubic-bezier(0.2, 0.9, 0.3, 1) both; }

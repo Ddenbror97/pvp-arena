@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { drawTicket, hexToBytes, sha256Hex } from "@/lib/jackpot/fairness";
+import { coinflipMessage, coinflipOutcome } from "@/lib/fairness/coinflip";
+import CF_VECTORS from "@/lib/fairness/coinflip-v1-vectors.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +11,7 @@ export const Route = createFileRoute("/fairness")({
   head: () => ({
     meta: [
       { title: "Fairness protocol — PVPCasino" },
-      { name: "description", content: "How PVPCasino picks jackpot winners: seed commitment, HMAC-SHA256 and unbiased rejection sampling. Verify any game yourself." },
+      { name: "description", content: "How PVPCasino decides Jackpot and Coinflip results: seed commitment, HMAC-SHA256, unbiased mapping. Verify any game yourself." },
       { property: "og:title", content: "Fairness protocol — PVPCasino" },
       { property: "og:description", content: "Commit/reveal draws with HMAC-SHA256 and unbiased ticket mapping. Verify any game yourself." },
       { property: "og:type", content: "article" },
@@ -94,6 +96,69 @@ function FairnessPage() {
         <Button onClick={run} className="w-fit">Compute</Button>
         {out && <pre className="tabular whitespace-pre-wrap break-all rounded-xl bg-card p-4 text-xs">{out}</pre>}
       </div>
+      <CoinflipSection />
     </div>
+  );
+}
+
+const CF_SPEC = `When the game is created (before any opponent exists):
+  server_seed      = 32 random bytes (CSPRNG, Postgres pgcrypto)
+  server_seed_hash = SHA256(server_seed)            -> published on the game
+
+Fixed message (no free parameter):
+  message = "PVPCasino:coinflip:v1:" + game_id + ":" + draw_version
+
+  h    = HMAC-SHA256(key = server_seed, data = UTF-8(message))
+  side = (h[0] & 1) == 0 ? HEADS : TAILS             (exactly 50/50: one bit)
+
+The result is fixed when the opponent joins, hidden until the flip starts,
+and the seed is revealed once the game is settled.`;
+
+function CoinflipSection() {
+  const [seed, setSeed] = useState("");
+  const [gameId, setGameId] = useState("");
+  const [out, setOut] = useState<string | null>(null);
+  async function run() {
+    try {
+      const hash = await sha256Hex(hexToBytes(seed));
+      const o = await coinflipOutcome(seed, gameId.trim(), 1);
+      setOut(`SHA256(seed) = ${hash}\nmessage      = ${coinflipMessage(gameId.trim(), 1)}\nHMAC         = ${o.hmacHex}\nfirst byte   = ${o.firstByte} -> ${o.side}`);
+    } catch (e) {
+      setOut(e instanceof Error ? e.message : "Invalid input");
+    }
+  }
+  return (
+    <>
+      <h1 className="mt-16 font-display text-3xl">Coinflip protocol v1</h1>
+      <p className="mt-3 text-muted-foreground">Uses the same seed-commitment engine as Jackpot, with its own message prefix so results from one game can never be reused for another.</p>
+      <pre className="tabular mt-6 overflow-x-auto rounded-2xl border border-border bg-card p-5 text-xs leading-relaxed">{CF_SPEC}</pre>
+      <h2 className="mt-8 font-display text-lg">Verify a coinflip</h2>
+      <p className="mt-2 text-sm text-muted-foreground">Runs entirely in your browser; nothing is sent to our servers.</p>
+      <div className="mt-4 grid gap-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="cfseed">Revealed server seed (hex)</Label>
+          <Input id="cfseed" value={seed} onChange={(e) => setSeed(e.target.value)} className="tabular" />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="cfgid">Coinflip game number</Label>
+          <Input id="cfgid" value={gameId} onChange={(e) => setGameId(e.target.value)} inputMode="numeric" />
+        </div>
+        <Button onClick={run} className="w-fit">Compute</Button>
+        {out && <pre className="tabular whitespace-pre-wrap break-all rounded-xl bg-card p-4 text-xs">{out}</pre>}
+      </div>
+      <details className="mt-8 rounded-2xl border border-border bg-card p-4 text-xs">
+        <summary className="cursor-pointer font-display text-sm">Published test vectors ({CF_VECTORS.length})</summary>
+        <div className="mt-3 overflow-x-auto">
+          <table className="tabular w-full">
+            <thead className="text-left text-muted-foreground"><tr><th className="pr-3">game_id</th><th className="pr-3">server_seed</th><th className="pr-3">first byte</th><th>side</th></tr></thead>
+            <tbody>
+              {CF_VECTORS.map((v, i) => (
+                <tr key={i}><td className="pr-3">{v.game_id}</td><td className="break-all pr-3">{v.server_seed}</td><td className="pr-3">{v.first_byte}</td><td>{v.side}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </>
   );
 }

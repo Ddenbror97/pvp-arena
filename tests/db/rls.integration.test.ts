@@ -66,4 +66,49 @@ d("access rules (anonymous client)", () => {
       expect(after!.status).toBe(before.status);
     }
   });
+
+  it("coinflip: secrets hidden, results hidden before flip, no unrevealed seeds", async () => {
+    const { data: sec } = await sb.from("coinflip_game_secrets").select("*").limit(5);
+    expect(sec ?? []).toEqual([]);
+    const { data: games } = await sb.from("coinflip_games").select("id, status, server_seed, winner_id, winning_side").limit(200);
+    for (const g of games ?? []) {
+      if (g.status !== "COMPLETED") expect(g.server_seed).toBeNull();
+      if (["WAITING", "READY", "CANCELLED"].includes(g.status)) {
+        expect(g.winner_id).toBeNull();
+        expect(g.winning_side).toBeNull();
+      }
+    }
+    const hidden = (games ?? []).filter((g) => g.status === "READY").map((g) => g.id);
+    if (hidden.length) {
+      const { data: res } = await sb.from("coinflip_results").select("*").in("game_id", hidden);
+      expect(res ?? []).toEqual([]);
+    }
+  });
+
+  it("coinflip: no direct writes and no internal functions from the browser", async () => {
+    const fake = "00000000-0000-0000-0000-000000000000";
+    const writes = [
+      sb.from("coinflip_games").update({ winner_id: fake }).gte("id", 0),
+      sb.from("coinflip_results").insert({ game_id: 1, protocol_version: "v1", draw_version: 1, server_seed_hash: "0".repeat(64), message: "x", hmac_hex: "0".repeat(64), first_byte: 0, winning_side: "HEADS", winner_id: fake }),
+      sb.from("coinflip_payouts").update({ status: "SETTLED" }).gte("game_id", 0),
+      sb.from("coinflip_entries").insert({ game_id: 1, user_id: fake, slot: 2, side: "HEADS", amount: 100, ledger_tx_id: fake, idempotency_key: "xxxxxxxxxx" }),
+    ];
+    for (const w of writes) {
+      const { error, data } = await w;
+      expect(error ?? (data === null || (Array.isArray(data) && data.length === 0))).toBeTruthy();
+    }
+    for (const [fn, args] of [
+      ["coinflip_advance", { p_game_id: 1 }],
+      ["_coinflip_refund", { p_game_id: 1, p_reason: "EXPIRED" }],
+      ["coinflip_create", { p_amount: 100, p_side: "HEADS", p_idempotency_key: "abcdefgh12" }],
+      ["coinflip_join", { p_game_id: 1, p_idempotency_key: "abcdefgh12" }],
+      ["coinflip_cancel", { p_game_id: 1 }],
+      ["admin_coinflip_overview", {}],
+    ] as const) {
+      const { error } = await sb.rpc(fn as never, args as never);
+      expect(error).not.toBeNull();
+    }
+    const { error } = await sb.rpc("coinflip_tick");
+    expect(error).toBeNull();
+  });
 });

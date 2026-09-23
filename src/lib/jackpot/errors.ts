@@ -12,6 +12,15 @@ const MESSAGES: Record<string, string> = {
   AGE_CONFIRMATION_REQUIRED: "You must confirm you are 18 or older.",
   FAUCET_COOLDOWN: "You've already claimed test credits this hour.",
   FORBIDDEN: "You don't have access to this.",
+  BELOW_MIN_WAGER: "That's below the minimum wager.",
+  ABOVE_MAX_WAGER: "That's above the maximum wager.",
+  INVALID_SIDE: "Pick Heads or Tails.",
+  TOO_MANY_OPEN_GAMES: "You already have the maximum number of open coinflips.",
+  GAME_NOT_JOINABLE: "Someone else already joined that game.",
+  GAME_EXPIRED: "That game expired before you joined.",
+  GAME_NOT_FOUND: "That game doesn't exist.",
+  CANNOT_JOIN_OWN_GAME: "You can't join your own game.",
+  GAME_NOT_CANCELLABLE: "This game can no longer be cancelled.",
 };
 
 export function friendlyError(e: unknown): string {

@@ -1,5 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { OtpInput } from "@/components/auth/OtpInput";
+import { resendSignupCodeFn, startSignupFn, verifySignupCodeFn } from "@/lib/auth-otp/signup.functions";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -22,6 +25,9 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+type Pending = { challengeId: string; email: string; maskedEmail: string };
+const PENDING_KEY = "pvp-signup-pending";
+
 function AuthPage() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
@@ -29,12 +35,31 @@ function AuthPage() {
   const [username, setUsername] = useState("");
   const [age, setAge] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState<Pending | null>(null);
   const { userId } = useAuth();
   const navigate = useNavigate();
+  const start = useServerFn(startSignupFn);
 
   useEffect(() => {
     if (userId) navigate({ to: "/" });
   }, [userId, navigate]);
+
+  useEffect(() => {
+    const raw = sessionStorage.getItem(PENDING_KEY);
+    if (raw) {
+      try {
+        setPending(JSON.parse(raw) as Pending);
+      } catch {
+        sessionStorage.removeItem(PENDING_KEY);
+      }
+    }
+  }, []);
+
+  function savePending(p: Pending | null) {
+    setPending(p);
+    if (p) sessionStorage.setItem(PENDING_KEY, JSON.stringify(p));
+    else sessionStorage.removeItem(PENDING_KEY);
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -43,22 +68,44 @@ function AuthPage() {
       if (mode === "signup") {
         if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) throw new Error("Usernames are 3–20 letters, numbers or underscores.");
         if (!age) throw new Error("You must confirm you are 18 or older.");
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: window.location.origin, data: { username, age_confirmed: true } },
-        });
-        if (error) throw error;
-        if (!data.session) toast.success("Check your email to confirm your account.");
+        const r = await start({ data: { email, password, username, ageConfirmed: true } });
+        if (!r.ok) throw new Error(r.error);
+        savePending({ challengeId: r.challengeId, email: email.trim().toLowerCase(), maskedEmail: r.maskedEmail });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        if (error) throw new Error(/confirm/i.test(error.message) ? "Confirme seu e-mail com o código antes de entrar." : "E-mail ou senha incorretos.");
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Sign in failed");
     } finally {
       setBusy(false);
     }
+  }
+
+  if (pending) {
+    return (
+      <VerifyStep
+        pending={pending}
+        onPending={savePending}
+        onVerified={async () => {
+          const pw = password;
+          const em = pending.email;
+          savePending(null);
+          setPassword("");
+          if (pw) {
+            const { error } = await supabase.auth.signInWithPassword({ email: em, password: pw });
+            if (!error) return;
+          }
+          toast.success("E-mail confirmado! Entre com sua senha.");
+          setEmail(em);
+          setMode("signin");
+        }}
+        onChangeEmail={() => {
+          savePending(null);
+          setMode("signup");
+        }}
+      />
+    );
   }
 
   return (
@@ -107,6 +154,101 @@ function AuthPage() {
       >
         {mode === "signin" ? "No account? Create one" : "Have an account? Sign in"}
       </button>
+    </div>
+  );
+}
+
+function VerifyStep({
+  pending,
+  onPending,
+  onVerified,
+  onChangeEmail,
+}: {
+  pending: Pending;
+  onPending: (p: Pending) => void;
+  onVerified: () => Promise<void>;
+  onChangeEmail: () => void;
+}) {
+  const verify = useServerFn(verifySignupCodeFn);
+  const resend = useServerFn(resendSignupCodeFn);
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(60);
+  const inflight = useRef(false);
+
+  useEffect(() => {
+    const t = setInterval(() => setCooldown((c) => (c > 0 ? c - 1 : 0)), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    if (code.length !== 6 || inflight.current) return;
+    inflight.current = true;
+    setBusy(true);
+    setError(null);
+    verify({ data: { challengeId: pending.challengeId, code } })
+      .then(async (r) => {
+        if (r.ok) await onVerified();
+        else {
+          setError(r.error);
+          setCode("");
+        }
+      })
+      .catch(() => setError("Não foi possível verificar agora. Tente novamente."))
+      .finally(() => {
+        inflight.current = false;
+        setBusy(false);
+      });
+  }, [code, pending.challengeId, verify, onVerified]);
+
+  async function doResend() {
+    setBusy(true);
+    setError(null);
+    try {
+      const r = await resend({ data: { challengeId: pending.challengeId } });
+      if (!r.ok) setError(r.error);
+      else {
+        onPending({ ...pending, challengeId: r.challengeId });
+        setCode("");
+        setCooldown(60);
+        toast.success("Novo código enviado.");
+      }
+    } catch {
+      setError("Não foi possível enviar o código agora.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mx-auto max-w-sm py-10">
+      <h1 className="font-display text-2xl">Verifique seu e-mail</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Enviamos um código de 6 dígitos para <span className="font-mono text-foreground">{pending.maskedEmail}</span>. Ele expira em 10 minutos.
+      </p>
+      <div className="mt-6">
+        <OtpInput value={code} onChange={setCode} disabled={busy} />
+      </div>
+      <p className="mt-3 min-h-5 text-sm text-destructive" role="alert" aria-live="polite">
+        {error}
+      </p>
+      <Button
+        className="mt-2 w-full font-display"
+        size="lg"
+        disabled={busy || code.length !== 6}
+        onClick={() => setCode((c) => c)}
+      >
+        {busy ? "Verificando…" : "Verificar"}
+      </Button>
+      <div className="mt-4 flex items-center justify-between text-sm">
+        <button type="button" onClick={doResend} disabled={busy || cooldown > 0} className="text-muted-foreground hover:text-foreground disabled:opacity-50">
+          {cooldown > 0 ? `Reenviar código em ${cooldown}s` : "Reenviar código"}
+        </button>
+        <button type="button" onClick={onChangeEmail} className="text-muted-foreground hover:text-foreground">
+          Alterar e-mail
+        </button>
+      </div>
     </div>
   );
 }
