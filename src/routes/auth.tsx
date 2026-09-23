@@ -22,6 +22,9 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+type Pending = { challengeId: string; email: string; maskedEmail: string };
+const PENDING_KEY = "pvp-signup-pending";
+
 function AuthPage() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
@@ -29,12 +32,31 @@ function AuthPage() {
   const [username, setUsername] = useState("");
   const [age, setAge] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState<Pending | null>(null);
   const { userId } = useAuth();
   const navigate = useNavigate();
+  const start = useServerFn(startSignupFn);
 
   useEffect(() => {
     if (userId) navigate({ to: "/" });
   }, [userId, navigate]);
+
+  useEffect(() => {
+    const raw = sessionStorage.getItem(PENDING_KEY);
+    if (raw) {
+      try {
+        setPending(JSON.parse(raw) as Pending);
+      } catch {
+        sessionStorage.removeItem(PENDING_KEY);
+      }
+    }
+  }, []);
+
+  function savePending(p: Pending | null) {
+    setPending(p);
+    if (p) sessionStorage.setItem(PENDING_KEY, JSON.stringify(p));
+    else sessionStorage.removeItem(PENDING_KEY);
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -43,22 +65,44 @@ function AuthPage() {
       if (mode === "signup") {
         if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) throw new Error("Usernames are 3–20 letters, numbers or underscores.");
         if (!age) throw new Error("You must confirm you are 18 or older.");
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: window.location.origin, data: { username, age_confirmed: true } },
-        });
-        if (error) throw error;
-        if (!data.session) toast.success("Check your email to confirm your account.");
+        const r = await start({ data: { email, password, username, ageConfirmed: true } });
+        if (!r.ok) throw new Error(r.error);
+        savePending({ challengeId: r.challengeId, email: email.trim().toLowerCase(), maskedEmail: r.maskedEmail });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        if (error) throw new Error(/confirm/i.test(error.message) ? "Confirme seu e-mail com o código antes de entrar." : "E-mail ou senha incorretos.");
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Sign in failed");
     } finally {
       setBusy(false);
     }
+  }
+
+  if (pending) {
+    return (
+      <VerifyStep
+        pending={pending}
+        onPending={savePending}
+        onVerified={async () => {
+          const pw = password;
+          const em = pending.email;
+          savePending(null);
+          setPassword("");
+          if (pw) {
+            const { error } = await supabase.auth.signInWithPassword({ email: em, password: pw });
+            if (!error) return;
+          }
+          toast.success("E-mail confirmado! Entre com sua senha.");
+          setEmail(em);
+          setMode("signin");
+        }}
+        onChangeEmail={() => {
+          savePending(null);
+          setMode("signup");
+        }}
+      />
+    );
   }
 
   return (
