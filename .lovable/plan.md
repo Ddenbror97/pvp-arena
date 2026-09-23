@@ -17,16 +17,20 @@ WAITING --join--> READY --t>=animation_start--> FLIPPING --t>=animation_end--> S
 ```
 
 - Create: lock wager (available → locked), 32-byte seed generated, SHA-256 hash committed at creation (before any opponent exists).
-- Join (one transaction, `FOR UPDATE` on game row, then wallet): verify WAITING, not expired, not creator, exact same amount, balance; lock wager; server assigns opposite side; set `joined_at = clock_timestamp()`, `animation_start_at = +3s`, `animation_end_at = +6.5s`; compute outcome and store in hidden result record; status READY.
-- Outcome becomes publicly readable only once FLIPPING (animation start); seed revealed only at COMPLETED.
-- Settlement: both locked → escrow → winner available (pot − fee; fee 0 bps, stored per game) → house if fee > 0. Payout row unique per game, idempotency key `coinflip:{id}:winner`. Failure keeps game in SETTLEMENT with FAILED payout, retried; never COMPLETED without ledger success.
-- Expiry: configurable WAITING timeout (default 60 s) → CANCELLED with idempotent refund `coinflip:{id}:refund`. Cancel allowed only by creator while WAITING.
+- Join (one transaction, `FOR UPDATE` on game row, then wallet): verify WAITING, not expired, not creator, exact same amount, balance; lock wager; server assigns opposite side; compute outcome into the hidden result record; status READY.
+- **Timing:** all authoritative timing uses database server time. `clock_timestamp()` is captured once as `joined_at`; `animation_start_at = joined_at + 3 s` and `animation_end_at = animation_start_at + 3.5 s` are derived from it. Nothing is ever computed from client time.
+- **Allowed transitions only:** WAITING→READY, READY→FLIPPING, FLIPPING→SETTLEMENT, SETTLEMENT→COMPLETED, WAITING→CANCELLED. Everything else (e.g. READY→COMPLETED, FLIPPING→COMPLETED, anything out of COMPLETED/CANCELLED) is rejected by the database trigger. READY→FLIPPING requires `animation_start_at <= db time`; FLIPPING→SETTLEMENT requires `animation_end_at <= db time`, so no worker can settle early. Failed settlement stays in SETTLEMENT and is retried (no extra state).
+- **Result visibility invariant:** the server knows the outcome right after the join, but it must not appear in any client-readable table, column, RPC, realtime payload, API response, error message or frontend state until status = FLIPPING. Public `coinflip_games.winner_id/winning_side` stay NULL until FLIPPING; the join RPC returns no result. Server seed is revealed only at COMPLETED. Tests enforce this for every read path.
+- **Settlement:** reuses the exact Jackpot settlement pattern and helpers (same posting sequence locked → escrow → winner available → house if fee > 0), not a new Coinflip-specific flow. Fee 0 bps, stored per game. Expected result for A=$5, B=$5, A wins: A available +$10 net, B available unchanged, both locked $0, escrow $0. Payout row unique per game, idempotency key `coinflip:{id}:winner`; never COMPLETED without ledger success.
+- **Expiry:** configurable WAITING timeout (default 60 s) → CANCELLED with idempotent refund `coinflip:{id}:refund`. Cancel allowed only by creator while WAITING.
+- **Animation is presentation only.** Backend transitions happen on authoritative timestamps whether any browser is connected, rendering, throttled, sleeping or disconnected.
 
 ## Fairness (shared engine, domain-separated)
 
 - Message: `PVPCasino:coinflip:v1:{game_id}:{draw_version}`, HMAC-SHA256 keyed by server seed, `first_byte & 1` → 0 HEADS, 1 TAILS. Same pgcrypto primitives as Jackpot.
 - Client verifier refactored into a shared core (`sha256`, `hmacSha256`, message builder) with two derivations: jackpot (unchanged) and coinflip. Fairness page gets a game-type selector; verification runs entirely in the browser.
-- Published test vectors (≥3 HEADS, ≥3 TAILS) with seed, hash, digest, first byte, expected side; SQL and TypeScript must match or tests fail.
+- 32 published fixed test vectors (both sides well represented), each with game_id, seed, seed hash, draw_version, protocol version, full HMAC digest, first byte, expected side. They cover varied game IDs (1, multi-digit, large), draw versions, and seeds chosen to catch byte/hex/UTF-8 encoding, HMAC argument order, message format, version and bit-extraction regressions.
+- Cross-language: PostgreSQL (pgcrypto) and TypeScript (Web Crypto) each compute every vector independently against the committed expected values; neither implementation calls the other. Any mismatch fails the build.
 
 ## Worker
 
@@ -34,6 +38,8 @@ WAITING --join--> READY --t>=animation_start--> FLIPPING --t>=animation_end--> S
 - Called by: the existing pg_cron job (extended to also run coinflip ticks; switched to a seconds-level schedule so games finish without any browser), plus clients near deadlines as a harmless accelerator. Note: faster schedule adds some ongoing Cloud cost.
 
 ## Testing / Definition of done
+
+Standard: production-quality implementation with production-grade security, accounting, concurrency, fairness and recovery standards; TEST CREDITS ONLY. Real-money readiness requires separate security, compliance, licensing, custody/payment and independent review.
 
 Extend the isolated test schema harness; add `tests/db/coinflip.integration.test.ts`, coinflip vectors in `tests/fairness.test.ts`, RLS cases in `tests/db/rls.integration.test.ts`. Covers every item in the request: create/join validation, simultaneous joins (only one wins), double-create/double-join idempotency, exact timestamps, hidden result before FLIPPING, seed hidden before COMPLETED, correct payouts and loser balance, duplicate/delayed workers, injected failure before/after payout and recovery, expiry refunds, cancel, immutability, ledger reconciliation (sum of all balances = 0). Then full Jackpot regression, linter, typecheck, Playwright two-account browser run. Deliverable: test results + schema/RLS/security report in `docs/ARCHITECTURE.md`.
 
