@@ -34,7 +34,7 @@ const EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
 export function normaliseFrom(raw: string, fallbackName = "PVPspinArena"): string | null {
   const v = raw.trim().replace(/^["']+|["']+$/g, "").trim();
   const m = v.match(/<\s*([^<>\s]+)\s*>/);
-  const addr = (m ? m[1] : v).trim().toLowerCase();
+  const addr = (m?.[1] ?? v).trim().toLowerCase();
   if (!EMAIL_RE.test(addr)) return null;
   const name = (m ? v.slice(0, v.indexOf("<")) : "").replace(/["<>]/g, "").trim() || fallbackName;
   return `${name} <${addr}>`;
