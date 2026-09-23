@@ -11,9 +11,9 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/_authenticated/wallet")({
   head: () => ({
     meta: [
-      { title: "Wallet — PVPCasino" },
+      { title: "Wallet — PVPspinArena" },
       { name: "description", content: "Your test-credit balance and full transaction ledger." },
-      { property: "og:title", content: "Wallet — PVPCasino" },
+      { property: "og:title", content: "Wallet — PVPspinArena" },
       { property: "og:description", content: "Your test-credit balance and full transaction ledger." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

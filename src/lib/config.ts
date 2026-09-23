@@ -4,7 +4,7 @@
  * display and compliance feature flags only.
  */
 export const APP = {
-  name: "PVPCasino",
+  name: "PVPspinArena",
   currencyLabel: "USD",
   creditsLabel: "TEST CREDITS",
 } as const;

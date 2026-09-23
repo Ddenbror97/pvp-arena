@@ -69,7 +69,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "PVPCasino — PvP Crypto Jackpot" },
+      { title: "PVPspinArena — PvP Crypto Jackpot" },
       { name: "description", content: "Live PvP jackpot with provably fair, server-decided draws. Test credits only." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

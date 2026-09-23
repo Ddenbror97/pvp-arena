@@ -4,10 +4,10 @@ import { LegalPage } from "@/components/LegalPage";
 export const Route = createFileRoute("/responsible-gambling")({
   head: () => ({
     meta: [
-      { title: "Responsible gambling — PVPCasino" },
-      { name: "description", content: "Tools and guidance for playing responsibly on PVPCasino." },
-      { property: "og:title", content: "Responsible gambling — PVPCasino" },
-      { property: "og:description", content: "Tools and guidance for playing responsibly on PVPCasino." },
+      { title: "Responsible gambling — PVPspinArena" },
+      { name: "description", content: "Tools and guidance for playing responsibly on PVPspinArena." },
+      { property: "og:title", content: "Responsible gambling — PVPspinArena" },
+      { property: "og:description", content: "Tools and guidance for playing responsibly on PVPspinArena." },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
     ],

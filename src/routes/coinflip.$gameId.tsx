@@ -4,9 +4,9 @@ import { CoinflipRoom } from "@/components/coinflip/CoinflipRoom";
 export const Route = createFileRoute("/coinflip/$gameId")({
   head: ({ params }) => ({
     meta: [
-      { title: `Coinflip #${params.gameId} — PVPCasino` },
+      { title: `Coinflip #${params.gameId} — PVPspinArena` },
       { name: "description", content: `Live state and fairness proof for coinflip game #${params.gameId}.` },
-      { property: "og:title", content: `Coinflip #${params.gameId} — PVPCasino` },
+      { property: "og:title", content: `Coinflip #${params.gameId} — PVPspinArena` },
       { property: "og:description", content: "1v1 coinflip with a verifiable, server-decided result. Test credits only." },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },

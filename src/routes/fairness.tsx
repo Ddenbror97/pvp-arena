@@ -10,9 +10,9 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/fairness")({
   head: () => ({
     meta: [
-      { title: "Fairness protocol — PVPCasino" },
-      { name: "description", content: "How PVPCasino decides Jackpot and Coinflip results: seed commitment, HMAC-SHA256, unbiased mapping. Verify any game yourself." },
-      { property: "og:title", content: "Fairness protocol — PVPCasino" },
+      { title: "Fairness protocol — PVPspinArena" },
+      { name: "description", content: "How PVPspinArena decides Jackpot and Coinflip results: seed commitment, HMAC-SHA256, unbiased mapping. Verify any game yourself." },
+      { property: "og:title", content: "Fairness protocol — PVPspinArena" },
       { property: "og:description", content: "Commit/reveal draws with HMAC-SHA256 and unbiased ticket mapping. Verify any game yourself." },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },

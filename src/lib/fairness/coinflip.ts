@@ -1,5 +1,5 @@
 /**
- * PVPCasino Coinflip fairness protocol v1 (independent of the Postgres implementation).
+ * PVPspinArena Coinflip fairness protocol v1 (independent of the Postgres implementation).
  *
  *   commitment = SHA256(server_seed)                       (published when the game is created)
  *   message    = "PVPCasino:coinflip:v1:" + game_id + ":" + draw_version

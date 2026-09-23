@@ -7,9 +7,9 @@ import { useCoinflipRealtime } from "@/lib/coinflip/api";
 export const Route = createFileRoute("/coinflip")({
   head: () => ({
     meta: [
-      { title: "Coinflip — PVPCasino" },
+      { title: "Coinflip — PVPspinArena" },
       { name: "description", content: "1v1 coinflip: pick heads or tails, match a wager, winner takes the pot. Server-decided and verifiable. Test credits only." },
-      { property: "og:title", content: "Coinflip — PVPCasino" },
+      { property: "og:title", content: "Coinflip — PVPspinArena" },
       { property: "og:description", content: "1v1 provably fair coinflip. Test credits only." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

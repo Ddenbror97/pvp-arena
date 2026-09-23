@@ -14,10 +14,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — PVPCasino" },
-      { name: "description", content: "Sign in or create your PVPCasino account." },
-      { property: "og:title", content: "Sign in — PVPCasino" },
-      { property: "og:description", content: "Sign in or create your PVPCasino account." },
+      { title: "Sign in — PVPspinArena" },
+      { name: "description", content: "Sign in or create your PVPspinArena account." },
+      { property: "og:title", content: "Sign in — PVPspinArena" },
+      { property: "og:description", content: "Sign in or create your PVPspinArena account." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
