@@ -11,7 +11,7 @@ import { drawTicket, verifyGame } from "../../src/lib/jackpot/fairness";
 
 const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
 const d = url ? describe : describe.skip;
-const sql = url ? postgres(url, { max: 30, prepare: false, onnotice: () => {}, idle_timeout: 5 }) : (null as never);
+const sql = url ? postgres(url, { max: 10, prepare: false, onnotice: () => {}, idle_timeout: 5 }) : (null as never);
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const START = 100000; // welcome grant, cents
