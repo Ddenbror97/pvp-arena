@@ -155,11 +155,6 @@ export function JackpotStage() {
       </section>
 
       {phase === "winner" && stage?.winner_id === userId && <Celebration />}
-      {phase === "winner" && stage?.winner_id !== userId && <CelebrationLite />}
     </div>
   );
-}
-
-function CelebrationLite() {
-  return null;
 }
