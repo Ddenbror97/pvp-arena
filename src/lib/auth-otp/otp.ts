@@ -6,7 +6,7 @@ export const OTP_TTL_MINUTES = 10;
 export const OTP_PURPOSE = "SIGNUP_EMAIL_VERIFICATION" as const;
 
 /** Uniform 6-digit code via rejection sampling on 32-bit CSPRNG output (no modulo bias). */
-export function generateOtp(rand: (buf: Uint32Array) => Uint32Array = (b) => crypto.getRandomValues(b)): string {
+export function generateOtp(rand: (buf: Uint32Array<ArrayBuffer>) => ArrayLike<number> = (b) => crypto.getRandomValues(b)): string {
   const range = 1_000_000;
   const limit = Math.floor(0x1_0000_0000 / range) * range; // 4_294_000_000
   const buf = new Uint32Array(1);
