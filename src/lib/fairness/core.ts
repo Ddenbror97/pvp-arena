@@ -1,7 +1,7 @@
 /**
- * Shared PVPCasino provably-fair primitives (all games).
+ * Shared PVPspinArena provably-fair primitives (all games).
  * Only the Web Crypto standard library is used; no hand-rolled crypto.
- * Each game builds its own domain-separated message: "PVPCasino:<game>:<version>:...".
+ * Each game builds its own domain-separated message: "PVPspinArena:<game>:<version>:...".
  */
 
 function subtle(): SubtleCrypto {

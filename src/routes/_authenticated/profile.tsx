@@ -12,10 +12,10 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
-      { title: "Profile — PVPCasino" },
-      { name: "description", content: "Your PVPCasino profile, avatar and jackpot stats." },
-      { property: "og:title", content: "Profile — PVPCasino" },
-      { property: "og:description", content: "Your PVPCasino profile, avatar and jackpot stats." },
+      { title: "Profile — PVPspinArena" },
+      { name: "description", content: "Your PVPspinArena profile, avatar and jackpot stats." },
+      { property: "og:title", content: "Profile — PVPspinArena" },
+      { property: "og:description", content: "Your PVPspinArena profile, avatar and jackpot stats." },
       { property: "og:type", content: "profile" },
       { name: "twitter:card", content: "summary" },
     ],

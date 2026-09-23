@@ -6,9 +6,9 @@ import { formatUsd } from "@/lib/jackpot/math";
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Admin overview — PVPCasino" },
+      { title: "Admin overview — PVPspinArena" },
       { name: "description", content: "Read-only operations overview." },
-      { property: "og:title", content: "Admin overview — PVPCasino" },
+      { property: "og:title", content: "Admin overview — PVPspinArena" },
       { property: "og:description", content: "Read-only operations overview." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

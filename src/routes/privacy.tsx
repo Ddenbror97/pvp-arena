@@ -4,10 +4,10 @@ import { LegalPage } from "@/components/LegalPage";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy — PVPCasino" },
-      { name: "description", content: "What PVPCasino stores and what other players can see." },
-      { property: "og:title", content: "Privacy — PVPCasino" },
-      { property: "og:description", content: "What PVPCasino stores and what other players can see." },
+      { title: "Privacy — PVPspinArena" },
+      { name: "description", content: "What PVPspinArena stores and what other players can see." },
+      { property: "og:title", content: "Privacy — PVPspinArena" },
+      { property: "og:description", content: "What PVPspinArena stores and what other players can see." },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
     ],

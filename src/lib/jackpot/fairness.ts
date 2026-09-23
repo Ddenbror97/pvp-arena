@@ -1,5 +1,5 @@
 /**
- * PVPCasino Jackpot fairness protocol v1.
+ * PVPspinArena Jackpot fairness protocol v1.
  *
  * This is an independent re-implementation of the server's draw (Postgres
  * `jackpot_draw_ticket`) using only the Web Crypto standard library.

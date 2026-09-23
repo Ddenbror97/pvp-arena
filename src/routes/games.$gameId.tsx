@@ -12,9 +12,9 @@ import { CheckCircle2, XCircle } from "lucide-react";
 export const Route = createFileRoute("/games/$gameId")({
   head: ({ params }) => ({
     meta: [
-      { title: `Game #${params.gameId} — PVPCasino` },
+      { title: `Game #${params.gameId} — PVPspinArena` },
       { name: "description", content: `Full audit record for jackpot game #${params.gameId}: players, stakes, winner and fairness proof.` },
-      { property: "og:title", content: `Jackpot game #${params.gameId} — PVPCasino` },
+      { property: "og:title", content: `Jackpot game #${params.gameId} — PVPspinArena` },
       { property: "og:description", content: "Players, stakes, winner and a verifiable fairness proof." },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },

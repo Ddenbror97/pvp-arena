@@ -47,7 +47,7 @@ export function SiteFooter() {
     <footer className="mt-20 border-t border-border">
       <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-8 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p>
-          PVPCasino — test credits only. Credits have no cash value and cannot be withdrawn. Not a licensed gambling service. 18+.
+          PVPspinArena — test credits only. Credits have no cash value and cannot be withdrawn. Not a licensed gambling service. 18+.
         </p>
         <nav className="flex gap-4">
           <Link to="/terms" className="hover:text-foreground">Terms</Link>
