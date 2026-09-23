@@ -5,7 +5,7 @@ import { PlayerAvatar } from "./Avatar";
 import { colorFor } from "./JackpotWheel";
 import { cn } from "@/lib/utils";
 
-export function PlayerList({ players, pot, meId, winnerId }: { players: PlayerRow[]; pot: number; meId: string | null; winnerId?: string | null }) {
+export function PlayerList({ players, pot, meId, winnerId }: { players: PlayerRow[]; pot: number; meId: string | null; winnerId?: string | null | undefined }) {
   // Colors follow wheel order (join order); list is sorted by stake.
   const colorIdx = useMemo(() => new Map(players.map((p, i) => [p.user_id, i])), [players]);
   const sorted = useMemo(() => [...players].sort((a, b) => b.total_amount - a.total_amount || a.first_entry_at.localeCompare(b.first_entry_at)), [players]);
