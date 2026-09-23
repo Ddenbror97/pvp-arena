@@ -1,0 +1,154 @@
+import { useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
+import { useWallet, type Game } from "@/lib/jackpot/api";
+import { estimatedChanceBps, formatBps, formatUsd, parseUsdToCents } from "@/lib/jackpot/math";
+import { friendlyError } from "@/lib/jackpot/errors";
+import { QUICK_AMOUNTS, APP } from "@/lib/config";
+import { emitSound } from "@/lib/sound";
+import { Button } from "@/components/ui/button";
+
+interface Props {
+  game: Game | null;
+  myTotal: number;
+  closed: boolean;
+}
+
+export function EntryPanel({ game, myTotal, closed }: Props) {
+  const { userId, profile } = useAuth();
+  const wallet = useWallet(userId);
+  const qc = useQueryClient();
+  const [input, setInput] = useState("25.00");
+  const [pending, setPending] = useState(false);
+  // One idempotency key per intended entry; reused if the request is retried
+  // after a network failure so it can never be processed twice.
+  const pendingKey = useRef<{ key: string; amount: number } | null>(null);
+
+  const amount = parseUsdToCents(input);
+  const balance = wallet.data?.available ?? 0;
+  const pot = game?.pot_amount ?? 0;
+  const min = game?.min_entry ?? 100;
+  const max = Math.min(game?.max_entry ?? 1000000, balance);
+  const valid = amount != null && amount >= min && amount <= (game?.max_entry ?? 1000000);
+  const affordable = valid && amount! <= balance;
+  const chance = valid ? estimatedChanceBps(myTotal, pot, amount!) : 0;
+
+  async function submit() {
+    if (!valid || !affordable || pending || closed) return;
+    setPending(true);
+    if (!pendingKey.current || pendingKey.current.amount !== amount) {
+      pendingKey.current = { key: crypto.randomUUID(), amount: amount! };
+    }
+    const { data, error } = await supabase.rpc("jackpot_join", {
+      p_amount: amount!,
+      p_idempotency_key: pendingKey.current.key,
+    });
+    setPending(false);
+    if (error) {
+      toast.error(friendlyError(error));
+      if (!/fetch|network/i.test(error.message)) pendingKey.current = null;
+      return;
+    }
+    pendingKey.current = null;
+    const r = data as { amount: number; timer_extended?: boolean };
+    emitSound("entry");
+    toast.success(`You entered the Jackpot with ${formatUsd(r.amount)}`);
+    qc.invalidateQueries({ queryKey: ["wallet"] });
+    qc.invalidateQueries({ queryKey: ["players"] });
+  }
+
+  if (!userId) {
+    return (
+      <Panel>
+        <h3 className="font-display text-lg">Join the pot</h3>
+        <p className="mt-2 text-sm text-muted-foreground">Sign in to enter. New players get free {APP.creditsLabel.toLowerCase()} to try the game.</p>
+        <Button asChild className="mt-5 w-full font-display" size="lg">
+          <Link to="/auth">Sign in to play</Link>
+        </Button>
+      </Panel>
+    );
+  }
+  if (!profile) {
+    return (
+      <Panel>
+        <p className="text-sm text-muted-foreground">Finish setting up your profile to play.</p>
+      </Panel>
+    );
+  }
+
+  return (
+    <Panel>
+      <div className="flex items-center justify-between">
+        <span className="text-xs uppercase tracking-widest text-muted-foreground">Your balance</span>
+        <span className="rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>
+      </div>
+      <div className="tabular mt-1 text-2xl font-semibold">{wallet.isLoading ? "—" : formatUsd(balance)}</div>
+
+      <label className="mt-5 block text-xs uppercase tracking-widest text-muted-foreground" htmlFor="entry-amount">
+        Enter amount
+      </label>
+      <div className="mt-2 flex items-center rounded-lg border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring">
+        <span className="tabular text-muted-foreground">$</span>
+        <input
+          id="entry-amount"
+          inputMode="decimal"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className="tabular h-12 w-full bg-transparent px-2 text-lg outline-none"
+          aria-invalid={!valid}
+        />
+      </div>
+      <div className="mt-3 grid grid-cols-5 gap-2">
+        {QUICK_AMOUNTS.map((q) => (
+          <button
+            key={q}
+            type="button"
+            onClick={() => setInput((q / 100).toFixed(2))}
+            className="tabular rounded-md bg-secondary py-2 text-sm hover:bg-accent"
+          >
+            ${q / 100}
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => setInput((Math.max(0, max) / 100).toFixed(2))}
+          className="rounded-md bg-secondary py-2 text-xs font-bold hover:bg-accent"
+        >
+          MAX
+        </button>
+      </div>
+
+      <div className="mt-5 flex items-center justify-between text-sm">
+        <span className="text-muted-foreground">Your estimated chance</span>
+        <span className="tabular font-semibold text-primary">{formatBps(chance)}</span>
+      </div>
+      {!valid && input && (
+        <p className="mt-2 text-xs text-destructive">
+          Enter between {formatUsd(min)} and {formatUsd(game?.max_entry ?? 1000000)}.
+        </p>
+      )}
+      {valid && !affordable && <p className="mt-2 text-xs text-destructive">Not enough balance.</p>}
+
+      <Button
+        size="lg"
+        className="mt-5 h-14 w-full font-display text-base tracking-wide"
+        disabled={!affordable || pending || closed}
+        onClick={submit}
+      >
+        {closed ? "No more entries" : pending ? "Entering..." : `Enter jackpot · ${valid ? formatUsd(amount!) : "$0.00"}`}
+      </Button>
+      {myTotal > 0 && (
+        <p className="mt-3 text-center text-xs text-muted-foreground">
+          You're in with <span className="tabular text-foreground">{formatUsd(myTotal)}</span>
+        </p>
+      )}
+    </Panel>
+  );
+}
+
+function Panel({ children }: { children: React.ReactNode }) {
+  return <div className="rounded-2xl border border-border bg-card p-5">{children}</div>;
+}
