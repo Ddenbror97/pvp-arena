@@ -27,9 +27,28 @@ async function rpc<T>(fn: string, args: Record<string, unknown>): Promise<T> {
   return data;
 }
 
+const DEFAULT_FROM = "PVPspinArena <codigo@pvpspinarena.com>";
+const EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
+
+/** Normalise a configured sender into a strict `Name <addr>` that Resend accepts. */
+export function normaliseFrom(raw: string, fallbackName = "PVPspinArena"): string | null {
+  const v = raw.trim().replace(/^["']+|["']+$/g, "").trim();
+  const m = v.match(/<\s*([^<>\s]+)\s*>/);
+  const addr = (m?.[1] ?? v).trim().toLowerCase();
+  if (!EMAIL_RE.test(addr)) return null;
+  const name = (m ? v.slice(0, v.indexOf("<")) : "").replace(/["<>]/g, "").trim() || fallbackName;
+  return `${name} <${addr}>`;
+}
+
 async function sendCodeEmail(to: string, code: string, challengeId: string) {
-  const from = env("AUTH_EMAIL_FROM");
-  const replyTo = process.env["AUTH_EMAIL_REPLY_TO"];
+  // Sender is not secret; a malformed AUTH_EMAIL_FROM falls back to the verified default.
+  let from = normaliseFrom(process.env["AUTH_EMAIL_FROM"] ?? "");
+  if (!from) {
+    console.warn("AUTH_EMAIL_FROM missing or malformed; using default sender");
+    from = DEFAULT_FROM;
+  }
+  const replyRaw = process.env["AUTH_EMAIL_REPLY_TO"];
+  const replyTo = replyRaw && EMAIL_RE.test(replyRaw.trim()) ? replyRaw.trim() : undefined;
   const { subject, html, text } = renderOtpEmail(code);
   const res = await fetch(`${GATEWAY_URL}/emails`, {
     method: "POST",
