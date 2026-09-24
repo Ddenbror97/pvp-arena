@@ -107,13 +107,13 @@ export function CreatePanel() {
                 aria-checked={side === s}
                 onClick={() => setSide(s)}
                 className={cn(
-                  "flex items-center justify-center gap-2 rounded-xl border py-3 font-display text-sm transition",
+                  "flex items-center justify-center gap-2 rounded-lg border py-2 font-display text-xs transition",
                   side === s
                     ? s === "HEADS" ? "border-primary bg-primary/10 text-primary" : "border-rival bg-rival/10 text-rival"
                     : "border-border text-muted-foreground hover:text-foreground",
                 )}
               >
-                <span className={cn("inline-block h-5 w-5 rounded-full", s === "HEADS" ? "coin-heads" : "coin-tails")} />
+                <span className={cn("inline-block h-4 w-4 rounded-full", s === "HEADS" ? "coin-heads" : "coin-tails")} />
                 {s}
               </button>
             ))}
