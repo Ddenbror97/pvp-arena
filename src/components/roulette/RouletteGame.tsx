@@ -8,7 +8,6 @@ import { useNow, useServerClock, useWallet } from "@/lib/jackpot/api";
 import { formatUsd, parseUsdToCents } from "@/lib/jackpot/math";
 import { friendlyError } from "@/lib/jackpot/errors";
 import {
-  COLORS,
   fetchCurrentRound,
   fetchHistory,
   fetchRoundBets,
@@ -156,7 +155,7 @@ export function RouletteGame() {
       </div>
 
       <div className="grid gap-2 sm:grid-cols-3">
-        {COLORS.filter((c) => mults[c] != null).map((c) => {
+        {(["RED", "GREEN", "BLACK"] as RlColor[]).filter((c) => mults[c] != null).map((c) => {
           const list = (bets.data ?? []).filter((b) => b.color === c);
           const total = list.reduce((s, b) => s + Number(b.amount), 0);
           return (
