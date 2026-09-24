@@ -98,19 +98,20 @@ function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin:
 }
 
 export function RecentCoinflips() {
-  const q = useQuery({ queryKey: ["coinflip-recent"], queryFn: () => fetchRecentCoinflips() });
+  const { rows, isLoading, page, hasNext, hasPrev, next, prev, pauseProps } =
+    usePagedRecent("coinflip-recent", fetchRecentCoinflips);
   return (
-    <section className="mt-8">
+    <section className={EDGE_TO_EDGE} {...pauseProps}>
       <h2 className="mb-2 font-display text-xs uppercase tracking-widest">Recent coinflips</h2>
-      {!q.data?.length ? (
-        <p className="text-sm text-muted-foreground">{q.isLoading ? "Loading..." : "No completed games yet."}</p>
+      {!rows.length ? (
+        <p className="text-sm text-muted-foreground">{isLoading ? "Loading..." : "No completed games yet."}</p>
       ) : (
-        <div className="max-h-[22rem] overflow-y-auto rounded-xl border border-border bg-card">
-          <div className="sticky top-0 z-10 grid grid-cols-[2rem_minmax(0,1fr)_4.5rem] gap-2 border-b border-border bg-card px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[4.5rem_minmax(0,1fr)_5rem_6rem_5rem]">
+        <div className="rounded-xl border border-border bg-card">
+          <div className="grid grid-cols-[2rem_minmax(0,1fr)_4.5rem] gap-2 border-b border-border px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[4.5rem_minmax(0,1fr)_5rem_6rem_5rem]">
             <span>Game</span><span>Players</span><span className="hidden sm:block">Side</span><span className="text-right">Pot</span><span className="hidden text-right sm:block">When</span>
           </div>
           <ul className="divide-y divide-border">
-            {q.data.map((g) => {
+            {rows.map((g) => {
               const creatorWon = g.winner_id === g.creator_id;
               const name = (p: typeof g.creator, won: boolean, s: CoinSide) => (
                 <span className={cn("flex min-w-0 items-center gap-1.5", !won && "opacity-50")}>
