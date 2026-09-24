@@ -38,6 +38,10 @@
   --color-rival: var(--rival);
   --color-rival-foreground: var(--rival-foreground);
   --color-gold: var(--gold);
+  --color-rl-red: var(--rl-red);
+  --color-rl-black: var(--rl-black);
+  --color-rl-yellow: var(--rl-yellow);
+  --color-rl-green: var(--rl-green);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-destructive: var(--destructive);
@@ -88,6 +92,12 @@
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 12%);
   --ring: oklch(0.64 0.24 300 / 60%);
+
+  /* Roulette colours */
+  --rl-red: oklch(0.6 0.22 25);
+  --rl-black: oklch(0.22 0.02 285);
+  --rl-yellow: oklch(0.84 0.17 90);
+  --rl-green: oklch(0.74 0.2 150);
 
   /* Wheel player palette */
   --p1: oklch(0.64 0.24 300);

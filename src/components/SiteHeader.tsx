@@ -5,7 +5,7 @@ import { useWallet } from "@/lib/jackpot/api";
 import { formatUsd } from "@/lib/jackpot/math";
 import { Button } from "@/components/ui/button";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
-import { Dices, Coins, ShieldCheck, User } from "lucide-react";
+import { Dices, Coins, CircleDot, ShieldCheck, User } from "lucide-react";
 import arenaLogo from "@/assets/arena-logo-v2.png.asset.json";
 
 export function SiteHeader() {
@@ -21,6 +21,7 @@ export function SiteHeader() {
         <nav className="hidden items-center gap-5 sm:flex">
           <Link to="/" className={link} activeOptions={{ exact: true }}>Jackpot</Link>
           <Link to="/coinflip" className={link}>Coinflip</Link>
+          <Link to="/roulette" className={link}>Roulette</Link>
           <Link to="/fairness" className={link}>Fairness</Link>
         </nav>
         <div className="ml-auto flex items-center gap-3">
@@ -78,6 +79,7 @@ export function MobileTabBar() {
     >
       <Link to="/" className={tab} activeOptions={{ exact: true }}><Dices className="h-5 w-5" />Jackpot</Link>
       <Link to="/coinflip" className={tab}><Coins className="h-5 w-5" />Coinflip</Link>
+      <Link to="/roulette" className={tab}><CircleDot className="h-5 w-5" />Roulette</Link>
       <Link to="/fairness" className={tab}><ShieldCheck className="h-5 w-5" />Fairness</Link>
       <Link to={userId ? "/profile" : "/auth"} className={tab}><User className="h-5 w-5" />{userId ? "Profile" : "Sign in"}</Link>
     </nav>
