@@ -17,7 +17,8 @@ import {
   useRouletteSetup,
   type RlColor,
 } from "@/lib/roulette/api";
-import { RouletteStrip, colorClass } from "./RouletteStrip";
+import { RouletteStrip } from "./RouletteStrip";
+import { COIN, CoinImg } from "./coins";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -100,7 +101,7 @@ export function RouletteGame() {
   else if (g?.status === "SPINNING") status = now() >= new Date(g.spin_end_at!).getTime() ? "Settling…" : "Rolling…";
   else if (g?.status === "SETTLEMENT") status = "Settling…";
   const landed = g?.winning_color && g.spin_end_at && now() >= new Date(g.spin_end_at).getTime() ? g.winning_color : null;
-  if (landed) status = `Landed on ${landed}`;
+  if (landed) status = `Landed on ${COIN[landed].label}`;
 
   const betTime = g?.betting_ends_at && g.betting_started_at
     ? Math.max(0, Math.min(1, (new Date(g.betting_ends_at).getTime() - now()) / (g.betting_seconds * 1000)))
@@ -112,7 +113,7 @@ export function RouletteGame() {
         <span className="text-xs uppercase tracking-wider text-muted-foreground">Previous rolls</span>
         <div className="flex h-7 gap-1">
           {(history.data ?? []).map((h) => (
-            <span key={h.id} title={`#${h.id}`} className={cn("h-7 w-7 rounded-md", colorClass[h.winning_color!])} />
+            <CoinImg key={h.id} c={h.winning_color!} size={28} className="rounded-full" />
           ))}
         </div>
       </div>
@@ -159,18 +160,21 @@ export function RouletteGame() {
           const list = (bets.data ?? []).filter((b) => b.color === c);
           const total = list.reduce((s, b) => s + Number(b.amount), 0);
           return (
-            <div key={c} className="flex min-h-64 flex-col rounded-xl border border-border bg-card">
-              {ready && !userId ? (
-                <Button asChild className={cn("m-2 h-12 font-display", colorClass[c])}><Link to="/auth">{c} · {mults[c] ? multiplierLabel(mults[c]) : "…"}</Link></Button>
-              ) : (
-                <Button
-                  className={cn("m-2 h-12 font-display hover:opacity-90", colorClass[c])}
-                  disabled={!bettingOpen || pending != null}
-                  onClick={() => place(c)}
-                >
-                  {c} · {mults[c] ? multiplierLabel(mults[c]) : "…"}
-                </Button>
-              )}
+            <div key={c} className={cn("flex min-h-64 flex-col rounded-xl border bg-card transition-all duration-500", landed === c ? "border-primary" : "border-border", landed && landed !== c && "opacity-60")}>
+              <button
+                type="button"
+                disabled={!!userId && (!bettingOpen || pending != null)}
+                onClick={() => (userId ? place(c) : (window.location.href = "/auth"))}
+                className="group m-2 flex items-center gap-3 rounded-xl border border-border bg-secondary/60 p-2 text-left transition hover:-translate-y-0.5 hover:border-primary/60 disabled:opacity-50 disabled:hover:translate-y-0"
+                style={{ boxShadow: landed === c ? `0 0 24px ${COIN[c].glow}` : undefined }}
+              >
+                <CoinImg c={c} size={44} className="rounded-full transition-transform group-hover:rotate-12 group-hover:scale-110" />
+                <span className="flex-1">
+                  <span className="block font-display text-sm">{userId ? (pending === c ? "Placing…" : "Place bet") : "Sign in to bet"}</span>
+                  <span className="block text-xs text-muted-foreground">{COIN[c].label}</span>
+                </span>
+                <span className="font-display text-lg" style={{ color: COIN[c].glow }}>{mults[c] ? multiplierLabel(mults[c]) : "…"}</span>
+              </button>
               <div className="flex justify-between px-3 text-xs text-muted-foreground">
                 <span>{list.length} bets</span>
                 <span className="tabular">{formatUsd(total)}</span>
@@ -188,7 +192,7 @@ export function RouletteGame() {
         })}
       </div>
       <p className="text-xs text-muted-foreground">
-        15 slots: 5 Red (2.8x), 5 Black (2.8x), 4 Yellow (3.5x), 1 Green (14x). Payouts include your stake. The result is
+        15 coins: 5 Purple (2.8x), 5 Silver (2.8x), 4 Gold (3.5x), 1 Jackpot coin (14x). Payouts include your stake. The result is
         drawn on the server when betting closes and can be checked on the <Link to="/fairness" className="underline">Fairness</Link> page.
       </p>
     </div>
