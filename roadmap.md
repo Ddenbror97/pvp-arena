@@ -70,5 +70,5 @@
 
 ## Crypto testnet rails (Base Sepolia) — plan approved
 - [x] Step 0 checks: Chainlink ETH/USD 0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1 (8 dec, live, ~57s old); Circle USDC 0x036CbD53842c5426634e7929541eC2318f3dCF7e (6 dec); chain 84532; safe head lags ~172 blocks (~6 min), finalized ~544 blocks (~18 min) → credit at "safe" tag, configurable
-- [ ] Waiting on secrets: BASE_SEPOLIA_RPC_URL, DEPOSIT_XPUB (+ path), HOT_WALLET_PRIVATE_KEY
+- [ ] Waiting on secrets: BASE_SEPOLIA_RPC_URL, DEPOSIT_XPUB (+ path), CRYPTO_HOT_WALLET_PRIVATE_KEY
 - [ ] Phases 1–8 (DB, addresses, listener, withdrawals, reconciliation, UI, tests, no-mainnet tests)
