@@ -50,29 +50,33 @@ export function SiteHeader() {
 /** Balance plus the two wallet shortcuts, kept in one compact segmented control. */
 function WalletGroup({ available, loading }: { available?: number | undefined; loading: boolean }) {
   const action =
-    "flex shrink-0 items-center gap-1 px-2 py-1.5 text-[11px] font-bold uppercase tracking-wide transition-colors sm:px-2.5 sm:text-xs";
+    "flex flex-1 items-center justify-center gap-1 px-2 py-1 text-[11px] font-bold uppercase tracking-wide transition-colors sm:flex-none sm:px-2.5 sm:py-1.5 sm:text-xs";
+  const icon = "hidden h-3.5 w-3.5 shrink-0 lg:block" aria-hidden="true";
   return (
-    <nav aria-label="Wallet" className="flex items-center overflow-hidden rounded-lg border border-border bg-card">
+    <nav
+      aria-label="Wallet"
+      className="grid shrink-0 grid-rows-[auto_auto] overflow-hidden rounded-lg border border-border bg-card sm:flex sm:items-center"
+    >
       <Link
         to="/wallet"
         aria-label="Open wallet"
-        className="flex min-w-[5rem] shrink-0 items-center justify-center gap-1.5 px-2 py-1.5 transition-colors hover:bg-muted/60 sm:min-w-[6.5rem] sm:px-2.5"
+        className="flex items-center justify-center gap-1.5 border-b border-border px-2 py-0.5 transition-colors hover:bg-muted/60 sm:min-w-[6.5rem] sm:border-b-0 sm:border-r sm:px-2.5 sm:py-1.5"
       >
         {loading ? (
-          <span aria-hidden className="h-3.5 w-12 animate-pulse rounded bg-muted sm:w-16" />
+          <span aria-hidden className="h-3 w-12 animate-pulse rounded bg-muted sm:w-16" />
         ) : (
-          <span className="tabular text-sm font-semibold">{formatUsd(available ?? 0)}</span>
+          <span className="tabular text-[13px] font-semibold sm:text-sm">{formatUsd(available ?? 0)}</span>
         )}
         <span className="hidden rounded bg-gold/15 px-1 text-[9px] font-bold text-gold sm:inline">TEST</span>
       </Link>
-      <span aria-hidden className="h-5 w-px shrink-0 bg-border" />
-      <Link to="/wallet" search={{ mode: "deposit" }} className={`${action} text-primary hover:bg-primary/10`}>
-        <ArrowDownToLine className="h-3.5 w-3.5 shrink-0" aria-hidden /> Deposit
-      </Link>
-      <span aria-hidden className="h-5 w-px shrink-0 bg-border" />
-      <Link to="/wallet" search={{ mode: "withdraw" }} className={`${action} text-muted-foreground hover:bg-muted hover:text-foreground`}>
-        <ArrowUpFromLine className="h-3.5 w-3.5 shrink-0" aria-hidden /> Withdraw
-      </Link>
+      <div className="flex items-stretch divide-x divide-border">
+        <Link to="/wallet" search={{ mode: "deposit" }} className={`${action} text-primary hover:bg-primary/10`}>
+          <ArrowDownToLine className="hidden h-3.5 w-3.5 shrink-0 lg:block" aria-hidden /> Deposit
+        </Link>
+        <Link to="/wallet" search={{ mode: "withdraw" }} className={`${action} text-muted-foreground hover:bg-muted hover:text-foreground`}>
+          <ArrowUpFromLine className="hidden h-3.5 w-3.5 shrink-0 lg:block" aria-hidden /> Withdraw
+        </Link>
+      </div>
     </nav>
   );
 }
