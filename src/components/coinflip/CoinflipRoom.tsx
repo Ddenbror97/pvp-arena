@@ -116,7 +116,7 @@ function PlayerSlot({ g, slot, phase, me }: { g: CfGameView; slot: "creator" | "
       ) : (
         <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-border text-2xl text-muted-foreground animate-pulse">?</div>
       )}
-      <div className="mt-2 truncate text-sm font-semibold">{uid ? `@${p?.username ?? "player"}${uid === me ? " (you)" : ""}` : "Waiting..."}</div>
+      <div className="mt-2 truncate text-sm font-semibold">{uid ? `${p?.username ?? "player"}${uid === me ? " (you)" : ""}` : "Waiting..."}</div>
       <div className="tabular mt-0.5 font-display text-base">{formatUsd(g.amount)}</div>
       <SideChip side={side} className="mt-2" />
     </div>
@@ -230,7 +230,7 @@ function ResultCard({ g, me }: { g: CfGameView; me: string | null }) {
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
         <div className="min-w-0 flex-1">
           <div className="text-[10px] tracking-[0.3em] text-gold">WINNER</div>
-          <div className="truncate font-display text-base">@{winner?.username ?? "player"}</div>
+          <div className="truncate font-display text-base">{winner?.username ?? "player"}</div>
         </div>
         {involved && settled && (
           <div className="text-right">

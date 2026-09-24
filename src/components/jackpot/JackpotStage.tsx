@@ -147,7 +147,7 @@ export function JackpotStage() {
               />
               <div className="mt-3 font-display text-xs tracking-[0.35em] text-gold">WINNER</div>
               <div className="mt-1 truncate font-display text-lg sm:text-xl">
-                @{winner.profiles?.username}
+                {winner.profiles?.username}
               </div>
               <div className="tabular mt-1 text-xs text-muted-foreground">
                 {formatChance(stage.winner_total ?? 0, stage.pot_amount)} chance
