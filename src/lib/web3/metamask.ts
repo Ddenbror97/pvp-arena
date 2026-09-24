@@ -31,7 +31,7 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
 /** Hard guard: transaction/approval methods can never be sent. */
 export function guardedRequest(provider: Eip1193, method: string, params?: unknown[]) {
   if (!ALLOWED_WALLET_METHODS.has(method)) return Promise.reject(new WalletError("GENERIC"));
-  return provider.request({ method, params });
+  return provider.request(params ? { method, params } : { method });
 }
 
 function sub(p: Eip1193, ev: string, fn: (...a: unknown[]) => void) {
