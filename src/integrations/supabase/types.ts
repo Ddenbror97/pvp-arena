@@ -77,6 +77,124 @@ export type Database = {
         }
         Relationships: []
       }
+      chain_assets: {
+        Row: {
+          asset_key: string
+          chain_id: number
+          contract_address: string | null
+          created_at: string
+          decimals: number
+          display_name: string
+          is_enabled: boolean
+          ledger_account_type: string
+          ledger_asset: string
+          min_deposit_units: number
+          price_feed_address: string | null
+          settlement_kind: string
+          usd_per_unit: number | null
+        }
+        Insert: {
+          asset_key: string
+          chain_id: number
+          contract_address?: string | null
+          created_at?: string
+          decimals: number
+          display_name: string
+          is_enabled?: boolean
+          ledger_account_type: string
+          ledger_asset: string
+          min_deposit_units: number
+          price_feed_address?: string | null
+          settlement_kind: string
+          usd_per_unit?: number | null
+        }
+        Update: {
+          asset_key?: string
+          chain_id?: number
+          contract_address?: string | null
+          created_at?: string
+          decimals?: number
+          display_name?: string
+          is_enabled?: boolean
+          ledger_account_type?: string
+          ledger_asset?: string
+          min_deposit_units?: number
+          price_feed_address?: string | null
+          settlement_kind?: string
+          usd_per_unit?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chain_assets_chain_id_fkey"
+            columns: ["chain_id"]
+            isOneToOne: false
+            referencedRelation: "chain_networks"
+            referencedColumns: ["chain_id"]
+          },
+        ]
+      }
+      chain_networks: {
+        Row: {
+          chain_id: number
+          created_at: string
+          finalized_confirmations: number
+          is_enabled: boolean
+          name: string
+          network_mode: string
+          safe_confirmations: number
+        }
+        Insert: {
+          chain_id: number
+          created_at?: string
+          finalized_confirmations?: number
+          is_enabled?: boolean
+          name: string
+          network_mode: string
+          safe_confirmations?: number
+        }
+        Update: {
+          chain_id?: number
+          created_at?: string
+          finalized_confirmations?: number
+          is_enabled?: boolean
+          name?: string
+          network_mode?: string
+          safe_confirmations?: number
+        }
+        Relationships: []
+      }
+      chain_treasury_accounts: {
+        Row: {
+          address: string
+          chain_id: number
+          created_at: string
+          is_active: boolean
+          role: string
+        }
+        Insert: {
+          address: string
+          chain_id: number
+          created_at?: string
+          is_active?: boolean
+          role: string
+        }
+        Update: {
+          address?: string
+          chain_id?: number
+          created_at?: string
+          is_active?: boolean
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chain_treasury_accounts_chain_id_fkey"
+            columns: ["chain_id"]
+            isOneToOne: false
+            referencedRelation: "chain_networks"
+            referencedColumns: ["chain_id"]
+          },
+        ]
+      }
       chat_presence: {
         Row: {
           last_seen_at: string
@@ -435,6 +553,263 @@ export type Database = {
           {
             foreignKeyName: "coinflip_results_winner_id_fkey"
             columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crypto_deposits: {
+        Row: {
+          asset_key: string
+          block_number: number
+          chain_id: number
+          closed_reason: string | null
+          confirmed_at: string | null
+          created_at: string
+          credited_at: string | null
+          detected_at: string
+          from_address: string
+          id: string
+          ledger_tx_id: string | null
+          log_index: number
+          price_snapshot_id: string | null
+          status: string
+          to_address: string
+          tx_hash: string
+          units: number
+          usd_cents: number
+          user_id: string | null
+        }
+        Insert: {
+          asset_key: string
+          block_number: number
+          chain_id: number
+          closed_reason?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          credited_at?: string | null
+          detected_at?: string
+          from_address: string
+          id?: string
+          ledger_tx_id?: string | null
+          log_index?: number
+          price_snapshot_id?: string | null
+          status?: string
+          to_address: string
+          tx_hash: string
+          units: number
+          usd_cents: number
+          user_id?: string | null
+        }
+        Update: {
+          asset_key?: string
+          block_number?: number
+          chain_id?: number
+          closed_reason?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          credited_at?: string | null
+          detected_at?: string
+          from_address?: string
+          id?: string
+          ledger_tx_id?: string | null
+          log_index?: number
+          price_snapshot_id?: string | null
+          status?: string
+          to_address?: string
+          tx_hash?: string
+          units?: number
+          usd_cents?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crypto_deposits_asset_fk"
+            columns: ["chain_id", "asset_key"]
+            isOneToOne: false
+            referencedRelation: "chain_assets"
+            referencedColumns: ["chain_id", "asset_key"]
+          },
+          {
+            foreignKeyName: "crypto_deposits_ledger_tx_id_fkey"
+            columns: ["ledger_tx_id"]
+            isOneToOne: false
+            referencedRelation: "ledger_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crypto_deposits_price_snapshot_id_fkey"
+            columns: ["price_snapshot_id"]
+            isOneToOne: false
+            referencedRelation: "crypto_price_snapshots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crypto_deposits_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crypto_price_snapshots: {
+        Row: {
+          asset_key: string
+          chain_id: number
+          created_at: string
+          feed_address: string
+          feed_round_id: number
+          id: string
+          max_age_seconds: number
+          observed_at: string
+          price_micro_usd: number
+        }
+        Insert: {
+          asset_key: string
+          chain_id: number
+          created_at?: string
+          feed_address: string
+          feed_round_id: number
+          id?: string
+          max_age_seconds?: number
+          observed_at?: string
+          price_micro_usd: number
+        }
+        Update: {
+          asset_key?: string
+          chain_id?: number
+          created_at?: string
+          feed_address?: string
+          feed_round_id?: number
+          id?: string
+          max_age_seconds?: number
+          observed_at?: string
+          price_micro_usd?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crypto_price_snapshot_asset_fk"
+            columns: ["chain_id", "asset_key"]
+            isOneToOne: false
+            referencedRelation: "chain_assets"
+            referencedColumns: ["chain_id", "asset_key"]
+          },
+        ]
+      }
+      crypto_withdrawals: {
+        Row: {
+          asset_key: string
+          attempts: number
+          chain_id: number
+          closed_at: string | null
+          confirmed_at: string | null
+          created_at: string
+          fee_usd_cents: number
+          hold_ledger_tx_id: string | null
+          id: string
+          last_error: string | null
+          release_ledger_tx_id: string | null
+          review_required: boolean
+          reviewed_at: string | null
+          reviewed_by: string | null
+          settle_ledger_tx_id: string | null
+          status: string
+          submitted_at: string | null
+          to_address: string
+          tx_hash: string | null
+          units: number
+          usd_cents: number
+          user_id: string
+        }
+        Insert: {
+          asset_key: string
+          attempts?: number
+          chain_id: number
+          closed_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          fee_usd_cents?: number
+          hold_ledger_tx_id?: string | null
+          id?: string
+          last_error?: string | null
+          release_ledger_tx_id?: string | null
+          review_required?: boolean
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          settle_ledger_tx_id?: string | null
+          status?: string
+          submitted_at?: string | null
+          to_address: string
+          tx_hash?: string | null
+          units: number
+          usd_cents: number
+          user_id: string
+        }
+        Update: {
+          asset_key?: string
+          attempts?: number
+          chain_id?: number
+          closed_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          fee_usd_cents?: number
+          hold_ledger_tx_id?: string | null
+          id?: string
+          last_error?: string | null
+          release_ledger_tx_id?: string | null
+          review_required?: boolean
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          settle_ledger_tx_id?: string | null
+          status?: string
+          submitted_at?: string | null
+          to_address?: string
+          tx_hash?: string | null
+          units?: number
+          usd_cents?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crypto_withdrawals_asset_fk"
+            columns: ["chain_id", "asset_key"]
+            isOneToOne: false
+            referencedRelation: "chain_assets"
+            referencedColumns: ["chain_id", "asset_key"]
+          },
+          {
+            foreignKeyName: "crypto_withdrawals_hold_ledger_tx_id_fkey"
+            columns: ["hold_ledger_tx_id"]
+            isOneToOne: false
+            referencedRelation: "ledger_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crypto_withdrawals_release_ledger_tx_id_fkey"
+            columns: ["release_ledger_tx_id"]
+            isOneToOne: false
+            referencedRelation: "ledger_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crypto_withdrawals_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crypto_withdrawals_settle_ledger_tx_id_fkey"
+            columns: ["settle_ledger_tx_id"]
+            isOneToOne: false
+            referencedRelation: "ledger_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crypto_withdrawals_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
