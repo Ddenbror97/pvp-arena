@@ -33,6 +33,27 @@ const MESSAGES: Record<string, string> = {
 
 export function friendlyError(e: unknown): string {
   const msg = e instanceof Error ? e.message : typeof e === "object" && e && "message" in e ? String((e as { message: unknown }).message) : String(e);
+  if (msg.includes("SESSION_REVOKED")) void recoverRevokedSession();
   for (const code of Object.keys(MESSAGES)) if (msg.includes(code)) return MESSAGES[code]!;
   return "Something went wrong. Please try again.";
+}
+
+/**
+ * The server rejected this device's sign-in session (signed out elsewhere or expired).
+ * Try once to renew it; if that fails, clear the stale local session and send the user to sign in.
+ */
+let recovering = false;
+async function recoverRevokedSession() {
+  if (recovering || typeof window === "undefined") return;
+  recovering = true;
+  try {
+    const { supabase } = await import("@/integrations/supabase/client");
+    const { error } = await supabase.auth.refreshSession();
+    if (error) {
+      await supabase.auth.signOut({ scope: "local" });
+      window.location.assign("/auth");
+    }
+  } finally {
+    recovering = false;
+  }
 }

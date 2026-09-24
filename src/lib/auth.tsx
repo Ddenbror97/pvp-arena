@@ -97,7 +97,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     needsProfile,
     refreshProfile: () => loadProfile(session),
     signOut: async () => {
-      await supabase.auth.signOut();
+      // Local scope: signing out here must not end sessions on other devices or sites.
+      await supabase.auth.signOut({ scope: "local" });
     },
   };
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
