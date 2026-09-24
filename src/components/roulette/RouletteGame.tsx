@@ -8,7 +8,6 @@ import { useNow, useServerClock, useWallet } from "@/lib/jackpot/api";
 import { formatUsd, parseUsdToCents } from "@/lib/jackpot/math";
 import { friendlyError } from "@/lib/jackpot/errors";
 import {
-  COLORS,
   fetchCurrentRound,
   fetchHistory,
   fetchRoundBets,
