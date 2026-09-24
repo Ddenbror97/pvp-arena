@@ -3,7 +3,7 @@ import type { RlColor, RlGame } from "@/lib/roulette/api";
 import { cn } from "@/lib/utils";
 import { COIN, CoinImg } from "./coins";
 
-const TILE = 96; // px, includes gap
+const TILE = 72; // px, includes gap
 const REPEATS = 12;
 /**
  * Presentation only. The winning slot is already fixed on the server before the strip moves;
