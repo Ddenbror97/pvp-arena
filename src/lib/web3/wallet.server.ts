@@ -5,6 +5,7 @@ import {
   signatureMatches,
   shortAddress,
 } from "./message";
+import type { WalletErrorCode } from "./errors";
 
 type Rpc = (
   fn: string,
