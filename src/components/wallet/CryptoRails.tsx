@@ -112,6 +112,9 @@ export function CryptoRails({
   const valid = Number.isFinite(cents) && cents > 0;
   const quoteLeft = withdrawalReview?.quote ? Math.max(0, Math.ceil((new Date(withdrawalReview.quote.expires_at).getTime() - now) / 1000)) : 0;
 
+  // A header shortcut can change the requested action while this page is already open.
+  useEffect(() => setMode(requestedMode), [requestedMode]);
+
   useEffect(() => {
     if (!withdrawalReview?.quote) return;
     const timer = window.setInterval(() => setNow(Date.now()), 500);
