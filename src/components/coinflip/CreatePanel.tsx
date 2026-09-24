@@ -62,7 +62,7 @@ export function CreatePanel() {
     <div className="rounded-xl border border-border bg-card p-4">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-xs uppercase tracking-widest">Create a coinflip</h2>
-        <span className="rounded bg-gold/15 px-2 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>
+        <span className="shrink-0 whitespace-nowrap rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>
       </div>
       <p className="mt-1 text-xs text-muted-foreground">1 vs 1 · winner takes the pot</p>
 
@@ -119,7 +119,7 @@ export function CreatePanel() {
             ))}
           </div>
 
-          <dl className="tabular mt-3 grid grid-cols-4 gap-x-2 gap-y-0.5 rounded-lg bg-background/60 px-3 py-2 text-xs">
+          <dl className="tabular mt-3 grid grid-cols-2 gap-y-0.5 rounded-lg bg-background/60 px-3 py-2 text-xs">
             <dt className="text-muted-foreground">You wager</dt><dd className="text-right">{valid ? formatUsd(amount!) : "—"}</dd>
             <dt className="text-muted-foreground">Your side</dt><dd className="text-right">{side}</dd>
             <dt className="text-muted-foreground">Pot</dt><dd className="text-right">{valid ? formatUsd(pot) : "—"}</dd>

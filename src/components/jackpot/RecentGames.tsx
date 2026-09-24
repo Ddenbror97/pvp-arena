@@ -16,7 +16,7 @@ export function RecentGames() {
         <p className="text-sm text-muted-foreground">No completed games yet.</p>
       ) : (
         <div className="max-h-[22rem] overflow-y-auto rounded-xl border border-border bg-card">
-          <div className="sticky top-0 z-10 grid grid-cols-[4.5rem_minmax(0,1fr)_5.5rem_4rem] gap-3 border-b border-border bg-card px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[4.5rem_minmax(0,1fr)_6rem_4.5rem_4.5rem_5rem]">
+          <div className="sticky top-0 z-10 grid grid-cols-[2.5rem_minmax(0,1fr)_4.5rem_3.5rem] gap-3 border-b border-border bg-card px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[4.5rem_minmax(0,1fr)_6rem_4.5rem_4.5rem_5rem]">
             <span>Game</span><span>Winner</span><span className="text-right">Pot</span><span className="text-right">Chance</span>
             <span className="hidden text-right sm:block">Players</span><span className="hidden text-right sm:block">When</span>
           </div>
@@ -26,7 +26,7 @@ export function RecentGames() {
                 <Link
                   to="/games/$gameId"
                   params={{ gameId: String(g.id) }}
-                  className="grid grid-cols-[4.5rem_minmax(0,1fr)_5.5rem_4rem] items-center gap-3 px-3 py-1.5 text-sm transition hover:bg-secondary/50 sm:grid-cols-[4.5rem_minmax(0,1fr)_6rem_4.5rem_4.5rem_5rem]"
+                  className="grid grid-cols-[2.5rem_minmax(0,1fr)_4.5rem_3.5rem] items-center gap-3 px-3 py-1.5 text-sm transition hover:bg-secondary/50 sm:grid-cols-[4.5rem_minmax(0,1fr)_6rem_4.5rem_4.5rem_5rem]"
                 >
                   <span className="tabular text-xs text-muted-foreground">#{g.id}</span>
                   <span className="flex min-w-0 items-center gap-2">

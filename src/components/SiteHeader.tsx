@@ -12,7 +12,7 @@ export function SiteHeader() {
   const link = "text-sm text-muted-foreground hover:text-foreground transition-colors [&.active]:text-foreground";
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4">
+      <div className="mx-auto flex h-16 max-w-none lg:px-6 items-center gap-6 px-4">
         <Link to="/" className="shrink-0" aria-label="PVPspinArena">
           <img src={arenaLogo.url} alt="PVPspinArena" className="h-10 w-auto" />
         </Link>
@@ -46,7 +46,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="mt-20 border-t border-border">
-      <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-8 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto flex max-w-none lg:px-6 flex-col gap-3 px-4 py-8 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p>
           PVPspinArena — test credits only. Credits have no cash value and cannot be withdrawn. Not a licensed gambling service. 18+.
         </p>

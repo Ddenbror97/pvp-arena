@@ -98,7 +98,7 @@ export function RecentCoinflips() {
         <p className="text-sm text-muted-foreground">{q.isLoading ? "Loading..." : "No completed games yet."}</p>
       ) : (
         <div className="max-h-[22rem] overflow-y-auto rounded-xl border border-border bg-card">
-          <div className="sticky top-0 z-10 grid grid-cols-[4.5rem_minmax(0,1fr)_4.5rem_5.5rem] gap-3 border-b border-border bg-card px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[4.5rem_minmax(0,1fr)_5rem_6rem_5rem]">
+          <div className="sticky top-0 z-10 grid grid-cols-[2.5rem_minmax(0,1fr)_4rem_4rem] gap-3 border-b border-border bg-card px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[4.5rem_minmax(0,1fr)_5rem_6rem_5rem]">
             <span>Game</span><span>Players</span><span>Side</span><span className="text-right">Pot</span><span className="hidden text-right sm:block">When</span>
           </div>
           <ul className="divide-y divide-border">
@@ -115,7 +115,7 @@ export function RecentCoinflips() {
                   <Link
                     to="/coinflip/$gameId"
                     params={{ gameId: String(g.id) }}
-                    className="grid grid-cols-[4.5rem_minmax(0,1fr)_4.5rem_5.5rem] items-center gap-3 px-3 py-1.5 text-sm transition hover:bg-secondary/50 sm:grid-cols-[4.5rem_minmax(0,1fr)_5rem_6rem_5rem]"
+                    className="grid grid-cols-[2.5rem_minmax(0,1fr)_4rem_4rem] items-center gap-3 px-3 py-1.5 text-sm transition hover:bg-secondary/50 sm:grid-cols-[4.5rem_minmax(0,1fr)_5rem_6rem_5rem]"
                   >
                     <span className="tabular text-xs text-muted-foreground">#{g.id}</span>
                     <span className="flex min-w-0 items-center gap-2">
