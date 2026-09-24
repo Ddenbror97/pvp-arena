@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { useLiveJackpot, useNow, useServerClock, useWalletRealtime } from "@/lib/jackpot/api";
+import { tickJackpot, useLiveJackpot, useNow, useServerClock, useWalletRealtime } from "@/lib/jackpot/api";
 import { formatChance, formatUsd } from "@/lib/jackpot/math";
 import { emitSound } from "@/lib/sound";
 import { JackpotWheel, colorFor } from "./JackpotWheel";
@@ -23,7 +22,7 @@ function fmtClock(ms: number) {
 export function JackpotStage() {
   const { userId } = useAuth();
   useWalletRealtime(userId);
-  const { game, players, stage, finishReveal } = useLiveJackpot();
+  const { game, players, stage, finishReveal, resync } = useLiveJackpot();
   const serverNow = useServerClock();
   useNow(200);
   const [phase, setPhase] = useState<Phase>("live");
@@ -40,10 +39,15 @@ export function JackpotStage() {
   // background worker.
   useEffect(() => {
     if (stage || !(expired || game?.status === "DRAWING")) return;
-    void supabase.rpc("jackpot_tick");
-    const id = setInterval(() => void supabase.rpc("jackpot_tick"), 1500);
-    return () => clearInterval(id);
-  }, [expired, game?.status, stage]);
+    void tickJackpot();
+    const id = setInterval(() => void tickJackpot(), 1500);
+    // If still not revealed after a while, re-read the game directly.
+    const rs = setInterval(() => void resync(), 5000);
+    return () => {
+      clearInterval(id);
+      clearInterval(rs);
+    };
+  }, [expired, game?.status, stage, resync]);
 
   // Reveal sequence for a completed (already settled) game.
   useEffect(() => {
