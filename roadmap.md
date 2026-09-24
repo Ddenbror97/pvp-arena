@@ -44,8 +44,8 @@
 - [x] F-5 sign-up rate limit before account creation
 - [x] F-6 server-counted online players (heartbeat), remove browser presence
 - [x] F-7 pot ceilings
-- [ ] Session-liveness check on wagers/faucet/cancel (logout/reset tests)
-- [ ] Integrity monitor (detective) + schedule
-- [ ] New tests: join vs cancel, refund vs payout, gates, sessions, grants
-- [ ] Production build secret scan; full suite
+- [x] Session-liveness check on wagers/faucet/cancel (logout/reset tests)
+- [x] Integrity monitor (detective) + schedule
+- [x] New tests: join vs cancel, refund vs payout, gates, sessions, grants
+- [x] Production build secret scan; full suite
 - [x] Coinflip: better navigation after create/join; show chosen coin side instead of avatar; flip slows after 70%
