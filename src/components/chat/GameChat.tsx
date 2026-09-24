@@ -5,14 +5,16 @@ import { ChevronDown, MessageSquare, Send } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useGameChat, type ChatMessage } from "@/lib/chat/api";
 import { sendChatMessage } from "@/lib/chat/chat.functions";
-import { CHAT_CONFIG, type ChatRoom } from "@/lib/chat/config";
+import { CHAT_CONFIG, SHARED_CHAT_ROOM, type ChatRoom } from "@/lib/chat/config";
 import { chatMessageFor } from "@/lib/chat/errors";
 import { ChatMessageRow } from "./ChatMessageRow";
 import { cn } from "@/lib/utils";
 
 export { ChatMessageRow };
 
-export function GameChat({ gameType, className }: { gameType: ChatRoom; className?: string }) {
+export function GameChat({ className }: { gameType: ChatRoom; className?: string }) {
+  // Every game page shows the same shared chat.
+  const gameType = SHARED_CHAT_ROOM;
   const { userId, profile } = useAuth();
   const { messages, historyLoaded, online, status, hasMore, loadingOlder, loadOlder } = useGameChat(
     gameType,
