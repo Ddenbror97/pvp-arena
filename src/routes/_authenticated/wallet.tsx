@@ -11,9 +11,10 @@ import { CryptoRails } from "@/components/wallet/CryptoRails";
 
 export const Route = createFileRoute("/_authenticated/wallet")({
   // Header shortcuts deep-link straight to the requested action; anything else falls back to deposit.
-  validateSearch: (search: Record<string, unknown>): { mode?: "deposit" | "withdraw" } => ({
-    mode: search.mode === "withdraw" || search.mode === "deposit" ? search.mode : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { mode?: "deposit" | "withdraw" } => {
+    const value = search["mode"];
+    return value === "withdraw" || value === "deposit" ? { mode: value } : {};
+  },
   head: () => ({
     meta: [
       { title: "Wallet — PVPspinArena" },

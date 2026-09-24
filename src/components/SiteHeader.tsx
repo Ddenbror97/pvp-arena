@@ -48,7 +48,7 @@ export function SiteHeader() {
 }
 
 /** Balance plus the two wallet shortcuts, kept in one compact segmented control. */
-function WalletGroup({ available, loading }: { available?: number; loading: boolean }) {
+function WalletGroup({ available, loading }: { available?: number | undefined; loading: boolean }) {
   const action =
     "flex shrink-0 items-center gap-1 px-2 py-1.5 text-[11px] font-bold uppercase tracking-wide transition-colors sm:px-2.5 sm:text-xs";
   return (
