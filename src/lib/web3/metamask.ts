@@ -45,7 +45,7 @@ function sub(p: Eip1193, ev: string, fn: (...a: unknown[]) => void) {
   return () => p.removeListener?.(ev, fn);
 }
 
-function sessionFor(
+export function sessionFor(
   provider: Eip1193,
   connectFn: () => Promise<{ accounts: string[]; chainId: string }>,
   disconnectFn: () => Promise<void>,
