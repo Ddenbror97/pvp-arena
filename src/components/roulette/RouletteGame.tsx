@@ -155,7 +155,7 @@ export function RouletteGame() {
       </div>
 
       <div className="grid gap-2 sm:grid-cols-3">
-        {(["RED", "GREEN", "BLACK"] as RlColor[]).filter((c) => mults[c] != null).map((c) => {
+        {(["RED", "GREEN", "BLACK"] as RlColor[]).filter((c) => !Object.keys(mults).length || mults[c] != null).map((c) => {
           const list = (bets.data ?? []).filter((b) => b.color === c);
           const total = list.reduce((s, b) => s + Number(b.amount), 0);
           return (
