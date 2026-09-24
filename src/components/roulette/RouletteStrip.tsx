@@ -3,7 +3,7 @@ import type { RlColor, RlGame } from "@/lib/roulette/api";
 import { cn } from "@/lib/utils";
 import { COIN, CoinImg } from "./coins";
 
-const TILE = 84; // px, includes gap
+const TILE = 116; // px, includes gap
 const REPEATS = 12;
 /**
  * Presentation only. The winning slot is already fixed on the server before the strip moves;
@@ -63,7 +63,7 @@ export const RouletteStrip = memo(function RouletteStrip({
   const landedIndex = n * (REPEATS - 2) + (slot ?? 0);
 
   return (
-    <div ref={wrap} className="relative h-36 overflow-hidden rounded-2xl border border-border bg-[radial-gradient(ellipse_at_center,var(--surface-2),var(--card))]">
+    <div ref={wrap} className="relative h-[136px] overflow-hidden rounded-2xl border border-border bg-[radial-gradient(ellipse_at_center,var(--surface-2),var(--card))]">
       <div
         className="absolute top-3.5 flex gap-2 will-change-transform"
         style={{ transform: `translate3d(${width / 2 - pos}px,0,0)` }}
@@ -74,19 +74,19 @@ export const RouletteStrip = memo(function RouletteStrip({
             <div
               key={i}
               className={cn(
-                "relative flex h-[76px] w-[76px] shrink-0 items-center justify-center rounded-full transition-all duration-500",
+                "relative flex h-[108px] w-[108px] shrink-0 items-center justify-center rounded-full transition-all duration-500",
                 done && !win && "scale-90 opacity-35 grayscale",
-                win && "z-10 scale-125",
+                win && "z-10 scale-110",
               )}
               style={win ? { filter: `drop-shadow(0 0 18px ${COIN[c].glow})` } : undefined}
             >
-              <CoinImg c={c} size={70} className={cn("rounded-full", win && "animate-[pulse_1s_ease-in-out_infinite]")} />
+              <CoinImg c={c} size={104} className={cn("rounded-full", win && "animate-[pulse_1s_ease-in-out_infinite]")} />
             </div>
           );
         })}
       </div>
-      <div className="pointer-events-none absolute inset-y-2.5 left-1/2 w-1.5 -translate-x-1/2 rounded-full bg-primary shadow-[0_0_16px_var(--primary)]" />
-      <div className="pointer-events-none absolute left-1/2 top-0 h-0 w-0 -translate-x-1/2 border-x-9 border-t-[12px] border-x-transparent border-t-primary" />
+      <div className="pointer-events-none absolute inset-y-3 left-1/2 w-1.5 -translate-x-1/2 rounded-full bg-primary shadow-[0_0_16px_var(--primary)]" />
+      <div className="pointer-events-none absolute left-1/2 top-0 h-0 w-0 -translate-x-1/2 border-x-[10px] border-t-[13px] border-x-transparent border-t-primary" />
       <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-card to-transparent" />
       <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-card to-transparent" />
     </div>
