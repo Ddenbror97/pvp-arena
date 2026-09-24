@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ogImageMeta } from "@/lib/og";
 import { useState } from "react";
 import { drawTicket, hexToBytes, sha256Hex } from "@/lib/jackpot/fairness";
 import { coinflipMessage, coinflipOutcome } from "@/lib/fairness/coinflip";
@@ -15,7 +16,8 @@ export const Route = createFileRoute("/fairness")({
       { property: "og:title", content: "Fairness protocol — PVPspinArena" },
       { property: "og:description", content: "Commit/reveal draws with HMAC-SHA256 and unbiased ticket mapping. Verify any game yourself." },
       { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      ...ogImageMeta(),
     ],
   }),
   component: FairnessPage,

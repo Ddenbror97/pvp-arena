@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ogImageMeta } from "@/lib/og";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { OtpInput } from "@/components/auth/OtpInput";
@@ -19,7 +20,8 @@ export const Route = createFileRoute("/auth")({
       { property: "og:title", content: "Sign in — PVPspinArena" },
       { property: "og:description", content: "Sign in or create your PVPspinArena account." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      ...ogImageMeta(),
     ],
   }),
   component: AuthPage,

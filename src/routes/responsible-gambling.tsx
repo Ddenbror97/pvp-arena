@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ogImageMeta } from "@/lib/og";
 import { LegalPage } from "@/components/LegalPage";
 
 export const Route = createFileRoute("/responsible-gambling")({
@@ -9,7 +10,8 @@ export const Route = createFileRoute("/responsible-gambling")({
       { property: "og:title", content: "Responsible gambling — PVPspinArena" },
       { property: "og:description", content: "Tools and guidance for playing responsibly on PVPspinArena." },
       { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      ...ogImageMeta(),
     ],
   }),
   component: () => (
