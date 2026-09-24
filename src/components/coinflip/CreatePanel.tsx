@@ -59,46 +59,46 @@ export function CreatePanel() {
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-5">
+    <div className="rounded-xl border border-border bg-card p-4">
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-sm uppercase tracking-widest">Create a coinflip</h2>
-        <span className="rounded bg-gold/15 px-2 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>
+        <h2 className="font-display text-xs uppercase tracking-widest">Create a coinflip</h2>
+        <span className="shrink-0 whitespace-nowrap rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>
       </div>
       <p className="mt-1 text-xs text-muted-foreground">1 vs 1 · winner takes the pot</p>
 
       {!userId ? (
-        <Button asChild className="mt-5 w-full font-display"><Link to="/auth">Sign in to play</Link></Button>
+        <Button asChild className="mt-4 w-full font-display"><Link to="/auth">Sign in to play</Link></Button>
       ) : !profile ? (
         <p className="mt-5 text-sm text-muted-foreground">Finish setting up your profile to play.</p>
       ) : (
         <>
-          <div className="mt-4 text-xs text-muted-foreground">
+          <div className="mt-3 text-xs text-muted-foreground">
             Available <span className="tabular text-foreground">{formatUsd(balance)}</span> {APP.creditsLabel}
           </div>
-          <label className="mt-4 block text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor="cf-amount">Wager</label>
-          <div className="mt-1.5 flex items-center rounded-xl border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring">
+          <label className="mt-3 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground" htmlFor="cf-amount">Wager</label>
+          <div className="mt-1 flex items-center rounded-lg border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring">
             <span className="text-muted-foreground">$</span>
             <input
               id="cf-amount"
               inputMode="decimal"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="tabular h-12 w-full bg-transparent px-2 text-lg outline-none"
+              className="tabular h-10 w-full bg-transparent px-2 text-base outline-none"
             />
           </div>
-          <div className="mt-2 grid grid-cols-5 gap-2">
+          <div className="mt-1.5 grid grid-cols-5 gap-1.5">
             {QUICK.map((q) => (
-              <button key={q} type="button" onClick={() => setInput((q / 100).toFixed(2))} className="tabular rounded-lg bg-secondary py-2 text-xs hover:bg-secondary/70">
+              <button key={q} type="button" onClick={() => setInput((q / 100).toFixed(2))} className="tabular rounded-md bg-secondary py-1.5 text-xs hover:bg-secondary/70">
                 {formatUsd(q).replace(".00", "")}
               </button>
             ))}
-            <button type="button" onClick={() => setInput((Math.min(balance, max) / 100).toFixed(2))} className="rounded-lg bg-secondary py-2 text-xs font-bold hover:bg-secondary/70">
+            <button type="button" onClick={() => setInput((Math.min(balance, max) / 100).toFixed(2))} className="rounded-md bg-secondary py-1.5 text-xs font-bold hover:bg-secondary/70">
               MAX
             </button>
           </div>
 
-          <div className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Your side</div>
-          <div className="mt-1.5 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Your side">
+          <div className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Your side</div>
+          <div className="mt-1 grid grid-cols-2 gap-1.5" role="radiogroup" aria-label="Your side">
             {(["HEADS", "TAILS"] as const).map((s) => (
               <button
                 key={s}
@@ -107,26 +107,26 @@ export function CreatePanel() {
                 aria-checked={side === s}
                 onClick={() => setSide(s)}
                 className={cn(
-                  "flex items-center justify-center gap-2 rounded-xl border py-3 font-display text-sm transition",
+                  "flex items-center justify-center gap-2 rounded-lg border py-2 font-display text-xs transition",
                   side === s
                     ? s === "HEADS" ? "border-primary bg-primary/10 text-primary" : "border-rival bg-rival/10 text-rival"
                     : "border-border text-muted-foreground hover:text-foreground",
                 )}
               >
-                <span className={cn("inline-block h-5 w-5 rounded-full", s === "HEADS" ? "coin-heads" : "coin-tails")} />
+                <span className={cn("inline-block h-4 w-4 rounded-full", s === "HEADS" ? "coin-heads" : "coin-tails")} />
                 {s}
               </button>
             ))}
           </div>
 
-          <dl className="tabular mt-5 grid grid-cols-2 gap-y-1.5 rounded-xl bg-background/60 p-4 text-sm">
+          <dl className="tabular mt-3 grid grid-cols-2 gap-y-0.5 rounded-lg bg-background/60 px-3 py-2 text-xs">
             <dt className="text-muted-foreground">You wager</dt><dd className="text-right">{valid ? formatUsd(amount!) : "—"}</dd>
             <dt className="text-muted-foreground">Your side</dt><dd className="text-right">{side}</dd>
             <dt className="text-muted-foreground">Pot</dt><dd className="text-right">{valid ? formatUsd(pot) : "—"}</dd>
             <dt className="font-semibold">Win</dt><dd className="text-right font-semibold text-primary">{valid ? formatUsd(win) : "—"}</dd>
           </dl>
 
-          <Button onClick={submit} disabled={!affordable || pending} className="mt-4 h-12 w-full font-display text-base">
+          <Button onClick={submit} disabled={!affordable || pending} className="mt-3 h-11 w-full font-display text-sm">
             {pending ? "Creating..." : !valid ? `Wager ${formatUsd(min)}–${formatUsd(max)}` : !affordable ? "Not enough balance" : "Create game"}
           </Button>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">Test credits have no cash value.</p>

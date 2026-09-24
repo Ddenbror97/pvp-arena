@@ -38,7 +38,7 @@ function Lobby() {
   useCoinflipRealtime();
   return (
     <>
-      <div className="mt-6 grid gap-6 lg:grid-cols-[360px_1fr]">
+      <div className="mt-5 grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
         <CreatePanel />
         <OpenGames />
       </div>
