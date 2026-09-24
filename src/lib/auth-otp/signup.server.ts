@@ -170,6 +170,6 @@ export async function verifySignupCode(input: { challengeId: string; code: strin
 }
 
 function friendlyAuthError(msg: string) {
-  if (/password/i.test(msg)) return "Senha fraca ou comprometida. Escolha uma senha mais forte.";
+  if (/password/i.test(msg)) return "Weak or compromised password. Choose a stronger one.";
   return "Couldn't create the account right now. Please try again.";
 }

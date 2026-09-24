@@ -25,6 +25,8 @@ export class WalletError extends Error {
 /** Map any provider/server error to a safe code. Never surfaces raw text. */
 export function toWalletError(e: unknown, phase: "connect" | "sign"): WalletError {
   if (e instanceof WalletError) return e;
+  // Diagnostic only: provider code/message, never secrets.
+  console.warn("[wallet]", phase, (e as { code?: unknown })?.code, String((e as { message?: unknown })?.message ?? e).slice(0, 200));
   const code = (e as { code?: unknown })?.code;
   const msg = String((e as { message?: unknown })?.message ?? "").toLowerCase();
   if (

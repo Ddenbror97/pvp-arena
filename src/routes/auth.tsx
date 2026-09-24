@@ -98,7 +98,7 @@ function AuthPage() {
             const { error } = await supabase.auth.signInWithPassword({ email: em, password: pw });
             if (!error) return;
           }
-          toast.success("E-mail confirmado! Entre com sua senha.");
+          toast.success("Email confirmed! Sign in with your password.");
           setEmail(em);
           setMode("signin");
         }}
@@ -248,7 +248,7 @@ function VerifyStep({
           {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
         </button>
         <button type="button" onClick={onChangeEmail} className="text-muted-foreground hover:text-foreground">
-          Alterar e-mail
+          Change email
         </button>
       </div>
     </div>
