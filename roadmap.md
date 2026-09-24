@@ -72,5 +72,6 @@
 - [x] Step 0 checks: Chainlink ETH/USD 0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1 (8 dec, live, ~57s old); Circle USDC 0x036CbD53842c5426634e7929541eC2318f3dCF7e (6 dec); chain 84532; safe head lags ~172 blocks (~6 min), finalized ~544 blocks (~18 min) → credit at "safe" tag, configurable
 - [x] Secrets in place: CRYPTO_HOT_WALLET_PRIVATE_KEY, BASE_SEPOLIA_RPC_URL (public https://sepolia.base.org)
 - [x] Deposit matching decided: match by sender's verified MetaMask address — no xpub, no per-player addresses
-- [ ] Phase 1: DB allowlist + deposits + withdrawals + new ledger kinds (additive migration)
-- [ ] Phases 2–8 (listener, withdrawals, reconciliation, UI, tests, no-mainnet tests)
+- [x] Phase 1: DB allowlist + deposits + withdrawals + price snapshots + custody kind (additive migrations, guard functions locked down)
+- [ ] Phase 3: listener (once-per-minute worker) + `crypto_credit_deposit` money path with double-credit/reorg tests
+- [ ] Phases 4–8 (withdrawal worker, reconciliation, UI, tests, no-mainnet tests)
