@@ -20,14 +20,21 @@ export const Route = createFileRoute("/api/public/avatar/$style/$seed")({
         if (!isAvatarStyle(style) || !isAvatarSeed(seed)) return fail(404);
         let res: Response;
         try {
+          // The live server sends no browser identity by default and the avatar
+          // provider's CDN rejects anonymous requests, so identify ourselves.
           res = await fetch(`https://api.dicebear.com/9.x/${style}/svg?seed=${seed}`, {
             redirect: "error",
             signal: AbortSignal.timeout(5000),
+            headers: { "user-agent": "PVPspinArena-avatar/1.0 (+https://pvpspinarena.com)", accept: "image/svg+xml" },
           });
-        } catch {
+        } catch (e) {
+          console.error("avatar upstream fetch failed", String(e));
           return fail(502);
         }
-        if (!res.ok || !(res.headers.get("content-type") ?? "").startsWith("image/svg+xml")) return fail(502);
+        if (!res.ok || !(res.headers.get("content-type") ?? "").startsWith("image/svg+xml")) {
+          console.error("avatar upstream bad response", res.status, res.headers.get("content-type"));
+          return fail(502);
+        }
         const body = await res.arrayBuffer();
         if (body.byteLength > MAX_BYTES) return fail(502);
         return new Response(body, {
