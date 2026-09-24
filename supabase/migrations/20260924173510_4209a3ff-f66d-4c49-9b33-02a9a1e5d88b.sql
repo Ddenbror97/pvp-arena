@@ -1,0 +1,1 @@
+alter type public.account_kind add value if not exists 'external_custody';
