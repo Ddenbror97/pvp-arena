@@ -48,4 +48,4 @@
 - [ ] Integrity monitor (detective) + schedule
 - [ ] New tests: join vs cancel, refund vs payout, gates, sessions, grants
 - [ ] Production build secret scan; full suite
-- [ ] Coinflip: better navigation after create/join; show chosen coin side instead of avatar; flip slows after 70%
+- [x] Coinflip: better navigation after create/join; show chosen coin side instead of avatar; flip slows after 70%
