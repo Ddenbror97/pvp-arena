@@ -116,7 +116,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <SiteHeader />
-        <main className={wide ? "canvas mx-auto min-h-[calc(100dvh-3.5rem)] max-w-none px-4 py-6 sm:min-h-[calc(100dvh-4rem)] lg:px-6" : "canvas mx-auto min-h-[calc(100dvh-3.5rem)] max-w-7xl px-4 py-8 sm:min-h-[calc(100dvh-4rem)]"}>
+        <main className={wide ? "canvas mx-auto flex min-h-[calc(100dvh-3.5rem)] max-w-none flex-col px-4 pt-6 pb-4 sm:min-h-[calc(100dvh-4rem)] lg:px-6" : "canvas mx-auto min-h-[calc(100dvh-3.5rem)] max-w-7xl px-4 py-8 sm:min-h-[calc(100dvh-4rem)]"}>
           <Outlet />
         </main>
         <SiteFooter />

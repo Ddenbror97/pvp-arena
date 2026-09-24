@@ -16,7 +16,7 @@ export function RecentGames() {
       ) : !rows.length ? (
         <p className="text-sm text-muted-foreground">No completed games yet.</p>
       ) : (
-        <div className="rounded-xl border border-border bg-card">
+        <div className="flex flex-1 flex-col rounded-xl border border-border bg-card">
           <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_4.5rem_3.5rem] gap-3 border-b border-border px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[4.5rem_minmax(0,1fr)_6rem_4.5rem_4.5rem_5rem]">
             <span>Game</span><span>Winner</span><span className="text-right">Pot</span><span className="text-right">Chance</span>
             <span className="hidden text-right sm:block">Players</span><span className="hidden text-right sm:block">When</span>
