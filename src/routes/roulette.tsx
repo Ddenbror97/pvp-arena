@@ -24,7 +24,7 @@ export const Route = createFileRoute("/roulette")({
   loader: ({ context }) => {
     if (typeof window === "undefined") return;
     void context.queryClient.prefetchQuery({ queryKey: ["roulette-round"], queryFn: fetchCurrentRound, staleTime: 2000 });
-    void context.queryClient.prefetchQuery({ queryKey: ["roulette-history"], queryFn: () => fetchHistory(12), staleTime: 2000 });
+    void context.queryClient.prefetchQuery({ queryKey: ["roulette-history", 48], queryFn: () => fetchHistory(48), staleTime: 2000 });
   },
   component: RoulettePage,
 });
