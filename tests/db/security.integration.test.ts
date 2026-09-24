@@ -11,7 +11,10 @@ import { buildTestSchemaSql } from "./schema";
 
 const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
 const d = url ? describe : describe.skip;
-const sql = url ? postgres(url, { max: 20, prepare: false, onnotice: () => {}, idle_timeout: 5 }) : (null as never);
+const sql = url ? postgres(url, { max: 10, prepare: false, onnotice: () => {}, idle_timeout: 5 }) : (null as never);
+afterAll(async () => {
+  if (url) await sql.end();
+});
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const START = 100000;
 
@@ -86,7 +89,6 @@ d("security remediation (isolated schema)", () => {
   }, 60000);
   afterAll(async () => {
     await sql`drop schema if exists pvp_test cascade`;
-    await sql.end();
   });
   beforeEach(async () => {
     await sql`truncate pvp_test.audit_logs, pvp_test.coinflip_payouts, pvp_test.coinflip_results, pvp_test.coinflip_entries,
