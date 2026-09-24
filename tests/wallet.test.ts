@@ -115,13 +115,13 @@ describe("provider safety", () => {
       WALLET_MESSAGES.GENERIC,
     );
     expect(WALLET_MESSAGES[serverCodeToError("EXPIRED")]).toBe(
-      "A solicitação expirou. Tente novamente.",
+      "The request expired. Please try again.",
     );
     expect(WALLET_MESSAGES[serverCodeToError("ALREADY_LINKED")]).toBe(
-      "Esta carteira já está vinculada a outra conta.",
+      "This wallet is already linked to another account.",
     );
     expect(WALLET_MESSAGES[serverCodeToError("INVALID_SIGNATURE")]).toBe(
-      "Não foi possível verificar a propriedade desta carteira.",
+      "Could not verify ownership of this wallet.",
     );
   });
   it("blocks every transaction / approval method", async () => {

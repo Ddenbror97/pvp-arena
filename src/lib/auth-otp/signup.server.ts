@@ -3,7 +3,7 @@ import { renderOtpEmail } from "./email-template";
 import { OTP_PURPOSE, generateOtp, hashIdentifier, isOtpFormat, maskEmail, otpDigest } from "./otp";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
-const GENERIC_SEND_ERROR = "Não foi possível enviar o código agora. Tente novamente em instantes.";
+const GENERIC_SEND_ERROR = "Couldn't send the code right now. Please try again shortly.";
 
 export type StartResult = { ok: true; challengeId: string; maskedEmail: string } | { ok: false; error: string };
 export type VerifyResult = { ok: true } | { ok: false; error: string };
@@ -84,7 +84,7 @@ async function issueAndSend(p: { userId: string; email: string; ip: string | nul
     p_ua_hash: p.ua ? await hashIdentifier(pepper, p.ua) : null,
     p_request: p.requestId,
   });
-  if (!issued.ok) return { ok: false, error: "Aguarde um pouco antes de pedir um novo código." };
+  if (!issued.ok) return { ok: false, error: "Please wait a moment before requesting a new code." };
   let sent: { ok: boolean; error?: string };
   try {
     sent = await sendCodeEmail(p.email, code, challengeId);
@@ -110,7 +110,7 @@ export async function startSignup(input: { email: string; password: string; user
     p_ip_hash: input.ip ? await hashIdentifier(pepper, input.ip) : null,
     p_email_hash: await hashIdentifier(pepper, `email:${email}`),
   });
-  if (!limit.ok) return { ok: false, error: "Muitas tentativas de cadastro. Tente novamente mais tarde." };
+  if (!limit.ok) return { ok: false, error: "Too many sign-up attempts. Please try again later." };
   const a = await admin();
   const existing = await rpc<{ id: string; confirmed: boolean } | null>("auth_user_by_email", { p_email: email });
   let userId: string;
@@ -144,7 +144,7 @@ export async function resendSignupCode(input: { challengeId: string; ip: string 
 }
 
 export async function verifySignupCode(input: { challengeId: string; code: string }): Promise<VerifyResult> {
-  if (!isOtpFormat(input.code)) return { ok: false, error: "Código inválido." };
+  if (!isOtpFormat(input.code)) return { ok: false, error: "Invalid code." };
   const requestId = crypto.randomUUID();
   const digest = await otpDigest(env("OTP_PEPPER"), OTP_PURPOSE, input.challengeId, input.code);
   const r = await rpc<{ ok: boolean; reason?: string; user_id?: string }>("otp_verify", {
@@ -154,16 +154,16 @@ export async function verifySignupCode(input: { challengeId: string; code: strin
     p_request: requestId,
   });
   if (!r.ok) {
-    if (r.reason === "expired") return { ok: false, error: "Este código expirou. Peça um novo código." };
-    if (r.reason === "too_many_attempts") return { ok: false, error: "Muitas tentativas. Peça um novo código." };
-    return { ok: false, error: "Código inválido." };
+    if (r.reason === "expired") return { ok: false, error: "This code has expired. Request a new one." };
+    if (r.reason === "too_many_attempts") return { ok: false, error: "Too many attempts. Request a new code." };
+    return { ok: false, error: "Invalid code." };
   }
   // Single authoritative verification state: the auth system's own email-confirmed flag.
   const a = await admin();
   const { error } = await a.auth.admin.updateUserById(r.user_id!, { email_confirm: true });
   if (error) {
     console.error("confirm user failed", error.message);
-    return { ok: false, error: "Não foi possível concluir a verificação. Tente novamente." };
+    return { ok: false, error: "Couldn't complete verification. Please try again." };
   }
   await rpc("otp_log", { p_event: "EMAIL_VERIFIED", p_user: r.user_id, p_challenge: input.challengeId, p_purpose: OTP_PURPOSE, p_request: requestId, p_details: null });
   return { ok: true };
@@ -171,5 +171,5 @@ export async function verifySignupCode(input: { challengeId: string; code: strin
 
 function friendlyAuthError(msg: string) {
   if (/password/i.test(msg)) return "Senha fraca ou comprometida. Escolha uma senha mais forte.";
-  return "Não foi possível criar a conta agora. Tente novamente.";
+  return "Couldn't create the account right now. Please try again.";
 }

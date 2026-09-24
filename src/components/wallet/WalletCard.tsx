@@ -106,7 +106,7 @@ export function WalletCard({ userId }: { userId: string }) {
       const signature = await session.sign(ch.message, address);
       const v = await verifyFn({ data: { challengeId: ch.challengeId, signature } });
       if (!v.ok) throw new WalletError(serverCodeToError(v.code));
-      toast.success("Carteira verificada.");
+      toast.success("Wallet verified.");
     } catch (e) {
       fail(e instanceof WalletError ? e : new WalletError("GENERIC"), "sign");
     } finally {
@@ -129,7 +129,7 @@ export function WalletCard({ userId }: { userId: string }) {
 
   const copy = (a: string) =>
     navigator.clipboard?.writeText(a).then(
-      () => toast("Endereço copiado"),
+      () => toast("Address copied"),
       () => {},
     );
 

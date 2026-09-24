@@ -1,18 +1,18 @@
 import { WALLET_CONFIG } from "./config";
 
 export const WALLET_MESSAGES = {
-  CONNECT_REJECTED: "Conexão com a carteira cancelada.",
-  SIGN_REJECTED: "Verificação da carteira cancelada.",
-  INVALID_SIGNATURE: "Não foi possível verificar a propriedade desta carteira.",
-  EXPIRED: "A solicitação expirou. Tente novamente.",
-  ALREADY_LINKED: "Esta carteira já está vinculada a outra conta.",
-  UNSUPPORTED_NETWORK: `Rede não suportada. Conecte sua carteira à rede compatível com o PVPspinArena (${WALLET_CONFIG.requiredChainName}).`,
+  CONNECT_REJECTED: "Wallet connection cancelled.",
+  SIGN_REJECTED: "Wallet verification cancelled.",
+  INVALID_SIGNATURE: "Could not verify ownership of this wallet.",
+  EXPIRED: "The request expired. Please try again.",
+  ALREADY_LINKED: "This wallet is already linked to another account.",
+  UNSUPPORTED_NETWORK: `Unsupported network. Switch your wallet to the network PVPspinArena supports (${WALLET_CONFIG.requiredChainName}).`,
   UNAVAILABLE:
-    "MetaMask não está disponível neste dispositivo. Instale a extensão ou use o app MetaMask.",
-  TIMEOUT: "A carteira não respondeu a tempo. Tente novamente.",
-  UNSUPPORTED_ENV: "Este navegador não suporta a conexão com a MetaMask.",
-  RATE_LIMITED: "Muitas tentativas. Aguarde alguns minutos.",
-  GENERIC: "Algo deu errado com a carteira. Tente novamente.",
+    "MetaMask isn't available on this device. Install the extension or use the MetaMask app.",
+  TIMEOUT: "The wallet didn't respond in time. Please try again.",
+  UNSUPPORTED_ENV: "This browser doesn't support connecting to MetaMask.",
+  RATE_LIMITED: "Too many attempts. Please wait a few minutes.",
+  GENERIC: "Something went wrong with the wallet. Please try again.",
 } as const;
 export type WalletErrorCode = keyof typeof WALLET_MESSAGES;
 

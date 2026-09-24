@@ -75,7 +75,7 @@ function AuthPage() {
         savePending({ challengeId: r.challengeId, email: email.trim().toLowerCase(), maskedEmail: r.maskedEmail });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw new Error(/confirm/i.test(error.message) ? "Confirme seu e-mail com o código antes de entrar." : "E-mail ou senha incorretos.");
+        if (error) throw new Error(/confirm/i.test(error.message) ? "Confirm your email with the code before signing in." : "Incorrect email or password.");
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Sign in failed");
@@ -197,7 +197,7 @@ function VerifyStep({
           setCode("");
         }
       })
-      .catch(() => setError("Não foi possível verificar agora. Tente novamente."))
+      .catch(() => setError("Couldn't verify right now. Please try again."))
       .finally(() => {
         inflight.current = false;
         setBusy(false);
@@ -214,10 +214,10 @@ function VerifyStep({
         onPending({ ...pending, challengeId: r.challengeId });
         setCode("");
         setCooldown(60);
-        toast.success("Novo código enviado.");
+        toast.success("New code sent.");
       }
     } catch {
-      setError("Não foi possível enviar o código agora.");
+      setError("Couldn't send the code right now.");
     } finally {
       setBusy(false);
     }
@@ -225,9 +225,9 @@ function VerifyStep({
 
   return (
     <div className="mx-auto max-w-sm py-10">
-      <h1 className="font-display text-2xl">Verifique seu e-mail</h1>
+      <h1 className="font-display text-2xl">Check your email</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        Enviamos um código de 6 dígitos para <span className="font-mono text-foreground">{pending.maskedEmail}</span>. Ele expira em 10 minutos.
+        We sent a 6-digit code to <span className="font-mono text-foreground">{pending.maskedEmail}</span>. It expires in 10 minutes.
       </p>
       <div className="mt-6">
         <OtpInput value={code} onChange={setCode} disabled={busy} />
@@ -241,11 +241,11 @@ function VerifyStep({
         disabled={busy || code.length !== 6}
         onClick={() => setCode((c) => c)}
       >
-        {busy ? "Verificando…" : "Verificar"}
+        {busy ? "Verifying…" : "Verify"}
       </Button>
       <div className="mt-4 flex items-center justify-between text-sm">
         <button type="button" onClick={doResend} disabled={busy || cooldown > 0} className="text-muted-foreground hover:text-foreground disabled:opacity-50">
-          {cooldown > 0 ? `Reenviar código em ${cooldown}s` : "Reenviar código"}
+          {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
         </button>
         <button type="button" onClick={onChangeEmail} className="text-muted-foreground hover:text-foreground">
           Alterar e-mail
