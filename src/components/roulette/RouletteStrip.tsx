@@ -1,4 +1,7 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
+
+const useIso = typeof window === "undefined" ? useEffect : useLayoutEffect;
+let lastWidth = 0;
 import type { RlColor, RlGame } from "@/lib/roulette/api";
 import { cn } from "@/lib/utils";
 import { COIN, CoinImg } from "./coins";
@@ -19,12 +22,14 @@ export const RouletteStrip = memo(function RouletteStrip({
   now: () => number;
 }) {
   const wrap = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState(800);
+  const [width, setWidth] = useState(lastWidth || 800);
   const [, force] = useState(0);
-  useEffect(() => {
+  useIso(() => {
     const el = wrap.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => setWidth(el.clientWidth));
+    const set = () => { lastWidth = el.clientWidth; setWidth(el.clientWidth); };
+    set();
+    const ro = new ResizeObserver(set);
     ro.observe(el);
     return () => ro.disconnect();
   }, []);

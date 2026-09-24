@@ -119,16 +119,13 @@ export function RouletteGame() {
 
       {layout.length ? <RouletteStrip layout={layout} game={g} now={now} /> : <div className="h-[136px] animate-pulse rounded-xl bg-card" />}
 
-      <div className="rounded-xl border border-border bg-card p-2.5">
-        <div className="flex items-center justify-between text-sm">
+      <div className="relative h-7 overflow-hidden rounded-full border border-border bg-muted">
+        <div className="absolute inset-y-0 left-0 bg-primary/80 shadow-[0_0_12px_var(--primary)] transition-[width] duration-200" style={{ width: `${betTime * 100}%` }} />
+        <div className="relative flex h-full items-center justify-between px-3 text-xs">
           <span className="font-display" aria-live="polite">{status}</span>
           <span className="tabular text-muted-foreground">Round #{g?.id ?? "—"} · Pot {formatUsd(Number(g?.pot_amount ?? 0))}</span>
         </div>
-        <div className="mt-2 h-1.5 overflow-hidden rounded bg-muted">
-          <div className="h-full bg-primary transition-[width] duration-200" style={{ width: `${betTime * 100}%` }} />
-        </div>
       </div>
-
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-2.5">
         <span className="tabular w-full text-sm sm:w-auto sm:min-w-[8.5rem] text-muted-foreground">
           Balance <span className="font-semibold text-foreground">{formatUsd(balance)}</span>
@@ -159,7 +156,7 @@ export function RouletteGame() {
           const list = (bets.data ?? []).filter((b) => b.color === c);
           const total = list.reduce((s, b) => s + Number(b.amount), 0);
           return (
-            <div key={c} className={cn("flex min-h-44 flex-col rounded-xl border bg-card transition-all duration-500", landed === c ? "border-primary" : "border-border", landed && landed !== c && "opacity-60")}>
+            <div key={c} className={cn("flex min-h-60 flex-col rounded-xl border bg-card transition-all duration-500", landed === c ? "border-primary" : "border-border", landed && landed !== c && "opacity-60")}>
               <button
                 type="button"
                 disabled={!!userId && (!bettingOpen || pending != null)}
@@ -180,7 +177,7 @@ export function RouletteGame() {
               </div>
               <ul className="mt-2 space-y-1 px-3 pb-3 text-sm">
                 {list.slice(-12).reverse().map((b) => (
-                  <li key={b.id} className={cn("flex justify-between", landed && (landed === c ? "text-foreground" : "text-muted-foreground line-through"))}>
+                  <li key={b.id} className={cn("flex justify-between transition-colors", landed && (landed === c ? "font-semibold text-success" : "text-destructive"))}>
                     <span className="truncate">{b.player?.username ?? "player"}</span>
                     <span className="tabular">{formatUsd(Number(b.amount))}</span>
                   </li>

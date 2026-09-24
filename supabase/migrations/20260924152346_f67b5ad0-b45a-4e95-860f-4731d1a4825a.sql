@@ -1,0 +1,1 @@
+UPDATE public.roulette_config SET betting_seconds = 19, updated_at = now();

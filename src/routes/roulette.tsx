@@ -33,11 +33,11 @@ function RoulettePage() {
         <h1 className="font-display text-2xl">Roulette</h1>
         <p className="text-xs text-muted-foreground">Pick a coin before the roll. Everyone plays the same spin.</p>
       </div>
-      <div className="mt-3 min-h-[1287px] xl:min-h-[532px]">
-      <ClientOnly fallback={<section aria-hidden className="h-[1287px] animate-pulse rounded-2xl bg-card xl:h-[532px]" />}>
+      <div className="mt-3 min-h-[1287px] xl:min-h-[552px]">
+      <ClientOnly fallback={<section aria-hidden className="h-[1287px] animate-pulse rounded-2xl bg-card xl:h-[552px]" />}>
         <div className="grid gap-3 xl:grid-cols-[280px_minmax(0,1fr)]">
-          <Suspense fallback={<div className="order-2 h-64 animate-pulse rounded-xl border border-border bg-card xl:order-1 xl:h-[32rem]" />}>
-            <GameChat gameType="roulette" className="order-2 h-64 xl:order-1 xl:h-[32rem]" />
+          <Suspense fallback={<div className="order-2 h-64 animate-pulse rounded-xl border border-border bg-card xl:order-1 xl:h-[526px]" />}>
+            <GameChat gameType="roulette" className="order-2 h-64 xl:order-1 xl:h-[526px]" />
           </Suspense>
           <div className="order-1 xl:order-2"><RouletteGame /></div>
         </div>
