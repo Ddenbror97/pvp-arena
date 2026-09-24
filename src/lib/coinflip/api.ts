@@ -41,17 +41,6 @@ export async function fetchRecentCoinflips(limit = 12): Promise<CfGameView[]> {
   return (data ?? []) as unknown as CfGameView[];
 }
 
-export async function fetchMyCoinflips(userId: string, limit = 30): Promise<CfGameView[]> {
-  const { data, error } = await supabase
-    .from("coinflip_games")
-    .select(SELECT)
-    .or(`creator_id.eq.${userId},opponent_id.eq.${userId}`)
-    .order("id", { ascending: false })
-    .limit(limit);
-  if (error) throw error;
-  return (data ?? []) as unknown as CfGameView[];
-}
-
 export function useCoinflipConfig() {
   return useQuery({
     queryKey: ["coinflip-config"],

@@ -5,13 +5,6 @@ import { COIN, CoinImg } from "./coins";
 
 const TILE = 96; // px, includes gap
 const REPEATS = 12;
-export const colorClass: Record<RlColor, string> = {
-  RED: "bg-rl-red text-foreground",
-  BLACK: "bg-rl-black text-foreground border border-border",
-  YELLOW: "bg-rl-yellow text-background",
-  GREEN: "bg-rl-green text-background",
-};
-
 /**
  * Presentation only. The winning slot is already fixed on the server before the strip moves;
  * the strip is positioned from server timestamps so every viewer lands on the same tile at the same time.

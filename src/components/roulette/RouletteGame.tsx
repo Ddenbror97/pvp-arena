@@ -27,7 +27,7 @@ const DUE = ["BETTING", "LOCKED", "SPINNING", "SETTLEMENT"];
 
 export function RouletteGame() {
   useRouletteRealtime();
-  const { userId, ready } = useAuth();
+  const { userId } = useAuth();
   const qc = useQueryClient();
   const now = useServerClock();
   useNow(200);
