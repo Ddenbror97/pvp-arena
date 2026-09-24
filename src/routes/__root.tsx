@@ -13,7 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/lib/auth";
-import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
+import { MobileTabBar, SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { ProfileSetupDialog } from "@/components/ProfileSetupDialog";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -120,6 +120,7 @@ function RootComponent() {
           <Outlet />
         </main>
         <SiteFooter />
+        <MobileTabBar />
         <ProfileSetupDialog />
         <Toaster position="top-center" theme="dark" />
       </AuthProvider>

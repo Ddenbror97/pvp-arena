@@ -55,7 +55,7 @@ function ProfilePage() {
     <div className="mx-auto max-w-3xl">
       <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 sm:gap-4">
         <PlayerAvatar src={profile.avatar_url} name={profile.username} className="h-14 w-14 shrink-0 sm:h-20 sm:w-20" color="var(--primary)" />
-        <div>
+        <div className="min-w-0">
           <h1 className="truncate font-display text-lg sm:text-2xl">@{profile.username}</h1>
           <p className="text-sm text-muted-foreground">Joined {new Date(profile.created_at).toLocaleDateString()}</p>
         </div>
