@@ -191,8 +191,7 @@ function CoinflipSection() {
         reused for another. One HMAC bit decides the side — exactly 50/50.
       </p>
 
-      <div className="lg:grid lg:grid-cols-2 lg:gap-4">
-      <div>
+      <div className="grid gap-4 lg:grid-cols-2">
       <Card title="Verify a coinflip">
         <div className="grid gap-3">
           <div className="space-y-1.5">
@@ -212,13 +211,13 @@ function CoinflipSection() {
       <RecordedCheck title="Check a recorded Coinflip game" id="cfcheck" run={checkCoinflip} />
       </div>
 
-      <div>
-      <details className="mt-4 rounded-2xl border border-border bg-card p-4 lg:mt-0">
+      <div className="mt-4 grid gap-2 lg:grid-cols-2">
+      <details className="rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer font-display text-sm">How the draw works</summary>
         <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{CF_SPEC}</pre>
       </details>
 
-      <details className="mt-2 rounded-2xl border border-border bg-card p-4">
+      <details className="rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer font-display text-sm">Published test vectors ({CF_VECTORS.length})</summary>
         <div className="mt-3 max-h-64 overflow-y-auto overscroll-contain">
           <table className="tabular w-full text-[11px]">
@@ -267,8 +266,10 @@ function RouletteSection() {
         Same engine as Jackpot and Coinflip with its own message prefix. Each wheel slot is exactly equally likely; the
         slot decides the coin.
       </p>
-      <div className="lg:grid lg:grid-cols-2 lg:gap-4">
+      <div className="grid gap-4 lg:grid-cols-2">
       <Card title="Verify a roulette round">
+      <RecordedCheck title="Check a recorded Roulette round" id="rlcheck" run={undefined as never} />
+      </Card>
         <div className="grid gap-3">
           <div className="space-y-1.5">
             <Label htmlFor="rlgid">Round number</Label>
