@@ -4,7 +4,7 @@ import { useWallet } from "@/lib/jackpot/api";
 import { formatUsd } from "@/lib/jackpot/math";
 import { Button } from "@/components/ui/button";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
-import arenaLogo from "@/assets/arena-logo.png.asset.json";
+import arenaLogo from "@/assets/arena-logo-v2.png.asset.json";
 
 export function SiteHeader() {
   const { userId, profile, ready } = useAuth();

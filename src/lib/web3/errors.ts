@@ -7,7 +7,8 @@ export const WALLET_MESSAGES = {
   EXPIRED: "A solicitação expirou. Tente novamente.",
   ALREADY_LINKED: "Esta carteira já está vinculada a outra conta.",
   UNSUPPORTED_NETWORK: `Rede não suportada. Conecte sua carteira à rede compatível com o PVPspinArena (${WALLET_CONFIG.requiredChainName}).`,
-  UNAVAILABLE: "MetaMask não está disponível neste dispositivo. Instale a extensão ou use o app MetaMask.",
+  UNAVAILABLE:
+    "MetaMask não está disponível neste dispositivo. Instale a extensão ou use o app MetaMask.",
   TIMEOUT: "A carteira não respondeu a tempo. Tente novamente.",
   UNSUPPORTED_ENV: "Este navegador não suporta a conexão com a MetaMask.",
   RATE_LIMITED: "Muitas tentativas. Aguarde alguns minutos.",
@@ -26,7 +27,12 @@ export function toWalletError(e: unknown, phase: "connect" | "sign"): WalletErro
   if (e instanceof WalletError) return e;
   const code = (e as { code?: unknown })?.code;
   const msg = String((e as { message?: unknown })?.message ?? "").toLowerCase();
-  if (code === 4001 || code === "ACTION_REJECTED" || msg.includes("user rejected") || msg.includes("user denied"))
+  if (
+    code === 4001 ||
+    code === "ACTION_REJECTED" ||
+    msg.includes("user rejected") ||
+    msg.includes("user denied")
+  )
     return new WalletError(phase === "sign" ? "SIGN_REJECTED" : "CONNECT_REJECTED");
   if (code === 4900 || code === 4901) return new WalletError("UNAVAILABLE");
   if (msg.includes("timeout") || msg.includes("timed out")) return new WalletError("TIMEOUT");

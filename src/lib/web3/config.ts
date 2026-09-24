@@ -20,4 +20,9 @@ export const WALLET_CONFIG = {
 } as const;
 
 /** The only provider methods this app may call. Everything else is blocked. */
-export const ALLOWED_WALLET_METHODS = new Set(["eth_requestAccounts", "eth_accounts", "eth_chainId", "personal_sign"]);
+export const ALLOWED_WALLET_METHODS = new Set([
+  "eth_requestAccounts",
+  "eth_accounts",
+  "eth_chainId",
+  "personal_sign",
+]);

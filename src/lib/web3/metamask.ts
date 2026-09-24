@@ -24,7 +24,10 @@ const SIGN_TIMEOUT_MS = 180_000;
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   return new Promise((resolve, reject) => {
     const t = setTimeout(() => reject(new WalletError("TIMEOUT")), ms);
-    p.then((v) => (clearTimeout(t), resolve(v)), (e) => (clearTimeout(t), reject(e)));
+    p.then(
+      (v) => (clearTimeout(t), resolve(v)),
+      (e) => (clearTimeout(t), reject(e)),
+    );
   });
 }
 
@@ -39,7 +42,11 @@ function sub(p: Eip1193, ev: string, fn: (...a: unknown[]) => void) {
   return () => p.removeListener?.(ev, fn);
 }
 
-function sessionFor(provider: Eip1193, connectFn: () => Promise<{ accounts: string[]; chainId: string }>, disconnectFn: () => Promise<void>): WalletSession {
+function sessionFor(
+  provider: Eip1193,
+  connectFn: () => Promise<{ accounts: string[]; chainId: string }>,
+  disconnectFn: () => Promise<void>,
+): WalletSession {
   return {
     async connect() {
       try {
@@ -56,7 +63,10 @@ function sessionFor(provider: Eip1193, connectFn: () => Promise<{ accounts: stri
     },
     async sign(message, address) {
       try {
-        const sig = await withTimeout(guardedRequest(provider, "personal_sign", [message, address]), SIGN_TIMEOUT_MS);
+        const sig = await withTimeout(
+          guardedRequest(provider, "personal_sign", [message, address]),
+          SIGN_TIMEOUT_MS,
+        );
         if (typeof sig !== "string") throw new WalletError("INVALID_SIGNATURE");
         return sig;
       } catch (e) {
@@ -84,7 +94,9 @@ export function getWalletSession(): Promise<WalletSession> {
   if (cached) return cached;
   cached = (async () => {
     // Automated tests only (dev builds): a mocked EIP-1193 provider.
-    const test = import.meta.env.DEV ? (window as unknown as { __PVP_TEST_WALLET__?: Eip1193 }).__PVP_TEST_WALLET__ : undefined;
+    const test = import.meta.env.DEV
+      ? (window as unknown as { __PVP_TEST_WALLET__?: Eip1193 }).__PVP_TEST_WALLET__
+      : undefined;
     if (test) {
       return sessionFor(
         test,

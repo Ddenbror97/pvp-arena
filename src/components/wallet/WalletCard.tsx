@@ -6,10 +6,19 @@ import { Copy, ShieldCheck, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { WALLET_CONFIG } from "@/lib/web3/config";
-import { WALLET_MESSAGES, WalletError, serverCodeToError, type WalletErrorCode } from "@/lib/web3/errors";
+import {
+  WALLET_MESSAGES,
+  WalletError,
+  serverCodeToError,
+  type WalletErrorCode,
+} from "@/lib/web3/errors";
 import { shortAddress } from "@/lib/web3/message";
 import { getWalletSession, type WalletSession } from "@/lib/web3/metamask";
-import { recordWalletEvent, requestWalletChallenge, verifyWalletSignature } from "@/lib/web3/wallet.functions";
+import {
+  recordWalletEvent,
+  requestWalletChallenge,
+  verifyWalletSignature,
+} from "@/lib/web3/wallet.functions";
 
 export function WalletCard({ userId }: { userId: string }) {
   const qc = useQueryClient();
@@ -37,8 +46,12 @@ export function WalletCard({ userId }: { userId: string }) {
 
   useEffect(() => () => unsubs.current.forEach((u) => u()), []);
 
-  const verifiedPrimary = wallets.data?.find((w) => w.is_verified && w.is_primary) ?? wallets.data?.find((w) => w.is_verified);
-  const connectedRecord = address ? wallets.data?.find((w) => w.normalized_address === address.toLowerCase()) : undefined;
+  const verifiedPrimary =
+    wallets.data?.find((w) => w.is_verified && w.is_primary) ??
+    wallets.data?.find((w) => w.is_verified);
+  const connectedRecord = address
+    ? wallets.data?.find((w) => w.normalized_address === address.toLowerCase())
+    : undefined;
   const connectedVerified = !!connectedRecord?.is_verified;
   const wrongNetwork = !!address && !!chainId && chainId !== WALLET_CONFIG.requiredChainId;
 
@@ -114,12 +127,22 @@ export function WalletCard({ userId }: { userId: string }) {
     void eventFn({ data: { event: "WALLET_DISCONNECTED", address: a } }).catch(() => {});
   }
 
-  const copy = (a: string) => navigator.clipboard?.writeText(a).then(() => toast("Endereço copiado"), () => {});
+  const copy = (a: string) =>
+    navigator.clipboard?.writeText(a).then(
+      () => toast("Endereço copiado"),
+      () => {},
+    );
 
   const AddressLine = ({ a }: { a: string }) => (
     <div className="flex items-center gap-2">
-      <span className="tabular text-lg" data-testid="wallet-address">{shortAddress(a)}</span>
-      <button onClick={() => copy(a)} aria-label="Copy address" className="text-muted-foreground hover:text-foreground">
+      <span className="tabular text-lg" data-testid="wallet-address">
+        {shortAddress(a)}
+      </span>
+      <button
+        onClick={() => copy(a)}
+        aria-label="Copy address"
+        className="text-muted-foreground hover:text-foreground"
+      >
         <Copy className="h-4 w-4" />
       </button>
     </div>
@@ -130,40 +153,57 @@ export function WalletCard({ userId }: { userId: string }) {
       <div className="flex items-center gap-2">
         <Wallet className="h-4 w-4 text-primary" />
         <h2 className="font-display text-sm uppercase tracking-widest">Wallet</h2>
-        <span className="ml-auto text-[10px] uppercase tracking-widest text-muted-foreground">Identity only · no payments</span>
+        <span className="ml-auto text-[10px] uppercase tracking-widest text-muted-foreground">
+          Identity only · no payments
+        </span>
       </div>
 
       <div className="mt-4 space-y-3">
         {address && connectedVerified ? (
           <>
-            <div className="flex items-center gap-1.5 text-sm text-primary" data-testid="wallet-status">
+            <div
+              className="flex items-center gap-1.5 text-sm text-primary"
+              data-testid="wallet-status"
+            >
               <ShieldCheck className="h-4 w-4" /> ● Verified
             </div>
             <AddressLine a={connectedRecord!.address} />
-            <Button variant="secondary" onClick={disconnect}>Disconnect</Button>
+            <Button variant="secondary" onClick={disconnect}>
+              Disconnect
+            </Button>
           </>
         ) : address ? (
           <>
             <AddressLine a={address} />
-            <div className="text-sm text-rival" data-testid="wallet-status">Verification required</div>
+            <div className="text-sm text-rival" data-testid="wallet-status">
+              Verification required
+            </div>
             {verifiedPrimary && verifiedPrimary.normalized_address !== address.toLowerCase() && (
               <p className="text-xs text-muted-foreground">
-                Your verified wallet is {shortAddress(verifiedPrimary.address)}. This new address stays unverified until you sign.
+                Your verified wallet is {shortAddress(verifiedPrimary.address)}. This new address
+                stays unverified until you sign.
               </p>
             )}
             <div className="flex gap-2">
               <Button onClick={verify} disabled={busy !== null || wrongNetwork}>
                 {busy === "verify" ? "Check MetaMask..." : "Verify wallet"}
               </Button>
-              <Button variant="ghost" onClick={disconnect}>Disconnect</Button>
+              <Button variant="ghost" onClick={disconnect}>
+                Disconnect
+              </Button>
             </div>
-            <p className="text-[11px] text-muted-foreground">You'll sign a text message. No transaction, no gas, no approvals.</p>
+            <p className="text-[11px] text-muted-foreground">
+              You'll sign a text message. No transaction, no gas, no approvals.
+            </p>
           </>
         ) : (
           <>
             {verifiedPrimary ? (
               <>
-                <div className="flex items-center gap-1.5 text-sm text-primary" data-testid="wallet-status">
+                <div
+                  className="flex items-center gap-1.5 text-sm text-primary"
+                  data-testid="wallet-status"
+                >
                   <ShieldCheck className="h-4 w-4" /> ● Verified
                 </div>
                 <AddressLine a={verifiedPrimary.address} />
@@ -176,9 +216,15 @@ export function WalletCard({ userId }: { userId: string }) {
             </Button>
           </>
         )}
-        {err && <p role="alert" className="text-sm text-destructive" data-testid="wallet-error">{WALLET_MESSAGES[err]}</p>}
+        {err && (
+          <p role="alert" className="text-sm text-destructive" data-testid="wallet-error">
+            {WALLET_MESSAGES[err]}
+          </p>
+        )}
         {wrongNetwork && err !== "UNSUPPORTED_NETWORK" && (
-          <p role="alert" className="text-sm text-destructive">{WALLET_MESSAGES.UNSUPPORTED_NETWORK}</p>
+          <p role="alert" className="text-sm text-destructive">
+            {WALLET_MESSAGES.UNSUPPORTED_NETWORK}
+          </p>
         )}
       </div>
     </section>
