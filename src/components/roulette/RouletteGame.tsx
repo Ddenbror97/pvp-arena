@@ -120,9 +120,8 @@ export function RouletteGame() {
 
       <div className="relative h-7 overflow-hidden rounded-full border border-border bg-muted">
         <div className="absolute inset-y-0 left-0 bg-primary/80 shadow-[0_0_12px_var(--primary)] transition-[width] duration-200" style={{ width: `${betTime * 100}%` }} />
-        <div className="relative flex h-full items-center justify-between px-3 text-xs">
+        <div className="relative flex h-full items-center px-3 text-xs">
           <span className="font-display" aria-live="polite">{status}</span>
-          <span className="tabular text-muted-foreground">Round #{g?.id ?? "—"} · Pot {formatUsd(Number(g?.pot_amount ?? 0))}</span>
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-2.5">
