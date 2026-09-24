@@ -167,9 +167,19 @@ export function JackpotStage() {
               <div className="tabular mt-2 text-3xl font-semibold sm:text-4xl">
                 {formatUsd(pot)}
               </div>
-              <div className="mt-2 animate-pulse text-xs uppercase tracking-widest text-muted-foreground">
-                Drawing...
-              </div>
+              {(() => {
+                const since = endMs ? serverNow() - endMs : 0;
+                const n = Math.max(1, 3 - Math.floor(Math.max(0, since) / 1000));
+                return (
+                  <div className="mt-3 flex flex-col items-center gap-2">
+                    <div className="relative grid h-14 w-14 place-items-center">
+                      <span className="absolute inset-0 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
+                      <span key={n} className="tabular animate-scale-in font-display text-2xl text-primary">{n}</span>
+                    </div>
+                    <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Picking winner</div>
+                  </div>
+                );
+              })()}
             </div>
           ) : (
             <div className="text-center">

@@ -136,15 +136,6 @@ function Center({ g, phase, start, serverNow, now, me }: { g: CfGameView; phase:
 
   if (phase === "waiting") {
     const left = Math.max(0, Math.ceil((new Date(g.expires_at).getTime() - now) / 1000));
-    async function cancel() {
-      setPending(true);
-      const { error } = await supabase.rpc("coinflip_cancel", { p_game_id: g.id });
-      setPending(false);
-      if (error) toast.error(friendlyError(error));
-      else toast.success("Game cancelled. Your wager was returned.");
-      qc.invalidateQueries({ queryKey: ["coinflip", g.id] });
-      qc.invalidateQueries({ queryKey: ["wallet"] });
-    }
     return (
       <div className="flex flex-col items-center text-center">
         <Coin startMs={null} side={null} serverNow={serverNow} restSide={g.creator_side as CoinSide} size={110} />

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export const RECENT_PAGE_SIZE = 8;
