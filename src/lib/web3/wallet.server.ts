@@ -144,7 +144,7 @@ export async function recordEvent(
   }
   const details: Record<string, unknown> = { address: safe };
   // Only our own safe error codes are stored, never provider text.
-  if (event === "WALLET_CONNECT_FAILED" && reason) details.reason = reason;
+  if (event === "WALLET_CONNECT_FAILED" && reason) details["reason"] = reason;
   await log(rpc, event, userId, details);
   return { ok: true };
 }
