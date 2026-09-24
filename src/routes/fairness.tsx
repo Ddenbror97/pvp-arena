@@ -266,7 +266,7 @@ function RouletteSection() {
         Same engine as Jackpot and Coinflip with its own message prefix. Each wheel slot is exactly equally likely; the
         slot decides the coin.
       </p>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4">
       <Card title="Verify a roulette round">
         <div className="grid gap-3">
           <div className="space-y-1.5">
@@ -278,7 +278,7 @@ function RouletteSection() {
           <p className="text-[11px] text-muted-foreground">The seed and wheel are loaded from public data; the maths runs in your browser.</p>
         </div>
       </Card>
-      <details className="mt-4 rounded-2xl border border-border bg-card p-4 lg:mt-0">
+      <details className="rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer font-display text-sm">How the draw works</summary>
         <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{`HMAC-SHA256(key = server_seed, message = "PVPCasino:roulette:v1:{round}:{draw_version}:{counter}")
 r = first 8 bytes (big-endian); limit = floor(2^64 / n) * n
