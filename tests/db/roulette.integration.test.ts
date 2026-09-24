@@ -197,6 +197,7 @@ d("roulette adversarial audit (isolated schema)", () => {
   it("per-user limit: 11 simultaneous bets from one player accept exactly 10", async () => {
     const u = await newUser("alice");
     const res = await Promise.allSettled(Array.from({ length: 11 }, () => bet(u, "RED", 100)));
+    console.log("REASONS", res.map((r) => (r.status === "rejected" ? String(r.reason) : "ok")));
     expect(res.filter((r) => r.status === "fulfilled").length).toBe(10);
     expect(res.filter((r) => r.status === "rejected").every((r) => /TOO_MANY_BETS/.test(String((r as PromiseRejectedResult).reason)))).toBe(true);
     expect(await err(bet(u, "BLACK", 100))).toMatch(/TOO_MANY_BETS/); // 12th, sequential
