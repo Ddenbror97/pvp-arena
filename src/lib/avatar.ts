@@ -21,9 +21,15 @@ export function storedAvatarUrl(style: AvatarStyle, seed: string): string {
   return `https://api.dicebear.com/9.x/${style}/svg?seed=${seed}`;
 }
 
-/** Same-origin URL to render, or null for anything that isn't an allowed avatar. */
+/**
+ * URL to render, or null for anything that isn't an allowed avatar. The live
+ * server's upstream fetch is refused by the provider (502), so browsers load
+ * the fixed DiceBear host directly; the strict allowlist above still ensures
+ * only built-in styles and safe seeds are ever requested. SVGs in <img> can't
+ * run scripts.
+ */
 export function avatarSrc(stored: string | null | undefined): string | null {
   if (!stored) return null;
   const m = STORED.exec(stored);
-  return m ? `/api/public/avatar/${m[1]}/${m[2]}` : null;
+  return m ? `https://api.dicebear.com/9.x/${m[1]}/svg?seed=${m[2]}` : null;
 }
