@@ -129,12 +129,12 @@ describe("request validation", () => {
   });
   it("maps codes to Portuguese messages without internals", () => {
     expect(chatMessageFor("CHAT_RATE_LIMITED")).toBe(
-      "Você está enviando mensagens muito rápido. Aguarde alguns segundos.",
+      "You're sending messages too fast. Please wait a few seconds.",
     );
     expect(chatMessageFor("CHAT_MUTED")).toBe(
-      "Você está temporariamente impedido de enviar mensagens.",
+      "You're temporarily blocked from sending messages.",
     );
-    expect(chatMessageFor("CHAT_BLOCKED")).toBe("Essa mensagem não pode ser enviada.");
+    expect(chatMessageFor("CHAT_BLOCKED")).toBe("This message can't be sent.");
     expect(chatMessageFor("SOMETHING_INTERNAL")).toBe(chatMessageFor("CHAT_GENERIC"));
   });
 });

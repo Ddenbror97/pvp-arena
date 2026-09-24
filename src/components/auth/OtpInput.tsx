@@ -20,7 +20,7 @@ export function OtpInput({ value, onChange, disabled }: { value: string; onChang
   }
 
   return (
-    <div className="flex justify-between gap-2" role="group" aria-label="Código de verificação">
+    <div className="flex justify-between gap-2" role="group" aria-label="Verification code">
       {digits.map((d, i) => (
         <input
           key={i}
@@ -32,7 +32,7 @@ export function OtpInput({ value, onChange, disabled }: { value: string; onChang
           inputMode="numeric"
           autoComplete={i === 0 ? "one-time-code" : "off"}
           maxLength={6}
-          aria-label={`Dígito ${i + 1}`}
+          aria-label={`Digit ${i + 1}`}
           autoFocus={i === 0}
           onChange={(e) => set(i, e.target.value)}
           onPaste={(e) => {
