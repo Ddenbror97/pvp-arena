@@ -85,7 +85,13 @@ function AmountField({ amount, setAmount, max }: { amount: string; setAmount: (v
   );
 }
 
-export function CryptoRails({ availableCents }: { availableCents: number }) {
+export function CryptoRails({
+  availableCents,
+  requestedMode = "deposit",
+}: {
+  availableCents: number;
+  requestedMode?: "deposit" | "withdraw";
+}) {
   const qc = useQueryClient();
   const fetchActivity = useServerFn(getCryptoActivity);
   const prepareDeposit = useServerFn(prepareCryptoDeposit);
@@ -93,7 +99,7 @@ export function CryptoRails({ availableCents }: { availableCents: number }) {
   const doRequest = useServerFn(requestCryptoWithdrawal);
   const doCancel = useServerFn(cancelCryptoWithdrawal);
   const activity = useQuery({ queryKey: ["crypto-activity"], queryFn: () => fetchActivity(), refetchInterval: 15_000 });
-  const [mode, setMode] = useState<"deposit" | "withdraw">("deposit");
+  const [mode, setMode] = useState<"deposit" | "withdraw">(requestedMode);
   const [asset, setAsset] = useState<Asset>("USDC");
   const [amount, setAmount] = useState("");
   const [depositReview, setDepositReview] = useState<DepositReview | null>(null);

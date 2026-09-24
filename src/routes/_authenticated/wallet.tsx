@@ -10,6 +10,10 @@ import { Button } from "@/components/ui/button";
 import { CryptoRails } from "@/components/wallet/CryptoRails";
 
 export const Route = createFileRoute("/_authenticated/wallet")({
+  // Header shortcuts deep-link straight to the requested action; anything else falls back to deposit.
+  validateSearch: (search: Record<string, unknown>): { mode?: "deposit" | "withdraw" } => ({
+    mode: search.mode === "withdraw" || search.mode === "deposit" ? search.mode : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Wallet — PVPspinArena" },
@@ -34,6 +38,7 @@ const KIND_LABEL: Record<string, string> = {
 
 function WalletPage() {
   const { userId } = useAuth();
+  const { mode } = Route.useSearch();
   useWalletRealtime(userId);
   const wallet = useWallet(userId);
   const qc = useQueryClient();
@@ -92,7 +97,7 @@ function WalletPage() {
         <Button onClick={claim} className="font-display">Claim hourly test credits</Button>
       </div>
 
-      <CryptoRails availableCents={wallet.data?.available ?? 0} />
+      <CryptoRails availableCents={wallet.data?.available ?? 0} requestedMode={mode ?? "deposit"} />
 
       <h2 className="mt-10 font-display text-sm uppercase tracking-widest">Transactions</h2>
       <div className="mt-3 overflow-hidden rounded-2xl border border-border bg-card">
