@@ -117,7 +117,7 @@ export function RouletteGame() {
         </div>
       </div>
 
-      {layout.length ? <RouletteStrip layout={layout} game={g} now={now} /> : <div className="h-24 animate-pulse rounded-xl bg-card" />}
+      {layout.length ? <RouletteStrip layout={layout} game={g} now={now} /> : <div className="h-[136px] animate-pulse rounded-xl bg-card" />}
 
       <div className="rounded-xl border border-border bg-card p-2.5">
         <div className="flex items-center justify-between text-sm">
