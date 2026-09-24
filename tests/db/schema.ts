@@ -19,10 +19,11 @@ export function buildTestSchemaSql(): string {
   s = s.replace(/in schema public/g, "in schema pvp_test");
   s = s.replace(/auth\.uid\(\)/g, "pvp_test.test_uid()");
   // The email-code sign-up helpers read auth.users, which the test role
-  // cannot access. They're not exercised here, so skip body validation.
-  return `set check_function_bodies = off;
-drop schema if exists pvp_test cascade;
+  // cannot access; point them at a local stand-in table.
+  s = s.replace(/auth\.users/g, "pvp_test.test_auth_users");
+  return `drop schema if exists pvp_test cascade;
 create schema pvp_test;
+create table pvp_test.test_auth_users (id uuid primary key, email text, email_confirmed_at timestamptz);
 create function pvp_test.test_uid() returns uuid language sql stable as $$ select nullif(current_setting('test.uid', true),'')::uuid $$;
 ${s}`;
 }
