@@ -338,6 +338,85 @@ d("roulette adversarial audit (isolated schema)", () => {
     await assertInvariants();
   }, 30000);
 
+  it("stuck settlement is detected, logged, and recovers with exactly one payout", async () => {
+    const users = await Promise.all([newUser("a"), newUser("b"), newUser("c")]);
+    let gid = 0;
+    for (const [i, c] of ["RED", "BLACK", "GREEN"].entries()) gid = Number((await bet(users[i]!, c, 1000)).game_id);
+    await sleep(3400);
+    for (let i = 0; i < 12 && (await game(gid)).settle_attempts < 3; i++) {
+      await sql.begin(async (tx) => {
+        await tx`select set_config('pvp.fail_settlement', 'on', true)`;
+        await tx`select pvp_test.roulette_advance(${gid})`;
+      });
+      await sleep(100);
+    }
+    const stuck = await game(gid);
+    expect(stuck.status).toBe("SETTLEMENT");
+    expect(stuck.settle_attempts).toBeGreaterThanOrEqual(3);
+    expect(stuck.last_error).toMatch(/INJECTED_FAILURE/);
+    expect((await sql`select count(*)::int c from pvp_test.audit_logs where game_id=${gid} and action='RECOVERY_FAILED'`)[0].c).toBeGreaterThanOrEqual(3);
+    expect((await sql`select count(*)::int c from pvp_test.ledger_transactions where game_id=${gid} and kind='roulette_settlement'`)[0].c).toBe(0);
+    // Not silent: the monitor raises an incident.
+    const ic = (await sql`select pvp_test.roulette_integrity_check() as r`)[0].r;
+    expect(ic.incidents).toBeGreaterThanOrEqual(1);
+    const [inc] = await sql`select * from pvp_test.integrity_incidents where fingerprint = ${"rls:" + gid}`;
+    expect(inc.check_name).toBe("roulette_settlement_stuck");
+    // Recovery: concurrent retries settle exactly once.
+    const res = await Promise.allSettled(Array.from({ length: 8 }, () => advance(gid)));
+    expect(res.filter((r) => r.status === "fulfilled" && r.value === "settled").length).toBe(1);
+    expect((await sql`select count(*)::int c from pvp_test.ledger_transactions where game_id=${gid} and kind='roulette_settlement'`)[0].c).toBe(3);
+    expect((await sql`select count(*)::int c from pvp_test.roulette_payouts where game_id=${gid}`)[0].c).toBe(1);
+    await assertInvariants(); // monitor is clean again once settled
+  }, 120000);
+
+  it("200 bets at once: 25 players, mixed colours and amounts, limits and settlement exact", async () => {
+    await setCfg({ betting_seconds: 90, max_bets_per_round: 500 });
+    const users = await Promise.all(Array.from({ length: 25 }, (_, i) => newUser("L" + i)));
+    const colors = ["RED", "BLACK", "GREEN"];
+    const plan = Array.from({ length: 200 }, (_, i) => ({ u: users[i % 25]!, c: colors[(i * 7) % 3]!, a: 100 + ((i * 37) % 900) }));
+    const t0 = Date.now();
+    const res = await Promise.allSettled(plan.map((p) => bet(p.u, p.c, p.a)));
+    const ms = Date.now() - t0;
+    expect(res.filter((r) => r.status === "rejected")).toEqual([]);
+    const gid = Number((res[0] as PromiseFulfilledResult<{ game_id: number }>).value.game_id);
+    const g = await game(gid);
+    expect(g.bet_count).toBe(200);
+    expect(g.player_count).toBe(25);
+    expect(Number(g.pot_amount)).toBe(plan.reduce((s, p) => s + p.a, 0));
+    // Over the per-player limit: each player has 8 bets, 3 more at once -> exactly 2 accepted.
+    const extra = await Promise.allSettled(Array.from({ length: 3 }, () => bet(users[0]!, "RED", 100)));
+    expect(extra.filter((r) => r.status === "fulfilled").length).toBe(2);
+    const before = await Promise.all(users.map((u) => bal(u)));
+    await sql`select pvp_test.roulette_advance(${gid})`; // not due
+    // Fast-forward is impossible (timings immutable), so wait for the DB deadline.
+    const ends = +new Date(g.betting_ends_at);
+    const [{ t }] = await sql`select extract(epoch from clock_timestamp()) * 1000 as t`;
+    await sleep(Math.max(0, ends - Number(t)) + 200);
+    const done = await drive(gid);
+    expect(done.status).toBe("COMPLETED");
+    const bets = await sql`select * from pvp_test.roulette_bets where game_id=${gid}`;
+    for (let i = 0; i < 25; i++) {
+      const mine = bets.filter((b) => b.user_id === users[i]);
+      const win = mine.filter((b) => b.color === done.winning_color).reduce((s, b) => s + Math.floor((Number(b.amount) * b.multiplier_bps) / 10000), 0);
+      expect(await bal(users[i]!)).toBe(before[i]! + win);
+    }
+    console.log(`200 concurrent bets accepted in ${ms}ms`);
+    await assertInvariants();
+  }, 240000);
+
+  it("200 bets at once against a 150-bet round cap: exactly 150 accepted", async () => {
+    await setCfg({ betting_seconds: 60, max_bets_per_round: 150 });
+    const users = await Promise.all(Array.from({ length: 25 }, (_, i) => newUser("C" + i)));
+    const res = await Promise.allSettled(Array.from({ length: 200 }, (_, i) => bet(users[i % 25]!, ["RED", "BLACK", "GREEN"][i % 3]!, 100 + i)));
+    expect(res.filter((r) => r.status === "fulfilled").length).toBe(150);
+    for (const r of res) if (r.status === "rejected") expect(String(r.reason)).toMatch(/ROUND_FULL/);
+    const gid = Number((await sql`select id from pvp_test.roulette_games order by id desc limit 1`)[0].id);
+    expect((await game(gid)).bet_count).toBe(150);
+    await sleep(61000);
+    await drive(gid);
+    await assertInvariants();
+  }, 240000);
+
   it("wheel math is immutable, versioned and at most 100% RTP", async () => {
     const wheels = await sql`select * from pvp_test.roulette_wheels order by version`;
     for (const w of wheels) {
