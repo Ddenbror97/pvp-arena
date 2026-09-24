@@ -11,7 +11,7 @@ import { buildWalletMessage, normalizeAddress, signatureMatches } from "../../sr
 
 const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
 const d = url ? describe : describe.skip;
-const sql = url ? postgres(url, { max: 25, prepare: false, onnotice: () => {}, idle_timeout: 5 }) : (null as never);
+const sql = url ? postgres(url, { max: 8, prepare: false, onnotice: () => {}, idle_timeout: 5 }) : (null as never);
 
 async function newUser(name: string) {
   const id = randomUUID();
@@ -115,7 +115,9 @@ d("wallet identity (isolated schema)", () => {
     expect(row.consumed_at).toBeNull();
     expect((await issue(loser.u, a)).code).toBe("ALREADY_LINKED");
     // Database-level guarantee, independent of the function.
-    await expect(sql`update pvp_test.user_wallets set is_verified=true, verified_at=now() where user_id=${loser.u} and normalized_address=${a.toLowerCase()}`).rejects.toThrow(/unique/);
+    await expect(
+      sql`insert into pvp_test.user_wallets (user_id, address, normalized_address, is_verified, verified_at) values (${loser.u}, ${a}, ${a.toLowerCase()}, true, now())`,
+    ).rejects.toThrow(/unique|duplicate/);
   });
 
   it("mixed-case and lowercase addresses are one wallet", async () => {
