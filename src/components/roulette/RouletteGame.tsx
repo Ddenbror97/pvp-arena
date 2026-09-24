@@ -120,7 +120,7 @@ export function RouletteGame() {
 
       {layout.length ? <RouletteStrip layout={layout} game={g} now={now} /> : <div className="h-24 animate-pulse rounded-xl bg-card" />}
 
-      <div className="rounded-xl border border-border bg-card p-3">
+      <div className="rounded-xl border border-border bg-card p-2.5">
         <div className="flex items-center justify-between text-sm">
           <span className="font-display" aria-live="polite">{status}</span>
           <span className="tabular text-muted-foreground">Round #{g?.id ?? "—"} · Pot {formatUsd(Number(g?.pot_amount ?? 0))}</span>
@@ -130,7 +130,7 @@ export function RouletteGame() {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-3">
+      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-2.5">
         <span className="tabular text-sm text-muted-foreground">
           Balance <span className="font-semibold text-foreground">{formatUsd(balance)}</span>
         </span>
