@@ -53,7 +53,7 @@ function Lobby() {
       <div className="mt-5 grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start xl:grid-cols-[280px_minmax(0,1fr)_300px]">
         <CreatePanel />
         <OpenGames />
-        <Suspense fallback={<div className="h-80 animate-pulse rounded-xl bg-card" />}>
+        <Suspense fallback={<div className="h-72 animate-pulse rounded-xl border border-border bg-card sm:h-80 lg:col-span-2 xl:col-span-1 xl:h-[32rem]" />}>
           <GameChat gameType="coinflip" className="h-72 sm:h-80 lg:col-span-2 xl:col-span-1 xl:h-[32rem]" />
         </Suspense>
       </div>
