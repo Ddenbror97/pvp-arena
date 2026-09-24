@@ -110,7 +110,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const wide = pathname === "/" || pathname === "/coinflip" || pathname === "/coinflip/";
+  const wide = pathname === "/" || pathname === "/coinflip" || pathname === "/coinflip/" || pathname === "/roulette";
 
   return (
     <QueryClientProvider client={queryClient}>

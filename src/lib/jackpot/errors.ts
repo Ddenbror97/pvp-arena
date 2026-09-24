@@ -24,6 +24,11 @@ const MESSAGES: Record<string, string> = {
   POT_LIMIT_REACHED: "This pot has reached its maximum size. Try the next round.",
   SESSION_REVOKED: "Your session has ended. Please sign in again.",
   INVALID_AVATAR: "That avatar isn't available.",
+  BETTING_CLOSED: "Betting is closed for this spin. Try the next round.",
+  TOO_MANY_BETS: "You've reached the bet limit for this round.",
+  ROUND_FULL: "This round is full. Try the next one.",
+  INVALID_COLOR: "Pick a colour.",
+  IDEMPOTENCY_KEY_REUSED: "Please try again.",
 };
 
 export function friendlyError(e: unknown): string {

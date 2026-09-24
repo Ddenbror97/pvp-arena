@@ -1,5 +1,5 @@
 /** Central chat configuration. The database (`chat_send`) enforces the same limits authoritatively. */
-export const CHAT_ROOMS = ["jackpot", "coinflip"] as const;
+export const CHAT_ROOMS = ["jackpot", "coinflip", "roulette"] as const;
 export type ChatRoom = (typeof CHAT_ROOMS)[number];
 
 export const CHAT_CONFIG = {
