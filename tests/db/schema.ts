@@ -19,6 +19,9 @@ export function buildTestSchemaSql(): string {
   s = s.replace(/select public\._ensure_open_game\(\);/g, "");
   s = s.replace(/do \$\$ begin\s+if exists \(select 1 from pg_roles where rolname = 'sandbox_exec'\)[\s\S]*?end \$\$;/g, "");
   s = s.replace(/revoke execute on all functions in schema public from public, anon, authenticated;/g, "");
+  // Production grant loops print unqualified signatures that would resolve to
+  // the live public schema; privileges are covered by the security suite.
+  s = s.replace(/do \$\$ declare f text; begin\s+for f in select p\.oid::regprocedure::text[\s\S]*?end \$\$;/g, "");
   s = s.replace(/public\./g, "pvp_test.").replace(/search_path = public/g, "search_path = pvp_test");
   s = s.replace(/in schema public/g, "in schema pvp_test");
   s = s.replace(/auth\.uid\(\)/g, "pvp_test.test_uid()");

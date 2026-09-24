@@ -695,6 +695,24 @@ export type Database = {
         }
         Relationships: []
       }
+      crypto_job_tokens: {
+        Row: {
+          created_at: string
+          id: boolean
+          token_sha256: string
+        }
+        Insert: {
+          created_at?: string
+          id?: boolean
+          token_sha256: string
+        }
+        Update: {
+          created_at?: string
+          id?: boolean
+          token_sha256?: string
+        }
+        Relationships: []
+      }
       crypto_price_snapshots: {
         Row: {
           asset_key: string
@@ -2543,6 +2561,7 @@ export type Database = {
         Args: { p_block: number; p_chain: number }
         Returns: undefined
       }
+      crypto_verify_job_token: { Args: { p_token: string }; Returns: boolean }
       crypto_withdrawal_broadcast: {
         Args: { p_id: string }
         Returns: undefined
