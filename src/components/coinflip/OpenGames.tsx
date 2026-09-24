@@ -1,13 +1,14 @@
 import { useRef, useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { formatUsd } from "@/lib/jackpot/math";
 import { friendlyError } from "@/lib/jackpot/errors";
-import { fetchOpenCoinflips, fetchRecentCoinflips, opposite, type CfGameView, type CoinSide } from "@/lib/coinflip/api";
-import { PlayerAvatar } from "@/components/jackpot/Avatar";
+import { openRoom, fetchOpenCoinflips, fetchRecentCoinflips, opposite, type CfGameView, type CoinSide } from "@/lib/coinflip/api";
+import headsAsset from "@/assets/coin-heads.png.asset.json";
+import tailsAsset from "@/assets/coin-tails.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/time-ago";
@@ -47,6 +48,7 @@ export function OpenGames() {
 function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin: boolean }) {
   const qc = useQueryClient();
   const navigate = useNavigate();
+  const router = useRouter();
   const [pending, setPending] = useState(false);
   const key = useRef<string | null>(null);
   const side = g.creator_side as CoinSide;
@@ -56,20 +58,22 @@ function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin:
     setPending(true);
     key.current ??= crypto.randomUUID();
     const { error } = await supabase.rpc("coinflip_join", { p_game_id: g.id, p_idempotency_key: key.current });
-    setPending(false);
     if (error) {
+      setPending(false);
       toast.error(friendlyError(error));
       if (!/fetch|network/i.test(error.message)) key.current = null;
       qc.invalidateQueries({ queryKey: ["coinflip-open"] });
       return;
     }
     qc.invalidateQueries({ queryKey: ["wallet"] });
+    await openRoom(qc, router, g.id);
+    setPending(false);
     navigate({ to: "/coinflip/$gameId", params: { gameId: String(g.id) } });
   }
 
   return (
     <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
-      <PlayerAvatar src={g.creator?.avatar_url} name={g.creator?.username} className="h-11 w-11" />
+      <SideCoinImg side={side} className="h-11 w-11" />
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-semibold">@{g.creator?.username ?? "player"}</div>
         <div className="tabular font-display text-lg">{formatUsd(g.amount)}</div>
@@ -106,9 +110,9 @@ export function RecentCoinflips() {
           <ul className="divide-y divide-border">
             {q.data.map((g) => {
               const creatorWon = g.winner_id === g.creator_id;
-              const name = (p: typeof g.creator, won: boolean) => (
+              const name = (p: typeof g.creator, won: boolean, s: CoinSide) => (
                 <span className={cn("flex min-w-0 items-center gap-1.5", !won && "opacity-50")}>
-                  <PlayerAvatar src={p?.avatar_url} name={p?.username} className="h-5 w-5 shrink-0" />
+                  <SideCoinImg side={s} className="h-5 w-5" />
                   <span className={cn("truncate", won && "font-semibold")}>{p?.username ?? "unknown"}</span>
                 </span>
               );
@@ -121,9 +125,9 @@ export function RecentCoinflips() {
                   >
                     <span className="tabular text-xs text-muted-foreground">#{g.id}</span>
                     <span className="flex min-w-0 items-center gap-2">
-                      {name(g.creator, creatorWon)}
+                      {name(g.creator, creatorWon, g.creator_side as CoinSide)}
                       <span className="shrink-0 text-[10px] text-muted-foreground">vs</span>
-                      {name(g.opponent, !creatorWon)}
+                      {name(g.opponent, !creatorWon, opposite(g.creator_side as CoinSide))}
                     </span>
                     <span className="hidden sm:block">{g.winning_side && <SideChip side={g.winning_side as CoinSide} />}</span>
                     <span className="tabular text-right font-semibold">{formatUsd(g.pot_amount)}</span>
@@ -136,5 +140,18 @@ export function RecentCoinflips() {
         </div>
       )}
     </section>
+  );
+}
+
+function SideCoinImg({ side, className }: { side: CoinSide; className?: string }) {
+  return (
+    <img
+      src={(side === "HEADS" ? headsAsset : tailsAsset).url}
+      alt={side === "HEADS" ? "Heads" : "Tails"}
+      width={44}
+      height={44}
+      draggable={false}
+      className={cn("shrink-0 rounded-full object-cover select-none", className)}
+    />
   );
 }
