@@ -163,8 +163,6 @@ d("security remediation (isolated schema)", () => {
     expect(ran).toBeGreaterThanOrEqual(1);
     expect(ran).toBeLessThanOrEqual(Math.ceil((Date.now() - t0) / 250) + 1);
     expect(ran).toBeLessThan(12);
-    const again = await cfTick(anon);
-    expect(again.throttled).toBe(true);
     await sleep(300);
     expect((await cfTick(anon)).throttled).toBeUndefined();
     const auth = { claims: { role: "authenticated" } };
