@@ -14,6 +14,8 @@ export function buildTestSchemaSql(): string {
   s = s.replace(/alter publication supabase_realtime[^;]*;/g, "");
   // Realtime channel authorization lives in the shared realtime schema, not pvp_test.
   s = s.replace(/-- realtime-auth:begin[\s\S]*?-- realtime-auth:end/g, "");
+  // Scheduler jobs are production-only.
+  s = s.replace(/-- prod-only:begin[\s\S]*?-- prod-only:end/g, "");
   s = s.replace(/select public\._ensure_open_game\(\);/g, "");
   s = s.replace(/do \$\$ begin\s+if exists \(select 1 from pg_roles where rolname = 'sandbox_exec'\)[\s\S]*?end \$\$;/g, "");
   s = s.replace(/revoke execute on all functions in schema public from public, anon, authenticated;/g, "");
@@ -23,9 +25,11 @@ export function buildTestSchemaSql(): string {
   // The email-code sign-up helpers read auth.users, which the test role
   // cannot access; point them at a local stand-in table.
   s = s.replace(/auth\.users/g, "pvp_test.test_auth_users");
+  s = s.replace(/auth\.sessions/g, "pvp_test.test_auth_sessions");
   return `drop schema if exists pvp_test cascade;
 create schema pvp_test;
 create table pvp_test.test_auth_users (id uuid primary key, email text, email_confirmed_at timestamptz);
+create table pvp_test.test_auth_sessions (id uuid primary key, user_id uuid not null, not_after timestamptz);
 create function pvp_test.test_uid() returns uuid language sql stable set search_path = pvp_test as $$ select nullif(current_setting('test.uid', true),'')::uuid $$;
 ${s}`;
 }

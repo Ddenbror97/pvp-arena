@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { avatarSrc } from "@/lib/avatar";
 import { wheelSegments } from "@/lib/jackpot/math";
 import type { PlayerRow } from "@/lib/jackpot/api";
 import { emitSound } from "@/lib/sound";
@@ -108,13 +109,13 @@ export function JackpotWheel({ players, spin, onSpinEnd, highlightId, children }
           return (
             <g key={s.user_id} opacity={dim ? 0.25 : 1} style={{ transition: "opacity 600ms" }}>
               <path d={arcPath(s.start, s.end, R - 8, INNER)} fill={colorFor(i)} stroke="var(--background)" strokeWidth={2.5} />
-              {s.end - s.start > 14 && s.profiles?.avatar_url && (
+              {s.end - s.start > 14 && avatarSrc(s.profiles?.avatar_url) && (
                 <g transform={`translate(${R + rr * Math.cos(a)} ${R + rr * Math.sin(a)}) rotate(${mid})`}>
                   <clipPath id={`clip-${s.user_id}`}>
                     <circle r={15} />
                   </clipPath>
                   <circle r={17} fill="var(--background)" />
-                  <image href={s.profiles.avatar_url} x={-15} y={-15} width={30} height={30} clipPath={`url(#clip-${s.user_id})`} />
+                  <image href={avatarSrc(s.profiles?.avatar_url)!} x={-15} y={-15} width={30} height={30} clipPath={`url(#clip-${s.user_id})`} />
                 </g>
               )}
             </g>
