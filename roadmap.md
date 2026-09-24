@@ -52,3 +52,5 @@
 
 - [x] Roulette: database, round engine, page, chat, menu links
 - [ ] Roulette: dedicated automated tests, attack/concurrency tests, performance check, audit report
+- [x] Jackpot/Coinflip dead-code cleanup only (no logic changes), then run tests + build
+- [x] Roulette v2 wheel: Purple/Silver 2x (7 each), Green 14x (1), slower spin

@@ -1,16 +1,10 @@
 import { memo, useEffect, useRef, useState } from "react";
 import type { RlColor, RlGame } from "@/lib/roulette/api";
 import { cn } from "@/lib/utils";
+import { COIN, CoinImg } from "./coins";
 
-const TILE = 72; // px, includes gap
+const TILE = 96; // px, includes gap
 const REPEATS = 12;
-export const colorClass: Record<RlColor, string> = {
-  RED: "bg-rl-red text-foreground",
-  BLACK: "bg-rl-black text-foreground border border-border",
-  YELLOW: "bg-rl-yellow text-background",
-  GREEN: "bg-rl-green text-background",
-};
-
 /**
  * Presentation only. The winning slot is already fixed on the server before the strip moves;
  * the strip is positioned from server timestamps so every viewer lands on the same tile at the same time.
@@ -49,8 +43,9 @@ export const RouletteStrip = memo(function RouletteStrip({
   let pos = base;
   if (spinning && end > start) {
     const t = Math.min(1, Math.max(0, (now() - start) / (end - start)));
-    const eased = 1 - Math.pow(1 - t, 4);
-    pos = base + (target - base) * eased;
+    // Brisk start, then a long, gradual slowdown over the final 70% for suspense.
+    const e = t < 0.3 ? (0.55 * t) / 0.3 : 0.55 + 0.45 * (1 - Math.pow(1 - (t - 0.3) / 0.7, 3));
+    pos = base + (target - base) * e;
   }
 
   useEffect(() => {
@@ -68,27 +63,32 @@ export const RouletteStrip = memo(function RouletteStrip({
   const landedIndex = n * (REPEATS - 2) + (slot ?? 0);
 
   return (
-    <div ref={wrap} className="relative h-24 overflow-hidden rounded-xl border border-border bg-card">
+    <div ref={wrap} className="relative h-36 overflow-hidden rounded-2xl border border-border bg-[radial-gradient(ellipse_at_center,var(--surface-2),var(--card))]">
       <div
-        className="absolute top-3 flex gap-2 will-change-transform"
+        className="absolute top-6 flex gap-2 will-change-transform"
         style={{ transform: `translate3d(${width / 2 - pos}px,0,0)` }}
       >
-        {tiles.map((c, i) => (
-          <div
-            key={i}
-            className={cn(
-              "flex h-[4.5rem] w-16 shrink-0 items-center justify-center rounded-lg font-display text-xs font-bold transition-shadow",
-              colorClass[c],
-              done && i === landedIndex && "ring-4 ring-primary",
-            )}
-          >
-            {c === "GREEN" ? "14x" : ""}
-          </div>
-        ))}
+        {tiles.map((c, i) => {
+          const win = done && i === landedIndex;
+          return (
+            <div
+              key={i}
+              className={cn(
+                "relative flex h-[5.5rem] w-[5.5rem] shrink-0 items-center justify-center rounded-full transition-all duration-500",
+                done && !win && "scale-90 opacity-35 grayscale",
+                win && "z-10 scale-125",
+              )}
+              style={win ? { filter: `drop-shadow(0 0 18px ${COIN[c].glow})` } : undefined}
+            >
+              <CoinImg c={c} size={84} className={cn("rounded-full", win && "animate-[pulse_1s_ease-in-out_infinite]")} />
+            </div>
+          );
+        })}
       </div>
-      <div className="pointer-events-none absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-primary shadow-[0_0_12px_var(--primary)]" />
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-card to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-card to-transparent" />
+      <div className="pointer-events-none absolute inset-y-2 left-1/2 w-1 -translate-x-1/2 rounded-full bg-primary shadow-[0_0_16px_var(--primary)]" />
+      <div className="pointer-events-none absolute left-1/2 top-0 h-0 w-0 -translate-x-1/2 border-x-8 border-t-[10px] border-x-transparent border-t-primary" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-card to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-card to-transparent" />
     </div>
   );
 });

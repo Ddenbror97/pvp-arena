@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ChevronDown, MessageSquare, Send } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { useGameChat, type ChatMessage } from "@/lib/chat/api";
+import { useGameChat } from "@/lib/chat/api";
 import { sendChatMessage } from "@/lib/chat/chat.functions";
 import { CHAT_CONFIG, SHARED_CHAT_ROOM, type ChatRoom } from "@/lib/chat/config";
 import { chatMessageFor } from "@/lib/chat/errors";
