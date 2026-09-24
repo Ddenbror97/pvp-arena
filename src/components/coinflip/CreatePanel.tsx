@@ -17,7 +17,7 @@ import tailsAsset from "@/assets/coin-tails.png.asset.json";
 const QUICK = [500, 1000, 2500, 5000];
 
 export function CreatePanel() {
-  const { userId, profile, ready } = useAuth();
+  const { userId, profile, ready, needsProfile } = useAuth();
   const wallet = useWallet(userId);
   const cfg = useCoinflipConfig();
   const qc = useQueryClient();
@@ -39,7 +39,7 @@ export function CreatePanel() {
   const win = pot - Math.floor((pot * fee) / 10000);
 
   async function submit() {
-    if (!valid || !affordable || pending) return;
+    if (!profile || !valid || !affordable || pending) return;
     setPending(true);
     const k = pendingKey.current;
     if (!k || k.amount !== amount || k.side !== side) pendingKey.current = { key: crypto.randomUUID(), amount: amount!, side };
@@ -73,7 +73,7 @@ export function CreatePanel() {
 
       {!userId ? (
         <Button asChild className="mt-4 w-full font-display"><Link to="/auth">Sign in to play</Link></Button>
-      ) : !profile ? (
+      ) : !profile && needsProfile ? (
         <p className="mt-5 text-sm text-muted-foreground">Finish setting up your profile to play.</p>
       ) : (
         <>
