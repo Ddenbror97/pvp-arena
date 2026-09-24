@@ -113,7 +113,7 @@ export function CreatePanel() {
                     : "border-border text-muted-foreground hover:text-foreground",
                 )}
               >
-                <span className={cn("inline-block h-4 w-4 rounded-full", s === "HEADS" ? "coin-heads" : "coin-tails")} />
+                <img src={(s === "HEADS" ? headsAsset : tailsAsset).url} alt="" width={16} height={16} draggable={false} className="h-4 w-4 rounded-full object-cover select-none" />
                 {s}
               </button>
             ))}
