@@ -42,10 +42,21 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
     if (!pendingKey.current || pendingKey.current.amount !== amount) {
       pendingKey.current = { key: crypto.randomUUID(), amount: amount! };
     }
-    const { data, error } = await supabase.rpc("jackpot_join", {
+    let { data, error } = await supabase.rpc("jackpot_join", {
       p_amount: amount!,
       p_idempotency_key: pendingKey.current.key,
     });
+    if (error?.message.includes("SESSION_REVOKED")) {
+      // Stale local session (signed out elsewhere or expired): renew once and retry.
+      // The idempotency key makes a retried join safe.
+      const { error: refreshError } = await supabase.auth.refreshSession();
+      if (!refreshError) {
+        ({ data, error } = await supabase.rpc("jackpot_join", {
+          p_amount: amount!,
+          p_idempotency_key: pendingKey.current.key,
+        }));
+      }
+    }
     setPending(false);
     if (error) {
       toast.error(friendlyError(error));
