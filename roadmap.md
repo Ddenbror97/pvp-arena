@@ -29,3 +29,5 @@
 
 - [x] Coinflip winner animation: more exciting celebration (visual only, no timing/logic change)
 - [x] Chat "No messages yet" flash fixed; [x] one shared chat room on all game pages — flashes before history loads — scan site for similar late-load flashes
+- [x] Replace Coinflip coin faces with user's Heads/Tails images (same size)
+- [ ] Chat header late load-in: "Start of chat" and "1 online" pop in late — reserve space / gate on historyLoaded

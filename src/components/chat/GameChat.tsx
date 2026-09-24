@@ -117,7 +117,7 @@ export function GameChat({ className }: { gameType: ChatRoom; className?: string
             )}
           />
         </button>
-        <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <span className="flex min-w-[5.5rem] items-center justify-end gap-1.5 text-[11px] text-muted-foreground">
           <span
             className={cn(
               "h-1.5 w-1.5 rounded-full",
@@ -157,7 +157,7 @@ export function GameChat({ className }: { gameType: ChatRoom; className?: string
                 {loadingOlder && (
                   <p className="py-2 text-center text-[11px] text-muted-foreground">Loading...</p>
                 )}
-                {!hasMore && messages.length > 0 && (
+                {!hasMore && historyLoaded && messages.length > 0 && (
                   <p className="py-2 text-center text-[10px] uppercase tracking-widest text-muted-foreground/60">
                     Start of chat
                   </p>
