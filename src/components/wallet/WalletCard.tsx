@@ -74,7 +74,10 @@ export function WalletCard({ userId }: { userId: string }) {
           setAddress(a[0] ?? null);
           if (!a[0]) setSession(null);
         }),
-        s.onChainChanged((c) => setChainId(c)),
+        s.onChainChanged((c) => {
+          setChainId(c);
+          if (c === WALLET_CONFIG.requiredChainId) setErr((e) => (e === "UNSUPPORTED_NETWORK" ? null : e));
+        }),
         s.onDisconnect(() => {
           setAddress(null);
           setSession(null);
@@ -216,12 +219,18 @@ export function WalletCard({ userId }: { userId: string }) {
             </Button>
           </>
         )}
-        {err && (
+        {err && !(err === "UNSUPPORTED_NETWORK" && connectedVerified) && (
           <p role="alert" className="text-sm text-destructive" data-testid="wallet-error">
             {WALLET_MESSAGES[err]}
           </p>
         )}
-        {wrongNetwork && err !== "UNSUPPORTED_NETWORK" && (
+        {wrongNetwork && connectedVerified && (
+          <p className="text-xs text-muted-foreground" data-testid="wallet-network-hint">
+            MetaMask is on a different network. Your wallet is still verified. Switch MetaMask to{" "}
+            {WALLET_CONFIG.requiredChainName} before sending test deposits.
+          </p>
+        )}
+        {wrongNetwork && !connectedVerified && err !== "UNSUPPORTED_NETWORK" && (
           <p role="alert" className="text-sm text-destructive">
             {WALLET_MESSAGES.UNSUPPORTED_NETWORK}
           </p>
