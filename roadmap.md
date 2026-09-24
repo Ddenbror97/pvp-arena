@@ -92,3 +92,4 @@
 - [x] Coinflip open games last 24h before auto-cancel+refund (not 1 min)
 - [x] Jackpot #20: wheel did not spin before winner announced — investigate
 - [x] Roulette countdown starts at the full configured window after the prior result; previous rolls stay edge-to-edge without cache swaps
+- [x] Wallet UX: guided one-click MetaMask deposits, review-first withdrawals, and mobile-safe activity layout

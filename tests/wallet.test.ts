@@ -9,6 +9,8 @@ import {
 } from "../src/lib/web3/message";
 import { WALLET_MESSAGES, serverCodeToError, toWalletError } from "../src/lib/web3/errors";
 import { guardedRequest } from "../src/lib/web3/metamask";
+import { buildDepositTransaction } from "../src/lib/crypto/deposit";
+import { TESTNET } from "../src/lib/crypto/allowlist";
 import { ALLOWED_WALLET_METHODS } from "../src/lib/web3/config";
 
 const acct = privateKeyToAccount(generatePrivateKey());
@@ -108,7 +110,7 @@ describe("signatures", () => {
 });
 
 describe("provider safety", () => {
-  it("maps provider errors to safe Portuguese messages", () => {
+  it("maps provider errors to safe English messages", () => {
     expect(toWalletError({ code: 4001 }, "connect").message).toBe(WALLET_MESSAGES.CONNECT_REJECTED);
     expect(toWalletError({ code: 4001 }, "sign").message).toBe(WALLET_MESSAGES.SIGN_REJECTED);
     expect(toWalletError(new Error("RPC internal at 0xabc stack"), "connect").message).toBe(
@@ -124,16 +126,13 @@ describe("provider safety", () => {
       "Could not verify ownership of this wallet.",
     );
   });
-  it("blocks every transaction / approval method", async () => {
+  it("allows only verification and narrowly used deposit methods", async () => {
     const calls: string[] = [];
     const p = { request: async ({ method }: { method: string }) => (calls.push(method), "ok") };
     for (const m of [
-      "eth_sendTransaction",
       "eth_signTransaction",
       "eth_sign",
       "eth_signTypedData_v4",
-      "wallet_switchEthereumChain",
-      "wallet_addEthereumChain",
       "wallet_requestPermissions",
     ]) {
       await expect(guardedRequest(p, m)).rejects.toThrow();
@@ -143,7 +142,21 @@ describe("provider safety", () => {
       "eth_accounts",
       "eth_chainId",
       "eth_requestAccounts",
+      "eth_sendTransaction",
       "personal_sign",
+      "wallet_addEthereumChain",
+      "wallet_switchEthereumChain",
     ]);
+  });
+  it("builds only allowlisted Base Sepolia deposit transactions", () => {
+    const treasury = acct.address;
+    expect(buildDepositTransaction({ asset: "ETH", chainId: TESTNET.chainId, treasury, token: null, units: "1000" })).toEqual({ to: treasury, value: "0x3e8" });
+    const usdc = buildDepositTransaction({ asset: "USDC", chainId: TESTNET.chainId, treasury, token: TESTNET.usdc, units: "10000000" });
+    expect(usdc.to).toBe(TESTNET.usdc);
+    expect(usdc.value).toBe("0x0");
+    expect(usdc.data).toMatch(/^0xa9059cbb/);
+    expect(() => buildDepositTransaction({ asset: "ETH", chainId: 8453, treasury, token: null, units: "1" })).toThrow("UNSUPPORTED_NETWORK");
+    expect(() => buildDepositTransaction({ asset: "USDC", chainId: TESTNET.chainId, treasury, token: acct.address, units: "1" })).toThrow("INVALID_ASSET_CONFIG");
+    expect(() => buildDepositTransaction({ asset: "ETH", chainId: TESTNET.chainId, treasury, token: null, units: "0" })).toThrow("INVALID_AMOUNT");
   });
 });

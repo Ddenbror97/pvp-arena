@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { TESTNET, centsToWei } from "./allowlist";
 
 const ERRORS: Record<string, string> = {
   WITHDRAWALS_PAUSED: "Withdrawals are paused right now.",
@@ -34,6 +35,56 @@ export const getCryptoActivity = createServerFn({ method: "GET" })
     const { data, error } = await (await admin()).rpc("crypto_my_activity", { p_user: context.userId });
     if (error) throw new Error("Could not load crypto activity");
     return data as any;
+  });
+
+export const prepareCryptoDeposit = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z.object({ asset: z.enum(["USDC", "ETH"]), usdCents: z.number().int().positive().max(100_000_000) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const db = await admin();
+    const [{ data: wallet }, { loadVerifiedEnv, snapshotEthPrice }] = await Promise.all([
+      db
+        .from("user_wallets")
+        .select("normalized_address")
+        .eq("user_id", context.userId)
+        .eq("is_verified", true)
+        .eq("is_primary", true)
+        .maybeSingle(),
+      import("./chain.server"),
+    ]);
+    if (!wallet?.normalized_address) return { ok: false as const, error: ERRORS["NO_VERIFIED_WALLET"]! };
+    const checked = await loadVerifiedEnv();
+    if (!checked.ok || !checked.env.settings.crypto_system_enabled || !checked.env.settings.deposits_enabled) {
+      return { ok: false as const, error: "Deposits are unavailable right now." };
+    }
+    if (data.usdCents < Number(checked.env.settings.min_deposit_cents)) {
+      return { ok: false as const, error: ERRORS["BELOW_MINIMUM"]! };
+    }
+    let units: bigint;
+    let priceMicroUsd: number | null = null;
+    if (data.asset === "USDC") {
+      units = BigInt(data.usdCents) * 10_000n;
+    } else {
+      const price = await snapshotEthPrice(checked.env).catch(() => null);
+      if (!price) return { ok: false as const, error: ERRORS["PRICE_STALE"]! };
+      units = centsToWei(BigInt(data.usdCents), price.priceMicro);
+      priceMicroUsd = Number(price.priceMicro);
+    }
+    return {
+      ok: true as const,
+      instruction: {
+        asset: data.asset,
+        chainId: TESTNET.chainId,
+        treasury: checked.env.treasury,
+        token: data.asset === "USDC" ? TESTNET.usdc : null,
+        units: units.toString(),
+      },
+      verifiedAddress: wallet.normalized_address,
+      usdCents: data.usdCents,
+      priceMicroUsd,
+    };
   });
 
 export const quoteEthWithdrawal = createServerFn({ method: "POST" })

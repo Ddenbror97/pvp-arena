@@ -92,7 +92,7 @@ function WalletPage() {
         <Button onClick={claim} className="font-display">Claim hourly test credits</Button>
       </div>
 
-      <CryptoRails />
+      <CryptoRails availableCents={wallet.data?.available ?? 0} />
 
       <h2 className="mt-10 font-display text-sm uppercase tracking-widest">Transactions</h2>
       <div className="mt-3 overflow-hidden rounded-2xl border border-border bg-card">

@@ -1,5 +1,6 @@
 import { ALLOWED_WALLET_METHODS, WALLET_CONFIG } from "./config";
 import { WalletError, toWalletError } from "./errors";
+import { buildDepositTransaction, type DepositInstruction } from "@/lib/crypto/deposit";
 
 /** Minimal EIP-1193 surface this app uses. */
 interface Eip1193 {
@@ -12,6 +13,8 @@ export interface WalletSession {
   connect(): Promise<{ address: string; chainId: string }>;
   chainId(): Promise<string>;
   sign(message: string, address: string): Promise<string>;
+  switchToRequiredNetwork(): Promise<void>;
+  sendTestDeposit(instruction: DepositInstruction, expectedAddress: string): Promise<string>;
   disconnect(): Promise<void>;
   onAccountsChanged(fn: (accounts: string[]) => void): () => void;
   onChainChanged(fn: (chainId: string) => void): () => void;
@@ -71,6 +74,46 @@ function sessionFor(
         return sig;
       } catch (e) {
         throw toWalletError(e, "sign");
+      }
+    },
+    async switchToRequiredNetwork() {
+      try {
+        await guardedRequest(provider, "wallet_switchEthereumChain", [
+          { chainId: WALLET_CONFIG.requiredChainId },
+        ]);
+      } catch (e) {
+        const code = (e as { code?: unknown })?.code;
+        if (code !== 4902) throw toWalletError(e, "connect");
+        await guardedRequest(provider, "wallet_addEthereumChain", [
+          {
+            chainId: WALLET_CONFIG.requiredChainId,
+            chainName: WALLET_CONFIG.requiredChainName,
+            nativeCurrency: { name: "Ethereum", symbol: "ETH", decimals: 18 },
+            rpcUrls: [WALLET_CONFIG.rpcUrls[WALLET_CONFIG.requiredChainId]],
+            blockExplorerUrls: ["https://sepolia.basescan.org"],
+          },
+        ]);
+      }
+    },
+    async sendTestDeposit(instruction, expectedAddress) {
+      const chainId = String(await guardedRequest(provider, "eth_chainId")).toLowerCase();
+      if (chainId !== WALLET_CONFIG.requiredChainId) throw new WalletError("UNSUPPORTED_NETWORK");
+      const accounts = (await guardedRequest(provider, "eth_accounts")) as string[];
+      const from = accounts[0];
+      if (!from || from.toLowerCase() !== expectedAddress.toLowerCase()) {
+        throw new WalletError("ADDRESS_MISMATCH");
+      }
+      const transaction = buildDepositTransaction(instruction);
+      try {
+        const hash = await guardedRequest(provider, "eth_sendTransaction", [
+          { from, ...transaction },
+        ]);
+        if (typeof hash !== "string" || !/^0x[0-9a-fA-F]{64}$/.test(hash)) {
+          throw new WalletError("GENERIC");
+        }
+        return hash;
+      } catch (e) {
+        throw toWalletError(e, "send");
       }
     },
     disconnect: async () => {

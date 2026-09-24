@@ -3,9 +3,11 @@ import { WALLET_CONFIG } from "./config";
 export const WALLET_MESSAGES = {
   CONNECT_REJECTED: "Wallet connection cancelled.",
   SIGN_REJECTED: "Wallet verification cancelled.",
+  TRANSACTION_REJECTED: "Deposit cancelled in MetaMask.",
   INVALID_SIGNATURE: "Could not verify ownership of this wallet.",
   EXPIRED: "The request expired. Please try again.",
   ALREADY_LINKED: "This wallet is already linked to another account.",
+  ADDRESS_MISMATCH: "Select your verified wallet address in MetaMask before depositing.",
   UNSUPPORTED_NETWORK: `Unsupported network. Switch your wallet to the network PVPspinArena supports (${WALLET_CONFIG.requiredChainName}).`,
   UNAVAILABLE:
     "MetaMask isn't available on this device. Install the extension or use the MetaMask app.",
@@ -23,7 +25,7 @@ export class WalletError extends Error {
 }
 
 /** Map any provider/server error to a safe code. Never surfaces raw text. */
-export function toWalletError(e: unknown, phase: "connect" | "sign"): WalletError {
+export function toWalletError(e: unknown, phase: "connect" | "sign" | "send"): WalletError {
   if (e instanceof WalletError) return e;
   // Diagnostic only: provider code/message, never secrets.
   console.warn("[wallet]", phase, (e as { code?: unknown })?.code, String((e as { message?: unknown })?.message ?? e).slice(0, 200));
@@ -35,7 +37,7 @@ export function toWalletError(e: unknown, phase: "connect" | "sign"): WalletErro
     msg.includes("user rejected") ||
     msg.includes("user denied")
   )
-    return new WalletError(phase === "sign" ? "SIGN_REJECTED" : "CONNECT_REJECTED");
+    return new WalletError(phase === "sign" ? "SIGN_REJECTED" : phase === "send" ? "TRANSACTION_REJECTED" : "CONNECT_REJECTED");
   if (code === 4900 || code === 4901) return new WalletError("UNAVAILABLE");
   if (msg.includes("timeout") || msg.includes("timed out")) return new WalletError("TIMEOUT");
   return new WalletError("GENERIC");
