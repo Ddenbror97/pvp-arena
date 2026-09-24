@@ -53,16 +53,16 @@ function ProfilePage() {
   if (!profile) return <p className="text-muted-foreground">Loading...</p>;
   return (
     <div className="mx-auto max-w-3xl">
-      <div className="flex items-center gap-4">
-        <PlayerAvatar src={profile.avatar_url} name={profile.username} className="h-20 w-20" color="var(--primary)" />
-        <div>
-          <h1 className="font-display text-2xl">@{profile.username}</h1>
+      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 sm:gap-4">
+        <PlayerAvatar src={profile.avatar_url} name={profile.username} className="h-14 w-14 shrink-0 sm:h-20 sm:w-20" color="var(--primary)" />
+        <div className="min-w-0">
+          <h1 className="truncate font-display text-lg sm:text-2xl">@{profile.username}</h1>
           <p className="text-sm text-muted-foreground">Joined {new Date(profile.created_at).toLocaleDateString()}</p>
         </div>
-        <Button variant="secondary" className="ml-auto" onClick={signOut}>Sign out</Button>
+        <Button variant="secondary" size="sm" onClick={signOut}>Sign out</Button>
       </div>
 
-      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-5">
+      <div className="mt-5 grid grid-cols-2 gap-2 sm:mt-8 sm:grid-cols-5 sm:gap-3">
         {[
           ["Balance", formatUsd(wallet.data?.available ?? 0)],
           ["Games played", String(stats.data?.games_played ?? "—")],
@@ -70,18 +70,18 @@ function ProfilePage() {
           ["Total wagered", formatUsd(stats.data?.total_wagered ?? 0)],
           ["Total won", formatUsd(stats.data?.total_won ?? 0)],
         ].map(([k, v]) => (
-          <div key={k} className="rounded-xl border border-border bg-card p-4">
+          <div key={k} className="rounded-xl border border-border bg-card p-3 last:col-span-2 sm:p-4 sm:last:col-span-1">
             <div className="text-[11px] uppercase tracking-widest text-muted-foreground">{k}</div>
             <div className="tabular mt-1 text-lg font-semibold">{v}</div>
           </div>
         ))}
       </div>
 
-      <h2 className="mt-10 font-display text-sm uppercase tracking-widest">Avatar</h2>
+      <h2 className="mt-6 font-display sm:mt-10 text-sm uppercase tracking-widest">Avatar</h2>
       <div className="mt-3 flex flex-wrap gap-3">
         {STYLES.map((s) => (
           <button key={s} onClick={() => pick(s)} className="rounded-full p-0.5 hover:ring-2 hover:ring-primary" aria-label={`Use ${s} avatar`}>
-            <PlayerAvatar src={`https://api.dicebear.com/9.x/${s}/svg?seed=${encodeURIComponent(profile.username)}`} className="h-14 w-14" />
+            <PlayerAvatar src={`https://api.dicebear.com/9.x/${s}/svg?seed=${encodeURIComponent(profile.username)}`} className="h-11 w-11 sm:h-14 sm:w-14" />
           </button>
         ))}
       </div>

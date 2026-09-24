@@ -117,7 +117,7 @@ export function JackpotStage() {
       {/* Chat */}
       <section className="order-4 lg:order-1 lg:self-stretch">
         <Suspense fallback={<div className="h-80 animate-pulse rounded-xl bg-card" />}>
-          <GameChat gameType="jackpot" className="h-96 lg:h-full lg:min-h-[34rem]" />
+          <GameChat gameType="jackpot" className="h-72 sm:h-96 lg:h-full lg:min-h-[34rem]" />
         </Suspense>
       </section>
 
