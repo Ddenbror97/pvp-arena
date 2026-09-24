@@ -88,9 +88,11 @@ export function CoinflipRoom({ id }: { id: number }) {
       </div>
 
       <div className="relative mt-3 overflow-hidden rounded-2xl border border-border bg-card p-4 sm:px-10 sm:py-8">
-        <div className="grid items-center gap-4 sm:grid-cols-[1fr_auto_1fr]">
+        <div className="grid grid-cols-2 items-center gap-4 sm:grid-cols-[1fr_auto_1fr]">
           <PlayerSlot g={g} slot="creator" phase={phase} me={userId} />
-          <Center g={g} phase={phase} start={start} serverNow={serverNow} now={now} me={userId} />
+          <div className="order-first col-span-2 sm:order-none sm:col-span-1">
+            <Center g={g} phase={phase} start={start} serverNow={serverNow} now={now} me={userId} />
+          </div>
           <PlayerSlot g={g} slot="opponent" phase={phase} me={userId} />
         </div>
         {phase === "result" && <ResultCard g={g} me={userId} />}
@@ -108,7 +110,7 @@ function PlayerSlot({ g, slot, phase, me }: { g: CfGameView; slot: "creator" | "
   const won = phase === "result" && g.winner_id && g.winner_id === uid;
   const lost = phase === "result" && g.winner_id && g.winner_id !== uid;
   return (
-    <div className={`flex flex-col items-center text-center transition ${lost ? "opacity-40" : ""} ${slot === "opponent" ? "sm:order-last" : ""}`}>
+    <div className={`flex flex-col items-center text-center transition ${lost ? "opacity-40" : ""} `}>
       {uid ? (
         <SideCoin side={side} className={`h-14 w-14 ${won ? "glow-gold" : ""}`} />
       ) : (
