@@ -285,8 +285,9 @@ function RouletteSection() {
         <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{`HMAC-SHA256(key = server_seed, message = "PVPCasino:roulette:v1:{round}:{draw_version}:{counter}")
 r = first 8 bytes (big-endian); limit = floor(2^64 / n) * n
 if r >= limit: counter += 1 and redraw (max 1000)
-slot = r mod n; colour = wheel.layout[slot]`}</pre>
+ slot = r mod n; colour = wheel.layout[slot]`}</pre>
       </details>
+      </div>
     </section>
   );
 }
