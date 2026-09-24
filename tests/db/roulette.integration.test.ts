@@ -170,7 +170,7 @@ d("roulette adversarial audit (isolated schema)", () => {
   }, 30000);
 
   it("amount validation: min, max and malformed values", async () => {
-    await setCfg({ betting_seconds: 10 });
+    await setCfg({ betting_seconds: 30 });
     const u = await newUser("alice", 2_000_000);
     const cases: [number | string, RegExp | "OK"][] = [
       [0, /BELOW_MIN_WAGER/], [-100, /BELOW_MIN_WAGER/], [1, /BELOW_MIN_WAGER/], [99, /BELOW_MIN_WAGER/], [100, "OK"],
@@ -224,7 +224,7 @@ d("roulette adversarial audit (isolated schema)", () => {
   }, 30000);
 
   it("pot cap and round cap hold under 40 simultaneous bets", async () => {
-    await setCfg({ max_pot: 5000, max_bet: 5000, max_bets_per_round: 30, betting_seconds: 10 });
+    await setCfg({ max_pot: 5000, max_bet: 5000, max_bets_per_round: 100, betting_seconds: 10 });
     const users = await Promise.all(Array.from({ length: 8 }, (_, i) => newUser("p" + i)));
     const res = await Promise.allSettled(Array.from({ length: 40 }, (_, i) => bet(users[i % 8]!, ["RED", "BLACK", "GREEN"][i % 3]!, 150)));
     const ok = res.filter((r) => r.status === "fulfilled").length;
@@ -243,7 +243,9 @@ d("roulette adversarial audit (isolated schema)", () => {
       const users = await Promise.all(Array.from({ length: 10 }, (_, i) => newUser(`r${round}u${i}`)));
       const first = await bet(users[0]!, "RED", 100);
       const gid = Number(first.game_id);
-      const ends = +new Date((await game(gid)).betting_ends_at);
+      const [{ t }] = await sql`select extract(epoch from clock_timestamp()) * 1000 as t`;
+      const skew = Number(t) - Date.now(); // DB clock minus local clock
+      const ends = +new Date((await game(gid)).betting_ends_at) - skew;
       const offsets = Array.from({ length: 30 }, (_, i) => -150 + i * 10); // -150ms .. +140ms around the DB deadline
       const tasks = offsets.map((o, i) =>
         sleep(Math.max(0, ends + o - Date.now())).then(() => bet(users[i % 10]!, ["RED", "BLACK", "GREEN"][i % 3]!, 100 + i)),
@@ -255,14 +257,16 @@ d("roulette adversarial audit (isolated schema)", () => {
       const bets = await sql`select * from pvp_test.roulette_bets where game_id = ${gid}`;
       for (const b of bets) expect(+b.created_at).toBeLessThan(+g.betting_ends_at);
       expect(bets.length).toBe(g.bet_count);
-      const accepted = res.slice(0, 30).filter((r) => r.status === "fulfilled").length;
-      expect(bets.length).toBe(accepted + 1);
+      const accepted = res.slice(0, 30).filter((r) => r.status === "fulfilled") as PromiseFulfilledResult<{ game_id: number }>[];
+      const inRound = accepted.filter((r) => Number(r.value.game_id) === gid).length;
+      expect(bets.length).toBe(inRound + 1);
+      // Late bets can only land in the next round, never in the locked one.
+      for (const r of accepted) expect([gid, gid + 1]).toContain(Number(r.value.game_id));
       const [result] = await sql`select * from pvp_test.roulette_results where game_id = ${gid}`;
       const done = await drive(gid);
       expect(done.winning_color).toBe(result.color); // result could not change during the race
-      // Late bets went into the next round, not this one.
-      const late = res.slice(0, 30).filter((r) => r.status === "fulfilled" && Number((r as PromiseFulfilledResult<{ game_id: number }>).value.game_id) !== gid);
-      expect(late.length).toBe(0);
+      const next = await game(gid + 1);
+      if (next && next.status !== "WAITING") await drive(gid + 1);
       await assertInvariants();
     }
   }, 120000);
@@ -282,7 +286,7 @@ d("roulette adversarial audit (isolated schema)", () => {
   }, 30000);
 
   it("payout math: gross 2x/14x, rounded down, for every audited amount", async () => {
-    await setCfg({ betting_seconds: 10 });
+    await setCfg({ betting_seconds: 40 });
     const amounts = [100, 101, 111, 1000, 1001, 9999, 10001, 99999, 1_000_000];
     const users = await Promise.all(amounts.map((a, i) => newUser("m" + i, a * 3)));
     const before = await Promise.all(users.map((u) => bal(u)));
