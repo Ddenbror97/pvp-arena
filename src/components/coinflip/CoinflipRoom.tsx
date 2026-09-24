@@ -87,7 +87,7 @@ export function CoinflipRoom({ id }: { id: number }) {
         <span className="rounded bg-secondary px-2 py-0.5 text-xs">{g.status}</span>
       </div>
 
-      <div className="relative mt-3 overflow-hidden rounded-2xl border border-border bg-card p-4 sm:px-8 sm:py-5">
+      <div className="relative mt-3 overflow-hidden rounded-2xl border border-border bg-card p-4 sm:px-10 sm:py-8">
         <div className="grid items-center gap-4 sm:grid-cols-[1fr_auto_1fr]">
           <PlayerSlot g={g} slot="creator" phase={phase} me={userId} />
           <Center g={g} phase={phase} start={start} serverNow={serverNow} now={now} me={userId} />
@@ -182,12 +182,12 @@ function Center({ g, phase, start, serverNow, now, me }: { g: CfGameView; phase:
       <div className={`relative ${revealed ? `animate-coin-land ${tone}` : ""}`}>
         {revealed && (
           <>
-            <span className="shockwave h-[130px] w-[130px]" />
-            <span className="shockwave h-[130px] w-[130px]" style={{ animationDelay: "0.18s" }} />
+            <span className="shockwave h-[150px] w-[150px]" />
+            <span className="shockwave h-[150px] w-[150px]" style={{ animationDelay: "0.18s" }} />
             <span className="pointer-events-none absolute inset-0 -z-10 rounded-full bg-current opacity-30 blur-2xl" />
           </>
         )}
-        <Coin startMs={start} side={(g.winning_side as CoinSide | null) ?? null} serverNow={serverNow} size={130} />
+        <Coin startMs={start} side={(g.winning_side as CoinSide | null) ?? null} serverNow={serverNow} size={150} />
       </div>
       {phase === "flipping" ? (
         <div className="font-display text-sm tracking-[0.4em] text-muted-foreground">FLIPPING</div>
