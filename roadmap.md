@@ -81,7 +81,7 @@
 - [ ] Rotate payout key pasted in chat
 
 ## Game UX fixes (requested 2026-09-24)
-- [ ] Recent games: no auto page switching
-- [ ] Coinflip: remove "(you)" and Cancel & refund
-- [ ] Jackpot: countdown/effect inside wheel instead of "drawing"
-- [ ] Roulette: hold winning coin longer, reveal green/red names ~1.5s later, slower reset
+- [x] Recent games: no auto page switching
+- [x] Coinflip: remove "(you)" and Cancel & refund
+- [x] Jackpot: countdown/effect inside wheel instead of "drawing"
+- [x] Roulette: hold winning coin longer, reveal green/red names ~1.5s later, slower reset

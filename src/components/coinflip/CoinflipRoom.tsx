@@ -125,7 +125,6 @@ function PlayerSlot({ g, slot, phase, me }: { g: CfGameView; slot: "creator" | "
 
 function Center({ g, phase, start, serverNow, now, me }: { g: CfGameView; phase: string; start: number | null; serverNow: () => number; now: number; me: string | null }) {
   const qc = useQueryClient();
-  const [pending, setPending] = useState(false);
   const played = useRef<string | null>(null);
   useEffect(() => {
     if (played.current === phase) return;
