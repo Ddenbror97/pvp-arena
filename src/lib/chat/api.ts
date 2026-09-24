@@ -159,5 +159,5 @@ export function useGameChat(room: ChatRoom, userId: string | null) {
     }
   }, [room, messages, hasMore, loadingOlder]);
 
-  return { messages, online, status, hasMore, loadingOlder, loadOlder };
+  return { messages, historyLoaded, online, status, hasMore, loadingOlder, loadOlder };
 }

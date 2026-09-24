@@ -14,7 +14,7 @@ export { ChatMessageRow };
 
 export function GameChat({ gameType, className }: { gameType: ChatRoom; className?: string }) {
   const { userId, profile } = useAuth();
-  const { messages, online, status, hasMore, loadingOlder, loadOlder } = useGameChat(
+  const { messages, historyLoaded, online, status, hasMore, loadingOlder, loadOlder } = useGameChat(
     gameType,
     userId && profile ? userId : null,
   );
@@ -160,7 +160,17 @@ export function GameChat({ gameType, className }: { gameType: ChatRoom; classNam
                     Start of chat
                   </p>
                 )}
-                {messages.length === 0 && status === "live" && (
+                {messages.length === 0 && !historyLoaded && userId && (
+                  <ul aria-busy="true" className="space-y-3 px-3 py-3">
+                    {[0, 1, 2, 3, 4, 5].map((i) => (
+                      <li key={i} className="flex animate-pulse items-start gap-2">
+                        <span className="h-6 w-6 shrink-0 rounded-full bg-muted" />
+                        <span className="h-4 rounded bg-muted" style={{ width: `${45 + ((i * 17) % 40)}%` }} />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {messages.length === 0 && historyLoaded && (
                   <p className="px-4 py-10 text-center text-sm text-muted-foreground">
                     No messages yet. Say hi!
                   </p>
