@@ -46,6 +46,7 @@ function RoulettePage() {
         </div>
       </ClientOnly>
       </div>
+      <RecentRounds />
     </>
   );
 }
