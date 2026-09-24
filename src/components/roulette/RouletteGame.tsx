@@ -170,7 +170,7 @@ export function RouletteGame() {
               >
                 <CoinImg c={c} size={44} className="rounded-full transition-transform group-hover:rotate-12 group-hover:scale-110" />
                 <span className="flex-1">
-                  <span className="block font-display text-sm">{userId ? (pending === c ? "Placing…" : "Place bet") : "Sign in to bet"}</span>
+                  <span className="block font-display text-sm">{userId ? (pending === c ? "Placing…" : "Place bet") : "Sign in"}</span>
                   <span className="block text-xs text-muted-foreground">{COIN[c].label}</span>
                 </span>
                 <span className="font-display text-lg" style={{ color: COIN[c].glow }}>{mults[c] ? multiplierLabel(mults[c]) : "…"}</span>
