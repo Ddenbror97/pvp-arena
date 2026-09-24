@@ -66,7 +66,7 @@ export function CreatePanel() {
   }
 
   return (
-    <div className={`rounded-xl border border-border bg-card p-4 ${!userId && !ready && !hint ? "lg:min-h-[29.25rem]" : ""}`}>
+    <div className={`rounded-xl border border-border bg-card p-4 ${!userId && (ready || !hint) ? "lg:min-h-[29.25rem]" : ""}`}>
       <div className="flex items-center justify-between">
         <h2 className="font-display text-xs uppercase tracking-widest">Create a coinflip</h2>
         <span className="shrink-0 whitespace-nowrap rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>
