@@ -60,7 +60,7 @@ export function RecentPager({
   onNext: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between border-t border-border px-3 py-1.5">
+    <div className="mt-auto flex items-center justify-between border-t border-border px-3 py-1.5">
       <button
         type="button"
         onClick={onPrev}
