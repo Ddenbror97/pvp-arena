@@ -138,7 +138,7 @@ d("security remediation (isolated schema)", () => {
 
   it("pot ceiling holds under concurrent entries at the boundary", async () => {
     await sql`update pvp_test.jackpot_config set min_entry=100, max_entry=1000, max_pot=1000, entry_rate_limit=100000, countdown_seconds=60`;
-    const users = await Promise.all(Array.from({ length: 16 }, (_, i) => newUser(`p${i}`)));
+    const users = await Promise.all(Array.from({ length: 16 }, (_, i) => newUser(`player${i}`)));
     await jpTick(); // open game
     const res = await Promise.allSettled(users.map((u) => jpJoin(u, 100)));
     const ok = res.filter((r) => r.status === "fulfilled").length;
