@@ -154,14 +154,18 @@ export function GameChat({ className }: { gameType: ChatRoom; className?: string
                 onScroll={onScroll}
                 className="absolute inset-0 overflow-y-auto overscroll-contain"
               >
-                {loadingOlder && (
-                  <p className="py-2 text-center text-[11px] text-muted-foreground">Loading...</p>
-                )}
-                {!hasMore && historyLoaded && messages.length > 0 && (
-                  <p className="py-2 text-center text-[10px] uppercase tracking-widest text-muted-foreground/60">
-                    Start of chat
-                  </p>
-                )}
+                {/* Reserved top strip: constant height so "Start of chat" / "Loading..."
+                    never appear late and push the messages down. */}
+                <div
+                  className="flex h-8 shrink-0 items-center justify-center text-[10px] uppercase tracking-widest text-muted-foreground/60"
+                  aria-hidden={!loadingOlder}
+                >
+                  {loadingOlder
+                    ? "Loading..."
+                    : !hasMore && historyLoaded && messages.length > 0
+                      ? "Start of chat"
+                      : ""}
+                </div>
                 {messages.length === 0 && !historyLoaded && (userId || !ready) && (
                   <ul aria-busy="true" className="space-y-3 px-3 py-3">
                     {[0, 1, 2, 3, 4, 5].map((i) => (
