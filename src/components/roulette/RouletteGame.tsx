@@ -108,9 +108,9 @@ export function RouletteGame() {
 
   return (
     <div className="min-w-0 space-y-2.5">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs uppercase tracking-wider text-muted-foreground">Previous rolls</span>
-        <div className="flex h-6 gap-1">
+      <div className="flex h-6 items-center gap-2 overflow-hidden">
+        <span className="shrink-0 text-xs uppercase tracking-wider text-muted-foreground">Previous rolls</span>
+        <div className="flex h-6 min-w-0 gap-1 overflow-hidden">
           {(history.data ?? []).map((h) => (
             <CoinImg key={h.id} c={h.winning_color!} size={24} className="rounded-full" />
           ))}
@@ -130,7 +130,7 @@ export function RouletteGame() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-2.5">
-        <span className="tabular text-sm text-muted-foreground">
+        <span className="tabular w-full text-sm sm:w-auto sm:min-w-[8.5rem] text-muted-foreground">
           Balance <span className="font-semibold text-foreground">{formatUsd(balance)}</span>
         </span>
         <Input

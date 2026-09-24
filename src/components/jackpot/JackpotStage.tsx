@@ -191,7 +191,7 @@ export function JackpotStage() {
             </div>
           )}
         </JackpotWheel>
-        {game && (
+        {game ? (
           <Link
             to="/fairness"
             className="mt-4 inline-flex max-w-full items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
@@ -201,6 +201,8 @@ export function JackpotStage() {
               Seed commitment <span className="tabular">{game.server_seed_hash.slice(0, 16)}…</span>
             </span>
           </Link>
+        ) : (
+          <div aria-hidden className="mt-4 h-[17px]" />
         )}
       </section>
 

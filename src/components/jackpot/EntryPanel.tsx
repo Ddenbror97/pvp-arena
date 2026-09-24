@@ -18,7 +18,7 @@ interface Props {
 }
 
 export function EntryPanel({ game, myTotal, closed }: Props) {
-  const { userId, profile } = useAuth();
+  const { userId, profile, needsProfile } = useAuth();
   const wallet = useWallet(userId);
   const qc = useQueryClient();
   const [input, setInput] = useState("25.00");
@@ -37,7 +37,7 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
   const chance = valid ? estimatedChanceBps(myTotal, pot, amount!) : 0;
 
   async function submit() {
-    if (!valid || !affordable || pending || closed) return;
+    if (!profile || !valid || !affordable || pending || closed) return;
     setPending(true);
     if (!pendingKey.current || pendingKey.current.amount !== amount) {
       pendingKey.current = { key: crypto.randomUUID(), amount: amount! };
@@ -82,7 +82,7 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
       </Panel>
     );
   }
-  if (!profile) {
+  if (!profile && needsProfile) {
     return (
       <Panel>
         <p className="text-sm text-muted-foreground">Finish setting up your profile to play.</p>
@@ -141,12 +141,12 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
           Enter between {formatUsd(min)} and {formatUsd(game?.max_entry ?? 1000000)}.
         </p>
       )}
-      {valid && !affordable && <p className="mt-2 text-xs text-destructive">Not enough balance.</p>}
+      {valid && !affordable && !wallet.isLoading && <p className="mt-2 text-xs text-destructive">Not enough balance.</p>}
 
       <Button
         size="lg"
         className="mt-3 h-11 w-full font-display text-sm tracking-wide"
-        disabled={!affordable || pending || closed}
+        disabled={!profile || !affordable || pending || closed}
         onClick={submit}
       >
         {closed ? "No more entries" : pending ? "Entering..." : `Enter jackpot · ${valid ? formatUsd(amount!) : "$0.00"}`}

@@ -61,3 +61,4 @@
 - [x] Jackpot cold-start/LCP/FCP/JS audit (measure first, minimal fixes)
 - [x] Coinflip cold-start/LCP/FCP/JS audit (measure first, minimal fixes)
 - [x] Roulette cold-start/LCP/FCP/JS audit (measure first, minimal fixes)
+- [x] Zero movement on cold start inside Jackpot entry/players, Coinflip create, Roulette strip (signed in)
