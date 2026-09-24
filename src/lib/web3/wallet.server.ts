@@ -122,12 +122,14 @@ export const CLIENT_EVENTS = [
   "WALLET_CONNECTION_STARTED",
   "WALLET_CONNECTED",
   "WALLET_DISCONNECTED",
+  "WALLET_CONNECT_FAILED",
 ] as const;
 
 export async function recordEvent(
   userId: string,
   event: (typeof CLIENT_EVENTS)[number],
   address: string | null,
+  reason?: WalletErrorCode,
 ) {
   const rpc = await admin();
   let safe: string | null = null;
@@ -139,6 +141,9 @@ export async function recordEvent(
         p_address: normalizeAddress(address).checksummed,
       });
   }
-  await log(rpc, event, userId, { address: safe });
+  const details: Record<string, unknown> = { address: safe };
+  // Only our own safe error codes are stored, never provider text.
+  if (event === "WALLET_CONNECT_FAILED" && reason) details.reason = reason;
+  await log(rpc, event, userId, details);
   return { ok: true };
 }

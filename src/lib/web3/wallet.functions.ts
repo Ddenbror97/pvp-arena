@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { WALLET_ERROR_CODES } from "./errors";
 import { CLIENT_EVENTS, issueChallenge, recordEvent, verifyChallenge } from "./wallet.server";
 
 export const requestWalletChallenge = createServerFn({ method: "POST" })

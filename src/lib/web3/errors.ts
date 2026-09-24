@@ -17,6 +17,10 @@ export const WALLET_MESSAGES = {
   GENERIC: "Something went wrong with the wallet. Please try again.",
 } as const;
 export type WalletErrorCode = keyof typeof WALLET_MESSAGES;
+export const WALLET_ERROR_CODES = Object.keys(WALLET_MESSAGES) as [
+  WalletErrorCode,
+  ...WalletErrorCode[],
+];
 
 export class WalletError extends Error {
   constructor(public code: WalletErrorCode) {
