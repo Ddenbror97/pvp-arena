@@ -26,3 +26,6 @@
 - [x] Light page background with dark panels
 - [x] Background: black (replaced grey)
 - [x] Compact Coinflip game room (players/coin/result panels)
+
+- [x] Coinflip winner animation: more exciting celebration (visual only, no timing/logic change)
+- [x] Chat "No messages yet" flash fixed; [ ] ASK USER: one shared chat room vs separate per game — flashes before history loads — scan site for similar late-load flashes

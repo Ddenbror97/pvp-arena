@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 const QUICK = [500, 1000, 2500, 5000];
 
 export function CreatePanel() {
-  const { userId, profile } = useAuth();
+  const { userId, profile, ready } = useAuth();
   const wallet = useWallet(userId);
   const cfg = useCoinflipConfig();
   const qc = useQueryClient();
@@ -59,7 +59,7 @@ export function CreatePanel() {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
+    <div className={`rounded-xl border border-border bg-card p-4 ${!ready || userId ? "min-h-[28rem]" : ""}`}>
       <div className="flex items-center justify-between">
         <h2 className="font-display text-xs uppercase tracking-widest">Create a coinflip</h2>
         <span className="shrink-0 whitespace-nowrap rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>
