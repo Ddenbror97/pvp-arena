@@ -116,7 +116,7 @@ function PlayerSlot({ g, slot, phase, me }: { g: CfGameView; slot: "creator" | "
       ) : (
         <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-border text-2xl text-muted-foreground animate-pulse">?</div>
       )}
-      <div className="mt-2 truncate text-sm font-semibold">{uid ? `${p?.username ?? "player"}${uid === me ? " (you)" : ""}` : "Waiting..."}</div>
+      <div className="mt-2 truncate text-sm font-semibold">{uid ? `${p?.username ?? "player"}` : "Waiting..."}</div>
       <div className="tabular mt-0.5 font-display text-base">{formatUsd(g.amount)}</div>
       <SideChip side={side} className="mt-2" />
     </div>
@@ -150,9 +150,6 @@ function Center({ g, phase, start, serverNow, now, me }: { g: CfGameView; phase:
         <Coin startMs={null} side={null} serverNow={serverNow} restSide={g.creator_side as CoinSide} size={110} />
         <div className="font-display text-lg">Waiting for opponent...</div>
         <div className="mt-1 text-sm text-muted-foreground">Waiting for <b>{opposite(g.creator_side as CoinSide)}</b> · expires in <span className="tabular">{left}s</span></div>
-        {g.creator_id === me && (
-          <Button variant="secondary" size="sm" className="mt-4" onClick={cancel} disabled={pending}>Cancel and refund</Button>
-        )}
       </div>
     );
   }

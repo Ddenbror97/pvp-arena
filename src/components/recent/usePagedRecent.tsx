@@ -2,12 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export const RECENT_PAGE_SIZE = 8;
-const AUTO_ADVANCE_MS = 6000;
 
 /**
- * Paged recent-games list: 8 rows per page, auto-advances to the next page
- * every few seconds (pausing on hover/focus and for reduced-motion users),
- * with manual Prev/Next controls.
+ * Paged recent-games list: 8 rows per page, manual Prev/Next controls only.
  */
 export function usePagedRecent<T>(queryKey: string, fetcher: (limit: number, offset: number) => Promise<T[]>) {
   const [page, setPage] = useState(0);
@@ -24,17 +21,6 @@ export function usePagedRecent<T>(queryKey: string, fetcher: (limit: number, off
 
   const next = useCallback(() => setPage((p) => (hasNext ? p + 1 : 0)), [hasNext]);
   const prev = useCallback(() => setPage((p) => Math.max(0, p - 1)), []);
-
-  // Auto-scroll through pages; wraps to page 0 after the last one.
-  const pausedRef = useRef(paused);
-  pausedRef.current = paused;
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = window.setInterval(() => {
-      if (!pausedRef.current) setPage((p) => (hasNext ? p + 1 : 0));
-    }, AUTO_ADVANCE_MS);
-    return () => window.clearInterval(t);
-  }, [hasNext]);
 
   const pauseProps = {
     onMouseEnter: () => setPaused(true),
