@@ -31,6 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // sign-in, and two concurrent ensure_profile calls race (the loser hits a unique
   // violation and would wrongly show the "pick your username" dialog).
   const chain = useRef<Promise<void>>(Promise.resolve());
+  const lastUser = useRef<string | null>(null);
 
   const doLoad = useCallback(async (s: Session | null) => {
     if (!s) {
@@ -57,6 +58,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         p = await fetchProfile();
       }
     }
+    // Drop results for a user who is no longer the signed-in one.
+    if (lastUser.current !== s.user.id) return;
     setProfile(p ?? null);
     setNeedsProfile(!p);
   }, []);
@@ -74,12 +77,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let active = true;
     supabase.auth.getSession().then(async ({ data }) => {
       if (!active) return;
+      lastUser.current = data.session?.user.id ?? null;
       setSession(data.session);
       await loadProfile(data.session);
       if (active) setReady(true);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
-      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      // All tabs in one browser share one sign-in. If another tab signs into a
+      // different account, the session here switches user (possibly via a
+      // TOKEN_REFRESHED event) — never keep showing the previous user's profile.
+      const nextUser = s?.user.id ?? null;
+      const userChanged = nextUser !== lastUser.current;
+      lastUser.current = nextUser;
+      if (!userChanged && event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") {
+        setSession(s);
+        return;
+      }
+      if (userChanged) {
+        setProfile(null);
+        setNeedsProfile(false);
+      }
       setSession(s);
       setTimeout(() => void loadProfile(s), 0);
     });
