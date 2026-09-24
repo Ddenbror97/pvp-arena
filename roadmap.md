@@ -52,3 +52,4 @@
 
 - [x] Roulette: database, round engine, page, chat, menu links
 - [ ] Roulette: dedicated automated tests, attack/concurrency tests, performance check, audit report
+- [ ] Jackpot/Coinflip dead-code cleanup only (no logic changes), then run tests + build
