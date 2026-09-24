@@ -28,8 +28,8 @@ export const getRouter = () => {
   if (typeof window !== "undefined" && mode) {
     const warm = () => {
       for (const path of ["/", "/coinflip", "/roulette", "/fairness", "/auth"]) {
-        const r = (router.routesByPath as Record<string, unknown>)[path];
-        if (r) void router.loadRouteChunk(r as never).catch(() => {});
+        const r = (router.routesByPath as unknown as Record<string, unknown>)[path];
+        if (r) void router.loadRouteChunk(r as never)?.catch(() => {});
       }
     };
     const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback;
