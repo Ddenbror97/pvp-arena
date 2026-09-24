@@ -1,5 +1,4 @@
 import type { ChatMessage } from "@/lib/chat/messages";
-import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { cn } from "@/lib/utils";
 
 const time = (iso: string) =>
@@ -8,8 +7,7 @@ const time = (iso: string) =>
 /** Plain-text row: user content is only ever rendered as React text nodes. */
 export function ChatMessageRow({ m, mine }: { m: ChatMessage; mine: boolean }) {
   return (
-    <li className="flex gap-2 px-3 py-1.5">
-      <PlayerAvatar src={m.avatar_url} name={m.display_name} className="mt-0.5 h-6 w-6 ring-1" />
+    <li className="px-3 py-1.5">
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
           <span
