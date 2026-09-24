@@ -30,13 +30,13 @@ export async function fetchCoinflip(id: number): Promise<CfGameView | null> {
   return (data ?? null) as unknown as CfGameView | null;
 }
 
-export async function fetchRecentCoinflips(limit = 12): Promise<CfGameView[]> {
+export async function fetchRecentCoinflips(limit = 12, offset = 0): Promise<CfGameView[]> {
   const { data, error } = await supabase
     .from("coinflip_games")
     .select(SELECT)
     .eq("status", "COMPLETED")
     .order("id", { ascending: false })
-    .limit(limit);
+    .range(offset, offset + limit - 1);
   if (error) throw error;
   return (data ?? []) as unknown as CfGameView[];
 }
