@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ogImageMeta } from "@/lib/og";
 import { useState } from "react";
 import { drawTicket, hexToBytes, sha256Hex } from "@/lib/jackpot/fairness";
-import { coinflipMessage, coinflipOutcome } from "@/lib/fairness/coinflip";
+import { coinflipMessage, coinflipOutcome, verifyCoinflip, type CoinSide } from "@/lib/fairness/coinflip";
+import { verifyGame } from "@/lib/jackpot/fairness";
 import CF_VECTORS from "@/lib/fairness/coinflip-v1-vectors.json";
 import { rouletteMessage, verifyRoulette } from "@/lib/fairness/roulette";
 import { supabase } from "@/integrations/supabase/client";
@@ -142,6 +143,8 @@ function JackpotSection() {
         </div>
       </Card>
 
+      <RecordedCheck title="Check a recorded Jackpot game" id="jpcheck" run={checkJackpot} />
+
       <details className="mt-4 rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer font-display text-sm">How the draw works</summary>
         <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{SPEC}</pre>
@@ -198,6 +201,8 @@ function CoinflipSection() {
           <p className="text-[11px] text-muted-foreground">Runs entirely in your browser; nothing is sent to our servers.</p>
         </div>
       </Card>
+
+      <RecordedCheck title="Check a recorded Coinflip game" id="cfcheck" run={checkCoinflip} />
 
       <details className="mt-4 rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer font-display text-sm">How the draw works</summary>
@@ -279,5 +284,78 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
       <h2 className="font-display text-sm uppercase tracking-widest">{title}</h2>
       <div className="mt-3">{children}</div>
     </div>
+  );
+}
+
+type CheckOut = { ok: boolean; lines: string[] };
+
+function parseId(v: string) {
+  const id = Number(v.trim());
+  if (!Number.isInteger(id) || id < 1) throw new Error("Enter a game number.");
+  return id;
+}
+
+async function checkJackpot(v: string): Promise<CheckOut> {
+  const id = parseId(v);
+  const { data: g, error } = await supabase.from("jackpot_games")
+    .select("id, status, draw_version, pot_amount, server_seed_hash, server_seed, winning_ticket, winner_id").eq("id", id).maybeSingle();
+  if (error) throw new Error("Could not load that game.");
+  if (!g) throw new Error("Game not found.");
+  if (g.status !== "COMPLETED" || !g.server_seed) throw new Error("The seed is revealed once the game has finished.");
+  const { data: entries, error: e2 } = await supabase.from("jackpot_entries").select("user_id, ticket_start, ticket_end").eq("game_id", id);
+  if (e2) throw new Error("Could not load the entries.");
+  const r = await verifyGame(g, entries ?? []);
+  return {
+    ok: r.ok,
+    lines: [
+      ...r.checks.map((c) => `${c.ok ? "✓" : "✗"} ${c.label}: ${c.detail}`),
+      `recorded ticket = ${g.winning_ticket}, winner ${g.winner_id?.slice(0, 8)}...`,
+    ],
+  };
+}
+
+async function checkCoinflip(v: string): Promise<CheckOut> {
+  const id = parseId(v);
+  const { data: g, error } = await supabase.from("coinflip_games")
+    .select("id, status, draw_version, server_seed_hash, server_seed, winning_side").eq("id", id).maybeSingle();
+  if (error) throw new Error("Could not load that game.");
+  if (!g) throw new Error("Game not found.");
+  if (g.status !== "COMPLETED" || !g.server_seed) throw new Error("The seed is revealed once the game has finished.");
+  const r = await verifyCoinflip({ ...g, id: String(g.id), winning_side: g.winning_side as CoinSide | null });
+  return {
+    ok: r.ok,
+    lines: [...r.checks.map((c) => `${c.ok ? "✓" : "✗"} ${c.label}: ${c.detail}`), `recorded side = ${g.winning_side}`],
+  };
+}
+
+function RecordedCheck({ title, id, run }: { title: string; id: string; run: (v: string) => Promise<CheckOut> }) {
+  const [v, setV] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [res, setRes] = useState<CheckOut | { err: string } | null>(null);
+  async function go() {
+    setBusy(true);
+    try { setRes(await run(v)); } catch (e) { setRes({ err: e instanceof Error ? e.message : "Invalid input" }); } finally { setBusy(false); }
+  }
+  return (
+    <Card title={title}>
+      <div className="grid gap-3">
+        <div className="space-y-1.5">
+          <Label htmlFor={id}>Game number</Label>
+          <Input id={id} value={v} onChange={(e) => setV(e.target.value)} inputMode="numeric" />
+        </div>
+        <Button onClick={go} disabled={busy} className="w-full min-[420px]:w-fit">Verify</Button>
+        {res && ("err" in res ? (
+          <p className="text-xs text-muted-foreground">{res.err}</p>
+        ) : (
+          <div className={cn("rounded-xl border p-3", res.ok ? "border-primary/40 bg-primary/10" : "border-destructive/50 bg-destructive/10")}>
+            <p className={cn("font-display text-sm uppercase tracking-widest", res.ok ? "text-primary" : "text-destructive")}>
+              {res.ok ? "Verified · match" : "Mismatch · verification failed"}
+            </p>
+            <pre className="tabular mt-2 whitespace-pre-wrap break-all text-[11px] text-muted-foreground">{res.lines.join("\n")}</pre>
+          </div>
+        ))}
+        <p className="text-[11px] text-muted-foreground">Loads the recorded result from public data and compares it in your browser.</p>
+      </div>
+    </Card>
   );
 }
