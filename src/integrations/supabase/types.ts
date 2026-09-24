@@ -483,6 +483,141 @@ export type Database = {
         }
         Relationships: []
       }
+      game_chat_messages: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          edited_at: string | null
+          game_type: string
+          id: string
+          message: string
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_categories: string[] | null
+          moderation_provider: string | null
+          moderation_reason: string | null
+          moderation_score: number | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          game_type: string
+          id?: string
+          message: string
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_categories?: string[] | null
+          moderation_provider?: string | null
+          moderation_reason?: string | null
+          moderation_score?: number | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          game_type?: string
+          id?: string
+          message?: string
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_categories?: string[] | null
+          moderation_provider?: string | null
+          moderation_reason?: string | null
+          moderation_score?: number | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_chat_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_chat_moderation_events: {
+        Row: {
+          action: string
+          created_at: string
+          id: number
+          message_id: string | null
+          moderator_id: string | null
+          reason_code: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: never
+          message_id?: string | null
+          moderator_id?: string | null
+          reason_code?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: never
+          message_id?: string | null
+          moderator_id?: string | null
+          reason_code?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_chat_moderation_events_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "game_chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_chat_user_restrictions: {
+        Row: {
+          banned: boolean
+          created_at: string
+          muted_until: string | null
+          reason: string | null
+          updated_at: string
+          updated_by: string | null
+          user_id: string
+        }
+        Insert: {
+          banned?: boolean
+          created_at?: string
+          muted_until?: string | null
+          reason?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          user_id: string
+        }
+        Update: {
+          banned?: boolean
+          created_at?: string
+          muted_until?: string | null
+          reason?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_chat_user_restrictions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jackpot_config: {
         Row: {
           account_type: string
@@ -1111,6 +1246,35 @@ export type Database = {
       admin_coinflip_overview: { Args: never; Returns: Json }
       admin_overview: { Args: never; Returns: Json }
       auth_user_by_email: { Args: { p_email: string }; Returns: Json }
+      chat_send: {
+        Args: {
+          p_game: string
+          p_message: string
+          p_reason: string
+          p_severity: string
+          p_user: string
+        }
+        Returns: Json
+      }
+      chat_set_restriction: {
+        Args: {
+          p_banned: boolean
+          p_moderator: string
+          p_muted_until: string
+          p_reason: string
+          p_user: string
+        }
+        Returns: Json
+      }
+      chat_set_status: {
+        Args: {
+          p_message: string
+          p_moderator: string
+          p_reason: string
+          p_status: string
+        }
+        Returns: Json
+      }
       claim_test_credits: { Args: never; Returns: Json }
       coinflip_advance: { Args: { p_game_id: number }; Returns: string }
       coinflip_cancel: { Args: { p_game_id: number }; Returns: Json }

@@ -21,3 +21,8 @@
 - [x] Fix first-login profile creation blocked by unbalanced welcome-credit transaction
 - [x] MetaMask wallet connection + signature verification (Phase 1, identity only)
 - [x] Replace header logo with new casino_logo.png
+- [x] Shared live chat (Jackpot + Coinflip) with Broadcast, moderation, rate limits
+- [x] Jackpot: chat left of wheel; Players list auto-height (no scroll)
+- [x] Light page background with dark panels
+- [x] Background: black (replaced grey)
+- [x] Compact Coinflip game room (players/coin/result panels)

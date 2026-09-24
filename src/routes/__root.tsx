@@ -99,7 +99,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="canvas">
         {children}
         <Scripts />
       </body>
@@ -116,7 +116,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <SiteHeader />
-        <main className={wide ? "mx-auto max-w-none px-4 py-6 lg:px-6" : "mx-auto max-w-7xl px-4 py-8"}>
+        <main className={wide ? "canvas mx-auto max-w-none px-4 py-6 lg:px-6" : "canvas mx-auto max-w-7xl px-4 py-8"}>
           <Outlet />
         </main>
         <SiteFooter />
