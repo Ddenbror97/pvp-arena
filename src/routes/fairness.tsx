@@ -7,6 +7,7 @@ import CF_VECTORS from "@/lib/fairness/coinflip-v1-vectors.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/fairness")({
   head: () => ({
@@ -40,7 +41,61 @@ After entries close (N = final pot in cents = ticket count):
 
 After settlement: server_seed is revealed on the game record.`;
 
+const CF_SPEC = `When the game is created (before any opponent exists):
+  server_seed      = 32 random bytes (CSPRNG, Postgres pgcrypto)
+  server_seed_hash = SHA256(server_seed)            -> published on the game
+
+Fixed message (no free parameter):
+  message = "PVPCasino:coinflip:v1:" + game_id + ":" + draw_version
+
+  h    = HMAC-SHA256(key = server_seed, data = UTF-8(message))
+  side = (h[0] & 1) == 0 ? HEADS : TAILS             (exactly 50/50: one bit)
+
+The result is fixed when the opponent joins, hidden until the flip starts,
+and the seed is revealed once the game is settled.`;
+
+type Tab = "jackpot" | "coinflip";
+
 function FairnessPage() {
+  const [tab, setTab] = useState<Tab>("jackpot");
+
+  return (
+    <div className="mx-auto w-full max-w-2xl">
+      <h1 className="font-display text-2xl sm:text-3xl">Fairness protocol</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Every result is decided on the server with cryptographic randomness before any animation plays.
+        We commit to a secret seed before a round opens and reveal it afterwards, so anyone can recompute the outcome.
+      </p>
+
+      <div className="mt-5 grid grid-cols-2 gap-1.5 rounded-xl border border-border bg-card p-1.5" role="tablist" aria-label="Protocol">
+        {(
+          [
+            ["jackpot", "Jackpot"],
+            ["coinflip", "Coinflip"],
+          ] as const
+        ).map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            role="tab"
+            aria-selected={tab === id}
+            onClick={() => setTab(id)}
+            className={cn(
+              "rounded-lg py-2 font-display text-xs uppercase tracking-widest transition",
+              tab === id ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-6">{tab === "jackpot" ? <JackpotSection /> : <CoinflipSection />}</div>
+    </div>
+  );
+}
+
+function JackpotSection() {
   const [seed, setSeed] = useState("");
   const [gameId, setGameId] = useState("");
   const [pot, setPot] = useState("");
@@ -57,64 +112,53 @@ function FairnessPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <h1 className="font-display text-3xl">Fairness protocol v1</h1>
-      <p className="mt-3 text-muted-foreground">
-        Every jackpot winner is decided on the server with cryptographic randomness before the wheel spins. The wheel only replays
-        a result that is already recorded. Before a round takes entries we publish a hash of a secret seed; once the round ends we
-        reveal the seed so anyone can recompute the winner.
+    <section aria-label="Jackpot fairness">
+      <p className="text-sm text-muted-foreground">
+        The pot is split into one ticket per cent. A committed seed and rejection sampling pick the winning ticket — you can
+        recompute it below, or open any completed game and press “Verify”.
       </p>
 
-      <pre className="tabular mt-6 overflow-x-auto rounded-2xl border border-border bg-card p-5 text-xs leading-relaxed">{SPEC}</pre>
-
-      <h2 className="mt-10 font-display text-lg">What this does and doesn't prove</h2>
-      <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>The seed was fixed before any entry: its hash was public from the moment the round opened.</li>
-        <li>The draw input has no free parameter: the message is fully determined by the game number and protocol version.</li>
-        <li>Ticket mapping is integer-only and unbiased thanks to rejection sampling.</li>
-        <li>
-          Limitation: the operator generates the seed alone. A future version will mix in an independent randomness source before
-          any real-money use.
-        </li>
-      </ul>
-
-      <h2 className="mt-10 font-display text-lg">Verify a draw</h2>
-      <p className="mt-2 text-sm text-muted-foreground">Or open any completed game and press “Verify”.</p>
-      <div className="mt-4 grid gap-3">
-        <div className="space-y-1.5">
-          <Label htmlFor="seed">Revealed server seed (hex)</Label>
-          <Input id="seed" value={seed} onChange={(e) => setSeed(e.target.value)} className="tabular" />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
+      <Card title="Verify a draw">
+        <div className="grid gap-3">
           <div className="space-y-1.5">
-            <Label htmlFor="gid">Game number</Label>
-            <Input id="gid" value={gameId} onChange={(e) => setGameId(e.target.value)} inputMode="numeric" />
+            <Label htmlFor="seed">Revealed server seed (hex)</Label>
+            <Input id="seed" value={seed} onChange={(e) => setSeed(e.target.value)} className="tabular" />
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="pot">Final pot in cents</Label>
-            <Input id="pot" value={pot} onChange={(e) => setPot(e.target.value)} inputMode="numeric" />
+          <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="gid">Game number</Label>
+              <Input id="gid" value={gameId} onChange={(e) => setGameId(e.target.value)} inputMode="numeric" />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="pot">Final pot in cents</Label>
+              <Input id="pot" value={pot} onChange={(e) => setPot(e.target.value)} inputMode="numeric" />
+            </div>
           </div>
+          <Button onClick={run} className="w-full min-[420px]:w-fit">Compute</Button>
+          {out && <pre className="tabular whitespace-pre-wrap break-all rounded-xl bg-background/60 p-3 text-xs">{out}</pre>}
         </div>
-        <Button onClick={run} className="w-fit">Compute</Button>
-        {out && <pre className="tabular whitespace-pre-wrap break-all rounded-xl bg-card p-4 text-xs">{out}</pre>}
-      </div>
-      <CoinflipSection />
-    </div>
+      </Card>
+
+      <details className="mt-4 rounded-2xl border border-border bg-card p-4">
+        <summary className="cursor-pointer font-display text-sm">How the draw works</summary>
+        <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{SPEC}</pre>
+      </details>
+
+      <details className="mt-2 rounded-2xl border border-border bg-card p-4">
+        <summary className="cursor-pointer font-display text-sm">What this does and doesn’t prove</summary>
+        <ul className="mt-3 list-disc space-y-1.5 pl-5 text-xs text-muted-foreground">
+          <li>The seed was fixed before any entry: its hash was public from the moment the round opened.</li>
+          <li>The draw input has no free parameter: the message is fully determined by the game number and protocol version.</li>
+          <li>Ticket mapping is integer-only and unbiased thanks to rejection sampling.</li>
+          <li>
+            Limitation: the operator generates the seed alone. A future version will mix in an independent randomness source
+            before any real-money use.
+          </li>
+        </ul>
+      </details>
+    </section>
   );
 }
-
-const CF_SPEC = `When the game is created (before any opponent exists):
-  server_seed      = 32 random bytes (CSPRNG, Postgres pgcrypto)
-  server_seed_hash = SHA256(server_seed)            -> published on the game
-
-Fixed message (no free parameter):
-  message = "PVPCasino:coinflip:v1:" + game_id + ":" + draw_version
-
-  h    = HMAC-SHA256(key = server_seed, data = UTF-8(message))
-  side = (h[0] & 1) == 0 ? HEADS : TAILS             (exactly 50/50: one bit)
-
-The result is fixed when the opponent joins, hidden until the flip starts,
-and the seed is revealed once the game is settled.`;
 
 function CoinflipSection() {
   const [seed, setSeed] = useState("");
@@ -130,28 +174,37 @@ function CoinflipSection() {
     }
   }
   return (
-    <>
-      <h1 className="mt-16 font-display text-3xl">Coinflip protocol v1</h1>
-      <p className="mt-3 text-muted-foreground">Uses the same seed-commitment engine as Jackpot, with its own message prefix so results from one game can never be reused for another.</p>
-      <pre className="tabular mt-6 overflow-x-auto rounded-2xl border border-border bg-card p-5 text-xs leading-relaxed">{CF_SPEC}</pre>
-      <h2 className="mt-8 font-display text-lg">Verify a coinflip</h2>
-      <p className="mt-2 text-sm text-muted-foreground">Runs entirely in your browser; nothing is sent to our servers.</p>
-      <div className="mt-4 grid gap-3">
-        <div className="space-y-1.5">
-          <Label htmlFor="cfseed">Revealed server seed (hex)</Label>
-          <Input id="cfseed" value={seed} onChange={(e) => setSeed(e.target.value)} className="tabular" />
+    <section aria-label="Coinflip fairness">
+      <p className="text-sm text-muted-foreground">
+        Uses the same seed-commitment engine as Jackpot, with its own message prefix so results from one game can never be
+        reused for another. One HMAC bit decides the side — exactly 50/50.
+      </p>
+
+      <Card title="Verify a coinflip">
+        <div className="grid gap-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="cfseed">Revealed server seed (hex)</Label>
+            <Input id="cfseed" value={seed} onChange={(e) => setSeed(e.target.value)} className="tabular" />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="cfgid">Coinflip game number</Label>
+            <Input id="cfgid" value={gameId} onChange={(e) => setGameId(e.target.value)} inputMode="numeric" />
+          </div>
+          <Button onClick={run} className="w-full min-[420px]:w-fit">Compute</Button>
+          {out && <pre className="tabular whitespace-pre-wrap break-all rounded-xl bg-background/60 p-3 text-xs">{out}</pre>}
+          <p className="text-[11px] text-muted-foreground">Runs entirely in your browser; nothing is sent to our servers.</p>
         </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="cfgid">Coinflip game number</Label>
-          <Input id="cfgid" value={gameId} onChange={(e) => setGameId(e.target.value)} inputMode="numeric" />
-        </div>
-        <Button onClick={run} className="w-fit">Compute</Button>
-        {out && <pre className="tabular whitespace-pre-wrap break-all rounded-xl bg-card p-4 text-xs">{out}</pre>}
-      </div>
-      <details className="mt-8 rounded-2xl border border-border bg-card p-4 text-xs">
+      </Card>
+
+      <details className="mt-4 rounded-2xl border border-border bg-card p-4">
+        <summary className="cursor-pointer font-display text-sm">How the draw works</summary>
+        <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{CF_SPEC}</pre>
+      </details>
+
+      <details className="mt-2 rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer font-display text-sm">Published test vectors ({CF_VECTORS.length})</summary>
-        <div className="mt-3 overflow-x-auto">
-          <table className="tabular w-full">
+        <div className="mt-3 max-h-64 overflow-y-auto overscroll-contain">
+          <table className="tabular w-full text-[11px]">
             <thead className="text-left text-muted-foreground"><tr><th className="pr-3">game_id</th><th className="pr-3">server_seed</th><th className="pr-3">first byte</th><th>side</th></tr></thead>
             <tbody>
               {CF_VECTORS.map((v, i) => (
@@ -161,6 +214,15 @@ function CoinflipSection() {
           </table>
         </div>
       </details>
-    </>
+    </section>
+  );
+}
+
+function Card({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="mt-4 rounded-2xl border border-border bg-card p-4">
+      <h2 className="font-display text-sm uppercase tracking-widest">{title}</h2>
+      <div className="mt-3">{children}</div>
+    </div>
   );
 }
