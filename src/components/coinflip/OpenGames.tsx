@@ -7,7 +7,8 @@ import { useAuth } from "@/lib/auth";
 import { formatUsd } from "@/lib/jackpot/math";
 import { friendlyError } from "@/lib/jackpot/errors";
 import { openRoom, fetchOpenCoinflips, fetchRecentCoinflips, opposite, type CfGameView, type CoinSide } from "@/lib/coinflip/api";
-import { PlayerAvatar } from "@/components/jackpot/Avatar";
+import headsAsset from "@/assets/coin-heads.png.asset.json";
+import tailsAsset from "@/assets/coin-tails.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/time-ago";
@@ -72,7 +73,7 @@ function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin:
 
   return (
     <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
-      <PlayerAvatar src={g.creator?.avatar_url} name={g.creator?.username} className="h-11 w-11" />
+      <SideCoinImg side={side} className="h-11 w-11" />
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-semibold">@{g.creator?.username ?? "player"}</div>
         <div className="tabular font-display text-lg">{formatUsd(g.amount)}</div>
@@ -109,9 +110,9 @@ export function RecentCoinflips() {
           <ul className="divide-y divide-border">
             {q.data.map((g) => {
               const creatorWon = g.winner_id === g.creator_id;
-              const name = (p: typeof g.creator, won: boolean) => (
+              const name = (p: typeof g.creator, won: boolean, s: CoinSide) => (
                 <span className={cn("flex min-w-0 items-center gap-1.5", !won && "opacity-50")}>
-                  <PlayerAvatar src={p?.avatar_url} name={p?.username} className="h-5 w-5 shrink-0" />
+                  <SideCoinImg side={s} className="h-5 w-5" />
                   <span className={cn("truncate", won && "font-semibold")}>{p?.username ?? "unknown"}</span>
                 </span>
               );
@@ -139,5 +140,18 @@ export function RecentCoinflips() {
         </div>
       )}
     </section>
+  );
+}
+
+function SideCoinImg({ side, className }: { side: CoinSide; className?: string }) {
+  return (
+    <img
+      src={(side === "HEADS" ? headsAsset : tailsAsset).url}
+      alt={side === "HEADS" ? "Heads" : "Tails"}
+      width={44}
+      height={44}
+      draggable={false}
+      className={cn("shrink-0 rounded-full object-cover select-none", className)}
+    />
   );
 }
