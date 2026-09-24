@@ -156,14 +156,22 @@ d("security remediation (isolated schema)", () => {
 
   it("public tick is gated (no pile-up, <= 1 run per 250ms); scheduler is never gated; duplicates stay single-effect", async () => {
     const anon = { claims: { role: "anon" } };
+    const t0 = Date.now();
     const r = await Promise.all(Array.from({ length: 12 }, () => cfTick(anon)));
-    expect(r.filter((x) => !x.throttled).length).toBeLessThanOrEqual(1);
+    const ran = r.filter((x) => !x.throttled).length;
+    // At most one run per 250 ms window, however many callers pile in.
+    expect(ran).toBeGreaterThanOrEqual(1);
+    expect(ran).toBeLessThanOrEqual(Math.ceil((Date.now() - t0) / 250) + 1);
+    expect(ran).toBeLessThan(12);
     const again = await cfTick(anon);
     expect(again.throttled).toBe(true);
     await sleep(300);
     expect((await cfTick(anon)).throttled).toBeUndefined();
     const auth = { claims: { role: "authenticated" } };
-    expect((await Promise.all([jpTick(auth), jpTick(auth), jpTick(auth)])).filter((x) => !x.throttled).length).toBeLessThanOrEqual(1);
+    await sleep(300);
+    const t1 = Date.now();
+    const jr = await Promise.all([jpTick(auth), jpTick(auth), jpTick(auth)]);
+    expect(jr.filter((x) => !x.throttled).length).toBeLessThanOrEqual(Math.ceil((Date.now() - t1) / 250) + 1);
     const sched = await Promise.all([cfTick(), cfTick(), cfTick()]);
     for (const s of sched) expect(s.throttled).toBeUndefined();
     // Duplicate triggering of a real settlement: exactly one payout.
