@@ -26,3 +26,5 @@
 - [x] Light page background with dark panels
 - [x] Background: black (replaced grey)
 - [x] Compact Coinflip game room (players/coin/result panels)
+
+- [ ] Coinflip winner animation: more exciting celebration (visual only, no timing/logic change)
