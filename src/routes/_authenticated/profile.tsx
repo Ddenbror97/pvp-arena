@@ -8,6 +8,7 @@ import { formatUsd } from "@/lib/jackpot/math";
 import { friendlyError } from "@/lib/jackpot/errors";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { Button } from "@/components/ui/button";
+import { WalletCard } from "@/components/wallet/WalletCard";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -84,6 +85,8 @@ function ProfilePage() {
           </button>
         ))}
       </div>
+
+      {userId && <WalletCard userId={userId} />}
     </div>
   );
 }
