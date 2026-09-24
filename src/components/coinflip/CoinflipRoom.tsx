@@ -87,15 +87,17 @@ export function CoinflipRoom({ id }: { id: number }) {
         <span className="rounded bg-secondary px-2 py-0.5 text-xs">{g.status}</span>
       </div>
 
-      <div className="relative mt-3 overflow-hidden rounded-2xl border border-border bg-card p-4 sm:px-8 sm:py-5">
-        <div className="grid items-center gap-4 sm:grid-cols-[1fr_auto_1fr]">
+      <div className="relative mt-3 overflow-hidden rounded-2xl border border-border bg-card p-4 sm:px-10 sm:py-8">
+        <div className="grid grid-cols-2 items-center gap-4 sm:grid-cols-[1fr_auto_1fr]">
           <PlayerSlot g={g} slot="creator" phase={phase} me={userId} />
-          <Center g={g} phase={phase} start={start} serverNow={serverNow} now={now} me={userId} />
+          <div className="order-first col-span-2 sm:order-none sm:col-span-1">
+            <Center g={g} phase={phase} start={start} serverNow={serverNow} now={now} me={userId} />
+          </div>
           <PlayerSlot g={g} slot="opponent" phase={phase} me={userId} />
         </div>
+        {phase === "result" && <ResultCard g={g} me={userId} />}
       </div>
 
-      {phase === "result" && <ResultCard g={g} me={userId} />}
       <FairnessPanel g={g} />
     </div>
   );
@@ -108,7 +110,7 @@ function PlayerSlot({ g, slot, phase, me }: { g: CfGameView; slot: "creator" | "
   const won = phase === "result" && g.winner_id && g.winner_id === uid;
   const lost = phase === "result" && g.winner_id && g.winner_id !== uid;
   return (
-    <div className={`flex flex-col items-center text-center transition ${lost ? "opacity-40" : ""} ${slot === "opponent" ? "sm:order-last" : ""}`}>
+    <div className={`flex flex-col items-center text-center transition ${lost ? "opacity-40" : ""} `}>
       {uid ? (
         <SideCoin side={side} className={`h-14 w-14 ${won ? "glow-gold" : ""}`} />
       ) : (
@@ -182,12 +184,12 @@ function Center({ g, phase, start, serverNow, now, me }: { g: CfGameView; phase:
       <div className={`relative ${revealed ? `animate-coin-land ${tone}` : ""}`}>
         {revealed && (
           <>
-            <span className="shockwave h-[130px] w-[130px]" />
-            <span className="shockwave h-[130px] w-[130px]" style={{ animationDelay: "0.18s" }} />
+            <span className="shockwave h-[150px] w-[150px]" />
+            <span className="shockwave h-[150px] w-[150px]" style={{ animationDelay: "0.18s" }} />
             <span className="pointer-events-none absolute inset-0 -z-10 rounded-full bg-current opacity-30 blur-2xl" />
           </>
         )}
-        <Coin startMs={start} side={(g.winning_side as CoinSide | null) ?? null} serverNow={serverNow} size={130} />
+        <Coin startMs={start} side={(g.winning_side as CoinSide | null) ?? null} serverNow={serverNow} size={150} />
       </div>
       {phase === "flipping" ? (
         <div className="font-display text-sm tracking-[0.4em] text-muted-foreground">FLIPPING</div>
@@ -223,14 +225,12 @@ function ResultCard({ g, me }: { g: CfGameView; me: string | null }) {
   const involved = me && (me === g.creator_id || me === g.opponent_id);
   const iWon = involved && g.winner_id === me;
   return (
-    <div className={`animate-rise-in mt-3 rounded-xl border border-gold/30 bg-card p-4 ${settled ? "win-card" : ""}`}>
+    <div className="animate-rise-in mt-4 border-t border-border pt-4">
       {settled && iWon && <Celebration />}
-      <div className="flex flex-wrap items-center gap-3">
-        {g.winning_side && <SideCoin side={g.winning_side as CoinSide} className={`h-11 w-11 ${settled ? "animate-win-pop" : ""}`} />}
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
         <div className="min-w-0 flex-1">
-          <div className="text-xs tracking-[0.3em] text-gold">WINNER</div>
-          <div className="font-display text-base">@{winner?.username ?? "player"}</div>
-          {g.winning_side && <SideChip side={g.winning_side as CoinSide} className="mt-1" />}
+          <div className="text-[10px] tracking-[0.3em] text-gold">WINNER</div>
+          <div className="truncate font-display text-base">@{winner?.username ?? "player"}</div>
         </div>
         {involved && settled && (
           <div className="text-right">
@@ -242,17 +242,16 @@ function ResultCard({ g, me }: { g: CfGameView; me: string | null }) {
             </div>
           </div>
         )}
+        <dl className="tabular flex gap-5 text-sm">
+          <div><dt className="text-[10px] text-muted-foreground">Pot</dt><dd>{formatUsd(g.pot_amount)}</dd></div>
+          <div><dt className="text-[10px] text-muted-foreground">Payout</dt><dd>{settled ? formatUsd(g.payout_amount ?? 0) : "Settling..."}</dd></div>
+        </dl>
+        {settled && (
+          <Button asChild size="sm" className="w-full font-display animate-win-pop sm:w-auto sm:px-8">
+            <Link to="/coinflip">Play again</Link>
+          </Button>
+        )}
       </div>
-      <dl className="tabular mt-3 grid grid-cols-3 gap-3 border-t border-border pt-3 text-sm">
-        <div><dt className="text-xs text-muted-foreground">Wager</dt><dd>{formatUsd(g.amount)} each</dd></div>
-        <div><dt className="text-xs text-muted-foreground">Total pot</dt><dd>{formatUsd(g.pot_amount)}</dd></div>
-        <div><dt className="text-xs text-muted-foreground">Payout</dt><dd>{settled ? formatUsd(g.payout_amount ?? 0) : "Settling..."}</dd></div>
-      </dl>
-      {settled && (
-        <Button asChild size="sm" className="mt-3 w-full font-display animate-win-pop">
-          <Link to="/coinflip">Play again</Link>
-        </Button>
-      )}
     </div>
   );
 }
@@ -260,11 +259,15 @@ function ResultCard({ g, me }: { g: CfGameView; me: string | null }) {
 function FairnessPanel({ g }: { g: CfGameView }) {
   const [res, setRes] = useState<{ ok: boolean; checks: CoinflipCheck[] } | null>(null);
   return (
-    <section className="mt-3 rounded-xl border border-border bg-card p-4 text-sm">
-      <div className="flex items-center gap-2 font-display text-sm uppercase tracking-widest">
-        <ShieldCheck className="h-4 w-4 text-primary" /> Provably fair · Coinflip v1
-      </div>
-      <dl className="mt-3 grid gap-2">
+    <details className="group mt-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm">
+      <summary className="flex cursor-pointer list-none items-center gap-2 text-xs text-muted-foreground hover:text-foreground">
+        <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+        <span className="font-display uppercase tracking-widest">Provably fair</span>
+        <span className="tabular hidden truncate sm:inline">· {g.server_seed_hash.slice(0, 16)}…</span>
+        <span className="ml-auto group-open:hidden">Details</span>
+        <span className="ml-auto hidden group-open:inline">Hide</span>
+      </summary>
+      <dl className="mt-3 grid gap-2 sm:grid-cols-2">
         <Row k="Server seed hash (committed at creation)" v={g.server_seed_hash} />
         <Row k="Message" v={`PVPCasino:coinflip:${g.protocol_version}:${g.id}:${g.draw_version}`} />
         <Row k="Server seed" v={g.server_seed ?? "Revealed when the game completes"} />
@@ -275,7 +278,8 @@ function FairnessPanel({ g }: { g: CfGameView }) {
       {g.status === "COMPLETED" && (
         <Button
           size="sm"
-          className="mt-4"
+          variant="secondary"
+          className="mt-3"
           onClick={async () =>
             setRes(await verifyCoinflip({ id: String(g.id), draw_version: g.draw_version, server_seed_hash: g.server_seed_hash, server_seed: g.server_seed, winning_side: g.winning_side as CoinSide | null }))
           }
@@ -293,7 +297,7 @@ function FairnessPanel({ g }: { g: CfGameView }) {
           ))}
         </ul>
       )}
-    </section>
+    </details>
   );
 }
 
