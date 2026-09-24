@@ -130,7 +130,7 @@ export function RouletteGame() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-2.5">
-        <span className="tabular min-w-[8.5rem] text-sm text-muted-foreground">
+        <span className="tabular w-full text-sm sm:w-auto sm:min-w-[8.5rem] text-muted-foreground">
           Balance <span className="font-semibold text-foreground">{formatUsd(balance)}</span>
         </span>
         <Input
