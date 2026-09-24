@@ -16,6 +16,7 @@ import { Route as CoinflipRouteImport } from './routes/coinflip'
 import { Route as FairnessRouteImport } from './routes/fairness'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResponsibleGamblingRouteImport } from './routes/responsible-gambling'
+import { Route as RouletteRouteImport } from './routes/roulette'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -56,6 +57,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ResponsibleGamblingRoute = ResponsibleGamblingRouteImport.update({
   id: '/responsible-gambling',
   path: '/responsible-gambling',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RouletteRoute = RouletteRouteImport.update({
+  id: '/roulette',
+  path: '/roulette',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/fairness': typeof FairnessRoute
   '/privacy': typeof PrivacyRoute
   '/responsible-gambling': typeof ResponsibleGamblingRoute
+  '/roulette': typeof RouletteRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/fairness': typeof FairnessRoute
   '/privacy': typeof PrivacyRoute
   '/responsible-gambling': typeof ResponsibleGamblingRoute
+  '/roulette': typeof RouletteRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   '/fairness': typeof FairnessRoute
   '/privacy': typeof PrivacyRoute
   '/responsible-gambling': typeof ResponsibleGamblingRoute
+  '/roulette': typeof RouletteRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/fairness'
     | '/privacy'
     | '/responsible-gambling'
+    | '/roulette'
     | '/terms'
     | '/admin'
     | '/profile'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/fairness'
     | '/privacy'
     | '/responsible-gambling'
+    | '/roulette'
     | '/terms'
     | '/admin'
     | '/profile'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '/fairness'
     | '/privacy'
     | '/responsible-gambling'
+    | '/roulette'
     | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/profile'
@@ -199,6 +211,7 @@ export interface RootRouteChildren {
   FairnessRoute: typeof FairnessRoute
   PrivacyRoute: typeof PrivacyRoute
   ResponsibleGamblingRoute: typeof ResponsibleGamblingRoute
+  RouletteRoute: typeof RouletteRoute
   TermsRoute: typeof TermsRoute
   GamesGameIdRoute: typeof GamesGameIdRoute
   ApiPublicAvatarStyleSeedRoute: typeof ApiPublicAvatarStyleSeedRoute
@@ -253,6 +266,13 @@ declare module '@tanstack/react-router' {
       path: '/responsible-gambling'
       fullPath: '/responsible-gambling'
       preLoaderRoute: typeof ResponsibleGamblingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/roulette': {
+      id: '/roulette'
+      path: '/roulette'
+      fullPath: '/roulette'
+      preLoaderRoute: typeof RouletteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -342,6 +362,7 @@ const rootRouteChildren: RootRouteChildren = {
   FairnessRoute: FairnessRoute,
   PrivacyRoute: PrivacyRoute,
   ResponsibleGamblingRoute: ResponsibleGamblingRoute,
+  RouletteRoute: RouletteRoute,
   TermsRoute: TermsRoute,
   GamesGameIdRoute: GamesGameIdRoute,
   ApiPublicAvatarStyleSeedRoute: ApiPublicAvatarStyleSeedRoute,
