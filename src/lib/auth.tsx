@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -27,40 +27,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [needsProfile, setNeedsProfile] = useState(false);
 
-  const loadProfile = useCallback(async (s: Session | null) => {
+  // Serialise loads: initial getSession and SIGNED_IN can fire together on first
+  // sign-in, and two concurrent ensure_profile calls race (the loser hits a unique
+  // violation and would wrongly show the "pick your username" dialog).
+  const chain = useRef<Promise<void>>(Promise.resolve());
+
+  const doLoad = useCallback(async (s: Session | null) => {
     if (!s) {
       setProfile(null);
       setNeedsProfile(false);
       return;
     }
-    const { data } = await supabase
-      .from("profiles")
-      .select("id, username, avatar_url, created_at")
-      .eq("id", s.user.id)
-      .maybeSingle();
-    if (data) {
-      setProfile(data);
-      setNeedsProfile(false);
-      return;
-    }
-    // First sign-in: create the profile from signup details if we have them.
-    const meta = s.user.user_metadata as { username?: string; age_confirmed?: boolean };
-    if (meta?.username && meta?.age_confirmed) {
-      const { error } = await supabase.rpc("ensure_profile", { p_username: meta.username, p_age_confirmed: true });
-      if (!error) {
-        const { data: p } = await supabase
+    const fetchProfile = async () =>
+      (
+        await supabase
           .from("profiles")
           .select("id, username, avatar_url, created_at")
           .eq("id", s.user.id)
-          .maybeSingle();
-        setProfile(p ?? null);
-        setNeedsProfile(!p);
-        return;
+          .maybeSingle()
+      ).data;
+    let p = await fetchProfile();
+    if (!p) {
+      // First sign-in: create the profile from signup details if we have them.
+      const meta = s.user.user_metadata as { username?: string; age_confirmed?: boolean };
+      if (meta?.username && meta?.age_confirmed) {
+        const { error } = await supabase.rpc("ensure_profile", { p_username: meta.username, p_age_confirmed: true });
+        if (error) console.warn("ensure_profile failed", error.message);
+        // Re-read regardless of error: a parallel call may have created it.
+        p = await fetchProfile();
       }
     }
-    setProfile(null);
-    setNeedsProfile(true);
+    setProfile(p ?? null);
+    setNeedsProfile(!p);
   }, []);
+
+  const loadProfile = useCallback(
+    (s: Session | null) => {
+      const next = chain.current.catch(() => {}).then(() => doLoad(s));
+      chain.current = next;
+      return next;
+    },
+    [doLoad],
+  );
 
   useEffect(() => {
     let active = true;
