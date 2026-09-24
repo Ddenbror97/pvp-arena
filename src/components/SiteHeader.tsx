@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { useWallet } from "@/lib/jackpot/api";
@@ -63,7 +64,11 @@ export function SiteFooter() {
 
 /** Phone-only bottom tab bar: primary navigation within thumb reach. */
 export function MobileTabBar() {
-  const { userId } = useAuth();
+  const { userId: authId } = useAuth();
+  // Auth state is client-only; defer it until after hydration to keep SSR markup identical.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const userId = mounted ? authId : null;
   const tab =
     "flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors [&.active]:text-primary";
   return (
