@@ -55,4 +55,5 @@
 - [x] Jackpot/Coinflip dead-code cleanup only (no logic changes), then run tests + build
 - [x] Roulette v2 wheel: Purple/Silver 2x (7 each), Green 14x (1), slower spin
 
-- [ ] Coinflip finished-game screen: merge coin + winner into one panel, compact collapsible provably-fair section
+- [x] Coinflip finished-game screen: merge coin + winner into one panel, compact collapsible provably-fair section
+- [x] Roulette adversarial audit: 15 attack tests + 4 verifier tests, Fairness page Roulette tab, report
