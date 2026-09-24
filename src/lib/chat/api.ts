@@ -43,8 +43,22 @@ export async function fetchChatPage(room: ChatRoom, before?: ChatMessage): Promi
   return ((data ?? []) as unknown as Row[]).map(toMessage).reverse();
 }
 
+// Last known messages per room, so returning to a page shows chat instantly
+// while the server copy is re-fetched (display cache only; server stays authoritative).
+const roomCache = new Map<ChatRoom, ChatMessage[]>();
+
 export function useGameChat(room: ChatRoom, userId: string | null) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessagesState] = useState<ChatMessage[]>(() => roomCache.get(room) ?? []);
+  const [historyLoaded, setHistoryLoaded] = useState(() => roomCache.has(room));
+  const setMessages = useCallback(
+    (fn: ChatMessage[] | ((cur: ChatMessage[]) => ChatMessage[])) =>
+      setMessagesState((cur) => {
+        const next = typeof fn === "function" ? fn(cur) : fn;
+        roomCache.set(room, next);
+        return next;
+      }),
+    [room],
+  );
   const [online, setOnline] = useState(0);
   const [status, setStatus] = useState<"idle" | "connecting" | "live" | "offline">("idle");
   const [hasMore, setHasMore] = useState(true);
@@ -64,14 +78,15 @@ export function useGameChat(room: ChatRoom, userId: string | null) {
         return mergeMessages(kept, latest);
       });
       if (latest.length < CHAT_CONFIG.pageSize) setHasMore(false);
+      setHistoryLoaded(true);
     } catch {
       /* history is retried on the next reconnect / visibility change */
     }
-  }, [room]);
+  }, [room, setMessages]);
 
   useEffect(() => {
     if (!userId) {
-      setMessages([]);
+      setMessagesState([]);
       setStatus("idle");
       setOnline(0);
       return;
@@ -79,7 +94,10 @@ export function useGameChat(room: ChatRoom, userId: string | null) {
     let disposed = false;
     setStatus("connecting");
     setHasMore(true);
-    setMessages([]);
+    setMessagesState(roomCache.get(room) ?? []);
+    setHistoryLoaded(roomCache.has(room));
+    // Load history right away, in parallel with the live connection.
+    void reconcile();
     const presenceKey = crypto.randomUUID();
     let presenceTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -127,7 +145,7 @@ export function useGameChat(room: ChatRoom, userId: string | null) {
       if (channelRef.current) void supabase.removeChannel(channelRef.current);
       channelRef.current = null;
     };
-  }, [room, userId, reconcile]);
+  }, [room, userId, reconcile, setMessages]);
 
   const loadOlder = useCallback(async () => {
     if (loadingOlder || !hasMore || !messages[0]) return;
