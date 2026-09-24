@@ -50,7 +50,7 @@ export function SiteHeader() {
 /** Balance plus the two wallet shortcuts, kept in one compact segmented control. */
 function WalletGroup({ available, loading }: { available?: number | undefined; loading: boolean }) {
   const action =
-    "flex flex-1 items-center justify-center gap-1 px-2 py-1 text-[11px] font-bold uppercase tracking-wide transition-colors sm:flex-none sm:px-2.5 sm:py-1.5 sm:text-xs";
+    "flex flex-1 items-center justify-center gap-1 px-3 py-1 text-[11px] font-bold uppercase transition-colors sm:flex-none sm:px-2.5 sm:py-1.5 sm:text-xs sm:tracking-wide";
   return (
     <nav
       aria-label="Wallet"
