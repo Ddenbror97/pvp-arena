@@ -18,3 +18,4 @@
 - [x] Replace favicon with PVP logo, remove Lovable icon
 - [x] Resend 6-digit sign-up codes (built)
 - [ ] Live sign-up with a real inbox (user testing themselves)
+- [ ] Fix first-login profile creation blocked by unbalanced welcome-credit transaction
