@@ -89,6 +89,7 @@
   --rival-foreground: oklch(0.15 0.02 25);
   --gold: oklch(0.74 0.2 310);
   --destructive: oklch(0.64 0.22 25);
+  --success: oklch(0.78 0.2 145);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 12%);
