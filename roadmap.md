@@ -19,5 +19,5 @@
 - [x] Resend 6-digit sign-up codes (built)
 - [ ] Live sign-up with a real inbox (user testing themselves)
 - [x] Fix first-login profile creation blocked by unbalanced welcome-credit transaction
-- [ ] MetaMask wallet connection + signature verification (Phase 1, identity only)
-- [ ] Replace header logo with new casino_logo.png
+- [x] MetaMask wallet connection + signature verification (Phase 1, identity only)
+- [x] Replace header logo with new casino_logo.png
