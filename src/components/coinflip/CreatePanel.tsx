@@ -11,6 +11,8 @@ import { APP } from "@/lib/config";
 import { useCoinflipConfig, type CoinSide } from "@/lib/coinflip/api";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import headsAsset from "@/assets/coin-heads.png.asset.json";
+import tailsAsset from "@/assets/coin-tails.png.asset.json";
 
 const QUICK = [500, 1000, 2500, 5000];
 
