@@ -60,7 +60,7 @@ export function RecentPager({
   onNext: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between border-t border-border px-3 py-1.5">
+    <div className="mt-auto flex items-center justify-between border-t border-border px-3 py-1.5">
       <button
         type="button"
         onClick={onPrev}
@@ -83,4 +83,4 @@ export function RecentPager({
 }
 
 /** Full-bleed wrapper so the section runs edge to edge inside a centered page container. */
-export const EDGE_TO_EDGE = "relative left-1/2 mt-8 w-screen -translate-x-1/2 px-3 sm:px-6";
+export const EDGE_TO_EDGE = "relative left-1/2 mt-8 flex w-screen flex-1 -translate-x-1/2 flex-col px-3 sm:px-6";

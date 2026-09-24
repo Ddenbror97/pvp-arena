@@ -107,7 +107,7 @@ export function RecentCoinflips() {
       {!rows.length ? (
         <p className="text-sm text-muted-foreground">{isLoading ? "Loading..." : "No completed games yet."}</p>
       ) : (
-        <div className="rounded-xl border border-border bg-card">
+        <div className="flex flex-1 flex-col rounded-xl border border-border bg-card">
           <div className="grid grid-cols-[2rem_minmax(0,1fr)_4.5rem] gap-2 border-b border-border px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[4.5rem_minmax(0,1fr)_5rem_6rem_5rem]">
             <span>Game</span><span>Players</span><span className="hidden sm:block">Side</span><span className="text-right">Pot</span><span className="hidden text-right sm:block">When</span>
           </div>
