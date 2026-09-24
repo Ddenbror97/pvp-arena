@@ -34,3 +34,4 @@
 - [ ] Fix chat "Start of chat" drop-in: it appears late and makes the username row shift/drop — remove entrance animation / reserve geometry
 - [ ] Fairness page UX: too much content / too big — simplify layout, fix mobile
 - [x] Fix chat "Start of chat" drop-in: reserved constant-height top strip in GameChat (verified: message + marker render in same commit)
+- [x] Fairness page UX: Jackpot/Coinflip tabs, verifier card first, specs/vectors collapsed, compact mobile layout (no overflow at 1280/390px; both verifiers tested)
