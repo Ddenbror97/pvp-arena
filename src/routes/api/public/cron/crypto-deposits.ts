@@ -3,9 +3,9 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/api/public/cron/crypto-deposits")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
         const { handleCryptoJob } = await import("@/lib/crypto/jobs.server");
-        return handleCryptoJob("deposits");
+        return handleCryptoJob("deposits", request);
       },
     },
   },

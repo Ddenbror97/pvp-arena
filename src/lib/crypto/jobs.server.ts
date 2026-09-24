@@ -11,9 +11,14 @@ const JOBS = {
  * in the database, and every job is idempotent — calling it early can only
  * re-do work already due, never grant anything.
  */
-export async function handleCryptoJob(name: keyof typeof JOBS): Promise<Response> {
+export async function handleCryptoJob(name: keyof typeof JOBS, request: Request): Promise<Response> {
   const job = JOBS[name];
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  // Authentication: only the scheduler holds the job token (the database stores its SHA-256).
+  const token = /^Bearer ([0-9a-f]{64})$/.exec(request.headers.get("authorization") ?? "")?.[1];
+  if (!token) return new Response("Unauthorized", { status: 401 });
+  const { data: authed } = await supabaseAdmin.rpc("crypto_verify_job_token" as never, { p_token: token } as never);
+  if (authed !== true) return new Response("Unauthorized", { status: 401 });
   const { data: go } = await supabaseAdmin.rpc("crypto_run_gate" as never, { p_name: name, p_seconds: job.gapSeconds } as never);
   if (!go) return Response.json({ ok: true, skipped: true });
   try {

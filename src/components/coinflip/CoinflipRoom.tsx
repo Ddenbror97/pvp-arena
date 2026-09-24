@@ -116,7 +116,7 @@ function PlayerSlot({ g, slot, phase, me }: { g: CfGameView; slot: "creator" | "
       ) : (
         <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-border text-2xl text-muted-foreground animate-pulse">?</div>
       )}
-      <div className="mt-2 truncate text-sm font-semibold">{uid ? `${p?.username ?? "player"}${uid === me ? " (you)" : ""}` : "Waiting..."}</div>
+      <div className="mt-2 truncate text-sm font-semibold">{uid ? `${p?.username ?? "player"}` : "Waiting..."}</div>
       <div className="tabular mt-0.5 font-display text-base">{formatUsd(g.amount)}</div>
       <SideChip side={side} className="mt-2" />
     </div>
@@ -125,7 +125,6 @@ function PlayerSlot({ g, slot, phase, me }: { g: CfGameView; slot: "creator" | "
 
 function Center({ g, phase, start, serverNow, now, me }: { g: CfGameView; phase: string; start: number | null; serverNow: () => number; now: number; me: string | null }) {
   const qc = useQueryClient();
-  const [pending, setPending] = useState(false);
   const played = useRef<string | null>(null);
   useEffect(() => {
     if (played.current === phase) return;
@@ -136,23 +135,11 @@ function Center({ g, phase, start, serverNow, now, me }: { g: CfGameView; phase:
 
   if (phase === "waiting") {
     const left = Math.max(0, Math.ceil((new Date(g.expires_at).getTime() - now) / 1000));
-    async function cancel() {
-      setPending(true);
-      const { error } = await supabase.rpc("coinflip_cancel", { p_game_id: g.id });
-      setPending(false);
-      if (error) toast.error(friendlyError(error));
-      else toast.success("Game cancelled. Your wager was returned.");
-      qc.invalidateQueries({ queryKey: ["coinflip", g.id] });
-      qc.invalidateQueries({ queryKey: ["wallet"] });
-    }
     return (
       <div className="flex flex-col items-center text-center">
         <Coin startMs={null} side={null} serverNow={serverNow} restSide={g.creator_side as CoinSide} size={110} />
         <div className="font-display text-lg">Waiting for opponent...</div>
         <div className="mt-1 text-sm text-muted-foreground">Waiting for <b>{opposite(g.creator_side as CoinSide)}</b> · expires in <span className="tabular">{left}s</span></div>
-        {g.creator_id === me && (
-          <Button variant="secondary" size="sm" className="mt-4" onClick={cancel} disabled={pending}>Cancel and refund</Button>
-        )}
       </div>
     );
   }

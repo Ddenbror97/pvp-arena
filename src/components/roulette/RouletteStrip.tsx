@@ -85,7 +85,7 @@ export const RouletteStrip = memo(function RouletteStrip({
               )}
               style={win ? { filter: `drop-shadow(0 0 18px ${COIN[c].glow})` } : undefined}
             >
-              <CoinImg c={c} size={104} className={cn("rounded-full", win && "animate-[pulse_1s_ease-in-out_infinite]")} />
+              <CoinImg c={c} size={104} className={cn("rounded-full", win && "scale-110 animate-[pulse_1.8s_ease-in-out_infinite] drop-shadow-[0_0_18px_var(--primary)] transition-transform duration-700")} />
             </div>
           );
         })}

@@ -47,6 +47,10 @@ export function CryptoAdmin() {
         ))}
         <span className="text-muted-foreground">Ledger custody: <b className="text-foreground">{formatUsd(d.custody_cents)}</b></span>
       </div>
+      <p className="mt-2 text-xs text-muted-foreground">
+        Base Sepolia test configuration: ETH price freshness ≤ {Math.round(s.price_max_age_seconds / 60)} minutes (the testnet price feed updates slowly).
+        This is a testnet-only value — the settings row is locked to testnet, and any future production setup must use its own stricter limit.
+      </p>
 
       <h3 className="mt-4 text-xs uppercase tracking-widest text-muted-foreground">Withdrawals in progress</h3>
       <ul className="mt-2 divide-y divide-border rounded-2xl border border-border bg-card text-sm">

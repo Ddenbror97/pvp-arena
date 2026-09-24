@@ -79,3 +79,9 @@
 - [ ] Live round trip (deposit, play, withdraw): waits on test ETH/USDC in payout wallet + publish
 - [ ] DB integration tests for double-credit/parallel withdraw/quote reuse
 - [ ] Rotate payout key pasted in chat
+
+## Game UX fixes (requested 2026-09-24)
+- [x] Recent games: no auto page switching
+- [x] Coinflip: remove "(you)" and Cancel & refund
+- [x] Jackpot: countdown/effect inside wheel instead of "drawing"
+- [x] Roulette: hold winning coin longer, reveal green/red names ~1.5s later, slower reset
