@@ -33,7 +33,10 @@ export const getRouter = () => {
       }
     };
     const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback;
-    window.addEventListener("load", () => (idle ? idle(warm, { timeout: 3000 }) : setTimeout(warm, 1500)), { once: true });
+    // Wait so the current page's own data and images download first, then warm on idle.
+    const later = () => setTimeout(() => (idle ? idle(warm, { timeout: 3000 }) : warm()), 4000);
+    if (document.readyState === "complete") later();
+    else window.addEventListener("load", later, { once: true });
   }
 
   return router;
