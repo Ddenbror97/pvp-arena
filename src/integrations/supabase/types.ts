@@ -921,6 +921,59 @@ export type Database = {
         }
         Relationships: []
       }
+      user_wallets: {
+        Row: {
+          address: string
+          chain_type: string
+          created_at: string
+          id: string
+          is_primary: boolean
+          is_verified: boolean
+          last_seen_at: string | null
+          normalized_address: string
+          updated_at: string
+          user_id: string
+          verified_at: string | null
+          wallet_provider: string
+        }
+        Insert: {
+          address: string
+          chain_type?: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          is_verified?: boolean
+          last_seen_at?: string | null
+          normalized_address: string
+          updated_at?: string
+          user_id: string
+          verified_at?: string | null
+          wallet_provider?: string
+        }
+        Update: {
+          address?: string
+          chain_type?: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          is_verified?: boolean
+          last_seen_at?: string | null
+          normalized_address?: string
+          updated_at?: string
+          user_id?: string
+          verified_at?: string | null
+          wallet_provider?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_wallets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wallet_accounts: {
         Row: {
           account_type: string
@@ -950,6 +1003,53 @@ export type Database = {
           owner_id?: string | null
         }
         Relationships: []
+      }
+      wallet_verification_challenges: {
+        Row: {
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          issued_at: string
+          message_version: number
+          nonce: string
+          normalized_address: string
+          user_id: string
+          wallet_address: string
+        }
+        Insert: {
+          consumed_at?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          issued_at: string
+          message_version?: number
+          nonce: string
+          normalized_address: string
+          user_id: string
+          wallet_address: string
+        }
+        Update: {
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          issued_at?: string
+          message_version?: number
+          nonce?: string
+          normalized_address?: string
+          user_id?: string
+          wallet_address?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_verification_challenges_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -1104,6 +1204,26 @@ export type Database = {
       }
       server_time: { Args: never; Returns: string }
       update_avatar: { Args: { p_avatar_url: string }; Returns: undefined }
+      wallet_consume_and_verify: {
+        Args: { p_id: string; p_normalized: string; p_user: string }
+        Returns: Json
+      }
+      wallet_get_challenge: {
+        Args: { p_id: string; p_user: string }
+        Returns: Json
+      }
+      wallet_issue_challenge: {
+        Args: { p_address: string; p_user: string }
+        Returns: Json
+      }
+      wallet_log: {
+        Args: { p_details: Json; p_event: string; p_user: string }
+        Returns: undefined
+      }
+      wallet_touch: {
+        Args: { p_address: string; p_user: string }
+        Returns: undefined
+      }
     }
     Enums: {
       account_kind:
