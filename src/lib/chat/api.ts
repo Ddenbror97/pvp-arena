@@ -46,6 +46,8 @@ export async function fetchChatPage(room: ChatRoom, before?: ChatMessage): Promi
 // Last known messages per room, so returning to a page shows chat instantly
 // while the server copy is re-fetched (display cache only; server stays authoritative).
 const roomCache = new Map<ChatRoom, ChatMessage[]>();
+// Last known online count per room, so the header doesn't pop from "Connecting..." to a number.
+const onlineCache = new Map<ChatRoom, number>();
 
 export function useGameChat(room: ChatRoom, userId: string | null) {
   const [messages, setMessagesState] = useState<ChatMessage[]>(() => roomCache.get(room) ?? []);
@@ -59,7 +61,14 @@ export function useGameChat(room: ChatRoom, userId: string | null) {
       }),
     [room],
   );
-  const [online, setOnline] = useState(0);
+  const [online, setOnlineState] = useState(() => onlineCache.get(room) ?? 0);
+  const setOnline = useCallback(
+    (n: number) => {
+      onlineCache.set(room, n);
+      setOnlineState(n);
+    },
+    [room],
+  );
   const [status, setStatus] = useState<"idle" | "connecting" | "live" | "offline">("idle");
   const [hasMore, setHasMore] = useState(true);
   const [loadingOlder, setLoadingOlder] = useState(false);

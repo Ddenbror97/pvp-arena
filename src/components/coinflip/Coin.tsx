@@ -1,4 +1,6 @@
 import { useEffect, useRef } from "react";
+import headsAsset from "@/assets/coin-heads.png.asset.json";
+import tailsAsset from "@/assets/coin-tails.png.asset.json";
 
 /**
  * Presentation only. The coin's rotation is a pure function of elapsed server
@@ -72,23 +74,29 @@ export function Coin({ startMs, side, serverNow, restSide = "HEADS", size = 150 
     <div className="flex items-center justify-center" style={{ perspective: size * 4, height: size * 1.5 }}>
       <div ref={wrap} style={{ willChange: "transform" }}>
         <div ref={ref} className="relative" style={{ width: size, height: size, transformStyle: "preserve-3d", willChange: "transform" }}>
-          <Face label="HEADS" glyph="H" size={size} className="coin-face coin-heads" />
-          <Face label="TAILS" glyph="T" size={size} className="coin-face coin-tails" back />
+          <Face src={headsAsset.url} label="HEADS" size={size} />
+          <Face src={tailsAsset.url} label="TAILS" size={size} back />
         </div>
       </div>
     </div>
   );
 }
 
-function Face({ label, glyph, className, back, size }: { label: string; glyph: string; className: string; back?: boolean; size: number }) {
+function Face({ src, label, back, size }: { src: string; label: string; back?: boolean; size: number }) {
   return (
     <div
-      className={`${className} absolute inset-0 flex flex-col items-center justify-center rounded-full`}
+      className="absolute inset-0 overflow-hidden rounded-full"
       style={{ backfaceVisibility: "hidden", transform: back ? "rotateY(180deg)" : undefined }}
       aria-hidden
     >
-      <span className="font-display text-[34%] leading-none" style={{ fontSize: size * 0.32 }}>{glyph}</span>
-      <span className="mt-1 text-[10px] font-bold tracking-[0.4em]">{label}</span>
+      <img
+        src={src}
+        alt={label}
+        width={size}
+        height={size}
+        draggable={false}
+        className="h-full w-full rounded-full object-cover select-none"
+      />
     </div>
   );
 }
