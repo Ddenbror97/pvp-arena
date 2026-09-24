@@ -268,8 +268,6 @@ function RouletteSection() {
       </p>
       <div className="grid gap-4 lg:grid-cols-2">
       <Card title="Verify a roulette round">
-      <RecordedCheck title="Check a recorded Roulette round" id="rlcheck" run={undefined as never} />
-      </Card>
         <div className="grid gap-3">
           <div className="space-y-1.5">
             <Label htmlFor="rlgid">Round number</Label>
