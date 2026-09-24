@@ -160,7 +160,12 @@ export function getWalletSession(): Promise<WalletSession> {
       return sessionFor(
         provider,
         async () => {
-          const r = await client.connect({ chainIds: [WALLET_CONFIG.requiredChainId] });
+          // forceRequest: always let the user pick the account, instead of silently
+          // reusing a stale session from another site account / MetaMask account.
+          const r = await client.connect({
+            chainIds: [WALLET_CONFIG.requiredChainId],
+            forceRequest: true,
+          });
           return { accounts: [...r.accounts], chainId: r.chainId };
         },
         () => client.disconnect(),
