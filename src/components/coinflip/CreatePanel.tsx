@@ -131,7 +131,7 @@ export function CreatePanel() {
             <dt className="font-semibold">Win</dt><dd className="text-right font-semibold text-primary">{valid ? formatUsd(win) : "—"}</dd>
           </dl>
 
-          <Button onClick={submit} disabled={!affordable || pending} className="mt-3 h-11 w-full font-display text-sm">
+          <Button onClick={submit} disabled={!profile || !affordable || pending} className="mt-3 h-11 w-full font-display text-sm">
             {pending ? "Creating..." : !valid ? `Wager ${formatUsd(min)}–${formatUsd(max)}` : !affordable ? "Not enough balance" : "Create game"}
           </Button>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">Test credits have no cash value.</p>
