@@ -22,7 +22,7 @@ function fmtClock(ms: number) {
 export function JackpotStage() {
   const { userId } = useAuth();
   useWalletRealtime(userId);
-  const { game, players, stage, finishReveal } = useLiveJackpot();
+  const { game, players, stage, finishReveal, resync } = useLiveJackpot();
   const serverNow = useServerClock();
   useNow(200);
   const [phase, setPhase] = useState<Phase>("live");
