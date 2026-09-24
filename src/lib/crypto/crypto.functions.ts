@@ -21,7 +21,7 @@ const ERRORS: Record<string, string> = {
 };
 function clean(msg: string): string {
   const code = Object.keys(ERRORS).find((k) => msg.includes(k));
-  return code ? ERRORS[code] : "Something went wrong. Please try again.";
+  return (code && ERRORS[code]) || "Something went wrong. Please try again.";
 }
 async function admin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -44,7 +44,7 @@ export const quoteEthWithdrawal = createServerFn({ method: "POST" })
     const env = await loadVerifiedEnv();
     if (!env.ok) return { ok: false as const, error: "Crypto rails are unavailable right now." };
     const price = await snapshotEthPrice(env.env).catch(() => null);
-    if (!price) return { ok: false as const, error: ERRORS.PRICE_STALE };
+    if (!price) return { ok: false as const, error: ERRORS["PRICE_STALE"]! };
     const { data: q, error } = await (await admin()).rpc("crypto_quote_withdrawal", { p_user: context.userId, p_usd_cents: data.usdCents });
     if (error) return { ok: false as const, error: clean(error.message) };
     return { ok: true as const, quote: q as { quote_id: string; usd_cents: number; wei: string; price_micro_usd: number; expires_at: string } };

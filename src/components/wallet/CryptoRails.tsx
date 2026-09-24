@@ -28,7 +28,7 @@ const STATUS: Record<string, string> = {
 
 function formatUnits(units: string, asset: string) {
   const dec = asset === "ETH" ? 18 : 6;
-  const s = units.split(".")[0].padStart(dec + 1, "0");
+  const s = (units.split(".")[0] ?? "0").padStart(dec + 1, "0");
   const v = `${s.slice(0, -dec)}.${s.slice(-dec)}`.replace(/\.?0+$/, "");
   return `${v} ${asset}`;
 }
@@ -74,21 +74,21 @@ export function CryptoRails() {
   async function getQuote() {
     setBusy(true);
     const r = await doQuote({ data: { usdCents: cents } }).finally(() => setBusy(false));
-    if (!r.ok) return toast.error(r.error);
+    if (!r.ok) { toast.error(r.error); return; }
     setQuote(r.quote);
   }
   async function submit() {
     setBusy(true);
     const r = await doRequest({ data: { asset, usdCents: cents, quoteId: asset === "ETH" ? quote?.quote_id ?? null : null } }).finally(() => setBusy(false));
     setQuote(null);
-    if (!r.ok) return toast.error(r.error);
+    if (!r.ok) { toast.error(r.error); return; }
     toast.success(r.result.status === "PENDING" ? "Withdrawal requested — waiting for review" : "Withdrawal approved — sending shortly");
     setAmount("");
     refresh();
   }
   async function cancel(id: string) {
     const r = await doCancel({ data: { id } });
-    if (!r.ok) return toast.error(r.error);
+    if (!r.ok) { toast.error(r.error); return; }
     toast.success("Withdrawal cancelled and refunded");
     refresh();
   }

@@ -44,7 +44,7 @@ export interface Env {
   client: PublicClient;
   treasury: `0x${string}`;
   payout: `0x${string}`;
-  settings: Record<string, any>;
+  settings: any;
   minDepositUnits: Record<string, bigint>;
 }
 
@@ -306,7 +306,7 @@ export async function runWithdrawalWorker() {
     return { ok: true, results: { ...results, [next.id]: "released" } };
   }
   const to = next.to_address as Hex;
-  const units = BigInt(String(next.units).split(".")[0]);
+  const units = BigInt(String(next.units).split(".")[0] ?? "0");
   const request =
     next.asset_key === "ETH"
       ? { to, value: units }
@@ -327,7 +327,7 @@ export async function runWithdrawalWorker() {
 
   const nonce = await env.client.getTransactionCount({ address: account.address, blockTag: "pending" });
   const prepared = await wallet.prepareTransactionRequest({ ...request, nonce, chain: baseSepolia, account } as any);
-  if (prepared.chainId !== TESTNET.chainId) return { ok: false, reason: "CHAIN_MISMATCH" };
+  if ((prepared as any).chainId !== TESTNET.chainId) return { ok: false, reason: "CHAIN_MISMATCH" };
   const raw = await wallet.signTransaction(prepared as any);
   const hash = keccak256(raw);
   await must(rpc("crypto_withdrawal_signed", { p_id: next.id, p_hash: hash, p_nonce: nonce, p_raw: raw }));
