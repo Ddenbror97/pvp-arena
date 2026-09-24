@@ -174,16 +174,46 @@ function Center({ g, phase, start, serverNow, now, me }: { g: CfGameView; phase:
       </div>
     );
   }
+  const revealed = phase !== "flipping" && !!g.winning_side;
+  const tone = g.winning_side === "HEADS" ? "text-primary" : "text-rival";
   return (
     <div className="flex flex-col items-center text-center">
-      <Coin startMs={start} side={(g.winning_side as CoinSide | null) ?? null} serverNow={serverNow} size={130} />
+      <div className={`relative ${revealed ? `animate-coin-land ${tone}` : ""}`}>
+        {revealed && (
+          <>
+            <span className="shockwave h-[130px] w-[130px]" />
+            <span className="shockwave h-[130px] w-[130px]" style={{ animationDelay: "0.18s" }} />
+            <span className="pointer-events-none absolute inset-0 -z-10 rounded-full bg-current opacity-30 blur-2xl" />
+          </>
+        )}
+        <Coin startMs={start} side={(g.winning_side as CoinSide | null) ?? null} serverNow={serverNow} size={130} />
+      </div>
       {phase === "flipping" ? (
         <div className="font-display text-sm tracking-[0.4em] text-muted-foreground">FLIPPING</div>
       ) : (
-        <div className={`animate-rise-in font-display text-xl ${g.winning_side === "HEADS" ? "text-primary" : "text-rival"}`}>{g.winning_side ?? "..."}</div>
+        <div className={`animate-win-slam font-display text-3xl tracking-[0.25em] ${tone}`} style={{ textShadow: "0 0 24px currentColor" }}>
+          {g.winning_side ?? "..."}
+        </div>
       )}
     </div>
   );
+}
+
+/** Display-only count-up of an already-settled amount. */
+function CountUp({ cents, ms = 900 }: { cents: number; ms?: number }) {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    const t0 = performance.now();
+    let raf = 0;
+    const step = (t: number) => {
+      const k = Math.min(1, (t - t0) / ms);
+      setV(Math.round(cents * (1 - Math.pow(1 - k, 3))));
+      if (k < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [cents, ms]);
+  return <>{formatUsd(v)}</>;
 }
 
 function ResultCard({ g, me }: { g: CfGameView; me: string | null }) {
@@ -192,10 +222,10 @@ function ResultCard({ g, me }: { g: CfGameView; me: string | null }) {
   const involved = me && (me === g.creator_id || me === g.opponent_id);
   const iWon = involved && g.winner_id === me;
   return (
-    <div className="animate-rise-in mt-3 rounded-xl border border-gold/30 bg-card p-4">
+    <div className={`animate-rise-in mt-3 rounded-xl border border-gold/30 bg-card p-4 ${settled ? "win-card" : ""}`}>
       {settled && iWon && <Celebration />}
       <div className="flex flex-wrap items-center gap-3">
-        <PlayerAvatar src={winner?.avatar_url} name={winner?.username} className="h-11 w-11" color="var(--gold)" />
+        <PlayerAvatar src={winner?.avatar_url} name={winner?.username} className={`h-11 w-11 ${settled ? "animate-win-pop" : ""}`} color="var(--gold)" />
         <div className="min-w-0 flex-1">
           <div className="text-xs tracking-[0.3em] text-gold">WINNER</div>
           <div className="font-display text-base">@{winner?.username ?? "player"}</div>
@@ -203,9 +233,11 @@ function ResultCard({ g, me }: { g: CfGameView; me: string | null }) {
         </div>
         {involved && settled && (
           <div className="text-right">
-            <div className="font-display text-lg">{iWon ? "YOU WON" : "YOU LOST"}</div>
+            <div className={`animate-win-slam font-display ${iWon ? "text-2xl text-gold" : "text-lg"}`} style={iWon ? { textShadow: "0 0 20px currentColor" } : undefined}>
+              {iWon ? "YOU WON!" : "YOU LOST"}
+            </div>
             <div className={`tabular text-sm ${iWon ? "text-primary" : "text-rival"}`}>
-              {iWon ? `+${formatUsd(g.payout_amount ?? 0)}` : `-${formatUsd(g.amount)}`} <span className="text-xs">{APP.creditsLabel}</span>
+              {iWon ? <>+<CountUp cents={g.payout_amount ?? 0} /></> : `-${formatUsd(g.amount)}`} <span className="text-xs">{APP.creditsLabel}</span>
             </div>
           </div>
         )}
@@ -215,6 +247,11 @@ function ResultCard({ g, me }: { g: CfGameView; me: string | null }) {
         <div><dt className="text-xs text-muted-foreground">Total pot</dt><dd>{formatUsd(g.pot_amount)}</dd></div>
         <div><dt className="text-xs text-muted-foreground">Payout</dt><dd>{settled ? formatUsd(g.payout_amount ?? 0) : "Settling..."}</dd></div>
       </dl>
+      {settled && (
+        <Button asChild size="sm" className="mt-3 w-full font-display animate-win-pop">
+          <Link to="/coinflip">Play again</Link>
+        </Button>
+      )}
     </div>
   );
 }
