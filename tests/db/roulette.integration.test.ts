@@ -65,6 +65,12 @@ async function drive(gid: number) {
   }
   throw new Error("round did not finish");
 }
+/** Rounds open immediately (continuous play); wait until this round's betting window has closed. */
+async function untilClosed(gid: number, extra = 100) {
+  const g = await game(gid);
+  const ms = new Date(g.betting_ends_at).getTime() - Date.now() + extra;
+  if (ms > 0) await sleep(ms);
+}
 async function openRound() {
   return Number((await sql`select pvp_test._roulette_ensure_open() as id`)[0].id);
 }
@@ -119,10 +125,11 @@ d("roulette adversarial audit (isolated schema)", () => {
     const u = await newUser("alice");
     const tryStatus = (gid: number, s: string) => err(sql`update pvp_test.roulette_games set status = ${s}::pvp_test.roulette_status where id = ${gid}`);
     const g0 = await openRound();
-    for (const s of ["COMPLETED", "SETTLEMENT", "SPINNING", "LOCKED", "CANCELLED"]) expect(await tryStatus(g0, s)).toMatch(/ILLEGAL_TRANSITION/);
+    // Continuous play: a fresh round is already BETTING.
+    expect((await game(g0)).status).toBe("BETTING");
     await bet(u, "RED", 100);
     for (const s of ["COMPLETED", "SETTLEMENT", "SPINNING", "WAITING"]) expect(await tryStatus(g0, s)).toMatch(/ILLEGAL_TRANSITION/);
-    await sleep(3100);
+    await untilClosed(g0);
     expect(await advance(g0)).toBe("locked");
     for (const s of ["BETTING", "CANCELLED", "SETTLEMENT", "COMPLETED", "WAITING"]) expect(await tryStatus(g0, s)).toMatch(/ILLEGAL_TRANSITION/);
     expect(await err(sql`select pvp_test._roulette_refund(${g0}, 'attack')`)).toMatch(/NOT_CANCELLABLE/);
@@ -274,7 +281,7 @@ d("roulette adversarial audit (isolated schema)", () => {
   it("betting is refused in LOCKED, SPINNING and SETTLEMENT; late bets open the next round", async () => {
     const [a, b] = [await newUser("a"), await newUser("b")];
     const gid = Number((await bet(a, "RED", 100)).game_id);
-    await sleep(3100);
+    await untilClosed(gid);
     await advance(gid);
     // A post-lock bet can never reach the locked round: it lands in a new round.
     const r = await bet(b, "RED", 100);
@@ -316,7 +323,7 @@ d("roulette adversarial audit (isolated schema)", () => {
     const users = await Promise.all([newUser("a"), newUser("b"), newUser("c")]);
     let gid = 0;
     for (const [i, c] of ["RED", "BLACK", "GREEN"].entries()) gid = Number((await bet(users[i]!, c, 1000)).game_id);
-    await sleep(3400);
+    await untilClosed(gid, 400);
     // Failure injected after ledger writes: the whole settlement rolls back.
     const r1 = await sql.begin(async (tx) => {
       await tx`select set_config('pvp.fail_after_ledger', 'on', true)`;
@@ -342,7 +349,7 @@ d("roulette adversarial audit (isolated schema)", () => {
     const users = await Promise.all([newUser("a"), newUser("b"), newUser("c")]);
     let gid = 0;
     for (const [i, c] of ["RED", "BLACK", "GREEN"].entries()) gid = Number((await bet(users[i]!, c, 1000)).game_id);
-    await sleep(3400);
+    await untilClosed(gid, 400);
     for (let i = 0; i < 12 && (await game(gid)).settle_attempts < 3; i++) {
       await sql.begin(async (tx) => {
         await tx`select set_config('pvp.fail_settlement', 'on', true)`;
@@ -451,7 +458,7 @@ d("roulette adversarial audit (isolated schema)", () => {
       const g0 = await game(gid);
       expect(g0.server_seed).toBeNull();
       expect(g0.server_seed_hash).toMatch(/^[0-9a-f]{64}$/);
-      await sleep(3100);
+      await untilClosed(gid);
       await advance(gid);
       const locked = await game(gid);
       expect(locked.server_seed).toBeNull();

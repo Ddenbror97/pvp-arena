@@ -139,7 +139,7 @@ function Center({ g, phase, start, serverNow, now, me }: { g: CfGameView; phase:
       <div className="flex flex-col items-center text-center">
         <Coin startMs={null} side={null} serverNow={serverNow} restSide={g.creator_side as CoinSide} size={110} />
         <div className="font-display text-lg">Waiting for opponent...</div>
-        <div className="mt-1 text-sm text-muted-foreground">Waiting for <b>{opposite(g.creator_side as CoinSide)}</b> · expires in <span className="tabular">{left}s</span></div>
+        <div className="mt-1 text-sm text-muted-foreground">Waiting for <b>{opposite(g.creator_side as CoinSide)}</b> · expires in <span className="tabular">{left >= 3600 ? `${Math.floor(left / 3600)}h ${Math.floor((left % 3600) / 60)}m` : left >= 60 ? `${Math.floor(left / 60)}m ${left % 60}s` : `${left}s`}</span></div>
       </div>
     );
   }

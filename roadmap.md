@@ -87,3 +87,7 @@
 - [x] Roulette: hold winning coin longer, reveal green/red names ~1.5s later, slower reset
 - [x] MetaMask connect error "Algo deu errado com a carteira" — fix; all wallet messages in English
 - [x] Cold-start CLS on Jackpot/Coinflip/Roulette (live measured)
+- [ ] Mobile scroll smoothness (Jackpot/Roulette jank)
+- [ ] Roulette: rounds run continuously (no "Waiting for the first bet"), previous rolls edge to edge
+- [ ] Coinflip open games last 24h before auto-cancel+refund (not 1 min)
+- [ ] Jackpot #20: wheel did not spin before winner announced — investigate
