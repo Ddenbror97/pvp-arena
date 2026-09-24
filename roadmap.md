@@ -27,5 +27,5 @@
 - [x] Background: black (replaced grey)
 - [x] Compact Coinflip game room (players/coin/result panels)
 
-- [ ] Coinflip winner animation: more exciting celebration (visual only, no timing/logic change)
-- [ ] Chat: jackpot/coinflip rooms appear unsynced; "No messages yet" flashes before history loads — scan site for similar late-load flashes
+- [x] Coinflip winner animation: more exciting celebration (visual only, no timing/logic change)
+- [x] Chat "No messages yet" flash fixed; [ ] ASK USER: one shared chat room vs separate per game — flashes before history loads — scan site for similar late-load flashes
