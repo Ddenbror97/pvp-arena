@@ -124,7 +124,7 @@ export function GameChat({ className }: { gameType: ChatRoom; className?: string
               status === "live" ? "animate-pulse bg-p4" : "bg-muted-foreground/50",
             )}
           />
-          {status === "live" ? (
+          {status === "live" || online > 0 ? (
             <span className="tabular">{online} online</span>
           ) : userId ? (
             status === "offline" ? (
