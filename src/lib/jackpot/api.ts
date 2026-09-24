@@ -98,10 +98,35 @@ export const recentGamesQuery = { queryKey: ["recent-games"], queryFn: () => fet
  * shown game completes, `stage` holds it so the reveal can play before
  * moving on to the next open game.
  */
+/**
+ * Ask the server to settle any game past its deadline. Supabase query
+ * builders are lazy: the request is only sent once awaited, so this helper
+ * must always await it. The server verifies deadlines itself.
+ */
+export async function tickJackpot() {
+  const { error } = await supabase.rpc("jackpot_tick");
+  if (error) console.warn("jackpot_tick failed", error.message);
+}
+
+const REVEAL_WINDOW_MS = 60_000;
+
 export function useLiveJackpot() {
   const qc = useQueryClient();
-  const gameQ = useQuery({ queryKey: ["open-game"], queryFn: fetchOpenGame });
   const [stage, setStage] = useState<Game | null>(null);
+  const stageRef = useRef<Game | null>(null);
+  stageRef.current = stage;
+  const gameQ = useQuery({
+    queryKey: ["open-game"],
+    queryFn: fetchOpenGame,
+    // Don't jump to the next game on tab focus while a draw is pending.
+    refetchOnWindowFocus: (q) => {
+      const g = q.state.data as Game | null | undefined;
+      if (!g || stageRef.current) return false;
+      if (g.status === "DRAWING") return false;
+      if (g.status === "ACTIVE" && g.scheduled_end_at && new Date(g.scheduled_end_at).getTime() <= Date.now()) return false;
+      return true;
+    },
+  });
   const game = stage ?? gameQ.data ?? null;
   const gameId = game?.id ?? null;
   const playersQ = useQuery({
@@ -110,7 +135,38 @@ export function useLiveJackpot() {
     enabled: gameId != null,
   });
   const shownId = useRef<number | null>(null);
-  shownId.current = gameQ.data?.id ?? null;
+  const revealed = useRef<Set<number>>(new Set());
+
+  const startReveal = useCallback(
+    (row: Game) => {
+      if (revealed.current.has(row.id)) return;
+      revealed.current.add(row.id);
+      setStage(row);
+      qc.invalidateQueries({ queryKey: ["recent-games"] });
+      qc.invalidateQueries({ queryKey: ["wallet"] });
+    },
+    [qc],
+  );
+
+  // If the open game moved on before we saw the previous one complete
+  // (missed realtime event, reconnect, refetch), recover its reveal.
+  useEffect(() => {
+    const nextId = gameQ.data?.id ?? null;
+    const prevId = shownId.current;
+    shownId.current = nextId;
+    if (prevId == null || nextId == null || nextId <= prevId || revealed.current.has(prevId) || stageRef.current) return;
+    let cancelled = false;
+    (async () => {
+      const old = await fetchGame(prevId).catch(() => null);
+      if (cancelled || !old || old.status !== "COMPLETED" || !old.completed_at) return;
+      if (Date.now() - new Date(old.completed_at).getTime() > REVEAL_WINDOW_MS) return;
+      const hadPlayers = old.player_count >= 2;
+      if (hadPlayers) startReveal(old);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [gameQ.data?.id, startReveal]);
 
   useEffect(() => {
     const ch = supabase
@@ -119,9 +175,7 @@ export function useLiveJackpot() {
         const row = payload.new as Game;
         if (!row?.id) return;
         if (row.id === shownId.current && row.status === "COMPLETED") {
-          setStage(row);
-          qc.invalidateQueries({ queryKey: ["recent-games"] });
-          qc.invalidateQueries({ queryKey: ["wallet"] });
+          startReveal(row);
           return;
         }
         if (row.status === "WAITING" || row.status === "ACTIVE" || row.status === "DRAWING") {
@@ -136,14 +190,24 @@ export function useLiveJackpot() {
     return () => {
       supabase.removeChannel(ch);
     };
-  }, [qc]);
+  }, [qc, startReveal]);
+
+  /** Safety net: re-read the shown game directly (in case realtime missed an update). */
+  const resync = useCallback(async () => {
+    const id = shownId.current;
+    if (id == null || stageRef.current) return;
+    const row = await fetchGame(id).catch(() => null);
+    if (!row) return;
+    if (row.status === "COMPLETED") startReveal(row);
+    else qc.setQueryData(["open-game"], row);
+  }, [qc, startReveal]);
 
   const finishReveal = useCallback(() => {
     setStage(null);
     qc.invalidateQueries({ queryKey: ["open-game"] });
   }, [qc]);
 
-  return { game, players: playersQ.data ?? [], stage, finishReveal, loading: gameQ.isLoading };
+  return { game, players: playersQ.data ?? [], stage, finishReveal, resync, loading: gameQ.isLoading };
 }
 
 export function useWallet(userId: string | null) {
