@@ -48,10 +48,10 @@ Version: 1
 ## Technical details
 
 **Dependencies**
-- `@metamask/connect-evm`: the official current MetaMask Connect package (the successor to `@metamask/sdk`). It covers the extension, mobile QR and deeplink flows. It is loaded only in the browser, after the page has finished loading.
+- MetaMask Connect EVM: before installing, confirm the package name and current API against the official MetaMask documentation at that time (currently documented as `@metamask/connect-evm`). No deprecated MetaMask SDK APIs are used. It covers the extension, mobile QR and deeplink flows, and is loaded only in the browser, after the page has finished loading.
 - `viem`: used server-side for address validation, checksum normalisation (`getAddress`) and `recoverMessageAddress`. It works in the edge runtime, and the tests also use it to sign messages with throwaway test keys.
 
-**Config**: `src/lib/web3/config.ts` is the one place for chain settings. The default is Ethereum Mainnet (`0x1`) with a public RPC used only to identify the connected network. There is no Infura key and no transaction methods. Changing the network is a one-line edit.
+**Config**: `src/lib/web3/config.ts` is the one place for chain settings. Ethereum Mainnet (`0x1`) is the initial supported network. The app only reads `eth_chainId` from the connected wallet. There is no custom RPC, no paid provider API key, no transactions and no other RPC calls. Changing the network is a one-line edit.
 
 **Database (one additive migration)**
 - `user_wallets`: `id, user_id, chain_type ('EVM'), address (checksummed), normalized_address (lowercase), wallet_provider ('metamask'), is_verified, is_primary, created_at, updated_at, verified_at, last_seen_at`.
@@ -66,7 +66,9 @@ Version: 1
   - Challenges have no browser access at all.
 - Functions (`SECURITY DEFINER`, `search_path = public`, fully qualified tables, execute revoked from public/anon/authenticated, granted only to the server role):
   - `wallet_issue_challenge`: rate-limited. It replaces an earlier unconsumed challenge for the same address.
-  - `wallet_consume_and_verify(challenge_id, user_id, normalized_address)`: locks the challenge with `FOR UPDATE`, checks owner, expiry and consumed state against `clock_timestamp()`, then consumes it and upserts the verified wallet. It returns clean error codes, including `ALREADY_LINKED` when the unique index blocks a duplicate.
+  - `wallet_consume_and_verify(challenge_id, user_id, normalized_address)`: locks the challenge with `FOR UPDATE`, checks owner, expiry and consumed state against `clock_timestamp()`, then consumes it and upserts the verified wallet.
+    - The unique partial index is the final authority. If two accounts verify the same wallet at the same moment, one succeeds. The other's `unique_violation` is caught inside the function, which rolls back that account's challenge use and returns `ALREADY_LINKED`.
+    - A dedicated test runs two accounts verifying the same wallet in parallel and expects exactly one success and one `ALREADY_LINKED`.
   - `wallet_touch`: records a connected but unverified address.
 - Audit: events go to the existing `auth_events` table: `WALLET_CONNECTION_STARTED`, `WALLET_CONNECTED`, `WALLET_VERIFICATION_REQUESTED`, `WALLET_VERIFICATION_FAILED`, `WALLET_VERIFIED`, `WALLET_DISCONNECTED`. They store only the masked address and an outcome code. No signatures, messages or tokens are logged.
 
