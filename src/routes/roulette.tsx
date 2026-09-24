@@ -3,6 +3,9 @@ import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 import { ogImageMeta } from "@/lib/og";
 import { RouletteGame } from "@/components/roulette/RouletteGame";
 import { fetchCurrentRound, fetchHistory } from "@/lib/roulette/api";
+import heads from "@/assets/coin-heads.png.asset.json";
+import tails from "@/assets/coin-tails.png.asset.json";
+import green from "@/assets/roulette-green.png.asset.json";
 
 export const Route = createFileRoute("/roulette")({
   head: () => ({
@@ -15,6 +18,7 @@ export const Route = createFileRoute("/roulette")({
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),
     ],
+    links: [heads.url, tails.url, green.url].map((href) => ({ rel: "preload", as: "image", href, type: "image/webp" })),
   }),
   loader: ({ context }) => {
     if (typeof window === "undefined") return;

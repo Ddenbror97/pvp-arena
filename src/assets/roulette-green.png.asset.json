@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "asset_id": "83c21b99-669f-4945-94f8-49cd7e407ad8",
+  "asset_id": "fd409e2f-d358-488c-a71e-d66d737d8b8d",
   "project_id": "21c592a2-8b02-4d94-8cf9-bc1f7f5a2fd3",
-  "url": "/__l5e/assets-v1/83c21b99-669f-4945-94f8-49cd7e407ad8/roulette-green.png",
-  "r2_key": "a/v1/21c592a2-8b02-4d94-8cf9-bc1f7f5a2fd3/83c21b99-669f-4945-94f8-49cd7e407ad8/roulette-green.png",
-  "original_filename": "roulette-green.png",
-  "size": 2192224,
-  "content_type": "image/png",
-  "created_at": "2026-09-24T03:30:31Z"
+  "url": "/__l5e/assets-v1/fd409e2f-d358-488c-a71e-d66d737d8b8d/roulette-green.webp",
+  "r2_key": "a/v1/21c592a2-8b02-4d94-8cf9-bc1f7f5a2fd3/fd409e2f-d358-488c-a71e-d66d737d8b8d/roulette-green.webp",
+  "original_filename": "roulette-green.webp",
+  "size": 50722,
+  "content_type": "image/webp",
+  "created_at": "2026-09-24T16:01:24Z"
 }

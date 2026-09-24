@@ -5,8 +5,8 @@ import { routeTree } from "./routeTree.gen";
 // Hover/touch preloading of the next page, skipped on Save-Data or slow connections.
 function preloadMode(): "intent" | false {
   if (typeof navigator === "undefined") return "intent";
-  const c = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
-  if (c?.saveData || /(^|-)2g$|3g/.test(c?.effectiveType ?? "")) return false;
+  const c = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string; downlink?: number } }).connection;
+  if (c?.saveData || /(^|-)2g$|3g/.test(c?.effectiveType ?? "") || (c?.downlink ?? 10) < 1.5) return false;
   return "intent";
 }
 
@@ -33,7 +33,10 @@ export const getRouter = () => {
       }
     };
     const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback;
-    window.addEventListener("load", () => (idle ? idle(warm, { timeout: 3000 }) : setTimeout(warm, 1500)), { once: true });
+    // Wait so the current page's own data and images download first, then warm on idle.
+    const later = () => setTimeout(() => (idle ? idle(warm, { timeout: 3000 }) : warm()), 4000);
+    if (document.readyState === "complete") later();
+    else window.addEventListener("load", later, { once: true });
   }
 
   return router;
