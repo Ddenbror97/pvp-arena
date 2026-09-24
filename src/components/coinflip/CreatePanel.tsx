@@ -11,6 +11,8 @@ import { APP } from "@/lib/config";
 import { useCoinflipConfig, type CoinSide } from "@/lib/coinflip/api";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import headsAsset from "@/assets/coin-heads.png.asset.json";
+import tailsAsset from "@/assets/coin-tails.png.asset.json";
 
 const QUICK = [500, 1000, 2500, 5000];
 
@@ -113,7 +115,7 @@ export function CreatePanel() {
                     : "border-border text-muted-foreground hover:text-foreground",
                 )}
               >
-                <span className={cn("inline-block h-4 w-4 rounded-full", s === "HEADS" ? "coin-heads" : "coin-tails")} />
+                <img src={(s === "HEADS" ? headsAsset : tailsAsset).url} alt="" width={16} height={16} draggable={false} className="h-4 w-4 rounded-full object-cover select-none" />
                 {s}
               </button>
             ))}
