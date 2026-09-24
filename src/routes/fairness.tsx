@@ -63,7 +63,7 @@ function FairnessPage() {
   const [tab, setTab] = useState<Tab>("jackpot");
 
   return (
-    <div className="mx-auto w-full max-w-2xl">
+    <div className="mx-auto w-full max-w-6xl">
       <h1 className="font-display text-2xl sm:text-3xl">Fairness protocol</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Every result is decided on the server with cryptographic randomness before any animation plays.
@@ -122,6 +122,8 @@ function JackpotSection() {
         recompute it below, or open any completed game and press “Verify”.
       </p>
 
+      <div className="lg:grid lg:grid-cols-2 lg:gap-4">
+      <div>
       <Card title="Verify a draw">
         <div className="grid gap-3">
           <div className="space-y-1.5">
@@ -144,8 +146,10 @@ function JackpotSection() {
       </Card>
 
       <RecordedCheck title="Check a recorded Jackpot game" id="jpcheck" run={checkJackpot} />
+      </div>
 
-      <details className="mt-4 rounded-2xl border border-border bg-card p-4">
+      <div>
+      <details className="mt-4 rounded-2xl border border-border bg-card p-4 lg:mt-0">
         <summary className="cursor-pointer font-display text-sm">How the draw works</summary>
         <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{SPEC}</pre>
       </details>
@@ -162,6 +166,8 @@ function JackpotSection() {
           </li>
         </ul>
       </details>
+      </div>
+      </div>
     </section>
   );
 }
