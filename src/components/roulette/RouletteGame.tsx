@@ -108,9 +108,9 @@ export function RouletteGame() {
 
   return (
     <div className="min-w-0 space-y-2.5">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs uppercase tracking-wider text-muted-foreground">Previous rolls</span>
-        <div className="flex h-6 gap-1">
+      <div className="flex h-6 items-center gap-2 overflow-hidden">
+        <span className="shrink-0 text-xs uppercase tracking-wider text-muted-foreground">Previous rolls</span>
+        <div className="flex h-6 min-w-0 gap-1 overflow-hidden">
           {(history.data ?? []).map((h) => (
             <CoinImg key={h.id} c={h.winning_color!} size={24} className="rounded-full" />
           ))}
