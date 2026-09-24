@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +22,52 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 const DUE = ["BETTING", "LOCKED", "SPINNING", "SETTLEMENT"];
+
+/** Presentation-only progress. Server timestamps remain the source of truth. */
+const BettingCountdownBar = memo(function BettingCountdownBar({
+  active,
+  startedAt,
+  endsAt,
+  now,
+}: {
+  active: boolean;
+  startedAt: string | null;
+  endsAt: string | null;
+  now: () => number;
+}) {
+  const bar = useRef<HTMLDivElement>(null);
+  const start = startedAt ? new Date(startedAt).getTime() : 0;
+  const end = endsAt ? new Date(endsAt).getTime() : 0;
+  const duration = end - start;
+  const progress = active && duration > 0 ? Math.max(0, Math.min(1, (end - now()) / duration)) : 0;
+
+  useEffect(() => {
+    const element = bar.current;
+    if (!element) return;
+    if (!active || duration <= 0) {
+      element.style.transform = "scaleX(0)";
+      return;
+    }
+
+    let frame = 0;
+    const render = () => {
+      const next = Math.max(0, Math.min(1, (end - now()) / duration));
+      element.style.transform = `scaleX(${next})`;
+      if (next > 0) frame = requestAnimationFrame(render);
+    };
+    render();
+    return () => cancelAnimationFrame(frame);
+  }, [active, duration, end, now]);
+
+  return (
+    <div
+      ref={bar}
+      data-roulette-countdown-fill
+      className="absolute inset-y-0 left-0 w-full origin-left bg-primary/80 shadow-[0_0_12px_var(--primary)] will-change-transform"
+      style={{ transform: `scaleX(${progress})` }}
+    />
+  );
+});
 
 export function RouletteGame() {
   useRouletteRealtime();
@@ -101,10 +147,6 @@ export function RouletteGame() {
   const landed = g?.winning_color && g.spin_end_at && now() >= new Date(g.spin_end_at).getTime() ? g.winning_color : null;
   if (landed) status = `Landed on ${COIN[landed].label}`;
 
-  const betTime = g?.betting_ends_at && g.betting_started_at
-    ? Math.max(0, Math.min(1, (new Date(g.betting_ends_at).getTime() - now()) / (g.betting_seconds * 1000)))
-    : 0;
-
   return (
     <div className="min-w-0 space-y-2.5">
       <div className="flex h-6 items-center gap-2 overflow-hidden">
@@ -118,8 +160,13 @@ export function RouletteGame() {
 
       {layout.length ? <RouletteStrip layout={layout} game={g} now={now} /> : <div className="h-[136px] animate-pulse rounded-xl bg-card" />}
 
-      <div className="relative h-7 overflow-hidden rounded-full border border-border bg-muted">
-        <div className="absolute inset-y-0 left-0 bg-primary/80 shadow-[0_0_12px_var(--primary)] transition-[width] duration-200" style={{ width: `${betTime * 100}%` }} />
+      <div data-roulette-countdown className="relative h-7 overflow-hidden rounded-full border border-border bg-muted">
+        <BettingCountdownBar
+          active={g?.status === "BETTING"}
+          startedAt={g?.betting_started_at ?? null}
+          endsAt={g?.betting_ends_at ?? null}
+          now={now}
+        />
         <div className="relative flex h-full items-center px-3 text-xs">
           <span className="font-display" aria-live="polite">{status}</span>
         </div>
