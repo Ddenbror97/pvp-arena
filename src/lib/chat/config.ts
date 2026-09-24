@@ -22,3 +22,6 @@ export const CHAT_CONFIG = {
 
 export const chatTopic = (room: ChatRoom) => `chat:${room}`;
 export const CHAT_EVENTS = { message: "message", removed: "removed" } as const;
+
+/** One chat is shared by every game page; this room id holds its messages. */
+export const SHARED_CHAT_ROOM: ChatRoom = "coinflip";
