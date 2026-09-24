@@ -206,9 +206,7 @@ d("game chat (isolated schema)", () => {
     expect(trg.proconfig).toContain("search_path=public");
     const rt =
       await sql`select policyname, cmd, qual, with_check from pg_policies where schemaname = 'realtime' and tablename = 'messages' and policyname like 'chat rooms%'`;
-    expect(rt.map((r) => r.cmd).sort()).toEqual(["INSERT", "SELECT"]);
-    const ins = rt.find((r) => r.cmd === "INSERT")!;
-    expect(ins.with_check).toMatch(/presence/);
-    expect(ins.with_check).not.toMatch(/broadcast/);
+    // Browsers only receive; presence is now server-counted (no browser INSERT at all).
+    expect(rt.map((r) => r.cmd).sort()).toEqual(["SELECT"]);
   });
 });
