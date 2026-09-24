@@ -77,7 +77,7 @@ function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin:
     <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
       <SideCoinImg side={side} className="h-11 w-11" />
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-semibold">@{g.creator?.username ?? "player"}</div>
+        <div className="truncate text-sm font-semibold">{g.creator?.username ?? "player"}</div>
         <div className="tabular font-display text-lg">{formatUsd(g.amount)}</div>
         <div className="mt-1 flex items-center gap-1.5 text-[10px] text-muted-foreground">
           <SideChip side={side} /> VS <SideChip side={opposite(side)} />
