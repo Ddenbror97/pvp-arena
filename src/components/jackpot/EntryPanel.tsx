@@ -73,10 +73,10 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
     qc.invalidateQueries({ queryKey: ["players"] });
   }
 
-  if (!userId) {
+  if (!userId && (ready || !hint)) {
     return (
       <Panel>
-        <div className={ready || !hint ? undefined : "invisible"} aria-hidden={(!ready && hint) || undefined}>
+        <div>
         <h3 className="font-display text-base">Join the pot</h3>
         <p className="mt-2 text-sm text-muted-foreground">Sign in to enter. New players get free {APP.creditsLabel.toLowerCase()} to try the game.</p>
         <Button asChild className="mt-4 w-full font-display">
@@ -100,7 +100,7 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
         <span className="text-xs uppercase tracking-widest text-muted-foreground">Your balance</span>
         <span className="rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>
       </div>
-      <div className="tabular mt-0.5 text-xl font-semibold">{wallet.isLoading ? "—" : formatUsd(balance)}</div>
+      <div className="tabular mt-0.5 text-xl font-semibold">{!userId || wallet.isLoading ? "—" : formatUsd(balance)}</div>
 
       <label className="mt-3 block text-[11px] uppercase tracking-widest text-muted-foreground" htmlFor="entry-amount">
         Enter amount
@@ -140,12 +140,13 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
         <span className="text-muted-foreground">Your estimated chance</span>
         <span className="tabular font-semibold text-primary">{formatBps(chance)}</span>
       </div>
-      {!valid && input && (
-        <p className="mt-2 text-xs text-destructive">
-          Enter between {formatUsd(min)} and {formatUsd(game?.max_entry ?? 1000000)}.
-        </p>
-      )}
-      {valid && !affordable && !wallet.isLoading && <p className="mt-2 text-xs text-destructive">Not enough balance.</p>}
+      <p className="mt-2 min-h-4 text-xs leading-4 text-destructive" aria-live="polite">
+        {!valid && input
+          ? `Enter between ${formatUsd(min)} and ${formatUsd(game?.max_entry ?? 1000000)}.`
+          : valid && !affordable && userId && !wallet.isLoading
+            ? "Not enough balance."
+            : null}
+      </p>
 
       <Button
         size="lg"
@@ -155,11 +156,11 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
       >
         {closed ? "No more entries" : pending ? "Entering..." : `Enter jackpot · ${valid ? formatUsd(amount!) : "$0.00"}`}
       </Button>
-      {myTotal > 0 && (
-        <p className="mt-2 text-center text-xs text-muted-foreground">
-          You're in with <span className="tabular text-foreground">{formatUsd(myTotal)}</span>
-        </p>
-      )}
+      <p className="mt-2 min-h-4 text-center text-xs leading-4 text-muted-foreground">
+        {myTotal > 0 && (
+          <>You're in with <span className="tabular text-foreground">{formatUsd(myTotal)}</span></>
+        )}
+      </p>
     </Panel>
   );
 }

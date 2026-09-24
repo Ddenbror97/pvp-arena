@@ -83,4 +83,4 @@ export function RecentPager({
 }
 
 /** Full-bleed wrapper so the section runs edge to edge inside a centered page container. */
-export const EDGE_TO_EDGE = "relative left-1/2 mt-8 flex w-screen -translate-x-1/2 flex-col px-3 sm:px-6";
+export const EDGE_TO_EDGE = "relative left-1/2 mt-8 flex min-h-[24.5rem] w-screen -translate-x-1/2 flex-col px-3 sm:px-6";
