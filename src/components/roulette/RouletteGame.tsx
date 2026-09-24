@@ -99,9 +99,9 @@ export function RouletteGame() {
   // Nudge the server when a server deadline has passed. The server decides what (if anything) is due.
   const ticking = useRef(false);
   useEffect(() => {
-    if (!userId || !g || !DUE.includes(g.status)) return;
+    if (!userId || !live || !DUE.includes(live.status)) return;
     const deadline =
-      g.status === "BETTING" ? g.betting_ends_at : g.status === "LOCKED" ? g.spin_start_at : g.status === "SPINNING" ? g.spin_end_at : null;
+      live.status === "BETTING" ? live.betting_ends_at : live.status === "LOCKED" ? live.spin_start_at : live.status === "SPINNING" ? live.spin_end_at : null;
     const due = deadline ? new Date(deadline).getTime() - now() : 0;
     const id = setTimeout(async () => {
       if (ticking.current) return;
@@ -116,7 +116,7 @@ export function RouletteGame() {
       }
     }, Math.max(150, due + 150));
     return () => clearTimeout(id);
-  }, [userId, g?.id, g?.status, g?.betting_ends_at, g?.spin_start_at, g?.spin_end_at, now, qc]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [userId, live?.id, live?.status, live?.betting_ends_at, live?.spin_start_at, live?.spin_end_at, now, qc]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const wheel = setup.data?.wheels.find((w) => w.version === (g?.wheel_version ?? setup.data?.cfg.wheel_version));
   const layout = (wheel?.layout ?? []) as RlColor[];
