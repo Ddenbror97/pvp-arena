@@ -63,5 +63,6 @@
 - [x] Roulette cold-start/LCP/FCP/JS audit (measure first, minimal fixes)
 - [x] Zero movement on cold start inside Jackpot entry/players, Coinflip create, Roulette strip (signed in)
 - [ ] Fairness page: reduce dead space left/right on desktop (senior UX pass)
-- [x] Recent games all 3 games: edge-to-edge, 20/page, auto-advancing pages + Prev/Next (Jackpot, Coinflip, new Roulette table)
+- [x] Recent games all 3 games: edge-to-edge, 8/page, auto-advancing pages + Prev/Next (Jackpot, Coinflip, new Roulette table)
 - [x] Fairness page desktop: widened to max-w-6xl, two-column layout per game tab
+- [x] Multi-column site footer with games, how it works, about, and legal sections

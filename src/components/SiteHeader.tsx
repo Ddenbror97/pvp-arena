@@ -47,17 +47,59 @@ export function SiteHeader() {
 }
 
 export function SiteFooter() {
+  const footerLink = "text-sm text-muted-foreground transition-colors hover:text-primary";
+
   return (
-    <footer className="canvas mt-12 border-t border-border pb-20 sm:mt-20 sm:pb-0">
-      <div className="mx-auto flex max-w-none lg:px-6 flex-col gap-3 px-4 py-8 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <p>
-          PVPspinArena — test credits only. Credits have no cash value and cannot be withdrawn. Not a licensed gambling service. 18+.
-        </p>
-        <nav className="flex gap-4">
-          <Link to="/terms" className="hover:text-foreground">Terms</Link>
-          <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
-          <Link to="/responsible-gambling" className="hover:text-foreground">Responsible gambling</Link>
+    <footer className="canvas mt-10 border-t border-border pb-20 sm:pb-0">
+      <div className="mx-auto grid max-w-none gap-10 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.6fr_repeat(4,1fr)] lg:gap-8 lg:py-12">
+        <div className="max-w-sm">
+          <Link to="/" className="inline-flex" aria-label="PVPspinArena home">
+            <img src={arenaLogo.url} alt="PVPspinArena" width={240} height={128} loading="lazy" decoding="async" className="h-10 w-auto" />
+          </Link>
+          <p className="mt-4 text-sm leading-6 text-muted-foreground">
+            Player-versus-player Jackpot, Coinflip and Roulette using test credits only.
+          </p>
+          <p className="mt-3 text-xs leading-5 text-muted-foreground">
+            Credits have no cash value and cannot be withdrawn. Not a licensed gambling service. 18+.
+          </p>
+        </div>
+
+        <nav aria-label="Games">
+          <h2 className="font-display text-sm text-foreground">Games</h2>
+          <ul className="mt-4 space-y-3">
+            <li><Link to="/" className={footerLink}>Jackpot</Link></li>
+            <li><Link to="/coinflip" className={footerLink}>Coinflip</Link></li>
+            <li><Link to="/roulette" className={footerLink}>Roulette</Link></li>
+          </ul>
         </nav>
+
+        <div>
+          <h2 className="font-display text-sm text-foreground">How it works</h2>
+          <p className="mt-4 text-sm leading-6 text-muted-foreground">
+            Pick a game, enter with test credits, then verify completed results independently.
+          </p>
+          <Link to="/fairness" className={`mt-3 inline-block ${footerLink}`}>Fairness</Link>
+        </div>
+
+        <div>
+          <h2 className="font-display text-sm text-foreground">About us</h2>
+          <p className="mt-4 text-sm leading-6 text-muted-foreground">
+            A multiplayer arena built to make every game result transparent and checkable.
+          </p>
+          <p className="mt-3 text-xs text-muted-foreground">Contact page coming later.</p>
+        </div>
+
+        <nav aria-label="Legal">
+          <h2 className="font-display text-sm text-foreground">Legal</h2>
+          <ul className="mt-4 space-y-3">
+            <li><Link to="/terms" className={footerLink}>Terms</Link></li>
+            <li><Link to="/privacy" className={footerLink}>Privacy</Link></li>
+            <li><Link to="/responsible-gambling" className={footerLink}>Responsible gambling</Link></li>
+          </ul>
+        </nav>
+      </div>
+      <div className="border-t border-border px-4 py-4 text-center text-xs text-muted-foreground sm:px-6">
+        © {new Date().getFullYear()} PVPspinArena
       </div>
     </footer>
   );

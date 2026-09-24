@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-export const RECENT_PAGE_SIZE = 20;
+export const RECENT_PAGE_SIZE = 8;
 const AUTO_ADVANCE_MS = 6000;
 
 /**
- * Paged recent-games list: 20 rows per page, auto-advances to the next page
+ * Paged recent-games list: 8 rows per page, auto-advances to the next page
  * every few seconds (pausing on hover/focus and for reduced-motion users),
  * with manual Prev/Next controls.
  */
@@ -83,4 +83,4 @@ export function RecentPager({
 }
 
 /** Full-bleed wrapper so the section runs edge to edge inside a centered page container. */
-export const EDGE_TO_EDGE = "relative left-1/2 mt-8 flex w-screen flex-1 -translate-x-1/2 flex-col px-3 sm:px-6";
+export const EDGE_TO_EDGE = "relative left-1/2 mt-8 flex w-screen -translate-x-1/2 flex-col px-3 sm:px-6";
