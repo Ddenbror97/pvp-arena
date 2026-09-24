@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 import { ogImageMeta } from "@/lib/og";
+import emblem from "@/assets/roulette-green.png.asset.json";
 import { RouletteGame } from "@/components/roulette/RouletteGame";
 import { fetchCurrentRound, fetchHistory } from "@/lib/roulette/api";
 
@@ -29,7 +30,10 @@ const GameChat = lazy(() => import("@/components/chat/GameChat").then((m) => ({ 
 function RoulettePage() {
   return (
     <>
-      <h1 className="font-display text-3xl">Roulette</h1>
+      <div className="flex items-center gap-3">
+        <img src={emblem.url} alt="" width={48} height={48} className="h-12 w-12" />
+        <h1 className="font-display text-3xl">Roulette</h1>
+      </div>
       <p className="mt-1 text-sm text-muted-foreground">Pick a colour before the roll. Everyone plays the same spin.</p>
       <ClientOnly fallback={<div className="mt-5 h-[40rem] animate-pulse rounded-2xl bg-card" />}>
         <div className="mt-5 grid gap-4 xl:grid-cols-[300px_minmax(0,1fr)]">
