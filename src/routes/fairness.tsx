@@ -230,7 +230,6 @@ function CoinflipSection() {
         </div>
       </details>
       </div>
-      </div>
     </section>
   );
 }
