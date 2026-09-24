@@ -25,4 +25,7 @@ export const ALLOWED_WALLET_METHODS = new Set([
   "eth_accounts",
   "eth_chainId",
   "personal_sign",
+  "wallet_switchEthereumChain",
+  "wallet_addEthereumChain",
+  "eth_sendTransaction",
 ]);
