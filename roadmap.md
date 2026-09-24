@@ -85,5 +85,5 @@
 - [x] Coinflip: remove "(you)" and Cancel & refund
 - [x] Jackpot: countdown/effect inside wheel instead of "drawing"
 - [x] Roulette: hold winning coin longer, reveal green/red names ~1.5s later, slower reset
-- [ ] MetaMask connect error "Algo deu errado com a carteira" — fix; all wallet messages in English
-- [ ] Cold-start CLS on Jackpot/Coinflip/Roulette (live measured)
+- [x] MetaMask connect error "Algo deu errado com a carteira" — fix; all wallet messages in English
+- [x] Cold-start CLS on Jackpot/Coinflip/Roulette (live measured)
