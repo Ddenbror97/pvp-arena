@@ -36,7 +36,7 @@ export const RouletteStrip = memo(function RouletteStrip({
   }, []);
 
   const n = layout.length;
-  const tiles = Array.from({ length: n * REPEATS }, (_, i) => layout[i % n]);
+  const tiles = Array.from({ length: n * REPEATS }, (_, i) => layout[i % n]!);
   const slot = game?.winning_slot;
   const start = game?.spin_start_at ? new Date(game.spin_start_at).getTime() : 0;
   const end = game?.spin_end_at ? new Date(game.spin_end_at).getTime() : 0;

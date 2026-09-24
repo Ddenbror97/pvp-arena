@@ -16,7 +16,7 @@ export async function rouletteSlot(seedHex: string, gameId: number | string, dra
   for (let counter = 0; counter <= 1000; counter++) {
     const h = await hmacSha256(key, rouletteMessage(gameId, drawVersion, counter));
     let r = 0n;
-    for (let i = 0; i < 8; i++) r = (r << 8n) | BigInt(h[i]);
+    for (let i = 0; i < 8; i++) r = (r << 8n) | BigInt(h[i]!);
     if (r < lim) return { slot: Number(r % BigInt(n)), counter };
   }
   throw new Error("DRAW_EXHAUSTED");

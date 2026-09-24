@@ -75,9 +75,9 @@ export function RouletteGame() {
   const max = Number(setup.data?.cfg.max_bet ?? 1000000);
   const bettingOpen = !g || g.status === "WAITING" || (g.status === "BETTING" && new Date(g.betting_ends_at!).getTime() > now());
 
-  async function place(color: RlColor) {
-    if (amount == null || amount < min || amount > max) return toast.error(`Bet between ${formatUsd(min)} and ${formatUsd(max)}.`);
-    if (amount > balance) return toast.error("Not enough balance for that bet.");
+  async function place(color: RlColor): Promise<void> {
+    if (amount == null || amount < min || amount > max) { toast.error(`Bet between ${formatUsd(min)} and ${formatUsd(max)}.`); return; }
+    if (amount > balance) { toast.error("Not enough balance for that bet."); return; }
     setPending(color);
     try {
       const { error } = await supabase.rpc("roulette_bet", { p_color: color, p_amount: amount, p_idempotency_key: crypto.randomUUID() });
