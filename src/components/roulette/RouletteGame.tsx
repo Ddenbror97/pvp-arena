@@ -160,7 +160,7 @@ export function RouletteGame() {
           const list = (bets.data ?? []).filter((b) => b.color === c);
           const total = list.reduce((s, b) => s + Number(b.amount), 0);
           return (
-            <div key={c} className={cn("flex min-h-52 flex-col rounded-xl border bg-card transition-all duration-500", landed === c ? "border-primary" : "border-border", landed && landed !== c && "opacity-60")}>
+            <div key={c} className={cn("flex min-h-44 flex-col rounded-xl border bg-card transition-all duration-500", landed === c ? "border-primary" : "border-border", landed && landed !== c && "opacity-60")}>
               <button
                 type="button"
                 disabled={!!userId && (!bettingOpen || pending != null)}
