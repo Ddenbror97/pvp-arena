@@ -69,6 +69,9 @@ const BettingCountdownBar = memo(function BettingCountdownBar({
   );
 });
 
+const RESULT_HOLD_MS = 5000;
+const NAME_REVEAL_MS = 1500;
+
 export function RouletteGame() {
   useRouletteRealtime();
   const { userId } = useAuth();
@@ -78,7 +81,14 @@ export function RouletteGame() {
   const setup = useRouletteSetup();
   const round = useQuery({ queryKey: ["roulette-round"], queryFn: fetchCurrentRound, refetchInterval: 4000 });
   const history = useQuery({ queryKey: ["roulette-history"], queryFn: () => fetchHistory(12) });
-  const g = round.data ?? null;
+  const live = round.data ?? null;
+  // Presentation hold: keep the finished round (winning coin + green/red names) on screen
+  // for a few seconds after the strip stops, even if the server already opened the next round.
+  const finished = useRef<typeof live>(null);
+  if (live?.winning_color && live.spin_end_at) finished.current = live;
+  const f = finished.current;
+  const holding = !!f && f.id !== live?.id && now() < new Date(f.spin_end_at!).getTime() + RESULT_HOLD_MS;
+  const g = holding ? f : live;
   const bets = useQuery({
     queryKey: ["roulette-bets", g?.id],
     queryFn: () => fetchRoundBets(Number(g!.id)),
@@ -118,7 +128,7 @@ export function RouletteGame() {
   const balance = wallet.data?.available ?? 0;
   const min = Number(setup.data?.cfg.min_bet ?? 100);
   const max = Number(setup.data?.cfg.max_bet ?? 1000000);
-  const bettingOpen = !g || g.status === "WAITING" || (g.status === "BETTING" && new Date(g.betting_ends_at!).getTime() > now());
+  const bettingOpen = !holding && (!live || live.status === "WAITING" || (live.status === "BETTING" && new Date(live.betting_ends_at!).getTime() > now()));
 
   async function place(color: RlColor): Promise<void> {
     if (amount == null || amount < min || amount > max) { toast.error(`Bet between ${formatUsd(min)} and ${formatUsd(max)}.`); return; }
@@ -146,6 +156,7 @@ export function RouletteGame() {
   else if (g?.status === "SETTLEMENT") status = "Settling…";
   const landed = g?.winning_color && g.spin_end_at && now() >= new Date(g.spin_end_at).getTime() ? g.winning_color : null;
   if (landed) status = `Landed on ${COIN[landed].label}`;
+  const namesRevealed = !!landed && now() >= new Date(g!.spin_end_at!).getTime() + NAME_REVEAL_MS;
 
   return (
     <div className="min-w-0 space-y-2.5">
@@ -222,7 +233,7 @@ export function RouletteGame() {
               </div>
               <ul className="mt-2 space-y-1 px-3 pb-3 text-sm">
                 {list.slice(-12).reverse().map((b) => (
-                  <li key={b.id} className={cn("flex justify-between transition-colors", landed && (landed === c ? "font-semibold text-success" : "text-destructive"))}>
+                  <li key={b.id} className={cn("flex justify-between transition-colors duration-700", namesRevealed && (landed === c ? "font-semibold text-success" : "text-destructive"))}>
                     <span className="truncate">{b.player?.username ?? "player"}</span>
                     <span className="tabular">{formatUsd(Number(b.amount))}</span>
                   </li>
