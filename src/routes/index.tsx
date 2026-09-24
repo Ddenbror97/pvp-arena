@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ogImageMeta } from "@/lib/og";
-import { ClientOnly } from "@tanstack/react-router";
 import { JackpotStage } from "@/components/jackpot/JackpotStage";
 import { RecentGames } from "@/components/jackpot/RecentGames";
 
@@ -23,12 +22,8 @@ function Index() {
   return (
     <>
       <h1 className="sr-only">PVPspinArena Jackpot</h1>
-      <ClientOnly fallback={<div className="h-[520px] animate-pulse rounded-2xl bg-card" />}>
-        <JackpotStage />
-      </ClientOnly>
-      <ClientOnly fallback={null}>
-        <RecentGames />
-      </ClientOnly>
+      <JackpotStage />
+      <RecentGames />
     </>
   );
 }

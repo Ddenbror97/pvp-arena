@@ -29,12 +29,14 @@ export function OpenGames() {
     <section>
       <h2 className="mb-3 font-display text-sm uppercase tracking-widest">Open games</h2>
       {q.isLoading ? (
-        <div aria-busy="true" className="animate-pulse rounded-2xl border border-dashed border-border p-8 text-center text-sm text-transparent select-none">
-          No open games. Create one and wait for an opponent.
+        <div aria-busy="true" className="animate-pulse rounded-2xl border border-dashed border-border px-6 py-7 text-center text-transparent select-none">
+          <p className="text-sm">No open games</p>
+          <p className="mt-1 text-xs">Create one and wait for an opponent.</p>
         </div>
       ) : !q.data?.length ? (
-        <div className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          No open games. Create one and wait for an opponent.
+        <div className="rounded-2xl border border-dashed border-border px-6 py-7 text-center text-muted-foreground">
+          <p className="text-sm text-foreground/80">No open games</p>
+          <p className="mt-1 text-xs">Create one and wait for an opponent.</p>
         </div>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">

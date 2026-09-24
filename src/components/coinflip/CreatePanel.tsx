@@ -1,3 +1,4 @@
+import { readAuthHint } from "@/lib/auth-hint";
 import { useRef, useState } from "react";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
@@ -18,6 +19,7 @@ const QUICK = [500, 1000, 2500, 5000];
 
 export function CreatePanel() {
   const { userId, profile, ready, needsProfile } = useAuth();
+  const [hint] = useState(readAuthHint);
   const wallet = useWallet(userId);
   const cfg = useCoinflipConfig();
   const qc = useQueryClient();
@@ -64,7 +66,7 @@ export function CreatePanel() {
   }
 
   return (
-    <div className={`rounded-xl border border-border bg-card p-4 ${!ready || userId ? "min-h-[28rem]" : ""}`}>
+    <div className={`rounded-xl border border-border bg-card p-4 ${userId || (!ready && hint) ? "min-h-[28rem]" : !ready ? "lg:min-h-[28rem]" : ""}`}>
       <div className="flex items-center justify-between">
         <h2 className="font-display text-xs uppercase tracking-widest">Create a coinflip</h2>
         <span className="shrink-0 whitespace-nowrap rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>

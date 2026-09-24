@@ -1,3 +1,4 @@
+import { writeAuthHint } from "@/lib/auth-hint";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -79,6 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!active) return;
       lastUser.current = data.session?.user.id ?? null;
       setSession(data.session);
+      writeAuthHint(!!data.session);
       await loadProfile(data.session);
       if (active) setReady(true);
     });
@@ -98,6 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setNeedsProfile(false);
       }
       setSession(s);
+      writeAuthHint(!!s);
       setTimeout(() => void loadProfile(s), 0);
     });
     return () => {
