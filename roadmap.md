@@ -57,3 +57,7 @@
 
 - [x] Coinflip finished-game screen: merge coin + winner into one panel, compact collapsible provably-fair section
 - [x] Roulette adversarial audit: 15 attack tests + 4 verifier tests, Fairness page Roulette tab, report
+
+- [x] Jackpot cold-start/LCP/FCP/JS audit (measure first, minimal fixes)
+- [x] Coinflip cold-start/LCP/FCP/JS audit (measure first, minimal fixes)
+- [x] Roulette cold-start/LCP/FCP/JS audit (measure first, minimal fixes)
