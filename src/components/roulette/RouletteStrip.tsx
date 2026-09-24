@@ -44,9 +44,8 @@ export const RouletteStrip = memo(function RouletteStrip({
   if (spinning && end > start) {
     const t = Math.min(1, Math.max(0, (now() - start) / (end - start)));
     // Brisk start, then a long, gradual slowdown over the final 70% for suspense.
-    const eased = t < 0.3 ? 0.6 * (1 - Math.pow(1 - t / 0.3, 2)) + 0.25 * (t / 0.3) * 0 + 0 : 0;
     const e = t < 0.3 ? (0.55 * t) / 0.3 : 0.55 + 0.45 * (1 - Math.pow(1 - (t - 0.3) / 0.7, 3));
-    pos = base + (target - base) * (t < 0.3 ? e : e);
+    pos = base + (target - base) * e;
   }
 
   useEffect(() => {
