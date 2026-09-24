@@ -155,8 +155,8 @@ export function RouletteGame() {
         <span className="ml-auto rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold text-gold">TEST CREDITS</span>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {COLORS.map((c) => {
+      <div className="grid gap-3 sm:grid-cols-3">
+        {COLORS.filter((c) => mults[c] != null).map((c) => {
           const list = (bets.data ?? []).filter((b) => b.color === c);
           const total = list.reduce((s, b) => s + Number(b.amount), 0);
           return (
@@ -192,7 +192,7 @@ export function RouletteGame() {
         })}
       </div>
       <p className="text-xs text-muted-foreground">
-        15 coins: 5 Purple (2.8x), 5 Silver (2.8x), 4 Gold (3.5x), 1 Jackpot coin (14x). Payouts include your stake. The result is
+        15 coins: 7 Purple (2x, 46.67%), 7 Silver (2x, 46.67%), 1 Green (14x, 6.67%). Payouts include your stake. The result is
         drawn on the server when betting closes and can be checked on the <Link to="/fairness" className="underline">Fairness</Link> page.
       </p>
     </div>

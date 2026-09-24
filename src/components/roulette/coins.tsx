@@ -8,7 +8,7 @@ export const COIN: Record<RlColor, { src: string; filter?: string; glow: string;
   RED: { src: heads.url, glow: "var(--primary)", label: "Purple" },
   BLACK: { src: tails.url, glow: "oklch(0.85 0.01 285)", label: "Silver" },
   YELLOW: { src: heads.url, filter: "hue-rotate(150deg) saturate(1.6) brightness(1.5)", glow: "var(--rl-yellow)", label: "Gold" },
-  GREEN: { src: green.url, glow: "var(--rl-green)", label: "Jackpot" },
+  GREEN: { src: green.url, glow: "var(--rl-green)", label: "Green" },
 };
 
 export function CoinImg({ c, className, size = 64 }: { c: RlColor; className?: string; size?: number }) {
