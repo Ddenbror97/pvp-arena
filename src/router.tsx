@@ -13,14 +13,28 @@ function preloadMode(): "intent" | false {
 export const getRouter = () => {
   const queryClient = new QueryClient();
 
+  const mode = preloadMode();
   const router = createRouter({
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
-    defaultPreload: preloadMode(),
-    defaultPreloadDelay: 80,
+    defaultPreload: mode,
+    defaultPreloadDelay: 30,
   });
+
+  // After the first page is idle, fetch only the code (no data) for the menu pages
+  // so the first click never waits on a chunk download.
+  if (typeof window !== "undefined" && mode) {
+    const warm = () => {
+      for (const path of ["/", "/coinflip", "/roulette", "/fairness", "/auth"]) {
+        const r = (router.routesByPath as unknown as Record<string, unknown>)[path];
+        if (r) void router.loadRouteChunk(r as never)?.catch(() => {});
+      }
+    };
+    const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback;
+    window.addEventListener("load", () => (idle ? idle(warm, { timeout: 3000 }) : setTimeout(warm, 1500)), { once: true });
+  }
 
   return router;
 };
