@@ -31,3 +31,4 @@
 - [x] Chat "No messages yet" flash fixed; [x] one shared chat room on all game pages — flashes before history loads — scan site for similar late-load flashes
 - [x] Replace Coinflip coin faces with user's Heads/Tails images (same size)
 - [x] Chat header late load-in: "Start of chat" and "1 online" pop in late — reserve space / gate on historyLoaded
+- [ ] Fix chat "Start of chat" drop-in: it appears late and makes the username row shift/drop — remove entrance animation / reserve geometry
