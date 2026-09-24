@@ -1110,6 +1110,426 @@ export type Database = {
         }
         Relationships: []
       }
+      roulette_bets: {
+        Row: {
+          amount: number
+          color: Database["public"]["Enums"]["roulette_color"]
+          created_at: string
+          game_id: number
+          id: string
+          idempotency_key: string
+          ledger_tx_id: string
+          multiplier_bps: number
+          payout_amount: number | null
+          settled_at: string | null
+          status: Database["public"]["Enums"]["roulette_bet_status"]
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          color: Database["public"]["Enums"]["roulette_color"]
+          created_at?: string
+          game_id: number
+          id?: string
+          idempotency_key: string
+          ledger_tx_id: string
+          multiplier_bps: number
+          payout_amount?: number | null
+          settled_at?: string | null
+          status?: Database["public"]["Enums"]["roulette_bet_status"]
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          color?: Database["public"]["Enums"]["roulette_color"]
+          created_at?: string
+          game_id?: number
+          id?: string
+          idempotency_key?: string
+          ledger_tx_id?: string
+          multiplier_bps?: number
+          payout_amount?: number | null
+          settled_at?: string | null
+          status?: Database["public"]["Enums"]["roulette_bet_status"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roulette_bets_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "roulette_games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roulette_bets_ledger_tx_id_fkey"
+            columns: ["ledger_tx_id"]
+            isOneToOne: false
+            referencedRelation: "ledger_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roulette_bets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roulette_config: {
+        Row: {
+          betting_seconds: number
+          id: boolean
+          lock_ms: number
+          max_bet: number
+          max_bets_per_round: number
+          max_bets_per_user: number
+          max_pot: number
+          min_bet: number
+          spin_ms: number
+          stuck_cancel_seconds: number
+          updated_at: string
+          wheel_version: number
+        }
+        Insert: {
+          betting_seconds?: number
+          id?: boolean
+          lock_ms?: number
+          max_bet?: number
+          max_bets_per_round?: number
+          max_bets_per_user?: number
+          max_pot?: number
+          min_bet?: number
+          spin_ms?: number
+          stuck_cancel_seconds?: number
+          updated_at?: string
+          wheel_version: number
+        }
+        Update: {
+          betting_seconds?: number
+          id?: boolean
+          lock_ms?: number
+          max_bet?: number
+          max_bets_per_round?: number
+          max_bets_per_user?: number
+          max_pot?: number
+          min_bet?: number
+          spin_ms?: number
+          stuck_cancel_seconds?: number
+          updated_at?: string
+          wheel_version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roulette_config_wheel_version_fkey"
+            columns: ["wheel_version"]
+            isOneToOne: false
+            referencedRelation: "roulette_wheels"
+            referencedColumns: ["version"]
+          },
+        ]
+      }
+      roulette_game_secrets: {
+        Row: {
+          game_id: number
+          server_seed: string
+        }
+        Insert: {
+          game_id: number
+          server_seed: string
+        }
+        Update: {
+          game_id?: number
+          server_seed?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roulette_game_secrets_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: true
+            referencedRelation: "roulette_games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roulette_games: {
+        Row: {
+          account_type: string
+          asset: string
+          bet_count: number
+          betting_ends_at: string | null
+          betting_seconds: number
+          betting_started_at: string | null
+          cancel_reason: string | null
+          cancelled_at: string | null
+          completed_at: string | null
+          created_at: string
+          draw_counter: number | null
+          draw_version: number
+          house_result: number | null
+          id: number
+          last_error: string | null
+          lock_ms: number
+          locked_at: string | null
+          max_bet: number
+          max_bets_per_round: number
+          max_bets_per_user: number
+          max_pot: number
+          min_bet: number
+          player_count: number
+          pot_amount: number
+          protocol_version: string
+          server_seed: string | null
+          server_seed_hash: string
+          settle_attempts: number
+          settlement_started_at: string | null
+          spin_end_at: string | null
+          spin_ms: number
+          spin_start_at: string | null
+          status: Database["public"]["Enums"]["roulette_status"]
+          stuck_cancel_seconds: number
+          total_payout: number | null
+          updated_at: string
+          wheel_version: number
+          winning_color: Database["public"]["Enums"]["roulette_color"] | null
+          winning_slot: number | null
+        }
+        Insert: {
+          account_type: string
+          asset: string
+          bet_count?: number
+          betting_ends_at?: string | null
+          betting_seconds: number
+          betting_started_at?: string | null
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          draw_counter?: number | null
+          draw_version?: number
+          house_result?: number | null
+          id?: never
+          last_error?: string | null
+          lock_ms: number
+          locked_at?: string | null
+          max_bet: number
+          max_bets_per_round: number
+          max_bets_per_user: number
+          max_pot: number
+          min_bet: number
+          player_count?: number
+          pot_amount?: number
+          protocol_version?: string
+          server_seed?: string | null
+          server_seed_hash: string
+          settle_attempts?: number
+          settlement_started_at?: string | null
+          spin_end_at?: string | null
+          spin_ms: number
+          spin_start_at?: string | null
+          status?: Database["public"]["Enums"]["roulette_status"]
+          stuck_cancel_seconds: number
+          total_payout?: number | null
+          updated_at?: string
+          wheel_version: number
+          winning_color?: Database["public"]["Enums"]["roulette_color"] | null
+          winning_slot?: number | null
+        }
+        Update: {
+          account_type?: string
+          asset?: string
+          bet_count?: number
+          betting_ends_at?: string | null
+          betting_seconds?: number
+          betting_started_at?: string | null
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          draw_counter?: number | null
+          draw_version?: number
+          house_result?: number | null
+          id?: never
+          last_error?: string | null
+          lock_ms?: number
+          locked_at?: string | null
+          max_bet?: number
+          max_bets_per_round?: number
+          max_bets_per_user?: number
+          max_pot?: number
+          min_bet?: number
+          player_count?: number
+          pot_amount?: number
+          protocol_version?: string
+          server_seed?: string | null
+          server_seed_hash?: string
+          settle_attempts?: number
+          settlement_started_at?: string | null
+          spin_end_at?: string | null
+          spin_ms?: number
+          spin_start_at?: string | null
+          status?: Database["public"]["Enums"]["roulette_status"]
+          stuck_cancel_seconds?: number
+          total_payout?: number | null
+          updated_at?: string
+          wheel_version?: number
+          winning_color?: Database["public"]["Enums"]["roulette_color"] | null
+          winning_slot?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roulette_games_wheel_version_fkey"
+            columns: ["wheel_version"]
+            isOneToOne: false
+            referencedRelation: "roulette_wheels"
+            referencedColumns: ["version"]
+          },
+        ]
+      }
+      roulette_payouts: {
+        Row: {
+          amount: number
+          beneficiary_id: string
+          bet_id: string
+          created_at: string
+          game_id: number
+          idempotency_key: string
+          kind: Database["public"]["Enums"]["roulette_payout_kind"]
+          ledger_tx_id: string
+        }
+        Insert: {
+          amount: number
+          beneficiary_id: string
+          bet_id: string
+          created_at?: string
+          game_id: number
+          idempotency_key: string
+          kind: Database["public"]["Enums"]["roulette_payout_kind"]
+          ledger_tx_id: string
+        }
+        Update: {
+          amount?: number
+          beneficiary_id?: string
+          bet_id?: string
+          created_at?: string
+          game_id?: number
+          idempotency_key?: string
+          kind?: Database["public"]["Enums"]["roulette_payout_kind"]
+          ledger_tx_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roulette_payouts_beneficiary_id_fkey"
+            columns: ["beneficiary_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roulette_payouts_bet_id_fkey"
+            columns: ["bet_id"]
+            isOneToOne: true
+            referencedRelation: "roulette_bets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roulette_payouts_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "roulette_games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roulette_payouts_ledger_tx_id_fkey"
+            columns: ["ledger_tx_id"]
+            isOneToOne: true
+            referencedRelation: "ledger_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roulette_results: {
+        Row: {
+          color: Database["public"]["Enums"]["roulette_color"]
+          created_at: string
+          draw_counter: number
+          draw_version: number
+          game_id: number
+          hmac_hex: string
+          message: string
+          protocol_version: string
+          server_seed_hash: string
+          slot: number
+          wheel_version: number
+        }
+        Insert: {
+          color: Database["public"]["Enums"]["roulette_color"]
+          created_at?: string
+          draw_counter: number
+          draw_version: number
+          game_id: number
+          hmac_hex: string
+          message: string
+          protocol_version: string
+          server_seed_hash: string
+          slot: number
+          wheel_version: number
+        }
+        Update: {
+          color?: Database["public"]["Enums"]["roulette_color"]
+          created_at?: string
+          draw_counter?: number
+          draw_version?: number
+          game_id?: number
+          hmac_hex?: string
+          message?: string
+          protocol_version?: string
+          server_seed_hash?: string
+          slot?: number
+          wheel_version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roulette_results_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: true
+            referencedRelation: "roulette_games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roulette_results_wheel_version_fkey"
+            columns: ["wheel_version"]
+            isOneToOne: false
+            referencedRelation: "roulette_wheels"
+            referencedColumns: ["version"]
+          },
+        ]
+      }
+      roulette_wheels: {
+        Row: {
+          created_at: string
+          layout: Database["public"]["Enums"]["roulette_color"][]
+          multipliers_bps: Json
+          slot_count: number
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          layout: Database["public"]["Enums"]["roulette_color"][]
+          multipliers_bps: Json
+          slot_count: number
+          version: number
+        }
+        Update: {
+          created_at?: string
+          layout?: Database["public"]["Enums"]["roulette_color"][]
+          multipliers_bps?: Json
+          slot_count?: number
+          version?: number
+        }
+        Relationships: []
+      }
       signup_attempts: {
         Row: {
           created_at: string
@@ -1334,6 +1754,21 @@ export type Database = {
         Args: { p_account: string; p_amount: number; p_tx: string }
         Returns: undefined
       }
+      _roulette_audit: {
+        Args: {
+          p_action: string
+          p_actor: string
+          p_details: Json
+          p_game: number
+        }
+        Returns: undefined
+      }
+      _roulette_ensure_open: { Args: never; Returns: number }
+      _roulette_refund: {
+        Args: { p_game_id: number; p_reason: string }
+        Returns: undefined
+      }
+      _roulette_settle: { Args: { p_game_id: number }; Returns: undefined }
       _system_account: {
         Args: {
           p_asset: string
@@ -1478,6 +1913,26 @@ export type Database = {
         }
         Returns: Json
       }
+      roulette_advance: { Args: { p_game_id: number }; Returns: string }
+      roulette_bet: {
+        Args: {
+          p_amount: number
+          p_color: Database["public"]["Enums"]["roulette_color"]
+          p_idempotency_key: string
+        }
+        Returns: Json
+      }
+      roulette_draw_slot: {
+        Args: {
+          p_draw_version: number
+          p_game_id: number
+          p_n: number
+          p_seed: string
+        }
+        Returns: Record<string, unknown>
+      }
+      roulette_integrity_check: { Args: never; Returns: Json }
+      roulette_tick: { Args: never; Returns: Json }
       server_time: { Args: never; Returns: string }
       signup_rate_check: {
         Args: { p_email_hash: string; p_ip_hash: string }
@@ -1533,6 +1988,17 @@ export type Database = {
         | "EXPIRED"
         | "SEND_FAILED"
       payout_status: "PENDING" | "SETTLED" | "FAILED"
+      roulette_bet_status: "ACCEPTED" | "WON" | "LOST" | "REFUNDED"
+      roulette_color: "RED" | "BLACK" | "YELLOW" | "GREEN"
+      roulette_payout_kind: "WINNER" | "REFUND"
+      roulette_status:
+        | "WAITING"
+        | "BETTING"
+        | "LOCKED"
+        | "SPINNING"
+        | "SETTLEMENT"
+        | "COMPLETED"
+        | "CANCELLED"
       tx_kind:
         | "test_credit_grant"
         | "jackpot_entry"
@@ -1543,6 +2009,9 @@ export type Database = {
         | "coinflip_entry"
         | "coinflip_settlement"
         | "coinflip_refund"
+        | "roulette_entry"
+        | "roulette_settlement"
+        | "roulette_refund"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1700,6 +2169,18 @@ export const Constants = {
         "SEND_FAILED",
       ],
       payout_status: ["PENDING", "SETTLED", "FAILED"],
+      roulette_bet_status: ["ACCEPTED", "WON", "LOST", "REFUNDED"],
+      roulette_color: ["RED", "BLACK", "YELLOW", "GREEN"],
+      roulette_payout_kind: ["WINNER", "REFUND"],
+      roulette_status: [
+        "WAITING",
+        "BETTING",
+        "LOCKED",
+        "SPINNING",
+        "SETTLEMENT",
+        "COMPLETED",
+        "CANCELLED",
+      ],
       tx_kind: [
         "test_credit_grant",
         "jackpot_entry",
@@ -1710,6 +2191,9 @@ export const Constants = {
         "coinflip_entry",
         "coinflip_settlement",
         "coinflip_refund",
+        "roulette_entry",
+        "roulette_settlement",
+        "roulette_refund",
       ],
     },
   },
