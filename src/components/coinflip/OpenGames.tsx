@@ -1,12 +1,12 @@
 import { useRef, useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { formatUsd } from "@/lib/jackpot/math";
 import { friendlyError } from "@/lib/jackpot/errors";
-import { fetchOpenCoinflips, fetchRecentCoinflips, opposite, type CfGameView, type CoinSide } from "@/lib/coinflip/api";
+import { openRoom, fetchOpenCoinflips, fetchRecentCoinflips, opposite, type CfGameView, type CoinSide } from "@/lib/coinflip/api";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -57,8 +57,8 @@ function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin:
     setPending(true);
     key.current ??= crypto.randomUUID();
     const { error } = await supabase.rpc("coinflip_join", { p_game_id: g.id, p_idempotency_key: key.current });
-    setPending(false);
     if (error) {
+      setPending(false);
       toast.error(friendlyError(error));
       if (!/fetch|network/i.test(error.message)) key.current = null;
       qc.invalidateQueries({ queryKey: ["coinflip-open"] });
@@ -66,6 +66,7 @@ function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin:
     }
     qc.invalidateQueries({ queryKey: ["wallet"] });
     await openRoom(qc, router, g.id);
+    setPending(false);
     navigate({ to: "/coinflip/$gameId", params: { gameId: String(g.id) } });
   }
 

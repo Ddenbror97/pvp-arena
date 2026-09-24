@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,7 +8,7 @@ import { useWallet } from "@/lib/jackpot/api";
 import { formatUsd, parseUsdToCents } from "@/lib/jackpot/math";
 import { friendlyError } from "@/lib/jackpot/errors";
 import { APP } from "@/lib/config";
-import { useCoinflipConfig, type CoinSide } from "@/lib/coinflip/api";
+import { openRoom, useCoinflipConfig, type CoinSide } from "@/lib/coinflip/api";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import headsAsset from "@/assets/coin-heads.png.asset.json";
@@ -48,8 +48,8 @@ export function CreatePanel() {
       p_side: side,
       p_idempotency_key: pendingKey.current!.key,
     });
-    setPending(false);
     if (error) {
+      setPending(false);
       toast.error(friendlyError(error));
       if (!/fetch|network/i.test(error.message)) pendingKey.current = null;
       return;
@@ -59,6 +59,7 @@ export function CreatePanel() {
     qc.invalidateQueries({ queryKey: ["coinflip-open"] });
     const gid = (data as { game_id: number }).game_id;
     await openRoom(qc, router, gid);
+    setPending(false);
     navigate({ to: "/coinflip/$gameId", params: { gameId: String(gid) } });
   }
 

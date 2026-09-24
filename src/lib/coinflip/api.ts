@@ -87,3 +87,19 @@ export function useCoinflipRealtime() {
 export function tickCoinflip() {
   return supabase.rpc("coinflip_tick");
 }
+
+/**
+ * Warm the room before navigating so it renders complete on arrival
+ * (game data + route code in parallel, capped so a slow network never blocks).
+ */
+export async function openRoom(
+  qc: import("@tanstack/react-query").QueryClient,
+  router: { preloadRoute: (o: { to: "/coinflip/$gameId"; params: { gameId: string } }) => Promise<unknown> },
+  id: number,
+) {
+  const warm = Promise.allSettled([
+    qc.prefetchQuery({ queryKey: ["coinflip", id], queryFn: () => fetchCoinflip(id), staleTime: 0 }),
+    router.preloadRoute({ to: "/coinflip/$gameId", params: { gameId: String(id) } }),
+  ]);
+  await Promise.race([warm, new Promise((r) => setTimeout(r, 1500))]);
+}
