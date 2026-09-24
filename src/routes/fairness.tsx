@@ -166,7 +166,6 @@ function JackpotSection() {
         </ul>
       </details>
       </div>
-      </div>
     </section>
   );
 }
