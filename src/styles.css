@@ -272,13 +272,16 @@
   .animate-win-slam, .animate-coin-land, .animate-win-pop, .shockwave, .win-card::after { animation: none; }
 }
 
-/* RGB lighting ring around the Jackpot wheel */
-@property --rgb-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
-@keyframes rgb-spin { to { --rgb-angle: 360deg; } }
+/* RGB lighting ring around the Jackpot wheel.
+   Rotates a static gradient with transform (compositor-only) instead of animating a
+   custom property, which forced a full repaint + blur every frame and made scrolling stutter. */
+@keyframes rgb-spin { to { transform: rotate(360deg); } }
 .rgb-ring {
   position: absolute; inset: -6px; border-radius: 9999px;
-  background: conic-gradient(from var(--rgb-angle), oklch(0.7 0.25 25), oklch(0.85 0.2 90), oklch(0.8 0.22 145), oklch(0.75 0.16 220), oklch(0.6 0.25 290), oklch(0.7 0.25 340), oklch(0.7 0.25 25));
+  background: conic-gradient(oklch(0.7 0.25 25), oklch(0.85 0.2 90), oklch(0.8 0.22 145), oklch(0.75 0.16 220), oklch(0.6 0.25 290), oklch(0.7 0.25 340), oklch(0.7 0.25 25));
   animation: rgb-spin 4s linear infinite;
+  will-change: transform;
 }
+[data-ring-paused] > .rgb-ring { animation-play-state: paused; }
 .rgb-ring-blur { inset: -14px; filter: blur(22px); opacity: 0.75; }
 @media (prefers-reduced-motion: reduce) { .rgb-ring { animation: none; } }

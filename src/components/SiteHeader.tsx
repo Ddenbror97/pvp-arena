@@ -15,7 +15,7 @@ export function SiteHeader() {
   const [hint] = useState(readAuthHint);
   const link = "text-sm text-muted-foreground hover:text-foreground transition-colors [&.active]:text-foreground";
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-border bg-background">
       <div className="mx-auto flex h-14 max-w-none items-center gap-4 px-3 sm:h-16 sm:gap-6 sm:px-4 lg:px-6">
         <Link to="/" className="shrink-0" aria-label="PVPspinArena">
           <img src={arenaLogo.url} alt="PVPspinArena" width={240} height={128} fetchPriority="high" decoding="async" className="h-8 w-auto sm:h-10" />
@@ -128,7 +128,7 @@ export function MobileTabBar() {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-40 flex border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 flex border-t border-border bg-background pb-[env(safe-area-inset-bottom)] sm:hidden"
     >
       <Link to="/" className={tab} activeOptions={{ exact: true }}><Dices className="h-5 w-5" />Jackpot</Link>
       <Link to="/coinflip" className={tab}><Coins className="h-5 w-5" />Coinflip</Link>

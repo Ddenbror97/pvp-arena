@@ -69,7 +69,7 @@ const BettingCountdownBar = memo(function BettingCountdownBar({
   );
 });
 
-const RESULT_HOLD_MS = 5000;
+const RESULT_HOLD_MS = 3500;
 const NAME_REVEAL_MS = 1500;
 
 export function RouletteGame() {
@@ -80,7 +80,7 @@ export function RouletteGame() {
   useNow(200);
   const setup = useRouletteSetup();
   const round = useQuery({ queryKey: ["roulette-round"], queryFn: fetchCurrentRound, refetchInterval: 4000 });
-  const history = useQuery({ queryKey: ["roulette-history"], queryFn: () => fetchHistory(12) });
+  const history = useQuery({ queryKey: ["roulette-history"], queryFn: () => fetchHistory(48) });
   const live = round.data ?? null;
   // Presentation hold: keep the finished round (winning coin + green/red names) on screen
   // for a few seconds after the strip stops, even if the server already opened the next round.
@@ -150,7 +150,7 @@ export function RouletteGame() {
   const adjust = (f: (c: number) => number) => setInput(((Math.max(0, f(amount ?? 0))) / 100).toFixed(2));
 
   let status = "Waiting for the first bet";
-  if (g?.status === "BETTING") status = `Rolling in ${Math.max(0, (new Date(g.betting_ends_at!).getTime() - now()) / 1000).toFixed(1)}s`;
+  if (g?.status === "BETTING") status = `Rolling in ${Math.max(0, Math.min(g.betting_seconds, (new Date(g.betting_ends_at!).getTime() - now()) / 1000)).toFixed(1)}s`;
   else if (g?.status === "LOCKED") status = "Bets locked";
   else if (g?.status === "SPINNING") status = now() >= new Date(g.spin_end_at!).getTime() ? "Settling…" : "Rolling…";
   else if (g?.status === "SETTLEMENT") status = "Settling…";

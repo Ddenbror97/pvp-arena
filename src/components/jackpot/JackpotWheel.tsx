@@ -51,28 +51,54 @@ export function JackpotWheel({ players, spin, onSpinEnd, highlightId, children }
   const [spinning, setSpinning] = useState(false);
   const spunFor = useRef<string | null>(null);
 
+  // Keep the latest callback without restarting the spin when the parent re-renders.
+  const onEndRef = useRef(onSpinEnd);
+  onEndRef.current = onSpinEnd;
+  const segRef = useRef(segments);
+  segRef.current = segments;
+  const winnerSeg = spin ? segments.find((s) => s.user_id === spin.winnerId) : undefined;
+  const ready = !!spin && !!winnerSeg;
+  const timers = useRef<number[]>([]);
+
   useEffect(() => {
-    if (!spin || !segments.length) return;
+    if (!spin || !ready) return;
     const key = `${spin.winnerId}:${spin.winningTicket}`;
     if (spunFor.current === key) return;
     spunFor.current = key;
-    const seg = segments.find((s) => s.user_id === spin.winnerId);
-    if (!seg) return;
-    // Land inside the winner's slice; position within the slice is derived from
-    // the (already decided) winning ticket so the reveal is deterministic.
-    const frac = 0.15 + 0.7 * ((spin.winningTicket % 997) / 997);
-    const angle = seg.start + (seg.end - seg.start) * frac;
-    const target = 8 * 360 + (360 - angle);
-    setSpinning(true);
-    emitSound("spin_start");
-    requestAnimationFrame(() => setRotation(target));
-    const t = setTimeout(() => {
-      setSpinning(false);
-      emitSound("spin_stop");
-      onSpinEnd?.();
-    }, SPIN_MS + 100);
-    return () => clearTimeout(t);
-  }, [spin, segments, onSpinEnd]);
+    const run = () => {
+      const seg = segRef.current.find((s) => s.user_id === spin.winnerId);
+      if (!seg) return;
+      // Land inside the winner's slice; position within the slice is derived from
+      // the (already decided) winning ticket so the reveal is deterministic.
+      const frac = 0.15 + 0.7 * ((spin.winningTicket % 997) / 997);
+      const angle = seg.start + (seg.end - seg.start) * frac;
+      const target = 8 * 360 + (360 - angle);
+      setSpinning(true);
+      emitSound("spin_start");
+      // Two frames: the "transition on" style must be committed before the rotation changes.
+      requestAnimationFrame(() => requestAnimationFrame(() => setRotation(target)));
+      timers.current.push(
+        window.setTimeout(() => {
+          setSpinning(false);
+          emitSound("spin_stop");
+          onEndRef.current?.();
+        }, SPIN_MS + 150),
+      );
+    };
+    // A hidden tab/app pauses animations but not timers, which used to announce the winner
+    // with no visible spin. Start the spin only once the page is visible.
+    if (document.visibilityState === "visible") run();
+    else {
+      const onVis = () => {
+        if (document.visibilityState !== "visible") return;
+        document.removeEventListener("visibilitychange", onVis);
+        run();
+      };
+      document.addEventListener("visibilitychange", onVis);
+    }
+  }, [spin, ready]);
+
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
   useEffect(() => {
     if (!spin) {
@@ -81,8 +107,29 @@ export function JackpotWheel({ players, spin, onSpinEnd, highlightId, children }
     }
   }, [spin]);
 
+  // Pause the decorative RGB ring while the page scrolls or the wheel is off-screen:
+  // repainting the rotating gradient + blur during scroll caused jank on mid-range phones.
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    let t = 0;
+    const onScroll = () => {
+      el.dataset["ringPaused"] = "1";
+      clearTimeout(t);
+      t = window.setTimeout(() => { if (el.dataset["visible"] !== "0") delete el.dataset["ringPaused"]; }, 180);
+    };
+    const io = new IntersectionObserver(([e]) => {
+      el.dataset["visible"] = e?.isIntersecting ? "1" : "0";
+      if (e?.isIntersecting) delete el.dataset["ringPaused"]; else el.dataset["ringPaused"] = "1";
+    });
+    io.observe(el);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => { window.removeEventListener("scroll", onScroll); io.disconnect(); clearTimeout(t); };
+  }, []);
+
   return (
-    <div data-panel className="relative mx-auto aspect-square w-full max-w-[min(340px,86vw)] sm:max-w-[460px]">
+    <div ref={box} data-panel className="relative mx-auto aspect-square w-full max-w-[min(340px,86vw)] sm:max-w-[460px]">
       {/* pointer */}
       <div className="absolute left-1/2 top-[-6px] z-20 -translate-x-1/2">
         <div className="h-0 w-0 border-x-[14px] border-t-[22px] border-x-transparent border-t-primary drop-shadow-[0_0_10px_var(--primary)]" />
@@ -122,7 +169,7 @@ export function JackpotWheel({ players, spin, onSpinEnd, highlightId, children }
           );
         })}
       </svg>
-      <div className="absolute inset-[18%] z-10 flex items-center justify-center rounded-full bg-background/90 ring-1 ring-border backdrop-blur">
+      <div className="absolute inset-[18%] z-10 flex items-center justify-center rounded-full bg-background ring-1 ring-border">
         {children}
       </div>
     </div>
