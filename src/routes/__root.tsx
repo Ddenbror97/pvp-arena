@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -108,12 +109,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const wide = pathname === "/" || pathname === "/coinflip" || pathname === "/coinflip/";
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <SiteHeader />
-        <main className="mx-auto max-w-7xl px-4 py-8">
+        <main className={wide ? "mx-auto max-w-none px-4 py-6 lg:px-6" : "mx-auto max-w-7xl px-4 py-8"}>
           <Outlet />
         </main>
         <SiteFooter />

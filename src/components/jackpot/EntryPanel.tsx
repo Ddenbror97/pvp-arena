@@ -63,9 +63,9 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
   if (!userId) {
     return (
       <Panel>
-        <h3 className="font-display text-lg">Join the pot</h3>
+        <h3 className="font-display text-base">Join the pot</h3>
         <p className="mt-2 text-sm text-muted-foreground">Sign in to enter. New players get free {APP.creditsLabel.toLowerCase()} to try the game.</p>
-        <Button asChild className="mt-5 w-full font-display" size="lg">
+        <Button asChild className="mt-4 w-full font-display">
           <Link to="/auth">Sign in to play</Link>
         </Button>
       </Panel>
@@ -85,29 +85,29 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
         <span className="text-xs uppercase tracking-widest text-muted-foreground">Your balance</span>
         <span className="rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>
       </div>
-      <div className="tabular mt-1 text-2xl font-semibold">{wallet.isLoading ? "—" : formatUsd(balance)}</div>
+      <div className="tabular mt-0.5 text-xl font-semibold">{wallet.isLoading ? "—" : formatUsd(balance)}</div>
 
-      <label className="mt-5 block text-xs uppercase tracking-widest text-muted-foreground" htmlFor="entry-amount">
+      <label className="mt-3 block text-[11px] uppercase tracking-widest text-muted-foreground" htmlFor="entry-amount">
         Enter amount
       </label>
-      <div className="mt-2 flex items-center rounded-lg border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring">
+      <div className="mt-1.5 flex items-center rounded-lg border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring">
         <span className="tabular text-muted-foreground">$</span>
         <input
           id="entry-amount"
           inputMode="decimal"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="tabular h-12 w-full bg-transparent px-2 text-lg outline-none"
+          className="tabular h-10 w-full bg-transparent px-2 text-base outline-none"
           aria-invalid={!valid}
         />
       </div>
-      <div className="mt-3 grid grid-cols-5 gap-2">
+      <div className="mt-2 grid grid-cols-5 gap-1.5">
         {QUICK_AMOUNTS.map((q) => (
           <button
             key={q}
             type="button"
             onClick={() => setInput((q / 100).toFixed(2))}
-            className="tabular rounded-md bg-secondary py-2 text-sm hover:bg-accent"
+            className="tabular rounded-md bg-secondary py-1.5 text-xs hover:bg-accent"
           >
             ${q / 100}
           </button>
@@ -115,13 +115,13 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
         <button
           type="button"
           onClick={() => setInput((Math.max(0, max) / 100).toFixed(2))}
-          className="rounded-md bg-secondary py-2 text-xs font-bold hover:bg-accent"
+          className="rounded-md bg-secondary py-1.5 text-xs font-bold hover:bg-accent"
         >
           MAX
         </button>
       </div>
 
-      <div className="mt-5 flex items-center justify-between text-sm">
+      <div className="mt-3 flex items-center justify-between text-xs">
         <span className="text-muted-foreground">Your estimated chance</span>
         <span className="tabular font-semibold text-primary">{formatBps(chance)}</span>
       </div>
@@ -134,14 +134,14 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
 
       <Button
         size="lg"
-        className="mt-5 h-14 w-full font-display text-base tracking-wide"
+        className="mt-3 h-11 w-full font-display text-sm tracking-wide"
         disabled={!affordable || pending || closed}
         onClick={submit}
       >
         {closed ? "No more entries" : pending ? "Entering..." : `Enter jackpot · ${valid ? formatUsd(amount!) : "$0.00"}`}
       </Button>
       {myTotal > 0 && (
-        <p className="mt-3 text-center text-xs text-muted-foreground">
+        <p className="mt-2 text-center text-xs text-muted-foreground">
           You're in with <span className="tabular text-foreground">{formatUsd(myTotal)}</span>
         </p>
       )}
@@ -150,5 +150,5 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
 }
 
 function Panel({ children }: { children: React.ReactNode }) {
-  return <div className="rounded-2xl border border-border bg-card p-5">{children}</div>;
+  return <div className="rounded-xl border border-border bg-card p-4">{children}</div>;
 }

@@ -94,11 +94,11 @@ export function JackpotStage() {
   );
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_minmax(0,1.35fr)_1fr]">
+    <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)_280px] lg:items-start xl:grid-cols-[280px_minmax(0,1fr)_300px]">
       {/* Players */}
-      <section className="order-3 rounded-2xl border border-border bg-card lg:order-1">
-        <header className="flex items-center justify-between border-b border-border px-4 py-3">
-          <h2 className="font-display text-sm uppercase tracking-widest">Players</h2>
+      <section className="order-3 overflow-hidden rounded-xl border border-border bg-card lg:order-1">
+        <header className="flex items-center justify-between border-b border-border px-3 py-2">
+          <h2 className="font-display text-xs uppercase tracking-widest">Players</h2>
           <span className="tabular text-xs text-muted-foreground">
             {game?.player_count ?? 0} players · {game?.entry_count ?? 0} entries
           </span>
