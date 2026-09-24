@@ -54,7 +54,7 @@ function Lobby() {
         <CreatePanel />
         <OpenGames />
         <Suspense fallback={<div className="h-80 animate-pulse rounded-xl bg-card" />}>
-          <GameChat gameType="coinflip" className="h-80 lg:col-span-2 xl:col-span-1 xl:h-[32rem]" />
+          <GameChat gameType="coinflip" className="h-72 sm:h-80 lg:col-span-2 xl:col-span-1 xl:h-[32rem]" />
         </Suspense>
       </div>
       <RecentCoinflips />
