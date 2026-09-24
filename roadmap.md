@@ -33,3 +33,4 @@
 - [x] Chat header late load-in: "Start of chat" and "1 online" pop in late — reserve space / gate on historyLoaded
 - [ ] Fix chat "Start of chat" drop-in: it appears late and makes the username row shift/drop — remove entrance animation / reserve geometry
 - [ ] Fairness page UX: too much content / too big — simplify layout, fix mobile
+- [x] Fix chat "Start of chat" drop-in: reserved constant-height top strip in GameChat (verified: message + marker render in same commit)
