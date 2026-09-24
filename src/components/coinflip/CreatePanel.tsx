@@ -66,21 +66,21 @@ export function CreatePanel() {
   }
 
   return (
-    <div className={`rounded-xl border border-border bg-card p-4 ${userId || (!ready && hint) ? "min-h-[28rem]" : !ready ? "lg:min-h-[28rem]" : ""}`}>
+    <div className={`rounded-xl border border-border bg-card p-4 ${!userId && (ready || !hint) ? "lg:min-h-[29.25rem]" : ""}`}>
       <div className="flex items-center justify-between">
         <h2 className="font-display text-xs uppercase tracking-widest">Create a coinflip</h2>
         <span className="shrink-0 whitespace-nowrap rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>
       </div>
       <p className="mt-1 text-xs text-muted-foreground">1 vs 1 · winner takes the pot</p>
 
-      {!userId ? (
+      {!userId && (ready || !hint) ? (
         <Button asChild className="mt-4 w-full font-display"><Link to="/auth">Sign in to play</Link></Button>
       ) : !profile && needsProfile ? (
         <p className="mt-5 text-sm text-muted-foreground">Finish setting up your profile to play.</p>
       ) : (
         <>
           <div className="mt-3 text-xs text-muted-foreground">
-            Available <span className="tabular text-foreground">{formatUsd(balance)}</span> {APP.creditsLabel}
+            Available <span className="tabular text-foreground">{!userId || wallet.isLoading ? "—" : formatUsd(balance)}</span> {APP.creditsLabel}
           </div>
           <label className="mt-3 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground" htmlFor="cf-amount">Wager</label>
           <div className="mt-1 flex items-center rounded-lg border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring">
