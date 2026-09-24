@@ -108,19 +108,19 @@ export function RouletteGame() {
     : 0;
 
   return (
-    <div className="min-w-0 space-y-4">
+    <div className="min-w-0 space-y-2.5">
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs uppercase tracking-wider text-muted-foreground">Previous rolls</span>
-        <div className="flex h-7 gap-1">
+        <div className="flex h-6 gap-1">
           {(history.data ?? []).map((h) => (
-            <CoinImg key={h.id} c={h.winning_color!} size={28} className="rounded-full" />
+            <CoinImg key={h.id} c={h.winning_color!} size={24} className="rounded-full" />
           ))}
         </div>
       </div>
 
       {layout.length ? <RouletteStrip layout={layout} game={g} now={now} /> : <div className="h-24 animate-pulse rounded-xl bg-card" />}
 
-      <div className="rounded-xl border border-border bg-card p-3">
+      <div className="rounded-xl border border-border bg-card p-2.5">
         <div className="flex items-center justify-between text-sm">
           <span className="font-display" aria-live="polite">{status}</span>
           <span className="tabular text-muted-foreground">Round #{g?.id ?? "—"} · Pot {formatUsd(Number(g?.pot_amount ?? 0))}</span>
@@ -130,7 +130,7 @@ export function RouletteGame() {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-3">
+      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-2.5">
         <span className="tabular text-sm text-muted-foreground">
           Balance <span className="font-semibold text-foreground">{formatUsd(balance)}</span>
         </span>
@@ -155,12 +155,12 @@ export function RouletteGame() {
         <span className="ml-auto rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold text-gold">TEST CREDITS</span>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-2 sm:grid-cols-3">
         {COLORS.filter((c) => mults[c] != null).map((c) => {
           const list = (bets.data ?? []).filter((b) => b.color === c);
           const total = list.reduce((s, b) => s + Number(b.amount), 0);
           return (
-            <div key={c} className={cn("flex min-h-64 flex-col rounded-xl border bg-card transition-all duration-500", landed === c ? "border-primary" : "border-border", landed && landed !== c && "opacity-60")}>
+            <div key={c} className={cn("flex min-h-44 flex-col rounded-xl border bg-card transition-all duration-500", landed === c ? "border-primary" : "border-border", landed && landed !== c && "opacity-60")}>
               <button
                 type="button"
                 disabled={!!userId && (!bettingOpen || pending != null)}

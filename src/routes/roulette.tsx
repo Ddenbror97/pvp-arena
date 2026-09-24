@@ -1,7 +1,6 @@
 import { lazy, Suspense } from "react";
 import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 import { ogImageMeta } from "@/lib/og";
-import emblem from "@/assets/roulette-green.png.asset.json";
 import { RouletteGame } from "@/components/roulette/RouletteGame";
 import { fetchCurrentRound, fetchHistory } from "@/lib/roulette/api";
 
@@ -9,9 +8,9 @@ export const Route = createFileRoute("/roulette")({
   head: () => ({
     meta: [
       { title: "Roulette — PVPspinArena" },
-      { name: "description", content: "Multiplayer colour roulette: Red, Black, Yellow or Green 14x. Server-drawn and verifiable. Test credits only." },
+      { name: "description", content: "Multiplayer coin roulette: Purple, Silver or Green 14x. Server-drawn and verifiable. Test credits only." },
       { property: "og:title", content: "Roulette — PVPspinArena" },
-      { property: "og:description", content: "Pick a colour, watch the roll. Provably fair, test credits only." },
+      { property: "og:description", content: "Pick a coin, watch the roll. Provably fair, test credits only." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),
@@ -30,15 +29,14 @@ const GameChat = lazy(() => import("@/components/chat/GameChat").then((m) => ({ 
 function RoulettePage() {
   return (
     <>
-      <div className="flex items-center gap-3">
-        <img src={emblem.url} alt="" width={48} height={48} className="h-12 w-12" />
-        <h1 className="font-display text-3xl">Roulette</h1>
+      <div className="flex flex-wrap items-baseline gap-x-3">
+        <h1 className="font-display text-2xl">Roulette</h1>
+        <p className="text-xs text-muted-foreground">Pick a coin before the roll. Everyone plays the same spin.</p>
       </div>
-      <p className="mt-1 text-sm text-muted-foreground">Pick a colour before the roll. Everyone plays the same spin.</p>
-      <ClientOnly fallback={<div className="mt-5 h-[40rem] animate-pulse rounded-2xl bg-card" />}>
-        <div className="mt-5 grid gap-4 xl:grid-cols-[300px_minmax(0,1fr)]">
-          <Suspense fallback={<div className="order-2 h-72 animate-pulse rounded-xl border border-border bg-card xl:order-1 xl:h-[40rem]" />}>
-            <GameChat gameType="roulette" className="order-2 h-72 xl:order-1 xl:h-[40rem]" />
+      <ClientOnly fallback={<div className="mt-3 h-[30rem] animate-pulse rounded-2xl bg-card" />}>
+        <div className="mt-3 grid gap-3 xl:grid-cols-[280px_minmax(0,1fr)]">
+          <Suspense fallback={<div className="order-2 h-64 animate-pulse rounded-xl border border-border bg-card xl:order-1 xl:h-[30rem]" />}>
+            <GameChat gameType="roulette" className="order-2 h-64 xl:order-1 xl:h-[30rem]" />
           </Suspense>
           <div className="order-1 xl:order-2"><RouletteGame /></div>
         </div>
