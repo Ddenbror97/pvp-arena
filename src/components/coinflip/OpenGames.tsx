@@ -125,9 +125,9 @@ export function RecentCoinflips() {
                   >
                     <span className="tabular text-xs text-muted-foreground">#{g.id}</span>
                     <span className="flex min-w-0 items-center gap-2">
-                      {name(g.creator, creatorWon)}
+                      {name(g.creator, creatorWon, g.creator_side as CoinSide)}
                       <span className="shrink-0 text-[10px] text-muted-foreground">vs</span>
-                      {name(g.opponent, !creatorWon)}
+                      {name(g.opponent, !creatorWon, opposite(g.creator_side as CoinSide))}
                     </span>
                     <span className="hidden sm:block">{g.winning_side && <SideChip side={g.winning_side as CoinSide} />}</span>
                     <span className="tabular text-right font-semibold">{formatUsd(g.pot_amount)}</span>
