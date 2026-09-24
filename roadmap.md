@@ -66,3 +66,4 @@
 - [x] Recent games all 3 games: edge-to-edge, 8/page, auto-advancing pages + Prev/Next (Jackpot, Coinflip, new Roulette table)
 - [x] Fairness page desktop: widened to max-w-6xl, two-column layout per game tab
 - [x] Multi-column site footer with games, how it works, about, and legal sections
+- [ ] Review uploaded USDC/ETH production-money architecture before any real-value implementation
