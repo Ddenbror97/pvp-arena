@@ -70,7 +70,16 @@ WAITING --first bet--> BETTING (20s countdown) --> LOCKED (1s) --> SPINNING (5s)
 ## 4. Fairness (same method as Jackpot and Coinflip)
 
 - **Seed:** each round gets a secret 32-byte random seed. Its fingerprint is published when the round opens, and the seed itself is revealed after payouts.
-- **Result:** the server hashes the seed with the round's unique message `PVPCasino:roulette:v1:{round}:{draw_version}:{counter}`. That gives a number which picks one of the 15 slots, and the slot gives the color. Numbers that would make some slots slightly more likely are thrown away and redrawn, so every slot has exactly the same chance.
+- **Result:** the server uses the exact same HMAC-SHA256 construction as Jackpot and Coinflip.
+  - The key is the 32-byte server seed. The input is the canonical Roulette message `PVPCasino:roulette:v1:{round}:{draw_version}:{counter}`.
+  - Rejection sampling makes all 15 slots exactly equally likely. The chosen slot gives the color.
+- **Function permissions:**
+  - `roulette_tick()` takes no player-controlled input. It can only apply a step that the database clock says is already due, and it takes the same round lock and global lock before changing anything.
+  - Execute permission is removed from public and anonymous callers; only signed-in users can run it.
+  - `roulette_advance`, `roulette_draw_slot`, the settle, refund and recovery steps, and every other internal function can't be run by browser roles at all.
+  - Every SECURITY DEFINER function uses `SET search_path = ''` with fully qualified names.
+  - Tests make direct calls as anonymous and signed-in users.
+- **One lock for everything:** betting, lock and draw, cancellation and settlement all take the same lock on the round row (`SELECT ... FOR UPDATE`). Each one re-checks the round's status and deadline after getting the lock.
 - The Fairness page gets a Roulette tab with a verifier and fixed test examples.
 
 ## 5. Screens
