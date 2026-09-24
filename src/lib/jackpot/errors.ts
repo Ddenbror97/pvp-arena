@@ -21,6 +21,9 @@ const MESSAGES: Record<string, string> = {
   GAME_NOT_FOUND: "That game doesn't exist.",
   CANNOT_JOIN_OWN_GAME: "You can't join your own game.",
   GAME_NOT_CANCELLABLE: "This game can no longer be cancelled.",
+  POT_LIMIT_REACHED: "This pot has reached its maximum size. Try the next round.",
+  SESSION_REVOKED: "Your session has ended. Please sign in again.",
+  INVALID_AVATAR: "That avatar isn't available.",
 };
 
 export function friendlyError(e: unknown): string {

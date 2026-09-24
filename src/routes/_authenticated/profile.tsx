@@ -8,6 +8,7 @@ import { formatUsd } from "@/lib/jackpot/math";
 import { friendlyError } from "@/lib/jackpot/errors";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { Button } from "@/components/ui/button";
+import { AVATAR_STYLES, storedAvatarUrl, type AvatarStyle } from "@/lib/avatar";
 import { WalletCard } from "@/components/wallet/WalletCard";
 
 export const Route = createFileRoute("/_authenticated/profile")({
@@ -24,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
   component: ProfilePage,
 });
 
-const STYLES = ["shapes", "rings", "glass", "identicon", "bottts-neutral", "thumbs"];
+const STYLES = AVATAR_STYLES;
 
 function ProfilePage() {
   const { profile, userId, refreshProfile, signOut } = useAuth();
@@ -39,9 +40,9 @@ function ProfilePage() {
     },
   });
 
-  async function pick(style: string) {
+  async function pick(style: AvatarStyle) {
     if (!profile) return;
-    const url = `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(profile.username)}`;
+    const url = storedAvatarUrl(style, profile.username);
     const { error } = await supabase.rpc("update_avatar", { p_avatar_url: url });
     if (error) {
       toast.error(friendlyError(error));

@@ -107,14 +107,20 @@ export function useGameChat(room: ChatRoom, userId: string | null) {
     setHistoryLoaded(roomCache.has(room));
     // Load history right away, in parallel with the live connection.
     void reconcile();
-    const presenceKey = crypto.randomUUID();
-    let presenceTimer: ReturnType<typeof setTimeout> | undefined;
+    // Online count is computed by the server from signed-in heartbeats (one per user).
+    const beat = async () => {
+      if (disposed || document.visibilityState !== "visible") return;
+      const { data, error } = await supabase.rpc("chat_heartbeat");
+      if (!disposed && !error && typeof data === "number") setOnline(data);
+    };
+    void beat();
+    const presenceTimer = setInterval(() => void beat(), 25_000);
 
     (async () => {
       await supabase.realtime.setAuth();
       if (disposed) return;
       const ch = supabase.channel(chatTopic(room), {
-        config: { private: true, presence: { key: presenceKey } },
+        config: { private: true },
       });
       channelRef.current = ch;
       ch.on("broadcast", { event: CHAT_EVENTS.message }, ({ payload }) => {
@@ -125,15 +131,10 @@ export function useGameChat(room: ChatRoom, userId: string | null) {
           const id = (payload as { id?: unknown })?.id;
           if (typeof id === "string") setMessages((cur) => cur.filter((m) => m.id !== id));
         })
-        .on("presence", { event: "sync" }, () => {
-          clearTimeout(presenceTimer);
-          presenceTimer = setTimeout(() => setOnline(Object.keys(ch.presenceState()).length), 500);
-        })
         .subscribe(async (s) => {
           if (disposed) return;
           if (s === "SUBSCRIBED") {
             setStatus("live");
-            await ch.track({ k: 1 });
             void reconcile();
           } else if (s === "CHANNEL_ERROR" || s === "TIMED_OUT" || s === "CLOSED") {
             setStatus("offline");
@@ -142,13 +143,16 @@ export function useGameChat(room: ChatRoom, userId: string | null) {
     })();
 
     const onVisible = () => {
-      if (document.visibilityState === "visible") void reconcile();
+      if (document.visibilityState === "visible") {
+        void reconcile();
+        void beat();
+      }
     };
     document.addEventListener("visibilitychange", onVisible);
     window.addEventListener("online", onVisible);
     return () => {
       disposed = true;
-      clearTimeout(presenceTimer);
+      clearInterval(presenceTimer);
       document.removeEventListener("visibilitychange", onVisible);
       window.removeEventListener("online", onVisible);
       if (channelRef.current) void supabase.removeChannel(channelRef.current);

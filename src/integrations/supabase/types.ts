@@ -77,6 +77,21 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_presence: {
+        Row: {
+          last_seen_at: string
+          user_id: string
+        }
+        Insert: {
+          last_seen_at?: string
+          user_id: string
+        }
+        Update: {
+          last_seen_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       coinflip_config: {
         Row: {
           animation_ms: number
@@ -618,6 +633,60 @@ export type Database = {
           },
         ]
       }
+      integrity_incidents: {
+        Row: {
+          check_name: string
+          details: Json
+          fingerprint: string
+          first_seen_at: string
+          id: number
+          last_run_id: number | null
+          last_seen_at: string
+          occurrences: number
+        }
+        Insert: {
+          check_name: string
+          details: Json
+          fingerprint: string
+          first_seen_at?: string
+          id?: never
+          last_run_id?: number | null
+          last_seen_at?: string
+          occurrences?: number
+        }
+        Update: {
+          check_name?: string
+          details?: Json
+          fingerprint?: string
+          first_seen_at?: string
+          id?: never
+          last_run_id?: number | null
+          last_seen_at?: string
+          occurrences?: number
+        }
+        Relationships: []
+      }
+      integrity_runs: {
+        Row: {
+          finished_at: string | null
+          id: number
+          incidents_found: number
+          started_at: string
+        }
+        Insert: {
+          finished_at?: string | null
+          id?: never
+          incidents_found?: number
+          started_at?: string
+        }
+        Update: {
+          finished_at?: string | null
+          id?: never
+          incidents_found?: number
+          started_at?: string
+        }
+        Relationships: []
+      }
       jackpot_config: {
         Row: {
           account_type: string
@@ -629,6 +698,7 @@ export type Database = {
           id: boolean
           max_duration_seconds: number
           max_entry: number
+          max_pot: number
           min_entry: number
           rake_bps: number
           real_money_enabled: boolean
@@ -645,6 +715,7 @@ export type Database = {
           id?: boolean
           max_duration_seconds?: number
           max_entry?: number
+          max_pot?: number
           min_entry?: number
           rake_bps?: number
           real_money_enabled?: boolean
@@ -661,6 +732,7 @@ export type Database = {
           id?: boolean
           max_duration_seconds?: number
           max_entry?: number
+          max_pot?: number
           min_entry?: number
           rake_bps?: number
           real_money_enabled?: boolean
@@ -1038,6 +1110,27 @@ export type Database = {
         }
         Relationships: []
       }
+      signup_attempts: {
+        Row: {
+          created_at: string
+          email_hash: string
+          id: number
+          ip_hash: string | null
+        }
+        Insert: {
+          created_at?: string
+          email_hash: string
+          id?: never
+          ip_hash?: string | null
+        }
+        Update: {
+          created_at?: string
+          email_hash?: string
+          id?: never
+          ip_hash?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -1186,6 +1279,21 @@ export type Database = {
           },
         ]
       }
+      worker_tick_gate: {
+        Row: {
+          last_run_at: string
+          name: string
+        }
+        Insert: {
+          last_run_at?: string
+          name: string
+        }
+        Update: {
+          last_run_at?: string
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1234,6 +1342,7 @@ export type Database = {
         }
         Returns: string
       }
+      _tick_gate: { Args: { p_name: string }; Returns: boolean }
       _user_account: {
         Args: {
           p_asset: string
@@ -1246,6 +1355,7 @@ export type Database = {
       admin_coinflip_overview: { Args: never; Returns: Json }
       admin_overview: { Args: never; Returns: Json }
       auth_user_by_email: { Args: { p_email: string }; Returns: Json }
+      chat_heartbeat: { Args: never; Returns: number }
       chat_send: {
         Args: {
           p_game: string
@@ -1299,6 +1409,7 @@ export type Database = {
         Args: { p_age_confirmed: boolean; p_username: string }
         Returns: Json
       }
+      get_my_account_status: { Args: never; Returns: Json }
       get_profile_stats: { Args: { p_user: string }; Returns: Json }
       has_role: {
         Args: {
@@ -1307,6 +1418,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      integrity_check: { Args: never; Returns: Json }
       jackpot_draw_ticket: {
         Args: {
           p_draw_version: number
@@ -1367,6 +1479,10 @@ export type Database = {
         Returns: Json
       }
       server_time: { Args: never; Returns: string }
+      signup_rate_check: {
+        Args: { p_email_hash: string; p_ip_hash: string }
+        Returns: Json
+      }
       update_avatar: { Args: { p_avatar_url: string }; Returns: undefined }
       wallet_consume_and_verify: {
         Args: { p_id: string; p_normalized: string; p_user: string }

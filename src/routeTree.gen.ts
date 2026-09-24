@@ -22,6 +22,7 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as CoinflipGameIdRouteImport } from './routes/coinflip.$gameId'
 import { Route as GamesGameIdRouteImport } from './routes/games.$gameId'
+import { Route as ApiPublicAvatarStyleSeedRouteImport } from './routes/api/public/avatar.$style.$seed'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -87,6 +88,12 @@ const GamesGameIdRoute = GamesGameIdRouteImport.update({
   path: '/games/$gameId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAvatarStyleSeedRoute =
+  ApiPublicAvatarStyleSeedRouteImport.update({
+    id: '/api/public/avatar/$style/$seed',
+    path: '/api/public/avatar/$style/$seed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/wallet': typeof AuthenticatedWalletRoute
   '/coinflip/$gameId': typeof CoinflipGameIdRoute
   '/games/$gameId': typeof GamesGameIdRoute
+  '/api/public/avatar/$style/$seed': typeof ApiPublicAvatarStyleSeedRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -115,6 +123,7 @@ export interface FileRoutesByTo {
   '/wallet': typeof AuthenticatedWalletRoute
   '/coinflip/$gameId': typeof CoinflipGameIdRoute
   '/games/$gameId': typeof GamesGameIdRoute
+  '/api/public/avatar/$style/$seed': typeof ApiPublicAvatarStyleSeedRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -131,6 +140,7 @@ export interface FileRoutesById {
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/coinflip/$gameId': typeof CoinflipGameIdRoute
   '/games/$gameId': typeof GamesGameIdRoute
+  '/api/public/avatar/$style/$seed': typeof ApiPublicAvatarStyleSeedRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/coinflip/$gameId'
     | '/games/$gameId'
+    | '/api/public/avatar/$style/$seed'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/coinflip/$gameId'
     | '/games/$gameId'
+    | '/api/public/avatar/$style/$seed'
   id:
     | '__root__'
     | '/'
@@ -176,6 +188,7 @@ export interface FileRouteTypes {
     | '/_authenticated/wallet'
     | '/coinflip/$gameId'
     | '/games/$gameId'
+    | '/api/public/avatar/$style/$seed'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -188,6 +201,7 @@ export interface RootRouteChildren {
   ResponsibleGamblingRoute: typeof ResponsibleGamblingRoute
   TermsRoute: typeof TermsRoute
   GamesGameIdRoute: typeof GamesGameIdRoute
+  ApiPublicAvatarStyleSeedRoute: typeof ApiPublicAvatarStyleSeedRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -283,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GamesGameIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/avatar/$style/$seed': {
+      id: '/api/public/avatar/$style/$seed'
+      path: '/api/public/avatar/$style/$seed'
+      fullPath: '/api/public/avatar/$style/$seed'
+      preLoaderRoute: typeof ApiPublicAvatarStyleSeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -323,6 +344,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResponsibleGamblingRoute: ResponsibleGamblingRoute,
   TermsRoute: TermsRoute,
   GamesGameIdRoute: GamesGameIdRoute,
+  ApiPublicAvatarStyleSeedRoute: ApiPublicAvatarStyleSeedRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -104,6 +104,13 @@ function decoy(email: string): StartResult {
 export async function startSignup(input: { email: string; password: string; username: string; ip: string | null; ua: string | null }): Promise<StartResult> {
   const requestId = crypto.randomUUID();
   const email = input.email.trim().toLowerCase();
+  // Abuse limit on account creation itself (per IP, per email, site-wide), checked before any account work.
+  const pepper = env("OTP_PEPPER");
+  const limit = await rpc<{ ok: boolean }>("signup_rate_check", {
+    p_ip_hash: input.ip ? await hashIdentifier(pepper, input.ip) : null,
+    p_email_hash: await hashIdentifier(pepper, `email:${email}`),
+  });
+  if (!limit.ok) return { ok: false, error: "Muitas tentativas de cadastro. Tente novamente mais tarde." };
   const a = await admin();
   const existing = await rpc<{ id: string; confirmed: boolean } | null>("auth_user_by_email", { p_email: email });
   let userId: string;
