@@ -93,3 +93,4 @@
 - [x] Jackpot #20: wheel did not spin before winner announced — investigate
 - [x] Roulette countdown starts at the full configured window after the prior result; previous rolls stay edge-to-edge without cache swaps
 - [x] Wallet UX: guided one-click MetaMask deposits, review-first withdrawals, and mobile-safe activity layout
+- [ ] MetaMask connect on ddenbror97 still fails generically — check whether the shared wallet is already linked to testbot123 and surface the real reason
