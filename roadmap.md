@@ -10,7 +10,7 @@
 - [x] Test suite: unit, integration, concurrency, failure injection, access rules
 - [x] Coinflip engine: schema, create/join/cancel, state machine, fairness v1, settlement, worker, 32 vectors, tests
 - [x] Coinflip UI: lobby, room, coin animation, history, fairness verifier, admin view
-- [ ] Resend 6-digit email code sign-up (no links): code storage, limits, email template, code-entry screen, tests (needs RESEND_API_KEY + AUTH_EMAIL_FROM on a verified domain)
+- [x] Resend 6-digit email code sign-up (no links): code storage, limits, email template, code-entry screen, tests (RESEND_API_KEY connected; pvpspinarena.com verified — test email delivered 2026-09-23)
 - [ ] End-to-end check of a live two-player round in the browser (user testing themselves)
 - [ ] Before real money: independent randomness source, crypto review, KYC/AML/geo providers, legal review
 - [ ] Review: Jackpot settle locks wallets in a different order than joins (possible deadlock under heavy load; retry-safe)
