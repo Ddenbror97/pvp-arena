@@ -1,3 +1,4 @@
+import { readAuthHint } from "@/lib/auth-hint";
 import { useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -18,7 +19,8 @@ interface Props {
 }
 
 export function EntryPanel({ game, myTotal, closed }: Props) {
-  const { userId, profile, needsProfile } = useAuth();
+  const { userId, profile, needsProfile, ready } = useAuth();
+  const [hint] = useState(readAuthHint);
   const wallet = useWallet(userId);
   const qc = useQueryClient();
   const [input, setInput] = useState("25.00");
@@ -74,11 +76,13 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
   if (!userId) {
     return (
       <Panel>
+        <div className={ready || !hint ? undefined : "invisible"} aria-hidden={(!ready && hint) || undefined}>
         <h3 className="font-display text-base">Join the pot</h3>
         <p className="mt-2 text-sm text-muted-foreground">Sign in to enter. New players get free {APP.creditsLabel.toLowerCase()} to try the game.</p>
         <Button asChild className="mt-4 w-full font-display">
           <Link to="/auth">Sign in to play</Link>
         </Button>
+        </div>
       </Panel>
     );
   }

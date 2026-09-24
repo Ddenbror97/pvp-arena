@@ -1,10 +1,12 @@
-import { lazy, Suspense } from "react";
+import { ClientOnly } from "@tanstack/react-router";
+import { lazy, Suspense, useEffect } from "react";
 import { createFileRoute, Outlet, useMatch } from "@tanstack/react-router";
 import { ogImageMeta } from "@/lib/og";
-import { ClientOnly } from "@tanstack/react-router";
 import { CreatePanel } from "@/components/coinflip/CreatePanel";
 import { OpenGames, RecentCoinflips } from "@/components/coinflip/OpenGames";
 import { useCoinflipRealtime, fetchOpenCoinflips, fetchRecentCoinflips } from "@/lib/coinflip/api";
+
+let appHydrated = false;
 
 export const Route = createFileRoute("/coinflip")({
   head: () => ({
@@ -24,7 +26,8 @@ export const Route = createFileRoute("/coinflip")({
   }),
   // Start fetching lobby data during navigation/hydration (browser only), not after the lobby mounts.
   loader: ({ context }) => {
-    if (typeof window === "undefined") return;
+    // Skip on the first page load: data landing mid-hydration would mismatch the server HTML.
+    if (typeof window === "undefined" || !appHydrated) return;
     void context.queryClient.prefetchQuery({ queryKey: ["coinflip-open"], queryFn: fetchOpenCoinflips, staleTime: 3000 });
     void context.queryClient.prefetchQuery({ queryKey: ["coinflip-recent"], queryFn: () => fetchRecentCoinflips(), staleTime: 3000 });
   },
@@ -37,9 +40,7 @@ function CoinflipLayout() {
   return (
     <>
       <h1 className="font-display text-3xl">Coinflip</h1>
-      <ClientOnly fallback={<div className="mt-6 h-96 animate-pulse rounded-2xl bg-card" />}>
-        <Lobby />
-      </ClientOnly>
+      <Lobby />
     </>
   );
 }
@@ -50,14 +51,17 @@ const GameChat = lazy(() =>
 
 function Lobby() {
   useCoinflipRealtime();
+  useEffect(() => { appHydrated = true; }, []);
   return (
     <>
       <div className="mt-5 grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start xl:grid-cols-[280px_minmax(0,1fr)_300px]">
         <CreatePanel />
         <OpenGames />
-        <Suspense fallback={<div className="h-72 animate-pulse rounded-xl border border-border bg-card sm:h-80 lg:col-span-2 xl:col-span-1 xl:h-[32rem]" />}>
-          <GameChat gameType="coinflip" className="h-72 sm:h-80 lg:col-span-2 xl:col-span-1 xl:h-[32rem]" />
-        </Suspense>
+        <ClientOnly fallback={<div className="h-72 animate-pulse rounded-xl border border-border bg-card sm:h-80 lg:col-span-2 xl:col-span-1 xl:h-[32rem]" />}>
+          <Suspense fallback={<div className="h-72 animate-pulse rounded-xl border border-border bg-card sm:h-80 lg:col-span-2 xl:col-span-1 xl:h-[32rem]" />}>
+                    <GameChat gameType="coinflip" className="h-72 sm:h-80 lg:col-span-2 xl:col-span-1 xl:h-[32rem]" />
+          </Suspense>
+        </ClientOnly>
       </div>
       <RecentCoinflips />
     </>
