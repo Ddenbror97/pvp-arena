@@ -60,3 +60,4 @@
 
 - [ ] Jackpot cold-start/LCP/FCP/JS audit (measure first, minimal fixes)
 - [ ] Coinflip cold-start/LCP/FCP/JS audit (measure first, minimal fixes)
+- [ ] Roulette cold-start/LCP/FCP/JS audit (measure first, minimal fixes)
