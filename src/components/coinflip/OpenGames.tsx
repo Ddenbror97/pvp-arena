@@ -12,6 +12,7 @@ import tailsAsset from "@/assets/coin-tails.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/time-ago";
+import { EDGE_TO_EDGE, RecentPager, usePagedRecent } from "@/components/recent/usePagedRecent";
 
 export function SideChip({ side, className }: { side: CoinSide; className?: string }) {
   return (
@@ -140,6 +141,7 @@ export function RecentCoinflips() {
               );
             })}
           </ul>
+          <RecentPager page={page} hasPrev={hasPrev} hasNext={hasNext} onPrev={prev} onNext={next} />
         </div>
       )}
     </section>
