@@ -91,3 +91,4 @@
 - [x] Roulette: rounds run continuously (no "Waiting for the first bet"), previous rolls edge to edge
 - [x] Coinflip open games last 24h before auto-cancel+refund (not 1 min)
 - [x] Jackpot #20: wheel did not spin before winner announced — investigate
+- [x] Roulette countdown starts at the full configured window after the prior result; previous rolls stay edge-to-edge without cache swaps
