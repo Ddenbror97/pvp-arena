@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 import { ogImageMeta } from "@/lib/og";
 import { RouletteGame } from "@/components/roulette/RouletteGame";
+import { RecentRounds } from "@/components/roulette/RecentRounds";
 import { fetchCurrentRound, fetchHistory } from "@/lib/roulette/api";
 import heads from "@/assets/coin-heads.png.asset.json";
 import tails from "@/assets/coin-tails.png.asset.json";
@@ -46,6 +47,7 @@ function RoulettePage() {
         </div>
       </ClientOnly>
       </div>
+      <RecentRounds />
     </>
   );
 }

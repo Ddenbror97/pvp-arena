@@ -79,13 +79,13 @@ export async function fetchProfiles(ids: string[]) {
   return new Map((data ?? []).map((p) => [p.id, p]));
 }
 
-export async function fetchRecentGames(limit = 12) {
+export async function fetchRecentGames(limit = 12, offset = 0) {
   const { data, error } = await supabase
     .from("jackpot_games")
     .select("id, pot_amount, player_count, entry_count, winner_id, winner_total, payout_amount, completed_at")
     .eq("status", "COMPLETED")
     .order("id", { ascending: false })
-    .limit(limit);
+    .range(offset, offset + limit - 1);
   if (error) throw error;
   const profiles = await fetchProfiles([...new Set((data ?? []).map((g) => g.winner_id!).filter(Boolean))]);
   return (data ?? []).map((g) => ({ ...g, winner: g.winner_id ? profiles.get(g.winner_id) ?? null : null }));

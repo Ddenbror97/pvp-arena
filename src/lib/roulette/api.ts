@@ -40,6 +40,22 @@ export async function fetchHistory(limit = 12): Promise<RlGame[]> {
   return data ?? [];
 }
 
+export type RlRecentRound = Pick<
+  RlGame,
+  "id" | "winning_color" | "pot_amount" | "player_count" | "bet_count" | "total_payout" | "completed_at"
+>;
+
+export async function fetchRecentRounds(limit = 20, offset = 0): Promise<RlRecentRound[]> {
+  const { data, error } = await supabase
+    .from("roulette_games")
+    .select("id, winning_color, pot_amount, player_count, bet_count, total_payout, completed_at")
+    .eq("status", "COMPLETED")
+    .order("id", { ascending: false })
+    .range(offset, offset + limit - 1);
+  if (error) throw error;
+  return data ?? [];
+}
+
 export function useRouletteSetup() {
   return useQuery({
     queryKey: ["roulette-setup"],
