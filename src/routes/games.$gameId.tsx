@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ogImageMeta } from "@/lib/og";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,7 +18,8 @@ export const Route = createFileRoute("/games/$gameId")({
       { property: "og:title", content: `Jackpot game #${params.gameId} — PVPspinArena` },
       { property: "og:description", content: "Players, stakes, winner and a verifiable fairness proof." },
       { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      ...ogImageMeta(),
     ],
   }),
   component: GamePage,

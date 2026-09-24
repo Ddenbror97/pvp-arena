@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ogImageMeta } from "@/lib/og";
 import { LegalPage } from "@/components/LegalPage";
 
 export const Route = createFileRoute("/terms")({
@@ -9,7 +10,8 @@ export const Route = createFileRoute("/terms")({
       { property: "og:title", content: "Terms — PVPspinArena" },
       { property: "og:description", content: "Terms for using PVPspinArena during the test-credit period." },
       { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      ...ogImageMeta(),
     ],
   }),
   component: () => (

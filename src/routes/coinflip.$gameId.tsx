@@ -1,4 +1,5 @@
 import { createFileRoute, ClientOnly } from "@tanstack/react-router";
+import { ogImageMeta } from "@/lib/og";
 import { CoinflipRoom } from "@/components/coinflip/CoinflipRoom";
 
 export const Route = createFileRoute("/coinflip/$gameId")({
@@ -9,7 +10,8 @@ export const Route = createFileRoute("/coinflip/$gameId")({
       { property: "og:title", content: `Coinflip #${params.gameId} — PVPspinArena` },
       { property: "og:description", content: "1v1 coinflip with a verifiable, server-decided result. Test credits only." },
       { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      ...ogImageMeta(),
     ],
   }),
   component: Page,

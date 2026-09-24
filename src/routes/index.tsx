@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ogImageMeta } from "@/lib/og";
 import { ClientOnly } from "@tanstack/react-router";
 import { JackpotStage } from "@/components/jackpot/JackpotStage";
 import { RecentGames } from "@/components/jackpot/RecentGames";
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "Live PvP jackpot with provably fair, server-decided draws. Test credits only." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      ...ogImageMeta(),
     ],
   }),
   component: Index,

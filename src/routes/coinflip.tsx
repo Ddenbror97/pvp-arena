@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet, useMatch } from "@tanstack/react-router";
+import { ogImageMeta } from "@/lib/og";
 import { ClientOnly } from "@tanstack/react-router";
 import { CreatePanel } from "@/components/coinflip/CreatePanel";
 import { OpenGames, RecentCoinflips } from "@/components/coinflip/OpenGames";
@@ -12,7 +13,8 @@ export const Route = createFileRoute("/coinflip")({
       { property: "og:title", content: "Coinflip — PVPspinArena" },
       { property: "og:description", content: "1v1 provably fair coinflip. Test credits only." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      ...ogImageMeta(),
     ],
   }),
   component: CoinflipLayout,
