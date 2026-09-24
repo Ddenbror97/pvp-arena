@@ -111,4 +111,31 @@ d("access rules (anonymous client)", () => {
     const { error } = await sb.rpc("coinflip_tick");
     expect(error).toBeNull();
   });
+
+  it("wallet identity: no reads, no writes, no internal functions without the server", async () => {
+    const fake = "00000000-0000-0000-0000-000000000000";
+    for (const t of ["user_wallets", "wallet_verification_challenges"]) {
+      const { data } = await sb.from(t as never).select("*").limit(1);
+      expect(data ?? []).toEqual([]);
+    }
+    const writes = [
+      sb.from("user_wallets" as never).insert({ user_id: fake, address: "0x" + "1".repeat(40), normalized_address: "0x" + "1".repeat(40), is_verified: true, verified_at: new Date().toISOString() } as never),
+      sb.from("user_wallets" as never).update({ is_verified: true } as never).neq("user_id", fake),
+      sb.from("wallet_verification_challenges" as never).update({ consumed_at: new Date().toISOString() } as never).neq("user_id", fake),
+    ];
+    for (const w of writes) {
+      const { error, data } = await w;
+      expect(error ?? (data === null || (Array.isArray(data) && data.length === 0))).toBeTruthy();
+    }
+    for (const [fn, args] of [
+      ["wallet_issue_challenge", { p_user: fake, p_address: "0x" + "1".repeat(40) }],
+      ["wallet_consume_and_verify", { p_id: fake, p_user: fake, p_normalized: "0x" + "1".repeat(40) }],
+      ["wallet_get_challenge", { p_id: fake, p_user: fake }],
+      ["wallet_touch", { p_user: fake, p_address: "0x" + "1".repeat(40) }],
+      ["wallet_log", { p_event: "WALLET_VERIFIED", p_user: fake, p_details: {} }],
+    ] as const) {
+      const { error } = await sb.rpc(fn as never, args as never);
+      expect(error).not.toBeNull();
+    }
+  });
 });
