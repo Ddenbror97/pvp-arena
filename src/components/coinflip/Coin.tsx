@@ -5,19 +5,27 @@ import tailsAsset from "@/assets/coin-tails.png.asset.json";
 /**
  * Presentation only. The coin's rotation is a pure function of elapsed server
  * time and the server-decided side; there is no randomness anywhere.
- *   0.0–0.5s accelerate · 0.5–2.5s high speed · 2.5–3.2s slow down · 3.5s land.
+ *   0.0–0.5s accelerate · fast until 70% · slows down over the last 30% · 3.5s land.
  */
 export const ANIMATION_MS = 3500;
 const BASE_TURNS = 12; // full turns; HEADS lands on 0deg, TAILS on 180deg
 
+const ACCEL_END = 0.5 / 3.5; // spin-up
+const SLOW_START = 0.7; // after 70% of the flip the coin visibly slows down
+const P_ACCEL = 0.06;
+const P_SLOW = 0.85;
+const FAST_SPEED = (P_SLOW - P_ACCEL) / (SLOW_START - ACCEL_END);
+// Ease-out exponent chosen so speed is continuous at SLOW_START.
+const SLOW_K = (FAST_SPEED * (1 - SLOW_START)) / (1 - P_SLOW);
+
 function progress(u: number) {
-  // Accelerating start, long fast middle, dramatic ease-out landing.
+  // Accelerating start, fast middle, long dramatic slowdown over the last 30%.
   if (u <= 0) return 0;
   if (u >= 1) return 1;
-  const a = 0.5 / 3.5;
-  if (u < a) return 0.06 * (u / a) ** 2;
-  const v = (u - a) / (1 - a);
-  return 0.06 + 0.94 * (1 - (1 - v) ** 3.2);
+  if (u < ACCEL_END) return P_ACCEL * (u / ACCEL_END) ** 2;
+  if (u < SLOW_START) return P_ACCEL + FAST_SPEED * (u - ACCEL_END);
+  const w = (u - SLOW_START) / (1 - SLOW_START);
+  return P_SLOW + (1 - P_SLOW) * (1 - (1 - w) ** SLOW_K);
 }
 
 function tailsOffset(u: number) {
