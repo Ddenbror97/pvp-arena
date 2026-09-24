@@ -28,7 +28,7 @@ export function OpenGames() {
     <section>
       <h2 className="mb-3 font-display text-sm uppercase tracking-widest">Open games</h2>
       {q.isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading...</p>
+        <div aria-busy="true" className="min-h-[5.25rem] animate-pulse rounded-2xl border border-dashed border-border" />
       ) : !q.data?.length ? (
         <div className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
           No open games. Create one and wait for an opponent.
