@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -187,10 +186,6 @@ export function RouletteGame() {
           );
         })}
       </div>
-      <p className="text-xs text-muted-foreground">
-        15 coins: 7 Purple (2x, 46.67%), 7 Silver (2x, 46.67%), 1 Green (14x, 6.67%). Payouts include your stake. The result is
-        drawn on the server when betting closes and can be checked on the <Link to="/fairness" className="underline">Fairness</Link> page.
-      </p>
     </div>
   );
 }

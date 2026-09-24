@@ -37,10 +37,6 @@ function CoinflipLayout() {
   return (
     <>
       <h1 className="font-display text-3xl">Coinflip</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        1 vs 1. Same wager, opposite sides, winner takes the pot. 50/50, decided on the server
-        before the flip.
-      </p>
       <ClientOnly fallback={<div className="mt-6 h-96 animate-pulse rounded-2xl bg-card" />}>
         <Lobby />
       </ClientOnly>

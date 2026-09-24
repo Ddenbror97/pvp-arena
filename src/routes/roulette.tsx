@@ -29,9 +29,8 @@ const GameChat = lazy(() => import("@/components/chat/GameChat").then((m) => ({ 
 function RoulettePage() {
   return (
     <>
-      <div className="flex flex-wrap items-baseline gap-x-3">
+      <div>
         <h1 className="font-display text-2xl">Roulette</h1>
-        <p className="text-xs text-muted-foreground">Pick a coin before the roll. Everyone plays the same spin.</p>
       </div>
       <div className="mt-3 min-h-[1287px] xl:min-h-[552px]">
       <ClientOnly fallback={<section aria-hidden className="h-[1287px] animate-pulse rounded-2xl bg-card xl:h-[552px]" />}>
