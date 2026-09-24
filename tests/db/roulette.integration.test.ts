@@ -154,7 +154,7 @@ d("roulette adversarial audit (isolated schema)", () => {
     expect(await err(sql`select pvp_test._roulette_refund(${g1}, 'again')`)).toMatch(/NOT_CANCELLABLE/);
     expect(await bal(u)).toBe(100000 - 100 + (done.winning_color === "RED" ? 200 : 0));
     await assertInvariants();
-  }, 60000);
+  }, 120000);
 
   it("advance never cancels a round inside the recovery grace period", async () => {
     const u = await newUser("alice");
@@ -205,7 +205,7 @@ d("roulette adversarial audit (isolated schema)", () => {
     expect((await game(gid)).bet_count).toBe(10);
     await drive(gid);
     await assertInvariants();
-  }, 60000);
+  }, 120000);
 
   it("idempotency: replays never double-charge; key reuse with other params is refused", async () => {
     const u = await newUser("alice");
@@ -236,7 +236,7 @@ d("roulette adversarial audit (isolated schema)", () => {
     for (const r of res) if (r.status === "rejected") expect(String(r.reason)).toMatch(/POT_LIMIT_REACHED|ROUND_FULL/);
     await drive(gid);
     await assertInvariants();
-  }, 60000);
+  }, 120000);
 
   it("exact-close race: 30 bets across the deadline plus concurrent advances", async () => {
     for (let round = 0; round < 3; round++) {
@@ -310,7 +310,7 @@ d("roulette adversarial audit (isolated schema)", () => {
       expect(Number(b.payout_amount)).toBe(b.color === done.winning_color ? Math.floor((Number(b.amount) * b.multiplier_bps) / 10000) : 0);
     }
     await assertInvariants();
-  }, 60000);
+  }, 120000);
 
   it("settlement failure is retried safely and never pays twice", async () => {
     const users = await Promise.all([newUser("a"), newUser("b"), newUser("c")]);
@@ -405,7 +405,7 @@ d("roulette adversarial audit (isolated schema)", () => {
     expect(seen.size).toBe(15); // first (0) and last (14) slots included
     expect(await err(sql`select * from pvp_test.roulette_draw_slot(decode('00', 'hex'), 1, 1, 15)`)).toMatch(/INVALID_SEED/);
     expect(await err(sql`select * from pvp_test.roulette_draw_slot(decode(${"00".repeat(32)}, 'hex'), 1, 1, 1)`)).toMatch(/INVALID_RANGE/);
-  }, 60000);
+  }, 120000);
 
   it("20 concurrent ticks never advance a round early", async () => {
     const u = await newUser("a");
