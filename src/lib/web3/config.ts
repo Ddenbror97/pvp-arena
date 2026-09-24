@@ -8,11 +8,17 @@ export const WALLET_CONFIG = {
   requiredChainId: "0x14a34" as const,
   requiredChainName: "Base Sepolia",
   /**
-   * MetaMask Connect requires a chain -> RPC map at construction time. The app
-   * never makes RPC calls through it (no reads, no transactions); network
-   * detection uses `eth_chainId` from the wallet itself. Public, keyless.
+   * MetaMask Connect refuses *every* request (even eth_chainId / personal_sign)
+   * while the wallet's active chain is missing from this map, and it always
+   * adds Ethereum mainnet to the permission request. So mainnet must be listed
+   * too, purely so a wallet sitting on Ethereum can connect, sign and then be
+   * switched. Deposits still hard-check chainId === requiredChainId, and the
+   * server never uses these RPCs. Public, keyless.
    */
-  rpcUrls: { "0x14a34": "https://sepolia.base.org" } as Record<`0x${string}`, string>,
+  rpcUrls: {
+    "0x14a34": "https://sepolia.base.org",
+    "0x1": "https://ethereum-rpc.publicnode.com",
+  } as Record<`0x${string}`, string>,
   domain: "pvpspinarena.com",
   dappName: "PVPspinArena",
   messageVersion: 1,

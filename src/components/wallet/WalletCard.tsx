@@ -118,6 +118,18 @@ export function WalletCard({ userId }: { userId: string }) {
     }
   }
 
+  async function switchNetwork() {
+    if (!session) return;
+    try {
+      await session.switchToRequiredNetwork();
+      const c = await session.chainId();
+      setChainId(c);
+      if (c === WALLET_CONFIG.requiredChainId) setErr(null);
+    } catch (e) {
+      fail(e, "connect");
+    }
+  }
+
   async function disconnect() {
     const a = address;
     await session?.disconnect();
@@ -234,6 +246,11 @@ export function WalletCard({ userId }: { userId: string }) {
           <p role="alert" className="text-sm text-destructive">
             {WALLET_MESSAGES.UNSUPPORTED_NETWORK}
           </p>
+        )}
+        {wrongNetwork && session && (
+          <Button variant="secondary" size="sm" onClick={switchNetwork} disabled={busy !== null}>
+            Switch to {WALLET_CONFIG.requiredChainName}
+          </Button>
         )}
       </div>
     </section>
