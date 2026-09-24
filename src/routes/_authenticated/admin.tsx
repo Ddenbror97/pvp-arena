@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatUsd } from "@/lib/jackpot/math";
+import { CryptoAdmin } from "@/components/wallet/CryptoAdmin";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -148,6 +149,7 @@ function AdminPage() {
           </li>
         ))}
       </ul>
+      <CryptoAdmin />
     </div>
   );
 }

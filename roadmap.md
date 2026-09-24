@@ -73,5 +73,9 @@
 - [x] Secrets in place: CRYPTO_HOT_WALLET_PRIVATE_KEY, BASE_SEPOLIA_RPC_URL (public https://sepolia.base.org)
 - [x] Deposit matching decided: match by sender's verified MetaMask address — no xpub, no per-player addresses
 - [x] Phase 1: DB allowlist + deposits + withdrawals + price snapshots + custody kind (additive migrations, guard functions locked down)
-- [ ] Phase 3: listener (once-per-minute worker) + `crypto_credit_deposit` money path with double-credit/reorg tests
-- [ ] Phases 4–8 (withdrawal worker, reconciliation, UI, tests, no-mainnet tests)
+- [x] Review changes folded in (testnet flags, ETH quotes, overlap re-scan, 3 switches)
+- [x] Deposit watcher, withdrawal worker, reconciliation, wallet + admin UI, minutely schedule
+- [x] No-mainnet + valuation unit tests (9/9)
+- [ ] Live round trip (deposit, play, withdraw): waits on test ETH/USDC in payout wallet + publish
+- [ ] DB integration tests for double-credit/parallel withdraw/quote reuse
+- [ ] Rotate payout key pasted in chat

@@ -680,6 +680,21 @@ export type Database = {
           },
         ]
       }
+      crypto_job_runs: {
+        Row: {
+          last_run_at: string
+          name: string
+        }
+        Insert: {
+          last_run_at?: string
+          name: string
+        }
+        Update: {
+          last_run_at?: string
+          name?: string
+        }
+        Relationships: []
+      }
       crypto_price_snapshots: {
         Row: {
           asset_key: string
@@ -2519,6 +2534,10 @@ export type Database = {
           p_user: string
         }
         Returns: Json
+      }
+      crypto_run_gate: {
+        Args: { p_name: string; p_seconds: number }
+        Returns: boolean
       }
       crypto_set_cursor: {
         Args: { p_block: number; p_chain: number }

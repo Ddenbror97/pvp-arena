@@ -23,6 +23,9 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as CoinflipGameIdRouteImport } from './routes/coinflip.$gameId'
 import { Route as GamesGameIdRouteImport } from './routes/games.$gameId'
+import { Route as ApiPublicCronCryptoDepositsRouteImport } from './routes/api/public/cron/crypto-deposits'
+import { Route as ApiPublicCronCryptoReconcileRouteImport } from './routes/api/public/cron/crypto-reconcile'
+import { Route as ApiPublicCronCryptoWithdrawalsRouteImport } from './routes/api/public/cron/crypto-withdrawals'
 import { Route as ApiPublicAvatarStyleSeedRouteImport } from './routes/api/public/avatar.$style.$seed'
 
 const IndexRoute = IndexRouteImport.update({
@@ -94,6 +97,24 @@ const GamesGameIdRoute = GamesGameIdRouteImport.update({
   path: '/games/$gameId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronCryptoDepositsRoute =
+  ApiPublicCronCryptoDepositsRouteImport.update({
+    id: '/api/public/cron/crypto-deposits',
+    path: '/api/public/cron/crypto-deposits',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicCronCryptoReconcileRoute =
+  ApiPublicCronCryptoReconcileRouteImport.update({
+    id: '/api/public/cron/crypto-reconcile',
+    path: '/api/public/cron/crypto-reconcile',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicCronCryptoWithdrawalsRoute =
+  ApiPublicCronCryptoWithdrawalsRouteImport.update({
+    id: '/api/public/cron/crypto-withdrawals',
+    path: '/api/public/cron/crypto-withdrawals',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicAvatarStyleSeedRoute =
   ApiPublicAvatarStyleSeedRouteImport.update({
     id: '/api/public/avatar/$style/$seed',
@@ -115,6 +136,9 @@ export interface FileRoutesByFullPath {
   '/wallet': typeof AuthenticatedWalletRoute
   '/coinflip/$gameId': typeof CoinflipGameIdRoute
   '/games/$gameId': typeof GamesGameIdRoute
+  '/api/public/cron/crypto-deposits': typeof ApiPublicCronCryptoDepositsRoute
+  '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
+  '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
   '/api/public/avatar/$style/$seed': typeof ApiPublicAvatarStyleSeedRoute
 }
 export interface FileRoutesByTo {
@@ -131,6 +155,9 @@ export interface FileRoutesByTo {
   '/wallet': typeof AuthenticatedWalletRoute
   '/coinflip/$gameId': typeof CoinflipGameIdRoute
   '/games/$gameId': typeof GamesGameIdRoute
+  '/api/public/cron/crypto-deposits': typeof ApiPublicCronCryptoDepositsRoute
+  '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
+  '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
   '/api/public/avatar/$style/$seed': typeof ApiPublicAvatarStyleSeedRoute
 }
 export interface FileRoutesById {
@@ -149,6 +176,9 @@ export interface FileRoutesById {
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/coinflip/$gameId': typeof CoinflipGameIdRoute
   '/games/$gameId': typeof GamesGameIdRoute
+  '/api/public/cron/crypto-deposits': typeof ApiPublicCronCryptoDepositsRoute
+  '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
+  '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
   '/api/public/avatar/$style/$seed': typeof ApiPublicAvatarStyleSeedRoute
 }
 export interface FileRouteTypes {
@@ -167,6 +197,9 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/coinflip/$gameId'
     | '/games/$gameId'
+    | '/api/public/cron/crypto-deposits'
+    | '/api/public/cron/crypto-reconcile'
+    | '/api/public/cron/crypto-withdrawals'
     | '/api/public/avatar/$style/$seed'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -183,6 +216,9 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/coinflip/$gameId'
     | '/games/$gameId'
+    | '/api/public/cron/crypto-deposits'
+    | '/api/public/cron/crypto-reconcile'
+    | '/api/public/cron/crypto-withdrawals'
     | '/api/public/avatar/$style/$seed'
   id:
     | '__root__'
@@ -200,6 +236,9 @@ export interface FileRouteTypes {
     | '/_authenticated/wallet'
     | '/coinflip/$gameId'
     | '/games/$gameId'
+    | '/api/public/cron/crypto-deposits'
+    | '/api/public/cron/crypto-reconcile'
+    | '/api/public/cron/crypto-withdrawals'
     | '/api/public/avatar/$style/$seed'
   fileRoutesById: FileRoutesById
 }
@@ -214,6 +253,9 @@ export interface RootRouteChildren {
   RouletteRoute: typeof RouletteRoute
   TermsRoute: typeof TermsRoute
   GamesGameIdRoute: typeof GamesGameIdRoute
+  ApiPublicCronCryptoDepositsRoute: typeof ApiPublicCronCryptoDepositsRoute
+  ApiPublicCronCryptoReconcileRoute: typeof ApiPublicCronCryptoReconcileRoute
+  ApiPublicCronCryptoWithdrawalsRoute: typeof ApiPublicCronCryptoWithdrawalsRoute
   ApiPublicAvatarStyleSeedRoute: typeof ApiPublicAvatarStyleSeedRoute
 }
 
@@ -317,6 +359,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GamesGameIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/crypto-deposits': {
+      id: '/api/public/cron/crypto-deposits'
+      path: '/api/public/cron/crypto-deposits'
+      fullPath: '/api/public/cron/crypto-deposits'
+      preLoaderRoute: typeof ApiPublicCronCryptoDepositsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cron/crypto-reconcile': {
+      id: '/api/public/cron/crypto-reconcile'
+      path: '/api/public/cron/crypto-reconcile'
+      fullPath: '/api/public/cron/crypto-reconcile'
+      preLoaderRoute: typeof ApiPublicCronCryptoReconcileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cron/crypto-withdrawals': {
+      id: '/api/public/cron/crypto-withdrawals'
+      path: '/api/public/cron/crypto-withdrawals'
+      fullPath: '/api/public/cron/crypto-withdrawals'
+      preLoaderRoute: typeof ApiPublicCronCryptoWithdrawalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/avatar/$style/$seed': {
       id: '/api/public/avatar/$style/$seed'
       path: '/api/public/avatar/$style/$seed'
@@ -365,6 +428,9 @@ const rootRouteChildren: RootRouteChildren = {
   RouletteRoute: RouletteRoute,
   TermsRoute: TermsRoute,
   GamesGameIdRoute: GamesGameIdRoute,
+  ApiPublicCronCryptoDepositsRoute: ApiPublicCronCryptoDepositsRoute,
+  ApiPublicCronCryptoReconcileRoute: ApiPublicCronCryptoReconcileRoute,
+  ApiPublicCronCryptoWithdrawalsRoute: ApiPublicCronCryptoWithdrawalsRoute,
   ApiPublicAvatarStyleSeedRoute: ApiPublicAvatarStyleSeedRoute,
 }
 export const routeTree = rootRouteImport
