@@ -63,9 +63,9 @@ export const RouletteStrip = memo(function RouletteStrip({
   const landedIndex = n * (REPEATS - 2) + (slot ?? 0);
 
   return (
-    <div ref={wrap} className="relative h-36 overflow-hidden rounded-2xl border border-border bg-[radial-gradient(ellipse_at_center,var(--surface-2),var(--card))]">
+    <div ref={wrap} className="relative h-28 overflow-hidden rounded-2xl border border-border bg-[radial-gradient(ellipse_at_center,var(--surface-2),var(--card))]">
       <div
-        className="absolute top-6 flex gap-2 will-change-transform"
+        className="absolute top-3 flex gap-2 will-change-transform"
         style={{ transform: `translate3d(${width / 2 - pos}px,0,0)` }}
       >
         {tiles.map((c, i) => {
@@ -74,13 +74,13 @@ export const RouletteStrip = memo(function RouletteStrip({
             <div
               key={i}
               className={cn(
-                "relative flex h-[5.5rem] w-[5.5rem] shrink-0 items-center justify-center rounded-full transition-all duration-500",
+                "relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full transition-all duration-500",
                 done && !win && "scale-90 opacity-35 grayscale",
                 win && "z-10 scale-125",
               )}
               style={win ? { filter: `drop-shadow(0 0 18px ${COIN[c].glow})` } : undefined}
             >
-              <CoinImg c={c} size={84} className={cn("rounded-full", win && "animate-[pulse_1s_ease-in-out_infinite]")} />
+              <CoinImg c={c} size={60} className={cn("rounded-full", win && "animate-[pulse_1s_ease-in-out_infinite]")} />
             </div>
           );
         })}
