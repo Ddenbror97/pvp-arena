@@ -35,3 +35,16 @@
 - [ ] Fairness page UX: too much content / too big — simplify layout, fix mobile
 - [x] Fix chat "Start of chat" drop-in: reserved constant-height top strip in GameChat (verified: message + marker render in same commit)
 - [x] Fairness page UX: Jackpot/Coinflip tabs, verifier card first, specs/vectors collapsed, compact mobile layout (no overflow at 1280/390px; both verifiers tested)
+
+## Security remediation (audit findings)
+- [ ] F-1 least-privilege grants + truncate guard
+- [ ] F-2 hide self-exclusion/age fields; own-status RPC
+- [ ] F-3 tick gate (throttle + try-lock)
+- [ ] F-4 avatar allowlist + same-origin proxy
+- [ ] F-5 sign-up rate limit before account creation
+- [ ] F-6 server-counted online players (heartbeat), remove browser presence
+- [ ] F-7 pot ceilings
+- [ ] Session-liveness check on wagers/faucet/cancel (logout/reset tests)
+- [ ] Integrity monitor (detective) + schedule
+- [ ] New tests: join vs cancel, refund vs payout, gates, sessions, grants
+- [ ] Production build secret scan; full suite
