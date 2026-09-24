@@ -15,10 +15,10 @@ export { ChatMessageRow };
 export function GameChat({ className }: { gameType: ChatRoom; className?: string }) {
   // Every game page shows the same shared chat.
   const gameType = SHARED_CHAT_ROOM;
-  const { userId, profile } = useAuth();
+  const { userId, profile, ready } = useAuth();
   const { messages, historyLoaded, online, status, hasMore, loadingOlder, loadOlder } = useGameChat(
     gameType,
-    userId && profile ? userId : null,
+    userId,
   );
   const send = useServerFn(sendChatMessage);
   const [text, setText] = useState("");
@@ -162,7 +162,7 @@ export function GameChat({ className }: { gameType: ChatRoom; className?: string
                     Start of chat
                   </p>
                 )}
-                {messages.length === 0 && !historyLoaded && userId && (
+                {messages.length === 0 && !historyLoaded && (userId || !ready) && (
                   <ul aria-busy="true" className="space-y-3 px-3 py-3">
                     {[0, 1, 2, 3, 4, 5].map((i) => (
                       <li key={i} className="flex animate-pulse items-start gap-2">

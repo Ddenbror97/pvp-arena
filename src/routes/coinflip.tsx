@@ -4,7 +4,7 @@ import { ogImageMeta } from "@/lib/og";
 import { ClientOnly } from "@tanstack/react-router";
 import { CreatePanel } from "@/components/coinflip/CreatePanel";
 import { OpenGames, RecentCoinflips } from "@/components/coinflip/OpenGames";
-import { useCoinflipRealtime } from "@/lib/coinflip/api";
+import { useCoinflipRealtime, fetchOpenCoinflips, fetchRecentCoinflips } from "@/lib/coinflip/api";
 
 export const Route = createFileRoute("/coinflip")({
   head: () => ({
@@ -22,6 +22,12 @@ export const Route = createFileRoute("/coinflip")({
       ...ogImageMeta(),
     ],
   }),
+  // Start fetching lobby data during navigation/hydration (browser only), not after the lobby mounts.
+  loader: ({ context }) => {
+    if (typeof window === "undefined") return;
+    void context.queryClient.prefetchQuery({ queryKey: ["coinflip-open"], queryFn: fetchOpenCoinflips, staleTime: 3000 });
+    void context.queryClient.prefetchQuery({ queryKey: ["coinflip-recent"], queryFn: () => fetchRecentCoinflips(), staleTime: 3000 });
+  },
   component: CoinflipLayout,
 });
 
