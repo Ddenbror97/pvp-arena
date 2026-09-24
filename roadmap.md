@@ -49,3 +49,6 @@
 - [x] New tests: join vs cancel, refund vs payout, gates, sessions, grants
 - [x] Production build secret scan; full suite
 - [x] Coinflip: better navigation after create/join; show chosen coin side instead of avatar; flip slows after 70%
+
+- [x] Roulette: database, round engine, page, chat, menu links
+- [ ] Roulette: dedicated automated tests, attack/concurrency tests, performance check, audit report

@@ -161,7 +161,7 @@ export function RouletteGame() {
           return (
             <div key={c} className="flex min-h-64 flex-col rounded-xl border border-border bg-card">
               {ready && !userId ? (
-                <Button asChild className={cn("m-2 h-12 font-display", colorClass[c])}><Link to="/auth">Sign in to bet</Link></Button>
+                <Button asChild className={cn("m-2 h-12 font-display", colorClass[c])}><Link to="/auth">{c} · {mults[c] ? multiplierLabel(mults[c]) : "…"}</Link></Button>
               ) : (
                 <Button
                   className={cn("m-2 h-12 font-display hover:opacity-90", colorClass[c])}
