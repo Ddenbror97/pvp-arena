@@ -86,8 +86,8 @@ export function CoinflipRoom({ id }: { id: number }) {
         <span className="rounded bg-secondary px-2 py-0.5 text-xs">{g.status}</span>
       </div>
 
-      <div className="relative mt-6 overflow-hidden rounded-3xl border border-border bg-card p-6 sm:p-10">
-        <div className="grid items-center gap-6 sm:grid-cols-[1fr_auto_1fr]">
+      <div className="relative mt-3 overflow-hidden rounded-2xl border border-border bg-card p-4 sm:px-8 sm:py-5">
+        <div className="grid items-center gap-4 sm:grid-cols-[1fr_auto_1fr]">
           <PlayerSlot g={g} slot="creator" phase={phase} me={userId} />
           <Center g={g} phase={phase} start={start} serverNow={serverNow} now={now} me={userId} />
           <PlayerSlot g={g} slot="opponent" phase={phase} me={userId} />
@@ -109,12 +109,12 @@ function PlayerSlot({ g, slot, phase, me }: { g: CfGameView; slot: "creator" | "
   return (
     <div className={`flex flex-col items-center text-center transition ${lost ? "opacity-40" : ""} ${slot === "opponent" ? "sm:order-last" : ""}`}>
       {uid ? (
-        <PlayerAvatar src={p?.avatar_url} name={p?.username} className={`h-20 w-20 ${won ? "glow-gold" : ""}`} color={won ? "var(--gold)" : side === "HEADS" ? "var(--primary)" : "var(--rival)"} />
+        <PlayerAvatar src={p?.avatar_url} name={p?.username} className={`h-14 w-14 ${won ? "glow-gold" : ""}`} color={won ? "var(--gold)" : side === "HEADS" ? "var(--primary)" : "var(--rival)"} />
       ) : (
-        <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-dashed border-border text-2xl text-muted-foreground animate-pulse">?</div>
+        <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-border text-2xl text-muted-foreground animate-pulse">?</div>
       )}
-      <div className="mt-3 truncate text-sm font-semibold">{uid ? `@${p?.username ?? "player"}${uid === me ? " (you)" : ""}` : "Waiting..."}</div>
-      <div className="tabular mt-1 font-display text-lg">{formatUsd(g.amount)}</div>
+      <div className="mt-2 truncate text-sm font-semibold">{uid ? `@${p?.username ?? "player"}${uid === me ? " (you)" : ""}` : "Waiting..."}</div>
+      <div className="tabular mt-0.5 font-display text-base">{formatUsd(g.amount)}</div>
       <SideChip side={side} className="mt-2" />
     </div>
   );
@@ -144,7 +144,7 @@ function Center({ g, phase, start, serverNow, now, me }: { g: CfGameView; phase:
     }
     return (
       <div className="flex flex-col items-center text-center">
-        <Coin startMs={null} side={null} serverNow={serverNow} restSide={g.creator_side as CoinSide} size={140} />
+        <Coin startMs={null} side={null} serverNow={serverNow} restSide={g.creator_side as CoinSide} size={110} />
         <div className="font-display text-lg">Waiting for opponent...</div>
         <div className="mt-1 text-sm text-muted-foreground">Waiting for <b>{opposite(g.creator_side as CoinSide)}</b> · expires in <span className="tabular">{left}s</span></div>
         {g.creator_id === me && (
@@ -169,18 +169,18 @@ function Center({ g, phase, start, serverNow, now, me }: { g: CfGameView; phase:
       <div className="flex flex-col items-center text-center">
         <div className="text-xs font-bold tracking-[0.4em] text-primary">OPPONENT FOUND</div>
         <div className="tabular mt-2 text-sm text-muted-foreground">{formatUsd(g.amount)} VS {formatUsd(g.amount)}</div>
-        <div key={n} className="animate-count-pop mt-4 font-display text-7xl">{n}</div>
+        <div key={n} className="animate-count-pop mt-2 font-display text-5xl">{n}</div>
         <div className="mt-2 text-xs text-muted-foreground">Starting in {n}...</div>
       </div>
     );
   }
   return (
     <div className="flex flex-col items-center text-center">
-      <Coin startMs={start} side={(g.winning_side as CoinSide | null) ?? null} serverNow={serverNow} size={180} />
+      <Coin startMs={start} side={(g.winning_side as CoinSide | null) ?? null} serverNow={serverNow} size={130} />
       {phase === "flipping" ? (
         <div className="font-display text-sm tracking-[0.4em] text-muted-foreground">FLIPPING</div>
       ) : (
-        <div className={`animate-rise-in font-display text-3xl ${g.winning_side === "HEADS" ? "text-primary" : "text-rival"}`}>{g.winning_side ?? "..."}</div>
+        <div className={`animate-rise-in font-display text-xl ${g.winning_side === "HEADS" ? "text-primary" : "text-rival"}`}>{g.winning_side ?? "..."}</div>
       )}
     </div>
   );
@@ -192,25 +192,25 @@ function ResultCard({ g, me }: { g: CfGameView; me: string | null }) {
   const involved = me && (me === g.creator_id || me === g.opponent_id);
   const iWon = involved && g.winner_id === me;
   return (
-    <div className="animate-rise-in mt-6 rounded-2xl border border-gold/30 bg-gold/5 p-6">
+    <div className="animate-rise-in mt-3 rounded-xl border border-gold/30 bg-card p-4">
       {settled && iWon && <Celebration />}
-      <div className="flex flex-wrap items-center gap-5">
-        <PlayerAvatar src={winner?.avatar_url} name={winner?.username} className="h-16 w-16" color="var(--gold)" />
+      <div className="flex flex-wrap items-center gap-3">
+        <PlayerAvatar src={winner?.avatar_url} name={winner?.username} className="h-11 w-11" color="var(--gold)" />
         <div className="min-w-0 flex-1">
           <div className="text-xs tracking-[0.3em] text-gold">WINNER</div>
-          <div className="font-display text-xl">@{winner?.username ?? "player"}</div>
+          <div className="font-display text-base">@{winner?.username ?? "player"}</div>
           {g.winning_side && <SideChip side={g.winning_side as CoinSide} className="mt-1" />}
         </div>
         {involved && settled && (
           <div className="text-right">
-            <div className="font-display text-2xl">{iWon ? "YOU WON" : "YOU LOST"}</div>
-            <div className={`tabular text-lg ${iWon ? "text-primary" : "text-rival"}`}>
+            <div className="font-display text-lg">{iWon ? "YOU WON" : "YOU LOST"}</div>
+            <div className={`tabular text-sm ${iWon ? "text-primary" : "text-rival"}`}>
               {iWon ? `+${formatUsd(g.payout_amount ?? 0)}` : `-${formatUsd(g.amount)}`} <span className="text-xs">{APP.creditsLabel}</span>
             </div>
           </div>
         )}
       </div>
-      <dl className="tabular mt-5 grid grid-cols-3 gap-3 text-sm">
+      <dl className="tabular mt-3 grid grid-cols-3 gap-3 border-t border-border pt-3 text-sm">
         <div><dt className="text-xs text-muted-foreground">Wager</dt><dd>{formatUsd(g.amount)} each</dd></div>
         <div><dt className="text-xs text-muted-foreground">Total pot</dt><dd>{formatUsd(g.pot_amount)}</dd></div>
         <div><dt className="text-xs text-muted-foreground">Payout</dt><dd>{settled ? formatUsd(g.payout_amount ?? 0) : "Settling..."}</dd></div>
@@ -222,7 +222,7 @@ function ResultCard({ g, me }: { g: CfGameView; me: string | null }) {
 function FairnessPanel({ g }: { g: CfGameView }) {
   const [res, setRes] = useState<{ ok: boolean; checks: CoinflipCheck[] } | null>(null);
   return (
-    <section className="mt-6 rounded-2xl border border-border bg-card p-5 text-sm">
+    <section className="mt-3 rounded-xl border border-border bg-card p-4 text-sm">
       <div className="flex items-center gap-2 font-display text-sm uppercase tracking-widest">
         <ShieldCheck className="h-4 w-4 text-primary" /> Provably fair · Coinflip v1
       </div>

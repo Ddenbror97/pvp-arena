@@ -14,7 +14,7 @@ export function PlayerList({ players, pot, meId, winnerId }: { players: PlayerRo
     return <p className="px-3 py-8 text-center text-sm text-muted-foreground">No players yet. Be the first in.</p>;
   }
   return (
-    <ul className="max-h-[28rem] divide-y divide-border overflow-y-auto">
+    <ul className="divide-y divide-border">
       {sorted.map((p) => {
         const color = colorFor(colorIdx.get(p.user_id) ?? 0);
         const isMe = p.user_id === meId;

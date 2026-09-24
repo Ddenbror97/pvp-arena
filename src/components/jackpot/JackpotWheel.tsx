@@ -81,7 +81,7 @@ export function JackpotWheel({ players, spin, onSpinEnd, highlightId, children }
   }, [spin]);
 
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[460px]">
+    <div data-panel className="relative mx-auto aspect-square w-full max-w-[460px]">
       {/* pointer */}
       <div className="absolute left-1/2 top-[-6px] z-20 -translate-x-1/2">
         <div className="h-0 w-0 border-x-[14px] border-t-[22px] border-x-transparent border-t-primary drop-shadow-[0_0_10px_var(--primary)]" />

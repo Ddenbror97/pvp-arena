@@ -39,7 +39,7 @@ interface Props {
   size?: number;
 }
 
-export function Coin({ startMs, side, serverNow, restSide = "HEADS", size = 220 }: Props) {
+export function Coin({ startMs, side, serverNow, restSide = "HEADS", size = 150 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const wrap = useRef<HTMLDivElement>(null);
   const sideRef = useRef(side);
@@ -72,22 +72,22 @@ export function Coin({ startMs, side, serverNow, restSide = "HEADS", size = 220 
     <div className="flex items-center justify-center" style={{ perspective: size * 4, height: size * 1.5 }}>
       <div ref={wrap} style={{ willChange: "transform" }}>
         <div ref={ref} className="relative" style={{ width: size, height: size, transformStyle: "preserve-3d", willChange: "transform" }}>
-          <Face label="HEADS" glyph="H" className="coin-face coin-heads" />
-          <Face label="TAILS" glyph="T" className="coin-face coin-tails" back />
+          <Face label="HEADS" glyph="H" size={size} className="coin-face coin-heads" />
+          <Face label="TAILS" glyph="T" size={size} className="coin-face coin-tails" back />
         </div>
       </div>
     </div>
   );
 }
 
-function Face({ label, glyph, className, back }: { label: string; glyph: string; className: string; back?: boolean }) {
+function Face({ label, glyph, className, back, size }: { label: string; glyph: string; className: string; back?: boolean; size: number }) {
   return (
     <div
       className={`${className} absolute inset-0 flex flex-col items-center justify-center rounded-full`}
       style={{ backfaceVisibility: "hidden", transform: back ? "rotateY(180deg)" : undefined }}
       aria-hidden
     >
-      <span className="font-display text-[34%] leading-none" style={{ fontSize: "4.5rem" }}>{glyph}</span>
+      <span className="font-display text-[34%] leading-none" style={{ fontSize: size * 0.32 }}>{glyph}</span>
       <span className="mt-1 text-[10px] font-bold tracking-[0.4em]">{label}</span>
     </div>
   );

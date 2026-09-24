@@ -222,4 +222,72 @@ d("access rules (anonymous client)", () => {
       expect(error).not.toBeNull();
     }
   });
+
+  it("chat: anonymous clients can't read, write, moderate or publish into chat rooms", async () => {
+    const { data } = await sb
+      .from("game_chat_messages" as never)
+      .select("*")
+      .limit(1);
+    expect(data ?? []).toEqual([]);
+    for (const t of ["game_chat_user_restrictions", "game_chat_moderation_events"]) {
+      const r = await sb
+        .from(t as never)
+        .select("*")
+        .limit(1);
+      expect(r.data ?? []).toEqual([]);
+    }
+    const ins = await sb.from("game_chat_messages" as never).insert({
+      game_type: "jackpot",
+      user_id: "00000000-0000-0000-0000-000000000000",
+      message: "spoof",
+      status: "visible",
+    } as never);
+    expect(ins.error).not.toBeNull();
+    for (const [fn, args] of [
+      [
+        "chat_send",
+        {
+          p_user: "00000000-0000-0000-0000-000000000000",
+          p_game: "jackpot",
+          p_message: "x",
+          p_severity: "LOW",
+          p_reason: "ok",
+        },
+      ],
+      [
+        "chat_set_status",
+        {
+          p_message: "00000000-0000-0000-0000-000000000000",
+          p_status: "hidden",
+          p_moderator: null,
+          p_reason: "x",
+        },
+      ],
+      [
+        "chat_set_restriction",
+        {
+          p_user: "00000000-0000-0000-0000-000000000000",
+          p_muted_until: null,
+          p_banned: true,
+          p_moderator: null,
+          p_reason: "x",
+        },
+      ],
+    ] as const) {
+      const { error } = await sb.rpc(fn as never, args as never);
+      expect(error).not.toBeNull();
+    }
+    // Private room: an anonymous socket must not be allowed to join.
+    const ch = sb.channel("chat:jackpot", { config: { private: true } });
+    const state = await new Promise<string>((res) => {
+      const t = setTimeout(() => res("TIMEOUT"), 8000);
+      ch.subscribe((s) => {
+        if (s !== "SUBSCRIBED" && s !== "CHANNEL_ERROR" && s !== "CLOSED") return;
+        clearTimeout(t);
+        res(s);
+      });
+    });
+    await sb.removeChannel(ch);
+    expect(state).not.toBe("SUBSCRIBED");
+  }, 20_000);
 });

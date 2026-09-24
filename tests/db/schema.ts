@@ -12,6 +12,8 @@ export function buildTestSchemaSql(): string {
   let s = files.map((f) => readFileSync(join(dir, f), "utf8")).join("\n");
   s = s.replace(/create extension if not exists pgcrypto with schema extensions;/g, "");
   s = s.replace(/alter publication supabase_realtime[^;]*;/g, "");
+  // Realtime channel authorization lives in the shared realtime schema, not pvp_test.
+  s = s.replace(/-- realtime-auth:begin[\s\S]*?-- realtime-auth:end/g, "");
   s = s.replace(/select public\._ensure_open_game\(\);/g, "");
   s = s.replace(/do \$\$ begin\s+if exists \(select 1 from pg_roles where rolname = 'sandbox_exec'\)[\s\S]*?end \$\$;/g, "");
   s = s.replace(/revoke execute on all functions in schema public from public, anon, authenticated;/g, "");
