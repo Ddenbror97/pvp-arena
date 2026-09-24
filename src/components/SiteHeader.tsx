@@ -16,7 +16,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-none items-center gap-4 px-3 sm:h-16 sm:gap-6 sm:px-4 lg:px-6">
         <Link to="/" className="shrink-0" aria-label="PVPspinArena">
-          <img src={arenaLogo.url} alt="PVPspinArena" className="h-8 w-auto sm:h-10" />
+          <img src={arenaLogo.url} alt="PVPspinArena" fetchPriority="high" decoding="async" className="h-8 w-auto sm:h-10" />
         </Link>
         <nav className="hidden items-center gap-5 sm:flex">
           <Link to="/" className={link} activeOptions={{ exact: true }}>Jackpot</Link>
