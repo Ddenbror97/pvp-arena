@@ -12,7 +12,8 @@ import { APP } from "@/lib/config";
 import { emitSound } from "@/lib/sound";
 import { fetchCoinflip, opposite, tickCoinflip, useCoinflipRealtime, type CfGameView, type CoinSide } from "@/lib/coinflip/api";
 import { verifyCoinflip, type CoinflipCheck } from "@/lib/fairness/coinflip";
-import { PlayerAvatar } from "@/components/jackpot/Avatar";
+import headsAsset from "@/assets/coin-heads.png.asset.json";
+import tailsAsset from "@/assets/coin-tails.png.asset.json";
 import { Celebration } from "@/components/jackpot/Celebration";
 import { Button } from "@/components/ui/button";
 import { Coin } from "./Coin";
@@ -109,7 +110,7 @@ function PlayerSlot({ g, slot, phase, me }: { g: CfGameView; slot: "creator" | "
   return (
     <div className={`flex flex-col items-center text-center transition ${lost ? "opacity-40" : ""} ${slot === "opponent" ? "sm:order-last" : ""}`}>
       {uid ? (
-        <PlayerAvatar src={p?.avatar_url} name={p?.username} className={`h-14 w-14 ${won ? "glow-gold" : ""}`} color={won ? "var(--gold)" : side === "HEADS" ? "var(--primary)" : "var(--rival)"} />
+        <SideCoin side={side} className={`h-14 w-14 ${won ? "glow-gold" : ""}`} />
       ) : (
         <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-border text-2xl text-muted-foreground animate-pulse">?</div>
       )}
@@ -225,7 +226,7 @@ function ResultCard({ g, me }: { g: CfGameView; me: string | null }) {
     <div className={`animate-rise-in mt-3 rounded-xl border border-gold/30 bg-card p-4 ${settled ? "win-card" : ""}`}>
       {settled && iWon && <Celebration />}
       <div className="flex flex-wrap items-center gap-3">
-        <PlayerAvatar src={winner?.avatar_url} name={winner?.username} className={`h-11 w-11 ${settled ? "animate-win-pop" : ""}`} color="var(--gold)" />
+        {g.winning_side && <SideCoin side={g.winning_side as CoinSide} className={`h-11 w-11 ${settled ? "animate-win-pop" : ""}`} />}
         <div className="min-w-0 flex-1">
           <div className="text-xs tracking-[0.3em] text-gold">WINNER</div>
           <div className="font-display text-base">@{winner?.username ?? "player"}</div>
@@ -302,5 +303,18 @@ function Row({ k, v }: { k: string; v: string }) {
       <dt className="text-xs text-muted-foreground">{k}</dt>
       <dd className="tabular break-all text-xs">{v}</dd>
     </div>
+  );
+}
+
+function SideCoin({ side, className }: { side: CoinSide; className?: string }) {
+  return (
+    <img
+      src={(side === "HEADS" ? headsAsset : tailsAsset).url}
+      alt={side === "HEADS" ? "Heads" : "Tails"}
+      width={56}
+      height={56}
+      draggable={false}
+      className={`shrink-0 rounded-full object-cover select-none ${className ?? ""}`}
+    />
   );
 }

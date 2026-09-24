@@ -22,6 +22,7 @@ export function CreatePanel() {
   const cfg = useCoinflipConfig();
   const qc = useQueryClient();
   const navigate = useNavigate();
+  const router = useRouter();
   const [input, setInput] = useState("5.00");
   const [side, setSide] = useState<CoinSide>("HEADS");
   const [pending, setPending] = useState(false);
@@ -57,6 +58,7 @@ export function CreatePanel() {
     qc.invalidateQueries({ queryKey: ["wallet"] });
     qc.invalidateQueries({ queryKey: ["coinflip-open"] });
     const gid = (data as { game_id: number }).game_id;
+    await openRoom(qc, router, gid);
     navigate({ to: "/coinflip/$gameId", params: { gameId: String(gid) } });
   }
 

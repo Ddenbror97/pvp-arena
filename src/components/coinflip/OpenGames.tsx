@@ -47,6 +47,7 @@ export function OpenGames() {
 function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin: boolean }) {
   const qc = useQueryClient();
   const navigate = useNavigate();
+  const router = useRouter();
   const [pending, setPending] = useState(false);
   const key = useRef<string | null>(null);
   const side = g.creator_side as CoinSide;
@@ -64,6 +65,7 @@ function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin:
       return;
     }
     qc.invalidateQueries({ queryKey: ["wallet"] });
+    await openRoom(qc, router, g.id);
     navigate({ to: "/coinflip/$gameId", params: { gameId: String(g.id) } });
   }
 
