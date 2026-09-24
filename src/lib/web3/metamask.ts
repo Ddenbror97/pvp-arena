@@ -52,13 +52,32 @@ function sessionFor(
 ): WalletSession {
   return {
     async connect() {
-      try {
+      const attempt = async () => {
         const { accounts, chainId } = await withTimeout(connectFn(), CONNECT_TIMEOUT_MS);
         const address = accounts?.[0];
         if (!address) throw new WalletError("CONNECT_REJECTED");
         return { address, chainId: String(chainId).toLowerCase() };
+      };
+      try {
+        return await attempt();
       } catch (e) {
-        throw toWalletError(e, "connect");
+        const first = toWalletError(e, "connect");
+        // A connection left over from an earlier session — typically another site
+        // account in the same browser — can block the first request. Dropping it
+        // and retrying once clears that state. Never retried when the user
+        // themselves dismissed or ignored the prompt.
+        if (first.code === "CONNECT_REJECTED" || first.code === "TIMEOUT") throw first;
+        try {
+          await disconnectFn();
+        } catch {
+          /* stale state may already be gone */
+        }
+        await new Promise((r) => setTimeout(r, 250));
+        try {
+          return await attempt();
+        } catch (e2) {
+          throw toWalletError(e2, "connect");
+        }
       }
     },
     async chainId() {
