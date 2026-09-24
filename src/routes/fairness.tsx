@@ -122,8 +122,7 @@ function JackpotSection() {
         recompute it below, or open any completed game and press “Verify”.
       </p>
 
-      <div className="lg:grid lg:grid-cols-2 lg:gap-4">
-      <div>
+      <div className="grid gap-4 lg:grid-cols-2">
       <Card title="Verify a draw">
         <div className="grid gap-3">
           <div className="space-y-1.5">
@@ -148,13 +147,13 @@ function JackpotSection() {
       <RecordedCheck title="Check a recorded Jackpot game" id="jpcheck" run={checkJackpot} />
       </div>
 
-      <div>
-      <details className="mt-4 rounded-2xl border border-border bg-card p-4 lg:mt-0">
+      <div className="mt-4 grid gap-2 lg:grid-cols-2">
+      <details className="rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer font-display text-sm">How the draw works</summary>
         <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{SPEC}</pre>
       </details>
 
-      <details className="mt-2 rounded-2xl border border-border bg-card p-4">
+      <details className="rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer font-display text-sm">What this does and doesn’t prove</summary>
         <ul className="mt-3 list-disc space-y-1.5 pl-5 text-xs text-muted-foreground">
           <li>The seed was fixed before any entry: its hash was public from the moment the round opened.</li>
