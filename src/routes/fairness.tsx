@@ -122,8 +122,7 @@ function JackpotSection() {
         recompute it below, or open any completed game and press “Verify”.
       </p>
 
-      <div className="lg:grid lg:grid-cols-2 lg:gap-4">
-      <div>
+      <div className="grid gap-4 lg:grid-cols-2">
       <Card title="Verify a draw">
         <div className="grid gap-3">
           <div className="space-y-1.5">
@@ -148,13 +147,13 @@ function JackpotSection() {
       <RecordedCheck title="Check a recorded Jackpot game" id="jpcheck" run={checkJackpot} />
       </div>
 
-      <div>
-      <details className="mt-4 rounded-2xl border border-border bg-card p-4 lg:mt-0">
+      <div className="mt-4 grid gap-2 lg:grid-cols-2">
+      <details className="rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer font-display text-sm">How the draw works</summary>
         <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{SPEC}</pre>
       </details>
 
-      <details className="mt-2 rounded-2xl border border-border bg-card p-4">
+      <details className="rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer font-display text-sm">What this does and doesn’t prove</summary>
         <ul className="mt-3 list-disc space-y-1.5 pl-5 text-xs text-muted-foreground">
           <li>The seed was fixed before any entry: its hash was public from the moment the round opened.</li>
@@ -166,7 +165,6 @@ function JackpotSection() {
           </li>
         </ul>
       </details>
-      </div>
       </div>
     </section>
   );
@@ -192,8 +190,7 @@ function CoinflipSection() {
         reused for another. One HMAC bit decides the side — exactly 50/50.
       </p>
 
-      <div className="lg:grid lg:grid-cols-2 lg:gap-4">
-      <div>
+      <div className="grid gap-4 lg:grid-cols-2">
       <Card title="Verify a coinflip">
         <div className="grid gap-3">
           <div className="space-y-1.5">
@@ -213,13 +210,13 @@ function CoinflipSection() {
       <RecordedCheck title="Check a recorded Coinflip game" id="cfcheck" run={checkCoinflip} />
       </div>
 
-      <div>
-      <details className="mt-4 rounded-2xl border border-border bg-card p-4 lg:mt-0">
+      <div className="mt-4 grid gap-2 lg:grid-cols-2">
+      <details className="rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer font-display text-sm">How the draw works</summary>
         <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{CF_SPEC}</pre>
       </details>
 
-      <details className="mt-2 rounded-2xl border border-border bg-card p-4">
+      <details className="rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer font-display text-sm">Published test vectors ({CF_VECTORS.length})</summary>
         <div className="mt-3 max-h-64 overflow-y-auto overscroll-contain">
           <table className="tabular w-full text-[11px]">
@@ -232,7 +229,6 @@ function CoinflipSection() {
           </table>
         </div>
       </details>
-      </div>
       </div>
     </section>
   );
@@ -268,7 +264,7 @@ function RouletteSection() {
         Same engine as Jackpot and Coinflip with its own message prefix. Each wheel slot is exactly equally likely; the
         slot decides the coin.
       </p>
-      <div className="lg:grid lg:grid-cols-2 lg:gap-4">
+      <div className="grid gap-4">
       <Card title="Verify a roulette round">
         <div className="grid gap-3">
           <div className="space-y-1.5">
@@ -280,7 +276,7 @@ function RouletteSection() {
           <p className="text-[11px] text-muted-foreground">The seed and wheel are loaded from public data; the maths runs in your browser.</p>
         </div>
       </Card>
-      <details className="mt-4 rounded-2xl border border-border bg-card p-4 lg:mt-0">
+      <details className="rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer font-display text-sm">How the draw works</summary>
         <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{`HMAC-SHA256(key = server_seed, message = "PVPCasino:roulette:v1:{round}:{draw_version}:{counter}")
 r = first 8 bytes (big-endian); limit = floor(2^64 / n) * n
