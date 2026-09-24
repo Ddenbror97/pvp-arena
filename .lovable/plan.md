@@ -35,6 +35,33 @@ WAITING --first bet--> BETTING (20s countdown) --> LOCKED (1s) --> SPINNING (5s)
 - The result is fixed by the server the moment betting closes. The spin only shows it.
 - After the round locks, nobody can add, edit or move a bet.
 
+## 2b. Corrections (from your review)
+
+1. **Fairness uses the exact existing method.**
+   - It is the same keyed HMAC-SHA256 as Jackpot and Coinflip: the secret seed is the key and the Roulette message is the input. There is no new "hash(seed + message)" method.
+   - It uses the same kind of redraw (rejection sampling) as the Jackpot ticket draw.
+   - Fixed test examples will be checked against a separate implementation. They cover every color, the first and last slot, the redraw limit, and the maximum value.
+2. **Who can cancel.**
+   - Only the internal recovery step, run by the server worker, can cancel a round. No player can call it, and there is no cancel button.
+   - A round can be cancelled only while it is still in BETTING and more than 10 minutes past its database betting deadline. The database clock decides the timing, not the browser.
+   - Locking and cancelling both take the same lock on the round row and re-check the status after taking it. So once LOCKED is saved, a round can never be cancelled or refunded.
+   - A round in SPINNING or SETTLEMENT can't be cancelled either. It can only be retried until it settles.
+   - Tests will run cancel against lock, and cancel against settlement, as real simultaneous transactions.
+3. **Why the public `roulette_tick()` is safe.**
+   - Browsers call it only so rounds move on time between worker runs. It takes no input: no round number, color, amount or state.
+   - All it can do is apply the next step that is already due by the database clock. The actual steps stay internal and can't be called by browsers.
+   - It uses the existing global throttle and a lock, so repeated or simultaneous calls just merge into one run.
+   - Even with the right timing, a malicious caller can't create, change, speed up or pay out anything.
+   - Tests will make these calls signed out, signed in, and with forged or malicious requests.
+4. **Timing.**
+   - The server keeps rounds moving on its own every few seconds (a short loop inside the existing every-minute job, under the same lock). The throttled browser tick just adds extra nudges.
+   - Browser timers only drive the display. Server timestamps decide every step, and the result is drawn inside the lock step.
+5. **History is display only.** The last-100 counts never affect chances, the slot picked, payouts, settings, seeds or timing.
+6. **The database is the authority on the math.**
+   - The wheel settings can't be changed once any round has used them; a database guard blocks edits and deletes.
+   - Settlement reads each round's stored version and multipliers inside the same transaction.
+   - The app's own copy of the numbers is only used for display, and tests check it matches the database.
+
 ## 3. Betting
 
 - You can place several bets on one or more colors. Each bet is its own record: bet number, round, player, color, amount, time, status.
