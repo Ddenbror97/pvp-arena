@@ -24,6 +24,6 @@ export function buildTestSchemaSql(): string {
   return `drop schema if exists pvp_test cascade;
 create schema pvp_test;
 create table pvp_test.test_auth_users (id uuid primary key, email text, email_confirmed_at timestamptz);
-create function pvp_test.test_uid() returns uuid language sql stable as $$ select nullif(current_setting('test.uid', true),'')::uuid $$;
+create function pvp_test.test_uid() returns uuid language sql stable set search_path = pvp_test as $$ select nullif(current_setting('test.uid', true),'')::uuid $$;
 ${s}`;
 }

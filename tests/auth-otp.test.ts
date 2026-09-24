@@ -33,7 +33,7 @@ describe("OTP digest", () => {
 describe("email template", () => {
   it("contains the code and no links/URLs/buttons", () => {
     const { html, text, subject } = renderOtpEmail("042917");
-    expect(subject).toBe("Seu código de verificação PVPCasino");
+    expect(subject).toBe("Seu código de verificação PVPspinArena");
     for (const s of [html, text]) {
       expect(s).toContain("042917");
       expect(s).not.toMatch(/https?:\/\/|www\.|<a\s|href=|<button|mailto:/i);
