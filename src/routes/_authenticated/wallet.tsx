@@ -7,6 +7,7 @@ import { useWallet, useWalletRealtime } from "@/lib/jackpot/api";
 import { formatUsd } from "@/lib/jackpot/math";
 import { friendlyError } from "@/lib/jackpot/errors";
 import { Button } from "@/components/ui/button";
+import { CryptoRails } from "@/components/wallet/CryptoRails";
 
 export const Route = createFileRoute("/_authenticated/wallet")({
   head: () => ({
@@ -89,9 +90,9 @@ function WalletPage() {
 
       <div className="mt-4 flex flex-wrap gap-3">
         <Button onClick={claim} className="font-display">Claim hourly test credits</Button>
-        <Button variant="secondary" disabled title="Real-money deposits are disabled">Deposit (disabled)</Button>
-        <Button variant="secondary" disabled title="Withdrawals are disabled for test credits">Withdraw (disabled)</Button>
       </div>
+
+      <CryptoRails />
 
       <h2 className="mt-10 font-display text-sm uppercase tracking-widest">Transactions</h2>
       <div className="mt-3 overflow-hidden rounded-2xl border border-border bg-card">
