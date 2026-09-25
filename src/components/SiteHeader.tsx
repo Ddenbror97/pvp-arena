@@ -98,7 +98,7 @@ export function SiteFooter() {
             Player-versus-player Jackpot, Coinflip and Roulette.
           </p>
           <p className="mt-3 text-xs leading-5 text-muted-foreground">
-            Credits have no cash value and cannot be withdrawn. Not a licensed gambling service. 18+.
+            Balances are in USD, funded by USDC or ETH deposits on Base. 18+. Play responsibly.
           </p>
         </div>
 
