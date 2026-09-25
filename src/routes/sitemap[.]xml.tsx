@@ -31,8 +31,8 @@ export const Route = createFileRoute("/sitemap.xml")({
         // Dynamic entries: public fairness/audit pages for completed games.
         try {
           const supabase = createClient(
-            import.meta.env.VITE_SUPABASE_URL as string,
-            import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string,
+            import.meta.env["VITE_SUPABASE_URL"] as string,
+            import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string,
             { auth: { persistSession: false } },
           );
           // Coinflip rooms are live, client-only pages (noindex) — only the
