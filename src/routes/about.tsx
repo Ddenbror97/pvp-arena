@@ -371,6 +371,7 @@ function AboutPage() {
 
       <SeoFaq faqs={FAQS} />
 
+      <p className="text-center text-sm text-muted-foreground">Read our <Link to="/guides/$slug" params={{ slug: "pvp-gambling" }} className="text-primary hover:underline">guide to PvP gambling</Link>, or browse all <Link to="/guides" className="text-primary hover:underline">crypto casino guides</Link>.</p>
       <SeoCta
         title="Explore PVPspinArena"
         text="Pick a game, watch a round or read exactly how results are decided."

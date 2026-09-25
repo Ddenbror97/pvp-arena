@@ -337,6 +337,7 @@ function HowItWorksPage() {
 
       <SeoFaq faqs={FAQS} />
 
+      <p className="text-center text-sm text-muted-foreground">New to crypto gaming? Start with <Link to="/guides/$slug" params={{ slug: "what-is-a-crypto-casino" }} className="text-primary hover:underline">what is a crypto casino</Link>, or browse all <Link to="/guides" className="text-primary hover:underline">guides</Link>.</p>
       <SeoCta
         title="Ready to play a round?"
         text="Pick a game, check the committed hash and watch the result land live."
