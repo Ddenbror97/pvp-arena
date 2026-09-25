@@ -94,6 +94,6 @@
 - [x] Roulette countdown starts at the full configured window after the prior result; previous rolls stay edge-to-edge without cache swaps
 - [x] Wallet UX: guided one-click MetaMask deposits, review-first withdrawals, and mobile-safe activity layout
 - [x] Header: balance + Deposit/Withdraw in one control, deep-linked to the wallet tab; fits 320-1280px, no added page movement
-- [x] MetaMask connect on ddenbror97: auto-retry after a stale connection, wider error mapping, failures logged server-side with a safe reason code
+- [x] MetaMask connect on ddenbror97: direct installed-extension discovery, mobile fallback, duplicate-request guard, actionable errors, safe failure logging
 - [ ] Full Base Sepolia round trip (deposit -> play -> withdraw) — waits on test coins in the payout wallet and a publish
 - [ ] Rotate the payout wallet key that was pasted in chat — after testing

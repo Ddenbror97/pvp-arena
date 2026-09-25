@@ -3,8 +3,10 @@ import { WalletError, toWalletError } from "./errors";
 import { buildDepositTransaction, type DepositInstruction } from "@/lib/crypto/deposit";
 
 /** Minimal EIP-1193 surface this app uses. */
-interface Eip1193 {
+export interface Eip1193 {
   request(args: { method: string; params?: unknown[] }): Promise<unknown>;
+  isMetaMask?: boolean;
+  providers?: Eip1193[];
   on?(event: string, fn: (...a: unknown[]) => void): void;
   removeListener?(event: string, fn: (...a: unknown[]) => void): void;
 }
@@ -23,6 +25,54 @@ export interface WalletSession {
 
 const CONNECT_TIMEOUT_MS = 120_000;
 const SIGN_TIMEOUT_MS = 180_000;
+const PROVIDER_DISCOVERY_MS = 750;
+
+interface ProviderHost {
+  ethereum?: Eip1193;
+  addEventListener(type: string, listener: EventListener): void;
+  removeEventListener(type: string, listener: EventListener): void;
+  dispatchEvent(event: Event): boolean;
+}
+
+interface Eip6963Detail {
+  info?: { rdns?: string };
+  provider?: Eip1193;
+}
+
+function metaMaskFromLegacyProvider(provider?: Eip1193) {
+  if (!provider) return null;
+  const candidates = provider.providers ?? [provider];
+  return candidates.find((candidate) => candidate.isMetaMask === true) ?? null;
+}
+
+/** Discover the installed MetaMask provider without relying on the SDK's one-shot timer. */
+export async function discoverInjectedMetaMask(
+  host: ProviderHost,
+  waitMs = PROVIDER_DISCOVERY_MS,
+): Promise<Eip1193 | null> {
+  const legacy = metaMaskFromLegacyProvider(host.ethereum);
+  if (legacy) return legacy;
+
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (provider: Eip1193 | null) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      host.removeEventListener("eip6963:announceProvider", onAnnounce);
+      resolve(provider);
+    };
+    const onAnnounce = (event: Event) => {
+      const detail = (event as CustomEvent<Eip6963Detail>).detail;
+      if (detail?.provider && (detail.info?.rdns === "io.metamask" || detail.provider.isMetaMask === true)) {
+        finish(detail.provider);
+      }
+    };
+    const timer = setTimeout(() => finish(metaMaskFromLegacyProvider(host.ethereum)), waitMs);
+    host.addEventListener("eip6963:announceProvider", onAnnounce);
+    host.dispatchEvent(new Event("eip6963:requestProvider"));
+  });
+}
 
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -55,7 +105,7 @@ export function sessionFor(
       const attempt = async () => {
         const { accounts, chainId } = await withTimeout(connectFn(), CONNECT_TIMEOUT_MS);
         const address = accounts?.[0];
-        if (!address) throw new WalletError("CONNECT_REJECTED");
+        if (!address) throw new WalletError("WALLET_LOCKED");
         return { address, chainId: String(chainId).toLowerCase() };
       };
       try {
@@ -66,7 +116,13 @@ export function sessionFor(
         // account in the same browser — can block the first request. Dropping it
         // and retrying once clears that state. Never retried when the user
         // themselves dismissed or ignored the prompt.
-        if (first.code === "CONNECT_REJECTED" || first.code === "TIMEOUT") throw first;
+        if (
+          first.code === "CONNECT_REJECTED" ||
+          first.code === "CONNECT_PENDING" ||
+          first.code === "WALLET_LOCKED" ||
+          first.code === "TIMEOUT"
+        )
+          throw first;
         try {
           await disconnectFn();
         } catch {
@@ -169,6 +225,17 @@ export function getWalletSession(): Promise<WalletSession> {
         async () => {},
       );
     }
+    const injected = await discoverInjectedMetaMask(window);
+    if (injected) {
+      return sessionFor(
+        injected,
+        async () => ({
+          accounts: (await guardedRequest(injected, "eth_requestAccounts")) as string[],
+          chainId: String(await guardedRequest(injected, "eth_chainId")),
+        }),
+        async () => {},
+      );
+    }
     try {
       const { createEVMClient } = await import("@metamask/connect-evm");
       const client = await createEVMClient({
@@ -196,4 +263,9 @@ export function getWalletSession(): Promise<WalletSession> {
   })();
   cached.catch(() => (cached = null));
   return cached;
+}
+
+/** Clear a failed connector so the next click starts from a clean session. */
+export function resetWalletSession() {
+  cached = null;
 }

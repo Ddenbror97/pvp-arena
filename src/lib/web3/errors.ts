@@ -2,6 +2,8 @@ import { WALLET_CONFIG } from "./config";
 
 export const WALLET_MESSAGES = {
   CONNECT_REJECTED: "Wallet connection cancelled.",
+  CONNECT_PENDING: "A MetaMask request is already open. Finish or close it, then try again.",
+  WALLET_LOCKED: "Unlock MetaMask and select an account, then try again.",
   SIGN_REJECTED: "Wallet verification cancelled.",
   TRANSACTION_REJECTED: "Deposit cancelled in MetaMask.",
   INVALID_SIGNATURE: "Could not verify ownership of this wallet.",
@@ -33,9 +35,17 @@ export function toWalletError(e: unknown, phase: "connect" | "sign" | "send"): W
   if (e instanceof WalletError) return e;
   const code = (e as { code?: unknown })?.code;
   const dataCode = (e as { data?: { code?: unknown } })?.data?.code;
+  const causeCode = (e as { cause?: { code?: unknown } })?.cause?.code;
   const msg = String((e as { message?: unknown })?.message ?? e).toLowerCase();
   // Diagnostic only: provider code/message, never secrets.
-  console.warn("[wallet]", phase, code ?? dataCode, msg.slice(0, 200));
+  console.warn("[wallet]", phase, code ?? dataCode ?? causeCode, msg.slice(0, 200));
+  if (
+    code === -32002 ||
+    dataCode === -32002 ||
+    causeCode === -32002 ||
+    /request already pending|already processing|already pending/.test(msg)
+  )
+    return new WalletError("CONNECT_PENDING");
   if (
     code === 4001 ||
     code === "ACTION_REJECTED" ||
@@ -54,6 +64,8 @@ export function toWalletError(e: unknown, phase: "connect" | "sign" | "send"): W
   )
     return new WalletError("UNAVAILABLE");
   if (/timeout|timed out/.test(msg)) return new WalletError("TIMEOUT");
+  if (/wallet.*locked|unlock.*wallet|no accounts? (?:available|selected)/.test(msg))
+    return new WalletError("WALLET_LOCKED");
   if (/unsupported network|unsupported chain|unrecognized chain|chain not supported/.test(msg))
     return new WalletError("UNSUPPORTED_NETWORK");
   return new WalletError("GENERIC");
