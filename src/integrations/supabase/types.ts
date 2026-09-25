@@ -361,6 +361,7 @@ export type Database = {
           fee_bps: number
           id: number
           joined_at: string | null
+          money_domain: string
           opponent_id: string | null
           payout_amount: number | null
           pot_amount: number
@@ -391,6 +392,7 @@ export type Database = {
           fee_bps: number
           id?: never
           joined_at?: string | null
+          money_domain?: string
           opponent_id?: string | null
           payout_amount?: number | null
           pot_amount: number
@@ -421,6 +423,7 @@ export type Database = {
           fee_bps?: number
           id?: never
           joined_at?: string | null
+          money_domain?: string
           opponent_id?: string | null
           payout_amount?: number | null
           pot_amount?: number
@@ -821,10 +824,12 @@ export type Database = {
           mainnet_enabled: boolean
           min_deposit_cents: number
           min_withdrawal_cents: number
+          money_domain_frozen: boolean
           overlap_blocks: number
           payout_float_max_cents: number
           price_max_age_seconds: number
           quote_ttl_seconds: number
+          real_play_enabled: boolean
           test_credits_reset_at: string | null
           updated_at: string
           watch_only: boolean
@@ -843,10 +848,12 @@ export type Database = {
           mainnet_enabled?: boolean
           min_deposit_cents?: number
           min_withdrawal_cents?: number
+          money_domain_frozen?: boolean
           overlap_blocks?: number
           payout_float_max_cents?: number
           price_max_age_seconds?: number
           quote_ttl_seconds?: number
+          real_play_enabled?: boolean
           test_credits_reset_at?: string | null
           updated_at?: string
           watch_only?: boolean
@@ -865,10 +872,12 @@ export type Database = {
           mainnet_enabled?: boolean
           min_deposit_cents?: number
           min_withdrawal_cents?: number
+          money_domain_frozen?: boolean
           overlap_blocks?: number
           payout_float_max_cents?: number
           price_max_age_seconds?: number
           quote_ttl_seconds?: number
+          real_play_enabled?: boolean
           test_credits_reset_at?: string | null
           updated_at?: string
           watch_only?: boolean
@@ -1474,6 +1483,7 @@ export type Database = {
           max_end_at: string | null
           max_entry: number
           min_entry: number
+          money_domain: string
           payout_amount: number | null
           player_count: number
           pot_amount: number
@@ -1506,6 +1516,7 @@ export type Database = {
           max_end_at?: string | null
           max_entry: number
           min_entry: number
+          money_domain?: string
           payout_amount?: number | null
           player_count?: number
           pot_amount?: number
@@ -1538,6 +1549,7 @@ export type Database = {
           max_end_at?: string | null
           max_entry?: number
           min_entry?: number
+          money_domain?: string
           payout_amount?: number | null
           player_count?: number
           pot_amount?: number
@@ -1714,6 +1726,57 @@ export type Database = {
           kind?: Database["public"]["Enums"]["tx_kind"]
           memo?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      money_domain_config: {
+        Row: {
+          account_type: string
+          asset: string
+          id: boolean
+          money_domain: string
+          updated_at: string
+        }
+        Insert: {
+          account_type: string
+          asset: string
+          id?: boolean
+          money_domain: string
+          updated_at?: string
+        }
+        Update: {
+          account_type?: string
+          asset?: string
+          id?: boolean
+          money_domain?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      money_migrations: {
+        Row: {
+          applied_at: string
+          details: Json
+          finalized_at: string | null
+          state: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          applied_at?: string
+          details?: Json
+          finalized_at?: string | null
+          state: string
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          applied_at?: string
+          details?: Json
+          finalized_at?: string | null
+          state?: string
+          updated_at?: string
+          version?: string
         }
         Relationships: []
       }
@@ -1911,6 +1974,7 @@ export type Database = {
           max_bets_per_user: number
           max_pot: number
           min_bet: number
+          money_domain: string
           player_count: number
           pot_amount: number
           protocol_version: string
@@ -1952,6 +2016,7 @@ export type Database = {
           max_bets_per_user: number
           max_pot: number
           min_bet: number
+          money_domain?: string
           player_count?: number
           pot_amount?: number
           protocol_version?: string
@@ -1993,6 +2058,7 @@ export type Database = {
           max_bets_per_user?: number
           max_pot?: number
           min_bet?: number
+          money_domain?: string
           player_count?: number
           pot_amount?: number
           protocol_version?: string
@@ -2393,10 +2459,17 @@ export type Database = {
         Returns: string
       }
       _is_house_address: { Args: { p_addr: string }; Returns: boolean }
+      _money_deposit_snapshot: { Args: never; Returns: Json }
+      _money_finalize_v1: { Args: never; Returns: Json }
+      _money_migrate_v1: { Args: never; Returns: Json }
+      _money_rollback_v1: { Args: never; Returns: Json }
+      _money_state: { Args: never; Returns: string }
+      _play_domain_open: { Args: never; Returns: boolean }
       _post: {
         Args: { p_account: string; p_amount: number; p_tx: string }
         Returns: undefined
       }
+      _real_play_allowed: { Args: never; Returns: boolean }
       _roulette_audit: {
         Args: {
           p_action: string
@@ -2758,6 +2831,7 @@ export type Database = {
       }
       jackpot_settle: { Args: { p_game_id: number }; Returns: string }
       jackpot_tick: { Args: never; Returns: Json }
+      money_real_invariants: { Args: never; Returns: Json }
       otp_challenge_info: { Args: { p_id: string }; Returns: Json }
       otp_cleanup: { Args: never; Returns: undefined }
       otp_issue: {
@@ -2858,6 +2932,7 @@ export type Database = {
         | "house_revenue"
         | "test_faucet"
         | "external_custody"
+        | "house_bankroll"
       app_role: "admin" | "moderator" | "user"
       coin_side: "HEADS" | "TAILS"
       coinflip_payout_kind: "WINNER" | "REFUND"
@@ -3038,6 +3113,7 @@ export const Constants = {
         "house_revenue",
         "test_faucet",
         "external_custody",
+        "house_bankroll",
       ],
       app_role: ["admin", "moderator", "user"],
       coin_side: ["HEADS", "TAILS"],

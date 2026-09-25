@@ -29,6 +29,9 @@ const MESSAGES: Record<string, string> = {
   ROUND_FULL: "This round is full. Try the next one.",
   INVALID_COLOR: "Pick a colour.",
   IDEMPOTENCY_KEY_REUSED: "Please try again.",
+  REAL_MONEY_DISABLED: "Real-money play not yet open.",
+  LEDGER_NOT_READY: "Real-money play not yet open.",
+  TEST_CREDITS_RETIRED: "Test credits are no longer available.",
 };
 
 export function friendlyError(e: unknown): string {
