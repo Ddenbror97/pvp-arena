@@ -339,6 +339,25 @@ d("jackpot engine (isolated schema)", () => {
     }
   });
 
+  it("legacy chain-less money overloads are not executable by any API role", async () => {
+    const sigs = [
+      "crypto_observe_deposit(text,text,integer,bigint,text,text,numeric)",
+      "crypto_record_price(text,text,numeric,bigint,timestamp with time zone)",
+      "crypto_quote_withdrawal(uuid,bigint)",
+      "crypto_request_withdrawal(uuid,text,bigint,uuid,boolean)",
+      "crypto_next_withdrawals()",
+    ];
+    for (const schema of ["public", "pvp_test"]) {
+      for (const s of sigs) {
+        const [r] = await sql`select has_function_privilege('anon', p, 'execute') a,
+            has_function_privilege('authenticated', p, 'execute') u,
+            has_function_privilege('service_role', p, 'execute') s
+          from (select (${schema} || '.' || ${s})::regprocedure p) x`;
+        expect({ sig: s, ...r }).toEqual({ sig: s, a: false, u: false, s: false });
+      }
+    }
+  });
+
   it("SQL draw and TypeScript verifier agree on random seeds (incl. rejection sampling)", async () => {
     const ns = [1n, 2n, 3n, 100n, 12485n, 999999937n, (1n << 62n) + 1n, 9223372036854775807n];
     let retried = 0;
