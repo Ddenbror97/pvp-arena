@@ -257,6 +257,28 @@ async function providersAgree(env: Env, txHash: string, blockNumber: bigint, log
   return true;
 }
 
+/**
+ * Fetch Transfer logs over [from, to], splitting the range adaptively when the
+ * RPC provider rejects it (e.g. free-tier 10-block eth_getLogs caps). Fails
+ * closed only when even a single-block query is rejected.
+ */
+async function getLogsChunked(
+  client: { getLogs: (args: unknown) => Promise<unknown[]> },
+  args: { address: Hex; event: unknown; args: { to: Hex[] } },
+  from: bigint,
+  to: bigint,
+): Promise<any[]> {
+  try {
+    return (await client.getLogs({ ...args, fromBlock: from, toBlock: to })) as any[];
+  } catch (e) {
+    if (from >= to) throw e;
+    const mid = from + (to - from) / 2n;
+    const left = await getLogsChunked(client, args, from, mid);
+    const right = await getLogsChunked(client, args, mid + 1n, to);
+    return [...left, ...right];
+  }
+}
+
 /** Deposit watcher for one chain: scan, re-scan overlap, verify, credit idempotently. */
 export async function runDepositWatcher(chainId: number) {
   const envr = await loadChainEnv(chainId);
