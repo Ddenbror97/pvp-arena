@@ -235,6 +235,31 @@ async function providersAgree(env: Env, txHash: string, blockNumber: bigint, log
 }
 
 /**
+ * Payout finality agreement: both providers must return the same receipt
+ * (same status, block number and block hash) and the same canonical block.
+ * Used before a withdrawal is settled (success) or its hold released (revert).
+ */
+async function payoutReceiptAgreed(
+  env: Env,
+  txHash: string,
+  blockNumber: bigint,
+  status: "success" | "reverted",
+): Promise<boolean> {
+  if (!env.clientB) return env.networkMode === "testnet"; // mainnet requires two providers
+  const [bA, bB, rA, rB] = await Promise.all([
+    env.client.getBlock({ blockNumber }).catch(() => null),
+    env.clientB!.getBlock({ blockNumber }).catch(() => null),
+    env.client.getTransactionReceipt({ hash: txHash as Hex }).catch(() => null),
+    env.clientB!.getTransactionReceipt({ hash: txHash as Hex }).catch(() => null),
+  ]);
+  if (!bA || !bB || bA.hash !== bB.hash) return false;
+  if (!bA.transactions.includes(txHash as Hex)) return false;
+  if (!rA || !rB || rA.status !== status || rB.status !== status) return false;
+  if (rA.blockHash !== rB.blockHash || rA.blockHash !== bA.hash) return false;
+  return rA.blockNumber === blockNumber && rB.blockNumber === blockNumber;
+}
+
+/**
  * Fetch Transfer logs over [from, to], splitting the range adaptively when the
  * RPC provider rejects it (e.g. free-tier 10-block eth_getLogs caps). Fails
  * closed only when even a single-block query is rejected.
@@ -428,13 +453,25 @@ export async function runWithdrawalWorker(chainId: number) {
       inFlight = true;
       const receipt = await env.client.getTransactionReceipt({ hash: w.tx_hash }).catch(() => null);
       if (receipt) {
-        if (receipt.status !== "success") {
-          await must(rpc("crypto_withdrawal_failed", { p_id: w.id, p_reason: "transaction reverted on-chain" }));
+        // Finality policy (CONFIRMED / RELEASED): the receipt's block must be at or
+        // below the L1-safe head AND both providers must agree on status + block hash.
+        // Until then the hold stays in place and the row keeps being re-checked.
+        const outcome = receipt.status === "success" ? "success" : "reverted";
+        if (receipt.blockNumber > safe) {
+          results[w.id] = "confirming";
+        } else if (!(await payoutReceiptAgreed(env, w.tx_hash, receipt.blockNumber, outcome))) {
+          await rpc("crypto_raise_incident", {
+            p_check: "crypto_withdrawal_rpc_disagreement", p_fp: `crypto_withdrawal_rpc:${w.id}`,
+            p_details: { withdrawal: w.id, tx: w.tx_hash, block: Number(receipt.blockNumber), outcome },
+          });
+          results[w.id] = "awaiting_agreement";
+        } else if (outcome === "reverted") {
+          await must(rpc("crypto_withdrawal_failed", { p_id: w.id, p_reason: "transaction reverted on-chain (safe, 2 providers)" }));
           results[w.id] = "released";
-        } else if (receipt.blockNumber <= safe) {
+        } else {
           await must(rpc("crypto_withdrawal_confirmed", { p_id: w.id }));
           results[w.id] = "confirmed";
-        } else results[w.id] = "confirming";
+        }
         continue;
       }
       // No receipt: rebroadcast the exact signed bytes (idempotent — same hash, same nonce).
