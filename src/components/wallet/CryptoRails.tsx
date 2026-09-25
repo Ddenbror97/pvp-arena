@@ -237,9 +237,9 @@ export function CryptoRails({
     <section className="mt-8" aria-label="Crypto wallet">
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="font-display text-sm uppercase tracking-widest">Crypto wallet</h2>
-        <span className="rounded bg-destructive/15 px-2 py-0.5 text-xs font-bold tracking-wider text-destructive">TESTNET · NO REAL VALUE</span>
+        {isTestnet && <span className="rounded bg-destructive/15 px-2 py-0.5 text-xs font-bold tracking-wider text-destructive">TESTNET · NO REAL VALUE</span>}
       </div>
-      <p className="mt-1 text-xs text-muted-foreground">Base Sepolia only. Test USDC and test ETH have no cash value.</p>
+      <p className="mt-1 text-xs text-muted-foreground">{isTestnet ? `${chainName} only. Test USDC and test ETH have no cash value.` : `${chainName}. Real funds — double-check every transaction.`}</p>
 
       <div className="mt-4 grid grid-cols-2 rounded-lg bg-muted p-1" role="tablist" aria-label="Crypto action">
         <Button role="tab" aria-selected={mode === "deposit"} variant={mode === "deposit" ? "default" : "ghost"} onClick={() => reset("deposit", asset)}><ArrowDownToLine /> Add funds</Button>
@@ -250,11 +250,21 @@ export function CryptoRails({
         <div className="mx-auto max-w-xl">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <div className="font-display text-base">{mode === "deposit" ? "Add test funds" : "Withdraw test funds"}</div>
-              <div className="mt-1 text-xs text-muted-foreground">Base Sepolia · Verified wallet only</div>
+              <div className="font-display text-base">{mode === "deposit" ? "Add funds" : "Withdraw funds"}</div>
+              <div className="mt-1 text-xs text-muted-foreground">{chainName} · Verified wallet only</div>
             </div>
             <ShieldCheck className="h-5 w-5 text-primary" aria-hidden="true" />
           </div>
+
+          {chains.length > 1 && (
+            <div className="mt-4 grid gap-2" style={{ gridTemplateColumns: `repeat(${Math.min(chains.length, 3)}, 1fr)` }} aria-label="Network">
+              {chains.map((c) => (
+                <Button key={c.chain_id} type="button" variant={c.chain_id === chain?.chain_id ? "default" : "secondary"} onClick={() => { setChainId(c.chain_id); setDepositReview(null); setWithdrawalReview(null); }}>
+                  {c.name}
+                </Button>
+              ))}
+            </div>
+          )}
 
           {!data ? <div className="mt-6 h-72 animate-pulse rounded-lg bg-muted" /> : !data.wallet ? (
             <div className="mt-6 rounded-lg border border-border bg-muted/40 p-4 text-sm">Verify a MetaMask wallet on your Profile before depositing or withdrawing.</div>
