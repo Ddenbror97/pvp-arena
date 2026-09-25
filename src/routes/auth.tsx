@@ -17,6 +17,7 @@ export const Route = createFileRoute("/auth")({
     meta: [
       { title: "Sign in — PVPspinArena" },
       { name: "description", content: "Sign in or create your PVPspinArena account." },
+      { name: "robots", content: "noindex, nofollow" },
       { property: "og:title", content: "Sign in — PVPspinArena" },
       { property: "og:description", content: "Sign in or create your PVPspinArena account." },
       { property: "og:type", content: "website" },
