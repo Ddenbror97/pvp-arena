@@ -222,6 +222,6 @@ Verify your wallet early, use the right network, keep transaction hashes and be 
     { label: "Ethereum JSON-RPC: safe and finalized block tags", url: "https://ethereum.org/en/developers/docs/apis/json-rpc/" },
     { label: "BaseScan block explorer", url: "https://basescan.org" },
   ],
-  related: ["usdc-casino", "crypto-wallet-for-gambling", "add-base-network-metamask"],
+  related: ["best-crypto-gambling-sites", "usdc-casino", "crypto-wallet-for-gambling", "add-base-network-metamask"],
   updated: "2026-09-25",
 };

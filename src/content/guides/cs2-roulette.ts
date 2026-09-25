@@ -204,6 +204,6 @@ Each round's seed is committed with SHA-256 before betting closes, and the slot 
     { label: "NIST FIPS 180-4: Secure Hash Standard", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
     { label: "Wikipedia: Roulette", url: "https://en.wikipedia.org/wiki/Roulette" },
   ],
-  related: ["roulette-colors", "crypto-roulette", "provably-fair-roulette", "csgo-coinflip"],
+  related: ["how-to-win-at-roulette", "roulette-colors", "crypto-roulette", "provably-fair-roulette", "csgo-coinflip"],
   updated: "2026-09-25",
 };

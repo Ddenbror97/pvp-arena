@@ -222,6 +222,6 @@ In PvP coinflip betting, the fee is the only thing that moves expected value awa
     { label: "Wikipedia: Gambler's fallacy", url: "https://en.wikipedia.org/wiki/Gambler%27s_fallacy" },
     { label: "Wikipedia: Binomial distribution", url: "https://en.wikipedia.org/wiki/Binomial_distribution" },
   ],
-  related: ["csgo-coinflip", "house-edge", "martingale-strategy", "hmac-sha256-provably-fair"],
+  related: ["csgo-coinflip-sites", "csgo-coinflip", "house-edge", "martingale-strategy", "hmac-sha256-provably-fair"],
   updated: "2026-09-25",
 };

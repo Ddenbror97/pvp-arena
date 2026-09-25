@@ -223,6 +223,6 @@ Shared PvP games use one server seed per round, committed before anyone joins, b
     { label: "NIST FIPS 180-4: Secure Hash Standard", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
     { label: "MDN: Crypto.getRandomValues()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues" },
   ],
-  related: ["provably-fair-casino", "hmac-sha256-provably-fair", "provably-fair-calculator"],
+  related: ["provably-fair-games", "provably-fair-casino", "hmac-sha256-provably-fair", "provably-fair-calculator"],
   updated: "2026-09-25",
 };

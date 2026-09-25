@@ -211,7 +211,7 @@ On PVPspinArena, send USDC on Base from your verified wallet, and your balance a
     { label: "Base documentation: network information", url: "https://docs.base.org/chain/network-information" },
     { label: "MetaMask Help Center", url: "https://support.metamask.io/" },
   ],
-  related: ["usdc-casino", "add-base-network-metamask", "metamask-casino"],
+  related: ["base-network", "usdc-casino", "add-base-network-metamask", "metamask-casino"],
   updated: "2026-09-25",
   howTo: true,
 };

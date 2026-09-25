@@ -168,7 +168,7 @@ If that fits what you are looking for, you can create a free account, watch a fe
     { label: "RFC 2104 — HMAC: Keyed-Hashing for Message Authentication", url: "https://www.rfc-editor.org/rfc/rfc2104" },
     { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
   ],
-  related: ["what-is-a-crypto-casino", "provably-fair-casino", "usdc-casino", "crypto-casino-withdrawals", "house-edge"],
+  related: ["provably-fair-games", "what-is-a-crypto-casino", "provably-fair-casino", "usdc-casino", "crypto-casino-withdrawals"],
   updated: "2026-09-25",
   cta: {
     title: "Try a site you can check",

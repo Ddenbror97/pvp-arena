@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Clock, ShieldCheck } from "lucide-react";
 import { clusterInfo, getGuide, getTopic, GUIDES, guidesInCluster, wordCount } from "@/content/guides";
 import { GuideBody } from "@/components/guides/GuideBody";
+import { GuideScrollCta } from "@/components/guides/GuideScrollCta";
 import { SeoFaq, SeoCta } from "@/components/seo/SeoPage";
 import { OG_SITE_URL } from "@/lib/og";
 
@@ -204,6 +205,7 @@ function GuidePage() {
           })}
         />
       </div>
+      <GuideScrollCta key={g.slug} cluster={g.cluster} />
     </article>
   );
 }

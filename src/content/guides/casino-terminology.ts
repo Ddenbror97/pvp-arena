@@ -308,6 +308,6 @@ Keep it open when you read a game's rules for the first time. If a term appears 
     { label: "NIST: Secure Hash Standard (FIPS 180-4)", url: "https://csrc.nist.gov/publications/detail/fips/180/4/final" },
     { label: "Circle: USDC overview", url: "https://www.circle.com/usdc" },
   ],
-  related: ["house-edge", "provably-fair-casino", "what-is-a-crypto-casino", "coin-flip-odds"],
+  related: ["best-crypto-gambling-sites", "house-edge", "provably-fair-casino", "what-is-a-crypto-casino", "coin-flip-odds"],
   updated: "2026-09-25",
 };

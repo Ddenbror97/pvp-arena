@@ -209,6 +209,6 @@ Randomness does not balance out in the short run, and it never owes you anything
     { label: "Encyclopaedia Britannica: Gambler's fallacy", url: "https://www.britannica.com/topic/gamblers-fallacy" },
     { label: "Tversky & Kahneman (1974), Judgment under Uncertainty", url: "https://www.science.org/doi/10.1126/science.185.4157.1124" },
   ],
-  related: ["martingale-strategy", "roulette-colors", "coin-flip-odds", "gambling-budget"],
+  related: ["gambling-self-exclusion", "martingale-strategy", "roulette-colors", "coin-flip-odds", "gambling-budget"],
   updated: "2026-09-25",
 };

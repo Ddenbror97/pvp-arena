@@ -191,7 +191,7 @@ You can watch live [Jackpot](/) and [Coinflip](/coinflip) rounds without an acco
     { label: "UK Gambling Commission — Skins gambling position paper", url: "https://www.gamblingcommission.gov.uk/" },
     { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
   ],
-  related: ["csgo-gambling-history", "skin-gambling-vs-crypto", "csgo-jackpot", "cs2-betting", "pvp-gambling"],
+  related: ["csgo-case-opening", "csgo-case-battle-sites", "csgo-coinflip-sites", "csgo-gambling-history", "cs2-betting"],
   updated: "2026-09-25",
   cta: {
     title: "The CS:GO classics, with USDC",

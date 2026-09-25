@@ -221,6 +221,6 @@ With no fee, every player's expected result is zero; with a fee, the fee is the 
     { label: "RFC 2104: HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
     { label: "NIST FIPS 180-4: Secure Hash Standard", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
   ],
-  related: ["crypto-jackpot", "csgo-coinflip", "skin-gambling-vs-crypto", "cs2-roulette"],
+  related: ["csgo-case-battle-sites", "best-csgo-gambling-sites", "cs2-betting", "crypto-jackpot", "csgo-coinflip"],
   updated: "2026-09-25",
 };

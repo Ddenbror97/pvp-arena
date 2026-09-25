@@ -215,6 +215,6 @@ The player-versus-player formats survived. Today's crypto PvP sites can offer th
     { label: "Wikipedia: Skin gambling", url: "https://en.wikipedia.org/wiki/Skin_gambling" },
     { label: "Counter-Strike: Arms Deal update (2013)", url: "https://blog.counter-strike.net/index.php/2013/08/7425/" },
   ],
-  related: ["skin-gambling-vs-crypto", "csgo-jackpot", "csgo-coinflip", "pvp-gambling"],
+  related: ["best-csgo-gambling-sites", "cs2-betting", "skin-gambling-vs-crypto", "csgo-jackpot", "csgo-coinflip"],
   updated: "2026-09-25",
 };

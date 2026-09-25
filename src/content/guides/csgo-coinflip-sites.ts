@@ -178,7 +178,7 @@ Check that online gambling is legal where you live, and never play if you are un
     { label: "Circle — USDC overview", url: "https://www.circle.com/usdc" },
     { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
   ],
-  related: ["csgo-coinflip", "coin-flip-odds", "provably-fair-calculator", "skin-gambling-vs-crypto", "pvp-gambling"],
+  related: ["gamblers-fallacy", "best-csgo-gambling-sites", "csgo-coinflip", "coin-flip-odds", "provably-fair-calculator"],
   updated: "2026-09-25",
   cta: {
     title: "Flip with exact stakes",
