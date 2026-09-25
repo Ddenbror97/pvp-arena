@@ -247,6 +247,6 @@ Doubling after losses is close to chasing losses, one of the most common signs o
     { label: "Wizard of Odds: Martingale betting system", url: "https://wizardofodds.com/gambling/betting-systems/martingale/" },
     { label: "Encyclopaedia Britannica: Martingale (probability)", url: "https://www.britannica.com/science/martingale" },
   ],
-  related: ["house-edge", "roulette-colors", "crypto-roulette", "gambling-budget"],
+  related: ["house-edge", "gamblers-fallacy", "how-to-win-at-roulette", "roulette-colors", "gambling-budget"],
   updated: "2026-09-25",
 };

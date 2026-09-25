@@ -212,6 +212,6 @@ The biggest risks are phishing and misleading approvals. Read every pop-up, neve
     { label: "Ethereum.org: wallets", url: "https://ethereum.org/en/wallets/" },
     { label: "EIP-191: Signed data standard", url: "https://eips.ethereum.org/EIPS/eip-191" },
   ],
-  related: ["add-base-network-metamask", "crypto-wallet-for-gambling", "usdc-casino"],
+  related: ["seed-phrase", "add-base-network-metamask", "crypto-wallet-for-gambling", "usdc-casino"],
   updated: "2026-09-25",
 };
