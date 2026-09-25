@@ -13,7 +13,7 @@ import {
   type WalletErrorCode,
 } from "@/lib/web3/errors";
 import { shortAddress } from "@/lib/web3/message";
-import { getWalletSession, type WalletSession } from "@/lib/web3/metamask";
+import { getWalletSession, resetWalletSession, type WalletSession } from "@/lib/web3/metamask";
 import {
   recordWalletEvent,
   requestWalletChallenge,
@@ -43,6 +43,7 @@ export function WalletCard({ userId }: { userId: string }) {
   const verifyFn = useServerFn(verifyWalletSignature);
   const eventFn = useServerFn(recordWalletEvent);
   const unsubs = useRef<(() => void)[]>([]);
+  const connectInFlight = useRef(false);
 
   useEffect(() => () => unsubs.current.forEach((u) => u()), []);
 
@@ -67,6 +68,8 @@ export function WalletCard({ userId }: { userId: string }) {
   };
 
   async function connect() {
+    if (connectInFlight.current) return;
+    connectInFlight.current = true;
     setErr(null);
     setBusy("connect");
     void eventFn({ data: { event: "WALLET_CONNECTION_STARTED", address: null } }).catch(() => {});
@@ -95,8 +98,10 @@ export function WalletCard({ userId }: { userId: string }) {
       await eventFn({ data: { event: "WALLET_CONNECTED", address: r.address } }).catch(() => {});
       qc.invalidateQueries({ queryKey: ["user-wallets", userId] });
     } catch (e) {
+      resetWalletSession();
       fail(e, "connect");
     } finally {
+      connectInFlight.current = false;
       setBusy(null);
     }
   }

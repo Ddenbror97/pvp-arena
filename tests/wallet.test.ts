@@ -8,7 +8,12 @@ import {
   signatureMatches,
 } from "../src/lib/web3/message";
 import { WALLET_MESSAGES, serverCodeToError, toWalletError } from "../src/lib/web3/errors";
-import { guardedRequest, sessionFor } from "../src/lib/web3/metamask";
+import {
+  discoverInjectedMetaMask,
+  guardedRequest,
+  sessionFor,
+  type Eip1193,
+} from "../src/lib/web3/metamask";
 import { buildDepositTransaction } from "../src/lib/crypto/deposit";
 import { TESTNET } from "../src/lib/crypto/allowlist";
 import { ALLOWED_WALLET_METHODS } from "../src/lib/web3/config";
@@ -134,6 +139,45 @@ describe("provider safety", () => {
       "UNSUPPORTED_NETWORK",
     );
     expect(toWalletError(new Error("Request timed out"), "connect").code).toBe("TIMEOUT");
+    expect(toWalletError({ code: -32002 }, "connect").code).toBe("CONNECT_PENDING");
+    expect(toWalletError(new Error("Wallet is locked"), "connect").code).toBe("WALLET_LOCKED");
+  });
+  it("uses an installed MetaMask provider immediately", async () => {
+    const provider: Eip1193 = { isMetaMask: true, request: async () => [] };
+    const target = new EventTarget() as EventTarget & { ethereum?: Eip1193 };
+    target.ethereum = provider;
+    await expect(discoverInjectedMetaMask(target, 1)).resolves.toBe(provider);
+  });
+  it("selects MetaMask when several injected wallets are present", async () => {
+    const otherProvider: Eip1193 = { request: async () => [] };
+    const metaMask: Eip1193 = { isMetaMask: true, request: async () => [] };
+    const target = new EventTarget() as EventTarget & { ethereum?: Eip1193 };
+    target.ethereum = { request: async () => [], providers: [otherProvider, metaMask] };
+    await expect(discoverInjectedMetaMask(target, 1)).resolves.toBe(metaMask);
+  });
+  it("discovers MetaMask through EIP-6963 after a delayed announcement", async () => {
+    const provider: Eip1193 = { isMetaMask: true, request: async () => [] };
+    const target = new EventTarget();
+    target.addEventListener("eip6963:requestProvider", () => {
+      setTimeout(
+        () =>
+          target.dispatchEvent(
+            new CustomEvent("eip6963:announceProvider", {
+              detail: { info: { rdns: "io.metamask" }, provider },
+            }),
+          ),
+        10,
+      );
+    });
+    await expect(discoverInjectedMetaMask(target, 50)).resolves.toBe(provider);
+  });
+  it("reports an empty account response as an unlock or account-selection action", async () => {
+    const session = sessionFor(
+      { request: async () => "0x1" },
+      async () => ({ accounts: [], chainId: "0x1" }),
+      async () => {},
+    );
+    await expect(session.connect()).rejects.toThrow(WALLET_MESSAGES.WALLET_LOCKED);
   });
   it("drops a stale connection and retries once when the first attempt fails", async () => {
     let attempts = 0;
