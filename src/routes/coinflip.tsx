@@ -15,10 +15,10 @@ export const Route = createFileRoute("/coinflip")({
       {
         name: "description",
         content:
-          "1v1 coinflip: pick heads or tails, match a wager, winner takes the pot. Server-decided and verifiable. Test credits only.",
+          "1v1 coinflip: pick heads or tails, match a wager, winner takes the pot. Server-decided and verifiable.",
       },
       { property: "og:title", content: "Coinflip — PVPspinArena" },
-      { property: "og:description", content: "1v1 provably fair coinflip. Test credits only." },
+      { property: "og:description", content: "1v1 provably fair coinflip." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),
