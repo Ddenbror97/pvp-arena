@@ -276,6 +276,50 @@ d("real-money ledger migration", () => {
     await realInvariants();
   }, 60_000);
 
+  it("coinflip_join adversarial: real-play gate, invalid players, replay, lock, concurrency, settlement", async () => {
+    const [a, b, c, poor] = [await newUser(20), await newUser(20), await newUser(20), await newUser(0)];
+    const join = (uid: string | null, gid: number, key = randomUUID()) =>
+      as(uid, (tx) => tx`select pvp_test.coinflip_join(${gid}, ${key}) r`).then((x) => x[0].r);
+    const g = (await as(a.id, (tx) => tx`select pvp_test.coinflip_create(1000, 'HEADS', ${randomUUID()}) r`))[0].r.game_id;
+    // Real-play switch closed after the game opened: join is refused and nothing moves.
+    await sql`update pvp_test.crypto_settings set real_play_enabled = false`;
+    expect(await err(join(b.id, g))).toMatch(/REAL_MONEY_DISABLED/);
+    expect(await bal(b.id, "user_locked")).toBe(0);
+    await sql`update pvp_test.crypto_settings set real_play_enabled = true`;
+    // Invalid players.
+    expect(await err(join(null, g))).toMatch(/AUTH_REQUIRED/);
+    expect(await err(join(a.id, g))).toMatch(/CANNOT_JOIN_OWN_GAME/);
+    expect(await err(join(poor.id, g))).toMatch(/INSUFFICIENT_BALANCE/);
+    // Direct table writes are impossible for browser roles.
+    expect(await err(sql.begin(async (tx) => {
+      await tx`set local role authenticated`;
+      await tx`update pvp_test.coinflip_games set opponent_id = ${c.id} where id = ${g}`;
+    }))).toMatch(/permission denied/);
+    // Concurrent joins by two players plus replays of one key: exactly one join, wager matches the game.
+    const key = randomUUID();
+    await Promise.allSettled([join(b.id, g, key), join(b.id, g, key), join(c.id, g), join(c.id, g)]);
+    const [row] = await sql`select opponent_id, status from pvp_test.coinflip_games where id = ${g}`;
+    const joined = row.opponent_id as string;
+    expect([b.id, c.id]).toContain(joined);
+    expect(await bal(joined, "user_locked")).toBe(1000);
+    const other = joined === b.id ? c.id : b.id;
+    expect(await bal(other, "user_locked")).toBe(0);
+    expect(Number((await sql`select count(*) c from pvp_test.coinflip_entries where game_id = ${g}`)[0].c)).toBe(2);
+    // Join after lock is refused.
+    expect(await err(join(other, g))).toMatch(/GAME_NOT_JOINABLE/);
+    // Settle, then a late join or replay still changes nothing.
+    for (let i = 0; i < 40; i++) {
+      await sql`select pvp_test.coinflip_advance(${g})`;
+      if ((await sql`select status from pvp_test.coinflip_games where id = ${g}`)[0].status === "COMPLETED") break;
+      await sleep(60);
+    }
+    expect((await sql`select status from pvp_test.coinflip_games where id = ${g}`)[0].status).toBe("COMPLETED");
+    expect(await err(join(other, g))).toMatch(/GAME_NOT_JOINABLE/);
+    expect(Number((await sql`select count(*) c from pvp_test.coinflip_payouts where game_id = ${g}`)[0].c)).toBe(1);
+    await realInvariants();
+  }, 60_000);
+
+
   it("roulette on real USD: limits enforced; wins paid from the house bankroll exactly once", async () => {
     await sql`update pvp_test.roulette_config set betting_seconds = 2, lock_ms = 100, spin_ms = 300`;
     const u = await newUser(50);
