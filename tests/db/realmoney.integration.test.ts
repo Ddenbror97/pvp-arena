@@ -81,6 +81,16 @@ d("real-money ledger migration", () => {
 
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
+    // Test schema only: keep the retired Base Sepolia rail usable as a sandbox (live DB keeps it disabled).
+    await sql.unsafe(`alter table pvp_test.chain_networks disable trigger user;
+      update pvp_test.chain_networks set is_enabled = true where chain_id = 84532;
+      alter table pvp_test.chain_networks enable trigger user;
+      alter table pvp_test.chain_assets disable trigger user;
+      update pvp_test.chain_assets set is_enabled = true where chain_id = 84532;
+      alter table pvp_test.chain_assets enable trigger user;
+      alter table pvp_test.chain_treasury_accounts disable trigger user;
+      update pvp_test.chain_treasury_accounts set is_active = true where chain_id = 84532;
+      alter table pvp_test.chain_treasury_accounts enable trigger user;`);
     TREASURY = (await sql`select address from pvp_test.chain_treasury_accounts where role = 'deposit' and chain_id = 84532`)[0].address.toLowerCase();
     await sql`update pvp_test.jackpot_config set entry_rate_limit = 100000, countdown_seconds = 4`;
     await sql`update pvp_test.coinflip_config set pre_delay_ms = 50, animation_ms = 50, create_rate_limit = 100000, fee_bps = 500`;

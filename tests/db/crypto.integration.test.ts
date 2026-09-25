@@ -71,11 +71,21 @@ d("crypto money path", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
+    // Test schema only: keep the retired Base Sepolia rail usable as a sandbox (live DB keeps it disabled).
+    await sql.unsafe(`alter table pvp_test.chain_networks disable trigger user;
+      update pvp_test.chain_networks set is_enabled = true where chain_id = 84532;
+      alter table pvp_test.chain_networks enable trigger user;
+      alter table pvp_test.chain_assets disable trigger user;
+      update pvp_test.chain_assets set is_enabled = true where chain_id = 84532;
+      alter table pvp_test.chain_assets enable trigger user;`);
     // Test schema only: run the Base Sepolia rail on the real USD ledger.
     await sql.unsafe(`alter table pvp_test.chain_assets disable trigger user;
       update pvp_test.chain_assets set ledger_asset = 'USD', ledger_account_type = 'real' where chain_id = 84532;
-      alter table pvp_test.chain_assets enable trigger user;`);
-    TREASURY = (await sql`select address from pvp_test.chain_treasury_accounts where role = 'deposit'`)[0].address.toLowerCase();
+      alter table pvp_test.chain_assets enable trigger user;
+      alter table pvp_test.chain_treasury_accounts disable trigger user;
+      update pvp_test.chain_treasury_accounts set is_active = true where chain_id = 84532;
+      alter table pvp_test.chain_treasury_accounts enable trigger user;`);
+    TREASURY = (await sql`select address from pvp_test.chain_treasury_accounts where role = 'deposit' and chain_id = 84532`)[0].address.toLowerCase();
     await sql`update pvp_test.jackpot_config set entry_rate_limit = 100000`;
     await sql`update pvp_test.crypto_settings set daily_limit_cents = 10000000, daily_global_limit_cents = 100000000, payout_float_max_cents = 100000000`;
   }, 120_000);
