@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ogImageMeta } from "@/lib/og";
 import { JackpotStage } from "@/components/jackpot/JackpotStage";
 import { RecentGames } from "@/components/jackpot/RecentGames";
-import { IntroGate, INTRO_BOOT_SCRIPT } from "@/components/IntroGate";
+import { IntroGate } from "@/components/IntroGate";
 
 export const Route = createFileRoute("/")({
   head: () => ({
