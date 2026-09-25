@@ -469,6 +469,30 @@ export async function runWithdrawalWorker(chainId: number) {
     await must(rpc("crypto_withdrawal_failed", { p_id: next.id, p_reason: "destination wallet no longer verified" }));
     return { ok: true, results: { ...results, [next.id]: "released" } };
   }
+  // Hot-wallet float hard cap: the payout key has limited authority. If the
+  // wallet holds more than its configured operating maximum, the worker refuses
+  // to send payouts until the excess is swept to treasury manually.
+  const floatMax = BigInt(Number(env.settings.payout_float_max_cents ?? 0));
+  if (floatMax > 0n) {
+    const [floatUsdc, floatWei] = await Promise.all([
+      env.client.readContract({ address: env.usdc as Hex, abi: ERC20, functionName: "balanceOf", args: [account.address] }) as Promise<bigint>,
+      env.client.getBalance({ address: account.address }),
+    ]);
+    let floatCents = usdcUnitsToCents(floatUsdc);
+    if (floatWei > 0n) {
+      const p = await snapshotEthPrice(env).catch(() => null);
+      if (p) floatCents += weiToCents(floatWei, p.priceMicro);
+    }
+    if (floatCents > floatMax) {
+      await rpc("crypto_raise_incident", {
+        p_check: "crypto_float_cap",
+        p_fp: `crypto_float_cap:${env.chainId}:${new Date().toISOString().slice(0, 13)}`,
+        p_details: { chain_id: env.chainId, float_cents: Number(floatCents), max_cents: Number(floatMax) },
+      });
+      return { ok: true, results: { ...results, [next.id]: "float_cap_exceeded" } };
+    }
+  }
+
   const to = next.to_address as Hex;
   const units = BigInt(String(next.units).split(".")[0] ?? "0");
   const request =
