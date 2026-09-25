@@ -18,9 +18,9 @@ export const Route = createFileRoute("/_authenticated/wallet")({
   head: () => ({
     meta: [
       { title: "Wallet — PVPspinArena" },
-      { name: "description", content: "Your test-credit balance and full transaction ledger." },
+      { name: "description", content: "Your balance, deposits, withdrawals and full transaction ledger." },
       { property: "og:title", content: "Wallet — PVPspinArena" },
-      { property: "og:description", content: "Your test-credit balance and full transaction ledger." },
+      { property: "og:description", content: "Your balance, deposits, withdrawals and full transaction ledger." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -63,25 +63,13 @@ function WalletPage() {
     },
   });
 
-  async function claim() {
-    const { error } = await supabase.rpc("claim_test_credits");
-    if (error) {
-      toast.error(friendlyError(error));
-      return;
-    }
-    toast.success("Test credits added");
-    qc.invalidateQueries({ queryKey: ["wallet"] });
-    qc.invalidateQueries({ queryKey: ["ledger"] });
-  }
-
   return (
     <div className="mx-auto max-w-4xl">
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="font-display text-2xl">Wallet</h1>
-        <span className="rounded bg-gold/15 px-2 py-0.5 text-xs font-bold tracking-wider text-gold">TEST CREDITS</span>
       </div>
       <p className="mt-2 text-sm text-muted-foreground">
-        Test credits have no cash value, cannot be withdrawn and cannot be transferred. Real-money play is disabled.
+        Deposit USDC or ETH on Base to play. Winnings can be withdrawn back to your verified wallet.
       </p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -93,10 +81,6 @@ function WalletPage() {
           <div className="text-xs uppercase tracking-widest text-muted-foreground">Locked in game</div>
           <div className="tabular mt-1 text-3xl font-semibold">{formatUsd(wallet.data?.locked ?? 0)}</div>
         </div>
-      </div>
-
-      <div className="mt-4 flex flex-wrap gap-3">
-        <Button onClick={claim} className="font-display">Claim hourly test credits</Button>
       </div>
 
       <CryptoRails availableCents={wallet.data?.available ?? 0} requestedMode={mode ?? "deposit"} />
