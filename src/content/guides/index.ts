@@ -24,11 +24,16 @@ import { guide as web3Casino } from "./web3-casino";
 import { guide as usdcVsUsdt } from "./usdc-vs-usdt-gambling";
 import { guide as houseEdge } from "./house-edge";
 import { guide as rigged } from "./are-online-casinos-rigged";
+import { guide as terminology } from "./casino-terminology";
+import { guide as rouletteColors } from "./roulette-colors";
+import { guide as cryptoRoulette } from "./crypto-roulette";
+import { guide as rngVsPf } from "./rng-vs-provably-fair";
+import { guide as skinGambling } from "./skin-gambling-vs-crypto";
 
 export type { Guide, GuideCluster } from "./types";
 
 /** Published guides. Add each new guide here once it passes scripts/check-guides.ts. */
-export const GUIDES: Guide[] = [whatIsACryptoCasino, provablyFairCasino, pvpGambling, cryptoJackpot, usdcCasino, gamblingBudget, csgoCoinflip, cs2Roulette, hmacSha256, pfCalculator, csgoJackpot, metamaskCasino, buyUsdc, addBase, cryptoWallet, seeds, pfRoulette, coinOdds, withdrawals, csgoHistory, commitReveal, web3Casino, usdcVsUsdt, houseEdge, rigged];
+export const GUIDES: Guide[] = [whatIsACryptoCasino, provablyFairCasino, pvpGambling, cryptoJackpot, usdcCasino, gamblingBudget, csgoCoinflip, cs2Roulette, hmacSha256, pfCalculator, csgoJackpot, metamaskCasino, buyUsdc, addBase, cryptoWallet, seeds, pfRoulette, coinOdds, withdrawals, csgoHistory, commitReveal, web3Casino, usdcVsUsdt, houseEdge, rigged, terminology, rouletteColors, cryptoRoulette, rngVsPf, skinGambling];
 
 export const CLUSTERS: { name: GuideCluster; blurb: string }[] = [
   { name: "Foundations", blurb: "Start here: what crypto casinos are and how they work." },
