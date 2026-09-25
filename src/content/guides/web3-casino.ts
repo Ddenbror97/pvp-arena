@@ -189,6 +189,11 @@ Start with a small deposit and a small withdrawal to test the full cycle before 
       body: `If you want to see a hybrid web3 casino in practice, read [how it works](/how-it-works) for an overview of PVPspinArena's games, balances and payments, then check a few finished rounds on the [Fairness page](/fairness). You can verify results without signing up, and you only need a wallet when you are ready to deposit.`,
     },
     {
+      id: "future",
+      title: "Where web3 casinos are heading",
+      body: `Web3 gambling is still young, and several trends are shaping it. Stablecoins are becoming the default unit of account, because players prefer balances that do not move with crypto prices. Layer-2 networks like Base are making small deposits and withdrawals practical, which suits casual play. Wallet software is getting better at warning users about risky approvals and known scam sites, reducing the most common source of losses. And regulators in more countries are writing rules for crypto assets and online gambling, which may bring clearer licensing but also more restrictions on who can play where. For players, the practical takeaway is the same: prefer sites that are transparent about their operator, odds, fairness and payments, and that respect the rules where you live.`,
+    },
+    {
       id: "summary",
       title: "Summary",
       body: `A web3 casino is a gambling site built around blockchain tools: self-custody wallets for identity and payments, on-chain tokens and, often, provably fair results. Fully on-chain casinos run games in smart contracts; hybrid casinos run fast games on servers but keep wallets, stablecoins and verifiable fairness.

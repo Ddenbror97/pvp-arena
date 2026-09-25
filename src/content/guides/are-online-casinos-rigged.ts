@@ -7,7 +7,7 @@ export const guide: Guide = {
   secondary: ["are online casinos fair", "how to tell if a casino is rigged", "rigged online slots", "online casino scams"],
   title: "Are Online Casinos Rigged? How to Tell and What to Check",
   description:
-    "Are online casinos rigged? How fair games are regulated or proven, the difference between house edge and cheating, warning signs of a rigged site, and how to check.",
+    "Are online casinos rigged? How fairness is tested or proven, house edge vs cheating, warning signs of a rigged site, and how to check one.",
   h1: "Are online casinos rigged? How to tell and what to check",
   answer:
     "Are online casinos rigged? Legitimate ones are not rigged in the sense of cheating: their games follow published odds, checked either by licensed testing labs or by provably fair cryptography you can verify yourself. They still have a house edge, so players lose on average. Unlicensed or unverifiable sites can cheat, which is why checking a site before you deposit matters.",

@@ -172,6 +172,28 @@ If you prefer a stablecoin with more frequent reporting and closer regulatory ov
       body: `If you plan to play on PVPspinArena, you will need USDC or ETH on Base in a wallet you control. Our [crypto wallet for gambling guide](/guides/crypto-wallet-for-gambling) covers setup, and [how it works](/how-it-works) explains how deposits become a dollar balance and how withdrawals are processed. You can also check any game result on the [Fairness page](/fairness) before you deposit anything.`,
     },
     {
+      id: "swap",
+      title: "Switching from USDT to USDC",
+      body: `If you hold USDT and want to play on a site that accepts USDC, switching is straightforward.
+
+1. **Send your USDT to an exchange** that supports both tokens, using a network the exchange accepts for USDT deposits.
+2. **Trade USDT for USDC.** Many exchanges offer a direct USDT/USDC market with a very small spread, because both are worth about a dollar.
+3. **Withdraw the USDC on Base** to your own wallet. Check the network name carefully.
+4. **Keep a little ETH on Base** so you can send the USDC onward.
+
+### Costs
+
+You will usually pay a small trading fee and network fees on both the deposit and the withdrawal. Compare these with the amount you are moving; for very small balances, fees can take a noticeable share.
+
+### Swapping in your wallet
+
+If you are comfortable with decentralised exchanges, you can also swap USDT for USDC directly on a network where both exist. Check that you are using a reputable exchange interface, review the rate and slippage, and be aware that swaps usually require a token approval, which you should limit to the amount you are swapping.
+
+### Keep records
+
+Swapping one crypto asset for another can be a taxable event in some countries, even between stablecoins. Keep a record of each trade.`,
+    },
+    {
       id: "summary",
       title: "Summary",
       body: `USDC and USDT are the two largest dollar stablecoins. Both aim for $1 and are backed mainly by cash and US Treasuries. USDC, from Circle, offers more frequent, detailed reserve reports and wider regulatory oversight. USDT, from Tether, is larger and more widely accepted, particularly on Tron.
