@@ -10,6 +10,7 @@ import {
 import { WALLET_MESSAGES, serverCodeToError, toWalletError } from "../src/lib/web3/errors";
 import {
   discoverInjectedMetaMask,
+  connectInjectedProvider,
   guardedRequest,
   sessionFor,
   type Eip1193,
@@ -178,6 +179,68 @@ describe("provider safety", () => {
       async () => {},
     );
     await expect(session.connect()).rejects.toThrow(WALLET_MESSAGES.WALLET_LOCKED);
+  });
+  it("reuses an already-authorized account without opening a prompt", async () => {
+    const calls: string[] = [];
+    const provider: Eip1193 = {
+      request: async ({ method }) => {
+        calls.push(method);
+        if (method === "eth_accounts") return [acct.address];
+        if (method === "eth_chainId") return "0x14a34";
+        throw new Error("unexpected request");
+      },
+    };
+    await expect(connectInjectedProvider(provider)).resolves.toEqual({
+      accounts: [acct.address],
+      chainId: "0x14a34",
+    });
+    expect(calls).toEqual(["eth_accounts", "eth_chainId"]);
+  });
+  it("shares one pending account request across concurrent callers", async () => {
+    let requests = 0;
+    let approve: ((accounts: string[]) => void) | undefined;
+    const provider: Eip1193 = {
+      request: async ({ method }) => {
+        if (method === "eth_accounts") return [];
+        if (method === "eth_chainId") return "0x14a34";
+        if (method === "eth_requestAccounts") {
+          requests += 1;
+          return new Promise<string[]>((resolve) => {
+            approve = resolve;
+          });
+        }
+        throw new Error("unexpected request");
+      },
+    };
+    const first = connectInjectedProvider(provider);
+    await Promise.resolve();
+    const second = connectInjectedProvider(provider);
+    await Promise.resolve();
+    expect(requests).toBe(1);
+    if (!approve) throw new Error("account request was not started");
+    approve([acct.address]);
+    await expect(Promise.all([first, second])).resolves.toEqual([
+      { accounts: [acct.address], chainId: "0x14a34" },
+      { accounts: [acct.address], chainId: "0x14a34" },
+    ]);
+  });
+  it("recovers from -32002 when the older request has just authorized an account", async () => {
+    let accountReads = 0;
+    const provider: Eip1193 = {
+      request: async ({ method }) => {
+        if (method === "eth_accounts") {
+          accountReads += 1;
+          return accountReads === 1 ? [] : [acct.address];
+        }
+        if (method === "eth_requestAccounts") throw { code: -32002 };
+        if (method === "eth_chainId") return "0x14a34";
+        throw new Error("unexpected request");
+      },
+    };
+    await expect(connectInjectedProvider(provider)).resolves.toEqual({
+      accounts: [acct.address],
+      chainId: "0x14a34",
+    });
   });
   it("drops a stale connection and retries once when the first attempt fails", async () => {
     let attempts = 0;

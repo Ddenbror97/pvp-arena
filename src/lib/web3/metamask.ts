@@ -13,6 +13,7 @@ export interface Eip1193 {
 
 export interface WalletSession {
   connect(): Promise<{ address: string; chainId: string }>;
+  checkConnection(): Promise<{ address: string; chainId: string } | null>;
   chainId(): Promise<string>;
   sign(message: string, address: string): Promise<string>;
   switchToRequiredNetwork(): Promise<void>;
@@ -26,6 +27,13 @@ export interface WalletSession {
 const CONNECT_TIMEOUT_MS = 120_000;
 const SIGN_TIMEOUT_MS = 180_000;
 const PROVIDER_DISCOVERY_MS = 750;
+
+type ConnectedAccount = { accounts: string[]; chainId: string };
+
+// MetaMask owns the lifetime of eth_requestAccounts and offers no cancellation API.
+// Keep its promise alive across React remounts/session resets so this origin never
+// creates a second request while the first is still waiting in the extension.
+const pendingInjectedConnections = new WeakMap<Eip1193, Promise<ConnectedAccount>>();
 
 interface ProviderHost {
   ethereum?: Eip1193;
@@ -90,6 +98,49 @@ export function guardedRequest(provider: Eip1193, method: string, params?: unkno
   return provider.request(params ? { method, params } : { method });
 }
 
+async function readAuthorizedConnection(provider: Eip1193): Promise<ConnectedAccount | null> {
+  const accounts = (await guardedRequest(provider, "eth_accounts")) as string[];
+  if (!accounts?.[0]) return null;
+  return {
+    accounts,
+    chainId: String(await guardedRequest(provider, "eth_chainId")),
+  };
+}
+
+/** Reuse one permission request per injected provider, including across remounts. */
+export async function connectInjectedProvider(provider: Eip1193): Promise<ConnectedAccount> {
+  const authorized = await readAuthorizedConnection(provider);
+  if (authorized) return authorized;
+
+  const existing = pendingInjectedConnections.get(provider);
+  if (existing) return existing;
+
+  const request = (async () => {
+    try {
+      const accounts = (await guardedRequest(provider, "eth_requestAccounts")) as string[];
+      return {
+        accounts,
+        chainId: String(await guardedRequest(provider, "eth_chainId")),
+      };
+    } catch (error) {
+      const mapped = toWalletError(error, "connect");
+      if (mapped.code === "CONNECT_PENDING") {
+        // The wallet can finish an older request just before reporting -32002.
+        const recovered = await readAuthorizedConnection(provider);
+        if (recovered) return recovered;
+      }
+      throw mapped;
+    }
+  })();
+  pendingInjectedConnections.set(provider, request);
+  void request.finally(() => {
+    if (pendingInjectedConnections.get(provider) === request) {
+      pendingInjectedConnections.delete(provider);
+    }
+  }).catch(() => {});
+  return request;
+}
+
 function sub(p: Eip1193, ev: string, fn: (...a: unknown[]) => void) {
   p.on?.(ev, fn);
   return () => p.removeListener?.(ev, fn);
@@ -135,6 +186,14 @@ export function sessionFor(
           throw toWalletError(e2, "connect");
         }
       }
+    },
+    async checkConnection() {
+      const connected = await readAuthorizedConnection(provider);
+      if (!connected) return null;
+      return {
+        address: connected.accounts[0],
+        chainId: connected.chainId.toLowerCase(),
+      };
     },
     async chainId() {
       return String(await guardedRequest(provider, "eth_chainId")).toLowerCase();
@@ -218,10 +277,7 @@ export function getWalletSession(): Promise<WalletSession> {
     if (test) {
       return sessionFor(
         test,
-        async () => ({
-          accounts: (await guardedRequest(test, "eth_requestAccounts")) as string[],
-          chainId: String(await guardedRequest(test, "eth_chainId")),
-        }),
+        () => connectInjectedProvider(test),
         async () => {},
       );
     }
@@ -229,10 +285,7 @@ export function getWalletSession(): Promise<WalletSession> {
     if (injected) {
       return sessionFor(
         injected,
-        async () => ({
-          accounts: (await guardedRequest(injected, "eth_requestAccounts")) as string[],
-          chainId: String(await guardedRequest(injected, "eth_chainId")),
-        }),
+        () => connectInjectedProvider(injected),
         async () => {},
       );
     }

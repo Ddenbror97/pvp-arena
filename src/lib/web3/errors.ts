@@ -2,7 +2,8 @@ import { WALLET_CONFIG } from "./config";
 
 export const WALLET_MESSAGES = {
   CONNECT_REJECTED: "Wallet connection cancelled.",
-  CONNECT_PENDING: "A MetaMask request is already open. Finish or close it, then try again.",
+  CONNECT_PENDING:
+    "A MetaMask request is waiting. Open MetaMask from your browser toolbar, then approve or reject it.",
   WALLET_LOCKED: "Unlock MetaMask and select an account, then try again.",
   SIGN_REJECTED: "Wallet verification cancelled.",
   TRANSACTION_REJECTED: "Deposit cancelled in MetaMask.",
