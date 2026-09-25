@@ -7,7 +7,7 @@ export const guide: Guide = {
   secondary: ["martingale betting system", "martingale roulette", "does martingale work", "reverse martingale"],
   title: "Martingale Strategy: Why Doubling Bets Fails Long-Term",
   description:
-    "How the martingale strategy works, worked examples on roulette and coinflip, the maths of losing streaks, table limits, variants, and why it cannot beat the edge.",
+    "How the martingale strategy works, roulette and coinflip examples, losing streak maths, table limits, variants and why it cannot beat the edge.",
   h1: "Martingale strategy: why doubling your bet fails long-term",
   answer:
     "The martingale strategy is a betting system where you double your stake after every loss and return to your starting stake after a win. The idea is that one win recovers all previous losses plus a profit equal to the first bet. In practice, losing streaks grow the required stake so fast that a bankroll or table limit is hit long before the system pays off, and it never changes the house edge.",
