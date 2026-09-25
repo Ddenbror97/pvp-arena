@@ -2,6 +2,12 @@
 
 Follows your spec (sections 1–28) in the order investigate → measure → document → optimize → test → verify. There are no screen changes and no changes to game rules, payouts, fairness or wallet economics. Balances and deposits stay as they are, no USDC moves, and the live money settings stay as they are.
 
+## Execution rules (from your approval)
+- The audit never changes live game, wallet, ledger or settlement data. EXPLAIN ANALYZE runs only on read queries against live data. Write paths get plain EXPLAIN (no execution) or a disposable test-schema transaction.
+- Every index change, cleanup and schema optimization is reversible: each migration comes with its rollback SQL, recorded in the report.
+- An index is dropped only if it is demonstrably redundant (covered by another index or constraint). Being unused in the stats is not enough.
+- Financial checks are strictly read-only. There are no automatic balance or ledger repairs. Any discrepancy stops the process and is reported as a blocking finding.
+
 ## Phase 1 — Inventory and measurement (read-only)
 - Full catalog dump: tables, columns, constraints, defaults, triggers, functions (including security-definer), RLS policies, grants, enums, sequences, indexes, extensions, views, realtime publication, storage, cron jobs.
 - Dependency maps: page → server function/RPC → DB function → tables; cron → worker → DB function → tables; realtime → table → page listeners. Built by scanning `src/` and `supabase/migrations/`.
