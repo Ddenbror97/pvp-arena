@@ -19,7 +19,6 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),
     ],
-    scripts: [{ children: INTRO_BOOT_SCRIPT }],
   }),
   component: Index,
 });
