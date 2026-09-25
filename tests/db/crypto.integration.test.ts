@@ -7,6 +7,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
+import { migrateTestSchemaToReal } from "./money";
 
 const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
 const d = url ? describe : describe.skip;
@@ -37,11 +38,14 @@ async function newUser(name: string, verified = true) {
   if (verified) {
     await sql`insert into pvp_test.user_wallets (user_id, chain_type, address, normalized_address, wallet_provider, is_verified, is_primary, verified_at)
       values (${id}, 'EVM', ${w}, ${w}, 'metamask', true, true, now())`;
+    // Real accounts start at $0: fund with a real (test-schema) $1,000 USDC deposit.
+    const dep = await observe("USDC", txh(), w, "1000000000");
+    await credit(dep.id);
   }
   return { id, wallet: w };
 }
 const bal = async (uid: string, kind = "user_available") =>
-  Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind}`)[0]?.balance ?? 0);
+  Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind} and account_type = 'real'`)[0]?.balance ?? 0);
 const observe = (asset: string, tx: string, from: string, units: string, log = 0) =>
   one(sql`select pvp_test.crypto_observe_deposit(84532, ${asset}, ${tx}, ${log}, 100, ${from}, ${TREASURY}, ${units}) as r`);
 const credit = (id: string, snap: string | null = null) => one(sql`select pvp_test.crypto_credit_deposit(${id}, ${snap}) as r`);
@@ -54,7 +58,7 @@ const ledgerCount = async (key: string) => Number((await sql`select count(*) c f
 async function assertInvariants() {
   const [s] = await sql`select coalesce(sum(balance),0)::bigint s from pvp_test.wallet_accounts`;
   expect(Number(s.s)).toBe(0);
-  const neg = await sql`select id from pvp_test.wallet_accounts where kind not in ('test_faucet','external_custody') and balance < 0`;
+  const neg = await sql`select id from pvp_test.wallet_accounts where kind not in ('test_faucet','external_custody','house_bankroll') and balance < 0`;
   expect(neg.length).toBe(0);
   const mism = await sql`select a.id from pvp_test.wallet_accounts a left join pvp_test.ledger_postings p on p.account_id = a.id
     group by a.id, a.balance having a.balance <> coalesce(sum(p.amount),0)`;
@@ -66,6 +70,11 @@ async function assertInvariants() {
 d("crypto money path", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
+    await migrateTestSchemaToReal(sql, { realPlay: true });
+    // Test schema only: run the Base Sepolia rail on the real USD ledger.
+    await sql.unsafe(`alter table pvp_test.chain_assets disable trigger user;
+      update pvp_test.chain_assets set ledger_asset = 'USD', ledger_account_type = 'real' where chain_id = 84532;
+      alter table pvp_test.chain_assets enable trigger user;`);
     TREASURY = (await sql`select address from pvp_test.chain_treasury_accounts where role = 'deposit'`)[0].address.toLowerCase();
     await sql`update pvp_test.jackpot_config set entry_rate_limit = 100000`;
   }, 120_000);
