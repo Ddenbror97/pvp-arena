@@ -41,7 +41,7 @@ const bet = (uid: string, color: string, amount: number | string, key = randomUU
 const advance = async (gid: number) => (await sql`select pvp_test.roulette_advance(${gid}) as r`)[0].r as string;
 const game = async (gid: number) => (await sql`select * from pvp_test.roulette_games where id = ${gid}`)[0];
 const bal = async (uid: string, kind = "user_available") =>
-  Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind}`)[0]?.balance ?? 0);
+  Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind} and account_type = 'test_credit'`)[0]?.balance ?? 0);
 const err = async (p: Promise<unknown>) => {
   try {
     await p;
