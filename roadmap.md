@@ -113,6 +113,7 @@
 - [ ] Staged round-trip test on Base Sepolia, then enable Base Mainnet, then Ethereum
 - [x] Base Mainnet go-live Stage 1+2: secrets saved (RPC primary/backup, payout key), treasury 0x9EAf…7987 + payout 0xd293…dA24 registered, chain 8453 + USDC/ETH enabled in watch-only mode
 - [x] Watch-only end-to-end check passed: both RPCs agree on chain 8453, payout key derives to registered address, watcher/withdrawal worker/reconcile all run clean; adaptive log-chunking fix for free-tier RPC 10-block cap
+- [x] Automatic deposit crediting ON (watch-only off, owner approved); house-wallet senders never auto-credited; $2 house-origin deposit admin-credited once to ddenbror97
 - [ ] Stage 4: full test suite pass + new mainnet safety tests
 - [ ] Stage 5: live rollout — publish, $2 watch-only deposit detection, $5 credit test, $5 withdrawal, ETH round trip, reconcile, then enable crediting (watch_only=false) and disable Base Sepolia
 - [ ] Stage 3 remainder: real-money Terms/Privacy/Responsible Gambling copy, geo-block page, memory update
