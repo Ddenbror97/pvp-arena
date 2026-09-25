@@ -154,7 +154,7 @@ export function SeoFaq({ faqs, title = "Frequently asked questions" }: { faqs: F
         {faqs.map((f, i) => (
           <AccordionItem key={f.q} value={`f${i}`} className={i === faqs.length - 1 ? "border-b-0" : undefined}>
             <AccordionTrigger className="text-left font-display text-sm sm:text-base">{f.q}</AccordionTrigger>
-            <AccordionContent className="leading-relaxed text-muted-foreground">{f.a}</AccordionContent>
+            <AccordionContent forceMount className="leading-relaxed text-muted-foreground">{f.a}</AccordionContent>
           </AccordionItem>
         ))}
       </Accordion>
