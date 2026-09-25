@@ -278,7 +278,7 @@ d("roulette adversarial audit (isolated schema)", () => {
     }
   }, 120000);
 
-  it("betting is refused in LOCKED, SPINNING and SETTLEMENT; late bets open the next round", async () => {
+  it("betting is refused in LOCKED, SPINNING and SETTLEMENT; late bets are refused, the next round accepts them", async () => {
     const [a, b] = [await newUser("a"), await newUser("b")];
     const gid = Number((await bet(a, "RED", 100)).game_id);
     await untilClosed(gid);
