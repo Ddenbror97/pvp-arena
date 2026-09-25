@@ -4,9 +4,9 @@
  * requests `personal_sign`. It never sends transactions.
  */
 export const WALLET_CONFIG = {
-  /** Base Sepolia testnet — the same network as the test deposit/withdrawal rails. */
-  requiredChainId: "0x14a34" as const,
-  requiredChainName: "Base Sepolia",
+  /** Base Mainnet — the same network as the deposit/withdrawal rails. */
+  requiredChainId: "0x2105" as const,
+  requiredChainName: "Base",
   /**
    * MetaMask Connect refuses *every* request (even eth_chainId / personal_sign)
    * while the wallet's active chain is missing from this map, and it always
@@ -16,7 +16,7 @@ export const WALLET_CONFIG = {
    * server never uses these RPCs. Public, keyless.
    */
   rpcUrls: {
-    "0x14a34": "https://sepolia.base.org",
+    "0x2105": "https://mainnet.base.org",
     "0x1": "https://ethereum-rpc.publicnode.com",
   } as Record<`0x${string}`, string>,
   domain: "pvpspinarena.com",
