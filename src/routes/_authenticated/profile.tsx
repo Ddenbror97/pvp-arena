@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -28,8 +28,17 @@ export const Route = createFileRoute("/_authenticated/profile")({
 const STYLES = AVATAR_STYLES;
 
 function ProfilePage() {
-  const { profile, userId, refreshProfile, signOut } = useAuth();
+  const { profile, userId, refreshProfile, signOut: doSignOut } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const wallet = useWallet(userId);
+
+  async function signOut() {
+    await queryClient.cancelQueries();
+    await doSignOut();
+    queryClient.clear();
+    navigate({ to: "/auth", replace: true });
+  }
   const stats = useQuery({
     queryKey: ["stats", userId],
     enabled: !!userId,
