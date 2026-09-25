@@ -127,6 +127,18 @@ Notice how one rare item decided the whole battle. That is typical. Most opening
 If a site does not publish odds for every item, you cannot do this check, and you should treat that as a warning sign. Compare the result with games where the maths is simpler, such as [coin flip odds](/guides/coin-flip-odds), to see how much you are paying for the excitement.`,
     },
     {
+      id: "why-popular",
+      title: "Why case battles feel so exciting",
+      body: `Case battles combine several things that make games feel intense. Knowing what they are helps you notice when the excitement is doing the thinking for you.
+
+- **Speed.** A battle can finish in under a minute, and the next one can start straight away.
+- **Near misses.** The opening animation often slows down as it passes rare items. Missing a rare item by one slot feels close, but it was never more likely than any other result.
+- **Social pressure.** Playing against another person, often in front of a chat, makes it harder to walk away after a loss.
+- **Big single wins.** A rare item can turn a losing session around in one opening, which keeps players hoping for the next one.
+
+None of this changes the odds. The case edge is the same whether the battle feels close or not. If you notice that you are playing faster, raising stakes or chasing a loss, it is a good moment to stop. Our [how to stop gambling guide](/guides/how-to-stop-gambling) has practical steps if it ever feels hard to take a break.`,
+    },
+    {
       id: "pvpspinarena",
       title: "Where PVPspinArena fits",
       body: `To be clear: PVPspinArena does not offer case opening or case battles. We focus on the player-versus-player formats that made the CS:GO era popular:

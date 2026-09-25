@@ -127,6 +127,15 @@ It also helps to understand which provably fair games suit you. Player-versus-pl
 Finally, remember that verification is a tool, not a guarantee of a good night. Set a budget, check a few rounds and stop when you reach your limit.`,
     },
     {
+      id: "history",
+      title: "Where provably fair games came from",
+      body: `Provably fair games grew up alongside early Bitcoin gambling sites in the early 2010s. Players using crypto were already used to checking transactions on a public blockchain, so it made sense to ask for the same kind of proof from games.
+
+The first widely used designs were for dice. The site published a hash of its seed, the player supplied a seed of their own, and each roll was calculated from both plus a counter. That pattern spread to other games, and the CS:GO skin sites of the mid-2010s adopted it for jackpot, coinflip and roulette.
+
+Today provably fair methods are common on crypto casinos, but the quality varies a lot. Some sites publish a clear formula and a working verifier for every game. Others use the phrase in their marketing without giving players a practical way to check anything. That is why the checklist above matters: the idea is simple, but it only protects you if the site has implemented it properly and you can actually use it.`,
+    },
+    {
       id: "example",
       title: "Worked example: verifying a PVPspinArena round",
       body: `Here is how you would check a Roulette round on PVPspinArena:

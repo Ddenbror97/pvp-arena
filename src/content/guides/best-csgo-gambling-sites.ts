@@ -151,6 +151,19 @@ This routine protects you from the most common mistakes: chasing losses, playing
 **"Betting systems beat the house."** No staking pattern changes the underlying odds. Our [martingale strategy guide](/guides/martingale-strategy) shows why doubling up fails.`,
     },
     {
+      id: "questions",
+      title: "Questions to ask before you sign up",
+      body: `Before creating an account on any CS2 gambling site, it is worth asking a few direct questions. Most good sites answer them on their help or about pages. If you cannot find an answer, ask support and see how they respond.
+
+- **Who runs the site?** A named operator you can contact is a basic sign of accountability.
+- **Where is it allowed to operate?** Some sites block certain countries. If yours is blocked, do not try to get around it.
+- **What happens to my balance if the site closes?** Clear terms on this matter more than any bonus.
+- **Can I set limits on my own account?** Deposit, loss or time limits are useful even if you never expect to need them.
+- **How do I close my account?** It should be as easy to leave as it was to join.
+
+Asking these questions takes a few minutes, and the answers tell you a lot about how a site treats its players when things go wrong. A site that answers clearly and politely is usually one that handles withdrawals and disputes the same way. A site that avoids the questions, or pushes you toward a deposit instead of answering, has told you what you need to know.`,
+    },
+    {
       id: "pvpspinarena",
       title: "How PVPspinArena fits the checklist",
       body: `PVPspinArena was built as a crypto version of the CS:GO-era classics:

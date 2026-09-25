@@ -136,6 +136,22 @@ You will need a wallet that supports the Base network, such as MetaMask. Our gui
 After that, the experience is simpler than with skins. There are no trade offers to accept, no trade holds and no arguments about item prices. You deposit from your wallet, play, and withdraw back to the same wallet. Your balance is always a clear dollar figure.`,
     },
     {
+      id: "rooms",
+      title: "Reading a coinflip lobby",
+      body: `When you open a coinflip site, the first thing you see is the lobby: a list of open rooms. Knowing how to read it helps you pick rooms that suit your budget.
+
+Each room shows the stake, the side the creator chose and, on some sites, how long it has been open. On skin sites you may also see the items in the room and a value range for joining. On USDC sites you just see the exact dollar amount.
+
+A few tips:
+
+- **Pick a stake well within your budget.** A good rule is that a single flip should be a small fraction of what you plan to spend in a session.
+- **Side does not matter.** Heads and tails have the same 50% chance on a fair site, so choose whichever you like.
+- **Creating your own room is fine.** You wait for someone to join, but you choose the exact stake.
+- **Watch a few rooms first.** Seeing flips resolve helps you understand how fast the game moves.
+
+On PVPspinArena the lobby updates live, and finished rooms stay available so you can check any result later.`,
+    },
+    {
       id: "red-flags",
       title: "Red flags on coinflip sites",
       body: `Walk away if you see any of these:
