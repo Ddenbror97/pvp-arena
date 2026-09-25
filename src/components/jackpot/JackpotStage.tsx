@@ -127,8 +127,6 @@ export function JackpotStage() {
   // deadline + LEAD_MS (holding at 1 if settlement is slow); once settled we
   // count toward the shared spin start. It disappears the moment the wheel moves.
   const countdownTarget = spinStart ?? (endMs != null ? endMs + LEAD_MS : null);
-  const countN =
-    countdownTarget != null ? Math.min(3, Math.max(1, Math.ceil((countdownTarget - t) / 1000))) : 3;
 
   return (
     <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)_280px] lg:items-start xl:grid-cols-[280px_minmax(0,1fr)_300px]">
