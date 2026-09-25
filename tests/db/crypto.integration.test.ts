@@ -249,7 +249,7 @@ d("crypto money path", () => {
     await sql`update pvp_test.crypto_settings set deposits_enabled = true`;
     // Multi-chain: settings are no longer locked to one testnet chain; chains are
     // gated individually via chain_networks.is_enabled instead.
-    await sql`update pvp_test.chain_networks set is_enabled = false where chain_id = 8453`;
+    await sql.unsafe(`alter table pvp_test.chain_networks disable trigger user; update pvp_test.chain_networks set is_enabled = false where chain_id = 8453; alter table pvp_test.chain_networks enable trigger user;`);
     await expect(sql`select pvp_test.crypto_request_withdrawal(${u.id}, 8453, 'USDC', 1000, null, true) as r`).rejects.toThrow(/CHAIN_DISABLED/);
   });
 
