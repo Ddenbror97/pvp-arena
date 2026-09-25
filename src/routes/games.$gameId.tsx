@@ -15,6 +15,7 @@ export const Route = createFileRoute("/games/$gameId")({
     meta: [
       { title: `Game #${params.gameId} — PVPspinArena` },
       { name: "description", content: `Full audit record for jackpot game #${params.gameId}: players, stakes, winner and fairness proof.` },
+      { name: "robots", content: "noindex" },
       { property: "og:title", content: `Jackpot game #${params.gameId} — PVPspinArena` },
       { property: "og:description", content: "Players, stakes, winner and a verifiable fairness proof." },
       { property: "og:type", content: "article" },
