@@ -35,6 +35,8 @@ export async function issueChallenge(userId: string, rawAddress: string): Promis
     p_user: userId,
     p_address: checksummed,
   });
+  if (error && /RESERVED_ADDRESS/.test(String((error as { message?: string }).message ?? "")))
+    return { ok: false, code: "RESERVED_ADDRESS" };
   if (error || !data) return { ok: false, code: "GENERIC" };
   const r = data as {
     ok: boolean;

@@ -10,6 +10,7 @@ export const WALLET_MESSAGES = {
   INVALID_SIGNATURE: "Could not verify ownership of this wallet.",
   EXPIRED: "The request expired. Please try again.",
   ALREADY_LINKED: "This wallet is already linked to another account.",
+  RESERVED_ADDRESS: "This address belongs to PVPspinArena and can't be linked as a player wallet.",
   ADDRESS_MISMATCH: "Select your verified wallet address in MetaMask before depositing.",
   UNSUPPORTED_NETWORK: `Unsupported network. Switch your wallet to the network PVPspinArena supports (${WALLET_CONFIG.requiredChainName}).`,
   UNAVAILABLE:
@@ -82,6 +83,8 @@ export function serverCodeToError(code: string): WalletErrorCode {
       return "EXPIRED";
     case "ALREADY_LINKED":
       return "ALREADY_LINKED";
+    case "RESERVED_ADDRESS":
+      return "RESERVED_ADDRESS";
     case "RATE_LIMITED":
       return "RATE_LIMITED";
     case "INVALID_SIGNATURE":
