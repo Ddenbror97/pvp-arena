@@ -137,8 +137,11 @@ export type Database = {
         Row: {
           chain_id: number
           created_at: string
+          credit_confirmations: number
           finalized_confirmations: number
           is_enabled: boolean
+          min_deposit_cents: number
+          min_withdrawal_cents: number
           name: string
           network_mode: string
           safe_confirmations: number
@@ -146,8 +149,11 @@ export type Database = {
         Insert: {
           chain_id: number
           created_at?: string
+          credit_confirmations?: number
           finalized_confirmations?: number
           is_enabled?: boolean
+          min_deposit_cents?: number
+          min_withdrawal_cents?: number
           name: string
           network_mode: string
           safe_confirmations?: number
@@ -155,8 +161,11 @@ export type Database = {
         Update: {
           chain_id?: number
           created_at?: string
+          credit_confirmations?: number
           finalized_confirmations?: number
           is_enabled?: boolean
+          min_deposit_cents?: number
+          min_withdrawal_cents?: number
           name?: string
           network_mode?: string
           safe_confirmations?: number
@@ -582,6 +591,48 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "chain_networks"
             referencedColumns: ["chain_id"]
+          },
+        ]
+      }
+      crypto_deposit_addresses: {
+        Row: {
+          address: string
+          chain_id: number
+          created_at: string
+          derivation_index: number
+          id: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          chain_id: number
+          created_at?: string
+          derivation_index: number
+          id?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          chain_id?: number
+          created_at?: string
+          derivation_index?: number
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crypto_deposit_addresses_chain_id_fkey"
+            columns: ["chain_id"]
+            isOneToOne: false
+            referencedRelation: "chain_networks"
+            referencedColumns: ["chain_id"]
+          },
+          {
+            foreignKeyName: "crypto_deposit_addresses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -2443,54 +2494,105 @@ export type Database = {
       }
       crypto_get_cursor: { Args: { p_chain: number }; Returns: number }
       crypto_my_activity: { Args: { p_user: string }; Returns: Json }
-      crypto_next_withdrawals: {
-        Args: never
-        Returns: {
-          asset_key: string
-          attempts: number
-          chain_id: number
-          closed_at: string | null
-          confirmed_at: string | null
-          created_at: string
-          fee_usd_cents: number
-          hold_ledger_tx_id: string | null
-          id: string
-          last_error: string | null
-          nonce: number | null
-          quote_id: string | null
-          release_ledger_tx_id: string | null
-          review_required: boolean
-          reviewed_at: string | null
-          reviewed_by: string | null
-          settle_ledger_tx_id: string | null
-          signed_raw_tx: string | null
-          status: string
-          submitted_at: string | null
-          to_address: string
-          tx_hash: string | null
-          units: number
-          usd_cents: number
-          user_id: string
-        }[]
-        SetofOptions: {
-          from: "*"
-          to: "crypto_withdrawals"
-          isOneToOne: false
-          isSetofReturn: true
-        }
-      }
-      crypto_observe_deposit: {
-        Args: {
-          p_asset: string
-          p_block: number
-          p_from: string
-          p_log: number
-          p_to: string
-          p_tx: string
-          p_units: number
-        }
-        Returns: Json
-      }
+      crypto_next_withdrawals:
+        | {
+            Args: never
+            Returns: {
+              asset_key: string
+              attempts: number
+              chain_id: number
+              closed_at: string | null
+              confirmed_at: string | null
+              created_at: string
+              fee_usd_cents: number
+              hold_ledger_tx_id: string | null
+              id: string
+              last_error: string | null
+              nonce: number | null
+              quote_id: string | null
+              release_ledger_tx_id: string | null
+              review_required: boolean
+              reviewed_at: string | null
+              reviewed_by: string | null
+              settle_ledger_tx_id: string | null
+              signed_raw_tx: string | null
+              status: string
+              submitted_at: string | null
+              to_address: string
+              tx_hash: string | null
+              units: number
+              usd_cents: number
+              user_id: string
+            }[]
+            SetofOptions: {
+              from: "*"
+              to: "crypto_withdrawals"
+              isOneToOne: false
+              isSetofReturn: true
+            }
+          }
+        | {
+            Args: { p_chain: number }
+            Returns: {
+              asset_key: string
+              attempts: number
+              chain_id: number
+              closed_at: string | null
+              confirmed_at: string | null
+              created_at: string
+              fee_usd_cents: number
+              hold_ledger_tx_id: string | null
+              id: string
+              last_error: string | null
+              nonce: number | null
+              quote_id: string | null
+              release_ledger_tx_id: string | null
+              review_required: boolean
+              reviewed_at: string | null
+              reviewed_by: string | null
+              settle_ledger_tx_id: string | null
+              signed_raw_tx: string | null
+              status: string
+              submitted_at: string | null
+              to_address: string
+              tx_hash: string | null
+              units: number
+              usd_cents: number
+              user_id: string
+            }[]
+            SetofOptions: {
+              from: "*"
+              to: "crypto_withdrawals"
+              isOneToOne: false
+              isSetofReturn: true
+            }
+          }
+      crypto_observe_deposit:
+        | {
+            Args: {
+              p_asset: string
+              p_block: number
+              p_from: string
+              p_log: number
+              p_to: string
+              p_tx: string
+              p_units: number
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_asset: string
+              p_block: number
+              p_chain: number
+              p_from: string
+              p_log: number
+              p_to: string
+              p_tx: string
+              p_units: number
+            }
+            Returns: Json
+          }
       crypto_pending_deposits: {
         Args: { p_chain: number; p_max_block: number }
         Returns: {
@@ -2521,10 +2623,12 @@ export type Database = {
           isSetofReturn: true
         }
       }
-      crypto_quote_withdrawal: {
-        Args: { p_usd_cents: number; p_user: string }
-        Returns: Json
-      }
+      crypto_quote_withdrawal:
+        | {
+            Args: { p_chain: number; p_usd_cents: number; p_user: string }
+            Returns: Json
+          }
+        | { Args: { p_usd_cents: number; p_user: string }; Returns: Json }
       crypto_raise_incident: {
         Args: { p_check: string; p_details: Json; p_fp: string }
         Returns: undefined
@@ -2533,26 +2637,50 @@ export type Database = {
         Args: { p_details: Json; p_onchain_cents: number }
         Returns: Json
       }
-      crypto_record_price: {
-        Args: {
-          p_asset: string
-          p_feed: string
-          p_observed: string
-          p_price_micro: number
-          p_round: number
-        }
-        Returns: string
-      }
-      crypto_request_withdrawal: {
-        Args: {
-          p_asset: string
-          p_env_ok: boolean
-          p_quote: string
-          p_usd_cents: number
-          p_user: string
-        }
-        Returns: Json
-      }
+      crypto_record_price:
+        | {
+            Args: {
+              p_asset: string
+              p_feed: string
+              p_observed: string
+              p_price_micro: number
+              p_round: number
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_asset: string
+              p_chain: number
+              p_feed: string
+              p_observed: string
+              p_price_micro: number
+              p_round: number
+            }
+            Returns: string
+          }
+      crypto_request_withdrawal:
+        | {
+            Args: {
+              p_asset: string
+              p_env_ok: boolean
+              p_quote: string
+              p_usd_cents: number
+              p_user: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_asset: string
+              p_chain: number
+              p_env_ok: boolean
+              p_quote: string
+              p_usd_cents: number
+              p_user: string
+            }
+            Returns: Json
+          }
       crypto_run_gate: {
         Args: { p_name: string; p_seconds: number }
         Returns: boolean
@@ -2575,6 +2703,10 @@ export type Database = {
         Returns: undefined
       }
       crypto_withdrawal_failed: {
+        Args: { p_id: string; p_reason: string }
+        Returns: undefined
+      }
+      crypto_withdrawal_liquidity_pending: {
         Args: { p_id: string; p_reason: string }
         Returns: undefined
       }

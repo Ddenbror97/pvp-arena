@@ -347,15 +347,33 @@ describe("provider safety", () => {
       "wallet_switchEthereumChain",
     ]);
   });
-  it("builds only allowlisted Base Sepolia deposit transactions", () => {
+  it("builds deposit transactions from server-supplied registry values", () => {
     const treasury = acct.address;
     expect(buildDepositTransaction({ asset: "ETH", chainId: TESTNET.chainId, treasury, token: null, units: "1000" })).toEqual({ to: treasury, value: "0x3e8" });
     const usdc = buildDepositTransaction({ asset: "USDC", chainId: TESTNET.chainId, treasury, token: TESTNET.usdc, units: "10000000" });
     expect(usdc.to).toBe(TESTNET.usdc);
     expect(usdc.value).toBe("0x0");
     expect(usdc.data).toMatch(/^0xa9059cbb/);
-    expect(() => buildDepositTransaction({ asset: "ETH", chainId: 8453, treasury, token: null, units: "1" })).toThrow("UNSUPPORTED_NETWORK");
-    expect(() => buildDepositTransaction({ asset: "USDC", chainId: TESTNET.chainId, treasury, token: acct.address, units: "1" })).toThrow("INVALID_ASSET_CONFIG");
+    // Chain allowlisting is server-side (registry-driven); the builder validates shape only.
+    expect(buildDepositTransaction({ asset: "ETH", chainId: 8453, treasury, token: null, units: "1" })).toEqual({ to: treasury, value: "0x1" });
+    expect(() => buildDepositTransaction({ asset: "ETH", chainId: 0, treasury, token: null, units: "1" })).toThrow("UNSUPPORTED_NETWORK");
+    expect(() => buildDepositTransaction({ asset: "USDC", chainId: TESTNET.chainId, treasury, token: "0x123", units: "1" })).toThrow("INVALID_ASSET_CONFIG");
     expect(() => buildDepositTransaction({ asset: "ETH", chainId: TESTNET.chainId, treasury, token: null, units: "0" })).toThrow("INVALID_AMOUNT");
+  });
+});
+
+describe("personal deposit address derivation", () => {
+  it("derives deterministic addresses from an xpub and never needs private keys", async () => {
+    const { mnemonicToSeedSync } = await import("@scure/bip39");
+    const { HDKey } = await import("@scure/bip32");
+    const { deriveDepositAddress } = await import("../src/lib/crypto/addresses.server");
+    const seed = mnemonicToSeedSync("test test test test test test test test test test test junk");
+    const xpub = HDKey.fromMasterSeed(seed).wipePrivateData().publicExtendedKey;
+    const a0 = deriveDepositAddress(xpub, 8453, 0);
+    expect(a0).toMatch(/^0x[0-9a-fA-F]{40}$/);
+    expect(deriveDepositAddress(xpub, 8453, 0)).toBe(a0); // deterministic
+    expect(deriveDepositAddress(xpub, 8453, 1)).not.toBe(a0); // per-player index
+    expect(deriveDepositAddress(xpub, 1, 0)).not.toBe(a0); // per-chain path
+    expect(() => deriveDepositAddress("not-an-xpub", 8453, 0)).toThrow("XPUB_INVALID");
   });
 });

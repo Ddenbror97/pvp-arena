@@ -6,12 +6,13 @@ import {
   keccak256,
   parseAbi,
   parseAbiItem,
+  type Chain,
   type Hex,
   type PublicClient,
 } from "viem";
-import { baseSepolia } from "viem/chains";
+import { base, baseSepolia, mainnet } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
-import { TESTNET, checkRpcUrl, checkStaticConfig, weiToCents, usdcUnitsToCents } from "./allowlist";
+import { TESTNET, checkStaticConfig, weiToCents, usdcUnitsToCents } from "./allowlist";
 
 const ERC20 = parseAbi([
   "function transfer(address to, uint256 value) returns (bool)",
@@ -25,6 +26,9 @@ const FEED = parseAbi([
 const NATIVE_LOG_INDEX = 1_000_000;
 const MAX_ETH_BLOCKS_PER_RUN = 60;
 const MAX_LOG_RANGE = 2000n;
+const GAS_MARGIN_BPS = 12_500n; // 1.25x safety margin on the exact-transaction gas estimate
+
+const CHAIN_DEFS: Record<number, Chain> = { 84532: baseSepolia, 8453: base, 1: mainnet };
 
 type Rpc = (fn: string, args?: Record<string, unknown>) => Promise<{ data: any; error: { message: string } | null }>;
 
@@ -41,72 +45,153 @@ async function must<T = any>(p: Promise<{ data: any; error: { message: string } 
 }
 
 export interface Env {
+  chainId: number;
+  chain: Chain;
+  networkMode: "testnet" | "mainnet";
   client: PublicClient;
+  clientB: PublicClient | null; // second independent RPC provider for agreement checks
   treasury: `0x${string}`;
   payout: `0x${string}`;
+  usdc: `0x${string}`;
+  ethFeed: `0x${string}` | null;
   settings: any;
+  network: any; // chain_networks row (per-chain policy)
   minDepositUnits: Record<string, bigint>;
+  depositAddresses: Set<string>; // personal deposit addresses, lowercased
 }
 
-/** Refuses to return unless every testnet-only invariant holds. Raises an incident on failure. */
-export async function loadVerifiedEnv(): Promise<{ ok: true; env: Env } | { ok: false; reason: string }> {
+function rpcUrlFor(chainId: number, secondary = false): string | undefined {
+  const suffix = secondary ? `_${chainId}_B` : `_${chainId}`;
+  const url = process.env[`CRYPTO_RPC_URL${suffix}`];
+  if (url) return url;
+  if (!secondary && chainId === TESTNET.chainId) return process.env["BASE_SEPOLIA_RPC_URL"];
+  return undefined;
+}
+
+function checkChainRpcUrl(chainId: number, url: string | undefined): { ok: true } | { ok: false; reason: string } {
+  if (!url) return { ok: false, reason: "RPC_URL_MISSING" };
+  try {
+    const u = new URL(url);
+    if (u.protocol !== "https:") return { ok: false, reason: "RPC_NOT_HTTPS" };
+    if (chainId === TESTNET.chainId && !/sepolia/i.test(url)) return { ok: false, reason: "RPC_NOT_SEPOLIA" };
+    if (chainId !== TESTNET.chainId && /sepolia/i.test(url)) return { ok: false, reason: "RPC_NOT_MAINNET" };
+  } catch {
+    return { ok: false, reason: "RPC_URL_INVALID" };
+  }
+  return { ok: true };
+}
+
+/** Enabled chains from the registry. Workers iterate these; disabled chains are observe-only. */
+export async function enabledChainIds(): Promise<number[]> {
+  const { admin } = await db();
+  const { data } = await admin.from("chain_networks").select("chain_id").eq("is_enabled", true);
+  return (data ?? []).map((r: any) => Number(r.chain_id));
+}
+
+/** Refuses to return unless every invariant for the chain holds. Raises an incident on failure. */
+export async function loadChainEnv(chainId: number): Promise<{ ok: true; env: Env } | { ok: false; reason: string }> {
   const { admin, rpc } = await db();
   const fail = async (reason: string) => {
     await rpc("crypto_raise_incident", {
       p_check: "crypto_env",
-      p_fp: `crypto_env:${reason}:${new Date().toISOString().slice(0, 13)}`,
-      p_details: { reason },
+      p_fp: `crypto_env:${chainId}:${reason}:${new Date().toISOString().slice(0, 13)}`,
+      p_details: { reason, chain_id: chainId },
     });
     return { ok: false as const, reason };
   };
-  const url = process.env["BASE_SEPOLIA_RPC_URL"];
-  const rpcCheck = checkRpcUrl(url);
+  const chain = CHAIN_DEFS[chainId];
+  if (!chain) return { ok: false, reason: "CHAIN_UNKNOWN" };
+  const rpcCheck = checkChainRpcUrl(chainId, rpcUrlFor(chainId));
   if (!rpcCheck.ok) return fail(rpcCheck.reason);
-  const [{ data: s }, { data: assets }, { data: tr }] = await Promise.all([
+  const [{ data: s }, { data: net }, { data: assets }, { data: tr }, { data: addrs }] = await Promise.all([
     admin.from("crypto_settings").select("*").single(),
-    admin.from("chain_assets").select("*").eq("chain_id", TESTNET.chainId),
-    admin.from("chain_treasury_accounts").select("*").eq("chain_id", TESTNET.chainId).eq("is_active", true),
+    admin.from("chain_networks").select("*").eq("chain_id", chainId).maybeSingle(),
+    admin.from("chain_assets").select("*").eq("chain_id", chainId),
+    admin.from("chain_treasury_accounts").select("*").eq("chain_id", chainId).eq("is_active", true),
+    admin.from("crypto_deposit_addresses").select("address").eq("chain_id", chainId),
   ]);
   if (!s) return fail("SETTINGS_MISSING");
-  const usdc = assets?.find((a: any) => a.asset_key === "USDC");
-  const eth = assets?.find((a: any) => a.asset_key === "ETH");
-  const st = checkStaticConfig({
-    environment: s.environment,
-    mainnetEnabled: s.mainnet_enabled,
-    chainId: Number(s.chain_id),
-    usdc: usdc?.contract_address,
-    feed: eth?.price_feed_address,
-  });
-  if (!st.ok) return fail(st.reason);
-  const client = createPublicClient({ chain: baseSepolia, transport: http(url, { timeout: 10_000 }) }) as PublicClient;
+  if (!net || !net.is_enabled) return fail("CHAIN_DISABLED");
+  const usdc = assets?.find((a: any) => a.asset_key === "USDC" && a.is_enabled);
+  const eth = assets?.find((a: any) => a.asset_key === "ETH" && a.is_enabled);
+  if (!usdc || !eth) return fail("ASSETS_MISSING");
+
+  if (chainId === TESTNET.chainId) {
+    // Testnet keeps its strict hard-coded invariants.
+    const st = checkStaticConfig({
+      environment: s.environment,
+      mainnetEnabled: s.mainnet_enabled,
+      chainId,
+      usdc: usdc.contract_address,
+      feed: eth.price_feed_address,
+    });
+    if (!st.ok) return fail(st.reason);
+  } else {
+    // Mainnet chains: the migration-seeded registry is the source of truth; it must
+    // declare mainnet mode and exact contract/feed addresses (verified against Circle/Chainlink docs).
+    if (net.network_mode !== "mainnet") return fail("MODE_MISMATCH");
+    if (!usdc.contract_address || !eth.price_feed_address) return fail("REGISTRY_INCOMPLETE");
+  }
+
+  const client = createPublicClient({ chain, transport: http(rpcUrlFor(chainId), { timeout: 10_000 }) }) as PublicClient;
   let liveChain: number;
   try {
     liveChain = await client.getChainId();
   } catch {
     return { ok: false, reason: "RPC_UNREACHABLE" };
   }
-  if (liveChain !== TESTNET.chainId) return fail("RPC_CHAIN_MISMATCH");
-  const code = await client.getCode({ address: TESTNET.usdc as Hex }).catch(() => undefined);
+  if (liveChain !== chainId) return fail("RPC_CHAIN_MISMATCH");
+  const code = await client.getCode({ address: usdc.contract_address as Hex }).catch(() => undefined);
   if (!code || code === "0x") return fail("USDC_NO_CODE");
+
+  // Second independent provider: required for mainnet crediting (RPC agreement), optional on testnet.
+  let clientB: PublicClient | null = null;
+  const urlB = rpcUrlFor(chainId, true);
+  if (urlB && checkChainRpcUrl(chainId, urlB).ok) {
+    const cB = createPublicClient({ chain, transport: http(urlB, { timeout: 10_000 }) }) as PublicClient;
+    try {
+      if ((await cB.getChainId()) === chainId) clientB = cB;
+    } catch {
+      clientB = null;
+    }
+  }
+
   const treasury = tr?.find((t: any) => t.role === "deposit")?.address?.toLowerCase();
   const payout = tr?.find((t: any) => t.role === "payout")?.address?.toLowerCase();
   if (!treasury || !payout) return fail("TREASURY_MISSING");
   return {
     ok: true,
     env: {
+      chainId,
+      chain,
+      networkMode: net.network_mode,
       client,
+      clientB,
       treasury,
       payout,
+      usdc: usdc.contract_address.toLowerCase(),
+      ethFeed: eth.price_feed_address?.toLowerCase() ?? null,
       settings: s,
-      minDepositUnits: { USDC: BigInt(usdc.min_deposit_units), ETH: BigInt(Number(eth.min_deposit_units).toLocaleString("fullwide", { useGrouping: false })) },
+      network: net,
+      minDepositUnits: {
+        USDC: BigInt(usdc.min_deposit_units),
+        ETH: BigInt(Number(eth.min_deposit_units).toLocaleString("fullwide", { useGrouping: false })),
+      },
+      depositAddresses: new Set((addrs ?? []).map((a: any) => String(a.address).toLowerCase())),
     },
   };
 }
 
+/** Backwards-compatible alias for the primary testnet environment. */
+export async function loadVerifiedEnv() {
+  return loadChainEnv(TESTNET.chainId);
+}
+
 /** Reads Chainlink ETH/USD on the server and stores a snapshot. Never trusts a browser price. */
 export async function snapshotEthPrice(env: Env): Promise<{ id: string; priceMicro: bigint } | null> {
+  if (!env.ethFeed) return null;
   const { rpc } = await db();
-  const feed = TESTNET.ethUsdFeed as Hex;
+  const feed = env.ethFeed as Hex;
   const [round, dec] = await Promise.all([
     env.client.readContract({ address: feed, abi: FEED, functionName: "latestRoundData" }),
     env.client.readContract({ address: feed, abi: FEED, functionName: "decimals" }),
@@ -119,6 +204,7 @@ export async function snapshotEthPrice(env: Env): Promise<{ id: string; priceMic
   const priceMicro = d >= 6 ? answer / 10n ** BigInt(d - 6) : answer * 10n ** BigInt(6 - d);
   const id = await must<string>(
     rpc("crypto_record_price", {
+      p_chain: env.chainId,
       p_asset: "ETH",
       p_feed: feed,
       p_round: roundId.toString(),
@@ -129,9 +215,24 @@ export async function snapshotEthPrice(env: Env): Promise<{ id: string; priceMic
   return { id, priceMicro };
 }
 
-/** Deposit watcher: scan, re-scan overlap, verify at the safe block, credit idempotently. */
-export async function runDepositWatcher() {
-  const envr = await loadVerifiedEnv();
+/**
+ * RPC agreement: two independent providers must return the SAME block hash at the
+ * SAME block number, and that block must contain the transaction. Anything less
+ * (different heads, missing tx) fails closed: no credit, retry next run.
+ */
+async function providersAgree(env: Env, txHash: string, blockNumber: bigint): Promise<boolean> {
+  if (!env.clientB) return env.networkMode === "testnet"; // mainnet requires two providers
+  const [bA, bB] = await Promise.all([
+    env.client.getBlock({ blockNumber }).catch(() => null),
+    env.clientB!.getBlock({ blockNumber }).catch(() => null),
+  ]);
+  if (!bA || !bB || bA.hash !== bB.hash) return false;
+  return bA.transactions.includes(txHash as Hex);
+}
+
+/** Deposit watcher for one chain: scan, re-scan overlap, verify, credit idempotently. */
+export async function runDepositWatcher(chainId: number) {
+  const envr = await loadChainEnv(chainId);
   if (!envr.ok) return { ok: false, reason: envr.reason };
   const env = envr.env;
   const { rpc } = await db();
@@ -142,7 +243,7 @@ export async function runDepositWatcher() {
     env.client.getBlockNumber(),
     env.client.getBlock({ blockTag: "safe" }).then((b) => b.number!),
   ]);
-  const cursorRaw = await must<number | null>(rpc("crypto_get_cursor", { p_chain: TESTNET.chainId }));
+  const cursorRaw = await must<number | null>(rpc("crypto_get_cursor", { p_chain: env.chainId }));
   const cursor = cursorRaw == null ? latest - 5n : BigInt(cursorRaw);
   const overlap = BigInt(s.overlap_blocks);
   const ethFrom = cursor + 1n;
@@ -151,20 +252,24 @@ export async function runDepositWatcher() {
   const logTo = ethTo;
   let observed = 0;
 
-  // USDC: Transfer logs to the treasury, over the overlap window (reorg-safe re-scan).
+  // Watched destinations: the shared treasury plus every personal deposit address.
+  const watched = Array.from(new Set([env.treasury, ...env.depositAddresses])) as Hex[];
+
+  // USDC: Transfer logs to any watched address, over the overlap window (reorg-safe re-scan).
   for (let from = logFrom; from <= logTo; from += MAX_LOG_RANGE) {
     const to = from + MAX_LOG_RANGE - 1n < logTo ? from + MAX_LOG_RANGE - 1n : logTo;
     const logs = await env.client.getLogs({
-      address: TESTNET.usdc as Hex,
+      address: env.usdc as Hex,
       event: TRANSFER,
-      args: { to: env.treasury },
+      args: { to: watched },
       fromBlock: from,
       toBlock: to,
     });
     for (const l of logs) {
-      if (l.address.toLowerCase() !== TESTNET.usdc || !l.args.value || l.removed) continue;
+      if (l.address.toLowerCase() !== env.usdc || !l.args.value || l.removed) continue;
       await must(
         rpc("crypto_observe_deposit", {
+          p_chain: env.chainId,
           p_asset: "USDC",
           p_tx: l.transactionHash,
           p_log: l.logIndex,
@@ -178,7 +283,7 @@ export async function runDepositWatcher() {
     }
   }
 
-  // Native ETH: scan new blocks' transactions to the treasury.
+  // Native ETH: scan new blocks' transactions to any watched address.
   const heights: bigint[] = [];
   for (let b = ethFrom; b <= ethTo; b++) heights.push(b);
   for (let i = 0; i < heights.length; i += 10) {
@@ -187,9 +292,12 @@ export async function runDepositWatcher() {
     );
     for (const blk of blocks) {
       for (const tx of blk.transactions) {
-        if (typeof tx === "string" || !tx.to || tx.to.toLowerCase() !== env.treasury || tx.value <= 0n) continue;
+        if (typeof tx === "string" || !tx.to || tx.value <= 0n) continue;
+        const dest = tx.to.toLowerCase();
+        if (dest !== env.treasury && !env.depositAddresses.has(dest)) continue;
         await must(
           rpc("crypto_observe_deposit", {
+            p_chain: env.chainId,
             p_asset: "ETH",
             p_tx: tx.hash,
             p_log: NATIVE_LOG_INDEX,
@@ -203,12 +311,17 @@ export async function runDepositWatcher() {
       }
     }
   }
-  await must(rpc("crypto_set_cursor", { p_chain: TESTNET.chainId, p_block: Number(ethTo) }));
+  await must(rpc("crypto_set_cursor", { p_chain: env.chainId, p_block: Number(ethTo) }));
 
   // Credit: re-verify every pending deposit against the chain before crediting.
+  // Confirmation threshold: the chain's own configurable credit_confirmations, and
+  // never ahead of the RPC "safe" block. (Ethereum finalization is tracked by the
+  // registry for reporting only; crediting uses this configurable threshold.)
   let credited = 0;
   if (s.deposits_enabled) {
-    const pending = await must<any[]>(rpc("crypto_pending_deposits", { p_chain: TESTNET.chainId, p_max_block: Number(latest) }));
+    const confThreshold = latest - BigInt(Math.max(0, Number(env.network.credit_confirmations) - 1));
+    const creditAt = safeBlock < confThreshold ? safeBlock : confThreshold;
+    const pending = await must<any[]>(rpc("crypto_pending_deposits", { p_chain: env.chainId, p_max_block: Number(latest) }));
     let price: { id: string; priceMicro: bigint } | null | undefined;
     for (const d of pending ?? []) {
       const receipt = await env.client.getTransactionReceipt({ hash: d.tx_hash }).catch(() => null);
@@ -216,22 +329,37 @@ export async function runDepositWatcher() {
       if (receipt.blockNumber !== BigInt(d.block_number)) {
         await must(
           rpc("crypto_observe_deposit", {
-            p_asset: d.asset_key, p_tx: d.tx_hash, p_log: d.log_index, p_block: Number(receipt.blockNumber),
-            p_from: d.from_address, p_to: d.to_address, p_units: String(d.units),
+            p_chain: env.chainId,
+            p_asset: d.asset_key,
+            p_tx: d.tx_hash,
+            p_log: d.log_index,
+            p_block: Number(receipt.blockNumber),
+            p_from: d.from_address,
+            p_to: d.to_address,
+            p_units: String(d.units),
           }),
         );
       }
-      if (receipt.blockNumber > safeBlock) continue;
+      if (receipt.blockNumber > creditAt) continue;
+      const dest = String(d.to_address).toLowerCase();
       if (d.asset_key === "USDC") {
         const log = receipt.logs.find((l) => l.logIndex === d.log_index);
-        if (!log || log.address.toLowerCase() !== TESTNET.usdc) continue;
-        if ((log.topics[2] ?? "").slice(-40).toLowerCase() !== env.treasury.slice(2)) continue;
+        if (!log || log.address.toLowerCase() !== env.usdc) continue;
+        if ((log.topics[2] ?? "").slice(-40).toLowerCase() !== dest.slice(2)) continue;
         if (BigInt(log.data) !== BigInt(d.units)) continue;
       } else {
         const tx = await env.client.getTransaction({ hash: d.tx_hash });
-        if (tx.to?.toLowerCase() !== env.treasury || tx.value !== BigInt(d.units)) continue;
+        if (tx.to?.toLowerCase() !== dest || tx.value !== BigInt(d.units)) continue;
         if (price === undefined) price = await snapshotEthPrice(env).catch(() => null);
         if (!price) continue; // awaiting valuation
+      }
+      if (!(await providersAgree(env, d.tx_hash, receipt.blockNumber))) {
+        await rpc("crypto_raise_incident", {
+          p_check: "crypto_rpc_disagreement",
+          p_fp: `crypto_rpc_disagreement:${env.chainId}:${d.tx_hash}`,
+          p_details: { chain_id: env.chainId, tx: d.tx_hash, block: Number(receipt.blockNumber) },
+        });
+        continue; // fail closed: no credit, retry next run
       }
       const r = await must<any>(
         rpc("crypto_credit_deposit", { p_id: d.id, p_price_snapshot: d.asset_key === "ETH" ? price?.id : null }),
@@ -239,24 +367,25 @@ export async function runDepositWatcher() {
       if (r?.status === "CREDITED") credited++;
     }
   }
-  return { ok: true, latest: Number(latest), safe: Number(safeBlock), cursor: Number(ethTo), observed, credited };
+  return { ok: true, chain: env.chainId, latest: Number(latest), safe: Number(safeBlock), cursor: Number(ethTo), observed, credited };
 }
 
-/** Withdrawal worker: one in-flight payout at a time, crash-safe (sign → store → broadcast). */
-export async function runWithdrawalWorker() {
-  const envr = await loadVerifiedEnv();
+/** Withdrawal worker for one chain: one in-flight payout at a time, crash-safe (sign → store → broadcast). */
+export async function runWithdrawalWorker(chainId: number) {
+  const envr = await loadChainEnv(chainId);
   if (!envr.ok) return { ok: false, reason: envr.reason };
   const env = envr.env;
   const { admin, rpc } = await db();
   const s = env.settings;
   if (!s.crypto_system_enabled || !s.withdrawals_enabled) return { ok: true, paused: true };
-  const pk = process.env["CRYPTO_HOT_WALLET_PRIVATE_KEY"] as Hex | undefined;
+  const pk = (process.env[`CRYPTO_HOT_WALLET_PRIVATE_KEY_${env.chainId}`] ??
+    (env.chainId === TESTNET.chainId ? process.env["CRYPTO_HOT_WALLET_PRIVATE_KEY"] : undefined)) as Hex | undefined;
   if (!pk || !/^0x[0-9a-fA-F]{64}$/.test(pk)) return { ok: false, reason: "HOT_KEY_MISSING" };
   const account = privateKeyToAccount(pk);
   if (account.address.toLowerCase() !== env.payout) return { ok: false, reason: "HOT_KEY_ADDRESS_MISMATCH" };
-  const wallet = createWalletClient({ account, chain: baseSepolia, transport: http(process.env["BASE_SEPOLIA_RPC_URL"]) });
+  const wallet = createWalletClient({ account, chain: env.chain, transport: http(rpcUrlFor(env.chainId)) });
 
-  const rows = await must<any[]>(rpc("crypto_next_withdrawals"));
+  const rows = await must<any[]>(rpc("crypto_next_withdrawals", { p_chain: env.chainId }));
   const safe = (await env.client.getBlock({ blockTag: "safe" })).number!;
   const results: Record<string, string> = {};
   let inFlight = false;
@@ -295,7 +424,7 @@ export async function runWithdrawalWorker() {
   }
 
   if (inFlight) return { ok: true, results };
-  const next = (rows ?? []).find((w) => w.status === "APPROVED");
+  const next = (rows ?? []).find((w) => w.status === "APPROVED" || w.status === "LIQUIDITY_PENDING");
   if (!next) return { ok: true, results };
 
   // Destination must still be the user's verified wallet.
@@ -310,24 +439,48 @@ export async function runWithdrawalWorker() {
   const request =
     next.asset_key === "ETH"
       ? { to, value: units }
-      : { to: TESTNET.usdc as Hex, data: encodeFunctionData({ abi: ERC20, functionName: "transfer", args: [to, units] }) };
+      : { to: env.usdc as Hex, data: encodeFunctionData({ abi: ERC20, functionName: "transfer", args: [to, units] }) };
 
-  // Funds check.
+  // Exact-transaction gas estimate with a safety margin.
+  const [gasEstimate, gasPrice] = await Promise.all([
+    env.client.estimateGas({ account: account.address, ...request } as any).catch(() => null),
+    env.client.getGasPrice().catch(() => null),
+  ]);
+  if (gasEstimate == null || gasPrice == null) {
+    await rpc("crypto_withdrawal_error", { p_id: next.id, p_reason: "gas estimation failed; will retry" });
+    return { ok: true, results: { ...results, [next.id]: "gas_estimate_retry" } };
+  }
+  const feeWei = (gasEstimate * GAS_MARGIN_BPS / 10_000n) * gasPrice;
+
+  // Funds checks. Shortage is an explicit queued state, never a silent failure.
   const ethBal = await env.client.getBalance({ address: account.address });
   if (next.asset_key === "USDC") {
-    const bal = (await env.client.readContract({ address: TESTNET.usdc as Hex, abi: ERC20, functionName: "balanceOf", args: [account.address] })) as bigint;
-    if (bal < units) {
-      await rpc("crypto_withdrawal_error", { p_id: next.id, p_reason: "payout wallet has insufficient test USDC" });
-      return { ok: true, results: { ...results, [next.id]: "insufficient_funds" } };
+    const bal = (await env.client.readContract({ address: env.usdc as Hex, abi: ERC20, functionName: "balanceOf", args: [account.address] })) as bigint;
+    if (bal < units || ethBal < feeWei) {
+      await rpc("crypto_withdrawal_liquidity_pending", { p_id: next.id, p_reason: "payout wallet liquidity shortfall (USDC or gas)" });
+      return { ok: true, results: { ...results, [next.id]: "liquidity_pending" } };
     }
-  } else if (ethBal < units) {
-    await rpc("crypto_withdrawal_error", { p_id: next.id, p_reason: "payout wallet has insufficient test ETH" });
-    return { ok: true, results: { ...results, [next.id]: "insufficient_funds" } };
+  } else {
+    // Native payout: on Ethereum L1 the gas is deducted from the player's payout;
+    // on low-fee chains the house subsidizes gas. Payout + fee never exceeds the hold.
+    let value = units;
+    if (env.chainId === 1) {
+      value = units - feeWei;
+      if (value <= 0n) {
+        await rpc("crypto_withdrawal_error", { p_id: next.id, p_reason: "amount does not cover network gas; increase the withdrawal amount" });
+        return { ok: true, results: { ...results, [next.id]: "below_gas" } };
+      }
+      (request as any).value = value;
+    }
+    if (ethBal < value + (env.chainId === 1 ? 0n : feeWei)) {
+      await rpc("crypto_withdrawal_liquidity_pending", { p_id: next.id, p_reason: "payout wallet liquidity shortfall (ETH)" });
+      return { ok: true, results: { ...results, [next.id]: "liquidity_pending" } };
+    }
   }
 
   const nonce = await env.client.getTransactionCount({ address: account.address, blockTag: "pending" });
-  const prepared = await wallet.prepareTransactionRequest({ ...request, nonce, chain: baseSepolia, account } as any);
-  if ((prepared as any).chainId !== TESTNET.chainId) return { ok: false, reason: "CHAIN_MISMATCH" };
+  const prepared = await wallet.prepareTransactionRequest({ ...request, nonce, chain: env.chain, account } as any);
+  if ((prepared as any).chainId !== env.chainId) return { ok: false, reason: "CHAIN_MISMATCH" };
   const raw = await wallet.signTransaction(prepared as any);
   const hash = keccak256(raw);
   await must(rpc("crypto_withdrawal_signed", { p_id: next.id, p_hash: hash, p_nonce: nonce, p_raw: raw }));
@@ -342,31 +495,41 @@ export async function runWithdrawalWorker() {
   return { ok: true, results };
 }
 
-/** Hourly detect-only reconciliation: on-chain treasury value vs ledger custody liability. */
+/** Detect-only reconciliation across all enabled chains: on-chain value vs ledger custody liability. */
 export async function runReconciliation() {
-  const envr = await loadVerifiedEnv();
-  if (!envr.ok) return { ok: false, reason: envr.reason };
-  const env = envr.env;
   const { rpc } = await db();
-  const addrs = Array.from(new Set([env.treasury, env.payout])) as Hex[];
-  let usdc = 0n;
-  let wei = 0n;
-  for (const a of addrs) {
-    usdc += (await env.client.readContract({ address: TESTNET.usdc as Hex, abi: ERC20, functionName: "balanceOf", args: [a] })) as bigint;
-    wei += await env.client.getBalance({ address: a });
+  const chains = await enabledChainIds();
+  let totalCents = 0n;
+  const perChain: Record<string, any> = {};
+  for (const chainId of chains) {
+    const envr = await loadChainEnv(chainId);
+    if (!envr.ok) {
+      perChain[String(chainId)] = { error: envr.reason };
+      continue;
+    }
+    const env = envr.env;
+    const addrs = Array.from(new Set([env.treasury, env.payout])) as Hex[];
+    let usdc = 0n;
+    let wei = 0n;
+    for (const a of addrs) {
+      usdc += (await env.client.readContract({ address: env.usdc as Hex, abi: ERC20, functionName: "balanceOf", args: [a] })) as bigint;
+      wei += await env.client.getBalance({ address: a });
+    }
+    const price = await snapshotEthPrice(env).catch(() => null);
+    const cents = usdcUnitsToCents(usdc) + (price ? weiToCents(wei, price.priceMicro) : 0n);
+    perChain[String(chainId)] = { usdc_units: usdc.toString(), wei: wei.toString(), cents: Number(cents), priced: !!price };
+    totalCents += cents;
   }
-  const price = await snapshotEthPrice(env).catch(() => null);
-  if (!price) return { ok: false, reason: "PRICE_STALE" };
-  const cents = usdcUnitsToCents(usdc) + weiToCents(wei, price.priceMicro);
+  if (chains.length === 0) return { ok: true, skipped: true };
   return must(
     rpc("crypto_reconcile", {
-      p_onchain_cents: Number(cents),
-      p_details: { usdc_units: usdc.toString(), wei: wei.toString(), price_micro: price.priceMicro.toString() },
+      p_onchain_cents: Number(totalCents),
+      p_details: { chains: perChain },
     }),
   );
 }
 
-export async function envOkForAutoApproval(): Promise<boolean> {
-  const r = await loadVerifiedEnv().catch(() => ({ ok: false as const, reason: "ERR" }));
+export async function envOkForAutoApproval(chainId: number = TESTNET.chainId): Promise<boolean> {
+  const r = await loadChainEnv(chainId).catch(() => ({ ok: false as const, reason: "ERR" }));
   return r.ok;
 }

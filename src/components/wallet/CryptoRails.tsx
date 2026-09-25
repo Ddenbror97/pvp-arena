@@ -23,9 +23,24 @@ const STATUS: Record<string, string> = {
   DETECTED: "Detected", CONFIRMED: "Confirming", CREDITED: "Credited",
   UNMATCHED: "Unmatched — under review", REJECTED: "Rejected", PENDING: "Waiting for review",
   APPROVED: "Approved", SUBMITTING: "Sending", SUBMITTED: "Sent", RELEASED: "Cancelled — refunded",
+  LIQUIDITY_PENDING: "Queued — processing shortly",
 };
 const PRESETS = [5, 10, 25, 50];
+const EXPLORERS: Record<number, string> = {
+  84532: "https://sepolia.basescan.org",
+  8453: "https://basescan.org",
+  1: "https://etherscan.io",
+};
 type Asset = "USDC" | "ETH";
+type ChainInfo = {
+  chain_id: number;
+  name: string;
+  network_mode: "testnet" | "mainnet";
+  min_deposit_cents: number;
+  min_withdrawal_cents: number;
+  credit_confirmations: number;
+  assets: string[] | null;
+};
 type DepositReview = {
   instruction: DepositInstruction;
   verifiedAddress: string;
@@ -47,10 +62,11 @@ function formatUnits(units: string, asset: Asset) {
   const value = `${padded.slice(0, -decimals)}.${padded.slice(-decimals)}`.replace(/\.?0+$/, "");
   return `${value} ${asset}`;
 }
-function TxLink({ hash }: { hash: string | null }) {
+function TxLink({ hash, chainId }: { hash: string | null; chainId?: number | undefined }) {
   if (!hash) return null;
+  const explorer = EXPLORERS[chainId ?? TESTNET.chainId] ?? TESTNET.explorer;
   return (
-    <a href={`${TESTNET.explorer}/tx/${hash}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-primary hover:underline">
+    <a href={`${explorer}/tx/${hash}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-primary hover:underline">
       {hash.slice(0, 10)}… <ExternalLink className="h-3 w-3" />
     </a>
   );
@@ -101,6 +117,7 @@ export function CryptoRails({
   const activity = useQuery({ queryKey: ["crypto-activity"], queryFn: () => fetchActivity(), refetchInterval: 15_000 });
   const [mode, setMode] = useState<"deposit" | "withdraw">(requestedMode);
   const [asset, setAsset] = useState<Asset>("USDC");
+  const [chainId, setChainId] = useState<number>(TESTNET.chainId);
   const [amount, setAmount] = useState("");
   const [depositReview, setDepositReview] = useState<DepositReview | null>(null);
   const [withdrawalReview, setWithdrawalReview] = useState<WithdrawalReview | null>(null);
@@ -108,6 +125,10 @@ export function CryptoRails({
   const [busy, setBusy] = useState(false);
   const [now, setNow] = useState(() => Date.now());
   const data = activity.data;
+  const chains: ChainInfo[] = data?.chains ?? [];
+  const chain: ChainInfo | undefined = chains.find((c) => c.chain_id === chainId) ?? chains[0];
+  const chainName = chain?.name ?? "Base Sepolia";
+  const isTestnet = chain?.network_mode !== "mainnet";
   const cents = Math.round(Number(amount) * 100);
   const valid = Number.isFinite(cents) && cents > 0;
   const quoteLeft = withdrawalReview?.quote ? Math.max(0, Math.ceil((new Date(withdrawalReview.quote.expires_at).getTime() - now) / 1000)) : 0;
@@ -142,7 +163,7 @@ export function CryptoRails({
   async function reviewDeposit() {
     setBusy(true);
     try {
-      const result = await prepareDeposit({ data: { asset, usdCents: cents } });
+      const result = await prepareDeposit({ data: { asset, usdCents: cents, chainId: chain?.chain_id ?? TESTNET.chainId } });
       if (!result.ok) {
         toast.error(result.error);
         return;
@@ -159,15 +180,15 @@ export function CryptoRails({
       if (connected.address.toLowerCase() !== depositReview.verifiedAddress.toLowerCase()) {
         throw new WalletError("ADDRESS_MISMATCH");
       }
-      let chain = connected.chainId;
-      if (chain !== WALLET_CONFIG.requiredChainId) {
+      let chainNow = connected.chainId;
+      if (chainNow !== WALLET_CONFIG.requiredChainId) {
         await session.switchToRequiredNetwork();
-        chain = await session.chainId();
+        chainNow = await session.chainId();
       }
-      if (chain !== WALLET_CONFIG.requiredChainId) throw new WalletError("UNSUPPORTED_NETWORK");
+      if (chainNow !== WALLET_CONFIG.requiredChainId) throw new WalletError("UNSUPPORTED_NETWORK");
       const hash = await session.sendTestDeposit(depositReview.instruction, depositReview.verifiedAddress);
       setSubmittedHash(hash);
-      toast.success("Deposit submitted to Base Sepolia");
+      toast.success(`Deposit submitted to ${chainName}`);
       window.setTimeout(refresh, 1500);
     } catch (error) {
       toast.error(error instanceof WalletError ? error.message : WALLET_MESSAGES.GENERIC);
@@ -178,7 +199,7 @@ export function CryptoRails({
     setBusy(true);
     try {
       if (asset === "ETH") {
-        const result = await doQuote({ data: { usdCents: cents } });
+        const result = await doQuote({ data: { usdCents: cents, chainId: chain?.chain_id ?? TESTNET.chainId } });
         if (!result.ok) {
           toast.error(result.error);
           return;
@@ -192,7 +213,7 @@ export function CryptoRails({
     if (!withdrawalReview) return;
     setBusy(true);
     try {
-      const result = await doRequest({ data: { asset: withdrawalReview.asset, usdCents: withdrawalReview.usdCents, quoteId: withdrawalReview.quote?.quote_id ?? null } });
+      const result = await doRequest({ data: { asset: withdrawalReview.asset, usdCents: withdrawalReview.usdCents, quoteId: withdrawalReview.quote?.quote_id ?? null, chainId: chain?.chain_id ?? TESTNET.chainId } });
       if (!result.ok) {
         toast.error(result.error);
         return;
@@ -216,9 +237,9 @@ export function CryptoRails({
     <section className="mt-8" aria-label="Crypto wallet">
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="font-display text-sm uppercase tracking-widest">Crypto wallet</h2>
-        <span className="rounded bg-destructive/15 px-2 py-0.5 text-xs font-bold tracking-wider text-destructive">TESTNET · NO REAL VALUE</span>
+        {isTestnet && <span className="rounded bg-destructive/15 px-2 py-0.5 text-xs font-bold tracking-wider text-destructive">TESTNET · NO REAL VALUE</span>}
       </div>
-      <p className="mt-1 text-xs text-muted-foreground">Base Sepolia only. Test USDC and test ETH have no cash value.</p>
+      <p className="mt-1 text-xs text-muted-foreground">{isTestnet ? `${chainName} only. Test USDC and test ETH have no cash value.` : `${chainName}. Real funds — double-check every transaction.`}</p>
 
       <div className="mt-4 grid grid-cols-2 rounded-lg bg-muted p-1" role="tablist" aria-label="Crypto action">
         <Button role="tab" aria-selected={mode === "deposit"} variant={mode === "deposit" ? "default" : "ghost"} onClick={() => reset("deposit", asset)}><ArrowDownToLine /> Add funds</Button>
@@ -229,11 +250,21 @@ export function CryptoRails({
         <div className="mx-auto max-w-xl">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <div className="font-display text-base">{mode === "deposit" ? "Add test funds" : "Withdraw test funds"}</div>
-              <div className="mt-1 text-xs text-muted-foreground">Base Sepolia · Verified wallet only</div>
+              <div className="font-display text-base">{mode === "deposit" ? "Add funds" : "Withdraw funds"}</div>
+              <div className="mt-1 text-xs text-muted-foreground">{chainName} · Verified wallet only</div>
             </div>
             <ShieldCheck className="h-5 w-5 text-primary" aria-hidden="true" />
           </div>
+
+          {chains.length > 1 && (
+            <div className="mt-4 grid gap-2" style={{ gridTemplateColumns: `repeat(${Math.min(chains.length, 3)}, 1fr)` }} aria-label="Network">
+              {chains.map((c) => (
+                <Button key={c.chain_id} type="button" variant={c.chain_id === chain?.chain_id ? "default" : "secondary"} onClick={() => { setChainId(c.chain_id); setDepositReview(null); setWithdrawalReview(null); }}>
+                  {c.name}
+                </Button>
+              ))}
+            </div>
+          )}
 
           {!data ? <div className="mt-6 h-72 animate-pulse rounded-lg bg-muted" /> : !data.wallet ? (
             <div className="mt-6 rounded-lg border border-border bg-muted/40 p-4 text-sm">Verify a MetaMask wallet on your Profile before depositing or withdrawing.</div>
@@ -241,8 +272,8 @@ export function CryptoRails({
             <div className="mt-6 rounded-lg border border-primary/40 bg-primary/10 p-5 text-center">
               <Check className="mx-auto h-8 w-8 text-primary" />
               <h3 className="mt-3 font-display text-sm">Deposit submitted</h3>
-              <p className="mt-2 text-sm text-muted-foreground">MetaMask sent the transaction. Test credits appear only after the server verifies the safe block, usually about 6 minutes.</p>
-              <div className="mt-3"><TxLink hash={submittedHash} /></div>
+              <p className="mt-2 text-sm text-muted-foreground">MetaMask sent the transaction. Credits appear only after the server verifies the confirmed transaction{isTestnet ? ", usually about 6 minutes" : ""}.</p>
+              <div className="mt-3"><TxLink hash={submittedHash} chainId={chain?.chain_id} /></div>
               <Button className="mt-4" variant="secondary" onClick={() => reset("deposit", asset)}>Make another deposit</Button>
             </div>
           ) : mode === "deposit" && depositReview ? (
@@ -253,7 +284,7 @@ export function CryptoRails({
                 <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">Estimated credit</dt><dd className="font-mono font-semibold">{formatUsd(depositReview.usdCents)}</dd></div>
                 <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">From</dt><dd className="font-mono">{shortAddress(depositReview.verifiedAddress)}</dd></div>
                 <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">To PVPspinArena</dt><dd className="font-mono">{shortAddress(depositReview.instruction.treasury)}</dd></div>
-                <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">Network</dt><dd>Base Sepolia</dd></div>
+                <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">Network</dt><dd>{chainName}</dd></div>
               </dl>
               {asset === "ETH" && <p className="text-xs text-muted-foreground">ETH credit is recalculated from the server price when the confirmed deposit is credited.</p>}
               <div className="grid gap-2 sm:grid-cols-2"><Button variant="secondary" onClick={() => setDepositReview(null)}>Back</Button><Button onClick={sendDeposit} disabled={busy}>{busy ? "Check MetaMask…" : "Deposit with MetaMask"}</Button></div>
@@ -277,7 +308,7 @@ export function CryptoRails({
               <AssetSelector value={asset} onChange={(next) => reset(mode, next)} />
               <AmountField amount={amount} setAmount={(value) => { setAmount(value); setDepositReview(null); setWithdrawalReview(null); }} max={mode === "withdraw" ? availableCents : undefined} />
               <div className="rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-                {mode === "deposit" ? <><b className="text-foreground">From {shortAddress(data.wallet)}</b><br />Only a transfer sent from this verified address is credited. Minimum {formatUsd(data.settings.min_deposit_cents)} · about 6 minutes.</> : <><b className="text-foreground">To {shortAddress(data.wallet)}</b><br />Minimum {formatUsd(data.settings.min_withdrawal_cents)} · {formatUsd(data.settings.daily_limit_cents)}/day · above {formatUsd(data.settings.auto_approve_cents)} requires review.</>}
+                {mode === "deposit" ? <><b className="text-foreground">From {shortAddress(data.wallet)}</b><br />Only a transfer sent from this verified address is credited. Minimum {formatUsd(chain?.min_deposit_cents ?? data.settings.min_deposit_cents)}{isTestnet ? " · about 6 minutes" : ""}.</> : <><b className="text-foreground">To {shortAddress(data.wallet)}</b><br />Minimum {formatUsd(chain?.min_withdrawal_cents ?? data.settings.min_withdrawal_cents)} · {formatUsd(data.settings.daily_limit_cents)}/day · above {formatUsd(data.settings.auto_approve_cents)} requires review.</>}
               </div>
               <Button className="h-11 w-full" onClick={mode === "deposit" ? reviewDeposit : reviewWithdrawal} disabled={!valid || busy || (mode === "deposit" ? !data.settings.deposits_enabled : !data.settings.withdrawals_enabled) || (mode === "withdraw" && cents > availableCents)}>
                 {busy ? "Preparing…" : mode === "deposit" ? "Review deposit" : asset === "ETH" ? "Get ETH quote" : "Review withdrawal"}
@@ -294,7 +325,7 @@ export function CryptoRails({
           <ul className="divide-y divide-border text-sm">
             {rows.map((row: any) => (
               <li key={row.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
-                <div className="min-w-0 flex-1"><div className="font-medium">{row.type} · {formatUnits(row.units, row.asset_key)}</div><div className="flex flex-wrap gap-2 text-xs text-muted-foreground"><span>{new Date(row.at).toLocaleString()}</span><TxLink hash={row.tx_hash} /></div></div>
+                <div className="min-w-0 flex-1"><div className="font-medium">{row.type} · {formatUnits(row.units, row.asset_key)}</div><div className="flex flex-wrap gap-2 text-xs text-muted-foreground"><span>{new Date(row.at).toLocaleString()}</span>{row.chain_id && chains.length > 1 && <span>{chains.find((c) => c.chain_id === row.chain_id)?.name ?? row.chain_id}</span>}<TxLink hash={row.tx_hash} chainId={row.chain_id} /></div></div>
                 <span className="text-xs">{row.status === "CONFIRMED" && row.type === "Withdrawal" ? "Confirmed" : STATUS[row.status] ?? row.status}</span>
                 <span className="font-mono font-semibold">{row.type === "Deposit" ? "+" : "−"}{formatUsd(row.usd_cents)}</span>
                 {row.type === "Withdrawal" && ["PENDING", "APPROVED"].includes(row.status) && <Button size="sm" variant="secondary" onClick={() => cancel(row.id)}>Cancel</Button>}
