@@ -16,11 +16,12 @@ export async function seedSnapshotDeposits(sql: postgres.Sql) {
 }
 
 /** Run the real migration + finalization inside the isolated test schema. */
-export async function migrateTestSchemaToReal(sql: postgres.Sql, opts: { realPlay?: boolean } = {}) {
+export async function migrateTestSchemaToReal(sql: postgres.Sql, opts: { realPlay?: boolean; live?: boolean } = {}) {
   await sql`update pvp_test.crypto_settings set watch_only = true, withdrawals_enabled = false, real_play_enabled = false`;
   await seedSnapshotDeposits(sql);
   const m = (await sql`select pvp_test._money_migrate_v1() r`)[0].r;
   const f = (await sql`select pvp_test._money_finalize_v1() r`)[0].r;
   if (opts.realPlay) await sql`update pvp_test.crypto_settings set real_play_enabled = true`;
+  if (opts.live) await sql`update pvp_test.crypto_settings set watch_only = false, deposits_enabled = true, withdrawals_enabled = true`;
   return { m, f };
 }

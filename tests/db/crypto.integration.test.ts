@@ -70,7 +70,7 @@ async function assertInvariants() {
 d("crypto money path", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
-    await migrateTestSchemaToReal(sql, { realPlay: true });
+    await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     // Test schema only: run the Base Sepolia rail on the real USD ledger.
     await sql.unsafe(`alter table pvp_test.chain_assets disable trigger user;
       update pvp_test.chain_assets set ledger_asset = 'USD', ledger_account_type = 'real' where chain_id = 84532;
