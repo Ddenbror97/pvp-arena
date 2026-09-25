@@ -34,4 +34,6 @@ export type Guide = {
   related: string[]; // other guide slugs
   updated: string; // ISO date
   howTo?: boolean;
+  /** Optional conversion CTA; falls back to the default "watch a live round" box. */
+  cta?: { title: string; text: string; primary: { to: string; label: string }; secondary: { to: string; label: string } };
 };

@@ -12,6 +12,7 @@ const PLANNED = new Set([
   "martingale-strategy",
   "gamblers-fallacy", "csgo-case-opening", "how-to-stop-gambling", "crash-gambling", "cs2-betting",
   "how-to-win-at-roulette", "seed-phrase", "base-network", "gambling-self-exclusion",
+  "best-crypto-gambling-sites", "best-csgo-gambling-sites", "csgo-coinflip-sites", "csgo-case-battle-sites", "provably-fair-games",
 ]);
 
 let fail = 0;

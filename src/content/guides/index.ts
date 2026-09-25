@@ -39,11 +39,16 @@ import { guide as winRoulette } from "./how-to-win-at-roulette";
 import { guide as seedPhrase } from "./seed-phrase";
 import { guide as baseNetwork } from "./base-network";
 import { guide as selfExclusion } from "./gambling-self-exclusion";
+import { guide as bestCrypto } from "./best-crypto-gambling-sites";
+import { guide as bestCsgo } from "./best-csgo-gambling-sites";
+import { guide as coinflipSites } from "./csgo-coinflip-sites";
+import { guide as caseBattles } from "./csgo-case-battle-sites";
+import { guide as pfGames } from "./provably-fair-games";
 
 export type { Guide, GuideCluster } from "./types";
 
 /** Published guides. Add each new guide here once it passes scripts/check-guides.ts. */
-export const GUIDES: Guide[] = [whatIsACryptoCasino, provablyFairCasino, pvpGambling, cryptoJackpot, usdcCasino, gamblingBudget, csgoCoinflip, cs2Roulette, hmacSha256, pfCalculator, csgoJackpot, metamaskCasino, buyUsdc, addBase, cryptoWallet, seeds, pfRoulette, coinOdds, withdrawals, csgoHistory, commitReveal, web3Casino, usdcVsUsdt, houseEdge, rigged, terminology, rouletteColors, cryptoRoulette, rngVsPf, skinGambling, martingale, gamblersFallacy, caseOpening, stopGambling, crash, cs2Betting, winRoulette, seedPhrase, baseNetwork, selfExclusion];
+export const GUIDES: Guide[] = [whatIsACryptoCasino, provablyFairCasino, pvpGambling, cryptoJackpot, usdcCasino, gamblingBudget, csgoCoinflip, cs2Roulette, hmacSha256, pfCalculator, csgoJackpot, metamaskCasino, buyUsdc, addBase, cryptoWallet, seeds, pfRoulette, coinOdds, withdrawals, csgoHistory, commitReveal, web3Casino, usdcVsUsdt, houseEdge, rigged, terminology, rouletteColors, cryptoRoulette, rngVsPf, skinGambling, martingale, gamblersFallacy, caseOpening, stopGambling, crash, cs2Betting, winRoulette, seedPhrase, baseNetwork, selfExclusion, bestCrypto, bestCsgo, coinflipSites, caseBattles, pfGames];
 
 export type ClusterInfo = {
   name: GuideCluster;

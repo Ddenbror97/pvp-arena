@@ -203,6 +203,6 @@ The odds are 50/50 for each player, and the fee is the only cost. Play with a fi
     { label: "NIST FIPS 180-4: Secure Hash Standard", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
     { label: "Valve statement on CS:GO gambling sites (2016)", url: "https://blog.counter-strike.net/index.php/2016/07/15109/" },
   ],
-  related: ["pvp-gambling", "provably-fair-casino", "cs2-roulette"],
+  related: ["csgo-coinflip-sites", "pvp-gambling", "provably-fair-casino", "cs2-roulette"],
   updated: "2026-09-25",
 };
