@@ -52,7 +52,7 @@ async function newUser(fund = 0) {
   await sql`insert into pvp_test.user_wallets (user_id, chain_type, address, normalized_address, wallet_provider, is_verified, is_primary, verified_at)
     values (${id}, 'EVM', ${w}, ${w}, 'metamask', true, true, now())`;
   if (fund) {
-    const dep = await observe(w, String(fund * 10_000));
+    const dep = await observe(w, String(fund * 1_000_000));
     expect((await credit(dep.id)).status).toBe("CREDITED");
   }
   return { id, wallet: w };
@@ -135,6 +135,7 @@ d("real-money ledger migration", () => {
     // Open empty test rounds are closed by the migration.
     await sql`select pvp_test._ensure_open_game()`;
     const snapBefore = (await sql`select pvp_test._money_deposit_snapshot() r`)[0].r;
+    testBefore = JSON.stringify(await sql`select id, balance from pvp_test.wallet_accounts where account_type = 'test_credit' order by id`);
     const r1 = (await sql`select pvp_test._money_migrate_v1() r`)[0].r;
     expect(r1.status).toBe("MIGRATED");
     expect(r1.cancelled.some((c: any) => c.game === "jackpot")).toBe(true);
