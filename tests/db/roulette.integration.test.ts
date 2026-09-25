@@ -514,8 +514,9 @@ d("roulette live permissions (read-only catalog)", () => {
       has_function_privilege('authenticated', p.oid, 'execute') auth, p.prosecdef, p.proconfig
       from pg_proc p where p.pronamespace = 'public'::regnamespace and p.proname like '%roulette%'`;
     for (const f of fns) {
-      expect(f.anon).toBe(false);
-      expect(f.auth).toBe(["roulette_bet", "roulette_tick"].includes(f.proname));
+      // roulette_round_bets is the safe-column public bet feed.
+      expect(f.anon).toBe(f.proname === "roulette_round_bets");
+      expect(f.auth).toBe(["roulette_bet", "roulette_tick", "roulette_round_bets"].includes(f.proname));
       if (f.prosecdef) expect(f.proconfig).toContain("search_path=\"\"");
     }
     const tbl = await sql`select c.relname, r, p from pg_class c cross join (values('anon'),('authenticated')) x(r)

@@ -193,10 +193,6 @@ export async function loadChainEnv(chainId: number): Promise<{ ok: true; env: En
   };
 }
 
-/** Backwards-compatible alias for the primary testnet environment. */
-export async function loadVerifiedEnv() {
-  return loadChainEnv(TESTNET.chainId);
-}
 
 /** Reads Chainlink ETH/USD on the server and stores a snapshot. Never trusts a browser price. */
 export async function snapshotEthPrice(env: Env): Promise<{ id: string; priceMicro: bigint } | null> {
@@ -610,7 +606,7 @@ export async function runReconciliation() {
   );
 }
 
-export async function envOkForAutoApproval(chainId: number = TESTNET.chainId): Promise<boolean> {
+export async function envOkForAutoApproval(chainId: number): Promise<boolean> {
   const r = await loadChainEnv(chainId).catch(() => ({ ok: false as const, reason: "ERR" }));
   return r.ok;
 }

@@ -7,7 +7,7 @@ export type DepositAsset = "USDC" | "ETH";
 export interface DepositInstruction {
   asset: DepositAsset;
   chainId: number;
-  /** Destination: the player's personal deposit address, or the shared treasury on the legacy testnet flow. */
+  /** Destination: the player's personal deposit address, or the shared treasury (matched by verified sender). */
   treasury: `0x${string}`;
   token: `0x${string}` | null;
   units: string;

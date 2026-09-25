@@ -33,7 +33,7 @@ export function CryptoAdmin() {
     <section className="mt-10">
       <div className="flex items-center gap-3">
         <h2 className="font-display text-sm uppercase tracking-widest">Crypto rails</h2>
-        <span className="rounded bg-destructive/15 px-2 py-0.5 text-xs font-bold text-destructive">TESTNET · NO REAL VALUE</span>
+        <span className="rounded bg-destructive/15 px-2 py-0.5 text-xs font-bold text-destructive">REAL FUNDS</span>
       </div>
       <div className="mt-3 flex flex-wrap gap-6 rounded-2xl border border-border bg-card p-4 text-sm">
         {([
@@ -49,7 +49,6 @@ export function CryptoAdmin() {
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
         ETH price freshness ≤ {Math.round(s.price_max_age_seconds / 60)} minutes.
-        This is a testnet-only value — the settings row is locked to testnet, and any future production setup must use its own stricter limit.
       </p>
 
       <h3 className="mt-4 text-xs uppercase tracking-widest text-muted-foreground">Withdrawals in progress</h3>

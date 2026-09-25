@@ -327,11 +327,10 @@ d("jackpot engine (isolated schema)", () => {
     await join(b, 1000);
   });
 
-  it("test credits: hourly faucet is idempotent", async () => {
+  it("retired test-credit faucet cannot be executed by players", async () => {
     const a = await newUser("fau_a");
-    await as(a, (tx) => tx`select pvp_test.claim_test_credits()`);
-    await expectErr(as(a, (tx) => tx`select pvp_test.claim_test_credits()`), "FAUCET_COOLDOWN");
-    expect(await bal(a)).toBe(START * 2);
+    await expectErr(as(a, (tx) => tx`select pvp_test.claim_test_credits()`), "permission denied");
+    expect(await bal(a)).toBe(START);
     await assertInvariants();
   });
 
