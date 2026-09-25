@@ -813,6 +813,7 @@ export type Database = {
           auto_approve_cents: number
           chain_id: number
           crypto_system_enabled: boolean
+          daily_global_limit_cents: number
           daily_limit_cents: number
           deposits_enabled: boolean
           environment: string
@@ -821,9 +822,12 @@ export type Database = {
           min_deposit_cents: number
           min_withdrawal_cents: number
           overlap_blocks: number
+          payout_float_max_cents: number
           price_max_age_seconds: number
           quote_ttl_seconds: number
+          test_credits_reset_at: string | null
           updated_at: string
+          watch_only: boolean
           withdrawal_fee_cents: number
           withdrawals_enabled: boolean
         }
@@ -831,6 +835,7 @@ export type Database = {
           auto_approve_cents?: number
           chain_id?: number
           crypto_system_enabled?: boolean
+          daily_global_limit_cents?: number
           daily_limit_cents?: number
           deposits_enabled?: boolean
           environment?: string
@@ -839,9 +844,12 @@ export type Database = {
           min_deposit_cents?: number
           min_withdrawal_cents?: number
           overlap_blocks?: number
+          payout_float_max_cents?: number
           price_max_age_seconds?: number
           quote_ttl_seconds?: number
+          test_credits_reset_at?: string | null
           updated_at?: string
+          watch_only?: boolean
           withdrawal_fee_cents?: number
           withdrawals_enabled?: boolean
         }
@@ -849,6 +857,7 @@ export type Database = {
           auto_approve_cents?: number
           chain_id?: number
           crypto_system_enabled?: boolean
+          daily_global_limit_cents?: number
           daily_limit_cents?: number
           deposits_enabled?: boolean
           environment?: string
@@ -857,9 +866,12 @@ export type Database = {
           min_deposit_cents?: number
           min_withdrawal_cents?: number
           overlap_blocks?: number
+          payout_float_max_cents?: number
           price_max_age_seconds?: number
           quote_ttl_seconds?: number
+          test_credits_reset_at?: string | null
           updated_at?: string
+          watch_only?: boolean
           withdrawal_fee_cents?: number
           withdrawals_enabled?: boolean
         }
@@ -2450,7 +2462,9 @@ export type Database = {
         }
         Returns: Json
       }
-      claim_test_credits: { Args: never; Returns: Json }
+      claim_test_credits:
+        | { Args: never; Returns: Json }
+        | { Args: { p_user: string }; Returns: Json }
       coinflip_advance: { Args: { p_game_id: number }; Returns: string }
       coinflip_cancel: { Args: { p_game_id: number }; Returns: Json }
       coinflip_create: {
@@ -2787,6 +2801,7 @@ export type Database = {
         }
         Returns: Json
       }
+      reset_test_credits: { Args: { p_admin: string }; Returns: Json }
       roulette_advance: { Args: { p_game_id: number }; Returns: string }
       roulette_bet: {
         Args: {
@@ -2887,6 +2902,7 @@ export type Database = {
         | "roulette_entry"
         | "roulette_settlement"
         | "roulette_refund"
+        | "test_credit_reset"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3070,6 +3086,7 @@ export const Constants = {
         "roulette_entry",
         "roulette_settlement",
         "roulette_refund",
+        "test_credit_reset",
       ],
     },
   },
