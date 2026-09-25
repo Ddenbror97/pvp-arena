@@ -257,6 +257,28 @@ async function providersAgree(env: Env, txHash: string, blockNumber: bigint, log
   return true;
 }
 
+/**
+ * Fetch Transfer logs over [from, to], splitting the range adaptively when the
+ * RPC provider rejects it (e.g. free-tier 10-block eth_getLogs caps). Fails
+ * closed only when even a single-block query is rejected.
+ */
+async function getLogsChunked(
+  client: { getLogs: (args: any) => Promise<any[]> },
+  args: { address: Hex; event: unknown; args: { to: Hex[] } },
+  from: bigint,
+  to: bigint,
+): Promise<any[]> {
+  try {
+    return (await client.getLogs({ ...args, fromBlock: from, toBlock: to })) as any[];
+  } catch (e) {
+    if (from >= to) throw e;
+    const mid = from + (to - from) / 2n;
+    const left = await getLogsChunked(client, args, from, mid);
+    const right = await getLogsChunked(client, args, mid + 1n, to);
+    return [...left, ...right];
+  }
+}
+
 /** Deposit watcher for one chain: scan, re-scan overlap, verify, credit idempotently. */
 export async function runDepositWatcher(chainId: number) {
   const envr = await loadChainEnv(chainId);
@@ -289,13 +311,12 @@ export async function runDepositWatcher(chainId: number) {
   // USDC: Transfer logs to any watched address, over the overlap window (reorg-safe re-scan).
   for (let from = logFrom; from <= logTo; from += MAX_LOG_RANGE) {
     const to = from + MAX_LOG_RANGE - 1n < logTo ? from + MAX_LOG_RANGE - 1n : logTo;
-    const logs = await env.client.getLogs({
-      address: env.usdc as Hex,
-      event: TRANSFER,
-      args: { to: watched },
-      fromBlock: from,
-      toBlock: to,
-    });
+    const logs = await getLogsChunked(
+      env.client,
+      { address: env.usdc as Hex, event: TRANSFER, args: { to: watched } },
+      from,
+      to,
+    );
     for (const l of logs) {
       if (l.address.toLowerCase() !== env.usdc || !l.args.value || l.removed) continue;
       await must(
@@ -413,8 +434,9 @@ export async function runWithdrawalWorker(chainId: number) {
   const { admin, rpc } = await db();
   const s = env.settings;
   if (!s.crypto_system_enabled || !s.withdrawals_enabled) return { ok: true, paused: true };
-  const pk = (process.env[`CRYPTO_HOT_WALLET_PRIVATE_KEY_${env.chainId}`] ??
-    (env.chainId === TESTNET.chainId ? process.env["CRYPTO_HOT_WALLET_PRIVATE_KEY"] : undefined)) as Hex | undefined;
+  const pkRaw = (process.env[`CRYPTO_HOT_WALLET_PRIVATE_KEY_${env.chainId}`] ??
+    (env.chainId === TESTNET.chainId ? process.env["CRYPTO_HOT_WALLET_PRIVATE_KEY"] : undefined))?.trim();
+  const pk = (pkRaw && !pkRaw.startsWith("0x") ? `0x${pkRaw}` : pkRaw) as Hex | undefined;
   if (!pk || !/^0x[0-9a-fA-F]{64}$/.test(pk)) return { ok: false, reason: "HOT_KEY_MISSING" };
   const account = privateKeyToAccount(pk);
   if (account.address.toLowerCase() !== env.payout) return { ok: false, reason: "HOT_KEY_ADDRESS_MISMATCH" };
