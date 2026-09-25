@@ -245,8 +245,9 @@ function RouletteSection() {
   async function run() {
     setBusy(true);
     try {
-      const id = Number(gameId.trim());
-      if (!Number.isInteger(id) || id < 1) throw new Error("Enter a round number.");
+      const cleaned = gameId.trim().replace(/^#/, "").replace(/[\s,]/g, "");
+      const id = /^\d+$/.test(cleaned) ? Number(cleaned) : NaN;
+      if (!Number.isSafeInteger(id) || id < 1) throw new Error("Enter a round number, for example 389 or #389.");
       const { data: g, error } = await supabase.from("roulette_games")
         .select("id, status, server_seed, server_seed_hash, draw_version, wheel_version, winning_slot, winning_color").eq("id", id).maybeSingle();
       if (error) throw new Error("Could not load that round.");
