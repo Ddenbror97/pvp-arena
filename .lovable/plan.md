@@ -60,7 +60,8 @@ Schema extensions: `crypto_deposits` and `crypto_withdrawals` gain `chain_id`, `
 - Per-chain hot-wallet max balance, low-balance alert, high-balance alert.
 - Daily global withdrawal volume limit, per-user limit, per-transaction limit.
 - Withdrawals above the auto-approve cap (default $100) require manual admin approval.
-- Global emergency stop switch; signer-failure stop; RPC disagreement detection (two independent RPCs must agree before crediting).
+- Global emergency stop switch; signer-failure stop.
+- **RPC agreement, precisely defined:** two independent RPC providers must return the **same block hash at the same block number containing the same transaction/log** before a deposit is credit-eligible. Merely "transaction exists on both" is not enough (providers can be at different heads). On disagreement the system **fails closed**: don't credit, retry later, alert if persistent.
 
 ## 7. Cross-chain liquidity rules
 
