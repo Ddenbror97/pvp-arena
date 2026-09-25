@@ -347,15 +347,17 @@ describe("provider safety", () => {
       "wallet_switchEthereumChain",
     ]);
   });
-  it("builds only allowlisted Base Sepolia deposit transactions", () => {
+  it("builds deposit transactions from server-supplied registry values", () => {
     const treasury = acct.address;
     expect(buildDepositTransaction({ asset: "ETH", chainId: TESTNET.chainId, treasury, token: null, units: "1000" })).toEqual({ to: treasury, value: "0x3e8" });
     const usdc = buildDepositTransaction({ asset: "USDC", chainId: TESTNET.chainId, treasury, token: TESTNET.usdc, units: "10000000" });
     expect(usdc.to).toBe(TESTNET.usdc);
     expect(usdc.value).toBe("0x0");
     expect(usdc.data).toMatch(/^0xa9059cbb/);
-    expect(() => buildDepositTransaction({ asset: "ETH", chainId: 8453, treasury, token: null, units: "1" })).toThrow("UNSUPPORTED_NETWORK");
-    expect(() => buildDepositTransaction({ asset: "USDC", chainId: TESTNET.chainId, treasury, token: acct.address, units: "1" })).toThrow("INVALID_ASSET_CONFIG");
+    // Chain allowlisting is server-side (registry-driven); the builder validates shape only.
+    expect(buildDepositTransaction({ asset: "ETH", chainId: 8453, treasury, token: null, units: "1" })).toEqual({ to: treasury, value: "0x1" });
+    expect(() => buildDepositTransaction({ asset: "ETH", chainId: 0, treasury, token: null, units: "1" })).toThrow("UNSUPPORTED_NETWORK");
+    expect(() => buildDepositTransaction({ asset: "USDC", chainId: TESTNET.chainId, treasury, token: "0x123", units: "1" })).toThrow("INVALID_ASSET_CONFIG");
     expect(() => buildDepositTransaction({ asset: "ETH", chainId: TESTNET.chainId, treasury, token: null, units: "0" })).toThrow("INVALID_AMOUNT");
   });
 });
