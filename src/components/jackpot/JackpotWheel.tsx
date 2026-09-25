@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { avatarSrc } from "@/lib/avatar";
 import { wheelSegments } from "@/lib/jackpot/math";
 import type { PlayerRow } from "@/lib/jackpot/api";
@@ -33,79 +33,70 @@ function arcPath(startDeg: number, endDeg: number, r: number, inner: number) {
 export interface SpinTarget {
   winnerId: string;
   winningTicket: number;
+  /** Server-clock ms when the spin begins. Every viewer derives the same position from it. */
+  startAt: number;
 }
 
 interface Props {
   players: PlayerRow[];
   spin: SpinTarget | null;
-  onSpinEnd?: () => void;
+  /** Server-synced clock. */
+  now: () => number;
   highlightId?: string | null | undefined;
   children?: React.ReactNode;
 }
 
-const SPIN_MS = 7600;
+export const SPIN_MS = 7600;
 
-export function JackpotWheel({ players, spin, onSpinEnd, highlightId, children }: Props) {
+// Approximates the former cubic-bezier(0.12, 0.72, 0.08, 1): fast start, long settle.
+const ease = (t: number) => 1 - Math.pow(1 - t, 4);
+
+export function JackpotWheel({ players, spin, now, highlightId, children }: Props) {
   const segments = useMemo(() => wheelSegments(players), [players]);
-  const [rotation, setRotation] = useState(0);
-  const [spinning, setSpinning] = useState(false);
-  const spunFor = useRef<string | null>(null);
-
-  // Keep the latest callback without restarting the spin when the parent re-renders.
-  const onEndRef = useRef(onSpinEnd);
-  onEndRef.current = onSpinEnd;
-  const segRef = useRef(segments);
-  segRef.current = segments;
+  const svg = useRef<SVGSVGElement>(null);
   const winnerSeg = spin ? segments.find((s) => s.user_id === spin.winnerId) : undefined;
-  const ready = !!spin && !!winnerSeg;
-  const timers = useRef<number[]>([]);
 
+  // Final rotation: land inside the winner's slice at a spot derived from the
+  // (already decided) winning ticket, so all viewers land on the same pixel.
+  const target = useMemo(() => {
+    if (!spin || !winnerSeg) return null;
+    const frac = 0.15 + 0.7 * ((spin.winningTicket % 997) / 997);
+    const angle = winnerSeg.start + (winnerSeg.end - winnerSeg.start) * frac;
+    return 8 * 360 + (360 - angle);
+  }, [spin, winnerSeg]);
+
+  const rotAt = (t: number) => {
+    if (!spin || target == null) return 0;
+    const p = Math.min(1, Math.max(0, (t - spin.startAt) / SPIN_MS));
+    return target * ease(p);
+  };
+
+  // Clock-driven animation: position depends only on server time, never on
+  // when this browser received the result. Hidden tabs resume at the right spot.
   useEffect(() => {
-    if (!spin || !ready) return;
-    const key = `${spin.winnerId}:${spin.winningTicket}`;
-    if (spunFor.current === key) return;
-    spunFor.current = key;
-    const run = () => {
-      const seg = segRef.current.find((s) => s.user_id === spin.winnerId);
-      if (!seg) return;
-      // Land inside the winner's slice; position within the slice is derived from
-      // the (already decided) winning ticket so the reveal is deterministic.
-      const frac = 0.15 + 0.7 * ((spin.winningTicket % 997) / 997);
-      const angle = seg.start + (seg.end - seg.start) * frac;
-      const target = 8 * 360 + (360 - angle);
-      setSpinning(true);
-      emitSound("spin_start");
-      // Two frames: the "transition on" style must be committed before the rotation changes.
-      requestAnimationFrame(() => requestAnimationFrame(() => setRotation(target)));
-      timers.current.push(
-        window.setTimeout(() => {
-          setSpinning(false);
-          emitSound("spin_stop");
-          onEndRef.current?.();
-        }, SPIN_MS + 150),
-      );
+    if (!spin || target == null) {
+      if (svg.current) svg.current.style.transform = "rotate(0deg)";
+      return;
+    }
+    let raf = 0;
+    let started = now() >= spin.startAt;
+    let stopped = now() >= spin.startAt + SPIN_MS;
+    const loop = () => {
+      const t = now();
+      if (svg.current) svg.current.style.transform = `rotate(${rotAt(t)}deg)`;
+      if (!started && t >= spin.startAt) {
+        started = true;
+        emitSound("spin_start");
+      }
+      if (!stopped && t >= spin.startAt + SPIN_MS) {
+        stopped = true;
+        emitSound("spin_stop");
+      }
+      if (t < spin.startAt + SPIN_MS + 50) raf = requestAnimationFrame(loop);
     };
-    // A hidden tab/app pauses animations but not timers, which used to announce the winner
-    // with no visible spin. Start the spin only once the page is visible.
-    if (document.visibilityState === "visible") run();
-    else {
-      const onVis = () => {
-        if (document.visibilityState !== "visible") return;
-        document.removeEventListener("visibilitychange", onVis);
-        run();
-      };
-      document.addEventListener("visibilitychange", onVis);
-    }
-  }, [spin, ready]);
-
-  useEffect(() => () => timers.current.forEach(clearTimeout), []);
-
-  useEffect(() => {
-    if (!spin) {
-      spunFor.current = null;
-      setRotation(0);
-    }
-  }, [spin]);
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [spin, target, now]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Pause the decorative RGB ring while the page scrolls or the wheel is off-screen:
   // repainting the rotating gradient + blur during scroll caused jank on mid-range phones.
@@ -138,12 +129,10 @@ export function JackpotWheel({ players, spin, onSpinEnd, highlightId, children }
       <div aria-hidden className="rgb-ring" />
       <div className="absolute inset-0 rounded-full bg-surface ring-1 ring-border" />
       <svg
+        ref={svg}
         viewBox={`0 0 ${R * 2} ${R * 2}`}
         className="absolute inset-0 h-full w-full will-change-transform"
-        style={{
-          transform: `rotate(${rotation}deg)`,
-          transition: spinning ? `transform ${SPIN_MS}ms cubic-bezier(0.12, 0.72, 0.08, 1)` : "none",
-        }}
+        style={{ transform: `rotate(${rotAt(now())}deg)` }}
       >
         {segments.length === 0 && (
           <circle cx={R} cy={R} r={(R + INNER) / 2 - 4} fill="none" stroke="var(--muted)" strokeWidth={R - INNER - 8} strokeDasharray="4 10" />
