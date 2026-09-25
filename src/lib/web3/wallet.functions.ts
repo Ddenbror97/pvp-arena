@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { WALLET_ERROR_CODES } from "./errors";
 import { CLIENT_EVENTS, issueChallenge, recordEvent, verifyChallenge } from "./wallet.server";
 
 export const requestWalletChallenge = createServerFn({ method: "POST" })
@@ -32,7 +33,10 @@ export const recordWalletEvent = createServerFn({ method: "POST" })
           .string()
           .regex(/^0x[0-9a-fA-F]{40}$/)
           .nullable(),
+        reason: z.enum(WALLET_ERROR_CODES).optional(),
       })
       .parse(d),
   )
-  .handler(async ({ data, context }) => recordEvent(context.userId, data.event, data.address));
+  .handler(async ({ data, context }) =>
+    recordEvent(context.userId, data.event, data.address, data.reason),
+  );

@@ -85,7 +85,13 @@ function AmountField({ amount, setAmount, max }: { amount: string; setAmount: (v
   );
 }
 
-export function CryptoRails({ availableCents }: { availableCents: number }) {
+export function CryptoRails({
+  availableCents,
+  requestedMode = "deposit",
+}: {
+  availableCents: number;
+  requestedMode?: "deposit" | "withdraw";
+}) {
   const qc = useQueryClient();
   const fetchActivity = useServerFn(getCryptoActivity);
   const prepareDeposit = useServerFn(prepareCryptoDeposit);
@@ -93,7 +99,7 @@ export function CryptoRails({ availableCents }: { availableCents: number }) {
   const doRequest = useServerFn(requestCryptoWithdrawal);
   const doCancel = useServerFn(cancelCryptoWithdrawal);
   const activity = useQuery({ queryKey: ["crypto-activity"], queryFn: () => fetchActivity(), refetchInterval: 15_000 });
-  const [mode, setMode] = useState<"deposit" | "withdraw">("deposit");
+  const [mode, setMode] = useState<"deposit" | "withdraw">(requestedMode);
   const [asset, setAsset] = useState<Asset>("USDC");
   const [amount, setAmount] = useState("");
   const [depositReview, setDepositReview] = useState<DepositReview | null>(null);
@@ -105,6 +111,9 @@ export function CryptoRails({ availableCents }: { availableCents: number }) {
   const cents = Math.round(Number(amount) * 100);
   const valid = Number.isFinite(cents) && cents > 0;
   const quoteLeft = withdrawalReview?.quote ? Math.max(0, Math.ceil((new Date(withdrawalReview.quote.expires_at).getTime() - now) / 1000)) : 0;
+
+  // A header shortcut can change the requested action while this page is already open.
+  useEffect(() => setMode(requestedMode), [requestedMode]);
 
   useEffect(() => {
     if (!withdrawalReview?.quote) return;

@@ -6,7 +6,7 @@ import { useWallet } from "@/lib/jackpot/api";
 import { formatUsd } from "@/lib/jackpot/math";
 import { Button } from "@/components/ui/button";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
-import { Dices, Coins, CircleDot, ShieldCheck, User } from "lucide-react";
+import { Dices, Coins, CircleDot, ShieldCheck, User, ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
 import arenaLogo from "@/assets/arena-logo-v2.png.asset.json";
 
 export function SiteHeader() {
@@ -14,6 +14,8 @@ export function SiteHeader() {
   const wallet = useWallet(userId);
   const [hint] = useState(readAuthHint);
   const link = "text-sm text-muted-foreground hover:text-foreground transition-colors [&.active]:text-foreground";
+  // A stored session means the signed-in wallet group is the final shape, so reserve it now.
+  const showWallet = ready ? Boolean(userId) : hint;
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background">
       <div className="mx-auto flex h-14 max-w-none items-center gap-4 px-3 sm:h-16 sm:gap-6 sm:px-4 lg:px-6">
@@ -26,34 +28,55 @@ export function SiteHeader() {
           <Link to="/roulette" className={link}>Roulette</Link>
           <Link to="/fairness" className={link}>Fairness</Link>
         </nav>
-        <div className="ml-auto flex items-center gap-3">
-          {!ready && hint ? (
-            <div aria-hidden className="flex items-center gap-3">
-              <div className="h-[34px] min-w-[7.5rem] rounded-lg border border-border bg-card" />
-              <div className="h-8 w-8 rounded-full bg-muted sm:h-9 sm:w-9" />
-            </div>
-          ) : !ready || !userId ? (
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
+          {!showWallet ? (
             <Button asChild size="sm" className="font-display">
               <Link to="/auth">Sign in</Link>
             </Button>
-          ) : userId ? (
+          ) : (
             <>
-              <Link to="/wallet" className="flex min-w-[7.5rem] items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 hover:border-primary/40">
-                <span className="tabular text-sm font-semibold">{formatUsd(wallet.data?.available ?? 0)}</span>
-                <span className="hidden rounded bg-gold/15 px-1 text-[9px] font-bold text-gold sm:inline">TEST</span>
-              </Link>
-              <Link to="/profile" aria-label="Profile">
+              <WalletGroup available={wallet.data?.available} loading={!ready || wallet.isLoading} />
+              <Link to="/profile" aria-label="Profile" className="shrink-0">
                 <PlayerAvatar src={profile?.avatar_url} name={profile?.username} className="h-8 w-8 sm:h-9 sm:w-9" />
               </Link>
             </>
-          ) : (
-            <Button asChild size="sm" className="font-display">
-              <Link to="/auth">Sign in</Link>
-            </Button>
           )}
         </div>
       </div>
     </header>
+  );
+}
+
+/** Balance plus the two wallet shortcuts, kept in one compact segmented control. */
+function WalletGroup({ available, loading }: { available?: number | undefined; loading: boolean }) {
+  const action =
+    "flex flex-1 items-center justify-center gap-1 px-3 py-1 text-[11px] font-bold uppercase transition-colors sm:flex-none sm:px-2.5 sm:py-1.5 sm:text-xs sm:tracking-wide";
+  return (
+    <nav
+      aria-label="Wallet"
+      className="grid shrink-0 grid-rows-[auto_auto] overflow-hidden rounded-lg border border-border bg-card sm:flex sm:items-center"
+    >
+      <Link
+        to="/wallet"
+        aria-label="Open wallet"
+        className="flex items-center justify-center gap-1.5 border-b border-border px-2 py-0.5 transition-colors hover:bg-muted/60 sm:min-w-[6.5rem] sm:border-b-0 sm:border-r sm:px-2.5 sm:py-1.5"
+      >
+        {loading ? (
+          <span aria-hidden className="h-3 w-12 animate-pulse rounded bg-muted sm:w-16" />
+        ) : (
+          <span className="tabular text-[13px] font-semibold sm:text-sm">{formatUsd(available ?? 0)}</span>
+        )}
+        <span className="hidden rounded bg-gold/15 px-1 text-[9px] font-bold text-gold sm:inline">TEST</span>
+      </Link>
+      <div className="flex items-stretch divide-x divide-border">
+        <Link to="/wallet" search={{ mode: "deposit" }} className={`${action} text-primary hover:bg-primary/10`}>
+          <ArrowDownToLine className="hidden h-3.5 w-3.5 shrink-0 lg:block" aria-hidden /> Deposit
+        </Link>
+        <Link to="/wallet" search={{ mode: "withdraw" }} className={`${action} text-muted-foreground hover:bg-muted hover:text-foreground`}>
+          <ArrowUpFromLine className="hidden h-3.5 w-3.5 shrink-0 lg:block" aria-hidden /> Withdraw
+        </Link>
+      </div>
+    </nav>
   );
 }
 

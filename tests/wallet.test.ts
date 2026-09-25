@@ -8,7 +8,7 @@ import {
   signatureMatches,
 } from "../src/lib/web3/message";
 import { WALLET_MESSAGES, serverCodeToError, toWalletError } from "../src/lib/web3/errors";
-import { guardedRequest } from "../src/lib/web3/metamask";
+import { guardedRequest, sessionFor } from "../src/lib/web3/metamask";
 import { buildDepositTransaction } from "../src/lib/crypto/deposit";
 import { TESTNET } from "../src/lib/crypto/allowlist";
 import { ALLOWED_WALLET_METHODS } from "../src/lib/web3/config";
@@ -125,6 +125,57 @@ describe("provider safety", () => {
     expect(WALLET_MESSAGES[serverCodeToError("INVALID_SIGNATURE")]).toBe(
       "Could not verify ownership of this wallet.",
     );
+    // Provider shapes seen from the MetaMask Connect SDK / extension.
+    expect(toWalletError({ data: { code: 4001 }, message: "Rejected" }, "connect").code).toBe(
+      "CONNECT_REJECTED",
+    );
+    expect(toWalletError(new Error("MetaMask not detected"), "connect").code).toBe("UNAVAILABLE");
+    expect(toWalletError(new Error("Unrecognized chain 0x1"), "connect").code).toBe(
+      "UNSUPPORTED_NETWORK",
+    );
+    expect(toWalletError(new Error("Request timed out"), "connect").code).toBe("TIMEOUT");
+  });
+  it("drops a stale connection and retries once when the first attempt fails", async () => {
+    let attempts = 0;
+    let disconnected = 0;
+    const session = sessionFor(
+      { request: async () => "0x1" },
+      async () => {
+        attempts += 1;
+        if (attempts === 1) throw new Error("A connection for this origin already exists");
+        return { accounts: [acct.address], chainId: "0x14a34" };
+      },
+      async () => {
+        disconnected += 1;
+      },
+    );
+    const r = await session.connect();
+    expect(r).toEqual({ address: acct.address, chainId: "0x14a34" });
+    expect(attempts).toBe(2);
+    expect(disconnected).toBe(1);
+  });
+  it("never retries after the user dismisses the prompt", async () => {
+    let attempts = 0;
+    const session = sessionFor(
+      { request: async () => "0x1" },
+      async () => {
+        attempts += 1;
+        throw { code: 4001, message: "User rejected the request." };
+      },
+      async () => {},
+    );
+    await expect(session.connect()).rejects.toThrow(WALLET_MESSAGES.CONNECT_REJECTED);
+    expect(attempts).toBe(1);
+  });
+  it("reports a repeated failure as a safe message", async () => {
+    const session = sessionFor(
+      { request: async () => "0x1" },
+      async () => {
+        throw new Error("boom");
+      },
+      async () => {},
+    );
+    await expect(session.connect()).rejects.toThrow(WALLET_MESSAGES.GENERIC);
   });
   it("allows only verification and narrowly used deposit methods", async () => {
     const calls: string[] = [];

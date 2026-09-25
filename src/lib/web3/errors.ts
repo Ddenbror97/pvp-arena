@@ -17,6 +17,10 @@ export const WALLET_MESSAGES = {
   GENERIC: "Something went wrong with the wallet. Please try again.",
 } as const;
 export type WalletErrorCode = keyof typeof WALLET_MESSAGES;
+export const WALLET_ERROR_CODES = Object.keys(WALLET_MESSAGES) as [
+  WalletErrorCode,
+  ...WalletErrorCode[],
+];
 
 export class WalletError extends Error {
   constructor(public code: WalletErrorCode) {
@@ -27,19 +31,31 @@ export class WalletError extends Error {
 /** Map any provider/server error to a safe code. Never surfaces raw text. */
 export function toWalletError(e: unknown, phase: "connect" | "sign" | "send"): WalletError {
   if (e instanceof WalletError) return e;
-  // Diagnostic only: provider code/message, never secrets.
-  console.warn("[wallet]", phase, (e as { code?: unknown })?.code, String((e as { message?: unknown })?.message ?? e).slice(0, 200));
   const code = (e as { code?: unknown })?.code;
-  const msg = String((e as { message?: unknown })?.message ?? "").toLowerCase();
+  const dataCode = (e as { data?: { code?: unknown } })?.data?.code;
+  const msg = String((e as { message?: unknown })?.message ?? e).toLowerCase();
+  // Diagnostic only: provider code/message, never secrets.
+  console.warn("[wallet]", phase, code ?? dataCode, msg.slice(0, 200));
   if (
     code === 4001 ||
     code === "ACTION_REJECTED" ||
-    msg.includes("user rejected") ||
-    msg.includes("user denied")
+    dataCode === 4001 ||
+    /user rejected|user denied|rejected the request|action rejected|cancelled|canceled|dismissed|closed popup/.test(
+      msg,
+    )
   )
-    return new WalletError(phase === "sign" ? "SIGN_REJECTED" : phase === "send" ? "TRANSACTION_REJECTED" : "CONNECT_REJECTED");
-  if (code === 4900 || code === 4901) return new WalletError("UNAVAILABLE");
-  if (msg.includes("timeout") || msg.includes("timed out")) return new WalletError("TIMEOUT");
+    return new WalletError(
+      phase === "sign" ? "SIGN_REJECTED" : phase === "send" ? "TRANSACTION_REJECTED" : "CONNECT_REJECTED",
+    );
+  if (
+    code === 4900 ||
+    code === 4901 ||
+    /not detected|no extension|not installed|no provider|ethereum provider|is not available|install the/.test(msg)
+  )
+    return new WalletError("UNAVAILABLE");
+  if (/timeout|timed out/.test(msg)) return new WalletError("TIMEOUT");
+  if (/unsupported network|unsupported chain|unrecognized chain|chain not supported/.test(msg))
+    return new WalletError("UNSUPPORTED_NETWORK");
   return new WalletError("GENERIC");
 }
 

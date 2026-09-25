@@ -59,6 +59,11 @@ export function WalletCard({ userId }: { userId: string }) {
     const code = e instanceof WalletError ? e.code : phase === "sign" ? "SIGN_REJECTED" : "GENERIC";
     setErr(code);
     toast.error(WALLET_MESSAGES[code]);
+    // Record the safe code server-side so failures are diagnosable after the fact.
+    if (phase === "connect")
+      void eventFn({ data: { event: "WALLET_CONNECT_FAILED", address: null, reason: code } }).catch(
+        () => {},
+      );
   };
 
   async function connect() {
