@@ -19,14 +19,10 @@ export async function fetchCurrentRound(): Promise<RlGame | null> {
 }
 
 export async function fetchRoundBets(gameId: number): Promise<RlBet[]> {
-  const { data, error } = await supabase
-    .from("roulette_bets")
-    .select("*, player:profiles!roulette_bets_user_id_fkey(username, avatar_url)")
-    .eq("game_id", gameId)
-    .order("created_at", { ascending: true })
-    .limit(500);
+  // Safe public summary: excludes internal ledger/idempotency references.
+  const { data, error } = await supabase.rpc("roulette_round_bets" as never, { p_game_id: gameId } as never);
   if (error) throw error;
-  return (data ?? []) as unknown as RlBet[];
+  return ((data as unknown) ?? []) as RlBet[];
 }
 
 export async function fetchHistory(limit = 12): Promise<RlGame[]> {
@@ -81,6 +77,8 @@ export function useRouletteRealtime() {
       .on("postgres_changes", { event: "*", schema: "public", table: "roulette_games" }, () => {
         qc.invalidateQueries({ queryKey: ["roulette-round"] });
         qc.invalidateQueries({ queryKey: ["roulette-history"] });
+        // Other players' bets arrive via the round's pot/bet_count update.
+        qc.invalidateQueries({ queryKey: ["roulette-bets"] });
       })
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "roulette_bets" }, (p) => {
         const gid = (p.new as { game_id?: number }).game_id;

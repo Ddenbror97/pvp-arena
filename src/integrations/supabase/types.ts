@@ -2896,6 +2896,7 @@ export type Database = {
         Returns: Record<string, unknown>
       }
       roulette_integrity_check: { Args: never; Returns: Json }
+      roulette_round_bets: { Args: { p_game_id: number }; Returns: Json }
       roulette_tick: { Args: never; Returns: Json }
       server_time: { Args: never; Returns: string }
       signup_rate_check: {
