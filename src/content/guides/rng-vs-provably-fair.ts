@@ -211,6 +211,14 @@ The strongest check uses a tool the site does not control, such as a short scrip
 
 Provably fair does not replace licensing, consumer protection or complaint processes. It adds a layer of transparency on top. When judging any site, look at both sides: how results are produced and verified, and how the business handles your money, your data and disputes. The [terms](/terms) and [privacy](/privacy) pages are where a site should explain the second part clearly.`,
     },
+    {
+      id: "myths",
+      title: "Common misunderstandings",
+      body: `- **"Provably fair means I will win more."** No. It proves results were not changed; the odds and edge stay the same.
+- **"Certified RNG means rigging is impossible."** It makes rigging unlikely at licensed sites, but you still cannot check a specific result.
+- **"A long losing streak proves the RNG is broken."** Streaks are normal in random results. Check the maths and, where possible, verify the rounds instead of relying on a feeling.
+- **"The verifier on the site is enough."** It is useful, but an independent check is stronger because it does not depend on the site's own code.`,
+    },
   ],
   faqs: [
     {

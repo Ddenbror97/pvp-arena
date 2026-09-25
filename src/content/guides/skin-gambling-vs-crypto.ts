@@ -226,6 +226,11 @@ Treat any gambling content as advertising unless it shows otherwise.`,
 
 Any gambling site you use should be adults only and should say so clearly. PVPspinArena is for adults only and requires an account with email verification before you can play. If you are a parent, the tools in the [responsible gambling page](/responsible-gambling) also cover blocking gambling sites on shared devices.`,
     },
+    {
+      id: "today",
+      title: "Skin gambling today",
+      body: `Skin gambling did not disappear after 2016. Sites for CS2 still exist, often based outside the countries that restrict them, and the formats remain much the same. Rules from Valve and regulators continue to change, so what is allowed can shift quickly. Anyone considering it should check local law, the site's licence and how deposits and withdrawals really work before trading any items.`,
+    },
   ],
   faqs: [
     {
