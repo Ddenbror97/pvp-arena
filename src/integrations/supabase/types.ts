@@ -2479,6 +2479,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      _roulette_domain_valid: { Args: never; Returns: boolean }
       _roulette_ensure_open: { Args: never; Returns: number }
       _roulette_refund: {
         Args: { p_game_id: number; p_reason: string }
