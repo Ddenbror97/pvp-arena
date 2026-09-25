@@ -62,10 +62,11 @@ function formatUnits(units: string, asset: Asset) {
   const value = `${padded.slice(0, -decimals)}.${padded.slice(-decimals)}`.replace(/\.?0+$/, "");
   return `${value} ${asset}`;
 }
-function TxLink({ hash }: { hash: string | null }) {
+function TxLink({ hash, chainId }: { hash: string | null; chainId?: number }) {
   if (!hash) return null;
+  const explorer = EXPLORERS[chainId ?? TESTNET.chainId] ?? TESTNET.explorer;
   return (
-    <a href={`${TESTNET.explorer}/tx/${hash}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-primary hover:underline">
+    <a href={`${explorer}/tx/${hash}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-primary hover:underline">
       {hash.slice(0, 10)}… <ExternalLink className="h-3 w-3" />
     </a>
   );
