@@ -12,9 +12,9 @@ export const Route = createFileRoute("/roulette")({
   head: () => ({
     meta: [
       { title: "Roulette — PVPspinArena" },
-      { name: "description", content: "Multiplayer coin roulette: Purple, Silver or Green 14x. Server-drawn and verifiable. Test credits only." },
+      { name: "description", content: "Multiplayer coin roulette: Purple, Silver or Green 14x. Server-drawn and verifiable." },
       { property: "og:title", content: "Roulette — PVPspinArena" },
-      { property: "og:description", content: "Pick a coin, watch the roll. Provably fair, test credits only." },
+      { property: "og:description", content: "Pick a coin, watch the roll. Provably fair." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),

@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatUsd } from "@/lib/jackpot/math";
-import { TESTNET } from "@/lib/crypto/allowlist";
 import type { DepositInstruction } from "@/lib/crypto/deposit";
 import { getWalletSession } from "@/lib/web3/metamask";
 import { WALLET_CONFIG } from "@/lib/web3/config";
@@ -64,7 +63,7 @@ function formatUnits(units: string, asset: Asset) {
 }
 function TxLink({ hash, chainId }: { hash: string | null; chainId?: number | undefined }) {
   if (!hash) return null;
-  const explorer = EXPLORERS[chainId ?? TESTNET.chainId] ?? TESTNET.explorer;
+  const explorer = EXPLORERS[chainId ?? 8453] ?? "https://basescan.org";
   return (
     <a href={`${explorer}/tx/${hash}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-primary hover:underline">
       {hash.slice(0, 10)}… <ExternalLink className="h-3 w-3" />
@@ -117,7 +116,7 @@ export function CryptoRails({
   const activity = useQuery({ queryKey: ["crypto-activity"], queryFn: () => fetchActivity(), refetchInterval: 15_000 });
   const [mode, setMode] = useState<"deposit" | "withdraw">(requestedMode);
   const [asset, setAsset] = useState<Asset>("USDC");
-  const [chainId, setChainId] = useState<number>(TESTNET.chainId);
+  const [chainId, setChainId] = useState<number>(8453);
   const [amount, setAmount] = useState("");
   const [depositReview, setDepositReview] = useState<DepositReview | null>(null);
   const [withdrawalReview, setWithdrawalReview] = useState<WithdrawalReview | null>(null);
@@ -127,7 +126,7 @@ export function CryptoRails({
   const data = activity.data;
   const chains: ChainInfo[] = data?.chains ?? [];
   const chain: ChainInfo | undefined = chains.find((c) => c.chain_id === chainId) ?? chains[0];
-  const chainName = chain?.name ?? "Base Sepolia";
+  const chainName = chain?.name ?? "Base";
   const isTestnet = chain?.network_mode !== "mainnet";
   const cents = Math.round(Number(amount) * 100);
   const valid = Number.isFinite(cents) && cents > 0;
@@ -163,7 +162,7 @@ export function CryptoRails({
   async function reviewDeposit() {
     setBusy(true);
     try {
-      const result = await prepareDeposit({ data: { asset, usdCents: cents, chainId: chain?.chain_id ?? TESTNET.chainId } });
+      const result = await prepareDeposit({ data: { asset, usdCents: cents, chainId: chain?.chain_id ?? 8453 } });
       if (!result.ok) {
         toast.error(result.error);
         return;
@@ -199,7 +198,7 @@ export function CryptoRails({
     setBusy(true);
     try {
       if (asset === "ETH") {
-        const result = await doQuote({ data: { usdCents: cents, chainId: chain?.chain_id ?? TESTNET.chainId } });
+        const result = await doQuote({ data: { usdCents: cents, chainId: chain?.chain_id ?? 8453 } });
         if (!result.ok) {
           toast.error(result.error);
           return;
@@ -213,7 +212,7 @@ export function CryptoRails({
     if (!withdrawalReview) return;
     setBusy(true);
     try {
-      const result = await doRequest({ data: { asset: withdrawalReview.asset, usdCents: withdrawalReview.usdCents, quoteId: withdrawalReview.quote?.quote_id ?? null, chainId: chain?.chain_id ?? TESTNET.chainId } });
+      const result = await doRequest({ data: { asset: withdrawalReview.asset, usdCents: withdrawalReview.usdCents, quoteId: withdrawalReview.quote?.quote_id ?? null, chainId: chain?.chain_id ?? 8453 } });
       if (!result.ok) {
         toast.error(result.error);
         return;

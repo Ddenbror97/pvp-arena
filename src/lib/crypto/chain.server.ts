@@ -12,7 +12,7 @@ import {
 } from "viem";
 import { base, baseSepolia, mainnet } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
-import { TESTNET, checkStaticConfig, weiToCents, usdcUnitsToCents } from "./allowlist";
+import { TESTNET, checkStaticConfig, checkMainnetRegistry, weiToCents, usdcUnitsToCents } from "./allowlist";
 
 const ERC20 = parseAbi([
   "function transfer(address to, uint256 value) returns (bool)",
@@ -24,6 +24,7 @@ const FEED = parseAbi([
   "function decimals() view returns (uint8)",
 ]);
 const NATIVE_LOG_INDEX = 1_000_000;
+const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 const MAX_ETH_BLOCKS_PER_RUN = 60;
 const MAX_LOG_RANGE = 2000n;
 const GAS_MARGIN_BPS = 12_500n; // 1.25x safety margin on the exact-transaction gas estimate
@@ -127,10 +128,20 @@ export async function loadChainEnv(chainId: number): Promise<{ ok: true; env: En
     });
     if (!st.ok) return fail(st.reason);
   } else {
-    // Mainnet chains: the migration-seeded registry is the source of truth; it must
-    // declare mainnet mode and exact contract/feed addresses (verified against Circle/Chainlink docs).
-    if (net.network_mode !== "mainnet") return fail("MODE_MISMATCH");
-    if (!usdc.contract_address || !eth.price_feed_address) return fail("REGISTRY_INCOMPLETE");
+    // Mainnet chains: the registry must match the known-good Circle/Chainlink
+    // values exactly (hard production-config guard — fails closed on any drift).
+    const mc = checkMainnetRegistry({
+      chainId,
+      networkMode: net.network_mode,
+      usdc: usdc.contract_address,
+      usdcDecimals: Number(usdc.decimals),
+      feed: eth.price_feed_address,
+    });
+    if (!mc.ok) return fail(mc.reason);
+    // Risk/emergency settings must be present before real money moves.
+    if (s.payout_float_max_cents == null || s.daily_global_limit_cents == null || s.auto_approve_cents == null) {
+      return fail("RISK_SETTINGS_MISSING");
+    }
   }
 
   const client = createPublicClient({ chain, transport: http(rpcUrlFor(chainId), { timeout: 10_000 }) }) as PublicClient;
@@ -216,18 +227,34 @@ export async function snapshotEthPrice(env: Env): Promise<{ id: string; priceMic
 }
 
 /**
- * RPC agreement: two independent providers must return the SAME block hash at the
- * SAME block number, and that block must contain the transaction. Anything less
- * (different heads, missing tx) fails closed: no credit, retry next run.
+ * RPC agreement: two independent providers must agree on the block number, the
+ * block hash, the transaction receipt (status + block hash), and the exact
+ * log/event being credited. Anything less fails closed: no credit, retry next
+ * run, alert if persistent.
  */
-async function providersAgree(env: Env, txHash: string, blockNumber: bigint): Promise<boolean> {
+async function providersAgree(env: Env, txHash: string, blockNumber: bigint, logIndex: number | null): Promise<boolean> {
   if (!env.clientB) return env.networkMode === "testnet"; // mainnet requires two providers
-  const [bA, bB] = await Promise.all([
+  const [bA, bB, rA, rB] = await Promise.all([
     env.client.getBlock({ blockNumber }).catch(() => null),
     env.clientB!.getBlock({ blockNumber }).catch(() => null),
+    env.client.getTransactionReceipt({ hash: txHash as Hex }).catch(() => null),
+    env.clientB!.getTransactionReceipt({ hash: txHash as Hex }).catch(() => null),
   ]);
-  if (!bA || !bB || bA.hash !== bB.hash) return false;
-  return bA.transactions.includes(txHash as Hex);
+  if (!bA || !bB || bA.hash !== bB.hash || bA.number !== bB.number) return false;
+  if (!bA.transactions.includes(txHash as Hex)) return false;
+  if (!rA || !rB) return false;
+  if (rA.status !== "success" || rB.status !== "success") return false;
+  if (rA.blockHash !== rB.blockHash || rA.blockHash !== bA.hash) return false;
+  if (rA.blockNumber !== rB.blockNumber || rA.blockNumber !== blockNumber) return false;
+  if (logIndex != null) {
+    const lA = rA.logs.find((l) => l.logIndex === logIndex);
+    const lB = rB.logs.find((l) => l.logIndex === logIndex);
+    if (!lA || !lB) return false;
+    if (lA.address.toLowerCase() !== lB.address.toLowerCase()) return false;
+    if (lA.data !== lB.data) return false;
+    if (lA.topics.length !== lB.topics.length || lA.topics.some((t, i) => t !== lB.topics[i])) return false;
+  }
+  return true;
 }
 
 /** Deposit watcher for one chain: scan, re-scan overlap, verify, credit idempotently. */
@@ -239,10 +266,14 @@ export async function runDepositWatcher(chainId: number) {
   const s = env.settings;
   if (!s.crypto_system_enabled) return { ok: true, paused: true };
 
-  const [latest, safeBlock] = await Promise.all([
-    env.client.getBlockNumber(),
-    env.client.getBlock({ blockTag: "safe" }).then((b) => b.number!),
-  ]);
+  // Confirmation threshold is a plain block-number rule (the chain's own
+  // configurable credit_confirmations). The RPC "safe" tag is only an extra
+  // cap when the provider supports it — some providers don't.
+  const latest = await env.client.getBlockNumber();
+  const safeBlock = await env.client
+    .getBlock({ blockTag: "safe" })
+    .then((b) => b.number!)
+    .catch(() => latest);
   const cursorRaw = await must<number | null>(rpc("crypto_get_cursor", { p_chain: env.chainId }));
   const cursor = cursorRaw == null ? latest - 5n : BigInt(cursorRaw);
   const overlap = BigInt(s.overlap_blocks);
@@ -343,8 +374,12 @@ export async function runDepositWatcher(chainId: number) {
       if (receipt.blockNumber > creditAt) continue;
       const dest = String(d.to_address).toLowerCase();
       if (d.asset_key === "USDC") {
+        // Per-event validation: exact contract, genuine Transfer event, exact
+        // sender and destination, exact amount. Never trust the stored row alone.
         const log = receipt.logs.find((l) => l.logIndex === d.log_index);
         if (!log || log.address.toLowerCase() !== env.usdc) continue;
+        if ((log.topics[0] ?? "").toLowerCase() !== TRANSFER_TOPIC) continue;
+        if ((log.topics[1] ?? "").slice(-40).toLowerCase() !== String(d.from_address).toLowerCase().slice(2)) continue;
         if ((log.topics[2] ?? "").slice(-40).toLowerCase() !== dest.slice(2)) continue;
         if (BigInt(log.data) !== BigInt(d.units)) continue;
       } else {
@@ -353,7 +388,7 @@ export async function runDepositWatcher(chainId: number) {
         if (price === undefined) price = await snapshotEthPrice(env).catch(() => null);
         if (!price) continue; // awaiting valuation
       }
-      if (!(await providersAgree(env, d.tx_hash, receipt.blockNumber))) {
+      if (!(await providersAgree(env, d.tx_hash, receipt.blockNumber, d.asset_key === "USDC" ? d.log_index : null))) {
         await rpc("crypto_raise_incident", {
           p_check: "crypto_rpc_disagreement",
           p_fp: `crypto_rpc_disagreement:${env.chainId}:${d.tx_hash}`,
@@ -434,6 +469,30 @@ export async function runWithdrawalWorker(chainId: number) {
     await must(rpc("crypto_withdrawal_failed", { p_id: next.id, p_reason: "destination wallet no longer verified" }));
     return { ok: true, results: { ...results, [next.id]: "released" } };
   }
+  // Hot-wallet float hard cap: the payout key has limited authority. If the
+  // wallet holds more than its configured operating maximum, the worker refuses
+  // to send payouts until the excess is swept to treasury manually.
+  const floatMax = BigInt(Number(env.settings.payout_float_max_cents ?? 0));
+  if (floatMax > 0n) {
+    const [floatUsdc, floatWei] = await Promise.all([
+      env.client.readContract({ address: env.usdc as Hex, abi: ERC20, functionName: "balanceOf", args: [account.address] }) as Promise<bigint>,
+      env.client.getBalance({ address: account.address }),
+    ]);
+    let floatCents = usdcUnitsToCents(floatUsdc);
+    if (floatWei > 0n) {
+      const p = await snapshotEthPrice(env).catch(() => null);
+      if (p) floatCents += weiToCents(floatWei, p.priceMicro);
+    }
+    if (floatCents > floatMax) {
+      await rpc("crypto_raise_incident", {
+        p_check: "crypto_float_cap",
+        p_fp: `crypto_float_cap:${env.chainId}:${new Date().toISOString().slice(0, 13)}`,
+        p_details: { chain_id: env.chainId, float_cents: Number(floatCents), max_cents: Number(floatMax) },
+      });
+      return { ok: true, results: { ...results, [next.id]: "float_cap_exceeded" } };
+    }
+  }
+
   const to = next.to_address as Hex;
   const units = BigInt(String(next.units).split(".")[0] ?? "0");
   const request =

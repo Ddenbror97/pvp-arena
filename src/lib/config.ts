@@ -6,7 +6,7 @@
 export const APP = {
   name: "PVPspinArena",
   currencyLabel: "USD",
-  creditsLabel: "TEST CREDITS",
+  creditsLabel: "BALANCE",
 } as const;
 
 export const COMPLIANCE = {

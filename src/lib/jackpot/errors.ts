@@ -10,7 +10,7 @@ const MESSAGES: Record<string, string> = {
   INVALID_USERNAME: "Usernames are 3–20 letters, numbers or underscores.",
   USERNAME_TAKEN: "That username is taken.",
   AGE_CONFIRMATION_REQUIRED: "You must confirm you are 18 or older.",
-  FAUCET_COOLDOWN: "You've already claimed test credits this hour.",
+  FAUCET_COOLDOWN: "Credit claims are no longer available.",
   FORBIDDEN: "You don't have access to this.",
   BELOW_MIN_WAGER: "That's below the minimum wager.",
   ABOVE_MAX_WAGER: "That's above the maximum wager.",
