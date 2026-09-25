@@ -41,7 +41,7 @@ const tick = (f: Flags = {}) => as(null, async (tx) => (await tx`select pvp_test
 const game = async (id: number) => (await sql`select * from pvp_test.coinflip_games where id = ${id}`)[0];
 const payout = async (id: number) => (await sql`select * from pvp_test.coinflip_payouts where game_id = ${id}`)[0];
 const bal = async (uid: string, kind = "user_available") =>
-  Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind}`)[0].balance);
+  Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind} and account_type = 'test_credit'`)[0].balance);
 const expectErr = (p: Promise<unknown>, code: string) => expect(p).rejects.toThrow(code);
 
 async function setCfg(pre = 150, anim = 200, timeout = 60, rate = 1000, maxOpen = 100) {

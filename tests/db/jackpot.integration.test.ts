@@ -35,7 +35,7 @@ const tick = (fail = false) => as(null, async (tx) => (await tx`select pvp_test.
 const openGame = async () => (await sql`select * from pvp_test.jackpot_games where status in ('WAITING','ACTIVE')`)[0];
 const game = async (id: number) => (await sql`select * from pvp_test.jackpot_games where id = ${id}`)[0];
 const bal = async (uid: string, kind = "user_available") =>
-  Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind}`)[0].balance);
+  Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind} and account_type = 'test_credit'`)[0].balance);
 
 async function expectErr(p: Promise<unknown>, code: string) {
   await expect(p).rejects.toThrow(code);
@@ -310,7 +310,7 @@ d("jackpot engine (isolated schema)", () => {
     await expect(
       sql.begin(async (tx) => {
         const [t] = await tx`insert into pvp_test.ledger_transactions (kind, idempotency_key) values ('refund', ${randomUUID()}) returning id`;
-        const [acc] = await tx`select id from pvp_test.wallet_accounts where owner_id = ${a} and kind='user_available'`;
+        const [acc] = await tx`select id from pvp_test.wallet_accounts where owner_id = ${a} and kind='user_available' and account_type='test_credit'`;
         await tx`select pvp_test._post(${t.id}, ${acc.id}, 999999)`; // unbalanced single-sided posting
       }),
     ).rejects.toThrow(/LEDGER_UNBALANCED/);

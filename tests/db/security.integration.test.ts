@@ -41,7 +41,7 @@ const jpJoin = (uid: string, amount: number, c: Ctx = {}) =>
   as(uid, async (tx) => (await tx`select pvp_test.jackpot_join(${amount}, ${randomUUID()}) as r`)[0].r, c);
 const cfGame = async (id: number) => (await sql`select * from pvp_test.coinflip_games where id = ${id}`)[0];
 const bal = async (uid: string, kind = "user_available") =>
-  Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind}`)[0]?.balance ?? 0);
+  Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind} and account_type = 'test_credit'`)[0]?.balance ?? 0);
 
 async function setCf(timeout = 60) {
   await sql`update pvp_test.coinflip_config set pre_delay_ms=100, animation_ms=150, waiting_timeout_seconds=${timeout},
@@ -272,7 +272,7 @@ d("security remediation (isolated schema)", () => {
     const clean = (await sql`select pvp_test.integrity_check() r`)[0].r;
     expect(clean.incidents).toBe(0);
     // Simulate corruption (bypassing the ledger) and confirm detection.
-    await sql`update pvp_test.wallet_accounts set balance = balance + 777 where owner_id = ${a} and kind = 'user_available'`;
+    await sql`update pvp_test.wallet_accounts set balance = balance + 777 where owner_id = ${a} and kind = 'user_available' and account_type = 'test_credit'`;
     const before = await bal(a);
     const found = (await sql`select pvp_test.integrity_check() r`)[0].r;
     expect(found.incidents).toBeGreaterThanOrEqual(2);

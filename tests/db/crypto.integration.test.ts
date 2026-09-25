@@ -70,13 +70,14 @@ async function assertInvariants() {
 d("crypto money path", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
-    await migrateTestSchemaToReal(sql, { realPlay: true });
+    await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     // Test schema only: run the Base Sepolia rail on the real USD ledger.
     await sql.unsafe(`alter table pvp_test.chain_assets disable trigger user;
       update pvp_test.chain_assets set ledger_asset = 'USD', ledger_account_type = 'real' where chain_id = 84532;
       alter table pvp_test.chain_assets enable trigger user;`);
     TREASURY = (await sql`select address from pvp_test.chain_treasury_accounts where role = 'deposit'`)[0].address.toLowerCase();
     await sql`update pvp_test.jackpot_config set entry_rate_limit = 100000`;
+    await sql`update pvp_test.crypto_settings set daily_limit_cents = 10000000, daily_global_limit_cents = 100000000, payout_float_max_cents = 100000000`;
   }, 120_000);
 
   it("duplicate deposit is credited exactly once (replayed + concurrent)", async () => {
@@ -248,6 +249,7 @@ d("crypto money path", () => {
     await sql`update pvp_test.crypto_settings set deposits_enabled = true`;
     // Multi-chain: settings are no longer locked to one testnet chain; chains are
     // gated individually via chain_networks.is_enabled instead.
+    await sql.unsafe(`alter table pvp_test.chain_networks disable trigger user; update pvp_test.chain_networks set is_enabled = false where chain_id = 8453; alter table pvp_test.chain_networks enable trigger user;`);
     await expect(sql`select pvp_test.crypto_request_withdrawal(${u.id}, 8453, 'USDC', 1000, null, true) as r`).rejects.toThrow(/CHAIN_DISABLED/);
   });
 
