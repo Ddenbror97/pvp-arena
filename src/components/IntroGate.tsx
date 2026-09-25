@@ -61,7 +61,10 @@ export function IntroGate() {
     <div className={`intro-half intro-half-${side}`} aria-hidden>
       <div className="intro-logo-wrap">
         <img src={arenaLogo.url} alt="" width={240} height={128} className="intro-logo" decoding="async" />
-        <span className="intro-sweep" />
+        <span
+          className="intro-sweep"
+          style={{ WebkitMaskImage: `url(${arenaLogo.url})`, maskImage: `url(${arenaLogo.url})` }}
+        />
       </div>
     </div>
   );
