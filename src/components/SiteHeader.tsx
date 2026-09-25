@@ -105,6 +105,7 @@ export function SiteFooter() {
           <h2 className="font-display text-sm text-foreground">How it works</h2>
           <ul className="mt-4 space-y-3">
             <li><Link to="/how-it-works" className={footerLink}>How it works</Link></li>
+            <li><Link to="/guides" className={footerLink}>Guides</Link></li>
           </ul>
         </div>
 

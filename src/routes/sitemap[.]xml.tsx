@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import { GUIDES } from "@/content/guides";
 
 const BASE_URL = "https://pvpspinarena.com";
 
@@ -15,6 +16,7 @@ const STATIC_PATHS = [
   "/terms",
   "/privacy",
   "/responsible-gambling",
+  "/guides",
 ];
 
 function urlEntry(loc: string, lastmod?: string | null): string {
@@ -27,6 +29,7 @@ export const Route = createFileRoute("/sitemap.xml")({
     handlers: {
       GET: async () => {
         const entries: string[] = STATIC_PATHS.map((p) => urlEntry(p));
+        for (const g of GUIDES) entries.push(urlEntry(`/guides/${g.slug}`, g.updated));
 
         // Dynamic entries: public fairness/audit pages for completed games.
         try {
