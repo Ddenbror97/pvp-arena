@@ -237,8 +237,9 @@ d("crypto money path", () => {
     const dep2 = await observe("USDC", txh(), u.wallet, "2000000");
     expect((await credit(dep2.id)).status).toBe("PAUSED");
     await sql`update pvp_test.crypto_settings set deposits_enabled = true`;
-    await expect(sql`update pvp_test.crypto_settings set mainnet_enabled = true`).rejects.toThrow();
-    await expect(sql`update pvp_test.crypto_settings set chain_id = 8453`).rejects.toThrow();
+    // Multi-chain: settings are no longer locked to one testnet chain; chains are
+    // gated individually via chain_networks.is_enabled instead.
+    await expect(sql`select pvp_test.crypto_request_withdrawal(${u.id}, 8453, 'USDC', 1000, null, true) as r`).rejects.toThrow(/CHAIN_DISABLED/);
   });
 
   it("reconciliation mismatch raises an alert and never changes balances", async () => {
