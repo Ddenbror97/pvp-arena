@@ -361,3 +361,19 @@ describe("provider safety", () => {
     expect(() => buildDepositTransaction({ asset: "ETH", chainId: TESTNET.chainId, treasury, token: null, units: "0" })).toThrow("INVALID_AMOUNT");
   });
 });
+
+describe("personal deposit address derivation", () => {
+  it("derives deterministic addresses from an xpub and never needs private keys", async () => {
+    const { mnemonicToSeedSync } = await import("@scure/bip39");
+    const { HDKey } = await import("@scure/bip32");
+    const { deriveDepositAddress } = await import("../src/lib/crypto/addresses.server");
+    const seed = mnemonicToSeedSync("test test test test test test test test test test test junk");
+    const xpub = HDKey.fromMasterSeed(seed).neutered().publicExtendedKey;
+    const a0 = deriveDepositAddress(xpub, 8453, 0);
+    expect(a0).toMatch(/^0x[0-9a-fA-F]{40}$/);
+    expect(deriveDepositAddress(xpub, 8453, 0)).toBe(a0); // deterministic
+    expect(deriveDepositAddress(xpub, 8453, 1)).not.toBe(a0); // per-player index
+    expect(deriveDepositAddress(xpub, 1, 0)).not.toBe(a0); // per-chain path
+    expect(() => deriveDepositAddress("not-an-xpub", 8453, 0)).toThrow("XPUB_INVALID");
+  });
+});
