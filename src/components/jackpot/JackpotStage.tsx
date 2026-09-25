@@ -14,6 +14,7 @@ import {
 import { formatChance, formatUsd } from "@/lib/jackpot/math";
 import { emitSound } from "@/lib/sound";
 import { JackpotWheel, SPIN_MS, colorFor } from "./JackpotWheel";
+import { CountdownLock } from "./CountdownLock";
 import { PlayerList } from "./PlayerList";
 import { EntryPanel } from "./EntryPanel";
 import { PlayerAvatar } from "./Avatar";
@@ -107,7 +108,7 @@ export function JackpotStage() {
           toast("Countdown started", { description: "Second player joined — 60 seconds" });
       }
       if (p.status !== "DRAWING" && game.status === "DRAWING")
-        toast("No more entries", { description: "Drawing winner..." });
+        toast("No more entries", { description: "Preparing the wheel to spin" });
     }
     prev.current = { id: game.id, players: game.player_count, end: endMs, status: game.status };
   }, [game, endMs]);
@@ -192,14 +193,14 @@ export function JackpotStage() {
               <div className="tabular mt-2 text-3xl font-semibold sm:text-4xl">
                 {formatUsd(pot)}
               </div>
-              <div className="mt-3 flex flex-col items-center gap-2">
-                <div className="relative grid h-14 w-14 place-items-center">
-                  <span className="absolute inset-0 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
-                  <span key={countN} className="tabular animate-scale-in font-display text-2xl text-primary">{countN}</span>
+              <div className="mt-3 flex flex-col items-center">
+                <CountdownLock spinAt={countdownTarget ?? t} now={serverNow} />
+                <div className="mt-2 text-[10px] uppercase tracking-[0.26em] text-muted-foreground">
+                  Preparing the wheel
                 </div>
-                <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Picking winner</div>
               </div>
             </div>
+
           ) : (
             <div className="text-center">
               <div className="text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
