@@ -13,6 +13,8 @@ import arenaLogo from "@/assets/arena-logo-v2.png.asset.json";
 export function SiteHeader() {
   const { userId, profile, ready } = useAuth();
   const wallet = useWallet(userId);
+  // Header is on every page, so deposit progress is announced app-wide.
+  useDepositNotifications(userId);
   const [hint] = useState(readAuthHint);
   const link = "text-sm text-muted-foreground hover:text-foreground transition-colors [&.active]:text-foreground";
   // A stored session means the signed-in wallet group is the final shape, so reserve it now.
