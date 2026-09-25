@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ChevronDown, MessageSquare, Send } from "lucide-react";
+import { MessageSquare, Send } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useGameChat } from "@/lib/chat/api";
 import { sendChatMessage } from "@/lib/chat/chat.functions";
@@ -24,7 +24,6 @@ export function GameChat({ className }: { gameType: ChatRoom; className?: string
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [collapsed, setCollapsed] = useState(false);
   const [unseen, setUnseen] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const atBottom = useRef(true);
@@ -102,21 +101,10 @@ export function GameChat({ className }: { gameType: ChatRoom; className?: string
       aria-label="Live chat"
     >
       <header className="flex items-center justify-between border-b border-border px-3 py-2">
-        <button
-          type="button"
-          className="flex items-center gap-2"
-          onClick={() => setCollapsed((c) => !c)}
-          aria-expanded={!collapsed}
-        >
-          <MessageSquare className="h-3.5 w-3.5 text-primary" />
-          <h2 className="font-display text-xs uppercase tracking-widest">Live chat</h2>
-          <ChevronDown
-            className={cn(
-              "h-3.5 w-3.5 text-muted-foreground transition lg:hidden",
-              collapsed && "-rotate-90",
-            )}
-          />
-        </button>
+        <div className="flex items-center gap-2">
+          <MessageSquare className="h-3.5 w-3.5 shrink-0 text-primary" />
+          <h2 className="truncate font-display text-xs uppercase tracking-widest">Live chat</h2>
+        </div>
         <span className="flex min-w-[5.5rem] items-center justify-end gap-1.5 text-[11px] text-muted-foreground">
           <span
             className={cn(
@@ -138,7 +126,7 @@ export function GameChat({ className }: { gameType: ChatRoom; className?: string
         </span>
       </header>
 
-      <div className={cn("flex min-h-0 flex-1 flex-col", collapsed && "hidden lg:flex")}>
+      <div className="flex min-h-0 flex-1 flex-col">
         {!userId ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 py-10 text-center">
             <p className="text-sm text-muted-foreground">Sign in to join the chat.</p>
