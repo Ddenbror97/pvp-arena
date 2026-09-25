@@ -308,7 +308,7 @@ export function CryptoRails({
               <AssetSelector value={asset} onChange={(next) => reset(mode, next)} />
               <AmountField amount={amount} setAmount={(value) => { setAmount(value); setDepositReview(null); setWithdrawalReview(null); }} max={mode === "withdraw" ? availableCents : undefined} />
               <div className="rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-                {mode === "deposit" ? <><b className="text-foreground">From {shortAddress(data.wallet)}</b><br />Only a transfer sent from this verified address is credited. Minimum {formatUsd(data.settings.min_deposit_cents)} · about 6 minutes.</> : <><b className="text-foreground">To {shortAddress(data.wallet)}</b><br />Minimum {formatUsd(data.settings.min_withdrawal_cents)} · {formatUsd(data.settings.daily_limit_cents)}/day · above {formatUsd(data.settings.auto_approve_cents)} requires review.</>}
+                {mode === "deposit" ? <><b className="text-foreground">From {shortAddress(data.wallet)}</b><br />Only a transfer sent from this verified address is credited. Minimum {formatUsd(chain?.min_deposit_cents ?? data.settings.min_deposit_cents)}{isTestnet ? " · about 6 minutes" : ""}.</> : <><b className="text-foreground">To {shortAddress(data.wallet)}</b><br />Minimum {formatUsd(chain?.min_withdrawal_cents ?? data.settings.min_withdrawal_cents)} · {formatUsd(data.settings.daily_limit_cents)}/day · above {formatUsd(data.settings.auto_approve_cents)} requires review.</>}
               </div>
               <Button className="h-11 w-full" onClick={mode === "deposit" ? reviewDeposit : reviewWithdrawal} disabled={!valid || busy || (mode === "deposit" ? !data.settings.deposits_enabled : !data.settings.withdrawals_enabled) || (mode === "withdraw" && cents > availableCents)}>
                 {busy ? "Preparing…" : mode === "deposit" ? "Review deposit" : asset === "ETH" ? "Get ETH quote" : "Review withdrawal"}
@@ -325,7 +325,7 @@ export function CryptoRails({
           <ul className="divide-y divide-border text-sm">
             {rows.map((row: any) => (
               <li key={row.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
-                <div className="min-w-0 flex-1"><div className="font-medium">{row.type} · {formatUnits(row.units, row.asset_key)}</div><div className="flex flex-wrap gap-2 text-xs text-muted-foreground"><span>{new Date(row.at).toLocaleString()}</span><TxLink hash={row.tx_hash} /></div></div>
+                <div className="min-w-0 flex-1"><div className="font-medium">{row.type} · {formatUnits(row.units, row.asset_key)}</div><div className="flex flex-wrap gap-2 text-xs text-muted-foreground"><span>{new Date(row.at).toLocaleString()}</span>{row.chain_id && chains.length > 1 && <span>{chains.find((c) => c.chain_id === row.chain_id)?.name ?? row.chain_id}</span>}<TxLink hash={row.tx_hash} chainId={row.chain_id} /></div></div>
                 <span className="text-xs">{row.status === "CONFIRMED" && row.type === "Withdrawal" ? "Confirmed" : STATUS[row.status] ?? row.status}</span>
                 <span className="font-mono font-semibold">{row.type === "Deposit" ? "+" : "−"}{formatUsd(row.usd_cents)}</span>
                 {row.type === "Withdrawal" && ["PENDING", "APPROVED"].includes(row.status) && <Button size="sm" variant="secondary" onClick={() => cancel(row.id)}>Cancel</Button>}
