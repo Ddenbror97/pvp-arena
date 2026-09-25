@@ -44,21 +44,22 @@ function WalletPage() {
   const wallet = useWallet(userId);
   const qc = useQueryClient();
   const ids = wallet.data?.accountIds ?? [];
-  const kindById = new Map<string, string>();
   const history = useQuery({
     queryKey: ["ledger", userId, ids.join(",")],
     enabled: ids.length > 0,
     queryFn: async () => {
-      const { data: accts } = await supabase.from("wallet_accounts").select("id, kind").in("id", ids);
-      accts?.forEach((a) => kindById.set(a.id, a.kind));
+      // Single request: account kind comes from the joined wallet account row.
       const { data, error } = await supabase
         .from("ledger_postings")
-        .select("id, amount, balance_after, created_at, account_id, ledger_transactions(kind, memo, game_id)")
+        .select("id, amount, balance_after, created_at, account_id, wallet_accounts(kind), ledger_transactions(kind, memo, game_id)")
         .in("account_id", ids)
         .order("id", { ascending: false })
         .limit(100);
       if (error) throw error;
-      return (data ?? []).map((p) => ({ ...p, accountKind: kindById.get(p.account_id) }));
+      return (data ?? []).map((p) => ({
+        ...p,
+        accountKind: (p.wallet_accounts as { kind: string } | null)?.kind,
+      }));
     },
   });
 
