@@ -24,6 +24,7 @@ const FEED = parseAbi([
   "function decimals() view returns (uint8)",
 ]);
 const NATIVE_LOG_INDEX = 1_000_000;
+const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 const MAX_ETH_BLOCKS_PER_RUN = 60;
 const MAX_LOG_RANGE = 2000n;
 const GAS_MARGIN_BPS = 12_500n; // 1.25x safety margin on the exact-transaction gas estimate
@@ -373,8 +374,12 @@ export async function runDepositWatcher(chainId: number) {
       if (receipt.blockNumber > creditAt) continue;
       const dest = String(d.to_address).toLowerCase();
       if (d.asset_key === "USDC") {
+        // Per-event validation: exact contract, genuine Transfer event, exact
+        // sender and destination, exact amount. Never trust the stored row alone.
         const log = receipt.logs.find((l) => l.logIndex === d.log_index);
         if (!log || log.address.toLowerCase() !== env.usdc) continue;
+        if ((log.topics[0] ?? "").toLowerCase() !== TRANSFER_TOPIC) continue;
+        if ((log.topics[1] ?? "").slice(-40).toLowerCase() !== String(d.from_address).toLowerCase().slice(2)) continue;
         if ((log.topics[2] ?? "").slice(-40).toLowerCase() !== dest.slice(2)) continue;
         if (BigInt(log.data) !== BigInt(d.units)) continue;
       } else {
@@ -383,7 +388,7 @@ export async function runDepositWatcher(chainId: number) {
         if (price === undefined) price = await snapshotEthPrice(env).catch(() => null);
         if (!price) continue; // awaiting valuation
       }
-      if (!(await providersAgree(env, d.tx_hash, receipt.blockNumber))) {
+      if (!(await providersAgree(env, d.tx_hash, receipt.blockNumber, d.asset_key === "USDC" ? d.log_index : null))) {
         await rpc("crypto_raise_incident", {
           p_check: "crypto_rpc_disagreement",
           p_fp: `crypto_rpc_disagreement:${env.chainId}:${d.tx_hash}`,
