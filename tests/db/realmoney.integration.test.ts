@@ -82,7 +82,7 @@ d("real-money ledger migration", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
     TREASURY = (await sql`select address from pvp_test.chain_treasury_accounts where role = 'deposit' and chain_id = 84532`)[0].address.toLowerCase();
-    await sql`update pvp_test.jackpot_config set entry_rate_limit = 100000, countdown_seconds = 1`;
+    await sql`update pvp_test.jackpot_config set entry_rate_limit = 100000, countdown_seconds = 4`;
     await sql`update pvp_test.coinflip_config set pre_delay_ms = 50, animation_ms = 50, create_rate_limit = 100000, fee_bps = 500`;
     await sql`update pvp_test.crypto_settings set watch_only = true, withdrawals_enabled = false, real_play_enabled = false, daily_limit_cents = 10000000, daily_global_limit_cents = 100000000, auto_approve_cents = 10000000`;
     // A pre-migration player with test credits, and the two snapshot deposits.
