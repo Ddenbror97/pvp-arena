@@ -163,7 +163,7 @@ export function CryptoRails({
   async function reviewDeposit() {
     setBusy(true);
     try {
-      const result = await prepareDeposit({ data: { asset, usdCents: cents } });
+      const result = await prepareDeposit({ data: { asset, usdCents: cents, chainId: chain?.chain_id ?? TESTNET.chainId } });
       if (!result.ok) {
         toast.error(result.error);
         return;
@@ -180,15 +180,15 @@ export function CryptoRails({
       if (connected.address.toLowerCase() !== depositReview.verifiedAddress.toLowerCase()) {
         throw new WalletError("ADDRESS_MISMATCH");
       }
-      let chain = connected.chainId;
-      if (chain !== WALLET_CONFIG.requiredChainId) {
+      let chainNow = connected.chainId;
+      if (chainNow !== WALLET_CONFIG.requiredChainId) {
         await session.switchToRequiredNetwork();
-        chain = await session.chainId();
+        chainNow = await session.chainId();
       }
-      if (chain !== WALLET_CONFIG.requiredChainId) throw new WalletError("UNSUPPORTED_NETWORK");
+      if (chainNow !== WALLET_CONFIG.requiredChainId) throw new WalletError("UNSUPPORTED_NETWORK");
       const hash = await session.sendTestDeposit(depositReview.instruction, depositReview.verifiedAddress);
       setSubmittedHash(hash);
-      toast.success("Deposit submitted to Base Sepolia");
+      toast.success(`Deposit submitted to ${chainName}`);
       window.setTimeout(refresh, 1500);
     } catch (error) {
       toast.error(error instanceof WalletError ? error.message : WALLET_MESSAGES.GENERIC);
@@ -199,7 +199,7 @@ export function CryptoRails({
     setBusy(true);
     try {
       if (asset === "ETH") {
-        const result = await doQuote({ data: { usdCents: cents } });
+        const result = await doQuote({ data: { usdCents: cents, chainId: chain?.chain_id ?? TESTNET.chainId } });
         if (!result.ok) {
           toast.error(result.error);
           return;
@@ -213,7 +213,7 @@ export function CryptoRails({
     if (!withdrawalReview) return;
     setBusy(true);
     try {
-      const result = await doRequest({ data: { asset: withdrawalReview.asset, usdCents: withdrawalReview.usdCents, quoteId: withdrawalReview.quote?.quote_id ?? null } });
+      const result = await doRequest({ data: { asset: withdrawalReview.asset, usdCents: withdrawalReview.usdCents, quoteId: withdrawalReview.quote?.quote_id ?? null, chainId: chain?.chain_id ?? TESTNET.chainId } });
       if (!result.ok) {
         toast.error(result.error);
         return;
