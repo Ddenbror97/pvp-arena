@@ -11,14 +11,14 @@ let appHydrated = false;
 export const Route = createFileRoute("/coinflip")({
   head: () => ({
     meta: [
-      { title: "Coinflip — PVPspinArena" },
+      { title: "Coinflip — 1v1 PvP Coinflip Game | PVPspinArena" },
       {
         name: "description",
         content:
-          "1v1 coinflip: pick heads or tails, match a wager, winner takes the pot. Server-decided and verifiable.",
+          "Pick heads or tails, match a rival's wager, and the winner takes the whole pot in this 1v1 coinflip. Every flip is server-decided and verifiable.",
       },
-      { property: "og:title", content: "Coinflip — PVPspinArena" },
-      { property: "og:description", content: "1v1 provably fair coinflip." },
+      { property: "og:title", content: "Coinflip — 1v1 PvP Coinflip Game | PVPspinArena" },
+      { property: "og:description", content: "1v1 PvP coinflip: match a wager, winner takes the pot. Verifiable." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),

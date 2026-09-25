@@ -6,10 +6,14 @@ import { RecentGames } from "@/components/jackpot/RecentGames";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Jackpot — PVPspinArena" },
-      { name: "description", content: "Join the live PvP jackpot. Bigger stake, bigger slice of the wheel. Server-decided, verifiable draws." },
-      { property: "og:title", content: "Jackpot — PVPspinArena" },
-      { property: "og:description", content: "Live PvP jackpot with provably fair, server-decided draws." },
+      { title: "Jackpot — PvP Jackpot Game | PVPspinArena" },
+      {
+        name: "description",
+        content:
+          "Enter the live PvP jackpot wheel: every cent you stake is a ticket in the draw, and a provably fair, server-decided draw picks the single winner.",
+      },
+      { property: "og:title", content: "Jackpot — PvP Jackpot Game | PVPspinArena" },
+      { property: "og:description", content: "Live PvP jackpot wheel with provably fair, server-decided draws." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),
