@@ -2877,6 +2877,7 @@ export type Database = {
         }
         Returns: Json
       }
+      real_play_open: { Args: never; Returns: boolean }
       reset_test_credits: { Args: { p_admin: string }; Returns: Json }
       roulette_advance: { Args: { p_game_id: number }; Returns: string }
       roulette_bet: {
