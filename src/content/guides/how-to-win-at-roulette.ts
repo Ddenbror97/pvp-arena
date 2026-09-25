@@ -197,6 +197,46 @@ Historically, a few players profited from biased physical wheels with mechanical
 
 Roulette can be fun when it is treated as entertainment with a cost. If it stops being fun, stop playing. The [responsible gambling page](/responsible-gambling) and our [how to stop gambling guide](/guides/how-to-stop-gambling) have practical help.`,
     },
+    {
+      id: "myths",
+      title: "Roulette myths that cost players money",
+      body: `Some beliefs about roulette sound reasonable but lead to worse decisions.
+
+### "Hot and cold numbers"
+
+Some tables show which numbers have hit most and least recently. On a fair wheel, these are random clusters and have no predictive value.
+
+### "Dealers can aim"
+
+On physical wheels, dealers spin the ball in slightly different ways each time, and casinos monitor for patterns. On online and provably fair wheels, there is no dealer to influence the result.
+
+### "Covering most of the table is safe"
+
+Betting on many numbers at once raises your chance of winning a spin, but the total edge is unchanged, and the occasional miss costs a lot.
+
+### "Online roulette is rigged to make you lose"
+
+Unlicensed sites can be dishonest, which is why fairness checks matter. On a provably fair wheel, you can check each result. Our [are online casinos rigged guide](/guides/are-online-casinos-rigged) covers how to tell.
+
+### "You can win it back"
+
+After a loss, it can feel like the next session will make it back. It will not, on average. Every session starts with the same edge.`,
+    },
+    {
+      id: "session",
+      title: "An example of a well-planned session",
+      body: `Here is what a sensible session might look like on PVPspinArena's wheel.
+
+- **Budget**: $40, money already set aside for entertainment.
+- **Stake**: $0.50 flat bets on Silver.
+- **Plan**: up to 60 spins, about 15 minutes.
+- **Loss limit**: stop if the balance falls to $25.
+- **Win goal**: stop if the balance reaches $55.
+
+Total wagered, if all 60 spins are played, is $30. The expected cost at a 6.67% edge is about $2. In practice, the session will often end earlier, at either the win goal or the loss limit, and many sessions finish ahead.
+
+Every number here is decided before the first spin. That is the real skill in roulette: deciding in advance and sticking to it.`,
+    },
   ],
   faqs: [
     {

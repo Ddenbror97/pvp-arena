@@ -193,6 +193,48 @@ On PVPspinArena, if you move to a new wallet, verify the new address on your pro
 
 Following these steps protects you from the most common ways people lose crypto. If you are just getting started with USDC, our [how to buy USDC guide](/guides/how-to-buy-usdc) covers the next step.`,
     },
+    {
+      id: "vs-keys",
+      title: "Seed phrase vs private key vs address",
+      body: `These three terms are often confused. Here is how they relate.
+
+### Seed phrase
+
+The master backup. One seed phrase can create many private keys and many addresses. It is the most sensitive thing you own in crypto.
+
+### Private key
+
+A long secret number that controls one specific address. Anyone with it can move funds from that address. Many wallets let you export a private key for a single account; treat it with the same care as a seed phrase.
+
+### Public address
+
+The identifier you share so others can send you funds, starting with 0x on Ethereum-style networks like Base. It is safe to share, and it is what PVPspinArena asks you to verify.
+
+### A simple way to remember
+
+- Address: like your email address. Share it.
+- Private key: like the password to one account. Never share it.
+- Seed phrase: like the master key that can recreate every account. Never share it, never type it anywhere except a genuine wallet restore.`,
+    },
+    {
+      id: "hardware",
+      title: "Hardware wallets and seed phrases",
+      body: `A hardware wallet is a small physical device that stores your keys offline and signs transactions without exposing them to your computer.
+
+### How it helps
+
+- Your keys never leave the device.
+- Malware on your computer cannot easily steal them.
+- Every transaction must be confirmed on the device itself.
+
+### You still have a seed phrase
+
+When you set up a hardware wallet, it shows you a seed phrase. That phrase is still the backup, and it still needs to be stored safely offline. If someone gets it, they can recreate your wallet on another device.
+
+### When it is worth it
+
+Hardware wallets are a good idea for larger savings. For small everyday amounts, a software wallet like MetaMask with a well-protected seed phrase is common. Many people use both: a hardware wallet for savings and a software wallet for daily use.`,
+    },
   ],
   faqs: [
     {

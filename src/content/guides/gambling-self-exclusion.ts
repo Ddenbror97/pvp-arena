@@ -10,7 +10,7 @@ export const guide: Guide = {
     "How gambling self-exclusion works: cool-offs vs exclusion, US state programmes, GAMSTOP in the UK, blocking software, crypto sites, and what to expect.",
   h1: "Gambling self-exclusion: how it works and where to start",
   answer:
-    "Self-exclusion in gambling is a voluntary ban you place on yourself, usually for months or years, that stops you from using a casino, betting site or group of operators. You can self-exclude directly with each site, through state or national programmes that cover many operators at once, or with blocking software. It works best combined with money controls and support.",
+    "Self exclusion gambling tools let you place a voluntary ban on yourself, usually for months or years, that stops you from using a casino, betting site or group of operators. You can self-exclude directly with each site, through state or national programmes that cover many operators at once, or with blocking software. It works best combined with money controls and support.",
   facts: [
     "Self-exclusion is voluntary and usually lasts from six months to several years or permanently.",
     "A cool-off or time-out is a shorter break, often from 24 hours to a few weeks.",
@@ -184,6 +184,43 @@ Many schemes do not automatically reopen accounts; you may have to ask. Before d
 Set strict deposit and time limits from the start, and stop immediately if the old patterns come back. The [gambler's fallacy](/guides/gamblers-fallacy) and chasing losses are common early warning signs.
 
 Help is always available. The [responsible gambling page](/responsible-gambling) lists helplines and support services.`,
+    },
+    {
+      id: "prepare",
+      title: "Preparing to self-exclude",
+      body: `A little preparation makes self-exclusion more effective.
+
+### Before you register
+
+- **List every account**: casinos, sportsbooks, poker, crypto and skin sites.
+- **Withdraw balances** where possible, or note them so you can ask support later.
+- **Decide on a period**: longer is usually better.
+- **Tell someone** you trust what you are doing.
+
+### On the day
+
+- Self-exclude from each site on your list.
+- Register with any state or national scheme that applies to you.
+- Install blocking software on every device.
+- Turn on gambling blocks with your bank.
+
+### After registering
+
+- Keep confirmation emails in case you need them.
+- Report any marketing you receive to the operator and, if relevant, the regulator.
+- Tell support immediately if a site lets you open a new account despite an exclusion.`,
+    },
+    {
+      id: "limits",
+      title: "What self-exclusion cannot do",
+      body: `Self-exclusion is a strong tool, but it has limits worth knowing.
+
+- It does not cover sites outside the scheme you joined.
+- Determined attempts to get round it, such as new emails or other people's accounts, may work on some sites.
+- It does not address the reasons behind gambling, such as stress or low mood.
+- It does not deal with debts that already exist.
+
+That is why it works best as one part of a plan. Pair it with blocking software, money controls, and support from a helpline, counsellor or peer group. Our [how to stop gambling guide](/guides/how-to-stop-gambling) sets out a full step-by-step plan.`,
     },
   ],
   faqs: [

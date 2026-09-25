@@ -196,6 +196,38 @@ Read our [PvP gambling guide](/guides/pvp-gambling) for a fuller comparison of p
 
 If crash or any other game is becoming hard to stop, our [how to stop gambling guide](/guides/how-to-stop-gambling) and the [responsible gambling page](/responsible-gambling) have practical next steps.`,
     },
+    {
+      id: "round-example",
+      title: "A worked crash session",
+      body: `Numbers make the trade-offs clearer. Imagine a crash game with a 1% house edge and a player who bets $1 per round for 100 rounds.
+
+### Player A: auto cash-out at 1.5x
+
+- Chance of reaching 1.5x: about 66%.
+- Expected wins: about 66 rounds, each returning $1.50.
+- Expected return: about $99 on $100 wagered.
+- Typical feel: frequent small wins, broken by runs of early crashes.
+
+### Player B: auto cash-out at 10x
+
+- Chance of reaching 10x: about 9.9%.
+- Expected wins: about 10 rounds, each returning $10.
+- Expected return: about $99 on $100 wagered.
+- Typical feel: long losing runs, then occasional big wins.
+
+Both players have the same expected cost of about $1. But Player B could easily finish with $50 or $150, while Player A's result is much more likely to stay close to $99.
+
+### Why this matters
+
+Your choice of target is really a choice of how bumpy you want the ride to be. It is not a way to reduce the cost.`,
+    },
+    {
+      id: "history",
+      title: "Where crash games came from",
+      body: `Crash-style games became popular in the mid-2010s on CS:GO skin gambling sites, where players could bet skins on the rising multiplier. Their mix of simple rules, social feeds showing other players' cash-outs and fast rounds made them very popular on stream.
+
+After Valve's 2016 crackdown on skin gambling, many crash games moved to crypto casinos. The format has stayed much the same, and many crypto sites now use a hash chain to make every crash point verifiable. Our [skin gambling vs crypto guide](/guides/skin-gambling-vs-crypto) explains how the wider market shifted.`,
+    },
   ],
   faqs: [
     {

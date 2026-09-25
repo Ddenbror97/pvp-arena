@@ -185,6 +185,66 @@ Our [PvP gambling guide](/guides/pvp-gambling) and [CS2 roulette guide](/guides/
 
 Watching esports should be fun without money on it. If betting starts to take over the enjoyment, take a break and see the options on the [responsible gambling page](/responsible-gambling).`,
     },
+    {
+      id: "tournaments",
+      title: "Major CS2 tournaments and betting",
+      body: `The CS2 calendar is packed with events, and betting activity follows it.
+
+### Majors
+
+Valve-sponsored Majors are the biggest events of the year, with the largest prize pools and audiences. They attract the most betting interest and usually the most bookmaker coverage.
+
+### Tier 1 circuits
+
+Organisers such as ESL, BLAST and PGL run top-level tournaments throughout the year. Matches are well covered, with plenty of public information about teams and form.
+
+### Lower tiers
+
+Qualifiers, regional leagues and smaller online cups run almost daily. They have less coverage, less information and, historically, more integrity concerns. Bookmakers often set wider margins on these matches.
+
+### Formats
+
+Matches are usually best of one, best of three or best of five maps. Best of one matches are more random, because a single map can swing on a few rounds. Best of three is the most common format for important matches. Understanding the format helps you judge how predictable a result really is.`,
+    },
+    {
+      id: "value",
+      title: "Can you beat the bookmaker?",
+      body: `Some bettors aim to find value: bets where they believe the real chance of winning is higher than the odds imply.
+
+### What that requires
+
+- Better information or analysis than the market.
+- Discipline to bet only when value exists.
+- Accurate record keeping to check whether you actually have an edge.
+- A large enough number of bets to separate skill from luck.
+
+### Why it is hard
+
+Bookmaker margins mean you need to be right noticeably more often than the odds suggest just to break even. Sharp bookmakers adjust odds quickly, and some limit accounts that win consistently. Most people who bet on esports lose money over time.
+
+### A realistic view
+
+For most fans, CS2 betting is best treated as paid entertainment around matches they would watch anyway, with a fixed budget. If you want games where results are pure chance and every round can be verified, PvP formats like [Coinflip](/coinflip) are simpler: your odds are exactly your share, and the fee on PVPspinArena defaults to 0%.`,
+    },
+    {
+      id: "crypto",
+      title: "Crypto CS2 betting",
+      body: `Many CS2 betting sites now accept cryptocurrency, especially stablecoins like USDC.
+
+### Why players use crypto
+
+- Fast deposits and withdrawals.
+- No card details shared.
+- Stable dollar value when using stablecoins.
+
+### Extra checks
+
+- Confirm which networks the site supports before sending funds.
+- Check licensing and terms, since many crypto sites are licensed offshore.
+- Understand withdrawal limits and review processes.
+
+Our [crypto casino withdrawals guide](/guides/crypto-casino-withdrawals) explains what a careful withdrawal process looks like.`,
+    },
   ],
   faqs: [
     {

@@ -201,6 +201,30 @@ Shame tends to lead back to gambling. Treat a slip as information about what nee
 
 If someone you care about is struggling, talk calmly, avoid blame, and offer to help them find support. Protect your own finances too. Helplines support family members as well as gamblers.`,
     },
+    {
+      id: "online",
+      title: "Stopping online and crypto gambling",
+      body: `Online gambling brings extra challenges, because it is always available and often very fast.
+
+### Why online is harder
+
+- Sites and apps are open 24 hours a day.
+- Deposits take seconds, and crypto transfers cannot be reversed.
+- Fast games allow hundreds of bets in a single evening.
+- Notifications, bonuses and emails pull you back in.
+
+### Extra steps that help
+
+- Turn off notifications from any gambling or crypto app you keep.
+- Unsubscribe from every gambling email and text list.
+- Remove saved payment methods and wallet connections from gambling sites.
+- Delete exchange apps from your phone if you mainly used crypto to gamble.
+- Keep devices out of the bedroom at night, when many people gamble most.
+
+### Talk about the money honestly
+
+Online losses can feel less real than cash. Write down what you have deposited and lost over the last few months. Seeing the total in one place is often a turning point. Our [gambling budget guide](/guides/gambling-budget) explains how to track spending clearly.`,
+    },
   ],
   faqs: [
     {

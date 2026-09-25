@@ -10,7 +10,7 @@ export const guide: Guide = {
     "How CS:GO and CS2 case opening works: keys, rarity tiers, published drop odds, expected value, loot box rules, and how case sites compare with PvP games.",
   h1: "CS:GO case opening: odds, value and the real risks",
   answer:
-    "CS:GO case opening, now CS2 case opening, means using a paid key to unlock a weapon case and receive one random skin. Most results are common Mil-Spec skins worth less than the key; rare knives and gloves drop well under 1% of the time. Because you pay money for a random item with a market value, case opening works much like gambling, and on average it returns less than it costs.",
+    "CSGO case opening, now usually called CS2 case opening, means using a paid key to unlock a weapon case and receive one random skin. Most results are common Mil-Spec skins worth less than the key; rare knives and gloves drop well under 1% of the time. Because you pay money for a random item with a market value, case opening works much like gambling, and on average it returns less than it costs.",
   facts: [
     "A case is opened with a key bought from Valve; the case itself is usually cheap or dropped in game.",
     "Odds published by Valve for China in 2017: Mil-Spec 79.92%, Restricted 15.98%, Classified 3.20%, Covert 0.64%, rare special items 0.26%.",
@@ -204,6 +204,29 @@ Our [CS:GO gambling history guide](/guides/csgo-gambling-history) covers the ful
 - **Keep your account safe.** Never log in to Steam through links from strangers.
 
 If opening cases starts to feel hard to stop, or you spend more than you planned, take a break and look at the support options on the [responsible gambling page](/responsible-gambling).`,
+    },
+    {
+      id: "ev-example",
+      title: "A worked expected value example",
+      body: `Here is a simplified example to show how expected value works. The prices are illustrative, not real market data.
+
+Imagine a key costs $2.50 and a case costs $0.50, so each opening costs $3.00. Suppose the average sale value of each tier in that case is:
+
+- Mil-Spec: $0.10
+- Restricted: $0.60
+- Classified: $3.00
+- Covert: $15.00
+- Rare special item: $200.00
+
+Using the published odds:
+
+- Mil-Spec: 0.7992 × $0.10 = $0.08
+- Restricted: 0.1598 × $0.60 = $0.10
+- Classified: 0.0320 × $3.00 = $0.10
+- Covert: 0.0064 × $15.00 = $0.10
+- Special: 0.0026 × $200.00 = $0.52
+
+Total expected value: about $0.90 per opening, compared with a cost of $3.00. On average, each opening loses about $2.10, or 70% of what you spend. Real cases differ, and prices change constantly, but the pattern of a large gap between cost and expected value is typical.`,
     },
   ],
   faqs: [

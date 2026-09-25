@@ -179,6 +179,57 @@ Withdrawals are sent as USDC on Base to your verified address. A withdrawal is m
 
 Understanding these risks helps you use Base safely. Keep your seed phrase offline, as our [seed phrase guide](/guides/seed-phrase) explains, and double-check every transfer.`,
     },
+    {
+      id: "compare",
+      title: "Base compared with other networks",
+      body: `Base is one of several networks that support USDC and Ethereum-style wallets.
+
+### Ethereum mainnet
+
+- Highest security and decentralisation.
+- Fees can be high during busy periods.
+- Slower blocks, about every 12 seconds.
+
+### Base
+
+- Layer 2 built on the OP Stack.
+- Low fees and fast blocks.
+- Strong exchange support through Coinbase.
+
+### Other layer 2 networks
+
+Arbitrum, Optimism and others offer similar benefits with different designs and ecosystems.
+
+### Non-Ethereum networks
+
+Solana, Tron and others also support stablecoins but use different wallets and address formats. Sending to the wrong type of network is a common and costly mistake.
+
+### The rule of thumb
+
+Always send tokens on the network the recipient supports. For PVPspinArena, that means USDC on Base. If in doubt, check the [wallet page](/wallet) before sending.`,
+    },
+    {
+      id: "apps",
+      title: "What people use Base for",
+      body: `Base has grown into one of the most active layer 2 networks. Common uses include:
+
+- **Payments**: sending stablecoins between people and businesses.
+- **Trading**: decentralised exchanges and token swaps.
+- **Games and social apps**: on-chain games, social platforms and creator tools.
+- **Onramps**: moving funds from Coinbase and other exchanges into on-chain apps cheaply.
+
+For gaming platforms, the combination of low fees and native USDC is the main draw. Small deposits and withdrawals make sense on Base in a way they often do not on Ethereum mainnet, where a single transfer can cost more than the amount being sent.`,
+    },
+    {
+      id: "safety",
+      title: "Staying safe on Base",
+      body: `- Only add Base to your wallet using official network details.
+- Check the token contract before accepting or sending tokens.
+- Ignore unexpected tokens that appear in your wallet; many are scams.
+- Keep a small ETH balance for gas, not your whole savings, in the wallet you use for apps.
+- Verify large transfers on BaseScan before assuming they arrived.
+- Never share your seed phrase, however official a request looks.`,
+    },
   ],
   faqs: [
     {
