@@ -95,7 +95,7 @@ export function SiteFooter() {
             <img src={arenaLogo.url} alt="PVPspinArena" width={240} height={128} loading="lazy" decoding="async" className="h-10 w-auto" />
           </Link>
           <p className="mt-4 text-sm leading-6 text-muted-foreground">
-            Player-versus-player Jackpot, Coinflip and Roulette using test credits only.
+            Player-versus-player Jackpot, Coinflip and Roulette.
           </p>
           <p className="mt-3 text-xs leading-5 text-muted-foreground">
             Credits have no cash value and cannot be withdrawn. Not a licensed gambling service. 18+.
@@ -114,7 +114,7 @@ export function SiteFooter() {
         <div>
           <h2 className="font-display text-sm text-foreground">How it works</h2>
           <p className="mt-4 text-sm leading-6 text-muted-foreground">
-            Pick a game, enter with test credits, then verify completed results independently.
+            Pick a game, place your entry, then verify completed results independently.
           </p>
           <Link to="/fairness" className={`mt-3 inline-block ${footerLink}`}>Fairness</Link>
         </div>

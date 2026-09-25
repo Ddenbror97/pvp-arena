@@ -204,7 +204,7 @@ export function RouletteGame() {
         ].map(([l, f]) => (
           <Button key={l as string} size="sm" variant="secondary" onClick={f as () => void}>{l as string}</Button>
         ))}
-        <span className="ml-auto rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold text-gold">TEST CREDITS</span>
+        <span className="ml-auto rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold text-gold">PROVABLY FAIR</span>
       </div>
 
       <div className="grid gap-2 sm:grid-cols-3">

@@ -36,7 +36,7 @@ export interface BalanceProvider {
 
 export class RealMoneyDisabledError extends Error {
   constructor() {
-    super("Real-money deposits and withdrawals are disabled. Test credits have no cash value.");
+    super("Deposits and withdrawals are temporarily unavailable. Please try again later.");
   }
 }
 
