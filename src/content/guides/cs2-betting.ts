@@ -289,6 +289,6 @@ Our [crypto casino withdrawals guide](/guides/crypto-casino-withdrawals) explain
     { label: "Counter-Strike 2 official site", url: "https://www.counter-strike.net/" },
     { label: "Steam Subscriber Agreement", url: "https://store.steampowered.com/subscriber_agreement/" },
   ],
-  related: ["skin-gambling-vs-crypto", "cs2-roulette", "pvp-gambling", "gambling-budget"],
+  related: ["best-csgo-gambling-sites", "skin-gambling-vs-crypto", "cs2-roulette", "pvp-gambling", "gambling-budget"],
   updated: "2026-09-25",
 };

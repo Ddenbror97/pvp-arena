@@ -119,7 +119,6 @@ All stakes are USDC on Base, shown in US dollars, and every result can be checke
   ],
   sources: [
     { label: "Counter-Strike 2 — official site", url: "https://www.counter-strike.net/cs2" },
-    { label: "Steam Support — Container odds (CS2)", url: "https://www.counter-strike.net/news" },
     { label: "UK Gambling Commission — Loot boxes and skins", url: "https://www.gamblingcommission.gov.uk/" },
     { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
   ],

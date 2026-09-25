@@ -196,10 +196,12 @@ function GuidePage() {
 
       <div className="mt-16">
         <SeoCta
-          title="See it on a live round"
-          text="Watch Jackpot, Coinflip and Roulette rounds as they happen, and check any result on the Fairness page."
-          primary={{ to: "/", label: "Watch Jackpot" }}
-          secondary={{ to: "/fairness", label: "Check a result" }}
+          {...(g.cta ?? {
+            title: "See it on a live round",
+            text: "Watch Jackpot, Coinflip and Roulette rounds as they happen, and check any result on the Fairness page.",
+            primary: { to: "/", label: "Watch Jackpot" },
+            secondary: { to: "/fairness", label: "Check a result" },
+          })}
         />
       </div>
     </article>

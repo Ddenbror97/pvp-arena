@@ -263,6 +263,6 @@ If you want a particular skin, buying it directly on the market is usually far c
     { label: "Steam Subscriber Agreement", url: "https://store.steampowered.com/subscriber_agreement/" },
     { label: "Belgian Gaming Commission: loot box research (2018)", url: "https://www.gamingcommission.be/" },
   ],
-  related: ["skin-gambling-vs-crypto", "csgo-gambling-history", "house-edge", "csgo-jackpot"],
+  related: ["csgo-case-battle-sites", "skin-gambling-vs-crypto", "csgo-gambling-history", "house-edge", "csgo-jackpot"],
   updated: "2026-09-25",
 };
