@@ -10,7 +10,7 @@ export const guide: Guide = {
     "What HMAC-SHA256 is, how it differs from a plain SHA-256 hash, and how provably fair games use it with a committed server seed to make results checkable.",
   h1: "HMAC-SHA256 explained: how it powers provably fair games",
   answer:
-    "HMAC-SHA256 is a standard way to combine a secret key with a message and produce a 256-bit fingerprint using the SHA-256 hash function. Without the key, nobody can predict or forge the output. Provably fair games use it with a secret server seed as the key: the seed's hash is published first, and after the game anyone can recompute the result.",
+    "HMAC SHA256, usually written HMAC-SHA256, is a standard way to combine a secret key with a message and produce a 256-bit fingerprint using the SHA-256 hash function. Without the key, nobody can predict or forge the output. Provably fair games use it with a secret server seed as the key: the seed's hash is published first, and after the game anyone can recompute the result.",
   facts: [
     "SHA-256 is a hash function standardised by NIST in FIPS 180-4; it outputs 256 bits (32 bytes).",
     "HMAC is defined in RFC 2104 and turns any hash function into a keyed message authentication code.",

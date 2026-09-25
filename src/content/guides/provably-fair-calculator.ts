@@ -177,6 +177,10 @@ If you have ruled all of these out and the result still does not match, keep a r
 - Whether the site processes withdrawals promptly or holds funds securely.
 - Whether gambling is legal where you are.
 
+### Try it on each game
+
+Each game maps the hash differently, so it is worth checking one of each. Start with a [coinflip](/guides/csgo-coinflip), because a single byte decides the result and the maths fits on a napkin. Then try a [CS2-style roulette](/guides/cs2-roulette) round to see rejection sampling in action, and finally a [crypto jackpot](/guides/crypto-jackpot) draw, where the winning ticket is chosen from every ticket in the pot. Once you have done all three, you will understand exactly how every PVPspinArena result is produced, and you will be able to judge any other site's documentation against the same standard. If a site's published method is too vague to reproduce with a calculator, treat its fairness claims with caution.
+
 ### Spot checks are enough
 
 You do not need to verify every game. Checking a few at random, especially large or surprising results, is enough to keep a site honest, because a site that cheated even occasionally would risk being caught by anyone at any time.

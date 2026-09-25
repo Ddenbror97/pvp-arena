@@ -27,6 +27,8 @@ export const guide: Guide = {
 
 This is a different mindset from thinking of gambling as a way to make money. Over enough rounds, games with a house edge return less than you put in. Even in pure player-versus-player games, where two players face each other and the site only takes a fee, the average player cannot come out ahead once fees are counted. A budget accepts that maths instead of fighting it.
 
+If you are new to crypto gaming, our [crypto casino guide](/guides/what-is-a-crypto-casino) explains the basics first.
+
 A good budget has three parts:
 
 - **A money limit**: the total you can afford to lose in the period.
@@ -139,7 +141,7 @@ If the answers are yes, no and no, your budget is working. If not, lower the bud
 
 ### Why it feels logical
 
-After a run of losses, it can feel like a win is "due". It is not. In a fair game each round is independent. A coin that has landed tails five times is still a 50/50 on the next flip. A roulette wheel does not remember its last colour. Systems that double the stake after each loss, such as the Martingale, only make the eventual losing streak more expensive.
+After a run of losses, it can feel like a win is "due". It is not. In a fair game each round is independent. A coin that has landed tails five times is still a 50/50 on the next flip. A roulette wheel does not remember its last colour. Systems that double the stake after each loss, such as the [Martingale strategy](/guides/martingale-strategy), only make the eventual losing streak more expensive.
 
 ### What chasing looks like
 

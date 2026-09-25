@@ -10,7 +10,7 @@ export const guide: Guide = {
     "How CS:GO coinflip worked, why it was a 50/50 player duel, what changed after skin gambling, and how a provably fair crypto coinflip works today.",
   h1: "CS:GO coinflip explained: rules, odds and the crypto version",
   answer:
-    "CS:GO coinflip was a two-player game where each side put in skins of similar value and a random coin toss decided who took both stakes. Today the same duel format runs with crypto: two players stake equal amounts, a provably fair flip picks heads or tails, and the winner receives the pot minus any site fee.",
+    "CSGO coinflip, written CS:GO coinflip, was a two-player game where each side put in skins of similar value and a random coin toss decided who took both stakes. Today the same duel format runs with crypto: two players stake equal amounts, a provably fair flip picks heads or tails, and the winner receives the pot minus any site fee.",
   facts: [
     "Coinflip is a player-versus-player game: you play against another person, not against the house.",
     "Each flip has two outcomes, so a fair flip gives each player a 50% chance.",
