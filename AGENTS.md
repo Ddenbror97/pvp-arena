@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Architecture rules
+
+- Roulette lifecycle timing is driven by the one-second `pvp-roulette-worker`; browser tick calls are recovery hints only, so anonymous traffic cannot stall rounds.

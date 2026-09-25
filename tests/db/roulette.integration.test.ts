@@ -509,6 +509,12 @@ d("roulette adversarial audit (isolated schema)", () => {
 });
 
 d("roulette live permissions (read-only catalog)", () => {
+  it("runs the production lifecycle clock every second without browser sessions", async () => {
+    const jobs = await sql`select schedule, command, active from cron.job where jobname = 'pvp-roulette-worker'`;
+    expect(jobs).toHaveLength(1);
+    expect(jobs[0]).toMatchObject({ schedule: "1 second", command: "select public.roulette_tick()", active: true });
+  });
+
   it("browsers can only place a bet and nudge the tick; no table writes; secrets unreadable", async () => {
     const fns = await sql`select p.proname, has_function_privilege('anon', p.oid, 'execute') anon,
       has_function_privilege('authenticated', p.oid, 'execute') auth, p.prosecdef, p.proconfig
