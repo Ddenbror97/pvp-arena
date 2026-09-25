@@ -14,7 +14,7 @@ export function buildTestSchemaSql(): string {
   const files = readdirSync(dir).filter((f) => f.endsWith(".sql") && !superseded.has(f)).sort();
   let s = files.map((f) => readFileSync(join(dir, f), "utf8")).join("\n");
   s = s.replace(/create extension if not exists pgcrypto with schema extensions;/g, "");
-  s = s.replace(/alter publication supabase_realtime[^;]*;/g, "");
+  s = s.replace(/alter publication supabase_realtime[^;]*;/gi, "");
   // Realtime channel authorization lives in the shared realtime schema, not pvp_test.
   s = s.replace(/-- realtime-auth:begin[\s\S]*?-- realtime-auth:end/g, "");
   // Scheduler jobs are production-only.

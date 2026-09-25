@@ -119,5 +119,6 @@
 - [ ] Stage 3 remainder: real-money Terms/Privacy/Responsible Gambling copy, geo-block page, memory update
 
 - [x] Roulette rounds run non-stop while real play is off
+- [x] Roulette lifecycle uses an independent one-second server clock; logged-out viewers no longer depend on signed-in tabs
 - [x] Base Mainnet withdrawals on; Base Sepolia removed
 - [x] Full adversarial audit per uploaded spec (report delivered)

@@ -6,6 +6,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { buildTestSchemaSql } from "./schema";
 import { rouletteSlot } from "../../src/lib/fairness/roulette";
 
@@ -509,6 +510,16 @@ d("roulette adversarial audit (isolated schema)", () => {
 });
 
 d("roulette live permissions (read-only catalog)", () => {
+  it("runs the production lifecycle clock every second without browser sessions", async () => {
+    const migration = readFileSync(
+      "supabase/migrations/20260925185856_72114122-2a02-49e7-8910-999e5a049dfd.sql",
+      "utf8",
+    );
+    expect(migration).toContain("'pvp-roulette-worker'");
+    expect(migration).toContain("'1 second'");
+    expect(migration).toContain("'select public.roulette_tick()'");
+  });
+
   it("browsers can only place a bet and nudge the tick; no table writes; secrets unreadable", async () => {
     const fns = await sql`select p.proname, has_function_privilege('anon', p.oid, 'execute') anon,
       has_function_privilege('authenticated', p.oid, 'execute') auth, p.prosecdef, p.proconfig
