@@ -14,6 +14,7 @@ export interface Eip1193 {
 export interface WalletSession {
   connect(): Promise<{ address: string; chainId: string }>;
   checkConnection(): Promise<{ address: string; chainId: string } | null>;
+  resetConnection(): Promise<void>;
   chainId(): Promise<string>;
   sign(message: string, address: string): Promise<string>;
   switchToRequiredNetwork(): Promise<void>;
@@ -24,7 +25,6 @@ export interface WalletSession {
   onDisconnect(fn: () => void): () => void;
 }
 
-const CONNECT_TIMEOUT_MS = 120_000;
 const SIGN_TIMEOUT_MS = 180_000;
 const PROVIDER_DISCOVERY_MS = 750;
 
@@ -34,6 +34,9 @@ type ConnectedAccount = { accounts: string[]; chainId: string };
 // Keep its promise alive across React remounts/session resets so this origin never
 // creates a second request while the first is still waiting in the extension.
 const pendingInjectedConnections = new WeakMap<Eip1193, Promise<ConnectedAccount>>();
+// A -32002 response means the extension, not this page, owns an older request.
+// Remember that across every caller so Deposit/Profile cannot repeatedly poke it.
+const externallyPendingConnections = new WeakSet<Eip1193>();
 
 interface ProviderHost {
   ethereum?: Eip1193;
@@ -110,10 +113,14 @@ async function readAuthorizedConnection(provider: Eip1193): Promise<ConnectedAcc
 /** Reuse one permission request per injected provider, including across remounts. */
 export async function connectInjectedProvider(provider: Eip1193): Promise<ConnectedAccount> {
   const authorized = await readAuthorizedConnection(provider);
-  if (authorized) return authorized;
+  if (authorized) {
+    externallyPendingConnections.delete(provider);
+    return authorized;
+  }
 
   const existing = pendingInjectedConnections.get(provider);
   if (existing) return existing;
+  if (externallyPendingConnections.has(provider)) throw new WalletError("CONNECT_PENDING");
 
   const request = (async () => {
     try {
@@ -125,9 +132,13 @@ export async function connectInjectedProvider(provider: Eip1193): Promise<Connec
     } catch (error) {
       const mapped = toWalletError(error, "connect");
       if (mapped.code === "CONNECT_PENDING") {
+        externallyPendingConnections.add(provider);
         // The wallet can finish an older request just before reporting -32002.
         const recovered = await readAuthorizedConnection(provider);
-        if (recovered) return recovered;
+        if (recovered) {
+          externallyPendingConnections.delete(provider);
+          return recovered;
+        }
       }
       throw mapped;
     }
@@ -139,6 +150,24 @@ export async function connectInjectedProvider(provider: Eip1193): Promise<Connec
     }
   }).catch(() => {});
   return request;
+}
+
+/**
+ * Ask the extension to forget this origin's account permission. This is the
+ * only provider-supported reset for a stale account request; it never touches
+ * keys, accounts, transactions, or permissions granted to other sites.
+ */
+export async function resetInjectedProviderConnection(provider: Eip1193): Promise<void> {
+  try {
+    await guardedRequest(provider, "wallet_revokePermissions", [{ eth_accounts: {} }]);
+  } catch (error) {
+    const mapped = toWalletError(error, "connect");
+    // There may be no existing permission to revoke. The reset is still safe
+    // to continue unless MetaMask explicitly says another request is pending.
+    if (mapped.code === "CONNECT_PENDING") throw mapped;
+  }
+  pendingInjectedConnections.delete(provider);
+  externallyPendingConnections.delete(provider);
 }
 
 function sub(p: Eip1193, ev: string, fn: (...a: unknown[]) => void) {
@@ -154,7 +183,10 @@ export function sessionFor(
   return {
     async connect() {
       const attempt = async () => {
-        const { accounts, chainId } = await withTimeout(connectFn(), CONNECT_TIMEOUT_MS);
+        // MetaMask does not provide cancellation for eth_requestAccounts. Do
+        // not abandon it behind an app timeout and then accidentally create a
+        // second request that the extension rejects as already pending.
+        const { accounts, chainId } = await connectFn();
         const address = accounts?.[0];
         if (!address) throw new WalletError("WALLET_LOCKED");
         return { address, chainId: String(chainId).toLowerCase() };
@@ -196,6 +228,14 @@ export function sessionFor(
         address,
         chainId: connected.chainId.toLowerCase(),
       };
+    },
+    async resetConnection() {
+      await resetInjectedProviderConnection(provider);
+      try {
+        await disconnectFn();
+      } catch {
+        /* injected providers have no local session to disconnect */
+      }
     },
     async chainId() {
       return String(await guardedRequest(provider, "eth_chainId")).toLowerCase();

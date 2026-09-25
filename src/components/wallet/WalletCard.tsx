@@ -38,12 +38,14 @@ export function WalletCard({ userId }: { userId: string }) {
   const [address, setAddress] = useState<string | null>(null);
   const [chainId, setChainId] = useState<string | null>(null);
   const [busy, setBusy] = useState<"connect" | "verify" | null>(null);
+  const [connectWaiting, setConnectWaiting] = useState(false);
   const [err, setErr] = useState<WalletErrorCode | null>(null);
   const challengeFn = useServerFn(requestWalletChallenge);
   const verifyFn = useServerFn(verifyWalletSignature);
   const eventFn = useServerFn(recordWalletEvent);
   const unsubs = useRef<(() => void)[]>([]);
   const connectInFlight = useRef(false);
+  const connectAttempt = useRef(0);
 
   useEffect(() => () => unsubs.current.forEach((u) => u()), []);
 
@@ -113,24 +115,28 @@ export function WalletCard({ userId }: { userId: string }) {
 
   async function connect() {
     if (connectInFlight.current) return;
+    const attemptId = ++connectAttempt.current;
     connectInFlight.current = true;
     setErr(null);
+    setConnectWaiting(false);
     setBusy("connect");
     void eventFn({ data: { event: "WALLET_CONNECTION_STARTED", address: null } }).catch(() => {});
     let activeSession: WalletSession | null = null;
+    const waitingTimer = window.setTimeout(() => {
+      if (connectAttempt.current === attemptId) {
+        setConnectWaiting(true);
+        setErr("CONNECT_PENDING");
+      }
+    }, 8_000);
     try {
       const s = await getWalletSession();
       activeSession = s;
       watchSession(s);
-      if (err === "CONNECT_PENDING") {
-        const connected = await s.checkConnection();
-        if (!connected) throw new WalletError("CONNECT_PENDING");
-        await acceptConnection(s, connected);
-        return;
-      }
       const r = await s.connect();
+      if (connectAttempt.current !== attemptId) return;
       await acceptConnection(s, r);
     } catch (e) {
+      if (connectAttempt.current !== attemptId) return;
       const code = e instanceof WalletError ? e.code : "GENERIC";
       if (code !== "CONNECT_PENDING") {
         resetWalletSession();
@@ -138,7 +144,34 @@ export function WalletCard({ userId }: { userId: string }) {
       }
       fail(e, "connect");
     } finally {
-      connectInFlight.current = false;
+      window.clearTimeout(waitingTimer);
+      if (connectAttempt.current === attemptId) {
+        connectInFlight.current = false;
+        setConnectWaiting(false);
+        setBusy(null);
+      }
+    }
+  }
+
+  async function resetConnection() {
+    const activeSession = session;
+    ++connectAttempt.current;
+    connectInFlight.current = false;
+    setConnectWaiting(false);
+    setBusy("connect");
+    try {
+      await activeSession?.resetConnection();
+      unsubs.current.forEach((u) => u());
+      unsubs.current = [];
+      resetWalletSession();
+      setSession(null);
+      setAddress(null);
+      setChainId(null);
+      setErr(null);
+      toast.success("MetaMask site connection reset. Connect again.");
+    } catch (e) {
+      fail(e, "connect");
+    } finally {
       setBusy(null);
     }
   }
@@ -275,11 +308,16 @@ export function WalletCard({ userId }: { userId: string }) {
             )}
             <Button onClick={connect} disabled={busy !== null}>
               {busy === "connect"
-                ? "Checking MetaMask..."
-                : err === "CONNECT_PENDING"
-                  ? "Check connection"
-                  : "Connect MetaMask"}
+                ? connectWaiting
+                  ? "Waiting for MetaMask..."
+                  : "Opening MetaMask..."
+                : "Connect MetaMask"}
             </Button>
+            {connectWaiting && (
+              <Button variant="secondary" onClick={resetConnection}>
+                Reset MetaMask connection
+              </Button>
+            )}
           </>
         )}
         {err && !(err === "UNSUPPORTED_NETWORK" && connectedVerified) && (
