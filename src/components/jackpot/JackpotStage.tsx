@@ -13,7 +13,7 @@ import {
 } from "@/lib/jackpot/api";
 import { formatChance, formatUsd } from "@/lib/jackpot/math";
 import { emitSound } from "@/lib/sound";
-import { JackpotWheel, colorFor } from "./JackpotWheel";
+import { JackpotWheel, SPIN_MS, colorFor } from "./JackpotWheel";
 import { PlayerList } from "./PlayerList";
 import { EntryPanel } from "./EntryPanel";
 import { PlayerAvatar } from "./Avatar";
@@ -21,6 +21,13 @@ import { Celebration } from "./Celebration";
 import { ShieldCheck } from "lucide-react";
 
 type Phase = "live" | "locked" | "spinning" | "winner";
+
+/** Countdown after the deadline before the wheel starts. */
+const LEAD_MS = 3000;
+/** If settlement lands late, still show at least this much countdown after it. */
+const MIN_LOCK_MS = 800;
+/** How long the winner is shown before moving to the next game. */
+const WINNER_MS = 6500;
 
 function fmtClock(ms: number) {
   const s = Math.ceil(ms / 1000);
@@ -109,11 +116,18 @@ export function JackpotStage() {
   const winnerColor = winner ? colorFor(players.indexOf(winner)) : undefined;
   const spin = useMemo(
     () =>
-      stage && (phase === "spinning" || phase === "winner")
-        ? { winnerId: stage.winner_id!, winningTicket: Number(stage.winning_ticket) }
+      stage && spinStart != null && stage.winner_id
+        ? { winnerId: stage.winner_id, winningTicket: Number(stage.winning_ticket), startAt: spinStart }
         : null,
-    [stage, phase],
+    [stage, spinStart],
   );
+
+  // Countdown before the spin. Until the server has settled we count toward
+  // deadline + LEAD_MS (holding at 1 if settlement is slow); once settled we
+  // count toward the shared spin start. It disappears the moment the wheel moves.
+  const countdownTarget = spinStart ?? (endMs != null ? endMs + LEAD_MS : null);
+  const countN =
+    countdownTarget != null ? Math.min(3, Math.max(1, Math.ceil((countdownTarget - t) / 1000))) : 3;
 
   return (
     <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)_280px] lg:items-start xl:grid-cols-[280px_minmax(0,1fr)_300px]">
@@ -136,7 +150,7 @@ export function JackpotStage() {
         <JackpotWheel
           players={players}
           spin={spin}
-          onSpinEnd={onSpinEnd}
+          now={serverNow}
           highlightId={phase === "winner" ? stage?.winner_id : null}
         >
           {phase === "winner" && stage && winner ? (
@@ -158,10 +172,7 @@ export function JackpotStage() {
                 Won {formatUsd(stage.payout_amount ?? 0)}
               </div>
             </div>
-          ) : phase === "locked" ||
-            phase === "spinning" ||
-            game?.status === "DRAWING" ||
-            expired ? (
+          ) : phase === "spinning" ? (
             <div className="text-center">
               <div className="font-display text-sm tracking-[0.25em] text-rival">
                 NO MORE ENTRIES
@@ -169,19 +180,25 @@ export function JackpotStage() {
               <div className="tabular mt-2 text-3xl font-semibold sm:text-4xl">
                 {formatUsd(pot)}
               </div>
-              {(() => {
-                const since = endMs ? serverNow() - endMs : 0;
-                const n = Math.max(1, 3 - Math.floor(Math.max(0, since) / 1000));
-                return (
-                  <div className="mt-3 flex flex-col items-center gap-2">
-                    <div className="relative grid h-14 w-14 place-items-center">
-                      <span className="absolute inset-0 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
-                      <span key={n} className="tabular animate-scale-in font-display text-2xl text-primary">{n}</span>
-                    </div>
-                    <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Picking winner</div>
-                  </div>
-                );
-              })()}
+              <div className="mt-3 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+                Spinning
+              </div>
+            </div>
+          ) : phase === "locked" || game?.status === "DRAWING" || expired ? (
+            <div className="text-center">
+              <div className="font-display text-sm tracking-[0.25em] text-rival">
+                NO MORE ENTRIES
+              </div>
+              <div className="tabular mt-2 text-3xl font-semibold sm:text-4xl">
+                {formatUsd(pot)}
+              </div>
+              <div className="mt-3 flex flex-col items-center gap-2">
+                <div className="relative grid h-14 w-14 place-items-center">
+                  <span className="absolute inset-0 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
+                  <span key={countN} className="tabular animate-scale-in font-display text-2xl text-primary">{countN}</span>
+                </div>
+                <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Picking winner</div>
+              </div>
             </div>
           ) : (
             <div className="text-center">
