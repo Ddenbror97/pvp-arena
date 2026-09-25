@@ -349,7 +349,11 @@ function HowItWorksPage() {
 
 function Step(props: { n: string; id: string; title: string; icon: React.ReactNode; flip?: boolean; children: React.ReactNode }) {
   return (
-    <section id={props.id} aria-labelledby={`${props.id}-h`} className="grid scroll-mt-24 items-start gap-6 md:grid-cols-[220px_1fr]">
+    <section
+      id={props.id}
+      aria-labelledby={`${props.id}-h`}
+      className={`grid scroll-mt-24 items-start gap-6 md:grid-cols-[220px_1fr] ${props.flip ? "md:grid-cols-[1fr_220px]" : ""}`}
+    >
       <div className={props.flip ? "md:order-2" : undefined}>
         <div className="flex items-center gap-3 md:flex-col md:items-start">
           <span className="tabular font-mono text-4xl text-primary/40 sm:text-5xl">{props.n}</span>
