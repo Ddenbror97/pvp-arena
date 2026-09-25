@@ -26,7 +26,6 @@ export const Route = createFileRoute("/_authenticated/wallet")({
 });
 
 const KIND_LABEL: Record<string, string> = {
-  test_credit_grant: "Test credits",
   jackpot_entry: "Jackpot entry",
   jackpot_settlement: "Jackpot settlement",
   deposit: "Deposit",

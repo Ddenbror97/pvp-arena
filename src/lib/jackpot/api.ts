@@ -215,15 +215,20 @@ export function useWallet(userId: string | null) {
     queryKey: ["wallet", userId],
     enabled: !!userId,
     queryFn: async () => {
-      const { data, error } = await supabase.from("wallet_accounts").select("id, kind, balance, asset, account_type").eq("owner_id", userId!);
+      // Real USD only. Retired test-credit balances are never shown as money.
+      const { data, error } = await supabase
+        .from("wallet_accounts")
+        .select("id, kind, balance, asset, account_type")
+        .eq("owner_id", userId!)
+        .eq("account_type", "real");
       if (error) throw error;
       const available = data.find((a) => a.kind === "user_available");
       const locked = data.find((a) => a.kind === "user_locked");
       return {
         available: Number(available?.balance ?? 0),
         locked: Number(locked?.balance ?? 0),
-        asset: available?.asset ?? "TEST_USD",
-        accountType: (available?.account_type ?? "test_credit") as "test_credit" | "real",
+        asset: "USD",
+        accountType: "real" as "test_credit" | "real",
         accountIds: data.map((a) => a.id),
       };
     },
