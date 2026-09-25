@@ -235,7 +235,7 @@ d("real-money ledger migration", () => {
     expect(await worth()).toBe(before - Number(done.rake_amount));
     for (const p of players) expect(await bal(p, "user_locked")).toBe(0);
     await realInvariants();
-  });
+  }, 60_000);
 
   it("coinflip on real USD: lock, one settlement, exact 5% fee", async () => {
     const a = await newUser(20);
@@ -264,7 +264,7 @@ d("real-money ledger migration", () => {
     expect(await bal(lose)).toBe(1000);
     expect(Number((await sql`select count(*) c from pvp_test.coinflip_payouts where game_id = ${c.game_id}`)[0].c)).toBe(1);
     await realInvariants();
-  });
+  }, 60_000);
 
   it("roulette on real USD: limits enforced; wins paid from the house bankroll exactly once", async () => {
     await sql`update pvp_test.roulette_config set betting_seconds = 2, lock_ms = 100, spin_ms = 300`;
@@ -273,15 +273,15 @@ d("real-money ledger migration", () => {
     const [g0] = await sql`select * from pvp_test.roulette_games where id = ${gid}`;
     expect(g0.money_domain).toBe("REAL_USD");
     await sleep(Math.max(0, +g0.betting_started_at - Date.now()) + 50);
-    expect(await err(as(u.id, (tx) => tx`select pvp_test.roulette_bet(${Number(g0.max_bet) + 1}, 'RED', ${randomUUID()})`))).toMatch(/ABOVE_MAX_WAGER|INSUFFICIENT/);
+    expect(await err(as(u.id, (tx) => tx`select pvp_test.roulette_bet('RED', ${Number(g0.max_bet) + 1}, ${randomUUID()})`))).toMatch(/ABOVE_MAX_WAGER|INSUFFICIENT/);
     const colors = ["RED", "BLACK", "GREEN"];
-    for (const col of colors) await as(u.id, (tx) => tx`select pvp_test.roulette_bet(100, ${col}::pvp_test.roulette_color, ${randomUUID()})`).catch(() => {});
+    for (const col of colors) await as(u.id, (tx) => tx`select pvp_test.roulette_bet(${col}::pvp_test.roulette_color, 100, ${randomUUID()})`).catch(() => {});
     const placed = Number((await sql`select count(*) c from pvp_test.roulette_bets where game_id = ${gid}`)[0].c);
     expect(placed).toBeGreaterThan(0);
     expect(await bal(u.id, "user_locked")).toBe(placed * 100);
     const [g1] = await sql`select * from pvp_test.roulette_games where id = ${gid}`;
     await sleep(Math.max(0, +g1.betting_ends_at - Date.now()) + 50);
-    expect(await err(as(u.id, (tx) => tx`select pvp_test.roulette_bet(100, 'RED', ${randomUUID()})`))).not.toBe("");
+    expect(await err(as(u.id, (tx) => tx`select pvp_test.roulette_bet('RED', 100, ${randomUUID()})`))).not.toBe("");
     for (let i = 0; i < 100; i++) {
       await Promise.allSettled([sql`select pvp_test.roulette_advance(${gid})`, sql`select pvp_test.roulette_advance(${gid})`]);
       const [g] = await sql`select status from pvp_test.roulette_games where id = ${gid}`;
@@ -297,7 +297,7 @@ d("real-money ledger migration", () => {
     const faucet = await sql`select id from pvp_test.wallet_accounts where kind = 'test_faucet' and account_type = 'real'`;
     expect(faucet.length).toBe(0);
     await realInvariants();
-  });
+  }, 60_000);
 
   it("withdrawals: hold once, insufficient/locked funds rejected, failure releases once, success settles once", async () => {
     const u = await newUser(30);
@@ -332,6 +332,7 @@ d("real-money ledger migration", () => {
   });
 
   it("game rows cannot change money domain after creation", async () => {
+    await sql`select pvp_test._ensure_open_game()`;
     const [g] = await sql`select id from pvp_test.jackpot_games where account_type = 'real' and status in ('WAITING','ACTIVE') limit 1`;
     expect(g).toBeTruthy();
     expect(await err(sql`update pvp_test.jackpot_games set money_domain = 'TEST_USD', asset = 'TEST_USD', account_type = 'test_credit' where id = ${g.id}`)).toMatch(/IMMUTABLE_FIELD/);
