@@ -25,10 +25,55 @@
   - links from Fairness, How it works and About
   - all guides added to the dynamic sitemap
 
-## Order of work (5 batches, so each can be checked)
-1. Guide pages, the hub, and the first 6 guides (the main guide of each topic group).
-2. The 7 quick wins.
-3.–5. The remaining 18 guides, 6 per batch.
+## All 31 guides, in batches of 5
+Each line shows the guide's web address, its main keyword, then its Semrush estimates: searches per month and ranking difficulty out of 100.
+
+**Batch 1** (also builds the guide pages and the /guides hub): the main guide of each topic group.
+1. /guides/what-is-a-crypto-casino: "what is a crypto casino" (90/mo, 71)
+2. /guides/provably-fair-casino: "provably fair casino" (210/mo, 64)
+3. /guides/pvp-gambling: "peer to peer gambling" (30/mo, 20)
+4. /guides/crypto-jackpot: "crypto jackpot" (110/mo, 29)
+5. /guides/usdc-casino: "usdc casino" (210/mo, 25)
+
+**Batch 2:** quick wins
+6. /guides/gambling-budget: "gambling budget" (20/mo, 0), main guide for responsible play
+7. /guides/csgo-coinflip: "csgo coinflip" (1,000/mo, 35)
+8. /guides/cs2-roulette: "cs2 roulette" (1,300/mo, 38)
+9. /guides/hmac-sha256-provably-fair: "hmac sha256" (590/mo, 29)
+10. /guides/provably-fair-calculator: "provably fair calculator" (480/mo, difficulty not returned by Semrush)
+
+**Batch 3**
+11. /guides/csgo-jackpot: "csgo jackpot" (480/mo, 55)
+12. /guides/metamask-casino: "metamask casino" (390/mo, 45)
+13. /guides/how-to-buy-usdc: "how to buy usdc" (260/mo, 32)
+14. /guides/add-base-network-metamask: "add base to metamask" (20/mo, 0)
+15. /guides/crypto-wallet-for-gambling: "best crypto wallet for gambling" (320/mo, 35)
+
+**Batch 4**
+16. /guides/server-seed-client-seed: "client seed generator" (140/mo, difficulty not returned)
+17. /guides/provably-fair-roulette: "provably fair roulette" (30/mo, 0)
+18. /guides/coin-flip-odds: "coin flip odds" (260/mo, 62)
+19. /guides/crypto-casino-withdrawals: "instant withdrawal crypto casino" (390/mo, 60)
+20. /guides/csgo-gambling-history: "csgo lotto scandal" (20/mo, 0)
+
+**Batch 5**
+21. /guides/commit-reveal-scheme: "commit reveal scheme" (20/mo, 0)
+22. /guides/web3-casino: "web3 casino" (260/mo, 50) (new)
+23. /guides/usdc-vs-usdt-gambling: "usdc vs usdt" (4,400/mo, 50)
+24. /guides/house-edge: "house edge" (390/mo, 73)
+25. /guides/are-online-casinos-rigged: "are online casinos rigged" (210/mo, 51)
+
+**Batch 6**
+26. /guides/casino-terminology: "casino terminology" (140/mo, 56)
+27. /guides/roulette-colors: "roulette colors" (170/mo, 49)
+28. /guides/crypto-roulette: "crypto roulette" (1,900/mo, 73)
+29. /guides/rng-vs-provably-fair: "rng casino" (90/mo, 63)
+30. /guides/skin-gambling-vs-crypto: "skin gambling" (320/mo, 84)
+
+**Batch 7**
+31. /guides/martingale-strategy: "martingale strategy" (4,400/mo, 78)
+
+The hardest keywords come last: by then the other guides link to them, which helps them rank.
 
 After each batch: word count and title/description length checks, a check that every link works, and a spot check of the pages.
 
