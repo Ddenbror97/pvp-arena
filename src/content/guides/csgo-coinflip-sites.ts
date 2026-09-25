@@ -110,6 +110,32 @@ On PVPspinArena, the Coinflip winner is credited in the same database step that 
 Set a budget before you start, and treat each flip as entertainment, not income. Over time, a fair 50/50 game with no fee leaves the average player where they started, and any fee moves them below it.`,
     },
     {
+      id: "maths",
+      title: "The maths of a coinflip session",
+      body: `It helps to see what a session looks like in numbers. This is an illustrative example, not a prediction.
+
+Suppose you play 100 flips at $1 each on a site with a 0% fee. On average you would expect about 50 wins and 50 losses, finishing close to where you started. In practice, your result will usually land somewhere between about 10 flips ahead and 10 flips behind, simply because of normal variation.
+
+Now add a 5% fee. Each win pays $1.90 instead of $2.00. With 50 wins and 50 losses, you get back $95 from the $100 you staked. The fee costs you about $5 per 100 flips, every time, no matter how lucky you feel.
+
+That is why the fee matters more than anything else on a coinflip site. The coin is fair everywhere it is honest. The price is not.
+
+A few more points worth knowing:
+
+- **Stake size does not change the odds.** A $100 flip is still 50/50. It only changes how much you can win or lose.
+- **Streaks are normal.** In 100 fair flips, a run of six or seven in a row is quite likely. It does not mean anything is wrong.
+- **Doubling up does not help.** Raising your stake after a loss can recover one loss, but a long losing run can wipe out your budget. See our [martingale strategy guide](/guides/martingale-strategy).`,
+    },
+    {
+      id: "skins-to-usdc",
+      title: "Moving from skin coinflip to USDC coinflip",
+      body: `If you used skin coinflip sites in the CS:GO days, switching to a crypto coinflip site takes a little setup, but only once.
+
+You will need a wallet that supports the Base network, such as MetaMask. Our guide to [adding Base to MetaMask](/guides/add-base-network-metamask) walks through it. Then you need some USDC on Base. Our [how to buy USDC guide](/guides/how-to-buy-usdc) covers the common ways to get it.
+
+After that, the experience is simpler than with skins. There are no trade offers to accept, no trade holds and no arguments about item prices. You deposit from your wallet, play, and withdraw back to the same wallet. Your balance is always a clear dollar figure.`,
+    },
+    {
       id: "red-flags",
       title: "Red flags on coinflip sites",
       body: `Walk away if you see any of these:

@@ -101,6 +101,32 @@ The formula picks an item from a list with published odds. Check that the full o
 For a full comparison with traditional casino systems, read [RNG vs provably fair](/guides/rng-vs-provably-fair).`,
     },
     {
+      id: "checklist",
+      title: "A quick checklist for any provably fair game",
+      body: `Whatever game you are playing, you can run through the same short checklist before you trust a site's "provably fair" label:
+
+- **Is the hash shown before the round?** If the commitment only appears after the result, it proves nothing.
+- **Is the formula published?** You should be able to read exactly how the seed becomes an outcome, step by step.
+- **Can you add your own input?** A client seed or other player input means the site cannot pick a seed that suits it.
+- **Is there a working verifier?** A page where you enter a round and get the result recomputed is much easier than doing the maths yourself.
+- **Can you check old rounds?** Verification should work for any past round, not just the last few.
+- **Does the maths avoid bias?** Look for a mention of rejection sampling or another method that keeps every outcome equally likely.
+- **Are payouts listed clearly?** Fair results with unclear payouts still leave room for surprises.
+
+A site that passes all seven is doing provably fair properly. A site that passes only one or two is using the words as marketing.`,
+    },
+    {
+      id: "choosing",
+      title: "Choosing a provably fair crypto casino",
+      body: `Searches for "provably fair crypto casino" show that many players now treat verification as a basic requirement. That is a good instinct, but it is only one part of choosing a site.
+
+Once you know a site's games can be verified, check the rest: the fee or house edge on each game, how deposits and withdrawals work, how accounts are protected and whether the site helps you stay in control. Our [best crypto gambling sites guide](/guides/best-crypto-gambling-sites) gives a full checklist for this.
+
+It also helps to understand which provably fair games suit you. Player-versus-player games such as coinflip and jackpot pair well with provable fairness, because the site's only job is to be an honest referee. House games such as roulette, dice and crash can be just as verifiable, but they also carry a built-in edge that you pay on every bet.
+
+Finally, remember that verification is a tool, not a guarantee of a good night. Set a budget, check a few rounds and stop when you reach your limit.`,
+    },
+    {
       id: "example",
       title: "Worked example: verifying a PVPspinArena round",
       body: `Here is how you would check a Roulette round on PVPspinArena:

@@ -99,6 +99,34 @@ Set a budget before you start. Our [gambling budget guide](/guides/gambling-budg
 In these games the site does not add any hidden value gap: the money that goes in is the money that comes out, minus a stated fee if there is one. Our [PvP gambling guide](/guides/pvp-gambling) explains why this structure is kinder to players over time.`,
     },
     {
+      id: "example-battle",
+      title: "A worked 1v1 case battle, step by step",
+      body: `Here is an illustrative 1v1 battle to show how the numbers play out. The figures are made up for the example; real sites set their own prices and odds.
+
+Two players choose a battle of three cases. Each case costs $3.00 and has an expected value of $2.70, a 10% edge.
+
+- **Player A pays $9.00.** Their three openings return items worth $0.40, $1.10 and $12.00. Total: $13.50.
+- **Player B pays $9.00.** Their three openings return items worth $2.20, $0.90 and $1.60. Total: $4.70.
+
+Player A wins and takes all six items, worth $18.20. Player B leaves with nothing.
+
+In this battle the group got lucky: $18.20 came out of $18.00 paid in. But on average the six openings would return $16.20, not $18.00. Over many battles, the players as a group lose about $1.80 each time, and that money goes to the site.
+
+Notice how one rare item decided the whole battle. That is typical. Most openings return items worth less than the case price, and battles are usually won by whoever hits the one big item. That is exciting, but it also means you can lose several battles in a row without anything being wrong.`,
+    },
+    {
+      id: "ev-check",
+      title: "How to work out a case's expected value yourself",
+      body: `If a site publishes full odds, you can work out the expected value of any case in a few minutes.
+
+1. List every item in the case with its chance and its value.
+2. Multiply each item's chance by its value.
+3. Add the results together. That is the expected value.
+4. Divide it by the case price. If the answer is 0.90, the case returns 90% on average and the edge is 10%.
+
+If a site does not publish odds for every item, you cannot do this check, and you should treat that as a warning sign. Compare the result with games where the maths is simpler, such as [coin flip odds](/guides/coin-flip-odds), to see how much you are paying for the excitement.`,
+    },
+    {
       id: "pvpspinarena",
       title: "Where PVPspinArena fits",
       body: `To be clear: PVPspinArena does not offer case opening or case battles. We focus on the player-versus-player formats that made the CS:GO era popular:

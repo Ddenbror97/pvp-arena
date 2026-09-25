@@ -131,6 +131,15 @@ Look for a [responsible gambling page](/responsible-gambling), budget tips and l
 Also check that online gambling is legal where you live. Rules differ by country and region, and it is your responsibility to follow them. You must be 18 or older, or the legal age where you live if that is higher.`,
     },
     {
+      id: "compare",
+      title: "How to compare two sites side by side",
+      body: `When you have narrowed your search to two or three sites, open each one in a separate tab and go through the checklist in order. Write the answers down. It sounds slow, but it takes about ten minutes and stops you choosing on looks alone.
+
+A simple way to score them is to give one point for each check a site passes clearly, half a point when the answer is unclear, and nothing when the answer is missing. A site that scores well on fairness, fees and withdrawals is usually a better choice than one with a big bonus and a low score everywhere else.
+
+Finally, try a small test. Deposit a small amount, play a few rounds, check one result on the verifier and make a small withdrawal. How a site handles your first withdrawal tells you more than any review. If anything feels wrong, stop there. Our [crypto wallet guide](/guides/crypto-wallet-for-gambling) explains how to keep your own funds safe while you test.`,
+    },
+    {
       id: "pvpspinarena",
       title: "How PVPspinArena measures up",
       body: `Here is the checklist applied to PVPspinArena, in one place:

@@ -122,6 +122,35 @@ Modern crypto PvP sites keep that structure and add three things the skin era us
 Our [PvP gambling guide](/guides/pvp-gambling) explains why playing against people rather than the house changes the maths in your favour when fees are low.`,
     },
     {
+      id: "first-session",
+      title: "A safe first session on any CS2 gambling site",
+      body: `Choosing a site is only half the job. How you use it matters just as much. Here is a simple routine for your first session on any CS2 gambling site, including PVPspinArena.
+
+1. **Decide your budget first.** Pick an amount you would be comfortable spending on a night out, and treat it as already spent. Do not top up during the session.
+2. **Watch before you play.** Spend a few minutes watching live rounds. Get a feel for how fast the games move and how big the pots are.
+3. **Start with the simplest game.** Coinflip has one decision and exact 50/50 odds, so it is the easiest way to understand how a site works.
+4. **Check one result.** After your first round, verify it on the fairness page. If you cannot, that tells you something important about the site.
+5. **Make a small withdrawal.** Even if you are ahead by a small amount, withdraw some of it to test the process. A site that pays quickly and correctly on a small withdrawal is more likely to do the same on a larger one.
+6. **Stop at your limit.** Whether you are up or down, stop when your budget is used or your time is up.
+
+This routine protects you from the most common mistakes: chasing losses, playing on a site you have never tested, and trusting results you have never checked.`,
+    },
+    {
+      id: "myths",
+      title: "Common myths about CS:GO gambling sites",
+      body: `A few beliefs keep coming up in CS:GO and CS2 communities. None of them hold up.
+
+**"Some sites have hot streaks."** Each round on a fair site is independent. A site cannot be "hot", and a room cannot be "due" a win. That idea is the [gambler's fallacy](/guides/gamblers-fallacy).
+
+**"Bigger pots are better odds."** In jackpot, your chance is your share of the pot. A bigger pot with a small stake gives you a smaller chance, not a better one.
+
+**"Streamers prove a site is fair."** Sponsored streamers are often given balances to play with. Their wins do not tell you anything about your odds.
+
+**"Skins are safer than crypto."** Skins carry their own risks: pricing set by the site, trade holds and scams. Neither is automatically safer; what matters is how the site handles your stakes and payouts.
+
+**"Betting systems beat the house."** No staking pattern changes the underlying odds. Our [martingale strategy guide](/guides/martingale-strategy) shows why doubling up fails.`,
+    },
+    {
       id: "pvpspinarena",
       title: "How PVPspinArena fits the checklist",
       body: `PVPspinArena was built as a crypto version of the CS:GO-era classics:
