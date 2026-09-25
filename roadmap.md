@@ -122,3 +122,12 @@
 - [x] Roulette lifecycle uses an independent one-second server clock; logged-out viewers no longer depend on signed-in tabs
 - [x] Base Mainnet withdrawals on; Base Sepolia removed
 - [x] Full adversarial audit per uploaded spec (report delivered)
+
+## SEO guides (31, batches of 5)
+- [x] Batch 1: guide pages, /guides hub, what-is-a-crypto-casino, provably-fair-casino, pvp-gambling, crypto-jackpot, usdc-casino
+- [ ] Batch 2: gambling-budget, csgo-coinflip, cs2-roulette, hmac-sha256-provably-fair, provably-fair-calculator
+- [ ] Batch 3: csgo-jackpot, metamask-casino, how-to-buy-usdc, add-base-network-metamask, crypto-wallet-for-gambling
+- [ ] Batch 4: server-seed-client-seed, provably-fair-roulette, coin-flip-odds, crypto-casino-withdrawals, csgo-gambling-history
+- [ ] Batch 5: commit-reveal-scheme, web3-casino, usdc-vs-usdt-gambling, house-edge, are-online-casinos-rigged
+- [ ] Batch 6: casino-terminology, roulette-colors, crypto-roulette, rng-vs-provably-fair, skin-gambling-vs-crypto
+- [ ] Batch 7: martingale-strategy
