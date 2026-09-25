@@ -259,6 +259,6 @@ Any gambling site you use should be adults only and should say so clearly. PVPsp
     { label: "Circle: USDC overview", url: "https://www.circle.com/usdc" },
     { label: "UK Gambling Commission: virtual currencies and skins", url: "https://www.gamblingcommission.gov.uk/" },
   ],
-  related: ["csgo-gambling-history", "csgo-jackpot", "csgo-coinflip", "pvp-gambling"],
+  related: ["csgo-case-opening", "cs2-betting", "csgo-gambling-history", "pvp-gambling"],
   updated: "2026-09-25",
 };

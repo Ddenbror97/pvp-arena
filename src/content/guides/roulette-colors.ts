@@ -232,6 +232,6 @@ The coloured wheels used on crypto sites are a much newer idea. They keep the re
     { label: "Wizard of Odds: Roulette", url: "https://wizardofodds.com/games/roulette/" },
     { label: "Encyclopaedia Britannica: Roulette", url: "https://www.britannica.com/topic/roulette" },
   ],
-  related: ["provably-fair-roulette", "cs2-roulette", "house-edge", "crypto-roulette"],
+  related: ["how-to-win-at-roulette", "provably-fair-roulette", "gamblers-fallacy", "crypto-roulette"],
   updated: "2026-09-25",
 };

@@ -220,7 +220,7 @@ With Base set up, you can deposit to PVPspinArena from your verified wallet and 
     { label: "Circle: USDC contract addresses", url: "https://developers.circle.com/stablecoins/usdc-contract-addresses" },
     { label: "BaseScan block explorer", url: "https://basescan.org" },
   ],
-  related: ["metamask-casino", "how-to-buy-usdc", "usdc-casino"],
+  related: ["base-network", "metamask-casino", "how-to-buy-usdc", "usdc-casino"],
   updated: "2026-09-25",
   howTo: true,
 };

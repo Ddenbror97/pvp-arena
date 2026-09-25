@@ -239,7 +239,7 @@ Never chase losses, never borrow to play, and use a stablecoin and a separate wa
     { label: "Gamblers Anonymous", url: "https://www.gamblersanonymous.org/" },
     { label: "Gambling Therapy", url: "https://www.gamblingtherapy.org/" },
   ],
-  related: ["martingale-strategy", "house-edge", "usdc-casino", "what-is-a-crypto-casino"],
+  related: ["how-to-stop-gambling", "gambling-self-exclusion", "martingale-strategy", "house-edge"],
   updated: "2026-09-25",
   howTo: true,
 };

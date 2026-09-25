@@ -225,6 +225,6 @@ Protect your recovery phrase, read every signature, reject unexpected approvals 
     { label: "Base documentation: network information", url: "https://docs.base.org/chain/network-information" },
     { label: "EIP-191: Signed data standard", url: "https://eips.ethereum.org/EIPS/eip-191" },
   ],
-  related: ["metamask-casino", "add-base-network-metamask", "how-to-buy-usdc"],
+  related: ["seed-phrase", "metamask-casino", "base-network", "how-to-buy-usdc"],
   updated: "2026-09-25",
 };

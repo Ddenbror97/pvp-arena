@@ -10,6 +10,8 @@ const PLANNED = new Set([
   "commit-reveal-scheme", "web3-casino", "usdc-vs-usdt-gambling", "house-edge", "are-online-casinos-rigged",
   "casino-terminology", "roulette-colors", "crypto-roulette", "rng-vs-provably-fair", "skin-gambling-vs-crypto",
   "martingale-strategy",
+  "gamblers-fallacy", "csgo-case-opening", "how-to-stop-gambling", "crash-gambling", "cs2-betting",
+  "how-to-win-at-roulette", "seed-phrase", "base-network", "gambling-self-exclusion",
 ]);
 
 let fail = 0;
@@ -18,7 +20,7 @@ const slugs = new Set<string>(), kws = new Set<string>();
 for (const g of GUIDES) {
   const wc = wordCount(g);
   console.log(`${g.slug}: ${wc} words, title ${g.title.length}, desc ${g.description.length}`);
-  if (wc < 1850 || wc > 2500) err(`word count ${wc}`);
+  if (wc < 1850 || wc > 2400) err(`word count ${wc}`);
   if (g.title.length < 40 || g.title.length > 59) err(`title length ${g.title.length}`);
   if (g.description.length < 120 || g.description.length > 159) err(`desc length ${g.description.length}`);
   if (slugs.has(g.slug)) err("duplicate slug"); slugs.add(g.slug);
