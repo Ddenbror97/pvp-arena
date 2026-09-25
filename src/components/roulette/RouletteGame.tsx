@@ -1,4 +1,5 @@
 import { memo, useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -225,7 +226,7 @@ export function RouletteGame() {
         ].map(([l, f]) => (
           <Button key={l as string} size="sm" variant="secondary" onClick={f as () => void}>{l as string}</Button>
         ))}
-        <span className="ml-auto rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold text-gold">PROVABLY FAIR</span>
+        <Link to="/fairness" className="ml-auto rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold text-gold hover:bg-gold/25" aria-label="Provably fair — verify roulette rounds">PROVABLY FAIR</Link>
       </div>
 
       {playOpen.data === false && (
