@@ -211,9 +211,13 @@ export function useLiveJackpot() {
 }
 
 export function useWallet(userId: string | null) {
+  useWalletRealtime(userId);
   return useQuery({
     queryKey: ["wallet", userId],
     enabled: !!userId,
+    // Backup for missed realtime events (e.g. deposits credited by the watcher).
+    refetchInterval: 20_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // Real USD only. Retired test-credit balances are never shown as money.
       const { data, error } = await supabase
@@ -240,8 +244,9 @@ export function useWalletRealtime(userId: string | null) {
   const qc = useQueryClient();
   useEffect(() => {
     if (!userId) return;
+    // Unique channel per hook instance so header + page subscriptions don't collide.
     const ch = supabase
-      .channel(`wallet-${userId}`)
+      .channel(`wallet-${userId}-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "wallet_accounts", filter: `owner_id=eq.${userId}` }, () =>
         qc.invalidateQueries({ queryKey: ["wallet", userId] }),
       )
