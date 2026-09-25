@@ -91,42 +91,22 @@ export function SiteFooter() {
 
   return (
     <footer className="canvas mt-10 border-t border-border pb-20 sm:pb-0">
-      <div className="mx-auto grid max-w-none gap-10 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.6fr_repeat(4,1fr)] lg:gap-8 lg:py-12">
-        <div className="max-w-sm">
+      <div className="mx-auto grid max-w-none gap-10 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.6fr_repeat(3,1fr)] lg:gap-8 lg:py-12">
+        <div>
           <Link to="/" className="inline-flex" aria-label="PVPspinArena home">
             <img src={arenaLogo.url} alt="PVPspinArena" width={240} height={128} loading="lazy" decoding="async" className="h-10 w-auto" />
           </Link>
-          <p className="mt-4 text-sm leading-6 text-muted-foreground">
-            Player-versus-player Jackpot, Coinflip and Roulette.
-          </p>
-          <p className="mt-3 text-xs leading-5 text-muted-foreground">
-            Balances are in USD, funded by USDC or ETH deposits on Base. 18+. Play responsibly.
-          </p>
         </div>
-
-        <nav aria-label="Games">
-          <h2 className="font-display text-sm text-foreground">Games</h2>
-          <ul className="mt-4 space-y-3">
-            <li><Link to="/" className={footerLink}>Jackpot</Link></li>
-            <li><Link to="/coinflip" className={footerLink}>Coinflip</Link></li>
-            <li><Link to="/roulette" className={footerLink}>Roulette</Link></li>
-          </ul>
-        </nav>
 
         <div>
           <h2 className="font-display text-sm text-foreground">How it works</h2>
-          <p className="mt-4 text-sm leading-6 text-muted-foreground">
-            Pick a game, place your entry, then verify completed results independently.
-          </p>
-          <Link to="/fairness" className={`mt-3 inline-block ${footerLink}`}>Fairness</Link>
+          <ul className="mt-4 space-y-3">
+            <li><Link to="/fairness" className={footerLink}>Fairness</Link></li>
+          </ul>
         </div>
 
         <div>
           <h2 className="font-display text-sm text-foreground">About us</h2>
-          <p className="mt-4 text-sm leading-6 text-muted-foreground">
-            A multiplayer arena built to make every game result transparent and checkable.
-          </p>
-          <p className="mt-3 text-xs text-muted-foreground">Contact page coming later.</p>
         </div>
 
         <nav aria-label="Legal">
@@ -137,9 +117,6 @@ export function SiteFooter() {
             <li><Link to="/responsible-gambling" className={footerLink}>Responsible gambling</Link></li>
           </ul>
         </nav>
-      </div>
-      <div className="border-t border-border px-4 py-4 text-center text-xs text-muted-foreground sm:px-6">
-        © {new Date().getFullYear()} PVPspinArena
       </div>
     </footer>
   );

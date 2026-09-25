@@ -11,10 +11,14 @@ import green from "@/assets/roulette-green.png.asset.json";
 export const Route = createFileRoute("/roulette")({
   head: () => ({
     meta: [
-      { title: "Roulette — PVPspinArena" },
-      { name: "description", content: "Multiplayer coin roulette: Purple, Silver or Green 14x. Server-drawn and verifiable." },
-      { property: "og:title", content: "Roulette — PVPspinArena" },
-      { property: "og:description", content: "Pick a coin, watch the roll. Provably fair." },
+      { title: "Roulette — Multiplayer Coin Roulette | PVPspinArena" },
+      {
+        name: "description",
+        content:
+          "Bet on Purple, Silver or the 14x Green in our multiplayer coin roulette. Each slot is equally likely, the roll is server-drawn, and you can verify it.",
+      },
+      { property: "og:title", content: "Roulette — Multiplayer Coin Roulette | PVPspinArena" },
+      { property: "og:description", content: "Multiplayer coin roulette: Purple, Silver or Green 14x. Verifiable." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),

@@ -15,9 +15,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/fairness")({
   head: () => ({
     meta: [
-      { title: "Fairness protocol — PVPspinArena" },
-      { name: "description", content: "How PVPspinArena decides Jackpot, Coinflip and Roulette results: seed commitment, HMAC-SHA256, unbiased mapping. Verify any game yourself." },
-      { property: "og:title", content: "Fairness protocol — PVPspinArena" },
+      { title: "Fairness — Provably Fair Games | PVPspinArena" },
+      {
+        name: "description",
+        content:
+          "See how every result is decided: a committed seed, HMAC-SHA256 draws and rejection sampling. Verify any Jackpot, Coinflip or Roulette outcome yourself.",
+      },
+      { property: "og:title", content: "Fairness — Provably Fair Games | PVPspinArena" },
       { property: "og:description", content: "Commit/reveal draws with HMAC-SHA256 and unbiased ticket mapping. Verify any game yourself." },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
