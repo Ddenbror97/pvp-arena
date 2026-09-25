@@ -19,11 +19,16 @@ import { guide as pfRoulette } from "./provably-fair-roulette";
 import { guide as coinOdds } from "./coin-flip-odds";
 import { guide as withdrawals } from "./crypto-casino-withdrawals";
 import { guide as csgoHistory } from "./csgo-gambling-history";
+import { guide as commitReveal } from "./commit-reveal-scheme";
+import { guide as web3Casino } from "./web3-casino";
+import { guide as usdcVsUsdt } from "./usdc-vs-usdt-gambling";
+import { guide as houseEdge } from "./house-edge";
+import { guide as rigged } from "./are-online-casinos-rigged";
 
 export type { Guide, GuideCluster } from "./types";
 
 /** Published guides. Add each new guide here once it passes scripts/check-guides.ts. */
-export const GUIDES: Guide[] = [whatIsACryptoCasino, provablyFairCasino, pvpGambling, cryptoJackpot, usdcCasino, gamblingBudget, csgoCoinflip, cs2Roulette, hmacSha256, pfCalculator, csgoJackpot, metamaskCasino, buyUsdc, addBase, cryptoWallet, seeds, pfRoulette, coinOdds, withdrawals, csgoHistory];
+export const GUIDES: Guide[] = [whatIsACryptoCasino, provablyFairCasino, pvpGambling, cryptoJackpot, usdcCasino, gamblingBudget, csgoCoinflip, cs2Roulette, hmacSha256, pfCalculator, csgoJackpot, metamaskCasino, buyUsdc, addBase, cryptoWallet, seeds, pfRoulette, coinOdds, withdrawals, csgoHistory, commitReveal, web3Casino, usdcVsUsdt, houseEdge, rigged];
 
 export const CLUSTERS: { name: GuideCluster; blurb: string }[] = [
   { name: "Foundations", blurb: "Start here: what crypto casinos are and how they work." },

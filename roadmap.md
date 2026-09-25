@@ -128,6 +128,6 @@
 - [x] Batch 2: gambling-budget, csgo-coinflip, cs2-roulette, hmac-sha256-provably-fair, provably-fair-calculator
 - [x] Batch 3: csgo-jackpot, metamask-casino, how-to-buy-usdc, add-base-network-metamask, crypto-wallet-for-gambling
 - [x] Batch 4: server-seed-client-seed, provably-fair-roulette, coin-flip-odds, crypto-casino-withdrawals, csgo-gambling-history
-- [ ] Batch 5: commit-reveal-scheme, web3-casino, usdc-vs-usdt-gambling, house-edge, are-online-casinos-rigged
+- [x] Batch 5: commit-reveal-scheme, web3-casino, usdc-vs-usdt-gambling, house-edge, are-online-casinos-rigged
 - [ ] Batch 6: casino-terminology, roulette-colors, crypto-roulette, rng-vs-provably-fair, skin-gambling-vs-crypto
 - [ ] Batch 7: martingale-strategy
