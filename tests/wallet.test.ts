@@ -303,6 +303,7 @@ describe("provider safety", () => {
       "eth_sendTransaction",
       "personal_sign",
       "wallet_addEthereumChain",
+      "wallet_revokePermissions",
       "wallet_switchEthereumChain",
     ]);
   });

@@ -14,6 +14,7 @@ export interface Eip1193 {
 export interface WalletSession {
   connect(): Promise<{ address: string; chainId: string }>;
   checkConnection(): Promise<{ address: string; chainId: string } | null>;
+  resetConnection(): Promise<void>;
   chainId(): Promise<string>;
   sign(message: string, address: string): Promise<string>;
   switchToRequiredNetwork(): Promise<void>;
@@ -141,6 +142,23 @@ export async function connectInjectedProvider(provider: Eip1193): Promise<Connec
   return request;
 }
 
+/**
+ * Ask the extension to forget this origin's account permission. This is the
+ * only provider-supported reset for a stale account request; it never touches
+ * keys, accounts, transactions, or permissions granted to other sites.
+ */
+export async function resetInjectedProviderConnection(provider: Eip1193): Promise<void> {
+  try {
+    await guardedRequest(provider, "wallet_revokePermissions", [{ eth_accounts: {} }]);
+  } catch (error) {
+    const mapped = toWalletError(error, "connect");
+    // There may be no existing permission to revoke. The reset is still safe
+    // to continue unless MetaMask explicitly says another request is pending.
+    if (mapped.code === "CONNECT_PENDING") throw mapped;
+  }
+  pendingInjectedConnections.delete(provider);
+}
+
 function sub(p: Eip1193, ev: string, fn: (...a: unknown[]) => void) {
   p.on?.(ev, fn);
   return () => p.removeListener?.(ev, fn);
@@ -154,7 +172,10 @@ export function sessionFor(
   return {
     async connect() {
       const attempt = async () => {
-        const { accounts, chainId } = await withTimeout(connectFn(), CONNECT_TIMEOUT_MS);
+        // MetaMask does not provide cancellation for eth_requestAccounts. Do
+        // not abandon it behind an app timeout and then accidentally create a
+        // second request that the extension rejects as already pending.
+        const { accounts, chainId } = await connectFn();
         const address = accounts?.[0];
         if (!address) throw new WalletError("WALLET_LOCKED");
         return { address, chainId: String(chainId).toLowerCase() };
@@ -196,6 +217,14 @@ export function sessionFor(
         address,
         chainId: connected.chainId.toLowerCase(),
       };
+    },
+    async resetConnection() {
+      await resetInjectedProviderConnection(provider);
+      try {
+        await disconnectFn();
+      } catch {
+        /* injected providers have no local session to disconnect */
+      }
     },
     async chainId() {
       return String(await guardedRequest(provider, "eth_chainId")).toLowerCase();

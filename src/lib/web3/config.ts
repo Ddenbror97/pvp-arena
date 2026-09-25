@@ -30,6 +30,7 @@ export const ALLOWED_WALLET_METHODS = new Set([
   "eth_requestAccounts",
   "eth_accounts",
   "eth_chainId",
+  "wallet_revokePermissions",
   "personal_sign",
   "wallet_switchEthereumChain",
   "wallet_addEthereumChain",
