@@ -272,8 +272,8 @@ export function CryptoRails({
             <div className="mt-6 rounded-lg border border-primary/40 bg-primary/10 p-5 text-center">
               <Check className="mx-auto h-8 w-8 text-primary" />
               <h3 className="mt-3 font-display text-sm">Deposit submitted</h3>
-              <p className="mt-2 text-sm text-muted-foreground">MetaMask sent the transaction. Test credits appear only after the server verifies the safe block, usually about 6 minutes.</p>
-              <div className="mt-3"><TxLink hash={submittedHash} /></div>
+              <p className="mt-2 text-sm text-muted-foreground">MetaMask sent the transaction. Credits appear only after the server verifies the confirmed transaction{isTestnet ? ", usually about 6 minutes" : ""}.</p>
+              <div className="mt-3"><TxLink hash={submittedHash} chainId={chain?.chain_id} /></div>
               <Button className="mt-4" variant="secondary" onClick={() => reset("deposit", asset)}>Make another deposit</Button>
             </div>
           ) : mode === "deposit" && depositReview ? (
@@ -284,7 +284,7 @@ export function CryptoRails({
                 <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">Estimated credit</dt><dd className="font-mono font-semibold">{formatUsd(depositReview.usdCents)}</dd></div>
                 <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">From</dt><dd className="font-mono">{shortAddress(depositReview.verifiedAddress)}</dd></div>
                 <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">To PVPspinArena</dt><dd className="font-mono">{shortAddress(depositReview.instruction.treasury)}</dd></div>
-                <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">Network</dt><dd>Base Sepolia</dd></div>
+                <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">Network</dt><dd>{chainName}</dd></div>
               </dl>
               {asset === "ETH" && <p className="text-xs text-muted-foreground">ETH credit is recalculated from the server price when the confirmed deposit is credited.</p>}
               <div className="grid gap-2 sm:grid-cols-2"><Button variant="secondary" onClick={() => setDepositReview(null)}>Back</Button><Button onClick={sendDeposit} disabled={busy}>{busy ? "Check MetaMask…" : "Deposit with MetaMask"}</Button></div>
