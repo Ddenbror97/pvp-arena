@@ -128,7 +128,7 @@ export function JackpotStage() {
       <section className="order-1 flex flex-col items-center lg:order-2">
         <div className="mb-4 text-center">
           <div className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            Jackpot <span className="tabular">#{game?.id ?? "—"}</span>
+            Jackpot <span className="tabular inline-block min-w-[4ch] text-left">#{game?.id ?? "—"}</span>
           </div>
         </div>
         <JackpotWheel
