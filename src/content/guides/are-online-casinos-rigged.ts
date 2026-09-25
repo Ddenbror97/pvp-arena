@@ -222,6 +222,6 @@ Watch for warning signs such as no licence or verifiable fairness, hidden odds, 
     { label: "Gaming Laboratories International (GLI)", url: "https://gaminglabs.com/" },
     { label: "Wikipedia: Gambler's fallacy", url: "https://en.wikipedia.org/wiki/Gambler%27s_fallacy" },
   ],
-  related: ["provably-fair-casino", "house-edge", "commit-reveal-scheme"],
+  related: ["rng-vs-provably-fair", "provably-fair-casino", "house-edge", "commit-reveal-scheme"],
   updated: "2026-09-25",
 };

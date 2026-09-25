@@ -167,6 +167,6 @@ If you are new, start with the [provably fair casino guide](/guides/provably-fai
     { label: "Circle — USDC overview", url: "https://www.circle.com/usdc" },
     { label: "Base — Network documentation", url: "https://docs.base.org/" },
   ],
-  related: ["provably-fair-casino", "pvp-gambling", "usdc-casino", "crypto-jackpot"],
+  related: ["web3-casino", "casino-terminology", "provably-fair-casino", "usdc-casino", "pvp-gambling"],
   updated: "2026-09-25",
 };

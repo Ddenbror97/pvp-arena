@@ -159,6 +159,6 @@ Watch a live round on the [Jackpot page](/), or compare it with the one-on-one f
     { label: "RFC 2104 — HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
     { label: "NIST FIPS 180-4 — SHA-256", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
   ],
-  related: ["pvp-gambling", "provably-fair-casino", "csgo-jackpot", "coin-flip-odds", "gambling-budget"],
+  related: ["pvp-gambling", "csgo-jackpot", "coin-flip-odds", "house-edge", "provably-fair-casino"],
   updated: "2026-09-25",
 };
