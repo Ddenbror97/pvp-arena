@@ -368,7 +368,7 @@ describe("personal deposit address derivation", () => {
     const { HDKey } = await import("@scure/bip32");
     const { deriveDepositAddress } = await import("../src/lib/crypto/addresses.server");
     const seed = mnemonicToSeedSync("test test test test test test test test test test test junk");
-    const xpub = HDKey.fromMasterSeed(seed).neutered().publicExtendedKey;
+    const xpub = HDKey.fromMasterSeed(seed).wipePrivateData().publicExtendedKey;
     const a0 = deriveDepositAddress(xpub, 8453, 0);
     expect(a0).toMatch(/^0x[0-9a-fA-F]{40}$/);
     expect(deriveDepositAddress(xpub, 8453, 0)).toBe(a0); // deterministic
