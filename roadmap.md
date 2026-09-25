@@ -95,6 +95,7 @@
 - [x] Wallet UX: guided one-click MetaMask deposits, review-first withdrawals, and mobile-safe activity layout
 - [x] Header: balance + Deposit/Withdraw in one control, deep-linked to the wallet tab; fits 320-1280px, no added page movement
 - [x] MetaMask connect on ddenbror97: direct installed-extension discovery, mobile fallback, duplicate-request guard, actionable errors, safe failure logging
+- [x] MetaMask pending-request recovery: shared single-flight request, authorized-account reuse, safe polling across account switches/remounts
 - [x] Final CLS hardening pass (header auth swap, balance slot, Jackpot round #)
 - [ ] Full Base Sepolia round trip (deposit -> play -> withdraw) — waits on test coins in the payout wallet and a publish
 - [ ] Rotate the payout wallet key that was pasted in chat — after testing

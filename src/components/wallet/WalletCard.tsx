@@ -56,6 +56,50 @@ export function WalletCard({ userId }: { userId: string }) {
   const connectedVerified = !!connectedRecord?.is_verified;
   const wrongNetwork = !!address && !!chainId && chainId !== WALLET_CONFIG.requiredChainId;
 
+  const watchSession = (s: WalletSession) => {
+    unsubs.current.forEach((u) => u());
+    unsubs.current = [
+      s.onAccountsChanged((a) => {
+        setAddress(a[0] ?? null);
+        if (a[0]) setErr((current) => (current === "CONNECT_PENDING" ? null : current));
+        else setSession(null);
+      }),
+      s.onChainChanged((c) => {
+        setChainId(c);
+        if (c === WALLET_CONFIG.requiredChainId)
+          setErr((current) => (current === "UNSUPPORTED_NETWORK" ? null : current));
+      }),
+      s.onDisconnect(() => {
+        setAddress(null);
+        setSession(null);
+      }),
+    ];
+    setSession(s);
+  };
+
+  const acceptConnection = async (s: WalletSession, r: { address: string; chainId: string }) => {
+    setAddress(r.address);
+    setChainId(r.chainId);
+    setErr(r.chainId === WALLET_CONFIG.requiredChainId ? null : "UNSUPPORTED_NETWORK");
+    await eventFn({ data: { event: "WALLET_CONNECTED", address: r.address } }).catch(() => {});
+    qc.invalidateQueries({ queryKey: ["user-wallets", userId] });
+  };
+
+  useEffect(() => {
+    if (err !== "CONNECT_PENDING" || !session) return;
+    let stopped = false;
+    const check = async () => {
+      const connected = await session.checkConnection().catch(() => null);
+      if (!stopped && connected) await acceptConnection(session, connected);
+    };
+    void check();
+    const timer = window.setInterval(() => void check(), 2_000);
+    return () => {
+      stopped = true;
+      window.clearInterval(timer);
+    };
+  }, [err, session]);
+
   const fail = (e: unknown, phase: "connect" | "sign") => {
     const code = e instanceof WalletError ? e.code : phase === "sign" ? "SIGN_REJECTED" : "GENERIC";
     setErr(code);
@@ -73,32 +117,25 @@ export function WalletCard({ userId }: { userId: string }) {
     setErr(null);
     setBusy("connect");
     void eventFn({ data: { event: "WALLET_CONNECTION_STARTED", address: null } }).catch(() => {});
+    let activeSession: WalletSession | null = null;
     try {
       const s = await getWalletSession();
+      activeSession = s;
+      watchSession(s);
+      if (err === "CONNECT_PENDING") {
+        const connected = await s.checkConnection();
+        if (!connected) throw new WalletError("CONNECT_PENDING");
+        await acceptConnection(s, connected);
+        return;
+      }
       const r = await s.connect();
-      unsubs.current.forEach((u) => u());
-      unsubs.current = [
-        s.onAccountsChanged((a) => {
-          setAddress(a[0] ?? null);
-          if (!a[0]) setSession(null);
-        }),
-        s.onChainChanged((c) => {
-          setChainId(c);
-          if (c === WALLET_CONFIG.requiredChainId) setErr((e) => (e === "UNSUPPORTED_NETWORK" ? null : e));
-        }),
-        s.onDisconnect(() => {
-          setAddress(null);
-          setSession(null);
-        }),
-      ];
-      setSession(s);
-      setAddress(r.address);
-      setChainId(r.chainId);
-      if (r.chainId !== WALLET_CONFIG.requiredChainId) setErr("UNSUPPORTED_NETWORK");
-      await eventFn({ data: { event: "WALLET_CONNECTED", address: r.address } }).catch(() => {});
-      qc.invalidateQueries({ queryKey: ["user-wallets", userId] });
+      await acceptConnection(s, r);
     } catch (e) {
-      resetWalletSession();
+      const code = e instanceof WalletError ? e.code : "GENERIC";
+      if (code !== "CONNECT_PENDING") {
+        resetWalletSession();
+        if (activeSession) setSession(null);
+      }
       fail(e, "connect");
     } finally {
       connectInFlight.current = false;
@@ -192,7 +229,7 @@ export function WalletCard({ userId }: { userId: string }) {
             >
               <ShieldCheck className="h-4 w-4" /> ● Verified
             </div>
-            <AddressLine a={connectedRecord!.address} />
+            <AddressLine a={connectedRecord?.address ?? address} />
             <Button variant="secondary" onClick={disconnect}>
               Disconnect
             </Button>
@@ -237,7 +274,11 @@ export function WalletCard({ userId }: { userId: string }) {
               <p className="text-sm text-muted-foreground">Connect your MetaMask wallet</p>
             )}
             <Button onClick={connect} disabled={busy !== null}>
-              {busy === "connect" ? "Opening MetaMask..." : "Connect MetaMask"}
+              {busy === "connect"
+                ? "Checking MetaMask..."
+                : err === "CONNECT_PENDING"
+                  ? "Check connection"
+                  : "Connect MetaMask"}
             </Button>
           </>
         )}
