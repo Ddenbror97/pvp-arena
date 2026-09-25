@@ -117,6 +117,7 @@ export function CryptoRails({
   const activity = useQuery({ queryKey: ["crypto-activity"], queryFn: () => fetchActivity(), refetchInterval: 15_000 });
   const [mode, setMode] = useState<"deposit" | "withdraw">(requestedMode);
   const [asset, setAsset] = useState<Asset>("USDC");
+  const [chainId, setChainId] = useState<number>(TESTNET.chainId);
   const [amount, setAmount] = useState("");
   const [depositReview, setDepositReview] = useState<DepositReview | null>(null);
   const [withdrawalReview, setWithdrawalReview] = useState<WithdrawalReview | null>(null);
@@ -124,6 +125,10 @@ export function CryptoRails({
   const [busy, setBusy] = useState(false);
   const [now, setNow] = useState(() => Date.now());
   const data = activity.data;
+  const chains: ChainInfo[] = data?.chains ?? [];
+  const chain: ChainInfo | undefined = chains.find((c) => c.chain_id === chainId) ?? chains[0];
+  const chainName = chain?.name ?? "Base Sepolia";
+  const isTestnet = chain?.network_mode !== "mainnet";
   const cents = Math.round(Number(amount) * 100);
   const valid = Number.isFinite(cents) && cents > 0;
   const quoteLeft = withdrawalReview?.quote ? Math.max(0, Math.ceil((new Date(withdrawalReview.quote.expires_at).getTime() - now) / 1000)) : 0;
