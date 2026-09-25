@@ -43,11 +43,11 @@ async function newUser(name: string, verified = true) {
 const bal = async (uid: string, kind = "user_available") =>
   Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind}`)[0]?.balance ?? 0);
 const observe = (asset: string, tx: string, from: string, units: string, log = 0) =>
-  one(sql`select pvp_test.crypto_observe_deposit(${asset}, ${tx}, ${log}, 100, ${from}, ${TREASURY}, ${units}) as r`);
+  one(sql`select pvp_test.crypto_observe_deposit(84532, ${asset}, ${tx}, ${log}, 100, ${from}, ${TREASURY}, ${units}) as r`);
 const credit = (id: string, snap: string | null = null) => one(sql`select pvp_test.crypto_credit_deposit(${id}, ${snap}) as r`);
-const snapshot = () => one(sql`select pvp_test.crypto_record_price('ETH', ${FEED}, 1, ${PRICE}, now()) as r`);
+const snapshot = () => one(sql`select pvp_test.crypto_record_price(84532, 'ETH', ${FEED}, 1, ${PRICE}, now()) as r`);
 const withdraw = (uid: string, cents: number, asset = "USDC", quote: string | null = null) =>
-  one(sql`select pvp_test.crypto_request_withdrawal(${uid}, ${asset}, ${cents}, ${quote}, true) as r`);
+  one(sql`select pvp_test.crypto_request_withdrawal(${uid}, 84532, ${asset}, ${cents}, ${quote}, true) as r`);
 const wd = async (id: string) => (await sql`select * from pvp_test.crypto_withdrawals where id = ${id}`)[0];
 const ledgerCount = async (key: string) => Number((await sql`select count(*) c from pvp_test.ledger_transactions where idempotency_key like ${key}`)[0].c);
 
@@ -113,7 +113,7 @@ d("crypto money path", () => {
     const u = await newUser("eth");
     const before = await bal(u.id);
     const dep = await observe("ETH", txh(), u.wallet, "1000000000000000000", 1_000_000); // 1 ETH
-    const stale = await one(sql`select pvp_test.crypto_record_price('ETH', ${FEED}, 1, ${PRICE}, now() - interval '2 hours') as r`);
+    const stale = await one(sql`select pvp_test.crypto_record_price(84532, 'ETH', ${FEED}, 1, ${PRICE}, now() - interval '2 hours') as r`);
     expect((await credit(dep.id, stale)).status).toBe("AWAITING_VALUATION");
     expect((await credit(dep.id, null)).status).toBe("AWAITING_VALUATION");
     expect((await credit(dep.id, await snapshot())).status).toBe("CREDITED");
@@ -189,18 +189,18 @@ d("crypto money path", () => {
   it("ETH quotes: expired and reused quotes are rejected", async () => {
     const u = await newUser("qt");
     await snapshot();
-    const q = await one(sql`select pvp_test.crypto_quote_withdrawal(${u.id}, 1000) as r`);
+    const q = await one(sql`select pvp_test.crypto_quote_withdrawal(${u.id}, 84532, 1000) as r`);
     expect(BigInt(q.wei)).toBe((1000n * 10_000n * 10n ** 18n) / BigInt(PRICE));
     await expect(withdraw(u.id, 1200, "ETH", q.quote_id)).rejects.toThrow(/QUOTE_MISMATCH/);
     const w = await withdraw(u.id, 1000, "ETH", q.quote_id);
     expect(String((await wd(w.id)).units)).toBe(q.wei);
     await sql`select pvp_test.crypto_cancel_withdrawal(${u.id}, ${w.id})`;
     await expect(withdraw(u.id, 1000, "ETH", q.quote_id)).rejects.toThrow(/QUOTE_USED/);
-    const q2 = await one(sql`select pvp_test.crypto_quote_withdrawal(${u.id}, 1000) as r`);
+    const q2 = await one(sql`select pvp_test.crypto_quote_withdrawal(${u.id}, 84532, 1000) as r`);
     await sql`update pvp_test.crypto_withdrawal_quotes set expires_at = now() - interval '1 second' where id = ${q2.quote_id}`;
     await expect(withdraw(u.id, 1000, "ETH", q2.quote_id)).rejects.toThrow(/QUOTE_EXPIRED/);
     const other = await newUser("qo");
-    const q3 = await one(sql`select pvp_test.crypto_quote_withdrawal(${u.id}, 1000) as r`);
+    const q3 = await one(sql`select pvp_test.crypto_quote_withdrawal(${u.id}, 84532, 1000) as r`);
     await expect(withdraw(other.id, 1000, "ETH", q3.quote_id)).rejects.toThrow(/QUOTE_INVALID/);
     await assertInvariants();
   });
