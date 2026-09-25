@@ -25,7 +25,7 @@ export function buildTestSchemaSql(): string {
   s = s.replace(/public\./g, "pvp_test.").replace(/search_path = public/g, "search_path = pvp_test");
   // In-place function patch helpers look functions up by schema name.
   s = s.replace(/n\.nspname = 'public'/g, "n.nspname = 'pvp_test'");
-  s = s.replace(/SET search_path TO 'public'/g, "SET search_path TO 'pvp_test'");
+  s = s.replace(/search_path to 'public'/gi, "search_path TO 'pvp_test'");
   s = s.replace(/in schema public/g, "in schema pvp_test");
   s = s.replace(/auth\.uid\(\)/g, "pvp_test.test_uid()");
   // The email-code sign-up helpers read auth.users, which the test role

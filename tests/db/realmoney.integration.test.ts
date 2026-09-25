@@ -266,7 +266,7 @@ d("real-money ledger migration", () => {
   });
 
   it("roulette on real USD: limits enforced; wins paid from the house bankroll exactly once", async () => {
-    await sql`update pvp_test.roulette_config set betting_seconds = 2, lock_ms = 100, spin_ms = 100`;
+    await sql`update pvp_test.roulette_config set betting_seconds = 2`;
     const u = await newUser(50);
     const gid = (await sql`select pvp_test._roulette_ensure_open() r`)[0].r;
     const [g0] = await sql`select * from pvp_test.roulette_games where id = ${gid}`;
