@@ -302,6 +302,55 @@ function AboutPage() {
       </SeoSection>
 
       <SeoSection
+        id="principles"
+        eyebrow="In practice"
+        title="What PVP crypto gaming means here"
+        intro={
+          <p>
+            "Crypto casino" can mean many things. These are the specific commitments behind the way PVPspinArena runs,
+            written plainly so you know what to expect before you play.
+          </p>
+        }
+      >
+        <SeoGrid cols={2}>
+          <SeoCard title="Money is counted in cents, not guesses">
+            <p>
+              Every balance is an integer number of US cents. Wagers, pots and payouts are whole-cent amounts, so there
+              is no rounding drift between what you see and what is stored. When a Jackpot pot is $12.34, there are
+              exactly 1,234 tickets in that draw.
+            </p>
+          </SeoCard>
+          <SeoCard title="Every movement is double-entry" accent="gold">
+            <p>
+              When you join a round, money moves from your balance into the game's escrow. When the round settles, it
+              moves from escrow to the winner. Each step is recorded twice — once leaving an account, once arriving in
+              another — so the totals always balance and can be reconciled at any time.
+            </p>
+          </SeoCard>
+          <SeoCard title="Deposits come from wallets you prove you own" accent="rival">
+            <p>
+              Before a deposit is credited, the sending address must be a wallet you verified by signing a message.
+              That links on-chain money to the right account without asking for personal banking details, and it stops
+              funds from an unknown sender being credited to the wrong player.
+            </p>
+          </SeoCard>
+          <SeoCard title="The animation follows the result, never the reverse">
+            <p>
+              By the time a wheel starts spinning or a coin starts flipping, the outcome is already stored. Every viewer's
+              screen is timed from the same server clock, so everyone watching sees the same result land at the same
+              moment — whether they joined the round or are just watching.
+            </p>
+          </SeoCard>
+        </SeoGrid>
+        <p className="mt-6 max-w-3xl leading-relaxed text-muted-foreground">
+          None of this changes the basic nature of the games: they are games of chance, and any wager can be lost. What
+          it does mean is that the rules are fixed before you join, the numbers add up afterwards, and the outcome can
+          be checked by you rather than taken on trust. That combination — player competition, fast rounds and
+          verifiable results — is what PVPspinArena is built to deliver.
+        </p>
+      </SeoSection>
+
+      <SeoSection
         id="next"
         eyebrow="Direction"
         title="Where we're going"

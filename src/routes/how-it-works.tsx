@@ -257,6 +257,66 @@ function HowItWorksPage() {
         </div>
       </section>
 
+      <SeoSection
+        id="terms"
+        eyebrow="Key terms"
+        title="The words you'll see on PVPspinArena"
+        intro={<p>A short glossary of the terms used across the games, the wallet and the Fairness page.</p>}
+      >
+        <SeoGrid cols={3}>
+          <SeoCard title="Server seed">
+            <p>
+              A random 32-byte secret created for each round before anyone can join. It is the key that decides the
+              result, and it stays hidden until the round is settled.
+            </p>
+          </SeoCard>
+          <SeoCard title="Seed hash (commitment)" accent="gold">
+            <p>
+              The SHA-256 hash of the server seed, published at the start of the round. It locks the seed in place: if
+              the seed were changed later, its hash would no longer match.
+            </p>
+          </SeoCard>
+          <SeoCard title="HMAC-SHA256" accent="rival">
+            <p>
+              A standard cryptographic function. The seed is used as the key and a fixed message about the game as the
+              input. The output is unpredictable without the seed, yet anyone with the seed gets the same answer.
+            </p>
+          </SeoCard>
+          <SeoCard title="Rejection sampling">
+            <p>
+              A way of turning a random number into a ticket without favouring low numbers. Values that would create a
+              bias are discarded and the next value is used, so every ticket has exactly the same chance.
+            </p>
+          </SeoCard>
+          <SeoCard title="Escrow" accent="gold">
+            <p>
+              While a round is running, the wagers in it sit in a game escrow account. Nobody can spend them until the
+              round settles, at which point the pot moves to the winner in one step.
+            </p>
+          </SeoCard>
+          <SeoCard title="Confirmations" accent="rival">
+            <p>
+              The number of network blocks built on top of your deposit. Waiting for several confirmations, and checking
+              with two independent providers, protects against a payment being reversed after it is credited.
+            </p>
+          </SeoCard>
+        </SeoGrid>
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <SeoCallout title="PVP vs house-banked, in one line">
+            <p>
+              In a PVP game your winnings come from the other players in the round. In a house-banked game such as
+              Roulette, bets are paid at fixed multipliers regardless of what anyone else bets.
+            </p>
+          </SeoCallout>
+          <SeoCallout title="What your browser does — and doesn't do">
+            <p>
+              Your browser shows timers, wheels and coins, and sends your requests to join or bet. It never picks a
+              result, sets a balance or approves a payout. Those steps only happen on the server.
+            </p>
+          </SeoCallout>
+        </div>
+      </SeoSection>
+
       <SeoSection id="responsible" eyebrow="Play responsibly" title="Responsible gaming">
         <SeoCallout title="Real money is at risk" tone="gold">
           <p>
