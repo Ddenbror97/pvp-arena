@@ -35,24 +35,16 @@ export const Route = createFileRoute("/sitemap.xml")({
             import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string,
             { auth: { persistSession: false } },
           );
-          const [jackpot, coinflip] = await Promise.all([
-            supabase
-              .from("jackpot_games")
-              .select("id, completed_at")
-              .eq("status", "COMPLETED")
-              .order("id", { ascending: false })
-              .limit(1000),
-            supabase
-              .from("coinflip_games")
-              .select("id, completed_at")
-              .eq("status", "COMPLETED")
-              .order("id", { ascending: false })
-              .limit(1000),
-          ]);
+          // Coinflip rooms are live, client-only pages (noindex) — only the
+          // jackpot audit records are indexable dynamic content.
+          const jackpot = await supabase
+            .from("jackpot_games")
+            .select("id, completed_at")
+            .eq("status", "COMPLETED")
+            .order("id", { ascending: false })
+            .limit(1000);
           if (jackpot.error) throw new Error(`jackpot_games: ${jackpot.error.message}`);
-          if (coinflip.error) throw new Error(`coinflip_games: ${coinflip.error.message}`);
           for (const g of jackpot.data ?? []) entries.push(urlEntry(`/games/${g.id}`, g.completed_at));
-          for (const g of coinflip.data ?? []) entries.push(urlEntry(`/coinflip/${g.id}`, g.completed_at));
         } catch (err) {
           // Surface the failure rather than serving a silently partial sitemap.
           console.error("sitemap dynamic entries failed:", err);
