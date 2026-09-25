@@ -2392,6 +2392,7 @@ export type Database = {
         Args: { p_message: string; p_seed: string }
         Returns: string
       }
+      _is_house_address: { Args: { p_addr: string }; Returns: boolean }
       _post: {
         Args: { p_account: string; p_amount: number; p_tx: string }
         Returns: undefined
