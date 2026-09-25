@@ -8,7 +8,10 @@ import { join } from "node:path";
  */
 export function buildTestSchemaSql(): string {
   const dir = join(process.cwd(), "supabase/migrations");
-  const files = readdirSync(dir).filter((f) => f.endsWith(".sql")).sort();
+  // 20260925125620 used an unqualified app_role type that doesn't port to the
+  // isolated schema; 20260925125749 re-applies the identical fix portably.
+  const superseded = new Set(["20260925125620_70751fb6-0f85-4e13-9c9f-4a2eeb379a5f.sql"]);
+  const files = readdirSync(dir).filter((f) => f.endsWith(".sql") && !superseded.has(f)).sort();
   let s = files.map((f) => readFileSync(join(dir, f), "utf8")).join("\n");
   s = s.replace(/create extension if not exists pgcrypto with schema extensions;/g, "");
   s = s.replace(/alter publication supabase_realtime[^;]*;/g, "");
