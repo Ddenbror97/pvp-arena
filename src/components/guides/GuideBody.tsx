@@ -14,8 +14,8 @@ function inline(text: string, key: string): ReactNode[] {
     const k = `${key}-${i++}`;
     if (m[1]) out.push(<strong key={k} className="font-semibold text-foreground">{m[1]}</strong>);
     else {
-      const href = m[3];
-      const label = m[2];
+      const href = m[3] ?? "/";
+      const label = m[2] ?? "";
       const isGuide = href.startsWith("/guides/");
       if (isGuide && !isPublishedGuide(href.slice(8))) out.push(<Fragment key={k}>{label}</Fragment>);
       else if (isGuide)
