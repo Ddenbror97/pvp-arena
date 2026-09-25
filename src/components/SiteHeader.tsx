@@ -28,7 +28,8 @@ export function SiteHeader() {
           <Link to="/roulette" className={link}>Roulette</Link>
           <Link to="/fairness" className={link}>Fairness</Link>
         </nav>
-        <div className="ml-auto flex items-center gap-2 sm:gap-3">
+        {/* Reserve the signed-in width in every state so the auth swap never moves this slot. */}
+        <div className="ml-auto flex h-11 min-w-[198px] shrink-0 items-center justify-end gap-2 sm:min-w-[352px] sm:gap-3 lg:min-w-[388px]">
           {!showWallet ? (
             <Button asChild size="sm" className="font-display">
               <Link to="/auth">Sign in</Link>
@@ -47,25 +48,28 @@ export function SiteHeader() {
   );
 }
 
-/** Balance plus the two wallet shortcuts, kept in one compact segmented control. */
+/** Balance plus the two wallet shortcuts, kept in one compact, fixed-geometry segmented control. */
 function WalletGroup({ available, loading }: { available?: number | undefined; loading: boolean }) {
   const action =
-    "flex flex-1 items-center justify-center gap-1 px-3 py-1 text-[11px] font-bold uppercase transition-colors sm:flex-none sm:px-2.5 sm:py-1.5 sm:text-xs sm:tracking-wide";
+    "flex h-5 flex-1 items-center justify-center gap-1 px-3 text-[11px] font-bold uppercase leading-none transition-colors sm:h-8 sm:flex-none sm:px-2.5 sm:text-xs sm:tracking-wide";
   return (
     <nav
       aria-label="Wallet"
-      className="grid shrink-0 grid-rows-[auto_auto] overflow-hidden rounded-lg border border-border bg-card sm:flex sm:items-center"
+      className="grid h-11 shrink-0 grid-rows-[1fr_1.25rem] overflow-hidden rounded-lg border border-border bg-card sm:flex sm:h-9 sm:items-center"
     >
       <Link
         to="/wallet"
         aria-label="Open wallet"
-        className="flex items-center justify-center gap-1.5 border-b border-border px-2 py-0.5 transition-colors hover:bg-muted/60 sm:min-w-[6.5rem] sm:border-b-0 sm:border-r sm:px-2.5 sm:py-1.5"
+        className="flex h-full items-center justify-center gap-1.5 border-b border-border px-2 transition-colors hover:bg-muted/60 sm:h-8 sm:border-b-0 sm:border-r sm:px-2.5"
       >
-        {loading ? (
-          <span aria-hidden className="h-3 w-12 animate-pulse rounded bg-muted sm:w-16" />
-        ) : (
-          <span className="tabular text-[13px] font-semibold sm:text-sm">{formatUsd(available ?? 0)}</span>
-        )}
+        {/* Fixed-width slot: the skeleton and the loaded balance occupy identical geometry. */}
+        <span className="flex h-4 w-[4.75rem] shrink-0 items-center justify-end sm:w-[5.25rem]">
+          {loading ? (
+            <span aria-hidden className="h-3.5 w-full animate-pulse rounded bg-muted" />
+          ) : (
+            <span className="tabular truncate text-[13px] font-semibold leading-none sm:text-sm">{formatUsd(available ?? 0)}</span>
+          )}
+        </span>
         <span className="hidden rounded bg-gold/15 px-1 text-[9px] font-bold text-gold sm:inline">TEST</span>
       </Link>
       <div className="flex items-stretch divide-x divide-border">
