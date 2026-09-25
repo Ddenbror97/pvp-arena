@@ -290,7 +290,7 @@ d("roulette adversarial audit (isolated schema)", () => {
     // Once the round is finished, the next bet lands in a fresh round.
     const r = await bet(b, "RED", 100);
     expect(Number(r.game_id)).not.toBe(gid);
-    await sql`update pvp_test.roulette_games set betting_started_at = clock_timestamp(), betting_ends_at = clock_timestamp() where id = ${Number(r.game_id)}`;
+    await untilClosed(Number(r.game_id));
     await drive(Number(r.game_id));
     await assertInvariants();
   }, 30000);
