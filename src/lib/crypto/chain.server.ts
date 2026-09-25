@@ -10,9 +10,9 @@ import {
   type Hex,
   type PublicClient,
 } from "viem";
-import { base, baseSepolia, mainnet } from "viem/chains";
+import { base, mainnet } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
-import { TESTNET, checkStaticConfig, checkMainnetRegistry, weiToCents, usdcUnitsToCents } from "./allowlist";
+import { checkRpcUrl, checkMainnetRegistry, weiToCents, usdcUnitsToCents } from "./allowlist";
 
 const ERC20 = parseAbi([
   "function transfer(address to, uint256 value) returns (bool)",
@@ -29,7 +29,7 @@ const MAX_ETH_BLOCKS_PER_RUN = 60;
 const MAX_LOG_RANGE = 2000n;
 const GAS_MARGIN_BPS = 12_500n; // 1.25x safety margin on the exact-transaction gas estimate
 
-const CHAIN_DEFS: Record<number, Chain> = { 84532: baseSepolia, 8453: base, 1: mainnet };
+const CHAIN_DEFS: Record<number, Chain> = { 8453: base, 1: mainnet };
 
 type Rpc = (fn: string, args?: Record<string, unknown>) => Promise<{ data: any; error: { message: string } | null }>;
 
@@ -65,21 +65,11 @@ function rpcUrlFor(chainId: number, secondary = false): string | undefined {
   const suffix = secondary ? `_${chainId}_B` : `_${chainId}`;
   const url = process.env[`CRYPTO_RPC_URL${suffix}`];
   if (url) return url;
-  if (!secondary && chainId === TESTNET.chainId) return process.env["BASE_SEPOLIA_RPC_URL"];
   return undefined;
 }
 
-function checkChainRpcUrl(chainId: number, url: string | undefined): { ok: true } | { ok: false; reason: string } {
-  if (!url) return { ok: false, reason: "RPC_URL_MISSING" };
-  try {
-    const u = new URL(url);
-    if (u.protocol !== "https:") return { ok: false, reason: "RPC_NOT_HTTPS" };
-    if (chainId === TESTNET.chainId && !/sepolia/i.test(url)) return { ok: false, reason: "RPC_NOT_SEPOLIA" };
-    if (chainId !== TESTNET.chainId && /sepolia/i.test(url)) return { ok: false, reason: "RPC_NOT_MAINNET" };
-  } catch {
-    return { ok: false, reason: "RPC_URL_INVALID" };
-  }
-  return { ok: true };
+function checkChainRpcUrl(_chainId: number, url: string | undefined): { ok: true } | { ok: false; reason: string } {
+  return checkRpcUrl(url);
 }
 
 /** Enabled chains from the registry. Workers iterate these; disabled chains are observe-only. */
@@ -117,17 +107,8 @@ export async function loadChainEnv(chainId: number): Promise<{ ok: true; env: En
   const eth = assets?.find((a: any) => a.asset_key === "ETH" && a.is_enabled);
   if (!usdc || !eth) return fail("ASSETS_MISSING");
 
-  if (chainId === TESTNET.chainId) {
-    // Testnet keeps its strict hard-coded invariants.
-    const st = checkStaticConfig({
-      environment: s.environment,
-      mainnetEnabled: s.mainnet_enabled,
-      chainId,
-      usdc: usdc.contract_address,
-      feed: eth.price_feed_address,
-    });
-    if (!st.ok) return fail(st.reason);
-  } else {
+  if (net.network_mode !== "mainnet") return fail("TESTNET_REMOVED");
+  {
     // Mainnet chains: the registry must match the known-good Circle/Chainlink
     // values exactly (hard production-config guard — fails closed on any drift).
     const mc = checkMainnetRegistry({
@@ -430,8 +411,7 @@ export async function runWithdrawalWorker(chainId: number) {
   const { admin, rpc } = await db();
   const s = env.settings;
   if (!s.crypto_system_enabled || !s.withdrawals_enabled) return { ok: true, paused: true };
-  const pkRaw = (process.env[`CRYPTO_HOT_WALLET_PRIVATE_KEY_${env.chainId}`] ??
-    (env.chainId === TESTNET.chainId ? process.env["CRYPTO_HOT_WALLET_PRIVATE_KEY"] : undefined))?.trim();
+  const pkRaw = process.env[`CRYPTO_HOT_WALLET_PRIVATE_KEY_${env.chainId}`]?.trim();
   const pk = (pkRaw && !pkRaw.startsWith("0x") ? `0x${pkRaw}` : pkRaw) as Hex | undefined;
   if (!pk || !/^0x[0-9a-fA-F]{64}$/.test(pk)) return { ok: false, reason: "HOT_KEY_MISSING" };
   const account = privateKeyToAccount(pk);

@@ -26,7 +26,6 @@ const STATUS: Record<string, string> = {
 };
 const PRESETS = [5, 10, 25, 50];
 const EXPLORERS: Record<number, string> = {
-  84532: "https://sepolia.basescan.org",
   8453: "https://basescan.org",
   1: "https://etherscan.io",
 };
