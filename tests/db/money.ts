@@ -20,10 +20,6 @@ export async function migrateTestSchemaToReal(sql: postgres.Sql, opts: { realPla
   await sql`update pvp_test.crypto_settings set watch_only = true, withdrawals_enabled = false, real_play_enabled = false`;
   await seedSnapshotDeposits(sql);
   const m = (await sql`select pvp_test._money_migrate_v1() r`)[0].r;
-  // Let any empty in-flight test round drain.
-  for (const g of await sql`select id from pvp_test.roulette_games where account_type = 'test_credit' and status in ('LOCKED','SPINNING','SETTLEMENT')`) {
-    await sql`update pvp_test.roulette_games set status = 'CANCELLED' where false and id = ${g.id}`;
-  }
   const f = (await sql`select pvp_test._money_finalize_v1() r`)[0].r;
   if (opts.realPlay) await sql`update pvp_test.crypto_settings set real_play_enabled = true`;
   return { m, f };
