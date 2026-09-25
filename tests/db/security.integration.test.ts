@@ -201,7 +201,6 @@ d("security remediation (isolated schema)", () => {
     await sql`delete from pvp_test.test_auth_sessions where id = ${sid}`;
     await expect(cfCreate(a, 100, claims(a))).rejects.toThrow("SESSION_REVOKED");
     await expect(jpJoin(a, 100, claims(a))).rejects.toThrow("SESSION_REVOKED");
-    await expect(as(a, (tx) => tx`select pvp_test.claim_test_credits()`, claims(a))).rejects.toThrow("SESSION_REVOKED");
     // malformed claims
     await expect(cfCreate(a, 100, { claims: { role: "authenticated", sub: a, session_id: "not-a-uuid" } })).rejects.toThrow("SESSION_REVOKED");
     // nothing moved beyond the one legitimate wager

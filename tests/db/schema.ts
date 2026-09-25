@@ -17,6 +17,10 @@ export function buildTestSchemaSql(): string {
   // Scheduler jobs are production-only.
   s = s.replace(/-- prod-only:begin[\s\S]*?-- prod-only:end/g, "");
   s = s.replace(/select public\._ensure_open_game\(\);/g, "");
+  // One-off production data operations (live finalize + controlled $4.50 credit)
+  // must never replay into the isolated schema.
+  s = s.replace(/DO \$\$\s*DECLARE r1 jsonb; r2 jsonb; inv jsonb;[\s\S]*?END \$\$;/g, "");
+  s = s.replace(/DO \$\$\s*DECLARE r jsonb; s crypto_settings;[\s\S]*?END \$\$;/g, "");
   s = s.replace(/do \$\$ begin\s+if exists \(select 1 from pg_roles where rolname = 'sandbox_exec'\)[\s\S]*?end \$\$;/g, "");
   s = s.replace(/revoke execute on all functions in schema public from public, anon, authenticated;/g, "");
   // Production grant loops print unqualified signatures that would resolve to

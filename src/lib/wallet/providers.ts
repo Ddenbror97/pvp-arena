@@ -10,7 +10,7 @@ export interface BalanceSnapshot {
   available: number;
   locked: number;
   asset: string;
-  accountType: "test_credit" | "real";
+  accountType: "real";
 }
 
 export interface DepositIntent {

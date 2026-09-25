@@ -127,7 +127,7 @@ export function CryptoRails({
   const chains: ChainInfo[] = data?.chains ?? [];
   const chain: ChainInfo | undefined = chains.find((c) => c.chain_id === chainId) ?? chains[0];
   const chainName = chain?.name ?? "Base";
-  const isTestnet = chain?.network_mode !== "mainnet";
+  const isTestnet = chain?.network_mode === "testnet";
   const cents = Math.round(Number(amount) * 100);
   const valid = Number.isFinite(cents) && cents > 0;
   const quoteLeft = withdrawalReview?.quote ? Math.max(0, Math.ceil((new Date(withdrawalReview.quote.expires_at).getTime() - now) / 1000)) : 0;

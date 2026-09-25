@@ -228,7 +228,7 @@ export function useWallet(userId: string | null) {
         available: Number(available?.balance ?? 0),
         locked: Number(locked?.balance ?? 0),
         asset: "USD",
-        accountType: "real" as "test_credit" | "real",
+        accountType: "real" as const,
         accountIds: data.map((a) => a.id),
       };
     },

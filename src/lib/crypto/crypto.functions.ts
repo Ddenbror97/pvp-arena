@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { TESTNET, centsToWei } from "./allowlist";
+import { centsToWei } from "./allowlist";
 
 const ERRORS: Record<string, string> = {
   WITHDRAWALS_PAUSED: "Withdrawals are paused right now.",
@@ -30,7 +30,8 @@ async function admin() {
   return supabaseAdmin as any;
 }
 
-const chainIdSchema = z.number().int().positive().default(TESTNET.chainId);
+// Required: a missing chain must fail closed, never fall back to a default network.
+const chainIdSchema = z.number().int().positive();
 
 export const getCryptoActivity = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -43,8 +44,8 @@ export const getCryptoActivity = createServerFn({ method: "GET" })
 /**
  * Returns the player's personal deposit address for a chain, deriving and
  * storing it on first use. Addresses come from an xpub — the server can derive
- * addresses but never spend from them. Falls back to null when no xpub is
- * configured (legacy shared-treasury testnet flow).
+ * addresses but never spend from them. Returns null when no xpub is
+ * configured (deposits then go to the shared treasury, matched by verified sender).
  */
 export const getDepositAddress = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -108,7 +109,7 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
     if (data.usdCents < Number(checked.env.network.min_deposit_cents)) {
       return { ok: false as const, error: ERRORS["BELOW_MINIMUM"]! };
     }
-    // Prefer the player's personal deposit address; fall back to the shared treasury (legacy testnet flow).
+    // Prefer the player's personal deposit address; otherwise the shared treasury (sender-matched).
     const { depositXpub, deriveDepositAddress } = await import("./addresses.server");
     let destination = checked.env.treasury as string;
     if (depositXpub()) {
