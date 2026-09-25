@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ogImageMeta } from "@/lib/og";
 import { JackpotStage } from "@/components/jackpot/JackpotStage";
 import { RecentGames } from "@/components/jackpot/RecentGames";
+import { IntroGate, INTRO_BOOT_SCRIPT } from "@/components/IntroGate";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),
     ],
+    scripts: [{ children: INTRO_BOOT_SCRIPT }],
   }),
   component: Index,
 });
@@ -25,6 +27,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <>
+      <IntroGate />
       <h1 className="sr-only">PVPspinArena Jackpot</h1>
       <JackpotStage />
       <RecentGames />
