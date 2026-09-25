@@ -165,6 +165,6 @@ Ready to see it in action? Watch a live [Jackpot](/) round, or open [Coinflip](/
     { label: "Valve — Statement on CS:GO gambling sites (2016)", url: "https://blog.counter-strike.net/index.php/2016/07/15109/" },
     { label: "RFC 2104 — HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
   ],
-  related: ["crypto-jackpot", "csgo-coinflip", "csgo-jackpot", "skin-gambling-vs-crypto", "csgo-gambling-history"],
+  related: ["csgo-coinflip-sites", "crypto-jackpot", "csgo-coinflip", "csgo-jackpot", "skin-gambling-vs-crypto"],
   updated: "2026-09-25",
 };

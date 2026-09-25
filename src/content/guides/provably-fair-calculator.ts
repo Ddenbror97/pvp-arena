@@ -225,7 +225,7 @@ Spot-checking a few games is enough to hold a site to account. A match proves fa
     { label: "Python docs: hmac module", url: "https://docs.python.org/3/library/hmac.html" },
     { label: "RFC 2104: HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
   ],
-  related: ["hmac-sha256-provably-fair", "provably-fair-casino", "cs2-roulette"],
+  related: ["provably-fair-games", "hmac-sha256-provably-fair", "provably-fair-casino", "cs2-roulette"],
   updated: "2026-09-25",
   howTo: true,
 };

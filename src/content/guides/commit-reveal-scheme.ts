@@ -224,6 +224,6 @@ On PVPspinArena every round commits a 32-byte seed with SHA-256 before entries o
     { label: "NIST FIPS 180-4: Secure Hash Standard", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
     { label: "Ethereum.org: block proposal and RANDAO", url: "https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/block-proposal/" },
   ],
-  related: ["provably-fair-casino", "server-seed-client-seed", "hmac-sha256-provably-fair"],
+  related: ["provably-fair-games", "provably-fair-casino", "server-seed-client-seed", "hmac-sha256-provably-fair"],
   updated: "2026-09-25",
 };

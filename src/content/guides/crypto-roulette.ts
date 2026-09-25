@@ -241,6 +241,6 @@ Stablecoins solve most of this. USDC is designed to track the US dollar, so a $5
     { label: "Circle: USDC overview", url: "https://www.circle.com/usdc" },
     { label: "Wizard of Odds: Roulette", url: "https://wizardofodds.com/games/roulette/" },
   ],
-  related: ["provably-fair-roulette", "roulette-colors", "cs2-roulette", "crypto-casino-withdrawals"],
+  related: ["how-to-win-at-roulette", "crash-gambling", "provably-fair-roulette", "roulette-colors", "cs2-roulette"],
   updated: "2026-09-25",
 };

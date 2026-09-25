@@ -173,7 +173,7 @@ All stakes are USDC on Base, shown in US dollars, and every result can be checke
     { label: "UK Gambling Commission — Loot boxes and skins", url: "https://www.gamblingcommission.gov.uk/" },
     { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
   ],
-  related: ["csgo-case-opening", "house-edge", "pvp-gambling", "csgo-jackpot", "gamblers-fallacy"],
+  related: ["how-to-stop-gambling", "best-csgo-gambling-sites", "csgo-case-opening", "house-edge", "gamblers-fallacy"],
   updated: "2026-09-25",
   cta: {
     title: "Head-to-head, without the case edge",

@@ -229,6 +229,6 @@ Both have briefly lost their peg under stress and recovered. Both exist on many 
     { label: "CFTC: Tether settlement (2021)", url: "https://www.cftc.gov/PressRoom/PressReleases/8450-21" },
     { label: "Circle: USDC contract addresses", url: "https://developers.circle.com/stablecoins/usdc-contract-addresses" },
   ],
-  related: ["usdc-casino", "how-to-buy-usdc", "crypto-wallet-for-gambling"],
+  related: ["base-network", "usdc-casino", "how-to-buy-usdc", "crypto-wallet-for-gambling"],
   updated: "2026-09-25",
 };

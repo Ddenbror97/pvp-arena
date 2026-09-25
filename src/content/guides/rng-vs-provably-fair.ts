@@ -247,6 +247,6 @@ Provably fair does not replace licensing, consumer protection or complaint proce
     { label: "NIST: Secure Hash Standard (FIPS 180-4)", url: "https://csrc.nist.gov/publications/detail/fips/180/4/final" },
     { label: "RFC 2104: HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
   ],
-  related: ["provably-fair-casino", "commit-reveal-scheme", "are-online-casinos-rigged", "server-seed-client-seed"],
+  related: ["provably-fair-games", "provably-fair-casino", "commit-reveal-scheme", "are-online-casinos-rigged", "server-seed-client-seed"],
   updated: "2026-09-25",
 };

@@ -168,7 +168,7 @@ Jackpot and Coinflip work the same way from their own tabs. If you prefer to do 
     { label: "NIST FIPS 180-4 — Secure Hash Standard (SHA-256)", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
     { label: "NIST SP 800-90A — Random number generation using deterministic RBGs", url: "https://csrc.nist.gov/pubs/sp/800/90/a/r1/final" },
   ],
-  related: ["provably-fair-casino", "commit-reveal-scheme", "rng-vs-provably-fair", "provably-fair-roulette", "hmac-sha256-provably-fair"],
+  related: ["crash-gambling", "provably-fair-casino", "commit-reveal-scheme", "rng-vs-provably-fair", "provably-fair-roulette"],
   updated: "2026-09-25",
   cta: {
     title: "Verify a round yourself",
