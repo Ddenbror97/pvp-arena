@@ -4,11 +4,16 @@ import { guide as provablyFairCasino } from "./provably-fair-casino";
 import { guide as pvpGambling } from "./pvp-gambling";
 import { guide as cryptoJackpot } from "./crypto-jackpot";
 import { guide as usdcCasino } from "./usdc-casino";
+import { guide as gamblingBudget } from "./gambling-budget";
+import { guide as csgoCoinflip } from "./csgo-coinflip";
+import { guide as cs2Roulette } from "./cs2-roulette";
+import { guide as hmacSha256 } from "./hmac-sha256-provably-fair";
+import { guide as pfCalculator } from "./provably-fair-calculator";
 
 export type { Guide, GuideCluster } from "./types";
 
 /** Published guides. Add each new guide here once it passes scripts/check-guides.ts. */
-export const GUIDES: Guide[] = [whatIsACryptoCasino, provablyFairCasino, pvpGambling, cryptoJackpot, usdcCasino];
+export const GUIDES: Guide[] = [whatIsACryptoCasino, provablyFairCasino, pvpGambling, cryptoJackpot, usdcCasino, gamblingBudget, csgoCoinflip, cs2Roulette, hmacSha256, pfCalculator];
 
 export const CLUSTERS: { name: GuideCluster; blurb: string }[] = [
   { name: "Foundations", blurb: "Start here: what crypto casinos are and how they work." },
