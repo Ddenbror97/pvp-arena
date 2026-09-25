@@ -70,7 +70,6 @@ function WalletGroup({ available, loading }: { available?: number | undefined; l
             <span className="tabular truncate text-[13px] font-semibold leading-none sm:text-sm">{formatUsd(available ?? 0)}</span>
           )}
         </span>
-        <span className="hidden rounded bg-gold/15 px-1 text-[9px] font-bold text-gold sm:inline">TEST</span>
       </Link>
       <div className="flex items-stretch divide-x divide-border">
         <Link to="/wallet" search={{ mode: "deposit" }} className={`${action} text-primary hover:bg-primary/10`}>
