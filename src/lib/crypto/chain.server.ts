@@ -226,18 +226,34 @@ export async function snapshotEthPrice(env: Env): Promise<{ id: string; priceMic
 }
 
 /**
- * RPC agreement: two independent providers must return the SAME block hash at the
- * SAME block number, and that block must contain the transaction. Anything less
- * (different heads, missing tx) fails closed: no credit, retry next run.
+ * RPC agreement: two independent providers must agree on the block number, the
+ * block hash, the transaction receipt (status + block hash), and the exact
+ * log/event being credited. Anything less fails closed: no credit, retry next
+ * run, alert if persistent.
  */
-async function providersAgree(env: Env, txHash: string, blockNumber: bigint): Promise<boolean> {
+async function providersAgree(env: Env, txHash: string, blockNumber: bigint, logIndex: number | null): Promise<boolean> {
   if (!env.clientB) return env.networkMode === "testnet"; // mainnet requires two providers
-  const [bA, bB] = await Promise.all([
+  const [bA, bB, rA, rB] = await Promise.all([
     env.client.getBlock({ blockNumber }).catch(() => null),
     env.clientB!.getBlock({ blockNumber }).catch(() => null),
+    env.client.getTransactionReceipt({ hash: txHash as Hex }).catch(() => null),
+    env.clientB!.getTransactionReceipt({ hash: txHash as Hex }).catch(() => null),
   ]);
-  if (!bA || !bB || bA.hash !== bB.hash) return false;
-  return bA.transactions.includes(txHash as Hex);
+  if (!bA || !bB || bA.hash !== bB.hash || bA.number !== bB.number) return false;
+  if (!bA.transactions.includes(txHash as Hex)) return false;
+  if (!rA || !rB) return false;
+  if (rA.status !== "success" || rB.status !== "success") return false;
+  if (rA.blockHash !== rB.blockHash || rA.blockHash !== bA.hash) return false;
+  if (rA.blockNumber !== rB.blockNumber || rA.blockNumber !== blockNumber) return false;
+  if (logIndex != null) {
+    const lA = rA.logs.find((l) => l.logIndex === logIndex);
+    const lB = rB.logs.find((l) => l.logIndex === logIndex);
+    if (!lA || !lB) return false;
+    if (lA.address.toLowerCase() !== lB.address.toLowerCase()) return false;
+    if (lA.data !== lB.data) return false;
+    if (lA.topics.length !== lB.topics.length || lA.topics.some((t, i) => t !== lB.topics[i])) return false;
+  }
+  return true;
 }
 
 /** Deposit watcher for one chain: scan, re-scan overlap, verify, credit idempotently. */
@@ -249,10 +265,14 @@ export async function runDepositWatcher(chainId: number) {
   const s = env.settings;
   if (!s.crypto_system_enabled) return { ok: true, paused: true };
 
-  const [latest, safeBlock] = await Promise.all([
-    env.client.getBlockNumber(),
-    env.client.getBlock({ blockTag: "safe" }).then((b) => b.number!),
-  ]);
+  // Confirmation threshold is a plain block-number rule (the chain's own
+  // configurable credit_confirmations). The RPC "safe" tag is only an extra
+  // cap when the provider supports it — some providers don't.
+  const latest = await env.client.getBlockNumber();
+  const safeBlock = await env.client
+    .getBlock({ blockTag: "safe" })
+    .then((b) => b.number!)
+    .catch(() => latest);
   const cursorRaw = await must<number | null>(rpc("crypto_get_cursor", { p_chain: env.chainId }));
   const cursor = cursorRaw == null ? latest - 5n : BigInt(cursorRaw);
   const overlap = BigInt(s.overlap_blocks);
