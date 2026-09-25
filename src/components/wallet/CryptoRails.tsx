@@ -64,7 +64,7 @@ function formatUnits(units: string, asset: Asset) {
 }
 function TxLink({ hash, chainId }: { hash: string | null; chainId?: number | undefined }) {
   if (!hash) return null;
-  const explorer = EXPLORERS[chainId ?? TESTNET.chainId] ?? TESTNET.explorer;
+  const explorer = EXPLORERS[chainId ?? 8453] ?? "https://basescan.org";
   return (
     <a href={`${explorer}/tx/${hash}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-primary hover:underline">
       {hash.slice(0, 10)}… <ExternalLink className="h-3 w-3" />
@@ -127,7 +127,7 @@ export function CryptoRails({
   const data = activity.data;
   const chains: ChainInfo[] = data?.chains ?? [];
   const chain: ChainInfo | undefined = chains.find((c) => c.chain_id === chainId) ?? chains[0];
-  const chainName = chain?.name ?? "Base Sepolia";
+  const chainName = chain?.name ?? "Base";
   const isTestnet = chain?.network_mode !== "mainnet";
   const cents = Math.round(Number(amount) * 100);
   const valid = Number.isFinite(cents) && cents > 0;

@@ -48,7 +48,7 @@ export function CryptoAdmin() {
         <span className="text-muted-foreground">Ledger custody: <b className="text-foreground">{formatUsd(d.custody_cents)}</b></span>
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
-        Base Sepolia test configuration: ETH price freshness ≤ {Math.round(s.price_max_age_seconds / 60)} minutes (the testnet price feed updates slowly).
+        ETH price freshness ≤ {Math.round(s.price_max_age_seconds / 60)} minutes.
         This is a testnet-only value — the settings row is locked to testnet, and any future production setup must use its own stricter limit.
       </p>
 
