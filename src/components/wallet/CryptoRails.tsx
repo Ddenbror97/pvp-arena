@@ -62,7 +62,7 @@ function formatUnits(units: string, asset: Asset) {
   const value = `${padded.slice(0, -decimals)}.${padded.slice(-decimals)}`.replace(/\.?0+$/, "");
   return `${value} ${asset}`;
 }
-function TxLink({ hash, chainId }: { hash: string | null; chainId?: number }) {
+function TxLink({ hash, chainId }: { hash: string | null; chainId?: number | undefined }) {
   if (!hash) return null;
   const explorer = EXPLORERS[chainId ?? TESTNET.chainId] ?? TESTNET.explorer;
   return (
