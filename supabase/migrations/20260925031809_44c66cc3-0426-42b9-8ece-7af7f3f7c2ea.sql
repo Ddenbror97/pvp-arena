@@ -1,0 +1,1 @@
+ALTER TABLE public.roulette_games DROP CONSTRAINT real_money_off;
