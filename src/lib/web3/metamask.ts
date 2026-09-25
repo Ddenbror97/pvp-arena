@@ -266,7 +266,7 @@ export function sessionFor(
             chainName: WALLET_CONFIG.requiredChainName,
             nativeCurrency: { name: "Ethereum", symbol: "ETH", decimals: 18 },
             rpcUrls: [WALLET_CONFIG.rpcUrls[WALLET_CONFIG.requiredChainId]],
-            blockExplorerUrls: ["https://sepolia.basescan.org"],
+            blockExplorerUrls: ["https://basescan.org"],
           },
         ]);
       }
