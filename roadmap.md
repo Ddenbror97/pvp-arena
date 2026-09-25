@@ -120,4 +120,4 @@
 
 - [x] Roulette rounds run non-stop while real play is off
 - [x] Base Mainnet withdrawals on; Base Sepolia removed
-- [ ] Full adversarial audit per uploaded spec (money flows, invariants, concurrency, dead code)
+- [x] Full adversarial audit per uploaded spec (report delivered)
