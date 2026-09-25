@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ogImageMeta } from "@/lib/og";
 import { useState } from "react";
 import { drawTicket, hexToBytes, sha256Hex } from "@/lib/jackpot/fairness";
@@ -99,6 +99,9 @@ function FairnessPage() {
       </div>
 
       <div className="mt-6">{tab === "jackpot" ? <JackpotSection /> : tab === "coinflip" ? <CoinflipSection /> : <RouletteSection />}</div>
+      <p className="mt-8 text-center text-sm text-muted-foreground">
+        Want to check results by hand? Read our <Link to="/guides/$slug" params={{ slug: "provably-fair-calculator" }} className="text-primary hover:underline">provably fair calculator guide</Link> or learn how <Link to="/guides/$slug" params={{ slug: "hmac-sha256-provably-fair" }} className="text-primary hover:underline">HMAC-SHA256</Link> works.
+      </p>
     </div>
   );
 }
