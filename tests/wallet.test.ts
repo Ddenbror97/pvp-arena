@@ -12,6 +12,7 @@ import {
   discoverInjectedMetaMask,
   connectInjectedProvider,
   guardedRequest,
+  resetInjectedProviderConnection,
   sessionFor,
   type Eip1193,
 } from "../src/lib/web3/metamask";
@@ -241,6 +242,29 @@ describe("provider safety", () => {
       accounts: [acct.address],
       chainId: "0x14a34",
     });
+  });
+  it("revokes only this site's account permission when resetting a stale connection", async () => {
+    const calls: { method: string; params?: unknown[] }[] = [];
+    const provider: Eip1193 = {
+      request: async (args) => {
+        calls.push(args);
+        return null;
+      },
+    };
+    await resetInjectedProviderConnection(provider);
+    expect(calls).toEqual([
+      { method: "wallet_revokePermissions", params: [{ eth_accounts: {} }] },
+    ]);
+  });
+  it("does not hide a still-pending MetaMask request during reset", async () => {
+    const provider: Eip1193 = {
+      request: async () => {
+        throw { code: -32002 };
+      },
+    };
+    await expect(resetInjectedProviderConnection(provider)).rejects.toThrow(
+      WALLET_MESSAGES.CONNECT_PENDING,
+    );
   });
   it("drops a stale connection and retries once when the first attempt fails", async () => {
     let attempts = 0;

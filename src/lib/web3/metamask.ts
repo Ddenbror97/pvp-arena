@@ -25,7 +25,6 @@ export interface WalletSession {
   onDisconnect(fn: () => void): () => void;
 }
 
-const CONNECT_TIMEOUT_MS = 120_000;
 const SIGN_TIMEOUT_MS = 180_000;
 const PROVIDER_DISCOVERY_MS = 750;
 
