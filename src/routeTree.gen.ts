@@ -11,12 +11,15 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CoinflipRouteImport } from './routes/coinflip'
 import { Route as FairnessRouteImport } from './routes/fairness'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResponsibleGamblingRouteImport } from './routes/responsible-gambling'
 import { Route as RouletteRouteImport } from './routes/roulette'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -37,6 +40,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -52,6 +60,11 @@ const FairnessRoute = FairnessRouteImport.update({
   path: '/fairness',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -65,6 +78,11 @@ const ResponsibleGamblingRoute = ResponsibleGamblingRouteImport.update({
 const RouletteRoute = RouletteRouteImport.update({
   id: '/roulette',
   path: '/roulette',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -124,12 +142,15 @@ const ApiPublicAvatarStyleSeedRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/coinflip': typeof CoinflipRouteWithChildren
   '/fairness': typeof FairnessRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/privacy': typeof PrivacyRoute
   '/responsible-gambling': typeof ResponsibleGamblingRoute
   '/roulette': typeof RouletteRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -143,12 +164,15 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/coinflip': typeof CoinflipRouteWithChildren
   '/fairness': typeof FairnessRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/privacy': typeof PrivacyRoute
   '/responsible-gambling': typeof ResponsibleGamblingRoute
   '/roulette': typeof RouletteRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -164,12 +188,15 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/coinflip': typeof CoinflipRouteWithChildren
   '/fairness': typeof FairnessRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/privacy': typeof PrivacyRoute
   '/responsible-gambling': typeof ResponsibleGamblingRoute
   '/roulette': typeof RouletteRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
@@ -185,12 +212,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/auth'
     | '/coinflip'
     | '/fairness'
+    | '/how-it-works'
     | '/privacy'
     | '/responsible-gambling'
     | '/roulette'
+    | '/sitemap.xml'
     | '/terms'
     | '/admin'
     | '/profile'
@@ -204,12 +234,15 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/auth'
     | '/coinflip'
     | '/fairness'
+    | '/how-it-works'
     | '/privacy'
     | '/responsible-gambling'
     | '/roulette'
+    | '/sitemap.xml'
     | '/terms'
     | '/admin'
     | '/profile'
@@ -224,12 +257,15 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/about'
     | '/auth'
     | '/coinflip'
     | '/fairness'
+    | '/how-it-works'
     | '/privacy'
     | '/responsible-gambling'
     | '/roulette'
+    | '/sitemap.xml'
     | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/profile'
@@ -245,12 +281,15 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   CoinflipRoute: typeof CoinflipRouteWithChildren
   FairnessRoute: typeof FairnessRoute
+  HowItWorksRoute: typeof HowItWorksRoute
   PrivacyRoute: typeof PrivacyRoute
   ResponsibleGamblingRoute: typeof ResponsibleGamblingRoute
   RouletteRoute: typeof RouletteRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   GamesGameIdRoute: typeof GamesGameIdRoute
   ApiPublicCronCryptoDepositsRoute: typeof ApiPublicCronCryptoDepositsRoute
@@ -275,6 +314,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -296,6 +342,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FairnessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -315,6 +368,13 @@ declare module '@tanstack/react-router' {
       path: '/roulette'
       fullPath: '/roulette'
       preLoaderRoute: typeof RouletteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -420,12 +480,15 @@ const CoinflipRouteWithChildren = CoinflipRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   CoinflipRoute: CoinflipRouteWithChildren,
   FairnessRoute: FairnessRoute,
+  HowItWorksRoute: HowItWorksRoute,
   PrivacyRoute: PrivacyRoute,
   ResponsibleGamblingRoute: ResponsibleGamblingRoute,
   RouletteRoute: RouletteRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   GamesGameIdRoute: GamesGameIdRoute,
   ApiPublicCronCryptoDepositsRoute: ApiPublicCronCryptoDepositsRoute,

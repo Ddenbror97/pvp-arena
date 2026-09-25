@@ -101,12 +101,16 @@ export function SiteFooter() {
         <div>
           <h2 className="font-display text-sm text-foreground">How it works</h2>
           <ul className="mt-4 space-y-3">
+            <li><Link to="/how-it-works" className={footerLink}>How it works</Link></li>
             <li><Link to="/fairness" className={footerLink}>Fairness</Link></li>
           </ul>
         </div>
 
         <div>
           <h2 className="font-display text-sm text-foreground">About us</h2>
+          <ul className="mt-4 space-y-3">
+            <li><Link to="/about" className={footerLink}>About PVPspinArena</Link></li>
+          </ul>
         </div>
 
         <nav aria-label="Legal">
