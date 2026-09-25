@@ -136,6 +136,13 @@ The first widely used designs were for dice. The site published a hash of its se
 Today provably fair methods are common on crypto casinos, but the quality varies a lot. Some sites publish a clear formula and a working verifier for every game. Others use the phrase in their marketing without giving players a practical way to check anything. That is why the checklist above matters: the idea is simple, but it only protects you if the site has implemented it properly and you can actually use it.`,
     },
     {
+      id: "client-seed",
+      title: "Why your own input matters",
+      body: `Some provably fair games let you set a client seed. It is mixed with the server seed to produce each result. Because the site commits to its seed before seeing yours, it cannot choose a seed that works against your input.
+
+Changing your client seed does not change your odds. It simply removes one more way a site could try to steer results. If a game offers this option, it is a good sign that the design was thought through.`,
+    },
+    {
       id: "example",
       title: "Worked example: verifying a PVPspinArena round",
       body: `Here is how you would check a Roulette round on PVPspinArena:

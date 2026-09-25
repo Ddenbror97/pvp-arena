@@ -139,6 +139,17 @@ If a site does not publish odds for every item, you cannot do this check, and yo
 None of this changes the odds. The case edge is the same whether the battle feels close or not. If you notice that you are playing faster, raising stakes or chasing a loss, it is a good moment to stop. Our [how to stop gambling guide](/guides/how-to-stop-gambling) has practical steps if it ever feels hard to take a break.`,
     },
     {
+      id: "team",
+      title: "How team and reverse battles change things",
+      body: `Team and reverse formats are worth understanding because they change who wins, even though they do not change the average loss.
+
+In a 2v2 battle, each team's totals are added together. A single rare item on your partner's side can win the battle for you, so results feel less random for each player. But the payout is split, so the win is smaller.
+
+In reverse or crazy mode, the lowest total wins. This rewards bad luck, which can make a string of cheap items feel exciting. The house edge on each case stays exactly the same.
+
+Whatever the format, remember the simple rule: the group always pays the case edge.`,
+    },
+    {
       id: "pvpspinarena",
       title: "Where PVPspinArena fits",
       body: `To be clear: PVPspinArena does not offer case opening or case battles. We focus on the player-versus-player formats that made the CS:GO era popular:
