@@ -81,3 +81,12 @@ The outcome exists server-side from the join, but the public game row carries `w
 ## Known notes
 - Jackpot settlement locks wallet rows in a different order than joins; under heavy load this can cause a retry-safe deadlock. Coinflip locks all wallet rows in one global order. Jackpot left unchanged by request.
 - Linter warnings remain for the intentionally callable game actions (create/join/cancel/tick, Jackpot join/tick, profile helpers). Internal functions are not callable from the browser (tested).
+
+## Withdrawal finality (security meaning of CONFIRMED)
+A withdrawal becomes CONFIRMED (hold settled to external custody) only when its payout
+receipt is `success`, its block is at or below the RPC `safe` head (Base: batch posted to L1),
+and two independent providers agree on the receipt status, block number and block hash.
+A reverted payout releases the hold only under the same safe + two-provider condition, so a
+reorg of an unsafe block can never refund a payout that later succeeds. Disagreement raises
+`crypto_withdrawal_rpc_disagreement` and keeps the hold. Settle/release are idempotent
+(`withdrawal:<id>:settle|release`) and mutually exclusive; closed rows are immutable.
