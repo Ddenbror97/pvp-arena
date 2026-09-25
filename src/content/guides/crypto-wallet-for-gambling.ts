@@ -7,7 +7,7 @@ export const guide: Guide = {
   secondary: ["crypto wallet for casino", "self custody wallet", "hot wallet vs cold wallet", "metamask vs exchange wallet"],
   title: "Best Crypto Wallet for Gambling: How to Choose Safely",
   description:
-    "How to choose the best crypto wallet for gambling: self-custody vs exchange, hot vs cold, network support, fees and the security habits that protect your funds.",
+    "How to choose the best crypto wallet for gambling: self-custody vs exchange, hot vs cold, network support, fees and the security habits that protect funds.",
   h1: "Best crypto wallet for gambling: how to choose safely",
   answer:
     "The best crypto wallet for gambling is a self-custody wallet you control, that supports the network the site uses, and that you keep separate from your savings. For most players that means a browser or mobile wallet such as MetaMask set up for Base, funded only with a gaming budget, with larger holdings kept on a hardware wallet.",
@@ -177,6 +177,15 @@ PVPspinArena will only ever ask you to sign a readable verification message and 
 - **Skipping test transactions.** A small first transfer catches most errors cheaply.
 
 If something goes wrong, stop, keep the transaction hash and contact the official support of the site or exchange involved. Our [USDC casino guide](/guides/usdc-casino) covers what to expect from deposits and withdrawals.`,
+    },
+    {
+      id: "next",
+      title: "Putting your wallet to work",
+      body: `Once your gaming account is set up, a short routine keeps it healthy. Before each session, check the network, your balance and that you still have a little ETH for fees. After each session, withdraw anything above your budget back to the same account and move it to savings. Once a month, review connected sites and token approvals, and disconnect anything you no longer use.
+
+Your wallet also gives you a complete, permanent record of your gaming spending. Every deposit and withdrawal is visible on a block explorer, so you can compare it against your own notes and against the site's wallet history.
+
+To see how PVPspinArena uses your verified wallet, read [how it works](/how-it-works). For peace of mind about the games themselves, the [Fairness page](/fairness) lets you check any finished result with the revealed seed, directly in your browser, without trusting anyone's word.`,
     },
     {
       id: "summary",

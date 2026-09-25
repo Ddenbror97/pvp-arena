@@ -165,6 +165,15 @@ Deposits must come from your verified address, because that is how they are matc
 Once funded, you can join a [crypto jackpot](/guides/crypto-jackpot) pot, open a [coinflip](/guides/csgo-coinflip) duel or bet on [roulette](/guides/cs2-roulette).`,
     },
     {
+      id: "next",
+      title: "Before your first deposit",
+      body: `Before you send your first USDC, take a few minutes to understand where it is going. Read [how it works](/how-it-works) for an overview of PVPspinArena's balances, deposits and withdrawals, including why deposits are credited only after confirmations and why withdrawals have limits and reviews.
+
+It is also worth opening the [Fairness page](/fairness) and checking a finished game or two. It shows exactly how results are produced and lets you verify them yourself, so you know what you are playing before you spend anything.
+
+Finally, write down your budget and stick to it. Buying exactly the amount you plan to play, rather than a round number "just in case", is one of the simplest ways to keep gaming spending under control. If you want to start small, a single session's budget plus a dollar or two of ETH for fees is plenty for a first try.`,
+    },
+    {
       id: "summary",
       title: "Summary",
       body: `To buy USDC, open and verify an account at a regulated exchange, add money by bank transfer or card, and purchase USDC. Then withdraw it to your own wallet, choosing the Base network if you plan to use it there.

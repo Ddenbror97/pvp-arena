@@ -170,6 +170,11 @@ Our [crypto wallet for gambling guide](/guides/crypto-wallet-for-gambling) compa
 If a deposit still does not show after confirmations, keep the transaction hash and contact support.`,
     },
     {
+      id: "next",
+      title: "Where to go next",
+      body: `Once your wallet is verified and funded, read [how it works](/how-it-works) for an overview of PVPspinArena's games, balances and payments. You can check any finished game on the [Fairness page](/fairness), which runs every check in your own browser.`,
+    },
+    {
       id: "summary",
       title: "Summary",
       body: `A MetaMask casino lets you keep control of your funds while playing. Connecting shares only your public address, and signing a readable message proves ownership without costing gas or moving tokens.

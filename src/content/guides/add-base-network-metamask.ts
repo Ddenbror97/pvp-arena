@@ -174,6 +174,15 @@ Base's low fees make small deposits practical, which also makes it easier to sti
 If funds appear on the explorer but not in the app you are using, contact that site's support with the transaction hash.`,
     },
     {
+      id: "next",
+      title: "Checking your setup",
+      body: `Before you move real money, run a quick check that everything is correct. Open MetaMask, switch to Base and confirm the network name reads Base and that the chain ID in the network settings is 8453. Then look up your own address on basescan.org: you should see the same ETH and USDC balances that MetaMask shows. If the two disagree, your RPC settings may be wrong, so re-enter the official values.
+
+Next, send a very small amount, such as one dollar of USDC, between two of your own accounts or from an exchange. Watching it arrive teaches you what a normal Base transfer looks like and how quickly it confirms.
+
+When you are ready to play, read [how it works](/how-it-works) for an overview of deposits and balances on PVPspinArena, and visit the [Fairness page](/fairness) to see how every game result can be checked in your browser. Both pages explain what happens after your USDC leaves MetaMask.`,
+    },
+    {
       id: "summary",
       title: "Summary",
       body: `To add Base to MetaMask, select it from the popular networks list or enter the settings manually: name Base, RPC https://mainnet.base.org, chain ID 8453, symbol ETH and explorer https://basescan.org. Then switch to Base to see and send balances there.
