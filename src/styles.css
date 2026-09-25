@@ -311,3 +311,53 @@
   .animate-count-slam, .count-shock, .count-heat { animation: none; }
 }
 
+
+/* ---------- Homepage intro gate ---------- */
+:root { --intro-bg: oklch(0 0 0); }
+html.intro-pending body::after {
+  content: ""; position: fixed; inset: 0; z-index: 99; background: var(--intro-bg);
+}
+.intro-gate { position: fixed; inset: 0; z-index: 100; cursor: pointer; overflow: hidden; }
+.intro-leave { animation: intro-fade 0.35s ease-out forwards; }
+.intro-half {
+  position: absolute; left: 0; right: 0; height: 50%; overflow: hidden; background: var(--intro-bg);
+  will-change: transform;
+}
+.intro-half-top { top: 0; animation: intro-open-up 0.8s cubic-bezier(0.7, 0, 0.2, 1) 1.6s forwards; box-shadow: 0 1px 0 color-mix(in oklab, var(--primary) 60%, transparent); }
+.intro-half-bottom { bottom: 0; animation: intro-open-down 0.8s cubic-bezier(0.7, 0, 0.2, 1) 1.6s forwards; }
+.intro-logo-wrap {
+  position: absolute; left: 50%; width: min(420px, 70vw); aspect-ratio: 240 / 128; transform: translateX(-50%);
+}
+.intro-half-top .intro-logo-wrap { bottom: 0; transform: translate(-50%, 50%); }
+.intro-half-bottom .intro-logo-wrap { top: 0; transform: translate(-50%, -50%); }
+.intro-logo {
+  width: 100%; height: 100%; object-fit: contain; opacity: 0;
+  animation: intro-logo-in 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  filter: drop-shadow(0 0 28px color-mix(in oklab, var(--primary) 55%, transparent));
+}
+.intro-seam {
+  position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; transform: scaleX(0);
+  background: var(--primary); box-shadow: 0 0 18px 2px var(--primary);
+  animation: intro-seam 1.2s ease-out 1.2s forwards;
+}
+.intro-skip {
+  position: absolute; right: 1.25rem; bottom: 1.25rem; z-index: 2;
+  border: 1px solid color-mix(in oklab, var(--foreground) 25%, transparent); border-radius: 999px;
+  padding: 0.4rem 1rem; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted-foreground); background: transparent; animation: intro-fade-in 0.4s ease 0.4s both;
+}
+.intro-skip:hover, .intro-skip:focus-visible { color: var(--foreground); border-color: var(--primary); outline: none; }
+@keyframes intro-logo-in {
+  0% { opacity: 0; transform: scale(0.8); filter: blur(8px) drop-shadow(0 0 0 transparent); }
+  60% { opacity: 1; filter: blur(0) drop-shadow(0 0 36px color-mix(in oklab, var(--primary) 70%, transparent)); }
+  100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 28px color-mix(in oklab, var(--primary) 55%, transparent)); }
+}
+@keyframes intro-sweep { to { transform: translateX(120%); } }
+@keyframes intro-seam {
+  0% { transform: scaleX(0); opacity: 1; } 33% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; }
+}
+@keyframes intro-open-up { to { transform: translateY(-102%); filter: blur(1px); } }
+@keyframes intro-open-down { to { transform: translateY(102%); filter: blur(1px); } }
+@keyframes intro-fade { to { opacity: 0; } }
+@keyframes intro-fade-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .intro-gate { display: none; } }
