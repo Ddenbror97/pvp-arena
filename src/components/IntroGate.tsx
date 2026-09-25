@@ -3,33 +3,17 @@ import arenaLogo from "@/assets/arena-logo-v2.png.asset.json";
 
 export const INTRO_KEY = "pvp_intro_seen";
 
-/**
- * Inline pre-paint script for the homepage head: marks <html> with
- * `intro-pending` on a first full load of "/" this session, so a solid cover
- * shows before hydration (no flash of the page). Client-side navigation never
- * runs it, so the intro can't replay on "back to Jackpot".
- */
-export const INTRO_BOOT_SCRIPT = `try{var n=performance.getEntriesByType("navigation")[0];if(location.pathname==="/"&&!sessionStorage.getItem("${INTRO_KEY}")&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&(!n||n.type!=="back_forward")){var d=document.documentElement;d.classList.add("intro-pending");d.style.setProperty("--intro-logo","url(${arenaLogo.url})");sessionStorage.setItem("${INTRO_KEY}","1")}}catch(e){}`;
-
 const TOTAL_MS = 2600;
-/** If the app hydrates later than this (cold cache / slow network), the
- * visitor has already waited; skip the full gate animation and show the page. */
-const MAX_HYDRATION_DELAY_MS = 700;
 
 export function IntroGate() {
   const [phase, setPhase] = useState<"off" | "play" | "leave">("off");
   const skipRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (!root.classList.contains("intro-pending")) return;
-    if (performance.now() > MAX_HYDRATION_DELAY_MS) {
-      // Late hydration: let the CSS cover finish its own fade, then clean up.
-      const t = window.setTimeout(() => root.classList.remove("intro-pending"), 1200);
-      return () => window.clearTimeout(t);
-    }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (sessionStorage.getItem(INTRO_KEY)) return;
+    sessionStorage.setItem(INTRO_KEY, "1");
     setPhase("play");
-    root.classList.remove("intro-pending");
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const prevFocus = document.activeElement as HTMLElement | null;
