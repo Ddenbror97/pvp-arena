@@ -78,7 +78,7 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
       <Panel>
         <div>
         <h3 className="font-display text-base">Join the pot</h3>
-        <p className="mt-2 text-sm text-muted-foreground">Sign in to enter. New players get free {APP.creditsLabel.toLowerCase()} to try the game.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Sign in and deposit USDC to enter.</p>
         <Button asChild className="mt-4 w-full font-display">
           <Link to="/auth">Sign in to play</Link>
         </Button>

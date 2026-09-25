@@ -271,7 +271,7 @@ export function CryptoRails({
             <div className="mt-6 rounded-lg border border-primary/40 bg-primary/10 p-5 text-center">
               <Check className="mx-auto h-8 w-8 text-primary" />
               <h3 className="mt-3 font-display text-sm">Deposit submitted</h3>
-              <p className="mt-2 text-sm text-muted-foreground">MetaMask sent the transaction. Credits appear only after the server verifies the confirmed transaction{isTestnet ? ", usually about 6 minutes" : ""}.</p>
+              <p className="mt-2 text-sm text-muted-foreground">MetaMask sent the transaction. Your balance updates only after the server verifies the confirmed transaction{isTestnet ? ", usually about 6 minutes" : ""}.</p>
               <div className="mt-3"><TxLink hash={submittedHash} chainId={chain?.chain_id} /></div>
               <Button className="mt-4" variant="secondary" onClick={() => reset("deposit", asset)}>Make another deposit</Button>
             </div>
