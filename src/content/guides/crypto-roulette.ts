@@ -191,6 +191,28 @@ Set a loss limit and a time limit before you start. Roulette is fast, and a 6.67
 
 Betting systems like Martingale do not change the maths. Our [martingale strategy guide](/guides/martingale-strategy) explains why.`,
     },
+    {
+      id: "session-example",
+      title: "A worked session example",
+      body: `Numbers make the cost of crypto roulette easier to picture. Imagine a player with a $20 budget who bets $1 per round on Silver for 60 rounds.
+
+- Total wagered: $60, three times the starting budget, because winnings are re-bet.
+- Expected cost at a 6.67% edge: about $4.
+- Expected wins: about 28 of the 60 rounds.
+
+In practice the result could easily be anywhere from a $15 loss to a small profit. That spread is variance. If the same player bet on Green instead, the average cost would be the same, but the range would be much wider: several Green hits could double the budget, and no hits at all in 60 rounds is possible (about a 1.6% chance).
+
+### What to take from it
+
+The edge sets the average. Your bet size and the number of rounds set how much you actually wager. Smaller bets over fewer rounds keep the cost down, whatever color you choose. Stopping at a set loss limit is the single most effective way to keep a session under control.`,
+    },
+    {
+      id: "stablecoins",
+      title: "Why stablecoins suit roulette",
+      body: `Many early crypto casinos used Bitcoin. That meant a player could win a round and still lose money if the price of Bitcoin fell before they withdrew. It also made it hard to know what a bet was really worth.
+
+Stablecoins solve most of this. USDC is designed to track the US dollar, so a $5 bet is a $5 bet from deposit to withdrawal. Balances are easier to track, and budgets mean what they say. Stablecoins still carry their own small risks, such as the issuer's reserves and rare short-lived price dips, which our [USDC vs USDT guide](/guides/usdc-vs-usdt-gambling) discusses.`,
+    },
   ],
   faqs: [
     {

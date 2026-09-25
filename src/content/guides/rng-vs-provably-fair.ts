@@ -187,6 +187,30 @@ Open the [fairness page](/fairness), choose a game and enter the round. The chec
 
 Fairness is about whether results are honest. It does not make gambling a way to earn money. Every game still has risk, and the only reliable way to stay in control is to decide your limits in advance. The [responsible gambling page](/responsible-gambling) has practical tools and help lines.`,
     },
+    {
+      id: "example",
+      title: "A simple verification example",
+      body: `Here is what verifying a provably fair round looks like in practice, without the full maths.
+
+1. Before the round, the site shows a hash such as a long string of letters and numbers. You note it down or screenshot it.
+2. The round runs and a result appears, for example Silver on the roulette wheel.
+3. After the round, the site reveals the server seed.
+4. You hash the revealed seed with SHA-256. If the output matches the hash from step 1, the seed was not changed.
+5. You run the result calculation with the seed and the round data. If it produces Silver, the result was genuine.
+
+With a certified RNG casino, the equivalent check does not exist. You would see the result and a certificate from a lab, but nothing that ties this particular result to an honest process.
+
+### Doing it without the site
+
+The strongest check uses a tool the site does not control, such as a short script or an open-source calculator. PVPspinArena's verifier runs in your browser, and the method is documented so it can be repeated independently. Our [provably fair calculator guide](/guides/provably-fair-calculator) walks through it.`,
+    },
+    {
+      id: "regulation",
+      title: "Regulation and provably fair",
+      body: `Regulated markets usually require certified RNG testing regardless of whether a game is also provably fair. The two are not mutually exclusive. A game can be both certified by a lab and verifiable by players.
+
+Provably fair does not replace licensing, consumer protection or complaint processes. It adds a layer of transparency on top. When judging any site, look at both sides: how results are produced and verified, and how the business handles your money, your data and disputes. The [terms](/terms) and [privacy](/privacy) pages are where a site should explain the second part clearly.`,
+    },
   ],
   faqs: [
     {

@@ -198,6 +198,13 @@ Crypto wheels usually settle in stablecoins like USDC. On PVPspinArena, all amou
 
 If you want to try the wheel, set a limit first, keep bets small relative to your balance and check a round or two on the fairness page so you know how verification works. The [How it works](/how-it-works) page covers the round cycle in detail.`,
     },
+    {
+      id: "history",
+      title: "Where roulette colors came from",
+      body: `Roulette developed in France in the 18th century, and the red and black layout has been part of the game for most of its history. The single green zero became the standard in Europe in the 19th century, while many American casinos kept the double zero, which gives the house a bigger edge.
+
+The coloured wheels used on crypto sites are a much newer idea. They keep the red and black logic but swap in brand colors and cut the wheel down to a handful of slots, so a round can be read in a second. The rare color keeps the classic role of the green zero: it is the pocket that pays the most and gives the house its edge.`,
+    },
   ],
   faqs: [
     {

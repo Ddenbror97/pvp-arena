@@ -204,6 +204,28 @@ All game and money logic runs on the server, results are provably fair, and ever
 
 Crypto removes many of the practical problems of skin gambling, but it does not change the fact that gambling is risky. Treat it as entertainment with a fixed cost, not a way to make money.`,
     },
+    {
+      id: "streamers",
+      title: "Streamers, promotions and disclosure",
+      body: `A large part of the skin gambling story involved promotion. Popular streamers and video creators showed big wins on skin sites, which drew in younger viewers. In some well-known cases, it later emerged that the people promoting a site also had a stake in it, and this had not been clearly disclosed.
+
+The lesson carries over to crypto gambling. A streamer's big win tells you nothing about your expected result. Promotional accounts may be funded differently from normal players, and highlight clips only show wins.
+
+### What to look for
+
+- Clear disclosure when someone is paid to promote a site.
+- The house edge or fee stated plainly, so you can judge the cost yourself.
+- A working verifier, so results do not depend on anyone's word.
+
+Treat any gambling content as advertising unless it shows otherwise.`,
+    },
+    {
+      id: "age",
+      title: "Age limits and account checks",
+      body: `One of the biggest criticisms of skin gambling was that many sites did little to stop children from playing. Skins came from a game with a large teenage audience, and signing in with Steam did not prove age.
+
+Any gambling site you use should be adults only and should say so clearly. PVPspinArena is for adults only and requires an account with email verification before you can play. If you are a parent, the tools in the [responsible gambling page](/responsible-gambling) also cover blocking gambling sites on shared devices.`,
+    },
   ],
   faqs: [
     {
