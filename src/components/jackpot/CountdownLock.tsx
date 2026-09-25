@@ -4,12 +4,18 @@ import { emitSound } from "@/lib/sound";
 /** Circumference of the countdown ring (r = 42 inside a 100x100 viewBox). */
 const CIRC = 2 * Math.PI * 42;
 
-/** The colour heats up as the wheel gets closer to releasing. */
+/** The colour and size heat up as the wheel gets closer to releasing. */
 const TONE: Record<number, string> = {
   3: "text-primary",
   2: "text-gold",
   1: "text-rival",
 };
+const SIZE: Record<number, string> = {
+  3: "text-5xl",
+  2: "text-[3.4rem]",
+  1: "text-6xl",
+};
+
 
 interface Props {
   /** Server-clock ms when the wheel starts spinning. */
