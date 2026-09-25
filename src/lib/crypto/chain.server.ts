@@ -311,13 +311,12 @@ export async function runDepositWatcher(chainId: number) {
   // USDC: Transfer logs to any watched address, over the overlap window (reorg-safe re-scan).
   for (let from = logFrom; from <= logTo; from += MAX_LOG_RANGE) {
     const to = from + MAX_LOG_RANGE - 1n < logTo ? from + MAX_LOG_RANGE - 1n : logTo;
-    const logs = await env.client.getLogs({
-      address: env.usdc as Hex,
-      event: TRANSFER,
-      args: { to: watched },
-      fromBlock: from,
-      toBlock: to,
-    });
+    const logs = await getLogsChunked(
+      env.client,
+      { address: env.usdc as Hex, event: TRANSFER, args: { to: watched } },
+      from,
+      to,
+    );
     for (const l of logs) {
       if (l.address.toLowerCase() !== env.usdc || !l.args.value || l.removed) continue;
       await must(
