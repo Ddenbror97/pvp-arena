@@ -5,7 +5,7 @@ import { TESTNET, centsToWei } from "./allowlist";
 
 const ERRORS: Record<string, string> = {
   WITHDRAWALS_PAUSED: "Withdrawals are paused right now.",
-  BELOW_MINIMUM: "Amount is below the minimum.",
+  BELOW_MINIMUM: "Amount is below the minimum for this network.",
   SELF_EXCLUDED: "Withdrawals are unavailable while self-excluded.",
   NO_VERIFIED_WALLET: "Verify a MetaMask wallet on your profile first.",
   WITHDRAWAL_PENDING: "You already have a withdrawal in progress.",
@@ -19,6 +19,7 @@ const ERRORS: Record<string, string> = {
   CANNOT_CANCEL: "This withdrawal can no longer be cancelled.",
   FORBIDDEN: "Admins only.",
   NOT_PENDING: "This withdrawal is no longer waiting for review.",
+  CHAIN_DISABLED: "This network is not available right now.",
 };
 function clean(msg: string): string {
   const code = Object.keys(ERRORS).find((k) => msg.includes(k));
@@ -29,6 +30,8 @@ async function admin() {
   return supabaseAdmin as any;
 }
 
+const chainIdSchema = z.number().int().positive().default(TESTNET.chainId);
+
 export const getCryptoActivity = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -37,14 +40,57 @@ export const getCryptoActivity = createServerFn({ method: "GET" })
     return data as any;
   });
 
+/**
+ * Returns the player's personal deposit address for a chain, deriving and
+ * storing it on first use. Addresses come from an xpub — the server can derive
+ * addresses but never spend from them. Falls back to null when no xpub is
+ * configured (legacy shared-treasury testnet flow).
+ */
+export const getDepositAddress = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ chainId: chainIdSchema }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await admin();
+    const { data: net } = await db.from("chain_networks").select("chain_id").eq("chain_id", data.chainId).eq("is_enabled", true).maybeSingle();
+    if (!net) return { ok: false as const, error: ERRORS["CHAIN_DISABLED"]! };
+    const { data: existing } = await db
+      .from("crypto_deposit_addresses").select("address")
+      .eq("user_id", context.userId).eq("chain_id", data.chainId).maybeSingle();
+    if (existing) return { ok: true as const, address: existing.address as string };
+    const { depositXpub, deriveDepositAddress } = await import("./addresses.server");
+    const xpub = depositXpub();
+    if (!xpub) return { ok: true as const, address: null }; // legacy shared-treasury flow
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const { data: maxRow } = await db
+        .from("crypto_deposit_addresses").select("derivation_index")
+        .eq("chain_id", data.chainId).order("derivation_index", { ascending: false }).limit(1).maybeSingle();
+      const index = maxRow ? Number(maxRow.derivation_index) + 1 : 0;
+      const address = deriveDepositAddress(xpub, data.chainId, index).toLowerCase();
+      const { error } = await db.from("crypto_deposit_addresses").insert({
+        user_id: context.userId, chain_id: data.chainId, derivation_index: index, address,
+      });
+      if (!error) return { ok: true as const, address };
+      if (error.code === "23505") {
+        // Concurrent assignment or the user already has one — re-read.
+        const { data: again } = await db
+          .from("crypto_deposit_addresses").select("address")
+          .eq("user_id", context.userId).eq("chain_id", data.chainId).maybeSingle();
+        if (again) return { ok: true as const, address: again.address as string };
+        continue;
+      }
+      break;
+    }
+    return { ok: false as const, error: "Could not assign a deposit address. Please try again." };
+  });
+
 export const prepareCryptoDeposit = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
-    z.object({ asset: z.enum(["USDC", "ETH"]), usdCents: z.number().int().positive().max(100_000_000) }).parse(d),
+    z.object({ asset: z.enum(["USDC", "ETH"]), usdCents: z.number().int().positive().max(100_000_000), chainId: chainIdSchema }).parse(d),
   )
   .handler(async ({ data, context }) => {
     const db = await admin();
-    const [{ data: wallet }, { loadVerifiedEnv, snapshotEthPrice }] = await Promise.all([
+    const [{ data: wallet }, { loadChainEnv, snapshotEthPrice }] = await Promise.all([
       db
         .from("user_wallets")
         .select("normalized_address")
@@ -55,12 +101,21 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
       import("./chain.server"),
     ]);
     if (!wallet?.normalized_address) return { ok: false as const, error: ERRORS["NO_VERIFIED_WALLET"]! };
-    const checked = await loadVerifiedEnv();
+    const checked = await loadChainEnv(data.chainId);
     if (!checked.ok || !checked.env.settings.crypto_system_enabled || !checked.env.settings.deposits_enabled) {
       return { ok: false as const, error: "Deposits are unavailable right now." };
     }
-    if (data.usdCents < Number(checked.env.settings.min_deposit_cents)) {
+    if (data.usdCents < Number(checked.env.network.min_deposit_cents)) {
       return { ok: false as const, error: ERRORS["BELOW_MINIMUM"]! };
+    }
+    // Prefer the player's personal deposit address; fall back to the shared treasury (legacy testnet flow).
+    const { depositXpub, deriveDepositAddress } = await import("./addresses.server");
+    let destination = checked.env.treasury as string;
+    if (depositXpub()) {
+      const { data: existing } = await db
+        .from("crypto_deposit_addresses").select("address")
+        .eq("user_id", context.userId).eq("chain_id", data.chainId).maybeSingle();
+      if (existing) destination = existing.address as string;
     }
     let units: bigint;
     let priceMicroUsd: number | null = null;
@@ -76,9 +131,9 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
       ok: true as const,
       instruction: {
         asset: data.asset,
-        chainId: TESTNET.chainId,
-        treasury: checked.env.treasury,
-        token: data.asset === "USDC" ? TESTNET.usdc : null,
+        chainId: data.chainId,
+        treasury: destination,
+        token: data.asset === "USDC" ? checked.env.usdc : null,
         units: units.toString(),
       },
       verifiedAddress: wallet.normalized_address,
@@ -89,14 +144,16 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
 
 export const quoteEthWithdrawal = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({ usdCents: z.number().int().positive().max(100_000_000) }).parse(d))
+  .inputValidator((d) => z.object({ usdCents: z.number().int().positive().max(100_000_000), chainId: chainIdSchema }).parse(d))
   .handler(async ({ data, context }) => {
-    const { loadVerifiedEnv, snapshotEthPrice } = await import("./chain.server");
-    const env = await loadVerifiedEnv();
+    const { loadChainEnv, snapshotEthPrice } = await import("./chain.server");
+    const env = await loadChainEnv(data.chainId);
     if (!env.ok) return { ok: false as const, error: "Crypto rails are unavailable right now." };
     const price = await snapshotEthPrice(env.env).catch(() => null);
     if (!price) return { ok: false as const, error: ERRORS["PRICE_STALE"]! };
-    const { data: q, error } = await (await admin()).rpc("crypto_quote_withdrawal", { p_user: context.userId, p_usd_cents: data.usdCents });
+    const { data: q, error } = await (await admin()).rpc("crypto_quote_withdrawal", {
+      p_user: context.userId, p_chain: data.chainId, p_usd_cents: data.usdCents,
+    });
     if (error) return { ok: false as const, error: clean(error.message) };
     return { ok: true as const, quote: q as { quote_id: string; usd_cents: number; wei: string; price_micro_usd: number; expires_at: string } };
   });
@@ -104,13 +161,13 @@ export const quoteEthWithdrawal = createServerFn({ method: "POST" })
 export const requestCryptoWithdrawal = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
-    z.object({ asset: z.enum(["USDC", "ETH"]), usdCents: z.number().int().positive().max(100_000_000), quoteId: z.string().uuid().nullable() }).parse(d),
+    z.object({ asset: z.enum(["USDC", "ETH"]), usdCents: z.number().int().positive().max(100_000_000), quoteId: z.string().uuid().nullable(), chainId: chainIdSchema }).parse(d),
   )
   .handler(async ({ data, context }) => {
     const { envOkForAutoApproval } = await import("./chain.server");
-    const envOk = await envOkForAutoApproval();
+    const envOk = await envOkForAutoApproval(data.chainId);
     const { data: r, error } = await (await admin()).rpc("crypto_request_withdrawal", {
-      p_user: context.userId, p_asset: data.asset, p_usd_cents: data.usdCents, p_quote: data.quoteId, p_env_ok: envOk,
+      p_user: context.userId, p_chain: data.chainId, p_asset: data.asset, p_usd_cents: data.usdCents, p_quote: data.quoteId, p_env_ok: envOk,
     });
     if (error) return { ok: false as const, error: clean(error.message) };
     return { ok: true as const, result: r as { id: string; status: string } };
