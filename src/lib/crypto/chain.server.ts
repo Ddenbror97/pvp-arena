@@ -12,7 +12,7 @@ import {
 } from "viem";
 import { base, baseSepolia, mainnet } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
-import { TESTNET, checkStaticConfig, weiToCents, usdcUnitsToCents } from "./allowlist";
+import { TESTNET, checkStaticConfig, checkMainnetRegistry, weiToCents, usdcUnitsToCents } from "./allowlist";
 
 const ERC20 = parseAbi([
   "function transfer(address to, uint256 value) returns (bool)",
@@ -127,10 +127,20 @@ export async function loadChainEnv(chainId: number): Promise<{ ok: true; env: En
     });
     if (!st.ok) return fail(st.reason);
   } else {
-    // Mainnet chains: the migration-seeded registry is the source of truth; it must
-    // declare mainnet mode and exact contract/feed addresses (verified against Circle/Chainlink docs).
-    if (net.network_mode !== "mainnet") return fail("MODE_MISMATCH");
-    if (!usdc.contract_address || !eth.price_feed_address) return fail("REGISTRY_INCOMPLETE");
+    // Mainnet chains: the registry must match the known-good Circle/Chainlink
+    // values exactly (hard production-config guard — fails closed on any drift).
+    const mc = checkMainnetRegistry({
+      chainId,
+      networkMode: net.network_mode,
+      usdc: usdc.contract_address,
+      usdcDecimals: Number(usdc.decimals),
+      feed: eth.price_feed_address,
+    });
+    if (!mc.ok) return fail(mc.reason);
+    // Risk/emergency settings must be present before real money moves.
+    if (s.payout_float_max_cents == null || s.daily_global_limit_cents == null || s.auto_approve_cents == null) {
+      return fail("RISK_SETTINGS_MISSING");
+    }
   }
 
   const client = createPublicClient({ chain, transport: http(rpcUrlFor(chainId), { timeout: 10_000 }) }) as PublicClient;
