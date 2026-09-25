@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatUsd } from "@/lib/jackpot/math";
-const DEFAULT_CHAIN_ID = 8453;
 import type { DepositInstruction } from "@/lib/crypto/deposit";
 import { getWalletSession } from "@/lib/web3/metamask";
 import { WALLET_CONFIG } from "@/lib/web3/config";
