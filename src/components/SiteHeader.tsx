@@ -96,13 +96,15 @@ export function SiteFooter() {
           <Link to="/" className="inline-flex" aria-label="PVPspinArena home">
             <img src={arenaLogo.url} alt="PVPspinArena" width={240} height={128} loading="lazy" decoding="async" className="h-10 w-auto" />
           </Link>
+          <p className="mt-3 max-w-xs text-sm text-muted-foreground">
+            A true player vs player platform, inspired by the CS:GO era.
+          </p>
         </div>
 
         <div>
           <h2 className="font-display text-sm text-foreground">How it works</h2>
           <ul className="mt-4 space-y-3">
             <li><Link to="/how-it-works" className={footerLink}>How it works</Link></li>
-            <li><Link to="/fairness" className={footerLink}>Fairness</Link></li>
           </ul>
         </div>
 
