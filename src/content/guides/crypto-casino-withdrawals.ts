@@ -180,6 +180,11 @@ A site's approach to fairness is also a useful signal. Sites that let you verify
 For how PVPspinArena handles balances and payouts in general, read [how it works](/how-it-works), or visit your [wallet](/wallet) page to see your history.`,
     },
     {
+      id: "plan",
+      title: "Planning your withdrawals",
+      body: `A little planning makes withdrawals smoother. Decide in advance at what balance you will cash out, for example when a session doubles your starting budget, and withdraw promptly rather than leaving winnings to be played back. Keep each request within the automatic threshold where possible, and spread larger amounts over several days to stay inside the daily limit. Record the amount, date and transaction hash of every withdrawal alongside your deposits, so you always know your true net result. Treat any balance on a gaming site as money in transit, not savings: the safest place for funds you are not actively playing with is your own wallet, and for larger sums a hardware wallet. Finally, remember that in many countries crypto transactions can have tax consequences, so keep records that would let you explain every transfer if asked.`,
+    },
+    {
       id: "summary",
       title: "Summary",
       body: `An instant withdrawal crypto casino processes withdrawals automatically and quickly, but no blockchain payment is literally instant. Speed depends on the network, the site's checks and your own setup.

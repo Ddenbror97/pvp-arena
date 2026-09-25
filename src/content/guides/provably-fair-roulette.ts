@@ -183,6 +183,11 @@ You do not need to verify every spin. A few random checks, particularly after a 
 Both can be legitimate. Some players value regulated oversight; others value the ability to verify every result themselves. Our upcoming [RNG vs provably fair guide](/guides/rng-vs-provably-fair) compares them in more depth. For how PVPspinArena operates overall, see [how it works](/how-it-works).`,
     },
     {
+      id: "next",
+      title: "A quick exercise",
+      body: `To build confidence, try this simple exercise. Open the Roulette page and write down the round numbers and colours of five consecutive results. Then verify each one on the Fairness page, noting the counter used for each. You will almost certainly see a counter of 0 every time, which shows how rarely rejection sampling needs to redraw. Finally, count how many of the five were Green. Over five spins you would expect a third of a Green on average, so seeing none is normal, and seeing two is unusual but entirely possible. Doing this once makes the maths feel concrete and shows why no pattern in recent results predicts the next spin.`,
+    },
+    {
       id: "summary",
       title: "Summary",
       body: `Provably fair roulette commits to a secret seed before bets lock, computes the spin from that seed with a published formula, and reveals the seed afterwards so anyone can check it.

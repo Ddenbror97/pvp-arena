@@ -169,6 +169,15 @@ For the full picture, read [how it works](/how-it-works) and our [about page](/a
 - **September 2023**: Counter-Strike 2 replaces CS:GO.`,
     },
     {
+      id: "why-matters",
+      title: "Why this history still matters",
+      body: `It is tempting to see the skin gambling era as a closed chapter, but its lessons apply to every new form of online play. Whenever a new currency, platform or game format appears, the same questions come up: who is running the site, how are results chosen, who is allowed to play and how does money move in and out? The answers that skin gambling got wrong are exactly the ones worth checking today.
+
+For players, that means looking beyond flashy wins on stream. Check whether promoters disclose their relationships, whether a site verifies ages, whether it publishes and lets you verify its results, and whether its payment terms are clear before you deposit. For operators, it means building those protections in from the start rather than adding them after a scandal.
+
+The formats themselves, a shared pot, a two-player duel, a colour wheel, remain some of the most straightforward and social games online. Run transparently, with fair maths and honest promotion, they can be enjoyed as entertainment without repeating the mistakes that brought the first generation down.`,
+    },
+    {
       id: "summary",
       title: "Summary",
       body: `Weapon skins turned CS:GO into an economy, and from 2014 skin gambling grew into a vast, mostly unregulated industry of jackpots, coinflips and roulette wheels. The CSGO Lotto scandal in 2016, when two YouTubers were revealed to own the site they promoted, became the defining example of its problems.
