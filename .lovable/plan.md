@@ -27,11 +27,14 @@ USDC contract addresses independently verified against Circle's official deploym
 
 Schema extensions: `crypto_deposits` and `crypto_withdrawals` gain `chain_id`, `token_contract`, `deposit_address`. Existing Sepolia rows are preserved/migrated.
 
-## 2. Personal deposit addresses
+## 2. Personal deposit addresses (xpub-only custody)
 
-- Each verified player gets a unique deposit address per chain (derived from a server-held HD seed or generated keypair; keys stored as secrets).
-- Deposit scanner matches on **destination = player's deposit address**; records sender for audit/risk.
+- Deposit addresses are derived from an **HD wallet extended public key (xpub)** — one derivation path per player per chain.
+- The deposit-watching server holds **only the xpub / address-derivation capability**. No HD seed and no per-player private keys are stored as application secrets.
+- Private key material for sweeping funds is isolated from the web application and handled through a dedicated custody/HSM/multisig setup (same separation principle as the payout signers).
+- Deposit scanner matches on **destination = player's deposit address**; records sender for audit/risk only.
 - Deposit UI shows the player's personal address + QR per selected network.
+- **No auto-sweep to the hot wallet:** funds flow Player → personal deposit address → detected → confirmed → ledger credited → separate treasury sweep → cold/warm treasury. A deposit address never becomes a withdrawal signer.
 
 ## 3. Confirmation model
 
