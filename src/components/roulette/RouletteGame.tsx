@@ -112,19 +112,31 @@ export function RouletteGame() {
     const deadline =
       live.status === "BETTING" ? live.betting_ends_at : live.status === "LOCKED" ? live.spin_start_at : live.status === "SPINNING" ? live.spin_end_at : null;
     const due = deadline ? new Date(deadline).getTime() - now() : 0;
-    const id = setTimeout(async () => {
+    // A single nudge can be throttled (another viewer ticked at the same moment) or lost
+    // on a network hiccup, so keep nudging every second until the round actually moves.
+    let retry: ReturnType<typeof setInterval> | undefined;
+    const tick = async () => {
       if (ticking.current) return;
       ticking.current = true;
       try {
         await supabase.rpc("roulette_tick");
+      } catch {
+        /* retried on the next interval */
       } finally {
         ticking.current = false;
         qc.invalidateQueries({ queryKey: ["roulette-round"] });
         qc.invalidateQueries({ queryKey: ["roulette-history"] });
         qc.invalidateQueries({ queryKey: ["wallet", userId] });
       }
+    };
+    const id = setTimeout(() => {
+      void tick();
+      retry = setInterval(() => void tick(), 1000);
     }, Math.max(150, due + 150));
-    return () => clearTimeout(id);
+    return () => {
+      clearTimeout(id);
+      if (retry) clearInterval(retry);
+    };
   }, [userId, live?.id, live?.status, live?.betting_ends_at, live?.spin_start_at, live?.spin_end_at, now, qc]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const wheel = setup.data?.wheels.find((w) => w.version === (g?.wheel_version ?? setup.data?.cfg.wheel_version));
