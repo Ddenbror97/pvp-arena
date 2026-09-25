@@ -114,7 +114,7 @@ function AuthPage() {
     <div className="mx-auto max-w-sm py-10">
       <h1 className="font-display text-2xl">{mode === "signin" ? "Welcome back" : "Create account"}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        {mode === "signin" ? "Sign in to join the jackpot." : "New accounts get $1,000 in test credits (no cash value)."}
+        {mode === "signin" ? "Sign in to join the jackpot." : "Create your account to play. You must be 18 or older."}
       </p>
       <form onSubmit={submit} className="mt-6 space-y-4">
         {mode === "signup" && (
