@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatUsd } from "@/lib/jackpot/math";
-import { TESTNET } from "@/lib/crypto/allowlist";
+const DEFAULT_CHAIN_ID = 8453;
 import type { DepositInstruction } from "@/lib/crypto/deposit";
 import { getWalletSession } from "@/lib/web3/metamask";
 import { WALLET_CONFIG } from "@/lib/web3/config";
@@ -117,7 +117,7 @@ export function CryptoRails({
   const activity = useQuery({ queryKey: ["crypto-activity"], queryFn: () => fetchActivity(), refetchInterval: 15_000 });
   const [mode, setMode] = useState<"deposit" | "withdraw">(requestedMode);
   const [asset, setAsset] = useState<Asset>("USDC");
-  const [chainId, setChainId] = useState<number>(TESTNET.chainId);
+  const [chainId, setChainId] = useState<number>(8453);
   const [amount, setAmount] = useState("");
   const [depositReview, setDepositReview] = useState<DepositReview | null>(null);
   const [withdrawalReview, setWithdrawalReview] = useState<WithdrawalReview | null>(null);
@@ -163,7 +163,7 @@ export function CryptoRails({
   async function reviewDeposit() {
     setBusy(true);
     try {
-      const result = await prepareDeposit({ data: { asset, usdCents: cents, chainId: chain?.chain_id ?? TESTNET.chainId } });
+      const result = await prepareDeposit({ data: { asset, usdCents: cents, chainId: chain?.chain_id ?? 8453 } });
       if (!result.ok) {
         toast.error(result.error);
         return;
@@ -199,7 +199,7 @@ export function CryptoRails({
     setBusy(true);
     try {
       if (asset === "ETH") {
-        const result = await doQuote({ data: { usdCents: cents, chainId: chain?.chain_id ?? TESTNET.chainId } });
+        const result = await doQuote({ data: { usdCents: cents, chainId: chain?.chain_id ?? 8453 } });
         if (!result.ok) {
           toast.error(result.error);
           return;
@@ -213,7 +213,7 @@ export function CryptoRails({
     if (!withdrawalReview) return;
     setBusy(true);
     try {
-      const result = await doRequest({ data: { asset: withdrawalReview.asset, usdCents: withdrawalReview.usdCents, quoteId: withdrawalReview.quote?.quote_id ?? null, chainId: chain?.chain_id ?? TESTNET.chainId } });
+      const result = await doRequest({ data: { asset: withdrawalReview.asset, usdCents: withdrawalReview.usdCents, quoteId: withdrawalReview.quote?.quote_id ?? null, chainId: chain?.chain_id ?? 8453 } });
       if (!result.ok) {
         toast.error(result.error);
         return;
