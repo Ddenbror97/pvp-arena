@@ -209,7 +209,6 @@ d("real-money ledger migration", () => {
   });
 
   it("jackpot on real USD: one settlement, exact payout + rake, duplicate settle is a no-op", async () => {
-    const g0 = (await sql`select id from pvp_test.jackpot_games where status in ('WAITING','ACTIVE') and account_type = 'real'`)[0];
     const a = await newUser(20);
     const b = await newUser(20);
     const key = randomUUID();
@@ -220,17 +219,20 @@ d("real-money ledger migration", () => {
     expect(g.money_domain).toBe("REAL_USD");
     await sleep(Math.max(0, +g.scheduled_end_at - Date.now()) + 200);
     const houseBefore = await sys("house_revenue");
+    const players = (await sql`select user_id from pvp_test.jackpot_players where game_id = ${g.id}`).map((r) => r.user_id as string);
+    const worth = async () => { let t = 0; for (const p of players) t += (await bal(p)) + (await bal(p, "user_locked")); return t; };
+    const before = await worth();
     await Promise.allSettled(Array.from({ length: 4 }, () => sql`select pvp_test.jackpot_settle(${g.id})`));
     const [done] = await sql`select * from pvp_test.jackpot_games where id = ${g.id}`;
     expect(done.status).toBe("COMPLETED");
     const pot = Number(done.pot_amount);
-    expect(pot + Number(g0 ? 0 : 0)).toBeGreaterThanOrEqual(2000);
+    expect(pot).toBeGreaterThanOrEqual(2000);
     expect(Number(done.payout_amount) + Number(done.rake_amount)).toBe(pot);
     expect(Number(done.rake_amount)).toBe(Math.floor((pot * done.rake_bps) / 10000));
     expect(await sys("house_revenue")).toBe(houseBefore + Number(done.rake_amount));
     expect(Number((await sql`select count(*) c from pvp_test.ledger_transactions where game_id = ${g.id} and kind = 'jackpot_settlement'`)[0].c)).toBe(1);
-    const total = (await bal(a.id)) + (await bal(b.id)) + (await bal(a.id, "user_locked")) + (await bal(b.id, "user_locked"));
-    expect(total).toBe(4000 - Number(done.rake_amount));
+    expect(await worth()).toBe(before - Number(done.rake_amount));
+    for (const p of players) expect(await bal(p, "user_locked")).toBe(0);
     await realInvariants();
   });
 
