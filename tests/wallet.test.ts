@@ -17,7 +17,7 @@ import {
   type Eip1193,
 } from "../src/lib/web3/metamask";
 import { buildDepositTransaction } from "../src/lib/crypto/deposit";
-import { TESTNET } from "../src/lib/crypto/allowlist";
+import { BASE_MAINNET as TESTNET } from "../src/lib/crypto/allowlist";
 import { ALLOWED_WALLET_METHODS } from "../src/lib/web3/config";
 
 const acct = privateKeyToAccount(generatePrivateKey());
