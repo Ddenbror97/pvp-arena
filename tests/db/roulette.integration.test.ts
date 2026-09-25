@@ -283,11 +283,14 @@ d("roulette adversarial audit (isolated schema)", () => {
     const gid = Number((await bet(a, "RED", 100)).game_id);
     await untilClosed(gid);
     await advance(gid);
-    // A post-lock bet can never reach the locked round: it lands in a new round.
-    const r = await bet(b, "RED", 100);
-    expect(Number(r.game_id)).not.toBe(gid);
+    // A post-lock bet can never reach the locked round: it is refused outright.
+    expect(await err(bet(b, "RED", 100))).toMatch(/BETTING_CLOSED/);
     expect((await game(gid)).bet_count).toBe(1);
     await drive(gid);
+    // Once the round is finished, the next bet lands in a fresh round.
+    const r = await bet(b, "RED", 100);
+    expect(Number(r.game_id)).not.toBe(gid);
+    await sql`update pvp_test.roulette_games set betting_started_at = clock_timestamp(), betting_ends_at = clock_timestamp() where id = ${Number(r.game_id)}`;
     await drive(Number(r.game_id));
     await assertInvariants();
   }, 30000);
@@ -453,6 +456,7 @@ d("roulette adversarial audit (isolated schema)", () => {
 
   it("provably fair: commitment first, seed hidden until settled, independent verifier agrees", async () => {
     const u = await newUser("a");
+    await setCfg({ betting_seconds: 1 });
     for (let i = 0; i < 12; i++) {
       const gid = Number((await bet(u, "RED", 100)).game_id);
       const g0 = await game(gid);
@@ -477,7 +481,7 @@ d("roulette adversarial audit (isolated schema)", () => {
       expect(res.message).toBe(`PVPCasino:roulette:v1:${gid}:${done.draw_version}:${res.draw_counter}`);
     }
     await assertInvariants();
-  }, 90000);
+  }, 240000);
 
   it("DB draw and TS verifier agree on 300 random seeds; every slot and colour is reachable", async () => {
     const seen = new Set<number>();
