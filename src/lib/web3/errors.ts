@@ -38,8 +38,9 @@ export function toWalletError(e: unknown, phase: "connect" | "sign" | "send"): W
   const dataCode = (e as { data?: { code?: unknown } })?.data?.code;
   const causeCode = (e as { cause?: { code?: unknown } })?.cause?.code;
   const msg = String((e as { message?: unknown })?.message ?? e).toLowerCase();
-  // Diagnostic only: provider code/message, never secrets.
-  console.warn("[wallet]", phase, code ?? dataCode ?? causeCode, msg.slice(0, 200));
+  // Diagnostic only: safe phase and provider code. Raw provider messages can
+  // include extension internals, so they never leave this mapper.
+  console.warn("[wallet]", phase, code ?? dataCode ?? causeCode ?? "unclassified");
   if (
     code === -32002 ||
     dataCode === -32002 ||

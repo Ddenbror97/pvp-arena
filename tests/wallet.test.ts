@@ -243,6 +243,22 @@ describe("provider safety", () => {
       chainId: "0x14a34",
     });
   });
+  it("does not create repeated requests after MetaMask reports an external pending request", async () => {
+    let accountRequests = 0;
+    const provider: Eip1193 = {
+      request: async ({ method }) => {
+        if (method === "eth_accounts") return [];
+        if (method === "eth_requestAccounts") {
+          accountRequests += 1;
+          throw { code: -32002 };
+        }
+        throw new Error("unexpected request");
+      },
+    };
+    await expect(connectInjectedProvider(provider)).rejects.toThrow(WALLET_MESSAGES.CONNECT_PENDING);
+    await expect(connectInjectedProvider(provider)).rejects.toThrow(WALLET_MESSAGES.CONNECT_PENDING);
+    expect(accountRequests).toBe(1);
+  });
   it("revokes only this site's account permission when resetting a stale connection", async () => {
     const calls: { method: string; params?: unknown[] }[] = [];
     const provider: Eip1193 = {

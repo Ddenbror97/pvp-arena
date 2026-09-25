@@ -34,6 +34,9 @@ type ConnectedAccount = { accounts: string[]; chainId: string };
 // Keep its promise alive across React remounts/session resets so this origin never
 // creates a second request while the first is still waiting in the extension.
 const pendingInjectedConnections = new WeakMap<Eip1193, Promise<ConnectedAccount>>();
+// A -32002 response means the extension, not this page, owns an older request.
+// Remember that across every caller so Deposit/Profile cannot repeatedly poke it.
+const externallyPendingConnections = new WeakSet<Eip1193>();
 
 interface ProviderHost {
   ethereum?: Eip1193;
@@ -110,10 +113,14 @@ async function readAuthorizedConnection(provider: Eip1193): Promise<ConnectedAcc
 /** Reuse one permission request per injected provider, including across remounts. */
 export async function connectInjectedProvider(provider: Eip1193): Promise<ConnectedAccount> {
   const authorized = await readAuthorizedConnection(provider);
-  if (authorized) return authorized;
+  if (authorized) {
+    externallyPendingConnections.delete(provider);
+    return authorized;
+  }
 
   const existing = pendingInjectedConnections.get(provider);
   if (existing) return existing;
+  if (externallyPendingConnections.has(provider)) throw new WalletError("CONNECT_PENDING");
 
   const request = (async () => {
     try {
@@ -125,9 +132,13 @@ export async function connectInjectedProvider(provider: Eip1193): Promise<Connec
     } catch (error) {
       const mapped = toWalletError(error, "connect");
       if (mapped.code === "CONNECT_PENDING") {
+        externallyPendingConnections.add(provider);
         // The wallet can finish an older request just before reporting -32002.
         const recovered = await readAuthorizedConnection(provider);
-        if (recovered) return recovered;
+        if (recovered) {
+          externallyPendingConnections.delete(provider);
+          return recovered;
+        }
       }
       throw mapped;
     }
@@ -156,6 +167,7 @@ export async function resetInjectedProviderConnection(provider: Eip1193): Promis
     if (mapped.code === "CONNECT_PENDING") throw mapped;
   }
   pendingInjectedConnections.delete(provider);
+  externallyPendingConnections.delete(provider);
 }
 
 function sub(p: Eip1193, ev: string, fn: (...a: unknown[]) => void) {

@@ -155,7 +155,7 @@ export function CryptoRails({
     setBusy(true);
     try {
       const session = await getWalletSession();
-      const connected = await session.connect();
+      const connected = (await session.checkConnection()) ?? (await session.connect());
       if (connected.address.toLowerCase() !== depositReview.verifiedAddress.toLowerCase()) {
         throw new WalletError("ADDRESS_MISMATCH");
       }
