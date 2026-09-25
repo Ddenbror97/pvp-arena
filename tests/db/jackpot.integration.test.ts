@@ -327,11 +327,16 @@ d("jackpot engine (isolated schema)", () => {
     await join(b, 1000);
   });
 
-  it("retired test-credit faucet cannot be executed by players", async () => {
-    const a = await newUser("fau_a");
-    await expectErr(as(a, (tx) => tx`select pvp_test.claim_test_credits()`), "permission denied");
-    expect(await bal(a)).toBe(START);
-    await assertInvariants();
+  it("retired test-credit functions are not executable by browser roles", async () => {
+    for (const schema of ["public", "pvp_test"]) {
+      const rows = await sql`select p.oid::regprocedure::text f,
+          has_function_privilege('anon', p.oid, 'execute') anon,
+          has_function_privilege('authenticated', p.oid, 'execute') auth
+        from pg_proc p where p.pronamespace = ${schema}::regnamespace
+          and p.proname in ('claim_test_credits', 'reset_test_credits')`;
+      expect(rows.length).toBe(3);
+      for (const r of rows) expect({ f: r.f, anon: r.anon, auth: r.auth }).toEqual({ f: r.f, anon: false, auth: false });
+    }
   });
 
   it("SQL draw and TypeScript verifier agree on random seeds (incl. rejection sampling)", async () => {
