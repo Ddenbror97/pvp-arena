@@ -73,7 +73,7 @@ export function GuideScrollCta({ cluster }: { cluster: GuideCluster }) {
           </Link>
         ) : (
           <Link to="/auth" onClick={close} className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90">
-            Play now, free sign-up <ArrowRight className="h-4 w-4" />
+            Play now, it's free <ArrowRight className="h-4 w-4" />
           </Link>
         )}
         <Link to={game.to} onClick={close} className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-lg border border-border px-4 text-sm font-semibold hover:border-primary hover:text-primary">
