@@ -413,8 +413,9 @@ export async function runWithdrawalWorker(chainId: number) {
   const { admin, rpc } = await db();
   const s = env.settings;
   if (!s.crypto_system_enabled || !s.withdrawals_enabled) return { ok: true, paused: true };
-  const pk = (process.env[`CRYPTO_HOT_WALLET_PRIVATE_KEY_${env.chainId}`] ??
-    (env.chainId === TESTNET.chainId ? process.env["CRYPTO_HOT_WALLET_PRIVATE_KEY"] : undefined)) as Hex | undefined;
+  const pkRaw = (process.env[`CRYPTO_HOT_WALLET_PRIVATE_KEY_${env.chainId}`] ??
+    (env.chainId === TESTNET.chainId ? process.env["CRYPTO_HOT_WALLET_PRIVATE_KEY"] : undefined))?.trim();
+  const pk = (pkRaw && !pkRaw.startsWith("0x") ? `0x${pkRaw}` : pkRaw) as Hex | undefined;
   if (!pk || !/^0x[0-9a-fA-F]{64}$/.test(pk)) return { ok: false, reason: "HOT_KEY_MISSING" };
   const account = privateKeyToAccount(pk);
   if (account.address.toLowerCase() !== env.payout) return { ok: false, reason: "HOT_KEY_ADDRESS_MISMATCH" };
