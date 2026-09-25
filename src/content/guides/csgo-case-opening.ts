@@ -228,6 +228,13 @@ Using the published odds:
 
 Total expected value: about $0.90 per opening, compared with a cost of $3.00. On average, each opening loses about $2.10, or 70% of what you spend. Real cases differ, and prices change constantly, but the pattern of a large gap between cost and expected value is typical.`,
     },
+    {
+      id: "trade-ups",
+      title: "Trade-up contracts and alternatives",
+      body: `Trade-up contracts let you exchange ten skins of one rarity for one skin of the next tier up, from the same collections. They add another random element but no guaranteed profit, since the result is random and fees still apply.
+
+If you want a particular skin, buying it directly on the market is usually far cheaper than opening cases until it drops. Opening cases makes sense only as entertainment with a known cost.`,
+    },
   ],
   faqs: [
     {

@@ -230,6 +230,27 @@ For gaming platforms, the combination of low fees and native USDC is the main dr
 - Verify large transfers on BaseScan before assuming they arrived.
 - Never share your seed phrase, however official a request looks.`,
     },
+    {
+      id: "deposit-walkthrough",
+      title: "A typical first deposit on Base",
+      body: `Here is how a first deposit to a Base-based app usually goes, without repeating the full wallet setup.
+
+1. **Buy USDC** on an exchange that supports Base withdrawals.
+2. **Buy a small amount of ETH** for gas, or check whether the exchange lets you withdraw ETH on Base as well.
+3. **Withdraw both to your wallet**, choosing Base as the network each time.
+4. **Check the arrival** in your wallet and, if needed, on BaseScan.
+5. **Verify your wallet** on the app if it requires it. On PVPspinArena this is a signed message on your profile.
+6. **Send a small test amount** of USDC to the deposit address.
+7. **Wait for credit**, then send the rest once you are confident everything works.
+
+### Timing
+
+On Base, the transfer itself usually confirms within seconds. Apps that wait for extra safety steps may take a little longer before your balance updates. PVPspinArena shows deposit status updates as the deposit is detected and credited.
+
+### Fees to expect
+
+You pay a small ETH gas fee for each send. Exchanges may also charge their own withdrawal fee, which is separate from the network fee.`,
+    },
   ],
   faqs: [
     {

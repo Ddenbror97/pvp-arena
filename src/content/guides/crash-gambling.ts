@@ -228,6 +228,20 @@ Your choice of target is really a choice of how bumpy you want the ride to be. I
 
 After Valve's 2016 crackdown on skin gambling, many crash games moved to crypto casinos. The format has stayed much the same, and many crypto sites now use a hash chain to make every crash point verifiable. Our [skin gambling vs crypto guide](/guides/skin-gambling-vs-crypto) explains how the wider market shifted.`,
     },
+    {
+      id: "checklist",
+      title: "Crash game checklist",
+      body: `Before playing crash on any site, check:
+
+- **House edge**: is it stated clearly, and how does it compare with other games?
+- **Verification**: is there a hash before each round and a public formula?
+- **Hash chain**: are future crash points committed in advance?
+- **Limits**: are there maximum payouts that could cap big wins?
+- **Licensing and terms**: who runs the site and where?
+- **Responsible gambling tools**: are deposit limits and self-exclusion available?
+
+If any of these are missing, treat the game with extra caution, or choose a different one.`,
+    },
   ],
   faqs: [
     {

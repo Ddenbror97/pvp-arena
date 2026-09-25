@@ -235,6 +235,11 @@ When you set up a hardware wallet, it shows you a seed phrase. That phrase is st
 
 Hardware wallets are a good idea for larger savings. For small everyday amounts, a software wallet like MetaMask with a well-protected seed phrase is common. Many people use both: a hardware wallet for savings and a software wallet for daily use.`,
     },
+    {
+      id: "family",
+      title: "Explaining seed phrases to others",
+      body: `If you help friends or family with crypto, the single most useful thing you can teach them is this: the seed phrase is never shared, never typed into a website and never photographed. Almost every major crypto theft affecting ordinary users starts with someone giving away their phrase to a person or site that looked legitimate.`,
+    },
   ],
   faqs: [
     {

@@ -222,6 +222,26 @@ Help is always available. The [responsible gambling page](/responsible-gambling)
 
 That is why it works best as one part of a plan. Pair it with blocking software, money controls, and support from a helpline, counsellor or peer group. Our [how to stop gambling guide](/guides/how-to-stop-gambling) sets out a full step-by-step plan.`,
     },
+    {
+      id: "family",
+      title: "Helping someone else self-exclude",
+      body: `Self-exclusion has to be chosen by the person who gambles. You cannot usually register someone else. But you can help.
+
+### What helps
+
+- **Talk calmly** and without blame. Focus on how gambling is affecting them and you.
+- **Offer practical help**: sitting with them while they register, helping list accounts, or installing blocking software together.
+- **Suggest a helpline**: 1-800-GAMBLER in the US supports family members as well as gamblers.
+- **Protect your own finances**: separate accounts and remove shared cards from gambling sites.
+
+### Look after yourself
+
+Living with someone who gambles can be stressful. Support groups such as Gam-Anon exist for family and friends. You do not have to handle it alone.
+
+### Third-party exclusion
+
+A few jurisdictions allow family members to request an exclusion in limited cases, often through a court or regulator. Rules vary widely, so check with your local regulator if this is a concern.`,
+    },
   ],
   faqs: [
     {

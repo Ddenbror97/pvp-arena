@@ -245,6 +245,18 @@ For most fans, CS2 betting is best treated as paid entertainment around matches 
 
 Our [crypto casino withdrawals guide](/guides/crypto-casino-withdrawals) explains what a careful withdrawal process looks like.`,
     },
+    {
+      id: "checklist",
+      title: "CS2 betting site checklist",
+      body: `Before depositing on any CS2 betting site, check:
+
+- Licence and regulator, and whether it covers where you live.
+- Clear odds and margins on the markets you want.
+- Withdrawal times, limits and fees.
+- Age and identity checks, which a legitimate site should have.
+- Responsible gambling tools such as deposit limits and self-exclusion.
+- Independent reviews and complaint history.`,
+    },
   ],
   faqs: [
     {

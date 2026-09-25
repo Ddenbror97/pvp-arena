@@ -225,6 +225,18 @@ If someone you care about is struggling, talk calmly, avoid blame, and offer to 
 
 Online losses can feel less real than cash. Write down what you have deposited and lost over the last few months. Seeing the total in one place is often a turning point. Our [gambling budget guide](/guides/gambling-budget) explains how to track spending clearly.`,
     },
+    {
+      id: "money-back",
+      title: "Rebuilding after gambling",
+      body: `Stopping is the first step; rebuilding is the next.
+
+- **Make a debt plan** with a free advice service, starting with the most urgent bills.
+- **Rebuild trust slowly** with people affected, through honesty and consistency rather than promises.
+- **Track progress**: count days without gambling and money saved.
+- **Celebrate milestones** with things that do not involve gambling.
+
+Recovery is rarely a straight line, but most people who get support and put barriers in place do reduce or stop gambling for good.`,
+    },
   ],
   faqs: [
     {
