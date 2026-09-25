@@ -1,105 +1,143 @@
 # Real-money ledger migration (test credits → real USD)
 
-Follows your uploaded spec. Nothing gets credited, withdrawn or sent. At the end the system is ready for real money but still switched off.
+Follows your spec plus all 8 reviewer changes. Nothing gets credited, withdrawn or sent. At the end the system is ready for real money but still switched off.
 
 ## 1. What exists today (inspected)
 
 ```text
-wallet_accounts   (owner, kind, asset, account_type, balance)  <- balance cache only; written by _post()
+wallet_accounts     (owner, kind, asset, account_type, balance)  <- balance cache; written only by _post()
 ledger_transactions (kind, idempotency_key UNIQUE, account_type, user/game)
-ledger_postings   (tx, account, amount, balance_after)          <- double-entry, _ledger_balanced trigger sums to 0
+ledger_postings     (tx, account, amount, balance_after)         <- double-entry; _ledger_balanced makes each tx sum to 0
 ```
 
-- **Test money:** every account is `TEST_USD / test_credit`: player spendable + locked, house_revenue, game_escrow, test_faucet. Players still hold 277,400 test cents in total, spread over 4 non-zero accounts.
-- **Real money:** only the deposit/withdrawal code points at `USD / real` (`chain_assets.ledger_asset/ledger_account_type`). No `USD/real` accounts exist yet. That is why the $4.50 credit failed with ACCOUNT_NOT_FOUND.
-- **Where each game gets its money type:**
+- **Test money:** every account is `TEST_USD / test_credit`: player spendable + locked, house_revenue, game_escrow, test_faucet. Players still hold 277,400 test cents in total.
+- **Real money:** only the deposit/withdrawal code points at `USD / real`. No `USD/real` accounts exist yet. That is why the $4.50 credit failed with ACCOUNT_NOT_FOUND.
+- **How games pick their money type:**
   - Jackpot copies `jackpot_config.asset/account_type` onto each game.
-  - Coinflip (`coinflip_create`) and Roulette (`_roulette_ensure_open`, `roulette_bet`) hardcode `'test_credit'`.
-  - Settle and refund functions (`jackpot_settle`, `coinflip_advance/_coinflip_refund`, `_roulette_settle/_roulette_refund`) read the type from the game row. That part is already correct.
+  - Coinflip and Roulette hardcode `'test_credit'`.
+  - Settle and refund already read the type from the game row.
 - **Test-money functions:** `ensure_profile` (welcome grant), `claim_test_credits`, `reset_test_credits`.
-- **Deposit/withdrawal functions:** `crypto_credit_deposit`, `crypto_request_withdrawal`, `_crypto_release`, `crypto_withdrawal_confirmed`, `crypto_reconcile`. They use `deposit:chain:tx:log` style idempotency keys and write audit rows through `_audit`.
-- **Open test games:** 1 Jackpot round and 1 Roulette round are open on test money. Coinflip has none open.
+- **Open test games:** 1 Jackpot round and 1 Roulette round.
 
-## 2. Money separation (permanent)
+## 2. Separation enforced by the database (reviewer point 1)
 
-- Test money stays in its own isolated area (option 1 of your spec). Nothing is deleted and no test balance is converted.
-- Two new database rules:
-  - Every ledger transaction may touch only accounts whose `account_type` matches the transaction's own. Mixing test and real is rejected.
-  - Transaction kinds are split: `test_credit_grant` and `test_credit_reset` are allowed only on test money; `deposit` and `withdrawal` only on real money.
-- A new `money_domain_frozen` flag locks the test area. After finalization, no new test-money transactions can be written (history stays readable).
-- `ensure_profile` stops granting test credits. It creates the new player's real spendable and locked accounts at $0 instead.
-- `claim_test_credits` is removed from use: its permission is revoked and it always refuses.
+A `_ledger_domain_guard` trigger on `ledger_postings` runs for every insert, including from server functions and admin access. It rejects:
+- a posting whose account `asset/account_type` differs from its transaction's `account_type`
+- any `TEST_USD` posting in a `real` transaction, or `USD` in a `test_credit` one
+- test-only kinds (`test_credit_grant`, `test_credit_reset`) on real money, and `deposit`/`withdrawal` on test money
+- any test-domain posting once the test domain is frozen
 
-## 3. Real USD accounts
+The functions `claim_test_credits` and the test grant in `ensure_profile` are cut off. `ensure_profile` creates the player's real accounts at $0 instead. No function exists that converts in either direction.
 
-- **Per player:** `user_available` and `user_locked` for `USD/real`. They are created by the migration for existing players (at $0) and at signup for new ones. `_user_account` still fails closed if an account is missing.
-- **House:** `house_revenue`, `game_escrow` and `external_custody` for `USD/real`. All start at $0, so no value is created.
-- **Balances:** they change only through `_post()`. The existing negative-balance check, row locks and idempotency key apply. The client still has no write access.
+## 3. One server-side money setting (architecture change)
 
-## 4. Games switch money type (accounting only)
+- A single row in a new `money_domain_config` table (`money_domain = REAL_USD`, `asset = USD`, `account_type = real`) is the only source.
+- A new `money_domain` column is stored on each game row when the game is created, so past games stay unchanged. Jackpot, Coinflip and Roulette creation read it on the server.
+- Bets, settlement and refunds use the game row's value, never the setting again.
+- Clients never pass asset, account type or domain. The functions have no such inputs.
 
-- `jackpot_config.asset/account_type` becomes `USD/real`.
-- Coinflip and Roulette read the money type from a single new config value, replacing the hardcoded `'test_credit'`.
-- Game rules, fairness/HMAC, timing, limits, multipliers and winner selection stay byte-identical. Only the lines that pick the money type change.
-- **Open test rounds:** the one open Jackpot round and the one open Roulette round are cancelled and refunded in test money through their existing refund paths. After that, every new round is real.
-- **Real play gate:** games may open real rounds only if `crypto_settings.real_play_enabled` is true. It stays **false**, so no real bet is possible at the end of this task.
+## 4. Explicit migration states (reviewer point 2)
 
-## 5. Migration safety
+```text
+PRE_MIGRATION --migrate--> MIGRATED --finalize--> FINALIZED
+```
 
-- One versioned migration. It records a marker in a new `money_migrations` table and writes an audit record.
-- It stops, without changing anything, unless all of these hold:
-  - no real-money ledger transactions exist
-  - no open withdrawals exist
-  - the $2 and $4.50 deposits are CONFIRMED with no ledger link
-  - the marker is not already present
-- Everything runs in one database transaction, so a failure changes nothing.
-- It can be undone until you finalize: a documented rollback migration exists. Finalizing (freezing test money) is a separate step.
+- **MIGRATED requires:** real accounts exist, test accounts untouched, zero open test games, and real play, crediting and withdrawals all OFF.
+- **FINALIZED requires:** everything in MIGRATED, plus the test domain frozen for good.
+- **Real play is allowed only if all hold:**
+  - state = FINALIZED
+  - `money_domain_frozen`
+  - `real_play_enabled`
+  - `crypto_system_enabled` (emergency stop not triggered)
 
-## 6. Screens
+  One of these switches alone is never enough.
+- **Real-money functions** (bet, credit, withdraw) refuse unless state is FINALIZED.
+
+## 5. The migration itself (reviewer points 3, 5, 6)
+
+It runs as one database transaction, and every check that fails aborts everything.
+
+**Before any change**, it checks:
+- The marker is absent; if present, it exits without changes, so running twice is safe.
+- No real transactions exist.
+- No withdrawal rows are open.
+- The two deposits are exactly as recorded: status, hash, amount, sender, destination, block and confirmed time, with no ledger link. This snapshot is stored in the marker's details.
+
+**Steps:**
+1. Cancel and refund the 1 open Jackpot and 1 open Roulette test round through their existing refund functions.
+2. Create the real accounts at $0.
+3. Set the money setting.
+4. Point game creation at it.
+5. Write the marker plus an audit record.
+
+**After the steps, it verifies:**
+- Open test games = 0. Each cancelled game is terminal, has its refund transaction and refund key, and has $0 left in escrow.
+- Test escrow = $0.
+- Test player balances are unchanged apart from the refunds.
+- Every real total is exactly $0: player, escrow, house, custody, and the sum of all real postings.
+- The two deposits match the snapshot, still with no ledger link.
+
+**Undo and finalize:**
+- A tested rollback migration returns to PRE_MIGRATION while in the MIGRATED state.
+- Finalizing is a separate small migration run after the tests pass.
+
+## 6. Reconciliation (reviewer point 4)
+
+The sign convention is encoded in tests and in `crypto_reconcile`. Custody is the negative side.
+
+- `SUM(all real postings) = 0`
+- `-external_custody = player_available + player_locked + game_escrow + house_revenue`
+- `-external_custody = credited deposits - settled withdrawals` (checked independently from the chain records)
+
+Test money is excluded from all three.
+
+## 7. Screens
 
 - The header and wallet page show real USD spendable, plus locked if not zero.
-- Test balances are never shown as money. The faucet and test-credit controls are gone.
-- When real play is off, the games show "Real-money play not yet open" instead of a bet button. No other visual changes.
+- Test balances and the faucet are gone.
+- When real play is off, the game bet buttons show "Real-money play not yet open". No other visual changes.
 
-## 7. Guards kept or added
+## 8. Tests (reviewer points 7, 8)
 
-- Existing: chain 8453, USDC contract/decimals, two RPCs agreeing, payout-key/address match, reserved treasury/payout addresses, limits, float cap, emergency stop, watch-only.
-- New: every real-money function refuses to run unless the migration marker exists and the test area is frozen. There is no fallback to test money or Sepolia.
-- Security review: confirm no real-money function can be executed by anon or authenticated users other than the intended player functions. Run the linter.
+**Baseline:** first, find the current full suite and record its unit, database and security test counts. That count may not drop. All old tests plus all new ones must pass.
 
-## 8. Tests (run before any report of readiness)
-
-New database money tests, run inside rolled-back transactions against the real schema. Coverage:
-- Test/real mixing rejected.
-- Ledger: debit/credit, lock/unlock, insufficient balance, concurrent spend, rollback, idempotency.
+**New database tests**, run in rolled-back transactions:
+- Mixing test and real is rejected.
+- Ledger: debit/credit, lock/unlock, insufficient balance, negative balances blocked, concurrent spend, rollback, idempotency.
 - Deposits: duplicate credit, unknown or unverified sender, minimum amount, decimals.
-- Each game on real money: entry, settlement, winner payout, house fee exactness, duplicate settlement, race.
-- Roulette limits: max bets, max wager, pot limit, locked period.
-- Withdrawals: insufficient balance, locked funds, duplicate request, failure release, float cap, daily limit, emergency stop.
-- Reconciliation.
+- Each game on real money: entry, settlement, payout, exact house fee, duplicate settlement, concurrent settlement.
+- Roulette limits.
+- Withdrawals: insufficient balance, locked funds, duplicate request, failure release, float cap, limits, emergency stop.
+- State machine gates and rollback.
+- Reconciliation equations.
 
-The existing 119 unit tests and 13 database tests must also pass.
+**Attack tests as a signed-in browser user.** Each path must fail:
+- Direct RPC calls with malformed arguments or extra asset/account/domain arguments.
+- REST insert/update on wallet_accounts, ledger tables, games, the money setting, migration state and crypto_settings.
+- Attempts to change `real_play_enabled` or a game's money type.
 
-**Reconciliation rule** (documented with the tests): on the real side, the sum of all postings is 0. Player liabilities plus house plus escrow equals minus `external_custody`, which equals credited deposits minus settled withdrawals.
+**Not proof of readiness:** passing the linter, typecheck or build does not count on its own.
 
-## 9. End state
+## 9. Acceptance gates
 
-Real deposit crediting, withdrawals, real play and watch-only are exactly as today:
-- Crediting and withdrawals: OFF
+The report includes your full reviewer checklist, each item marked pass or fail. Any fail means stop, with nothing enabled.
+
+**End state:**
+- Crediting: OFF
+- Withdrawals: OFF
 - Real play: OFF
 - Watch-only: ON
-- $2 and $4.50 deposits: untouched
-
-The final report follows your 16 points. Any failed check means stopping without enabling anything.
+- Both deposits: untouched and uncredited
 
 ## Technical details
 
-- New objects:
-  - `money_migrations`: version, applied_at, details, finalized_at. Service-role only.
-  - A `_ledger_domain_guard` trigger on `ledger_postings`.
+- **New:**
+  - `money_migrations` table: version, state, details, applied_at, finalized_at. Service-role only.
+  - `money_domain_config`, a single row, read-only to clients.
+  - `money_domain` column on the jackpot, coinflip and roulette game tables. Existing games get TEST_USD.
   - Settings: `crypto_settings.real_play_enabled` and `money_domain_frozen`.
-  - A config value for game money type.
-- Functions edited only where they pick the money type: `ensure_profile`, `coinflip_create`, `_roulette_ensure_open`, `roulette_bet`, plus the `jackpot_config` row.
-- `claim_test_credits` and `reset_test_credits` are hardened to refuse after the freeze.
-- `crypto_reconcile` is extended with the real-domain invariant and excludes test money.
-- Code changes: balance query in the header/wallet (read the `USD/real` accounts), removal of the faucet UI, and the disabled game state when real play is off.
+  - The `_ledger_domain_guard` trigger.
+- **Edited:** only the lines that pick the money type in `jackpot_join`/`_ensure_open_game`, `coinflip_create` and `_roulette_ensure_open`/`roulette_bet`, plus `ensure_profile`. Fairness, timing and settlement math are unchanged.
+- **Hardened:** `claim_test_credits` and `reset_test_credits` refuse after the freeze.
+- **Extended:** `crypto_reconcile`.
+- **Screens:** the balance query in the header/wallet, faucet removal, and the disabled bet state.
