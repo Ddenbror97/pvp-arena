@@ -1,12 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useWallet, useWalletRealtime } from "@/lib/jackpot/api";
 import { formatUsd } from "@/lib/jackpot/math";
-import { friendlyError } from "@/lib/jackpot/errors";
-import { Button } from "@/components/ui/button";
 import { CryptoRails } from "@/components/wallet/CryptoRails";
 
 export const Route = createFileRoute("/_authenticated/wallet")({
@@ -42,7 +39,6 @@ function WalletPage() {
   const { mode } = Route.useSearch();
   useWalletRealtime(userId);
   const wallet = useWallet(userId);
-  const qc = useQueryClient();
   const ids = wallet.data?.accountIds ?? [];
   const history = useQuery({
     queryKey: ["ledger", userId, ids.join(",")],
