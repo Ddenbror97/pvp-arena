@@ -231,6 +231,6 @@ PVPspinArena is a hybrid web3 casino focused on PvP games, with USDC and ETH on 
     { label: "Base documentation", url: "https://docs.base.org/" },
     { label: "Chainlink: Verifiable Random Function", url: "https://docs.chain.link/vrf" },
   ],
-  related: ["what-is-a-crypto-casino", "metamask-casino", "pvp-gambling"],
+  related: ["what-is-a-crypto-casino", "metamask-casino", "crypto-wallet-for-gambling", "pvp-gambling"],
   updated: "2026-09-25",
 };

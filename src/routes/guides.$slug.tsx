@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Clock, ShieldCheck } from "lucide-react";
-import { getGuide, GUIDES, wordCount } from "@/content/guides";
+import { clusterInfo, getGuide, getTopic, GUIDES, guidesInCluster, wordCount } from "@/content/guides";
 import { GuideBody } from "@/components/guides/GuideBody";
 import { SeoFaq, SeoCta } from "@/components/seo/SeoPage";
 import { OG_SITE_URL } from "@/lib/og";
@@ -34,7 +34,10 @@ export const Route = createFileRoute("/guides/$slug")({
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: `${OG_SITE_URL}/` },
           { "@type": "ListItem", position: 2, name: "Guides", item: `${OG_SITE_URL}/guides` },
-          { "@type": "ListItem", position: 3, name: g.h1, item: url },
+          ...(getTopic(clusterInfo(g.cluster).slug)
+            ? [{ "@type": "ListItem", position: 3, name: g.cluster, item: `${OG_SITE_URL}/guides/topics/${clusterInfo(g.cluster).slug}` }]
+            : []),
+          { "@type": "ListItem", position: getTopic(clusterInfo(g.cluster).slug) ? 4 : 3, name: g.h1, item: url },
         ],
       },
     ];
@@ -68,6 +71,9 @@ function GuidePage() {
   const { guide: g } = Route.useLoaderData();
   const minutes = Math.max(1, Math.round(wordCount(g) / 230));
   const related = g.related.map((s) => GUIDES.find((x) => x.slug === s)).filter((x): x is NonNullable<typeof x> => !!x);
+  const topic = getTopic(clusterInfo(g.cluster).slug);
+  const family = guidesInCluster(g.cluster).filter((x) => x.slug !== g.slug && !g.related.includes(x.slug));
+  const pillar = guidesInCluster(g.cluster).find((x) => x.pillar && x.slug !== g.slug);
   const updated = new Date(g.updated + "T00:00:00Z").toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
 
   return (
@@ -79,7 +85,13 @@ function GuidePage() {
             <li aria-hidden>/</li>
             <li><Link to="/guides" className="hover:text-primary">Guides</Link></li>
             <li aria-hidden>/</li>
-            <li aria-current="page" className="text-foreground">{g.cluster}</li>
+            <li>
+              {topic ? (
+                <Link to="/guides/topics/$topic" params={{ topic: topic.slug }} className="hover:text-primary">{g.cluster}</Link>
+              ) : (
+                <span>{g.cluster}</span>
+              )}
+            </li>
           </ol>
         </nav>
         <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.3em] text-primary">{g.cluster} guide</p>
@@ -93,6 +105,12 @@ function GuidePage() {
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_260px]">
         <div className="min-w-0 space-y-12">
+          {pillar && (
+            <p className="text-sm text-muted-foreground">
+              Part of our {g.cluster} series. New to the topic? Start with{" "}
+              <Link to="/guides/$slug" params={{ slug: pillar.slug }} className="text-primary hover:underline">{pillar.h1}</Link>.
+            </p>
+          )}
           <aside className="rounded-2xl border border-primary/30 bg-primary/5 p-5 sm:p-6">
             <h2 className="font-display text-base text-primary">Key facts</h2>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
@@ -156,6 +174,24 @@ function GuidePage() {
             ))}
           </div>
         </section>
+      )}
+
+      {family.length > 0 && (
+        <nav aria-labelledby="family-h" className="mt-12 rounded-2xl border border-border bg-card p-5 sm:p-6">
+          <h2 id="family-h" className="font-display text-lg">More {g.cluster} guides</h2>
+          <ul className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+            {family.map((f) => (
+              <li key={f.slug}>
+                <Link to="/guides/$slug" params={{ slug: f.slug }} className="text-muted-foreground hover:text-primary">{f.h1}</Link>
+              </li>
+            ))}
+          </ul>
+          {topic && (
+            <Link to="/guides/topics/$topic" params={{ topic: topic.slug }} className="mt-4 inline-block text-sm font-semibold text-primary hover:underline">
+              All {g.cluster} guides →
+            </Link>
+          )}
+        </nav>
       )}
 
       <div className="mt-16">

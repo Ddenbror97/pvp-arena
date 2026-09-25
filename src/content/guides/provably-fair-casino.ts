@@ -161,6 +161,6 @@ To go deeper, try the [provably fair calculator guide](/guides/provably-fair-cal
     { label: "NIST FIPS 180-4 — Secure Hash Standard (SHA-256)", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
     { label: "RFC 2104 — HMAC: Keyed-Hashing for Message Authentication", url: "https://www.rfc-editor.org/rfc/rfc2104" },
   ],
-  related: ["what-is-a-crypto-casino", "crypto-jackpot", "pvp-gambling", "usdc-casino"],
+  related: ["commit-reveal-scheme", "server-seed-client-seed", "rng-vs-provably-fair", "provably-fair-calculator", "what-is-a-crypto-casino"],
   updated: "2026-09-25",
 };

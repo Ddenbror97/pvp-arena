@@ -152,7 +152,7 @@ Before your first deposit, read about [choosing a crypto wallet for gaming](/gui
     { label: "Base — Network documentation", url: "https://docs.base.org/" },
     { label: "BaseScan — Base block explorer", url: "https://basescan.org/" },
   ],
-  related: ["what-is-a-crypto-casino", "metamask-casino", "how-to-buy-usdc", "crypto-casino-withdrawals", "usdc-vs-usdt-gambling"],
+  related: ["how-to-buy-usdc", "usdc-vs-usdt-gambling", "crypto-casino-withdrawals", "metamask-casino", "crypto-wallet-for-gambling"],
   updated: "2026-09-25",
   howTo: true,
 };

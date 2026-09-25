@@ -224,6 +224,6 @@ You can verify any finished round in your browser on the Fairness page or with i
     { label: "NIST FIPS 180-4: Secure Hash Standard", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
     { label: "Wikipedia: Rejection sampling", url: "https://en.wikipedia.org/wiki/Rejection_sampling" },
   ],
-  related: ["cs2-roulette", "provably-fair-calculator", "hmac-sha256-provably-fair"],
+  related: ["crypto-roulette", "roulette-colors", "provably-fair-calculator", "hmac-sha256-provably-fair"],
   updated: "2026-09-25",
 };

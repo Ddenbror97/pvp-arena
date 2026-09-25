@@ -228,6 +228,6 @@ Variance decides how bumpy results are, but no system changes the edge. Use it t
     { label: "Wikipedia: Casino game (house advantage)", url: "https://en.wikipedia.org/wiki/Casino_game#House_advantage" },
     { label: "Wikipedia: Return to player", url: "https://en.wikipedia.org/wiki/Return_to_player" },
   ],
-  related: ["cs2-roulette", "coin-flip-odds", "crypto-jackpot"],
+  related: ["martingale-strategy", "roulette-colors", "coin-flip-odds", "crypto-jackpot"],
   updated: "2026-09-25",
 };

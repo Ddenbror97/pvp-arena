@@ -28,6 +28,7 @@ import { Route as CoinflipGameIdRouteImport } from './routes/coinflip.$gameId'
 import { Route as GamesGameIdRouteImport } from './routes/games.$gameId'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
+import { Route as GuidesTopicsTopicRouteImport } from './routes/guides.topics.$topic'
 import { Route as ApiPublicCronCryptoDepositsRouteImport } from './routes/api/public/cron/crypto-deposits'
 import { Route as ApiPublicCronCryptoReconcileRouteImport } from './routes/api/public/cron/crypto-reconcile'
 import { Route as ApiPublicCronCryptoWithdrawalsRouteImport } from './routes/api/public/cron/crypto-withdrawals'
@@ -127,6 +128,11 @@ const GuidesSlugRoute = GuidesSlugRouteImport.update({
   path: '/guides/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesTopicsTopicRoute = GuidesTopicsTopicRouteImport.update({
+  id: '/guides/topics/$topic',
+  path: '/guides/topics/$topic',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCronCryptoDepositsRoute =
   ApiPublicCronCryptoDepositsRouteImport.update({
     id: '/api/public/cron/crypto-deposits',
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/games/$gameId': typeof GamesGameIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/guides/': typeof GuidesIndexRoute
+  '/guides/topics/$topic': typeof GuidesTopicsTopicRoute
   '/api/public/cron/crypto-deposits': typeof ApiPublicCronCryptoDepositsRoute
   '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
   '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByTo {
   '/games/$gameId': typeof GamesGameIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/guides': typeof GuidesIndexRoute
+  '/guides/topics/$topic': typeof GuidesTopicsTopicRoute
   '/api/public/cron/crypto-deposits': typeof ApiPublicCronCryptoDepositsRoute
   '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
   '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
@@ -221,6 +229,7 @@ export interface FileRoutesById {
   '/games/$gameId': typeof GamesGameIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/guides/': typeof GuidesIndexRoute
+  '/guides/topics/$topic': typeof GuidesTopicsTopicRoute
   '/api/public/cron/crypto-deposits': typeof ApiPublicCronCryptoDepositsRoute
   '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
   '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/games/$gameId'
     | '/guides/$slug'
     | '/guides/'
+    | '/guides/topics/$topic'
     | '/api/public/cron/crypto-deposits'
     | '/api/public/cron/crypto-reconcile'
     | '/api/public/cron/crypto-withdrawals'
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/games/$gameId'
     | '/guides/$slug'
     | '/guides'
+    | '/guides/topics/$topic'
     | '/api/public/cron/crypto-deposits'
     | '/api/public/cron/crypto-reconcile'
     | '/api/public/cron/crypto-withdrawals'
@@ -296,6 +307,7 @@ export interface FileRouteTypes {
     | '/games/$gameId'
     | '/guides/$slug'
     | '/guides/'
+    | '/guides/topics/$topic'
     | '/api/public/cron/crypto-deposits'
     | '/api/public/cron/crypto-reconcile'
     | '/api/public/cron/crypto-withdrawals'
@@ -318,6 +330,7 @@ export interface RootRouteChildren {
   GamesGameIdRoute: typeof GamesGameIdRoute
   GuidesSlugRoute: typeof GuidesSlugRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
+  GuidesTopicsTopicRoute: typeof GuidesTopicsTopicRoute
   ApiPublicCronCryptoDepositsRoute: typeof ApiPublicCronCryptoDepositsRoute
   ApiPublicCronCryptoReconcileRoute: typeof ApiPublicCronCryptoReconcileRoute
   ApiPublicCronCryptoWithdrawalsRoute: typeof ApiPublicCronCryptoWithdrawalsRoute
@@ -459,6 +472,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guides/topics/$topic': {
+      id: '/guides/topics/$topic'
+      path: '/guides/topics/$topic'
+      fullPath: '/guides/topics/$topic'
+      preLoaderRoute: typeof GuidesTopicsTopicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/crypto-deposits': {
       id: '/api/public/cron/crypto-deposits'
       path: '/api/public/cron/crypto-deposits'
@@ -533,6 +553,7 @@ const rootRouteChildren: RootRouteChildren = {
   GamesGameIdRoute: GamesGameIdRoute,
   GuidesSlugRoute: GuidesSlugRoute,
   GuidesIndexRoute: GuidesIndexRoute,
+  GuidesTopicsTopicRoute: GuidesTopicsTopicRoute,
   ApiPublicCronCryptoDepositsRoute: ApiPublicCronCryptoDepositsRoute,
   ApiPublicCronCryptoReconcileRoute: ApiPublicCronCryptoReconcileRoute,
   ApiPublicCronCryptoWithdrawalsRoute: ApiPublicCronCryptoWithdrawalsRoute,

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CLUSTERS, GUIDES } from "@/content/guides";
+import { CLUSTERS, getTopic, GUIDES } from "@/content/guides";
 import { OG_SITE_URL } from "@/lib/og";
 
 const TITLE = "Crypto Casino Guides: Fairness, Games and Payments";
@@ -49,7 +49,13 @@ function GuidesHub() {
         if (!list.length) return null;
         return (
           <section key={c.name} aria-labelledby={`c-${c.name}`}>
-            <h2 id={`c-${c.name}`} className="font-display text-2xl">{c.name}</h2>
+            <h2 id={`c-${c.name}`} className="font-display text-2xl">
+              {getTopic(c.slug) ? (
+                <Link to="/guides/topics/$topic" params={{ topic: c.slug }} className="hover:text-primary">{c.name}</Link>
+              ) : (
+                c.name
+              )}
+            </h2>
             <p className="mt-1 text-sm text-muted-foreground">{c.blurb}</p>
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {list.map((g) => (
