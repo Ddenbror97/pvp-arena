@@ -23,9 +23,24 @@ const STATUS: Record<string, string> = {
   DETECTED: "Detected", CONFIRMED: "Confirming", CREDITED: "Credited",
   UNMATCHED: "Unmatched — under review", REJECTED: "Rejected", PENDING: "Waiting for review",
   APPROVED: "Approved", SUBMITTING: "Sending", SUBMITTED: "Sent", RELEASED: "Cancelled — refunded",
+  LIQUIDITY_PENDING: "Queued — processing shortly",
 };
 const PRESETS = [5, 10, 25, 50];
+const EXPLORERS: Record<number, string> = {
+  84532: "https://sepolia.basescan.org",
+  8453: "https://basescan.org",
+  1: "https://etherscan.io",
+};
 type Asset = "USDC" | "ETH";
+type ChainInfo = {
+  chain_id: number;
+  name: string;
+  network_mode: "testnet" | "mainnet";
+  min_deposit_cents: number;
+  min_withdrawal_cents: number;
+  credit_confirmations: number;
+  assets: string[] | null;
+};
 type DepositReview = {
   instruction: DepositInstruction;
   verifiedAddress: string;
