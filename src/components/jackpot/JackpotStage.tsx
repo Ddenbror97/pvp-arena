@@ -198,7 +198,6 @@ export function JackpotStage() {
                 </div>
               </div>
             </div>
-
           ) : (
             <div className="text-center">
               <div className="text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
