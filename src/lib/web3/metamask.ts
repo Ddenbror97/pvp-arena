@@ -190,8 +190,10 @@ export function sessionFor(
     async checkConnection() {
       const connected = await readAuthorizedConnection(provider);
       if (!connected) return null;
+      const address = connected.accounts[0];
+      if (!address) return null;
       return {
-        address: connected.accounts[0],
+        address,
         chainId: connected.chainId.toLowerCase(),
       };
     },
