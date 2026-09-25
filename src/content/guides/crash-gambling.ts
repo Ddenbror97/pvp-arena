@@ -264,6 +264,10 @@ If any of these are missing, treat the game with extra caution, or choose a diff
       q: "Does PVPspinArena have a crash game?",
       a: "No. PVPspinArena currently offers Jackpot, Coinflip and Roulette. This guide explains crash so you can understand it wherever you see it.",
     },
+    {
+      q: "Is auto cash-out better than manual cash-out?",
+      a: "Auto cash-out does not change the odds or the house edge, but it removes in-the-moment decisions. Many players find it helps them stick to a plan instead of chasing a higher multiplier after a big round.",
+    },
   ],
   sources: [
     { label: "RFC 2104: HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },

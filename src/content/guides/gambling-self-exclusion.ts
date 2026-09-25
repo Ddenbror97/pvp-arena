@@ -264,6 +264,10 @@ A few jurisdictions allow family members to request an exclusion in limited case
       q: "What is the difference between a cool-off and self-exclusion?",
       a: "A cool-off is a short break, often 24 hours to six weeks. Self-exclusion is a longer ban, usually six months or more, that cannot easily be undone.",
     },
+    {
+      q: "Does self-exclusion stop gambling adverts?",
+      a: "Operators in a self-exclusion scheme should stop sending you marketing. General adverts on TV, streams or social media are not covered, so muting gambling accounts and using ad blockers can also help.",
+    },
   ],
   sources: [
     { label: "National Council on Problem Gambling (1-800-GAMBLER)", url: "https://www.ncpgambling.org/help-treatment/" },

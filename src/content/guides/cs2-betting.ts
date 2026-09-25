@@ -279,6 +279,10 @@ Our [crypto casino withdrawals guide](/guides/crypto-casino-withdrawals) explain
       q: "Does PVPspinArena offer CS2 match betting?",
       a: "No. PVPspinArena offers CS:GO-inspired Jackpot and Coinflip PvP games and a coloured Roulette wheel, all in USD with provably fair results.",
     },
+    {
+      q: "What is a good bankroll rule for CS2 betting?",
+      a: "A common approach is to set a fixed monthly budget and stake only a small share of it, such as 1 to 2 percent, on any single bet. Never add money to win back losses from previous matches.",
+    },
   ],
   sources: [
     { label: "Esports Integrity Commission (ESIC)", url: "https://esic.gg/" },

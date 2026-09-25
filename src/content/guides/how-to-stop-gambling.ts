@@ -259,6 +259,10 @@ Recovery is rarely a straight line, but most people who get support and put barr
       q: "Is it normal to relapse when quitting gambling?",
       a: "Slips are common. Stop as soon as you notice, do not chase losses, tell someone and strengthen your barriers. A slip does not undo your progress.",
     },
+    {
+      q: "Can I stop gambling on my own?",
+      a: "Some people do, but most find it much easier with support. Combining blocks, money controls and a helpline, counsellor or peer group gives you the best chance of stopping for good and staying stopped.",
+    },
   ],
   sources: [
     { label: "National Council on Problem Gambling (1-800-GAMBLER)", url: "https://www.ncpgambling.org/help-treatment/" },
