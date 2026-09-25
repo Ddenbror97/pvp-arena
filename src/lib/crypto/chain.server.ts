@@ -263,7 +263,7 @@ async function providersAgree(env: Env, txHash: string, blockNumber: bigint, log
  * closed only when even a single-block query is rejected.
  */
 async function getLogsChunked(
-  client: { getLogs: (args: unknown) => Promise<unknown[]> },
+  client: { getLogs: (args: any) => Promise<any[]> },
   args: { address: Hex; event: unknown; args: { to: Hex[] } },
   from: bigint,
   to: bigint,
