@@ -2858,6 +2858,7 @@ export type Database = {
         | "house_revenue"
         | "test_faucet"
         | "external_custody"
+        | "house_bankroll"
       app_role: "admin" | "moderator" | "user"
       coin_side: "HEADS" | "TAILS"
       coinflip_payout_kind: "WINNER" | "REFUND"
@@ -3038,6 +3039,7 @@ export const Constants = {
         "house_revenue",
         "test_faucet",
         "external_custody",
+        "house_bankroll",
       ],
       app_role: ["admin", "moderator", "user"],
       coin_side: ["HEADS", "TAILS"],
