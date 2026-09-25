@@ -77,6 +77,8 @@ export function useRouletteRealtime() {
       .on("postgres_changes", { event: "*", schema: "public", table: "roulette_games" }, () => {
         qc.invalidateQueries({ queryKey: ["roulette-round"] });
         qc.invalidateQueries({ queryKey: ["roulette-history"] });
+        // Other players' bets arrive via the round's pot/bet_count update.
+        qc.invalidateQueries({ queryKey: ["roulette-bets"] });
       })
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "roulette_bets" }, (p) => {
         const gid = (p.new as { game_id?: number }).game_id;
