@@ -76,8 +76,8 @@ export function CountdownLock({ spinAt, now }: Props) {
         </svg>
         <span
           key={`n${count}`}
-          className="animate-count-slam tabular font-display text-5xl leading-none"
-          style={{ textShadow: "0 0 26px currentColor" }}
+          className={`animate-count-slam tabular font-display leading-none ${SIZE[count] ?? "text-5xl"}`}
+          style={{ textShadow: `0 0 ${count === 1 ? 40 : 26}px currentColor` }}
         >
           {count}
         </span>
