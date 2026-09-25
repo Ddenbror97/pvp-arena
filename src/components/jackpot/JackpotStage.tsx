@@ -37,8 +37,6 @@ export function JackpotStage() {
   const { game, players, stage, finishReveal, resync } = useLiveJackpot();
   const serverNow = useServerClock();
   useNow(200);
-  const [phase, setPhase] = useState<Phase>("live");
-
   const endMs = game?.scheduled_end_at ? new Date(game.scheduled_end_at).getTime() : null;
   const remaining = game?.status === "ACTIVE" && endMs ? Math.max(0, endMs - serverNow()) : null;
   const expired = remaining === 0;
@@ -46,41 +44,45 @@ export function JackpotStage() {
   const pot = Number(game?.pot_amount ?? 0);
   const my = players.find((p) => p.user_id === userId);
 
-  // Nudge the server to settle once the authoritative deadline passes. The
-  // server verifies the deadline itself; this only avoids waiting for the
-  // background worker.
-  useEffect(() => {
-    if (stage || !(expired || game?.status === "DRAWING")) return;
-    void tickJackpot();
-    const id = setInterval(() => void tickJackpot(), 1500);
-    // If still not revealed after a while, re-read the game directly.
-    const rs = setInterval(() => void resync(), 5000);
-    return () => {
-      clearInterval(id);
-      clearInterval(rs);
-    };
-  }, [expired, game?.status, stage, resync]);
+  // One shared, server-anchored timeline for the reveal. Every screen computes
+  // the same moments from the game's own timestamps, so all viewers see the
+  // countdown end, the wheel spin and the winner at the same time, no matter
+  // when their live update arrived.
+  //   deadline -> 3,2,1 countdown -> spin (SPIN_MS) -> winner (WINNER_MS) -> next game
+  const doneMs = stage?.completed_at ? new Date(stage.completed_at).getTime() : null;
+  const stageEnd = stage?.scheduled_end_at ? new Date(stage.scheduled_end_at).getTime() : doneMs;
+  const spinStart =
+    stage && doneMs != null ? Math.max((stageEnd ?? doneMs) + LEAD_MS, doneMs + MIN_LOCK_MS) : null;
+  const t = serverNow();
+  const phase: Phase =
+    spinStart == null
+      ? "live"
+      : t < spinStart
+        ? "locked"
+        : t < spinStart + SPIN_MS
+          ? "spinning"
+          : "winner";
+  const revealOver = spinStart != null && t >= spinStart + SPIN_MS + WINNER_MS;
 
-  // Reveal sequence for a completed (already settled) game.
   useEffect(() => {
-    if (!stage) {
-      setPhase("live");
-      return;
+    if (revealOver) finishReveal();
+  }, [revealOver, finishReveal]);
+
+  // Sounds / toast once per phase change of a given game.
+  const announced = useRef<string>("");
+  useEffect(() => {
+    if (!stage) return;
+    const key = `${stage.id}:${phase}`;
+    if (announced.current === key) return;
+    announced.current = key;
+    if (phase === "locked") emitSound("lock");
+    if (phase === "winner") {
+      if (stage.winner_id === userId) {
+        emitSound("win");
+        toast.success(`You won ${formatUsd(stage.payout_amount ?? 0)}!`);
+      } else if (players.some((p) => p.user_id === userId)) emitSound("lose");
     }
-    setPhase("locked");
-    emitSound("lock");
-    const t = setTimeout(() => setPhase("spinning"), 1400);
-    return () => clearTimeout(t);
-  }, [stage]);
-
-  const onSpinEnd = useCallback(() => {
-    setPhase("winner");
-    if (stage?.winner_id === userId) {
-      emitSound("win");
-      toast.success(`You won ${formatUsd(stage!.payout_amount ?? 0)}!`);
-    } else if (players.some((p) => p.user_id === userId)) emitSound("lose");
-    setTimeout(() => finishReveal(), 6500);
-  }, [stage, userId, players, finishReveal]);
+  }, [stage, phase, userId, players]);
 
   // Light, non-spammy notifications.
   const prev = useRef<{ id: number; players: number; end: number | null; status: string } | null>(
