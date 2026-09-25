@@ -116,3 +116,6 @@
 - [ ] Stage 4: full test suite pass + new mainnet safety tests
 - [ ] Stage 5: live rollout — publish, $2 watch-only deposit detection, $5 credit test, $5 withdrawal, ETH round trip, reconcile, then enable crediting (watch_only=false) and disable Base Sepolia
 - [ ] Stage 3 remainder: real-money Terms/Privacy/Responsible Gambling copy, geo-block page, memory update
+
+- [x] Roulette rounds run non-stop while real play is off
+- [x] Base Mainnet withdrawals on; Base Sepolia removed

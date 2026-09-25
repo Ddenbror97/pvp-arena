@@ -2479,6 +2479,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      _roulette_domain_valid: { Args: never; Returns: boolean }
       _roulette_ensure_open: { Args: never; Returns: number }
       _roulette_refund: {
         Args: { p_game_id: number; p_reason: string }
@@ -2876,6 +2877,7 @@ export type Database = {
         }
         Returns: Json
       }
+      real_play_open: { Args: never; Returns: boolean }
       reset_test_credits: { Args: { p_admin: string }; Returns: Json }
       roulette_advance: { Args: { p_game_id: number }; Returns: string }
       roulette_bet: {

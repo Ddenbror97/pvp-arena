@@ -95,6 +95,15 @@ export function RouletteGame() {
     enabled: g != null,
   });
   const wallet = useWallet(userId);
+  const playOpen = useQuery({
+    queryKey: ["real-play-open"],
+    refetchInterval: 30_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("real_play_open" as never);
+      if (error) throw error;
+      return Boolean(data);
+    },
+  });
 
   // Nudge the server when a server deadline has passed. The server decides what (if anything) is due.
   const ticking = useRef(false);
@@ -207,6 +216,11 @@ export function RouletteGame() {
         <span className="ml-auto rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold text-gold">PROVABLY FAIR</span>
       </div>
 
+      {playOpen.data === false && (
+        <p className="rounded-lg border border-border bg-secondary/60 px-3 py-2 text-center text-xs text-muted-foreground">
+          Real-money play opens soon. Rounds keep running, and betting unlocks as soon as it's live.
+        </p>
+      )}
       <div className="grid gap-2 sm:grid-cols-3">
         {(["RED", "GREEN", "BLACK"] as RlColor[]).filter((c) => !Object.keys(mults).length || mults[c] != null).map((c) => {
           const list = (bets.data ?? []).filter((b) => b.color === c);
@@ -215,7 +229,7 @@ export function RouletteGame() {
             <div key={c} className={cn("flex min-h-60 flex-col rounded-xl border bg-card transition-all duration-500", landed === c ? "border-primary" : "border-border", landed && landed !== c && "opacity-60")}>
               <button
                 type="button"
-                disabled={!!userId && (!bettingOpen || pending != null)}
+                disabled={!!userId && (!bettingOpen || pending != null || playOpen.data === false)}
                 onClick={() => (userId ? place(c) : (window.location.href = "/auth"))}
                 className="group m-2 flex items-center gap-3 rounded-xl border border-border bg-secondary/60 p-2 text-left transition hover:-translate-y-0.5 hover:border-primary/60 disabled:opacity-50 disabled:hover:translate-y-0"
                 style={{ boxShadow: landed === c ? `0 0 24px ${COIN[c].glow}` : undefined }}
