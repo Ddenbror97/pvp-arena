@@ -1,4 +1,7 @@
 import { enabledChainIds, runDepositWatcher, runReconciliation, runWithdrawalWorker } from "./chain.server";
+import { applyWorkerEnv, workerEnv } from "@/lib/worker-env";
+
+export { applyWorkerEnv };
 
 const JOBS = {
   deposits: { gapSeconds: 40, perChain: runDepositWatcher },
@@ -35,5 +38,21 @@ export async function handleCryptoJob(name: keyof typeof JOBS | "reconcile", req
   } catch (e) {
     console.error(`[crypto:${name}]`, (e as Error).message);
     return Response.json({ ok: false }, { status: 500 });
+  }
+}
+
+/** Cloudflare cron: same auth as the HTTP cron routes. */
+export async function runScheduledCryptoJobs(): Promise<void> {
+  const token = workerEnv("CRYPTO_JOB_TOKEN");
+  if (!token) {
+    console.error("[crypto] CRYPTO_JOB_TOKEN missing");
+    return;
+  }
+  const headers = { authorization: `Bearer ${token}` };
+  for (const name of ["deposits", "withdrawals", "reconcile"] as const) {
+    const req = new Request("https://internal/crypto-cron", { method: "POST", headers });
+    const res = await handleCryptoJob(name, req);
+    const body = await res.text();
+    console.log(`[crypto:${name}] ${res.status} ${body.slice(0, 400)}`);
   }
 }

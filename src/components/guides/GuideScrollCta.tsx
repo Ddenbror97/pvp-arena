@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Radio, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import type { GuideCluster } from "@/content/guides";
 
@@ -12,12 +12,12 @@ const GAMES: Record<GuideCluster, Game> = {
   "CS:GO heritage": { to: "/coinflip", name: "Coinflip", hook: "The CS:GO classic, 1v1, exact 50/50." },
   "Games & odds": { to: "/roulette", name: "Roulette", hook: "See the odds from this guide play out live." },
   "Crypto payments": { to: "/", name: "Jackpot", hook: "USDC on Base, credited automatically." },
-  "Responsible play": { to: "/", name: "Jackpot", hook: "Watch for free, no account needed." },
+  "Responsible play": { to: "/", name: "Jackpot", hook: "Watch the pot, then set a limit." },
 };
 
 const KEY = "pvp-guide-cta-dismissed";
 
-/** Slide-up call to action shown once per visit after 40% of a guide is scrolled. */
+/** Compact dock shown once per visit after 40% of a guide is scrolled. */
 export function GuideScrollCta({ cluster }: { cluster: GuideCluster }) {
   const { userId } = useAuth();
   const [open, setOpen] = useState(false);
@@ -47,40 +47,36 @@ export function GuideScrollCta({ cluster }: { cluster: GuideCluster }) {
   return (
     <aside
       role="dialog"
-      aria-label="Play on PVPspinArena"
-      className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-md animate-in slide-in-from-bottom-6 fade-in rounded-2xl border border-primary/40 bg-card p-5 shadow-2xl sm:inset-x-auto sm:right-5 sm:bottom-5"
+      aria-label={`Live ${game.name} on PVPspinArena. 18+ only. Play responsibly.`}
+      className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-lg animate-in slide-in-from-bottom-4 fade-in sm:inset-x-auto sm:right-4 sm:bottom-4 sm:mx-0 sm:max-w-md"
     >
-      <button onClick={close} aria-label="Close" className="absolute right-3 top-3 rounded-md p-1 text-muted-foreground hover:text-foreground">
-        <X className="h-4 w-4" />
-      </button>
-      <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
-        <span className="relative flex h-2 w-2">
+      <div className="flex items-center gap-2 rounded-xl border border-primary/30 bg-card/95 py-2 pl-3 pr-1.5 shadow-lg backdrop-blur-sm sm:gap-3">
+        <span className="relative flex h-2 w-2 shrink-0" aria-hidden>
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
         </span>
-        Live now · {game.name}
-      </p>
-      <h2 className="mt-2 pr-6 font-display text-xl leading-tight">
-        {soft ? "Play only with a plan" : "Ready to try it for real?"}
-      </h2>
-      <p className="mt-1.5 text-sm text-muted-foreground">
-        {game.hook} {soft ? "Set your budget first." : "Every round is verifiable, and the default fee on PvP games is 0%."}
-      </p>
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-        {userId ? (
-          <Link to={game.to} onClick={close} className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90">
-            Play {game.name} now <ArrowRight className="h-4 w-4" />
-          </Link>
-        ) : (
-          <Link to="/auth" onClick={close} className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90">
-            Play now, it's free <ArrowRight className="h-4 w-4" />
-          </Link>
-        )}
-        <Link to={game.to} onClick={close} className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-lg border border-border px-4 text-sm font-semibold hover:border-primary hover:text-primary">
-          <Radio className="h-4 w-4" /> Watch live {game.name}
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-primary">Live · {game.name}</p>
+          <p className="truncate text-xs leading-snug text-foreground sm:text-sm">
+            {soft ? "Play only with a plan." : game.hook}
+          </p>
+        </div>
+        <Link
+          to={userId ? game.to : "/auth"}
+          onClick={close}
+          className="inline-flex h-8 shrink-0 items-center rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground hover:opacity-90"
+        >
+          Play {game.name}
         </Link>
+        <button
+          type="button"
+          onClick={close}
+          aria-label="Close"
+          className="shrink-0 rounded-md p-1.5 text-muted-foreground hover:text-foreground"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
       </div>
-      <p className="mt-3 text-[11px] text-muted-foreground">18+ only. Play responsibly.</p>
     </aside>
   );
 }

@@ -1,6 +1,7 @@
 // Server-only sign-up verification flow. Never import from client code.
 import { renderOtpEmail } from "./email-template";
 import { OTP_PURPOSE, generateOtp, hashIdentifier, isOtpFormat, maskEmail, otpDigest } from "./otp";
+import { workerEnv } from "@/lib/worker-env";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 const GENERIC_SEND_ERROR = "Couldn't send the code right now. Please try again shortly.";
@@ -9,7 +10,7 @@ export type StartResult = { ok: true; challengeId: string; maskedEmail: string }
 export type VerifyResult = { ok: true } | { ok: false; error: string };
 
 function env(name: string): string {
-  const v = process.env[name];
+  const v = workerEnv(name);
   if (!v) throw new Error(`Missing server configuration: ${name}`);
   return v;
 }
@@ -41,25 +42,44 @@ export function normaliseFrom(raw: string, fallbackName = "PVPspinArena"): strin
 }
 
 async function sendCodeEmail(to: string, code: string, challengeId: string) {
-  // Sender is not secret; a malformed AUTH_EMAIL_FROM falls back to the verified default.
-  let from = normaliseFrom(process.env["AUTH_EMAIL_FROM"] ?? "");
+  let from = normaliseFrom(process.env["AUTH_EMAIL_FROM"] ?? workerEnv("AUTH_EMAIL_FROM") ?? "");
   if (!from) {
     console.warn("AUTH_EMAIL_FROM missing or malformed; using default sender");
     from = DEFAULT_FROM;
   }
-  const replyRaw = process.env["AUTH_EMAIL_REPLY_TO"];
+  const replyRaw = workerEnv("AUTH_EMAIL_REPLY_TO") ?? process.env["AUTH_EMAIL_REPLY_TO"];
   const replyTo = replyRaw && EMAIL_RE.test(replyRaw.trim()) ? replyRaw.trim() : undefined;
   const { subject, html, text } = renderOtpEmail(code);
-  const res = await fetch(`${GATEWAY_URL}/emails`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${env("LOVABLE_API_KEY")}`,
-      "X-Connection-Api-Key": env("RESEND_API_KEY"),
-      "Idempotency-Key": `auth-otp:${challengeId}`,
-    },
-    body: JSON.stringify({ from, to: [to], subject, html, text, ...(replyTo ? { reply_to: replyTo } : {}) }),
-  });
+  const payload = { from, to: [to], subject, html, text, ...(replyTo ? { reply_to: replyTo } : {}) };
+
+  const resendKey = workerEnv("RESEND_API_KEY");
+  const lovableKey = workerEnv("LOVABLE_API_KEY");
+  const res = lovableKey
+    ? await fetch(`${GATEWAY_URL}/emails`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${lovableKey}`,
+          "X-Connection-Api-Key": env("RESEND_API_KEY"),
+          "Idempotency-Key": `auth-otp:${challengeId}`,
+        },
+        body: JSON.stringify(payload),
+      })
+    : resendKey
+      ? await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${resendKey}`,
+            "Idempotency-Key": `auth-otp:${challengeId}`,
+          },
+          body: JSON.stringify(payload),
+        })
+      : null;
+  if (!res) {
+    console.error("No RESEND_API_KEY or LOVABLE_API_KEY configured for signup email");
+    return { ok: false as const, error: "email_not_configured" };
+  }
   if (!res.ok) {
     const body = await res.text();
     // Log status + provider message only; never the code or the email body.

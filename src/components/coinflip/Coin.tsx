@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
-import headsAsset from "@/assets/coin-heads.png.asset.json";
-import tailsAsset from "@/assets/coin-tails.png.asset.json";
+import { coinHeads as headsAsset, coinTails as tailsAsset } from "@/assets/media";
 
 /**
  * Presentation only. The coin's rotation is a pure function of elapsed server
@@ -82,8 +81,8 @@ export function Coin({ startMs, side, serverNow, restSide = "HEADS", size = 150 
     <div className="flex items-center justify-center" style={{ perspective: size * 4, height: size * 1.5 }}>
       <div ref={wrap} style={{ willChange: "transform" }}>
         <div ref={ref} className="relative" style={{ width: size, height: size, transformStyle: "preserve-3d", willChange: "transform" }}>
-          <Face src={headsAsset.url} label="HEADS" size={size} />
-          <Face src={tailsAsset.url} label="TAILS" size={size} back />
+          <Face src={headsAsset} label="HEADS" size={size} />
+          <Face src={tailsAsset} label="TAILS" size={size} back />
         </div>
       </div>
     </div>

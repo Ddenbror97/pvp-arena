@@ -12,8 +12,7 @@ import { APP } from "@/lib/config";
 import { emitSound } from "@/lib/sound";
 import { fetchCoinflip, opposite, tickCoinflip, useCoinflipRealtime, type CfGameView, type CoinSide } from "@/lib/coinflip/api";
 import { verifyCoinflip, type CoinflipCheck } from "@/lib/fairness/coinflip";
-import headsAsset from "@/assets/coin-heads.png.asset.json";
-import tailsAsset from "@/assets/coin-tails.png.asset.json";
+import { coinHeads as headsAsset, coinTails as tailsAsset } from "@/assets/media";
 import { Celebration } from "@/components/jackpot/Celebration";
 import { Button } from "@/components/ui/button";
 import { Coin } from "./Coin";
@@ -300,7 +299,7 @@ function Row({ k, v }: { k: string; v: string }) {
 function SideCoin({ side, className }: { side: CoinSide; className?: string }) {
   return (
     <img
-      src={(side === "HEADS" ? headsAsset : tailsAsset).url}
+      src={side === "HEADS" ? headsAsset : tailsAsset}
       alt={side === "HEADS" ? "Heads" : "Tails"}
       width={56}
       height={56}

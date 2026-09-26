@@ -1,6 +1,5 @@
 import { ClientOnly } from "@tanstack/react-router";
-import { lazy, Suspense } from "react";
-import { useEffect, useMemo, useRef } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
@@ -18,7 +17,6 @@ import { CountdownLock } from "./CountdownLock";
 import { PlayerList } from "./PlayerList";
 import { EntryPanel } from "./EntryPanel";
 import { PlayerAvatar } from "./Avatar";
-import { Celebration } from "./Celebration";
 import { ShieldCheck } from "lucide-react";
 
 type Phase = "live" | "locked" | "spinning" | "winner";
@@ -38,6 +36,7 @@ function fmtClock(ms: number) {
 const GameChat = lazy(() =>
   import("@/components/chat/GameChat").then((m) => ({ default: m.GameChat })),
 );
+const Celebration = lazy(() => import("./Celebration").then((m) => ({ default: m.Celebration })));
 
 export function JackpotStage() {
   const { userId } = useAuth();
@@ -255,7 +254,11 @@ export function JackpotStage() {
         </section>
       </section>
 
-      {phase === "winner" && stage?.winner_id === userId && <Celebration />}
+      {phase === "winner" && stage?.winner_id === userId && (
+        <Suspense fallback={null}>
+          <Celebration />
+        </Suspense>
+      )}
     </div>
   );
 }

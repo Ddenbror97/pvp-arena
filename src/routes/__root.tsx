@@ -8,14 +8,21 @@ import {
   Scripts,
   useRouterState,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/lib/auth";
 import { MobileTabBar, SiteFooter, SiteHeader } from "@/components/SiteHeader";
-import { ProfileSetupDialog } from "@/components/ProfileSetupDialog";
-import { Toaster } from "@/components/ui/sonner";
+import { arenaLogo } from "@/assets/media";
+
+const ProfileSetupDialog = lazy(() =>
+  import("@/components/ProfileSetupDialog").then((m) => ({ default: m.ProfileSetupDialog })),
+);
+const Toaster = lazy(() => import("@/components/ui/sonner").then((m) => ({ default: m.Toaster })));
+
+/** First paint: black immediately, no wait for stylesheets or JS. */
+const PAINT_CSS = "html,body{background:#000}";
 
 function NotFoundComponent() {
   return (
@@ -77,15 +84,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#12131a" },
     ],
     links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous", href: "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSg.woff2" },
-      { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous", href: "https://fonts.gstatic.com/s/unbounded/v12/Yq6W-LOTXCb04q32xlpwu8Zf.woff2" },
-      { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous", href: "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap",
-      },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
@@ -100,9 +98,28 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark">
       <head>
+        <style dangerouslySetInnerHTML={{ __html: PAINT_CSS }} />
         <HeadContent />
       </head>
       <body className="canvas">
+        <div id="intro-boot" className="intro-gate" aria-hidden="true" style={{ display: "none" }}>
+          <div className="intro-half intro-half-top" style={{ background: "#000" }}>
+            <div className="intro-logo-wrap">
+              <img src={arenaLogo} alt="" width={240} height={128} className="intro-logo" decoding="sync" fetchPriority="high" />
+            </div>
+          </div>
+          <div className="intro-half intro-half-bottom" style={{ background: "#000" }}>
+            <div className="intro-logo-wrap">
+              <img src={arenaLogo} alt="" width={240} height={128} className="intro-logo" decoding="sync" fetchPriority="high" />
+            </div>
+          </div>
+          <span className="intro-seam" />
+        </div>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var p=location.pathname;var home=p==="/"||p==="";var skip=!home||sessionStorage.getItem("pvp_intro_seen")||matchMedia("(prefers-reduced-motion: reduce)").matches;var b=document.getElementById("intro-boot");if(skip){document.documentElement.classList.add("intro-ready","intro-seen");if(b)b.style.display="none";return;}if(b)b.style.display="block";document.body.style.overflow="hidden";setTimeout(function(){try{sessionStorage.setItem("pvp_intro_seen","1");}catch(e){}document.documentElement.classList.add("intro-ready","intro-seen");document.body.style.overflow="";if(b)b.style.display="none";},2600);}catch(e){document.documentElement.classList.add("intro-ready","intro-seen");}})();`,
+          }}
+        />
         {children}
         <Scripts />
       </body>
@@ -124,8 +141,10 @@ function RootComponent() {
         </main>
         <SiteFooter />
         <MobileTabBar />
-        <ProfileSetupDialog />
-        <Toaster position="top-center" theme="dark" />
+        <Suspense fallback={null}>
+          <ProfileSetupDialog />
+          <Toaster position="top-center" theme="dark" />
+        </Suspense>
       </AuthProvider>
     </QueryClientProvider>
   );

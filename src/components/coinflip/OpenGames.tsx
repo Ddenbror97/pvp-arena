@@ -7,8 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { formatUsd } from "@/lib/jackpot/math";
 import { friendlyError } from "@/lib/jackpot/errors";
 import { openRoom, fetchOpenCoinflips, fetchRecentCoinflips, opposite, type CfGameView, type CoinSide } from "@/lib/coinflip/api";
-import headsAsset from "@/assets/coin-heads.png.asset.json";
-import tailsAsset from "@/assets/coin-tails.png.asset.json";
+import { coinHeads as headsAsset, coinTails as tailsAsset } from "@/assets/media";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/time-ago";
@@ -151,7 +150,7 @@ export function RecentCoinflips() {
 function SideCoinImg({ side, className }: { side: CoinSide; className?: string }) {
   return (
     <img
-      src={(side === "HEADS" ? headsAsset : tailsAsset).url}
+      src={side === "HEADS" ? headsAsset : tailsAsset}
       alt={side === "HEADS" ? "Heads" : "Tails"}
       width={44}
       height={44}

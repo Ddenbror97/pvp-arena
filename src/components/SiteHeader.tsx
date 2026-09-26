@@ -8,7 +8,7 @@ import { formatUsd } from "@/lib/jackpot/math";
 import { Button } from "@/components/ui/button";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { Dices, Coins, CircleDot, ShieldCheck, User, ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
-import arenaLogo from "@/assets/arena-logo-v2.png.asset.json";
+import { arenaLogo } from "@/assets/media";
 
 export function SiteHeader() {
   const { userId, profile, ready } = useAuth();
@@ -23,7 +23,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-30 border-b border-border bg-background">
       <div className="mx-auto flex h-14 max-w-none items-center gap-4 px-3 sm:h-16 sm:gap-6 sm:px-4 lg:px-6">
         <Link to="/" className="shrink-0" aria-label="PVPspinArena">
-          <img src={arenaLogo.url} alt="PVPspinArena" width={240} height={128} fetchPriority="high" decoding="async" className="h-8 w-auto sm:h-10" />
+          <img src={arenaLogo} alt="PVPspinArena" width={240} height={128} decoding="async" className="h-8 w-auto sm:h-10" />
         </Link>
         <nav className="hidden items-center gap-5 sm:flex">
           <Link to="/" className={link} activeOptions={{ exact: true }}>Jackpot</Link>
@@ -94,7 +94,7 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-none gap-10 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.6fr_repeat(3,1fr)] lg:gap-8 lg:py-12">
         <div>
           <Link to="/" className="inline-flex" aria-label="PVPspinArena home">
-            <img src={arenaLogo.url} alt="PVPspinArena" width={240} height={128} loading="lazy" decoding="async" className="h-10 w-auto" />
+            <img src={arenaLogo} alt="PVPspinArena" width={240} height={128} loading="lazy" decoding="async" className="h-10 w-auto" />
           </Link>
           <p className="mt-3 max-w-xs text-sm text-muted-foreground">
             A true player vs player platform, inspired by the CS:GO era.

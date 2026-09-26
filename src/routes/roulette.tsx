@@ -4,9 +4,7 @@ import { ogImageMeta } from "@/lib/og";
 import { RouletteGame } from "@/components/roulette/RouletteGame";
 import { RecentRounds } from "@/components/roulette/RecentRounds";
 import { fetchCurrentRound, fetchHistory } from "@/lib/roulette/api";
-import heads from "@/assets/coin-heads.png.asset.json";
-import tails from "@/assets/coin-tails.png.asset.json";
-import green from "@/assets/roulette-green.png.asset.json";
+import { coinHeads, coinTails, rouletteGreen } from "@/assets/media";
 
 export const Route = createFileRoute("/roulette")({
   head: () => ({
@@ -23,7 +21,7 @@ export const Route = createFileRoute("/roulette")({
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),
     ],
-    links: [heads.url, tails.url, green.url].map((href) => ({ rel: "preload", as: "image", href, type: "image/webp" })),
+    links: [coinHeads, coinTails, rouletteGreen].map((href) => ({ rel: "preload", as: "image", href, type: "image/webp" })),
   }),
   loader: ({ context }) => {
     if (typeof window === "undefined") return;

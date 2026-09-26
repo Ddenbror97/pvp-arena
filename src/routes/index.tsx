@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 import { ogImageMeta } from "@/lib/og";
-import { JackpotStage } from "@/components/jackpot/JackpotStage";
-import { RecentGames } from "@/components/jackpot/RecentGames";
-import { IntroGate } from "@/components/IntroGate";
+import { arenaLogo } from "@/assets/media";
+
+const HomeArena = lazy(() => import("@/components/jackpot/HomeArena"));
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),
     ],
+    links: [{ rel: "preload", as: "image", href: arenaLogo, type: "image/webp" }],
   }),
   component: Index,
 });
@@ -26,10 +28,12 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <>
-      <IntroGate />
       <h1 className="sr-only">PVPspinArena Jackpot</h1>
-      <JackpotStage />
-      <RecentGames />
+      <ClientOnly fallback={null}>
+        <Suspense fallback={null}>
+          <HomeArena />
+        </Suspense>
+      </ClientOnly>
     </>
   );
 }

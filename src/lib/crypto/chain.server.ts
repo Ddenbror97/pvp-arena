@@ -14,6 +14,7 @@ import { base, mainnet } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 import { decidePayout, applyPayoutDecision } from "./payout-finality";
 import { checkRpcUrl, checkMainnetRegistry, weiToCents, usdcUnitsToCents } from "./allowlist";
+import { workerEnv } from "@/lib/worker-env";
 
 const ERC20 = parseAbi([
   "function transfer(address to, uint256 value) returns (bool)",
@@ -64,7 +65,7 @@ export interface Env {
 
 function rpcUrlFor(chainId: number, secondary = false): string | undefined {
   const suffix = secondary ? `_${chainId}_B` : `_${chainId}`;
-  const url = process.env[`CRYPTO_RPC_URL${suffix}`];
+  const url = workerEnv(`CRYPTO_RPC_URL${suffix}`);
   if (url) return url;
   return undefined;
 }
@@ -412,7 +413,7 @@ export async function runWithdrawalWorker(chainId: number) {
   const { admin, rpc } = await db();
   const s = env.settings;
   if (!s.crypto_system_enabled || !s.withdrawals_enabled) return { ok: true, paused: true };
-  const pkRaw = process.env[`CRYPTO_HOT_WALLET_PRIVATE_KEY_${env.chainId}`]?.trim();
+  const pkRaw = workerEnv(`CRYPTO_HOT_WALLET_PRIVATE_KEY_${env.chainId}`)?.trim();
   const pk = (pkRaw && !pkRaw.startsWith("0x") ? `0x${pkRaw}` : pkRaw) as Hex | undefined;
   if (!pk || !/^0x[0-9a-fA-F]{64}$/.test(pk)) return { ok: false, reason: "HOT_KEY_MISSING" };
   const account = privateKeyToAccount(pk);

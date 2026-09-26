@@ -1,5 +1,6 @@
 import { HDKey } from "@scure/bip32";
 import { publicKeyToAddress } from "viem/accounts";
+import { workerEnv } from "@/lib/worker-env";
 
 /**
  * Personal deposit addresses are derived from an HD wallet EXTENDED PUBLIC KEY
@@ -25,6 +26,6 @@ export function deriveDepositAddress(xpub: string, chainId: number, index: numbe
 
 /** Reads the deposit xpub from the environment. Absent => personal addresses unavailable. */
 export function depositXpub(): string | null {
-  const xpub = process.env["CRYPTO_DEPOSIT_XPUB"];
+  const xpub = workerEnv("CRYPTO_DEPOSIT_XPUB");
   return xpub && xpub.length > 20 ? xpub : null;
 }
