@@ -4,7 +4,10 @@ export default function cryptoCronPlugin(nitroApp: {
   nitroApp.hooks.hook("cloudflare:scheduled", async ({ env }) => {
     const { applyWorkerEnv } = await import("../src/lib/worker-env");
     applyWorkerEnv(env);
-    const { runScheduledCryptoJobs } = await import("../src/lib/crypto/jobs.server");
-    await runScheduledCryptoJobs();
+    const { runScheduledCryptoJobs, runScheduledRouletteWorker } = await import("../src/lib/crypto/jobs.server");
+    await Promise.all([
+      runScheduledCryptoJobs(),
+      runScheduledRouletteWorker(),
+    ]);
   });
 }

@@ -328,8 +328,10 @@ html.intro-seen .intro-gate { display: none !important; }
   position: absolute; left: 0; right: 0; height: 50%; overflow: hidden; background: var(--intro-bg);
   will-change: transform;
 }
-.intro-half-top { top: 0; animation: intro-open-up 0.8s cubic-bezier(0.7, 0, 0.2, 1) 1.6s forwards; box-shadow: 0 1px 0 color-mix(in oklab, var(--primary) 60%, transparent); }
-.intro-half-bottom { bottom: 0; animation: intro-open-down 0.8s cubic-bezier(0.7, 0, 0.2, 1) 1.6s forwards; }
+.intro-half-top { top: 0; box-shadow: 0 1px 0 color-mix(in oklab, var(--primary) 60%, transparent); }
+.intro-half-bottom { bottom: 0; }
+#intro-boot.intro-can-open .intro-half-top { animation: intro-open-up 0.8s cubic-bezier(0.7, 0, 0.2, 1) forwards; }
+#intro-boot.intro-can-open .intro-half-bottom { animation: intro-open-down 0.8s cubic-bezier(0.7, 0, 0.2, 1) forwards; }
 .intro-logo-wrap {
   position: absolute; left: 50%; width: min(420px, 70vw); aspect-ratio: 240 / 128; transform: translateX(-50%);
 }

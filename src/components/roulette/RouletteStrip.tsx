@@ -7,7 +7,9 @@ import { cn } from "@/lib/utils";
 import { COIN, CoinImg } from "./coins";
 
 const TILE = 116; // px, includes gap
-const REPEATS = 12;
+// Eight wheel copies still give the roll a long runway while keeping a third
+// fewer transformed/image nodes alive than the previous twelve copies.
+const REPEATS = 8;
 /**
  * Presentation only. The winning slot is already fixed on the server before the strip moves;
  * the strip is positioned from server timestamps so every viewer lands on the same tile at the same time.
@@ -81,7 +83,7 @@ export const RouletteStrip = memo(function RouletteStrip({
             key={i}
             className={cn(
               "relative flex h-[108px] w-[108px] shrink-0 items-center justify-center rounded-full transition-all duration-500",
-              done && !win && "scale-90 opacity-35 grayscale",
+              done && !win && "opacity-35",
               win && "z-10 scale-110",
             )}
             style={win ? { filter: `drop-shadow(0 0 18px ${COIN[c].glow})` } : undefined}
@@ -97,7 +99,7 @@ export const RouletteStrip = memo(function RouletteStrip({
     <div ref={wrap} className="relative h-[136px] overflow-hidden rounded-2xl border border-border bg-[radial-gradient(ellipse_at_center,var(--surface-2),var(--card))]">
       <div
         ref={track}
-        className="absolute top-3.5 flex gap-2 will-change-transform"
+        className="absolute top-3.5 flex gap-2 will-change-transform [contain:layout_style]"
         style={{ transform: `translate3d(${width / 2 - pos}px,0,0)` }}
       >
         {tileEls}

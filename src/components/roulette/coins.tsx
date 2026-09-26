@@ -17,6 +17,7 @@ export function CoinImg({ c, className, size = 64 }: { c: RlColor; className?: s
       alt={k.label}
       width={size}
       height={size}
+      decoding="async"
       draggable={false}
       className={className}
       style={{ filter: k.filter, width: size, height: size }}

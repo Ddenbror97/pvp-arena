@@ -5,6 +5,7 @@ const path = resolve(".output/server/wrangler.json");
 const cfg = JSON.parse(readFileSync(path, "utf8"));
 cfg.name = "pvpspinarena";
 cfg.workers_dev = false;
+cfg.triggers = { crons: ["* * * * *"] };
 cfg.routes = [
   { pattern: "pvpspinarena.com/*", zone_name: "pvpspinarena.com" },
   { pattern: "www.pvpspinarena.com/*", zone_name: "pvpspinarena.com" },

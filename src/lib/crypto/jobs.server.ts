@@ -56,3 +56,33 @@ export async function runScheduledCryptoJobs(): Promise<void> {
     console.log(`[crypto:${name}] ${res.status} ${body.slice(0, 400)}`);
   }
 }
+
+/**
+ * Cloudflare fallback for the one-second Roulette lifecycle worker.
+ *
+ * Supabase pg_cron remains the primary scheduler. A minute Cron Trigger keeps
+ * this event alive for most of the minute and calls the same idempotent,
+ * database-gated function once per second. Overlap is safe because
+ * roulette_tick has its own one-second gate and row locks.
+ */
+export async function runScheduledRouletteWorker(durationMs = 58_000): Promise<void> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const startedAt = Date.now();
+  let nextAt = startedAt;
+  let ticks = 0;
+
+  do {
+    try {
+      const { error } = await supabaseAdmin.rpc("roulette_tick");
+      if (error) console.error("[roulette:cron]", error.message);
+    } catch (error) {
+      console.error("[roulette:cron]", (error as Error).message);
+    }
+    ticks += 1;
+    nextAt += 1_000;
+    const waitMs = nextAt - Date.now();
+    if (waitMs > 0) await new Promise((resolve) => setTimeout(resolve, waitMs));
+  } while (Date.now() - startedAt < durationMs);
+
+  console.log(`[roulette:cron] completed ${ticks} ticks`);
+}
