@@ -23,7 +23,7 @@ function Page() {
   const id = Number(gameId);
   if (!Number.isSafeInteger(id) || id <= 0) return <p className="text-muted-foreground">Game not found.</p>;
   return (
-    <ClientOnly fallback={<div className="h-[520px] animate-pulse rounded-2xl bg-card" />}>
+    <ClientOnly fallback={<div className="mx-auto h-[21rem] w-full max-w-4xl animate-pulse rounded-2xl bg-card sm:h-[26rem]" />}>
       <CoinflipRoom id={id} />
     </ClientOnly>
   );
