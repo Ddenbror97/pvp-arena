@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "usdc-vs-usdt-gambling",
   cluster: "Crypto payments",
   keyword: "usdc vs usdt",
-  secondary: ["usdt casino", "usdc or usdt for gambling", "stablecoin gambling", "tether vs usd coin"],
+  secondary: [
+    "usdt casino",
+    "usdc or usdt for gambling",
+    "stablecoin gambling",
+    "tether vs usd coin",
+  ],
   title: "USDC vs USDT: Which Stablecoin Is Better for Gambling?",
   description:
     "USDC vs USDT compared for gambling: issuers, reserves, transparency, networks, fees and depeg risk, plus how to choose and avoid costly network mistakes.",
@@ -198,7 +203,11 @@ Swapping one crypto asset for another can be a taxable event in some countries, 
       title: "Summary",
       body: `USDC and USDT are the two largest dollar stablecoins. Both aim for $1 and are backed mainly by cash and US Treasuries. USDC, from Circle, offers more frequent, detailed reserve reports and wider regulatory oversight. USDT, from Tether, is larger and more widely accepted, particularly on Tron.
 
-Both have briefly lost their peg under stress and recovered. Both exist on many networks, and the network you send on must match the site's. For gambling, the best choice is simply the one your site supports: on PVPspinArena that is USDC on Base. Keep only your gaming budget in it and always test with a small transfer first.`,
+Both have briefly lost their peg under stress and recovered. Both exist on many networks, and the network you send on must match the site's. For gambling, the best choice is simply the one your site supports: on PVPspinArena that is USDC on Base. Keep only your gaming budget in it and always test with a small transfer first.
+
+More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).
+
+Issuer, attestations and chain differences for USDT sit on [what is Tether](/guides/what-is-tether).`,
     },
   ],
   faqs: [
@@ -226,9 +235,22 @@ Both have briefly lost their peg under stress and recovered. Both exist on many 
   sources: [
     { label: "Circle: USDC transparency", url: "https://www.circle.com/transparency" },
     { label: "Tether: transparency", url: "https://tether.to/en/transparency/" },
-    { label: "CFTC: Tether settlement (2021)", url: "https://www.cftc.gov/PressRoom/PressReleases/8450-21" },
-    { label: "Circle: USDC contract addresses", url: "https://developers.circle.com/stablecoins/usdc-contract-addresses" },
+    {
+      label: "CFTC: Tether settlement (2021)",
+      url: "https://www.cftc.gov/PressRoom/PressReleases/8450-21",
+    },
+    {
+      label: "Circle: USDC contract addresses",
+      url: "https://developers.circle.com/stablecoins/usdc-contract-addresses",
+    },
   ],
-  related: ["base-network", "usdc-casino", "how-to-buy-usdc", "crypto-wallet-for-gambling"],
+  related: [
+    "usdc-casino",
+    "stablecoin-payments-gambling",
+    "usdc-apy",
+    "what-is-usdc",
+    "what-is-a-stablecoin",
+    "what-is-tether",
+  ],
   updated: "2026-09-25",
 };

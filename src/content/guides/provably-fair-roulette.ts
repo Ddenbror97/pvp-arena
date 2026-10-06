@@ -4,18 +4,23 @@ export const guide: Guide = {
   slug: "provably-fair-roulette",
   cluster: "Provably fair",
   keyword: "provably fair roulette",
-  secondary: ["verify roulette spin", "crypto roulette fairness", "roulette rejection sampling", "roulette seed"],
+  secondary: [
+    "verify roulette spin",
+    "crypto roulette fairness",
+    "roulette rejection sampling",
+    "roulette seed",
+  ],
   title: "Provably Fair Roulette: How Every Spin Is Verified",
   description:
     "How provably fair roulette works: seed commitments, HMAC-SHA256, rejection sampling for an unbiased wheel, and how to verify any spin step by step yourself.",
   h1: "Provably fair roulette: how every spin is verified",
   answer:
-    "Provably fair roulette is online roulette where each spin's result is fixed by a secret seed whose hash is published before betting closes. After the spin, the seed is revealed and anyone can recompute the result. On PVPspinArena, the slot is drawn with HMAC-SHA256 and rejection sampling, so every one of the 15 slots is exactly equally likely.",
+    "Provably fair roulette is online roulette where each spin's result is fixed by a secret seed whose hash is published before betting closes. After the spin, the seed is revealed and anyone can recompute the result. On PVPspinArena, the slot is drawn with HMAC-SHA256 and rejection sampling, so every one of the 33 slots is exactly equally likely.",
   facts: [
     "Each round has its own 32-byte server seed, committed with SHA-256 before bets lock.",
     "The slot comes from HMAC-SHA256 over PVPCasino:roulette:v1:{round}:{draw_version}:{counter}.",
     "Rejection sampling removes the tiny bias a plain modulo would cause.",
-    "PVPspinArena's wheel has 15 slots: 7 Purple (2x), 7 Silver (2x), 1 Green (14x).",
+    "PVPspinArena's wheel has 33 slots: 16 Purple (2x), 16 Silver (2x), 1 Green (14x).",
     "Any finished round can be verified in your browser on the Fairness page.",
   ],
   sections: [
@@ -84,7 +89,7 @@ If a round ever had to be redrawn for a technical reason, the draw version would
 
 A 64-bit number has 2^64 possible values. That number does not divide evenly by 15. If you simply took r mod 15, the remainder values 0 up to 2^64 mod 15 minus 1 would each appear one extra time across the whole range. Those slots would be very slightly more likely than the others.
 
-For 15 slots the bias is astronomically small, on the order of one part in a billion billion. But the principle matters: a fair wheel should give every slot exactly the same probability, not almost the same.
+For 33 slots the bias is astronomically small, on the order of one part in a billion billion. But the principle matters: a fair wheel should give every slot exactly the same probability, not almost the same.
 
 ### How rejection sampling fixes it
 
@@ -99,23 +104,23 @@ This same technique is used for PVPspinArena's Jackpot draw, where the number of
     {
       id: "layout",
       title: "The wheel layout and its odds",
-      body: `The formula produces a slot number from 0 to 14. The round's layout maps each slot to a colour.
+      body: `The formula produces a slot number from 0 to 32. The round's layout maps each slot to a colour.
 
-- **Purple**: 7 slots, pays 2x.
-- **Silver**: 7 slots, pays 2x.
+- **Purple**: 16 slots, pays 2x.
+- **Silver**: 16 slots, pays 2x.
 - **Green**: 1 slot, pays 14x.
 
 ### Probabilities
 
-Because every slot is exactly equally likely, the chance of each colour is its slot count divided by 15:
+Because every slot is exactly equally likely, the chance of each colour is its slot count divided by 33:
 
-- Purple: 7/15 ≈ 46.67%
-- Silver: 7/15 ≈ 46.67%
-- Green: 1/15 ≈ 6.67%
+- Purple: 16/33 ≈ 48.48%
+- Silver: 16/33 ≈ 48.48%
+- Green: 1/33 ≈ 3.03%
 
 ### Expected return
 
-Each colour returns about 93.3% of stakes on average: 7/15 × 2 = 0.933 and 1/15 × 14 = 0.933. The house edge is therefore about 6.7% on every colour.
+Purple and Silver return 16/33 × 2 = 32/33 ≈ 96.97% before the 5% win fee. Green returns 1/33 × 14 = 14/33 ≈ 42.42%. The colours do not share an edge.
 
 ### Why the layout is part of verification
 
@@ -185,16 +190,18 @@ Both can be legitimate. Some players value regulated oversight; others value the
     {
       id: "next",
       title: "A quick exercise",
-      body: `To build confidence, try this simple exercise. Open the Roulette page and write down the round numbers and colours of five consecutive results. Then verify each one on the Fairness page, noting the counter used for each. You will almost certainly see a counter of 0 every time, which shows how rarely rejection sampling needs to redraw. Finally, count how many of the five were Green. Over five spins you would expect a third of a Green on average, so seeing none is normal, and seeing two is unusual but entirely possible. Doing this once makes the maths feel concrete and shows why no pattern in recent results predicts the next spin.`,
+      body: `To build confidence, try this simple exercise. Open the Roulette page and write down the round numbers and colours of five consecutive results. Then verify each one on the Fairness page, noting the counter used for each. You will almost certainly see a counter of 0 every time, which shows how rarely rejection sampling needs to redraw. Finally, count how many of the five were Green. Over five spins you would expect about 0.15 Greens on average, so seeing none is normal, and seeing two is unusual but entirely possible. Doing this once makes the maths feel concrete and shows why no pattern in recent results predicts the next spin.`,
     },
     {
       id: "summary",
       title: "Summary",
       body: `Provably fair roulette commits to a secret seed before bets lock, computes the spin from that seed with a published formula, and reveals the seed afterwards so anyone can check it.
 
-On PVPspinArena, each round has its own 32-byte seed. The slot comes from HMAC-SHA256 over a message containing the round number, draw version and a counter, followed by rejection sampling so all 15 slots are exactly equally likely. The layout of 7 Purple, 7 Silver and 1 Green gives each colour an expected return of about 93.3%.
+On PVPspinArena, each round has its own 32-byte seed. The slot comes from HMAC-SHA256 over a message containing the round number, draw version and a counter, followed by rejection sampling so all 33 slots are exactly equally likely. The layout of 16 Purple, 16 Silver and 1 Green returns 32/33 on Purple or Silver and 14/33 on Green before the win fee.
 
-You can verify any finished round in your browser on the Fairness page or with independent tools. Verification proves the result, not the payout, so check both when you want complete peace of mind.`,
+You can verify any finished round in your browser on the Fairness page or with independent tools. Verification proves the result, not the payout, so check both when you want complete peace of mind.
+
+More provably fair reading lives in our [Provably fair guides](/guides/topics/provably-fair).`,
     },
   ],
   faqs: [
@@ -221,9 +228,21 @@ You can verify any finished round in your browser on the Fairness page or with i
   ],
   sources: [
     { label: "RFC 2104: HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
-    { label: "NIST FIPS 180-4: Secure Hash Standard", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
-    { label: "Wikipedia: Rejection sampling", url: "https://en.wikipedia.org/wiki/Rejection_sampling" },
+    {
+      label: "NIST FIPS 180-4: Secure Hash Standard",
+      url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final",
+    },
+    {
+      label: "Wikipedia: Rejection sampling",
+      url: "https://en.wikipedia.org/wiki/Rejection_sampling",
+    },
   ],
-  related: ["how-to-win-at-roulette", "crypto-roulette", "roulette-colors", "provably-fair-calculator", "hmac-sha256-provably-fair"],
+  related: [
+    "provably-fair-casino",
+    "provably-fair-calculator",
+    "hmac-sha256-provably-fair",
+    "server-seed-client-seed",
+    "commit-reveal-scheme",
+  ],
   updated: "2026-09-25",
 };

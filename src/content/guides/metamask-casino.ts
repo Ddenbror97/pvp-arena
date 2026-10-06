@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "metamask-casino",
   cluster: "Crypto payments",
   keyword: "metamask casino",
-  secondary: ["metamask gambling", "casino that accepts metamask", "connect metamask to casino", "wallet signature"],
+  secondary: [
+    "metamask gambling",
+    "casino that accepts metamask",
+    "connect metamask to casino",
+    "wallet signature",
+  ],
   title: "MetaMask Casino Guide: Connect, Deposit and Stay Safe",
   description:
     "How a MetaMask casino works: connecting your wallet, what signing a message means, depositing on Base, and the safety checks to make before approving anything.",
@@ -172,7 +177,9 @@ If a deposit still does not show after confirmations, keep the transaction hash 
     {
       id: "next",
       title: "Where to go next",
-      body: `Once your wallet is verified and funded, read [how it works](/how-it-works) for an overview of PVPspinArena's games, balances and payments. You can check any finished game on the [Fairness page](/fairness), which runs every check in your own browser.`,
+      body: `Once your wallet is verified and funded, read [how it works](/how-it-works) for an overview of PVPspinArena's games, balances and payments. You can check any finished game on the [Fairness page](/fairness), which runs every check in your own browser.
+
+The wallet itself, before any casino, is [what is MetaMask](/guides/what-is-metamask). XRP and Litecoin are not native assets in it: see [does MetaMask support XRP](/guides/does-metamask-support-xrp) and [how to add Litecoin to MetaMask](/guides/how-to-add-litecoin-to-metamask).`,
     },
     {
       id: "summary",
@@ -181,7 +188,9 @@ If a deposit still does not show after confirmations, keep the transaction hash 
 
 Set up MetaMask from the official source, keep your recovery phrase offline, add Base and fund a separate gaming account. Deposit by sending USDC or ETH from your verified address on the correct network, and expect withdrawals to pass confirmation checks and limits.
 
-The biggest risks are phishing and misleading approvals. Read every pop-up, never share your phrase and reject any spending approval you did not expect. Then you can enjoy PvP games like [crypto jackpot](/guides/crypto-jackpot) with your wallet safely in your hands.`,
+The biggest risks are phishing and misleading approvals. Read every pop-up, never share your phrase and reject any spending approval you did not expect. Then you can enjoy PvP games like [crypto jackpot](/guides/crypto-jackpot) with your wallet safely in your hands.
+
+More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).`,
     },
   ],
   faqs: [
@@ -208,10 +217,26 @@ The biggest risks are phishing and misleading approvals. Read every pop-up, neve
   ],
   sources: [
     { label: "MetaMask Help Center", url: "https://support.metamask.io/" },
-    { label: "Base documentation: network information", url: "https://docs.base.org/chain/network-information" },
+    {
+      label: "Base documentation: network information",
+      url: "https://docs.base.org/chain/network-information",
+    },
     { label: "Ethereum.org: wallets", url: "https://ethereum.org/en/wallets/" },
     { label: "EIP-191: Signed data standard", url: "https://eips.ethereum.org/EIPS/eip-191" },
   ],
-  related: ["seed-phrase", "add-base-network-metamask", "crypto-wallet-for-gambling", "usdc-casino"],
+  related: [
+    "usdc-casino",
+    "phantom-wallet-gambling",
+    "coinbase-wallet-casino",
+    "trust-wallet-casino",
+    "walletconnect-casino",
+    "how-to-install-metamask",
+    "how-to-use-metamask",
+    "what-is-metamask",
+    "metamask-login-help",
+    "metamask-scams",
+    "does-metamask-support-xrp",
+    "how-to-add-litecoin-to-metamask",
+  ],
   updated: "2026-09-25",
 };

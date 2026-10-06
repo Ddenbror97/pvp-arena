@@ -191,7 +191,9 @@ Avoid sites that promise "guaranteed" wins, offer to sell predictions or do not 
 
 The modern crypto version keeps the pot and the visible odds, and fixes the trust problem. Stakes are exact dollar amounts, each round's seed is committed with SHA-256 before anyone joins, and the winning ticket is drawn with HMAC-SHA256 and rejection sampling so anyone can verify it afterwards.
 
-With no fee, every player's expected result is zero; with a fee, the fee is the cost of playing. Play with a fixed budget, verify rounds when you want to, and treat each pot as entertainment.`,
+With no fee, every player's expected result is zero; with a fee, the fee is the cost of playing. Play with a fixed budget, verify rounds when you want to, and treat each pot as entertainment.
+
+More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).`,
     },
   ],
   faqs: [
@@ -217,10 +219,22 @@ With no fee, every player's expected result is zero; with a fee, the fee is the 
     },
   ],
   sources: [
-    { label: "Valve statement on CS:GO gambling sites (2016)", url: "https://blog.counter-strike.net/index.php/2016/07/15109/" },
+    {
+      label: "Valve statement on CS:GO gambling sites (2016)",
+      url: "https://blog.counter-strike.net/index.php/2016/07/15109/",
+    },
     { label: "RFC 2104: HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
-    { label: "NIST FIPS 180-4: Secure Hash Standard", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
+    {
+      label: "NIST FIPS 180-4: Secure Hash Standard",
+      url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final",
+    },
   ],
-  related: ["csgo-case-battle-sites", "best-csgo-gambling-sites", "cs2-betting", "crypto-jackpot", "csgo-coinflip"],
+  related: [
+    "pvp-gambling",
+    "csgo-coinflip",
+    "cs2-roulette",
+    "csgo-gambling-history",
+    "skin-gambling-vs-crypto",
+  ],
   updated: "2026-09-25",
 };

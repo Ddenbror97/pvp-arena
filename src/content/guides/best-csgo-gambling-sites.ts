@@ -170,33 +170,59 @@ Asking these questions takes a few minutes, and the answers tell you a lot about
 
 - **Games:** Jackpot, Coinflip and Roulette. No case openings, case battles or crash.
 - **Stakes:** USDC on Base, shown in US dollars. No skins.
-- **Fees:** 0% default fee on player-vs-player Jackpot and Coinflip; Roulette has an edge of about 6.67%.
+- **Fees:** 0% default fee on player-vs-player Jackpot and Coinflip; Roulette's Purple or Silver edge is about 7.88% after the win fee.
 - **Fairness:** every round can be checked on the [Fairness page](/fairness).
 - **Withdrawals:** automatic, with a $250 daily limit and review over $25. Marked finished only after a safe block and agreement from two providers.
 - **Age:** you must be 18 or older, or the legal age where you live.
 
-You can watch live [Jackpot](/) and [Coinflip](/coinflip) rounds without an account. If the format suits you, create a free account, set a budget and start small.`,
+You can watch live [Jackpot](/) and [Coinflip](/coinflip) rounds without an account. If the format suits you, create a free account, set a budget and start small.
+
+More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).`,
     },
   ],
   faqs: [
-    { q: "What are the best CS:GO gambling sites?", a: "The best sites let you verify results, state their fees, value stakes clearly, pay out automatically and take age checks seriously. Use a checklist rather than a ranking list, because rankings are often paid." },
-    { q: "Are CS:GO gambling sites still around after CS2?", a: "Yes. Most sites now call themselves CS2 gambling sites, but the jackpot, coinflip and roulette formats are the same. Many now accept crypto instead of, or as well as, skins." },
-    { q: "Is CS:GO gambling legal?", a: "It depends on where you live. Some countries ban online gambling or skin gambling specifically, and others license it. Check your local laws and never play if you are under 18." },
-    { q: "Does PVPspinArena accept skins?", a: "No. PVPspinArena uses USDC on Base, shown in US dollars, so every stake has a clear dollar value." },
-    { q: "How do I know a CS2 gambling site is legit?", a: "Look for a named operator, a working result verifier, clear fees, automatic withdrawals and honest marketing. Be wary of sites that hide fees or only pay out through support chat." },
+    {
+      q: "What are the best CS:GO gambling sites?",
+      a: "The best sites let you verify results, state their fees, value stakes clearly, pay out automatically and take age checks seriously. Use a checklist rather than a ranking list, because rankings are often paid.",
+    },
+    {
+      q: "Are CS:GO gambling sites still around after CS2?",
+      a: "Yes. Most sites now call themselves CS2 gambling sites, but the jackpot, coinflip and roulette formats are the same. Many now accept crypto instead of, or as well as, skins.",
+    },
+    {
+      q: "Is CS:GO gambling legal?",
+      a: "It depends on where you live. Some countries ban online gambling or skin gambling specifically, and others license it. Check your local laws and never play if you are under 18.",
+    },
+    {
+      q: "Does PVPspinArena accept skins?",
+      a: "No. PVPspinArena uses USDC on Base, shown in US dollars, so every stake has a clear dollar value.",
+    },
+    {
+      q: "How do I know a CS2 gambling site is legit?",
+      a: "Look for a named operator, a working result verifier, clear fees, automatic withdrawals and honest marketing. Be wary of sites that hide fees or only pay out through support chat.",
+    },
   ],
   sources: [
     { label: "Counter-Strike 2 — official site", url: "https://www.counter-strike.net/cs2" },
     { label: "Circle — USDC overview", url: "https://www.circle.com/usdc" },
-    { label: "UK Gambling Commission — Skins gambling position paper", url: "https://www.gamblingcommission.gov.uk/" },
+    {
+      label: "UK Gambling Commission — Skins gambling position paper",
+      url: "https://www.gamblingcommission.gov.uk/",
+    },
     { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
   ],
-  related: ["csgo-case-opening", "csgo-case-battle-sites", "csgo-coinflip-sites", "csgo-gambling-history", "cs2-betting"],
+  related: [
+    "pvp-gambling",
+    "csgo-coinflip-sites",
+    "csgo-case-battle-sites",
+    "esports-betting",
+    "cs2-betting",
+  ],
   updated: "2026-09-25",
   cta: {
     title: "The CS:GO classics, with USDC",
     text: "Create a free account and play Jackpot, Coinflip and Roulette with results you can verify.",
-    primary: { to: "/auth", label: "Create your free account" },
-    secondary: { to: "/", label: "Watch Jackpot" },
+    primary: { to: "/auth", label: "Sign in" },
+    secondary: { to: "/", label: "Jackpot" },
   },
 };

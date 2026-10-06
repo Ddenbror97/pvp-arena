@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "house-edge",
   cluster: "Games & odds",
   keyword: "house edge",
-  secondary: ["what is house edge", "house edge vs rtp", "casino house edge by game", "lowest house edge games"],
+  secondary: [
+    "what is house edge",
+    "house edge vs rtp",
+    "casino house edge by game",
+    "lowest house edge games",
+  ],
   title: "House Edge Explained: What It Costs You Per Bet",
   description:
     "What house edge means, how to calculate it, how it relates to RTP, typical house edges by game, and why PvP games with low fees work differently.",
@@ -51,10 +56,10 @@ House edge = 1 − expected return.
 
 ### Example: coloured roulette
 
-PVPspinArena's wheel has 15 slots: 7 Purple (pays 2x), 7 Silver (pays 2x) and 1 Green (pays 14x).
+PVPspinArena's wheel has 33 slots: 16 Purple (pays 2x), 16 Silver (pays 2x) and 1 Green (pays 14x).
 
-- Bet on Purple: expected return = 7/15 × 2 = 0.9333. House edge = 6.67%.
-- Bet on Green: expected return = 1/15 × 14 = 0.9333. House edge = 6.67%.
+- Bet on Purple: expected return = 16/33 × 2 = 0.9697 before the win fee, about 0.9212 after it.
+- Bet on Green: expected return = 1/33 × 14 = 0.4242 before the win fee, about 0.4030 after it.
 
 ### Example: European roulette
 
@@ -104,7 +109,7 @@ Some online games offer several versions with different RTPs, and operators may 
 - **Baccarat, banker bet**: about 1.06%. Player bet: about 1.24%. Tie bet: about 14.4%.
 - **Craps, pass line**: about 1.41%.
 - **European roulette**: 2.70%.
-- **French roulette with la partage on even-money bets**: about 1.35%.
+- **French roulette with la partage on even-money bets**: about 1.35% ([French roulette](/guides/french-roulette)).
 - **American roulette**: 5.26%.
 - **Slots**: typically 2% to 15%, varying by game and venue.
 - **Keno**: often 20% or more.
@@ -116,7 +121,9 @@ Some online games offer several versions with different RTPs, and operators may 
 - Side bets and novelty bets usually carry much higher edges.
 - Games with huge jackpots, like lotteries, fund them with large edges.
 
-Knowing these numbers helps you understand what each game costs, not how to win. No bet with a positive house edge can be beaten over the long run.`,
+Knowing these numbers helps you understand what each game costs, not how to win. No bet with a positive house edge can be beaten over the long run.
+
+The same cut shows up on a sports ticket as the [vig](/guides/vig-betting), the price built into both sides of a line.`,
     },
     {
       id: "pvp",
@@ -137,7 +144,7 @@ In PvP games, the fee plays the role of the house edge. It is usually a percenta
 
 ### Why this matters
 
-A PvP game with a low fee can cost players much less on average than a house-banked game. But it is still gambling: individual players win and lose, and variance can be large. Roulette on PVPspinArena is a house-banked colour wheel with its own edge of about 6.67%, calculated above.`,
+A PvP game with a low fee can cost players much less on average than a house-banked game. But it is still gambling: individual players win and lose, and variance can be large. Roulette on PVPspinArena is a house-banked colour wheel with its own Purple or Silver edge of about 7.88% after the win fee, calculated above.`,
     },
     {
       id: "variance",
@@ -184,7 +191,7 @@ If your budget is small, high-variance bets make it more likely you will lose ev
 5. **Set limits.** Use the estimated cost to set a budget and time limit.
 6. **Check the rules.** Small rule changes, like single vs double zero, can double the edge.
 
-For example, 30 minutes of $1 roulette bets at one bet every 30 seconds is 60 bets, or $60 wagered. At 6.67%, the average cost is about $4. At 2.70%, it is about $1.62. The session feels similar, but the costs are different.`,
+For example, 30 minutes of $1 roulette bets at one bet every 30 seconds is 60 bets, or $60 wagered. At about 3.03% before the win fee, the average cost is about $1.82. At 2.70%, it is about $1.62. The session feels similar, but the costs are different.`,
     },
     {
       id: "next",
@@ -198,7 +205,13 @@ For example, 30 minutes of $1 roulette bets at one bet every 30 seconds is 60 be
 
 Edges range from about 0.5% for blackjack with good strategy to 50% for many lotteries. European roulette sits at 2.70% and American at 5.26%. In PvP games, the house does not bet, so the fee is the edge, and on PVPspinArena that fee defaults to 0%.
 
-Variance decides how bumpy results are, but no system changes the edge. Use it to compare games, estimate session costs and set a sensible budget.`,
+Variance decides how bumpy results are, but no system changes the edge. Use it to compare games, estimate session costs and set a sensible budget.
+
+More games & odds reading lives in our [Games & odds guides](/guides/topics/games-and-odds).
+
+If you want the arithmetic, [how to calculate house edge](/guides/how-to-calculate-house-edge) is the worksheet. A page that ranks games by that number is [best payout online casinos](/guides/best-payout-online-casinos), and the ranking is only as good as the rules it used.
+
+The [law of large numbers](/guides/law-of-large-numbers-gambling) is why that long-run average actually arrives.`,
     },
   ],
   faqs: [
@@ -224,10 +237,28 @@ Variance decides how bumpy results are, but no system changes the edge. Use it t
     },
   ],
   sources: [
-    { label: "Wizard of Odds: house edge of casino games", url: "https://wizardofodds.com/gambling/house-edge/" },
-    { label: "Wikipedia: Casino game (house advantage)", url: "https://en.wikipedia.org/wiki/Casino_game#House_advantage" },
+    {
+      label: "Wizard of Odds: house edge of casino games",
+      url: "https://wizardofodds.com/gambling/house-edge/",
+    },
+    {
+      label: "Wikipedia: Casino game (house advantage)",
+      url: "https://en.wikipedia.org/wiki/Casino_game#House_advantage",
+    },
     { label: "Wikipedia: Return to player", url: "https://en.wikipedia.org/wiki/Return_to_player" },
   ],
-  related: ["csgo-case-battle-sites", "crash-gambling", "martingale-strategy", "roulette-colors", "coin-flip-odds"],
+  related: [
+    "crypto-jackpot",
+    "coin-flip-odds",
+    "crypto-roulette",
+    "roulette-odds-chart",
+    "roulette-colors",
+    "how-to-calculate-house-edge",
+    "best-casino-game-odds",
+    "best-payout-online-casinos",
+    "how-do-online-casinos-make-money",
+    "law-of-large-numbers-gambling",
+    "french-roulette",
+  ],
   updated: "2026-09-25",
 };

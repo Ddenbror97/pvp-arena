@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "gambling-self-exclusion",
   cluster: "Responsible play",
   keyword: "self exclusion gambling",
-  secondary: ["gambling self exclusion", "self exclusion casino", "how to self exclude from gambling", "gamstop"],
+  secondary: [
+    "gambling self exclusion",
+    "self exclusion casino",
+    "how to self exclude from gambling",
+    "gamstop",
+  ],
   title: "Gambling Self-Exclusion: How It Works and Options",
   description:
     "How gambling self-exclusion works: cool-offs vs exclusion, US state programmes, GAMSTOP in the UK, blocking software, crypto sites, and what to expect.",
@@ -240,7 +245,11 @@ Living with someone who gambles can be stressful. Support groups such as Gam-Ano
 
 ### Third-party exclusion
 
-A few jurisdictions allow family members to request an exclusion in limited cases, often through a court or regulator. Rules vary widely, so check with your local regulator if this is a concern.`,
+A few jurisdictions allow family members to request an exclusion in limited cases, often through a court or regulator. Rules vary widely, so check with your local regulator if this is a concern.
+
+More responsible play reading lives in our [Responsible play guides](/guides/topics/responsible-play).
+
+Age is the other door. [Underage gambling risks](/guides/underage-gambling-risks) are why a shared password or a game server is not a harmless workaround.`,
     },
   ],
   faqs: [
@@ -270,11 +279,14 @@ A few jurisdictions allow family members to request an exclusion in limited case
     },
   ],
   sources: [
-    { label: "National Council on Problem Gambling (1-800-GAMBLER)", url: "https://www.ncpgambling.org/help-treatment/" },
+    {
+      label: "National Council on Problem Gambling (1-800-GAMBLER)",
+      url: "https://www.ncpgambling.org/help-treatment/",
+    },
     { label: "GAMSTOP (UK)", url: "https://www.gamstop.co.uk/" },
     { label: "BetBlocker", url: "https://betblocker.org/" },
     { label: "BetStop (Australia)", url: "https://www.betstop.gov.au/" },
   ],
-  related: ["how-to-stop-gambling", "gambling-budget", "gamblers-fallacy"],
+  related: ["gambling-budget", "how-to-stop-gambling", "gambling-blocker-apps"],
   updated: "2026-09-25",
 };

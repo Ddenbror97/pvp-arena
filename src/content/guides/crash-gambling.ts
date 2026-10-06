@@ -10,7 +10,7 @@ export const guide: Guide = {
     "How crash gambling works: the rising multiplier, cash-out odds, house edge, provably fair crash results, strategy myths, and how it compares with PvP games.",
   h1: "Crash gambling: how crash games work and what the odds are",
   answer:
-    "Crash gambling is a game where a multiplier starts at 1x and rises until it suddenly \"crashes\" at a random point. You place a bet before the round and cash out at any time; if you cash out before the crash, you win your stake times the multiplier, and if you wait too long you lose it. The crash point is set before the round, and a built-in house edge means every cash-out target has the same average cost.",
+    'Crash gambling is a game where a multiplier starts at 1x and rises until it suddenly "crashes" at a random point. You place a bet before the round and cash out at any time; if you cash out before the crash, you win your stake times the multiplier, and if you wait too long you lose it. The crash point is set before the round, and a built-in house edge means every cash-out target has the same average cost.',
   facts: [
     "A crash round's multiplier starts at 1x and rises until a random crash point.",
     "Cashing out before the crash pays stake × multiplier; staying past the crash loses the stake.",
@@ -35,7 +35,7 @@ Some rounds crash almost instantly at 1.00x. Others run to 10x, 100x or higher. 
 
 ### Where it came from
 
-Crash games grew popular on CS:GO skin sites in the mid-2010s, alongside [jackpot](/guides/csgo-jackpot), [coinflip](/guides/csgo-coinflip) and coloured roulette. Today they are common on crypto casinos. PVPspinArena does not currently offer crash; this guide explains how the format works so you can judge it anywhere.
+Crash games grew popular on CS:GO skin sites in the mid-2010s, alongside [CS:GO jackpot](/guides/csgo-jackpot), [coinflip](/guides/csgo-coinflip) and coloured roulette. Today they are common on crypto casinos. PVPspinArena does not currently offer crash; this guide explains how the format works so you can judge it anywhere.
 
 ### Why it feels different
 
@@ -226,7 +226,7 @@ Your choice of target is really a choice of how bumpy you want the ride to be. I
       title: "Where crash games came from",
       body: `Crash-style games became popular in the mid-2010s on CS:GO skin gambling sites, where players could bet skins on the rising multiplier. Their mix of simple rules, social feeds showing other players' cash-outs and fast rounds made them very popular on stream.
 
-After Valve's 2016 crackdown on skin gambling, many crash games moved to crypto casinos. The format has stayed much the same, and many crypto sites now use a hash chain to make every crash point verifiable. Our [skin gambling vs crypto guide](/guides/skin-gambling-vs-crypto) explains how the wider market shifted.`,
+After Valve's 2016 crackdown on skin gambling, many crash games moved to crypto casinos. The format has stayed much the same, and many crypto sites now use a hash chain to make every crash point verifiable. Our [skin gambling vs crypto guide](/guides/skin-gambling-vs-crypto) explains how the wider market shifted. The named plane round is covered on its own in the [Aviator game guide](/guides/aviator-game-guide). PVPspinArena does not offer that game.`,
     },
     {
       id: "checklist",
@@ -240,7 +240,11 @@ After Valve's 2016 crackdown on skin gambling, many crash games moved to crypto 
 - **Licensing and terms**: who runs the site and where?
 - **Responsible gambling tools**: are deposit limits and self-exclusion available?
 
-If any of these are missing, treat the game with extra caution, or choose a different one.`,
+If any of these are missing, treat the game with extra caution, or choose a different one.
+
+More games & odds reading lives in our [Games & odds guides](/guides/topics/games-and-odds).
+
+A named crash title with its own RTP card is [JetX](/guides/jetx-game).`,
     },
   ],
   faqs: [
@@ -271,8 +275,22 @@ If any of these are missing, treat the game with extra caution, or choose a diff
   ],
   sources: [
     { label: "RFC 2104: HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
-    { label: "NIST: Secure Hash Standard (FIPS 180-4)", url: "https://csrc.nist.gov/publications/detail/fips/180/4/final" },
+    {
+      label: "NIST: Secure Hash Standard (FIPS 180-4)",
+      url: "https://csrc.nist.gov/publications/detail/fips/180/4/final",
+    },
   ],
-  related: ["house-edge", "provably-fair-casino", "martingale-strategy", "hmac-sha256-provably-fair"],
+  related: [
+    "crypto-jackpot",
+    "crypto-blackjack",
+    "crypto-poker",
+    "crypto-lottery",
+    "bitcoin-lottery",
+    "crash-game-strategy",
+    "crash-vs-plinko",
+    "crash-cashout-calculator",
+    "aviator-game-guide",
+    "jetx-game",
+  ],
   updated: "2026-09-25",
 };

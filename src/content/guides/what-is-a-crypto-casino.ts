@@ -5,7 +5,12 @@ export const guide: Guide = {
   cluster: "Foundations",
   pillar: true,
   keyword: "what is a crypto casino",
-  secondary: ["crypto casino", "online crypto casino", "how crypto casinos work", "crypto gambling"],
+  secondary: [
+    "crypto casino",
+    "online crypto casino",
+    "how crypto casinos work",
+    "crypto gambling",
+  ],
   title: "What Is a Crypto Casino? A Plain-English Guide",
   description:
     "How crypto casinos work, how they differ from card-based sites, what provably fair adds, the risks to know and questions to ask before you play.",
@@ -73,7 +78,7 @@ Card-based casinos must run identity checks tied to banking rules. Crypto casino
 - **Original games** built by the site itself, such as crash, dice, plinko or mines, usually provably fair.
 - **Player-vs-player formats** such as jackpot pots and coinflips, where players compete against each other and the site takes a fee rather than betting against you.
 
-PVPspinArena focuses on three games. In [Jackpot](/), every cent you add to the pot is one ticket and one winner takes the pot. In [Coinflip](/coinflip), one player creates a game and another matches it, and a single random bit decides who wins. [Roulette](/roulette) is a shared wheel of 15 slots: seven Purple and seven Silver slots pay 2x and one Green slot pays 14x. The [crypto jackpot guide](/guides/crypto-jackpot) covers how pot-based odds work.`,
+PVPspinArena focuses on three games. In [Jackpot](/), every cent you add to the pot is one ticket and one winner takes the pot. In [Coinflip](/coinflip), one player creates a game and another matches it, and a single random bit decides who wins. [Roulette](/roulette) is a shared wheel of 33 slots: 16 Purple and 16 Silver slots pay 2x and one Green slot pays 14x. The [crypto jackpot guide](/guides/crypto-jackpot) covers how pot-based odds work.`,
     },
     {
       id: "benefits",
@@ -137,7 +142,11 @@ Later you request a $5.00 withdrawal. The amount is held on your balance while t
       title: "Summary: what a crypto casino is and isn't",
       body: `A crypto casino is an online casino that uses blockchain transfers for deposits and withdrawals, and often adds provably fair games so you can check results yourself. It can be faster and more transparent than a card-based site, but it is still gambling, the odds still favour the house or the fee over time, and crypto mistakes are hard to undo.
 
-If you are new, start with the [provably fair casino guide](/guides/provably-fair-casino) to understand how results are decided, then read the [USDC casino guide](/guides/usdc-casino) before your first deposit. Keep a budget, never share your recovery phrase, and only play with money you can afford to lose.`,
+If you are new, start with the [provably fair casino guide](/guides/provably-fair-casino) to understand how results are decided, then read the [USDC casino guide](/guides/usdc-casino) before your first deposit. Keep a budget, never share your recovery phrase, and only play with money you can afford to lose.
+
+More foundations reading lives in our [Foundations guides](/guides/topics/foundations).
+
+Two follow-ups belong here. [Crypto casino versus a traditional casino](/guides/crypto-casino-vs-traditional-casino) is the payment and licence contrast. [How online casinos make money](/guides/how-do-online-casinos-make-money) is the edge, the fee and the bonus, whether or not the cashier is a coin.`,
     },
   ],
   faqs: [
@@ -167,6 +176,14 @@ If you are new, start with the [provably fair casino guide](/guides/provably-fai
     { label: "Circle — USDC overview", url: "https://www.circle.com/usdc" },
     { label: "Base — Network documentation", url: "https://docs.base.org/" },
   ],
-  related: ["best-crypto-gambling-sites", "web3-casino", "casino-terminology", "provably-fair-casino", "usdc-casino"],
+  related: [
+    "web3-casino",
+    "casino-terminology",
+    "pvp-gambling",
+    "are-online-casinos-rigged",
+    "best-crypto-gambling-sites",
+    "crypto-casino-vs-traditional-casino",
+    "crypto-casino-reddit-advice",
+  ],
   updated: "2026-09-25",
 };

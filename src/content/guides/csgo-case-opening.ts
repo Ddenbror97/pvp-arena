@@ -233,7 +233,9 @@ Total expected value: about $0.90 per opening, compared with a cost of $3.00. On
       title: "Trade-up contracts and alternatives",
       body: `Trade-up contracts let you exchange ten skins of one rarity for one skin of the next tier up, from the same collections. They add another random element but no guaranteed profit, since the result is random and fees still apply.
 
-If you want a particular skin, buying it directly on the market is usually far cheaper than opening cases until it drops. Opening cases makes sense only as entertainment with a known cost.`,
+If you want a particular skin, buying it directly on the market is usually far cheaper than opening cases until it drops. Opening cases makes sense only as entertainment with a known cost.
+
+More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).`,
     },
   ],
   faqs: [
@@ -260,9 +262,22 @@ If you want a particular skin, buying it directly on the market is usually far c
   ],
   sources: [
     { label: "Counter-Strike 2 official site", url: "https://www.counter-strike.net/" },
-    { label: "Steam Subscriber Agreement", url: "https://store.steampowered.com/subscriber_agreement/" },
-    { label: "Belgian Gaming Commission: loot box research (2018)", url: "https://www.gamingcommission.be/" },
+    {
+      label: "Steam Subscriber Agreement",
+      url: "https://store.steampowered.com/subscriber_agreement/",
+    },
+    {
+      label: "Belgian Gaming Commission: loot box research (2018)",
+      url: "https://www.gamingcommission.be/",
+    },
   ],
-  related: ["csgo-case-battle-sites", "skin-gambling-vs-crypto", "csgo-gambling-history", "house-edge", "csgo-jackpot"],
+  related: [
+    "pvp-gambling",
+    "cs2-case-odds",
+    "cs2-trade-up-calculator",
+    "csgo-trade-up-contract",
+    "cs2-case-battle",
+    "loot-boxes-and-gambling",
+  ],
   updated: "2026-09-25",
 };

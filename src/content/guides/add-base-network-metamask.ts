@@ -189,7 +189,9 @@ When you are ready to play, read [how it works](/how-it-works) for an overview o
 
 Import USDC using MetaMask's token search or Circle's official contract address, and keep a little ETH on Base for fees. Your address is the same on every network, but balances are not, so always check the network before sending.
 
-With Base set up, you can deposit to PVPspinArena from your verified wallet and play games like [crypto jackpot](/guides/crypto-jackpot) with low fees.`,
+With Base set up, you can deposit to PVPspinArena from your verified wallet and play games like [crypto jackpot](/guides/crypto-jackpot) with low fees.
+
+More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).`,
     },
   ],
   faqs: [
@@ -215,12 +217,24 @@ With Base set up, you can deposit to PVPspinArena from your verified wallet and 
     },
   ],
   sources: [
-    { label: "Base documentation: network information", url: "https://docs.base.org/chain/network-information" },
+    {
+      label: "Base documentation: network information",
+      url: "https://docs.base.org/chain/network-information",
+    },
     { label: "MetaMask Help Center: adding networks", url: "https://support.metamask.io/" },
-    { label: "Circle: USDC contract addresses", url: "https://developers.circle.com/stablecoins/usdc-contract-addresses" },
+    {
+      label: "Circle: USDC contract addresses",
+      url: "https://developers.circle.com/stablecoins/usdc-contract-addresses",
+    },
     { label: "BaseScan block explorer", url: "https://basescan.org" },
   ],
-  related: ["base-network", "metamask-casino", "how-to-buy-usdc", "usdc-casino"],
+  related: [
+    "usdc-casino",
+    "crypto-casino-withdrawals",
+    "instant-withdrawal-casino",
+    "how-to-buy-usdc",
+    "buy-crypto-with-card",
+  ],
   updated: "2026-09-25",
   howTo: true,
 };

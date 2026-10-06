@@ -124,7 +124,7 @@ After settlement the seed is revealed. Anyone can open the game's audit page, co
     {
       id: "glossary",
       title: "Key PvP gambling terms",
-      body: "A few terms come up again and again in player-vs-player games. Knowing them makes rules pages much easier to read.\n\n- **Pot.** The total of all stakes in a round. In PvP games, this is what the winner receives before fees.\n- **Rake or fee.** The operator's share of the pot. In poker it is called rake; on jackpot and coinflip sites it is usually called a fee or commission.\n- **Escrow.** Money held aside while a round is running, so it can't be spent elsewhere. On PVPspinArena stakes move into an escrow account when you enter and leave it only at settlement or refund.\n- **Ticket.** In jackpot games, the unit your stake is divided into. On PVPspinArena one cent is one ticket.\n- **Seed commitment.** The published hash of the secret seed that will decide the round.\n- **Settlement.** The moment the pot is paid to the winner and any fee is collected.\n- **Cancelled round.** A round that ends without a draw, for example because too few players joined. Stakes are returned.\n\n### Why terminology matters for trust\n\nClear terms usually signal clear rules. When a site explains exactly what happens to your stake from the moment you enter until settlement, you can check each step. When a site uses vague words like \"bonus pool\" or \"house share\" without numbers, you can't. For a wider list of definitions, see the [casino and crypto gambling glossary](/guides/casino-terminology).\n\n### Is PvP gambling legal?\n\nLaws on gambling, including peer to peer formats, vary by country and sometimes by region. Player-vs-player structure does not create a legal exemption. Always check what applies where you live before playing.",
+      body: 'A few terms come up again and again in player-vs-player games. Knowing them makes rules pages much easier to read.\n\n- **Pot.** The total of all stakes in a round. In PvP games, this is what the winner receives before fees.\n- **Rake or fee.** The operator\'s share of the pot. In poker it is called rake; on jackpot and coinflip sites it is usually called a fee or commission.\n- **Escrow.** Money held aside while a round is running, so it can\'t be spent elsewhere. On PVPspinArena stakes move into an escrow account when you enter and leave it only at settlement or refund.\n- **Ticket.** In jackpot games, the unit your stake is divided into. On PVPspinArena one cent is one ticket.\n- **Seed commitment.** The published hash of the secret seed that will decide the round.\n- **Settlement.** The moment the pot is paid to the winner and any fee is collected.\n- **Cancelled round.** A round that ends without a draw, for example because too few players joined. Stakes are returned.\n\n### Why terminology matters for trust\n\nClear terms usually signal clear rules. When a site explains exactly what happens to your stake from the moment you enter until settlement, you can check each step. When a site uses vague words like "bonus pool" or "house share" without numbers, you can\'t. For a wider list of definitions, see the [casino and crypto gambling glossary](/guides/casino-terminology).\n\n### Is PvP gambling legal?\n\nLaws on gambling, including peer to peer formats, vary by country and sometimes by region. Player-vs-player structure does not create a legal exemption. Always check what applies where you live before playing.',
     },
     {
       id: "social",
@@ -136,7 +136,11 @@ After settlement the seed is revealed. Anyone can open the game's audit page, co
       title: "Summary",
       body: `PvP gambling means your opponent is another player, not the casino. The operator earns a fee, the pot is funded by players' stakes, and fair draws can be checked with provably fair methods. That makes the incentives cleaner than in house-banked games, but it doesn't make gambling a way to earn money. Read the fee, check a few results and set a budget before you play.
 
-Ready to see it in action? Watch a live [Jackpot](/) round, or open [Coinflip](/coinflip) to see open games.`,
+Ready to see it in action? Watch a live [Jackpot](/) round, or open [Coinflip](/coinflip) to see open games.
+
+More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).
+
+The formats that sit under this idea are a [PvP casino](/guides/pvp-casino-games), [head to head betting](/guides/head-to-head-betting) and [skill-based gambling](/guides/skill-based-gambling). A game-item pot such as [OSRS gambling](/guides/osrs-gambling) is the same shape with a worse bankroll.`,
     },
   ],
   faqs: [
@@ -162,9 +166,22 @@ Ready to see it in action? Watch a live [Jackpot](/) round, or open [Coinflip](/
     },
   ],
   sources: [
-    { label: "Valve — Statement on CS:GO gambling sites (2016)", url: "https://blog.counter-strike.net/index.php/2016/07/15109/" },
+    {
+      label: "Valve — Statement on CS:GO gambling sites (2016)",
+      url: "https://blog.counter-strike.net/index.php/2016/07/15109/",
+    },
     { label: "RFC 2104 — HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
   ],
-  related: ["csgo-coinflip-sites", "crypto-jackpot", "csgo-coinflip", "csgo-jackpot", "skin-gambling-vs-crypto"],
+  related: [
+    "what-is-a-crypto-casino",
+    "web3-casino",
+    "casino-terminology",
+    "csgo-coinflip",
+    "cs2-roulette",
+    "pvp-casino-games",
+    "peer-to-peer-gambling",
+    "bet-with-friends-online",
+    "skill-based-gambling",
+  ],
   updated: "2026-09-25",
 };

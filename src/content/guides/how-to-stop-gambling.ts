@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "how-to-stop-gambling",
   cluster: "Responsible play",
   keyword: "how to stop gambling",
-  secondary: ["how to quit gambling", "signs of gambling addiction", "gambling help", "stop gambling online"],
+  secondary: [
+    "how to quit gambling",
+    "signs of gambling addiction",
+    "gambling help",
+    "stop gambling online",
+  ],
   title: "How to Stop Gambling: Practical Steps That Help",
   description:
     "How to stop gambling: warning signs, first steps, blocking tools, money controls, getting support, handling urges and relapse, and helping someone you love.",
@@ -235,7 +240,13 @@ Online losses can feel less real than cash. Write down what you have deposited a
 - **Track progress**: count days without gambling and money saved.
 - **Celebrate milestones** with things that do not involve gambling.
 
-Recovery is rarely a straight line, but most people who get support and put barriers in place do reduce or stop gambling for good.`,
+Recovery is rarely a straight line, but most people who get support and put barriers in place do reduce or stop gambling for good.
+
+More responsible play reading lives in our [Responsible play guides](/guides/topics/responsible-play).
+
+Stopping has tools that are not willpower. [Gambling blocker apps](/guides/gambling-blocker-apps), a [cooling-off period](/guides/gambling-cooling-off-period) and the [responsible gambling tools](/guides/responsible-gambling-tools) on a cashier are the practical set.
+
+Chasing because you have already lost is the [sunk cost fallacy](/guides/sunk-cost-fallacy-gambling) in gambling clothes.`,
     },
   ],
   faqs: [
@@ -265,10 +276,13 @@ Recovery is rarely a straight line, but most people who get support and put barr
     },
   ],
   sources: [
-    { label: "National Council on Problem Gambling (1-800-GAMBLER)", url: "https://www.ncpgambling.org/help-treatment/" },
+    {
+      label: "National Council on Problem Gambling (1-800-GAMBLER)",
+      url: "https://www.ncpgambling.org/help-treatment/",
+    },
     { label: "GamCare: National Gambling Helpline (UK)", url: "https://www.gamcare.org.uk/" },
     { label: "Gamblers Anonymous", url: "https://gamblersanonymous.org/" },
   ],
-  related: ["gambling-self-exclusion", "gambling-budget", "gamblers-fallacy", "martingale-strategy"],
+  related: ["gambling-budget", "gambling-self-exclusion", "sunk-cost-fallacy-gambling"],
   updated: "2026-09-25",
 };

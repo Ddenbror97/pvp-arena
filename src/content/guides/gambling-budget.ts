@@ -5,7 +5,12 @@ export const guide: Guide = {
   cluster: "Responsible play",
   pillar: true,
   keyword: "gambling budget",
-  secondary: ["how to set a gambling budget", "bankroll management", "responsible gambling tips", "gambling limits"],
+  secondary: [
+    "how to set a gambling budget",
+    "bankroll management",
+    "responsible gambling tips",
+    "gambling limits",
+  ],
   title: "Gambling Budget: How to Set Limits and Stick to Them",
   description:
     "Set a gambling budget you can afford to lose: pick an amount, split it into sessions, set time and loss limits, and spot warning signs before they grow.",
@@ -208,7 +213,11 @@ Take a break of at least a few weeks. Remove saved payment methods and wallet co
 
 Split the budget into sessions, keep stakes small compared with each session, and write down a time limit, a loss limit and a win stop before you play. Track every deposit and withdrawal and review the total monthly.
 
-Never chase losses, never borrow to play, and use a stablecoin and a separate wallet if you gamble with crypto. If the budget keeps slipping, that is a sign to pause and reach out for free support. When you are ready to play within your limits, see how our [PvP games](/guides/pvp-gambling) work first.`,
+Never chase losses, never borrow to play, and use a stablecoin and a separate wallet if you gamble with crypto. If the budget keeps slipping, that is a sign to pause and reach out for free support. When you are ready to play within your limits, see how our [PvP games](/guides/pvp-gambling) work first.
+
+More responsible play reading lives in our [Responsible play guides](/guides/topics/responsible-play).
+
+Two tools sit next to a written limit. A [bankroll calculator](/guides/bankroll-calculator) turns the limit into a stake size. A [gambling odds calculator](/guides/gambling-odds-calculator) turns a price into an implied chance so the stake is not a guess about the number.`,
     },
   ],
   faqs: [
@@ -234,12 +243,21 @@ Never chase losses, never borrow to play, and use a stablecoin and a separate wa
     },
   ],
   sources: [
-    { label: "National Council on Problem Gambling", url: "https://www.ncpgambling.org/help-treatment/" },
+    {
+      label: "National Council on Problem Gambling",
+      url: "https://www.ncpgambling.org/help-treatment/",
+    },
     { label: "GamCare: National Gambling Helpline", url: "https://www.gamcare.org.uk/" },
     { label: "Gamblers Anonymous", url: "https://www.gamblersanonymous.org/" },
     { label: "Gambling Therapy", url: "https://www.gamblingtherapy.org/" },
   ],
-  related: ["how-to-stop-gambling", "gambling-self-exclusion", "martingale-strategy", "house-edge"],
+  related: [
+    "how-to-stop-gambling",
+    "gambling-self-exclusion",
+    "bankroll-calculator",
+    "responsible-gambling-tools",
+    "gambling-cooling-off-period",
+  ],
   updated: "2026-09-25",
   howTo: true,
 };

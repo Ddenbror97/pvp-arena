@@ -130,7 +130,7 @@ For a coin, only one bit is needed. Each bit of a good HMAC output is equally li
 
 ### Many outcomes
 
-For a roulette wheel with 15 slots, you need a number between 0 and 14. A naive approach takes a large number from the hash and uses the remainder after dividing by 15. The problem is that most large ranges do not divide evenly by 15, so a few slots would be very slightly more likely.
+For a roulette wheel with 33 slots, you need a number between 0 and 14. A naive approach takes a large number from the hash and uses the remainder after dividing by 15. The problem is that most large ranges do not divide evenly by 15, so a few slots would be very slightly more likely.
 
 ### Rejection sampling
 
@@ -189,7 +189,9 @@ Understanding these limits is part of using provably fair properly. See [how it 
 
 Provably fair games use both: SHA-256 to commit to a server seed before play, and HMAC-SHA256 with that seed as the key to produce each result. After the game the seed is revealed, and anyone can hash it, recompute the HMAC and map it to the outcome. Careful mapping, such as rejection sampling, keeps every outcome equally likely.
 
-You can check PVPspinArena results in your browser on the Fairness page, or with any independent tool, as long as you enter the seed as hex.`,
+You can check PVPspinArena results in your browser on the Fairness page, or with any independent tool, as long as you enter the seed as hex.
+
+More provably fair reading lives in our [Provably fair guides](/guides/topics/provably-fair).`,
     },
   ],
   faqs: [
@@ -216,10 +218,27 @@ You can check PVPspinArena results in your browser on the Fairness page, or with
   ],
   sources: [
     { label: "RFC 2104: HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
-    { label: "NIST FIPS 180-4: Secure Hash Standard", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
-    { label: "NIST FIPS 198-1: The Keyed-Hash Message Authentication Code", url: "https://csrc.nist.gov/pubs/fips/198-1/final" },
-    { label: "MDN: SubtleCrypto.sign() (HMAC)", url: "https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/sign" },
+    {
+      label: "NIST FIPS 180-4: Secure Hash Standard",
+      url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final",
+    },
+    {
+      label: "NIST FIPS 198-1: The Keyed-Hash Message Authentication Code",
+      url: "https://csrc.nist.gov/pubs/fips/198-1/final",
+    },
+    {
+      label: "MDN: SubtleCrypto.sign() (HMAC)",
+      url: "https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/sign",
+    },
   ],
-  related: ["provably-fair-casino", "provably-fair-calculator", "csgo-coinflip"],
+  related: [
+    "provably-fair-casino",
+    "provably-fair-games",
+    "commit-reveal-scheme",
+    "server-seed-client-seed",
+    "how-random-number-generators-work",
+    "nonce-and-cursor-provably-fair",
+    "sha256-explained",
+  ],
   updated: "2026-09-25",
 };

@@ -162,7 +162,7 @@ If you plan to use USDC for gaming, decide on a [gambling budget](/guides/gambli
 
 Deposits must come from your verified address, because that is how they are matched to your account. Deposits sent directly from an exchange cannot be matched automatically.
 
-Once funded, you can join a [crypto jackpot](/guides/crypto-jackpot) pot, open a [coinflip](/guides/csgo-coinflip) duel or bet on [roulette](/guides/cs2-roulette).`,
+Once funded, you can join a [crypto jackpot](/guides/crypto-jackpot) pot, open a [Coinflip](/coinflip) duel or bet on [Roulette](/roulette).`,
     },
     {
       id: "next",
@@ -180,7 +180,11 @@ Finally, write down your budget and stick to it. Buying exactly the amount you p
 
 Always check the network and address, send a small test amount first and keep a little ETH on Base for fees. Protect your accounts with an authenticator app, bookmarks and address whitelists, and never share your recovery phrase.
 
-On PVPspinArena, send USDC on Base from your verified wallet, and your balance appears in dollars after confirmations. Buy only what fits your budget.`,
+On PVPspinArena, send USDC on Base from your verified wallet, and your balance appears in dollars after confirmations. Buy only what fits your budget.
+
+More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).
+
+The same path for the other dollar token is [how to buy USDT](/guides/how-to-buy-usdt).`,
     },
   ],
   faqs: [
@@ -207,11 +211,24 @@ On PVPspinArena, send USDC on Base from your verified wallet, and your balance a
   ],
   sources: [
     { label: "Circle: USDC", url: "https://www.circle.com/usdc" },
-    { label: "Circle: USDC contract addresses", url: "https://developers.circle.com/stablecoins/usdc-contract-addresses" },
-    { label: "Base documentation: network information", url: "https://docs.base.org/chain/network-information" },
+    {
+      label: "Circle: USDC contract addresses",
+      url: "https://developers.circle.com/stablecoins/usdc-contract-addresses",
+    },
+    {
+      label: "Base documentation: network information",
+      url: "https://docs.base.org/chain/network-information",
+    },
     { label: "MetaMask Help Center", url: "https://support.metamask.io/" },
   ],
-  related: ["base-network", "usdc-casino", "add-base-network-metamask", "metamask-casino"],
+  related: [
+    "usdc-casino",
+    "buy-crypto-with-card",
+    "how-to-swap-tokens",
+    "coinbase-to-metamask-transfer",
+    "add-base-network-metamask",
+    "how-to-buy-usdt",
+  ],
   updated: "2026-09-25",
   howTo: true,
 };

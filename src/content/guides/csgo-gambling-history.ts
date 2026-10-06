@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "csgo-gambling-history",
   cluster: "CS:GO heritage",
   keyword: "csgo lotto scandal",
-  secondary: ["csgo gambling history", "skin gambling", "valve gambling crackdown", "csgo skin betting"],
+  secondary: [
+    "csgo gambling history",
+    "skin gambling",
+    "valve gambling crackdown",
+    "csgo skin betting",
+  ],
   title: "CSGO Lotto Scandal and the History of Skin Gambling",
   description:
     "The CSGO Lotto scandal and the rise and fall of skin gambling: how skins became currency, what went wrong in 2016, and what it taught today's PvP sites.",
@@ -184,7 +189,13 @@ The formats themselves, a shared pot, a two-player duel, a colour wheel, remain 
 
 Valve's crackdown, lawsuits, regulators and an FTC settlement ended the easy era. The lessons were clear: disclose relationships, keep children out, prove results and keep money clear.
 
-The player-versus-player formats survived. Today's crypto PvP sites can offer the same games with exact stakes and verifiable outcomes, as long as they take those lessons seriously.`,
+The player-versus-player formats survived. Today's crypto PvP sites can offer the same games with exact stakes and verifiable outcomes, as long as they take those lessons seriously.
+
+More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).
+
+The public fight over those skin casinos is the [Valve gambling lawsuit](/guides/valve-gambling-lawsuit) period: bots, undisclosed ownership and an audience that included minors. It is history, not a template.
+
+Skin sites are a late chapter; the longer arc is [history of gambling](/guides/history-of-gambling).`,
     },
   ],
   faqs: [
@@ -210,11 +221,29 @@ The player-versus-player formats survived. Today's crypto PvP sites can offer th
     },
   ],
   sources: [
-    { label: "FTC: CSGO Lotto owners settle charges (2017)", url: "https://www.ftc.gov/news-events/news/press-releases/2017/09/csgo-lotto-owners-settle-ftcs-first-ever-complaint-against-individual-social-media-influencers" },
-    { label: "Valve statement on CS:GO gambling sites (2016)", url: "https://blog.counter-strike.net/index.php/2016/07/15109/" },
+    {
+      label: "FTC: CSGO Lotto owners settle charges (2017)",
+      url: "https://www.ftc.gov/news-events/news/press-releases/2017/09/csgo-lotto-owners-settle-ftcs-first-ever-complaint-against-individual-social-media-influencers",
+    },
+    {
+      label: "Valve statement on CS:GO gambling sites (2016)",
+      url: "https://blog.counter-strike.net/index.php/2016/07/15109/",
+    },
     { label: "Wikipedia: Skin gambling", url: "https://en.wikipedia.org/wiki/Skin_gambling" },
-    { label: "Counter-Strike: Arms Deal update (2013)", url: "https://blog.counter-strike.net/index.php/2013/08/7425/" },
+    {
+      label: "Counter-Strike: Arms Deal update (2013)",
+      url: "https://blog.counter-strike.net/index.php/2013/08/7425/",
+    },
   ],
-  related: ["best-csgo-gambling-sites", "cs2-betting", "skin-gambling-vs-crypto", "csgo-jackpot", "csgo-coinflip"],
+  related: [
+    "pvp-gambling",
+    "skin-gambling-vs-crypto",
+    "csgo-jackpot",
+    "csgo-coinflip",
+    "cs2-roulette",
+    "duel-arena-gambling",
+    "osrs-gambling",
+    "history-of-gambling",
+  ],
   updated: "2026-09-25",
 };

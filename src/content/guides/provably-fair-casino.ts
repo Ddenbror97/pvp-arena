@@ -5,7 +5,13 @@ export const guide: Guide = {
   cluster: "Provably fair",
   pillar: true,
   keyword: "provably fair casino",
-  secondary: ["provably fair games", "how to check provably fair", "is provably fair legit", "what does provably fair mean", "how to choose a provably fair casino"],
+  secondary: [
+    "provably fair games",
+    "how to check provably fair",
+    "is provably fair legit",
+    "what does provably fair mean",
+    "how to choose a provably fair casino",
+  ],
   title: "Provably Fair Casino Guide: How to Check Every Result",
   description:
     "What makes a casino provably fair, how seeds, hashes and HMAC prove a result, how to check one yourself and which red flags to watch out for.",
@@ -120,7 +126,7 @@ Before the round opened, the server generated its seed and published the SHA-256
 
 You open the Fairness page, choose the Roulette tab and type "#389". The checker fetches the revealed seed and the round data, hashes the seed and confirms the hash equals the one published earlier. It then computes HMAC-SHA256 with the seed as the key, turns the output into a slot number between 0 and 14 using rejection sampling, and maps that slot onto the wheel. If it lands on the same Purple slot, the round is verified.
 
-Because the wheel has seven Purple, seven Silver and one Green slot, the [provably fair roulette guide](/guides/provably-fair-roulette) walks through the exact slot mapping.`,
+Because the wheel has 16 Purple, 16 Silver and one Green slot, the [provably fair roulette guide](/guides/provably-fair-roulette) walks through the exact slot mapping.`,
     },
     {
       id: "vs-rng",
@@ -132,7 +138,13 @@ Because the wheel has seven Purple, seven Silver and one Green slot, the [provab
       title: "Summary",
       body: `A provably fair casino gives you a way to check that every result was decided by a seed committed before you played. Look for a visible commitment, a published formula, bias-free sampling and a checker that anyone can use. Remember that fairness of the draw does not change the odds, and always gamble within a budget you set in advance.
 
-To go deeper, try the [provably fair calculator guide](/guides/provably-fair-calculator), or open the [Fairness page](/fairness) and check a real round now.`,
+To go deeper, try the [provably fair calculator guide](/guides/provably-fair-calculator), or open the [Fairness page](/fairness) and check a real round now.
+
+More provably fair reading lives in our [Provably fair guides](/guides/topics/provably-fair).
+
+The pieces of a check live on their own pages. [SHA-256](/guides/sha256-explained) is the hash. The [nonce](/guides/nonce-and-cursor-provably-fair) is which bet in the chain you are on. [Seed rotation](/guides/seed-rotation-provably-fair) is when the server secret changes. [How to verify a casino bet](/guides/verify-a-casino-bet) is the order of operations.
+
+A stronger privacy primitive some on-chain games talk about is a [zero-knowledge proof](/guides/zero-knowledge-proof-gambling).`,
     },
   ],
   faqs: [
@@ -158,9 +170,26 @@ To go deeper, try the [provably fair calculator guide](/guides/provably-fair-cal
     },
   ],
   sources: [
-    { label: "NIST FIPS 180-4 — Secure Hash Standard (SHA-256)", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
-    { label: "RFC 2104 — HMAC: Keyed-Hashing for Message Authentication", url: "https://www.rfc-editor.org/rfc/rfc2104" },
+    {
+      label: "NIST FIPS 180-4 — Secure Hash Standard (SHA-256)",
+      url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final",
+    },
+    {
+      label: "RFC 2104 — HMAC: Keyed-Hashing for Message Authentication",
+      url: "https://www.rfc-editor.org/rfc/rfc2104",
+    },
   ],
-  related: ["provably-fair-games", "commit-reveal-scheme", "server-seed-client-seed", "rng-vs-provably-fair", "provably-fair-calculator"],
+  related: [
+    "provably-fair-games",
+    "commit-reveal-scheme",
+    "server-seed-client-seed",
+    "hmac-sha256-provably-fair",
+    "provably-fair-roulette",
+    "rng-vs-provably-fair",
+    "verify-a-casino-bet",
+    "sha256-explained",
+    "casino-fairness-audits",
+    "zero-knowledge-proof-gambling",
+  ],
   updated: "2026-09-25",
 };

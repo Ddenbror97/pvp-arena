@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "commit-reveal-scheme",
   cluster: "Provably fair",
   keyword: "commit reveal scheme",
-  secondary: ["commitment scheme", "hash commitment", "commit reveal cryptography", "sealed envelope proof"],
+  secondary: [
+    "commitment scheme",
+    "hash commitment",
+    "commit reveal cryptography",
+    "sealed envelope proof",
+  ],
   title: "Commit Reveal Scheme: The Idea Behind Provably Fair",
   description:
     "What a commit reveal scheme is, why hiding and binding matter, how hash commitments work, and how games, auctions and blockchains use them to prove fairness.",
@@ -180,7 +185,7 @@ First check you entered the seed as hex and copied it fully. If it still does no
 - **Reveal.** The seed is published when the round settles.
 - **Verification.** Any round can be checked in your browser.
 
-Because every round has its own seed, results in one round reveal nothing about the next. And because the commitment exists before any stakes are known, the site could not choose a seed to favour anyone. For the game rules, see our guides to [crypto jackpot](/guides/crypto-jackpot), [coinflip](/guides/csgo-coinflip) and [roulette](/guides/provably-fair-roulette).`,
+Because every round has its own seed, results in one round reveal nothing about the next. And because the commitment exists before any stakes are known, the site could not choose a seed to favour anyone. For the game rules, see our guides to [crypto jackpot](/guides/crypto-jackpot), [coinflip](/guides/csgo-coinflip) and [provably fair roulette](/guides/provably-fair-roulette).`,
     },
     {
       id: "next",
@@ -194,7 +199,11 @@ Because every round has its own seed, results in one round reveal nothing about 
 
 The idea is used in auctions, voting, blockchain randomness and, most visibly for players, in provably fair games. There, the site commits to a seed before play, computes results from it and reveals it afterwards. The main pitfalls are guessable secrets and commitments published too late.
 
-On PVPspinArena every round commits a 32-byte seed with SHA-256 before entries open, and you can verify any settled round in your browser.`,
+On PVPspinArena every round commits a 32-byte seed with SHA-256 before entries open, and you can verify any settled round in your browser.
+
+More provably fair reading lives in our [Provably fair guides](/guides/topics/provably-fair).
+
+Commit-reveal hides a value until reveal; a [zero-knowledge proof](/guides/zero-knowledge-proof-gambling) can prove a fact without revealing the value at all.`,
     },
   ],
   faqs: [
@@ -220,10 +229,25 @@ On PVPspinArena every round commits a 32-byte seed with SHA-256 before entries o
     },
   ],
   sources: [
-    { label: "Wikipedia: Commitment scheme", url: "https://en.wikipedia.org/wiki/Commitment_scheme" },
-    { label: "NIST FIPS 180-4: Secure Hash Standard", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
-    { label: "Ethereum.org: block proposal and RANDAO", url: "https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/block-proposal/" },
+    {
+      label: "Wikipedia: Commitment scheme",
+      url: "https://en.wikipedia.org/wiki/Commitment_scheme",
+    },
+    {
+      label: "NIST FIPS 180-4: Secure Hash Standard",
+      url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final",
+    },
+    {
+      label: "Ethereum.org: block proposal and RANDAO",
+      url: "https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/block-proposal/",
+    },
   ],
-  related: ["provably-fair-games", "provably-fair-casino", "server-seed-client-seed", "hmac-sha256-provably-fair"],
+  related: [
+    "provably-fair-casino",
+    "server-seed-client-seed",
+    "hmac-sha256-provably-fair",
+    "provably-fair-games",
+    "zero-knowledge-proof-gambling",
+  ],
   updated: "2026-09-25",
 };

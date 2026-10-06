@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "coin-flip-odds",
   cluster: "Games & odds",
   keyword: "coin flip odds",
-  secondary: ["coin flip probability", "odds of flipping heads", "coin flip streak odds", "is a coin flip 50/50"],
+  secondary: [
+    "coin flip probability",
+    "odds of flipping heads",
+    "coin flip streak odds",
+    "is a coin flip 50/50",
+  ],
   title: "Coin Flip Odds: Probability, Streaks and Real Coins",
   description:
     "Coin flip odds explained: why each flip is 50/50, the real chance of streaks, what research says about physical coins, and how online coinflip odds work.",
@@ -177,7 +182,9 @@ Even with zero expected value, results swing. After 100 flips at $10 each, a typ
 
 ### Martingale does not help
 
-Doubling your stake after each loss aims to recover all losses with one win. It works until you hit a long losing streak, which the table above shows is common. Seven losses in a row, a 1 in 128 event for each attempt, turns a $1 starting stake into a $128 required bet. Our upcoming [Martingale guide](/guides/martingale-strategy) covers this in detail.`,
+Doubling your stake after each loss aims to recover all losses with one win. It works until you hit a long losing streak, which the table above shows is common. Seven losses in a row, a 1 in 128 event for each attempt, turns a $1 starting stake into a $128 required bet. Our upcoming [Martingale guide](/guides/martingale-strategy) covers this in detail.
+
+A draw with millions of tickets is the same count at a different scale. The [odds of winning the lottery](/guides/odds-of-winning-the-lottery) walk through that arithmetic.`,
     },
     {
       id: "next",
@@ -191,7 +198,11 @@ Doubling your stake after each loss aims to recover all losses with one win. It 
 
 Real coins have a small bias towards their starting side, about 50.8% in a large 2023 study. Digital coinflips can be exactly 50/50: PVPspinArena uses one bit of an HMAC-SHA256 output from a seed committed before the game.
 
-In PvP coinflip betting, the fee is the only thing that moves expected value away from zero. No side, timing or doubling system changes the odds, so play with a fixed budget.`,
+In PvP coinflip betting, the fee is the only thing that moves expected value away from zero. No side, timing or doubling system changes the odds, so play with a fixed budget.
+
+More games & odds reading lives in our [Games & odds guides](/guides/topics/games-and-odds).
+
+The maths is the same when the stake is real. [Coin flip for money](/guides/coin-flip-for-money) is the wager. An [online coin flip game](/guides/online-coin-flip-game) is the screen that takes it.`,
     },
   ],
   faqs: [
@@ -217,11 +228,32 @@ In PvP coinflip betting, the fee is the only thing that moves expected value awa
     },
   ],
   sources: [
-    { label: "Bartoš et al. (2023): Fair coins tend to land on the same side they started", url: "https://arxiv.org/abs/2310.04153" },
-    { label: "Diaconis, Holmes and Montgomery (2007): Dynamical bias in the coin toss", url: "https://doi.org/10.1137/S0036144504446436" },
-    { label: "Wikipedia: Gambler's fallacy", url: "https://en.wikipedia.org/wiki/Gambler%27s_fallacy" },
-    { label: "Wikipedia: Binomial distribution", url: "https://en.wikipedia.org/wiki/Binomial_distribution" },
+    {
+      label: "Bartoš et al. (2023): Fair coins tend to land on the same side they started",
+      url: "https://arxiv.org/abs/2310.04153",
+    },
+    {
+      label: "Diaconis, Holmes and Montgomery (2007): Dynamical bias in the coin toss",
+      url: "https://doi.org/10.1137/S0036144504446436",
+    },
+    {
+      label: "Wikipedia: Gambler's fallacy",
+      url: "https://en.wikipedia.org/wiki/Gambler%27s_fallacy",
+    },
+    {
+      label: "Wikipedia: Binomial distribution",
+      url: "https://en.wikipedia.org/wiki/Binomial_distribution",
+    },
   ],
-  related: ["csgo-coinflip-sites", "csgo-coinflip", "house-edge", "martingale-strategy", "hmac-sha256-provably-fair"],
+  related: [
+    "crypto-jackpot",
+    "crypto-roulette",
+    "roulette-odds-chart",
+    "roulette-colors",
+    "how-to-win-at-roulette",
+    "coin-flip-for-money",
+    "online-coin-flip-game",
+    "rock-paper-scissors-for-money",
+  ],
   updated: "2026-09-25",
 };

@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "rng-vs-provably-fair",
   cluster: "Provably fair",
   keyword: "rng casino",
-  secondary: ["rng vs provably fair", "what is rng in casino", "casino random number generator", "certified rng"],
+  secondary: [
+    "rng vs provably fair",
+    "what is rng in casino",
+    "casino random number generator",
+    "certified rng",
+  ],
   title: "RNG Casino vs Provably Fair: Which Can You Trust?",
   description:
     "How an RNG casino generates results, how certified RNG audits work, how provably fair differs, and which model lets you verify each bet yourself.",
@@ -152,7 +157,7 @@ For player-vs-player games, the server seed is committed before the round, and t
 
 ### Roulette
 
-Each [Roulette](/roulette) round commits a seed hash before betting opens. After the spin, the seed is revealed, and the result maps to one of 15 slots using rejection sampling so each slot is equally likely.
+Each [Roulette](/roulette) round commits a seed hash before betting opens. After the spin, the seed is revealed, and the result maps to one of 33 slots using rejection sampling so each slot is equally likely.
 
 ### Server-authoritative
 
@@ -217,7 +222,9 @@ Provably fair does not replace licensing, consumer protection or complaint proce
       body: `- **"Provably fair means I will win more."** No. It proves results were not changed; the odds and edge stay the same.
 - **"Certified RNG means rigging is impossible."** It makes rigging unlikely at licensed sites, but you still cannot check a specific result.
 - **"A long losing streak proves the RNG is broken."** Streaks are normal in random results. Check the maths and, where possible, verify the rounds instead of relying on a feeling.
-- **"The verifier on the site is enough."** It is useful, but an independent check is stronger because it does not depend on the site's own code.`,
+- **"The verifier on the site is enough."** It is useful, but an independent check is stronger because it does not depend on the site's own code.
+
+More provably fair reading lives in our [Provably fair guides](/guides/topics/provably-fair).`,
     },
   ],
   faqs: [
@@ -243,10 +250,22 @@ Provably fair does not replace licensing, consumer protection or complaint proce
     },
   ],
   sources: [
-    { label: "NIST SP 800-90A: Random number generation", url: "https://csrc.nist.gov/publications/detail/sp/800-90a/rev-1/final" },
-    { label: "NIST: Secure Hash Standard (FIPS 180-4)", url: "https://csrc.nist.gov/publications/detail/fips/180/4/final" },
+    {
+      label: "NIST SP 800-90A: Random number generation",
+      url: "https://csrc.nist.gov/publications/detail/sp/800-90a/rev-1/final",
+    },
+    {
+      label: "NIST: Secure Hash Standard (FIPS 180-4)",
+      url: "https://csrc.nist.gov/publications/detail/fips/180/4/final",
+    },
     { label: "RFC 2104: HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
   ],
-  related: ["provably-fair-games", "provably-fair-casino", "commit-reveal-scheme", "are-online-casinos-rigged", "server-seed-client-seed"],
+  related: [
+    "provably-fair-casino",
+    "how-random-number-generators-work",
+    "hmac-sha256-provably-fair",
+    "provably-fair-calculator",
+    "server-seed-client-seed",
+  ],
   updated: "2026-09-25",
 };

@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "martingale-strategy",
   cluster: "Games & odds",
   keyword: "martingale strategy",
-  secondary: ["martingale betting system", "martingale roulette", "does martingale work", "reverse martingale"],
+  secondary: [
+    "martingale betting system",
+    "martingale roulette",
+    "does martingale work",
+    "reverse martingale",
+  ],
   title: "Martingale Strategy: Why Doubling Bets Fails Long-Term",
   description:
     "How the martingale strategy works, roulette and coinflip examples, losing streak maths, table limits, variants and why it cannot beat the edge.",
@@ -15,7 +20,7 @@ export const guide: Guide = {
     "Martingale doubles the stake after each loss and resets after a win.",
     "After 10 losses in a row, a $1 starting bet grows to $1,024.",
     "A system that changes bet size cannot change the house edge of the game.",
-    "On a 46.67% chance bet, 10 losses in a row happen about once in 500 sequences.",
+    "On a 48.48% chance bet, 10 losses in a row happen about once in 500 sequences.",
     "Martingale produces many small wins and rare, very large losses.",
   ],
   sections: [
@@ -64,9 +69,9 @@ The required stake doubles each time. To survive n losses in a row you need a ba
       title: "How likely are long losing streaks?",
       body: `Losing streaks feel rare, but they are a normal part of random results. The probability of losing n bets in a row is (1 − p)^n, where p is the chance of winning one bet.
 
-### On a 46.67% bet (Purple or Silver on PVPspinArena Roulette)
+### On a 48.48% bet (Purple or Silver on PVPspinArena Roulette)
 
-The chance of losing one bet is 8/15, about 53.3%.
+The chance of losing one bet is 17/33, about 53.3%.
 
 - 5 losses in a row: about 4.3%, roughly 1 in 23.
 - 7 losses in a row: about 1.2%, roughly 1 in 81.
@@ -74,7 +79,7 @@ The chance of losing one bet is 8/15, about 53.3%.
 
 ### Over a session
 
-Those numbers apply to one sequence. Over hundreds of bets, you get many chances to hit a long streak. In 200 bets on a 46.67% chance, the probability of seeing at least one run of 7 losses is well over 50%.
+Those numbers apply to one sequence. Over hundreds of bets, you get many chances to hit a long streak. In 200 bets on a 48.48% chance, the probability of seeing at least one run of 7 losses is well over 50%.
 
 ### Why the gambler's fallacy makes it worse
 
@@ -87,7 +92,7 @@ After five losses, many players feel a win is "due". It is not. Each round is in
 
 ### The expected value of a martingale session
 
-On a bet with a 6.67% edge, every $1 wagered returns about $0.933 on average. Martingale increases your total amount wagered, since losing streaks push stakes up, so your expected loss actually grows compared with flat betting.
+On Purple or Silver, every $1 wagered returns about $0.970 before the win fee and about $0.921 after it. Martingale increases your total amount wagered, since losing streaks push stakes up, so your expected loss actually grows compared with flat betting.
 
 ### The shape of the results
 
@@ -117,7 +122,7 @@ Most games cap the size of a single bet. If the minimum is $1 and the maximum is
 
 ### Combined effect
 
-With a $1 start, a cap of $256 and a bankroll of $511, one run of 9 losses costs you $511, while each successful sequence wins $1. You would need about 511 successful sequences just to break even after one bad streak, and the streak comes on average far sooner than that on a 46.67% bet.
+With a $1 start, a cap of $256 and a bankroll of $511, one run of 9 losses costs you $511, while each successful sequence wins $1. You would need about 511 successful sequences just to break even after one bad streak, and the streak comes on average far sooner than that on a 48.48% bet.
 
 ### Withdrawal and daily limits
 
@@ -138,11 +143,11 @@ Red or black wins 18/38, about 47.37%, with a 5.26% edge. The extra green pocket
 
 ### PVPspinArena coloured wheel
 
-Purple or Silver wins 7/15, about 46.67%, pays 2x, with a 6.67% edge. Rounds are fast and run continuously, which means a martingale sequence can escalate within minutes.
+Purple or Silver wins 16/33, about 48.48%, pays 2x, with about a 7.88% Purple or Silver edge after the win fee. Rounds are fast and run continuously, which means a martingale sequence can escalate within minutes.
 
 ### Green martingale
 
-Some players try doubling on the 14x Green. Because Green only hits 1 in 15 times, streaks of 20 or more misses are common (about a 25% chance), so a doubling system on Green grows stakes to impossible levels. Players who chase Green usually increase stakes more slowly, but the edge is still 6.67% on every bet.
+Some players try doubling on the 14x Green. Because Green only hits 1 in 33 times, streaks of 20 or more misses are common (about a 25% chance), so a doubling system on Green grows stakes to impossible levels. Players who chase Green usually increase stakes more slowly, but the edge is still about 7.88% on Purple or Silver and about 59.70% on Green after the 5% win fee.
 
 For the full details of the wheel, see our [crypto roulette guide](/guides/crypto-roulette). You can watch rounds on the [Roulette page](/roulette) without betting.`,
     },
@@ -218,7 +223,15 @@ These figures are rounded estimates for illustration and assume every round is i
 
 ### Warning signs
 
-Doubling after losses is close to chasing losses, one of the most common signs of problem gambling. If you find yourself raising bets to win back money, take a break. Our [gambling budget guide](/guides/gambling-budget) explains how to set limits, and the [responsible gambling page](/responsible-gambling) lists where to get help.`,
+Doubling after losses is close to chasing losses, one of the most common signs of problem gambling. If you find yourself raising bets to win back money, take a break. Our [gambling budget guide](/guides/gambling-budget) explains how to set limits, and the [responsible gambling page](/responsible-gambling) lists where to get help.
+
+More games & odds reading lives in our [Games & odds guides](/guides/topics/games-and-odds).
+
+The sequence has a worksheet. The [martingale calculator](/guides/martingale-calculator) shows the stake after a run of losses, which is the part the system hides.
+
+Another negative progression, built from a written line, is the [Labouchere system](/guides/labouchere-system).
+
+The boring alternative that does not grow the stake is [flat betting](/guides/flat-betting).`,
     },
   ],
   faqs: [
@@ -244,9 +257,23 @@ Doubling after losses is close to chasing losses, one of the most common signs o
     },
   ],
   sources: [
-    { label: "Wizard of Odds: Martingale betting system", url: "https://wizardofodds.com/gambling/betting-systems/martingale/" },
-    { label: "Encyclopaedia Britannica: Martingale (probability)", url: "https://www.britannica.com/science/martingale" },
+    {
+      label: "Wizard of Odds: Martingale betting system",
+      url: "https://wizardofodds.com/gambling/betting-systems/martingale/",
+    },
+    {
+      label: "Encyclopaedia Britannica: Martingale (probability)",
+      url: "https://www.britannica.com/science/martingale",
+    },
   ],
-  related: ["crash-gambling", "house-edge", "gamblers-fallacy", "how-to-win-at-roulette", "roulette-colors"],
+  related: [
+    "crypto-jackpot",
+    "martingale-calculator",
+    "paroli-system",
+    "dalembert-strategy",
+    "fibonacci-betting-system",
+    "labouchere-system",
+    "flat-betting",
+  ],
   updated: "2026-09-25",
 };

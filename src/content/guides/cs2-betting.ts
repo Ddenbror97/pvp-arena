@@ -255,7 +255,9 @@ Our [crypto casino withdrawals guide](/guides/crypto-casino-withdrawals) explain
 - Withdrawal times, limits and fees.
 - Age and identity checks, which a legitimate site should have.
 - Responsible gambling tools such as deposit limits and self-exclusion.
-- Independent reviews and complaint history.`,
+- Independent reviews and complaint history.
+
+More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).`,
     },
   ],
   faqs: [
@@ -287,8 +289,17 @@ Our [crypto casino withdrawals guide](/guides/crypto-casino-withdrawals) explain
   sources: [
     { label: "Esports Integrity Commission (ESIC)", url: "https://esic.gg/" },
     { label: "Counter-Strike 2 official site", url: "https://www.counter-strike.net/" },
-    { label: "Steam Subscriber Agreement", url: "https://store.steampowered.com/subscriber_agreement/" },
+    {
+      label: "Steam Subscriber Agreement",
+      url: "https://store.steampowered.com/subscriber_agreement/",
+    },
   ],
-  related: ["best-csgo-gambling-sites", "skin-gambling-vs-crypto", "cs2-roulette", "pvp-gambling", "gambling-budget"],
+  related: [
+    "pvp-gambling",
+    "best-csgo-gambling-sites",
+    "csgo-coinflip-sites",
+    "csgo-case-battle-sites",
+    "esports-betting",
+  ],
   updated: "2026-09-25",
 };

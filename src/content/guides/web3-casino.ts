@@ -200,7 +200,9 @@ Start with a small deposit and a small withdrawal to test the full cycle before 
 
 The benefits are transparency and control. The risks include custody, smart contract bugs, phishing, network mistakes and unclear regulation. Check legality, network support, fairness, fees and withdrawal rules before depositing, and start small.
 
-PVPspinArena is a hybrid web3 casino focused on PvP games, with USDC and ETH on Base and provably fair rounds you can verify yourself.`,
+PVPspinArena is a hybrid web3 casino focused on PvP games, with USDC and ETH on Base and provably fair rounds you can verify yourself.
+
+More foundations reading lives in our [Foundations guides](/guides/topics/foundations).`,
     },
   ],
   faqs: [
@@ -231,6 +233,17 @@ PVPspinArena is a hybrid web3 casino focused on PvP games, with USDC and ETH on 
     { label: "Base documentation", url: "https://docs.base.org/" },
     { label: "Chainlink: Verifiable Random Function", url: "https://docs.chain.link/vrf" },
   ],
-  related: ["best-crypto-gambling-sites", "what-is-a-crypto-casino", "metamask-casino", "crypto-wallet-for-gambling", "pvp-gambling"],
+  related: [
+    "what-is-a-crypto-casino",
+    "casino-terminology",
+    "pvp-gambling",
+    "are-online-casinos-rigged",
+    "best-crypto-gambling-sites",
+    "smart-contract-casino",
+    "decentralized-casino-explained",
+    "chainlink-vrf-gambling",
+    "crypto-prediction-markets",
+    "polymarket-alternatives",
+  ],
   updated: "2026-09-25",
 };

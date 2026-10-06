@@ -1,0 +1,72 @@
+import type { Guide } from "./types";
+
+export const guide: Guide = {
+  slug: "what-is-a-crypto-wallet-address",
+  cluster: "Crypto payments",
+  keyword: "what is a crypto wallet address",
+  secondary: ["public wallet address", "crypto receive address"],
+  title: "What Is a Crypto Wallet Address? Formats to Check",
+  h1: "What Is a Crypto Wallet Address? Formats to Check",
+  description:
+    "A crypto wallet address is the public destination for a transfer. Learn how formats differ by chain and how to check one before you send.",
+  answer:
+    "What is a crypto wallet address? It is the public string you give someone so they can send coins to you. It is not a password, not a recovery phrase, and not a private key. The chain stores balances against addresses. Your wallet software knows which addresses belong to your keys and can sign a spend from them. Anyone can look an address up on a block explorer and see its history. That publicity is normal. It is also why you should not assume an address is anonymous just because it does not contain your legal name.\n\nYou can publish a receive address. You cannot publish the secret that controls it. The rest of this page is about telling those strings apart, noticing when a chain uses a different format, and checking the destination before money moves. The act of sending is covered in [how to send crypto](/guides/how-to-send-crypto). This page stops at the identifier itself.",
+  facts: [],
+  sections: [
+    {
+      id: "a-public-destination-not-a-key",
+      title: "A public destination, not a key",
+      body: 'An address is derived from a public key, and the public key is derived from a private key, which a wallet can rebuild from the recovery phrase. You do not need the math to use one safely. You need the direction of the risk. Money sent to the address can be spent only with the private key. Money is not "inside" the address in the way cash sits in an envelope. The ledger records that this address may spend these outputs, or that this account holds this token balance. The wallet is the tool that holds the key and shows you the address.\n\nSharing the address does not let a stranger drain you. Asking you to "verify" the wallet by typing the phrase is a drain. Those are different requests, and scammers blur them on purpose. A casino, an exchange, and a friend who owes you money all need an address. None of them need the phrase. If a form has a field for twelve or twenty-four words, you are not on an address form.\n\nAddresses are not friendly names. They are long so that guessing one is not a practical way to hit your wallet. They are also long so that typos are common. A single wrong character usually produces a different valid-looking string, or a string the wallet rejects if a checksum is present. Do not hand-type an address from memory. Copy it, then verify it on a screen you trust, especially when the amount matters.\n\nPrivacy is limited even when the address has no name on it. Anyone you pay can see that address, and anyone who looks at the explorer can follow later transfers. Reusing one address for salary, savings, and a gambling site ties those activities together for anyone who already knows one of them. That is not a reason to chase a fresh anonymous identity for its own sake. It is a reason to know that "no name on the string" is not the same as "nobody can see the flow."',
+    },
+    {
+      id: "how-an-address-is-formed",
+      title: "How an address is formed",
+      body: 'Wallet software follows a derivation recipe. From one master secret it can produce a tree of keys, and from each key an address. The recipe includes a path that says which account and which chain you mean. Change the path and you get a different address, even though the phrase is the same. This is why a hardware device and a phone app can disagree after an "import" if they are not using the same path. The coins are not missing. The app is looking at a different branch. Restore with the official app for that wallet, or with a tool that lets you select the path you actually used.\n\nOn account-style networks, the address you see is the account. You reuse it. Tokens and the chain\'s native coin can share that one account address, which is convenient and dangerous. Convenient, because one string receives several assets. Dangerous, because the asset and the network are not encoded in the address text alone. An Ethereum-style address does not, by itself, tell you whether the sender should use Ethereum, a layer 2, or another chain that copied the same address format. The cashier or the sender\'s withdrawal page has to name the network. The address will not save you if that choice is wrong.\n\nOn Bitcoin-style networks, wallets often show a new receive address for each payment. Older addresses from the same wallet still belong to you. Sending to last month\'s address is fine if you control the wallet. Sending to an address a stranger wants you to "update" to, because of an email, is not fine. The wallet, not the email, is the list of addresses you control.\n\nContract addresses deserve a separate glance. A token is often a contract, and a casino or an exchange may also use a contract as a deposit target. The address string can look like any other account on that chain. What happens when you send there depends on the contract code, not on the shape of the string. Send the asset the receiver asked for. A random token "airdrop" that appears under your address is not a reason to interact with a contract you did not seek out.',
+    },
+    {
+      id: "formats-change-with-the-chain",
+      title: "Formats change with the chain",
+      body: "There is no single global format. An Ethereum-style address is hexadecimal, usually prefixed with 0x, and it refers to a 20-byte account. Bitcoin addresses you will meet in wallets are often bech32 strings that start with bc1, or older formats that start with 1 or 3. TRON addresses are commonly base58 and start with T. Other chains have their own alphabets and prefixes. If the string does not match the receive screen for that network, stop. Do not test a full balance.\n\nChecksums catch some typos. Ethereum addresses can use mixed case, under a convention called EIP-55, so that a wrong character is more likely to be rejected by a careful wallet. Lowercase-only addresses still exist and can be valid. A wallet that warns about a bad checksum is doing you a favor. Read the warning. A wallet that refuses a Bitcoin address with a broken checksum is also doing you a favor. Overriding those warnings because you are in a hurry is how typos become donations to a random account that nobody controls, or to an attacker who generated a lookalike.\n\nQR codes are only as honest as the screen that rendered them. Scan a code from the receiver's own app if you can. If you must use a code in a chat image, decode it and compare the address to a second channel, or compare it to a previous payment you already trust. Malware on a computer can swap the address sitting on the clipboard after you copy it. The habit that helps is to read the first and last several characters after pasting, and to read the whole string when the amount is large. A hardware wallet screen, when you have one, is the display to trust for that check.\n\nLookalike addresses are a known nuisance. An attacker sends a tiny transfer from an address that matches the first and last characters of one you use, hoping you will copy their address from your history later. Do not pick a payee from transaction history when you are rushing. Copy the address from the invoice, the cashier, or the person, at the moment you send. History is a record. It is not an address book you can trust blindly.",
+    },
+    {
+      id: "memos-tags-and-other-extra-fields",
+      title: "Memos, tags, and other extra fields",
+      body: 'Some transfers need more than an address. Certain networks attach a memo, destination tag, or payment id because exchanges deposit thousands of customers into one address and use the extra field to decide who to credit. If the withdrawal form or the deposit page shows that field, it is part of the payment. Leaving it blank can put the coins in a pool the receiver must sort by hand, or not at all. Copy the tag as carefully as the address. A wrong tag is a wrong delivery even when the address is perfect.\n\nComments you type in your own wallet, such as "rent" or "Alice," are not memos the chain must understand. Know which box is a personal note and which box is required by the protocol or the exchange. The label in your app does not travel with the coins unless the receiver asked for an on-chain memo.\n\nCase and spaces matter in the boring sense. Do not add a space, a line break, or a word like "address:" when you paste. Do not wrap the string in quotes. Most wallets trim a little whitespace. Do not count on that. Paste into the address field and nowhere else.\n\nIf you control several accounts, name them in the wallet so you do not pay the savings account when you meant to pay the spending account. The chain will not notice the nickname. It will follow the string.',
+    },
+    {
+      id: "addresses-at-a-cashier",
+      title: "Addresses at a cashier",
+      body: 'A crypto casino cashier is a set of instructions: asset, network, address, and sometimes a tag or a minimum. The address is only one line of that set. [Crypto casino payment methods](/guides/crypto-casino-payment-methods) compares how sites take payment. Use that page for the menu of methods. Use this page to remember that a copied string is not a method by itself.\n\nRead the address from the cashier after you have selected the asset and the network, not from an old screenshot and not from a direct-message "updated address" sent by someone claiming to be support. Support that moves a deposit address into chat is a pattern thieves use. The cashier page you opened yourself, on a bookmark you typed, is the source. Compare the string on that page to the string in your wallet before you approve.\n\nGambling is for adults 21 and older, and only with money you can afford to lose. An address check does not make a bet favorable. It only makes it more likely the deposit arrives where you intended.\n\nPVPspinArena offers jackpot, coinflip, and roulette settled in USD. Deposit and payout wallets are separate. The address you send a deposit to and the address that sends a payout can be different strings, on purpose. Save the payout address you register, and re-read the deposit address at the time you fund the account. Do not assume they match. Do not assume a payout address you used at another site is valid here.\n\nPublic explorers will show your deposit address once it has been used. That does not reveal a private key. It does reveal amounts and timing. If that bothers you, use a spending wallet whose history you are willing to show, and keep savings on a different address that never touches the cashier.',
+    },
+    {
+      id: "checking-an-address-before-you-trust-it",
+      title: "Checking an address before you trust it",
+      body: 'Do a short routine every time the destination is new. Confirm the chain in your wallet matches the chain the receiver named. Paste the address. Compare the prefix, a run of characters in the middle, and the suffix against the original. If a checksum warning appears, stop. If the receiver uses a hardware wallet, ask them to read the address from the device, not only from a desktop window. Send a small test when the amount is large enough that a mistake would hurt, and send the rest only after the test arrives at the right place.\n\nKeep your own receive address handy in the wallet\'s receive screen, and regenerate the view from the app when you need it. A note on your desktop is fine as a convenience if you check it against the app before sharing it for a large incoming payment. The app, tied to your keys, is the authority. A text file can be edited by malware. The receive screen on a hardware device is harder to fake.\n\nIf you ever discover you published the wrong address, tell the sender immediately and give them the correct one from the app. If they have not sent yet, the fix is easy. If they have sent, you are in the world of tracing a completed transfer, which depends on whether anyone controls the address that received the coins. Hoping the string was "close enough" is not a plan. Close enough is a different account.\n\nThe rest of this subject is on the [Crypto payments guides](/guides/topics/crypto-payments). See [how to send crypto](/guides/how-to-send-crypto), [crypto casino payment methods](/guides/crypto-casino-payment-methods), [crypto wallet for gambling](/guides/crypto-wallet-for-gambling). PVPspinArena settles jackpot, coinflip, and roulette in US dollars. Read [wallet](/wallet) before you play.',
+    },
+  ],
+  faqs: [
+    {
+      q: "Is a wallet address the same as a private key?",
+      a: "No, the address is a public destination derived from a key, and sharing it lets people pay you. The private key or recovery phrase is what spends the coins, and you do not put that in a chat or on a website.",
+    },
+    {
+      q: "Why does the same wallet show different addresses?",
+      a: "One recovery phrase can derive many addresses, and each chain has its own format. Always copy the address from the account that matches the network the sender will use.",
+    },
+    {
+      q: "Can I reuse an address?",
+      a: "Yes, on account-style chains such as Ethereum you typically reuse the same address, and the history stays public. On some Bitcoin-style wallets the app offers a fresh address each time, and older ones still work if you control the keys.",
+    },
+    {
+      q: "What is a destination tag or memo?",
+      a: "Some networks and many exchange deposits require a memo or tag in addition to the address, because one address is shared by many customers. Skip the memo and the transfer can arrive in a pooled account with no automatic credit to you.",
+    },
+    {
+      q: "Does a casino deposit address stay the same forever?",
+      a: "Not always, so read the address on the cashier at the moment you send, and follow the steps in how to send crypto. Deposit and payout wallets are separate, so the address that pays you can differ from the address you deposited to.",
+    },
+  ],
+  sources: [],
+  related: ["how-to-send-crypto", "crypto-casino-payment-methods"],
+  updated: "2026-09-26",
+};

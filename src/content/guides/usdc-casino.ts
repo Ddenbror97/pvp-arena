@@ -122,7 +122,11 @@ You open [Coinflip](/coinflip), create a $2.00 game and pick a side. When someon
       title: "Summary",
       body: `A USDC casino uses a dollar-tracking stablecoin, so your balance reflects your play rather than market swings. The key to using one safely is the network: send on the exact network the site supports, from a verified wallet, and start with a small amount. Look for clear confirmation rules, honest withdrawal limits and fees shown up front.
 
-Before your first deposit, read about [choosing a crypto wallet for gaming](/guides/crypto-wallet-for-gambling) and set a [gambling budget](/guides/gambling-budget). When you are ready, the [wallet page](/wallet) shows your deposit address.`,
+Before your first deposit, read about [choosing a crypto wallet for gaming](/guides/crypto-wallet-for-gambling) and set a [gambling budget](/guides/gambling-budget). When you are ready, the [wallet page](/wallet) shows your deposit address.
+
+More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).
+
+A dollar balance can still be a different contract. [Stablecoin casinos](/guides/stablecoin-casino) is the wider set. [USDC yield](/guides/usdc-apy) is a savings product, not a gambling edge.`,
     },
   ],
   faqs: [
@@ -152,7 +156,13 @@ Before your first deposit, read about [choosing a crypto wallet for gaming](/gui
     { label: "Base — Network documentation", url: "https://docs.base.org/" },
     { label: "BaseScan — Base block explorer", url: "https://basescan.org/" },
   ],
-  related: ["best-crypto-gambling-sites", "how-to-buy-usdc", "usdc-vs-usdt-gambling", "crypto-casino-withdrawals", "metamask-casino"],
+  related: [
+    "what-is-usdc",
+    "what-is-a-stablecoin",
+    "stablecoin-casino",
+    "usdt-casino",
+    "usdc-vs-usdt-gambling",
+  ],
   updated: "2026-09-25",
   howTo: true,
 };

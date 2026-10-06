@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "skin-gambling-vs-crypto",
   cluster: "CS:GO heritage",
   keyword: "skin gambling",
-  secondary: ["cs2 skin gambling", "csgo skin gambling", "skin gambling vs crypto gambling", "skin betting"],
+  secondary: [
+    "cs2 skin gambling",
+    "csgo skin gambling",
+    "skin gambling vs crypto gambling",
+    "skin betting",
+  ],
   title: "Skin Gambling vs Crypto Gambling: What Changed",
   description:
     "What skin gambling is, how CS:GO and CS2 skin sites worked, the risks players faced, and how crypto gambling with USDC compares on value, fairness and payouts.",
@@ -176,11 +181,11 @@ Both are gambling. Both can cause harm. Both are subject to local laws that diff
 
 - **[Jackpot](/)**: players add USD to a shared pot; your chance equals your share.
 - **[Coinflip](/coinflip)**: two players stake the same amount, and one flip decides who wins both stakes.
-- **[Roulette](/roulette)**: a 15-slot wheel with 7 Purple (2x), 7 Silver (2x) and 1 Green (14x).
+- **[Roulette](/roulette)**: a 33-slot wheel with 16 Purple (2x), 16 Silver (2x) and 1 Green (14x).
 
 ### Player vs player at the core
 
-Jackpot and Coinflip are player vs player, meaning the house does not bet. Its only take is a configurable fee, which defaults to 0%. Our [PvP gambling guide](/guides/pvp-gambling) explains the model. Roulette is house-banked with a 6.67% edge.
+Jackpot and Coinflip are player vs player, meaning the house does not bet. Its only take is a configurable fee, which defaults to 0%. Our [PvP gambling guide](/guides/pvp-gambling) explains the model. Roulette is house-banked with about a 7.88% Purple or Silver edge after the win fee.
 
 ### No valuation games
 
@@ -229,7 +234,9 @@ Any gambling site you use should be adults only and should say so clearly. PVPsp
     {
       id: "today",
       title: "Skin gambling today",
-      body: `Skin gambling did not disappear after 2016. Sites for CS2 still exist, often based outside the countries that restrict them, and the formats remain much the same. Rules from Valve and regulators continue to change, so what is allowed can shift quickly. Anyone considering it should check local law, the site's licence and how deposits and withdrawals really work before trading any items.`,
+      body: `Skin gambling did not disappear after 2016. Sites for CS2 still exist, often based outside the countries that restrict them, and the formats remain much the same. Rules from Valve and regulators continue to change, so what is allowed can shift quickly. Anyone considering it should check local law, the site's licence and how deposits and withdrawals really work before trading any items.
+
+More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).`,
     },
   ],
   faqs: [
@@ -255,10 +262,24 @@ Any gambling site you use should be adults only and should say so clearly. PVPsp
     },
   ],
   sources: [
-    { label: "Steam Subscriber Agreement", url: "https://store.steampowered.com/subscriber_agreement/" },
+    {
+      label: "Steam Subscriber Agreement",
+      url: "https://store.steampowered.com/subscriber_agreement/",
+    },
     { label: "Circle: USDC overview", url: "https://www.circle.com/usdc" },
-    { label: "UK Gambling Commission: virtual currencies and skins", url: "https://www.gamblingcommission.gov.uk/" },
+    {
+      label: "UK Gambling Commission: virtual currencies and skins",
+      url: "https://www.gamblingcommission.gov.uk/",
+    },
   ],
-  related: ["best-csgo-gambling-sites", "csgo-case-opening", "cs2-betting", "csgo-gambling-history", "pvp-gambling"],
+  related: [
+    "pvp-gambling",
+    "csgo-jackpot",
+    "csgo-coinflip",
+    "cs2-roulette",
+    "csgo-gambling-history",
+    "fortnite-gambling",
+    "roblox-gambling",
+  ],
   updated: "2026-09-25",
 };

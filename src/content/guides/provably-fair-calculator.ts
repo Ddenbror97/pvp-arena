@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "provably-fair-calculator",
   cluster: "Provably fair",
   keyword: "provably fair calculator",
-  secondary: ["provably fair checker", "verify provably fair", "provably fair verifier", "server seed checker"],
+  secondary: [
+    "provably fair checker",
+    "verify provably fair",
+    "provably fair verifier",
+    "server seed checker",
+  ],
   title: "Provably Fair Calculator: How to Check Any Game Result",
   description:
     "Use a provably fair calculator to check a game result: verify the seed hash, recompute HMAC-SHA256 and map it to the outcome, with worked examples.",
@@ -194,7 +199,9 @@ Explore the rest of our guides on the [guides page](/guides), or read [how it wo
 
 On PVPspinArena you can use the built-in verifier on the Fairness page, which runs in your browser, or any independent SHA-256 and HMAC-SHA256 tool. Enter the seed as hex, copy the message exactly and use 64-bit maths for Roulette and Jackpot.
 
-Spot-checking a few games is enough to hold a site to account. A match proves fairness of the result, not solvency or payouts, so check those separately.`,
+Spot-checking a few games is enough to hold a site to account. A match proves fairness of the result, not solvency or payouts, so check those separately.
+
+More provably fair reading lives in our [Provably fair guides](/guides/topics/provably-fair).`,
     },
   ],
   faqs: [
@@ -220,12 +227,24 @@ Spot-checking a few games is enough to hold a site to account. A match proves fa
     },
   ],
   sources: [
-    { label: "MDN: SubtleCrypto.sign() (HMAC)", url: "https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/sign" },
-    { label: "MDN: SubtleCrypto.digest()", url: "https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest" },
+    {
+      label: "MDN: SubtleCrypto.sign() (HMAC)",
+      url: "https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/sign",
+    },
+    {
+      label: "MDN: SubtleCrypto.digest()",
+      url: "https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest",
+    },
     { label: "Python docs: hmac module", url: "https://docs.python.org/3/library/hmac.html" },
     { label: "RFC 2104: HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
   ],
-  related: ["provably-fair-games", "hmac-sha256-provably-fair", "provably-fair-casino", "cs2-roulette"],
+  related: [
+    "provably-fair-casino",
+    "provably-fair-roulette",
+    "hmac-sha256-provably-fair",
+    "server-seed-client-seed",
+    "commit-reveal-scheme",
+  ],
   updated: "2026-09-25",
   howTo: true,
 };

@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "crypto-roulette",
   cluster: "Games & odds",
   keyword: "crypto roulette",
-  secondary: ["bitcoin roulette", "usdc roulette", "online crypto roulette", "provably fair crypto roulette"],
+  secondary: [
+    "bitcoin roulette",
+    "usdc roulette",
+    "online crypto roulette",
+    "provably fair crypto roulette",
+  ],
   title: "Crypto Roulette: How It Works, Odds and Fair Play",
   description:
     "How crypto roulette works: wheel formats, odds and payouts, provably fair results, USDC deposits and withdrawals, and what to check before you play.",
@@ -14,8 +19,8 @@ export const guide: Guide = {
   facts: [
     "Crypto roulette settles bets in crypto, commonly USDC or other stablecoins.",
     "Provably fair roulette publishes a hash of the result seed before betting opens.",
-    "PVPspinArena's wheel has 7 Purple (2x), 7 Silver (2x) and 1 Green (14x) slot.",
-    "The house edge on PVPspinArena Roulette is 6.67% on every bet.",
+    "PVPspinArena's wheel has 16 Purple (2x), 16 Silver (2x) and 1 Green (14x) slot.",
+    "The house edge on PVPspinArena Roulette is about 7.88% on Purple or Silver and about 59.70% on Green after the 5% win fee.",
     "Stablecoins avoid the price swings of Bitcoin or ETH while you play.",
   ],
   sections: [
@@ -58,12 +63,12 @@ Because rounds run on the server's clock, the wheel keeps cycling even when nobo
       title: "Crypto roulette odds and payouts",
       body: `The odds depend on the wheel, not the currency. Here are the three formats you will meet most often.
 
-### PVPspinArena coloured wheel (15 slots)
+### PVPspinArena coloured wheel (33 slots)
 
-- Purple: 7/15 = 46.67%, pays 2x.
-- Silver: 7/15 = 46.67%, pays 2x.
-- Green: 1/15 = 6.67%, pays 14x.
-- House edge on every bet: 6.67%.
+- Purple: 16/33 = 48.48%, pays 2x.
+- Silver: 16/33 = 48.48%, pays 2x.
+- Green: 1/33 ≈ 3.03%, pays 14x.
+- Before the 5% win fee, Purple and Silver return 32/33 and Green returns 14/33.
 
 ### European roulette (37 pockets)
 
@@ -187,7 +192,7 @@ Rules on online gambling vary by country. Check what applies where you live and 
 
 ### Play sensibly
 
-Set a loss limit and a time limit before you start. Roulette is fast, and a 6.67% edge on many quick rounds adds up. Never chase losses with bigger bets. The [responsible gambling page](/responsible-gambling) lists practical steps and support options.
+Set a loss limit and a time limit before you start. Roulette is fast, and about a 7.88% Purple or Silver edge after the win fee on many quick rounds adds up. Never chase losses with bigger bets. The [responsible gambling page](/responsible-gambling) lists practical steps and support options.
 
 Betting systems like Martingale do not change the maths. Our [martingale strategy guide](/guides/martingale-strategy) explains why.`,
     },
@@ -197,7 +202,7 @@ Betting systems like Martingale do not change the maths. Our [martingale strateg
       body: `Numbers make the cost of crypto roulette easier to picture. Imagine a player with a $20 budget who bets $1 per round on Silver for 60 rounds.
 
 - Total wagered: $60, three times the starting budget, because winnings are re-bet.
-- Expected cost at a 6.67% edge: about $4.
+- Expected cost at about a 7.88% Purple or Silver edge after the win fee: about $4.
 - Expected wins: about 28 of the 60 rounds.
 
 In practice the result could easily be anywhere from a $15 loss to a small profit. That spread is variance. If the same player bet on Green instead, the average cost would be the same, but the range would be much wider: several Green hits could double the budget, and no hits at all in 60 rounds is possible (about a 1.6% chance).
@@ -211,7 +216,13 @@ The edge sets the average. Your bet size and the number of rounds set how much y
       title: "Why stablecoins suit roulette",
       body: `Many early crypto casinos used Bitcoin. That meant a player could win a round and still lose money if the price of Bitcoin fell before they withdrew. It also made it hard to know what a bet was really worth.
 
-Stablecoins solve most of this. USDC is designed to track the US dollar, so a $5 bet is a $5 bet from deposit to withdrawal. Balances are easier to track, and budgets mean what they say. Stablecoins still carry their own small risks, such as the issuer's reserves and rare short-lived price dips, which our [USDC vs USDT guide](/guides/usdc-vs-usdt-gambling) discusses.`,
+Stablecoins solve most of this. USDC is designed to track the US dollar, so a $5 bet is a $5 bet from deposit to withdrawal. Balances are easier to track, and budgets mean what they say. Stablecoins still carry their own small risks, such as the issuer's reserves and rare short-lived price dips, which our [USDC vs USDT guide](/guides/usdc-vs-usdt-gambling) discusses.
+
+More games & odds reading lives in our [Games & odds guides](/guides/topics/games-and-odds).
+
+A public hash does not pick the wheel you wanted. [Chainlink VRF](/guides/chainlink-vrf-gambling) is a different randomness product, and it is still not this site's Base roulette unless the rules say so.
+
+A branded live-roulette product with lightning multipliers is [Lightning Roulette](/guides/lightning-roulette).`,
     },
   ],
   faqs: [
@@ -225,7 +236,7 @@ Stablecoins solve most of this. USDC is designed to track the US dollar, so a $5
     },
     {
       q: "What is the house edge on crypto roulette?",
-      a: "It depends on the wheel. European roulette has 2.70%, American 5.26%, and PVPspinArena's 15-slot coloured wheel has 6.67% on every bet.",
+      a: "It depends on the wheel. European roulette has 2.70%, American 5.26%, and PVPspinArena's 33-slot coloured wheel has about 7.88% on Purple or Silver and about 59.70% on Green after the 5% win fee.",
     },
     {
       q: "How long do crypto roulette withdrawals take?",
@@ -241,6 +252,13 @@ Stablecoins solve most of this. USDC is designed to track the US dollar, so a $5
     { label: "Circle: USDC overview", url: "https://www.circle.com/usdc" },
     { label: "Wizard of Odds: Roulette", url: "https://wizardofodds.com/games/roulette/" },
   ],
-  related: ["how-to-win-at-roulette", "crash-gambling", "provably-fair-roulette", "roulette-colors", "cs2-roulette"],
+  related: [
+    "crypto-jackpot",
+    "roulette-odds-chart",
+    "roulette-colors",
+    "how-to-win-at-roulette",
+    "house-edge",
+    "lightning-roulette",
+  ],
   updated: "2026-09-25",
 };

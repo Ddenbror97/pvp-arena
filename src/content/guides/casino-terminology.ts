@@ -66,7 +66,7 @@ The moment a result is applied to balances. Winnings are credited and losing sta
       title: "Odds, payouts and probability",
       body: `### Probability
 
-The chance an outcome happens, from 0% to 100%. On a 15-slot wheel with one Green slot, the probability of Green is 1/15, about 6.67%.
+The chance an outcome happens, from 0% to 100%. On a 33-slot wheel with one Green slot, the probability of Green is 1/33, about 3.03%.
 
 ### Odds
 
@@ -144,7 +144,7 @@ A game that has been created and is waiting for an opponent or more players.
 
 ### Roulette
 
-A wheel game where players bet on which segment the wheel stops on. PVPspinArena uses a coloured wheel with 7 Purple, 7 Silver and 1 Green slot.
+A wheel game where players bet on which segment the wheel stops on. PVPspinArena uses a coloured wheel with 16 Purple, 16 Silver and 1 Green slot.
 
 ### Countdown
 
@@ -279,13 +279,17 @@ A lot of this slang comes from the CS:GO skin scene, where jackpot and coinflip 
 
 ### How to use this glossary
 
-Keep it open when you read a game's rules for the first time. If a term appears that is not here, look for a plain explanation before you bet. A trustworthy site explains its rules in clear words, and you should never have to guess how a payout works. Our [How it works](/how-it-works) page describes each PVPspinArena game step by step.`,
+Keep it open when you read a game's rules for the first time. If a term appears that is not here, look for a plain explanation before you bet. A trustworthy site explains its rules in clear words, and you should never have to guess how a payout works. Our [How it works](/how-it-works) page describes each PVPspinArena game step by step.
+
+More foundations reading lives in our [Foundations guides](/guides/topics/foundations).
+
+What those words mean at a live table, including tipping and phones, is [casino etiquette](/guides/casino-etiquette).`,
     },
   ],
   faqs: [
     {
       q: "What is the difference between odds and probability?",
-      a: "Probability is the chance an outcome happens, such as 1/15. Odds express the same chance as a ratio of losing to winning outcomes, such as 14 to 1 against.",
+      a: "Probability is the chance an outcome happens, such as 1/33. Odds express the same chance as a ratio of losing to winning outcomes, such as 14 to 1 against.",
     },
     {
       q: "What does a 2x payout mean?",
@@ -305,9 +309,19 @@ Keep it open when you read a game's rules for the first time. If a term appears 
     },
   ],
   sources: [
-    { label: "NIST: Secure Hash Standard (FIPS 180-4)", url: "https://csrc.nist.gov/publications/detail/fips/180/4/final" },
+    {
+      label: "NIST: Secure Hash Standard (FIPS 180-4)",
+      url: "https://csrc.nist.gov/publications/detail/fips/180/4/final",
+    },
     { label: "Circle: USDC overview", url: "https://www.circle.com/usdc" },
   ],
-  related: ["best-crypto-gambling-sites", "house-edge", "provably-fair-casino", "what-is-a-crypto-casino", "coin-flip-odds"],
+  related: [
+    "what-is-a-crypto-casino",
+    "pvp-gambling",
+    "web3-casino",
+    "are-online-casinos-rigged",
+    "best-crypto-gambling-sites",
+    "casino-etiquette",
+  ],
   updated: "2026-09-25",
 };

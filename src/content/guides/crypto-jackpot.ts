@@ -130,7 +130,9 @@ After settlement, anyone can open the audit page, confirm the seed matches the c
       title: "Summary",
       body: `A crypto jackpot is one shared pot, many players and one winner. Your chance equals your share, the pot is funded by players rather than the house, and the operator earns a fee that should be shown before you enter. Every draw on PVPspinArena can be checked against a seed committed before the round. Enjoy the tension of the wheel, but decide your budget first.
 
-Watch a live round on the [Jackpot page](/), or compare it with the one-on-one format in the [coin flip odds guide](/guides/coin-flip-odds).`,
+Watch a live round on the [Jackpot page](/), or compare it with the one-on-one format in the [coin flip odds guide](/guides/coin-flip-odds).
+
+More games & odds reading lives in our [Games & odds guides](/guides/topics/games-and-odds).`,
     },
   ],
   faqs: [
@@ -159,6 +161,12 @@ Watch a live round on the [Jackpot page](/), or compare it with the one-on-one f
     { label: "RFC 2104 — HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
     { label: "NIST FIPS 180-4 — SHA-256", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
   ],
-  related: ["pvp-gambling", "csgo-jackpot", "coin-flip-odds", "house-edge", "provably-fair-casino"],
+  related: [
+    "coin-flip-odds",
+    "crypto-roulette",
+    "roulette-odds-chart",
+    "roulette-colors",
+    "how-to-win-at-roulette",
+  ],
   updated: "2026-09-25",
 };

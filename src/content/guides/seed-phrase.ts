@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "seed-phrase",
   cluster: "Crypto payments",
   keyword: "seed phrase",
-  secondary: ["what is a seed phrase", "recovery phrase", "seed phrase security", "seed phrase scam"],
+  secondary: [
+    "what is a seed phrase",
+    "recovery phrase",
+    "seed phrase security",
+    "seed phrase scam",
+  ],
   title: "Seed Phrase Explained: How to Keep Your Wallet Safe",
   description:
     "What a seed phrase is, how it controls your crypto wallet, how to store it safely, the scams that target it, and why no casino or support team will ask for it.",
@@ -238,7 +243,9 @@ Hardware wallets are a good idea for larger savings. For small everyday amounts,
     {
       id: "family",
       title: "Explaining seed phrases to others",
-      body: `If you help friends or family with crypto, the single most useful thing you can teach them is this: the seed phrase is never shared, never typed into a website and never photographed. Almost every major crypto theft affecting ordinary users starts with someone giving away their phrase to a person or site that looked legitimate.`,
+      body: `If you help friends or family with crypto, the single most useful thing you can teach them is this: the seed phrase is never shared, never typed into a website and never photographed. Almost every major crypto theft affecting ordinary users starts with someone giving away their phrase to a person or site that looked legitimate.
+
+More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).`,
     },
   ],
   faqs: [
@@ -264,10 +271,25 @@ Hardware wallets are a good idea for larger savings. For small everyday amounts,
     },
   ],
   sources: [
-    { label: "BIP-39: Mnemonic code for generating deterministic keys", url: "https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki" },
+    {
+      label: "BIP-39: Mnemonic code for generating deterministic keys",
+      url: "https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki",
+    },
     { label: "MetaMask: Secret Recovery Phrase safety", url: "https://support.metamask.io/" },
-    { label: "FTC: What to know about cryptocurrency and scams", url: "https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-and-scams" },
+    {
+      label: "FTC: What to know about cryptocurrency and scams",
+      url: "https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-and-scams",
+    },
   ],
-  related: ["crypto-wallet-for-gambling", "metamask-casino", "crypto-casino-withdrawals", "add-base-network-metamask"],
+  related: [
+    "usdc-casino",
+    "crypto-wallet-for-gambling",
+    "metamask-casino",
+    "phantom-wallet-gambling",
+    "coinbase-wallet-casino",
+    "export-metamask-private-key",
+    "how-to-delete-metamask-account",
+    "metamask-scams",
+  ],
   updated: "2026-09-25",
 };

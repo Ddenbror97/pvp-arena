@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "best-crypto-gambling-sites",
   cluster: "Foundations",
   keyword: "best crypto gambling sites",
-  secondary: ["best crypto casino", "crypto casino instant withdrawal", "provably fair crypto casino", "usdc casino"],
+  secondary: [
+    "best crypto casino",
+    "crypto casino instant withdrawal",
+    "provably fair crypto casino",
+    "usdc casino",
+  ],
   title: "Best Crypto Gambling Sites: A 9-Point Checklist",
   description:
     "How to pick the best crypto gambling sites: check provable fairness, fees, USDC payments, withdrawal safety, terms and limits before you ever deposit.",
@@ -55,7 +60,7 @@ A good site states this number in plain words on the game page or the help pages
 On PVPspinArena:
 
 - **Jackpot and Coinflip** are player-vs-player. The house fee is configurable and set to 0% by default, so the pot goes to the winner.
-- **Roulette** is played against the wheel. It has 15 slots: 7 pay 2x, 7 pay 2x and 1 pays 14x. That gives a return of 14 in 15, or a house edge of about 6.67%.
+- **Roulette** is played against the wheel. It has 33 slots: 16 pay 2x, 16 pay 2x and 1 pays 14x. That gives a return of 32 in 33 on Purple or Silver and 14 in 33 on Green, or a house Purple or Silver edge of about 7.88% after the win fee.
 
 Knowing the edge does not make you win more. It tells you what the game costs so you can decide whether that price is worth it.`,
     },
@@ -145,35 +150,66 @@ Finally, try a small test. Deposit a small amount, play a few rounds, check one 
       body: `Here is the checklist applied to PVPspinArena, in one place:
 
 - **Fairness:** every round can be checked on the Fairness page.
-- **Fees:** 0% default fee on Jackpot and Coinflip; about 6.67% house edge on Roulette.
+- **Fees:** 0% default fee on Jackpot and Coinflip; a Roulette edge of about 7.88% on Purple or Silver after the win fee.
 - **Payments:** USDC on Base, balances in US dollars.
 - **Deposits:** credited automatically from your verified wallet, once per transaction.
 - **Withdrawals:** automatic, $250 daily limit, review over $25, finished only after a safe block and two providers agree.
 - **Account:** 6-digit email code sign-in, verified wallets.
 - **Game style:** mostly player-vs-player, so in Jackpot and Coinflip you play against other people, not the house. See [PvP gambling](/guides/pvp-gambling) for why that matters.
 
-If that fits what you are looking for, you can create a free account, watch a few live rounds and check the results before you decide to deposit. Start with a small amount you are happy to lose, and stop when you reach your limit.`,
+If that fits what you are looking for, you can create a free account, watch a few live rounds and check the results before you decide to deposit. Start with a small amount you are happy to lose, and stop when you reach your limit.
+
+More foundations reading lives in our [Foundations guides](/guides/topics/foundations).`,
     },
   ],
   faqs: [
-    { q: "What are the best crypto gambling sites?", a: "The best sites are the ones that pass a clear checklist: verifiable results, a stated fee or house edge, stable payments, safe and published withdrawal rules, readable terms and responsible gambling tools. Apply the checklist yourself rather than relying on ranking tables." },
-    { q: "Is the best crypto casino the one with the biggest bonus?", a: "Rarely. Large bonuses usually carry wagering requirements that make them hard to withdraw. Clear fees and fair withdrawals matter more over time." },
-    { q: "Are crypto gambling sites safe?", a: "Some are much safer than others. Verifiable results, automatic and logged withdrawals, verified wallets and clear terms are good signs. Missing fees, support-only withdrawals and pressure tactics are warning signs." },
-    { q: "Which crypto is best for gambling?", a: "Many players prefer stablecoins like USDC because the balance stays close to one dollar per coin. A cheap network such as Base keeps small deposits and withdrawals affordable." },
-    { q: "Does PVPspinArena offer instant withdrawals?", a: "Withdrawals are processed automatically, but they are marked finished only after the payment reaches a safe block and two providers agree. There is a $250 daily limit and requests over $25 are reviewed." },
+    {
+      q: "What are the best crypto gambling sites?",
+      a: "The best sites are the ones that pass a clear checklist: verifiable results, a stated fee or house edge, stable payments, safe and published withdrawal rules, readable terms and responsible gambling tools. Apply the checklist yourself rather than relying on ranking tables.",
+    },
+    {
+      q: "Is the best crypto casino the one with the biggest bonus?",
+      a: "Rarely. Large bonuses usually carry wagering requirements that make them hard to withdraw. Clear fees and fair withdrawals matter more over time.",
+    },
+    {
+      q: "Are crypto gambling sites safe?",
+      a: "Some are much safer than others. Verifiable results, automatic and logged withdrawals, verified wallets and clear terms are good signs. Missing fees, support-only withdrawals and pressure tactics are warning signs.",
+    },
+    {
+      q: "Which crypto is best for gambling?",
+      a: "Many players prefer stablecoins like USDC because the balance stays close to one dollar per coin. A cheap network such as Base keeps small deposits and withdrawals affordable.",
+    },
+    {
+      q: "Does PVPspinArena offer instant withdrawals?",
+      a: "Withdrawals are processed automatically, but they are marked finished only after the payment reaches a safe block and two providers agree. There is a $250 daily limit and requests over $25 are reviewed.",
+    },
   ],
   sources: [
     { label: "Circle — USDC overview", url: "https://www.circle.com/usdc" },
     { label: "Base — official documentation", url: "https://docs.base.org/" },
-    { label: "RFC 2104 — HMAC: Keyed-Hashing for Message Authentication", url: "https://www.rfc-editor.org/rfc/rfc2104" },
+    {
+      label: "RFC 2104 — HMAC: Keyed-Hashing for Message Authentication",
+      url: "https://www.rfc-editor.org/rfc/rfc2104",
+    },
     { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
   ],
-  related: ["provably-fair-games", "what-is-a-crypto-casino", "provably-fair-casino", "usdc-casino", "crypto-casino-withdrawals"],
+  related: [
+    "what-is-a-crypto-casino",
+    "web3-casino",
+    "are-online-casinos-rigged",
+    "casino-terminology",
+    "no-kyc-casino",
+    "stake-alternatives",
+    "roobet-alternatives",
+    "crypto-betting-app",
+    "new-crypto-casinos",
+    "are-online-casinos-safe",
+  ],
   updated: "2026-09-25",
   cta: {
     title: "Try a site you can check",
     text: "Create a free account, watch live rounds and verify any result before you deposit a cent.",
-    primary: { to: "/auth", label: "Create your free account" },
-    secondary: { to: "/fairness", label: "Check a result" },
+    primary: { to: "/auth", label: "Sign in" },
+    secondary: { to: "/fairness", label: "Fairness" },
   },
 };

@@ -173,7 +173,11 @@ If you find you are playing longer or staking more than you planned, take a brea
 
 The modern crypto version keeps the duel but fixes the weak points. Stakes are exact dollar amounts, results are committed before the game with a SHA-256 hash, and the outcome is computed with HMAC-SHA256 so anyone can verify it after the seed is revealed.
 
-The odds are 50/50 for each player, and the fee is the only cost. Play with a fixed budget, verify results when you want to, and never try to beat streaks with bigger stakes. When you are ready, open the [Coinflip lobby](/coinflip) to see live rooms.`,
+The odds are 50/50 for each player, and the fee is the only cost. Play with a fixed budget, verify results when you want to, and never try to beat streaks with bigger stakes. When you are ready, open the [Coinflip lobby](/coinflip) to see live rooms.
+
+More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).
+
+A single script is not a market. [CS:GO coinflip sites](/guides/csgo-coinflip-sites) and the wider [CS:GO gambling sites](/guides/best-csgo-gambling-sites) list are checklists, not a reason to deposit a knife.`,
     },
   ],
   faqs: [
@@ -200,9 +204,21 @@ The odds are 50/50 for each player, and the fee is the only cost. Play with a fi
   ],
   sources: [
     { label: "RFC 2104: HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
-    { label: "NIST FIPS 180-4: Secure Hash Standard", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
-    { label: "Valve statement on CS:GO gambling sites (2016)", url: "https://blog.counter-strike.net/index.php/2016/07/15109/" },
+    {
+      label: "NIST FIPS 180-4: Secure Hash Standard",
+      url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final",
+    },
+    {
+      label: "Valve statement on CS:GO gambling sites (2016)",
+      url: "https://blog.counter-strike.net/index.php/2016/07/15109/",
+    },
   ],
-  related: ["csgo-coinflip-sites", "pvp-gambling", "provably-fair-casino", "cs2-roulette"],
+  related: [
+    "pvp-gambling",
+    "cs2-roulette",
+    "csgo-gambling-history",
+    "skin-gambling-vs-crypto",
+    "csgo-jackpot",
+  ],
   updated: "2026-09-25",
 };

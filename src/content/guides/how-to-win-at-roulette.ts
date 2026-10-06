@@ -13,7 +13,7 @@ export const guide: Guide = {
     "There is no reliable way to win at roulette over the long run, because every bet has a built-in house edge and no betting system can change it. What you can do is improve your odds of leaving a session ahead: pick the wheel with the lowest edge, keep stakes small relative to your budget, play fewer spins, set a win goal and a loss limit, and verify that results are fair.",
   facts: [
     "Every standard roulette bet has a house edge: 2.70% European, 5.26% American.",
-    "PVPspinArena's 15-slot wheel has a 6.67% edge on every bet.",
+    "PVPspinArena's 33-slot wheel has about a 7.88% edge on Purple or Silver and about 59.70% on Green after the 5% win fee.",
     "Betting systems like martingale change variance, not the edge.",
     "Fewer spins mean less total wagered and a lower expected cost.",
     "Short-term wins are common; long-term profit on a fair wheel is not.",
@@ -33,7 +33,9 @@ Roulette pays winning bets slightly less than the true odds. On a European wheel
 - **Winning a session**: very possible. Many sessions end ahead.
 - **Winning over months or years**: not possible on a fair wheel, on average.
 
-The goal of this guide is to help you get the most out of roulette as entertainment: more playing time for your budget, a reasonable chance of finishing ahead on a given day, and no nasty surprises. If the words edge or variance are unfamiliar, see our [casino terminology guide](/guides/casino-terminology).`,
+The goal of this guide is to help you get the most out of roulette as entertainment: more playing time for your budget, a reasonable chance of finishing ahead on a given day, and no nasty surprises. If the words edge or variance are unfamiliar, see our [casino terminology guide](/guides/casino-terminology).
+
+The rules of a single spin, before any session plan, are [how to play roulette](/guides/how-to-play-roulette).`,
     },
     {
       id: "wheel",
@@ -46,7 +48,7 @@ The goal of this guide is to help you get the most out of roulette as entertainm
 - **European with la partage or en prison**: about 1.35% on even-money bets, when available.
 - **American (double zero)**: 5.26% edge.
 - **Triple zero wheels**: about 7.69% edge.
-- **PVPspinArena coloured wheel (7 Purple, 7 Silver, 1 Green)**: 6.67% edge.
+- **PVPspinArena coloured wheel (16 Purple, 16 Silver, 1 Green)**: about 7.88% on Purple or Silver and about 59.70% on Green after the win fee.
 
 ### What that means in money
 
@@ -54,14 +56,15 @@ On $100 of total wagers:
 
 - European: average cost $2.70.
 - American: average cost $5.26.
-- PVPspinArena's wheel: average cost $6.67.
+- PVPspinArena Purple or Silver: about $7.88 after the win fee, about $3.03 before it.
+- PVPspinArena Green: about $59.70 after the win fee.
 
 A coloured wheel trades a higher edge for simplicity and speed. Our [roulette colors guide](/guides/roulette-colors) and [crypto roulette guide](/guides/crypto-roulette) compare the formats in detail.`,
     },
     {
       id: "bet-type",
-      title: "Tip 2: Understand that bet type changes variance, not cost",
-      body: `On a single wheel, almost every bet has the same edge. What differs is how often you win and how much.
+      title: "Tip 2: Know when bet type changes the cost",
+      body: `On a classic single-zero or double-zero wheel, almost every bet has the same edge. What differs is how often you win and how much. On PVPspinArena, Purple and Silver share an edge and Green costs much more.
 
 ### Even-money bets
 
@@ -69,14 +72,14 @@ Red, black, Purple or Silver win close to half the time and pay 2x. Your balance
 
 ### Long shots
 
-Single numbers on classic wheels pay 36x; Green on PVPspinArena pays 14x. They hit rarely, and your balance swings a lot.
+Single numbers on classic wheels pay 36x and cost the same percentage as red. Green on PVPspinArena pays 14x and returns 14/33 before the win fee, so it is both rarer and more expensive.
 
 ### Which is "best"?
 
 - If you want the best chance of finishing a short session slightly ahead, even-money bets are better.
 - If you want a small chance of a big session win, long shots are better, with a much bigger chance of losing your budget.
 
-Neither is cheaper. The one exception on classic wheels is the American five-number bet (0, 00, 1, 2, 3), which has a worse edge of 7.89% and is best avoided.`,
+On a classic wheel, neither colour is cheaper. The exception is the American five-number bet (0, 00, 1, 2, 3), which has a worse edge of 7.89% and is best avoided. On this site, Purple and Silver are the cheaper colours.`,
     },
     {
       id: "systems",
@@ -91,7 +94,7 @@ Neither is cheaper. The one exception on classic wheels is the American five-num
 
 ### What they have in common
 
-Every one of these changes how much you bet and when. None change the probability of any spin or the payout. So each one produces the same average result as flat betting, with a different shape: some give many small wins and rare big losses, others the reverse.
+Every one of these changes how much you bet and when. None change the probability of any spin or the payout. So each one produces the same average result as [flat betting](/guides/flat-betting), with a different shape: some give many small wins and rare big losses, others the reverse.
 
 Our [martingale strategy guide](/guides/martingale-strategy) shows in detail how doubling up runs into bankroll and table limits.
 
@@ -118,7 +121,7 @@ Increasing stakes to win back money is chasing losses. It grows total wagered an
 
 ### An example
 
-With a $50 budget, $1 flat bets on Silver and 50 spins, you wager $50 in total. At a 6.67% edge, the expected cost is about $3.33, and you have a reasonable chance of finishing ahead. At $5 bets over the same 50 spins, you wager $250 and the expected cost rises to about $16.67.`,
+With a $50 budget, $1 flat bets on Silver and 50 spins, you wager $50 in total. At about a 7.88% Purple or Silver edge after the win fee, the expected cost is about $3.33, and you have a reasonable chance of finishing ahead. At $5 bets over the same 50 spins, you wager $250 and the expected cost rises to about $16.67.`,
     },
     {
       id: "fewer-spins",
@@ -233,9 +236,13 @@ After a loss, it can feel like the next session will make it back. It will not, 
 - **Loss limit**: stop if the balance falls to $25.
 - **Win goal**: stop if the balance reaches $55.
 
-Total wagered, if all 60 spins are played, is $30. The expected cost at a 6.67% edge is about $2. In practice, the session will often end earlier, at either the win goal or the loss limit, and many sessions finish ahead.
+Total wagered, if all 60 spins are played, is $30. The expected cost at about a 7.88% Purple or Silver edge after the win fee is about $2. In practice, the session will often end earlier, at either the win goal or the loss limit, and many sessions finish ahead.
 
-Every number here is decided before the first spin. That is the real skill in roulette: deciding in advance and sticking to it.`,
+Every number here is decided before the first spin. That is the real skill in roulette: deciding in advance and sticking to it.
+
+More games & odds reading lives in our [Games & odds guides](/guides/topics/games-and-odds).
+
+If a table offers even-money refunds, that is [French roulette](/guides/french-roulette), not a system.`,
     },
   ],
   faqs: [
@@ -262,8 +269,19 @@ Every number here is decided before the first spin. That is the real skill in ro
   ],
   sources: [
     { label: "Wizard of Odds: Roulette", url: "https://wizardofodds.com/games/roulette/" },
-    { label: "Wizard of Odds: Betting systems", url: "https://wizardofodds.com/gambling/betting-systems/" },
+    {
+      label: "Wizard of Odds: Betting systems",
+      url: "https://wizardofodds.com/gambling/betting-systems/",
+    },
   ],
-  related: ["roulette-colors", "crypto-roulette", "martingale-strategy", "gamblers-fallacy"],
+  related: [
+    "crypto-jackpot",
+    "house-edge",
+    "coin-flip-odds",
+    "crypto-roulette",
+    "roulette-odds-chart",
+    "french-roulette",
+    "flat-betting",
+  ],
   updated: "2026-09-25",
 };

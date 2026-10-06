@@ -4,18 +4,23 @@ export const guide: Guide = {
   slug: "roulette-colors",
   cluster: "Games & odds",
   keyword: "roulette colors",
-  secondary: ["roulette wheel colors", "red and black roulette", "green in roulette", "roulette color odds"],
+  secondary: [
+    "roulette wheel colors",
+    "red and black roulette",
+    "green in roulette",
+    "roulette color odds",
+  ],
   title: "Roulette Colors Explained: Red, Black, Green and Odds",
   description:
     "What roulette colors mean on classic and coloured crypto wheels, the odds and payouts of each color, why green exists, and common color betting myths.",
   h1: "Roulette colors explained: red, black, green and the odds",
   answer:
-    "Roulette colors split the wheel into groups you can bet on. On a classic wheel, 18 pockets are red, 18 are black and one (European) or two (American) are green zeros. Red and black pay 2x; green pays much more but hits rarely. The green pockets are what give the house its edge. Coloured crypto wheels, like PVPspinArena's 7 Purple, 7 Silver and 1 Green, use the same idea with fewer slots.",
+    "Roulette colors split the wheel into groups you can bet on. On a classic wheel, 18 pockets are red, 18 are black and one (European) or two (American) are green zeros. Red and black pay 2x; green pays much more but hits rarely. The green pockets are what give the house its edge. Coloured crypto wheels, like PVPspinArena's 16 Purple, 16 Silver and 1 Green, use the same idea with fewer slots.",
   facts: [
     "A European wheel has 37 pockets: 18 red, 18 black and 1 green zero.",
     "An American wheel has 38 pockets: 18 red, 18 black and 2 green (0 and 00).",
     "On a European wheel, red wins with probability 18/37, about 48.65%.",
-    "PVPspinArena's wheel has 15 slots: 7 Purple (2x), 7 Silver (2x), 1 Green (14x).",
+    "PVPspinArena's wheel has 33 slots: 16 Purple (2x), 16 Silver (2x), 1 Green (14x).",
     "Previous colors never change the probability of the next spin.",
   ],
   sections: [
@@ -36,7 +41,9 @@ The layout spreads red and black evenly so that neither color clusters in one ar
 - **American (double zero)**: 18 red, 18 black, 2 green.
 - **Some novelty wheels** add extra green or special pockets, which raises the house edge further.
 
-If you are new to casino words like pocket, payout and edge, our [casino terminology guide](/guides/casino-terminology) explains them.`,
+If you are new to casino words like pocket, payout and edge, our [casino terminology guide](/guides/casino-terminology) explains them.
+
+Where those colors sit on the felt, including the outside bets, is the [roulette table layout](/guides/roulette-table-layout).`,
     },
     {
       id: "green",
@@ -76,11 +83,11 @@ For the full maths behind these numbers, read our [house edge guide](/guides/hou
 
 ### PVPspinArena coloured wheel
 
-- Purple: 7/15 = 46.67%, pays 2x, house edge 6.67%.
-- Silver: 7/15 = 46.67%, pays 2x, house edge 6.67%.
-- Green: 1/15 = 6.67%, pays 14x, house edge 6.67%.
+- Purple: 16/33 = 48.48%, pays 2x, about 96.97% before the win fee.
+- Silver: 16/33 = 48.48%, pays 2x, about 96.97% before the win fee.
+- Green: 1/33 ≈ 3.03%, pays 14x, about 42.42% before the win fee.
 
-Notice that within one wheel every color bet has the same edge. The difference between color bets is variance, not cost. Green hits rarely and pays a lot; red, black, Purple and Silver hit often and pay little. You can compare this with a pure [coin flip's odds](/guides/coin-flip-odds), where there is no green at all.`,
+Purple and Silver cost the same. Green costs much more. The difference is both price and variance. Green hits rarely and pays a lot; red, black, Purple and Silver hit often and pay little. You can compare this with a pure [coin flip's odds](/guides/coin-flip-odds), where there is no green at all.`,
     },
     {
       id: "crypto-wheels",
@@ -89,15 +96,15 @@ Notice that within one wheel every color bet has the same edge. The difference b
 
 ### How PVPspinArena's wheel works
 
-The [Roulette](/roulette) wheel has 15 slots: 7 Purple, 7 Silver and 1 Green. Purple and Silver pay 2x. Green pays 14x. Each round runs on a fixed cycle: betting opens, bets lock, the wheel spins for about seven seconds and the result is settled on the server.
+The [Roulette](/roulette) wheel has 33 slots: 16 Purple, 16 Silver and 1 Green. Purple and Silver pay 2x. Green pays 14x. Each round runs on a fixed cycle: betting opens, bets lock, the wheel spins for about seven seconds and the result is settled on the server.
 
 ### Why fewer slots
 
-A 15-slot wheel is easy to read at a glance and suits fast rounds. It also makes the rare color more frequent than zero on a classic wheel: Green hits about once in 15 spins on average, compared with once in 37 on a European wheel.
+A 33-slot wheel is easy to read at a glance and suits fast rounds. It also makes the rare color more frequent than zero on a classic wheel: Green hits about once in 33 spins on average, compared with once in 37 on a European wheel.
 
 ### What stays the same
 
-The logic is the classic one. Two common colors pay roughly even money, and one rare color gives the house its edge. Because every bet on the wheel has the same 6.67% edge, the choice of color only changes how bumpy your results are.
+The logic is the classic one. Two common colors pay roughly even money, and one rare color gives the house its edge. After the 5% win fee, Purple and Silver return about 92.12% and Green about 40.30%. Purple and Silver are the same price, and Green is a much more expensive long shot.
 
 ### Checking the result
 
@@ -114,7 +121,7 @@ This is the gambler's fallacy. Each spin is independent. After ten black results
 
 ### "Green hasn't hit in a while, so it is coming"
 
-Same fallacy. On a 15-slot wheel, going 30 spins without Green is not unusual. The probability of no Green in 30 spins is (14/15)^30, about 13%.
+Same fallacy. On a 33-slot wheel, going 30 spins without Green is not unusual. The probability of no Green in 30 spins is (32/33)^30, about 13%.
 
 ### "Following the trend works"
 
@@ -171,7 +178,7 @@ A classic wheel has 37 or 38 pockets and dozens of bet types: single numbers, sp
 
 ### Cost
 
-European roulette is the cheapest at 2.70%. American is 5.26%. PVPspinArena's coloured wheel has a 6.67% edge, which funds the game because the house banks Roulette bets. Jackpot and Coinflip are different: they are player vs player, so the house does not bet and only takes a fee, which defaults to 0%.
+European roulette is the cheapest at 2.70%. American is 5.26%. PVPspinArena's coloured wheel has about a 7.88% Purple or Silver edge after the win fee, which funds the game because the house banks Roulette bets. Jackpot and Coinflip are different: they are player vs player, so the house does not bet and only takes a fee, which defaults to 0%.
 
 ### Speed
 
@@ -191,8 +198,8 @@ Crypto wheels usually settle in stablecoins like USDC. On PVPspinArena, all amou
       body: `- Roulette colors group the wheel into simple bets.
 - Red and black each cover 18 pockets; green covers one or two.
 - Green is what gives classic roulette its house edge.
-- On a single wheel, every color bet has the same edge; color choice only changes variance.
-- PVPspinArena's wheel uses 7 Purple, 7 Silver and 1 Green, with 2x, 2x and 14x payouts.
+- On a classic single-zero wheel, red, black and a straight-up zero share one edge; colour choice only changes variance.
+- PVPspinArena's wheel uses 16 Purple, 16 Silver and 1 Green, with 2x, 2x and 14x payouts. Purple and Silver return 32/33. Green returns 14/33.
 - Past colors do not predict future spins.
 - Betting systems like Martingale do not change the edge.
 
@@ -203,7 +210,11 @@ If you want to try the wheel, set a limit first, keep bets small relative to you
       title: "Where roulette colors came from",
       body: `Roulette developed in France in the 18th century, and the red and black layout has been part of the game for most of its history. The single green zero became the standard in Europe in the 19th century, while many American casinos kept the double zero, which gives the house a bigger edge.
 
-The coloured wheels used on crypto sites are a much newer idea. They keep the red and black logic but swap in brand colors and cut the wheel down to a handful of slots, so a round can be read in a second. The rare color keeps the classic role of the green zero: it is the pocket that pays the most and gives the house its edge.`,
+The coloured wheels used on crypto sites are a much newer idea. They keep the red and black logic but swap in brand colors and cut the wheel down to a handful of slots, so a round can be read in a second. The rare color keeps the classic role of the green zero: it is the pocket that pays the most and gives the house its edge.
+
+More games & odds reading lives in our [Games & odds guides](/guides/topics/games-and-odds).
+
+European and French layouts use the same colours; the rule that changes the price is [French roulette](/guides/french-roulette).`,
     },
   ],
   faqs: [
@@ -213,7 +224,7 @@ The coloured wheels used on crypto sites are a much newer idea. They keep the re
     },
     {
       q: "What are the odds of green in roulette?",
-      a: "On a European wheel, 1 in 37 (about 2.70%). On an American wheel, 1 in 38 per green number. On PVPspinArena's 15-slot wheel, 1 in 15 (about 6.67%).",
+      a: "On a European wheel, 1 in 37 (about 2.70%). On an American wheel, 1 in 38 per green number. On PVPspinArena's 33-slot wheel, 1 in 33 (about 3.03%).",
     },
     {
       q: "Is it better to bet on red or black?",
@@ -221,7 +232,7 @@ The coloured wheels used on crypto sites are a much newer idea. They keep the re
     },
     {
       q: "Why does green pay 14x on crypto roulette?",
-      a: "On a 15-slot wheel, green wins once in 15 spins. Paying 14x instead of the fair 15x gives the same 6.67% edge as the two main colors.",
+      a: "On a 33-slot wheel, green wins once in 33 spins. Paying 14x instead of a fair 33x is why Green returns 14/33. Purple and Silver return 32/33.",
     },
     {
       q: "Can I predict the next roulette color from history?",
@@ -230,8 +241,18 @@ The coloured wheels used on crypto sites are a much newer idea. They keep the re
   ],
   sources: [
     { label: "Wizard of Odds: Roulette", url: "https://wizardofodds.com/games/roulette/" },
-    { label: "Encyclopaedia Britannica: Roulette", url: "https://www.britannica.com/topic/roulette" },
+    {
+      label: "Encyclopaedia Britannica: Roulette",
+      url: "https://www.britannica.com/topic/roulette",
+    },
   ],
-  related: ["how-to-win-at-roulette", "provably-fair-roulette", "gamblers-fallacy", "crypto-roulette"],
+  related: [
+    "crypto-jackpot",
+    "how-to-win-at-roulette",
+    "house-edge",
+    "coin-flip-odds",
+    "crypto-roulette",
+    "french-roulette",
+  ],
   updated: "2026-09-25",
 };

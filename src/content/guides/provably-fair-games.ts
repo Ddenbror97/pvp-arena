@@ -4,7 +4,11 @@ export const guide: Guide = {
   slug: "provably-fair-games",
   cluster: "Provably fair",
   keyword: "provably fair games",
-  secondary: ["provably fair crypto casino", "provably fair verification", "provably fair coinflip"],
+  secondary: [
+    "provably fair crypto casino",
+    "provably fair verification",
+    "provably fair coinflip",
+  ],
   title: "Provably Fair Games: Which Games Can Be Verified?",
   description:
     "Provably fair games explained: how coinflip, jackpot, roulette, dice, crash and cases are verified, what to check on each, and a worked PVPspinArena example.",
@@ -69,7 +73,7 @@ PVPspinArena stores stakes as whole cents, so the ticket count equals the pot in
 
 **What to check:** that every slot is equally likely and that the payout table matches the number of slots. The house edge comes from the payouts, not from hidden weighting.
 
-PVPspinArena Roulette has 15 slots: 7 purple paying 2x, 7 silver paying 2x and 1 green paying 14x. Each slot is equally likely, so the return is 14 in 15 and the edge is about 6.67%. Our [provably fair roulette guide](/guides/provably-fair-roulette) shows how to verify a spin, and you can check any round by number on the [Fairness page](/fairness).`,
+PVPspinArena Roulette has 33 slots: 16 purple paying 2x, 16 silver paying 2x and 1 green paying 14x. Each slot is equally likely, so Purple and Silver return 32 in 33 and Green returns 14 in 33 before the win fee. Our [provably fair roulette guide](/guides/provably-fair-roulette) shows how to verify a spin, and you can check any round by number on the [Fairness page](/fairness).`,
     },
     {
       id: "dice-crash-cases",
@@ -153,27 +157,58 @@ Changing your client seed does not change your odds. It simply removes one more 
 4. **Read the result.** The verifier fetches the revealed seed, confirms it matches the published hash, recomputes the slot in your browser and shows the colour.
 5. **Compare.** The slot should match what the wheel showed and what was paid.
 
-Jackpot and Coinflip work the same way from their own tabs. If you prefer to do the maths yourself, our [provably fair calculator guide](/guides/provably-fair-calculator) shows each step with the same formula.`,
+Jackpot and Coinflip work the same way from their own tabs. If you prefer to do the maths yourself, our [provably fair calculator guide](/guides/provably-fair-calculator) shows each step with the same formula.
+
+More provably fair reading lives in our [Provably fair guides](/guides/topics/provably-fair).`,
     },
   ],
   faqs: [
-    { q: "What are provably fair games?", a: "Games where the site commits to a secret seed before the round and reveals it afterwards, so anyone can recompute the result and confirm it was not changed." },
-    { q: "Which games can be provably fair?", a: "Any game whose result comes from random numbers: coinflip, jackpot, roulette, dice, crash, plinko, case openings and more. Each uses its own formula to turn the random number into an outcome." },
-    { q: "Does provably fair mean I will win?", a: "No. It only proves the result was not changed. The game can still have a house edge, and every result is still random." },
-    { q: "How do I verify a provably fair game?", a: "Get the revealed seed and round details, confirm the seed matches the hash published before the round, and rerun the published formula. Many sites, including PVPspinArena, provide a verifier page that does this for you." },
-    { q: "Which PVPspinArena games are provably fair?", a: "Jackpot, Coinflip and Roulette. Every round of each can be checked on the Fairness page." },
+    {
+      q: "What are provably fair games?",
+      a: "Games where the site commits to a secret seed before the round and reveals it afterwards, so anyone can recompute the result and confirm it was not changed.",
+    },
+    {
+      q: "Which games can be provably fair?",
+      a: "Any game whose result comes from random numbers: coinflip, jackpot, roulette, dice, crash, plinko, case openings and more. Each uses its own formula to turn the random number into an outcome.",
+    },
+    {
+      q: "Does provably fair mean I will win?",
+      a: "No. It only proves the result was not changed. The game can still have a house edge, and every result is still random.",
+    },
+    {
+      q: "How do I verify a provably fair game?",
+      a: "Get the revealed seed and round details, confirm the seed matches the hash published before the round, and rerun the published formula. Many sites, including PVPspinArena, provide a verifier page that does this for you.",
+    },
+    {
+      q: "Which PVPspinArena games are provably fair?",
+      a: "Jackpot, Coinflip and Roulette. Every round of each can be checked on the Fairness page.",
+    },
   ],
   sources: [
-    { label: "RFC 2104 — HMAC: Keyed-Hashing for Message Authentication", url: "https://www.rfc-editor.org/rfc/rfc2104" },
-    { label: "NIST FIPS 180-4 — Secure Hash Standard (SHA-256)", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
-    { label: "NIST SP 800-90A — Random number generation using deterministic RBGs", url: "https://csrc.nist.gov/pubs/sp/800/90/a/r1/final" },
+    {
+      label: "RFC 2104 — HMAC: Keyed-Hashing for Message Authentication",
+      url: "https://www.rfc-editor.org/rfc/rfc2104",
+    },
+    {
+      label: "NIST FIPS 180-4 — Secure Hash Standard (SHA-256)",
+      url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final",
+    },
+    {
+      label: "NIST SP 800-90A — Random number generation using deterministic RBGs",
+      url: "https://csrc.nist.gov/pubs/sp/800/90/a/r1/final",
+    },
   ],
-  related: ["crash-gambling", "provably-fair-casino", "commit-reveal-scheme", "rng-vs-provably-fair", "provably-fair-roulette"],
+  related: [
+    "provably-fair-casino",
+    "commit-reveal-scheme",
+    "server-seed-client-seed",
+    "hmac-sha256-provably-fair",
+  ],
   updated: "2026-09-25",
   cta: {
     title: "Verify a round yourself",
     text: "Create a free account to play Jackpot, Coinflip and Roulette, and check any round on the Fairness page.",
-    primary: { to: "/auth", label: "Create your free account" },
-    secondary: { to: "/fairness", label: "Check a result" },
+    primary: { to: "/auth", label: "Sign in" },
+    secondary: { to: "/fairness", label: "Fairness" },
   },
 };

@@ -162,28 +162,57 @@ On PVPspinArena the lobby updates live, and finished rooms stay available so you
 - **Winning streak marketing**, such as streamers who never seem to lose.
 - **Pressure to top up** after a loss.
 
-Check that online gambling is legal where you live, and never play if you are under 18.`,
+Check that online gambling is legal where you live, and never play if you are under 18.
+
+More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).`,
     },
   ],
   faqs: [
-    { q: "What makes a good CS:GO coinflip site?", a: "Exact 50/50 odds, a clear fee, exact stake matching, a working verifier for every flip and automatic payouts. Everything else is presentation." },
-    { q: "Are CS2 coinflip sites rigged?", a: "Some sites in the skin era were caught cheating. You do not have to take any site on trust: pick one that commits to its seed before each flip and lets you verify the result afterwards." },
-    { q: "What fee do coinflip sites charge?", a: "It varies. Some take a few percent of each pot. PVPspinArena's default fee is 0%, so the winner receives the full pot." },
-    { q: "Can I coinflip with USDC instead of skins?", a: "Yes. Crypto coinflip sites let both players stake an exact dollar amount in a stablecoin such as USDC, which avoids arguments about item prices." },
-    { q: "Does a losing streak mean I am due a win?", a: "No. Each flip is independent and stays 50/50. Believing otherwise is the gambler's fallacy." },
+    {
+      q: "What makes a good CS:GO coinflip site?",
+      a: "Exact 50/50 odds, a clear fee, exact stake matching, a working verifier for every flip and automatic payouts. Everything else is presentation.",
+    },
+    {
+      q: "Are CS2 coinflip sites rigged?",
+      a: "Some sites in the skin era were caught cheating. You do not have to take any site on trust: pick one that commits to its seed before each flip and lets you verify the result afterwards.",
+    },
+    {
+      q: "What fee do coinflip sites charge?",
+      a: "It varies. Some take a few percent of each pot. PVPspinArena's default fee is 0%, so the winner receives the full pot.",
+    },
+    {
+      q: "Can I coinflip with USDC instead of skins?",
+      a: "Yes. Crypto coinflip sites let both players stake an exact dollar amount in a stablecoin such as USDC, which avoids arguments about item prices.",
+    },
+    {
+      q: "Does a losing streak mean I am due a win?",
+      a: "No. Each flip is independent and stays 50/50. Believing otherwise is the gambler's fallacy.",
+    },
   ],
   sources: [
-    { label: "RFC 2104 — HMAC: Keyed-Hashing for Message Authentication", url: "https://www.rfc-editor.org/rfc/rfc2104" },
-    { label: "NIST FIPS 180-4 — Secure Hash Standard (SHA-256)", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
+    {
+      label: "RFC 2104 — HMAC: Keyed-Hashing for Message Authentication",
+      url: "https://www.rfc-editor.org/rfc/rfc2104",
+    },
+    {
+      label: "NIST FIPS 180-4 — Secure Hash Standard (SHA-256)",
+      url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final",
+    },
     { label: "Circle — USDC overview", url: "https://www.circle.com/usdc" },
     { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
   ],
-  related: ["gamblers-fallacy", "best-csgo-gambling-sites", "csgo-coinflip", "coin-flip-odds", "provably-fair-calculator"],
+  related: [
+    "pvp-gambling",
+    "csgo-case-battle-sites",
+    "esports-betting",
+    "cs2-betting",
+    "best-csgo-gambling-sites",
+  ],
   updated: "2026-09-25",
   cta: {
     title: "Flip with exact stakes",
     text: "Create a free account, join a Coinflip room and verify the result yourself.",
-    primary: { to: "/auth", label: "Create your free account" },
-    secondary: { to: "/coinflip", label: "See open rooms" },
+    primary: { to: "/auth", label: "Sign in" },
+    secondary: { to: "/coinflip", label: "Coinflip" },
   },
 };

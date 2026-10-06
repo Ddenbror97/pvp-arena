@@ -193,7 +193,9 @@ For how to protect yourself from scams more broadly, see the [crypto wallet guid
       title: "Summary",
       body: `A server seed is the site's secret random input, committed with a SHA-256 hash before play and revealed afterwards. A client seed is your own input, often created with a client seed generator, and a nonce counts your bets so each one is unique. Together they stop both the site and the player from controlling the result in single-player games.
 
-Shared PvP games use one server seed per round, committed before anyone joins, because many players share one outcome. PVPspinArena does this for Jackpot, Coinflip and Roulette and lets you verify every settled round. No seed is luckier than another, and no predictor can beat a sound system.`,
+Shared PvP games use one server seed per round, committed before anyone joins, because many players share one outcome. PVPspinArena does this for Jackpot, Coinflip and Roulette and lets you verify every settled round. No seed is luckier than another, and no predictor can beat a sound system.
+
+More provably fair reading lives in our [Provably fair guides](/guides/topics/provably-fair).`,
     },
   ],
   faqs: [
@@ -220,9 +222,21 @@ Shared PvP games use one server seed per round, committed before anyone joins, b
   ],
   sources: [
     { label: "RFC 2104: HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
-    { label: "NIST FIPS 180-4: Secure Hash Standard", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
-    { label: "MDN: Crypto.getRandomValues()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues" },
+    {
+      label: "NIST FIPS 180-4: Secure Hash Standard",
+      url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final",
+    },
+    {
+      label: "MDN: Crypto.getRandomValues()",
+      url: "https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues",
+    },
   ],
-  related: ["provably-fair-games", "provably-fair-casino", "hmac-sha256-provably-fair", "provably-fair-calculator"],
+  related: [
+    "provably-fair-casino",
+    "hmac-sha256-provably-fair",
+    "provably-fair-games",
+    "commit-reveal-scheme",
+    "seed-rotation-provably-fair",
+  ],
   updated: "2026-09-25",
 };

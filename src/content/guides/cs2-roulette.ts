@@ -13,8 +13,8 @@ export const guide: Guide = {
     "CS2 roulette is a colour-based wheel game that grew out of CS:GO skin sites. Instead of numbers, you bet on colours: two common colours pay 2x and a single rare slot pays 14x. Everyone bets on the same spin, and on provably fair sites the result is committed before the round so you can check it afterwards.",
   facts: [
     "CS-style roulette uses colours, not the 37 or 38 numbers of casino roulette.",
-    "PVPspinArena's wheel has 15 slots: 7 Purple (2x), 7 Silver (2x) and 1 Green (14x).",
-    "Each colour's chance is its slot count divided by 15: Purple and Silver 46.7%, Green 6.7%.",
+    "PVPspinArena's wheel has 33 slots: 16 Purple (2x), 16 Silver (2x) and 1 Green (14x).",
+    "Each colour's chance is its slot count divided by 33: Purple and Silver 48.48%, Green 3.03%.",
     "Rounds run continuously; a new spin starts about every few seconds whether or not anyone bets.",
     "Each result is computed with HMAC-SHA256 from a server seed whose hash is shown before the spin.",
   ],
@@ -37,37 +37,37 @@ When Counter-Strike 2 replaced CS:GO in 2023, the name changed but the game did 
 
 ### PVPspinArena's wheel
 
-PVPspinArena's wheel has 15 slots:
+PVPspinArena's wheel has 33 slots:
 
-- **Purple**: 7 slots, pays 2x your stake.
-- **Silver**: 7 slots, pays 2x your stake.
+- **Purple**: 16 slots, pays 2x your stake.
+- **Silver**: 16 slots, pays 2x your stake.
 - **Green**: 1 slot, pays 14x your stake.
 
 A "2x" payout means a $1 bet returns $2 in total: your $1 back plus $1 profit. A "14x" payout means a $1 bet returns $14 in total.
 
 ### Other common layouts
 
-Older CS:GO sites often used red and black instead of purple and silver, and some used 15 slots with one green, similar to this layout. Some sites add extra colours or bonus slots with higher payouts. Whatever the layout, you can always work out the odds by counting slots.
+Older CS:GO sites often used red and black instead of purple and silver, and some used 33 slots with one green, similar to this layout. Some sites add extra colours or bonus slots with higher payouts. Whatever the layout, you can always work out the odds by counting slots.
 
 Our [roulette colours guide](/guides/roulette-colors) goes deeper into how different sites arrange their wheels. You can see the live wheel and recent results on the [Roulette page](/roulette).`,
     },
     {
       id: "odds",
       title: "CS2 roulette odds and house edge",
-      body: `The chance of any colour is the number of its slots divided by the total number of slots. On a 15-slot wheel:
+      body: `The chance of any colour is the number of its slots divided by the total number of slots. On a 33-slot wheel:
 
-- **Purple**: 7 ÷ 15 = 46.67%
-- **Silver**: 7 ÷ 15 = 46.67%
-- **Green**: 1 ÷ 15 = 6.67%
+- **Purple**: 16 ÷ 33 = 48.48%
+- **Silver**: 16 ÷ 33 = 48.48%
+- **Green**: 1 ÷ 33 ≈ 3.03%
 
 ### Expected return per $1 bet
 
 Multiply the chance of winning by the total payout:
 
-- **Purple or Silver**: 0.4667 × $2 = $0.933. You get back about 93.3 cents per dollar on average.
-- **Green**: 0.0667 × $14 = $0.933. The same 93.3 cents.
+- **Purple or Silver**: 0.4848 × $2 = $0.970. You get back about 97.0 cents before the win fee per dollar on average, so the edge is about 3.03% before the fee.
+- **Green**: 0.0303 × $14 = $0.424. You get back about 42.4 cents, so Green costs much more.
 
-That gap of about 6.7% is the house edge: the part of each bet the game keeps on average over many spins. Notice that every colour has the same expected return. Green is not a better or worse bet in the long run; it is just more volatile, with rare big wins and long gaps between them.
+Green is not the same price as Purple. It is more expensive and more volatile, with rare big wins and long gaps between them.
 
 ### Comparison with casino roulette
 
@@ -138,7 +138,7 @@ The calculation runs locally in your browser, so the site cannot fake what you s
 
 ### Waiting for Green
 
-A common idea is to wait until Green has not appeared for a while and then bet on it. But each spin is independent. The chance of Green on the next spin is 6.67% whether it landed one round ago or fifty rounds ago. Long gaps are normal: the chance of no Green in 30 spins is about 12.6%.
+A common idea is to wait until Green has not appeared for a while and then bet on it. But each spin is independent. The chance of Green on the next spin is about 3.03% whether it landed one round ago or fifty rounds ago. Long gaps are normal: the chance of no Green in 30 spins is about 12.6%.
 
 ### Doubling after a loss
 
@@ -170,21 +170,23 @@ Avoid sites that promise guaranteed wins, sell "predictors" or hide how results 
     {
       id: "summary",
       title: "Summary",
-      body: `CS2 roulette is a fast colour wheel inherited from the CS:GO skin era. On PVPspinArena's 15-slot wheel, Purple and Silver each cover 7 slots and pay 2x, while Green covers 1 slot and pays 14x.
+      body: `CS2 roulette is a fast colour wheel inherited from the CS:GO skin era. On PVPspinArena's 33-slot wheel, Purple and Silver each cover 16 slots and pay 2x, while Green covers 1 slot and pays 14x.
 
-Every colour has the same expected return of about 93.3 cents per dollar, so the house edge is around 6.7% whichever colour you pick. Green is simply more volatile. Streaks and gaps are normal and no betting system changes the odds of the next spin.
+Purple and Silver return about 97.0 cents per dollar before the win fee. Green returns about 42.4 cents. Green is more expensive and more volatile. Streaks and gaps are normal and no betting system changes the odds of the next spin.
 
-Each round's seed is committed with SHA-256 before betting closes, and the slot is computed with HMAC-SHA256 and rejection sampling. You can verify any finished round on the Fairness page. Play with a fixed budget and treat each spin as entertainment.`,
+Each round's seed is committed with SHA-256 before betting closes, and the slot is computed with HMAC-SHA256 and rejection sampling. You can verify any finished round on the Fairness page. Play with a fixed budget and treat each spin as entertainment.
+
+More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).`,
     },
   ],
   faqs: [
     {
       q: "What are the odds of Green in CS2 roulette?",
-      a: "On a 15-slot wheel with one Green slot, the chance is 1 in 15, or about 6.67% per spin. Previous spins do not change this.",
+      a: "On a 33-slot wheel with one Green slot, the chance is 1 in 33, or about 3.03% per spin. Previous spins do not change this.",
     },
     {
       q: "Which colour is the best bet?",
-      a: "On PVPspinArena's wheel, all colours have the same expected return of about 93.3%. Purple and Silver win more often with smaller payouts; Green wins rarely but pays 14x.",
+      a: "On PVPspinArena's wheel, Purple and Silver return about 97.0% before the win fee and win often at 2x. Green returns about 42.4% and pays 14x, so it costs more.",
     },
     {
       q: "Is CS2 roulette the same as casino roulette?",
@@ -201,9 +203,18 @@ Each round's seed is committed with SHA-256 before betting closes, and the slot 
   ],
   sources: [
     { label: "RFC 2104: HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
-    { label: "NIST FIPS 180-4: Secure Hash Standard", url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final" },
+    {
+      label: "NIST FIPS 180-4: Secure Hash Standard",
+      url: "https://csrc.nist.gov/pubs/fips/180-4/upd1/final",
+    },
     { label: "Wikipedia: Roulette", url: "https://en.wikipedia.org/wiki/Roulette" },
   ],
-  related: ["how-to-win-at-roulette", "roulette-colors", "crypto-roulette", "provably-fair-roulette", "csgo-coinflip"],
+  related: [
+    "pvp-gambling",
+    "csgo-gambling-history",
+    "skin-gambling-vs-crypto",
+    "csgo-jackpot",
+    "csgo-coinflip",
+  ],
   updated: "2026-09-25",
 };

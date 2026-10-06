@@ -156,29 +156,55 @@ Whatever the format, remember the simple rule: the group always pays the case ed
 
 - **[Jackpot](/)**: shared pot, chance equal to your share, 0% default fee.
 - **[Coinflip](/coinflip)**: 1v1 duel, exact 50/50, 0% default fee.
-- **Roulette**: a coloured wheel with a stated edge of about 6.67%.
+- **Roulette**: a coloured wheel with a stated Purple or Silver edge of about 7.88% after the win fee.
 
-All stakes are USDC on Base, shown in US dollars, and every result can be checked on the [Fairness page](/fairness). If you like the competition of case battles but want to know exactly what you are paying, create a free account and watch a few live Jackpot rounds first.`,
+All stakes are USDC on Base, shown in US dollars, and every result can be checked on the [Fairness page](/fairness). If you like the competition of case battles but want to know exactly what you are paying, create a free account and watch a few live Jackpot rounds first.
+
+More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).`,
     },
   ],
   faqs: [
-    { q: "What is a case battle?", a: "A case battle is a game where players pay to open the same virtual cases, and the player (or team) whose items are worth the most at the end takes all the items." },
-    { q: "Are case battles profitable?", a: "Not on average. Each case usually has an expected value below its price, so the group of players loses that house edge in every battle, even though one player wins." },
-    { q: "Are CS:GO case battle sites legal?", a: "It depends on where you live. Some countries regulate loot boxes and case opening as gambling. Check local laws and never play if you are under 18." },
-    { q: "How do I check case battle odds?", a: "Look for published odds for every item and multiply each item's chance by its value. Add these up to get the case's expected value, then compare it with the case price." },
-    { q: "Does PVPspinArena have case battles?", a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette. Jackpot and Coinflip are pure player-versus-player games with a 0% default fee." },
+    {
+      q: "What is a case battle?",
+      a: "A case battle is a game where players pay to open the same virtual cases, and the player (or team) whose items are worth the most at the end takes all the items.",
+    },
+    {
+      q: "Are case battles profitable?",
+      a: "Not on average. Each case usually has an expected value below its price, so the group of players loses that house edge in every battle, even though one player wins.",
+    },
+    {
+      q: "Are CS:GO case battle sites legal?",
+      a: "It depends on where you live. Some countries regulate loot boxes and case opening as gambling. Check local laws and never play if you are under 18.",
+    },
+    {
+      q: "How do I check case battle odds?",
+      a: "Look for published odds for every item and multiply each item's chance by its value. Add these up to get the case's expected value, then compare it with the case price.",
+    },
+    {
+      q: "Does PVPspinArena have case battles?",
+      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette. Jackpot and Coinflip are pure player-versus-player games with a 0% default fee.",
+    },
   ],
   sources: [
     { label: "Counter-Strike 2 — official site", url: "https://www.counter-strike.net/cs2" },
-    { label: "UK Gambling Commission — Loot boxes and skins", url: "https://www.gamblingcommission.gov.uk/" },
+    {
+      label: "UK Gambling Commission — Loot boxes and skins",
+      url: "https://www.gamblingcommission.gov.uk/",
+    },
     { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
   ],
-  related: ["how-to-stop-gambling", "best-csgo-gambling-sites", "csgo-case-opening", "house-edge", "gamblers-fallacy"],
+  related: [
+    "pvp-gambling",
+    "esports-betting",
+    "cs2-betting",
+    "best-csgo-gambling-sites",
+    "csgo-coinflip-sites",
+  ],
   updated: "2026-09-25",
   cta: {
     title: "Head-to-head, without the case edge",
     text: "Create a free account and try Jackpot or Coinflip, where the pot goes to the players.",
-    primary: { to: "/auth", label: "Create your free account" },
-    secondary: { to: "/", label: "Watch Jackpot" },
+    primary: { to: "/auth", label: "Sign in" },
+    secondary: { to: "/", label: "Jackpot" },
   },
 };

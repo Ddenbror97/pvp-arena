@@ -249,7 +249,11 @@ On Base, the transfer itself usually confirms within seconds. Apps that wait for
 
 ### Fees to expect
 
-You pay a small ETH gas fee for each send. Exchanges may also charge their own withdrawal fee, which is separate from the network fee.`,
+You pay a small ETH gas fee for each send. Exchanges may also charge their own withdrawal fee, which is separate from the network fee.
+
+More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).
+
+Getting onto Base is its own set of mistakes. [Bridge to Base](/guides/bridge-to-base) is the hop. [Base network fees](/guides/base-network-fees) are what the hop costs. [Coinbase Wallet to Base](/guides/coinbase-wallet-to-base) is one path that still has to name the network.`,
     },
   ],
   faqs: [
@@ -280,6 +284,16 @@ You pay a small ETH gas fee for each send. Exchanges may also charge their own w
     { label: "BaseScan block explorer", url: "https://basescan.org/" },
     { label: "Optimism: OP Stack documentation", url: "https://docs.optimism.io/" },
   ],
-  related: ["add-base-network-metamask", "how-to-buy-usdc", "usdc-casino", "seed-phrase"],
+  related: [
+    "usdc-casino",
+    "base-vs-ethereum",
+    "ethereum-gambling",
+    "gas-fees-explained",
+    "crypto-bridge",
+    "bridge-to-base",
+    "base-network-fees",
+    "coinbase-wallet-to-base",
+    "stuck-crypto-transaction",
+  ],
   updated: "2026-09-25",
 };

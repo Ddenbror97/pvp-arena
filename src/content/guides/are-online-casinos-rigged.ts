@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "are-online-casinos-rigged",
   cluster: "Foundations",
   keyword: "are online casinos rigged",
-  secondary: ["are online casinos fair", "how to tell if a casino is rigged", "rigged online slots", "online casino scams"],
+  secondary: [
+    "are online casinos fair",
+    "how to tell if a casino is rigged",
+    "rigged online slots",
+    "online casino scams",
+  ],
   title: "Are Online Casinos Rigged? How to Tell and What to Check",
   description:
     "Are online casinos rigged? How fairness is tested or proven, house edge vs cheating, warning signs of a rigged site, and how to check one.",
@@ -114,7 +119,7 @@ Every Jackpot, Coinflip and Roulette round commits a SHA-256 hash of a 32-byte s
 
 ### Streaks are normal
 
-On a 50/50 bet, losing five in a row has a 1 in 32 chance from any given starting point. Over a session of 100 bets, a losing run of six or seven is typical. On a bet that wins only 1 in 15 times, going 30 rounds without a win happens about 12.6% of the time.
+On a 50/50 bet, losing five in a row has a 1 in 32 chance from any given starting point. Over a session of 100 bets, a losing run of six or seven is typical. On a bet that wins only 1 in 33 times, going 30 rounds without a win happens about 12.6% of the time.
 
 ### Memory bias
 
@@ -191,7 +196,11 @@ A dishonest operator could still favour certain accounts, or run bots. That is w
 
 Licensed casinos prove fairness through tested RNGs and regulatory oversight. Provably fair casinos let you verify each result with cryptography. Losing streaks feel rigged but are a normal part of random games.
 
-Watch for warning signs such as no licence or verifiable fairness, hidden odds, withdrawal excuses and requests for your recovery phrase. Check legality, rules and withdrawals, start small and verify results. PvP games reduce the incentive to cheat, and provably fair PvP games let you confirm it.`,
+Watch for warning signs such as no licence or verifiable fairness, hidden odds, withdrawal excuses and requests for your recovery phrase. Check legality, rules and withdrawals, start small and verify results. PvP games reduce the incentive to cheat, and provably fair PvP games let you confirm it.
+
+More foundations reading lives in our [Foundations guides](/guides/topics/foundations).
+
+Rigged and unsafe are different complaints. [Are online casinos safe](/guides/are-online-casinos-safe) is the custody and licence question. A fair game can still be a bad place to leave a balance.`,
     },
   ],
   faqs: [
@@ -217,11 +226,25 @@ Watch for warning signs such as no licence or verifiable fairness, hidden odds, 
     },
   ],
   sources: [
-    { label: "UK Gambling Commission: public register", url: "https://www.gamblingcommission.gov.uk/public-register" },
+    {
+      label: "UK Gambling Commission: public register",
+      url: "https://www.gamblingcommission.gov.uk/public-register",
+    },
     { label: "eCOGRA: testing and certification", url: "https://ecogra.org/" },
     { label: "Gaming Laboratories International (GLI)", url: "https://gaminglabs.com/" },
-    { label: "Wikipedia: Gambler's fallacy", url: "https://en.wikipedia.org/wiki/Gambler%27s_fallacy" },
+    {
+      label: "Wikipedia: Gambler's fallacy",
+      url: "https://en.wikipedia.org/wiki/Gambler%27s_fallacy",
+    },
   ],
-  related: ["best-crypto-gambling-sites", "rng-vs-provably-fair", "provably-fair-casino", "house-edge", "commit-reveal-scheme"],
+  related: [
+    "what-is-a-crypto-casino",
+    "curacao-gambling-license",
+    "crypto-casino-license",
+    "proof-of-reserves",
+    "fake-casino-sites",
+    "are-online-casinos-safe",
+    "ecogra-certification",
+  ],
   updated: "2026-09-25",
 };

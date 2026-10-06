@@ -4,18 +4,23 @@ export const guide: Guide = {
   slug: "gamblers-fallacy",
   cluster: "Games & odds",
   keyword: "gambler's fallacy",
-  secondary: ["gamblers fallacy examples", "monte carlo fallacy", "hot hand fallacy", "gambler's fallacy roulette"],
+  secondary: [
+    "gamblers fallacy examples",
+    "monte carlo fallacy",
+    "hot hand fallacy",
+    "gambler's fallacy roulette",
+  ],
   title: "Gambler's Fallacy: Why Past Results Don't Matter",
   description:
     "What the gambler's fallacy is, why our brains fall for it, examples from roulette and coin flips, the hot-hand fallacy, and how to stop it shaping your bets.",
   h1: "Gambler's fallacy: why past results don't change the next one",
   answer:
-    "The gambler's fallacy is the mistaken belief that a random outcome becomes more or less likely because of what happened before. After five reds in a row, many players feel black is \"due\". It is not. Each spin, flip or draw is independent, so the chance on the next round is exactly the same as on the first. Recognising the fallacy is one of the simplest ways to avoid chasing losses.",
+    'The gambler\'s fallacy is the mistaken belief that a random outcome becomes more or less likely because of what happened before. After five reds in a row, many players feel black is "due". It is not. Each spin, flip or draw is independent, so the chance on the next round is exactly the same as on the first. Recognising the fallacy is one of the simplest ways to avoid chasing losses.',
   facts: [
     "Independent events have no memory: past results do not change future probabilities.",
     "It is also called the Monte Carlo fallacy, after a famous 1913 roulette streak.",
     "The opposite belief, that a streak will continue, is called the hot-hand fallacy.",
-    "On a 15-slot wheel, going 30 spins without Green happens about 13% of the time.",
+    "On a 33-slot wheel, going 30 spins without Green happens about 13% of the time.",
     "The fallacy often leads to raising bets after losses, a common warning sign of problem gambling.",
   ],
   sections: [
@@ -36,7 +41,9 @@ The best-known example happened at the Monte Carlo Casino in 1913, when black is
 
 ### Why it matters
 
-The fallacy is not just a curiosity. It changes how people bet. If you think a result is due, you are more likely to bet bigger on it, and bigger bets on a false belief cost more. If terms like probability and independence are new, our [casino terminology guide](/guides/casino-terminology) covers them.`,
+The fallacy is not just a curiosity. It changes how people bet. If you think a result is due, you are more likely to bet bigger on it, and bigger bets on a false belief cost more. If terms like probability and independence are new, our [casino terminology guide](/guides/casino-terminology) covers them.
+
+Pick 3 boards invite the same mistake. [Pick 3 strategy](/guides/pick-3-strategy) shows why a hot number is still 1 in 1,000 straight.`,
     },
     {
       id: "why-brain",
@@ -66,21 +73,21 @@ After a string of losses, it can feel like you have "earned" a win. The wheel do
 
 ### Colour streaks
 
-On PVPspinArena's [Roulette](/roulette) wheel, there are 7 Purple, 7 Silver and 1 Green slot. Purple wins 7 out of 15 spins, about 46.67%, on every single spin. That is true after one Purple, after ten Purples and after ten Silvers.
+On PVPspinArena's [Roulette](/roulette) wheel, there are 16 Purple, 16 Silver and 1 Green slot. Purple wins 16 out of 33 spins, about 48.48%, on every single spin. That is true after one Purple, after ten Purples and after ten Silvers.
 
 ### Waiting for Green
 
-Green has a 1 in 15 chance each spin. Many players watch the history and wait for Green to be "due". Here is how often long gaps happen purely by chance:
+Green has a 1 in 33 chance each spin. Many players watch the history and wait for Green to be "due". Here is how often long gaps happen purely by chance:
 
-- No Green in 15 spins: about 36%.
-- No Green in 30 spins: about 13%.
-- No Green in 45 spins: about 4.5%.
+- No Green in 33 spins: about 37%.
+- No Green in 30 spins: about 40%.
+- No Green in 45 spins: about 25%.
 
-Long droughts are normal. After a 30-spin gap, the chance of Green on the next spin is still 1 in 15.
+Long droughts are normal. After a 30-spin gap, the chance of Green on the next spin is still 1 in 33.
 
 ### What the history board is for
 
-A result history is useful for seeing that rounds are running and for checking specific rounds on the [fairness page](/fairness). It is not a forecast. Our [roulette colors guide](/guides/roulette-colors) explains why every colour bet on the same wheel has the same edge.`,
+A result history is useful for seeing that rounds are running and for checking specific rounds on the [fairness page](/fairness). It is not a forecast. Past colours do not change the next spin, and Green is a different price from Purple. Our [roulette colors guide](/guides/roulette-colors) has the hit rates.`,
     },
     {
       id: "coin-flips",
@@ -180,7 +187,11 @@ Stop when you hit a loss limit you set before you started. Take a break. Treat m
 
 ### A final thought
 
-Randomness does not balance out in the short run, and it never owes you anything. The more comfortable you are with long streaks being normal, the less power the fallacy has over your decisions. If you want to see the rules for each game written plainly, the [How it works](/how-it-works) page covers all three.`,
+Randomness does not balance out in the short run, and it never owes you anything. The more comfortable you are with long streaks being normal, the less power the fallacy has over your decisions. If you want to see the rules for each game written plainly, the [How it works](/how-it-works) page covers all three.
+
+More games & odds reading lives in our [Games & odds guides](/guides/topics/games-and-odds).
+
+The complementary mistake — treating a hot streak as a skill signal — is covered in [regression to the mean](/guides/regression-to-the-mean-gambling).`,
     },
   ],
   faqs: [
@@ -206,9 +217,22 @@ Randomness does not balance out in the short run, and it never owes you anything
     },
   ],
   sources: [
-    { label: "Encyclopaedia Britannica: Gambler's fallacy", url: "https://www.britannica.com/topic/gamblers-fallacy" },
-    { label: "Tversky & Kahneman (1974), Judgment under Uncertainty", url: "https://www.science.org/doi/10.1126/science.185.4157.1124" },
+    {
+      label: "Encyclopaedia Britannica: Gambler's fallacy",
+      url: "https://www.britannica.com/topic/gamblers-fallacy",
+    },
+    {
+      label: "Tversky & Kahneman (1974), Judgment under Uncertainty",
+      url: "https://www.science.org/doi/10.1126/science.185.4157.1124",
+    },
   ],
-  related: ["gambling-self-exclusion", "martingale-strategy", "roulette-colors", "coin-flip-odds", "gambling-budget"],
+  related: [
+    "crypto-jackpot",
+    "martingale-strategy",
+    "martingale-calculator",
+    "paroli-system",
+    "dalembert-strategy",
+    "regression-to-the-mean-gambling",
+  ],
   updated: "2026-09-25",
 };

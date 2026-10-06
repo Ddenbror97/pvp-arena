@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "crypto-wallet-for-gambling",
   cluster: "Crypto payments",
   keyword: "best crypto wallet for gambling",
-  secondary: ["crypto wallet for casino", "self custody wallet", "hot wallet vs cold wallet", "metamask vs exchange wallet"],
+  secondary: [
+    "crypto wallet for casino",
+    "self custody wallet",
+    "hot wallet vs cold wallet",
+    "metamask vs exchange wallet",
+  ],
   title: "Best Crypto Wallet for Gambling: How to Choose Safely",
   description:
     "How to choose the best crypto wallet for gambling: self-custody vs exchange, hot vs cold, network support, fees and the security habits that protect funds.",
@@ -194,7 +199,11 @@ To see how PVPspinArena uses your verified wallet, read [how it works](/how-it-w
 
 Use an exchange to buy crypto, then move only your gaming budget to a dedicated wallet account on the right network, with a little ETH for fees. Verify that account with the site and deposit from it.
 
-Protect your recovery phrase, read every signature, reject unexpected approvals and bookmark the sites you use. With that setup, your wallet stays under your control while you play.`,
+Protect your recovery phrase, read every signature, reject unexpected approvals and bookmark the sites you use. With that setup, your wallet stays under your control while you play.
+
+More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).
+
+A newer roundup is [the best crypto wallet for gambling in 2026](/guides/best-crypto-wallet-for-gambling). One common mobile signer that is not MetaMask is [Trust Wallet](/guides/trust-wallet-casino).`,
     },
   ],
   faqs: [
@@ -222,9 +231,25 @@ Protect your recovery phrase, read every signature, reject unexpected approvals 
   sources: [
     { label: "Ethereum.org: wallets", url: "https://ethereum.org/en/wallets/" },
     { label: "MetaMask Help Center", url: "https://support.metamask.io/" },
-    { label: "Base documentation: network information", url: "https://docs.base.org/chain/network-information" },
+    {
+      label: "Base documentation: network information",
+      url: "https://docs.base.org/chain/network-information",
+    },
     { label: "EIP-191: Signed data standard", url: "https://eips.ethereum.org/EIPS/eip-191" },
   ],
-  related: ["seed-phrase", "metamask-casino", "base-network", "how-to-buy-usdc"],
+  related: [
+    "usdc-casino",
+    "metamask-casino",
+    "phantom-wallet-gambling",
+    "coinbase-wallet-casino",
+    "trust-wallet-casino",
+    "wallet-security-checklist",
+    "best-crypto-wallet-for-gambling",
+    "what-is-a-crypto-wallet-address",
+    "does-metamask-support-xrp",
+    "what-is-metamask",
+    "how-to-create-a-crypto-wallet",
+    "what-is-a-hardware-wallet",
+  ],
   updated: "2026-09-25",
 };
