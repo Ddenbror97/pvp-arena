@@ -22,7 +22,7 @@ export const guide: Guide = {
     {
       id: "what-is",
       title: "What a case battle is",
-      body: `A CS2 case battle takes ordinary case opening and turns it into a race. Each participant pays for the same sequence of cases. The site opens them for every player in parallel. At the end, values are summed. In the default mode the highest sum wins every item produced in that battle.
+      body: `A CS2 case battle takes ordinary case opening and turns it into a race. Each participant pays for the same sequence of cases. The site opens them for every player in parallel. At the end, values are summed. In the default mode the highest sum wins every item produced in that battle. A reel duel that scores a slot paytable is a [slot battle](/guides/slot-battles), not a case battle. The pot shape is similar. The object you open is not.
 
 This page sits in the [CS:GO heritage](/guides/topics/csgo-heritage) cluster. Adults 18+ only. It explains the mechanic. It is not a ranked list of operators. For a site-style overview see [CSGO case battle sites](/guides/csgo-case-battle-sites). For how a single case is supposed to drop, start with [CSGO case opening](/guides/csgo-case-opening) and [CS2 case odds](/guides/cs2-case-odds).
 

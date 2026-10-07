@@ -141,7 +141,7 @@ That routine is boring on purpose. Boring is how you keep OSRS nostalgia from wr
     },
     {
       q: "Can I deposit OSRS gold on PVPspinArena?",
-      a: "No. Deposits are USDC or ETH on Base only.",
+      a: "No. Deposits include on-chain Bitcoin, plus USDC or ETH on Base.",
     },
     {
       q: "What is the closest experience on this site?",

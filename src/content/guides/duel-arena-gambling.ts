@@ -152,7 +152,7 @@ If staking is about anger, loneliness, or chasing, stop. [Gambling addiction sig
     },
     {
       q: "Can I stake OSRS gold on PVPspinArena?",
-      a: "No. This site takes USDC or ETH on Base only. It does not connect to RuneScape.",
+      a: "No. This site takes on-chain Bitcoin, plus USDC or ETH on Base. It does not connect to RuneScape.",
     },
     {
       q: "What is the closest product here to an Arena duel?",

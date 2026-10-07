@@ -10,13 +10,13 @@ export const guide: Guide = {
     "Base vs Ethereum for casino deposits: gas fees, confirmation time, USDC availability, wallet setup, and when mainnet is the wrong network.",
   h1: "Base vs Ethereum: fees, speed and casino deposits",
   answer:
-    "Base vs Ethereum is a choice of network, not a choice of wallet brand. Ethereum mainnet (chain ID 1) is the settlement layer. Base (chain ID 8453) is an Ethereum layer 2: same 0x addresses, much lower gas, faster blocks, ETH still used for fees. Circle issues native USDC on both. A casino that lists Base will not see a mainnet transfer to the same address string. PVPspinArena deposits are USDC and ETH on Base only. Mainnet is the wrong network for this site and is often the expensive path for small bets.",
+    "Base vs Ethereum is a choice of network, not a choice of wallet brand. Ethereum mainnet (chain ID 1) is the settlement layer. Base (chain ID 8453) is an Ethereum layer 2: same 0x addresses, much lower gas, faster blocks, ETH still used for fees. Circle issues native USDC on both. A casino that lists Base will not see a mainnet transfer to the same address string. PVPspinArena USDC and ETH deposits use Base. On-chain Bitcoin is separate. Mainnet is the wrong network for this site and is often the expensive path for small bets.",
   facts: [
     "Ethereum mainnet chain ID is 1; Base chain ID is 8453.",
     "Both use 0x addresses and ETH for gas; ETH on one chain is not ETH on the other.",
     "Base blocks are about two seconds; mainnet blocks are about twelve seconds, and gas is usually far higher on mainnet.",
     "Circle issues native USDC on Ethereum and on Base as separate tokens.",
-    "PVPspinArena accepts USDC and ETH on Base only. Withdrawals have a $250 daily limit; amounts over $25 are reviewed.",
+    "PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base. Withdrawals have a $250 daily limit; amounts over $25 are reviewed.",
   ],
   sections: [
     {
@@ -180,7 +180,7 @@ If you are new to layer 2s, do one dry run with $2 of USDC on Base before you mo
     },
     {
       q: "Which network does PVPspinArena use?",
-      a: "Base only, for USDC and ETH. It is not a BTC, SOL, LTC, DOGE or USDT casino and it does not watch Ethereum mainnet deposits.",
+      a: "USDC and ETH use Base. On-chain Bitcoin uses the Bitcoin network. It is not a SOL, LTC, DOGE or USDT casino, and it does not watch Ethereum mainnet deposits.",
     },
     {
       q: "How fast is a Base deposit compared with mainnet?",

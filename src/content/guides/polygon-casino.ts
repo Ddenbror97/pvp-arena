@@ -10,13 +10,13 @@ export const guide: Guide = {
     "Polygon casino deposits use MATIC or POL rails and Polygon USDC. Fees, wrong-network traps, and why this site watches Base.",
   h1: "Polygon casino: MATIC and POL rails, not Base USDC",
   answer:
-    "A Polygon casino credits deposits on Polygon (the PoS chain people still call MATIC): POL or leftover MATIC for gas, and often USDC or USDT issued on that chain. Transfers are usually cheap and fast. The trap is the ticker and the chain ID. Polygon USDC is not Base USDC. POL is not ETH on Base. PVPspinArena is not a Polygon casino. It accepts USDC and ETH on Base only.",
+    "A Polygon casino credits deposits on Polygon (the PoS chain people still call MATIC): POL or leftover MATIC for gas, and often USDC or USDT issued on that chain. Transfers are usually cheap and fast. The trap is the ticker and the chain ID. Polygon USDC is not Base USDC. POL is not ETH on Base. PVPspinArena is not a Polygon casino. It accepts on-chain Bitcoin, and USDC and ETH on Base.",
   facts: [
     "Polygon PoS uses chain ID 137 and 0x addresses, the same address shape as Base and Ethereum.",
     "The gas token rebranded from MATIC to POL; wallets and cashiers may still show either name.",
     "Circle issues native USDC on Polygon at a different contract from USDC on Base.",
     "A cheap Polygon send to a Base deposit address will not credit.",
-    "PVPspinArena watches Base (chain ID 8453) for USDC and ETH only.",
+    "PVPspinArena watches Base (chain ID 8453) for USDC and ETH. On-chain Bitcoin is a separate deposit.",
   ],
   sections: [
     {
@@ -139,7 +139,7 @@ Pick one cashier you meant to use. For this site, that cashier is Base. Convert 
   faqs: [
     {
       q: "Does PVPspinArena accept Polygon or MATIC / POL?",
-      a: "No. It is not a Polygon casino. Deposits are USDC and ETH on Base only.",
+      a: "No. It is not a Polygon casino. Deposits include on-chain Bitcoin, plus USDC and ETH on Base.",
     },
     {
       q: "What chain does a Polygon casino use?",

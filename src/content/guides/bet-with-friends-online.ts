@@ -80,7 +80,7 @@ An office draw needs rules before the numbers are called. A [lottery pool agreem
     {
       id: "pvp-rooms",
       title: "Using a PvP room as escrow",
-      body: `A coinflip room can act like escrow for a 1v1 cash bet: both deposit, the flip decides, the winner is paid minus fee. That removes “I’ll pay you Friday.” It introduces a fee and a custody relationship with the site.
+      body: `A coinflip room can act like escrow for a 1v1 cash bet: both deposit, the flip decides, the winner is paid minus fee. That removes “I’ll pay you Friday.” It introduces a fee and a custody relationship with the site. For a result that is not a coin, the same hold is [escrow betting](/guides/escrow-betting): both stakes locked to a rule you wrote first.
 
 Read [PvP gambling](/guides/pvp-gambling) and [coin flip odds](/guides/coin-flip-odds) so everyone understands the cut. Open [Coinflip](/coinflip) only after both friends agree the fee is acceptable entertainment cost.
 

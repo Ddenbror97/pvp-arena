@@ -27,7 +27,7 @@ export const guide: Guide = {
     {
       id: "define",
       title: "What people mean by crypto betting app",
-      body: `Searchers lump three products together: mobile crypto sportsbooks, mobile crypto casinos, and PvP original-game sites that happen to work on a phone. A crypto betting app label in an ad may mean any of them.
+      body: `Searchers lump three products together: mobile crypto sportsbooks, mobile crypto casinos, and PvP original-game sites that happen to work on a phone. A crypto betting app label in an ad may mean any of them. An app whose job is to match two people and hold their bet is a [P2P betting app](/guides/p2p-betting-app), not a mobile sportsbook.
 
 Start with [what is a crypto casino](/guides/what-is-a-crypto-casino) and [best crypto gambling sites](/guides/best-crypto-gambling-sites) for rail literacy. For sports legality orientation in the US, see [sports betting legal states](/guides/sports-betting-legal-states). For esports as a category, see the [esports betting topic](/guides/topics/esports-betting) and [esports betting](/guides/esports-betting).
 

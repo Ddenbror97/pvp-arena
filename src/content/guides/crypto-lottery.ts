@@ -125,7 +125,7 @@ The lottery bought a long shot against a withheld prize. The PvP pot bought a sh
 | Draw | House RNG or on-chain random | Hash then reveal on Fairness |
 | Asset | Any advertised coin | Dollar ledger via USDC or ETH on Base |
 
-Do not call a 1-in-N raffle a “jackpot” in the PvP sense. Do not call a PvP pot a lottery just because one winner takes the money. The ticket identity is the difference.
+Do not call a 1-in-N raffle a “jackpot” in the PvP sense. A [50/50 raffle](/guides/50-50-raffle) keeps a large share for a cause or a promoter and gives each ticket 1/N. Do not call a PvP pot a lottery just because one winner takes the money. The ticket identity is the difference.
 
 PVPspinArena will not sell you a weekly raffle. Open [Jackpot](/) if you want pot tickets, [Coinflip](/coinflip) if you want two-sided pots, or [Roulette](/roulette) if you want the 33-slot wheel. The [Fairness](/fairness) page is where a finished round is checked — not a lottery PDF.
 

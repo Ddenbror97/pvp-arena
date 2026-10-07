@@ -1767,4 +1767,16 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(23, "Casino knowledge", "Culture and belief", "famous-casino-heists", "casino heist", "Robberies. casino-surveillance stays the camera system."),
   p(23, "Casino knowledge", "Culture and belief", "gambling-superstitions", "gambling superstitions", "Roundup. lucky-numbers-gambling and horseshoe-luck stay the specific beliefs."),
   p(23, "Foundations", "Taxes", "gambling-tax-calculator", "gambling tax calculator", "Estimate only. report-gambling-winnings keeps Form W-2G."),
+  // 24 — niche PvP. Skipped multiplayer-casino-games (pvp-casino-games owns that intent) and coinflip-bot (discord-gambling-bot owns discord coinflip bots).
+  p(24, "Slots", "Slot duels", "slot-battles", "slot battles", "1v1 slot duels. cs2-case-battle keeps cosmetic case battles. Do not link /slott."),
+  p(24, "Skill wagers", "Skill matches", "cod-wagers", "cod wagers", "Play Call of Duty for a stake. esports-betting-legal keeps betting on pro matches. fortnite-gambling keeps Fortnite."),
+  p(24, "Skill wagers", "Skill matches", "play-chess-for-money", "play chess for money", "Rated chess for a stake. skill-based-gambling keeps the skill-vs-chance frame."),
+  p(24, "Skill wagers", "Skill matches", "8-ball-pool-for-money", "8 ball pool for money", "8-ball for a stake. skill-based-gambling keeps the umbrella."),
+  p(24, "Skill wagers", "Apps and escrow", "escrow-betting", "escrow betting", "Neutral holder for both stakes. peer-to-peer-gambling keeps the P2P format."),
+  p(24, "Skill wagers", "Apps and escrow", "p2p-betting-app", "p2p betting app", "Apps that match two bettors. crypto-betting-app keeps mobile crypto books. peer-to-peer-sports-betting keeps sports P2P."),
+  p(24, "Lottery", "Raffles and pools", "50-50-raffle", "50/50 raffle", "Charity ticket split. crypto-jackpot keeps player pots. crypto-lottery keeps crypto lotteries."),
+  p(24, "Skill wagers", "Cash games", "games-that-pay-real-money", "games that pay real money", "Pillar for the skill-wager topic. online-casino-real-money keeps casino deposits."),
+  p(24, "Skill wagers", "Cash games", "skillz-review", "skillz", "Skillz cash-app review. Do not invent fee or bot rates. provably-fair-casino keeps seed checks."),
+  p(24, "Skill wagers", "Apps and escrow", "wager-app", "wager app", "1v1 money-match apps. bet-with-friends-online keeps private friend bets."),
+  p(24, "Games of chance", "The deck", "high-card-game", "high card game", "One card each. war-card-game-rules keeps the home game War. casino-war-game keeps dealer War."),
 ];

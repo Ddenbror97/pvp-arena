@@ -76,7 +76,7 @@ Identity checks can appear at withdrawal even when the deposit was just an addre
 
 This site is a website with a Base cashier, not a TON mini-app. Opening Telegram will not show a PVPspinArena balance.
 
-Sibling chain pages use the same rows so the anchor stays specific: [Cardano casino](/guides/cardano-casino), [XRP casino](/guides/xrp-casino), [Shiba Inu casino](/guides/shiba-inu-casino), [Monero casino](/guides/monero-casino), [Binance Coin casino](/guides/binance-coin-casino), [TON casino](/guides/ton-casino). None of them is a deposit guide for this site.`,
+Sibling chain pages use the same rows so the anchor stays specific: [Cardano casino](/guides/cardano-casino), [XRP casino](/guides/xrp-casino), [Shiba Inu casino](/guides/shiba-inu-casino), [Monero casino](/guides/monero-casino), [Binance Coin casino](/guides/binance-coin-casino), TON casino. None of them is a deposit guide for this site.`,
     },
     {
       id: "rehearsal",

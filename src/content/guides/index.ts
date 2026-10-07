@@ -692,6 +692,17 @@ import { guide as ngPokerTells } from "./poker-tells";
 import { guide as ngSevenCardStud } from "./seven-card-stud";
 import { guide as ngSportsBettingScandals } from "./sports-betting-scandals";
 import { guide as ngGamblingSuperstitions } from "./gambling-superstitions";
+import { guide as ngSlotBattles } from "./slot-battles";
+import { guide as ngCodWagers } from "./cod-wagers";
+import { guide as ngPlayChessForMoney } from "./play-chess-for-money";
+import { guide as ngEightBallPoolForMoney } from "./8-ball-pool-for-money";
+import { guide as ngEscrowBetting } from "./escrow-betting";
+import { guide as ngP2pBettingApp } from "./p2p-betting-app";
+import { guide as ngFiftyFiftyRaffle } from "./50-50-raffle";
+import { guide as ngGamesThatPayRealMoney } from "./games-that-pay-real-money";
+import { guide as ngSkillzReview } from "./skillz-review";
+import { guide as ngWagerApp } from "./wager-app";
+import { guide as ngHighCardGame } from "./high-card-game";
 
 export type { Guide, GuideCluster } from "./types";
 
@@ -1389,6 +1400,17 @@ export const GUIDES: Guide[] = [
   ngSevenCardStud,
   ngSportsBettingScandals,
   ngGamblingSuperstitions,
+  ngSlotBattles,
+  ngCodWagers,
+  ngPlayChessForMoney,
+  ngEightBallPoolForMoney,
+  ngEscrowBetting,
+  ngP2pBettingApp,
+  ngFiftyFiftyRaffle,
+  ngGamesThatPayRealMoney,
+  ngSkillzReview,
+  ngWagerApp,
+  ngHighCardGame,
 ];
 
 export type ClusterInfo = {
@@ -1492,6 +1514,16 @@ export const CLUSTERS: ClusterInfo[] = [
       "An esports ticket prices a match, not a hashed pot. These guides cover books, odds formats, live betting and the main titles, then contrast that with player-versus-player crypto rounds.",
   },
   {
+    name: "Skill wagers",
+    slug: "skill-wagers",
+    blurb: "Cash matches, wager apps, and escrow for both stakes.",
+    title: "Skill Wagers: Cash Games, Apps and Escrow",
+    description:
+      "Cash games that pay real money: skill matches, wager apps, Skillz-style tournaments, and escrow that locks both stakes before anyone plays.",
+    intro:
+      "These pages are about playing for a stake, or holding one for a stranger. Chess, pool, and Call of Duty matches sit with wager apps and escrow. They are not CS:GO skin guides and not sportsbook tickets. A fee still comes out of the pot.",
+  },
+  {
     name: "Casino games",
     slug: "casino-games",
     blurb: "Live dealer, baccarat, craps and other table games.",
@@ -1524,12 +1556,12 @@ export const CLUSTERS: ClusterInfo[] = [
   {
     name: "Slots",
     slug: "slots",
-    blurb: "Free play, volatility, paylines and bonus buys.",
+    blurb: "Free play, volatility, paylines, bonus buys and slot duels.",
     title: "Slot Guides: Free Play, Volatility and Paylines",
     description:
-      "How online slots work: free play, real-money RTP, volatility, paylines, bonus buys, and why no pattern turns a house-edge reel into a winning system.",
+      "How online slots work: free play, real-money RTP, volatility, paylines, bonus buys, 1v1 slot duels, and why no pattern beats the reel.",
     intro:
-      "A slot is a priced random draw with a published or hidden RTP. These guides explain free play, volatility and paylines. They will not tell you how to beat a reel.",
+      "A slot is a priced random draw with a published or hidden RTP. These guides explain free play, volatility and paylines. A slot duel is grouped here because the object is a reel, not a skin case. They will not tell you how to beat a reel.",
   },
   {
     name: "Casino knowledge",
@@ -1564,12 +1596,12 @@ export const CLUSTERS: ClusterInfo[] = [
   {
     name: "Lottery",
     slug: "lottery",
-    blurb: "Ticket odds, payout choice, taxes and office pools.",
+    blurb: "Ticket odds, payout choice, taxes, pools and raffles.",
     title: "Lottery Guides: Odds, Payouts, Taxes and Pools",
     description:
-      "US lottery guides: Powerball and Mega Millions odds, scratch-off maths, lump sum versus annuity, taxes, and what to do after a win.",
+      "US lottery guides: Powerball and Mega Millions odds, scratch-offs, lump sum versus annuity, taxes, 50/50 raffles, and what to do after a win.",
     intro:
-      "A lottery ticket is a priced long shot. These pages count the combinations, compare games, and walk through taxes and claiming. They are not a system for beating the draw.",
+      "A lottery ticket is a priced long shot. These pages count the combinations, compare games, and walk through taxes and claiming. A 50/50 raffle is a ticket draw with a kept share, so it sits here rather than with casino pot maths. None of this is a system for beating the draw.",
   },
   {
     name: "Horse racing",
@@ -2251,6 +2283,20 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     },
     { name: "Integrity", slugs: ["esports-match-fixing"] },
   ],
+  "Skill wagers": [
+    {
+      name: "Cash games",
+      slugs: ["games-that-pay-real-money", "skillz-review"],
+    },
+    {
+      name: "Skill matches",
+      slugs: ["cod-wagers", "play-chess-for-money", "8-ball-pool-for-money"],
+    },
+    {
+      name: "Apps and escrow",
+      slugs: ["wager-app", "p2p-betting-app", "escrow-betting"],
+    },
+  ],
   "Casino games": [
     {
       name: "Lobbies and live",
@@ -2430,6 +2476,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "best-slot-machines-to-play",
       ],
     },
+    { name: "Slot duels", slugs: ["slot-battles"] },
   ],
   "Casino knowledge": [
     {
@@ -2565,7 +2612,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "ship-captain-crew",
       ],
     },
-    { name: "The deck", slugs: ["52-card-deck"] },
+    { name: "The deck", slugs: ["52-card-deck", "high-card-game"] },
     {
       name: "Trick-taking",
       slugs: [
@@ -2689,8 +2736,11 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "lottery-calculator",
         "what-to-do-if-you-win-the-lottery",
         "claim-lottery-winnings-anonymously",
-        "lottery-pool-agreement",
       ],
+    },
+    {
+      name: "Raffles and pools",
+      slugs: ["50-50-raffle", "lottery-pool-agreement"],
     },
   ],
   "Horse racing": [

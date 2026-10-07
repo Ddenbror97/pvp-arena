@@ -154,7 +154,7 @@ A cash pot will not make you a better Pyro. It will not make the Unusual rarer. 
     },
     {
       q: "Does PVPspinArena accept TF2 items?",
-      a: "No. It accepts USDC and ETH on Base only. It does not use Steam trade bots.",
+      a: "No. It accepts on-chain Bitcoin, and USDC and ETH on Base. It does not use Steam trade bots.",
     },
     {
       q: "Was TF2 part of the 2016 skin-gambling crackdown?",

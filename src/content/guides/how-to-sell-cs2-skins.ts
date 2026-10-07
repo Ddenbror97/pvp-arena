@@ -162,7 +162,7 @@ Where the item goes is the whole risk. [CS2 trading sites](/guides/cs2-trading-s
     },
     {
       q: "Will PVPspinArena buy my skins?",
-      a: "No. Cash out on Steam or a market you accept, then deposit USDC or ETH on Base only if you still want to play.",
+      a: "No. Cash out on Steam or a market you accept, then deposit on-chain Bitcoin, or USDC or ETH on Base if you still want to play.",
     },
     {
       q: "Is selling to a gambling bot a cash-out?",

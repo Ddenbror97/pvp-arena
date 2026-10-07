@@ -10,12 +10,12 @@ export const guide: Guide = {
     "How a USDT casino works: Tether deposits, TRC-20 versus ERC-20 versus other networks, fees, and how USDT compares with USDC for play.",
   h1: "USDT casino: Tether networks, fees and cashout checks",
   answer:
-    "A USDT casino accepts Tether (USDT), a dollar stablecoin issued by Tether, for deposits and withdrawals. USDT exists on several networks — notably TRC-20 on Tron, ERC-20 on Ethereum, and other chains — and a transfer on one network never appears on another. Fees and confirmation times depend on the network you pick, not on the USDT ticker. PVPspinArena is not a USDT casino. It accepts USDC and ETH on Base only. If you hold USDT, swap or sell it for USDC and withdraw on Base.",
+    "A USDT casino accepts Tether (USDT), a dollar stablecoin issued by Tether, for deposits and withdrawals. USDT exists on several networks — notably TRC-20 on Tron, ERC-20 on Ethereum, and other chains — and a transfer on one network never appears on another. Fees and confirmation times depend on the network you pick, not on the USDT ticker. PVPspinArena is not a USDT casino. It accepts on-chain Bitcoin, and USDC and ETH on Base. If you hold USDT, swap or sell it for USDC and withdraw on Base.",
   facts: [
     "USDT is issued by Tether and is designed to track one US dollar.",
     "TRC-20, ERC-20, Solana and other USDT versions are different tokens on different ledgers.",
     "ERC-20 USDT transfers pay Ethereum gas in ETH and can be expensive; TRC-20 fees are usually lower.",
-    "PVPspinArena does not accept USDT. It accepts USDC and ETH on the Base network only.",
+    "PVPspinArena does not accept USDT. It accepts on-chain Bitcoin, and USDC and ETH on Base.",
     "Withdrawals on PVPspinArena have a $250 daily limit; requests over $25 wait for review.",
   ],
   sections: [
@@ -79,7 +79,7 @@ Exchange withdrawal fees sit on top. A "zero casino deposit fee" does not refund
 - **Issuer**: USDT is Tether. USDC is Circle.
 - **Transparency**: Circle publishes frequent reserve reports; Tether publishes attestations on its own schedule. Details belong in [USDC vs USDT](/guides/usdc-vs-usdt-gambling).
 - **Availability**: USDT is everywhere at offshore exchanges and many casinos, especially TRC-20. USDC is common in US-facing apps and on Base.
-- **This site**: USDC on Base only.
+- **This site**: USDC on Base, and on-chain Bitcoin. Not USDT.
 
 Neither token is a bank deposit. Neither removes game variance. Choose the one the destination actually accepts, then pick the matching network. A longer payments overview is in [stablecoin payments for gambling](/guides/stablecoin-payments-gambling).
 

@@ -15,12 +15,12 @@ export const guide: Guide = {
     "How a bitcoin casino works: BTC deposits, confirmation times, fees, withdrawals, and why a dollar stablecoin is often simpler for small bets.",
   h1: "Bitcoin casino: deposits, fees, confirmations and cashouts",
   answer:
-    "A bitcoin casino accepts Bitcoin (BTC) for deposits and usually pays winnings back in BTC. You send BTC from a wallet or exchange, wait for on-chain confirmations, then play in a BTC-denominated balance. Fees go to Bitcoin miners, not the casino, and they rise when the network is busy. Confirmation times are measured in blocks of about ten minutes, so a deposit can take half an hour or more. PVPspinArena is not a bitcoin casino: it accepts USDC and ETH on Base only. If you hold BTC, you convert it to USDC and withdraw on Base before depositing.",
+    "A bitcoin casino accepts Bitcoin (BTC) for deposits and usually pays winnings back in BTC. You send BTC from a wallet or exchange, wait for on-chain confirmations, then play in a BTC-denominated balance. Fees go to Bitcoin miners, not the casino, and they rise when the network is busy. Confirmation times are measured in blocks of about ten minutes, so a deposit can take half an hour or more. PVPspinArena accepts on-chain Bitcoin deposits and Bitcoin cashouts, credited to a US-dollar balance, and also accepts USDC and ETH on Base. Lightning payments are not accepted.",
   facts: [
     "Bitcoin blocks average about ten minutes; many casinos wait for two to six confirmations before crediting BTC.",
     "Miner fees are set by you and the mempool. A busy day can make a small deposit uneconomical.",
     "A BTC balance moves with the dollar price of Bitcoin even when you are not playing.",
-    "PVPspinArena is not a BTC casino. It accepts USDC and ETH on the Base network only.",
+    "PVPspinArena accepts on-chain Bitcoin and pays Bitcoin cashouts to a bc1 address. Play stays in US dollars. USDC and ETH on Base are also accepted.",
     "Withdrawals on PVPspinArena have a $250 daily limit; requests over $25 wait for review.",
   ],
   sections: [
@@ -31,9 +31,9 @@ export const guide: Guide = {
 
 That model became common because Bitcoin is public, transferable without a card network, and familiar to people who already hold crypto. It is still a form of gambling for adults aged 18 or over, and a BTC-denominated site does not change the odds of any game.
 
-PVPspinArena is a different design. It is player-versus-player only: [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette). Deposits are USDC and ETH on Base. It is not a BTC, SOL, LTC, DOGE or USDT casino. If your goal is a dollar-stable chip for small bets, a [USDC casino](/guides/usdc-casino) is usually simpler than holding the session in Bitcoin.
+PVPspinArena accepts on-chain Bitcoin as well as USDC and ETH on Base. The games are [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette). A Bitcoin deposit is credited in US dollars, so the chip does not stay in BTC while you play. It is not a SOL, LTC, DOGE, USDT or Lightning cashier. A [USDC casino](/guides/usdc-casino) deposit is the other rail if you would rather not wait on Bitcoin confirmations.
 
-This guide explains how BTC deposits, fees and withdrawals work on sites that do accept Bitcoin, then shows the safer path if you want to play on PVPspinArena with money that started as BTC.`,
+This guide explains how BTC deposits, fees and withdrawals work, including the on-chain Bitcoin deposit on PVPspinArena.`,
     },
     {
       id: "deposits",
@@ -114,29 +114,26 @@ This cluster of payment guides lives under [crypto payments](/guides/topics/cryp
     {
       id: "example",
       title: "Worked example: from 0.001 BTC to a $40 session",
-      body: `Suppose you hold 0.001 BTC on an exchange and want about $40 of play on PVPspinArena. Bitcoin is $64,000 in this example, so 0.001 BTC is $64.00 of value before fees.
+      body: `Suppose you hold 0.001 BTC and want about $40 of play on PVPspinArena. Bitcoin is $64,000 in this example, so 0.001 BTC is $64.00 of value before fees.
 
-1. **Sell or convert 0.0007 BTC to USDC on the exchange.** At $64,000 that is $44.80. Leave the rest as BTC if you want to keep exposure.
-2. **Check the exchange withdrawal screen.** Choose USDC and the **Base** network, not Bitcoin, not Ethereum mainnet, not Solana.
-3. **Withdraw 42 USDC to your self-custody wallet** (for example MetaMask on Base). The exchange might charge a $1.00 withdrawal fee; you receive 41 USDC.
-4. **Keep a little ETH on Base** in that wallet so you can pay the network fee on the casino deposit. A few cents of ETH is usually enough.
-5. **Verify the wallet on your PVPspinArena profile**, copy the deposit address from the [wallet page](/wallet), and send 40 USDC on Base.
-6. **Wait for Base confirmations.** The site credits $40.00 after two data providers agree. You still have about 1 USDC plus leftover ETH in the wallet for a later cashout.
+1. **Open the [wallet page](/wallet) and choose Bitcoin.** Enter $40. The invoice shows the exact BTC to send and the confirmations required.
+2. **Send that on-chain amount** from a Bitcoin wallet to the invoice address. MetaMask does not hold native BTC. Do not send a Lightning invoice.
+3. **Wait for those confirmations.** The site credits US dollars, not a BTC play balance. A smaller confirmed amount can still credit at the same rate.
+4. **Play from the dollar balance.** Jackpot, Coinflip and Roulette all use that balance.
+5. **Cash out in Bitcoin** to an address that starts with bc1, or cash out USDC or ETH on Base instead.
 
-If you had sent the 0.001 BTC to PVPspinArena directly, it would not credit. The site does not watch the Bitcoin chain. If you had withdrawn USDC on Ethereum mainnet, it also would not credit, and recovering a wrong-network transfer is not guaranteed.
-
-Buying USDC the first time is covered in [how to buy USDC](/guides/how-to-buy-usdc).`,
+Sending that BTC to the USDC or ETH address on Base will not credit. Withdrawing USDC on Ethereum mainnet will not credit either, and recovering a wrong-network transfer is not guaranteed. USDC on Base is covered in [how to buy USDC](/guides/how-to-buy-usdc).`,
     },
     {
       id: "pvp-path",
       title: "If you hold Bitcoin and want to use PVPspinArena",
-      body: `You do not need a bitcoin casino account to use BTC-origin funds. You need a path onto Base.
+      body: `You can deposit on-chain Bitcoin directly. You do not have to convert it to USDC first.
 
 ### Practical path
 
-- Convert BTC to USDC on a reputable exchange that supports Base withdrawals.
-- Withdraw USDC on Base to a wallet you control.
-- Deposit USDC on Base from that verified wallet.
+- On the wallet page, choose Bitcoin and send the exact on-chain amount on the invoice.
+- Wait for the confirmations shown there. The credit is in US dollars.
+- Cash out to a bc1 address, or use USDC or ETH on Base if you prefer that rail.
 - Alternatively, withdraw ETH on Base and deposit ETH; the site converts it to a dollar balance when it credits.
 
 ### Habits that prevent losses
@@ -146,7 +143,7 @@ Buying USDC the first time is covered in [how to buy USDC](/guides/how-to-buy-us
 - Send only what you planned to play with. Keep long-term BTC in a separate wallet.
 - Read [how it works](/how-it-works) so you know Jackpot, Coinflip and Roulette before you deposit.
 
-A bitcoin casino can be a reasonable product for someone who already lives in BTC and accepts confirmation times and price swings. It is the wrong mental model for PVPspinArena. Treat Bitcoin as the asset you already hold, convert what you need, and play in dollars on Base.
+A bitcoin casino that keeps the stack in BTC is a different product. On PVPspinArena the deposit can be Bitcoin, and the balance you play with is still US dollars, fixed when the deposit credits.
 
 Other coins get the same cashier mistakes under a different ticker. [Dogecoin](/guides/dogecoin-casino), [Tron](/guides/tron-casino) and [Polygon](/guides/polygon-casino) are separate networks, not Bitcoin with a new logo.
 
@@ -158,7 +155,7 @@ A cheaper-fee bitcoin fork used at some cashiers is [bitcoin cash casino](/guide
   faqs: [
     {
       q: "Does PVPspinArena accept Bitcoin deposits?",
-      a: "No. It is not a bitcoin casino. Deposits are USDC and ETH on the Base network only. Convert BTC to USDC and withdraw on Base, or send ETH on Base.",
+      a: "Yes. Choose Bitcoin on the wallet page and send the on-chain amount on the invoice. It credits a US-dollar balance after the confirmations shown there. Lightning is not accepted. USDC and ETH on Base are separate deposits.",
     },
     {
       q: "How long does a bitcoin casino deposit take?",
@@ -170,7 +167,7 @@ A cheaper-fee bitcoin fork used at some cashiers is [bitcoin cash casino](/guide
     },
     {
       q: "Can I withdraw BTC from PVPspinArena?",
-      a: "No. Cashouts are USDC or ETH on Base. There is a $250 daily limit, and amounts over $25 are reviewed. You can convert the USDC to BTC on an exchange after it arrives.",
+      a: "Yes. Cash out to a Bitcoin address that starts with bc1. The amount comes from your US-dollar balance. Daily limits and any review are shown on the wallet page. USDC and ETH on Base are the other cash-out option.",
     },
     {
       q: "Is a bitcoin casino safer than a dollar-stablecoin casino?",
@@ -200,5 +197,5 @@ A cheaper-fee bitcoin fork used at some cashiers is [bitcoin cash casino](/guide
     "bitcoin-cash-casino",
     "bitcoin-faucet",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-07",
 };

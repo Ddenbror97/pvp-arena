@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Hardware devices such as a Ledger still have a seed phrase; the device is not a substitute for that backup.",
     "Casinos need a deposit from an address they can match, which almost always means a hot wallet you control.",
     "Approving a token spend from a hot wallet can drain it; a normal USDC send does not need a blanket approval.",
-    "PVPspinArena verifies a wallet with a message signature and accepts USDC or ETH on Base only.",
+    "PVPspinArena verifies a wallet with a message signature and accepts on-chain Bitcoin, plus USDC or ETH on Base.",
   ],
   sections: [
     {

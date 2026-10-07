@@ -31,7 +31,7 @@ Fortnite cosmetics are licensed items inside Epic’s ecosystem. They are not CS
     {
       id: "custom",
       title: "Custom wager matches and tournaments",
-      body: `Custom lobbies and community tournaments sometimes add side pots: loser tips the winner, or an organizer holds funds. That social wager can still be gambling under local law when money or money’s worth changes hands on a game of chance or mixed skill.
+      body: `Custom lobbies and community tournaments sometimes add side pots: loser tips the winner, or an organizer holds funds. That social wager can still be gambling under local law when money or money’s worth changes hands on a game of chance or mixed skill. A Call of Duty money match is the same shape on a different game. [COD wagers](/guides/cod-wagers) covers the fee, the disconnect rule, and the escrow.
 
 Risks compound:
 

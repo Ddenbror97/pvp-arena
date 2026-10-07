@@ -217,7 +217,7 @@ Issuer, attestations and chain differences for USDT sit on [what is Tether](/gui
     },
     {
       q: "Can I deposit USDT on PVPspinArena?",
-      a: "No. PVPspinArena accepts USDC and ETH on Base only. Swap USDT for USDC on an exchange and withdraw it on Base to your wallet first.",
+      a: "No. PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base. Swap USDT for USDC on an exchange and withdraw it on Base to your wallet first.",
     },
     {
       q: "What happens if I send USDT to a USDC address?",

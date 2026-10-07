@@ -10,12 +10,12 @@ export const guide: Guide = {
     "What a solana casino is: SOL deposits, near-instant confirmations, low fees, wallet choices, and the risks of sending on the wrong network.",
   h1: "Solana casino: speed, fees, wallets and deposit risks",
   answer:
-    "A solana casino accepts SOL or Solana tokens such as USDC-on-Solana for deposits. Transfers usually confirm in about a second and network fees are typically a fraction of a cent, which is why these sites advertise speed. The main risk is the network, not the clock: SOL sent to an Ethereum-style address, or Solana USDC sent to a Base USDC address, will not arrive. PVPspinArena is not a solana casino. It takes USDC and ETH on Base only. If you hold SOL, swap or sell it, then withdraw USDC on Base to a compatible wallet.",
+    "A solana casino accepts SOL or Solana tokens such as USDC-on-Solana for deposits. Transfers usually confirm in about a second and network fees are typically a fraction of a cent, which is why these sites advertise speed. The main risk is the network, not the clock: SOL sent to an Ethereum-style address, or Solana USDC sent to a Base USDC address, will not arrive. PVPspinArena is not a solana casino. It takes on-chain Bitcoin, plus USDC and ETH on Base. If you hold SOL, swap or sell it, then withdraw USDC on Base to a compatible wallet.",
   facts: [
     "Solana blocks land in roughly 400 milliseconds; most transfers feel final in one or two seconds.",
     "A simple SOL transfer fee is usually a fraction of a US cent when the network is healthy.",
     "Solana addresses are Base58 strings, not the 0x format used by Ethereum and Base.",
-    "PVPspinArena is not a SOL casino. It accepts USDC and ETH on the Base network only.",
+    "PVPspinArena is not a SOL casino. It accepts on-chain Bitcoin, and USDC and ETH on Base.",
     "Withdrawals on PVPspinArena have a $250 daily limit; requests over $25 wait for review.",
   ],
   sections: [

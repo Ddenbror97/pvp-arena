@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 Demo chips, social coins and some sweepstakes currencies are not the same product. [Free casino games](/guides/free-casino-games) can teach buttons. They cannot teach what a $40 hole feels like at 1 a.m. Sweepstakes models have their own rules; do not assume a “gold coin” lobby is a cash casino.
 
-This [Foundations](/guides/topics/foundations) page is for adults 18+. It will not rank brands. PVPspinArena is a [crypto casino](/guides/what-is-a-crypto-casino) that takes USDC and ETH on Base and shows balances in dollars. Jackpot and Coinflip are player-versus-player. Roulette is a house-banked colour wheel. None of that makes a session profitable.
+This [Foundations](/guides/topics/foundations) page is for adults 18+. It will not rank brands. PVPspinArena is a [crypto casino](/guides/what-is-a-crypto-casino) that takes USDC and ETH on Base and shows balances in dollars. Jackpot and Coinflip are player-versus-player. Roulette is a house-banked colour wheel. None of that makes a session profitable. Skill matches and player-funded pots that are not a house paytable are [games that pay real money](/guides/games-that-pay-real-money). This page stays on the casino deposit.
 
 If gambling is already costing more than a plan, stop reading mechanics and use [responsible gambling](/responsible-gambling).
 

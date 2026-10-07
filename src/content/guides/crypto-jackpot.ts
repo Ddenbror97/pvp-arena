@@ -27,7 +27,7 @@ export const guide: Guide = {
 
 The format became famous on CS:GO skin sites, where players threw weapon skins into a pot and watched a wheel decide the winner. The [CS:GO jackpot guide](/guides/csgo-jackpot) covers that history. Crypto jackpots keep the same mechanics but use digital assets instead of skins. On PVPspinArena you fund your balance with USDC or ETH on Base, the balance is held in US dollars, and you add dollars and cents to the pot.
 
-Because it is a [peer to peer game](/guides/pvp-gambling), the site does not pay winners from its own money. The losers' stakes pay the winner, and the operator's income is a fee.`,
+Because it is a [peer to peer game](/guides/pvp-gambling), the site does not pay winners from its own money. The losers' stakes pay the winner, and the operator's income is a fee. A charity [50/50 raffle](/guides/50-50-raffle) also collects money from buyers, then often keeps half. A jackpot pays the pot minus a fee, and your chance is your share of the pot, not one ticket out of N.`,
     },
     {
       id: "how-it-works",

@@ -76,7 +76,7 @@ Identity checks can appear at withdrawal even when the deposit was just an addre
 
 If you cannot withdraw XMR to an exchange you already use, you do not have an exit. Solve the exit before you deposit. This page will not list bypasses.
 
-Sibling chain pages use the same rows so the anchor stays specific: [Cardano casino](/guides/cardano-casino), [XRP casino](/guides/xrp-casino), [Shiba Inu casino](/guides/shiba-inu-casino), [Monero casino](/guides/monero-casino), [Binance Coin casino](/guides/binance-coin-casino), [TON casino](/guides/ton-casino). None of them is a deposit guide for this site.`,
+Sibling chain pages use the same rows so the anchor stays specific: [Cardano casino](/guides/cardano-casino), [XRP casino](/guides/xrp-casino), [Shiba Inu casino](/guides/shiba-inu-casino), Monero casino, [Binance Coin casino](/guides/binance-coin-casino), [TON casino](/guides/ton-casino). None of them is a deposit guide for this site.`,
     },
     {
       id: "rehearsal",

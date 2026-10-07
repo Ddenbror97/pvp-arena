@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Ethereum mainnet gas is paid in ETH and can cost several dollars for a simple transfer when the chain is busy.",
     "Base, Arbitrum, Optimism and other layer 2s also use ETH for gas, usually at a much lower dollar price.",
     "A 0x address looks the same on mainnet and on Base; the chain you select in the wallet is what matters.",
-    "PVPspinArena accepts ETH and USDC on Base only, not Ethereum mainnet ETH.",
+    "PVPspinArena accepts ETH and USDC on Base, not Ethereum mainnet ETH. On-chain Bitcoin is a separate deposit.",
     "Withdrawals on PVPspinArena have a $250 daily limit; requests over $25 wait for review.",
   ],
   howTo: true,
@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 The wallet screen can look identical. The network dropdown is the whole game. Ethereum gambling for adults 18 or over still needs a budget, honest cashout rules and a clear house or PvP fee. Cheap gas does not make a bet safer.
 
-PVPspinArena is PvP Jackpot, Coinflip and Roulette. It takes **ETH on Base** and **USDC on Base**. It is not a BTC, SOL, LTC, DOGE or USDT casino, and it is not a mainnet-ETH casino. This guide is how ETH deposits, gas and layer 2s work, and how to deposit here without paying mainnet prices. The rest of the cluster is under [crypto payments](/guides/topics/crypto-payments).`,
+PVPspinArena is PvP Jackpot, Coinflip and Roulette. It takes **ETH on Base** and **USDC on Base**. It also accepts on-chain Bitcoin. It is not a SOL, LTC, DOGE or USDT casino, and it is not a mainnet-ETH casino. This guide is how ETH deposits, gas and layer 2s work, and how to deposit here without paying mainnet prices. The rest of the cluster is under [crypto payments](/guides/topics/crypto-payments).`,
     },
     {
       id: "mainnet",
@@ -44,7 +44,7 @@ Gas is the fee for computation and storage on Ethereum. A simple ETH transfer is
 
 ### When mainnet still makes sense
 
-Large transfers, settlement that must live on L1, or a casino that truly only watches chain ID 1. For everyday [ethereum gambling](/guides/ethereum-gambling) stakes, a layer 2 is usually the rational rail. Compare the two in [Base vs Ethereum](/guides/base-vs-ethereum).`,
+Large transfers, settlement that must live on L1, or a casino that truly only watches chain ID 1. For everyday ethereum gambling stakes, a layer 2 is usually the rational rail. Compare the two in [Base vs Ethereum](/guides/base-vs-ethereum).`,
     },
     {
       id: "gas",

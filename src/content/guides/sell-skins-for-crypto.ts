@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Crypto cash-out sites publish their own fees, minimums and KYC; those pages change.",
     "Trade holds and trade bans can block a sale even when a buyer exists.",
     "Scam “instant USDC” DMs usually want a Guard code or a wrong trade destination.",
-    "PVPspinArena does not buy inventories; deposit USDC or ETH on Base only after you already hold them.",
+    "PVPspinArena does not buy inventories; deposit on-chain Bitcoin, or USDC or ETH on Base after you already hold them.",
   ],
   howTo: true,
   sections: [

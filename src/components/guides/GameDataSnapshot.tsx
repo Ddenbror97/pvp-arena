@@ -15,6 +15,7 @@ const NAME: Record<SnapshotGame, string> = {
   coinflip: "Coinflip",
   jackpot: "Jackpot",
   roulette: "Roulette",
+  slott: "Slott",
 };
 const NOT_ENOUGH = "Not enough completed rounds yet to show this statistic.";
 const box = "rounded-xl border border-border bg-secondary/40 p-3";
@@ -25,6 +26,9 @@ const RESULT_LABEL: Record<string, string> = {
   RED: COIN.RED.label,
   BLACK: COIN.BLACK.label,
   GREEN: COIN.GREEN.label,
+  WIN: "Win",
+  DRAW: "Draw",
+  BOMB: "Bomb",
 };
 const RESULT_DOT: Record<string, string> = {
   RED: COIN.RED.glow,
@@ -97,6 +101,12 @@ function RoundId({ game, id }: { game: SnapshotGame; id: number }) {
         Round #{id}
       </Link>
     );
+  if (game === "slott")
+    return (
+      <Link to="/slott/$gameId" params={{ gameId: String(id) }} className={cls}>
+        Duel #{id}
+      </Link>
+    );
   return <span className="font-semibold text-foreground">Spin #{id}</span>;
 }
 
@@ -110,7 +120,7 @@ function RecentRow({
   reference: string;
 }) {
   const detail =
-    game === "jackpot"
+    game === "jackpot" || game === "slott"
       ? r.players !== null
         ? `${r.players} players`
         : null
@@ -146,7 +156,8 @@ export function GameDataSnapshot({
   const name = NAME[game];
   const w = s.window;
   const enoughForAvg = w.rounds >= MIN_ROUNDS_FOR_AVERAGE;
-  const play = game === "jackpot" ? "/" : game === "coinflip" ? "/coinflip" : "/roulette";
+  const play =
+    game === "jackpot" ? "/" : game === "coinflip" ? "/coinflip" : game === "slott" ? "/slott" : "/roulette";
 
   return (
     <section

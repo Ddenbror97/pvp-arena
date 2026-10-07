@@ -6,7 +6,7 @@ import { OG_SITE_URL } from "@/lib/og";
 
 const TITLE = "Crypto Casino Guides: Odds, Lottery and Betting";
 const DESC =
-  "Topic hubs for provably fair play, lottery odds, horse racing, sports betting, prediction markets, payments, and responsible play.";
+  "Topic hubs for skill wagers, provably fair play, lottery odds, horse racing, sports betting, prediction markets, payments, and responsible play.";
 
 export const Route = createFileRoute("/guides/")({
   loader: () => getGuidesHub(),
@@ -129,16 +129,16 @@ function GuidesHub() {
           Crypto casino guides
         </h1>
         <p className="mt-5 max-w-2xl leading-relaxed text-muted-foreground">
-          {guides.length} guides in {clusters.length} topics. Open a topic, then a guide. Lottery,
-          horse racing, prediction markets, and sports bets sit beside the crypto casino topics, and
-          every article stays linked here and on its topic page.
+          {guides.length} guides in {clusters.length} topics. Open a topic, then a guide. Skill
+          wagers, lottery, horse racing, prediction markets, and sports bets sit beside the crypto
+          casino topics, and every article stays linked here and on its topic page.
         </p>
         <label className="mt-6 block max-w-md text-sm">
           <span className="font-medium text-foreground">Search guides</span>
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Try lottery, horse racing, provably fair"
+            placeholder="Try skill wagers, lottery, provably fair"
             className="mt-1.5 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
           />
         </label>

@@ -35,7 +35,7 @@ export const guide: Guide = {
 
 The game then charges a [house edge](/guides/house-edge) or a PvP fee. That fourth cost is not a deposit fee. Keep it in a separate column.
 
-This guide is in [crypto payments](/guides/topics/crypto-payments). Adults 18+ only. PVPspinArena credits USDC and ETH on Base. It is not a BTC, SOL, TRX or Lightning cashier.
+This guide is in [crypto payments](/guides/topics/crypto-payments). Adults 18+ only. PVPspinArena credits USDC and ETH on Base. On-chain Bitcoin credits a dollar balance. It is not a SOL, TRX or Lightning cashier.
 
 The long form of “who you pay on a send” is [gas fees explained](/guides/gas-fees-explained). This page is the deposit stack: how those line items hit a session before the first pot.
 

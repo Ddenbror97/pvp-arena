@@ -76,7 +76,7 @@ Identity checks can appear at withdrawal even when the deposit was just an addre
 
 If the casino converts SHIB to an internal dollar chip, write the rate. The conversion is a spread. It can cost more than gas.
 
-Sibling chain pages use the same rows so the anchor stays specific: [Cardano casino](/guides/cardano-casino), [XRP casino](/guides/xrp-casino), [Shiba Inu casino](/guides/shiba-inu-casino), [Monero casino](/guides/monero-casino), [Binance Coin casino](/guides/binance-coin-casino), [TON casino](/guides/ton-casino). None of them is a deposit guide for this site.`,
+Sibling chain pages use the same rows so the anchor stays specific: [Cardano casino](/guides/cardano-casino), [XRP casino](/guides/xrp-casino), Shiba Inu casino, [Monero casino](/guides/monero-casino), [Binance Coin casino](/guides/binance-coin-casino), [TON casino](/guides/ton-casino). None of them is a deposit guide for this site.`,
     },
     {
       id: "rehearsal",

@@ -10,12 +10,12 @@ export const guide: Guide = {
     "How a litecoin casino works: LTC deposits, confirmation times, fees versus Bitcoin, withdrawals, and when a stablecoin is the better chip.",
   h1: "Litecoin casino: LTC deposits, fees and withdrawal times",
   answer:
-    "A litecoin casino accepts Litecoin (LTC) for deposits and typically pays winnings back in LTC. Litecoin uses a Bitcoin-like design with a 2.5-minute target block time, so deposits often credit faster than BTC and miner fees are usually lower. You still wait for confirmations, still pay a network fee, and still hold a coin whose dollar price moves. PVPspinArena is not a litecoin casino. It accepts USDC and ETH on Base only. Convert LTC to USDC and withdraw on Base if you want a dollar balance for Jackpot, Coinflip or Roulette.",
+    "A litecoin casino accepts Litecoin (LTC) for deposits and typically pays winnings back in LTC. Litecoin uses a Bitcoin-like design with a 2.5-minute target block time, so deposits often credit faster than BTC and miner fees are usually lower. You still wait for confirmations, still pay a network fee, and still hold a coin whose dollar price moves. PVPspinArena is not a litecoin casino. It accepts on-chain Bitcoin, plus USDC and ETH on Base. Convert LTC to USDC and withdraw on Base if you want a dollar balance for Jackpot, Coinflip or Roulette.",
   facts: [
     "Litecoin's target block time is 2.5 minutes, one quarter of Bitcoin's ten-minute target.",
     "Many sites wait for a handful of LTC confirmations, often about 10 to 20 minutes in total.",
     "LTC miner fees are usually lower than Bitcoin fees for a similar transfer, but they are not fixed.",
-    "PVPspinArena is not an LTC casino. It accepts USDC and ETH on the Base network only.",
+    "PVPspinArena is not an LTC casino. It accepts on-chain Bitcoin, and USDC and ETH on Base.",
     "Withdrawals on PVPspinArena have a $250 daily limit; requests over $25 wait for review.",
   ],
   sections: [
@@ -28,7 +28,7 @@ Litecoin launched in 2011 as a Bitcoin-like chain with a faster block target and
 
 It is still gambling for people aged 18 or over. Faster blocks do not improve odds. They only change how long you wait to fund the account.
 
-PVPspinArena does not take LTC. It is a player-versus-player site for Jackpot, Coinflip and Roulette, funded with USDC and ETH on Base. It is not a BTC, SOL, LTC, DOGE or USDT casino. If you already hold Litecoin, treat this guide as a map of how LTC casinos work and how to move value onto Base instead. The same cluster is collected under [crypto payments](/guides/topics/crypto-payments).`,
+PVPspinArena does not take LTC. It is a player-versus-player site for Jackpot, Coinflip and Roulette, funded with USDC and ETH on Base. It is not a SOL, LTC, DOGE or USDT casino. On-chain Bitcoin credits a dollar balance. If you already hold Litecoin, treat this guide as a map of how LTC casinos work and how to move value onto Base instead. The same cluster is collected under [crypto payments](/guides/topics/crypto-payments).`,
     },
     {
       id: "deposits",

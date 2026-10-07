@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Circle issues native USDC on Arbitrum at a different contract from bridged USDC.e.",
     "Arbitrum sequencer confirmations are typically well under two seconds; L2-to-L1 withdrawals still wait a challenge window of about seven days.",
     "Gas on Arbitrum is usually cents, in the same cheap band as Base and far below Ethereum mainnet.",
-    "PVPspinArena accepts USDC and ETH on Base only. It does not watch Arbitrum One or Arbitrum Nova.",
+    "PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base. It does not watch Arbitrum One or Arbitrum Nova.",
   ],
   sections: [
     {
@@ -155,7 +155,7 @@ Write three lines on paper before any first send: chain ID 42161 or 8453, token 
   faqs: [
     {
       q: "Does PVPspinArena accept Arbitrum deposits?",
-      a: "No. It accepts USDC and ETH on Base only. An Arbitrum One transfer will not credit, even if the 0x address string matches.",
+      a: "No. It accepts on-chain Bitcoin, and USDC and ETH on Base. An Arbitrum One transfer will not credit, even if the 0x address string matches.",
     },
     {
       q: "Is gas cheaper on Arbitrum than on Base?",

@@ -46,7 +46,7 @@ The term "crypto casino" covers a wide range of sites. Some are traditional casi
 5. **Play.** You stake part of your balance in a game. The result is decided on the site's server and your balance updates.
 6. **Withdraw.** You request a payout to your wallet. The site checks the request, signs a blockchain transaction and sends it.
 
-On PVPspinArena, deposits are accepted as USDC or ETH on the Base network. The system checks the chain every minute, waits for confirmations, and only credits a deposit when two independent blockchain data providers agree on it. Your balance is then shown in US dollars, so a deposit of 10 USDC appears as $10.00. The [USDC casino guide](/guides/usdc-casino) walks through the full deposit and withdrawal flow.`,
+On PVPspinArena, deposits are accepted as on-chain Bitcoin, or as USDC or ETH on the Base network. USDC and ETH are checked on Base and credited when two independent blockchain data providers agree. Bitcoin is credited in dollars after the confirmations on its invoice. Your balance is shown in US dollars, so a deposit of 10 USDC appears as $10.00. The [USDC casino guide](/guides/usdc-casino) and the [bitcoin casino guide](/guides/bitcoin-casino) walk through those deposits.`,
     },
     {
       id: "vs-traditional",

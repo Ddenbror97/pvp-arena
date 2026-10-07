@@ -134,7 +134,7 @@ The example is not an argument that USDC "wins." It is an argument that you shou
       title: "Summary: a peg is a design, not a guarantee",
       body: `A stablecoin is a token built to stay near a reference price, usually one dollar, using reserves, redemption and market arbitrage. Fiat-backed coins are the ones casinos actually use. Algorithmic coins are a different, historically fragile design. USDC and USDT share a peg target and differ in issuer, reporting and chains.
 
-Use a dollar token when you want the session to be about the game. Use Bitcoin when you accept dollar swings as part of the stack. On this site, send USDC or ETH on Base only, from a wallet you control, and treat every stake as money you can afford to lose.
+Use a dollar token when you want the session to be about the game. Use Bitcoin when you accept dollar swings as part of the stack. On this site, send on-chain Bitcoin, or USDC or ETH on Base, from a wallet you control, and treat every stake as money you can afford to lose.
 
 The largest dollar stablecoin by float is [Tether](/guides/what-is-tether).`,
     },
@@ -158,7 +158,7 @@ The largest dollar stablecoin by float is [Tether](/guides/what-is-tether).`,
     },
     {
       q: "Does PVPspinArena accept every stablecoin?",
-      a: "No. It accepts USDC and ETH on the Base network only. USDT, TRX and Bitcoin deposits are not credited.",
+      a: "No. It accepts on-chain Bitcoin, and USDC and ETH on Base. USDT, TRX and Bitcoin deposits are not credited.",
     },
   ],
   sources: [

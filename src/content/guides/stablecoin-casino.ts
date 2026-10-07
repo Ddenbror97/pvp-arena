@@ -16,7 +16,7 @@ export const guide: Guide = {
     "USDC is issued by Circle; USDT is issued by Tether. Both aim at one US dollar.",
     "The same ticker on two networks is two tokens. A wrong-network send will not credit.",
     "Algorithmic and thinly backed pegs have broken; a casino chip should be a large fiat-backed coin.",
-    "PVPspinArena accepts USDC and ETH on Base only. It does not accept USDT or other dollar tokens.",
+    "PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base. It does not accept USDT or other dollar tokens.",
   ],
   sections: [
     {
@@ -167,7 +167,7 @@ If a landing page says “any stablecoin” and then shows one address, it is ly
     },
     {
       q: "Does PVPspinArena accept USDT?",
-      a: "No. It accepts USDC and ETH on Base only. Swap or sell USDT, then withdraw USDC on Base.",
+      a: "No. It accepts on-chain Bitcoin, and USDC and ETH on Base. Swap or sell USDT, then withdraw USDC on Base.",
     },
     {
       q: "Are other dollar tokens fine?",

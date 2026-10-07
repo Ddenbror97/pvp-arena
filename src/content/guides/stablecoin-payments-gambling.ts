@@ -15,7 +15,7 @@ export const guide: Guide = {
     "A dollar stablecoin is designed to track $1; it is not a bank deposit and is not FDIC insured.",
     "USDC is issued by Circle; USDT is issued by Tether. Both exist on multiple networks.",
     "Sending USDC on the wrong network is as final as sending the wrong coin.",
-    "PVPspinArena accepts USDC and ETH on Base only — not USDT, BTC, SOL, LTC or DOGE.",
+    "PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base — not USDT, SOL, LTC or DOGE. On-chain Bitcoin is accepted.",
     "Withdrawals on PVPspinArena have a $250 daily limit; requests over $25 wait for review.",
   ],
   sections: [

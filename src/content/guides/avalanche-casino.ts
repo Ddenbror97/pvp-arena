@@ -16,7 +16,7 @@ export const guide: Guide = {
     "C-Chain gas is paid in AVAX. A USDC-only wallet on Avalanche cannot send until it also holds AVAX.",
     "Circle issues native USDC on Avalanche; the ticker matches other chains, the ledger does not.",
     "C-Chain blocks are typically about two seconds; a simple transfer often feels final in a few seconds.",
-    "PVPspinArena accepts USDC and ETH on Base only. It does not watch Avalanche, the X-Chain or the P-Chain.",
+    "PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base. It does not watch Avalanche, the X-Chain or the P-Chain.",
   ],
   sections: [
     {
@@ -170,7 +170,7 @@ PVPspinArena is not an Avalanche casino. Fund USDC or ETH on Base, then deposit.
     },
     {
       q: "Does PVPspinArena accept AVAX?",
-      a: "No. It accepts USDC and ETH on Base only. An Avalanche hash will not credit.",
+      a: "No. It accepts on-chain Bitcoin, and USDC and ETH on Base. An Avalanche hash will not credit.",
     },
     {
       q: "How fast is an Avalanche C-Chain deposit?",

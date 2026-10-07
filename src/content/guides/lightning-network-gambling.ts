@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Lightning Network casino deposits use Bitcoin Lightning rails. How invoices work, what fails, and why this site uses USDC on Base.",
   h1: "Lightning Network casino: Bitcoin Lightning rails, not Base",
   answer:
-    "A Lightning Network casino takes Bitcoin over Lightning: you pay a BOLT11 invoice (or a similar LN offer) from a Lightning wallet, the payment channel network routes satoshis, and the site credits a BTC or dollar balance. Fees are usually tiny and settlement is fast compared with on-chain Bitcoin. PVPspinArena is not a Lightning Network casino. It accepts USDC and ETH on Base only. Lightning BTC will not credit here.",
+    "A Lightning Network casino takes Bitcoin over Lightning: you pay a BOLT11 invoice (or a similar LN offer) from a Lightning wallet, the payment channel network routes satoshis, and the site credits a BTC or dollar balance. Fees are usually tiny and settlement is fast compared with on-chain Bitcoin. PVPspinArena is not a Lightning Network casino. It accepts on-chain Bitcoin, plus USDC and ETH on Base. Lightning BTC will not credit here.",
   facts: [
     "Lightning is a Bitcoin layer-2 payment-channel network, not a separate casino coin.",
     "Deposits are invoices or offers, not a Base 0x USDC transfer.",
@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 That is the whole definition. Fast and cheap is a property of the rail. It is not a promise the games are fair, licensed or solvent.
 
-This guide is in [crypto payments](/guides/topics/crypto-payments). Adults 18+ only. PVPspinArena is Jackpot, Coinflip and Roulette with USDC or ETH on Base. It is not a bitcoin casino and it is not a Lightning cashier.
+This guide is in [crypto payments](/guides/topics/crypto-payments). Adults 18+ only. PVPspinArena is Jackpot, Coinflip and Roulette with on-chain Bitcoin, plus USDC or ETH on Base. It is not a Lightning cashier.
 
 On-chain BTC rooms are covered in [bitcoin casino](/guides/bitcoin-casino). Read that page if your coins are sitting in a bc1 address and you have never opened a Lightning wallet. This page is the invoice rail.
 
@@ -142,13 +142,13 @@ If you cannot sit with a failed invoice without sending another, step away. Use 
 
 If you already paid two invoices because the first one “looked stuck,” stop and wait. Double-pays are how a $25 plan becomes $50 before a chip appears. Speed is not a requirement to act twice.
 
-PVPspinArena will not take the invoice. Convert to USDC on Base only if you still have a planned dollar session — after you can close the tab.`,
+PVPspinArena will not take the Lightning invoice. On-chain Bitcoin is a separate deposit on the wallet page, after you can close the tab.`,
     },
   ],
   faqs: [
     {
       q: "Does PVPspinArena accept Lightning Network deposits?",
-      a: "No. It is not a Lightning Network casino. Deposits are USDC and ETH on Base only.",
+      a: "No. It is not a Lightning Network casino. On-chain Bitcoin, and USDC or ETH on Base, are accepted. A Lightning invoice will not credit.",
     },
     {
       q: "What is a Lightning Network casino?",
@@ -164,7 +164,7 @@ PVPspinArena will not take the invoice. Convert to USDC on Base only if you stil
     },
     {
       q: "If I hold BTC, how do I use this site?",
-      a: "Convert to USDC on an exchange, withdraw USDC on Base, then deposit. Or send ETH on Base.",
+      a: "Deposit on-chain Bitcoin from the wallet page, or send USDC or ETH on Base. A Lightning payment will not credit.",
     },
     {
       q: "Is Lightning gambling anonymous?",

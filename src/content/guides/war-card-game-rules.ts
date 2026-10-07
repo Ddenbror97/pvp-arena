@@ -31,7 +31,7 @@ export const guide: Guide = {
       title: "Home War and casino war are different games",
       body: `Say which War you mean before anyone deals. This page is the catching game children play on the floor: one shared deck, no bets against a house, no dealer. You win by collecting cards until the other player has none, or until you stop and count.
 
-The casino game is a banking game. You play one card against the dealer's card, for a stake, and the house keeps an edge. Read it on the [casino war](/guides/casino-war-game) guide if that is the game you looked up. Do not import its bets into a kitchen-table deck.
+The casino game is a banking game. You play one card against the dealer's card, for a stake, and the house keeps an edge. Read it on the [casino war](/guides/casino-war-game) guide if that is the game you looked up. One flip each, then the hand is over, is a [high card game](/guides/high-card-game), not a full-deck war. Do not import casino bets into a kitchen-table deck.
 
 Home War needs one [52-card deck](/guides/52-card-deck) and two players for the basic game. Jokers stay out unless you have agreed they beat aces. Three players can play with 17 cards each, and the leftover card sits out. Four players get 13 each. Everyone flips at the same time.
 

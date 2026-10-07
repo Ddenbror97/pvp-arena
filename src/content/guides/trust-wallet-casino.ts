@@ -54,7 +54,7 @@ People also confuse Trust Wallet with a Binance deposit address. Those are diffe
       title: "Picking Base so the deposit can credit",
       body: `Trust Wallet will show USDC more than once if you have used several chains. Read the network subtitle, not the icon.
 
-PVPspinArena accepts USDC and ETH on Base only. BNB Chain, Ethereum, Polygon, Solana and Tron variants will not credit. Base addresses look like Ethereum addresses, so a mainnet send to the site address is a common loss.
+PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base. BNB Chain, Ethereum, Polygon, Solana and Tron variants will not credit. Base addresses look like Ethereum addresses, so a mainnet send to the site address is a common loss.
 
 If Base is missing, add it the same way you would in a browser wallet. Our guide to [adding the Base network](/guides/add-base-network-metamask) lists the public RPC details you should verify against official Base docs, even if you paste them into Trust Wallet instead of MetaMask.
 

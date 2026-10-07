@@ -110,7 +110,7 @@ You open [Coinflip](/coinflip), create a $2.00 game and pick a side. When someon
     {
       id: "usdt",
       title: "Can you use USDT or other coins?",
-      body: "Many players already hold USDT or other tokens. PVPspinArena accepts USDC and ETH on Base only. If you hold USDT, you can swap it for USDC on an exchange or a reputable decentralised exchange before sending, keeping in mind that swaps have their own fees and slippage. ETH deposits on Base are also accepted and are converted to a dollar balance when they are credited, so the dollar amount is fixed at that point.",
+      body: "Many players already hold USDT or other tokens. PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base. If you hold USDT, you can swap it for USDC on an exchange or a reputable decentralised exchange before sending, keeping in mind that swaps have their own fees and slippage. ETH deposits on Base are also accepted and are converted to a dollar balance when they are credited, so the dollar amount is fixed at that point.",
     },
     {
       id: "eth",

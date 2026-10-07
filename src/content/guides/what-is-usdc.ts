@@ -26,7 +26,7 @@ export const guide: Guide = {
 
 People mix USDC up with USDT and with "crypto dollars" invented by a gambling brand. Circle is the issuer. Tether issues USDT. A casino that shows $10.00 after a 10 USDC deposit is keeping its own ledger; the tokens themselves sat in the deposit address.
 
-This page is part of the [crypto payments](/guides/topics/crypto-payments) guides. It is written for adults aged 18 or over who want to understand the coin before they send it. PVPspinArena uses USDC as a deposit asset for player-versus-player Jackpot, Coinflip and Roulette. It is not a poker room, sportsbook or lottery, and it does not take USDT or Bitcoin.
+This page is part of the [crypto payments](/guides/topics/crypto-payments) guides. It is written for adults aged 18 or over who want to understand the coin before they send it. PVPspinArena uses USDC as a deposit asset for player-versus-player Jackpot, Coinflip and Roulette. It is not a poker room, sportsbook or lottery, and it does not take USDT. On-chain Bitcoin is a separate deposit.
 
 If you need the broader category first, start with [what is a stablecoin](/guides/what-is-a-stablecoin). If you already know you will deposit here, the [USDC casino](/guides/usdc-casino) guide walks the send and cashout steps.`,
     },
@@ -134,7 +134,7 @@ Keep a written [gambling budget](/guides/gambling-budget) before the first 25 US
     {
       id: "summary",
       title: "Summary: Circle's dollar token, your send, the site's ledger",
-      body: `USDC is Circle's dollar stablecoin, reserved and redeemable at the issuer for eligible customers, and issued on several chains. Casinos use it because a dollar in is a dollar on the chip. PVPspinArena accepts USDC and ETH on Base only, shows dollars after credit, and is a PvP jackpot, coinflip and roulette site — not a USDT, Tron or Bitcoin casino.
+      body: `USDC is Circle's dollar stablecoin, reserved and redeemable at the issuer for eligible customers, and issued on several chains. Casinos use it because a dollar in is a dollar on the chip. PVPspinArena accepts USDC and ETH on Base, and on-chain Bitcoin, shows dollars after credit, and is a PvP jackpot, coinflip and roulette site — not a USDT or Tron casino.
 
 Check the network, verify the wallet, and keep a budget before the first send.
 

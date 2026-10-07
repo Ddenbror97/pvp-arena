@@ -5,7 +5,7 @@
  * carried as decimal strings so they survive serialization as exact values.
  */
 
-export type SnapshotGame = "coinflip" | "jackpot" | "roulette";
+export type SnapshotGame = "coinflip" | "jackpot" | "roulette" | "slott";
 
 /** Guides that get a live data block. Anything not listed renders unchanged. */
 export const GUIDE_GAME_DATA: Readonly<Record<string, SnapshotGame>> = {
@@ -21,6 +21,11 @@ export const GUIDE_GAME_DATA: Readonly<Record<string, SnapshotGame>> = {
   "provably-fair-roulette": "roulette",
   "roulette-colors": "roulette",
   "roulette-odds-chart": "roulette",
+  "50-50-raffle": "jackpot",
+  "high-card-game": "coinflip",
+  "skillz-review": "coinflip",
+  "games-that-pay-real-money": "roulette",
+  "slot-battles": "slott",
 };
 
 /** First entry that is not the current guide wins. */
@@ -38,6 +43,10 @@ export const GAME_GUIDE_LINKS: Readonly<
   roulette: {
     howItWorks: ["crypto-roulette", "cs2-roulette"],
     fairness: ["provably-fair-roulette", "provably-fair-games"],
+  },
+  slott: {
+    howItWorks: ["slot-battles"],
+    fairness: ["provably-fair-casino", "provably-fair-games"],
   },
 };
 
@@ -97,6 +106,7 @@ type Key =
   | "coinflip"
   | "jackpot"
   | "roulette"
+  | "slott"
   | "window"
   | "all_time"
   | "recent"
@@ -166,6 +176,7 @@ const RESULTS: Record<SnapshotGame, readonly string[]> = {
   coinflip: ["HEADS", "TAILS"],
   jackpot: [],
   roulette: ["RED", "BLACK", "GREEN"],
+  slott: ["WIN", "DRAW", "BOMB"],
 };
 
 function recentRows(v: unknown, game: SnapshotGame): RecentRound[] {
@@ -271,6 +282,7 @@ export function parseSnapshot(raw: unknown): GameSnapshot | null {
       coinflip: gameStats(raw.coinflip, "coinflip"),
       jackpot: gameStats(raw.jackpot, "jackpot"),
       roulette: gameStats(raw.roulette, "roulette"),
+      slott: gameStats(raw.slott, "slott"),
     },
   };
 }

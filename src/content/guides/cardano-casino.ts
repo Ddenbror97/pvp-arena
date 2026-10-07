@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Cardano block times are about twenty seconds. Casinos may require more than one block.",
     "Fees are usually small compared with Ethereum mainnet gas, and they are paid in ADA.",
     "You need a Cardano wallet. An Ethereum address will not spend ADA.",
-    "PVPspinArena accepts USDC or ETH on Base only. ADA sent here is not a deposit.",
+    "PVPspinArena accepts on-chain Bitcoin, plus USDC or ETH on Base. ADA sent here is not a deposit.",
   ],
   sections: [
     {
@@ -76,7 +76,7 @@ Identity checks can appear at withdrawal even when the deposit was just an addre
 
 If the only ADA you hold is staked, unstaking and sending are extra steps with their own timing. Do not start them until the casino address is copied from the deposit screen the same day.
 
-Sibling chain pages use the same rows so the anchor stays specific: [Cardano casino](/guides/cardano-casino), [XRP casino](/guides/xrp-casino), [Shiba Inu casino](/guides/shiba-inu-casino), [Monero casino](/guides/monero-casino), [Binance Coin casino](/guides/binance-coin-casino), [TON casino](/guides/ton-casino). None of them is a deposit guide for this site.`,
+Sibling chain pages use the same rows so the anchor stays specific: Cardano casino, [XRP casino](/guides/xrp-casino), [Shiba Inu casino](/guides/shiba-inu-casino), [Monero casino](/guides/monero-casino), [Binance Coin casino](/guides/binance-coin-casino), [TON casino](/guides/ton-casino). None of them is a deposit guide for this site.`,
     },
     {
       id: "rehearsal",

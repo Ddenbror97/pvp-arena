@@ -120,7 +120,7 @@ Price the product you have:
 - House edge on banked games
 - Rake or juice on skill-leaning contests
 
-Then set a budget. [Gambling budget](/guides/gambling-budget) stays relevant even if you play poker well.`,
+Then set a budget. [Gambling budget](/guides/gambling-budget) stays relevant even if you play poker well. Cash matches and the apps around them are mapped on [games that pay real money](/guides/games-that-pay-real-money).`,
     },
     {
       id: "pvp-chance",

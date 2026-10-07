@@ -8,6 +8,7 @@ export type GuideCluster =
   | "Sweepstakes"
   | "Poker"
   | "Esports betting"
+  | "Skill wagers"
   | "Casino games"
   | "Sports betting"
   | "Blackjack"

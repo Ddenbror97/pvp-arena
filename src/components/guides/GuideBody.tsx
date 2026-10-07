@@ -59,11 +59,18 @@ export function InternalLink({
   children: ReactNode;
 }) {
   const targets = useContext(TargetsCtx);
+  const classNames = className ?? "font-medium text-primary underline-offset-4 hover:underline";
+  if (href.startsWith("#")) {
+    return (
+      <a href={href} className={classNames}>
+        {children}
+      </a>
+    );
+  }
   const hashAt = href.indexOf("#");
   const hash = hashAt >= 0 ? href.slice(hashAt + 1) : undefined;
   const path =
     ((hashAt >= 0 ? href.slice(0, hashAt) : href).split("?")[0] ?? "").replace(/\/$/, "") || "/";
-  const classNames = className ?? "font-medium text-primary underline-offset-4 hover:underline";
   if (path.startsWith("/guides/topics/")) {
     const topic = path.slice("/guides/topics/".length);
     if (!targets.topics.has(topic)) return <Fragment>{children}</Fragment>;
@@ -99,7 +106,7 @@ export function InternalLink({
 /** Inline: **bold** and [text](/path). */
 function inline(text: string, key: string): ReactNode[] {
   const out: ReactNode[] = [];
-  const re = /\*\*([^*]+)\*\*|\[([^\]]+)\]\((\/[^)]*)\)/g;
+  const re = /\*\*([^*]+)\*\*|\[([^\]]+)\]\((\/[^)]*|#[^)]+)\)/g;
   let last = 0;
   let m: RegExpExecArray | null;
   let i = 0;

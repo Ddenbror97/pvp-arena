@@ -103,7 +103,7 @@ If anyone offers to "bridge for you" after you send them the coins, that is not 
 3. **Use a well-known canonical bridge to your own wallet, then deposit.** Acceptable if you understand approvals and native versus wrapped tokens.
 4. **Use an unknown "instant bridge" from a casino comment section.** Do not.
 
-PVPspinArena is not a BTC, SOL, LTC, DOGE or USDT casino. Those coins have to become USDC or ETH on Base by path 2 or 3, never by sending them to the 0x deposit address.`,
+PVPspinArena accepts on-chain Bitcoin on its own invoice. It is not a SOL, LTC, DOGE or USDT casino. Those coins have to become USDC or ETH on Base by path 2 or 3, never by sending them to the 0x deposit address. Do not send BTC to that 0x address.`,
     },
     {
       id: "example",
@@ -174,7 +174,7 @@ PVPspinArena will still be PvP Jackpot, Coinflip and Roulette tomorrow, with the
     },
     {
       q: "Can I bridge BTC or SOL directly into PVPspinArena?",
-      a: "No. The site does not accept BTC, SOL, LTC, DOGE or USDT. Convert to USDC or ETH and get that asset onto Base first.",
+      a: "On-chain Bitcoin uses its own invoice. Do not bridge BTC to the Base address. The site does not accept SOL, LTC, DOGE or USDT.",
     },
     {
       q: "Who pays the fees in a bridge?",

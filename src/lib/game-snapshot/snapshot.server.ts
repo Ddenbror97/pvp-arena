@@ -6,7 +6,7 @@ const TTL_MS = 5 * 60_000;
 const STALE_MS = 60 * 60_000;
 const RETRY_MS = 30_000;
 const RPC_TIMEOUT_MS = 2_500;
-const CACHE_KEY = "https://game-snapshot.internal/seo/v1";
+const CACHE_KEY = "https://game-snapshot.internal/seo/v2";
 
 /** Cloudflare's per-colo cache, so isolates in one data centre share a refresh. */
 const edgeCache = () => (globalThis as { caches?: { default?: Cache } }).caches?.default;

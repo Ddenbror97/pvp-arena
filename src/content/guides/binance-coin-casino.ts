@@ -76,7 +76,7 @@ Identity checks can appear at withdrawal even when the deposit was just an addre
 
 This site's network is Base. Adding BNB Chain to MetaMask does not create a PVPspinArena deposit. The wallet page names the rail.
 
-Sibling chain pages use the same rows so the anchor stays specific: [Cardano casino](/guides/cardano-casino), [XRP casino](/guides/xrp-casino), [Shiba Inu casino](/guides/shiba-inu-casino), [Monero casino](/guides/monero-casino), [Binance Coin casino](/guides/binance-coin-casino), [TON casino](/guides/ton-casino). None of them is a deposit guide for this site.`,
+Sibling chain pages use the same rows so the anchor stays specific: [Cardano casino](/guides/cardano-casino), [XRP casino](/guides/xrp-casino), [Shiba Inu casino](/guides/shiba-inu-casino), [Monero casino](/guides/monero-casino), Binance Coin casino, [TON casino](/guides/ton-casino). None of them is a deposit guide for this site.`,
     },
     {
       id: "rehearsal",

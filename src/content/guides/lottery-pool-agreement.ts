@@ -33,7 +33,7 @@ export const guide: Guide = {
 
 Someone is “in” but pays late. Someone leaves the job. The buyer picks extra lines and keeps them. The photo of the ticket never circulates, so a win is easy to hide. The group splits the gross and forgets that tax was withheld from the claimant. Each of those fights is cheaper to prevent than to litigate.
 
-These [Lottery guides](/guides/topics/lottery) are not a system for choosing numbers. Pools do not improve the combination count. They spread the cost and they spread the prize. Number selection, if you care, is the [quick pick](/guides/quick-pick-lottery) page. The social version of betting with people you know, outside a state lottery, is [bet with friends online](/guides/bet-with-friends-online). Do not confuse a state-ticket pool with a player-versus-player pot.`,
+These [Lottery guides](/guides/topics/lottery) are not a system for choosing numbers. Pools do not improve the combination count. They spread the cost and they spread the prize. Number selection, if you care, is the [quick pick](/guides/quick-pick-lottery) page. The social version of betting with people you know, outside a state lottery, is [bet with friends online](/guides/bet-with-friends-online). Do not confuse a state-ticket pool with a player-versus-player pot. A public [50/50 raffle](/guides/50-50-raffle) is a different document again: the organizer sells tickets and keeps a share. Do not use this office-pool template to run one.`,
     },
     {
       id: "template",

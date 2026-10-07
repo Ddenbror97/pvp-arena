@@ -10,12 +10,12 @@ export const guide: Guide = {
     "How a dogecoin casino works: DOGE deposits, network fees, confirmation times, price swings, and why a dollar balance is easier to budget.",
   h1: "Dogecoin casino: DOGE deposits, fees and price risk",
   answer:
-    "A dogecoin casino accepts Dogecoin (DOGE) for deposits and usually pays back in DOGE. Dogecoin shares a design family with Litecoin: one-minute blocks, generally low network fees, and a long history as a tipping and meme coin. The hard part is not the transfer. It is the dollar price, which can move sharply, so a DOGE balance is a poor session budget. PVPspinArena is not a dogecoin casino. It takes USDC and ETH on Base only. If you hold DOGE, convert it to USDC and withdraw on Base before you deposit.",
+    "A dogecoin casino accepts Dogecoin (DOGE) for deposits and usually pays back in DOGE. Dogecoin shares a design family with Litecoin: one-minute blocks, generally low network fees, and a long history as a tipping and meme coin. The hard part is not the transfer. It is the dollar price, which can move sharply, so a DOGE balance is a poor session budget. PVPspinArena is not a dogecoin casino. It takes on-chain Bitcoin, plus USDC and ETH on Base. If you hold DOGE, convert it to USDC and withdraw on Base before you deposit.",
   facts: [
     "Dogecoin's target block time is one minute, faster than Litecoin and much faster than Bitcoin.",
     "DOGE transfer fees are usually small in dollar terms, but they are not zero and they can spike.",
     "Dogecoin's dollar price has historically moved far more than a dollar stablecoin.",
-    "PVPspinArena is not a DOGE casino. It accepts USDC and ETH on the Base network only.",
+    "PVPspinArena is not a DOGE casino. It accepts on-chain Bitcoin, and USDC and ETH on Base.",
     "Withdrawals on PVPspinArena have a $250 daily limit; requests over $25 wait for review.",
   ],
   sections: [
@@ -26,7 +26,7 @@ export const guide: Guide = {
 
 The games are still gambling. They are for adults 18 or older. A joke coin does not make a jackpot less real. If you would not stake the same dollars in USDC, do not stake them because the ticker is DOGE.
 
-PVPspinArena is not in this category. It is player-versus-player Jackpot, Coinflip and Roulette, funded with USDC and ETH on Base. It is not a BTC, SOL, LTC, DOGE or USDT casino. This article explains how DOGE deposits work on sites that accept them, why the price is the main risk, and how to move value onto Base if you want a dollar chip. Related explainers live under [crypto payments](/guides/topics/crypto-payments).`,
+PVPspinArena is not in this category. It is player-versus-player Jackpot, Coinflip and Roulette, funded with USDC and ETH on Base. It is not a SOL, LTC, DOGE or USDT casino. On-chain Bitcoin credits a dollar balance. This article explains how DOGE deposits work on sites that accept them, why the price is the main risk, and how to move value onto Base if you want a dollar chip. Related explainers live under [crypto payments](/guides/topics/crypto-payments).`,
     },
     {
       id: "deposits",

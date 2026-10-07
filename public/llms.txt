@@ -1,6 +1,6 @@
 # PVPspinArena
 
-> PVPspinArena (https://pvpspinarena.com) is a player-vs-player crypto gaming site with three games: Jackpot, Coinflip, and Roulette. Balances are shown in US dollars and funded with USDC or ETH on Base. Each result is computed on the server from a seed whose SHA-256 hash is published before the round; after settlement the seed is revealed so anyone can recompute the outcome. Adults 18+ only. Play only with money you can afford to lose.
+> PVPspinArena (https://pvpspinarena.com) is a player-vs-player crypto gaming site with three games: Jackpot, Coinflip, and Roulette. Balances are shown in US dollars and funded with Bitcoin, or with USDC or ETH on Base. Each result is computed on the server from a seed whose SHA-256 hash is published before the round; after settlement the seed is revealed so anyone can recompute the outcome. Adults 18+ only. Play only with money you can afford to lose.
 
 Jackpot and Coinflip are player versus player: the pot is the players' wagers, and the winner receives it minus any fee shown before entry. Roulette is a shared house-banked wheel, not a pot. The browser animation does not decide the result. PVPspinArena is not affiliated with Valve, Counter-Strike, or Steam.
 
@@ -24,11 +24,12 @@ Educational guides live at [Guides](https://pvpspinarena.com/guides). The comple
 - [Foundations](https://pvpspinarena.com/guides/topics/foundations): what a crypto casino is and how to judge trust
 - [Provably fair](https://pvpspinarena.com/guides/topics/provably-fair): commitments, hashes, and checking a result
 - [CS:GO heritage](https://pvpspinarena.com/guides/topics/csgo-heritage): PvP formats and the skin-era background
+- [Skill wagers](https://pvpspinarena.com/guides/topics/skill-wagers): cash matches, wager apps, and escrow
 - [Games and odds](https://pvpspinarena.com/guides/topics/games-and-odds): RTP, house edge, and game maths
 - [Crypto payments](https://pvpspinarena.com/guides/topics/crypto-payments): wallets, networks, deposits, and cashouts
 - [Responsible play](https://pvpspinarena.com/guides/topics/responsible-play): budgets and staying in control
 - [Casino knowledge](https://pvpspinarena.com/guides/topics/casino-knowledge): history, probability, and how casinos run
-- [Lottery](https://pvpspinarena.com/guides/topics/lottery): ticket odds, payout choice, taxes, and office pools
+- [Lottery](https://pvpspinarena.com/guides/topics/lottery): ticket odds, payout choice, taxes, pools, and 50/50 raffles
 - [Horse racing](https://pvpspinarena.com/guides/topics/horse-racing): straight bets, exotics, tote odds, and Derby tickets
 - [Prediction markets](https://pvpspinarena.com/guides/topics/prediction-markets): pick'em apps, event contracts, and election prices
 

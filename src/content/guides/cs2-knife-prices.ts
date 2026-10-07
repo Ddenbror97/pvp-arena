@@ -164,7 +164,7 @@ PVPspinArena runs cash PvP — Jackpot and Coinflip — plus a coloured Roulette
     },
     {
       q: "Can I deposit a knife on PVPspinArena?",
-      a: "No. PVPspinArena accepts USDC and ETH on Base only. Sell the knife first if you want a dollar stake.",
+      a: "No. PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base. Sell the knife first if you want a dollar stake.",
     },
     {
       q: "Is a listed price the same as cash?",

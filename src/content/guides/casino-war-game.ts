@@ -22,7 +22,7 @@ export const guide: Guide = {
     {
       id: "scope",
       title: "What casino war refers to",
-      body: `Casino war deals one card to you and one to the dealer. Higher card wins even money. A tie is where the rules take their bite: surrender half, or go to war and pay for a second card. There is no skill. This site does not offer the game. Keep that definition in the first line of your note so a later paragraph does not drift into a different product with a similar name.
+      body: `Casino war deals one card to you and one to the dealer. Higher card wins even money. A tie is where the rules take their bite: surrender half, or go to war and pay for a second card. There is no skill. This site does not offer the game. A friend-versus-friend one-card draw, with no dealer and no tie bet, is the [high card game](/guides/high-card-game). Keep that definition in the first line of your note so a later paragraph does not drift into a different product with a similar name.
 
 Write that down as part of any casino war note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
 

@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Tron fees use bandwidth and energy; an empty account burns TRX instead.",
     "Tron blocks are short, so deposits often credit in under a minute once the site watches the chain.",
     "A TRX address format can look similar to other chains’ text; the network choice still has to match.",
-    "PVPspinArena accepts USDC and ETH on Base only — not TRX and not TRC-20 USDT.",
+    "PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base — not TRX and not TRC-20 USDT.",
   ],
   sections: [
     {
@@ -129,7 +129,7 @@ Convert, or stay on the sites that name TRC-20.`,
   faqs: [
     {
       q: "Can I deposit TRC-20 USDT to PVPspinArena?",
-      a: "No. The site accepts USDC and ETH on Base only. TRC-20 USDT will not be credited, and support cannot turn a Tronscan hash into a Base deposit.",
+      a: "No. The site accepts on-chain Bitcoin, and USDC and ETH on Base. TRC-20 USDT will not be credited, and support cannot turn a Tronscan hash into a Base deposit.",
     },
     {
       q: "Why did my Tron USDT send fail with USDT in the wallet?",

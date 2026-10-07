@@ -94,7 +94,7 @@ Two players, equal stakes, one binary result. [Coin flip odds](/guides/coin-flip
 
 ### Head-to-head variants
 
-Case battles and other comparison modes can be P2P if player stakes fund the prize. Read the settlement line. A “battle” that pays from a house table is not P2P just because two names appear on screen.
+Case battles and other comparison modes can be P2P if player stakes fund the prize. Read the settlement line. A “battle” that pays from a house table is not P2P just because two names appear on screen. When both stakes have to sit with a neutral holder until a written rule pays, that hold is [escrow betting](/guides/escrow-betting).
 
 ### Not P2P
 
