@@ -15,7 +15,7 @@ Record each production apply here. Do not re-run apply solely to update this doc
 | `20261014143000` | `leaderboard-sync-skip-zero-deposit` | `_lb_sync` skips zero deposit-funded qualifying stakes (`greatest(min_wager_cents, 1)`); fixes check violation when `min_wager_cents = 0` | 2026-10-13 | Confirmed in `schema_migrations`; **DB-only** — no worker deploy required |
 | `20261014160000` | `remove_promo_code_burst` | Removes per-code promo burst caps | 2026-10-13 | Same apply session as above |
 | `20261014170000` | `crypto_my_activity_withdraw_room` | Wallet withdraw room in `crypto_my_activity`; ETH quote bonus check | 2026-10-13 | Same apply session as above |
-| `20261014180000` | `withdraw_basis_writer_lock_grants` | Revoke RPC execute on trigger-only `_withdraw_basis_writer_lock` | 2026-10-13 | Applied via Supabase MCP; see `docs/SUPABASE-ADVISORY-REVIEW.md` |
+| `20261014180000` | `withdraw_basis_writer_lock_grants` | Revoke RPC execute on trigger-only `_withdraw_basis_writer_lock` | 2026-10-13 | `schema_migrations` + privileges verified; see `docs/SUPABASE-ADVISORY-REVIEW.md` |
 
 ## Rollout test gate
 
