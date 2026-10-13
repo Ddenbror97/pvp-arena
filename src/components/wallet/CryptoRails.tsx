@@ -1,99 +1,226 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowDownToLine, ArrowUpFromLine, Check, Copy, ExternalLink, ShieldCheck } from "lucide-react";
+import { encodeQR } from "qr";
+import { ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatUsd } from "@/lib/jackpot/math";
-import type { DepositInstruction } from "@/lib/crypto/deposit";
-import { getWalletSession } from "@/lib/web3/metamask";
-import { WALLET_CONFIG } from "@/lib/web3/config";
-import { WalletError, WALLET_MESSAGES } from "@/lib/web3/errors";
+import { formatUsd, parseUsdToCents } from "@/lib/jackpot/math";
 import {
-  cancelCryptoWithdrawal,
-  getCryptoActivity,
-  prepareCryptoDeposit,
+  checkWithdrawalLiquidity,
+  getDepositAddress,
   quoteEthWithdrawal,
   requestCryptoWithdrawal,
 } from "@/lib/crypto/crypto.functions";
+import {
+  formatCryptoUnits,
+  pegUnits,
+  railEquivalent,
+  readStoredRail,
+  resolveRail,
+  writeStoredRail,
+  type FundingAsset,
+} from "@/lib/crypto/rails";
+import { depositWaitPhrase } from "@/lib/crypto/deposit-notice";
+import { announceWithdrawalSubmitted } from "@/lib/crypto/withdraw-notify";
+import { useCryptoActivity, type CryptoActivity } from "@/components/wallet/RailPreference";
+import { BtcDepositPanel } from "@/components/wallet/BtcDepositPanel";
+import { getBtcDepositConfig, getBtcPayoutConfig } from "@/lib/crypto/btcpay/btcpay.functions";
+import { DepositAddress } from "@/components/wallet/DepositAddress";
+import { claimSendLock, VerifiedWalletActions } from "@/components/wallet/VerifiedWalletActions";
+import { TokenMark } from "@/components/wallet/TokenMark";
+import { useWithdrawalCode, WithdrawalCodeField } from "@/components/wallet/WithdrawalCode";
+import { PartnerProfitNote, usePartnerProfitHold } from "@/components/wallet/PartnerProfitHold";
+import {
+  BonusCashoutNotice,
+  cashoutMaxCents,
+  cashoutMaxLabel,
+} from "@/components/wallet/BonusCashoutNotice";
+import { bonusWithdrawBlockedMessage } from "@/lib/crypto/bonus-withdraw";
 
-const STATUS: Record<string, string> = {
-  DETECTED: "Detected", CONFIRMED: "Confirming", CREDITED: "Credited",
-  UNMATCHED: "Unmatched — under review", REJECTED: "Rejected", PENDING: "Waiting for review",
-  APPROVED: "Approved", SUBMITTING: "Sending", SUBMITTED: "Sent", RELEASED: "Cancelled — refunded",
-  LIQUIDITY_PENDING: "Queued — processing shortly",
-};
-const PRESETS = [5, 10, 25, 50];
-const EXPLORERS: Record<number, string> = {
-  8453: "https://basescan.org",
-  1: "https://etherscan.io",
-};
-type Asset = "USDC" | "ETH";
-type ChainInfo = {
-  chain_id: number;
-  name: string;
-  network_mode: "testnet" | "mainnet";
-  min_deposit_cents: number;
-  min_withdrawal_cents: number;
-  credit_confirmations: number;
-  assets: string[] | null;
-};
-type DepositReview = {
-  instruction: DepositInstruction;
-  verifiedAddress: string;
-  usdCents: number;
-  priceMicroUsd: number | null;
-};
+const PRESETS = [20, 50, 100, 250];
+const EVM_ADDRESS = /^0x[0-9a-fA-F]{40}$/;
 type WithdrawalReview = {
-  asset: Asset;
+  asset: string;
   usdCents: number;
-  quote: null | { quote_id: string; usd_cents: number; wei: string; price_micro_usd: number; expires_at: string };
+  toAddress: string;
+  quote: null | {
+    quote_id: string;
+    usd_cents: number;
+    wei: string;
+    price_micro_usd: number;
+    expires_at: string;
+  };
 };
 
 function shortAddress(value: string) {
   return `${value.slice(0, 6)}…${value.slice(-4)}`;
 }
-function formatUnits(units: string, asset: Asset) {
-  const decimals = asset === "ETH" ? 18 : 6;
-  const padded = (units.split(".")[0] ?? "0").padStart(decimals + 1, "0");
-  const value = `${padded.slice(0, -decimals)}.${padded.slice(-decimals)}`.replace(/\.?0+$/, "");
-  return `${value} ${asset}`;
+function storage() {
+  try {
+    return typeof localStorage === "undefined" ? null : localStorage;
+  } catch {
+    return null;
+  }
 }
-function TxLink({ hash, chainId }: { hash: string | null; chainId?: number | undefined }) {
-  if (!hash) return null;
-  const explorer = EXPLORERS[chainId ?? 8453] ?? "https://basescan.org";
+function CurrencyList({
+  assets,
+  value,
+  onChange,
+  withdraw,
+  floors,
+  layout = "stack",
+}: {
+  assets: FundingAsset[];
+  value: string;
+  onChange: (asset: string) => void;
+  withdraw: boolean;
+  floors: Record<string, number>;
+  layout?: "stack" | "row";
+}) {
+  const loaded = assets.map((asset) => ({
+    key: asset.asset_key,
+    label: asset.asset_key,
+    closed: withdraw && !asset.payout_ready,
+    pending: false,
+  }));
+  const rows =
+    loaded.length > 0
+      ? [{ key: "BTC", label: "BTC", closed: false, pending: false }, ...loaded]
+      : [
+          { key: "BTC", label: "BTC", closed: false, pending: false },
+          { key: "ETH", label: "ETH", closed: false, pending: true },
+          { key: "USDC", label: "USDC", closed: false, pending: true },
+        ];
+  if (layout === "row") {
+    return (
+      <div role="radiogroup" aria-label="Currency" className="grid grid-cols-3 gap-1.5">
+        {rows.map((row) => {
+          const selected = row.key === value;
+          return (
+            <button
+              key={row.key}
+              type="button"
+              role="radio"
+              aria-checked={selected}
+              title={row.closed ? `${row.label} withdrawals are unavailable` : row.label}
+              disabled={row.pending}
+              onClick={() => {
+                if (!row.pending) onChange(row.key);
+              }}
+              className={`flex h-11 min-w-0 items-center justify-center gap-1.5 rounded-lg border px-2 ${
+                row.pending || row.closed
+                  ? "border-border bg-muted/30 text-muted-foreground"
+                  : selected
+                    ? "border-primary bg-primary/10"
+                    : "border-border bg-muted/20 hover:bg-muted/40"
+              }`}
+            >
+              <TokenMark asset={row.key} className="h-4 w-4" />
+              <span className="min-w-0 text-left">
+                <span className="block truncate text-xs font-medium leading-4">{row.label}</span>
+                <span className="block h-3 truncate text-[10px] font-normal leading-3 text-muted-foreground">
+                  {row.closed ? "Disabled" : ""}
+                </span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
   return (
-    <a href={`${explorer}/tx/${hash}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-primary hover:underline">
-      {hash.slice(0, 10)}… <ExternalLink className="h-3 w-3" />
-    </a>
-  );
-}
-function AssetSelector({ value, onChange }: { value: Asset; onChange: (asset: Asset) => void }) {
-  return (
-    <div className="grid grid-cols-2 gap-2" aria-label="Asset">
-      {(["USDC", "ETH"] as const).map((asset) => (
-        <Button key={asset} type="button" variant={value === asset ? "default" : "secondary"} onClick={() => onChange(asset)}>
-          {asset}
-        </Button>
-      ))}
+    <div role="radiogroup" aria-label="Currency" className="space-y-1">
+      {rows.map((row) => {
+        const selected = row.key === value;
+        const floor = floors[row.key];
+        return (
+          <button
+            key={row.key}
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            onClick={() => onChange(row.key)}
+            className={`flex w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-left ${selected ? "border-primary bg-primary/10" : "border-border bg-muted/20 hover:bg-muted/40"}`}
+          >
+            <TokenMark asset={row.key} className="h-6 w-6" />
+            <span className="text-xs font-medium">{row.label}</span>
+            <span className="ml-auto text-[11px] text-muted-foreground">
+              {row.closed ? "Withdrawals unavailable" : floor ? `From ${formatUsd(floor)}` : ""}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }
-function AmountField({ amount, setAmount, max }: { amount: string; setAmount: (value: string) => void; max: number | undefined }) {
+function AmountField({
+  amount,
+  setAmount,
+  max,
+  maxAsset,
+  id,
+}: {
+  amount: string;
+  setAmount: (value: string) => void;
+  max: number | undefined;
+  maxAsset?: string | null;
+  id: string;
+}) {
   return (
     <div>
-      <div className="flex items-end justify-between gap-3">
-        <label htmlFor="crypto-amount" className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Amount in USD</label>
-        {max !== undefined && <span className="text-xs text-muted-foreground">Available {formatUsd(max)}</span>}
+      <div className="flex min-h-4 flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <label
+          htmlFor={id}
+          className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground"
+        >
+          Amount in USD
+        </label>
+        {max !== undefined && (
+          <span className="text-[11px] text-muted-foreground sm:text-right">
+            Available {formatUsd(max)}
+            {maxAsset ? ` · ${maxAsset}` : ""}
+          </span>
+        )}
       </div>
-      <div className="relative mt-2">
-        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-muted-foreground">$</span>
-        <Input id="crypto-amount" inputMode="decimal" autoComplete="off" className="h-12 pl-7 pr-16 font-mono text-lg" placeholder="0.00" value={amount} onChange={(event) => setAmount(event.target.value)} />
-        {max !== undefined && <Button type="button" variant="ghost" size="sm" className="absolute right-1 top-2" onClick={() => setAmount((max / 100).toFixed(2))}>Max</Button>}
+      <div className="relative mt-1">
+        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">
+          $
+        </span>
+        <Input
+          id={id}
+          inputMode="decimal"
+          autoComplete="off"
+          className="h-9 pl-7 pr-14 font-mono"
+          placeholder="0.00"
+          value={amount}
+          onChange={(event) => setAmount(event.target.value)}
+        />
+        {max !== undefined && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="absolute right-0.5 top-1/2 h-7 -translate-y-1/2 px-2"
+            onClick={() => setAmount((max / 100).toFixed(2))}
+          >
+            Max
+          </Button>
+        )}
       </div>
-      <div className="mt-2 grid grid-cols-4 gap-2">
-        {PRESETS.map((preset) => <Button key={preset} type="button" size="sm" variant="secondary" onClick={() => setAmount(String(preset))}>${preset}</Button>)}
+      <div className="mt-1.5 grid grid-cols-4 gap-1.5">
+        {PRESETS.map((preset) => (
+          <Button
+            key={preset}
+            type="button"
+            size="sm"
+            variant="secondary"
+            onClick={() => setAmount(String(preset))}
+          >
+            ${preset}
+          </Button>
+        ))}
       </div>
     </div>
   );
@@ -102,37 +229,133 @@ function AmountField({ amount, setAmount, max }: { amount: string; setAmount: (v
 export function CryptoRails({
   availableCents,
   requestedMode = "deposit",
+  requestedAsset,
+  children,
 }: {
   availableCents: number;
   requestedMode?: "deposit" | "withdraw";
+  requestedAsset?: string | undefined;
+  children: (panels: { form: ReactNode }) => ReactNode;
 }) {
   const qc = useQueryClient();
-  const fetchActivity = useServerFn(getCryptoActivity);
-  const prepareDeposit = useServerFn(prepareCryptoDeposit);
+  const receiveFn = useServerFn(getDepositAddress);
   const doQuote = useServerFn(quoteEthWithdrawal);
   const doRequest = useServerFn(requestCryptoWithdrawal);
-  const doCancel = useServerFn(cancelCryptoWithdrawal);
-  const activity = useQuery({ queryKey: ["crypto-activity"], queryFn: () => fetchActivity(), refetchInterval: 15_000 });
-  const [mode, setMode] = useState<"deposit" | "withdraw">(requestedMode);
-  const [asset, setAsset] = useState<Asset>("USDC");
+  const doLiquidity = useServerFn(checkWithdrawalLiquidity);
+  const btcDepositFn = useServerFn(getBtcDepositConfig);
+  const btcPayoutFn = useServerFn(getBtcPayoutConfig);
+  const activity = useCryptoActivity(true);
+  const btcDeposit = useQuery({
+    queryKey: ["btc-deposit-config"],
+    queryFn: () => btcDepositFn(),
+    staleTime: 30_000,
+  });
+  const btcPayout = useQuery({
+    queryKey: ["btc-payout-config"],
+    queryFn: () => btcPayoutFn(),
+    staleTime: 30_000,
+  });
+  const [depositRail, setDepositRail] = useState(
+    requestedMode !== "withdraw" && requestedAsset ? requestedAsset : "BTC",
+  );
+  const [withdrawRail, setWithdrawRail] = useState(
+    requestedMode === "withdraw" && requestedAsset ? requestedAsset : "BTC",
+  );
+  const seededRails = useRef(false);
   const [chainId, setChainId] = useState<number>(8453);
-  const [amount, setAmount] = useState("");
-  const [depositReview, setDepositReview] = useState<DepositReview | null>(null);
+  const [amount, setAmount] = useState("20");
+  const [outAddress, setOutAddress] = useState("");
   const [withdrawalReview, setWithdrawalReview] = useState<WithdrawalReview | null>(null);
-  const [submittedHash, setSubmittedHash] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const withdrawLock = useRef(false);
   const [now, setNow] = useState(() => Date.now());
-  const data = activity.data;
-  const chains: ChainInfo[] = data?.chains ?? [];
-  const chain: ChainInfo | undefined = chains.find((c) => c.chain_id === chainId) ?? chains[0];
-  const chainName = chain?.name ?? "Base";
+  const emailCode = useWithdrawalCode();
+  const heldCents = usePartnerProfitHold(true);
+  const data: CryptoActivity | undefined = activity.data;
+  const withdrawSnap = data?.withdraw ?? null;
+  const withdrawableCents = cashoutMaxCents(availableCents, heldCents, withdrawSnap);
+  const cashoutCapHint = cashoutMaxLabel(withdrawSnap, withdrawableCents);
+  const chains = data?.chains ?? [];
+  const chain = chains.find((c) => c.chain_id === chainId) ?? chains[0];
+  const assets = chain?.assets ?? [];
+  const withdrawAsset = assets.find((item) => item.asset_key === withdrawRail) ?? null;
+  const depositAsset = assets.find((item) => item.asset_key === depositRail) ?? null;
+  const chainName = chain?.name ?? "Network";
   const isTestnet = chain?.network_mode === "testnet";
-  const cents = Math.round(Number(amount) * 100);
-  const valid = Number.isFinite(cents) && cents > 0;
-  const quoteLeft = withdrawalReview?.quote ? Math.max(0, Math.ceil((new Date(withdrawalReview.quote.expires_at).getTime() - now) / 1000)) : 0;
+  const cents = parseUsdToCents(amount);
+  const outOk = EVM_ADDRESS.test(outAddress.trim());
+  const quoteLeft = withdrawalReview?.quote
+    ? Math.max(0, Math.ceil((new Date(withdrawalReview.quote.expires_at).getTime() - now) / 1000))
+    : 0;
+  const assetKeys = assets.map((item) => item.asset_key).join("\n");
+  const codeTarget =
+    withdrawalReview && chain
+      ? {
+          rail: "evm" as const,
+          chainId: chain.chain_id,
+          asset: withdrawalReview.asset,
+          usdCents: withdrawalReview.usdCents,
+          address: withdrawalReview.toAddress,
+        }
+      : null;
+  const codeProof = codeTarget ? emailCode.proof(codeTarget) : null;
+  const receive = useQuery({
+    queryKey: ["evm-deposit-address", chain?.chain_id ?? chainId],
+    queryFn: () => receiveFn({ data: { chainId: chain?.chain_id ?? chainId } }),
+    staleTime: 60_000,
+  });
+  const minDepositCents = chain?.min_deposit_cents ?? data?.settings.min_deposit_cents ?? 100;
+  const minWithdrawCents =
+    chain?.min_withdrawal_cents ?? data?.settings.min_withdrawal_cents ?? 2000;
+  const depositFloors: Record<string, number> = {
+    BTC: btcDeposit.data?.enabled ? btcDeposit.data.minCents : 100,
+  };
+  const withdrawFloors: Record<string, number> = {
+    BTC: btcPayout.data?.enabled ? btcPayout.data.minCents : 2000,
+  };
+  for (const item of assets) {
+    depositFloors[item.asset_key] = minDepositCents;
+    withdrawFloors[item.asset_key] = minWithdrawCents;
+  }
+  const receiveAddress = receive.data?.ok ? receive.data.address : null;
+  const receiveQr = useMemo(() => {
+    if (!receiveAddress) return "";
+    try {
+      return encodeQR(receiveAddress, "svg", { ecc: "low", border: 1, scale: 2 });
+    } catch {
+      return "";
+    }
+  }, [receiveAddress]);
 
-  // A header shortcut can change the requested action while this page is already open.
-  useEffect(() => setMode(requestedMode), [requestedMode]);
+  useEffect(() => {
+    if (requestedMode !== "withdraw") return;
+    document.getElementById("wallet-withdraw")?.scrollIntoView({ block: "nearest" });
+  }, [requestedMode]);
+  useEffect(() => {
+    if (outAddress || !data?.wallet) return;
+    setOutAddress(data.wallet);
+  }, [data?.wallet, outAddress]);
+
+  useEffect(() => {
+    const keys = assets.map((item) => item.asset_key);
+    const stored = readStoredRail(storage());
+    if (stored && stored !== "BTC" && keys.length > 0 && stored !== resolveRail(stored, keys))
+      writeStoredRail(storage(), null);
+    const requested =
+      requestedAsset && (requestedAsset === "BTC" || keys.includes(requestedAsset))
+        ? requestedAsset
+        : null;
+    if (!seededRails.current) {
+      // A plain visit opens on Bitcoin. A header link can still name one asset.
+      if (requested && requestedMode === "withdraw") setWithdrawRail(requested);
+      else if (requested) setDepositRail(requested);
+      seededRails.current = true;
+      return;
+    }
+    if (keys.length === 0) return;
+    setDepositRail((current) => (current === "BTC" || keys.includes(current) ? current : "BTC"));
+    setWithdrawRail((current) => (current === "BTC" || keys.includes(current) ? current : "BTC"));
+  }, [chain?.chain_id, requestedAsset, assetKeys, requestedMode]);
 
   useEffect(() => {
     if (!withdrawalReview?.quote) return;
@@ -140,198 +363,464 @@ export function CryptoRails({
     return () => window.clearInterval(timer);
   }, [withdrawalReview?.quote]);
 
-  const rows = useMemo(() => data ? [
-    ...data.deposits.map((row: any) => ({ ...row, type: "Deposit", at: row.detected_at })),
-    ...data.withdrawals.map((row: any) => ({ ...row, type: "Withdrawal", at: row.created_at })),
-  ].sort((a, b) => a.at < b.at ? 1 : -1) : [], [data]);
-
-  function reset(nextMode = mode, nextAsset = asset) {
-    setMode(nextMode);
-    setAsset(nextAsset);
-    setAmount("");
-    setDepositReview(null);
+  function clearWithdrawDraft() {
+    setAmount("20");
     setWithdrawalReview(null);
-    setSubmittedHash(null);
+  }
+  function chooseDeposit(next: string) {
+    writeStoredRail(storage(), next);
+    setDepositRail(next);
+  }
+  function chooseWithdraw(next: string) {
+    writeStoredRail(storage(), next);
+    setWithdrawRail(next);
+    setWithdrawalReview(null);
   }
   function refresh() {
     qc.invalidateQueries({ queryKey: ["crypto-activity"] });
     qc.invalidateQueries({ queryKey: ["wallet"] });
     qc.invalidateQueries({ queryKey: ["ledger"] });
   }
-  async function reviewDeposit() {
+  async function reviewWithdrawal() {
+    if (withdrawLock.current || busy) return;
+    if (cents == null || !withdrawAsset || !chain || !outOk) return;
+    if (cents < minWithdrawCents) {
+      toast.error(`Minimum cashout is ${formatUsd(minWithdrawCents)}.`);
+      return;
+    }
+    if (withdrawSnap && cents > withdrawableCents) {
+      toast.error(bonusWithdrawBlockedMessage(withdrawSnap, cents));
+      return;
+    }
+    const toAddress = outAddress.trim();
+    if (!claimSendLock(withdrawLock)) return;
     setBusy(true);
     try {
-      const result = await prepareDeposit({ data: { asset, usdCents: cents, chainId: chain?.chain_id ?? 8453 } });
-      if (!result.ok) {
-        toast.error(result.error);
+      const liquid = await doLiquidity({
+        data: { asset: withdrawAsset.asset_key, usdCents: cents, chainId: chain.chain_id },
+      });
+      if (!liquid.ok) {
+        toast.error(liquid.error);
         return;
       }
-      setDepositReview(result as DepositReview & { ok: true });
-    } finally { setBusy(false); }
-  }
-  async function sendDeposit() {
-    if (!depositReview) return;
-    setBusy(true);
-    try {
-      const session = await getWalletSession();
-      const connected = (await session.checkConnection()) ?? (await session.connect());
-      if (connected.address.toLowerCase() !== depositReview.verifiedAddress.toLowerCase()) {
-        throw new WalletError("ADDRESS_MISMATCH");
-      }
-      let chainNow = connected.chainId;
-      if (chainNow !== WALLET_CONFIG.requiredChainId) {
-        await session.switchToRequiredNetwork();
-        chainNow = await session.chainId();
-      }
-      if (chainNow !== WALLET_CONFIG.requiredChainId) throw new WalletError("UNSUPPORTED_NETWORK");
-      const hash = await session.sendTestDeposit(depositReview.instruction, depositReview.verifiedAddress);
-      setSubmittedHash(hash);
-      toast.success(`Deposit submitted to ${chainName}`);
-      window.setTimeout(refresh, 1500);
-    } catch (error) {
-      toast.error(error instanceof WalletError ? error.message : WALLET_MESSAGES.GENERIC);
-    } finally { setBusy(false); }
-  }
-  async function reviewWithdrawal() {
-    if (!valid) return;
-    setBusy(true);
-    try {
-      if (asset === "ETH") {
-        const result = await doQuote({ data: { usdCents: cents, chainId: chain?.chain_id ?? 8453 } });
+      if (withdrawAsset.settlement_kind === "native") {
+        const result = await doQuote({ data: { usdCents: cents, chainId: chain.chain_id } });
         if (!result.ok) {
           toast.error(result.error);
           return;
         }
         setNow(Date.now());
-        setWithdrawalReview({ asset, usdCents: cents, quote: result.quote });
-      } else setWithdrawalReview({ asset, usdCents: cents, quote: null });
-    } finally { setBusy(false); }
+        setWithdrawalReview({
+          asset: withdrawAsset.asset_key,
+          usdCents: cents,
+          toAddress,
+          quote: result.quote,
+        });
+      } else
+        setWithdrawalReview({
+          asset: withdrawAsset.asset_key,
+          usdCents: cents,
+          toAddress,
+          quote: null,
+        });
+      await emailCode.send({
+        rail: "evm",
+        chainId: chain.chain_id,
+        asset: withdrawAsset.asset_key,
+        usdCents: cents,
+        address: toAddress,
+      });
+    } catch {
+      toast.error("Withdrawals are unavailable right now.");
+    } finally {
+      withdrawLock.current = false;
+      setBusy(false);
+    }
   }
   async function confirmWithdrawal() {
-    if (!withdrawalReview) return;
+    if (withdrawLock.current || busy) return;
+    if (!withdrawalReview || !chain || !codeProof) return;
+    if (!claimSendLock(withdrawLock)) return;
     setBusy(true);
     try {
-      const result = await doRequest({ data: { asset: withdrawalReview.asset, usdCents: withdrawalReview.usdCents, quoteId: withdrawalReview.quote?.quote_id ?? null, chainId: chain?.chain_id ?? 8453 } });
+      const result = await doRequest({
+        data: {
+          asset: withdrawalReview.asset,
+          usdCents: withdrawalReview.usdCents,
+          quoteId: withdrawalReview.quote?.quote_id ?? null,
+          chainId: chain.chain_id,
+          toAddress: withdrawalReview.toAddress,
+          ...codeProof,
+        },
+      });
       if (!result.ok) {
         toast.error(result.error);
+        emailCode.failed(result.error);
         return;
       }
-      toast.success(result.result.status === "PENDING" ? "Withdrawal requested — waiting for review" : "Withdrawal approved — sending shortly");
-      reset("withdraw", asset);
+      emailCode.clear();
+      announceWithdrawalSubmitted({
+        usdCents: withdrawalReview.usdCents,
+        asset: withdrawalReview.asset,
+        network: "base",
+      });
+      clearWithdrawDraft();
       refresh();
-    } finally { setBusy(false); }
-  }
-  async function cancel(id: string) {
-    const result = await doCancel({ data: { id } });
-    if (!result.ok) {
-      toast.error(result.error);
-      return;
+    } catch {
+      toast.error("Withdrawals are unavailable right now.");
+    } finally {
+      withdrawLock.current = false;
+      setBusy(false);
     }
-    toast.success("Withdrawal cancelled and refunded");
-    refresh();
+  }
+  const receiveUnits =
+    withdrawalReview && withdrawAsset
+      ? withdrawalReview.quote
+        ? formatCryptoUnits(
+            withdrawalReview.quote.wei,
+            withdrawAsset.decimals,
+            withdrawAsset.asset_key,
+          )
+        : formatCryptoUnits(
+            pegUnits(withdrawalReview.usdCents, withdrawAsset.decimals),
+            withdrawAsset.decimals,
+            withdrawAsset.asset_key,
+          )
+      : "";
+
+  function networkPicker() {
+    if (chains.length <= 1) return null;
+    return (
+      <div
+        className="mb-2 grid gap-1.5"
+        style={{ gridTemplateColumns: `repeat(${Math.min(chains.length, 3)}, 1fr)` }}
+        aria-label="Network"
+      >
+        {chains.map((c) => (
+          <Button
+            key={c.chain_id}
+            type="button"
+            variant={c.chain_id === chain?.chain_id ? "default" : "secondary"}
+            size="sm"
+            onClick={() => {
+              setChainId(c.chain_id);
+              setWithdrawalReview(null);
+            }}
+          >
+            {c.name}
+          </Button>
+        ))}
+      </div>
+    );
+  }
+  function testnetMark() {
+    if (!isTestnet) return null;
+    return (
+      <span className="rounded bg-destructive/15 px-2 py-0.5 text-xs font-bold tracking-wider text-destructive">
+        TESTNET · NO REAL VALUE
+      </span>
+    );
   }
 
-  return (
-    <section className="mt-8" aria-label="Crypto wallet">
-      <div className="flex flex-wrap items-center gap-3">
-        <h2 className="font-display text-sm uppercase tracking-widest">Crypto wallet</h2>
-        {isTestnet && <span className="rounded bg-destructive/15 px-2 py-0.5 text-xs font-bold tracking-wider text-destructive">TESTNET · NO REAL VALUE</span>}
-      </div>
-      <p className="mt-1 text-xs text-muted-foreground">{isTestnet ? `${chainName} only. Test USDC and test ETH have no cash value.` : `${chainName}. Real funds — double-check every transaction.`}</p>
-
-      <div className="mt-4 grid grid-cols-2 rounded-lg bg-muted p-1" role="tablist" aria-label="Crypto action">
-        <Button role="tab" aria-selected={mode === "deposit"} variant={mode === "deposit" ? "default" : "ghost"} onClick={() => reset("deposit", asset)}><ArrowDownToLine /> Add funds</Button>
-        <Button role="tab" aria-selected={mode === "withdraw"} variant={mode === "withdraw" ? "default" : "ghost"} onClick={() => reset("withdraw", asset)}><ArrowUpFromLine /> Withdraw</Button>
-      </div>
-
-      <div className="mt-3 min-h-[31rem] rounded-xl border border-border bg-card p-4 sm:p-6">
-        <div className="mx-auto max-w-xl">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <div className="font-display text-base">{mode === "deposit" ? "Add funds" : "Withdraw funds"}</div>
-              <div className="mt-1 text-xs text-muted-foreground">{chainName} · Verified wallet only</div>
-            </div>
-            <ShieldCheck className="h-5 w-5 text-primary" aria-hidden="true" />
+  const form = (
+    <div className="grid items-start gap-3 lg:grid-cols-2">
+      <section aria-label="Deposit" className="min-w-0 rounded-lg border border-border bg-card p-3">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
+            <ArrowDownToLine className="h-3.5 w-3.5" aria-hidden="true" />
+          </span>
+          <div className="min-w-0">
+            <h2 className="text-sm font-semibold leading-none">Deposit</h2>
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
+              {depositRail === "BTC"
+                ? "Send Bitcoin to the address below."
+                : `Send ${depositAsset?.asset_key ?? "crypto"} on ${chainName}.`}
+            </p>
           </div>
-
-          {chains.length > 1 && (
-            <div className="mt-4 grid gap-2" style={{ gridTemplateColumns: `repeat(${Math.min(chains.length, 3)}, 1fr)` }} aria-label="Network">
-              {chains.map((c) => (
-                <Button key={c.chain_id} type="button" variant={c.chain_id === chain?.chain_id ? "default" : "secondary"} onClick={() => { setChainId(c.chain_id); setDepositReview(null); setWithdrawalReview(null); }}>
-                  {c.name}
-                </Button>
-              ))}
+        </div>
+        {depositRail !== "BTC" && isTestnet ? <div className="mt-2">{testnetMark()}</div> : null}
+        <div className="mt-3 space-y-2.5">
+          <CurrencyList
+            assets={assets}
+            value={depositRail}
+            onChange={chooseDeposit}
+            withdraw={false}
+            floors={depositFloors}
+            layout="row"
+          />
+          <div className="min-h-[18.5rem] min-w-0">
+            <div className={depositRail === "BTC" ? undefined : "hidden"}>
+              <BtcDepositPanel mode="deposit" active={depositRail === "BTC"} />
             </div>
-          )}
-
-          {!data ? <div className="mt-6 h-72 animate-pulse rounded-lg bg-muted" /> : !data.wallet ? (
-            <div className="mt-6 rounded-lg border border-border bg-muted/40 p-4 text-sm">Verify a MetaMask wallet on your Profile before depositing or withdrawing.</div>
-          ) : submittedHash ? (
-            <div className="mt-6 rounded-lg border border-primary/40 bg-primary/10 p-5 text-center">
-              <Check className="mx-auto h-8 w-8 text-primary" />
-              <h3 className="mt-3 font-display text-sm">Deposit submitted</h3>
-              <p className="mt-2 text-sm text-muted-foreground">MetaMask sent the transaction. Your balance updates only after the server verifies the confirmed transaction{isTestnet ? ", usually about 6 minutes" : ""}.</p>
-              <div className="mt-3"><TxLink hash={submittedHash} chainId={chain?.chain_id} /></div>
-              <Button className="mt-4" variant="secondary" onClick={() => reset("deposit", asset)}>Make another deposit</Button>
+            <div className={depositRail === "BTC" ? "hidden" : undefined}>
+              {!data ? (
+                <DepositAddress
+                  network={chainName}
+                  address={null}
+                  qr=""
+                  copiedLabel="Base address copied"
+                  note=""
+                  pending
+                />
+              ) : (
+                <>
+                  {networkPicker()}
+                  {receive.isPending && !receiveAddress ? (
+                    <DepositAddress
+                      network={chainName}
+                      address={null}
+                      qr=""
+                      copiedLabel="Base address copied"
+                      note=""
+                      pending
+                    />
+                  ) : receive.isError || receive.data?.ok === false ? (
+                    <div className="space-y-3" role="alert">
+                      <p className="text-sm text-destructive">
+                        Could not load your deposit address. Try again.
+                      </p>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        disabled={receive.isFetching}
+                        onClick={() => void receive.refetch()}
+                      >
+                        {receive.isFetching ? "Trying…" : "Try again"}
+                      </Button>
+                    </div>
+                  ) : receiveAddress ? (
+                    <DepositAddress
+                      network={chainName}
+                      address={receiveAddress}
+                      qr={receiveQr}
+                      copiedLabel="Base address copied"
+                      note={`Send ${depositAsset?.asset_key ?? "ETH or USDC"} on ${chainName} only. Minimum ${formatUsd(minDepositCents)}. Credited within ${depositWaitPhrase(chain?.network_mode)}.`}
+                    />
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      Deposit addresses are unavailable right now.
+                    </p>
+                  )}
+                </>
+              )}
             </div>
-          ) : mode === "deposit" && depositReview ? (
-            <div className="mt-6 space-y-4">
-              <h3 className="font-display text-sm">Review deposit</h3>
-              <dl className="divide-y divide-border rounded-lg border border-border bg-muted/30 text-sm">
-                <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">You send</dt><dd className="font-mono font-semibold">{formatUnits(depositReview.instruction.units, asset)}</dd></div>
-                <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">Estimated credit</dt><dd className="font-mono font-semibold">{formatUsd(depositReview.usdCents)}</dd></div>
-                <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">From</dt><dd className="font-mono">{shortAddress(depositReview.verifiedAddress)}</dd></div>
-                <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">To PVPspinArena</dt><dd className="font-mono">{shortAddress(depositReview.instruction.treasury)}</dd></div>
-                <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">Network</dt><dd>{chainName}</dd></div>
-              </dl>
-              {asset === "ETH" && <p className="text-xs text-muted-foreground">ETH credit is recalculated from the server price when the confirmed deposit is credited.</p>}
-              <div className="grid gap-2 sm:grid-cols-2"><Button variant="secondary" onClick={() => setDepositReview(null)}>Back</Button><Button onClick={sendDeposit} disabled={busy}>{busy ? "Check MetaMask…" : "Deposit with MetaMask"}</Button></div>
-              <Button variant="ghost" className="w-full" onClick={() => navigator.clipboard.writeText(depositReview.instruction.treasury).then(() => toast.success("Deposit address copied"))}><Copy /> Copy address instead</Button>
-            </div>
-          ) : mode === "withdraw" && withdrawalReview ? (
-            <div className="mt-6 space-y-4">
+          </div>
+          {depositRail !== "BTC" ? (
+            <VerifiedWalletActions
+              purpose="deposit"
+              chainId={chain?.chain_id ?? chainId}
+              asset={depositAsset?.asset_key ?? null}
+              minCents={minDepositCents}
+              payments
+            />
+          ) : null}
+        </div>
+      </section>
+      <section
+        id="wallet-withdraw"
+        aria-label="Withdraw"
+        className="min-w-0 rounded-lg border border-border bg-card p-3"
+      >
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
+            <ArrowUpFromLine className="h-3.5 w-3.5" aria-hidden="true" />
+          </span>
+          <div className="min-w-0">
+            <h2 className="text-sm font-semibold leading-none">Withdraw</h2>
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
+              {withdrawRail === "BTC"
+                ? "Cash out to a bc1 address."
+                : "Cash out to a Base address."}
+            </p>
+          </div>
+        </div>
+        {withdrawRail !== "BTC" && isTestnet ? <div className="mt-2">{testnetMark()}</div> : null}
+        <div className="mt-3">
+          <CurrencyList
+            assets={assets}
+            value={withdrawRail}
+            onChange={chooseWithdraw}
+            withdraw
+            floors={withdrawFloors}
+            layout="row"
+          />
+        </div>
+        <div className={withdrawRail === "BTC" ? "mt-2.5" : "hidden"}>
+          <BtcDepositPanel mode="withdraw" active={withdrawRail === "BTC"} />
+        </div>
+        <div className={withdrawRail === "BTC" ? "hidden" : undefined}>
+          {withdrawRail !== "BTC" && !withdrawalReview ? (
+            <VerifiedWalletActions
+              purpose="withdraw"
+              chainId={chain?.chain_id ?? chainId}
+              asset={withdrawAsset?.asset_key ?? null}
+              minCents={minWithdrawCents}
+              activeAddress={outAddress}
+              onAddress={(address) => {
+                setOutAddress(address);
+                setWithdrawalReview(null);
+              }}
+              payments
+            />
+          ) : null}
+          {!data ? (
+            <div className="mt-2.5 min-h-[18rem] animate-pulse rounded-lg bg-muted" aria-hidden />
+          ) : withdrawalReview && withdrawAsset ? (
+            <div className="mt-2.5 space-y-2.5">
+              {networkPicker()}
               <h3 className="font-display text-sm">Review withdrawal</h3>
-              <dl className="divide-y divide-border rounded-lg border border-border bg-muted/30 text-sm">
-                <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">Balance deducted</dt><dd className="font-mono font-semibold">{formatUsd(withdrawalReview.usdCents)}</dd></div>
-                <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">You receive</dt><dd className="font-mono font-semibold">{withdrawalReview.quote ? formatUnits(withdrawalReview.quote.wei, "ETH") : formatUnits(String(BigInt(withdrawalReview.usdCents) * 10_000n), "USDC")}</dd></div>
-                <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">To</dt><dd className="font-mono">{shortAddress(data.wallet)}</dd></div>
-                <div className="flex justify-between gap-3 p-3"><dt className="text-muted-foreground">Fee</dt><dd>{formatUsd(data.settings.fee_cents)}</dd></div>
+              <dl className="divide-y divide-border rounded-lg border border-border bg-muted/30 text-xs">
+                <div className="flex justify-between gap-3 px-2.5 py-1.5">
+                  <dt className="text-muted-foreground">Balance deducted</dt>
+                  <dd className="font-mono font-semibold">
+                    {formatUsd(withdrawalReview.usdCents)}
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-3 px-2.5 py-1.5">
+                  <dt className="text-muted-foreground">You receive</dt>
+                  <dd className="font-mono font-semibold">{receiveUnits}</dd>
+                </div>
+                <div className="flex justify-between gap-3 px-2.5 py-1.5">
+                  <dt className="text-muted-foreground">To</dt>
+                  <dd className="font-mono">{shortAddress(withdrawalReview.toAddress)}</dd>
+                </div>
+                <div className="flex justify-between gap-3 px-2.5 py-1.5">
+                  <dt className="text-muted-foreground">Network</dt>
+                  <dd>{chainName}</dd>
+                </div>
+                <div className="flex justify-between gap-3 px-2.5 py-1.5">
+                  <dt className="text-muted-foreground">Fee</dt>
+                  <dd>{formatUsd(data.settings.fee_cents)}</dd>
+                </div>
               </dl>
-              {withdrawalReview.quote && <p className={quoteLeft ? "text-xs text-muted-foreground" : "text-xs text-destructive"}>{quoteLeft ? `ETH quote expires in ${quoteLeft}s` : "Quote expired. Go back and request a new quote."}</p>}
-              {withdrawalReview.usdCents > data.settings.auto_approve_cents && <p className="text-xs text-muted-foreground">This amount requires review before it is sent.</p>}
-              <div className="grid gap-2 sm:grid-cols-2"><Button variant="secondary" onClick={() => setWithdrawalReview(null)}>Back</Button><Button onClick={confirmWithdrawal} disabled={busy || (!!withdrawalReview.quote && quoteLeft === 0)}>{busy ? "Submitting…" : "Confirm withdrawal"}</Button></div>
+              {withdrawalReview.quote && (
+                <p
+                  className={
+                    quoteLeft ? "text-xs text-muted-foreground" : "text-xs text-destructive"
+                  }
+                >
+                  {quoteLeft
+                    ? `Quote expires in ${quoteLeft}s. The crypto amount is fixed by this server quote.`
+                    : "Quote expired. Go back and request a new quote."}
+                </p>
+              )}
+              {withdrawalReview.usdCents > data.settings.auto_approve_cents && (
+                <p className="text-xs text-muted-foreground">
+                  This amount requires review before it is sent.
+                </p>
+              )}
+              {codeTarget && (
+                <WithdrawalCodeField
+                  ctl={emailCode}
+                  target={codeTarget}
+                  disabled={busy}
+                  onConfirm={() => void confirmWithdrawal()}
+                  confirmLabel={busy ? "Submitting…" : "Confirm withdrawal"}
+                />
+              )}
+              {codeTarget && !emailCode.sentFor(codeTarget) && !emailCode.sending && (
+                <Button
+                  variant="secondary"
+                  className="w-full"
+                  onClick={() => void emailCode.send(codeTarget)}
+                >
+                  Email me a withdrawal code
+                </Button>
+              )}
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Button variant="secondary" onClick={() => setWithdrawalReview(null)}>
+                  Back
+                </Button>
+                <Button
+                  onClick={confirmWithdrawal}
+                  disabled={busy || !codeProof || (!!withdrawalReview.quote && quoteLeft === 0)}
+                >
+                  {busy ? "Submitting…" : "Confirm withdrawal"}
+                </Button>
+              </div>
             </div>
           ) : (
-            <div className="mt-6 space-y-5">
-              <AssetSelector value={asset} onChange={(next) => reset(mode, next)} />
-              <AmountField amount={amount} setAmount={(value) => { setAmount(value); setDepositReview(null); setWithdrawalReview(null); }} max={mode === "withdraw" ? availableCents : undefined} />
-              <div className="rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-                {mode === "deposit" ? <><b className="text-foreground">From {shortAddress(data.wallet)}</b><br />Only a transfer sent from this verified address is credited. Minimum {formatUsd(chain?.min_deposit_cents ?? data.settings.min_deposit_cents)}{isTestnet ? " · about 6 minutes" : ""}.</> : <><b className="text-foreground">To {shortAddress(data.wallet)}</b><br />Minimum {formatUsd(chain?.min_withdrawal_cents ?? data.settings.min_withdrawal_cents)} · {formatUsd(data.settings.daily_limit_cents)}/day · above {formatUsd(data.settings.auto_approve_cents)} requires review.</>}
+            <div className="mt-2.5 flex flex-1 flex-col space-y-2.5">
+              {networkPicker()}
+              <AmountField
+                id="crypto-amount"
+                amount={amount}
+                setAmount={(value) => {
+                  setAmount(value);
+                  setWithdrawalReview(null);
+                }}
+                max={withdrawableCents}
+                maxAsset={withdrawAsset ? railEquivalent(withdrawAsset, withdrawableCents) : null}
+              />
+              <PartnerProfitNote heldCents={heldCents} availableCents={availableCents} />
+              {withdrawSnap ? (
+                <BonusCashoutNotice snap={withdrawSnap} availableCents={availableCents} />
+              ) : null}
+              <div className="space-y-1.5 rounded-lg border border-border bg-muted/30 p-2.5 text-xs text-muted-foreground">
+                <label htmlFor="evm-cashout-address" className="font-semibold text-foreground">
+                  To a Base address
+                </label>
+                <Input
+                  id="evm-cashout-address"
+                  className="h-9 font-mono text-xs"
+                  value={outAddress}
+                  onChange={(event) => setOutAddress(event.target.value)}
+                  placeholder="0x…"
+                  aria-label="Base cashout address"
+                />
+                <p>
+                  Minimum{" "}
+                  {formatUsd(chain?.min_withdrawal_cents ?? data.settings.min_withdrawal_cents)}. A
+                  code is emailed to approve each cashout.
+                </p>
               </div>
-              <Button className="h-11 w-full" onClick={mode === "deposit" ? reviewDeposit : reviewWithdrawal} disabled={!valid || busy || (mode === "deposit" ? !data.settings.deposits_enabled : !data.settings.withdrawals_enabled) || (mode === "withdraw" && cents > availableCents)}>
-                {busy ? "Preparing…" : mode === "deposit" ? "Review deposit" : asset === "ETH" ? "Get ETH quote" : "Review withdrawal"}
-              </Button>
-              {!(mode === "deposit" ? data.settings.deposits_enabled : data.settings.withdrawals_enabled) && <p className="text-center text-xs text-destructive">{mode === "deposit" ? "Deposits" : "Withdrawals"} are paused right now.</p>}
+              {withdrawAsset && !withdrawAsset.payout_ready ? (
+                <p className="text-xs text-destructive">
+                  {withdrawAsset.asset_key} withdrawals are temporarily unavailable while that
+                  payout wallet is refilled. Choose another asset or try again later.
+                </p>
+              ) : null}
+              <div className="mt-auto space-y-2">
+                <Button
+                  className="h-9 w-full"
+                  onClick={reviewWithdrawal}
+                  disabled={
+                    cents == null ||
+                    cents < minWithdrawCents ||
+                    !outOk ||
+                    !withdrawAsset ||
+                    busy ||
+                    !data.settings.withdrawals_enabled ||
+                    cents > withdrawableCents ||
+                    !withdrawAsset.payout_ready
+                  }
+                >
+                  {busy
+                    ? "Preparing…"
+                    : withdrawAsset?.asset_key === "USDC"
+                      ? "Cash out USDC"
+                      : "Cash out ETH"}
+                </Button>
+                {cents != null && cents < minWithdrawCents ? (
+                  <p className="text-center text-xs text-destructive">
+                    Minimum cashout is {formatUsd(minWithdrawCents)}.
+                  </p>
+                ) : null}
+                {!data.settings.withdrawals_enabled && (
+                  <p className="text-center text-xs text-destructive">Withdrawals are paused.</p>
+                )}
+                {cashoutCapHint && withdrawableCents < minWithdrawCents ? (
+                  <p className="text-center text-xs text-destructive">{cashoutCapHint}</p>
+                ) : cashoutCapHint ? (
+                  <p className="text-center text-xs text-muted-foreground">{cashoutCapHint}</p>
+                ) : null}
+              </div>
             </div>
           )}
         </div>
-      </div>
-
-      <div className="mt-4 overflow-hidden rounded-xl border border-border bg-card">
-        <div className="border-b border-border px-4 py-3 text-xs font-semibold uppercase tracking-widest">Crypto activity</div>
-        {!data || rows.length === 0 ? <p className="p-4 text-sm text-muted-foreground">{data ? "No crypto activity yet." : "Loading…"}</p> : (
-          <ul className="divide-y divide-border text-sm">
-            {rows.map((row: any) => (
-              <li key={row.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
-                <div className="min-w-0 flex-1"><div className="font-medium">{row.type} · {formatUnits(row.units, row.asset_key)}</div><div className="flex flex-wrap gap-2 text-xs text-muted-foreground"><span>{new Date(row.at).toLocaleString()}</span>{row.chain_id && chains.length > 1 && <span>{chains.find((c) => c.chain_id === row.chain_id)?.name ?? row.chain_id}</span>}<TxLink hash={row.tx_hash} chainId={row.chain_id} /></div></div>
-                <span className="text-xs">{row.status === "CONFIRMED" && row.type === "Withdrawal" ? "Confirmed" : STATUS[row.status] ?? row.status}</span>
-                <span className="font-mono font-semibold">{row.type === "Deposit" ? "+" : "−"}{formatUsd(row.usd_cents)}</span>
-                {row.type === "Withdrawal" && ["PENDING", "APPROVED"].includes(row.status) && <Button size="sm" variant="secondary" onClick={() => cancel(row.id)}>Cancel</Button>}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </section>
+      </section>
+    </div>
   );
+
+  return children({ form });
 }
