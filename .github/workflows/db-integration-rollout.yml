@@ -11,6 +11,7 @@ on:
       - "scripts/ci/**"
       - ".env.example"
       - "package.json"
+      - "package-lock.json"
       - "vitest.config.ts"
       - ".github/workflows/db-integration-rollout.yml"
   pull_request:
@@ -20,6 +21,7 @@ on:
       - "scripts/ci/**"
       - ".env.example"
       - "package.json"
+      - "package-lock.json"
       - "vitest.config.ts"
       - ".github/workflows/db-integration-rollout.yml"
   workflow_dispatch:
