@@ -1,6 +1,8 @@
 # PVPCasino Jackpot — architecture and verification report
 
-Status: **test credits only**. Production-quality engineering standards; not presented as production-ready real-money gambling.
+Status note, 10 Oct 2026: `jackpot_config.real_money_enabled` is still false. Production wallet accounts include both `real` and `test_credit`. Bitcoin and Base cashouts use the USD ledger in `src/lib/crypto`. This jackpot section is not the withdrawal runbook.
+
+The sections below describe the original jackpot and coinflip engine, including the test-credit faucet.
 
 ## Where the logic lives
 
@@ -46,6 +48,8 @@ Triggers block update/delete on ledger, entries, audit log and seeds; completed/
 See `/fairness` in the app and `src/lib/jackpot/fairness.ts`. Seed (32 bytes, pgcrypto) committed as SHA-256 at game creation, stored in a table no client can read, revealed on the game record only when `COMPLETED` (enforced by a check constraint). Winner ticket via HMAC-SHA256 over a fixed message with integer rejection sampling. Known limitation: operator is the sole randomness source — add an independent contribution before any real-money use.
 
 ## Tests (`bun run test`)
+
+Database integration tests require `TEST_DATABASE_URL` and refuse to start when it is missing, equal to `SUPABASE_DB_URL`, or aimed at the production host, database user, or project ref. `pvp_test` is the schema those tests build. It is not a separate Postgres instance. Do not point the test URL at the production primary. CI runs `npm run test:db:rollout` on an isolated Postgres (see `.github/workflows/db-integration-rollout.yml` and `.env.example`).
 
 - `tests/fairness.test.ts` — published test vectors, range, rejection sampling, uniformity, verifier tamper detection.
 - `tests/math.test.ts` — integer money, probability, timer rules, wheel geometry.

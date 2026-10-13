@@ -1,4 +1,5 @@
 import type postgres from "postgres";
+import { randomUUID } from "node:crypto";
 
 /** The two real Base Mainnet deposits the production migration snapshots. */
 export const SNAPSHOT_TX = [
@@ -15,13 +16,53 @@ export async function seedSnapshotDeposits(sql: postgres.Sql) {
   }
 }
 
+/**
+ * A fresh, deep payout-wallet reading for the Base Sepolia sandbox rail and Bitcoin, so suites that
+ * are not about treasury liquidity see every asset as fundable. Readings expire after 10 minutes.
+ */
+/** Credit a user's real USD available balance through a deposit posting. */
+export async function creditUserDeposit(
+  sql: postgres.Sql | postgres.TransactionSql,
+  uid: string,
+  cents: number,
+) {
+  const external = (
+    await sql`select pvp_test._system_account('external_custody', 'USD', 'real') id`
+  )[0].id as string;
+  const available = (
+    await sql`select pvp_test._user_account(${uid}::uuid, 'user_available'::pvp_test.account_kind, 'USD', 'real') id`
+  )[0].id as string;
+  const txId = (
+    await sql`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id)
+      values ('deposit'::pvp_test.tx_kind, ${randomUUID()}, 'real', ${uid}::uuid) returning id`
+  )[0].id as string;
+  await sql`select pvp_test._post(${txId}::uuid, ${external}::uuid, ${-cents}::bigint)`;
+  await sql`select pvp_test._post(${txId}::uuid, ${available}::uuid, ${cents}::bigint)`;
+}
+
+export async function fundTestTreasury(sql: postgres.Sql) {
+  // 0.1 ETH covers the $10 withdrawal minimum. 0.001 ETH prices under that floor, so payout_ready stays false.
+  await sql`select pvp_test.crypto_record_inventory(84532, 0, ${(10n ** 24n).toString()}, 0, ${(10n ** 17n).toString()}, null, true, true)`;
+  await sql`select pvp_test.treasury_record_btc(${(10n ** 12n).toString()}, 60000000000)`;
+}
+
 /** Run the real migration + finalization inside the isolated test schema. */
-export async function migrateTestSchemaToReal(sql: postgres.Sql, opts: { realPlay?: boolean; live?: boolean } = {}) {
+export async function migrateTestSchemaToReal(
+  sql: postgres.Sql,
+  opts: { realPlay?: boolean; live?: boolean } = {},
+) {
   await sql`update pvp_test.crypto_settings set watch_only = true, withdrawals_enabled = false, real_play_enabled = false`;
   await seedSnapshotDeposits(sql);
   const m = (await sql`select pvp_test._money_migrate_v1() r`)[0].r;
   const f = (await sql`select pvp_test._money_finalize_v1() r`)[0].r;
   if (opts.realPlay) await sql`update pvp_test.crypto_settings set real_play_enabled = true`;
-  if (opts.live) await sql`update pvp_test.crypto_settings set watch_only = false, deposits_enabled = true, withdrawals_enabled = true`;
+  if (opts.live)
+    await sql`update pvp_test.crypto_settings set watch_only = false, deposits_enabled = true, withdrawals_enabled = true`;
+  // Production cashouts are $20. Suites that are not about that floor keep the
+  // previous $10 so their amounts still clear the minimum.
+  await sql`update pvp_test.crypto_settings set min_withdrawal_cents = 1000 where min_withdrawal_cents > 1000`;
+  await sql`alter table pvp_test.chain_networks disable trigger user`;
+  await sql`update pvp_test.chain_networks set min_withdrawal_cents = 1000 where min_withdrawal_cents > 1000`;
+  await sql`alter table pvp_test.chain_networks enable trigger user`;
   return { m, f };
 }

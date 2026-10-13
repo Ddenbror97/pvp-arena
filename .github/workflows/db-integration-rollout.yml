@@ -1,0 +1,92 @@
+# Withdraw-basis + leaderboard integration tests against an isolated Postgres.
+# Uses secrets.TEST_DATABASE_URL when set; otherwise the job Postgres service (not production).
+name: DB integration (rollout)
+
+on:
+  push:
+    branches: [main, master, wallet-hardening-phase2]
+    paths:
+      - "supabase/migrations/**"
+      - "tests/db/**"
+      - "scripts/ci/**"
+      - ".env.example"
+      - "package.json"
+      - "vitest.config.ts"
+      - ".github/workflows/db-integration-rollout.yml"
+  pull_request:
+    paths:
+      - "supabase/migrations/**"
+      - "tests/db/**"
+      - "scripts/ci/**"
+      - ".env.example"
+      - "package.json"
+      - "vitest.config.ts"
+      - ".github/workflows/db-integration-rollout.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: db-integration-rollout-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  db-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # Guard tests compare against prod metadata; values are not used to connect.
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure TEST_DATABASE_URL
+        env:
+          TEST_DATABASE_URL_SECRET: ${{ secrets.TEST_DATABASE_URL }}
+        run: |
+          if [ -n "$TEST_DATABASE_URL_SECRET" ]; then
+            echo "TEST_DATABASE_URL=$TEST_DATABASE_URL_SECRET" >> "$GITHUB_ENV"
+            echo "Using TEST_DATABASE_URL from repository secret."
+          else
+            echo "TEST_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres" >> "$GITHUB_ENV"
+            echo "Using workflow Postgres service (isolated from production)."
+          fi
+
+      - name: Prepare Postgres extensions
+        run: node scripts/ci/postgres-extensions.mjs
+
+      - name: Rollout integration suites
+        run: npm run test:db:rollout
+
+      - name: Upload Vitest report (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitest-db-rollout-log
+          path: |
+            **/vitest-results.*
+          if-no-files-found: ignore
