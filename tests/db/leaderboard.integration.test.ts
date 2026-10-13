@@ -3,7 +3,7 @@
  * Rankings come from settled coinflip stakes. A second sync must not double-count.
  */
 import postgres from "postgres";
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
 import { adminClaims, openAdminStepup } from "./admin-stepup";
@@ -113,9 +113,9 @@ async function settledFlip(
 }
 
 d("partner leaderboards", () => {
-  it("rebuilds the isolated schema", async () => {
+  beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
-  });
+  }, 180_000);
 
   it("isolates partners, ranks settled stakes once, and pays prizes once", async () => {
     const admin = randomUUID();

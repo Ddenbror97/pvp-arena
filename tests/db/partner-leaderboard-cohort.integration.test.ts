@@ -5,7 +5,7 @@
  * Requires TEST_DATABASE_URL. Refuses the production database.
  */
 import postgres from "postgres";
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { promoTestIp } from "./promo-client-ip";
 import { buildTestSchemaSql } from "./schema";
@@ -79,9 +79,9 @@ async function settledFlip(
 }
 
 d("partner leaderboard cohort", () => {
-  it("rebuilds the isolated schema", async () => {
+  beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
-  });
+  }, 180_000);
 
   it("keeps friend referrals and partner attribution independent, and ranks only that cohort", async () => {
     const admin = randomUUID();
