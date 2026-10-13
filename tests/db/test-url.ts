@@ -4,6 +4,7 @@
  * throws. There is no fallback.
  *
  * Topology: CI and local db tests → isolated Postgres. Production → app traffic.
+ * Rollout gate: npm run test:db:rollout (same five files as db-integration-rollout.yml).
  * pvp_test stays as the schema name inside that isolated database until the
  * suite is moved off the production instance. Do not point TEST_DATABASE_URL
  * at the production host, pooler user, or project ref.
