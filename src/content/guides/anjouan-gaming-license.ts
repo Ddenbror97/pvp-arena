@@ -10,7 +10,7 @@ export const guide: Guide = {
   description:
     "An Anjouan gaming license is an offshore permission, not a fairness proof. Learn what to check on the issuer site and what the seal does not cover.",
   answer:
-    "An Anjouan gaming license is a permission associated with Anjouan, an autonomous island in the Union of the Comoros, and marketed to online gambling operators, including crypto casinos. In plain terms, a company pays an issuer that uses Anjouan's name, receives a certificate, and puts a seal in the footer. That seal can show that an application was filed somewhere. It does not show that your last bet was honest, that the hot wallet can cover Friday, or that you are allowed to play from your home. This page is not legal advice. A foreign license does not authorize a player in the United States.\n\nGambling is for adults 21 and older, and only with money you can afford to lose. A license is a compliance artifact. It is not a strategy, and it is not a promise that the next round will pay.",
+    "An Anjouan gaming license is a permission associated with Anjouan, an autonomous island in the Union of the Comoros, and marketed to online gambling operators, including crypto casinos. In plain terms, a company pays an issuer that uses Anjouan's name, receives a certificate, and puts a seal in the footer. That seal can show that an application was filed somewhere. It does not show that your last bet was honest, that the hot wallet can cover Friday, or that you are allowed to play from your home. This page is not legal advice. A foreign license does not authorize a player in the United States.\n\nGambling is for adults 18 or older, or the age required where you live, and only with money you can afford to lose. A license is a compliance artifact. It is not a strategy, and it is not a promise that the next round will pay.",
   facts: [],
   sections: [
     {
@@ -41,7 +41,7 @@ export const guide: Guide = {
     {
       id: "keeping-the-claim-in-proportion",
       title: "Keeping the claim in proportion",
-      body: "Use the Anjouan gaming license as a name check. After the name check, spend your attention on the cashier, the game rules, and the law where you live. If any of those fail, the seal does not repair them. If all of them pass to your satisfaction, the seal still did not create the pass. It only failed to be the problem.\n\nOperators change jurisdictions when rules tighten elsewhere. A new badge after a news cycle is a reason to reread the terms, not a reason to relax. Write down the entity name on the day you first deposit, and look again if the footer changes. The games can stay familiar while the company behind them becomes a different company.\n\nStop when the entertainment budget is gone. No issuer's logo changes that limit, and no argument about Comoros law makes a loss into an investment. If you need help because gambling has stopped being entertainment, use a local support line rather than a casino chat.\n\nThe rest of this subject is on the [Foundations guides](/guides/topics/foundations). See [crypto casino license](/guides/crypto-casino-license), [curacao gambling license](/guides/curacao-gambling-license), [what is a crypto casino](/guides/what-is-a-crypto-casino). PVPspinArena settles jackpot, coinflip, and roulette in US dollars. Read [responsible gambling](/responsible-gambling) before you play.",
+      body: "Use the Anjouan gaming license as a name check. After the name check, spend your attention on the cashier, the game rules, and the law where you live. If any of those fail, the seal does not repair them. If all of them pass to your satisfaction, the seal still did not create the pass. It only failed to be the problem.\n\nOperators change jurisdictions when rules tighten elsewhere. A new badge after a news cycle is a reason to reread the terms, not a reason to relax. Write down the entity name on the day you first deposit, and look again if the footer changes. The games can stay familiar while the company behind them becomes a different company.\n\nStop when the entertainment budget is gone. No issuer's logo changes that limit, and no argument about Comoros law makes a loss into an investment. If you need help because gambling has stopped being entertainment, use a local support line rather than a casino chat.\n\nThe rest of this subject is on the [Foundations guides](/guides/topics/foundations). See [crypto casino license](/guides/crypto-casino-license), [curacao gambling license](/guides/curacao-gambling-license), [what is a crypto casino](/guides/what-is-a-crypto-casino). PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in US dollars. Read [responsible gambling](/responsible-gambling) before you play.",
     },
   ],
   faqs: [
@@ -66,7 +66,12 @@ export const guide: Guide = {
       a: "No, solvency and payout policy are separate from the fact that a PDF exists. A licensed operator can still delay a cashout, and an unlicensed site can still pay, so you judge the cashier on its own behavior.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Anjouan Gaming: about the authority",
+      url: "https://anjouangaming.com/about-the-authority/",
+    },
+  ],
   related: ["crypto-casino-license", "curacao-gambling-license"],
   updated: "2026-09-26",
 };

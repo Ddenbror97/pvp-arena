@@ -42,7 +42,7 @@ If a stream overlay says “real money” and the site pays in a token you can o
     {
       id: "cost",
       title: "The cost: edge, fees and total wagered",
-      body: `Every real-money game has a price. Against the house, that price is the [house edge](/guides/house-edge). In player-versus-player pots, the price is the site fee. On PVPspinArena the default fee on Jackpot and Coinflip is 0%; Roulette is a 33-slot wheel: 16 Purple and 16 Silver pay 2x, and 1 Green pays 14x. Those figures are product facts, not a reason to raise stakes.
+      body: `Every real-money game has a price. Against the house, that price is the [house edge](/guides/house-edge). In player-versus-player pots, the price is the site fee. On PVPspinArena the fee on Jackpot and Coinflip is 5% of the pot; Roulette is a 33-slot wheel: 16 Purple and 16 Silver pay 2x, and 1 Green pays 14x. Those figures are product facts, not a reason to raise stakes.
 
 Illustration — labelled as an illustration, not a forecast. You deposit $50. You place fifty $2 bets. You have wagered $100. At a 5% edge the average cost is about $5, not 5% of $50. Fast games reach $100 wagered quickly. That is why “I only deposited fifty” is a poor cost account.
 

@@ -21,7 +21,7 @@ export const guide: Guide = {
     "On-chain deposits prove a payment, not that a match was settled on the right score.",
     "Implied probability from odds is always less than 100% across a market once the book’s margin is included.",
     "Event integrity (referees, injuries, spot-fixing) is a sports problem, not a wallet problem.",
-    "PVPspinArena is not a sportsbook. It runs hashed PvP Jackpot, Coinflip and Roulette only.",
+    "PVPspinArena is not a sportsbook. It runs hashed PvP Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -29,7 +29,7 @@ export const guide: Guide = {
       title: "What a crypto sportsbook actually sells",
       body: `A crypto sportsbook is an online bookmaker with a blockchain cashier. You send coins, receive a betting balance, and strike prices on listed events: leagues, props, sometimes [esports betting](/guides/esports-betting). Cashouts go back out as crypto. The product is still a price on a future fact about a match, not a shuffled deck and not a PvP pot.
 
-This [games and odds](/guides/topics/games-and-odds) guide is for adults aged 18 or over. It explains deposits, implied odds and integrity risk, then contrasts that book with a verifiable round on PVPspinArena. This site does not take team bets. It is Jackpot, Coinflip and Roulette, USDC and ETH on Base.
+This [games and odds](/guides/topics/games-and-odds) guide is for adults aged 18 or over. It explains deposits, implied odds and integrity risk, then contrasts that book with a verifiable round on PVPspinArena. This site does not take team bets. It runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.
 
 "Anonymous sports betting" in ads usually means a light sign-up and a crypto send. It does not mean the book has no records, that your chain activity is invisible, or that the bet is legal where you live. A public BTC payment to a known deposit cluster is a breadcrumb. A stablecoin send on a transparent ledger is a breadcrumb. If you need privacy, a sportsbook is the wrong tool; if you need a priced football market, accept that the book will know your account.
 
@@ -80,7 +80,7 @@ Worked numbers belong in the next section. The habit to learn here is: convert e
 4. You stake $20 on A at 1.80. If A wins, the book returns $36, a $16 profit. If A loses, you lose $20.
 5. If you could bet both sides in proportion to "balance" the book, the book would keep a slice of the $20 pair regardless of the winner. You cannot remove that slice by paying in USDC.
 
-Now contrast a $20 Coinflip on this site with a 0% fee and a committed seed. Each side is 50% before anyone joins. You can recompute the bit after the reveal. Nobody is pricing an injury report. The games are not substitutes. One is a sports price. One is a hashed pot.`,
+Now contrast a $20 Coinflip on this site with a 5% pot fee and a committed seed. Each side is 50% before anyone joins. You can recompute the bit after the reveal. Nobody is pricing an injury report. The games are not substitutes. One is a sports price. One is a hashed pot.`,
     },
     {
       id: "integrity",

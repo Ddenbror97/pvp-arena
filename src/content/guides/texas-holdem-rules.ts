@@ -17,7 +17,7 @@ export const guide: Guide = {
     "How to play Texas Holdem: hole cards, blinds, preflop to river, betting actions, showdown, and how this differs from PVPspinArena.",
   h1: "How to play Texas Holdem: hole cards, streets and showdown",
   answer:
-    "How to play Texas Holdem is the Hold'em rule sheet: two hole cards, blinds, four betting streets, five community cards, and a showdown that uses the best five-card hand. No-limit means you may shove your stack. The room still takes rake. PVPspinArena is not a Hold'em client. It runs Jackpot, Coinflip and Roulette only.",
+    "How to play Texas Holdem is the Hold'em rule sheet: two hole cards, blinds, four betting streets, five community cards, and a showdown that uses the best five-card hand. No-limit means you may shove your stack. The room still takes rake. PVPspinArena is not a Hold'em client. It runs Jackpot, Coinflip, Roulette, and P2P Slott.",
   facts: [
     "Each player gets two private hole cards; the board gets five community cards.",
     "Betting streets are preflop, flop, turn and river, in that order.",
@@ -185,7 +185,7 @@ PVPspinArena does not run this loop. Verify a hashed PvP result on [fairness](/f
     },
     {
       q: "Does PVPspinArena have Texas Hold'em tables?",
-      a: "No. It is not a poker room. It offers Jackpot, Coinflip and Roulette only.",
+      a: "No. It is not a poker room. It offers Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "What happens if two players have the same hand?",

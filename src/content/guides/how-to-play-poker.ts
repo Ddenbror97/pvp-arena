@@ -18,7 +18,7 @@ export const guide: Guide = {
     "How to play poker from blinds to showdown: streets, hand rankings, betting actions, rake, and why PVPspinArena is not a poker room.",
   h1: "How to play poker: blinds, streets, showdown and rake",
   answer:
-    "How to play poker is a sequence, not a slogan. You post blinds, receive hole cards, bet through streets, and either fold or go to showdown, where the best five-card hand wins the pot. Skill shows up in which pots you enter and how you size bets. Rake and variance still tax every session. PVPspinArena is not a poker room: it runs Jackpot, Coinflip and Roulette only.",
+    "How to play poker is a sequence, not a slogan. You post blinds, receive hole cards, bet through streets, and either fold or go to showdown, where the best five-card hand wins the pot. Skill shows up in which pots you enter and how you size bets. Rake and variance still tax every session. PVPspinArena is not a poker room: it runs Jackpot, Coinflip, Roulette, and P2P Slott.",
   facts: [
     "A standard poker hand uses a 52-card deck; most online cash games are No-Limit Texas Hold'em.",
     "Each betting street is a chance to fold, check, call, bet or raise before more cards appear.",
@@ -32,7 +32,7 @@ export const guide: Guide = {
       title: "What poker is — and what this site is not",
       body: `Poker is a player-versus-player card game. You compete with the other seats for a shared pot. The room is not your opponent on the cards. The room is paid by rake. That is a different product from a house-banked colour wheel, where the paytable is the opponent.
 
-This [poker](/guides/topics/poker) guide is for adults aged 18 or over. It teaches the common rules of cash-game Hold'em so you can sit down without inventing streets. It will not sell a secret winning system. There is not one.
+This [poker](/guides/topics/poker) guide is for adults aged 18 or over. It teaches the common rules of [cash-game Hold'em](/guides/cash-game-poker) so you can sit down without inventing streets. A one-table tournament with a fixed prize is a [sit and go](/guides/sit-and-go-poker), which is not the cash game this page walks through. It will not sell a secret winning system. There is not one.
 
 PVPspinArena is not a poker room. If you want a hashed pot with published odds, use [Jackpot](/), [Coinflip](/coinflip) or [Roulette](/roulette). Those games do not deal hole cards. Do not treat a coinflip as a flop.
 
@@ -183,7 +183,7 @@ Where the game came from is [history of poker](/guides/history-of-poker).`,
     },
     {
       q: "Does PVPspinArena offer poker tables?",
-      a: "No. It is not a poker room. It offers player-versus-player Jackpot, Coinflip and Roulette only.",
+      a: "No. It is not a poker room. It offers player-versus-player Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Is rake cheating?",

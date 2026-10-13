@@ -135,7 +135,7 @@ That is a different contract from "Horse 4 at 8.00." Nobody at this table is pre
 
 ### What you should still not do
 
-Do not treat a 0% default PvP fee as a reason to chase a virtual-track loss. Different games, same bankroll. If the horse lobby already spent the night, stop. The [responsible gambling](/responsible-gambling) page is the next click, not another meeting.
+Do not treat a 5% PvP pot fee as a reason to chase a virtual-track loss. Different games, same bankroll. If the horse lobby already spent the night, stop. The [responsible gambling](/responsible-gambling) page is the next click, not another meeting.
 
 Crypto rails do not make a virtual race fairer. Bitcoin horse betting is still a priced market. USDC only stops the chip from moving with BTC while you wait for the photo.`,
     },

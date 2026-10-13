@@ -153,7 +153,7 @@ PVPspinArena will not settle your integrity argument. It will not take the other
     },
     {
       q: "Does PVPspinArena take bets on matches under investigation?",
-      a: "PVPspinArena does not take match bets at all. It runs hashed Jackpot, Coinflip and Roulette only.",
+      a: "PVPspinArena does not take match bets at all. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Where do I report a genuine integrity concern?",

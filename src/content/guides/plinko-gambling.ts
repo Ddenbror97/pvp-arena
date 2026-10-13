@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Row count sets how many bounces happen before the ball lands; more rows spread the board and raise the rare edge payouts.",
     "Risk level (low, medium, high) reshapes the multiplier table; high risk pays the edges more and the middle less.",
     "A typical crypto plinko RTP is about 97% to 99%, which is a house edge of 1% to 3% on every ball.",
-    "PVPspinArena does not offer plinko; it runs Jackpot, Coinflip and Roulette only.",
+    "PVPspinArena does not offer plinko; it runs Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -144,7 +144,7 @@ Many crypto boards let you drop balls in a burst. That is convenience, not an ed
     {
       id: "not-here",
       title: "Why PVPspinArena does not run plinko",
-      body: `PVPspinArena offers three games: Jackpot, Coinflip and Roulette. There is no plinko, and there are no slots, dice, mines or limbo boards either.
+      body: `PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. There is no plinko, and there are no house-banked slots, dice, mines or limbo boards either.
 
 ### What we run instead
 
@@ -201,7 +201,7 @@ The physical board the online game copies is explained in [plinko board](/guides
     },
     {
       q: "Does PVPspinArena have plinko?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. This guide explains plinko so you can price a board you see elsewhere, then compare it with published PvP odds.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide explains plinko so you can price a board you see elsewhere, then compare it with published PvP odds.",
     },
     {
       q: "How do I calculate plinko house edge?",

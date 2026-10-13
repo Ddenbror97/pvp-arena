@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Plus-EV is a positive number; minus-EV is a negative number; 0-EV is a fair game.",
     "House edge is minus-EV expressed as a percentage of the stake.",
     "A good EV process can still finish a session down; that is sample size, not a broken formula.",
-    "PvP pots with a 0% fee are about 0-EV between players; Purple and Silver are about −3% before the win fee, and Green is about −58%.",
+    "PvP pots with a 5% fee are about −5% between players; Purple and Silver are about −7.88% after the win fee, and Green is about −60%.",
   ],
   sections: [
     {
@@ -90,17 +90,17 @@ $3 on Purple and $1 on Green in the same round is not a hedge that creates plus-
       title: "EV on Jackpot, Coinflip and fees",
       body: `### Coinflip
 
-Two equal stakes, one winner, default 0% house fee. Each player’s EV ≈ $0. The site is not the counterparty. You can verify the winner on [fairness](/fairness). A 5% fee on the pot would make EV ≈ −5% of your stake, because only 95% of the combined money comes back to the winner.
+Two equal stakes, one winner, and a 5% pot fee. The winner receives 95%, so each player’s EV is about −5% of their stake. The site is not the counterparty. You can verify the winner on [fairness](/fairness).
 
 Try the live rooms on [Coinflip](/coinflip) as a rules demo, not as a plus-EV hunt.
 
 ### Jackpot
 
-Your ticket is your share of the pot. With no fee, winning pays the pot, so EV ≈ $0: you pay $s for a s/P chance at $P. With a fee f, you pay $s for a s/P chance at (1−f)P, so EV ≈ −f × s. A small ticket in a large pot is still about 0-EV or minus-fee-EV; it is not a cheap lottery ticket with a hidden plus. Watch a pot on [Jackpot](/).
+Your ticket is your share of the pot. The live fee is 5%, so you pay $s for an s/P chance at 0.95P, and EV is about −5% of your stake. A small ticket in a large pot is still minus that fee; it is not a cheap lottery ticket with a hidden plus. Watch a pot on [Jackpot](/).
 
 ### Roulette
 
-House-banked. EV is about −3.03% of a Purple or Silver stake before the win fee, and about −57.6% on Green. No matching opponent can cancel that. The banker is the paytable.`,
+House-banked. EV is about −7.88% of a Purple or Silver stake after the win fee, and about −59.7% on Green. Before the fee those figures are about −3.03% and −57.6%. No matching opponent can cancel that. The banker is the paytable.`,
     },
     {
       id: "sample",
@@ -192,7 +192,7 @@ Expected value is a mean; the [law of large numbers](/guides/law-of-large-number
     },
     {
       q: "Are PVPspinArena PvP games plus-EV?",
-      a: "No. With a 0% fee they are about 0-EV between players. You can win a pot and still have no long-run edge over other players as a class.",
+      a: "No. With a 5% pot fee they are about −5% between players. You can win a pot and still have no long-run edge over other players as a class.",
     },
     {
       q: "How do I use EV before I bet?",

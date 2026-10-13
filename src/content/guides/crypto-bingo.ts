@@ -122,7 +122,7 @@ You must be 18 or older. Bingo's friendly tone does not lower the age line.`,
     {
       id: "not-a-pot",
       title: "Why a bingo card is not a verifiable PvP pot",
-      body: `On PVPspinArena, Jackpot is simple: players add USD, the draw picks a winner with probability equal to share, and you can check the result on the [fairness](/fairness) page. Coinflip is two equal stakes. The house fee defaults to 0% on those PvP games. Roulette is house-banked with a countable edge on the 33-slot wheel.
+      body: `On PVPspinArena, Jackpot is simple: players add USD, the draw picks a winner with probability equal to share, and you can check the result on the [fairness](/fairness) page. Coinflip is two equal stakes. The house fee on those PvP games is 5% of the pot. Roulette is house-banked with a countable edge on the 33-slot wheel.
 
 A bingo card fails that simplicity:
 

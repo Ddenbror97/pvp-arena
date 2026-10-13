@@ -141,7 +141,7 @@ For a wider view of how people misread chance, the [casino knowledge topic](/gui
     {
       id: "pvpspinarena",
       title: "Regression to the mean on PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on Base, and none of them has form. Every round is drawn from committed seeds, and any settled round can be verified on [fairness](/fairness). That means r = 0 for every streak you see.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, and none of them has form. Every round is drawn from committed seeds, and any settled round can be verified on [fairness](/fairness). That means r = 0 for every streak you see.
 
 - On [Roulette](/roulette), a run of Green does not make Green hotter or colder. Each spin is 16/33 Purple, 16/33 Silver and 1/33 Green, with every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee on average.
 - On Coinflip, a player who has won five flips in a row still has a 50/50 next flip.

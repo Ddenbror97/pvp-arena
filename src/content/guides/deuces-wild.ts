@@ -163,7 +163,7 @@ The practical rule is the same for every version: identify the exact paytable, l
     {
       id: "pvp",
       title: "Paytable thinking on PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on the Base network, for adults 18+ only. None of them is video poker, but the paytable habit transfers directly: multiply each payout by its probability and add them up.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, for adults 18+ only. None of them is video poker, but the paytable habit transfers directly: multiply each payout by its probability and add them up.
 
 On [Roulette](/roulette), the 33-slot wheel has 16 Purple and 16 Silver slots paying 2x and 1 Green slot paying 14x. Purple returns (16/33) × 2 = 32/33 ≈ 96.97%, Green returns (1/33) × 14 = 14/33. Green costs much more than Purple. [Coinflip](/coinflip) is a 50/50 between two players, and in [Jackpot](/) your win chance equals your share of the pot; in both, the winner takes the pot minus any fee shown before entry.
 

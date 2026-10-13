@@ -96,7 +96,7 @@ A crypto PvP site such as this one takes USDC or ETH into a pot you can see. Jac
 2. Terms require 1× playthrough on those 10 SC before redeem is unlocked. You stake 10 SC of slot play. After play you hold 8 SC.
 3. The redeem floor is 50 SC. You cannot cash 8 SC. You buy another bundle, or you grind dailies, or you stop.
 4. A different illustration: same $20, same 10 SC, but playthrough is 40×. You must put 400 SC of weighted play through the games before redeem. At $0.20 a spin that is a long session. Most of the promotional value dies in variance before the meter finishes.
-5. Contrast a $20 USDC deposit on this site with a 0% default Jackpot fee: there is no playthrough meter. The cost is the pot outcome, not a bonus clause.
+5. Contrast a $20 USDC deposit on this site with a 5% Jackpot pot fee: there is no playthrough meter. The cost is the pot outcome, not a bonus clause.
 
 Use the example to read a terms page. Do not use it to pick a “best” brand. [Best sweepstakes casinos](/guides/best-sweepstakes-casinos) is a checklist for that reason.`,
     },

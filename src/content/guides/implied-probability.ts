@@ -138,11 +138,11 @@ A tote board is the same conversion at the track. [Horse racing odds explained](
       title: "Implied chance on PVPspinArena games",
       body: `### Coinflip
 
-A 0% fee [Coinflip](/coinflip) pays 2.00 on a 50% ticket. Implied 50%, true 50%. There is no overround in the payout. Variance still exists: one flip moves the whole stake. Verify the flip on [fairness](/fairness) if you want the honesty check; honesty is not a plus-EV.
+A live [Coinflip](/coinflip) is a 50/50, then a 5% fee comes off the pot, so the winner receives 95%. Decimal on your stake is 1.90, which implies about 52.63% against a true 50%, and expected value is −5%. A hypothetical 0% fee flip would pay 2.00 and have no overround. Variance still exists: one flip moves the whole stake. Verify the flip on [fairness](/fairness) if you want the honesty check; honesty is not a plus-EV.
 
 ### Jackpot
 
-The “odds” are not a fixed decimal. Your chance is your stake divided by the pot. A fair 0% fee pot pays the whole pot, so implied chance from “I win the pot” is your share, which matches true chance. A 5% fee pays 95% of the pot: implied chance from the cash you can take is higher than the chance you should assign to the reduced prize, and EV is −5%.
+The “odds” are not a fixed decimal. Your chance is your stake divided by the pot. The live fee is 5%, so the winner receives 95% of the pot: implied chance from the cash you can take is higher than your share, and expected value is −5%. A hypothetical 0% fee pot would pay the whole pot and match true chance.
 
 ### Roulette
 
@@ -167,9 +167,9 @@ Write the two percents. Subtract. Then multiply by the payout. That is the whole
 
 ### A one-minute habit
 
-Keep a note with four columns: posted decimal, implied %, true %, EV per $1. Fill it for Purple, Silver, Green, a fee-free flip, and any sports screenshot you are tempted by. After a week the sports rows will show overround; the wheel rows will show about a 3% leak on Purple or Silver and a much larger leak on Green. The implied probability column is there so you never again treat 2.00 as a weather forecast.
+Keep a note with four columns: posted decimal, implied %, true %, EV per $1. Fill it for Purple, Silver, Green, a Coinflip after the 5% pot fee, and any sports screenshot you are tempted by. After a week the sports rows will show overround; the wheel rows will show about a 7.88% leak on Purple or Silver after the win fee and a much larger leak on Green. The implied probability column is there so you never again treat 2.00 as a weather forecast.
 
-Implied probability is a translation, not a measurement. The book or the paytable speaks first; you write down what that sentence would mean if it were fair; then you ask whether the world agrees. On a 33-slot wheel the world is the slot count. On a fee-free flip the world is 1/2. On a jackpot ticket the world is your share of the pot. If you cannot name the world, you cannot finish the comparison, and a lonely implied percent is just a pretty number. Use it as a checkpoint, then spend or walk away on the dollar EV, not on the feeling that 50% is printed on the chip. A second habit: when two implied chances add to more than 100%, write the surplus as a fee. 104.7% is a 4.7-point book charge. 50% implied on a 48.48% colour is the same family of charge wearing a single number.`,
+Implied probability is a translation, not a measurement. The book or the paytable speaks first; you write down what that sentence would mean if it were fair; then you ask whether the world agrees. On a 33-slot wheel the world is the slot count. On a Coinflip after the 5% pot fee the world is 1/2. On a jackpot ticket the world is your share of the pot. If you cannot name the world, you cannot finish the comparison, and a lonely implied percent is just a pretty number. Use it as a checkpoint, then spend or walk away on the dollar EV, not on the feeling that 50% is printed on the chip. A second habit: when two implied chances add to more than 100%, write the surplus as a fee. 104.7% is a 4.7-point book charge. 50% implied on a 48.48% colour is the same family of charge wearing a single number.`,
     },
   ],
   faqs: [
@@ -191,11 +191,11 @@ Implied probability is a translation, not a measurement. The book or the paytabl
     },
     {
       q: "Why is Green's dollar edge so much larger than Purple's?",
-      a: "Purple returns 16/33 times 2, which is 32/33. Green returns 1/33 times 14, which is 14/33. Before the win fee that is about a 3.03% edge on Purple and about 57.6% on Green.",
+      a: "Purple returns 16/33 times 2, which is 32/33. Green returns 1/33 times 14, which is 14/33. Before the win fee that is about a 3.03% edge on Purple and about 57.6% on Green. After the 5% fee on the winning payout, Purple and Silver are about 7.88% and Green is about 59.70%.",
     },
     {
-      q: "Does a 0% fee coinflip have overround?",
-      a: "No. Decimal 2.00 on a true 50% match implies 50%. The payout is fair between the two players. You can still lose the flip.",
+      q: "Does the live Coinflip have overround?",
+      a: "Yes, from the 5% pot fee. A 50/50 that pays 95% of the pot is decimal 1.90, which implies about 52.63% against a true 50%. A hypothetical 0% fee flip at 2.00 would not. You can still lose the flip.",
     },
   ],
   sources: [

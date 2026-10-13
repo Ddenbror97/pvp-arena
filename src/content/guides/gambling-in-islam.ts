@@ -144,9 +144,9 @@ The [how to stop gambling guide](/guides/how-to-stop-gambling) goes through thes
     {
       id: "pvp",
       title: "How a PvP game maps onto the definition",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on Base, and each contains the three elements jurists use to define qimar. In Jackpot, players add wagers to one pot and the winner, chosen with probability equal to their share, takes the pot minus any fee shown before entry. In a [Coinflip](/coinflip), two players stake against each other on a 50/50 result. [Roulette](/roulette) pays 2x or 14x on a 33-slot wheel from stakes placed before the spin.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, and each contains the three elements jurists use to define qimar. In Jackpot, players add wagers to one pot and the winner, chosen with probability equal to their share, takes the pot minus any fee shown before entry. In a [Coinflip](/coinflip), two players stake against each other on a 50/50 result. [Roulette](/roulette) pays 2x or 14x on a 33-slot wheel from stakes placed before the spin.
 
-Results come from committed seeds and can be verified on the [fairness page](/fairness). That transparency addresses whether a game is honest, which is a separate question from whether it is permitted, and most scholars would regard all three games as gambling under the classical definition.
+Results come from committed seeds and can be verified on the [fairness page](/fairness). That transparency addresses whether a game is honest, which is a separate question from whether it is permitted, and most scholars would regard these games as gambling under the classical definition.
 
 The site is for adults 18+ only. Anyone who chooses to stop can find limits, cooling-off options and support links on the [responsible gambling](/responsible-gambling) page.
 

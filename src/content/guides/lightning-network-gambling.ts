@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Deposits are invoices or offers, not a Base 0x USDC transfer.",
     "On-chain BTC sent to a Lightning invoice, or LN paid to an on-chain address, will not land.",
     "Many “LN casinos” are custodial: the site holds BTC after the invoice clears.",
-    "PVPspinArena watches Base for USDC and ETH. It does not watch Lightning.",
+    "PVPspinArena watches Base for USDC and ETH, and on-chain Bitcoin separately. It does not watch Lightning.",
   ],
   sections: [
     {
@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 That is the whole definition. Fast and cheap is a property of the rail. It is not a promise the games are fair, licensed or solvent.
 
-This guide is in [crypto payments](/guides/topics/crypto-payments). Adults 18+ only. PVPspinArena is Jackpot, Coinflip and Roulette with on-chain Bitcoin, plus USDC or ETH on Base. It is not a Lightning cashier.
+This guide is in [crypto payments](/guides/topics/crypto-payments). Adults 18+ only. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, with on-chain Bitcoin, plus USDC or ETH on Base. It is not a Lightning cashier.
 
 On-chain BTC rooms are covered in [bitcoin casino](/guides/bitcoin-casino). Read that page if your coins are sitting in a bc1 address and you have never opened a Lightning wallet. This page is the invoice rail.
 

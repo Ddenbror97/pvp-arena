@@ -72,7 +72,10 @@ export async function verifyGame(
 ): Promise<VerificationResult> {
   const checks: VerificationResult["checks"] = [];
   if (!game.server_seed) {
-    return { ok: false, checks: [{ label: "Seed revealed", ok: false, detail: "Game not finished yet" }] };
+    return {
+      ok: false,
+      checks: [{ label: "Seed revealed", ok: false, detail: "Game not finished yet" }],
+    };
   }
   const hash = await sha256Hex(hexToBytes(game.server_seed));
   checks.push({
@@ -81,7 +84,9 @@ export async function verifyGame(
     detail: `SHA256(seed) = ${hash}`,
   });
 
-  const sorted = [...entries].sort((a, b) => Number(BigInt(a.ticket_start) - BigInt(b.ticket_start)));
+  const sorted = [...entries].sort((a, b) =>
+    Number(BigInt(a.ticket_start) - BigInt(b.ticket_start)),
+  );
   let cursor = 0n;
   let contiguous = true;
   for (const e of sorted) {
@@ -102,12 +107,19 @@ export async function verifyGame(
     detail: `ticket ${ticket} (sampling round ${counter})`,
   });
 
-  const winner = sorted.find((e) => BigInt(e.ticket_start) <= ticket && ticket < BigInt(e.ticket_end));
+  const winner = sorted.find(
+    (e) => BigInt(e.ticket_start) <= ticket && ticket < BigInt(e.ticket_end),
+  );
   checks.push({
     label: "Ticket owner matches recorded winner",
     ok: !!winner && winner.user_id === game.winner_id,
     detail: winner ? `owner ${winner.user_id.slice(0, 8)}...` : "no owner found",
   });
 
-  return { ok: checks.every((c) => c.ok), checks, computedTicket: ticket, computedWinner: winner?.user_id };
+  return {
+    ok: checks.every((c) => c.ok),
+    checks,
+    computedTicket: ticket,
+    computedWinner: winner?.user_id,
+  };
 }

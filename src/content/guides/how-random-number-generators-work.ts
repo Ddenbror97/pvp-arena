@@ -128,7 +128,7 @@ Before a roulette round you see a 64-character hex commitment. After the spin yo
     {
       id: "pvp",
       title: "How PVPspinArena generates each result",
-      body: `All three games are server-authoritative and provably fair.
+      body: `Jackpot, Coinflip, Roulette, and P2P Slott are server-authoritative and provably fair.
 
 ### Roulette
 
@@ -136,7 +136,7 @@ A seed hash is published before the betting window. After lock, HMAC-SHA256 mate
 
 ### Coinflip
 
-Two matched stakes. One bit (or equivalent) of the hash picks the winner. With a 0% default fee the game is even between the two players; the RNG is only choosing who takes the pot.
+Two matched stakes. One bit (or equivalent) of the hash picks the winner. With a 5% pot fee the winner receives 95%; the RNG is only choosing who takes the pot.
 
 ### Jackpot
 

@@ -105,7 +105,7 @@ A [web3 casino](/guides/web3-casino) should tell you the stake, the odds and how
 | Who pays you if you "win"? | A market, maybe | The pot or the house table |
 | Proof | Sometimes a block explorer | Provably fair or a lab RNG |
 
-PVPspinArena is the second column. [Jackpot](/) and [Coinflip](/coinflip) are player versus player with a default 0% fee. [Roulette](/roulette) is a published wheel. There is no guild, no scholarship and no "gamefi crypto" to farm. Our [PvP gambling guide](/guides/pvp-gambling) is the mechanics page.
+PVPspinArena is the second column. [Jackpot](/) and [Coinflip](/coinflip) are player versus player with a 5% pot fee. [Roulette](/roulette) is a published wheel. There is no guild, no scholarship and no "gamefi crypto" to farm. Our [PvP gambling guide](/guides/pvp-gambling) is the mechanics page.
 
 If you want yield, a casino is the wrong building. If you want a short, checkable bet in dollars, a GameFi map is the wrong building. Using one product to cosplay the other is how people end up with an empty wallet and a character they cannot sell.`,
     },

@@ -19,7 +19,11 @@ export function coinflipMessage(gameId: number | bigint | string, drawVersion: n
   return `PVPCasino:coinflip:${COINFLIP_PROTOCOL}:${id.toString()}:${drawVersion}`;
 }
 
-export async function coinflipOutcome(seedHex: string, gameId: number | bigint | string, drawVersion: number) {
+export async function coinflipOutcome(
+  seedHex: string,
+  gameId: number | bigint | string,
+  drawVersion: number,
+) {
   if (hexToBytes(seedHex).length !== 32) throw new Error("Seed must be 32 bytes");
   const h = await hmacSha256(await hmacKey(seedHex), coinflipMessage(gameId, drawVersion));
   const firstByte = h[0]!;
@@ -40,12 +44,24 @@ export async function verifyCoinflip(g: {
   server_seed: string | null;
   winning_side: CoinSide | null;
 }): Promise<{ ok: boolean; checks: CoinflipCheck[]; side?: CoinSide }> {
-  if (!g.server_seed) return { ok: false, checks: [{ label: "Seed revealed", ok: false, detail: "Game not finished yet" }] };
+  if (!g.server_seed)
+    return {
+      ok: false,
+      checks: [{ label: "Seed revealed", ok: false, detail: "Game not finished yet" }],
+    };
   const checks: CoinflipCheck[] = [];
   const hash = await sha256Hex(hexToBytes(g.server_seed));
-  checks.push({ label: "Seed matches the commitment published at creation", ok: hash === g.server_seed_hash, detail: `SHA256(seed) = ${hash}` });
+  checks.push({
+    label: "Seed matches the commitment published at creation",
+    ok: hash === g.server_seed_hash,
+    detail: `SHA256(seed) = ${hash}`,
+  });
   const o = await coinflipOutcome(g.server_seed, g.id, g.draw_version);
-  checks.push({ label: "HMAC recomputed", ok: true, detail: `${coinflipMessage(g.id, g.draw_version)} → ${o.hmacHex}` });
+  checks.push({
+    label: "HMAC recomputed",
+    ok: true,
+    detail: `${coinflipMessage(g.id, g.draw_version)} → ${o.hmacHex}`,
+  });
   checks.push({
     label: "First byte & 1 gives the recorded side",
     ok: o.side === g.winning_side,

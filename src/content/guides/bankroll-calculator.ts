@@ -48,7 +48,7 @@ More odds and sizing pieces live in the [Games and odds topic](/guides/topics/ga
 1. **Bankroll ($)** — cash set aside for play. Not next month’s rent.
 2. **Stake ($)** — one bet. On [Roulette](/roulette) that is one colour stake; on [Coinflip](/coinflip) it is your side of the pot; on Jackpot it is your buy-in.
 3. **Win probability p** — the true chance the bet pays. Purple or Silver on a 33-slot wheel is 16/33 ≈ 48.48%. A fair coin is 50%. A posted crash target uses RTP ÷ multiplier (see the crash cashout page in this cluster).
-4. **House edge e** (or RTP) — keep-rate of the bet. Purple or Silver on this site returns about 92.12% after the win fee. Green returns about 40.30%. A 0% fee PvP duel is 0% edge between players before anyone talks about skill or match quality.
+4. **House edge e** (or RTP) — keep-rate of the bet. Purple or Silver on this site returns about 92.12% after the win fee. Green returns about 40.30%. A 5% fee PvP duel is a 5% edge between players before anyone talks about skill or match quality.
 
 ### Derived quantities
 
@@ -185,7 +185,7 @@ Link the money rules to [poker bankroll management](/guides/poker-bankroll-manag
 
 ### Coinflip contrast
 
-$50 into a 0% fee head-to-head pot: edge between players is 0% before matchup quality. Expected fee leak is $0. Ruin is still real: you can lose the $50 in one pot. Units = 1. That is a different calculator row — one bet, binary outcome — not forty colours.
+$50 into a 5% fee head-to-head pot: edge between players is 5%. Expected fee leak is $2.50. Ruin is still real: you can lose the $50 in one pot. Units = 1. That is a different calculator row — one bet, binary outcome — not forty colours.
 
 ### Jackpot contrast
 
@@ -259,7 +259,7 @@ The calculator sizes a roll; [risk of ruin](/guides/risk-of-ruin) is the formula
     },
     {
       q: "How do I use this on PVPspinArena?",
-      a: "For Roulette colours use p ≈ 48.48% and e ≈ 7.88% on Purple or Silver. For 0% fee Coinflip or Jackpot, fee edge can be 0% between players, but one pot can still take the whole buy-in — size that buy-in as a budget line, not as forty flat units.",
+      a: "For Roulette colours use p ≈ 48.48% and e ≈ 7.88% on Purple or Silver. For Coinflip or Jackpot, the fee edge is 5% of the pot, but one pot can still take the whole buy-in — size that buy-in as a budget line, not as forty flat units.",
     },
   ],
   sources: [

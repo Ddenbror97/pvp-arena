@@ -127,7 +127,7 @@ His legacy has two halves. One is the talent: three Main Events, gin dominance, 
 
 ### The PvP connection
 
-PVPspinArena runs three player-vs-player games where talent of Ungar's kind has nothing to work on. A [Coinflip](/coinflip) is a fair 50/50 between two players. Jackpot gives each player a win chance equal to their share of the pot. Roulette uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. There are no discards to remember and no shoe to count; each result comes from a committed seed that is revealed after settlement and can be checked on the [fairness](/fairness) page.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott where talent of Ungar's kind has nothing to work on. A [Coinflip](/coinflip) is a fair 50/50 between two players. Jackpot gives each player a win chance equal to their share of the pot. Roulette uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. There are no discards to remember and no shoe to count; each result comes from a committed seed that is revealed after settlement and can be checked on the [fairness](/fairness) page.
 
 That makes the bankroll lesson the only one that transfers. Size stakes so that a losing run is affordable, decide the stopping point before you start, and treat any game with a house edge as a cost rather than an income source. Gambling is 18+.`,
     },

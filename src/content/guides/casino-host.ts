@@ -157,7 +157,7 @@ Questions worth asking any host or VIP manager:
 
 ### How PVPspinArena handles rewards
 
-PVPspinArena runs three player-vs-player games, [Jackpot](/), [Coinflip](/coinflip) and Roulette, and has no host programme. Instead, [Prestige](/prestige) gives players XP as they wager and unlocks cosmetic rewards. Because the rewards are cosmetic, they carry no cash value to chase. The same theo arithmetic still applies to your own play: on Roulette, Purple and Silver return 32/33 before the win fee, about $3.03 per $100, and about $7.88 per $100 after the fee. Green returns 14/33 and costs much more. Knowing that number makes it easy to decide whether a session is worth it. Play is 18+, and limits and support links are on the [responsible gambling](/responsible-gambling) page.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and has no host programme. Instead, [Prestige](/prestige) gives players XP as they wager and unlocks cosmetic rewards. Because the rewards are cosmetic, they carry no cash value to chase. The same theo arithmetic still applies to your own play: on Roulette, Purple and Silver return 32/33 before the win fee, about $3.03 per $100, and about $7.88 per $100 after the fee. Green returns 14/33 and costs much more. Knowing that number makes it easy to decide whether a session is worth it. Play is 18+, and limits and support links are on the [responsible gambling](/responsible-gambling) page.
 
 In the same cluster, see also [dealer school](/guides/dealer-school) and [casino dealer salary](/guides/casino-dealer-salary).`,
     },

@@ -122,7 +122,7 @@ Progressives and “100%+” variants exist. Some Deuces Wild full-pay games hav
 
 [Kelly](/guides/kelly-criterion) on a 99.54% game is still a non-positive growth fraction. Do not bet a percent of wealth because a video said “almost 100% RTP”. Almost 100% is still minus.
 
-If you came from this site’s PvP games, remember: a 0% fee [Coinflip](/coinflip) is about 0-EV between players. Video poker is minus-EV against a cabinet. Different products.
+If you came from this site’s PvP games, remember: a 5% fee [Coinflip](/coinflip) is about −5% EV between players. Video poker is minus-EV against a cabinet. Different products.
 
 ### Penalty cards and “I would have hit”
 

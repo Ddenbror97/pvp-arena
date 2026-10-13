@@ -179,7 +179,7 @@ About 4.6% of turns produce a Yahtzee with competent keeping. Over 13 turns the 
       title: "Yahtzee odds and a hashed PvP round",
       body: `Yahtzee teaches the counting skill that every dice bet rests on. List the outcomes, count the ones you want, then divide. It is the same method behind [dice roll probability](/guides/dice-roll-probability) and [poker dice](/guides/poker-dice). It is also the core of [expected value](/guides/expected-value-gambling). There, you multiply each outcome by its payout and add them up.
 
-PVPspinArena applies that arithmetic to three player-vs-player games in USDC or ETH on Base. A [Coinflip](/coinflip) is an even 50/50 between two players. On Roulette's 33-slot wheel, Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. In Jackpot, your chance to win equals your share of the pot. Results come from committed seeds, and anyone can recheck a settled round on the [fairness page](/fairness).
+PVPspinArena applies that arithmetic to Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. A [Coinflip](/coinflip) is an even 50/50 between two players. On Roulette's 33-slot wheel, Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. In Jackpot, your chance to win equals your share of the pot. Results come from committed seeds, and anyone can recheck a settled round on the [fairness page](/fairness).
 
 Yahtzee's lesson on long runs applies too. Short sessions are noisy, and averages only show up over many games. Play is 18+, and limits live on the [responsible gambling](/responsible-gambling) page.
 

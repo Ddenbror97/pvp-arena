@@ -134,7 +134,7 @@ Licensed books should offer deposit limits and time-outs. Use them. If you need 
 
 A step-by-step guide can make a harmful habit look organised. Organisation is not a reason to continue. If the slip is the only reason the match is interesting, skip the match or watch it with no money on it.
 
-PVPspinArena will not price your futures. If you come here after a match night, you are switching products: a cash balance in USDC or ETH on Base, adult accounts only, and games you can audit. That is still gambling. It is not a method to recover a lost series.
+PVPspinArena will not price your futures. If you come here after a match night, you are switching products: a cash balance settled in US dollars, adult accounts only, and games you can audit. That is still gambling. It is not a method to recover a lost series.
 
 Title menus are not the same book. [Dota 2 betting](/guides/dota2-betting) and [Rocket League betting](/guides/rocket-league-betting) are two of them, with their own series length and void rules.`,
     },
@@ -154,7 +154,7 @@ Title menus are not the same book. [Dota 2 betting](/guides/dota2-betting) and [
     },
     {
       q: "Does PVPspinArena let me bet on esports?",
-      a: "No. It is not a sportsbook. It offers hashed Jackpot, Coinflip and Roulette only.",
+      a: "No. It is not a sportsbook. It offers hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "How much should I stake?",

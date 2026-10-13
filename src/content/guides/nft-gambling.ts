@@ -151,7 +151,7 @@ If you cannot name a bid for the exact token in the next seven days, you do not 
     },
     {
       q: "Does PVPspinArena accept NFTs?",
-      a: "No. It accepts USDC and ETH on Base. Balances are in USD. It will not credit a JPEG.",
+      a: "No. It accepts on-chain Bitcoin, and USDC and ETH on Base. Balances are in USD. It will not credit a JPEG.",
     },
     {
       q: "Why is a dollar chip easier to budget than an NFT?",

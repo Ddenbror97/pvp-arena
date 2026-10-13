@@ -82,7 +82,7 @@ Betting systems that tell you to chase losses, such as the [Martingale strategy]
       title: "Jackpot fees and how they are shown",
       body: `The fee is the operator's share of each pot. It is the one number that decides whether playing costs you money over time.
 
-On PVPspinArena the house fee is configurable by the operator and is shown before you enter. If a pot of $40.00 has a 5% fee, the winner receives $38.00 and $2.00 goes to the platform. With a 0% fee, the winner receives the full $40.00.
+On PVPspinArena the house fee is 5% of the pot and is shown before you enter. If a pot of $40.00 has that fee, the winner receives $38.00 and $2.00 goes to the platform.
 
 Settlement happens in a single ledger transaction: stakes move from escrow to the winner, and any fee moves to the house revenue account. Every transaction must balance to zero, so money cannot appear or vanish during settlement. If a round is cancelled before a draw, for example because only one player joined, stakes are returned rather than kept.`,
     },
@@ -111,7 +111,7 @@ The same logic is explained step by step in the [provably fair casino guide](/gu
 
 The pot is $10.00, or 1,000 tickets. Chances are 20%, 50%, 25% and 5%.
 
-The countdown ends, entries close, and the wheel spins. The server draws ticket 963, so Kai wins despite holding the smallest share. With a 0% fee Kai receives $10.00, twenty times the stake. Over many rounds, Kai's 5% share will win about one round in twenty, which is exactly why the expected value stays the same whatever size you choose.
+The countdown ends, entries close, and the wheel spins. The server draws ticket 963, so Kai wins despite holding the smallest share. With the 5% fee Kai receives $9.50, nineteen times the stake. Over many rounds, Kai's 5% share will win about one round in twenty, which is exactly why the expected value stays the same whatever size you choose.
 
 After settlement, anyone can open the audit page, confirm the seed matches the commitment and recompute ticket 963.`,
     },

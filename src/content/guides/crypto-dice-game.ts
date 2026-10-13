@@ -16,7 +16,7 @@ export const guide: Guide = {
     "A common house edge is 1%, which means a 50% target pays about 1.98x instead of 2.00x.",
     "Win chance and payout move together: raise the target payout and the quoted chance falls by the same factor.",
     "Provably fair dice mix a server seed, a client seed and a nonce, then map the hash onto the roll.",
-    "PVPspinArena does not offer a dice game; it runs Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer a dice game; it runs Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -140,13 +140,13 @@ A bot that rolls under 2 until three misses, then flips to over 98, is still pic
     {
       id: "not-here",
       title: "PVPspinArena does not offer dice",
-      body: `There is no roll-under slider on this site. The live games are Jackpot, Coinflip and Roulette.
+      body: `There is no roll-under slider on this site. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
 
 That is not because dice is mysterious. It is because we already publish a 50/50 PvP duel and a colour wheel whose edge you can count from the slots. Dice would be another house-banked RNG curve.
 
 ### Closest live substitutes
 
-- Want a 50/50 you can explain in one sentence? Use [Coinflip](/coinflip). Two equal stakes, one HMAC bit, fee shown, default 0%.
+- Want a 50/50 you can explain in one sentence? Use [Coinflip](/coinflip). Two equal stakes, one HMAC bit, and a 5% pot fee.
 - Want a published payout row? Use [Roulette](/roulette). Seven purple, seven silver, one green.
 - Want to recompute a result? Use the [Fairness page](/fairness).
 
@@ -208,7 +208,7 @@ A scored five-dice game with the same pips is [Farkle](/guides/farkle-rules).`,
     },
     {
       q: "Does PVPspinArena have a dice game?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. This guide explains dice so you can check a roll-under game elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide explains dice so you can check a roll-under game elsewhere.",
     },
     {
       q: "Is crypto dice the same as craps?",

@@ -211,7 +211,7 @@ Those bin probabilities are the same maths as a [plinko board](/guides/plinko-bo
     },
     {
       q: "Does PVPspinArena have plinko?",
-      a: "No. It offers Jackpot, Coinflip and Roulette only. Use this maths to price a board elsewhere, then compare it with published PvP odds.",
+      a: "No. It offers Jackpot, Coinflip, Roulette, and P2P Slott. Use this maths to price a board elsewhere, then compare it with published PvP odds.",
     },
   ],
   sources: [

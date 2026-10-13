@@ -22,7 +22,7 @@ export const guide: Guide = {
     {
       id: "what-it-is",
       title: "What a wager app is",
-      body: `The product is a lobby for money matches. You pick a game the app supports, a stake, and a format. Another user accepts, or the app pairs you. Both balances are debited. You play. The app reads a result, from a plugin, a code, or an upload, and credits the winner. That sequence is the whole business. Anything that skips the lock, or pays from a vague “bonus balance,” is a different and worse business.
+      body: `The product is a lobby for money matches. You pick a game the app supports, a stake, and a format. Another user accepts, or the app pairs you. Both balances are debited. You play. The app reads a result, from a plugin, a code, or an upload, and credits the winner. That sequence is the whole business. Anything that skips the lock, or pays from a vague “bonus balance,” is a different and worse business. Two catalogs of that lobby are the [Skillz review](/guides/skillz-review) and the [Solitaire Cash review](/guides/solitaire-cash-review).
 
 This is not the same as betting with friends on a Sunday game you are both watching. [Bet with friends online](/guides/bet-with-friends-online) is that private habit: a rule, a stake, and ideally a hold, between people who know each other. A wager app is built for strangers and for repeats. The trust has to sit in the software because you will never meet the other account.
 

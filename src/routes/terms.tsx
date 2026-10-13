@@ -29,7 +29,7 @@ function TermsPage() {
   return (
     <LegalPage title="Terms">
       <p>
-        <strong>Last updated October 7, 2026.</strong>
+        <strong>Last updated October 9, 2026.</strong>
       </p>
       <p>
         These terms are the rules for using PVPspinArena at pvpspinarena.com. By creating an account
@@ -37,7 +37,7 @@ function TermsPage() {
       </p>
 
       <h2>The Service</h2>
-      <p>PVPspinArena offers three games: Jackpot, Coinflip, and Roulette.</p>
+        <p>PVPspinArena offers four games: Jackpot, Coinflip, Roulette, and P2P Slott.</p>
       <p>
         Your playable balance is maintained as a US-dollar ledger, counted in cents. Bitcoin, and
         USDC and ETH on the Base network, can be used to add funds and cash out. They are not
@@ -201,7 +201,7 @@ function TermsPage() {
 
       <h2>Responsible Play</h2>
       <p>Only use money you can afford to lose.</p>
-      <p>Jackpot, Coinflip, and Roulette involve real money and can result in losses.</p>
+      <p>Jackpot, Coinflip, Roulette, and P2P Slott involve real money and can result in losses.</p>
       <p>
         The <Link to="/responsible-gambling">Responsible Gambling</Link> page provides information
         about self-exclusion and available support resources.

@@ -158,7 +158,7 @@ Buying more lines raises your chance proportionally and your cost proportionally
     {
       id: "pvp",
       title: "Random picks and PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games, and none of them asks you to pick numbers. In [Jackpot](/) your win chance equals your share of the pot: put in 10% of the total and you have a 10% chance to take it, minus any fee shown before entry. There are no lucky combinations, only proportions. A Coinflip is a 50/50 between two players.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and none of them asks you to pick numbers. In [Jackpot](/) your win chance equals your share of the pot: put in 10% of the total and you have a 10% chance to take it, minus any fee shown before entry. There are no lucky combinations, only proportions. A Coinflip is a 50/50 between two players.
 
 [Roulette](/roulette) uses a 33-slot wheel with 16 Purple, 16 Silver and 1 Green. Purple and Silver pay 2x; Green pays 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Results come from committed seeds, and settled rounds can be verified on [fairness](/fairness).
 

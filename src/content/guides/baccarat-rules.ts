@@ -17,7 +17,7 @@ export const guide: Guide = {
     "Banker with a 5% commission is about 1.06% house edge; player is about 1.24%.",
     "A common 8:1 tie bet is about 14.4% — a side price, not a “lucky” third option.",
     "Eights or nines on the first two cards are naturals; no third card is drawn.",
-    "PVPspinArena does not offer baccarat; Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena does not offer baccarat; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -111,7 +111,7 @@ If you want a 50/50 that actually pays 2x on a player pot, that is [Coinflip](/c
     {
       id: "not-here",
       title: "PVPspinArena does not offer baccarat",
-      body: `There is no player/banker grid here. The live games are Jackpot, Coinflip and Roulette.
+      body: `There is no player/banker grid here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
 
 - [Jackpot](/) — chance = your stake / pot.
 - [Roulette](/roulette) — 33 slots, about 7.88% on Purple or Silver and about 59.70% on Green after the 5% win fee.
@@ -142,7 +142,7 @@ Moving from eight decks to six changes banker and player edges by a few hundredt
 
 One hundred banker wins at $10. Clean 5% is $50 of commission. If the site always rounds the 5% up to the next $0.50, you might pay $0.50 on each $10 win instead of $0.50 exactly — same — but on $12 wins a $0.60 charge that becomes $1.00 is a real leak. Multiply that leak by a fast live shoe and the 1.06% story is incomplete.
 
-If you want a result with no commission fiction, a 0% fee [Coinflip](/coinflip) pays 2x or nothing. It is not baccarat. It is a cleaner sentence.`,
+If you want a result with no commission fiction, a 5% fee [Coinflip](/coinflip) pays 1.90x or nothing. It is not baccarat. It is a cleaner sentence.`,
     },
     {
       id: "limits",
@@ -179,7 +179,7 @@ Playing the same game with a wallet is [crypto baccarat](/guides/crypto-baccarat
     },
     {
       q: "Does PVPspinArena have baccarat?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. This how-to is for tables you meet elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This how-to is for tables you meet elsewhere.",
     },
     {
       q: "Is no-commission baccarat a better deal?",

@@ -167,7 +167,7 @@ If you are hunting a specific finish, buying it is usually cheaper than assembli
       title: "The CS2 trade up contract, and what this site is not",
       body: `The CS2 trade up contract keeps the ten-skin weapon ladder and adds the five-Covert knife or glove recipe. Float is normalized. Filler abuse is weaker. Dust 2 still cannot invent a Covert. Those are in-game facts. The place to simulate them is the [CS2 trade up calculator](/guides/cs2-trade-up-calculator), which already has the slots, the catalog and the EV tiles.
 
-PVPspinArena is not a trade-up site. We do not take skins, we do not submit contracts, and we do not pay knives. The calculator is an article widget. The games here are cash PvP: [Jackpot](/) and [Coinflip](/coinflip), staked in USDC on Base, with a configurable fee that defaults to 0% and a result you can check.
+PVPspinArena is not a trade-up site. We do not take skins, we do not submit contracts, and we do not pay knives. The calculator is an article widget. The games here are cash PvP: [Jackpot](/) and [Coinflip](/coinflip), staked in USDC on Base, with a 5% fee on the pot and a result you can check.
 
 Skin-era sites blurred that line. They took your inventory through trade bots and called the pot a “contract.” That model is how [skin gambling vs crypto](/guides/skin-gambling-vs-crypto) started, and it is not what a Trade Up Contract in your CS2 inventory does. One burns ten items for a higher-tier cosmetic. The other is a bet.
 

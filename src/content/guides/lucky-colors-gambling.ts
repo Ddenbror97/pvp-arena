@@ -141,7 +141,7 @@ Total expected leak: about **$0.81 per spin**, 2.70% of $30, same as betting $30
       title: "Lucky colours and a hashed PvP round",
       body: `Pick a colour because you like it. Do not pick a stake because the colour felt hot.
 
-PVPspinArena runs three player-vs-player games in USDC or ETH on Base. [Roulette](/roulette) is the colour game: 16 Purple, 16 Silver, 1 Green. Purple and Silver pay 2x; Green pays 14x; Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. [Coinflip](/coinflip) is a 50/50 with no colour contract. [Jackpot](/) sets chance equal to your share of the pot. Seeds are committed before the round; any settled result can be checked on [fairness](/fairness).
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. [Roulette](/roulette) is the colour game: 16 Purple, 16 Silver, 1 Green. Purple and Silver pay 2x; Green pays 14x; Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. [Coinflip](/coinflip) is a 50/50 with no colour contract. [Jackpot](/) sets chance equal to your share of the pot. Seeds are committed before the round; any settled result can be checked on [fairness](/fairness).
 
 If a colour ritual is already choosing the size of the next bet, that is chase. Use [responsible gambling](/responsible-gambling). Play is 18+ only.
 

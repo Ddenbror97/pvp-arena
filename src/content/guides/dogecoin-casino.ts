@@ -168,7 +168,7 @@ It will not list DOGE to make the meme easier. It will not match a DOGE txid. It
     },
     {
       q: "Does PVPspinArena pay out in Dogecoin?",
-      a: "No. Withdrawals are USDC or ETH on Base, capped at $250 per day, with review on amounts over $25. You can buy DOGE later on an exchange.",
+      a: "No. Withdrawals are Bitcoin, or USDC or ETH on Base, capped at $250 per day, with review on amounts over $25. You can buy DOGE later on an exchange.",
     },
     {
       q: "Are DOGE network fees really tiny?",

@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Risk labels reallocate multipliers on the same path probabilities; they do not have to change RTP.",
     "House edge = 1 − Σ (bucket probability × bucket multiplier).",
     "More rows thin the tails; they do not improve long-run return by themselves.",
-    "PVPspinArena does not offer plinko; it runs Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer plinko; it runs Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -169,7 +169,7 @@ Risk rows on a digital board map to peg rows on a [plinko board](/guides/plinko-
     },
     {
       q: "Does PVPspinArena offer plinko?",
-      a: "No. It offers Jackpot, Coinflip and Roulette only. Use this page to price boards elsewhere.",
+      a: "No. It offers Jackpot, Coinflip, Roulette, and P2P Slott. Use this page to price boards elsewhere.",
     },
   ],
   sources: [

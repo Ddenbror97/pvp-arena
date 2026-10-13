@@ -120,7 +120,7 @@ He also illustrates a point that runs through the whole famous-gambler list: eli
     {
       id: "pvp",
       title: "Hidden information and PvP rounds",
-      body: `Edge sorting worked because a physical deck can leak information about what comes next. PVPspinArena's three player-vs-player games, Jackpot, Coinflip and Roulette in USDC or ETH on Base, are designed so that no one can see the outcome early. Results come from seeds that are committed before the round and revealed afterwards, and any settled round can be checked on the [fairness](/fairness) page.
+      body: `Edge sorting worked because a physical deck can leak information about what comes next. PVPspinArena's Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, are designed so that no one can see the outcome early. Results come from seeds that are committed before the round and revealed afterwards, and any settled round can be checked on the [fairness](/fairness) page.
 
 - [Roulette](/roulette) runs on a 33-slot wheel: 16 Purple and 16 Silver pay 2x, 1 Green pays 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
 - [Coinflip](/coinflip) is a 50/50 between two players; the winner takes the pot minus any fee shown before entry.

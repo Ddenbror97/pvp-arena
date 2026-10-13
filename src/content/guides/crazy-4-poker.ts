@@ -128,7 +128,7 @@ The house way will sometimes discard a card you would have kept. That is the rul
 
 Adults 18+ only. This is an explanation, not a license where the game is illegal for you, and not a tax opinion. If you cannot discard and fold without negotiating with yourself, the 3x button will get the chips the chart wanted to save.
 
-PVPspinArena does not deal Crazy 4 Poker. Jackpot, Coinflip, and Roulette are the live games, in USDC or ETH on Base. A four-card pit game is not one of those tables with a new name.`,
+PVPspinArena does not deal Crazy 4 Poker. Jackpot, Coinflip, Roulette, and P2P Slott are the live games, settled in US dollars. A four-card pit game is not one of those tables with a new name.`,
     },
     {
       id: "keep",

@@ -107,7 +107,7 @@ This is not legal advice. Whether a given site is lawful where you live is a loc
       title: "Why cash-settled crypto PvP is clearer",
       body: `Clearer does not mean "you will win." It means the unit, the share and the withdraw are the same kind of number.
 
-On PVPspinArena the chip is USDC or ETH on Base, shown in USD. Jackpot chance equals your share. Coinflip is 50/50 on equal stakes. Roulette is a published 33-slot wheel. You can verify a round on the [fairness](/fairness) page. The house fee on PvP games defaults to 0%.
+On PVPspinArena the chip is USDC or ETH on Base, shown in USD. Jackpot chance equals your share. Coinflip is 50/50 on equal stakes. Roulette is a published 33-slot wheel. You can verify a round on the [fairness](/fairness) page. The house fee on Jackpot and Coinflip is 5% of the pot.
 
 You do not hand anyone a Steam session. You do not care if Unusual prices crater during the round. You do care about seed phrases, wrong-network sends and your own budget — ordinary crypto risks, not backpack risks.
 

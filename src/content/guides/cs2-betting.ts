@@ -156,7 +156,7 @@ Check the rules in your state or country, use licensed operators where required,
 ### Who you bet against
 
 - **Match betting**: the bookmaker, who sets odds with a margin.
-- **PvP games**: other players. On PVPspinArena, the house does not bet; it only takes a fee, which defaults to 0%.
+- **PvP games**: other players. On PVPspinArena, the house does not bet; it only takes a fee, which is 5% of the pot.
 
 ### What decides the result
 
@@ -224,7 +224,7 @@ Bookmaker margins mean you need to be right noticeably more often than the odds 
 
 ### A realistic view
 
-For most fans, CS2 betting is best treated as paid entertainment around matches they would watch anyway, with a fixed budget. If you want games where results are pure chance and every round can be verified, PvP formats like [Coinflip](/coinflip) are simpler: your odds are exactly your share, and the fee on PVPspinArena defaults to 0%.`,
+For most fans, CS2 betting is best treated as paid entertainment around matches they would watch anyway, with a fixed budget. If you want games where results are pure chance and every round can be verified, PvP formats like [Coinflip](/coinflip) are simpler: your odds are exactly your share, and the fee on PVPspinArena is 5% of the pot.`,
     },
     {
       id: "crypto",

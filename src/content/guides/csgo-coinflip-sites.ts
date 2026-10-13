@@ -15,7 +15,7 @@ export const guide: Guide = {
     "A fair coinflip gives each player exactly a 50% chance of winning.",
     "The site fee is the only thing that changes your long-run return.",
     "Skin coinflips depend on the site's item prices; USDC stakes are exact.",
-    "PVPspinArena Coinflip has a 0% default fee and verifiable results.",
+    "PVPspinArena Coinflip has a 5% pot fee and verifiable results.",
     "You can check any PVPspinArena flip on the Fairness page.",
   ],
   sections: [
@@ -55,7 +55,7 @@ Look for the fee on the game page, not buried in the terms. A good site shows ex
 
 Some sites add extra charges: deposit fees, withdrawal fees or poor exchange rates when turning skins into site coins. Those are part of the real cost too.
 
-PVPspinArena's house fee is configurable and set to 0% by default, so the winner of a Coinflip receives the full pot. If that ever changes, the fee is shown in the game.`,
+PVPspinArena's house fee is 5% of the pot, so the winner of a Coinflip receives 95%. The fee is shown in the game.`,
     },
     {
       id: "stakes",
@@ -114,7 +114,7 @@ Set a budget before you start, and treat each flip as entertainment, not income.
       title: "The maths of a coinflip session",
       body: `It helps to see what a session looks like in numbers. This is an illustrative example, not a prediction.
 
-Suppose you play 100 flips at $1 each on a site with a 0% fee. On average you would expect about 50 wins and 50 losses, finishing close to where you started. In practice, your result will usually land somewhere between about 10 flips ahead and 10 flips behind, simply because of normal variation.
+Suppose you play 100 flips at $1 each and the fee were 0%. On average you would expect about 50 wins and 50 losses, finishing close to where you started. In practice, your result will usually land somewhere between about 10 flips ahead and 10 flips behind, simply because of normal variation.
 
 Now add a 5% fee. Each win pays $1.90 instead of $2.00. With 50 wins and 50 losses, you get back $95 from the $100 you staked. The fee costs you about $5 per 100 flips, every time, no matter how lucky you feel.
 
@@ -178,7 +178,7 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     },
     {
       q: "What fee do coinflip sites charge?",
-      a: "It varies. Some take a few percent of each pot. PVPspinArena's default fee is 0%, so the winner receives the full pot.",
+      a: "It varies. Some take a few percent of each pot. PVPspinArena's fee is 5% of the pot, so the winner receives 95%.",
     },
     {
       q: "Can I coinflip with USDC instead of skins?",

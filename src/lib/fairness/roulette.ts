@@ -9,7 +9,12 @@ import { hmacKey, hmacSha256, hexToBytes, sha256Hex } from "./core";
 export const rouletteMessage = (gameId: number | string, drawVersion: number, counter: number) =>
   `PVPCasino:roulette:v1:${gameId}:${drawVersion}:${counter}`;
 
-export async function rouletteSlot(seedHex: string, gameId: number | string, drawVersion: number, n: number) {
+export async function rouletteSlot(
+  seedHex: string,
+  gameId: number | string,
+  drawVersion: number,
+  n: number,
+) {
   const key = await hmacKey(seedHex);
   const two64 = 1n << 64n;
   const lim = (two64 / BigInt(n)) * BigInt(n);
@@ -30,6 +35,11 @@ export async function verifyRoulette(g: {
   layout: string[];
 }) {
   const hashOk = (await sha256Hex(hexToBytes(g.server_seed))) === g.server_seed_hash;
-  const { slot, counter } = await rouletteSlot(g.server_seed, g.id, g.draw_version, g.layout.length);
+  const { slot, counter } = await rouletteSlot(
+    g.server_seed,
+    g.id,
+    g.draw_version,
+    g.layout.length,
+  );
   return { hashOk, slot, counter, color: g.layout[slot] };
 }

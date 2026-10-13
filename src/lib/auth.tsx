@@ -1,5 +1,18 @@
 import { writeAuthHint } from "@/lib/auth-hint";
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { claimRememberedPromo, peekPromoCode } from "@/lib/promo/claim";
+import { claimPartnerAttribution } from "@/lib/partner/acquire.functions";
+import { claimReferral } from "@/lib/referral/referral.functions";
+import { useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -22,6 +35,30 @@ interface AuthState {
 
 const Ctx = createContext<AuthState | null>(null);
 
+// Last loaded public profile, so a hard load shows the name and avatar before the
+// profiles request returns. Display only; the fresh row always replaces it.
+const PROFILE_KEY = "pvp_profile";
+
+function readCachedProfile(userId: string): Profile | null {
+  try {
+    const p = JSON.parse(localStorage.getItem(PROFILE_KEY) ?? "null") as Profile | null;
+    return p?.id === userId && typeof p.username === "string" && typeof p.created_at === "string"
+      ? p
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedProfile(p: Profile | null) {
+  try {
+    if (p) localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+    else localStorage.removeItem(PROFILE_KEY);
+  } catch {
+    // Storage can be unavailable (private mode); the cache is optional.
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
@@ -33,11 +70,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // violation and would wrongly show the "pick your username" dialog).
   const chain = useRef<Promise<void>>(Promise.resolve());
   const lastUser = useRef<string | null>(null);
+  const claimed = useRef<string | null>(null);
+  const partnerClaimed = useRef<string | null>(null);
+  const promoClaimed = useRef<string | null>(null);
+  const claim = useServerFn(claimReferral);
+  const claimPartner = useServerFn(claimPartnerAttribution);
+  const queryClient = useQueryClient();
 
   const doLoad = useCallback(async (s: Session | null) => {
     if (!s) {
       setProfile(null);
       setNeedsProfile(false);
+      writeCachedProfile(null);
       return;
     }
     const fetchProfile = async () =>
@@ -53,7 +97,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // First sign-in: create the profile from signup details if we have them.
       const meta = s.user.user_metadata as { username?: string; age_confirmed?: boolean };
       if (meta?.username && meta?.age_confirmed) {
-        const { error } = await supabase.rpc("ensure_profile", { p_username: meta.username, p_age_confirmed: true });
+        const { error } = await supabase.rpc("ensure_profile", {
+          p_username: meta.username,
+          p_age_confirmed: true,
+        });
         if (error) console.warn("ensure_profile failed", error.message);
         // Re-read regardless of error: a parallel call may have created it.
         p = await fetchProfile();
@@ -63,6 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (lastUser.current !== s.user.id) return;
     setProfile(p ?? null);
     setNeedsProfile(!p);
+    writeCachedProfile(p ?? null);
   }, []);
 
   const loadProfile = useCallback(
@@ -81,6 +129,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       lastUser.current = data.session?.user.id ?? null;
       setSession(data.session);
       writeAuthHint(!!data.session);
+      const cached = data.session ? readCachedProfile(data.session.user.id) : null;
+      if (cached) setProfile(cached);
       await loadProfile(data.session);
       if (active) setReady(true);
     });
@@ -91,7 +141,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const nextUser = s?.user.id ?? null;
       const userChanged = nextUser !== lastUser.current;
       lastUser.current = nextUser;
-      if (!userChanged && event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") {
+      if (
+        !userChanged &&
+        event !== "SIGNED_IN" &&
+        event !== "SIGNED_OUT" &&
+        event !== "USER_UPDATED"
+      ) {
         setSession(s);
         return;
       }
@@ -109,6 +164,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [loadProfile]);
 
+  useEffect(() => {
+    if (!profile) return;
+    if (claimed.current === profile.id) return;
+    claimed.current = profile.id;
+    void claim().catch(() => {
+      claimed.current = null;
+    });
+  }, [profile, claim]);
+
+  useEffect(() => {
+    if (!profile) return;
+    if (partnerClaimed.current === profile.id) return;
+    partnerClaimed.current = profile.id;
+    void claimPartner().catch(() => {
+      partnerClaimed.current = null;
+    });
+  }, [profile, claimPartner]);
+
+  useEffect(() => {
+    if (!profile || !session || promoClaimed.current === profile.id || !peekPromoCode()) return;
+    promoClaimed.current = profile.id;
+    void claimRememberedPromo({ id: session.user.id, email: session.user.email ?? null }).then(
+      (result) => {
+        if (result === "retry" || result === "none") promoClaimed.current = null;
+        if (result === "done") {
+          void queryClient.invalidateQueries({ queryKey: ["wallet"] });
+        }
+      },
+    );
+  }, [profile, session, queryClient]);
+
   const value: AuthState = {
     ready,
     session,
@@ -117,7 +203,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     needsProfile,
     refreshProfile: () => loadProfile(session),
     signOut: async () => {
-      // Local scope: signing out here must not end sessions on other devices or sites.
+      // Local scope revokes this device's auth.sessions row (so a stolen access
+      // token fails the live-session check) and does not sign out other devices.
       await supabase.auth.signOut({ scope: "local" });
     },
   };

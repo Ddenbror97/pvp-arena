@@ -126,7 +126,7 @@ Where adults play hearts for a stake per point, or for a set amount on the loss 
 
 That is the same shape as any priced game of chance: a choice inside a distribution you do not control. [Pitch](/guides/pitch-card-game) prices trump and jacks. Hearts prices 14 specific cards and leaves the rest at zero.
 
-PVPspinArena runs three player-versus-player games in USDC or ETH on Base. Adults only, 18+. [Coinflip](/coinflip) is a straight 50/50 between two players. Roulette uses a 33-slot wheel and returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee, a 7.88 percent on Purple or Silver after the win fee edge. Jackpot gives you a win chance equal to your share of the pot. None of them has a queen to dump. Every round uses seeds committed before the result, and you can check a settled round on the [fairness](/fairness) page.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Adults only, 18+. [Coinflip](/coinflip) is a straight 50/50 between two players. Roulette uses a 33-slot wheel and returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee, a 7.88 percent on Purple or Silver after the win fee edge. Jackpot gives you a win chance equal to your share of the pot. None of them has a queen to dump. Every round uses seeds committed before the result, and you can check a settled round on the [fairness](/fairness) page.
 
 Keep the stake where a loss is affordable. The [responsible gambling](/responsible-gambling) page has the limits. Shooting the moon is a card-table phrase. It is not a reason to raise the next coin.
 

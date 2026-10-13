@@ -121,7 +121,7 @@ More history is collected in the [Casino knowledge topic](/guides/topics/casino-
 
 ### Where PVPspinArena sits
 
-PVPspinArena runs three player-vs-player games in USDC or ETH on the Base network: [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette). In a sense it goes back to the oldest form of gambling, people betting against each other, with a modern record of fairness. Coinflip is a 50/50 between two players, and the winner takes the pot minus any fee shown before entry. Roulette uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee that the law of large numbers enforces as surely as it did at the Ridotto. Every result comes from committed seeds that you can check on [fairness](/fairness). Play is 18+ only, and limits and help are on [responsible gambling](/responsible-gambling).
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. In a sense it goes back to the oldest form of gambling, people betting against each other, with a modern record of fairness. Coinflip is a 50/50 between two players, and the winner takes the pot minus any fee shown before entry. Roulette uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee that the law of large numbers enforces as surely as it did at the Ridotto. Every result comes from committed seeds that you can check on [fairness](/fairness). Play is 18+ only, and limits and help are on [responsible gambling](/responsible-gambling).
 
 See also [the history of dice](/guides/history-of-dice).`,
     },

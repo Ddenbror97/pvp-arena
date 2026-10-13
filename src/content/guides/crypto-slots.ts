@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Advertised slot RTP often sits between 94% and 98%, which is a 2% to 6% house edge per spin.",
     "Volatility describes how lumpy that RTP is: low-volatility games hit small wins often, high-volatility games pay rarely and large.",
     "Most studio slots are certified RNG products, not commit-reveal games you can verify spin by spin.",
-    "PVPspinArena does not offer slots; Jackpot, Coinflip and Roulette are the only live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel. Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -125,8 +125,8 @@ If you want the pot you can actually measure, open [Jackpot](/) or read the [gam
     },
     {
       id: "not-here",
-      title: "PVPspinArena does not offer slots",
-      body: `There are no reel games here. The live set is Jackpot, Coinflip and Roulette.
+      title: "The slot game here is P2P Slott",
+      body: `The reel game is [P2P Slott](/slott), a 1v1 duel on a 5 by 4 grid. The live set is Jackpot, Coinflip, Roulette, and P2P Slott.
 
 That is a product choice, not a moral ranking. Slots are a fine entertainment format if you treat RTP as a cost and volatility as a warning. They are a poor format if you want to verify a result or compute your chance from the screen in front of you.
 
@@ -165,7 +165,7 @@ Two hundred autoplay spins at $1 on a 96% RTP title is $200 wagered. Expected co
       title: "Summary",
       body: `Crypto slots are house-banked video slots with a crypto cashier. RTP is the cost rate; hit rate and volatility describe how that cost arrives. Most titles are certified RNG products you cannot replay from a seed. Bonuses often add wagering that applies the same edge to a larger turnover. A slot jackpot is a rare paytable event, not a shared PvP pot.
 
-PVPspinArena does not offer slots. If you want published odds and a result you can check, use Jackpot, Coinflip or Roulette, and keep this guide for pricing any reel game you meet elsewhere.`,
+PVPspinArena's slot game is P2P Slott, a 1v1 duel. If you want published odds and a result you can check, use Jackpot, Coinflip or Roulette, and keep this guide for pricing any reel game you meet elsewhere.`,
     },
   ],
   faqs: [
@@ -187,7 +187,7 @@ PVPspinArena does not offer slots. If you want published odds and a result you c
     },
     {
       q: "Does PVPspinArena have crypto slots?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. This guide exists so you can judge slots you see on other sites.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide exists so you can judge slots you see on other sites.",
     },
     {
       q: "Do slot bonuses raise RTP?",

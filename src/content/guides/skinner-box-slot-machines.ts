@@ -146,7 +146,7 @@ Gambling on PVPspinArena is 18+ only. Limits, cooling-off options and help links
     {
       id: "pvp",
       title: "Reward schedules in a PvP round",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on Base: Jackpot, Coinflip and Roulette. They are still games of chance with unpredictable rewards, and the schedule logic applies.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. They are still games of chance with unpredictable rewards, and the schedule logic applies.
 
 [Roulette](/roulette) runs shared rounds on a 33-slot wheel, with bets placed before each spin rather than on a tap-and-repeat reel. A bet on Purple pays 2x and lands on 16 of 33 slots, about 48.48% of the time. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
 

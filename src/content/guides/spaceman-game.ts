@@ -146,7 +146,7 @@ A session log helps more than a signal group. Write stake, full-auto target, whe
     {
       id: "pvp",
       title: "Crash edge next to a hashed PvP round",
-      body: `A 96% RTP crash bet returns $0.96 per $1 in the long run, whatever the 50% button does. PVPspinArena runs three player-vs-player games in USDC or ETH on Base: Jackpot, [Coinflip](/coinflip) and [Roulette](/roulette). Coinflip is a 50/50 between two players. Roulette uses a 33-slot wheel — 16 Purple and 16 Silver at 2x, 1 Green at 14x — and Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Seeds are committed before the result, and a settled round can be checked on [fairness](/fairness).
+      body: `A 96% RTP crash bet returns $0.96 per $1 in the long run, whatever the 50% button does. PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Coinflip is a 50/50 between two players. Roulette uses a 33-slot wheel — 16 Purple and 16 Silver at 2x, 1 Green at 14x — and Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Seeds are committed before the result, and a settled round can be checked on [fairness](/fairness).
 
 If Spaceman sessions are running past the round limit you wrote, close the tab. The tools on [responsible gambling](/responsible-gambling) are for that moment, not for later. A 50% cashout that keeps "paying for" leftover halves is the same chase with an extra button.
 

@@ -85,7 +85,7 @@ If two books show different numbers on the same market, that is the only compari
       title: "Size the stake as a loss, not a hope",
       body: `A stake is the amount that disappears if you are wrong. Write that sentence on the slip.
 
-**Illustration (not a pick):** session budget $40. You want at least four independent decisions in the week, not one swing. A $10 unit is already 25% of the session. A $4 unit is 10%. Most people who blow a first deposit used the $40 as one ticket.
+**Illustration (not a pick):** session budget $40. You want at least four independent decisions in the week, not one swing. A $10 unit is already 25% of the session. A $4 unit is 10%. What that word means, and what it does not, is [betting units explained](/guides/betting-units-explained). Most people who blow a first deposit used the $40 as one ticket.
 
 [Kelly](/guides/kelly-criterion) is the wrong growth tool on a juiced recreational line. Kelly on a minus-EV price says bet nothing to grow a bankroll. Entertainment sizing is a small fixed unit and a hard stop. [Expected value](/guides/expected-value-gambling) is how you admit the ticket is minus-EV and still choose, or refuse, to buy it.
 
@@ -165,7 +165,7 @@ Prices that move during the event are a different product from the number you to
     },
     {
       q: "Can I place a sports bet on PVPspinArena?",
-      a: "No. This site is not a sportsbook. It offers hashed Jackpot, Coinflip and Roulette only.",
+      a: "No. This site is not a sportsbook. It offers hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "What should I write down after I bet?",

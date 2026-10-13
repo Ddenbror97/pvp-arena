@@ -99,7 +99,7 @@ If you cannot place the offer in one of those rows, do not claim it. Unnamed “
 2. You play $1 spins on a 96% RTP slot. Expected return on $800 handled is about $768. Expected cost of the grind is about $32 — already larger than the $20 gift.
 3. A max cash-out of $50 means even a lucky spike is clipped. A $120 bonus-balance screenshot becomes $50 if you request it, or less after review.
 4. Sweepstakes translation: 20 SC, 40×, 50 SC redeem floor. You need 800 SC of weighted play and then a balance the gift never reached. The next Gold Coin bundle is the intended next click.
-5. Contrast this site: a $20 USDC deposit and a [Coinflip](/coinflip) with a 0% default fee has no bonus meter. You can lose the $20. You will not lose it to a 40× clause.
+5. Contrast this site: a $20 USDC deposit and a [Coinflip](/coinflip) with a 5% pot fee has no bonus meter. You can lose the $20. You will not lose it to a 40× clause.
 
 Use the example to read terms. Do not use it to hunt a loophole. The operator wrote the weights.
 
@@ -137,7 +137,7 @@ PVPspinArena will not give you that tutorial pack. Watch a live [Jackpot](/) rou
     {
       id: "summary",
       title: "Summary and when to stop",
-      body: `No deposit bonus casinos sell a screenshot. The terms sell a meter. Sweepstakes free SC is the same meter with a different coin. This site does not run that product. PVPspinArena is Jackpot, Coinflip and Roulette with USDC or ETH on Base — no Gold Coins, no free SC.
+      body: `No deposit bonus casinos sell a screenshot. The terms sell a meter. Sweepstakes free SC is the same meter with a different coin. This site does not run that product. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars — no Gold Coins, no free SC.
 
 If you are claiming pack after pack because the last meter almost finished, stop. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A no-deposit banner is a poor reason to stay logged in.`,
     },

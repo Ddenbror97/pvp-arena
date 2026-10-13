@@ -106,7 +106,7 @@ Red/black inherits 2.70% or 5.26%. The ladder is unchanged. The leak per dollar 
 
 ### Coinflip
 
-A 0% fee [Coinflip](/coinflip) is ~0-EV. The strategy then “fails” in a different sense: it does not create profit, it only correlates larger bets with recent losses. Average P/L tends to zero; the path is choppier than [flat betting](/guides/flat-betting). You also need an opponent to match the new unit each time.
+A 5% fee [Coinflip](/coinflip) is about −5% EV. The strategy then “fails” in a different sense: it does not create profit, it only correlates larger bets with recent losses. Average P/L tends to zero; the path is choppier than [flat betting](/guides/flat-betting). You also need an opponent to match the new unit each time.
 
 ### Jackpot
 

@@ -153,7 +153,7 @@ If you are learning how wallets and transactions work, a testnet faucet is the b
     {
       id: "pvp",
       title: "Faucets and PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games, Jackpot, [Coinflip](/coinflip) and [Roulette](/roulette), with real stakes in USDC or ETH on the Base network. It is 18+ only. There is no faucet, and faucet balances are not a sensible way to fund play: the amounts are tiny, they are usually on other networks, and the time cost is out of proportion to the value.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, with stakes settled in US dollars. It is 18+ only. There is no faucet, and faucet balances are not a sensible way to fund play: the amounts are tiny, they are usually on other networks, and the time cost is out of proportion to the value.
 
 What carries over is the maths lesson. A faucet dice game with a 1% edge drains a balance slowly through turnover; Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee, so a Purple or Silver bet costs about 3.03% before the win fee. A Coinflip is a 50/50 between two players, with the winner taking the pot minus any fee shown before entry. Settled rounds can be verified on [fairness](/fairness).
 

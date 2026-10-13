@@ -94,7 +94,7 @@ External CS2 books often charge less than 15 percent and pay out crypto or fiat.
 
 USDC on Base is a transfer. You pay [gas](/guides/gas-fees-explained) in ETH, usually cents. The casino may take a game fee. There is no 15 percent marketplace tax to "cash out" a dollar that is already a dollar.
 
-On PVPspinArena you deposit USDC or ETH on Base from the [wallet](/wallet). Balances are USD. Withdrawals are USDC or ETH on Base, with a $250 daily limit and review above $25. No trade bot, no Community Market, no 10 percent game fee on the way out.
+On PVPspinArena you deposit USDC or ETH on Base from the [wallet](/wallet). Balances are USD. Withdrawals are Bitcoin, or USDC or ETH on Base, with a $250 daily limit and review above $25. No trade bot, no Community Market, no 10 percent game fee on the way out.
 
 That is the contrast. Crypto play still loses to edges and to your own volume. It does not silently levy Steam's sale fee on every exit.`,
     },
@@ -175,7 +175,7 @@ Fifteen percent is not a conspiracy. It is a published cashier. Once you see bot
     },
     {
       q: "Does PVPspinArena charge Steam market fees?",
-      a: "No. It does not use Steam. Deposits and withdrawals are USDC or ETH on Base. You still pay Base gas and any game fee.",
+      a: "No. It does not use Steam. Deposits and withdrawals are Bitcoin, or USDC or ETH on Base. You still pay network fees and any game fee.",
     },
     {
       q: "Why do my numbers not equal exactly 15 percent?",

@@ -171,7 +171,7 @@ Advantage players have studied weak casino shuffles to follow clumps of high car
 
 ### How PVPspinArena handles randomness
 
-PVPspinArena runs three player-vs-player games, [Jackpot](/), Coinflip and Roulette, and has no cards to shuffle. Results come from a commit-reveal scheme: the server's seed is committed as a hash before the round and revealed after, so it cannot be changed once bets are in. Anyone can take a settled round and verify the result on the [fairness](/fairness) page. It is the digital version of letting a player cut the deck: a check you can perform yourself, rather than a procedure you must trust. Roulette's 33 slots pay 2x on Purple or Silver and 14x on Green, about a 7.88% Purple or Silver edge after the win fee. Play is 18+.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and has no cards to shuffle. Results come from a commit-reveal scheme: the server's seed is committed as a hash before the round and revealed after, so it cannot be changed once bets are in. Anyone can take a settled round and verify the result on the [fairness](/fairness) page. It is the digital version of letting a player cut the deck: a check you can perform yourself, rather than a procedure you must trust. Roulette's 33 slots pay 2x on Purple or Silver and 14x on Green, about a 7.88% Purple or Silver edge after the win fee. Play is 18+.
 
 In the same cluster, see also [law of large numbers](/guides/law-of-large-numbers-gambling), [monty hall problem](/guides/monty-hall-problem), and [regression to the mean](/guides/regression-to-the-mean-gambling).`,
     },

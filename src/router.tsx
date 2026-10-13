@@ -1,12 +1,19 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
+import { prefetchGamePage } from "@/lib/first-paint";
+import { warmSlotStage } from "@/lib/slott/stage";
 import { routeTree } from "./routeTree.gen";
 
 // Hover/touch preloading of the next page, skipped on Save-Data or slow connections.
 function preloadMode(): "intent" | false {
   if (typeof navigator === "undefined") return "intent";
-  const c = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string; downlink?: number } }).connection;
-  if (c?.saveData || /(^|-)2g$|3g/.test(c?.effectiveType ?? "") || (c?.downlink ?? 10) < 1.5) return false;
+  const c = (
+    navigator as Navigator & {
+      connection?: { saveData?: boolean; effectiveType?: string; downlink?: number };
+    }
+  ).connection;
+  if (c?.saveData || /(^|-)2g$|3g/.test(c?.effectiveType ?? "") || (c?.downlink ?? 10) < 1.5)
+    return false;
   return "intent";
 }
 
@@ -25,14 +32,39 @@ export const getRouter = () => {
 
   // After the first page is idle, fetch only the code (no data) for the menu pages
   // so the first click never waits on a chunk download.
+  if (typeof window !== "undefined") {
+    // Start the reel backdrop now. Waiting for the slot route chunk leaves a hole
+    // on the first paint after a client navigation.
+    warmSlotStage();
+  }
+
   if (typeof window !== "undefined" && mode) {
     const warm = () => {
-      for (const path of ["/", "/coinflip", "/roulette", "/fairness", "/auth"]) {
+      for (const path of [
+        "/",
+        "/coinflip",
+        "/roulette",
+        "/slott",
+        "/slott/$gameId",
+        "/fairness",
+        "/leaderboards",
+        "/leaderboards/$campaignId",
+        "/auth",
+        "/profile",
+        "/wallet",
+      ]) {
         const r = (router.routesByPath as unknown as Record<string, unknown>)[path];
         if (r) void router.loadRouteChunk(r as never)?.catch(() => {});
       }
+      void import("@/lib/leaderboard/paint").then((m) => m.prefetchPublicList(queryClient));
+      prefetchGamePage(queryClient, "/");
+      prefetchGamePage(queryClient, "/coinflip");
+      prefetchGamePage(queryClient, "/roulette");
+      prefetchGamePage(queryClient, "/slott");
     };
-    const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback;
+    const idle = (
+      window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void }
+    ).requestIdleCallback;
     // Wait so the current page's own data and images download first, then warm on idle.
     const later = () => setTimeout(() => (idle ? idle(warm, { timeout: 3000 }) : warm()), 4000);
     if (document.readyState === "complete") later();

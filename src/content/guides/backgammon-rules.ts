@@ -160,7 +160,7 @@ Regional games follow the same core. [Tavla](/guides/tavla), the Turkish form, u
     {
       id: "stakes",
       title: "Stakes, dice luck and the PvP connection",
-      body: `Playing backgammon for money is legal in some places and restricted in others; check local law, and gambling is for adults 18+ or the local legal age. A per-point stake can escalate quickly: a gammon on a cube at 4 is 8 points. Agree a maximum cube value before playing if the stake matters to you.
+      body: `Playing backgammon for money is legal in some places and restricted in others; check local law, and gambling is for adults 18+ or the local legal age. Sites, the doubling cube, and a posted stake are in [backgammon for money](/guides/backgammon-for-money). A per-point stake can escalate quickly: a gammon on a cube at 4 is 8 points. Agree a maximum cube value before playing if the stake matters to you.
 
 Short sessions are dominated by dice. A clearly stronger player may lose a 5-point match often, because one lucky 6-6 at the right moment swings a game. Over hundreds of games the skill edge shows. The [variance in gambling](/guides/variance-in-gambling) guide explains why small samples mislead in both directions.
 

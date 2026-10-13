@@ -23,7 +23,7 @@ export const guide: Guide = {
     {
       id: "name-the-contest",
       title: "DFS strategy starts with the payout shape",
-      body: `Daily fantasy sports lets you draft a salary-capped lineup for a single slate. The strategy is not a list of names. It is a match between the lineup's score distribution and the way the contest pays. Cash games and GPPs pay in opposite shapes, so a lineup that is correct for one is often a poor fit for the other.
+      body: `Daily fantasy sports lets you draft a salary-capped lineup for a single slate. The strategy is not a list of names. It is a match between the lineup's score distribution and the way the contest pays. A season-long league's places are a different table, walked through in [fantasy football payouts](/guides/fantasy-football-payouts). Cash games and GPPs pay in opposite shapes, so a lineup that is correct for one is often a poor fit for the other.
 
 A cash game, in the language of this page, means a flatter contest: head-to-head, a 50/50, or a double-up. Roughly the top half of the field gets paid, at a modest multiple of the entry. You want a score that clears that bar as often as possible. A GPP, a guaranteed prize pool, means a large field and a top-heavy table. First place can pay hundreds of times the entry. Most entries win nothing. You want a score that can finish first, even if that lineup also finishes last more often.
 

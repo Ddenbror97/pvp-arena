@@ -139,7 +139,7 @@ More puzzles like this sit in the [casino knowledge topic](/guides/topics/casino
     {
       id: "pvpspinarena",
       title: "Doubling on PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on Base, and every one of them has finite, published odds. No round has an infinite tail.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, and every one of them has finite, published odds. No round has an infinite tail.
 
 - On [Roulette](/roulette), Purple and Silver pay 2x on 16 of 33 slots and Green pays 14x on 1 slot. Purple and Silver return 32/33 before the win fee, about a 7.88% edge after it, and Green returns 14/33. A chain of doubles is a capped St Petersburg run with that edge applied to each link.
 - On [Coinflip](/coinflip), two players take a 50/50. Letting a win ride doubles the stake each round and halves the chance of surviving, so the chain's value is exactly what you started with, minus any fee shown before entry at each step.

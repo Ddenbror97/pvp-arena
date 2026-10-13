@@ -149,7 +149,7 @@ In a traditional casino you play against the house, which sets the odds so that 
 
 Many PvP formats come from the CS:GO skin gambling era. Our [PvP gambling guide](/guides/pvp-gambling) explains how those games work today, and the [CSGO Lotto scandal guide](/guides/csgo-gambling-history) covers what went wrong the first time around.
 
-PVPspinArena focuses on this style of play. Jackpot and Coinflip pots are made only of players' stakes, with a configurable house fee that defaults to 0%.`,
+PVPspinArena focuses on this style of play. Jackpot and Coinflip pots are made only of players' stakes, with a 5% house fee on the pot.`,
     },
     {
       id: "risks",

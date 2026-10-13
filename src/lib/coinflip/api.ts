@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { channelLive, markChannel } from "@/lib/live-channel";
 import type { Database } from "@/integrations/supabase/types";
 
 export type CfGame = Database["public"]["Tables"]["coinflip_games"]["Row"];
@@ -8,7 +9,8 @@ export type CoinSide = "HEADS" | "TAILS";
 type Prof = { username: string; avatar_url: string | null } | null;
 export type CfGameView = CfGame & { creator: Prof; opponent: Prof };
 
-const SELECT = "*, creator:profiles!coinflip_games_creator_id_fkey(username, avatar_url), opponent:profiles!coinflip_games_opponent_id_fkey(username, avatar_url)";
+const SELECT =
+  "*, creator:profiles!coinflip_games_creator_id_fkey(username, avatar_url), opponent:profiles!coinflip_games_opponent_id_fkey(username, avatar_url)";
 
 export const opposite = (s: CoinSide): CoinSide => (s === "HEADS" ? "TAILS" : "HEADS");
 
@@ -24,8 +26,24 @@ export async function fetchOpenCoinflips(): Promise<CfGameView[]> {
   return (data ?? []) as unknown as CfGameView[];
 }
 
+/** Games with both players in, so the lobby can show the flip in progress. */
+export async function fetchLiveCoinflips(): Promise<CfGameView[]> {
+  const { data, error } = await supabase
+    .from("coinflip_games")
+    .select(SELECT)
+    .in("status", ["READY", "FLIPPING", "SETTLEMENT"])
+    .order("id", { ascending: false })
+    .limit(12);
+  if (error) throw error;
+  return (data ?? []) as unknown as CfGameView[];
+}
+
 export async function fetchCoinflip(id: number): Promise<CfGameView | null> {
-  const { data, error } = await supabase.from("coinflip_games").select(SELECT).eq("id", id).maybeSingle();
+  const { data, error } = await supabase
+    .from("coinflip_games")
+    .select(SELECT)
+    .eq("id", id)
+    .maybeSingle();
   if (error) throw error;
   return (data ?? null) as unknown as CfGameView | null;
 }
@@ -53,42 +71,66 @@ export function useCoinflipConfig() {
   });
 }
 
-/** Realtime is only a hint; every event triggers a refetch of authoritative rows. */
+/** Realtime is only a hint; a dropped socket falls back to the room and lobby polls. */
 export function useCoinflipRealtime() {
   const qc = useQueryClient();
   useEffect(() => {
+    let live = false;
+    const setLive = (up: boolean) => {
+      if (live === up) return;
+      live = up;
+      markChannel("coinflip", up);
+    };
     const ch = supabase
       .channel("coinflip-live")
-      .on("postgres_changes", { event: "*", schema: "public", table: "coinflip_games" }, (payload) => {
-        const row = payload.new as { id?: number };
-        qc.invalidateQueries({ queryKey: ["coinflip-open"] });
-        qc.invalidateQueries({ queryKey: ["coinflip-recent"] });
-        qc.invalidateQueries({ queryKey: ["coinflip-mine"] });
-        if (row?.id != null) qc.invalidateQueries({ queryKey: ["coinflip", row.id] });
-      })
-      .subscribe();
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "coinflip_games" },
+        (payload) => {
+          const row = payload.new as { id?: number; status?: string };
+          qc.invalidateQueries({ queryKey: ["coinflip-open"] });
+          qc.invalidateQueries({ queryKey: ["coinflip-live"] });
+          if (row?.id != null) qc.invalidateQueries({ queryKey: ["coinflip", row.id] });
+          if (row?.status === "COMPLETED" || row?.status === "CANCELLED") {
+            qc.invalidateQueries({ queryKey: ["coinflip-recent"] });
+            qc.invalidateQueries({ queryKey: ["coinflip-mine"] });
+          }
+        },
+      )
+      .subscribe((status) => {
+        setLive(status === "SUBSCRIBED");
+        if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+          qc.invalidateQueries({ queryKey: ["coinflip-open"] });
+          qc.invalidateQueries({ queryKey: ["coinflip-live"] });
+        }
+      });
     return () => {
+      setLive(false);
       supabase.removeChannel(ch);
     };
   }, [qc]);
 }
 
-export function tickCoinflip() {
-  return supabase.rpc("coinflip_tick");
+/** Lobby lists already subscribe on the coinflip page. Poll only as a dropped-socket fallback. */
+export function coinflipLobbyPollMs(kind: "open" | "live", realtimeUp = channelLive("coinflip")) {
+  if (realtimeUp) return 8_000;
+  return kind === "live" ? 1_500 : 2_000;
 }
 
-/**
- * Warm the room before navigating so it renders complete on arrival
- * (game data + route code in parallel, capped so a slow network never blocks).
- */
-export async function openRoom(
+/** Start the room fetch and route load, then let navigation proceed. */
+export function openRoom(
   qc: import("@tanstack/react-query").QueryClient,
-  router: { preloadRoute: (o: { to: "/coinflip/$gameId"; params: { gameId: string } }) => Promise<unknown> },
+  router: {
+    preloadRoute: (o: { to: "/coinflip/$gameId"; params: { gameId: string } }) => Promise<unknown>;
+  },
   id: number,
 ) {
-  const warm = Promise.allSettled([
-    qc.prefetchQuery({ queryKey: ["coinflip", id], queryFn: () => fetchCoinflip(id), staleTime: 0 }),
-    router.preloadRoute({ to: "/coinflip/$gameId", params: { gameId: String(id) } }),
-  ]);
-  await Promise.race([warm, new Promise((r) => setTimeout(r, 1500))]);
+  void qc.prefetchQuery({
+    queryKey: ["coinflip", id],
+    queryFn: () => fetchCoinflip(id),
+    staleTime: 0,
+  });
+  void router
+    .preloadRoute({ to: "/coinflip/$gameId", params: { gameId: String(id) } })
+    .catch(() => {});
 }

@@ -23,7 +23,7 @@ export const guide: Guide = {
     "You do not need to play a hand every orbit; folding is a complete action.",
     "Position means you act after more players and see more information.",
     "A written session cap matters more than a starting-hand chart you ignore when bored.",
-    "This site does not deal beginner tables. It is Jackpot, Coinflip and Roulette only.",
+    "This site does not deal beginner tables. It is Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {

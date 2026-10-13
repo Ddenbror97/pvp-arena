@@ -156,7 +156,7 @@ Keno "predictor" tools and number-pattern systems do not work on a random draw; 
       title: "Lottery odds and a shared pot at PVPspinArena",
       body: `Keno is a lottery with a paytable. PVPspinArena takes a different route to a lottery-style game. In the [Jackpot](/), players add wagers to one pot and each player's chance of winning equals their share of the pot, with the winner taking the pot minus any fee shown before entry. There is no paytable to decode: a 10% share is a 10% chance. [Coinflip](/coinflip) is a 50/50 between two players, and [Roulette](/roulette) returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee.
 
-Play is in USDC or ETH on the Base network, and every settled round can be verified on the [fairness](/fairness) page from its committed seeds. For more lottery-style games in crypto, see [crypto lottery](/guides/crypto-lottery). PVPspinArena is for adults 18+, and limits and time-out tools are on the [responsible gambling](/responsible-gambling) page.
+Play is settled in US dollars, and every settled round can be verified on the [fairness](/fairness) page from its committed seeds. For more lottery-style games in crypto, see [crypto lottery](/guides/crypto-lottery). PVPspinArena is for adults 18+, and limits and time-out tools are on the [responsible gambling](/responsible-gambling) page.
 
 In the same cluster, see also [crypto baccarat](/guides/crypto-baccarat).`,
     },

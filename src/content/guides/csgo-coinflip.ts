@@ -60,7 +60,7 @@ Suppose two players each stake $10, making a $20 pot.
 - **With no fee**, the winner gets $20. Your expected result is 50% × $20 − $10 = $0. Over many flips you break even on average.
 - **With a 5% fee**, the pot pays out $19. Your expected result is 50% × $19 − $10 = −$0.50 per flip.
 
-So the fee is the entire cost of playing. Nothing about picking heads or tails, or waiting for a "hot" room, changes that. PVPspinArena shows its configured house fee, and the default is 0%.
+So the fee is the entire cost of playing. Nothing about picking heads or tails, or waiting for a "hot" room, changes that. PVPspinArena takes 5% of the pot, and that fee is shown before you play.
 
 ### Streaks are normal
 

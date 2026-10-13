@@ -161,7 +161,7 @@ Live-dealer baccarat is a streamed shoe. RNG baccarat is a server shuffle. A has
     {
       id: "pvp",
       title: "Banker, Player and a 50/50 at PVPspinArena",
-      body: `Banker versus Player is close to a coin flip with a small tax. PVPspinArena runs three player-vs-player games in USDC or ETH on the [Base network](/guides/base-network), and the closest cousin is [Coinflip](/coinflip): two players, a true 50/50, with the winner taking the pot minus any fee shown before entry. [Roulette](/roulette) runs shared rounds on a 33-slot wheel where Purple and Silver pay 2x and Green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. In the [Jackpot](/), your chance equals your share of the pot.
+      body: `Banker versus Player is close to a coin flip with a small tax. PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott in USDC or ETH on the [Base network](/guides/base-network), and the closest cousin is [Coinflip](/coinflip): two players, a true 50/50, with the winner taking the pot minus any fee shown before entry. [Roulette](/roulette) runs shared rounds on a 33-slot wheel where Purple and Silver pay 2x and Green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. In the [Jackpot](/), your chance equals your share of the pot.
 
 Each round's result comes from committed seeds, so you can check any settled round on the [fairness](/fairness) page. PVPspinArena is for adults 18+, and budget and time-out tools are on the [responsible gambling](/responsible-gambling) page.
 

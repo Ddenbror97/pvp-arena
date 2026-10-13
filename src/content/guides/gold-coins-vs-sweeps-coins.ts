@@ -86,7 +86,7 @@ PVPspinArena refuses the split. A dollar in a pot is a dollar. There is no sidec
 | What a spin costs | 100 GC on a slot | 0.20 SC on the same slot | $1 on a posted pot |
 | What you track | Entertainment time | Meter + floor | Dollars and the fee |
 
-If you play the 100,000 GC down to zero, you spent $10 of entertainment. If you play the 5 SC to 2 SC and the redeem floor is 50 SC, you spent $10 and unlocked nothing. If you put $10 USDC into [Coinflip](/coinflip) at a 0% default fee, you have a 50/50 dollar result and no second chip to misunderstand.
+If you play the 100,000 GC down to zero, you spent $10 of entertainment. If you play the 5 SC to 2 SC and the redeem floor is 50 SC, you spent $10 and unlocked nothing. If you put $10 into [Coinflip](/coinflip) at a 5% pot fee, you have a 50/50 result and no second chip to misunderstand.
 
 Use the row you are actually in. Do not price GC as if they were SC. Do not price SC as if they were USDC.`,
     },

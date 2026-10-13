@@ -21,7 +21,7 @@ export const guide: Guide = {
     "RTP (return to player) = 100% − house edge.",
     "European roulette has a house edge of about 2.70%; American roulette about 5.26%.",
     "The house edge is an average; short-term results can be far above or below it.",
-    "In PvP games the house does not bet; its only take is the fee, which on PVPspinArena defaults to 0%.",
+    "In PvP games the house does not bet. On PVPspinArena the fee is 5% of a Jackpot or Coinflip pot and 10% of a P2P Slott pot.",
   ],
   sections: [
     {
@@ -136,11 +136,11 @@ All stakes form one pot, and one player wins it. With no fee, every player's exp
 
 ### Coinflip
 
-Two equal stakes form a pot, and a 50/50 flip decides the winner. With no fee, the expected return is 100%. See our [coin flip odds guide](/guides/coin-flip-odds).
+Two equal stakes form a pot, and a 50/50 flip decides the winner. With a 5% fee, the winner receives 95% of the pot. See our [coin flip odds guide](/guides/coin-flip-odds).
 
 ### The fee is the edge
 
-In PvP games, the fee plays the role of the house edge. It is usually a percentage of the pot. PVPspinArena's house fee is configurable and defaults to 0%, meaning the pot is returned to players in full.
+In PvP games, the fee plays the role of the house edge. It is a percentage of the pot. On PVPspinArena, Jackpot and Coinflip keep 5% of the pot and P2P Slott keeps 10% of the players' pot. The winner receives the rest.
 
 ### Why this matters
 
@@ -203,7 +203,7 @@ For example, 30 minutes of $1 roulette bets at one bet every 30 seconds is 60 be
       title: "Summary",
       body: `The house edge is the average share of each bet a game keeps over the long run, created by paying winners slightly less than true odds. RTP is 100% minus the edge. You can calculate it from probabilities and payouts, and it applies to total wagered, not to your deposit.
 
-Edges range from about 0.5% for blackjack with good strategy to 50% for many lotteries. European roulette sits at 2.70% and American at 5.26%. In PvP games, the house does not bet, so the fee is the edge, and on PVPspinArena that fee defaults to 0%.
+Edges range from about 0.5% for blackjack with good strategy to 50% for many lotteries. European roulette sits at 2.70% and American at 5.26%. In PvP games, the house does not bet, so the fee is the edge. On PVPspinArena that fee is 5% of a Jackpot or Coinflip pot and 10% of a P2P Slott pot.
 
 Variance decides how bumpy results are, but no system changes the edge. Use it to compare games, estimate session costs and set a sensible budget.
 
@@ -229,7 +229,7 @@ The [law of large numbers](/guides/law-of-large-numbers-gambling) is why that lo
     },
     {
       q: "Do PvP games have a house edge?",
-      a: "Not in the traditional sense. Players bet against each other, so the site's only take is its fee. On PVPspinArena, the default house fee is 0%.",
+      a: "Not in the traditional sense. Players bet against each other, so the site's only take is its fee. On PVPspinArena, Jackpot and Coinflip keep 5% of the pot and P2P Slott keeps 10% of the players' pot.",
     },
     {
       q: "Can I beat the house edge?",

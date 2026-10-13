@@ -145,7 +145,7 @@ In Oklahoma gin, the value of the first upcard sets the knock limit for the hand
     {
       id: "stakes",
       title: "Playing gin rummy for money",
-      body: `Gin has long been played for money, from kitchen tables to private card clubs. Everyone involved should be 18 or older, or the local legal gambling age, and private gambling laws differ by country and region.
+      body: `Gin has long been played for money, from kitchen tables to private card clubs. Apps and a posted point stake are in [gin rummy for money](/guides/gin-rummy-for-money). Everyone involved should be 18 or older, or the local legal gambling age, and private gambling laws differ by country and region.
 
 The usual format is a rate per point on the final margin. At one cent a point, a win of 180 to 60 after bonuses pays $1.20. Hollywood scoring roughly triples the exposure per session because three games run at once. Agree on these before the first deal:
 
@@ -161,7 +161,7 @@ Gin rewards skill more than many card games: discard reading and knock timing pr
       title: "Gin rummy maths and a hashed PvP round",
       body: `Gin decisions are probability decisions. After the deal, 31 cards remain in the stock. If you need one of three unseen cards to go gin, the chance your next stock draw hits is 3/31, about 9.7%, before accounting for cards your opponent may hold. That is the kind of estimate strong players make on every turn.
 
-PVPspinArena runs three player-vs-player games where there are no draws to count: Jackpot, [Coinflip](/coinflip) and Roulette. A Coinflip is an even 50/50. Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Results come from committed seeds, and anyone can verify a settled round on the [fairness](/fairness) page, much as a fresh deck and a cut keep a gin table honest. None of that gives a player an edge; for gin's skill side, compare the [how to play Spades](/guides/how-to-play-spades) guide.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott where there are no draws to count: Jackpot, [Coinflip](/coinflip) and Roulette. A Coinflip is an even 50/50. Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Results come from committed seeds, and anyone can verify a settled round on the [fairness](/fairness) page, much as a fresh deck and a cut keep a gin table honest. None of that gives a player an edge; for gin's skill side, compare the [how to play Spades](/guides/how-to-play-spades) guide.
 
 See also [tonk](/guides/tonk-card-game).`,
     },

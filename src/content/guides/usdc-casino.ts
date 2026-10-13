@@ -15,7 +15,7 @@ export const guide: Guide = {
   facts: [
     "USDC is issued by Circle and is designed to be redeemable 1:1 for US dollars.",
     "USDC exists on many networks. You must send on the network the casino supports.",
-    "PVPspinArena accepts USDC and ETH on the Base network and shows balances in US dollars.",
+    "PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on the Base network, and shows balances in US dollars.",
     "Deposits are credited after confirmations, once two independent blockchain data providers agree.",
     "Withdrawals on PVPspinArena have a $250 daily limit; requests over $25 wait for review.",
   ],

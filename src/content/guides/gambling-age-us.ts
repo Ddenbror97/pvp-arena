@@ -121,7 +121,7 @@ Study-abroad and visa situations add another layer: your home country’s age an
     {
       id: "pvp",
       title: "What PVPspinArena expects",
-      body: `You must be an adult: at least 18, and older if your jurisdiction says so. PvP Jackpot, Coinflip and Roulette are still gambling. A 0% default fee on some pots does not make them a kids’ skill game.
+      body: `You must be an adult: at least 18, and older if your jurisdiction says so. PvP Jackpot, Coinflip and Roulette are still gambling. A 5% pot fee does not make them a kids’ skill game.
 
 If you fail an age rule, do not open an account. If you already did and you are underage, stop and contact support; do not keep playing “to withdraw.” That path goes badly.
 

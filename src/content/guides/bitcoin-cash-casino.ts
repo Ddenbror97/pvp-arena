@@ -167,7 +167,7 @@ Similar coin-specific pages exist for [Litecoin](/guides/litecoin-casino) and [D
     {
       id: "pvp",
       title: "Bitcoin Cash and PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games, [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette), with play in USDC or ETH on the Base network. BCH cannot be sent to a Base address. If you hold BCH, sell it for USDC on an exchange that supports Base withdrawals, then send the USDC on Base. That also removes the price exposure described above, because USDC is designed to hold $1.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. BCH cannot be sent to a Base address. If you hold BCH, sell it for USDC on an exchange that supports Base withdrawals, then send the USDC on Base. That also removes the price exposure described above, because USDC is designed to hold $1.
 
 The games are the same whatever coin you started with. Jackpot win chance equals your share of the pot. A Coinflip is a 50/50 between two players. Purple and Silver return 32/33 before the win fee, about a 7.88% edge after it, and Green returns 14/33. Seeds are committed before bets close, and any settled round can be checked on [fairness](/fairness).
 

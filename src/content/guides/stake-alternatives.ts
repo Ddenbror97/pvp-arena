@@ -21,7 +21,7 @@ export const guide: Guide = {
     "A fairness page you can recompute beats a marketing claim that outcomes are “provably fair.”",
     "A small deposit-and-withdraw test reveals more than a welcome-bonus headline.",
     "Licence seals are claims until you verify them on the regulator’s own register.",
-    "PVPspinArena runs Jackpot, Coinflip and Roulette with USDC or ETH on Base; it is not a Stake clone and does not sell itself as a licensed US or UK casino.",
+    "PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars; it is not a Stake clone and does not sell itself as a licensed US or UK casino.",
   ],
   sections: [
     {
@@ -73,7 +73,7 @@ Write down:
 
 [House edge](/guides/house-edge) is the long-run price of a banked game. A Stake alternative with slicker graphics and a worse edge is not a bargain. A site that hides the fee behind “dynamic” language fails the checklist even if the lobby looks premium.
 
-PVPspinArena states a 0% default fee on its PvP Jackpot and Coinflip pots and a published roulette edge in [how it works](/how-it-works). Use those numbers as an example of clarity, not as a universal ranking.
+PVPspinArena states a 5% fee on its Jackpot and Coinflip pots and a published roulette edge in [how it works](/how-it-works). Use those numbers as an example of clarity, not as a universal ranking.
 
 Translate percentage fees into dollars on your usual stake. A 1% pot fee on a $50 coinflip is fifty cents; on a $500 pot it is five dollars. The same percentage feels invisible until volume stacks. House-banked edges work the same way over hundreds of spins. If a Stake alternative hides the number behind “dynamic VIP,” you cannot price the night.
 

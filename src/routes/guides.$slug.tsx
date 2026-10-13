@@ -424,7 +424,7 @@ function GuideArticle({
         <SeoCta
           {...(g.cta ?? {
             title: "See it on a live round",
-            text: "Watch Jackpot, Coinflip and Roulette rounds as they happen, and check any result on the Fairness page.",
+            text: "Watch Jackpot, Coinflip, Roulette, and P2P Slott rounds as they happen, and check any result on the Fairness page.",
             primary: { to: "/", label: "Jackpot" },
             secondary: { to: "/fairness", label: "Fairness" },
           })}

@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Blackjack near 0.5% and baccarat banker near 1.06% are common textbook lows with correct rules.",
     "European roulette is 2.70% on even-money bets; American double-zero is 5.26%.",
     "Many crypto originals quote 99% RTP but caps and rounding can raise effective edge on extreme paths.",
-    "PVPspinArena defaults to 0% fee on Jackpot and Coinflip; Roulette publishes about a 7.88% Purple or Silver edge after the win fee on colour bets.",
+    "PVPspinArena takes a 5% fee on Jackpot and Coinflip pots. Roulette's Purple or Silver edge is about 7.88% after the win fee.",
   ],
   sections: [
     {
@@ -85,18 +85,18 @@ Verification proves outcomes match seeds. It does not prove RTP unless you also 
     },
     {
       id: "pvp",
-      title: "PvP and zero-fee pots",
+      title: "PvP pots and the fee",
       body: `Best casino game odds on a **house** chart misses games where you mainly pay other players.
 
 In a fair coinflip between two humans with no rake, each side is 50% to win the pot minus whatever fee the venue takes. At 0% fee, expected value is flat before skill or collusion concerns.
 
 PVPspinArena’s live surface:
 
-- [Jackpot](/) — win probability equals your ticket share; house fee defaults to 0%.
-- [Coinflip](/coinflip) — symmetric 50/50 PvP.
+- [Jackpot](/) — win probability equals your ticket share; the house fee is 5% of the pot.
+- [Coinflip](/coinflip) — symmetric 50/50 PvP, with the same 5% pot fee.
 - [Roulette](/roulette) — house-banked colours, about 7.88% on Purple or Silver after the win fee on 2x/14x pays you can derive from the 33-slot table.
 
-That mix matters when comparing “best odds” lists that only cite baccarat and blackjack. A 0% fee PvP flip can beat a 1% house crash **on expected cents** — variance and trust still apply.
+That mix matters when comparing “best odds” lists that only cite baccarat and blackjack. A 5% pot fee is a different price from a 1% house crash — variance and trust still apply.
 
 See [coin flip odds](/guides/coin-flip-odds) for the fair-coin baseline, then compare fees.`,
     },
@@ -159,7 +159,7 @@ Online blackjack can deal three times faster than a live felt, tripling wagered 
 4. Match volatility to bankroll — lowest edge with unaffordable variance still busts fast.
 5. Write stop rules; best odds do not mean positive EV for your session length.
 
-On PVPspinArena, if you want lowest house edge **here**, Coinflip and Jackpot at 0% fee are the symmetric choices; Roulette is the transparent house game with a counted wheel. Elsewhere, blackjack with basic strategy and banker baccarat remain the textbook lows among banked tables.
+On PVPspinArena, if you want the lower cost **here**, Coinflip and Jackpot at a 5% pot fee are the symmetric choices; Roulette is the transparent house game with a counted wheel. Elsewhere, blackjack with basic strategy and banker baccarat remain the textbook lows among banked tables.
 
 No game becomes +EV because you “feel sharp”. Discipline and rule selection are the whole edge-aware pick.
 
@@ -182,7 +182,7 @@ Fixed-odds sports betting is a different product: the book margin lives in the l
 
 Published RTP is a starting point. Rule variants, side bets, speed, and bonus terms raise realized cost. PVPspinArena offers Jackpot, Coinflip and Roulette — not crash, plinko, or mines. Use this ranking to choose tables elsewhere and to see where this site’s transparent PvP options sit on the same scale.
 
-When articles claim “single best game”, replace with “best edge among rules I will actually follow with stakes I can afford”. That sentence keeps blackjack on the podium for disciplined players and Coinflip on the podium for fee-free PvP comparisons without pretending slots are secretly 99%.
+When articles claim “single best game”, replace with “best edge among rules I will actually follow with stakes I can afford”. That sentence keeps blackjack on the podium for disciplined players and Coinflip on the podium for a posted 5% pot fee, without pretending slots are secretly 99%.
 
 Compare [Mines game casino](/guides/mines-game-casino) style originals only after you invert their cashouts — they rarely beat baccarat on paper when caps are ignored. The ranking is a map, not a dare to play everything on the list.
 
@@ -208,7 +208,7 @@ Responsible bankroll sizing matters at every rank: low edge with huge variance s
     },
     {
       q: "What are the best odds on PVPspinArena?",
-      a: "Jackpot and Coinflip at default 0% fee are symmetric PvP. Roulette is house-banked with a published edge: about 7.88% on Purple or Silver and about 59.70% on Green after the win fee.",
+      a: "Jackpot and Coinflip take a 5% fee from the pot. Roulette is house-banked with a published edge: about 7.88% on Purple or Silver and about 59.70% on Green after the win fee.",
     },
   ],
   sources: [

@@ -140,7 +140,7 @@ Gambling on PVPspinArena is 18+ only. Limits and cooling-off tools are on the [r
     {
       id: "pvp",
       title: "Loss aversion in a PvP round",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on Base, and each shows a different side of prospect theory.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, and each shows a different side of prospect theory.
 
 A [Coinflip](/coinflip) is a fair 50/50 between two players, and the winner takes the pot minus any fee shown before entry. Prospect theory predicts that a symmetric flip feels worse than neutral, and that is exactly how many players describe it. The feeling is the bias; the maths is close to even.
 

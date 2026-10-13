@@ -11,13 +11,13 @@ export const guide: Guide = {
     "Free slots are demo or play-for-fun reels, not a cash gift. Learn how demo credits work, why RTP still applies, and what they cannot pay.",
   h1: "Free slots: demo play, play-for-fun and what they are not",
   answer:
-    "Free slots are demo or play-for-fun versions of a video slot. You spin with credits that have no cash value, so a win cannot be withdrawn. The reels, RTP and volatility are usually the same kind of house-banked model as the real-money build. “Free” describes the cashier, not a gift of money and not a better chance to beat the game. PVPspinArena does not offer slots in either mode.",
+    "Free slots are demo or play-for-fun versions of a video slot. You spin with credits that have no cash value, so a win cannot be withdrawn. The reels, RTP and volatility are usually the same kind of house-banked model as the real-money build. “Free” describes the cashier, not a gift of money and not a better chance to beat the game. PVPspinArena does not offer demo slots. Its cash slot game is P2P Slott, a 1v1 duel.",
   facts: [
     "Free slots use credits with no cash value; a demo win cannot be withdrawn.",
     "Demo RTP is still a long-run cost rate on those credits, not a 96% chance to finish ahead.",
     "A hot demo session does not prove the real-money build will pay you.",
     "Social-casino “free coins” and sweepstakes coins are different products from a studio demo.",
-    "PVPspinArena has no slots; the live games are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; the live games are Jackpot, Coinflip and Roulette.",
   ],
   sections: [
     {
@@ -128,8 +128,8 @@ Free slots aimed at adults can still sit next to real-money cashiers. If you are
     },
     {
       id: "not-here",
-      title: "PVPspinArena does not offer slots",
-      body: `There is no reel demo here and no reel cashier. The live set is Jackpot, Coinflip and Roulette.
+      title: "The slot game here is P2P Slott",
+      body: `There is no free reel demo. The reel game is [P2P Slott](/slott), a 1v1 duel on a 5 by 4 grid. The live set is Jackpot, Coinflip, Roulette, and P2P Slott.
 
 - [Jackpot](/) — player pot, chance = your stake divided by the pot.
 - [Coinflip](/coinflip) — 50/50 duel, fee published.
@@ -185,7 +185,7 @@ If stopping is already hard, use [how to stop gambling](/guides/how-to-stop-gamb
     },
     {
       q: "Does PVPspinArena have free slots?",
-      a: "No. PVPspinArena does not offer slots in demo or cash form. The live games are Jackpot, Coinflip and Roulette.",
+      a: "No. PVPspinArena does not offer demo slots. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
   ],
   sources: [

@@ -10,13 +10,13 @@ export const guide: Guide = {
     "Slot volatility explained: how low, medium and high titles deliver the same RTP as drips or spikes, and why a dry hour is not a broken game.",
   h1: "Slot volatility explained: droughts, spikes and the same RTP",
   answer:
-    "Slot volatility explained simply: volatility is how lumpy the ride is around a published RTP. Low-volatility titles pay small hits often. High-volatility titles wait, then spike. Medium sits between. Two 96% games can feel unrelated because hit rate and prize size differ, not because one “plays fairer.” Volatility does not raise RTP and does not make a machine due. PVPspinArena does not offer slots.",
+    "Slot volatility explained simply: volatility is how lumpy the ride is around a published RTP. Low-volatility titles pay small hits often. High-volatility titles wait, then spike. Medium sits between. Two 96% games can feel unrelated because hit rate and prize size differ, not because one “plays fairer.” Volatility does not raise RTP and does not make a machine due. PVPspinArena's slot game is P2P Slott, a 1v1 duel.",
   facts: [
     "Volatility is the width of results around RTP, not a second RTP number.",
     "Low volatility: frequent small pays. High volatility: long droughts and rare large pays.",
     "The same 96% RTP can finish a 200-spin clip at very different balances.",
     "A bonus buy raises the stake and usually the swing; it does not flatten the edge.",
-    "PVPspinArena has no slots; Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -32,7 +32,7 @@ This [slots topic](/guides/topics/slots) page is for adults 18+. Pair it with [R
 - It is not a thermometer that rises when you have waited.
 - It is not proof a title is loose or tight. Loose/tight talk is folklore. The panel’s RTP and volatility label are the public facts.
 
-PVPspinArena has no reel volatility slider. The comparable shape on [Roulette](/roulette) is Purple versus Green: Purple returns about 96.97% before the win fee and hits often, while Green returns about 42.42% and hits rarely. The ride differs, and so does the price.`,
+P2P Slott is the reel game, a 1v1 duel. The comparable shape on [Roulette](/roulette) is Purple versus Green: Purple returns about 96.97% before the win fee and hits often, while Green returns about 42.42% and hits rarely. The ride differs, and so does the price.`,
     },
     {
       id: "three-bands",
@@ -197,7 +197,7 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     },
     {
       q: "Does PVPspinArena have high-volatility slots?",
-      a: "No. This site does not offer slots. Jackpot, Coinflip and Roulette have published chances instead of hidden feature intervals.",
+      a: "No. This site's slot game is P2P Slott, a 1v1 duel. Jackpot, Coinflip and Roulette have published chances instead of hidden feature intervals.",
     },
   ],
   sources: [

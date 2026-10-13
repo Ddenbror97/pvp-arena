@@ -36,7 +36,7 @@ Say the conclusion in plain words. There is no best machine in the sense of one 
 
 A list can be a checklist. You can ask whether the return is printed, whether you understand the variance, whether the stake per spin fits a stop you set in advance, and whether the session length you have in mind is a small amount of turnover or a large one. Those questions compare games you might actually open. They do not crown a winner.
 
-The other reel guides are grouped on the [slots topic](/guides/topics/slots). Play is for adults, 18+. A ranking that calls a game hot is a reason to leave, not to start. The limits on the [responsible gambling](/responsible-gambling) page matter more than any title. This site does not offer slots, so it has no cabinet to chart.`,
+The other reel guides are grouped on the [slots topic](/guides/topics/slots). Play is for adults, 18+. A ranking that calls a game hot is a reason to leave, not to start. The limits on the [responsible gambling](/responsible-gambling) page matter more than any title. This site's slot game is P2P Slott, a 1v1 duel, not a cabinet to chart.`,
     },
     {
       id: "rtp",

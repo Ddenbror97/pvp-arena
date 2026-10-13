@@ -205,7 +205,7 @@ Write the invert result on the same sticky note as your rung cap. If the math sa
     },
     {
       q: "Does PVPspinArena have a tower game?",
-      a: "No. Live games are Jackpot, Coinflip and Roulette only.",
+      a: "No. Live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
   ],
   sources: [

@@ -112,7 +112,7 @@ Live LoL boards move after each dragon soul and baron. Latency between the strea
       title: "A LoL ticket versus a hashed PvP round",
       body: `A League ticket is a contract on an external match. You cannot recompute a baron from a server seed. Your checks are the book's licence, the void rule, the price after vig, and whether you can withdraw.
 
-A PvP round on this site is a contract on an internal random result. [Coinflip](/coinflip) with a 0% fee is 50% at decimal 2.00. Jackpot chance is your share of the pot. You can check the commit-reveal on the [fairness page](/fairness). Nobody is pricing a jungle path.
+A PvP round on this site is a contract on an internal random result. [Coinflip](/coinflip) is 50/50 at decimal 1.90 after a 5% pot fee. Jackpot chance is your share of the pot. You can check the commit-reveal on the [fairness page](/fairness). Nobody is pricing a jungle path.
 
 Do not use a jackpot pot as a same-game parlay after a lost first map. Do not use a first-dragon miss as a reason to "win it back" on a wheel. They fail in different ways.`,
     },
@@ -151,7 +151,7 @@ If betting is already taking more time or money than you planned, use [how to st
     },
     {
       q: "Does PVPspinArena offer League of Legends betting?",
-      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip and Roulette only.",
+      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Do patches change LoL odds?",

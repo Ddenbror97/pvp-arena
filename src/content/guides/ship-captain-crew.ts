@@ -149,7 +149,7 @@ Ten turns at ~54% to score is about 5 or 6 cargos. Chance of scoring on all ten 
       title: "Qualifying odds and a hashed PvP round",
       body: `Ship captain crew is a sequence filter. Most of the drama is binary: did you crew, or did you score zero? The cargo is a small two-dice game glued on the end.
 
-PVPspinArena makes the filter visible. It runs three player-vs-player games in USDC or ETH on Base. [Coinflip](/coinflip) is a 50/50, no sequence to complete. [Roulette](/roulette) is 33 slots, 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. [Jackpot](/) sets win chance equal to your share of the pot, the same idea as a share of a glass on the bar. Seeds are committed; check a settled round on [fairness](/fairness).
+PVPspinArena makes the filter visible. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. [Coinflip](/coinflip) is a 50/50, no sequence to complete. [Roulette](/roulette) is 33 slots, 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. [Jackpot](/) sets win chance equal to your share of the pot, the same idea as a share of a glass on the bar. Seeds are committed; check a settled round on [fairness](/fairness).
 
 If the next "one more glass" is already a chase, use [responsible gambling](/responsible-gambling). Play is 18+ only.
 

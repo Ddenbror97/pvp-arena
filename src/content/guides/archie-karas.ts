@@ -134,7 +134,7 @@ Nothing in that list is unique to Karas. It describes what happens to anyone who
     {
       id: "pvp",
       title: "The Run and a hashed PvP round",
-      body: `PVPspinArena runs three player-vs-player games, and the same arithmetic governs all of them.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and the same arithmetic governs all of them.
 
 - **Coinflip**: two players, 50/50. The winner takes the pot minus any fee shown before entry. A string of flips is a string of independent coin tosses; twenty in a row is about 1 in a million.
 - **Jackpot**: your win chance equals your share of the pot. A 5% share wins about 1 time in 20.

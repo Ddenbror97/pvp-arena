@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Your chance to win equals your stake divided by the total pot.",
     "In the skin era, stakes were CS:GO items; crypto jackpots use exact dollar stakes.",
     "On PVPspinArena the winner is drawn with HMAC-SHA256 from a server seed committed before the round.",
-    "The site keeps only the configured house fee; the default fee on PVPspinArena is 0%.",
+    "The site keeps only the configured house fee; the fee on PVPspinArena is 5% of the pot.",
   ],
   sections: [
     {

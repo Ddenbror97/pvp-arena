@@ -134,7 +134,7 @@ A fair shuffle matters in a stakes game. [How to shuffle cards](/guides/how-to-s
       title: "Exact bids, variance and a hashed PvP round",
       body: `Oh Hell rewards counting and memory, but the changing deal injects huge luck. A 1-card hand can swing 10 points on a single unseen ace. Over a 19-hand match that noise shrinks; over one evening it can decide the money.
 
-PVPspinArena runs three player-vs-player games in USDC or ETH on Base: Jackpot, [Coinflip](/coinflip) and Roulette. Coinflip is a fair 50/50. Roulette returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. There is no bid to hit. Results come from committed seeds, and any settled round can be verified on [fairness](/fairness) — the digital version of watching the cut.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Coinflip is a fair 50/50. Roulette returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. There is no bid to hit. Results come from committed seeds, and any settled round can be verified on [fairness](/fairness) — the digital version of watching the cut.
 
 If a friendly unit is climbing to recover a blobbed 0-bid, stop. Use [responsible gambling](/responsible-gambling). The game is optional and 18+.
 

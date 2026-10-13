@@ -113,7 +113,7 @@ Play is 18+. Nothing in this profile is a plan for a $25 table. If large-loss ch
     {
       id: "pvp",
       title: "Negotiated edge versus a posted hashed game",
-      body: `PVPspinArena does not offer blackjack. It runs three player-vs-player games with posted maths: a [Jackpot](/) whose win chance equals your share of the pot, [Coinflip](/coinflip) at 50/50, and [Roulette](/roulette) on a 33-slot wheel (16 Purple, 16 Silver, 1 Green) where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. There is no private rebate letter and no soft-17 negotiation.
+      body: `PVPspinArena does not offer blackjack. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott with posted maths: a [Jackpot](/) whose win chance equals your share of the pot, [Coinflip](/coinflip) at 50/50, and [Roulette](/roulette) on a 33-slot wheel (16 Purple, 16 Silver, 1 Green) where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. There is no private rebate letter and no soft-17 negotiation.
 
 That is the contrast Johnson’s story is good for. He did not beat a mystery. He beat a contract the house wrote in a soft market. On a hashed PvP round the contract is public: seeds are committed, and any settled result can be checked on [fairness](/fairness). The edge, where there is one, is the posted price, not a side deal.
 

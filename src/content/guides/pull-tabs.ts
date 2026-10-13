@@ -125,7 +125,7 @@ Counterfeit or leftover deals from an unknown seller are a separate fraud proble
     {
       id: "pvp",
       title: "Printed odds next to a hashed PvP round",
-      body: `A pull-tab deal is honest when the printer, the flare and the remaining-prize board all match. The hold is still large. PVPspinArena runs three player-vs-player games in USDC or ETH on Base: Jackpot, [Coinflip](/coinflip) and [Roulette](/roulette). Coinflip is 50/50. Roulette returns 32/33, about a 7.88% Purple or Silver edge after the win fee. Jackpot chance equals your share of the pot. There is no printed urn of winners. Each result comes from committed seeds, and a settled round can be checked on [fairness](/fairness).
+      body: `A pull-tab deal is honest when the printer, the flare and the remaining-prize board all match. The hold is still large. PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Coinflip is 50/50. Roulette returns 32/33, about a 7.88% Purple or Silver edge after the win fee. Jackpot chance equals your share of the pot. There is no printed urn of winners. Each result comes from committed seeds, and a settled round can be checked on [fairness](/fairness).
 
 If the jar is already "one more, the red tab was close," the RTP discussion is finished. Use [responsible gambling](/responsible-gambling). Tickets are 18+ where the law requires it.
 

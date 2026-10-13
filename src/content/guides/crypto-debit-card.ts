@@ -153,7 +153,7 @@ If the answers are vague, the costs are usually in the vague parts. The [Crypto 
     {
       id: "pvp",
       title: "Crypto cards and PVPspinArena",
-      body: `A crypto debit card is a tool for spending off-chain. PVPspinArena sits on the other side of the ledger: three player-vs-player games, Jackpot, [Coinflip](/coinflip) and [Roulette](/roulette), played from a wallet in USDC or ETH on the Base network. Cards and games do not need to touch, and keeping them apart is healthy. Winnings that stay in a wallet are visible and deliberate; card spending is everyday money.
+      body: `A crypto debit card is a tool for spending off-chain. PVPspinArena sits on the other side of the ledger: Jackpot, Coinflip, house-banked Roulette, and P2P Slott, played from a wallet settled in US dollars. Cards and games do not need to touch, and keeping them apart is healthy. Winnings that stay in a wallet are visible and deliberate; card spending is everyday money.
 
 The game maths is fixed regardless of how funds arrive. Roulette's 33-slot wheel pays 2x on Purple or Silver and 14x on Green, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Coinflip is a 50/50 between two players. Every settled round is checkable on [fairness](/fairness).
 

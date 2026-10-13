@@ -22,7 +22,7 @@ export const guide: Guide = {
     "You use your two hole cards plus three community cards. The dealer has no hand to beat.",
     "A common paytable pushes some middle pairs and pays jacks or better and above.",
     "One standard sheet is often published near a 4.9% house edge. The felt you see controls the price.",
-    "PVPspinArena does not offer Mississippi Stud. The live games are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer Mississippi Stud. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {

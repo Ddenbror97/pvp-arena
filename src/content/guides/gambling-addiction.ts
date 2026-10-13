@@ -84,7 +84,7 @@ Family members reading this list should not turn it into a courtroom. Use [help 
       title: "Why online and crypto play change the risk",
       body: `Land casinos have doors, cash cages and closing hours. Online products do not. A phone in bed at 1 a.m. is a full casino. Crypto adds finality: a confirmed transfer is not a pending card payment you can dispute.
 
-PVPspinArena is a player-versus-player site with Jackpot, Coinflip and Roulette, funded in USDC or ETH on Base. Fast rounds and a dollar balance make it easy to see what a session cost. They also make it easy to place many bets in a short time. A low or zero fee on a PvP pot does not make a session safe if you cannot stop. The [house edge](/guides/house-edge) explains average cost; addiction is about control, not only about edge.
+PVPspinArena is a player-versus-player site with Jackpot, Coinflip and Roulette, funded settled in US dollars. Fast rounds and a dollar balance make it easy to see what a session cost. They also make it easy to place many bets in a short time. A low or zero fee on a PvP pot does not make a session safe if you cannot stop. The [house edge](/guides/house-edge) explains average cost; addiction is about control, not only about edge.
 
 What helps on any site, including this one:
 

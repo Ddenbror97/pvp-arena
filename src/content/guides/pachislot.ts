@@ -123,7 +123,7 @@ Home cabinets sold as second-hand "pachislo" often have a dip-switch block for s
       title: "Opaque settings versus a hashed PvP round",
       body: `Pachislot hides the most important number (the setting) inside the cabinet. You see medals, lights and a stop order. You do not see the switch.
 
-PVPspinArena publishes the price instead. It runs three player-vs-player games in USDC or ETH on Base. [Coinflip](/coinflip) is a 50/50. [Roulette](/roulette) is 33 slots: 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. [Jackpot](/) sets win chance equal to your share of the pot. Results use committed seeds; any settled round can be recomputed on [fairness](/fairness). There is no hidden setting 4.
+PVPspinArena publishes the price instead. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. [Coinflip](/coinflip) is a 50/50. [Roulette](/roulette) is 33 slots: 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. [Jackpot](/) sets win chance equal to your share of the pot. Results use committed seeds; any settled round can be recomputed on [fairness](/fairness). There is no hidden setting 4.
 
 A hall on setting 5 is not "hot tonight." It is a long-run medal-out rate that still produces dead hours. Sitting down because the last player walked away with a bag is a hidden switch plus ordinary clustering. If you cannot know the setting, you cannot price the session.
 

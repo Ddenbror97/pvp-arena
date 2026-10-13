@@ -122,7 +122,7 @@ Adults who miss the old category are not owed a replacement overlay. The leak wa
     {
       id: "here",
       title: "How this site fits (and does not)",
-      body: `PVPspinArena does not offer slots, dice or a house plinko board. It offers Jackpot, Coinflip and Roulette with published rules. Nobody is paid to sit in a Twitch directory and call a colour “due.”
+      body: `PVPspinArena does not offer house-banked slots, dice or a house plinko board. It offers Jackpot, Coinflip, Roulette, and P2P Slott with published rules. Nobody is paid to sit in a Twitch directory and call a colour “due.”
 
 The 2022 Twitch change is useful here only as a fact about **distribution**: unlicensed slots overlays lost a huge free billboard. That did not make remaining casinos kinder. It did not make a PvP pot a lottery. It did not make an affiliate code a seed.
 
@@ -156,7 +156,7 @@ If you are writing a complaint or a school project, cite Twitch’s safety artic
     },
     {
       q: "Does PVPspinArena run Twitch slot streams?",
-      a: "No. This site does not offer slots and does not pay streamers to broadcast a slots overlay. It is hashed PvP Jackpot, Coinflip and Roulette.",
+      a: "No. This site's slot game is P2P Slott, a 1v1 duel, and it does not pay streamers to broadcast a slots overlay. The live games are hashed PvP Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
   ],
   sources: [

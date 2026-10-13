@@ -48,7 +48,7 @@ Edge = 1 − 2p.
 | Fair coin | 50% | 1.00 | 0% |
 | 1% short 2× (crash-style) | 49.5% | 0.99 | 1% |
 | Even money at 49% | 49% | 0.98 | 2% |
-| [Coin flip odds](/guides/coin-flip-odds) at 50% fee-free PvP | 50% | 1.00 | 0% transfer |
+| [Coin flip odds](/guides/coin-flip-odds) at a 50/50 Coinflip before the 5% pot fee | 50% | 1.00 | 0% transfer |
 
 If the “double” uses red on a single-zero wheel, p ≈ 18/37 — not 50%. Compute p from the actual prop, not from the word “double.”
 
@@ -160,7 +160,7 @@ Some blackjack side flows offer even money on insurance-like doubles. That is no
       title: "Where to get a single fair 50/50 instead",
       body: `PVPspinArena does not ship a double-or-nothing ladder. [Coinflip](/coinflip) is one pot-based 50/50 — not a parlay widget. [Roulette](/roulette) is a counted wheel with a published colour edge, not even money.
 
-If you want exactly one fair coin step, use a fee-free 50/50 against another player, not a house double button with hidden p.
+If you want exactly one fair coin step, use a 50/50 Coinflip against another player, then subtract the 5% pot fee, not a house double button with hidden p.
 
 [How it works](/how-it-works) explains pot share on Jackpot and Coinflip. [Fairness](/fairness) lets you replay committed outcomes on Roulette.
 
@@ -199,7 +199,7 @@ Telegram “double signals” sell the same product with extra steps. The signal
     },
     {
       q: "Does PVPspinArena have double or nothing?",
-      a: "No. It offers Jackpot, Coinflip and Roulette only. Coinflip is a single 50/50, not a built-in parlay ladder.",
+      a: "No. It offers Jackpot, Coinflip, Roulette, and P2P Slott. Coinflip is a single 50/50, not a built-in parlay ladder.",
     },
   ],
   sources: [

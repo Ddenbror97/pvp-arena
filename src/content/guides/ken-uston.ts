@@ -129,7 +129,7 @@ Uston's era also tested hidden computers. According to accounts of the period, a
     {
       id: "pvp",
       title: "No counting needed in a PvP round",
-      body: `Uston's method depended on a shoe that remembers which cards are gone. PVPspinArena's three player-vs-player games, Jackpot, Coinflip and Roulette in USDC or ETH on Base, have no memory at all. Each round comes from fresh committed seeds, so there is no running count to track and no favourable moment to wait for.
+      body: `Uston's method depended on a shoe that remembers which cards are gone. PVPspinArena's Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, have no memory at all. Each round comes from fresh committed seeds, so there is no running count to track and no favourable moment to wait for.
 
 - On [Roulette](/roulette), a 33-slot wheel with 16 Purple and 16 Silver slots paying 2x and 1 Green paying 14x, Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee on every spin.
 - [Coinflip](/coinflip) is a 50/50 between two players; the winner takes the pot minus any fee shown before entry.

@@ -126,7 +126,7 @@ The boom brought a huge influx of recreational players. That made poker more pro
       title: "What the Moneymaker story means for PvP play",
       body: `The part of the Moneymaker story that applies to any game is the arithmetic of long shots. A small stake with a huge possible prize is attractive, and the rare winner becomes the advert. The rest of the field pays for that prize.
 
-PVPspinArena runs three player-vs-player games, and each one makes that arithmetic visible:
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and each one makes that arithmetic visible:
 
 - **Jackpot** at [/](/): players add wagers to one pot, and your win chance equals your share. A $10 entry in a $1,000 pot is a 1% chance at the pot minus any fee shown before entry, the same shape as a satellite.
 - **Coinflip**: two players, 50/50, winner takes the pot minus any fee shown before entry.

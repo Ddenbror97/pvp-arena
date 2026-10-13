@@ -48,10 +48,28 @@ export async function fetchChatPage(room: ChatRoom, before?: ChatMessage): Promi
 const roomCache = new Map<ChatRoom, ChatMessage[]>();
 // Last known online count per room, so the header doesn't pop from "Connecting..." to a number.
 const onlineCache = new Map<ChatRoom, number>();
+// Last connection light. Remounting the chat on another game page must not
+// blink the dot gray while the same room subscribes again.
+const statusCache = new Map<ChatRoom, "live" | "offline">();
+// Whether older history is exhausted. Resetting this on each page hides
+// "Start of chat" until the refetch finishes.
+const hasMoreCache = new Map<ChatRoom, boolean>();
 
-export function useGameChat(room: ChatRoom, userId: string | null) {
-  const [messages, setMessagesState] = useState<ChatMessage[]>(() => roomCache.get(room) ?? []);
-  const [historyLoaded, setHistoryLoaded] = useState(() => roomCache.has(room));
+export function useGameChat(
+  room: ChatRoom,
+  userId: string | null,
+  initial?: { data: ChatMessage[] } | null,
+) {
+  const [messages, setMessagesState] = useState<ChatMessage[]>(() => {
+    if (typeof window !== "undefined") {
+      const cached = roomCache.get(room);
+      if (cached) return cached;
+    }
+    return initial?.data ?? [];
+  });
+  const [historyLoaded, setHistoryLoaded] = useState(
+    () => (typeof window !== "undefined" && roomCache.has(room)) || !!initial,
+  );
   const setMessages = useCallback(
     (fn: ChatMessage[] | ((cur: ChatMessage[]) => ChatMessage[])) =>
       setMessagesState((cur) => {
@@ -69,8 +87,24 @@ export function useGameChat(room: ChatRoom, userId: string | null) {
     },
     [room],
   );
-  const [status, setStatus] = useState<"idle" | "connecting" | "live" | "offline">("idle");
-  const [hasMore, setHasMore] = useState(true);
+  const [status, setStatusState] = useState<"idle" | "connecting" | "live" | "offline">(
+    () => statusCache.get(room) ?? "idle",
+  );
+  const setStatus = useCallback(
+    (next: "idle" | "connecting" | "live" | "offline") => {
+      if (next === "live" || next === "offline") statusCache.set(room, next);
+      setStatusState(next);
+    },
+    [room],
+  );
+  const [hasMore, setHasMoreState] = useState(() => hasMoreCache.get(room) ?? true);
+  const setHasMore = useCallback(
+    (next: boolean) => {
+      hasMoreCache.set(room, next);
+      setHasMoreState(next);
+    },
+    [room],
+  );
   const [loadingOlder, setLoadingOlder] = useState(false);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
@@ -91,33 +125,28 @@ export function useGameChat(room: ChatRoom, userId: string | null) {
     } catch {
       /* history is retried on the next reconnect / visibility change */
     }
-  }, [room, setMessages]);
+  }, [room, setMessages, setHasMore]);
 
   useEffect(() => {
-    if (!userId) {
-      setMessagesState([]);
-      setStatus("idle");
-      setOnline(0);
-      return;
-    }
     let disposed = false;
-    setStatus("connecting");
-    setHasMore(true);
-    setMessagesState(roomCache.get(room) ?? []);
-    setHistoryLoaded(roomCache.has(room));
+    if (statusCache.get(room) !== "live") setStatus("connecting");
+    // Keep messages already painted from the document. An empty cache must not blank them.
+    setMessagesState((cur) => roomCache.get(room) ?? cur);
+    setHistoryLoaded((loaded) => roomCache.has(room) || loaded);
     // Load history right away, in parallel with the live connection.
+    // Logged-out visitors can read the room; only signed-in users publish.
     void reconcile();
     // Online count is computed by the server from signed-in heartbeats (one per user).
     const beat = async () => {
-      if (disposed || document.visibilityState !== "visible") return;
+      if (!userId || disposed || document.visibilityState !== "visible") return;
       const { data, error } = await supabase.rpc("chat_heartbeat");
       if (!disposed && !error && typeof data === "number") setOnline(data);
     };
     void beat();
-    const presenceTimer = setInterval(() => void beat(), 25_000);
+    const presenceTimer = userId ? setInterval(() => void beat(), 25_000) : undefined;
 
     (async () => {
-      await supabase.realtime.setAuth();
+      if (userId) await supabase.realtime.setAuth();
       if (disposed) return;
       const ch = supabase.channel(chatTopic(room), {
         config: { private: true },
@@ -152,13 +181,13 @@ export function useGameChat(room: ChatRoom, userId: string | null) {
     window.addEventListener("online", onVisible);
     return () => {
       disposed = true;
-      clearInterval(presenceTimer);
+      if (presenceTimer) clearInterval(presenceTimer);
       document.removeEventListener("visibilitychange", onVisible);
       window.removeEventListener("online", onVisible);
       if (channelRef.current) void supabase.removeChannel(channelRef.current);
       channelRef.current = null;
     };
-  }, [room, userId, reconcile, setMessages]);
+  }, [room, userId, reconcile, setMessages, setOnline, setStatus]);
 
   const loadOlder = useCallback(async () => {
     if (loadingOlder || !hasMore || !messages[0]) return;

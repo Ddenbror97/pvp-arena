@@ -145,7 +145,7 @@ If you notice you are staying longer or spending more than planned, the [respons
       title: "No carpet, same maths",
       body: `An online game has no floor to decorate, but the same design questions appear on screen: colour, animation, sound and how easy it is to start another round.
 
-PVPspinArena runs three player-vs-player games, Jackpot, Coinflip and Roulette, and play is in USDC or ETH on the Base network. The environment is simple by design, and the odds are stated rather than hidden in the décor:
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and play is settled in US dollars. The environment is simple by design, and the odds are stated rather than hidden in the décor:
 
 - In [Roulette](/roulette), 16 Purple and 16 Silver slots pay 2x and one Green pays 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
 - In [Coinflip](/coinflip), two players take a fair 50/50, and the winner takes the pot minus any fee shown before entry.

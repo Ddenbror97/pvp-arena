@@ -139,7 +139,7 @@ The [law of large numbers](/guides/law-of-large-numbers-gambling) is the other h
     {
       id: "pvp",
       title: "Big wins on PVPspinArena and how to think about them",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on the Base network. Its largest single-round wins come from [Jackpot](/), where players add wagers to one pot and the winner takes the pot minus any fee shown before entry.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. Its largest single-round wins come from [Jackpot](/), where players add wagers to one pot and the winner takes the pot minus any fee shown before entry.
 
 ### Why Jackpot odds are easy to read
 

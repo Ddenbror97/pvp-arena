@@ -121,7 +121,7 @@ The lottery bought a long shot against a withheld prize. The PvP pot bought a sh
 | --- | --- | --- |
 | Ticket meaning | Number you bought against a huge N | Cents you put in this pot |
 | Prize source | Schedule, progressive, leftover sales | The pot itself |
-| Typical edge | Often large | Posted fee only (default 0%) |
+| Typical edge | Often large | 5% of the pot |
 | Draw | House RNG or on-chain random | Hash then reveal on Fairness |
 | Asset | Any advertised coin | Dollar ledger via USDC or ETH on Base |
 

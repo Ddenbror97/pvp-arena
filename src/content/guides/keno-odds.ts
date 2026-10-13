@@ -10,7 +10,7 @@ export const guide: Guide = {
     "Keno odds on an 80-ball, 20-draw card: how spot counts set hit chances, why paytables often keep 20% or more, and how to read one ticket.",
   h1: "Keno odds: spot counts, 80-ball draws and the real keep",
   answer:
-    "Keno odds are combination counts on an 80-number field with 20 numbers drawn. You mark n spots; the paytable pays for catching k of those n. The true chance of a catch is a hypergeometric fraction. Casinos short-pay the rare catches and the common ones, so many tickets sit at a 20% to 40% house edge — lottery territory, not baccarat. PVPspinArena does not offer keno; Jackpot, Coinflip and Roulette are the live games.",
+    "Keno odds are combination counts on an 80-number field with 20 numbers drawn. You mark n spots; the paytable pays for catching k of those n. The true chance of a catch is a hypergeometric fraction. Casinos short-pay the rare catches and the common ones, so many tickets sit at a 20% to 40% house edge — lottery territory, not baccarat. PVPspinArena does not offer keno; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   facts: [
     "Classic keno draws 20 numbers from 80. Your ticket marks 1 to 10 (sometimes more) spots.",
     "Hit chances are hypergeometric: C(n,k) × C(80−n, 20−k) / C(80,20), not “1 in 4 because 20/80.”",
@@ -90,7 +90,7 @@ Marking groups and playing many n-subsets at once raises turnover. Each subset i
     {
       id: "not-here",
       title: "PVPspinArena does not offer keno",
-      body: `There is no 80-ball card here. The live games are Jackpot, Coinflip and Roulette.
+      body: `There is no 80-ball card here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
 
 - [Jackpot](/) — your chance is your share of a visible pot, not C(n,k) against a house paytable.
 - [Coinflip](/coinflip) — 50/50, fee published.
@@ -180,7 +180,7 @@ The same paytables appear as [crypto keno](/guides/crypto-keno) when the cashier
     },
     {
       q: "Does PVPspinArena have keno?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. This guide is the 80-ball pricing sheet for tickets elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide is the 80-ball pricing sheet for tickets elsewhere.",
     },
     {
       q: "Is video keno different from live keno?",

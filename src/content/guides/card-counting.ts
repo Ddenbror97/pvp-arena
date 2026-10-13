@@ -104,7 +104,7 @@ If the chase is already bigger than the maths, open [responsible gambling](/resp
     {
       id: "not-here",
       title: "PVPspinArena has no shoe to count",
-      body: `There is no blackjack table here. The live games are Jackpot, Coinflip and Roulette. Their odds do not depend on cards left in a tray.
+      body: `There is no blackjack table here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott. Their odds do not depend on cards left in a tray.
 
 - [Jackpot](/) — probability is stake / pot, every round.
 - [Coinflip](/coinflip) — a 50/50 bit, no memory.

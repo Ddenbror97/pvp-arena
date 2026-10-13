@@ -110,7 +110,7 @@ A live 1.25 favourite implies 80% before you ask whether the book is sharp. That
       title: "A book price versus a hashed PvP payout",
       body: `A sports or esports ticket is a contract on an external event. You cannot recompute a map from a server seed. Your checks are: is the price good after vig, are the rules clear, can you withdraw?
 
-A PvP round on this site is a contract on an internal random result. Your chance on [Coinflip](/coinflip) with a 0% fee is 50% at decimal 2.00. Your chance in Jackpot is your share of the pot. You can check the commit-reveal on the [fairness page](/fairness). Nobody is pricing an injury report.
+A PvP round on this site is a contract on an internal random result. Your chance on [Coinflip](/coinflip) is 50%, and decimal is 1.90 after a 5% pot fee. Your chance in Jackpot is your share of the pot. You can check the commit-reveal on the [fairness page](/fairness). Nobody is pricing an injury report.
 
 Do not use a jackpot pot as a same-game parlay. Do not use a League moneyline as a coin. They fail in different ways. The book can be honest and you can still lose to the overround. The hashed game can be honest and you can still lose the flip.
 

@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Bookmaker odds include a margin, often called the vig or overround, so implied probabilities add up to more than 100%.",
     "The Esports Integrity Commission (ESIC) investigates match-fixing, betting offences and related corruption.",
     "Lower-tier online cups generally have less public information and, historically, more integrity cases than Majors.",
-    "PVPspinArena does not take esports bets; it runs Jackpot, Coinflip and Roulette with USDC or ETH on Base.",
+    "PVPspinArena does not take esports bets; it runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.",
   ],
   sections: [
     {
@@ -118,7 +118,7 @@ Licensing does not make you a winner. It gives you a complaint path and a set of
 | Can you verify one round? | Usually no | Yes, if the site publishes seeds |
 | Typical cost | Odds margin | A stated fee, or a house edge on a wheel |
 
-On PVPspinArena, [Jackpot](/) and [Coinflip](/coinflip) are player versus player. The house does not take a side. The default fee is 0%. [Roulette](/roulette) is a shared 33-slot wheel with a published edge. Every finished round can be checked on the [fairness page](/fairness). That is a casino product with a public ledger, not a match book.
+On PVPspinArena, [Jackpot](/) and [Coinflip](/coinflip) are player versus player. The house does not take a side. The fee is 5% of the pot. [Roulette](/roulette) is a shared 33-slot wheel with a published edge. Every finished round can be checked on the [fairness page](/fairness). That is a casino product with a public ledger, not a match book.
 
 If you enjoy reading a CS2 odds board, keep using a licensed book and treat the stake as the price of watching. If what you actually want is a short, checkable game of chance with a dollar balance, that is a different job. Our [PvP gambling guide](/guides/pvp-gambling) explains the fee model without pretending it is a way to beat the market.
 
@@ -138,7 +138,7 @@ Do not mix the two in your head. Picking Na'Vi because you "know CS" does not tr
 
 Watching a Major with no money on it is still allowed. If the slip is the only reason the match is interesting, that is a warning sign, not a hobby. Licensed books should offer deposit limits and time-outs. Use them.
 
-PVPspinArena will not price your CS2 futures. If you come here after a match night, you are switching products: a cash balance in USDC or ETH on Base, adult accounts only, and games you can audit. That is a clearer unit than a parlay built on three lower-tier maps you did not watch.
+PVPspinArena will not price your CS2 futures. If you come here after a match night, you are switching products: a cash balance settled in US dollars, adult accounts only, and games you can audit. That is a clearer unit than a parlay built on three lower-tier maps you did not watch.
 
 Whether a match ticket is allowed is not the same page as how the odds work. [Esports betting law](/guides/esports-betting-legal) is the permission question.`,
     },

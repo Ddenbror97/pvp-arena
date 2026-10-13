@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Amount wagered = bet size × number of bets, not the size of your deposit.",
     "Expected loss = amount wagered × (1 − RTP).",
     "PVPspinArena Purple and Silver return about 92% after the fee. Green returns about 40%.",
-    "A 0% fee PvP Jackpot or Coinflip is 100% RTP between players; type 100 to see a $0 expected leak.",
+    "A 5% fee PvP Jackpot or Coinflip is 95% RTP between players; type 95 to see the expected leak.",
   ],
   sections: [
     {
@@ -97,7 +97,7 @@ The roll was $50 in every story. The leak followed turnover.
 
 Count the bets you will actually click, not the bets you hope will happen. If you do not know n, you do not have a session plan. Write n first, then type it. Raising n in the box after a win streak is a new problem, not a continuation of the old one.
 
-PvP pots are a different n: one Jackpot entry is one bet against that pot, not a hundred recycled colours. Type 1 and the stake you put in. At a 0% fee, RTP is 100% between players and expected loss is $0 before anyone talks about fun.
+PvP pots are a different n: one Jackpot entry is one bet against that pot, not a hundred recycled colours. Type 1 and the stake you put in. At a 5% fee, RTP is 95% between players and expected loss is 5% of the stake.
 
 Autoplay is just a large n with a short clock. If a slot page offers “100 spins” as a button, that button is the third input. Type 100. Do not type 10 because you “might stop.” The leak box should scare you before the button does. If it does not, your stake is too small to feel and n will grow in silence.`,
     },
@@ -118,7 +118,7 @@ Autoplay is just a large n with a short clock. If a slot page offers “100 spin
 ### PVPspinArena presets
 
 - **Purple or Silver:** type **96.97** for the wheel before the win fee, or **92.12** after it. **Green:** type **42.42** before the fee, or **40.30** after it. You can watch the slots on [Roulette](/roulette) without staking.
-- **Jackpot or Coinflip at 0% fee:** type **100**, stake = your buy-in, n = 1. The leak box should read $0.00. A posted 1% fee is 99% RTP on that pot: $20 in, expected leak $0.20.
+- **Jackpot or Coinflip at the 5% fee:** type **95**, stake = your buy-in, n = 1. On a $20 buy-in the leak box should read $1.00.
 
 European even-money roulette is about 97.30%. American is about 94.74%. Do not type those on this site’s wheel.
 
@@ -220,8 +220,8 @@ Print or screenshot the three outputs before you sit down. If you cannot show so
       a: "No. This page is the arithmetic tool. Definitions, sample size and the 96%-is-not-a-win-chance essay live on RTP explained.",
     },
     {
-      q: "What do I type for a 0% fee Coinflip?",
-      a: "RTP 100, bet size equal to your side of the pot, number of bets 1. Expected loss should read $0.00 before anyone talks about matching.",
+      q: "What do I type for Coinflip?",
+      a: "RTP 95, bet size equal to your side of the pot, number of bets 1. Expected loss should read 5% of that stake.",
     },
   ],
   sources: [

@@ -130,7 +130,7 @@ Date it. Promotions on a site this busy change quickly. An undated bonus percent
     },
     {
       q: "Is BC.Game the same as PVPspinArena?",
-      a: "No. PVPspinArena is Jackpot, Coinflip and Roulette with USDC or ETH on Base. It does not copy the BC.Game lobby or token.",
+      a: "No. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not copy the BC.Game lobby or token.",
     },
     {
       q: "Why did a BC.Game withdrawal wait?",

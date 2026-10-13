@@ -1,18 +1,17 @@
 import { useEffect } from "react";
+import type { JackpotPaint } from "@/lib/first-paint";
 import { JackpotStage } from "./JackpotStage";
 import { RecentGames } from "./RecentGames";
 
-/** Isolated so the homepage overlay can paint before this chunk downloads. */
-export default function HomeArena() {
+export default function HomeArena({ chat }: { chat: JackpotPaint["chat"] }) {
   useEffect(() => {
-    // The intro has a minimum animation time, but must not open onto an empty
-    // page while this lazy chunk is still downloading on a cold connection.
+    // The intro stays up until the stage is mounted, so it never opens onto a blank main.
     window.dispatchEvent(new Event("pvp:home-ready"));
   }, []);
 
   return (
     <>
-      <JackpotStage />
+      <JackpotStage chat={chat} />
       <RecentGames />
     </>
   );

@@ -171,7 +171,7 @@ The $9.50 difference is the price of convenience on this one purchase. On a $50 
     {
       id: "pvp",
       title: "Cash App bitcoin and PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games, [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette). You can deposit on-chain Bitcoin from the wallet page, or USDC or ETH on Base. Bitcoin from Cash App cannot be sent to a Base address. An on-chain Bitcoin withdrawal can go to the Bitcoin invoice instead. A Lightning payment will not credit. [How to buy USDC](/guides/how-to-buy-usdc) covers the stablecoin rail. The [bitcoin casino](/guides/bitcoin-casino) guide covers on-chain deposits, and [Lightning network casino](/guides/lightning-network-gambling) covers why Lightning is a different payment.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott. You can deposit on-chain Bitcoin from the wallet page, or USDC or ETH on Base. Bitcoin from Cash App cannot be sent to a Base address. An on-chain Bitcoin withdrawal can go to the Bitcoin invoice instead. A Lightning payment will not credit. [How to buy USDC](/guides/how-to-buy-usdc) covers the stablecoin rail. The [bitcoin casino](/guides/bitcoin-casino) guide covers on-chain deposits, and [Lightning network casino](/guides/lightning-network-gambling) covers why Lightning is a different payment.
 
 Payment apps also set their own rules on gambling transactions, so read Cash App's terms before routing money from it to any gaming site.
 

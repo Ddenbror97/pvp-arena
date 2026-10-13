@@ -165,7 +165,7 @@ A bid of 30 or 31 is comfortable here. Most players would not push higher withou
 
 42 is a skill game with a luck deal. Over one hand, the draw matters enormously: a hand with four doubles is simply better than a hand of trash. Over dozens of games, the stronger partnership bids more accurately, loses fewer sets and wins more marks. That skill edge is why tournament winners repeat.
 
-PVPspinArena sits at the other end of the scale. Its three player-vs-player games, [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette), have no skill layer at all, played in USDC or ETH on Base. On Roulette's 33-slot wheel, each of Purple and Silver hits 16/33 of the time and pays 2x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Seeds are committed before the round, and any settled result can be verified on [fairness](/fairness). If money on any game stops being a pastime, see [responsible gambling](/responsible-gambling).
+PVPspinArena sits at the other end of the scale. Its Jackpot, Coinflip, house-banked Roulette, and P2P Slott, have no skill layer at all, settled in US dollars. On Roulette's 33-slot wheel, each of Purple and Silver hits 16/33 of the time and pays 2x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Seeds are committed before the round, and any settled result can be verified on [fairness](/fairness). If money on any game stops being a pastime, see [responsible gambling](/responsible-gambling).
 
 In the same cluster, see also [mahjong tiles](/guides/mahjong-tiles) and [mexican train rules](/guides/mexican-train-rules).`,
     },

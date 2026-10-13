@@ -103,14 +103,15 @@ A live baccarat table and an instant baccarat table can share the 1.06% banker e
     {
       id: "not-here",
       title: "What PVPspinArena actually offers",
-      body: `There is no slots grid, no baccarat pit and no money wheel on this site. The live games are Jackpot, Coinflip and Roulette.
+      body: `There is no house-banked slots grid, no baccarat pit and no money wheel on this site. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
 
-- [Jackpot](/) — your chance equals your share of a visible pot. With a 0% fee, expected return between players is 100%.
-- [Coinflip](/coinflip) — two equal stakes, one 50/50 result. Default fee 0%.
-- [Roulette](/roulette) — 33 slots. Purple and Silver return 32/33 before the win fee; Green returns 14/33.
+- [Jackpot](/) — your chance equals your share of a visible pot. With a 5% fee, expected return between players is 95%.
+- [Coinflip](/coinflip) — two equal stakes, one 50/50 result. The pot fee is 5%.
+- [Roulette](/roulette) — 33 slots. Purple and Silver return about 92% after the win fee; Green returns about 40%.
+- [P2P Slott](/slott) — a 1v1 duel. The winner receives 90% of the players' pot.
 - [Fairness](/fairness) — recompute a committed result.
 
-Those three are the product. This pillar exists so a lobby full of other names does not get filed as “the same as Jackpot.” A house-banked tile is you versus a paytable. A PvP pot is you versus other players’ stakes.
+Jackpot, Coinflip, Roulette, and P2P Slott are the product. This pillar exists so a lobby full of other names does not get filed as “the same as Jackpot.” A house-banked tile is you versus a paytable. A PvP pot is you versus other players’ stakes.
 
 ### 18+ and no rankings
 
@@ -186,7 +187,7 @@ A few felt games are easy to misread from the name. [Pai gow poker](/guides/pai-
     },
     {
       q: "Does PVPspinArena offer a full casino lobby?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. This pillar explains how to read other casino games you will see elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This pillar explains how to read other casino games you will see elsewhere.",
     },
     {
       q: "Why do side bets matter?",

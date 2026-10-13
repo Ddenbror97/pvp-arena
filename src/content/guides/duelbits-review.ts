@@ -136,7 +136,7 @@ A different book is not automatically a better price. [Duelbits alternatives](/g
     },
     {
       q: "Can I bet NFL on PVPspinArena instead?",
-      a: "No. This site does not run a sportsbook. It runs Jackpot, Coinflip and Roulette with USDC or ETH on Base.",
+      a: "No. This site does not run a sportsbook. It runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.",
     },
   ],
   sources: [

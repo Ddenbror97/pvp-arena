@@ -142,7 +142,7 @@ For more stablecoin and payment topics, the [crypto payments topic hub](/guides/
     {
       id: "pvp",
       title: "Tether and PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games, [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette), and play is in USDC or ETH on the Base network. If you hold USDT, the usual route is to swap it for USDC on an exchange or through a decentralised exchange, then send the USDC on Base. The [how to swap tokens](/guides/how-to-swap-tokens) guide walks through slippage and quotes. Casino-specific handling of USDT elsewhere is covered in [USDT casino](/guides/usdt-casino).
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and play is settled in US dollars. If you hold USDT, the usual route is to swap it for USDC on an exchange or through a decentralised exchange, then send the USDC on Base. The [how to swap tokens](/guides/how-to-swap-tokens) guide walks through slippage and quotes. Casino-specific handling of USDT elsewhere is covered in [USDT casino](/guides/usdt-casino).
 
 The stablecoin question and the game question are separate. A stable dollar unit makes stakes easier to reason about: a Roulette colour bet on Purple or Silver returns 32/33 of what you stake on average, about 96.97% before the win fee, whatever the market is doing. It does not change the odds. Every settled round can be checked on [fairness](/fairness), because results come from seeds committed before bets close.
 

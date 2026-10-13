@@ -158,7 +158,7 @@ These controls make cashing out slower in some cases, but they also protect you.
       title: "Settlement without a cage",
       body: `An online casino still needs something that plays the role of a cage: a system that tracks balances and pays out. On PVPspinArena, that happens in the rounds themselves.
 
-PVPspinArena runs three player-vs-player games, Jackpot, Coinflip and Roulette, and play is in USDC or ETH on the Base network. There are no chips to convert and no window to queue at. Stakes and payouts are already in the currency you hold.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and play is settled in US dollars. There are no chips to convert and no window to queue at. Stakes and payouts are already in the currency you hold.
 
 - In [Roulette](/roulette), 16 Purple and 16 Silver slots pay 2x and one Green pays 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
 - In Coinflip, two players face a fair 50/50, and the winner takes the pot minus any fee shown before entry.

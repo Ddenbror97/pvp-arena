@@ -142,7 +142,7 @@ Team play depends on a shoe dealt without replacement. On any game where each ro
     {
       id: "pvp",
       title: "Team maths versus independent PvP rounds",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on Base: Jackpot, Coinflip and Roulette. None of them has a shoe. Every round is generated from fresh committed seeds, so no previous result tells you anything about the next one, and there is nothing for a spotter to count.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. None of them has a shoe. Every round is generated from fresh committed seeds, so no previous result tells you anything about the next one, and there is nothing for a spotter to count.
 
 - [Roulette](/roulette) uses a 33-slot wheel: 16 Purple and 16 Silver pay 2x, 1 Green pays 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee, whatever happened on earlier spins.
 - [Coinflip](/coinflip) is a 50/50 between two players, with the winner taking the pot minus any fee shown before entry.

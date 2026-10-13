@@ -1,19 +1,74 @@
 import { ALLOWED_WALLET_METHODS, WALLET_CONFIG } from "./config";
-import { WalletError, toWalletError } from "./errors";
+import { WalletError, toWalletError, type WalletName } from "./errors";
 import { buildDepositTransaction, type DepositInstruction } from "@/lib/crypto/deposit";
 
 /** Minimal EIP-1193 surface this app uses. */
 export interface Eip1193 {
   request(args: { method: string; params?: unknown[] }): Promise<unknown>;
   isMetaMask?: boolean;
+  isCoinbaseWallet?: boolean;
   providers?: Eip1193[];
   on?(event: string, fn: (...a: unknown[]) => void): void;
   removeListener?(event: string, fn: (...a: unknown[]) => void): void;
 }
 
+/**
+ * Browser wallets this app can drive. Both are EVM extensions speaking EIP-1193,
+ * so verification, Base switching and deposits share one code path; only
+ * discovery and the fallback when nothing is installed differ.
+ */
+export type WalletKind = "metamask" | "coinbase";
+export const WALLET_KINDS: readonly WalletKind[] = ["metamask", "coinbase"];
+export const WALLET_LABEL: Record<WalletKind, WalletName> = {
+  metamask: "MetaMask",
+  coinbase: "Coinbase Wallet",
+};
+const WALLET_RDNS: Record<WalletKind, string> = {
+  metamask: "io.metamask",
+  coinbase: "com.coinbase.wallet",
+};
+const KIND_STORAGE_PREFIX = "pvp-wallet-kind:";
+
+export function isWalletKind(value: unknown): value is WalletKind {
+  return value === "metamask" || value === "coinbase";
+}
+
+function safeStorage(): Storage | null {
+  try {
+    return typeof localStorage === "undefined" ? null : localStorage;
+  } catch {
+    return null;
+  }
+}
+
+/** Remember which extension verified an address so Deposit opens that wallet, not another one. */
+export function rememberWalletKind(address: string, kind: WalletKind) {
+  try {
+    safeStorage()?.setItem(KIND_STORAGE_PREFIX + address.toLowerCase(), kind);
+  } catch {
+    /* storage may be full or blocked; the picker still works */
+  }
+}
+export function recallWalletKind(address: string | null | undefined): WalletKind | null {
+  if (!address) return null;
+  try {
+    const value = safeStorage()?.getItem(KIND_STORAGE_PREFIX + address.toLowerCase());
+    return isWalletKind(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
 export interface WalletSession {
   connect(): Promise<{ address: string; chainId: string }>;
+  /**
+   * Open the wallet's account list. `picker: "unavailable"` means the extension
+   * cannot show that list from the page, so the player switches inside the extension.
+   */
+  chooseAccount(): Promise<{ address: string; chainId: string; picker: "shown" | "unavailable" }>;
   checkConnection(): Promise<{ address: string; chainId: string } | null>;
+  /** True while this provider still owns an account request. Never true after a reload. */
+  hasPendingRequest(): boolean;
   resetConnection(): Promise<void>;
   chainId(): Promise<string>;
   sign(message: string, address: string): Promise<string>;
@@ -23,6 +78,7 @@ export interface WalletSession {
   onAccountsChanged(fn: (accounts: string[]) => void): () => void;
   onChainChanged(fn: (chainId: string) => void): () => void;
   onDisconnect(fn: () => void): () => void;
+  onConnect(fn: (chainId: string) => void): () => void;
 }
 
 const SIGN_TIMEOUT_MS = 180_000;
@@ -50,18 +106,34 @@ interface Eip6963Detail {
   provider?: Eip1193;
 }
 
-function metaMaskFromLegacyProvider(provider?: Eip1193) {
-  if (!provider) return null;
-  const candidates = provider.providers ?? [provider];
-  return candidates.find((candidate) => candidate.isMetaMask === true) ?? null;
+/**
+ * Legacy flag check. Coinbase Wallet sets `isMetaMask` on some builds to pass
+ * old dapp checks, so MetaMask is only matched when the Coinbase flag is absent.
+ */
+function matchesKind(provider: Eip1193, kind: WalletKind) {
+  if (kind === "coinbase") return provider.isCoinbaseWallet === true;
+  return provider.isMetaMask === true && provider.isCoinbaseWallet !== true;
 }
 
-/** Discover the installed MetaMask provider without relying on the SDK's one-shot timer. */
-export async function discoverInjectedMetaMask(
+function fromLegacyProvider(provider: Eip1193 | undefined, kind: WalletKind) {
+  if (!provider) return null;
+  const candidates = provider.providers ?? [provider];
+  return candidates.find((candidate) => matchesKind(candidate, kind)) ?? null;
+}
+
+function matchesAnnouncement(detail: Eip6963Detail | undefined, kind: WalletKind) {
+  if (!detail?.provider) return false;
+  if (detail.info?.rdns) return detail.info.rdns === WALLET_RDNS[kind];
+  return matchesKind(detail.provider, kind);
+}
+
+/** Discover one installed wallet extension by kind, via EIP-6963 or the legacy `window.ethereum` flags. */
+export async function discoverInjectedWallet(
   host: ProviderHost,
+  kind: WalletKind,
   waitMs = PROVIDER_DISCOVERY_MS,
 ): Promise<Eip1193 | null> {
-  const legacy = metaMaskFromLegacyProvider(host.ethereum);
+  const legacy = fromLegacyProvider(host.ethereum, kind);
   if (legacy) return legacy;
 
   return new Promise((resolve) => {
@@ -75,14 +147,31 @@ export async function discoverInjectedMetaMask(
     };
     const onAnnounce = (event: Event) => {
       const detail = (event as CustomEvent<Eip6963Detail>).detail;
-      if (detail?.provider && (detail.info?.rdns === "io.metamask" || detail.provider.isMetaMask === true)) {
-        finish(detail.provider);
-      }
+      if (matchesAnnouncement(detail, kind)) finish(detail.provider!);
     };
-    const timer = setTimeout(() => finish(metaMaskFromLegacyProvider(host.ethereum)), waitMs);
+    const timer = setTimeout(() => finish(fromLegacyProvider(host.ethereum, kind)), waitMs);
     host.addEventListener("eip6963:announceProvider", onAnnounce);
     host.dispatchEvent(new Event("eip6963:requestProvider"));
   });
+}
+
+/** Discover the installed MetaMask provider without relying on the SDK's one-shot timer. */
+export function discoverInjectedMetaMask(host: ProviderHost, waitMs = PROVIDER_DISCOVERY_MS) {
+  return discoverInjectedWallet(host, "metamask", waitMs);
+}
+
+/** Which wallet extensions are installed right now. Used only to label the picker. */
+export async function discoverInstalledWallets(
+  host: ProviderHost,
+  waitMs = PROVIDER_DISCOVERY_MS,
+): Promise<Set<WalletKind>> {
+  const found = new Set<WalletKind>();
+  await Promise.all(
+    WALLET_KINDS.map(async (kind) => {
+      if (await discoverInjectedWallet(host, kind, waitMs)) found.add(kind);
+    }),
+  );
+  return found;
 }
 
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
@@ -95,9 +184,14 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   });
 }
 
-/** Hard guard: transaction/approval methods can never be sent. */
+const ACCOUNT_PERMISSION = JSON.stringify([{ eth_accounts: {} }]);
+
+/** Hard guard: transaction methods can never be sent. Account permission is the only extra shape. */
 export function guardedRequest(provider: Eip1193, method: string, params?: unknown[]) {
   if (!ALLOWED_WALLET_METHODS.has(method)) return Promise.reject(new WalletError("GENERIC"));
+  if (method === "wallet_requestPermissions" && JSON.stringify(params) !== ACCOUNT_PERMISSION) {
+    return Promise.reject(new WalletError("GENERIC"));
+  }
   return provider.request(params ? { method, params } : { method });
 }
 
@@ -144,11 +238,13 @@ export async function connectInjectedProvider(provider: Eip1193): Promise<Connec
     }
   })();
   pendingInjectedConnections.set(provider, request);
-  void request.finally(() => {
-    if (pendingInjectedConnections.get(provider) === request) {
-      pendingInjectedConnections.delete(provider);
-    }
-  }).catch(() => {});
+  void request
+    .finally(() => {
+      if (pendingInjectedConnections.get(provider) === request) {
+        pendingInjectedConnections.delete(provider);
+      }
+    })
+    .catch(() => {});
   return request;
 }
 
@@ -170,6 +266,52 @@ export async function resetInjectedProviderConnection(provider: Eip1193): Promis
   externallyPendingConnections.delete(provider);
 }
 
+function permissionsUnsupported(error: unknown) {
+  const code = (error as { code?: unknown })?.code;
+  const msg = String((error as { message?: unknown })?.message ?? error).toLowerCase();
+  return (
+    code === 4200 ||
+    code === -32601 ||
+    /not support|unsupported method|does not exist|method not found/.test(msg)
+  );
+}
+
+/**
+ * Ask the wallet to show its account list. eth_requestAccounts returns the
+ * current account without a picker once this site is already permitted.
+ */
+export type AccountChoice = ConnectedAccount & { picker: "shown" | "unavailable" };
+
+export async function chooseInjectedAccount(provider: Eip1193): Promise<AccountChoice> {
+  if (pendingInjectedConnections.has(provider) || externallyPendingConnections.has(provider)) {
+    throw new WalletError("CONNECT_PENDING");
+  }
+  try {
+    await guardedRequest(provider, "wallet_requestPermissions", [{ eth_accounts: {} }]);
+  } catch (error) {
+    if (permissionsUnsupported(error)) {
+      const current = await readAuthorizedConnection(provider);
+      if (current) return { ...current, picker: "unavailable" };
+      const next = await connectInjectedProvider(provider);
+      return { ...next, picker: "shown" };
+    }
+    const mapped = error instanceof WalletError ? error : toWalletError(error, "connect");
+    if (mapped.code === "CONNECT_PENDING") {
+      externallyPendingConnections.add(provider);
+      const recovered = await readAuthorizedConnection(provider);
+      if (recovered) {
+        externallyPendingConnections.delete(provider);
+        return { ...recovered, picker: "shown" };
+      }
+    }
+    throw mapped;
+  }
+  const chosen = await readAuthorizedConnection(provider);
+  if (!chosen) throw new WalletError("CONNECT_REJECTED");
+  externallyPendingConnections.delete(provider);
+  return { ...chosen, picker: "shown" };
+}
+
 function sub(p: Eip1193, ev: string, fn: (...a: unknown[]) => void) {
   p.on?.(ev, fn);
   return () => p.removeListener?.(ev, fn);
@@ -181,6 +323,21 @@ export function sessionFor(
   disconnectFn: () => Promise<void>,
 ): WalletSession {
   return {
+    async chooseAccount() {
+      try {
+        const { accounts, chainId, picker } = await chooseInjectedAccount(provider);
+        const address = accounts?.[0];
+        if (!address) throw new WalletError("WALLET_LOCKED");
+        return { address, chainId: String(chainId).toLowerCase(), picker };
+      } catch (e) {
+        throw e instanceof WalletError ? e : toWalletError(e, "connect");
+      }
+    },
+    hasPendingRequest() {
+      return (
+        pendingInjectedConnections.has(provider) || externallyPendingConnections.has(provider)
+      );
+    },
     async connect() {
       const attempt = async () => {
         // MetaMask does not provide cancellation for eth_requestAccounts. Do
@@ -272,6 +429,8 @@ export function sessionFor(
       }
     },
     async sendTestDeposit(instruction, expectedAddress) {
+      const requiredChain = Number.parseInt(WALLET_CONFIG.requiredChainId, 16);
+      if (instruction.chainId !== requiredChain) throw new WalletError("UNSUPPORTED_NETWORK");
       const chainId = String(await guardedRequest(provider, "eth_chainId")).toLowerCase();
       if (chainId !== WALLET_CONFIG.requiredChainId) throw new WalletError("UNSUPPORTED_NETWORK");
       const accounts = (await guardedRequest(provider, "eth_accounts")) as string[];
@@ -302,35 +461,43 @@ export function sessionFor(
     onAccountsChanged: (fn) => sub(provider, "accountsChanged", (a) => fn((a as string[]) ?? [])),
     onChainChanged: (fn) => sub(provider, "chainChanged", (c) => fn(String(c).toLowerCase())),
     onDisconnect: (fn) => sub(provider, "disconnect", () => fn()),
+    onConnect: (fn) =>
+      sub(provider, "connect", (info) => {
+        const chainId =
+          typeof info === "string" ? info : String((info as { chainId?: unknown })?.chainId ?? "");
+        if (chainId) fn(chainId.toLowerCase());
+      }),
   };
 }
 
-let cached: Promise<WalletSession> | null = null;
+const cached = new Map<WalletKind, Promise<WalletSession>>();
 
-/** Lazily create the MetaMask Connect EVM client (browser only). */
-export function getWalletSession(): Promise<WalletSession> {
+function injectedSession(provider: Eip1193): WalletSession {
+  return sessionFor(
+    provider,
+    () => connectInjectedProvider(provider),
+    async () => {},
+  );
+}
+
+/**
+ * Lazily create the session for one wallet kind (browser only). MetaMask falls
+ * back to MetaMask Connect (QR / mobile deep link) when no extension is present;
+ * Coinbase Wallet is extension-only here, so a missing extension is UNAVAILABLE.
+ */
+export function getWalletSession(kind: WalletKind = "metamask"): Promise<WalletSession> {
   if (typeof window === "undefined") return Promise.reject(new WalletError("UNSUPPORTED_ENV"));
-  if (cached) return cached;
-  cached = (async () => {
+  const existing = cached.get(kind);
+  if (existing) return existing;
+  const created = (async () => {
     // Automated tests only (dev builds): a mocked EIP-1193 provider.
     const test = import.meta.env.DEV
       ? (window as unknown as { __PVP_TEST_WALLET__?: Eip1193 }).__PVP_TEST_WALLET__
       : undefined;
-    if (test) {
-      return sessionFor(
-        test,
-        () => connectInjectedProvider(test),
-        async () => {},
-      );
-    }
-    const injected = await discoverInjectedMetaMask(window);
-    if (injected) {
-      return sessionFor(
-        injected,
-        () => connectInjectedProvider(injected),
-        async () => {},
-      );
-    }
+    if (test) return injectedSession(test);
+    const injected = await discoverInjectedWallet(window, kind);
+    if (injected) return injectedSession(injected);
+    if (kind === "coinbase") throw new WalletError("UNAVAILABLE");
     try {
       const { createEVMClient } = await import("@metamask/connect-evm");
       const client = await createEVMClient({
@@ -352,15 +519,18 @@ export function getWalletSession(): Promise<WalletSession> {
         () => client.disconnect(),
       );
     } catch (e) {
-      cached = null;
       throw e instanceof WalletError ? e : new WalletError("UNAVAILABLE");
     }
   })();
-  cached.catch(() => (cached = null));
-  return cached;
+  cached.set(kind, created);
+  created.catch(() => {
+    if (cached.get(kind) === created) cached.delete(kind);
+  });
+  return created;
 }
 
 /** Clear a failed connector so the next click starts from a clean session. */
-export function resetWalletSession() {
-  cached = null;
+export function resetWalletSession(kind?: WalletKind) {
+  if (kind) cached.delete(kind);
+  else cached.clear();
 }

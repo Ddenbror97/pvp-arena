@@ -22,7 +22,7 @@ export const guide: Guide = {
     "A team that shares a plan or a bankroll at the same table is still collusion.",
     "Chip dumping is a related fraud. This page names it and does not teach it.",
     "The player response is to leave the table and use the room's report form.",
-    "PVPspinArena does not run poker. Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena does not run poker. Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -39,7 +39,7 @@ That belief is the game. [How to play poker](/guides/how-to-play-poker) starts f
 - No stake sizes for moving chips.
 - No software for coordinating seats.
 
-If that is what you searched for, you are in the wrong article. Collusion steals equity from people who did not agree to play a team. Rooms close accounts for it. Victims should report it and leave, not study it.
+If that is what you searched for, you are in the wrong article. Collusion steals equity from people who did not agree to play a team. Rooms close accounts for it. A site that deals against the table is a different complaint, covered in [rigged poker sites](/guides/rigged-poker-sites). Victims should report it and leave, not study it.
 
 The notes in the [poker topic](/guides/topics/poker) assume a normal table. Keep that assumption only while it still looks true. Adults 18+. Nothing here is legal advice, and nothing here is a tactic.`,
     },

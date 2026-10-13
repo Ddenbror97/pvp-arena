@@ -109,7 +109,7 @@ Price the item on [rust skin prices](/guides/rust-skin-prices) before you even o
 
 PVPspinArena runs the CS:GO-era formats in dollars. [Jackpot](/) is a shared pot where your chance equals your share. [Coinflip](/coinflip) is two matching stakes and one result. [Roulette](/roulette) is a 33-slot wheel with published payouts. Deposits are USDC or ETH on Base. Results are committed before entries and can be checked on the [fairness page](/fairness).
 
-That is still gambling. You can lose the balance. The house does not need to underprice your hoodie to get paid: Jackpot and Coinflip take a visible fee, which defaults to 0%, and Roulette has a stated edge. Our [PvP gambling guide](/guides/pvp-gambling) explains the incentive difference. The site does not win when you lose a flip; another player does.
+That is still gambling. You can lose the balance. The house does not need to underprice your hoodie to get paid: Jackpot and Coinflip take a visible fee, which is 5% of the pot, and Roulette has a stated edge. Our [PvP gambling guide](/guides/pvp-gambling) explains the incentive difference. The site does not win when you lose a flip; another player does.
 
 What you give up is the fantasy that a rare rust skin "doesn't feel like money". That fantasy is a risk factor, not a feature. What you gain is a unit you can budget, a withdrawal that is not an inventory lottery, and no Steam trade with a stranger's bot.`,
     },

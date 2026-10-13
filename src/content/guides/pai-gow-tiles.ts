@@ -177,7 +177,7 @@ Pai gow tiles is related to other tile games only by equipment. Mahjong uses a d
     {
       id: "pvp",
       title: "Scores, pushes and edge on a hashed PvP round",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on the Base network, for adults 18+ only. None involves tiles, but the edge arithmetic is the same kind of counting.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, for adults 18+ only. None involves tiles, but the edge arithmetic is the same kind of counting.
 
 On [Roulette](/roulette), 16 Purple and 16 Silver slots pay 2x and 1 Green slot pays 14x on a 33-slot wheel. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee, with no pushes. [Coinflip](/coinflip) is a 50/50 between two players, and in [Jackpot](/) your win chance equals your share of the pot; in both, the winner takes the pot minus any fee shown before entry.
 

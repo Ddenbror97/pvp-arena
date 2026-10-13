@@ -83,7 +83,7 @@ You can watch both colours on [Roulette](/roulette) in the same minute. The whee
 
 A low-edge, high-variance game (rare huge jackpot, small published edge) can bust a small bankroll faster than a higher-edge, low-variance even-money bet, because you never survive to the mean. A high-edge, low-variance game grinds you in a straightish line. Neither is a strategy. Both are reasons to pick a stake that matches the budget’s stomach.
 
-PvP [Coinflip](/coinflip) with a 0% fee has ~0 edge and still has full-stake variance: one flip is ±100% of the stake. Edge and variance parted company there. You can be in a fair game and have a brutal hour.
+PvP [Coinflip](/coinflip) with a 5% pot fee has about a 5% edge and still has full-stake variance: one flip is ±100% of the stake. Edge and variance parted company there. You can be in a fair game and have a brutal hour.
 
 Daily fantasy swings for the same reason a short sample lies. [DFS strategy](/guides/dfs-strategy) is about that spread. A practice wheel that does not change the edge is the [roulette simulator](/guides/roulette-simulator).`,
     },
@@ -98,7 +98,7 @@ A rough sd for the 50-bet total is on the order of $14. That is not a precise la
 
 ### Jackpot share
 
-A $5 ticket in a $100 [Jackpot](/) pot (0% fee) has p = 5% at $100, EV ≈ $0, and a huge variance: usually −$5, rarely +$95. Ten such tickets in a night are not “due” a hit. The distribution is still 10 independent long shots (or fewer if you re-enter the same style of pot). Short sessions of jackpot tickets lie even harder than Purple, because hits are scarce.
+A $5 ticket in a $100 [Jackpot](/) pot (5% fee) has p = 5% and the winner receives $95, EV ≈ −$0.25, and a huge variance: usually −$5, rarely +$90. Ten such tickets in a night are not “due” a hit. The distribution is still 10 independent long shots (or fewer if you re-enter the same style of pot). Short sessions of jackpot tickets lie even harder than Purple, because hits are scarce.
 
 Chance of zero hits in ten independent 5% tickets: 0.95^10 ≈ 60%. Most ten-ticket nights are a clean −$50. That is not a broken generator. That is a 5% shot refusing to appear on cue. People then write “variance” when they mean “I bought a rare event ten times”. Both descriptions are true; only the second one sizes the next ticket honestly.`,
     },
@@ -125,7 +125,7 @@ Do not raise the unit because the session is “running”. That converts a luck
 - **Small unit versus session budget.** If you cannot absorb ten losses in a row, the unit is too big for even-money colours. For Green, think in dozens of misses.
 - **Time and money stops.** Fast rounds manufacture n. n manufactures both the mean leak and the chance of a loud swing.
 - **Do not resize from the streak.** Resize from the remaining budget, downward if needed, never upward to recover.
-- **Match the game to the stomach.** Want a longer, tickier session? Purple or a fee-free flip. Want a lottery feel? Green or a small jackpot share. Same or similar EV per dollar is possible; the ride is not.
+- **Match the game to the stomach.** Want a longer, tickier session? Purple or a Coinflip. Want a lottery feel? Green or a small jackpot share. Same or similar EV per dollar is possible; the ride is not.
 
 Variance in gambling is why one friend cashed out smiling and another swore the site was broken, on the same edge. Long books settle. Short nights argue. Believe the paytable, size the unit, and treat a streak as weather.
 
@@ -159,7 +159,7 @@ How far a downswing can go before the bankroll dies is [risk of ruin](/guides/ri
     },
     {
       q: "Can PvP games have variance with no house edge?",
-      a: "Yes. A 0% fee coinflip or jackpot is about 0-EV and still moves your whole stake when you lose. Edge and variance are separate.",
+      a: "Yes. Edge and variance are separate. On this site the pot fee is 5%, and one loss still moves the whole stake.",
     },
   ],
   sources: [

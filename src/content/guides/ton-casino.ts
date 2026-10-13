@@ -91,7 +91,7 @@ Withdraw a slice of that test back to the same wallet before you play in earnest
 
 Only after the round trip do you decide whether a larger amount is even a question. Convert your dollar loss limit into TON at the moment you would send it. When the dollar limit is gone, stop, even if the token count looks small. Stop if a bot asks for your seed phrase. Stop if you cannot find a terms page with a legal name. Low fees are not a substitute for knowing who has the float. A mini-app that hides the company name behind a username is not finished research, and a fast Toncoin transfer will not finish it for you.
 
-PVPspinArena still does not accept TON. A successful rehearsal somewhere else does not create a balance here. This site's [wallet](/wallet) page lists USDC or ETH on Base. Adults 18+ only. If the drill left you wanting a second site to chase the test, stop and use [responsible gambling](/responsible-gambling) instead of another deposit screen.`,
+PVPspinArena still does not accept TON. A successful rehearsal somewhere else does not create a balance here. This site's [wallet](/wallet) page lists on-chain Bitcoin, and USDC or ETH on Base. Adults 18+ only. If the drill left you wanting a second site to chase the test, stop and use [responsible gambling](/responsible-gambling) instead of another deposit screen.`,
     },
     {
       id: "stop",
@@ -100,7 +100,7 @@ PVPspinArena still does not accept TON. A successful rehearsal somewhere else do
 
 If a casino blocks your country, stop. This page will not describe a bypass. If you are sending TON to chase a loss from another coin, stop. The chain fee being small is not a reason to continue.
 
-A useful session ends with the float you set aside, whether that float comes home or not. [How it works](/how-it-works) describes the three games on this site. It does not describe a TON lobby, because there is not one.
+A useful session ends with the float you set aside, whether that float comes home or not. [How it works](/how-it-works) describes the four games on this site. It does not describe a TON lobby, because there is not one.
 
 The asset still needs its own wallet. A [TON wallet](/guides/ton-wallet) such as Tonkeeper is not MetaMask, and this site does not accept TON.`,
     },
@@ -147,7 +147,7 @@ The asset still needs its own wallet. A [TON wallet](/guides/ton-wallet) such as
   updated: "2026-09-27",
   cta: {
     title: "This cashier is Base",
-    text: "PVPspinArena does not take TON. Jackpot, Coinflip and Roulette use USDC or ETH on Base. A TON balance in another wallet is not a deposit here.",
+    text: "PVPspinArena does not take TON. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars. A TON balance in another wallet is not a deposit here.",
     primary: { to: "/wallet", label: "Open the wallet page" },
     secondary: { to: "/how-it-works", label: "How the site works" },
   },

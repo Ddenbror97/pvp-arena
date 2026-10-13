@@ -164,7 +164,7 @@ Money play is for adults (18+ or your local legal age). If a friendly game is tu
     {
       id: "pvp",
       title: "How the same idea shows up on PVPspinArena",
-      body: `A quarters game of 31 is player-vs-player money: nobody runs a house, everyone antes the same amount, and the pot goes to one winner. PVPspinArena runs three player-vs-player games on the same principle, with the draw replaced by a verifiable random result. In [Jackpot](/) your chance of winning equals your share of the pot, much as five equal antes in a 31 game give each player a notional one-in-five start. In [Coinflip](/coinflip) two players face a straight 50/50, and the winner takes the pot minus any fee shown before entry.
+      body: `A quarters game of 31 is player-vs-player money: nobody runs a house, everyone antes the same amount, and the pot goes to one winner. PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott on the same principle, with the draw replaced by a verifiable random result. In [Jackpot](/) your chance of winning equals your share of the pot, much as five equal antes in a 31 game give each player a notional one-in-five start. In [Coinflip](/coinflip) two players face a straight 50/50, and the winner takes the pot minus any fee shown before entry.
 
 The difference is that 31 has decisions. Your knock timing and suit choice move your odds a little. A hashed round has no decisions after you enter: the result comes from committed seeds that anyone can check on the [fairness](/fairness) page. If you enjoy the skill part of 31, that is a real reason to prefer the card table. For more card games that work for small stakes, see [Oh Hell](/guides/oh-hell-card-game) and [Bourré](/guides/bourre-card-game).
 

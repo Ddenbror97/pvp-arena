@@ -16,7 +16,7 @@ export const guide: Guide = {
     "On a typical 1% design, the chance of winning at target m is about 0.99 / m.",
     "Every target then returns about 99 cents per dollar; only variance changes.",
     "Max-profit caps and tiny minimum increment steps can make extreme targets worse than the advertised edge.",
-    "PVPspinArena does not offer limbo; it runs Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer limbo; it runs Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -125,7 +125,7 @@ Instant games compress time. A “short session” of 15 minutes can be 400 roun
     {
       id: "not-here",
       title: "PVPspinArena does not offer limbo",
-      body: `There is no target-multiplier slider here. The live games are Jackpot, Coinflip and Roulette.
+      body: `There is no target-multiplier slider here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
 
 Limbo is a house-banked crash draw. Our PvP pots do not use a 1/m house curve, and Roulette publishes a 33-slot table you can count.
 
@@ -195,7 +195,7 @@ A final comparison helps. Crash lets you flinch as the number rises; that flinch
     },
     {
       q: "Does PVPspinArena have limbo?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. This guide explains limbo so you can ignore strategy myths on other sites.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide explains limbo so you can ignore strategy myths on other sites.",
     },
     {
       q: "Can I verify a limbo result?",

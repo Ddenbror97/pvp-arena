@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Fiat-backed coins such as USDC and USDT claim reserves of cash and short-term US Treasuries.",
     "Algorithmic coins try to hold the peg with code and incentives; several have failed.",
     "USDC and USDT are different issuers, reserve reports and networks, not interchangeable tokens.",
-    "PVPspinArena accepts USDC and ETH on Base and keeps balances in US dollar cents.",
+    "PVPspinArena accepts Bitcoin, and USDC and ETH on Base, and keeps balances in US dollar cents.",
   ],
   sections: [
     {
@@ -33,7 +33,7 @@ The useful idea is simple. Bitcoin and ETH are priced by the market every second
 
 This guide sits in [Crypto payments](/guides/topics/crypto-payments) because the peg, the reserves and the issuer matter before you ever open a deposit page. Gambling on PVPspinArena is for adults aged 18 or over. A stablecoin does not make a bet safer; it only keeps the unit of account steadier.
 
-PVPspinArena is not a Bitcoin casino, a lottery or a sportsbook. It runs three player-versus-player games — [Jackpot](/), Coinflip and Roulette — and it credits USDC and ETH on the Base network into a dollar ledger. The rest of this article teaches how a peg is supposed to work, then contrasts that with coins that swing.`,
+PVPspinArena is not a lottery or a sportsbook. It runs [Jackpot](/), [Coinflip](/coinflip), house-banked [Roulette](/roulette), and P2P [Slott](/slott). Bitcoin, and USDC and ETH on Base, credit a US-dollar ledger. The rest of this article teaches how a peg is supposed to work, then contrasts that with coins that swing.`,
     },
     {
       id: "peg",

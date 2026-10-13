@@ -151,7 +151,7 @@ Among adults, Farkle is sometimes played for a small stake per game, or per 1,00
       title: "Farkle maths and a hashed PvP round",
       body: `The farkle table is just a list of probabilities, and the same kind of arithmetic prices every dice-style bet. Read it next to [crypto dice](/guides/crypto-dice-game) or a two-player [dice duel](/guides/dice-duel-game) and you'll see the same pattern. You count outcomes, divide by the total, then compare that probability with what you're paid.
 
-PVPspinArena runs three player-vs-player games, all in USDC or ETH on Base. [Coinflip](/coinflip) is a straight 50/50 between two players. Roulette uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Jackpot gives you a win chance equal to your share of the pot. There's no push-your-luck choice in these games, so the maths is even simpler than Farkle's. Every round comes from committed seeds, and you can check any settled round on the [fairness page](/fairness).
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, all settled in US dollars. [Coinflip](/coinflip) is a straight 50/50 between two players. Roulette uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Jackpot gives you a win chance equal to your share of the pot. There's no push-your-luck choice in these games, so the maths is even simpler than Farkle's. Every round comes from committed seeds, and you can check any settled round on the [fairness page](/fairness).
 
 One Farkle habit carries over well: decide your stopping rule before emotion starts making it for you. The [responsible gambling](/responsible-gambling) page has limits and tools. Play is 18+ only.
 

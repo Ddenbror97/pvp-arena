@@ -164,7 +164,7 @@ For a full breakdown of what a casino deposit costs, including exchange fees, sp
     {
       id: "pvp",
       title: "Bitcoin fees and PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games, [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette). You can deposit on-chain Bitcoin from the wallet page, or USDC or ETH on Base. Base transfers typically cost a small fraction of a bitcoin on-chain fee; [Base network fees](/guides/base-network-fees) explains why. A small session is often cheaper on USDC. Casinos that keep the whole balance in BTC are covered in [bitcoin casino](/guides/bitcoin-casino).
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott. You can deposit on-chain Bitcoin from the wallet page, or USDC or ETH on Base. Base transfers typically cost a small fraction of a bitcoin on-chain fee; [Base network fees](/guides/base-network-fees) explains why. A small session is often cheaper on USDC. Casinos that keep the whole balance in BTC are covered in [bitcoin casino](/guides/bitcoin-casino).
 
 Fees are a cost before a single round is played. On a $20 session, a $4 fee is 20% of your stake, far larger than Roulette's Purple or Silver edge of about 7.88% after the win fee. Budget fees and stakes together. Every settled round can be checked on [fairness](/fairness), and gambling is 18+ or your local legal age. The [responsible gambling](/responsible-gambling) page has limits and support if you need them, and the [crypto payments topic](/guides/topics/crypto-payments) collects related payment guides.`,
     },

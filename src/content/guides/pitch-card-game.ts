@@ -151,7 +151,7 @@ A card exposed in the deal is usually a misdeal. A renege (failing to follow sui
 
 The leftover stock is unseen. Low may be a three, not a two. Game may hide in the undealt 10s. Good bidders allow for missing cards; they do not assume a full 80-point Game deck.
 
-PVPspinArena runs three player-vs-player games in USDC or ETH on Base: Jackpot, [Coinflip](/coinflip) and Roulette. Coinflip is 50/50. Roulette returns 32/33, about a 7.88% Purple or Silver edge after the win fee. There is no Jack to capture. Seeds are committed and checkable on [fairness](/fairness). If a Pitch unit is already setback in real life — chasing a hole on the scorepad — pause and use [responsible gambling](/responsible-gambling). The card game is 18+ when money is out.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Coinflip is 50/50. Roulette returns 32/33, about a 7.88% Purple or Silver edge after the win fee. There is no Jack to capture. Seeds are committed and checkable on [fairness](/fairness). If a Pitch unit is already setback in real life — chasing a hole on the scorepad — pause and use [responsible gambling](/responsible-gambling). The card game is 18+ when money is out.
 
 See also [pinochle](/guides/pinochle-rules).`,
     },

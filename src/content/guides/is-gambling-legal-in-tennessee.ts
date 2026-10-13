@@ -22,7 +22,7 @@ export const guide: Guide = {
     "The sportsbook market launched in November 2020 under a 2019 law.",
     "The state lottery is a separate legal product from the sportsbooks.",
     "A licensed sports app is not a licence for online slots or table games.",
-    "Sports wagering is for adults 21 and older. This page is not legal advice.",
+    "Sports wagering is for adults 18 or older, or the age required where you live. This page is not legal advice.",
   ],
   sections: [
     {

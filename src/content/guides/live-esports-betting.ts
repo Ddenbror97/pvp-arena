@@ -156,7 +156,7 @@ PVPspinArena will not price your live futures. If you come here after an in-play
     },
     {
       q: "Does PVPspinArena offer live esports betting?",
-      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip and Roulette only.",
+      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Do I need live betting to bet on esports?",

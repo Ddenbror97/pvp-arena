@@ -93,8 +93,8 @@ Set a budget before you start. Our [gambling budget guide](/guides/gambling-budg
       title: "The PvP alternative: jackpot and coinflip",
       body: `Many people enjoy case battles for the head-to-head feeling. If that is what you like, pure player-versus-player games give you the same competition without the built-in case edge.
 
-- **Jackpot.** Players add stakes to one pot. Your chance of winning is your share of the pot. With no fee, the pot's full value goes to the winner. See our [CS:GO jackpot guide](/guides/csgo-jackpot).
-- **Coinflip.** Two players, equal stakes, one fair flip. With no fee, the winner takes the full pot.
+- **Jackpot.** Players add stakes to one pot. Your chance of winning is your share of the pot. On this site the winner receives 95%. See our [CS:GO jackpot guide](/guides/csgo-jackpot).
+- **Coinflip.** Two players, equal stakes, one fair flip. On this site the winner receives 95% of the pot.
 
 In these games the site does not add any hidden value gap: the money that goes in is the money that comes out, minus a stated fee if there is one. Our [PvP gambling guide](/guides/pvp-gambling) explains why this structure is kinder to players over time.`,
     },
@@ -154,8 +154,8 @@ Whatever the format, remember the simple rule: the group always pays the case ed
       title: "Where PVPspinArena fits",
       body: `To be clear: PVPspinArena does not offer case opening or case battles. We focus on the player-versus-player formats that made the CS:GO era popular:
 
-- **[Jackpot](/)**: shared pot, chance equal to your share, 0% default fee.
-- **[Coinflip](/coinflip)**: 1v1 duel, exact 50/50, 0% default fee.
+- **[Jackpot](/)**: shared pot, chance equal to your share, 5% fee on the pot.
+- **[Coinflip](/coinflip)**: 1v1 duel, exact 50/50, 5% fee on the pot.
 - **Roulette**: a coloured wheel with a stated Purple or Silver edge of about 7.88% after the win fee.
 
 All stakes are USDC on Base, shown in US dollars, and every result can be checked on the [Fairness page](/fairness). If you like the competition of case battles but want to know exactly what you are paying, create a free account and watch a few live Jackpot rounds first.
@@ -182,7 +182,7 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     },
     {
       q: "Does PVPspinArena have case battles?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette. Jackpot and Coinflip are pure player-versus-player games with a 0% default fee.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. Jackpot and Coinflip take a 5% fee on the pot. P2P Slott takes 10% of the players' pot.",
     },
   ],
   sources: [

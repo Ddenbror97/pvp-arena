@@ -143,7 +143,7 @@ In most countries tips are taxable income. In the US, employees must report tips
 
 ### How PVPspinArena compares
 
-PVPspinArena runs three player-vs-player games, [Jackpot](/), Coinflip and Roulette, with no dealer at all, so there is no tipping and no toke pool. Coinflip is a 50/50 between two players, and the winner takes the pot minus any fee shown before entry. Roulette pays 2x on Purple or Silver and 14x on Green, a edge you can read from the 33-slot pay table from the pay table. Results come from committed seeds you can check on the [fairness](/fairness) page. Play is 18+, and budgeting tools are on the [responsible gambling](/responsible-gambling) page.`,
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, with no dealer at all, so there is no tipping and no toke pool. Coinflip is a 50/50 between two players, and the winner takes the pot minus any fee shown before entry. Roulette pays 2x on Purple or Silver and 14x on Green, a edge you can read from the 33-slot pay table from the pay table. Results come from committed seeds you can check on the [fairness](/fairness) page. Play is 18+, and budgeting tools are on the [responsible gambling](/responsible-gambling) page.`,
     },
   ],
   faqs: [

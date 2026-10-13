@@ -49,13 +49,13 @@ People also treat a winning week as a roll expansion that “unlocks” the next
 
 | Format | Teaching roll | Why it is that wide |
 | --- | --- | --- |
-| Full-ring / 6-max cash, 100bb | 20–40 buy-ins | All-in pots still swing tens of buy-ins |
+| Full-ring / 6-max [cash game](/guides/cash-game-poker), 100bb | 20–40 buy-ins | All-in pots still swing tens of buy-ins |
 | Short-handed or loose-aggressive cash | 30–50 buy-ins | More money goes in; wider swings |
-| Sit-and-go / small-field MTT | 30–50 buy-ins | One ticket is mostly zero |
+| [Sit and go](/guides/sit-and-go-poker) / small-field MTT | 30–50 buy-ins | One ticket is mostly zero |
 | Larger-field MTT | 50–100+ buy-ins | Long droughts between cashes |
 | House games (video / 3-card) | Use a budget | There is no win-rate roll to manage |
 
-A “buy-in” means a standard stack: $200 at $1/$2 if the max is 100bb. If you short-buy for $60, do not pretend you have a 40-buy-in roll because 40 × $60 is a smaller number. You have changed the game.
+A multiplier version of that one-table tournament is a [spin and go](/guides/spin-and-go), with a prize that is drawn rather than printed in advance. A “buy-in” means a standard stack: $200 at $1/$2 if the max is 100bb. If you short-buy for $60, do not pretend you have a 40-buy-in roll because 40 × $60 is a smaller number. You have changed the game.
 
 [Poker tips](/guides/poker-tips) will tell you not to reload on tilt. Bankroll rules only work if you follow them after a loss.
 
@@ -92,7 +92,7 @@ If Kelly’s formula is fed a negative edge — you are a losing or break-even p
 
 ### Cash versus tournament accounting
 
-Do not mix the piles if you play both. A $3,000 cash roll that you also use for $109 MTTs will hit a 20-buy-in drought in the tournament half and starve the cash half. Keep a tournament slice with its own count, or admit you are a cash player who buys the occasional ticket from the entertainment budget. Mixing units is how a “30-buy-in cash player” is actually a 12-buy-in player with a hobby that eats the rest.
+Someone else owning part of the roll is [poker staking](/guides/poker-staking), with its own split and makeup, not a second copy of this buy-in count. Do not mix the piles if you play both. A $3,000 cash roll that you also use for $109 MTTs will hit a 20-buy-in drought in the tournament half and starve the cash half. Keep a tournament slice with its own count, or admit you are a cash player who buys the occasional ticket from the entertainment budget. Mixing units is how a “30-buy-in cash player” is actually a 12-buy-in player with a hobby that eats the rest.
 
 The same split applies to side games. A $50 Three Card session is not a cash buy-in. It is a house-edge purchase. Take it from the entertainment cap, not from the 30 × $100 pile, or you will wonder why the roll shrank after a night you “didn’t even play Hold'em”.`,
     },

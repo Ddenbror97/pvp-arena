@@ -144,7 +144,7 @@ None of these change the 1-in-216 bunco rate. They change how long you sit and w
       title: "Bunco luck and a hashed PvP round",
       body: `Bunco is honest about being luck. There is no card to count and no tile to save. The only skill is social: keep the dice moving, keep the card honest, stop when the bell says stop.
 
-PVPspinArena is also honest about the price. It runs three player-vs-player games in USDC or ETH on Base: [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette). Coinflip is a 50/50. Roulette is a 33-slot wheel (16 Purple and 16 Silver at 2x, 1 Green at 14x). Purple and Silver return 32/33 before the win fee, about a 7.88% edge after it, and Green returns 14/33. Jackpot pays the pot minus any fee shown before entry, with win chance equal to your share. Seeds are committed up front; any settled round can be checked on [fairness](/fairness).
+PVPspinArena is also honest about the price. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars: [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette). Coinflip is a 50/50. Roulette is a 33-slot wheel (16 Purple and 16 Silver at 2x, 1 Green at 14x). Purple and Silver return 32/33 before the win fee, about a 7.88% edge after it, and Green returns 14/33. Jackpot pays the pot minus any fee shown before entry, with win chance equal to your share. Seeds are committed up front; any settled round can be checked on [fairness](/fairness).
 
 A bunco night and a hashed round share one useful habit: write the stop before the noise starts. If the party pot or the next match is already a chase, use the tools on [responsible gambling](/responsible-gambling). Play is 18+ only.
 

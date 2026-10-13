@@ -166,7 +166,7 @@ Sequel titles and reskins (later Chicken Road versions advertised in 2025) are s
     {
       id: "pvp",
       title: "Step-game edge next to PvP rounds",
-      body: `Chicken Road charges a house edge on every completed walk. PVPspinArena runs three player-vs-player games in USDC or ETH on Base: Jackpot, [Coinflip](/coinflip) and Roulette. Coinflip is 50/50. Roulette's 33-slot wheel returns 32/33, about a 7.88% Purple or Silver edge after the win fee. Jackpot win chance equals your share of the pot. Settled rounds use committed seeds you can check on [fairness](/fairness).
+      body: `Chicken Road charges a house edge on every completed walk. PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Coinflip is 50/50. Roulette's 33-slot wheel returns 32/33, about a 7.88% Purple or Silver edge after the win fee. Jackpot win chance equals your share of the pot. Settled rounds use committed seeds you can check on [fairness](/fairness).
 
 A hashed coin flip will not tell you which Chicken Road tile is safe either. Different products, same rule: if you cannot verify the claim, do not pay for the claim. If the taps are already past the budget, use [responsible gambling](/responsible-gambling).`,
     },

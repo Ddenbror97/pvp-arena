@@ -1,7 +1,7 @@
 /**
- * Single source of truth for wallet-identity network settings (Phase 1).
- * Identity only: the app reads `eth_chainId` from the connected wallet and
- * requests `personal_sign`. It never sends transactions.
+ * Wallet network settings. Identity reads `eth_chainId` and requests
+ * `personal_sign`. Deposits also call `eth_sendTransaction` on Base after the
+ * chain and account checks.
  */
 export const WALLET_CONFIG = {
   /** Base Mainnet — the same network as the deposit/withdrawal rails. */
@@ -31,6 +31,8 @@ export const ALLOWED_WALLET_METHODS = new Set([
   "eth_accounts",
   "eth_chainId",
   "wallet_revokePermissions",
+  // Account picker only. guardedRequest rejects every other permission shape.
+  "wallet_requestPermissions",
   "personal_sign",
   "wallet_switchEthereumChain",
   "wallet_addEthereumChain",

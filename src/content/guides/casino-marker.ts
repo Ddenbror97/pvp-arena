@@ -146,7 +146,7 @@ The best-case outcome with a marker is that you repay it and it made no differen
     {
       id: "online",
       title: "Playing without credit",
-      body: `PVPspinArena has no credit lines. It runs three player-vs-player games, Jackpot, Coinflip and Roulette, and stakes are in USDC or ETH on the Base network, so every bet is funded by crypto you already hold. That makes the natural limit of a cash visit to a casino the default: you cannot sign for more than you have.
+      body: `PVPspinArena has no credit lines. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and stakes are settled in US dollars, so every bet is funded by crypto you already hold. That makes the natural limit of a cash visit to a casino the default: you cannot sign for more than you have.
 
 The maths each round carries is the same kind a casino credit department uses to estimate theoretical loss:
 

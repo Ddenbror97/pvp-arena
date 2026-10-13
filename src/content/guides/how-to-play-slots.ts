@@ -8,16 +8,16 @@ export const guide: Guide = {
   secondary: ["how to play slots", "slot machine tutorial", "slot paytable", "slot autoplay"],
   title: "How to Play Online Slots: Stake, Spin, Paytable",
   description:
-    "How to play online slots in order: read the paytable, set a total stake, spin, and treat RTP as a cost. PVPspinArena has no reel games.",
+    "How to play online slots in order: read the paytable, set a total stake, spin, and treat RTP as a cost. P2P Slott is the 1v1 reel duel.",
   h1: "How to play online slots: stake, spin and read the paytable",
   answer:
-    "How to play online slots is a short loop: open the info panel, set a stake you can lose, press spin, and read what paid. The generator picks a grid; the paytable decides the return. You cannot steer the next stop. RTP and volatility describe the cost and the ride, not a method for winning. This is a tutorial, not a system. PVPspinArena does not offer slots.",
+    "How to play online slots is a short loop: open the info panel, set a stake you can lose, press spin, and read what paid. The generator picks a grid; the paytable decides the return. You cannot steer the next stop. RTP and volatility describe the cost and the ride, not a method for winning. This is a tutorial, not a system. PVPspinArena's slot game is P2P Slott, a 1v1 duel.",
   facts: [
     "A spin is one house-banked bet at the total stake you selected, not at the coin size alone.",
     "The paytable and info panel are the only public rules; artwork is not a probability table.",
     "Autoplay repeats the same bet; it does not improve RTP.",
     "Turning lines off rarely helps and can void features; drop the stake instead if the total is too high.",
-    "PVPspinArena has no slots; Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -40,7 +40,7 @@ This [slots topic](/guides/topics/slots) tutorial is for adults 18+. If you only
 
 You will not learn a pattern. You will not learn when a machine is due. [How to win online slots](/guides/how-to-win-at-slots) is the honest follow-up: you cannot beat a negative-EV reel. This page is only the controls.
 
-PVPspinArena has no reel tutorial because it has no reels. The comparable “press and read” loop here is [Roulette](/roulette): pick a colour, wait for the clock, read the pocket.`,
+PVPspinArena's reel game is P2P Slott, a 1v1 duel, not this payline tutorial. The comparable “press and read” loop here is [Roulette](/roulette): pick a colour, wait for the clock, read the pocket.`,
     },
     {
       id: "paytable",
@@ -140,8 +140,8 @@ If you play on a phone, the same rules apply with worse ergonomics: one-thumb tu
     },
     {
       id: "not-here",
-      title: "PVPspinArena does not offer slots",
-      body: `There is no five-reel tutorial on this site because there is no five-reel game. The live set is Jackpot, Coinflip and Roulette.
+      title: "The slot game here is P2P Slott",
+      body: `[P2P Slott](/slott) is the five-reel game, a 1v1 duel on a 5 by 4 grid. The winner receives 90% of the players' pot. The live set is Jackpot, Coinflip, Roulette, and P2P Slott.
 
 - [Jackpot](/) — join a pot, chance = share.
 - [Coinflip](/coinflip) — pick a side, 50/50 plus a published fee.
@@ -208,7 +208,7 @@ The coin size is not the price. [Penny slots](/guides/penny-slots-online) can st
     },
     {
       q: "Does PVPspinArena have online slots?",
-      a: "No. This site offers Jackpot, Coinflip and Roulette only. This guide is a controls tutorial for slots you meet elsewhere.",
+      a: "No. This site offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide is a controls tutorial for slots you meet elsewhere.",
     },
     {
       q: "Can I learn to win by practising in demo?",

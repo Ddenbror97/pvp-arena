@@ -134,7 +134,7 @@ Roobet's interface is built to feel quick. Add one sentence in the note about a 
     },
     {
       q: "Does this site offer Roobet games?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only, with USDC or ETH on Base.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott, with USDC or ETH on Base.",
     },
   ],
   sources: [

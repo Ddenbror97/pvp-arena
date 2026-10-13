@@ -110,7 +110,7 @@ A [gambling budget](/guides/gambling-budget) should be set on dollars paid, not 
     {
       id: "no-meter",
       title: "Sites with no bonus meter",
-      body: `PVPspinArena does not sell a welcome pack, does not issue Sweeps Coins, and does not attach playthrough to a deposit. Jackpot and Coinflip are player-versus-player pots with a configurable fee that defaults to 0%. Roulette is a 33-slot wheel with a posted edge. You can watch rounds and use the [Fairness](/fairness) page without clearing a meter.
+      body: `PVPspinArena does not sell a welcome pack, does not issue Sweeps Coins, and does not attach playthrough to a deposit. Jackpot and Coinflip are player-versus-player pots with a 5% fee on the pot. Roulette is a 33-slot wheel with a posted edge. You can watch rounds and use the [Fairness](/fairness) page without clearing a meter.
 
 That absence is a different product, not a secret 1× bonus. If you want promotional chips, you are in the wrong lobby. If you want a pot, you are in the right one.
 
@@ -123,7 +123,7 @@ A no-meter site can still hurt a budget. Fast pots and a cheap network make it e
     {
       id: "summary",
       title: "Summary and when to stop",
-      body: `Wagering requirements explained: a multiple, a base, weights, a clock and often a cap. Sweepstakes playthrough is the same machine. This site does not run it. PVPspinArena is Jackpot, Coinflip and Roulette with USDC or ETH on Base.
+      body: `Wagering requirements explained: a multiple, a base, weights, a clock and often a cap. Sweepstakes playthrough is the same machine. This site does not run it. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.
 
 You must be 18 or over. If you are depositing to finish a meter you already resent, stop. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A multiple is not a debt you owe the lobby.
 

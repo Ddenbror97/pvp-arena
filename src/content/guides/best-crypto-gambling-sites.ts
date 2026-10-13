@@ -20,7 +20,7 @@ export const guide: Guide = {
     "No list can tell you which site is best for you; a repeatable checklist can.",
     "Provably fair results let you verify each round with a public algorithm.",
     "Stablecoins like USDC keep your balance steady in dollars while you play.",
-    "PVPspinArena charges a 0% default fee on player-vs-player Jackpot and Coinflip.",
+    "PVPspinArena charges a 5% fee on player-vs-player Jackpot and Coinflip pots.",
     "PVPspinArena withdrawals finish only after a safe block and two providers agree.",
   ],
   sections: [
@@ -59,7 +59,7 @@ A good site states this number in plain words on the game page or the help pages
 
 On PVPspinArena:
 
-- **Jackpot and Coinflip** are player-vs-player. The house fee is configurable and set to 0% by default, so the pot goes to the winner.
+- **Jackpot and Coinflip** are player-vs-player. The house fee is 5% of the pot, so the winner receives 95%.
 - **Roulette** is played against the wheel. It has 33 slots: 16 pay 2x, 16 pay 2x and 1 pays 14x. That gives a return of 32 in 33 on Purple or Silver and 14 in 33 on Green, or a house Purple or Silver edge of about 7.88% after the win fee.
 
 Knowing the edge does not make you win more. It tells you what the game costs so you can decide whether that price is worth it.`,
@@ -150,7 +150,7 @@ Finally, try a small test. Deposit a small amount, play a few rounds, check one 
       body: `Here is the checklist applied to PVPspinArena, in one place:
 
 - **Fairness:** every round can be checked on the Fairness page.
-- **Fees:** 0% default fee on Jackpot and Coinflip; a Roulette edge of about 7.88% on Purple or Silver after the win fee.
+- **Fees:** 5% fee on Jackpot and Coinflip pots; a Roulette edge of about 7.88% on Purple or Silver after the win fee.
 - **Payments:** USDC on Base, balances in US dollars.
 - **Deposits:** credited automatically from your verified wallet, once per transaction.
 - **Withdrawals:** automatic, $250 daily limit, review over $25, finished only after a safe block and two providers agree.

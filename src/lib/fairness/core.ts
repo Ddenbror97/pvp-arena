@@ -28,7 +28,13 @@ export async function sha256Hex(bytes: Uint8Array): Promise<string> {
 }
 
 export async function hmacKey(seedHex: string): Promise<CryptoKey> {
-  return subtle().importKey("raw", hexToBytes(seedHex) as BufferSource, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  return subtle().importKey(
+    "raw",
+    hexToBytes(seedHex) as BufferSource,
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
 }
 
 /** HMAC-SHA256(key = seed bytes, data = UTF-8 message). */

@@ -203,7 +203,7 @@ Protect your recovery phrase, read every signature, reject unexpected approvals 
 
 More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).
 
-A newer roundup is [the best crypto wallet for gambling in 2026](/guides/best-crypto-wallet-for-gambling). One common mobile signer that is not MetaMask is [Trust Wallet](/guides/trust-wallet-casino).`,
+A newer roundup is [the best crypto wallet for gambling in 2026](/guides/best-crypto-wallet-for-gambling). One common mobile signer that is not MetaMask is [Trust Wallet](/guides/trust-wallet-casino). A mobile Ethereum wallet in that same class is the [Rainbow wallet review](/guides/rainbow-wallet-review).`,
     },
   ],
   faqs: [

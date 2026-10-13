@@ -158,7 +158,7 @@ A legitimate [provably fair calculator](/guides/provably-fair-calculator) only c
     {
       id: "pvp",
       title: "Prediction and PVPspinArena rounds",
-      body: `PVPspinArena runs three player-vs-player games: Jackpot, [Coinflip](/coinflip) and [Roulette](/roulette). The same commit-reveal logic that stops mines prediction protects these rounds. Results come from committed seeds, and after settlement anyone can recompute a round on [fairness](/fairness). Before settlement there is only a hash, so there is nothing for a predictor to read.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott. The same commit-reveal logic that stops mines prediction protects these rounds. Results come from committed seeds, and after settlement anyone can recompute a round on [fairness](/fairness). Before settlement there is only a hash, so there is nothing for a predictor to read.
 
 The odds are public instead. A Coinflip is a 50/50 between two players. In Jackpot your win chance equals your share of the pot. Roulette's 33-slot wheel pays 2x on Purple or Silver and 14x on Green, returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee on every bet. Anyone selling a PVPspinArena predictor is running one of the scams above.
 

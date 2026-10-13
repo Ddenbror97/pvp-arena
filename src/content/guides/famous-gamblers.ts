@@ -148,7 +148,7 @@ Suppose a high roller plays baccarat's banker bet, with a house edge of about 1.
     {
       id: "pvp",
       title: "How the same lessons apply on PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on Base, and each maps onto one of these lessons.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, and each maps onto one of these lessons.
 
 - [Roulette](/roulette) uses a 33-slot wheel: 16 Purple and 16 Silver pay 2x, 1 Green pays 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Like a whale's baccarat, no staking plan changes that number.
 - [Coinflip](/coinflip) is a straight 50/50 between two players; the winner takes the pot minus any fee shown before entry.

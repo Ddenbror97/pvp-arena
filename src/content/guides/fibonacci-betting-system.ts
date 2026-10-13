@@ -120,7 +120,7 @@ Purple or Silver is the intended canvas. Green is not: you will walk far to the 
 
 ### Coinflip
 
-A 0% fee [Coinflip](/coinflip) is ~0-EV. Fibonacci then manufactures a random walk with an expanding step after losses. Mean near zero, variance higher than flat. Someone must match 13, 21, 34. Many will not.
+A 5% fee [Coinflip](/coinflip) is about −5% EV. Fibonacci then manufactures a random walk with an expanding step after losses. Mean near zero, variance higher than flat. Someone must match 13, 21, 34. Many will not.
 
 ### Jackpot
 

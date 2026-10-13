@@ -154,7 +154,7 @@ Charms, numbers, and routines that feel like an edge are [gambling superstitions
     {
       id: "pvp",
       title: "Control and chance in a hashed PvP round",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on Base: Jackpot, Coinflip and Roulette. Each gives players real choices and makes clear which of them affect the odds.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Each gives players real choices and makes clear which of them affect the odds.
 
 ### What your choices do
 

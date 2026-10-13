@@ -155,7 +155,7 @@ For a typical player, surveillance is invisible. It shows up only when you are p
       title: "Verification instead of cameras",
       body: `An online game cannot be watched by a camera over the table, so it needs a different kind of oversight. On PVPspinArena, that role is played by cryptographic verification.
 
-PVPspinArena runs three player-vs-player games, Jackpot, Coinflip and Roulette, with play in USDC or ETH on the Base network. Results come from committed seeds: before a round, the game publishes a hash of a secret seed, and after the round it reveals the seed. Anyone can check that the revealed seed matches the commitment and that it produces the recorded result. You can do that for any settled round on the [fairness](/fairness) page. The [commit-reveal scheme](/guides/commit-reveal-scheme) guide explains the method step by step.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Results come from committed seeds: before a round, the game publishes a hash of a secret seed, and after the round it reveals the seed. Anyone can check that the revealed seed matches the commitment and that it produces the recorded result. You can do that for any settled round on the [fairness](/fairness) page. The [commit-reveal scheme](/guides/commit-reveal-scheme) guide explains the method step by step.
 
 This gives players something a physical casino's surveillance does not: direct access to the evidence. In a casino, the footage belongs to the operator and is reviewed by its staff and regulators. With commit-reveal, the player can run the check.
 

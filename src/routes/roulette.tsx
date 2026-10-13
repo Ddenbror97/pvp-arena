@@ -1,53 +1,78 @@
-import { lazy, Suspense } from "react";
-import { ClientOnly, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import "@/lib/roulette/tick.functions";
 import { ogImageMeta } from "@/lib/og";
 import { RouletteGame } from "@/components/roulette/RouletteGame";
 import { RecentRounds } from "@/components/roulette/RecentRounds";
-import { fetchCurrentRound, fetchHistory } from "@/lib/roulette/api";
+import { GameChat } from "@/components/chat/GameChat";
+import { useSeedIdentities } from "@/components/prestige/PrestigeProvider";
 import { coinHeads, coinTails, rouletteGreen } from "@/assets/media";
+import { loadRoulettePaint, useQuerySeed } from "@/lib/first-paint";
 
 export const Route = createFileRoute("/roulette")({
   head: () => ({
     meta: [
-      { title: "Roulette — Multiplayer Coin Roulette | PVPspinArena" },
+      { title: "PvP Roulette | Provably Fair Crypto Roulette | PVPspinArena" },
       {
         name: "description",
         content:
-          "Bet on Purple, Silver or the 14x Green in our multiplayer coin roulette. Each slot is equally likely, the roll is server-drawn, and you can verify it.",
+          "Play crypto Roulette with real players. Bet on red, black or green and verify every result with PVPspinArena's provably fair system.",
       },
-      { property: "og:title", content: "Roulette — Multiplayer Coin Roulette | PVPspinArena" },
-      { property: "og:description", content: "Multiplayer coin roulette: Purple, Silver or Green 14x. Verifiable." },
+      {
+        property: "og:title",
+        content: "PvP Roulette | Provably Fair Crypto Roulette | PVPspinArena",
+      },
+      {
+        property: "og:description",
+        content:
+          "Play crypto Roulette with real players. Bet on red, black or green and verify every result with PVPspinArena's provably fair system.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),
     ],
-    links: [coinHeads, coinTails, rouletteGreen].map((href) => ({ rel: "preload", as: "image", href, type: "image/webp" })),
+    links: [coinHeads, coinTails, rouletteGreen].map((href) => ({
+      rel: "preload",
+      as: "image",
+      href,
+      type: "image/webp",
+    })),
   }),
-  loader: ({ context }) => {
-    if (typeof window === "undefined") return;
-    void context.queryClient.prefetchQuery({ queryKey: ["roulette-round"], queryFn: fetchCurrentRound, staleTime: 2000 });
-    void context.queryClient.prefetchQuery({ queryKey: ["roulette-history", 48], queryFn: () => fetchHistory(48), staleTime: 2000 });
-  },
+  loader: () => loadRoulettePaint(),
   component: RoulettePage,
 });
 
-const GameChat = lazy(() => import("@/components/chat/GameChat").then((m) => ({ default: m.GameChat })));
-
 function RoulettePage() {
+  const paint = Route.useLoaderData();
+  const roundId = paint.round?.data?.id;
+  useQuerySeed([
+    [["roulette-round"], paint.round],
+    [["roulette-history", 48], paint.history],
+    [["roulette-recent", 0], paint.recent],
+    [["roulette-setup"], paint.setup],
+    roundId != null ? [["roulette-bets", roundId], paint.bets] : null,
+    [["real-play-open"], paint.playOpen],
+  ]);
+  useSeedIdentities(
+    [
+      (paint.bets?.data ?? []).map((b) => b.user_id),
+      (paint.chat?.data ?? []).map((m) => m.user_id),
+    ],
+    paint.identities,
+  );
   return (
     <>
-      <div>
-        <h1 className="font-display text-2xl">Roulette</h1>
-      </div>
-      <div className="mt-3 min-h-[1287px] xl:min-h-[552px]">
-      <ClientOnly fallback={<section aria-hidden className="h-[1287px] animate-pulse rounded-2xl bg-card xl:h-[552px]" />}>
-        <div className="grid gap-3 xl:grid-cols-[280px_minmax(0,1fr)]">
-          <Suspense fallback={<div className="order-2 h-64 animate-pulse rounded-xl border border-border bg-card xl:order-1 xl:h-full xl:min-h-[526px]" />}>
-            <GameChat gameType="roulette" className="order-2 h-64 xl:order-1 xl:h-full xl:min-h-[526px]" />
-          </Suspense>
-          <div className="order-1 xl:order-2"><RouletteGame /></div>
+      <h1 className="sr-only">Roulette</h1>
+      <div className="min-h-[1307px] xl:min-h-[572px]">
+        <div className="grid items-stretch gap-3 xl:grid-cols-[280px_minmax(0,1fr)] xl:min-h-[546px]">
+          <GameChat
+            gameType="roulette"
+            initial={paint.chat}
+            className="order-2 h-64 xl:order-1 xl:h-[34rem]"
+          />
+          <div className="order-1 flex min-h-0 min-w-0 flex-col game-panel rounded-xl border p-2.5 xl:order-2 xl:h-full xl:py-2">
+            <RouletteGame />
+          </div>
         </div>
-      </ClientOnly>
       </div>
       <RecentRounds />
     </>

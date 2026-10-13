@@ -145,7 +145,7 @@ Most wallets let you stake SOL to a validator for a variable yield. Staked SOL t
     {
       id: "pvp",
       title: "SOL and PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games, [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette), with play in USDC or ETH on the Base network, not on Solana. If you hold SOL, the practical route is to sell or swap it for USDC on an exchange and withdraw that USDC on Base; [how to buy USDC](/guides/how-to-buy-usdc) covers the Base withdrawal. Moving value between chains yourself is possible through a bridge, with extra steps and risks explained in [crypto bridge](/guides/crypto-bridge).
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars, not on Solana. If you hold SOL, the practical route is to sell or swap it for USDC on an exchange and withdraw that USDC on Base; [how to buy USDC](/guides/how-to-buy-usdc) covers the Base withdrawal. Moving value between chains yourself is possible through a bridge, with extra steps and risks explained in [crypto bridge](/guides/crypto-bridge).
 
 The coin you start with does not change the games. A Coinflip is a 50/50, and Purple and Silver return 32/33 before the win fee, about a 7.88% edge after it, and Green returns 14/33. Results come from committed seeds, and you can check any settled round on [fairness](/fairness).
 

@@ -155,7 +155,7 @@ Other side bets on these tables work the same way. The broader comparison, with 
       title: "Pricing a game, from Spanish 21 to PVPspinArena",
       body: `Spanish 21 is a clean example of house-edge accounting. Remove tens and the player loses about 2%. Add liberal rules and the player gets most of it back. The final number, roughly 0.4% to 0.8%, is the only one that matters for your wallet, and it only holds if you use the right chart.
 
-PVPspinArena runs three player-vs-player games with the pricing on the surface. [Roulette](/roulette) has 33 slots: 16 Purple and 16 Silver pay 2x and 1 Green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. [Coinflip](/coinflip) is a 50/50 between two players with any fee shown before entry. In the [Jackpot](/), your win chance equals your share of the pot. Each settled round can be checked on the [fairness](/fairness) page against its committed seeds.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott with the pricing on the surface. [Roulette](/roulette) has 33 slots: 16 Purple and 16 Silver pay 2x and 1 Green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. [Coinflip](/coinflip) is a 50/50 between two players with any fee shown before entry. In the [Jackpot](/), your win chance equals your share of the pot. Each settled round can be checked on the [fairness](/fairness) page against its committed seeds.
 
 None of those games have a chart that lowers the edge, and none need one. Gambling is for adults 18+, and budget and time-out tools are on the [responsible gambling](/responsible-gambling) page.
 

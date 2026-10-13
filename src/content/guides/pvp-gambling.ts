@@ -86,7 +86,7 @@ For a player, the expected result of one game is:
 
 With a 5% fee that works out to an average of -$0.25 per game. With no fee it is exactly $0.00. That average is not a prediction for any single game; it is the long-run cost.
 
-On PVPspinArena the fee is configurable by the operator and is shown before you enter a game. Always read it before you play. A PvP site that hides its fee, or changes it after you join, is a red flag.`,
+On PVPspinArena the Jackpot and Coinflip fee is 5% of the pot, and the P2P Slott fee is 10%, shown before you enter a game. Always read it before you play. A PvP site that hides its fee, or changes it after you join, is a red flag.`,
     },
     {
       id: "history",

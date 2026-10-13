@@ -30,7 +30,7 @@ In cash-game poker the room does not play a hand against you. Players play each 
 - **Time rake / deal-making fees.** A charge per hour or per hand, common at higher stakes.
 - **Tournament fees.** A buy-in split into prize pool and fee (the “+$10” on a $100+$10). That fee is not pot rake but it is the same idea: the house is paid for hosting.
 
-This [Foundations](/guides/topics/foundations) page is for adults 18+. For how crypto rooms deal cards and what you can actually verify, read [crypto poker](/guides/crypto-poker). PVPspinArena runs Jackpot, Coinflip and Roulette only. A 0% default fee on some PvP pots is a published fee, not poker rakeback.
+This [Foundations](/guides/topics/foundations) page is for adults 18+. For how crypto rooms deal cards and what you can actually verify, read [crypto poker](/guides/crypto-poker). Named-room advertising of a rakeback percent is in the [ACR poker review](/guides/acr-poker-review). Read the deal page, not a remembered percent. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott. A 5% fee on Jackpot and Coinflip pots is a published fee, not poker rakeback.
 
 If poker volume is already a problem, skip the rebate math and use [responsible gambling](/responsible-gambling).
 
@@ -168,7 +168,7 @@ If a deal only works at hours you do not have, it is not a deal. It is a job lis
     },
     {
       q: "Does PVPspinArena pay rakeback?",
-      a: "No. It is not a poker room. PvP Jackpot and Coinflip use a published house fee (0% by default). There is no rake-and-rebate ladder.",
+      a: "No. It is not a poker room. PvP Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. There is no rake-and-rebate ladder.",
     },
   ],
   sources: [

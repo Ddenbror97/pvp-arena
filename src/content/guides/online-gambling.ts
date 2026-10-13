@@ -77,7 +77,7 @@ Illustration: you plan $25 and 35 minutes. At minute 20 you are up $18. The writ
 - **House-banked casino.** [House edge](/guides/house-edge) × total wagered. Fast slots raise total wagered per hour.
 - **Sports.** The juice or overround is built into the prices. A −110 line is a fee on a fair coin.
 - **Poker.** Rake or tournament fee, minus any [rakeback](/guides/rakeback-explained).
-- **PvP pots.** A percent of the pot. On this site the default Jackpot/Coinflip fee is 0%; Roulette is a 33-slot wheel: 16 Purple, 16 Silver and 1 Green.
+- **PvP pots.** A percent of the pot. On this site the Jackpot and Coinflip fee is 5% of the pot; Roulette is a 33-slot wheel: 16 Purple, 16 Silver and 1 Green.
 
 Illustration: 90 minutes of $1 spins at four spins a minute is 360 bets = $360 wagered. At 5% edge the average cost is about $18, not $1. Online speed is how people miss that arithmetic.
 

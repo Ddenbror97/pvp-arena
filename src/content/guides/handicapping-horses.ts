@@ -122,7 +122,7 @@ A lobby "race" that starts every 45 seconds with invented form lines is not hand
       title: "A priced opinion, and a hashed PvP round",
       body: `Good handicapping is a budgeted opinion. You can be right about pace and still lose the photo. You can be wrong about class and still cash if the price was wide enough. The craft is repeating small, priced edges, not finding a horse that "cannot lose."
 
-PVPspinArena does not run a book on live racing. It runs three player-vs-player games in USDC or ETH on Base. [Coinflip](/coinflip) is a 50/50. [Roulette](/roulette) is 33 slots, 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee — a price you can write without a past-performance line. [Jackpot](/) sets win chance equal to your share of the pot. Seeds are committed; verify a settled round on [fairness](/fairness).
+PVPspinArena does not run a book on live racing. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. [Coinflip](/coinflip) is a 50/50. [Roulette](/roulette) is 33 slots, 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee — a price you can write without a past-performance line. [Jackpot](/) sets win chance equal to your share of the pot. Seeds are committed; verify a settled round on [fairness](/fairness).
 
 The ticket itself, from win through exacta, is [how to bet on horse racing](/guides/how-to-bet-on-horse-racing). Speed figures stay on this page. If the next race is already a chase to recover the last exacta, stop. Use [responsible gambling](/responsible-gambling). Play is 18+ only.
 

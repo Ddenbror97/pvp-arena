@@ -122,9 +122,9 @@ Our [gambling budget](/guides/gambling-budget) guide is the practical document. 
     {
       id: "pvp",
       title: "Kelly on PvP Jackpot and Coinflip",
-      body: `With a 0% fee, a fair [Coinflip](/coinflip) has p = 0.50 and b = 1, so f* = 0. Kelly says there is nothing to grow. You can still flip for fun; you cannot expect the bankroll’s log to climb.
+      body: `With a 5% pot fee, a [Coinflip](/coinflip) has p = 0.50 and the winner receives 95% of the pot, so net odds b are 0.90 and f* is negative. Kelly says there is nothing to grow. You can still flip for fun; you cannot expect the bankroll’s log to climb.
 
-A 0% fee [Jackpot](/) ticket has expectation equal to your share of the pot before variance. If the pot is only other players’ money and the fee is zero, EV is about zero, so Kelly is again ~0%. A fee makes EV negative and Kelly more negative.
+A [Jackpot](/) ticket’s chance equals your share of the pot. The winner receives 95%, so expected value is about −5% and Kelly is negative.
 
 ### What people get wrong
 

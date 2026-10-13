@@ -102,7 +102,7 @@ Advertising rules exist for a reason. A licensed book should not sell "guarantee
     {
       id: "not-this-site",
       title: "Why PVPspinArena is not an esports sportsbook",
-      body: `This site does not post a CS2 moneyline, a LoL first-baron price or a Dota outright. It does not take a side. [Jackpot](/) and [Coinflip](/coinflip) are player versus player. The house does not bet. The default fee is 0%. [Roulette](/roulette) is a shared 33-slot wheel with a published edge. Every finished round can be checked on the [fairness page](/fairness).
+      body: `This site does not post a CS2 moneyline, a LoL first-baron price or a Dota outright. It does not take a side. [Jackpot](/) and [Coinflip](/coinflip) are player versus player. The house does not bet. The fee is 5% of the pot. [Roulette](/roulette) is a shared 33-slot wheel with a published edge. Every finished round can be checked on the [fairness page](/fairness).
 
 That is a casino product with a public ledger, not a match book. Picking a roster because you "know the game" does not transfer to a coinflip. A verified HMAC draw does not tell you who wins a Major.
 

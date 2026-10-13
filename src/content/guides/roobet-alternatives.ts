@@ -71,7 +71,7 @@ If verification requires a third-party website you have never heard of, treat th
 
 [House edge](/guides/house-edge) is the long-run banked-game price. PvP fees are a different price. VIP cashback that needs volume you cannot afford is not a discount; it is a bait for overplay.
 
-PVPspinArena publishes a 0% default fee on its PvP pots and a roulette edge in [how it works](/how-it-works). Use clarity as the standard when you judge Roobet alternatives — not our brand name as a score.
+PVPspinArena publishes a 5% fee on its Jackpot and Coinflip pots and a roulette edge in [how it works](/how-it-works). Use clarity as the standard when you judge Roobet alternatives — not our brand name as a score.
 
 Compare the cost of the games you actually open. A site can advertise low dice edges and bury slot RTP, or the reverse. Your Roobet alternatives shortlist should include a one-line price for each habit game.
 

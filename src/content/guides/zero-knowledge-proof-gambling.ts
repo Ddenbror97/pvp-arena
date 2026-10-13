@@ -153,7 +153,7 @@ ZK earns its cost when you need to keep something hidden permanently: a card dec
     {
       id: "pvp",
       title: "How this relates to PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games, Jackpot, [Coinflip](/coinflip) and [Roulette](/roulette), on the Base network. Results come from committed seeds using commit-reveal: the seed's hash is fixed before the round, and after settlement the seed is revealed so anyone can recompute the outcome on [fairness](/fairness). Nothing about a Roulette spin needs to stay secret afterwards, so revealing the seed is the simplest honest proof.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, on the Base network. Results come from committed seeds using commit-reveal: the seed's hash is fixed before the round, and after settlement the seed is revealed so anyone can recompute the outcome on [fairness](/fairness). Nothing about a Roulette spin needs to stay secret afterwards, so revealing the seed is the simplest honest proof.
 
 The maths the proof protects is plain. A 33-slot wheel pays 2x on Purple or Silver and 14x on Green, returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee on every bet. A Coinflip is a 50/50 between two players. A proof, ZK or otherwise, confirms those odds were applied; it cannot improve them.
 

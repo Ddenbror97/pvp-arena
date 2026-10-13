@@ -120,7 +120,7 @@ Highlights and clips show the biggest wins. The long stretches of losing spins t
       title: "Watching versus playing, and the PvP link",
       body: `The useful question after watching any gambling stream is not "could I win like that?" but "what does this game cost per dollar, and can I check it?"
 
-PVPspinArena runs three player-vs-player games with stated structures:
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott with stated structures:
 
 - **Coinflip**: two players, 50/50. The winner takes the pot minus any fee shown before entry.
 - **Jackpot**: players add wagers to one pot, and your win chance equals your share.

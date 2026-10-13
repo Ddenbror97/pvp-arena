@@ -89,7 +89,7 @@ Litecoin confirmations still take minutes. If the casino underpays the miner fee
 
 ### PVPspinArena cashouts
 
-PVPspinArena does not pay LTC. Withdrawals are USDC or ETH on Base. The daily cap is $250. Amounts over $25 are reviewed. The ledger marks a payout complete only after a safe Base block and agreement from two data providers. If you want LTC again later, withdraw USDC to your wallet or exchange and buy LTC there.`,
+PVPspinArena does not pay LTC. Withdrawals are Bitcoin, or USDC or ETH on Base. The daily cap is $250. Amounts over $25 are reviewed. The ledger marks a payout complete only after a safe Base block and agreement from two data providers. If you want LTC again later, withdraw Bitcoin, USDC, or ETH and buy LTC there.`,
     },
     {
       id: "stablecoin",

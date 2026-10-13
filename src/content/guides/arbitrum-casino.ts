@@ -30,7 +30,7 @@ Arbitrum is not one product name. One is the main rollup. Nova is a separate cha
 
 This guide lives with other rails in [crypto payments](/guides/topics/crypto-payments). It is the Arbitrum twin of the [Avalanche casino](/guides/avalanche-casino) explainer: teach the chain, then show why this site is not on it.
 
-PVPspinArena is Jackpot, Coinflip and Roulette. Deposits are USDC and ETH on Base. It is not an ARB casino, not an Arbitrum One casino, and it will not credit an Arbiscan transaction.
+PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott. Deposits are on-chain Bitcoin, and USDC and ETH on Base. It is not an ARB casino, not an Arbitrum One casino, and it will not credit an Arbiscan transaction.
 
 ARB the governance token is not the chip. Some rooms take ARB. Many take ETH and USDC only. Read the cashier asset list. A wallet that shows a large ARB balance and empty ETH cannot pay gas and cannot satisfy a USDC deposit field. Three tickers, three jobs.`,
     },
@@ -53,7 +53,7 @@ You pay in **ETH on Arbitrum**. USDC on Arbitrum does not pay its own gas. A wal
 | Arbitrum One | 42161 | ETH on Arbitrum | cents | ~0.25–2 seconds |
 | Base | 8453 | ETH on Base | cents, often a fraction of a cent | ~2 seconds |
 
-The difference that matters at the cashier is **which RPC the site watches**. A cheap Arbitrum transfer to a Base deposit address is still a lost transfer. Read [USDC casino](/guides/usdc-casino) for why PVPspinArena watches Base only.
+The difference that matters at the cashier is **which RPC the site watches**. A cheap Arbitrum transfer to a Base deposit address is still a lost transfer. Read [USDC casino](/guides/usdc-casino) for why PVPspinArena watches Base for USDC and ETH.
 
 If the wallet fee preview is several dollars, you are probably on Ethereum mainnet, not on Arbitrum.
 

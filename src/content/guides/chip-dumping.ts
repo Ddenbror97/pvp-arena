@@ -17,7 +17,7 @@ export const guide: Guide = {
     "Rooms ban it in their terms and may close the accounts involved.",
     "There is no stake size, hand choice, or method on this page.",
     "The player response is to report the table and stop playing it.",
-    "PVPspinArena does not offer poker. It runs Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer poker. It runs Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {

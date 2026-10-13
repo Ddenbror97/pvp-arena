@@ -129,7 +129,7 @@ Every edge Thorp found was eventually closed, diluted or policed. Advantage play
     {
       id: "pvp",
       title: "Thorp's questions applied to a PvP round",
-      body: `PVPspinArena runs three player-vs-player games: Jackpot, Coinflip and Roulette, played in USDC or ETH on Base. Asking Thorp's questions of each is a quick way to understand them.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Asking Thorp's questions of each is a quick way to understand them.
 
 - **Is there memory?** No. Each round uses fresh committed seeds, so past results carry no information, exactly like a freshly shuffled deck.
 - **What is the expectation?** On [Roulette](/roulette), 16 Purple and 16 Silver slots pay 2x and 1 Green pays 14x on a 33-slot wheel. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. [Coinflip](/coinflip) is a 50/50 between two players, with the winner taking the pot minus any fee shown before entry.

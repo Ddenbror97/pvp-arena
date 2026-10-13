@@ -168,7 +168,7 @@ If you play digitally, the edges and table rules still apply. [Crypto baccarat](
       title: "Where the same idea shows up on PVPspinArena",
       body: `Baccarat strategy comes down to a single question: which bet has the lowest edge on this table? That is a useful habit anywhere.
 
-PVPspinArena runs three player-vs-player games. [Coinflip](/coinflip) is a straight 50/50 between two players, with no tie outcome at all; the winner takes the pot minus any fee shown before entry. [Roulette](/roulette) uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee, so choosing between Purple, Silver and Green changes variance but not the cost per dollar. Settled rounds can be verified on the [fairness](/fairness) page.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott. [Coinflip](/coinflip) is a straight 50/50 between two players, with no tie outcome at all; the winner takes the pot minus any fee shown before entry. [Roulette](/roulette) uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee, so choosing between Purple, Silver and Green changes variance but not the cost per dollar. Settled rounds can be verified on the [fairness](/fairness) page.
 
 Gambling is 18+ (or the local legal age). If baccarat or any game is taking more time or money than planned, the [responsible gambling](/responsible-gambling) page has tools and support.
 

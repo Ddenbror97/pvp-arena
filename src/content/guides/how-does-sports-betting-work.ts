@@ -125,7 +125,7 @@ Read the house rules once. Arguing them after a void is how people stay in chat 
     {
       id: "contrast",
       title: "Why a book is not a hashed PvP game",
-      body: `On PVPspinArena a 0% fee flip has no overround in the payout. Two stakes, one winner, committed seed. On a sportsbook, both sides of a −110/−110 market are juiced and the event lives in a stadium.
+      body: `On PVPspinArena a Coinflip is 50/50, then a 5% pot fee, so decimal is 1.90. Two stakes, one winner, committed seed. On a sportsbook, both sides of a −110/−110 market are juiced and the event lives in a stadium.
 
 | Mechanism | Sportsbook | Hashed PvP |
 | --- | --- | --- |
@@ -173,7 +173,7 @@ After the ticket exists, the book may offer to buy it back. That sale is [cash o
     },
     {
       q: "Does PVPspinArena take live or pre-match sports bets?",
-      a: "No. It is not a sportsbook. It offers Jackpot, Coinflip and Roulette only.",
+      a: "No. It is not a sportsbook. It offers Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Why did my limit drop after I won?",

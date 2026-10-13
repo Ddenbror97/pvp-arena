@@ -30,13 +30,13 @@ A clean friendly bet needs three lines in writing before anything starts:
 2. Exact outcome that decides the winner
 3. How and when money moves
 
-If you cannot write those lines, you are not ready to wager. Adults 18+ only.
+If you cannot write those lines, you are not ready to wager. Adults 18+ only. An app built to hold a friend challenge is the subject of the [Wagr review](/guides/wagr-review). A group pool with a prize list is the [Splash Sports review](/guides/splash-sports-review).
 
 This guide sits in [CS:GO heritage](/guides/topics/csgo-heritage) because friend lobbies and stream audience flips trained that social pattern. PVPspinArena offers structured PvP settlement with USDC or ETH on Base, not a group chat ledger.
 
 Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena is Jackpot, Coinflip and Roulette with USDC or ETH on Base. Jackpot and Coinflip are player-versus-player with a published fee. Roulette is house-banked with a published edge. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
 A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
@@ -61,7 +61,7 @@ Warning signs: one friend always owes, stakes rise to “make it fair,” or som
 
 Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena is Jackpot, Coinflip and Roulette with USDC or ETH on Base. Jackpot and Coinflip are player-versus-player with a published fee. Roulette is house-banked with a published edge. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
 A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
@@ -88,7 +88,7 @@ Jackpot on the [home page](/) is a multi-player pot, not a two-friend match, unl
 
 Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena is Jackpot, Coinflip and Roulette with USDC or ETH on Base. Jackpot and Coinflip are player-versus-player with a published fee. Roulette is house-banked with a published edge. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
 A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 

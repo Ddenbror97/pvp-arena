@@ -6,7 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { fetchGame, fetchPlayers } from "@/lib/jackpot/api";
 import { formatChance, formatUsd } from "@/lib/jackpot/math";
 import { verifyGame, type VerificationResult } from "@/lib/jackpot/fairness";
-import { PlayerAvatar } from "@/components/jackpot/Avatar";
+import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
+import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle } from "lucide-react";
 
@@ -14,9 +15,16 @@ export const Route = createFileRoute("/games/$gameId")({
   head: ({ params }) => ({
     meta: [
       { title: `Game #${params.gameId} — PVPspinArena` },
-      { name: "description", content: `Full audit record for jackpot game #${params.gameId}: players, stakes, winner and fairness proof.` },
+      {
+        name: "description",
+        content: `Full audit record for jackpot game #${params.gameId}: players, stakes, winner and fairness proof.`,
+      },
+      { name: "robots", content: "noindex, follow" },
       { property: "og:title", content: `Jackpot game #${params.gameId} — PVPspinArena` },
-      { property: "og:description", content: "Players, stakes, winner and a verifiable fairness proof." },
+      {
+        property: "og:description",
+        content: "Players, stakes, winner and a verifiable fairness proof.",
+      },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),
@@ -35,12 +43,17 @@ function GamePage() {
       const [game, players, entries] = await Promise.all([
         fetchGame(id),
         fetchPlayers(id),
-        supabase.from("jackpot_entries").select("user_id, amount, ticket_start, ticket_end, created_at").eq("game_id", id).order("ticket_start"),
+        supabase
+          .from("jackpot_entries")
+          .select("user_id, amount, ticket_start, ticket_end, created_at")
+          .eq("game_id", id)
+          .order("ticket_start"),
       ]);
       return { game, players, entries: entries.data ?? [] };
     },
   });
   const [result, setResult] = useState<VerificationResult | null>(null);
+  const identities = usePrestigeIdentities((q.data?.players ?? []).map((p) => p.user_id));
 
   if (q.isLoading) return <p className="text-muted-foreground">Loading...</p>;
   const g = q.data?.game;
@@ -51,7 +64,9 @@ function GamePage() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">← Back to jackpot</Link>
+      <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+        ← Back to jackpot
+      </Link>
       <div className="mt-3 flex flex-wrap items-baseline gap-3">
         <h1 className="font-display text-2xl">Game #{g.id}</h1>
         <span className="rounded bg-secondary px-2 py-0.5 text-xs">{g.status}</span>
@@ -66,12 +81,21 @@ function GamePage() {
 
       {done && winner && (
         <div className="mt-6 flex items-center gap-4 rounded-2xl border border-gold/30 bg-gold/5 p-5">
-          <PlayerAvatar src={winner.profiles?.avatar_url} name={winner.profiles?.username} className="h-16 w-16" color="var(--gold)" />
+          <PlayerPrestigeIdentity
+            avatar={winner.profiles?.avatar_url}
+            name={winner.profiles?.username}
+            frame={identities.get(winner.user_id)?.frame}
+            crown={identities.get(winner.user_id)?.crown}
+            level={identities.get(winner.user_id)?.level}
+            tier={identities.get(winner.user_id)?.tier}
+            size={64}
+          />
           <div>
             <div className="text-xs tracking-[0.3em] text-gold">WINNER</div>
             <div className="font-display text-xl">@{winner.profiles?.username}</div>
             <div className="tabular text-sm text-muted-foreground">
-              {formatChance(g.winner_total ?? 0, g.pot_amount)} win chance · won {formatUsd(g.payout_amount ?? 0)}
+              {formatChance(g.winner_total ?? 0, g.pot_amount)} win chance · won{" "}
+              {formatUsd(g.payout_amount ?? 0)}
             </div>
           </div>
         </div>
@@ -79,11 +103,26 @@ function GamePage() {
 
       <dl className="mt-6 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
         <Row k="Created" v={new Date(g.created_at).toLocaleString()} />
-        <Row k="Countdown started" v={g.countdown_started_at ? new Date(g.countdown_started_at).toLocaleString() : "—"} />
+        <Row
+          k="Countdown started"
+          v={g.countdown_started_at ? new Date(g.countdown_started_at).toLocaleString() : "—"}
+        />
         <Row k="Closed" v={g.drawn_at ? new Date(g.drawn_at).toLocaleString() : "—"} />
         <Row k="Completed" v={g.completed_at ? new Date(g.completed_at).toLocaleString() : "—"} />
-        <Row k="House fee" v={`${g.rake_bps / 100}%`} />
-        <Row k="Winning ticket" v={g.winning_ticket != null ? `${g.winning_ticket} of ${g.pot_amount}` : "—"} />
+        {done ? (
+          <Row
+            k="House fee"
+            v={
+              g.rake_bps > 0 && g.payout_amount === g.pot_amount
+                ? "Waived (fee-free win)"
+                : `${g.rake_bps / 100}%`
+            }
+          />
+        ) : null}
+        <Row
+          k="Winning ticket"
+          v={g.winning_ticket != null ? `${g.winning_ticket} of ${g.pot_amount}` : "—"}
+        />
       </dl>
 
       <h2 className="mt-10 font-display text-sm uppercase tracking-widest">Participants</h2>
@@ -101,11 +140,22 @@ function GamePage() {
             {players.map((p) => (
               <tr key={p.user_id} className={p.user_id === g.winner_id ? "bg-gold/5" : ""}>
                 <td className="flex items-center gap-2 px-4 py-2.5">
-                  <PlayerAvatar src={p.profiles?.avatar_url} name={p.profiles?.username} className="h-7 w-7" />@{p.profiles?.username}
+                  <PlayerPrestigeIdentity
+                    avatar={p.profiles?.avatar_url}
+                    name={p.profiles?.username}
+                    frame={identities.get(p.user_id)?.frame}
+                    crown={identities.get(p.user_id)?.crown}
+                    level={identities.get(p.user_id)?.level}
+                    tier={identities.get(p.user_id)?.tier}
+                    size={32}
+                  />
+                  @{p.profiles?.username}
                 </td>
                 <td className="tabular px-4 py-2.5 text-right">{formatUsd(p.total_amount)}</td>
                 <td className="tabular px-4 py-2.5 text-right">{p.entry_count}</td>
-                <td className="tabular px-4 py-2.5 text-right">{formatChance(p.total_amount, g.pot_amount)}</td>
+                <td className="tabular px-4 py-2.5 text-right">
+                  {formatChance(p.total_amount, g.pot_amount)}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -116,7 +166,10 @@ function GamePage() {
       <div className="mt-3 space-y-2 rounded-2xl border border-border bg-card p-5 text-sm">
         <Mono k="Seed commitment (SHA-256)" v={g.server_seed_hash} />
         <Mono k="Revealed server seed" v={g.server_seed ?? "hidden until the game completes"} />
-        <Mono k="Message" v={`PVPCasino:jackpot:${g.protocol_version}:${g.id}:${g.draw_version}:<round>`} />
+        <Mono
+          k="Message"
+          v={`PVPCasino:jackpot:${g.protocol_version}:${g.id}:${g.draw_version}:<round>`}
+        />
         <Mono k="Sampling round used" v={g.draw_counter != null ? String(g.draw_counter) : "—"} />
         <Button
           className="mt-3"
@@ -125,7 +178,11 @@ function GamePage() {
             setResult(
               await verifyGame(
                 { ...g, pot_amount: g.pot_amount, winning_ticket: g.winning_ticket },
-                (q.data?.entries ?? []).map((e) => ({ user_id: e.user_id, ticket_start: e.ticket_start, ticket_end: e.ticket_end })),
+                (q.data?.entries ?? []).map((e) => ({
+                  user_id: e.user_id,
+                  ticket_start: e.ticket_start,
+                  ticket_end: e.ticket_end,
+                })),
               ),
             )
           }
@@ -136,7 +193,11 @@ function GamePage() {
           <ul className="mt-3 space-y-1.5">
             {result.checks.map((c) => (
               <li key={c.label} className="flex items-start gap-2">
-                {c.ok ? <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" /> : <XCircle className="mt-0.5 h-4 w-4 text-destructive" />}
+                {c.ok ? (
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
+                ) : (
+                  <XCircle className="mt-0.5 h-4 w-4 text-destructive" />
+                )}
                 <div>
                   <div>{c.label}</div>
                   <div className="tabular break-all text-xs text-muted-foreground">{c.detail}</div>

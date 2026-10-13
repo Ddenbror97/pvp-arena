@@ -127,7 +127,7 @@ When Alex later withdraws, the destination can be A or a cold address Alex contr
 
 Software updates and seed exports deserve a slow minute. Official wallet apps can show a recovery screen. A pop-up on a casino tab that asks for the same words is not an official update. Close the tab.
 
-Use a dedicated hot wallet for play, keep savings colder, and treat every stake as money you can lose. PVPspinArena accepts USDC and ETH on Base from a verified address — nothing more. If you only remember three rules: you sign, the casino never needs the phrase, and a credited balance is no longer self-custodied until you withdraw. Adults aged 18 or over who skip those rules usually skip them when they are tired. Write the deposit loop down once.
+Use a dedicated hot wallet for play, keep savings colder, and treat every stake as money you can lose. PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base, from a verified address. If you only remember three rules: you sign, the casino never needs the phrase, and a credited balance is no longer self-custodied until you withdraw. Adults aged 18 or over who skip those rules usually skip them when they are tired. Write the deposit loop down once.
 
 The games are player-versus-player pots, not a reason to import a life-savings seed into a browser the night you sign up.
 

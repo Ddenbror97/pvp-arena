@@ -128,7 +128,7 @@ Other public cases, told as history rather than a method, are [sports betting sc
       title: "Sports-betting edges versus a hashed PvP round",
       body: `Walters made money because betting lines are opinions, and opinions can be wrong. A casino game whose odds are fixed by its rules has no opinion to beat.
 
-PVPspinArena runs three player-vs-player games, and each has a fixed, stated structure:
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and each has a fixed, stated structure:
 
 - **Coinflip**: two players, 50/50. The winner takes the pot minus any fee shown before entry. No model or information gives either player an advantage.
 - **Jackpot**: your win chance equals your share of the pot, stated before the draw.

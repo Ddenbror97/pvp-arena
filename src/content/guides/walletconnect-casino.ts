@@ -131,7 +131,7 @@ Another pattern is a session that stays alive for weeks. You verify once, forget
     {
       id: "pvp-use",
       title: "Using Wallet Connect with PVPspinArena",
-      body: `PVPspinArena is a PvP Jackpot, Coinflip and Roulette site. It accepts USDC and ETH on Base. Wallet Connect is optional plumbing. You can also use a browser extension on the same machine.
+      body: `PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott. It accepts on-chain Bitcoin, and USDC and ETH on Base. Wallet Connect is optional plumbing. You can also use a browser extension on the same machine.
 
 What the site needs:
 

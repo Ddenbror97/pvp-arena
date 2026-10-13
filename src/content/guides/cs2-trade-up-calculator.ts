@@ -149,7 +149,7 @@ Buying the target skin on the market is often cheaper than assembling ten inputs
       title: "This is not a trade-up site",
       body: `PVPspinArena does not take your skins, does not run a Trade Up Contract, and does not pay out knives. The calculator exists so the [CS:GO heritage](/guides/topics/csgo-heritage) guides can show the real in-game math. If you want to trade up, you do that in Counter-Strike 2.
 
-What this site does run is cash player-versus-player. On [Jackpot](/) and [Coinflip](/coinflip) you stake USDC on Base against other players. The house does not sit in the pot. The default fee is configurable and starts at 0%. Every round is provably fair.
+What this site does run is cash player-versus-player. On [Jackpot](/) and [Coinflip](/coinflip) you stake USDC on Base against other players. The house does not sit in the pot. The fee is 5% of the pot. Every round is provably fair.
 
 That is a different product from a trade-up:
 

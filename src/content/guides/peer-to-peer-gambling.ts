@@ -32,7 +32,7 @@ For the broader vocabulary of player pots, read [PvP gambling](/guides/pvp-gambl
 
 Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena is Jackpot, Coinflip and Roulette with USDC or ETH on Base. Jackpot and Coinflip are player-versus-player with a published fee. Roulette is house-banked with a published edge. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
 A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
@@ -67,7 +67,7 @@ None of those reasons make the next flip profitable. They explain the product pr
 
 Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena is Jackpot, Coinflip and Roulette with USDC or ETH on Base. Jackpot and Coinflip are player-versus-player with a published fee. Roulette is house-banked with a published edge. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
 A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
@@ -102,7 +102,7 @@ Shared roulette with fixed multipliers, crash curves paid by the house, and most
 
 Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena is Jackpot, Coinflip and Roulette with USDC or ETH on Base. Jackpot and Coinflip are player-versus-player with a published fee. Roulette is house-banked with a published edge. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
 Sharing one jackpot ticket needs the same kind of rules. A [lottery pool agreement](/guides/lottery-pool-agreement) writes them down. A grid of final scores is a different friends game. [Super Bowl squares](/guides/super-bowl-squares) explains who owns which box.`,
     },
@@ -148,7 +148,7 @@ If you still hold skins you want to sell, that is a marketplace problem, not a c
 
 Warning signs: staking rent money, chasing after a lost coinflip, or raising stake because a jackpot “looks due.” Those are the same harms as any casino product. [Gambling addiction signs](/guides/gambling-addiction-signs) and [responsible gambling](/responsible-gambling) are the exit ramps.
 
-How the three games on this site differ is summarised on [how it works](/how-it-works). Use P2P rooms for entertainment you can price. Do not use them as income.
+How the four games on this site differ is summarised on [how it works](/how-it-works). Use P2P rooms for entertainment you can price. Do not use them as income.
 
 Friends and small games use the same pot. [Betting with friends online](/guides/bet-with-friends-online), a [duel arena](/guides/duel-arena-gambling) and [rock paper scissors for money](/guides/rock-paper-scissors-for-money) are that pot with a different reveal.`,
     },

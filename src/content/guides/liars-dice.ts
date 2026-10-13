@@ -169,7 +169,7 @@ With one die left, Palifico-style or not, the binomial table shrinks. A lone die
       title: "Binomial odds and a hashed PvP round",
       body: `The binomial table that prices a liars dice bid also prices many small independent chances. It covers streaks of coin flips, hits on a roulette colour, and matches under a cup. For a coin, see [coin flip odds](/guides/coin-flip-odds): p = 1/2 in place of 1/6 or 1/3.
 
-PVPspinArena runs three player-vs-player games in USDC or ETH on Base. A [Coinflip](/coinflip) is a fair 50/50 between two players. Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Jackpot win chance equals your share of the pot. There's no bluffing in these games. Outcomes come from committed seeds, and any settled round can be checked on the [fairness page](/fairness). Play is 18+. The [responsible gambling](/responsible-gambling) page has limits if a game stops being fun.`,
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. A [Coinflip](/coinflip) is a fair 50/50 between two players. Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Jackpot win chance equals your share of the pot. There's no bluffing in these games. Outcomes come from committed seeds, and any settled round can be checked on the [fairness page](/fairness). Play is 18+. The [responsible gambling](/responsible-gambling) page has limits if a game stops being fun.`,
     },
   ],
   faqs: [

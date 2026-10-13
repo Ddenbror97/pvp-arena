@@ -128,7 +128,7 @@ If you want sportsbook technique — closing-line value, holds, sides versus tot
       title: "A pool against people, and a hashed PvP pot",
       body: `A survivor pool is already player-versus-player. The NFL games are the random number generator; the other entries are the opponents. Your edge, if you have one, is using inventory and crowd percentages better than they do. The games themselves still have huge variance. One blocked punt ends a perfect card.
 
-PVPspinArena is the same structure without a football season. It runs three player-vs-player games in USDC or ETH on Base. [Jackpot](/) sets your win chance equal to your share of the pot, the clean version of "my entry versus their entries." [Coinflip](/coinflip) is a 50/50. [Roulette](/roulette) is a 33-slot wheel, 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Seeds are committed; check a settled round on [fairness](/fairness).
+PVPspinArena is the same structure without a football season. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. [Jackpot](/) sets your win chance equal to your share of the pot, the clean version of "my entry versus their entries." [Coinflip](/coinflip) is a 50/50. [Roulette](/roulette) is a 33-slot wheel, 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Seeds are committed; check a settled round on [fairness](/fairness).
 
 If the next week's "must-use" pick is already a chase to get even from last Sunday, stop. Tools are on [responsible gambling](/responsible-gambling). Play is 18+ only.
 

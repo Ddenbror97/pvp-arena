@@ -185,7 +185,7 @@ Both are gambling. Both can cause harm. Both are subject to local laws that diff
 
 ### Player vs player at the core
 
-Jackpot and Coinflip are player vs player, meaning the house does not bet. Its only take is a configurable fee, which defaults to 0%. Our [PvP gambling guide](/guides/pvp-gambling) explains the model. Roulette is house-banked with about a 7.88% Purple or Silver edge after the win fee.
+Jackpot and Coinflip are player vs player, meaning the house does not bet. Its only take is a configurable fee, which is 5% of the pot. Our [PvP gambling guide](/guides/pvp-gambling) explains the model. Roulette is house-banked with about a 7.88% Purple or Silver edge after the win fee.
 
 ### No valuation games
 

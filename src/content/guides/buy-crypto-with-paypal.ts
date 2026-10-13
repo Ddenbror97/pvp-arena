@@ -169,7 +169,7 @@ In many countries, selling, swapping or spending crypto is a taxable disposal. P
     {
       id: "pvp",
       title: "PayPal crypto and PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games, [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette), with play in USDC or ETH on the Base network. Crypto from PayPal does not land on Base directly. A typical route is to transfer ETH or a stablecoin from PayPal to an exchange that supports Base, convert to USDC if needed, and withdraw on Base. The [how to buy USDC](/guides/how-to-buy-usdc) and [bridge to Base](/guides/bridge-to-base) guides cover those steps. PayPal also has its own terms on gambling-related payments, so read them before using it as part of any gaming route.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Crypto from PayPal does not land on Base directly. A typical route is to transfer ETH or a stablecoin from PayPal to an exchange that supports Base, convert to USDC if needed, and withdraw on Base. The [how to buy USDC](/guides/how-to-buy-usdc) and [bridge to Base](/guides/bridge-to-base) guides cover those steps. PayPal also has its own terms on gambling-related payments, so read them before using it as part of any gaming route.
 
 The payment route does not change the odds. A Coinflip is a 50/50 between two players; Purple and Silver return 32/33 before the win fee, about a 7.88% edge after it, and Green returns 14/33. Results come from committed seeds, and any settled round can be checked on [fairness](/fairness).
 

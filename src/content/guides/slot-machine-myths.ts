@@ -135,7 +135,7 @@ Decide the money per spin before you sit, and decide the stop before the first r
 - **Cap the visit.** More spins buy more exposure. They do not collect a debt the game owes you.
 - **Leave on the stop you set.** A late change of plan is usually the myth arriving in the middle of the session.
 
-This site does not offer slot cabinets, so there is no bank here to call hot or owed. Know the price of the bet, and do not invent a pattern the last few results cannot support. A checklist that starts from printed return, variance, and stake, and refuses a due machine, is [best slot machines to play](/guides/best-slot-machines-to-play).
+This site does not offer house-banked slot cabinets, so there is no bank here to call hot or owed. P2P Slott is a 1v1 duel. Know the price of the bet, and do not invent a pattern the last few results cannot support. A checklist that starts from printed return, variance, and stake, and refuses a due machine, is [best slot machines to play](/guides/best-slot-machines-to-play).
 
 These stories use words players already say out loud. They are still stories about a sample, and no version of them beats the edge.`,
     },

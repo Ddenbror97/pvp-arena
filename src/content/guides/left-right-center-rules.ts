@@ -146,7 +146,7 @@ If you want a party game with real choices, play [shut the box](/guides/shut-the
       title: "Chip passing and a hashed PvP round",
       body: `LCR is a teaching tool for independence: each face is a separate order, the pot only grows on C, and seat order is a small tax. It is a poor teaching tool for skill, because there is none.
 
-PVPspinArena runs three player-vs-player games in USDC or ETH on Base. [Coinflip](/coinflip) is a 50/50, closer to a single LCR die than it looks: one binary result, two players, pot in the middle. [Roulette](/roulette) is a 33-slot wheel, 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee (about a 7.88% Purple or Silver edge after the win fee). [Jackpot](/) sets your chance equal to your share of the pot. Seeds are committed; verify a settled round on [fairness](/fairness).
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. [Coinflip](/coinflip) is a 50/50, closer to a single LCR die than it looks: one binary result, two players, pot in the middle. [Roulette](/roulette) is a 33-slot wheel, 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee (about a 7.88% Purple or Silver edge after the win fee). [Jackpot](/) sets your chance equal to your share of the pot. Seeds are committed; verify a settled round on [fairness](/fairness).
 
 If passing chips has become passing more cash than you meant, stop. Tools sit on [responsible gambling](/responsible-gambling). Play is 18+ only.`,
     },

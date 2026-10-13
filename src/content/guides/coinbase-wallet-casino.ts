@@ -73,7 +73,7 @@ Desktop users sometimes keep Coinbase Wallet extension and the mobile app on the
       title: "Networks inside Coinbase Wallet",
       body: `Coinbase Wallet can show Ethereum, Base and other chains. USDC exists on several of them. The send screen’s network toggle is the decision that matters.
 
-PVPspinArena only credits USDC and ETH on Base. Ethereum mainnet USDC, Polygon USDC and Solana USDC are different tokens. Base addresses look like Ethereum addresses. That similarity is why people send mainnet USDC to a Base deposit and then wait forever.
+PVPspinArena credits Bitcoin, and USDC and ETH on Base. Ethereum mainnet USDC, Polygon USDC and Solana USDC are different tokens. Base addresses look like Ethereum addresses. That similarity is why people send mainnet USDC to a Base deposit and then wait forever.
 
 ### Before every send
 

@@ -168,7 +168,7 @@ You control your stake size, your target, how many rounds you play and when you 
 ### Who takes the other side
 
 - **Crash**: the house pays winners and keeps losing stakes, with a built-in edge.
-- **[Jackpot](/)** and **[Coinflip](/coinflip)** on PVPspinArena: players play each other. The house does not bet and only takes a fee, which defaults to 0%.
+- **[Jackpot](/)** and **[Coinflip](/coinflip)** on PVPspinArena: players play each other. The house does not bet and only takes a fee, which is 5% of the pot.
 
 ### Pace
 

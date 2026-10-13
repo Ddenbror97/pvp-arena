@@ -1,4 +1,12 @@
-import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, ShieldCheck, XCircle } from "lucide-react";
@@ -8,18 +16,29 @@ import { serverOffset, useNow, useServerClock, useWalletRealtime } from "@/lib/j
 import { useBalanceHold } from "@/lib/balance-hold";
 import { ANIMATION_MS, LATE_LAND_MS, coinLandingTime } from "@/lib/coinflip/coin-motion";
 import { formatUsd } from "@/lib/jackpot/math";
-import { crownPlacement, PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
+import {
+  crownPlacement,
+  PlayerPrestigeIdentity,
+} from "@/components/prestige/PlayerPrestigeIdentity";
 import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import { APP } from "@/lib/config";
 import { emitSound } from "@/lib/sound";
-import { fetchCoinflip, opposite, tickCoinflip, useCoinflipRealtime, type CfGameView, type CoinSide } from "@/lib/coinflip/api";
+import {
+  fetchCoinflip,
+  opposite,
+  useCoinflipRealtime,
+  type CfGameView,
+  type CoinSide,
+} from "@/lib/coinflip/api";
 import type { PrestigeIdentity } from "@/lib/prestige/api";
 import { verifyCoinflip, type CoinflipCheck } from "@/lib/fairness/coinflip";
 import { coinHeads as headsAsset, coinTails as tailsAsset } from "@/assets/media";
 import { Button } from "@/components/ui/button";
 import { Coin } from "./Coin";
 
-const Celebration = lazy(() => import("@/components/jackpot/Celebration").then((m) => ({ default: m.Celebration })));
+const Celebration = lazy(() =>
+  import("@/components/jackpot/Celebration").then((m) => ({ default: m.Celebration })),
+);
 
 const IN_PROGRESS = ["READY", "FLIPPING", "SETTLEMENT"];
 
@@ -33,37 +52,21 @@ export function CoinflipRoom({ id }: { id: number }) {
   const q = useQuery({
     queryKey: ["coinflip", id],
     queryFn: () => fetchCoinflip(id),
-    // Realtime is a hint only: poll authoritative state while the game is live.
+    // The one-second worker advances deadlines. This poll only refreshes the view.
     refetchInterval: (query) => {
       const s = query.state.data?.status;
-      return s === "WAITING" ? 4000 : s && IN_PROGRESS.includes(s) ? 800 : false;
+      if (s === "WAITING") return 2_000;
+      if (s && IN_PROGRESS.includes(s)) return 800;
+      return false;
     },
   });
   const g = q.data ?? null;
-  const identities = usePrestigeIdentities([g?.creator_id, g?.opponent_id].filter((id): id is string => !!id));
+  const identities = usePrestigeIdentities(
+    [g?.creator_id, g?.opponent_id].filter((id): id is string => !!id),
+  );
 
   const now = serverNow();
   const start = g?.animation_start_at ? new Date(g.animation_start_at).getTime() : null;
-  const end = g?.animation_end_at ? new Date(g.animation_end_at).getTime() : null;
-  const expires = g ? new Date(g.expires_at).getTime() : null;
-
-  // Accelerate the server worker once an authoritative deadline passes. The
-  // server re-checks every deadline itself; the game finishes without us too.
-  const due =
-    !!g &&
-    ((g.status === "WAITING" && expires != null && now >= expires) ||
-      (g.status === "READY" && start != null && now >= start) ||
-      ((g.status === "FLIPPING" || g.status === "SETTLEMENT") && end != null && now >= end));
-  useEffect(() => {
-    if (!due) return;
-    const run = async () => {
-      await tickCoinflip();
-      qc.invalidateQueries({ queryKey: ["coinflip", id] });
-    };
-    void run();
-    const t = setInterval(run, 1000);
-    return () => clearInterval(t);
-  }, [due, id, qc]);
 
   useEffect(() => {
     if (g?.status === "COMPLETED") qc.invalidateQueries({ queryKey: ["wallet"] });
@@ -83,10 +86,12 @@ export function CoinflipRoom({ id }: { id: number }) {
   const involved = !!userId && !!g && (userId === g.creator_id || userId === g.opponent_id);
   useBalanceHold(
     "coinflip",
-    involved && start != null && landAt != null && landAt > now ? (landAt === Infinity ? start + ANIMATION_MS + LATE_LAND_MS : landAt) - serverOffset() : null,
+    involved && start != null && landAt != null && landAt > now
+      ? (landAt === Infinity ? start + ANIMATION_MS + LATE_LAND_MS : landAt) - serverOffset()
+      : null,
   );
 
-  if (q.isLoading) return <div className="mx-auto w-full max-w-4xl"><StageBox className="animate-pulse" /></div>;
+  if (q.isLoading) return <CoinflipRoomFallback />;
   if (!g) return <p className="text-muted-foreground">Game not found.</p>;
 
   let phase: "waiting" | "cancelled" | "found" | "flipping" | "result";
@@ -98,32 +103,83 @@ export function CoinflipRoom({ id }: { id: number }) {
   else phase = "result";
 
   return (
-    <div className="mx-auto w-full max-w-4xl">
-      <div className="flex items-center justify-between">
-        <Link to="/coinflip" className="text-sm text-muted-foreground hover:text-foreground">← Coinflip lobby</Link>
-        <span className="rounded bg-gold/15 px-2 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>
-      </div>
-      <div className="mt-3 flex flex-wrap items-baseline gap-3">
-        <h1 className="font-display text-2xl">Coinflip #{g.id}</h1>
-        <span className="rounded bg-secondary px-2 py-0.5 text-xs">{g.status}</span>
-      </div>
-
+    <RoomFrame title={`Coinflip #${g.id}`} status={g.status}>
       <StageBox>
-        <MatchStage g={g} phase={phase} start={start} revealAt={revealAt} serverNow={serverNow} now={now} me={userId} identities={identities} />
+        <MatchStage
+          g={g}
+          phase={phase}
+          start={start}
+          revealAt={revealAt}
+          serverNow={serverNow}
+          now={now}
+          me={userId}
+          identities={identities}
+        />
       </StageBox>
 
       <FairnessPanel g={g} />
-      {phase === "result" && g.winner_id === userId && seen.current?.id === g.id && seen.current.sawHidden && (
-        <Suspense fallback={null}>
-          <Celebration />
-        </Suspense>
-      )}
+      {phase === "result" &&
+        g.winner_id === userId &&
+        seen.current?.id === g.id &&
+        seen.current.sawHidden && (
+          <Suspense fallback={null}>
+            <Celebration />
+          </Suspense>
+        )}
+    </RoomFrame>
+  );
+}
+
+/** Header rows are a fixed height so the stage does not drop when the game row arrives. */
+export function CoinflipRoomFallback() {
+  return (
+    <RoomFrame title="Coinflip">
+      <StageBox className="animate-pulse" />
+    </RoomFrame>
+  );
+}
+
+function RoomFrame({
+  title,
+  status,
+  children,
+}: {
+  title: string;
+  status?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="mx-auto w-full max-w-4xl">
+      <div className="flex h-5 items-center justify-between">
+        <Link
+          to="/coinflip"
+          className="text-sm leading-5 text-muted-foreground hover:text-foreground"
+        >
+          ← Coinflip lobby
+        </Link>
+        <span className="rounded bg-gold/15 px-2 py-0.5 text-[10px] font-bold leading-none tracking-wider text-gold">
+          {APP.creditsLabel}
+        </span>
+      </div>
+      <div className="mt-3 flex h-8 items-center gap-3">
+        <h1 className="truncate font-display text-2xl leading-8">{title}</h1>
+        {status ? (
+          <span className="shrink-0 rounded bg-secondary px-2 py-0.5 text-xs leading-5">
+            {status}
+          </span>
+        ) : (
+          <span className="inline-block h-5 w-16 shrink-0 rounded bg-secondary/70" />
+        )}
+      </div>
+      {children}
     </div>
   );
 }
 
 function useMatchAvatarSize() {
-  const [wide, setWide] = useState(() => typeof window !== "undefined" && window.matchMedia("(min-width: 640px)").matches);
+  const [wide, setWide] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(min-width: 640px)").matches,
+  );
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 640px)");
     const apply = () => setWide(mq.matches);
@@ -139,13 +195,32 @@ const CENTER_COIN = 128;
 const CENTER_COIN_BOX = CENTER_COIN * 1.5;
 const CENTER_COUNTDOWN = 148;
 /** Same box for the loading state, the countdown and the flip, so landing on a game does not move the page. */
-const STAGE_BOX = "game-stage relative mt-3 h-[21rem] touch-pan-y overflow-clip rounded-2xl border border-border bg-card p-4 sm:h-[26rem] sm:px-10 sm:py-8";
+const STAGE_BOX =
+  "game-stage relative mt-3 h-[21rem] touch-pan-y overflow-clip rounded-2xl border border-border bg-card p-4 sm:h-[26rem] sm:px-10 sm:py-8";
 
 function StageBox({ children, className }: { children?: ReactNode; className?: string }) {
   return <div className={className ? `${STAGE_BOX} ${className}` : STAGE_BOX}>{children}</div>;
 }
 
-function MatchStage({ g, phase, start, revealAt, serverNow, now, me, identities }: { g: CfGameView; phase: string; start: number | null; revealAt: number | null; serverNow: () => number; now: number; me: string | null; identities: Map<string, PrestigeIdentity> }) {
+function MatchStage({
+  g,
+  phase,
+  start,
+  revealAt,
+  serverNow,
+  now,
+  me,
+  identities,
+}: {
+  g: CfGameView;
+  phase: string;
+  start: number | null;
+  revealAt: number | null;
+  serverNow: () => number;
+  now: number;
+  me: string | null;
+  identities: Map<string, PrestigeIdentity>;
+}) {
   const avatarSize = useMatchAvatarSize();
   const compact = avatarSize < 100;
   const coinSize = compact ? 88 : CENTER_COIN;
@@ -169,22 +244,67 @@ function MatchStage({ g, phase, start, revealAt, serverNow, now, me, identities 
       <div className="flex items-end justify-center" style={{ height: winningsH }}>
         {showWinnings ? <Winnings amount={won} /> : null}
       </div>
-      <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-2 sm:gap-3" style={crownPad ? { paddingTop: crownPad } : undefined}>
-        <PlayerSlot g={g} slot="creator" phase={phase} identity={identities.get(g.creator_id)} avatarSize={avatarSize} band={band} />
+      <div
+        className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-2 sm:gap-3"
+        style={crownPad ? { paddingTop: crownPad } : undefined}
+      >
+        <PlayerSlot
+          g={g}
+          slot="creator"
+          phase={phase}
+          identity={identities.get(g.creator_id)}
+          avatarSize={avatarSize}
+          band={band}
+        />
         <div className="grid place-items-center" style={{ width: band, height: band }}>
-          <Center g={g} phase={phase} start={start} revealAt={revealAt} serverNow={serverNow} now={now} me={me} coinSize={coinSize} compact={compact} />
+          <Center
+            g={g}
+            phase={phase}
+            start={start}
+            revealAt={revealAt}
+            serverNow={serverNow}
+            now={now}
+            me={me}
+            coinSize={coinSize}
+            compact={compact}
+          />
         </div>
-        <PlayerSlot g={g} slot="opponent" phase={phase} identity={g.opponent_id ? identities.get(g.opponent_id) : undefined} avatarSize={avatarSize} band={band} />
+        <PlayerSlot
+          g={g}
+          slot="opponent"
+          phase={phase}
+          identity={g.opponent_id ? identities.get(g.opponent_id) : undefined}
+          avatarSize={avatarSize}
+          band={band}
+        />
       </div>
       <StageNote g={g} phase={phase} now={now} />
       {/* Sits in the stage's existing padding, so the card does not grow when the coin lands. */}
-      <p className="tabular pointer-events-none absolute inset-x-0 bottom-2 text-center text-xs leading-4 text-muted-foreground sm:bottom-3">{feeLine}</p>
+      <p className="tabular pointer-events-none absolute inset-x-0 bottom-2 text-center text-xs leading-4 text-muted-foreground sm:bottom-3">
+        {feeLine}
+      </p>
     </div>
   );
 }
 
-function PlayerSlot({ g, slot, phase, identity, avatarSize, band }: { g: CfGameView; slot: "creator" | "opponent"; phase: string; identity?: PrestigeIdentity; avatarSize: number; band: number }) {
-  const side = (slot === "creator" ? g.creator_side : opposite(g.creator_side as CoinSide)) as CoinSide;
+function PlayerSlot({
+  g,
+  slot,
+  phase,
+  identity,
+  avatarSize,
+  band,
+}: {
+  g: CfGameView;
+  slot: "creator" | "opponent";
+  phase: string;
+  identity?: PrestigeIdentity | undefined;
+  avatarSize: number;
+  band: number;
+}) {
+  const side = (
+    slot === "creator" ? g.creator_side : opposite(g.creator_side as CoinSide)
+  ) as CoinSide;
   const p = slot === "creator" ? g.creator : g.opponent;
   const uid = slot === "creator" ? g.creator_id : g.opponent_id;
   const lost = phase === "result" && g.winner_id && g.winner_id !== uid;
@@ -193,14 +313,39 @@ function PlayerSlot({ g, slot, phase, identity, avatarSize, band }: { g: CfGameV
       <div className="grid place-items-center" style={{ height: band }}>
         {uid ? (
           <span className="relative inline-flex">
-            <PlayerPrestigeIdentity avatar={p?.avatar_url} name={p?.username} frame={identity?.frame} crown={identity?.crown} level={identity?.level} tier={identity?.tier} size={avatarSize} reserveHeadroom={false} />
-            <SideCoin side={side} overlay className="absolute z-30" style={coinBadgePlacement(avatarSize, !!identity?.frame, slot === "creator" ? "left" : "right")} />
+            <PlayerPrestigeIdentity
+              avatar={p?.avatar_url}
+              name={p?.username}
+              frame={identity?.frame}
+              crown={identity?.crown}
+              level={identity?.level}
+              tier={identity?.tier}
+              size={avatarSize}
+              reserveHeadroom={false}
+            />
+            <SideCoin
+              side={side}
+              overlay
+              className="absolute z-30"
+              style={coinBadgePlacement(
+                avatarSize,
+                !!identity?.frame,
+                slot === "creator" ? "left" : "right",
+              )}
+            />
           </span>
         ) : (
-          <div className="flex items-center justify-center rounded-[8%] border-2 border-dashed border-border text-2xl text-muted-foreground" style={{ width: avatarSize, height: avatarSize }}>?</div>
+          <div
+            className="flex items-center justify-center rounded-[8%] border-2 border-dashed border-border text-2xl text-muted-foreground"
+            style={{ width: avatarSize, height: avatarSize }}
+          >
+            ?
+          </div>
         )}
       </div>
-      <div className="mt-3 max-w-full truncate text-sm font-semibold sm:text-base">{uid ? (p?.username ?? "player") : "Waiting..."}</div>
+      <div className="mt-3 max-w-full truncate text-sm font-semibold sm:text-base">
+        {uid ? (p?.username ?? "player") : "Waiting..."}
+      </div>
     </div>
   );
 }
@@ -208,11 +353,19 @@ function PlayerSlot({ g, slot, phase, identity, avatarSize, band }: { g: CfGameV
 function StageNote({ g, phase, now }: { g: CfGameView; phase: string; now: number }) {
   if (phase === "waiting") {
     const left = Math.max(0, Math.ceil((new Date(g.expires_at).getTime() - now) / 1000));
-    const clock = left >= 3600 ? `${Math.floor(left / 3600)}h ${Math.floor((left % 3600) / 60)}m` : left >= 60 ? `${Math.floor(left / 60)}m ${left % 60}s` : `${left}s`;
+    const clock =
+      left >= 3600
+        ? `${Math.floor(left / 3600)}h ${Math.floor((left % 3600) / 60)}m`
+        : left >= 60
+          ? `${Math.floor(left / 60)}m ${left % 60}s`
+          : `${left}s`;
     return (
       <div className="mt-3 text-center">
         <div className="font-display text-lg">Waiting for opponent...</div>
-        <div className="mt-1 text-sm text-muted-foreground">Waiting for <b>{opposite(g.creator_side as CoinSide)}</b> · expires in <span className="tabular">{clock}</span></div>
+        <div className="mt-1 text-sm text-muted-foreground">
+          Waiting for <b>{opposite(g.creator_side as CoinSide)}</b> · expires in{" "}
+          <span className="tabular">{clock}</span>
+        </div>
       </div>
     );
   }
@@ -221,7 +374,10 @@ function StageNote({ g, phase, now }: { g: CfGameView; phase: string; now: numbe
       <div className="mt-3 text-center">
         <div className="font-display text-lg">Game cancelled</div>
         <div className="mt-1 text-sm text-muted-foreground">
-          {g.cancel_reason === "EXPIRED" ? "No opponent joined in time." : "Cancelled by the creator."} The wager was returned.
+          {g.cancel_reason === "EXPIRED"
+            ? "No opponent joined in time."
+            : "Cancelled by the creator."}{" "}
+          The wager was returned.
         </div>
       </div>
     );
@@ -229,7 +385,27 @@ function StageNote({ g, phase, now }: { g: CfGameView; phase: string; now: numbe
   return null;
 }
 
-function Center({ g, phase, start, revealAt, serverNow, now, me, coinSize, compact }: { g: CfGameView; phase: string; start: number | null; revealAt: number | null; serverNow: () => number; now: number; me: string | null; coinSize: number; compact: boolean }) {
+function Center({
+  g,
+  phase,
+  start,
+  revealAt,
+  serverNow,
+  now,
+  me,
+  coinSize,
+  compact,
+}: {
+  g: CfGameView;
+  phase: string;
+  start: number | null;
+  revealAt: number | null;
+  serverNow: () => number;
+  now: number;
+  me: string | null;
+  coinSize: number;
+  compact: boolean;
+}) {
   const played = useRef<string | null>(null);
   useEffect(() => {
     if (played.current === phase) return;
@@ -240,14 +416,36 @@ function Center({ g, phase, start, revealAt, serverNow, now, me, coinSize, compa
 
   if (phase === "cancelled") return null;
   if (phase === "waiting") {
-    return <Coin startMs={null} side={null} serverNow={serverNow} restSide={g.creator_side as CoinSide} size={coinSize} embedded={compact} />;
+    return (
+      <Coin
+        startMs={null}
+        side={null}
+        serverNow={serverNow}
+        restSide={g.creator_side as CoinSide}
+        size={coinSize}
+        embedded={compact}
+      />
+    );
   }
   if (phase === "found" && start != null) {
-    return <Countdown start={start} joinedAt={g.joined_at ? new Date(g.joined_at).getTime() : null} now={now} />;
+    return (
+      <Countdown
+        start={start}
+        joinedAt={g.joined_at ? new Date(g.joined_at).getTime() : null}
+        now={now}
+      />
+    );
   }
   return (
     <div className="flex flex-col items-center">
-      <Coin startMs={start} side={(g.winning_side as CoinSide | null) ?? null} revealAt={revealAt} serverNow={serverNow} size={coinSize} embedded={compact} />
+      <Coin
+        startMs={start}
+        side={(g.winning_side as CoinSide | null) ?? null}
+        revealAt={revealAt}
+        serverNow={serverNow}
+        size={coinSize}
+        embedded={compact}
+      />
     </div>
   );
 }
@@ -255,7 +453,9 @@ function Center({ g, phase, start, revealAt, serverNow, now, me, coinSize, compa
 function Winnings({ amount }: { amount: number }) {
   return (
     <div className="animate-rise-in text-center leading-none">
-      <p className="text-[9px] font-semibold tracking-[0.14em] text-primary sm:text-[10px]">Winnings:</p>
+      <p className="text-[9px] font-semibold tracking-[0.14em] text-primary sm:text-[10px]">
+        Winnings:
+      </p>
       <p className="mt-px bg-gradient-to-b from-foreground to-primary bg-clip-text font-display text-lg tracking-tight text-transparent tabular sm:text-xl">
         {formatUsd(amount)}
       </p>
@@ -264,18 +464,37 @@ function Winnings({ amount }: { amount: number }) {
 }
 
 /** 3.5s pre-flip: an RGB disc that fills as the countdown runs out. */
-function Countdown({ start, joinedAt, now }: { start: number; joinedAt: number | null; now: number }) {
+function Countdown({
+  start,
+  joinedAt,
+  now,
+}: {
+  start: number;
+  joinedAt: number | null;
+  now: number;
+}) {
   const total = Math.max(1, joinedAt != null ? start - joinedAt : 3500);
   const left = Math.min(total, Math.max(0, start - now));
   const filled = Math.min(1, Math.max(0, 1 - left / total));
-  const rgb = "oklch(0.72 0.24 25), oklch(0.86 0.18 85), oklch(0.8 0.2 150), oklch(0.74 0.16 220), oklch(0.62 0.24 295), oklch(0.72 0.24 340)";
+  const rgb =
+    "oklch(0.72 0.24 25), oklch(0.86 0.18 85), oklch(0.8 0.2 150), oklch(0.74 0.16 220), oklch(0.62 0.24 295), oklch(0.72 0.24 340)";
   const sweep = `conic-gradient(from -90deg, ${rgb} ${filled * 100}%, transparent ${filled * 100}%)`;
   return (
     <div className="relative grid h-[148px] w-[148px] place-items-center">
       <div aria-hidden className="absolute inset-1 rounded-full bg-secondary" />
-      <div aria-hidden className="absolute inset-1 rounded-full opacity-80 blur-lg" style={{ background: sweep }} />
-      <div aria-hidden className="absolute inset-1 rounded-full shadow-[inset_0_0_18px_rgb(0_0_0/0.35)]" style={{ background: sweep }} />
-      <span className="tabular relative z-10 font-display text-4xl leading-none tracking-tight text-foreground drop-shadow-[0_1px_6px_rgb(0_0_0/0.85)]">{(left / 1000).toFixed(1)}</span>
+      <div
+        aria-hidden
+        className="absolute inset-1 rounded-full opacity-80 blur-lg"
+        style={{ background: sweep }}
+      />
+      <div
+        aria-hidden
+        className="absolute inset-1 rounded-full shadow-[inset_0_0_18px_rgb(0_0_0/0.35)]"
+        style={{ background: sweep }}
+      />
+      <span className="tabular relative z-10 font-display text-4xl leading-none tracking-tight text-foreground drop-shadow-[0_1px_6px_rgb(0_0_0/0.85)]">
+        {(left / 1000).toFixed(1)}
+      </span>
     </div>
   );
 }
@@ -287,7 +506,9 @@ function FairnessPanel({ g }: { g: CfGameView }) {
       <summary className="flex cursor-pointer list-none items-center gap-2 text-xs text-muted-foreground hover:text-foreground">
         <ShieldCheck className="h-3.5 w-3.5 text-primary" />
         <span className="font-display uppercase tracking-widest">Provably fair</span>
-        <span className="tabular hidden truncate sm:inline">· {g.server_seed_hash.slice(0, 16)}…</span>
+        <span className="tabular hidden truncate sm:inline">
+          · {g.server_seed_hash.slice(0, 16)}…
+        </span>
         <span className="ml-auto group-open:hidden">Details</span>
         <span className="ml-auto hidden group-open:inline">Hide</span>
       </summary>
@@ -305,7 +526,15 @@ function FairnessPanel({ g }: { g: CfGameView }) {
           variant="secondary"
           className="mt-3"
           onClick={async () =>
-            setRes(await verifyCoinflip({ id: String(g.id), draw_version: g.draw_version, server_seed_hash: g.server_seed_hash, server_seed: g.server_seed, winning_side: g.winning_side as CoinSide | null }))
+            setRes(
+              await verifyCoinflip({
+                id: String(g.id),
+                draw_version: g.draw_version,
+                server_seed_hash: g.server_seed_hash,
+                server_seed: g.server_seed,
+                winning_side: g.winning_side as CoinSide | null,
+              }),
+            )
           }
         >
           Verify in my browser
@@ -315,8 +544,15 @@ function FairnessPanel({ g }: { g: CfGameView }) {
         <ul className="mt-4 space-y-2">
           {res.checks.map((c) => (
             <li key={c.label} className="flex gap-2">
-              {c.ok ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> : <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-rival" />}
-              <div className="min-w-0"><div>{c.label}</div><div className="tabular break-all text-xs text-muted-foreground">{c.detail}</div></div>
+              {c.ok ? (
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              ) : (
+                <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-rival" />
+              )}
+              <div className="min-w-0">
+                <div>{c.label}</div>
+                <div className="tabular break-all text-xs text-muted-foreground">{c.detail}</div>
+              </div>
             </li>
           ))}
         </ul>
@@ -346,7 +582,17 @@ function coinBadgePlacement(size: number, framed: boolean, corner: "left" | "rig
   return { width: coin, height: coin, bottom: edge, [corner]: edge };
 }
 
-function SideCoin({ side, className, style, overlay }: { side: CoinSide; className?: string; style?: CSSProperties; overlay?: boolean }) {
+function SideCoin({
+  side,
+  className,
+  style,
+  overlay,
+}: {
+  side: CoinSide;
+  className?: string;
+  style?: CSSProperties;
+  overlay?: boolean;
+}) {
   const img = (
     <img
       src={side === "HEADS" ? headsAsset : tailsAsset}
@@ -355,7 +601,11 @@ function SideCoin({ side, className, style, overlay }: { side: CoinSide; classNa
       height={56}
       draggable={false}
       style={overlay ? undefined : style}
-      className={overlay ? "h-full w-full scale-125 object-cover" : `shrink-0 rounded-full object-cover select-none ${className ?? ""}`}
+      className={
+        overlay
+          ? "h-full w-full scale-125 object-cover"
+          : `shrink-0 rounded-full object-cover select-none ${className ?? ""}`
+      }
     />
   );
   if (!overlay) return img;

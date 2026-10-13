@@ -1,12 +1,20 @@
 /**
- * Avatars are limited to the built-in DiceBear styles and are always loaded
- * through our own server (`/api/public/avatar/...`), so a player's browser
- * never requests an image from a host another player chose.
+ * Avatars are either a built-in DiceBear style or an uploaded image in our
+ * own storage bucket, so a player's browser never requests an image from a
+ * host another player chose.
  */
-export const AVATAR_STYLES = ["shapes", "rings", "glass", "identicon", "bottts-neutral", "thumbs"] as const;
+export const AVATAR_STYLES = [
+  "shapes",
+  "rings",
+  "glass",
+  "identicon",
+  "bottts-neutral",
+  "thumbs",
+] as const;
 export type AvatarStyle = (typeof AVATAR_STYLES)[number];
 
-const STORED = /^https:\/\/api\.dicebear\.com\/9\.x\/(shapes|rings|glass|identicon|bottts-neutral|thumbs)\/svg\?seed=([A-Za-z0-9_]{1,40})$/;
+const STORED =
+  /^https:\/\/api\.dicebear\.com\/9\.x\/(shapes|rings|glass|identicon|bottts-neutral|thumbs)\/svg\?seed=([A-Za-z0-9_]{1,40})$/;
 const SEED = /^[A-Za-z0-9_]{1,40}$/;
 
 export function isAvatarStyle(s: string): s is AvatarStyle {
@@ -31,5 +39,30 @@ export function storedAvatarUrl(style: AvatarStyle, seed: string): string {
 export function avatarSrc(stored: string | null | undefined): string | null {
   if (!stored) return null;
   const m = STORED.exec(stored);
-  return m ? `https://api.dicebear.com/9.x/${m[1]}/svg?seed=${m[2]}` : null;
+  if (m) return `https://api.dicebear.com/9.x/${m[1]}/svg?seed=${m[2]}`;
+  return isCustomAvatar(stored) ? stored : null;
+}
+
+const UUID = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+const CUSTOM_PATH = new RegExp(`^/storage/v1/object/public/avatars/${UUID}/${UUID}\\.webp$`);
+
+function storageOrigin(): string | null {
+  const url = import.meta.env?.["VITE_SUPABASE_URL"] as string | undefined;
+  try {
+    return url ? new URL(url).origin : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Uploaded avatars: a normalized WebP in our own public `avatars` bucket. The
+ * server only writes this URL after the image passed validation and the
+ * content check; every upload gets a new file, so URLs are immutable.
+ */
+export function isCustomAvatar(stored: string | null | undefined): boolean {
+  if (!stored) return false;
+  const origin = storageOrigin();
+  if (!origin || !stored.startsWith(`${origin}/`)) return false;
+  return CUSTOM_PATH.test(stored.slice(origin.length));
 }

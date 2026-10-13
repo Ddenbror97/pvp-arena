@@ -105,7 +105,7 @@ The same measure from the player's side: RTP = 100% − house edge. A game with 
 
 ### Rake or fee
 
-A cut taken from a pot rather than a built-in edge. Poker rooms and player-vs-player games usually charge a rake or fee. On PVPspinArena the house fee is configurable and defaults to 0%.
+A cut taken from a pot rather than a built-in edge. Poker rooms and player-vs-player games usually charge a rake or fee. On PVPspinArena the house fee on Jackpot and Coinflip is 5% of the pot.
 
 ### House-banked
 
@@ -267,7 +267,7 @@ Knowing these words is the first step to using the tools behind them. Setting li
       body: `Players also use informal words. Some come from land-based casinos, and some from the CS:GO skin era.
 
 - **High roller or whale**: a player who bets large amounts.
-- **Degen**: short for degenerate; online slang for a player who takes big risks. It is often used jokingly, but the behaviour behind it is worth taking seriously.
+- **[Degen](/guides/degen-gambling)**: short for degenerate; online slang for a player who takes big risks. It is often used jokingly, but the behaviour behind it is worth taking seriously.
 - **Bust**: losing your whole bankroll for a session.
 - **Heater**: a run of wins. It does not change the odds of the next bet.
 - **Tilt**: playing emotionally after a loss, usually with bigger bets.

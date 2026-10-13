@@ -113,7 +113,7 @@ Do not open every RLCS open because the games are short. Thin events plus live g
       title: "An RL ticket versus a hashed PvP round",
       body: `A Rocket League ticket is a contract on an external match. You cannot recompute a golden goal from a server seed. Your checks are licence, void rules, price after vig, and withdrawal.
 
-A PvP round on this site is a contract on an internal random result. [Coinflip](/coinflip) with a 0% fee is 50% at decimal 2.00. Jackpot chance is your share of the pot. Check the commit-reveal on the [fairness page](/fairness). Nobody is pricing a kickoff.
+A PvP round on this site is a contract on an internal random result. [Coinflip](/coinflip) is 50/50 at decimal 1.90 after a 5% pot fee. Jackpot chance is your share of the pot. Check the commit-reveal on the [fairness page](/fairness). Nobody is pricing a kickoff.
 
 Do not use a hashed pot as a hedge after a 0–3 start. Do not use a roulette colour as "overtime but faster". They fail in different ways.`,
     },
@@ -163,7 +163,7 @@ If betting is already taking more time or money than you planned, use [how to st
     },
     {
       q: "Does PVPspinArena offer Rocket League betting?",
-      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip and Roulette only.",
+      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Is Rocket League betting legal?",

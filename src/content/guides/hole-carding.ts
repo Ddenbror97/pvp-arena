@@ -99,7 +99,7 @@ If one player always seems to know the dealer total before it is shown, treat th
       title: "A result with no down card to see",
       body: `Hole carding is a problem created by a hidden physical card and a human dealer. A hashed round has neither. Both players see the rule before the stake, and either player can recompute the result after it.
 
-PVPspinArena runs three games, in USDC or ETH on Base. [Coinflip](/coinflip) is two players and a 50/50. Roulette is a shared 33-slot wheel: 16 purple and 16 silver pay 2x, and 1 green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Jackpot assigns a win chance equal to your share of the pot, and the winner takes the pot minus any fee shown before entry. The [fairness](/fairness) page is where a settled round's seeds are checked. There is no hole card, no pitch, and no dealer procedure to interpret.
+PVPspinArena runs four games, settled in US dollars. P2P Slott is a 1v1 duel with a 10% fee on the players' pot. [Coinflip](/coinflip) is two players and a 50/50. Roulette is a shared 33-slot wheel: 16 purple and 16 silver pay 2x, and 1 green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Jackpot assigns a win chance equal to your share of the pot, and the winner takes the pot minus any fee shown before entry. The [fairness](/fairness) page is where a settled round's seeds are checked. There is no hole card, no pitch, and no dealer procedure to interpret.
 
 The edge on the wheel is a price you pay on purpose. If you want blackjack, play it in a licensed room, under the posted hole-card rule, and without a device. Limits and contacts are on the [responsible gambling](/responsible-gambling) page. Adults only.
 

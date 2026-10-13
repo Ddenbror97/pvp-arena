@@ -156,7 +156,7 @@ A statistic that cannot answer these questions is a talking point, not evidence.
       title: "The statistic that matters for your own play",
       body: `National figures describe populations. For an individual player, the most useful number is the expected return on the bet in front of them.
 
-PVPspinArena runs three player-vs-player games in USDC or ETH on Base. In [Roulette](/roulette), Purple and Silver on its 33-slot wheel return 32/33, about 96.97%, before the win fee, which is about $3.03 of expected loss for every $100 wagered. After the fee that Purple or Silver edge is about 7.88%. Green returns 14/33, so it costs much more. A [Coinflip](/coinflip) is a fair 50/50, with the winner taking the pot minus any fee shown before entry. In Jackpot, your chance equals your share of the pot.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. In [Roulette](/roulette), Purple and Silver on its 33-slot wheel return 32/33, about 96.97%, before the win fee, which is about $3.03 of expected loss for every $100 wagered. After the fee that Purple or Silver edge is about 7.88%. Green returns 14/33, so it costs much more. A [Coinflip](/coinflip) is a fair 50/50, with the winner taking the pot minus any fee shown before entry. In Jackpot, your chance equals your share of the pot.
 
 ### Checking the numbers yourself
 

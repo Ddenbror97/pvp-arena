@@ -153,7 +153,7 @@ Skip the player closest to going out. One lost turn is often the difference betw
 
 If adults stake the game, 18+ applies and the stake should be agreed before the shuffle. A [coinflip](/coinflip) is a separate even bet you can check from published seeds. Phase 10 is won by the player who lays Phase 10, or by the lowest score if several finish it on the same hand.
 
-[Canasta](/guides/canasta-rules) is the other big commercial-style melding game in this cluster, played with standard decks and a different contract. [Gin rummy](/guides/how-to-play-gin-rummy) is the two-player version of laying sets and runs without a ten-phase ladder.
+[Canasta](/guides/canasta-rules) is the other big commercial-style melding game in this cluster, played with standard decks and a different contract. [Gin rummy](/guides/how-to-play-gin-rummy) is the two-player version of laying sets and runs without a ten-phase ladder. [Sequence](/guides/sequence-rules) is the board-and-chip game that uses two decks. It is not a meld ladder.
 
 See also [tonk](/guides/tonk-card-game) and [skip-bo](/guides/skip-bo-rules).`,
     },

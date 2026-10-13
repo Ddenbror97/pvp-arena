@@ -150,7 +150,7 @@ The story of [Archie Karas](/guides/archie-karas), who reportedly ran a small st
     {
       id: "pvpspinarena",
       title: "Risk of ruin on PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on Base, and the ruin maths maps onto each one.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, and the ruin maths maps onto each one.
 
 - **[Roulette](/roulette):** Purple and Silver are the 16/33 bet used in the tables above. Green pays 14x on 1 slot in 15, with different edges: about 7.88% on Purple or Silver and about 59.70% on Green after the 5% win fee but far higher variance, so a bankroll of Green bets reaches ruin with bigger swings along the way.
 - **[Coinflip](/coinflip):** two players on a 50/50. With no fee it is the fair-coin column, where risk of ruin is 1 − i/N. Any fee shown before entry pulls the numbers towards the negative-edge column.

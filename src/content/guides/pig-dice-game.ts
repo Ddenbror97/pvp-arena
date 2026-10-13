@@ -115,7 +115,7 @@ The mistake new players make is narrating the turn total as if it were already b
       title: "Banking a turn and a hashed round",
       body: `Pig's choice is whether to lock in a total or risk it. A player-versus-player round on this site has no optional extra roll. The result is one draw from a committed procedure, and both players see the same rule before they stake.
 
-PVPspinArena runs three games, in USDC or ETH on Base. Coinflip is two players and a 50/50. Roulette is a shared 33-slot wheel: 16 purple and 16 silver pay 2x, and 1 green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Jackpot pays the pot to one player, with a win chance equal to that player's share of the pot, minus any fee shown before entry. You can check a settled round from the committed seeds on the [fairness page](/fairness).
+PVPspinArena runs four games, settled in US dollars. P2P Slott is a 1v1 duel with a 10% fee on the players' pot. Coinflip is two players and a 50/50. Roulette is a shared 33-slot wheel: 16 purple and 16 silver pay 2x, and 1 green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Jackpot pays the pot to one player, with a win chance equal to that player's share of the pot, minus any fee shown before entry. You can check a settled round from the committed seeds on the [fairness page](/fairness).
 
 The habit worth copying from Pig is the one you make before the die is in the air. In Pig that is a hold threshold. In a staked game it is a loss limit you set while you are calm. Tools for that sit on the [responsible gambling](/responsible-gambling) page. Play is 18+ only.
 

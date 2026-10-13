@@ -22,7 +22,7 @@ export const guide: Guide = {
     "If you cannot name the poker software, you cannot tell who is responsible for the shuffle.",
     "A tiny site with a crowded lobby of instant, silent accounts is a reason to close the tab.",
     "Cheating hurts the other seats. This page will not teach anyone how to rig a game.",
-    "PVPspinArena does not run a poker room. The live games are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not run a poker room. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -96,7 +96,7 @@ You are not expected to audit source code. You are expected to notice when there
 
 This table is a refusal list, not a build guide. It will not tell you how a client should shuffle. It tells you when you lack the facts a player needs.
 
-[Provably fair games](/guides/provably-fair-games) describe a commit-and-reveal style used on some crypto games. A poker site that never mentions anything like it, and also never names a conventional provider, has given you no story you can check. Silence is not the same as a proof. The [fairness](/fairness) page on this site explains Jackpot, Coinflip and Roulette only. It is not a certificate for someone else's poker client.`,
+[Provably fair games](/guides/provably-fair-games) describe a commit-and-reveal style used on some crypto games. A poker site that never mentions anything like it, and also never names a conventional provider, has given you no story you can check. Silence is not the same as a proof. The [fairness](/fairness) page on this site explains Jackpot, Coinflip, Roulette, and P2P Slott. It is not a certificate for someone else's poker client.`,
     },
     {
       id: "lobby",

@@ -10,7 +10,7 @@ export const guide: Guide = {
     "How a dice duel works: two totals compared, what ties do to the price, and why a “higher roll wins” button is not a fair 50/50.",
   h1: "Dice duel: two-cube rules, ties and the house take",
   answer:
-    "A dice duel is a showdown of two rolls — usually two dice each, sometimes one. Higher total wins. If ties push and the winner is paid even money, the game is fair before any fee. If ties lose, or the house takes ties, the keep equals the tie rate (about 11.3% for 2d6 vs 2d6). PVPspinArena does not offer a dice duel; Jackpot, Coinflip and Roulette are the live games.",
+    "A dice duel is a showdown of two rolls — usually two dice each, sometimes one. Higher total wins. If ties push and the winner is paid even money, the game is fair before any fee. If ties lose, or the house takes ties, the keep equals the tie rate (about 11.3% for 2d6 vs 2d6). PVPspinArena does not offer a dice duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   facts: [
     "Two independent 2d6 totals tie in 146 of 1,296 ordered outcomes, about 11.27%.",
     "If ties push and winners take 2x, expected return is 100% before a commission.",
@@ -80,16 +80,16 @@ If the UI says “dice war” and hides the tie line in a footnote, assume the e
     {
       id: "not-here",
       title: "PVPspinArena does not offer a dice duel",
-      body: `There is no two-cube showdown here. The live games are Jackpot, Coinflip and Roulette.
+      body: `There is no two-cube showdown here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
 
 - [Jackpot](/) — pot share is chance.
-- [Coinflip](/coinflip) — a single 50/50 bit, default 0% fee, no tie-eat.
+- [Coinflip](/coinflip) — a single 50/50 bit, a 5% pot fee, no tie-eat.
 - [Roulette](/roulette) — 33 slots, about 7.88% on Purple or Silver and about 59.70% on Green after the 5% win fee.
 - [online casino games](/guides/online-casino-games) — where a duel tile usually sits: instant original.
 
 If you want a 50/50 that does not silently keep ties, use Coinflip or a push-on-tie duel you have read. If the button only says “higher wins,” ask what happens on 8–8.
 
-A night of 120 ties-lose 2d6 duels at $8 is $960 wagered, expected cost about $108. The same 120 push-on-tie duels at $8 have expected cost $0 before a fee, with a lot of 8–8 chips coming back. The same 120 Coinflips at 0% fee are a cleaner 50/50 without a 11% collision tax. If the studio adds a “sudden death” on ties that is a one-die ties-lose, that appendix is a 16.67% game sitting on top of a fair duel. Price the appendix separately or refuse it.`,
+A night of 120 ties-lose 2d6 duels at $8 is $960 wagered, expected cost about $108. The same 120 push-on-tie duels at $8 have expected cost $0 before a fee, with a lot of 8–8 chips coming back. The same 120 Coinflips at a 5% pot fee cost about $48, without an 11% collision tax. If the studio adds a “sudden death” on ties that is a one-die ties-lose, that appendix is a 16.67% game sitting on top of a fair duel. Price the appendix separately or refuse it.`,
     },
     {
       id: "read",
@@ -129,7 +129,7 @@ A “fair” 2d6 duel that takes 5% of pots on wins: you win 44.37% of the time 
 
 Suppose 20% of duels the house may reroll a losing total once. That is a second draw on the 44.37% of rolls they lost. They convert some losses into ties or wins. Even a modest reroll on 6-or-worse is a large extra keep. If the help file mentions “house may roll again,” treat it as a different, worse game.
 
-Eighty $10 ties-lose duels: expected cost about $90. Eighty $10 push-on-tie duels: expected cost $0 before fees, with a bumpy path. Eighty $10 Coinflips at 0% fee: expected cost $0, 50/50 each time, no 11% tie tax. The word “dice” does not pick the row. The tie sentence does.
+Eighty $10 ties-lose duels: expected cost about $90. Eighty $10 push-on-tie duels: expected cost $0 before fees, with a bumpy path. Eighty $10 Coinflips at a 5% pot fee: expected cost $40, 50/50 each time, no 11% tie tax. The word “dice” does not pick the row. The tie sentence does.
 
 Sic bo and craps propositions use three dice or one 36-pair table with short pays. They are not duels. Do not import a 16.67% any-seven into a 2d6 showdown, and do not export 11.27% onto a slider.`,
     },
@@ -164,7 +164,7 @@ Cap rematches. One hundred $6 ties-lose 2d6 duels is $600 through 11.27%, about 
     },
     {
       q: "Does PVPspinArena have a dice duel?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. This guide prices duel buttons you will see elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide prices duel buttons you will see elsewhere.",
     },
     {
       q: "What should I read first on the help screen?",

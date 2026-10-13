@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Rake is the site's cut of the pot or a timed fee; it is how the room is paid.",
     "A lab certificate says an RNG was tested, not that tonight's hand was honest.",
     "Provably fair poker is harder than a one-shot game because cards are dealt across streets.",
-    "PVPspinArena is not a poker room. It runs Jackpot, Coinflip and Roulette only.",
+    "PVPspinArena is not a poker room. It runs Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -72,7 +72,7 @@ Compare that with a posted pot fee on a PvP jackpot or coinflip. The fee is take
 
 A hashed PvP game on this site is a smaller object. Before a Coinflip or Jackpot result, the server publishes a commitment. After the round, you can recompute the result on the [Fairness](/fairness) page. That check answers "was this draw swapped after I joined?" It does not make you a poker player and it does not apply to community-card games this site does not offer.
 
-Hand histories and unique club IDs help after a dispute. They do not prove the unseen deck. If a room lets you export a hand, keep it. If a room deletes history after an hour, assume you will lose any argument about a mis-deal.
+Hand histories and unique club IDs help after a dispute. Private club clients and phone rooms are sorted on [real money poker apps](/guides/real-money-poker-apps). They do not prove the unseen deck. If a room lets you export a hand, keep it. If a room deletes history after an hour, assume you will lose any argument about a mis-deal.
 
 The [RNG versus provably fair](/guides/rng-vs-provably-fair) guide is the right next read if you want the lab-certificate model versus the hash-then-reveal model. Bring that vocabulary to any "bitcoin poker" landing page: ask what was committed, when, and what you recompute. If the answer is a logo, you have an RNG room with a crypto cashier.`,
     },
@@ -96,7 +96,7 @@ PVPspinArena does not sell poker bonuses because it does not sell poker. If you 
 2. Suppose, after the cap, the room effectively takes about $0.12 of rake per hand you see through. That is a teaching figure, not a quote from a named room.
 3. 400 × $0.12 = $48 of rake. Your stack can still be up if you won pots. The $48 is gone to the room either way.
 4. A 10% rakeback deal returns $4.80. You "got a bonus" and still paid $43.20 to sit.
-5. Contrast a $2 PvP Coinflip with a 0% fee: the only expected cost is the 50/50 variance, not a drip of rake. That is a different game with different skill. It is not better poker. It is not poker.
+5. Contrast a $2 PvP Coinflip with a 5% pot fee: the expected cost is that fee plus the 50/50 variance, not a drip of poker rake. That is a different game with different skill. It is not better poker. It is not poker.
 
 Use the example to read fee pages, not to pick a strategy. Set a [gambling budget](/guides/gambling-budget) before either product.`,
     },

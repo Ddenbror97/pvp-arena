@@ -168,7 +168,7 @@ These are the same questions our [are online casinos rigged guide](/guides/are-o
 ### Cost
 
 - **Case opening**: the gap between key price and expected item value, often large.
-- **PvP on PVPspinArena**: a configurable fee that defaults to 0%.
+- **PvP on PVPspinArena**: a 5% fee on the pot.
 
 ### Value
 

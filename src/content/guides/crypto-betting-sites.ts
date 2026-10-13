@@ -44,7 +44,7 @@ Affiliate copy will call every brand “trusted” and “instant.” Those word
 
 **Casino.** Ask for house edge or RTP on the games you will actually play. See [house edge](/guides/house-edge).
 
-**PvP.** Ask for the fee. On PVPspinArena, Jackpot and Coinflip default to 0%. On Roulette, Purple or Silver is about 7.88% and Green about 59.70% after the win fee.
+**PvP.** Ask for the fee. On PVPspinArena, Jackpot and Coinflip take 5% of the pot and P2P Slott takes 10%. On Roulette, Purple or Silver is about 7.88% and Green about 59.70% after the win fee.
 
 If a site will not state a price, stop. A mystery vig is not a feature of “Web3.”
 
@@ -158,7 +158,7 @@ The same books show up as installs. A [crypto betting app](/guides/crypto-bettin
     },
     {
       q: "Does PVPspinArena take sports bets?",
-      a: "No. It is Jackpot, Coinflip and Roulette. Use this checklist on any sportsbook you consider, and use Fairness here only for these games.",
+      a: "No. It runs Jackpot, Coinflip, Roulette, and P2P Slott. Use this checklist on any sportsbook you consider, and use Fairness here only for these games.",
     },
     {
       q: "What is the first check I should run?",

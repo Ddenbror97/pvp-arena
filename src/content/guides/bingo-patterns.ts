@@ -166,7 +166,7 @@ Bingo prizes, like [pull tabs](/guides/pull-tabs) and [quick pick](/guides/quick
 
 PVPspinArena runs the same idea without the waiting. In [Jackpot](/), players add wagers to one pot and your win chance equals your share of it: put in 5% of the pot and you win about 5% of the time. The winner takes the pot minus any fee shown before entry. [Coinflip](/coinflip) is the two-player case, a straight 50/50. [Roulette](/roulette) is a shared wheel of 33 slots where Purple and Silver pay 2x and Green pays 14x, returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee of every bet.
 
-Each result comes from committed seeds, so the draw is fixed before anyone joins, and any settled round can be checked on [fairness](/fairness). A bingo hall asks you to trust the blower; a hashed round lets you verify it. Play is in USDC or ETH on Base, and the [responsible gambling](/responsible-gambling) page has limits if games start running longer than you planned.`,
+Each result comes from committed seeds, so the draw is fixed before anyone joins, and any settled round can be checked on [fairness](/fairness). A bingo hall asks you to trust the blower; a hashed round lets you verify it. Play is settled in US dollars, and the [responsible gambling](/responsible-gambling) page has limits if games start running longer than you planned.`,
     },
   ],
   faqs: [

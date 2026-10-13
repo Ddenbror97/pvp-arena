@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { PLAYER_COLORS } from "./JackpotWheel";
+import { playerColor } from "@/lib/jackpot/colors";
 
 /** Subtle confetti + light burst. Rendered only after a reveal (client-side). */
 export function Celebration() {
@@ -10,14 +10,17 @@ export function Celebration() {
         delay: Math.random() * 0.8,
         dur: 2.4 + Math.random() * 1.8,
         dx: `${(Math.random() - 0.5) * 30}vw`,
-        color: PLAYER_COLORS[i % PLAYER_COLORS.length],
+        color: playerColor(i, 1),
         w: 5 + Math.random() * 6,
       })),
     [],
   );
   return (
     <div className="pointer-events-none fixed inset-0 z-40 overflow-hidden" aria-hidden>
-      <div className="absolute left-1/2 top-1/3 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/30 blur-2xl" style={{ animation: "burst 1.4s ease-out both" }} />
+      <div
+        className="absolute left-1/2 top-1/3 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/30 blur-2xl"
+        style={{ animation: "burst 1.4s ease-out both" }}
+      />
       {pieces.map((p, i) => (
         <span
           key={i}

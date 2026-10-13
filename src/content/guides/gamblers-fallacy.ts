@@ -151,7 +151,7 @@ Betting on whatever hit last is the hot-hand fallacy as a system. It feels diffe
 
 ### What every system has in common
 
-A system changes bet sizes and timing. It cannot change the probability of any single result or the payout for it. So no system can change the house edge. In a PvP game with a 0% fee, no system can give you an edge over other players either, because each round is still a fair coin or a fair share of a pot.`,
+A system changes bet sizes and timing. It cannot change the probability of any single result or the payout for it. So no system can change the house edge. In a PvP game, no system removes the 5% pot fee either, because each round is still a fair coin or a fair share of a pot.`,
     },
     {
       id: "chasing",

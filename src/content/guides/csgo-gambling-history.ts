@@ -150,7 +150,7 @@ Many players who grew up with skin jackpots now look for the same formats with c
       title: "How PVPspinArena applies these lessons",
       body: `PVPspinArena is inspired by the CS:GO era's player-versus-player games, but it is built to avoid the problems that ended it.
 
-- **Player versus player.** Jackpot and Coinflip pots are made only of players' stakes. The site keeps only its configured fee, which defaults to 0%.
+- **Player versus player.** Jackpot and Coinflip pots are made only of players' stakes. The site keeps only its configured fee, which is 5% of the pot.
 - **Provably fair.** Every Jackpot, Coinflip and Roulette round commits a seed hash before entries and can be verified on the [Fairness page](/fairness).
 - **Exact dollar balances.** Balances are held in US dollar cents and funded with USDC or ETH on Base, so there are no price disputes.
 - **Transparent payments.** Deposits and withdrawals are blockchain transactions you can look up, with published limits and review thresholds.

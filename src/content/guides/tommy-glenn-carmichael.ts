@@ -130,7 +130,7 @@ For how RTP is set and measured, see [RTP explained](/guides/rtp-explained), and
       title: "Verification in a hashed PvP round",
       body: `The lesson regulators drew from Carmichael's era was that trust should not rest on a single component checking itself. Provably fair games apply a version of that idea to the result itself.
 
-PVPspinArena runs three player-vs-player games: Jackpot at [/](/), [Coinflip](/coinflip) and Roulette. Each round's result is derived from seeds committed before the round and revealed after settlement. Because the commitment is published first, the outcome cannot be quietly changed afterwards, and any player can recompute a settled round on the [fairness](/fairness) page. For how commitments work, see the [provably fair topic hub](/guides/topics/provably-fair).
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott: Jackpot at [/](/), [Coinflip](/coinflip) and Roulette. Each round's result is derived from seeds committed before the round and revealed after settlement. Because the commitment is published first, the outcome cannot be quietly changed afterwards, and any player can recompute a settled round on the [fairness](/fairness) page. For how commitments work, see the [provably fair topic hub](/guides/topics/provably-fair).
 
 There is no coin hopper to fool and no physical payout to intercept; payouts are balances credited by the system. Verification shows that the result was not changed. It does not change the odds. Coinflip is a fair 50/50, with the winner taking the pot minus any fee shown before entry. In Jackpot your win chance equals your share of the pot. On Roulette's 33-slot wheel, Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
 

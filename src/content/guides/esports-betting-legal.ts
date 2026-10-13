@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 Adults 18+ — many US sports products require 21. See [gambling age us](/guides/gambling-age-us). This legality note lives with the other geography pages in [Foundations](/guides/topics/foundations). Product literacy stays on [esports betting](/guides/esports-betting) and the [esports betting topic](/guides/topics/esports-betting).
 
-PVPspinArena runs Jackpot, Coinflip and Roulette. We are not a state-licensed sportsbook and will not claim otherwise.
+PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott. We are not a state-licensed sportsbook and will not claim otherwise.
 
 If betting is already harmful, use [responsible gambling](/responsible-gambling).
 ### Extra diligence notes

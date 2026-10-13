@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Auto cash-out and manual cash-out change timing friction, not the edge of a stated target.",
     "Instant 1.00x crashes are often how part of the house edge is built in.",
     "Doubling after losses raises ruin risk; it does not raise RTP.",
-    "PVPspinArena does not offer a crash gambling game; it runs Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer a crash gambling game; it runs Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {

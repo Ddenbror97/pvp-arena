@@ -91,7 +91,7 @@ Online operators sometimes advertise “real pachinko RTP.” Ask whether they m
     {
       id: "not-here",
       title: "PVPspinArena does not offer pachinko",
-      body: `There are no steel balls and no peg clone here. The live games are Jackpot, Coinflip and Roulette.
+      body: `There are no steel balls and no peg clone here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
 
 - [Jackpot](/) — pot share is chance.
 - [Coinflip](/coinflip) — 50/50, fee published.
@@ -173,7 +173,7 @@ The slot-style cousin with skill-stop reels is [pachislot](/guides/pachislot).`,
     },
     {
       q: "Does PVPspinArena have pachinko?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. This guide separates parlour opacity from clone paytables.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide separates parlour opacity from clone paytables.",
     },
     {
       q: "Why won’t you list a parlour house edge?",

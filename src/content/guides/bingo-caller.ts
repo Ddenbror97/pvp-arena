@@ -175,7 +175,7 @@ Numbers carry superstition in any draw. Players will tell you 7 is lucky and 13 
       title: "From the caller's cage to a hashed round",
       body: `A good caller earns trust by making the draw visible: the balls are counted, each one is shown, and the masterboard lets anyone check a claim. Bingo relies on people watching.
 
-PVPspinArena replaces the watching with cryptography. It runs three player-vs-player games, [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette), played in USDC or ETH on Base. Before each round, the result is fixed by committed seeds (a commit-reveal scheme). After it settles, anyone can check the round on the [fairness](/fairness) page, the same way a checker reads a card against the masterboard. In Jackpot your chance equals your share of the pot, much like your share of the cards in a bingo hall.
+PVPspinArena replaces the watching with cryptography. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Before each round, the result is fixed by committed seeds (a commit-reveal scheme). After it settles, anyone can check the round on the [fairness](/fairness) page, the same way a checker reads a card against the masterboard. In Jackpot your chance equals your share of the pot, much like your share of the cards in a bingo hall.
 
 No caller, cage or seed changes the odds in anyone's favour after the fact. If money on games of chance stops being a fun night out, the [responsible gambling](/responsible-gambling) page has limits and support links.`,
     },

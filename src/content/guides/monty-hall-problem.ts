@@ -147,7 +147,7 @@ For more puzzles where intuition and arithmetic disagree, the [St Petersburg par
     {
       id: "pvpspinarena",
       title: "Hidden information in a hashed PvP round",
-      body: `PVPspinArena runs three player-vs-player games, Jackpot, [Coinflip](/coinflip) and Roulette, and each round works like the opposite of Monty's stage. Before a round, the site commits to a seed by publishing its hash. The hash is fixed but reveals nothing useful about the result, so seeing it cannot tilt the odds the way the host's open door does. After settlement the seed is revealed and anyone can check it against the commitment on [fairness](/fairness). The design is explained in the [commit-reveal scheme](/guides/commit-reveal-scheme) guide.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and each round works like the opposite of Monty's stage. Before a round, the site commits to a seed by publishing its hash. The hash is fixed but reveals nothing useful about the result, so seeing it cannot tilt the odds the way the host's open door does. After settlement the seed is revealed and anyone can check it against the commitment on [fairness](/fairness). The design is explained in the [commit-reveal scheme](/guides/commit-reveal-scheme) guide.
 
 In other words, the only information you get before the result is information that is uncorrelated with it. A Coinflip is a clean 50/50 before and after you look at the hash. Roulette's Purple and Silver keep about a 7.88% house edge after the 5% win fee, Green keeps about 59.70%, and the previous spin changes nothing. Gambling on PVPspinArena is for adults 18+.`,
     },

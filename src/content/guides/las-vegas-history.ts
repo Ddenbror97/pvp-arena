@@ -117,7 +117,7 @@ The city’s famous free drinks, rooms and shows are paid for by expected loss. 
       title: "From the Strip to a hashed PvP round",
       body: `Las Vegas history is part of a much longer story told in [history of gambling](/guides/history-of-gambling), and the [oldest casino](/guides/oldest-casino) guide covers the European houses that came first. Browse more in the [Casino knowledge topic](/guides/topics/casino-knowledge).
 
-PVPspinArena is a small online example of the same maths, with a different trust model. It runs three player-vs-player games in USDC or ETH on the Base network:
+PVPspinArena is a small online example of the same maths, with a different trust model. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars:
 
 - [Roulette](/roulette) is a 33-slot wheel with 16 Purple and 16 Silver slots paying 2x and 1 Green slot paying 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee, and the law of large numbers enforces it the same way it does on a Strip table.
 - [Coinflip](/coinflip) pits two players against each other on a 50/50, with the winner taking the pot minus any fee shown before entry.

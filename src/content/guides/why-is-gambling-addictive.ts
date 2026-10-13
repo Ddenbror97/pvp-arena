@@ -76,7 +76,7 @@ Chase also has a time version: staying past the clock because the session is “
 
 Crypto adds another removal of friction. A confirmed transfer is final. There is no chargeback pause. That is good for honest withdrawals and bad for an urge. A [crypto casino](/guides/what-is-a-crypto-casino) is still a casino. The payment rail is faster.
 
-PVPspinArena credits USDC and ETH on Base and shows dollars. Speed of credit is a product fact — see [how it works](/how-it-works) — not a reason to treat a balance as harmless. A 0% default fee on some PvP pots lowers average cost. It does not slow the loop.
+PVPspinArena credits USDC and ETH on Base and shows dollars. Speed of credit is a product fact — see [how it works](/how-it-works) — not a reason to treat a balance as harmless. A 5% fee on a Jackpot or Coinflip pot is still a cost. It does not slow the loop.
 
 Late night is a common accelerator. Sleep loss makes chase stories more convincing. That is not a mystical “willpower hour.” It is a tired brain plus an open app.
 

@@ -114,13 +114,13 @@ Insurance and “get one leg back” promotions have a price too. Sometimes the 
     {
       id: "not-jackpot",
       title: "A parlay is not a Jackpot pot",
-      body: `On PVPspinArena a [Jackpot](/) ticket is your share of a pot. Your chance is stake/pot. A 0% fee pot is about 0-EV between players. That is not a four-leg multiply. You cannot “parlay” colours into a jackpot and you cannot park an SGP on this domain.
+      body: `On PVPspinArena a [Jackpot](/) ticket is your share of a pot. Your chance is stake/pot. A 5% fee pot is about −5% between players. That is not a four-leg multiply. You cannot “parlay” colours into a jackpot and you cannot park an SGP on this domain.
 
 | Product | How you get paid | Where the fee lives |
 | --- | --- | --- |
 | Parlay | All listed legs hit | Compounded vig in the product |
-| Jackpot | You win the draw | Fee on the pot, if any |
-| Coinflip | Your bit hits | Fee on the pot, if any |
+| Jackpot | You win the draw | 5% of the pot |
+| Coinflip | Your bit hits | 5% of the pot |
 
 [Sports betting with crypto](/guides/sports-betting-with-crypto) does not unstack a parlay. USDC settlement does not turn 6.96 into 8.00.
 

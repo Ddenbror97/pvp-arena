@@ -43,7 +43,7 @@ If the casino accepts only on-chain deposits, the card step always ends in a wal
     {
       id: "stablecoins",
       title: "Stablecoins vs volatile coins",
-      body: `USDC or similar keeps your bankroll steadier during a session. ETH or BTC add market noise on top of game variance. [Stablecoin payments for gambling](/guides/stablecoin-payments-gambling) covers the trade-offs.
+      body: `USDC or similar keeps your bankroll steadier during a session. ETH or BTC add market noise on top of game variance. [Stablecoin payments for gambling](/guides/stablecoin-payments-gambling) covers the trade-offs. The wider fit among fees, speed, and a coin that moves in price is [best crypto for gambling](/guides/best-crypto-for-gambling).
 
 Stablecoins still need the correct chain. USDC on the wrong network is the wrong asset for the cashier.`,
     },

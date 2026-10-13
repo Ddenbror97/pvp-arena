@@ -84,7 +84,7 @@ Lottery-scale odds belong in the same mental bin as a state jackpot: entertainme
 - Pool is the stakes sitting in this round.
 - Your chance equals your stake divided by the pot.
 - Other players are the bank.
-- The house take is a fee, default 0% here.
+- The house take is a 5% fee on the pot.
 - You can write the probability before the draw.
 
 That PvP product is [crypto jackpot](/guides/crypto-jackpot). You can watch it on [Jackpot](/). A $20 ticket in a $200 pot is 10%, not 1 in 10 million. Different sport.
@@ -126,7 +126,7 @@ Write a spin cap that assumes the jackpot will not hit, because that is the defa
     {
       id: "not-here",
       title: "What you will find on PVPspinArena instead",
-      body: `There is no progressive reel and no networked meter. The live games are Jackpot, Coinflip and Roulette.
+      body: `There is no progressive reel and no networked meter. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
 
 - [Jackpot](/guides/crypto-jackpot) — a pot of player stakes, chance = share.
 - [Coinflip](/coinflip) — two players, 50/50.

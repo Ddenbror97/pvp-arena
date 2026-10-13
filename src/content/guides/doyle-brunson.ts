@@ -142,7 +142,7 @@ Very few professionals of any era last sixty years. Brunson went broke and rebui
 
 ### How this maps to PVPspinArena
 
-PVPspinArena runs three player-vs-player games, and none of them is poker. In [Coinflip](/coinflip) two players take a fair 50/50, and the winner takes the pot minus any fee shown before entry. In Jackpot your win chance equals your share of the pot. [Roulette](/roulette) uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Reading an opponent does not change any of those numbers, because the result comes from committed seeds rather than decisions at a table. Any settled round can be checked on the [fairness page](/fairness).
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and none of them is poker. In [Coinflip](/coinflip) two players take a fair 50/50, and the winner takes the pot minus any fee shown before entry. In Jackpot your win chance equals your share of the pot. [Roulette](/roulette) uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Reading an opponent does not change any of those numbers, because the result comes from committed seeds rather than decisions at a table. Any settled round can be checked on the [fairness page](/fairness).
 
 That is the useful contrast: Brunson's edge was real because poker has decisions. A hashed PvP round has none after you enter, so the only choices that matter are how much you stake and when you stop. For more on where the line between skill and chance sits, see [skill based gambling](/guides/skill-based-gambling). Gambling is 18+, and limits are available on the [responsible gambling](/responsible-gambling) page.`,
     },

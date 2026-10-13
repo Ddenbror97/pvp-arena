@@ -16,7 +16,7 @@ export const guide: Guide = {
     "If each step wins with probability p and pays 2x, EV per step is 2p; edge is 1 − 2p.",
     "n precommitted doubles multiply those factors: expected remaining ≈ (2p)^n of the first stake’s EV path.",
     "Variance explodes: the typical path is a bust; the mean is held up by rare full streaks.",
-    "PVPspinArena does not offer double or nothing gambling as a product; Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena does not offer double or nothing gambling as a product; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -79,15 +79,15 @@ If the casino’s double button is a hidden 45% (red/black card with a joker los
 
 **Stopping rules.** The only EV-preserving move on a fair coin is to stop whenever you like; every prefix has EV 1. On a negative step, **fewer steps** cost less. “I feel lucky so I continue” is how 0.98 becomes 0.90.
 
-Do not confuse this with a 0% fee [Coinflip](/coinflip). One flip is one step. Re-queuing a new flip with a new stake is [flat betting](/guides/flat-betting). Letting the pot ride is the streak plan.`,
+Do not confuse this with a 5% fee [Coinflip](/coinflip). One flip is one step. Re-queuing a new flip with a new stake is [flat betting](/guides/flat-betting). Letting the pot ride is the streak plan.`,
     },
     {
       id: "not-here",
       title: "PVPspinArena does not offer a double-or-nothing original",
-      body: `There is no 2x-or-bust ladder here. The live games are Jackpot, Coinflip and Roulette.
+      body: `There is no 2x-or-bust ladder here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
 
 - [Jackpot](/) — pot share, not a parlay button.
-- [Coinflip](/coinflip) — one 50/50 at a time, default 0% fee.
+- [Coinflip](/coinflip) — one 50/50 at a time, a 5% pot fee.
 - [Roulette](/roulette) — 33 slots; Purple is 48.48%, not 50%. Parlaying Purple is the 0.970 row, not a fair coin.
 - [online casino games](/guides/online-casino-games) — where streak originals sit.
 

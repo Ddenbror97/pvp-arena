@@ -148,7 +148,7 @@ Play only on operators you can verify, read the rules page for the RTP and the m
     {
       id: "pvp",
       title: "JetX odds next to PvP games",
-      body: `JetX's 97% RTP means a 3% house edge on every dollar, whatever the target. PVPspinArena runs three player-vs-player games with different shapes. [Coinflip](/coinflip) is a straight 50/50 between two players, and the winner takes the pot minus any fee shown before entry. Jackpot pays one winner, with a win chance equal to your share of the pot. Roulette is a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
+      body: `JetX's 97% RTP means a 3% house edge on every dollar, whatever the target. PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott with different shapes. [Coinflip](/coinflip) is a straight 50/50 between two players, and the winner takes the pot minus any fee shown before entry. Jackpot pays one winner, with a win chance equal to your share of the pot. Roulette is a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
 
 Results on PVPspinArena come from committed seeds, and any settled round can be checked on [fairness](/fairness). None of that makes a streak predictable. If crash sessions are running longer than planned, the [responsible gambling](/responsible-gambling) page has limits and support.
 

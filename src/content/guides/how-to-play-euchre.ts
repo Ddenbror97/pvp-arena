@@ -166,7 +166,7 @@ Short games mean luck in the deal shows up strongly over a single night, even th
       title: "Euchre odds and a hashed PvP round",
       body: `The kitty is euchre's built-in uncertainty: three unseen cards that no one can use. Players adjust for it with conditional probability, just as in the 5/18 calculation above.
 
-PVPspinArena runs three player-vs-player games that remove card judgement altogether: Jackpot, [Coinflip](/coinflip) and Roulette. A Coinflip is an even 50/50 between two players. Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Results come from seeds committed before the round, and any settled round can be verified on the [fairness](/fairness) page, which does the job an honest shuffle and cut do at a euchre table. For another partnership game with exact bidding, see [Oh Hell](/guides/oh-hell-card-game).
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott that remove card judgement altogether: Jackpot, [Coinflip](/coinflip) and Roulette. A Coinflip is an even 50/50 between two players. Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Results come from seeds committed before the round, and any settled round can be verified on the [fairness](/fairness) page, which does the job an honest shuffle and cut do at a euchre table. For another partnership game with exact bidding, see [Oh Hell](/guides/oh-hell-card-game).
 
 In the same cluster, see also [how to play rummy](/guides/how-to-play-rummy) and [how to play gin rummy](/guides/how-to-play-gin-rummy).
 

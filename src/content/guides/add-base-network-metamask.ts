@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Base is an Ethereum layer-2 network built by Coinbase on the OP Stack.",
     "Base mainnet uses chain ID 8453 and ETH as its gas token.",
     "Your MetaMask address is the same on Ethereum and Base, but balances are separate.",
-    "PVPspinArena accepts USDC and ETH deposits on Base mainnet only.",
+    "PVPspinArena accepts USDC and ETH on Base mainnet, plus on-chain Bitcoin.",
     "Only add networks using official settings; fake RPCs can show false balances.",
   ],
   sections: [
@@ -213,7 +213,7 @@ More crypto payments reading lives in our [Crypto payments guides](/guides/topic
     },
     {
       q: "Does PVPspinArena support networks other than Base?",
-      a: "No. PVPspinArena accepts USDC and ETH on Base mainnet only. Funds sent on other networks will not be credited.",
+      a: "No. PVPspinArena accepts USDC and ETH on Base mainnet, plus on-chain Bitcoin. Funds sent on other networks will not be credited.",
     },
   ],
   sources: [

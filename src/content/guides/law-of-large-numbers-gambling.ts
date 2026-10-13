@@ -129,7 +129,7 @@ The theorem has conditions. Real gambling sometimes breaks them.
     {
       id: "pvpspinarena",
       title: "The law of large numbers on PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on Base, and each one shows the law differently.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, and each one shows the law differently.
 
 - **[Roulette](/roulette)** is the table above. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Picking Green changes both the cost and how fast that cost shows up.
 - **[Coinflip](/coinflip)** is two players on a 50/50. Over many flips your win rate converges to 50%, and your average result converges to minus whatever fee was shown before entry. Your total can still sit well above or below that line for a long time.

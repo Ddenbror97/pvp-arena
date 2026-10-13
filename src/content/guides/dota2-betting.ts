@@ -171,7 +171,7 @@ If betting is already taking more time or money than you planned, stop shopping 
     },
     {
       q: "Does PVPspinArena offer Dota 2 betting?",
-      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip and Roulette only.",
+      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Do Dota patches make old odds useless?",

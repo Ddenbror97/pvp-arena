@@ -175,7 +175,7 @@ Case battles add peer competition on top of case margins. If you cannot explain 
     },
     {
       q: "Does PVPspinArena offer case battles?",
-      a: "No. The site runs Jackpot, Coinflip and Roulette with USDC or ETH on Base. Case battles belong to third-party skin sites, not this product.",
+      a: "No. The site runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. Case battles belong to third-party skin sites, not this product.",
     },
   ],
   sources: [

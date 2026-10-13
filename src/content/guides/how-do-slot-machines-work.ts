@@ -15,13 +15,13 @@ export const guide: Guide = {
     "How do online slots work: a generator draws a stop, virtual strips weight the symbols, and a paytable pays. Artwork is not the odds.",
   h1: "How do online slots work: generator, virtual strips, paytable",
   answer:
-    "How do online slots work in one chain: you buy a spin, a random-number generator draws one or more values, those values map onto weighted virtual reel strips, the visible grid is the artwork of that mapping, and the paytable pays matching lines, ways or features. The cherries looking common on the glass does not mean they are common in the virtual strip. You almost never see the weights. PVPspinArena does not offer slots.",
+    "How do online slots work in one chain: you buy a spin, a random-number generator draws one or more values, those values map onto weighted virtual reel strips, the visible grid is the artwork of that mapping, and the paytable pays matching lines, ways or features. The cherries looking common on the glass does not mean they are common in the virtual strip. You almost never see the weights. PVPspinArena's slot game is P2P Slott, a 1v1 duel.",
   facts: [
     "The result is drawn when you bet; the reel animation is a replay of a mapping, not a physical stop you can time.",
     "Virtual strips are weighted: a jackpot symbol can occupy one stop among hundreds.",
     "Most studio slots are certified RNG products, not commit-reveal games you can recompute.",
     "Bonus states hold a large share of RTP on many titles; the base game can be lean on purpose.",
-    "PVPspinArena has no slots; Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -44,7 +44,7 @@ This [slots topic](/guides/topics/slots) page is for adults 18+. For the button 
 
 The same chain runs under a three-reel fruit skin, a five-reel video title and a six-reel ways engine. Artists change. Weights change. The steps do not: random index → strip position → evaluate → pay. If a lobby sells “skill bonus” as if you were aiming a reel, read the help file. Most “skill” moments are already-determined pick-me screens or timing games whose prize set was drawn before the tap. A tap that chooses among three boxes the RNG already filled is not skill in the blackjack sense. It is a delayed reveal.
 
-PVPspinArena has no reel mapping to show you. The comparable chain on [Roulette](/roulette) is hash → pocket 1–15 → colour paytable. You can count the pockets. You cannot count a studio’s virtual stops.`,
+The reel game here is [P2P Slott](/slott), a 5 by 4 duel. The comparable chain on [Roulette](/roulette) is hash → one of 33 slots → colour paytable. You can count the pockets. You cannot count a studio’s virtual stops. Who builds the tile, and who chooses the math build, is [casino game providers](/guides/casino-game-providers).`,
     },
     {
       id: "strips",
@@ -192,7 +192,7 @@ Why a reel is built to feel “almost” is the [Skinner box](/guides/skinner-bo
     },
     {
       q: "Does PVPspinArena run slot machines?",
-      a: "No. This site offers Jackpot, Coinflip and Roulette. Those results can be checked on the fairness page. There are no reel strips.",
+      a: "Yes. P2P Slott is a 1v1 reel duel on a 5 by 4 grid. Jackpot, Coinflip, and Roulette are the other games, and settled results can be checked on the fairness page.",
     },
     {
       q: "Is a crypto slot a different machine?",

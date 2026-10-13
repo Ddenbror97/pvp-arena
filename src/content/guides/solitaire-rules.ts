@@ -112,7 +112,7 @@ Settle these Klondike choices out loud:
 
 Published win rates are bounds, not a promise. Mathematician Persi Diaconis has called the exact chance of winning ordinary Klondike one of the open embarrassments of applied probability. A fully visible variant called Thoughtful Klondike, draw three, has been estimated near 82 percent winnable. Hidden-card turn-three is harder. Computer searches have posted lower bounds from the high teens into the mid-30s, depending on the program, and one skilled human sample won 189 of 442 games, about 43 percent. Turn one is easier than turn three because you see every stock card in order. None of those figures is a strategy you can force on a single deal.
 
-Some casinos have offered a paid one-pass Klondike, sometimes called Las Vegas solitaire, that pays a fixed amount per card you get onto the foundations. That is a banking game with a price, not the kitchen-table puzzle. Gambling is for adults only (18+, or the legal age where you live). Agree any stake before you deal, and keep it small enough that a lost game is the end of the story.`,
+Some casinos have offered a paid one-pass Klondike, sometimes called Las Vegas solitaire, that pays a fixed amount per card you get onto the foundations. That is a banking game with a price, not the kitchen-table puzzle. Playing other people for a stake is [solitaire for money](/guides/solitaire-for-money), which is a different page from these rules and from any one brand. Gambling is for adults only (18+, or the legal age where you live). Agree any stake before you deal, and keep it small enough that a lost game is the end of the story.`,
     },
     {
       id: "chance",
@@ -121,7 +121,7 @@ Some casinos have offered a paid one-pass Klondike, sometimes called Las Vegas s
 
 The same split shows up in dice games. [Farkle](/guides/farkle-rules) lets you choose when to bank. [Yahtzee](/guides/yahtzee-rules) lets you choose which box to fill. Klondike lets you choose which legal move to make, and then the face-down cards answer. None of the three removes the shuffle or the dice.
 
-PVPspinArena is a different kind of chance. It runs Jackpot, [Coinflip](/coinflip) and Roulette in USDC or ETH on Base, for adults 18+ only. A Coinflip is a 50/50 between two players. Roulette is a 33-slot wheel. Purple and Silver return 32/33 before the win fee, about a 7.88% edge after it, and Green returns 14/33. Jackpot pays from a shared pot, with a win chance equal to your share. Seeds are committed before the round. Any settled round can be checked on the [fairness](/fairness) page. There is no tableau to solve and no redeal to argue about.
+PVPspinArena is a different kind of chance. It runs Jackpot, [Coinflip](/coinflip) and Roulette settled in US dollars, for adults 18+ only. A Coinflip is a 50/50 between two players. Roulette is a 33-slot wheel. Purple and Silver return 32/33 before the win fee, about a 7.88% edge after it, and Green returns 14/33. Jackpot pays from a shared pot, with a win chance equal to your share. Seeds are committed before the round. Any settled round can be checked on the [fairness](/fairness) page. There is no tableau to solve and no redeal to argue about.
 
 If a session stops being a game and starts being a chase, stop. The [responsible gambling](/responsible-gambling) page has limits and tools. A second deal of Klondike will not repair a loss on a coin.
 

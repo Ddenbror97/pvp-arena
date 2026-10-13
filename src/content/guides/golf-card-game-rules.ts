@@ -136,7 +136,7 @@ An example column of queen, 5, queen is 25. A column of 4, 4, 4 is 0. The other 
 
 [Yahtzee](/guides/yahtzee-rules) also fills a card over a fixed number of rounds, with dice and 13 boxes. Golf is nine holes and a grid.
 
-If adults stake a unit per hole or on the nine-hole total, 18+ applies, or the legal age where you live. Agree the unit first. A six-card hole is mostly the deal and the two cards you were allowed to see. The [responsible gambling](/responsible-gambling) page covers limits for games played for money.
+If adults stake a unit per hole or on the nine-hole total, 18+ applies, or the legal age where you live. Agree the unit first. The outdoor course games, Nassau and skins included, are [golf side bets](/guides/golf-side-bets). This page is the card game. A six-card hole is mostly the deal and the two cards you were allowed to see. The [responsible gambling](/responsible-gambling) page covers limits for games played for money.
 
 Read each grid out loud: "zero, six, seven, thirteen." A hidden king scored as a ten ruins the sheet. Shuffle between holes. A just-scored grid is a pile of pairs, and dealing it back in order hands someone three zeros. The [shuffle](/guides/how-to-shuffle-cards) has to break those columns.
 

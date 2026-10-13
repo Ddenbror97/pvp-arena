@@ -178,7 +178,7 @@ A classic wheel has 37 or 38 pockets and dozens of bet types: single numbers, sp
 
 ### Cost
 
-European roulette is the cheapest at 2.70%. American is 5.26%. PVPspinArena's coloured wheel has about a 7.88% Purple or Silver edge after the win fee, which funds the game because the house banks Roulette bets. Jackpot and Coinflip are different: they are player vs player, so the house does not bet and only takes a fee, which defaults to 0%.
+European roulette is the cheapest at 2.70%. American is 5.26%. PVPspinArena's coloured wheel has about a 7.88% Purple or Silver edge after the win fee, which funds the game because the house banks Roulette bets. Jackpot and Coinflip are different: they are player vs player, so the house does not bet and only takes a fee, which is 5% of the pot.
 
 ### Speed
 

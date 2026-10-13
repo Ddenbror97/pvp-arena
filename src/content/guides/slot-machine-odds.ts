@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Hit rate counts any paying combination, including wins smaller than the stake.",
     "Two 96% RTP slots can feel opposite: one dribbles small hits, the other waits for a rare bonus.",
     "Progressive jackpots skim extra from the base game, so the advertised top prize sits on a very small probability.",
-    "PVPspinArena does not offer slots; Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -105,8 +105,8 @@ Cluster pays, avalanche reels and “win both ways” are more engines, not more
     },
     {
       id: "not-here",
-      title: "PVPspinArena does not offer slots",
-      body: `There are no reels on this site. The live set is Jackpot, Coinflip and Roulette, each with a chance you can write as a fraction.
+      title: "The slot game here is P2P Slott",
+      body: `P2P Slott is the reel game, a 1v1 duel. The other live games are Jackpot, Coinflip, and house-banked Roulette, each with a chance you can write as a fraction.
 
 - [Jackpot](/) — stake / pot.
 - [Coinflip](/coinflip) — 1/2, fee published.
@@ -151,7 +151,7 @@ If a help file lists both average bonus interval and average bonus win, you can 
       title: "Summary",
       body: `Slot machine odds are RTP, hit rate and volatility sitting on a hidden weighted strip. RTP is the cost per dollar spun. Hit rate counts tiny pays. Volatility explains why two 96% games feel unrelated and why one spin is silence. Progressives add a long-shot prize funded by a skim.
 
-PVPspinArena does not offer slots. Use this page to stop treating a session as a measurement, and use Jackpot, Coinflip or Roulette when you want the sample space printed next to the bet.
+PVPspinArena's slot game is P2P Slott, a 1v1 duel. Use this page to stop treating a session as a measurement, and use Jackpot, Coinflip or Roulette when you want the sample space printed next to the bet.
 
 See also [loose slots](/guides/loose-slots).`,
     },
@@ -175,7 +175,7 @@ See also [loose slots](/guides/loose-slots).`,
     },
     {
       q: "Does PVPspinArena have slot machines?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. This guide explains slot odds so you can read a title on another site.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide explains slot odds so you can read a title on another site.",
     },
     {
       q: "Can I calculate slot odds from the symbols I see?",

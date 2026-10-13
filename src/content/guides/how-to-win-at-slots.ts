@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Betting systems change the shape of losses, not the sign of expected value.",
     "Independent spins have no memory; a dry hour does not raise the next hit chance.",
     "Higher RTP and lower turnover are the only cost levers you can choose from the outside.",
-    "PVPspinArena has no slots; Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -33,7 +33,7 @@ A 96% RTP slot has a 4% house edge. [RTP explained](/guides/rtp-explained) is th
 
 This [slots topic](/guides/topics/slots) page is for adults 18+. It will not teach a pattern. If you want the controls, use [how to play online slots](/guides/how-to-play-slots). If you want the cost in dollars, use [online slots real money](/guides/online-slots-real-money).
 
-PVPspinArena does not offer slots. The comparable honesty on this site is [how to win at roulette](/guides/how-to-win-at-roulette): pick the known edge, bet less often, leave. Reels hide the strips; the conclusion is the same sign.`,
+PVPspinArena's slot game is P2P Slott, a 1v1 duel. The comparable honesty on this site is [how to win at roulette](/guides/how-to-win-at-roulette): pick the known edge, bet less often, leave. Reels hide the strips; the conclusion is the same sign.`,
     },
     {
       id: "negative-ev",
@@ -123,7 +123,7 @@ Max lines do not create a winning method. They create a complete bet at a higher
     {
       id: "not-here",
       title: "What “winning” looks like on PVPspinArena",
-      body: `There are no reels here. Jackpot and fee-free Coinflip can be 100% RTP *between players* because the house is not the bank. You can still lose the whole stake in one draw. Roulette is house-banked. Purple and Silver return 32/33 before the win fee, and Green returns 14/33. You can count the pockets on [Roulette](/roulette) and repeat the multiplication.
+      body: `P2P Slott is the reel game, a 1v1 duel. Jackpot and Coinflip take a 5% fee from the pot, so the winner receives 95%. The house is not a player in the pot. You can still lose the whole stake in one draw. Roulette is house-banked. Purple and Silver return 32/33 before the win fee, and Green returns 14/33. You can count the pockets on [Roulette](/roulette) and repeat the multiplication.
 
 That is a different product, not a slot-beating trick. If you came for a reel system, you will not find one here either. You will find a wheel you can price and a [Fairness](/fairness) page for the hash.
 
@@ -185,7 +185,7 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     },
     {
       q: "Does PVPspinArena have a slot system?",
-      a: "No. This site does not offer slots and does not publish a reel-beating method. The live games are Jackpot, Coinflip and Roulette.",
+      a: "No. This site's slot game is P2P Slott, a 1v1 duel, and it does not publish a reel-beating method. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Can a bonus buy be +EV?",

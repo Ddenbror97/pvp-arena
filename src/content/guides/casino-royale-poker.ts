@@ -140,7 +140,7 @@ Poker gave the 2006 film something baccarat could not: decisions, bluffs and rea
 
 ### How PVPspinArena works
 
-PVPspinArena runs three player-vs-player games in USDC or ETH on the Base network. In [Coinflip](/coinflip), two players take opposite sides of a 50/50 flip, and the winner takes the pot minus any fee shown before entry. In [Jackpot](/), each player's win chance equals their share of the pot. Roulette runs shared rounds on a 33-slot wheel where Purple and Silver pay 2x and Green pays 14x, about a 7.88% house edge on Purple or Silver after the 5% win fee.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. In [Coinflip](/coinflip), two players take opposite sides of a 50/50 flip, and the winner takes the pot minus any fee shown before entry. In [Jackpot](/), each player's win chance equals their share of the pot. Roulette runs shared rounds on a 33-slot wheel where Purple and Silver pay 2x and Green pays 14x, about a 7.88% house edge on Purple or Silver after the 5% win fee.
 
 ### No tells, no faked tells
 

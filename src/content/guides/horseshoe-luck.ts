@@ -134,7 +134,7 @@ Some psychology experiments have reported that holding a lucky charm can modestl
     {
       id: "pvp",
       title: "Horseshoes, hashes and a PvP round",
-      body: `PVPspinArena runs three player-vs-player games: Jackpot at [the home page](/), [Coinflip](/coinflip) and [Roulette](/roulette), played in USDC or ETH on Base. Each result comes from committed seeds, so the outcome is fixed before anyone clicks, and every settled round can be checked on [fairness](/fairness).
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott: Jackpot at [the home page](/), [Coinflip](/coinflip) and [Roulette](/roulette), settled in US dollars. Each result comes from committed seeds, so the outcome is fixed before anyone clicks, and every settled round can be checked on [fairness](/fairness).
 
 That setup is a clean test of the charm question. On Roulette, 16 Purple and 16 Silver slots pay 2x and 1 Green slot pays 14x on a 33-slot wheel. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Coinflip is a 50/50 between two players. In Jackpot, your win chance equals your share of the pot. A horseshoe on your desk changes none of those numbers, and because the seed is committed in advance, nothing you do at the moment of the spin can influence it either.
 

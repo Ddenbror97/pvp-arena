@@ -85,7 +85,7 @@ Don’t-pass odds are the inverse ratios. The 12 push on don’t-pass is why tha
     {
       id: "not-here",
       title: "PVPspinArena does not offer craps",
-      body: `There is no pass line and no stickman. The live games are Jackpot, Coinflip and Roulette.
+      body: `There is no pass line and no stickman. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
 
 - [Jackpot](/) — pot share is chance.
 - [Coinflip](/coinflip) — 50/50, not 8/36 for 7-or-11.
@@ -167,7 +167,7 @@ Which bets to use, and which to skip, is [craps strategy](/guides/craps-strategy
     },
     {
       q: "Does PVPspinArena have craps?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. This guide is the pass-versus-proposition map for tables elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide is the pass-versus-proposition map for tables elsewhere.",
     },
     {
       q: "Is don’t-pass better than pass?",

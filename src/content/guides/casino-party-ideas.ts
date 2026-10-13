@@ -181,7 +181,7 @@ Some places allow private social gambling among friends provided nobody takes a 
       title: "After the party: what real stakes look like",
       body: `A play-money night is a good place to learn how the maths feels without the cost. Guests see house edges shave stacks, streaks come and go, and a lucky raffle draw beat a careful strategy.
 
-PVPspinArena applies the same ideas with real value, for adults only. It runs three player-vs-player games in USDC or ETH on Base: Jackpot on [the home page](/), where your win chance equals your share of the pot; [Coinflip](/coinflip), a 50/50 between two players; and Roulette, a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Results come from committed seeds you can check on [fairness](/fairness).
+PVPspinArena applies the same ideas with real value, for adults only. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars: Jackpot on [the home page](/), where your win chance equals your share of the pot; [Coinflip](/coinflip), a 50/50 between two players; and Roulette, a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Results come from committed seeds you can check on [fairness](/fairness).
 
 If you enjoy the party version, keep that attitude with real money: a fixed budget, a finish time and no chasing. The [responsible gambling](/responsible-gambling) page has limit tools, and the wider [Games of chance topic](/guides/topics/games-of-chance) and [casino knowledge hub](/guides/topics/casino-knowledge) have more on how the games work.
 

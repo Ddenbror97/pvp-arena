@@ -10,13 +10,13 @@ export const guide: Guide = {
     "Slot paylines explained: fixed lines versus ways and clusters, how coin times lines becomes the real stake, and why more lines are not better odds.",
   h1: "Slot paylines explained: lines, ways, clusters and total stake",
   answer:
-    "Slot paylines explained simply: a payline is a path across the grid that the engine checks for matching symbols, usually left to right. Ways and cluster engines skip painted paths and pay on adjacent counts instead. Your real bet is the total stake — coin × lines on a line game, or the single stake on a ways game — and RTP applies to that total. More lines are more evaluations, not a better edge. PVPspinArena does not offer slots.",
+    "Slot paylines explained simply: a payline is a path across the grid that the engine checks for matching symbols, usually left to right. Ways and cluster engines skip painted paths and pay on adjacent counts instead. Your real bet is the total stake — coin × lines on a line game, or the single stake on a ways game — and RTP applies to that total. More lines are more evaluations, not a better edge. PVPspinArena's slot game is P2P Slott, a 1v1 duel.",
   facts: [
     "On a line game, total bet = coin value × number of active lines.",
     "RTP applies to the total stake, not to the coin size alone.",
     "Ways and cluster pays change how wins are counted, not the house edge.",
     "Turning lines off can void features and rarely improves RTP.",
-    "PVPspinArena has no slots; Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -200,7 +200,7 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     },
     {
       q: "Does PVPspinArena have payline slots?",
-      a: "No. This site does not offer slots. Jackpot, Coinflip and Roulette use published fractions instead of painted lines.",
+      a: "No. This site's slot game is P2P Slott, a 1v1 duel. Jackpot, Coinflip and Roulette use published fractions instead of painted lines.",
     },
     {
       q: "Why did a 20× win barely change my balance?",

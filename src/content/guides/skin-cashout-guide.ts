@@ -181,7 +181,7 @@ These habits are repetitive on purpose. Repetition is what still works at midnig
     },
     {
       q: "Does PVPspinArena cash out skins?",
-      a: "No. Cash out elsewhere. The site only credits USDC or ETH deposits on Base matched to a verified address.",
+      a: "No. Cash out elsewhere. The site credits Bitcoin deposits, and USDC or ETH deposits on Base matched to a verified address.",
     },
   ],
   sources: [

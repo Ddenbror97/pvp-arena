@@ -149,11 +149,11 @@ Our [are online casinos rigged guide](/guides/are-online-casinos-rigged) has a l
     {
       id: "pvpspinarena",
       title: "How PVPspinArena handles randomness",
-      body: `PVPspinArena uses a provably fair commit-reveal protocol for all three games.
+      body: `PVPspinArena uses a provably fair commit-reveal protocol for Jackpot, Coinflip, Roulette, and P2P Slott.
 
 ### Jackpot and Coinflip
 
-For player-vs-player games, the server seed is committed before the round, and the winner is calculated from the seed and round data once the round locks. Because the house does not bet in these games, it has no stake in who wins. The only take is a fee, which defaults to 0%. Try [Jackpot](/) or [Coinflip](/coinflip).
+For player-vs-player games, the server seed is committed before the round, and the winner is calculated from the seed and round data once the round locks. Because the house does not bet in these games, it has no stake in who wins. The only take is a fee, which is 5% of the pot. Try [Jackpot](/) or [Coinflip](/coinflip).
 
 ### Roulette
 

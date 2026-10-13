@@ -21,7 +21,7 @@ export const guide: Guide = {
     "PvP rooms can earn a rake or platform fee without betting against you.",
     "Bonus wagering is designed so many players never cash the headline amount.",
     "Deposit and withdrawal spreads are cashier revenue, separate from the game.",
-    "PVPspinArena’s Jackpot and Coinflip default fee is 0%; Roulette is a 33-slot wheel: 16 Purple, 16 Silver and 1 Green.",
+    "PVPspinArena’s Jackpot and Coinflip fee is 5% of the pot; Roulette is a 33-slot wheel: 16 Purple, 16 Silver and 1 Green.",
   ],
   sections: [
     {
@@ -43,7 +43,7 @@ Skin-era rooms made money on markdowns so large that the game almost did not mat
 
 A “provably fair” badge next to a 15 percent crash edge is still a 15 percent crash edge. Hashing does not shrink handle. It only lets you check that this crash was the crash they committed to. That is worth having. It is not a rebate.
 
-If you want a room whose PvP pots can show a 0 percent fee, read the pot. Then remember Roulette on this site is still a house game. Mixing the two in your head is how people say “this site is free” and then spin a 7.88 percent on Purple or Silver after the win fee wheel for an hour.`,
+On this site Jackpot and Coinflip take 5 percent of the pot. Roulette is still a house game. Mixing the two in your head is how people say “this site is free” and then spin a 7.88 percent on Purple or Silver after the win fee wheel for an hour.`,
     },
     {
       id: "handle",
@@ -95,7 +95,7 @@ A “lossback” email after a bad night is the same engine with better copy. It
 | Bonus | Extra balance | Extra handle + caps |
 | Cashier | “Zero fees” | FX, minima, withdraw delay |
 | Skin overlay | “Instant value” | Deposit/withdraw spread |
-| This site (PvP) | Jackpot, Coinflip | Default 0% fee (read the pot) |
+| This site (PvP) | Jackpot, Coinflip | 5% of the pot (read the pot) |
 | This site (wheel) | 33-slot Roulette | about 7.88% on Purple or Silver after the fee |
 
 No row says “the blockchain fee.” Gas is usually yours on the way in and theirs on the way out. It is too small, on Base, to be the company. If a room’s only story is “we make money on gas,” they are not telling you about the games.`,
@@ -103,9 +103,9 @@ No row says “the blockchain fee.” Gas is usually yours on the way in and the
     {
       id: "this-site",
       title: "How this site fits — and what it does not claim",
-      body: `PVPspinArena shows the PvP fee on the pot. The default is 0 percent on Jackpot and Coinflip: players bet each other. That is not a vow that you will profit. The other player is the variance. Roulette is a published 7.88 percent on Purple or Silver after the win fee house game.
+      body: `PVPspinArena shows the PvP fee on the pot. Jackpot and Coinflip take 5 percent. P2P Slott takes 10 percent. That is not a vow that you will profit. The other player is the variance. Roulette is a published 7.88 percent on Purple or Silver after the win fee.
 
-There is no bonus meter to extract extra handle. There is no skin markdown. Deposits are USDC or ETH on Base; balances sit in USD cents. Withdrawals have a $250 daily limit and review above $25 — operations and risk control, not a hidden edge.
+There is no bonus meter to extract extra handle. There is no skin markdown. Deposits are on-chain Bitcoin, or USDC or ETH on Base; balances sit in USD cents. Withdrawals have a $250 daily limit and review above $25 — operations and risk control, not a hidden edge.
 
 We still need the lights on. If a fee is on a pot, it is visible. If you play Roulette, the edge is the product. We will not pretend crypto made expected value a donation.
 
@@ -166,7 +166,7 @@ Some of that revenue is paid out to publishers. A [crypto casino affiliate progr
     },
     {
       q: "How does PVPspinArena make money?",
-      a: "Jackpot and Coinflip show any pot fee (default 0%). Roulette has about a 7.88% house edge on Purple or Silver after the 5% win fee. No bonus meter and no skin spread.",
+      a: "Jackpot and Coinflip take 5% of the pot. Roulette has about a 7.88% house edge on Purple or Silver after the 5% win fee. No bonus meter and no skin spread.",
     },
     {
       q: "Is gas how they get paid?",

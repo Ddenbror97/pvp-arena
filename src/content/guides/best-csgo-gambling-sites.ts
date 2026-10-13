@@ -15,7 +15,7 @@ export const guide: Guide = {
     "CS:GO was replaced by Counter-Strike 2 in 2023; the site formats carried over.",
     "Jackpot, coinflip and coloured roulette are the classic CS:GO-era game types.",
     "Skin values move with the market; USDC stays close to one US dollar.",
-    "PVPspinArena runs Jackpot, Coinflip and Roulette with USDC, not skins.",
+    "PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott in US dollars, not skins.",
     "Every PVPspinArena round can be checked on the public Fairness page.",
   ],
   sections: [
@@ -170,7 +170,7 @@ Asking these questions takes a few minutes, and the answers tell you a lot about
 
 - **Games:** Jackpot, Coinflip and Roulette. No case openings, case battles or crash.
 - **Stakes:** USDC on Base, shown in US dollars. No skins.
-- **Fees:** 0% default fee on player-vs-player Jackpot and Coinflip; Roulette's Purple or Silver edge is about 7.88% after the win fee.
+- **Fees:** 5% fee on player-vs-player Jackpot and Coinflip pots; Roulette's Purple or Silver edge is about 7.88% after the win fee.
 - **Fairness:** every round can be checked on the [Fairness page](/fairness).
 - **Withdrawals:** automatic, with a $250 daily limit and review over $25. Marked finished only after a safe block and agreement from two providers.
 - **Age:** you must be 18 or older, or the legal age where you live.

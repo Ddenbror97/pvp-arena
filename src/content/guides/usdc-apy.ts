@@ -28,7 +28,7 @@ If you need the coin first — who issues it, what the reserves are, why the peg
 
 This sits in the [crypto payments](/guides/topics/crypto-payments) cluster. It is for adults aged 18 or over. It is not financial advice, not a recommendation to lend, and not a promise that any rate you saw on a screenshot still exists.
 
-PVPspinArena accepts USDC and ETH on Base for player-versus-player Jackpot, Coinflip and Roulette. A balance here is a game ledger. It is not a savings account.`,
+PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base, for Jackpot, Coinflip, Roulette, and P2P Slott. A balance here is a game ledger. It is not a savings account.`,
     },
     {
       id: "where",

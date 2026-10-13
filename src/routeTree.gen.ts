@@ -16,10 +16,13 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CoinflipRouteImport } from './routes/coinflip'
 import { Route as FairnessRouteImport } from './routes/fairness'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
+import { Route as PrestigeRouteImport } from './routes/prestige'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResponsibleGamblingRouteImport } from './routes/responsible-gambling'
 import { Route as RouletteRouteImport } from './routes/roulette'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SlottRouteImport } from './routes/slott'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -28,10 +31,23 @@ import { Route as CoinflipGameIdRouteImport } from './routes/coinflip.$gameId'
 import { Route as GamesGameIdRouteImport } from './routes/games.$gameId'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
+import { Route as InviteCodeRouteImport } from './routes/invite.$code'
+import { Route as LeaderboardsCampaignIdRouteImport } from './routes/leaderboards.$campaignId'
+import { Route as PartnerCodeRouteImport } from './routes/partner.$code'
+import { Route as SlottGameIdRouteImport } from './routes/slott.$gameId'
+import { Route as AuthenticatedPartnerLeaderboardsRouteImport } from './routes/_authenticated/partner.leaderboards'
+import { Route as AuthenticatedProfileSecurityRouteImport } from './routes/_authenticated/profile_.security'
+import { Route as AuthenticatedWalletActivityRouteImport } from './routes/_authenticated/wallet_.activity'
+import { Route as ApiAvatarUploadRouteImport } from './routes/api/avatar.upload'
 import { Route as GuidesTopicsTopicRouteImport } from './routes/guides.topics.$topic'
+import { Route as LeaderboardsPUsernameRouteImport } from './routes/leaderboards.p.$username'
+import { Route as ApiPublicBtcpayWebhookRouteImport } from './routes/api/public/btcpay/webhook'
+import { Route as ApiPublicCronBtcpayReconcileRouteImport } from './routes/api/public/cron/btcpay-reconcile'
 import { Route as ApiPublicCronCryptoDepositsRouteImport } from './routes/api/public/cron/crypto-deposits'
 import { Route as ApiPublicCronCryptoReconcileRouteImport } from './routes/api/public/cron/crypto-reconcile'
 import { Route as ApiPublicCronCryptoWithdrawalsRouteImport } from './routes/api/public/cron/crypto-withdrawals'
+import { Route as ApiPublicDiditWebhookRouteImport } from './routes/api/public/didit/webhook'
+import { Route as ApiPublicNowpaymentsIpnRouteImport } from './routes/api/public/nowpayments/ipn'
 import { Route as ApiPublicAvatarStyleSeedRouteImport } from './routes/api/public/avatar.$style.$seed'
 
 const IndexRoute = IndexRouteImport.update({
@@ -68,6 +84,16 @@ const HowItWorksRoute = HowItWorksRouteImport.update({
   path: '/how-it-works',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LeaderboardsRoute = LeaderboardsRouteImport.update({
+  id: '/leaderboards',
+  path: '/leaderboards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrestigeRoute = PrestigeRouteImport.update({
+  id: '/prestige',
+  path: '/prestige',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -86,6 +112,11 @@ const RouletteRoute = RouletteRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SlottRoute = SlottRouteImport.update({
+  id: '/slott',
+  path: '/slott',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -128,11 +159,70 @@ const GuidesSlugRoute = GuidesSlugRouteImport.update({
   path: '/guides/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InviteCodeRoute = InviteCodeRouteImport.update({
+  id: '/invite/$code',
+  path: '/invite/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeaderboardsCampaignIdRoute = LeaderboardsCampaignIdRouteImport.update({
+  id: '/$campaignId',
+  path: '/$campaignId',
+  getParentRoute: () => LeaderboardsRoute,
+} as any)
+const PartnerCodeRoute = PartnerCodeRouteImport.update({
+  id: '/partner/$code',
+  path: '/partner/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SlottGameIdRoute = SlottGameIdRouteImport.update({
+  id: '/$gameId',
+  path: '/$gameId',
+  getParentRoute: () => SlottRoute,
+} as any)
+const AuthenticatedPartnerLeaderboardsRoute =
+  AuthenticatedPartnerLeaderboardsRouteImport.update({
+    id: '/partner/leaderboards',
+    path: '/partner/leaderboards',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProfileSecurityRoute =
+  AuthenticatedProfileSecurityRouteImport.update({
+    id: '/profile_/security',
+    path: '/profile/security',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedWalletActivityRoute =
+  AuthenticatedWalletActivityRouteImport.update({
+    id: '/wallet_/activity',
+    path: '/wallet/activity',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const ApiAvatarUploadRoute = ApiAvatarUploadRouteImport.update({
+  id: '/api/avatar/upload',
+  path: '/api/avatar/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GuidesTopicsTopicRoute = GuidesTopicsTopicRouteImport.update({
   id: '/guides/topics/$topic',
   path: '/guides/topics/$topic',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LeaderboardsPUsernameRoute = LeaderboardsPUsernameRouteImport.update({
+  id: '/p/$username',
+  path: '/p/$username',
+  getParentRoute: () => LeaderboardsRoute,
+} as any)
+const ApiPublicBtcpayWebhookRoute = ApiPublicBtcpayWebhookRouteImport.update({
+  id: '/api/public/btcpay/webhook',
+  path: '/api/public/btcpay/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicCronBtcpayReconcileRoute =
+  ApiPublicCronBtcpayReconcileRouteImport.update({
+    id: '/api/public/cron/btcpay-reconcile',
+    path: '/api/public/cron/btcpay-reconcile',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCronCryptoDepositsRoute =
   ApiPublicCronCryptoDepositsRouteImport.update({
     id: '/api/public/cron/crypto-deposits',
@@ -151,6 +241,16 @@ const ApiPublicCronCryptoWithdrawalsRoute =
     path: '/api/public/cron/crypto-withdrawals',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicDiditWebhookRoute = ApiPublicDiditWebhookRouteImport.update({
+  id: '/api/public/didit/webhook',
+  path: '/api/public/didit/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicNowpaymentsIpnRoute = ApiPublicNowpaymentsIpnRouteImport.update({
+  id: '/api/public/nowpayments/ipn',
+  path: '/api/public/nowpayments/ipn',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicAvatarStyleSeedRoute =
   ApiPublicAvatarStyleSeedRouteImport.update({
     id: '/api/public/avatar/$style/$seed',
@@ -165,10 +265,13 @@ export interface FileRoutesByFullPath {
   '/coinflip': typeof CoinflipRouteWithChildren
   '/fairness': typeof FairnessRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/leaderboards': typeof LeaderboardsRouteWithChildren
+  '/prestige': typeof PrestigeRoute
   '/privacy': typeof PrivacyRoute
   '/responsible-gambling': typeof ResponsibleGamblingRoute
   '/roulette': typeof RouletteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/slott': typeof SlottRouteWithChildren
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -176,11 +279,24 @@ export interface FileRoutesByFullPath {
   '/coinflip/$gameId': typeof CoinflipGameIdRoute
   '/games/$gameId': typeof GamesGameIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
+  '/invite/$code': typeof InviteCodeRoute
+  '/leaderboards/$campaignId': typeof LeaderboardsCampaignIdRoute
+  '/partner/$code': typeof PartnerCodeRoute
+  '/slott/$gameId': typeof SlottGameIdRoute
   '/guides/': typeof GuidesIndexRoute
+  '/partner/leaderboards': typeof AuthenticatedPartnerLeaderboardsRoute
+  '/profile/security': typeof AuthenticatedProfileSecurityRoute
+  '/wallet/activity': typeof AuthenticatedWalletActivityRoute
+  '/api/avatar/upload': typeof ApiAvatarUploadRoute
   '/guides/topics/$topic': typeof GuidesTopicsTopicRoute
+  '/leaderboards/p/$username': typeof LeaderboardsPUsernameRoute
+  '/api/public/btcpay/webhook': typeof ApiPublicBtcpayWebhookRoute
+  '/api/public/cron/btcpay-reconcile': typeof ApiPublicCronBtcpayReconcileRoute
   '/api/public/cron/crypto-deposits': typeof ApiPublicCronCryptoDepositsRoute
   '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
   '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
+  '/api/public/didit/webhook': typeof ApiPublicDiditWebhookRoute
+  '/api/public/nowpayments/ipn': typeof ApiPublicNowpaymentsIpnRoute
   '/api/public/avatar/$style/$seed': typeof ApiPublicAvatarStyleSeedRoute
 }
 export interface FileRoutesByTo {
@@ -190,10 +306,13 @@ export interface FileRoutesByTo {
   '/coinflip': typeof CoinflipRouteWithChildren
   '/fairness': typeof FairnessRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/leaderboards': typeof LeaderboardsRouteWithChildren
+  '/prestige': typeof PrestigeRoute
   '/privacy': typeof PrivacyRoute
   '/responsible-gambling': typeof ResponsibleGamblingRoute
   '/roulette': typeof RouletteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/slott': typeof SlottRouteWithChildren
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -201,11 +320,24 @@ export interface FileRoutesByTo {
   '/coinflip/$gameId': typeof CoinflipGameIdRoute
   '/games/$gameId': typeof GamesGameIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
+  '/invite/$code': typeof InviteCodeRoute
+  '/leaderboards/$campaignId': typeof LeaderboardsCampaignIdRoute
+  '/partner/$code': typeof PartnerCodeRoute
+  '/slott/$gameId': typeof SlottGameIdRoute
   '/guides': typeof GuidesIndexRoute
+  '/partner/leaderboards': typeof AuthenticatedPartnerLeaderboardsRoute
+  '/profile/security': typeof AuthenticatedProfileSecurityRoute
+  '/wallet/activity': typeof AuthenticatedWalletActivityRoute
+  '/api/avatar/upload': typeof ApiAvatarUploadRoute
   '/guides/topics/$topic': typeof GuidesTopicsTopicRoute
+  '/leaderboards/p/$username': typeof LeaderboardsPUsernameRoute
+  '/api/public/btcpay/webhook': typeof ApiPublicBtcpayWebhookRoute
+  '/api/public/cron/btcpay-reconcile': typeof ApiPublicCronBtcpayReconcileRoute
   '/api/public/cron/crypto-deposits': typeof ApiPublicCronCryptoDepositsRoute
   '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
   '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
+  '/api/public/didit/webhook': typeof ApiPublicDiditWebhookRoute
+  '/api/public/nowpayments/ipn': typeof ApiPublicNowpaymentsIpnRoute
   '/api/public/avatar/$style/$seed': typeof ApiPublicAvatarStyleSeedRoute
 }
 export interface FileRoutesById {
@@ -217,10 +349,13 @@ export interface FileRoutesById {
   '/coinflip': typeof CoinflipRouteWithChildren
   '/fairness': typeof FairnessRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/leaderboards': typeof LeaderboardsRouteWithChildren
+  '/prestige': typeof PrestigeRoute
   '/privacy': typeof PrivacyRoute
   '/responsible-gambling': typeof ResponsibleGamblingRoute
   '/roulette': typeof RouletteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/slott': typeof SlottRouteWithChildren
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
@@ -228,11 +363,24 @@ export interface FileRoutesById {
   '/coinflip/$gameId': typeof CoinflipGameIdRoute
   '/games/$gameId': typeof GamesGameIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
+  '/invite/$code': typeof InviteCodeRoute
+  '/leaderboards/$campaignId': typeof LeaderboardsCampaignIdRoute
+  '/partner/$code': typeof PartnerCodeRoute
+  '/slott/$gameId': typeof SlottGameIdRoute
   '/guides/': typeof GuidesIndexRoute
+  '/_authenticated/partner/leaderboards': typeof AuthenticatedPartnerLeaderboardsRoute
+  '/_authenticated/profile_/security': typeof AuthenticatedProfileSecurityRoute
+  '/_authenticated/wallet_/activity': typeof AuthenticatedWalletActivityRoute
+  '/api/avatar/upload': typeof ApiAvatarUploadRoute
   '/guides/topics/$topic': typeof GuidesTopicsTopicRoute
+  '/leaderboards/p/$username': typeof LeaderboardsPUsernameRoute
+  '/api/public/btcpay/webhook': typeof ApiPublicBtcpayWebhookRoute
+  '/api/public/cron/btcpay-reconcile': typeof ApiPublicCronBtcpayReconcileRoute
   '/api/public/cron/crypto-deposits': typeof ApiPublicCronCryptoDepositsRoute
   '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
   '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
+  '/api/public/didit/webhook': typeof ApiPublicDiditWebhookRoute
+  '/api/public/nowpayments/ipn': typeof ApiPublicNowpaymentsIpnRoute
   '/api/public/avatar/$style/$seed': typeof ApiPublicAvatarStyleSeedRoute
 }
 export interface FileRouteTypes {
@@ -244,10 +392,13 @@ export interface FileRouteTypes {
     | '/coinflip'
     | '/fairness'
     | '/how-it-works'
+    | '/leaderboards'
+    | '/prestige'
     | '/privacy'
     | '/responsible-gambling'
     | '/roulette'
     | '/sitemap.xml'
+    | '/slott'
     | '/terms'
     | '/admin'
     | '/profile'
@@ -255,11 +406,24 @@ export interface FileRouteTypes {
     | '/coinflip/$gameId'
     | '/games/$gameId'
     | '/guides/$slug'
+    | '/invite/$code'
+    | '/leaderboards/$campaignId'
+    | '/partner/$code'
+    | '/slott/$gameId'
     | '/guides/'
+    | '/partner/leaderboards'
+    | '/profile/security'
+    | '/wallet/activity'
+    | '/api/avatar/upload'
     | '/guides/topics/$topic'
+    | '/leaderboards/p/$username'
+    | '/api/public/btcpay/webhook'
+    | '/api/public/cron/btcpay-reconcile'
     | '/api/public/cron/crypto-deposits'
     | '/api/public/cron/crypto-reconcile'
     | '/api/public/cron/crypto-withdrawals'
+    | '/api/public/didit/webhook'
+    | '/api/public/nowpayments/ipn'
     | '/api/public/avatar/$style/$seed'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -269,10 +433,13 @@ export interface FileRouteTypes {
     | '/coinflip'
     | '/fairness'
     | '/how-it-works'
+    | '/leaderboards'
+    | '/prestige'
     | '/privacy'
     | '/responsible-gambling'
     | '/roulette'
     | '/sitemap.xml'
+    | '/slott'
     | '/terms'
     | '/admin'
     | '/profile'
@@ -280,11 +447,24 @@ export interface FileRouteTypes {
     | '/coinflip/$gameId'
     | '/games/$gameId'
     | '/guides/$slug'
+    | '/invite/$code'
+    | '/leaderboards/$campaignId'
+    | '/partner/$code'
+    | '/slott/$gameId'
     | '/guides'
+    | '/partner/leaderboards'
+    | '/profile/security'
+    | '/wallet/activity'
+    | '/api/avatar/upload'
     | '/guides/topics/$topic'
+    | '/leaderboards/p/$username'
+    | '/api/public/btcpay/webhook'
+    | '/api/public/cron/btcpay-reconcile'
     | '/api/public/cron/crypto-deposits'
     | '/api/public/cron/crypto-reconcile'
     | '/api/public/cron/crypto-withdrawals'
+    | '/api/public/didit/webhook'
+    | '/api/public/nowpayments/ipn'
     | '/api/public/avatar/$style/$seed'
   id:
     | '__root__'
@@ -295,10 +475,13 @@ export interface FileRouteTypes {
     | '/coinflip'
     | '/fairness'
     | '/how-it-works'
+    | '/leaderboards'
+    | '/prestige'
     | '/privacy'
     | '/responsible-gambling'
     | '/roulette'
     | '/sitemap.xml'
+    | '/slott'
     | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/profile'
@@ -306,11 +489,24 @@ export interface FileRouteTypes {
     | '/coinflip/$gameId'
     | '/games/$gameId'
     | '/guides/$slug'
+    | '/invite/$code'
+    | '/leaderboards/$campaignId'
+    | '/partner/$code'
+    | '/slott/$gameId'
     | '/guides/'
+    | '/_authenticated/partner/leaderboards'
+    | '/_authenticated/profile_/security'
+    | '/_authenticated/wallet_/activity'
+    | '/api/avatar/upload'
     | '/guides/topics/$topic'
+    | '/leaderboards/p/$username'
+    | '/api/public/btcpay/webhook'
+    | '/api/public/cron/btcpay-reconcile'
     | '/api/public/cron/crypto-deposits'
     | '/api/public/cron/crypto-reconcile'
     | '/api/public/cron/crypto-withdrawals'
+    | '/api/public/didit/webhook'
+    | '/api/public/nowpayments/ipn'
     | '/api/public/avatar/$style/$seed'
   fileRoutesById: FileRoutesById
 }
@@ -322,18 +518,28 @@ export interface RootRouteChildren {
   CoinflipRoute: typeof CoinflipRouteWithChildren
   FairnessRoute: typeof FairnessRoute
   HowItWorksRoute: typeof HowItWorksRoute
+  LeaderboardsRoute: typeof LeaderboardsRouteWithChildren
+  PrestigeRoute: typeof PrestigeRoute
   PrivacyRoute: typeof PrivacyRoute
   ResponsibleGamblingRoute: typeof ResponsibleGamblingRoute
   RouletteRoute: typeof RouletteRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SlottRoute: typeof SlottRouteWithChildren
   TermsRoute: typeof TermsRoute
   GamesGameIdRoute: typeof GamesGameIdRoute
   GuidesSlugRoute: typeof GuidesSlugRoute
+  InviteCodeRoute: typeof InviteCodeRoute
+  PartnerCodeRoute: typeof PartnerCodeRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
+  ApiAvatarUploadRoute: typeof ApiAvatarUploadRoute
   GuidesTopicsTopicRoute: typeof GuidesTopicsTopicRoute
+  ApiPublicBtcpayWebhookRoute: typeof ApiPublicBtcpayWebhookRoute
+  ApiPublicCronBtcpayReconcileRoute: typeof ApiPublicCronBtcpayReconcileRoute
   ApiPublicCronCryptoDepositsRoute: typeof ApiPublicCronCryptoDepositsRoute
   ApiPublicCronCryptoReconcileRoute: typeof ApiPublicCronCryptoReconcileRoute
   ApiPublicCronCryptoWithdrawalsRoute: typeof ApiPublicCronCryptoWithdrawalsRoute
+  ApiPublicDiditWebhookRoute: typeof ApiPublicDiditWebhookRoute
+  ApiPublicNowpaymentsIpnRoute: typeof ApiPublicNowpaymentsIpnRoute
   ApiPublicAvatarStyleSeedRoute: typeof ApiPublicAvatarStyleSeedRoute
 }
 
@@ -388,6 +594,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/leaderboards': {
+      id: '/leaderboards'
+      path: '/leaderboards'
+      fullPath: '/leaderboards'
+      preLoaderRoute: typeof LeaderboardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prestige': {
+      id: '/prestige'
+      path: '/prestige'
+      fullPath: '/prestige'
+      preLoaderRoute: typeof PrestigeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -414,6 +634,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/slott': {
+      id: '/slott'
+      path: '/slott'
+      fullPath: '/slott'
+      preLoaderRoute: typeof SlottRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -472,11 +699,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/invite/$code': {
+      id: '/invite/$code'
+      path: '/invite/$code'
+      fullPath: '/invite/$code'
+      preLoaderRoute: typeof InviteCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leaderboards/$campaignId': {
+      id: '/leaderboards/$campaignId'
+      path: '/$campaignId'
+      fullPath: '/leaderboards/$campaignId'
+      preLoaderRoute: typeof LeaderboardsCampaignIdRouteImport
+      parentRoute: typeof LeaderboardsRoute
+    }
+    '/partner/$code': {
+      id: '/partner/$code'
+      path: '/partner/$code'
+      fullPath: '/partner/$code'
+      preLoaderRoute: typeof PartnerCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/slott/$gameId': {
+      id: '/slott/$gameId'
+      path: '/$gameId'
+      fullPath: '/slott/$gameId'
+      preLoaderRoute: typeof SlottGameIdRouteImport
+      parentRoute: typeof SlottRoute
+    }
+    '/_authenticated/partner/leaderboards': {
+      id: '/_authenticated/partner/leaderboards'
+      path: '/partner/leaderboards'
+      fullPath: '/partner/leaderboards'
+      preLoaderRoute: typeof AuthenticatedPartnerLeaderboardsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profile_/security': {
+      id: '/_authenticated/profile_/security'
+      path: '/profile/security'
+      fullPath: '/profile/security'
+      preLoaderRoute: typeof AuthenticatedProfileSecurityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/wallet_/activity': {
+      id: '/_authenticated/wallet_/activity'
+      path: '/wallet/activity'
+      fullPath: '/wallet/activity'
+      preLoaderRoute: typeof AuthenticatedWalletActivityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/avatar/upload': {
+      id: '/api/avatar/upload'
+      path: '/api/avatar/upload'
+      fullPath: '/api/avatar/upload'
+      preLoaderRoute: typeof ApiAvatarUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/guides/topics/$topic': {
       id: '/guides/topics/$topic'
       path: '/guides/topics/$topic'
       fullPath: '/guides/topics/$topic'
       preLoaderRoute: typeof GuidesTopicsTopicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leaderboards/p/$username': {
+      id: '/leaderboards/p/$username'
+      path: '/p/$username'
+      fullPath: '/leaderboards/p/$username'
+      preLoaderRoute: typeof LeaderboardsPUsernameRouteImport
+      parentRoute: typeof LeaderboardsRoute
+    }
+    '/api/public/btcpay/webhook': {
+      id: '/api/public/btcpay/webhook'
+      path: '/api/public/btcpay/webhook'
+      fullPath: '/api/public/btcpay/webhook'
+      preLoaderRoute: typeof ApiPublicBtcpayWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cron/btcpay-reconcile': {
+      id: '/api/public/cron/btcpay-reconcile'
+      path: '/api/public/cron/btcpay-reconcile'
+      fullPath: '/api/public/cron/btcpay-reconcile'
+      preLoaderRoute: typeof ApiPublicCronBtcpayReconcileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/cron/crypto-deposits': {
@@ -500,6 +804,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronCryptoWithdrawalsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/didit/webhook': {
+      id: '/api/public/didit/webhook'
+      path: '/api/public/didit/webhook'
+      fullPath: '/api/public/didit/webhook'
+      preLoaderRoute: typeof ApiPublicDiditWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/nowpayments/ipn': {
+      id: '/api/public/nowpayments/ipn'
+      path: '/api/public/nowpayments/ipn'
+      fullPath: '/api/public/nowpayments/ipn'
+      preLoaderRoute: typeof ApiPublicNowpaymentsIpnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/avatar/$style/$seed': {
       id: '/api/public/avatar/$style/$seed'
       path: '/api/public/avatar/$style/$seed'
@@ -514,12 +832,18 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
+  AuthenticatedPartnerLeaderboardsRoute: typeof AuthenticatedPartnerLeaderboardsRoute
+  AuthenticatedProfileSecurityRoute: typeof AuthenticatedProfileSecurityRoute
+  AuthenticatedWalletActivityRoute: typeof AuthenticatedWalletActivityRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
+  AuthenticatedPartnerLeaderboardsRoute: AuthenticatedPartnerLeaderboardsRoute,
+  AuthenticatedProfileSecurityRoute: AuthenticatedProfileSecurityRoute,
+  AuthenticatedWalletActivityRoute: AuthenticatedWalletActivityRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -537,6 +861,30 @@ const CoinflipRouteWithChildren = CoinflipRoute._addFileChildren(
   CoinflipRouteChildren,
 )
 
+interface LeaderboardsRouteChildren {
+  LeaderboardsCampaignIdRoute: typeof LeaderboardsCampaignIdRoute
+  LeaderboardsPUsernameRoute: typeof LeaderboardsPUsernameRoute
+}
+
+const LeaderboardsRouteChildren: LeaderboardsRouteChildren = {
+  LeaderboardsCampaignIdRoute: LeaderboardsCampaignIdRoute,
+  LeaderboardsPUsernameRoute: LeaderboardsPUsernameRoute,
+}
+
+const LeaderboardsRouteWithChildren = LeaderboardsRoute._addFileChildren(
+  LeaderboardsRouteChildren,
+)
+
+interface SlottRouteChildren {
+  SlottGameIdRoute: typeof SlottGameIdRoute
+}
+
+const SlottRouteChildren: SlottRouteChildren = {
+  SlottGameIdRoute: SlottGameIdRoute,
+}
+
+const SlottRouteWithChildren = SlottRoute._addFileChildren(SlottRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -545,18 +893,28 @@ const rootRouteChildren: RootRouteChildren = {
   CoinflipRoute: CoinflipRouteWithChildren,
   FairnessRoute: FairnessRoute,
   HowItWorksRoute: HowItWorksRoute,
+  LeaderboardsRoute: LeaderboardsRouteWithChildren,
+  PrestigeRoute: PrestigeRoute,
   PrivacyRoute: PrivacyRoute,
   ResponsibleGamblingRoute: ResponsibleGamblingRoute,
   RouletteRoute: RouletteRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SlottRoute: SlottRouteWithChildren,
   TermsRoute: TermsRoute,
   GamesGameIdRoute: GamesGameIdRoute,
   GuidesSlugRoute: GuidesSlugRoute,
+  InviteCodeRoute: InviteCodeRoute,
+  PartnerCodeRoute: PartnerCodeRoute,
   GuidesIndexRoute: GuidesIndexRoute,
+  ApiAvatarUploadRoute: ApiAvatarUploadRoute,
   GuidesTopicsTopicRoute: GuidesTopicsTopicRoute,
+  ApiPublicBtcpayWebhookRoute: ApiPublicBtcpayWebhookRoute,
+  ApiPublicCronBtcpayReconcileRoute: ApiPublicCronBtcpayReconcileRoute,
   ApiPublicCronCryptoDepositsRoute: ApiPublicCronCryptoDepositsRoute,
   ApiPublicCronCryptoReconcileRoute: ApiPublicCronCryptoReconcileRoute,
   ApiPublicCronCryptoWithdrawalsRoute: ApiPublicCronCryptoWithdrawalsRoute,
+  ApiPublicDiditWebhookRoute: ApiPublicDiditWebhookRoute,
+  ApiPublicNowpaymentsIpnRoute: ApiPublicNowpaymentsIpnRoute,
   ApiPublicAvatarStyleSeedRoute: ApiPublicAvatarStyleSeedRoute,
 }
 export const routeTree = rootRouteImport

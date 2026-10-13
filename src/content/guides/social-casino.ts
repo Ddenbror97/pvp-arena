@@ -76,7 +76,7 @@ Near-miss animations, “almost stacked” bonus teases, and a countdown on a ch
 
 Track optional purchases for a month. A $2.99 pack every other day is about $45. That number belongs on a household budget line the same way a $45 USDC session would. Calling it “just a mobile game” does not change the card statement.
 
-PVPspinArena posts fees in the open. Jackpot and Coinflip default to a 0% house fee on the pot. Roulette is a 33-slot wheel with about about a 7.88% Purple or Silver edge after the win fee. There is no “free chip” layer hiding a second meter.`,
+PVPspinArena posts fees in the open. Jackpot and Coinflip take a 5% house fee on the pot. Roulette is a 33-slot wheel with about a 7.88% Purple or Silver edge after the win fee. P2P Slott takes 10% of the players' pot. There is no “free chip” layer hiding a second meter.`,
     },
     {
       id: "example",

@@ -117,7 +117,7 @@ If a $2 unit already feels like it must be recovered tonight, the unit is too la
     {
       id: "pvp",
       title: "Flat units on hashed PvP rounds",
-      body: `PVPspinArena runs three player-vs-player games. The same constant-stake idea maps cleanly onto two of them and loosely onto the third.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott. The same constant-stake idea maps cleanly onto two of them and loosely onto the third.
 
 - **Roulette.** Purple or Silver is the even-money canvas. Write $X a spin, write a 20-unit stop, and let the 7.88% Purple or Silver edge be the visible hourly price. Green is a 14x long shot; a “flat” green unit is a different variance product, not a colour-betting system.
 - **Coinflip.** Two players, 50/50, winner takes the pot minus any fee shown before entry. Flat means repeating a size you can lose several times, not pressing after a miss because “it has to flip”.

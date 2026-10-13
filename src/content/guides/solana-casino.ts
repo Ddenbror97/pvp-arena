@@ -47,7 +47,7 @@ Solana has had outages and degraded periods. During those times, wallets may ret
 
 ### Compared with Base
 
-Base is an Ethereum layer 2. Transfers there also cost cents or less and confirm in seconds. The difference that matters for you is **which chain the casino watches**. A cheap SOL transfer to the wrong chain is still a lost transfer. Our [USDC casino](/guides/usdc-casino) guide explains why PVPspinArena watches Base only.`,
+Base is an Ethereum layer 2. Transfers there also cost cents or less and confirm in seconds. The difference that matters for you is **which chain the casino watches**. A cheap SOL transfer to the wrong chain is still a lost transfer. Our [USDC casino](/guides/usdc-casino) guide explains why PVPspinArena watches Base for USDC and ETH.`,
     },
     {
       id: "wallets",

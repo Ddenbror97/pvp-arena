@@ -15,7 +15,7 @@ export const guide: Guide = {
     "How do sweepstakes casinos work, step by step: account, Gold Coins, Sweeps Coins, playthrough, redeem checks, and how that loop differs from a hashed USDC pot.",
   h1: "How do sweepstakes casinos work? From coins to a redeem request",
   answer:
-    "How do sweepstakes casinos work? You create an account, receive Gold Coins for fun play and Sweeps Coins as promotional entries, play under a playthrough rule, then request a redeem if you clear the floor, the identity checks and the state filter. That is the loop. PVPspinArena is not on that loop. It is Jackpot, Coinflip and Roulette with USDC or ETH on Base.",
+    "How do sweepstakes casinos work? You create an account, receive Gold Coins for fun play and Sweeps Coins as promotional entries, play under a playthrough rule, then request a redeem if you clear the floor, the identity checks and the state filter. That is the loop. PVPspinArena is not on that loop. It runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.",
   howTo: true,
   facts: [
     "The loop is account → coins → play → playthrough → redeem request → review → payout or denial.",
@@ -123,7 +123,7 @@ If AMOE is missing from the current PDF, do not invent a 2022 address from a for
 | Proof | Terms + support ticket | [Fairness](/fairness) recompute |
 | Off-ramp | Redeem review | Withdrawal to the verified wallet |
 
-Jackpot and Coinflip are player-versus-player with a configurable house fee that defaults to 0%. Roulette posts its edge. None of those sentences is a sweepstakes official rule.
+Jackpot and Coinflip are player-versus-player with a 5% house fee on the pot. Roulette posts its edge. None of those sentences is a sweepstakes official rule.
 
 If you wanted the sweepstakes loop, stay on that product and finish reading its PDF. If you wanted a pot you can check, use this site’s games. Do not expect one loop to satisfy the other checklist. Mixing the loops in one night is how a denied redeem becomes a second deposit.`,
     },

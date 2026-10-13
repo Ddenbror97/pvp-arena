@@ -108,7 +108,7 @@ For skin betting, crypto cashiers and legal status, go back to [CS2 betting](/gu
       title: "A CS price versus a hashed PvP payout",
       body: `A CSGO-odds ticket is a contract on an external match. You cannot recompute Inferno from a server seed. Your checks are the book's rules, the price after vig, and whether you can withdraw.
 
-A PvP round on this site is a contract on an internal random result. [Coinflip](/coinflip) with a 0% fee is 50% at decimal 2.00. Jackpot chance is your share of the pot. Check the commit-reveal on the [fairness page](/fairness). Nobody is pricing a mid-round save.
+A PvP round on this site is a contract on an internal random result. [Coinflip](/coinflip) is 50/50 at decimal 1.90 after a 5% pot fee. Jackpot chance is your share of the pot. Check the commit-reveal on the [fairness page](/fairness). Nobody is pricing a mid-round save.
 
 Do not use a hashed pot as a same-game parlay after a lost Ancient. Do not treat a 2.00 colour on Roulette as "the same as even-money CS". The wheel has a published edge. The book has an overround. They are different leaks.`,
     },
@@ -148,7 +148,7 @@ If converting CSGO odds has become a way to stay in the session, stop. Use [how 
     },
     {
       q: "Does PVPspinArena post CSGO odds?",
-      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip and Roulette only.",
+      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Where should I read about CS2 betting as a whole?",

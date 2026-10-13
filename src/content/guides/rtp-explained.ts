@@ -16,7 +16,7 @@ export const guide: Guide = {
     "A 96% RTP is a long-run average on total wagered, not a 96% chance to win.",
     "European roulette RTP is about 97.30%; American roulette about 94.74%.",
     "PVPspinArena Purple and Silver return about 92% after the fee. Green returns about 40%.",
-    "PvP Jackpot and Coinflip with a 0% fee have 100% RTP between players.",
+    "PvP Jackpot and Coinflip with a 5% fee have 95% RTP between players.",
   ],
   sections: [
     {
@@ -110,7 +110,7 @@ Sample size does not create an edge. Playing longer does not “unlock” the 96
 
 Purple: 16/33 × 2 = 0.9697, so RTP = 96.97% before the 5% win fee. Green: 1/33 × 14 = 0.4242. The hit rates differ, and Green costs much more. You can count the 33 slots on the live [Roulette](/roulette) wheel and repeat the multiplication yourself.
 
-On a 0% fee PvP [Coinflip](/coinflip) or [Jackpot](/), players fund the pot and the site does not take the other side, so RTP between players is 100%. Individual players still finish up or down; the group as a whole is not charged a keep-rate. Add a fee and RTP falls by that fee.
+On a 5% fee PvP [Coinflip](/coinflip) or [Jackpot](/), players fund the pot and the site does not take the other side, so RTP between players is 95%. Individual players still finish up or down; the group as a whole is charged that keep-rate.
 
 A scratch ticket prints its return on the back. [Scratch off odds](/guides/scratch-off-odds) is that label, not a slot RTP.`,
     },
@@ -119,7 +119,7 @@ A scratch ticket prints its return on the back. [Scratch off odds](/guides/scrat
       title: "RTP on PVPspinArena and on slots",
       body: `Slots hide the paytable behind thousands of symbol combinations and bonus states. You cannot usually derive RTP with a napkin. You rely on the published figure, and you still need a huge sample before your personal return resembles it. Slot volatility also means a 96% game can return 30% or 250% in a short sitting. That is the point of [variance in gambling](/guides/variance-in-gambling).
 
-PVPspinArena’s three games are simple enough to price without a lab report.
+PVPspinArena’s four games are simple enough to price without a lab report.
 
 ### Roulette
 
@@ -127,11 +127,11 @@ The coloured wheel is house-banked. Purple and Silver return 96.97% before the 5
 
 ### Coinflip
 
-Two equal stakes, one 50/50 result. With the default 0% house fee, RTP is 100% between the two players. You can still lose the entire stake in one flip. Fairness of the result is a separate question from RTP; check a finished round on the [fairness](/fairness) page.
+Two equal stakes, one 50/50 result. With the 5% pot fee, RTP is 95% between the two players. You can still lose the entire stake in one flip. Fairness of the result is a separate question from RTP; check a finished round on the [fairness](/fairness) page.
 
 ### Jackpot
 
-Your chance equals your share of the pot. With no fee, expected return is 100% of your stake in expectation, because you are buying a proportional ticket on a player-funded pot. A small share of a large pot is a long-shot ticket: high variance, same 100% RTP before fees.
+Your chance equals your share of the pot. With a 5% fee, expected return is 95% of your stake in expectation, because you are buying a proportional ticket on a player-funded pot. A small share of a large pot is a long-shot ticket: high variance, same 95% RTP after the fee.
 
 ### 18+ and cost
 
@@ -144,7 +144,7 @@ None of these figures is a reason to play more. They are a reason to know the pr
 
 1. **Convert to edge.** Subtract RTP from 100% so you can think in dollars kept per $100 wagered.
 2. **Estimate turnover.** Stake × number of bets is the figure the percentage applies to.
-3. **Compare like with like.** A 96% slot, Purple at 96.97% before the win fee, and Green at 42.42% are different prices. A 100% fee-free PvP pot is a different price again, but it is still a transfer between players.
+3. **Compare like with like.** A 96% slot, Purple at 96.97% before the win fee, and Green at 42.42% are different prices. A worked example with no fee is a different price again, but it is still a transfer between players.
 4. **Ignore “96% chance” talk.** Ask about hit rate and payout size if you care how bumpy the ride is.
 5. **Read the instance.** If a game offers several RTPs, believe the one on the info screen.
 6. **Stop on your budget, not on the sample.** More play moves you toward the average by charging the edge more times.

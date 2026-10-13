@@ -169,7 +169,7 @@ A sportsbook licence is not an online-casino licence. [Is online casino legal](/
     },
     {
       q: "Does PVPspinArena offer legal sports betting?",
-      a: "No. It is not a sportsbook in any state. It offers hashed Jackpot, Coinflip and Roulette only.",
+      a: "No. It is not a sportsbook in any state. It offers hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Can I use a licensed app while I travel?",

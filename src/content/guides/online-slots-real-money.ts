@@ -12,16 +12,16 @@ export const guide: Guide = {
   ],
   title: "Online Slots Real Money: Cost, RTP and Cashier",
   description:
-    "Online slots real money means cash or crypto at risk on every spin. See RTP as a cost, how cashiers work, and why PVPspinArena has no reels.",
+    "Online slots real money means cash or crypto at risk on every spin. See RTP as a cost, how cashiers work, and P2P Slott is a 1v1 reel duel.",
   h1: "Online slots real money: what you actually put at risk",
   answer:
-    "Online slots real money are video slots you fund with cash or crypto. Each spin is a house-banked bet: the generator picks a stop, the paytable pays or does not, and the long-run keep-rate is 100% minus RTP. Real money means a loss leaves your bank account or wallet. It does not mean a better RTP, a fairer generator or a jackpot you can price from your deposit. PVPspinArena does not offer slots.",
+    "Online slots real money are video slots you fund with cash or crypto. Each spin is a house-banked bet: the generator picks a stop, the paytable pays or does not, and the long-run keep-rate is 100% minus RTP. Real money means a loss leaves your bank account or wallet. It does not mean a better RTP, a fairer generator or a jackpot you can price from your deposit. PVPspinArena's slot game is P2P Slott, a 1v1 duel.",
   facts: [
     "A real-money spin stakes cash or crypto; demo credits are a different product.",
     "RTP applies to total wagered, not to the size of your deposit.",
     "Fast autoplay turns a small deposit into a large turnover in minutes.",
     "Withdrawals, wagering and KYC sit on the cashier, not on the reel art.",
-    "PVPspinArena has no slots; Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -147,7 +147,7 @@ A useful habit: after ten spins, look at the balance and at total wagered if the
     {
       id: "not-here",
       title: "PVPspinArena does not offer real-money slots",
-      body: `There are no reels here. The live games are Jackpot, Coinflip and Roulette, each with a chance you can state without a studio sheet.
+      body: `P2P Slott is the reel game, a 1v1 duel. The other live games are Jackpot, Coinflip, and house-banked Roulette, each with a chance you can state without a studio sheet.
 
 If a lobby’s real-money slot list is why you opened this page, take RTP as a cost, volatility as a warning and the cashier as a second paytable. Then decide whether you still want a game that cannot show you the strips.
 
@@ -186,7 +186,7 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     },
     {
       q: "Does PVPspinArena have real-money slots?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. This guide is for pricing slots you see elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide is for pricing slots you see elsewhere.",
     },
     {
       q: "Are slot bonuses free extra money?",

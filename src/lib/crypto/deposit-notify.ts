@@ -1,64 +1,152 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { formatUsd } from "@/lib/jackpot/math";
+import { useCryptoActivity } from "@/components/wallet/RailPreference";
+import {
+  selectDepositNotice,
+  type DepositNotice,
+  type DepositNoticeRow,
+  type SubmittedDeposit,
+} from "@/lib/crypto/deposit-notice";
 
-type DepositRow = {
-  id: string;
-  status: string;
-  usd_cents: number;
-  asset_key: string;
-};
+export const DEPOSIT_SUBMITTED = "pvp:deposit-submitted";
+
+/** Tell every page that MetaMask just sent a deposit. The card appears at once. */
+export function announceDepositSubmitted(detail: {
+  usdCents: number;
+  asset: string;
+  networkMode: string;
+}) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent(DEPOSIT_SUBMITTED, { detail }));
+}
 
 /**
- * Live deposit feedback. Deposits are credited by the server-side watcher once
- * the block is confirmed by both providers, which takes up to ~90s. Without
- * feedback the balance looks unchanged in that window, so surface the deposit
- * as soon as it is seen on chain and refresh the balance the moment it lands.
- *
- * Purely presentational: it never decides amounts or crediting.
+ * Deposit progress for the signed-in header. The browser cannot subscribe to
+ * deposit rows, so this watches the activity the wallet already loads and
+ * refreshes it while a transfer is in flight.
  */
-export function useDepositNotifications(userId: string | null) {
+export function useDepositNotice(userId: string | null): {
+  notice: DepositNotice | null;
+  dismiss: () => void;
+} {
+  const activity = useCryptoActivity(!!userId);
   const qc = useQueryClient();
-  // Only announce each (deposit, status) pair once per session.
-  const seen = useRef(new Set<string>());
+  const [submitted, setSubmitted] = useState<SubmittedDeposit | null>(null);
+  const [dismissed, setDismissed] = useState<ReadonlySet<string>>(() => new Set());
+  const [now, setNow] = useState(() => Date.now());
+  const baseline = useRef<Set<string> | null>(null);
+  const baselineUser = useRef<string | null>(null);
+  const credited = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    if (!userId) return;
-    const announce = (row: DepositRow) => {
-      const key = `${row.id}:${row.status}`;
-      if (seen.current.has(key)) return;
-      seen.current.add(key);
-      const amount = formatUsd(Number(row.usd_cents ?? 0));
-      if (row.status === "DETECTED") {
-        toast.info(`${amount} ${row.asset_key} deposit seen on Base — confirming…`, { id: row.id, duration: 8000 });
-      } else if (row.status === "CONFIRMED") {
-        toast.info(`${amount} deposit confirmed — crediting…`, { id: row.id, duration: 8000 });
-      } else if (row.status === "CREDITED") {
-        toast.success(`${amount} added to your balance`, { id: row.id, duration: 8000 });
-      } else if (row.status === "UNMATCHED" || row.status === "REJECTED") {
-        toast.warning(`${amount} deposit needs review — support will follow up`, { id: row.id, duration: 10000 });
-      }
-      // Any status change may move money, so refresh balance and activity.
-      qc.invalidateQueries({ queryKey: ["wallet", userId] });
-      qc.invalidateQueries({ queryKey: ["crypto-activity"] });
+    const onSubmit = (event: Event) => {
+      const detail = (
+        event as CustomEvent<{ usdCents?: number; asset?: string; networkMode?: string }>
+      ).detail;
+      if (!detail || typeof detail.usdCents !== "number" || typeof detail.asset !== "string")
+        return;
+      setSubmitted({
+        usdCents: detail.usdCents,
+        asset: detail.asset,
+        networkMode: typeof detail.networkMode === "string" ? detail.networkMode : "mainnet",
+        at: Date.now(),
+      });
+      setDismissed((current) => {
+        if (!current.has("submitted")) return current;
+        const next = new Set(current);
+        next.delete("submitted");
+        return next;
+      });
+      setNow(Date.now());
     };
+    window.addEventListener(DEPOSIT_SUBMITTED, onSubmit);
+    return () => window.removeEventListener(DEPOSIT_SUBMITTED, onSubmit);
+  }, []);
 
-    const ch = supabase
-      .channel(`deposits-${userId}-${Math.random().toString(36).slice(2)}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "crypto_deposits", filter: `user_id=eq.${userId}` },
-        (payload) => {
-          const row = payload.new as DepositRow | null;
-          if (row?.id && row.status) announce(row);
+  if (baselineUser.current !== userId) {
+    baselineUser.current = userId;
+    baseline.current = null;
+    credited.current = new Set();
+  }
+  if (baseline.current === null && activity.data) {
+    baseline.current = new Set([
+      ...activity.data.deposits.filter((row) => row.status === "CREDITED").map((row) => row.id),
+      ...activity.data.bitcoin.filter((row) => row.status === "CREDITED").map((row) => row.id),
+    ]);
+  }
+
+  const chains = activity.data?.chains ?? [];
+  const deposits: DepositNoticeRow[] = [
+    ...(activity.data?.deposits ?? []).map((row) => ({
+      id: row.id,
+      status: row.status,
+      usd_cents: row.usd_cents,
+      asset_key: row.asset_key,
+      at: row.at || null,
+      networkMode: chains.find((chain) => chain.chain_id === row.chain_id)?.network_mode ?? null,
+    })),
+    ...(activity.data?.bitcoin ?? []).flatMap((row) => {
+      const status =
+        row.status === "CREDITED"
+          ? "CREDITED"
+          : row.status === "REVIEW"
+            ? "UNMATCHED"
+            : row.status === "PROCESSING" || row.status === "SETTLED"
+              ? "DETECTED"
+              : null;
+      if (!status) return [];
+      return [
+        {
+          id: row.id,
+          status,
+          usd_cents: row.usd_cents,
+          asset_key: "BTC",
+          at: row.at || null,
+          networkMode: "bitcoin" as const,
         },
-      )
-      .subscribe();
+      ];
+    }),
+  ].sort((a, b) => Date.parse(b.at ?? "") - Date.parse(a.at ?? ""));
+  const notice = userId
+    ? selectDepositNotice({
+        deposits,
+        baselineCredited: baseline.current ?? new Set(),
+        dismissed,
+        submitted,
+        now,
+      })
+    : null;
 
+  useEffect(() => {
+    if (notice?.phase !== "waiting") return;
+    const clock = window.setInterval(() => setNow(Date.now()), 1000);
+    const poll = window.setInterval(() => {
+      qc.invalidateQueries({ queryKey: ["crypto-activity"] });
+    }, 8000);
     return () => {
-      supabase.removeChannel(ch);
+      window.clearInterval(clock);
+      window.clearInterval(poll);
     };
-  }, [userId, qc]);
+  }, [notice?.phase, qc]);
+
+  useEffect(() => {
+    if (notice?.phase !== "added" || !userId) return;
+    const id = notice.key.slice("added:".length);
+    if (credited.current.has(id)) return;
+    credited.current.add(id);
+    setSubmitted(null);
+    qc.invalidateQueries({ queryKey: ["wallet", userId] });
+    qc.invalidateQueries({ queryKey: ["crypto-activity"] });
+    qc.invalidateQueries({ queryKey: ["ledger"] });
+  }, [notice?.key, notice?.phase, userId, qc]);
+
+  const dismiss = useCallback(() => {
+    if (!notice) return;
+    const id =
+      notice.key === "submitted" ? "submitted" : notice.key.slice(notice.key.indexOf(":") + 1);
+    setDismissed((current) => new Set(current).add(id));
+    if (notice.key === "submitted") setSubmitted(null);
+  }, [notice]);
+
+  return { notice, dismiss };
 }

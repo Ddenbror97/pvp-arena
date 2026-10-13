@@ -181,7 +181,7 @@ The legal status of playing teen patti for money depends on where you are. In In
     {
       id: "pvp",
       title: "Pot share and odds on a hashed PvP round",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on the Base network, for adults 18+ only. Like teen patti, they are games between players rather than games against a dealer's hand, but there is no hidden information to bet on.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, for adults 18+ only. Like teen patti, they are games between players rather than games against a dealer's hand, but there is no hidden information to bet on.
 
 - In [Jackpot](/), players add wagers to one pot and your win chance equals your share. Put 2 into a 10-unit pot and your chance is exactly 20%. The winner takes the pot minus any fee shown before entry.
 - [Coinflip](/coinflip) is a straight 50/50 between two players.

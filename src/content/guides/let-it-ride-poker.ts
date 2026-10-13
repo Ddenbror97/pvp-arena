@@ -119,7 +119,7 @@ The deck is shuffled again under the house rules. Your three new hole cards are 
 
 Adults 18+ only. This page explains a casino table game. It is not permission to play where you are underage or unlicensed, and it is not a tax opinion. If the pull-back feels impossible because you want every hand to be a royal, the chart will not survive the session. Leave while bet 3 is still unposted.
 
-PVPspinArena does not offer Let It Ride. The live games here are Jackpot, Coinflip, and Roulette in USDC or ETH on Base. A paytable poker game is not hiding inside those products.`,
+PVPspinArena does not offer Let It Ride. The live games here are Jackpot, Coinflip, and Roulette settled in US dollars. A paytable poker game is not hiding inside those products.`,
     },
     {
       id: "keep",

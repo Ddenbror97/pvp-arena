@@ -111,7 +111,7 @@ You may ask a host to process a self-exclusion or a limit. Some will. Some will 
 
 Provably fair games make this checkable: the formula does not include your badge. If a host claims they can “make the game loose,” they are either lying or describing a different product. Walk away.
 
-PvP pots divide money among players. A VIP label cannot mint extra expected value without taking it from someone else or from the fee. On PVPspinArena the default PvP fee is 0%; there is nothing to rebate except marketing fiction.
+PvP pots divide money among players. A VIP label cannot mint extra expected value without taking it from someone else or from the fee. On PVPspinArena the Jackpot and Coinflip fee is 5% of the pot and the P2P Slott fee is 10%; a VIP label does not rebate that fee.
 
 If a host hints they can “send you a better game,” they are describing either a different RTP setting — which should be in the info panel — or nonsense. Check the panel. If the number changed, you are not getting a gift. You are getting a different product. If the number did not change, you were sold a story.
 

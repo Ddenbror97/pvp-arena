@@ -42,7 +42,7 @@ For a bet to be fair, the payout must match the odds. On a 50/50 outcome, a fair
 
 ### Where a fee fits in
 
-If the site keeps a fee from the pot, the payout falls below 2x and the average player loses the fee over time. On PVPspinArena the house fee is configurable and shown openly; the default is 0%. Our [CS:GO coinflip guide](/guides/csgo-coinflip) explains how the online game works.`,
+If the site keeps a fee from the pot, the payout falls below 2x and the average player loses the fee over time. On PVPspinArena the house fee is 5% of the pot and is shown openly. Our [CS:GO coinflip guide](/guides/csgo-coinflip) explains how the online game works.`,
     },
     {
       id: "independence",

@@ -30,7 +30,7 @@ Avalanche is not one ledger. The X-Chain (exchange), P-Chain (platform / validat
 
 This guide lives with other rails in [crypto payments](/guides/topics/crypto-payments). It is the Avalanche twin of the [Solana casino](/guides/solana-casino) explainer: teach the chain, then show why this site is not on it.
 
-PVPspinArena is Jackpot, Coinflip and Roulette. Deposits are USDC and ETH on Base. It is not an AVAX casino, not a C-Chain casino, and it will not credit a Snowtrace transaction.`,
+PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott. Deposits are on-chain Bitcoin, and USDC and ETH on Base. It is not an AVAX casino, not a C-Chain casino, and it will not credit a Snowtrace transaction.`,
     },
     {
       id: "c-chain-fees",
@@ -47,7 +47,7 @@ That speed is why "avax casino" pages advertise instant play. It is also why a w
 
 ### Compared with Base
 
-Base is also cheap and fast for ordinary sends. The difference that matters is **which RPC the cashier watches**. A cheap AVAX transfer to a Base deposit address is still a lost transfer. Read [USDC casino](/guides/usdc-casino) for why PVPspinArena watches Base only.`,
+Base is also cheap and fast for ordinary sends. The difference that matters is **which RPC the cashier watches**. A cheap AVAX transfer to a Base deposit address is still a lost transfer. Read [USDC casino](/guides/usdc-casino) for why PVPspinArena watches Base for USDC and ETH.`,
     },
     {
       id: "usdc-on-avax",

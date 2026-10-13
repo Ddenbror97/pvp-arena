@@ -144,7 +144,7 @@ The physical [Plinko board](/guides/plinko-board) is a useful comparison. It is 
       title: "Stated odds versus hidden odds on PVPspinArena",
       body: `The problem with most midway games is not that they have a margin. It is that you cannot see it. The rim is a little oval, the balloon a little soft, and you only find out by paying.
 
-PVPspinArena works the other way. It runs three player-vs-player games, and the odds are published before you play. On [Roulette](/roulette), the 33-slot wheel has 16 Purple and 16 Silver slots paying 2x and 1 Green slot paying 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. [Coinflip](/coinflip) is a 50/50 between two players, with any fee shown before entry. Results come from committed seeds, and any settled round can be checked on the [fairness](/fairness) page.
+PVPspinArena works the other way. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and the odds are published before you play. On [Roulette](/roulette), the 33-slot wheel has 16 Purple and 16 Silver slots paying 2x and 1 Green slot paying 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. [Coinflip](/coinflip) is a 50/50 between two players, with any fee shown before entry. Results come from committed seeds, and any settled round can be checked on the [fairness](/fairness) page.
 
 That does not make any of it a way to earn money. Like a carnival game, it is entertainment with a cost. Play only at 18+ (or your local legal age), set a limit in advance, and use the [responsible gambling](/responsible-gambling) tools if you need them.`,
     },

@@ -4,7 +4,10 @@ import { z } from "zod";
 import { resendSignupCode, startSignup, verifySignupCode } from "./signup.server";
 
 function clientMeta() {
-  const ip = getRequestHeader("cf-connecting-ip") ?? getRequestHeader("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
+  const ip =
+    getRequestHeader("cf-connecting-ip") ??
+    getRequestHeader("x-forwarded-for")?.split(",")[0]?.trim() ??
+    null;
   const ua = getRequestHeader("user-agent")?.slice(0, 300) ?? null;
   return { ip, ua };
 }
@@ -20,12 +23,23 @@ export const startSignupFn = createServerFn({ method: "POST" })
       })
       .parse(d),
   )
-  .handler(async ({ data }) => startSignup({ email: data.email, password: data.password, username: data.username, ...clientMeta() }));
+  .handler(async ({ data }) =>
+    startSignup({
+      email: data.email,
+      password: data.password,
+      username: data.username,
+      ...clientMeta(),
+    }),
+  );
 
 export const resendSignupCodeFn = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ challengeId: z.string().uuid() }).parse(d))
-  .handler(async ({ data }) => resendSignupCode({ challengeId: data.challengeId, ...clientMeta() }));
+  .handler(async ({ data }) =>
+    resendSignupCode({ challengeId: data.challengeId, ...clientMeta() }),
+  );
 
 export const verifySignupCodeFn = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ challengeId: z.string().uuid(), code: z.string().regex(/^\d{6}$/) }).parse(d))
+  .inputValidator((d) =>
+    z.object({ challengeId: z.string().uuid(), code: z.string().regex(/^\d{6}$/) }).parse(d),
+  )
   .handler(async ({ data }) => verifySignupCode(data));

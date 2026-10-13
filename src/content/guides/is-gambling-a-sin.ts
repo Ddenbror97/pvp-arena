@@ -159,7 +159,7 @@ A person who answers the fourth question with yes is, in almost every tradition,
     {
       id: "pvp",
       title: "How a PvP game fits the debate",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on Base. Their structure maps directly onto the arguments above. In Jackpot, players add wagers to one pot and the winner takes it minus any fee shown before entry. In a [Coinflip](/coinflip), two players stake against each other at 50/50. Money moves from the losers to the winner, which is exactly the transfer critics describe as gain at a neighbour's expense, and which others describe as an agreed game between consenting adults.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. Their structure maps directly onto the arguments above. In Jackpot, players add wagers to one pot and the winner takes it minus any fee shown before entry. In a [Coinflip](/coinflip), two players stake against each other at 50/50. Money moves from the losers to the winner, which is exactly the transfer critics describe as gain at a neighbour's expense, and which others describe as an agreed game between consenting adults.
 
 The odds are published and checkable. [Roulette](/roulette) returns 32/33, about 96.97%, of every stake on average, and any settled round can be verified on the [fairness page](/fairness). Transparency answers questions of honesty, not the moral question itself, which each person answers within their own tradition.
 

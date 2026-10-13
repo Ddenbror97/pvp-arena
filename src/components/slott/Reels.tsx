@@ -1,5 +1,6 @@
 import { memo, useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react";
-import { REELS, ROWS, WILD, SYMBOLS } from "@/lib/slott/paytable";
+import { BOMB, REELS, ROWS, WILD, SYMBOLS } from "@/lib/slott/paytable";
+import { warmSlotStage, SLOT_STAGE } from "@/lib/slott/stage";
 import { SYMBOL_IMG } from "@/lib/slott/symbols";
 import { cn } from "@/lib/utils";
 import { reelStops, teases, type ReelSpin } from "./timing";
@@ -7,7 +8,8 @@ import type { HitCell } from "./hits";
 
 const FILLER_BASE = 14;
 const FILLER_STEP = 5;
-const TEASE_EXTRA = 12;
+
+warmSlotStage();
 
 /** Deterministic, cosmetic filler: WILDs and high-value symbols flash past often. */
 function filler(seed: number, reel: number, n: number): number[] {
@@ -40,11 +42,29 @@ export const Reels = memo(function Reels({
   seamless?: boolean;
   className?: string;
 }) {
-  const stops = spin ? reelStops(spin.grid, spin.durationMs) : null;
-  const tease = !!spin && teases(spin.grid);
+  const stops = spin && !spin.pending ? reelStops(spin.grid, spin.durationMs) : null;
+  const tease = !!spin && !spin.pending && teases(spin.grid);
   return (
-    <div className={cn("relative", className)}>
-      <div className={cn("grid grid-cols-5", seamless ? "slott-reel-window overflow-hidden rounded-lg sm:rounded-xl" : "gap-1 sm:gap-1.5")}>
+    <div className={cn("slott-reels relative", className)}>
+      <div
+        className={cn(
+          "relative grid grid-cols-5",
+          seamless
+            ? "slott-reel-window overflow-hidden rounded-lg sm:rounded-xl"
+            : "gap-1 sm:gap-1.5",
+        )}
+      >
+        <img
+          src={SLOT_STAGE}
+          alt=""
+          width={1024}
+          height={850}
+          draggable={false}
+          decoding="sync"
+          fetchPriority="high"
+          className="slott-stage pointer-events-none absolute inset-0 z-0 h-full w-full select-none object-cover"
+        />
+        <div aria-hidden className="slott-stage-scrim pointer-events-none absolute inset-0 z-0" />
         {Array.from({ length: REELS }, (_, r) => (
           <Reel
             key={r}
@@ -59,7 +79,9 @@ export const Reels = memo(function Reels({
           />
         ))}
       </div>
-      {fx ? <div className="slott-fx contents">{fx}</div> : null}
+      {fx ? (
+        <div className="slott-fx pointer-events-none absolute inset-0 z-20">{fx}</div>
+      ) : null}
     </div>
   );
 });
@@ -85,59 +107,110 @@ function Reel({
 }) {
   const strip = useRef<HTMLDivElement>(null);
   const ran = useRef<string | null>(null);
-  const k = FILLER_BASE + reel * FILLER_STEP + (teaseFrom != null ? TEASE_EXTRA : 0);
-  const cells = spin ? [...spin.prev.slice(reel * ROWS, reel * ROWS + ROWS), ...filler(spin.grid.reduce((a, b) => a * 31 + b, reel), reel, k), ...column] : column;
+  const k = FILLER_BASE + reel * FILLER_STEP;
+  const head = spin ? spin.prev.slice(reel * ROWS, reel * ROWS + ROWS) : [];
+  const blur = spin
+    ? filler(
+        spin.prev.reduce((a, b) => a * 31 + b, reel),
+        reel,
+        k,
+      )
+    : [];
+  const cells = spin?.pending
+    ? [...head, ...blur, ...head]
+    : spin
+      ? [...head, ...blur, ...column]
+      : column;
   // CSS delays are relative to when the style was first applied, so pin the offset per spin.
   const mount = useRef<{ key: string; since: number } | null>(null);
-  if (spin && mount.current?.key !== spin.key) mount.current = { key: spin.key, since: Date.now() - spin.startAt };
+  if (spin && mount.current?.key !== spin.key)
+    mount.current = { key: spin.key, since: Date.now() - spin.startAt };
   const since = spin ? mount.current!.since : Infinity;
-  const live = !!spin && since < stop;
+  const live = !!spin && (spin.pending || since < stop);
 
   useLayoutEffect(() => {
     const el = strip.current;
-    if (!el || !spin || ran.current === spin.key) return;
-    ran.current = spin.key;
-    const elapsed = Date.now() - spin.startAt;
-    if (elapsed >= stop) return;
+    if (!el || !spin) return;
+    const token = spin.pending ? `${spin.key}:loop` : spin.key;
+    if (ran.current === token) return;
+    const travel = spin.pending ? stop : Math.max(stop, 400);
+    ran.current = token;
     const total = cells.length;
     const end = -((total - ROWS) / total) * 100;
-    const over = (0.22 / total) * 100;
-    const anim = el.animate(
-      [
-        { transform: "translateY(0%)", filter: "blur(0px)", offset: 0 },
-        { transform: `translateY(${(1 / total) * 30}%)`, filter: "blur(0px)", offset: 0.04 },
-        { transform: `translateY(${end * 0.14}%)`, filter: "blur(2px)", offset: 0.16 },
-        { transform: `translateY(${end - over}%)`, filter: "blur(0.8px)", offset: 0.9 },
-        { transform: `translateY(${end + over * 0.35}%)`, filter: "blur(0px)", offset: 0.96 },
-        { transform: `translateY(${end}%)`, filter: "blur(0px)", offset: 1 },
-      ],
-      { duration: stop, delay: -elapsed, easing: "cubic-bezier(0.3, 0.05, 0.25, 1)", fill: "backwards" },
-    );
-    return () => anim.cancel();
+    const anim = spin.pending
+      ? el.animate(
+          [
+            { transform: "translateY(0%)" },
+            { transform: `translateY(${end}%)` },
+          ],
+          {
+            duration: Math.max(480, Math.round(spin.durationMs * 0.42)),
+            iterations: Infinity,
+            easing: "linear",
+          },
+        )
+      : el.animate(
+          [
+            { transform: "translateY(0%)", offset: 0 },
+            { transform: `translateY(${(1 / total) * 30}%)`, offset: 0.045 },
+            { transform: `translateY(${end * 0.18}%)`, offset: 0.2 },
+            { transform: `translateY(${end * 0.72}%)`, offset: 0.62 },
+            { transform: `translateY(${end - (0.22 / total) * 100}%)`, offset: 0.9 },
+            { transform: `translateY(${end}%)`, offset: 1 },
+          ],
+          {
+            duration: travel,
+            easing: "linear",
+            fill: "forwards",
+          },
+        );
+    return () => {
+      anim.cancel();
+      if (ran.current === token) ran.current = null;
+    };
     // cells are derived from spin; the key guards re-runs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spin?.key]);
+  }, [spin?.key, spin?.pending, stop]);
 
   const at = (ms: number) => `${Math.round(ms - since)}ms`;
   const teaseStyle: CSSProperties | undefined =
-    live && teaseFrom != null ? { animation: `slott-tease ${stop - teaseFrom}ms linear ${at(teaseFrom)} both` } : undefined;
+    live && teaseFrom != null
+      ? { animation: `slott-tease ${stop - teaseFrom}ms linear ${at(teaseFrom)} both` }
+      : undefined;
 
   return (
-    <div className={cn("relative aspect-[1/4] overflow-hidden", seamless ? "slott-reel-seam" : "slott-reel rounded-md sm:rounded-lg")}>
+    <div
+      className={cn(
+        "relative z-[1] aspect-[1/4] overflow-hidden",
+        seamless ? "slott-reel-seam" : "slott-reel rounded-md sm:rounded-lg",
+      )}
+    >
       <div
         ref={strip}
         className="absolute inset-x-0 top-0 will-change-transform"
-        style={{ height: `${(cells.length / ROWS) * 100}%`, transform: spin ? `translateY(-${((cells.length - ROWS) / cells.length) * 100}%)` : undefined }}
+        style={{
+          height: `${(cells.length / ROWS) * 100}%`,
+          transform:
+            spin && !spin.pending && landed
+              ? `translateY(-${((cells.length - ROWS) / cells.length) * 100}%)`
+              : undefined,
+        }}
       >
         {cells.map((s, i) => {
           const row = i - (cells.length - ROWS);
           const cell = reel * ROWS + row;
           const final = row >= 0;
+          const sym = SYMBOLS[s];
           const h = final && landed ? highlight.get(cell) : undefined;
           const hit = !!h;
           const vars = h ? ({ "--d": `${h.delay}ms`, "--c": h.color } as CSSProperties) : undefined;
           return (
-            <div key={i} data-rarity={SYMBOLS[s]!.rarity} className="slott-cell relative flex items-center justify-center" style={{ height: `${100 / cells.length}%` }}>
+            <div
+              key={i}
+              data-rarity={sym?.rarity ?? "legendary"}
+              className="slott-cell relative flex items-center justify-center"
+              style={{ height: `${100 / cells.length}%` }}
+            >
               {hit ? (
                 <>
                   <span aria-hidden className="slott-hit-ring" style={vars} />
@@ -147,11 +220,12 @@ function Reel({
               ) : null}
               <img
                 src={SYMBOL_IMG[s]}
-                alt={final ? SYMBOLS[s]!.name : ""}
+                alt={final ? (sym?.name ?? "Bomb") : ""}
                 draggable={false}
                 style={vars}
                 className={cn(
                   "relative select-none object-contain transition-[filter,opacity] duration-300",
+                  s === BOMB && "slott-bomb-symbol",
                   final && landed && s === WILD && "slott-wild-glow",
                   hit && (h.big ? "slott-hit slott-hit-big" : "slott-hit"),
                   final && landed && highlight.size > 0 && !hit && "opacity-40 saturate-50",
@@ -163,9 +237,17 @@ function Reel({
       </div>
       {live ? (
         <div key={spin!.key} aria-hidden className="pointer-events-none absolute inset-0">
-          <div className="slott-reel-sheen absolute inset-0" style={{ animation: `slott-fade-out ${stop}ms linear ${at(0)} both` }} />
-          {teaseStyle ? <div className="slott-tease-glow absolute inset-0" style={teaseStyle} /> : null}
-          <div className="slott-stop-flash absolute inset-0" style={{ animationDelay: at(stop - 40) }} />
+          <div
+            className="slott-reel-sheen absolute inset-0"
+            style={{ animation: `slott-fade-out ${stop}ms linear ${at(0)} both` }}
+          />
+          {teaseStyle ? (
+            <div className="slott-tease-glow absolute inset-0" style={teaseStyle} />
+          ) : null}
+          <div
+            className="slott-stop-flash absolute inset-0"
+            style={{ animationDelay: at(stop - 40) }}
+          />
         </div>
       ) : null}
     </div>

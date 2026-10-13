@@ -178,7 +178,7 @@ The same ideas sit under every game in the [poker topic hub](/guides/topics/poke
     {
       id: "pvp",
       title: "The same arithmetic on a hashed PvP round",
-      body: `PVPspinArena is a player-vs-player crypto casino with three games, played in USDC or ETH on the Base network and open to adults 18+ only. There is no poker on the site, but the maths in this guide applies directly.
+      body: `PVPspinArena is a player-vs-player crypto casino with four games, settled in US dollars and open to adults 18+ only. There is no poker on the site, but the maths in this guide applies directly.
 
 - **Equity:** in [Jackpot](/), your win chance equals your share of the pot. Put in $30 of a $120 pot and your equity is 25%, just like a range calculation, except the number is exact rather than estimated.
 - **EV:** [Coinflip](/coinflip) is a 50/50 between two players; the winner takes the pot minus any fee shown before entry, so EV before that fee is zero.

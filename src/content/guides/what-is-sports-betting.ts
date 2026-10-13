@@ -22,7 +22,7 @@ export const guide: Guide = {
     "Every posted number embeds a margin. Implied chances across a full market add to more than 100%.",
     "Common tickets are moneyline, point spread, over/under and parlays that stack several legs.",
     "Most recreational bettors lose over time because the vig is a fee on every dollar turned over.",
-    "PVPspinArena is not a sportsbook. It runs hashed Jackpot, Coinflip and Roulette only.",
+    "PVPspinArena is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -111,7 +111,7 @@ Do not treat a Sunday ticket and a Jackpot share as the same “action.” They 
 | Information edge | Possible in theory, rare in practice | Not a scouting problem |
 | This site take the bet? | No | Yes, as Jackpot, Coinflip or Roulette |
 
-A 0% fee Coinflip is about even between two players. That is not a reason to “hedge” a lost spread on a flip. It is a reason to notice that the products are not substitutes.
+A Coinflip is a 50/50, then a 5% pot fee. That is not a reason to “hedge” a lost spread on a flip. It is a reason to notice that the products are not substitutes.
 
 If you opened this pillar because a search mixed “sports betting” with this brand, keep the split: we teach the vocabulary here so you can read a book. We do not operate the book.`,
     },

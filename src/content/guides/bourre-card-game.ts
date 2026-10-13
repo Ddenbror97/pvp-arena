@@ -176,7 +176,7 @@ Money play is for adults only (18+ or your local legal age). If a game is starti
     {
       id: "pvp",
       title: "Bourré pots and PvP rounds on PVPspinArena",
-      body: `Bourré is a pure player-vs-player pot. Nobody deals for a house, and every dollar that leaves one player goes to another. PVPspinArena runs three player-vs-player games with the same basic shape. In [Jackpot](/), players add wagers to one pot and your win chance equals your share of it; the winner takes the pot minus any fee shown before entry. In [Coinflip](/coinflip), two players face a clean 50/50.
+      body: `Bourré is a pure player-vs-player pot. Nobody deals for a house, and every dollar that leaves one player goes to another. PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott with the same basic shape. In [Jackpot](/), players add wagers to one pot and your win chance equals your share of it; the winner takes the pot minus any fee shown before entry. In [Coinflip](/coinflip), two players face a clean 50/50.
 
 What Bourré adds is decisions and a penalty: your choice to stay or fold and how you play the tricks move your results. A hashed PvP round has no penalty and no decisions after entry, and the outcome comes from committed seeds you can check on the [fairness](/fairness) page. If you enjoy Bourré, the related [31 card game](/guides/31-card-game) and [Oh Hell](/guides/oh-hell-card-game) use similar small-stakes, everyone-for-themselves formats.
 

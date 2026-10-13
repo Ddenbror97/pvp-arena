@@ -143,7 +143,7 @@ In other words, the legal question online is usually a contractual one: what did
     {
       id: "pvp",
       title: "No shoe to count on PVPspinArena",
-      body: `PVPspinArena is a player-vs-player crypto casino for adults 18+ only, with three games played in USDC or ETH on the Base network. None of them uses a deck, so there is nothing to count and no dealer deciding when to shuffle.
+      body: `PVPspinArena is a player-vs-player crypto casino for adults 18+ only, with four games settled in US dollars. None of them uses a deck, so there is nothing to count and no dealer deciding when to shuffle.
 
 - [Coinflip](/coinflip) is a 50/50 between two players. The winner takes the pot minus any fee shown before entry.
 - In [Jackpot](/), your win chance equals your share of the pot.

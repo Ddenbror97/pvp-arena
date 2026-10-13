@@ -15,7 +15,7 @@ export const guide: Guide = {
     "A swap trades one token for another on the same network unless you also use a bridge.",
     "DEX swaps need a token approval the first time; that allowance is a lasting permission.",
     "Slippage settings let the fill move against you; thin pools can take more than you expect.",
-    "PVPspinArena accepts USDC and ETH on Base, not USDT and not Solana or mainnet USDC.",
+    "PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base, not USDT and not Solana or mainnet USDC.",
     "Exchange conversions plus a Base withdrawal are often simpler than a DEX plus a bridge.",
   ],
   sections: [

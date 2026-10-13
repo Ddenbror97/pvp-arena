@@ -10,13 +10,13 @@ export const guide: Guide = {
     "Bonus buy slots let you pay a multiple of stake to jump into the feature. That ticket has its own RTP and more variance, not a better edge.",
   h1: "Bonus buy slots: what you pay to skip the base game",
   answer:
-    "Bonus buy slots are video slots that sell an instant entry into the bonus or free-spin feature for a published multiple of your stake — often 50×, 80× or 100×. You skip the base-game wait and buy a fat-tailed ticket with its own RTP, usually near the base RTP and sometimes worse. The buy does not reveal the strips, does not make the feature due and does not flip a negative expected value. PVPspinArena does not offer slots.",
+    "Bonus buy slots are video slots that sell an instant entry into the bonus or free-spin feature for a published multiple of your stake — often 50×, 80× or 100×. You skip the base-game wait and buy a fat-tailed ticket with its own RTP, usually near the base RTP and sometimes worse. The buy does not reveal the strips, does not make the feature due and does not flip a negative expected value. PVPspinArena's slot game is P2P Slott, a 1v1 duel.",
   facts: [
     "A bonus buy is a separate bet: price × that bet’s own RTP, not a coupon for extra edge.",
     "Typical published multiples sit around 50× to 100× the spin stake, sometimes more.",
     "The buy raises variance immediately; a $1 game becomes an $80 decision in one click.",
     "Streamer overlays made buys look normal; an overlay is not a lab sheet.",
-    "PVPspinArena has no slots; Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -107,7 +107,7 @@ A PvP pot on this site does not sell a skip. Your chance is your share. Paying m
     {
       id: "not-here",
       title: "PVPspinArena does not sell bonus buys",
-      body: `No reels, no feature store. The live games are Jackpot, Coinflip and Roulette.
+      body: `No reels, no feature store. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
 
 - [Jackpot](/) — raise stake to raise share. The extra dollars are visible probability, not a skip.
 - [Coinflip](/coinflip) — one flip. There is no “buy the flip.”
@@ -171,7 +171,7 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     },
     {
       q: "Does PVPspinArena have bonus buy slots?",
-      a: "No. This site does not offer slots or feature buys. The live games are Jackpot, Coinflip and Roulette.",
+      a: "No. This site does not offer house-banked slots or feature buys. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Do streamers prove that buys are +EV?",

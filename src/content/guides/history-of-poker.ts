@@ -133,7 +133,7 @@ More history sits in the [Casino knowledge topic](/guides/topics/casino-knowledg
 
 ### PvP on PVPspinArena
 
-PVPspinArena runs three player-vs-player games in USDC or ETH on the Base network. They are pure chance, not poker. In [Coinflip](/coinflip) two players take a 50/50, and in [Jackpot](/) your win chance equals your share of the pot. In both, the winner takes the pot minus any fee shown before entry, which is the same idea as a poker room’s rake. Results come from committed seeds you can check on [fairness](/fairness). Play is 18+ only.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. They are pure chance, not poker. In [Coinflip](/coinflip) two players take a 50/50, and in [Jackpot](/) your win chance equals your share of the pot. In both, the winner takes the pot minus any fee shown before entry, which is the same idea as a poker room’s rake. Results come from committed seeds you can check on [fairness](/fairness). Play is 18+ only.
 
 In the same cluster, see also [las vegas history](/guides/las-vegas-history) and [stardust casino](/guides/stardust-casino).`,
     },

@@ -38,12 +38,20 @@ export function estimatedChanceBps(mine: number, pot: number, add: number): numb
   return chanceBps(mine + add, pot + add);
 }
 
+/** A new player adds time only once this much of the clock is left. */
+export const EXTENSION_FROM_REMAINING_MS = 35_000;
+
 /** Mirrors the server timer rule (documentation + tests; the server is authoritative). */
 export function nextTimer(
-  state: { playerCount: number; startedAtMs: number | null; endAtMs: number | null; maxEndAtMs: number | null },
+  state: {
+    playerCount: number;
+    startedAtMs: number | null;
+    endAtMs: number | null;
+    maxEndAtMs: number | null;
+  },
   nowMs: number,
   isNewPlayer: boolean,
-  cfg = { countdown: 60, extension: 10, maxDuration: 180 },
+  cfg = { countdown: 45, extension: 10, maxDuration: 180 },
 ) {
   if (!isNewPlayer) return { ...state };
   const playerCount = state.playerCount + 1;
@@ -56,7 +64,12 @@ export function nextTimer(
     };
   }
   if (playerCount > 2 && state.endAtMs != null && state.maxEndAtMs != null) {
-    return { ...state, playerCount, endAtMs: Math.min(state.endAtMs + cfg.extension * 1000, state.maxEndAtMs) };
+    if (state.endAtMs - nowMs > EXTENSION_FROM_REMAINING_MS) return { ...state, playerCount };
+    return {
+      ...state,
+      playerCount,
+      endAtMs: Math.min(state.endAtMs + cfg.extension * 1000, state.maxEndAtMs),
+    };
   }
   return { ...state, playerCount };
 }

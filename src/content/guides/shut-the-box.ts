@@ -137,7 +137,7 @@ Tiles 1–9 open. First roll 11: close 9 and 2 (or 8 and 3, or 7 and 4, or 6 and
       title: "Tile choices and a hashed PvP round",
       body: `Shut the box is one of the few party dice games where the next action is a real choice. The dice still dominate. Optimal play only lifts you from a terrible leftover expectation to a merely bad one.
 
-The same honesty shows up on PVPspinArena. The site runs three player-vs-player games in USDC or ETH on Base. [Coinflip](/coinflip) is a 50/50. [Roulette](/roulette) uses 33 slots: 16 Purple and 16 Silver pay 2x, 1 Green pays 14x, and Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee you can write down before you click. [Jackpot](/) gives a win chance equal to your share of the pot. Results use committed seeds; check any settled round on [fairness](/fairness).
+The same honesty shows up on PVPspinArena. The site runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. [Coinflip](/coinflip) is a 50/50. [Roulette](/roulette) uses 33 slots: 16 Purple and 16 Silver pay 2x, 1 Green pays 14x, and Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee you can write down before you click. [Jackpot](/) gives a win chance equal to your share of the pot. Results use committed seeds; check any settled round on [fairness](/fairness).
 
 You cannot "choose tiles" on those games. You can choose a stop. If the box, or the next match, is already a chase, use [responsible gambling](/responsible-gambling). Play is 18+ only.
 

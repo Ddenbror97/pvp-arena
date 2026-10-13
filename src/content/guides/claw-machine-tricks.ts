@@ -159,7 +159,7 @@ For comparison with booths you pay a person to play, see [carnival games](/guide
     {
       id: "pvp",
       title: "Hidden settings versus published odds on PVPspinArena",
-      body: `The frustrating thing about a claw machine is that its odds are set by a board you cannot see. PVPspinArena takes the opposite approach. It runs three player-vs-player games with published odds and results you can check.
+      body: `The frustrating thing about a claw machine is that its odds are set by a board you cannot see. PVPspinArena takes the opposite approach. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott with published odds and results you can check.
 
 On [Roulette](/roulette), the 33-slot wheel pays 2x on 16 Purple and 16 Silver slots and 14x on 1 Green slot, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. [Coinflip](/coinflip) is a 50/50 between two players, with any fee shown before entry. Results come from committed seeds using commit-reveal, and any settled round can be verified on the [fairness](/fairness) page.
 

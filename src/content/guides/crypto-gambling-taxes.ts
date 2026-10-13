@@ -33,7 +33,7 @@ If you live outside the United States, stop treating this as your rulebook. Othe
 
 This page sits in [foundations](/guides/topics/foundations) because record-keeping is part of using any [crypto casino](/guides/what-is-a-crypto-casino), including a [USDC casino](/guides/usdc-casino). If gambling is already costing more than a tax worksheet, use the [responsible gambling page](/responsible-gambling) and the [how to stop gambling guide](/guides/how-to-stop-gambling) first. A clean spreadsheet is not a reason to keep playing.
 
-PVPspinArena offers Jackpot, Coinflip and Roulette in USDC or ETH on Base. We can describe how our ledger looks. We cannot tell you the line on your Form 1040.`,
+PVPspinArena offers Jackpot, Coinflip and Roulette settled in US dollars. We can describe how our ledger looks. We cannot tell you the line on your Form 1040.`,
     },
     {
       id: "income",

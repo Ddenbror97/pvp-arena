@@ -128,7 +128,7 @@ Some players wear a particular shirt, colour or piece of jewellery for luck. It 
       title: "No dress code online: what still matters",
       body: `Online there is no door to be turned away at, which removes one of the natural pauses a casino visit builds in. Getting dressed, travelling and showing ID all create moments to reconsider. At home, you can start a session in seconds.
 
-PVPspinArena runs three player-vs-player games, Jackpot, Coinflip and Roulette, and play is in USDC or ETH on the Base network. There is no dress code, but the age rule is the same as at any casino door: play is for adults 18 and over. The maths is also the same whatever you are wearing. In [Roulette](/roulette), the 33-slot wheel has 16 Purple and 16 Silver slots paying 2x and one Green paying 14x; Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. In Coinflip, the two sides are a true 50/50. In Jackpot, your chance equals your share of the pot.
+PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and play is settled in US dollars. There is no dress code, but the age rule is the same as at any casino door: play is for adults 18 and over. The maths is also the same whatever you are wearing. In [Roulette](/roulette), the 33-slot wheel has 16 Purple and 16 Silver slots paying 2x and one Green paying 14x; Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. In Coinflip, the two sides are a true 50/50. In Jackpot, your chance equals your share of the pot.
 
 Because the online version has no natural brakes, it helps to add your own:
 

@@ -16,7 +16,7 @@ export const guide: Guide = {
     "The price is a number you can point at today, or it is unknown.",
     "Country rules and age rules still apply. Adults 18+ only.",
     "A guide is not a licence, a tax opinion, or a bypass.",
-    "PVPspinArena does not add this product to Jackpot, Coinflip or Roulette.",
+    "PVPspinArena does not add this product to Jackpot, Coinflip, Roulette, or P2P Slott.",
   ],
   sections: [
     {
@@ -26,7 +26,7 @@ export const guide: Guide = {
 
 Write that down as part of any ton wallet note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip and Roulette with USDC or ETH on Base. It does not sell the product this page describes, and a guide is not a licence.
+Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
 
 If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
 
@@ -39,7 +39,7 @@ Start in [Crypto payments](/guides/topics/crypto-payments). Related reading: [ga
 
 Write that down as part of any ton wallet note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip and Roulette with USDC or ETH on Base. It does not sell the product this page describes, and a guide is not a licence.
+Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
 
 If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
     },
@@ -50,7 +50,7 @@ If the session starts to feel like chasing, stop. [Responsible gambling](/respon
 
 Write that down as part of any ton wallet note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip and Roulette with USDC or ETH on Base. It does not sell the product this page describes, and a guide is not a licence.
+Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
 
 If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
 
@@ -63,7 +63,7 @@ More on the surrounding ideas: [Base network](/guides/base-network), [crypto cas
 
 Write that down as part of any ton wallet note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip and Roulette with USDC or ETH on Base. It does not sell the product this page describes, and a guide is not a licence.
+Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
 
 If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
     },
@@ -74,7 +74,7 @@ If the session starts to feel like chasing, stop. [Responsible gambling](/respon
 
 Write that down as part of any ton wallet note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip and Roulette with USDC or ETH on Base. It does not sell the product this page describes, and a guide is not a licence.
+Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
 
 If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
 
@@ -89,11 +89,11 @@ If the session starts to feel like chasing, stop. [Responsible gambling](/respon
     {
       id: "stop",
       title: "Where this site stops",
-      body: `PVPspinArena still offers only Jackpot, Coinflip and Roulette in USDC or ETH on Base. If ton wallet was the thing you wanted to use, you will not find it in the header. That mismatch is a reason to close the tab, not a reason to force the cashier.
+      body: `PVPspinArena still offers Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If ton wallet was the thing you wanted to use, you will not find it in the header. That mismatch is a reason to close the tab, not a reason to force the cashier.
 
 Write that down as part of any ton wallet note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip and Roulette with USDC or ETH on Base. It does not sell the product this page describes, and a guide is not a licence.
+Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
 
 If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
     },
@@ -110,7 +110,7 @@ What goes wrong. The usual failure is believing the first sentence of an ad. The
 
 A note with empty cells. Columns: definition, price, constraint, date, loss limit. Five cells.
 
-Where this site stops. PVPspinArena still offers only Jackpot, Coinflip and Roulette in USDC or ETH on Base. If ton wallet was the thing you wanted to use, you will not find it in the header.
+Where this site stops. PVPspinArena still offers Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If ton wallet was the thing you wanted to use, you will not find it in the header.
 
 Read that list once, from the top, and stop where a cell is empty. The empty cell is the decision. Filling it from a clip, a chat, or this paragraph is how a ton wallet note turns into an advertisement you wrote for yourself.
 
@@ -120,7 +120,7 @@ Facts worth dating:
 - The price is a number you can point at today, or it is unknown.
 - Country rules and age rules still apply. Adults 18+ only.
 - A guide is not a licence, a tax opinion, or a bypass.
-- PVPspinArena does not add this product to Jackpot, Coinflip or Roulette.
+- PVPspinArena does not add this product to Jackpot, Coinflip, Roulette, or P2P Slott.
 
 A fee you do not see is still a fee. Someone pays gas, a sponsor, or a spread. A smart-contract wallet can add recovery and also add a guardian or a bug between you and the coins. A TON wallet is a different chain from the Base transfer this cashier expects. Paste nothing that looks like a recovery phrase into a bot.
 
@@ -132,7 +132,7 @@ Date the note on the same line as the stake and the loss limit. When the limit i
 
 One clean test beats a pile of tabs. Use the smallest stake the cashier will accept, on the asset and network the cashier names, then withdraw a fraction before you add more. Time it. Save the identifier. If the site asks who you are, answer or leave. Do not shop for a version of ton wallet that skips the question. The question is part of the product.
 
-Then close the tab or play only what this site actually offers. Jackpot, Coinflip and Roulette, USDC or ETH on Base, adults 18+ only. A second account is not a fresh start.`,
+Then close the tab or play only what this site actually offers. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars, adults 18+ only. A second account is not a fresh start.`,
     },
   ],
   faqs: [
@@ -142,7 +142,7 @@ Then close the tab or play only what this site actually offers. Jackpot, Coinfli
     },
     {
       q: "Is this available on PVPspinArena?",
-      a: "No. Jackpot, Coinflip and Roulette only. USDC or ETH on Base. This topic is explained so you can tell it apart from those games.",
+      a: "No. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. This topic is explained so you can tell it apart from those games.",
     },
     {
       q: "Does crypto change the rule?",
@@ -172,7 +172,7 @@ Then close the tab or play only what this site actually offers. Jackpot, Coinfli
   updated: "2026-09-27",
   cta: {
     title: "This site is a pot, not that product",
-    text: "PVPspinArena does not offer the product described on this page. Jackpot, Coinflip and Roulette use USDC or ETH on Base.",
+    text: "PVPspinArena does not offer the product described on this page. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
     primary: { to: "/wallet", label: "Open the wallet page" },
     secondary: { to: "/how-it-works", label: "How this site works" },
   },

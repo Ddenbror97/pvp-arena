@@ -126,7 +126,7 @@ USDC is common at sites built on Ethereum and its layer-2 networks such as Base,
 
 ### PVPspinArena
 
-PVPspinArena accepts USDC and ETH on Base mainnet. It does not accept USDT. If you hold USDT, you can swap it for USDC on an exchange and withdraw the USDC on Base to your own wallet. Our [how to buy USDC guide](/guides/how-to-buy-usdc) walks through this.
+PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base mainnet. It does not accept USDT. If you hold USDT, you can swap it for USDC on an exchange and withdraw the USDC on Base to your own wallet. Our [how to buy USDC guide](/guides/how-to-buy-usdc) walks through this.
 
 ### A warning about sending the wrong token
 

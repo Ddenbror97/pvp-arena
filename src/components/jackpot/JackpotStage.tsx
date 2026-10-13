@@ -1,10 +1,10 @@
-import { ClientOnly } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useMemo, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
+import { useBalanceHold } from "@/lib/balance-hold";
 import {
-  tickJackpot,
+  serverOffset,
   useLiveJackpot,
   useNow,
   useServerClock,
@@ -12,64 +12,70 @@ import {
 } from "@/lib/jackpot/api";
 import { formatChance, formatUsd } from "@/lib/jackpot/math";
 import { emitSound } from "@/lib/sound";
-import { JackpotWheel, SPIN_MS, colorFor } from "./JackpotWheel";
-import { CountdownLock } from "./CountdownLock";
+import { JACKPOT_SPIN_MS, JACKPOT_WINNER_MS, jackpotSpinStart } from "@/lib/jackpot/reveal";
+import { JackpotWheel } from "./JackpotWheel";
 import { PlayerList } from "./PlayerList";
 import { EntryPanel } from "./EntryPanel";
-import { PlayerAvatar } from "./Avatar";
+import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
+import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import { ShieldCheck } from "lucide-react";
+import { GameChat } from "@/components/chat/GameChat";
+import type { JackpotPaint } from "@/lib/first-paint";
 
-type Phase = "live" | "locked" | "spinning" | "winner";
-
-/** Countdown after the deadline before the wheel starts. */
-const LEAD_MS = 3000;
-/** If settlement lands late, still show at least this much countdown after it. */
-const MIN_LOCK_MS = 800;
-/** How long the winner is shown before moving to the next game. */
-const WINNER_MS = 6500;
+type Phase = "live" | "spinning" | "winner";
 
 function fmtClock(ms: number) {
   const s = Math.ceil(ms / 1000);
   return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 }
 
-const GameChat = lazy(() =>
-  import("@/components/chat/GameChat").then((m) => ({ default: m.GameChat })),
-);
 const Celebration = lazy(() => import("./Celebration").then((m) => ({ default: m.Celebration })));
 
-export function JackpotStage() {
+export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
   const { userId } = useAuth();
   useWalletRealtime(userId);
-  const { game, players, stage, finishReveal, resync } = useLiveJackpot();
+  const { game, players, playersPending, stage, finishReveal } = useLiveJackpot();
+  const identities = usePrestigeIdentities(players.map((p) => p.user_id));
   const serverNow = useServerClock();
   useNow(200);
   const endMs = game?.scheduled_end_at ? new Date(game.scheduled_end_at).getTime() : null;
-  const remaining = game?.status === "ACTIVE" && endMs ? Math.max(0, endMs - serverNow()) : null;
+  const remaining =
+    endMs && (game?.status === "ACTIVE" || game?.status === "DRAWING")
+      ? Math.max(0, endMs - serverNow())
+      : null;
   const expired = remaining === 0;
   const closed = expired || game?.status === "DRAWING" || !!stage;
-  const pot = Number(game?.pot_amount ?? 0);
+  const playerPot = players.reduce((sum, player) => sum + Number(player.total_amount), 0);
+  const pot = Math.max(Number(game?.pot_amount ?? 0), playerPot);
+  const seated = Math.max(game?.player_count ?? 0, players.length);
   const my = players.find((p) => p.user_id === userId);
 
   // One shared, server-anchored timeline for the reveal. Every screen computes
   // the same moments from the game's own timestamps, so all viewers see the
   // countdown end, the wheel spin and the winner at the same time, no matter
-  // when their live update arrived.
-  //   deadline -> 3,2,1 countdown -> spin (SPIN_MS) -> winner (WINNER_MS) -> next game
-  const doneMs = stage?.completed_at ? new Date(stage.completed_at).getTime() : null;
-  const stageEnd = stage?.scheduled_end_at ? new Date(stage.scheduled_end_at).getTime() : doneMs;
-  const spinStart =
-    stage && doneMs != null ? Math.max((stageEnd ?? doneMs) + LEAD_MS, doneMs + MIN_LOCK_MS) : null;
+  // when their live update arrived — including someone who left and came back.
+  //   deadline -> spin (JACKPOT_SPIN_MS) -> winner (JACKPOT_WINNER_MS) -> next game
+  const spinStart = jackpotSpinStart(stage);
   const t = serverNow();
   const phase: Phase =
-    spinStart == null
+    spinStart == null || t < spinStart
       ? "live"
-      : t < spinStart
-        ? "locked"
-        : t < spinStart + SPIN_MS
-          ? "spinning"
-          : "winner";
-  const revealOver = spinStart != null && t >= spinStart + SPIN_MS + WINNER_MS;
+      : t < spinStart + JACKPOT_SPIN_MS
+        ? "spinning"
+        : "winner";
+  const revealOver = spinStart != null && t >= spinStart + JACKPOT_SPIN_MS + JACKPOT_WINNER_MS;
+
+  // Settlement credits the winner before the wheel even starts; keep balances
+  // showing the pre-draw value for participants until the wheel has landed.
+  const inRound = !!userId && players.some((p) => p.user_id === userId);
+  const holdUntil = !inRound
+    ? null
+    : spinStart != null
+      ? spinStart + JACKPOT_SPIN_MS
+      : closed && endMs != null
+        ? endMs + JACKPOT_SPIN_MS + 5000
+        : null;
+  useBalanceHold("jackpot", holdUntil != null && holdUntil > t ? holdUntil - serverOffset() : null);
 
   useEffect(() => {
     if (revealOver) finishReveal();
@@ -82,7 +88,6 @@ export function JackpotStage() {
     const key = `${stage.id}:${phase}`;
     if (announced.current === key) return;
     announced.current = key;
-    if (phase === "locked") emitSound("lock");
     if (phase === "winner") {
       if (stage.winner_id === userId) {
         emitSound("win");
@@ -99,50 +104,49 @@ export function JackpotStage() {
     if (!game) return;
     const p = prev.current;
     if (p && p.id === game.id) {
-      if (game.player_count > p.players && game.player_count >= 2) {
+      if (
+        game.player_count > p.players &&
+        game.player_count > 2 &&
+        p.end &&
+        endMs &&
+        endMs > p.end
+      ) {
         emitSound("player_join");
-        if (p.end && endMs && endMs > p.end && game.player_count > 2)
-          toast("+10 seconds added", { description: "New player joined" });
-        else if (game.player_count === 2)
-          toast("Countdown started", { description: "Second player joined — 60 seconds" });
+        toast("+10 seconds added", { description: "New player joined" });
+      } else if (game.player_count > p.players && game.player_count >= 2) {
+        emitSound("player_join");
       }
-      if (p.status !== "DRAWING" && game.status === "DRAWING")
-        toast("No more entries", { description: "Preparing the wheel to spin" });
     }
     prev.current = { id: game.id, players: game.player_count, end: endMs, status: game.status };
   }, [game, endMs]);
 
   const winner = stage ? players.find((p) => p.user_id === stage.winner_id) : null;
-  const winnerColor = winner ? colorFor(players.indexOf(winner)) : undefined;
+  const winnerIdentity = winner ? identities.get(winner.user_id) : undefined;
   const spin = useMemo(
     () =>
       stage && spinStart != null && stage.winner_id
-        ? { winnerId: stage.winner_id, winningTicket: Number(stage.winning_ticket), startAt: spinStart }
+        ? {
+            winnerId: stage.winner_id,
+            winningTicket: Number(stage.winning_ticket),
+            startAt: spinStart,
+          }
         : null,
     [stage, spinStart],
   );
-
-  // Countdown before the spin. Until the server has settled we count toward
-  // deadline + LEAD_MS (holding at 1 if settlement is slow); once settled we
-  // count toward the shared spin start. It disappears the moment the wheel moves.
-  const countdownTarget = spinStart ?? (endMs != null ? endMs + LEAD_MS : null);
 
   return (
     <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)_280px] lg:items-start xl:grid-cols-[280px_minmax(0,1fr)_300px]">
       {/* Chat */}
       <section className="order-4 lg:order-1 lg:self-stretch">
-        <ClientOnly fallback={<div className="h-72 animate-pulse rounded-xl border border-border bg-card sm:h-96 lg:h-full lg:min-h-[34rem]" />}>
-          <Suspense fallback={<div className="h-72 animate-pulse rounded-xl border border-border bg-card sm:h-96 lg:h-full lg:min-h-[34rem]" />}>
-                    <GameChat gameType="jackpot" className="h-72 sm:h-96 lg:h-full lg:min-h-[34rem]" />
-          </Suspense>
-        </ClientOnly>
+        <GameChat gameType="jackpot" initial={chat} className="h-72 sm:h-96 lg:h-[34rem]" />
       </section>
 
       {/* Wheel */}
       <section className="order-1 flex flex-col items-center lg:order-2">
         <div className="mb-4 text-center">
           <div className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            Jackpot <span className="tabular inline-block min-w-[4ch] text-left">#{game?.id ?? "—"}</span>
+            Jackpot{" "}
+            <span className="tabular inline-block min-w-[4ch] text-left">#{game?.id ?? "—"}</span>
           </div>
         </div>
         <JackpotWheel
@@ -150,14 +154,18 @@ export function JackpotStage() {
           spin={spin}
           now={serverNow}
           highlightId={phase === "winner" ? stage?.winner_id : null}
+          roundId={Number(game?.id ?? 0)}
         >
           {phase === "winner" && stage && winner ? (
             <div className="animate-rise-in flex flex-col items-center px-4 text-center">
-              <PlayerAvatar
-                src={winner.profiles?.avatar_url}
+              <PlayerPrestigeIdentity
+                avatar={winner.profiles?.avatar_url}
                 name={winner.profiles?.username}
-                className="glow-gold h-20 w-20 sm:h-24 sm:w-24"
-                color={winnerColor}
+                frame={winnerIdentity?.frame}
+                crown={winnerIdentity?.crown}
+                level={winnerIdentity?.level}
+                tier={winnerIdentity?.tier}
+                size={96}
               />
               <div className="mt-3 font-display text-xs tracking-[0.35em] text-gold">WINNER</div>
               <div className="mt-1 truncate font-display text-lg sm:text-xl">
@@ -169,6 +177,17 @@ export function JackpotStage() {
               <div className="tabular mt-1 text-xl font-semibold text-primary sm:text-2xl">
                 Won {formatUsd(stage.payout_amount ?? 0)}
               </div>
+              {stage.rake_bps > 0 ? (
+                <div className="tabular mt-1 text-[11px] text-muted-foreground">
+                  {stage.payout_amount === stage.pot_amount ? (
+                    `Pot ${formatUsd(stage.pot_amount)} · fee-free win`
+                  ) : (
+                    <>
+                      Pot {formatUsd(stage.pot_amount)} − {stage.rake_bps / 100}% fee
+                    </>
+                  )}
+                </div>
+              ) : null}
             </div>
           ) : phase === "spinning" ? (
             <div className="text-center">
@@ -182,21 +201,6 @@ export function JackpotStage() {
                 Spinning
               </div>
             </div>
-          ) : phase === "locked" || game?.status === "DRAWING" || expired ? (
-            <div className="text-center">
-              <div className="font-display text-sm tracking-[0.25em] text-rival">
-                NO MORE ENTRIES
-              </div>
-              <div className="tabular mt-2 text-3xl font-semibold sm:text-4xl">
-                {formatUsd(pot)}
-              </div>
-              <div className="mt-3 flex flex-col items-center">
-                <CountdownLock spinAt={countdownTarget ?? t} now={serverNow} />
-                <div className="mt-2 text-[10px] uppercase tracking-[0.26em] text-muted-foreground">
-                  Preparing the wheel
-                </div>
-              </div>
-            </div>
           ) : (
             <div className="text-center">
               <div className="text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
@@ -206,16 +210,21 @@ export function JackpotStage() {
                 {formatUsd(pot)}
               </div>
               <div
+                suppressHydrationWarning
                 className={`tabular mt-3 text-2xl sm:text-3xl ${remaining != null && remaining < 10000 ? "text-rival" : "text-primary"}`}
               >
                 {remaining != null ? fmtClock(remaining) : "--:--"}
               </div>
-              <div className="mt-1 text-[11px] text-muted-foreground">
-                {game?.status === "ACTIVE"
-                  ? "Countdown running"
-                  : (game?.player_count ?? 0) === 1
-                    ? "Waiting for a 2nd player"
-                    : "Waiting for players"}
+              <div suppressHydrationWarning className="mt-1 text-[11px] text-muted-foreground">
+                {expired || game?.status === "DRAWING"
+                  ? "Drawing"
+                  : game?.status === "ACTIVE"
+                    ? "Countdown running"
+                    : seated >= 2
+                      ? "Starting"
+                      : seated === 1
+                        ? "Waiting for a 2nd player"
+                        : "Waiting for players"}
               </div>
             </div>
           )}
@@ -238,18 +247,22 @@ export function JackpotStage() {
       {/* Entry */}
       <section className="order-2 flex flex-col gap-4 lg:order-3">
         <EntryPanel game={game} myTotal={my?.total_amount ?? 0} closed={closed} />
-        <section className="overflow-hidden rounded-xl border border-border bg-card">
+        <section className="overflow-clip rounded-xl border border-border bg-card">
           <header className="flex items-center justify-between border-b border-border px-3 py-2">
             <h2 className="font-display text-xs uppercase tracking-widest">Players</h2>
             <span className="tabular text-xs text-muted-foreground">
-              {game?.player_count ?? 0} players · {game?.entry_count ?? 0} entries
+              {playersPending
+                ? "\u00a0"
+                : `${seated} players · ${Math.max(game?.entry_count ?? 0, players.length)} entries`}
             </span>
           </header>
           <PlayerList
             players={players}
+            pending={playersPending}
             pot={pot}
             meId={userId}
             winnerId={phase === "winner" ? stage?.winner_id : null}
+            roundId={Number(game?.id ?? 0)}
           />
         </section>
       </section>

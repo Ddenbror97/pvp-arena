@@ -112,7 +112,7 @@ A fourth, quieter use: quotes as culture. Runyon’s Broadway and Dostoevsky’s
     {
       id: "pvp",
       title: "A hashed round does not need a proverb",
-      body: `PVPspinArena’s three games already have a price in numbers rather than in epigrams. [Coinflip](/coinflip) is 50/50. A [Jackpot](/) ticket wins in proportion to your share of the pot. Roulette is 16 Purple, 16 Silver, 1 Green on a 33-slot wheel; Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Committed seeds mean you can check a settled result on [fairness](/fairness) instead of quoting a dead physicist.
+      body: `PVPspinArena’s four games already have a price in numbers rather than in epigrams. [Coinflip](/coinflip) is 50/50. A [Jackpot](/) ticket wins in proportion to your share of the pot. Roulette is 16 Purple, 16 Silver, 1 Green on a 33-slot wheel; Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Committed seeds mean you can check a settled result on [fairness](/fairness) instead of quoting a dead physicist.
 
 That is the adult version of “the house always wins”: not a curse, a percentage, and only on the games that carry one. A fair coin does not owe you a Runyon 6-to-5. A posted Purple or Silver edge does.
 

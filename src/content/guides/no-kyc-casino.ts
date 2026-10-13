@@ -150,7 +150,7 @@ If you only wanted less paperwork, you already have the honest version of the pr
     {
       id: "summary",
       title: "Summary",
-      body: `A no KYC casino skips the passport upload for ordinary play. It does not skip chain analysis, IPs, limits or the law where you live. PVPspinArena is wallet-verified, Base-only and capped on the way out. Treat “no verification” as a cashier style only, then read the published withdrawal rules and the privacy you actually have.
+      body: `A no KYC casino skips the passport upload for ordinary play. When a cashier does ask for the ID, the documents and the waits are [casino account verification](/guides/casino-account-verification). It does not skip chain analysis, IPs, limits or the law where you live. PVPspinArena is wallet-verified, Base-only and capped on the way out. Treat “no verification” as a cashier style only, then read the published withdrawal rules and the privacy you actually have.
 
 If you came here from an [anonymous casino](/guides/anonymous-casino) search, keep going there next. The two phrases are sold as synonyms and they are not. This page is about the ID skip. That page is about what remains visible anyway.
 

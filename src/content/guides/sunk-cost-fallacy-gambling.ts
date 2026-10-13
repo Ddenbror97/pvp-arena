@@ -129,7 +129,7 @@ PVPspinArena is 18+ only, and deposit limits, cooling-off options and support li
     {
       id: "pvp",
       title: "Sunk costs in a hashed PvP round",
-      body: `PVPspinArena runs three player-vs-player games: Jackpot, Coinflip and Roulette, played in USDC or ETH on Base. None of them keeps a memory of what you lost.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. None of them keeps a memory of what you lost.
 
 Each result comes from seeds committed before the round starts, and anyone can check a settled round on the [fairness page](/fairness). That design has a useful side effect for this topic: it proves there is no hidden balance that "owes" you a win after a bad run. The next [Roulette](/roulette) spin still has 16 Purple, 16 Silver and 1 Green slot. Purple and Silver still return 32/33, and Green still returns 14/33, before the win fee. The first spin of the night and the fiftieth are identical.
 

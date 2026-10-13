@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 This guide is in [CS:GO heritage](/guides/topics/csgo-heritage). Adults 18+ only. We will describe risk. We will not name vendors, links, injectors, loaders or settings.
 
-PVPspinArena is [fairness](/fairness)-checked PvP in USDC or ETH on Base. We do not inspect your Steam inventory and we do not want a screenshot of a fake Karambit.
+PVPspinArena is [fairness](/fairness)-checked PvP settled in US dollars. We do not inspect your Steam inventory and we do not want a screenshot of a fake Karambit.
 
 Want paint you can actually trade? Buy it on a real rail — [where to buy CS2 skins](/guides/where-to-buy-cs2-skins) — or equip what you already own.
 

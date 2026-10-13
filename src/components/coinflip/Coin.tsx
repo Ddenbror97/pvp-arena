@@ -16,7 +16,15 @@ interface Props {
   embedded?: boolean;
 }
 
-export function Coin({ startMs, side, revealAt = null, serverNow, restSide = "HEADS", size = 150, embedded = false }: Props) {
+export function Coin({
+  startMs,
+  side,
+  revealAt = null,
+  serverNow,
+  restSide = "HEADS",
+  size = 150,
+  embedded = false,
+}: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const wrap = useRef<HTMLDivElement>(null);
 
@@ -47,9 +55,22 @@ export function Coin({ startMs, side, revealAt = null, serverNow, restSide = "HE
   }, [startMs, side, revealAt, serverNow, restSide, size, embedded]);
 
   return (
-    <div className="flex touch-pan-y items-center justify-center" style={{ perspective: size * 4, height: embedded ? size : size * 1.5 }}>
+    <div
+      className="flex touch-pan-y items-center justify-center"
+      style={{ perspective: size * 4, height: embedded ? size : size * 1.5 }}
+    >
       <div ref={wrap} style={{ willChange: "transform", touchAction: "pan-y" }}>
-        <div ref={ref} className="relative" style={{ width: size, height: size, transformStyle: "preserve-3d", willChange: "transform", touchAction: "pan-y" }}>
+        <div
+          ref={ref}
+          className="relative"
+          style={{
+            width: size,
+            height: size,
+            transformStyle: "preserve-3d",
+            willChange: "transform",
+            touchAction: "pan-y",
+          }}
+        >
           <Face src={headsAsset} label="HEADS" size={size} />
           <Face src={tailsAsset} label="TAILS" size={size} back />
         </div>
@@ -58,7 +79,17 @@ export function Coin({ startMs, side, revealAt = null, serverNow, restSide = "HE
   );
 }
 
-function Face({ src, label, back, size }: { src: string; label: string; back?: boolean; size: number }) {
+function Face({
+  src,
+  label,
+  back,
+  size,
+}: {
+  src: string;
+  label: string;
+  back?: boolean;
+  size: number;
+}) {
   return (
     <div
       className="absolute inset-0 overflow-hidden rounded-full"

@@ -43,7 +43,7 @@ The fee is how the room gets paid. Example, clearly an example and not a live ra
 | Team scrim | Two captains | 20 per team | 10% of the pot | The site, paid to the captain | A player leaves mid-map |
 | “Trust me” chat bet | Two usernames | Whatever was typed | None until someone invents one | Nobody | The loser blocks you |
 
-The third row is not a recommendation. It is the version that fails. [Fortnite gambling](/guides/fortnite-gambling) covers a different game’s money matches. Do not copy Fortnite lobby habits into Call of Duty and assume the dispute rules came along. Different titles, different disconnect problems, same need for [escrow betting](/guides/escrow-betting). The lobby that lists the match is often a [wager app](/guides/wager-app).`,
+The third row is not a recommendation. It is the version that fails. [Fortnite gambling](/guides/fortnite-gambling) covers a different game’s money matches. Do not copy Fortnite lobby habits into Call of Duty and assume the dispute rules came along. Different titles, different disconnect problems, same need for [escrow betting](/guides/escrow-betting). The lobby that lists the match is often a [wager app](/guides/wager-app). A COD and Fortnite lobby of that type is the [Checkmate Gaming review](/guides/checkmate-gaming-review).`,
     },
     {
       id: "rules-card",

@@ -16,7 +16,7 @@ export const guide: Guide = {
     "The 1-spot line is the fastest honesty check: pay 3x on a 25% hit is a 25% house edge before you read the jackpot font.",
     "Raising spot count shifts probability mass toward middle catches; jackpots fund themselves with short pays on rows you actually hit.",
     "Video keno speed multiplies the same per-ticket edge; pace is a cost lever, not a math lever.",
-    "PVPspinArena does not offer keno; Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena does not offer keno; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -187,7 +187,7 @@ Spot-count advice does not change when the game is [crypto keno](/guides/crypto-
     },
     {
       q: "Does PVPspinArena have keno?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. Use this guide to price keno elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. Use this guide to price keno elsewhere.",
     },
   ],
   sources: [

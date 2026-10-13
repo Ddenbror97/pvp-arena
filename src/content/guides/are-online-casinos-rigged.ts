@@ -182,7 +182,7 @@ In a house-banked game, the casino wins when you lose, so there is a theoretical
 
 ### Why checks still matter
 
-A dishonest operator could still favour certain accounts, or run bots. That is why PvP sites should also be provably fair, so every round can be checked. On PVPspinArena, Jackpot and Coinflip pots are made only of players' stakes, the fee defaults to 0%, and every result is verifiable. See our [PvP gambling guide](/guides/pvp-gambling) for how these games work.`,
+A dishonest operator could still favour certain accounts, or run bots. That is why PvP sites should also be provably fair, so every round can be checked. On PVPspinArena, Jackpot and Coinflip pots are made only of players' stakes, the fee is 5% of the pot, and every result is verifiable. See our [PvP gambling guide](/guides/pvp-gambling) for how these games work.`,
     },
     {
       id: "next",

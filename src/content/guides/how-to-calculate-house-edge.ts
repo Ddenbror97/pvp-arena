@@ -21,7 +21,7 @@ export const guide: Guide = {
     "House edge = 1 − E when stakes are counted in returns; RTP = E × 100%.",
     "Even-money bets with true 50/50 and 2x return have 0% edge; paying 1.98x creates 1% edge.",
     "Survival games use E = P(reach) × cash-out multiplier on a win, zero on bust.",
-    "PVPspinArena Roulette colour bets use a 33-slot table you can count; Coinflip at 0% fee has no house edge on the flip itself.",
+    "PVPspinArena Roulette colour bets use a 33-slot table you can count; Coinflip has a 5% pot fee, not a zero edge.",
   ],
   sections: [
     {
@@ -277,7 +277,7 @@ Once you have the percentage, the [law of large numbers](/guides/law-of-large-nu
     },
     {
       q: "Does PVPspinArena publish edge I can verify?",
-      a: "Roulette uses a fixed slot table you can count. Coinflip and Jackpot are PvP with default 0% fee on the pot, not a house paytable on the flip.",
+      a: "Roulette uses a fixed slot table you can count. Coinflip and Jackpot are PvP with a 5% fee on the pot, not a house paytable on the flip.",
     },
   ],
   sources: [

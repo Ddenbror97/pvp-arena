@@ -149,7 +149,7 @@ A wallet phrase that has ever been typed into a website, photographed or stored 
     {
       id: "pvp",
       title: "Using Exodus with PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games, Jackpot, [Coinflip](/coinflip) and [Roulette](/roulette), played in USDC or ETH on the Base network. The wallet you use to fund play is your choice; what matters is holding the right asset on Base and connecting a wallet that can sign on that network.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. The wallet you use to fund play is your choice; what matters is holding the right asset on Base and connecting a wallet that can sign on that network.
 
 A sensible pattern is to keep savings in a hardware-backed or cold setup and move only a session budget into a hot wallet such as Exodus. That limits the damage from a compromised laptop and makes the budget concrete: when the hot wallet is empty, the session is over.
 

@@ -135,7 +135,7 @@ If you will call flop and fold turn to any bet, your real equity is closer to on
       title: "Pot odds are not a winning system",
       body: `Correct prices stop some of the worst calls. They do not create an edge if you play too many hands, ignore position, or sit a high-rake game you cannot beat. They do not apply to [video poker](/guides/video-poker-paytables): that product pays a schedule, not a contested pot.
 
-On this site, a [Coinflip](/coinflip) at 0% fee is about 50% to win a known pot. That is a posted price, not a draw. You do not need outs. You need a budget.
+On this site, a [Coinflip](/coinflip) is about 50% to win, and the winner receives 95% of the pot. That is a posted price, not a draw. You do not need outs. You need a budget.
 
 ### Calculators and the tank
 

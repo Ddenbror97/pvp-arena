@@ -80,7 +80,7 @@ Instant “fortune wheel” originals sometimes use 20–30 wedges with multipli
     {
       id: "not-here",
       title: "PVPspinArena does not offer a money wheel",
-      body: `There is no Big Six and no branded WOF slot here. The live games are Jackpot, Coinflip and Roulette.
+      body: `There is no Big Six and no branded WOF slot here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
 
 - [Jackpot](/) — pot share is chance.
 - [Coinflip](/coinflip) — 50/50, fee published.

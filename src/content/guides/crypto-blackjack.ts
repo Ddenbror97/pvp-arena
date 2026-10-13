@@ -16,7 +16,7 @@ export const guide: Guide = {
     "With common six-deck S17 rules and correct basic strategy, the house edge often sits near 0.4% to 0.6%.",
     "Paying 6:5 on blackjack instead of 3:2 adds roughly 1.4% to the edge, which can more than double the cost.",
     "Most crypto tables are RNG or continuously shuffled; they are not dealt from a depleting physical shoe you can count.",
-    "PVPspinArena does not offer blackjack; Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena does not offer blackjack; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {
@@ -97,14 +97,14 @@ It is not PvP. The house still banks every hand. It is not a live shoe you can c
     {
       id: "not-here",
       title: "PVPspinArena does not offer blackjack",
-      body: `There is no 21 table on this site. The live games are Jackpot, Coinflip and Roulette.
+      body: `There is no 21 table on this site. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
 
 That is a cleaner product surface: pots and a colour wheel with numbers you can count without a strategy chart. Blackjack remains a good teaching game for how rules hide inside RTP, which is why this guide exists.
 
 ### Live games with a price on the screen
 
 - [Jackpot](/) — share of pot equals chance.
-- [Coinflip](/coinflip) — 50/50, fee published, default 0%.
+- [Coinflip](/coinflip) — 50/50, then a 5% pot fee.
 - [Roulette](/roulette) — 33 slots, 16 Purple, 16 Silver, 1 Green.
 - [Fairness](/fairness) — recompute a committed result.
 
@@ -185,7 +185,7 @@ PVPspinArena does not offer blackjack. For a chance you can write as a fraction 
     },
     {
       q: "Does PVPspinArena have blackjack?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette only. This guide explains crypto 21 so you can read tables on other sites.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide explains crypto 21 so you can read tables on other sites.",
     },
     {
       q: "Does basic strategy beat crypto blackjack?",

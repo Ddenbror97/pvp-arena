@@ -177,7 +177,7 @@ Card games played for money are for adults only, 18+ or your local legal age.`,
     {
       id: "pvp",
       title: "Counting outcomes on a hashed PvP round",
-      body: `PVPspinArena runs three player-vs-player games in USDC or ETH on the Base network, for adults 18+ only. There is no deck, but the counting method is the same: favourable outcomes over total outcomes.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, for adults 18+ only. There is no deck, but the counting method is the same: favourable outcomes over total outcomes.
 
 On [Roulette](/roulette), the wheel has 33 slots. Purple covers 16, so P(Purple) = 16/33 ≈ 48.5%, a little like the chance of drawing a red card from a deck that has one extra green card added. Purple and Silver pay 2x and Green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Unlike a shoe, every round starts fresh: there is no removal effect, so past results say nothing about the next spin.
 

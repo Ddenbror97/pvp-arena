@@ -204,7 +204,7 @@ More crypto payments reading lives in our [Crypto payments guides](/guides/topic
     },
     {
       q: "Which network should I use in MetaMask for PVPspinArena?",
-      a: "Use Base. PVPspinArena accepts USDC and ETH on Base, and transfers sent on other networks will not arrive.",
+      a: "Use Base for USDC and ETH. PVPspinArena also accepts on-chain Bitcoin. Transfers of USDC or ETH on other networks will not arrive.",
     },
     {
       q: "Why do I need ETH if I deposit USDC?",

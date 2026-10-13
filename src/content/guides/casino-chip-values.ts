@@ -136,7 +136,7 @@ Chips feel less like money than cash. Gambling writers and researchers have long
     {
       id: "online",
       title: "Stablecoin stakes instead of chips",
-      body: `Online, chips disappear entirely. PVPspinArena runs three player-vs-player games, Jackpot, Coinflip and Roulette, and stakes are placed in USDC or ETH on the Base network. USDC is designed to track the US dollar one-to-one, so a 5 USDC bet reads like a red chip, without the colour conversion step. There is no cage because there are no chips to redeem.
+      body: `Online, chips disappear entirely. PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and stakes are settled in US dollars network. USDC is designed to track the US dollar one-to-one, so a 5 USDC bet reads like a red chip, without the colour conversion step. There is no cage because there are no chips to redeem.
 
 The absence of chips removes some of the psychological padding: the amount you stake is shown in the same units you hold in your wallet. It does not remove the edge or the variance.
 

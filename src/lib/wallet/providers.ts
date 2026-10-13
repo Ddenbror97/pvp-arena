@@ -28,7 +28,12 @@ export interface DepositProvider extends WalletProvider {
   createDepositIntent(userId: string, asset: string): Promise<DepositIntent>;
 }
 export interface WithdrawalProvider extends WalletProvider {
-  requestWithdrawal(userId: string, asset: string, amount: number, destination: string): Promise<{ requestId: string }>;
+  requestWithdrawal(
+    userId: string,
+    asset: string,
+    amount: number,
+    destination: string,
+  ): Promise<{ requestId: string }>;
 }
 export interface BalanceProvider {
   getBalance(userId: string): Promise<BalanceSnapshot>;

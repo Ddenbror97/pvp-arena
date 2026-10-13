@@ -29,7 +29,7 @@ A [moneyline](/guides/moneyline-betting-explained) only asks who wins. The run l
 
 The hockey cousin is the puck line, also posted at 1.5. The sports are different. Baseball does not decide a tie with a shootout that adds one run. If the game is a one-run final, minus 1.5 loses and plus 1.5 wins. That sentence is the product. Read [puck line betting](/guides/puck-line) only if you want the hockey settlement next to this one. Do not copy a hockey empty-net story onto a ninth inning.
 
-[Sports betting guides](/guides/topics/sports-betting) is the cluster menu. Adults 18+ only. This is not legal advice. PVPspinArena runs Jackpot, Coinflip and Roulette. [Fairness](/fairness) checks those hashed rounds. [Jackpot](/) is a player pot, not a baseball handicap. If the session becomes chasing, use [responsible gambling](/responsible-gambling).`,
+[Sports betting guides](/guides/topics/sports-betting) is the cluster menu. Adults 18+ only. This is not legal advice. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott. [Fairness](/fairness) checks those hashed rounds. [Jackpot](/) is a player pot, not a baseball handicap. If the session becomes chasing, use [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "settlement",

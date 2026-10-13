@@ -703,6 +703,42 @@ import { guide as ngGamesThatPayRealMoney } from "./games-that-pay-real-money";
 import { guide as ngSkillzReview } from "./skillz-review";
 import { guide as ngWagerApp } from "./wager-app";
 import { guide as ngHighCardGame } from "./high-card-game";
+import { guide as ngNovigReview } from "./novig-review";
+import { guide as ngProphetxReview } from "./prophetx-review";
+import { guide as ngSporttradeReview } from "./sporttrade-review";
+import { guide as ngNovigVsProphetx } from "./novig-vs-prophetx";
+import { guide as ngWagrReview } from "./wagr-review";
+import { guide as ngSplashSportsReview } from "./splash-sports-review";
+import { guide as ngFantasyFootballPayouts } from "./fantasy-football-payouts";
+import { guide as ngWolfGolfGame } from "./wolf-golf-game";
+import { guide as ngSkinsGameGolf } from "./skins-game-golf";
+import { guide as ngNassauBet } from "./nassau-bet";
+import { guide as ngGolfSideBets } from "./golf-side-bets";
+import { guide as ngBingoBangoBongoGolf } from "./bingo-bango-bongo-golf";
+import { guide as ngPlayersLoungeReview } from "./players-lounge-review";
+import { guide as ngCheckmateGamingReview } from "./checkmate-gaming-review";
+import { guide as ngGamersaloonReview } from "./gamersaloon-review";
+import { guide as ngChallengermodeReview } from "./challengermode-review";
+import { guide as ngSolitaireCashReview } from "./solitaire-cash-review";
+import { guide as ngBingoCashReview } from "./bingo-cash-review";
+import { guide as ngSolitaireClashReview } from "./solitaire-clash-review";
+import { guide as ngPapayaGamesReview } from "./papaya-games-review";
+import { guide as ngAviaGamesReview } from "./avia-games-review";
+import { guide as ngBlitzWinCashReview } from "./blitz-win-cash-review";
+import { guide as ngPocket7gamesReview } from "./pocket7games-review";
+import { guide as ngSolitaireForMoney } from "./solitaire-for-money";
+import { guide as ngSpadesForMoney } from "./spades-for-money";
+import { guide as ngBackgammonForMoney } from "./backgammon-for-money";
+import { guide as ngGinRummyForMoney } from "./gin-rummy-for-money";
+import { guide as ngTriviaForMoney } from "./trivia-for-money";
+import { guide as ngClubggReview } from "./clubgg-review";
+import { guide as ngPokerbrosReview } from "./pokerbros-review";
+import { guide as ngAcrPokerReview } from "./acr-poker-review";
+import { guide as ngRealMoneyPokerApps } from "./real-money-poker-apps";
+import { guide as ngPokerStaking } from "./poker-staking";
+import { guide as ngSitAndGoPoker } from "./sit-and-go-poker";
+import { guide as ngSpinAndGo } from "./spin-and-go";
+import { guide as ngCashGamePoker } from "./cash-game-poker";
 
 export type { Guide, GuideCluster } from "./types";
 
@@ -1411,6 +1447,42 @@ export const GUIDES: Guide[] = [
   ngSkillzReview,
   ngWagerApp,
   ngHighCardGame,
+  ngNovigReview,
+  ngProphetxReview,
+  ngSporttradeReview,
+  ngNovigVsProphetx,
+  ngWagrReview,
+  ngSplashSportsReview,
+  ngFantasyFootballPayouts,
+  ngWolfGolfGame,
+  ngSkinsGameGolf,
+  ngNassauBet,
+  ngGolfSideBets,
+  ngBingoBangoBongoGolf,
+  ngPlayersLoungeReview,
+  ngCheckmateGamingReview,
+  ngGamersaloonReview,
+  ngChallengermodeReview,
+  ngSolitaireCashReview,
+  ngBingoCashReview,
+  ngSolitaireClashReview,
+  ngPapayaGamesReview,
+  ngAviaGamesReview,
+  ngBlitzWinCashReview,
+  ngPocket7gamesReview,
+  ngSolitaireForMoney,
+  ngSpadesForMoney,
+  ngBackgammonForMoney,
+  ngGinRummyForMoney,
+  ngTriviaForMoney,
+  ngClubggReview,
+  ngPokerbrosReview,
+  ngAcrPokerReview,
+  ngRealMoneyPokerApps,
+  ngPokerStaking,
+  ngSitAndGoPoker,
+  ngSpinAndGo,
+  ngCashGamePoker,
 ];
 
 export type ClusterInfo = {
@@ -1501,7 +1573,7 @@ export const CLUSTERS: ClusterInfo[] = [
     description:
       "Learn poker from the rules up: Texas Hold'em, hand rankings, pot odds, GTO basics, bankroll, and how a rake room differs from hashed PvP games.",
     intro:
-      "Poker is incomplete information plus rake. Start with how to play, then hand ranks, Hold'em streets, pot odds and bankroll. These pages teach the game; they do not deal you a flop.",
+      "Poker is incomplete information plus rake. Start with how to play, then hand ranks, Hold'em streets, pot odds and bankroll. Club apps, sit-and-gos, spin-and-gos, cash games, and staking deals are grouped with those rules so a format page does not compete with a rules page. These pages teach the game; they do not deal you a flop.",
   },
   {
     name: "Esports betting",
@@ -1521,7 +1593,7 @@ export const CLUSTERS: ClusterInfo[] = [
     description:
       "Cash games that pay real money: skill matches, wager apps, Skillz-style tournaments, and escrow that locks both stakes before anyone plays.",
     intro:
-      "These pages are about playing for a stake, or holding one for a stranger. Chess, pool, and Call of Duty matches sit with wager apps and escrow. They are not CS:GO skin guides and not sportsbook tickets. A fee still comes out of the pot.",
+      "These pages are about playing for a stake, or holding one for a stranger. Chess, pool, and Call of Duty matches sit with wager apps and escrow. App reviews and play-for-a-stake pages have their own groups on this hub. They are not CS:GO skin guides and not sportsbook tickets. A fee still comes out of the pot.",
   },
   {
     name: "Casino games",
@@ -1541,7 +1613,7 @@ export const CLUSTERS: ClusterInfo[] = [
     description:
       "Sports betting guides grouped by spreads, parlays, sport lines and vig, plus how a book price differs from a hashed PvP pot.",
     intro:
-      "A sportsbook sells prices on events. Start with what a bet is, then spreads and totals, parlays, sport-specific lines, and the vig. These pages are not picks and not a licence to bet where you live.",
+      "A sportsbook sells prices on events. Start with what a bet is, then spreads and totals, parlays, sport-specific lines, and the vig. Peer exchanges, friend pools, and golf games between players have their own groups, separate from the line pages. These pages are not picks and not a licence to bet where you live.",
   },
   {
     name: "Blackjack",
@@ -2259,6 +2331,14 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
       name: "Cheating and the room",
       slugs: ["rigged-poker-sites", "collusion-in-poker", "chip-dumping"],
     },
+    {
+      name: "Rooms and apps",
+      slugs: ["clubgg-review", "pokerbros-review", "acr-poker-review", "real-money-poker-apps"],
+    },
+    {
+      name: "Formats and staking",
+      slugs: ["sit-and-go-poker", "spin-and-go", "cash-game-poker", "poker-staking"],
+    },
   ],
   "Esports betting": [
     {
@@ -2295,6 +2375,37 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Apps and escrow",
       slugs: ["wager-app", "p2p-betting-app", "escrow-betting"],
+    },
+    {
+      name: "Esports money matches",
+      slugs: [
+        "players-lounge-review",
+        "checkmate-gaming-review",
+        "gamersaloon-review",
+        "challengermode-review",
+      ],
+    },
+    {
+      name: "Cash-game apps",
+      slugs: [
+        "solitaire-cash-review",
+        "bingo-cash-review",
+        "solitaire-clash-review",
+        "papaya-games-review",
+        "avia-games-review",
+        "blitz-win-cash-review",
+        "pocket7games-review",
+      ],
+    },
+    {
+      name: "Play for a stake",
+      slugs: [
+        "solitaire-for-money",
+        "spades-for-money",
+        "backgammon-for-money",
+        "gin-rummy-for-money",
+        "trivia-for-money",
+      ],
     },
   ],
   "Casino games": [
@@ -2417,6 +2528,24 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
       ],
     },
     { name: "Office pools", slugs: ["bracket-pool", "super-bowl-squares"] },
+    {
+      name: "Exchanges",
+      slugs: ["novig-review", "prophetx-review", "sporttrade-review", "novig-vs-prophetx"],
+    },
+    {
+      name: "Fantasy and friend bets",
+      slugs: ["wagr-review", "splash-sports-review", "fantasy-football-payouts"],
+    },
+    {
+      name: "Golf games",
+      slugs: [
+        "wolf-golf-game",
+        "skins-game-golf",
+        "nassau-bet",
+        "golf-side-bets",
+        "bingo-bango-bongo-golf",
+      ],
+    },
     {
       name: "Law and results",
       slugs: ["sports-betting-legal-states", "how-old-to-sports-bet", "prediction-market-legal-us"],

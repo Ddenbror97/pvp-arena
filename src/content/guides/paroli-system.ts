@@ -123,7 +123,7 @@ European red is a milder version of the same idea (2.70% edge). The structure of
 
 ### Coinflip and Jackpot
 
-A 0% fee flip is ~0-EV. Paroli still produces many −1 unit cycles and a few pyramids. Average profit tends to zero before you count time and mood. A [Jackpot](/) share is not an even-money step, so the three-win ladder does not map. Do not invent a Paroli on pot tickets; you would be stacking long shots.
+A 5% fee flip is about −5% EV. Paroli still produces many −1 unit cycles and a few pyramids. Average profit tends to zero before you count time and mood. A [Jackpot](/) share is not an even-money step, so the three-win ladder does not map. Do not invent a Paroli on pot tickets; you would be stacking long shots.
 
 Verify a finished sequence on [fairness](/fairness) if you care whether the Ws and Ls were honest. Honesty does not turn Paroli plus.`,
     },

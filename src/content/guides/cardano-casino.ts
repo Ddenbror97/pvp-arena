@@ -91,7 +91,7 @@ Withdraw a slice of that test back to the same wallet before you play in earnest
 
 Only after the round trip do you decide whether a larger amount is even a question. Convert your dollar loss limit into ADA at the moment you would send it. When the dollar limit is gone, stop, even if the token count looks small. Stop if the deposit address is not a Cardano address you can verify in your wallet's send screen. Stop if the site wants you to buy ADA on a page it controls. Use an exchange or wallet you already trust, then send only the float.
 
-PVPspinArena still does not accept ADA. A successful rehearsal somewhere else does not create a balance here. This site's [wallet](/wallet) page lists USDC or ETH on Base. Adults 18+ only. If the drill left you wanting a second site to chase the test, stop and use [responsible gambling](/responsible-gambling) instead of another deposit screen.`,
+PVPspinArena still does not accept ADA. A successful rehearsal somewhere else does not create a balance here. This site's [wallet](/wallet) page lists on-chain Bitcoin, and USDC or ETH on Base. Adults 18+ only. If the drill left you wanting a second site to chase the test, stop and use [responsible gambling](/responsible-gambling) instead of another deposit screen.`,
     },
     {
       id: "stop",
@@ -100,7 +100,7 @@ PVPspinArena still does not accept ADA. A successful rehearsal somewhere else do
 
 If a casino blocks your country, stop. This page will not describe a bypass. If you are sending ADA to chase a loss from another coin, stop. The chain fee being small is not a reason to continue.
 
-A useful session ends with the float you set aside, whether that float comes home or not. [How it works](/how-it-works) describes the three games on this site. It does not describe a ADA lobby, because there is not one.`,
+A useful session ends with the float you set aside, whether that float comes home or not. [How it works](/how-it-works) describes the four games on this site. It does not describe a ADA lobby, because there is not one.`,
     },
   ],
   faqs: [
@@ -145,7 +145,7 @@ A useful session ends with the float you set aside, whether that float comes hom
   updated: "2026-09-27",
   cta: {
     title: "This cashier is Base",
-    text: "PVPspinArena does not take ADA. Jackpot, Coinflip and Roulette use USDC or ETH on Base. A ADA balance in another wallet is not a deposit here.",
+    text: "PVPspinArena does not take ADA. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars. A ADA balance in another wallet is not a deposit here.",
     primary: { to: "/wallet", label: "Open the wallet page" },
     secondary: { to: "/how-it-works", label: "How the site works" },
   },

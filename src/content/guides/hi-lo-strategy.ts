@@ -21,7 +21,7 @@ export const guide: Guide = {
     "A one-rank spread has about an 8% win chance on a fresh deck; even money is catastrophic.",
     "Higher-lower on a middle card is near a coin flip; ties that lose add several percent of edge.",
     "Passing tight spreads is often the best hi lo strategy in home games and some casino tables.",
-    "PVPspinArena does not offer hi-lo; Jackpot, Coinflip and Roulette are the live games.",
+    "PVPspinArena does not offer hi-lo; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
   ],
   sections: [
     {

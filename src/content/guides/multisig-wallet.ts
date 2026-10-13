@@ -159,7 +159,7 @@ The [Crypto payments topic](/guides/topics/crypto-payments) collects the wallet,
     {
       id: "pvp",
       title: "Multisig and PVPspinArena play",
-      body: `PVPspinArena runs three player-vs-player games, Jackpot, [Coinflip](/coinflip) and [Roulette](/roulette), with play in USDC or ETH on the Base network. A multisig is a vault, not a gaming wallet: requiring two approvals for each Roulette bet would be slow, and contract wallets sign messages differently from single-key accounts, so not every dapp flow works smoothly with them.
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. A multisig is a vault, not a gaming wallet: requiring two approvals for each Roulette bet would be slow, and contract wallets sign messages differently from single-key accounts, so not every dapp flow works smoothly with them.
 
 The practical pattern is the savings-and-spending split. Keep reserves in a 2-of-3, move a fixed session budget on Base into a single-key wallet, and play from that. The second signature becomes a natural pause before topping up.
 

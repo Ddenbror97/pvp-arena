@@ -72,7 +72,7 @@ A crypto withdrawal is a request to send the asset to a verified address. It can
 
 [No-KYC casino](/guides/no-kyc-casino) marketing appears on both sides. Sweepstakes rooms often collect identity at redeem, which is KYC with extra steps. Crypto rooms vary. “No KYC” that becomes “send a passport to unlock” is late KYC, not a different product.
 
-PVPspinArena withdrawals are USDC or ETH back to a wallet you proved. There is no SC conversion step because there is no SC.
+PVPspinArena withdrawals are Bitcoin, or USDC or ETH on Base, back to a wallet you proved. There is no SC conversion step because there is no SC.
 
 Speed marketing lies on both sides. “Instant redeem” on sweepstakes still means after review. “Instant withdrawal” on crypto still means after confirmations, limits, and sometimes a manual check. Ask what “done” means: a ticket status, a broadcast txid, or a chat promise. Only the first two are objects you can show someone else.`,
     },
@@ -86,7 +86,7 @@ Speed marketing lies on both sides. “Instant redeem” on sweepstakes still me
 | You spend | $50 on Gold Coin bundles + SC allotment | $50 USDC deposited on Base |
 | What you hold | GC scoreboard + SC under a meter | $50 site ledger backed by the deposit |
 | After play | SC leftover must clear floor + review | Balance withdraws as USDC, if you stop |
-| Extra cost | Playthrough edge on the meter | Posted pot fee (0% default on Jackpot/Coinflip) or the posted Roulette edge |
+| Extra cost | Playthrough edge on the meter | Posted pot fee (5% of a Jackpot or Coinflip pot) or the posted Roulette edge |
 | Proof you can show a friend | Terms + ticket id | Round id + fairness recompute |
 
 If the $50 is rent, neither path is appropriate. Set a [gambling budget](/guides/gambling-budget) first. The table only shows where the $50 goes inside each machine.
@@ -140,7 +140,7 @@ You must be 18 or over. If you are hopping from a denied SC ticket into a crypto
     },
     {
       q: "Is PVPspinArena a sweepstakes casino that pays in USDC?",
-      a: "No. It is not a sweepstakes casino. There are no Gold Coins and no Sweeps Coins. Jackpot, Coinflip and Roulette use USDC or ETH on Base. A win is the same asset, not a promotional redeem. Do not look for an SC meter beside a pot.",
+      a: "No. It is not a sweepstakes casino. There are no Gold Coins and no Sweeps Coins. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars. A win is the same asset, not a promotional redeem. Do not look for an SC meter beside a pot.",
     },
     {
       q: "Which is safer, sweepstakes or crypto?",

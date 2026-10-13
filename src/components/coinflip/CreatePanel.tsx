@@ -8,9 +8,16 @@ import { useAuth } from "@/lib/auth";
 import { useWallet } from "@/lib/jackpot/api";
 import { formatUsd, parseUsdToCents } from "@/lib/jackpot/math";
 import { friendlyError } from "@/lib/jackpot/errors";
-import { APP } from "@/lib/config";
 import { openRoom, useCoinflipConfig, type CoinSide } from "@/lib/coinflip/api";
-import { Button } from "@/components/ui/button";
+import {
+  PlayButton,
+  SignInPlayButton,
+  SlipBalance,
+  SlipCard,
+  SlipLabel,
+  SlipNote,
+  StakeInput,
+} from "@/components/game/BetSlip";
 import { cn } from "@/lib/utils";
 import { coinHeads as headsAsset, coinTails as tailsAsset } from "@/assets/media";
 
@@ -24,26 +31,34 @@ export function CreatePanel() {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const router = useRouter();
-  const [input, setInput] = useState("5.00");
+  const [input, setInput] = useState("1.00");
   const [side, setSide] = useState<CoinSide>("HEADS");
   const [pending, setPending] = useState(false);
   const pendingKey = useRef<{ key: string; amount: number; side: CoinSide } | null>(null);
+  const submitting = useRef(false);
 
   const amount = parseUsdToCents(input);
   const balance = wallet.data?.available ?? 0;
   const min = Number(cfg.data?.min_wager ?? 100);
   const max = Number(cfg.data?.max_wager ?? 1000000);
-  const fee = Number(cfg.data?.fee_bps ?? 0);
   const valid = amount != null && amount >= min && amount <= max;
   const affordable = valid && amount! <= balance;
-  const pot = valid ? amount! * 2 : 0;
-  const win = pot - Math.floor((pot * fee) / 10000);
 
   async function submit() {
-    if (!profile || !valid || !affordable || pending) return;
+    if (submitting.current || !profile || !valid || !affordable || pending) return;
+    submitting.current = true;
+    try {
+      await create();
+    } finally {
+      submitting.current = false;
+    }
+  }
+
+  async function create() {
     setPending(true);
     const k = pendingKey.current;
-    if (!k || k.amount !== amount || k.side !== side) pendingKey.current = { key: crypto.randomUUID(), amount: amount!, side };
+    if (!k || k.amount !== amount || k.side !== side)
+      pendingKey.current = { key: crypto.randomUUID(), amount: amount!, side };
     const { data, error } = await supabase.rpc("coinflip_create", {
       p_amount: amount!,
       p_side: side,
@@ -59,52 +74,52 @@ export function CreatePanel() {
     qc.invalidateQueries({ queryKey: ["wallet"] });
     qc.invalidateQueries({ queryKey: ["coinflip-open"] });
     const gid = (data as { game_id: number }).game_id;
-    await openRoom(qc, router, gid);
     setPending(false);
+    openRoom(qc, router, gid);
     navigate({ to: "/coinflip/$gameId", params: { gameId: String(gid) } });
   }
 
-  return (
-    <div className={`rounded-xl border border-border bg-card p-4 ${!userId && (ready || !hint) ? "lg:min-h-[29.25rem]" : ""}`}>
-      <div className="flex items-center justify-between">
-        <h2 className="font-display text-xs uppercase tracking-widest">Create a coinflip</h2>
-        <span className="shrink-0 whitespace-nowrap rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-gold">{APP.creditsLabel}</span>
-      </div>
-      <p className="mt-1 text-xs text-muted-foreground">1 vs 1 · winner takes the pot</p>
+  const signedOut = !userId && (ready || !hint);
+  const broke = !signedOut && valid && !affordable && !wallet.isLoading;
+  const cap = signedOut ? max : Math.min(balance, max);
+  const setAmount = (cents: number) =>
+    setInput((Math.max(min, Math.min(cap, Math.floor(cents))) / 100).toFixed(2));
+  const needsSetup = !signedOut && !profile && needsProfile;
 
-      {!userId && (ready || !hint) ? (
-        <Button asChild className="mt-4 w-full font-display"><Link to="/auth">Sign in to play</Link></Button>
-      ) : !profile && needsProfile ? (
-        <p className="mt-5 text-sm text-muted-foreground">Finish setting up your profile to play.</p>
+  return (
+    <>
+      <MobileCreate
+        side={side}
+        setSide={setSide}
+        input={input}
+        setInput={setInput}
+        setAmount={setAmount}
+        amount={amount}
+        valid={valid}
+        pending={pending}
+        signedOut={signedOut}
+        needsSetup={needsSetup}
+        broke={broke}
+        affordable={affordable}
+        hasProfile={!!profile}
+        cap={cap}
+        onSubmit={submit}
+      />
+      <SlipCard
+        title="Create a coinflip"
+        tag={<span className="text-[11px] text-muted-foreground">1 vs 1</span>}
+        className="hidden lg:block"
+      >
+      {!signedOut && !profile && needsProfile ? (
+        <p className="mt-5 text-sm text-muted-foreground">
+          Finish setting up your profile to play.
+        </p>
       ) : (
         <>
-          <div className="mt-3 text-xs text-muted-foreground">
-            Available <span className="tabular text-foreground">{!userId || wallet.isLoading ? "—" : formatUsd(balance)}</span> {APP.creditsLabel}
-          </div>
-          <label className="mt-3 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground" htmlFor="cf-amount">Wager</label>
-          <div className="mt-1 flex items-center rounded-lg border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring">
-            <span className="text-muted-foreground">$</span>
-            <input
-              id="cf-amount"
-              inputMode="decimal"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="tabular h-10 w-full bg-transparent px-2 text-base outline-none"
-            />
-          </div>
-          <div className="mt-1.5 grid grid-cols-5 gap-1.5">
-            {QUICK.map((q) => (
-              <button key={q} type="button" onClick={() => setInput((q / 100).toFixed(2))} className="tabular rounded-md bg-secondary py-1.5 text-xs hover:bg-secondary/70">
-                {formatUsd(q).replace(".00", "")}
-              </button>
-            ))}
-            <button type="button" onClick={() => setInput((Math.min(balance, max) / 100).toFixed(2))} className="rounded-md bg-secondary py-1.5 text-xs font-bold hover:bg-secondary/70">
-              MAX
-            </button>
-          </div>
+          {signedOut ? null : <SlipBalance cents={balance} loading={!userId || wallet.isLoading} />}
 
-          <div className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Your side</div>
-          <div className="mt-1 grid grid-cols-2 gap-1.5" role="radiogroup" aria-label="Your side">
+          <SlipLabel>Pick your side</SlipLabel>
+          <div className="mt-1.5 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Your side">
             {(["HEADS", "TAILS"] as const).map((s) => (
               <button
                 key={s}
@@ -113,31 +128,224 @@ export function CreatePanel() {
                 aria-checked={side === s}
                 onClick={() => setSide(s)}
                 className={cn(
-                  "flex items-center justify-center gap-2 rounded-lg border py-2 font-display text-xs transition",
+                  "flex items-center gap-2.5 rounded-xl border px-3 py-2 font-display text-xs transition active:scale-[0.98]",
                   side === s
-                    ? s === "HEADS" ? "border-primary bg-primary/10 text-primary" : "border-rival bg-rival/10 text-rival"
-                    : "border-border text-muted-foreground hover:text-foreground",
+                    ? s === "HEADS"
+                      ? "border-coin-heads bg-coin-heads/10 text-coin-heads shadow-[0_0_0_1px_var(--color-coin-heads)]"
+                      : "border-coin-tails bg-coin-tails/10 text-coin-tails shadow-[0_0_0_1px_var(--color-coin-tails)]"
+                    : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground",
                 )}
               >
-                <img src={s === "HEADS" ? headsAsset : tailsAsset} alt="" width={16} height={16} draggable={false} className="h-4 w-4 rounded-full object-cover select-none" />
+                <img
+                  src={s === "HEADS" ? headsAsset : tailsAsset}
+                  alt=""
+                  width={32}
+                  height={32}
+                  draggable={false}
+                  className={cn(
+                    "h-8 w-8 rounded-full object-cover transition select-none",
+                    side !== s && "opacity-60 grayscale",
+                  )}
+                />
                 {s}
               </button>
             ))}
           </div>
 
-          <dl className="tabular mt-3 grid grid-cols-2 gap-y-0.5 rounded-lg bg-background/60 px-3 py-2 text-xs">
-            <dt className="text-muted-foreground">You wager</dt><dd className="text-right">{valid ? formatUsd(amount!) : "—"}</dd>
-            <dt className="text-muted-foreground">Your side</dt><dd className="text-right">{side}</dd>
-            <dt className="text-muted-foreground">Pot</dt><dd className="text-right">{valid ? formatUsd(pot) : "—"}</dd>
-            <dt className="font-semibold">Win</dt><dd className="text-right font-semibold text-primary">{valid ? formatUsd(win) : "—"}</dd>
-          </dl>
+          <SlipLabel htmlFor="cf-amount">Wager</SlipLabel>
+          <StakeInput
+            id="cf-amount"
+            value={input}
+            onChange={setInput}
+            quick={QUICK}
+            min={min}
+            max={signedOut ? max : Math.min(balance, max)}
+            invalid={!valid && !!input}
+            disabled={pending}
+          />
 
-          <Button onClick={submit} disabled={!profile || !affordable || pending} className="mt-3 h-11 w-full font-display text-sm">
-            {pending ? "Creating..." : !valid ? `Wager ${formatUsd(min)}–${formatUsd(max)}` : !affordable ? "Not enough balance" : "Create game"}
-          </Button>
-          <p className="mt-2 text-center text-[11px] text-muted-foreground">Winner takes the pot. Every result is verifiable.</p>
+          {signedOut ? (
+            <SignInPlayButton />
+          ) : (
+            <PlayButton
+              onClick={submit}
+              disabled={!profile || !affordable || pending}
+              label={pending ? "Creating…" : `Create · ${side === "HEADS" ? "Heads" : "Tails"}`}
+              amount={valid ? amount : null}
+            />
+          )}
+          <SlipNote
+            error={
+              broke ? (
+                <>
+                  Not enough balance ·{" "}
+                  <Link to="/wallet" className="underline">
+                    Deposit
+                  </Link>
+                </>
+              ) : null
+            }
+          >
+            Every flip is verifiable.
+          </SlipNote>
         </>
       )}
+    </SlipCard>
+    </>
+  );
+}
+
+function MobileCreate({
+  side,
+  setSide,
+  input,
+  setInput,
+  setAmount,
+  amount,
+  valid,
+  pending,
+  signedOut,
+  needsSetup,
+  broke,
+  affordable,
+  hasProfile,
+  cap,
+  onSubmit,
+}: {
+  side: CoinSide;
+  setSide: (side: CoinSide) => void;
+  input: string;
+  setInput: (next: string) => void;
+  setAmount: (cents: number) => void;
+  amount: number | null;
+  valid: boolean;
+  pending: boolean;
+  signedOut: boolean;
+  needsSetup: boolean;
+  broke: boolean;
+  affordable: boolean;
+  hasProfile: boolean;
+  cap: number;
+  onSubmit: () => void;
+}) {
+  if (needsSetup) {
+    return (
+      <p className="rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-muted-foreground lg:hidden">
+        Finish setting up your profile to play.
+      </p>
+    );
+  }
+  return (
+    <div className="rounded-xl border border-border bg-card p-2 lg:hidden">
+      <div className="flex items-center gap-1.5">
+        <div className="flex shrink-0 gap-1" role="radiogroup" aria-label="Your side">
+          {(["HEADS", "TAILS"] as const).map((s) => (
+            <button
+              key={s}
+              type="button"
+              role="radio"
+              aria-checked={side === s}
+              aria-label={s === "HEADS" ? "Heads" : "Tails"}
+              disabled={pending}
+              onClick={() => setSide(s)}
+              className={cn(
+                "grid h-10 w-10 place-items-center rounded-full border transition active:scale-95 disabled:opacity-50",
+                side === s
+                  ? s === "HEADS"
+                    ? "border-coin-heads shadow-[0_0_0_1px_var(--color-coin-heads)]"
+                    : "border-coin-tails shadow-[0_0_0_1px_var(--color-coin-tails)]"
+                  : "border-transparent opacity-50 grayscale",
+              )}
+            >
+              <img
+                src={s === "HEADS" ? headsAsset : tailsAsset}
+                alt=""
+                width={32}
+                height={32}
+                draggable={false}
+                className="h-8 w-8 rounded-full object-cover select-none"
+              />
+            </button>
+          ))}
+        </div>
+        <label className="sr-only" htmlFor="cf-amount-mobile">
+          Wager
+        </label>
+        <div
+          className={cn(
+            "flex h-10 min-w-0 flex-1 items-center rounded-lg border bg-background px-2",
+            !valid && input ? "border-destructive/60" : "border-input",
+          )}
+        >
+          <span className="text-xs text-muted-foreground">$</span>
+          <input
+            id="cf-amount-mobile"
+            inputMode="decimal"
+            value={input}
+            disabled={pending}
+            onChange={(e) => setInput(e.target.value)}
+            onFocus={(e) => e.target.select()}
+            aria-invalid={!valid && !!input}
+            className="tabular h-full w-full min-w-0 bg-transparent px-1 text-sm font-semibold outline-none disabled:opacity-50"
+          />
+        </div>
+        {signedOut ? (
+          <Link
+            to="/auth"
+            className="inline-flex h-10 shrink-0 items-center rounded-lg bg-primary px-3 font-display text-xs tracking-wide text-primary-foreground"
+          >
+            Sign in
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={onSubmit}
+            disabled={!hasProfile || !affordable || pending}
+            className="inline-flex h-10 shrink-0 items-center rounded-lg bg-primary px-3 font-display text-xs tracking-wide text-primary-foreground transition hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
+          >
+            {pending ? "…" : "Create"}
+          </button>
+        )}
+      </div>
+      <div className="mt-1.5 grid grid-cols-5 gap-1">
+        {QUICK.map((q) => (
+          <button
+            key={q}
+            type="button"
+            disabled={pending}
+            onClick={() => setAmount(q)}
+            className={cn(
+              "tabular rounded-md border py-1 text-[11px] font-semibold disabled:opacity-50",
+              amount === q
+                ? "border-primary bg-primary/15 text-primary-soft"
+                : "border-border bg-secondary/60 text-foreground/85",
+            )}
+          >
+            {formatUsd(q).replace(".00", "")}
+          </button>
+        ))}
+        <button
+          type="button"
+          disabled={pending}
+          onClick={() => setAmount(cap)}
+          className={cn(
+            "tabular rounded-md border py-1 text-[11px] font-semibold disabled:opacity-50",
+            cap > 0 && amount === cap
+              ? "border-primary bg-primary/15 text-primary-soft"
+              : "border-border bg-secondary/60 text-foreground/85",
+          )}
+        >
+          MAX
+        </button>
+      </div>
+      {broke ? (
+        <p className="mt-1.5 text-center text-[11px] text-destructive">
+          Not enough balance ·{" "}
+          <Link to="/wallet" className="underline">
+            Deposit
+          </Link>
+        </p>
+      ) : null}
     </div>
   );
 }

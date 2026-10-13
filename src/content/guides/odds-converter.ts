@@ -127,7 +127,7 @@ You want $40 profit on a −110 line. Stake required = 40 × 110/100 = $44. Tota
 
 ### Worked casino comparison
 
-Fair even money on a true 50% coin is decimal 2.00. A [Coinflip](/coinflip) with a 0% fee pays that: two $10 stakes, winner takes $20, decimal 2.00, implied 50%, true 50%.
+Fair even money on a true 50% coin is decimal 2.00. A [Coinflip](/coinflip) with a 5% fee pays 1.90: two $10 stakes, winner takes $19, decimal 1.90, implied about 52.63%, true 50%.
 
 Purple pays the same decimal 2.00, so a naive converter says “implied 50%”. The true chance is 16/33 ≈ 48.48%. The gap is the house edge. The converter did not lie about the format. It cannot see the extra three slots that do not pay Purple.
 
@@ -184,7 +184,7 @@ Watch the wheel on [Roulette](/roulette) or a matched pair on [Coinflip](/coinfl
 
 ### Jackpot is not a fixed decimal
 
-A [Jackpot](/) ticket does not convert like a colour. If you put $8 into a $40 pot with a 0% fee, your true p is 20% and a fair decimal on “win the pot” is 5.00 (you get $40 back). The posted “payout” is the pot, not a 2.00 sticker. Trying to run that through an American converter as +100 is a category error. Convert only when a multiplier is actually posted.
+A [Jackpot](/) ticket does not convert like a colour. If you put $8 into a $40 pot with a 5% fee, your true p is 20% and the winner receives $38, so decimal is 4.75. The posted “payout” is the pot, not a 2.00 sticker. Trying to run that through an American converter as +100 is a category error. Convert only when a multiplier is actually posted.
 
 Keep a four-column note: posted format, decimal, implied chance, true chance. After a few rows the converter becomes boring, which is the point. The only interesting column is the last one, and it does not come from the converter. It comes from counting slots on the wheel or shares of a pot. Boring conversion plus an honest count is how you stop paying a 2.00 sticker as if it were a fair coin.`,
     },
@@ -212,7 +212,7 @@ Keep a four-column note: posted format, decimal, implied chance, true chance. Af
     },
     {
       q: "Which odds format does PVPspinArena use?",
-      a: "Multipliers: 2x on Purple and Silver, 14x on Green, 2x on a fee-free coinflip pot. Those are decimal 2.00 and 14.00.",
+      a: "Multipliers: 2x on Purple and Silver, 14x on Green, 2x on a Coinflip before the 5% pot fee. Those are decimal 2.00 and 14.00.",
     },
   ],
   sources: [

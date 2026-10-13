@@ -151,7 +151,7 @@ Keep your recovery phrase offline and never type it into a website; see [seed ph
     {
       id: "pvp",
       title: "USDT, USDC and playing on PVPspinArena",
-      body: `PVPspinArena runs three player-vs-player games, [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette), and play is in USDC or ETH on the Base network. If you are buying a stablecoin specifically to play there, buying USDC on Base directly saves a swap and a second fee; [how to buy USDC](/guides/how-to-buy-usdc) covers that route. If you already hold USDT, swap it to USDC and send it on Base. Other casinos' handling of Tether is covered in [USDT casino](/guides/usdt-casino).
+      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and play is settled in US dollars. If you are buying a stablecoin specifically to play there, buying USDC on Base directly saves a swap and a second fee; [how to buy USDC](/guides/how-to-buy-usdc) covers that route. If you already hold USDT, swap it to USDC and send it on Base. Other casinos' handling of Tether is covered in [USDT casino](/guides/usdt-casino).
 
 Whichever token you use, the maths of the games does not change. A Coinflip is a 50/50 between two players, and Purple and Silver return 32/33 before the win fee, about a 7.88% edge after it, and Green returns 14/33. You can verify any settled round on [fairness](/fairness).
 

@@ -154,7 +154,7 @@ For the full details of the wheel, see our [crypto roulette guide](/guides/crypt
     {
       id: "coinflip",
       title: "Martingale on coinflip and PvP games",
-      body: `In a PvP coinflip, two players stake the same amount and one wins both stakes. With a 0% fee, each player has exactly a 50% chance and the game has no house edge.
+      body: `In a PvP coinflip, two players stake the same amount and a 50/50 bit picks the winner. With a 5% pot fee, the winner receives 95% and the edge is that fee.
 
 ### Does martingale work without an edge?
 
