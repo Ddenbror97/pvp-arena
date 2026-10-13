@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
-    "test:db:rollout": "vitest run --maxWorkers=1 --sequence.concurrent=false --testTimeout 300000 tests/db/withdraw-basis-parity.integration.test.ts tests/db/bonus-withdraw.integration.test.ts tests/db/leaderboard.integration.test.ts tests/db/partner-leaderboard-cohort.integration.test.ts tests/db/withdraw-basis-sync-bench.integration.test.ts",
+    "test:db:rollout": "vitest run --maxWorkers=1 --hookTimeout 300000 --sequence.concurrent=false --testTimeout 300000 tests/db/withdraw-basis-parity.integration.test.ts tests/db/bonus-withdraw.integration.test.ts tests/db/leaderboard.integration.test.ts tests/db/partner-leaderboard-cohort.integration.test.ts tests/db/withdraw-basis-sync-bench.integration.test.ts",
     "ci:rollout": "node --env-file=.env scripts/ci/rollout-ci.mjs"
   },
   "overrides": {

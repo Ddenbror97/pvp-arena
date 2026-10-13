@@ -7,7 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
 import { adminClaims, openAdminStepup } from "./admin-stepup";
-import { creditUserDeposit } from "./money";
+import { creditUserDeposit, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
 const url = testDatabaseUrl();
@@ -115,6 +115,7 @@ async function settledFlip(
 d("partner leaderboards", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
+    await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
   }, 180_000);
 
   it("isolates partners, ranks settled stakes once, and pays prizes once", async () => {

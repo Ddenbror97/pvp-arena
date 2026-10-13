@@ -6,6 +6,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
+import { migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
 const url = testDatabaseUrl();
@@ -23,6 +24,7 @@ function pct(sorted: number[], p: number): number {
 d("withdraw basis sync bench", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
+    await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     await sql`select pvp_test._withdraw_basis_rebuild_full()`;
     const uid = randomUUID();
     const username = ("bench" + uid.replace(/-/g, "")).slice(0, 20);

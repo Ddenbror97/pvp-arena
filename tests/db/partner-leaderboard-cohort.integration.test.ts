@@ -9,7 +9,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { promoTestIp } from "./promo-client-ip";
 import { buildTestSchemaSql } from "./schema";
-import { creditUserDeposit } from "./money";
+import { creditUserDeposit, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
 const url = testDatabaseUrl();
@@ -81,6 +81,7 @@ async function settledFlip(
 d("partner leaderboard cohort", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
+    await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
   }, 180_000);
 
   it("keeps friend referrals and partner attribution independent, and ranks only that cohort", async () => {
