@@ -37,15 +37,17 @@ async function settledFlip(
   amount: number,
   when: Date,
   accountType: "real" | "test_credit",
+  skipDepositFor: readonly string[] = [],
 ) {
   const asset = accountType === "real" ? "USD" : "TEST_USD";
   const domain = accountType === "real" ? "REAL_USD" : "TEST_USD";
+  const skip = new Set(skipDepositFor);
   const pot = amount * 2;
   const fee = Math.floor((pot * 500) / 10000);
   const end = new Date(when.getTime() + 1000);
   if (accountType === "real") {
-    await creditUserDeposit(tx, creator, amount * 10);
-    await creditUserDeposit(tx, opponent, amount * 10);
+    if (!skip.has(creator)) await creditUserDeposit(tx, creator, amount * 10);
+    if (!skip.has(opponent)) await creditUserDeposit(tx, opponent, amount * 10);
   }
   const [game] = await tx`insert into pvp_test.coinflip_games (
     status, creator_id, opponent_id, creator_side, amount, pot_amount, fee_bps, asset, account_type, money_domain,
@@ -189,7 +191,7 @@ d("partner leaderboard cohort", () => {
     const promo = (
       await sql.begin(async (tx) => {
         await tx`select set_config('test.uid', ${admin}, true), set_config('request.jwt.claims', ${adminClaims}, true)`;
-        return tx`select pvp_test.partner_admin_create_code(${sousa}::uuid, 'STREAM1', 100, 10, null) r`;
+        return tx`select pvp_test.partner_admin_create_code(${sousa}::uuid, 'STREAM1', 500, 10, null) r`;
       })
     )[0].r as { ok: boolean; code: string };
     expect(promo.code).toBe("STREAM1");
@@ -254,7 +256,7 @@ d("partner leaderboard cohort", () => {
         const ago = (minutes: number) => new Date(Date.now() - minutes * 60 * 1000);
         await settledFlip(tx, playerBoth, playerPartner, 2000, ago(40), "real");
         await settledFlip(tx, playerBoth, stranger, 1000, ago(30), "real");
-        await settledFlip(tx, playerPromo, stranger, 400, ago(25), "real");
+        await settledFlip(tx, playerPromo, stranger, 400, ago(25), "real", [playerPromo]);
         await settledFlip(tx, playerBoth, stranger, 9000, ago(15), "test_credit");
         const when = ago(20);
         const [cancelled] = await tx`insert into pvp_test.coinflip_games (
@@ -288,6 +290,7 @@ d("partner leaderboard cohort", () => {
     const openRows = await ranks(openRace);
     expect(sousaRows.map((row) => row.player_id)).toEqual([playerBoth]);
     expect(Number(sousaRows[0].qualifying_cents)).toBe(3000);
+    expect(sousaRows.map((row) => row.player_id)).not.toContain(playerPromo);
     expect(rowsB.map((row) => row.player_id)).toEqual([playerPartner]);
     expect(Number(rowsB[0].qualifying_cents)).toBe(2000);
     expect(openRows.map((row) => [row.player_id, Number(row.qualifying_cents)])).toEqual([

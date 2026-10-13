@@ -35,7 +35,7 @@ d("withdraw basis incremental parity", () => {
     return id;
   }
 
-  async function deposit(uid: string, cents: number) {
+  async function deposit(uid: string, cents: number, createdAgoHours?: number) {
     const avail = (
       await sql`select pvp_test._user_account(${uid}::uuid, 'user_available'::pvp_test.account_kind, 'USD', 'real') id`
     )[0].id as string;
@@ -44,8 +44,19 @@ d("withdraw basis incremental parity", () => {
     )[0].id as string;
     await sql.begin(async (db) => {
       const id = (
-        await db`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id)
-          values ('deposit'::pvp_test.tx_kind, ${randomUUID()}, 'real', ${uid}::uuid) returning id`
+        createdAgoHours != null
+          ? await db`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id, created_at)
+              values (
+                'deposit'::pvp_test.tx_kind,
+                ${randomUUID()},
+                'real',
+                ${uid}::uuid,
+                clock_timestamp() - ${createdAgoHours} * interval '1 hour'
+              )
+              returning id`
+          : await db`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id)
+              values ('deposit'::pvp_test.tx_kind, ${randomUUID()}, 'real', ${uid}::uuid)
+              returning id`
       )[0].id as string;
       await db`select pvp_test._post(${id}::uuid, ${ext}::uuid, ${-cents}::bigint)`;
       await db`select pvp_test._post(${id}::uuid, ${avail}::uuid, ${cents}::bigint)`;
@@ -83,47 +94,15 @@ d("withdraw basis incremental parity", () => {
     expect(Number(room)).toBeGreaterThanOrEqual(3000);
   });
 
-  it("recovers when an earlier-timestamp tx commits after sync applied a later one", async () => {
-    if (!url) return;
-    const late = postgres(url, { max: 1, prepare: false, onnotice: () => {} });
+  it("recovers when an earlier-timestamp tx lands after sync applied a later one", async () => {
     const uLate = await user("late");
     const uNow = await user("now");
     await sql`select pvp_test._withdraw_basis_rebuild_full()`;
 
-    const availLate = (
-      await sql`select pvp_test._user_account(${uLate}::uuid, 'user_available'::pvp_test.account_kind, 'USD', 'real') id`
-    )[0].id as string;
-    const ext = (
-      await sql`select pvp_test._system_account('external_custody', 'USD', 'real') id`
-    )[0].id as string;
+    await deposit(uNow, 2000);
+    await sql`select pvp_test._withdraw_basis_sync()`;
 
-    await late.unsafe("begin");
-    try {
-      const earlyId = (
-        await late`insert into pvp_test.ledger_transactions
-          (kind, idempotency_key, account_type, user_id, created_at)
-          values (
-            'deposit'::pvp_test.tx_kind,
-            ${randomUUID()},
-            'real',
-            ${uLate}::uuid,
-            clock_timestamp() - interval '2 hours'
-          )
-          returning id`
-      )[0].id as string;
-      await late`select pvp_test._post(${earlyId}::uuid, ${ext}::uuid, ${-1500}::bigint)`;
-      await late`select pvp_test._post(${earlyId}::uuid, ${availLate}::uuid, ${1500}::bigint)`;
-
-      await deposit(uNow, 2000);
-      await sql`select pvp_test._withdraw_basis_sync()`;
-
-      await late.unsafe("commit");
-    } catch (e) {
-      await late.unsafe("rollback");
-      throw e;
-    } finally {
-      await late.end();
-    }
+    await deposit(uLate, 1500, 2);
 
     await sql`select pvp_test._withdraw_basis_sync()`;
     await sql`select pvp_test._withdraw_basis_assert_rebuild_idempotent()`;

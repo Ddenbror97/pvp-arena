@@ -6,7 +6,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
-import { migrateTestSchemaToReal } from "./money";
+import { creditUserDeposit, fundTestTreasury, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
 const url = testDatabaseUrl();
@@ -25,23 +25,15 @@ d("withdraw basis sync bench", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
+    await fundTestTreasury(sql);
     await sql`select pvp_test._withdraw_basis_rebuild_full()`;
     const uid = randomUUID();
     const username = ("bench" + uid.replace(/-/g, "")).slice(0, 20);
     await sql`select pvp_test.ensure_profile(${username}, true)
       from (select set_config('test.uid', ${uid}, true)) c`;
-    const avail = (
-      await sql`select pvp_test._user_account(${uid}::uuid, 'user_available'::pvp_test.account_kind, 'USD', 'real') id`
-    )[0].id as string;
-    const ext = (
-      await sql`select pvp_test._system_account('external_custody', 'USD', 'real') id`
-    )[0].id as string;
-    const txId = (
-      await sql`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id)
-        values ('deposit'::pvp_test.tx_kind, ${randomUUID()}, 'real', ${uid}::uuid) returning id`
-    )[0].id as string;
-    await sql`select pvp_test._post(${txId}::uuid, ${ext}::uuid, ${-50000}::bigint)`;
-    await sql`select pvp_test._post(${txId}::uuid, ${avail}::uuid, ${50000}::bigint)`;
+    await sql.begin(async (db) => {
+      await creditUserDeposit(db, uid, 50_000);
+    });
   }, 180_000);
 
   afterAll(async () => {

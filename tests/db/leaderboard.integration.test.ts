@@ -409,7 +409,7 @@ d("partner leaderboards", () => {
         await tx`set local role authenticated`;
         await tx`update pvp_test.leaderboard_entries set qualifying_cents = 1`;
       }),
-    ).rejects.toThrow(/permission denied/i);
+    ).rejects.toThrow(/permission denied|42501|rättighet saknas/i);
 
     const [board] = await as(
       playerA,
