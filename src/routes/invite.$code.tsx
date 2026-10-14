@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { openInvite } from "@/lib/referral/referral.functions";
+import { formatUsd } from "@/lib/jackpot/math";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/invite/$code")({
@@ -26,11 +27,14 @@ function InvitePage() {
         {data.ok ? (
           <>
             <p className="mx-auto mt-3 max-w-sm text-sm text-muted-foreground">
-              {data.username} invited you to PVPspinArena. Create an account and the invite stays
-              linked to you.
+              {data.username} invited you to PVPspinArena. Sign up with this link so their invite
+              stays attached to your account.
             </p>
-            <p className="mt-4 text-xs text-muted-foreground">
-              This invite does not add credit to your balance.
+            <p className="mx-auto mt-3 max-w-sm text-xs leading-relaxed text-muted-foreground">
+              After you deposit {formatUsd(data.deposit_cents)} and wager{" "}
+              {formatUsd(data.play_cents)} on Jackpot, Coinflip, Roulette, or Slott,{" "}
+              {data.username} earns their referral reward. This link does not add credit to your
+              balance.
             </p>
           </>
         ) : (

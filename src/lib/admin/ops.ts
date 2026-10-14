@@ -96,6 +96,7 @@ export interface RouletteNow {
 
 export interface OverviewData {
   server_time: string;
+  money_epoch?: string;
   jackpot: {
     waiting: number;
     active: number;

@@ -17,9 +17,12 @@ export { ChatMessageRow };
 export function GameChat({
   className,
   initial,
+  bare = false,
 }: {
   gameType: ChatRoom;
   className?: string;
+  /** Drops the "Live chat" header when the host already labels the panel. */
+  bare?: boolean;
   /** Messages already rendered into the page, so the list is not a skeleton on first paint. */
   initial?: { data: ChatMessage[] } | null;
 }) {
@@ -131,7 +134,10 @@ export function GameChat({
       )}
       aria-label="Live chat"
     >
-      <header className="flex items-center justify-between border-b border-border px-3.5 py-2.5">
+      <header
+        hidden={bare}
+        className="flex items-center justify-between border-b border-border px-3.5 py-2.5"
+      >
         <div className="flex items-center gap-2.5">
           <MessageSquare
             className="h-[18px] w-[18px] shrink-0 fill-primary/25 text-primary-soft"

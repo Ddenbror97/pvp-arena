@@ -1,7 +1,7 @@
 -- Expose withdraw cash room in crypto_my_activity for wallet UX and error copy.
 
 create or replace function public.crypto_my_activity(p_user uuid)
-returns jsonb language sql stable security definer set search_path = public as $$
+returns jsonb language sql volatile security definer set search_path = public as $$
   select jsonb_build_object(
     'deposits', coalesce((select jsonb_agg(x order by x.detected_at desc) from (
       select d.id, d.chain_id, d.asset_key, d.tx_hash, d.units::text as units, d.usd_cents, d.status, d.detected_at, d.credited_at, a.decimals

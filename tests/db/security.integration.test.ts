@@ -557,6 +557,16 @@ d("live database permissions (read-only catalog checks)", () => {
     expect(r).toEqual({ a1: false, a2: false, u1: false, u2: false, pub: true });
   });
 
+  it("crypto_my_activity stays read-only (stable + peek, no _withdraw_basis sync)", async () => {
+    const [row] = await sql`select p.provolatile v, pg_get_functiondef(p.oid) like '%_withdraw_basis_peek%' uses_peek,
+      pg_get_functiondef(p.oid) not like '%pvp_test._withdraw_basis(%' no_sync
+      from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+      where n.nspname = 'pvp_test' and p.proname = 'crypto_my_activity'`;
+    expect(row.v).toBe("s");
+    expect(row.uses_peek).toBe(true);
+    expect(row.no_sync).toBe(true);
+  });
+
   it("_withdraw_basis_writer_lock trigger helper is not RPC-callable by browser roles", async () => {
     const [r] = await sql`
       select has_function_privilege('anon', 'pvp_test._withdraw_basis_writer_lock()', 'execute') as anon,
@@ -568,6 +578,21 @@ d("live database permissions (read-only catalog checks)", () => {
                join pg_namespace n on n.oid = c.relnamespace
                where n.nspname = 'pvp_test' and c.relname = 'ledger_transactions'
                  and p.proname = '_withdraw_basis_writer_lock' and not t.tgisinternal
+             ) as trigger_attached`;
+    expect(r).toEqual({ anon: false, auth: false, trigger_attached: true });
+  });
+
+  it("referral_reward_lock_playthrough trigger helper is not RPC-callable by browser roles", async () => {
+    const [r] = await sql`
+      select has_function_privilege('anon', 'pvp_test.referral_reward_lock_playthrough()', 'execute') as anon,
+             has_function_privilege('authenticated', 'pvp_test.referral_reward_lock_playthrough()', 'execute') as auth,
+             exists (
+               select 1 from pg_trigger t
+               join pg_proc p on p.oid = t.tgfoid
+               join pg_class c on c.oid = t.tgrelid
+               join pg_namespace n on n.oid = c.relnamespace
+               where n.nspname = 'pvp_test' and c.relname = 'referral_rewards'
+                 and p.proname = 'referral_reward_lock_playthrough' and not t.tgisinternal
              ) as trigger_attached`;
     expect(r).toEqual({ anon: false, auth: false, trigger_attached: true });
   });
@@ -595,6 +620,23 @@ d("live database permissions (read-only catalog checks)", () => {
       "otp_verify(uuid,pvp_test.otp_purpose,text,uuid)",
       "wallet_consume_and_verify(uuid,uuid,text)",
       "chat_send(uuid,text,text,text,text)",
+      "poker_tick()",
+      "slot_tick_with_poker()",
+      "_poker_settle(bigint)",
+      "_poker_take_cash(bigint,bigint,boolean)",
+      "_poker_cashout(bigint)",
+      "_poker_apply(bigint,integer,text,bigint,text,text)",
+      "_poker_note_settle_failure(bigint,text,text)",
+      "_poker_rate(uuid,text,integer,integer)",
+      "_poker_tick_one(bigint)",
+      "_withdraw_basis_rebuild_full()",
+      "_withdraw_basis_apply_one(uuid)",
+      "_withdraw_basis_apply_trg()",
+      "_lock_system_accounts(pvp_test.account_kind[],text,text)",
+      "_poker_hand_transfers(bigint)",
+      "_jsonb_add_counts(jsonb,jsonb)",
+      "slot_tick_worker()",
+      "prestige_award_wager(uuid,text,text,bigint,jsonb)",
     ]) {
       const [r] = await sql.unsafe(
         `select has_function_privilege('anon','pvp_test.${f}','execute') a, has_function_privilege('authenticated','pvp_test.${f}','execute') u`,
@@ -627,6 +669,11 @@ d("live database permissions (read-only catalog checks)", () => {
       "slot_spin_grid(bytea,bigint,integer)",
       "slot_spin_grid_v2(bytea,bigint,integer)",
       "slot_spin_grid_v3(bytea,bigint,integer)",
+      "_poker_eval(smallint[])",
+      "_poker_shuffle(bytea,bigint,text)",
+      "poker_hand_detail(bigint)",
+      "poker_lobby()",
+      "poker_table_state(bigint)",
     ];
     const SIGNED_IN_FNS = [
       ...PUBLIC_FNS,
@@ -692,6 +739,18 @@ d("live database permissions (read-only catalog checks)", () => {
       "slot_create(bigint,text)",
       "slot_join(bigint,text)",
       "slot_spin(bigint,integer,text)",
+      "poker_act(bigint,integer,text,bigint,text)",
+      "poker_buyin_info(smallint)",
+      "poker_commit_chain(bigint,text)",
+      "poker_leave(bigint)",
+      "poker_nudge(bigint)",
+      "poker_reveal(bigint,text)",
+      "poker_sit(bigint,smallint,smallint,bigint,text,text)",
+      "poker_sit_out(bigint,boolean,text)",
+      "poker_top_up(bigint,bigint)",
+      "poker_admin_collusion_signals(integer,integer,integer)",
+      "poker_admin_recover_settlement(bigint,text,text)",
+      "poker_worker_health()",
     ];
     const executable = async (role: string) => {
       const rows = await sql.begin(async (tx) => {

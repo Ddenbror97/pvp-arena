@@ -49,7 +49,7 @@ begin
       'Authorization', 'Bearer ' || tok
     ),
     body := '{}'::jsonb,
-    timeout_milliseconds := 55000
+    timeout_milliseconds := 25000
   ) into req_id;
   return req_id;
 end;

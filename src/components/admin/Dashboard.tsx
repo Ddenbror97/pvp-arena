@@ -63,7 +63,7 @@ const BLURB: Record<AdminTab, string> = {
   jackpot: "Recent rounds, pots, and winners.",
   coinflip: "Open tables and settled flips.",
   roulette: "The live round and the rounds behind it.",
-  deposits: "Incoming transfers, including ones that did not match a player.",
+  deposits: "On-chain credited deposits (EVM + Bitcoin). Promos and card invoices are not listed here.",
   withdrawals: "Payouts from request through broadcast.",
   ledger: "Player balances, winnings credited, and whether payout wallets cover them.",
   crypto: "Switches, inventory, and items waiting on a decision.",
@@ -217,8 +217,13 @@ function AdminDashboardInner() {
           ? "bg-destructive/15 text-destructive"
           : "bg-secondary text-muted-foreground";
 
-  function open(next: AdminTab) {
-    void navigate({ to: "/admin", search: { section: next } });
+  const logFilter = adminRoute.useSearch().log;
+
+  function open(next: AdminTab, opts?: { log?: string | undefined }) {
+    void navigate({
+      to: "/admin",
+      search: { section: next, log: opts?.log },
+    });
   }
 
   return (
@@ -256,7 +261,8 @@ function AdminDashboardInner() {
                 serverNow={serverNow}
                 live={live.data}
                 liveError={live.error}
-                onOpen={open}
+                onOpen={(next) => open(next)}
+                onOpenLogs={(action) => open("logs", { log: action })}
               />
             )}
             {tab === "jackpot" && <Games game="jackpot" />}
@@ -272,7 +278,7 @@ function AdminDashboardInner() {
             {tab === "leaderboards" && <LeaderboardsAdmin />}
             {tab === "promos" && <PromoAdmin />}
             {tab === "prestige" && <PrestigeAdmin />}
-            {tab === "logs" && <Logs />}
+            {tab === "logs" && <Logs initialSearch={logFilter} />}
           </div>
         </div>
       </div>
@@ -370,11 +376,13 @@ function Overview({
   live,
   liveError,
   onOpen,
+  onOpenLogs,
 }: {
   serverNow: number;
   live: LiveHealth | undefined;
   liveError: unknown;
   onOpen: (tab: AdminTab) => void;
+  onOpenLogs: (action: string) => void;
 }) {
   const q = useOverview();
   const d = q.data;
@@ -438,9 +446,24 @@ function Overview({
             </li>
             <li className="flex items-center justify-between gap-3 px-3 py-2">
               <span>Latest failure</span>
-              <span className={live.latest_failure ? tone["down"] : undefined}>
-                {live.latest_failure?.action ?? "none"}
-              </span>
+              {live.latest_failure ? (
+                <button
+                  type="button"
+                  className={cn(
+                    "max-w-[14rem] truncate text-right text-sm underline-offset-2 hover:underline",
+                    tone["down"],
+                  )}
+                  title={`${live.latest_failure.game_type ?? "system"} · ${when(live.latest_failure.created_at)} — open in logs`}
+                  onClick={() => onOpenLogs(live.latest_failure!.action)}
+                >
+                  {live.latest_failure.action}
+                  {live.latest_failure.game_type
+                    ? ` (${live.latest_failure.game_type})`
+                    : ""}
+                </button>
+              ) : (
+                <span className="text-muted-foreground">none</span>
+              )}
             </li>
             {live.roulette_error && (
               <li className="flex items-center justify-between gap-3 px-3 py-2">
@@ -1002,7 +1025,7 @@ const WITHDRAWAL_STATUSES = [
 ];
 
 function Money({ kind }: { kind: "deposits" | "withdrawals" }) {
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(kind === "deposits" ? "CREDITED" : "");
   const [asset, setAsset] = useState("");
   const [assetOn, setAssetOn] = useState("");
   const [rail, setRail] = useState("");
@@ -1064,6 +1087,11 @@ function Money({ kind }: { kind: "deposits" | "withdrawals" }) {
   const counts = overview.data;
   return (
     <section className="space-y-3">
+      {kind === "deposits" && counts?.money_epoch && (
+        <p className="text-xs text-muted-foreground">
+          Admin history since {when(counts.money_epoch)} (player balances unchanged).
+        </p>
+      )}
       {kind === "deposits" && counts && (
         <CountStrip>
           <Stat label="Detected" value={counts.deposits.pending} />
@@ -1074,6 +1102,11 @@ function Money({ kind }: { kind: "deposits" | "withdrawals" }) {
           <Stat label="Today" value={counts.deposits.today_count} />
           <Stat label="Credited today" value={formatUsd(Number(counts.deposits.today_cents))} />
         </CountStrip>
+      )}
+      {kind === "withdrawals" && counts?.money_epoch && (
+        <p className="text-xs text-muted-foreground">
+          Admin history since {when(counts.money_epoch)} (player balances unchanged).
+        </p>
       )}
       {kind === "withdrawals" && counts && (
         <CountStrip>
@@ -1097,7 +1130,7 @@ function Money({ kind }: { kind: "deposits" | "withdrawals" }) {
       )}
       <p className="text-xs text-muted-foreground">
         {kind === "deposits"
-          ? "Credited amounts match the ledger across EVM, Bitcoin, and card."
+          ? "Real-money rails only: EVM (Base) and Bitcoin. Default is credited. Promos never appear in this table."
           : "Settled and open amounts match the ledger across EVM and Bitcoin."}
       </p>
       <form
@@ -1123,10 +1156,25 @@ function Money({ kind }: { kind: "deposits" | "withdrawals" }) {
               setCursor(null);
             }}
           >
-            <option value="">Any</option>
-            {statuses.map((s) => (
-              <option key={s}>{s}</option>
-            ))}
+            {kind === "deposits" ? (
+              <>
+                <option value="CREDITED">Credited (finished)</option>
+                <option value="CONFIRMED">Confirmed on-chain</option>
+                <option value="">All statuses</option>
+                {statuses
+                  .filter((s) => s !== "CREDITED" && s !== "CONFIRMED")
+                  .map((s) => (
+                    <option key={s}>{s}</option>
+                  ))}
+              </>
+            ) : (
+              <>
+                <option value="">Any</option>
+                {statuses.map((s) => (
+                  <option key={s}>{s}</option>
+                ))}
+              </>
+            )}
           </select>
         </Field>
         <Field label="Rail">
@@ -1143,7 +1191,6 @@ function Money({ kind }: { kind: "deposits" | "withdrawals" }) {
             <option value="">Any</option>
             <option value="evm">EVM</option>
             <option value="bitcoin">Bitcoin</option>
-            {kind === "deposits" && <option value="card">Card</option>}
           </select>
         </Field>
         <Field label="Asset">
@@ -1566,15 +1613,22 @@ function Referrals() {
   );
 }
 
-function Logs() {
+function Logs({ initialSearch }: { initialSearch?: string | undefined }) {
   const [severity, setSeverity] = useState("");
   const [game, setGame] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [qtext, setQtext] = useState("");
-  const [search, setSearch] = useState("");
+  const [qtext, setQtext] = useState(initialSearch ?? "");
+  const [search, setSearch] = useState(initialSearch ?? "");
   const [cursor, setCursor] = useState<string | null>(null);
   const [stack, setStack] = useState<(string | null)[]>([]);
+  useEffect(() => {
+    if (!initialSearch) return;
+    setQtext(initialSearch);
+    setSearch(initialSearch);
+    setCursor(null);
+    setStack([]);
+  }, [initialSearch]);
   const q = useQuery({
     queryKey: ["admin-logs", severity, game, from, to, search, cursor],
     queryFn: () =>
@@ -1593,6 +1647,22 @@ function Logs() {
   });
   return (
     <section className="space-y-3">
+      <p className="text-xs text-muted-foreground">
+        Search matches action names (e.g.{" "}
+        <button
+          type="button"
+          className="text-primary underline-offset-2 hover:underline"
+          onClick={() => {
+            setQtext("RECOVERY_FAILED");
+            setSearch("RECOVERY_FAILED");
+            setCursor(null);
+            setStack([]);
+          }}
+        >
+          RECOVERY_FAILED
+        </button>
+        ) from overview.
+      </p>
       <form
         className="grid gap-3 rounded-lg border border-border bg-muted/20 p-3 sm:grid-cols-2 xl:grid-cols-3"
         onSubmit={(e) => {

@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { queryOptions, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { useWallet, walletQuery } from "@/lib/jackpot/api";
+import { useWallet, useWalletRealtime, walletQuery } from "@/lib/jackpot/api";
 import { formatUsd } from "@/lib/jackpot/math";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
 import { equippedAssets, prestigeQuery, usePrestige } from "@/components/prestige/PrestigeProvider";
@@ -49,6 +49,7 @@ const statsQuery = (userId: string) =>
   queryOptions({
     queryKey: ["stats", userId],
     staleTime: 10_000,
+    refetchOnMount: "always",
     queryFn: async () => {
       const { data, error } = await supabase.rpc("get_profile_stats", { p_user: userId });
       if (error) throw error;
@@ -82,6 +83,7 @@ function ProfilePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const wallet = useWallet(userId);
+  useWalletRealtime(userId);
   const prestige = usePrestige();
   const style = equippedAssets(prestige.state);
 

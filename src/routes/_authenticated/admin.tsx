@@ -4,9 +4,18 @@ import { AdminDashboard } from "@/components/admin/Dashboard";
 import { isAdminTab, type AdminTab } from "@/lib/admin/ops";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  validateSearch: (search: Record<string, unknown>): { section: AdminTab } => {
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { section: AdminTab; log?: string | undefined } => {
     const raw = search["section"];
-    return { section: typeof raw === "string" && isAdminTab(raw) ? raw : "overview" };
+    const log = search["log"];
+    return {
+      section: typeof raw === "string" && isAdminTab(raw) ? raw : "overview",
+      log:
+        typeof log === "string" && log.length > 0 && log.length <= 80
+          ? log.trim()
+          : undefined,
+    };
   },
   head: () => ({
     meta: [

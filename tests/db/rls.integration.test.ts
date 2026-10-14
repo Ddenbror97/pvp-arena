@@ -175,7 +175,7 @@ d("access rules (anonymous client)", () => {
       expect(error).not.toBeNull();
     }
     const { error } = await sb.rpc("coinflip_tick");
-    expect(error).toBeNull();
+    expect(error).not.toBeNull();
   });
 
   it("wallet identity: no reads, no writes, no internal functions without the server", async () => {
@@ -223,12 +223,13 @@ d("access rules (anonymous client)", () => {
     }
   });
 
-  it("chat: anonymous clients can't read, write, moderate or publish into chat rooms", async () => {
-    const { data } = await sb
+  it("chat: anonymous clients may lurk visible chat but cannot write, moderate or call chat RPCs", async () => {
+    const { data, error } = await sb
       .from("game_chat_messages" as never)
-      .select("*")
-      .limit(1);
-    expect(data ?? []).toEqual([]);
+      .select("id, message, status")
+      .limit(5);
+    expect(error).toBeNull();
+    for (const row of data ?? []) expect(row.status).toBe("visible");
     for (const t of ["game_chat_user_restrictions", "game_chat_moderation_events"]) {
       const r = await sb
         .from(t as never)
@@ -277,7 +278,7 @@ d("access rules (anonymous client)", () => {
       const { error } = await sb.rpc(fn as never, args as never);
       expect(error).not.toBeNull();
     }
-    // Private room: an anonymous socket must not be allowed to join.
+    // Broadcast lurker channel (see realtime.messages policy "chat rooms receive anon").
     const ch = sb.channel("chat:jackpot", { config: { private: true } });
     const state = await new Promise<string>((res) => {
       const t = setTimeout(() => res("TIMEOUT"), 8000);
@@ -288,6 +289,6 @@ d("access rules (anonymous client)", () => {
       });
     });
     await sb.removeChannel(ch);
-    expect(state).not.toBe("SUBSCRIBED");
+    expect(state).toBe("SUBSCRIBED");
   }, 20_000);
 });

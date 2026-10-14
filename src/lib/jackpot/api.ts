@@ -546,7 +546,11 @@ export function useWalletRealtime(userId: string | null) {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "wallet_accounts", filter: `owner_id=eq.${userId}` },
-        () => qc.invalidateQueries({ queryKey: ["wallet", userId] }),
+        () => {
+          void qc.invalidateQueries({ queryKey: ["wallet", userId] });
+          void qc.invalidateQueries({ queryKey: ["stats", userId] });
+          void qc.invalidateQueries({ queryKey: ["prestige", userId] });
+        },
       )
       .subscribe();
     return () => {

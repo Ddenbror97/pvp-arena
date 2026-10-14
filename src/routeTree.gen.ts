@@ -17,6 +17,7 @@ import { Route as CoinflipRouteImport } from './routes/coinflip'
 import { Route as FairnessRouteImport } from './routes/fairness'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
+import { Route as PokerRouteImport } from './routes/poker'
 import { Route as PrestigeRouteImport } from './routes/prestige'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResponsibleGamblingRouteImport } from './routes/responsible-gambling'
@@ -34,6 +35,8 @@ import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as InviteCodeRouteImport } from './routes/invite.$code'
 import { Route as LeaderboardsCampaignIdRouteImport } from './routes/leaderboards.$campaignId'
 import { Route as PartnerCodeRouteImport } from './routes/partner.$code'
+import { Route as PokerTableIdRouteImport } from './routes/poker.$tableId'
+import { Route as PokerReplayRouteImport } from './routes/poker.replay'
 import { Route as SlottGameIdRouteImport } from './routes/slott.$gameId'
 import { Route as AuthenticatedPartnerLeaderboardsRouteImport } from './routes/_authenticated/partner.leaderboards'
 import { Route as AuthenticatedProfileSecurityRouteImport } from './routes/_authenticated/profile_.security'
@@ -87,6 +90,11 @@ const HowItWorksRoute = HowItWorksRouteImport.update({
 const LeaderboardsRoute = LeaderboardsRouteImport.update({
   id: '/leaderboards',
   path: '/leaderboards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PokerRoute = PokerRouteImport.update({
+  id: '/poker',
+  path: '/poker',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrestigeRoute = PrestigeRouteImport.update({
@@ -173,6 +181,16 @@ const PartnerCodeRoute = PartnerCodeRouteImport.update({
   id: '/partner/$code',
   path: '/partner/$code',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PokerTableIdRoute = PokerTableIdRouteImport.update({
+  id: '/$tableId',
+  path: '/$tableId',
+  getParentRoute: () => PokerRoute,
+} as any)
+const PokerReplayRoute = PokerReplayRouteImport.update({
+  id: '/replay',
+  path: '/replay',
+  getParentRoute: () => PokerRoute,
 } as any)
 const SlottGameIdRoute = SlottGameIdRouteImport.update({
   id: '/$gameId',
@@ -266,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/fairness': typeof FairnessRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
+  '/poker': typeof PokerRouteWithChildren
   '/prestige': typeof PrestigeRoute
   '/privacy': typeof PrivacyRoute
   '/responsible-gambling': typeof ResponsibleGamblingRoute
@@ -282,6 +301,8 @@ export interface FileRoutesByFullPath {
   '/invite/$code': typeof InviteCodeRoute
   '/leaderboards/$campaignId': typeof LeaderboardsCampaignIdRoute
   '/partner/$code': typeof PartnerCodeRoute
+  '/poker/$tableId': typeof PokerTableIdRoute
+  '/poker/replay': typeof PokerReplayRoute
   '/slott/$gameId': typeof SlottGameIdRoute
   '/guides/': typeof GuidesIndexRoute
   '/partner/leaderboards': typeof AuthenticatedPartnerLeaderboardsRoute
@@ -307,6 +328,7 @@ export interface FileRoutesByTo {
   '/fairness': typeof FairnessRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
+  '/poker': typeof PokerRouteWithChildren
   '/prestige': typeof PrestigeRoute
   '/privacy': typeof PrivacyRoute
   '/responsible-gambling': typeof ResponsibleGamblingRoute
@@ -323,6 +345,8 @@ export interface FileRoutesByTo {
   '/invite/$code': typeof InviteCodeRoute
   '/leaderboards/$campaignId': typeof LeaderboardsCampaignIdRoute
   '/partner/$code': typeof PartnerCodeRoute
+  '/poker/$tableId': typeof PokerTableIdRoute
+  '/poker/replay': typeof PokerReplayRoute
   '/slott/$gameId': typeof SlottGameIdRoute
   '/guides': typeof GuidesIndexRoute
   '/partner/leaderboards': typeof AuthenticatedPartnerLeaderboardsRoute
@@ -350,6 +374,7 @@ export interface FileRoutesById {
   '/fairness': typeof FairnessRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
+  '/poker': typeof PokerRouteWithChildren
   '/prestige': typeof PrestigeRoute
   '/privacy': typeof PrivacyRoute
   '/responsible-gambling': typeof ResponsibleGamblingRoute
@@ -366,6 +391,8 @@ export interface FileRoutesById {
   '/invite/$code': typeof InviteCodeRoute
   '/leaderboards/$campaignId': typeof LeaderboardsCampaignIdRoute
   '/partner/$code': typeof PartnerCodeRoute
+  '/poker/$tableId': typeof PokerTableIdRoute
+  '/poker/replay': typeof PokerReplayRoute
   '/slott/$gameId': typeof SlottGameIdRoute
   '/guides/': typeof GuidesIndexRoute
   '/_authenticated/partner/leaderboards': typeof AuthenticatedPartnerLeaderboardsRoute
@@ -393,6 +420,7 @@ export interface FileRouteTypes {
     | '/fairness'
     | '/how-it-works'
     | '/leaderboards'
+    | '/poker'
     | '/prestige'
     | '/privacy'
     | '/responsible-gambling'
@@ -409,6 +437,8 @@ export interface FileRouteTypes {
     | '/invite/$code'
     | '/leaderboards/$campaignId'
     | '/partner/$code'
+    | '/poker/$tableId'
+    | '/poker/replay'
     | '/slott/$gameId'
     | '/guides/'
     | '/partner/leaderboards'
@@ -434,6 +464,7 @@ export interface FileRouteTypes {
     | '/fairness'
     | '/how-it-works'
     | '/leaderboards'
+    | '/poker'
     | '/prestige'
     | '/privacy'
     | '/responsible-gambling'
@@ -450,6 +481,8 @@ export interface FileRouteTypes {
     | '/invite/$code'
     | '/leaderboards/$campaignId'
     | '/partner/$code'
+    | '/poker/$tableId'
+    | '/poker/replay'
     | '/slott/$gameId'
     | '/guides'
     | '/partner/leaderboards'
@@ -476,6 +509,7 @@ export interface FileRouteTypes {
     | '/fairness'
     | '/how-it-works'
     | '/leaderboards'
+    | '/poker'
     | '/prestige'
     | '/privacy'
     | '/responsible-gambling'
@@ -492,6 +526,8 @@ export interface FileRouteTypes {
     | '/invite/$code'
     | '/leaderboards/$campaignId'
     | '/partner/$code'
+    | '/poker/$tableId'
+    | '/poker/replay'
     | '/slott/$gameId'
     | '/guides/'
     | '/_authenticated/partner/leaderboards'
@@ -519,6 +555,7 @@ export interface RootRouteChildren {
   FairnessRoute: typeof FairnessRoute
   HowItWorksRoute: typeof HowItWorksRoute
   LeaderboardsRoute: typeof LeaderboardsRouteWithChildren
+  PokerRoute: typeof PokerRouteWithChildren
   PrestigeRoute: typeof PrestigeRoute
   PrivacyRoute: typeof PrivacyRoute
   ResponsibleGamblingRoute: typeof ResponsibleGamblingRoute
@@ -599,6 +636,13 @@ declare module '@tanstack/react-router' {
       path: '/leaderboards'
       fullPath: '/leaderboards'
       preLoaderRoute: typeof LeaderboardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/poker': {
+      id: '/poker'
+      path: '/poker'
+      fullPath: '/poker'
+      preLoaderRoute: typeof PokerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/prestige': {
@@ -719,6 +763,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/partner/$code'
       preLoaderRoute: typeof PartnerCodeRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/poker/$tableId': {
+      id: '/poker/$tableId'
+      path: '/$tableId'
+      fullPath: '/poker/$tableId'
+      preLoaderRoute: typeof PokerTableIdRouteImport
+      parentRoute: typeof PokerRoute
+    }
+    '/poker/replay': {
+      id: '/poker/replay'
+      path: '/replay'
+      fullPath: '/poker/replay'
+      preLoaderRoute: typeof PokerReplayRouteImport
+      parentRoute: typeof PokerRoute
     }
     '/slott/$gameId': {
       id: '/slott/$gameId'
@@ -875,6 +933,18 @@ const LeaderboardsRouteWithChildren = LeaderboardsRoute._addFileChildren(
   LeaderboardsRouteChildren,
 )
 
+interface PokerRouteChildren {
+  PokerTableIdRoute: typeof PokerTableIdRoute
+  PokerReplayRoute: typeof PokerReplayRoute
+}
+
+const PokerRouteChildren: PokerRouteChildren = {
+  PokerTableIdRoute: PokerTableIdRoute,
+  PokerReplayRoute: PokerReplayRoute,
+}
+
+const PokerRouteWithChildren = PokerRoute._addFileChildren(PokerRouteChildren)
+
 interface SlottRouteChildren {
   SlottGameIdRoute: typeof SlottGameIdRoute
 }
@@ -894,6 +964,7 @@ const rootRouteChildren: RootRouteChildren = {
   FairnessRoute: FairnessRoute,
   HowItWorksRoute: HowItWorksRoute,
   LeaderboardsRoute: LeaderboardsRouteWithChildren,
+  PokerRoute: PokerRouteWithChildren,
   PrestigeRoute: PrestigeRoute,
   PrivacyRoute: PrivacyRoute,
   ResponsibleGamblingRoute: ResponsibleGamblingRoute,

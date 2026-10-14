@@ -240,6 +240,7 @@ function RootComponent() {
   const slott = pathname === "/slott" || pathname.startsWith("/slott/");
   const slottLobby = pathname === "/slott" || pathname === "/slott/";
   const walletHome = pathname === "/wallet";
+  const pokerTable = /^\/poker\/[^/]+\/?$/.test(pathname);
   useLayoutEffect(() => {
     if (!slottLobby) return;
     const apply = () =>
@@ -255,6 +256,11 @@ function RootComponent() {
       document.documentElement.classList.remove("slott-noscroll");
     };
   }, [slottLobby]);
+  useLayoutEffect(() => {
+    if (!pokerTable) return;
+    document.documentElement.classList.add("poker-noscroll");
+    return () => document.documentElement.classList.remove("poker-noscroll");
+  }, [pokerTable]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -262,20 +268,22 @@ function RootComponent() {
         <PrestigeProvider>
           <ThemeSync />
           <GameSounds />
-          <SiteHeader />
+          {pokerTable ? null : <SiteHeader />}
           <main
             className={
               admin
                 ? "canvas flex h-[calc(100dvh-3.5rem)] w-full max-w-none flex-col overflow-hidden sm:h-[calc(100dvh-4rem)]"
-                : wide
-                  ? "canvas mx-auto flex min-h-[calc(100dvh-3.5rem)] w-full max-w-full flex-col overflow-x-clip px-4 pt-6 pb-4 sm:min-h-[calc(100dvh-4rem)] lg:px-6"
-                  : `canvas mx-auto w-full max-w-7xl overflow-x-clip ${slott ? `px-3 pt-3 pb-8 sm:px-4 sm:pt-3 lg:max-w-none ${slottLobby ? "lg:h-[calc(100dvh-4rem)] lg:overflow-hidden lg:px-6 lg:pr-0 lg:pt-2 lg:pb-0" : "lg:px-0 lg:pt-0 lg:pb-0"}` : walletHome ? "px-4 py-4" : "px-4 py-8"} sm:min-h-[calc(100dvh-4rem)] min-h-[calc(100dvh-3.5rem)]`
+                : pokerTable
+                  ? "poker-root"
+                  : wide
+                    ? "canvas mx-auto flex min-h-[calc(100dvh-3.5rem)] w-full max-w-full flex-col overflow-x-clip px-4 pt-6 pb-4 sm:min-h-[calc(100dvh-4rem)] lg:px-6"
+                    : `canvas mx-auto w-full max-w-7xl overflow-x-clip ${slott ? `px-3 pt-3 pb-8 sm:px-4 sm:pt-3 lg:max-w-none ${slottLobby ? "lg:h-[calc(100dvh-4rem)] lg:overflow-hidden lg:px-6 lg:pr-0 lg:pt-2 lg:pb-0" : "lg:px-0 lg:pt-0 lg:pb-0"}` : walletHome ? "px-4 py-4" : "px-4 py-8"} sm:min-h-[calc(100dvh-4rem)] min-h-[calc(100dvh-3.5rem)]`
             }
           >
             <Outlet />
           </main>
-          <SiteFooter className={admin ? "hidden" : slott ? "lg:hidden" : ""} />
-          {!admin && <MobileTabBar />}
+          <SiteFooter className={admin || pokerTable ? "hidden" : slott ? "lg:hidden" : ""} />
+          {!admin && !pokerTable && <MobileTabBar />}
           <RootOverlays />
         </PrestigeProvider>
       </AuthProvider>

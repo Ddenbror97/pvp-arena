@@ -19,18 +19,32 @@ type Dashboard = {
   rows: Row[];
 };
 
-const STATUS: Record<string, string> = {
-  SIGNED_UP: "Signed up",
-  DEPOSIT_PENDING: "Deposit pending",
-  DEPOSIT_QUALIFIED: "Deposit qualified",
-  PLAY_REQUIREMENT_PENDING: "Playing",
-  QUALIFIED: "Qualified",
-  REWARD_PENDING: "Reward pending",
-  REWARDED: "Rewarded",
-  FRAUD_REVIEW: "In review",
-  INVALID: "Invalid",
-  CANCELLED: "Cancelled",
-};
+function referralStatusLabel(status: string, depositCents: number): string {
+  switch (status) {
+    case "SIGNED_UP":
+      return "Signed up";
+    case "DEPOSIT_PENDING":
+      return `Awaiting ${formatUsd(depositCents)} deposit`;
+    case "DEPOSIT_QUALIFIED":
+      return "Deposit complete";
+    case "PLAY_REQUIREMENT_PENDING":
+      return "Playing";
+    case "QUALIFIED":
+      return "Qualified";
+    case "REWARD_PENDING":
+      return "Reward pending";
+    case "REWARDED":
+      return "Rewarded";
+    case "FRAUD_REVIEW":
+      return "In review";
+    case "INVALID":
+      return "Invalid";
+    case "CANCELLED":
+      return "Cancelled";
+    default:
+      return status;
+  }
+}
 
 async function loadDashboard(): Promise<Dashboard> {
   const { data, error } = await supabase.rpc("referral_dashboard" as never);
@@ -55,6 +69,9 @@ export function InvitePanel() {
 
   const code = dash.data?.code ?? null;
   const link = code ? `${origin}/invite/${code}` : "";
+  const depositCents = dash.data?.deposit_cents ?? 5000;
+  const playCents = dash.data?.play_cents ?? 500;
+  const rewardCents = dash.data?.reward_cents ?? 1000;
 
   async function ensureCode() {
     if (code) return code;
@@ -89,8 +106,31 @@ export function InvitePanel() {
     <section className="rounded-lg border border-border bg-card p-3">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <h2 className="font-display text-sm">Invite a friend</h2>
-        <p className="text-xs font-medium">Get $10 for every friend</p>
+        <p className="text-xs font-medium">{formatUsd(rewardCents)} per qualifying friend</p>
       </div>
+      {!dash.isLoading ? (
+        <ol className="mt-2 space-y-1 text-xs leading-snug text-muted-foreground">
+          <li>
+            <span className="text-foreground">1.</span> They create an account with your link.
+          </li>
+          <li>
+            <span className="text-foreground">2.</span> They complete a{" "}
+            <span className="text-foreground">{formatUsd(depositCents)}</span> deposit.
+          </li>
+          <li>
+            <span className="text-foreground">3.</span> When they wager {formatUsd(playCents)} on
+            Jackpot, Coinflip, Roulette, or Slott, you earn {formatUsd(rewardCents)}.
+          </li>
+        </ol>
+      ) : (
+        <p className="mt-2 h-10" aria-hidden />
+      )}
+      {dash.data && dash.data.playthrough_left_cents > 0 ? (
+        <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
+          Referral rewards in your balance need {formatUsd(dash.data.playthrough_left_cents)} more
+          play before withdrawal.
+        </p>
+      ) : null}
       {dash.isLoading ? (
         <p className="mt-2 h-4" aria-hidden />
       ) : link ? (
@@ -137,7 +177,7 @@ export function InvitePanel() {
               {dash.data.rows.map((row) => (
                 <tr key={row.created_at + row.username} className="border-t border-border">
                   <td className="py-1">{row.username}</td>
-                  <td className="py-1">{STATUS[row.status] ?? row.status}</td>
+                  <td className="py-1">{referralStatusLabel(row.status, depositCents)}</td>
                   <td className="py-1 text-right tabular">
                     {row.status === "REWARDED" ? formatUsd(row.reward_cents) : "Pending"}
                   </td>

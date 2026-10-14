@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { requireLiveSession } from "@/integrations/supabase/live-session";
 import { centsToWei } from "./allowlist";
 import { usableDisplayPrice } from "./eth-price";
+import { isTransientRpcFailure } from "./rpc-retry";
 import { withdrawalCodeSchema } from "@/lib/auth-otp/withdrawal.functions";
 import {
   bonusWithdrawBlockedMessage,
@@ -56,11 +57,25 @@ function clean(msg: string): string {
   return (code && ERRORS[code]) || "Something went wrong. Please try again.";
 }
 
+async function rpcCryptoMyActivity(
+  db: Awaited<ReturnType<typeof admin>>,
+  userId: string,
+): Promise<unknown> {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const { data, error, status } = await db.rpc("crypto_my_activity", { p_user: userId });
+    if (!error) return data;
+    if (attempt === 1 || !isTransientRpcFailure({ code: error.code, status })) throw error;
+    await new Promise((r) => setTimeout(r, 200));
+  }
+  return null;
+}
+
 async function loadWithdrawSnapshot(
   db: Awaited<ReturnType<typeof admin>>,
   userId: string,
 ): Promise<WithdrawCashSnapshot | null> {
-  const { data } = await db.rpc("crypto_my_activity", { p_user: userId });
+  // Only enriches an already-failed withdrawal's message; a failed read must not mask that error.
+  const data = await rpcCryptoMyActivity(db, userId).catch(() => null);
   if (!data || typeof data !== "object") return null;
   return parseWithdrawCashSnapshot((data as Record<string, unknown>)["withdraw"]);
 }
@@ -76,7 +91,11 @@ export function cleanWithdrawError(
   }
   return clean(msg);
 }
-type RowResult = { data: unknown; error: { message: string; code?: string } | null };
+type RowResult = {
+  data: unknown;
+  error: { message: string; code?: string } | null;
+  status?: number;
+};
 
 type Filter = {
   select: (columns: string) => Filter;
@@ -156,11 +175,10 @@ export const getCryptoActivity = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth, requireLiveSession])
   .handler(async ({ context }) => {
     const db = await admin();
-    const [{ data, error }, { data: settings }] = await Promise.all([
-      db.rpc("crypto_my_activity", { p_user: context.userId }),
+    const [{ data: settings }] = await Promise.all([
       db.from("crypto_settings").select("price_max_age_seconds").single(),
     ]);
-    if (error) throw new Error("Could not load crypto activity");
+    const data = await rpcCryptoMyActivity(db, context.userId);
     const activity = data as {
       chains?: {
         chain_id: number;

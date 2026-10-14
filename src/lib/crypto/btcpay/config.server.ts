@@ -58,7 +58,7 @@ export function readBtcpayConfig(): BtcpayConfig {
   const onchainMethod = workerEnv("BTCPAY_ONCHAIN_METHOD") ?? "BTC";
   if (!/^[A-Z0-9-]{3,32}$/.test(onchainMethod)) return { ok: false, reason: "METHOD_INVALID" };
   const minRaw = workerEnv("BTCPAY_MIN_DEPOSIT_CENTS");
-  const minCents = minRaw == null || minRaw === "" ? 100 : Number(minRaw);
+  const minCents = minRaw == null || minRaw === "" ? 1000 : Number(minRaw);
   if (!Number.isInteger(minCents) || minCents < 100 || minCents > 100_000_000) {
     return { ok: false, reason: "MIN_DEPOSIT_INVALID" };
   }
