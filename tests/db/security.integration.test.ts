@@ -273,11 +273,14 @@ d("security remediation (isolated schema)", () => {
     expect(dispatch[0].d.health).toBeUndefined();
     expect(dispatch[0].d.jackpot).toBeUndefined();
     expect(dispatch[0].d.coinflip).toBeUndefined();
-    // crypto_invoke_cron is installed by the production cron setup script,
-    // not by a migration, so the isolated schema records that absence.
+    // crypto_invoke_cron and its job token are installed by the production
+    // cron setup script, not by a migration, so the isolated schema records
+    // that absence.
     for (const step of ["crypto-withdrawals", "crypto-deposits"]) {
       const row = dispatch[0].d[step];
-      expect(row.ok === true || String(row.error).includes("crypto_invoke_cron")).toBe(true);
+      expect(
+        row.ok === true || /crypto_invoke_cron|crypto job token missing/.test(String(row.error)),
+      ).toBe(true);
     }
   });
 
@@ -558,7 +561,8 @@ d("live database permissions (read-only catalog checks)", () => {
   });
 
   it("crypto_my_activity stays read-only (stable + peek, no _withdraw_basis sync)", async () => {
-    const [row] = await sql`select p.provolatile v, pg_get_functiondef(p.oid) like '%_withdraw_basis_peek%' uses_peek,
+    const [row] =
+      await sql`select p.provolatile v, pg_get_functiondef(p.oid) like '%_withdraw_basis_peek%' uses_peek,
       pg_get_functiondef(p.oid) not like '%pvp_test._withdraw_basis(%' no_sync
       from pg_proc p join pg_namespace n on n.oid = p.pronamespace
       where n.nspname = 'pvp_test' and p.proname = 'crypto_my_activity'`;

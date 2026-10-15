@@ -395,7 +395,6 @@ const MESSAGES: Record<string, string> = {
   REAL_MONEY_DISABLED: "Real-money play is paused.",
   INVALID_BUY_IN: "That buy-in is outside this table's range.",
   INSUFFICIENT_BALANCE: "Not enough balance for that buy-in.",
-  CASH_ONLY_BUY_IN: "Poker buy-ins use deposited cash only. Bonus funds can't be used.",
   TOO_MANY_TABLES: "You're already seated at the maximum number of tables.",
   TABLE_CAP_REACHED: "All tables are in play right now. Join an open seat or try again shortly.",
   ALREADY_SEATED: "You're already seated at this table.",

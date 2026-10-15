@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { fetchBuyInInfo, money } from "@/lib/poker/api";
 
-/** Buy-in amount within the table range and the player's deposited cash. */
+/** Buy-in amount within the table range and the player's balance. */
 export function BuyInDialog({
   open,
   onOpenChange,
@@ -45,13 +45,13 @@ export function BuyInDialog({
     enabled: open,
     staleTime: 0,
   });
-  const cash = info.data?.cash ?? 0;
-  const top = Math.min(max, cash);
+  const balance = info.data?.available ?? 0;
+  const top = Math.min(max, balance);
   const [amount, setAmount] = useState(max);
   useEffect(() => {
     if (open) setAmount(Math.max(min, Math.min(max, top || max)));
   }, [open, min, max, top]);
-  const short = info.data != null && cash < min;
+  const short = info.data != null && balance < min;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm">
@@ -60,7 +60,7 @@ export function BuyInDialog({
           <DialogDescription>
             {note ??
               `Buy in between ${money(min)} and ${money(max)} (${min / bb}–${max / bb} big blinds).`}{" "}
-            Poker uses deposited cash only; bonus funds stay in your wallet.
+            Deposited cash is used first, then promo credit, the same as every other game.
           </DialogDescription>
         </DialogHeader>
         {info.isLoading ? (
@@ -69,7 +69,7 @@ export function BuyInDialog({
           </div>
         ) : short ? (
           <p className="rounded-lg border border-border bg-muted/30 p-3 text-sm">
-            You have {money(cash)} in deposited cash. This table needs at least {money(min)}.
+            You have {money(balance)} available. This table needs at least {money(min)}.
           </p>
         ) : (
           <div className="space-y-3">
@@ -88,7 +88,7 @@ export function BuyInDialog({
               aria-label="Buy-in amount"
             />
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Cash available {money(cash)}</span>
+              <span>Available {money(balance)}</span>
               <button
                 type="button"
                 className="text-primary-soft hover:underline"

@@ -83,12 +83,14 @@ async function post(
   legs: [string, number][],
   gameId: number | null = null,
 ): Promise<string> {
-  if ("begin" in db) return db.begin((tx) => post(tx, kind, userId, legs, gameId)) as Promise<string>;
+  if ("begin" in db)
+    return db.begin((tx) => post(tx, kind, userId, legs, gameId)) as Promise<string>;
   const tx = (
     await db`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id, game_id)
       values (${kind}::pvp_test.tx_kind, ${randomUUID()}, 'real', ${userId}::uuid, ${gameId}) returning id`
   )[0]!.id as string;
-  for (const [a, amt] of legs) await db`select pvp_test._post(${tx}::uuid, ${a}::uuid, ${amt}::bigint)`;
+  for (const [a, amt] of legs)
+    await db`select pvp_test._post(${tx}::uuid, ${a}::uuid, ${amt}::bigint)`;
   return tx;
 }
 
@@ -259,7 +261,10 @@ async function createdAtReplay(): Promise<Record<string, Row>> {
       await tx`delete from pvp_test.withdraw_basis_stake ws using pvp_test.poker_seats ps
         where ws.game = 'poker' and ws.game_id = ps.id and ws.user_id = ps.user_id
           and ps.status = 'CLOSED' and ps.close_ledger_tx is null`;
-      out = (await tx`select pvp_test._withdraw_basis_buckets_json() b`)[0]!.b as Record<string, Row>;
+      out = (await tx`select pvp_test._withdraw_basis_buckets_json() b`)[0]!.b as Record<
+        string,
+        Row
+      >;
       throw new Error("ROLLBACK");
     })
     .catch((e) => {
@@ -501,14 +506,14 @@ d("withdraw basis per-user concurrency", () => {
   );
 
   it(
-    "deposits and basis reads race a cash-only buy-in and a cash-out by the same player",
+    "deposits and basis reads race a cash-then-bonus buy-in and a cash-out by the same player",
     async () => {
       const d0 = await deadlocks();
       const everyone: string[] = [];
       const outcomes: string[] = [];
       for (let k = 0; k < TRIALS; k++) {
-        // 1000 cash + 5000 bonus: a 2000 buy-in is cash-only, so it passes only if the
-        // concurrent 1500 deposit is already in the basis when the buy-in checks it.
+        // 1000 cash + 5000 bonus, 500 of the cash at t2: a 2000 buy-in takes whatever cash
+        // has committed when it applies (the deposit and the t2 cash-out race it), then bonus.
         const u = await player(1000);
         const v = await player();
         everyone.push(u.id, v.id);
@@ -526,52 +531,44 @@ d("withdraw basis per-user concurrency", () => {
           err(leave(u, t2)),
         ]);
         expect(cash).toBe("");
-        expect(["", "CASH_ONLY_BUY_IN"]).toContain(buy.replace(/^.*(CASH_ONLY_BUY_IN).*$/, "$1"));
-        outcomes.push(buy === "" ? "seated" : "refused");
-        const seated = (
-          await sql`select count(*)::int c from pvp_test.poker_seats where user_id = ${u.id}::uuid
-            and table_id = ${t1} and status <> 'CLOSED'`
-        )[0]!.c;
-        expect(seated).toBe(buy === "" ? 1 : 0);
-        if (buy === "") {
-          // The stake recorded for the buy-in is entirely cash.
-          const [s] = await sql`select eligible, bonus from pvp_test.withdraw_basis_stake
-            where user_id = ${u.id}::uuid and game = 'poker' and game_id = (select id from pvp_test.poker_seats
-              where user_id = ${u.id}::uuid and table_id = ${t1} and status <> 'CLOSED')`;
-          expect([Number(s!.eligible), Number(s!.bonus)]).toEqual([2000, 0]);
-          await leave(u, t1);
-        }
+        expect(buy).toBe("");
+        const [s] = await sql`select eligible, bonus from pvp_test.withdraw_basis_stake
+          where user_id = ${u.id}::uuid and game = 'poker' and game_id = (select id from pvp_test.poker_seats
+            where user_id = ${u.id}::uuid and table_id = ${t1} and status <> 'CLOSED')`;
+        const e = Number(s!.eligible);
+        expect(Number(s!.bonus)).toBe(2000 - e);
+        // 500 left in the bucket, plus 500 if the cash-out applied first, plus 1500 if the deposit did.
+        expect([500, 1000, 2000]).toContain(e);
+        outcomes.push(`eligible=${e}`);
+        await leave(u, t1);
         await leave(v, t1);
       }
       expect((await deadlocks()) - d0).toBe(0);
       await parity();
       await conservation(everyone);
       await ledgerBalanced();
-      console.log(JSON.stringify({ cash_only_buy_in_race: outcomes }));
+      console.log(JSON.stringify({ cash_then_bonus_buy_in_race: outcomes }));
     },
     LONG,
   );
 
   it(
-    "cash-only buy-in, both orders: waits for an open deposit and uses it, or refuses without it",
+    "cash-then-bonus buy-in, both orders: without the deposit it spends bonus, with an open deposit it waits and uses the cash",
     async () => {
       for (let k = 0; k < TRIALS; k++) {
         const u = await player(500);
         await bonus(sql, u.id, 5000);
         const t = await newTable(3);
-        const ledger0 = (
-          await sql`select count(*)::int c from pvp_test.ledger_transactions where user_id = ${u.id}::uuid`
-        )[0]!.c;
 
-        // No cash: refused, nothing written, basis unchanged.
+        // Not enough cash: the 500 cash goes in first, then 1500 bonus, and both come back on leave.
         const b0 = (await buckets())[u.id];
-        expect(await err(sit({ id: u.id, links: chain() }, t, 2000))).toMatch(/CASH_ONLY_BUY_IN/);
+        expect(await err(sit({ id: u.id, links: chain() }, t, 2000))).toBe("");
+        const [s0] = await sql`select eligible, bonus from pvp_test.withdraw_basis_stake
+          where user_id = ${u.id}::uuid and game = 'poker' and game_id = (select id from pvp_test.poker_seats
+            where user_id = ${u.id}::uuid and table_id = ${t} and status <> 'CLOSED')`;
+        expect([Number(s0!.eligible), Number(s0!.bonus)]).toEqual([500, 1500]);
+        await leave(u, t);
         expect((await buckets())[u.id]).toEqual(b0);
-        expect(
-          (
-            await sql`select count(*)::int c from pvp_test.ledger_transactions where user_id = ${u.id}::uuid`
-          )[0]!.c,
-        ).toBe(ledger0);
 
         // A deposit still open: the buy-in waits on the wallet, then sees the cash.
         const a = openTx((tx) => deposit(tx, u.id, 1500));
@@ -647,22 +644,26 @@ d("withdraw basis per-user concurrency", () => {
       const h = await bettingHand(t, [u, v]);
       const who = await actor(h, [u, v]);
       expect(await err(act(who, h, "FOLD", 0, "on"))).toBe("");
-      const failed = (await sql`select status, settle_attempts from pvp_test.poker_hands where id = ${h.id}`)[0]!;
+      const failed = (
+        await sql`select status, settle_attempts from pvp_test.poker_hands where id = ${h.id}`
+      )[0]!;
       expect(failed.status).not.toBe("COMPLETED");
       await parity();
       await sql`update pvp_test.poker_tables set next_due_at = clock_timestamp() where id = ${t}`;
       await sql`select pvp_test._poker_tick_one(${t}::bigint)`;
-      expect((await sql`select status from pvp_test.poker_hands where id = ${h.id}`)[0]!.status).toBe(
-        "COMPLETED",
-      );
+      expect(
+        (await sql`select status from pvp_test.poker_hands where id = ${h.id}`)[0]!.status,
+      ).toBe("COMPLETED");
       await parity();
 
       // Savepoint rollback: the rolled-back deposit is never applied, the kept one once.
       await sql.begin(async (tx) => {
-        await tx.savepoint(async (sp) => {
-          await deposit(sp, u.id, 111);
-          throw new Error("undo");
-        }).catch(() => {});
+        await tx
+          .savepoint(async (sp) => {
+            await deposit(sp, u.id, 111);
+            throw new Error("undo");
+          })
+          .catch(() => {});
         await deposit(tx, u.id, 222);
         // A mid-transaction read flushes the kept deposit; commit must not apply it again.
         const mid = (await tx`select pvp_test._withdraw_basis(${u.id}::uuid) b`)[0]!.b as Row;
@@ -718,8 +719,15 @@ d("withdraw basis per-user concurrency", () => {
       // differ from the real (seq) order; record how often, for the report.
       const ref = await createdAtReplay();
       const live = await buckets();
-      const diff = Object.keys(live).filter((k) => JSON.stringify(live[k]) !== JSON.stringify(ref[k]));
-      console.log(JSON.stringify({ created_at_vs_seq_bucket_diffs: diff.length, users: Object.keys(live).length }));
+      const diff = Object.keys(live).filter(
+        (k) => JSON.stringify(live[k]) !== JSON.stringify(ref[k]),
+      );
+      console.log(
+        JSON.stringify({
+          created_at_vs_seq_bucket_diffs: diff.length,
+          users: Object.keys(live).length,
+        }),
+      );
     },
     LONG,
   );

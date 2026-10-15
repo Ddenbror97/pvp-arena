@@ -41,17 +41,17 @@ This model uses the existing ledger and accounts with no new balances. It adds t
 | Each hand        | `poker_hand`       | hand id | players' user_locked → game_escrow → winners' user_locked + house_revenue |
 | Leave / cash-out | `poker_settlement` | seat id | user_locked → user_available                                              |
 
-- **Cash only.** A buy-in locks the player's wallets, syncs the withdrawal basis, and
-  requires `eligible >= amount`. After posting, it re-syncs and requires the ledger stake
-  row (`withdraw_basis_ledger_stake`) to show `bonus = 0`. Otherwise the transaction rolls
-  back with `CASH_ONLY_BUY_IN`. Entries draw from eligible cash first, so bonus can never
-  enter a seat. Bonus balances and unclassifiable funds are rejected.
+- **Promo credit, same as every other game.** A buy-in spends the player's available
+  balance. The withdrawal basis takes eligible (deposited or won) cash first, then bonus,
+  exactly like a jackpot, coinflip, roulette or slot entry
+  (`20261015020000_poker_promo_parity`).
 - **Withdrawal basis.** `poker_entry` (suffix `_entry`) opens a stake keyed by the seat id
-  with eligible-only funds. `poker_settlement` (suffix `_settlement`) pays the cash-out. The
-  basis apportions it pro rata to that stake, so it is 100% eligible. `poker_hand` has no
-  tracked suffix and is invisible to the basis, which is correct because money stays in
-  `user_locked` between hands. A busted seat (0 cashed out) leaves a stale, harmless stake
-  row, the same as a lost bet in any other game. Full-rebuild parity
+  as (eligible, bonus). Each `poker_hand` mixes the pot: every contributor's seat stake
+  gives up `put` cents in its own eligible:bonus ratio, and every winner's seat stake gains
+  its share in the pot's ratio. Bonus lost to another player therefore stays bonus and
+  cannot be cashed out as eligible. `poker_settlement` (suffix `_settlement`) pays the
+  cash-out pro rata to the seat stake. A busted seat (0 cashed out) leaves a stale,
+  harmless stake row, the same as a lost bet in any other game. Full-rebuild parity
   (`_withdraw_basis_assert_rebuild_idempotent`) is part of the test suite.
 - **Disjoint ids.** Seat ids start at 1,000,000,000,000,001 and hand ids at
   2,000,000,000,000,001. The basis keys open stakes by `game_id` alone, and these ranges
@@ -83,15 +83,17 @@ This model uses the existing ledger and accounts with no new balances. It adds t
 
 | Hook                                                                                                                        | Poker v1                                                                                                                                                                        |
 | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Promo / referral / leaderboard-prize playthrough (`_playthrough_stake`, `promo_apply_wager`, `referral_apply_reward_wager`) | **Not counted.** Whitelists unchanged. Cash-only seats hold no bonus to play through.                                                                                           |
-| Referral qualification (`referral_note_play`)                                                                               | Not counted.                                                                                                                                                                    |
-| Partner and campaign leaderboards                                                                                           | Not counted.                                                                                                                                                                    |
+| Promo / referral / leaderboard-prize playthrough (`_playthrough_stake`, `promo_apply_wager`, `referral_apply_reward_wager`) | Counted. `_poker_hand_hooks` calls `referral_note_play(user, 'poker', '{hand}:{user}', wagered)` when a real-table hand completes, only for hands that reached the flop.        |
+| Referral qualification (`referral_note_play`)                                                                               | Counted, same rule (flop hands, contested chips).                                                                                                                               |
+| Partner profit holds (`_partner_profit_record`)                                                                             | Counted. An active partner's net loss in a hand is held against each non-partner net winner, split by their share of the winnings.                                              |
+| Wager leaderboard campaigns (`_lb_sync`)                                                                                    | Not counted (separate feature).                                                                                                                                                 |
 | Prestige XP                                                                                                                 | Counted. `prestige_award_wager(user, 'poker', 'hand:{id}:{seat}', wagered)`, only for hands that reached the flop. "Wagered" means contested chips (uncalled returns excluded). |
 | `get_profile_stats`                                                                                                         | Includes poker. Played = hands with chips in; wagered = contested chips; won = gross pot shares; wins = hands with a share > 0.                                                 |
 | Admin cash-flow report                                                                                                      | `admin_ledger_cashflow()` adds a Poker row: real-money USD pot shares won (today and since the epoch), excluding uncalled returns. Fees are already in the platform fee totals. |
 
-Adding poker to playthrough or leaderboards later needs its own decision. Multi-street
-per-hand stakes do not map one-to-one onto the existing "one stake per game" model.
+Preflop folds do not count toward playthrough: blinds alone would let two accounts clear
+wagering requirements cheaply without risk. "Wagered" is contested chips, so uncalled
+returns never count.
 
 ## Provably fair deck
 

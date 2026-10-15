@@ -1,5 +1,5 @@
 /**
- * Poker v1: cash-only buy-ins, every stake tier, complete hands through the player RPCs,
+ * Poker v1: cash-then-bonus buy-ins, every stake tier, complete hands through the player RPCs,
  * SQL/TypeScript rule and fairness parity, idempotency, concurrency, timeouts, voids,
  * settlement retry, access control, hooks and ledger reconciliation.
  * Isolated pvp_test schema. Requires TEST_DATABASE_URL.
@@ -435,10 +435,12 @@ d("poker", () => {
   );
 
   it(
-    "accepts deposited cash only and rejects bonus balances",
+    "takes eligible cash first, then bonus, like the other games",
     async () => {
       const bonusOnly = await player(0, 5000);
-      expect(await err(sit(bonusOnly, 2, 400))).toContain("CASH_ONLY_BUY_IN");
+      const b = await sit(bonusOnly, 2, 400);
+      expect(await bal(bonusOnly.id)).toBe(4600);
+      await leave(bonusOnly, b.table_id);
       expect(await bal(bonusOnly.id)).toBe(5000);
 
       const mixed = await player(1000, 5000);
@@ -456,13 +458,21 @@ d("poker", () => {
       where t.kind = 'poker_entry' and t.user_id = ${mixed.id}::uuid`
       )[0]!;
       expect([+stake.eligible, +stake.bonus]).toEqual([1000, 0]);
-      // Eligible cash is used up; the remaining $50 is bonus. A second table needs its own chain.
+      // Eligible cash is used up, so a second table is bought with bonus. It needs its own chain.
       const second = (await buildChain(randomBytes(32).toString("hex"), 2))[0]!;
-      expect(await err(sit(mixed, 1, 200, { head: second }))).toContain("CASH_ONLY_BUY_IN");
+      const r2 = await sit(mixed, 1, 200, { head: second });
+      const stake2 = (
+        await sql`select s.eligible, s.bonus from pvp_test.withdraw_basis_ledger_stake s
+      join pvp_test.ledger_transactions t on t.id = s.ledger_tx_id
+      where t.kind = 'poker_entry' and t.user_id = ${mixed.id}::uuid and t.game_id = (
+        select id from pvp_test.poker_seats where user_id = ${mixed.id}::uuid and table_id = ${r2.table_id})`
+      )[0]!;
+      expect([+stake2.eligible, +stake2.bonus]).toEqual([0, 200]);
       await leave(mixed, r.table_id);
+      await leave(mixed, r2.table_id);
       await sql`select pvp_test._withdraw_basis_sync()`;
       const peek = (await sql`select pvp_test._withdraw_basis_peek(${mixed.id}::uuid) r`)[0]!.r;
-      expect(+peek.eligible).toBe(1000);
+      expect([+peek.eligible, +peek.bonus]).toEqual([1000, 5000]);
       expect(await bal(mixed.id)).toBe(6000);
 
       const broke = await player(100);
@@ -655,7 +665,9 @@ d("poker", () => {
         await sql`update pvp_test.poker_hands set reveal_deadline = clock_timestamp() - interval '1 second' where id = ${h.id}`;
         await sql`update pvp_test.poker_tables set next_due_at = clock_timestamp() where id = ${table}`;
         await tick();
-        const v = (await sql`select status, voided_by from pvp_test.poker_hands where id = ${h.id}`)[0]!;
+        const v = (
+          await sql`select status, voided_by from pvp_test.poker_hands where id = ${h.id}`
+        )[0]!;
         expect(v.status).toBe("VOIDED");
         expect(v.voided_by).toEqual([w.id]);
       };
@@ -666,7 +678,11 @@ d("poker", () => {
           await sql`select status, state, missed_reveals from pvp_test.poker_seats
           where user_id = ${w.id}::uuid and table_id = ${table} order by id desc limit 1`
         )[0]!;
-      expect(await seat()).toMatchObject({ status: "SEATED", state: "SITTING_OUT", missed_reveals: 1 });
+      expect(await seat()).toMatchObject({
+        status: "SEATED",
+        state: "SITTING_OUT",
+        missed_reveals: 1,
+      });
       await as(w.id, (tx) => tx`select pvp_test.poker_sit_out(${table}::bigint, false, null)`);
 
       await withhold();
@@ -679,7 +695,9 @@ d("poker", () => {
       const h3 = await liveHand(table);
       expect(h3.status).toBe("COMMIT");
       await leave(w, table);
-      const v3 = (await sql`select void_reason, voided_by from pvp_test.poker_hands where id = ${h3.id}`)[0]!;
+      const v3 = (
+        await sql`select void_reason, voided_by from pvp_test.poker_hands where id = ${h3.id}`
+      )[0]!;
       expect(v3).toEqual({ void_reason: "player_left", voided_by: [w.id] });
       expect(await err(sit(w, 4, 2000, { head: w.links[60]! }))).toContain("VOID_COOLDOWN");
       expect(await bal(w.id)).toBe(10_000);
@@ -962,7 +980,8 @@ d("poker", () => {
     LONG,
   );
 
-  it("leaves playthrough, referral and leaderboard hooks untouched and feeds XP and profile stats", async () => {
+  it("writes no playthrough rows for players without open holds and feeds XP and profile stats", async () => {
+    // Poker counts toward playthrough (poker-promo.integration.test.ts); nobody here holds a promo or referral.
     const ids = everyone.map((p) => p.id);
     for (const t of ["promo_wagers", "referral_reward_wagers"]) {
       const n = await sql.unsafe(
