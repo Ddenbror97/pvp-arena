@@ -108,7 +108,11 @@ function RoundId({ game, id }: { game: SnapshotGame; id: number }) {
         Duel #{id}
       </Link>
     );
-  return <span className="font-semibold text-foreground">Spin #{id}</span>;
+  return (
+    <span className="font-semibold text-foreground">
+      {game === "poker" ? "Hand" : "Spin"} #{id}
+    </span>
+  );
 }
 
 function RecentRow({
@@ -127,7 +131,11 @@ function RecentRow({
         : null
       : game === "roulette" && r.bets !== null
         ? `${r.bets} ${r.bets === 1 ? "bet" : "bets"}`
-        : null;
+        : game === "poker" && r.blinds
+          ? `${formatUsd(BigInt(r.blinds.small))}/${formatUsd(BigInt(r.blinds.big))} blinds${
+              r.players !== null ? `, ${r.players} players` : ""
+            }`
+          : null;
   return (
     <li className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border/70 py-2 text-sm first:border-t-0">
       <RoundId game={game} id={r.id} />
