@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { useWallet } from "@/lib/jackpot/api";
 import { arenaLogo } from "@/assets/media";
 import { WalletGroupPlaceholder } from "@/components/wallet/HeaderWalletFrame";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
 import { equippedAssets, usePrestige } from "@/components/prestige/PrestigeProvider";
 import {
@@ -72,6 +73,7 @@ export function GameAccount() {
           Sign in
         </Link>
       ) : null}
+      <ThemeToggle className="poker-icon-btn" />
       <DropdownMenu>
         <DropdownMenuTrigger className="poker-icon-btn" aria-label="Menu">
           <Menu className="h-4 w-4" />

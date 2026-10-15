@@ -25,7 +25,7 @@ function warmRanks(qc: QueryClient) {
   void import("@/lib/leaderboard/paint").then((m) => m.prefetchPublicList(qc));
 }
 
-export function SiteHeader() {
+export function SiteHeader({ className }: { className?: string }) {
   const qc = useQueryClient();
   const { userId, profile, ready } = useAuth();
   const prestige = usePrestige();
@@ -37,7 +37,7 @@ export function SiteHeader() {
   // A stored session means the signed-in wallet group is the final shape, so reserve it now.
   const showWallet = ready ? Boolean(userId) : hint;
   return (
-    <header className="site-chrome sticky top-0 z-30 overflow-x-clip border-b">
+    <header className={cn("site-chrome sticky top-0 z-30 overflow-x-clip border-b", className)}>
       <div className="mx-auto grid h-14 w-full max-w-full grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-2 px-2 sm:flex sm:h-16 sm:gap-4 sm:px-4 lg:gap-6 lg:px-6">
         <Link to="/" className="shrink-0" aria-label="PVPspinArena">
           <img
@@ -306,14 +306,17 @@ export function SiteFooter({ className }: { className?: string }) {
 }
 
 /** Phone-only bottom tab bar: primary navigation within thumb reach. */
-export function MobileTabBar() {
+export function MobileTabBar({ className }: { className?: string }) {
   const qc = useQueryClient();
   const tab =
     "flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors [&.active]:text-primary";
   return (
     <nav
       aria-label="Main"
-      className="site-chrome fixed inset-x-0 bottom-0 z-40 flex border-t pb-[env(safe-area-inset-bottom)] lg:hidden"
+      className={cn(
+        "site-chrome fixed inset-x-0 bottom-0 z-40 flex border-t pb-[env(safe-area-inset-bottom)] lg:hidden",
+        className,
+      )}
     >
       <Link
         to="/"

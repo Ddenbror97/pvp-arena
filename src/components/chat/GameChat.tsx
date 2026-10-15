@@ -1,4 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  startTransition,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { MessageSquare, Send } from "lucide-react";
@@ -13,6 +20,10 @@ import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import { cn } from "@/lib/utils";
 
 export { ChatMessageRow };
+
+/** Rows rendered in the navigation commit; the rest follow in a background transition. */
+const FIRST_COMMIT_ROWS = 16;
+const noopSubscribe = () => () => {};
 
 export function GameChat({
   className,
@@ -34,6 +45,19 @@ export function GameChat({
     userId,
     initial,
   );
+  // False while hydrating server HTML (which already holds every row), true for client mounts.
+  const clientMount = useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  );
+  const [windowed, setWindowed] = useState(clientMount);
+  useEffect(() => {
+    if (!windowed) return;
+    const t = setTimeout(() => startTransition(() => setWindowed(false)), 0);
+    return () => clearTimeout(t);
+  }, [windowed]);
+  const shown = windowed ? messages.slice(-FIRST_COMMIT_ROWS) : messages;
   const identities = usePrestigeIdentities(messages.map((m) => m.user_id));
   const send = useServerFn(sendChatMessage);
   const [text, setText] = useState("");
@@ -50,8 +74,8 @@ export function GameChat({
   useLayoutEffect(() => {
     const el = listRef.current;
     if (!el) return;
-    const first = messages[0]?.id;
-    const last = messages[messages.length - 1]?.id;
+    const first = shown[0]?.id;
+    const last = shown[shown.length - 1]?.id;
     if (first !== prevFirst.current && last === prevLast.current && prevHeight.current) {
       // Older page prepended: keep the reader's position.
       el.scrollTop += el.scrollHeight - prevHeight.current;
@@ -64,7 +88,7 @@ export function GameChat({
     prevFirst.current = first;
     prevLast.current = last;
     prevHeight.current = el.scrollHeight;
-  }, [messages]);
+  }, [shown]);
 
   // Avatars, prestige frames, and the composer all change the list height after the
   // first paint. While the reader is pinned, follow that height to the true bottom.
@@ -95,7 +119,7 @@ export function GameChat({
       el.scrollHeight - el.scrollTop - el.clientHeight < CHAT_CONFIG.stickToBottomPx;
     if (atBottom.current) setUnseen(false);
     prevHeight.current = el.scrollHeight;
-    if (el.scrollTop < 40 && hasMore && !loadingOlder) void loadOlder();
+    if (el.scrollTop < 40 && hasMore && !loadingOlder && !windowed) void loadOlder();
   };
   const jump = () => {
     const el = listRef.current;
@@ -199,7 +223,7 @@ export function GameChat({
               </p>
             )}
             <ul className="pb-1">
-              {messages.map((m) => (
+              {shown.map((m) => (
                 <ChatMessageRow
                   key={m.id}
                   m={m}

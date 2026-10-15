@@ -8,7 +8,7 @@ import {
   Scripts,
   useRouterState,
 } from "@tanstack/react-router";
-import { lazy, Suspense, useEffect, useLayoutEffect, type ReactNode } from "react";
+import { lazy, memo, Suspense, useEffect, useLayoutEffect, type ReactNode } from "react";
 import { ensureTheme } from "@/lib/theme";
 
 import appCss from "../styles.css?url";
@@ -206,7 +206,7 @@ function GameSounds() {
   return null;
 }
 
-function RootOverlays() {
+const RootOverlays = memo(function RootOverlays() {
   const { userId, needsProfile } = useAuth();
   return (
     <>
@@ -226,11 +226,15 @@ function RootOverlays() {
       </Suspense>
     </>
   );
-}
+});
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // The router flips `location` when a navigation starts but swaps the rendered matches only
+  // when it commits; the page chrome must follow the page that is actually on screen.
+  const pathname = useRouterState({
+    select: (s) => s.matches[s.matches.length - 1]?.pathname ?? s.location.pathname,
+  });
   const admin = pathname === "/admin";
   const wide =
     pathname === "/" ||
@@ -269,7 +273,7 @@ function RootComponent() {
         <PrestigeProvider>
           <ThemeSync />
           <GameSounds />
-          {pokerTable ? null : <SiteHeader />}
+          <SiteHeader className={pokerTable ? "hidden" : ""} />
           <main
             className={
               admin
@@ -286,7 +290,7 @@ function RootComponent() {
             <Outlet />
           </main>
           <SiteFooter className={admin || pokerTable ? "hidden" : slott ? "lg:hidden" : ""} />
-          {!admin && !pokerTable && <MobileTabBar />}
+          {!admin && <MobileTabBar className={pokerTable ? "hidden" : ""} />}
           <RootOverlays />
         </PrestigeProvider>
       </AuthProvider>

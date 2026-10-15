@@ -133,7 +133,7 @@ export function PokerLobby() {
               key={s.table_id}
               to="/poker/$tableId"
               params={{ tableId: String(s.table_id) }}
-              className="flex items-center justify-between gap-3 rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-50 hover:bg-emerald-500/20"
+              className="poker-return flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-sm"
             >
               <span>
                 You still have a seat at <strong>{s.name}</strong> with {money(s.stack)}
@@ -738,7 +738,7 @@ function ListSkeleton() {
       {[0, 1].map((s) => (
         <div key={s}>
           <div className="poker-section-head">
-            <span className="h-5 w-32 animate-pulse rounded bg-white/5" />
+            <span className="h-5 w-32 animate-pulse rounded bg-[var(--edge)]" />
           </div>
           <div className="poker-card-grid">
             {[0, 1].map((i) => (
