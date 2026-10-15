@@ -21,6 +21,13 @@ export const DEALER_RIG = {
   headBand: [0.4, 0.5] as const,
   /** Torso band that breathes; below it the arms and cards stay still on the table. */
   torsoBand: [0.74, 0.82] as const,
+  /**
+   * Mouth, measured on the art: lip corners, the line between the lips at the centre,
+   * and the chin. The jaw (lower lip and chin) drops from the lip line while she speaks.
+   */
+  mouth: { left: 0.4501, right: 0.5293, cx: 0.4897, line: 0.2916, corner: 0.2853, chin: 0.343 },
+  /** Between the card in her left hand and the deck in her right: the hands move apart here. */
+  handSplit: 0.523,
 };
 
 export function warmDealer() {

@@ -34,6 +34,9 @@ function voiceService() {
 
 export const voiceSupported = () => !!provider?.available();
 
+/** Loudness of the dealer's recorded line right now (0..1), or null when none is playing. */
+export const dealerMouthLevel = () => provider?.mouthLevel() ?? null;
+
 /**
  * Speaks a line straight from a click handler. Mobile Safari only lets speech start inside a
  * user gesture, so turning the voice on (or moving its slider) speaks right away.

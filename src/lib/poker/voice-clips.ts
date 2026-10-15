@@ -59,6 +59,24 @@ export class ClipVoiceProvider implements VoiceProvider {
   private decoded = new WeakMap<BaseAudioContext, Map<DealerLineId, Promise<AudioBuffer | null>>>();
   private failed = new Set<DealerLineId>();
   private stop: (() => void) | null = null;
+  private analyser: AnalyserNode | null = null;
+  private samples: Float32Array<ArrayBuffer> | null = null;
+
+  /**
+   * Loudness of the clip playing right now, 0..1, for the dealer's mouth. Null when no clip
+   * is playing (silence, or a line spoken by the fallback, which exposes no audio).
+   */
+  mouthLevel(): number | null {
+    const a = this.analyser;
+    if (!a) return null;
+    if (!this.samples || this.samples.length !== a.fftSize)
+      this.samples = new Float32Array(a.fftSize);
+    a.getFloatTimeDomainData(this.samples);
+    let sum = 0;
+    for (const v of this.samples) sum += v * v;
+    return Math.sqrt(sum / this.samples.length) * this.meterGain;
+  }
+  private meterGain = 1;
 
   constructor(private fallback: VoiceProvider) {}
 
@@ -114,6 +132,7 @@ export class ClipVoiceProvider implements VoiceProvider {
         } catch {
           /* already stopped */
         }
+        this.analyser = null;
         done();
       };
       this.stop = stop;
@@ -136,11 +155,18 @@ export class ClipVoiceProvider implements VoiceProvider {
           wet.gain.value = ROOM_MIX;
           const verb = ctx.createConvolver();
           verb.buffer = room(ctx);
+          const meter = ctx.createAnalyser();
+          meter.fftSize = 512;
           src.connect(level);
+          src.connect(meter);
           level.connect(out);
           level.connect(verb).connect(wet).connect(out);
+          this.analyser = meter;
+          this.meterGain = normalize(buf);
           src.onended = () => {
             clearTimeout(guard);
+            if (this.analyser === meter) this.analyser = null;
+            meter.disconnect();
             setTimeout(() => {
               level.disconnect();
               wet.disconnect();
