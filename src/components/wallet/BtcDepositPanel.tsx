@@ -81,7 +81,7 @@ export function BtcDepositPanel({
         data: { id: resolvedId!, refresh: invoicePoll.current++ > 0 },
       }),
     enabled: !!resolvedId,
-    placeholderData: preview ? { ok: true as const, invoice: preview } : undefined,
+    ...(preview ? { placeholderData: { ok: true as const, invoice: preview } } : {}),
     refetchInterval: (query) => {
       const status = query.state.data?.ok ? query.state.data.invoice.status : "";
       return status === "NEW" || status === "PROCESSING" || status === "SETTLED" ? 8000 : false;
@@ -111,9 +111,7 @@ export function BtcDepositPanel({
 
   const open = invoice.data?.ok ? invoice.data.invoice : null;
   const phase = open ? btcInvoicePhase(open.status) : null;
-  const payUri = open?.address
-    ? bitcoinPaymentUri(open.address, open.btcDue ?? "")
-    : "";
+  const payUri = open?.address ? bitcoinPaymentUri(open.address, open.btcDue ?? "") : "";
   const payQr = useMemo(() => {
     if (!payUri) return "";
     try {
@@ -145,7 +143,12 @@ export function BtcDepositPanel({
       return;
     }
     setAmount(String(nextCents / 100));
-    const live = open && phase === "pay" ? open : preview && btcInvoicePhase(preview.status) === "pay" ? preview : null;
+    const live =
+      open && phase === "pay"
+        ? open
+        : preview && btcInvoicePhase(preview.status) === "pay"
+          ? preview
+          : null;
     if (live && live.usdCents === nextCents && live.address) {
       setInvoiceId(live.id);
       return;
@@ -283,9 +286,7 @@ export function BtcDepositPanel({
     <div className="min-w-0">
       {mode === "deposit" && (depositsOn || !config.isFetched) ? (
         <>
-          {open &&
-          phase &&
-          (phase === "credited" || phase === "review" || phase === "closed") ? (
+          {open && phase && (phase === "credited" || phase === "review" || phase === "closed") ? (
             <p className="mb-2 text-sm font-medium">
               {phase === "credited" && `${formatUsd(open.usdCents)} is in your balance.`}
               {phase === "review" && "This payment needs a review before it can be added."}
@@ -315,7 +316,9 @@ export function BtcDepositPanel({
                       : `Minimum ${formatUsd(config.data?.minCents ?? 0)}. Change the amount and press Enter to update the invoice.`
                     : ""
             }
-            pending={busy || (depositsOn && !open?.address && !config.isLoading && latest.isLoading)}
+            pending={
+              busy || (depositsOn && !open?.address && !config.isLoading && latest.isLoading)
+            }
             emptyAddress="Preparing address…"
           >
             <label htmlFor="btc-deposit-amount" className="mt-2 block text-xs font-medium">
@@ -331,7 +334,9 @@ export function BtcDepositPanel({
                 inputMode="decimal"
                 autoComplete="off"
                 value={amount}
-                disabled={busy || phase === "confirming" || phase === "crediting" || phase === "credited"}
+                disabled={
+                  busy || phase === "confirming" || phase === "crediting" || phase === "credited"
+                }
                 onChange={(event) => setAmount(event.target.value)}
                 onBlur={() => {
                   if (amountDirty) void start();
@@ -408,7 +413,7 @@ export function BtcDepositPanel({
               aria-label="Bitcoin cashout address"
             />
             <p className="min-h-[2.5rem] sm:min-h-4">
-              {payout.data
+              {payout.data?.minCents != null
                 ? `Minimum ${formatUsd(payout.data.minCents)}. A code is emailed to approve each cashout.`
                 : "\u00a0"}
             </p>

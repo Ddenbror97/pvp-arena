@@ -255,8 +255,12 @@ describe("provider safety", () => {
         throw new Error("unexpected request");
       },
     };
-    await expect(connectInjectedProvider(provider)).rejects.toThrow(WALLET_MESSAGES.CONNECT_PENDING);
-    await expect(connectInjectedProvider(provider)).rejects.toThrow(WALLET_MESSAGES.CONNECT_PENDING);
+    await expect(connectInjectedProvider(provider)).rejects.toThrow(
+      WALLET_MESSAGES.CONNECT_PENDING,
+    );
+    await expect(connectInjectedProvider(provider)).rejects.toThrow(
+      WALLET_MESSAGES.CONNECT_PENDING,
+    );
     expect(accountRequests).toBe(1);
   });
   it("revokes only this site's account permission when resetting a stale connection", async () => {
@@ -268,9 +272,7 @@ describe("provider safety", () => {
       },
     };
     await resetInjectedProviderConnection(provider);
-    expect(calls).toEqual([
-      { method: "wallet_revokePermissions", params: [{ eth_accounts: {} }] },
-    ]);
+    expect(calls).toEqual([{ method: "wallet_revokePermissions", params: [{ eth_accounts: {} }] }]);
   });
   it("does not hide a still-pending MetaMask request during reset", async () => {
     const provider: Eip1193 = {
@@ -343,22 +345,57 @@ describe("provider safety", () => {
       "eth_sendTransaction",
       "personal_sign",
       "wallet_addEthereumChain",
+      "wallet_requestPermissions",
       "wallet_revokePermissions",
       "wallet_switchEthereumChain",
     ]);
   });
   it("builds deposit transactions from server-supplied registry values", () => {
     const treasury = acct.address;
-    expect(buildDepositTransaction({ asset: "ETH", chainId: TESTNET.chainId, treasury, token: null, units: "1000" })).toEqual({ to: treasury, value: "0x3e8" });
-    const usdc = buildDepositTransaction({ asset: "USDC", chainId: TESTNET.chainId, treasury, token: TESTNET.usdc, units: "10000000" });
+    expect(
+      buildDepositTransaction({
+        asset: "ETH",
+        chainId: TESTNET.chainId,
+        treasury,
+        token: null,
+        units: "1000",
+      }),
+    ).toEqual({ to: treasury, value: "0x3e8" });
+    const usdc = buildDepositTransaction({
+      asset: "USDC",
+      chainId: TESTNET.chainId,
+      treasury,
+      token: TESTNET.usdc,
+      units: "10000000",
+    });
     expect(usdc.to).toBe(TESTNET.usdc);
     expect(usdc.value).toBe("0x0");
     expect(usdc.data).toMatch(/^0xa9059cbb/);
     // Chain allowlisting is server-side (registry-driven); the builder validates shape only.
-    expect(buildDepositTransaction({ asset: "ETH", chainId: 8453, treasury, token: null, units: "1" })).toEqual({ to: treasury, value: "0x1" });
-    expect(() => buildDepositTransaction({ asset: "ETH", chainId: 0, treasury, token: null, units: "1" })).toThrow("UNSUPPORTED_NETWORK");
-    expect(() => buildDepositTransaction({ asset: "USDC", chainId: TESTNET.chainId, treasury, token: "0x123", units: "1" })).toThrow("INVALID_ASSET_CONFIG");
-    expect(() => buildDepositTransaction({ asset: "ETH", chainId: TESTNET.chainId, treasury, token: null, units: "0" })).toThrow("INVALID_AMOUNT");
+    expect(
+      buildDepositTransaction({ asset: "ETH", chainId: 8453, treasury, token: null, units: "1" }),
+    ).toEqual({ to: treasury, value: "0x1" });
+    expect(() =>
+      buildDepositTransaction({ asset: "ETH", chainId: 0, treasury, token: null, units: "1" }),
+    ).toThrow("UNSUPPORTED_NETWORK");
+    expect(() =>
+      buildDepositTransaction({
+        asset: "USDC",
+        chainId: TESTNET.chainId,
+        treasury,
+        token: "0x123",
+        units: "1",
+      }),
+    ).toThrow("INVALID_ASSET_CONFIG");
+    expect(() =>
+      buildDepositTransaction({
+        asset: "ETH",
+        chainId: TESTNET.chainId,
+        treasury,
+        token: null,
+        units: "0",
+      }),
+    ).toThrow("INVALID_AMOUNT");
   });
 });
 

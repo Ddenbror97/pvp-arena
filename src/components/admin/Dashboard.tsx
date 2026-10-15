@@ -63,7 +63,8 @@ const BLURB: Record<AdminTab, string> = {
   jackpot: "Recent rounds, pots, and winners.",
   coinflip: "Open tables and settled flips.",
   roulette: "The live round and the rounds behind it.",
-  deposits: "On-chain credited deposits (EVM + Bitcoin). Promos and card invoices are not listed here.",
+  deposits:
+    "On-chain credited deposits (EVM + Bitcoin). Promos and card invoices are not listed here.",
   withdrawals: "Payouts from request through broadcast.",
   ledger: "Player balances, winnings credited, and whether payout wallets cover them.",
   crypto: "Switches, inventory, and items waiting on a decision.",
@@ -457,9 +458,7 @@ function Overview({
                   onClick={() => onOpenLogs(live.latest_failure!.action)}
                 >
                   {live.latest_failure.action}
-                  {live.latest_failure.game_type
-                    ? ` (${live.latest_failure.game_type})`
-                    : ""}
+                  {live.latest_failure.game_type ? ` (${live.latest_failure.game_type})` : ""}
                 </button>
               ) : (
                 <span className="text-muted-foreground">none</span>

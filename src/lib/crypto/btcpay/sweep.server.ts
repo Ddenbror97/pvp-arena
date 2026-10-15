@@ -1,4 +1,11 @@
-import { BtcpayError, createOnChainTransfer, getBtcUsdRate, getOnChainAddress, getOnChainWallet, getPayoutWallet } from "./client.server";
+import {
+  BtcpayError,
+  createOnChainTransfer,
+  getBtcUsdRate,
+  getOnChainAddress,
+  getOnChainWallet,
+  getPayoutWallet,
+} from "./client.server";
 import { readBtcpayPayoutConfig, readBtcpaySweepConfig } from "./config.server";
 import {
   SWEEP_DAILY_MAX_CENTS,
@@ -194,6 +201,9 @@ export async function previewBtcHotWallet(): Promise<HotWalletPreview> {
   };
 }
 
+/** SQL NULL for nullable RPC args; generated types declare every function arg non-null. */
+const SQL_NULL = null as unknown as string;
+
 async function transferDb() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin;
@@ -211,11 +221,7 @@ async function transferHistory(): Promise<{ sweptSats: bigint; coolingDown: bool
   }
 }
 
-async function broadcastTopUp(
-  usdCents: number,
-  sweptSats: bigint,
-  liabilitySats: bigint | null,
-) {
+async function broadcastTopUp(usdCents: number, sweptSats: bigint, liabilitySats: bigint | null) {
   if (!Number.isInteger(usdCents) || usdCents < SWEEP_MIN_CENTS || usdCents > SWEEP_MAX_CENTS) {
     return { ok: false as const, error: "Enter from $10 to $1,000." };
   }
@@ -269,7 +275,7 @@ async function broadcastTopUp(
 
   const db = await transferDb();
   const begun = await db.rpc("btc_wallet_transfer_begin", {
-    p_admin: null,
+    p_admin: SQL_NULL,
     p_usd_cents: recordedCents,
     p_sats: Number(sats),
     p_destination: destination,
@@ -294,7 +300,7 @@ async function broadcastTopUp(
     const sent = await createOnChainTransfer(sweep, sweep.onchainMethod, body);
     txid = readSweepTxid(sent);
     if (!txid) {
-      await db.rpc("btc_wallet_transfer_finish", { p_id: id, p_txid: null, p_ok: false });
+      await db.rpc("btc_wallet_transfer_finish", { p_id: id, p_txid: SQL_NULL, p_ok: false });
       return {
         ok: false as const,
         error:
@@ -305,9 +311,12 @@ async function broadcastTopUp(
     return { ok: true as const, txid, sats: sats.toString() };
   } catch (error) {
     if (txid) return { ok: true as const, txid, sats: sats.toString() };
-    await db.rpc("btc_wallet_transfer_finish", { p_id: id, p_txid: null, p_ok: false });
+    await db.rpc("btc_wallet_transfer_finish", { p_id: id, p_txid: SQL_NULL, p_ok: false });
     if (error instanceof BtcpayError && (error.status === 401 || error.status === 403)) {
-      return { ok: false as const, error: "That key cannot spend the deposit wallet. Nothing was sent." };
+      return {
+        ok: false as const,
+        error: "That key cannot spend the deposit wallet. Nothing was sent.",
+      };
     }
     if (error instanceof BtcpayError && error.status === 503) {
       return {
@@ -315,7 +324,10 @@ async function broadcastTopUp(
         error: "BTCPay is not allowing this key to sign. Nothing was sent.",
       };
     }
-    return { ok: false as const, error: "BTCPay refused the top-up. Nothing new was recorded as sent." };
+    return {
+      ok: false as const,
+      error: "BTCPay refused the top-up. Nothing new was recorded as sent.",
+    };
   }
 }
 
@@ -343,7 +355,8 @@ export async function maintainBtcHotWallet(): Promise<string> {
   const depositCents = satsToUsdCents(depositSats, rate);
   if (depositCents == null) return "wallets-unreadable";
   if (depositCents < SWEEP_TRIGGER_CENTS) return "below-threshold";
-  const spendableCents = satsToUsdCents(spendableDepositSats(depositSats, history.sweptSats), rate) ?? 0;
+  const spendableCents =
+    satsToUsdCents(spendableDepositSats(depositSats, history.sweptSats), rate) ?? 0;
   const cents = depositSweepCents(depositCents, spendableCents);
   if (cents == null) return "reserve";
   const sent = await broadcastTopUp(cents, history.sweptSats, 0n);

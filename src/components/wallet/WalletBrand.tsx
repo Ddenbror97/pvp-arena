@@ -75,7 +75,7 @@ export function WalletMark({ kind, className }: { kind: WalletKind; className?: 
 }
 
 /** Coinbase's circular C: blue on the left, cyan on the right, gap facing right. */
-function CoinbaseMark({ className }: { className?: string }) {
+function CoinbaseMark({ className }: { className?: string | undefined }) {
   const gradientId = `coinbase-${useId().replace(/:/g, "")}`;
   return (
     <svg viewBox="0 0 32 32" className={className} aria-hidden="true">

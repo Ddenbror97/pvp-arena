@@ -11,10 +11,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
     const log = search["log"];
     return {
       section: typeof raw === "string" && isAdminTab(raw) ? raw : "overview",
-      log:
-        typeof log === "string" && log.length > 0 && log.length <= 80
-          ? log.trim()
-          : undefined,
+      log: typeof log === "string" && log.length > 0 && log.length <= 80 ? log.trim() : undefined,
     };
   },
   head: () => ({

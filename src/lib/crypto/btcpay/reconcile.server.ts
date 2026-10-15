@@ -25,8 +25,9 @@ type InvoiceRow = {
 type RowResult<T> = { data: T; error: { message: string } | null; count?: number | null };
 
 type Filter = {
-  eq: (column: string, value: string) => Filter;
+  eq: (column: string, value: string | number) => Filter;
   neq: (column: string, value: string) => Filter;
+  not: (column: string, operator: string, value: string | null) => Filter;
   in: (column: string, values: readonly string[]) => Filter;
   gte: (column: string, value: string) => Filter;
   lt: (column: string, value: string) => Filter;
@@ -299,16 +300,23 @@ export async function createBtcInvoiceForUser(
     return { ok: false, error: "You already have a Bitcoin deposit in progress." };
   const reusable = await admin
     .from("btcpay_invoices")
-    .select(
-      "id, address, btc_due, usd_cents, expires_at, network, required_confirmations, status",
-    )
+    .select("id, address, btc_due, usd_cents, expires_at, network, required_confirmations, status")
     .eq("user_id", userId)
     .eq("status", "NEW")
     .eq("usd_cents", usdCents)
     .not("address", "is", null)
     .order("created_at", { ascending: false })
     .limit(1)
-    .maybeSingle();
+    .maybeSingle<{
+      id: string;
+      address: string | null;
+      btc_due: string | null;
+      usd_cents: number;
+      expires_at: string | null;
+      network: string;
+      required_confirmations: number;
+      status: string;
+    }>();
   const live = reusable.data;
   if (
     live?.address &&

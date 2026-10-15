@@ -98,6 +98,9 @@ export function SiteHeader() {
           >
             P2P Slott
           </Link>
+          <Link to="/poker" className={link}>
+            Poker
+          </Link>
           <Link to="/fairness" className={link}>
             Fairness
           </Link>

@@ -24,7 +24,9 @@ describe("OTP generation", () => {
 describe("OTP digest", () => {
   it("matches independent node HMAC and is challenge-bound", async () => {
     const d = await otpDigest("pep", "SIGNUP_EMAIL_VERIFICATION", "c1", "123456");
-    const n = createHmac("sha256", "pep").update("PVPCasino:otp:v1:SIGNUP_EMAIL_VERIFICATION:c1:123456").digest("hex");
+    const n = createHmac("sha256", "pep")
+      .update("PVPCasino:otp:v1:SIGNUP_EMAIL_VERIFICATION:c1:123456")
+      .digest("hex");
     expect(d).toBe(n);
     expect(await otpDigest("pep", "SIGNUP_EMAIL_VERIFICATION", "c2", "123456")).not.toBe(d);
   });
@@ -34,7 +36,9 @@ describe("email template", () => {
   it("contains the code and no links/URLs/buttons", () => {
     const { html, text, subject } = renderOtpEmail("042917");
     expect(subject).toBe("Your PVPspinArena verification code");
-    for (const s of [html, text]) {
+    const logo = /<img src="https:\/\/pvpspinarena\.com\/brand\/arena-logo-email\.png"[^>]*>/g;
+    expect(html.match(logo)).toHaveLength(1);
+    for (const s of [html.replace(logo, ""), text]) {
       expect(s).toContain("042917");
       expect(s).not.toMatch(/https?:\/\/|www\.|<a\s|href=|<button|mailto:/i);
     }

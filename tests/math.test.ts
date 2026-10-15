@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
-  chanceBps, estimatedChanceBps, formatBps, formatUsd, landingRotation, nextTimer, parseUsdToCents, wheelSegments,
+  chanceBps,
+  estimatedChanceBps,
+  formatBps,
+  formatUsd,
+  landingRotation,
+  nextTimer,
+  parseUsdToCents,
+  wheelSegments,
 } from "../src/lib/jackpot/math";
 
 describe("money", () => {
@@ -37,19 +44,24 @@ describe("timer rules", () => {
   it("one player does not start the countdown", () => {
     expect(nextTimer(empty, 0, true).endAtMs).toBeNull();
   });
-  it("second player starts 60s", () => {
+  it("second player starts 45s", () => {
     const s = nextTimer(nextTimer(empty, 0, true), 1000, true);
-    expect(s.endAtMs).toBe(61000);
+    expect(s.endAtMs).toBe(46000);
     expect(s.maxEndAtMs).toBe(181000);
   });
-  it("new players add 10s, capped at 180s", () => {
+  it("new players add nothing while more than 35s remain", () => {
+    const s = nextTimer(nextTimer(empty, 0, true), 0, true);
+    expect(nextTimer(s, 9000, true).endAtMs).toBe(45000);
+  });
+  it("new players add 10s once 35s or less remain, capped at 180s", () => {
     let s = nextTimer(nextTimer(empty, 0, true), 0, true);
-    for (let i = 0; i < 20; i++) s = nextTimer(s, 0, true);
+    expect(nextTimer(s, 10000, true).endAtMs).toBe(55000);
+    for (let i = 0; i < 30; i++) s = nextTimer(s, s.endAtMs! - 35000, true);
     expect(s.endAtMs).toBe(180000);
   });
   it("existing player adding more does not extend", () => {
     const s = nextTimer(nextTimer(empty, 0, true), 0, true);
-    expect(nextTimer(s, 0, false).endAtMs).toBe(60000);
+    expect(nextTimer(s, 30000, false).endAtMs).toBe(45000);
   });
 });
 
