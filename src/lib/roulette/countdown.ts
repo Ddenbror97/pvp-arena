@@ -47,25 +47,31 @@ export function resultHoldUntil(spinEndMs: number, nextStartMs: number): number 
 }
 
 /**
- * Before the betting clock starts the bar fills from the row's opening to full, then it drains
- * from 1 at the opening of the betting window to 0 at its end. 0 outside a betting round.
+ * Where a round's drain starts. A round first shown before its betting clock starts drains from
+ * the row's opening, so the bar keeps moving down through the gap instead of freezing or refilling.
+ * Otherwise it drains from the betting start. NaN when the round has no betting window.
  */
-export function rouletteBarFill(
-  active: boolean,
+export function rouletteBarAnchor(
   opensAt: string | null,
   startedAt: string | null,
+  firstSeenMs: number,
+): number {
+  const start = startedAt ? Date.parse(startedAt) : NaN;
+  if (!Number.isFinite(start) || firstSeenMs >= start) return start;
+  const open = opensAt ? Date.parse(opensAt) : NaN;
+  return Number.isFinite(open) && open < start ? open : start;
+}
+
+/** Drains from 1 at the anchor to 0 at the betting end; never rises. 0 outside a betting round. */
+export function rouletteBarFill(
+  active: boolean,
+  anchorMs: number,
   endsAt: string | null,
   nowMs: number,
 ): number {
-  if (!active || !startedAt || !endsAt) return 0;
-  const start = Date.parse(startedAt);
+  if (!active || !endsAt) return 0;
   const end = Date.parse(endsAt);
-  const duration = end - start;
+  const duration = end - anchorMs;
   if (!Number.isFinite(duration) || duration <= 0 || nowMs >= end) return 0;
-  if (nowMs < start) {
-    const open = opensAt ? Date.parse(opensAt) : NaN;
-    if (!Number.isFinite(open) || open >= start) return 1;
-    return Math.min(1, Math.max(0, (nowMs - open) / (start - open)));
-  }
-  return (end - nowMs) / duration;
+  return Math.min(1, (end - nowMs) / duration);
 }

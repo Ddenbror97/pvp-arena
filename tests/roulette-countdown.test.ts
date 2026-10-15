@@ -3,6 +3,7 @@ import {
   RESULT_HOLD_MAX_MS,
   RESULT_HOLD_MS,
   resultHoldUntil,
+  rouletteBarAnchor,
   rouletteBarFill,
   rouletteBarLabel,
 } from "../src/lib/roulette/countdown";
@@ -19,31 +20,50 @@ const round = {
   betting_ends_at: ends,
 };
 
-describe("roulette countdown before the betting clock starts", () => {
-  it("fills from the row opening to full, so the bar never stands still", () => {
-    expect(rouletteBarFill(true, opens, starts, ends, at(opens))).toBe(0);
-    const half = rouletteBarFill(true, opens, starts, ends, at(opens, 1770));
-    expect(half).toBeCloseTo(0.5, 2);
-    expect(rouletteBarFill(true, opens, starts, ends, at(starts, -1))).toBeCloseTo(1, 3);
+const samples = (anchor: number, from: number) =>
+  Array.from({ length: 300 }, (_, i) => rouletteBarFill(true, anchor, ends, from + i * 100));
+
+describe("roulette countdown first shown before the betting clock starts", () => {
+  const anchor = rouletteBarAnchor(opens, starts, at(opens, 1000));
+
+  it("anchors at the row opening", () => {
+    expect(anchor).toBe(at(opens));
+  });
+  it("drains through the gap and the betting window without ever rising", () => {
+    const fills = samples(anchor, at(opens, 1000));
+    for (let i = 1; i < fills.length; i++) expect(fills[i]).toBeLessThanOrEqual(fills[i - 1]);
+    expect(fills[0]).toBeLessThan(1);
+    expect(fills[0]).toBeGreaterThan(fills[fills.length - 1]);
+    expect(rouletteBarFill(true, anchor, ends, at(ends))).toBe(0);
   });
   it("counts down to the start instead of freezing at the full betting time", () => {
     expect(rouletteBarLabel(round, at(starts, -2000))).toBe("Next round in 2.0s");
     expect(rouletteBarLabel(round, at(starts, -500))).toBe("Next round in 0.5s");
   });
-  it("is full when the opening time is unknown", () => {
-    expect(rouletteBarFill(true, null, starts, ends, at(starts, -1000))).toBe(1);
+  it("anchors at the start when the opening time is unknown or not earlier", () => {
+    expect(rouletteBarAnchor(null, starts, at(starts, -1000))).toBe(at(starts));
+    expect(rouletteBarAnchor(starts, starts, at(starts, -1000))).toBe(at(starts));
   });
 });
 
-describe("roulette countdown during betting", () => {
+describe("roulette countdown first shown once betting has started", () => {
+  const anchor = rouletteBarAnchor(opens, starts, at(starts));
+
   it("drains from full at the start to empty at the end", () => {
-    expect(rouletteBarFill(true, opens, starts, ends, at(starts))).toBe(1);
-    expect(rouletteBarFill(true, opens, starts, ends, at(starts, 9500))).toBeCloseTo(0.5, 3);
-    expect(rouletteBarFill(true, opens, starts, ends, at(ends))).toBe(0);
+    expect(anchor).toBe(at(starts));
+    expect(rouletteBarFill(true, anchor, ends, at(starts))).toBe(1);
+    expect(rouletteBarFill(true, anchor, ends, at(starts, 9500))).toBeCloseTo(0.5, 3);
+    expect(rouletteBarFill(true, anchor, ends, at(ends))).toBe(0);
     expect(rouletteBarLabel(round, at(starts, 1000))).toBe("Rolling in 18.0s");
   });
-  it("is empty outside a betting round", () => {
-    expect(rouletteBarFill(false, opens, starts, ends, at(starts, 1000))).toBe(0);
+  it("never rises", () => {
+    const fills = samples(anchor, at(starts));
+    for (let i = 1; i < fills.length; i++) expect(fills[i]).toBeLessThanOrEqual(fills[i - 1]);
+  });
+  it("is empty outside a betting round or without a window", () => {
+    expect(rouletteBarFill(false, anchor, ends, at(starts, 1000))).toBe(0);
+    expect(rouletteBarFill(true, NaN, ends, at(starts, 1000))).toBe(0);
+    expect(rouletteBarAnchor(opens, null, at(opens))).toBeNaN();
   });
 });
 

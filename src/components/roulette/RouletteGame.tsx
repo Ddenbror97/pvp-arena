@@ -20,7 +20,12 @@ import {
   type RlGame,
 } from "@/lib/roulette/api";
 import { betIntentFor, type BetIntent } from "@/lib/roulette/bet-intent";
-import { resultHoldUntil, rouletteBarFill, rouletteBarLabel } from "@/lib/roulette/countdown";
+import {
+  resultHoldUntil,
+  rouletteBarAnchor,
+  rouletteBarFill,
+  rouletteBarLabel,
+} from "@/lib/roulette/countdown";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
 import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import { RouletteStrip } from "./RouletteStrip";
@@ -47,7 +52,12 @@ const BettingCountdownBar = memo(function BettingCountdownBar({
   now: () => number;
 }) {
   const bar = useRef<HTMLDivElement>(null);
-  const progress = rouletteBarFill(active, opensAt, startedAt, endsAt, now());
+  const anchored = useRef<{ round: string; at: number } | null>(null);
+  const round = `${startedAt}|${endsAt}`;
+  if (active && anchored.current?.round !== round)
+    anchored.current = { round, at: rouletteBarAnchor(opensAt, startedAt, now()) };
+  const anchor = active && anchored.current ? anchored.current.at : NaN;
+  const progress = rouletteBarFill(active, anchor, endsAt, now());
 
   useLayoutEffect(() => {
     const element = bar.current;
@@ -56,7 +66,7 @@ const BettingCountdownBar = memo(function BettingCountdownBar({
     let cancelled = false;
     const render = () => {
       if (cancelled) return;
-      const next = rouletteBarFill(active, opensAt, startedAt, endsAt, now());
+      const next = rouletteBarFill(active, anchor, endsAt, now());
       element.style.transform = `scaleX(${next})`;
       const end = endsAt ? Date.parse(endsAt) : 0;
       if (active && Number.isFinite(end) && now() < end) frame = requestAnimationFrame(render);
@@ -66,7 +76,7 @@ const BettingCountdownBar = memo(function BettingCountdownBar({
       cancelled = true;
       cancelAnimationFrame(frame);
     };
-  }, [active, opensAt, startedAt, endsAt, now]);
+  }, [active, anchor, endsAt, now]);
 
   return (
     <div
