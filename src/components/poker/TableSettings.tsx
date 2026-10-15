@@ -5,16 +5,20 @@ import { Switch } from "@/components/ui/switch";
 import { setSoundMuted, soundMuted, subscribeSound } from "@/lib/sound";
 import { setPokerPrefs, usePokerPrefs } from "@/lib/poker/prefs";
 import { playPokerSfx } from "@/lib/poker/audio";
+import { previewDealerVoice } from "./usePresentation";
 
 function Range({
   label,
   value,
   onChange,
+  onCommit,
   disabled,
 }: {
   label: string;
   value: number;
   onChange: (v: number) => void;
+  /** Fires when the user releases the slider. */
+  onCommit?: () => void;
   disabled?: boolean;
 }) {
   return (
@@ -27,6 +31,8 @@ function Range({
         value={Math.round(value * 100)}
         disabled={disabled}
         onChange={(e) => onChange(Number(e.target.value) / 100)}
+        onPointerUp={onCommit}
+        onKeyUp={onCommit}
         className="poker-slider w-28"
         aria-label={`${label} volume`}
       />
@@ -83,7 +89,10 @@ export function TableSettings({ voiceAvailable }: { voiceAvailable: boolean }) {
           <Switch
             checked={prefs.voice && voiceAvailable}
             disabled={!voiceAvailable}
-            onCheckedChange={(v) => setPokerPrefs({ voice: v })}
+            onCheckedChange={(v) => {
+              setPokerPrefs({ voice: v });
+              if (v) previewDealerVoice();
+            }}
             aria-label="Dealer voice"
           />
         </label>
@@ -92,7 +101,11 @@ export function TableSettings({ voiceAvailable }: { voiceAvailable: boolean }) {
           value={prefs.voiceVolume}
           disabled={!prefs.voice || muted}
           onChange={(v) => setPokerPrefs({ voiceVolume: v })}
+          onCommit={() => previewDealerVoice("Voice level.")}
         />
+        {prefs.voice && muted ? (
+          <p className="text-[11px] text-amber-300/90">Sound is muted, so the dealer is silent.</p>
+        ) : null}
         <label className="flex items-center justify-between gap-3 text-sm">
           <span>Fast animations</span>
           <Switch

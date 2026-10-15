@@ -13,15 +13,19 @@ export interface PokerPrefs {
   fast: boolean;
   /** The first-visit welcome was shown or skipped. */
   welcomed: boolean;
+  /** Stored-format revision; 2 raised the voice to full volume once for earlier visitors. */
+  rev: number;
 }
 
 const KEY = "pvp-poker-prefs";
+const REV = 2;
 export const DEFAULT_PREFS: PokerPrefs = {
   voice: false,
-  voiceVolume: 0.8,
+  voiceVolume: 1,
   effectsVolume: 0.55,
   fast: false,
   welcomed: false,
+  rev: REV,
 };
 
 const listeners = new Set<() => void>();
@@ -40,10 +44,14 @@ function load(): PokerPrefs {
   }
   current = {
     voice: raw.voice === true,
-    voiceVolume: clamp(raw.voiceVolume, DEFAULT_PREFS.voiceVolume),
+    voiceVolume:
+      raw.rev === REV
+        ? clamp(raw.voiceVolume, DEFAULT_PREFS.voiceVolume)
+        : DEFAULT_PREFS.voiceVolume,
     effectsVolume: clamp(raw.effectsVolume, DEFAULT_PREFS.effectsVolume),
     fast: raw.fast === true,
     welcomed: raw.welcomed === true,
+    rev: REV,
   };
   return current;
 }

@@ -91,6 +91,14 @@ export function PokerStage({
   const anchor = mySeat ?? 0;
   const bySeat = new Map(state.seats.map((s) => [s.seat_no, s]));
   const pot = hand && !voided ? collectedPot(hand) : 0;
+  const focusPos =
+    pres.focusSeat != null ? layout[displaySlot(pres.focusSeat, anchor, max)]?.seat : null;
+  const look = focusPos
+    ? {
+        x: Math.max(-1, Math.min(1, (focusPos.x - 50) / 40)),
+        y: Math.max(0, Math.min(1, (focusPos.y - 30) / 55)),
+      }
+    : null;
   const showPot = pot > 0 && !(done && winners.size > 0 && (!presented || pres.winners.length > 0));
 
   return (
@@ -108,6 +116,7 @@ export function PokerStage({
       </div>
       <Dealer
         pose={pres.pose}
+        look={look}
         caption={pres.caption?.text ?? null}
         className="poker-stage-dealer"
       />

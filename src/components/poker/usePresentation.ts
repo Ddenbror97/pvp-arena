@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 import type { TableState } from "@/lib/poker/api";
 import { deriveEvents, type EventCursor } from "@/lib/poker/events";
 import { INITIAL, PokerDirector, type Presentation } from "@/lib/poker/director";
-import { playPokerSfx } from "@/lib/poker/audio";
+import { duckPokerSfx, playPokerSfx } from "@/lib/poker/audio";
 import { getPokerPrefs } from "@/lib/poker/prefs";
-import { VoiceService, WebSpeechProvider } from "@/lib/poker/voice";
+import { VoicePriority, VoiceService, WebSpeechProvider } from "@/lib/poker/voice";
 import { soundMuted } from "@/lib/sound";
 import type { FlightLayerHandle } from "./FlightLayer";
 
@@ -12,8 +12,8 @@ let voiceSingleton: VoiceService | null = null;
 const provider = typeof window !== "undefined" ? new WebSpeechProvider() : null;
 
 function voiceService() {
-  if (!voiceSingleton && provider)
-    voiceSingleton = new VoiceService(provider, {
+  if (!voiceSingleton && provider) {
+    const v = new VoiceService(provider, {
       enabled: () => getPokerPrefs().voice && !soundMuted(),
       volume: () => getPokerPrefs().voiceVolume,
       unlocked: () =>
@@ -22,10 +22,32 @@ function voiceService() {
         (navigator as Navigator & { userActivation: { hasBeenActive: boolean } }).userActivation
           .hasBeenActive,
     });
+    v.subscribeSpeaking(() => duckPokerSfx(v.isSpeaking() ? 0.4 : 1));
+    voiceSingleton = v;
+  }
   return voiceSingleton;
 }
 
 export const voiceSupported = () => !!provider?.available();
+
+/**
+ * Speaks a line straight from a click handler. Mobile Safari only lets speech start inside a
+ * user gesture, so turning the voice on (or moving its slider) speaks right away.
+ */
+export function previewDealerVoice(text = "Dealer voice is on. Good luck at the table.") {
+  voiceService()?.say({ key: `preview:${Date.now()}`, text, priority: VoicePriority.Important });
+}
+
+const noSpeech = () => () => {};
+/** Whether the dealer is speaking right now, for her talking motion. */
+export function useDealerSpeaking() {
+  const v = voiceService();
+  return useSyncExternalStore(
+    v?.subscribeSpeaking ?? noSpeech,
+    v?.isSpeaking ?? (() => false),
+    () => false,
+  );
+}
 
 /**
  * Presentation for one table view. Each authoritative snapshot is diffed into events; the

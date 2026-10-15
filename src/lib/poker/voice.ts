@@ -54,41 +54,60 @@ export class WebSpeechProvider implements VoiceProvider {
   readonly name = "browser";
   private voice: SpeechSynthesisVoice | null = null;
   private resolve: (() => void) | null = null;
+  /** Chrome garbage-collects an unreferenced utterance mid-line and never fires `onend`. */
+  private utterance: SpeechSynthesisUtterance | null = null;
+  /** Voices that errored on this device (offline network voices); skipped from then on. */
+  private broken = new Set<string>();
+  private listening = false;
 
   available() {
     return typeof window !== "undefined" && "speechSynthesis" in window;
   }
 
   private ensureVoice() {
-    if (this.voice || !this.available()) return;
-    this.voice = pickVoice(window.speechSynthesis.getVoices());
-    if (!this.voice)
-      window.speechSynthesis.addEventListener(
-        "voiceschanged",
-        () => (this.voice = pickVoice(window.speechSynthesis.getVoices())),
-        { once: true },
+    if (!this.available()) return;
+    if (!this.voice || this.broken.has(this.voice.voiceURI))
+      this.voice = pickVoice(
+        window.speechSynthesis.getVoices().filter((v) => !this.broken.has(v.voiceURI)),
       );
+    if (!this.listening) {
+      this.listening = true;
+      window.speechSynthesis.addEventListener("voiceschanged", () => {
+        this.voice = null;
+        this.ensureVoice();
+      });
+    }
   }
 
   speak(text: string, o: { volume: number }) {
     if (!this.available()) return Promise.resolve();
     this.ensureVoice();
+    const synth = window.speechSynthesis;
     return new Promise<void>((resolve) => {
       const u = new SpeechSynthesisUtterance(text);
-      if (this.voice) u.voice = this.voice;
-      u.lang = this.voice?.lang ?? "en-US";
-      u.volume = o.volume;
-      u.rate = 0.97;
-      u.pitch = 1.02;
+      const voice = this.voice;
+      if (voice) u.voice = voice;
+      u.lang = voice?.lang ?? "en-US";
+      u.volume = Math.min(1, Math.max(0, o.volume));
+      u.rate = 1;
+      u.pitch = 1.04;
       const done = () => {
         if (this.resolve === resolve) this.resolve = null;
+        if (this.utterance === u) this.utterance = null;
         resolve();
       };
       u.onend = done;
-      u.onerror = done;
+      u.onerror = (ev) => {
+        if (voice && ev.error !== "interrupted" && ev.error !== "canceled")
+          this.broken.add(voice.voiceURI);
+        done();
+      };
       this.resolve = resolve;
+      this.utterance = u;
       try {
-        window.speechSynthesis.speak(u);
+        // A tab that was backgrounded can leave the engine paused; speak() then queues silently.
+        if (synth.paused) synth.resume();
+        synth.speak(u);
       } catch {
         done();
       }
@@ -100,6 +119,7 @@ export class WebSpeechProvider implements VoiceProvider {
   cancel() {
     if (!this.available()) return;
     window.speechSynthesis.cancel();
+    this.utterance = null;
     this.resolve?.();
     this.resolve = null;
   }
@@ -110,6 +130,7 @@ export class VoiceService {
   private speaking: Queued | null = null;
   private spoken = new Set<string>();
   private spokenOrder: string[] = [];
+  private speakingListeners = new Set<() => void>();
 
   constructor(
     private provider: VoiceProvider,
@@ -139,6 +160,17 @@ export class VoiceService {
 
   get current() {
     return this.speaking;
+  }
+  /** True while a line is being spoken; drives the dealer's talking motion and audio ducking. */
+  isSpeaking = () => this.speaking !== null;
+  subscribeSpeaking = (l: () => void) => {
+    this.speakingListeners.add(l);
+    return () => this.speakingListeners.delete(l);
+  };
+  private setSpeaking(q: Queued | null) {
+    const changed = (this.speaking === null) !== (q === null);
+    this.speaking = q;
+    if (changed) this.speakingListeners.forEach((l) => l());
   }
   get pending() {
     return this.queue.slice();
@@ -173,14 +205,14 @@ export class VoiceService {
         this.remember(q.key);
         continue;
       }
-      this.speaking = q;
+      this.setSpeaking(q);
       this.remember(q.key);
       try {
         await this.provider.speak(q.text, { volume: this.opts.volume() });
       } catch {
         /* a failed line never blocks the next one */
       }
-      if (this.speaking === q) this.speaking = null;
+      if (this.speaking === q) this.setSpeaking(null);
     }
   }
 
@@ -195,6 +227,6 @@ export class VoiceService {
     for (const q of this.queue) this.remember(q.key);
     this.queue = [];
     this.provider.cancel();
-    this.speaking = null;
+    this.setSpeaking(null);
   }
 }

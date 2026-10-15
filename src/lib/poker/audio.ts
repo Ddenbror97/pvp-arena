@@ -112,13 +112,19 @@ const SOUNDS: Record<PokerSfx, (ctx: AudioContext, out: AudioNode, t: number) =>
 };
 
 const lastAt = new Map<PokerSfx, number>();
+let duck = 1;
+
+/** Effects play at `level` (0..1) of their volume while the dealer speaks, so lines stay clear. */
+export function duckPokerSfx(level: number) {
+  duck = level;
+}
 
 /** Plays one effect. Identical effects within 25 ms merge so bursts of events never stack. */
 export function playPokerSfx(name: PokerSfx) {
   const now = typeof performance === "undefined" ? 0 : performance.now();
   if (now - (lastAt.get(name) ?? -1e9) < 25) return;
   lastAt.set(name, now);
-  const vol = getPokerPrefs().effectsVolume;
+  const vol = getPokerPrefs().effectsVolume * duck;
   if (vol <= 0) return;
   playSynth((ctx, master) => {
     const g = ctx.createGain();

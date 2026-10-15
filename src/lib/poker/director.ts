@@ -39,6 +39,8 @@ export interface Winner {
 
 export interface Presentation {
   pose: DealerPose;
+  /** Seat the dealer is attending to (dealt to, acting, winning); null looks at the table. */
+  focusSeat: number | null;
   handId: number | null;
   /** Hole cards that have landed per seat (0..2). Undefined hand: everything shown. */
   holeShown: Record<number, number>;
@@ -95,6 +97,7 @@ const money = (c: number) => `$${(c / 100).toLocaleString("en-US", { maximumFrac
 
 export const INITIAL: Presentation = {
   pose: "idle",
+  focusSeat: null,
   handId: null,
   holeShown: {},
   boardShown: 0,
@@ -229,6 +232,7 @@ export class PokerDirector {
     this.board = Array.from({ length: boardLen }, () => -1);
     this.set({
       pose: waiting ? "wait" : "idle",
+      focusSeat: null,
       handId,
       holeShown: Object.fromEntries(dealtSeats.map((s) => [s, 2])),
       boardShown: boardLen,
@@ -270,6 +274,7 @@ export class PokerDirector {
           at(0, () => {
             this.set({
               pose: "shuffle",
+              focusSeat: null,
               handId: e.handId,
               holeShown: {},
               boardShown: 0,
@@ -312,6 +317,7 @@ export class PokerDirector {
           e.order.forEach((seat, i) => {
             const slot = (round[seat] = (round[seat] ?? -1) + 1);
             at(i * gap, () => {
+              this.set({ focusSeat: seat });
               this.sink.flight({
                 id: `${e.id}:${i}`,
                 kind: "card",
@@ -329,7 +335,7 @@ export class PokerDirector {
               })),
             );
           });
-          at(total, () => this.set({ pose: "idle" }));
+          at(total, () => this.set({ pose: "idle", focusSeat: null }));
         });
         return;
       }
@@ -402,7 +408,7 @@ export class PokerDirector {
         this.board = [...this.board, ...e.cards];
         this.beat(total, (at) => {
           at(0, () => {
-            this.set({ pose: "reveal", freshBoard: [] });
+            this.set({ pose: "reveal", focusSeat: null, freshBoard: [] });
             this.sink.flight({
               id: `${e.id}:burn`,
               kind: "card",
@@ -449,7 +455,7 @@ export class PokerDirector {
       case "turn_changed": {
         this.beat(0, (at) =>
           at(0, () => {
-            this.set({ pose: "wait" });
+            this.set({ pose: "wait", focusSeat: e.seat });
             if (mine(e.seat)) {
               this.sink.sfx("turn");
               const now = this.clock.now();
@@ -471,7 +477,11 @@ export class PokerDirector {
         const d = this.scale(BASE.showdown);
         this.beat(d, (at) =>
           at(0, () => {
-            this.set({ pose: "reveal", shownSeats: e.reveals.map((r) => r.seat) });
+            this.set({
+              pose: "reveal",
+              focusSeat: null,
+              shownSeats: e.reveals.map((r) => r.seat),
+            });
             this.sink.sfx("flip");
           }),
         );
@@ -495,6 +505,7 @@ export class PokerDirector {
             const verb = mine(e.seat) ? "win" : "wins";
             this.set((p) => ({
               pose: "acknowledge",
+              focusSeat: e.seat,
               winners: [...p.winners, { seat: e.seat, amount: e.amount, handName: e.handName }],
               toast: {
                 id: e.id,
@@ -523,13 +534,14 @@ export class PokerDirector {
       }
       case "hand_completed": {
         const d = this.scale(BASE.settle) || 1;
-        this.beat(d, (at) => at(d, () => this.set({ pose: "idle", toast: null })));
+        this.beat(d, (at) => at(d, () => this.set({ pose: "idle", focusSeat: null, toast: null })));
         return;
       }
       case "hand_voided": {
         this.flush();
         this.set({
           pose: "idle",
+          focusSeat: null,
           holeShown: {},
           boardShown: 0,
           toast: {
