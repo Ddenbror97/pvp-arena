@@ -33,6 +33,19 @@ import {
   type ChainlinkRound,
 } from "./eth-price";
 import { workerEnv } from "@/lib/worker-env";
+import {
+  ANKR_MAX_BATCH,
+  ANKR_MAX_INDEX_CALLS,
+  ANKR_MIN_SCAN_BLOCKS,
+  activeTargets,
+  activityCalls,
+  ankrChainName,
+  ankrIndexUrl,
+  ankrIndexedThrough,
+  ankrNativeTransfers,
+  type AnkrTxPage,
+  type RpcReply,
+} from "./ankr-index";
 
 const ERC20 = parseAbi([
   "function transfer(address to, uint256 value) returns (bool)",
@@ -148,7 +161,7 @@ function rpcUrlFor(chainId: number, secondary = false): string | undefined {
   return undefined;
 }
 
-/** Alchemy-only JSON-RPC; other providers use block scanning for native ETH deposits. */
+/** Alchemy JSON-RPC index. Ankr uses `ankr-index.ts`; other providers use block scanning. */
 function rpcHasAlchemyAssetIndex(url: string): boolean {
   try {
     return /alchemy\.com/i.test(new URL(url).hostname);
@@ -446,12 +459,14 @@ async function providersAgree(
   logIndex: number | null,
 ): Promise<boolean> {
   if (!env.clientB) return env.networkMode === "testnet"; // mainnet requires two providers
-  const [bA, bB, rA, rB] = await Promise.all([
+  const [bA, rA, rB] = await Promise.all([
     env.client.getBlock({ blockNumber }).catch(() => null),
-    env.clientB!.getBlock({ blockNumber }).catch(() => null),
     env.client.getTransactionReceipt({ hash: txHash as Hex }).catch(() => null),
     env.clientB!.getTransactionReceipt({ hash: txHash as Hex }).catch(() => null),
   ]);
+  // Provider B by hash: its plan serves only recent blocks by number. B's own receipt
+  // (checked below) is what proves the block is canonical on B.
+  const bB = bA ? await env.clientB!.getBlock({ blockHash: bA.hash! }).catch(() => null) : null;
   if (!bA || !bB || bA.hash !== bB.hash || bA.number !== bB.number) return false;
   if (!bA.transactions.includes(txHash as Hex)) return false;
   if (!rA || !rB) return false;
@@ -594,6 +609,83 @@ async function scanNativeViaIndex(
   return { scannedTo: end, observed };
 }
 
+/** Native transfers to the treasury and deposit addresses. Batched balance and nonce reads
+ *  find the addresses with activity; only those are looked up in Ankr's address index.
+ *  Advances no further than the block every index response reports as indexed. Throws on any error. */
+async function scanNativeViaAnkrIndex(
+  env: Env,
+  rpcUrl: string,
+  indexUrl: string,
+  fromBlock: bigint,
+  toBlock: bigint,
+): Promise<{ scannedTo: bigint; observed: number }> {
+  const chain = ankrChainName(env.chainId);
+  if (!chain) throw new Error("INDEX_CHAIN");
+  const end =
+    toBlock < fromBlock + MAX_ETH_INDEX_BLOCKS - 1n
+      ? toBlock
+      : fromBlock + MAX_ETH_INDEX_BLOCKS - 1n;
+  const targets = Array.from(new Set([env.treasury.toLowerCase(), ...env.depositAddresses]));
+
+  const calls = activityCalls(targets, fromBlock - 1n, end);
+  const replies: RpcReply[] = [];
+  for (let i = 0; i < calls.length; i += ANKR_MAX_BATCH) {
+    const res = await fetch(rpcUrl, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(calls.slice(i, i + ANKR_MAX_BATCH)),
+    });
+    if (!res.ok) throw new Error("ACTIVITY_HTTP");
+    const part = (await res.json()) as unknown;
+    if (!Array.isArray(part)) throw new Error("ACTIVITY_READ");
+    replies.push(...(part as RpcReply[]));
+  }
+  const active = activeTargets(targets, replies);
+  if (active.length > ANKR_MAX_INDEX_CALLS) throw new Error("INDEX_BUSY");
+
+  let indexed = end;
+  let observed = 0;
+  let indexCalls = 0;
+  for (const target of active) {
+    let pageToken: string | undefined;
+    for (let page = 0; page < 20; page++) {
+      if (++indexCalls > ANKR_MAX_INDEX_CALLS) throw new Error("INDEX_BUSY");
+      const params: Record<string, unknown> = {
+        blockchain: chain,
+        address: target,
+        fromBlock: Number(fromBlock),
+        toBlock: Number(end),
+        pageSize: 1000,
+        descOrder: false,
+      };
+      if (pageToken) params["pageToken"] = pageToken;
+      const res = await fetch(indexUrl, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "ankr_getTransactionsByAddress",
+          params,
+        }),
+      });
+      if (!res.ok) throw new Error("INDEX_HTTP");
+      const json = (await res.json()) as AnkrTxPage;
+      if (json.error) throw new Error("INDEX_RPC");
+      const through = ankrIndexedThrough(json);
+      if (through == null) throw new Error("INDEX_SYNC_UNKNOWN");
+      if (through < indexed) indexed = through;
+      for (const t of ankrNativeTransfers(json, target, fromBlock, end)) {
+        if (await observeNativeTransfer(env, t)) observed++;
+      }
+      pageToken = json.result?.nextPageToken || undefined;
+      if (!pageToken) break;
+      if (page === 19) throw new Error("INDEX_TRUNCATED");
+    }
+  }
+  return { scannedTo: indexed < fromBlock ? fromBlock - 1n : indexed, observed };
+}
+
 /** Bounded getBlock fallback. One block at a time, a few blocks per run.
  *  A parallel batch of full blocks exhausted Worker memory and Cloudflare
  *  killed the isolate (1102), including the withdrawal cron sharing it.
@@ -728,18 +820,25 @@ export async function runDepositWatcher(chainId: number) {
     }
   }
 
+  let ethAt: bigint | null = null;
   if (env.ethEnabled) {
     const ethCursorRaw = await must<number | null>(
       rpc("crypto_get_eth_cursor", { p_chain: env.chainId }),
     );
     const ethCursor = ethCursorRaw == null ? latest : BigInt(ethCursorRaw);
-    if (ethCursor < latest) {
-      const primaryRpc = rpcUrlFor(env.chainId);
+    ethAt = ethCursor;
+    const primaryRpc = rpcUrlFor(env.chainId);
+    const ankrIndex = primaryRpc ? ankrIndexUrl(primaryRpc, env.chainId) : null;
+    const due = ankrIndex ? latest - ethCursor >= ANKR_MIN_SCAN_BLOCKS : ethCursor < latest;
+    if (due) {
       const useAlchemyIndex = !!primaryRpc && rpcHasAlchemyAssetIndex(primaryRpc);
+      const useIndex = useAlchemyIndex || !!ankrIndex;
       try {
-        const ethScan = useAlchemyIndex
-          ? await scanNativeViaIndex(env, ethCursor + 1n, latest)
-          : await scanNativeViaBlocks(env, ethCursor + 1n, latest);
+        const ethScan = ankrIndex
+          ? await scanNativeViaAnkrIndex(env, primaryRpc!, ankrIndex, ethCursor + 1n, latest)
+          : useAlchemyIndex
+            ? await scanNativeViaIndex(env, ethCursor + 1n, latest)
+            : await scanNativeViaBlocks(env, ethCursor + 1n, latest);
         observed += ethScan.observed;
         await must(
           rpc("crypto_set_eth_cursor", {
@@ -747,6 +846,7 @@ export async function runDepositWatcher(chainId: number) {
             p_block: Number(ethScan.scannedTo),
           }),
         );
+        if (ethScan.scannedTo > ethCursor) ethAt = ethScan.scannedTo;
         skippedEth = ethScan.scannedTo < latest;
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e);
@@ -761,7 +861,7 @@ export async function runDepositWatcher(chainId: number) {
             observed,
           };
         }
-        if (!useAlchemyIndex) {
+        if (!useIndex) {
           skippedEth = true;
         } else {
           try {
@@ -773,6 +873,7 @@ export async function runDepositWatcher(chainId: number) {
                 p_block: Number(blocks.scannedTo),
               }),
             );
+            if (blocks.scannedTo > ethCursor) ethAt = blocks.scannedTo;
           } catch {
             // Leave the ETH cursor where it is. The next run retries this range.
           }
@@ -874,6 +975,18 @@ export async function runDepositWatcher(chainId: number) {
         cursor: Number(lastCursor),
         latest: Number(latest),
         gap: Number(latest - lastCursor),
+      },
+    });
+  }
+  if (ethAt != null && latest > ethAt + 500n) {
+    await rpc("crypto_raise_incident", {
+      p_check: "crypto_eth_cursor_lag",
+      p_fp: `crypto_eth_cursor_lag:${env.chainId}:${new Date().toISOString().slice(0, 13)}`,
+      p_details: {
+        chain_id: env.chainId,
+        cursor: Number(ethAt),
+        latest: Number(latest),
+        gap: Number(latest - ethAt),
       },
     });
   }
