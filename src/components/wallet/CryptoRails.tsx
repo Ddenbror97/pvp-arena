@@ -40,6 +40,16 @@ import {
 import { bonusWithdrawBlockedMessage } from "@/lib/crypto/bonus-withdraw";
 
 const PRESETS = [20, 50, 100, 250];
+/** Rail order left to right; Bitcoin is its own rail and sits last. */
+const RAIL_ORDER = ["USDC", "ETH"];
+const DEFAULT_RAIL = "USDC";
+function railRank(key: string) {
+  const i = RAIL_ORDER.indexOf(key);
+  return i === -1 ? RAIL_ORDER.length : i;
+}
+function fallbackRail(keys: string[]) {
+  return keys.includes(DEFAULT_RAIL) ? DEFAULT_RAIL : (keys[0] ?? "BTC");
+}
 const EVM_ADDRESS = /^0x[0-9a-fA-F]{40}$/;
 type WithdrawalReview = {
   asset: string;
@@ -79,19 +89,22 @@ function CurrencyList({
   floors: Record<string, number>;
   layout?: "stack" | "row";
 }) {
-  const loaded = assets.map((asset) => ({
-    key: asset.asset_key,
-    label: asset.asset_key,
-    closed: withdraw && !asset.payout_ready,
-    pending: false,
-  }));
+  const loaded = assets
+    .map((asset) => ({
+      key: asset.asset_key,
+      label: asset.asset_key,
+      closed: withdraw && !asset.payout_ready,
+      pending: false,
+    }))
+    .sort((a, b) => railRank(a.key) - railRank(b.key));
+  const btc = { key: "BTC", label: "BTC", closed: false, pending: false };
   const rows =
     loaded.length > 0
-      ? [{ key: "BTC", label: "BTC", closed: false, pending: false }, ...loaded]
+      ? [...loaded, btc]
       : [
-          { key: "BTC", label: "BTC", closed: false, pending: false },
-          { key: "ETH", label: "ETH", closed: false, pending: true },
           { key: "USDC", label: "USDC", closed: false, pending: true },
+          { key: "ETH", label: "ETH", closed: false, pending: true },
+          btc,
         ];
   if (layout === "row") {
     return (
@@ -256,10 +269,10 @@ export function CryptoRails({
     staleTime: 30_000,
   });
   const [depositRail, setDepositRail] = useState(
-    requestedMode !== "withdraw" && requestedAsset ? requestedAsset : "BTC",
+    requestedMode !== "withdraw" && requestedAsset ? requestedAsset : DEFAULT_RAIL,
   );
   const [withdrawRail, setWithdrawRail] = useState(
-    requestedMode === "withdraw" && requestedAsset ? requestedAsset : "BTC",
+    requestedMode === "withdraw" && requestedAsset ? requestedAsset : DEFAULT_RAIL,
   );
   const seededRails = useRef(false);
   const [chainId, setChainId] = useState<number>(8453);
@@ -346,15 +359,19 @@ export function CryptoRails({
         ? requestedAsset
         : null;
     if (!seededRails.current) {
-      // A plain visit opens on Bitcoin. A header link can still name one asset.
+      // A plain visit opens on USDC. A header link can still name one asset.
       if (requested && requestedMode === "withdraw") setWithdrawRail(requested);
       else if (requested) setDepositRail(requested);
       seededRails.current = true;
       return;
     }
     if (keys.length === 0) return;
-    setDepositRail((current) => (current === "BTC" || keys.includes(current) ? current : "BTC"));
-    setWithdrawRail((current) => (current === "BTC" || keys.includes(current) ? current : "BTC"));
+    setDepositRail((current) =>
+      current === "BTC" || keys.includes(current) ? current : fallbackRail(keys),
+    );
+    setWithdrawRail((current) =>
+      current === "BTC" || keys.includes(current) ? current : fallbackRail(keys),
+    );
   }, [chain?.chain_id, requestedAsset, assetKeys, requestedMode]);
 
   useEffect(() => {

@@ -47,6 +47,8 @@ type FundingEvent = {
   cancelable: boolean;
   /** Unpaid invoices are not balance credits. */
   credited: boolean;
+  /** Credited deposit or a cashout the network confirmed. */
+  settled: boolean;
 };
 
 function compactUnits(units: string, decimals: number, asset: string) {
@@ -101,6 +103,7 @@ export function fundingEvents(data: CryptoActivity | undefined): FundingEvent[] 
         chainId: row.chain_id,
         cancelable: false,
         credited: true,
+        settled: row.status === "CREDITED",
       };
     }),
     ...data.withdrawals.map((row) => {
@@ -120,6 +123,7 @@ export function fundingEvents(data: CryptoActivity | undefined): FundingEvent[] 
         chainId: row.chain_id,
         cancelable: ["PENDING", "APPROVED"].includes(row.status),
         credited: true,
+        settled: row.status === "CONFIRMED",
       };
     }),
     ...data.bitcoin.map((row) => ({
@@ -135,6 +139,7 @@ export function fundingEvents(data: CryptoActivity | undefined): FundingEvent[] 
       chainId: null,
       cancelable: false,
       credited: row.status === "CREDITED",
+      settled: row.status === "CREDITED",
     })),
     ...(data.card ?? []).map((row) => ({
       id: row.id,
@@ -148,7 +153,8 @@ export function fundingEvents(data: CryptoActivity | undefined): FundingEvent[] 
       txHash: null,
       chainId: null,
       cancelable: false,
-      credited: true,
+      credited: row.status === "CREDITED",
+      settled: row.status === "CREDITED",
     })),
     ...data.bitcoinPayouts.map((row) => ({
       id: row.id,
@@ -163,6 +169,7 @@ export function fundingEvents(data: CryptoActivity | undefined): FundingEvent[] 
       chainId: null,
       cancelable: false,
       credited: true,
+      settled: row.status === "COMPLETED",
     })),
   ];
   return rows.sort((a, b) => (a.at < b.at ? 1 : -1));
@@ -240,7 +247,9 @@ function EventRow({
 
 export function RecentFunding() {
   const activity = useCryptoActivity(true);
-  const events = fundingEvents(activity.data).slice(0, 3);
+  const events = fundingEvents(activity.data)
+    .filter((event) => event.settled)
+    .slice(0, 3);
   return (
     <section className="mt-3 rounded-lg border border-border bg-card" aria-label="Recent activity">
       <div className="flex items-center justify-between px-3 py-2">
@@ -267,7 +276,9 @@ export function RecentFunding() {
           ))}
         </ul>
       ) : events.length === 0 ? (
-        <p className="px-3 pb-3 text-xs text-muted-foreground">No activity yet.</p>
+        <p className="px-3 pb-3 text-xs text-muted-foreground">
+          No completed deposits or cashouts yet.
+        </p>
       ) : (
         <ul className="divide-y divide-border border-t border-border px-3">
           {events.map((event) => (
