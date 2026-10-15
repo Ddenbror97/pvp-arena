@@ -4,16 +4,13 @@ import { prefetchGamePage } from "@/lib/first-paint";
 import { warmSlotStage } from "@/lib/slott/stage";
 import { routeTree } from "./routeTree.gen";
 
-// Hover/touch preloading of the next page, skipped on Save-Data or slow connections.
+// Hover/touch preloading of the next page, skipped on Save-Data or 2G. Route code is small and is
+// what makes a click instant; `downlink` estimates read low on healthy 4G, so they are not a gate.
 function preloadMode(): "intent" | false {
   if (typeof navigator === "undefined") return "intent";
-  const c = (
-    navigator as Navigator & {
-      connection?: { saveData?: boolean; effectiveType?: string; downlink?: number };
-    }
-  ).connection;
-  if (c?.saveData || /(^|-)2g$|3g/.test(c?.effectiveType ?? "") || (c?.downlink ?? 10) < 1.5)
-    return false;
+  const c = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } })
+    .connection;
+  if (c?.saveData || /(^|-)2g$/.test(c?.effectiveType ?? "")) return false;
   return "intent";
 }
 
