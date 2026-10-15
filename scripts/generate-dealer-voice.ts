@@ -2,7 +2,7 @@
  * Records every dealer line with a neural voice (Cloudflare Workers AI, Deepgram Aura-2)
  * into public/audio/dealer/<id>.mp3.
  *
- *   CLOUDFLARE_ACCOUNT_ID=... npx tsx scripts/generate-dealer-voice.ts [--force] [--speaker athena]
+ *   CLOUDFLARE_ACCOUNT_ID=... npx tsx scripts/generate-dealer-voice.ts [--force] [--speaker delia]
  *
  * Auth: CLOUDFLARE_API_TOKEN (Workers AI permission), else the local `wrangler login` token.
  * Existing clips are kept unless --force, so adding a line only records the new one.
@@ -16,7 +16,7 @@ const MODEL = "@cf/deepgram/aura-2-en";
 const args = process.argv.slice(2);
 const force = args.includes("--force");
 const at = args.indexOf("--speaker");
-const speaker = at >= 0 && args[at + 1] ? args[at + 1]! : "athena";
+const speaker = at >= 0 && args[at + 1] ? args[at + 1]! : "delia";
 
 function token(): string {
   if (process.env.CLOUDFLARE_API_TOKEN) return process.env.CLOUDFLARE_API_TOKEN;
