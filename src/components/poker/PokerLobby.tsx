@@ -203,7 +203,7 @@ export function PokerLobby() {
             </div>
           </div>
 
-          <div id={TABLES_ID} className="scroll-mt-20 space-y-5">
+          <div id={TABLES_ID} className="poker-sections scroll-mt-20">
             {lobby.isLoading ? (
               <ListSkeleton />
             ) : lobby.isError ? (
@@ -238,26 +238,28 @@ export function PokerLobby() {
                 </button>
               </div>
             ) : (
-              groups.map((g) => (
-                <section key={g.category} aria-labelledby={`poker-cat-${g.category}`}>
-                  <div className="poker-section-head">
-                    <h2 id={`poker-cat-${g.category}`}>{g.category} Stakes</h2>
-                    <p>
-                      <span className="hidden sm:inline">Blinds {blindRange(g.types)}</span>
-                      {g.live ? (
-                        <span className="poker-pill is-live">
-                          Live · {g.live} {g.live === 1 ? "table" : "tables"}
-                        </span>
-                      ) : null}
-                    </p>
-                  </div>
-                  <div className="poker-card-grid">
-                    {g.items.map((l) => (
-                      <TableCard key={l.key} listing={l} {...act} />
-                    ))}
-                  </div>
-                </section>
-              ))
+              <div className="poker-section-grid">
+                {groups.map((g) => (
+                  <section key={g.category} aria-labelledby={`poker-cat-${g.category}`}>
+                    <div className="poker-section-head">
+                      <h2 id={`poker-cat-${g.category}`}>{g.category} Stakes</h2>
+                      <p>
+                        <span className="hidden sm:inline">Blinds {blindRange(g.types)}</span>
+                        {g.live ? (
+                          <span className="poker-pill is-live">
+                            Live · {g.live} {g.live === 1 ? "table" : "tables"}
+                          </span>
+                        ) : null}
+                      </p>
+                    </div>
+                    <div className="poker-card-grid">
+                      {g.items.map((l) => (
+                        <TableCard key={l.key} listing={l} {...act} />
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
             )}
           </div>
         </div>
@@ -564,10 +566,10 @@ function Featured({
         </span>
         <div className="min-w-0 flex-1">
           <p className="poker-featured-badge">Featured table</p>
-          <p className="truncate font-display text-[0.95rem] text-[var(--ink)]">
+          <p className="font-display text-[0.95rem] leading-tight text-[var(--ink)]">
             No table is running right now
           </p>
-          <p className="truncate text-xs text-[var(--ink-muted)]">
+          <p className="mt-0.5 text-xs text-[var(--ink-muted)]">
             Take the first seat at any stake and the table opens.
           </p>
         </div>
@@ -709,14 +711,14 @@ function TableArt({
 
 function ListSkeleton() {
   return (
-    <div className="space-y-5" aria-busy="true" aria-label="Loading tables">
+    <div className="poker-section-grid" aria-busy="true" aria-label="Loading tables">
       {[0, 1].map((s) => (
         <div key={s}>
           <div className="poker-section-head">
             <span className="h-5 w-32 animate-pulse rounded bg-white/5" />
           </div>
           <div className="poker-card-grid">
-            {[0, 1, 2, 3].map((i) => (
+            {[0, 1].map((i) => (
               <div key={i} className="poker-tcard is-skeleton" />
             ))}
           </div>

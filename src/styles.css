@@ -1946,6 +1946,7 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 }
 .poker-hero-modes { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--neon-hot); }
 .poker-hero-modes span { margin-inline: 0.3em; color: var(--ink-muted); }
+@media (max-width: 359.98px) { .poker-hero-modes { font-size: 0.62rem; letter-spacing: 0.06em; } }
 .poker-hero-sub { font-size: 0.95rem; color: rgb(238 240 251 / 88%); }
 .poker-hero-cta { align-self: flex-start; height: 2.75rem; margin-top: 0.35rem; padding: 0 1.25rem; font-size: 0.85rem; }
 .poker-hero-art { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
@@ -2046,7 +2047,7 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 .poker-radio.is-checked .poker-radio-dot { border-color: var(--neon-hot); background: radial-gradient(circle, var(--neon-hot) 0 36%, transparent 42%); box-shadow: 0 0 8px var(--neon); }
 .poker-radio-hint { justify-self: end; font-size: 0.64rem; color: var(--ink-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-.poker-lobby-top { display: grid; gap: 0.75rem; }
+.poker-lobby-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.75rem; }
 @media (min-width: 1280px) { .poker-lobby-top { grid-template-columns: minmax(0, 1fr) auto; align-items: center; } }
 .poker-featured {
   display: flex; align-items: center; gap: 0.9rem; min-height: 4.75rem; padding: 0.7rem 0.9rem; border-radius: 1rem;
@@ -2063,7 +2064,7 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 .poker-featured-badge { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #ffcf5a; }
 .poker-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
 .poker-search {
-  display: flex; flex: 1 1 14rem; align-items: center; gap: 0.5rem; height: 2.6rem; padding: 0 0.8rem; border-radius: 0.75rem;
+  display: flex; flex: 1 1 10rem; min-width: 0; align-items: center; gap: 0.5rem; height: 2.6rem; padding: 0 0.8rem; border-radius: 0.75rem;
   border: 1px solid var(--edge); background: var(--panel); transition: border-color 0.15s, box-shadow 0.15s;
 }
 .poker-search:focus-within, .poker-sort:focus-within { border-color: #b57bff; box-shadow: 0 0 0 3px rgb(139 53 236 / 25%); }
@@ -2088,7 +2089,14 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 .poker-pill.is-live { color: #4ade80; border-color: rgb(74 222 128 / 35%); background: rgb(74 222 128 / 8%); }
 .poker-pill.is-live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
 .poker-pill.is-full { color: #f87171; border-color: rgb(248 113 113 / 35%); background: rgb(248 113 113 / 8%); }
-.poker-card-grid { display: grid; gap: 0.65rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); }
+.poker-sections { container-type: inline-size; }
+.poker-section-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+/* Once two cards fit per section, pair sections up instead of stretching two cards across the row. */
+@container (min-width: 78rem) {
+  .poker-section-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .poker-section-grid > :only-child { grid-column: 1 / -1; }
+}
+.poker-card-grid { display: grid; gap: 0.65rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); }
 .poker-tcard {
   display: flex; align-items: center; gap: 0.75rem; min-height: 6.25rem; padding: 0.7rem 0.8rem; border-radius: 0.9rem;
   border: 1px solid var(--edge); background: linear-gradient(180deg, #100c2d, #0a0920); transition: border-color 0.15s, box-shadow 0.15s;

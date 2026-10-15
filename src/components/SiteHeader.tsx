@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { WalletGroupPlaceholder } from "@/components/wallet/HeaderWalletFrame";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
 import { equippedAssets, usePrestige } from "@/components/prestige/PrestigeProvider";
-import { Dices, Coins, CircleDot, Cherry, Spade, User } from "lucide-react";
+import { Dices, Coins, CircleDot, Cherry, Spade, ShieldCheck } from "lucide-react";
 import { arenaLogo } from "@/assets/media";
 import { TokenMark } from "@/components/wallet/TokenMark";
 import { SoundToggle } from "@/components/SoundToggle";
@@ -308,11 +308,6 @@ export function SiteFooter({ className }: { className?: string }) {
 /** Phone-only bottom tab bar: primary navigation within thumb reach. */
 export function MobileTabBar() {
   const qc = useQueryClient();
-  const { userId: authId } = useAuth();
-  // Auth state is client-only; defer it until after hydration to keep SSR markup identical.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  const userId = mounted ? authId : null;
   const tab =
     "flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors [&.active]:text-primary";
   return (
@@ -345,9 +340,9 @@ export function MobileTabBar() {
         <Spade className="h-5 w-5" />
         Poker
       </Link>
-      <Link to={userId ? "/profile" : "/auth"} className={tab}>
-        <User className="h-5 w-5" />
-        {userId ? "Profile" : "Sign in"}
+      <Link to="/fairness" className={tab}>
+        <ShieldCheck className="h-5 w-5" />
+        Fairness
       </Link>
     </nav>
   );
