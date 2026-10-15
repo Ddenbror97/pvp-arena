@@ -425,7 +425,7 @@ d("partner leaderboards", () => {
     const listed = await sql`select pvp_test.leaderboard_public_list() as r`;
     expect(JSON.stringify(listed[0].r)).not.toContain("Settled race");
     expect(JSON.stringify(board.r.rules)).toContain(
-      "stays locked until you wager that same amount on Jackpot, Coinflip, Roulette, or Slott",
+      "stays locked until you wager that same amount on Jackpot, Coinflip, Roulette, Slott, or Poker",
     );
     expect(JSON.stringify(board.r.rules)).not.toMatch(/ledger/i);
   }, 90_000);

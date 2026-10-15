@@ -84,7 +84,11 @@ export function agedHoldRecovery(input: {
       next: "release only through the existing cancel path after the provider reports Cancelled",
     };
   }
-  if (input.providerState === "Completed" || input.providerState === "InProgress" || input.hasTxid) {
+  if (
+    input.providerState === "Completed" ||
+    input.providerState === "InProgress" ||
+    input.hasTxid
+  ) {
     return {
       action: "CONFIRMED_BROADCAST",
       next: "settle only after this row's quote matches and its transaction id is stored",
@@ -128,7 +132,10 @@ const PAYOUT_COLUMNS =
   "id, user_id, btcpay_payout_id, usd_cents, fee_usd_cents, address, status, quote_sats, created_at, payout_txid";
 
 /** A hold older than the rolling cap window no longer counts, but the balance stays reserved. */
-export function holdLeavesDailyCap(createdAt: string | null | undefined, now = Date.now()): boolean {
+export function holdLeavesDailyCap(
+  createdAt: string | null | undefined,
+  now = Date.now(),
+): boolean {
   if (!createdAt) return false;
   const created = Date.parse(createdAt);
   return Number.isFinite(created) && now - created >= CAP_WINDOW_MS;
@@ -323,8 +330,12 @@ async function viewWithAmount(
   config: Enabled,
   view: PayoutView,
   quote: { sats: bigint; address: string; orderId: string; onchainMethod: string } | null,
-): Promise<{ view: PayoutView; match: { ok: true; sats: bigint } | { ok: false; reason: string } }> {
-  let match = quote == null ? { ok: false as const, reason: "QUOTE" } : payoutMatchesQuote(view, quote);
+): Promise<{
+  view: PayoutView;
+  match: { ok: true; sats: bigint } | { ok: false; reason: string };
+}> {
+  let match =
+    quote == null ? { ok: false as const, reason: "QUOTE" } : payoutMatchesQuote(view, quote);
   if (match.ok || match.reason !== "AMOUNT_MISSING" || quote == null) return { view, match };
   try {
     const refreshed = readPayoutView(await getPayout(config, view.id));
@@ -405,11 +416,7 @@ async function recoverUnattached(
   return "one";
 }
 
-function reportAgedHold(
-  row: PayoutRow,
-  lookup: HoldLookup,
-  providerState: string | null,
-): void {
+function reportAgedHold(row: PayoutRow, lookup: HoldLookup, providerState: string | null): void {
   if (row.status !== "HOLD" || !holdLeavesDailyCap(row.created_at)) return;
   const created = row.created_at ? Date.parse(row.created_at) : Number.NaN;
   const ageHours = Number.isFinite(created)
@@ -458,7 +465,8 @@ export async function reconcilePayout(config: Enabled, row: PayoutRow): Promise<
   }
   reportAgedHold(row, "attached", view.state);
   const quote = quoteFor(row, config.onchainMethod);
-  const match = quote == null ? { ok: false as const, reason: "QUOTE" } : payoutMatchesQuote(view, quote);
+  const match =
+    quote == null ? { ok: false as const, reason: "QUOTE" } : payoutMatchesQuote(view, quote);
   if (view.state === "Cancelled") {
     await admin.rpc("btcpay_fail_payout", { p_id: row.id, p_reason: "CANCELLED" });
     return;
@@ -592,13 +600,13 @@ function payoutError(message: string): string {
     return "This would exceed the daily cashout limit.";
   if (message.includes("INSUFFICIENT_BALANCE")) return "Not enough balance.";
   if (message.includes("REFERRAL_PLAYTHROUGH"))
-    return "Your $10 referral reward has to be wagered on Jackpot, Coinflip, Roulette, or Slott before that reward can be withdrawn.";
+    return "Your $10 referral reward has to be wagered on Jackpot, Coinflip, Roulette, Slott, or Poker before that reward can be withdrawn.";
   if (message.includes("PROMO_PLAYTHROUGH"))
-    return "Promotional credit has to be wagered on Jackpot, Coinflip, Roulette, or Slott before that amount can be withdrawn.";
+    return "Promotional credit has to be wagered on Jackpot, Coinflip, Roulette, Slott, or Poker before that amount can be withdrawn.";
   if (message.includes("BONUS_NOT_WITHDRAWABLE"))
     return "Your balance includes promo or bonus credit that cannot be cashed out yet. Deposit at least $20 on Base first; after that, bonus winnings can be withdrawn (minimum cashout $20).";
   if (message.includes("LEADERBOARD_PLAYTHROUGH"))
-    return "Leaderboard prize money has to be wagered on Jackpot, Coinflip, Roulette, or Slott before that amount can be withdrawn.";
+    return "Leaderboard prize money has to be wagered on Jackpot, Coinflip, Roulette, Slott, or Poker before that amount can be withdrawn.";
   if (message.includes("PARTNER_WITHDRAWAL_BLOCKED"))
     return "You cant withdraw right now, try again later";
   if (message.includes("PARTNER_FUNDS_HELD"))

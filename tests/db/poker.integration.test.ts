@@ -482,6 +482,67 @@ d("poker", () => {
   );
 
   it(
+    "ranks poker on leaderboards by deposit-funded contested chips only",
+    async () => {
+      const host = await player(0);
+      const depositor = await player(10_000);
+      const promoOnly = await player(0, 10_000);
+      await sql`insert into pvp_test.partners (user_id, created_by, leaderboard) values (${host.id}, ${host.id}, true)`;
+      const [template] =
+        await sql`select id, version from pvp_test.leaderboard_templates where status = 'active' limit 1`;
+      const [race] = await sql`insert into pvp_test.leaderboard_campaigns (
+        partner_user_id, template_id, template_version, name, description, status, timezone,
+        starts_at, ends_at, min_wager_cents, games, prize_pool_cents, audience,
+        funding_status, rules_frozen_at, approved_by, approved_at, started_at
+      ) values (
+        ${host.id}::uuid, ${template.id}::uuid, ${template.version}, 'Poker race', '', 'active', 'UTC',
+        now() - interval '1 minute', now() + interval '2 hours', 0, array['poker'], 500, 'open',
+        'checked', clock_timestamp(), ${host.id}::uuid, now(), now() - interval '1 minute'
+      ) returning id`;
+      const ra = await sit(depositor, 2, 1000);
+      const table = ra.table_id as number;
+      await sit(promoOnly, null, 1000, { table });
+      for (let i = 0; i < 3; i++) {
+        await liveHand(table);
+        await drive(table, [depositor, promoOnly]);
+      }
+      await sql`select pvp_test._withdraw_basis_sync()`;
+      await sql`select pvp_test._lb_sync(${race.id}::uuid)`;
+
+      const want = (
+        await sql`select hp.user_id, coalesce(sum(least(hp.wagered, (hp.wagered * x.eligible) / x.put)), 0)::bigint c,
+          coalesce(sum(hp.wagered), 0)::bigint w
+        from pvp_test.poker_hand_players hp
+        join pvp_test.poker_hands h on h.id = hp.hand_id
+        join pvp_test.withdraw_basis_poker_put x on x.hand_id = hp.hand_id and x.user_id = hp.user_id
+        where h.table_id = ${table} and h.status = 'COMPLETED' and array_length(h.board, 1) >= 3
+        group by hp.user_id`
+      ).reduce((m, r) => m.set(r.user_id as string, r), new Map<string, Row>());
+      expect(Number(want.get(depositor.id)?.c)).toBeGreaterThan(0);
+      expect(Number(want.get(depositor.id)?.c)).toBeLessThanOrEqual(
+        Number(want.get(depositor.id)?.w),
+      );
+      expect(Number(want.get(promoOnly.id)?.c ?? 0)).toBe(0);
+
+      const rows = await sql`select player_id, qualifying_cents from pvp_test.leaderboard_entries
+        where campaign_id = ${race.id}::uuid and qualifying_cents > 0`;
+      expect(rows.map((r) => [r.player_id, Number(r.qualifying_cents)])).toEqual([
+        [depositor.id, Number(want.get(depositor.id)!.c)],
+      ]);
+      const rules = JSON.stringify(
+        (await sql`select pvp_test.leaderboard_public_board(${race.id}::uuid, 10, 0) r`)[0]!.r
+          .rules,
+      );
+      expect(rules).toContain("Poker counts the chips you put into contested pots");
+      expect(rules).not.toContain("null");
+      await leave(depositor, table);
+      await leave(promoOnly, table);
+      expect((await reconcile()).ok).toBe(true);
+    },
+    LONG,
+  );
+
+  it(
     "plays complete heads-up hands that verify, replay and reconcile",
     async () => {
       const a = await player(10_000);

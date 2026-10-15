@@ -58,7 +58,7 @@ type Detail = {
   rules?: string[];
 };
 
-const GAMES = ["jackpot", "coinflip", "roulette", "slott"];
+const GAMES = ["jackpot", "coinflip", "roulette", "slott", "poker"];
 const control = "h-9 rounded-md border border-border bg-background px-2 text-sm";
 
 export function LeaderboardsAdmin() {

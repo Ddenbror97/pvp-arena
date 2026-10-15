@@ -119,7 +119,7 @@ export function InvitePanel() {
           </li>
           <li>
             <span className="text-foreground">3.</span> When they wager {formatUsd(playCents)} on
-            Jackpot, Coinflip, Roulette, or Slott, you earn {formatUsd(rewardCents)}.
+            Jackpot, Coinflip, Roulette, Slott, or Poker, you earn {formatUsd(rewardCents)}.
           </li>
         </ol>
       ) : (

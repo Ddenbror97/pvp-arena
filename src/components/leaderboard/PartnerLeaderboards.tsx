@@ -80,7 +80,7 @@ type Draft = {
   tiers: { rank_start: string; rank_end: string; dollars: string }[];
 };
 
-const GAMES = ["jackpot", "coinflip", "roulette", "slott"] as const;
+const GAMES = ["jackpot", "coinflip", "roulette", "slott", "poker"] as const;
 const control = "h-9 w-full rounded-md border border-border bg-background px-2 text-sm";
 
 function clock(ms: number): string {

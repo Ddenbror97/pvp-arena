@@ -28,13 +28,13 @@ const ERRORS: Record<string, string> = {
   QUOTE_MISMATCH: "Amount changed since the quote. Get a new quote.",
   INSUFFICIENT_BALANCE: "Not enough balance.",
   REFERRAL_PLAYTHROUGH:
-    "Your $10 referral reward has to be wagered on Jackpot, Coinflip, Roulette, or Slott before that reward can be withdrawn.",
+    "Your $10 referral reward has to be wagered on Jackpot, Coinflip, Roulette, Slott, or Poker before that reward can be withdrawn.",
   PROMO_PLAYTHROUGH:
-    "Promotional credit has to be wagered on Jackpot, Coinflip, Roulette, or Slott before that amount can be withdrawn.",
+    "Promotional credit has to be wagered on Jackpot, Coinflip, Roulette, Slott, or Poker before that amount can be withdrawn.",
   BONUS_NOT_WITHDRAWABLE:
     "Your balance includes promo or bonus credit that cannot be cashed out yet. Deposit at least $20 on Base first; after that, bonus winnings can be withdrawn (minimum cashout $20). Winnings funded by another player's bonus stay bonus.",
   LEADERBOARD_PLAYTHROUGH:
-    "Leaderboard prize money has to be wagered on Jackpot, Coinflip, Roulette, or Slott before that amount can be withdrawn.",
+    "Leaderboard prize money has to be wagered on Jackpot, Coinflip, Roulette, Slott, or Poker before that amount can be withdrawn.",
   PARTNER_WITHDRAWAL_BLOCKED: "You cant withdraw right now, try again later",
   PARTNER_FUNDS_HELD:
     "Balance from your partner period stays on the account. You can withdraw up to what you've deposited since.",
@@ -417,7 +417,10 @@ export const quoteEthWithdrawal = createServerFn({ method: "POST" })
     });
     if (error) {
       const withdraw = await loadWithdrawSnapshot(await admin(), context.userId);
-      return { ok: false as const, error: cleanWithdrawError(error.message, withdraw, data.usdCents) };
+      return {
+        ok: false as const,
+        error: cleanWithdrawError(error.message, withdraw, data.usdCents),
+      };
     }
     return {
       ok: true as const,

@@ -25,6 +25,7 @@ const GAME_LABEL: Record<string, string> = {
   coinflip: "Coinflip",
   roulette: "Roulette",
   slott: "Slott",
+  poker: "Poker",
 };
 
 function LocalTime({ iso }: { iso: string | null }) {

@@ -32,7 +32,7 @@ function InvitePage() {
             </p>
             <p className="mx-auto mt-3 max-w-sm text-xs leading-relaxed text-muted-foreground">
               After you deposit {formatUsd(data.deposit_cents)} and wager{" "}
-              {formatUsd(data.play_cents)} on Jackpot, Coinflip, Roulette, or Slott,{" "}
+              {formatUsd(data.play_cents)} on Jackpot, Coinflip, Roulette, Slott, or Poker,{" "}
               {data.username} earns their referral reward. This link does not add credit to your
               balance.
             </p>
