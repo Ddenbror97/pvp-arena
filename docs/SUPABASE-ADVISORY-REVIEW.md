@@ -1,6 +1,8 @@
 # Supabase advisory review
 
-Last closed review: **2026-10-13** (production PVPSPINARENA). Re-run advisors after DDL; compare counts here rather than treating linter output as a blanket fix list.
+Last closed review: **2026-10-15** (production PVPSPINARENA). Re-run advisors after DDL; compare counts here rather than treating linter output as a blanket fix list.
+
+2026-10-15 counts: 15 anon / 90 authenticated SECURITY DEFINER, 1 mutable search_path (`slot_tick_worker`), 128 RLS-without-policy (incl. `pvp_test`), 53 unindexed FKs (all `pvp_test`), 174 unused indexes, Auth DB connections absolute (10).
 
 ## Completed on production
 
@@ -45,7 +47,7 @@ Live seeds sit in `*_game_secrets` / `poker_hand_secrets` (no client grant). The
 
 ### `slot_tick_worker` mutable search_path
 
-Accepted. It is a procedure that commits per table, and a procedure with a `SET` clause cannot commit. It is not SECURITY DEFINER, only `service_role` can call it, and every object it references is schema-qualified.
+Accepted. It is a procedure that commits per table, and a procedure with a `SET` clause cannot commit. It is not SECURITY DEFINER, only `service_role` can call it, and every object it references is schema-qualified. `security.integration.test.ts` fails if another function loses its pinned search_path, if the worker becomes SECURITY DEFINER, or if its body calls an unqualified non-`pg_catalog` function or table.
 
 ### Intentional `authenticated` SECURITY DEFINER RPCs (~63 beyond anon)
 
@@ -79,7 +81,7 @@ This cannot be applied via Postgres migration. After enabling, re-run **security
 | Withdraw basis caches | `withdraw_basis_*` (client roles revoked)                                 |
 | Test harness          | `pvp_test.test_auth_users` / `test_auth_sessions` (RLS on, zero policies) |
 
-Periodic check: new tables with RLS and no policies should be classified here before launch.
+Periodic check: new tables with RLS and no policies should be classified here before launch. `security.integration.test.ts` fails if `anon` or `authenticated` can read any of them (`withdraw_basis_poker_put`, added with poker, is covered).
 
 ---
 
@@ -105,6 +107,8 @@ Supabase installs **`pg_net` in `public`**. Moving it is a **platform/extension*
 ## Unused indexes (~127)
 
 Includes the eight new FK indexes and many CI/low-traffic paths. **Do not drop** on linter alone; re-evaluate after representative production workload (`pg_stat_user_indexes`).
+
+`poker_hands_completed_created_idx` serves the per-minute poker leaderboard ingest (`status = 'COMPLETED'` within a campaign window). With a handful of completed hands the planner prefers a sequential scan; keep it.
 
 ---
 

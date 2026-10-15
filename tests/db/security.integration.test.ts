@@ -872,6 +872,39 @@ d("live database permissions (read-only catalog checks)", () => {
     expect(rows).toEqual([]);
   });
 
+  it("slot_tick_worker is the only unpinned search_path, and it resolves nothing through it", async () => {
+    const unpinned = await sql`select p.proname, p.prosecdef, coalesce(p.prosrc, '') src
+      from pg_proc p join pg_namespace n on n.oid = p.pronamespace join pg_language l on l.oid = p.prolang
+      where n.nspname = 'pvp_test' and l.lanname in ('plpgsql', 'sql')
+        and not exists (select 1 from unnest(coalesce(p.proconfig, '{}')) c where c like 'search_path=%')
+        and not exists (select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e')`;
+    expect(unpinned.map((r) => r.proname)).toEqual(["slot_tick_worker"]);
+    const [worker] = unpinned;
+    expect(worker.prosecdef).toBe(false);
+    const src = String(worker.src);
+    const calls = [
+      ...new Set([...src.matchAll(/(?<![.\w])([a-z_][a-z0-9_]*)\s*\(/g)].map((m) => m[1])),
+    ];
+    const builtin =
+      await sql`select proname from pg_proc where pronamespace = 'pg_catalog'::regnamespace and proname = any(${calls})`;
+    expect(calls.filter((c) => !builtin.some((b) => b.proname === c))).toEqual([]);
+    const tables = [...src.matchAll(/\b(?:from|join|update)\s+([a-z_][a-z0-9_.]*)/gi)].map(
+      (m) => m[1],
+    );
+    expect(tables.length).toBeGreaterThan(0);
+    expect(tables.filter((t) => !t.startsWith("pvp_test."))).toEqual([]);
+  });
+
+  it("tables with RLS and no policies are backend-only: no browser role can read them", async () => {
+    const rows =
+      await sql`select c.relname, r.role from pg_class c join pg_namespace n on n.oid = c.relnamespace,
+      (values ('anon'), ('authenticated')) r(role)
+      where n.nspname = 'pvp_test' and c.relkind = 'r' and c.relrowsecurity
+        and not exists (select 1 from pg_policy p where p.polrelid = c.oid)
+        and has_table_privilege(r.role, c.oid, 'select')`;
+    expect(rows).toEqual([]);
+  });
+
   it("realtime: browsers may only receive chat broadcasts (no insert policy, no presence)", async () => {
     const [ns] = await sql`select to_regnamespace('realtime') as n`;
     if (ns.n === null) {
