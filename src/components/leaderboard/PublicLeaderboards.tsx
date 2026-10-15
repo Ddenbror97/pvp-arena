@@ -174,24 +174,17 @@ export function LeaderboardIndex({
     networkMode: "always",
     retry: false,
     enabled: rows === undefined,
-    queryFn: async () => {
-      try {
-        await leaderboardCall("leaderboard_tick");
-      } catch {
-        /* the list still loads if the refresh is busy */
-      }
-      return leaderboardCall<PublicListRow[]>("leaderboard_public_list");
-    },
+    queryFn: () => leaderboardCall<PublicListRow[]>("leaderboard_public_list"),
     refetchInterval: rows === undefined ? 20_000 : false,
   });
   const listed = (rows ?? query.data)
     ?.filter((row) => row.status === "active")
     .slice()
     .sort((a, b) => {
-    const rank = boardOrder(a) - boardOrder(b);
-    if (rank !== 0) return rank;
-    return new Date(a.ends_at).getTime() - new Date(b.ends_at).getTime();
-  });
+      const rank = boardOrder(a) - boardOrder(b);
+      if (rank !== 0) return rank;
+      return new Date(a.ends_at).getTime() - new Date(b.ends_at).getTime();
+    });
   const now = useNow(
     Boolean(
       listed?.some(
@@ -359,7 +352,12 @@ function PodiumSeat({ row, rank }: { row: BoardRow | null; rank: 1 | 2 | 3 }) {
             : "flex-col items-center border-rival/30 bg-[linear-gradient(180deg,color-mix(in_oklab,var(--rival)_16%,transparent),transparent_72%)] px-2 pb-0 pt-3 text-center",
       )}
     >
-      <div className={cn("flex min-w-0 flex-1 flex-col", first ? "items-start sm:items-center" : "items-center")}>
+      <div
+        className={cn(
+          "flex min-w-0 flex-1 flex-col",
+          first ? "items-start sm:items-center" : "items-center",
+        )}
+      >
         <span
           className={cn(
             "font-display text-xs uppercase tracking-[0.16em]",
@@ -389,7 +387,9 @@ function PodiumSeat({ row, rank }: { row: BoardRow | null; rank: 1 | 2 | 3 }) {
               {formatUsd(row.qualifying_cents)}
             </span>
             {row.prize_cents != null ? (
-              <span className={cn("mt-1 font-display text-sm tabular", first && "text-lg text-gold")}>
+              <span
+                className={cn("mt-1 font-display text-sm tabular", first && "text-lg text-gold")}
+              >
                 {formatUsd(row.prize_cents)}
               </span>
             ) : null}
@@ -412,7 +412,11 @@ function PodiumSeat({ row, rank }: { row: BoardRow | null; rank: 1 | 2 | 3 }) {
       <span
         className={cn(
           "hidden w-full rounded-b-[0.9rem] sm:block",
-          first ? "mt-3 h-8 bg-gold/30" : rank === 2 ? "mt-3 h-5 bg-foreground/10" : "mt-3 h-3 bg-rival/20",
+          first
+            ? "mt-3 h-8 bg-gold/30"
+            : rank === 2
+              ? "mt-3 h-5 bg-foreground/10"
+              : "mt-3 h-3 bg-rival/20",
         )}
         aria-hidden
       />
@@ -444,18 +448,12 @@ export function LeaderboardBoard({
     networkMode: "always",
     retry: false,
     enabled: preview === undefined,
-    queryFn: async () => {
-      try {
-        await leaderboardCall("leaderboard_tick");
-      } catch {
-        /* board read is the source of truth */
-      }
-      return leaderboardCall<PublicBoard>("leaderboard_public_board", {
+    queryFn: () =>
+      leaderboardCall<PublicBoard>("leaderboard_public_board", {
         p_campaign: campaignId,
         p_limit: PAGE,
         p_offset: page * PAGE,
-      });
-    },
+      }),
     refetchInterval: preview === undefined ? 20_000 : false,
   });
   const loaded = preview ?? query.data;
@@ -518,7 +516,8 @@ export function LeaderboardBoard({
                 {board.campaign.name}
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                {board.campaign.description || "Ranked from settled real-money stakes in this window."}
+                {board.campaign.description ||
+                  "Ranked from settled real-money stakes in this window."}
               </p>
               {board.campaign.games && board.campaign.games.length > 0 ? (
                 <ul className="mt-3 flex flex-wrap gap-1.5">
@@ -570,7 +569,9 @@ export function LeaderboardBoard({
                   <span className="text-muted-foreground">Your place </span>
                   <span className="font-display text-lg">#{board.me.rank ?? "—"}</span>
                   <span className="text-muted-foreground"> · </span>
-                  <span className="tabular">{formatUsd(board.me.qualifying_cents)} from deposits</span>
+                  <span className="tabular">
+                    {formatUsd(board.me.qualifying_cents)} from deposits
+                  </span>
                   {board.me.prize_cents != null ? (
                     <span className="text-gold">
                       {" "}

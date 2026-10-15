@@ -641,6 +641,8 @@ d("live database permissions (read-only catalog checks)", () => {
       "_jsonb_add_counts(jsonb,jsonb)",
       "slot_tick_worker()",
       "prestige_award_wager(uuid,text,text,bigint,jsonb)",
+      "leaderboard_tick()",
+      "_poker_require_admin()",
     ]) {
       const [r] = await sql.unsafe(
         `select has_function_privilege('anon','pvp_test.${f}','execute') a, has_function_privilege('authenticated','pvp_test.${f}','execute') u`,
@@ -659,7 +661,6 @@ d("live database permissions (read-only catalog checks)", () => {
       "leaderboard_public_board(uuid,integer,integer)",
       "leaderboard_public_list()",
       "leaderboard_public_partner(text)",
-      "leaderboard_tick()",
       "prestige_identities(uuid[])",
       "prestige_state()",
       "real_play_open()",
@@ -746,6 +747,7 @@ d("live database permissions (read-only catalog checks)", () => {
       "poker_act(bigint,integer,text,bigint,text)",
       "poker_buyin_info(smallint)",
       "poker_commit_chain(bigint,text)",
+      "poker_heartbeat(bigint)",
       "poker_leave(bigint)",
       "poker_nudge(bigint)",
       "poker_reveal(bigint,text)",
@@ -770,6 +772,30 @@ d("live database permissions (read-only catalog checks)", () => {
       await sql`select count(*)::int n from pg_default_acl a join pg_namespace n on n.oid=a.defaclnamespace
       where n.nspname='pvp_test' and a.defaclrole = current_user::regrole and exists (select 1 from unnest(a.defaclacl) x where x::text ~ '^(anon|authenticated)?=')`;
     expect(d.n).toBe(0);
+  });
+
+  it("every client-readable server_seed column is constrained to finished games", async () => {
+    const rows = await sql`
+      select r.relname t,
+        exists (select 1 from pg_constraint k
+          where k.conrelid = r.oid and k.contype = 'c' and k.convalidated
+            and pg_get_constraintdef(k.oid) ~* '\\(server_seed IS NULL\\) OR \\(status') guarded
+      from pg_class r
+      join pg_namespace n on n.oid = r.relnamespace
+      join pg_attribute a on a.attrelid = r.oid and a.attname = 'server_seed' and not a.attisdropped
+      where n.nspname = 'pvp_test' and r.relkind = 'r'
+        and has_column_privilege('anon', r.oid, a.attnum, 'select')
+      order by 1`;
+    expect(rows.map((r) => r.t)).toEqual(
+      expect.arrayContaining([
+        "coinflip_games",
+        "jackpot_games",
+        "poker_hands",
+        "roulette_games",
+        "slot_games",
+      ]),
+    );
+    for (const r of rows) expect({ t: r.t, guarded: r.guarded }).toEqual({ t: r.t, guarded: true });
   });
 
   it("money-moving functions carry the server-only guard", async () => {

@@ -40,6 +40,7 @@ Record each production apply here. Do not re-run apply solely to update this doc
 
 | `20261015042000` | `poker_idle_away` | Worker idle sweep sits out lone seats unseen for 90 s as `away`; the sit-out kick then cashes them out | 2026-10-15 12:25, after deploy of `dbd3ddc` | Worker running, 0 tick failures |
 | `20261015043000` | `poker_leave_after_reveal` | Leaving during the reveal window only voids the hand if the leaver hasn't revealed; otherwise they are folded on their turn | 2026-10-15 13:5x, before deploy of `e050f66` | New rule in `poker_leave`; executable by `authenticated` only |
+| `20261015044000` | `security_rpc_hardening` | `leaderboard_tick` service_role only; poker admin RPCs reject userless browser JWTs; roulette `server_seed` only on finished rounds | 2026-10-15 14:xx, before deploy that drops the browser tick | `leaderboard_tick` not executable by anon/authenticated; minute dispatch still ticks; constraint validated |
 
 ## Rollout test gate
 

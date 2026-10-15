@@ -665,6 +665,26 @@ d("poker audit fixes", () => {
           (e) => (e as Error).message,
         );
       expect(anon).toContain("permission denied");
+      for (const call of [
+        "select pvp_test.poker_admin_collusion_signals()",
+        "select pvp_test.poker_admin_recover_settlement(1, 'retry', 'no user on this request')",
+      ]) {
+        const userless = await sql
+          .begin(async (tx) => {
+            await tx`select set_config('test.uid', '', true),
+              set_config('request.jwt.claims', '{"role":"authenticated"}', true)`;
+            await tx.unsafe("set local role authenticated");
+            return tx.unsafe(call);
+          })
+          .then(
+            () => "ran",
+            (e) => (e as Error).message,
+          );
+        expect({ call, userless }).toEqual({
+          call,
+          userless: expect.stringContaining("SERVER_ONLY"),
+        });
+      }
     },
     LONG,
   );
@@ -878,8 +898,10 @@ d("poker audit fixes", () => {
         const s1 = await hand(f.id);
         expect(s1.status).toBe("SETTLEMENT");
         expect(s1.settle_attempts).toBe(2);
-        const nd = (await sql`select next_due_at > clock_timestamp() + interval '500 milliseconds' later
-          from pvp_test.poker_tables where id = ${f.t}`)[0]!.later;
+        const nd = (
+          await sql`select next_due_at > clock_timestamp() + interval '500 milliseconds' later
+          from pvp_test.poker_tables where id = ${f.t}`
+        )[0]!.later;
         expect(nd).toBe(true);
         expect(await nudge(w, f.t, "on")).toBe("not_due");
         expect((await hand(f.id)).settle_attempts).toBe(2);
@@ -919,9 +941,15 @@ d("poker audit fixes", () => {
           where table_id = ${t} and status = 'SEATED' and (stack + pending < 200 or state = 'SITTING_OUT')`;
         for (const r of low) {
           if (Number(r.s) < 200)
-            await as(r.user_id, (tx) => tx`select pvp_test.poker_top_up(${t}::bigint, ${300 - Number(r.s)}::bigint)`);
+            await as(
+              r.user_id,
+              (tx) => tx`select pvp_test.poker_top_up(${t}::bigint, ${300 - Number(r.s)}::bigint)`,
+            );
           if (r.state === "SITTING_OUT")
-            await as(r.user_id, (tx) => tx`select pvp_test.poker_sit_out(${t}::bigint, false, null)`);
+            await as(
+              r.user_id,
+              (tx) => tx`select pvp_test.poker_sit_out(${t}::bigint, false, null)`,
+            );
         }
         let h = await bettingHand(t, ps);
         hands.push(String(h.id));
@@ -1033,7 +1061,9 @@ d("poker audit fixes", () => {
           );
           // won excludes the uncalled refund, and wagered is net of it.
           expect(net).toBeCloseTo(p.won - p.wagered + feeShare, 6);
-          const sent = [...got].filter(([k]) => k.startsWith(`${p.user}>`)).reduce((s, [, a]) => s + a, 0);
+          const sent = [...got]
+            .filter(([k]) => k.startsWith(`${p.user}>`))
+            .reduce((s, [, a]) => s + a, 0);
           expect(sent).toBeLessThanOrEqual(p.wagered + 1e-9);
         }
       }

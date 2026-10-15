@@ -269,7 +269,8 @@ Without the migration the same tests deadlock.
   revisiting the hand, one `poker_settlement_stuck` incident and warning are raised, and
   `poker_reconcile()` and `poker_worker_health()` report it.
 - Recovery is `poker_admin_recover_settlement(hand, mode, reason)` (admin with step-up, or
-  the service role; reason required; audited; idempotent). `retry` runs the same
+  a server caller with no user; a userless browser JWT is rejected; reason required; audited;
+  idempotent). `retry` runs the same
   settlement again. `refund` voids the hand and returns every contribution, and is
   refused unless no settlement ledger transaction exists and every seat still holds its
   start stack. Chips stay in `user_locked` during a hand, so a refund moves no money. The
