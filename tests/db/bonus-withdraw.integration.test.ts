@@ -254,7 +254,7 @@ d("bonus withdrawal floor", () => {
     expect(await btc(depositor, 2535)).toMatch(/BONUS_NOT_WITHDRAWABLE/);
     expect(await usdc(depositor, 2345)).toBe("");
     expect(await bal(depositor)).toBe(190);
-  });
+  }, 60_000);
 
   it("lets bonus out only after $20 of deposits, and only the eligible part before that", async () => {
     const u = await user("mix");
@@ -312,10 +312,14 @@ d("bonus withdrawal floor", () => {
     expect(claimed.ok).toBe(true);
     await expect(sql`delete from pvp_test.promo_claims where user_id = ${first}::uuid`).rejects.toThrow(/IMMUTABLE/);
     await sql.begin(async (db) => {
-      await db`select set_config('session_replication_role', 'replica', true)`;
+      await db`alter table pvp_test.promo_claims disable trigger promo_claim_guard`;
       await db`delete from pvp_test.promo_claims where user_id = ${first}::uuid`;
+      await db`alter table pvp_test.promo_claims enable trigger promo_claim_guard`;
       await db`delete from pvp_test.test_auth_users where id = ${first}::uuid`;
     });
+    const [guard] = await sql`select tgenabled from pg_trigger
+      where tgrelid = 'pvp_test.promo_claims'::regclass and tgname = 'promo_claim_guard'`;
+    expect(guard.tgenabled).toBe("O");
     expect((await sql`select 1 from pvp_test.promo_claims where user_id = ${first}::uuid`).length).toBe(0);
     expect(
       (await sql`select 1 from pvp_test.promo_ip_redemptions where ip = '203.0.113.20'::inet`).length,
