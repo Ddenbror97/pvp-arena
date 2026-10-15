@@ -9,6 +9,7 @@
 import type { PokerSfx } from "./audio";
 import type { TableEvent } from "./events";
 import { VoicePriority, type VoiceLine } from "./voice";
+import { DEALER_LINES as L } from "./dealer-lines";
 
 export type DealerPose = "intro" | "idle" | "shuffle" | "deal" | "reveal" | "wait" | "acknowledge";
 
@@ -207,11 +208,11 @@ export class PokerDirector {
       at(0, () => {
         this.set({
           pose: "intro",
-          caption: { id: "welcome", text: "Welcome to PVP SpinArena. Ready to play?" },
+          caption: { id: "welcome", text: L.welcome },
         });
         this.sink.voice({
           key: "welcome",
-          text: "Welcome to PVP SpinArena. Ready to play?",
+          text: L.welcome,
           priority: VoicePriority.Important,
           ttlMs: 4000,
         });
@@ -301,14 +302,14 @@ export class PokerDirector {
             if (meIn && this.handsSeen <= 1)
               this.sink.voice({
                 key: `${e.id}:v`,
-                text: "Cards are coming your way.",
+                text: L.dealing,
                 priority: VoicePriority.Normal,
                 ttlMs: 2000,
               });
             else if (this.handsSeen % 6 === 1)
               this.sink.voice({
                 key: `${e.id}:v`,
-                text: "Good luck, everyone.",
+                text: L.goodLuck,
                 priority: VoicePriority.Ambient,
                 ttlMs: 2000,
               });
@@ -399,12 +400,7 @@ export class PokerDirector {
         const fl = this.scale(BASE.boardFlight);
         const first = this.board.length;
         const total = burn + gap * (e.cards.length - 1) + fl + this.scale(250);
-        const line =
-          e.street === "FLOP"
-            ? "Here comes the flop."
-            : e.street === "TURN"
-              ? "The turn."
-              : "And the river.";
+        const line = e.street === "FLOP" ? L.flop : e.street === "TURN" ? L.turn : L.river;
         this.board = [...this.board, ...e.cards];
         this.beat(total, (at) => {
           at(0, () => {
@@ -463,7 +459,7 @@ export class PokerDirector {
                 this.lastTurnLine = now;
                 this.sink.voice({
                   key: e.id,
-                  text: this.handsSeen % 2 ? "Your action." : "The action is on you.",
+                  text: this.handsSeen % 2 ? L.yourAction : L.actionOnYou,
                   priority: VoicePriority.Normal,
                   ttlMs: 2500,
                 });
@@ -516,14 +512,14 @@ export class PokerDirector {
               this.sink.sfx("win");
               this.sink.voice({
                 key: `${e.id}:v`,
-                text: e.handName ? "Nice hand. The pot goes to you." : "The pot goes to you.",
+                text: e.handName ? L.niceHand : L.potToYou,
                 priority: VoicePriority.Normal,
                 ttlMs: 3000,
               });
             } else if (this.handsSeen % 4 === 0) {
               this.sink.voice({
                 key: `${e.id}:v`,
-                text: "Well played.",
+                text: L.wellPlayed,
                 priority: VoicePriority.Ambient,
                 ttlMs: 2000,
               });

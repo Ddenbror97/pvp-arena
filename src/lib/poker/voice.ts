@@ -89,8 +89,8 @@ export class WebSpeechProvider implements VoiceProvider {
       if (voice) u.voice = voice;
       u.lang = voice?.lang ?? "en-US";
       u.volume = Math.min(1, Math.max(0, o.volume));
-      u.rate = 1;
-      u.pitch = 1.04;
+      u.rate = 0.96;
+      u.pitch = 1;
       const done = () => {
         if (this.resolve === resolve) this.resolve = null;
         if (this.utterance === u) this.utterance = null;

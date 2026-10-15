@@ -283,7 +283,26 @@ export function PokerTable({ id }: { id: number }) {
     void refresh();
   };
 
+  const [confirmLeave, setConfirmLeave] = useState(false);
+  useEffect(() => {
+    if (!confirmLeave) return;
+    const t = setTimeout(() => setConfirmLeave(false), 5000);
+    return () => clearTimeout(t);
+  }, [confirmLeave]);
+  const inLiveHand =
+    !!state?.hand &&
+    (state.hand.status === "COMMIT" || state.hand.status === "BETTING") &&
+    state.hand.players.some((p) => p.seat_no === mySeat && !p.folded);
+
   const leave = async () => {
+    if (inLiveHand && !confirmLeave) {
+      setConfirmLeave(true);
+      toast("Leaving now folds your hand. Chips already in the pot stay there.", {
+        description: "The rest of your stack goes back to your wallet when the hand ends.",
+      });
+      return;
+    }
+    setConfirmLeave(false);
     setBusy(true);
     const { data, error } = await pokerLeave(id);
     setBusy(false);
@@ -416,7 +435,7 @@ export function PokerTable({ id }: { id: number }) {
         ) : (
           <LogOut className="h-3.5 w-3.5" aria-hidden />
         )}
-        {seat.leaving ? "Leaving…" : "Leave table"}
+        {seat.leaving ? "Leaving…" : confirmLeave && inLiveHand ? "Fold & leave" : "Leave table"}
       </button>
     </div>
   ) : null;

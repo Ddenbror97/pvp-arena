@@ -428,6 +428,74 @@ describe("poker promo parity", () => {
   );
 
   it(
+    "leaving after revealing folds the hand instead of cancelling it, with no strike",
+    async () => {
+      const leaver = await player(3000);
+      const stay = await player(3000);
+      const t = (await sit(leaver, 2, 1000)).table_id as number;
+      await sit(stay, null, 1000, t);
+      let h = await latest(t);
+      for (let i = 0; i < 5 && h?.status !== "COMMIT"; i++) {
+        await nextHand(t);
+        h = await latest(t);
+      }
+      expect(h!.status).toBe("COMMIT");
+      const reveal = async (p: Player) => {
+        const [r] = await sql`select link from pvp_test.poker_hand_players
+          where hand_id = ${h!.id} and user_id = ${p.id}::uuid`;
+        const next = p.links[p.links.indexOf(r!.link) + 1]!;
+        await as(p.id, (tx) => tx`select pvp_test.poker_reveal(${h!.id}::bigint, ${next})`);
+      };
+      await reveal(leaver);
+      const lr = (await leave(leaver, t))[0]!.r as Row;
+      expect(lr.pending).toBe(true);
+      expect((await latest(t))!.status).toBe("COMMIT");
+      await reveal(stay);
+
+      for (let i = 0; i < 50; i++) {
+        const cur = (await latest(t))!;
+        if (cur.id !== h!.id || !["BETTING", "COMMIT"].includes(cur.status)) break;
+        const [hp] = await sql`select user_id from pvp_test.poker_hand_players
+          where hand_id = ${cur.id} and seat_no = ${cur.to_act}`;
+        if (hp!.user_id === leaver.id) {
+          await sql`update pvp_test.poker_tables set next_due_at = clock_timestamp() where id = ${t}`;
+          await as(null, (tx) => tx`select pvp_test.poker_tick()`);
+          continue;
+        }
+        const st = (
+          await as(stay.id, (tx) => tx`select pvp_test.poker_table_state(${t}::bigint) r`)
+        )[0]!.r;
+        const [a] = passive(st.me.legal as Legal);
+        await as(
+          stay.id,
+          (tx) =>
+            tx`select pvp_test.poker_act(${cur.id}::bigint, ${st.hand.version}::int, ${a}, 0::bigint, ${randomUUID()})`,
+        );
+      }
+      const [done] =
+        await sql`select status, void_reason from pvp_test.poker_hands where id = ${h!.id}`;
+      expect(done!.status).toBe("COMPLETED");
+      const [lact] = await sql`select action from pvp_test.poker_actions
+        where hand_id = ${h!.id} and user_id = ${leaver.id}::uuid order by seq desc limit 1`;
+      expect(lact!.action).toBe("FOLD");
+      const [hp] = await sql`select start_stack - end_stack lost from pvp_test.poker_hand_players
+        where hand_id = ${h!.id} and user_id = ${leaver.id}::uuid`;
+      const [closed] = await sql`select status, cashed_out from pvp_test.poker_seats
+        where table_id = ${t} and user_id = ${leaver.id}::uuid order by id desc limit 1`;
+      expect(closed!.status).toBe("CLOSED");
+      // The blind in the pot is forfeited; the rest of the stack comes back.
+      expect(Number(closed!.cashed_out)).toBe(1000 - Number(hp!.lost));
+      expect(await bal(leaver.id)).toBe(3000 - Number(hp!.lost));
+      expect(
+        Number((await sql`select pvp_test._poker_void_strikes(${leaver.id}::uuid) n`)[0]!.n),
+      ).toBe(0);
+      await leave(stay, t);
+      await parity();
+    },
+    LONG,
+  );
+
+  it(
     "a lone player who closed the browser is sat out, then cashed out by the kick",
     async () => {
       const p = await player(3000);

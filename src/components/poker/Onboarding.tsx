@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { setPokerPrefs } from "@/lib/poker/prefs";
 import { setSoundMuted, soundMuted } from "@/lib/sound";
+import { DEALER_LINES } from "@/lib/poker/dealer-lines";
 import { previewDealerVoice } from "./usePresentation";
 
 /** First-visit table tips. Short, dismissible, shown once per browser. */
@@ -10,7 +11,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
     if (voice) {
       // Asking for the voice is asking for sound, even if the site was muted earlier.
       if (soundMuted()) setSoundMuted(false);
-      previewDealerVoice("Welcome to PVP SpinArena. I'm your dealer. Good luck at the table.");
+      previewDealerVoice(DEALER_LINES.intro);
     }
     onDone();
   };

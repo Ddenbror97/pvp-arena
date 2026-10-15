@@ -5,14 +5,18 @@ import { INITIAL, PokerDirector, type Presentation } from "@/lib/poker/director"
 import { duckPokerSfx, playPokerSfx } from "@/lib/poker/audio";
 import { getPokerPrefs } from "@/lib/poker/prefs";
 import { VoicePriority, VoiceService, WebSpeechProvider } from "@/lib/poker/voice";
+import { ClipVoiceProvider } from "@/lib/poker/voice-clips";
+import { DEALER_LINES } from "@/lib/poker/dealer-lines";
 import { soundMuted } from "@/lib/sound";
 import type { FlightLayerHandle } from "./FlightLayer";
 
 let voiceSingleton: VoiceService | null = null;
-const provider = typeof window !== "undefined" ? new WebSpeechProvider() : null;
+const provider =
+  typeof window !== "undefined" ? new ClipVoiceProvider(new WebSpeechProvider()) : null;
 
 function voiceService() {
   if (!voiceSingleton && provider) {
+    if (getPokerPrefs().voice) provider.preload();
     const v = new VoiceService(provider, {
       enabled: () => getPokerPrefs().voice && !soundMuted(),
       volume: () => getPokerPrefs().voiceVolume,
@@ -34,7 +38,8 @@ export const voiceSupported = () => !!provider?.available();
  * Speaks a line straight from a click handler. Mobile Safari only lets speech start inside a
  * user gesture, so turning the voice on (or moving its slider) speaks right away.
  */
-export function previewDealerVoice(text = "Dealer voice is on. Good luck at the table.") {
+export function previewDealerVoice(text: string = DEALER_LINES.voiceOn) {
+  provider?.preload();
   voiceService()?.say({ key: `preview:${Date.now()}`, text, priority: VoicePriority.Important });
 }
 

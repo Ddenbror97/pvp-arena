@@ -4,6 +4,9 @@
  * director timeline, and the dealer voice queue.
  */
 import { describe, expect, it } from "vitest";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { DEALER_CLIP_DIR, DEALER_LINES, dealerLineId } from "../src/lib/poker/dealer-lines";
 import fixture from "../src/lib/poker/replay/recorded-hands.json";
 import type { TableState } from "../src/lib/poker/api";
 import { deriveEvents, type EventCursor, type TableEvent } from "../src/lib/poker/events";
@@ -278,6 +281,21 @@ describe("PokerDirector", () => {
     clock.advance(30_000);
     const turnLines = log.voice.filter((v) => /action/i.test(v.text));
     expect(turnLines.length).toBeLessThanOrEqual(1);
+  });
+
+  it("speaks only recorded dealer lines, and every line has its clip", () => {
+    const spoken: VoiceLine[] = [];
+    for (const seat of [0, 1, 2, null]) {
+      const { d, clock, log } = director({ mySeat: seat });
+      d.welcome();
+      d.handle(all);
+      clock.advance(120_000);
+      spoken.push(...log.voice);
+    }
+    expect(spoken.length).toBeGreaterThan(3);
+    for (const v of spoken) expect(dealerLineId(v.text), v.text).not.toBeNull();
+    for (const id of Object.keys(DEALER_LINES))
+      expect(existsSync(join("public", DEALER_CLIP_DIR, `${id}.mp3`)), id).toBe(true);
   });
 });
 

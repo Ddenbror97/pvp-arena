@@ -5,6 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { setSoundMuted, soundMuted, subscribeSound } from "@/lib/sound";
 import { setPokerPrefs, usePokerPrefs } from "@/lib/poker/prefs";
 import { playPokerSfx } from "@/lib/poker/audio";
+import { DEALER_LINES } from "@/lib/poker/dealer-lines";
 import { previewDealerVoice } from "./usePresentation";
 
 function Range({
@@ -101,7 +102,7 @@ export function TableSettings({ voiceAvailable }: { voiceAvailable: boolean }) {
           value={prefs.voiceVolume}
           disabled={!prefs.voice || muted}
           onChange={(v) => setPokerPrefs({ voiceVolume: v })}
-          onCommit={() => previewDealerVoice("Voice level.")}
+          onCommit={() => previewDealerVoice(DEALER_LINES.voiceLevel)}
         />
         {prefs.voice && muted ? (
           <p className="text-[11px] text-amber-300/90">Sound is muted, so the dealer is silent.</p>
