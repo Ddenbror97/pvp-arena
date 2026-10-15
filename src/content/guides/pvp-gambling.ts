@@ -27,7 +27,7 @@ export const guide: Guide = {
 
 Peer to peer gambling flips that. You play against other people. The stakes from every player go into a shared pot, the game decides a winner, and the winner receives the pot. The operator's job is to run the game fairly, hold the money safely and settle the pot correctly. Its income comes from a fee, typically a percentage of the pot, which should be shown before you join.
 
-The same idea is sometimes called a P2P casino or a PvP casino. Poker rooms have worked this way for decades, taking a small "rake" from each pot. What is newer is applying the model to simple, fast games like jackpots and coinflips.`,
+The same idea is sometimes called a P2P casino or a PvP casino. Poker rooms have worked this way for decades, taking a small "rake" from each pot. What is newer is applying the model to simple, fast games like jackpots and coinflips. The [P2P gambling](/guides/peer-to-peer-gambling) guide covers the same model under its peer-to-peer name, with a focus on fees and variance.`,
     },
     {
       id: "vs-house",
@@ -61,11 +61,15 @@ Players add stakes to a shared pot during a countdown. Each unit of stake is a t
 
 ### Coinflip
 
-Two players, one flip. One player creates a game, chooses a side and sets the stake. Another player matches it. A single random result decides the winner, who takes both stakes minus any fee. Before fees, each side has exactly a 50% chance. See [coin flip odds](/guides/coin-flip-odds) for the maths.
+Two players, one flip. One player creates a game, chooses a side and sets the stake. Another player matches it. A single random result decides the winner, who takes both stakes minus any fee. Before fees, each side has exactly a 50% chance. See [coin flip odds](/guides/coin-flip-odds) for the maths, [coin flip for money](/guides/coin-flip-for-money) for staking a flip with someone you know, and the [online coin flip game](/guides/online-coin-flip-game) guide for how a hosted flip is created, matched and settled.
 
 ### Versus modes and battles
 
-Some sites offer case battles or other head-to-head modes where several players' results are compared. The principle is the same: players' stakes fund the prize.
+Some sites offer case battles or other head-to-head modes where several players' results are compared. The principle is the same: players' stakes fund the prize. The [CS2 case battle](/guides/cs2-case-battle) guide prices the skin version.
+
+### Duels and hand games
+
+The oldest PvP formats need no wheel at all. [Rock paper scissors for money](/guides/rock-paper-scissors-for-money) is a two-player stake decided by a throw, and [duel arena gambling](/guides/duel-arena-gambling) is the Old School RuneScape version where two fighters staked items on a fight. Both show the same risk: without a neutral record of the result, the loser has to trust whoever holds the stakes.
 
 ### Shared rounds that are not PvP
 

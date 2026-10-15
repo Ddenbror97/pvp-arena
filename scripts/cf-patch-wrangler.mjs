@@ -6,6 +6,9 @@ const cfg = JSON.parse(readFileSync(path, "utf8"));
 cfg.name = "pvpspinarena";
 cfg.workers_dev = false;
 cfg.triggers = { crons: ["* * * * *"] };
+// Workers Paid: explicit CPU ceiling (free plans reject `limits`) and Workers Logs.
+cfg.limits = { cpu_ms: 30000 };
+cfg.observability = { enabled: true, head_sampling_rate: 1 };
 cfg.routes = [
   { pattern: "pvpspinarena.com/*", zone_name: "pvpspinarena.com" },
   { pattern: "www.pvpspinarena.com/*", zone_name: "pvpspinarena.com" },

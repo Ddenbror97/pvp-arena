@@ -42,7 +42,9 @@ Shuffle. [How to shuffle cards](/guides/how-to-shuffle-cards) matters here becau
 
 Before anyone plays, you may swap cards between your hand and your face-up row. The usual aim is to park high cards, 2s, and 10s face up for the end, and to keep low cards in hand for the start. You may not look at or swap the face-down row.
 
-Palace is a race to be empty, in the [games of chance hub](/guides/topics/games-of-chance). It is not a meld game. If you wanted sets that score, that is [rummy](/guides/how-to-play-rummy). Here a set of four is only a way to burn the pile.`,
+Palace is a race to be empty, in the [games of chance hub](/guides/topics/games-of-chance). It is not a meld game. If you wanted sets that score, that is [rummy](/guides/how-to-play-rummy). Here a set of four is only a way to burn the pile.
+
+Other shedding games trade the face-down rows for a different twist. [BS](/guides/bs-card-game-rules) lets you lie about what you shed, [Speed](/guides/speed-card-game) drops turns and races two players at once, and [Egyptian ratscrew](/guides/egyptian-ratscrew-rules) wins the pile with a slap. [Old Maid](/guides/old-maid-card-game) shares Palace's ending: there is no winner, only one player left holding the card nobody wants.`,
     },
     {
       id: "play",

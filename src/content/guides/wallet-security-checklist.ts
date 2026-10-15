@@ -38,7 +38,7 @@ Mobile: official apps only. Avoid in-app browsers on casino promos for seed entr
       title: "Separating play funds from savings",
       body: `Create a dedicated play account or phrase. Fund it with a weekly ceiling. Keep long-term holdings on a hardware wallet that never clicks “connect” on a casino. If the play wallet dies, the loss is pre-accepted.
 
-[Cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet) explains the split. [Ledger vs Trezor](/guides/ledger-vs-trezor) compares common hardware options.`,
+[Cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet) explains the split. [What is a hardware wallet](/guides/what-is-a-hardware-wallet) covers how the device keeps keys offline, and [Ledger vs Trezor](/guides/ledger-vs-trezor) compares common hardware options. If you sign from MetaMask with the device attached, follow [connect Ledger to MetaMask](/guides/connect-ledger-to-metamask) so the key never leaves the hardware.`,
     },
     {
       id: "seed-rules",
@@ -50,14 +50,14 @@ Anyone asking for the phrase to “unlock a bonus” is stealing.`,
     {
       id: "approvals",
       title: "Approval and signature discipline",
-      body: `Read every prompt. Prefer message signatures and normal transfers. Reject unlimited token approvals for casino deposits. Periodically revoke stale allowances.
+      body: `Read every prompt. Prefer message signatures and normal transfers. Reject unlimited token approvals for casino deposits. Periodically revoke stale allowances; [revoke token approvals](/guides/revoke-token-approvals) shows how to find and cancel them.
 
 PVPspinArena: verify wallet with a signature, deposit USDC or ETH on Base via transfer shown on the real [wallet](/wallet) page.`,
     },
     {
       id: "phishing",
       title: "Phishing patterns in casino promos",
-      body: `Lookalike domains in ads. Discord “admins.” Fake giveaways. Urgency timers. “Verify wallet” pages that request seeds. Bookmark the real site. [Fake casino sites](/guides/fake-casino-sites) lists tells.
+      body: `Lookalike domains in ads. Discord “admins.” Fake giveaways. Urgency timers. “Verify wallet” pages that request seeds. Bookmark the real site. [Fake casino sites](/guides/fake-casino-sites) lists tells, and [MetaMask scams](/guides/metamask-scams) covers the wallet-side versions of the same tricks.
 
 If a stream overlay link differs from your bookmark, trust the bookmark.`,
     },
@@ -117,7 +117,7 @@ Play wallet versus savings wallet is the highest leverage split. Seeds stay offl
 
 Device shared with family members needs a locked wallet every time you stand up. An unlocked extension on a living-room PC is not self-custody; it is a shared drawer.
 
-Write down the network name you intend to use before you open the send modal. Speaking Base or Ethereum out loud sounds silly and prevents silent dropdown mistakes that explorers cannot undo.
+Write down the network name you intend to use before you open the send modal. Speaking Base or Ethereum out loud sounds silly and prevents silent dropdown mistakes that explorers cannot undo. [How to send crypto](/guides/how-to-send-crypto) walks the full send screen, [what is a crypto wallet address](/guides/what-is-a-crypto-wallet-address) explains why the same address can exist on several chains, and [sent crypto to the wrong network](/guides/sent-crypto-to-wrong-network) covers what is recoverable if it already happened.
 
 If you use hardware signing, confirm the destination on the device screen, not only in the browser popup. Browser popups can be raced; device screens are slower on purpose.
 

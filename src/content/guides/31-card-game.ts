@@ -36,7 +36,9 @@ What you need:
 - three tokens per player (coins, chips or matchsticks) to count lives;
 - a flat surface with room for a face-down stock pile and a face-up discard pile.
 
-The game is quick. A round often lasts under two minutes, and a full game with five players can finish in ten or fifteen. That pace is why it became a kitchen-table and bar game for small change. It sits in the [Games of chance topic](/guides/topics/games-of-chance) alongside other family card games like [gin rummy](/guides/how-to-play-gin-rummy), which uses a similar draw-then-discard rhythm but scores sets and runs instead of one suit.`,
+The game is quick. A round often lasts under two minutes, and a full game with five players can finish in ten or fifteen. That pace is why it became a kitchen-table and bar game for small change. It sits in the [Games of chance topic](/guides/topics/games-of-chance) alongside other family card games like [gin rummy](/guides/how-to-play-gin-rummy), which uses a similar draw-then-discard rhythm but scores sets and runs instead of one suit.
+
+If your group likes the draw-and-discard loop but wants longer games, the meld family builds on it: [basic rummy](/guides/how-to-play-rummy) first, then [Rummy 500](/guides/rummy-500-rules) for running scores, [Canasta](/guides/canasta-rules) and [Hand and Foot](/guides/hand-and-foot-rules) for partnership play, or [Phase 10](/guides/phase-10-rules) for set goals each round. [Golf](/guides/golf-card-game-rules) keeps the same quick swap-a-card turn but chases the lowest score instead of 31.`,
     },
     {
       id: "rules",

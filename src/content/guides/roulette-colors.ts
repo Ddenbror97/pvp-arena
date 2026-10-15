@@ -43,7 +43,7 @@ The layout spreads red and black evenly so that neither color clusters in one ar
 
 If you are new to casino words like pocket, payout and edge, our [casino terminology guide](/guides/casino-terminology) explains them.
 
-Where those colors sit on the felt, including the outside bets, is the [roulette table layout](/guides/roulette-table-layout).`,
+Where those colors sit on the felt, including the outside bets, is the [roulette table layout](/guides/roulette-table-layout). If you have never placed a bet at a wheel, [how to play roulette](/guides/how-to-play-roulette) walks through a full round first.`,
     },
     {
       id: "green",
@@ -87,7 +87,7 @@ For the full maths behind these numbers, read our [house edge guide](/guides/hou
 - Silver: 16/33 = 48.48%, pays 2x, about 96.97% before the win fee.
 - Green: 1/33 ≈ 3.03%, pays 14x, about 42.42% before the win fee.
 
-Purple and Silver cost the same. Green costs much more. The difference is both price and variance. Green hits rarely and pays a lot; red, black, Purple and Silver hit often and pay little. You can compare this with a pure [coin flip's odds](/guides/coin-flip-odds), where there is no green at all.`,
+Purple and Silver cost the same. Green costs much more. The difference is both price and variance. Green hits rarely and pays a lot; red, black, Purple and Silver hit often and pay little. You can compare this with a pure [coin flip's odds](/guides/coin-flip-odds), where there is no green at all. Color bets are only the outside of the table; the [roulette odds chart](/guides/roulette-odds-chart) lists every inside and outside bet on one page.`,
     },
     {
       id: "crypto-wheels",
@@ -133,7 +133,7 @@ Result history is useful for checking that a game is running, not for predicting
 
 ### "Doubling on a color guarantees a win"
 
-The Martingale system doubles your stake after each loss. It turns many small wins into rare, very large losses and runs into table limits or empty bankrolls. We cover it in detail in our [martingale strategy guide](/guides/martingale-strategy).
+The Martingale system doubles your stake after each loss. It turns many small wins into rare, very large losses and runs into table limits or empty bankrolls. We cover it in detail in our [martingale strategy guide](/guides/martingale-strategy), and the [martingale calculator](/guides/martingale-calculator) shows how fast the doubled stakes outgrow a budget.
 
 Understanding these myths is also a good way to spot when play is turning into chasing losses.`,
     },
@@ -161,7 +161,7 @@ Imagine 150 bets of $1 each on PVPspinArena's wheel.
 - On Purple, you would expect about 70 wins of $2 each, returning about $140.
 - On Green, you would expect about 10 wins of $14 each, also returning about $140.
 
-The average is the same. But on Green, it is quite possible to hit only 5 times (returning $70) or 15 times (returning $210). On Purple, the spread is much narrower.
+The average is the same. But on Green, it is quite possible to hit only 5 times (returning $70) or 15 times (returning $210). On Purple, the spread is much narrower. You can watch both shapes play out over hundreds of spins in the [roulette simulator](/guides/roulette-simulator).
 
 ### The real choice
 
@@ -182,7 +182,7 @@ European roulette is the cheapest at 2.70%. American is 5.26%. PVPspinArena's co
 
 ### Speed
 
-Coloured wheels run on a fixed timer with short rounds. That makes them fast, and fast games raise the total you wager per hour. A lower edge on a slow game can cost less per hour than a higher edge on a fast one, and vice versa.
+Coloured wheels run on a fixed timer with short rounds. That makes them fast, and fast games raise the total you wager per hour. A lower edge on a slow game can cost less per hour than a higher edge on a fast one, and vice versa. Big-wheel games use the same trade of common and rare segments; [wheel of fortune odds](/guides/wheel-of-fortune-odds) prices each segment the same way.
 
 ### Transparency
 

@@ -68,15 +68,15 @@ A Powerball jackpot line is one outcome in a list you can recompute.
 
 C(69, 5) = (69 × 68 × 67 × 66 × 65) / 120 = 11,238,513.
 
-Times 26 red balls = 292,201,338.
+Times 26 red balls = 292,201,338. Every lower tier on that ticket is priced the same way in [Powerball odds](/guides/powerball-odds).
 
-Mega Millions is the same kind of event on a different list. C(70, 5) = 12,103,014, times 24 Mega Balls, is 290,472,336. The 12 steps do not change because the logo did. The deadline, the cash option, and the disclosure rule still come from the state on the ticket.
+Mega Millions is the same kind of event on a different list. C(70, 5) = 12,103,014, times 24 Mega Balls, is 290,472,336. [How to play Mega Millions](/guides/how-to-play-mega-millions) shows where those two pools come from. The 12 steps do not change because the logo did. The deadline, the cash option, and the disclosure rule still come from the state on the ticket.
 
-You matched 1 of those. That is the entire reason a local story exists. It is not evidence you are due another one. Buying more tickets in the claim week is how winners manufacture a second loss.
+You matched 1 of those. That is the entire reason a local story exists. It is not evidence you are due another one, and [which lottery has the best odds](/guides/which-lottery-has-the-best-odds) shows that no game makes a repeat likely. Buying more tickets in the claim week is how winners manufacture a second loss.
 
 ### A smaller prize is still a procedure
 
-Suppose the hit is the Powerball tier for 4 white balls plus the Powerball. Ways: C(5, 4) × 64 = 320. Odds: 292,201,338 / 320 ≈ 1 in 913,129. The published fixed prize on that tier has been $50,000. Confirm the live chart. Federal withholding at 24 percent of $50,000 is $12,000, so a $38,000 check is the prepayment picture, not a promise that $38,000 is yours after the return. The rate page is [lottery taxes](/guides/lottery-taxes). Spend $50,000 because the sign said $50,000 and you will be short.`,
+Suppose the hit is the Powerball tier for 4 white balls plus the Powerball. Ways: C(5, 4) × 64 = 320. Odds: 292,201,338 / 320 ≈ 1 in 913,129. The published fixed prize on that tier has been $50,000. Confirm the live chart. Federal withholding at 24 percent of $50,000 is $12,000, so a $38,000 check is the prepayment picture, not a promise that $38,000 is yours after the return. The rate page is [lottery taxes](/guides/lottery-taxes). Spend $50,000 because the sign said $50,000 and you will be short. A scratcher win of the same size follows the same claim and withholding path; [scratch-off odds](/guides/scratch-off-odds) explains how those prize tables are printed.`,
     },
     {
       id: "team-and-quiet",
@@ -104,7 +104,7 @@ Fees to professionals are real. A demand for a percentage just to “process” 
     {
       id: "payout-and-park",
       title: "Pick the payout, then park the money",
-      body: `Step 8 uses the published cash option, not a remembered fraction of the billboard. The comparison of checks versus cash, including a worked 30-payment illustration, is the [lump sum vs annuity](/guides/lump-sum-vs-annuity) page. Do not redo the algebra from a chat. Do it with the tax professional and the figure on the claim sheet.
+      body: `Step 8 uses the published cash option, not a remembered fraction of the billboard. The comparison of checks versus cash, including a worked 30-payment illustration, is the [lump sum vs annuity](/guides/lump-sum-vs-annuity) page. Do not redo the algebra from a chat. Do it with the tax professional and the figure on the claim sheet. For a first rough pass before that meeting, the [lottery calculator](/guides/lottery-calculator) turns the published cash option into an after-withholding estimate.
 
 After the check or the first annuity payment, park the money in a boring account while the return is drafted. “Park” means you can find it and you cannot casually wire it. It does not mean a cousin’s investment, a crypto tip, or a house you have not inspected.
 
