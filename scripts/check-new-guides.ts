@@ -61,8 +61,8 @@ for (const slug of targets) {
     err(`cluster ${g.cluster}, plan says ${planned.cluster}`);
   if (planned && g.keyword !== planned.keyword)
     err(`keyword "${g.keyword}", plan says "${planned.keyword}"`);
-  if (existingKeywords.has(g.keyword.toLowerCase()))
-    err(`keyword already used by ${existingKeywords.get(g.keyword.toLowerCase())}`);
+  const owner = existingKeywords.get(g.keyword.toLowerCase());
+  if (owner && owner !== slug) err(`keyword already used by ${owner}`);
   if (plannedKeywords.get(g.keyword.toLowerCase()) !== slug)
     err("keyword clashes with another planned guide");
   if (wc < 1850 || wc > 2400) err(`word count ${wc} (need 1850-2400)`);
