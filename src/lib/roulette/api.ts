@@ -120,6 +120,15 @@ export function useRouletteRealtime() {
       live = up;
       markChannel("roulette", up);
     };
+    // Coalesce bet-list refreshes so a busy round costs each viewer one read per 2 s at most.
+    let betsTimer: ReturnType<typeof setTimeout> | undefined;
+    const refreshBets = (id: number) => {
+      if (betsTimer) return;
+      betsTimer = setTimeout(() => {
+        betsTimer = undefined;
+        qc.invalidateQueries({ queryKey: ["roulette-bets", id] });
+      }, 2000);
+    };
     const refetch = () => {
       qc.invalidateQueries({ queryKey: ["roulette-round"] });
       qc.invalidateQueries({ queryKey: ["roulette-history"] });
@@ -130,19 +139,14 @@ export function useRouletteRealtime() {
       .on("postgres_changes", { event: "*", schema: "public", table: "roulette_games" }, (p) => {
         if (isRoundRow(p.new)) {
           const row = p.new;
+          const prev = qc.getQueryData<RlGame | null>(["roulette-round"]);
           qc.setQueryData<RlGame | null>(["roulette-round"], (cur) => mergeRoundUpdate(cur, row));
+          // Every bet bumps bet_count on the round row; bet rows themselves are RLS-private.
+          if (prev?.id === row.id && prev.bet_count !== row.bet_count) refreshBets(row.id);
           if (row.status === "COMPLETED" || row.status === "CANCELLED")
             qc.invalidateQueries({ queryKey: ["roulette-history"] });
         }
       })
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "roulette_bets" },
-        (p) => {
-          const gid = (p.new as { game_id?: number }).game_id;
-          if (gid != null) qc.invalidateQueries({ queryKey: ["roulette-bets", gid] });
-        },
-      )
       .subscribe((status) => {
         setLive(status === "SUBSCRIBED");
         if (status === "SUBSCRIBED" || status === "CHANNEL_ERROR" || status === "TIMED_OUT")
@@ -157,6 +161,7 @@ export function useRouletteRealtime() {
       window.removeEventListener("online", onWake);
       document.removeEventListener("visibilitychange", onWake);
       setLive(false);
+      clearTimeout(betsTimer);
       supabase.removeChannel(ch);
     };
   }, [qc]);

@@ -20,6 +20,8 @@ import {
   SLOT_RECENT_PAGE_SIZE,
 } from "@/lib/slott/api";
 import { warmSlotStage } from "@/lib/slott/stage";
+import { fetchLobby, type Lobby } from "@/lib/poker/api";
+import { warmDealer } from "@/lib/poker/assets";
 import {
   fetchCurrentRound,
   fetchHistory,
@@ -86,6 +88,8 @@ export type SlottPaint = {
   recent: Fresh<Awaited<ReturnType<typeof fetchRecentSlots>>>;
 };
 
+export type PokerPaint = { lobby: Fresh<Lobby> };
+
 function cap<T>(promise: Promise<T>, deadline: number): Promise<T | undefined> {
   const ms = deadline - Date.now();
   if (ms <= 0) return Promise.resolve(undefined);
@@ -151,7 +155,9 @@ function hold(work: Promise<unknown>, wait?: (work: Promise<unknown>) => void) {
   }
 }
 
-async function readEdge<T extends object>(key: string): Promise<PaintSlot & { value: T } | undefined> {
+async function readEdge<T extends object>(
+  key: string,
+): Promise<(PaintSlot & { value: T }) | undefined> {
   const cache = edgeCache();
   if (!cache) return undefined;
   const res = await cache.match(PAINT_CACHE_URL + key);
@@ -389,6 +395,18 @@ export async function loadSlottPaint(pathname: string): Promise<SlottPaint> {
   return servePaint("slott", EMPTY_SLOTT, buildSlottPaint);
 }
 
+const EMPTY_POKER: PokerPaint = { lobby: null };
+
+async function buildPokerPaint(deadline: number): Promise<PokerPaint> {
+  const at = Date.now();
+  return { lobby: fresh(await cap(fetchLobby(), deadline), at) };
+}
+
+export async function loadPokerPaint(pathname: string): Promise<PokerPaint> {
+  if (inBrowser || (pathname !== "/poker" && pathname !== "/poker/")) return EMPTY_POKER;
+  return servePaint("poker", EMPTY_POKER, buildPokerPaint);
+}
+
 /**
  * Fill react-query for a game page before the visitor clicks the header.
  * The route loaders skip these reads in the browser so the old page stays up;
@@ -396,8 +414,13 @@ export async function loadSlottPaint(pathname: string): Promise<SlottPaint> {
  */
 export function prefetchGamePage(
   qc: QueryClient,
-  path: "/" | "/coinflip" | "/roulette" | "/slott",
+  path: "/" | "/coinflip" | "/roulette" | "/slott" | "/poker",
 ) {
+  if (path === "/poker") {
+    warmDealer();
+    void qc.prefetchQuery({ queryKey: ["poker-lobby"], queryFn: fetchLobby });
+    return;
+  }
   if (path === "/slott") {
     warmSlotStage();
     void qc.prefetchQuery({

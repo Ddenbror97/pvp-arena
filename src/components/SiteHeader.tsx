@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { WalletGroupPlaceholder } from "@/components/wallet/HeaderWalletFrame";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
 import { equippedAssets, usePrestige } from "@/components/prestige/PrestigeProvider";
-import { Dices, Coins, CircleDot, Cherry, ShieldCheck, User } from "lucide-react";
+import { Dices, Coins, CircleDot, Cherry, Spade, User } from "lucide-react";
 import { arenaLogo } from "@/assets/media";
 import { TokenMark } from "@/components/wallet/TokenMark";
 import { SoundToggle } from "@/components/SoundToggle";
@@ -98,7 +98,13 @@ export function SiteHeader() {
           >
             P2P Slott
           </Link>
-          <Link to="/poker" className={link}>
+          <Link
+            to="/poker"
+            className={link}
+            onMouseEnter={() => prefetchGamePage(qc, "/poker")}
+            onFocus={() => prefetchGamePage(qc, "/poker")}
+            onTouchStart={() => prefetchGamePage(qc, "/poker")}
+          >
             Poker
           </Link>
           <Link to="/fairness" className={link}>
@@ -335,9 +341,9 @@ export function MobileTabBar() {
         <Cherry className="h-5 w-5" />
         Slott
       </Link>
-      <Link to="/fairness" className={tab}>
-        <ShieldCheck className="h-5 w-5" />
-        Fairness
+      <Link to="/poker" className={tab} onTouchStart={() => prefetchGamePage(qc, "/poker")}>
+        <Spade className="h-5 w-5" />
+        Poker
       </Link>
       <Link to={userId ? "/profile" : "/auth"} className={tab}>
         <User className="h-5 w-5" />

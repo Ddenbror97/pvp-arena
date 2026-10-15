@@ -1,5 +1,7 @@
-import { createFileRoute, ClientOnly, Outlet, useMatch } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useMatch } from "@tanstack/react-router";
 import { ogImageMeta } from "@/lib/og";
+import { loadPokerPaint, useQuerySeed } from "@/lib/first-paint";
+import { DEALER_IMAGE } from "@/lib/poker/assets";
 import { PokerLobby } from "@/components/poker/PokerLobby";
 
 export const Route = createFileRoute("/poker")({
@@ -20,7 +22,17 @@ export const Route = createFileRoute("/poker")({
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),
     ],
+    links: [
+      {
+        rel: "preload",
+        as: "image",
+        href: DEALER_IMAGE,
+        type: "image/webp",
+        fetchPriority: "high",
+      },
+    ],
   }),
+  loader: ({ location }) => loadPokerPaint(location.pathname),
   component: PokerLayout,
 });
 
@@ -28,13 +40,11 @@ function PokerLayout() {
   const table = useMatch({ from: "/poker/$tableId", shouldThrow: false });
   const replay = useMatch({ from: "/poker/replay", shouldThrow: false });
   if (table || replay) return <Outlet />;
-  return (
-    <ClientOnly
-      fallback={
-        <div className="mx-auto h-[420px] w-full max-w-6xl animate-pulse rounded-2xl bg-card" />
-      }
-    >
-      <PokerLobby />
-    </ClientOnly>
-  );
+  return <PokerLobbyPage />;
+}
+
+function PokerLobbyPage() {
+  const paint = Route.useLoaderData();
+  useQuerySeed([[["poker-lobby"], paint.lobby]]);
+  return <PokerLobby />;
 }

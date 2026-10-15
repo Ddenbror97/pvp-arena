@@ -26,6 +26,8 @@ Record each production apply here. Do not re-run apply solely to update this doc
 | `20261014355000` | `withdraw_basis_per_user` | Per-user withdraw basis applied at write time (deferred trigger); backfills `withdraw_basis_applied` | 2026-10-14 23:3x | 2.4 s under a ledger share-row-exclusive lock; 3,664 real txs backfilled (240 test_credit txs excluded by design) |
 | `20261014356000`, `20261014357000` | `lock_order`, `poker_nudge_and_collusion` | Cross-game wallet lock order; poker nudge rate limit and multiway collusion attribution | 2026-10-14 23:3x | All game workers 0 failures in the following 5 min |
 | `20261014358000` | `crypto_invoke_cron` | Brings the existing `crypto_invoke_cron` and `crypto_job_bearer` (created by `scripts/setup-pg-crypto-cron.mjs`) into migrations; no token stored | 2026-10-14 | Same body as live (25 s timeout); token row untouched |
+| `20261015010000` | `cron_history_retention` | Hourly scheduler-history purge: 12 h for 1-second workers, 7 days for other jobs and failed runs | 2026-10-15 01:18 | Backlog purge removed 1,002,007 rows in 8.2 s (1.18M → 182k); all workers 0 failures after |
+| `20261015011000` | `realtime_publication_trim` | Drops `roulette_bets` and `crypto_deposits` from `supabase_realtime` | Pending: apply after the frontend without the `roulette_bets` subscription is live | |
 
 ## Rollout test gate
 

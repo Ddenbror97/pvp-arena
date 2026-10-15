@@ -25,18 +25,27 @@ function writeTold(id: number) {
   }
 }
 
-/** Tells the host, wherever they are on the site, that an opponent sat down. */
+function SlotLive() {
+  useSlotRealtime();
+  return null;
+}
+
+/**
+ * Tells the host, wherever they are on the site, that an opponent sat down.
+ * Mounted for every signed-in visitor, so it only polls fast and subscribes while
+ * the visitor is hosting a match that is still waiting for an opponent.
+ */
 export function SlotJoinNotice() {
   const { userId } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  useSlotRealtime();
   const mine = useQuery({
     queryKey: ["slot-mine", userId],
     queryFn: () => fetchMySlot(userId!),
     enabled: !!userId,
-    refetchInterval: 4000,
+    refetchInterval: (q) => (q.state.data?.status === "WAITING" ? 4000 : 60_000),
   });
+  const hosting = mine.data?.status === "WAITING" && mine.data.creator_id === userId;
   const told = useRef<number | null | undefined>(undefined);
 
   useEffect(() => {
@@ -61,11 +70,10 @@ export function SlotJoinNotice() {
       duration: 15000,
       action: {
         label: "Play",
-        onClick: () =>
-          navigate({ to: "/slott/$gameId", params: { gameId: String(g.id) } }),
+        onClick: () => navigate({ to: "/slott/$gameId", params: { gameId: String(g.id) } }),
       },
     });
   }, [mine.data, navigate, pathname, userId]);
 
-  return null;
+  return hosting ? <SlotLive /> : null;
 }
