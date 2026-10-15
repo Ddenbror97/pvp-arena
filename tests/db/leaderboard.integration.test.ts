@@ -216,6 +216,9 @@ d("partner leaderboards", () => {
     );
     expect(approved.r.campaign.status).toBe("scheduled");
     expect(approved.r.funding.shortfall).toBe(true);
+    const [frozen] =
+      await sql`select config_snapshot ->> 'ranking' ranking from pvp_test.leaderboard_campaigns where id = ${draftId}::uuid`;
+    expect(frozen.ranking).toBe("deposit_wager");
     expect(approved.r.funding.status).toBe("checked");
     await expect(
       as(
@@ -355,7 +358,9 @@ d("partner leaderboards", () => {
       await sql`select qualifying_wager_cents from pvp_test.leaderboard_prize_holds where user_id = ${playerA}::uuid`;
     expect(Number(ignored.qualifying_wager_cents)).toBe(0);
     await sql`alter table pvp_test.coinflip_entries disable trigger coinflip_entry_check`;
-    const flipId = await sql.begin((tx) => settledFlip(tx, playerA, playerB, 200, new Date(), "real"));
+    const flipId = await sql.begin((tx) =>
+      settledFlip(tx, playerA, playerB, 200, new Date(), "real"),
+    );
     await sql`alter table pvp_test.coinflip_entries enable trigger coinflip_entry_check`;
     const flipSource = `${flipId}:${playerA}`;
     await sql`select pvp_test.referral_note_play(${playerA}::uuid, 'coinflip', ${flipSource}, 1)`;

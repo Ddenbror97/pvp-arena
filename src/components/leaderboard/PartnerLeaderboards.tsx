@@ -342,9 +342,7 @@ export function PartnerLeaderboards() {
   if (!access.data?.partner) {
     return (
       <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
-        <p>
-          Leaderboards are enabled per partner. An admin turns that on from Admin → Partners.
-        </p>
+        <p>Leaderboards are enabled per partner. An admin turns that on from Admin → Partners.</p>
         {access.data?.admin ? (
           <p className="mt-3">
             <Link
@@ -454,8 +452,8 @@ export function PartnerLeaderboards() {
         </dl>
       ) : null}
       <p className="text-xs text-muted-foreground">
-        Rankings count only the deposit-funded part of each stake. Promo and bonus balance does not
-        count until you deposit and wager from that balance.
+        Rankings count only wagers paid from deposited money. Promo codes, referral, partner, and
+        prize credits never count, and neither do winnings from them.
       </p>
       <div className="flex flex-wrap gap-2">
         <select
@@ -667,7 +665,9 @@ function placeName(start: string, end: string) {
   if (from !== to) return `Ranks ${from}–${to}, each`;
   const teen = from % 100;
   const suffix =
-    teen >= 11 && teen <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[from % 10] ?? "th";
+    teen >= 11 && teen <= 13
+      ? "th"
+      : (({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[from % 10] ?? "th");
   return `${from}${suffix} place`;
 }
 
@@ -710,7 +710,10 @@ function Wizard({
   const nameOk = draft.name.trim().length >= 3 && draft.name.trim().length <= 60;
   const gamesOk = draft.games.length > 0;
   const prizesOk = parsed.pool != null;
-  const poolCap = Math.min(template?.max_prize_pool_cents ?? LEADERBOARD_PRIZE_MAX_CENTS, LEADERBOARD_PRIZE_MAX_CENTS);
+  const poolCap = Math.min(
+    template?.max_prize_pool_cents ?? LEADERBOARD_PRIZE_MAX_CENTS,
+    LEADERBOARD_PRIZE_MAX_CENTS,
+  );
   const inRange = prizePoolAllowed(parsed.pool, poolCap);
   const scheduleOk = !!parsed.start && !!parsed.end && parsed.end > parsed.start;
   const ready = nameOk && gamesOk && prizesOk && inRange && scheduleOk;
@@ -735,14 +738,17 @@ function Wizard({
   return (
     <div className="mx-auto max-w-lg space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="font-display text-xl">{draft.id ? "Edit leaderboard" : "New leaderboard"}</h1>
+        <h1 className="font-display text-xl">
+          {draft.id ? "Edit leaderboard" : "New leaderboard"}
+        </h1>
         <Button size="sm" variant="secondary" onClick={onClose}>
           Back
         </Button>
       </div>
       <p className="text-sm text-muted-foreground">
-        Players who joined through your partner link or your promo code are ranked, by how much
-        they wager during the board. You are not on the board. An admin approves it before it starts.
+        Players who joined through your partner link or your promo code are ranked by how much they
+        wager from deposited money during the board. Promo and bonus play does not count. You are
+        not on the board. An admin approves it before it starts.
       </p>
       <div className="space-y-4 rounded-lg border border-border bg-card p-4">
         <label className="block text-sm">
@@ -765,7 +771,9 @@ function Wizard({
                 key={days}
                 type="button"
                 className={chip(draft.lengthDays === days)}
-                onClick={() => pickSchedule(draft.startIn === "keep" ? "soon" : draft.startIn, days)}
+                onClick={() =>
+                  pickSchedule(draft.startIn === "keep" ? "soon" : draft.startIn, days)
+                }
               >
                 {days === 1 ? "1 day" : `${days} days`}
               </button>
@@ -806,7 +814,9 @@ function Wizard({
                   onClick={() =>
                     setDraft({
                       ...draft,
-                      games: on ? draft.games.filter((item) => item !== game) : [...draft.games, game],
+                      games: on
+                        ? draft.games.filter((item) => item !== game)
+                        : [...draft.games, game],
                     })
                   }
                 >
@@ -815,7 +825,9 @@ function Wizard({
               );
             })}
           </div>
-          {!gamesOk ? <p className="mt-2 text-xs text-destructive">Pick at least one game.</p> : null}
+          {!gamesOk ? (
+            <p className="mt-2 text-xs text-destructive">Pick at least one game.</p>
+          ) : null}
         </div>
         <div className="space-y-2">
           <p className="text-sm">Prize pool</p>

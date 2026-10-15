@@ -584,7 +584,8 @@ export function LeaderboardBoard({
                 </p>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  Sign in and wager in this window to take a place.
+                  Sign in and wager deposited money in this window to take a place. Promo and bonus
+                  play does not count.
                 </p>
               )}
               <p className="text-xs text-muted-foreground">

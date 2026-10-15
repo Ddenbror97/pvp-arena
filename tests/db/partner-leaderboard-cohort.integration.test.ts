@@ -124,12 +124,10 @@ d("partner leaderboard cohort", () => {
     };
     const sousaCode = await codeOf(sousa);
     const codeB = await codeOf(streamerB);
-    const friendCode = (
-      await as(friend, (tx) => tx`select pvp_test.referral_create_invite() r`)
-    )[0].r as { code: string };
-    const sousaInvite = (
-      await as(sousa, (tx) => tx`select pvp_test.referral_create_invite() r`)
-    )[0].r as { code: string };
+    const friendCode = (await as(friend, (tx) => tx`select pvp_test.referral_create_invite() r`))[0]
+      .r as { code: string };
+    const sousaInvite = (await as(sousa, (tx) => tx`select pvp_test.referral_create_invite() r`))[0]
+      .r as { code: string };
 
     const friendFirst = (
       await as(playerBoth, (tx) => tx`select pvp_test.referral_claim(${friendCode.code}) r`)
@@ -187,7 +185,11 @@ d("partner leaderboard cohort", () => {
       values (${deviceId}::uuid, ${admin}::uuid, ${randomBytes(32).toString("hex")}, clock_timestamp())`;
     await sql`insert into pvp_test.admin_stepup (session_id, user_id, device_id)
       values (${sessionId}::uuid, ${admin}::uuid, ${deviceId}::uuid)`;
-    const adminClaims = JSON.stringify({ role: "authenticated", sub: admin, session_id: sessionId });
+    const adminClaims = JSON.stringify({
+      role: "authenticated",
+      sub: admin,
+      session_id: sessionId,
+    });
     const promo = (
       await sql.begin(async (tx) => {
         await tx`select set_config('test.uid', ${admin}, true), set_config('request.jwt.claims', ${adminClaims}, true)`;
@@ -303,7 +305,11 @@ d("partner leaderboard cohort", () => {
 
     const sousaHome = (
       await as(sousa, (tx) => tx`select pvp_test.leaderboard_partner_cohort() r`)
-    )[0].r as { referred_players: number; eligible_wager_cents: number; rows: { username: string }[] };
+    )[0].r as {
+      referred_players: number;
+      eligible_wager_cents: number;
+      rows: { username: string }[];
+    };
     expect(Number(sousaHome.referred_players)).toBe(2);
     expect(Number(sousaHome.eligible_wager_cents)).toBe(3000);
     expect(sousaHome.rows.map((row) => row.username)).toEqual([name(playerBoth, "p")]);
@@ -320,6 +326,70 @@ d("partner leaderboard cohort", () => {
     const board = await sql`select pvp_test.leaderboard_public_board(${sousaRace}::uuid, 50, 0) r`;
     expect(JSON.stringify(board[0].r)).not.toMatch(/email|wallet|ledger/i);
     expect(JSON.stringify(board[0].r.rules)).toContain("promo code");
+    expect(JSON.stringify(board[0].r.rules)).toContain(
+      "Promo codes, referral, partner, and prize credits never count",
+    );
+    expect(JSON.stringify(board[0].r.rules)).not.toContain("until you deposit");
+  }, 90_000);
+
+  it("counts only the deposited part of a stake that mixes deposit and promo balance", async () => {
+    const admin = randomUUID();
+    const host = randomUUID();
+    const mixed = randomUUID();
+    const rival = randomUUID();
+    for (const [id, prefix] of [
+      [admin, "a"],
+      [host, "h"],
+      [mixed, "m"],
+      [rival, "r"],
+    ] as const) {
+      await as(
+        id,
+        (tx) =>
+          tx`select pvp_test.ensure_profile(${prefix + id.replace(/-/g, "").slice(0, 8)}, true)`,
+      );
+    }
+    await sql`insert into pvp_test.user_roles (user_id, role) values (${admin}, 'admin'::pvp_test.app_role)`;
+    await sql`insert into pvp_test.partners (user_id, created_by, leaderboard) values (${host}, ${admin}, true)`;
+    await sql.begin((tx) => creditUserDeposit(tx, mixed, 300));
+    await sql.begin(async (tx) => {
+      const [promo] =
+        await tx`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id)
+        values ('promo_reward', ${`lb-promo-${mixed}`}, 'real', ${mixed}::uuid) returning id`;
+      await tx`select pvp_test._post(${promo.id}::uuid, pvp_test._user_account(${mixed}::uuid, 'user_available', 'USD', 'real'), 2000)`;
+      await tx`select pvp_test._post(${promo.id}::uuid, pvp_test._system_account('house_bankroll', 'USD', 'real'), -2000)`;
+    });
+    const [template] =
+      await sql`select id, version from pvp_test.leaderboard_templates where status = 'active' limit 1`;
+    const [race] = await sql`insert into pvp_test.leaderboard_campaigns (
+      partner_user_id, template_id, template_version, name, description, status, timezone,
+      starts_at, ends_at, min_wager_cents, games, prize_pool_cents, audience,
+      funding_status, rules_frozen_at, approved_by, approved_at, started_at
+    ) values (
+      ${host}::uuid, ${template.id}::uuid, ${template.version}, 'Mixed race', '', 'active', 'UTC',
+      now() - interval '2 hours', now() + interval '2 hours', 0, array['coinflip'], 500, 'open',
+      'checked', clock_timestamp(), ${admin}::uuid, now(), now() - interval '2 hours'
+    ) returning id`;
+
+    await sql`alter table pvp_test.coinflip_games disable trigger coinflip_guard`;
+    await sql`alter table pvp_test.coinflip_entries disable trigger coinflip_entry_check`;
+    try {
+      await sql.begin((tx) =>
+        settledFlip(tx, mixed, rival, 1000, new Date(Date.now() - 10 * 60 * 1000), "real", [mixed]),
+      );
+    } finally {
+      await sql`alter table pvp_test.coinflip_games enable trigger coinflip_guard`;
+      await sql`alter table pvp_test.coinflip_entries enable trigger coinflip_entry_check`;
+    }
+    await sql`select pvp_test._withdraw_basis_rebuild_full()`;
+    await sql`select pvp_test._lb_sync(${race.id}::uuid)`;
+    const rows = await sql`select player_id, qualifying_cents from pvp_test.leaderboard_entries
+      where campaign_id = ${race.id}::uuid and qualifying_cents > 0
+        and player_id in (${mixed}::uuid, ${rival}::uuid) order by rank`;
+    expect(rows.map((row) => [row.player_id, Number(row.qualifying_cents)])).toEqual([
+      [rival, 1000],
+      [mixed, 300],
+    ]);
   }, 90_000);
 
   it("rejects a credited deposit on every rail and still allows a friend plus a partner", async () => {
@@ -353,13 +423,14 @@ d("partner leaderboard cohort", () => {
     const [link] =
       await sql`select code from pvp_test.partner_acquisition_codes where partner_user_id = ${streamer}::uuid`;
     const code = link.code as string;
-    const friendCode = (
-      await as(friend, (tx) => tx`select pvp_test.referral_create_invite() r`)
-    )[0].r as { code: string };
+    const friendCode = (await as(friend, (tx) => tx`select pvp_test.referral_create_invite() r`))[0]
+      .r as { code: string };
     const claim = async (uid: string) =>
-      (
-        await as(uid, (tx) => tx`select pvp_test.partner_acquisition_claim(${code}) r`)
-      )[0].r as { ok: boolean; attributed?: boolean; reason?: string };
+      (await as(uid, (tx) => tx`select pvp_test.partner_acquisition_claim(${code}) r`))[0].r as {
+        ok: boolean;
+        attributed?: boolean;
+        reason?: string;
+      };
     const attributed = async (uid: string) =>
       Number(
         (
