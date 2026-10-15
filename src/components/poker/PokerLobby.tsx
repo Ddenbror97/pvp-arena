@@ -674,7 +674,9 @@ function TableCard({ listing, ...act }: Act & { listing: Listing }) {
             <span className="poker-pill">Waiting</span>
           )
         ) : (
-          <span className="poker-pill">{type.tables ? `${type.tables} running` : "Open"}</span>
+          <span className="poker-pill">
+            {listing.kind === "stake" && listing.running ? `${listing.running} running` : "Open"}
+          </span>
         )}
         {table && full ? (
           <Link

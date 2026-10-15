@@ -57,6 +57,20 @@ describe("poker lobby view", () => {
     expect(keys({})).toEqual(["s1", "t10", "s2", "t11", "s5", "t12", "s8"]);
   });
 
+  it("counts only tables with someone seated as running, not empty OPEN tables", () => {
+    const withEmpty: Lobby = {
+      ...lobby,
+      types: lobby.types.map((t) => ({ ...t, tables: 2 })),
+      tables: [...lobby.tables, table(14, 1, 0), table(15, 8, 0)],
+    };
+    const running = Object.fromEntries(
+      sections(withEmpty, DEFAULT_FILTERS)
+        .flatMap((s) => s.items)
+        .flatMap((i) => (i.kind === "stake" ? [[i.key, i.running]] : [])),
+    );
+    expect(running).toEqual({ s1: 1, s2: 1, s5: 1, s8: 0 });
+  });
+
   it("filters by category, availability and search, composing all of them", () => {
     expect(keys({ category: "Micro" })).toEqual(["s1", "t10", "s2", "t11"]);
     expect(keys({ availability: "running" })).toEqual(["t10", "t11", "t12"]);

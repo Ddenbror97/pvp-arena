@@ -36,7 +36,8 @@ export const DEFAULT_FILTERS: LobbyFilters = {
 
 /** A quick seat at a stake level (fills a running table or opens one) or one running table. */
 export type Listing =
-  | { kind: "stake"; key: string; type: LobbyType }
+  /** `running` counts tables with someone seated; an idle stake keeps one empty OPEN table. */
+  | { kind: "stake"; key: string; type: LobbyType; running: number }
   | { kind: "table"; key: string; type: LobbyType; table: LobbyTable };
 
 export const blinds = (t: LobbyType) => `${money(t.small_blind)}/${money(t.big_blind)}`;
@@ -64,12 +65,9 @@ function haystack(l: Listing) {
 export function listings(lobby: Lobby): Listing[] {
   const out: Listing[] = [];
   for (const type of lobby.types) {
-    out.push({ kind: "stake", key: `s${type.id}`, type });
-    for (const table of lobby.tables) {
-      if (table.type_id === type.id && table.seated > 0) {
-        out.push({ kind: "table", key: `t${table.id}`, type, table });
-      }
-    }
+    const running = lobby.tables.filter((t) => t.type_id === type.id && t.seated > 0);
+    out.push({ kind: "stake", key: `s${type.id}`, type, running: running.length });
+    for (const table of running) out.push({ kind: "table", key: `t${table.id}`, type, table });
   }
   return out;
 }
