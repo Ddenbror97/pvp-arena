@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Casino games",
   keyword: "sic bo strategy",
   secondary: ["best sic bo bets", "sic bo big small", "sic bo house edge", "sic bo tips"],
-  title: "Sic Bo Strategy: The Least Bad Bets and Bankroll",
+  title: "Sic Bo Strategy: Best Bets, House Edge Chart and Bankroll",
   description:
     "Sic bo strategy by the numbers: Big and Small at 2.78%, why triples and doubles cost 14–33%, how to check any paytable, and a bankroll plan that fits.",
   h1: "Sic bo strategy: which bets are least bad and how to size them",

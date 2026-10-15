@@ -10,9 +10,9 @@ export const guide: Guide = {
     "cra gambling",
     "lottery winnings tax canada",
   ],
-  title: "Gambling Winnings Tax in Canada Explained",
+  title: "Are Gambling Winnings Taxable in Canada? CRA Rules",
   description:
-    "Casual gambling wins are usually tax-free in Canada - until they are not. The business-income test, crypto gains, and the records CRA expects.",
+    "Gambling winnings in Canada are usually tax-free for casual players. When CRA treats play as business income, how crypto wins are taxed and what to keep.",
   h1: "Gambling Winnings Tax in Canada",
   answer:
     "Gambling winnings tax canada. Gambling tax Canada questions usually turn on whether a win is a windfall from a hobby or income from a business-like activity under CRA themes. Many casual lottery-style windfalls are discussed as non-taxable in CRA guidance, while professional or business gambling can be taxable — and crypto rules can still apply separately. This is orientation for adults 18+, not personal tax advice.",

@@ -5,9 +5,9 @@ export const guide: Guide = {
   cluster: "CS:GO heritage",
   keyword: "cs2 roulette",
   secondary: ["csgo roulette", "cs2 roulette sites", "crypto roulette", "roulette colors"],
-  title: "CS2 Roulette Explained: Colours, Payouts and Odds",
+  title: "CS2 Roulette: 2x and 14x Odds, Sites and Fair Spins",
   description:
-    "How CS2 roulette works: the colour wheel from the CS:GO era, payouts like 2x and 14x, real odds per colour, and how to verify each spin is provably fair.",
+    "CS2 roulette odds explained: 48.48% for each 2x color, 3.03% for the 14x green, the real house edge, how to verify a spin and what to check in a site.",
   h1: "CS2 roulette explained: colours, payouts and odds",
   answer:
     "CS2 roulette is a colour-based wheel game that grew out of CS:GO skin sites. Instead of numbers, you bet on colours: two common colours pay 2x and a single rare slot pays 14x. Everyone bets on the same spin, and on provably fair sites the result is committed before the round so you can check it afterwards.",

@@ -4,9 +4,9 @@ import type { HubGuide } from "@/lib/guides/pages";
 import { getGuidesHub } from "@/lib/guides/pages.functions";
 import { OG_SITE_URL } from "@/lib/og";
 
-const TITLE = "Crypto Casino Guides: Odds, Lottery and Betting";
+const TITLE = "Gambling Guides: 700+ Free Guides on Odds and Crypto";
 const DESC =
-  "Topic hubs for skill wagers, provably fair play, lottery odds, horse racing, sports betting, prediction markets, payments, and responsible play.";
+  "Over 700 free guides to casino odds, card and dice game rules, crypto deposits, provably fair play, sports betting and lottery maths, grouped by topic.";
 
 export const Route = createFileRoute("/guides/")({
   loader: () => getGuidesHub(),

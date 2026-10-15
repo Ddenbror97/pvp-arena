@@ -5,9 +5,9 @@ export const guide: Guide = {
   cluster: "Casino games",
   keyword: "sic bo online",
   secondary: ["sic bo online"],
-  title: "Sic Bo Online: Three Dice, Many Bets, One Edge",
+  title: "Sic Bo Online: Rules, Bets and the Lower-Edge Wagers",
   description:
-    "Sic bo online is three dice with many bets on totals and triples. Small bets and big bets are the lower-edge wagers. Adults 18+.",
+    "Sic bo online explained: three dice, bets on totals, doubles and triples, why Small and Big are the lower-edge wagers, and what to check before real money.",
   h1: "Sic bo online: three dice and a menu of prices",
   answer:
     "Sic bo online is a three-dice game. You bet on totals, doubles, triples or big/small ranges. Different bets on the same roll have very different edges. Triples pay a lot because they almost never hit. Big and small are the cheaper bets and still are not fair. This site does not run sic bo.",

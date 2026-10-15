@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Crypto payments",
   keyword: "crypto casino payment methods",
   secondary: ["casino deposit methods crypto", "funding options", "deposit comparison"],
-  title: "Crypto Casino Payment Methods Compared | PvP Spin Arena",
+  title: "Crypto Casino Payment Methods: Fees and Routes Compared",
   description:
     "Every crypto deposit route compared: on-chain transfers, card on-ramps, stablecoins and network choices, with a fee table and size guidance.",
   h1: "Crypto Casino Payment Methods Compared",

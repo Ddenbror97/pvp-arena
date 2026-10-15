@@ -10,9 +10,9 @@ export const guide: Guide = {
     "baccarat banker house edge",
     "live baccarat squeeze",
   ],
-  title: "Baccarat Squeeze: The Reveal, the Ritual, the Edge",
+  title: "Baccarat Squeeze: What It Is and Why Players Do It",
   description:
-    "A baccarat squeeze is how cards are revealed, not a way to change the result. See the ritual, the pace, and the banker edge that stays.",
+    "What the baccarat squeeze is, who gets to peel the cards, why the slow reveal feels like control, and why the 1.06% banker edge stays the same either way.",
   h1: "Baccarat squeeze: the reveal ritual and the edge that stays",
   answer:
     "A baccarat squeeze is a slow peel of cards that are already dealt, a ritual of timing and theater. It does not redraw the hand, skip the third-card rules, or move the banker and player prices. A commonly published figure for banker on one standard multi-deck layout with 5% commission is about 1.06%. The felt in front of the player controls commission and any no-commission exception.",

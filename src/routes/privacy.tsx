@@ -5,13 +5,13 @@ import { LegalPage } from "@/components/LegalPage";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy — PVPspinArena" },
+      { title: "Privacy Policy: What PVPspinArena Collects and Shows" },
       {
         name: "description",
         content:
           "Privacy policy for PVPspinArena, including Discord sign-in, account data, wallet records, and what other players can see.",
       },
-      { property: "og:title", content: "Privacy — PVPspinArena" },
+      { property: "og:title", content: "Privacy Policy: What PVPspinArena Collects and Shows" },
       {
         property: "og:description",
         content: "What PVPspinArena collects, why we use it, and what other players can see.",

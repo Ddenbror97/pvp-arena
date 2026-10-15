@@ -5,9 +5,9 @@ export const guide: Guide = {
   cluster: "Casino games",
   keyword: "casino war",
   secondary: ["casino war"],
-  title: "Casino War: One Card, the Tie Bet and the Edge",
+  title: "Casino War Rules: Odds, the Tie Bet and House Edge",
   description:
-    "Casino war is one card against the dealer. Ties are the expensive part. The edge is in the tie rule, not in a system. Adults 18+ only.",
+    "Casino war rules in one minute: one card each, what happens on a tie, when to surrender or go to war, and why the tie bet is the costly part of the table.",
   h1: "Casino war: one card each, and the tie is the price",
   answer:
     "Casino war deals one card to you and one to the dealer. Higher card wins even money. A tie is where the rules take their bite: surrender half, or go to war and pay for a second card. There is no skill. This site does not offer the game.",

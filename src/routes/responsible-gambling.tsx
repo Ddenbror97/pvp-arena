@@ -5,13 +5,13 @@ import { LegalPage } from "@/components/LegalPage";
 export const Route = createFileRoute("/responsible-gambling")({
   head: () => ({
     meta: [
-      { title: "Responsible Gambling — PVPspinArena" },
+      { title: "Responsible Gambling: Budgets, Self-Exclusion and Help" },
       {
         name: "description",
         content:
-          "Responsible gambling on PVPspinArena: the cost of Jackpot, Coinflip, and Roulette, self-exclusion, and where to get help.",
+          "Responsible gambling on PVPspinArena: what Jackpot, Coinflip and Roulette really cost, how to set a budget or self-exclude, and where to get help fast.",
       },
-      { property: "og:title", content: "Responsible Gambling — PVPspinArena" },
+      { property: "og:title", content: "Responsible Gambling: Budgets, Self-Exclusion and Help" },
       {
         property: "og:description",
         content: "How to keep play in bounds on PVPspinArena, and where to get help.",

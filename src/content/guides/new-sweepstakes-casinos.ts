@@ -5,10 +5,10 @@ export const guide: Guide = {
   cluster: "Sweepstakes",
   keyword: "new sweepstakes casinos",
   secondary: ["new sweeps sites", "coin expiry on new brands"],
-  title: "New Sweepstakes Casinos: How to Judge a New Brand",
+  title: "New Sweepstakes Casinos: How to Check a New Site First",
   h1: "New Sweepstakes Casinos: How to Judge a New Brand",
   description:
-    "A new sweepstakes casino needs a brand-age check, a read of redemption complaints, and a look at coin expiry before you spend USD.",
+    "Before you try a new sweepstakes casino: check how old the brand really is, read redemption complaints, watch coin expiry and look past the launch offer.",
   answer:
     "New sweepstakes casinos show up with a fresh lobby, a welcome banner, and very little operating history you can see. This page is a way to judge that launch. It asks how old the brand actually is, what redemption complaints repeat, and how coin expiry is written. It is for adults 18 or older, or the age required where you live. Prize play can spend money you meant to keep. If it stops feeling like entertainment, stop and use the limits on our [responsible gambling](/responsible-gambling) page.\n\nThis is not legal advice. Sweepstakes rules and state positions change. Confirm the current terms and your local rules before you buy coins or request a prize. PVPspinArena is not a sweepstakes casino. It offers jackpot, coinflip, and roulette in USD only.\n\nA ranked “best new” list goes stale the week a cashier changes. The standing checklist for terms, playthrough, geography, and redeem friction lives on [best sweepstakes casinos](/guides/best-sweepstakes-casinos). Use that page when you want the full scorecard. Use this page when the thing you do not know yet is whether the brand has been around long enough to judge.",
   facts: [],

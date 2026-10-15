@@ -8,7 +8,7 @@ export const guide: Guide = {
   title: "What Is MetaMask? A Self-Custody Wallet, Explained",
   h1: "What Is MetaMask? A Self-Custody Wallet, Explained",
   description:
-    "What is MetaMask: a self-custody wallet for Ethereum and EVM chains. The company does not hold your Secret Recovery Phrase or funds.",
+    "What is MetaMask? A self-custody wallet for Ethereum and EVM chains: what the recovery phrase does, what sites can see, and connecting versus sending.",
   answer:
     "What is MetaMask? It is a self-custody wallet for Ethereum and other EVM chains, shipped as a browser extension and a mobile app. You hold the keys. The company does not hold your Secret Recovery Phrase, and there is no password reset that recovers a lost phrase. The app shows balances, builds transactions, and asks you to confirm them. Funds are not an account balance sitting on MetaMask’s servers. If you lose the phrase and have no other backup, the company cannot recreate it.\n\nThat design is the whole product. A website can request a connection. It cannot spend from your wallet unless you approve a transaction or a token allowance. Gambling is only for people 18 or older, or the age required where you live, and only with money you can afford to lose. Understanding the wallet does not make a wager profitable.",
   facts: [],

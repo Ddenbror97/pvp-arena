@@ -5,9 +5,9 @@ export const guide: Guide = {
   cluster: "Crypto payments",
   keyword: "ethereum gambling",
   secondary: ["eth casino", "ethereum casino", "eth gambling", "ethereum gas fees"],
-  title: "Ethereum Gambling Guide: ETH Fees, L2s and Risk",
+  title: "Ethereum Gambling: Deposit ETH Without High Gas Fees",
   description:
-    "How ethereum gambling works: ETH deposits, gas fees, layer-2 networks like Base, confirmation times, and why mainnet is often the expensive path.",
+    "Ethereum gambling explained: why mainnet gas can cost dollars per deposit, how Base cuts that to cents, a $20 worked example and how to avoid the wrong chain.",
   h1: "Ethereum gambling: ETH deposits, gas and layer-2 networks",
   answer:
     "Ethereum gambling means funding a casino with ETH or with tokens that live on Ethereum-style networks. On Ethereum mainnet, every send pays a gas fee that can dwarf a small bet. Layer-2 networks such as Base use ETH for gas too, but typically cost cents instead of many dollars. Confirmations are faster on those rollups. PVPspinArena accepts ETH and USDC on Base, not ETH on Ethereum mainnet. Sending mainnet ETH to a Base deposit address is a wrong-network transfer and will not credit.",

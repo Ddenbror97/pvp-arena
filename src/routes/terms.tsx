@@ -5,13 +5,13 @@ import { LegalPage } from "@/components/LegalPage";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms — PVPspinArena" },
+      { title: "Terms of Service: Fees, Deposits and Rules | PVPspinArena" },
       {
         name: "description",
         content:
           "Terms for PVPspinArena: eligibility, the 5% fee on Jackpot, Coinflip and Roulette, the 10% fee on P2P Slott, Bitcoin and Base deposits, and account rules.",
       },
-      { property: "og:title", content: "Terms — PVPspinArena" },
+      { property: "og:title", content: "Terms of Service: Fees, Deposits and Rules | PVPspinArena" },
       {
         property: "og:description",
         content:

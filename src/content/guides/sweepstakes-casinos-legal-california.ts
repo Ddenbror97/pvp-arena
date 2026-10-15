@@ -12,7 +12,7 @@ export const guide: Guide = {
   ],
   title: "Are Sweepstakes Casinos Legal in California?",
   description:
-    "Are sweepstakes casinos legal in California? This is not legal advice. The parent map stays general; here is how to check California itself.",
+    "Are sweepstakes casinos legal in California? How sweepstakes differ from licensed gambling, where the Attorney General sits, and which rules to read first.",
   h1: "are sweepstakes casinos legal in california? Check, do not collect a verdict",
   answer:
     "are sweepstakes casinos legal in california? This page will not say yes or no. A licensed casino and a promotional sweepstakes are different products, California can change what it enforces, and you have to read the Attorney General's current pages plus the operator's current rules. This is not legal advice.",

@@ -11,20 +11,20 @@ import { loadRoulettePaint, useQuerySeed } from "@/lib/first-paint";
 export const Route = createFileRoute("/roulette")({
   head: () => ({
     meta: [
-      { title: "PvP Roulette | Provably Fair Crypto Roulette | PVPspinArena" },
+      { title: "PVPspinArena Roulette: 2x and 14x Provably Fair Spins" },
       {
         name: "description",
         content:
-          "Play crypto Roulette with real players. Bet on red, black or green and verify every result with PVPspinArena's provably fair system.",
+          "Spin a 33-slot crypto roulette wheel: Purple or Silver pays 2x, Green pays 14x. Fast timed rounds in USD, and every result is provably fair and checkable.",
       },
       {
         property: "og:title",
-        content: "PvP Roulette | Provably Fair Crypto Roulette | PVPspinArena",
+        content: "PVPspinArena Roulette: 2x and 14x Provably Fair Spins",
       },
       {
         property: "og:description",
         content:
-          "Play crypto Roulette with real players. Bet on red, black or green and verify every result with PVPspinArena's provably fair system.",
+          "Spin a 33-slot crypto roulette wheel: Purple or Silver pays 2x, Green pays 14x. Fast timed rounds in USD, and every result is provably fair and checkable.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

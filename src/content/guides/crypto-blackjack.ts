@@ -5,9 +5,9 @@ export const guide: Guide = {
   cluster: "Games & odds",
   keyword: "blackjack crypto",
   secondary: ["crypto blackjack", "bitcoin blackjack", "blackjack rtp", "online blackjack"],
-  title: "Blackjack Crypto Guide: Rules, RTP and Fairness",
+  title: "Crypto Blackjack: Rules That Change RTP and Fair Play",
   description:
-    "How blackjack crypto tables work: rules that change RTP, RNG versus live, basic strategy limits, and why a hashed shoe is not the same as PvP.",
+    "How crypto blackjack works: the rule changes that move RTP, RNG versus live tables, why card counting fails online, side bet costs and what to check first.",
   h1: "Blackjack crypto: rules, RTP and what you can actually verify",
   answer:
     "Blackjack crypto tables are ordinary blackjack with a crypto cashier. RTP is set by the rules — decks, soft 17, double after split, blackjack payout — and by whether you play a correct basic-strategy chart. A hashed RNG shoe can prove which cards were drawn. It does not make the table a player pot, and it does not restore the information a live shoe gives a counter.",

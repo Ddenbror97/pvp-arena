@@ -10,9 +10,9 @@ export const guide: Guide = {
     "online crypto roulette",
     "provably fair crypto roulette",
   ],
-  title: "Crypto Roulette: How It Works, Odds and Fair Play",
+  title: "Crypto Roulette: Odds, Payouts and Provably Fair Spins",
   description:
-    "How crypto roulette works: wheel formats, odds and payouts, provably fair results, USDC deposits and withdrawals, and what to check before you play.",
+    "Crypto roulette explained: odds and payouts per wheel, how to verify a provably fair spin, depositing and withdrawing USDC, and what to check before you bet.",
   h1: "Crypto roulette: how it works, odds and fair play",
   answer:
     "Crypto roulette is roulette played with cryptocurrency, usually stablecoins like USDC, instead of bank money. You deposit from a wallet, bet on colors or numbers, and winnings are credited to your balance. The best versions are provably fair, meaning each spin's result is committed in advance and can be verified. The odds work the same as normal roulette: every bet has a built-in house edge.",

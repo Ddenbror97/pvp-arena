@@ -10,9 +10,9 @@ export const guide: Guide = {
     "trust wallet vs metamask seed phrase",
     "which wallet for an evm casino",
   ],
-  title: "MetaMask vs Trust Wallet: Fees, Chains, Custody",
+  title: "MetaMask vs Trust Wallet: Chains, Fees and Safety",
   description:
-    "MetaMask vs Trust Wallet is a custody and network choice, not a casino bonus. See chains, seed phrases, swaps, and where deposits actually land.",
+    "MetaMask vs Trust Wallet side by side: supported chains, swap fees, seed phrase safety, and where a deposit lands so you never send to the wrong network.",
   h1: "MetaMask vs Trust Wallet: custody, chains, and where funds land",
   answer:
     "MetaMask vs Trust Wallet is a choice between two self-custody wallets, not a casino bonus. Both put the seed phrase in your hands. They differ in which chains they are built to show, and a deposit lands on the network the cashier watches, not inside the app's brand.",

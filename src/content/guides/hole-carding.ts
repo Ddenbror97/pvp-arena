@@ -11,7 +11,7 @@ export const guide: Guide = {
     "exposed dealer card",
     "hole card cheating",
   ],
-  title: "Hole Carding: Law, Counting and Risk | PvP Spin Arena",
+  title: "Hole Carding in Blackjack: Is It Legal? Law and Risks",
   description:
     "Hole carding means seeing the blackjack dealer's face-down card. Devices and dealer collusion are cheating. Counting cards is a different, usually legal, act.",
   h1: "Hole carding: the dealer's down card in blackjack",

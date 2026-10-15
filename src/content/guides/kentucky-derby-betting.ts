@@ -10,9 +10,9 @@ export const guide: Guide = {
     "derby exacta",
     "derby trifecta",
   ],
-  title: "Kentucky Derby Betting: How to Bet the Run for the Roses",
+  title: "Kentucky Derby Betting: Odds, Best Bets and How to Bet",
   description:
-    "Kentucky Derby betting guide: how to read the odds, best bet types for a 20-horse field, key trends and how to place a Derby bet online or at the track.",
+    "Kentucky Derby betting made simple: how to read Derby odds, which bet types work in a 20-horse field, trends that matter and how to bet online or at the track.",
   h1: "Kentucky Derby betting for a 20-horse Run for the Roses",
   answer:
     "Kentucky Derby betting is pari-mutuel wagering on the Grade 1 race for three-year-olds at Churchill Downs, 1 1/4 miles, on the first Saturday in May. The gate holds up to 20 horses. Win, place and show are the straight pools. Exacta, trifecta and superfecta prices explode in combination count at that field size. Odds on the tote are the pool minus takeout, not a fixed Derby price. You must be 18+ or the local legal age.",

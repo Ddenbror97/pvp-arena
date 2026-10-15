@@ -5,9 +5,9 @@ export const guide: Guide = {
   cluster: "Games of chance",
   keyword: "dominoes scoring",
   secondary: ["all fives score", "domino pip count", "bergen points", "block dominoes score"],
-  title: "Dominoes Scoring: Points, Variants and the Board",
+  title: "Dominoes Scoring: How to Count Points, Game by Game",
   description:
-    "Dominoes scoring depends on the variant: pips left, multiples of five, or a target. How to play the tiles stays on the rules page.",
+    "How dominoes scoring works: counting pips in block and draw games, scoring multiples of five in All Fives, plus Bergen, Mexican Train and Texas 42 notes.",
   h1: "Dominoes scoring: pips, multiples of five, and the point target",
   answer:
     "Dominoes scoring depends on which game you already agreed to play. Block and draw games usually write down the pips left when the hand ends. All Fives writes points during the hand when the open ends add to a multiple of five. Bergen scores 2 or 3 for matching ends, and train games and Texas 42 keep their own sheets. How the tiles are dealt, matched, and drawn is on the dominoes rules page. This page is only the score.",

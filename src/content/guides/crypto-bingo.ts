@@ -7,7 +7,7 @@ export const guide: Guide = {
   secondary: ["bitcoin bingo", "crypto bingo sites", "bingo rtp", "75 ball bingo odds"],
   title: "Crypto Bingo Guide: Odds, Patterns and House Edge",
   description:
-    "How crypto bingo works: card odds, pattern payouts, RNG draws, house edge, and why a bingo card is not a verifiable PvP pot.",
+    "How crypto bingo works: 75-ball and 90-ball card odds, pattern payouts, how the draw is generated, the real house edge and how to judge a room first.",
   h1: "Crypto bingo: card odds, patterns and the house edge",
   answer:
     "Crypto bingo is the old hall game with a crypto cashier: you buy one or more cards, an RNG draws numbers, and you are paid if your card completes a published pattern. The house edge sits in the price of the card versus the prize table, not in a shared pot you can audit by share. A bingo card is not a verifiable PvP stake. Bitcoin bingo does not change the combinatorics.",

@@ -10,9 +10,9 @@ export const guide: Guide = {
     "queens up side bet",
     "crazy 4 poker ante",
   ],
-  title: "Crazy 4 Poker: Queens, Aces and the Ante",
+  title: "Crazy 4 Poker Rules: Ante, Play Bet and Super Bonus",
   description:
-    "Crazy 4 Poker deals five cards and you play four. See the ante, the play bet, queens-up qualifying, and the super bonus side.",
+    "Crazy 4 Poker rules: five cards dealt, best four played, how the ante and play bet work, why Queens Up is a side bet, and how the super bonus pays.",
   h1: "Crazy 4 poker: five cards dealt, four cards played",
   answer:
     "Crazy 4 poker deals five cards and you play four of them against the dealer. You post an ante, then fold or make a play bet after you choose a discard. On the common layout the dealer qualifies with king-high or better, a pair of aces or better may raise the play bet, and Queens Up is an optional side bet rather than the qualify rule. The super bonus is its own posted price.",

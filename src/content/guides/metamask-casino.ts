@@ -10,9 +10,9 @@ export const guide: Guide = {
     "connect metamask to casino",
     "wallet signature",
   ],
-  title: "MetaMask Casino Guide: Connect, Deposit and Stay Safe",
+  title: "MetaMask Casino: How to Deposit, Play and Withdraw Safely",
   description:
-    "How a MetaMask casino works: connecting your wallet, what signing a message means, depositing on Base, and the safety checks to make before approving anything.",
+    "Use MetaMask at a crypto casino step by step: connect, sign in without gas, deposit USDC on Base, withdraw back to your wallet and spot risky approvals.",
   h1: "MetaMask casino guide: connect, deposit and stay safe",
   answer:
     "A MetaMask casino is a crypto casino you can use with the MetaMask wallet. You connect MetaMask to prove which address is yours, usually by signing a free message, then send deposits from that wallet on the network the site supports. Your funds stay in MetaMask until you send them, and you should never share your secret recovery phrase with any site.",

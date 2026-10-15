@@ -11,9 +11,9 @@ export const guide: Guide = {
     "bankroll for holdem",
     "poker downswing",
   ],
-  title: "Poker Bankroll Management: Buy-Ins and Risk",
+  title: "Poker Bankroll Management: How Many Buy-Ins You Need",
   description:
-    "Poker bankroll management: cash and tournament buy-in counts, downswings, Kelly limits, and why a roll is not a winning system.",
+    "Poker bankroll management in numbers: 20 to 40 buy-ins for cash games, more for tournaments, a worked 50NL example, downswings and where Kelly helps.",
   h1: "Poker bankroll management: buy-in counts, not a promise",
   answer:
     "Poker bankroll management is a rule for how many buy-ins you keep at a stake so a normal downswing does not force you to quit or to chase. It is risk control, not a winning system. If you do not have an edge after rake, a bigger roll only delays ruin. PVPspinArena is not a poker room and does not need a Hold'em roll.",

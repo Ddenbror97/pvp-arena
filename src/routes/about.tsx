@@ -59,9 +59,9 @@ const FAQS: Faq[] = [
   },
 ];
 
-const TITLE = "About PVPspinArena | PVP Crypto Gaming Platform";
+const TITLE = "About PVPspinArena: Provably Fair PvP Crypto Games";
 const DESC =
-  "Learn about PVPspinArena, a player-vs-player crypto gaming platform inspired by the fast, competitive spirit of the early CS:GO betting era.";
+  "PVPspinArena runs player-vs-player Jackpot, Coinflip, Slott duels and Hold'em poker plus Roulette, on one USD balance with provably fair results.";
 
 export const Route = createFileRoute("/about")({
   head: () =>

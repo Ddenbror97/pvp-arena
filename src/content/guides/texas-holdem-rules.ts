@@ -12,9 +12,9 @@ export const guide: Guide = {
     "holdem blinds",
     "holdem showdown",
   ],
-  title: "How to Play Texas Holdem: Rules and Streets",
+  title: "How to Play Texas Holdem: Rules for Beginners",
   description:
-    "How to play Texas Holdem: hole cards, blinds, preflop to river, betting actions, showdown, and how this differs from PVPspinArena.",
+    "How to play Texas Holdem step by step: hole cards, blinds, the flop, turn and river, every betting action, showdown rules and a worked beginner hand.",
   h1: "How to play Texas Holdem: hole cards, streets and showdown",
   answer:
     "How to play Texas Holdem is the Hold'em rule sheet: two hole cards, blinds, four betting streets, five community cards, and a showdown that uses the best five-card hand. No-limit means you may shove your stack. The room still takes rake. PVPspinArena is not a Hold'em client. It runs Jackpot, Coinflip, Roulette, and P2P Slott.",
