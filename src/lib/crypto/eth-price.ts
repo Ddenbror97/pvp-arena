@@ -97,6 +97,18 @@ export function assessSequencer(
   return { ok: true };
 }
 
+/**
+ * Uptime feed latestRoundData: [roundId, answer, startedAt, updatedAt, answeredInRound].
+ * startedAt is the last status change; updatedAt moves on every daily heartbeat and must not
+ * restart the grace window.
+ */
+export function assessSequencerRound(
+  round: readonly [bigint, bigint, bigint, bigint, bigint],
+  nowSeconds: number,
+): { ok: true } | { ok: false; reason: OracleFailure } {
+  return assessSequencer(round[1], round[2], nowSeconds);
+}
+
 /** Presentation-only ETH for a USD-cent amount. Never a balance. */
 export function formatEthEquivalent(cents: number, priceMicroUsd: number): string {
   if (!Number.isSafeInteger(cents) || cents <= 0) return "";

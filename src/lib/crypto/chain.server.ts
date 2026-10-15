@@ -29,7 +29,7 @@ import {
   BASE_ETH_USD_DECIMALS,
   BASE_SEQUENCER_UPTIME_FEED,
   assessEthUsdRound,
-  assessSequencer,
+  assessSequencerRound,
   type ChainlinkRound,
 } from "./eth-price";
 import { workerEnv } from "@/lib/worker-env";
@@ -382,7 +382,7 @@ export async function snapshotEthPrice(
     return null;
   }
   if (sequencer) {
-    const seq = assessSequencer(sequencer[1], sequencer[3], nowSeconds);
+    const seq = assessSequencerRound(sequencer, nowSeconds);
     if (!seq.ok) {
       await notePriceFailure(env.chainId, seq.reason);
       return null;
