@@ -11,7 +11,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
-import { migrateTestSchemaToReal } from "./money";
+import { fundTestTreasury, migrateTestSchemaToReal } from "./money";
 import {
   applyPayoutDecision,
   decidePayout,
@@ -279,7 +279,8 @@ d("withdrawal finality (ledger)", () => {
     await sql`update pvp_test.crypto_settings set daily_limit_cents = 100000000, daily_global_limit_cents = 1000000000, payout_float_max_cents = 1000000000, auto_approve_cents = 100000000`;
   }, 180_000);
 
-  async function setup(cents = 700) {
+  async function setup(cents = 1100) {
+    await fundTestTreasury(sql);
     const uid = await newUser("wf");
     const tx = hex(32);
     const s = scenario(tx);

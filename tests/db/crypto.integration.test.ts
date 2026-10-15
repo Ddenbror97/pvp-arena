@@ -7,7 +7,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
-import { migrateTestSchemaToReal } from "./money";
+import { fundTestTreasury, migrateTestSchemaToReal } from "./money";
 
 const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
 const d = url ? describe : describe.skip;
@@ -88,6 +88,7 @@ d("crypto money path", () => {
     TREASURY = (await sql`select address from pvp_test.chain_treasury_accounts where role = 'deposit' and chain_id = 84532`)[0].address.toLowerCase();
     await sql`update pvp_test.jackpot_config set entry_rate_limit = 100000`;
     await sql`update pvp_test.crypto_settings set daily_limit_cents = 10000000, daily_global_limit_cents = 100000000, payout_float_max_cents = 100000000`;
+    await fundTestTreasury(sql);
   }, 120_000);
 
   it("duplicate deposit is credited exactly once (replayed + concurrent)", async () => {
@@ -133,8 +134,12 @@ d("crypto money path", () => {
     const u = await newUser("eth");
     const before = await bal(u.id);
     const dep = await observe("ETH", txh(), u.wallet, "1000000000000000000", 1_000_000); // 1 ETH
-    const stale = await one(sql`select pvp_test.crypto_record_price(84532, 'ETH', ${FEED}, 1, ${PRICE}, now() - interval '2 hours') as r`);
-    expect((await credit(dep.id, stale)).status).toBe("AWAITING_VALUATION");
+    await expect(sql`select pvp_test.crypto_record_price(84532, 'ETH', ${FEED}, 1, ${PRICE}, now() - interval '2 hours')`).rejects.toThrow(/PRICE_STALE/);
+    const [stale] = await sql`insert into pvp_test.crypto_price_snapshots
+        (chain_id, asset_key, feed_address, feed_round_id, price_micro_usd, max_age_seconds, observed_at, oracle_updated_at)
+      select 84532, 'ETH', ${FEED}, 0, ${PRICE}, price_max_age_seconds, now() - interval '2 hours', now() - interval '2 hours'
+      from pvp_test.crypto_settings returning id`;
+    expect((await credit(dep.id, stale.id)).status).toBe("AWAITING_VALUATION");
     expect((await credit(dep.id, null)).status).toBe("AWAITING_VALUATION");
     expect((await credit(dep.id, await snapshot())).status).toBe("CREDITED");
     expect(await bal(u.id)).toBe(before + 250_000);
@@ -178,7 +183,7 @@ d("crypto money path", () => {
   it("failed withdrawal releases funds exactly once, and never after settlement", async () => {
     const u = await newUser("fx");
     const avail = await bal(u.id);
-    const w = await withdraw(u.id, 700);
+    const w = await withdraw(u.id, 1100);
     await sql`select pvp_test.crypto_withdrawal_signed(${w.id}, ${txh()}, 1, '0x00')`;
     await settled(Array.from({ length: 5 }, () => sql`select pvp_test.crypto_withdrawal_failed(${w.id}, 'reverted')`));
     expect(await bal(u.id)).toBe(avail);
@@ -191,7 +196,7 @@ d("crypto money path", () => {
   it("a replayed/confirmed withdrawal can only settle once and cannot be re-signed", async () => {
     const u = await newUser("rp");
     const avail = await bal(u.id);
-    const w = await withdraw(u.id, 900);
+    const w = await withdraw(u.id, 1200);
     await sql`select pvp_test.crypto_withdrawal_signed(${w.id}, ${txh()}, 2, '0x00')`;
     await expect(sql`select pvp_test.crypto_withdrawal_signed(${w.id}, ${txh()}, 3, '0x00')`).rejects.toThrow(/NOT_APPROVED/);
     await sql`select pvp_test.crypto_withdrawal_broadcast(${w.id})`;
@@ -200,7 +205,7 @@ d("crypto money path", () => {
     await expect(one(sql`select pvp_test.crypto_cancel_withdrawal(${u.id}, ${w.id}) as r`)).rejects.toThrow();
     expect(await ledgerCount(`withdrawal:${w.id}:settle`)).toBe(1);
     expect(await ledgerCount(`withdrawal:${w.id}:release`)).toBe(0);
-    expect(await bal(u.id)).toBe(avail - 900);
+    expect(await bal(u.id)).toBe(avail - 1200);
     expect(await bal(u.id, "user_locked")).toBe(0);
     expect((await wd(w.id)).status).toBe("CONFIRMED");
     await assertInvariants();

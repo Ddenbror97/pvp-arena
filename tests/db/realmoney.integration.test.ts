@@ -6,7 +6,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
-import { seedSnapshotDeposits, SNAPSHOT_TX } from "./money";
+import { fundTestTreasury, seedSnapshotDeposits, SNAPSHOT_TX, useTestWithdrawalMinimum } from "./money";
 
 const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
 const d = url ? describe : describe.skip;
@@ -95,6 +95,7 @@ d("real-money ledger migration", () => {
     await sql`update pvp_test.jackpot_config set entry_rate_limit = 100000, countdown_seconds = 4`;
     await sql`update pvp_test.coinflip_config set pre_delay_ms = 50, animation_ms = 50, create_rate_limit = 100000, fee_bps = 500`;
     await sql`update pvp_test.crypto_settings set watch_only = true, withdrawals_enabled = false, real_play_enabled = false, daily_limit_cents = 10000000, daily_global_limit_cents = 100000000, auto_approve_cents = 10000000`;
+    await useTestWithdrawalMinimum(sql);
     // A pre-migration player with test credits, and the two snapshot deposits.
     testUser = randomUUID();
     await as(testUser, (tx) => tx`select pvp_test.ensure_profile(${"pre" + Date.now().toString(36)}, true)`);
@@ -356,6 +357,7 @@ d("real-money ledger migration", () => {
   it("withdrawals: hold once, insufficient/locked funds rejected, failure releases once, success settles once", async () => {
     const u = await newUser(30);
     await sql`update pvp_test.crypto_settings set withdrawal_fee_cents = 0`;
+    await fundTestTreasury(sql);
     expect(await err(sql`select pvp_test.crypto_request_withdrawal(${u.id}, 84532, 'USDC', 3001, null, true)`)).toMatch(/INSUFFICIENT_BALANCE/);
     const w = (await sql`select pvp_test.crypto_request_withdrawal(${u.id}, 84532, 'USDC', 1000, null, true) r`)[0].r;
     expect(await err(sql`select pvp_test.crypto_request_withdrawal(${u.id}, 84532, 'USDC', 1000, null, true)`)).toMatch(/WITHDRAWAL_PENDING/);
