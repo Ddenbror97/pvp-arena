@@ -20,7 +20,7 @@ import {
   type RlGame,
 } from "@/lib/roulette/api";
 import { betIntentFor, type BetIntent } from "@/lib/roulette/bet-intent";
-import { rouletteBarFill, rouletteBarLabel } from "@/lib/roulette/countdown";
+import { resultHoldUntil, rouletteBarFill, rouletteBarLabel } from "@/lib/roulette/countdown";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
 import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import { RouletteStrip } from "./RouletteStrip";
@@ -79,9 +79,6 @@ const BettingCountdownBar = memo(function BettingCountdownBar({
   );
 });
 
-const RESULT_HOLD_MS = 3500;
-const RESULT_HOLD_MAX_MS = 6000;
-
 /** Fallback polling for when realtime is slow or down: tight around the next deadline. */
 function roundPollMs(g: RlGame | null, at: number) {
   const live = channelLive("roulette");
@@ -123,10 +120,7 @@ export function RouletteGame() {
       ? Date.parse(live.betting_started_at)
       : NaN;
   // Hand over to the next round when its betting clock starts, so the bar never sits idle between.
-  const holdUntil = Number.isFinite(nextStart)
-    ? Math.max(resultEnd + RESULT_HOLD_MS, Math.min(nextStart, resultEnd + RESULT_HOLD_MAX_MS))
-    : resultEnd + RESULT_HOLD_MS;
-  const holding = !!f && f.id !== live?.id && now() < holdUntil;
+  const holding = !!f && f.id !== live?.id && now() < resultHoldUntil(resultEnd, nextStart);
   const g = holding ? f : live;
   const bets = useQuery({
     queryKey: ["roulette-bets", g?.id],

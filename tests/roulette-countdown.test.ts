@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { rouletteBarFill, rouletteBarLabel } from "../src/lib/roulette/countdown";
+import {
+  RESULT_HOLD_MAX_MS,
+  RESULT_HOLD_MS,
+  resultHoldUntil,
+  rouletteBarFill,
+  rouletteBarLabel,
+} from "../src/lib/roulette/countdown";
 
 const opens = "2026-10-15T16:32:17.725Z";
 const starts = "2026-10-15T16:32:21.265Z";
@@ -38,5 +44,33 @@ describe("roulette countdown during betting", () => {
   });
   it("is empty outside a betting round", () => {
     expect(rouletteBarFill(false, opens, starts, ends, at(starts, 1000))).toBe(0);
+  });
+});
+
+describe("roulette result hold", () => {
+  const spinEnd = Date.parse("2026-10-15T16:32:17.625Z");
+
+  it("uses a 3.5s minimum and a 6s cap", () => {
+    expect(RESULT_HOLD_MS).toBe(3500);
+    expect(RESULT_HOLD_MAX_MS).toBe(6000);
+  });
+  it("hands over when the next round's betting clock starts on schedule", () => {
+    expect(resultHoldUntil(spinEnd, spinEnd + 3640)).toBe(spinEnd + 3640);
+  });
+  it("holds for the minimum when the next round starts sooner", () => {
+    expect(resultHoldUntil(spinEnd, spinEnd + 1000)).toBe(spinEnd + RESULT_HOLD_MS);
+    expect(resultHoldUntil(spinEnd, spinEnd - 500)).toBe(spinEnd + RESULT_HOLD_MS);
+  });
+  it("stops at the cap when the next round starts later", () => {
+    expect(resultHoldUntil(spinEnd, spinEnd + 9000)).toBe(spinEnd + RESULT_HOLD_MAX_MS);
+  });
+  it("is exact at both boundaries", () => {
+    expect(resultHoldUntil(spinEnd, spinEnd + RESULT_HOLD_MS)).toBe(spinEnd + RESULT_HOLD_MS);
+    expect(resultHoldUntil(spinEnd, spinEnd + RESULT_HOLD_MAX_MS)).toBe(
+      spinEnd + RESULT_HOLD_MAX_MS,
+    );
+  });
+  it("holds for the minimum when the next start is unknown", () => {
+    expect(resultHoldUntil(spinEnd, NaN)).toBe(spinEnd + RESULT_HOLD_MS);
   });
 });

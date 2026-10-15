@@ -30,6 +30,22 @@ export function rouletteBarLabel(game: CountdownRound | null, nowMs: number): st
   return "Waiting for the first bet";
 }
 
+export const RESULT_HOLD_MS = 3500;
+export const RESULT_HOLD_MAX_MS = 6000;
+
+/**
+ * When the finished round's result stops being shown: at the next round's betting start, but no
+ * sooner than RESULT_HOLD_MS and no later than RESULT_HOLD_MAX_MS after the spin ended. Without a
+ * known next start (NaN) the result is held for RESULT_HOLD_MS.
+ */
+export function resultHoldUntil(spinEndMs: number, nextStartMs: number): number {
+  if (!Number.isFinite(nextStartMs)) return spinEndMs + RESULT_HOLD_MS;
+  return Math.max(
+    spinEndMs + RESULT_HOLD_MS,
+    Math.min(nextStartMs, spinEndMs + RESULT_HOLD_MAX_MS),
+  );
+}
+
 /**
  * Before the betting clock starts the bar fills from the row's opening to full, then it drains
  * from 1 at the opening of the betting window to 0 at its end. 0 outside a betting round.
