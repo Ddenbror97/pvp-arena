@@ -395,4 +395,73 @@ describe("poker promo parity", () => {
     },
     LONG,
   );
+
+  it(
+    "a player waiting alone can leave at any time and gets the whole buy-in back",
+    async () => {
+      const p = await player(3000);
+      const t = (await sit(p, 2, 1000)).table_id as number;
+      expect(await bal(p.id)).toBe(2000);
+      // Waited a long time, then sat out, then gave up: each leave path returns everything.
+      await sql`update pvp_test.poker_seats set created_at = clock_timestamp() - interval '2 hours'
+        where table_id = ${t} and user_id = ${p.id}::uuid and status = 'SEATED'`;
+      const r = (await leave(p, t))[0] as Row;
+      expect(r).toBeDefined();
+      expect(await bal(p.id)).toBe(3000);
+      const [open] = await sql`select count(*)::int n from pvp_test.poker_seats
+        where user_id = ${p.id}::uuid and status <> 'CLOSED'`;
+      expect(open!.n).toBe(0);
+      const [tbl] = await sql`select seated from pvp_test.poker_tables where id = ${t}`;
+      expect(tbl!.seated).toBe(0);
+
+      const again = (await sit(p, null, 1000, t)).table_id as number;
+      expect(again).toBe(t);
+      await as(p.id, (tx) => tx`select pvp_test.poker_sit_out(${t}::bigint, true, null)`);
+      await leave(p, t);
+      expect(await bal(p.id)).toBe(3000);
+      // Leaving twice is harmless.
+      await leave(p, t);
+      expect(await bal(p.id)).toBe(3000);
+      await parity();
+    },
+    LONG,
+  );
+
+  it(
+    "a lone player who closed the browser is sat out, then cashed out by the kick",
+    async () => {
+      const p = await player(3000);
+      const t = (await sit(p, 2, 1000)).table_id as number;
+      const seat = async () =>
+        (
+          await sql`select state, status, sat_out_reason from pvp_test.poker_seats
+            where table_id = ${t} and user_id = ${p.id}::uuid order by id desc limit 1`
+        )[0] as Row;
+      // A live heartbeat keeps a waiting player seated.
+      await as(null, (tx) => tx`select pvp_test.poker_tick()`);
+      expect(await seat()).toMatchObject({ state: "ACTIVE", status: "SEATED" });
+
+      await sql`update pvp_test.poker_seats set last_seen_at = clock_timestamp() - interval '2 minutes'
+        where table_id = ${t} and user_id = ${p.id}::uuid and status = 'SEATED'`;
+      await as(null, (tx) => tx`select pvp_test.poker_tick()`);
+      expect(await seat()).toMatchObject({
+        state: "SITTING_OUT",
+        status: "SEATED",
+        sat_out_reason: "away",
+      });
+      const [due] =
+        await sql`select next_due_at is not null d from pvp_test.poker_tables where id = ${t}`;
+      expect(due!.d).toBe(true);
+      expect(await bal(p.id)).toBe(2000);
+
+      await sql`update pvp_test.poker_seats set sat_out_at = clock_timestamp() - interval '1 hour'
+        where table_id = ${t} and user_id = ${p.id}::uuid and status = 'SEATED'`;
+      await sql`update pvp_test.poker_tables set next_due_at = clock_timestamp() where id = ${t}`;
+      await as(null, (tx) => tx`select pvp_test.poker_tick()`);
+      expect((await seat()).status).toBe("CLOSED");
+      expect(await bal(p.id)).toBe(3000);
+      await parity();
+    },
+    LONG,
+  );
 });

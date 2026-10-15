@@ -160,6 +160,18 @@ export function PokerTable({ id }: { id: number }) {
     })();
   }, [awayOut, visible, userId, me?.chain_link, id, refresh]);
 
+  // A leave requested mid-hand completes when the hand ends; follow the player to the lobby.
+  const wasLeaving = useRef(false);
+  useEffect(() => {
+    if (me?.leaving) wasLeaving.current = true;
+    else if (wasLeaving.current && mySeat === null && state) {
+      wasLeaving.current = false;
+      toast.success("You left the table. Your chips are back in your wallet.");
+      void qc.invalidateQueries({ queryKey: ["wallet"] });
+      void navigate({ to: "/poker" });
+    }
+  }, [me?.leaving, mySeat, state, qc, navigate]);
+
   // Flag the tab while it is hidden and the action is on this player, so a turn isn't lost to the clock.
   const myTurn =
     state?.hand?.status === "BETTING" && mySeat !== null && state.hand.to_act === mySeat;
@@ -280,7 +292,10 @@ export function PokerTable({ id }: { id: number }) {
       return;
     }
     if (data?.pending) toast("You'll leave the table when this hand ends.");
-    else void navigate({ to: "/poker" });
+    else {
+      toast.success("You left the table. Your chips are back in your wallet.");
+      void navigate({ to: "/poker" });
+    }
     void refresh();
     void qc.invalidateQueries({ queryKey: ["wallet"] });
   };
@@ -346,7 +361,7 @@ export function PokerTable({ id }: { id: number }) {
     )
   ) : !h ? (
     state.seats.filter((s) => s.state === "ACTIVE").length < 2 ? (
-      "Waiting for another player…"
+      "Waiting for another player… Leave anytime and your chips go back to your wallet."
     ) : (
       "Next hand starting…"
     )
