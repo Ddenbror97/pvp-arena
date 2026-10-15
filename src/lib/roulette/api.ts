@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { markChannel } from "@/lib/live-channel";
+import { listenTopic, markChannel } from "@/lib/live-channel";
 import type { Database } from "@/integrations/supabase/types";
 
 export type RlColor = Database["public"]["Enums"]["roulette_color"];
@@ -134,11 +134,10 @@ export function useRouletteRealtime() {
       qc.invalidateQueries({ queryKey: ["roulette-history"] });
       qc.invalidateQueries({ queryKey: ["roulette-bets"] });
     };
-    const ch = supabase
-      .channel("roulette-live")
-      .on("postgres_changes", { event: "*", schema: "public", table: "roulette_games" }, (p) => {
-        if (isRoundRow(p.new)) {
-          const row = p.new;
+    const stop = listenTopic(
+      "game:roulette",
+      (_event, row) => {
+        if (isRoundRow(row)) {
           const prev = qc.getQueryData<RlGame | null>(["roulette-round"]);
           qc.setQueryData<RlGame | null>(["roulette-round"], (cur) => mergeRoundUpdate(cur, row));
           // Every bet bumps bet_count on the round row; bet rows themselves are RLS-private.
@@ -146,12 +145,13 @@ export function useRouletteRealtime() {
           if (row.status === "COMPLETED" || row.status === "CANCELLED")
             qc.invalidateQueries({ queryKey: ["roulette-history"] });
         }
-      })
-      .subscribe((status) => {
+      },
+      (status) => {
         setLive(status === "SUBSCRIBED");
         if (status === "SUBSCRIBED" || status === "CHANNEL_ERROR" || status === "TIMED_OUT")
           refetch();
-      });
+      },
+    );
     const onWake = () => {
       if (document.visibilityState === "visible") refetch();
     };
@@ -162,7 +162,7 @@ export function useRouletteRealtime() {
       document.removeEventListener("visibilitychange", onWake);
       setLive(false);
       clearTimeout(betsTimer);
-      supabase.removeChannel(ch);
+      stop();
     };
   }, [qc]);
 }

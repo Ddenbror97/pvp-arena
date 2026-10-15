@@ -3,7 +3,7 @@ import { queryOptions, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { useBalanceHeld } from "@/lib/balance-hold";
-import { channelLive, markChannel } from "@/lib/live-channel";
+import { channelLive, listenTopic, markChannel } from "@/lib/live-channel";
 import {
   inJackpotReveal,
   JACKPOT_SPIN_MS,
@@ -87,7 +87,9 @@ type OpenRoundRow = Game & { jackpot_players?: PlayerRow[] | null };
 function splitOpenRound(row: OpenRoundRow | null): { game: Game | null; players: PlayerRow[] } {
   if (!row) return { game: null, players: [] };
   const { jackpot_players: nested, ...game } = row;
-  const players = [...(nested ?? [])].sort((a, b) => a.first_entry_at.localeCompare(b.first_entry_at));
+  const players = [...(nested ?? [])].sort((a, b) =>
+    a.first_entry_at.localeCompare(b.first_entry_at),
+  );
   return { game, players };
 }
 
@@ -340,8 +342,7 @@ export function useLiveJackpot() {
   // A fresh visit has no stage in memory. The completed row is still the wheel
   // until its server clock runs out, so leaving the page cannot swap in the
   // empty game the server opens at settlement.
-  const showingReveal =
-    !!queried && inJackpotReveal(queried) && !revealed.current.has(queried.id);
+  const showingReveal = !!queried && inJackpotReveal(queried) && !revealed.current.has(queried.id);
   const shownStage = stage ?? (showingReveal ? queried : null);
   const game = shownStage ?? (queried && queried.status !== "COMPLETED" ? queried : null);
   const gameId = game?.id ?? null;
@@ -426,40 +427,33 @@ export function useLiveJackpot() {
       live = up;
       markChannel("jackpot", up);
     };
-    const ch = supabase
-      .channel("jackpot-live")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "jackpot_games" },
-        (payload) => {
-          const row = payload.new as Game;
-          if (!row?.id) return;
-          if (row.id === shownId.current && row.status === "COMPLETED") {
-            startReveal(row);
-            return;
-          }
-          if (row.status === "WAITING" || row.status === "ACTIVE" || row.status === "DRAWING") {
-            qc.setQueryData(["open-game"], (old: Game | null | undefined) => newerGame(old, row));
-          }
-        },
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "jackpot_players" },
-        (payload) => {
-          const row = payload.new as { game_id?: number };
-          if (row?.game_id == null) return;
-          void qc.invalidateQueries({ queryKey: ["players", row.game_id] });
-        },
-      )
-      .subscribe((status) => {
+    const stop = listenTopic(
+      "game:jackpot",
+      (event, payload) => {
+        if (event === "player") {
+          const gameId = (payload as { game_id?: number }).game_id;
+          if (gameId != null) void qc.invalidateQueries({ queryKey: ["players", gameId] });
+          return;
+        }
+        const row = payload as unknown as Game;
+        if (!row?.id) return;
+        if (row.id === shownId.current && row.status === "COMPLETED") {
+          startReveal(row);
+          return;
+        }
+        if (row.status === "WAITING" || row.status === "ACTIVE" || row.status === "DRAWING") {
+          qc.setQueryData(["open-game"], (old: Game | null | undefined) => newerGame(old, row));
+        }
+      },
+      (status) => {
         setLive(status === "SUBSCRIBED");
         if (status === "SUBSCRIBED" || status === "CHANNEL_ERROR" || status === "TIMED_OUT")
           void qc.invalidateQueries({ queryKey: ["open-game"] });
-      });
+      },
+    );
     return () => {
       setLive(false);
-      supabase.removeChannel(ch);
+      stop();
     };
   }, [qc, startReveal]);
 
@@ -535,26 +529,15 @@ export function walletQuery(userId: string | null) {
   });
 }
 
-/** Keep wallet fresh from realtime (RLS limits events to the owner's rows). */
+/** Keep wallet fresh from realtime (the topic policy admits only the owner). */
 export function useWalletRealtime(userId: string | null) {
   const qc = useQueryClient();
   useEffect(() => {
     if (!userId) return;
-    // Unique channel per hook instance so header + page subscriptions don't collide.
-    const ch = supabase
-      .channel(`wallet-${userId}-${Math.random().toString(36).slice(2)}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "wallet_accounts", filter: `owner_id=eq.${userId}` },
-        () => {
-          void qc.invalidateQueries({ queryKey: ["wallet", userId] });
-          void qc.invalidateQueries({ queryKey: ["stats", userId] });
-          void qc.invalidateQueries({ queryKey: ["prestige", userId] });
-        },
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(ch);
-    };
+    return listenTopic(`wallet:${userId}`, () => {
+      void qc.invalidateQueries({ queryKey: ["wallet", userId] });
+      void qc.invalidateQueries({ queryKey: ["stats", userId] });
+      void qc.invalidateQueries({ queryKey: ["prestige", userId] });
+    });
   }, [userId, qc]);
 }

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { channelLive, markChannel } from "@/lib/live-channel";
+import { channelLive, listenTopic, markChannel } from "@/lib/live-channel";
 import type { Database } from "@/integrations/supabase/types";
 
 export type CfGame = Database["public"]["Tables"]["coinflip_games"]["Row"];
@@ -81,32 +81,29 @@ export function useCoinflipRealtime() {
       live = up;
       markChannel("coinflip", up);
     };
-    const ch = supabase
-      .channel("coinflip-live")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "coinflip_games" },
-        (payload) => {
-          const row = payload.new as { id?: number; status?: string };
-          qc.invalidateQueries({ queryKey: ["coinflip-open"] });
-          qc.invalidateQueries({ queryKey: ["coinflip-live"] });
-          if (row?.id != null) qc.invalidateQueries({ queryKey: ["coinflip", row.id] });
-          if (row?.status === "COMPLETED" || row?.status === "CANCELLED") {
-            qc.invalidateQueries({ queryKey: ["coinflip-recent"] });
-            qc.invalidateQueries({ queryKey: ["coinflip-mine"] });
-          }
-        },
-      )
-      .subscribe((status) => {
+    const stop = listenTopic(
+      "game:coinflip",
+      (_event, payload) => {
+        const row = payload as { id?: number; status?: string };
+        qc.invalidateQueries({ queryKey: ["coinflip-open"] });
+        qc.invalidateQueries({ queryKey: ["coinflip-live"] });
+        if (row?.id != null) qc.invalidateQueries({ queryKey: ["coinflip", row.id] });
+        if (row?.status === "COMPLETED" || row?.status === "CANCELLED") {
+          qc.invalidateQueries({ queryKey: ["coinflip-recent"] });
+          qc.invalidateQueries({ queryKey: ["coinflip-mine"] });
+        }
+      },
+      (status) => {
         setLive(status === "SUBSCRIBED");
         if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
           qc.invalidateQueries({ queryKey: ["coinflip-open"] });
           qc.invalidateQueries({ queryKey: ["coinflip-live"] });
         }
-      });
+      },
+    );
     return () => {
       setLive(false);
-      supabase.removeChannel(ch);
+      stop();
     };
   }, [qc]);
 }

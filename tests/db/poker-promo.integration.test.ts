@@ -295,7 +295,7 @@ describe("poker promo parity", () => {
   );
 
   it(
-    "holds a partner's poker losses to a regular player",
+    "buys in with partner credit and holds the partner's losses to a regular player",
     async () => {
       const adm = await admin();
       const partner = await player(0);
@@ -303,6 +303,8 @@ describe("poker promo parity", () => {
       await sql`insert into pvp_test.partners (user_id, created_by, leaderboard) values (${partner.id}::uuid, ${adm.id}::uuid, false)`;
       const friend = await player(1000);
       const t = (await sit(partner, 2, 1000)).table_id as number;
+      expect(await seatStake(partner.id, t)).toEqual({ eligible: 0, bonus: 1000 });
+      expect(await bal(partner.id)).toBe(4000);
       await sit(friend, null, 1000, t);
       const h = await playHand(
         t,
@@ -322,6 +324,10 @@ describe("poker promo parity", () => {
         ["poker", friend.id, Number(hp!.lost), Number(hp!.lost)],
       ]);
       expect(ev[0]!.ledger_tx_id).toBe(h.ledger_tx_id);
+      // Partner credit won by the friend stays bonus in the friend's seat.
+      const won = await seatStake(friend.id, t);
+      expect(won.bonus).toBeGreaterThan(0);
+      expect(won.eligible).toBeLessThanOrEqual(1000);
       await leave(partner, t);
       await leave(friend, t);
       await parity();

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { markChannel } from "@/lib/live-channel";
+import { listenTopic, markChannel } from "@/lib/live-channel";
 import { rememberCommitment } from "./commitments";
 
 export const REFETCH_COALESCE_MS = 250;
@@ -343,28 +343,25 @@ export function useTableState(id: number, userId: string | null) {
       live = up;
       markChannel("poker", up);
     };
-    const ch = supabase
-      .channel(`poker-table-${id}-${Math.random().toString(36).slice(2)}`)
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "poker_tables", filter: `id=eq.${id}` },
-        (payload) => {
-          const v = Number((payload.new as { version?: number }).version);
-          if (lastVersion.current !== null && v <= lastVersion.current) return;
-          lastVersion.current = v;
-          // One refetch per burst of version bumps.
-          if (pending) return;
-          pending = setTimeout(() => {
-            pending = null;
-            void qc.invalidateQueries({ queryKey: ["poker-table", id] });
-          }, REFETCH_COALESCE_MS);
-        },
-      )
-      .subscribe((status) => setLive(status === "SUBSCRIBED"));
+    const stop = listenTopic(
+      `poker:table:${id}`,
+      (_event, payload) => {
+        const v = Number((payload as { version?: number }).version);
+        if (lastVersion.current !== null && v <= lastVersion.current) return;
+        lastVersion.current = v;
+        // One refetch per burst of version bumps.
+        if (pending) return;
+        pending = setTimeout(() => {
+          pending = null;
+          void qc.invalidateQueries({ queryKey: ["poker-table", id] });
+        }, REFETCH_COALESCE_MS);
+      },
+      (status) => setLive(status === "SUBSCRIBED"),
+    );
     return () => {
       if (pending) clearTimeout(pending);
       setLive(false);
-      void supabase.removeChannel(ch);
+      stop();
     };
   }, [qc, id]);
   return q;

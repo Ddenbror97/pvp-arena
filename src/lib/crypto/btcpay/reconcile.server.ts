@@ -237,12 +237,14 @@ export async function reconcileBtcpayInvoices(): Promise<
       .limit(20),
   ]);
   if (open.error || watched.error) return { ok: false, reason: "INVOICE_LIST_FAILED" };
+  const openRows = (open.data ?? []) as InvoiceRow[];
   const watchedRows = (watched.data ?? []) as InvoiceRow[];
-  const rows = [
-    ...((open.data ?? []) as InvoiceRow[]),
-    ...watchedRows.filter((row) => !covered(row)).slice(0, 8),
-  ];
-  const touched = new Set(rows.map((row) => row.id));
+  const uncovered = watchedRows.filter((row) => !covered(row));
+  const rows = [...openRows, ...uncovered.slice(0, 8)];
+  // updated_at is the round-robin cursor. It only needs to move when a list is
+  // longer than one run reads; otherwise every row is already read every run.
+  const rotateOpen = openRows.length >= 20;
+  const rotateWatched = watchedRows.length >= 20 || uncovered.length > 8;
   let credited = 0;
   for (const row of [...rows, ...watchedRows.filter((row) => covered(row))]) {
     if (!covered(row)) {
@@ -251,14 +253,16 @@ export async function reconcileBtcpayInvoices(): Promise<
       } catch {
         // One BTCPay miss leaves the row for the next minute.
       }
-    } else touched.add(row.id);
+    }
+    const isOpen = OPEN.includes(row.status);
+    if (isOpen ? !rotateOpen : !rotateWatched) continue;
     await admin
       .from("btcpay_invoices")
       .update({ updated_at: new Date().toISOString() })
       .eq("id", row.id)
       .eq("status", row.status);
   }
-  return { ok: true, checked: touched.size, credited };
+  return { ok: true, checked: rows.length + watchedRows.length - uncovered.length, credited };
 }
 
 export async function createBtcInvoiceForUser(

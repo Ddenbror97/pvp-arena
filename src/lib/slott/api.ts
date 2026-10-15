@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { markChannel } from "@/lib/live-channel";
+import { listenTopic, markChannel } from "@/lib/live-channel";
 
 // slot_* tables are newer than the generated Database types; rows are typed here.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -232,10 +232,10 @@ export function useSlotRealtime(gameId?: number) {
       live = up;
       markChannel("slot", up);
     };
-    const ch = supabase
-      .channel(`slot-live-${gameId ?? "lobby"}-${Math.random().toString(36).slice(2)}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "slot_games" }, (payload) => {
-        const row = payload.new as { id?: number; status?: string };
+    const stop = listenTopic(
+      "game:slot",
+      (_event, payload) => {
+        const row = payload as { id?: number; status?: string };
         qc.invalidateQueries({ queryKey: ["slot-open"] });
         qc.invalidateQueries({ queryKey: ["slot-live"] });
         if (row?.id != null) {
@@ -248,11 +248,12 @@ export function useSlotRealtime(gameId?: number) {
           qc.invalidateQueries({ queryKey: ["slot-recent"] });
           qc.invalidateQueries({ queryKey: ["slot-mine"] });
         }
-      })
-      .subscribe((status) => setLive(status === "SUBSCRIBED"));
+      },
+      (status) => setLive(status === "SUBSCRIBED"),
+    );
     return () => {
       setLive(false);
-      supabase.removeChannel(ch);
+      stop();
     };
   }, [qc, gameId]);
 }
