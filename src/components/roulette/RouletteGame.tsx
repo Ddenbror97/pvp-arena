@@ -35,17 +35,19 @@ const DUE = ["BETTING", "LOCKED", "SPINNING", "SETTLEMENT"];
 /** Presentation-only progress. Server timestamps remain the source of truth. */
 const BettingCountdownBar = memo(function BettingCountdownBar({
   active,
+  opensAt,
   startedAt,
   endsAt,
   now,
 }: {
   active: boolean;
+  opensAt: string | null;
   startedAt: string | null;
   endsAt: string | null;
   now: () => number;
 }) {
   const bar = useRef<HTMLDivElement>(null);
-  const progress = rouletteBarFill(active, startedAt, endsAt, now());
+  const progress = rouletteBarFill(active, opensAt, startedAt, endsAt, now());
 
   useLayoutEffect(() => {
     const element = bar.current;
@@ -54,7 +56,7 @@ const BettingCountdownBar = memo(function BettingCountdownBar({
     let cancelled = false;
     const render = () => {
       if (cancelled) return;
-      const next = rouletteBarFill(active, startedAt, endsAt, now());
+      const next = rouletteBarFill(active, opensAt, startedAt, endsAt, now());
       element.style.transform = `scaleX(${next})`;
       const end = endsAt ? Date.parse(endsAt) : 0;
       if (active && Number.isFinite(end) && now() < end) frame = requestAnimationFrame(render);
@@ -64,7 +66,7 @@ const BettingCountdownBar = memo(function BettingCountdownBar({
       cancelled = true;
       cancelAnimationFrame(frame);
     };
-  }, [active, startedAt, endsAt, now]);
+  }, [active, opensAt, startedAt, endsAt, now]);
 
   return (
     <div
@@ -78,6 +80,7 @@ const BettingCountdownBar = memo(function BettingCountdownBar({
 });
 
 const RESULT_HOLD_MS = 3500;
+const RESULT_HOLD_MAX_MS = 6000;
 
 /** Fallback polling for when realtime is slow or down: tight around the next deadline. */
 function roundPollMs(g: RlGame | null, at: number) {
@@ -114,8 +117,16 @@ export function RouletteGame() {
   const finished = useRef<typeof live>(null);
   if (live?.winning_color && live.spin_end_at) finished.current = live;
   const f = finished.current;
-  const holding =
-    !!f && f.id !== live?.id && now() < new Date(f.spin_end_at!).getTime() + RESULT_HOLD_MS;
+  const resultEnd = f ? new Date(f.spin_end_at!).getTime() : 0;
+  const nextStart =
+    live?.status === "BETTING" && live.betting_started_at
+      ? Date.parse(live.betting_started_at)
+      : NaN;
+  // Hand over to the next round when its betting clock starts, so the bar never sits idle between.
+  const holdUntil = Number.isFinite(nextStart)
+    ? Math.max(resultEnd + RESULT_HOLD_MS, Math.min(nextStart, resultEnd + RESULT_HOLD_MAX_MS))
+    : resultEnd + RESULT_HOLD_MS;
+  const holding = !!f && f.id !== live?.id && now() < holdUntil;
   const g = holding ? f : live;
   const bets = useQuery({
     queryKey: ["roulette-bets", g?.id],
@@ -241,6 +252,7 @@ export function RouletteGame() {
       >
         <BettingCountdownBar
           active={g?.status === "BETTING"}
+          opensAt={g?.created_at ?? null}
           startedAt={g?.betting_started_at ?? null}
           endsAt={g?.betting_ends_at ?? null}
           now={now}
