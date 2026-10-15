@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { snapshotView, type GameSnapshotView, type SnapshotGame } from "./snapshot";
 
-const GAMES: readonly SnapshotGame[] = ["coinflip", "jackpot", "roulette", "slott"];
+const GAMES: readonly SnapshotGame[] = ["coinflip", "jackpot", "roulette", "slott", "poker"];
 
 /** Cached public activity for one game. Never throws; null means render the guide without it. */
 export const getGameSnapshot = createServerFn({ method: "GET" })

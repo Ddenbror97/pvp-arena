@@ -26,7 +26,7 @@ export const Route = createFileRoute("/fairness")({
       {
         name: "description",
         content:
-          "See how every result is decided: a committed seed, HMAC-SHA256 draws and rejection sampling. Verify any Jackpot, Coinflip or Roulette outcome yourself.",
+          "See how every result is decided: committed seeds, HMAC-SHA256 draws and unbiased sampling. Verify Jackpot, Coinflip, Roulette, Slott and poker hands yourself.",
       },
       { property: "og:title", content: "Fairness — Provably Fair Games | PVPspinArena" },
       {
@@ -72,7 +72,22 @@ Fixed message (no free parameter):
 The result is fixed when the opponent joins, hidden until the flip starts,
 and the seed is revealed once the game is settled.`;
 
-type Tab = "jackpot" | "coinflip" | "roulette" | "slott";
+const POKER_SPEC = `At sit-down, each player's browser commits L0 = the head of a SHA-256 hash chain
+  (L_k = SHA256(L_{k+1}), secret end kept in that browser).
+
+When a hand opens:
+  server_seed      = 32 random bytes;  server_seed_hash = SHA256(server_seed) -> published
+  each player reveals v with SHA256(v) = their current link   (5 s window)
+  entropy = SHA256("PVPCasino:poker:v1:entropy:{hand}:" + "{seat}={v}" joined by "|", sorted by seat)
+
+Shuffle (Fisher-Yates over cards 0..51, i = 51 down to 1):
+  draw = first 4 bytes of HMAC-SHA256(server_seed, "PVPCasino:poker:v1:{hand}:{entropy}:{i}:{counter}")
+  reject draw >= floor(2^32 / (i+1)) * (i+1), else j = draw mod (i+1)   (no modulo bias)
+
+A missing reveal voids the hand before any card or blind: no money moves.
+After the hand: server_seed is published and anyone can rebuild the whole deck.`;
+
+type Tab = "jackpot" | "coinflip" | "roulette" | "slott" | "poker";
 
 function FairnessPage() {
   const [tab, setTab] = useState<Tab>("jackpot");
@@ -87,7 +102,7 @@ function FairnessPage() {
       </p>
 
       <div
-        className="mt-5 grid grid-cols-2 gap-1.5 sm:grid-cols-4 rounded-xl border border-border bg-card p-1.5"
+        className="mt-5 grid grid-cols-3 gap-1.5 sm:grid-cols-5 rounded-xl border border-border bg-card p-1.5"
         role="tablist"
         aria-label="Protocol"
       >
@@ -97,6 +112,7 @@ function FairnessPage() {
             ["coinflip", "Coinflip"],
             ["roulette", "Roulette"],
             ["slott", "P2P Slott"],
+            ["poker", "Poker"],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -124,8 +140,10 @@ function FairnessPage() {
           <CoinflipSection />
         ) : tab === "roulette" ? (
           <RouletteSection />
-        ) : (
+        ) : tab === "slott" ? (
           <SlottSection />
+        ) : (
+          <PokerSection />
         )}
       </div>
       <p className="mt-8 text-center text-sm text-muted-foreground">
@@ -505,6 +523,46 @@ function SlottSection() {
 score = sum of symbol values + payline wins (3/4/5 in a row pay x5/x15/x50, WILD substitutes)
 bonus tier = number of WILDs on the grid (3+), paid into the shared pot within the caps`}</pre>
         </details>
+      </div>
+    </section>
+  );
+}
+
+function PokerSection() {
+  return (
+    <section aria-label="Poker fairness">
+      <p className="text-sm text-muted-foreground">
+        The deck is shuffled from the server's committed seed and a secret revealed by every player
+        dealt in, so the server cannot pick the deck by itself. Each finished hand can be rebuilt
+        card by card.
+      </p>
+      <div className="grid gap-4">
+        <Card title="Verify a poker hand">
+          <p className="text-sm text-muted-foreground">
+            At any table, open the <strong className="text-foreground">Hands</strong> tab and press
+            Verify on a finished hand. Your browser checks the seed against the hash it saw before
+            the deal, checks every player's reveal against their chain, and recomputes the shuffle.
+          </p>
+          <Link
+            to="/poker"
+            className="mt-3 inline-block text-sm font-semibold text-primary hover:underline"
+          >
+            Open the poker lobby
+          </Link>
+        </Card>
+        <details className="rounded-2xl border border-border bg-card p-4" open>
+          <summary className="cursor-pointer font-display text-sm">
+            How the deck is shuffled
+          </summary>
+          <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">
+            {POKER_SPEC}
+          </pre>
+        </details>
+        <p className="text-xs text-muted-foreground">
+          Limits: a player can refuse to reveal and void a hand, which is a re-deal, never a payout.
+          Voids are public and attributed, and repeated voids sit a player out. The server deals the
+          cards, so the protocol proves the deck was not chosen; it cannot prove nobody looked.
+        </p>
       </div>
     </section>
   );

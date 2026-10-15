@@ -16,6 +16,7 @@ const NAME: Record<SnapshotGame, string> = {
   jackpot: "Jackpot",
   roulette: "Roulette",
   slott: "Slott",
+  poker: "Poker",
 };
 const NOT_ENOUGH = "Not enough completed rounds yet to show this statistic.";
 const box = "rounded-xl border border-border bg-secondary/40 p-3";
@@ -157,7 +158,13 @@ export function GameDataSnapshot({
   const w = s.window;
   const enoughForAvg = w.rounds >= MIN_ROUNDS_FOR_AVERAGE;
   const play =
-    game === "jackpot" ? "/" : game === "coinflip" ? "/coinflip" : game === "slott" ? "/slott" : "/roulette";
+    game === "jackpot"
+      ? "/"
+      : game === "coinflip"
+        ? "/coinflip"
+        : game === "slott"
+          ? "/slott"
+          : "/roulette";
 
   return (
     <section

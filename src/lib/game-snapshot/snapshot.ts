@@ -5,7 +5,7 @@
  * carried as decimal strings so they survive serialization as exact values.
  */
 
-export type SnapshotGame = "coinflip" | "jackpot" | "roulette" | "slott";
+export type SnapshotGame = "coinflip" | "jackpot" | "roulette" | "slott" | "poker";
 
 /** Guides that get a live data block. Anything not listed renders unchanged. */
 export const GUIDE_GAME_DATA: Readonly<Record<string, SnapshotGame>> = {
@@ -26,6 +26,12 @@ export const GUIDE_GAME_DATA: Readonly<Record<string, SnapshotGame>> = {
   "skillz-review": "coinflip",
   "games-that-pay-real-money": "roulette",
   "slot-battles": "slott",
+  "crypto-poker": "poker",
+  "real-money-poker-apps": "poker",
+  "cash-game-poker": "poker",
+  "rigged-poker-sites": "poker",
+  "how-to-play-poker": "poker",
+  "texas-holdem-rules": "poker",
 };
 
 /** First entry that is not the current guide wins. */
@@ -47,6 +53,10 @@ export const GAME_GUIDE_LINKS: Readonly<
   slott: {
     howItWorks: ["slot-battles"],
     fairness: ["provably-fair-casino", "provably-fair-games"],
+  },
+  poker: {
+    howItWorks: ["how-to-play-poker", "texas-holdem-rules"],
+    fairness: ["rigged-poker-sites", "crypto-poker"],
   },
 };
 
@@ -70,6 +80,8 @@ export type RecentRound = {
   result: string | null;
   completedAt: string;
   verifiable: boolean;
+  /** Poker only: the table's blinds in cents. */
+  blinds: { small: string; big: string } | null;
 };
 
 export type Outcome = { label: string; count: number; expectedBps: number };
@@ -85,6 +97,9 @@ export type GameStats = {
   outcomes: Outcome[] | null;
   outcomeTotal: number;
   wheelVersion: number | null;
+  /** Poker only: hands voided before any card (no money moved) and hands that reached showdown. */
+  voided: number | null;
+  showdowns: number | null;
 };
 
 export type GameSnapshot = {
@@ -107,6 +122,11 @@ type Key =
   | "jackpot"
   | "roulette"
   | "slott"
+  | "poker"
+  | "voided"
+  | "showdowns"
+  | "small_blind"
+  | "big_blind"
   | "window"
   | "all_time"
   | "recent"
@@ -177,6 +197,7 @@ const RESULTS: Record<SnapshotGame, readonly string[]> = {
   jackpot: [],
   roulette: ["RED", "BLACK", "GREEN"],
   slott: ["WIN", "DRAW", "BOMB"],
+  poker: ["PREFLOP", "FLOP", "TURN", "RIVER", "SHOWDOWN"],
 };
 
 function recentRows(v: unknown, game: SnapshotGame): RecentRound[] {
@@ -191,6 +212,8 @@ function recentRows(v: unknown, game: SnapshotGame): RecentRound[] {
     const result =
       typeof r.result === "string" && RESULTS[game].includes(r.result) ? r.result : null;
     if (game !== "jackpot" && result === null) continue;
+    const small = cents(r.small_blind);
+    const big = cents(r.big_blind);
     rows.push({
       id,
       pot,
@@ -199,6 +222,7 @@ function recentRows(v: unknown, game: SnapshotGame): RecentRound[] {
       result,
       completedAt,
       verifiable: r.verifiable === true,
+      blinds: game === "poker" && small !== null && big !== null ? { small, big } : null,
     });
   }
   return rows.sort((a, b) => b.completedAt.localeCompare(a.completedAt)).slice(0, 10);
@@ -251,7 +275,7 @@ function gameStats(v: unknown, game: SnapshotGame): GameStats | null {
         ? rouletteOutcomes(v.colors)
         : null;
   const avgPlayers =
-    game === "jackpot" &&
+    (game === "jackpot" || game === "poker") &&
     typeof v.window.avg_players === "number" &&
     Number.isFinite(v.window.avg_players)
       ? v.window.avg_players.toFixed(1)
@@ -266,6 +290,8 @@ function gameStats(v: unknown, game: SnapshotGame): GameStats | null {
     outcomes: dist?.outcomes ?? null,
     outcomeTotal: dist?.total ?? 0,
     wheelVersion: dist?.wheel ?? null,
+    voided: game === "poker" ? count(v.window.voided) : null,
+    showdowns: game === "poker" ? count(v.window.showdowns) : null,
   };
 }
 
@@ -283,6 +309,7 @@ export function parseSnapshot(raw: unknown): GameSnapshot | null {
       jackpot: gameStats(raw.jackpot, "jackpot"),
       roulette: gameStats(raw.roulette, "roulette"),
       slott: gameStats(raw.slott, "slott"),
+      poker: gameStats(raw.poker, "poker"),
     },
   };
 }

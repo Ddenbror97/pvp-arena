@@ -14,6 +14,7 @@ import {
   ScrollText,
   ShieldCheck,
   MonitorX,
+  Spade,
 } from "lucide-react";
 import {
   SeoPage,
@@ -33,7 +34,7 @@ import { LINE_MULT, PAYLINES, REELS, SYMBOLS, type Rarity } from "@/lib/slott/pa
 const FAQS: Faq[] = [
   {
     q: "How does a PVP casino work?",
-    a: "In a player-vs-player casino you compete with other players instead of betting against fixed odds set by the operator. On PVPspinArena, Jackpot and Coinflip pots are made up of the players' wagers, and the winner receives the pot minus the fee taken when the round settles. The platform runs the round, decides the result with a committed random seed, settles balances and publishes the data needed to verify it.",
+    a: "In a player-vs-player casino you compete with other players instead of betting against fixed odds set by the operator. On PVPspinArena, Jackpot, Coinflip, P2P Slott and Poker pots are made up of the players' wagers, and the winner receives the pot minus the fee taken when the round settles. The platform runs the round, decides the result with a committed random seed, settles balances and publishes the data needed to verify it.",
   },
   {
     q: "How does PVPspinArena Coinflip work?",
@@ -48,6 +49,10 @@ const FAQS: Faq[] = [
     a: "Roulette runs continuously in shared rounds. During the betting phase you place bets on Purple, Silver or Green. Betting then locks and the wheel spins. The wheel has 33 slots: 16 Purple and 16 Silver pay 2x, and 1 Green pays 14x. When the round settles, a 5% fee is taken from each winning payout.",
   },
   {
+    q: "How does poker work on PVPspinArena?",
+    a: "Poker is six-max No-Limit Texas Hold'em against other players, with blinds from $0.02/$0.05 to $5/$10. You take a seat with a buy-in of 40 to 125 big blinds, depending on the stakes, and each player has 20 seconds to act. The fee is 5% of each pot, and only when a flop is dealt: a hand that ends before the flop pays nothing. Every player dealt in adds a secret to the shuffle, and each finished hand can be verified from the table's Hands tab.",
+  },
+  {
     q: "What does provably fair mean?",
     a: "Provably fair means you can check a result yourself instead of trusting the operator. Before a round, the server publishes the SHA-256 hash of a secret seed. After the round, it reveals the seed. You can hash the seed to confirm it matches the commitment, then recompute the result with the published formula. If both match, the result could not have been changed after the commitment.",
   },
@@ -57,7 +62,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "Can I verify a completed game?",
-    a: "Yes. Once a game is settled its seed is published alongside the original hash. Open the Fairness page, choose Jackpot, Coinflip, Roulette or P2P Slott, and enter the game details. The verifier runs in your browser, recomputes the hash and the result, and shows whether they match the recorded outcome. You can also reproduce the calculation with any standard HMAC-SHA256 tool.",
+    a: "Yes. Once a game is settled its seed is published alongside the original hash. Open the Fairness page, choose Jackpot, Coinflip, Roulette or P2P Slott, and enter the game details. Poker hands are verified from the Hands tab at the table. The verifier runs in your browser, recomputes the hash and the result, and shows whether they match the recorded outcome. You can also reproduce the calculation with any standard HMAC-SHA256 tool.",
   },
   {
     q: "Can you play slots against other players?",
@@ -69,13 +74,13 @@ const FAQS: Faq[] = [
   },
   {
     q: "What is the house fee?",
-    a: "On P2P Slott the fee is 10% of the players' pot, taken when the match ends and shown on the result. Promotional WILD bonuses added to the pot are paid in full and are not reduced by the fee. If the match is a draw, both stakes are refunded. If either player lands a bomb, the match ends and the house keeps both stakes.",
+    a: "Jackpot, Coinflip and Roulette take 5% when the round settles. On P2P Slott the fee is 10% of the players' pot, taken when the match ends and shown on the result; promotional WILD bonuses are paid in full, a draw refunds both stakes, and a bomb ends the match with the house keeping both stakes. Poker takes 5% of each pot only when a flop is dealt, with no fee on hands that end preflop.",
   },
 ];
 
 const TITLE = "How PVPspinArena Works | PVP Crypto Casino Games";
 const DESC =
-  "See how PVPspinArena works: Jackpot, Coinflip, Roulette and a 1v1 slot duel. The higher score takes the pot, unless a bomb ends the match.";
+  "How PVPspinArena works: Jackpot, Coinflip, Roulette, a 1v1 slot duel and six-max Hold'em poker, all on one USD balance with verifiable results.";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () =>
@@ -92,9 +97,9 @@ export const Route = createFileRoute("/how-it-works")({
 const JOURNEY = [
   ["Access your account", "Sign in with a 6-digit email code."],
   ["Fund your wallet", "Deposit Bitcoin, or USDC or ETH on Base."],
-  ["Choose a game", "Jackpot, Coinflip, Roulette or P2P Slott."],
+  ["Choose a game", "Jackpot, Coinflip, Roulette, P2P Slott or Poker."],
   ["Review the rules", "Wager, chance, multipliers and any fee."],
-  ["Create or join", "Enter a pot, match a flip or place a bet."],
+  ["Create or join", "Enter a pot, match a flip, bet or take a seat."],
   ["Game resolves", "The server computes the committed result."],
   ["Verify", "Check the revealed seed against the result."],
 ];
@@ -114,7 +119,8 @@ function HowItWorksPage() {
           your wallet with digital assets, pick a game, and every result is computed on the server
           from a seed that was committed before the round began. P2P Slott is a 1 vs 1 slot duel.
           The higher score takes the pot, unless a bomb ends the match and the house keeps both
-          stakes.
+          stakes. Poker is six-max No-Limit Hold'em against other players, with a deck every player
+          at the table helps shuffle.
         </p>
         <p>
           Here is the whole journey, from your first sign-in to checking a finished game yourself.
@@ -138,8 +144,8 @@ function HowItWorksPage() {
         </ol>
         <p className="mt-4 max-w-3xl text-sm text-muted-foreground">
           The steps are the same for every game, but the mechanics in step five differ: Jackpot,
-          Coinflip and P2P Slott are player-vs-player, while Roulette is a shared round with fixed
-          multipliers.
+          Coinflip, P2P Slott and Poker are player-vs-player, while Roulette is a shared round with
+          fixed multipliers.
         </p>
       </section>
 
@@ -195,7 +201,7 @@ function HowItWorksPage() {
           <p>Each game uses the same balance and fairness protocol, but plays very differently.</p>
         }
       >
-        <SeoGrid cols={4}>
+        <SeoGrid cols={3}>
           <GameTile
             icon={<Dices className="h-5 w-5" />}
             name="Jackpot"
@@ -228,6 +234,14 @@ function HowItWorksPage() {
           >
             Same stake, six spins each. The higher score takes the pot.
           </GameTile>
+          <GameTile
+            icon={<Spade className="h-5 w-5" />}
+            name="Poker"
+            to="/poker"
+            tag="PVP · six-max Hold'em"
+          >
+            No-Limit Texas Hold'em cash tables. Fee only when a flop is dealt.
+          </GameTile>
         </SeoGrid>
       </SeoSection>
 
@@ -245,7 +259,8 @@ function HowItWorksPage() {
           </li>
           <li>
             <strong>Possible outcomes:</strong> your share of the Jackpot pot, the 50/50 Coinflip,
-            Roulette multipliers, or the P2P Slott score race.
+            Roulette multipliers, the P2P Slott score race, or the blinds and buy-in range at a
+            poker table.
           </li>
           <li>
             <strong>Fees:</strong> the pot fee is taken when the round settles and shown on the
@@ -265,6 +280,12 @@ function HowItWorksPage() {
           other players staked, plus any promotional bonus added to a Slott pot. Your chance depends
           on your share of the pot (Jackpot), is exactly half (Coinflip), or follows the higher
           score after both players have spun (P2P Slott).
+        </p>
+        <p>
+          <strong>Poker.</strong> At a poker table your chips stay yours between hands. Each hand
+          you bet, call, raise or fold against the other seated players, and the best hand at
+          showdown, or the last player left, wins the pot. Skill and decisions matter here, not only
+          the deal.
         </p>
         <p>
           <strong>Shared-round game.</strong> Roulette is not PVP in the same sense. Many players
@@ -399,6 +420,28 @@ function HowItWorksPage() {
             </ol>
             <SeoLink to="/how-it-works#slott">Scoring, bonuses and rules</SeoLink>
           </SeoCard>
+          <SeoCard icon={<Spade className="h-5 w-5" />} title="Poker" accent="gold">
+            <ol className="list-decimal space-y-1 pl-5">
+              <li>
+                <strong>Sit:</strong> buy in for 40 to 125 big blinds at a six-max table.
+              </li>
+              <li>
+                <strong>Shuffle:</strong> every dealt player reveals a secret within 5 seconds; it
+                is mixed with the server's committed seed.
+              </li>
+              <li>
+                <strong>Bet:</strong> 20 seconds per decision. Fold, check, call, bet or raise.
+              </li>
+              <li>
+                <strong>Showdown:</strong> the best five-card hand wins; side pots and split pots
+                are handled automatically.
+              </li>
+              <li>
+                <strong>Fee:</strong> 5% of each pot, only if a flop was dealt.
+              </li>
+            </ol>
+            <SeoLink to="/how-it-works#poker">Tables, fees and fairness</SeoLink>
+          </SeoCard>
         </SeoGrid>
       </SeoSection>
 
@@ -497,6 +540,64 @@ function HowItWorksPage() {
             <div className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
               <SeoLink to="/slott">Play P2P Slott</SeoLink>
               <SeoLink to="/fairness">Verify a match</SeoLink>
+            </div>
+          </SeoCallout>
+        </div>
+      </SeoSection>
+
+      <SeoSection
+        id="poker"
+        eyebrow="Poker"
+        title="Six-max No-Limit Hold'em"
+        intro={
+          <p>
+            Cash tables where you play against the other seated players, never the house. Your chips
+            stay in your seat between hands and return to your balance when you leave.
+          </p>
+        }
+      >
+        <div className="grid gap-4 lg:grid-cols-2">
+          <SeoCard title="Stakes">
+            <ul className="list-disc space-y-1 pl-5">
+              {POKER_STAKES.map(([cat, blinds, buyIn]) => (
+                <li key={blinds}>
+                  <strong>{cat}:</strong> {blinds} blinds, buy-in {buyIn}
+                </li>
+              ))}
+            </ul>
+          </SeoCard>
+          <SeoCard title="Fee and promo credit" accent="gold">
+            <ul className="list-disc space-y-1 pl-5">
+              <li>5% of each pot, and only if the flop was dealt. Preflop hands are free.</li>
+              <li>Uncalled chips are returned before the fee and never charged.</li>
+              <li>
+                Promo and partner credit can be used for a buy-in, under the same rules as every
+                other game: deposited or won money is used first, and bonus you lose to another
+                player stays bonus.
+              </li>
+            </ul>
+          </SeoCard>
+        </div>
+        <div className="mt-4">
+          <SeoCallout title="A deck every player helps shuffle">
+            <ul className="list-disc space-y-1 pl-5">
+              <li>
+                When you sit down your browser commits to a secret chain. Each hand it reveals the
+                next link within 5 seconds, and the server mixes all reveals with its own committed
+                seed.
+              </li>
+              <li>
+                If someone does not reveal in time, the hand is voided before any card or blind. No
+                money moves and a new hand starts.
+              </li>
+              <li>
+                Your hole cards are visible only to you. After the hand the seed is published and
+                the Hands tab rebuilds the whole deck in your browser.
+              </li>
+            </ul>
+            <div className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
+              <SeoLink to="/poker">Find a poker table</SeoLink>
+              <SeoLink to="/fairness">The poker shuffle protocol</SeoLink>
             </div>
           </SeoCallout>
         </div>
@@ -616,8 +717,8 @@ function HowItWorksPage() {
           <SeoCallout title="PVP vs house-banked, in one line">
             <p>
               In a PVP game your winnings come from the other players in the round. Jackpot,
-              Coinflip and P2P Slott work that way. In a house-banked game such as Roulette, bets
-              are paid at fixed multipliers regardless of what anyone else bets.
+              Coinflip, P2P Slott and Poker work that way. In a house-banked game such as Roulette,
+              bets are paid at fixed multipliers regardless of what anyone else bets.
             </p>
           </SeoCallout>
           <SeoCallout title="What your browser does — and doesn't do">
@@ -676,6 +777,14 @@ function HowItWorksPage() {
     </SeoPage>
   );
 }
+
+const POKER_STAKES = [
+  ["Micro", "$0.02/$0.05 and $0.05/$0.10", "$2–$10"],
+  ["Low", "$0.10/$0.25 and $0.25/$0.50", "$10–$50"],
+  ["Mid", "$0.50/$1 and $1/$2", "$40–$250"],
+  ["High", "$2/$5", "$200–$500"],
+  ["VIP", "$5/$10", "$400–$1,000"],
+] as const;
 
 const POINT_ORDER: Rarity[] = ["wild", "legendary", "epic", "rare", "common"];
 const POINT_LABEL: Record<Rarity, string> = {

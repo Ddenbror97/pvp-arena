@@ -12,6 +12,7 @@ import {
   Globe,
   Network,
   ArrowRight,
+  Spade,
 } from "lucide-react";
 import {
   SeoPage,
@@ -30,11 +31,11 @@ import { seoHead, type Faq } from "@/components/seo/seo-head";
 const FAQS: Faq[] = [
   {
     q: "What is PVPspinArena?",
-    a: "PVPspinArena is a player-vs-player crypto gaming platform with three game formats: Jackpot, Coinflip and Roulette. Balances are held in US dollars and funded with Bitcoin, or with USDC or ETH on the Base network. Every game result is decided on the server using a committed random seed, and the seed is revealed after the game so anyone can recompute the outcome on the Fairness page.",
+    a: "PVPspinArena is a player-vs-player crypto gaming platform with five games: Jackpot, Coinflip, Roulette, P2P Slott and six-max Texas Hold'em poker. Balances are held in US dollars and funded with Bitcoin, or with USDC or ETH on the Base network. Every game result is decided on the server using a committed random seed, and the seed is revealed after the game so anyone can recompute the outcome on the Fairness page.",
   },
   {
     q: "What does PVP mean on PVPspinArena?",
-    a: "PVP stands for player vs player. In Jackpot and Coinflip you compete against other players rather than against a dealer: the wagers from every participant form the pot, and the winner of the round receives it, minus the fee taken when the round settles. Roulette is different — it is a shared round where each bet is paid at a fixed multiplier — and we describe it separately so the two models are never confused.",
+    a: "PVP stands for player vs player. In Jackpot, Coinflip, P2P Slott and Poker you compete against other players rather than against the house: the wagers from every participant form the pot, and the winner of the round receives it, minus the fee taken when the round settles. Roulette is different — it is a shared round where each bet is paid at a fixed multiplier — and we describe it separately so the two models are never confused.",
   },
   {
     q: "Is PVPspinArena a crypto casino?",
@@ -42,7 +43,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "What games are available?",
-    a: "Three games are live today. Jackpot is a shared pot where every cent you add is one ticket in the draw. Coinflip is a one-on-one match: one player creates a game and picks a side, another matches the wager, and one random bit decides the winner. Roulette is a continuous round with Purple and Silver paying 2x and Green paying 14x.",
+    a: "Five games are live today. Jackpot is a shared pot where every cent you add is one ticket in the draw. Coinflip is a one-on-one match decided by one random bit. Roulette is a continuous round with Purple and Silver paying 2x and Green paying 14x. P2P Slott is a 1 vs 1 slot duel where the higher score takes the pot. Poker is six-max No-Limit Texas Hold'em, from $0.02/$0.05 to $5/$10 blinds, with a 5% fee only on hands that reach the flop.",
   },
   {
     q: "How is PVPspinArena inspired by the CS:GO betting era?",
@@ -79,9 +80,9 @@ function AboutPage() {
         secondary={{ to: "/how-it-works", label: "Learn how it works" }}
       >
         <p>
-          PVPspinArena is a player-vs-player gaming platform built around three fast, competitive
-          formats — Jackpot, Coinflip and Roulette. Rounds are short, results are decided on the
-          server, and every outcome can be checked after the game.
+          PVPspinArena is a player-vs-player gaming platform built around five competitive games —
+          Jackpot, Coinflip, Roulette, P2P Slott and six-max Hold'em poker. Results are decided on
+          the server, and every outcome can be checked after the game.
         </p>
         <p>
           Balances are shown in US dollars and funded with Bitcoin, or with USDC or ETH on the Base
@@ -97,10 +98,10 @@ function AboutPage() {
           <>
             <p>
               PVPspinArena is a crypto gaming platform where the main opponent is another player,
-              not a dealer. When you join a Jackpot or a Coinflip, the money in play comes from the
-              players in that round, and the round's winner receives the pot. That is what we mean
-              by a PVP casino: the games are about competing with people, in a format everyone in
-              the room can watch resolve at the same moment.
+              not the house. When you join a Jackpot, a Coinflip, a Slott duel or a poker table, the
+              money in play comes from the players there, and the winner receives the pot. That is
+              what we mean by a PVP casino: the games are about competing with people, in a format
+              everyone in the room can watch resolve at the same moment.
             </p>
             <p>
               Everything that matters happens on the server. Your browser shows the wheel and the
@@ -110,17 +111,17 @@ function AboutPage() {
               accounting stays strict behind it.
             </p>
             <p>
-              We keep the product deliberately small. There are three games, one wallet, one balance
-              in US dollars and one fairness protocol shared across all of them. A narrow scope
-              means each part can be built carefully, explained clearly and verified by anyone who
-              wants to look.
+              We keep the product deliberately small. There are five games, one wallet, one balance
+              in US dollars and one commit-and-reveal approach to fairness shared across all of
+              them. A narrow scope means each part can be built carefully, explained clearly and
+              verified by anyone who wants to look.
             </p>
           </>
         }
       >
         <SeoGrid cols={3}>
-          <SeoCard icon={<Swords className="h-5 w-5" />} title="Players, not a dealer">
-            <p>Jackpot and Coinflip pots are formed by the players in the round.</p>
+          <SeoCard icon={<Swords className="h-5 w-5" />} title="Players, not the house">
+            <p>Jackpot, Coinflip, Slott and poker pots are formed by the players in the game.</p>
           </SeoCard>
           <SeoCard
             icon={<ShieldCheck className="h-5 w-5" />}
@@ -152,15 +153,16 @@ function AboutPage() {
           <SeoCard icon={<Swords className="h-5 w-5" />} title="Player competition">
             <p>
               In Jackpot every player adds to a shared pot and one winner takes it. In Coinflip two
-              players match wagers and one of them wins both. The competition is visible: you see
-              who joined, how much they staked and what chance each player holds.
+              players match wagers and one of them wins both. At a poker table you play hand after
+              hand against the other seated players. The competition is visible: you see who joined,
+              how much they staked and what chance each player holds.
             </p>
           </SeoCard>
           <SeoCard icon={<Timer className="h-5 w-5" />} title="Fast rounds" accent="gold">
             <p>
               Rounds are designed to be short. A Jackpot closes on a timer, a Coinflip resolves as
-              soon as the second player joins, and Roulette runs continuously with a new round after
-              each spin.
+              soon as the second player joins, Roulette runs continuously with a new round after
+              each spin, and poker gives each player 20 seconds to act.
             </p>
           </SeoCard>
           <SeoCard icon={<Eye className="h-5 w-5" />} title="Transparent mechanics" accent="rival">
@@ -270,7 +272,7 @@ function AboutPage() {
               {[
                 "USD balances funded with Bitcoin, or USDC or ETH on Base",
                 "Wallet verification and a double-entry ledger",
-                "PVP Jackpot, Coinflip and Roulette",
+                "PVP Jackpot, Coinflip, Roulette, Slott duels and Hold'em poker",
                 "Commit/reveal fairness verification",
                 "Live, synchronized game interfaces",
               ].map((x) => (
@@ -284,11 +286,11 @@ function AboutPage() {
       <SeoSection
         id="games"
         eyebrow="The games"
-        title="Three games, one balance"
+        title="Five games, one balance"
         intro={
           <p>
-            All three games use the same wallet balance, the same fairness protocol and the same
-            live-round interface.
+            All five games use the same wallet balance, the same commit-and-reveal fairness and the
+            same live interface.
           </p>
         }
       >
@@ -315,6 +317,19 @@ function AboutPage() {
           >
             A continuous shared round. Bet on Purple or Silver for 2x, or Green for 14x. Betting
             closes, the wheel spins, and winning bets are paid at the fixed multiplier.
+          </GameCard>
+          <GameCard
+            icon={<Swords className="h-5 w-5" />}
+            name="P2P Slott"
+            to="/slott"
+            cta="Play P2P Slott"
+          >
+            A 1 vs 1 slot duel. Both players stake the same amount and take six spins each on the
+            same grid. The higher score takes the pot, unless a bomb ends the match.
+          </GameCard>
+          <GameCard icon={<Spade className="h-5 w-5" />} name="Poker" to="/poker" cta="Play Poker">
+            Six-max No-Limit Texas Hold'em cash tables from $0.02/$0.05 to $5/$10. Every player
+            dealt in helps shuffle the deck, and the 5% fee applies only to hands that see a flop.
           </GameCard>
         </SeoGrid>
       </SeoSection>

@@ -10,6 +10,7 @@ import {
   pokerAct,
   pokerCommitChain,
   pokerError,
+  pokerHeartbeat,
   pokerLeave,
   pokerNudge,
   pokerReveal,
@@ -28,6 +29,20 @@ const key = () => crypto.randomUUID();
 
 /** Seconds a server deadline may be overdue before the browser asks the table to advance. */
 const NUDGE_GRACE_MS = 1500;
+/** Well inside the server's 20-second presence window, even with background-tab timer throttling. */
+const HEARTBEAT_MS = 5000;
+
+function usePageVisible() {
+  const [visible, setVisible] = useState(
+    () => typeof document === "undefined" || document.visibilityState === "visible",
+  );
+  useEffect(() => {
+    const on = () => setVisible(document.visibilityState === "visible");
+    document.addEventListener("visibilitychange", on);
+    return () => document.removeEventListener("visibilitychange", on);
+  }, []);
+  return visible;
+}
 
 function dueAt(s: TableState): number | null {
   const h = s.hand;
@@ -103,6 +118,64 @@ export function PokerTable({ id }: { id: number }) {
       }
     })();
   }, [userId, mySeat, me?.chain_link, me?.hand_id, state, id, refresh]);
+
+  // Presence: a seat that stops reporting sits out before the next deal instead of voiding it.
+  const seated = !!userId && mySeat !== null;
+  useEffect(() => {
+    if (!seated) return;
+    const beat = () => void pokerHeartbeat(id);
+    beat();
+    const timer = setInterval(beat, HEARTBEAT_MS);
+    const onShow = () => document.visibilityState === "visible" && beat();
+    document.addEventListener("visibilitychange", onShow);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", onShow);
+    };
+  }, [seated, id]);
+
+  // Sat out because the browser went away: deal back in as soon as the player is looking again.
+  const visible = usePageVisible();
+  const awayOut =
+    me?.state === "SITTING_OUT" &&
+    me.sat_out_reason === "away" &&
+    !me.leaving &&
+    (me.stack ?? 0) + (me.pending ?? 0) > 0;
+  const resumeTried = useRef(false);
+  useEffect(() => {
+    if (!awayOut) {
+      resumeTried.current = false;
+      return;
+    }
+    if (!visible || resumeTried.current || !userId) return;
+    resumeTried.current = true;
+    void (async () => {
+      const head = (await chainNeedsRotation(userId, me?.chain_link))
+        ? await newChainHead(userId)
+        : null;
+      const { error } = await pokerSitOut(id, false, head);
+      if (error) toast.error(pokerError(error));
+      else toast("Welcome back. You're dealt in from the next hand.");
+      void refresh();
+    })();
+  }, [awayOut, visible, userId, me?.chain_link, id, refresh]);
+
+  // Flag the tab while it is hidden and the action is on this player, so a turn isn't lost to the clock.
+  const myTurn =
+    state?.hand?.status === "BETTING" && mySeat !== null && state.hand.to_act === mySeat;
+  useEffect(() => {
+    if (!myTurn || typeof document === "undefined") return;
+    const base = document.title;
+    const sync = () => {
+      document.title = document.hidden ? `● Your turn · ${base}` : base;
+    };
+    sync();
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      document.removeEventListener("visibilitychange", sync);
+      document.title = base;
+    };
+  }, [myTurn]);
 
   // The scheduler advances tables; an overdue deadline is a recovery hint only.
   const due = state ? dueAt(state) : null;
@@ -266,7 +339,11 @@ export function PokerTable({ id }: { id: number }) {
       "Pick an open seat to join the game."
     )
   ) : seat?.state === "SITTING_OUT" ? (
-    "You're sitting out. Press I'm back to be dealt in."
+    me?.sat_out_reason === "away" ? (
+      "You were away, so you sat out. Press I'm back if you aren't dealt in shortly."
+    ) : (
+      "You're sitting out. Press I'm back to be dealt in."
+    )
   ) : !h ? (
     state.seats.filter((s) => s.state === "ACTIVE").length < 2 ? (
       "Waiting for another player…"

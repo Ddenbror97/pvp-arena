@@ -126,6 +126,27 @@ export function PokerLobby() {
     <div className="poker-lobby">
       <Hero lobby={data} />
 
+      {userId && data?.mine?.length ? (
+        <div className="mx-auto mt-4 flex max-w-6xl flex-col gap-2 px-4" role="status">
+          {data.mine.map((s) => (
+            <Link
+              key={s.table_id}
+              to="/poker/$tableId"
+              params={{ tableId: String(s.table_id) }}
+              className="flex items-center justify-between gap-3 rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-50 hover:bg-emerald-500/20"
+            >
+              <span>
+                You still have a seat at <strong>{s.name}</strong> with {money(s.stack)}
+                {s.state === "SITTING_OUT" ? " (sitting out)" : ""}.
+              </span>
+              <span className="inline-flex items-center gap-1 font-semibold">
+                Return to table <ArrowRight className="h-4 w-4" aria-hidden />
+              </span>
+            </Link>
+          ))}
+        </div>
+      ) : null}
+
       <div className="poker-lobby-body">
         {filtersOpen ? (
           <div

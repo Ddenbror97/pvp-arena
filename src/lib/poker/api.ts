@@ -142,6 +142,8 @@ export interface PokerMe {
   buy_in_total?: number;
   timeouts?: number;
   missed_reveals?: number;
+  /** Why the seat is sitting out: the player's own choice, or the server saw them leave. */
+  sat_out_reason?: "manual" | "away" | null;
   hand_id?: number;
   hand_seat?: number;
   hole_cards?: number[] | null;
@@ -217,6 +219,8 @@ export interface Lobby {
   action_seconds: number;
   types: LobbyType[];
   tables: LobbyTable[];
+  /** The viewer's open seats. */
+  mine?: { table_id: number; name: string; stack: number; state: "ACTIVE" | "SITTING_OUT" }[];
 }
 
 /** Lobby result when the poker schema is not deployed to this database yet. */
@@ -226,6 +230,7 @@ export const LOBBY_UNAVAILABLE: Lobby = {
   action_seconds: 20,
   types: [],
   tables: [],
+  mine: [],
 };
 
 const missingRpc = (e: { code?: string; message?: string } | null) =>
@@ -311,6 +316,9 @@ export const pokerLeave = (table: number): RpcResult<{ ok: boolean; pending?: bo
   db.rpc("poker_leave", { p_table: table });
 export const pokerNudge = (table: number): RpcResult<string> =>
   db.rpc("poker_nudge", { p_table: table });
+/** Tells the table this seat's player is still here; seats not seen for 20 s sit out before a deal. */
+export const pokerHeartbeat = (table: number): RpcResult<null> =>
+  db.rpc("poker_heartbeat", { p_table: table });
 
 export function useLobby() {
   return useQuery({ queryKey: ["poker-lobby"], queryFn: fetchLobby, refetchInterval: 10_000 });
@@ -322,10 +330,14 @@ export function useLobby() {
  */
 export function useTableState(id: number, userId: string | null) {
   const qc = useQueryClient();
+  // A seated player must answer the fairness reveal within seconds even from a background tab,
+  // or the hand voids. Spectators stop polling when hidden.
+  const seated = !!qc.getQueryData<TableState>(["poker-table", id, userId])?.me;
   const q = useQuery({
     queryKey: ["poker-table", id, userId],
     queryFn: () => fetchTableState(id),
     refetchInterval: (query) => (query.state.data?.hand ? 1500 : 3000),
+    refetchIntervalInBackground: seated,
     refetchOnWindowFocus: true,
     staleTime: 0,
   });
@@ -349,6 +361,11 @@ export function useTableState(id: number, userId: string | null) {
         const v = Number((payload as { version?: number }).version);
         if (lastVersion.current !== null && v <= lastVersion.current) return;
         lastVersion.current = v;
+        // Hidden tabs throttle timers to a second or more, longer than the reveal window allows.
+        if (document.hidden) {
+          void qc.invalidateQueries({ queryKey: ["poker-table", id] });
+          return;
+        }
         // One refetch per burst of version bumps.
         if (pending) return;
         pending = setTimeout(() => {
@@ -399,7 +416,8 @@ const MESSAGES: Record<string, string> = {
   TABLE_FULL: "This table is full.",
   TABLE_CLOSED: "This table has closed.",
   CHAIN_REUSED: "Fairness chain already used. Try again.",
-  VOID_COOLDOWN: "You voided too many hands recently. Try again later.",
+  VOID_COOLDOWN:
+    "Several of your recent hands were cancelled because your browser didn't respond. You can sit again within 24 hours.",
   NOT_YOUR_TURN: "It's not your turn.",
   STALE_STATE: "The table moved on. Try again.",
   ACTION_EXPIRED: "Your time ran out.",

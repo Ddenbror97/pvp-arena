@@ -334,4 +334,65 @@ describe("poker promo parity", () => {
     },
     LONG,
   );
+
+  it(
+    "a player whose browser went away sits out before the deal, without a void or a strike",
+    async () => {
+      const ghost = await player(2000);
+      const fresh = await player(2000);
+      const t = (await sit(ghost, 2, 1000)).table_id as number;
+      const before = Number((await latest(t))?.id ?? 0);
+      await sql`update pvp_test.poker_seats set last_seen_at = clock_timestamp() - interval '60 seconds'
+        where table_id = ${t} and user_id = ${ghost.id}::uuid`;
+      await sit(fresh, null, 1000, t);
+      await nextHand(t);
+
+      const seat = async () =>
+        (
+          await sql`select state, sat_out_reason from pvp_test.poker_seats
+            where table_id = ${t} and user_id = ${ghost.id}::uuid and status <> 'CLOSED'`
+        )[0] as Row;
+      expect(await seat()).toMatchObject({ state: "SITTING_OUT", sat_out_reason: "away" });
+      const hands =
+        await sql`select status from pvp_test.poker_hands where table_id = ${t} and id > ${before}`;
+      expect(hands.filter((h) => h.status === "VOIDED")).toHaveLength(0);
+      const strikes = async () =>
+        Number((await sql`select pvp_test._poker_void_strikes(${ghost.id}::uuid) n`)[0]!.n);
+      expect(await strikes()).toBe(0);
+      const me = async () =>
+        (await as(ghost.id, (tx) => tx`select pvp_test.poker_table_state(${t}::bigint) r`))[0]!.r
+          .me;
+      expect((await me()).sat_out_reason).toBe("away");
+      const mine = (await as(ghost.id, (tx) => tx`select pvp_test.poker_lobby() r`))[0]!.r.mine;
+      expect(mine).toEqual([expect.objectContaining({ table_id: t, state: "SITTING_OUT" })]);
+
+      // Coming back deals them in again and the hand plays out normally.
+      await as(ghost.id, (tx) => tx`select pvp_test.poker_sit_out(${t}::bigint, false, null)`);
+      expect(await seat()).toMatchObject({ state: "ACTIVE", sat_out_reason: null });
+      const h = await playHand(
+        t,
+        [ghost, fresh],
+        new Map([
+          [ghost.id, passive],
+          [fresh.id, passive],
+        ]),
+      );
+      expect(h.status).toBe("COMPLETED");
+
+      // A deliberate sit-out stays manual so the browser never deals the player back in.
+      await as(ghost.id, (tx) => tx`select pvp_test.poker_sit_out(${t}::bigint, true, null)`);
+      expect((await seat()).sat_out_reason).toBe("manual");
+      await as(ghost.id, (tx) => tx`select pvp_test.poker_heartbeat(${t}::bigint)`);
+      expect(await seat()).toMatchObject({ state: "SITTING_OUT", sat_out_reason: "manual" });
+      // Heartbeats from someone without a seat are a no-op.
+      const stranger = await player(0);
+      await as(stranger.id, (tx) => tx`select pvp_test.poker_heartbeat(${t}::bigint)`);
+      expect(await strikes()).toBe(0);
+
+      await leave(ghost, t);
+      await leave(fresh, t);
+      await parity();
+    },
+    LONG,
+  );
 });
