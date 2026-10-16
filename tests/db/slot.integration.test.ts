@@ -12,7 +12,7 @@ import { randomBytes, randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
 import { migrateTestSchemaToReal } from "./money";
 import { slottOutcome, verifySlott } from "../../src/lib/fairness/slott";
-import { SYMBOLS, WEIGHT_TOTAL, scoreGrid } from "../../src/lib/slott/paytable";
+import { BOMB, SYMBOLS, WEIGHT_TOTAL, hasBomb, scoreGrid } from "../../src/lib/slott/paytable";
 
 const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
 const d = url ? describe : describe.skip;
@@ -120,34 +120,65 @@ function expectedBonuses(
   });
 }
 
+const protocolOf = async (id: number) => (await game(id)).protocol_version as string;
 async function wildsForSeed(id: number, n: number) {
-  const seed = await seedOf(id);
+  const [seed, protocol] = [await seedOf(id), await protocolOf(id)];
   const out: number[] = [];
-  for (let s = 1; s <= n; s++) out.push((await slottOutcome(seed, id, s)).wilds);
+  for (let s = 1; s <= n; s++) out.push((await slottOutcome(seed, id, s, protocol)).wilds);
   return out;
 }
-/** Creates matches in parallel batches until a committed seed satisfies `ok`; cancels the rest. */
-async function findGame(uid: string, stake: number, spins: number, ok: (o: { scores: number[]; wilds: number[] }) => boolean) {
+/** Every spin a match can reach, so a bomb anywhere in it (sudden death included) is seen. */
+const MAX_SPINS = 32;
+/**
+ * Creates matches in parallel batches until a committed seed satisfies `ok`; cancels the rest.
+ * Seeds with a bomb are skipped unless `bombs` is set, since a bomb ends the match early.
+ */
+async function findGame(
+  uid: string,
+  stake: number,
+  spins: number,
+  ok: (o: { scores: number[]; wilds: number[]; bombs: boolean[] }) => boolean,
+  opts: { bombs?: boolean } = {},
+) {
   for (let batch = 0; batch < 40; batch++) {
     const ids = (await Promise.all(Array.from({ length: 12 }, () => create(uid, stake)))).map((r) => r.game_id);
-    const seeds = await sql`select game_id, encode(server_seed, 'hex') s from pvp_test.slot_game_secrets where game_id in ${sql(ids)}`;
+    const seeds = await sql`select s.game_id, encode(s.server_seed, 'hex') s, g.protocol_version p
+      from pvp_test.slot_game_secrets s join pvp_test.slot_games g on g.id = s.game_id where s.game_id in ${sql(ids)}`;
     let found: number | null = null;
     for (const r of seeds) {
       if (found != null) break;
-      const outs = await Promise.all(Array.from({ length: spins }, (_, i) => slottOutcome(r.s, r.game_id, i + 1)));
-      if (ok({ scores: outs.map((o) => o.score), wilds: outs.map((o) => o.wilds) })) found = Number(r.game_id);
+      // A bomb hunt only needs the spins the match will play. Every other search
+      // also has to see a bomb in sudden death, so it reads the full 32.
+      const outs = await Promise.all(
+        Array.from({ length: opts.bombs ? spins : MAX_SPINS }, (_, i) => slottOutcome(r.s, r.game_id, i + 1, r.p)),
+      );
+      const bombs = outs.map((o) => hasBomb(o.grid));
+      if (!opts.bombs && bombs.some(Boolean)) continue;
+      const first = outs.slice(0, spins);
+      if (ok({ scores: first.map((o) => o.score), wilds: first.map((o) => o.wilds), bombs: bombs.slice(0, spins) })) found = Number(r.game_id);
     }
     await Promise.all(ids.filter((id) => id !== found).map((id) => cancel(uid, id)));
     if (found != null) return found;
   }
   throw new Error("no matching seed found");
 }
+/** A match whose committed seed has no bomb in any reachable spin, for tests that play a full match. */
+async function createSafe(uid: string, stake: number) {
+  for (let i = 0; i < 40; i++) {
+    const { game_id: id } = await create(uid, stake);
+    const [seed, protocol] = [await seedOf(id), await protocolOf(id)];
+    const outs = await Promise.all(Array.from({ length: MAX_SPINS }, (_, s) => slottOutcome(seed, id, s + 1, protocol)));
+    if (!outs.some((o) => hasBomb(o.grid))) return { game_id: id };
+    await cancel(uid, id);
+  }
+  throw new Error("no bomb-free seed found");
+}
 const createWithWilds = (uid: string, stake: number, k: number) =>
   findGame(uid, stake, 12, ({ wilds }) => wilds.filter((w) => w > 0).length >= k);
 async function scoresForSeed(id: number, n: number) {
-  const seed = await seedOf(id);
+  const [seed, protocol] = [await seedOf(id), await protocolOf(id)];
   const out: number[] = [];
-  for (let s = 1; s <= n; s++) out.push((await slottOutcome(seed, id, s)).score);
+  for (let s = 1; s <= n; s++) out.push((await slottOutcome(seed, id, s, protocol)).score);
   return out;
 }
 
@@ -182,12 +213,16 @@ async function assertInvariants() {
     if (g.status === "COMPLETED") {
       expect((k.slot_settlement ?? 0) + (k.slot_refund ?? 0)).toBe(1);
       const sp = await spinsOf(g.id);
-      const v = await verifySlott({ id: g.id, server_seed_hash: g.server_seed_hash, server_seed: g.server_seed, score_a: g.score_a, score_b: g.score_b }, sp as never);
+      const v = await verifySlott({ id: g.id, protocol_version: g.protocol_version, server_seed_hash: g.server_seed_hash, server_seed: g.server_seed, score_a: g.score_a, score_b: g.score_b }, sp as never);
       expect(v.ok).toBe(true);
       const pays = await sql`select * from pvp_test.slot_payouts where game_id = ${g.id}`;
       if (g.outcome === "WIN") {
         expect(pays.length).toBe(1);
         expect(Number(pays[0]!.amount)).toBe(Number(g.p2p_pot) - Number(g.fee_amount) + Number(g.bonus_total));
+      } else if (g.outcome === "BOMB") {
+        // The house keeps both stakes; nobody is paid.
+        expect(pays.length).toBe(0);
+        expect([Number(g.fee_amount), Number(g.payout_amount), g.winner_id]).toEqual([Number(g.p2p_pot), 0, null]);
       } else {
         expect(pays.length).toBe(2);
       }
@@ -231,8 +266,16 @@ d("P2P Slott engine (isolated schema)", { timeout: LONG }, () => {
         expect(r!.score).toBe(t.score);
         expect(r!.wilds).toBe(t.wilds);
         expect(r!.lines).toEqual(t.lines);
+        // v2/v3 bomb draws: same grid, and a bomb grid scores nothing.
+        for (const p of ["v2", "v3"] as const) {
+          const [g] = await sql.unsafe(`select pvp_test.slot_spin_grid_${p}(decode($1, 'hex'), $2::bigint, $3) g`, [seed, gid, n]);
+          const tp = await slottOutcome(seed, gid, n, p);
+          expect(g!.g.map(Number)).toEqual(tp.grid);
+          if (hasBomb(tp.grid)) expect(tp.score).toBe(0);
+        }
       }
     }
+    expect(scoreGrid([BOMB, ...Array(19).fill(7)]).score).toBe(0);
     const grids: number[][] = [
       Array(20).fill(7),
       Array(20).fill(0),
@@ -324,7 +367,7 @@ d("P2P Slott engine (isolated schema)", { timeout: LONG }, () => {
   it("a full match alternates turns, rejects out-of-turn and replayed spins, and pays the winner", async () => {
     const [a, b, c] = [await newUser("alice"), await newUser("bob"), await newUser("carol")];
     await setCfg({ pre_delay_ms: 5000, spin_ms: 4000 });
-    const { game_id: id } = await create(a, 1000);
+    const { game_id: id } = await createSafe(a, 1000);
     await joinG(b, id);
     await expectErr(spin(a, id, 1), "TURN_NOT_OPEN");
     await openTurn(id);
@@ -376,7 +419,7 @@ d("P2P Slott engine (isolated schema)", { timeout: LONG }, () => {
 
   it("the worker auto-spins for idle players, and a concurrent click and worker spin exactly once", async () => {
     const [a, b] = [await newUser("alice"), await newUser("bob")];
-    const { game_id: id } = await create(a, 500);
+    const { game_id: id } = await createSafe(a, 500);
     await joinG(b, id);
     const opened = await game(id);
     // The creator may have been away while the match sat open. The first turn waits
@@ -408,7 +451,7 @@ d("P2P Slott engine (isolated schema)", { timeout: LONG }, () => {
       await setTiers(TEST_TIERS);
       const [a, b] = [await newUser("alice"), await newUser("bob")];
       await setCfg({ max_event_bonus_cents: stake * 2 });
-      const { game_id: id } = await create(a, stake);
+      const { game_id: id } = await createSafe(a, stake);
       await joinG(b, id);
       const g = await playAll(id, a, b);
       expect(g.status).toBe("COMPLETED");
@@ -520,6 +563,24 @@ d("P2P Slott engine (isolated schema)", { timeout: LONG }, () => {
     await assertInvariants();
   }, 300_000);
 
+  it("a bomb ends the match on that spin; the house keeps both stakes and no one is paid", async () => {
+    const [a, b] = [await newUser("alice"), await newUser("bob")];
+    const id = await findGame(a, 500, 12, ({ bombs }) => bombs.some(Boolean), { bombs: true });
+    expect((await game(id)).protocol_version).toBe("v3");
+    await joinG(b, id);
+    const g = await playAll(id, a, b);
+    const sp = await spinsOf(id);
+    const firstBomb = sp.findIndex((s) => s.grid.map(Number).includes(BOMB));
+    expect(firstBomb).toBe(sp.length - 1);
+    expect([sp[firstBomb]!.score, sp[firstBomb]!.wild_count]).toEqual([0, 0]);
+    expect([g.status, g.outcome, g.winner_id, Number(g.payout_amount), Number(g.fee_amount)]).toEqual(["COMPLETED", "BOMB", null, 0, 1000]);
+    expect(await bal(a)).toBe(START - 500);
+    expect(await bal(b)).toBe(START - 500);
+    expect(await bal(a, "user_locked")).toBe(0);
+    expect(await bal(b, "user_locked")).toBe(0);
+    await assertInvariants();
+  }, 300_000);
+
   it("WAITING matches expire once, creators can cancel, and cancel cannot beat a join", async () => {
     const [a, b] = [await newUser("alice"), await newUser("bob")];
     await setCfg({ waiting_timeout_seconds: 1 });
@@ -546,7 +607,7 @@ d("P2P Slott engine (isolated schema)", { timeout: LONG }, () => {
 
   it("injected settlement failures leave nothing half-paid; the next worker settles exactly once", async () => {
     const [a, b] = [await newUser("alice"), await newUser("bob")];
-    const { game_id: id } = await create(a, 500);
+    const { game_id: id } = await createSafe(a, 500);
     await joinG(b, id);
     for (;;) {
       const g = await game(id);
