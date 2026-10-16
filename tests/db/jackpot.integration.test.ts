@@ -32,6 +32,9 @@ async function newUser(name: string) {
 const join = (uid: string | null, amount: number, key = randomUUID()) =>
   as(uid, async (tx) => (await tx`select pvp_test.jackpot_join(${amount}, ${key}) as r`)[0].r);
 const tick = (fail = false) => as(null, async (tx) => (await tx`select pvp_test.jackpot_tick() as r`)[0].r, fail);
+/** A failed payout backs off for seconds; end the wait so the next worker retries now. */
+const retryNow = (id: number) =>
+  sql`update pvp_test.jackpot_payouts set next_retry_at = clock_timestamp() where game_id = ${id}`;
 const openGame = async () => (await sql`select * from pvp_test.jackpot_games where status in ('WAITING','ACTIVE')`)[0];
 const game = async (id: number) => (await sql`select * from pvp_test.jackpot_games where id = ${id}`)[0];
 const bal = async (uid: string, kind = "user_available") =>
@@ -97,7 +100,7 @@ d("jackpot engine (isolated schema)", () => {
   });
 
   it("full lifecycle WAITING -> ACTIVE -> DRAWING -> COMPLETED with correct timer rules", async () => {
-    const [a, b, c] = [await newUser("alice"), await newUser("bob"), await newUser("carol")];
+    const [a, b, c, dd] = [await newUser("alice"), await newUser("bob"), await newUser("carol"), await newUser("dave")];
     await join(a, 2500);
     let g = await openGame();
     expect(g.status).toBe("WAITING");
@@ -112,11 +115,17 @@ d("jackpot engine (isolated schema)", () => {
 
     await join(a, 1000); // existing player tops up: no extension
     expect(len(await openGame())).toBeCloseTo(60, 0);
-    await join(c, 1500); // new player: +10s
+    await join(c, 1000); // new player with more than 35s left: no extension
+    expect(len(await openGame())).toBeCloseTo(60, 0);
+    // Test-only clock skip: 30s remain, so the next new player adds 10s.
+    await sql`update pvp_test.jackpot_games set scheduled_end_at = clock_timestamp() + interval '30 seconds' where id = ${g.id}`;
+    await join(dd, 500);
     g = await openGame();
-    expect(len(g)).toBeCloseTo(70, 0);
-    expect(g.player_count).toBe(3);
-    expect(g.entry_count).toBe(4);
+    const [left] = await sql`select extract(epoch from scheduled_end_at - clock_timestamp())::float8 s from pvp_test.jackpot_games where id = ${g.id}`;
+    expect(left.s).toBeGreaterThan(36);
+    expect(left.s).toBeLessThanOrEqual(40);
+    expect(g.player_count).toBe(4);
+    expect(g.entry_count).toBe(5);
     expect(Number(g.pot_amount)).toBe(10000);
     expect(await bal(a)).toBe(START - 3500);
     expect(await bal(a, "user_locked")).toBe(3500);
@@ -131,11 +140,12 @@ d("jackpot engine (isolated schema)", () => {
     expect(r.settled).toBe(1);
     const done = await game(g.id);
     expect(done.status).toBe("COMPLETED");
-    expect(Number(done.payout_amount)).toBe(10000);
+    expect(Number(done.rake_amount)).toBe(500); // 5% house rake
+    expect(Number(done.payout_amount)).toBe(9500);
     expect(done.server_seed).toMatch(/^[0-9a-f]{64}$/);
-    const winnerStart = { [a]: START - 3500, [b]: START - 5000, [c]: START - 1500 }[done.winner_id];
-    expect(await bal(done.winner_id)).toBe(winnerStart + 10000);
-    for (const u of [a, b, c]) expect(await bal(u, "user_locked")).toBe(0);
+    const winnerStart = { [a]: START - 3500, [b]: START - 5000, [c]: START - 1000, [dd]: START - 500 }[done.winner_id];
+    expect(await bal(done.winner_id)).toBe(winnerStart + 9500);
+    for (const u of [a, b, c, dd]) expect(await bal(u, "user_locked")).toBe(0);
 
     // A fresh game opens and the record is independently verifiable
     expect((await openGame()).id).not.toBe(g.id);
@@ -146,14 +156,18 @@ d("jackpot engine (isolated schema)", () => {
     );
     expect(v.ok).toBe(true);
     await assertInvariants();
-  });
+  }, 60_000);
 
-  it("timer never exceeds 180s max duration", async () => {
-    await setTimer(60, 50, 180);
-    for (let i = 0; i < 6; i++) await join(await newUser(`cap${i}`), 100);
+  it("timer never exceeds the max duration", async () => {
+    await setTimer(60, 50, 70);
+    for (let i = 0; i < 3; i++) await join(await newUser(`cap${i}`), 100);
+    const g0 = await openGame();
+    // Test-only clock skip into the last 35s, where new players extend the clock.
+    await sql`update pvp_test.jackpot_games set scheduled_end_at = clock_timestamp() + interval '30 seconds' where id = ${g0.id}`;
+    for (let i = 3; i < 6; i++) await join(await newUser(`cap${i}`), 100);
     const g = await openGame();
     expect(+g.scheduled_end_at).toBe(+g.max_end_at);
-    expect((+g.scheduled_end_at - +g.countdown_started_at) / 1000).toBeCloseTo(180, 0);
+    expect((+g.max_end_at - +g.countdown_started_at) / 1000).toBeCloseTo(70, 0);
   });
 
   it("validation: auth, min/max, insufficient balance, profile, self-exclusion", async () => {
@@ -204,7 +218,7 @@ d("jackpot engine (isolated schema)", () => {
     expect(g.entry_count).toBe(50);
     expect(Number(g.pot_amount)).toBe(25 * 1250);
     await assertInvariants();
-  }, 30000);
+  }, 90_000);
 
   it("double spend: parallel entries cannot overdraw a balance", async () => {
     const a = await newUser("dbl_a");
@@ -265,13 +279,19 @@ d("jackpot engine (isolated schema)", () => {
     let [p] = await sql`select * from pvp_test.jackpot_payouts where game_id = ${g.id}`;
     expect(p.status).toBe("FAILED");
     expect(p.last_error).toMatch(/INJECTED_FAILURE/);
+    // A failed payout backs off (2-3s first): an immediate worker leaves it alone.
+    expect(+p.next_retry_at).toBeGreaterThan(Date.now() - 1000);
+    expect((await tick()).settled).toBe(0);
+    expect((await game(g.id)).status).toBe("DRAWING");
     expect(await bal(a, "user_locked")).toBe(1000);
     // Entries are rejected while drawing, and no new game opens until settled
     await expectErr(join(a, 100), "GAME_CLOSED");
     await assertInvariants();
 
     // Retry after partial failure succeeds exactly once
+    await retryNow(g.id);
     await tick(true);
+    await retryNow(g.id);
     await tick();
     await tick();
     st = await game(g.id);
@@ -280,7 +300,7 @@ d("jackpot engine (isolated schema)", () => {
     expect(p.status).toBe("SETTLED");
     expect(p.attempts).toBe(3);
     await assertInvariants();
-  });
+  }, 60_000);
 
   it("transaction rollback: an aborted transaction leaves no partial entry or debit", async () => {
     const a = await newUser("rb_a");
