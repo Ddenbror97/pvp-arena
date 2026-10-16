@@ -52,10 +52,18 @@ const err = async (p: Promise<unknown>) => {
   }
 };
 
+/** What a winning bet is paid: gross amount x multiplier, less the round's win fee, each step rounded down. */
+const netWin = (amount: number, multiplierBps: number, feeBps: number) => {
+  const gross = Math.floor((amount * multiplierBps) / 10000);
+  return gross - Math.floor((gross * feeBps) / 10000);
+};
+
 async function setCfg(over: Partial<Record<string, number>> = {}) {
-  const c = { betting_seconds: 3, max_bet: 1000000, lock_ms: 100, spin_ms: 200, max_pot: 100000000, max_bets_per_user: 10, max_bets_per_round: 500, ...over };
+  // Exposure is lifted here so non-exposure tests can stake large amounts; the cap has its own test.
+  const c = { betting_seconds: 3, max_bet: 1000000, lock_ms: 100, spin_ms: 200, max_pot: 100000000, max_bets_per_user: 10, max_bets_per_round: 500, max_round_exposure: 1_000_000_000, ...over };
   await sql`update pvp_test.roulette_config set betting_seconds=${c.betting_seconds}, lock_ms=${c.lock_ms}, spin_ms=${c.spin_ms},
-    max_pot=${c.max_pot}, max_bet=${c.max_bet}, max_bets_per_user=${c.max_bets_per_user}, max_bets_per_round=${c.max_bets_per_round}`;
+    max_pot=${c.max_pot}, max_bet=${c.max_bet}, max_bets_per_user=${c.max_bets_per_user}, max_bets_per_round=${c.max_bets_per_round},
+    max_round_exposure=${c.max_round_exposure}`;
 }
 async function drive(gid: number) {
   for (let i = 0; i < 100; i++) {
@@ -160,7 +168,7 @@ d("roulette adversarial audit (isolated schema)", () => {
     await sql`select pvp_test._roulette_refund(${g1}, 'STUCK')`;
     for (const s of ["BETTING", "COMPLETED", "LOCKED"]) expect(await tryStatus(g1, s)).toMatch(/IMMUTABLE_RECORD/);
     expect(await err(sql`select pvp_test._roulette_refund(${g1}, 'again')`)).toMatch(/NOT_CANCELLABLE/);
-    expect(await bal(u)).toBe(100000 - 100 + (done.winning_color === "RED" ? 200 : 0));
+    expect(await bal(u)).toBe(100000 - 100 + (done.winning_color === "RED" ? netWin(100, 20000, done.win_fee_bps) : 0));
     await assertInvariants();
   }, 120000);
 
@@ -246,6 +254,28 @@ d("roulette adversarial audit (isolated schema)", () => {
     await assertInvariants();
   }, 120000);
 
+  it("round exposure cap: the house's worst-case net loss never passes max_round_exposure, even concurrently", async () => {
+    // GREEN pays 14x: one 100 bet risks 1400 - 100 staked = 1300, exactly the cap.
+    await setCfg({ max_round_exposure: 1300, betting_seconds: 10 });
+    const [a, b, c] = [await newUser("ea"), await newUser("eb"), await newUser("ec")];
+    expect(await err(bet(a, "GREEN", 100))).toBe("OK");
+    expect(await err(bet(b, "RED", 100))).toBe("OK"); // more stake, same worst case: 1400 - 200
+    expect(await err(bet(c, "GREEN", 100))).toMatch(/EXPOSURE_LIMIT_REACHED/); // 2800 - 300
+    expect(await bal(c)).toBe(100000);
+    const gid = Number((await sql`select id from pvp_test.roulette_games order by id desc limit 1`)[0].id);
+    await untilClosed(gid);
+    await drive(gid);
+
+    const users = await Promise.all(Array.from({ length: 10 }, (_, i) => newUser("ex" + i)));
+    const res = await Promise.allSettled(users.map((u) => bet(u, "GREEN", 100)));
+    expect(res.filter((r) => r.status === "fulfilled").length).toBe(1);
+    for (const r of res) if (r.status === "rejected") expect(String(r.reason)).toMatch(/EXPOSURE_LIMIT_REACHED/);
+    const g2 = Number((res.find((r) => r.status === "fulfilled") as PromiseFulfilledResult<{ game_id: number }>).value.game_id);
+    await untilClosed(g2);
+    await drive(g2);
+    await assertInvariants();
+  }, 120000);
+
   it("exact-close race: 30 bets across the deadline plus concurrent advances", async () => {
     for (let round = 0; round < 3; round++) {
       const users = await Promise.all(Array.from({ length: 10 }, (_, i) => newUser(`r${round}u${i}`)));
@@ -296,7 +326,7 @@ d("roulette adversarial audit (isolated schema)", () => {
     await assertInvariants();
   }, 30000);
 
-  it("payout math: gross 2x/14x, rounded down, for every audited amount", async () => {
+  it("payout math: 2x/14x less the 5% win fee, rounded down, for every audited amount", async () => {
     await setCfg({ betting_seconds: 40 });
     const amounts = [100, 101, 111, 1000, 1001, 9999, 10001, 99999, 1_000_000];
     const users = await Promise.all(amounts.map((a, i) => newUser("m" + i, a * 3)));
@@ -306,10 +336,11 @@ d("roulette adversarial audit (isolated schema)", () => {
       for (const c of ["RED", "BLACK", "GREEN"]) gid = Number((await bet(users[i]!, c, amounts[i]!)).game_id);
     const done = await drive(gid);
     expect(done.status).toBe("COMPLETED");
+    expect(done.win_fee_bps).toBe(500);
     const mult: Record<string, number> = { RED: 20000, BLACK: 20000, GREEN: 140000 };
     let total = 0;
     for (let i = 0; i < amounts.length; i++) {
-      const win = Math.floor((amounts[i]! * mult[done.winning_color]!) / 10000);
+      const win = netWin(amounts[i]!, mult[done.winning_color]!, done.win_fee_bps);
       total += win;
       expect(await bal(users[i]!)).toBe(before[i]! - 3 * amounts[i]! + win);
     }
@@ -318,7 +349,7 @@ d("roulette adversarial audit (isolated schema)", () => {
     const bets = await sql`select * from pvp_test.roulette_bets where game_id = ${gid}`;
     for (const b of bets) {
       expect(b.status).toBe(b.color === done.winning_color ? "WON" : "LOST");
-      expect(Number(b.payout_amount)).toBe(b.color === done.winning_color ? Math.floor((Number(b.amount) * b.multiplier_bps) / 10000) : 0);
+      expect(Number(b.payout_amount)).toBe(b.color === done.winning_color ? netWin(Number(b.amount), b.multiplier_bps, done.win_fee_bps) : 0);
     }
     await assertInvariants();
   }, 120000);
@@ -408,7 +439,7 @@ d("roulette adversarial audit (isolated schema)", () => {
     const bets = await sql`select * from pvp_test.roulette_bets where game_id=${gid}`;
     for (let i = 0; i < 25; i++) {
       const mine = bets.filter((b) => b.user_id === users[i]);
-      const win = mine.filter((b) => b.color === done.winning_color).reduce((s, b) => s + Math.floor((Number(b.amount) * b.multiplier_bps) / 10000), 0);
+      const win = mine.filter((b) => b.color === done.winning_color).reduce((s, b) => s + netWin(Number(b.amount), b.multiplier_bps, done.win_fee_bps), 0);
       expect(await bal(users[i]!)).toBe(before[i]! + win);
     }
     console.log(`200 concurrent bets accepted in ${ms}ms`);
@@ -430,17 +461,27 @@ d("roulette adversarial audit (isolated schema)", () => {
 
   it("wheel math is immutable, versioned and at most 100% RTP", async () => {
     const wheels = await sql`select * from pvp_test.roulette_wheels order by version`;
+    expect(wheels.map((w) => w.version)).toEqual([1, 2, 3, 4]);
+    const rtp = (w: (typeof wheels)[number], c: string) =>
+      (w.layout.filter((x: string) => x === c).length * (w.multipliers_bps as Record<string, number>)[c]!) / (w.slot_count * 10000);
     for (const w of wheels) {
-      expect(w.slot_count).toBe(15);
-      expect(w.layout.length).toBe(15);
-      for (const [c, m] of Object.entries(w.multipliers_bps as Record<string, number>)) {
-        const n = w.layout.filter((x: string) => x === c).length;
-        expect((n * m) / (15 * 10000)).toBeCloseTo(14 / 15, 10); // 93.33% on every colour
+      expect(w.layout.length).toBe(w.slot_count);
+      for (const c of Object.keys(w.multipliers_bps)) expect(rtp(w, c)).toBeLessThanOrEqual(1);
+      if (w.version <= 3) {
+        expect(w.slot_count).toBe(15);
+        for (const c of Object.keys(w.multipliers_bps)) expect(rtp(w, c)).toBeCloseTo(14 / 15, 10); // 93.33% on every colour
       }
     }
     const v3 = wheels.find((w) => w.version === 3)!;
     expect(v3.layout.filter((x: string) => x === "GREEN").length).toBe(1);
     expect(v3.multipliers_bps).toEqual({ RED: 20000, BLACK: 20000, GREEN: 140000 });
+    // v4: 33 slots, 16 RED / 16 BLACK / 1 GREEN at 2x/2x/14x, before the win fee.
+    const v4 = wheels.find((w) => w.version === 4)!;
+    expect(v4.slot_count).toBe(33);
+    expect(["RED", "BLACK", "GREEN"].map((c) => v4.layout.filter((x: string) => x === c).length)).toEqual([16, 16, 1]);
+    expect(v4.multipliers_bps).toEqual({ RED: 20000, BLACK: 20000, GREEN: 140000 });
+    expect(rtp(v4, "RED")).toBeCloseTo(32 / 33, 10);
+    expect(rtp(v4, "GREEN")).toBeCloseTo(14 / 33, 10);
     expect(await err(sql`update pvp_test.roulette_wheels set multipliers_bps = '{"RED":30000,"BLACK":20000,"GREEN":140000}' where version = 3`)).toMatch(/IMMUTABLE/);
     expect(await err(sql`delete from pvp_test.roulette_wheels where version = 3`)).toMatch(/IMMUTABLE/);
     expect(await err(sql`insert into pvp_test.roulette_wheels (version, slot_count, layout, multipliers_bps)
@@ -448,7 +489,7 @@ d("roulette adversarial audit (isolated schema)", () => {
     // Each round stores its own version; settlement uses the stored one.
     const u = await newUser("a");
     const gid = Number((await bet(u, "RED", 100)).game_id);
-    expect((await game(gid)).wheel_version).toBe(3);
+    expect((await game(gid)).wheel_version).toBe(4);
     const [b] = await sql`select multiplier_bps from pvp_test.roulette_bets where game_id=${gid}`;
     expect(b.multiplier_bps).toBe(20000);
     await drive(gid);
@@ -520,14 +561,15 @@ d("roulette live permissions (read-only catalog)", () => {
     expect(migration).toContain("'select public.roulette_tick()'");
   });
 
-  it("browsers can only place a bet and nudge the tick; no table writes; secrets unreadable", async () => {
+  it("browsers can only place a bet and read the bet feed; no tick, no table writes; secrets unreadable", async () => {
     const fns = await sql`select p.proname, has_function_privilege('anon', p.oid, 'execute') anon,
       has_function_privilege('authenticated', p.oid, 'execute') auth, p.prosecdef, p.proconfig
       from pg_proc p where p.pronamespace = 'public'::regnamespace and p.proname like '%roulette%'`;
     for (const f of fns) {
       // roulette_round_bets is the safe-column public bet feed.
       expect(f.anon).toBe(f.proname === "roulette_round_bets");
-      expect(f.auth).toBe(["roulette_bet", "roulette_tick", "roulette_round_bets"].includes(f.proname));
+      // The pvp-roulette-worker owns the clock; browsers cannot call roulette_tick.
+      expect(f.auth).toBe(["roulette_bet", "roulette_round_bets"].includes(f.proname));
       if (f.prosecdef) expect(f.proconfig).toContain("search_path=\"\"");
     }
     const tbl = await sql`select c.relname, r, p from pg_class c cross join (values('anon'),('authenticated')) x(r)
