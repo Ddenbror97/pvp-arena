@@ -179,9 +179,12 @@ d("game chat (isolated schema)", () => {
   it("access rules: browsers read visible rows only and can never write or call chat functions", async () => {
     const pol =
       await sql`select cmd, roles::text[] roles, qual from pg_policies where schemaname = 'public' and tablename like 'game_chat%'`;
-    expect(pol).toHaveLength(1);
-    expect(pol[0]).toMatchObject({ cmd: "SELECT", roles: ["authenticated"] });
-    expect(pol[0].qual).toMatch(/status = 'visible'/);
+    // Logged-out visitors read visible chat too; sending stays authenticated-only.
+    expect(pol.map((p) => p.roles.join(",")).sort()).toEqual(["anon", "authenticated"]);
+    for (const p of pol) {
+      expect(p.cmd).toBe("SELECT");
+      expect(p.qual).toMatch(/status = 'visible'/);
+    }
     const privs: string[] = [];
     for (const t of [
       "game_chat_messages",
@@ -193,7 +196,15 @@ d("game chat (isolated schema)", () => {
           const [r] = await sql`select has_table_privilege(${role}, ${"public." + t}, ${p}) ok`;
           if (r.ok) privs.push(`${t}:${role}:${p}`);
         }
-    expect(privs).toEqual(["game_chat_messages:authenticated:SELECT"]);
+    expect(privs).toEqual([]);
+    // Reads are column-scoped: moderation fields stay server-only.
+    const cols = await sql`select grantee, privilege_type, column_name from information_schema.column_privileges
+      where table_schema = 'public' and table_name like 'game_chat%' and grantee in ('anon', 'authenticated')
+      order by grantee, column_name`;
+    const readable = ["created_at", "game_type", "id", "message", "status", "user_id"];
+    expect(cols.every((c) => c.privilege_type === "SELECT")).toBe(true);
+    for (const role of ["anon", "authenticated"])
+      expect(cols.filter((c) => c.grantee === role).map((c) => c.column_name)).toEqual(readable);
     for (const fn of ["chat_send", "chat_set_status", "chat_set_restriction", "_chat_broadcast"]) {
       const [row] =
         await sql`select bool_or(has_function_privilege('authenticated', p.oid, 'execute')) a, bool_or(has_function_privilege('anon', p.oid, 'execute')) n
@@ -207,6 +218,8 @@ d("game chat (isolated schema)", () => {
     const rt =
       await sql`select policyname, cmd, qual, with_check from pg_policies where schemaname = 'realtime' and tablename = 'messages' and policyname like 'chat rooms%'`;
     // Browsers only receive; presence is now server-counted (no browser INSERT at all).
-    expect(rt.map((r) => r.cmd).sort()).toEqual(["SELECT"]);
+    expect(rt.length).toBeGreaterThan(0);
+    expect([...new Set(rt.map((r) => r.cmd))]).toEqual(["SELECT"]);
+    expect(rt.every((r) => r.with_check === null)).toBe(true);
   });
 });

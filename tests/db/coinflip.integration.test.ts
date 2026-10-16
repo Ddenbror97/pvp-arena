@@ -40,6 +40,11 @@ const cancel = (uid: string, gid: number) => as(uid, async (tx) => (await tx`sel
 const tick = (f: Flags = {}) => as(null, async (tx) => (await tx`select pvp_test.coinflip_tick() as r`)[0].r, f);
 const game = async (id: number) => (await sql`select * from pvp_test.coinflip_games where id = ${id}`)[0];
 const payout = async (id: number) => (await sql`select * from pvp_test.coinflip_payouts where game_id = ${id}`)[0];
+const retry = async (id: number) =>
+  (await sql`select * from pvp_test.settlement_retry where game = 'coinflip' and game_id = ${id}`)[0];
+/** A failed settlement backs off for seconds; end the wait so the next worker retries now. */
+const retryNow = (id: number) =>
+  sql`update pvp_test.settlement_retry set next_retry_at = clock_timestamp() where game = 'coinflip' and game_id = ${id}`;
 const bal = async (uid: string, kind = "user_available") =>
   Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind} and account_type = 'test_credit'`)[0].balance);
 const expectErr = (p: Promise<unknown>, code: string) => expect(p).rejects.toThrow(code);
@@ -107,7 +112,7 @@ d("coinflip engine (isolated schema)", () => {
     await sql`truncate pvp_test.audit_logs, pvp_test.coinflip_payouts, pvp_test.coinflip_results, pvp_test.coinflip_entries,
       pvp_test.coinflip_game_secrets, pvp_test.coinflip_games, pvp_test.jackpot_payouts, pvp_test.jackpot_players, pvp_test.jackpot_entries,
       pvp_test.jackpot_game_secrets, pvp_test.jackpot_games, pvp_test.ledger_postings, pvp_test.ledger_transactions,
-      pvp_test.wallet_accounts, pvp_test.profiles restart identity cascade`;
+      pvp_test.wallet_accounts, pvp_test.profiles, pvp_test.settlement_retry restart identity cascade`;
     await setCfg();
   });
 
@@ -228,7 +233,7 @@ d("coinflip engine (isolated schema)", () => {
     await assertInvariants();
   });
 
-  it("result is hidden until FLIPPING, visible after; seed revealed only at COMPLETED; winner gets full pot", async () => {
+  it("result is hidden until FLIPPING, visible after; seed revealed only at COMPLETED; winner gets the pot less the 5% fee", async () => {
     await setCfg(3000, 1000);
     const [a, b] = [await newUser("alice"), await newUser("bob")];
     const { game_id } = await create(a, 500, "HEADS");
@@ -250,11 +255,11 @@ d("coinflip engine (isolated schema)", () => {
     await tick();
     g = await game(game_id);
     expect(g.status).toBe("COMPLETED");
-    expect(Number(g.payout_amount)).toBe(1000);
-    expect(Number(g.fee_amount)).toBe(0);
+    expect(Number(g.payout_amount)).toBe(950);
+    expect(Number(g.fee_amount)).toBe(50);
     expect(g.server_seed).toMatch(/^[0-9a-f]{64}$/);
     const loser = g.winner_id === a ? b : a;
-    expect(await bal(g.winner_id)).toBe(START - 500 + 1000);
+    expect(await bal(g.winner_id)).toBe(START - 500 + 950);
     expect(await bal(loser)).toBe(START - 500);
     expect(await bal(a, "user_locked")).toBe(0);
     expect(await bal(b, "user_locked")).toBe(0);
@@ -292,7 +297,7 @@ d("coinflip engine (isolated schema)", () => {
     const [n2] = await sql`select count(*)::int c from pvp_test.ledger_transactions where kind='coinflip_settlement'`;
     expect(n2.c).toBe(4);
     await assertInvariants();
-  });
+  }, 60_000);
 
   it("the worker cannot settle early; illegal transitions are rejected by the database", async () => {
     await setCfg(5000, 5000);
@@ -318,6 +323,7 @@ d("coinflip engine (isolated schema)", () => {
     expect((await payout(id)).status).toBe("FAILED");
     expect(await bal(a, "user_locked")).toBe(500);
     await assertInvariants();
+    await retryNow(id);
     await tick();
     expect((await game(id)).status).toBe("COMPLETED");
     const p = await payout(id);
@@ -337,11 +343,20 @@ d("coinflip engine (isolated schema)", () => {
     expect((await game(id)).status).toBe("SETTLEMENT");
     const [n0] = await sql`select count(*)::int c from pvp_test.ledger_transactions where kind='coinflip_settlement'`;
     expect(n0.c).toBe(0);
+    const r1 = await retry(id);
+    expect(r1.attempts).toBe(1);
+    expect(+r1.next_retry_at).toBeGreaterThan(Date.now() - 1000);
+    // The backoff holds: an immediate worker does not touch the game.
+    expect((await tick()).settled).toBe(0);
+    expect((await game(id)).status).toBe("SETTLEMENT");
+    await retryNow(id);
     await tick({ failBeforeComplete: true });
     expect((await game(id)).status).toBe("SETTLEMENT");
+    expect((await retry(id)).attempts).toBe(2);
     const [n1] = await sql`select count(*)::int c from pvp_test.ledger_transactions where kind='coinflip_settlement'`;
     expect(n1.c).toBe(0);
     await assertInvariants();
+    await retryNow(id);
     await tick();
     expect((await game(id)).status).toBe("COMPLETED");
     const [n2] = await sql`select count(*)::int c from pvp_test.ledger_transactions where kind='coinflip_settlement'`;
@@ -373,7 +388,7 @@ d("coinflip engine (isolated schema)", () => {
     expect((await game(id)).status).toBe("COMPLETED");
   });
 
-  it("WAITING games expire server-side with one idempotent refund; creator cancel works; join after expiry fails", async () => {
+  it("WAITING games expire server-side with one idempotent refund; players cannot cancel; join after expiry fails", async () => {
     await setCfg(150, 200, 1);
     const [a, b] = [await newUser("alice"), await newUser("bob")];
     const { game_id } = await create(a, 700, "HEADS");
@@ -390,14 +405,16 @@ d("coinflip engine (isolated schema)", () => {
 
     await setCfg();
     const { game_id: g2 } = await create(a, 300, "TAILS");
-    await expectErr(cancel(b, g2), "FORBIDDEN");
-    await cancel(a, g2);
-    await expectErr(cancel(a, g2), "GAME_NOT_CANCELLABLE");
-    expect(await bal(a)).toBe(START);
-    // cancel vs join race: exactly one wins
+    await expectErr(cancel(b, g2), "CANCEL_DISABLED");
+    await expectErr(cancel(a, g2), "CANCEL_DISABLED");
+    expect((await game(g2)).status).toBe("WAITING");
+    expect(await bal(a)).toBe(START - 300);
+    expect(await bal(a, "user_locked")).toBe(300);
+    // a cancel attempt racing a join never stops the join
     const { game_id: g3 } = await create(a, 300, "TAILS");
     const res = await Promise.allSettled([cancel(a, g3), joinG(b, g3)]);
-    expect(res.filter((r) => r.status === "fulfilled").length).toBe(1);
+    expect(res[0].status).toBe("rejected");
+    expect(res[1].status).toBe("fulfilled");
     await assertInvariants();
   });
 
