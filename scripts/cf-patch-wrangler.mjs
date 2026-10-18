@@ -22,7 +22,7 @@ cfg.vars = {
   VITE_SUPABASE_PROJECT_ID: process.env.VITE_SUPABASE_PROJECT_ID ?? process.env.SUPABASE_PROJECT_ID ?? "",
   VITE_SUPABASE_PUBLISHABLE_KEY:
     process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_PUBLISHABLE_KEY ?? "",
-  BTCPAY_MIN_DEPOSIT_CENTS: process.env.BTCPAY_MIN_DEPOSIT_CENTS ?? "100",
+  BTCPAY_MIN_DEPOSIT_CENTS: process.env.BTCPAY_MIN_DEPOSIT_CENTS ?? "200",
 };
 const flags = Array.isArray(cfg.compatibility_flags) ? cfg.compatibility_flags : [];
 if (!flags.includes("nodejs_compat")) flags.push("nodejs_compat");

@@ -317,11 +317,11 @@ export function CryptoRails({
     queryFn: () => receiveFn({ data: { chainId: chain?.chain_id ?? chainId } }),
     staleTime: 60_000,
   });
-  const minDepositCents = chain?.min_deposit_cents ?? data?.settings.min_deposit_cents ?? 100;
+  const minDepositCents = chain?.min_deposit_cents ?? data?.settings.min_deposit_cents ?? 200;
   const minWithdrawCents =
     chain?.min_withdrawal_cents ?? data?.settings.min_withdrawal_cents ?? 2000;
   const depositFloors: Record<string, number> = {
-    BTC: btcDeposit.data?.enabled ? btcDeposit.data.minCents : 100,
+    BTC: btcDeposit.data?.enabled ? btcDeposit.data.minCents : 200,
   };
   const withdrawFloors: Record<string, number> = {
     BTC: btcPayout.data?.enabled ? btcPayout.data.minCents : 2000,
