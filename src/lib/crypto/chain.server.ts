@@ -49,6 +49,7 @@ import {
 } from "./ankr-index";
 import {
   checkTraceUrl,
+  internalCreditProofKey,
   mayCreditInternal,
   traceCooldownElapsed,
   traceDepositBlock,
@@ -655,7 +656,7 @@ async function confirmInternalEth(
 ): Promise<boolean> {
   const url = workerEnv(`CRYPTO_TRACE_URL_${env.chainId}`);
   if (!checkTraceUrl(url).ok || !url) return false;
-  const fp = `crypto_eth_trace_tx:${env.chainId}:${txHash.toLowerCase()}`;
+  const fp = internalCreditProofKey(env.chainId, txHash, dest, units);
   const prior = await recentTraceAttempt(fp);
   if (prior?.reason === "proved" && !traceCooldownElapsed(prior.at, prior.reason, Date.now()))
     return true;

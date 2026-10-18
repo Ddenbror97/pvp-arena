@@ -135,6 +135,16 @@ export function mayCreditInternal(status: "open" | "recorded" | "none"): boolean
   return status === "recorded";
 }
 
+/** One proof covers one transaction, recipient, and amount. A second payout in the same transaction needs its own proof. */
+export function internalCreditProofKey(
+  chainId: number,
+  txHash: string,
+  dest: string,
+  units: bigint,
+): string {
+  return `crypto_eth_trace_tx:${chainId}:${txHash.toLowerCase()}:${dest.toLowerCase()}:${units.toString()}`;
+}
+
 type FetchLike = (url: string, init: RequestInit) => Promise<Response>;
 
 export async function nodeflareCall(
@@ -285,7 +295,9 @@ export async function traceDepositBlock(input: {
     all.length > hashes.length ||
     attempts.some((attempt) => attempt.status === "open") ||
     hashes.length === 0;
-  if (settled.status !== "recorded" && incomplete) {
+  // A named payout must not close the block while another candidate is still unverified.
+  // Recording only the first one would move the balance threshold past the second.
+  if (incomplete) {
     return {
       settled: { transfers: [], status: "open" },
       problem: problem ?? "incomplete",

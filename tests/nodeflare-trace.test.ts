@@ -3,6 +3,7 @@ import {
   callTracerOutcome,
   checkTraceUrl,
   classifyTraceBody,
+  internalCreditProofKey,
   mayCreditInternal,
   nodeflareCall,
   traceCooldownElapsed,
@@ -226,6 +227,35 @@ describe("NodeFlare request behavior", () => {
     expect(outcome.settled.transfers).toHaveLength(1);
     expect(outcome.settled.transfers[0]?.value).toBe(payout);
     expect(outcome.problem).toBeUndefined();
+  });
+
+  it("keeps the block open when one debug trace pays and another candidate fails", async () => {
+    const methods: string[] = [];
+    const outcome = await traceDepositBlock({
+      url: traceUrl,
+      block,
+      targets: [deposit],
+      candidateHashes: async () => [parent, second],
+      call: async (_url, method, params) => {
+        methods.push(method);
+        if (method === "trace_filter") return { ok: false, problem: "unsupported", attempts: 1 };
+        const hash = String(params[0]);
+        if (hash === second) return { ok: false, problem: "timeout", attempts: 2 };
+        return { ok: true, result: tree, attempts: 1 };
+      },
+    });
+    expect(methods).toEqual(["trace_filter", "debug_traceTransaction", "debug_traceTransaction"]);
+    expect(outcome.settled).toEqual({ transfers: [], status: "open" });
+    expect(outcome.problem).toBe("timeout");
+    expect(mayCreditInternal(outcome.settled.status)).toBe(false);
+  });
+
+  it("binds a stored internal proof to the recipient and amount", () => {
+    const amount = 3138330000000000n;
+    const key = internalCreditProofKey(8453, parent, deposit.toUpperCase(), amount);
+    expect(key).toBe(internalCreditProofKey(8453, parent, deposit, amount));
+    expect(key).not.toBe(internalCreditProofKey(8453, parent, deposit, amount + 1n));
+    expect(key).not.toBe(internalCreditProofKey(8453, parent, other, amount));
   });
 
   it("does not fall through to debug when trace_filter is rate limited, down, or malformed", async () => {
