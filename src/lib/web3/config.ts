@@ -1,0 +1,40 @@
+/**
+ * Wallet network settings. Identity reads `eth_chainId` and requests
+ * `personal_sign`. Deposits also call `eth_sendTransaction` on Base after the
+ * chain and account checks.
+ */
+export const WALLET_CONFIG = {
+  /** Base Mainnet — the same network as the deposit/withdrawal rails. */
+  requiredChainId: "0x2105" as const,
+  requiredChainName: "Base",
+  /**
+   * MetaMask Connect refuses *every* request (even eth_chainId / personal_sign)
+   * while the wallet's active chain is missing from this map, and it always
+   * adds Ethereum mainnet to the permission request. So mainnet must be listed
+   * too, purely so a wallet sitting on Ethereum can connect, sign and then be
+   * switched. Deposits still hard-check chainId === requiredChainId, and the
+   * server never uses these RPCs. Public, keyless.
+   */
+  rpcUrls: {
+    "0x2105": "https://mainnet.base.org",
+    "0x1": "https://ethereum-rpc.publicnode.com",
+  } as Record<`0x${string}`, string>,
+  domain: "pvpspinarena.com",
+  dappName: "PVPspinArena",
+  messageVersion: 1,
+  challengeTtlMinutes: 10,
+} as const;
+
+/** The only provider methods this app may call. Everything else is blocked. */
+export const ALLOWED_WALLET_METHODS = new Set([
+  "eth_requestAccounts",
+  "eth_accounts",
+  "eth_chainId",
+  "wallet_revokePermissions",
+  // Account picker only. guardedRequest rejects every other permission shape.
+  "wallet_requestPermissions",
+  "personal_sign",
+  "wallet_switchEthereumChain",
+  "wallet_addEthereumChain",
+  "eth_sendTransaction",
+]);
