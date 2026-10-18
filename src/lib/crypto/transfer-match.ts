@@ -26,7 +26,8 @@ export function nativeTransfersAgree(
   dest: string,
   units: bigint,
 ): boolean {
-  if (!nativeTransferMatches(a, dest, units) || !nativeTransferMatches(b, dest, units)) return false;
+  if (!nativeTransferMatches(a, dest, units) || !nativeTransferMatches(b, dest, units))
+    return false;
   return a!.from!.toLowerCase() === b!.from!.toLowerCase();
 }
 
@@ -44,8 +45,10 @@ export function erc20LogMatches(
   if (!log?.address || !log.topics || log.topics.length < 3 || !log.data) return false;
   if (log.address.toLowerCase() !== expected.token.toLowerCase()) return false;
   if ((log.topics[0] ?? "").toLowerCase() !== expected.transferTopic.toLowerCase()) return false;
-  if ((log.topics[1] ?? "").slice(-40).toLowerCase() !== expected.from.toLowerCase().slice(2)) return false;
-  if ((log.topics[2] ?? "").slice(-40).toLowerCase() !== expected.to.toLowerCase().slice(2)) return false;
+  if ((log.topics[1] ?? "").slice(-40).toLowerCase() !== expected.from.toLowerCase().slice(2))
+    return false;
+  if ((log.topics[2] ?? "").slice(-40).toLowerCase() !== expected.to.toLowerCase().slice(2))
+    return false;
   try {
     return BigInt(log.data) === expected.units;
   } catch {
@@ -91,7 +94,9 @@ export function settleInternalTransfers<T extends InternalTrace>(
     );
     if (earlier !== index) return false;
     return internalTransferConfirmed(
-      groups.map((group) => group?.map((hit) => ({ hash: hit.hash, to: hit.to, value: hit.value })) ?? null),
+      groups.map(
+        (group) => group?.map((hit) => ({ hash: hit.hash, to: hit.to, value: hit.value })) ?? null,
+      ),
       tx.hash,
       tx.to,
       tx.value,
@@ -132,6 +137,27 @@ export function mergeTraceAttempts<T extends InternalTrace>(
   if (transfers.length > 0) return { transfers, status: "recorded" };
   if (sawClosed && !sawOpen) return { transfers: [], status: "none" };
   return { transfers: [], status: "open" };
+}
+
+/** Same transaction, recipient, and amount already stored under a different log index. */
+export function sameInternalPayout(
+  row: {
+    logIndex?: number | null | undefined;
+    to?: string | null | undefined;
+    units?: string | number | null | undefined;
+  },
+  logIndex: number,
+  dest: string,
+  units: bigint,
+): boolean {
+  if (row.logIndex === logIndex) return false;
+  if ((row.to ?? "").toLowerCase() !== dest.toLowerCase()) return false;
+  const whole = String(row.units ?? "0").split(".")[0] ?? "0";
+  try {
+    return BigInt(whole) === units;
+  } catch {
+    return false;
+  }
 }
 
 /**

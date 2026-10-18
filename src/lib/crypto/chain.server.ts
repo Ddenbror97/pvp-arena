@@ -44,19 +44,22 @@ import {
   ankrIndexFromRpcUrls,
   ankrIndexedThrough,
   ankrNativeTransfers,
-  callTracerDeposits,
-  traceFilterDeposits,
   type AnkrTxPage,
   type RpcReply,
 } from "./ankr-index";
 import {
+  checkTraceUrl,
+  mayCreditInternal,
+  traceCooldownElapsed,
+  traceDepositBlock,
+  type TraceHold,
+} from "./nodeflare-trace";
+import {
   erc20LogMatches,
   internalSearchFloor,
   internalTransferConfirmed,
-  mergeTraceAttempts,
   nativeTransfersAgree,
-  settleInternalTransfers,
-  type InternalHit,
+  sameInternalPayout,
 } from "./transfer-match";
 
 const ERC20 = parseAbi([
@@ -537,13 +540,19 @@ async function observeNativeTransfer(
       .eq("chain_id", env.chainId)
       .eq("tx_hash", tx.hash.toLowerCase());
     if (existing.error) return false;
-    const rows = (existing.data ?? []) as { units?: string | number; to_address?: string; log_index?: number }[];
+    const rows = (existing.data ?? []) as {
+      units?: string | number;
+      to_address?: string;
+      log_index?: number;
+    }[];
     if (
-      rows.some(
-        (row) =>
-          row.log_index !== logIndex &&
-          row.to_address?.toLowerCase() === dest &&
-          BigInt(String(row.units ?? "0").split(".")[0] ?? "0") === tx.value,
+      rows.some((row) =>
+        sameInternalPayout(
+          { logIndex: row.log_index, to: row.to_address, units: row.units },
+          logIndex,
+          dest,
+          tx.value,
+        ),
       )
     ) {
       return false;
@@ -584,19 +593,58 @@ async function rpcResult(url: string, method: string, params: unknown[]): Promis
 
 async function balanceAt(url: string, address: string, block: bigint): Promise<bigint> {
   const result = await rpcResult(url, "eth_getBalance", [address, `0x${block.toString(16)}`]);
-  if (typeof result !== "string" || !/^0x[0-9a-f]+$/i.test(result)) throw new Error("ACTIVITY_READ");
+  if (typeof result !== "string" || !/^0x[0-9a-f]+$/i.test(result))
+    throw new Error("ACTIVITY_READ");
   return BigInt(result);
 }
 
-function asHits(rows: Array<{ hash: string; to: string; value: bigint }>): InternalHit[] {
-  return rows.map((t) => ({ hash: t.hash, to: t.to, value: t.value }));
+async function recentTraceAttempt(fp: string): Promise<{ at: number; reason: string } | null> {
+  try {
+    const { admin } = await db();
+    const row = await admin
+      .from("integrity_incidents")
+      .select("last_seen_at,details")
+      .eq("fingerprint", fp)
+      .maybeSingle();
+    const data = row.data as { last_seen_at?: string; details?: unknown } | null;
+    if (row.error || !data?.last_seen_at) return null;
+    const at = Date.parse(String(data.last_seen_at));
+    const details = data.details;
+    const reason =
+      details && typeof details === "object" && "reason" in details
+        ? String((details as { reason?: unknown }).reason ?? "")
+        : "";
+    return Number.isFinite(at) ? { at, reason } : null;
+  } catch {
+    return null;
+  }
+}
+
+async function rememberTraceAttempt(
+  chainId: number,
+  fp: string,
+  reason: TraceHold,
+  block?: bigint,
+) {
+  try {
+    const { rpc } = await db();
+    await rpc("crypto_raise_incident", {
+      p_check: "crypto_eth_trace",
+      p_fp: fp,
+      p_details: {
+        chain_id: chainId,
+        reason,
+        ...(block == null ? {} : { block: Number(block) }),
+      },
+    });
+  } catch {
+    /* The deposit stays uncredited whether or not the incident row is written. */
+  }
 }
 
 /**
- * An internal deposit is credited only when trace_filter or debug_traceTransaction
- * names this transaction, recipient, and amount. A balance delta is not enough.
- * A provider that cannot trace does not veto. A provider that traces and finds
- * a different amount, or nothing, does.
+ * Re-prove an internal deposit before credit. NodeFlare must name this
+ * transaction, recipient, and amount. A provider error is not a "no".
  */
 async function confirmInternalEth(
   env: Env,
@@ -605,32 +653,36 @@ async function confirmInternalEth(
   units: bigint,
   block: bigint,
 ): Promise<boolean> {
-  const results: Array<InternalHit[] | null> = [];
-  const urls = [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)].filter(
-    (url): url is string => !!url,
-  );
-  for (const url of urls) {
-    try {
-      const traced = await traceFilterBlock(url, block, new Set([dest]));
-      results.push(asHits(traceFilterDeposits(traced, dest, block)));
-    } catch {
-      results.push(null);
-    }
+  const url = workerEnv(`CRYPTO_TRACE_URL_${env.chainId}`);
+  if (!checkTraceUrl(url).ok || !url) return false;
+  const fp = `crypto_eth_trace_tx:${env.chainId}:${txHash.toLowerCase()}`;
+  const prior = await recentTraceAttempt(fp);
+  if (prior?.reason === "proved" && !traceCooldownElapsed(prior.at, prior.reason, Date.now()))
+    return true;
+  if (prior && !traceCooldownElapsed(prior.at, prior.reason, Date.now())) return false;
+  const outcome = await traceDepositBlock({
+    url,
+    block,
+    targets: [dest],
+    candidateHashes: async () => [txHash],
+  });
+  const hits = outcome.settled.transfers.map((tx) => ({
+    hash: tx.hash,
+    to: tx.to,
+    value: tx.value,
+  }));
+  const proved =
+    mayCreditInternal(outcome.settled.status) &&
+    !outcome.problem &&
+    internalTransferConfirmed([hits], txHash, dest, units);
+  if (!proved) {
+    const reason: TraceHold =
+      outcome.problem ?? (outcome.settled.status === "none" ? "unconfirmed" : "unavailable");
+    await rememberTraceAttempt(env.chainId, fp, reason, block);
+    return false;
   }
-  let proof = results;
-  if (results.every((list) => list == null)) {
-    const debug: Array<InternalHit[] | null> = [];
-    for (const url of urls) {
-      try {
-        const traced = await rpcResult(url, "debug_traceTransaction", [txHash, { tracer: "callTracer" }]);
-        debug.push(asHits(callTracerDeposits(traced, dest, block, txHash)));
-      } catch {
-        debug.push(null);
-      }
-    }
-    proof = debug;
-  }
-  return internalTransferConfirmed(proof, txHash, dest, units);
+  await rememberTraceAttempt(env.chainId, fp, "proved", block);
+  return true;
 }
 
 /** ETH already recorded for this chain, in wei, keyed by the receiving address. */
@@ -647,30 +699,6 @@ async function accountedEthWei(chainId: number): Promise<Map<string, bigint>> {
   return out;
 }
 
-/**
- * A contract call paid one of our addresses. Record each internal transfer once.
- * Direct transfers are handled separately and use the external log index.
- */
-async function traceFilterBlock(
-  url: string,
-  block: bigint,
-  targets: Set<string>,
-): Promise<unknown> {
-  const hex = `0x${block.toString(16)}`;
-  return rpcResult(url, "trace_filter", [
-    { fromBlock: hex, toBlock: hex, toAddress: Array.from(targets) },
-  ]);
-}
-
-type InternalTransfer = {
-  hash: string;
-  from: string;
-  to: string;
-  blockNumber: bigint;
-  value: bigint;
-  logIndex: number;
-};
-
 function clipReason(err: unknown): string {
   const message = err instanceof Error ? err.message : "error";
   return message.replace(/https?:\/\/\S+/g, "url").slice(0, 120);
@@ -682,7 +710,10 @@ async function payoutCandidates(
   block: bigint,
   targets: Set<string>,
 ): Promise<string[]> {
-  const body = (await rpcResult(url, "eth_getBlockByNumber", [`0x${block.toString(16)}`, true])) as {
+  const body = (await rpcResult(url, "eth_getBlockByNumber", [
+    `0x${block.toString(16)}`,
+    true,
+  ])) as {
     transactions?: Array<{ hash?: string; to?: string | null; input?: string | null }>;
   } | null;
   const needles = Array.from(targets).map((a) => a.slice(2));
@@ -691,26 +722,10 @@ async function payoutCandidates(
     if (!tx.hash) continue;
     const input = (tx.input ?? "").toLowerCase();
     const to = (tx.to ?? "").toLowerCase();
-    if (targets.has(to) || needles.some((n) => n.length === 40 && input.includes(n))) hashes.push(tx.hash);
+    if (targets.has(to) || needles.some((n) => n.length === 40 && input.includes(n)))
+      hashes.push(tx.hash);
   }
   return hashes.slice(0, 6);
-}
-
-async function collectTraces(
-  urls: string[],
-  read: (url: string) => Promise<InternalTransfer[]>,
-  notes: string[],
-): Promise<Array<InternalTransfer[] | null>> {
-  const lists: Array<InternalTransfer[] | null> = [];
-  for (const url of urls) {
-    try {
-      lists.push(await read(url));
-    } catch (err) {
-      notes.push(clipReason(err));
-      lists.push(null);
-    }
-  }
-  return lists;
 }
 
 async function observeInternalBlock(
@@ -719,56 +734,55 @@ async function observeInternalBlock(
   targets: Set<string>,
 ): Promise<{ observed: number; notes: string[]; open: boolean }> {
   const notes: string[] = [];
-  const urls = [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)].filter(
-    (url): url is string => !!url,
-  );
-  // Ankr does not serve internal-transaction methods. A trace has to name the
-  // transfer. A provider that cannot trace leaves the payout open.
-  const traceLists = await collectTraces(
-    urls,
-    async (url) => {
-      const traced = await traceFilterBlock(url, block, targets);
-      const found: InternalTransfer[] = [];
-      for (const target of targets) found.push(...traceFilterDeposits(traced, target, block));
-      return found;
-    },
-    notes,
-  );
-  let settled = settleInternalTransfers(traceLists);
-  if (settled.status === "open") {
-    const url = rpcUrlFor(env.chainId);
-    let candidates: string[] = [];
-    if (url) {
+  const url = workerEnv(`CRYPTO_TRACE_URL_${env.chainId}`);
+  const check = checkTraceUrl(url);
+  if (!check.ok || !url) {
+    return { observed: 0, notes: [check.ok ? "TRACE_URL_MISSING" : check.reason], open: true };
+  }
+  const fp = `crypto_eth_trace:${env.chainId}:${block}`;
+  const prior = await recentTraceAttempt(fp);
+  if (prior && !traceCooldownElapsed(prior.at, prior.reason, Date.now())) {
+    return {
+      observed: 0,
+      notes: ["cooldown", prior.reason].slice(0, 8),
+      open: prior.reason !== "none",
+    };
+  }
+  // Balance polling chose this block. Only a NodeFlare trace can name the payout.
+  // Chainstack and Ankr are not asked to trace.
+  let candidateCount = 0;
+  const outcome = await traceDepositBlock({
+    url,
+    block,
+    targets: Array.from(targets),
+    candidateHashes: async () => {
+      const primary = rpcUrlFor(env.chainId);
+      if (!primary) return [];
       try {
-        candidates = await payoutCandidates(url, block, targets);
+        const hashes = await payoutCandidates(primary, block, targets);
+        candidateCount = hashes.length;
+        return hashes;
       } catch (err) {
         notes.push(clipReason(err));
+        return [];
       }
-    }
-    const attempts = [];
-    for (const hash of candidates) {
-      const debugLists = await collectTraces(
-        urls,
-        async (endpoint) => {
-          const traced = await rpcResult(endpoint, "debug_traceTransaction", [hash, { tracer: "callTracer" }]);
-          const found: InternalTransfer[] = [];
-          for (const target of targets) found.push(...callTracerDeposits(traced, target, block, hash));
-          return found;
-        },
-        notes,
-      );
-      attempts.push(settleInternalTransfers(debugLists));
-    }
-    if (attempts.length > 0) settled = mergeTraceAttempts(attempts);
-    notes.push(`candidates:${candidates.length}`);
+    },
+  });
+  if (candidateCount > 0) notes.push(`candidates:${candidateCount}`);
+  const settled = outcome.settled;
+  if (!mayCreditInternal(settled.status) || outcome.problem) {
+    const reason: TraceHold =
+      outcome.problem ?? (settled.status === "none" ? "none" : "unavailable");
+    notes.push(reason);
+    await rememberTraceAttempt(env.chainId, fp, reason, block);
+    return { observed: 0, notes: notes.slice(0, 8), open: reason !== "none" };
   }
   let observed = 0;
   for (const t of settled.transfers) {
     if (await observeNativeTransfer(env, t, t.logIndex)) observed++;
   }
   if (settled.transfers.length > 0 && observed === 0) notes.push("found_unrecorded");
-  if (settled.status === "open") notes.push("open");
-  return { observed, notes: notes.slice(0, 8), open: settled.status === "open" };
+  return { observed, notes: notes.slice(0, 8), open: false };
 }
 
 async function rpcBatch(url: string, calls: ReturnType<typeof activityCalls>): Promise<RpcReply[]> {
@@ -858,9 +872,9 @@ async function scanNativeViaAnkrIndex(
       if (page === 19) throw new Error("INDEX_TRUNCATED");
     }
   }
-  // A zero-value parent is not in the address index. Tracing it does not move
-  // this cursor. Until a trace names the transfer, the extra wei stays unrecorded
-  // and the next run searches for it again from genesis.
+  // A zero-value parent is not in the address index. NodeFlare tracing does not
+  // move this cursor. Until a trace names the transfer, the extra wei stays
+  // unrecorded and the next run searches for it again from genesis.
   if (indexCalls < ANKR_MAX_INDEX_CALLS) {
     observed += await observeUncreditedInternal(
       env,
