@@ -53,6 +53,7 @@ import {
   erc20LogMatches,
   internalSearchFloor,
   internalTransferConfirmed,
+  mergeTraceAttempts,
   nativeTransfersAgree,
   settleInternalTransfers,
   type InternalHit,
@@ -744,6 +745,7 @@ async function observeInternalBlock(
         notes.push(clipReason(err));
       }
     }
+    const attempts = [];
     for (const hash of candidates) {
       const debugLists = await collectTraces(
         urls,
@@ -755,12 +757,9 @@ async function observeInternalBlock(
         },
         notes,
       );
-      const debugSettled = settleInternalTransfers(debugLists);
-      if (debugSettled.status !== "open") {
-        settled = debugSettled;
-        break;
-      }
+      attempts.push(settleInternalTransfers(debugLists));
     }
+    if (attempts.length > 0) settled = mergeTraceAttempts(attempts);
     notes.push(`candidates:${candidates.length}`);
   }
   let observed = 0;

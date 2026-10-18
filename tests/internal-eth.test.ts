@@ -4,7 +4,11 @@ import {
   callTracerDeposits,
   traceFilterDeposits,
 } from "../src/lib/crypto/ankr-index";
-import { internalSearchFloor, settleInternalTransfers } from "../src/lib/crypto/transfer-match";
+import {
+  internalSearchFloor,
+  mergeTraceAttempts,
+  settleInternalTransfers,
+} from "../src/lib/crypto/transfer-match";
 
 const deposit = "0x989642fd0d3e78296081a9417fac253460f2a0c0";
 const other = "0x1111111111111111111111111111111111111111";
@@ -153,5 +157,32 @@ describe("zero-value parent with an internal ETH payout", () => {
     expect(traced).toHaveLength(1);
     expect(traced[0]?.value).toBe(payout);
     expect(settleInternalTransfers([null, traced]).status).toBe("recorded");
+  });
+
+  it("keeps searching after an earlier transaction traces and pays someone else", () => {
+    const unrelated = settleInternalTransfers([[], []]);
+    const payoutTx = settleInternalTransfers([found, null]);
+    const merged = mergeTraceAttempts([unrelated, payoutTx]);
+    expect(unrelated.status).toBe("none");
+    expect(merged.status).toBe("recorded");
+    expect(merged.transfers).toHaveLength(1);
+    expect(merged.transfers[0]?.value).toBe(payout);
+  });
+
+  it("stays open when a later candidate cannot be traced", () => {
+    const unrelated = settleInternalTransfers([[], []]);
+    expect(mergeTraceAttempts([unrelated, { transfers: [], status: "open" }])).toEqual({
+      transfers: [],
+      status: "open",
+    });
+    expect(mergeTraceAttempts([{ transfers: [], status: "open" }, { transfers: [], status: "open" }])).toEqual({
+      transfers: [],
+      status: "open",
+    });
+  });
+
+  it("records nothing when every candidate traced and none paid the deposit", () => {
+    const unrelated = settleInternalTransfers([[], []]);
+    expect(mergeTraceAttempts([unrelated, unrelated])).toEqual({ transfers: [], status: "none" });
   });
 });

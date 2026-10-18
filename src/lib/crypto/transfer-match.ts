@@ -71,9 +71,14 @@ export function internalSearchFloor(_tip: bigint): bigint {
  * `none` means a source answered and did not confirm this transfer.
  * A balance change is not an input.
  */
+export type TraceSettlement<T> = {
+  transfers: T[];
+  status: "open" | "recorded" | "none";
+};
+
 export function settleInternalTransfers<T extends InternalTrace>(
   groups: Array<T[] | null>,
-): { transfers: T[]; status: "open" | "recorded" | "none" } {
+): TraceSettlement<T> {
   if (groups.every((group) => group == null)) return { transfers: [], status: "open" };
   const flat = groups.flatMap((group) => group ?? []);
   const transfers = flat.filter((tx, index) => {
@@ -93,6 +98,40 @@ export function settleInternalTransfers<T extends InternalTrace>(
     );
   });
   return { transfers, status: transfers.length > 0 ? "recorded" : "none" };
+}
+
+/**
+ * Combine per-transaction trace attempts for one block.
+ * An earlier transaction that traced and paid someone else must not hide a
+ * later payout. A transaction that could not be traced keeps the block open
+ * unless another attempt already named a transfer.
+ */
+export function mergeTraceAttempts<T extends InternalTrace>(
+  attempts: Array<TraceSettlement<T>>,
+): TraceSettlement<T> {
+  const transfers: T[] = [];
+  let sawClosed = false;
+  let sawOpen = false;
+  for (const attempt of attempts) {
+    if (attempt.status === "open") {
+      sawOpen = true;
+      continue;
+    }
+    sawClosed = true;
+    for (const tx of attempt.transfers) {
+      const duplicate = transfers.some(
+        (other) =>
+          other.hash.toLowerCase() === tx.hash.toLowerCase() &&
+          other.to.toLowerCase() === tx.to.toLowerCase() &&
+          other.value === tx.value &&
+          other.logIndex === tx.logIndex,
+      );
+      if (!duplicate) transfers.push(tx);
+    }
+  }
+  if (transfers.length > 0) return { transfers, status: "recorded" };
+  if (sawClosed && !sawOpen) return { transfers: [], status: "none" };
+  return { transfers: [], status: "open" };
 }
 
 /**
