@@ -641,6 +641,83 @@ function clipReason(err: unknown): string {
   return message.replace(/https?:\/\/\S+/g, "url").slice(0, 120);
 }
 
+async function balanceNow(url: string, address: string): Promise<bigint> {
+  const result = await rpcResult(url, "eth_getBalance", [address, "latest"]);
+  if (typeof result !== "string" || !/^0x[0-9a-f]+$/i.test(result)) throw new Error("ACTIVITY_READ");
+  return BigInt(result);
+}
+
+async function nonceAt(url: string, address: string, block: bigint): Promise<bigint> {
+  const result = await rpcResult(url, "eth_getTransactionCount", [address, `0x${block.toString(16)}`]);
+  if (typeof result !== "string" || !/^0x[0-9a-f]+$/i.test(result)) throw new Error("ACTIVITY_READ");
+  return BigInt(result);
+}
+
+type SolePayout = { hash: string; from: string; value: bigint };
+
+/** The one transaction in this block that names the deposit address. */
+async function solePayout(url: string, block: bigint, target: string): Promise<SolePayout | null> {
+  const body = (await rpcResult(url, "eth_getBlockByNumber", [`0x${block.toString(16)}`, true])) as {
+    transactions?: Array<{ hash?: string; from?: string; to?: string | null; input?: string | null; value?: string }>;
+  } | null;
+  const needle = target.slice(2);
+  const hits = (body?.transactions ?? []).filter((tx) => {
+    const to = (tx.to ?? "").toLowerCase();
+    const input = (tx.input ?? "").toLowerCase();
+    return to === target || (needle.length === 40 && input.includes(needle));
+  });
+  const tx = hits.length === 1 ? hits[0] : null;
+  if (!tx?.hash || !tx.from) return null;
+  return { hash: tx.hash, from: tx.from, value: BigInt(tx.value ?? "0x0") };
+}
+
+/**
+ * Ankr and Chainstack both refuse trace methods on the current keys. The deposit
+ * is still provable: the archive node shows the balance rising in one block, the
+ * address did not send, and exactly one transaction in that block names it.
+ * The second node must agree on the amount, or at least on the balance held now.
+ */
+async function attributeFromBalance(
+  urls: string[],
+  block: bigint,
+  target: string,
+): Promise<InternalTransfer | null> {
+  if (urls.length < 2 || block < 1n) return null;
+  const before = await balanceAt(urls[0]!, target, block - 1n);
+  const after = await balanceAt(urls[0]!, target, block);
+  const delta = after - before;
+  if (delta <= 0n) return null;
+  if ((await nonceAt(urls[0]!, target, block - 1n)) !== (await nonceAt(urls[0]!, target, block))) {
+    return null;
+  }
+  const sole = await solePayout(urls[0]!, block, target);
+  if (!sole) return null;
+  if (sole.value > 0n && sole.value !== delta) return null;
+  let agreed = false;
+  try {
+    const beforeB = await balanceAt(urls[1]!, target, block - 1n);
+    const afterB = await balanceAt(urls[1]!, target, block);
+    const soleB = await solePayout(urls[1]!, block, target);
+    agreed =
+      afterB - beforeB === delta &&
+      !!soleB &&
+      soleB.hash.toLowerCase() === sole.hash.toLowerCase();
+  } catch {
+    const nowA = await balanceNow(urls[0]!, target);
+    const nowB = await balanceNow(urls[1]!, target);
+    agreed = nowA === nowB && nowA >= delta;
+  }
+  if (!agreed) return null;
+  return {
+    hash: sole.hash,
+    from: sole.from,
+    to: target,
+    blockNumber: block,
+    value: sole.value > 0n ? sole.value : delta,
+    logIndex: sole.value > 0n ? NATIVE_LOG_INDEX : ETH_EXTERNAL_LOG_INDEX + 1,
+  };
+}
+
 /** Transactions in the block whose calldata names one of our deposit addresses. */
 async function payoutCandidates(
   url: string,
@@ -716,6 +793,16 @@ async function observeInternalBlock(
   const urls = [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)].filter(
     (url): url is string => !!url,
   );
+  if (transfers.length === 0) {
+    for (const target of targets) {
+      try {
+        const agreed = await attributeFromBalance(urls, block, target);
+        if (agreed) transfers.push(agreed);
+      } catch (err) {
+        notes.push(clipReason(err));
+      }
+    }
+  }
   if (transfers.length === 0) {
     for (const url of urls) {
       try {
@@ -1229,8 +1316,20 @@ export async function runDepositWatcher(chainId: number) {
             [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)],
             env.chainId,
           );
-          if (!indexUrl || !(await internalEthMatches(indexUrl, env.chainId, d.tx_hash, dest, units)))
-            continue;
+          const urls = [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)].filter(
+            (url): url is string => !!url,
+          );
+          const fromIndex =
+            !!indexUrl &&
+            (await internalEthMatches(indexUrl, env.chainId, d.tx_hash, dest, units));
+          const fromBalance = fromIndex
+            ? null
+            : await attributeFromBalance(urls, BigInt(d.block_number), dest).catch(() => null);
+          const balanceAgrees =
+            !!fromBalance &&
+            fromBalance.hash.toLowerCase() === d.tx_hash.toLowerCase() &&
+            fromBalance.value === units;
+          if (!fromIndex && !balanceAgrees) continue;
         }
         if (!price) continue;
       }
