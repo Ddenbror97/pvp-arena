@@ -43,18 +43,18 @@ import {
   ankrChainName,
   ankrIndexFromRpcUrls,
   ankrIndexedThrough,
-  ankrInternalDeposits,
   ankrNativeTransfers,
   callTracerDeposits,
   traceFilterDeposits,
-  type AnkrInternalPage,
   type AnkrTxPage,
   type RpcReply,
 } from "./ankr-index";
 import {
   erc20LogMatches,
+  internalSearchFloor,
   internalTransferConfirmed,
   nativeTransfersAgree,
+  settleInternalTransfers,
   type InternalHit,
 } from "./transfer-match";
 
@@ -70,8 +70,6 @@ const FEED = parseAbi([
   "function decimals() view returns (uint8)",
 ]);
 const NATIVE_LOG_INDEX = ETH_EXTERNAL_LOG_INDEX;
-/** How far back to look for ETH that arrived inside a contract call and was never recorded. */
-const ETH_INTERNAL_LOOKBACK_BLOCKS = 300_000n;
 const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 // Keep each Cloudflare minute cron under the shared Worker subrequest budget.
 // USDC uses narrow getLogs. Native ETH uses one indexed transfer query and its
@@ -594,7 +592,7 @@ function asHits(rows: Array<{ hash: string; to: string; value: bigint }>): Inter
 }
 
 /**
- * An internal deposit is credited only when a trace or Ankr's internal index
+ * An internal deposit is credited only when trace_filter or debug_traceTransaction
  * names this transaction, recipient, and amount. A balance delta is not enough.
  * A provider that cannot trace does not veto. A provider that traces and finds
  * a different amount, or nothing, does.
@@ -607,22 +605,6 @@ async function confirmInternalEth(
   block: bigint,
 ): Promise<boolean> {
   const results: Array<InternalHit[] | null> = [];
-  const indexUrl = ankrIndexFromRpcUrls(
-    [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)],
-    env.chainId,
-  );
-  if (indexUrl) {
-    try {
-      const page = await ankrInternalPage(indexUrl, "ankr_getInternalTransactionsByParentHash", {
-        blockchain: ankrChainName(env.chainId),
-        parentTransactionHash: txHash,
-        onlyWithValue: true,
-      });
-      results.push(asHits(ankrInternalDeposits(page, dest, 0n, (1n << 62n) - 1n)));
-    } catch {
-      results.push(null);
-    }
-  }
   const urls = [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)].filter(
     (url): url is string => !!url,
   );
@@ -634,33 +616,20 @@ async function confirmInternalEth(
       results.push(null);
     }
   }
-  if (!results.some((list) => list?.some((hit) => hit.value === units))) {
+  let proof = results;
+  if (results.every((list) => list == null)) {
+    const debug: Array<InternalHit[] | null> = [];
     for (const url of urls) {
       try {
         const traced = await rpcResult(url, "debug_traceTransaction", [txHash, { tracer: "callTracer" }]);
-        results.push(asHits(callTracerDeposits(traced, dest, block, txHash)));
+        debug.push(asHits(callTracerDeposits(traced, dest, block, txHash)));
       } catch {
-        results.push(null);
+        debug.push(null);
       }
     }
+    proof = debug;
   }
-  return internalTransferConfirmed(results, txHash, dest, units);
-}
-
-async function ankrInternalPage(
-  indexUrl: string,
-  method: string,
-  params: Record<string, unknown>,
-): Promise<AnkrInternalPage> {
-  const res = await fetch(indexUrl, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-  });
-  if (!res.ok) throw new Error("INDEX_HTTP");
-  const json = (await res.json()) as AnkrInternalPage;
-  if (json.error) throw new Error("INDEX_RPC");
-  return json;
+  return internalTransferConfirmed(proof, txHash, dest, units);
 }
 
 /** ETH already recorded for this chain, in wei, keyed by the receiving address. */
@@ -726,35 +695,48 @@ async function payoutCandidates(
   return hashes.slice(0, 6);
 }
 
+async function collectTraces(
+  urls: string[],
+  read: (url: string) => Promise<InternalTransfer[]>,
+  notes: string[],
+): Promise<Array<InternalTransfer[] | null>> {
+  const lists: Array<InternalTransfer[] | null> = [];
+  for (const url of urls) {
+    try {
+      lists.push(await read(url));
+    } catch (err) {
+      notes.push(clipReason(err));
+      lists.push(null);
+    }
+  }
+  return lists;
+}
+
 async function observeInternalBlock(
   env: Env,
-  indexUrl: string,
-  chain: string,
   block: bigint,
   targets: Set<string>,
-): Promise<{ observed: number; notes: string[] }> {
+): Promise<{ observed: number; notes: string[]; open: boolean }> {
   const notes: string[] = [];
-  let transfers: InternalTransfer[] = [];
-  const addPage = (page: AnkrInternalPage) => {
-    for (const target of targets) transfers.push(...ankrInternalDeposits(page, target, block, block));
-  };
-  try {
-    addPage(
-      await ankrInternalPage(indexUrl, "ankr_getInternalTransactionsByBlockNumber", {
-        blockchain: chain,
-        blockNumber: Number(block),
-        onlyWithValue: true,
-      }),
-    );
-  } catch (err) {
-    notes.push(clipReason(err));
-  }
-
-  // The address index misses contract payouts. The payout transaction itself
-  // names the deposit address in its calldata, so look that hash up directly.
-  let candidates: string[] = [];
-  if (transfers.length === 0) {
+  const urls = [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)].filter(
+    (url): url is string => !!url,
+  );
+  // Ankr does not serve internal-transaction methods. A trace has to name the
+  // transfer. A provider that cannot trace leaves the payout open.
+  const traceLists = await collectTraces(
+    urls,
+    async (url) => {
+      const traced = await traceFilterBlock(url, block, targets);
+      const found: InternalTransfer[] = [];
+      for (const target of targets) found.push(...traceFilterDeposits(traced, target, block));
+      return found;
+    },
+    notes,
+  );
+  let settled = settleInternalTransfers(traceLists);
+  if (settled.status === "open") {
     const url = rpcUrlFor(env.chainId);
+    let candidates: string[] = [];
     if (url) {
       try {
         candidates = await payoutCandidates(url, block, targets);
@@ -763,95 +745,31 @@ async function observeInternalBlock(
       }
     }
     for (const hash of candidates) {
-      if (transfers.length > 0) break;
-      for (const params of [
-        { blockchain: chain, hash },
-        { blockchain: chain, transactionHash: hash },
-      ]) {
-        try {
-          addPage(await ankrInternalPage(indexUrl, "ankr_getInternalTransactionsByParentHash", params));
-          if (transfers.length > 0) break;
-        } catch (err) {
-          notes.push(clipReason(err));
-        }
-      }
-    }
-  }
-
-  const urls = [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)].filter(
-    (url): url is string => !!url,
-  );
-  // A balance increase is not a deposit. Only an explicit internal transfer is,
-  // and a provider that traced the block and found nothing vetoes the other.
-  const traceLists: Array<InternalTransfer[] | null> = [];
-  for (const url of urls) {
-    try {
-      const traced = await traceFilterBlock(url, block, targets);
-      const found: InternalTransfer[] = [];
-      for (const target of targets) found.push(...traceFilterDeposits(traced, target, block));
-      traceLists.push(found);
-    } catch (err) {
-      notes.push(clipReason(err));
-      traceLists.push(null);
-    }
-  }
-  if (traceLists.some((list) => list != null)) {
-    for (const list of traceLists) if (list) transfers.push(...list);
-  }
-  if (transfers.length === 0) {
-    for (const hash of candidates) {
-      const debugLists: Array<InternalTransfer[] | null> = [];
-      for (const url of urls) {
-        try {
-          const traced = await rpcResult(url, "debug_traceTransaction", [hash, { tracer: "callTracer" }]);
+      const debugLists = await collectTraces(
+        urls,
+        async (endpoint) => {
+          const traced = await rpcResult(endpoint, "debug_traceTransaction", [hash, { tracer: "callTracer" }]);
           const found: InternalTransfer[] = [];
           for (const target of targets) found.push(...callTracerDeposits(traced, target, block, hash));
-          debugLists.push(found);
-        } catch (err) {
-          notes.push(clipReason(err));
-          debugLists.push(null);
-        }
-      }
-      if (debugLists.some((list) => list != null)) {
-        const added: InternalTransfer[] = [];
-        for (const list of debugLists) if (list) added.push(...list);
-        for (const t of added) {
-          if (
-            internalTransferConfirmed(
-              debugLists.map((list) => list?.map((hit) => ({ hash: hit.hash, to: hit.to, value: hit.value })) ?? null),
-              t.hash,
-              t.to,
-              t.value,
-            )
-          ) {
-            transfers.push(t);
-          }
-        }
+          return found;
+        },
+        notes,
+      );
+      const debugSettled = settleInternalTransfers(debugLists);
+      if (debugSettled.status !== "open") {
+        settled = debugSettled;
+        break;
       }
     }
+    notes.push(`candidates:${candidates.length}`);
   }
-  const proof = traceLists.some((list) => list != null) ? traceLists : null;
-  transfers = transfers.filter((t, i, all) => {
-    const first = all.findIndex(
-      (o) => o.hash === t.hash && o.to.toLowerCase() === t.to.toLowerCase() && o.value === t.value,
-    );
-    if (first !== i) return false;
-    if (!proof) return true;
-    return internalTransferConfirmed(
-      proof.map((list) => list?.map((hit) => ({ hash: hit.hash, to: hit.to, value: hit.value })) ?? null),
-      t.hash,
-      t.to,
-      t.value,
-    );
-  });
-
   let observed = 0;
-  for (const t of transfers) {
+  for (const t of settled.transfers) {
     if (await observeNativeTransfer(env, t, t.logIndex)) observed++;
   }
-  if (transfers.length > 0 && observed === 0) notes.push("found_unrecorded");
-  notes.push(`candidates:${candidates.length}`);
-  return { observed, notes: notes.slice(0, 8) };
+  if (settled.transfers.length > 0 && observed === 0) notes.push("found_unrecorded");
+  if (settled.status === "open") notes.push("open");
+  return { observed, notes: notes.slice(0, 8), open: settled.status === "open" };
 }
 
 async function rpcBatch(url: string, calls: ReturnType<typeof activityCalls>): Promise<RpcReply[]> {
@@ -941,16 +859,13 @@ async function scanNativeViaAnkrIndex(
       if (page === 19) throw new Error("INDEX_TRUNCATED");
     }
   }
-  // Exchange payouts (Coinbase on Base) move ETH inside a contract call. The
-  // parent transaction value is zero, so the address index above never sees it.
-  // A deposit address whose balance is higher than the wei already recorded is
-  // looked up from the block where the balance rose.
+  // A zero-value parent is not in the address index. Tracing it does not move
+  // this cursor. Until a trace names the transfer, the extra wei stays unrecorded
+  // and the next run searches for it again from genesis.
   if (indexCalls < ANKR_MAX_INDEX_CALLS) {
     observed += await observeUncreditedInternal(
       env,
       rpcUrl,
-      indexUrl,
-      chain,
       targets,
       replies,
       end,
@@ -999,8 +914,6 @@ async function firstBlockAboveChain(
 async function observeUncreditedInternal(
   env: Env,
   rpcUrl: string,
-  indexUrl: string,
-  chain: string,
   targets: string[],
   replies: RpcReply[],
   end: bigint,
@@ -1023,7 +936,7 @@ async function observeUncreditedInternal(
     const known = accounted.get(target) ?? 0n;
     if (endBal <= known) continue;
     if (min > 0n && endBal - known < min) continue;
-    const lo = end > ETH_INTERNAL_LOOKBACK_BLOCKS ? end - ETH_INTERNAL_LOOKBACK_BLOCKS : 0n;
+    const lo = internalSearchFloor(end);
     let threshold = known;
     let cursor = lo;
     // Walk each balance increase. A dust transfer must not hide a later payout.
@@ -1057,23 +970,27 @@ async function observeUncreditedInternal(
     }
   }
   let observed = 0;
+  let open = false;
   const notes: string[] = [];
   for (const [block, who] of wanted) {
     try {
-      const result = await observeInternalBlock(env, indexUrl, chain, block, who);
+      const result = await observeInternalBlock(env, block, who);
       observed += result.observed;
+      open = open || result.open;
       notes.push(...result.notes);
     } catch (err) {
+      open = true;
       notes.push(clipReason(err));
     }
   }
-  if (wanted.size > 0 && observed === 0) {
+  if (wanted.size > 0 && (observed === 0 || open)) {
     const { rpc } = await db();
     await rpc("crypto_raise_incident", {
       p_check: "crypto_eth_internal",
       p_fp: `crypto_eth_internal:${env.chainId}:${new Date().toISOString().slice(0, 13)}`,
       p_details: {
         chain_id: env.chainId,
+        open,
         blocks: Array.from(wanted.keys()).map((b) => Number(b)),
         notes: notes.slice(0, 8),
       },

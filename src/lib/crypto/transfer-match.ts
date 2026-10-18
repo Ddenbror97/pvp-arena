@@ -55,6 +55,46 @@ export function erc20LogMatches(
 
 export type InternalHit = { hash: string; to: string; value: bigint };
 
+export type InternalTrace<T extends InternalHit = InternalHit> = T & { logIndex: number };
+
+/**
+ * Unexplained internal ETH is searched from genesis. A sliding window would
+ * eventually walk past the payout and never look again.
+ */
+export function internalSearchFloor(_tip: bigint): bigint {
+  return 0n;
+}
+
+/**
+ * Decide what an internal-ETH scan may record.
+ * `open` means every source failed, so the payout is not processed.
+ * `none` means a source answered and did not confirm this transfer.
+ * A balance change is not an input.
+ */
+export function settleInternalTransfers<T extends InternalTrace>(
+  groups: Array<T[] | null>,
+): { transfers: T[]; status: "open" | "recorded" | "none" } {
+  if (groups.every((group) => group == null)) return { transfers: [], status: "open" };
+  const flat = groups.flatMap((group) => group ?? []);
+  const transfers = flat.filter((tx, index) => {
+    const earlier = flat.findIndex(
+      (other) =>
+        other.hash.toLowerCase() === tx.hash.toLowerCase() &&
+        other.to.toLowerCase() === tx.to.toLowerCase() &&
+        other.value === tx.value &&
+        other.logIndex === tx.logIndex,
+    );
+    if (earlier !== index) return false;
+    return internalTransferConfirmed(
+      groups.map((group) => group?.map((hit) => ({ hash: hit.hash, to: hit.to, value: hit.value })) ?? null),
+      tx.hash,
+      tx.to,
+      tx.value,
+    );
+  });
+  return { transfers, status: transfers.length > 0 ? "recorded" : "none" };
+}
+
 /**
  * Confirm one internal transfer.
  * `null` means that source could not trace. An empty list means it traced and found nothing.
