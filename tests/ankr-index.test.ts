@@ -3,9 +3,14 @@ import {
   ANKR_MAX_BATCH,
   activeTargets,
   activityCalls,
+  ETH_EXTERNAL_LOG_INDEX,
+  ankrIndexFromRpcUrls,
   ankrIndexUrl,
   ankrIndexedThrough,
+  ankrInternalDeposits,
   ankrNativeTransfers,
+  firstBlockAbove,
+  internalLogIndex,
   type AnkrTxPage,
   type RpcReply,
 } from "../src/lib/crypto/ankr-index";
@@ -28,6 +33,18 @@ describe("ankr index url", () => {
     expect(ankrIndexUrl("https://rpc.ankr.com/base/abc123", 8453)).toBe(
       "https://rpc.ankr.com/multichain/abc123",
     );
+  });
+  it("uses Ankr when Chainstack is the other RPC", () => {
+    expect(
+      ankrIndexFromRpcUrls(
+        [
+          "https://base-mainnet.core.chainstack.com/abc",
+          "https://rpc.ankr.com/base/abc123",
+        ],
+        8453,
+      ),
+    ).toBe("https://rpc.ankr.com/multichain/abc123");
+    expect(ankrIndexFromRpcUrls(["https://base-mainnet.core.chainstack.com/abc"], 8453)).toBeNull();
   });
   it("is off for other providers, chains, paths and plain http", () => {
     expect(ankrIndexUrl("https://base-mainnet.core.chainstack.com/abc", 8453)).toBeNull();
@@ -127,6 +144,71 @@ describe("native activity check", () => {
     expect(() => activeTargets([a], [...ok.slice(0, 3), { id: 3, result: "12" }])).toThrow(
       "ACTIVITY_READ",
     );
+  });
+});
+
+describe("internal ETH deposits", () => {
+  const coinbase = {
+    transactionHash: "0xd8e70b8f1d0c78cbc84e373fea87c4b4d3a7db920647adfdc30122e70a4e4167",
+    fromAddress: "0xbf2f1213f47e76f1c1d9b7a536f2cb8b347d59b4",
+    toAddress: deposit,
+    value: "3138330000000000",
+    blockHeight: 52705282,
+    error: "",
+    callType: "call",
+    callStack: [4],
+  };
+
+  it("records a Coinbase-style internal payout and ignores the parent value", () => {
+    const [t] = ankrInternalDeposits(
+      { result: { internalTransactions: [coinbase, { ...coinbase, value: "0", callStack: [5] }] } },
+      deposit,
+      52705282n,
+      52705282n,
+    );
+    expect(t).toMatchObject({
+      hash: coinbase.transactionHash,
+      to: deposit,
+      value: 3138330000000000n,
+      blockNumber: 52705282n,
+      logIndex: ETH_EXTERNAL_LOG_INDEX + 1 + 4,
+    });
+    expect(internalLogIndex(coinbase, 0)).toBe(ETH_EXTERNAL_LOG_INDEX + 5);
+  });
+
+  it("skips failed calls, other recipients, and calls that do not move ETH", () => {
+    const rows = ankrInternalDeposits(
+      {
+        result: {
+          internalTransactions: [
+            { ...coinbase, error: "reverted" },
+            { ...coinbase, toAddress: "0x9eaff85db9a2559ec958740a6a3b523751237987" },
+            { ...coinbase, callType: "delegatecall", callStack: [9] },
+            { ...coinbase, blockHeight: 1 },
+          ],
+        },
+      },
+      deposit,
+      52705282n,
+      52705282n,
+    );
+    expect(rows).toEqual([]);
+  });
+});
+
+describe("balance jump search", () => {
+  it("finds the block where the balance rose above what was already recorded", () => {
+    const balances = new Map<bigint, bigint>([
+      [10n, 0n],
+      [11n, 0n],
+      [12n, 5n],
+      [13n, 5n],
+      [14n, 5n],
+    ]);
+    const read = (block: bigint) => balances.get(block) ?? 0n;
+    expect(firstBlockAbove(10n, 14n, 0n, read)).toBe(12n);
+    expect(firstBlockAbove(10n, 14n, 5n, read)).toBeNull();
+    expect(firstBlockAbove(12n, 14n, 0n, read)).toBe("older");
   });
 });
 

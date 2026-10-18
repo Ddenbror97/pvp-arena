@@ -25,6 +25,32 @@ export function ankrIndexUrl(rpcUrl: string, chainId: number): string | null {
 
 export const ankrChainName = (chainId: number): string | null => ANKR_CHAINS[chainId] ?? null;
 
+/** Ankr advanced API, whether it is the primary RPC or the Chainstack pair. */
+export function ankrIndexFromRpcUrls(
+  urls: Array<string | undefined>,
+  chainId: number,
+): string | null {
+  for (const url of urls) {
+    if (!url) continue;
+    const index = ankrIndexUrl(url, chainId);
+    if (index) return index;
+  }
+  return null;
+}
+
+/** Top-level native transfer log index. Internal transfers use 1_000_001 and up. */
+export const ETH_EXTERNAL_LOG_INDEX = 1_000_000;
+
+export function parseAnkrWei(value: string | number | undefined | null): bigint | null {
+  if (value == null || value === "") return null;
+  const raw = String(value).trim();
+  try {
+    return BigInt(raw);
+  } catch {
+    return null;
+  }
+}
+
 export type AnkrTxPage = {
   error?: { message?: string };
   result?: {
@@ -99,6 +125,105 @@ export function activeTargets(targets: string[], replies: RpcReply[]): string[] 
     });
     return values[0] !== values[1] || values[2] !== values[3];
   });
+}
+
+export type AnkrInternalTx = {
+  transactionHash?: string;
+  fromAddress?: string;
+  toAddress?: string | null;
+  value?: string | number | null;
+  blockHeight?: number | string | null;
+  error?: string | null;
+  callType?: string | null;
+  callPath?: string | null;
+  callStack?: number[] | null;
+  transactionIndex?: number | null;
+};
+
+export type AnkrInternalPage = {
+  error?: { message?: string };
+  result?: {
+    internalTransactions?: AnkrInternalTx[] | null;
+    nextPageToken?: string;
+  };
+};
+
+const INTERNAL_CALLS_WITHOUT_VALUE = new Set(["delegatecall", "staticcall", "invalid"]);
+
+/** Stable id so the same internal transfer is not credited twice if the page order changes. */
+export function internalLogIndex(tx: AnkrInternalTx, fallback: number): number {
+  const stacked = tx.callStack?.length ? tx.callStack[tx.callStack.length - 1] : null;
+  const fromPath = tx.callPath?.match(/(\d+)\s*$/);
+  const n =
+    stacked != null && Number.isInteger(stacked) && stacked >= 0
+      ? stacked
+      : fromPath
+        ? Number(fromPath[1])
+        : (tx.transactionIndex ?? 0) * 1_000 + fallback;
+  const slot = Number.isInteger(n) && n >= 0 ? n % 1_000_000 : fallback % 1_000_000;
+  return ETH_EXTERNAL_LOG_INDEX + 1 + slot;
+}
+
+/**
+ * ETH that arrived inside a contract call (Coinbase and other exchanges do this).
+ * The parent transaction's own value is often zero, so it is not a top-level deposit.
+ */
+export function ankrInternalDeposits(
+  page: AnkrInternalPage,
+  target: string,
+  from: bigint,
+  to: bigint,
+): Array<NativeTransfer & { logIndex: number }> {
+  const want = target.toLowerCase();
+  const rows = (page.result?.internalTransactions ?? [])
+    .map((tx, i) => ({ tx, i }))
+    .filter(({ tx }) => {
+      if (!tx.transactionHash || !tx.fromAddress || !tx.toAddress) return false;
+      if (tx.toAddress.toLowerCase() !== want) return false;
+      if (tx.error && tx.error.trim()) return false;
+      const kind = tx.callType?.toLowerCase();
+      if (kind && INTERNAL_CALLS_WITHOUT_VALUE.has(kind)) return false;
+      const value = parseAnkrWei(tx.value);
+      if (value == null || value <= 0n) return false;
+      if (tx.blockHeight == null || tx.blockHeight === "") return true;
+      try {
+        const block = BigInt(tx.blockHeight);
+        return block >= from && block <= to;
+      } catch {
+        return false;
+      }
+    });
+  return rows.map(({ tx, i }) => ({
+    hash: tx.transactionHash!,
+    from: tx.fromAddress!,
+    to: tx.toAddress!,
+    blockNumber: BigInt(tx.blockHeight ?? from),
+    value: parseAnkrWei(tx.value)!,
+    logIndex: internalLogIndex(tx, i),
+  }));
+}
+
+/**
+ * First block in (lo, hi] whose balance is above `threshold`.
+ * "older" means the funds were already there at `lo`, so the window does not contain the transfer.
+ */
+export function firstBlockAbove(
+  lo: bigint,
+  hi: bigint,
+  threshold: bigint,
+  balance: (block: bigint) => bigint,
+): bigint | "older" | null {
+  if (hi < lo) return null;
+  if (balance(hi) <= threshold) return null;
+  if (balance(lo) > threshold) return "older";
+  let left = lo;
+  let right = hi;
+  while (left + 1n < right) {
+    const mid = left + (right - left) / 2n;
+    if (balance(mid) > threshold) right = mid;
+    else left = mid;
+  }
+  return right;
 }
 
 /** Highest block the index has processed, or null when the response does not say. */

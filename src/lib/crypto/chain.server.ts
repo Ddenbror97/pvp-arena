@@ -39,10 +39,13 @@ import {
   ANKR_MIN_SCAN_BLOCKS,
   activeTargets,
   activityCalls,
+  ETH_EXTERNAL_LOG_INDEX,
   ankrChainName,
-  ankrIndexUrl,
+  ankrIndexFromRpcUrls,
   ankrIndexedThrough,
+  ankrInternalDeposits,
   ankrNativeTransfers,
+  type AnkrInternalPage,
   type AnkrTxPage,
   type RpcReply,
 } from "./ankr-index";
@@ -58,7 +61,9 @@ const FEED = parseAbi([
   "function latestRoundData() view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)",
   "function decimals() view returns (uint8)",
 ]);
-const NATIVE_LOG_INDEX = 1_000_000;
+const NATIVE_LOG_INDEX = ETH_EXTERNAL_LOG_INDEX;
+/** How far back to look for ETH that arrived inside a contract call and was never recorded. */
+const ETH_INTERNAL_LOOKBACK_BLOCKS = 300_000n;
 const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 // Keep each Cloudflare minute cron under the shared Worker subrequest budget.
 // USDC uses narrow getLogs. Native ETH uses one indexed transfer query and its
@@ -159,15 +164,6 @@ function rpcUrlFor(chainId: number, secondary = false): string | undefined {
   const url = workerEnv(`CRYPTO_RPC_URL${suffix}`);
   if (url) return url;
   return undefined;
-}
-
-/** Alchemy JSON-RPC index. Ankr uses `ankr-index.ts`; other providers use block scanning. */
-function rpcHasAlchemyAssetIndex(url: string): boolean {
-  try {
-    return /alchemy\.com/i.test(new URL(url).hostname);
-  } catch {
-    return false;
-  }
 }
 
 function checkChainRpcUrl(
@@ -518,6 +514,7 @@ async function getLogsChunked(
 async function observeNativeTransfer(
   env: Env,
   tx: { hash: string; from: string; to: string; blockNumber: bigint; value: bigint },
+  logIndex = NATIVE_LOG_INDEX,
 ): Promise<boolean> {
   const dest = tx.to.toLowerCase();
   if (tx.value <= 0n || (dest !== env.treasury && !env.depositAddresses.has(dest))) return false;
@@ -528,7 +525,7 @@ async function observeNativeTransfer(
       p_chain: env.chainId,
       p_asset: "ETH",
       p_tx: tx.hash,
-      p_log: NATIVE_LOG_INDEX,
+      p_log: logIndex,
       p_block: Number(tx.blockNumber),
       p_from: tx.from,
       p_to: tx.to,
@@ -538,75 +535,99 @@ async function observeNativeTransfer(
   return true;
 }
 
-/** Indexed native transfers to the treasury. Throws if the index is incomplete. */
-async function scanNativeViaIndex(
+async function rpcResult(url: string, method: string, params: unknown[]): Promise<unknown> {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+  });
+  if (!res.ok) throw new Error("ACTIVITY_HTTP");
+  const json = (await res.json()) as { error?: { message?: string }; result?: unknown };
+  if (json.error) throw new Error("ACTIVITY_READ");
+  return json.result;
+}
+
+async function balanceAt(url: string, address: string, block: bigint): Promise<bigint> {
+  const result = await rpcResult(url, "eth_getBalance", [address, `0x${block.toString(16)}`]);
+  if (typeof result !== "string" || !/^0x[0-9a-f]+$/i.test(result)) throw new Error("ACTIVITY_READ");
+  return BigInt(result);
+}
+
+/** Re-read the exchange payout from Ankr before crediting. A normal transfer never reaches here. */
+async function internalEthMatches(
+  indexUrl: string,
+  chainId: number,
+  txHash: string,
+  dest: string,
+  units: bigint,
+): Promise<boolean> {
+  const chain = ankrChainName(chainId);
+  if (!chain) return false;
+  try {
+    const page = await ankrInternalPage(indexUrl, "ankr_getInternalTransactionsByParentHash", {
+      blockchain: chain,
+      parentTransactionHash: txHash,
+      onlyWithValue: true,
+    });
+    return ankrInternalDeposits(page, dest, 0n, (1n << 62n) - 1n).some((t) => t.value === units);
+  } catch {
+    return false;
+  }
+}
+
+async function ankrInternalPage(
+  indexUrl: string,
+  method: string,
+  params: Record<string, unknown>,
+): Promise<AnkrInternalPage> {
+  const res = await fetch(indexUrl, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+  });
+  if (!res.ok) throw new Error("INDEX_HTTP");
+  const json = (await res.json()) as AnkrInternalPage;
+  if (json.error) throw new Error("INDEX_RPC");
+  return json;
+}
+
+/** ETH already recorded for this chain, in wei, keyed by the receiving address. */
+async function accountedEthWei(chainId: number): Promise<Map<string, bigint>> {
+  const { rpc } = await db();
+  const rows = await must<{ to_address: string; units: string }[]>(
+    rpc("crypto_eth_accounted", { p_chain: chainId }),
+  );
+  const out = new Map<string, bigint>();
+  for (const row of rows ?? []) {
+    if (!row?.to_address || row.units == null) continue;
+    out.set(row.to_address.toLowerCase(), BigInt(row.units));
+  }
+  return out;
+}
+
+/**
+ * A contract call paid one of our addresses. Record each internal transfer once.
+ * Direct transfers are handled separately and use the external log index.
+ */
+async function observeInternalBlock(
   env: Env,
-  fromBlock: bigint,
-  toBlock: bigint,
-): Promise<{ scannedTo: bigint; observed: number }> {
-  const url = rpcUrlFor(env.chainId);
-  if (!url) throw new Error("RPC_URL_MISSING");
-  const end =
-    toBlock < fromBlock + MAX_ETH_INDEX_BLOCKS - 1n
-      ? toBlock
-      : fromBlock + MAX_ETH_INDEX_BLOCKS - 1n;
-  const targets = Array.from(new Set([env.treasury, ...env.depositAddresses]));
+  indexUrl: string,
+  chain: string,
+  block: bigint,
+  targets: Set<string>,
+): Promise<number> {
+  const page = await ankrInternalPage(indexUrl, "ankr_getInternalTransactionsByBlockNumber", {
+    blockchain: chain,
+    blockNumber: Number(block),
+    onlyWithValue: true,
+  });
   let observed = 0;
   for (const target of targets) {
-    let pageKey: string | undefined;
-    for (let page = 0; page < 20; page++) {
-      const params: Record<string, unknown> = {
-        fromBlock: `0x${fromBlock.toString(16)}`,
-        toBlock: `0x${end.toString(16)}`,
-        toAddress: target,
-        category: ["external"],
-        excludeZeroValue: true,
-        withMetadata: false,
-        maxCount: "0x3e8",
-      };
-      if (pageKey) params["pageKey"] = pageKey;
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: 1,
-          method: "alchemy_getAssetTransfers",
-          params: [params],
-        }),
-      });
-      if (!res.ok) throw new Error("INDEX_HTTP");
-      const json = (await res.json()) as {
-        error?: { message?: string };
-        result?: {
-          transfers?: Array<{
-            hash?: string;
-            from?: string;
-            to?: string;
-            blockNum?: string;
-            rawContract?: { value?: string | null };
-          }>;
-          pageKey?: string;
-        };
-      };
-      if (json.error) throw new Error("INDEX_RPC");
-      for (const t of json.result?.transfers ?? []) {
-        if (!t.hash || !t.from || !t.to || !t.blockNum || !t.rawContract?.value) continue;
-        const seen = await observeNativeTransfer(env, {
-          hash: t.hash,
-          from: t.from,
-          to: t.to,
-          blockNumber: BigInt(t.blockNum),
-          value: BigInt(t.rawContract.value),
-        });
-        if (seen) observed++;
-      }
-      pageKey = json.result?.pageKey;
-      if (!pageKey) break;
-      if (page === 19) throw new Error("INDEX_TRUNCATED");
+    for (const t of ankrInternalDeposits(page, target, block, block)) {
+      if (await observeNativeTransfer(env, t, t.logIndex)) observed++;
     }
   }
-  return { scannedTo: end, observed };
+  return observed;
 }
 
 /** Native transfers to the treasury and deposit addresses. Batched balance and nonce reads
@@ -683,7 +704,130 @@ async function scanNativeViaAnkrIndex(
       if (page === 19) throw new Error("INDEX_TRUNCATED");
     }
   }
+  // Exchange payouts (Coinbase on Base) move ETH inside a contract call. The
+  // parent transaction value is zero, so the address index above never sees it.
+  // A deposit address whose balance is higher than the wei already recorded is
+  // looked up from the block where the balance rose.
+  if (indexCalls < ANKR_MAX_INDEX_CALLS) {
+    observed += await observeUncreditedInternal(
+      env,
+      rpcUrl,
+      indexUrl,
+      chain,
+      targets,
+      replies,
+      end,
+      ANKR_MAX_INDEX_CALLS - indexCalls,
+    );
+  }
   return { scannedTo: indexed < fromBlock ? fromBlock - 1n : indexed, observed };
+}
+
+function replyWei(replies: RpcReply[], id: number): bigint {
+  const row = replies.find((r) => r.id === id);
+  if (!row || typeof row.result !== "string" || !/^0x[0-9a-f]+$/i.test(row.result)) {
+    throw new Error("ACTIVITY_READ");
+  }
+  return BigInt(row.result);
+}
+
+async function firstBlockAboveChain(
+  url: string,
+  address: string,
+  lo: bigint,
+  hi: bigint,
+  threshold: bigint,
+): Promise<bigint | "older" | null> {
+  const reading = new Map<bigint, bigint>();
+  const balance = async (block: bigint) => {
+    const cached = reading.get(block);
+    if (cached != null) return cached;
+    const value = await balanceAt(url, address, block);
+    reading.set(block, value);
+    return value;
+  };
+  if (hi < lo) return null;
+  if ((await balance(hi)) <= threshold) return null;
+  if ((await balance(lo)) > threshold) return "older";
+  let left = lo;
+  let right = hi;
+  while (left + 1n < right) {
+    const mid = left + (right - left) / 2n;
+    if ((await balance(mid)) > threshold) right = mid;
+    else left = mid;
+  }
+  return right;
+}
+
+async function observeUncreditedInternal(
+  env: Env,
+  rpcUrl: string,
+  indexUrl: string,
+  chain: string,
+  targets: string[],
+  replies: RpcReply[],
+  end: bigint,
+  budget: number,
+): Promise<number> {
+  if (budget <= 0) return 0;
+  let accounted: Map<string, bigint>;
+  try {
+    accounted = await accountedEthWei(env.chainId);
+  } catch {
+    return 0;
+  }
+  const min = env.minDepositUnits["ETH"] ?? 0n;
+  const wanted = new Map<bigint, Set<string>>();
+  let lookups = 0;
+  for (let i = 0; i < targets.length && lookups < budget && lookups < 3; i++) {
+    const target = targets[i]!;
+    if (!env.depositAddresses.has(target)) continue;
+    const endBal = replyWei(replies, i * 4 + 1);
+    const known = accounted.get(target) ?? 0n;
+    if (endBal <= known) continue;
+    if (min > 0n && endBal - known < min) continue;
+    const lo = end > ETH_INTERNAL_LOOKBACK_BLOCKS ? end - ETH_INTERNAL_LOOKBACK_BLOCKS : 0n;
+    let threshold = known;
+    let cursor = lo;
+    // Walk each balance increase. A dust transfer must not hide a later payout.
+    for (let step = 0; step < 3 && lookups < budget && threshold < endBal; step++) {
+      let jump: bigint | "older" | null = null;
+      try {
+        jump = await firstBlockAboveChain(rpcUrl, target, cursor, end, threshold);
+      } catch {
+        break;
+      }
+      if (jump === "older") {
+        const { rpc } = await db();
+        await rpc("crypto_raise_incident", {
+          p_check: "crypto_eth_uncredited",
+          p_fp: `crypto_eth_uncredited:${env.chainId}:${target}`,
+          p_details: { chain_id: env.chainId, address: target, balance: endBal.toString() },
+        });
+        break;
+      }
+      if (jump == null) break;
+      lookups++;
+      const who = wanted.get(jump) ?? new Set<string>();
+      who.add(target);
+      wanted.set(jump, who);
+      try {
+        threshold = await balanceAt(rpcUrl, target, jump);
+      } catch {
+        break;
+      }
+      cursor = jump;
+    }
+  }
+  let observed = 0;
+  for (const [block, who] of wanted) {
+    try {
+      observed += await observeInternalBlock(env, indexUrl, chain, block, who);
+    } catch {
+      // The balance is still ahead of the ledger. The next scan tries again.
+    }
+  }
+  return observed;
 }
 
 /** Bounded getBlock fallback. One block at a time, a few blocks per run.
@@ -828,17 +972,17 @@ export async function runDepositWatcher(chainId: number) {
     const ethCursor = ethCursorRaw == null ? latest : BigInt(ethCursorRaw);
     ethAt = ethCursor;
     const primaryRpc = rpcUrlFor(env.chainId);
-    const ankrIndex = primaryRpc ? ankrIndexUrl(primaryRpc, env.chainId) : null;
+    const secondaryRpc = rpcUrlFor(env.chainId, true);
+    // Ankr is the address index. It can be either configured RPC. Chainstack is
+    // the other provider and is what proves the receipt. Alchemy is not used.
+    const ankrIndex = ankrIndexFromRpcUrls([primaryRpc, secondaryRpc], env.chainId);
     const due = ankrIndex ? latest - ethCursor >= ANKR_MIN_SCAN_BLOCKS : ethCursor < latest;
     if (due) {
-      const useAlchemyIndex = !!primaryRpc && rpcHasAlchemyAssetIndex(primaryRpc);
-      const useIndex = useAlchemyIndex || !!ankrIndex;
+      const useIndex = !!ankrIndex;
       try {
         const ethScan = ankrIndex
           ? await scanNativeViaAnkrIndex(env, primaryRpc!, ankrIndex, ethCursor + 1n, latest)
-          : useAlchemyIndex
-            ? await scanNativeViaIndex(env, ethCursor + 1n, latest)
-            : await scanNativeViaBlocks(env, ethCursor + 1n, latest);
+          : await scanNativeViaBlocks(env, ethCursor + 1n, latest);
         observed += ethScan.observed;
         await must(
           rpc("crypto_set_eth_cursor", {
@@ -936,8 +1080,19 @@ export async function runDepositWatcher(chainId: number) {
         if (BigInt(log.data) !== BigInt(d.units)) continue;
       } else {
         if (!env.ethEnabled) continue;
-        const tx = await env.client.getTransaction({ hash: d.tx_hash });
-        if (tx.to?.toLowerCase() !== dest || tx.value !== BigInt(d.units)) continue;
+        const units = BigInt(d.units);
+        const internal = (d.log_index ?? NATIVE_LOG_INDEX) > NATIVE_LOG_INDEX;
+        if (!internal) {
+          const tx = await env.client.getTransaction({ hash: d.tx_hash });
+          if (tx.to?.toLowerCase() !== dest || tx.value !== units) continue;
+        } else {
+          const indexUrl = ankrIndexFromRpcUrls(
+            [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)],
+            env.chainId,
+          );
+          if (!indexUrl || !(await internalEthMatches(indexUrl, env.chainId, d.tx_hash, dest, units)))
+            continue;
+        }
         if (!price) continue;
       }
       if (
