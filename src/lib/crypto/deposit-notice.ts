@@ -52,7 +52,6 @@ export type DepositNotice = {
 };
 
 const PENDING = new Set(["DETECTED", "CONFIRMED"]);
-const REVIEW = new Set(["UNMATCHED", "REJECTED"]);
 
 function fresh(row: DepositNoticeRow, now: number): boolean {
   if (!row.at) return false;
@@ -110,7 +109,7 @@ export function selectDepositNotice(input: {
       body: waitingBody(pending.networkMode, late),
     };
   }
-  const review = live.find((row) => REVIEW.has(row.status));
+  const review = live.find((row) => row.status === "UNMATCHED");
   if (review) {
     return {
       key: `review:${review.id}`,
@@ -118,6 +117,16 @@ export function selectDepositNotice(input: {
       title: "Deposit needs review",
       amount: `${formatUsd(review.usd_cents)} ${review.asset_key}`,
       body: "We'll review this transfer before adding it to your balance.",
+    };
+  }
+  const short = live.find((row) => row.status === "REJECTED");
+  if (short) {
+    return {
+      key: `short:${short.id}`,
+      phase: "review",
+      title: "Under the minimum",
+      amount: `${formatUsd(short.usd_cents)} ${short.asset_key}`,
+      body: "This transfer is under the minimum deposit, so it was not added to your balance.",
     };
   }
   if (input.submitted && !input.dismissed.has("submitted")) {
