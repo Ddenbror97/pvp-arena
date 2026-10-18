@@ -176,6 +176,28 @@ describe("internal ETH deposits", () => {
       logIndex: ETH_EXTERNAL_LOG_INDEX + 1 + 4,
     });
     expect(internalLogIndex(coinbase, 0)).toBe(ETH_EXTERNAL_LOG_INDEX + 5);
+    const nestedA = internalLogIndex({ callStack: [0, 1] }, 0);
+    const nestedB = internalLogIndex({ callStack: [2, 1] }, 0);
+    expect(nestedA).not.toBe(nestedB);
+    expect(nestedA).not.toBe(internalLogIndex(coinbase, 0));
+  });
+
+  it("keeps every positive top-level transfer, including one sent by a contract", () => {
+    const rows = ankrNativeTransfers(
+      {
+        result: {
+          transactions: [
+            { hash: "0xaaa", from: "0x" + "ab".repeat(20), to: deposit, blockNumber: "10", value: "100" },
+            { hash: "0xbbb", from: "0x" + "cd".repeat(20), to: deposit, blockNumber: "11", value: "200" },
+            { hash: "0xccc", from: "0x" + "11".repeat(20), to: deposit, blockNumber: "12", value: "0" },
+          ],
+        },
+      },
+      deposit,
+      1n,
+      20n,
+    );
+    expect(rows.map((r) => r.hash)).toEqual(["0xaaa", "0xbbb"]);
   });
 
   it("skips failed calls, other recipients, and calls that do not move ETH", () => {
@@ -219,7 +241,7 @@ describe("chainstack trace_filter", () => {
       52705282n,
     );
     expect(t?.value).toBe(3138330000000000n);
-    expect(t?.logIndex).toBe(ETH_EXTERNAL_LOG_INDEX + 1 + 1);
+    expect(t?.logIndex).toBe(ETH_EXTERNAL_LOG_INDEX + 1 + 133);
   });
 });
 

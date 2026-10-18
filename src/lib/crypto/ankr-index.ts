@@ -150,16 +150,20 @@ export type AnkrInternalPage = {
 
 const INTERNAL_CALLS_WITHOUT_VALUE = new Set(["delegatecall", "staticcall", "invalid"]);
 
-/** Stable id so the same internal transfer is not credited twice if the page order changes. */
+/**
+ * Stable id so the same internal transfer is not credited twice if the page order changes.
+ * A one-element call stack keeps its index. A deeper path is folded so two calls that
+ * merely end at the same child index do not share a log index.
+ */
 export function internalLogIndex(tx: AnkrInternalTx, fallback: number): number {
-  const stacked = tx.callStack?.length ? tx.callStack[tx.callStack.length - 1] : null;
-  const fromPath = tx.callPath?.match(/(\d+)\s*$/);
-  const n =
-    stacked != null && Number.isInteger(stacked) && stacked >= 0
-      ? stacked
-      : fromPath
-        ? Number(fromPath[1])
-        : (tx.transactionIndex ?? 0) * 1_000 + fallback;
+  const stack = (tx.callStack ?? []).filter((n) => Number.isInteger(n) && n >= 0);
+  let n: number;
+  if (stack.length === 1) n = stack[0]!;
+  else if (stack.length > 1) n = stack.reduce((acc, part) => (Math.imul(acc, 131) + part + 1) >>> 0, 0);
+  else {
+    const fromPath = tx.callPath?.match(/(\d+)\s*$/);
+    n = fromPath ? Number(fromPath[1]) : (tx.transactionIndex ?? 0) * 1_000 + fallback;
+  }
   const slot = Number.isInteger(n) && n >= 0 ? n % 1_000_000 : fallback % 1_000_000;
   return ETH_EXTERNAL_LOG_INDEX + 1 + slot;
 }
@@ -217,7 +221,7 @@ type TraceFilterEntry = {
   } | null;
 };
 
-/** Internal ETH from a client's `trace_filter` result. Chainstack serves this; Alchemy is not involved. */
+/** Internal ETH from a `trace_filter` result. Only explicit call values are deposits. */
 export function traceFilterDeposits(
   result: unknown,
   target: string,
@@ -271,8 +275,7 @@ export function callTracerDeposits(
 ): Array<NativeTransfer & { logIndex: number }> {
   if (!root || typeof root !== "object") return [];
   const want = target.toLowerCase();
-  const found: Array<{ frame: CallFrame; slot: number; order: number }> = [];
-  let order = 0;
+  const found: Array<{ frame: CallFrame; stack: number[] }> = [];
   const walk = (frame: CallFrame, stack: number[]) => {
     const value = parseAnkrWei(frame.value);
     const kind = (frame.type ?? "").toLowerCase();
@@ -285,19 +288,18 @@ export function callTracerDeposits(
       !(frame.error && frame.error.trim()) &&
       !INTERNAL_CALLS_WITHOUT_VALUE.has(kind)
     ) {
-      found.push({ frame, slot: stack.length ? stack[stack.length - 1]! : 0, order });
+      found.push({ frame, stack: stack.length ? stack : [0] });
     }
-    order++;
     (frame.calls ?? []).forEach((child, i) => walk(child, [...stack, i]));
   };
   walk(root as CallFrame, []);
-  return found.map(({ frame, slot, order: i }) => ({
+  return found.map(({ frame, stack }, i) => ({
     hash,
     from: frame.from!,
     to: frame.to!,
     blockNumber: block,
     value: parseAnkrWei(frame.value)!,
-    logIndex: internalLogIndex({ callStack: [slot] }, i),
+    logIndex: internalLogIndex({ callStack: stack }, i),
   }));
 }
 

@@ -51,6 +51,12 @@ import {
   type AnkrTxPage,
   type RpcReply,
 } from "./ankr-index";
+import {
+  erc20LogMatches,
+  internalTransferConfirmed,
+  nativeTransfersAgree,
+  type InternalHit,
+} from "./transfer-match";
 
 const ERC20 = parseAbi([
   "function transfer(address to, uint256 value) returns (bool)",
@@ -521,6 +527,29 @@ async function observeNativeTransfer(
   const dest = tx.to.toLowerCase();
   if (tx.value <= 0n || (dest !== env.treasury && !env.depositAddresses.has(dest))) return false;
   if (belowDepositMinimum(env.minDepositUnits, "ETH", tx.value)) return false;
+  // The same payout can be seen once from the index and again from a trace, with
+  // different log indexes. One recorded amount for this transaction and recipient
+  // is enough; a second row would credit it twice.
+  if (logIndex > NATIVE_LOG_INDEX) {
+    const { admin } = await db();
+    const existing = await admin
+      .from("crypto_deposits")
+      .select("units,to_address,log_index")
+      .eq("chain_id", env.chainId)
+      .eq("tx_hash", tx.hash.toLowerCase());
+    if (existing.error) return false;
+    const rows = (existing.data ?? []) as { units?: string | number; to_address?: string; log_index?: number }[];
+    if (
+      rows.some(
+        (row) =>
+          row.log_index !== logIndex &&
+          row.to_address?.toLowerCase() === dest &&
+          BigInt(String(row.units ?? "0").split(".")[0] ?? "0") === tx.value,
+      )
+    ) {
+      return false;
+    }
+  }
   const { rpc } = await db();
   await must(
     rpc("crypto_observe_deposit", {
@@ -560,26 +589,62 @@ async function balanceAt(url: string, address: string, block: bigint): Promise<b
   return BigInt(result);
 }
 
-/** Re-read the exchange payout from Ankr before crediting. A normal transfer never reaches here. */
-async function internalEthMatches(
-  indexUrl: string,
-  chainId: number,
+function asHits(rows: Array<{ hash: string; to: string; value: bigint }>): InternalHit[] {
+  return rows.map((t) => ({ hash: t.hash, to: t.to, value: t.value }));
+}
+
+/**
+ * An internal deposit is credited only when a trace or Ankr's internal index
+ * names this transaction, recipient, and amount. A balance delta is not enough.
+ * A provider that cannot trace does not veto. A provider that traces and finds
+ * a different amount, or nothing, does.
+ */
+async function confirmInternalEth(
+  env: Env,
   txHash: string,
   dest: string,
   units: bigint,
+  block: bigint,
 ): Promise<boolean> {
-  const chain = ankrChainName(chainId);
-  if (!chain) return false;
-  try {
-    const page = await ankrInternalPage(indexUrl, "ankr_getInternalTransactionsByParentHash", {
-      blockchain: chain,
-      parentTransactionHash: txHash,
-      onlyWithValue: true,
-    });
-    return ankrInternalDeposits(page, dest, 0n, (1n << 62n) - 1n).some((t) => t.value === units);
-  } catch {
-    return false;
+  const results: Array<InternalHit[] | null> = [];
+  const indexUrl = ankrIndexFromRpcUrls(
+    [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)],
+    env.chainId,
+  );
+  if (indexUrl) {
+    try {
+      const page = await ankrInternalPage(indexUrl, "ankr_getInternalTransactionsByParentHash", {
+        blockchain: ankrChainName(env.chainId),
+        parentTransactionHash: txHash,
+        onlyWithValue: true,
+      });
+      results.push(asHits(ankrInternalDeposits(page, dest, 0n, (1n << 62n) - 1n)));
+    } catch {
+      results.push(null);
+    }
   }
+  const urls = [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)].filter(
+    (url): url is string => !!url,
+  );
+  for (const url of urls) {
+    try {
+      const traced = await traceFilterBlock(url, block, new Set([dest]));
+      results.push(asHits(traceFilterDeposits(traced, dest, block)));
+    } catch {
+      results.push(null);
+    }
+  }
+  if (!results.some((list) => list?.some((hit) => hit.value === units))) {
+    for (const url of urls) {
+      try {
+        const traced = await rpcResult(url, "debug_traceTransaction", [txHash, { tracer: "callTracer" }]);
+        results.push(asHits(callTracerDeposits(traced, dest, block, txHash)));
+      } catch {
+        results.push(null);
+      }
+    }
+  }
+  return internalTransferConfirmed(results, txHash, dest, units);
 }
 
 async function ankrInternalPage(
@@ -639,83 +704,6 @@ type InternalTransfer = {
 function clipReason(err: unknown): string {
   const message = err instanceof Error ? err.message : "error";
   return message.replace(/https?:\/\/\S+/g, "url").slice(0, 120);
-}
-
-async function balanceNow(url: string, address: string): Promise<bigint> {
-  const result = await rpcResult(url, "eth_getBalance", [address, "latest"]);
-  if (typeof result !== "string" || !/^0x[0-9a-f]+$/i.test(result)) throw new Error("ACTIVITY_READ");
-  return BigInt(result);
-}
-
-async function nonceAt(url: string, address: string, block: bigint): Promise<bigint> {
-  const result = await rpcResult(url, "eth_getTransactionCount", [address, `0x${block.toString(16)}`]);
-  if (typeof result !== "string" || !/^0x[0-9a-f]+$/i.test(result)) throw new Error("ACTIVITY_READ");
-  return BigInt(result);
-}
-
-type SolePayout = { hash: string; from: string; value: bigint };
-
-/** The one transaction in this block that names the deposit address. */
-async function solePayout(url: string, block: bigint, target: string): Promise<SolePayout | null> {
-  const body = (await rpcResult(url, "eth_getBlockByNumber", [`0x${block.toString(16)}`, true])) as {
-    transactions?: Array<{ hash?: string; from?: string; to?: string | null; input?: string | null; value?: string }>;
-  } | null;
-  const needle = target.slice(2);
-  const hits = (body?.transactions ?? []).filter((tx) => {
-    const to = (tx.to ?? "").toLowerCase();
-    const input = (tx.input ?? "").toLowerCase();
-    return to === target || (needle.length === 40 && input.includes(needle));
-  });
-  const tx = hits.length === 1 ? hits[0] : null;
-  if (!tx?.hash || !tx.from) return null;
-  return { hash: tx.hash, from: tx.from, value: BigInt(tx.value ?? "0x0") };
-}
-
-/**
- * Ankr and Chainstack both refuse trace methods on the current keys. The deposit
- * is still provable: the archive node shows the balance rising in one block, the
- * address did not send, and exactly one transaction in that block names it.
- * The second node must agree on the amount, or at least on the balance held now.
- */
-async function attributeFromBalance(
-  urls: string[],
-  block: bigint,
-  target: string,
-): Promise<InternalTransfer | null> {
-  if (urls.length < 2 || block < 1n) return null;
-  const before = await balanceAt(urls[0]!, target, block - 1n);
-  const after = await balanceAt(urls[0]!, target, block);
-  const delta = after - before;
-  if (delta <= 0n) return null;
-  if ((await nonceAt(urls[0]!, target, block - 1n)) !== (await nonceAt(urls[0]!, target, block))) {
-    return null;
-  }
-  const sole = await solePayout(urls[0]!, block, target);
-  if (!sole) return null;
-  if (sole.value > 0n && sole.value !== delta) return null;
-  let agreed = false;
-  try {
-    const beforeB = await balanceAt(urls[1]!, target, block - 1n);
-    const afterB = await balanceAt(urls[1]!, target, block);
-    const soleB = await solePayout(urls[1]!, block, target);
-    agreed =
-      afterB - beforeB === delta &&
-      !!soleB &&
-      soleB.hash.toLowerCase() === sole.hash.toLowerCase();
-  } catch {
-    const nowA = await balanceNow(urls[0]!, target);
-    const nowB = await balanceNow(urls[1]!, target);
-    agreed = nowA === nowB && nowA >= delta;
-  }
-  if (!agreed) return null;
-  return {
-    hash: sole.hash,
-    from: sole.from,
-    to: target,
-    blockNumber: block,
-    value: sole.value > 0n ? sole.value : delta,
-    logIndex: sole.value > 0n ? NATIVE_LOG_INDEX : ETH_EXTERNAL_LOG_INDEX + 1,
-  };
 }
 
 /** Transactions in the block whose calldata names one of our deposit addresses. */
@@ -793,44 +781,69 @@ async function observeInternalBlock(
   const urls = [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)].filter(
     (url): url is string => !!url,
   );
-  if (transfers.length === 0) {
-    for (const target of targets) {
-      try {
-        const agreed = await attributeFromBalance(urls, block, target);
-        if (agreed) transfers.push(agreed);
-      } catch (err) {
-        notes.push(clipReason(err));
-      }
+  // A balance increase is not a deposit. Only an explicit internal transfer is,
+  // and a provider that traced the block and found nothing vetoes the other.
+  const traceLists: Array<InternalTransfer[] | null> = [];
+  for (const url of urls) {
+    try {
+      const traced = await traceFilterBlock(url, block, targets);
+      const found: InternalTransfer[] = [];
+      for (const target of targets) found.push(...traceFilterDeposits(traced, target, block));
+      traceLists.push(found);
+    } catch (err) {
+      notes.push(clipReason(err));
+      traceLists.push(null);
     }
   }
-  if (transfers.length === 0) {
-    for (const url of urls) {
-      try {
-        const traced = await traceFilterBlock(url, block, targets);
-        transfers = [];
-        for (const target of targets) transfers.push(...traceFilterDeposits(traced, target, block));
-        if (transfers.length > 0) break;
-      } catch (err) {
-        notes.push(clipReason(err));
-      }
-    }
+  if (traceLists.some((list) => list != null)) {
+    for (const list of traceLists) if (list) transfers.push(...list);
   }
   if (transfers.length === 0) {
     for (const hash of candidates) {
-      if (transfers.length > 0) break;
+      const debugLists: Array<InternalTransfer[] | null> = [];
       for (const url of urls) {
         try {
           const traced = await rpcResult(url, "debug_traceTransaction", [hash, { tracer: "callTracer" }]);
-          for (const target of targets) {
-            transfers.push(...callTracerDeposits(traced, target, block, hash));
-          }
-          if (transfers.length > 0) break;
+          const found: InternalTransfer[] = [];
+          for (const target of targets) found.push(...callTracerDeposits(traced, target, block, hash));
+          debugLists.push(found);
         } catch (err) {
           notes.push(clipReason(err));
+          debugLists.push(null);
+        }
+      }
+      if (debugLists.some((list) => list != null)) {
+        const added: InternalTransfer[] = [];
+        for (const list of debugLists) if (list) added.push(...list);
+        for (const t of added) {
+          if (
+            internalTransferConfirmed(
+              debugLists.map((list) => list?.map((hit) => ({ hash: hit.hash, to: hit.to, value: hit.value })) ?? null),
+              t.hash,
+              t.to,
+              t.value,
+            )
+          ) {
+            transfers.push(t);
+          }
         }
       }
     }
   }
+  const proof = traceLists.some((list) => list != null) ? traceLists : null;
+  transfers = transfers.filter((t, i, all) => {
+    const first = all.findIndex(
+      (o) => o.hash === t.hash && o.to.toLowerCase() === t.to.toLowerCase() && o.value === t.value,
+    );
+    if (first !== i) return false;
+    if (!proof) return true;
+    return internalTransferConfirmed(
+      proof.map((list) => list?.map((hit) => ({ hash: hit.hash, to: hit.to, value: hit.value })) ?? null),
+      t.hash,
+      t.to,
+      t.value,
+    );
+  });
 
   let observed = 0;
   for (const t of transfers) {
@@ -839,6 +852,22 @@ async function observeInternalBlock(
   if (transfers.length > 0 && observed === 0) notes.push("found_unrecorded");
   notes.push(`candidates:${candidates.length}`);
   return { observed, notes: notes.slice(0, 8) };
+}
+
+async function rpcBatch(url: string, calls: ReturnType<typeof activityCalls>): Promise<RpcReply[]> {
+  const replies: RpcReply[] = [];
+  for (let i = 0; i < calls.length; i += ANKR_MAX_BATCH) {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(calls.slice(i, i + ANKR_MAX_BATCH)),
+    });
+    if (!res.ok) throw new Error("ACTIVITY_HTTP");
+    const part = (await res.json()) as unknown;
+    if (!Array.isArray(part)) throw new Error("ACTIVITY_READ");
+    replies.push(...(part as RpcReply[]));
+  }
+  return replies;
 }
 
 /** Native transfers to the treasury and deposit addresses. Batched balance and nonce reads
@@ -860,17 +889,14 @@ async function scanNativeViaAnkrIndex(
   const targets = Array.from(new Set([env.treasury.toLowerCase(), ...env.depositAddresses]));
 
   const calls = activityCalls(targets, fromBlock - 1n, end);
-  const replies: RpcReply[] = [];
-  for (let i = 0; i < calls.length; i += ANKR_MAX_BATCH) {
-    const res = await fetch(rpcUrl, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(calls.slice(i, i + ANKR_MAX_BATCH)),
-    });
-    if (!res.ok) throw new Error("ACTIVITY_HTTP");
-    const part = (await res.json()) as unknown;
-    if (!Array.isArray(part)) throw new Error("ACTIVITY_READ");
-    replies.push(...(part as RpcReply[]));
+  const secondary = rpcUrlFor(env.chainId, true);
+  let replies: RpcReply[];
+  try {
+    replies = await rpcBatch(rpcUrl, calls);
+    activeTargets(targets, replies);
+  } catch (err) {
+    if (!secondary || secondary === rpcUrl) throw err;
+    replies = await rpcBatch(secondary, calls);
   }
   const active = activeTargets(targets, replies);
   if (active.length > ANKR_MAX_INDEX_CALLS) throw new Error("INDEX_BUSY");
@@ -1045,7 +1071,7 @@ async function observeUncreditedInternal(
     const { rpc } = await db();
     await rpc("crypto_raise_incident", {
       p_check: "crypto_eth_internal",
-      p_fp: `crypto_eth_internal:${env.chainId}:${new Date().toISOString().slice(0, 16)}`,
+      p_fp: `crypto_eth_internal:${env.chainId}:${new Date().toISOString().slice(0, 13)}`,
       p_details: {
         chain_id: env.chainId,
         blocks: Array.from(wanted.keys()).map((b) => Number(b)),
@@ -1138,31 +1164,42 @@ export async function runDepositWatcher(chainId: number) {
         const watched = Array.from(new Set([env.treasury, ...env.depositAddresses])) as Hex[];
 
         // USDC first — this is the real-money rail. Advance cursor before ETH scan.
-        for (let from = logFrom; from <= logTo; from += MAX_LOG_RANGE) {
-          const to = from + MAX_LOG_RANGE - 1n < logTo ? from + MAX_LOG_RANGE - 1n : logTo;
-          const logs = await getLogsChunked(
-            env.client,
-            { address: env.usdc as Hex, event: TRANSFER, args: { to: watched } },
-            from,
-            to,
-          );
-          for (const l of logs) {
-            if (l.address.toLowerCase() !== env.usdc || !l.args.value || l.removed) continue;
-            if (belowDepositMinimum(env.minDepositUnits, "USDC", l.args.value)) continue;
-            await must(
-              rpc("crypto_observe_deposit", {
-                p_chain: env.chainId,
-                p_asset: "USDC",
-                p_tx: l.transactionHash,
-                p_log: l.logIndex,
-                p_block: Number(l.blockNumber),
-                p_from: l.args.from,
-                p_to: l.args.to,
-                p_units: l.args.value.toString(),
-              }),
+        // Primary reads the logs. If that provider fails, the secondary reads the
+        // same window. Crediting still requires both receipts to agree.
+        const readUsdcLogs = async (client: PublicClient) => {
+          for (let from = logFrom; from <= logTo; from += MAX_LOG_RANGE) {
+            const to = from + MAX_LOG_RANGE - 1n < logTo ? from + MAX_LOG_RANGE - 1n : logTo;
+            const logs = await getLogsChunked(
+              client,
+              { address: env.usdc as Hex, event: TRANSFER, args: { to: watched } },
+              from,
+              to,
             );
-            observed++;
+            for (const l of logs) {
+              if (l.address.toLowerCase() !== env.usdc || !l.args.value || l.removed) continue;
+              if (belowDepositMinimum(env.minDepositUnits, "USDC", l.args.value)) continue;
+              await must(
+                rpc("crypto_observe_deposit", {
+                  p_chain: env.chainId,
+                  p_asset: "USDC",
+                  p_tx: l.transactionHash,
+                  p_log: l.logIndex,
+                  p_block: Number(l.blockNumber),
+                  p_from: l.args.from,
+                  p_to: l.args.to,
+                  p_units: l.args.value.toString(),
+                }),
+              );
+              observed++;
+            }
           }
+        };
+        try {
+          await readUsdcLogs(env.client);
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err);
+          if (/Too many subrequests/i.test(message) || !env.clientB) throw err;
+          await readUsdcLogs(env.clientB);
         }
 
         // USDC cursor only. Native ETH has its own cursor and is scanned below.
@@ -1295,41 +1332,29 @@ export async function runDepositWatcher(chainId: number) {
       if (d.asset_key === "USDC") {
         if (!env.usdc) continue;
         const log = receipt.logs.find((l) => l.logIndex === d.log_index);
-        if (!log || log.address.toLowerCase() !== env.usdc) continue;
-        if ((log.topics[0] ?? "").toLowerCase() !== TRANSFER_TOPIC) continue;
         if (
-          (log.topics[1] ?? "").slice(-40).toLowerCase() !==
-          String(d.from_address).toLowerCase().slice(2)
-        )
+          !erc20LogMatches(log, {
+            token: env.usdc,
+            from: String(d.from_address),
+            to: dest,
+            units: BigInt(d.units),
+            transferTopic: TRANSFER_TOPIC,
+          })
+        ) {
           continue;
-        if ((log.topics[2] ?? "").slice(-40).toLowerCase() !== dest.slice(2)) continue;
-        if (BigInt(log.data) !== BigInt(d.units)) continue;
+        }
       } else {
         if (!env.ethEnabled) continue;
         const units = BigInt(d.units);
         const internal = (d.log_index ?? NATIVE_LOG_INDEX) > NATIVE_LOG_INDEX;
         if (!internal) {
           const tx = await env.client.getTransaction({ hash: d.tx_hash });
-          if (tx.to?.toLowerCase() !== dest || tx.value !== units) continue;
-        } else {
-          const indexUrl = ankrIndexFromRpcUrls(
-            [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)],
-            env.chainId,
-          );
-          const urls = [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)].filter(
-            (url): url is string => !!url,
-          );
-          const fromIndex =
-            !!indexUrl &&
-            (await internalEthMatches(indexUrl, env.chainId, d.tx_hash, dest, units));
-          const fromBalance = fromIndex
-            ? null
-            : await attributeFromBalance(urls, BigInt(d.block_number), dest).catch(() => null);
-          const balanceAgrees =
-            !!fromBalance &&
-            fromBalance.hash.toLowerCase() === d.tx_hash.toLowerCase() &&
-            fromBalance.value === units;
-          if (!fromIndex && !balanceAgrees) continue;
+          const txB = env.clientB
+            ? await env.clientB.getTransaction({ hash: d.tx_hash }).catch(() => null)
+            : null;
+          if (!nativeTransfersAgree(tx, txB, dest, units)) continue;
+        } else if (!(await confirmInternalEth(env, d.tx_hash, dest, units, receipt.blockNumber))) {
+          continue;
         }
         if (!price) continue;
       }
@@ -1396,6 +1421,23 @@ export async function runDepositWatcher(chainId: number) {
     observed,
     credited,
   };
+}
+
+/** Broadcast the already-signed bytes. The second provider gets the same transaction, never a new one. */
+async function broadcastSigned(env: Env, raw: Hex): Promise<void> {
+  const clients = [env.client, env.clientB].filter((client): client is PublicClient => !!client);
+  let last: unknown;
+  for (const client of clients) {
+    try {
+      await client.sendRawTransaction({ serializedTransaction: raw });
+      return;
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (/already known|known transaction/i.test(msg)) return;
+      last = e;
+    }
+  }
+  throw last instanceof Error ? last : new Error("BROADCAST_FAILED");
 }
 
 /** Withdrawal worker for one chain: one in-flight payout at a time.
@@ -1467,7 +1509,7 @@ export async function runWithdrawalWorker(chainId: number) {
       }
       // No receipt: rebroadcast the exact signed bytes (idempotent — same hash, same nonce).
       try {
-        await env.client.sendRawTransaction({ serializedTransaction: w.signed_raw_tx });
+        await broadcastSigned(env, w.signed_raw_tx);
       } catch (e) {
         const msg = String((e as Error).message).replace(/https?:\/\/\S+/g, "[rpc]");
         // Nonce already consumed. Keep the signed transaction and the hold.
@@ -1695,7 +1737,7 @@ export async function runWithdrawalWorker(chainId: number) {
     rpc("crypto_withdrawal_signed", { p_id: next.id, p_hash: hash, p_nonce: nonce, p_raw: raw }),
   );
   try {
-    await env.client.sendRawTransaction({ serializedTransaction: raw });
+    await broadcastSigned(env, raw);
     await must(rpc("crypto_withdrawal_broadcast", { p_id: next.id }));
     results[next.id] = "sent";
   } catch (e) {
