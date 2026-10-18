@@ -4,6 +4,7 @@ import {
   runReconciliation,
   runWithdrawalWorker,
 } from "./chain.server";
+import { redactSweepLog } from "./deposit-sweep";
 import { applyWorkerEnv, workerEnv } from "@/lib/worker-env";
 
 export { applyWorkerEnv };
@@ -58,6 +59,20 @@ export async function handleCryptoJob(
     for (const chainId of chains) {
       results[String(chainId)] = await JOBS[name].perChain(chainId);
     }
+    // Sweep runs only on the pg_cron deposit route, after crediting, and only
+    // when CRYPTO_DEPOSIT_SWEEP_ENABLED is exactly "true". It is not part of
+    // the Cloudflare minute cron: that budget cannot spare the extra RPC.
+    if (name === "deposits") {
+      try {
+        const { runDepositSweep } = await import("./deposit-sweep.server");
+        for (const chainId of chains) {
+          results[`${chainId}:sweep`] = await runDepositSweep(chainId);
+        }
+      } catch (e) {
+        console.error("[crypto:sweep]", redactSweepLog((e as Error).message ?? "failed", []));
+        results["sweep"] = { ok: false, error: "SWEEP_FAILED" };
+      }
+    }
     return Response.json({ ok: true, results });
   } catch (e) {
     const message = (e as Error).message ?? "failed";
@@ -81,9 +96,7 @@ async function reportSettlementWorkerHealth(): Promise<void> {
       return;
     }
     const row = (data ?? {}) as { stale?: number; exhausted?: number };
-    console.log(
-      `[settlement:health] stale=${row.stale ?? "?"} exhausted=${row.exhausted ?? "?"}`,
-    );
+    console.log(`[settlement:health] stale=${row.stale ?? "?"} exhausted=${row.exhausted ?? "?"}`);
   } catch (e) {
     console.error("[settlement:health]", e instanceof Error ? e.message.slice(0, 120) : "failed");
   }

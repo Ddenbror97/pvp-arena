@@ -9,6 +9,11 @@ const KNOWN = [
   "SUPABASE_PUBLISHABLE_KEY",
   "CRYPTO_JOB_TOKEN",
   "CRYPTO_DEPOSIT_XPUB",
+  // Deposit sweep stays off until this flag is exactly "true". The xprv is the
+  // extended private key for CRYPTO_DEPOSIT_XPUB. Both are Worker secrets.
+  // Never commit them and never log them.
+  "CRYPTO_DEPOSIT_XPRV",
+  "CRYPTO_DEPOSIT_SWEEP_ENABLED",
   "CRYPTO_TRACE_URL_8453",
   "BTCPAY_URL",
   "BTCPAY_STORE_ID",
