@@ -10,6 +10,7 @@ import {
   ankrInternalDeposits,
   ankrNativeTransfers,
   firstBlockAbove,
+  traceFilterDeposits,
   internalLogIndex,
   type AnkrTxPage,
   type RpcReply,
@@ -193,6 +194,31 @@ describe("internal ETH deposits", () => {
       52705282n,
     );
     expect(rows).toEqual([]);
+  });
+});
+
+describe("chainstack trace_filter", () => {
+  it("reads an internal call to the deposit address", () => {
+    const [t] = traceFilterDeposits(
+      [
+        {
+          transactionHash: "0xd8e70b8f1d0c78cbc84e373fea87c4b4d3a7db920647adfdc30122e70a4e4167",
+          blockNumber: "0x" + (52705282).toString(16),
+          traceAddress: [0, 1],
+          type: "call",
+          action: {
+            from: "0xbf2f1213f47e76f1c1d9b7a536f2cb8b347d59b4",
+            to: deposit,
+            value: "0x" + (3138330000000000).toString(16),
+            callType: "call",
+          },
+        },
+      ],
+      deposit,
+      52705282n,
+    );
+    expect(t?.value).toBe(3138330000000000n);
+    expect(t?.logIndex).toBe(ETH_EXTERNAL_LOG_INDEX + 1 + 1);
   });
 });
 

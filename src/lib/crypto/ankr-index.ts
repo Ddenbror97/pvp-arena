@@ -203,6 +203,56 @@ export function ankrInternalDeposits(
   }));
 }
 
+type TraceFilterEntry = {
+  transactionHash?: string;
+  blockNumber?: string | number;
+  error?: string | null;
+  traceAddress?: number[] | null;
+  type?: string | null;
+  action?: {
+    from?: string;
+    to?: string | null;
+    value?: string | number | null;
+    callType?: string | null;
+  } | null;
+};
+
+/** Internal ETH from a client's `trace_filter` result. Chainstack serves this; Alchemy is not involved. */
+export function traceFilterDeposits(
+  result: unknown,
+  target: string,
+  block: bigint,
+): Array<NativeTransfer & { logIndex: number }> {
+  if (!Array.isArray(result)) return [];
+  const want = target.toLowerCase();
+  const rows = (result as TraceFilterEntry[])
+    .map((tx, i) => ({ tx, i }))
+    .filter(({ tx }) => {
+      const action = tx.action;
+      if (!tx.transactionHash || !action?.from || !action.to) return false;
+      if (action.to.toLowerCase() !== want) return false;
+      if (tx.error && tx.error.trim()) return false;
+      const kind = (action.callType ?? tx.type ?? "").toLowerCase();
+      if (kind && INTERNAL_CALLS_WITHOUT_VALUE.has(kind)) return false;
+      const value = parseAnkrWei(action.value);
+      if (value == null || value <= 0n) return false;
+      if (tx.blockNumber == null || tx.blockNumber === "") return true;
+      try {
+        return BigInt(tx.blockNumber) === block;
+      } catch {
+        return false;
+      }
+    });
+  return rows.map(({ tx, i }) => ({
+    hash: tx.transactionHash!,
+    from: tx.action!.from!,
+    to: tx.action!.to!,
+    blockNumber: block,
+    value: parseAnkrWei(tx.action!.value)!,
+    logIndex: internalLogIndex(tx.traceAddress ? { callStack: tx.traceAddress } : {}, i),
+  }));
+}
+
 /**
  * First block in (lo, hi] whose balance is above `threshold`.
  * "older" means the funds were already there at `lo`, so the window does not contain the transfer.

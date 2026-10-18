@@ -45,6 +45,7 @@ import {
   ankrIndexedThrough,
   ankrInternalDeposits,
   ankrNativeTransfers,
+  traceFilterDeposits,
   type AnkrInternalPage,
   type AnkrTxPage,
   type RpcReply,
@@ -609,6 +610,17 @@ async function accountedEthWei(chainId: number): Promise<Map<string, bigint>> {
  * A contract call paid one of our addresses. Record each internal transfer once.
  * Direct transfers are handled separately and use the external log index.
  */
+async function traceFilterBlock(
+  url: string,
+  block: bigint,
+  targets: Set<string>,
+): Promise<unknown> {
+  const hex = `0x${block.toString(16)}`;
+  return rpcResult(url, "trace_filter", [
+    { fromBlock: hex, toBlock: hex, toAddress: Array.from(targets) },
+  ]);
+}
+
 async function observeInternalBlock(
   env: Env,
   indexUrl: string,
@@ -616,16 +628,40 @@ async function observeInternalBlock(
   block: bigint,
   targets: Set<string>,
 ): Promise<number> {
-  const page = await ankrInternalPage(indexUrl, "ankr_getInternalTransactionsByBlockNumber", {
-    blockchain: chain,
-    blockNumber: Number(block),
-    onlyWithValue: true,
-  });
-  let observed = 0;
-  for (const target of targets) {
-    for (const t of ankrInternalDeposits(page, target, block, block)) {
-      if (await observeNativeTransfer(env, t, t.logIndex)) observed++;
+  let transfers: Array<{ hash: string; from: string; to: string; blockNumber: bigint; value: bigint; logIndex: number }> =
+    [];
+  try {
+    const page = await ankrInternalPage(indexUrl, "ankr_getInternalTransactionsByBlockNumber", {
+      blockchain: chain,
+      blockNumber: Number(block),
+      onlyWithValue: true,
+    });
+    for (const target of targets) {
+      transfers.push(...ankrInternalDeposits(page, target, block, block));
     }
+  } catch {
+    transfers = [];
+  }
+  // Ankr's advanced index does not list every exchange payout. Chainstack's
+  // trace API does: one filtered query for the block where the balance rose.
+  if (transfers.length === 0) {
+    const urls = [rpcUrlFor(env.chainId), rpcUrlFor(env.chainId, true)].filter(
+      (url): url is string => !!url,
+    );
+    for (const url of urls) {
+      try {
+        const traced = await traceFilterBlock(url, block, targets);
+        transfers = [];
+        for (const target of targets) transfers.push(...traceFilterDeposits(traced, target, block));
+        if (transfers.length > 0) break;
+      } catch {
+        continue;
+      }
+    }
+  }
+  let observed = 0;
+  for (const t of transfers) {
+    if (await observeNativeTransfer(env, t, t.logIndex)) observed++;
   }
   return observed;
 }
@@ -826,6 +862,14 @@ async function observeUncreditedInternal(
     } catch {
       // The balance is still ahead of the ledger. The next scan tries again.
     }
+  }
+  if (wanted.size > 0 && observed === 0) {
+    const { rpc } = await db();
+    await rpc("crypto_raise_incident", {
+      p_check: "crypto_eth_internal",
+      p_fp: `crypto_eth_internal:${env.chainId}:${new Date().toISOString().slice(0, 13)}`,
+      p_details: { chain_id: env.chainId, blocks: Array.from(wanted.keys()).map((b) => Number(b)) },
+    });
   }
   return observed;
 }
