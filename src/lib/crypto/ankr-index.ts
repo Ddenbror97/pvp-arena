@@ -253,6 +253,54 @@ export function traceFilterDeposits(
   }));
 }
 
+type CallFrame = {
+  from?: string;
+  to?: string | null;
+  value?: string | number | null;
+  type?: string | null;
+  error?: string | null;
+  calls?: CallFrame[] | null;
+};
+
+/** Internal ETH from `debug_traceTransaction` with the `callTracer`. */
+export function callTracerDeposits(
+  root: unknown,
+  target: string,
+  block: bigint,
+  hash: string,
+): Array<NativeTransfer & { logIndex: number }> {
+  if (!root || typeof root !== "object") return [];
+  const want = target.toLowerCase();
+  const found: Array<{ frame: CallFrame; slot: number; order: number }> = [];
+  let order = 0;
+  const walk = (frame: CallFrame, stack: number[]) => {
+    const value = parseAnkrWei(frame.value);
+    const kind = (frame.type ?? "").toLowerCase();
+    const to = frame.to?.toLowerCase();
+    if (
+      frame.from &&
+      to === want &&
+      value != null &&
+      value > 0n &&
+      !(frame.error && frame.error.trim()) &&
+      !INTERNAL_CALLS_WITHOUT_VALUE.has(kind)
+    ) {
+      found.push({ frame, slot: stack.length ? stack[stack.length - 1]! : 0, order });
+    }
+    order++;
+    (frame.calls ?? []).forEach((child, i) => walk(child, [...stack, i]));
+  };
+  walk(root as CallFrame, []);
+  return found.map(({ frame, slot, order: i }) => ({
+    hash,
+    from: frame.from!,
+    to: frame.to!,
+    blockNumber: block,
+    value: parseAnkrWei(frame.value)!,
+    logIndex: internalLogIndex({ callStack: [slot] }, i),
+  }));
+}
+
 /**
  * First block in (lo, hi] whose balance is above `threshold`.
  * "older" means the funds were already there at `lo`, so the window does not contain the transfer.
