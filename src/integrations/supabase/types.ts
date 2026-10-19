@@ -1090,6 +1090,7 @@ export type Database = {
           chain_id: number;
           created_at: string;
           derivation_index: number;
+          derivation_version: number;
           id: string;
           user_id: string;
         };
@@ -1098,6 +1099,7 @@ export type Database = {
           chain_id: number;
           created_at?: string;
           derivation_index: number;
+          derivation_version?: number;
           id?: string;
           user_id: string;
         };
@@ -1106,6 +1108,7 @@ export type Database = {
           chain_id?: number;
           created_at?: string;
           derivation_index?: number;
+          derivation_version?: number;
           id?: string;
           user_id?: string;
         };

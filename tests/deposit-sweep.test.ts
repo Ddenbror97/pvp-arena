@@ -2,7 +2,10 @@ import { readFileSync } from "node:fs";
 import { HDKey } from "@scure/bip32";
 import { privateKeyToAccount } from "viem/accounts";
 import {
+  encodeFunctionData,
+  getAddress,
   keccak256,
+  parseAbi,
   parseTransaction,
   recoverTransactionAddress,
   stringToHex,
@@ -16,14 +19,18 @@ import {
   deriveDepositAddressFromXprv,
   ETH_TRANSFER_GAS,
   GAS_STIPEND_CAP_WEI,
+  GAS_STIPEND_LIFETIME_CAP_WEI,
   MAX_NEW_SWEEPS_PER_RUN,
   MIN_ETH_SWEEP_WEI,
   planGasStipend,
   planSweep,
   prepareSweepAuth,
+  chainTransactionMatches,
+  decodeSignedSweep,
   reconcileAddress,
   redactSweepLog,
   selectSweepTargets,
+  signedSweepMatches,
   signSweepTransaction,
   spendableAddressFromXprv,
   sweepFlagEnabled,
@@ -37,13 +44,22 @@ import {
   type BroadcastOutcome,
   type ReceiptView,
   type SignRequest,
+  type ChainTransactionView,
+  type DecodedSweep,
   type SweepBegin,
+  type SweepConfirmProof,
   type SweepContext,
   type SweepIncident,
   type SweepRecord,
   type SweepStore,
   type SweepTarget,
 } from "../src/lib/crypto/deposit-sweep";
+import {
+  markPayoutNonceSigned,
+  MemoryNonceBook,
+  releasePayoutNonce,
+  reservePayoutNonce,
+} from "../src/lib/crypto/payout-nonce";
 
 const GWEI = 1_000_000_000n;
 const INDEX3 = "0xe0a1403a2e32c5d52d1620ccce8a5867367ef8fa";
@@ -51,7 +67,8 @@ const PAYOUT = "0xd29370ca973e85b7ec7e52c0cff267b0fb63da24";
 /** On-chain ETH at index 3: one credited deposit plus two rejected under-minimum transfers. */
 const INDEX3_ETH = 1_434_137_303_036_008n;
 const INDEX3_CREDITED = 614_169_901_209_170n;
-const BOOK: SweepTarget[] = [{ derivationIndex: 3, address: INDEX3 }];
+const BOOK: SweepTarget[] = [{ derivationIndex: 3, derivationVersion: 2, address: INDEX3 }];
+const TRANSFER = parseAbi(["function transfer(address to, uint256 value) returns (bool)"]);
 
 class MemorySweepStore implements SweepStore {
   rows: SweepRecord[] = [];
@@ -63,7 +80,14 @@ class MemorySweepStore implements SweepStore {
     );
   }
 
+  async listForDeposit(chainId: number, address: string): Promise<SweepRecord[]> {
+    return this.rows.filter(
+      (row) => row.chainId === chainId && row.depositAddress === address.toLowerCase(),
+    );
+  }
+
   async begin(row: SweepBegin) {
+    if (row.derivationVersion !== 2) return { created: false as const };
     const depositAddress = row.depositAddress.toLowerCase();
     const key = sweepIdempotencyKey(row.chainId, depositAddress, row.asset, row.nonce);
     const clash = this.rows.some(
@@ -111,11 +135,22 @@ class MemorySweepStore implements SweepStore {
     row.status = "BROADCAST";
   }
 
-  async confirm(id: string) {
+  async confirm(id: string, proof: SweepConfirmProof) {
     const row = this.must(id);
-    if (row.status === "CONFIRMED") return;
+    const matches =
+      row.txHash?.toLowerCase() === proof.hash.toLowerCase() &&
+      row.payer === proof.sender.toLowerCase() &&
+      row.toAddress === proof.to.toLowerCase() &&
+      row.amount === proof.amount &&
+      row.chainId === proof.chainId &&
+      row.signedRawTx != null;
+    if (row.status === "CONFIRMED") {
+      if (!matches) throw new Error("SWEEP_CONFIRM_MISMATCH");
+      return;
+    }
     if (row.status !== "SIGNED" && row.status !== "BROADCAST")
       throw new Error("SWEEP_NOT_INFLIGHT");
+    if (!matches) throw new Error("SWEEP_CONFIRM_MISMATCH");
     row.status = "CONFIRMED";
   }
 
@@ -161,8 +196,52 @@ function signer() {
   };
 }
 
+function fixtureDecode(raw: string): DecodedSweep | null {
+  if (!raw.startsWith("raw:")) return null;
+  const [, kind, from, to, amount, nonce] = raw.split(":");
+  if (!kind || !from || !to || !amount || nonce == null) return null;
+  const hash = keccak256(stringToHex(raw));
+  if (kind === "usdc") {
+    return {
+      hash,
+      chainId: 8453,
+      nonce: Number(nonce),
+      sender: from.toLowerCase(),
+      to: SWEEP_USDC.toLowerCase(),
+      value: 0n,
+      data: encodeFunctionData({
+        abi: TRANSFER,
+        functionName: "transfer",
+        args: [getAddress(to), BigInt(amount)],
+      }),
+    };
+  }
+  return {
+    hash,
+    chainId: 8453,
+    nonce: Number(nonce),
+    sender: from.toLowerCase(),
+    to: to.toLowerCase(),
+    value: BigInt(amount),
+    data: "0x",
+  };
+}
+
+function chainFromDecoded(decoded: DecodedSweep): ChainTransactionView {
+  return {
+    hash: decoded.hash,
+    from: decoded.sender,
+    to: decoded.to,
+    value: decoded.value,
+    input: decoded.data,
+    nonce: decoded.nonce,
+    chainId: decoded.chainId,
+  };
+}
+
 async function tick(opts: {
   store?: MemorySweepStore;
+  nonces?: MemoryNonceBook;
   accounts: Record<string, AccountView>;
   sign?: ReturnType<typeof signer>["sign"];
   broadcast?: (raw: string) => BroadcastOutcome | Promise<BroadcastOutcome>;
@@ -172,8 +251,10 @@ async function tick(opts: {
   gasFundingAvailable?: boolean;
   book?: SweepTarget[];
   targets?: SweepTarget[];
+  chainTransaction?: (hash: string) => ChainTransactionView | null;
 }) {
   const store = opts.store ?? new MemorySweepStore();
+  const nonces = opts.nonces ?? new MemoryNonceBook();
   const incidents: SweepIncident[] = [];
   const book = opts.book ?? BOOK;
   const ctx: SweepContext = {
@@ -193,6 +274,51 @@ async function tick(opts: {
     broadcast: opts.broadcast ?? (() => "ok"),
     store,
     raise: (incident) => incidents.push(incident),
+    reserveNonce: (input) =>
+      nonces.run(() =>
+        reservePayoutNonce(nonces, {
+          chainId: 8453,
+          payer: input.payer,
+          purpose: input.purpose,
+          ownerId: input.ownerId,
+          chainPending: input.chainNonce,
+          occupied: store.rows
+            .filter(
+              (row) =>
+                row.payer === input.payer.toLowerCase() &&
+                row.nonce != null &&
+                ["PENDING", "SIGNED", "BROADCAST"].includes(row.status),
+            )
+            .map((row) => row.nonce ?? 0),
+        }),
+      ),
+    markNonceSigned: async (input) => {
+      markPayoutNonceSigned(nonces, {
+        chainId: 8453,
+        payer: input.payer,
+        nonce: input.nonce,
+        ownerId: input.ownerId,
+      });
+    },
+    releaseNonce: async (input) => {
+      releasePayoutNonce(nonces, {
+        chainId: 8453,
+        payer: input.payer,
+        nonce: input.nonce,
+        ownerId: input.ownerId,
+        chainPending: input.chainNonce,
+      });
+    },
+    decodeSigned: (raw) => fixtureDecode(raw),
+    chainTransaction:
+      opts.chainTransaction ??
+      ((hash) => {
+        const row = store.rows.find((item) => item.txHash === hash);
+        if (!row?.signedRawTx) return null;
+        const decoded = fixtureDecode(row.signedRawTx);
+        if (!decoded || decoded.hash.toLowerCase() !== hash.toLowerCase()) return null;
+        return chainFromDecoded(decoded);
+      }),
   });
   return { store, incidents, ...result };
 }
@@ -574,6 +700,7 @@ describe("deposit sweep settlement", () => {
       chainId: 8453,
       depositAddress: INDEX3,
       derivationIndex: 3,
+      derivationVersion: 2,
       asset: "ETH",
       amount,
       nonce: 4,
@@ -603,6 +730,7 @@ describe("deposit sweep settlement", () => {
       chainId: 8453,
       depositAddress: INDEX3,
       derivationIndex: 3,
+      derivationVersion: 2,
       asset: "ETH",
       amount: MIN_ETH_SWEEP_WEI,
       nonce: 1,
@@ -615,6 +743,7 @@ describe("deposit sweep settlement", () => {
       chainId: 8453,
       depositAddress: INDEX3,
       derivationIndex: 3,
+      derivationVersion: 2,
       asset: "USDC",
       amount: 1n,
       nonce: 2,
@@ -818,9 +947,58 @@ describe("deposit sweep guards", () => {
     expect(parsed.value).toBe(amount);
     expect(parsed.chainId).toBe(8453);
     expect(await recoverTransactionAddress({ serializedTransaction: raw.raw })).toBe(spendable);
+    const decoded = await decodeSignedSweep(raw.raw);
+    expect(decoded?.sender).toBe(spendable.toLowerCase());
+    expect(decoded?.to).toBe(SWEEP_TREASURY.toLowerCase());
+    expect(decoded?.value).toBe(amount);
+    expect(decoded?.chainId).toBe(8453);
+    expect(decoded?.hash).toBe(raw.hash);
+    const record = {
+      id: "signed",
+      chainId: 8453,
+      depositAddress: spendable.toLowerCase(),
+      derivationIndex: 3,
+      asset: "ETH" as const,
+      amount,
+      txHash: raw.hash,
+      signedRawTx: raw.raw,
+      nonce: 4,
+      status: "BROADCAST" as const,
+      payer: spendable.toLowerCase(),
+      toAddress: SWEEP_TREASURY.toLowerCase(),
+      idempotencyKey: "signed",
+      error: null,
+      maxFeePerGas: GWEI,
+      gasLimit: ETH_TRANSFER_GAS,
+    };
+    expect(decoded && signedSweepMatches(record, decoded).ok).toBe(true);
+    expect(
+      decoded &&
+        chainTransactionMatches(decoded, {
+          hash: decoded.hash,
+          from: spendable,
+          to: SWEEP_TREASURY,
+          value: amount,
+          input: "0x",
+          nonce: 4,
+          chainId: 8453,
+        }),
+    ).toBe(true);
+    expect(
+      decoded &&
+        chainTransactionMatches(decoded, {
+          hash: decoded.hash,
+          from: PAYOUT,
+          to: SWEEP_TREASURY,
+          value: amount,
+          input: "0x",
+          nonce: 4,
+          chainId: 8453,
+        }),
+    ).toBe(false);
   });
 
-  it("matches an xprv to its xpub and rejects a different node or a wrong address", () => {
+  it("matches an xprv to its xpub and rejects a different node or a wrong address", async () => {
     const seed = new Uint8Array(64);
     seed[0] = 4;
     const otherSeed = new Uint8Array(64);
@@ -831,19 +1009,40 @@ describe("deposit sweep guards", () => {
     const xpub = master.publicExtendedKey;
     if (!xprv || !other.privateExtendedKey) throw new Error("test key");
     const address = deriveDepositAddress(xpub, 8453, 3);
+    const { deriveDepositAddressV2 } = await import("../src/lib/crypto/addresses.server");
+    const spendable = spendableAddressFromXprv(xprv, 8453, 3);
     expect(xprvMatchesXpub(xprv, xpub)).toBe(true);
     expect(xprvMatchesXpub(xprv, other.publicExtendedKey)).toBe(false);
-    expect(spendableAddressFromXprv(xprv, 8453, 3)).not.toBe(address);
-    const good = prepareSweepAuth({
+    expect(spendable).not.toBe(address);
+    expect(deriveDepositAddressV2(xpub, 8453, 3)).toBe(spendable);
+    const historical = prepareSweepAuth({
       enabledFlag: "true",
       xprv,
       xpub,
       treasury: SWEEP_TREASURY,
-      book: [{ index: 3, address }],
+      book: [{ index: 3, address, version: 1 }],
       requireKnownAnchors: false,
     });
-    expect(good.ok).toBe(false);
-    if (!good.ok) expect(good.reason).toBe("DERIVATION_MISMATCH");
+    expect(historical.ok).toBe(true);
+    const current = prepareSweepAuth({
+      enabledFlag: "true",
+      xprv,
+      xpub,
+      treasury: SWEEP_TREASURY,
+      book: [{ index: 3, address: spendable, version: 2 }],
+      requireKnownAnchors: false,
+    });
+    expect(current.ok).toBe(true);
+    const mislabeled = prepareSweepAuth({
+      enabledFlag: "true",
+      xprv,
+      xpub,
+      treasury: SWEEP_TREASURY,
+      book: [{ index: 3, address, version: 2 }],
+      requireKnownAnchors: false,
+    });
+    expect(mislabeled.ok).toBe(false);
+    if (!mislabeled.ok) expect(mislabeled.reason).toBe("DERIVATION_MISMATCH");
     const mismatch = prepareSweepAuth({
       enabledFlag: "true",
       xprv,
@@ -859,7 +1058,7 @@ describe("deposit sweep guards", () => {
       xprv,
       xpub,
       treasury: SWEEP_TREASURY,
-      book: [{ index: 3, address: INDEX3 }],
+      book: [{ index: 3, address: INDEX3, version: 1 }],
       requireKnownAnchors: false,
     });
     expect(wrongAddress.ok).toBe(false);
@@ -869,7 +1068,7 @@ describe("deposit sweep guards", () => {
       xprv,
       xpub,
       treasury: SWEEP_TREASURY,
-      book: [{ index: 3, address }],
+      book: [{ index: 3, address, version: 1 }],
       requireKnownAnchors: true,
     });
     expect(anchors.ok).toBe(false);
@@ -886,7 +1085,7 @@ describe("deposit sweep guards", () => {
       xprv: "xprv",
       xpub: "xpub",
       treasury: SWEEP_TREASURY,
-      book: [{ index: 3, address: INDEX3 }],
+      book: [{ index: 3, address: INDEX3, version: 1 }],
       requireKnownAnchors: true,
     });
     expect(disabled.ok).toBe(false);
@@ -896,7 +1095,7 @@ describe("deposit sweep guards", () => {
       xprv: "xprv",
       xpub: "xpub",
       treasury: PAYOUT,
-      book: [{ index: 3, address: INDEX3 }],
+      book: [{ index: 3, address: INDEX3, version: 1 }],
       requireKnownAnchors: false,
     });
     expect(treasury.ok).toBe(false);
@@ -918,6 +1117,7 @@ describe("deposit sweep guards", () => {
   it("walks a bounded address window and always includes in-flight rows", () => {
     const book = Array.from({ length: 10 }, (_, index) => ({
       derivationIndex: index,
+      derivationVersion: 2 as const,
       address: `0x${(index + 1).toString(16).padStart(40, "0")}`,
     }));
     const first = selectSweepTargets({
@@ -961,6 +1161,142 @@ describe("deposit sweep guards", () => {
     expect(migration).toContain("enable row level security");
     expect(migration).toContain("revoke all on public.crypto_deposit_sweeps");
     expect(migration).not.toContain("xprv");
+    const versioned = readFileSync(
+      "supabase/migrations/20261019010000_deposit_address_version.sql",
+      "utf8",
+    );
+    expect(versioned).toContain("derivation_version = 2");
+    expect(versioned).toContain("0x9eaff85db9a2559ec958740a6a3b523751237987");
+    expect(versioned).toContain("400000000000000");
+    expect(versioned).toContain("pg_advisory_xact_lock");
+    expect(versioned).toContain("'withdrawal', 'gas_stipend'");
+    expect(versioned).not.toContain("crypto_credit_deposit");
+    expect(versioned).not.toContain("_post(");
+    expect(versioned).not.toContain("update public.crypto_deposit_addresses");
+    const watcher = readFileSync("src/lib/crypto/chain.server.ts", "utf8");
+    expect(watcher).toContain('.select("address")');
+    expect(watcher).not.toContain("derivation_version = 2");
+  });
+
+  it("does not sweep a version 1 address", async () => {
+    const version1: SweepTarget = {
+      derivationIndex: 41,
+      derivationVersion: 1,
+      address: "0x989642fd0d3e78296081a9417fac253460f2a0c0",
+    };
+    const { store, actions } = await tick({
+      book: [version1],
+      targets: [version1],
+      accounts: {
+        [version1.address]: funded(INDEX3_ETH, 0n, 0),
+        [PAYOUT]: funded(10n ** 18n, 0n, 1),
+      },
+    });
+    expect(actions).toEqual([{ address: version1.address, action: "version_skipped" }]);
+    expect(store.rows).toHaveLength(0);
+  });
+
+  it("gives concurrent gas stipends distinct payout nonces", async () => {
+    const first = `0x${"11".repeat(20)}`;
+    const second = `0x${"22".repeat(20)}`;
+    const book: SweepTarget[] = [
+      { derivationIndex: 0, derivationVersion: 2, address: first },
+      { derivationIndex: 1, derivationVersion: 2, address: second },
+    ];
+    const { store } = await tick({
+      book,
+      targets: book,
+      accounts: {
+        [first]: funded(0n, 1_000_000n, 0),
+        [second]: funded(0n, 1_000_000n, 0),
+        [PAYOUT]: funded(10n ** 18n, 0n, 7),
+      },
+    });
+    const gas = store.rows.filter((row) => row.asset === "GAS");
+    expect(gas.map((row) => row.nonce)).toEqual([7, 8]);
+    expect(new Set(gas.map((row) => row.idempotencyKey)).size).toBe(2);
+  });
+
+  it("stops repeat gas funding after the lifetime and attempt ceilings", async () => {
+    const store = new MemorySweepStore();
+    const base = {
+      id: "seed",
+      chainId: 8453,
+      depositAddress: INDEX3,
+      derivationIndex: 3,
+      txHash: null,
+      signedRawTx: null,
+      nonce: 1,
+      payer: PAYOUT,
+      toAddress: INDEX3,
+      error: null,
+      maxFeePerGas: GWEI,
+      gasLimit: ETH_TRANSFER_GAS,
+      idempotencyKey: "seed",
+    } satisfies Partial<SweepRecord>;
+    store.rows.push(
+      {
+        ...base,
+        id: "gas-1",
+        asset: "GAS",
+        amount: GAS_STIPEND_LIFETIME_CAP_WEI / 2n,
+        status: "CONFIRMED",
+        idempotencyKey: "gas-1",
+      } as SweepRecord,
+      {
+        ...base,
+        id: "gas-2",
+        asset: "GAS",
+        amount: GAS_STIPEND_LIFETIME_CAP_WEI / 2n,
+        status: "CONFIRMED",
+        idempotencyKey: "gas-2",
+        nonce: 2,
+      } as SweepRecord,
+    );
+    const refused = await tick({
+      store,
+      accounts: {
+        [INDEX3]: funded(0n, 1_000_000n, 0),
+        [PAYOUT]: funded(10n ** 18n, 0n, 9),
+      },
+    });
+    expect(refused.actions[0]?.action).toBe("gas_lifetime");
+    expect(store.rows.filter((row) => row.asset === "GAS")).toHaveLength(2);
+    expect(
+      refused.incidents.some((incident) => incident.details["reason"] === "GAS_LIFETIME"),
+    ).toBe(true);
+  });
+
+  it("holds a confirmed-looking receipt that does not match the signed transaction", async () => {
+    const keys = signer();
+    const first = await tick({
+      accounts: {
+        [INDEX3]: funded(INDEX3_ETH, 0n, 4),
+        [PAYOUT]: funded(10n ** 18n, 0n, 1),
+      },
+      sign: keys.sign,
+    });
+    const row = first.store.rows[0]!;
+    const mismatched = await tick({
+      store: first.store,
+      accounts: {
+        [INDEX3]: funded(0n, 0n, 5),
+        [PAYOUT]: funded(10n ** 18n, 0n, 1),
+      },
+      receipts: { [row.txHash ?? ""]: { state: "success", blockNumber: 10n } },
+      chainTransaction: () => ({
+        hash: row.txHash ?? "",
+        from: PAYOUT,
+        to: PAYOUT,
+        value: 1n,
+        input: "0x",
+        nonce: 4,
+        chainId: 1,
+      }),
+    });
+    expect(mismatched.actions[0]?.action).toBe("receipt_mismatch");
+    expect(row.status).toBe("BROADCAST");
+    expect(first.store.rows).toHaveLength(1);
   });
 });
 

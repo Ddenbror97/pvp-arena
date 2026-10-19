@@ -218,6 +218,7 @@ export async function loadChainEnv(
         .select("*")
         .eq("chain_id", chainId)
         .eq("is_active", true),
+      // Every version stays watched. Late deposits to a version 1 address still match.
       admin.from("crypto_deposit_addresses").select("address").eq("chain_id", chainId),
     ]);
   const settings = s as CryptoSettings | null;
@@ -1650,10 +1651,30 @@ export async function runWithdrawalWorker(chainId: number) {
     }
   }
 
-  const nonce = await env.client.getTransactionCount({
+  const chainNonce = await env.client.getTransactionCount({
     address: account.address,
     blockTag: "pending",
   });
+  let nonce: number;
+  try {
+    const leased = await must<{ nonce?: number }>(
+      rpc("crypto_reserve_nonce", {
+        p_chain: env.chainId,
+        p_payer: account.address.toLowerCase(),
+        p_purpose: "withdrawal",
+        p_owner: next.id,
+        p_chain_nonce: chainNonce,
+      }),
+    );
+    nonce = Number(leased?.nonce);
+    if (!Number.isInteger(nonce) || nonce < 0) throw new Error("NONCE_LEASE");
+  } catch {
+    await rpc("crypto_withdrawal_error", {
+      p_id: next.id,
+      p_reason: "payout nonce lease failed; will retry",
+    });
+    return { ok: true, results: { ...results, [next.id]: "nonce_lease_retry" } };
+  }
   const prepared = await wallet.prepareTransactionRequest({
     ...request,
     nonce,
@@ -1667,6 +1688,12 @@ export async function runWithdrawalWorker(chainId: number) {
   await must(
     rpc("crypto_withdrawal_signed", { p_id: next.id, p_hash: hash, p_nonce: nonce, p_raw: raw }),
   );
+  await rpc("crypto_nonce_mark_signed", {
+    p_chain: env.chainId,
+    p_payer: account.address.toLowerCase(),
+    p_nonce: nonce,
+    p_owner: next.id,
+  });
   try {
     await broadcastSigned(env, raw);
     await must(rpc("crypto_withdrawal_broadcast", { p_id: next.id }));

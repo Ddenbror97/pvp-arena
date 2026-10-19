@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { encodeQR } from "qr";
-import { ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
+import { ArrowDownToLine, ArrowUpFromLine, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -239,6 +239,42 @@ function AmountField({
   );
 }
 
+function PreviousDepositAddresses({ rows }: { rows: { address: string; version: 1 }[] }) {
+  if (rows.length === 0) return null;
+  return (
+    <div className="mt-2 space-y-2">
+      {rows.map((row) => (
+        <div key={row.address} className="rounded-md border border-border bg-muted/40 p-2">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+            Previous address — still monitored
+          </p>
+          <div className="mt-1 flex items-start gap-1.5">
+            <p className="min-w-0 flex-1 break-all font-mono text-[11px] leading-snug">
+              {row.address}
+            </p>
+            <button
+              type="button"
+              aria-label="Copy previous deposit address"
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
+              onClick={() => {
+                navigator.clipboard
+                  .writeText(row.address)
+                  .then(() => toast.success("Previous address copied"));
+              }}
+            >
+              <Copy className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          <p className="mt-1 text-xs leading-snug text-muted-foreground">
+            Deposits sent to this older address are still detected and credited once. Use the
+            current address for new deposits.
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function CryptoRails({
   availableCents,
   requestedMode = "deposit",
@@ -331,6 +367,7 @@ export function CryptoRails({
     withdrawFloors[item.asset_key] = minWithdrawCents;
   }
   const receiveAddress = receive.data?.ok ? receive.data.address : null;
+  const previousAddresses = receive.data?.ok ? receive.data.previous : [];
   const receiveQr = useMemo(() => {
     if (!receiveAddress) return "";
     try {
@@ -606,13 +643,25 @@ export function CryptoRails({
                       </Button>
                     </div>
                   ) : receiveAddress ? (
-                    <DepositAddress
-                      network={chainName}
-                      address={receiveAddress}
-                      qr={receiveQr}
-                      copiedLabel="Base address copied"
-                      note={`Send ${depositAsset?.asset_key ?? "ETH or USDC"} on ${chainName} only. Minimum ${formatUsd(minDepositCents)}. Credited within ${depositWaitPhrase(chain?.network_mode)}.`}
-                    />
+                    <>
+                      <DepositAddress
+                        network={chainName}
+                        heading="Current deposit address"
+                        address={receiveAddress}
+                        qr={receiveQr}
+                        copiedLabel="Base address copied"
+                        note={`Send ${depositAsset?.asset_key ?? "ETH or USDC"} on ${chainName} only. Minimum ${formatUsd(minDepositCents)}. Credited within ${depositWaitPhrase(chain?.network_mode)}.`}
+                      />
+                      <PreviousDepositAddresses rows={previousAddresses} />
+                    </>
+                  ) : previousAddresses.length > 0 ? (
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">
+                        The current deposit address is not ready yet. Deposits to an older address
+                        are still detected.
+                      </p>
+                      <PreviousDepositAddresses rows={previousAddresses} />
+                    </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
                       Deposit addresses are unavailable right now.

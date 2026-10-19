@@ -5,10 +5,10 @@
  * before any RPC, database, or signature.
  *
  * CRYPTO_DEPOSIT_XPRV is read from the Worker secret binding only. It has to
- * match CRYPTO_DEPOSIT_XPUB (same public key and chain code) and derive
- * m/0/8453/<index> to every deposit address, including the known public
- * anchors, before a transaction is signed. The key is not stored on a sweep
- * row and is stripped from logs.
+ * match CRYPTO_DEPOSIT_XPUB (same public key and chain code). Version 1 rows
+ * are checked as historical addresses and are not swept. Version 2 rows must
+ * match the child private key before a transaction is signed. The key is not
+ * stored on a sweep row and is stripped from logs.
  *
  * Set the secret in the Cloudflare dashboard for the pvpspinarena worker.
  * Do not commit it and do not paste it into chat.
@@ -21,6 +21,7 @@ import { depositXpub, depositDerivationPath } from "./addresses.server";
 import { decidePayout } from "./payout-finality";
 import {
   applySweepTick,
+  decodeSignedSweep,
   prepareSweepAuth,
   redactSweepLog,
   selectSweepTargets,
@@ -30,9 +31,11 @@ import {
   MAX_NEW_SWEEPS_PER_RUN,
   type AccountView,
   type BroadcastOutcome,
+  type ChainTransactionView,
   type ReceiptView,
   type SweepAsset,
   type SweepBegin,
+  type SweepConfirmProof,
   type SweepRecord,
   type SweepStatus,
   type SweepStore,
@@ -83,12 +86,13 @@ async function runEnabledSweep(chainId: number, secrets: string[]): Promise<Swee
 
   const { data: bookRows, error: bookError } = await supabaseAdmin
     .from("crypto_deposit_addresses")
-    .select("address, derivation_index")
+    .select("address, derivation_index, derivation_version")
     .eq("chain_id", chainId)
     .order("derivation_index", { ascending: true });
   if (bookError) throw new Error(bookError.message);
   const book: SweepTarget[] = (bookRows ?? []).map((row) => ({
     derivationIndex: Number(row.derivation_index),
+    derivationVersion: Number(row.derivation_version) === 2 ? 2 : 1,
     address: String(row.address).toLowerCase(),
   }));
 
@@ -98,7 +102,11 @@ async function runEnabledSweep(chainId: number, secrets: string[]): Promise<Swee
     xprv,
     xpub: depositXpub(),
     treasury: env.treasury,
-    book: book.map((row) => ({ index: row.derivationIndex, address: row.address })),
+    book: book.map((row) => ({
+      index: row.derivationIndex,
+      address: row.address,
+      version: row.derivationVersion,
+    })),
     requireKnownAnchors: true,
   });
   if (!auth.ok) {
@@ -193,6 +201,11 @@ async function runEnabledSweep(chainId: number, secrets: string[]): Promise<Swee
       },
       store,
       raise: () => undefined,
+      reserveNonce: (input) => reservePayoutNonce(admin, chainId, input),
+      markNonceSigned: (input) => markPayoutNonceSigned(admin, chainId, input),
+      releaseNonce: (input) => releasePayoutNonce(admin, chainId, input),
+      decodeSigned: (raw) => decodeSignedSweep(raw),
+      chainTransaction: (hash) => readChainTransaction(env.client, hash),
     },
   );
 
@@ -311,7 +324,16 @@ function supabaseSweepStore(admin: Admin): SweepStore {
       if (error) throw new Error(error.message);
       return ((data ?? []) as DbSweep[]).map(asRecord);
     },
+    async listForDeposit(chainId, address) {
+      const { data, error } = await rpc("crypto_sweep_for_address", {
+        p_chain: chainId,
+        p_deposit: address.toLowerCase(),
+      });
+      if (error) throw new Error(error.message);
+      return ((data ?? []) as DbSweep[]).map(asRecord);
+    },
     async begin(row: SweepBegin) {
+      if (row.derivationVersion !== 2) return { created: false };
       const { data, error } = await rpc("crypto_sweep_begin", {
         p_chain: row.chainId,
         p_deposit: row.depositAddress,
@@ -341,8 +363,15 @@ function supabaseSweepStore(admin: Admin): SweepStore {
       const { error } = await rpc("crypto_sweep_mark_broadcast", { p_id: id });
       if (error) throw new Error(error.message);
     },
-    async confirm(id) {
-      const { error } = await rpc("crypto_sweep_confirm", { p_id: id });
+    async confirm(id, proof: SweepConfirmProof) {
+      const { error } = await rpc("crypto_sweep_confirm", {
+        p_id: id,
+        p_hash: proof.hash,
+        p_sender: proof.sender,
+        p_to: proof.to,
+        p_amount: proof.amount.toString(),
+        p_chain: proof.chainId,
+      });
       if (error) throw new Error(error.message);
     },
     async fail(id, reason) {
@@ -354,6 +383,90 @@ function supabaseSweepStore(admin: Admin): SweepStore {
       if (error) throw new Error(error.message);
     },
   };
+}
+
+async function reservePayoutNonce(
+  admin: Admin,
+  chainId: number,
+  input: {
+    payer: string;
+    purpose: "withdrawal" | "gas_stipend";
+    ownerId: string;
+    chainNonce: number;
+  },
+): Promise<{ nonce: number; reused: boolean } | null> {
+  const { data, error } = await admin.rpc("crypto_reserve_nonce", {
+    p_chain: chainId,
+    p_payer: input.payer.toLowerCase(),
+    p_purpose: input.purpose,
+    p_owner: input.ownerId,
+    p_chain_nonce: input.chainNonce,
+  });
+  if (error || data == null || typeof data !== "object") return null;
+  const body = data as { nonce?: number; reused?: boolean };
+  const nonce = Number(body.nonce);
+  if (!Number.isInteger(nonce) || nonce < 0) return null;
+  return { nonce, reused: body.reused === true };
+}
+
+async function markPayoutNonceSigned(
+  admin: Admin,
+  chainId: number,
+  input: { payer: string; nonce: number; ownerId: string },
+): Promise<void> {
+  const { error } = await admin.rpc("crypto_nonce_mark_signed", {
+    p_chain: chainId,
+    p_payer: input.payer.toLowerCase(),
+    p_nonce: input.nonce,
+    p_owner: input.ownerId,
+  });
+  if (error) throw new Error(error.message);
+}
+
+async function releasePayoutNonce(
+  admin: Admin,
+  chainId: number,
+  input: { payer: string; nonce: number; ownerId: string; chainNonce: number },
+): Promise<void> {
+  await admin.rpc("crypto_nonce_release", {
+    p_chain: chainId,
+    p_payer: input.payer.toLowerCase(),
+    p_nonce: input.nonce,
+    p_owner: input.ownerId,
+    p_chain_nonce: input.chainNonce,
+  });
+}
+
+async function readChainTransaction(
+  client: unknown,
+  hash: string,
+): Promise<ChainTransactionView | null> {
+  try {
+    const tx = await (
+      client as {
+        getTransaction: (args: { hash: Hex }) => Promise<{
+          hash: Hex;
+          from: Hex;
+          to: Hex | null;
+          value: bigint;
+          input: Hex;
+          nonce: number;
+          chainId?: number;
+        }>;
+      }
+    ).getTransaction({ hash: hash as Hex });
+    return {
+      hash: tx.hash,
+      from: tx.from,
+      to: tx.to,
+      value: tx.value,
+      input: tx.input,
+      nonce: tx.nonce,
+      chainId: tx.chainId ?? null,
+    };
+  } catch {
+    return null;
+  }
 }
 
 async function cursorGet(admin: Admin, chainId: number): Promise<number> {

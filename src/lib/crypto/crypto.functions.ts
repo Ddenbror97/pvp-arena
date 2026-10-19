@@ -11,6 +11,7 @@ import {
   parseWithdrawCashSnapshot,
   type WithdrawCashSnapshot,
 } from "@/lib/crypto/bonus-withdraw";
+import type { AddressBookRow } from "./deposit-address-book";
 
 const ERRORS: Record<string, string> = {
   WITHDRAWALS_PAUSED: "Withdrawals are paused right now.",
@@ -241,7 +242,15 @@ async function assignPersonalDepositAddress(
   db: Awaited<ReturnType<typeof admin>>,
   userId: string,
   chainId: number,
-): Promise<{ ok: true; address: string | null } | { ok: false; error: string }> {
+): Promise<
+  | {
+      ok: true;
+      address: string | null;
+      version: 2 | null;
+      previous: { address: string; version: 1 }[];
+    }
+  | { ok: false; error: string }
+> {
   const { data: net } = await db
     .from("chain_networks")
     .select("chain_id")
@@ -249,49 +258,71 @@ async function assignPersonalDepositAddress(
     .eq("is_enabled", true)
     .maybeSingle();
   if (!net) return { ok: false, error: ERRORS["CHAIN_DISABLED"]! };
-  const { data: existing } = await db
-    .from("crypto_deposit_addresses")
-    .select("address")
-    .eq("user_id", userId)
-    .eq("chain_id", chainId)
-    .maybeSingle();
-  const found = existing as { address?: string } | null;
-  if (found?.address) return { ok: true, address: found.address };
-  const { depositXpub, deriveDepositAddress } = await import("./addresses.server");
-  const xpub = depositXpub();
-  if (!xpub) return { ok: true, address: null };
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const { data: maxRow } = await db
-      .from("crypto_deposit_addresses")
-      .select("derivation_index")
-      .eq("chain_id", chainId)
-      .order("derivation_index", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    const latest = maxRow as { derivation_index?: number } | null;
-    const index = latest ? Number(latest.derivation_index) + 1 : 0;
-    const address = deriveDepositAddress(xpub, chainId, index).toLowerCase();
-    const { error } = await db.from("crypto_deposit_addresses").insert({
-      user_id: userId,
-      chain_id: chainId,
-      derivation_index: index,
-      address,
-    });
-    if (!error) return { ok: true, address };
-    if (error.code === "23505") {
-      const { data: again } = await db
-        .from("crypto_deposit_addresses")
-        .select("address")
-        .eq("user_id", userId)
-        .eq("chain_id", chainId)
-        .maybeSingle();
-      const recovered = again as { address?: string } | null;
-      if (recovered?.address) return { ok: true, address: recovered.address };
-      continue;
+  const { allocateDepositAddress } = await import("./deposit-address-book");
+  const { depositXpub } = await import("./addresses.server");
+  type StoredRow = {
+    user_id?: string;
+    address?: string;
+    derivation_index?: number;
+    derivation_version?: number;
+  };
+  const toRow = (row: StoredRow): AddressBookRow | null => {
+    const version = Number(row.derivation_version);
+    if (
+      !row.user_id ||
+      !row.address ||
+      row.derivation_index == null ||
+      (version !== 1 && version !== 2)
+    ) {
+      return null;
     }
-    break;
+    return {
+      userId: row.user_id,
+      chainId,
+      derivationIndex: Number(row.derivation_index),
+      derivationVersion: version,
+      address: row.address.toLowerCase(),
+    };
+  };
+  try {
+    const allocated = await allocateDepositAddress({
+      userId,
+      chainId,
+      xpub: depositXpub(),
+      book: {
+        async list() {
+          const listed = await db
+            .from("crypto_deposit_addresses")
+            .select("user_id, address, derivation_index, derivation_version")
+            .eq("chain_id", chainId);
+          if (listed.error) throw new Error(listed.error.message);
+          return ((listed.data ?? []) as StoredRow[])
+            .map(toRow)
+            .filter((row): row is AddressBookRow => row != null);
+        },
+        async insert(row) {
+          const { error } = await db.from("crypto_deposit_addresses").insert({
+            user_id: row.userId,
+            chain_id: row.chainId,
+            derivation_index: row.derivationIndex,
+            derivation_version: row.derivationVersion,
+            address: row.address,
+          });
+          if (!error) return "ok";
+          if (error.code === "23505") return "unique";
+          return "error";
+        },
+      },
+    });
+    return {
+      ok: true,
+      address: allocated.current?.address ?? null,
+      version: allocated.current ? 2 : null,
+      previous: allocated.previous.map((row) => ({ address: row.address, version: 1 as const })),
+    };
+  } catch {
+    return { ok: false, error: "Could not assign a deposit address. Please try again." };
   }
-  return { ok: false, error: "Could not assign a deposit address. Please try again." };
 }
 
 /**
@@ -342,8 +373,14 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
     if (data.usdCents < Number(checked.env.network.min_deposit_cents)) {
       return { ok: false as const, error: ERRORS["BELOW_MINIMUM"]! };
     }
-    // Personal receive address first (any sender). Shared treasury only if that book is off and a verified sender exists.
-    const personal = assigned.ok ? assigned.address : null;
+    // Current pay-to address is version 2. A version 1 address stays monitored by the
+    // watcher and is not published as the destination. Shared treasury is only the
+    // fallback when this user has no personal address at all.
+    if (!assigned.ok) return { ok: false as const, error: assigned.error };
+    const personal = assigned.address;
+    if (!personal && assigned.previous.length > 0) {
+      return { ok: false as const, error: ERRORS["NO_DEPOSIT_ADDRESS"]! };
+    }
     const verifiedRows = (walletRows ?? []) as {
       normalized_address?: string;
       is_primary?: boolean;

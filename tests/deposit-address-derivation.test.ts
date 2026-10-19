@@ -3,9 +3,10 @@ import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { getAddress, keccak256, recoverMessageAddress, type Hex } from "viem";
 import { privateKeyToAccount, publicKeyToAddress } from "viem/accounts";
 import { describe, expect, it } from "vitest";
-import { deriveDepositAddress } from "../src/lib/crypto/addresses.server";
+import { deriveDepositAddress, deriveDepositAddressV2 } from "../src/lib/crypto/addresses.server";
 import {
   deriveDepositAddressFromXprv,
+  deriveDepositAddressV2FromXprv,
   spendableAddressFromXprv,
   xprvMatchesXpub,
 } from "../src/lib/crypto/deposit-sweep";
@@ -86,7 +87,11 @@ describe("Base deposit address derivation", () => {
         expect(xprvMatchesXpub(xprv, xpub)).toBe(true);
         expect(fromXprv.toLowerCase()).toBe(published.toLowerCase());
         expect(spendableAddressFromXprv(xprv, 8453, index)).toBe(spendable);
+        const version2 = deriveDepositAddressV2(xpub, 8453, index);
         expect(ethereumAddressFromCompressedPublicKey(compressed)).toBe(spendable);
+        expect(version2).toBe(spendable);
+        expect(deriveDepositAddressV2FromXprv(xprv, 8453, index)).toBe(spendable);
+        expect(published.toLowerCase()).not.toBe(version2.toLowerCase());
         expect(published.toLowerCase()).not.toBe(spendable.toLowerCase());
         expect(xCoordinateAddress(compressed).toLowerCase()).toBe(published.toLowerCase());
 

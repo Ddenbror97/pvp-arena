@@ -11,6 +11,7 @@ export function DepositAddress({
   copiedLabel,
   pending = false,
   emptyAddress,
+  heading = "Deposit address",
   children,
 }: {
   network: string;
@@ -20,6 +21,7 @@ export function DepositAddress({
   copiedLabel: string;
   pending?: boolean;
   emptyAddress?: string;
+  heading?: string;
   children?: ReactNode;
 }) {
   const waiting = !address && pending;
@@ -47,7 +49,7 @@ export function DepositAddress({
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium">Deposit address</p>
+          <p className="text-xs font-medium">{heading}</p>
           <div className="mt-1 flex items-start gap-1.5">
             <p className="min-h-[2.25rem] min-w-0 flex-1 break-all font-mono text-[11px] leading-snug">
               {address ? (
