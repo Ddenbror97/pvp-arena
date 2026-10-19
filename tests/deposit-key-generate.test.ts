@@ -2,17 +2,18 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { HDKey } from "@scure/bip32";
 import { afterEach, describe, expect, it } from "vitest";
 import { deriveDepositAddressV2 } from "../src/lib/crypto/addresses.server";
 import { spendableAddressFromXprv } from "../src/lib/crypto/deposit-sweep";
 import {
+  decryptBundle,
   generateDepositKeys,
-  outputPaths,
+  openDepositBackup,
   repoRoot,
 } from "../scripts/generate-deposit-extended-keys.mjs";
 import { depositKeyCheck } from "../scripts/verify-deposit-extended-keys.mjs";
 
+const PASSPHRASE = "disposable-test-passphrase";
 const dirs: string[] = [];
 
 function disposableSeed(mark: number) {
@@ -26,73 +27,66 @@ afterEach(() => {
   for (const dir of dirs.splice(0)) rmSync(dir, { recursive: true, force: true });
 });
 
-describe("offline deposit HD generator", () => {
-  it("writes a mode-600 backup outside the repo and the child key signs that address", async () => {
+describe("deposit HD generator", () => {
+  it("encrypts the backup and the child key signs the version-2 address", async () => {
     const dir = mkdtempSync(join(tmpdir(), "pvp-deposit-hd-"));
     dirs.push(dir);
     const out = join(dir, "pvp-base.deposit-hd.txt");
     const seed = disposableSeed(7);
-    const created = await generateDepositKeys({ outPath: out, seed });
+    const created = await generateDepositKeys({ outPath: out, seed, passphrase: PASSPHRASE });
     expect(seed.every((byte) => byte === 0)).toBe(true);
     expect(created.path).toBe("m/0/8453/0");
-    expect(created.address).toMatch(/^0x[0-9a-fA-F]{40}$/);
+    expect(statSync(created.paths.bundle).mode & 0o777).toBe(0o600);
 
-    for (const path of [created.paths.bundle, created.paths.xpub, created.paths.xprv]) {
-      expect(statSync(path).mode & 0o777).toBe(0o600);
-    }
-    const bundle = readFileSync(created.paths.bundle, "utf8");
-    const xpub = readFileSync(created.paths.xpub, "utf8").trim();
-    const xprv = readFileSync(created.paths.xprv, "utf8").trim();
-    expect(bundle.includes(xprv)).toBe(true);
-    expect(xpub.startsWith("xpub")).toBe(true);
-    expect(xprv.startsWith("xprv")).toBe(true);
+    const stored = readFileSync(created.paths.bundle, "utf8");
+    expect(stored.startsWith("PVP-DEPOSIT-HD-1\n")).toBe(true);
+    const opened = await openDepositBackup(stored, PASSPHRASE);
+    expect(stored.includes(opened.xprv)).toBe(false);
+    expect(stored.includes(opened.xpub)).toBe(false);
+    expect(opened.address).toBe(created.address);
 
     for (const index of [0, 1, 41]) {
-      const checked = await depositKeyCheck(xpub, xprv, `m/0/8453/${index}`);
-      const fromPub = deriveDepositAddressV2(xpub, 8453, index);
-      const fromPriv = spendableAddressFromXprv(xprv, 8453, index);
+      const checked = await depositKeyCheck(opened.xpub, opened.xprv, `m/0/8453/${index}`);
+      const fromPub = deriveDepositAddressV2(opened.xpub, 8453, index);
+      const fromPriv = spendableAddressFromXprv(opened.xprv, 8453, index);
       expect(checked).toEqual({ match: true, address: fromPub, path: `m/0/8453/${index}` });
       expect(fromPriv).toBe(fromPub);
     }
-    expect(deriveDepositAddressV2(xpub, 8453, 0)).not.toBe(deriveDepositAddressV2(xpub, 8453, 1));
-  });
-
-  it("refuses to write inside the repository", async () => {
-    const inside = join(repoRoot(), "pvp-base.deposit-hd.txt");
-    await expect(generateDepositKeys({ outPath: inside, seed: disposableSeed(8) })).rejects.toThrow(
-      /REFUSING_REPO_PATH/,
+    expect(deriveDepositAddressV2(opened.xpub, 8453, 0)).not.toBe(
+      deriveDepositAddressV2(opened.xpub, 8453, 1),
     );
-    expect(() => statSync(inside)).toThrow();
+    expect(() => decryptBundle(stored, "wrong-passphrase-value")).toThrow(/DECRYPT_FAILED/);
   });
 
-  it("the command prints the address and does not print the extended keys", () => {
+  it("refuses the repository and synced Windows folders", async () => {
+    await expect(
+      generateDepositKeys({
+        outPath: join(repoRoot(), "pvp-base.deposit-hd.txt"),
+        seed: disposableSeed(8),
+        passphrase: PASSPHRASE,
+      }),
+    ).rejects.toThrow(/REFUSING_REPO_PATH/);
+
+    for (const folder of ["Desktop", "Downloads", "Documents", "OneDrive", "Dropbox"]) {
+      const out = join(tmpdir(), folder, "pvp-base.deposit-hd.txt");
+      await expect(
+        generateDepositKeys({ outPath: out, seed: disposableSeed(9), passphrase: PASSPHRASE }),
+      ).rejects.toThrow(/REFUSING_SYNCED_PATH/);
+      expect(() => statSync(out)).toThrow();
+    }
+  });
+
+  it("does not write a backup when the passphrase cannot be prompted", () => {
     const dir = mkdtempSync(join(tmpdir(), "pvp-deposit-hd-"));
     dirs.push(dir);
     const out = join(dir, "pvp-base.deposit-hd.txt");
     const run = spawnSync(process.execPath, ["scripts/generate-deposit-extended-keys.mjs", "--out", out], {
       encoding: "utf8",
     });
-    const output = `${run.stdout}${run.stderr}`;
-    expect(run.status).toBe(0);
-    expect(output).toMatch(/match: true\npath: m\/0\/8453\/0\naddress: 0x[0-9a-fA-F]{40}\n/);
-    expect(output).toContain("mode: 600");
-    expect(output).not.toMatch(/\bxprv[1-9A-HJ-NP-Za-km-z]+\b/);
-    expect(output).not.toMatch(/\bxpub[1-9A-HJ-NP-Za-km-z]+\b/);
-
-    const paths = outputPaths(out);
-    const xpub = readFileSync(paths.xpub, "utf8").trim();
-    const xprv = readFileSync(paths.xprv, "utf8").trim();
-    const shown = spawnSync(
-      process.execPath,
-      ["scripts/generate-deposit-extended-keys.mjs", "--show-public", paths.bundle],
-      { encoding: "utf8" },
-    );
-    const shownOut = `${shown.stdout}${shown.stderr}`;
-    expect(shown.status).toBe(0);
-    expect(shownOut).toContain(`address: ${deriveDepositAddressV2(xpub, 8453, 0)}`);
-    expect(shownOut).not.toContain(xprv);
-    expect(shownOut).not.toContain(xpub);
-    expect(HDKey.fromExtendedKey(xpub).publicExtendedKey).toBe(xpub);
+    expect(run.status).toBe(1);
+    expect(run.stderr).toContain("PASSPHRASE_REQUIRED");
+    expect(`${run.stdout}${run.stderr}`).not.toMatch(/\bxprv[1-9A-HJ-NP-Za-km-z]+\b/);
+    expect(() => statSync(out)).toThrow();
   });
 
   it("checks the installed libraries without creating a key", () => {
