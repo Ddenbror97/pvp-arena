@@ -433,7 +433,7 @@ export const requestCryptoWithdrawal = createServerFn({ method: "POST" })
       .select("normalized_address")
       .eq("user_id", context.userId)
       .eq("is_verified", true);
-    const linked = (linkedWallets ?? [])
+    const linked = ((linkedWallets ?? []) as { normalized_address?: string | null }[])
       .map((row) => row.normalized_address)
       .filter((value): value is string => typeof value === "string");
     if (!linked.includes(data.toAddress.toLowerCase())) {
