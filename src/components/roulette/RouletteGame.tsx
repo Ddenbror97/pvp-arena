@@ -231,7 +231,7 @@ export function RouletteGame() {
       : null;
 
   return (
-    <div className="flex min-w-0 flex-col gap-2.5 xl:h-full xl:min-h-0 xl:gap-1">
+    <div className="flex min-w-0 flex-col gap-2 xl:gap-1">
       <div className="flex h-6 items-center gap-3">
         <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-foreground/80">
           Previous rolls

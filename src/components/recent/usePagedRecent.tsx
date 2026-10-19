@@ -75,6 +75,5 @@ export function RecentPager({
   );
 }
 
-/** Full-bleed wrapper so the section runs edge to edge inside a centered page container. */
-export const EDGE_TO_EDGE =
-  "relative mt-8 flex min-h-[24.5rem] w-full max-w-full flex-col px-0 sm:px-1";
+/** Recent list under the game. No reserved height, so a blank stretch does not push the rows down. */
+export const EDGE_TO_EDGE = "relative mt-3 flex w-full max-w-full flex-col px-0 sm:px-1";

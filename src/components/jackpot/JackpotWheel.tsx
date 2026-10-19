@@ -133,7 +133,7 @@ export function JackpotWheel({ players, spin, now, highlightId, roundId = 0, chi
     <div
       ref={box}
       data-panel
-      className="game-stage relative mx-auto aspect-square w-full max-w-[min(340px,86vw)] touch-pan-y sm:max-w-[460px] [&_*]:touch-pan-y"
+      className="game-stage relative mx-auto aspect-square w-full max-w-[min(280px,78vw)] touch-pan-y sm:max-w-[360px] [&_*]:touch-pan-y"
     >
       {/* pointer */}
       <div className="absolute left-1/2 top-[-6px] z-20 -translate-x-1/2">
