@@ -33,6 +33,8 @@ import {
   type ChainlinkRound,
 } from "./eth-price";
 import { workerEnv } from "@/lib/worker-env";
+import { logCryptoOps } from "./ops-log";
+import { freshWithdrawalNonce, inflightWithdrawalKeepsStoredRaw } from "./payout-nonce";
 import {
   ANKR_MAX_BATCH,
   ANKR_MAX_INDEX_CALLS,
@@ -1053,6 +1055,16 @@ export async function runDepositWatcher(chainId: number) {
   const { rpc } = await db();
   const s = env.settings;
   if (!s.crypto_system_enabled) return { ok: true, paused: true };
+  const startedAt = Date.now();
+  let detectMs = 0;
+  const stages = () => {
+    const totalMs = Date.now() - startedAt;
+    return {
+      detectMs: detectMs > 0 ? detectMs : totalMs,
+      creditMs: detectMs > 0 ? Math.max(0, totalMs - detectMs) : 0,
+      totalMs,
+    };
+  };
 
   const latest = await env.client.getBlockNumber();
   // No safe head means no finality proof: observe, but credit nothing this run.
@@ -1153,6 +1165,7 @@ export async function runDepositWatcher(chainId: number) {
           cursor: Number(lastCursor),
           passes,
           observed,
+          stages: stages(),
         };
       }
       usdcError = message.replace(/https?:\/\/\S+/g, "[rpc]").slice(0, 240);
@@ -1198,6 +1211,7 @@ export async function runDepositWatcher(chainId: number) {
             passes,
             skippedEth: true,
             observed,
+            stages: stages(),
           };
         }
         if (!useIndex) {
@@ -1223,6 +1237,8 @@ export async function runDepositWatcher(chainId: number) {
   }
 
   const price = await snapshotEthPrice(env).catch(() => null);
+  detectMs = Date.now() - startedAt;
+  let creditDeferred = 0;
 
   // Credit: re-verify every pending deposit against the chain before crediting.
   // A missing ETH price leaves the deposit DETECTED so a later round can credit it once.
@@ -1313,6 +1329,7 @@ export async function runDepositWatcher(chainId: number) {
         }),
       );
       if (r?.status === "CREDITED") credited++;
+      else creditDeferred++;
     }
   }
 
@@ -1352,6 +1369,8 @@ export async function runDepositWatcher(chainId: number) {
     usdcError,
     observed,
     credited,
+    creditDeferred,
+    stages: stages(),
   };
 }
 
@@ -1418,7 +1437,7 @@ export async function runWithdrawalWorker(chainId: number) {
     : 0n;
 
   for (const w of rows ?? []) {
-    if (w.status === "SUBMITTING" || w.status === "SUBMITTED") {
+    if (inflightWithdrawalKeepsStoredRaw(w.status)) {
       inFlight = true;
       // Finality policy lives in ./payout-finality (safe block + two-provider agreement).
       const decision = await decidePayout(
@@ -1666,9 +1685,11 @@ export async function runWithdrawalWorker(chainId: number) {
         p_chain_nonce: chainNonce,
       }),
     );
-    nonce = Number(leased?.nonce);
-    if (!Number.isInteger(nonce) || nonce < 0) throw new Error("NONCE_LEASE");
+    const parsed = freshWithdrawalNonce(leased);
+    if (!parsed.ok) throw new Error(parsed.reason);
+    nonce = parsed.nonce;
   } catch {
+    logCryptoOps("crypto_withdrawal_nonce_lease", { chainId: env.chainId, result: "failed" });
     await rpc("crypto_withdrawal_error", {
       p_id: next.id,
       p_reason: "payout nonce lease failed; will retry",

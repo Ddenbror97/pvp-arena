@@ -1,6 +1,8 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
+  freshWithdrawalNonce,
+  inflightWithdrawalKeepsStoredRaw,
   markPayoutNonceSigned,
   MemoryNonceBook,
   releasePayoutNonce,
@@ -132,5 +134,28 @@ describe("payout nonce lease", () => {
     expect(readFileSync("src/lib/crypto/deposit-sweep.server.ts", "utf8")).toContain(
       "crypto_reserve_nonce",
     );
+    const reserveAt = worker.indexOf("crypto_reserve_nonce");
+    const signAt = worker.indexOf("signTransaction", reserveAt);
+    expect(signAt).toBeGreaterThan(reserveAt);
+    expect(worker).toContain("freshWithdrawalNonce");
+    expect(worker).toContain("nonce_lease_retry");
+    expect(worker).toContain("inflightWithdrawalKeepsStoredRaw");
+  });
+
+  it("refuses to sign when the nonce lease is missing and keeps stored withdrawal bytes", () => {
+    expect(freshWithdrawalNonce(null)).toEqual({ ok: false, reason: "NONCE_LEASE_FAILED" });
+    expect(freshWithdrawalNonce({})).toEqual({ ok: false, reason: "NONCE_LEASE_FAILED" });
+    expect(freshWithdrawalNonce({ nonce: -1 })).toEqual({
+      ok: false,
+      reason: "NONCE_LEASE_FAILED",
+    });
+    expect(freshWithdrawalNonce({ nonce: 1.5 })).toEqual({
+      ok: false,
+      reason: "NONCE_LEASE_FAILED",
+    });
+    expect(freshWithdrawalNonce({ nonce: 8 })).toEqual({ ok: true, nonce: 8 });
+    expect(inflightWithdrawalKeepsStoredRaw("SUBMITTING")).toBe(true);
+    expect(inflightWithdrawalKeepsStoredRaw("SUBMITTED")).toBe(true);
+    expect(inflightWithdrawalKeepsStoredRaw("APPROVED")).toBe(false);
   });
 });

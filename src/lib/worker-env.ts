@@ -14,6 +14,9 @@ const KNOWN = [
   // Never commit them and never log them.
   "CRYPTO_DEPOSIT_XPRV",
   "CRYPTO_DEPOSIT_SWEEP_ENABLED",
+  // Separate from the live flag. Exactly "true" plans sweeps and signs nothing.
+  // Both flags set to "true", or any other value, fails closed.
+  "CRYPTO_DEPOSIT_SWEEP_DRY_RUN",
   "CRYPTO_TRACE_URL_8453",
   "BTCPAY_URL",
   "BTCPAY_STORE_ID",

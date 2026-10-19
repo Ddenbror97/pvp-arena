@@ -177,6 +177,10 @@ export interface SweepContext {
   book: SweepTarget[];
   targets: SweepTarget[];
   nowIso: string;
+  /** Absent means live, which is what the settlement tests exercise. */
+  mode?: "live" | "dry_run";
+  /** New work stops at this time. In-flight rows are still reconciled. */
+  deadlineAtMs?: number;
 }
 
 export interface ReservedNonce {
@@ -244,6 +248,39 @@ export interface SweepTickResult {
 
 export function sweepFlagEnabled(flag: string | undefined): boolean {
   return flag === "true";
+}
+
+export type SweepFlagState = "off" | "on" | "invalid";
+
+/** Only the exact strings "true" and "false" are configuration. Anything else fails closed. */
+export function classifySweepFlag(value: string | undefined): SweepFlagState {
+  if (value == null || value === "" || value === "false") return "off";
+  if (value === "true") return "on";
+  return "invalid";
+}
+
+export type SweepModeName = "off" | "dry_run" | "live";
+
+export type SweepModeDecision =
+  | { ok: true; mode: SweepModeName }
+  | { ok: false; reason: "SWEEP_MODE_CONFLICT" | "SWEEP_FLAG_INVALID" };
+
+/**
+ * Live signing requires the live flag exactly "true" and dry-run off.
+ * Dry-run requires its own flag exactly "true" and the live flag off.
+ * Both on, or any other value, is a conflict. Dry-run never selects live.
+ */
+export function resolveSweepMode(
+  enabled: string | undefined,
+  dryRun: string | undefined,
+): SweepModeDecision {
+  const live = classifySweepFlag(enabled);
+  const dry = classifySweepFlag(dryRun);
+  if (live === "invalid" || dry === "invalid") return { ok: false, reason: "SWEEP_FLAG_INVALID" };
+  if (live === "on" && dry === "on") return { ok: false, reason: "SWEEP_MODE_CONFLICT" };
+  if (dry === "on") return { ok: true, mode: "dry_run" };
+  if (live === "on") return { ok: true, mode: "live" };
+  return { ok: true, mode: "off" };
 }
 
 export function sweepIdempotencyKey(
@@ -707,6 +744,10 @@ export async function applySweepTick(ctx: SweepContext, io: SweepIo): Promise<Sw
     const index = known.derivationIndex;
     const existing = byAddress.get(address);
     if (existing) {
+      if ((ctx.mode ?? "live") === "dry_run") {
+        actions.push({ address, action: "dry_run_inflight" });
+        continue;
+      }
       const outcome = await reconcileRow(
         existing,
         ctx,
@@ -722,6 +763,10 @@ export async function applySweepTick(ctx: SweepContext, io: SweepIo): Promise<Sw
     if (target.derivationVersion !== 2) {
       actions.push({ address, action: "version_skipped" });
       continue;
+    }
+    if (ctx.deadlineAtMs != null && Date.now() >= ctx.deadlineAtMs) {
+      actions.push({ address, action: "deadline" });
+      break;
     }
     if (ctx.gasPriceWei == null || ctx.gasPriceWei <= 0n) {
       actions.push({ address, action: "gas_price_unavailable" });
@@ -762,6 +807,10 @@ export async function applySweepTick(ctx: SweepContext, io: SweepIo): Promise<Sw
         },
       });
       actions.push({ address, action: "gas_cap" });
+      continue;
+    }
+    if ((ctx.mode ?? "live") === "dry_run") {
+      actions.push({ address, action: await describeDryRun(plan, address, ctx, io) });
       continue;
     }
 
@@ -980,6 +1029,26 @@ async function reconcileRow(
   return rebroadcast(row, io, raise);
 }
 
+async function describeDryRun(
+  plan: Extract<SweepPlan, { action: "sweep_eth" | "sweep_usdc" | "fund_gas" }>,
+  address: string,
+  ctx: SweepContext,
+  io: SweepIo,
+): Promise<string> {
+  if (plan.action === "sweep_eth") return "dry_run_sweep_eth";
+  if (plan.action === "sweep_usdc") return "dry_run_sweep_usdc";
+  if (!ctx.gasFundingAvailable) return "dry_run_gas_payer_unavailable";
+  const payer = io.account(ctx.payout.toLowerCase());
+  if ("error" in payer) return "dry_run_rpc_skip";
+  if (ctx.gasPriceWei == null || payer.ethWei < plan.amount + ethGasWei(ctx.gasPriceWei)) {
+    return "dry_run_gas_payer_short";
+  }
+  const history = await io.store.listForDeposit(ctx.chainId, address);
+  const stipend = assessGasStipend({ records: history, nextAmount: plan.amount });
+  if (!stipend.ok) return `dry_run_${stipend.reason.toLowerCase()}`;
+  return "dry_run_fund_gas";
+}
+
 async function signAndBroadcast(
   id: string,
   req: SignRequest,
@@ -990,6 +1059,7 @@ async function signAndBroadcast(
   blockedPayers: Set<string>,
   consumeNonce: (address: string, used: number) => void,
 ): Promise<string> {
+  if (ctx.mode === "dry_run") return "dry_run_blocked";
   let signed: { raw: string; hash: string };
   try {
     buildSweepTransaction(req);
@@ -1085,6 +1155,28 @@ async function rebroadcast(
   return "broadcast_retry";
 }
 
+function version1MatchesXpub(xpub: string, index: number, address: string): boolean {
+  try {
+    const expected = address.toLowerCase();
+    const fromPub = deriveDepositAddress(xpub, SWEEP_CHAIN_ID, index).toLowerCase();
+    const version2 = deriveDepositAddressV2(xpub, SWEEP_CHAIN_ID, index).toLowerCase();
+    return fromPub === expected && version2 !== expected;
+  } catch {
+    return false;
+  }
+}
+
+function version2MatchesXpub(xpub: string, index: number, address: string): boolean {
+  try {
+    const expected = address.toLowerCase();
+    const fromPub = deriveDepositAddressV2(xpub, SWEEP_CHAIN_ID, index).toLowerCase();
+    const version1 = deriveDepositAddress(xpub, SWEEP_CHAIN_ID, index).toLowerCase();
+    return fromPub === expected && version1 !== expected;
+  } catch {
+    return false;
+  }
+}
+
 function version1RecordMatches(
   xpub: string,
   xprv: string,
@@ -1123,6 +1215,135 @@ function version2RecordMatches(
   } catch {
     return false;
   }
+}
+
+export type SweepPreflightReason =
+  | "KEY_MISSING"
+  | "XPUB_MISSING"
+  | "KEY_MISMATCH"
+  | "DERIVATION_MISMATCH"
+  | "TREASURY_MISMATCH"
+  | "TREASURY_COUNT"
+  | "PAYOUT_MISMATCH"
+  | "PAYOUT_COUNT"
+  | "USDC_MISMATCH"
+  | "CHAIN"
+  | "SCHEMA_NOT_READY"
+  | "BOOK_EMPTY";
+
+export interface SweepPreflightInput {
+  mode: "dry_run" | "live";
+  xprv?: string | undefined;
+  xpub: string | null;
+  treasury: string;
+  payout: string;
+  payoutKeyAddress: string | null;
+  usdc: string;
+  chainId: number;
+  activeDepositCount: number;
+  activePayoutCount: number;
+  schemaReady: boolean;
+  book: { index: number; address: string; version: 1 | 2 }[];
+  requireKnownAnchors: boolean;
+}
+
+/**
+ * Checks that must pass before a live signature or a dry-run plan.
+ * Dry-run does not read the xprv. Live mode also requires the xprv to match
+ * the xpub and the child private key, and the gas-stipend key to match the
+ * active payout address.
+ */
+export function prepareSweepPreflight(
+  input: SweepPreflightInput,
+): { ok: true } | { ok: false; reason: SweepPreflightReason; index?: number } {
+  if (input.chainId !== SWEEP_CHAIN_ID) return { ok: false, reason: "CHAIN" };
+  if (!input.schemaReady) return { ok: false, reason: "SCHEMA_NOT_READY" };
+  if (input.activeDepositCount !== 1) return { ok: false, reason: "TREASURY_COUNT" };
+  if (input.treasury.toLowerCase() !== SWEEP_TREASURY.toLowerCase()) {
+    return { ok: false, reason: "TREASURY_MISMATCH" };
+  }
+  if (input.activePayoutCount !== 1) return { ok: false, reason: "PAYOUT_COUNT" };
+  if (!/^0x[0-9a-f]{40}$/.test(input.payout.toLowerCase())) {
+    return { ok: false, reason: "PAYOUT_MISMATCH" };
+  }
+  if (input.usdc.toLowerCase() !== SWEEP_USDC.toLowerCase()) {
+    return { ok: false, reason: "USDC_MISMATCH" };
+  }
+  if (!input.xpub) return { ok: false, reason: "XPUB_MISSING" };
+  if (input.book.length === 0) return { ok: false, reason: "BOOK_EMPTY" };
+  if (input.mode === "live") {
+    if (!input.xprv) return { ok: false, reason: "KEY_MISSING" };
+    if (!xprvMatchesXpub(input.xprv, input.xpub)) return { ok: false, reason: "KEY_MISMATCH" };
+    if (
+      !input.payoutKeyAddress ||
+      input.payoutKeyAddress.toLowerCase() !== input.payout.toLowerCase()
+    ) {
+      return { ok: false, reason: "PAYOUT_MISMATCH" };
+    }
+  }
+  for (const row of input.book) {
+    const matches =
+      input.mode === "live" && input.xprv
+        ? row.version === 1
+          ? version1RecordMatches(input.xpub, input.xprv, row.index, row.address)
+          : row.version === 2
+            ? version2RecordMatches(input.xpub, input.xprv, row.index, row.address)
+            : false
+        : row.version === 1
+          ? version1MatchesXpub(input.xpub, row.index, row.address)
+          : row.version === 2
+            ? version2MatchesXpub(input.xpub, row.index, row.address)
+            : false;
+    if (!matches) return { ok: false, reason: "DERIVATION_MISMATCH", index: row.index };
+  }
+  if (input.requireKnownAnchors) {
+    for (const anchor of KNOWN_DEPOSIT_ANCHORS) {
+      const matches =
+        input.mode === "live" && input.xprv
+          ? version1RecordMatches(input.xpub, input.xprv, anchor.index, anchor.address)
+          : version1MatchesXpub(input.xpub, anchor.index, anchor.address);
+      if (!matches) return { ok: false, reason: "DERIVATION_MISMATCH", index: anchor.index };
+    }
+  }
+  return { ok: true };
+}
+
+/** Dry-run IO cannot sign, broadcast, lease a nonce, or change a sweep row. */
+export function guardSweepIo(mode: "live" | "dry_run", io: SweepIo): SweepIo {
+  if (mode === "live") return io;
+  const forbid = (code: string) => async (): Promise<never> => {
+    throw new Error(code);
+  };
+  return {
+    ...io,
+    sign: forbid("DRY_RUN_SIGN"),
+    broadcast: forbid("DRY_RUN_BROADCAST"),
+    reserveNonce: forbid("DRY_RUN_NONCE"),
+    markNonceSigned: forbid("DRY_RUN_NONCE"),
+    releaseNonce: forbid("DRY_RUN_NONCE"),
+    store: {
+      listInflight: (chainId) => io.store.listInflight(chainId),
+      listForDeposit: (chainId, address) => io.store.listForDeposit(chainId, address),
+      begin: async () => {
+        throw new Error("DRY_RUN_STATE");
+      },
+      storeSigned: async () => {
+        throw new Error("DRY_RUN_STATE");
+      },
+      markBroadcast: async () => {
+        throw new Error("DRY_RUN_STATE");
+      },
+      confirm: async () => {
+        throw new Error("DRY_RUN_STATE");
+      },
+      fail: async () => {
+        throw new Error("DRY_RUN_STATE");
+      },
+      note: async () => {
+        throw new Error("DRY_RUN_STATE");
+      },
+    },
+  };
 }
 
 export async function decodeSignedSweep(raw: string): Promise<DecodedSweep | null> {

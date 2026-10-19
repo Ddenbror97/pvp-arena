@@ -109,6 +109,26 @@ export function releasePayoutNonce(
   return true;
 }
 
+/** A missing or non-numeric lease never becomes a signature. */
+export function freshWithdrawalNonce(
+  leased: { nonce?: unknown } | null | undefined,
+): { ok: true; nonce: number } | { ok: false; reason: "NONCE_LEASE_FAILED" } {
+  const raw = leased?.nonce;
+  const nonce =
+    typeof raw === "number"
+      ? raw
+      : typeof raw === "string" && /^\d+$/.test(raw)
+        ? Number(raw)
+        : Number.NaN;
+  if (!Number.isInteger(nonce) || nonce < 0) return { ok: false, reason: "NONCE_LEASE_FAILED" };
+  return { ok: true, nonce };
+}
+
+/** SUBMITTING and SUBMITTED rows rebroadcast the stored raw transaction. */
+export function inflightWithdrawalKeepsStoredRaw(status: string): boolean {
+  return status === "SUBMITTING" || status === "SUBMITTED";
+}
+
 function findOpen(
   book: MemoryNonceBook,
   input: { chainId: number; payer: string; nonce: number },

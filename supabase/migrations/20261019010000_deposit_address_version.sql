@@ -71,7 +71,7 @@ as $$
 declare
   dep text := lower(p_deposit);
   dst text := lower(p_to);
-  payer text := lower(p_payer);
+  payer_norm text := lower(p_payer);
   key text;
   inserted_id uuid;
   treasury constant text := '0x9eaff85db9a2559ec958740a6a3b523751237987';
@@ -89,7 +89,7 @@ begin
   if p_fee is null or p_fee <= 0 then raise exception 'SWEEP_FEE'; end if;
   if p_asset = 'USDC' and p_gas <> 80000 then raise exception 'SWEEP_GAS'; end if;
   if p_asset <> 'USDC' and p_gas <> 21000 then raise exception 'SWEEP_GAS'; end if;
-  if dep !~ '^0x[0-9a-f]{40}$' or dst !~ '^0x[0-9a-f]{40}$' or payer !~ '^0x[0-9a-f]{40}$' then
+  if dep !~ '^0x[0-9a-f]{40}$' or dst !~ '^0x[0-9a-f]{40}$' or payer_norm !~ '^0x[0-9a-f]{40}$' then
     raise exception 'SWEEP_ADDRESS';
   end if;
   select lower(address) into db_treasury
@@ -107,11 +107,11 @@ begin
   end if;
   if p_asset in ('ETH', 'USDC') then
     if dst <> treasury then raise exception 'SWEEP_DESTINATION_FORBIDDEN'; end if;
-    if payer <> dep then raise exception 'SWEEP_PAYER'; end if;
+    if payer_norm <> dep then raise exception 'SWEEP_PAYER'; end if;
   else
     if p_amount > cap then raise exception 'GAS_CAP'; end if;
     if dst <> dep then raise exception 'GAS_DESTINATION_FORBIDDEN'; end if;
-    if payer = dep then raise exception 'GAS_PAYER'; end if;
+    if payer_norm = dep then raise exception 'GAS_PAYER'; end if;
     select count(*) into funded_count
     from public.crypto_deposit_sweeps
     where chain_id = p_chain and deposit_address = dep and asset_key = 'GAS' and status <> 'FAILED';
@@ -130,7 +130,7 @@ begin
     gas_limit, max_fee_per_gas, status, payer, to_address, idempotency_key
   ) values (
     p_chain, dep, p_index, p_asset, p_amount, p_nonce,
-    p_gas, p_fee, 'PENDING', payer, dst, key
+    p_gas, p_fee, 'PENDING', payer_norm, dst, key
   )
   on conflict (idempotency_key) do nothing
   returning id into inserted_id;
@@ -265,7 +265,7 @@ security definer
 set search_path = public
 as $$
 declare
-  payer text := lower(p_payer);
+  payer_norm text := lower(p_payer);
   existing integer;
   lease_floor integer;
   sweep_floor integer;
@@ -276,12 +276,12 @@ begin
   if p_purpose not in ('withdrawal', 'gas_stipend') then raise exception 'NONCE_PURPOSE'; end if;
   if p_owner is null or length(p_owner) < 8 or length(p_owner) > 200 then raise exception 'NONCE_OWNER'; end if;
   if p_chain_nonce is null or p_chain_nonce < 0 then raise exception 'NONCE_LEASE'; end if;
-  if payer !~ '^0x[0-9a-f]{40}$' then raise exception 'NONCE_PAYER'; end if;
-  perform pg_advisory_xact_lock(hashtextextended(p_chain::text || ':' || payer, 0));
+  if payer_norm !~ '^0x[0-9a-f]{40}$' then raise exception 'NONCE_PAYER'; end if;
+  perform pg_advisory_xact_lock(hashtextextended(p_chain::text || ':' || payer_norm, 0));
 
   select nonce into existing
   from public.crypto_nonce_leases
-  where chain_id = p_chain and payer = payer and owner_id = p_owner
+  where chain_id = p_chain and payer = payer_norm and owner_id = p_owner
     and status = 'reserved' and signed = false;
   if found then
     return jsonb_build_object('nonce', existing, 'reused', true);
@@ -289,11 +289,11 @@ begin
 
   select coalesce(max(nonce) + 1, 0) into lease_floor
   from public.crypto_nonce_leases
-  where chain_id = p_chain and payer = payer and status in ('reserved', 'used');
+  where chain_id = p_chain and payer = payer_norm and status in ('reserved', 'used');
 
   select coalesce(max(nonce) + 1, 0) into sweep_floor
   from public.crypto_deposit_sweeps
-  where chain_id = p_chain and payer = payer
+  where chain_id = p_chain and payer = payer_norm
     and status in ('PENDING', 'SIGNED', 'BROADCAST') and nonce is not null;
 
   select coalesce(max(nonce) + 1, 0) into withdrawal_floor
@@ -303,13 +303,13 @@ begin
   next_nonce := greatest(p_chain_nonce, lease_floor, sweep_floor, withdrawal_floor);
   while exists (
     select 1 from public.crypto_nonce_leases
-    where chain_id = p_chain and payer = payer and nonce = next_nonce and status <> 'released'
+    where chain_id = p_chain and payer = payer_norm and nonce = next_nonce and status <> 'released'
   ) loop
     next_nonce := next_nonce + 1;
   end loop;
 
   insert into public.crypto_nonce_leases (chain_id, payer, nonce, purpose, owner_id, status, signed)
-  values (p_chain, payer, next_nonce, p_purpose, p_owner, 'reserved', false);
+  values (p_chain, payer_norm, next_nonce, p_purpose, p_owner, 'reserved', false);
   return jsonb_build_object('nonce', next_nonce, 'reused', false);
 end;
 $$;

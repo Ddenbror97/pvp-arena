@@ -19,11 +19,16 @@ import { privateKeyToAccount } from "viem/accounts";
 import { workerEnv } from "@/lib/worker-env";
 import { depositXpub, depositDerivationPath } from "./addresses.server";
 import { decidePayout } from "./payout-finality";
+import { MAX_INFLIGHT_RECONCILE_PER_RUN, sweepDeadline } from "./job-budget";
+import { countActions, logCryptoOps } from "./ops-log";
 import {
   applySweepTick,
+  classifySweepFlag,
   decodeSignedSweep,
-  prepareSweepAuth,
+  guardSweepIo,
+  prepareSweepPreflight,
   redactSweepLog,
+  resolveSweepMode,
   selectSweepTargets,
   signSweepTransaction,
   SWEEP_CHAIN_ID,
@@ -36,6 +41,7 @@ import {
   type SweepAsset,
   type SweepBegin,
   type SweepConfirmProof,
+  type SweepIo,
   type SweepRecord,
   type SweepStatus,
   type SweepStore,
@@ -46,31 +52,64 @@ const ERC20 = parseAbi(["function balanceOf(address) view returns (uint256)"]);
 
 export type SweepRunResult =
   | { ok: true; skipped: "DISABLED" | "CHAIN" }
-  | { ok: true; actions: { address: string; action: string }[] }
+  | {
+      ok: true;
+      mode: "dry_run";
+      actions: { address: string; action: string }[];
+      signed: 0;
+      broadcast: 0;
+    }
+  | { ok: true; mode: "live"; actions: { address: string; action: string }[] }
   | { ok: false; error: string };
 
 export async function runDepositSweep(chainId: number): Promise<SweepRunResult> {
-  if (workerEnv("CRYPTO_DEPOSIT_SWEEP_ENABLED") !== "true") {
-    return { ok: true, skipped: "DISABLED" };
+  const decision = resolveSweepMode(
+    workerEnv("CRYPTO_DEPOSIT_SWEEP_ENABLED"),
+    workerEnv("CRYPTO_DEPOSIT_SWEEP_DRY_RUN"),
+  );
+  if (!decision.ok) {
+    logCryptoOps("crypto_sweep_config", { ok: false, error: decision.reason, chainId });
+    return { ok: false, error: decision.reason };
   }
+  if (
+    decision.mode === "live" &&
+    classifySweepFlag(workerEnv("CRYPTO_DEPOSIT_SWEEP_DRY_RUN")) !== "off"
+  ) {
+    logCryptoOps("crypto_sweep_config", { ok: false, error: "SWEEP_MODE_CONFLICT", chainId });
+    return { ok: false, error: "SWEEP_MODE_CONFLICT" };
+  }
+  if (decision.mode === "off") return { ok: true, skipped: "DISABLED" };
   if (chainId !== SWEEP_CHAIN_ID) return { ok: true, skipped: "CHAIN" };
   const secrets: string[] = [];
   try {
-    const xprv = workerEnv("CRYPTO_DEPOSIT_XPRV");
-    const hot = workerEnv(`CRYPTO_HOT_WALLET_PRIVATE_KEY_${chainId}`);
+    const xprv = decision.mode === "live" ? workerEnv("CRYPTO_DEPOSIT_XPRV") : undefined;
+    const hot =
+      decision.mode === "live" ? workerEnv(`CRYPTO_HOT_WALLET_PRIVATE_KEY_${chainId}`) : undefined;
     if (xprv) secrets.push(xprv);
     if (hot) secrets.push(hot);
-    return await runEnabledSweep(chainId, secrets);
+    return await runEnabledSweep(chainId, secrets, decision.mode, xprv);
   } catch (error) {
     console.error(
       "[crypto:sweep]",
       redactSweepLog(error instanceof Error ? error.message : "failed", secrets),
     );
+    logCryptoOps("crypto_sweep_run", {
+      ok: false,
+      error: "SWEEP_FAILED",
+      chainId,
+      mode: decision.mode,
+    });
     return { ok: false, error: "SWEEP_FAILED" };
   }
 }
 
-async function runEnabledSweep(chainId: number, secrets: string[]): Promise<SweepRunResult> {
+async function runEnabledSweep(
+  chainId: number,
+  secrets: string[],
+  mode: "dry_run" | "live",
+  xprv: string | undefined,
+): Promise<SweepRunResult> {
+  const started = Date.now();
   const { loadChainEnv } = await import("./chain.server");
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const admin: Admin = {
@@ -96,12 +135,30 @@ async function runEnabledSweep(chainId: number, secrets: string[]): Promise<Swee
     address: String(row.address).toLowerCase(),
   }));
 
-  const xprv = workerEnv("CRYPTO_DEPOSIT_XPRV");
-  const auth = prepareSweepAuth({
-    enabledFlag: workerEnv("CRYPTO_DEPOSIT_SWEEP_ENABLED"),
+  const readiness = await readSweepReadiness(admin);
+  const hotAccount =
+    mode === "live"
+      ? payoutAccount(workerEnv(`CRYPTO_HOT_WALLET_PRIVATE_KEY_${chainId}`), secrets)
+      : null;
+  const configuredUsdc = (env.usdc ?? "").toLowerCase();
+  const auth = prepareSweepPreflight({
+    mode,
     xprv,
     xpub: depositXpub(),
     treasury: env.treasury,
+    payout: env.payout,
+    payoutKeyAddress: hotAccount?.address ?? null,
+    usdc: readiness.ok && readiness.usdc.toLowerCase() !== configuredUsdc ? "" : configuredUsdc,
+    chainId,
+    activeDepositCount:
+      readiness.ok && readiness.depositAddress === env.treasury.toLowerCase()
+        ? readiness.depositCount
+        : 0,
+    activePayoutCount:
+      readiness.ok && readiness.payoutAddress === env.payout.toLowerCase()
+        ? readiness.payoutCount
+        : 0,
+    schemaReady: readiness.ok,
     book: book.map((row) => ({
       index: row.derivationIndex,
       address: row.address,
@@ -112,20 +169,30 @@ async function runEnabledSweep(chainId: number, secrets: string[]): Promise<Swee
   if (!auth.ok) {
     await raiseIncident(admin, {
       check: "crypto_sweep_auth",
-      fp: `crypto_sweep_auth:${chainId}:${auth.reason}`,
+      fp: `crypto_sweep_auth:${chainId}:${mode}:${auth.reason}`,
       details: {
         reason: auth.reason,
         index: "index" in auth && auth.index != null ? String(auth.index) : "",
       },
     });
+    logCryptoOps("crypto_sweep_run", {
+      ok: false,
+      error: auth.reason,
+      chainId,
+      mode,
+      durationMs: Date.now() - started,
+    });
     return { ok: false, error: auth.reason };
   }
 
-  const hotAccount = payoutAccount(workerEnv(`CRYPTO_HOT_WALLET_PRIVATE_KEY_${chainId}`), secrets);
   const gasFundingAvailable =
-    hotAccount != null && hotAccount.address.toLowerCase() === env.payout.toLowerCase();
+    mode === "live" &&
+    hotAccount != null &&
+    hotAccount.address.toLowerCase() === env.payout.toLowerCase();
   const store = supabaseSweepStore(admin);
-  const inflight = await store.listInflight(chainId);
+  const inflightAll = await store.listInflight(chainId);
+  const inflightDeferred = Math.max(0, inflightAll.length - MAX_INFLIGHT_RECONCILE_PER_RUN);
+  const inflight = inflightAll.slice(0, MAX_INFLIGHT_RECONCILE_PER_RUN);
   const cursor = await cursorGet(admin, chainId);
   const selected = selectSweepTargets({
     book,
@@ -135,11 +202,13 @@ async function runEnabledSweep(chainId: number, secrets: string[]): Promise<Swee
   });
 
   let gasPriceWei: bigint | null = null;
+  const rpcStarted = Date.now();
   try {
     gasPriceWei = await env.client.getGasPrice();
   } catch {
     gasPriceWei = null;
   }
+  const rpcMs = Date.now() - rpcStarted;
   let safeBlock: bigint | null = null;
   try {
     const safe = await env.client.getBlock({ blockTag: "safe" });
@@ -158,6 +227,44 @@ async function runEnabledSweep(chainId: number, secrets: string[]): Promise<Swee
     accounts.set(address, await readAccount(reader, address));
   }
 
+  const tickIo: SweepIo = {
+    account: (address) => accounts.get(address.toLowerCase()) ?? { error: "rpc" },
+    receipt: (hash) =>
+      readReceipt(
+        {
+          client: env.client as unknown as Parameters<typeof decidePayout>[0]["primary"],
+          clientB: env.clientB as unknown as Parameters<typeof decidePayout>[0]["secondary"],
+          networkMode: env.networkMode,
+        },
+        hash,
+        safeBlock,
+      ),
+    broadcast: (raw) =>
+      broadcastRaw(
+        {
+          client: env.client as unknown as RawSender,
+          clientB: (env.clientB as unknown as RawSender | null) ?? null,
+        },
+        raw,
+      ),
+    sign: async (req) => {
+      const account =
+        req.kind === "gas"
+          ? hotAccount
+          : xprv && req.derivationIndex != null
+            ? depositAccount(xprv, req.derivationIndex)
+            : null;
+      if (!account) throw new Error("SIGNER_MISSING");
+      return signSweepTransaction(account, req);
+    },
+    store,
+    raise: () => undefined,
+    reserveNonce: (input) => reservePayoutNonce(admin, chainId, input),
+    markNonceSigned: (input) => markPayoutNonceSigned(admin, chainId, input),
+    releaseNonce: (input) => releasePayoutNonce(admin, chainId, input),
+    decodeSigned: (raw) => decodeSignedSweep(raw),
+    chainTransaction: (hash) => readChainTransaction(env.client, hash),
+  };
   const tick = await applySweepTick(
     {
       chainId,
@@ -168,53 +275,58 @@ async function runEnabledSweep(chainId: number, secrets: string[]): Promise<Swee
       book,
       targets: selected.targets,
       nowIso: new Date().toISOString(),
+      mode,
+      deadlineAtMs: sweepDeadline(started),
     },
-    {
-      account: (address) => accounts.get(address.toLowerCase()) ?? { error: "rpc" },
-      receipt: (hash) =>
-        readReceipt(
-          {
-            client: env.client as unknown as Parameters<typeof decidePayout>[0]["primary"],
-            clientB: env.clientB as unknown as Parameters<typeof decidePayout>[0]["secondary"],
-            networkMode: env.networkMode,
-          },
-          hash,
-          safeBlock,
-        ),
-      broadcast: (raw) =>
-        broadcastRaw(
-          {
-            client: env.client as unknown as RawSender,
-            clientB: (env.clientB as unknown as RawSender | null) ?? null,
-          },
-          raw,
-        ),
-      sign: async (req) => {
-        const account =
-          req.kind === "gas"
-            ? hotAccount
-            : xprv && req.derivationIndex != null
-              ? depositAccount(xprv, req.derivationIndex)
-              : null;
-        if (!account) throw new Error("SIGNER_MISSING");
-        return signSweepTransaction(account, req);
-      },
-      store,
-      raise: () => undefined,
-      reserveNonce: (input) => reservePayoutNonce(admin, chainId, input),
-      markNonceSigned: (input) => markPayoutNonceSigned(admin, chainId, input),
-      releaseNonce: (input) => releasePayoutNonce(admin, chainId, input),
-      decodeSigned: (raw) => decodeSignedSweep(raw),
-      chainTransaction: (hash) => readChainTransaction(env.client, hash),
-    },
+    guardSweepIo(mode, tickIo),
   );
 
   for (const incident of tick.incidents) {
     await raiseIncident(admin, incident);
   }
   await cursorSet(admin, chainId, selected.nextCursor);
+  const counts = countActions(tick.actions);
+  logCryptoOps("crypto_sweep_run", {
+    ok: tick.aborted == null,
+    mode,
+    chainId,
+    durationMs: Date.now() - started,
+    rpcMs,
+    gasPriceOk: gasPriceWei != null,
+    inflightDeferred,
+    error: tick.aborted ?? "",
+    actions: JSON.stringify(counts),
+  });
   if (tick.aborted) return { ok: false, error: tick.aborted };
-  return { ok: true, actions: tick.actions };
+  if (mode === "dry_run") {
+    return { ok: true, mode, actions: tick.actions, signed: 0, broadcast: 0 };
+  }
+  return { ok: true, mode, actions: tick.actions };
+}
+
+async function readSweepReadiness(admin: Admin): Promise<
+  | {
+      ok: true;
+      depositCount: number;
+      depositAddress: string;
+      payoutCount: number;
+      payoutAddress: string;
+      usdc: string;
+    }
+  | { ok: false }
+> {
+  const { data, error } = await admin.rpc("crypto_sweep_readiness");
+  if (error || data == null || typeof data !== "object") return { ok: false };
+  const body = data as Record<string, unknown>;
+  if (body["functions_ready"] !== true) return { ok: false };
+  return {
+    ok: true,
+    depositCount: Number(body["deposit_count"] ?? 0),
+    depositAddress: String(body["deposit_address"] ?? "").toLowerCase(),
+    payoutCount: Number(body["payout_count"] ?? 0),
+    payoutAddress: String(body["payout_address"] ?? "").toLowerCase(),
+    usdc: String(body["usdc"] ?? "").toLowerCase(),
+  };
 }
 
 function payoutAccount(raw: string | undefined, secrets: string[]) {

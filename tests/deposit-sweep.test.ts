@@ -1303,6 +1303,7 @@ describe("deposit sweep guards", () => {
 describe("deposit sweep runner gate", () => {
   it("returns disabled and does not touch the network when the flag is unset", async () => {
     delete process.env["CRYPTO_DEPOSIT_SWEEP_ENABLED"];
+    delete process.env["CRYPTO_DEPOSIT_SWEEP_DRY_RUN"];
     const calls: string[] = [];
     const original = globalThis.fetch;
     globalThis.fetch = (async (input: RequestInfo | URL) => {

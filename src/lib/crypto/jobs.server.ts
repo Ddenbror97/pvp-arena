@@ -4,14 +4,48 @@ import {
   runReconciliation,
   runWithdrawalWorker,
 } from "./chain.server";
-import { redactSweepLog } from "./deposit-sweep";
+import { runDepositSweep } from "./deposit-sweep.server";
+import { DEPOSIT_GATE_SECONDS, SWEEP_GATE_SECONDS } from "./job-budget";
+import { logCryptoOps } from "./ops-log";
 import { applyWorkerEnv, workerEnv } from "@/lib/worker-env";
 
 export { applyWorkerEnv };
 
+function stageFields(result: unknown): Record<string, string | number | boolean> {
+  if (!result || typeof result !== "object") return {};
+  const row = result as Record<string, unknown>;
+  const out: Record<string, string | number | boolean> = {};
+  for (const key of [
+    "ok",
+    "skipped",
+    "mode",
+    "error",
+    "reason",
+    "observed",
+    "credited",
+    "creditDeferred",
+    "paused",
+  ]) {
+    const value = row[key];
+    if (typeof value === "number" || typeof value === "boolean") out[key] = value;
+    else if (typeof value === "string") out[key] = value.slice(0, 80);
+  }
+  const stages = row["stages"];
+  if (stages && typeof stages === "object") {
+    for (const [key, value] of Object.entries(stages as Record<string, unknown>)) {
+      if (typeof value === "number") out[`stage_${key}`] = value;
+    }
+  }
+  const actions = row["actions"];
+  if (Array.isArray(actions)) out["actions"] = actions.length;
+  return out;
+}
+
 const JOBS = {
-  deposits: { gapSeconds: 40, perChain: runDepositWatcher },
+  deposits: { gapSeconds: DEPOSIT_GATE_SECONDS, perChain: runDepositWatcher },
   withdrawals: { gapSeconds: 40, perChain: runWithdrawalWorker },
+  // Own HTTP call from pvp_minute_dispatch. Not part of the deposit request.
+  sweeps: { gapSeconds: SWEEP_GATE_SECONDS, perChain: runDepositSweep },
 } as const;
 
 /**
@@ -57,23 +91,22 @@ export async function handleCryptoJob(
     const chains = await enabledChainIds();
     const results: Record<string, unknown> = {};
     for (const chainId of chains) {
-      results[String(chainId)] = await JOBS[name].perChain(chainId);
+      const started = Date.now();
+      const result = await JOBS[name].perChain(chainId);
+      results[String(chainId)] = result;
+      logCryptoOps("crypto_job_stage", {
+        job: name,
+        chainId,
+        durationMs: Date.now() - started,
+        ...stageFields(result),
+      });
     }
-    // Sweep runs only on the pg_cron deposit route, after crediting, and only
-    // when CRYPTO_DEPOSIT_SWEEP_ENABLED is exactly "true". It is not part of
-    // the Cloudflare minute cron: that budget cannot spare the extra RPC.
-    if (name === "deposits") {
-      try {
-        const { runDepositSweep } = await import("./deposit-sweep.server");
-        for (const chainId of chains) {
-          results[`${chainId}:sweep`] = await runDepositSweep(chainId);
-        }
-      } catch (e) {
-        console.error("[crypto:sweep]", redactSweepLog((e as Error).message ?? "failed", []));
-        results["sweep"] = { ok: false, error: "SWEEP_FAILED" };
-      }
-    }
-    return Response.json({ ok: true, results });
+    const sweepFailed =
+      name === "sweeps" &&
+      Object.values(results).some(
+        (row) => !!row && typeof row === "object" && (row as { ok?: boolean }).ok === false,
+      );
+    return Response.json({ ok: !sweepFailed, job: name, results });
   } catch (e) {
     const message = (e as Error).message ?? "failed";
     console.error(`[crypto:${name}]`, message.replace(/https?:\/\/\S+/g, "[rpc]").slice(0, 240));
@@ -111,8 +144,8 @@ export async function runScheduledCryptoJobs(): Promise<void> {
     return;
   }
   const headers = { authorization: `Bearer ${token}` };
-  // Deposits are not in this invocation. pg_cron calls that route on its own,
-  // with a fresh subrequest budget. Scanning logs here used up the budget and
+  // Deposits and Base sweeps are not in this invocation. pg_cron calls each
+  // route on its own, with a fresh subrequest budget. Scanning logs here used up the budget and
   // Cloudflare killed the isolate (1102) before a treasury reading was stored.
   // The BTC reading expires after 10 minutes, so store it before withdrawals.
   // Those can spend the subrequest budget and then the BTCPay job cannot write.

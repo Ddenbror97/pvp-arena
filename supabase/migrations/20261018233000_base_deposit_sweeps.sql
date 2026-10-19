@@ -143,7 +143,7 @@ as $$
 declare
   dep text := lower(p_deposit);
   dst text := lower(p_to);
-  payer text := lower(p_payer);
+  payer_norm text := lower(p_payer);
   key text;
   inserted_id uuid;
   treasury constant text := '0x9eaff85db9a2559ec958740a6a3b523751237987';
@@ -156,7 +156,7 @@ begin
   if p_fee is null or p_fee <= 0 then raise exception 'SWEEP_FEE'; end if;
   if p_asset = 'USDC' and p_gas <> 80000 then raise exception 'SWEEP_GAS'; end if;
   if p_asset <> 'USDC' and p_gas <> 21000 then raise exception 'SWEEP_GAS'; end if;
-  if dep !~ '^0x[0-9a-f]{40}$' or dst !~ '^0x[0-9a-f]{40}$' or payer !~ '^0x[0-9a-f]{40}$' then
+  if dep !~ '^0x[0-9a-f]{40}$' or dst !~ '^0x[0-9a-f]{40}$' or payer_norm !~ '^0x[0-9a-f]{40}$' then
     raise exception 'SWEEP_ADDRESS';
   end if;
   if not exists (
@@ -167,11 +167,11 @@ begin
   end if;
   if p_asset in ('ETH', 'USDC') then
     if dst <> treasury then raise exception 'SWEEP_DESTINATION_FORBIDDEN'; end if;
-    if payer <> dep then raise exception 'SWEEP_PAYER'; end if;
+    if payer_norm <> dep then raise exception 'SWEEP_PAYER'; end if;
   else
     if p_amount > cap then raise exception 'GAS_CAP'; end if;
     if dst <> dep then raise exception 'GAS_DESTINATION_FORBIDDEN'; end if;
-    if payer = dep then raise exception 'GAS_PAYER'; end if;
+    if payer_norm = dep then raise exception 'GAS_PAYER'; end if;
   end if;
   key := 'sweep:' || p_chain::text || ':' || dep || ':' || p_asset || ':' || p_nonce::text;
   insert into public.crypto_deposit_sweeps (
@@ -179,7 +179,7 @@ begin
     gas_limit, max_fee_per_gas, status, payer, to_address, idempotency_key
   ) values (
     p_chain, dep, p_index, p_asset, p_amount, p_nonce,
-    p_gas, p_fee, 'PENDING', payer, dst, key
+    p_gas, p_fee, 'PENDING', payer_norm, dst, key
   )
   on conflict (idempotency_key) do nothing
   returning id into inserted_id;
