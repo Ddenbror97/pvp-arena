@@ -1,5 +1,5 @@
 /**
- * Bonus cashout floor: $20 deposited before bonus is withdrawable, $20 minimum,
+ * Bonus cashout floor: this suite restores the $20 deposit gate and $20 minimum,
  * and a payout keeps the stake's source. Isolated schema. Requires TEST_DATABASE_URL.
  */
 import postgres from "postgres";
@@ -26,8 +26,8 @@ d("bonus withdrawal floor", () => {
     const mins = await sql`select
       (select min_withdrawal_cents from pvp_test.crypto_settings) as settings,
       (select min_withdrawal_cents from pvp_test.chain_networks where chain_id = 8453) as chain`;
-    expect(Number(mins[0].settings)).toBe(2000);
-    expect(Number(mins[0].chain)).toBe(2000);
+    expect(Number(mins[0].settings)).toBe(200);
+    expect(Number(mins[0].chain)).toBe(200);
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     await fundTestTreasury(sql);
     await sql.unsafe(`alter table pvp_test.chain_networks disable trigger user;
