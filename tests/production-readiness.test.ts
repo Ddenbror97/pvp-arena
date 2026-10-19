@@ -132,8 +132,12 @@ describe("Base HD derivation", () => {
     }
     expect(deriveDepositAddressV2(xpub, 8453, 0)).not.toBe(deriveDepositAddressV2(xpub, 8453, 1));
     expect(deriveDepositAddressV2(xpub, 8453, 0)).not.toBe(deriveDepositAddressV2(xpub, 1, 0));
-    const checked = depositKeyCheck(xpub, xprv);
-    expect(checked).toEqual({ match: true, address: deriveDepositAddressV2(xpub, 8453, 0) });
+    const checked = await depositKeyCheck(xpub, xprv);
+    expect(checked).toEqual({
+      match: true,
+      address: deriveDepositAddressV2(xpub, 8453, 0),
+      path: "m/0/8453/0",
+    });
     const printed = spawnSync(
       process.execPath,
       ["scripts/verify-deposit-extended-keys.mjs"],

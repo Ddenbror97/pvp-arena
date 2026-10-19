@@ -5,10 +5,14 @@
  */
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { HDKey } from "@scure/bip32";
-import { getAddress, keccak256 } from "viem";
+import { getAddress, keccak256, recoverMessageAddress } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 
-export function depositKeyCheck(xpub, xprv) {
+const CHECK_PATH = "m/0/8453/0";
+const CHECK_MESSAGE = "pvp-deposit-key-check:m/0/8453/0";
+
+/** Parent match, version-2 address at m/0/8453/0, and a signature from that child key. */
+export async function depositKeyCheck(xpub, xprv) {
   if (!xpub?.startsWith("xpub") || !xprv?.startsWith("xprv")) return { match: false };
   const pub = HDKey.fromExtendedKey(xpub);
   const priv = HDKey.fromExtendedKey(xprv);
@@ -19,17 +23,20 @@ export function depositKeyCheck(xpub, xprv) {
     Buffer.from(pub.publicKey).toString("hex") === Buffer.from(priv.publicKey).toString("hex") &&
     Buffer.from(pub.chainCode).toString("hex") === Buffer.from(priv.chainCode).toString("hex");
   if (!sameNode) return { match: false };
-  const childPub = pub.derive("m/0/8453/0");
-  const childPriv = priv.derive("m/0/8453/0");
+  const childPub = pub.derive(CHECK_PATH);
+  const childPriv = priv.derive(CHECK_PATH);
   if (!childPub.publicKey || !childPriv.privateKey) return { match: false };
   const uncompressed = secp256k1.Point.fromHex(Buffer.from(childPub.publicKey).toString("hex")).toBytes(
     false,
   );
   const hash = keccak256(`0x${Buffer.from(uncompressed.subarray(1)).toString("hex")}`);
   const fromPub = getAddress(`0x${hash.slice(-40)}`);
-  const fromPriv = privateKeyToAccount(`0x${Buffer.from(childPriv.privateKey).toString("hex")}`).address;
-  if (fromPub !== fromPriv) return { match: false };
-  return { match: true, address: fromPub };
+  const account = privateKeyToAccount(`0x${Buffer.from(childPriv.privateKey).toString("hex")}`);
+  if (fromPub !== account.address) return { match: false };
+  const signature = await account.signMessage({ message: CHECK_MESSAGE });
+  const recovered = await recoverMessageAddress({ message: CHECK_MESSAGE, signature });
+  if (recovered !== account.address) return { match: false };
+  return { match: true, address: fromPub, path: CHECK_PATH };
 }
 
 const isMain = process.argv[1] && import.meta.url.endsWith(process.argv[1].split("/").pop());
@@ -41,7 +48,7 @@ if (isMain) {
     process.exit(1);
   }
   try {
-    const result = depositKeyCheck(xpub, xprv);
+    const result = await depositKeyCheck(xpub, xprv);
     if (!result.match || !result.address) {
       console.log("match: false");
       process.exit(1);
