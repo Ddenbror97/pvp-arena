@@ -89,6 +89,14 @@ describe("deposit HD generator", () => {
     expect(() => statSync(out)).toThrow();
   });
 
+  it("the Windows launcher does not contain a key or a passphrase", () => {
+    const launcher = readFileSync("scripts/new-deposit-wallet.cmd", "utf8");
+    expect(launcher).toContain("generate-deposit-extended-keys.mjs --check-deps");
+    expect(launcher).toContain("%LOCALAPPDATA%\\PvpDepositKeys\\pvp-base.deposit-hd.txt");
+    expect(launcher).not.toMatch(/\bxprv[1-9A-HJ-NP-Za-km-z]+\b/);
+    expect(launcher).not.toMatch(/passphrase\s*=/i);
+  });
+
   it("checks the installed libraries without creating a key", () => {
     const run = spawnSync(process.execPath, ["scripts/generate-deposit-extended-keys.mjs", "--check-deps"], {
       encoding: "utf8",
