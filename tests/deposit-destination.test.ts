@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { BASE_DEPOSIT_TREASURY } from "../src/lib/crypto/allowlist";
+import { BASE_DEPOSIT_TREASURY, DEPOSIT_FEE_ALLOWANCE_CENTS } from "../src/lib/crypto/allowlist";
 import { publishedDepositAddress } from "../src/lib/crypto/deposit";
 import { SWEEP_TREASURY } from "../src/lib/crypto/deposit-sweep";
 
@@ -38,5 +38,19 @@ describe("published Base deposit address", () => {
     expect(panel).not.toContain("Previous address");
     expect(panel).toContain("PVPspinArena's wallet");
     expect(panel).toContain("wallet linked on your account");
+    expect(panel).toContain("few cents short");
+    expect(panel).not.toContain("still monitored");
+  });
+
+  it("retires personal deposit addresses and accepts a five-cent fee shortfall", () => {
+    const sql = readFileSync(
+      "supabase/migrations/20261019033000_retire_personal_deposit_addresses.sql",
+      "utf8",
+    );
+    expect(DEPOSIT_FEE_ALLOWANCE_CENTS).toBe(5);
+    expect(sql).toContain("if cents + 5 < net.min_deposit_cents then");
+    expect(sql).toContain("min_deposit_units = 1950000");
+    expect(sql).toContain("delete from public.crypto_deposit_addresses");
+    expect(sql).not.toContain("if cents < net.min_deposit_cents then");
   });
 });

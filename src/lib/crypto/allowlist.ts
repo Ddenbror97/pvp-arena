@@ -110,6 +110,18 @@ export function usdcUnitsToCents(units: bigint): bigint {
 }
 
 /**
+ * A $2 send can arrive a few cents short after the sender's network fee.
+ * $1.95 still clears a $2 minimum. The credited amount is what arrived.
+ */
+export const DEPOSIT_FEE_ALLOWANCE_CENTS = 5;
+
+export function clearsDepositMinimum(cents: number, minimumCents: number): boolean {
+  if (!Number.isInteger(cents) || !Number.isInteger(minimumCents)) return false;
+  if (cents <= 0 || minimumCents <= 0) return false;
+  return cents + DEPOSIT_FEE_ALLOWANCE_CENTS >= minimumCents;
+}
+
+/**
  * Transfers under the asset's minimum are never credited, so the watcher skips them before any
  * DB call: a dust flood then cannot spend the run's subrequest budget. Unknown assets are kept.
  */
