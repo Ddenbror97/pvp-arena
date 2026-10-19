@@ -169,7 +169,8 @@ export interface Env {
   settings: CryptoSettings;
   network: ChainNetworkPolicy;
   minDepositUnits: Record<string, bigint>;
-  depositAddresses: Set<string>; // personal deposit addresses, lowercased
+  /** Personal deposit addresses are not watched. Only the treasury is scanned. */
+  depositAddresses: Set<string>;
 }
 
 function rpcUrlFor(chainId: number, secondary = false): string | undefined {
@@ -210,19 +211,12 @@ export async function loadChainEnv(
   if (!chain) return { ok: false, reason: "CHAIN_UNKNOWN" };
   const rpcCheck = checkChainRpcUrl(chainId, rpcUrlFor(chainId));
   if (!rpcCheck.ok) return fail(rpcCheck.reason);
-  const [{ data: s }, { data: net }, { data: assets }, { data: tr }, { data: addrs }] =
-    await Promise.all([
-      admin.from("crypto_settings").select("*").single(),
-      admin.from("chain_networks").select("*").eq("chain_id", chainId).maybeSingle(),
-      admin.from("chain_assets").select("*").eq("chain_id", chainId),
-      admin
-        .from("chain_treasury_accounts")
-        .select("*")
-        .eq("chain_id", chainId)
-        .eq("is_active", true),
-      // Every version stays watched. Late deposits to a version 1 address still match.
-      admin.from("crypto_deposit_addresses").select("address").eq("chain_id", chainId),
-    ]);
+  const [{ data: s }, { data: net }, { data: assets }, { data: tr }] = await Promise.all([
+    admin.from("crypto_settings").select("*").single(),
+    admin.from("chain_networks").select("*").eq("chain_id", chainId).maybeSingle(),
+    admin.from("chain_assets").select("*").eq("chain_id", chainId),
+    admin.from("chain_treasury_accounts").select("*").eq("chain_id", chainId).eq("is_active", true),
+  ]);
   const settings = s as CryptoSettings | null;
   const network = net as ChainNetworkPolicy | null;
   if (!settings) return fail("SETTINGS_MISSING");
@@ -333,9 +327,7 @@ export async function loadChainEnv(
             }
           : {}),
       },
-      depositAddresses: new Set(
-        ((addrs ?? []) as { address?: string }[]).map((a) => String(a.address).toLowerCase()),
-      ),
+      depositAddresses: new Set(),
     },
   };
 }

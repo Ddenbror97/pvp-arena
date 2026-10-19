@@ -4,7 +4,6 @@ import {
   runReconciliation,
   runWithdrawalWorker,
 } from "./chain.server";
-import { runDepositSweep } from "./deposit-sweep.server";
 import { DEPOSIT_GATE_SECONDS, SWEEP_GATE_SECONDS } from "./job-budget";
 import { logCryptoOps } from "./ops-log";
 import { applyWorkerEnv, workerEnv } from "@/lib/worker-env";
@@ -41,11 +40,20 @@ function stageFields(result: unknown): Record<string, string | number | boolean>
   return out;
 }
 
+/** Personal-address sweeps are retired. This never reads a key and never signs. */
+async function retiredDepositSweep(_chainId: number): Promise<{
+  ok: true;
+  skipped: true;
+  mode: "retired";
+}> {
+  return { ok: true, skipped: true, mode: "retired" };
+}
+
 const JOBS = {
   deposits: { gapSeconds: DEPOSIT_GATE_SECONDS, perChain: runDepositWatcher },
   withdrawals: { gapSeconds: 40, perChain: runWithdrawalWorker },
-  // Own HTTP call from pvp_minute_dispatch. Not part of the deposit request.
-  sweeps: { gapSeconds: SWEEP_GATE_SECONDS, perChain: runDepositSweep },
+  // The scheduler may still call this route. It does not derive, sign, or move funds.
+  sweeps: { gapSeconds: SWEEP_GATE_SECONDS, perChain: retiredDepositSweep },
 } as const;
 
 /**

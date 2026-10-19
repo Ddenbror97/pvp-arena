@@ -1,23 +1,4 @@
--- Read-only sweep monitoring. Aggregates only.
--- Do not read signed transaction bytes, job credentials, or HTTP response rows.
-
-select public.crypto_sweep_ops_snapshot();
-
-select status, count(*) as rows,
-       extract(epoch from (clock_timestamp() - min(created_at)))::bigint as oldest_seconds
-from public.crypto_deposit_sweeps
-where chain_id = 8453
-group by status
-order by status;
-
-select derivation_version, count(*) as rows
-from public.crypto_deposit_addresses
-where chain_id = 8453
-group by derivation_version
-order by derivation_version;
-
-select status, count(*) as rows
-from public.crypto_nonce_leases
-where chain_id = 8453
-group by status
-order by status;
+-- Personal Base deposit sweeps are retired.
+-- Do not call crypto_sweep_ops_snapshot to decide a sweep, and do not move funds.
+-- Historical sweep rows, if any, stay in crypto_deposit_sweeps.
+select 1 where false;

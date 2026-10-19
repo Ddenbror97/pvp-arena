@@ -237,39 +237,6 @@ export const getCryptoActivity = createServerFn({ method: "GET" })
     return activity;
   });
 
-/**
- * The house Base treasury. ETH and USDC deposits are sent there from a wallet
- * the player has linked. This does not allocate a personal deposit address.
- */
-export const getDepositAddress = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth, requireLiveSession])
-  .inputValidator((d) => z.object({ chainId: chainIdSchema }).parse(d))
-  .handler(async ({ data }) => {
-    const db = await admin();
-    const { data: net } = await db
-      .from("chain_networks")
-      .select("chain_id")
-      .eq("chain_id", data.chainId)
-      .eq("is_enabled", true)
-      .maybeSingle();
-    if (!net) return { ok: false as const, error: ERRORS["CHAIN_DISABLED"]! };
-    const { data: treasury } = await db
-      .from("chain_treasury_accounts")
-      .select("address")
-      .eq("chain_id", data.chainId)
-      .eq("role", "deposit")
-      .eq("is_active", true)
-      .maybeSingle();
-    const published = publishedDepositAddress(data.chainId, treasury?.address);
-    if (!published.ok) return { ok: false as const, error: "Deposits are unavailable right now." };
-    return {
-      ok: true as const,
-      address: published.address,
-      version: 1 as const,
-      previous: [] as { address: string; version: 1 }[],
-    };
-  });
-
 export const prepareCryptoDeposit = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth, requireLiveSession])
   .inputValidator((d) =>

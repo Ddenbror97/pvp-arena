@@ -129,11 +129,8 @@ describe("payout nonce lease", () => {
     const worker = readFileSync("src/lib/crypto/chain.server.ts", "utf8");
     expect(worker).toContain('p_purpose: "withdrawal"');
     expect(worker).toContain("crypto_reserve_nonce");
-    const sweep = readFileSync("src/lib/crypto/deposit-sweep.ts", "utf8");
-    expect(sweep).toContain('purpose: "gas_stipend"');
-    expect(readFileSync("src/lib/crypto/deposit-sweep.server.ts", "utf8")).toContain(
-      "crypto_reserve_nonce",
-    );
+    expect(worker).not.toContain('purpose: "gas_stipend"');
+    expect(worker).not.toContain("deposit-sweep");
     const reserveAt = worker.indexOf("crypto_reserve_nonce");
     const signAt = worker.indexOf("signTransaction", reserveAt);
     expect(signAt).toBeGreaterThan(reserveAt);
