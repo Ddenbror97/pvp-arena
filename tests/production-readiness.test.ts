@@ -30,7 +30,9 @@ import {
   xprvMatchesXpub,
   xpubForNewDepositAddress,
 } from "../src/lib/crypto/deposit-sweep";
+import { spawnSync } from "node:child_process";
 import { verifyBtcpaySignature } from "../src/lib/crypto/btcpay/hmac";
+import { depositKeyCheck } from "../scripts/verify-deposit-extended-keys.mjs";
 import {
   creditCentsForSats,
   decideBtcCredit,
@@ -130,6 +132,21 @@ describe("Base HD derivation", () => {
     }
     expect(deriveDepositAddressV2(xpub, 8453, 0)).not.toBe(deriveDepositAddressV2(xpub, 8453, 1));
     expect(deriveDepositAddressV2(xpub, 8453, 0)).not.toBe(deriveDepositAddressV2(xpub, 1, 0));
+    const checked = depositKeyCheck(xpub, xprv);
+    expect(checked).toEqual({ match: true, address: deriveDepositAddressV2(xpub, 8453, 0) });
+    const printed = spawnSync(
+      process.execPath,
+      ["scripts/verify-deposit-extended-keys.mjs"],
+      {
+        env: { ...process.env, CRYPTO_DEPOSIT_XPUB: xpub, CRYPTO_DEPOSIT_XPRV: xprv },
+        encoding: "utf8",
+      },
+    );
+    const output = `${printed.stdout}${printed.stderr}`;
+    expect(output).not.toContain(xprv);
+    expect(output).not.toContain(xpub);
+    expect(output).toContain(`address: ${deriveDepositAddressV2(xpub, 8453, 0)}`);
+    expect(printed.status).toBe(0);
   });
 
   it("accepts only Bitcoin mainnet xpub and xprv bytes, and refuses ypub, zpub, and tpub", () => {

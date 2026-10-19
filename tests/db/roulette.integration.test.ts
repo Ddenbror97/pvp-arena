@@ -1,7 +1,7 @@
 /**
  * Roulette adversarial audit suite. Runs against an isolated `pvp_test` copy of
  * every migration using real concurrent Postgres transactions; permission checks
- * read the live catalog (read-only). Requires SUPABASE_DB_URL.
+ * read this database's catalog. Requires TEST_DATABASE_URL and refuses production.
  */
 import postgres from "postgres";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -9,12 +9,15 @@ import { randomBytes, randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { buildTestSchemaSql } from "./schema";
 import { rouletteSlot } from "../../src/lib/fairness/roulette";
+import { testDatabaseUrl } from "./test-url";
 
-const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
+const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
 const sql = url ? postgres(url, { max: 12, prepare: false, onnotice: () => {}, idle_timeout: 5 }) : (null as never);
 afterAll(async () => {
-  if (url) await sql.end();
+  if (!url) return;
+  await sql`drop schema if exists pvp_test cascade`;
+  await sql.end();
 });
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -66,11 +69,20 @@ async function setCfg(over: Partial<Record<string, number>> = {}) {
     max_round_exposure=${c.max_round_exposure}`;
 }
 async function drive(gid: number) {
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 40; i++) {
     const g = await game(gid);
     if (g.status === "COMPLETED" || g.status === "CANCELLED") return g;
+    const due =
+      g.status === "BETTING"
+        ? new Date(g.betting_ends_at).getTime()
+        : g.status === "LOCKED"
+          ? new Date(g.spin_start_at).getTime()
+          : g.status === "SPINNING"
+            ? new Date(g.spin_end_at).getTime()
+            : Date.now();
+    const wait = due - Date.now();
+    if (wait > 0) await sleep(Math.min(wait + 40, 35_000));
     await advance(gid);
-    await sleep(60);
   }
   throw new Error("round did not finish");
 }
@@ -119,9 +131,6 @@ d("roulette adversarial audit (isolated schema)", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
   }, 90000);
-  afterAll(async () => {
-    await sql`drop schema if exists pvp_test cascade`;
-  });
   beforeEach(async () => {
     await sql`truncate pvp_test.audit_logs, pvp_test.roulette_payouts, pvp_test.roulette_results, pvp_test.roulette_bets,
       pvp_test.roulette_game_secrets, pvp_test.roulette_games, pvp_test.ledger_postings, pvp_test.ledger_transactions,
@@ -293,7 +302,11 @@ d("roulette adversarial audit (isolated schema)", () => {
       for (const r of res.slice(0, 30)) if (r.status === "rejected") expect(String(r.reason)).toMatch(/BETTING_CLOSED/);
       const g = await game(gid);
       const bets = await sql`select * from pvp_test.roulette_bets where game_id = ${gid}`;
-      for (const b of bets) expect(+b.created_at).toBeLessThan(+g.betting_ends_at);
+      // clock_timestamp() is finer than a JavaScript millisecond. Compare in SQL.
+      const [late] = await sql`select count(*)::int c from pvp_test.roulette_bets b
+        join pvp_test.roulette_games g on g.id = b.game_id
+        where b.game_id = ${gid} and b.created_at >= g.betting_ends_at`;
+      expect(late.c).toBe(0);
       expect(bets.length).toBe(g.bet_count);
       const accepted = res.slice(0, 30).filter((r) => r.status === "fulfilled") as PromiseFulfilledResult<{ game_id: number }>[];
       const inRound = accepted.filter((r) => Number(r.value.game_id) === gid).length;
@@ -551,6 +564,11 @@ d("roulette adversarial audit (isolated schema)", () => {
 });
 
 d("roulette live permissions (read-only catalog)", () => {
+  beforeAll(async () => {
+    const [row] = await sql`select exists(select 1 from pg_namespace where nspname = 'pvp_test') e`;
+    if (!row.e) await sql.unsafe(buildTestSchemaSql());
+  }, 90000);
+
   it("runs the production lifecycle clock every second without browser sessions", async () => {
     const migration = readFileSync(
       "supabase/migrations/20260925185856_72114122-2a02-49e7-8910-999e5a049dfd.sql",
@@ -564,7 +582,7 @@ d("roulette live permissions (read-only catalog)", () => {
   it("browsers can only place a bet and read the bet feed; no tick, no table writes; secrets unreadable", async () => {
     const fns = await sql`select p.proname, has_function_privilege('anon', p.oid, 'execute') anon,
       has_function_privilege('authenticated', p.oid, 'execute') auth, p.prosecdef, p.proconfig
-      from pg_proc p where p.pronamespace = 'public'::regnamespace and p.proname like '%roulette%'`;
+      from pg_proc p where p.pronamespace = 'pvp_test'::regnamespace and p.proname like '%roulette%'`;
     for (const f of fns) {
       // roulette_round_bets is the safe-column public bet feed.
       expect(f.anon).toBe(f.proname === "roulette_round_bets");
@@ -574,10 +592,10 @@ d("roulette live permissions (read-only catalog)", () => {
     }
     const tbl = await sql`select c.relname, r, p from pg_class c cross join (values('anon'),('authenticated')) x(r)
       cross join (values('SELECT'),('INSERT'),('UPDATE'),('DELETE'),('TRUNCATE')) y(p)
-      where c.relnamespace='public'::regnamespace and c.relkind='r' and c.relname like 'roulette%' and has_table_privilege(r, c.oid, p)`;
+      where c.relnamespace='pvp_test'::regnamespace and c.relkind='r' and c.relname like 'roulette%' and has_table_privilege(r, c.oid, p)`;
     expect(tbl.filter((t) => t.p !== "SELECT")).toEqual([]);
     expect(tbl.filter((t) => ["roulette_game_secrets", "roulette_results"].includes(t.relname))).toEqual([]);
-    const rls = await sql`select relname from pg_class where relnamespace='public'::regnamespace and relkind='r' and relname like 'roulette%' and not relrowsecurity`;
+    const rls = await sql`select relname from pg_class where relnamespace='pvp_test'::regnamespace and relkind='r' and relname like 'roulette%' and not relrowsecurity`;
     expect(rls).toEqual([]);
   });
 });

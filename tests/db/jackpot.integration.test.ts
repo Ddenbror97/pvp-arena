@@ -1,15 +1,16 @@
 /**
  * Jackpot engine integration + failure-injection + concurrency suite.
  * Runs against an isolated `pvp_test` schema built from the real migrations.
- * Requires SUPABASE_DB_URL; skipped otherwise. Any failure blocks deployment.
+ * Requires TEST_DATABASE_URL and refuses production. Any failure blocks deployment.
  */
 import postgres from "postgres";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
 import { drawTicket, verifyGame } from "../../src/lib/jackpot/fairness";
+import { testDatabaseUrl } from "./test-url";
 
-const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
+const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
 const sql = url ? postgres(url, { max: 10, prepare: false, onnotice: () => {}, idle_timeout: 5 }) : (null as never);
 
@@ -348,7 +349,7 @@ d("jackpot engine (isolated schema)", () => {
   });
 
   it("retired test-credit functions are not executable by browser roles", async () => {
-    for (const schema of ["public", "pvp_test"]) {
+    for (const schema of ["pvp_test"]) {
       const rows = await sql`select p.oid::regprocedure::text f,
           has_function_privilege('anon', p.oid, 'execute') anon,
           has_function_privilege('authenticated', p.oid, 'execute') auth
@@ -367,7 +368,7 @@ d("jackpot engine (isolated schema)", () => {
       "crypto_request_withdrawal(uuid,text,bigint,uuid,boolean)",
       "crypto_next_withdrawals()",
     ];
-    for (const schema of ["public", "pvp_test"]) {
+    for (const schema of ["pvp_test"]) {
       for (const s of sigs) {
         const [r] = await sql`select has_function_privilege('anon', p, 'execute') a,
             has_function_privilege('authenticated', p, 'execute') u,

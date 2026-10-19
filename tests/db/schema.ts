@@ -47,6 +47,12 @@ export function buildTestSchemaSql(skip: readonly string[] = []): string {
   s = s.replace(/search_path to 'public'/gi, "search_path TO 'pvp_test'");
   s = s.replace(/in schema public/g, "in schema pvp_test");
   s = s.replace(/auth\.uid\(\)/g, "pvp_test.test_uid()");
+  // Production applies each migration in its own transaction. This script
+  // runs them together, and Postgres refuses a new enum value until commit.
+  s = s.replace(
+    /^(alter type\s+\S+\s+add value\s+[^;]+;)/gim,
+    "$1\ncommit;",
+  );
   // The email-code sign-up helpers read auth.users, which the test role
   // cannot access; point them at a local stand-in table.
   s = s.replace(/auth\.users/g, "pvp_test.test_auth_users");

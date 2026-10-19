@@ -1,7 +1,7 @@
 /**
  * Coinflip engine integration + concurrency + failure-injection suite.
  * Runs against an isolated `pvp_test` schema built from the real migrations.
- * Requires SUPABASE_DB_URL; skipped otherwise. Any failure blocks deployment.
+ * Requires TEST_DATABASE_URL and refuses production. Any failure blocks deployment.
  */
 import postgres from "postgres";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -9,8 +9,9 @@ import { randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
 import { verifyCoinflip } from "../../src/lib/fairness/coinflip";
 import VECTORS from "../../src/lib/fairness/coinflip-v1-vectors.json";
+import { testDatabaseUrl } from "./test-url";
 
-const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
+const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
 const sql = url ? postgres(url, { max: 10, prepare: false, onnotice: () => {}, idle_timeout: 5 }) : (null as never);
 

@@ -1,6 +1,6 @@
 /**
  * Wallet-identity integration suite against the isolated `pvp_test` schema.
- * Requires SUPABASE_DB_URL; skipped otherwise.
+ * Requires TEST_DATABASE_URL. Refuses the production database.
  */
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -8,8 +8,9 @@ import { randomUUID } from "node:crypto";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { buildTestSchemaSql } from "./schema";
 import { buildWalletMessage, normalizeAddress, signatureMatches } from "../../src/lib/web3/message";
+import { testDatabaseUrl } from "./test-url";
 
-const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
+const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
 const sql = url
   ? postgres(url, { max: 8, prepare: false, onnotice: () => {}, idle_timeout: 5 })

@@ -8,9 +8,13 @@ import { describe, expect, it } from "vitest";
 
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_PUBLISHABLE_KEY;
-const d = url && key ? describe : describe.skip;
+const liveApi = Boolean(url && key);
 
-d("access rules (anonymous client)", () => {
+(liveApi ? describe : describe.skip)("access rules (anonymous client)", () => {
+  if (!liveApi) {
+    it("requires SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY", () => {});
+    return;
+  }
   const sb = createClient(url!, key!, { auth: { persistSession: false } });
 
   it("cannot read private wallet, ledger, secrets or audit data", async () => {

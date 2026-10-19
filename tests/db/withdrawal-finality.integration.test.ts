@@ -12,6 +12,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
 import { fundTestTreasury, migrateTestSchemaToReal } from "./money";
+import { testDatabaseUrl } from "./test-url";
 import {
   applyPayoutDecision,
   decidePayout,
@@ -122,7 +123,7 @@ describe("payout finality policy (pure)", () => {
 });
 
 // ---------- ledger integration ----------
-const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
+const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
 const sql = url
   ? postgres(url, { max: 24, prepare: false, onnotice: () => {}, idle_timeout: 5 })
