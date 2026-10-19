@@ -24,7 +24,7 @@ dist-ssr
 .wrangler/
 .dev.vars
 
-# Offline Base deposit HD backups. Never commit these.
+# Base deposit HD backups. The generator encrypts these. Never commit them.
 *.deposit-hd.txt
 *.deposit-hd.xpub
 *.deposit-hd.xprv
