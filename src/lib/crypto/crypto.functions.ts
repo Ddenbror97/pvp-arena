@@ -12,6 +12,7 @@ import {
   type WithdrawCashSnapshot,
 } from "@/lib/crypto/bonus-withdraw";
 import { publishedDepositAddress } from "./deposit";
+import { withdrawalDestinationAllowed } from "./withdrawal-wallet";
 
 const ERRORS: Record<string, string> = {
   WITHDRAWALS_PAUSED: "Withdrawals are paused right now.",
@@ -430,14 +431,32 @@ export const requestCryptoWithdrawal = createServerFn({ method: "POST" })
       await admin()
     )
       .from("user_wallets")
-      .select("normalized_address")
+      .select("normalized_address, became_primary_at")
       .eq("user_id", context.userId)
       .eq("is_verified", true);
-    const linked = ((linkedWallets ?? []) as { normalized_address?: string | null }[])
-      .map((row) => row.normalized_address)
-      .filter((value): value is string => typeof value === "string");
-    if (!linked.includes(data.toAddress.toLowerCase())) {
-      return { ok: false as const, error: "Cash out to the wallet you linked." };
+    const linked = (
+      (linkedWallets ?? []) as {
+        normalized_address?: string | null;
+        became_primary_at?: string | null;
+      }[]
+    )
+      .filter(
+        (row): row is { normalized_address: string; became_primary_at?: string | null } =>
+          typeof row.normalized_address === "string",
+      )
+      .map((row) => ({
+        address: row.normalized_address,
+        becamePrimaryAt: row.became_primary_at ?? null,
+      }));
+    const destination = withdrawalDestinationAllowed(linked, data.toAddress);
+    if (!destination.ok) {
+      return {
+        ok: false as const,
+        error:
+          destination.reason === "COOLDOWN"
+            ? ERRORS["WALLET_CHANGE_COOLDOWN"]!
+            : "Cash out to the wallet you linked.",
+      };
     }
     const { envOkForAutoApproval } = await import("./chain.server");
     const envOk = await envOkForAutoApproval(data.chainId);
