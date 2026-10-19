@@ -135,10 +135,10 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
   );
 
   return (
-    <div className="grid gap-3 lg:grid-cols-[240px_minmax(0,1fr)_260px] lg:items-start xl:grid-cols-[260px_minmax(0,1fr)_280px]">
+    <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)_280px] lg:items-start xl:grid-cols-[280px_minmax(0,1fr)_300px]">
       {/* Chat */}
       <section className="order-4 lg:order-1 lg:self-stretch">
-        <GameChat gameType="jackpot" initial={chat} className="h-64 sm:h-72 lg:h-[22rem]" />
+        <GameChat gameType="jackpot" initial={chat} className="h-72 sm:h-80 lg:h-[34rem]" />
       </section>
 
       {/* Wheel */}
@@ -232,7 +232,7 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
         {game ? (
           <Link
             to="/fairness"
-            className="mt-2 inline-flex max-w-full items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+            className="mt-4 inline-flex max-w-full items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
           >
             <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
             <span className="truncate">
@@ -240,7 +240,7 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
             </span>
           </Link>
         ) : (
-          <div aria-hidden className="mt-2 h-[17px]" />
+          <div aria-hidden className="mt-4 h-[17px]" />
         )}
       </section>
 

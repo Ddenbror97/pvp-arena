@@ -75,5 +75,6 @@ export function RecentPager({
   );
 }
 
-/** Recent list under the game. No reserved height, so a blank stretch does not push the rows down. */
-export const EDGE_TO_EDGE = "relative mt-3 flex w-full max-w-full flex-col px-0 sm:px-1";
+/** Recent list under the game. A little less space above it than the old mt-8. */
+export const EDGE_TO_EDGE =
+  "relative mt-4 flex min-h-[24.5rem] w-full max-w-full flex-col px-0 sm:px-1";
