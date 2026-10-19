@@ -164,7 +164,9 @@ async function runEnabledSweep(
       address: row.address,
       version: row.derivationVersion,
     })),
-    requireKnownAnchors: true,
+    // Historical version-1 anchors prove the original key. A book of only
+    // version-2 rows is checked address-by-address against the installed xprv.
+    requireKnownAnchors: book.some((row) => row.derivationVersion === 1),
   });
   if (!auth.ok) {
     await raiseIncident(admin, {

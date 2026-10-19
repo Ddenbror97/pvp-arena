@@ -531,6 +531,20 @@ export function xprvMatchesXpub(xprv: string, xpub: string): boolean {
   return priv.publicKey === pub.publicKey && priv.chainCode === pub.chainCode;
 }
 
+/**
+ * The xpub may be used to publish a new deposit address only when the xprv
+ * spends that same node. A missing or different key returns null. The xprv
+ * is not included in the result.
+ */
+export function xpubForNewDepositAddress(
+  xpub: string | null | undefined,
+  xprv: string | null | undefined,
+): string | null {
+  if (!xpub || !xprv) return null;
+  if (!xprvMatchesXpub(xprv, xpub)) return null;
+  return xpub;
+}
+
 export function deriveDepositAddressFromXprv(
   xprv: string,
   chainId: number,

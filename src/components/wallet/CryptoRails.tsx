@@ -612,7 +612,7 @@ export function CryptoRails({
                       address={receiveAddress}
                       qr={receiveQr}
                       copiedLabel="Base address copied"
-                        note={`Send ${depositAsset?.asset_key ?? "ETH or USDC"} on ${chainName} only, from the wallet linked on your account. Minimum ${formatUsd(minDepositCents)}. A network fee that leaves it a few cents short is still credited. Funds arrive in PVPspinArena's wallet. Credited within ${depositWaitPhrase(chain?.network_mode)}.`}
+                        note={`Your Base deposit address. Send ${depositAsset?.asset_key ?? "ETH or USDC"} on ${chainName} from any wallet or exchange. You do not need to connect that wallet. Minimum ${formatUsd(minDepositCents)}. A network fee that leaves it a few cents short is still credited. Credited within ${depositWaitPhrase(chain?.network_mode)}.`}
                     />
                   ) : (
                     <p className="text-sm text-muted-foreground">

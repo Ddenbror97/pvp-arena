@@ -8,7 +8,7 @@ export type DepositAsset = string;
 export interface DepositInstruction {
   asset: DepositAsset;
   chainId: number;
-  /** Destination: PVPspinArena's Base wallet. A deposit is matched by the verified sender. */
+  /** Destination: the player's personal Base deposit address. */
   treasury: `0x${string}`;
   token: `0x${string}` | null;
   units: string;
