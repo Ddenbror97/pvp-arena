@@ -29,7 +29,7 @@ import {
   type TransactionSerializableEIP1559,
 } from "viem";
 import { privateKeyToAccount, publicKeyToAddress } from "viem/accounts";
-import { BASE_MAINNET } from "./allowlist";
+import { BASE_DEPOSIT_TREASURY, BASE_MAINNET } from "./allowlist";
 import {
   depositDerivationPath,
   deriveDepositAddress,
@@ -39,7 +39,7 @@ import {
 
 export const SWEEP_CHAIN_ID = 8453;
 /** MetaMask treasury. The only ETH/USDC sweep destination. */
-export const SWEEP_TREASURY = getAddress("0x9EAff85db9A2559eC958740A6a3b523751237987");
+export const SWEEP_TREASURY = getAddress(BASE_DEPOSIT_TREASURY);
 export const SWEEP_USDC = getAddress(BASE_MAINNET.usdc);
 
 export const ETH_TRANSFER_GAS = 21_000n;

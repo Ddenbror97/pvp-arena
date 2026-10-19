@@ -11,7 +11,7 @@ import {
   parseWithdrawCashSnapshot,
   type WithdrawCashSnapshot,
 } from "@/lib/crypto/bonus-withdraw";
-import type { AddressBookRow } from "./deposit-address-book";
+import { publishedDepositAddress } from "./deposit";
 
 const ERRORS: Record<string, string> = {
   WITHDRAWALS_PAUSED: "Withdrawals are paused right now.",
@@ -19,7 +19,6 @@ const ERRORS: Record<string, string> = {
   SELF_EXCLUDED: "Withdrawals are unavailable while self-excluded.",
   NO_VERIFIED_WALLET: "Enter a Base address that starts with 0x.",
   BAD_ADDRESS: "Enter a Base address that starts with 0x.",
-  NO_DEPOSIT_ADDRESS: "Your Base deposit address is not ready yet. Try again in a moment.",
   WALLET_CHANGE_COOLDOWN: "Withdrawals are paused for 24 hours after a wallet change.",
   WITHDRAWAL_PENDING: "You already have a withdrawal in progress.",
   DAILY_LIMIT: "This would exceed your daily withdrawal limit.",
@@ -238,19 +237,10 @@ export const getCryptoActivity = createServerFn({ method: "GET" })
     return activity;
   });
 
-async function assignPersonalDepositAddress(
+async function publishedTreasuryDepositAddress(
   db: Awaited<ReturnType<typeof admin>>,
-  userId: string,
   chainId: number,
-): Promise<
-  | {
-      ok: true;
-      address: string | null;
-      version: 2 | null;
-      previous: { address: string; version: 1 }[];
-    }
-  | { ok: false; error: string }
-> {
+): Promise<{ ok: true; address: `0x${string}` } | { ok: false; error: string }> {
   const { data: net } = await db
     .from("chain_networks")
     .select("chain_id")
@@ -258,85 +248,40 @@ async function assignPersonalDepositAddress(
     .eq("is_enabled", true)
     .maybeSingle();
   if (!net) return { ok: false, error: ERRORS["CHAIN_DISABLED"]! };
-  const { allocateDepositAddress } = await import("./deposit-address-book");
-  const { depositXpub } = await import("./addresses.server");
-  type StoredRow = {
-    user_id?: string;
-    address?: string;
-    derivation_index?: number;
-    derivation_version?: number;
-  };
-  const toRow = (row: StoredRow): AddressBookRow | null => {
-    const version = Number(row.derivation_version);
-    if (
-      !row.user_id ||
-      !row.address ||
-      row.derivation_index == null ||
-      (version !== 1 && version !== 2)
-    ) {
-      return null;
-    }
-    return {
-      userId: row.user_id,
-      chainId,
-      derivationIndex: Number(row.derivation_index),
-      derivationVersion: version,
-      address: row.address.toLowerCase(),
-    };
-  };
-  try {
-    const allocated = await allocateDepositAddress({
-      userId,
-      chainId,
-      xpub: depositXpub(),
-      book: {
-        async list() {
-          const listed = await db
-            .from("crypto_deposit_addresses")
-            .select("user_id, address, derivation_index, derivation_version")
-            .eq("chain_id", chainId);
-          if (listed.error) throw new Error(listed.error.message);
-          return ((listed.data ?? []) as StoredRow[])
-            .map(toRow)
-            .filter((row): row is AddressBookRow => row != null);
-        },
-        async insert(row) {
-          const { error } = await db.from("crypto_deposit_addresses").insert({
-            user_id: row.userId,
-            chain_id: row.chainId,
-            derivation_index: row.derivationIndex,
-            derivation_version: row.derivationVersion,
-            address: row.address,
-          });
-          if (!error) return "ok";
-          if (error.code === "23505") return "unique";
-          return "error";
-        },
-      },
-    });
-    return {
-      ok: true,
-      address: allocated.current?.address ?? null,
-      version: allocated.current ? 2 : null,
-      previous: allocated.previous.map((row) => ({ address: row.address, version: 1 as const })),
-    };
-  } catch {
-    return { ok: false, error: "Could not assign a deposit address. Please try again." };
-  }
+  const { data: rows, error } = await db
+    .from("chain_treasury_accounts")
+    .select("address")
+    .eq("chain_id", chainId)
+    .eq("role", "deposit")
+    .eq("is_active", true);
+  if (error) return { ok: false, error: "Deposits are unavailable right now." };
+  const addresses = (rows ?? [])
+    .map((row) => (typeof row.address === "string" ? row.address : ""))
+    .filter((value) => value.length > 0);
+  if (addresses.length !== 1) return { ok: false, error: "Deposits are unavailable right now." };
+  const published = publishedDepositAddress(chainId, addresses[0]);
+  if (!published.ok) return { ok: false, error: "Deposits are unavailable right now." };
+  return { ok: true, address: published.address };
 }
 
 /**
- * Returns the player's personal deposit address for a chain, deriving and
- * storing it on first use. Addresses come from an xpub — the server can derive
- * addresses but never spend from them. Returns null when no xpub is
- * configured (deposits then go to the shared treasury, matched by verified sender).
+ * The only Base deposit address: PVPspinArena's wallet. A payment is credited
+ * when it comes from the player's verified wallet. Older personal addresses
+ * stay watched so a late payment can still be credited, and they are not shown.
  */
 export const getDepositAddress = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth, requireLiveSession])
   .inputValidator((d) => z.object({ chainId: chainIdSchema }).parse(d))
-  .handler(async ({ data, context }) =>
-    assignPersonalDepositAddress(await admin(), context.userId, data.chainId),
-  );
+  .handler(async ({ data }) => {
+    const loaded = await publishedTreasuryDepositAddress(await admin(), data.chainId);
+    if (!loaded.ok) return loaded;
+    return {
+      ok: true as const,
+      address: loaded.address,
+      version: null,
+      previous: [] as { address: string; version: 1 }[],
+    };
+  });
 
 export const prepareCryptoDeposit = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth, requireLiveSession])
@@ -353,13 +298,12 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
     const db = await admin();
     const asset = await loadEnabledAsset(data.chainId, data.asset);
     if (!asset) return { ok: false as const, error: ERRORS["ASSET_NOT_ALLOWLISTED"]! };
-    const [{ data: walletRows }, assigned, { loadChainEnv, snapshotEthPrice }] = await Promise.all([
+    const [{ data: walletRows }, { loadChainEnv, snapshotEthPrice }] = await Promise.all([
       db
         .from("user_wallets")
         .select("normalized_address, is_primary")
         .eq("user_id", context.userId)
         .eq("is_verified", true),
-      assignPersonalDepositAddress(db, context.userId, data.chainId),
       import("./chain.server"),
     ]);
     const checked = await loadChainEnv(data.chainId);
@@ -373,14 +317,8 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
     if (data.usdCents < Number(checked.env.network.min_deposit_cents)) {
       return { ok: false as const, error: ERRORS["BELOW_MINIMUM"]! };
     }
-    // Current pay-to address is version 2. A version 1 address stays monitored by the
-    // watcher and is not published as the destination. Shared treasury is only the
-    // fallback when this user has no personal address at all.
-    if (!assigned.ok) return { ok: false as const, error: assigned.error };
-    const personal = assigned.address;
-    if (!personal && assigned.previous.length > 0) {
-      return { ok: false as const, error: ERRORS["NO_DEPOSIT_ADDRESS"]! };
-    }
+    const published = publishedDepositAddress(data.chainId, checked.env.treasury);
+    if (!published.ok) return { ok: false as const, error: "Deposits are unavailable right now." };
     const verifiedRows = (walletRows ?? []) as {
       normalized_address?: string;
       is_primary?: boolean;
@@ -394,8 +332,14 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
       verifiedRows.find((row) => row.is_primary)?.normalized_address ??
       verifiedAddresses[0] ??
       null;
-    if (!personal && !verified) return { ok: false as const, error: ERRORS["NO_DEPOSIT_ADDRESS"]! };
-    const destination = personal ?? (checked.env.treasury as string);
+    if (!verified) {
+      return {
+        ok: false as const,
+        error:
+          "Link the wallet you will send from. A deposit is credited only when it comes from that wallet.",
+      };
+    }
+    const destination = published.address;
     let units: bigint;
     let priceMicroUsd: number | null = null;
     let token: string | null = null;

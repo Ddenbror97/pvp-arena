@@ -10,6 +10,9 @@ export const BASE_MAINNET = {
   ethUsdFeed: "0x71041dddad3595f9ced3dccfbe3d1f4b0a16bb70",
 } as const;
 
+/** PVPspinArena's Base wallet. The only address published for ETH and USDC deposits. */
+export const BASE_DEPOSIT_TREASURY = "0x9EAff85db9A2559eC958740A6a3b523751237987";
+
 /** Validates the database registry row for a mainnet chain against known-good values. */
 export function checkMainnetRegistry(cfg: {
   chainId: number;

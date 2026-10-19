@@ -1,4 +1,5 @@
-import { encodeFunctionData, parseAbi, type Hex } from "viem";
+import { encodeFunctionData, getAddress, parseAbi, type Hex } from "viem";
+import { BASE_DEPOSIT_TREASURY, BASE_MAINNET } from "./allowlist";
 
 const ERC20_TRANSFER = parseAbi(["function transfer(address to, uint256 value) returns (bool)"]);
 
@@ -7,10 +8,30 @@ export type DepositAsset = string;
 export interface DepositInstruction {
   asset: DepositAsset;
   chainId: number;
-  /** Destination: the player's personal deposit address, or the shared treasury (matched by verified sender). */
+  /** Destination: PVPspinArena's Base wallet. A deposit is matched by the verified sender. */
   treasury: `0x${string}`;
   token: `0x${string}` | null;
   units: string;
+}
+
+/**
+ * The address a player is told to pay. Base accepts only the house wallet.
+ * Any other treasury, including a personal deposit address, is refused.
+ */
+export function publishedDepositAddress(
+  chainId: number,
+  treasury: string | null | undefined,
+):
+  | { ok: true; address: `0x${string}` }
+  | { ok: false; reason: "CHAIN_NOT_VERIFIED" | "TREASURY_MISSING" | "TREASURY_MISMATCH" } {
+  if (chainId !== BASE_MAINNET.chainId) return { ok: false, reason: "CHAIN_NOT_VERIFIED" };
+  if (!treasury || !/^0x[0-9a-fA-F]{40}$/.test(treasury)) {
+    return { ok: false, reason: "TREASURY_MISSING" };
+  }
+  if (treasury.toLowerCase() !== BASE_DEPOSIT_TREASURY.toLowerCase()) {
+    return { ok: false, reason: "TREASURY_MISMATCH" };
+  }
+  return { ok: true, address: getAddress(BASE_DEPOSIT_TREASURY) };
 }
 
 /**

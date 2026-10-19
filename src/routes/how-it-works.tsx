@@ -177,9 +177,10 @@ function HowItWorksPage() {
           </li>
           <li>
             <strong>USDC and ETH:</strong> send them on the Base network from your verified wallet
-            to the deposit address on the wallet page. After the required network confirmations and
-            a check by two independent network providers, the deposit is added to your balance
-            automatically. Cash outs in those assets go back to that verified wallet on Base.
+            to PVPspinArena&apos;s wallet address on the wallet page. After the required network
+            confirmations and a check by two independent network providers, the deposit is added to
+            your balance automatically. Cash outs in those assets go back to that verified wallet on
+            Base.
           </li>
           <li>
             <strong>Withdrawals:</strong> request a payout in the asset you choose. The amount is
