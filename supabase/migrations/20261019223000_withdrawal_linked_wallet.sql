@@ -2,7 +2,7 @@
 -- A wallet that became primary in the last 24 hours is not paid while another
 -- verified wallet still exists. The older wallet can still be paid.
 -- The first wallet on an account is not delayed.
--- Not applied to production. Do not run this file until that is explicitly approved.
+-- Applied to production on 2026-10-19 22:48 UTC, after the matching Worker deploy.
 
 create or replace function public.crypto_request_withdrawal(
   p_user uuid, p_chain bigint, p_asset text, p_usd_cents bigint, p_quote uuid, p_env_ok boolean,
