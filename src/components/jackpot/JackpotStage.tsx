@@ -135,15 +135,15 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
   );
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)_280px] lg:items-start xl:grid-cols-[280px_minmax(0,1fr)_300px]">
-      {/* Chat */}
-      <section className="order-4 lg:order-1 lg:self-stretch">
-        <GameChat gameType="jackpot" initial={chat} className="h-72 sm:h-80 lg:h-[34rem]" />
+    <div className="grid gap-4 lg:h-[34rem] lg:grid-cols-[260px_minmax(0,1fr)_280px] lg:items-stretch xl:grid-cols-[280px_minmax(0,1fr)_300px]">
+      {/* Chat. Same 34rem window as the coinflip and roulette side chats. */}
+      <section className="order-4 h-72 sm:h-80 lg:order-1 lg:h-full lg:min-h-0">
+        <GameChat gameType="jackpot" initial={chat} className="h-full" />
       </section>
 
       {/* Wheel */}
-      <section className="order-1 flex flex-col items-center lg:order-2">
-        <div className="mb-4 text-center">
+      <section className="order-1 flex flex-col items-center justify-center rounded-xl border border-border bg-card px-3 py-3 lg:order-2 lg:h-full lg:min-h-0">
+        <div className="mb-2 text-center">
           <div className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
             Jackpot{" "}
             <span className="tabular inline-block min-w-[4ch] text-left">#{game?.id ?? "—"}</span>
@@ -232,7 +232,7 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
         {game ? (
           <Link
             to="/fairness"
-            className="mt-4 inline-flex max-w-full items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+            className="mt-2 inline-flex max-w-full items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
           >
             <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
             <span className="truncate">
@@ -240,14 +240,14 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
             </span>
           </Link>
         ) : (
-          <div aria-hidden className="mt-4 h-[17px]" />
+          <div aria-hidden className="mt-2 h-[17px]" />
         )}
       </section>
 
       {/* Entry */}
-      <section className="order-2 flex flex-col gap-4 lg:order-3">
+      <section className="order-2 flex min-h-0 flex-col gap-4 lg:order-3 lg:h-full lg:overflow-hidden">
         <EntryPanel game={game} myTotal={my?.total_amount ?? 0} closed={closed} />
-        <section className="overflow-clip rounded-xl border border-border bg-card">
+        <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-card">
           <header className="flex items-center justify-between border-b border-border px-3 py-2">
             <h2 className="font-display text-xs uppercase tracking-widest">Players</h2>
             <span className="tabular text-xs text-muted-foreground">
@@ -256,14 +256,16 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
                 : `${seated} players · ${Math.max(game?.entry_count ?? 0, players.length)} entries`}
             </span>
           </header>
-          <PlayerList
-            players={players}
-            pending={playersPending}
-            pot={pot}
-            meId={userId}
-            winnerId={phase === "winner" ? stage?.winner_id : null}
-            roundId={Number(game?.id ?? 0)}
-          />
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <PlayerList
+              players={players}
+              pending={playersPending}
+              pot={pot}
+              meId={userId}
+              winnerId={phase === "winner" ? stage?.winner_id : null}
+              roundId={Number(game?.id ?? 0)}
+            />
+          </div>
         </section>
       </section>
 
