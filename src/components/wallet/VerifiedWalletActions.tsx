@@ -657,7 +657,7 @@ export function VerifiedWalletActions({
         ))}
       {verified.length === 0 && !wallets.isLoading && !connected && (
         <p className="text-[11px] leading-snug text-muted-foreground">
-          Sign a message to link MetaMask or Coinbase. You can still copy the deposit address.
+          Sign a message to link MetaMask or Coinbase. Deposits and cashouts use that wallet.
         </p>
       )}
     </div>

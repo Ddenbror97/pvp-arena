@@ -53,8 +53,8 @@ Our step-by-step guide to [adding the Base network to MetaMask](/guides/add-base
       body: `Here is what happens between pressing send and seeing your balance update on PVPspinArena.
 
 1. **Verify your wallet.** On your profile, connect your wallet and sign a short message. This proves you own it and costs no gas. Deposits are matched to your account by this verified sender address.
-2. **Copy the deposit address.** The wallet page shows the address and the supported network.
-3. **Send USDC on Base.** Your wallet broadcasts the transfer and pays a small network fee.
+2. **Open the wallet page.** Choose USDC and connect the same wallet. The network shown is Base.
+3. **Send USDC on Base.** Press send, confirm the transfer in your wallet, and pay a small network fee.
 4. **Detection.** The site checks the chain every minute and records the incoming transfer.
 5. **Confirmations.** The deposit waits until enough blocks have been added on top of it that it is very unlikely to be reversed.
 6. **Agreement.** Two independent blockchain data providers must both report the same transfer before it is credited.
@@ -67,7 +67,7 @@ In practice, a deposit typically appears within a minute or two of confirming. A
       title: "How USDC withdrawals work",
       body: `Withdrawals are where honest sites differ most from marketing claims. A careful withdrawal process protects your money as much as the site's.
 
-1. **Request.** You choose an amount and a destination address. The amount is placed on hold on your balance, so it can't be spent twice.
+1. **Request.** You choose an amount. It is sent to the wallet you linked. The amount is placed on hold on your balance, so it can't be spent twice.
 2. **Checks.** PVPspinArena applies a $250 daily withdrawal limit, and requests over $25 wait for a manual review.
 3. **Signing and sending.** The payout wallet signs a USDC transfer on Base and broadcasts it. The signed transaction is stored before it is sent, so a restart can never create a second payout.
 4. **Finality.** The withdrawal is only marked as finished when the transaction is in a block considered safe from reversal and both blockchain data providers agree on the result.
@@ -98,7 +98,7 @@ A well-run USDC casino should tell you each of these clearly. Be wary of hidden 
 
 You connect MetaMask on your PVPspinArena profile and sign the verification message. In your exchange you withdraw 20 USDC, choosing Base as the network and pasting your MetaMask address. It arrives in MetaMask a few minutes later.
 
-From MetaMask you send the 20 USDC on Base to the PVPspinArena deposit address. You pay a network fee of a few cents in ETH. Within about a minute of confirmation, $20.00 appears in the header and a notice says the deposit was added.
+From MetaMask you send the 20 USDC on Base with the wallet-page send button. You pay a network fee of a few cents in ETH. Within about a minute of confirmation, $20.00 appears in the header and a notice says the deposit was added.
 
 You open [Coinflip](/coinflip), create a $2.00 game and pick a side. When someone joins, the result is decided by the committed seed. Later you withdraw $15.00 to MetaMask. Because it is under $25, it goes out without manual review, and it is marked as finished once the block is safe and both providers agree.`,
     },
@@ -115,14 +115,14 @@ You open [Coinflip](/coinflip), create a $2.00 game and pick a side. When someon
     {
       id: "eth",
       title: "Depositing ETH instead of USDC",
-      body: "If you prefer to deposit ETH on Base, the flow is the same: send from your verified wallet to the deposit address and wait for confirmations. The difference is price. Because ETH's dollar value moves, the amount credited depends on the ETH price at the moment of crediting. Once credited, your balance is in dollars and no longer moves with ETH. Remember to keep a little ETH in your wallet anyway, since network fees on Base are paid in ETH.",
+      body: "If you prefer to deposit ETH on Base, the flow is the same: send from your verified wallet with the wallet-page button and wait for confirmations. The difference is price. Because ETH's dollar value moves, the amount credited depends on the ETH price at the moment of crediting. Once credited, your balance is in dollars and no longer moves with ETH. Remember to keep a little ETH in your wallet anyway, since network fees on Base are paid in ETH.",
     },
     {
       id: "summary",
       title: "Summary",
       body: `A USDC casino uses a dollar-tracking stablecoin, so your balance reflects your play rather than market swings. The key to using one safely is the network: send on the exact network the site supports, from a verified wallet, and start with a small amount. Look for clear confirmation rules, honest withdrawal limits and fees shown up front.
 
-Before your first deposit, read about [choosing a crypto wallet for gaming](/guides/crypto-wallet-for-gambling) and set a [gambling budget](/guides/gambling-budget). When you are ready, the [wallet page](/wallet) shows your deposit address.
+Before your first deposit, read about [choosing a crypto wallet for gaming](/guides/crypto-wallet-for-gambling) and set a [gambling budget](/guides/gambling-budget). When you are ready, the [wallet page](/wallet) connects your wallet and sends on Base.
 
 More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).
 

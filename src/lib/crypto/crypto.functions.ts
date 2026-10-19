@@ -11,8 +11,7 @@ import {
   parseWithdrawCashSnapshot,
   type WithdrawCashSnapshot,
 } from "@/lib/crypto/bonus-withdraw";
-import type { AddressBookRow } from "./deposit-address-book";
-import { BASE_MAINNET } from "./allowlist";
+import { publishedDepositAddress } from "./deposit";
 
 const ERRORS: Record<string, string> = {
   WITHDRAWALS_PAUSED: "Withdrawals are paused right now.",
@@ -238,109 +237,35 @@ export const getCryptoActivity = createServerFn({ method: "GET" })
     return activity;
   });
 
-async function assignPersonalDepositAddress(
-  db: Awaited<ReturnType<typeof admin>>,
-  userId: string,
-  chainId: number,
-): Promise<{ ok: true; address: `0x${string}` } | { ok: false; error: string }> {
-  if (chainId !== BASE_MAINNET.chainId) return { ok: false, error: ERRORS["CHAIN_DISABLED"]! };
-  const { data: net } = await db
-    .from("chain_networks")
-    .select("chain_id")
-    .eq("chain_id", chainId)
-    .eq("is_enabled", true)
-    .maybeSingle();
-  if (!net) return { ok: false, error: ERRORS["CHAIN_DISABLED"]! };
-  const unavailable = { ok: false as const, error: "Deposits are unavailable right now." };
-  try {
-    const { workerEnv } = await import("@/lib/worker-env");
-    const { depositXpub } = await import("./addresses.server");
-    const { allocateDepositAddress } = await import("./deposit-address-book");
-    const { deriveDepositAddressV2FromXprv, xpubForNewDepositAddress } = await import(
-      "./deposit-sweep"
-    );
-    const xprv = workerEnv("CRYPTO_DEPOSIT_XPRV");
-    const xpub = xpubForNewDepositAddress(depositXpub(), xprv);
-    if (!xpub || !xprv) return unavailable;
-    type StoredRow = {
-      user_id?: string;
-      address?: string;
-      derivation_index?: number;
-      derivation_version?: number;
-    };
-    const toRow = (row: StoredRow): AddressBookRow | null => {
-      const version = Number(row.derivation_version);
-      if (
-        !row.user_id ||
-        !row.address ||
-        row.derivation_index == null ||
-        (version !== 1 && version !== 2)
-      ) {
-        return null;
-      }
-      return {
-        userId: row.user_id,
-        chainId,
-        derivationIndex: Number(row.derivation_index),
-        derivationVersion: version,
-        address: row.address.toLowerCase(),
-      };
-    };
-    const allocated = await allocateDepositAddress({
-      userId,
-      chainId,
-      xpub,
-      book: {
-        async list() {
-          const listed = await db
-            .from("crypto_deposit_addresses")
-            .select("user_id, address, derivation_index, derivation_version")
-            .eq("chain_id", chainId);
-          if (listed.error) throw new Error(listed.error.message);
-          return ((listed.data ?? []) as StoredRow[])
-            .map(toRow)
-            .filter((row): row is AddressBookRow => row != null);
-        },
-        async insert(row) {
-          const { error } = await db.from("crypto_deposit_addresses").insert({
-            user_id: row.userId,
-            chain_id: row.chainId,
-            derivation_index: row.derivationIndex,
-            derivation_version: row.derivationVersion,
-            address: row.address,
-          });
-          if (!error) return "ok";
-          if (error.code === "23505") return "unique";
-          return "error";
-        },
-      },
-    });
-    const current = allocated.current;
-    if (!current || current.derivationVersion !== 2) return unavailable;
-    const spendable = deriveDepositAddressV2FromXprv(xprv, chainId, current.derivationIndex);
-    if (spendable.toLowerCase() !== current.address.toLowerCase()) return unavailable;
-    return { ok: true, address: spendable };
-  } catch {
-    return unavailable;
-  }
-}
-
 /**
- * The player's own Base deposit address. A payment to it is credited to that
- * player whether or not the sending wallet is connected or linked. The address
- * is published only when the server holds the matching deposit key. Sweeps stay
- * off until CRYPTO_DEPOSIT_SWEEP_ENABLED is exactly "true".
+ * The house Base treasury. ETH and USDC deposits are sent there from a wallet
+ * the player has linked. This does not allocate a personal deposit address.
  */
 export const getDepositAddress = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth, requireLiveSession])
   .inputValidator((d) => z.object({ chainId: chainIdSchema }).parse(d))
-  .handler(async ({ data, context }) => {
-    const loaded = await assignPersonalDepositAddress(await admin(), context.userId, data.chainId);
-    if (!loaded.ok) return loaded;
+  .handler(async ({ data }) => {
+    const db = await admin();
+    const { data: net } = await db
+      .from("chain_networks")
+      .select("chain_id")
+      .eq("chain_id", data.chainId)
+      .eq("is_enabled", true)
+      .maybeSingle();
+    if (!net) return { ok: false as const, error: ERRORS["CHAIN_DISABLED"]! };
+    const { data: treasury } = await db
+      .from("chain_treasury_accounts")
+      .select("address")
+      .eq("chain_id", data.chainId)
+      .eq("role", "deposit")
+      .eq("is_active", true)
+      .maybeSingle();
+    const published = publishedDepositAddress(data.chainId, treasury?.address);
+    if (!published.ok) return { ok: false as const, error: "Deposits are unavailable right now." };
     return {
       ok: true as const,
-      address: loaded.address,
-      version: 2 as const,
+      address: published.address,
+      version: 1 as const,
       previous: [] as { address: string; version: 1 }[],
     };
   });
@@ -360,13 +285,12 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
     const db = await admin();
     const asset = await loadEnabledAsset(data.chainId, data.asset);
     if (!asset) return { ok: false as const, error: ERRORS["ASSET_NOT_ALLOWLISTED"]! };
-    const [{ data: walletRows }, assigned, { loadChainEnv, snapshotEthPrice }] = await Promise.all([
+    const [{ data: walletRows }, { loadChainEnv, snapshotEthPrice }] = await Promise.all([
       db
         .from("user_wallets")
         .select("normalized_address, is_primary")
         .eq("user_id", context.userId)
         .eq("is_verified", true),
-      assignPersonalDepositAddress(db, context.userId, data.chainId),
       import("./chain.server"),
     ]);
     const checked = await loadChainEnv(data.chainId);
@@ -380,7 +304,8 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
     if (data.usdCents < Number(checked.env.network.min_deposit_cents)) {
       return { ok: false as const, error: ERRORS["BELOW_MINIMUM"]! };
     }
-    if (!assigned.ok) return { ok: false as const, error: assigned.error };
+    const published = publishedDepositAddress(data.chainId, checked.env.treasury);
+    if (!published.ok) return { ok: false as const, error: "Deposits are unavailable right now." };
     const verifiedRows = (walletRows ?? []) as {
       normalized_address?: string;
       is_primary?: boolean;
@@ -394,7 +319,10 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
       verifiedRows.find((row) => row.is_primary)?.normalized_address ??
       verifiedAddresses[0] ??
       null;
-    const destination = assigned.address;
+    if (verifiedAddresses.length === 0) {
+      return { ok: false as const, error: "Link the wallet you will send from." };
+    }
+    const destination = published.address;
     let units: bigint;
     let priceMicroUsd: number | null = null;
     let token: string | null = null;
@@ -531,6 +459,19 @@ export const requestCryptoWithdrawal = createServerFn({ method: "POST" })
       target,
     });
     if (!verified.ok) return { ok: false as const, error: verified.error };
+    const { data: linkedWallets } = await (
+      await admin()
+    )
+      .from("user_wallets")
+      .select("normalized_address")
+      .eq("user_id", context.userId)
+      .eq("is_verified", true);
+    const linked = (linkedWallets ?? [])
+      .map((row) => row.normalized_address)
+      .filter((value): value is string => typeof value === "string");
+    if (!linked.includes(data.toAddress.toLowerCase())) {
+      return { ok: false as const, error: "Cash out to the wallet you linked." };
+    }
     const { envOkForAutoApproval } = await import("./chain.server");
     const envOk = await envOkForAutoApproval(data.chainId);
     const { data: r, error } = await (

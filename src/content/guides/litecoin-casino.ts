@@ -119,7 +119,7 @@ A [USDC casino](/guides/usdc-casino) balance does not remove every risk. It remo
 2. **Withdraw 31 USDC on the Base network** to MetaMask. Exchange fee: $1.00. You receive 30 USDC.
 3. **Confirm Base in the wallet.** The address is 0x…, chain ID 8453. It is not a Litecoin address.
 4. **Verify the wallet** on your PVPspinArena profile with a signature (no gas).
-5. **Send 30 USDC on Base** to the deposit address. Gas: about $0.03 in ETH. The site credits $30.00 after confirmations and dual-provider checks.
+5. **Send 30 USDC on Base** from the linked wallet on the wallet page. Gas: about $0.03 in ETH. The site credits $30.00 after confirmations and dual-provider checks.
 
 If you had withdrawn LTC to that same 0x address, the Litecoin network would reject it or you would have sent to a burn, depending on the tool. If you had sent LTC to a litecoin casino by mistake and then wanted PVPspinArena, you would still need this conversion. There is no LTC deposit button on this site.
 

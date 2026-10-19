@@ -160,7 +160,7 @@ If a deposit seems slow, the explorer shows whether it has actually been confirm
 
 ### How deposits work
 
-You verify your wallet address on your profile by signing a message. USDC sent from that address to the platform's deposit address on Base is detected, checked and credited to your USD balance automatically. See the [wallet page](/wallet) for the current address and network.
+You verify your wallet address on your profile by signing a message. On the wallet page you connect that wallet and send USDC on Base. The transfer is detected, checked and credited to your USD balance automatically. See the [wallet page](/wallet) for the network and the send button.
 
 ### How withdrawals work
 
@@ -240,7 +240,7 @@ For gaming platforms, the combination of low fees and native USDC is the main dr
 3. **Withdraw both to your wallet**, choosing Base as the network each time.
 4. **Check the arrival** in your wallet and, if needed, on BaseScan.
 5. **Verify your wallet** on the app if it requires it. On PVPspinArena this is a signed message on your profile.
-6. **Send a small test amount** of USDC to the deposit address.
+6. **Send a small test amount** of USDC from the linked wallet on the wallet page.
 7. **Wait for credit**, then send the rest once you are confident everything works.
 
 ### Timing

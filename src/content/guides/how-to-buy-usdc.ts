@@ -155,8 +155,8 @@ If you plan to use USDC for gaming, decide on a [gambling budget](/guides/gambli
       body: `With USDC on Base in your wallet, depositing takes a few minutes.
 
 1. **Verify your wallet** on your profile by connecting MetaMask and signing a short message. It costs no gas.
-2. **Open the wallet page** and copy the deposit address.
-3. **Send USDC on Base** from your verified MetaMask account.
+2. **Open the wallet page** and connect the same MetaMask account.
+3. **Send USDC on Base** with the send button. MetaMask opens the transfer.
 4. **Wait for confirmations.** The site detects your transfer, waits until it is safely confirmed and checks it with two independent blockchain data providers.
 5. **Play.** Your balance updates in US dollars.
 

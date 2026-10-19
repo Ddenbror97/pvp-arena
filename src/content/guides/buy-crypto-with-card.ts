@@ -97,7 +97,7 @@ Keep the receipt email. Chargebacks on crypto buys are often refused after token
 2. **Withdraw USDC on Base** to MetaMask or another self-custody wallet. Test $1 first.
 3. **Keep a little ETH on Base** for the deposit send.
 4. **Verify the wallet** on the site by signing a message. No token approval.
-5. **Send USDC on Base** to the deposit address on the [wallet](/wallet) page.
+5. **Send USDC on Base** from that linked wallet on the [wallet](/wallet) page.
 
 If you insist on an in-wallet ramp, set the destination network to Base and the token to USDC before you pay. If the widget cannot deliver Base USDC, do not take Ethereum USDC “and sort it later” unless you already understand the extra fee.
 

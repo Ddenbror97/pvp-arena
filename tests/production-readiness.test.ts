@@ -230,9 +230,10 @@ describe("Base HD derivation", () => {
     expect(blocked.current).toBeNull();
     expect(book.rows).toHaveLength(0);
     const issuer = readFileSync("src/lib/crypto/crypto.functions.ts", "utf8");
-    expect(issuer).toContain("xpubForNewDepositAddress");
-    expect(issuer).toContain("deriveDepositAddressV2FromXprv");
-    expect(issuer).not.toContain("publishedDepositAddress");
+    expect(issuer).toContain("publishedDepositAddress");
+    expect(issuer).toContain("Link the wallet you will send from.");
+    expect(issuer).not.toContain("allocateDepositAddress");
+    expect(issuer).not.toContain("xpubForNewDepositAddress");
     expect(issuer).toContain("Deposits are unavailable right now.");
   });
 });

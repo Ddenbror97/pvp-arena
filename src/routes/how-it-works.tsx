@@ -176,11 +176,11 @@ function HowItWorksPage() {
             Cash out to a Bitcoin address that starts with bc1. Lightning payments are not accepted.
           </li>
           <li>
-            <strong>USDC and ETH:</strong> each account has its own Base deposit address on the
-            wallet page. Send from any wallet or exchange on Base. You do not need to connect the
-            sending wallet. After the required network confirmations and a check by two independent
-            network providers, the deposit is added to your balance automatically. Cash outs in those
-            assets go back to your verified wallet on Base.
+            <strong>USDC and ETH:</strong> on the wallet page, connect MetaMask or Coinbase Wallet
+            and sign a message to link it. Then send from that wallet on Base. After the required
+            network confirmations and a check by two independent network providers, the deposit is
+            added to your balance automatically. Cash outs in those assets go back to that linked
+            wallet on Base.
           </li>
           <li>
             <strong>Withdrawals:</strong> request a payout in the asset you choose. The amount is

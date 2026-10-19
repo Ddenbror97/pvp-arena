@@ -86,26 +86,25 @@ describe("published Base deposit address", () => {
     expect(blocked.rows).toHaveLength(0);
   });
 
-  it("shows the personal address and credits by destination, not by the sending wallet", () => {
+  it("sends Base deposits from a linked wallet to the house treasury", () => {
     const server = readFileSync("src/lib/crypto/crypto.functions.ts", "utf8");
     const panel = readFileSync("src/components/wallet/CryptoRails.tsx", "utf8");
     const observe = readFileSync(
       "supabase/migrations/20260926203000_eth-oracle-heartbeat-and-inventory.sql",
       "utf8",
     );
-    const sweep = readFileSync("src/lib/crypto/deposit-sweep.server.ts", "utf8");
-    expect(server).toContain("allocateDepositAddress");
-    expect(server).toContain("xpubForNewDepositAddress");
-    expect(server).not.toContain("Link the wallet you will send from");
-    expect(panel).not.toContain("Previous address");
-    expect(panel).not.toContain("still monitored");
-    expect(panel).toContain("any wallet or exchange");
-    expect(panel).toContain("do not need to connect that wallet");
+    expect(server).toContain("publishedDepositAddress");
+    expect(server).toContain("Link the wallet you will send from.");
+    expect(server).toContain("Cash out to the wallet you linked.");
+    expect(server).not.toContain("allocateDepositAddress");
+    expect(panel).toContain("Connect MetaMask");
+    expect(panel).toContain("To your linked wallet");
+    expect(panel).not.toContain("any wallet or exchange");
+    expect(panel).not.toContain("do not need to connect that wallet");
+    expect(panel).not.toContain("getDepositAddress");
     expect(observe).toContain(
-      "select user_id into uid from crypto_deposit_addresses where chain_id = p_chain and lower(address) = lower(p_to)",
+      "select count(*), min(user_id::text)::uuid into n, uid from user_wallets where normalized_address = lower(p_from) and is_verified",
     );
-    expect(sweep).toContain("requireKnownAnchors: book.some((row) => row.derivationVersion === 1)");
-    expect(sweep).toContain('resolveSweepMode');
   });
 
   it("retires personal deposit addresses and accepts a five-cent fee shortfall", () => {

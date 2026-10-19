@@ -117,11 +117,11 @@ A lost phrase is not something the casino can restore. The site only sees public
     {
       id: "worked-example",
       title: "Worked example: from Phantom on Solana to a Base deposit",
-      body: `Suppose you have 40 USDC in Phantom on Solana and you want $20 on PVPspinArena for a [Coinflip](/coinflip) game. You cannot send those 40 USDC to the site deposit address.
+      body: `Suppose you have 40 USDC in Phantom on Solana and you want $20 on PVPspinArena for a [Coinflip](/coinflip) game. You cannot send those 40 USDC straight to the site.
 
 1. **Confirm what you hold.** In Phantom, open USDC and read the network. If it says Solana, stop. That is not Base USDC.
 2. **Decide the route.** Either sell or swap to a supported path on an exchange that can withdraw USDC on Base, or use a reputable bridge after you understand the fee and the destination token.
-3. **Get a Base address you control.** Install or open a Base-capable wallet such as MetaMask, add Base and copy that address. Do not paste the PVPspinArena deposit address into a Solana send screen.
+3. **Get a Base address you control.** Install or open a Base-capable wallet such as MetaMask, add Base and copy that address. Do not paste a Base address into a Solana send screen.
 4. **Move a test amount.** Send a small USDC amount on Base to your own wallet first. Wait until a Base explorer shows success.
 5. **Verify on the site.** On your profile, connect the Base wallet and sign the verification message. No token approval.
 6. **Deposit from that same address.** Send USDC on Base to the address on the wallet page. Keep a little ETH on Base for gas.

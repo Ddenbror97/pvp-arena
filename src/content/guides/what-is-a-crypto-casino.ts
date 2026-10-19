@@ -131,7 +131,7 @@ Fast rounds and easy deposits can make it easy to spend more than you planned. D
       title: "Worked example: a first session on PVPspinArena",
       body: `To make this concrete, here is what a first session looks like on PVPspinArena.
 
-You sign in with the six-digit code from your email. On your profile you connect MetaMask and sign a verification message, which proves you own the wallet without spending any gas. On the wallet page you copy the deposit address and send 10 USDC on the Base network from that verified wallet. About a minute after the transfer confirms, the site credits $10.00 to your balance and shows a notice that the deposit has arrived.
+You sign in with the six-digit code from your email. On your profile you connect MetaMask and sign a verification message, which proves you own the wallet without spending any gas. On the wallet page you press send and confirm 10 USDC on the Base network from that verified wallet. About a minute after the transfer confirms, the site credits $10.00 to your balance and shows a notice that the deposit has arrived.
 
 You open Coinflip, create a $1.00 game and pick a side. Before the game opens, the server has already published the SHA-256 hash of its secret seed. Another player joins, the result is computed, and the seed is revealed. You can copy the seed into the [Fairness](/fairness) page and recompute the same result in your browser.
 

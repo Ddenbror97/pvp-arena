@@ -107,12 +107,11 @@ On PVPspinArena you will only ever sign a readable verification message and send
       title: "Depositing from MetaMask",
       body: `Once your wallet is verified, depositing is a normal transfer.
 
-1. **Open the wallet page** on the site and copy the deposit address. Check the network shown, which is Base on PVPspinArena.
-2. **Switch MetaMask to Base.** Check the network name at the top of MetaMask.
-3. **Choose the token.** Select USDC or ETH.
-4. **Paste the address and amount.** Double-check the first and last characters of the address.
-5. **Review the fee and confirm.** Base fees are usually a fraction of a cent to a few cents.
-6. **Wait for confirmations.** The site detects the transfer and credits it after confirmation checks.
+1. **Open the wallet page** and choose USDC or ETH. Connect MetaMask and sign the link message if this account is not linked yet.
+2. **Switch MetaMask to Base** when the site asks. Check the network name at the top of MetaMask.
+3. **Enter the amount and choose Send.** MetaMask opens an ordinary transfer from the linked account.
+4. **Review the fee and confirm.** Base fees are usually a fraction of a cent to a few cents.
+5. **Wait for confirmations.** The site detects the transfer from your linked address and credits it after confirmation checks.
 
 ### Why the sending address matters
 

@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { encodeQR } from "qr";
 import { ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { formatUsd, parseUsdToCents } from "@/lib/jackpot/math";
 import {
   checkWithdrawalLiquidity,
-  getDepositAddress,
   quoteEthWithdrawal,
   requestCryptoWithdrawal,
 } from "@/lib/crypto/crypto.functions";
@@ -27,7 +25,6 @@ import { announceWithdrawalSubmitted } from "@/lib/crypto/withdraw-notify";
 import { useCryptoActivity, type CryptoActivity } from "@/components/wallet/RailPreference";
 import { BtcDepositPanel } from "@/components/wallet/BtcDepositPanel";
 import { getBtcDepositConfig, getBtcPayoutConfig } from "@/lib/crypto/btcpay/btcpay.functions";
-import { DepositAddress } from "@/components/wallet/DepositAddress";
 import { claimSendLock, VerifiedWalletActions } from "@/components/wallet/VerifiedWalletActions";
 import { TokenMark } from "@/components/wallet/TokenMark";
 import { useWithdrawalCode, WithdrawalCodeField } from "@/components/wallet/WithdrawalCode";
@@ -251,7 +248,6 @@ export function CryptoRails({
   children: (panels: { form: ReactNode }) => ReactNode;
 }) {
   const qc = useQueryClient();
-  const receiveFn = useServerFn(getDepositAddress);
   const doQuote = useServerFn(quoteEthWithdrawal);
   const doRequest = useServerFn(requestCryptoWithdrawal);
   const doLiquidity = useServerFn(checkWithdrawalLiquidity);
@@ -312,11 +308,6 @@ export function CryptoRails({
         }
       : null;
   const codeProof = codeTarget ? emailCode.proof(codeTarget) : null;
-  const receive = useQuery({
-    queryKey: ["evm-deposit-address", chain?.chain_id ?? chainId],
-    queryFn: () => receiveFn({ data: { chainId: chain?.chain_id ?? chainId } }),
-    staleTime: 60_000,
-  });
   const minDepositCents = chain?.min_deposit_cents ?? data?.settings.min_deposit_cents ?? 200;
   const minWithdrawCents =
     chain?.min_withdrawal_cents ?? data?.settings.min_withdrawal_cents ?? 2000;
@@ -330,16 +321,6 @@ export function CryptoRails({
     depositFloors[item.asset_key] = minDepositCents;
     withdrawFloors[item.asset_key] = minWithdrawCents;
   }
-  const receiveAddress = receive.data?.ok ? receive.data.address : null;
-  const receiveQr = useMemo(() => {
-    if (!receiveAddress) return "";
-    try {
-      return encodeQR(receiveAddress, "svg", { ecc: "low", border: 1, scale: 2 });
-    } catch {
-      return "";
-    }
-  }, [receiveAddress]);
-
   useEffect(() => {
     if (requestedMode !== "withdraw") return;
     document.getElementById("wallet-withdraw")?.scrollIntoView({ block: "nearest" });
@@ -551,7 +532,7 @@ export function CryptoRails({
             <p className="mt-0.5 text-[11px] text-muted-foreground">
               {depositRail === "BTC"
                 ? "Send Bitcoin to the address below."
-                : `Send ${depositAsset?.asset_key ?? "crypto"} on ${chainName}.`}
+                : `Connect a wallet and send ${depositAsset?.asset_key ?? "crypto"} on ${chainName}.`}
             </p>
           </div>
         </div>
@@ -570,57 +551,20 @@ export function CryptoRails({
               <BtcDepositPanel mode="deposit" active={depositRail === "BTC"} />
             </div>
             <div className={depositRail === "BTC" ? "hidden" : undefined}>
-              {!data ? (
-                <DepositAddress
-                  network={chainName}
-                  address={null}
-                  qr=""
-                  copiedLabel="Base address copied"
-                  note=""
-                  pending
-                />
-              ) : (
-                <>
-                  {networkPicker()}
-                  {receive.isPending && !receiveAddress ? (
-                    <DepositAddress
-                      network={chainName}
-                      address={null}
-                      qr=""
-                      copiedLabel="Base address copied"
-                      note=""
-                      pending
-                    />
-                  ) : receive.isError || receive.data?.ok === false ? (
-                    <div className="space-y-3" role="alert">
-                      <p className="text-sm text-destructive">
-                        Could not load your deposit address. Try again.
-                      </p>
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        disabled={receive.isFetching}
-                        onClick={() => void receive.refetch()}
-                      >
-                        {receive.isFetching ? "Trying…" : "Try again"}
-                      </Button>
-                    </div>
-                  ) : receiveAddress ? (
-                    <DepositAddress
-                      network={chainName}
-                      heading="Deposit address"
-                      address={receiveAddress}
-                      qr={receiveQr}
-                      copiedLabel="Base address copied"
-                        note={`Your Base deposit address. Send ${depositAsset?.asset_key ?? "ETH or USDC"} on ${chainName} from any wallet or exchange. You do not need to connect that wallet. Minimum ${formatUsd(minDepositCents)}. A network fee that leaves it a few cents short is still credited. Credited within ${depositWaitPhrase(chain?.network_mode)}.`}
-                    />
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      Deposit addresses are unavailable right now.
-                    </p>
-                  )}
-                </>
-              )}
+              {networkPicker()}
+              <div className="rounded-lg border border-border bg-muted/30 p-2.5 text-xs leading-relaxed text-muted-foreground">
+                <p className="font-semibold text-foreground">Send from a linked wallet</p>
+                <p className="mt-1">
+                  Connect MetaMask or Coinbase Wallet, sign once to link it, then send{" "}
+                  {depositAsset?.asset_key ?? "USDC or ETH"} on {chainName}. Minimum{" "}
+                  {formatUsd(minDepositCents)}. The balance updates within{" "}
+                  {depositWaitPhrase(chain?.network_mode)}. A send from an unlinked wallet is not
+                  credited.
+                </p>
+                {data && !data.settings.deposits_enabled ? (
+                  <p className="mt-2 text-destructive">Deposits are paused.</p>
+                ) : null}
+              </div>
             </div>
           </div>
           {depositRail !== "BTC" ? (
@@ -776,18 +720,18 @@ export function CryptoRails({
               ) : null}
               <div className="space-y-1.5 rounded-lg border border-border bg-muted/30 p-2.5 text-xs text-muted-foreground">
                 <label htmlFor="evm-cashout-address" className="font-semibold text-foreground">
-                  To a Base address
+                  To your linked wallet
                 </label>
                 <Input
                   id="evm-cashout-address"
                   className="h-9 font-mono text-xs"
                   value={outAddress}
-                  onChange={(event) => setOutAddress(event.target.value)}
-                  placeholder="0x…"
-                  aria-label="Base cashout address"
+                  readOnly
+                  placeholder="Connect a wallet"
+                  aria-label="Linked wallet cashout address"
                 />
                 <p>
-                  Minimum{" "}
+                  Connect MetaMask or Coinbase above. Cashouts go to that wallet. Minimum{" "}
                   {formatUsd(chain?.min_withdrawal_cents ?? data.settings.min_withdrawal_cents)}. A
                   code is emailed to approve each cashout.
                 </p>

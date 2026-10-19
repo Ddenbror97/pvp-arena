@@ -8,7 +8,7 @@ export type DepositAsset = string;
 export interface DepositInstruction {
   asset: DepositAsset;
   chainId: number;
-  /** Destination: the player's personal Base deposit address. */
+  /** Destination: the house Base treasury. The player sends from a linked wallet. */
   treasury: `0x${string}`;
   token: `0x${string}` | null;
   units: string;
