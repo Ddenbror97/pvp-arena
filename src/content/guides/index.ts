@@ -837,6 +837,42 @@ import { guide as lostWinnaCasinoReview } from "./winna-casino-review";
 import { guide as lostWorldwinnerReview } from "./worldwinner-review";
 import { guide as lostWowVegasReview } from "./wow-vegas-review";
 import { guide as lostZulaCasinoReview } from "./zula-casino-review";
+import { guide as lostBigBassBonanza } from "./big-bass-bonanza";
+import { guide as lostBigBassSplash } from "./big-bass-splash";
+import { guide as lostBiggestCasinoInTheWorld } from "./biggest-casino-in-the-world";
+import { guide as lostBingoBashReview } from "./bingo-bash-review";
+import { guide as lostBitkingzReview } from "./bitkingz-review";
+import { guide as lostBloodycaseReview } from "./bloodycase-review";
+import { guide as lostBlumCrypto } from "./blum-crypto";
+import { guide as lostBubbleCashReview } from "./bubble-cash-review";
+import { guide as lostBuffaloSlotMachine } from "./buffalo-slot-machine";
+import { guide as lostCashFrenzyReview } from "./cash-frenzy-review";
+import { guide as lostDaddyskinsReview } from "./daddyskins-review";
+import { guide as lostDancingDrumsSlot } from "./dancing-drums-slot";
+import { guide as lostDaraCasinoReview } from "./dara-casino-review";
+import { guide as lostGamblingMemes } from "./gambling-memes";
+import { guide as lostGamblingSongs } from "./gambling-songs";
+import { guide as lostGamezopReview } from "./gamezop-review";
+import { guide as lostGoldenHeartsCasinoReview } from "./golden-hearts-casino-review";
+import { guide as lostHelloMillionsReview } from "./hello-millions-review";
+import { guide as lostHuffNPuffSlot } from "./huff-n-puff-slot";
+import { guide as lostLegendzReview } from "./legendz-review";
+import { guide as lostLonestarCasinoReview } from "./lonestar-casino-review";
+import { guide as lostLotsaSlotsReview } from "./lotsa-slots-review";
+import { guide as lostLuckyBlockCasinoReview } from "./lucky-block-casino-review";
+import { guide as lostMegaBonanzaCasinoReview } from "./mega-bonanza-casino-review";
+import { guide as lostMiddlingInBetting } from "./middling-in-betting";
+import { guide as lostMoonPrincessSlot } from "./moon-princess-slot";
+import { guide as lostNrfiBetting } from "./nrfi-betting";
+import { guide as lostQueenOfTheNileSlot } from "./queen-of-the-nile-slot";
+import { guide as lostRealprizeReview } from "./realprize-review";
+import { guide as lostRollercoinReview } from "./rollercoin-review";
+import { guide as lostSkinbaronReview } from "./skinbaron-review";
+import { guide as lostSlotoCashReview } from "./sloto-cash-review";
+import { guide as lostSlotsLvReview } from "./slots-lv-review";
+import { guide as lostSugarRush1000Slot } from "./sugar-rush-1000-slot";
+import { guide as lostTapjoyReview } from "./tapjoy-review";
+import { guide as lostTf2Keys } from "./tf2-keys";
 
 export type { Guide, GuideCluster } from "./types";
 
@@ -1679,6 +1715,42 @@ export const GUIDES: Guide[] = [
   lostWorldwinnerReview,
   lostWowVegasReview,
   lostZulaCasinoReview,
+  lostBigBassBonanza,
+  lostBigBassSplash,
+  lostBiggestCasinoInTheWorld,
+  lostBingoBashReview,
+  lostBitkingzReview,
+  lostBloodycaseReview,
+  lostBlumCrypto,
+  lostBubbleCashReview,
+  lostBuffaloSlotMachine,
+  lostCashFrenzyReview,
+  lostDaddyskinsReview,
+  lostDancingDrumsSlot,
+  lostDaraCasinoReview,
+  lostGamblingMemes,
+  lostGamblingSongs,
+  lostGamezopReview,
+  lostGoldenHeartsCasinoReview,
+  lostHelloMillionsReview,
+  lostHuffNPuffSlot,
+  lostLegendzReview,
+  lostLonestarCasinoReview,
+  lostLotsaSlotsReview,
+  lostLuckyBlockCasinoReview,
+  lostMegaBonanzaCasinoReview,
+  lostMiddlingInBetting,
+  lostMoonPrincessSlot,
+  lostNrfiBetting,
+  lostQueenOfTheNileSlot,
+  lostRealprizeReview,
+  lostRollercoinReview,
+  lostSkinbaronReview,
+  lostSlotoCashReview,
+  lostSlotsLvReview,
+  lostSugarRush1000Slot,
+  lostTapjoyReview,
+  lostTf2Keys,
 ];
 
 export type ClusterInfo = {
