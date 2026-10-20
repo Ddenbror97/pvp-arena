@@ -183,9 +183,10 @@ function HowItWorksPage() {
             wallet on Base.
           </li>
           <li>
-            <strong>Withdrawals:</strong> request a payout in the asset you choose. The amount is
-            held and only marked finished once the payment is confirmed. Daily limits apply, and
-            larger withdrawals may be reviewed before sending.
+            <strong>Withdrawals:</strong> request a payout in Bitcoin, USDC, or ETH. The minimum is
+            $20. You can cash out after you have wagered at least half of what you deposited. The
+            amount is held and only marked finished once the payment is confirmed. Daily limits
+            apply, and larger withdrawals may be reviewed before sending.
           </li>
           <li>
             <strong>History:</strong> every deposit, wager, win and withdrawal is recorded as a

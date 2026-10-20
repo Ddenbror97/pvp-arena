@@ -1,6 +1,8 @@
 import { formatUsd } from "@/lib/jackpot/math";
 import {
   bonusWithdrawBlockedMessage,
+  depositWagerBlockedMessage,
+  depositWagerShortfall,
   type WithdrawCashSnapshot,
 } from "@/lib/crypto/bonus-withdraw";
 
@@ -11,6 +13,14 @@ export function BonusCashoutNotice({
   snap: WithdrawCashSnapshot;
   availableCents: number;
 }) {
+  if (depositWagerShortfall(snap) > 0) {
+    return (
+      <p className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-2.5 py-2 text-xs leading-snug text-muted-foreground">
+        <span className="font-semibold text-foreground">Wager half of your deposits first. </span>
+        {depositWagerBlockedMessage(snap)}
+      </p>
+    );
+  }
   if (snap.room_cents >= availableCents || snap.bonus_cents <= 0) return null;
   if (snap.deposit_cents >= snap.deposit_floor_cents && snap.room_cents > 0) return null;
   return (
@@ -32,6 +42,8 @@ export function cashoutMaxCents(
 }
 
 export function cashoutMaxLabel(snap: WithdrawCashSnapshot | null, maxCents: number): string | null {
-  if (!snap || snap.room_cents >= maxCents) return null;
+  if (!snap) return null;
+  if (depositWagerShortfall(snap) > 0) return depositWagerBlockedMessage(snap);
+  if (snap.room_cents >= maxCents) return null;
   return `Up to ${formatUsd(maxCents)} can be cashed out now (${formatUsd(snap.bonus_cents)} is bonus until you deposit ${formatUsd(snap.deposit_floor_cents)}).`;
 }

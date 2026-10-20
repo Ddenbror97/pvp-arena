@@ -6,7 +6,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
-import { fundTestTreasury, migrateTestSchemaToReal } from "./money";
+import { coverDepositWager, fundTestTreasury, migrateTestSchemaToReal } from "./money";
 import { promoTestIp } from "./promo-client-ip";
 import { BTC_QUOTE_RATE, quoteExpiry, quotedSats } from "./btc-quote";
 import { testDatabaseUrl } from "./test-url";
@@ -681,6 +681,7 @@ d("promo codes (isolated schema)", () => {
       end
       $dep$;
     `);
+    await coverDepositWager(sql, id, cents);
     return id;
   }
 

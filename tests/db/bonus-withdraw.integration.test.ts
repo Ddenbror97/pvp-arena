@@ -26,8 +26,8 @@ d("bonus withdrawal floor", () => {
     const mins = await sql`select
       (select min_withdrawal_cents from pvp_test.crypto_settings) as settings,
       (select min_withdrawal_cents from pvp_test.chain_networks where chain_id = 8453) as chain`;
-    expect(Number(mins[0].settings)).toBe(200);
-    expect(Number(mins[0].chain)).toBe(200);
+    expect(Number(mins[0].settings)).toBe(2000);
+    expect(Number(mins[0].chain)).toBe(2000);
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     await fundTestTreasury(sql);
     await sql.unsafe(`alter table pvp_test.chain_networks disable trigger user;
@@ -166,7 +166,8 @@ d("bonus withdrawal floor", () => {
       await db`select pvp_test._post(${id}::uuid, ${escrow}::uuid, ${pot}::bigint)`;
       await db`select pvp_test._post(${id}::uuid, ${escrow}::uuid, ${-pot}::bigint)`;
       await db`select pvp_test._post(${id}::uuid, ${won}::uuid, ${payout}::bigint)`;
-      await db`select pvp_test._post(${id}::uuid, ${house}::uuid, ${fee}::bigint)`;
+      if (fee !== 0)
+        await db`select pvp_test._post(${id}::uuid, ${house}::uuid, ${fee}::bigint)`;
     });
   }
 
@@ -226,6 +227,9 @@ d("bonus withdrawal floor", () => {
   it("rejects a cashout under $20 on bitcoin, usdc, and eth", async () => {
     const u = await user("min");
     await deposit(u, 5000);
+    expect(await eth(u, 2000)).toMatch(/DEPOSIT_WAGER_REQUIRED/);
+    await entry(u, 91010, 2500);
+    await settle(91010, [{ uid: u, stake: 2500 }], u, 2500, 0);
     expect(await btc(u, 1000)).toMatch(/BELOW_MINIMUM/);
     expect(await usdc(u, 1000)).toMatch(/BELOW_MINIMUM/);
     expect(await eth(u, 1000)).toMatch(/BELOW_MINIMUM/);
@@ -264,6 +268,8 @@ d("bonus withdrawal floor", () => {
       950,
       50,
     );
+    await entry(depositor, 91004, 350);
+    await settle(91004, [{ uid: depositor, stake: 350 }], depositor, 350, 0);
     expect(await basis(depositor)).toMatchObject({
       deposits: 1900,
       eligible: 2345,
@@ -286,11 +292,20 @@ d("bonus withdrawal floor", () => {
       deposits: 1500,
       eligible: 1500,
       bonus: 900,
-      room: 1500,
+      room: 0,
     });
     expect(await btc(u, 2000)).toMatch(/BONUS_NOT_WITHDRAWABLE/);
     expect(await bal(u)).toBe(2400);
     await deposit(u, 500);
+    expect(await basis(u)).toMatchObject({
+      deposits: 2000,
+      eligible: 2000,
+      bonus: 900,
+      room: 0,
+    });
+    expect(await btc(u, 2900)).toMatch(/DEPOSIT_WAGER_REQUIRED/);
+    await entry(u, 91011, 1000);
+    await settle(91011, [{ uid: u, stake: 1000 }], u, 1000, 0);
     expect(await basis(u)).toMatchObject({
       deposits: 2000,
       eligible: 2000,
@@ -305,6 +320,8 @@ d("bonus withdrawal floor", () => {
     const u = await user("race");
     await deposit(u, 2000);
     await bonus(u, "promo_reward", 500);
+    await entry(u, 91012, 1000);
+    await settle(91012, [{ uid: u, stake: 1000 }], u, 1000, 0);
     const results = await Promise.all([btc(u, 2000), usdc(u, 2000)]);
     expect(results.filter((m) => m === "").length, results.join(" | ")).toBe(1);
     expect(

@@ -574,7 +574,12 @@ export function CryptoRails({
           />
         </div>
         <div className={withdrawRail === "BTC" ? "mt-2.5" : "hidden"}>
-          <BtcDepositPanel mode="withdraw" active={withdrawRail === "BTC"} />
+          <BtcDepositPanel
+            mode="withdraw"
+            active={withdrawRail === "BTC"}
+            withdrawSnap={withdrawSnap}
+            availableCents={availableCents}
+          />
         </div>
         <div className={withdrawRail === "BTC" ? "hidden" : "flex min-h-0 flex-1 flex-col"}>
           {withdrawRail !== "BTC" && !withdrawalReview ? (

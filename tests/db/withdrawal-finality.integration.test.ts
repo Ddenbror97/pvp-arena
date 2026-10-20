@@ -11,7 +11,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
-import { fundTestTreasury, migrateTestSchemaToReal } from "./money";
+import { coverDepositWager, fundTestTreasury, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 import {
   applyPayoutDecision,
@@ -165,6 +165,7 @@ async function newUser(name: string) {
     sql`select pvp_test.crypto_observe_deposit(84532, 'USDC', ${hex(32)}, 0, 100, ${w}, ${TREASURY}, '100000000') as r`,
   );
   await one(sql`select pvp_test.crypto_credit_deposit(${dep.id}, null) as r`);
+  await coverDepositWager(sql, id, 10_000);
   return id;
 }
 const bal = async (uid: string, kind = "user_available") =>

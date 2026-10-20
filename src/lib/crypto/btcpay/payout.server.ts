@@ -603,6 +603,8 @@ function payoutError(message: string): string {
     return "Your $10 referral reward has to be wagered on Jackpot, Coinflip, Roulette, Slott, or Poker before that reward can be withdrawn.";
   if (message.includes("PROMO_PLAYTHROUGH"))
     return "Promotional credit has to be wagered on Jackpot, Coinflip, Roulette, Slott, or Poker before that amount can be withdrawn.";
+  if (message.includes("DEPOSIT_WAGER_REQUIRED"))
+    return "Wager half of what you have deposited before cashout. The minimum cashout is $20.";
   if (message.includes("BONUS_NOT_WITHDRAWABLE"))
     return "Your balance includes promo or bonus credit that cannot be cashed out yet. Deposit at least $20 on Base first; after that, bonus winnings can be withdrawn (minimum cashout $20).";
   if (message.includes("LEADERBOARD_PLAYTHROUGH"))

@@ -20,6 +20,8 @@ import { bitcoinPaymentUri, btcInvoicePhase } from "@/lib/crypto/btcpay/policy";
 import { announceDepositSubmitted } from "@/lib/crypto/deposit-notify";
 import { announceWithdrawalSubmitted } from "@/lib/crypto/withdraw-notify";
 import { PartnerProfitNote, usePartnerProfitHold } from "@/components/wallet/PartnerProfitHold";
+import { BonusCashoutNotice, cashoutMaxCents } from "@/components/wallet/BonusCashoutNotice";
+import { bonusWithdrawBlockedMessage, type WithdrawCashSnapshot } from "@/lib/crypto/bonus-withdraw";
 
 const DEFAULT_DEPOSIT_USD = "10";
 
@@ -27,10 +29,14 @@ const DEFAULT_DEPOSIT_USD = "10";
 export function BtcDepositPanel({
   mode = "deposit",
   active = true,
+  withdrawSnap = null,
+  availableCents = 0,
 }: {
   mode?: "deposit" | "withdraw";
   /** When false (another rail selected), do not create BTCPay invoices in the background. */
   active?: boolean;
+  withdrawSnap?: WithdrawCashSnapshot | null;
+  availableCents?: number;
 }) {
   const configFn = useServerFn(getBtcDepositConfig);
   const payoutFn = useServerFn(getBtcPayoutConfig);
@@ -239,6 +245,11 @@ export function BtcDepositPanel({
       toast.error("Enter a USD amount at or above the cashout minimum.");
       return;
     }
+    const cap = cashoutMaxCents(availableCents, heldCents, withdrawSnap);
+    if (withdrawSnap && outCents > cap) {
+      toast.error(bonusWithdrawBlockedMessage(withdrawSnap, outCents));
+      return;
+    }
     if (outAddress.trim().length < 14) {
       toast.error("Enter a Bitcoin address that starts with bc1.");
       return;
@@ -408,6 +419,9 @@ export function BtcDepositPanel({
                 : "\u00a0"}
             </p>
           </div>
+          {mode === "withdraw" && withdrawSnap ? (
+            <BonusCashoutNotice snap={withdrawSnap} availableCents={availableCents} />
+          ) : null}
           {!payout.isFetched || payout.data?.available ? (
             <PartnerProfitNote heldCents={payout.isFetched ? heldCents : 0} />
           ) : (

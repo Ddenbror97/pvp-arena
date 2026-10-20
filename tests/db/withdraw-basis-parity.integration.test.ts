@@ -91,7 +91,7 @@ d("withdraw basis incremental parity", () => {
     const room = (
       await sql`select (pvp_test._withdraw_basis(${u}::uuid)->>'room')::bigint r`
     )[0].r;
-    expect(Number(room)).toBeGreaterThanOrEqual(3000);
+    expect(Number(room)).toBe(0);
   });
 
   it("recovers when an earlier-timestamp tx lands after sync applied a later one", async () => {
@@ -109,7 +109,7 @@ d("withdraw basis incremental parity", () => {
     const lateRoom = (
       await sql`select (pvp_test._withdraw_basis(${uLate}::uuid)->>'room')::bigint r`
     )[0].r;
-    expect(Number(lateRoom)).toBe(1500);
+    expect(Number(lateRoom)).toBe(0);
   });
 
   it("sync latency stays bounded under repeated and concurrent calls (isolated DB)", async () => {

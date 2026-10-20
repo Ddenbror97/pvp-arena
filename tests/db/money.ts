@@ -64,11 +64,50 @@ export async function migrateTestSchemaToReal(
 
 /**
  * Suites that are not about the cashout floor use $10 so their amounts still
- * clear the minimum, including while production is temporarily at $2.
+ * clear the $20 production minimum.
  */
 export async function useTestWithdrawalMinimum(sql: postgres.Sql) {
   await sql`update pvp_test.crypto_settings set min_withdrawal_cents = 1000`;
   await sql`alter table pvp_test.chain_networks disable trigger user`;
   await sql`update pvp_test.chain_networks set min_withdrawal_cents = 1000`;
   await sql`alter table pvp_test.chain_networks enable trigger user`;
+}
+
+/**
+ * Stake half of a deposit and pay it back, so a later cashout clears the
+ * 50% deposit-wager gate without changing the available balance.
+ */
+export async function coverDepositWager(sql: postgres.Sql, uid: string, depositCents: number) {
+  const stake = Math.floor(depositCents / 2);
+  if (stake <= 0) return;
+  const gameId = 1_000_000_000 + Math.floor(Math.random() * 1_000_000_000);
+  const available = (
+    await sql`select pvp_test._user_account(${uid}::uuid, 'user_available'::pvp_test.account_kind, 'USD', 'real') id`
+  )[0].id as string;
+  const locked = (
+    await sql`select pvp_test._user_account(${uid}::uuid, 'user_locked'::pvp_test.account_kind, 'USD', 'real') id`
+  )[0].id as string;
+  const escrow = (
+    await sql`select pvp_test._system_account('game_escrow'::pvp_test.account_kind, 'USD', 'real') id`
+  )[0].id as string;
+  await sql.begin(async (db) => {
+    const id = (
+      await db`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, game_id, user_id)
+        values ('coinflip_entry'::pvp_test.tx_kind, ${randomUUID()}, 'real', ${gameId}, ${uid}::uuid)
+        returning id`
+    )[0].id as string;
+    await db`select pvp_test._post(${id}::uuid, ${available}::uuid, ${-stake}::bigint)`;
+    await db`select pvp_test._post(${id}::uuid, ${locked}::uuid, ${stake}::bigint)`;
+  });
+  await sql.begin(async (db) => {
+    const id = (
+      await db`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, game_id, user_id)
+        values ('coinflip_settlement'::pvp_test.tx_kind, ${randomUUID()}, 'real', ${gameId}, ${uid}::uuid)
+        returning id`
+    )[0].id as string;
+    await db`select pvp_test._post(${id}::uuid, ${locked}::uuid, ${-stake}::bigint)`;
+    await db`select pvp_test._post(${id}::uuid, ${escrow}::uuid, ${stake}::bigint)`;
+    await db`select pvp_test._post(${id}::uuid, ${escrow}::uuid, ${-stake}::bigint)`;
+    await db`select pvp_test._post(${id}::uuid, ${available}::uuid, ${stake}::bigint)`;
+  });
 }

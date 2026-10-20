@@ -8,7 +8,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
-import { fundTestTreasury, migrateTestSchemaToReal } from "./money";
+import { coverDepositWager, fundTestTreasury, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
 const url = testDatabaseUrl();
@@ -173,6 +173,7 @@ d("crypto_my_activity read-only path and withdrawal sync", () => {
     const u = await user("wd");
     await deposit(u, 5000);
     expect(await bucket(u)).toEqual({ deposits: 5000, eligible: 5000 });
+    await coverDepositWager(sql, u, 5000);
 
     const r = await failure(withdrawEth(u, 2500));
     expect(r).toBeNull();
@@ -191,6 +192,7 @@ d("crypto_my_activity read-only path and withdrawal sync", () => {
   it("withdrawal still refuses to run in a read-only transaction", async () => {
     const u = await user("wdro");
     await deposit(u, 5000);
+    await coverDepositWager(sql, u, 5000);
     const r = await failure(postgrestStable((tx) => withdrawEth(u, 2500, tx)));
     expect(r?.code).toBe("25006");
     const [n] =

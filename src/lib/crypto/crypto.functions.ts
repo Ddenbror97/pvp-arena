@@ -7,6 +7,8 @@ import { usableDisplayPrice } from "./eth-price";
 import { isTransientRpcFailure } from "./rpc-retry";
 import {
   bonusWithdrawBlockedMessage,
+  depositWagerBlockedMessage,
+  depositWagerShortfall,
   parseWithdrawCashSnapshot,
   type WithdrawCashSnapshot,
 } from "@/lib/crypto/bonus-withdraw";
@@ -31,6 +33,8 @@ const ERRORS: Record<string, string> = {
     "Your $10 referral reward has to be wagered on Jackpot, Coinflip, Roulette, Slott, or Poker before that reward can be withdrawn.",
   PROMO_PLAYTHROUGH:
     "Promotional credit has to be wagered on Jackpot, Coinflip, Roulette, Slott, or Poker before that amount can be withdrawn.",
+  DEPOSIT_WAGER_REQUIRED:
+    "Wager half of what you have deposited before cashout. The minimum cashout is $20.",
   BONUS_NOT_WITHDRAWABLE:
     "Your balance includes promo or bonus credit that cannot be cashed out yet. Deposit at least $20 on Base first; after that, bonus winnings can be withdrawn (minimum cashout $20). Winnings funded by another player's bonus stay bonus.",
   LEADERBOARD_PLAYTHROUGH:
@@ -86,6 +90,9 @@ export function cleanWithdrawError(
   withdraw: WithdrawCashSnapshot | null | undefined,
   amountCents?: number,
 ): string {
+  if (msg.includes("DEPOSIT_WAGER_REQUIRED") && withdraw && depositWagerShortfall(withdraw) > 0) {
+    return depositWagerBlockedMessage(withdraw);
+  }
   if (msg.includes("BONUS_NOT_WITHDRAWABLE") && withdraw) {
     return bonusWithdrawBlockedMessage(withdraw, amountCents);
   }

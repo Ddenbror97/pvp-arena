@@ -176,7 +176,8 @@ function TermsPage() {
       </p>
       <p>
         Withdrawals use your available dollar balance and are sent to a verified wallet using the
-        asset you select.
+        asset you select. The minimum cashout is $20 in Bitcoin, USDC, or ETH. A cashout is
+        available after you have wagered at least half of the dollars you have deposited.
       </p>
       <p>A withdrawal does not have to use the same asset that was previously deposited.</p>
       <p>

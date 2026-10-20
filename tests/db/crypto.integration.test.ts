@@ -7,7 +7,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
-import { fundTestTreasury, migrateTestSchemaToReal } from "./money";
+import { coverDepositWager, fundTestTreasury, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
 const url = testDatabaseUrl();
@@ -47,6 +47,7 @@ async function newUser(name: string, verified = true) {
     // Real accounts start at $0: fund with a real (test-schema) $1,000 USDC deposit.
     const dep = await observe("USDC", txh(), w, "1000000000");
     await credit(dep.id);
+    await coverDepositWager(sql, id, 100_000);
   }
   return { id, wallet: w };
 }
