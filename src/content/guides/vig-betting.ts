@@ -99,7 +99,9 @@ The [responsible gambling](/responsible-gambling) page is the stop if chasing lo
 
 A PvP pot is shared among the players who entered it. You are not taking −110 against a book that hung −110 the other way. [Fairness](/fairness) explains how this site's rounds can be checked. [Jackpot](/) is the pot, not a juiced spread. This page states no player counts, no rake, and no jackpot size. Adults 18+. Nothing here is betting advice.
 
-One help center prints a $1 online minimum and Panama law, and still no single juice number. That dated read is [a Panama rulebook with a $1 minimum](/guides/sportsbetting-ag-review).`
+One help center prints a $1 online minimum and Panama law, and still no single juice number. That dated read is [a Panama rulebook with a $1 minimum](/guides/sportsbetting-ag-review).
+
+A flex table treats a $5 fee at 3x as a $15 prize that does not include the fee. The ladder is [that printed flex table](/guides/betr-picks-review).`
     },
   ],
   faqs: [

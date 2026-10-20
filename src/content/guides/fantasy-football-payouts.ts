@@ -109,7 +109,9 @@ You check the draw on [fairness](/fairness) after settlement. The page recompute
 
 Coinflip is two players under the same 5% pot rule. Roulette is the 33-slot wheel with about a 7.88% theoretical edge on Purple or Silver after 5% of each winning payout. Slott is a 1v1 that keeps 10% of the players' pot when a player wins, unless a bomb ends the match and both stakes stay with the house. PVPspinArena does not run your fantasy league and does not set its payouts. If you wanted a season table, write the charter and do the subtraction. If you wanted a single pot and a draw, the on-site product is Jackpot.
 
-Open [Jackpot](/) for that pot: the live activity block, when present, is fetched from settled rounds, not typed into the article.`,
+Open [Jackpot](/) for that pot: the live activity block, when present, is fetched from settled rounds, not typed into the article.
+
+One app pools player entries against other users and caps a regular fee at $500. Two cash-out sentences disagree. The dated note is [those pool caps and the two clocks](/guides/sleeper-picks-review).`,
     },
   ],
   faqs: [

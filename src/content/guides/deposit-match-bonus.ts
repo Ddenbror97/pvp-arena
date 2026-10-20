@@ -136,7 +136,9 @@ One clean test beats a pile of tabs. Use the smallest stake the cashier will acc
 
 Then close the tab or play only what this site actually offers. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars, adults 18+ only. A second account is not a fresh start.
 
-One sports welcome prints 125% up to $1,250, then 10x sports or 30x casino on deposit plus bonus. The cases are [that 125% roll, with two minimums](/guides/lucky-rebel-review).`
+One sports welcome prints 125% up to $1,250, then 10x sports or 30x casino on deposit plus bonus. The cases are [that 125% roll, with two minimums](/guides/lucky-rebel-review).
+
+A fantasy help page offers four no-sweat tokens after a $10 deposit, capped at $50, through 31 October 2026. The terms are [that token window](/guides/betr-picks-review).`
     },
   ],
   faqs: [

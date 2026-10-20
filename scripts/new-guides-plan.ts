@@ -4501,4 +4501,20 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "justbet",
     "justbet.co review. The Australian racing site with a similar name stays off this page.",
   ),
+  p(
+    30,
+    "Sports betting",
+    "Pick'em apps",
+    "sleeper-picks-review",
+    "sleeper picks",
+    "Player-pool review from Sleeper help. prizepicks, underdog fantasy, and dfs strategy stay on their own pages.",
+  ),
+  p(
+    30,
+    "Sports betting",
+    "Pick'em apps",
+    "betr-picks-review",
+    "betr picks",
+    "Flex and no-sweat review from Betr help. Does not replace the PrizePicks explainer.",
+  ),
 ];
