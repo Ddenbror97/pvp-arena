@@ -6,7 +6,7 @@
  */
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { randomUUID } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
 import { fundTestTreasury, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
@@ -17,7 +17,6 @@ const sql = url
   ? postgres(url, { max: 4, prepare: false, onnotice: () => {}, idle_timeout: 5 })
   : (null as never);
 
-const TO = "0x2222222222222222222222222222222222222222";
 const FEED = "0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70";
 const PRICE = 2_500_000_000;
 
@@ -67,6 +66,12 @@ d("crypto_my_activity read-only path and withdrawal sync", () => {
     const username = (name + id.replace(/-/g, "")).slice(0, 20);
     await sql`select pvp_test.ensure_profile(${username}, true)
       from (select set_config('test.uid', ${id}, true)) c`;
+    const wallet = "0x" + randomBytes(20).toString("hex");
+    await sql`insert into pvp_test.user_wallets (
+      user_id, address, normalized_address, is_verified, is_primary, verified_at, became_primary_at
+    ) values (
+      ${id}::uuid, ${wallet}, ${wallet}, true, true, now() - interval '48 hours', now() - interval '48 hours'
+    )`;
     return id;
   }
 
@@ -95,7 +100,12 @@ d("crypto_my_activity read-only path and withdrawal sync", () => {
     const quote = (
       await sql`select pvp_test.crypto_quote_withdrawal(${uid}::uuid, 8453::bigint, ${cents}::bigint) q`
     )[0]!.q as { quote_id: string };
-    return db`select pvp_test.crypto_request_withdrawal(${uid}::uuid, 8453::bigint, 'ETH', ${cents}::bigint, ${quote.quote_id}::uuid, true, ${TO})`;
+    const wallet = (
+      await sql`select normalized_address from pvp_test.user_wallets
+        where user_id = ${uid}::uuid and is_verified
+        order by is_primary desc limit 1`
+    )[0]!.normalized_address as string;
+    return db`select pvp_test.crypto_request_withdrawal(${uid}::uuid, 8453::bigint, 'ETH', ${cents}::bigint, ${quote.quote_id}::uuid, true, ${wallet})`;
   }
 
   async function bucket(uid: string) {

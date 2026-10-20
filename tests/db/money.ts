@@ -63,12 +63,12 @@ export async function migrateTestSchemaToReal(
 }
 
 /**
- * Production cashouts are $20. Suites that are not about that floor keep the
- * previous $10 so their amounts still clear the minimum.
+ * Suites that are not about the cashout floor use $10 so their amounts still
+ * clear the minimum, including while production is temporarily at $2.
  */
 export async function useTestWithdrawalMinimum(sql: postgres.Sql) {
-  await sql`update pvp_test.crypto_settings set min_withdrawal_cents = 1000 where min_withdrawal_cents > 1000`;
+  await sql`update pvp_test.crypto_settings set min_withdrawal_cents = 1000`;
   await sql`alter table pvp_test.chain_networks disable trigger user`;
-  await sql`update pvp_test.chain_networks set min_withdrawal_cents = 1000 where min_withdrawal_cents > 1000`;
+  await sql`update pvp_test.chain_networks set min_withdrawal_cents = 1000`;
   await sql`alter table pvp_test.chain_networks enable trigger user`;
 }

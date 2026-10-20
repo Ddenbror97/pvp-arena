@@ -10,7 +10,6 @@ import {
   reconcileInvoice,
 } from "./reconcile.server";
 import { cancelBtcPayout, requestBtcPayout } from "./payout.server";
-import { withdrawalCodeSchema } from "@/lib/auth-otp/withdrawal.functions";
 
 export const getBtcDepositConfig = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth, requireLiveSession])
@@ -74,8 +73,7 @@ export const getBtcInvoice = createServerFn({ method: "POST" })
         requiredConfirmations: fresh.required_confirmations,
       },
     });
-    const live =
-      row.status === "NEW" || row.status === "PROCESSING" || row.status === "SETTLED";
+    const live = row.status === "NEW" || row.status === "PROCESSING" || row.status === "SETTLED";
     const config = readBtcpayConfig();
     if (config.ok && config.enabled && live && (data.refresh || !row.address)) {
       await reconcileInvoice(config, row).catch(() => undefined);
@@ -118,20 +116,14 @@ export const requestBtcCashout = createServerFn({ method: "POST" })
         usdCents: z.number().int().positive().max(100_000_000),
         address: z.string().min(14).max(120),
       })
-      .merge(withdrawalCodeSchema)
       .parse(data),
   )
   .handler(async ({ data, context }) => {
     const target = { rail: "btc" as const, usdCents: data.usdCents, address: data.address };
-    const { noticeWithdrawal, verifyWithdrawalCode } =
+    const { noticeWithdrawal, withdrawalBlocked } =
       await import("@/lib/auth-otp/withdrawal.server");
-    const verified = await verifyWithdrawalCode({
-      userId: context.userId,
-      challengeId: data.challengeId,
-      code: data.code,
-      target,
-    });
-    if (!verified.ok) return { ok: false as const, error: verified.error };
+    const blocked = await withdrawalBlocked(context.userId);
+    if (blocked) return { ok: false as const, error: blocked };
     const result = await requestBtcPayout(context.userId, data.usdCents, data.address);
     if (result.ok) await noticeWithdrawal(context.userId, result.id, target);
     return result;

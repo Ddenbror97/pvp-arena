@@ -38,13 +38,12 @@ import {
 } from "@/lib/web3/metamask";
 import { requestWalletChallenge, verifyWalletSignature } from "@/lib/web3/wallet.functions";
 import { matchingVerifiedAddress } from "@/lib/web3/verified-wallet";
+import { announceDepositSubmitted } from "@/lib/crypto/deposit-notify";
 import { userWalletsQuery } from "@/components/wallet/WalletCard";
 import { WalletChoices, WalletMark } from "@/components/wallet/WalletBrand";
+import { cn } from "@/lib/utils";
 
-/**
- * Deposit and withdraw can still be done by copying an address.
- * These actions open the verified MetaMask or Coinbase account when the player has one.
- */
+/** Opens the linked MetaMask or Coinbase wallet for an ETH or USDC payment. */
 /** Synchronous send lock. The second click in the same turn loses. */
 export function claimSendLock(lock: { current: boolean }): boolean {
   if (lock.current) return false;
@@ -59,7 +58,9 @@ export function VerifiedWalletActions({
   minCents,
   activeAddress,
   onAddress,
+  onLabel,
   payments = true,
+  className,
 }: {
   purpose: "deposit" | "withdraw";
   chainId: number;
@@ -67,8 +68,11 @@ export function VerifiedWalletActions({
   minCents: number;
   activeAddress?: string;
   onAddress?: (address: string) => void;
+  /** Wallet app name, without the address. Cash outs do not show a destination field. */
+  onLabel?: (label: string) => void;
   /** Bitcoin has its own address. The logo buttons stay; send and cashout stay on ETH and USDC. */
   payments?: boolean;
+  className?: string;
 }) {
   const { userId } = useAuth();
   const qc = useQueryClient();
@@ -86,8 +90,10 @@ export function VerifiedWalletActions({
   const filledByWallet = useRef<string | null>(null);
   const sendLock = useRef(false);
   const onAddressRef = useRef(onAddress);
+  const onLabelRef = useRef(onLabel);
   const activeRef = useRef(activeAddress);
   onAddressRef.current = onAddress;
+  onLabelRef.current = onLabel;
   activeRef.current = activeAddress;
   const [kind, setKind] = useState<WalletKind | null>(null);
   const [installed, setInstalled] = useState<Set<WalletKind>>(new Set());
@@ -158,9 +164,10 @@ export function VerifiedWalletActions({
     setUi(next);
   }
 
-  function publishAddress(address: string) {
+  function publishAddress(address: string, walletKind: WalletKind) {
     filledByWallet.current = address;
     onAddressRef.current?.(address);
+    onLabelRef.current?.(WALLET_LABEL[walletKind]);
   }
 
   function dropFilledAddress() {
@@ -168,6 +175,7 @@ export function VerifiedWalletActions({
     if (!filled || activeRef.current?.toLowerCase() !== filled.toLowerCase()) return;
     filledByWallet.current = null;
     onAddressRef.current?.("");
+    onLabelRef.current?.("your linked wallet");
   }
 
   function watch(nextKind: WalletKind, session: WalletSession) {
@@ -221,7 +229,8 @@ export function VerifiedWalletActions({
     rememberWalletKind(connected, kind);
     const row = verified.find((item) => item.normalized_address === hit);
     const next = row?.address ?? connected;
-    if (payments && activeRef.current?.toLowerCase() !== next.toLowerCase()) publishAddress(next);
+    if (payments && activeRef.current?.toLowerCase() !== next.toLowerCase())
+      publishAddress(next, kind);
     setErr((current) => (current === "ADDRESS_MISMATCH" ? null : current));
   }, [connected, kind, payments, wallets.data, wallets.isLoading]);
 
@@ -238,7 +247,7 @@ export function VerifiedWalletActions({
     if (hit) {
       rememberWalletKind(address, nextKind);
       const row = verified.find((item) => item.normalized_address === hit);
-      if (payments) publishAddress(row?.address ?? address);
+      if (payments) publishAddress(row?.address ?? address, nextKind);
       setErr(null);
       return;
     }
@@ -450,9 +459,11 @@ export function VerifiedWalletActions({
         { ...prepared.instruction, treasury: destination as `0x${string}` },
         connected,
       );
-      toast.success(
-        `Transaction submitted from ${label}. Your balance updates after the network confirms it.`,
-      );
+      announceDepositSubmitted({
+        usdCents: cents,
+        asset,
+        networkMode: "mainnet",
+      });
       setAmount("");
     } catch (error) {
       const code = error instanceof WalletError ? error.code : "GENERIC";
@@ -465,27 +476,41 @@ export function VerifiedWalletActions({
   }
 
   return (
-    <div className="mt-2 space-y-1.5" data-testid="verified-wallet-actions">
+    <div
+      className={cn("flex min-h-0 flex-col gap-1.5", className ?? "mt-1.5")}
+      data-testid="verified-wallet-actions"
+    >
       <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-        Pay from a linked wallet
+        {purpose === "deposit" ? "Pay with" : "Cash out with"}
       </p>
-      {verified.length > 0 && (
-        <div className="flex flex-wrap gap-1.5" role="group" aria-label="Verified wallets">
+      {verified.length > 1 && (
+        <div className="flex flex-wrap gap-1" role="group" aria-label="Verified wallets">
           {verified.map((row) => {
             const remembered = recallWalletKind(row.address);
             const selected =
               !!activeAddress && activeAddress.toLowerCase() === row.normalized_address;
+            const sameKind = verified.filter(
+              (item) => recallWalletKind(item.address) === remembered,
+            ).length;
+            const name = remembered ? WALLET_LABEL[remembered] : "Wallet";
+            const chip =
+              purpose === "withdraw" && sameKind < 2
+                ? name
+                : `${name} ${shortAddress(row.address)}`;
             return (
               <Button
                 key={row.normalized_address}
                 type="button"
                 size="sm"
                 variant={selected ? "default" : "secondary"}
-                className="gap-1.5"
+                className="h-7 gap-1 px-2"
                 aria-pressed={selected}
                 disabled={busy !== null}
                 onClick={() => {
-                  if (payments) onAddress?.(row.address);
+                  if (payments) {
+                    onAddress?.(row.address);
+                    if (remembered) onLabel?.(WALLET_LABEL[remembered]);
+                  }
                   if (!remembered) return;
                   const differentAccount =
                     kind === remembered &&
@@ -494,8 +519,8 @@ export function VerifiedWalletActions({
                   void connect(remembered, differentAccount ? "switch" : "open");
                 }}
               >
-                {remembered ? <WalletMark kind={remembered} className="h-4 w-4" /> : null}
-                {remembered ? WALLET_LABEL[remembered] : "Verified"} {shortAddress(row.address)}
+                {remembered ? <WalletMark kind={remembered} className="h-3.5 w-3.5" /> : null}
+                {chip}
               </Button>
             );
           })}
@@ -517,9 +542,9 @@ export function VerifiedWalletActions({
         onChoose={(item) => void connect(item, kind === item && connected ? "switch" : "open")}
       />
       {payments && connected && matched && purpose === "deposit" && (
-        <div className="space-y-2">
-          <p className="text-xs text-muted-foreground">
-            {label} · {shortAddress(connected)}
+        <div className="mt-auto flex flex-col gap-1.5">
+          <p className="truncate text-[11px] text-muted-foreground">
+            From {shortAddress(connected)}
           </p>
           {wrongNetwork ? (
             <Button
@@ -556,7 +581,7 @@ export function VerifiedWalletActions({
                   id="wallet-send-amount"
                   inputMode="decimal"
                   autoComplete="off"
-                  className="h-9 pl-7 font-mono"
+                  className="h-8 pl-7 font-mono"
                   placeholder="0.00"
                   value={amount}
                   onChange={(event) => setAmount(event.target.value)}
@@ -564,7 +589,7 @@ export function VerifiedWalletActions({
               </div>
               <Button
                 type="button"
-                className="h-9 w-full"
+                className="h-8 w-full"
                 disabled={
                   busy !== null ||
                   !asset ||
@@ -579,11 +604,6 @@ export function VerifiedWalletActions({
             </>
           )}
         </div>
-      )}
-      {payments && connected && matched && purpose === "withdraw" && (
-        <p className="text-xs text-muted-foreground">
-          Cashout address set from {label} · {shortAddress(connected)}
-        </p>
       )}
       {err && (
         <p role="alert" className="text-xs text-destructive">
@@ -657,7 +677,8 @@ export function VerifiedWalletActions({
         ))}
       {verified.length === 0 && !wallets.isLoading && !connected && (
         <p className="text-[11px] leading-snug text-muted-foreground">
-          Sign a message to link MetaMask or Coinbase. You can still copy the deposit address.
+          Choose MetaMask or Coinbase, then sign once to link it. Deposits and cash outs use that
+          wallet.
         </p>
       )}
     </div>

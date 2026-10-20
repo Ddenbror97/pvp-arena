@@ -1,7 +1,12 @@
 /** Integer-only money and probability helpers. Amounts are in cents. */
 
 export function formatUsd(cents: number | bigint): string {
-  const v = BigInt(cents);
+  // Postgres sum(bigint) is numeric, so a report can be a fraction of a cent.
+  // Round for display. A missing or non-finite value shows as zero.
+  const v =
+    typeof cents === "bigint"
+      ? cents
+      : BigInt(Math.round(Number.isFinite(cents) ? cents : 0));
   const neg = v < 0n;
   const abs = neg ? -v : v;
   const dollars = (abs / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

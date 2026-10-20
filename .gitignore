@@ -24,6 +24,14 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Base deposit HD backups. The generator encrypts these. Never commit them.
+*.deposit-hd.txt
+*.deposit-hd.xpub
+*.deposit-hd.xprv
+*.deposit-hd.txt.partial
+*.deposit-hd.xpub.partial
+*.deposit-hd.xprv.partial
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -4,6 +4,7 @@ import { formatUsd } from "@/lib/jackpot/math";
 import { timeAgo } from "@/lib/time-ago";
 import { COIN, CoinImg } from "./coins";
 import { EDGE_TO_EDGE, RecentPager, usePagedRecent } from "@/components/recent/usePagedRecent";
+import { cn } from "@/lib/utils";
 
 export function RecentRounds() {
   const paintedAt = getRouteApi("/roulette").useLoaderData().recent?.at;
@@ -12,7 +13,7 @@ export function RecentRounds() {
     fetchRecentRounds,
   );
   return (
-    <section className={EDGE_TO_EDGE} {...pauseProps}>
+    <section className={cn(EDGE_TO_EDGE, "mt-1")} {...pauseProps}>
       <h2 className="section-kicker mb-2 font-display text-xs uppercase tracking-widest">
         Recent roulette rounds
       </h2>

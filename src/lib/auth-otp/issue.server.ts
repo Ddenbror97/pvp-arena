@@ -1,13 +1,21 @@
 // Issues one email code through the existing OTP tables and Resend sender.
 import { renderAuthEmail, type AuthEmailKind } from "./email-template";
 import { sendAuthEmail } from "./mailer.server";
-import { generateOtp, hashIdentifier, isOtpFormat, maskEmail, otpDigest } from "./otp";
+import {
+  WITHDRAWAL_PURPOSE,
+  generateOtp,
+  hashIdentifier,
+  isOtpFormat,
+  maskEmail,
+  otpDigest,
+} from "./otp";
 import { workerEnv } from "@/lib/worker-env";
 
 const GENERIC_SEND_ERROR = "Couldn't send the code right now. Please try again shortly.";
 
 export type StartResult =
-  { ok: true; challengeId: string; maskedEmail: string } | { ok: false; error: string };
+  | { ok: true; challengeId: string; maskedEmail: string; reused?: boolean }
+  | { ok: false; error: string };
 
 function env(name: string): string {
   const v = workerEnv(name);
@@ -65,7 +73,17 @@ export async function issueCode(p: {
     p_ua_hash: p.ua ? await hashIdentifier(pepper, p.ua) : null,
     p_request: p.requestId,
   });
-  if (!issued.ok) return { ok: false, error: "Please wait a moment before requesting a new code." };
+  if (!issued.ok) {
+    // A cash-out code is already in the inbox during the 60s cooldown. Hand that
+    // challenge back so the code window can open. Signup and password codes stay strict.
+    if (p.purpose === WITHDRAWAL_PURPOSE) {
+      const existingId = await activeWithdrawalChallenge(p.userId, p.email);
+      if (existingId) {
+        return { ok: true, challengeId: existingId, maskedEmail: maskEmail(p.email), reused: true };
+      }
+    }
+    return { ok: false, error: "Please wait a moment before requesting a new code." };
+  }
   const message = renderAuthEmail(p.kind, code, p.detail);
   let sent: { ok: boolean; error?: string };
   try {
@@ -101,6 +119,28 @@ export async function sendNotice(
       "auth notice failed",
       e instanceof Error ? e.message.slice(0, 120) : "send_error",
     );
+  }
+}
+
+/** Latest emailed cash-out code that can still be typed. Pending and failed sends are skipped. */
+async function activeWithdrawalChallenge(userId: string, email: string): Promise<string | null> {
+  try {
+    const a = await admin();
+    const { data, error } = await a
+      .from("email_otp_challenges")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("email", email.trim().toLowerCase())
+      .eq("purpose", WITHDRAWAL_PURPOSE)
+      .eq("status", "ACTIVE")
+      .gt("expires_at", new Date().toISOString())
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error || !data?.id) return null;
+    return data.id;
+  } catch {
+    return null;
   }
 }
 

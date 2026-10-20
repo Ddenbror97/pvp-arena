@@ -62,6 +62,13 @@ type Detail = {
     created_at: string;
     admin: string | null;
   }[];
+  removals?: {
+    id: string;
+    amount_cents: number;
+    note: string | null;
+    created_at: string;
+    admin: string | null;
+  }[];
   windows: { d7: Window; d30: Window; d90: Window; all: Window; range: Window };
   users: {
     user_id: string;
@@ -88,6 +95,11 @@ const ERRORS: Record<string, string> = {
   PARTNER_HAS_OPEN_GAMES: "This partner has money in an open game. Try again once it settles.",
   NOT_PARTNER: "This user is not an active partner.",
   BAD_AMOUNT: "Amount is outside the allowed top-up range.",
+  AMOUNT_REQUIRED: "Enter an amount greater than zero.",
+  CREDITS_EXCEEDED: "That is more than the promotional credits still on this account.",
+  INSUFFICIENT_AVAILABLE: "The available balance is lower than that amount.",
+  DEPOSITS_PROTECTED:
+    "Deposited funds stay in the account. Only promotional credit above those deposits can be removed.",
   REQUEST_REUSED: "That request was already used for a different amount. Try again.",
   NO_WALLET: "This account has no wallet yet.",
   BAD_CODE: "Codes are 4–16 letters or digits.",
@@ -289,7 +301,7 @@ export function PartnersAdmin() {
             value={list.data ? formatUsd(sum((r) => r.period.commission_cents)) : "—"}
           />
           <Stat
-            label="Credits added"
+            label="Credits left"
             value={list.data ? formatUsd(sum((r) => r.credits_cents)) : "—"}
           />
         </div>
@@ -322,7 +334,7 @@ export function PartnersAdmin() {
                 `Deposits · ${RANGE_LABEL[range.preset]}`,
                 "Commission %",
                 "Commission",
-                "Credits added",
+                "Credits left",
                 "Balance",
               ].map((h) => (
                 <th key={h} className="px-3 py-2 font-medium">
@@ -433,8 +445,8 @@ function AddPartner({ onAdded }: { onAdded: (id: string) => void }) {
   return (
     <Section title="Add partner">
       <p className="mb-3 text-sm text-muted-foreground">
-        The player needs an account already. Type their username or email, then Make partner.
-        That does not open leaderboards. Enable leaderboard on the partner after they are added.
+        The player needs an account already. Type their username or email, then Make partner. That
+        does not open leaderboards. Enable leaderboard on the partner after they are added.
       </p>
       <form className="flex flex-wrap items-end gap-3" onSubmit={(e) => e.preventDefault()}>
         <div className="min-w-[14rem] flex-1 space-y-1.5">
@@ -578,7 +590,7 @@ function PartnerDetail({
       <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
         <Stat label="Available" value={formatUsd(Number(d.available_cents))} />
         <Stat label="In games" value={formatUsd(Number(d.locked_cents))} />
-        <Stat label="Credits added" value={formatUsd(Number(d.credits_cents))} />
+        <Stat label="Credits left" value={formatUsd(Number(d.credits_cents))} />
         <Stat label="Withdrawals" value={<span className="text-sm">{withdrawalCopy}</span>} />
         <Stat label="Attributed users" value={Number(d.attributed_users).toLocaleString("en-US")} />
         <Stat label="Commission" value={pct(d.commission_bps)} />
@@ -639,7 +651,10 @@ function PartnerDetail({
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Settings detail={d} onSaved={refresh} />
-        <TopUp detail={d} limits={limits} onSaved={refresh} />
+        <div className="space-y-4">
+          <TopUp detail={d} limits={limits} onSaved={refresh} />
+          <RemoveCredits detail={d} onSaved={refresh} />
+        </div>
       </div>
 
       <Codes detail={d} onSaved={refresh} />
@@ -665,6 +680,38 @@ function PartnerDetail({
                     <td className="px-2 py-1.5">{when(t.created_at)}</td>
                     <td className="tabular px-2 py-1.5 text-success">
                       +{formatUsd(Number(t.amount_cents))}
+                    </td>
+                    <td className="px-2 py-1.5">{t.admin ?? "—"}</td>
+                    <td className="px-2 py-1.5 text-muted-foreground">{t.note ?? "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Section>
+
+      <Section title="Credits removed">
+        {(d.removals ?? []).length === 0 ? (
+          <p className="text-sm text-muted-foreground">No promotional credits have been removed.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+                <tr>
+                  {["When", "Amount", "Admin", "Note"].map((h) => (
+                    <th key={h} className="px-2 py-1.5 font-medium">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {(d.removals ?? []).map((t) => (
+                  <tr key={t.id}>
+                    <td className="px-2 py-1.5">{when(t.created_at)}</td>
+                    <td className="tabular px-2 py-1.5 text-destructive">
+                      −{formatUsd(Number(t.amount_cents))}
                     </td>
                     <td className="px-2 py-1.5">{t.admin ?? "—"}</td>
                     <td className="px-2 py-1.5 text-muted-foreground">{t.note ?? "—"}</td>
@@ -1203,6 +1250,90 @@ function TopUp({
   );
 }
 
+function RemoveCredits({ detail, onSaved }: { detail: Detail; onSaved: () => Promise<void> }) {
+  const [amount, setAmount] = useState("");
+  const [note, setNote] = useState("");
+  const [request, setRequest] = useState(() => crypto.randomUUID());
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    const cents = parseUsdToCents(amount);
+    if (cents == null || cents <= 0) {
+      toast.error("Enter an amount greater than zero.");
+      return;
+    }
+    if (
+      !window.confirm(
+        `Remove ${formatUsd(cents)} of promotional credits from ${detail.username}? Deposited funds stay in the account.`,
+      )
+    )
+      return;
+    setBusy(true);
+    try {
+      await call("partner_admin_remove_credit", {
+        p_user: detail.user_id,
+        p_amount_cents: cents,
+        p_note: note,
+        p_request_id: request,
+      });
+      toast.success(`Removed ${formatUsd(cents)} from ${detail.username}.`);
+      setAmount("");
+      setNote("");
+      setRequest(crypto.randomUUID());
+      await onSaved();
+    } catch (err) {
+      const message = (err as { message?: string }).message ?? "";
+      toast.error(
+        message.includes("NOT_PARTNER")
+          ? "This user is not a partner."
+          : errorCopy(err as { message?: string }, "Couldn't remove credits."),
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Section title="Remove partner credits">
+      <form onSubmit={submit} className="space-y-3">
+        <div className="grid gap-3 sm:grid-cols-[9rem_1fr]">
+          <div className="space-y-1.5">
+            <Label htmlFor="pd-remove-amount">Amount (USD)</Label>
+            <Input
+              id="pd-remove-amount"
+              value={amount}
+              onChange={(e) => {
+                setAmount(e.target.value);
+                setRequest(crypto.randomUUID());
+              }}
+              inputMode="decimal"
+              placeholder="100.00"
+              required
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pd-remove-note">Reason (optional)</Label>
+            <Input
+              id="pd-remove-note"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              maxLength={200}
+            />
+          </div>
+        </div>
+        <Button type="submit" size="sm" variant="destructive" disabled={busy}>
+          {busy ? "Removing…" : "Remove credits"}
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          {formatUsd(Number(detail.credits_cents))} of promotional credits left. Available balance{" "}
+          {formatUsd(Number(detail.available_cents))}. Deposited funds cannot be taken back.
+        </p>
+      </form>
+    </Section>
+  );
+}
+
 function Codes({ detail, onSaved }: { detail: Detail; onSaved: () => Promise<void> }) {
   const [code, setCode] = useState("");
   const [reward, setReward] = useState("2.00");
@@ -1388,8 +1519,8 @@ function Codes({ detail, onSaved }: { detail: Detail; onSaved: () => Promise<voi
         </div>
       )}
       <p className="mt-2 text-xs text-muted-foreground">
-        Viewers get the reward under the normal promo rules. A code with no claims can be deleted.
-        A code that was already claimed can be disabled, and the claim history stays.
+        Viewers get the reward under the normal promo rules. A code with no claims can be deleted. A
+        code that was already claimed can be disabled, and the claim history stays.
       </p>
     </Section>
   );

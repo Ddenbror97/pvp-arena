@@ -30,6 +30,7 @@ import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIden
 import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import { RouletteStrip } from "./RouletteStrip";
 import { COIN, CoinImg } from "./coins";
+import { stripClock } from "./strip-motion";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -139,8 +140,7 @@ export function RouletteGame() {
   });
   const identities = usePrestigeIdentities((bets.data ?? []).map((b) => b.user_id));
   const wallet = useWallet(userId);
-  const involved =
-    !!userId && (bets.data ?? []).some((bet) => bet.user_id === userId);
+  const involved = !!userId && (bets.data ?? []).some((bet) => bet.user_id === userId);
   const spinEndMs = g?.spin_end_at ? new Date(g.spin_end_at).getTime() : null;
   const revealing =
     g?.status === "LOCKED" || g?.status === "SPINNING" || g?.status === "SETTLEMENT";
@@ -225,10 +225,12 @@ export function RouletteGame() {
     setInput((Math.max(0, f(amount ?? 0)) / 100).toFixed(2));
 
   const status = rouletteBarLabel(g, now());
-  const landed =
-    g?.winning_color && g.spin_end_at && now() >= new Date(g.spin_end_at).getTime()
-      ? g.winning_color
-      : null;
+  // The strip lands on its own clock (betting close plus the official spin length).
+  // The columns use that same instant, so purple/silver/green turn green or red
+  // when the winning coin stops, not when the worker's spin_end_at arrives.
+  const spinClock = stripClock(g, now());
+  const landAt = spinClock.end > 0 ? spinClock.end : g?.spin_end_at ? Date.parse(g.spin_end_at) : 0;
+  const landed = g?.winning_color && landAt > 0 && now() >= landAt ? g.winning_color : null;
 
   return (
     <div className="flex min-w-0 flex-col gap-2.5 xl:h-full xl:min-h-0 xl:gap-1">
@@ -340,10 +342,9 @@ export function RouletteGame() {
             return (
               <div
                 key={c}
+                data-result={landed == null ? undefined : landed === c ? "win" : "loss"}
                 className={cn(
                   `bet-col-${c} flex min-h-0 flex-col rounded-xl border transition-all duration-500 max-sm:max-h-60 xl:h-full`,
-                  landed === c && "shadow-[0_0_28px_rgb(139_53_236/35%)]",
-                  landed && landed !== c && "opacity-60",
                 )}
               >
                 <button
@@ -353,7 +354,6 @@ export function RouletteGame() {
                   }
                   onClick={() => (userId ? place(c) : (window.location.href = "/auth"))}
                   className={`bet-chip-${c} group @container m-2 grid shrink-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-xl border p-2 text-left transition hover:-translate-y-0.5 hover:border-primary/60 disabled:opacity-50 disabled:hover:translate-y-0 sm:m-2.5 sm:p-2.5`}
-                  style={{ boxShadow: landed === c ? `0 0 24px ${COIN[c].glow}` : undefined }}
                 >
                   <span className="flex min-w-0 items-center gap-1.5 sm:gap-2">
                     <CoinImg
@@ -370,7 +370,14 @@ export function RouletteGame() {
                       <span className="block font-display text-xs leading-tight sm:text-sm">
                         {userId ? (pending === c ? "Placing…" : "Place bet") : "Sign in"}
                       </span>
-                      <span className="block text-[10px] text-muted-foreground sm:text-xs">{COIN[c].label}</span>
+                      <span
+                        className={cn(
+                          "block text-[10px] sm:text-xs",
+                          landed ? "opacity-80" : "text-muted-foreground",
+                        )}
+                      >
+                        {COIN[c].label}
+                      </span>
                     </span>
                   </span>
                   {leader && leaderId ? (
@@ -390,7 +397,9 @@ export function RouletteGame() {
                         <span className="block truncate text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
                           Highest {COIN[c].label}
                         </span>
-                        <span className="mt-0.5 block truncate text-xs font-semibold">{leader.name}</span>
+                        <span className="mt-0.5 block truncate text-xs font-semibold">
+                          {leader.name}
+                        </span>
                       </span>
                     </span>
                   ) : (
@@ -399,7 +408,11 @@ export function RouletteGame() {
                   <span className="shrink-0 text-right">
                     <span
                       className="block font-display text-base leading-none sm:text-lg"
-                      style={{ color: c === "RED" ? "var(--primary-soft)" : COIN[c].glow }}
+                      style={
+                        landed
+                          ? undefined
+                          : { color: c === "RED" ? "var(--primary-soft)" : COIN[c].glow }
+                      }
                     >
                       {mults[c] ? multiplierLabel(mults[c]) : "…"}
                     </span>

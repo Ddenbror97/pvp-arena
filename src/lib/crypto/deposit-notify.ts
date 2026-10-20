@@ -130,8 +130,8 @@ export function useDepositNotice(userId: string | null): {
   }, [notice?.phase, qc]);
 
   useEffect(() => {
-    if (notice?.phase !== "added" || !userId) return;
-    const id = notice.key.slice("added:".length);
+    if (notice?.phase !== "confirmed" || !userId) return;
+    const id = notice.key.slice("confirmed:".length);
     if (credited.current.has(id)) return;
     credited.current.add(id);
     setSubmitted(null);

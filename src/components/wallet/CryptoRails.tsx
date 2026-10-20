@@ -1,15 +1,13 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { encodeQR } from "qr";
-import { ArrowDownToLine, ArrowUpFromLine, Copy } from "lucide-react";
+import { ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatUsd, parseUsdToCents } from "@/lib/jackpot/math";
 import {
   checkWithdrawalLiquidity,
-  getDepositAddress,
   quoteEthWithdrawal,
   requestCryptoWithdrawal,
 } from "@/lib/crypto/crypto.functions";
@@ -22,15 +20,12 @@ import {
   writeStoredRail,
   type FundingAsset,
 } from "@/lib/crypto/rails";
-import { depositWaitPhrase } from "@/lib/crypto/deposit-notice";
 import { announceWithdrawalSubmitted } from "@/lib/crypto/withdraw-notify";
 import { useCryptoActivity, type CryptoActivity } from "@/components/wallet/RailPreference";
 import { BtcDepositPanel } from "@/components/wallet/BtcDepositPanel";
 import { getBtcDepositConfig, getBtcPayoutConfig } from "@/lib/crypto/btcpay/btcpay.functions";
-import { DepositAddress } from "@/components/wallet/DepositAddress";
 import { claimSendLock, VerifiedWalletActions } from "@/components/wallet/VerifiedWalletActions";
 import { TokenMark } from "@/components/wallet/TokenMark";
-import { useWithdrawalCode, WithdrawalCodeField } from "@/components/wallet/WithdrawalCode";
 import { PartnerProfitNote, usePartnerProfitHold } from "@/components/wallet/PartnerProfitHold";
 import {
   BonusCashoutNotice,
@@ -64,9 +59,6 @@ type WithdrawalReview = {
   };
 };
 
-function shortAddress(value: string) {
-  return `${value.slice(0, 6)}…${value.slice(-4)}`;
-}
 function storage() {
   try {
     return typeof localStorage === "undefined" ? null : localStorage;
@@ -108,9 +100,10 @@ function CurrencyList({
         ];
   if (layout === "row") {
     return (
-      <div role="radiogroup" aria-label="Currency" className="grid grid-cols-3 gap-1.5">
+      <div role="radiogroup" aria-label="Currency" className="grid grid-cols-3 gap-1">
         {rows.map((row) => {
           const selected = row.key === value;
+          const floor = floors[row.key];
           return (
             <button
               key={row.key}
@@ -122,7 +115,7 @@ function CurrencyList({
               onClick={() => {
                 if (!row.pending) onChange(row.key);
               }}
-              className={`flex h-11 min-w-0 items-center justify-center gap-1.5 rounded-lg border px-2 ${
+              className={`flex h-9 min-w-0 items-center justify-center gap-1 rounded-lg border px-1.5 ${
                 row.pending || row.closed
                   ? "border-border bg-muted/30 text-muted-foreground"
                   : selected
@@ -130,11 +123,11 @@ function CurrencyList({
                     : "border-border bg-muted/20 hover:bg-muted/40"
               }`}
             >
-              <TokenMark asset={row.key} className="h-4 w-4" />
+              <TokenMark asset={row.key} className="h-3.5 w-3.5" />
               <span className="min-w-0 text-left">
                 <span className="block truncate text-xs font-medium leading-4">{row.label}</span>
                 <span className="block h-3 truncate text-[10px] font-normal leading-3 text-muted-foreground">
-                  {row.closed ? "Disabled" : ""}
+                  {row.closed ? "Disabled" : floor ? `From ${formatUsd(floor)}` : ""}
                 </span>
               </span>
             </button>
@@ -205,7 +198,7 @@ function AmountField({
           id={id}
           inputMode="decimal"
           autoComplete="off"
-          className="h-9 pl-7 pr-14 font-mono"
+          className="h-8 pl-7 pr-14 font-mono"
           placeholder="0.00"
           value={amount}
           onChange={(event) => setAmount(event.target.value)}
@@ -222,55 +215,20 @@ function AmountField({
           </Button>
         )}
       </div>
-      <div className="mt-1.5 grid grid-cols-4 gap-1.5">
+      <div className="mt-1 grid grid-cols-4 gap-1">
         {PRESETS.map((preset) => (
           <Button
             key={preset}
             type="button"
             size="sm"
             variant="secondary"
+            className="h-7"
             onClick={() => setAmount(String(preset))}
           >
             ${preset}
           </Button>
         ))}
       </div>
-    </div>
-  );
-}
-
-function PreviousDepositAddresses({ rows }: { rows: { address: string; version: 1 }[] }) {
-  if (rows.length === 0) return null;
-  return (
-    <div className="mt-2 space-y-2">
-      {rows.map((row) => (
-        <div key={row.address} className="rounded-md border border-border bg-muted/40 p-2">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-            Previous address — still monitored
-          </p>
-          <div className="mt-1 flex items-start gap-1.5">
-            <p className="min-w-0 flex-1 break-all font-mono text-[11px] leading-snug">
-              {row.address}
-            </p>
-            <button
-              type="button"
-              aria-label="Copy previous deposit address"
-              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
-              onClick={() => {
-                navigator.clipboard
-                  .writeText(row.address)
-                  .then(() => toast.success("Previous address copied"));
-              }}
-            >
-              <Copy className="h-3.5 w-3.5" />
-            </button>
-          </div>
-          <p className="mt-1 text-xs leading-snug text-muted-foreground">
-            Deposits sent to this older address are still detected and credited once. Use the
-            current address for new deposits.
-          </p>
-        </div>
-      ))}
     </div>
   );
 }
@@ -287,7 +245,6 @@ export function CryptoRails({
   children: (panels: { form: ReactNode }) => ReactNode;
 }) {
   const qc = useQueryClient();
-  const receiveFn = useServerFn(getDepositAddress);
   const doQuote = useServerFn(quoteEthWithdrawal);
   const doRequest = useServerFn(requestCryptoWithdrawal);
   const doLiquidity = useServerFn(checkWithdrawalLiquidity);
@@ -314,11 +271,11 @@ export function CryptoRails({
   const [chainId, setChainId] = useState<number>(8453);
   const [amount, setAmount] = useState("20");
   const [outAddress, setOutAddress] = useState("");
+  const [walletLabel, setWalletLabel] = useState("your linked wallet");
   const [withdrawalReview, setWithdrawalReview] = useState<WithdrawalReview | null>(null);
   const [busy, setBusy] = useState(false);
   const withdrawLock = useRef(false);
   const [now, setNow] = useState(() => Date.now());
-  const emailCode = useWithdrawalCode();
   const heldCents = usePartnerProfitHold(true);
   const data: CryptoActivity | undefined = activity.data;
   const withdrawSnap = data?.withdraw ?? null;
@@ -337,22 +294,6 @@ export function CryptoRails({
     ? Math.max(0, Math.ceil((new Date(withdrawalReview.quote.expires_at).getTime() - now) / 1000))
     : 0;
   const assetKeys = assets.map((item) => item.asset_key).join("\n");
-  const codeTarget =
-    withdrawalReview && chain
-      ? {
-          rail: "evm" as const,
-          chainId: chain.chain_id,
-          asset: withdrawalReview.asset,
-          usdCents: withdrawalReview.usdCents,
-          address: withdrawalReview.toAddress,
-        }
-      : null;
-  const codeProof = codeTarget ? emailCode.proof(codeTarget) : null;
-  const receive = useQuery({
-    queryKey: ["evm-deposit-address", chain?.chain_id ?? chainId],
-    queryFn: () => receiveFn({ data: { chainId: chain?.chain_id ?? chainId } }),
-    staleTime: 60_000,
-  });
   const minDepositCents = chain?.min_deposit_cents ?? data?.settings.min_deposit_cents ?? 200;
   const minWithdrawCents =
     chain?.min_withdrawal_cents ?? data?.settings.min_withdrawal_cents ?? 2000;
@@ -366,17 +307,6 @@ export function CryptoRails({
     depositFloors[item.asset_key] = minDepositCents;
     withdrawFloors[item.asset_key] = minWithdrawCents;
   }
-  const receiveAddress = receive.data?.ok ? receive.data.address : null;
-  const previousAddresses = receive.data?.ok ? receive.data.previous : [];
-  const receiveQr = useMemo(() => {
-    if (!receiveAddress) return "";
-    try {
-      return encodeQR(receiveAddress, "svg", { ecc: "low", border: 1, scale: 2 });
-    } catch {
-      return "";
-    }
-  }, [receiveAddress]);
-
   useEffect(() => {
     if (requestedMode !== "withdraw") return;
     document.getElementById("wallet-withdraw")?.scrollIntoView({ block: "nearest" });
@@ -477,13 +407,6 @@ export function CryptoRails({
           toAddress,
           quote: null,
         });
-      await emailCode.send({
-        rail: "evm",
-        chainId: chain.chain_id,
-        asset: withdrawAsset.asset_key,
-        usdCents: cents,
-        address: toAddress,
-      });
     } catch {
       toast.error("Withdrawals are unavailable right now.");
     } finally {
@@ -493,7 +416,7 @@ export function CryptoRails({
   }
   async function confirmWithdrawal() {
     if (withdrawLock.current || busy) return;
-    if (!withdrawalReview || !chain || !codeProof) return;
+    if (!withdrawalReview || !chain) return;
     if (!claimSendLock(withdrawLock)) return;
     setBusy(true);
     try {
@@ -504,15 +427,12 @@ export function CryptoRails({
           quoteId: withdrawalReview.quote?.quote_id ?? null,
           chainId: chain.chain_id,
           toAddress: withdrawalReview.toAddress,
-          ...codeProof,
         },
       });
       if (!result.ok) {
         toast.error(result.error);
-        emailCode.failed(result.error);
         return;
       }
-      emailCode.clear();
       announceWithdrawalSubmitted({
         usdCents: withdrawalReview.usdCents,
         asset: withdrawalReview.asset,
@@ -577,8 +497,11 @@ export function CryptoRails({
   }
 
   const form = (
-    <div className="grid items-start gap-3 lg:grid-cols-2">
-      <section aria-label="Deposit" className="min-w-0 rounded-lg border border-border bg-card p-3">
+    <div className="grid items-stretch gap-2 lg:grid-cols-2">
+      <section
+        aria-label="Deposit"
+        className="flex h-full min-w-0 flex-col rounded-lg border border-border bg-card p-2.5"
+      >
         <div className="flex items-center gap-2.5">
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
             <ArrowDownToLine className="h-3.5 w-3.5" aria-hidden="true" />
@@ -588,12 +511,12 @@ export function CryptoRails({
             <p className="mt-0.5 text-[11px] text-muted-foreground">
               {depositRail === "BTC"
                 ? "Send Bitcoin to the address below."
-                : `Send ${depositAsset?.asset_key ?? "crypto"} on ${chainName}.`}
+                : `Send ${depositAsset?.asset_key ?? "USDC"} from MetaMask or Coinbase on ${chainName}.`}
             </p>
           </div>
         </div>
         {depositRail !== "BTC" && isTestnet ? <div className="mt-2">{testnetMark()}</div> : null}
-        <div className="mt-3 space-y-2.5">
+        <div className="mt-2 flex min-h-0 flex-1 flex-col gap-2">
           <CurrencyList
             assets={assets}
             value={depositRail}
@@ -602,90 +525,29 @@ export function CryptoRails({
             floors={depositFloors}
             layout="row"
           />
-          <div className="min-h-[18.5rem] min-w-0">
-            <div className={depositRail === "BTC" ? undefined : "hidden"}>
-              <BtcDepositPanel mode="deposit" active={depositRail === "BTC"} />
-            </div>
-            <div className={depositRail === "BTC" ? "hidden" : undefined}>
-              {!data ? (
-                <DepositAddress
-                  network={chainName}
-                  address={null}
-                  qr=""
-                  copiedLabel="Base address copied"
-                  note=""
-                  pending
-                />
-              ) : (
-                <>
-                  {networkPicker()}
-                  {receive.isPending && !receiveAddress ? (
-                    <DepositAddress
-                      network={chainName}
-                      address={null}
-                      qr=""
-                      copiedLabel="Base address copied"
-                      note=""
-                      pending
-                    />
-                  ) : receive.isError || receive.data?.ok === false ? (
-                    <div className="space-y-3" role="alert">
-                      <p className="text-sm text-destructive">
-                        Could not load your deposit address. Try again.
-                      </p>
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        disabled={receive.isFetching}
-                        onClick={() => void receive.refetch()}
-                      >
-                        {receive.isFetching ? "Trying…" : "Try again"}
-                      </Button>
-                    </div>
-                  ) : receiveAddress ? (
-                    <>
-                      <DepositAddress
-                        network={chainName}
-                        heading="Current deposit address"
-                        address={receiveAddress}
-                        qr={receiveQr}
-                        copiedLabel="Base address copied"
-                        note={`Send ${depositAsset?.asset_key ?? "ETH or USDC"} on ${chainName} only. Minimum ${formatUsd(minDepositCents)}. Credited within ${depositWaitPhrase(chain?.network_mode)}.`}
-                      />
-                      <PreviousDepositAddresses rows={previousAddresses} />
-                    </>
-                  ) : previousAddresses.length > 0 ? (
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">
-                        The current deposit address is not ready yet. Deposits to an older address
-                        are still detected.
-                      </p>
-                      <PreviousDepositAddresses rows={previousAddresses} />
-                    </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      Deposit addresses are unavailable right now.
-                    </p>
-                  )}
-                </>
-              )}
-            </div>
+          <div className={depositRail === "BTC" ? undefined : "hidden"}>
+            <BtcDepositPanel mode="deposit" active={depositRail === "BTC"} />
           </div>
-          {depositRail !== "BTC" ? (
+          <div className={depositRail === "BTC" ? "hidden" : "flex min-h-0 flex-1 flex-col gap-2"}>
+            {networkPicker()}
+            {data && !data.settings.deposits_enabled ? (
+              <p className="text-xs text-destructive">Deposits are paused.</p>
+            ) : null}
             <VerifiedWalletActions
               purpose="deposit"
               chainId={chain?.chain_id ?? chainId}
               asset={depositAsset?.asset_key ?? null}
               minCents={minDepositCents}
+              className="flex min-h-0 flex-1 flex-col"
               payments
             />
-          ) : null}
+          </div>
         </div>
       </section>
       <section
         id="wallet-withdraw"
         aria-label="Withdraw"
-        className="min-w-0 rounded-lg border border-border bg-card p-3"
+        className="flex h-full min-w-0 flex-col rounded-lg border border-border bg-card p-2.5"
       >
         <div className="flex items-center gap-2.5">
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
@@ -696,12 +558,12 @@ export function CryptoRails({
             <p className="mt-0.5 text-[11px] text-muted-foreground">
               {withdrawRail === "BTC"
                 ? "Cash out to a bc1 address."
-                : "Cash out to a Base address."}
+                : `Pays ${walletLabel} on ${chainName}.`}
             </p>
           </div>
         </div>
         {withdrawRail !== "BTC" && isTestnet ? <div className="mt-2">{testnetMark()}</div> : null}
-        <div className="mt-3">
+        <div className="mt-2">
           <CurrencyList
             assets={assets}
             value={withdrawRail}
@@ -714,7 +576,7 @@ export function CryptoRails({
         <div className={withdrawRail === "BTC" ? "mt-2.5" : "hidden"}>
           <BtcDepositPanel mode="withdraw" active={withdrawRail === "BTC"} />
         </div>
-        <div className={withdrawRail === "BTC" ? "hidden" : undefined}>
+        <div className={withdrawRail === "BTC" ? "hidden" : "flex min-h-0 flex-1 flex-col"}>
           {withdrawRail !== "BTC" && !withdrawalReview ? (
             <VerifiedWalletActions
               purpose="withdraw"
@@ -726,11 +588,12 @@ export function CryptoRails({
                 setOutAddress(address);
                 setWithdrawalReview(null);
               }}
+              onLabel={setWalletLabel}
               payments
             />
           ) : null}
           {!data ? (
-            <div className="mt-2.5 min-h-[18rem] animate-pulse rounded-lg bg-muted" aria-hidden />
+            <div className="mt-2 min-h-32 animate-pulse rounded-lg bg-muted" aria-hidden />
           ) : withdrawalReview && withdrawAsset ? (
             <div className="mt-2.5 space-y-2.5">
               {networkPicker()}
@@ -747,8 +610,8 @@ export function CryptoRails({
                   <dd className="font-mono font-semibold">{receiveUnits}</dd>
                 </div>
                 <div className="flex justify-between gap-3 px-2.5 py-1.5">
-                  <dt className="text-muted-foreground">To</dt>
-                  <dd className="font-mono">{shortAddress(withdrawalReview.toAddress)}</dd>
+                  <dt className="text-muted-foreground">Pays</dt>
+                  <dd className="font-semibold">{walletLabel}</dd>
                 </div>
                 <div className="flex justify-between gap-3 px-2.5 py-1.5">
                   <dt className="text-muted-foreground">Network</dt>
@@ -775,111 +638,82 @@ export function CryptoRails({
                   This amount requires review before it is sent.
                 </p>
               )}
-              {codeTarget && (
-                <WithdrawalCodeField
-                  ctl={emailCode}
-                  target={codeTarget}
-                  disabled={busy}
-                  onConfirm={() => void confirmWithdrawal()}
-                  confirmLabel={busy ? "Submitting…" : "Confirm withdrawal"}
-                />
-              )}
-              {codeTarget && !emailCode.sentFor(codeTarget) && !emailCode.sending && (
-                <Button
-                  variant="secondary"
-                  className="w-full"
-                  onClick={() => void emailCode.send(codeTarget)}
-                >
-                  Email me a withdrawal code
-                </Button>
-              )}
               <div className="grid gap-2 sm:grid-cols-2">
                 <Button variant="secondary" onClick={() => setWithdrawalReview(null)}>
                   Back
                 </Button>
                 <Button
                   onClick={confirmWithdrawal}
-                  disabled={busy || !codeProof || (!!withdrawalReview.quote && quoteLeft === 0)}
+                  disabled={busy || (!!withdrawalReview.quote && quoteLeft === 0)}
                 >
-                  {busy ? "Submitting…" : "Confirm withdrawal"}
+                  {busy ? "Submitting…" : "Confirm cash out"}
                 </Button>
               </div>
             </div>
           ) : (
-            <div className="mt-2.5 flex flex-1 flex-col space-y-2.5">
+            <div className="mt-2 flex min-h-0 flex-1 flex-col">
               {networkPicker()}
-              <AmountField
-                id="crypto-amount"
-                amount={amount}
-                setAmount={(value) => {
-                  setAmount(value);
-                  setWithdrawalReview(null);
-                }}
-                max={withdrawableCents}
-                maxAsset={withdrawAsset ? railEquivalent(withdrawAsset, withdrawableCents) : null}
-              />
-              <PartnerProfitNote heldCents={heldCents} availableCents={availableCents} />
-              {withdrawSnap ? (
-                <BonusCashoutNotice snap={withdrawSnap} availableCents={availableCents} />
-              ) : null}
-              <div className="space-y-1.5 rounded-lg border border-border bg-muted/30 p-2.5 text-xs text-muted-foreground">
-                <label htmlFor="evm-cashout-address" className="font-semibold text-foreground">
-                  To a Base address
-                </label>
-                <Input
-                  id="evm-cashout-address"
-                  className="h-9 font-mono text-xs"
-                  value={outAddress}
-                  onChange={(event) => setOutAddress(event.target.value)}
-                  placeholder="0x…"
-                  aria-label="Base cashout address"
+              <div className="mt-auto flex flex-col gap-1.5">
+                <AmountField
+                  id="crypto-amount"
+                  amount={amount}
+                  setAmount={(value) => {
+                    setAmount(value);
+                    setWithdrawalReview(null);
+                  }}
+                  max={withdrawableCents}
+                  maxAsset={withdrawAsset ? railEquivalent(withdrawAsset, withdrawableCents) : null}
                 />
-                <p>
-                  Minimum{" "}
-                  {formatUsd(chain?.min_withdrawal_cents ?? data.settings.min_withdrawal_cents)}. A
-                  code is emailed to approve each cashout.
-                </p>
-              </div>
-              {withdrawAsset && !withdrawAsset.payout_ready ? (
-                <p className="text-xs text-destructive">
-                  {withdrawAsset.asset_key} withdrawals are temporarily unavailable while that
-                  payout wallet is refilled. Choose another asset or try again later.
-                </p>
-              ) : null}
-              <div className="mt-auto space-y-2">
-                <Button
-                  className="h-9 w-full"
-                  onClick={reviewWithdrawal}
-                  disabled={
-                    cents == null ||
-                    cents < minWithdrawCents ||
-                    !outOk ||
-                    !withdrawAsset ||
-                    busy ||
-                    !data.settings.withdrawals_enabled ||
-                    cents > withdrawableCents ||
-                    !withdrawAsset.payout_ready
-                  }
-                >
-                  {busy
-                    ? "Preparing…"
-                    : withdrawAsset?.asset_key === "USDC"
-                      ? "Cash out USDC"
-                      : "Cash out ETH"}
-                </Button>
-                {cents != null && cents < minWithdrawCents ? (
-                  <p className="text-center text-xs text-destructive">
-                    Minimum cashout is {formatUsd(minWithdrawCents)}.
+                <PartnerProfitNote heldCents={heldCents} availableCents={availableCents} />
+                {withdrawSnap ? (
+                  <BonusCashoutNotice snap={withdrawSnap} availableCents={availableCents} />
+                ) : null}
+                {outOk ? null : (
+                  <p className="text-xs text-muted-foreground">
+                    Connect MetaMask or Coinbase above. Cash outs go to that wallet.
+                  </p>
+                )}
+                {withdrawAsset && !withdrawAsset.payout_ready ? (
+                  <p className="text-xs text-destructive">
+                    {withdrawAsset.asset_key} withdrawals are temporarily unavailable while that
+                    payout wallet is refilled. Choose another asset or try again later.
                   </p>
                 ) : null}
-                {!data.settings.withdrawals_enabled && (
-                  <p className="text-center text-xs text-destructive">Withdrawals are paused.</p>
-                )}
-                {cashoutCapHint && withdrawableCents < minWithdrawCents ? (
-                  <p className="text-center text-xs text-destructive">{cashoutCapHint}</p>
-                ) : cashoutCapHint ? (
-                  <p className="text-center text-xs text-muted-foreground">{cashoutCapHint}</p>
-                ) : null}
+                <div className="space-y-1.5">
+                  <Button
+                    className="h-8 w-full"
+                    onClick={reviewWithdrawal}
+                    disabled={
+                      cents == null ||
+                      cents < minWithdrawCents ||
+                      !outOk ||
+                      !withdrawAsset ||
+                      busy ||
+                      !data.settings.withdrawals_enabled ||
+                      cents > withdrawableCents ||
+                      !withdrawAsset.payout_ready
+                    }
+                  >
+                    {busy
+                      ? "Preparing…"
+                      : withdrawAsset?.asset_key === "USDC"
+                        ? "Cash out USDC"
+                        : "Cash out ETH"}
+                  </Button>
+                  {cents != null && cents < minWithdrawCents ? (
+                    <p className="text-center text-xs text-destructive">
+                      Minimum cashout is {formatUsd(minWithdrawCents)}.
+                    </p>
+                  ) : null}
+                  {!data.settings.withdrawals_enabled && (
+                    <p className="text-center text-xs text-destructive">Withdrawals are paused.</p>
+                  )}
+                  {cashoutCapHint && withdrawableCents < minWithdrawCents ? (
+                    <p className="text-center text-xs text-destructive">{cashoutCapHint}</p>
+                  ) : cashoutCapHint ? (
+                    <p className="text-center text-xs text-muted-foreground">{cashoutCapHint}</p>
+                  ) : null}
+                </div>
               </div>
             </div>
           )}

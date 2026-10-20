@@ -1,17 +1,20 @@
 /**
  * Crypto money-path safety suite (Base Sepolia rails). Runs against the
  * isolated `pvp_test` schema with real concurrent Postgres transactions.
- * Requires SUPABASE_DB_URL.
+ * Requires TEST_DATABASE_URL. Refuses the production database.
  */
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
 import { fundTestTreasury, migrateTestSchemaToReal } from "./money";
+import { testDatabaseUrl } from "./test-url";
 
-const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
+const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
-const sql = url ? postgres(url, { max: 12, prepare: false, onnotice: () => {}, idle_timeout: 5 }) : (null as never);
+const sql = url
+  ? postgres(url, { max: 12, prepare: false, onnotice: () => {}, idle_timeout: 5 })
+  : (null as never);
 afterAll(async () => {
   if (url) await sql.end();
 });
@@ -20,7 +23,10 @@ const FEED = "0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1";
 const PRICE = 2_500_000_000; // $2500.000000 in micro-USD
 let TREASURY = "";
 
-async function as<T>(uid: string | null, fn: (tx: postgres.TransactionSql) => Promise<T>): Promise<T> {
+async function as<T>(
+  uid: string | null,
+  fn: (tx: postgres.TransactionSql) => Promise<T>,
+): Promise<T> {
   return sql.begin(async (tx) => {
     await tx`select set_config('test.uid', ${uid ?? ""}, true)`;
     return fn(tx);
@@ -45,25 +51,44 @@ async function newUser(name: string, verified = true) {
   return { id, wallet: w };
 }
 const bal = async (uid: string, kind = "user_available") =>
-  Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind} and account_type = 'real'`)[0]?.balance ?? 0);
+  Number(
+    (
+      await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind} and account_type = 'real'`
+    )[0]?.balance ?? 0,
+  );
 const observe = (asset: string, tx: string, from: string, units: string, log = 0) =>
-  one(sql`select pvp_test.crypto_observe_deposit(84532, ${asset}, ${tx}, ${log}, 100, ${from}, ${TREASURY}, ${units}) as r`);
-const credit = (id: string, snap: string | null = null) => one(sql`select pvp_test.crypto_credit_deposit(${id}, ${snap}) as r`);
-const snapshot = () => one(sql`select pvp_test.crypto_record_price(84532, 'ETH', ${FEED}, 1, ${PRICE}, now()) as r`);
+  one(
+    sql`select pvp_test.crypto_observe_deposit(84532, ${asset}, ${tx}, ${log}, 100, ${from}, ${TREASURY}, ${units}) as r`,
+  );
+const credit = (id: string, snap: string | null = null) =>
+  one(sql`select pvp_test.crypto_credit_deposit(${id}, ${snap}) as r`);
+const snapshot = () =>
+  one(sql`select pvp_test.crypto_record_price(84532, 'ETH', ${FEED}, 1, ${PRICE}, now()) as r`);
 const withdraw = (uid: string, cents: number, asset = "USDC", quote: string | null = null) =>
-  one(sql`select pvp_test.crypto_request_withdrawal(${uid}, 84532, ${asset}, ${cents}, ${quote}, true) as r`);
-const wd = async (id: string) => (await sql`select * from pvp_test.crypto_withdrawals where id = ${id}`)[0];
-const ledgerCount = async (key: string) => Number((await sql`select count(*) c from pvp_test.ledger_transactions where idempotency_key like ${key}`)[0].c);
+  one(
+    sql`select pvp_test.crypto_request_withdrawal(${uid}, 84532, ${asset}, ${cents}, ${quote}, true) as r`,
+  );
+const wd = async (id: string) =>
+  (await sql`select * from pvp_test.crypto_withdrawals where id = ${id}`)[0];
+const ledgerCount = async (key: string) =>
+  Number(
+    (
+      await sql`select count(*) c from pvp_test.ledger_transactions where idempotency_key like ${key}`
+    )[0].c,
+  );
 
 async function assertInvariants() {
   const [s] = await sql`select coalesce(sum(balance),0)::bigint s from pvp_test.wallet_accounts`;
   expect(Number(s.s)).toBe(0);
-  const neg = await sql`select id from pvp_test.wallet_accounts where kind not in ('test_faucet','external_custody','house_bankroll') and balance < 0`;
+  const neg =
+    await sql`select id from pvp_test.wallet_accounts where kind not in ('test_faucet','external_custody','house_bankroll') and balance < 0`;
   expect(neg.length).toBe(0);
-  const mism = await sql`select a.id from pvp_test.wallet_accounts a left join pvp_test.ledger_postings p on p.account_id = a.id
+  const mism =
+    await sql`select a.id from pvp_test.wallet_accounts a left join pvp_test.ledger_postings p on p.account_id = a.id
     group by a.id, a.balance having a.balance <> coalesce(sum(p.amount),0)`;
   expect(mism.length).toBe(0);
-  const unbalanced = await sql`select tx_id from pvp_test.ledger_postings group by tx_id having sum(amount) <> 0`;
+  const unbalanced =
+    await sql`select tx_id from pvp_test.ledger_postings group by tx_id having sum(amount) <> 0`;
   expect(unbalanced.length).toBe(0);
 }
 
@@ -85,7 +110,9 @@ d("crypto money path", () => {
       alter table pvp_test.chain_treasury_accounts disable trigger user;
       update pvp_test.chain_treasury_accounts set is_active = true where chain_id = 84532;
       alter table pvp_test.chain_treasury_accounts enable trigger user;`);
-    TREASURY = (await sql`select address from pvp_test.chain_treasury_accounts where role = 'deposit' and chain_id = 84532`)[0].address.toLowerCase();
+    TREASURY = (
+      await sql`select address from pvp_test.chain_treasury_accounts where role = 'deposit' and chain_id = 84532`
+    )[0].address.toLowerCase();
     await sql`update pvp_test.jackpot_config set entry_rate_limit = 100000`;
     await sql`update pvp_test.crypto_settings set daily_limit_cents = 10000000, daily_global_limit_cents = 100000000, payout_float_max_cents = 100000000`;
     await fundTestTreasury(sql);
@@ -125,7 +152,11 @@ d("crypto money path", () => {
     }
     const d2 = await observe("USDC", txh(), w, "9000000");
     const r2 = await credit(d2.id);
-    const n = Number((await sql`select count(*) c from pvp_test.user_wallets where normalized_address = ${w} and is_verified`)[0].c);
+    const n = Number(
+      (
+        await sql`select count(*) c from pvp_test.user_wallets where normalized_address = ${w} and is_verified`
+      )[0].c,
+    );
     if (n > 1) expect(r2.status).toBe("UNMATCHED");
     await assertInvariants();
   });
@@ -134,7 +165,9 @@ d("crypto money path", () => {
     const u = await newUser("eth");
     const before = await bal(u.id);
     const dep = await observe("ETH", txh(), u.wallet, "1000000000000000000", 1_000_000); // 1 ETH
-    await expect(sql`select pvp_test.crypto_record_price(84532, 'ETH', ${FEED}, 1, ${PRICE}, now() - interval '2 hours')`).rejects.toThrow(/PRICE_STALE/);
+    await expect(
+      sql`select pvp_test.crypto_record_price(84532, 'ETH', ${FEED}, 1, ${PRICE}, now() - interval '2 hours')`,
+    ).rejects.toThrow(/PRICE_STALE/);
     const [stale] = await sql`insert into pvp_test.crypto_price_snapshots
         (chain_id, asset_key, feed_address, feed_round_id, price_micro_usd, max_age_seconds, observed_at, oracle_updated_at)
       select 84532, 'ETH', ${FEED}, 0, ${PRICE}, price_max_age_seconds, now() - interval '2 hours', now() - interval '2 hours'
@@ -150,9 +183,15 @@ d("crypto money path", () => {
     const u = await newUser("ww");
     const avail = await bal(u.id);
     const amt = Math.floor(avail * 0.7);
-    const rs = await settled([withdraw(u.id, Math.min(amt, 50_000)), withdraw(u.id, Math.min(amt, 50_000)), withdraw(u.id, Math.min(amt, 50_000))]);
+    const rs = await settled([
+      withdraw(u.id, Math.min(amt, 50_000)),
+      withdraw(u.id, Math.min(amt, 50_000)),
+      withdraw(u.id, Math.min(amt, 50_000)),
+    ]);
     expect(rs.filter((r) => r.status === "fulfilled").length).toBe(1);
-    const n = Number((await sql`select count(*) c from pvp_test.crypto_withdrawals where user_id = ${u.id}`)[0].c);
+    const n = Number(
+      (await sql`select count(*) c from pvp_test.crypto_withdrawals where user_id = ${u.id}`)[0].c,
+    );
     expect(n).toBe(1);
     expect(await bal(u.id)).toBe(avail - Math.min(amt, 50_000));
     await assertInvariants();
@@ -172,7 +211,11 @@ d("crypto money path", () => {
     const avail = await bal(u.id);
     const w = await withdraw(u.id, 1000);
     expect(await bal(u.id, "user_locked")).toBe(1000);
-    await settled(Array.from({ length: 5 }, () => one(sql`select pvp_test.crypto_cancel_withdrawal(${u.id}, ${w.id}) as r`)));
+    await settled(
+      Array.from({ length: 5 }, () =>
+        one(sql`select pvp_test.crypto_cancel_withdrawal(${u.id}, ${w.id}) as r`),
+      ),
+    );
     expect(await bal(u.id)).toBe(avail);
     expect(await bal(u.id, "user_locked")).toBe(0);
     expect(await ledgerCount(`withdrawal:${w.id}:release`)).toBe(1);
@@ -185,7 +228,12 @@ d("crypto money path", () => {
     const avail = await bal(u.id);
     const w = await withdraw(u.id, 1100);
     await sql`select pvp_test.crypto_withdrawal_signed(${w.id}, ${txh()}, 1, '0x00')`;
-    await settled(Array.from({ length: 5 }, () => sql`select pvp_test.crypto_withdrawal_failed(${w.id}, 'reverted')`));
+    await settled(
+      Array.from(
+        { length: 5 },
+        () => sql`select pvp_test.crypto_withdrawal_failed(${w.id}, 'reverted')`,
+      ),
+    );
     expect(await bal(u.id)).toBe(avail);
     expect(await ledgerCount(`withdrawal:${w.id}:release`)).toBe(1);
     await sql`select pvp_test.crypto_withdrawal_confirmed(${w.id})`;
@@ -198,11 +246,17 @@ d("crypto money path", () => {
     const avail = await bal(u.id);
     const w = await withdraw(u.id, 1200);
     await sql`select pvp_test.crypto_withdrawal_signed(${w.id}, ${txh()}, 2, '0x00')`;
-    await expect(sql`select pvp_test.crypto_withdrawal_signed(${w.id}, ${txh()}, 3, '0x00')`).rejects.toThrow(/NOT_APPROVED/);
+    await expect(
+      sql`select pvp_test.crypto_withdrawal_signed(${w.id}, ${txh()}, 3, '0x00')`,
+    ).rejects.toThrow(/NOT_APPROVED/);
     await sql`select pvp_test.crypto_withdrawal_broadcast(${w.id})`;
-    await settled(Array.from({ length: 5 }, () => sql`select pvp_test.crypto_withdrawal_confirmed(${w.id})`));
+    await settled(
+      Array.from({ length: 5 }, () => sql`select pvp_test.crypto_withdrawal_confirmed(${w.id})`),
+    );
     await sql`select pvp_test.crypto_withdrawal_failed(${w.id}, 'late failure')`;
-    await expect(one(sql`select pvp_test.crypto_cancel_withdrawal(${u.id}, ${w.id}) as r`)).rejects.toThrow();
+    await expect(
+      one(sql`select pvp_test.crypto_cancel_withdrawal(${u.id}, ${w.id}) as r`),
+    ).rejects.toThrow();
     expect(await ledgerCount(`withdrawal:${w.id}:settle`)).toBe(1);
     expect(await ledgerCount(`withdrawal:${w.id}:release`)).toBe(0);
     expect(await bal(u.id)).toBe(avail - 1200);
@@ -235,7 +289,8 @@ d("crypto money path", () => {
     const before = await bal(u.id);
     const dep = await observe("USDC", txh(), u.wallet, "3000000");
     const joins = Array.from({ length: 4 }, () =>
-      as(u.id, (tx) => tx`select pvp_test.jackpot_join(100, ${randomUUID()})`));
+      as(u.id, (tx) => tx`select pvp_test.jackpot_join(100, ${randomUUID()})`),
+    );
     const rs = await settled([credit(dep.id), ...joins]);
     const ok = rs.slice(1).filter((r) => r.status === "fulfilled").length;
     expect(await bal(u.id)).toBe(before + 300 - ok * 100);
@@ -264,19 +319,88 @@ d("crypto money path", () => {
     await sql`update pvp_test.crypto_settings set deposits_enabled = true`;
     // Multi-chain: settings are no longer locked to one testnet chain; chains are
     // gated individually via chain_networks.is_enabled instead.
-    await sql.unsafe(`alter table pvp_test.chain_networks disable trigger user; update pvp_test.chain_networks set is_enabled = false where chain_id = 8453; alter table pvp_test.chain_networks enable trigger user;`);
-    await expect(sql`select pvp_test.crypto_request_withdrawal(${u.id}, 8453, 'USDC', 1000, null, true) as r`).rejects.toThrow(/CHAIN_DISABLED/);
+    await sql.unsafe(
+      `alter table pvp_test.chain_networks disable trigger user; update pvp_test.chain_networks set is_enabled = false where chain_id = 8453; alter table pvp_test.chain_networks enable trigger user;`,
+    );
+    await expect(
+      sql`select pvp_test.crypto_request_withdrawal(${u.id}, 8453, 'USDC', 1000, null, true) as r`,
+    ).rejects.toThrow(/CHAIN_DISABLED/);
+  });
+
+  it("an explicit cashout address must be that user's verified wallet", async () => {
+    const u = await newUser("link");
+    const stranger = addr();
+    await expect(
+      sql`select pvp_test.crypto_request_withdrawal(${u.id}, 84532, 'USDC', 2000, null, true, ${stranger})`,
+    ).rejects.toThrow(/NO_VERIFIED_WALLET/);
+    const ok = await one(
+      sql`select pvp_test.crypto_request_withdrawal(${u.id}, 84532, 'USDC', 2000, null, true, ${u.wallet}) as r`,
+    );
+    expect(["APPROVED", "PENDING", "LIQUIDITY_PENDING"]).toContain(ok.status);
+    expect((await wd(ok.id)).to_address).toBe(u.wallet);
+    await assertInvariants();
+  });
+
+  it("a newly linked wallet waits 24 hours while the older wallet can still be paid", async () => {
+    const u = await newUser("cool");
+    await sql`update pvp_test.user_wallets set became_primary_at = now() - interval '48 hours', is_primary = false where user_id = ${u.id}`;
+    const fresh = addr();
+    await sql`insert into pvp_test.user_wallets (
+      user_id, address, normalized_address, is_verified, is_primary, verified_at, became_primary_at
+    ) values (
+      ${u.id}, ${fresh}, ${fresh}, true, true, now(), now()
+    )`;
+    await expect(
+      sql`select pvp_test.crypto_request_withdrawal(${u.id}, 84532, 'USDC', 2000, null, true, ${fresh})`,
+    ).rejects.toThrow(/WALLET_CHANGE_COOLDOWN/);
+    const ok = await one(
+      sql`select pvp_test.crypto_request_withdrawal(${u.id}, 84532, 'USDC', 2000, null, true, ${u.wallet}) as r`,
+    );
+    expect((await wd(ok.id)).to_address).toBe(u.wallet);
+    const paid =
+      await sql`select to_address from pvp_test.crypto_withdrawals where user_id = ${u.id}`;
+    expect(paid.map((row) => row.to_address)).toEqual([u.wallet]);
+    await assertInvariants();
+  });
+
+  it("replaying a credited deposit from another wallet does not move the credit", async () => {
+    const owner = await newUser("own");
+    const attacker = await newUser("atk");
+    const tx = txh();
+    const dep = await observe("USDC", tx, owner.wallet, "5000000");
+    expect((await credit(dep.id)).status).toBe("CREDITED");
+    const ownerBefore = await bal(owner.id);
+    const attackerBefore = await bal(attacker.id);
+    const again = await observe("USDC", tx, attacker.wallet, "5000000");
+    expect(again.id).toBe(dep.id);
+    expect(again.status).toBe("CREDITED");
+    await credit(dep.id);
+    expect(await bal(owner.id)).toBe(ownerBefore);
+    expect(await bal(attacker.id)).toBe(attackerBefore);
+    const row = (
+      await sql`select user_id, from_address from pvp_test.crypto_deposits where id = ${dep.id}`
+    )[0];
+    expect(row.user_id).toBe(owner.id);
+    expect(row.from_address).toBe(owner.wallet);
+    expect(await ledgerCount(`deposit:%:${tx}:0`)).toBe(1);
+    await assertInvariants();
   });
 
   it("reconciliation mismatch raises an alert and never changes balances", async () => {
-    const snap = async () => (await sql`select id, balance from pvp_test.wallet_accounts order by id`).map((r) => `${r.id}:${r.balance}`).join(",");
+    const snap = async () =>
+      (await sql`select id, balance from pvp_test.wallet_accounts order by id`)
+        .map((r) => `${r.id}:${r.balance}`)
+        .join(",");
     const before = await snap();
     const r = await one(sql`select pvp_test.crypto_reconcile(0, '{}'::jsonb) as r`);
     expect(r.ok).toBe(false);
     expect(await snap()).toBe(before);
-    const inc = await sql`select * from pvp_test.integrity_incidents where check_name = 'crypto_reconcile'`;
+    const inc =
+      await sql`select * from pvp_test.integrity_incidents where check_name = 'crypto_reconcile'`;
     expect(inc.length).toBe(1);
-    const ok = await one(sql`select pvp_test.crypto_reconcile(${Number.MAX_SAFE_INTEGER}, '{}'::jsonb) as r`);
+    const ok = await one(
+      sql`select pvp_test.crypto_reconcile(${Number.MAX_SAFE_INTEGER}, '{}'::jsonb) as r`,
+    );
     expect(ok.ok).toBe(true);
     await assertInvariants();
   });

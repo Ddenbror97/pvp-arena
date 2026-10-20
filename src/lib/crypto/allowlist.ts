@@ -10,6 +10,9 @@ export const BASE_MAINNET = {
   ethUsdFeed: "0x71041dddad3595f9ced3dccfbe3d1f4b0a16bb70",
 } as const;
 
+/** PVPspinArena's Base wallet. The only address published for ETH and USDC deposits. */
+export const BASE_DEPOSIT_TREASURY = "0x9EAff85db9A2559eC958740A6a3b523751237987";
+
 /** Validates the database registry row for a mainnet chain against known-good values. */
 export function checkMainnetRegistry(cfg: {
   chainId: number;
@@ -104,6 +107,18 @@ export function weiToCents(wei: bigint, priceMicroUsd: bigint): bigint {
 /** USDC 6-decimals units to cents (floor). */
 export function usdcUnitsToCents(units: bigint): bigint {
   return units / 10_000n;
+}
+
+/**
+ * A $2 send can arrive a few cents short after the sender's network fee.
+ * $1.95 still clears a $2 minimum. The credited amount is what arrived.
+ */
+export const DEPOSIT_FEE_ALLOWANCE_CENTS = 5;
+
+export function clearsDepositMinimum(cents: number, minimumCents: number): boolean {
+  if (!Number.isInteger(cents) || !Number.isInteger(minimumCents)) return false;
+  if (cents <= 0 || minimumCents <= 0) return false;
+  return cents + DEPOSIT_FEE_ALLOWANCE_CENTS >= minimumCents;
 }
 
 /**

@@ -45,7 +45,7 @@ export type SubmittedDeposit = {
 
 export type DepositNotice = {
   key: string;
-  phase: "waiting" | "added" | "review";
+  phase: "waiting" | "confirmed" | "review";
   title: string;
   body: string;
   amount: string | null;
@@ -61,13 +61,11 @@ function fresh(row: DepositNoticeRow, now: number): boolean {
 }
 
 function waitingBody(networkMode: string | null, late: boolean): string {
-  if (networkMode === "bitcoin") {
-    return late
-      ? "We received your Bitcoin payment. It's taking a little longer. Your balance updates once it confirms."
-      : "We received your Bitcoin payment. It will be added after 2 confirmations, usually within about 20 minutes.";
-  }
-  if (late) return "Taking a little longer. Your balance updates once the transfer is confirmed.";
-  return `Your funds will be added within ${depositWaitPhrase(networkMode)}.`;
+  if (late) return "Still waiting for confirmation.";
+  if (networkMode === "bitcoin")
+    return `Waiting for 2 Bitcoin confirmations. Usually ${depositWaitPhrase(networkMode)}.`;
+  const where = networkMode === "testnet" ? "Base testnet" : "Base";
+  return `Waiting for confirmation on ${where}. Usually ${depositWaitPhrase(networkMode)}.`;
 }
 
 /**
@@ -90,10 +88,10 @@ export function selectDepositNotice(input: {
   if (credit) {
     const amount = formatUsd(credit.usd_cents);
     return {
-      key: `added:${credit.id}`,
-      phase: "added",
-      title: "Deposit credited",
-      body: `${amount} is in your balance.`,
+      key: `confirmed:${credit.id}`,
+      phase: "confirmed",
+      title: "Deposit confirmed",
+      body: "Added to your balance.",
       amount: `${amount} ${credit.asset_key}`,
     };
   }
@@ -137,8 +135,7 @@ export function selectDepositNotice(input: {
       return {
         key: "submitted",
         phase: "waiting",
-        title:
-          input.submitted.networkMode === "bitcoin" ? "Deposit pending" : "Transaction submitted",
+        title: "Deposit pending",
         amount: `${formatUsd(input.submitted.usdCents)} ${input.submitted.asset}`,
         body: waitingBody(
           input.submitted.networkMode,

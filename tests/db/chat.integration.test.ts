@@ -1,10 +1,12 @@
-/** Chat integration suite against the isolated `pvp_test` schema. Requires SUPABASE_DB_URL. */
+/** Chat integration suite against the isolated `pvp_test` schema. Requires TEST_DATABASE_URL. */
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { buildTestSchemaSql } from "./schema";
+import { testDatabaseUrl } from "./test-url";
 
-const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
+const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
 const sql = url
   ? postgres(url, { max: 8, prepare: false, onnotice: () => {}, idle_timeout: 5 })
@@ -178,7 +180,7 @@ d("game chat (isolated schema)", () => {
 
   it("access rules: browsers read visible rows only and can never write or call chat functions", async () => {
     const pol =
-      await sql`select cmd, roles::text[] roles, qual from pg_policies where schemaname = 'public' and tablename like 'game_chat%'`;
+      await sql`select cmd, roles::text[] roles, qual from pg_policies where schemaname = 'pvp_test' and tablename like 'game_chat%'`;
     // Logged-out visitors read visible chat too; sending stays authenticated-only.
     expect(pol.map((p) => p.roles.join(",")).sort()).toEqual(["anon", "authenticated"]);
     for (const p of pol) {
@@ -193,13 +195,13 @@ d("game chat (isolated schema)", () => {
     ])
       for (const role of ["anon", "authenticated"])
         for (const p of ["SELECT", "INSERT", "UPDATE", "DELETE"]) {
-          const [r] = await sql`select has_table_privilege(${role}, ${"public." + t}, ${p}) ok`;
+          const [r] = await sql`select has_table_privilege(${role}, ${"pvp_test." + t}, ${p}) ok`;
           if (r.ok) privs.push(`${t}:${role}:${p}`);
         }
     expect(privs).toEqual([]);
     // Reads are column-scoped: moderation fields stay server-only.
     const cols = await sql`select grantee, privilege_type, column_name from information_schema.column_privileges
-      where table_schema = 'public' and table_name like 'game_chat%' and grantee in ('anon', 'authenticated')
+      where table_schema = 'pvp_test' and table_name like 'game_chat%' and grantee in ('anon', 'authenticated')
       order by grantee, column_name`;
     const readable = ["created_at", "game_type", "id", "message", "status", "user_id"];
     expect(cols.every((c) => c.privilege_type === "SELECT")).toBe(true);
@@ -208,18 +210,25 @@ d("game chat (isolated schema)", () => {
     for (const fn of ["chat_send", "chat_set_status", "chat_set_restriction", "_chat_broadcast"]) {
       const [row] =
         await sql`select bool_or(has_function_privilege('authenticated', p.oid, 'execute')) a, bool_or(has_function_privilege('anon', p.oid, 'execute')) n
-        from pg_proc p join pg_namespace s on s.oid = p.pronamespace where s.nspname = 'public' and p.proname = ${fn}`;
+        from pg_proc p join pg_namespace s on s.oid = p.pronamespace where s.nspname = 'pvp_test' and p.proname = ${fn}`;
       expect(row, fn).toEqual({ a: false, n: false });
     }
     const [trg] =
-      await sql`select p.prosecdef, p.proconfig from pg_proc p join pg_namespace s on s.oid = p.pronamespace where s.nspname = 'public' and p.proname = '_chat_broadcast'`;
+      await sql`select p.prosecdef, p.proconfig from pg_proc p join pg_namespace s on s.oid = p.pronamespace where s.nspname = 'pvp_test' and p.proname = '_chat_broadcast'`;
     expect(trg.prosecdef).toBe(true);
-    expect(trg.proconfig).toContain("search_path=public");
-    const rt =
-      await sql`select policyname, cmd, qual, with_check from pg_policies where schemaname = 'realtime' and tablename = 'messages' and policyname like 'chat rooms%'`;
-    // Browsers only receive; presence is now server-counted (no browser INSERT at all).
-    expect(rt.length).toBeGreaterThan(0);
-    expect([...new Set(rt.map((r) => r.cmd))]).toEqual(["SELECT"]);
-    expect(rt.every((r) => r.with_check === null)).toBe(true);
+    expect(trg.proconfig).toContain("search_path=pvp_test");
+    // Supabase realtime policies live outside pvp_test and are stripped from the
+    // isolated schema. The migration source is what keeps browsers on SELECT.
+    const rooms = readFileSync(
+      "supabase/migrations/20260926160000_public-chat-and-coinflip-24h.sql",
+      "utf8",
+    );
+    const receive = readFileSync(
+      "supabase/migrations/20260924032744_bda537b7-cd42-4bef-b199-d799ddcb2152.sql",
+      "utf8",
+    );
+    expect(rooms).toContain('create policy "chat rooms receive anon"');
+    expect(rooms).toMatch(/create policy "chat rooms receive anon" on realtime\.messages\s+for select/i);
+    expect(receive).toContain('create policy "chat rooms receive" on realtime.messages for select');
   });
 });

@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { BASE_MAINNET, centsToWei, checkMainnetRegistry, checkRpcUrl, usdcUnitsToCents, weiToCents } from "@/lib/crypto/allowlist";
+import {
+  BASE_MAINNET,
+  centsToWei,
+  checkMainnetRegistry,
+  checkRpcUrl,
+  clearsDepositMinimum,
+  usdcUnitsToCents,
+  weiToCents,
+} from "@/lib/crypto/allowlist";
 
 const good = { chainId: 8453, networkMode: "mainnet", usdc: BASE_MAINNET.usdc, usdcDecimals: 6, feed: BASE_MAINNET.ethUsdFeed };
 
@@ -13,6 +21,15 @@ describe("mainnet-only guards", () => {
     expect(checkRpcUrl("https://sepolia.base.org").ok).toBe(false);
     expect(checkRpcUrl("http://mainnet.base.org").ok).toBe(false);
     expect(checkRpcUrl("https://mainnet.base.org").ok).toBe(true);
+  });
+});
+
+describe("deposit minimum after a network fee", () => {
+  it("credits $1.95 against a $2 minimum and rejects $1.94", () => {
+    expect(clearsDepositMinimum(195, 200)).toBe(true);
+    expect(clearsDepositMinimum(200, 200)).toBe(true);
+    expect(clearsDepositMinimum(194, 200)).toBe(false);
+    expect(clearsDepositMinimum(0, 200)).toBe(false);
   });
 });
 

@@ -339,12 +339,12 @@ export function PokerTable({ id }: { id: number }) {
         <div className="poker-env" aria-hidden />
         <div className="poker-hud-panel relative max-w-md p-8 text-center">
           <p className="font-display text-xl">Table not available</p>
-          <p className="mt-2 text-sm text-[#9aa3c4]">
+          <p className="mt-2 text-sm text-[var(--ink-muted)]">
             {q.isError
               ? "We couldn't load this table. Try again in a moment."
               : "This poker table doesn't exist or has closed."}
           </p>
-          <Link to="/poker" className="mt-4 inline-block text-[#c58bff] hover:underline">
+          <Link to="/poker" className="mt-4 inline-block text-[var(--neon-hot)] hover:underline">
             Back to the poker lobby
           </Link>
         </div>

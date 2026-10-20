@@ -103,12 +103,12 @@
 ## Multi-chain rails (Base Mainnet + Ethereum Mainnet) — in progress
 - [x] Chain registry extended: per-chain confirmations, minimums, network_mode (Base Sepolia unchanged, still the only enabled chain)
 - [x] Base Mainnet (8453) + Ethereum Mainnet (1) seeded in registry — DISABLED until gates pass
-- [x] Personal deposit addresses table (xpub-derived, watcher holds no keys, no auto-sweep)
+- [x] Personal deposit addresses table (historical). Issuance and sweeps are retired; the table and deposit history stay.
 - [x] Chain-aware DB functions: observe/credit deposits, quotes, withdrawals, per-chain worker queue, LIQUIDITY_PENDING
 - [x] Server: per-chain watchers/workers, two-RPC block-hash agreement (fail closed), exact gas estimation, per-chain hot-wallet keys
 - [x] Wallet UI: network selector, chain-aware deposits/withdrawals, per-chain explorer links
 - [x] Tests: 119 unit + 13 DB crypto money-path tests pass; build clean
-- [ ] Secrets needed to activate: CRYPTO_DEPOSIT_XPUB, per-chain RPC URLs (primary+secondary), per-chain payout keys
+- [ ] Secrets still required for Base: RPC URLs (primary and secondary) and the payout key. Do not set a deposit xpub or xprv.
 - [ ] Legal/custody gates before enabling mainnet: licensing, KYC/AML, geo-fencing, custody setup
 - [ ] Staged round-trip test on Base Sepolia, then enable Base Mainnet, then Ethereum
 - [x] Base Mainnet go-live Stage 1+2: secrets saved (RPC primary/backup, payout key), treasury 0x9EAf…7987 + payout 0xd293…dA24 registered, chain 8453 + USDC/ETH enabled in watch-only mode

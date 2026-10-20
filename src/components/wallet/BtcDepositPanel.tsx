@@ -19,7 +19,6 @@ import {
 import { bitcoinPaymentUri, btcInvoicePhase } from "@/lib/crypto/btcpay/policy";
 import { announceDepositSubmitted } from "@/lib/crypto/deposit-notify";
 import { announceWithdrawalSubmitted } from "@/lib/crypto/withdraw-notify";
-import { useWithdrawalCode, WithdrawalCodeField } from "@/components/wallet/WithdrawalCode";
 import { PartnerProfitNote, usePartnerProfitHold } from "@/components/wallet/PartnerProfitHold";
 
 const DEFAULT_DEPOSIT_USD = "10";
@@ -58,7 +57,6 @@ export function BtcDepositPanel({
   const autoEnsureDone = useRef(false);
   const [outBusy, setOutBusy] = useState(false);
   const cashoutLock = useRef(false);
-  const emailCode = useWithdrawalCode();
   const heldCents = usePartnerProfitHold(!!payout.data?.enabled);
   const [invoiceId, setInvoiceId] = useState<string | null>(null);
   const latest = useQuery({
@@ -128,9 +126,6 @@ export function BtcDepositPanel({
   const payoutsOn = !!payout.data?.enabled;
   const cents = parseUsdToCents(amount);
   const outCents = parseUsdToCents(outAmount);
-  const outTarget = { rail: "btc" as const, usdCents: outCents ?? 0, address: outAddress };
-  const outProof = emailCode.proof(outTarget);
-  const outCodeSent = emailCode.sentFor(outTarget);
 
   async function start(nextCents = cents) {
     if (busy || starting.current) return;
@@ -251,19 +246,13 @@ export function BtcDepositPanel({
     if (!claimSendLock(cashoutLock)) return;
     setOutBusy(true);
     try {
-      if (!outProof) {
-        await emailCode.send(outTarget);
-        return;
-      }
       const result = await cashoutFn({
-        data: { usdCents: outCents, address: outAddress, ...outProof },
+        data: { usdCents: outCents, address: outAddress },
       });
       if (!result.ok) {
         toast.error(result.error);
-        emailCode.failed(result.error);
         return;
       }
-      emailCode.clear();
       announceWithdrawalSubmitted({
         usdCents: outCents,
         asset: "BTC",
@@ -288,7 +277,7 @@ export function BtcDepositPanel({
         <>
           {open && phase && (phase === "credited" || phase === "review" || phase === "closed") ? (
             <p className="mb-2 text-sm font-medium">
-              {phase === "credited" && `${formatUsd(open.usdCents)} is in your balance.`}
+              {phase === "credited" && "Deposit confirmed. Added to your balance."}
               {phase === "review" && "This payment needs a review before it can be added."}
               {phase === "closed" && "This invoice is closed. Enter an amount to deposit again."}
             </p>
@@ -330,7 +319,7 @@ export function BtcDepositPanel({
               </span>
               <Input
                 id="btc-deposit-amount"
-                className="h-9 pl-7 font-mono"
+                className="h-8 pl-7 font-mono"
                 inputMode="decimal"
                 autoComplete="off"
                 value={amount}
@@ -379,20 +368,21 @@ export function BtcDepositPanel({
               </span>
               <Input
                 id="btc-cashout-amount"
-                className="h-9 pl-7 font-mono"
+                className="h-8 pl-7 font-mono"
                 inputMode="decimal"
                 value={outAmount}
                 onChange={(event) => setOutAmount(event.target.value)}
                 aria-label="Bitcoin cashout amount in USD"
               />
             </div>
-            <div className="mt-1.5 grid grid-cols-3 gap-1.5">
+            <div className="mt-1 grid grid-cols-3 gap-1">
               {["20", "50", "100"].map((preset) => (
                 <Button
                   key={preset}
                   type="button"
                   size="sm"
                   variant="secondary"
+                  className="h-7"
                   onClick={() => setOutAmount(preset)}
                 >
                   ${preset}
@@ -400,13 +390,13 @@ export function BtcDepositPanel({
               ))}
             </div>
           </div>
-          <div className="space-y-1.5 rounded-lg border border-border bg-muted/30 p-2.5 text-xs text-muted-foreground">
+          <div className="space-y-1.5 rounded-lg border border-border bg-muted/30 p-2 text-xs text-muted-foreground">
             <label htmlFor="btc-cashout-address" className="font-semibold text-foreground">
               To a bc1 address
             </label>
             <Input
               id="btc-cashout-address"
-              className="h-9 font-mono text-xs"
+              className="h-8 font-mono text-xs"
               value={outAddress}
               onChange={(event) => setOutAddress(event.target.value)}
               placeholder="bc1…"
@@ -414,7 +404,7 @@ export function BtcDepositPanel({
             />
             <p className="min-h-[2.5rem] sm:min-h-4">
               {payout.data?.minCents != null
-                ? `Minimum ${formatUsd(payout.data.minCents)}. A code is emailed to approve each cashout.`
+                ? `Minimum ${formatUsd(payout.data.minCents)}.`
                 : "\u00a0"}
             </p>
           </div>
@@ -426,20 +416,13 @@ export function BtcDepositPanel({
             </p>
           )}
           <div className="mt-auto space-y-2">
-            <WithdrawalCodeField
-              ctl={emailCode}
-              target={outTarget}
-              disabled={outBusy}
-              onConfirm={() => void cashout()}
-              confirmLabel={outBusy ? "Requesting…" : "Confirm cashout"}
-            />
             <Button
               type="button"
-              className="h-9 w-full"
+              className="h-8 w-full"
               onClick={cashout}
               disabled={outBusy || !payout.isFetched || !payout.data?.available}
             >
-              {outBusy ? "Requesting…" : outCodeSent ? "Enter code" : "Cash out BTC"}
+              {outBusy ? "Requesting…" : "Cash out BTC"}
             </Button>
           </div>
         </div>

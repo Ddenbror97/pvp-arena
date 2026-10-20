@@ -14,6 +14,8 @@ describe("money", () => {
   it("formats cents", () => {
     expect(formatUsd(1248500)).toBe("$12,485.00");
     expect(formatUsd(5)).toBe("$0.05");
+    expect(formatUsd(379.8)).toBe("$3.80");
+    expect(formatUsd(Number.NaN)).toBe("$0.00");
   });
   it("parses input to integer cents without floats", () => {
     expect(parseUsdToCents("25")).toBe(2500);

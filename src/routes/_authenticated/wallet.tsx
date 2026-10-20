@@ -85,47 +85,50 @@ function WalletPage() {
     >
       {({ form }) => (
         <div className="mx-auto w-full">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
-              <Wallet className="h-4 w-4" aria-hidden="true" />
+          <div className="flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <Wallet className="h-3.5 w-3.5" aria-hidden="true" />
             </span>
             <div>
-              <h1 className="font-display text-xl leading-none">Wallet</h1>
-              <p className="mt-0.5 text-xs text-muted-foreground">
+              <h1 className="font-display text-lg leading-none">Wallet</h1>
+              <p className="mt-0.5 text-[11px] text-muted-foreground">
                 Balance, deposits, and cashouts
               </p>
             </div>
           </div>
-          <section className="mt-3 grid grid-cols-3 gap-1.5 sm:gap-2" aria-label="Balance">
-            <div className="min-w-0 rounded-lg border border-border bg-card px-2 py-2.5 sm:px-3">
-              <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:gap-1.5 sm:tracking-widest">
+          <section className="mt-2 grid grid-cols-3 gap-1.5" aria-label="Balance">
+            <div className="min-w-0 rounded-lg border border-border bg-card px-2 py-2 sm:px-2.5">
+              <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:tracking-widest">
                 <Wallet className="h-3 w-3 shrink-0" aria-hidden="true" />
                 Total
               </div>
-              <p className="tabular mt-1.5 flex min-h-5 items-center whitespace-nowrap font-display text-[clamp(0.75rem,calc((100vw-6rem)/17.7),1.5rem)] font-semibold leading-none tracking-tight">
+              <p className="tabular mt-1 flex min-h-4 items-center whitespace-nowrap font-display text-[clamp(0.7rem,calc((100vw-6rem)/18),1.2rem)] font-semibold leading-none tracking-tight">
                 {wallet.isLoading ? "\u00a0" : formatUsd(available + locked)}
               </p>
             </div>
-            <div className="min-w-0 rounded-lg border border-border bg-card px-2 py-2.5 sm:px-3">
-              <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:gap-1.5 sm:tracking-widest">
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" aria-hidden="true" />
+            <div className="min-w-0 rounded-lg border border-border bg-card px-2 py-2 sm:px-2.5">
+              <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:tracking-widest">
+                <span
+                  className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
+                  aria-hidden="true"
+                />
                 Available
               </div>
-              <p className="tabular mt-1.5 flex min-h-5 items-center whitespace-nowrap font-display text-[clamp(0.75rem,calc((100vw-6rem)/17.7),1.5rem)] font-semibold leading-none tracking-tight">
+              <p className="tabular mt-1 flex min-h-4 items-center whitespace-nowrap font-display text-[clamp(0.7rem,calc((100vw-6rem)/18),1.2rem)] font-semibold leading-none tracking-tight">
                 {wallet.isLoading ? "\u00a0" : formatUsd(available)}
               </p>
             </div>
-            <div className="min-w-0 rounded-lg border border-border bg-card px-2 py-2.5 sm:px-3">
-              <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:gap-1.5 sm:tracking-widest">
+            <div className="min-w-0 rounded-lg border border-border bg-card px-2 py-2 sm:px-2.5">
+              <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:tracking-widest">
                 <Lock className="h-3 w-3 shrink-0" aria-hidden="true" />
                 Locked
               </div>
-              <p className="tabular mt-1.5 flex min-h-5 items-center whitespace-nowrap font-display text-[clamp(0.75rem,calc((100vw-6rem)/17.7),1.5rem)] font-semibold leading-none tracking-tight">
+              <p className="tabular mt-1 flex min-h-4 items-center whitespace-nowrap font-display text-[clamp(0.7rem,calc((100vw-6rem)/18),1.2rem)] font-semibold leading-none tracking-tight">
                 {wallet.isLoading ? "\u00a0" : formatUsd(locked)}
               </p>
             </div>
           </section>
-          <div className="mt-3">{form}</div>
+          <div className="mt-2">{form}</div>
           <RecentFunding />
         </div>
       )}

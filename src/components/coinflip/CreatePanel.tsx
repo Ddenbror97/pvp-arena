@@ -107,91 +107,102 @@ export function CreatePanel() {
       />
       <SlipCard
         title="Create a coinflip"
-        tag={<span className="text-[11px] text-muted-foreground">1 vs 1</span>}
-        className="hidden lg:block"
+        tag={<SidePicker side={side} setSide={setSide} pending={pending} />}
+        className="hidden shrink-0 lg:block"
       >
-      {!signedOut && !profile && needsProfile ? (
-        <p className="mt-5 text-sm text-muted-foreground">
-          Finish setting up your profile to play.
-        </p>
-      ) : (
-        <>
-          {signedOut ? null : <SlipBalance cents={balance} loading={!userId || wallet.isLoading} />}
+        {!signedOut && !profile && needsProfile ? (
+          <p className="mt-5 text-sm text-muted-foreground">
+            Finish setting up your profile to play.
+          </p>
+        ) : (
+          <>
+            {signedOut ? null : (
+              <SlipBalance cents={balance} loading={!userId || wallet.isLoading} />
+            )}
 
-          <SlipLabel>Pick your side</SlipLabel>
-          <div className="mt-1.5 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Your side">
-            {(["HEADS", "TAILS"] as const).map((s) => (
-              <button
-                key={s}
-                type="button"
-                role="radio"
-                aria-checked={side === s}
-                onClick={() => setSide(s)}
-                className={cn(
-                  "flex items-center gap-2.5 rounded-xl border px-3 py-2 font-display text-xs transition active:scale-[0.98]",
-                  side === s
-                    ? s === "HEADS"
-                      ? "border-coin-heads bg-coin-heads/10 text-coin-heads shadow-[0_0_0_1px_var(--color-coin-heads)]"
-                      : "border-coin-tails bg-coin-tails/10 text-coin-tails shadow-[0_0_0_1px_var(--color-coin-tails)]"
-                    : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground",
-                )}
-              >
-                <img
-                  src={s === "HEADS" ? headsAsset : tailsAsset}
-                  alt=""
-                  width={32}
-                  height={32}
-                  draggable={false}
-                  className={cn(
-                    "h-8 w-8 rounded-full object-cover transition select-none",
-                    side !== s && "opacity-60 grayscale",
-                  )}
-                />
-                {s}
-              </button>
-            ))}
-          </div>
-
-          <SlipLabel htmlFor="cf-amount">Wager</SlipLabel>
-          <StakeInput
-            id="cf-amount"
-            value={input}
-            onChange={setInput}
-            quick={QUICK}
-            min={min}
-            max={signedOut ? max : Math.min(balance, max)}
-            invalid={!valid && !!input}
-            disabled={pending}
-          />
-
-          {signedOut ? (
-            <SignInPlayButton />
-          ) : (
-            <PlayButton
-              onClick={submit}
-              disabled={!profile || !affordable || pending}
-              label={pending ? "Creating…" : `Create · ${side === "HEADS" ? "Heads" : "Tails"}`}
-              amount={valid ? amount : null}
+            <SlipLabel htmlFor="cf-amount">Wager</SlipLabel>
+            <StakeInput
+              id="cf-amount"
+              value={input}
+              onChange={setInput}
+              quick={QUICK}
+              min={min}
+              max={signedOut ? max : Math.min(balance, max)}
+              invalid={!valid && !!input}
+              disabled={pending}
             />
-          )}
-          <SlipNote
-            error={
-              broke ? (
-                <>
-                  Not enough balance ·{" "}
-                  <Link to="/wallet" className="underline">
-                    Deposit
-                  </Link>
-                </>
-              ) : null
-            }
-          >
-            Every flip is verifiable.
-          </SlipNote>
-        </>
-      )}
-    </SlipCard>
+
+            {signedOut ? (
+              <SignInPlayButton />
+            ) : (
+              <PlayButton
+                onClick={submit}
+                disabled={!profile || !affordable || pending}
+                label={pending ? "Creating…" : `Create · ${side === "HEADS" ? "Heads" : "Tails"}`}
+                amount={valid ? amount : null}
+              />
+            )}
+            <SlipNote
+              error={
+                broke ? (
+                  <>
+                    Not enough balance ·{" "}
+                    <Link to="/wallet" className="underline">
+                      Deposit
+                    </Link>
+                  </>
+                ) : null
+              }
+            >
+              Every flip is verifiable.
+            </SlipNote>
+          </>
+        )}
+      </SlipCard>
     </>
+  );
+}
+
+function SidePicker({
+  side,
+  setSide,
+  pending,
+}: {
+  side: CoinSide;
+  setSide: (side: CoinSide) => void;
+  pending: boolean;
+}) {
+  return (
+    <div className="flex shrink-0 items-center gap-1" role="radiogroup" aria-label="Your side">
+      {(["HEADS", "TAILS"] as const).map((s) => (
+        <button
+          key={s}
+          type="button"
+          role="radio"
+          aria-checked={side === s}
+          aria-label={s === "HEADS" ? "Heads" : "Tails"}
+          disabled={pending}
+          onClick={() => setSide(s)}
+          className={cn(
+            "relative grid h-4 w-4 place-items-center rounded-full border transition before:absolute before:-inset-1 active:scale-95 disabled:opacity-50",
+            side === s
+              ? s === "HEADS"
+                ? "border-coin-heads shadow-[0_0_0_1px_var(--color-coin-heads)]"
+                : "border-coin-tails shadow-[0_0_0_1px_var(--color-coin-tails)]"
+              : "border-transparent opacity-45 grayscale",
+          )}
+        >
+          <img
+            src={s === "HEADS" ? headsAsset : tailsAsset}
+            alt=""
+            width={16}
+            height={16}
+            draggable={false}
+            className="h-4 w-4 rounded-full object-cover select-none"
+          />
+        </button>
+      ))}
+    </div>
   );
 }
 

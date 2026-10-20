@@ -62,7 +62,7 @@ function RoulettePage() {
   return (
     <>
       <h1 className="sr-only">Roulette</h1>
-      <div className="min-h-[1307px] xl:min-h-[572px]">
+      <div className="min-h-[1307px] xl:min-h-0">
         <div className="grid items-stretch gap-3 xl:grid-cols-[280px_minmax(0,1fr)] xl:min-h-[546px]">
           <GameChat
             gameType="roulette"

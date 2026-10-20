@@ -7756,6 +7756,15 @@ export type Database = {
         Returns: Json;
       };
       partner_admin_remove: { Args: { p_user: string }; Returns: Json };
+      partner_admin_remove_credit: {
+        Args: {
+          p_amount_cents: number;
+          p_note: string;
+          p_request_id: string;
+          p_user: string;
+        };
+        Returns: Json;
+      };
       partner_admin_search: { Args: { p_query: string }; Returns: Json };
       partner_admin_set: {
         Args: { p_commission_bps: number; p_note: string; p_user: string };
@@ -7908,6 +7917,7 @@ export type Database = {
         Args: { p_user: string };
         Returns: number;
       };
+      request_self_exclusion: { Args: { p_days: number }; Returns: string };
       reset_test_credits: { Args: { p_admin: string }; Returns: Json };
       roulette_advance: { Args: { p_game_id: number }; Returns: string };
       roulette_bet: {

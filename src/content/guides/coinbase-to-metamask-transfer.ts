@@ -121,7 +121,7 @@ If you pasted a deposit address from a casino instead of MetaMask, the coins wen
 
 ### Next hop to the site
 
-When MetaMask on Base shows USDC, verify that account on PVPspinArena with a message signature, then send from it to the [wallet](/wallet) deposit address. Exchange senders will not match.
+When MetaMask on Base shows USDC, verify that account on PVPspinArena with a message signature, then send from it on the [wallet](/wallet) page. Exchange senders will not match.
 
 If you accidentally used Coinbase Wallet’s address instead of MetaMask, the coins are still yours if you control that wallet. Move them to the MetaMask account you verified, or verify the Coinbase Wallet address instead. Do not send a third copy from Coinbase until you know where the first two landed.
 

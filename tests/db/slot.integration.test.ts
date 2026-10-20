@@ -1,7 +1,7 @@
 /**
  * P2P Slott engine: ledger, turns, idempotency, promotional bonus caps/budget, fairness,
  * settlement recovery and access control. Runs against the isolated `pvp_test` schema
- * built from the real migrations. Requires SUPABASE_DB_URL; skipped otherwise.
+ * built from the real migrations. Requires TEST_DATABASE_URL and refuses production.
  *
  * Tests may read slot_game_secrets (they connect as the schema owner) to compute every
  * expected grid, score and bonus independently with the TypeScript verifier.
@@ -13,8 +13,9 @@ import { buildTestSchemaSql } from "./schema";
 import { migrateTestSchemaToReal } from "./money";
 import { slottOutcome, verifySlott } from "../../src/lib/fairness/slott";
 import { BOMB, SYMBOLS, WEIGHT_TOTAL, hasBomb, scoreGrid } from "../../src/lib/slott/paytable";
+import { testDatabaseUrl } from "./test-url";
 
-const url = process.env.SUPABASE_DB_URL?.replace(":6543/", ":5432/");
+const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
 const sql = url ? postgres(url, { max: 10, prepare: false, onnotice: () => {}, idle_timeout: 5 }) : (null as never);
 const LONG = 120_000;

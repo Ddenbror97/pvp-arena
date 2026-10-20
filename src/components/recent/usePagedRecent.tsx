@@ -2,6 +2,8 @@ import { useCallback, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export const RECENT_PAGE_SIZE = 8;
+/** Jackpot history shows one short page. Other games keep the default. */
+export const JACKPOT_RECENT_PAGE_SIZE = 4;
 
 /**
  * Paged recent-games list. Default is 8 rows; pass pageSize where a lobby fits fewer.
@@ -75,6 +77,6 @@ export function RecentPager({
   );
 }
 
-/** Full-bleed wrapper so the section runs edge to edge inside a centered page container. */
+/** Recent list under the game. A little less space above it than the old mt-8. */
 export const EDGE_TO_EDGE =
-  "relative mt-8 flex min-h-[24.5rem] w-full max-w-full flex-col px-0 sm:px-1";
+  "relative mt-4 flex min-h-[24.5rem] w-full max-w-full flex-col px-0 sm:px-1";

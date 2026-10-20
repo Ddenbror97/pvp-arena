@@ -1,5 +1,5 @@
 /**
- * Bonus cashout floor: $20 deposited before bonus is withdrawable, $20 minimum,
+ * Bonus cashout floor: this suite restores the $20 deposit gate and $20 minimum,
  * and a payout keeps the stake's source. Isolated schema. Requires TEST_DATABASE_URL.
  */
 import postgres from "postgres";
@@ -26,8 +26,8 @@ d("bonus withdrawal floor", () => {
     const mins = await sql`select
       (select min_withdrawal_cents from pvp_test.crypto_settings) as settings,
       (select min_withdrawal_cents from pvp_test.chain_networks where chain_id = 8453) as chain`;
-    expect(Number(mins[0].settings)).toBe(2000);
-    expect(Number(mins[0].chain)).toBe(2000);
+    expect(Number(mins[0].settings)).toBe(200);
+    expect(Number(mins[0].chain)).toBe(200);
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     await fundTestTreasury(sql);
     await sql.unsafe(`alter table pvp_test.chain_networks disable trigger user;
@@ -69,7 +69,24 @@ d("bonus withdrawal floor", () => {
         select 1 from pvp_test.wallet_accounts
         where owner_id = ${id}::uuid and kind = 'user_locked' and asset = 'USD' and account_type = 'real'
       )`;
+    const wallet = "0x" + randomBytes(20).toString("hex");
+    await sql`insert into pvp_test.user_wallets (
+      user_id, address, normalized_address, is_verified, is_primary, verified_at, became_primary_at
+    ) values (
+      ${id}::uuid, ${wallet}, ${wallet}, true, true, now() - interval '48 hours', now() - interval '48 hours'
+    )`;
     return id;
+  }
+
+  async function walletOf(uid: string) {
+    const row = (
+      await sql`select normalized_address from pvp_test.user_wallets
+        where user_id = ${uid}::uuid and is_verified
+        order by is_primary desc, verified_at desc
+        limit 1`
+    )[0];
+    if (!row) throw new Error("missing verified wallet");
+    return row.normalized_address as string;
   }
 
   async function acct(uid: string, kind: string) {
@@ -132,7 +149,9 @@ d("bonus withdrawal floor", () => {
     payout: number,
     fee: number,
   ) {
-    const locked = await Promise.all(stakes.map(async (s) => ({ ...s, account: await acct(s.uid, "user_locked") })));
+    const locked = await Promise.all(
+      stakes.map(async (s) => ({ ...s, account: await acct(s.uid, "user_locked") })),
+    );
     const escrow = await sys("game_escrow");
     const house = await sys("house_revenue");
     const won = await acct(winner, "user_available");
@@ -142,7 +161,8 @@ d("bonus withdrawal floor", () => {
         await db`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, game_id)
           values ('coinflip_settlement'::pvp_test.tx_kind, ${randomUUID()}, 'real', ${gameId}) returning id`
       )[0].id as string;
-      for (const s of locked) await db`select pvp_test._post(${id}::uuid, ${s.account}::uuid, ${-s.stake}::bigint)`;
+      for (const s of locked)
+        await db`select pvp_test._post(${id}::uuid, ${s.account}::uuid, ${-s.stake}::bigint)`;
       await db`select pvp_test._post(${id}::uuid, ${escrow}::uuid, ${pot}::bigint)`;
       await db`select pvp_test._post(${id}::uuid, ${escrow}::uuid, ${-pot}::bigint)`;
       await db`select pvp_test._post(${id}::uuid, ${won}::uuid, ${payout}::bigint)`;
@@ -186,7 +206,7 @@ d("bonus withdrawal floor", () => {
 
   async function usdc(uid: string, cents: number) {
     return err(
-      sql`select pvp_test.crypto_request_withdrawal(${uid}::uuid, 8453::bigint, 'USDC', ${cents}::bigint, null::uuid, true, '0x2222222222222222222222222222222222222222')`,
+      sql`select pvp_test.crypto_request_withdrawal(${uid}::uuid, 8453::bigint, 'USDC', ${cents}::bigint, null::uuid, true, ${await walletOf(uid)})`,
     );
   }
 
@@ -196,7 +216,7 @@ d("bonus withdrawal floor", () => {
         await sql`select pvp_test.crypto_quote_withdrawal(${uid}::uuid, 8453::bigint, ${cents}::bigint) q`
       )[0].q as { quote_id: string };
       return err(
-        sql`select pvp_test.crypto_request_withdrawal(${uid}::uuid, 8453::bigint, 'ETH', ${cents}::bigint, ${quote.quote_id}::uuid, true, '0x2222222222222222222222222222222222222222')`,
+        sql`select pvp_test.crypto_request_withdrawal(${uid}::uuid, 8453::bigint, 'ETH', ${cents}::bigint, ${quote.quote_id}::uuid, true, ${await walletOf(uid)})`,
       );
     } catch (e) {
       return String((e as Error).message);
@@ -262,11 +282,21 @@ d("bonus withdrawal floor", () => {
     await bonus(u, "promo_reward", 200);
     await bonus(u, "referral_reward", 300);
     await bonus(u, "leaderboard_prize", 400);
-    expect(await basis(u)).toMatchObject({ deposits: 1500, eligible: 1500, bonus: 900, room: 1500 });
+    expect(await basis(u)).toMatchObject({
+      deposits: 1500,
+      eligible: 1500,
+      bonus: 900,
+      room: 1500,
+    });
     expect(await btc(u, 2000)).toMatch(/BONUS_NOT_WITHDRAWABLE/);
     expect(await bal(u)).toBe(2400);
     await deposit(u, 500);
-    expect(await basis(u)).toMatchObject({ deposits: 2000, eligible: 2000, bonus: 900, room: 2900 });
+    expect(await basis(u)).toMatchObject({
+      deposits: 2000,
+      eligible: 2000,
+      bonus: 900,
+      room: 2900,
+    });
     expect(await btc(u, 2900)).toBe("");
     expect(await bal(u)).toBe(0);
   });
@@ -277,7 +307,11 @@ d("bonus withdrawal floor", () => {
     await bonus(u, "promo_reward", 500);
     const results = await Promise.all([btc(u, 2000), usdc(u, 2000)]);
     expect(results.filter((m) => m === "").length, results.join(" | ")).toBe(1);
-    expect(results.filter((m) => /BONUS_NOT_WITHDRAWABLE|WITHDRAWAL_PENDING|INSUFFICIENT/.test(m)).length, results.join(" | ")).toBe(1);
+    expect(
+      results.filter((m) => /BONUS_NOT_WITHDRAWABLE|WITHDRAWAL_PENDING|INSUFFICIENT/.test(m))
+        .length,
+      results.join(" | "),
+    ).toBe(1);
     const locked = Number(
       (
         await sql`select coalesce(sum(balance), 0)::bigint b from pvp_test.wallet_accounts
@@ -298,7 +332,12 @@ d("bonus withdrawal floor", () => {
     await sql`insert into pvp_test.test_auth_sessions (id, user_id) values (${session}::uuid, ${admin}::uuid)`;
     await sql`insert into pvp_test.admin_stepup (session_id, user_id, device_id)
       values (${session}::uuid, ${admin}::uuid, ${device}::uuid)`;
-    const claims = JSON.stringify({ sub: admin, role: "authenticated", app_role: "admin", session_id: session });
+    const claims = JSON.stringify({
+      sub: admin,
+      role: "authenticated",
+      app_role: "admin",
+      session_id: session,
+    });
     const created = (
       await sql`select pvp_test.promo_admin_create('FLOOR20', 200::bigint, 5, null::timestamptz) r
         from (select set_config('test.uid', ${admin}, true), set_config('request.jwt.claims', ${claims}, true)) c`
@@ -310,7 +349,9 @@ d("bonus withdrawal floor", () => {
         from (select set_config('test.uid', ${first}, true), set_config('test.client_ip', '203.0.113.20', true)) c`
     )[0].r as { ok: boolean };
     expect(claimed.ok).toBe(true);
-    await expect(sql`delete from pvp_test.promo_claims where user_id = ${first}::uuid`).rejects.toThrow(/IMMUTABLE/);
+    await expect(
+      sql`delete from pvp_test.promo_claims where user_id = ${first}::uuid`,
+    ).rejects.toThrow(/IMMUTABLE/);
     await sql.begin(async (db) => {
       await db`alter table pvp_test.promo_claims disable trigger promo_claim_guard`;
       await db`delete from pvp_test.promo_claims where user_id = ${first}::uuid`;
@@ -320,9 +361,12 @@ d("bonus withdrawal floor", () => {
     const [guard] = await sql`select tgenabled from pg_trigger
       where tgrelid = 'pvp_test.promo_claims'::regclass and tgname = 'promo_claim_guard'`;
     expect(guard.tgenabled).toBe("O");
-    expect((await sql`select 1 from pvp_test.promo_claims where user_id = ${first}::uuid`).length).toBe(0);
     expect(
-      (await sql`select 1 from pvp_test.promo_ip_redemptions where ip = '203.0.113.20'::inet`).length,
+      (await sql`select 1 from pvp_test.promo_claims where user_id = ${first}::uuid`).length,
+    ).toBe(0);
+    expect(
+      (await sql`select 1 from pvp_test.promo_ip_redemptions where ip = '203.0.113.20'::inet`)
+        .length,
     ).toBe(1);
     const second = await user("net2");
     const again = (

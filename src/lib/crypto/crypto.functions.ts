@@ -5,13 +5,13 @@ import { requireLiveSession } from "@/integrations/supabase/live-session";
 import { centsToWei } from "./allowlist";
 import { usableDisplayPrice } from "./eth-price";
 import { isTransientRpcFailure } from "./rpc-retry";
-import { withdrawalCodeSchema } from "@/lib/auth-otp/withdrawal.functions";
 import {
   bonusWithdrawBlockedMessage,
   parseWithdrawCashSnapshot,
   type WithdrawCashSnapshot,
 } from "@/lib/crypto/bonus-withdraw";
-import type { AddressBookRow } from "./deposit-address-book";
+import { publishedDepositAddress } from "./deposit";
+import { withdrawalDestinationAllowed } from "./withdrawal-wallet";
 
 const ERRORS: Record<string, string> = {
   WITHDRAWALS_PAUSED: "Withdrawals are paused right now.",
@@ -19,7 +19,6 @@ const ERRORS: Record<string, string> = {
   SELF_EXCLUDED: "Withdrawals are unavailable while self-excluded.",
   NO_VERIFIED_WALLET: "Enter a Base address that starts with 0x.",
   BAD_ADDRESS: "Enter a Base address that starts with 0x.",
-  NO_DEPOSIT_ADDRESS: "Your Base deposit address is not ready yet. Try again in a moment.",
   WALLET_CHANGE_COOLDOWN: "Withdrawals are paused for 24 hours after a wallet change.",
   WITHDRAWAL_PENDING: "You already have a withdrawal in progress.",
   DAILY_LIMIT: "This would exceed your daily withdrawal limit.",
@@ -238,106 +237,6 @@ export const getCryptoActivity = createServerFn({ method: "GET" })
     return activity;
   });
 
-async function assignPersonalDepositAddress(
-  db: Awaited<ReturnType<typeof admin>>,
-  userId: string,
-  chainId: number,
-): Promise<
-  | {
-      ok: true;
-      address: string | null;
-      version: 2 | null;
-      previous: { address: string; version: 1 }[];
-    }
-  | { ok: false; error: string }
-> {
-  const { data: net } = await db
-    .from("chain_networks")
-    .select("chain_id")
-    .eq("chain_id", chainId)
-    .eq("is_enabled", true)
-    .maybeSingle();
-  if (!net) return { ok: false, error: ERRORS["CHAIN_DISABLED"]! };
-  const { allocateDepositAddress } = await import("./deposit-address-book");
-  const { depositXpub } = await import("./addresses.server");
-  type StoredRow = {
-    user_id?: string;
-    address?: string;
-    derivation_index?: number;
-    derivation_version?: number;
-  };
-  const toRow = (row: StoredRow): AddressBookRow | null => {
-    const version = Number(row.derivation_version);
-    if (
-      !row.user_id ||
-      !row.address ||
-      row.derivation_index == null ||
-      (version !== 1 && version !== 2)
-    ) {
-      return null;
-    }
-    return {
-      userId: row.user_id,
-      chainId,
-      derivationIndex: Number(row.derivation_index),
-      derivationVersion: version,
-      address: row.address.toLowerCase(),
-    };
-  };
-  try {
-    const allocated = await allocateDepositAddress({
-      userId,
-      chainId,
-      xpub: depositXpub(),
-      book: {
-        async list() {
-          const listed = await db
-            .from("crypto_deposit_addresses")
-            .select("user_id, address, derivation_index, derivation_version")
-            .eq("chain_id", chainId);
-          if (listed.error) throw new Error(listed.error.message);
-          return ((listed.data ?? []) as StoredRow[])
-            .map(toRow)
-            .filter((row): row is AddressBookRow => row != null);
-        },
-        async insert(row) {
-          const { error } = await db.from("crypto_deposit_addresses").insert({
-            user_id: row.userId,
-            chain_id: row.chainId,
-            derivation_index: row.derivationIndex,
-            derivation_version: row.derivationVersion,
-            address: row.address,
-          });
-          if (!error) return "ok";
-          if (error.code === "23505") return "unique";
-          return "error";
-        },
-      },
-    });
-    return {
-      ok: true,
-      address: allocated.current?.address ?? null,
-      version: allocated.current ? 2 : null,
-      previous: allocated.previous.map((row) => ({ address: row.address, version: 1 as const })),
-    };
-  } catch {
-    return { ok: false, error: "Could not assign a deposit address. Please try again." };
-  }
-}
-
-/**
- * Returns the player's personal deposit address for a chain, deriving and
- * storing it on first use. Addresses come from an xpub — the server can derive
- * addresses but never spend from them. Returns null when no xpub is
- * configured (deposits then go to the shared treasury, matched by verified sender).
- */
-export const getDepositAddress = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth, requireLiveSession])
-  .inputValidator((d) => z.object({ chainId: chainIdSchema }).parse(d))
-  .handler(async ({ data, context }) =>
-    assignPersonalDepositAddress(await admin(), context.userId, data.chainId),
-  );
-
 export const prepareCryptoDeposit = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth, requireLiveSession])
   .inputValidator((d) =>
@@ -353,13 +252,12 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
     const db = await admin();
     const asset = await loadEnabledAsset(data.chainId, data.asset);
     if (!asset) return { ok: false as const, error: ERRORS["ASSET_NOT_ALLOWLISTED"]! };
-    const [{ data: walletRows }, assigned, { loadChainEnv, snapshotEthPrice }] = await Promise.all([
+    const [{ data: walletRows }, { loadChainEnv, snapshotEthPrice }] = await Promise.all([
       db
         .from("user_wallets")
         .select("normalized_address, is_primary")
         .eq("user_id", context.userId)
         .eq("is_verified", true),
-      assignPersonalDepositAddress(db, context.userId, data.chainId),
       import("./chain.server"),
     ]);
     const checked = await loadChainEnv(data.chainId);
@@ -373,14 +271,8 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
     if (data.usdCents < Number(checked.env.network.min_deposit_cents)) {
       return { ok: false as const, error: ERRORS["BELOW_MINIMUM"]! };
     }
-    // Current pay-to address is version 2. A version 1 address stays monitored by the
-    // watcher and is not published as the destination. Shared treasury is only the
-    // fallback when this user has no personal address at all.
-    if (!assigned.ok) return { ok: false as const, error: assigned.error };
-    const personal = assigned.address;
-    if (!personal && assigned.previous.length > 0) {
-      return { ok: false as const, error: ERRORS["NO_DEPOSIT_ADDRESS"]! };
-    }
+    const published = publishedDepositAddress(data.chainId, checked.env.treasury);
+    if (!published.ok) return { ok: false as const, error: "Deposits are unavailable right now." };
     const verifiedRows = (walletRows ?? []) as {
       normalized_address?: string;
       is_primary?: boolean;
@@ -394,8 +286,10 @@ export const prepareCryptoDeposit = createServerFn({ method: "POST" })
       verifiedRows.find((row) => row.is_primary)?.normalized_address ??
       verifiedAddresses[0] ??
       null;
-    if (!personal && !verified) return { ok: false as const, error: ERRORS["NO_DEPOSIT_ADDRESS"]! };
-    const destination = personal ?? (checked.env.treasury as string);
+    if (verifiedAddresses.length === 0) {
+      return { ok: false as const, error: "Link the wallet you will send from." };
+    }
+    const destination = published.address;
     let units: bigint;
     let priceMicroUsd: number | null = null;
     let token: string | null = null;
@@ -471,7 +365,7 @@ export const quoteEthWithdrawal = createServerFn({ method: "POST" })
     };
   });
 
-/** Early answer before a withdrawal code is emailed. The request decides again under the treasury lock. */
+/** Early answer before a cash out is submitted. The request decides again under the treasury lock. */
 export const checkWithdrawalLiquidity = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth, requireLiveSession])
   .inputValidator((d) =>
@@ -508,7 +402,6 @@ export const requestCryptoWithdrawal = createServerFn({ method: "POST" })
         chainId: chainIdSchema,
         toAddress: z.string().regex(/^0x[0-9a-fA-F]{40}$/),
       })
-      .merge(withdrawalCodeSchema)
       .parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -523,15 +416,41 @@ export const requestCryptoWithdrawal = createServerFn({ method: "POST" })
       usdCents: data.usdCents,
       address: data.toAddress,
     };
-    const { noticeWithdrawal, verifyWithdrawalCode } =
+    const { noticeWithdrawal, withdrawalBlocked } =
       await import("@/lib/auth-otp/withdrawal.server");
-    const verified = await verifyWithdrawalCode({
-      userId: context.userId,
-      challengeId: data.challengeId,
-      code: data.code,
-      target,
-    });
-    if (!verified.ok) return { ok: false as const, error: verified.error };
+    const blocked = await withdrawalBlocked(context.userId);
+    if (blocked) return { ok: false as const, error: blocked };
+    const { data: linkedWallets } = await (
+      await admin()
+    )
+      .from("user_wallets")
+      .select("normalized_address, became_primary_at")
+      .eq("user_id", context.userId)
+      .eq("is_verified", true);
+    const linked = (
+      (linkedWallets ?? []) as {
+        normalized_address?: string | null;
+        became_primary_at?: string | null;
+      }[]
+    )
+      .filter(
+        (row): row is { normalized_address: string; became_primary_at?: string | null } =>
+          typeof row.normalized_address === "string",
+      )
+      .map((row) => ({
+        address: row.normalized_address,
+        becamePrimaryAt: row.became_primary_at ?? null,
+      }));
+    const destination = withdrawalDestinationAllowed(linked, data.toAddress);
+    if (!destination.ok) {
+      return {
+        ok: false as const,
+        error:
+          destination.reason === "COOLDOWN"
+            ? ERRORS["WALLET_CHANGE_COOLDOWN"]!
+            : "Cash out to the wallet you linked.",
+      };
+    }
     const { envOkForAutoApproval } = await import("./chain.server");
     const envOk = await envOkForAutoApproval(data.chainId);
     const { data: r, error } = await (

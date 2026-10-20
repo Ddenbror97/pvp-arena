@@ -62,17 +62,18 @@ function Lobby() {
   );
   return (
     <>
-      <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-4 xl:grid-cols-[280px_minmax(0,1fr)_300px] xl:items-stretch">
-        <div className="order-1 min-w-0 lg:order-2">
+      <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-4 xl:h-[34rem] xl:grid-cols-[280px_minmax(0,1fr)_300px] xl:items-stretch xl:gap-4">
+        <div className="order-1 min-w-0 lg:order-2 xl:h-full xl:min-h-0 xl:overflow-y-auto">
           <OpenGames />
         </div>
-        <div className="order-2 min-w-0 lg:order-1 xl:order-3">
+        <div className="order-2 flex min-w-0 flex-col gap-4 lg:order-1 xl:order-3 xl:h-full xl:min-h-0 xl:overflow-hidden">
           <CreatePanel />
+          <RecentCoinflips layout="rail" />
         </div>
         <GameChat
           gameType="coinflip"
           initial={paint.chat}
-          className="order-3 h-72 sm:h-80 lg:col-span-2 xl:order-1 xl:col-span-1 xl:h-[34rem]"
+          className="order-3 h-72 sm:h-80 lg:col-span-2 xl:order-1 xl:col-span-1 xl:h-full xl:min-h-0"
         />
       </div>
       <RecentCoinflips />
