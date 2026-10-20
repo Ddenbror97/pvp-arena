@@ -146,7 +146,7 @@ If theory study is keeping you at tables you cannot afford, stop. Read [how to s
 
 Remember the two-column table: balance when you have no read, attack when you have a real one. That is the whole amateur version of GTO poker strategy. Everything else is homework. Homework does not get to spend the rent. The budget does. If the folder is more exciting than the cap, close the folder. The mix will wait. The bills will not.
 
-Solvers sit on top of the same [poker math](/guides/poker-math).
+Solvers sit on top of the same [poker math](/guides/poker-math). What those programs print, ranges and frequencies and EV, is [the output list from the vendor docs](/guides/poker-solver).
 
 A mixed check is not a tutorial in trapping. [Trapping with a made hand](/guides/slow-play-poker) is the practical version of checking strong, including when it gives a free card.`,
     },

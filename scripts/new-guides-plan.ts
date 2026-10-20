@@ -4533,4 +4533,20 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "dabble",
     "US pick'em rules v1.29. prizepicks and parlay betting explained stay on their own pages.",
   ),
+  p(
+    30,
+    "Poker",
+    "Strategy",
+    "poker-solver",
+    "poker solver",
+    "What a solver prints. gto-poker-strategy keeps that keyword. No licence keys or cracked software.",
+  ),
+  p(
+    30,
+    "Sports betting",
+    "Exchanges",
+    "smarkets-review",
+    "smarkets",
+    "Commission and lay review from Smarkets help. betting-exchange-explained keeps the explainer.",
+  ),
 ];

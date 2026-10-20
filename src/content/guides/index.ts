@@ -432,6 +432,8 @@ import { guide as seoSleeperPicksReview } from "./sleeper-picks-review";
 import { guide as seoBetrPicksReview } from "./betr-picks-review";
 import { guide as seoMetawinReview } from "./metawin-review";
 import { guide as seoDabbleReview } from "./dabble-review";
+import { guide as seoPokerSolver } from "./poker-solver";
+import { guide as seoSmarketsReview } from "./smarkets-review";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1420,6 +1422,8 @@ export const GUIDES: Guide[] = [
   seoBetrPicksReview,
   seoMetawinReview,
   seoDabbleReview,
+  seoPokerSolver,
+  seoSmarketsReview,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -2966,6 +2970,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "poker-tips",
         "texas-holdem-strategy",
         "gto-poker-strategy",
+        "poker-solver",
         "poker-pot-odds",
         "poker-math",
         "poker-tells",
@@ -3257,7 +3262,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     { name: "Office pools", slugs: ["bracket-pool", "super-bowl-squares"] },
     {
       name: "Exchanges",
-      slugs: ["novig-review", "prophetx-review", "sporttrade-review", "novig-vs-prophetx"],
+      slugs: ["novig-review", "prophetx-review", "sporttrade-review", "novig-vs-prophetx", "smarkets-review"],
     },
     {
       name: "Fantasy and friend bets",
