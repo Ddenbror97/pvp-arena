@@ -115,7 +115,9 @@ Use the column for the product you opened. A 5x label is not a coin flip, and a 
 
 After settlement the seed is published. [Fairness](/fairness) recomputes the hash and the result in the browser. That check is about the draw. It does not grade a league feed. PrizePicks does not publish a server seed for an entry, because the entry is not that draw. Jackpot does not grade a player stat, because the pot is not that contract.
 
-PVPspinArena does not offer a more-or-less board. It offers Jackpot, Coinflip, and Roulette, funded with USDC or ETH on Base. This guide cites no user counts and no fee percent. The fee on a round is the fee that round shows. If you wanted a stat line, use the app's slip and its state check. If you wanted a shared pot you can recompute, Jackpot is the product. Adults 18+ only. This is not financial, legal, or tax advice.`,
+PVPspinArena does not offer a more-or-less board. It offers Jackpot, Coinflip, and Roulette, funded with USDC or ETH on Base. This guide cites no user counts and no fee percent. The fee on a round is the fee that round shows. If you wanted a stat line, use the app's slip and its state check. If you wanted a shared pot you can recompute, Jackpot is the product. Adults 18+ only. This is not financial, legal, or tax advice.
+
+A second app matches the first deposit up to $100 in promo funds that expire in 7 days. The help-center read is [a deposit match paid as promo](/guides/parlayplay-review).`
     },
   ],
   faqs: [

@@ -134,7 +134,9 @@ One clean test beats a pile of tabs. Use the smallest stake the cashier will acc
 
 Then close the tab or play only what this site actually offers. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars, adults 18+ only. A second account is not a fresh start.
 
-One offshore rulebook prints the ID ask in advance, including a utility bill before funds move. That dated read is [the Costa Rica book's printed ID rule](/guides/wagerweb-review).`,
+One offshore rulebook prints the ID ask in advance, including a utility bill before funds move. That dated read is [the Costa Rica book's printed ID rule](/guides/wagerweb-review).
+
+Another licensing page names Anjouan and prices major markets at -105, without printing a licence number. The note is [that -105 page, dated](/guides/bet105-review).`
     },
   ],
   faqs: [

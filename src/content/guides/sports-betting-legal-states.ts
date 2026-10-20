@@ -110,7 +110,9 @@ Worked reminder: a $50 ticket at −110 has the same juice math on a licensed ap
 
 A second illustration: you win $800 on an unlicensed book and the cashout queue lasts three weeks. You have no commission to write. A licensed book can still be slow; you at least have a named office. That is what “legal” buys you as a customer. It does not buy you a plus-EV ticket.
 
-One public rulebook names Costa Rica law and still prints no licence number. The dated read is [one offshore rulebook, dated](/guides/wagerweb-review).`,
+One public rulebook names Costa Rica law and still prints no licence number. The dated read is [one offshore rulebook, dated](/guides/wagerweb-review).
+
+A second offshore page says Anjouan is not a state commission and still offers a -105 price on major markets. See [the reduced-juice licence page](/guides/bet105-review).`
     },
     {
       id: "check",

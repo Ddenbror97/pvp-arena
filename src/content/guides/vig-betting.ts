@@ -97,7 +97,9 @@ The [responsible gambling](/responsible-gambling) page is the stop if chasing lo
       title: "Sportsbook juice versus a pot that is shared",
       body: `Sportsbooks charge vig by shortening both sides of a market. That is the business. A −110 pair is the clearest picture: the winners are paid as if the chance were worse than a coin, on both sides, so the pair sums past 100 percent. Shopping can move you toward the −105 row. No system moves you to a sum of 100 percent at a book that intends to keep operating.
 
-A PvP pot is shared among the players who entered it. You are not taking −110 against a book that hung −110 the other way. [Fairness](/fairness) explains how this site's rounds can be checked. [Jackpot](/) is the pot, not a juiced spread. This page states no player counts, no rake, and no jackpot size. Adults 18+. Nothing here is betting advice.`,
+A PvP pot is shared among the players who entered it. You are not taking −110 against a book that hung −110 the other way. [Fairness](/fairness) explains how this site's rounds can be checked. [Jackpot](/) is the pot, not a juiced spread. This page states no player counts, no rake, and no jackpot size. Adults 18+. Nothing here is betting advice.
+
+One help center prints a $1 online minimum and Panama law, and still no single juice number. That dated read is [a Panama rulebook with a $1 minimum](/guides/sportsbetting-ag-review).`
     },
   ],
   faqs: [

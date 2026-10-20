@@ -115,7 +115,9 @@ A Coinflip is a 50/50, then a 5% pot fee. That is not a reason to “hedge” a 
 
 If you opened this pillar because a search mixed “sports betting” with this brand, keep the split: we teach the vocabulary here so you can read a book. We do not operate the book.
 
-The idea of a bet is not a brand. [One crypto-facing book](/guides/sportsbet-io-review) does not get a bonus figure here.`,
+The idea of a bet is not a brand. [One crypto-facing book](/guides/sportsbet-io-review) does not get a bonus figure here.
+
+A different help center treats the wager as Panamanian law and still prints no welcome percent. The dated note is [rules that name Panama, not a bonus percent](/guides/sportsbetting-ag-review).`
     },
     {
       id: "cluster",

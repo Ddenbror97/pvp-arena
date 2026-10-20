@@ -213,7 +213,9 @@ More games & odds reading lives in our [Games & odds guides](/guides/topics/game
 
 If you want the arithmetic, [how to calculate house edge](/guides/how-to-calculate-house-edge) is the worksheet. A page that ranks games by that number is [best payout online casinos](/guides/best-payout-online-casinos), and the ranking is only as good as the rules it used.
 
-The [law of large numbers](/guides/law-of-large-numbers-gambling) is why that long-run average actually arrives. A crash homepage can print the edge as a tilde. On 20 October 2026 one Ethereum game showed about 2% beside a 2.50 ETH max bet. The snapshot is [that printed tilde, dated](/guides/ethercrash-review).`,
+The [law of large numbers](/guides/law-of-large-numbers-gambling) is why that long-run average actually arrives. A crash homepage can print the edge as a tilde. On 20 October 2026 one Ethereum game showed about 2% beside a 2.50 ETH max bet. The snapshot is [that printed tilde, dated](/guides/ethercrash-review).
+
+An indexed sports perk calls -108 a 20% discount. The save versus -110 is about $2 per $100 of profit. The arithmetic is [that -108 claim, dated](/guides/heritage-sports-review).`
     },
   ],
   faqs: [

@@ -134,7 +134,9 @@ Date the note on the same line as the stake and the loss limit. When the limit i
 
 One clean test beats a pile of tabs. Use the smallest stake the cashier will accept, on the asset and network the cashier names, then withdraw a fraction before you add more. Time it. Save the identifier. If the site asks who you are, answer or leave. Do not shop for a version of matched betting that skips the question. The question is part of the product.
 
-Then close the tab or play only what this site actually offers. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars, adults 18+ only. A second account is not a fresh start.`,
+Then close the tab or play only what this site actually offers. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars, adults 18+ only. A second account is not a fresh start.
+
+One indexed perk prices major sides at -108 and calls it 20% off. The dollars are about $2 of juice, not 20% of the stake. See [the -108 wording, and the page that failed to load](/guides/heritage-sports-review).`
     },
   ],
   faqs: [

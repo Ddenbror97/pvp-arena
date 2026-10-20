@@ -134,7 +134,9 @@ A last count-the-stakes illustration: a three-leg round robin of $5 two-leg parl
 
 If you still want a parlay after that sum, keep it at two legs you can multiply on paper. Three and four are advertisements. Two is already compounded juice. That is the ceiling this page will endorse, and it is not an endorsement of plus-EV. A hashed Jackpot share is still not a two-leg. If you wanted a pot, use the pot. If you wanted legs, price the product. The graphic will always want one more leg. The math will not. Stop at the product you can multiply.
 
-A leg that lands on the number and returns the stake is a [push](/guides/push-in-betting). A parlay does not treat that the same way a single does. Splitting the same legs into every smaller parlay is a [round robin bet](/guides/round-robin-bet).`,
+A leg that lands on the number and returns the stake is a [push](/guides/push-in-betting). A parlay does not treat that the same way a single does. Splitting the same legs into every smaller parlay is a [round robin bet](/guides/round-robin-bet).
+
+A pick'em app can also pay a first deposit as promo funds you cannot withdraw. That offer, dated 3 September 2025, is [promo funds that are not cash](/guides/parlayplay-review).`
     },
     {
       id: "stop",

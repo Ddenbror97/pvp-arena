@@ -134,7 +134,9 @@ Use it as one filter. Use hashed results, posted fees, withdrawal rules and your
 
 If you only remember one line: permission to operate is not a proof of the draw, and a copied badge is not even permission.
 
-Other offshore papers players meet on crypto sites are the [Anjouan gaming license](/guides/anjouan-gaming-license) and the [Kahnawake gaming license](/guides/kahnawake-gaming-license). Each is a different issuer. None of them is a US state licence.`,
+Other offshore papers players meet on crypto sites are the [Anjouan gaming license](/guides/anjouan-gaming-license) and the [Kahnawake gaming license](/guides/kahnawake-gaming-license). Each is a different issuer. None of them is a US state licence.
+
+One operator's certificate is OGL/2024/664/0280, status active, granted 16 July 2024. The company match is [that active certificate, named](/guides/trustdice-review).`
     },
   ],
   faqs: [

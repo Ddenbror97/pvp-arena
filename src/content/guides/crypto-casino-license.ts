@@ -172,7 +172,9 @@ Check the register, check your law, check the commit-reveal. PVPspinArena asks y
 
 If a brand will not give you a number you can paste into a regulator search, the conversation is over. A gold frame around the word Licensed is not a lookup. It is clip art. If you cannot repeat the lookup next month, you never had a licence in your notes. You had an ad.
 
-A footer badge still has to match a register. The [Malta Gaming Authority licence](/guides/malta-gaming-authority-license) is a real Maltese permission, not a passport into the UK or the US. [AML in gambling](/guides/aml-gambling) is why a licensed cashier asks who you are.`,
+A footer badge still has to match a register. The [Malta Gaming Authority licence](/guides/malta-gaming-authority-license) is a real Maltese permission, not a passport into the UK or the US. [AML in gambling](/guides/aml-gambling) is why a licensed cashier asks who you are.
+
+A different certificate names VAVADA.COM under OGL/2024/252/0153. The domain check is [the certificate versus the terms host](/guides/vavada-review).`
     },
   ],
   faqs: [

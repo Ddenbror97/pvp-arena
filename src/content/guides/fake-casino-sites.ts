@@ -152,7 +152,9 @@ The same theft happens in chat. A Telegram bot that pastes a deposit address is 
 
 Do the same walk when a friend pastes a "mirror" because the "main site is down". Mirrors that appear only in chat are clones until the host matches your bookmark. A second tell is a new token contract with the same ticker as USDC. The logo can be identical. The spender is not. If the site wants you to swap into "site USDC" before you play, you are not depositing. You are buying their chip on their terms.
 
-Adults 18 or older can still lose money on a real site. A fake site skips the game and takes the stack. The checklist is how you tell the two apart before the first signature. A public ledger on a host you typed is slower than an ad. That slowness is the point.`,
+Adults 18 or older can still lose money on a real site. A fake site skips the game and takes the stack. The checklist is how you tell the two apart before the first signature. A public ledger on a host you typed is slower than an ad. That slowness is the point.
+
+One certificate names VAVADA.COM while the terms we opened sit on a .co host. Match them before you pay. The comparison is [the certificate domain against the terms host](/guides/vavada-review).`
     },
   ],
   faqs: [

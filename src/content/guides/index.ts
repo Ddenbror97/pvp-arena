@@ -419,6 +419,13 @@ import { guide as gapPolymarketVsKalshi } from "./polymarket-vs-kalshi";
 import { guide as seoWagerwebReview } from "./wagerweb-review";
 import { guide as seoYeetCasinoReview } from "./yeet-casino-review";
 import { guide as seoEthercrashReview } from "./ethercrash-review";
+import { guide as seoSportsbettingAgReview } from "./sportsbetting-ag-review";
+import { guide as seoBet105Review } from "./bet105-review";
+import { guide as seoTrustdiceReview } from "./trustdice-review";
+import { guide as seoParlayplayReview } from "./parlayplay-review";
+import { guide as seoVavadaReview } from "./vavada-review";
+import { guide as seoHeritageSportsReview } from "./heritage-sports-review";
+import { guide as seoLuckyRebelReview } from "./lucky-rebel-review";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1394,6 +1401,13 @@ export const GUIDES: Guide[] = [
   seoWagerwebReview,
   seoYeetCasinoReview,
   seoEthercrashReview,
+  seoSportsbettingAgReview,
+  seoBet105Review,
+  seoTrustdiceReview,
+  seoParlayplayReview,
+  seoVavadaReview,
+  seoHeritageSportsReview,
+  seoLuckyRebelReview,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -2192,6 +2206,8 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "stake-originals-games",
         "yeet-casino-review",
         "ethercrash-review",
+        "trustdice-review",
+        "vavada-review",
       ],
     },
     {
@@ -3218,6 +3234,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "no-kyc-sportsbook",
         "sportsbet-io-review",
         "wagerweb-review",
+        "sportsbetting-ag-review",
+        "bet105-review",
+        "heritage-sports-review",
+        "lucky-rebel-review",
       ],
     },
     { name: "Office pools", slugs: ["bracket-pool", "super-bowl-squares"] },
@@ -3227,7 +3247,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     },
     {
       name: "Fantasy and friend bets",
-      slugs: ["wagr-review", "splash-sports-review", "fantasy-football-payouts"],
+      slugs: ["wagr-review", "splash-sports-review", "fantasy-football-payouts", "parlayplay-review"],
     },
     {
       name: "Golf games",

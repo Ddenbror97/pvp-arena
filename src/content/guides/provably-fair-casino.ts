@@ -144,7 +144,9 @@ More provably fair reading lives in our [Provably fair guides](/guides/topics/pr
 
 The pieces of a check live on their own pages. [SHA-256](/guides/sha256-explained) is the hash. The [nonce](/guides/nonce-and-cursor-provably-fair) is which bet in the chain you are on. [Seed rotation](/guides/seed-rotation-provably-fair) is when the server secret changes. [How to verify a casino bet](/guides/verify-a-casino-bet) is the order of operations.
 
-A stronger privacy primitive some on-chain games talk about is a [zero-knowledge proof](/guides/zero-knowledge-proof-gambling).`,
+A stronger privacy primitive some on-chain games talk about is a [zero-knowledge proof](/guides/zero-knowledge-proof-gambling).
+
+Dice on one Curaçao casino shows a server seed, its hash, and a client seed inside My Bets. That is a per-bet record, not a licence. The page is [dice seeds on a licensed cashier](/guides/trustdice-review).`
     },
   ],
   faqs: [
