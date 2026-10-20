@@ -139,7 +139,9 @@ A single Mega Millions line is 1 of 290,472,336 outcomes. A $10 stake in a $50 p
 
 Finished PvP rounds are checked on [Fairness](/fairness). The pot is [Jackpot](/). The on-site coin flip is a separate two-outcome game. None of those pages cashes a Mega Millions ticket, and this page does not describe a hashed pot.
 
-Adults 18 and older. If two drawings a week have become a bill you hide, the right next page is [responsible gambling](/responsible-gambling), not another matrix.`,
+Adults 18 and older. If two drawings a week have become a bill you hide, the right next page is [responsible gambling](/responsible-gambling), not another matrix.
+
+Four digits are 10,000 straight outcomes on the Pennsylvania chart. [That four-digit table](/guides/pick-4-lottery) is not this matrix, and the four-of-a-kind box prize stays unpublished.`
     },
   ],
   faqs: [

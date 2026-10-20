@@ -129,7 +129,9 @@ A $2 Powerball line covers 1 of 292,201,338 combinations. A $2 contribution to a
 
 Read a finished PvP round on [Fairness](/fairness). The pot is [Jackpot](/). How the site’s games are structured is on [how it works](/how-it-works). For a national jackpot you still want the state lottery’s own rules, because a PvP reveal does not settle Powerball.
 
-Adults 18 and older. If the drawing calendar is becoming a schedule you cannot skip, stop and use [responsible gambling](/responsible-gambling). No version of these steps beats the combination count.`,
+Adults 18 and older. If the drawing calendar is becoming a schedule you cannot skip, stop and use [responsible gambling](/responsible-gambling). No version of these steps beats the combination count.
+
+Filling a slip is not the prize row. [The match-count table](/guides/powerball-payout-chart) leaves California's own dollar rows unpublished.`
     },
   ],
   faqs: [

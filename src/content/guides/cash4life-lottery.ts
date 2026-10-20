@@ -173,7 +173,9 @@ A ticket bought before the sales end can still be a live claim. Whether it is li
 
 Lower rows on the old chart stay not published in this file on purpose. If your ticket matched something other than the two life prizes, the amount is on the state chart, not in a guess that starts from $1,000 a day. The day prize and the week prize are the only amounts this page will say.
 
-A life annuity that has stopped selling is not a second draw for a dead ticket. [Entering a losing ticket in a later draw](/guides/second-chance-lottery) is that other product.`,
+A life annuity that has stopped selling is not a second draw for a dead ticket. [Entering a losing ticket in a later draw](/guides/second-chance-lottery) is that other product.
+
+A different life-annuity game is still selling. Connecticut's rules PDF and North Dakota's page were opened on 20 October 2026. [That rules table](/guides/lucky-for-life-lottery) is not the game Georgia and Missouri closed. The cash-option dollar amount stays unpublished.`
     },
   ],
   faqs: [

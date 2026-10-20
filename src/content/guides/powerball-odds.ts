@@ -147,7 +147,9 @@ There is no $4 Powerball-only prize, no Power Play wheel, and no 1-in-292,201,33
 
 Check the reveal on [Fairness](/fairness). Open the pot on [Jackpot](/). The national game’s combination list stays on this page and on the [odds of winning the lottery](/guides/odds-of-winning-the-lottery) overview. Do not mix the two tickets in one budget line and call it a strategy.
 
-Adults 18 and older. Lottery math is not a plan to get ahead. If spending on draws is no longer optional, use [responsible gambling](/responsible-gambling).`,
+Adults 18 and older. Lottery math is not a plan to get ahead. If spending on draws is no longer optional, use [responsible gambling](/responsible-gambling).
+
+The prize chart is the dollars by match count. [That chart](/guides/powerball-payout-chart) leaves the standing lump-sum jackpot dollar unpublished. The 19 October 2026 drawing report was opened separately.`
     },
   ],
   faqs: [

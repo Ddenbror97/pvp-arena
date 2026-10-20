@@ -143,7 +143,9 @@ Do not wait 90 days to “claim” a player pot that the game already settled. D
 
 Verify on [Fairness](/fairness). The game is [Jackpot](/). Reporting notes that are not lottery-specific start at [report gambling winnings](/guides/report-gambling-winnings). If the win, lottery or otherwise, is pushing you to chase, stop at [responsible gambling](/responsible-gambling).
 
-The 12 steps protect a rare check. They are not a method for creating the next one.`,
+The 12 steps protect a rare check. They are not a method for creating the next one.
+
+The FTC page from September 2025 and a New York Gaming Commission alert dated 21 July 2026 are the sources. [Those two alerts](/guides/lottery-scams) do not print a victim-loss total. An $18.6 million figure is the caller's pitch.`
     },
   ],
   faqs: [

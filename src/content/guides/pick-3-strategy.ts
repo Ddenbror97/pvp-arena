@@ -141,7 +141,9 @@ Both can be over in a minute, and both pay one winner. The ticket is the differe
 
 Verify a finished round on [Fairness](/fairness). Play the pot from [Jackpot](/) only if a pot is what you want. A coin flip is the 1-in-2 case, not a boxed digit. None of those options is a way to beat a state Pick 3, and a Pick 3 wheel is not a way to beat this site.
 
-If digit games are no longer a small loss you can shrug off, use [responsible gambling](/responsible-gambling). The smart play in the title is knowing the edge and betting less, or not at all.`,
+If digit games are no longer a small loss you can shrug off, use [responsible gambling](/responsible-gambling). The smart play in the title is knowing the edge and betting less, or not at all.
+
+Pennsylvania's prize page prints straight and box on separate lines. [That pay table](/guides/pick-3-lottery) is not a digit-picking system, and other states' dollars stay unpublished.`
     },
   ],
   faqs: [

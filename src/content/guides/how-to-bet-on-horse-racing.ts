@@ -118,7 +118,9 @@ Another quiet leak is the base amount. Many exacta pools take $1. Many trifecta 
 
 Watch the field size. A five-horse race and a twelve-horse race are different products. Short fields make exotics cheaper to cover and less likely to pay a life-changing number. Large fields do the opposite. The Kentucky Derby is the famous large field; its own page is about that twenty-horse gate, not about a system.
 
-Leave with the tickets you cashed and the ones you did not. The uncashed ones are the tuition. The pool will be there tomorrow, still minus takeout, still indifferent to the story you told about the horse.`,
+Leave with the tickets you cashed and the ones you did not. The uncashed ones are the tuition. The pool will be there tomorrow, still minus takeout, still indifferent to the story you told about the horse.
+
+The 2026 horsemen guide and the Keeneland wagering menu were opened. [Those championship notes](/guides/breeders-cup-betting) leave a fixed win payoff unpublished until the pools close.`
     },
   ],
   faqs: [

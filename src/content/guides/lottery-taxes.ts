@@ -129,7 +129,9 @@ A state lottery often withholds because it is a payer with a rulebook and a larg
 
 Check a finished round on [Fairness](/fairness) if the win you are staring at is a PvP pot. The game is [Jackpot](/). Neither page is the IRS, and neither page changes lottery taxes on a Powerball claim.
 
-Adults 18 and older. Knowing the 24 percent line is not a reason to buy more combinations.`,
+Adults 18 and older. Knowing the 24 percent line is not a reason to buy more combinations.
+
+A state digit game's prizes page does not print a withholding rate. [The Pennsylvania four-digit chart](/guides/pick-4-lottery) still points at IRS Topic 419 for the win.`
     },
   ],
   faqs: [

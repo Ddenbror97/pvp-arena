@@ -156,7 +156,9 @@ Adults 18 or older can still lose money on a real site. A fake site skips the ga
 
 One certificate names VAVADA.COM while the terms we opened sit on a .co host. Match them before you pay. The comparison is [the certificate domain against the terms host](/guides/vavada-review).
 
-Match the certificate domain before a welcome pop-up. One pack's stage minimum did not load. [The pack whose pop-up failed](/guides/betfury-review) stays unpublished on that line.`
+Match the certificate domain before a welcome pop-up. One pack's stage minimum did not load. [The pack whose pop-up failed](/guides/betfury-review) stays unpublished on that line.
+
+A prize letter that asks for a fee before you have a ticket is not a cashier. [The FTC page and the July 2026 alert](/guides/lottery-scams) are the checks.`
     },
   ],
   faqs: [

@@ -159,7 +159,9 @@ Two dollars buys one Powerball line: 1 outcome in 292,201,338. Two dollars put i
 
 Check a finished round on [Fairness](/fairness). Open the pot itself from [Jackpot](/). A coin-flip pot is the two-outcome cousin, with the arithmetic on [coin flip odds](/guides/coin-flip-odds). None of those pages changes a state draw, and none of them is a way to beat the lottery.
 
-Adults 18 and older. If lottery play stops being entertainment, use the limits on [responsible gambling](/responsible-gambling).`,
+Adults 18 and older. If lottery play stops being entertainment, use the limits on [responsible gambling](/responsible-gambling).
+
+One annuity game's matrix is not the Powerball count. [The Connecticut rules PDF](/guides/lucky-for-life-lottery) leaves a single national claim deadline unpublished.`
     },
   ],
   faqs: [

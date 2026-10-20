@@ -115,7 +115,9 @@ One win bet you can explain will teach you more about the race than a 360-line s
 
 People remember the ticket they meant to buy. That memory is not data. The points series, the post, the pace and the tote will all be recruited into a story that flatters the result. Next year's field is a new set of three-year-olds. Bring the checklist, the combination formula and a limit. Leave the omen.
 
-If you want the rest of the year instead of one Saturday, the straight-bet page and the odds page are the tools you will actually use. The Derby is a fine place to see a 20-horse pool in public. It is a bad place to learn multiplication for the first time. Do that math on a Thursday.`,
+If you want the rest of the year instead of one Saturday, the straight-bet page and the odds page are the tools you will actually use. The Derby is a fine place to see a 20-horse pool in public. It is a bad place to learn multiplication for the first time. Do that math on a Thursday.
+
+A November championship card is not the twenty-horse Saturday in May. [The 2026 horsemen guide](/guides/breeders-cup-betting) still showed 2025 dates on the challenge-rules URL.`
     },
   ],
   faqs: [

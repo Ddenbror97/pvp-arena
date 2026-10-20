@@ -463,6 +463,12 @@ import { guide as seoBetanysportsReview } from "./betanysports-review";
 import { guide as seoBovadaReview } from "./bovada-review";
 import { guide as seoBetusReview } from "./betus-review";
 import { guide as seoXbetReview } from "./xbet-review";
+import { guide as seoLuckyForLifeLottery } from "./lucky-for-life-lottery";
+import { guide as seoPick3Lottery } from "./pick-3-lottery";
+import { guide as seoPick4Lottery } from "./pick-4-lottery";
+import { guide as seoPowerballPayoutChart } from "./powerball-payout-chart";
+import { guide as seoLotteryScams } from "./lottery-scams";
+import { guide as seoBreedersCupBetting } from "./breeders-cup-betting";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1482,6 +1488,12 @@ export const GUIDES: Guide[] = [
   seoBovadaReview,
   seoBetusReview,
   seoXbetReview,
+  seoLuckyForLifeLottery,
+  seoPick3Lottery,
+  seoPick4Lottery,
+  seoPowerballPayoutChart,
+  seoLotteryScams,
+  seoBreedersCupBetting,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -3800,11 +3812,13 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "how-to-play-powerball",
         "how-to-play-mega-millions",
         "cash4life-lottery",
+        "lucky-for-life-lottery",
+        "powerball-payout-chart",
       ],
     },
     {
       name: "State games and scratchers",
-      slugs: ["pick-3-strategy", "scratch-off-odds", "second-chance-lottery"],
+      slugs: ["pick-3-strategy", "pick-3-lottery", "pick-4-lottery", "scratch-off-odds", "second-chance-lottery"],
     },
     {
       name: "After a win",
@@ -3814,6 +3828,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "lottery-calculator",
         "what-to-do-if-you-win-the-lottery",
         "claim-lottery-winnings-anonymously",
+        "lottery-scams",
       ],
     },
     {
@@ -3830,6 +3845,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "win-place-show-betting",
         "horse-racing-terms",
         "kentucky-derby-betting",
+        "breeders-cup-betting",
       ],
     },
     {

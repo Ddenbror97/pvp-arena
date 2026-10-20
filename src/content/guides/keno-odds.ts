@@ -158,7 +158,9 @@ Set a ticket count, not a “until I catch 6.” Twenty $3 cards on a 25% 1-spot
 
 Picking more spots does not invent an edge. [Keno strategy](/guides/keno-strategy) is the set of systems people try, and the odds page is still the price.
 
-The same paytables appear as [crypto keno](/guides/crypto-keno) when the cashier is a wallet.`,
+The same paytables appear as [crypto keno](/guides/crypto-keno) when the cashier is a wallet.
+
+A three-digit draw is 1,000 straight outcomes, not a keno spot card. [The Pennsylvania chart](/guides/pick-3-lottery) does not print a hold percent.`
     },
   ],
   faqs: [
