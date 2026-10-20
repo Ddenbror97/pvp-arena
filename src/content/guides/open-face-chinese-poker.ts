@@ -187,7 +187,9 @@ Nothing here recaps a recent layout or a recent pot.
 
 The same lobby does not deal Big O, short deck, razz, or 2-7. Saying that plainly saves a search for a variant button that is not there.
 
-Set the three rows in order, pay the sheet you wrote, and foul early in your head before you foul on the paper. Hold'em, when you want it from us, is a different deal with a 5% post-flop fee.`,
+Set the three rows in order, pay the sheet you wrote, and foul early in your head before you foul on the paper. Hold'em, when you want it from us, is a different deal with a 5% post-flop fee.
+
+Face-up rows are not a trap in hold'em. [Checking a monster in hold'em](/guides/slow-play-poker) is that other choice, on a game this site actually spreads.`,
     },
   ],
   faqs: [
@@ -234,6 +236,12 @@ Do not chase a top-row bonus that leaves the layout illegal. Keep score where bo
     { label: "Pagat — public card-game rules", url: "https://www.pagat.com/" },
     { label: "World Series of Poker", url: "https://www.wsop.com/" },
   ],
-  related: ["how-to-play-poker", "seven-card-stud", "video-poker-paytables", "texas-holdem-rules"],
+  related: [
+    "how-to-play-poker",
+    "seven-card-stud",
+    "video-poker-paytables",
+    "texas-holdem-rules",
+    "slow-play-poker",
+  ],
   updated: "2026-10-20",
 };

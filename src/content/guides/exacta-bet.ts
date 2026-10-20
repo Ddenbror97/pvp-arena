@@ -106,7 +106,9 @@ A useful test: if the box costs more than you would bet to win on your best hors
 
 Another leak is treating a big exacta payoff as a signal to raise the next base. The pool does not owe you a sequel. Takeout will be there in the next race at the track's published rate, which on exotics is commonly higher than on win bets. Check the program for the rate instead of borrowing one from memory.
 
-Straight tickets teach the pool with the least arithmetic. Boxes teach multiplication. Keys teach you what you are willing to lose on purpose. Most players need all three words, and they need them before the race, not during the photo. If the opinion is only "I like the 4," that is a win bet. An exacta bet begins when you can name who finishes behind the 4, or honestly say that several horses might.`,
+Straight tickets teach the pool with the least arithmetic. Boxes teach multiplication. Keys teach you what you are willing to lose on purpose. Most players need all three words, and they need them before the race, not during the photo. If the opinion is only "I like the 4," that is a win bet. An exacta bet begins when you can name who finishes behind the 4, or honestly say that several horses might.
+
+Boxing an exacta is not a quinella. [The either-order cousin](/guides/quinella-bet) is a different pool, still parimutuel.`,
     },
   ],
   faqs: [
@@ -141,6 +143,7 @@ Straight tickets teach the pool with the least arithmetic. Boxes teach multiplic
     "how-to-bet-on-horse-racing",
     "win-place-show-betting",
     "horse-racing-odds-explained",
+    "quinella-bet",
   ],
   updated: "2026-10-06",
 };

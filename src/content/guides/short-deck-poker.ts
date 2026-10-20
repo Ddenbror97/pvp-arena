@@ -188,7 +188,9 @@ This guide does not reprint a recent short-deck result.
 
 Big O, razz, 2-7, and open-face Chinese are absent too. Say so before someone hunts the lobby for a variant list.
 
-Learn the Hong Kong flush line, learn that some rooms flip it, and keep trips and straights in the "more common" column rather than in a fake ranking. Then play full-deck Hold'em where the fee is 5% only after the flop.`,
+Learn the Hong Kong flush line, learn that some rooms flip it, and keep trips and straights in the "more common" column rather than in a fake ranking. Then play full-deck Hold'em where the fee is 5% only after the flop.
+
+Stripping twos through fives is not a fifth hole card. [Five-card Omaha](/guides/big-o-poker) is the other variant people open by mistake.`,
     },
   ],
   faqs: [
@@ -242,6 +244,12 @@ Then decide whether you still want the game.`,
     },
     { label: "World Series of Poker", url: "https://www.wsop.com/" },
   ],
-  related: ["texas-holdem-rules", "omaha-poker-rules", "poker-pot-odds", "crypto-poker"],
+  related: [
+    "texas-holdem-rules",
+    "omaha-poker-rules",
+    "poker-pot-odds",
+    "crypto-poker",
+    "big-o-poker",
+  ],
   updated: "2026-10-20",
 };

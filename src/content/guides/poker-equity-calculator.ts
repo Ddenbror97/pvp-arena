@@ -200,7 +200,9 @@ No equity readout from a past pot is copied here.
 
 You can practise Hold'em decisions in that game. You still should not expect the site to print your equity for you, and it does not deal Big O, short deck, razz, 2-7, or open-face Chinese.
 
-Type a range you believe. Read about a coin flip as about a coin flip. Then let [pot odds](/guides/poker-pot-odds) price any call that is not an all-in.`,
+Type a range you believe. Read about a coin flip as about a coin flip. Then let [pot odds](/guides/poker-pot-odds) price any call that is not an all-in.
+
+A calculator is only as honest as the price you type. [The extra blind that changes the price](/guides/straddle-poker) is a live-cash habit that moves every equity line before the flop.`,
     },
   ],
   faqs: [
@@ -249,6 +251,12 @@ Close the tool if you are only hunting a percent that excuses a call.`,
     { label: "Pagat — public card-game rules", url: "https://www.pagat.com/" },
     { label: "World Series of Poker", url: "https://www.wsop.com/" },
   ],
-  related: ["poker-pot-odds", "gto-poker-strategy", "texas-holdem-rules", "how-to-play-poker"],
+  related: [
+    "poker-pot-odds",
+    "gto-poker-strategy",
+    "texas-holdem-rules",
+    "how-to-play-poker",
+    "straddle-poker",
+  ],
   updated: "2026-10-20",
 };

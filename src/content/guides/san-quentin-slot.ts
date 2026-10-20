@@ -179,7 +179,9 @@ Keep the adult line in view the whole time. The theme is deliberately harsh, whi
 
 The comparison that can be checked is a player-versus-player fee after a settled round. The marquee's price remains not published on this page.
 
-If a friend sends a screenshot of a huge hit, ask which build and which stake. Without those two, the picture is a mood, not a price, and it does not belong in the same column as a $7.20 win fee you can recompute.`,
+If a friend sends a screenshot of a huge hit, ask which build and which stake. Without those two, the picture is a mood, not a price, and it does not belong in the same column as a $7.20 win fee you can recompute.
+
+Prison art does not set the price of the other grim title. [The sequel-styled neighbor](/guides/mental-2-slot) keeps its own rules screen.`,
     },
   ],
   faqs: [
@@ -209,6 +211,12 @@ If a friend sends a screenshot of a huge hit, ask which build and which stake. W
     },
   ],
   sources: [],
-  related: ["bonus-buy-slots", "slot-volatility", "high-limit-slots", "slot-machine-odds"],
+  related: [
+    "bonus-buy-slots",
+    "slot-volatility",
+    "high-limit-slots",
+    "slot-machine-odds",
+    "mental-2-slot",
+  ],
   updated: "2026-10-20",
 };

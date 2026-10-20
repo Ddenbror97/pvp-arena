@@ -174,7 +174,9 @@ Schedule B, with 12 at 3 to 1 and 2 at 2 to 1, keeps 1/36, about 2.78%. Other pa
 
 The pass line is a different chip with a different article. Do not borrow this edge for that chip, and do not borrow the pass edge for the field.
 
-When you want a fee written in dollars before the outcome, use a Jackpot or a Coinflip and take 5% of the pot as the price. Leave the dice when the one-roll budget is spent. The layout will still be there tomorrow, on whatever schedule that casino printed.`,
+When you want a fee written in dollars before the outcome, use a Jackpot or a Coinflip and take 5% of the pot as the price. Leave the dice when the one-roll budget is spent. The layout will still be there tomorrow, on whatever schedule that casino printed.
+
+The field is one roll. [The variant where craps numbers become points](/guides/crapless-craps) changes the come-out instead.`,
     },
   ],
   faqs: [
@@ -204,6 +206,6 @@ When you want a fee written in dollars before the outcome, use a Jackpot or a Co
     },
   ],
   sources: [],
-  related: ["craps-odds", "online-craps", "house-edge", "sic-bo-online"],
+  related: ["craps-odds", "online-craps", "house-edge", "sic-bo-online", "crapless-craps"],
   updated: "2026-10-20",
 };

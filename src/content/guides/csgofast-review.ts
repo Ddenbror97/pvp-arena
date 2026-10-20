@@ -172,7 +172,9 @@ If our game page shows a live block, the block updates from settled play. No rec
 
 PVPspinArena does not sell CS skins, and it is not an affiliate of the speed-themed brand. This review prints no promo code. A house-priced case with hidden weights can share a lobby with a speed claim, and that sharing publishes neither number.
 
-A later link out to the brand should be read as advertising. This article is the editorial pause.`,
+A later link out to the brand should be read as advertising. This article is the editorial pause.
+
+Fast in a brand is not a number in a brand. [The lobby with a number in the name](/guides/csgo500-review) is a separate review.`,
     },
   ],
   faqs: [
@@ -207,6 +209,7 @@ A later link out to the brand should be read as advertising. This article is the
     "sell-skins-for-crypto",
     "csgoroll-review",
     "valve-gambling-lawsuit",
+    "csgo500-review",
   ],
   updated: "2026-10-20",
 };

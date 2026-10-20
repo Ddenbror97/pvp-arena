@@ -184,7 +184,9 @@ If the room is a peer game on this site, Slott's fee is 10% of the win, as in th
 
 When the panel in your room is silent, pump game payout remains not published. That silence is the honest result of the search, not a delay while a better rumor arrives.
 
-PVPspinArena is not an affiliate of the product you sort into. No code in this article changes the sort.`,
+PVPspinArena is not an affiliate of the product you sort into. No code in this article changes the sort.
+
+Pump is an ambiguous name. A clearer coin-named rewards search, still not Bitcoin, is [the coin-named rewards app](/guides/yescoin-review).`,
     },
   ],
   faqs: [
@@ -214,6 +216,12 @@ PVPspinArena is not an affiliate of the product you sort into. No code in this a
     },
   ],
   sources: [],
-  related: ["telegram-casino-bot", "house-edge", "skillz-review", "games-that-pay-real-money"],
+  related: [
+    "telegram-casino-bot",
+    "house-edge",
+    "skillz-review",
+    "games-that-pay-real-money",
+    "yescoin-review",
+  ],
   updated: "2026-10-20",
 };

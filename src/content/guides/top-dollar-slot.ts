@@ -189,7 +189,9 @@ A resale can be a different tax event. Ask a qualified person about the event yo
 
 For gambling limits, use [a place to set stops](/responsible-gambling). A cabinet in the garage is not a limit tool.
 
-Real-money spins are available only where that casino is allowed to offer the digital or floor game you are using. A legal private sale of hardware, if one is legal near you, does not authorize online cash play. The cashier's location check still governs the spin.`,
+Real-money spins are available only where that casino is allowed to offer the digital or floor game you are using. A legal private sale of hardware, if one is legal near you, does not authorize online cash play. The cashier's location check still governs the spin.
+
+A dollar burst is not a volcano. [The volcano floor cabinet](/guides/cash-eruption-slot) is the other branded floor name.`,
     },
   ],
   faqs: [
@@ -225,6 +227,7 @@ Real-money spins are available only where that casino is allowed to offer the di
     "penny-slots-online",
     "floating-dragon-slot",
     "golden-goddess-slot",
+    "cash-eruption-slot",
   ],
   updated: "2026-10-20",
 };

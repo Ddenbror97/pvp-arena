@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "omaha-poker-rules",
   cluster: "Poker",
   keyword: "omaha poker rules",
-  secondary: [
-    "pot limit omaha",
-    "must use two hole cards",
-    "Omaha Hi-Lo",
-    "PLO versus Hold'em",
-  ],
+  secondary: ["pot limit omaha", "must use two hole cards", "Omaha Hi-Lo", "PLO versus Hold'em"],
   title: "Omaha Poker Rules: How to Play PLO Step by Step",
   description:
     "Omaha poker rules made simple: dealing four hole cards, the must-use-two rule, pot limit betting, Omaha Hi-Lo and key differences from Hold'em.",
@@ -110,7 +105,9 @@ Fold when the hand is pretty and illegal. A straight you can see with one hole c
       title: "Differences you will feel at the table",
       body: `Hold’em lets you play one hole card with four board cards, or even the board alone. Omaha never does. Hold’em no-limit lets you bet your stack whenever you like. Pot-limit Omaha lets you bet the pot, which is often enough to commit a deep stack by the turn anyway. Hold’em top pair is frequently the best hand. Omaha top pair is frequently a bluff-catcher or a fold, because someone has a wrap, a flush draw, or a made straight.
 
-You will tie more often on the high, and you will cooler more often when both players have the same straight with a redraw behind it. Bankroll advice from a tight Hold’em game is too small for PLO. That is not a moral. It is variance. If you want a game with no hand ranking at all, a hashed coin flip is the contrast. If you want Omaha, respect the two-card rule, pot the size you can say out loud, and throw away danglers that do not work with the other three cards.`,
+You will tie more often on the high, and you will cooler more often when both players have the same straight with a redraw behind it. Bankroll advice from a tight Hold’em game is too small for PLO. That is not a moral. It is variance. If you want a game with no hand ranking at all, a hashed coin flip is the contrast. If you want Omaha, respect the two-card rule, pot the size you can say out loud, and throw away danglers that do not work with the other three cards.
+
+Four hole cards are not five. [Five-card Omaha](/guides/big-o-poker) still uses two cards from the hand, and this site does not deal it.`,
     },
   ],
   faqs: [
@@ -145,6 +142,12 @@ You will tie more often on the high, and you will cooler more often when both pl
       url: "https://www.wsop.com/",
     },
   ],
-  related: ["texas-holdem-rules", "poker-hand-rankings", "poker-for-beginners", "poker-positions"],
+  related: [
+    "texas-holdem-rules",
+    "poker-hand-rankings",
+    "poker-for-beginners",
+    "poker-positions",
+    "big-o-poker",
+  ],
   updated: "2026-10-06",
 };

@@ -186,7 +186,9 @@ Keep a separate slip for questions you will not answer, including salary, case d
 
 A long list of refusals is a healthier note than a short list of inventions. Date the slip so a later video title does not feel like new evidence.
 
-Date the slip. A question you refused in October can return in a video title later, and the date shows you already chose the blank.`,
+Date the slip. A question you refused in October can return in a video title later, and the date shows you already chose the blank.
+
+A downtown Horseshoe is not a tribal floor. [Tribal gaming under the 1988 federal frame](/guides/native-american-casinos) is the page for who compacts Class III, with no section number.`,
     },
   ],
   faqs: [
@@ -221,6 +223,12 @@ Date the slip. A question you refused in October can return in a video title lat
       url: "https://en.wikipedia.org/wiki/Benny_Binion",
     },
   ],
-  related: ["texas-holdem-rules", "how-to-play-poker", "house-edge", "cash-game-poker"],
+  related: [
+    "texas-holdem-rules",
+    "how-to-play-poker",
+    "house-edge",
+    "cash-game-poker",
+    "native-american-casinos",
+  ],
   updated: "2026-10-20",
 };

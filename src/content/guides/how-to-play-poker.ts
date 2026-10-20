@@ -42,7 +42,9 @@ If you want the cashier-and-rake version of online tables, start with [crypto po
 
 Omaha uses four hole cards and you must use exactly two. Short-deck uses a 36-card pack and changes some rankings. Five-card draw has no community cards. Stud deals a mix of up-cards and down-cards. This pillar teaches Hold'em because that is what “how to play poker” almost always means in 2026. If a table sticker says anything else, stop and ask for that game’s sheet. Playing Omaha with Hold'em habits — using one hole card, treating the board as yours alone — is how people stack off on night one.
 
-Home games invent wild cards, “Chicago”, and split-pot lowball. Those are fine as house rules if everyone agrees before the deal. They are not the online cash default. Do not carry a home-game ranking onto a site that posts the standard list.`,
+Home games invent wild cards, “Chicago”, and split-pot lowball. Those are fine as house rules if everyone agrees before the deal. They are not the online cash default. Do not carry a home-game ranking onto a site that posts the standard list.
+
+Hole cards are not the only poker. [Face-up Chinese poker](/guides/open-face-chinese-poker) sets three rows in the open, and these tables do not deal it.`,
     },
     {
       id: "setup",
@@ -165,7 +167,9 @@ PVPspinArena will not deal you a flop. Use this cluster to learn the real game, 
 
 Table talk is collected in [poker slang](/guides/poker-slang).
 
-Where the game came from is [history of poker](/guides/history-of-poker).`,
+Where the game came from is [history of poker](/guides/history-of-poker).
+
+Learning the streets is not hosting. [A home game with a written blind](/guides/how-to-host-a-poker-night) is the page for chips, food, and a house that does not rake unless everyone agreed.`,
     },
   ],
   faqs: [
@@ -208,6 +212,8 @@ Where the game came from is [history of poker](/guides/history-of-poker).`,
     "gambling-budget",
     "poker-slang",
     "history-of-poker",
+    "how-to-host-a-poker-night",
+    "open-face-chinese-poker",
   ],
   updated: "2026-09-26",
 };

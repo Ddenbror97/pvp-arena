@@ -177,7 +177,9 @@ If you want a price you can compute before you pay, a four-player Jackpot or a t
 
 Write the drawing's close date next to the ticket. Enter if the rules include you.
 
-Skip the entry if they do not. Buying a fresh stack of tickets only to manufacture stubs is a new stake, with the original game's price still attached.`,
+Skip the entry if they do not. Buying a fresh stack of tickets only to manufacture stubs is a new stake, with the original game's price still attached.
+
+A second-chance entry is not a daily life prize. [The retired life-annuity draw](/guides/cash4life-lottery) records a game whose sales ended.`,
     },
   ],
   faqs: [
@@ -212,6 +214,7 @@ Skip the entry if they do not. Buying a fresh stack of tickets only to manufactu
     "lottery-taxes",
     "quick-pick-lottery",
     "which-lottery-has-the-best-odds",
+    "cash4life-lottery",
   ],
   updated: "2026-10-20",
 };

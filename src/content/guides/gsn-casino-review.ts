@@ -183,7 +183,9 @@ Pick the drawer you actually meant when you typed the search. If the drawer is t
 
 Filling the blank from a highlight reel is how a TV memory becomes a fake price. A highlight can show confetti over a coin counter. Confetti is not a denomination.
 
-If you tell someone else about the lobby, send the checklist instead of a clip. The checklist still separates gold coins from sweeps coins. A clip rarely does.`,
+If you tell someone else about the lobby, send the checklist instead of a clip. The checklist still separates gold coins from sweeps coins. A clip rarely does.
+
+A network's social lobby is not the older slots brand. [The long-running slots brand](/guides/jackpotjoy-review) is a different cashier and still not our Jackpot game.`,
     },
   ],
   faqs: [
@@ -218,6 +220,7 @@ If you tell someone else about the lobby, send the checklist instead of a clip. 
     "sweeps-coins-explained",
     "sweepstakes-casino-legal-states",
     "sweepstakes-vs-crypto-casino",
+    "jackpotjoy-review",
   ],
   updated: "2026-10-20",
 };

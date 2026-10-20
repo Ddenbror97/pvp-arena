@@ -183,7 +183,9 @@ Write the six legs on one line before you add a saver. A saver in leg three doub
 
 If the doubled cost is more than the day's cap, drop a horse rather than raise the cap. The pool will not refund the extra combinations when your saver runs third.
 
-Consolation rules belong on the same line in your notes. If the program is silent, write that a five-leg ticket pays nothing here. Hope is not a published consolation rate.`,
+Consolation rules belong on the same line in your notes. If the program is silent, write that a five-leg ticket pays nothing here. Hope is not a published consolation rate.
+
+Six winners in a row is not a two-horse finish. [An either-order two-horse bet](/guides/quinella-bet) is a single-race pool.`,
     },
   ],
   faqs: [
@@ -218,6 +220,7 @@ Consolation rules belong on the same line in your notes. If the program is silen
     "horse-racing-odds-explained",
     "how-to-bet-on-horse-racing",
     "house-edge",
+    "quinella-bet",
   ],
   updated: "2026-10-20",
 };

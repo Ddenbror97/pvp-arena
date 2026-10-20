@@ -164,7 +164,9 @@ How PvP compares: Big O is a five-card high-low puzzle you can study on paper. T
 
 [Cash game poker](/guides/cash-game-poker) is the ring-game money wrapper if you want stakes language before you sit.
 
-Learn the ten combinations. Then decide whether you want a game this lobby does not spread, or the six-max Hold'em it does.`,
+Learn the ten combinations. Then decide whether you want a game this lobby does not spread, or the six-max Hold'em it does.
+
+Five-card Omaha is not a short deck. [The 36-card hold'em variant](/guides/short-deck-poker) removes low cards instead of adding a fifth hole card.`,
     },
   ],
   faqs: [
@@ -209,6 +211,12 @@ Do not treat a fan of five cards as five free chances. Only the legal pairs coun
     { label: "Pagat — public card-game rules", url: "https://www.pagat.com/" },
     { label: "World Series of Poker", url: "https://www.wsop.com/" },
   ],
-  related: ["omaha-poker-rules", "texas-holdem-rules", "poker-pot-odds", "cash-game-poker"],
+  related: [
+    "omaha-poker-rules",
+    "texas-holdem-rules",
+    "poker-pot-odds",
+    "cash-game-poker",
+    "short-deck-poker",
+  ],
   updated: "2026-10-20",
 };

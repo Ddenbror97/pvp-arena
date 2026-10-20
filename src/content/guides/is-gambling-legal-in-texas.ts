@@ -90,7 +90,9 @@ A social game with no prize is a third thing, and it does not licence a redeemab
 | “Sweepstakes, not gambling” | What can you redeem, and for what? | Official rules plus the state |
 | “Licensed” | Licensed by which government, for which game? | That government’s list |
 | “Crypto, so it’s fine” | Where is the player sitting? | Texas law, not the chain |
-| “Bill is about to pass” | Did it pass and get implemented? | The Legislature and the agency |`,
+| “Bill is about to pass” | Did it pass and get implemented? | The Legislature and the agency |
+
+Texas does not answer Oklahoma tribes. [The Oklahoma sports question](/guides/sports-betting-legal-oklahoma) stays out of this page's map.`,
     },
     {
       id: "check",
@@ -166,6 +168,7 @@ PVPspinArena is not a Texas casino and not a sportsbook. Hashed player-versus-pl
     "sweepstakes-casino-legal-states",
     "gambling-age-us",
     "sweepstakes-casino",
+    "sports-betting-legal-oklahoma",
   ],
   updated: "2026-10-06",
 };

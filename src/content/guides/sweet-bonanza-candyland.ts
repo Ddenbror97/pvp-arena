@@ -165,7 +165,9 @@ Our side of the comparison is a printed fee against another player, checked afte
 
 If you keep one split, keep this one. The show is a wheel you watch against a studio schedule, and the slot is a grid with a paytable.
 
-They do not share a page on this site.`,
+They do not share a page on this site.
+
+This wheel is not the Olympus tumble. [The tumble tile people search next](/guides/gates-of-olympus) is a slot, and its rules screen is a different contract.`,
     },
   ],
   faqs: [
@@ -195,6 +197,6 @@ They do not share a page on this site.`,
     },
   ],
   sources: [],
-  related: ["crazy-time", "sweet-bonanza", "house-edge", "slot-volatility"],
+  related: ["crazy-time", "sweet-bonanza", "house-edge", "slot-volatility", "gates-of-olympus"],
   updated: "2026-10-20",
 };

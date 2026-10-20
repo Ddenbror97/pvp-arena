@@ -177,7 +177,9 @@ A later jar grid can be a sequel with a different stake ladder. Sequel paint is 
 
 When a tumble chain stops, that spin is over. The next press is a new purchase.
 
-Recording the chain's length is fine. Treating the length as proof the grid is due is not.`,
+Recording the chain's length is fine. Treating the length as proof the grid is due is not.
+
+Cluster pays are not Megaways. [The changing-reel fortune title](/guides/madame-destiny-megaways) is the page that explains a different way the reel height moves.`,
     },
   ],
   faqs: [
@@ -207,6 +209,12 @@ Recording the chain's length is fine. Treating the length as proof the grid is d
     },
   ],
   sources: [],
-  related: ["slot-machine-odds", "slot-volatility", "penny-slots-online", "house-edge"],
+  related: [
+    "slot-machine-odds",
+    "slot-volatility",
+    "penny-slots-online",
+    "house-edge",
+    "madame-destiny-megaways",
+  ],
   updated: "2026-10-20",
 };

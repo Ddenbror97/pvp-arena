@@ -194,7 +194,9 @@ Converting chips to cash can create a record. What that means for tax is outside
 
 No affiliate link is embedded. A later button toward the brand should be read as advertising.
 
-[Responsible gambling resources](/responsible-gambling) cover limits, pauses, and help. Use them when the chip stack is being defended as money you "already won." Until the cashier converts it, the win is still inside the app.`,
+[Responsible gambling resources](/responsible-gambling) cover limits, pauses, and help. Use them when the chip stack is being defended as money you "already won." Until the cashier converts it, the win is still inside the app.
+
+A play-money or social room is not an early bitcoin name. [The early bitcoin room name](/guides/swc-poker-review) does not publish a current rake.`,
     },
   ],
   faqs: [
@@ -229,6 +231,7 @@ No affiliate link is embedded. A later button toward the brand should be read as
     "crypto-poker",
     "how-to-play-poker",
     "skill-based-gambling",
+    "swc-poker-review",
   ],
   updated: "2026-10-20",
 };

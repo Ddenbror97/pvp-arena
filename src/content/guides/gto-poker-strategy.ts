@@ -116,7 +116,9 @@ Solvers often assume a rake model. Your $0.05/$0.10 table may not match the node
 
 If they adjust to your adjustment, you are in a loop. GTO is one way to step off the loop: return to a mix that does not care. Another way is to keep watching and keep moving. Both are allowed. The failure mode is to pick one exploit on Monday and run it until Friday after they already stopped folding. Frequency without observation is just a new leak.
 
-Live, observation is slower. Online, HUDs make some leaks obvious and invent others from tiny samples. Do not “exploit” a 20-hand fold-to-cbet of 80%. Do exploit a 500-hand fold-to-cbet of 80% if the pool is real. Sample size is part of GTO-versus-exploit, even if the solver never asked you for it.`,
+Live, observation is slower. Online, HUDs make some leaks obvious and invent others from tiny samples. Do not “exploit” a 20-hand fold-to-cbet of 80%. Do exploit a 500-hand fold-to-cbet of 80% if the pool is real. Sample size is part of GTO-versus-exploit, even if the solver never asked you for it.
+
+A mixed strategy is not a personality. [The 17-bracelet record](/guides/phil-hellmuth) is a tournament career, including a July 2026 runner-up finish, not a net worth.`,
     },
     {
       id: "not-here",
@@ -144,7 +146,9 @@ If theory study is keeping you at tables you cannot afford, stop. Read [how to s
 
 Remember the two-column table: balance when you have no read, attack when you have a real one. That is the whole amateur version of GTO poker strategy. Everything else is homework. Homework does not get to spend the rent. The budget does. If the folder is more exciting than the cap, close the folder. The mix will wait. The bills will not.
 
-Solvers sit on top of the same [poker math](/guides/poker-math).`,
+Solvers sit on top of the same [poker math](/guides/poker-math).
+
+A mixed check is not a tutorial in trapping. [Trapping with a made hand](/guides/slow-play-poker) is the practical version of checking strong, including when it gives a free card.`,
     },
   ],
   faqs: [
@@ -185,6 +189,8 @@ Solvers sit on top of the same [poker math](/guides/poker-math).`,
     "expected-value-gambling",
     "kelly-criterion",
     "poker-math",
+    "slow-play-poker",
+    "phil-hellmuth",
   ],
   updated: "2026-09-26",
 };

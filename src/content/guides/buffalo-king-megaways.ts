@@ -187,7 +187,9 @@ The artwork will not reliably say. The title string will.
 
 A ways counter that jumps is the mechanic, not a missing number this page forgot. Routes on one spin stay on that spin's glass. They are still not the return.
 
-Take the loss limit from your budget, not from how familiar the herd feels. Familiar animals are where session clocks get ignored. The clock still runs.`,
+Take the loss limit from your budget, not from how familiar the herd feels. Familiar animals are where session clocks get ignored. The clock still runs.
+
+A Megaways buffalo is not the older cabinet. [The non-Megaways buffalo cabinet](/guides/buffalo-grand-slot) is the other name people type.`,
     },
   ],
   faqs: [
@@ -217,6 +219,12 @@ Take the loss limit from your budget, not from how familiar the herd feels. Fami
     },
   ],
   sources: [],
-  related: ["buffalo-slot-machine", "megaways-slots", "slot-volatility", "high-limit-slots"],
+  related: [
+    "buffalo-slot-machine",
+    "megaways-slots",
+    "slot-volatility",
+    "high-limit-slots",
+    "buffalo-grand-slot",
+  ],
   updated: "2026-10-20",
 };

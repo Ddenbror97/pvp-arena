@@ -218,7 +218,9 @@ Our $16.20 kept from an $18 Slott win is a teaching figure, 10% off the win. It 
 
 Say it once, then leave the chat. The chat will still be talking when you return.
 
-You do not have to answer it with a deposit.`,
+You do not have to answer it with a deposit.
+
+A meme-token name is not a sportsbook domain. [The bets.io brand search](/guides/bets-io-review) keeps bonus, time, and license off this page.`,
     },
   ],
   faqs: [
@@ -253,6 +255,7 @@ You do not have to answer it with a deposit.`,
     "are-online-casinos-safe",
     "anjouan-gaming-license",
     "is-crypto-gambling-legal",
+    "bets-io-review",
   ],
   updated: "2026-10-20",
 };

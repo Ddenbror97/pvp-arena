@@ -214,7 +214,9 @@ A 10% fee on a P2P Slott win is the third published cut, next to the 5% pot fee 
 
 If a code pops up as you switch tabs, it is still not ours. PVPspinArena is not an affiliate of the sportsbook and lists no code.
 
-Watch the game you came for with the casino tab closed. The whistle can blow without a reel. That is a complete way to use an afternoon, and it does not require a withdrawal time this file refused to invent.`,
+Watch the game you came for with the casino tab closed. The whistle can blow without a reel. That is a complete way to use an afternoon, and it does not require a withdrawal time this file refused to invent.
+
+A sportsbook-and-casino brand is not a resort-themed cashier. [An offshore cashier with a resort name](/guides/las-atlantis-casino-review) does not publish a bonus on this site either.`,
     },
   ],
   faqs: [
@@ -249,6 +251,7 @@ Watch the game you came for with the casino tab closed. The whistle can blow wit
     "is-crypto-gambling-legal",
     "crypto-casino-usa",
     "are-online-casinos-safe",
+    "las-atlantis-casino-review",
   ],
   updated: "2026-10-20",
 };

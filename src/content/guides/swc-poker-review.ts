@@ -185,7 +185,9 @@ The checklist already told you to stop there. Stopping is not ignorance of histo
 
 The history you are allowed is the early bitcoin room and the surviving name. Anything past that name needs a cashier you opened yourself, dated, and filed away from our $24 pot.
 
-Until that cashier exists in your notes, the accurate status is history plus blanks. That status is enough for an swc poker review. It does not need a closing year to feel finished.`,
+Until that cashier exists in your notes, the accurate status is history plus blanks. That status is enough for an swc poker review. It does not need a closing year to feel finished.
+
+An old bitcoin name does not answer a different room. [Another offshore room search](/guides/pokerok-review) keeps its own rake cell blank.`,
     },
   ],
   faqs: [
@@ -220,6 +222,7 @@ Until that cashier exists in your notes, the accurate status is history plus bla
     "real-money-poker-apps",
     "black-chip-poker-review",
     "replay-poker-review",
+    "pokerok-review",
   ],
   updated: "2026-10-20",
 };

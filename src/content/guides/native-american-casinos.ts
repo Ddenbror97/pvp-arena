@@ -187,7 +187,9 @@ Keep them in the fee column when a friend asks which casino is closest. Closest 
 
 Write the year 1988 once in the margin so it is not asked to do extra work. It dates a federal frame, and it does not pick a winner between products.
 
-The compact, if you find one, does the local work the year cannot do. Read it for the games it names and the government it names. If it does not name your question, you still do not have a local answer, and a blog cannot supply one by listing famous buildings.`,
+The compact, if you find one, does the local work the year cannot do. Read it for the games it names and the government it names. If it does not name your question, you still do not have a local answer, and a blog cannot supply one by listing famous buildings.
+
+A compact is not a skim. [The skim-era Strip operator](/guides/frank-rosenthal) is a biography, not a model for tribal government.`,
     },
   ],
   faqs: [
@@ -228,6 +230,12 @@ That fee is ours. It is not a term inside a compact.`,
       url: "https://www.nigc.gov/",
     },
   ],
-  related: ["is-crypto-gambling-legal", "gambling-age-us", "house-edge", "are-online-casinos-safe"],
+  related: [
+    "is-crypto-gambling-legal",
+    "gambling-age-us",
+    "house-edge",
+    "are-online-casinos-safe",
+    "frank-rosenthal",
+  ],
   updated: "2026-10-20",
 };

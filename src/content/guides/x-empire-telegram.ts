@@ -180,7 +180,9 @@ If a channel insists the token price is already known, ask which control inside 
 
 Coinflip keeps 5% of a pot if the game you wanted was a coin instead of a reel-style win. Either fee is ours. Neither fee settles an empire, and neither fee is a history footnote.
 
-When the claim button stays vague, x empire payout stays not published. PVPspinArena is not an affiliate of the tap title. The missing code is part of that sentence, not an oversight.`,
+When the claim button stays vague, x empire payout stays not published. PVPspinArena is not an affiliate of the tap title. The missing code is part of that sentence, not an oversight.
+
+An empire score is not a dog score. [The dog-named Telegram tap](/guides/dogs-telegram) is the neighboring bot people ask to cash out.`,
     },
   ],
   faqs: [
@@ -215,6 +217,7 @@ When the claim button stays vague, x empire payout stays not published. PVPspinA
     "skill-based-gambling",
     "house-edge",
     "games-that-pay-real-money",
+    "dogs-telegram",
   ],
   updated: "2026-10-20",
 };

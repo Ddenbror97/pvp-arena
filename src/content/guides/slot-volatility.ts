@@ -120,7 +120,9 @@ Progressive titles add a lottery tail on top of base volatility. [Progressive ja
 
 Switching from high to low after a drought does not collect a debt. Switching from low to high after a drip session does not “let the RTP catch up.” Each title is its own mix. If you switch, switch because the new panel’s RTP and volatility match the remaining budget, not because the last grid owed you a spike.
 
-A practical check before you click a high-volatility tile: name a spin count that can miss two mean feature intervals and still leave rent alone. If you cannot name that count, you are not choosing high volatility. You are choosing a short fuse. [How to play online slots](/guides/how-to-play-slots) is where that count gets written. [How to win online slots](/guides/how-to-win-at-slots) is why the count is not a method — it is a fuse length.`,
+A practical check before you click a high-volatility tile: name a spin count that can miss two mean feature intervals and still leave rent alone. If you cannot name that count, you are not choosing high volatility. You are choosing a short fuse. [How to play online slots](/guides/how-to-play-slots) is where that count gets written. [How to win online slots](/guides/how-to-win-at-slots) is why the count is not a method — it is a fuse length.
+
+Fame is not a volatility band. [The heavily searched tumble tile](/guides/gates-of-olympus) is a title people treat as if popularity softened the swings.`,
     },
     {
       id: "not-here",
@@ -138,7 +140,9 @@ If you wanted a slot’s drought-and-spike loop, you will not find it here. If y
 
 On this site’s 33-slot wheel, Purple hits often and pays 2×, returning 32/33 before the win fee. Green hits once in 33 and pays 14×, returning 14/33. A night of Green can look like a “dead” slot. A night of Purple can look like a “nice” slot. They are not the same price. Take the lesson back to any lobby: the friendlier banner is a different hit rate, and here it is also a cheaper bet.
 
-Write stake × spins for the wheel the same way you would for a reel. Forty $2 Purple bets are $80 wagered and about $2.42 expected cost before the fee. Forty $2 Green bets cost about $46 before the fee, and you will usually leave with nothing. Volatility is that difference. It is not a hint about which colour is due.`,
+Write stake × spins for the wheel the same way you would for a reel. Forty $2 Purple bets are $80 wagered and about $2.42 expected cost before the fee. Forty $2 Green bets cost about $46 before the fee, and you will usually leave with nothing. Volatility is that difference. It is not a hint about which colour is due.
+
+A grim sequel name does not publish a band on this page. [The sequel-styled harsh title](/guides/mental-2-slot) still sends you to the rules screen.`,
     },
     {
       id: "three-numbers",
@@ -212,6 +216,8 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     "slot-machine-odds",
     "variance-in-gambling",
     "bonus-buy-slots",
+    "gates-of-olympus",
+    "mental-2-slot",
   ],
   updated: "2026-09-26",
 };

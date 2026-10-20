@@ -154,7 +154,9 @@ If you are calling every draw “because pot odds” without doing the sum, stop
 
 Carry one shortcut if you hate arithmetic: a nine-out turn draw wants a call of about one-fifth of the new pot or less. A gutshot wants far less, or implied odds you can actually point at. If you cannot point, fold. The shortcut is not a system. It is the 20% line in street clothes. Use it, then leave when the note says leave.
 
-Pot odds are one slice of [poker math](/guides/poker-math).`,
+Pot odds are one slice of [poker math](/guides/poker-math).
+
+Pot odds are a price. [Hand versus a range](/guides/poker-equity-calculator) is a different tool, and its number is only as good as the range you typed.`,
     },
   ],
   faqs: [
@@ -196,6 +198,7 @@ Pot odds are one slice of [poker math](/guides/poker-math).`,
     "house-edge",
     "how-to-play-poker",
     "poker-math",
+    "poker-equity-calculator",
   ],
   updated: "2026-09-26",
 };

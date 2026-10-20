@@ -177,7 +177,9 @@ Read the note once more and strike any sentence that names a dollar amount for h
 
 A finished note has the words not published under net worth. If those words feel like a missing ending, the feeling is the point.
 
-The record this page trusts does not supply the ending the search box requested. Repeat the four beats to a friend and refuse the fifth question. Refusal is a complete answer when the source line is silent.`,
+The record this page trusts does not supply the ending the search box requested. Repeat the four beats to a friend and refuse the fifth question. Refusal is a complete answer when the source line is silent.
+
+The Stardust skim story is not the Horseshoe. [The Horseshoe founder](/guides/benny-binion) is the other downtown name, and his net worth is not printed here either.`,
     },
   ],
   faqs: [
@@ -217,6 +219,7 @@ The record this page trusts does not supply the ending the search box requested.
     "gamblers-fallacy",
     "law-of-large-numbers-gambling",
     "are-online-casinos-safe",
+    "benny-binion",
   ],
   updated: "2026-10-20",
 };

@@ -94,7 +94,9 @@ A stablecoin cashier does not convert an unlicensed slot into a licensed sportsb
 | Slot tiles | Not what the sports law is | Treat as unlicensed |
 | Sweepstakes coins | A different legal theory | Check official rules |
 | “Casino night” flyer | Not a commercial casino | Skip it |
-| Neighbor-state resort | Legal only over there | Read that state’s rules |`,
+| Neighbor-state resort | Legal only over there | Read that state’s rules |
+
+Tennessee's split does not cross into Missouri. [Missouri's separate page](/guides/online-gambling-legal-missouri) has its own regulator.`,
     },
     {
       id: "check",
@@ -164,6 +166,7 @@ PVPspinArena is not a Tennessee sportsbook and does not operate a casino here. I
     "sweepstakes-casino-legal-states",
     "gambling-age-us",
     "what-is-sports-betting",
+    "online-gambling-legal-missouri",
   ],
   updated: "2026-10-06",
 };

@@ -178,7 +178,9 @@ A mystery stack, when the rules actually describe one, is a reel whose symbols w
 
 The herd cabinet remains a different animal and a different article. Switching to it mid-session is a new purchase, not a correction of this one. Keep the shark's blanks on the shark's glass, including the blank where a multiple would have gone if the screen had printed one.
 
-If two lobbies show the same shark and different help files, you are looking at two prices wearing one costume. Write the casino name next to any figure you copy. Leave this article's cells as not published, because the article is not sitting in either lobby.`,
+If two lobbies show the same shark and different help files, you are looking at two prices wearing one costume. Write the casino name next to any figure you copy. Leave this article's cells as not published, because the article is not sitting in either lobby.
+
+A nudge is not a duel bonus. [The western bonus title](/guides/wanted-dead-or-a-wild) is where that other feature is discussed, still without a multiplier quoted here.`,
     },
   ],
   faqs: [
@@ -208,6 +210,12 @@ If two lobbies show the same shark and different help files, you are looking at 
     },
   ],
   sources: [],
-  related: ["slot-machine-odds", "slot-volatility", "buffalo-slot-machine", "penny-slots-online"],
+  related: [
+    "slot-machine-odds",
+    "slot-volatility",
+    "buffalo-slot-machine",
+    "penny-slots-online",
+    "wanted-dead-or-a-wild",
+  ],
   updated: "2026-10-20",
 };

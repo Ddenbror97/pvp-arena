@@ -146,7 +146,9 @@ $0.20 × 20 lines = $4 per spin. 100 spins = $400 wagered. At 96% RTP the expect
 
 A studio may say a bonus lands about every 250 spins on the medium-volatility build. That is a mean. The waiting time is often roughly geometric, so a 250-spin mean still puts a large pile of probability on waits of 400, 500 or more. Sitting to “finish the cycle” assumes a cycle. There is not one. There is a constant hazard that does not rise because you have already paid 249 spins. Leave when the budget says leave. The next player does not inherit your 249.
 
-If a help file lists both average bonus interval and average bonus win, you can sanity-check a slice of RTP: (1 / interval) × average bonus win, as a fraction of stake. If that slice is 40% of a 96% RTP, the base game is carrying 56%. Dry base-game hours are then the expected diet, not a broken machine.`,
+If a help file lists both average bonus interval and average bonus win, you can sanity-check a slice of RTP: (1 / interval) × average bonus win, as a fraction of stake. If that slice is 40% of a 96% RTP, the base game is carrying 56%. Dry base-game hours are then the expected diet, not a broken machine.
+
+A feature that locks symbols is a category, not a single RTP. [The hold-and-respin category](/guides/hold-and-win-slots) keeps that distinction.`,
     },
     {
       id: "summary",
@@ -201,6 +203,7 @@ See also [loose slots](/guides/loose-slots).`,
     "loose-slots",
     "sweet-bonanza",
     "megaways-slots",
+    "hold-and-win-slots",
   ],
   updated: "2026-09-26",
 };

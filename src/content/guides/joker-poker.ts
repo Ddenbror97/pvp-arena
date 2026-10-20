@@ -166,7 +166,9 @@ Write the budget first. Deal second. When the credits hit the number you chose, 
 
 Write down the coin size too. A per-coin line is not the royal's pay if the royal jumps only when you play the max coins the glass demands.
 
-The screen that takes the money has to show both the rows and that coin size. The next joker belongs to the next session, on that session's glass.`,
+The screen that takes the money has to show both the rows and that coin size. The next joker belongs to the next session, on that session's glass.
+
+A joker wild is not an aces-with-a-kicker paytable. [The four-aces kicker paytable](/guides/double-double-bonus-poker) is that other video-poker contract.`,
     },
   ],
   faqs: [
@@ -201,6 +203,7 @@ The screen that takes the money has to show both the rows and that coin size. Th
     "jacks-or-better-strategy",
     "how-to-play-poker",
     "poker-bankroll-management",
+    "double-double-bonus-poker",
   ],
   updated: "2026-10-20",
 };

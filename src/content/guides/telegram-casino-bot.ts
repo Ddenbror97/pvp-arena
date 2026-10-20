@@ -39,7 +39,9 @@ This belongs in [foundations](/guides/topics/foundations): know the product befo
 
 I will not name bots, post handles, or walk through how to stand one up. Unlicensed operators do not need a how-to. You need a picture of the scam surface.
 
-PVPspinArena is a site, not a chat. You use a browser, a verified wallet and the [fairness](/fairness) page. We will never DM you a bot token.`,
+PVPspinArena is a site, not a chat. You use a browser, a verified wallet and the [fairness](/fairness) page. We will never DM you a bot token.
+
+A casino bot is not every earn bot. [The dog-named tap](/guides/dogs-telegram) is a cash-out question with no published payout.`,
     },
     {
       id: "unlicensed",
@@ -149,7 +151,9 @@ You must be 18 or older. A group chat full of minors is a reason to leave, not a
       title: "A username is not a casino",
       body: `A Telegram casino bot is a chat UI on top of a wallet the operator controls. Most are unlicensed. Exit scams, drains, clones and fake support are the job. I will not promote a handle.
 
-If you play, use a public site, a verifier and a cashier you can name without opening a DM. PVPspinArena is built that way and is not a Telegram bot. If you came from a crash group, do not send a 'reactivation' payment. Close the chat.`,
+If you play, use a public site, a verifier and a cashier you can name without opening a DM. PVPspinArena is built that way and is not a Telegram bot. If you came from a crash group, do not send a 'reactivation' payment. Close the chat.
+
+An empire score is a different bot. [The empire tap](/guides/x-empire-telegram) still does not publish a cash-out figure.`,
     },
   ],
   faqs: [
@@ -193,6 +197,8 @@ If you play, use a public site, a verifier and a cashier you can name without op
     "twitch-slots-ban",
     "crypto-gambling-taxes",
     "discord-gambling-bot",
+    "dogs-telegram",
+    "x-empire-telegram",
   ],
   updated: "2026-09-26",
 };

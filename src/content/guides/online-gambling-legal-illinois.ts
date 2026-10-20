@@ -178,7 +178,9 @@ Ask the Illinois regulator, in the regulator’s own materials, which remote pro
 
 Adults who already use the cabinet still have a separate decision about the phone. Age rules can differ by product, which is why the age guide exists, and a higher local age still wins over 18. That decision is not a session plan, and a loss limit written down before the night still belongs on the napkin.
 
-Keep a receipt habit even when the rule feels familiar. If you play a product the regulator lists, save the date you checked and the name you matched. A later argument is easier when the screenshot is of the official page rather than of an ad.`,
+Keep a receipt habit even when the rule feels familiar. If you play a product the regulator lists, save the date you checked and the name you matched. A later argument is easier when the screenshot is of the official page rather than of an ad.
+
+Illinois video-gambling terminals are not a Virginia license. [Virginia's online question](/guides/online-gambling-legal-virginia) is a different state and a different product mix.`,
     },
   ],
   faqs: [
@@ -218,6 +220,7 @@ Keep a receipt habit even when the rule feels familiar. If you play a product th
     "esports-betting-legal",
     "sweepstakes-casino-legal-states",
     "online-gambling-legal-kentucky",
+    "online-gambling-legal-virginia",
   ],
   updated: "2026-10-20",
 };

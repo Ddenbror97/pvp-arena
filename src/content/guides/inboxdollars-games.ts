@@ -190,7 +190,9 @@ Mixing the lines is how a $22.80 winner share gets described as a survey bonus. 
 
 Surveys can be abandoned. Pots, once both stakes are in, are a committed match under the published fee. Decide which desk you are at before the hour starts, and stay at that desk until the note is finished.
 
-Inboxdollars games real money, if the menu completes a redemption, is that redemption. It is not a wage, and it is not a coin just because a different website uses coins.`,
+Inboxdollars games real money, if the menu completes a redemption, is that redemption. It is not a wage, and it is not a coin just because a different website uses coins.
+
+Survey points are not a well of cash. [A different rewards cashier](/guides/money-well-review) is a separate brand with its own unpublished payout.`,
     },
   ],
   faqs: [
@@ -220,6 +222,12 @@ Inboxdollars games real money, if the menu completes a redemption, is that redem
     },
   ],
   sources: [],
-  related: ["games-that-pay-real-money", "skillz-review", "solitaire-cash-review", "house-edge"],
+  related: [
+    "games-that-pay-real-money",
+    "skillz-review",
+    "solitaire-cash-review",
+    "house-edge",
+    "money-well-review",
+  ],
   updated: "2026-10-20",
 };

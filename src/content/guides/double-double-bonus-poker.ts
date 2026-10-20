@@ -176,7 +176,9 @@ A double double bonus poker demo that disagrees with the cash rows is a differen
 
 If any of those three moved, drop the holds the demo taught. The cash rows are the ones that pay.
 
-The 5% Hold'em fee still waits for a flop. The video meter has no flop, and it is not a coin pot. Keep the three prices in three notes, and leave the video note blank until the rules screen fills it.`,
+The 5% Hold'em fee still waits for a flop. The video meter has no flop, and it is not a coin pot. Keep the three prices in three notes, and leave the video note blank until the rules screen fills it.
+
+Extra pay on four aces does not add a wild joker. [The joker-wild machine](/guides/joker-poker) is the page for that deck.`,
     },
   ],
   faqs: [
@@ -206,6 +208,12 @@ The 5% Hold'em fee still waits for a flop. The video meter has no flop, and it i
     },
   ],
   sources: [],
-  related: ["video-poker-paytables", "jacks-or-better-strategy", "cash-game-poker", "crypto-poker"],
+  related: [
+    "video-poker-paytables",
+    "jacks-or-better-strategy",
+    "cash-game-poker",
+    "crypto-poker",
+    "joker-poker",
+  ],
   updated: "2026-10-20",
 };

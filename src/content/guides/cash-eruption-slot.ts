@@ -183,7 +183,9 @@ Write the title and the stake. Leave return and max win blank until the glass fi
 
 Write the stake before the animation plays. After the burst it is harder to remember the risk, which is the point of the show. The memory you want is the button.
 
-No rock type, no map, and no overdue mountain belongs in the note. If a sentence needs those words, it belongs in another article. This one ends at the cabinet.`,
+No rock type, no map, and no overdue mountain belongs in the note. If a sentence needs those words, it belongs in another article. This one ends at the cabinet.
+
+Lava on the glass is not a burglar theme. [The heist cabinet](/guides/cash-bandits-slot) is that other floor title.`,
     },
   ],
   faqs: [
@@ -213,6 +215,12 @@ No rock type, no map, and no overdue mountain belongs in the note. If a sentence
     },
   ],
   sources: [],
-  related: ["slot-machine-odds", "penny-slots-online", "house-edge", "slot-battles"],
+  related: [
+    "slot-machine-odds",
+    "penny-slots-online",
+    "house-edge",
+    "slot-battles",
+    "cash-bandits-slot",
+  ],
   updated: "2026-10-20",
 };

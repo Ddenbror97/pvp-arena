@@ -175,7 +175,9 @@ Sweepstakes casinos are a different product from a licensed sportsbook. Online c
 
 If you are somewhere peer play is allowed, Purple’s published shape is about a 7.88% edge after the win fee, and a jackpot pot loses 5% before the winner is paid. If you are not in such a place, those sentences stay hypothetical.
 
-Check the date on the official page you trust. A 2026 search result is not a frozen compact. No promo code is offered on the way out.`,
+Check the date on the official page you trust. A 2026 search result is not a frozen compact. No promo code is offered on the way out.
+
+Tribal sports in Oklahoma is not Missouri's market. [The Missouri online question](/guides/online-gambling-legal-missouri) is a separate regulator.`,
     },
   ],
   faqs: [
@@ -215,6 +217,7 @@ Check the date on the official page you trust. A 2026 search result is not a fro
     "sweepstakes-vs-crypto-casino",
     "is-crypto-gambling-legal",
     "gambling-age-us",
+    "online-gambling-legal-missouri",
   ],
   updated: "2026-10-20",
 };

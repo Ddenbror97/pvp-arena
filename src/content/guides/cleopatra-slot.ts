@@ -181,7 +181,9 @@ Write the full title string, sequel marks included, next to the stake. Leave ret
 
 A cleopatra slot demo search often assumes one address covers every generation. Practice buttons are per lobby and sometimes per build. This page stores none, so an outside link is not a source from here.
 
-If two people argue about free-game counts, ask which version each opened. Both counts can be honest and still describe different glasses. The argument does not mint a shared return.`,
+If two people argue about free-game counts, ask which version each opened. Both counts can be honest and still describe different glasses. The argument does not mint a shared return.
+
+Cleopatra has been reskinned for years. A fairy-tale glass with several versions of its own is [the beanstalk versions](/guides/jack-and-the-beanstalk-slot).`,
     },
   ],
   faqs: [
@@ -211,6 +213,12 @@ If two people argue about free-game counts, ask which version each opened. Both 
     },
   ],
   sources: [],
-  related: ["buffalo-slot-machine", "high-limit-slots", "slot-battles", "rtp-calculator"],
+  related: [
+    "buffalo-slot-machine",
+    "high-limit-slots",
+    "slot-battles",
+    "rtp-calculator",
+    "jack-and-the-beanstalk-slot",
+  ],
   updated: "2026-10-20",
 };

@@ -92,7 +92,9 @@ Watch for expired or "in application" statuses. A site can keep the badge up aft
 
 A licence check is one row on a list that should also include cashout rules, responsible-gambling tools and, where the product allows it, a fairness method. If you cannot complete the five steps above in ten minutes, you do not have a verified licence; you have a picture.
 
-When the register and the footer disagree, believe the register and walk. When they agree, you have identified an operator, not a friend. You still need terms, a cashier story and — on a hashed site — a seed you can recompute.`,
+When the register and the footer disagree, believe the register and walk. When they agree, you have identified an operator, not a friend. You still need terms, a cashier story and — on a hashed site — a seed you can recompute.
+
+A paper from Curaçao is not this brand's proof. [A coins-named brand](/guides/coins-game-casino-review) does not get a license number here.`,
     },
     {
       id: "fairness",
@@ -174,6 +176,7 @@ Other offshore papers players meet on crypto sites are the [Anjouan gaming licen
     "how-to-start-an-online-casino",
     "anjouan-gaming-license",
     "kahnawake-gaming-license",
+    "coins-game-casino-review",
   ],
   updated: "2026-09-26",
 };

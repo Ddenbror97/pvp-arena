@@ -178,7 +178,9 @@ A gift card on that row is a merchant balance. It is not a Base transfer and not
 
 The app search gets the remaining cell: not published, until its own button speaks. Big time, as a mood, does not fill a cell.
 
-PVPspinArena is not an affiliate of the listing. No code is tucked into the slogan. If you play Slott, use [the live block only as settled play](/slott) and check the round on the fairness page already linked above.`,
+PVPspinArena is not an affiliate of the listing. No code is tucked into the slogan. If you play Slott, use [the live block only as settled play](/slott) and check the round on the fairness page already linked above.
+
+Big-time cash is not a diamond suit and not a jackpot. [The crowded diamonds name](/guides/diamonds-casino-game) is the other ambiguous cash-out search.`,
     },
   ],
   faqs: [
@@ -208,6 +210,12 @@ PVPspinArena is not an affiliate of the listing. No code is tucked into the slog
     },
   ],
   sources: [],
-  related: ["skill-based-gambling", "games-that-pay-real-money", "pvp-gambling", "skillz-review"],
+  related: [
+    "skill-based-gambling",
+    "games-that-pay-real-money",
+    "pvp-gambling",
+    "skillz-review",
+    "diamonds-casino-game",
+  ],
   updated: "2026-10-20",
 };

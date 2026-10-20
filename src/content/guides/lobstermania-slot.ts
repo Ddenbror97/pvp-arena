@@ -170,7 +170,9 @@ A house spin on the floor cabinet can show a denomination and still hide the sha
 
 They are a third product with a posted cut.
 
-Lobstermania slot rtp is whatever the glass you can open actually prints. Lobstermania slot max win is the same kind of lookup, and only if a ceiling is written there. Lobstermania slot demo, when a lobby offers practice, is not the aisle you photographed and is not guaranteed on the way home.`,
+Lobstermania slot rtp is whatever the glass you can open actually prints. Lobstermania slot max win is the same kind of lookup, and only if a ceiling is written there. Lobstermania slot demo, when a lobby offers practice, is not the aisle you photographed and is not guaranteed on the way home.
+
+A lobster glass does not become a better price because a nearby family says platinum. [The platinum tier name](/guides/quick-hit-platinum) is that other family.`,
     },
   ],
   faqs: [
@@ -200,6 +202,12 @@ Lobstermania slot rtp is whatever the glass you can open actually prints. Lobste
     },
   ],
   sources: [],
-  related: ["penny-slots-online", "high-limit-slots", "slot-machine-odds", "buffalo-slot-machine"],
+  related: [
+    "penny-slots-online",
+    "high-limit-slots",
+    "slot-machine-odds",
+    "buffalo-slot-machine",
+    "quick-hit-platinum",
+  ],
   updated: "2026-10-20",
 };

@@ -104,14 +104,18 @@ Fifth street is the last cheap mistake. Fold draws that are not live. A made han
 - Name whether the cards you need are live before you call a big bet.
 - On fifth street, stop chasing a draw that did not improve.
 
-Stud is tiring because the information is the product. If you cannot watch the table, do not play the game that day. The cards will not become community cards to rescue you. Each up card belongs to someone, and when they fold it belongs to the muck, which is just as useful to count.`,
+Stud is tiring because the information is the product. If you cannot watch the table, do not play the game that day. The cards will not become community cards to rescue you. Each up card belongs to someone, and when they fold it belongs to the muck, which is just as useful to count.
+
+Stud is not draw. [Deuce-to-seven with three draws](/guides/2-7-triple-draw) is the other lowball, and a wheel is a bad hand there.`,
     },
     {
       id: "mistakes",
       title: "Mistakes that come from playing it like Hold’em",
       body: `The first mistake is hunting a button that does not exist. Later position in stud is “my board is lower, so I act after the scare card.” That is useful, and it is not a seat you can buy by sitting to the left of a dealer. The second mistake is playing every ace door card. The ace is visible. Better hands know to proceed against it, and worse hands fold. You win a small pot or you pay a large one.
 
-The ante is the cost of seeing three cards. It is not a ticket to fifth street. If the table deals Stud Hi-Lo, an eight-or-better low is a different game and a different starting chart. Do not use this high-only sketch unchanged. Ask which game is being dealt. Then go back to live cards. They remain the strategy, in both forms, because a dead deuce cannot make your low and a dead king cannot make your trips.`,
+The ante is the cost of seeing three cards. It is not a ticket to fifth street. If the table deals Stud Hi-Lo, an eight-or-better low is a different game and a different starting chart. Do not use this high-only sketch unchanged. Ask which game is being dealt. Then go back to live cards. They remain the strategy, in both forms, because a dead deuce cannot make your low and a dead king cannot make your trips.
+
+High stud is not ace-to-five low. [Stud played for the low](/guides/razz-poker) wants a wheel, not a pair of aces.`,
     },
   ],
   faqs: [
@@ -146,6 +150,13 @@ The ante is the cost of seeing three cards. It is not a ticket to fifth street. 
       url: "https://www.wsop.com/",
     },
   ],
-  related: ["poker-hand-rankings", "history-of-poker", "texas-holdem-rules", "poker-for-beginners"],
+  related: [
+    "poker-hand-rankings",
+    "history-of-poker",
+    "texas-holdem-rules",
+    "poker-for-beginners",
+    "razz-poker",
+    "2-7-triple-draw",
+  ],
   updated: "2026-10-06",
 };

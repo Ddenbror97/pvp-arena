@@ -105,7 +105,9 @@ If you want a job, this is the wrong page. Games that pay real money pay some us
 
 Time is the hidden stake in skill games. A 2 edge per hour, if you even have it, is a bad wage. Price the hour. Then decide if you would have played anyway. If you would not, you are working a shift with a chance of going backward. That is a strange job to apply for.
 
-Rewards walls are not a tournament purse. The [Freecash credit test](/guides/freecash-review), [Swagbucks points](/guides/swagbucks-games) and the [Tapjoy offer wall](/guides/tapjoy-review) pay only what the screen posts. [Cash Giraffe](/guides/cash-giraffe-review), the [Givvy minimum](/guides/givvy-review) and [Lucky Match](/guides/lucky-match-review) are the same kind of screen.`,
+Rewards walls are not a tournament purse. The [Freecash credit test](/guides/freecash-review), [Swagbucks points](/guides/swagbucks-games) and the [Tapjoy offer wall](/guides/tapjoy-review) pay only what the screen posts. [Cash Giraffe](/guides/cash-giraffe-review), the [Givvy minimum](/guides/givvy-review) and [Lucky Match](/guides/lucky-match-review) are the same kind of screen.
+
+A name that promises cash is not a wage. [The big-time cash app search](/guides/big-time-cash-review) is a brand question, not a jackpot.`,
     },
     {
       id: "stop-rules",
@@ -118,7 +120,9 @@ Keep one account per app and one budget. Borrowed accounts get frozen at the exa
 
 If gambling stops being a choice, use the responsible-play tools where you are, including cooling-off and deposit limits, and talk to a person rather than to the next lobby. This site is 18+ entertainment. It is not a recovery plan and not an income plan.
 
-The useful summary is short. Games that pay real money are real when the cashier matches the rule. They are worth your time only when you like the game at a price you can lose. Everything else in the ad is decoration.`,
+The useful summary is short. Games that pay real money are real when the cashier matches the rule. They are worth your time only when you like the game at a price you can lose. Everything else in the ad is decoration.
+
+Stop before a diamond in the title becomes a suit or a slot. [The crowded diamonds search](/guides/diamonds-casino-game) says the name is shared and the payout is not published.`,
     },
   ],
   faqs: [
@@ -157,6 +161,8 @@ The useful summary is short. Games that pay real money are real when the cashier
     "fake-casino-sites",
     "freecash-review",
     "swagbucks-games",
+    "big-time-cash-review",
+    "diamonds-casino-game",
   ],
   updated: "2026-10-06",
 };

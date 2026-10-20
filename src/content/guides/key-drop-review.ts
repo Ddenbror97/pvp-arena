@@ -176,7 +176,9 @@ Where the game page shows a live block, the block updates from settled play. Rec
 
 PVPspinArena does not sell CS skins and is not an affiliate of the case brand. We do not list a promo code. The comparison that is allowed is a house-priced case with odds often left opaque, set beside a peer pot whose fee is published.
 
-Treat a later outbound link as advertising. The page you just read is an editorial review.`,
+Treat a later outbound link as advertising. The page you just read is an editorial review.
+
+Opening a case is not placing a skin bet. [A skin-betting brand](/guides/skinbet-review) is a different product, and it is not skincare.`,
     },
   ],
   faqs: [
@@ -211,6 +213,7 @@ Treat a later outbound link as advertising. The page you just read is an editori
     "csgoroll-review",
     "valve-gambling-lawsuit",
     "csfloat-vs-skinport",
+    "skinbet-review",
   ],
   updated: "2026-10-20",
 };

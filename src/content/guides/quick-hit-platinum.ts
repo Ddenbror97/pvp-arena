@@ -173,7 +173,9 @@ If the session outgrows money you can lose, use [tools that help you stop](/resp
 
 Use the rules screen on the exact machine. That screen pays. A sibling cabinet, a photo, and a forum post do not.
 
-Our prices are the printed player-versus-player fees, checked after settlement. The floor family's price stays not published until you read it there.`,
+Our prices are the printed player-versus-player fees, checked after settlement. The floor family's price stays not published until you read it there.
+
+Platinum is a tier label on one family. A different floor family, with a boat on the glass, is [the lobster cabinet](/guides/lobstermania-slot).`,
     },
   ],
   faqs: [
@@ -203,6 +205,12 @@ Our prices are the printed player-versus-player fees, checked after settlement. 
     },
   ],
   sources: [],
-  related: ["penny-slots-online", "slot-battles", "rtp-calculator", "buffalo-slot-machine"],
+  related: [
+    "penny-slots-online",
+    "slot-battles",
+    "rtp-calculator",
+    "buffalo-slot-machine",
+    "lobstermania-slot",
+  ],
   updated: "2026-10-20",
 };

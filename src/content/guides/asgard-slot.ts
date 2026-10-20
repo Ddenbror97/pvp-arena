@@ -179,7 +179,9 @@ If the notebook gets only one line, make it the exact title string plus the stak
 
 People who learned a Vikings cabinet first often narrate this hall with the old bonus names. Those names may be absent here. Absence is a different product, not a hidden mode you should play as if it were present.
 
-The asgard slot max win query usually wants one multiplier for every northern game. This page will not print one. Any cap line is local to the hall's own screen.`,
+The asgard slot max win query usually wants one multiplier for every northern game. This page will not print one. Any cap line is local to the hall's own screen.
+
+Asgard and a Viking raid are different glasses. If the button shows a longboat rather than a hall, open [the other Norse cabinet](/guides/vikings-go-berzerk-slot) before you treat them as one game.`,
     },
   ],
   faqs: [
@@ -209,6 +211,12 @@ The asgard slot max win query usually wants one multiplier for every northern ga
     },
   ],
   sources: [],
-  related: ["megaways-slots", "slot-volatility", "house-edge", "penny-slots-online"],
+  related: [
+    "megaways-slots",
+    "slot-volatility",
+    "house-edge",
+    "penny-slots-online",
+    "vikings-go-berzerk-slot",
+  ],
   updated: "2026-10-20",
 };

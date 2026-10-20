@@ -183,7 +183,9 @@ Take a photo of gold coins and a separate photo of sweeps coins. If the redeem v
 
 Use the $95 and $27 examples only when you are talking about our Jackpot and our Slott. Say the brand fee is not published when you are talking about moonspin.
 
-Adults who want the category, rather than one logo, can stay on the sweepstakes hub and the coin explainers linked above. Adults who want a pot already denominated in dollars can use the worked examples and the fairness check. Either choice is clearer than a code this page refused to invent.`,
+Adults who want the category, rather than one logo, can stay on the sweepstakes hub and the coin explainers linked above. Adults who want a pot already denominated in dollars can use the worked examples and the fairness check. Either choice is clearer than a code this page refused to invent.
+
+Moonspin's cashier is not a studio. [The sweeps name that collides with a slot studio](/guides/nolimit-coins-review) is a different brand with the same blank promo cell.`,
     },
   ],
   faqs: [
@@ -218,6 +220,7 @@ Adults who want the category, rather than one logo, can stay on the sweepstakes 
     "sweeps-coins-explained",
     "gold-coins-vs-sweeps-coins",
     "sweepstakes-casino-legal-states",
+    "nolimit-coins-review",
   ],
   updated: "2026-10-20",
 };

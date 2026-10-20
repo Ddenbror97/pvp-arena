@@ -168,7 +168,9 @@ Demo portals that demand a deposit are not practice. Practice spends nothing. A 
 
 This file is an editorial review. It does not offer a code, a rebate, or a partner link. If some later page sends you to a brand, treat that outbound link as advertising and read the operator's terms yourself.
 
-Free-spin trailers are a third flag. A feature clip is not a hit rate. The trigger condition belongs on the glass of the title you opened, not in a category blurb.`,
+Free-spin trailers are a third flag. A feature clip is not a hit rate. The trigger condition belongs on the glass of the title you opened, not in a category blurb.
+
+The mechanic is not a buffalo. [The buffalo that uses changing reels](/guides/buffalo-king-megaways) is one titled game, not the definition.`,
     },
     {
       id: "legal",
@@ -181,7 +183,9 @@ It is not legal advice, not tax advice, and not a plan for your bankroll. Record
 
 When the stake is no longer money you can afford to lose, open [the limit tools](/responsible-gambling). A changing way count is not a reason to continue.
 
-Real-money access exists only where that casino is allowed to offer the specific title. A mechanic label in a search box does not travel with permission. If the cashier refuses your region, believe the cashier.`,
+Real-money access exists only where that casino is allowed to offer the specific title. A mechanic label in a search box does not travel with permission. If the cashier refuses your region, believe the cashier.
+
+A second titled game, not a second definition, is [the fortune title on changing reels](/guides/madame-destiny-megaways).`,
     },
   ],
   faqs: [
@@ -217,6 +221,8 @@ Real-money access exists only where that casino is allowed to offer the specific
     "how-do-slot-machines-work",
     "bonanza-megaways-slot",
     "sugar-rush-1000-slot",
+    "buffalo-king-megaways",
+    "madame-destiny-megaways",
   ],
   updated: "2026-10-20",
 };

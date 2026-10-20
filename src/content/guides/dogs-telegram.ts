@@ -195,7 +195,9 @@ They do not describe a sticker game.
 
 If you want the peer pot, use the stakes in the examples only as arithmetic, then read the live control. If you want the tap title, use its panel. When the panel is silent, the honest line is not published.
 
-PVPspinArena is not an affiliate of the dog title. No code appears in this file to change that.`,
+PVPspinArena is not an affiliate of the dog title. No code appears in this file to change that.
+
+A dog tap is not an empire tap. [The other Telegram empire tap](/guides/x-empire-telegram) has the same cash-out question and no published payout.`,
     },
   ],
   faqs: [
@@ -230,6 +232,7 @@ PVPspinArena is not an affiliate of the dog title. No code appears in this file 
     "skill-based-gambling",
     "games-that-pay-real-money",
     "pvp-gambling",
+    "x-empire-telegram",
   ],
   updated: "2026-10-20",
 };

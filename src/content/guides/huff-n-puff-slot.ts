@@ -174,7 +174,9 @@ Our Green payout and our 5% pot fee are our rules. They are not encoded in the v
 
 The piece is an editorial review. It offers no code. A later outbound link is advertising, even if the anchor is a wolf.
 
-[Responsible play](/responsible-gambling) is the page for limits. A feature that looks like a story ending is not an ending you have to fund.`,
+[Responsible play](/responsible-gambling) is the page for limits. A feature that looks like a story ending is not an ending you have to fund.
+
+A wolf and bricks are not a beanstalk. [The beanstalk glasses](/guides/jack-and-the-beanstalk-slot) cover a fairy tale more than one studio has used.`,
     },
   ],
   faqs: [
@@ -210,6 +212,7 @@ The piece is an editorial review. It offers no code. A later outbound link is ad
     "penny-slots-online",
     "dancing-drums-slot",
     "top-dollar-slot",
+    "jack-and-the-beanstalk-slot",
   ],
   updated: "2026-10-20",
 };

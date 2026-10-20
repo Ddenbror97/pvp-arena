@@ -188,7 +188,9 @@ Many schemes do not automatically reopen accounts; you may have to ask. Before d
 
 Set strict deposit and time limits from the start, and stop immediately if the old patterns come back. The [gambler's fallacy](/guides/gamblers-fallacy) and chasing losses are common early warning signs.
 
-Help is always available. The [responsible gambling page](/responsible-gambling) lists helplines and support services.`,
+Help is always available. The [responsible gambling page](/responsible-gambling) lists helplines and support services.
+
+A state list is not a meeting. [The 1957 fellowship](/guides/gamblers-anonymous) is a peer group, separate from 1-800-GAMBLER and from this exclusion file.`,
     },
     {
       id: "prepare",
@@ -287,6 +289,11 @@ Age is the other door. [Underage gambling risks](/guides/underage-gambling-risks
     { label: "BetBlocker", url: "https://betblocker.org/" },
     { label: "BetStop (Australia)", url: "https://www.betstop.gov.au/" },
   ],
-  related: ["gambling-budget", "how-to-stop-gambling", "gambling-blocker-apps"],
+  related: [
+    "gambling-budget",
+    "how-to-stop-gambling",
+    "gambling-blocker-apps",
+    "gamblers-anonymous",
+  ],
   updated: "2026-09-25",
 };

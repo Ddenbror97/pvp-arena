@@ -193,7 +193,9 @@ This page does not quote a recent straddle pot from anywhere.
 
 You can practise Hold'em concepts in that lobby: position, bet size, and folding a weak hand. You cannot demand a straddle, and the site does not deal Big O, short deck, razz, 2-7, or open-face Chinese.
 
-Post the extra blind only when the table's card allows it and you can name the tax. Otherwise let the big blind be the last forced bet.`,
+Post the extra blind only when the table's card allows it and you can name the tax. Otherwise let the big blind be the last forced bet.
+
+Posting the extra blind does not tell you your equity. [A hand-versus-range calculator](/guides/poker-equity-calculator) is the tool people open next, and it still is not pot odds.`,
     },
   ],
   faqs: [
@@ -244,6 +246,12 @@ Tips here are about whether you should post at all. Do not post and then invent 
     { label: "Pagat — public card-game rules", url: "https://www.pagat.com/" },
     { label: "World Series of Poker", url: "https://www.wsop.com/" },
   ],
-  related: ["cash-game-poker", "texas-holdem-rules", "poker-pot-odds", "poker-bankroll-management"],
+  related: [
+    "cash-game-poker",
+    "texas-holdem-rules",
+    "poker-pot-odds",
+    "poker-bankroll-management",
+    "poker-equity-calculator",
+  ],
   updated: "2026-10-20",
 };

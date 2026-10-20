@@ -175,7 +175,9 @@ Write the title string, the denomination, and the stake. Leave return, max win, 
 
 If you remember only one ban, make it this: the pool you saw at one moment is not the pool a few minutes later, and it was never a return. Take the stake home in your notes. Leave the pool on the casino floor.
 
-A sibling cabinet with a different dragon name can share the aisle. The aisle does not rename it into this family or into Dragon Cash. Read the string before you sit.`,
+A sibling cabinet with a different dragon name can share the aisle. The aisle does not rename it into this family or into Dragon Cash. Read the string before you sit.
+
+A linked meter is not Dragon Cash. [The standalone dragon title](/guides/dragon-cash-slot) refuses that merger.`,
     },
   ],
   faqs: [
@@ -205,6 +207,12 @@ A sibling cabinet with a different dragon name can share the aisle. The aisle do
     },
   ],
   sources: [],
-  related: ["high-limit-slots", "slot-machine-odds", "house-edge", "penny-slots-online"],
+  related: [
+    "high-limit-slots",
+    "slot-machine-odds",
+    "house-edge",
+    "penny-slots-online",
+    "dragon-cash-slot",
+  ],
   updated: "2026-10-20",
 };

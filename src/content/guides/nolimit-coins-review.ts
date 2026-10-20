@@ -185,7 +185,9 @@ Our $12 Purple credit of $22.80 and our $48 flop pot with a $2.40 fee stay in a 
 
 Adults who want the sweeps model can use the hub and the coin guides. Adults who want a wheel or a six-max table already priced in dollars can use the ledgers and the fairness recompute.
 
-The studio search can wait for a page that is actually about that studio. Until that page exists in your own notes, resist filling its RTP from memory. Memory of a loading screen is not a citation.`,
+The studio search can wait for a page that is actually about that studio. Until that page exists in your own notes, resist filling its RTP from memory. Memory of a loading screen is not a citation.
+
+NoLimit Coins is not NoLimit City and not Moonspin. [The other sweeps cashier](/guides/moonspin-review) stays on its own redeem question.`,
     },
   ],
   faqs: [
@@ -220,6 +222,7 @@ The studio search can wait for a page that is actually about that studio. Until 
     "gold-coins-vs-sweeps-coins",
     "sweepstakes-vs-crypto-casino",
     "no-deposit-sweepstakes-casinos",
+    "moonspin-review",
   ],
   updated: "2026-10-20",
 };

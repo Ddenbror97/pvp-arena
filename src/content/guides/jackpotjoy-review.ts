@@ -183,7 +183,9 @@ Choose one path before you open another lobby. Say the path out loud using eithe
 
 A second reading the next morning is worth the time. Overnight memory likes to promote a coin total into dollars. If the morning note lacks a photographed rate, demote the total back to coins before you tell anyone a price.
 
-Keep our $41.80 and $57 in a margin that names Coinflip and our Jackpot. A margin without those game names will be misread as the slots brand by the next person who borrows the notebook.`,
+Keep our $41.80 and $57 in a margin that names Coinflip and our Jackpot. A margin without those game names will be misread as the slots brand by the next person who borrows the notebook.
+
+A long-running slots brand is not a television lobby. [The TV-network social casino](/guides/gsn-casino-review) is the social-casino search, not a show guide.`,
     },
   ],
   faqs: [
@@ -218,6 +220,7 @@ Keep our $41.80 and $57 in a margin that names Coinflip and our Jackpot. A margi
     "gold-coins-vs-sweeps-coins",
     "sweepstakes-vs-crypto-casino",
     "no-deposit-sweepstakes-casinos",
+    "gsn-casino-review",
   ],
   updated: "2026-10-20",
 };

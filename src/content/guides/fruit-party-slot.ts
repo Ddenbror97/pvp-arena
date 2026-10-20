@@ -170,7 +170,9 @@ The file is not legal advice, not tax advice, and not a suggestion of a stake si
 
 When play is no longer spare cash, use [limit pages](/responsible-gambling). Looking like a familiar candy game is not a reason to raise the stake.
 
-Real-money availability is only where that casino is allowed to offer this fruit title. Permission for a different cluster game does not transfer. If the site blocks your region, stop.`,
+Real-money availability is only where that casino is allowed to offer this fruit title. Permission for a different cluster game does not transfer. If the site blocks your region, stop.
+
+Fruit clusters are not jar clusters. [The jar cluster grid](/guides/jammin-jars-slot) is the other cluster-pays name.`,
     },
   ],
   faqs: [
@@ -206,6 +208,7 @@ Real-money availability is only where that casino is allowed to offer this fruit
     "crypto-slots",
     "megaways-slots",
     "bonanza-megaways-slot",
+    "jammin-jars-slot",
   ],
   updated: "2026-10-20",
 };

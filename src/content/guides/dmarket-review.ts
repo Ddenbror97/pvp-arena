@@ -182,7 +182,9 @@ If the game page shows a live block, that block updates from settled play. This 
 
 PVPspinArena does not sell CS skins and is not an affiliate of DMarket. We do not list a promo code. The published comparison is the pot fee, set beside a case whose price the house chooses and whose odds are often opaque.
 
-A later outbound link toward the brand should be read as advertising. This file is an editorial review of a search.`,
+A later outbound link toward the brand should be read as advertising. This file is an editorial review of a search.
+
+A large marketplace is not the only desk. [The desk whose name uses a dot](/guides/cs-money-review) is the other place readers compare fees, and those fees stay unpublished here.`,
     },
   ],
   faqs: [
@@ -217,6 +219,7 @@ A later outbound link toward the brand should be read as advertising. This file 
     "sell-skins-for-crypto",
     "skin-cashout-guide",
     "valve-gambling-lawsuit",
+    "cs-money-review",
   ],
   updated: "2026-10-20",
 };

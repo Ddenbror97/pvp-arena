@@ -9,8 +9,7 @@ export const guide: Guide = {
   description:
     "Dancing drums slot treats drums as a feature skin. RTP and max win are not published here. A $17 pot pays $16.15 under our fee, and a $4 Purple hit nets $7.60.",
   h1: "Dancing drums slot in 2026: drums are a skin, not a return",
-  answer:
-    `Dancing drums slot is a reel game dressed in a drum feature, and the costume is not a return. This page does not publish an RTP or a max win for it, because those figures were not verified.
+  answer: `Dancing drums slot is a reel game dressed in a drum feature, and the costume is not a return. This page does not publish an RTP or a max win for it, because those figures were not verified.
 
 Artwork can be judged without pretending it is a paytable. Our examples use other rules: a $17 pot, and $4 on Purple.`,
   facts: [
@@ -200,7 +199,9 @@ Use the site's or the casino's own eligibility check. This page will not help yo
 
 No affiliate arrangement is declared here because none is embedded. If a link to a lobby that hosts the game appears later, treat that link as advertising.
 
-When the feature becomes the reason the cap moves, leave through [responsible gambling](/responsible-gambling). The drums will still be in the thumbnail tomorrow. The cap can still be the one you wrote today.`,
+When the feature becomes the reason the cap moves, leave through [responsible gambling](/responsible-gambling). The drums will still be in the thumbnail tomorrow. The cap can still be the one you wrote today.
+
+Drums on a glass are not a lobster boat. [The lobster floor cabinet](/guides/lobstermania-slot) is another name people read off a casino floor.`,
     },
   ],
   faqs: [
@@ -243,6 +244,7 @@ Dancing drums slot is a commercial title with an unpublished return. The names d
     "house-edge",
     "top-dollar-slot",
     "floating-dragon-slot",
+    "lobstermania-slot",
   ],
   updated: "2026-10-20",
 };

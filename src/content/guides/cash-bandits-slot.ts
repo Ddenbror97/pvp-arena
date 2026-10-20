@@ -161,7 +161,9 @@ If the session stops being money you can afford to lose, open the [stop and limi
 
 Read the rules screen on the build you opened. That screen is what the casino pays against. Silence on return or max win means your notes stay blank.
 
-Our column is a published fee against another player, checked when the round has settled. The cabinet column stays not published until you see it.`,
+Our column is a published fee against another player, checked when the round has settled. The cabinet column stays not published until you see it.
+
+A heist glass is not a volcano glass. [The volcano cabinet](/guides/cash-eruption-slot) is the other floor name in this pair.`,
     },
   ],
   faqs: [
@@ -191,6 +193,12 @@ Our column is a published fee against another player, checked when the round has
     },
   ],
   sources: [],
-  related: ["slot-machine-odds", "slot-volatility", "high-limit-slots", "house-edge"],
+  related: [
+    "slot-machine-odds",
+    "slot-volatility",
+    "high-limit-slots",
+    "house-edge",
+    "cash-eruption-slot",
+  ],
   updated: "2026-10-20",
 };

@@ -188,7 +188,9 @@ Offer the poker hub if they want rules instead of a room. Rules do not require P
 
 Our flop trigger can be taught from the $35 example without opening their client at all. That is a complete lesson. Their client can wait until a rules page of theirs actually shows a number.
 
-Waiting a day is part of the review. A cashier that looks different tomorrow should produce a second note, not an edit that erases the first blank. Both notes can be true of their own dates.`,
+Waiting a day is part of the review. A cashier that looks different tomorrow should produce a second note, not an edit that erases the first blank. Both notes can be true of their own dates.
+
+This room is not the crypto-funded brand people type next. [The crypto-funded room brand](/guides/coinpoker-review) is that other cashier.`,
     },
   ],
   faqs: [
@@ -227,6 +229,7 @@ Jackpot's fee does not wait for a flop. It is a different game from the poker ro
     "real-money-poker-apps",
     "rigged-poker-sites",
     "black-chip-poker-review",
+    "coinpoker-review",
   ],
   updated: "2026-10-20",
 };

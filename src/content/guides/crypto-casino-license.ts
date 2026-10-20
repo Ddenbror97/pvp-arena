@@ -131,7 +131,9 @@ You want both when you can get both. If you can only get one, know which questio
 
 A lab certificate on an RNG is a third artefact. It says a sample of output looked unbiased in a test last year. It does not bind today's server, and it does not name your payout wallet. People paste all three — licence, lab, hash — into one sentence. Keep them apart.
 
-PVPspinArena publishes fairness so you can check Jackpot, Coinflip and Roulette. Open [fairness](/fairness). A footer seal would not replace that page, and that page does not replace your local law.`,
+PVPspinArena publishes fairness so you can check Jackpot, Coinflip and Roulette. Open [fairness](/fairness). A footer seal would not replace that page, and that page does not replace your local law.
+
+A license is not a token price, and a hash is not either. [The meme-token casino name](/guides/wsm-casino-review) gets no investment note and no bonus.`,
     },
     {
       id: "player-duties",
@@ -221,6 +223,7 @@ A footer badge still has to match a register. The [Malta Gaming Authority licenc
     "is-crypto-gambling-legal",
     "how-to-start-an-online-casino",
     "aml-gambling",
+    "wsm-casino-review",
   ],
   updated: "2026-09-26",
 };

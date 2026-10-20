@@ -203,7 +203,9 @@ Big O, short deck, 2-7, and open-face Chinese are not in that lobby either. The 
 
 Chase A-2-3-4-5. Ignore flushes.
 
-Refuse any limit structure this page did not attribute to a specific kitchen card. Then play Hold'em, if you want our table, under a 5% fee that applies only after the flop.`,
+Refuse any limit structure this page did not attribute to a specific kitchen card. Then play Hold'em, if you want our table, under a 5% fee that applies only after the flop.
+
+Ace-to-five stud low is not draw. [Deuce-to-seven draw](/guides/2-7-triple-draw) uses a different best hand and three draws.`,
     },
   ],
   faqs: [
@@ -260,6 +262,7 @@ Fold rough doors when you are drawing live into a board that already stole your 
     "how-to-play-poker",
     "texas-holdem-rules",
     "poker-bankroll-management",
+    "2-7-triple-draw",
   ],
   updated: "2026-10-20",
 };

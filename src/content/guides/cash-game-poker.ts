@@ -93,7 +93,9 @@ A table that folds too much pays steals. A table that calls too much pays value 
 
 Pot odds still decide calls. A fee already taken does not change the chips in the pot you see. It changed the pot before the decision. Use the current pot, the current bet, and your chance of winning. Do not add a ghost rake on top of a pot that was already raked. Double-counting the cap makes you fold calls you should make.
 
-[Crypto poker](/guides/crypto-poker) is relevant when the cashier is a coin and the table is still a cash game. The strategy does not care that the buy-in arrived as USDC. The cashier cares. Know the unit your rent is denominated in. A chip graph and a dollar graph can diverge when the coin moves.`,
+[Crypto poker](/guides/crypto-poker) is relevant when the cashier is a coin and the table is still a cash game. The strategy does not care that the buy-in arrived as USDC. The cashier cares. Know the unit your rent is denominated in. A chip graph and a dollar graph can diverge when the coin moves.
+
+Strategy notes are not a biography. [The televised cash-game name](/guides/tom-dwan) is the public high-stakes figure, and the challenge settlement is not printed.`,
     },
     {
       id: "standup",
@@ -104,7 +106,9 @@ A stop-loss fits because nothing forces you to finish. It keeps one session from
 
 Compare a single [Coinflip](/coinflip) if you want to see a posted fee with no streets. Two players build a pot. This site takes 5% of that pot. The hand is over. Cash game poker takes its fee across many pots and asks you to decide on every street. PVPspinArena is not a poker room, so it will not host your $1/$2 seat. The balance here is USD, funded with Bitcoin or with USDC or ETH on Base. Roulette is a separate house wheel: 33 slots, 16 Purple, 16 Silver at 2x, 1 Green at 14x, 5% taken from winning payouts, about 7.88% on Purple and Silver after the fee. That wheel is not a ring game.
 
-Do not "play it off" because the cashier takes time. Waiting on a withdrawal is not a reason to open another table. Close the client.`,
+Do not "play it off" because the cashier takes time. Waiting on a withdrawal is not a reason to open another table. Close the client.
+
+A cash game can allow a blind the rules do not require. [The voluntary extra blind](/guides/straddle-poker) acts last before the flop and is not a rule on these six-max tables.`,
     },
     {
       id: "checklist",
@@ -155,6 +159,8 @@ If the fee card is missing, ask or leave. A table that will not show its price i
     "spin-and-go",
     "poker-staking",
     "texas-holdem-strategy",
+    "straddle-poker",
+    "tom-dwan",
   ],
   updated: "2026-10-07",
 };

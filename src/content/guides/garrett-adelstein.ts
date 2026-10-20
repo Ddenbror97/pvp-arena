@@ -189,7 +189,9 @@ Boring is what keeps a caption from becoming a trial. If the sentence starts to 
 
 A dramatic sentence usually smuggles a card or a stack. You already decided those details are outside the article.
 
-Leaving them outside is the whole garrett adelstein story this page is willing to stand behind, together with the unpublished net worth. Stand behind the blank even when a comment offers a dollar "everyone saw." Everyone is not a source, and a familiar stack is not a citation.`,
+Leaving them outside is the whole garrett adelstein story this page is willing to stand behind, together with the unpublished net worth. Stand behind the blank even when a comment offers a dollar "everyone saw." Everyone is not a source, and a familiar stack is not a citation.
+
+One streamed hand is not a bracelet count. [The bracelet-record holder](/guides/phil-hellmuth) is a tournament career, with the WSOP.com figures kept on that page.`,
     },
   ],
   faqs: [
@@ -221,6 +223,12 @@ Without a flop, that fee is not charged. The figure is ours, not the 2022 stream
     },
   ],
   sources: [],
-  related: ["rigged-poker-sites", "cash-game-poker", "how-to-play-poker", "texas-holdem-rules"],
+  related: [
+    "rigged-poker-sites",
+    "cash-game-poker",
+    "how-to-play-poker",
+    "texas-holdem-rules",
+    "phil-hellmuth",
+  ],
   updated: "2026-10-20",
 };

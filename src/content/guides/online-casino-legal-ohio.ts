@@ -16,7 +16,7 @@ export const guide: Guide = {
     {
       id: "what-this-page-will-and-will-not-say",
       title: "What this page will and will not say",
-      body: 'It will say that commercial real-money online casino play is not an open statewide market the way sports betting is in some states. It will say that retail rules, and tribal rules where they exist, are separate from a remote cash-casino license. It will tell you to read the current regulator pages.\n\nIt will not say that a particular website is approved. It will not say that every remote wager is lawful or that every remote wager is a crime. It will not invent a bill number, a court date, or a sentence like "as of this year it is legal." If a legislature or a commission changes the picture, the agency site moves first and this kind of article moves later. Use the agency site.\n\nOhio players also see ads for offshore crypto casinos and for sweepstakes sites that look like casinos. Availability of an ad is not a license. The questions to write down are: what prize is offered, who claims to operate the site, and whether any Ohio agency lists that operator for that product.\n\nPVPspinArena offers jackpot, coinflip, roulette, and P2P Slott, settled in US dollars. It does not offer house-banked slots, sports betting, crash, craps, baccarat, or sweepstakes. Those games are still wagers. Mentioning them is not a statement that Ohio has authorized them online. Apply the same caution you would apply to any other cash game.',
+      body: 'It will say that commercial real-money online casino play is not an open statewide market the way sports betting is in some states. It will say that retail rules, and tribal rules where they exist, are separate from a remote cash-casino license. It will tell you to read the current regulator pages.\n\nIt will not say that a particular website is approved. It will not say that every remote wager is lawful or that every remote wager is a crime. It will not invent a bill number, a court date, or a sentence like "as of this year it is legal." If a legislature or a commission changes the picture, the agency site moves first and this kind of article moves later. Use the agency site.\n\nOhio players also see ads for offshore crypto casinos and for sweepstakes sites that look like casinos. Availability of an ad is not a license. The questions to write down are: what prize is offered, who claims to operate the site, and whether any Ohio agency lists that operator for that product.\n\nPVPspinArena offers jackpot, coinflip, roulette, and P2P Slott, settled in US dollars. It does not offer house-banked slots, sports betting, crash, craps, baccarat, or sweepstakes. Those games are still wagers. Mentioning them is not a statement that Ohio has authorized them online. Apply the same caution you would apply to any other cash game.\n\nOhio\'s retail and sports split is not Illinois. [Illinois, including the terminal question](/guides/online-gambling-legal-illinois) treats video-gambling terminals as their own product.',
     },
     {
       id: "sports-betting-is-a-different-product",
@@ -66,15 +66,14 @@ export const guide: Guide = {
       a: "Start with the Ohio Casino Control Commission, and check whether the Ohio Lottery publishes separate rules for products it oversees. This page is not legal advice. State rules change, so read the agency page itself rather than a summary from last year.",
     },
   ],
-  sources: [
-    { label: "Ohio Casino Control Commission", url: "https://casinocontrol.ohio.gov/" },
-  ],
+  sources: [{ label: "Ohio Casino Control Commission", url: "https://casinocontrol.ohio.gov/" }],
   related: [
     "is-online-casino-legal",
     "online-casino-legal-florida",
     "online-casino-legal-maryland",
     "sweepstakes-casino-legal-states",
     "sports-betting-legal-states",
+    "online-gambling-legal-illinois",
   ],
   updated: "2026-09-26",
 };

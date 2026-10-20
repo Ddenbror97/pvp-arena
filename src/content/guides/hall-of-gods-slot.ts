@@ -141,7 +141,9 @@ RTP shopping across sites, when you do not have this title's percent, is superst
 
 Hand-pay stories and "it froze" stories are casino-floor anecdotes. They are not a payout speed. Speed stays not published.
 
-Chasing the meter with larger stakes raises the cost of the ordinary losing spins. The meter does not owe you a turn because you stayed.`,
+Chasing the meter with larger stakes raises the cost of the ordinary losing spins. The meter does not owe you a turn because you stayed.
+
+A gods jackpot title is not every Norse hall. [The other hall name](/guides/asgard-slot) is a different glass.`,
     },
     {
       id: "legal",
@@ -154,7 +156,9 @@ Whether a given site may offer the game is a license question. The regulator's l
 
 [Walk away at the loss limit](/responsible-gambling). The meter will still be there tomorrow, with a different number, which is why today's number was never printed.
 
-The $114 winner share is a player pot after a 5% fee. It is not a Hall of Gods jackpot.`,
+The $114 winner share is a player pot after a 5% fee. It is not a Hall of Gods jackpot.
+
+A raid with sticky wilds is not this jackpot. [The raid title](/guides/vikings-go-berzerk-slot) stands on its own.`,
     },
   ],
   faqs: [
@@ -191,6 +195,8 @@ The $114 winner share is a player pot after a 5% fee. It is not a Hall of Gods j
     "house-edge",
     "huff-n-puff-slot",
     "dancing-drums-slot",
+    "asgard-slot",
+    "vikings-go-berzerk-slot",
   ],
   updated: "2026-10-20",
 };

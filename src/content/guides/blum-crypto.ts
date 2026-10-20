@@ -190,7 +190,9 @@ You have recruited people into a number without a rate. That is a social cost ev
 
 A gambling mini-game inside the same chat is the category change. Taps that once added points start taking a balance. You are no longer waiting on a rumor.
 
-You are staking. The stake's edge is not published here. Do not borrow our 5% to describe it.`,
+You are staking. The stake's edge is not published here. Do not borrow our 5% to describe it.
+
+One mini-app does not identify every tap game. [The ambiguous pump name](/guides/pump-game-crypto) says which product this site will not certify.`,
     },
     {
       id: "legal",
@@ -205,7 +207,9 @@ Securities questions about a future token are also outside a guide that refuses 
 
 [Responsible gambling](/responsible-gambling) is the limit page if the mini-app becomes a stake, and if the hours in the chat are the problem by themselves. A points quest can be a loop. Loops need a stop you choose.
 
-Editorial, not an announcement. No code. Any later outbound link should be read as advertising.`,
+Editorial, not an announcement. No code. Any later outbound link should be read as advertising.
+
+A coin in the name is not a listing. [The coin-named rewards app](/guides/yescoin-review) is not Bitcoin and not a price.`,
     },
   ],
   faqs: [
@@ -240,6 +244,8 @@ Editorial, not an announcement. No code. Any later outbound link should be read 
     "what-is-a-crypto-casino",
     "fake-casino-sites",
     "rollercoin-review",
+    "pump-game-crypto",
+    "yescoin-review",
   ],
   updated: "2026-10-20",
 };

@@ -174,7 +174,9 @@ A house spin on the run can show a stake and still hide the share that stake is 
 
 Wolf run slot rtp and wolf run slot max win are the run's own glass, not the desert title's glass. A wolf run slot demo, when some lobby offers practice for this brand, does not boot the other wolf. If the load screen says gold instead of run, you have changed articles, and you should change pages with it.
 
-The animal is the part autocomplete understands. The second word is the part that picks the contract. Read that word on the machine, then stop borrowing figures from the wolf you did not load.`,
+The animal is the part autocomplete understands. The second word is the part that picks the contract. Read that word on the machine, then stop borrowing figures from the wolf you did not load.
+
+This run is not the desert respin. [The desert wolf cabinet](/guides/wolf-gold-slot) answers that other search.`,
     },
   ],
   faqs: [
@@ -204,6 +206,12 @@ The animal is the part autocomplete understands. The second word is the part tha
     },
   ],
   sources: [],
-  related: ["buffalo-slot-machine", "slot-volatility", "house-edge", "slot-battles"],
+  related: [
+    "buffalo-slot-machine",
+    "slot-volatility",
+    "house-edge",
+    "slot-battles",
+    "wolf-gold-slot",
+  ],
   updated: "2026-10-20",
 };

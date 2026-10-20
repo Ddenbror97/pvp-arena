@@ -174,7 +174,9 @@ Mental 2 rtp, mental 2 max win, and a mental 2 demo are adult lookups, not dares
 
 The earlier release, if you played one, had its own glass. Sequel marketing does not notarize a handover of that glass. Treat the follow-up as a new document, then decide whether the document is worth a stake you can afford to lose.
 
-No scene from the marketing needs to be retold to make that decision. The decision is a number on a screen plus a cap you wrote down. If the number is missing, the decision can still be to leave.`,
+No scene from the marketing needs to be retold to make that decision. The decision is a number on a screen plus a cap you wrote down. If the number is missing, the decision can still be to leave.
+
+A sequel name is not a shared paytable with every grim cabinet. [The prison-themed follow-up search](/guides/san-quentin-slot) is a different title, still without a printed return on this site.`,
     },
   ],
   faqs: [
@@ -204,6 +206,12 @@ No scene from the marketing needs to be retold to make that decision. The decisi
     },
   ],
   sources: [],
-  related: ["slot-volatility", "high-limit-slots", "bonus-buy-slots", "house-edge"],
+  related: [
+    "slot-volatility",
+    "high-limit-slots",
+    "bonus-buy-slots",
+    "house-edge",
+    "san-quentin-slot",
+  ],
   updated: "2026-10-20",
 };

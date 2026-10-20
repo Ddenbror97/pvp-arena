@@ -110,7 +110,9 @@ On the Powerball matrix, the number of ways to win any published prize tier sums
 
 ### Why “1 in 25” misleads
 
-A 1-in-25 chance of some prize can still lose money. If the common prize is $4 and the ticket is $2, a hit can be a small cash return or a break-even, and the other 24 tickets in that sketch win nothing. Expected value adds prize times probability across every tier, then subtracts the ticket price. The method is on the [expected value](/guides/expected-value-gambling) page. A jackpot meter that grows from losing tickets is a different object again; that funding story stays on [progressive jackpot odds](/guides/progressive-jackpot-odds).`,
+A 1-in-25 chance of some prize can still lose money. If the common prize is $4 and the ticket is $2, a hit can be a small cash return or a break-even, and the other 24 tickets in that sketch win nothing. Expected value adds prize times probability across every tier, then subtracts the ticket price. The method is on the [expected value](/guides/expected-value-gambling) page. A jackpot meter that grows from losing tickets is a different object again; that funding story stays on [progressive jackpot odds](/guides/progressive-jackpot-odds).
+
+The drawing odds are not a second prize for a loser. [A draw for tickets that missed](/guides/second-chance-lottery) is a separate entry, with odds set by that drawing.`,
     },
     {
       id: "compared-with-casino",
@@ -193,6 +195,7 @@ Adults 18 and older. If lottery play stops being entertainment, use the limits o
     "quick-pick-lottery",
     "expected-value-gambling",
     "progressive-jackpot-odds",
+    "second-chance-lottery",
   ],
   updated: "2026-10-06",
 };

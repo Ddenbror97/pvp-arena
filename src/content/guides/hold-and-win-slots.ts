@@ -172,7 +172,9 @@ A house spin on one title that uses the label can show a stake and still hide th
 
 Hold and win slots max win, hold and win slots rtp, and a hold and win slots demo fail as category-wide searches for the same reason. A ceiling and a return belong to one rules screen. A demo, when a lobby offers it, belongs to one tile, and the tile is not the shelf.
 
-Count the respins from the title you opened, or do not count them. This article will not supply a universal count to finish a sentence that the glass left unfinished.`,
+Count the respins from the title you opened, or do not count them. This article will not supply a universal count to finish a sentence that the glass left unfinished.
+
+The mechanic is not a single glass. [One branded jackpot title](/guides/divine-fortune-slot) is an example of a name people search beside the category.`,
     },
   ],
   faqs: [
@@ -202,6 +204,12 @@ Count the respins from the title you opened, or do not count them. This article 
     },
   ],
   sources: [],
-  related: ["bonus-buy-slots", "slot-volatility", "rtp-calculator", "megaways-slots"],
+  related: [
+    "bonus-buy-slots",
+    "slot-volatility",
+    "rtp-calculator",
+    "megaways-slots",
+    "divine-fortune-slot",
+  ],
   updated: "2026-10-20",
 };

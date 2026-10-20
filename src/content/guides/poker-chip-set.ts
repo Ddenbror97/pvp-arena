@@ -177,7 +177,9 @@ If a live block is on that page, it updates from settled play. No chip inventory
 
 The lobby does not spread Big O, short deck, razz, 2-7, or open-face Chinese, so do not buy a special rack for those games and expect this site to deal them. Buy the set for the home Hold'em you actually host.
 
-We do not list a promo code for any chip maker. Pick clay or plastic because your hands like the stack, label the colors, and keep the casino's chips out of the case.`,
+We do not list a promo code for any chip maker. Pick clay or plastic because your hands like the stack, label the colors, and keep the casino's chips out of the case.
+
+Clay versus plastic does not set the rules. [Hosting the night those chips are for](/guides/how-to-host-a-poker-night) is where the blinds and the no-rake agreement belong.`,
     },
   ],
   faqs: [
@@ -218,6 +220,12 @@ Flopped Hold'em pots here are charged 5%. A $50 pot that sees a flop pays $2.50,
     { label: "Wikipedia: Casino token", url: "https://en.wikipedia.org/wiki/Casino_token" },
     { label: "Pagat — public card-game rules", url: "https://www.pagat.com/" },
   ],
-  related: ["cash-game-poker", "how-to-play-poker", "texas-holdem-rules", "crypto-poker"],
+  related: [
+    "cash-game-poker",
+    "how-to-play-poker",
+    "texas-holdem-rules",
+    "crypto-poker",
+    "how-to-host-a-poker-night",
+  ],
   updated: "2026-10-20",
 };

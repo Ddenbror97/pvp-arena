@@ -99,7 +99,9 @@ Suppose Book A charges a seller 5 percent and Book B charges 8 percent *in a hyp
 
 This is not an affiliate ranking. We do not get a cut if you open either site.
 
-If two books quote the same inspect a few percent apart, the gap is often hold time, payout method or who takes fraud risk — not a secret “better market.” Price the whole path, including the day you cannot touch the item.`,
+If two books quote the same inspect a few percent apart, the gap is often hold time, payout method or who takes fraud risk — not a secret “better market.” Price the whole path, including the day you cannot touch the item.
+
+Two listed desks are not the whole market. [A third marketplace desk](/guides/dmarket-review) has fees this page does not print.`,
     },
     {
       id: "table",
@@ -170,7 +172,9 @@ Close the comparison. If the money was a gambling hole, use [how to stop gamblin
 
 A comparison tab is still a spending tab. If you have both books open plus Steam plus a third “just checking,” you are not researching models. You are browsing inventory the way other people browse a lobby. Close two of the three. Finish one job.
 
-Pick a model that matches the item. Read the live fee page. Complete one sale or one buy. Do not collect marketplaces the way people collect casinos.`,
+Pick a model that matches the item. Read the live fee page. Complete one sale or one buy. Do not collect marketplaces the way people collect casinos.
+
+Stopping on two logos misses a third brand. [The desk with a dot in the name](/guides/cs-money-review) is that search.`,
     },
   ],
   faqs: [
@@ -220,6 +224,8 @@ Pick a model that matches the item. Read the live fee page. Complete one sale or
     "cs2-trading-sites",
     "skinsmonkey-review",
     "tradeit-gg-review",
+    "dmarket-review",
+    "cs-money-review",
   ],
   updated: "2026-09-26",
 };

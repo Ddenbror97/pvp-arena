@@ -108,7 +108,9 @@ A peer bid at $188 with a three-day site hold might net more if you can wait. If
 
 After USDC arrives, you can verify a wallet and deposit on PVPspinArena’s [wallet](/wallet) page with a normal transfer—not a token approval. Or you can stop and keep the coins. Selling was the cash-out. Gambling is optional.
 
-Session tip: decide the sell and the stake as two decisions. People who “just convert to play” often skip the fee math and the stop-loss.`,
+Session tip: decide the sell and the stake as two decisions. People who “just convert to play” often skip the fee math and the stop-loss.
+
+A sale into crypto is not a trade bot. [One trade-style desk](/guides/lootfarm-review) does not publish a per-trade fee here.`,
     },
     {
       id: "extra-depth",
@@ -189,6 +191,7 @@ Align the cashout network with the spend network. Base USDC for Base play beats 
     "skin-gambling-vs-crypto",
     "steam-market-fees",
     "steam-trade-hold",
+    "lootfarm-review",
   ],
   updated: "2026-09-26",
 };

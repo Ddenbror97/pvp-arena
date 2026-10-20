@@ -180,7 +180,9 @@ Expansion made the screenshots feel official. A launch photo, a billboard, and a
 
 Browser slots do not get to borrow that advertising glow. A screen full of casino games is still a separate question from the sports expansion, even when one company sells both somewhere else. This file will not assume that company is authorized for both here.
 
-If you are somewhere peer play is allowed, keep the $96 jackpot and the $75 flop pot in the fee column only. They show a 5% charge without pretending the percentage is Missouri’s tax or a license fee.`,
+If you are somewhere peer play is allowed, keep the $96 jackpot and the $75 flop pot in the fee column only. They show a 5% charge without pretending the percentage is Missouri’s tax or a license fee.
+
+Missouri's page does not list Oklahoma tribes. [The Oklahoma sports question](/guides/sports-betting-legal-oklahoma) is where that compact topic stays, without a roster of tribes.`,
     },
   ],
   faqs: [
@@ -220,6 +222,7 @@ If you are somewhere peer play is allowed, keep the $96 jackpot and the $75 flop
     "is-crypto-gambling-legal",
     "sweepstakes-vs-crypto-casino",
     "gambling-age-us",
+    "sports-betting-legal-oklahoma",
   ],
   updated: "2026-10-20",
 };

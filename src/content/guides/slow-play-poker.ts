@@ -188,7 +188,9 @@ No sample hand from the lobby is copied into this article.
 
 Do not look for solver steps there or here. Big O, short deck, razz, 2-7, and open-face Chinese are not the games that lobby deals.
 
-Bet the strong hand when a worse hand can call. Check it when a bluff is the realistic way to get paid. Call the clock a clock, and call the trap a trap.`,
+Bet the strong hand when a worse hand can call. Check it when a bluff is the realistic way to get paid. Call the clock a clock, and call the trap a trap.
+
+Trapping hides a made hand. The opposite display is [the game that shows every card face up](/guides/open-face-chinese-poker), where placement, not a check, is the decision.`,
     },
   ],
   faqs: [
@@ -235,6 +237,12 @@ Separate the idea from the clock. Review the hand you checked, including the val
     { label: "Pagat — public card-game rules", url: "https://www.pagat.com/" },
     { label: "World Series of Poker", url: "https://www.wsop.com/" },
   ],
-  related: ["gto-poker-strategy", "poker-pot-odds", "texas-holdem-rules", "cash-game-poker"],
+  related: [
+    "gto-poker-strategy",
+    "poker-pot-odds",
+    "texas-holdem-rules",
+    "cash-game-poker",
+    "open-face-chinese-poker",
+  ],
   updated: "2026-10-20",
 };

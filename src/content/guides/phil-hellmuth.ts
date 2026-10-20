@@ -181,7 +181,9 @@ Copy the URL in full, including the player id, rather than a search link that mi
 
 Until that revision, the July 2026 runner-up line is the latest score this article will carry. Do not preview an 18th bracelet as "due." Due is not a result the player page printed.
 
-Separate our $190 and $95 from the series figures with a horizontal line in your notes. People add across lines when the line is missing. The line is a tool, not a decoration.`,
+Separate our $190 and $95 from the series figures with a horizontal line in your notes. People add across lines when the line is missing. The line is a tool, not a decoration.
+
+Seventeen bracelets are not a cash-game nickname. [The cash-game high-stakes name](/guides/tom-dwan) is the other poker fame, with no net worth attached.`,
     },
   ],
   faqs: [
@@ -221,6 +223,7 @@ Separate our $190 and $95 from the series figures with a horizontal line in your
     "how-to-play-poker",
     "gto-poker-strategy",
     "poker-bankroll-management",
+    "tom-dwan",
   ],
   updated: "2026-10-20",
 };

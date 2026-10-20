@@ -174,7 +174,9 @@ Grand, as a word on the glass, might name a feature or it might only decorate th
 
 If the load screen omits the word grand, you are no longer on this page's subject. Close the note and open the neighboring animal slot instead. Do not carry the $1.80 pot fee or the $5.50 win fee across as if those cuts described the other herd.
 
-Playing both herd tiles to feel which one is looser is two purchases, not a measurement. The feeling arrives too quickly to stand in for a rules screen. Stop after the screen you can actually read.`,
+Playing both herd tiles to feel which one is looser is two purchases, not a measurement. The feeling arrives too quickly to stand in for a rules screen. Stop after the screen you can actually read.
+
+Grand is a cabinet name. The changing-reel buffalo is [the Megaways buffalo](/guides/buffalo-king-megaways), and it does not inherit this page's glass.`,
     },
   ],
   faqs: [
@@ -204,6 +206,12 @@ Playing both herd tiles to feel which one is looser is two purchases, not a meas
     },
   ],
   sources: [],
-  related: ["buffalo-slot-machine", "slot-machine-odds", "high-limit-slots", "penny-slots-online"],
+  related: [
+    "buffalo-slot-machine",
+    "slot-machine-odds",
+    "high-limit-slots",
+    "penny-slots-online",
+    "buffalo-king-megaways",
+  ],
   updated: "2026-10-20",
 };

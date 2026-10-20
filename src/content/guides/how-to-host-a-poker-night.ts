@@ -171,7 +171,9 @@ Pack the chips when the stop time hits. Square the last pot from the card.
 
 Walk people to a ride if they need one. The game ended.
 
-The hosting did its job.`,
+The hosting did its job.
+
+A written blind still needs chips people can count. [A home chip set](/guides/poker-chip-set) is the shopping page, not a casino denomination chart.`,
     },
   ],
   faqs: [
@@ -220,6 +222,7 @@ The site deals six-max No-Limit Hold'em and charges 5% of the pot only after a f
     "texas-holdem-rules",
     "cash-game-poker",
     "poker-bankroll-management",
+    "poker-chip-set",
   ],
   updated: "2026-10-20",
 };

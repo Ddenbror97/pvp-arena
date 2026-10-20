@@ -180,7 +180,9 @@ The two official clocks do not tick together. The lottery can revise a draw game
 
 Fame of a historic track does not publish a menu. A grandstand people recognize from photographs is still a place, and a place is not an account you can fund from a couch. If you want to know whether any account is offered, the commission page has to say so in its own words.
 
-This guide’s date is a writing date. It is not the date a product launched, and it is not the date a product was withdrawn. When those dates matter, they will be printed by the office that runs the product, not by a fee example about a $62 win.`,
+This guide’s date is a writing date. It is not the date a product launched, and it is not the date a product was withdrawn. When those dates matter, they will be printed by the office that runs the product, not by a fee example about a $62 win.
+
+Virginia does not inherit Illinois terminals. [The Illinois terminal market](/guides/online-gambling-legal-illinois) is the page for that retail product.`,
     },
   ],
   faqs: [
@@ -220,6 +222,7 @@ This guide’s date is a writing date. It is not the date a product launched, an
     "is-crypto-gambling-legal",
     "sweepstakes-casino-legal-states",
     "gambling-age-us",
+    "online-gambling-legal-illinois",
   ],
   updated: "2026-10-20",
 };

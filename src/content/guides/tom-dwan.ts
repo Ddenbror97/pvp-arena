@@ -182,7 +182,9 @@ Then stop. Unfinished is a factual status.
 
 Completing it in your own paragraph is the mistake this page is built to avoid. Read the paragraph aloud and listen for a winner's name. If you hear one, delete back to Daniel Cates and the word unfinished.
 
-Keep the source link with the note. A retelling that cannot point at the entry is how a screen name grows a fortune it was never given.`,
+Keep the source link with the note. A retelling that cannot point at the entry is how a screen name grows a fortune it was never given.
+
+Televised high-stakes pots are not a livestream hand from 2022. [The streamed cash-game pro](/guides/garrett-adelstein) is that later argument, and it does not declare a cheat proved.`,
     },
   ],
   faqs: [
@@ -217,6 +219,12 @@ Keep the source link with the note. A retelling that cannot point at the entry i
       url: "https://en.wikipedia.org/wiki/Tom_Dwan",
     },
   ],
-  related: ["how-to-play-poker", "cash-game-poker", "texas-holdem-rules", "poker-pot-odds"],
+  related: [
+    "how-to-play-poker",
+    "cash-game-poker",
+    "texas-holdem-rules",
+    "poker-pot-odds",
+    "garrett-adelstein",
+  ],
   updated: "2026-10-20",
 };

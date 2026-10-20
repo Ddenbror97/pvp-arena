@@ -178,7 +178,9 @@ Our worked figures are $10 from a $200 pot and $1.60 from a $16 peer win. A hous
 
 Leave the candy neighbor on its own page. Leave this title's multiple, if it has one, on its own glass.
 
-A one-dollar house spin on this famous tile can be the most viewed button in a lobby and still hide the share that dollar is expected to return. The $10 pot fee and the $1.60 peer fee are visible without a search ranking. Visibility is the difference the fame argument keeps missing.`,
+A one-dollar house spin on this famous tile can be the most viewed button in a lobby and still hide the share that dollar is expected to return. The $10 pot fee and the $1.60 peer fee are visible without a search ranking. Visibility is the difference the fame argument keeps missing.
+
+A tumble on this tile is not a presenter show. [The live candy wheel](/guides/sweet-bonanza-candyland) prices a round with a host, not a spin on this glass.`,
     },
   ],
   faqs: [
@@ -208,6 +210,12 @@ A one-dollar house spin on this famous tile can be the most viewed button in a l
     },
   ],
   sources: [],
-  related: ["sweet-bonanza", "slot-volatility", "rtp-calculator", "house-edge"],
+  related: [
+    "sweet-bonanza",
+    "slot-volatility",
+    "rtp-calculator",
+    "house-edge",
+    "sweet-bonanza-candyland",
+  ],
   updated: "2026-10-20",
 };

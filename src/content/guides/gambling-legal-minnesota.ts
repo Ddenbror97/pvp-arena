@@ -188,7 +188,9 @@ If you are somewhere peer play is allowed, the published prices stay small and v
 
 Check the date on whatever official page you open. A 2026 headline ages the moment a commission posts a new list. This file will not race that list, and it will not invent one.
 
-No promo code waits at the bottom. No operator is endorsed. The next click that matters is the regulator’s.`,
+No promo code waits at the bottom. No operator is endorsed. The next click that matters is the regulator’s.
+
+Minnesota's sports-betting search is not Wisconsin's online question. [The neighboring online question](/guides/online-gambling-legal-wisconsin) does not borrow a Minnesota answer.`,
     },
   ],
   faqs: [
@@ -228,6 +230,7 @@ No promo code waits at the bottom. No operator is endorsed. The next click that 
     "sweepstakes-vs-crypto-casino",
     "esports-betting-legal",
     "gambling-age-us",
+    "online-gambling-legal-wisconsin",
   ],
   updated: "2026-10-20",
 };

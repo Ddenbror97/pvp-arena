@@ -171,7 +171,9 @@ If a lobby really shows a moving total, that total belongs in your own note for 
 
 Divine fortune max win, divine fortune rtp, and a divine fortune demo are three separate errands. The first two are settled only by the rules screen at the casino you opened. The third is a button some lobbies place beside the tile and other lobbies never install.
 
-Our Jackpot resets when the pot is paid. After the $90 pot, the next prize starts only if new entries arrive, and $85.50 was the whole prize for the round that just ended. That reset is why a pot fee and a branded meter can share a casual nickname and still be different offers.`,
+Our Jackpot resets when the pot is paid. After the $90 pot, the next prize starts only if new entries arrive, and $85.50 was the whole prize for the round that just ended. That reset is why a pot fee and a branded meter can share a casual nickname and still be different offers.
+
+A branded jackpot wheel is not the whole hold-and-respin category. [The hold-and-respin mechanic](/guides/hold-and-win-slots) explains the pattern without pretending one title owns it.`,
     },
   ],
   faqs: [
@@ -201,6 +203,12 @@ Our Jackpot resets when the pot is paid. After the $90 pot, the next prize start
     },
   ],
   sources: [],
-  related: ["rtp-calculator", "house-edge", "slot-machine-odds", "slot-volatility"],
+  related: [
+    "rtp-calculator",
+    "house-edge",
+    "slot-machine-odds",
+    "slot-volatility",
+    "hold-and-win-slots",
+  ],
   updated: "2026-10-20",
 };

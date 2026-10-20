@@ -202,7 +202,9 @@ Steam's terms apply when items move. Artwork does not amend those terms. No enfo
 
 If the mood is pushing the session past the cap you set, open [responsible gambling](/responsible-gambling). A dark palette is not a reason to continue.
 
-Editorial comparison only. The brand is not ranked. No code is offered.`,
+Editorial comparison only. The brand is not ranked. No code is offered.
+
+One case brand does not set the next drop table. [Another case shop](/guides/key-drop-review) prints no code and no odds.`,
     },
   ],
   faqs: [
@@ -239,6 +241,7 @@ Editorial comparison only. The brand is not ranked. No code is offered.`,
     "datdrop-review",
     "packdraw-review",
     "skinrave-review",
+    "key-drop-review",
   ],
   updated: "2026-10-20",
 };

@@ -168,7 +168,9 @@ That edge is ours. It is not a translation of a case site's drop table, because 
 
 When a game page on this site shows a live block, the block updates from settled play. No recent spin is pasted into this review.
 
-PVPspinArena does not sell CS skins and is not an affiliate of the brand in the search box. We do not list a promo code. A later link that leaves for the brand should be read as advertising.`,
+PVPspinArena does not sell CS skins and is not an affiliate of the brand in the search box. We do not list a promo code. A later link that leaves for the brand should be read as advertising.
+
+One betting brand does not price the next lobby. [Another skin lobby](/guides/csgofast-review) leaves its fee and any code unpublished.`,
     },
   ],
   faqs: [
@@ -203,6 +205,7 @@ PVPspinArena does not sell CS skins and is not an affiliate of the brand in the 
     "sell-skins-for-crypto",
     "skin-cashout-guide",
     "valve-gambling-lawsuit",
+    "csgofast-review",
   ],
   updated: "2026-10-20",
 };

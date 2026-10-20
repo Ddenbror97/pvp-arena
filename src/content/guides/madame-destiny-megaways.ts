@@ -181,7 +181,9 @@ Our checkable prices are player-versus-player fees after settlement. The fortune
 
 On a floor, write the title, the stake, and whether the heights moved. Leave return empty. A photo of one tall reel does not answer the empty cell.
 
-Pages that pair a practice button with a percent are still not a source. If the button spends nothing, it previews rules. The percent stays unpublished until the rules screen inside that preview actually shows it.`,
+Pages that pair a practice button with a percent are still not a source. If the button spends nothing, it previews rules. The percent stays unpublished until the rules screen inside that preview actually shows it.
+
+Changing reel heights are not a cluster of jars. [The jar cluster grid](/guides/jammin-jars-slot) is the other layout.`,
     },
   ],
   faqs: [
@@ -211,6 +213,12 @@ Pages that pair a practice button with a percent are still not a source. If the 
     },
   ],
   sources: [],
-  related: ["megaways-slots", "bonus-buy-slots", "rtp-calculator", "slot-machine-odds"],
+  related: [
+    "megaways-slots",
+    "bonus-buy-slots",
+    "rtp-calculator",
+    "slot-machine-odds",
+    "jammin-jars-slot",
+  ],
   updated: "2026-10-20",
 };

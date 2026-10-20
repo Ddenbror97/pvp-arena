@@ -225,7 +225,9 @@ You can close the visit with the account uncreated. Uncreated is not a failure o
 
 It is what a first visit is allowed to produce when the offer will not stand without the picture. Come back only with the terms in a tab of their own, and with a stake that is already surplus.
 
-The paper inventory is the only price list this review will defend. Anything brighter than that paper stays unpublished until you can quote it from their terms without the animal in the frame.`,
+The paper inventory is the only price list this review will defend. Anything brighter than that paper stays unpublished until you can quote it from their terms without the animal in the frame.
+
+A panda in the name is not a fee. [The other blank offshore cashier](/guides/razed-casino-review) is the same kind of page for a different brand.`,
     },
   ],
   faqs: [
@@ -255,6 +257,12 @@ The paper inventory is the only price list this review will defend. Anything bri
     },
   ],
   sources: [],
-  related: ["fake-casino-sites", "are-online-casinos-safe", "no-kyc-casino", "crypto-casino-usa"],
+  related: [
+    "fake-casino-sites",
+    "are-online-casinos-safe",
+    "no-kyc-casino",
+    "crypto-casino-usa",
+    "razed-casino-review",
+  ],
   updated: "2026-10-20",
 };

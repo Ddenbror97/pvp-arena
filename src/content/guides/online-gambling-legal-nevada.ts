@@ -178,7 +178,9 @@ Interactive history is narrower than the walk from the curb to the tables. Peopl
 
 Write down the question you actually have before you ask the Board’s site to answer a different one. Floor access, interactive casino games, interactive poker, and a sports app can be four readings. One reading that comes back clear does not color the other three.
 
-If you are somewhere peer play is allowed, the coinflip and jackpot fees stay 5% of the pot no matter how large the building is. The building’s rules for adult guests do not reprint those fees onto a sportsbook, and they do not turn a sweepstakes download into a pit game.`,
+If you are somewhere peer play is allowed, the coinflip and jackpot fees stay 5% of the pot no matter how large the building is. The building’s rules for adult guests do not reprint those fees onto a sportsbook, and they do not turn a sweepstakes download into a pit game.
+
+Land-based casinos in Nevada do not answer Colorado. [A mountain state people lump in with Nevada](/guides/online-gambling-legal-colorado) has its own regulator.`,
     },
   ],
   faqs: [
@@ -218,6 +220,7 @@ If you are somewhere peer play is allowed, the coinflip and jackpot fees stay 5%
     "is-crypto-gambling-legal",
     "sweepstakes-vs-crypto-casino",
     "gambling-age-us",
+    "online-gambling-legal-colorado",
   ],
   updated: "2026-10-20",
 };

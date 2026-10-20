@@ -171,7 +171,9 @@ Georgia is named because that lottery, with Missouri, announced the February 21,
 
 A ticket bought before the sales end can still be a live claim. Whether it is live depends on the state printed on it. A calendar reminder set to February 21, 2026 will track the sales announcement and can miss a shorter claim rule, or invent a deadline the selling state never wrote.
 
-Lower rows on the old chart stay not published in this file on purpose. If your ticket matched something other than the two life prizes, the amount is on the state chart, not in a guess that starts from $1,000 a day. The day prize and the week prize are the only amounts this page will say.`,
+Lower rows on the old chart stay not published in this file on purpose. If your ticket matched something other than the two life prizes, the amount is on the state chart, not in a guess that starts from $1,000 a day. The day prize and the week prize are the only amounts this page will say.
+
+A life annuity that has stopped selling is not a second draw for a dead ticket. [Entering a losing ticket in a later draw](/guides/second-chance-lottery) is that other product.`,
     },
   ],
   faqs: [
@@ -215,6 +217,7 @@ Lower rows on the old chart stay not published in this file on purpose. If your 
     "what-to-do-if-you-win-the-lottery",
     "odds-of-winning-the-lottery",
     "quick-pick-lottery",
+    "second-chance-lottery",
   ],
   updated: "2026-10-20",
 };

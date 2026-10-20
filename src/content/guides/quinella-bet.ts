@@ -178,7 +178,9 @@ A will-pay that flashes a large number is still an estimate. Late money on your 
 
 Bankroll the pairs the way you would bankroll any exotic. Six pairs at $2 is $12 even when each pair felt small.
 
-The $7 single-pair example earlier on this page is a different bill from that $12. Write the one you meant.`,
+The $7 single-pair example earlier on this page is a different bill from that $12. Write the one you meant.
+
+Either order in one race is not six races. [The six-race carryover](/guides/pick-6-horse-racing) is the multi-race pool.`,
     },
   ],
   faqs: [
@@ -213,6 +215,7 @@ The $7 single-pair example earlier on this page is a different bill from that $1
     "horse-racing-odds-explained",
     "how-to-bet-on-horse-racing",
     "gambling-age-us",
+    "pick-6-horse-racing",
   ],
   updated: "2026-10-20",
 };

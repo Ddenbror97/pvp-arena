@@ -66,7 +66,9 @@ Figures are the widely published full-pay and common short-pay pair. Always read
 
 Deuces Wild, Bonus Poker, Double Double Bonus, and Joker games each have their own full-pay and short-pay sheets. A Deuces Wild “full pay” is not 9/6. A Bonus Poker that pays extra on aces can still be a worse RTP than 9/6 Jacks if the lower rungs are cut. Learn one family first. Jacks or Better is the usual teaching family because the chart is smaller and the paytable language is simple.
 
-Progressives add a meter to the royal. When the meter is high enough, published RTPs can cross 100% *with perfect play and the posted base pays*. Casinos know this. They change the base, cap the bet, or the meter is never actually there on the machine you found. Do the glass, not the flyer.`,
+Progressives add a meter to the royal. When the meter is high enough, published RTPs can cross 100% *with perfect play and the posted base pays*. Casinos know this. They change the base, cap the bet, or the meter is never actually there on the machine you found. Do the glass, not the flyer.
+
+A standard paytable does not include a wild. [The machine with a wild joker](/guides/joker-poker) is a different contract.`,
     },
     {
       id: "example",
@@ -113,7 +115,9 @@ This is still not a reason to raise the denomination after a loss. Max-coin on a
 
 Three Card Poker is also a house game; it is a different paytable and a different decision (Q-6-4). Do not mix the charts.
 
-Progressives and “100%+” variants exist. Some Deuces Wild full-pay games have been published above 100% with perfect play. Those machines are rare, often capped, and still variance monsters. A blog screenshot is not the glass in front of you. If the royal does not pay what the article assumed, the RTP is fiction.`,
+Progressives and “100%+” variants exist. Some Deuces Wild full-pay games have been published above 100% with perfect play. Those machines are rare, often capped, and still variance monsters. A blog screenshot is not the glass in front of you. If the royal does not pay what the article assumed, the RTP is fiction.
+
+Bonus schedules are not hold'em and not one shared RTP. [The aces-with-kicker schedule](/guides/double-double-bonus-poker) is one named schedule.`,
     },
     {
       id: "budget",
@@ -189,6 +193,8 @@ The other video-poker family with its own full-pay chart is [Deuces Wild](/guide
     "expected-value-gambling",
     "poker-hand-rankings",
     "deuces-wild",
+    "joker-poker",
+    "double-double-bonus-poker",
   ],
   updated: "2026-09-26",
 };

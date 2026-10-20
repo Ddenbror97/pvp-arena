@@ -194,7 +194,9 @@ This article is one visit's refusal to invent. A dated screenshot from you can b
 
 Keep both. The article holds the line that our tables are a different product, and no screenshot of their lobby can erase that line.
 
-If the screenshot shows a rake, store it in their folder with the date. Do not paste it over our 5% sentence.`,
+If the screenshot shows a rake, store it in their folder with the date. Do not paste it over our 5% sentence.
+
+A current crypto-room brand is not the early bitcoin name. [The early bitcoin room name](/guides/swc-poker-review) is a history page, and its present rake is still not published here.`,
     },
   ],
   faqs: [
@@ -226,6 +228,12 @@ Our tables are a separate six-max game with a 5% fee after a flop. The shared th
     },
   ],
   sources: [],
-  related: ["crypto-poker", "real-money-poker-apps", "replay-poker-review", "rigged-poker-sites"],
+  related: [
+    "crypto-poker",
+    "real-money-poker-apps",
+    "replay-poker-review",
+    "rigged-poker-sites",
+    "swc-poker-review",
+  ],
   updated: "2026-10-20",
 };

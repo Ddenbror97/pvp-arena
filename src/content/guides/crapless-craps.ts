@@ -175,7 +175,9 @@ Leave the table at the budget. A rare point that hits is already included in the
 
 Dealers and help files sometimes rename the layout. Trust the point boxes, not the nickname on the felt. If 2, 3, 11, and 12 are points, you are still on this page's contract.
 
-If a side bet sits next to those boxes, leave its price unread by this article. The only figure to carry away is about 5.38% on even money with nothing behind the line.`,
+If a side bet sits next to those boxes, leave its price unread by this article. The only figure to carry away is about 5.38% on even money with nothing behind the line.
+
+A pass line that turns 2, 3, 11, and 12 into points is not the field. [The one-roll field](/guides/craps-field-bet) prices a different set of faces.`,
     },
   ],
   faqs: [
@@ -205,6 +207,6 @@ If a side bet sits next to those boxes, leave its price unread by this article. 
     },
   ],
   sources: [],
-  related: ["online-craps", "craps-odds", "craps-strategy", "sic-bo-online"],
+  related: ["online-craps", "craps-odds", "craps-strategy", "sic-bo-online", "craps-field-bet"],
   updated: "2026-10-20",
 };

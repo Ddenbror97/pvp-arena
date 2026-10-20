@@ -184,7 +184,9 @@ Peer play, if you are somewhere it is allowed, can sit in a note that is about f
 
 People who split time between the Front Range and a mountain town sometimes talk as if the elevation changed the rule. The rule’s author is still the state regulator, not the altitude. Check the same official site in both places, and do not let a vacation rental’s brochure pick the product.
 
-A last filter is the company string. The name on the app store, the name on the cashier, and the name on the regulator’s page should match before any dollar moves. If you cannot line the strings up, you are still sorting, and the download can wait.`,
+A last filter is the company string. The name on the app store, the name on the cashier, and the name on the regulator’s page should match before any dollar moves. If you cannot line the strings up, you are still sorting, and the download can wait.
+
+A regulated mountain market is not an island with a different history. [The island market with no Strip](/guides/gambling-legal-hawaii) stays on its own page.`,
     },
   ],
   faqs: [
@@ -224,6 +226,7 @@ A last filter is the company string. The name on the app store, the name on the 
     "esports-betting-legal",
     "sweepstakes-casino-legal-states",
     "online-gambling-legal-kentucky",
+    "gambling-legal-hawaii",
   ],
   updated: "2026-10-20",
 };

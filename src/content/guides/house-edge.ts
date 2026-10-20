@@ -177,7 +177,9 @@ If your budget is small, high-variance bets make it more likely you will lose ev
 - **"The house edge is what I will lose per session."** Only on average, and only as a share of total wagered.
 - **"Higher payouts mean a better game."** Not necessarily. What matters is payout relative to probability.
 - **"Online games have a higher edge than they show."** On a provably fair game, you can verify each result follows the published method, so the stated odds are the real odds. See our [provably fair casino guide](/guides/provably-fair-casino).
-- **"The casino changes the edge when I am winning."** With published rules and verifiable results, it cannot do so without detection.`,
+- **"The casino changes the edge when I am winning."** With published rules and verifiable results, it cannot do so without detection.
+
+The edge is a price, not a biography. [The operator behind the Stardust story](/guides/frank-rosenthal) is the skim-era name, with no net worth on that page.`,
     },
     {
       id: "use",
@@ -259,6 +261,7 @@ The [law of large numbers](/guides/law-of-large-numbers-gambling) is why that lo
     "how-do-online-casinos-make-money",
     "law-of-large-numbers-gambling",
     "french-roulette",
+    "frank-rosenthal",
   ],
   updated: "2026-09-25",
 };

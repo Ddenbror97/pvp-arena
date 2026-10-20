@@ -172,7 +172,9 @@ Our 5% cuts are not a candy hold. They do not become more official by standing n
 
 Editorial, not a bonus. No code hides in the label. An outbound link on a later pass is advertising.
 
-[Tools that stop a session](/responsible-gambling) apply when a grid of spots outlasts the money you named. An unpublished cap is not permission to find the cap empirically.`,
+[Tools that stop a session](/responsible-gambling) apply when a grid of spots outlasts the money you named. An unpublished cap is not permission to find the cap empirically.
+
+A candy cluster is not a shark nudge. [The shark nudge game](/guides/razor-shark-slot) is a different feature and a different rules screen.`,
     },
   ],
   faqs: [
@@ -207,6 +209,7 @@ Editorial, not a bonus. No code hides in the label. An outbound link on a later 
     "crypto-slots",
     "slot-machine-odds",
     "fruit-shop-slot",
+    "razor-shark-slot",
   ],
   updated: "2026-10-20",
 };

@@ -182,7 +182,9 @@ A wishing well does not get a line either. If you cannot point to a developer, y
 
 If you play the pot, recompute the $29 Coinflip or the $16 seats from the rules, then read the control you actually join. If you stay with the app, quote only the redemption screen, dated.
 
-PVPspinArena is not an affiliate of the rewards search. The absence of a code is deliberate.`,
+PVPspinArena is not an affiliate of the rewards search. The absence of a code is deliberate.
+
+A cash-app search is not a survey lobby. [The survey-site games lobby](/guides/inboxdollars-games) pays in the program's own points, not in a poker pot.`,
     },
   ],
   faqs: [
@@ -217,6 +219,7 @@ PVPspinArena is not an affiliate of the rewards search. The absence of a code is
     "skill-based-gambling",
     "solitaire-cash-review",
     "house-edge",
+    "inboxdollars-games",
   ],
   updated: "2026-10-20",
 };

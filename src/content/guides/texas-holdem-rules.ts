@@ -163,7 +163,9 @@ Write it on a card if you have to: **button = last after flop; blinds = forced m
       title: "Summary: Hold'em is an order of streets, not a paytable",
       body: `How to play Texas Holdem: two hole cards, blinds, preflop action, three flop cards, turn, river, then showdown or an earlier fold. No-limit sizes sit on top of that order. Rake sits on top of the pot.
 
-PVPspinArena does not run this loop. Verify a hashed PvP result on [fairness](/fairness) if you play here; that check is for Jackpot, Coinflip and Roulette, not for a flop. If Hold'em or any other game is already costing more than a planned budget, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Adults 18+ only.`,
+PVPspinArena does not run this loop. Verify a hashed PvP result on [fairness](/fairness) if you play here; that check is for Jackpot, Coinflip and Roulette, not for a flop. If Hold'em or any other game is already costing more than a planned budget, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Adults 18+ only.
+
+A full deck is the game above. [The 36-card deck](/guides/short-deck-poker) drops twos through fives and is not dealt on these tables.`,
     },
   ],
   faqs: [
@@ -206,6 +208,7 @@ PVPspinArena does not run this loop. Verify a hashed PvP result on [fairness](/f
     "texas-holdem-strategy",
     "poker-for-beginners",
     "crypto-poker",
+    "short-deck-poker",
   ],
   updated: "2026-09-26",
 };

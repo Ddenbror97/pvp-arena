@@ -171,7 +171,9 @@ People merge the names because coin showers and scaled creatures travel well in 
 
 If you already opened the other product by mistake, close it and start again from the load screen rather than annotating this page with that session. Notes taken on the wrong title feel thrifty and produce a false cell. The $68.40 winner's receipt will not correct that cell, because the receipt was never a dragon prize.
 
-Coin art is allowed to be enjoyable. Enjoyment is not a cell in the paytable, and it is not a reason to hand Dragon Link's reputation to dragon cash. If both products sit in one lobby, they still do not share this article.`,
+Coin art is allowed to be enjoyable. Enjoyment is not a cell in the paytable, and it is not a reason to hand Dragon Link's reputation to dragon cash. If both products sit in one lobby, they still do not share this article.
+
+Dragon Cash is not a linked meter. [The linked-jackpot dragon](/guides/dragon-link-slot) is the page for that other product.`,
     },
   ],
   faqs: [
@@ -201,6 +203,12 @@ Coin art is allowed to be enjoyable. Enjoyment is not a cell in the paytable, an
     },
   ],
   sources: [],
-  related: ["slot-machine-odds", "penny-slots-online", "slot-battles", "house-edge"],
+  related: [
+    "slot-machine-odds",
+    "penny-slots-online",
+    "slot-battles",
+    "house-edge",
+    "dragon-link-slot",
+  ],
   updated: "2026-10-20",
 };

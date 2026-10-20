@@ -174,7 +174,9 @@ When our game page has a live block, the block updates from settled play. Nothin
 
 PVPspinArena does not sell CS skins, and it is not an affiliate of the numbered brand. This file prints no promo code. The allowed comparison is their unpublished cashier against a peer pot or wheel whose fee is already public, and against a case whose price the house sets.
 
-Advertising is what a later outbound link would be. This file is the review.`,
+Advertising is what a later outbound link would be. This file is the review.
+
+A numbered lobby is not a case opener. [The case shop](/guides/key-drop-review) sells a spin against a table, not a match against a person.`,
     },
   ],
   faqs: [
@@ -209,6 +211,7 @@ Advertising is what a later outbound link would be. This file is the review.`,
     "skin-cashout-guide",
     "csgoroll-review",
     "sell-skins-for-crypto",
+    "key-drop-review",
   ],
   updated: "2026-10-20",
 };

@@ -98,7 +98,9 @@ Take the lump sum and the cash option, minus whatever was withheld, lands mostly
 
 Nonresidents sometimes owe tax to the state that sold the ticket and also have a home-state return. Credits between states exist in some pairs and not in others. Do not assume the selling state’s withholding satisfied your home state.
 
-Charitable gifts, income timing, and the legal name of the claimant can change the picture. They cannot change it after you have cashed and spent the gross. Park the money until the return is sketched. The order of those steps is [what to do if you win the lottery](/guides/what-to-do-if-you-win-the-lottery), not a second copy of the rate table.`,
+Charitable gifts, income timing, and the legal name of the claimant can change the picture. They cannot change it after you have cashed and spent the gross. Park the money until the return is sketched. The order of those steps is [what to do if you win the lottery](/guides/what-to-do-if-you-win-the-lottery), not a second copy of the rate table.
+
+A life annuity needs a game that is still sold. [The retired daily life prize](/guides/cash4life-lottery) stopped sales on February 21, 2026, and claim windows depend on the state.`,
     },
     {
       id: "checklist",
@@ -153,7 +155,10 @@ Adults 18 and older. Knowing the 24 percent line is not a reason to buy more com
     },
   ],
   sources: [
-    { label: "IRS Topic 419, Gambling Income and Losses", url: "https://www.irs.gov/taxtopics/tc419" },
+    {
+      label: "IRS Topic 419, Gambling Income and Losses",
+      url: "https://www.irs.gov/taxtopics/tc419",
+    },
     { label: "IRS — About Form W-2G", url: "https://www.irs.gov/forms-pubs/about-form-w-2g" },
     { label: "Powerball", url: "https://www.powerball.com/" },
   ],
@@ -163,6 +168,7 @@ Adults 18 and older. Knowing the 24 percent line is not a reason to buy more com
     "expected-value-gambling",
     "gambling-loss-deduction",
     "crypto-gambling-taxes",
+    "cash4life-lottery",
   ],
   updated: "2026-10-06",
 };

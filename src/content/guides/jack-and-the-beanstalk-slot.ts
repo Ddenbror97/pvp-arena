@@ -172,7 +172,9 @@ Name the build. Read its glass. Leave the other vines for their own glass.
 
 A house spin on one studio's vine can show a stake and still hide the share that stake is expected to return. A second studio's vine can hide another share. The $2.70 coin-pot fee and the $4.20 peer fee do not blend those vines into a typical beanstalk price.
 
-Jack and the beanstalk slot rtp fails as a single search because the tale has many builds. Jack and the beanstalk slot max win fails the same way. A jack and the beanstalk slot demo, if a lobby shows one, opens the build that lobby licensed, which may be none of the versions you remember from an older site.`,
+Jack and the beanstalk slot rtp fails as a single search because the tale has many builds. Jack and the beanstalk slot max win fails the same way. A jack and the beanstalk slot demo, if a lobby shows one, opens the build that lobby licensed, which may be none of the versions you remember from an older site.
+
+More than one studio has used the beanstalk. The same warning, on a different brand, is [the Egyptian cabinet with many versions](/guides/cleopatra-slot).`,
     },
   ],
   faqs: [
@@ -202,6 +204,12 @@ Jack and the beanstalk slot rtp fails as a single search because the tale has ma
     },
   ],
   sources: [],
-  related: ["slot-machine-odds", "rtp-calculator", "slot-volatility", "megaways-slots"],
+  related: [
+    "slot-machine-odds",
+    "rtp-calculator",
+    "slot-volatility",
+    "megaways-slots",
+    "cleopatra-slot",
+  ],
   updated: "2026-10-20",
 };

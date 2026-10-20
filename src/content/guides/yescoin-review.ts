@@ -187,7 +187,9 @@ Bitcoin stays in its funding sentence: it can add US dollars to our balance, alo
 
 Coinflip stays a fourth label so the name "coin" does not swallow it. Its fee is 5% of the pot. It does not cash out someone else's rewards integer.
 
-If the app later posts a rate, the rate is that post. Until then the honest cell is not published. PVPspinArena is not an affiliate of the app, and the file contains no code that would imply otherwise.`,
+If the app later posts a rate, the rate is that post. Until then the honest cell is not published. PVPspinArena is not an affiliate of the app, and the file contains no code that would imply otherwise.
+
+Yescoin is not a pump button and not a chain. [The ambiguously named pump search](/guides/pump-game-crypto) says which claims this site will not verify.`,
     },
   ],
   faqs: [
@@ -217,6 +219,12 @@ If the app later posts a rate, the rate is that post. Until then the honest cell
     },
   ],
   sources: [],
-  related: ["telegram-casino-bot", "pvp-gambling", "house-edge", "skill-based-gambling"],
+  related: [
+    "telegram-casino-bot",
+    "pvp-gambling",
+    "house-edge",
+    "skill-based-gambling",
+    "pump-game-crypto",
+  ],
   updated: "2026-10-20",
 };

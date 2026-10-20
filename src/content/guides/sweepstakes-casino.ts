@@ -129,7 +129,9 @@ Set a [gambling budget](/guides/gambling-budget) in dollars you paid, not in Gol
 
 Session length is the other hidden cost. A two-token lobby is built to keep a tab open: dailies, streaks, “SC weekend,” and a redeem floor that sits just above whatever you hold. If you came to test a $10 bundle and you are still clicking six hours later, the product worked as designed. That is not a compliment. Cap the clock the same way you cap the dollars. A note on the desk that says “one hour, then the app closes” beats a mental promise you will make after the next bonus round.
 
-PVPspinArena will not convert your USDC into Sweeps Coins. If you are here, you are looking at pots and a wheel, not a two-token sweepstakes. That is a product limit, not a hidden Gold Coin shop.`,
+PVPspinArena will not convert your USDC into Sweeps Coins. If you are here, you are looking at pots and a wheel, not a two-token sweepstakes. That is a product limit, not a hidden Gold Coin shop.
+
+A television network's lobby is still a social product. [The network's social lobby](/guides/gsn-casino-review) is not an episode guide.`,
     },
     {
       id: "summary",
@@ -140,7 +142,9 @@ Play only if you are 18 or over, can afford the purchase as entertainment, and h
 
 Two questions sit beside the coin split. [How sweepstakes casinos make money](/guides/how-do-sweepstakes-casinos-make-money) is the business. [New sweepstakes casinos](/guides/new-sweepstakes-casinos) are just newer versions of the same contract.
 
-Brand cashiers are separate notes, not a ranking. The [Yay redeem path](/guides/yay-casino-review) and the [Zula traffic warning](/guides/zula-casino-review) both start at the coin screen. [Crown-branded coins](/guides/crown-coins-casino-review), the [Modo sweeps name](/guides/modo-casino-review), [Fortune's coin rate](/guides/fortune-coins-review) and the [Hello Millions cashier](/guides/hello-millions-review) each leave unpublished fees blank.`,
+Brand cashiers are separate notes, not a ranking. The [Yay redeem path](/guides/yay-casino-review) and the [Zula traffic warning](/guides/zula-casino-review) both start at the coin screen. [Crown-branded coins](/guides/crown-coins-casino-review), the [Modo sweeps name](/guides/modo-casino-review), [Fortune's coin rate](/guides/fortune-coins-review) and the [Hello Millions cashier](/guides/hello-millions-review) each leave unpublished fees blank.
+
+A sweeps definition is not that brand, and that brand is not our Jackpot. [The long-running slots brand](/guides/jackpotjoy-review) keeps the names apart.`,
     },
   ],
   faqs: [
@@ -186,6 +190,8 @@ Brand cashiers are separate notes, not a ranking. The [Yay redeem path](/guides/
     "gambling-budget",
     "new-sweepstakes-casinos",
     "how-do-sweepstakes-casinos-make-money",
+    "jackpotjoy-review",
+    "gsn-casino-review",
   ],
   updated: "2026-09-26",
 };

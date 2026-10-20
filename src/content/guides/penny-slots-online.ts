@@ -134,7 +134,9 @@ One clean test beats a pile of tabs. Use the smallest stake the cashier will acc
 
 Then close the tab or play only what this site actually offers. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars, adults 18+ only. A second account is not a fresh start.
 
-A penny denomination is not these cabinets. The [Top Dollar name](/guides/top-dollar-slot), [Floating Dragon hold-and-spin](/guides/floating-dragon-slot) and the [Piggy Bankin bonus](/guides/piggy-bankin-slot) keep their returns unpublished. [Stack 'Em caps](/guides/stack-em-slot) and [Beam Boys bonus modes](/guides/beam-boys-slot) do too.`,
+A penny denomination is not these cabinets. The [Top Dollar name](/guides/top-dollar-slot), [Floating Dragon hold-and-spin](/guides/floating-dragon-slot) and the [Piggy Bankin bonus](/guides/piggy-bankin-slot) keep their returns unpublished. [Stack 'Em caps](/guides/stack-em-slot) and [Beam Boys bonus modes](/guides/beam-boys-slot) do too.
+
+A penny denomination is not a platinum label. [The platinum label on a floor family](/guides/quick-hit-platinum) does not mean a higher return.`,
     },
   ],
   faqs: [
@@ -172,6 +174,7 @@ A penny denomination is not these cabinets. The [Top Dollar name](/guides/top-do
     "slot-machine-odds",
     "top-dollar-slot",
     "floating-dragon-slot",
+    "quick-hit-platinum",
   ],
   updated: "2026-09-27",
   cta: {

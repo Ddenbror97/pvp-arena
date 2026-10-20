@@ -177,7 +177,9 @@ Our 5% rules are not the cabinet's hold. Quoting them at a cage would mix two le
 
 This is an editorial review, not a coupon. There is no code. A later link to a brand or a casino should be read as advertising.
 
-[The stop page](/responsible-gambling) covers limits. An unpublished free-spin count is not a reason to keep spinning until the count "shows up."`,
+[The stop page](/responsible-gambling) covers limits. An unpublished free-spin count is not a reason to keep spinning until the count "shows up."
+
+A Nile queen is not every Egyptian glass. [The other Egyptian cabinet](/guides/cleopatra-slot) has been rebuilt often enough that versions differ.`,
     },
   ],
   faqs: [
@@ -213,6 +215,7 @@ This is an editorial review, not a coupon. There is no code. A later link to a b
     "rtp-explained",
     "big-bass-bonanza",
     "big-bass-amazon-xtreme",
+    "cleopatra-slot",
   ],
   updated: "2026-10-20",
 };

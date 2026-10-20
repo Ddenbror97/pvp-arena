@@ -220,7 +220,9 @@ Stand up before the cards arrive. Standing up does not need their clock, which r
 
 Two words, sportsbet io, are enough to search. They are not enough to deposit.
 
-Depositing needs the domain, the company, and a stake you can lose. The rest of the legend can stay in other articles.`,
+Depositing needs the domain, the company, and a stake you can lose. The rest of the legend can stay in other articles.
+
+This book is not the esports-leaning brand. [The esports-leaning book](/guides/thunderpick-review) is that other review.`,
     },
   ],
   faqs: [
@@ -255,6 +257,7 @@ Depositing needs the domain, the company, and a stake you can lose. The rest of 
     "crypto-casino-license",
     "curacao-gambling-license",
     "fake-casino-sites",
+    "thunderpick-review",
   ],
   updated: "2026-10-20",
 };

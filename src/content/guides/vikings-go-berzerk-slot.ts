@@ -173,7 +173,9 @@ Vikings go berzerk max win, vikings go berzerk rtp, and a vikings go berzerk dem
 
 Two casinos can keep the helmets and change the help file between seasons. A review that freezes one percent has picked a season you might have missed. When the help file and a raid video disagree, the help file is the document that pays.
 
-A longship that looks identical in two lobbies can still be two help files. Write the casino beside any figure you personally copy. Leave this page's cells unpublished when you have not opened that glass.`,
+A longship that looks identical in two lobbies can still be two help files. Write the casino beside any figure you personally copy. Leave this page's cells unpublished when you have not opened that glass.
+
+A sticky-wild raid is not the hall game. [The hall-themed neighbor](/guides/asgard-slot) is the page for that other name.`,
     },
   ],
   faqs: [
@@ -203,6 +205,12 @@ A longship that looks identical in two lobbies can still be two help files. Writ
     },
   ],
   sources: [],
-  related: ["slot-volatility", "bonus-buy-slots", "megaways-slots", "high-limit-slots"],
+  related: [
+    "slot-volatility",
+    "bonus-buy-slots",
+    "megaways-slots",
+    "high-limit-slots",
+    "asgard-slot",
+  ],
   updated: "2026-10-20",
 };

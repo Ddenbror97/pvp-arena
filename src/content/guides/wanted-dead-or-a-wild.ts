@@ -185,7 +185,9 @@ Keep the base stake and the buy cost as two decisions when both are on screen. F
 
 Friends who quote a cap from a different western slot are importing another glass. Dust and a hat are not an identifier. Match the full title, then accept a figure only from this screen.
 
-Clips that show a huge result and skip the misses train you to ignore the gap. If the clip will not say how many presses it cut, treat it as a mood, not a price.`,
+Clips that show a huge result and skip the misses train you to ignore the gap. If the clip will not say how many presses it cut, treat it as a mood, not a price.
+
+A western bonus-buy reputation is not a shark nudge. [The shark nudge title](/guides/razor-shark-slot) is the other feature people describe from a video.`,
     },
   ],
   faqs: [
@@ -215,6 +217,12 @@ Clips that show a huge result and skip the misses train you to ignore the gap. I
     },
   ],
   sources: [],
-  related: ["bonus-buy-slots", "slot-volatility", "slot-battles", "rtp-calculator"],
+  related: [
+    "bonus-buy-slots",
+    "slot-volatility",
+    "slot-battles",
+    "rtp-calculator",
+    "razor-shark-slot",
+  ],
   updated: "2026-10-20",
 };

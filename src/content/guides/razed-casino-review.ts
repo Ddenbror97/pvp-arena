@@ -209,7 +209,9 @@ If the operator name you copied looks different in the morning, believe the morn
 
 Misreading a domain is how a late spin becomes someone else's casino. The lamp was a tool.
 
-Use it on the address bar, then turn it off.`,
+Use it on the address bar, then turn it off.
+
+One blank cashier is not the next brand. [The panda-named cashier](/guides/golden-panda-casino-review) has its own unpublished fee and its own license cell.`,
     },
   ],
   faqs: [
@@ -239,6 +241,12 @@ Use it on the address bar, then turn it off.`,
     },
   ],
   sources: [],
-  related: ["house-edge", "stake-alternatives", "crypto-casino-license", "anjouan-gaming-license"],
+  related: [
+    "house-edge",
+    "stake-alternatives",
+    "crypto-casino-license",
+    "anjouan-gaming-license",
+    "golden-panda-casino-review",
+  ],
   updated: "2026-10-20",
 };

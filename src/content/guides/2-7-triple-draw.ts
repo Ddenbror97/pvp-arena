@@ -203,7 +203,9 @@ No triple-draw result is pasted here.
 
 Big O, short deck, razz, and open-face Chinese are not dealt either. Razz gets its own guide if you need the ace-to-five stud low. This page stays on the draw.
 
-Sort to 7-5-4-3-2. Break aces, pairs, straights, and flushes. Then, if you wanted a site table, play the Hold'em whose fee is 5% only after a flop.`,
+Sort to 7-5-4-3-2. Break aces, pairs, straights, and flushes. Then, if you wanted a site table, play the Hold'em whose fee is 5% only after a flop.
+
+A draw with a wheel that is a bad hand is not stud. [Ace-to-five stud low](/guides/razz-poker) wants the opposite wheel.`,
     },
   ],
   faqs: [
@@ -253,6 +255,12 @@ Draw when one card can break a pair or a straight. Keep the betting form on the 
     },
     { label: "World Series of Poker", url: "https://www.wsop.com/" },
   ],
-  related: ["seven-card-stud", "how-to-play-poker", "cash-game-poker", "poker-bankroll-management"],
+  related: [
+    "seven-card-stud",
+    "how-to-play-poker",
+    "cash-game-poker",
+    "poker-bankroll-management",
+    "razz-poker",
+  ],
   updated: "2026-10-20",
 };

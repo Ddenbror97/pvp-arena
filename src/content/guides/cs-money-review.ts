@@ -178,7 +178,9 @@ If the roulette page shows a live block, the block updates from settled play. Th
 
 PVPspinArena does not sell CS skins and is not an affiliate of cs.money. We do not list a promo code. The case you can refuse is house-priced, and its odds are often opaque, so it sits in a different column from the pot.
 
-A link that later leaves this site for the brand is advertising. What you have read is an editorial review of a quote.`,
+A link that later leaves this site for the brand is advertising. What you have read is an editorial review of a quote.
+
+A dotted brand is not a trade bot. [A trade-style desk](/guides/lootfarm-review) is the next cashier people open, still with no per-trade fee printed.`,
     },
   ],
   faqs: [
@@ -213,6 +215,7 @@ A link that later leaves this site for the brand is advertising. What you have r
     "csfloat-vs-skinport",
     "valve-gambling-lawsuit",
     "sell-skins-for-crypto",
+    "lootfarm-review",
   ],
   updated: "2026-10-20",
 };

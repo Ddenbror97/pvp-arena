@@ -165,7 +165,9 @@ If you are somewhere peer play is allowed, the prices you can actually check are
 
 Re-open the official page when someone says the rule “just changed.” This file will not race that update, and it will not invent an operator list to fill the silence.
 
-There is no promo code at the end. The useful click is the state’s.`,
+There is no promo code at the end. The useful click is the state’s.
+
+A tight island market is not the desert floor. [The state with the famous casino floor](/guides/online-gambling-legal-nevada) is a different legal picture, still not a statute cite.`,
     },
   ],
   faqs: [
@@ -205,6 +207,7 @@ There is no promo code at the end. The useful click is the state’s.`,
     "is-online-casino-legal",
     "sweepstakes-casino-legal-states",
     "online-gambling-legal-kentucky",
+    "online-gambling-legal-nevada",
   ],
   updated: "2026-10-20",
 };

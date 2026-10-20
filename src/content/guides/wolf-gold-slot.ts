@@ -167,7 +167,9 @@ Read the herd guide only when the animal you wanted was the other one. Stay on t
 
 If the screen is blank, leave the blank. A borrowed percent would be a different article than the one the cabinet is running.
 
-A house spin on the desert title can show a stake on the button and still hide the share that stake is expected to return. Receipt 1 and Receipt 2 stay comparable only with each other. The moon on the glass does not join that comparison.`,
+A house spin on the desert title can show a stake on the button and still hide the share that stake is expected to return. Receipt 1 and Receipt 2 stay comparable only with each other. The moon on the glass does not join that comparison.
+
+Wolf Gold's desert respin is not Wolf Run. [The other wolf title](/guides/wolf-run-slot) is a separate glass, with its own rules screen.`,
     },
   ],
   faqs: [
@@ -197,6 +199,12 @@ A house spin on the desert title can show a stake on the button and still hide t
     },
   ],
   sources: [],
-  related: ["buffalo-slot-machine", "slot-volatility", "slot-machine-odds", "house-edge"],
+  related: [
+    "buffalo-slot-machine",
+    "slot-volatility",
+    "slot-machine-odds",
+    "house-edge",
+    "wolf-run-slot",
+  ],
   updated: "2026-10-20",
 };

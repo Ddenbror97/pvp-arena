@@ -168,7 +168,9 @@ That paragraph is our wheel. It does not fill chips gg fees. Their edge stays no
 
 A live block, when the game page has one, updates from settled play. This article does not embed a recent result.
 
-PVPspinArena does not sell CS skins, and it is not an affiliate of the casino brand. No promo code is printed in this note. Any later button that sends you to the brand is advertising, and this file remains an editorial comment on a $40 decision.`,
+PVPspinArena does not sell CS skins, and it is not an affiliate of the casino brand. No promo code is printed in this note. Any later button that sends you to the brand is advertising, and this file remains an editorial comment on a $40 decision.
+
+Chips in the name are not a home chip set and not the next skin logo. [Another skin desk](/guides/g4skins-review) keeps its own blank fee.`,
     },
   ],
   faqs: [
@@ -203,6 +205,7 @@ PVPspinArena does not sell CS skins, and it is not an affiliate of the casino br
     "csgoroll-review",
     "csfloat-vs-skinport",
     "skin-cashout-guide",
+    "g4skins-review",
   ],
   updated: "2026-10-20",
 };

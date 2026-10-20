@@ -178,7 +178,9 @@ A live block on our game page, when one is shown, updates from settled play. Thi
 
 PVPspinArena does not sell CS skins and is not an affiliate of the trade desk. We do not list a promo code. Set the house-priced case, odds often opaque, on the other side of the pot, and leave the desk's own fee as not published until the quote prints it.
 
-An outbound link later on would be advertising. The sentences above are the review.`,
+An outbound link later on would be advertising. The sentences above are the review.
+
+A trade desk is not the broad marketplace. [The larger marketplace desk](/guides/dmarket-review) is where that comparison belongs.`,
     },
   ],
   faqs: [
@@ -213,6 +215,7 @@ An outbound link later on would be advertising. The sentences above are the revi
     "sell-skins-for-crypto",
     "csfloat-vs-skinport",
     "csgoroll-review",
+    "dmarket-review",
   ],
   updated: "2026-10-20",
 };

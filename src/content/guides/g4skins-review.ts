@@ -175,7 +175,9 @@ If the game page includes a live block, the block updates from settled play. Thi
 
 PVPspinArena does not sell CS skins, and this file is not an affiliate placement for the swap. No promo string is printed. The case you did not open remains priced by the house, often without visible weights, which is why its fee cell stays blank.
 
-An outbound brand link added later should be treated as advertising. This file is an editorial comparison.`,
+An outbound brand link added later should be treated as advertising. This file is an editorial comparison.
+
+A skin desk is not a chip set. [The chips-named brand](/guides/chips-gg-review) is a casino-style search, not this marketplace.`,
     },
   ],
   faqs: [
@@ -210,6 +212,7 @@ An outbound brand link added later should be treated as advertising. This file i
     "csgoroll-review",
     "skin-cashout-guide",
     "sell-skins-for-crypto",
+    "chips-gg-review",
   ],
   updated: "2026-10-20",
 };

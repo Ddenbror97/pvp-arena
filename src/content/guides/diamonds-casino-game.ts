@@ -184,7 +184,9 @@ Diamonds game real money, for the app reading, waits on slip three. For the suit
 
 Roulette's published note, if you were hunting a casino number instead, is 33 slots, with Purple and Silver about a 7.88% edge after the 5% win fee. That note is our wheel. It is not a diamonds paytable.
 
-PVPspinArena is not an affiliate of the name you picked. No code sits in the margin to reward the confusion.`,
+PVPspinArena is not an affiliate of the name you picked. No code sits in the margin to reward the confusion.
+
+Diamonds in a search box is not a cash-app brand. [The big-time cash app search](/guides/big-time-cash-review) is that neighboring question.`,
     },
   ],
   faqs: [
@@ -214,6 +216,12 @@ PVPspinArena is not an affiliate of the name you picked. No code sits in the mar
     },
   ],
   sources: [],
-  related: ["games-that-pay-real-money", "solitaire-cash-review", "house-edge", "pvp-gambling"],
+  related: [
+    "games-that-pay-real-money",
+    "solitaire-cash-review",
+    "house-edge",
+    "pvp-gambling",
+    "big-time-cash-review",
+  ],
   updated: "2026-10-20",
 };

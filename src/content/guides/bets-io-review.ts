@@ -212,7 +212,9 @@ Two more published cuts belong in the note so the $100 scene cannot swallow them
 
 A P2P Slott win is charged 10%. Neither cut is their sportsbook, and neither is a bets io bonus code.
 
-If the house game lets you raise the $100 with one tap, turn the tap off in your head. One tap is how a scene becomes a session. Sessions need a stop you chose before the first tap, written down, smaller than the wound.`,
+If the house game lets you raise the $100 with one tap, turn the tap off in your head. One tap is how a scene becomes a session. Sessions need a stop you chose before the first tap, written down, smaller than the wound.
+
+Bets.io is not a coin lobby. [The coins-named casino brand](/guides/coins-game-casino-review) is a different search, and its withdrawal time stays unpublished.`,
     },
   ],
   faqs: [
@@ -247,6 +249,7 @@ If the house game lets you raise the $100 with one tap, turn the tap off in your
     "curacao-gambling-license",
     "is-crypto-gambling-legal",
     "fake-casino-sites",
+    "coins-game-casino-review",
   ],
   updated: "2026-10-20",
 };

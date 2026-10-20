@@ -197,7 +197,9 @@ Getting even on the next map is a feeling the broadcast encourages. The book doe
 
 The $47.50 on a $50 pot is the entire result story. There is no series price behind it and no forecast.
 
-Open the game if you want settled rounds to fill a live block. This article will not freeze a result in print just to look current.`,
+Open the game if you want settled rounds to fill a live block. This article will not freeze a result in print just to look current.
+
+An esports-leaning book is not every crypto sportsbook. [A different sports-and-crypto book](/guides/sportsbet-io-review) keeps a separate blank bonus cell.`,
     },
   ],
   faqs: [
@@ -232,6 +234,7 @@ Open the game if you want settled rounds to fill a live block. This article will
     "fake-casino-sites",
     "is-crypto-gambling-legal",
     "curacao-gambling-license",
+    "sportsbet-io-review",
   ],
   updated: "2026-10-20",
 };

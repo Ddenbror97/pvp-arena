@@ -210,7 +210,9 @@ Samples are still money leaving. Our about $1.97 edge on a $25 Purple or Silver 
 
 Do not subtract it from an unpublished hold and call the gap a coins game casino bonus code. Support that asks for a seed phrase "to verify" is a stop.
 
-This review never asks for a seed phrase. Close that chat.`,
+This review never asks for a seed phrase. Close that chat.
+
+A coins brand is not a token pitch. [The meme-token casino name](/guides/wsm-casino-review) is where that confusion is handled, without a token price.`,
     },
   ],
   faqs: [
@@ -245,6 +247,7 @@ This review never asks for a seed phrase. Close that chat.`,
     "no-kyc-casino",
     "are-online-casinos-safe",
     "crypto-casino-license",
+    "wsm-casino-review",
   ],
   updated: "2026-10-20",
 };

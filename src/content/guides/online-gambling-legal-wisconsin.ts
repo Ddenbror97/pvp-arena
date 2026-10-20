@@ -176,7 +176,9 @@ Wisconsin’s regulator can be opened in that same half hour. Write the product 
 
 Charitable raffles and phone slots also get mashed together after a county fair. A raffle ticket with a posted drawing is not the browser game someone installed on the drive home. Ask which pile the download belongs in before you fund it.
 
-Peer prices on this site do not close the legal questions. They matter if you are somewhere peer play is allowed, and even then they are fees rather than permission to skip the agency.`,
+Peer prices on this site do not close the legal questions. They matter if you are somewhere peer play is allowed, and even then they are fees rather than permission to skip the agency.
+
+Wisconsin's online page does not settle a sportsbook question across the border. [The sports-betting question next door](/guides/gambling-legal-minnesota) is that search.`,
     },
   ],
   faqs: [
@@ -216,6 +218,7 @@ Peer prices on this site do not close the legal questions. They matter if you ar
     "crypto-casino-usa",
     "esports-betting-legal",
     "online-gambling-legal-kentucky",
+    "gambling-legal-minnesota",
   ],
   updated: "2026-10-20",
 };
