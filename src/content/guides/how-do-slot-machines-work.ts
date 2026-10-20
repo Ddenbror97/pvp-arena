@@ -91,7 +91,9 @@ Avalanche or tumble engines pay a cluster, remove those symbols, drop new ones, 
 
 ### Illustration, not a studio file
 
-Suppose a cascade state has a 12% chance to continue after a win and the average continue adds 0.6× more. That is a teaching sketch, not a par sheet. The point is that the advertised RTP already includes those continues. Sitting through empty base spins to “build toward” a cascade is not how the memoryless draw works. There is no build. There is a new index.`,
+Suppose a cascade state has a 12% chance to continue after a win and the average continue adds 0.6× more. That is a teaching sketch, not a par sheet. The point is that the advertised RTP already includes those continues. Sitting through empty base spins to “build toward” a cascade is not how the memoryless draw works. There is no build. There is a new index.
+
+[That NetEnt gem sheet](/guides/starburst-slot) prints a 96.08% return, 10 lines, and an expanding wild. The respin is a second state, not a second RTP.`,
     },
     {
       id: "rng-vs-pf",

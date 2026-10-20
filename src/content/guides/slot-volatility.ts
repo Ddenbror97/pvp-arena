@@ -101,7 +101,9 @@ A 28% hit rate with tiny pays can still be medium or high volatility if a rare f
 
 A help file may say “bonus about every 250 spins.” That is a mean. Waiting times are often roughly geometric: many waits are shorter, a fat tail is much longer. Sitting to finish the 250 is the [gambler's fallacy](/guides/gamblers-fallacy) with a spreadsheet. Leave when the budget says leave.
 
-[Free slots](/guides/free-slots) demos are a safe way to *feel* a title’s drought length. They are not a forecast of the cash build’s next hour.`,
+[Free slots](/guides/free-slots) demos are a safe way to *feel* a title’s drought length. They are not a forecast of the cash build’s next hour.
+
+[The gem-and-bar sheet with a printed 23% hit rate](/guides/starburst-slot) is one cabinet where both numbers sit on the studio page.`,
     },
     {
       id: "choose",

@@ -66,7 +66,9 @@ If the jackpot EV is $0.32, that is 32% of one dollar — but only that componen
 
 Some mystery progressives guarantee a hit before a ceiling. That raises P(hit) as the meter approaches the cap. It can make the jackpot component +EV for a short window — in theory — if you know the ceiling, the current value, the qualifying bet and the hidden hazard rate. You almost never know the hazard rate. Treat “must hit by” as a marketing shape, not as a priced edge, unless the operator publishes the function.
 
-Lottery-scale odds belong in the same mental bin as a state jackpot: entertainment with a brutal mean. Our [house edge guide](/guides/house-edge) still applies to the spin as a whole.`,
+Lottery-scale odds belong in the same mental bin as a state jackpot: entertainment with a brutal mean. Our [house edge guide](/guides/house-edge) still applies to the spin as a whole.
+
+[The lion progressive's studio pages](/guides/mega-moolah-slot) name a 2021 record and leave today's meter unpublished. A record is not the price of the next spin.`,
     },
     {
       id: "vs-pvp",

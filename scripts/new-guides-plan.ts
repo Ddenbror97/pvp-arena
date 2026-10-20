@@ -4909,4 +4909,20 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "flush casino",
     "Anjouan ALSI-202509008-FI1. Welcome chip 30x or 35x. Terms URL body not published.",
   ),
+  p(
+    30,
+    "Slots",
+    "Studio RTP sheets",
+    "starburst-slot",
+    "starburst slot",
+    "NetEnt sheet: 96.08% RTP, 800x cap, 5x3, 10 lines, 23% hit rate. Feature-buy price not published.",
+  ),
+  p(
+    30,
+    "Slots",
+    "Studio RTP sheets",
+    "mega-moolah-slot",
+    "mega moolah",
+    "Games Global list. RTP, max win, and today's jackpot stay unpublished. Not the alien cabinet.",
+  ),
 ];

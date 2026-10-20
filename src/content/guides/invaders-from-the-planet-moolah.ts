@@ -170,7 +170,9 @@ This write-up is an editorial review. There is no bonus offer attached. Any bran
 
 Do not let the theme set the variance in your head. Aliens, cows, planets, and bright jackpots are art direction.
 
-Variance is in the weights. Those weights are not printed here.`,
+Variance is in the weights. Those weights are not printed here.
+
+[The safari progressive from the same family name](/guides/mega-moolah-slot) is a different cabinet. Its studio pages did not print a return or a live meter.`,
     },
     {
       id: "legal",

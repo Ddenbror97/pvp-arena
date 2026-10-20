@@ -479,6 +479,8 @@ import { guide as seoOvertimeMarketsReview } from "./overtime-markets-review";
 import { guide as seoWolfbetReview } from "./wolfbet-review";
 import { guide as seoCsgoTradeBot } from "./csgo-trade-bot";
 import { guide as seoFlushCasinoReview } from "./flush-casino-review";
+import { guide as seoStarburstSlot } from "./starburst-slot";
+import { guide as seoMegaMoolahSlot } from "./mega-moolah-slot";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1514,6 +1516,8 @@ export const GUIDES: Guide[] = [
   seoWolfbetReview,
   seoCsgoTradeBot,
   seoFlushCasinoReview,
+  seoStarburstSlot,
+  seoMegaMoolahSlot,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -3571,6 +3575,8 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "tombstone-rip-slot",
         "great-rhino-megaways",
         "chaos-crew-slot",
+        "starburst-slot",
+        "mega-moolah-slot",
       ],
     },
   ],
