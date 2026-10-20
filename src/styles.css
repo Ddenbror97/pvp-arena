@@ -1343,7 +1343,8 @@ html[data-theme="light"] .slott-card .slott-chip:not(.slott-cabinet *) {
  * Full-screen game. Three layers: the room (.poker-env) fills the viewport; the stage is one
  * size container that keeps its aspect ratio and fits inside it, so every table measurement
  * (seats, cards, chips, dealer) scales with the table; HUD panels anchor to the viewport edges
- * and scale with --hud-fs. Modes: desktop overlays (default), compact landscape (side column),
+ * and scale with --hud-fs. Desktop keeps a 34rem chat column on the right and the felt in the
+ * space to its left. Modes: desktop column, compact landscape (side column),
  * portrait (stacked rows, tall stage). PokerStage switches seat layouts from the stage's aspect.
  */
 html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-behavior: none; }
@@ -1366,6 +1367,10 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
   --pad-l: max(var(--hud-gap), env(safe-area-inset-left));
   --stage-aspect: 16 / 9;
   --stage-ratio: 1.7778;
+  /* Same live-chat window as coinflip, roulette and jackpot: 280px by 34rem. */
+  --poker-chat-w: 17.5rem;
+  --poker-chat-h: 34rem;
+  --poker-chat-space: calc(var(--poker-chat-w) + var(--pad-r) + var(--hud-gap));
   position: relative; width: 100%; height: 100dvh; overflow: hidden; isolation: isolate;
   font-size: var(--hud-fs); color: var(--ink); background: #05040f;
 }
@@ -1391,7 +1396,7 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 
 /* ---- Stage: fits the viewport, keeps its aspect ---- */
 .poker-stage-wrap {
-  position: absolute; inset: 0; z-index: 1; container-type: size;
+  position: absolute; inset: 0; right: var(--poker-chat-space); z-index: 1; container-type: size;
   display: grid; place-items: center; pointer-events: none;
 }
 .poker-stage {
@@ -1803,7 +1808,7 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
   backdrop-filter: blur(10px);
 }
 .poker-topbar {
-  position: absolute; z-index: 30; top: var(--pad-t); left: var(--pad-l); right: var(--pad-r);
+  position: absolute; z-index: 30; top: var(--pad-t); left: var(--pad-l); right: var(--poker-chat-space);
   display: flex; align-items: flex-start; justify-content: space-between; gap: 1em; pointer-events: none;
 }
 .poker-topbar > * { pointer-events: auto; }
@@ -1830,7 +1835,7 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 .poker-icon-btn:hover { background: rgb(139 53 236 / 35%); }
 
 .poker-info-panel {
-  position: absolute; z-index: 30; right: var(--pad-r); top: calc(var(--pad-t) + 4.2em);
+  position: absolute; z-index: 30; right: var(--poker-chat-space); top: calc(var(--pad-t) + 4.2em);
   width: clamp(12rem, 14.5vw, 17rem); padding: 0.85em 1em;
 }
 .poker-info-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5em; margin-bottom: 0.55em; }
@@ -1856,10 +1861,11 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
   padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.75rem; background: rgb(120 20 40 / 88%); color: #ffe3e8;
 }
 
-/* Chat and hands */
+/* Chat and hands. Desktop: a right-hand column the same size as the other live chats. */
 .poker-chat-dock {
-  position: absolute; z-index: 30; left: var(--pad-l); bottom: var(--pad-b);
-  width: clamp(15rem, 19.5vw, 24rem); height: clamp(10rem, 25dvh, 17rem);
+  position: absolute; z-index: 30; top: var(--pad-t); right: var(--pad-r); bottom: auto; left: auto;
+  width: var(--poker-chat-w); height: var(--poker-chat-h);
+  max-height: calc(100dvh - var(--pad-t) - var(--pad-b));
 }
 .poker-panel { display: flex; flex-direction: column; overflow: hidden; color: var(--ink); }
 .poker-panel-head { display: flex; align-items: center; gap: 0.25em; padding: 0 0.6em; border-bottom: 1px solid rgb(255 255 255 / 8%); }
@@ -1881,7 +1887,7 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 
 /* Bottom row: chat toggle, actions, seat controls */
 .poker-bottom {
-  position: absolute; z-index: 30; left: var(--pad-l); right: var(--pad-r); bottom: var(--pad-b);
+  position: absolute; z-index: 30; left: var(--pad-l); right: var(--poker-chat-space); bottom: var(--pad-b);
   display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); grid-template-areas: "chat act side";
   align-items: end; gap: var(--hud-gap); pointer-events: none;
 }
@@ -1944,6 +1950,18 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 }
 .poker-bottom .poker-btn-ghost:hover:not(:disabled) { background: rgb(139 53 236 / 22%); }
 .poker-bottom .poker-btn-leave { height: 3.2em; padding: 0 1.4em; font-size: 0.95em; }
+
+/* Below a desktop window the 34rem column would crush the felt, so the chat sits in the corner again. */
+@media (max-width: 1023.98px) {
+  .poker-stage-wrap { right: 0; }
+  .poker-topbar { right: var(--pad-r); }
+  .poker-info-panel { right: var(--pad-r); }
+  .poker-bottom { right: var(--pad-r); }
+  .poker-chat-dock {
+    top: auto; right: auto; left: var(--pad-l); bottom: var(--pad-b);
+    width: clamp(15rem, 19.5vw, 24rem); height: clamp(10rem, 25dvh, 17rem); max-height: none;
+  }
+}
 
 /* ---- Compact landscape (phones on their side, short laptop windows): side column ---- */
 @media (orientation: landscape) and (max-height: 560px) {

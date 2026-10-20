@@ -32,8 +32,8 @@ export interface TableScreenProps {
 /**
  * Full-screen table. Layers: environment, the stage (table, dealer, seats, cards; one
  * coordinate system that keeps its aspect ratio and fits the viewport), then overlay
- * panels anchored to the viewport edges: brand and account on top, table info upper
- * right, chat bottom left, actions bottom center, seat controls bottom right.
+ * panels anchored to the viewport edges: brand and account on top, table info beside
+ * the felt, chat in a right-hand column, actions bottom center, seat controls bottom right.
  */
 export function TableScreen(p: TableScreenProps) {
   const { state } = p;
