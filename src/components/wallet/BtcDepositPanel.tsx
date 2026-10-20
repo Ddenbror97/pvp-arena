@@ -277,7 +277,7 @@ export function BtcDepositPanel({
         <>
           {open && phase && (phase === "credited" || phase === "review" || phase === "closed") ? (
             <p className="mb-2 text-sm font-medium">
-              {phase === "credited" && `${formatUsd(open.usdCents)} is in your balance.`}
+              {phase === "credited" && "Deposit confirmed. Added to your balance."}
               {phase === "review" && "This payment needs a review before it can be added."}
               {phase === "closed" && "This invoice is closed. Enter an amount to deposit again."}
             </p>

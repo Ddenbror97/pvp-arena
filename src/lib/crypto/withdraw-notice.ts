@@ -23,14 +23,16 @@ export type SubmittedWithdrawal = {
 
 export type WithdrawalNotice = {
   key: string;
-  phase: "waiting" | "sent";
+  phase: "waiting" | "confirmed" | "problem";
   title: string;
   body: string;
   amount: string | null;
 };
 
-const OPEN_BTC = new Set(["HOLD", "AWAITING_APPROVAL", "QUEUED"]);
+const OPEN_BTC = new Set(["HOLD", "AWAITING_APPROVAL", "QUEUED", "PROCESSING", "BROADCAST"]);
 const OPEN_BASE = new Set(["PENDING", "APPROVED", "SUBMITTING", "SUBMITTED", "LIQUIDITY_PENDING"]);
+const FAILED_BTC = new Set(["FAILED", "CANCELLED"]);
+const FAILED_BASE = new Set(["FAILED", "REJECTED"]);
 
 function fresh(at: string | null, now: number, limit: number): boolean {
   if (!at) return false;
@@ -46,14 +48,18 @@ function sent(row: WithdrawalNoticeRow): boolean {
   return row.network === "bitcoin" ? row.status === "COMPLETED" : row.status === "CONFIRMED";
 }
 
-function pendingBody(network: "bitcoin" | "base"): string {
-  return network === "bitcoin"
-    ? "Your Bitcoin cashout is being sent. The amount stays reserved until it confirms."
-    : "Your cashout is being sent on Base. The amount stays reserved until it confirms.";
+function failed(row: WithdrawalNoticeRow): boolean {
+  return row.network === "bitcoin" ? FAILED_BTC.has(row.status) : FAILED_BASE.has(row.status);
 }
 
-function sentBody(network: "bitcoin" | "base"): string {
-  return network === "bitcoin" ? "Your Bitcoin cashout was sent." : "Your cashout was sent.";
+function pendingBody(network: "bitcoin" | "base"): string {
+  return network === "bitcoin"
+    ? "Waiting for confirmation on Bitcoin."
+    : "Waiting for confirmation on Base.";
+}
+
+function confirmedBody(network: "bitcoin" | "base"): string {
+  return network === "bitcoin" ? "Sent to your Bitcoin address." : "Sent to your linked wallet.";
 }
 
 /**
@@ -63,6 +69,7 @@ function sentBody(network: "bitcoin" | "base"): string {
 export function selectWithdrawalNotice(input: {
   withdrawals: readonly WithdrawalNoticeRow[];
   baselineSent: ReadonlySet<string>;
+  baselineProblem: ReadonlySet<string>;
   dismissed: ReadonlySet<string>;
   submitted: SubmittedWithdrawal | null;
   now: number;
@@ -73,11 +80,21 @@ export function selectWithdrawalNotice(input: {
   const done = live.find((row) => sent(row) && !input.baselineSent.has(row.id));
   if (done) {
     return {
-      key: `sent:${done.id}`,
-      phase: "sent",
-      title: "Withdrawal sent",
+      key: `confirmed:${done.id}`,
+      phase: "confirmed",
+      title: "Cash out confirmed",
       amount: `${formatUsd(done.usd_cents)} ${done.asset}`,
-      body: sentBody(done.network),
+      body: confirmedBody(done.network),
+    };
+  }
+  const problem = live.find((row) => failed(row) && !input.baselineProblem.has(row.id));
+  if (problem) {
+    return {
+      key: `problem:${problem.id}`,
+      phase: "problem",
+      title: "Cash out failed",
+      amount: `${formatUsd(problem.usd_cents)} ${problem.asset}`,
+      body: "This cash out did not confirm.",
     };
   }
   const pending = live.find((row) => open(row));
@@ -85,7 +102,7 @@ export function selectWithdrawalNotice(input: {
     return {
       key: `wait:${pending.id}`,
       phase: "waiting",
-      title: "Withdrawal pending",
+      title: "Cash out pending",
       amount: `${formatUsd(pending.usd_cents)} ${pending.asset}`,
       body: pendingBody(pending.network),
     };
@@ -96,7 +113,7 @@ export function selectWithdrawalNotice(input: {
       return {
         key: "submitted",
         phase: "waiting",
-        title: "Withdrawal pending",
+        title: "Cash out pending",
         amount: `${formatUsd(input.submitted.usdCents)} ${input.submitted.asset}`,
         body: pendingBody(input.submitted.network),
       };

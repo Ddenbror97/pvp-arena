@@ -30,13 +30,13 @@ export function useWithdrawalNotice(userId: string | null): {
   const [dismissed, setDismissed] = useState<ReadonlySet<string>>(() => new Set());
   const [now, setNow] = useState(() => Date.now());
   const baseline = useRef<Set<string> | null>(null);
+  const baselineProblem = useRef<Set<string>>(new Set());
   const baselineUser = useRef<string | null>(null);
 
   useEffect(() => {
     const onSubmit = (event: Event) => {
-      const detail = (
-        event as CustomEvent<{ usdCents?: number; asset?: string; network?: string }>
-      ).detail;
+      const detail = (event as CustomEvent<{ usdCents?: number; asset?: string; network?: string }>)
+        .detail;
       if (
         !detail ||
         typeof detail.usdCents !== "number" ||
@@ -65,14 +65,21 @@ export function useWithdrawalNotice(userId: string | null): {
   if (baselineUser.current !== userId) {
     baselineUser.current = userId;
     baseline.current = null;
+    baselineProblem.current = new Set();
   }
   if (baseline.current === null && activity.data) {
     baseline.current = new Set([
       ...activity.data.bitcoinPayouts
         .filter((row) => row.status === "COMPLETED")
         .map((row) => row.id),
+      ...activity.data.withdrawals.filter((row) => row.status === "CONFIRMED").map((row) => row.id),
+    ]);
+    baselineProblem.current = new Set([
+      ...activity.data.bitcoinPayouts
+        .filter((row) => row.status === "FAILED" || row.status === "CANCELLED")
+        .map((row) => row.id),
       ...activity.data.withdrawals
-        .filter((row) => row.status === "CONFIRMED")
+        .filter((row) => row.status === "FAILED" || row.status === "REJECTED")
         .map((row) => row.id),
     ]);
   }
@@ -100,6 +107,7 @@ export function useWithdrawalNotice(userId: string | null): {
     ? selectWithdrawalNotice({
         withdrawals,
         baselineSent: baseline.current ?? new Set(),
+        baselineProblem: baselineProblem.current,
         dismissed,
         submitted,
         now,
@@ -119,7 +127,7 @@ export function useWithdrawalNotice(userId: string | null): {
   }, [notice?.phase, qc]);
 
   useEffect(() => {
-    if (notice?.phase !== "sent" || !userId) return;
+    if (notice?.phase !== "confirmed" || !userId) return;
     setSubmitted(null);
     qc.invalidateQueries({ queryKey: ["wallet", userId] });
     qc.invalidateQueries({ queryKey: ["crypto-activity"] });

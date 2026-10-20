@@ -38,6 +38,7 @@ import {
 } from "@/lib/web3/metamask";
 import { requestWalletChallenge, verifyWalletSignature } from "@/lib/web3/wallet.functions";
 import { matchingVerifiedAddress } from "@/lib/web3/verified-wallet";
+import { announceDepositSubmitted } from "@/lib/crypto/deposit-notify";
 import { userWalletsQuery } from "@/components/wallet/WalletCard";
 import { WalletChoices, WalletMark } from "@/components/wallet/WalletBrand";
 import { cn } from "@/lib/utils";
@@ -458,9 +459,11 @@ export function VerifiedWalletActions({
         { ...prepared.instruction, treasury: destination as `0x${string}` },
         connected,
       );
-      toast.success(
-        `Transaction submitted from ${label}. Your balance updates after the network confirms it.`,
-      );
+      announceDepositSubmitted({
+        usdCents: cents,
+        asset,
+        networkMode: "mainnet",
+      });
       setAmount("");
     } catch (error) {
       const code = error instanceof WalletError ? error.code : "GENERIC";
