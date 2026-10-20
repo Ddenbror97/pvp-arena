@@ -134,7 +134,9 @@ One clean test beats a pile of tabs. Use the smallest stake the cashier will acc
 
 Then close the tab or play only what this site actually offers. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars, adults 18+ only. A second account is not a fresh start.
 
-A named exchange still charges commission on the winner and can leave a lay unmatched. The dated note is [that 2% commission page](/guides/smarkets-review).`,
+A named exchange still charges commission on the winner and can leave a lay unmatched. The dated note is [that 2% commission page](/guides/smarkets-review).
+
+A workplace sheet is a peer contest with no book. [The fee the group writes down](/guides/pick-em-pool) is the only cut that page will name.`,
     },
   ],
   faqs: [

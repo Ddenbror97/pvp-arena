@@ -191,7 +191,9 @@ A dramatic sentence usually smuggles a card or a stack. You already decided thos
 
 Leaving them outside is the whole garrett adelstein story this page is willing to stand behind, together with the unpublished net worth. Stand behind the blank even when a comment offers a dollar "everyone saw." Everyone is not a source, and a familiar stack is not a citation.
 
-One streamed hand is not a bracelet count. [The bracelet-record holder](/guides/phil-hellmuth) is a tournament career, with the WSOP.com figures kept on that page.`,
+One streamed hand is not a bracelet count. [The bracelet-record holder](/guides/phil-hellmuth) is a tournament career, with the WSOP.com figures kept on that page.
+
+A streamed cash game in Gardena prices the set, not a lesson. [The project page](/guides/hustler-casino-live) says the set cost is close to a million dollars and leaves the biggest pot unpublished.`,
     },
   ],
   faqs: [

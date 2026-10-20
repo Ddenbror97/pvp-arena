@@ -144,7 +144,9 @@ Two questions sit beside the coin split. [How sweepstakes casinos make money](/g
 
 Brand cashiers are separate notes, not a ranking. The [Yay redeem path](/guides/yay-casino-review) and the [Zula traffic warning](/guides/zula-casino-review) both start at the coin screen. [Crown-branded coins](/guides/crown-coins-casino-review), the [Modo sweeps name](/guides/modo-casino-review), [Fortune's coin rate](/guides/fortune-coins-review) and the [Hello Millions cashier](/guides/hello-millions-review) each leave unpublished fees blank.
 
-A sweeps definition is not that brand, and that brand is not our Jackpot. [The long-running slots brand](/guides/jackpotjoy-review) keeps the names apart.`,
+A sweeps definition is not that brand, and that brand is not our Jackpot. [The long-running slots brand](/guides/jackpotjoy-review) keeps the names apart.
+
+One sweeps sports product left the promo code and the dollar minimum unpublished. [Those sports-entry rules](/guides/onyx-odds-review) stay on that page.`,
     },
   ],
   faqs: [

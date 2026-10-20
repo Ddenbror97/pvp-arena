@@ -132,7 +132,9 @@ PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and e
 - **Coinflip**: two players, 50/50, winner takes the pot minus any fee shown before entry.
 - **Roulette**: a 33-slot wheel where Purple and Silver pay 2x and Green pays 14x, and Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
 
-Unlike poker, none of these involve decisions after entry. Results come from committed seeds, and any settled round can be verified on the [fairness](/fairness) page. That removes skill from the picture and leaves only probability and stake size. If a big win you watched is making a bigger entry feel sensible, that is survivor bias doing its work. Gambling is 18+; set limits first using the [responsible gambling](/responsible-gambling) tools.`,
+Unlike poker, none of these involve decisions after entry. Results come from committed seeds, and any settled round can be verified on the [fairness](/fairness) page. That removes skill from the picture and leaves only probability and stake size. If a big win you watched is making a bigger entry feel sensible, that is survivor bias doing its work. Gambling is 18+; set limits first using the [responsible gambling](/responsible-gambling) tools.
+
+The 2026 championship results page prints a prize pool of $85,634,400 and a first prize of $10,000,000. [Those Event 82 figures](/guides/wsop-main-event) name Lucas Jumalon. The staff-fee split inside the buy-in stays unpublished.`,
     },
   ],
   faqs: [

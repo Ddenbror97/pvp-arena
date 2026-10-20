@@ -154,7 +154,9 @@ Suppose a high roller plays baccarat's banker bet, with a house edge of about 1.
 - [Coinflip](/coinflip) is a straight 50/50 between two players; the winner takes the pot minus any fee shown before entry.
 - In Jackpot, your win chance equals your share of the pot, so a bigger stake buys a bigger chance and nothing more.
 
-Every result comes from committed seeds, and any settled round can be checked on the [fairness](/fairness) page. That answers the question the cheating stories raise: whether the game you played was the game you were shown. Play is 18+ only. If the famous-gambler stories feel like a plan rather than history, set limits first on the [responsible gambling](/responsible-gambling) page.`,
+Every result comes from committed seeds, and any settled round can be checked on the [fairness](/fairness) page. That answers the question the cheating stories raise: whether the game you played was the game you were shown. Play is 18+ only. If the famous-gambler stories feel like a plan rather than history, set limits first on the [responsible gambling](/responsible-gambling) page.
+
+One Hall of Fame career still prints conflicting earnings lines on the official pages. [The bracelet header versus the biography](/guides/daniel-negreanu) leaves net worth unpublished.`,
     },
   ],
   faqs: [

@@ -440,6 +440,12 @@ import { guide as seoLeBanditSlot } from "./le-bandit-slot";
 import { guide as seoTombstoneRipSlot } from "./tombstone-rip-slot";
 import { guide as seoGreatRhinoMegaways } from "./great-rhino-megaways";
 import { guide as seoChaosCrewSlot } from "./chaos-crew-slot";
+import { guide as seoOnyxOddsReview } from "./onyx-odds-review";
+import { guide as seoPickEmPool } from "./pick-em-pool";
+import { guide as seoPublicBettingPercentages } from "./public-betting-percentages";
+import { guide as seoDanielNegreanu } from "./daniel-negreanu";
+import { guide as seoWsopMainEvent } from "./wsop-main-event";
+import { guide as seoHustlerCasinoLive } from "./hustler-casino-live";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1436,6 +1442,12 @@ export const GUIDES: Guide[] = [
   seoTombstoneRipSlot,
   seoGreatRhinoMegaways,
   seoChaosCrewSlot,
+  seoOnyxOddsReview,
+  seoPickEmPool,
+  seoPublicBettingPercentages,
+  seoDanielNegreanu,
+  seoWsopMainEvent,
+  seoHustlerCasinoLive,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -3028,6 +3040,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
       slugs: ["sit-and-go-poker", "spin-and-go", "cash-game-poker", "poker-staking"],
     },
     {
+      name: "Series and streams",
+      slugs: ["daniel-negreanu", "wsop-main-event", "hustler-casino-live"],
+    },
+    {
       name: "Mixed games",
       slugs: [
         "2-7-triple-draw",
@@ -3228,6 +3244,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
       name: "Price and the closing line",
       slugs: [
         "vig-betting",
+        "public-betting-percentages",
         "line-shopping",
         "reverse-line-movement",
         "closing-line-value",
@@ -3271,7 +3288,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "justbet-review",
       ],
     },
-    { name: "Office pools", slugs: ["bracket-pool", "super-bowl-squares"] },
+    { name: "Office pools", slugs: ["bracket-pool", "super-bowl-squares", "pick-em-pool"] },
     {
       name: "Exchanges",
       slugs: ["novig-review", "prophetx-review", "sporttrade-review", "novig-vs-prophetx", "smarkets-review"],
@@ -3287,6 +3304,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "sleeper-picks-review",
         "betr-picks-review",
         "dabble-review",
+        "onyx-odds-review",
       ],
     },
     {

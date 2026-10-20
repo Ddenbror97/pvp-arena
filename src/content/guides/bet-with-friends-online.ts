@@ -138,7 +138,9 @@ Obvious is good. If the dollar cost feels too high for a friendship activity, sh
 5. Play one duel on [Coinflip](/coinflip), then stop unless a new written agreement exists.
 6. Read [how it works](/how-it-works) so nobody confuses Roulette’s house edge with a friend duel.
 
-[House edge](/guides/house-edge) is for house games. Fees are for PvP pots. Use the right word so friends do not feel misled.`,
+[House edge](/guides/house-edge) is for house games. Fees are for PvP pots. Use the right word so friends do not feel misled.
+
+An office sheet still needs its own fee written down before the season. [Survivor and confidence sheets](/guides/pick-em-pool) are that paragraph, not an app cashier.`,
     },
   ],
   faqs: [

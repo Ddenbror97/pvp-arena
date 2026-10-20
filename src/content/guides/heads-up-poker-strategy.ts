@@ -134,7 +134,9 @@ One clean test beats a pile of tabs. Use the smallest stake the cashier will acc
 
 Then close the tab or play only what this site actually offers. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars, adults 18+ only. A second account is not a fresh start.
 
-A solver print is homework, not the heads-up seat. [Ranges and EV from the vendor docs](/guides/poker-solver) still do not play the hand.`,
+A solver print is homework, not the heads-up seat. [Ranges and EV from the vendor docs](/guides/poker-solver) still do not play the hand.
+
+A full-table stream is not a heads-up match. [The Gardena cash-game show](/guides/hustler-casino-live) prints no rake and no minimum buy-in on the pages opened.`,
     },
   ],
   faqs: [

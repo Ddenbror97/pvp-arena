@@ -121,7 +121,9 @@ A second app matches the first deposit up to $100 in promo funds that expire in 
 
 The same operator's promo URL and help article did not print the same signup string on 20 October 2026. The $150 is bonus lineups if the first lineup wins. See [those disagreeing signup pages](/guides/prizepicks-promo-code).
 
-Another board prices an all-in ticket as a return on the dollar and caps one lineup at $50,000. Rules version 1.29 is [that pay scale](/guides/dabble-review).`
+Another board prices an all-in ticket as a return on the dollar and caps one lineup at $50,000. Rules version 1.29 is [that pay scale](/guides/dabble-review).
+
+A sweeps sportsbook, rules version 2.1.2, printed no public promo code on 20 October 2026. [That redemption contract](/guides/onyx-odds-review) is not this more-or-less board.`
     },
   ],
   faqs: [

@@ -191,7 +191,9 @@ Randomness does not balance out in the short run, and it never owes you anything
 
 More games & odds reading lives in our [Games & odds guides](/guides/topics/games-and-odds).
 
-The complementary mistake — treating a hot streak as a skill signal — is covered in [regression to the mean](/guides/regression-to-the-mean-gambling).`,
+The complementary mistake — treating a hot streak as a skill signal — is covered in [regression to the mean](/guides/regression-to-the-mean-gambling).
+
+A crowded side on a ticket graphic is a pattern of other bettors, not a debt the next game owes you. [That graphic versus the price](/guides/public-betting-percentages) leaves today's split unpublished.`,
     },
   ],
   faqs: [

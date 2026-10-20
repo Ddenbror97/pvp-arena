@@ -158,7 +158,9 @@ If the first sessions are already hard to stop, skip the next video. Use [how to
 
 You are allowed to stay a beginner for a long time. That is not an insult. It is a stake and a filter. Move up only when the cap is easy and the folds are boring. Boring is the goal. Excitement is usually a second buy-in. If you want excitement, budget it as entertainment and do not call it practice. Practice is the quiet orbit where you fold 72o without a speech.
 
-Words you will hear in the first session are in [poker slang](/guides/poker-slang).`,
+Words you will hear in the first session are in [poker slang](/guides/poker-slang).
+
+A $10,000 championship is not a first session. [The 2026 prize pool](/guides/wsop-main-event) is a series result, and the blind clock was not on the pages opened.`,
     },
   ],
   faqs: [
