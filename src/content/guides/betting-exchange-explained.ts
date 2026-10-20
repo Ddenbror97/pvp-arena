@@ -97,7 +97,9 @@ Write that down as part of any betting exchange explained note, with today's dat
 
 Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
+If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
+
+[The automated market on overtime.io](/guides/overtime-markets-review) hits a pool. It is not a back-and-lay queue.`,
     },
     {
       id: "close",

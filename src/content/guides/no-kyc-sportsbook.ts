@@ -95,7 +95,9 @@ Write that down as part of any no kyc sportsbook note, with today's date. If the
 
 Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
+If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
+
+[A sports shell whose rules host failed](/guides/jazz-sports-review) is still not a state book. A missing passport line is not a licence.`,
     },
     {
       id: "close",

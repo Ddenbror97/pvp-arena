@@ -159,7 +159,9 @@ Our funding sentence stays on our site: Bitcoin, or USDC or ETH on Base. If Coin
 
 We are not their affiliate. No promo code is printed. An advertisement you see elsewhere is not a rake.
 
-Tax questions belong with a qualified person and your own statements. The $4.50 fee is an illustration of our rule, not a line on their annual report.`,
+Tax questions belong with a qualified person and your own statements. The $4.50 fee is an illustration of our rule, not a line on their annual report.
+
+[The private-club client](/guides/pppoker-review) prints its own ownership sentence. Do not paste that sentence onto this room's rake.`,
     },
     {
       id: "close",

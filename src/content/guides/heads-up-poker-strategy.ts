@@ -95,7 +95,9 @@ Write that down as part of any heads up poker strategy note, with today's date. 
 
 Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
+If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
+
+[A client that names the company and then a blank licence field](/guides/blockchain-poker-review) is a different product from a short-handed decision.`,
     },
     {
       id: "close",

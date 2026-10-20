@@ -126,7 +126,9 @@ Before the round opened, the server generated its seed and published the SHA-256
 
 You open the Fairness page, choose the Roulette tab and type "#389". The checker fetches the revealed seed and the round data, hashes the seed and confirms the hash equals the one published earlier. It then computes HMAC-SHA256 with the seed as the key, turns the output into a slot number between 0 and 14 using rejection sampling, and maps that slot onto the wheel. If it lands on the same Purple slot, the round is verified.
 
-Because the wheel has 16 Purple, 16 Silver and one Green slot, the [provably fair roulette guide](/guides/provably-fair-roulette) walks through the exact slot mapping.`,
+Because the wheel has 16 Purple, 16 Silver and one Green slot, the [provably fair roulette guide](/guides/provably-fair-roulette) walks through the exact slot mapping.
+
+[One operator's seed page](/guides/wolfbet-review) is a single site's version of the same check. A hash you never recompute is still a label.`,
     },
     {
       id: "vs-rng",

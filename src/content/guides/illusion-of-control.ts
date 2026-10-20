@@ -149,7 +149,9 @@ A yes to any of these is normal. It is also a signal to go back to the published
 
 Gambling on PVPspinArena is 18+ only. If beliefs about systems or rituals are driving larger or longer play, the [responsible gambling](/responsible-gambling) page has limits, breaks and support links.
 
-Charms, numbers, and routines that feel like an edge are [gambling superstitions](/guides/gambling-superstitions).`,
+Charms, numbers, and routines that feel like an edge are [gambling superstitions](/guides/gambling-superstitions).
+
+[Raising a stake because a color feels live](/guides/hot-hand-fallacy) is the same costume on a wheel. The pocket count did not move.`,
     },
     {
       id: "pvp",

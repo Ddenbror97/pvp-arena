@@ -184,7 +184,9 @@ A site's approach to fairness is also a useful signal. Sites that let you verify
 
 For how PVPspinArena handles balances and payouts in general, read [how it works](/how-it-works), or visit your [wallet](/wallet) page to see your history. One operator's own FAQ puts crypto cash-outs at minutes up to 24 hours, and still requires the deposit to be wagered once. Notes from that page are in [a cashier that quotes its own clock](/guides/yeet-casino-review).
 
-A sports welcome page prints the rollover and never prints a coin or a wait. That gap is [a bonus page with no cash-out clock](/guides/lucky-rebel-review).`
+A sports welcome page prints the rollover and never prints a coin or a wait. That gap is [a bonus page with no cash-out clock](/guides/lucky-rebel-review).
+
+[Papers required when any withdrawal is requested](/guides/flush-casino-review) is one operator's file. It is not a universal cash-out clock.`
     },
     {
       id: "plan",

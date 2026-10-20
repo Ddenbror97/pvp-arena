@@ -161,7 +161,9 @@ A future licence page, if we add one, will be a lookup you can repeat — not a 
 
 Hashed results on Jackpot, Coinflip and Roulette answer the spin. They do not answer whether you are allowed to play from your chair. Do not treat a commit-reveal as a permission slip. Do not treat a permission slip as a commit-reveal. Adults keep those files in different folders.
 
-If you need a responsible-gambling stop, the licence footer will not provide it. Use the [responsible gambling](/responsible-gambling) page and the tools where you live.`,
+If you need a responsible-gambling stop, the licence footer will not provide it. Use the [responsible gambling](/responsible-gambling) page and the tools where you live.
+
+[The October closure page](/guides/bitsler-review) no longer prints a licence number. A notice is not a certificate you can paste into a register.`,
     },
     {
       id: "summary",

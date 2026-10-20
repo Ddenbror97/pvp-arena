@@ -155,7 +155,9 @@ Some events let you unregister until 30 seconds before the start. Multiple accou
 
 Bounty events split a shared elimination. All-in tournaments deal you all-in every hand.
 
-[Responsible gambling](/responsible-gambling). Call 1-800-GAMBLER if the session is no longer a game. Not for anyone under 18, anyone in a prohibited jurisdiction including the United States, anyone who needs a state poker licence, or anyone who will treat 7% as a fee we paid.`,
+[Responsible gambling](/responsible-gambling). Call 1-800-GAMBLER if the session is no longer a game. Not for anyone under 18, anyone in a prohibited jurisdiction including the United States, anyone who needs a state poker licence, or anyone who will treat 7% as a fee we paid.
+
+[The room that leaves a licence number as a variable](/guides/blockchain-poker-review) is a different operator. Do not paste its client text onto this card tab.`,
     },
     {
       id: "check",

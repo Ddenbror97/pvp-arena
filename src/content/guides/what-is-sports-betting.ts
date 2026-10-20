@@ -96,7 +96,9 @@ That has three practical consequences.
 
 An exchange-style book, where customers fade each other and the house takes a commission, is closer to a pot — and still not a hashed draw. You still need to read the commission and the void rules.
 
-Do not treat a Sunday ticket and a Jackpot share as the same “action.” They fail in different ways. One fails if the line was bad or the book will not pay. The other fails if the reveal bit is not yours. Keep the mental accounts separate so a bad slate does not become an excuse to chase on a wheel.`,
+Do not treat a Sunday ticket and a Jackpot share as the same “action.” They fail in different ways. One fails if the line was bad or the book will not pay. The other fails if the reveal bit is not yours. Keep the mental accounts separate so a bad slate does not become an excuse to chase on a wheel.
+
+[The offshore shell we opened](/guides/jazz-sports-review) is a cashier account, not an exchange. Its rules host returned Cloudflare error 522 on 20 October 2026.`,
     },
     {
       id: "contrast",

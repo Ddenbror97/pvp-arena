@@ -93,7 +93,9 @@ Read [peer-to-peer gambling](/guides/peer-to-peer-gambling) and [Coinflip odds](
 
 A token quest is not a pot. You cannot hash a promotional chip and call it the same check as a coinflip seed. Keep those proofs in different notes.
 
-If you only wanted a brand tour, you can stop before the cashier. If you deposit, decide the loss limit first. Entertainment that needs a second deposit to feel finished has already failed the budget test.`,
+If you only wanted a brand tour, you can stop before the cashier. If you deposit, decide the loss limit first. Entertainment that needs a second deposit to feel finished has already failed the budget test.
+
+[A brand that replaced its lobby with a closure notice](/guides/bitsler-review) is not this cashier. A shutdown page is not a bonus.`,
     },
     {
       id: "mistakes",

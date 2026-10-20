@@ -469,6 +469,16 @@ import { guide as seoPick4Lottery } from "./pick-4-lottery";
 import { guide as seoPowerballPayoutChart } from "./powerball-payout-chart";
 import { guide as seoLotteryScams } from "./lottery-scams";
 import { guide as seoBreedersCupBetting } from "./breeders-cup-betting";
+import { guide as seoJazzSportsReview } from "./jazz-sports-review";
+import { guide as seoPppokerReview } from "./pppoker-review";
+import { guide as seoBitslerReview } from "./bitsler-review";
+import { guide as seoHotHandFallacy } from "./hot-hand-fallacy";
+import { guide as seoRouletteCalculator } from "./roulette-calculator";
+import { guide as seoBlockchainPokerReview } from "./blockchain-poker-review";
+import { guide as seoOvertimeMarketsReview } from "./overtime-markets-review";
+import { guide as seoWolfbetReview } from "./wolfbet-review";
+import { guide as seoCsgoTradeBot } from "./csgo-trade-bot";
+import { guide as seoFlushCasinoReview } from "./flush-casino-review";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1494,6 +1504,16 @@ export const GUIDES: Guide[] = [
   seoPowerballPayoutChart,
   seoLotteryScams,
   seoBreedersCupBetting,
+  seoJazzSportsReview,
+  seoPppokerReview,
+  seoBitslerReview,
+  seoHotHandFallacy,
+  seoRouletteCalculator,
+  seoBlockchainPokerReview,
+  seoOvertimeMarketsReview,
+  seoWolfbetReview,
+  seoCsgoTradeBot,
+  seoFlushCasinoReview,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -2300,6 +2320,9 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "cloudbet-review",
         "betfury-review",
         "paripesa-review",
+        "bitsler-review",
+        "wolfbet-review",
+        "flush-casino-review",
       ],
     },
     {
@@ -2660,6 +2683,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "dmarket-review",
         "g4skins-review",
         "lootfarm-review",
+        "csgo-trade-bot",
       ],
     },
     {
@@ -3094,6 +3118,8 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "real-money-poker-apps",
         "coinpoker-review",
         "stake-poker",
+        "pppoker-review",
+        "blockchain-poker-review",
         "pokerok-review",
         "swc-poker-review",
       ],
@@ -3241,6 +3267,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "craps-strategy",
         "baccarat-strategy",
         "french-roulette",
+        "roulette-calculator",
         "sic-bo-strategy",
         "dragon-tiger",
         "teen-patti",
@@ -3354,6 +3381,8 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "bovada-review",
         "betus-review",
         "xbet-review",
+        "jazz-sports-review",
+        "overtime-markets-review",
       ],
     },
     { name: "Office pools", slugs: ["bracket-pool", "super-bowl-squares", "pick-em-pool"] },
@@ -3564,6 +3593,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "illusion-of-control",
         "skinner-box-slot-machines",
         "gambling-statistics",
+        "hot-hand-fallacy",
       ],
     },
     {

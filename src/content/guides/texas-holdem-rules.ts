@@ -156,7 +156,9 @@ Some cash tables allow a straddle (a voluntary third blind, usually from under t
 
 New players mix who posts and who acts last. The button is last after the flop. The small blind is left of the button and posts the smaller forced bet. The big blind is left of the small blind and posts the larger one. Preflop, the big blind is last to act if nobody raises. After the flop, the button is last if they are still in. Those two “last to act” seats are different. Mixing them is how you open from the wrong seat in your head and then wonder why the software will not let you check.
 
-Write it on a card if you have to: **button = last after flop; blinds = forced money; UTG = first preflop at a full table.** That sentence is most of the seating rules.`,
+Write it on a card if you have to: **button = last after flop; blinds = forced money; UTG = first preflop at a full table.** That sentence is most of the seating rules.
+
+[A club app that says you do not own the chips](/guides/pppoker-review) is a different contract from a casino card room. The streets are the same. The ownership sentence is not.`,
     },
     {
       id: "summary",

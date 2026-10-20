@@ -113,7 +113,9 @@ Roulette on our side is about a 7.88% Purple or Silver edge after the win fee. P
 
 I would not use TrustDice to park coins. The 5x wall means a deposit is not a transfer. I would use the certificate as the legit check, then the dice verifier as the game check, and I would ignore a 100% headline until the account shows the multiple.
 
-Not for US players who need a state licence, anyone who wants to withdraw the deposit untouched, or anyone who will not open a seed. The CGA document is real. The edge on a given slot is still not published on the pages we used.`,
+Not for US players who need a state licence, anyone who wants to withdraw the deposit untouched, or anyone who will not open a seed. The CGA document is real. The edge on a given slot is still not published on the pages we used.
+
+[A welcome chip locked at 30x before the first spin](/guides/flush-casino-review) is another operator's bonus, not this 5x wall.`,
     },
     {
       id: "check",

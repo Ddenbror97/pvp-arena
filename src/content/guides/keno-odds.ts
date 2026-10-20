@@ -143,7 +143,9 @@ Catch-8 on 8 spots is about 1 in 230,000. A 10,000× top line on that event cont
 
 An extra drawn ball that “only helps” is funded by lower base pays. Price the full distribution, or treat the bonus as unread.
 
-Fifty $5 tickets on the 37% 4-spot: $250 wagered, expected cost about $92. Fifty $5 banker chips: expected cost about $1.33. Keno is not a table game with more numbers. It is a lottery that lets you pick how many spots to misprice.`,
+Fifty $5 tickets on the 37% 4-spot: $250 wagered, expected cost about $92. Fifty $5 banker chips: expected cost about $1.33. Keno is not a table game with more numbers. It is a lottery that lets you pick how many spots to misprice.
+
+[A three-wheel worksheet](/guides/roulette-calculator) prices a straight-up the same way this sheet prices a spot. A sticker is not an edge.`,
     },
     {
       id: "limits",

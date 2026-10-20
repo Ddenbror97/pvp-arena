@@ -130,7 +130,9 @@ In skill-based activities, such as sport, research has debated whether players c
 
 ### Why both fallacies are dangerous
 
-Both beliefs encourage bigger bets based on something that is not real. The gambler's fallacy tends to raise bets after losses. The hot-hand fallacy tends to raise bets after wins. Either way, you end up wagering more, and the more you wager, the more the house edge costs you. See our [house edge guide](/guides/house-edge).`,
+Both beliefs encourage bigger bets based on something that is not real. The gambler's fallacy tends to raise bets after losses. The hot-hand fallacy tends to raise bets after wins. Either way, you end up wagering more, and the more you wager, the more the house edge costs you. See our [house edge guide](/guides/house-edge).
+
+[The continue-the-streak worksheet](/guides/hot-hand-fallacy) keeps that mistake on its own page, with the wheel fractions written out.`,
     },
     {
       id: "betting-systems",

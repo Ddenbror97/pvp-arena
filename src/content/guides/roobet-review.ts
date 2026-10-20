@@ -93,7 +93,9 @@ Read [peer-to-peer gambling](/guides/peer-to-peer-gambling) and [Coinflip odds](
 
 A Roobet original priced by the house is not a two-player coinflip. Even when both feel like a coin, the fee and the counterparty differ. Read the price on the game you opened, not the vibe of the clip that sent you there.
 
-If you only wanted a brand tour, you can stop before the cashier. If you deposit, decide the loss limit first. Entertainment that needs a second deposit to feel finished has already failed the budget test.`,
+If you only wanted a brand tour, you can stop before the cashier. If you deposit, decide the loss limit first. Entertainment that needs a second deposit to feel finished has already failed the budget test.
+
+[A cashier that splits its clock across two documents](/guides/wolfbet-review) is a different operator. Read that pair on its own.`,
     },
     {
       id: "mistakes",

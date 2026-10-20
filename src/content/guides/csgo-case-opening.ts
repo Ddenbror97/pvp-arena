@@ -182,7 +182,9 @@ Each case brand gets its own odds cell, and this page does not fill it. See the 
 - **Case opening**: official odds are published for some regions but individual openings cannot be verified.
 - **PVPspinArena**: every round is provably fair and can be checked on the [fairness page](/fairness).
 
-Our [CS:GO jackpot guide](/guides/csgo-jackpot) and [PvP gambling guide](/guides/pvp-gambling) explain how the pot and duel formats work.`,
+Our [CS:GO jackpot guide](/guides/csgo-jackpot) and [PvP gambling guide](/guides/pvp-gambling) explain how the pot and duel formats work.
+
+[A bot that asks you to send items first](/guides/csgo-trade-bot) is not a case with a drop list. Confirming the wrong offer can lose the item.`,
     },
     {
       id: "history",
