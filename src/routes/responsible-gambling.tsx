@@ -1,6 +1,12 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { ogImageMeta } from "@/lib/og";
 import { LegalPage } from "@/components/LegalPage";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/responsible-gambling")({
   head: () => ({
@@ -28,7 +34,7 @@ function ResponsiblePage() {
   return (
     <LegalPage title="Responsible Gambling">
       <p>
-        <strong>Last updated October 3, 2026.</strong>
+        <strong>Last updated October 20, 2026.</strong>
       </p>
       <p>
         Jackpot, Coinflip, and Roulette are real-money games. They are not a way to make money or
@@ -80,6 +86,7 @@ function ResponsiblePage() {
       <p>
         If you want to stop using PVPspinArena, you can request self-exclusion for your account.
       </p>
+      <SelfExclusionRequest />
       <p>
         Self-exclusion blocks the account from making deposits, placing wagers, and making
         withdrawals for the duration of the exclusion.
@@ -147,5 +154,115 @@ function ResponsiblePage() {
         </li>
       </ul>
     </LegalPage>
+  );
+}
+
+const EXCLUSION_PERIODS = [
+  { days: 180, label: "6 months" },
+  { days: 365, label: "1 year" },
+  { days: 1825, label: "5 years" },
+] as const;
+
+function exclusionError(message: string) {
+  if (message.includes("EXCLUSION_ALREADY_LONGER")) {
+    return "This account is already excluded for longer than that. A shorter period is refused.";
+  }
+  if (message.includes("EXCLUSION_PERIOD")) return "Choose 6 months, 1 year, or 5 years.";
+  if (message.includes("UNAUTHENTICATED")) return "Sign in again, then request the exclusion.";
+  if (message.includes("NO_PROFILE")) return "Finish setting up your account first.";
+  return "Couldn't request self-exclusion. Try again.";
+}
+
+function SelfExclusionRequest() {
+  const { ready, userId } = useAuth();
+  const queryClient = useQueryClient();
+  const [days, setDays] = useState<(typeof EXCLUSION_PERIODS)[number]["days"]>(180);
+  const [busy, setBusy] = useState(false);
+  const status = useQuery({
+    queryKey: ["account-status", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_my_account_status");
+      if (error) throw error;
+      const row = data as { self_excluded_until?: string | null } | null;
+      return row?.self_excluded_until ?? null;
+    },
+  });
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    const period = EXCLUSION_PERIODS.find((p) => p.days === days);
+    if (!period) return;
+    if (
+      !window.confirm(
+        `Self-exclude this account for ${period.label}? Deposits, wagers, and withdrawals stay blocked until then. This cannot be shortened.`,
+      )
+    )
+      return;
+    setBusy(true);
+    try {
+      const { data, error } = await supabase.rpc("request_self_exclusion", { p_days: days });
+      if (error) throw error;
+      const until = typeof data === "string" ? new Date(data).toLocaleString() : period.label;
+      toast.success(`Self-exclusion is on until ${until}.`);
+      await queryClient.invalidateQueries({ queryKey: ["account-status", userId] });
+    } catch (err) {
+      toast.error(exclusionError((err as { message?: string }).message ?? ""));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (!ready) {
+    return <p>Checking your account…</p>;
+  }
+  if (!userId) {
+    return (
+      <p>
+        <Link to="/auth">Sign in</Link> to request self-exclusion for this account.
+      </p>
+    );
+  }
+
+  const until = status.data ? new Date(status.data) : null;
+  const active = until != null && !Number.isNaN(until.getTime()) && until.getTime() > Date.now();
+
+  return (
+    <form
+      onSubmit={submit}
+      className="space-y-3 rounded-lg border border-border bg-card p-4 text-foreground"
+    >
+      {status.isLoading ? (
+        <p className="text-muted-foreground">Checking the current exclusion…</p>
+      ) : status.isError ? (
+        <p className="text-muted-foreground">The current exclusion could not be loaded.</p>
+      ) : active && until ? (
+        <p>
+          This account is self-excluded until{" "}
+          <time dateTime={status.data ?? undefined}>{until.toLocaleString()}</time>. A new request
+          can only make that longer.
+        </p>
+      ) : (
+        <p className="text-muted-foreground">This account is not self-excluded.</p>
+      )}
+      <fieldset className="space-y-2">
+        <legend className="text-sm font-medium">Exclusion length</legend>
+        {EXCLUSION_PERIODS.map((period) => (
+          <label key={period.days} className="flex items-center gap-2 text-sm">
+            <input
+              type="radio"
+              name="exclusion-days"
+              value={period.days}
+              checked={days === period.days}
+              onChange={() => setDays(period.days)}
+            />
+            {period.label}
+          </label>
+        ))}
+      </fieldset>
+      <Button type="submit" variant="destructive" size="sm" disabled={busy || status.isLoading}>
+        {busy ? "Requesting…" : "Request self-exclusion"}
+      </Button>
+    </form>
   );
 }
