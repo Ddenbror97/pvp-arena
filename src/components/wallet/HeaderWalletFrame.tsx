@@ -1,48 +1,59 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
+import { TokenMark } from "@/components/wallet/TokenMark";
+import { formatUsd } from "@/lib/jackpot/math";
 
+/** One chip: USDC dollar balance, then a single Wallet action. Fixed widths so the placeholder matches. */
 export const walletNavClass =
-  "header-wallet grid h-11 shrink-0 grid-rows-[1fr_1.25rem] overflow-hidden rounded-lg border sm:flex sm:items-center sm:gap-1 sm:rounded-xl sm:p-1";
-export const balanceButtonClass =
-  "flex h-full items-center justify-center border-b border-border px-2 transition-colors hover:bg-muted/60 sm:rounded-lg sm:border-b-0 sm:px-3";
+  "header-wallet grid h-11 w-[7.75rem] shrink-0 grid-rows-[1fr_1.35rem] overflow-hidden rounded-xl border sm:flex sm:h-10 sm:w-auto sm:items-center sm:gap-1.5 sm:rounded-full sm:py-1 sm:pl-1.5 sm:pr-1";
 
-const action =
-  "flex h-5 flex-1 items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase leading-none transition-colors sm:h-full sm:flex-none sm:rounded-lg sm:px-3 sm:text-xs sm:tracking-wide";
-
-export function WalletLinks() {
+export function UsdcBalance({
+  available,
+  loading,
+}: {
+  available?: number | undefined;
+  loading: boolean;
+}) {
+  const usd = formatUsd(available ?? 0);
   return (
-    <div className="flex items-stretch divide-x divide-border sm:h-full sm:gap-1 sm:divide-x-0">
-      <Link
-        to="/wallet"
-        search={{ mode: "deposit" }}
-        className={`${action} header-deposit`}
-      >
-        <ArrowDownToLine className="hidden h-3.5 w-3.5 shrink-0 lg:block" aria-hidden /> Deposit
-      </Link>
-      <Link
-        to="/wallet"
-        search={{ mode: "withdraw" }}
-        className={`${action} header-withdraw`}
-      >
-        <ArrowUpFromLine className="hidden h-3.5 w-3.5 shrink-0 lg:block" aria-hidden /> Withdraw
-      </Link>
-    </div>
+    <span className="flex h-full min-w-0 items-center justify-center gap-1.5 px-2 sm:h-auto sm:justify-start sm:px-1">
+      <TokenMark asset="USDC" className="h-4 w-4 shrink-0" />
+      {loading ? (
+        <span
+          aria-hidden
+          className="header-wallet-pulse h-3.5 w-[4.75rem] animate-pulse rounded sm:w-[5.25rem]"
+        />
+      ) : (
+        <span className="tabular w-[4.75rem] truncate text-right text-[13px] font-semibold leading-none sm:w-[5.25rem] sm:text-sm">
+          {usd}
+        </span>
+      )}
+      <span className="header-wallet-asset hidden text-[10px] font-semibold tracking-[0.14em] sm:inline">
+        USDC
+      </span>
+    </span>
   );
 }
 
-/** Same geometry as the loaded wallet group (BalanceRailButton in its loading state), shown while its chunk loads. */
+export function WalletAction() {
+  return <span className="header-wallet-label">Wallet</span>;
+}
+
+/** Same geometry as the loaded chip, shown while its chunk loads. The link works immediately. */
 export function WalletGroupPlaceholder() {
   return (
-    <nav aria-label="Wallet" className={walletNavClass}>
-      <span className={balanceButtonClass}>
-        <span className="flex items-center justify-end gap-1">
-          <span className="flex h-4 w-[4.75rem] shrink-0 items-center justify-end sm:w-[5.25rem]">
-            <span aria-hidden className="h-3.5 w-full animate-pulse rounded bg-muted" />
-          </span>
-          <span aria-hidden className="h-4 w-[3.25rem] shrink-0" />
-        </span>
+    <Link to="/wallet" aria-label="Wallet, USDC balance loading" className={walletNavClass}>
+      <span className="flex h-full items-center justify-center gap-1.5 px-2 sm:px-1">
+        <span
+          aria-hidden
+          className="header-wallet-pulse h-4 w-4 shrink-0 animate-pulse rounded-full"
+        />
+        <span
+          aria-hidden
+          className="header-wallet-pulse h-3.5 w-[4.75rem] animate-pulse rounded sm:w-[5.25rem]"
+        />
+        <span aria-hidden className="hidden h-2.5 w-8 sm:inline" />
       </span>
-      <WalletLinks />
-    </nav>
+      <WalletAction />
+    </Link>
   );
 }

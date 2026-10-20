@@ -1,33 +1,24 @@
-import { BalanceRailButton, useHeaderFunding } from "@/components/wallet/RailPreference";
-import {
-  balanceButtonClass,
-  walletNavClass,
-  WalletLinks,
-} from "@/components/wallet/HeaderWalletFrame";
+import { Link } from "@tanstack/react-router";
+import { formatUsd } from "@/lib/jackpot/math";
+import { UsdcBalance, WalletAction, walletNavClass } from "@/components/wallet/HeaderWalletFrame";
 
-/** Balance plus the two wallet shortcuts, kept in one compact, fixed-geometry segmented control. */
+function walletAriaLabel(loading: boolean, available?: number): string {
+  if (loading) return "Wallet, USDC balance loading";
+  return `Wallet, ${formatUsd(available ?? 0)} USDC`;
+}
+
+/** Signed-in header chip: the playable balance in USDC dollars, opening the wallet. */
 export function HeaderWallet({
-  userId,
   available,
   loading,
 }: {
-  userId: string | null;
   available?: number | undefined;
   loading: boolean;
 }) {
-  const funding = useHeaderFunding(!!userId && !loading);
   return (
-    <nav aria-label="Wallet" className={walletNavClass}>
-      <BalanceRailButton
-        available={available}
-        loading={loading}
-        rail={funding.rail}
-        rails={funding.rails}
-        assetLoading={funding.assetLoading}
-        onSelect={funding.select}
-        className={balanceButtonClass}
-      />
-      <WalletLinks />
-    </nav>
+    <Link to="/wallet" aria-label={walletAriaLabel(loading, available)} className={walletNavClass}>
+      <UsdcBalance available={available} loading={loading} />
+      <WalletAction />
+    </Link>
   );
 }

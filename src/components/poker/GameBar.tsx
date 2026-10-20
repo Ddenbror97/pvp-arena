@@ -53,7 +53,7 @@ export function GameBrand() {
   );
 }
 
-/** Balance, deposit, profile and site menu for the full-screen table. */
+/** Balance, wallet, profile and site menu for the full-screen table. */
 export function GameAccount() {
   const { userId, profile, ready } = useAuth();
   const prestige = usePrestige();
@@ -64,11 +64,7 @@ export function GameAccount() {
       {userId ? (
         <>
           <Suspense fallback={<WalletGroupPlaceholder />}>
-            <HeaderWallet
-              userId={userId}
-              available={wallet.data?.available}
-              loading={!ready || wallet.isLoading}
-            />
+            <HeaderWallet available={wallet.data?.available} loading={!ready || wallet.isLoading} />
           </Suspense>
           <Link to="/profile" aria-label="Profile" className="poker-account-avatar">
             <PlayerPrestigeIdentity

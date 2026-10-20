@@ -16,7 +16,7 @@ import { SoundToggle } from "@/components/SoundToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
-// Signed-in only (funding rails, popover, deposit notifications), so logged-out visitors never download it.
+// Signed-in only, so logged-out visitors never download the balance chip.
 const HeaderWallet = lazy(() =>
   import("@/components/wallet/HeaderWallet").then((m) => ({ default: m.HeaderWallet })),
 );
@@ -116,7 +116,7 @@ export function SiteHeader({ className }: { className?: string }) {
             </Link>
           ) : null}
         </nav>
-        <div className="col-start-4 flex h-11 shrink-0 items-center justify-end gap-2 sm:col-auto sm:ml-auto sm:min-w-[352px] sm:gap-3 lg:min-w-[388px]">
+        <div className="col-start-4 flex h-11 shrink-0 items-center justify-end gap-2 sm:col-auto sm:ml-auto sm:min-w-[19rem] sm:gap-3">
           {!showWallet ? (
             <Button asChild size="sm" className="shrink-0 font-display">
               <Link to="/auth">Sign in</Link>
@@ -125,7 +125,6 @@ export function SiteHeader({ className }: { className?: string }) {
             <>
               <Suspense fallback={<WalletGroupPlaceholder />}>
                 <HeaderWallet
-                  userId={userId}
                   available={wallet.data?.available}
                   loading={!ready || wallet.isLoading}
                 />

@@ -328,17 +328,36 @@ header.site-chrome {
     linear-gradient(to top, rgb(125 135 255 / 28%) 1px, transparent 1px),
     linear-gradient(90deg, transparent 55%, rgb(110 120 240 / 7%) 88%, rgb(120 130 250 / 11%));
 }
-.header-wallet { border-color: rgb(140 150 240 / 13%); background: #141a36; }
-.header-deposit {
-  color: #b57bff;
-  background: radial-gradient(ellipse at 50% 55%, #4c05a8 0%, #36108a 55%, #1f0f55 100%);
-  box-shadow: 0 0 16px rgb(110 30 230 / 35%), inset 0 0 0 1px rgb(150 90 255 / 22%);
+.header-wallet {
+  border-color: rgb(140 150 240 / 16%);
+  background: linear-gradient(180deg, #1b2248, #12182f);
+  color: #eef0fb;
+  text-decoration: none;
 }
-.header-deposit:hover { filter: brightness(1.15); }
-.header-withdraw { color: #c4cbe6; background: #0e1530; }
-.header-withdraw:hover { color: #fff; background: #151d3c; }
+.header-wallet:hover { border-color: rgb(167 176 255 / 36%); background: linear-gradient(180deg, #222a56, #161d3a); }
+.header-wallet:focus-visible { outline: 2px solid #b57bff; outline-offset: 2px; }
+.header-wallet-label {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background: rgb(255 255 255 / 6%);
+  color: #e7e4ff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.header-wallet:hover .header-wallet-label { background: rgb(139 92 246 / 32%); color: #fff; }
+.header-wallet-asset { color: #9eb6ff; }
+.header-wallet-pulse { background: rgb(255 255 255 / 12%); }
 @media (min-width: 640px) {
-  .header-withdraw { box-shadow: inset 0 0 0 1px rgb(140 150 240 / 16%); }
+  .header-wallet-label {
+    height: 2rem;
+    padding: 0 0.85rem;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.01em;
+  }
 }
 
 /* Jackpot wheel, coinflip table, and roulette strip use the light card in the light theme. */
@@ -1825,7 +1844,6 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 .poker-game-pill-title { font-family: var(--font-display); font-size: 1.12em; font-weight: 700; line-height: 1.2; }
 .poker-game-pill-sub { font-size: 0.8em; color: var(--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .poker-account { display: flex; align-items: center; gap: 0.6em; }
-.poker-account .header-withdraw { display: none; }
 .poker-account-avatar { display: block; border-radius: 999px; }
 .poker-signin {
   display: inline-flex; align-items: center; height: 2.6em; padding: 0 1.2em; border-radius: 0.7em; font-weight: 700;
@@ -2024,7 +2042,6 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 }
 @media (max-aspect-ratio: 5 / 6) and (max-width: 420px) {
   .poker-presets { display: none; }
-  .poker-account .header-deposit-label { display: none; }
 }
 
 /* Chat as a bottom sheet in compact modes */
@@ -2088,12 +2105,13 @@ html[data-theme="light"] .poker-account .header-wallet {
   border-color: rgb(109 40 217 / 18%);
   box-shadow: 0 0.35em 1em rgb(60 30 120 / 12%);
 }
-html[data-theme="light"] .poker-account .header-deposit {
+html[data-theme="light"] .poker-account .header-wallet-asset { color: #5b21b6; }
+html[data-theme="light"] .poker-account .header-wallet-pulse { background: rgb(109 40 217 / 14%); }
+html[data-theme="light"] .poker-account .header-wallet-label {
   color: #fff;
   background: linear-gradient(180deg, #9b5cff, #7c3aed);
-  box-shadow: 0 0.2em 0.7em rgb(124 58 237 / 32%);
 }
-html[data-theme="light"] .poker-account .header-deposit:hover { filter: brightness(1.06); }
+html[data-theme="light"] .poker-account .header-wallet:hover .header-wallet-label { filter: brightness(1.06); }
 html[data-theme="light"] :is(.poker-hud-panel, .poker-game-pill, .poker-info-panel, .poker-chat-dock, .poker-status, .poker-action-buttons) {
   box-shadow: 0 0.6em 1.6em rgb(60 30 120 / 14%), inset 0 1px 0 rgb(255 255 255 / 70%);
 }
