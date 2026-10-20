@@ -877,6 +877,99 @@ import { guide as lostTf2Keys } from "./tf2-keys";
 export type { Guide, GuideCluster } from "./types";
 
 /** Published guides. Add each new guide here once it passes scripts/check-guides.ts. */
+import { guide as w227TripleDraw } from "./2-7-triple-draw";
+import { guide as w2AsgardSlot } from "./asgard-slot";
+import { guide as w2BennyBinion } from "./benny-binion";
+import { guide as w2BetsIoReview } from "./bets-io-review";
+import { guide as w2BigOPoker } from "./big-o-poker";
+import { guide as w2BigTimeCashReview } from "./big-time-cash-review";
+import { guide as w2BitstarzReview } from "./bitstarz-review";
+import { guide as w2BitzCasinoReview } from "./bitz-casino-review";
+import { guide as w2BuffaloGrandSlot } from "./buffalo-grand-slot";
+import { guide as w2BuffaloKingMegaways } from "./buffalo-king-megaways";
+import { guide as w2CashBanditsSlot } from "./cash-bandits-slot";
+import { guide as w2CashEruptionSlot } from "./cash-eruption-slot";
+import { guide as w2Cash4lifeLottery } from "./cash4life-lottery";
+import { guide as w2ChipsGgReview } from "./chips-gg-review";
+import { guide as w2CleopatraSlot } from "./cleopatra-slot";
+import { guide as w2CoinpokerReview } from "./coinpoker-review";
+import { guide as w2CoinsGameCasinoReview } from "./coins-game-casino-review";
+import { guide as w2CraplessCraps } from "./crapless-craps";
+import { guide as w2CrapsFieldBet } from "./craps-field-bet";
+import { guide as w2CsMoneyReview } from "./cs-money-review";
+import { guide as w2Csgo500Review } from "./csgo500-review";
+import { guide as w2CsgofastReview } from "./csgofast-review";
+import { guide as w2DiamondsCasinoGame } from "./diamonds-casino-game";
+import { guide as w2DivineFortuneSlot } from "./divine-fortune-slot";
+import { guide as w2DmarketReview } from "./dmarket-review";
+import { guide as w2DogsTelegram } from "./dogs-telegram";
+import { guide as w2DoubleDoubleBonusPoker } from "./double-double-bonus-poker";
+import { guide as w2DragonCashSlot } from "./dragon-cash-slot";
+import { guide as w2DragonLinkSlot } from "./dragon-link-slot";
+import { guide as w2FrankRosenthal } from "./frank-rosenthal";
+import { guide as w2G4skinsReview } from "./g4skins-review";
+import { guide as w2GamblersAnonymous } from "./gamblers-anonymous";
+import { guide as w2GamblingLegalHawaii } from "./gambling-legal-hawaii";
+import { guide as w2GamblingLegalMinnesota } from "./gambling-legal-minnesota";
+import { guide as w2GarrettAdelstein } from "./garrett-adelstein";
+import { guide as w2GatesOfOlympus } from "./gates-of-olympus";
+import { guide as w2GoldenPandaCasinoReview } from "./golden-panda-casino-review";
+import { guide as w2GsnCasinoReview } from "./gsn-casino-review";
+import { guide as w2HoldAndWinSlots } from "./hold-and-win-slots";
+import { guide as w2HowToHostAPokerNight } from "./how-to-host-a-poker-night";
+import { guide as w2InboxdollarsGames } from "./inboxdollars-games";
+import { guide as w2JackAndTheBeanstalkSlot } from "./jack-and-the-beanstalk-slot";
+import { guide as w2JackpotjoyReview } from "./jackpotjoy-review";
+import { guide as w2JamminJarsSlot } from "./jammin-jars-slot";
+import { guide as w2JokerPoker } from "./joker-poker";
+import { guide as w2KeyDropReview } from "./key-drop-review";
+import { guide as w2LasAtlantisCasinoReview } from "./las-atlantis-casino-review";
+import { guide as w2LobstermaniaSlot } from "./lobstermania-slot";
+import { guide as w2LootfarmReview } from "./lootfarm-review";
+import { guide as w2MadameDestinyMegaways } from "./madame-destiny-megaways";
+import { guide as w2Mental2Slot } from "./mental-2-slot";
+import { guide as w2MoneyWellReview } from "./money-well-review";
+import { guide as w2MoonspinReview } from "./moonspin-review";
+import { guide as w2MybookieCasinoReview } from "./mybookie-casino-review";
+import { guide as w2NativeAmericanCasinos } from "./native-american-casinos";
+import { guide as w2NolimitCoinsReview } from "./nolimit-coins-review";
+import { guide as w2OnlineGamblingLegalColorado } from "./online-gambling-legal-colorado";
+import { guide as w2OnlineGamblingLegalIllinois } from "./online-gambling-legal-illinois";
+import { guide as w2OnlineGamblingLegalMissouri } from "./online-gambling-legal-missouri";
+import { guide as w2OnlineGamblingLegalNevada } from "./online-gambling-legal-nevada";
+import { guide as w2OnlineGamblingLegalVirginia } from "./online-gambling-legal-virginia";
+import { guide as w2OnlineGamblingLegalWisconsin } from "./online-gambling-legal-wisconsin";
+import { guide as w2OpenFaceChinesePoker } from "./open-face-chinese-poker";
+import { guide as w2PhilHellmuth } from "./phil-hellmuth";
+import { guide as w2Pick6HorseRacing } from "./pick-6-horse-racing";
+import { guide as w2PokerChipSet } from "./poker-chip-set";
+import { guide as w2PokerEquityCalculator } from "./poker-equity-calculator";
+import { guide as w2PokerokReview } from "./pokerok-review";
+import { guide as w2PumpGameCrypto } from "./pump-game-crypto";
+import { guide as w2QuickHitPlatinum } from "./quick-hit-platinum";
+import { guide as w2QuinellaBet } from "./quinella-bet";
+import { guide as w2RazedCasinoReview } from "./razed-casino-review";
+import { guide as w2RazorSharkSlot } from "./razor-shark-slot";
+import { guide as w2RazzPoker } from "./razz-poker";
+import { guide as w2SanQuentinSlot } from "./san-quentin-slot";
+import { guide as w2SecondChanceLottery } from "./second-chance-lottery";
+import { guide as w2ShortDeckPoker } from "./short-deck-poker";
+import { guide as w2SkinbetReview } from "./skinbet-review";
+import { guide as w2SlowPlayPoker } from "./slow-play-poker";
+import { guide as w2SportsBettingLegalOklahoma } from "./sports-betting-legal-oklahoma";
+import { guide as w2SportsbetIoReview } from "./sportsbet-io-review";
+import { guide as w2StraddlePoker } from "./straddle-poker";
+import { guide as w2SwcPokerReview } from "./swc-poker-review";
+import { guide as w2SweetBonanzaCandyland } from "./sweet-bonanza-candyland";
+import { guide as w2ThunderpickReview } from "./thunderpick-review";
+import { guide as w2TomDwan } from "./tom-dwan";
+import { guide as w2VikingsGoBerzerkSlot } from "./vikings-go-berzerk-slot";
+import { guide as w2WantedDeadOrAWild } from "./wanted-dead-or-a-wild";
+import { guide as w2WolfGoldSlot } from "./wolf-gold-slot";
+import { guide as w2WolfRunSlot } from "./wolf-run-slot";
+import { guide as w2WsmCasinoReview } from "./wsm-casino-review";
+import { guide as w2XEmpireTelegram } from "./x-empire-telegram";
+import { guide as w2YescoinReview } from "./yescoin-review";
 export const GUIDES: Guide[] = [
   whatIsACryptoCasino,
   provablyFairCasino,
@@ -1751,6 +1844,99 @@ export const GUIDES: Guide[] = [
   lostSugarRush1000Slot,
   lostTapjoyReview,
   lostTf2Keys,
+  w227TripleDraw,
+  w2AsgardSlot,
+  w2BennyBinion,
+  w2BetsIoReview,
+  w2BigOPoker,
+  w2BigTimeCashReview,
+  w2BitstarzReview,
+  w2BitzCasinoReview,
+  w2BuffaloGrandSlot,
+  w2BuffaloKingMegaways,
+  w2CashBanditsSlot,
+  w2CashEruptionSlot,
+  w2Cash4lifeLottery,
+  w2ChipsGgReview,
+  w2CleopatraSlot,
+  w2CoinpokerReview,
+  w2CoinsGameCasinoReview,
+  w2CraplessCraps,
+  w2CrapsFieldBet,
+  w2CsMoneyReview,
+  w2Csgo500Review,
+  w2CsgofastReview,
+  w2DiamondsCasinoGame,
+  w2DivineFortuneSlot,
+  w2DmarketReview,
+  w2DogsTelegram,
+  w2DoubleDoubleBonusPoker,
+  w2DragonCashSlot,
+  w2DragonLinkSlot,
+  w2FrankRosenthal,
+  w2G4skinsReview,
+  w2GamblersAnonymous,
+  w2GamblingLegalHawaii,
+  w2GamblingLegalMinnesota,
+  w2GarrettAdelstein,
+  w2GatesOfOlympus,
+  w2GoldenPandaCasinoReview,
+  w2GsnCasinoReview,
+  w2HoldAndWinSlots,
+  w2HowToHostAPokerNight,
+  w2InboxdollarsGames,
+  w2JackAndTheBeanstalkSlot,
+  w2JackpotjoyReview,
+  w2JamminJarsSlot,
+  w2JokerPoker,
+  w2KeyDropReview,
+  w2LasAtlantisCasinoReview,
+  w2LobstermaniaSlot,
+  w2LootfarmReview,
+  w2MadameDestinyMegaways,
+  w2Mental2Slot,
+  w2MoneyWellReview,
+  w2MoonspinReview,
+  w2MybookieCasinoReview,
+  w2NativeAmericanCasinos,
+  w2NolimitCoinsReview,
+  w2OnlineGamblingLegalColorado,
+  w2OnlineGamblingLegalIllinois,
+  w2OnlineGamblingLegalMissouri,
+  w2OnlineGamblingLegalNevada,
+  w2OnlineGamblingLegalVirginia,
+  w2OnlineGamblingLegalWisconsin,
+  w2OpenFaceChinesePoker,
+  w2PhilHellmuth,
+  w2Pick6HorseRacing,
+  w2PokerChipSet,
+  w2PokerEquityCalculator,
+  w2PokerokReview,
+  w2PumpGameCrypto,
+  w2QuickHitPlatinum,
+  w2QuinellaBet,
+  w2RazedCasinoReview,
+  w2RazorSharkSlot,
+  w2RazzPoker,
+  w2SanQuentinSlot,
+  w2SecondChanceLottery,
+  w2ShortDeckPoker,
+  w2SkinbetReview,
+  w2SlowPlayPoker,
+  w2SportsBettingLegalOklahoma,
+  w2SportsbetIoReview,
+  w2StraddlePoker,
+  w2SwcPokerReview,
+  w2SweetBonanzaCandyland,
+  w2ThunderpickReview,
+  w2TomDwan,
+  w2VikingsGoBerzerkSlot,
+  w2WantedDeadOrAWild,
+  w2WolfGoldSlot,
+  w2WolfRunSlot,
+  w2WsmCasinoReview,
+  w2XEmpireTelegram,
+  w2YescoinReview,
 ];
 
 export type ClusterInfo = {
@@ -2144,6 +2330,36 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
       name: "Earn-by-playing",
       slugs: ["coin-hunt-world-review", "rollercoin-review", "blum-crypto"],
     },
+    {
+      name: "Wave 2 state lines",
+      slugs: [
+        "gambling-legal-hawaii",
+        "gambling-legal-minnesota",
+        "online-gambling-legal-colorado",
+        "online-gambling-legal-illinois",
+        "online-gambling-legal-missouri",
+        "online-gambling-legal-nevada",
+        "online-gambling-legal-virginia",
+        "online-gambling-legal-wisconsin",
+        "sports-betting-legal-oklahoma",
+      ],
+    },
+    {
+      name: "Wave 2 offshore cashiers",
+      slugs: [
+        "bets-io-review",
+        "bitstarz-review",
+        "bitz-casino-review",
+        "coins-game-casino-review",
+        "golden-panda-casino-review",
+        "las-atlantis-casino-review",
+        "mybookie-casino-review",
+        "razed-casino-review",
+        "sportsbet-io-review",
+        "thunderpick-review",
+        "wsm-casino-review",
+      ],
+    },
   ],
   "Provably fair": [
     {
@@ -2324,6 +2540,20 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Roblox item sites",
       slugs: ["rbxflip-review", "bloxflip-review"],
+    },
+    {
+      name: "Wave 2 skin desks",
+      slugs: [
+        "chips-gg-review",
+        "cs-money-review",
+        "csgo500-review",
+        "csgofast-review",
+        "dmarket-review",
+        "g4skins-review",
+        "key-drop-review",
+        "lootfarm-review",
+        "skinbet-review",
+      ],
     },
   ],
   "Games & odds": [
@@ -2607,6 +2837,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "gambling-debt",
       ],
     },
+    {
+      name: "Fellowships",
+      slugs: ["gamblers-anonymous"],
+    },
   ],
   Sweepstakes: [
     {
@@ -2677,6 +2911,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "bingo-bash-review",
       ],
     },
+    {
+      name: "Wave 2 sweeps brands",
+      slugs: ["gsn-casino-review", "jackpotjoy-review", "moonspin-review", "nolimit-coins-review"],
+    },
   ],
   Poker: [
     {
@@ -2735,6 +2973,27 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Formats and staking",
       slugs: ["sit-and-go-poker", "spin-and-go", "cash-game-poker", "poker-staking"],
+    },
+    {
+      name: "Wave 2 poker study",
+      slugs: [
+        "2-7-triple-draw",
+        "big-o-poker",
+        "double-double-bonus-poker",
+        "how-to-host-a-poker-night",
+        "joker-poker",
+        "open-face-chinese-poker",
+        "poker-chip-set",
+        "poker-equity-calculator",
+        "razz-poker",
+        "short-deck-poker",
+        "slow-play-poker",
+        "straddle-poker",
+      ],
+    },
+    {
+      name: "Wave 2 poker rooms",
+      slugs: ["coinpoker-review", "pokerok-review", "swc-poker-review"],
     },
   ],
   "Esports betting": [
@@ -2830,6 +3089,19 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "lucky-match-review",
       ],
     },
+    {
+      name: "Wave 2 reward and tap apps",
+      slugs: [
+        "big-time-cash-review",
+        "diamonds-casino-game",
+        "dogs-telegram",
+        "inboxdollars-games",
+        "money-well-review",
+        "pump-game-crypto",
+        "x-empire-telegram",
+        "yescoin-review",
+      ],
+    },
   ],
   "Casino games": [
     {
@@ -2872,6 +3144,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "casino-war-game",
         "sic-bo-online",
       ],
+    },
+    {
+      name: "Wave 2 craps prices",
+      slugs: ["crapless-craps", "craps-field-bet"],
     },
   ],
   "Sports betting": [
@@ -3078,6 +3354,39 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
       name: "More cabinets",
       slugs: ["piggy-bankin-slot", "stack-em-slot", "beam-boys-slot"],
     },
+    {
+      name: "Wave 2 slot titles",
+      slugs: [
+        "asgard-slot",
+        "buffalo-grand-slot",
+        "buffalo-king-megaways",
+        "cash-bandits-slot",
+        "cash-eruption-slot",
+        "cleopatra-slot",
+        "divine-fortune-slot",
+        "dragon-cash-slot",
+        "dragon-link-slot",
+        "gates-of-olympus",
+        "hold-and-win-slots",
+        "jack-and-the-beanstalk-slot",
+      ],
+    },
+    {
+      name: "Wave 2 more slot titles",
+      slugs: [
+        "jammin-jars-slot",
+        "lobstermania-slot",
+        "madame-destiny-megaways",
+        "mental-2-slot",
+        "quick-hit-platinum",
+        "razor-shark-slot",
+        "san-quentin-slot",
+        "vikings-go-berzerk-slot",
+        "wanted-dead-or-a-wild",
+        "wolf-gold-slot",
+        "wolf-run-slot",
+      ],
+    },
   ],
   "Casino knowledge": [
     {
@@ -3193,6 +3502,17 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
       name: "Cabinets and rooms",
       slugs: ["slot-machine-for-sale", "bingo-halls-near-me"],
     },
+    {
+      name: "Wave 2 people and places",
+      slugs: [
+        "benny-binion",
+        "frank-rosenthal",
+        "garrett-adelstein",
+        "native-american-casinos",
+        "phil-hellmuth",
+        "tom-dwan",
+      ],
+    },
   ],
   "Game shows": [
     {
@@ -3208,6 +3528,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Crash and instant games",
       slugs: ["jetx-game", "spaceman-game", "chicken-road-game", "mines-predictor"],
+    },
+    {
+      name: "Wave 2 live wheels",
+      slugs: ["sweet-bonanza-candyland"],
     },
   ],
   "Games of chance": [
@@ -3359,6 +3683,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
       name: "Raffles and pools",
       slugs: ["50-50-raffle", "lottery-pool-agreement"],
     },
+    {
+      name: "Wave 2 lottery products",
+      slugs: ["cash4life-lottery", "second-chance-lottery"],
+    },
   ],
   "Horse racing": [
     {
@@ -3374,6 +3702,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Exotic bets",
       slugs: ["exacta-bet", "trifecta-bet", "superfecta-bet"],
+    },
+    {
+      name: "Wave 2 exotics",
+      slugs: ["pick-6-horse-racing", "quinella-bet"],
     },
   ],
   "Prediction markets": [
