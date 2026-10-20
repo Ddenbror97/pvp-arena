@@ -47,6 +47,7 @@ Record each production apply here. Do not re-run apply solely to update this doc
 | `20261019223000` | `withdrawal_linked_wallet` | A named cashout address must be a verified wallet of that account. A wallet that became primary in the last 24 hours is not paid while another verified wallet exists. | 2026-10-19 22:48, after Worker version `f74634c7-108f-472a-a757-c23f2bde54f1` | 7-arg function refuses an unlinked address with `NO_VERIFIED_WALLET` before any hold. Executable by `service_role` only. Address book still 0. Deposit history still 22. |
 | `20261019231000` | `temp_two_dollar_cashout` | Temporary test floor. Base cashout minimum is $2. Bonus can be cashed out once deposits reach that same $2 minimum. Promo, referral, prize, and partner holds stay. | 2026-10-19 22:56 | Settings and chain 8453 `min_withdrawal_cents` are 200. Fee is 0. Restore both minimums to 2000 to put the $20 floor back. |
 | `20261019234000` | `partner_commission_whole_cents` | Partner commission reports are whole cents. A fractional cent was crashing the admin partners page. | 2026-10-19 23:21 | `sum(bigint)` is numeric, so 20% of 1899 cents was 379.8. The window now truncates toward zero. Reporting only. No balances change. |
+| `20261020140000` | `partner_credit_removals_admin_fk` | Index on `partner_credit_removals.admin_id` for the performance advisor | Not applied from this environment | File is in the repo. Production apply needs `SUPABASE_DB_URL`, which is not in this checkout. |
 
 ## Rollout test gate
 

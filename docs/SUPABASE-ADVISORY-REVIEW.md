@@ -93,14 +93,13 @@ Supabase installs **`pg_net` in `public`**. Moving it is a **platform/extension*
 
 ---
 
-## Unindexed foreign keys (~102 remaining)
+## Unindexed foreign keys
 
-| Rule         | Detail                                                                                                          |
-| ------------ | --------------------------------------------------------------------------------------------------------------- |
-| Done         | Eight hot-path `public` indexes in `20261014221000`                                                             |
-| Backlog      | ~102 advisor rows (includes **`pvp_test` mirror** — skip indexing there if test-only)                           |
-| Next batches | Prioritize live `public` FKs on high-traffic joins/cascades; skip PK-covered FKs documented in `20261012190000` |
-| Do not       | One migration for all ~110                                                                                      |
+| Rule | Detail |
+| ---- | ------ |
+| Done | `20261015032000` covered every unindexed foreign key then in `public` |
+| New  | `partner_credit_removals.admin_id` was added later without an index. `20261020140000_partner_credit_removals_admin_fk` covers it. Apply with `node --env-file=.env scripts/audit/apply-migration.mjs` once `SUPABASE_DB_URL` is set. Do not re-apply if that version is already in `schema_migrations`. |
+| Skip | `pvp_test` mirror rows. Do not index the test schema to clear the linter. |
 
 ---
 
