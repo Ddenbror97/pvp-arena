@@ -121,7 +121,7 @@ export function RouletteGame() {
   const history = useQuery({ queryKey: ["roulette-history", 48], queryFn: () => fetchHistory(48) });
   const live = round.data ?? null;
   // Presentation hold: keep the finished round (winning coin + green/red names) on screen
-  // for a few seconds after the strip stops, even if the server already opened the next round.
+  // until the next betting clock starts, about 1.5s after the strip stops.
   const finished = useRef<typeof live>(null);
   if (live?.winning_color && live.spin_end_at) finished.current = live;
   const f = finished.current;

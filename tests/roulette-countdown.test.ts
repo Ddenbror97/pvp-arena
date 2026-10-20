@@ -70,12 +70,12 @@ describe("roulette countdown first shown once betting has started", () => {
 describe("roulette result hold", () => {
   const spinEnd = Date.parse("2026-10-15T16:32:17.625Z");
 
-  it("uses a 3.5s minimum and a 6s cap", () => {
-    expect(RESULT_HOLD_MS).toBe(3500);
+  it("uses a 1.5s minimum and a 6s cap", () => {
+    expect(RESULT_HOLD_MS).toBe(1500);
     expect(RESULT_HOLD_MAX_MS).toBe(6000);
   });
   it("hands over when the next round's betting clock starts on schedule", () => {
-    expect(resultHoldUntil(spinEnd, spinEnd + 3640)).toBe(spinEnd + 3640);
+    expect(resultHoldUntil(spinEnd, spinEnd + 1640)).toBe(spinEnd + 1640);
   });
   it("holds for the minimum when the next round starts sooner", () => {
     expect(resultHoldUntil(spinEnd, spinEnd + 1000)).toBe(spinEnd + RESULT_HOLD_MS);

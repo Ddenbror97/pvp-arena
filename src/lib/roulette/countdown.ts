@@ -15,7 +15,7 @@ export function rouletteBarLabel(game: CountdownRound | null, nowMs: number): st
   if (game.status === "BETTING") {
     const end = game.betting_ends_at ? Date.parse(game.betting_ends_at) : NaN;
     if (!Number.isFinite(end) || end <= nowMs) return "";
-    // The server opens the next row as the last spin stops and starts its clock a few seconds later.
+    // The server opens the next row as the last spin stops and starts its clock 1.5s later.
     const start = game.betting_started_at ? Date.parse(game.betting_started_at) : NaN;
     if (Number.isFinite(start) && nowMs < start)
       return `Next round in ${((start - nowMs) / 1000).toFixed(1)}s`;
@@ -30,7 +30,7 @@ export function rouletteBarLabel(game: CountdownRound | null, nowMs: number): st
   return "Waiting for the first bet";
 }
 
-export const RESULT_HOLD_MS = 3500;
+export const RESULT_HOLD_MS = 1500;
 export const RESULT_HOLD_MAX_MS = 6000;
 
 /**
