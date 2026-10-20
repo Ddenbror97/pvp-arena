@@ -2,6 +2,8 @@ import { useCallback, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export const RECENT_PAGE_SIZE = 8;
+/** Jackpot history shows one short page. Other games keep the default. */
+export const JACKPOT_RECENT_PAGE_SIZE = 4;
 
 /**
  * Paged recent-games list. Default is 8 rows; pass pageSize where a lobby fits fewer.

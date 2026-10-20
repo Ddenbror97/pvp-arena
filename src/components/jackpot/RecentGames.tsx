@@ -4,19 +4,26 @@ import { formatChance, formatUsd } from "@/lib/jackpot/math";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
 import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import { timeAgo } from "@/lib/time-ago";
-import { EDGE_TO_EDGE, RecentPager, usePagedRecent } from "@/components/recent/usePagedRecent";
+import {
+  EDGE_TO_EDGE,
+  JACKPOT_RECENT_PAGE_SIZE,
+  RecentPager,
+  usePagedRecent,
+} from "@/components/recent/usePagedRecent";
+import { cn } from "@/lib/utils";
 
 export function RecentGames() {
   const paintedAt = getRouteApi("/").useLoaderData().recent?.at;
   const { rows, isLoading, page, hasNext, hasPrev, next, prev, pauseProps } = usePagedRecent(
     "recent-games",
     fetchRecentGames,
+    JACKPOT_RECENT_PAGE_SIZE,
   );
   const identities = usePrestigeIdentities(
     rows.map((g) => g.winner_id).filter((id): id is string => !!id),
   );
   return (
-    <section className={EDGE_TO_EDGE} {...pauseProps}>
+    <section className={cn(EDGE_TO_EDGE, "min-h-0")} {...pauseProps}>
       <h2 className="section-kicker mb-2 font-display text-xs uppercase tracking-widest">
         Recent jackpot games
       </h2>

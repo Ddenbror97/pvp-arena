@@ -1,5 +1,5 @@
 import { useQueryClient, type QueryClient, type QueryKey } from "@tanstack/react-query";
-import { RECENT_PAGE_SIZE } from "@/components/recent/usePagedRecent";
+import { JACKPOT_RECENT_PAGE_SIZE, RECENT_PAGE_SIZE } from "@/components/recent/usePagedRecent";
 import { fetchChatPage } from "@/lib/chat/api";
 import type { ChatMessage } from "@/lib/chat/messages";
 import { SHARED_CHAT_ROOM } from "@/lib/chat/config";
@@ -245,7 +245,7 @@ async function buildJackpotPaint(deadline: number): Promise<JackpotPaint> {
   const at = Date.now();
   const [round, recent, chat] = await Promise.all([
     cap(peekShownRound(), deadline),
-    cap(fetchRecentGames(RECENT_PAGE_SIZE, 0), deadline),
+    cap(fetchRecentGames(JACKPOT_RECENT_PAGE_SIZE, 0), deadline),
     cap(fetchChatPage(SHARED_CHAT_ROOM), deadline),
   ]);
   const game = round?.game;
@@ -446,7 +446,7 @@ export function prefetchGamePage(
     });
     void qc.prefetchQuery({
       queryKey: ["recent-games", 0],
-      queryFn: () => fetchRecentGames(RECENT_PAGE_SIZE, 0),
+      queryFn: () => fetchRecentGames(JACKPOT_RECENT_PAGE_SIZE, 0),
     });
     return;
   }
