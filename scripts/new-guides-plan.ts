@@ -4925,4 +4925,20 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "mega moolah",
     "Games Global list. RTP, max win, and today's jackpot stay unpublished. Not the alien cabinet.",
   ),
+  p(
+    30,
+    "Foundations",
+    "Operator comparisons",
+    "gamba-casino-review",
+    "gamba casino",
+    "Anjouan ALSI-152512013-F13. Help says no deposit bonus. Over 90% instant is their claim.",
+  ),
+  p(
+    30,
+    "Foundations",
+    "Operator comparisons",
+    "metaspins-review",
+    "metaspins",
+    "Costa Rica 3-102-959384 SRL. Anjouan ALSI-202606048-FI2. 1x deposit wager. Welcome percent not published.",
+  ),
 ];

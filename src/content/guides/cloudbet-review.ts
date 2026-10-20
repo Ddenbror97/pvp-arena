@@ -147,7 +147,9 @@ A player who needs the whole $2,500 on day one will not find that sentence in cl
 
 Sports bets and casino bets both draw the package down. A single round at 25% or more of the deposit can put winnings at risk. Read that before you size a bet to "clear" the offer.
 
-[Responsible gambling](/responsible-gambling). Call 1-800-GAMBLER if the session is no longer entertainment. Not for anyone under the local age of majority, anyone in a barred country, anyone who needs a US state licence, or anyone who will treat the homepage clock as a stopwatch we ran.`,
+[Responsible gambling](/responsible-gambling). Call 1-800-GAMBLER if the session is no longer entertainment. Not for anyone under the local age of majority, anyone in a barred country, anyone who needs a US state licence, or anyone who will treat the homepage clock as a stopwatch we ran.
+
+[A welcome URL that returned HTTP 403](/guides/metaspins-review) is not the same as a missing percent on a page that loaded. Read the terms file that did open.`,
     },
     {
       id: "check",

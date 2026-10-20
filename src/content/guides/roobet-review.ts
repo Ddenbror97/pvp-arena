@@ -110,6 +110,8 @@ Do not hunt a mirror if the real site blocks your country. Mirrors are how looka
 
 Do not treat a fast interface as a cheaper game. Speed changes how quickly you can lose the budget. It does not change the edge printed on the original.
 
+[An Anjouan file whose help says deposit bonuses are not offered](/guides/gamba-casino-review) is a different cashier shape from a streamer's welcome headline.
+
 Write the Roobet note as if the stream did not exist. First line: the original or slot you will actually open, and the edge or RTP printed there. Second line: the cashier asset and network. Third line: whether your country can register, checked by you, not by a comment. Fourth line: the loss limit. Fifth line: the date.
 
 If a clip is why you arrived, add a sixth line that says "ad" and stop treating it as evidence. The clip cannot show your withdrawal. Only your txid can. If the site blocks you, the note ends there. Do not continue it on a lookalike domain.

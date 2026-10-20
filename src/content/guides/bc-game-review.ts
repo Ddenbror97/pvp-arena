@@ -110,6 +110,8 @@ The fourth mistake is depositing a coin the cashier will convert at a spread you
 
 The fifth mistake is using a new BC.Game review from a forum as a code list. Codes expire. This page will go stale on purpose wherever it refuses to print a percentage. If you need a number, copy it from the live promotion and date it.
 
+[Terms that name Costa Rica and a 1x deposit wager](/guides/metaspins-review) are a different contract from a token quest. Do not paste that wager onto this lobby.
+
 A BC.Game note has an extra line the other reviews do not: the token. Write whether the chip can be withdrawn today, what asset it converts to, and the spread you would pay. If you cannot answer, the chip is worth zero in your bankroll. Then write the one game you will play and its edge or RTP. Then the cashier round trip. Then the country check. Then the loss limit.
 
 Do not let the size of the lobby fill the page. A grid of tiles is not research. One tile, opened, with the rules read, is the review. Quests and rain go in a separate line marked optional. If you did not opt in, write "not opted in" so a later withdrawal delay is not a mystery.
