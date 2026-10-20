@@ -226,8 +226,8 @@ export function RouletteGame() {
 
   const status = rouletteBarLabel(g, now());
   // The strip lands on its own clock (betting close plus the official spin length).
-  // The columns use that same instant, so purple/silver/green turn green or red
-  // when the winning coin stops, not when the worker's spin_end_at arrives.
+  // Usernames use that same instant, so a winning name turns green and the others
+  // red when the winning coin stops, not when the worker's spin_end_at arrives.
   const spinClock = stripClock(g, now());
   const landAt = spinClock.end > 0 ? spinClock.end : g?.spin_end_at ? Date.parse(g.spin_end_at) : 0;
   const landed = g?.winning_color && landAt > 0 && now() >= landAt ? g.winning_color : null;
@@ -342,7 +342,6 @@ export function RouletteGame() {
             return (
               <div
                 key={c}
-                data-result={landed == null ? undefined : landed === c ? "win" : "loss"}
                 className={cn(
                   `bet-col-${c} flex min-h-0 flex-col rounded-xl border transition-all duration-500 max-sm:max-h-60 xl:h-full`,
                 )}
@@ -397,7 +396,12 @@ export function RouletteGame() {
                         <span className="block truncate text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
                           Highest {COIN[c].label}
                         </span>
-                        <span className="mt-0.5 block truncate text-xs font-semibold">
+                        <span
+                          className={cn(
+                            "mt-0.5 block truncate text-xs font-semibold",
+                            landed && (landed === c ? "text-success" : "text-destructive"),
+                          )}
+                        >
                           {leader.name}
                         </span>
                       </span>
@@ -425,14 +429,7 @@ export function RouletteGame() {
                 </button>
                 <ul className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pb-2 text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {rows.map(([id, row]) => (
-                    <li
-                      key={id}
-                      className={cn(
-                        "flex items-center justify-between gap-2",
-                        landed &&
-                          (landed === c ? "font-semibold text-success" : "text-destructive"),
-                      )}
-                    >
+                    <li key={id} className="flex items-center justify-between gap-2">
                       <span className="flex min-w-0 items-center gap-1.5">
                         <PlayerPrestigeIdentity
                           avatar={row.avatar}
@@ -443,7 +440,17 @@ export function RouletteGame() {
                           tier={identities.get(id)?.tier}
                           size={24}
                         />
-                        <span className="min-w-0 truncate">{row.name}</span>
+                        <span
+                          className={cn(
+                            "min-w-0 truncate",
+                            landed &&
+                              (landed === c
+                                ? "font-semibold text-success"
+                                : "font-semibold text-destructive"),
+                          )}
+                        >
+                          {row.name}
+                        </span>
                       </span>
                       <span className="tabular shrink-0">{formatUsd(row.amount)}</span>
                     </li>
