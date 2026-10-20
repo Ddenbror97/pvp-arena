@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type BotPublicConfig = { coinflip: boolean; poker: boolean };
 
-/** Public flags only. Both stay false until an operator funds the bot bankroll. */
+/** Public flags only. Stake still comes from the house bot bankroll, which is funded separately. */
 export function useBotConfig() {
   return useQuery({
     queryKey: ["bot-public-config"],
