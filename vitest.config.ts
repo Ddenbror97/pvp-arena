@@ -10,7 +10,7 @@ export default defineConfig({
     watch: false,
     // Database files call testDatabaseUrl() and refuse SUPABASE_DB_URL.
     // Point TEST_DATABASE_URL at an isolated Postgres before running them.
-    include: ["tests/**/*.test.ts"],
+    include: ["tests/**/*.test.ts", "tests/**/*.test.tsx"],
     fileParallelism: false,
     testTimeout: 15000,
   },

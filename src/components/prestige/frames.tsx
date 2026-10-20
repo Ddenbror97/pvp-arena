@@ -193,18 +193,31 @@ export function crownAspect(assetKey: string | null | undefined): number {
 export const FRAME_ASSET_KEYS = Object.keys(FRAMES);
 export const CROWN_ASSET_KEYS = Object.keys(CROWNS);
 
+/** Bundled URL for a frame or crown, for preloading the faces on the first paint. */
+export function cosmeticArtSrc(assetKey: string | null | undefined): string | null {
+  if (!assetKey) return null;
+  return FRAMES[assetKey]?.src ?? CROWNS[assetKey]?.src ?? null;
+}
+
 const paintedArt = new Set<string>();
 
-function Art({ src, className, style, animated }: ArtProps & { src: string }) {
-  const known = paintedArt.has(src);
+function Art({
+  src,
+  className,
+  style,
+  animated,
+  priority = false,
+}: ArtProps & { src: string; priority?: boolean | undefined }) {
+  const eager = priority || paintedArt.has(src);
   return (
     <img
       src={src}
       alt=""
       aria-hidden
       draggable={false}
-      decoding={known ? "sync" : "async"}
-      loading={known ? "eager" : "lazy"}
+      decoding="async"
+      loading={eager ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : undefined}
       onLoad={() => paintedArt.add(src)}
       className={cn("select-none object-contain", animated && "prestige-art-live", className)}
       style={style}
@@ -217,10 +230,14 @@ export function AvatarFrame({
   assetKey,
   className,
   style,
-}: Omit<ArtProps, "animated"> & { assetKey?: string | null | undefined }) {
+  priority = false,
+}: Omit<ArtProps, "animated"> & {
+  assetKey?: string | null | undefined;
+  priority?: boolean | undefined;
+}) {
   const art = assetKey ? FRAMES[assetKey] : undefined;
   if (!art) return null;
-  return <Art src={art.src} className={className} style={style} />;
+  return <Art src={art.src} className={className} style={style} priority={priority} />;
 }
 
 export function CrownAccessory({
@@ -228,10 +245,19 @@ export function CrownAccessory({
   className,
   style,
   animated,
-}: ArtProps & { assetKey?: string | null | undefined }) {
+  priority = false,
+}: ArtProps & { assetKey?: string | null | undefined; priority?: boolean | undefined }) {
   const art = assetKey ? CROWNS[assetKey] : undefined;
   if (!art) return null;
-  return <Art src={art.src} className={className} style={style} animated={animated} />;
+  return (
+    <Art
+      src={art.src}
+      className={className}
+      style={style}
+      animated={animated}
+      priority={priority}
+    />
+  );
 }
 
 export function LootBoxArt({

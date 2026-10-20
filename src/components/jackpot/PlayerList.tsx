@@ -1,10 +1,38 @@
 import { useMemo } from "react";
 import type { PlayerRow } from "@/lib/jackpot/api";
 import { formatChance, formatUsd } from "@/lib/jackpot/math";
-import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
+import {
+  PlayerPrestigeIdentity,
+  reservedCrownHeadroom,
+} from "@/components/prestige/PlayerPrestigeIdentity";
 import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import { playerColor } from "@/lib/jackpot/colors";
 import { cn } from "@/lib/utils";
+
+const PLAYER_AVATAR = 32;
+/** Same on every row, so a crown that arrives after the names cannot grow the list. */
+const PLAYER_HEADROOM = reservedCrownHeadroom(PLAYER_AVATAR);
+const EAGER_PLAYERS = 8;
+
+function PlayerSkeleton({ count }: { count: number }) {
+  return (
+    <ul aria-busy="true" className="divide-y divide-border">
+      {Array.from({ length: count }, (_, i) => (
+        <li key={i} aria-hidden className="flex items-center gap-2 px-3 py-1.5">
+          <span className="h-6 w-1 shrink-0 rounded-full bg-muted" />
+          <span
+            className="inline-flex shrink-0 flex-col items-center"
+            style={{ paddingTop: PLAYER_HEADROOM }}
+          >
+            <span className="h-8 w-8 rounded-[8%] bg-muted" />
+          </span>
+          <span className="h-4 min-w-0 flex-1 rounded bg-muted" />
+          <span className="h-8 w-14 shrink-0 rounded bg-muted" />
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export function PlayerList({
   players,
@@ -13,6 +41,7 @@ export function PlayerList({
   winnerId,
   roundId = 0,
   pending = false,
+  reserveCount = 0,
 }: {
   players: PlayerRow[];
   pot: number;
@@ -20,6 +49,8 @@ export function PlayerList({
   winnerId?: string | null | undefined;
   roundId?: number | undefined;
   pending?: boolean | undefined;
+  /** Rows to hold open while the player read is still in flight. */
+  reserveCount?: number | undefined;
 }) {
   // Colors follow wheel order (join order); list is sorted by stake.
   const identities = usePrestigeIdentities(players.map((p) => p.user_id));
@@ -34,7 +65,7 @@ export function PlayerList({
   );
 
   if (pending) {
-    return <div aria-busy="true" className="h-[3.25rem]" />;
+    return <PlayerSkeleton count={Math.min(12, Math.max(1, reserveCount))} />;
   }
   if (!players.length) {
     return (
@@ -45,7 +76,7 @@ export function PlayerList({
   }
   return (
     <ul className="divide-y divide-border">
-      {sorted.map((p) => {
+      {sorted.map((p, index) => {
         const color = playerColor(colorIdx.get(p.user_id) ?? 0, roundId);
         const isMe = p.user_id === meId;
         return (
@@ -65,7 +96,9 @@ export function PlayerList({
               crown={identities.get(p.user_id)?.crown}
               level={identities.get(p.user_id)?.level}
               tier={identities.get(p.user_id)?.tier}
-              size={32}
+              size={PLAYER_AVATAR}
+              minHeadroom={PLAYER_HEADROOM}
+              priority={index < EAGER_PLAYERS}
             />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">

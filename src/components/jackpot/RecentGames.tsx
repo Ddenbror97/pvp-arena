@@ -1,7 +1,10 @@
 import { Link, getRouteApi } from "@tanstack/react-router";
 import { fetchRecentGames } from "@/lib/jackpot/api";
 import { formatChance, formatUsd } from "@/lib/jackpot/math";
-import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
+import {
+  PlayerPrestigeIdentity,
+  reservedCrownHeadroom,
+} from "@/components/prestige/PlayerPrestigeIdentity";
 import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import { timeAgo } from "@/lib/time-ago";
 import {
@@ -59,6 +62,7 @@ export function RecentGames() {
                       level={identities.get(g.winner_id ?? "")?.level}
                       tier={identities.get(g.winner_id ?? "")?.tier}
                       size={32}
+                      minHeadroom={reservedCrownHeadroom(32)}
                     />
                     <span className="truncate font-semibold">
                       {g.winner?.username ?? "unknown"}

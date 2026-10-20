@@ -57,6 +57,7 @@ export function PlayerPrestigeIdentity({
   previewSrc,
   reserveHeadroom = true,
   minHeadroom = 0,
+  priority = false,
   className,
 }: {
   previewSrc?: string | null | undefined;
@@ -64,6 +65,8 @@ export function PlayerPrestigeIdentity({
   reserveHeadroom?: boolean | undefined;
   /** Always keep at least this many pixels, even before a crown is known. */
   minHeadroom?: number | undefined;
+  /** Fetch the face, frame, and crown with the first paint. */
+  priority?: boolean | undefined;
   avatar?: string | null | undefined;
   name?: string | null | undefined;
   frame?: string | null | undefined;
@@ -110,16 +113,19 @@ export function PlayerPrestigeIdentity({
             previewSrc={previewSrc}
             name={name ?? undefined}
             className="h-full w-full ring-0"
+            priority={priority}
           />
         </span>
         {frame ? (
           <AvatarFrame
             assetKey={frame}
+            priority={priority}
             className="pointer-events-none absolute inset-0 z-10 h-full w-full"
           />
         ) : null}
         <CrownAccessory
           assetKey={crown}
+          priority={priority}
           className="pointer-events-none absolute left-1/2 z-20 -translate-x-1/2"
           style={{
             top: place.top,

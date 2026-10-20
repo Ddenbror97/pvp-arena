@@ -16,7 +16,10 @@ import { JACKPOT_SPIN_MS, JACKPOT_WINNER_MS, jackpotSpinStart } from "@/lib/jack
 import { JackpotWheel } from "./JackpotWheel";
 import { PlayerList } from "./PlayerList";
 import { EntryPanel } from "./EntryPanel";
-import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
+import {
+  PlayerPrestigeIdentity,
+  reservedCrownHeadroom,
+} from "@/components/prestige/PlayerPrestigeIdentity";
 import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import { ShieldCheck } from "lucide-react";
 import { GameChat } from "@/components/chat/GameChat";
@@ -166,6 +169,8 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
                 level={winnerIdentity?.level}
                 tier={winnerIdentity?.tier}
                 size={96}
+                minHeadroom={reservedCrownHeadroom(96)}
+                priority
               />
               <div className="mt-3 font-display text-xs tracking-[0.35em] text-gold">WINNER</div>
               <div className="mt-1 truncate font-display text-lg sm:text-xl">
@@ -260,6 +265,7 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
             <PlayerList
               players={players}
               pending={playersPending}
+              reserveCount={seated}
               pot={pot}
               meId={userId}
               winnerId={phase === "winner" ? stage?.winner_id : null}

@@ -41,8 +41,13 @@ import {
 const FILL_BUDGET_MS = 2_000;
 const PAINT_FRESH_MS = 5_000;
 const PAINT_STALE_MS = 30_000;
-/** Client navigations keep the previous page up, so they can wait a little longer. */
-const BROWSER_WAIT_MS = 200;
+/**
+ * A click on Jackpot keeps the previous page up while the open round loads, so the
+ * Players list is already filled when this page appears. Identities get the time
+ * left after the round, up to the longer cap.
+ */
+const JACKPOT_BROWSER_ROUND_MS = 800;
+const JACKPOT_BROWSER_WAIT_MS = 1200;
 
 /**
  * The first document waits on these reads. A later visit to Jackpot also waits for the
@@ -241,40 +246,53 @@ const EMPTY_JACKPOT: JackpotPaint = {
   identities: null,
 };
 
+function mergeIdentitySeeds(first: IdentitySeed, second: IdentitySeed): IdentitySeed {
+  if (!first) return second;
+  if (!second) return first;
+  const ids = [...new Set([...first.ids, ...second.ids])];
+  const seen = new Set(first.rows.map((row) => row.user_id));
+  const rows = [...first.rows];
+  for (const row of second.rows) {
+    if (!seen.has(row.user_id)) rows.push(row);
+  }
+  return { ids, rows };
+}
+
 async function buildJackpotPaint(deadline: number): Promise<JackpotPaint> {
   const at = Date.now();
-  const [round, recent, chat] = await Promise.all([
-    cap(peekShownRound(), deadline),
-    cap(fetchRecentGames(JACKPOT_RECENT_PAGE_SIZE, 0), deadline),
-    cap(fetchChatPage(SHARED_CHAT_ROOM), deadline),
-  ]);
+  const roundP = cap(peekShownRound(), deadline);
+  const recentP = cap(fetchRecentGames(JACKPOT_RECENT_PAGE_SIZE, 0), deadline);
+  const chatP = cap(fetchChatPage(SHARED_CHAT_ROOM), deadline);
+  const round = await roundP;
   const game = round?.game;
   const players = round === undefined ? undefined : round.players;
-  const identities = await identitiesFor(
-    [
-      ...(players ?? []).map((p) => p.user_id),
-      ...(recent ?? []).map((g) => g.winner_id).filter((id): id is string => !!id),
-      ...(chat ?? []).map((m) => m.user_id),
-    ],
-    deadline,
-  );
+  const playerIds = (players ?? []).map((p) => p.user_id);
+  // Frames start as soon as the round is known, while recent games and chat are still reading.
+  const playerIdentitiesP = identitiesFor(playerIds, deadline);
+  const [recent, chat, playerIdentities] = await Promise.all([recentP, chatP, playerIdentitiesP]);
+  const restIds = [
+    ...(recent ?? []).map((g) => g.winner_id).filter((id): id is string => !!id),
+    ...(chat ?? []).map((m) => m.user_id),
+  ].filter((id) => !playerIds.includes(id));
+  const restIdentities =
+    restIds.length > 0 && Date.now() < deadline ? await identitiesFor(restIds, deadline) : null;
   return {
     game: fresh(game, at),
     players: fresh(players, at),
     recent: fresh(recent, at),
     chat: fresh(chat, at),
-    identities,
+    identities: mergeIdentitySeeds(playerIdentities, restIdentities),
   };
 }
 
 export async function loadJackpotPaint(): Promise<JackpotPaint> {
   if (inBrowser) {
     const at = Date.now();
-    const round = await cap(peekShownRound(), at + BROWSER_WAIT_MS);
+    const round = await cap(peekShownRound(), at + JACKPOT_BROWSER_ROUND_MS);
     if (!round) return EMPTY_JACKPOT;
     const identities = await identitiesFor(
       round.players.map((p) => p.user_id),
-      at + BROWSER_WAIT_MS,
+      at + JACKPOT_BROWSER_WAIT_MS,
     );
     return {
       game: fresh(round.game, at),

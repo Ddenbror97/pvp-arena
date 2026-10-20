@@ -5,17 +5,21 @@ import { GameFacts } from "@/components/seo/GameFacts";
 import { indexableHead } from "@/lib/seo/indexable-head";
 import { useSeedIdentities } from "@/components/prestige/PrestigeProvider";
 import { loadJackpotPaint, useQuerySeed } from "@/lib/first-paint";
+import { jackpotPlayerLinks } from "@/lib/jackpot/player-paint";
 
 export const Route = createFileRoute("/")({
   loader: () => loadJackpotPaint(),
-  head: () =>
+  head: ({ loaderData }) =>
     indexableHead({
       path: "/",
       title: "PvP Jackpot | CSGO-Style Crypto Jackpot | PVPspinArena",
       description:
         "Play crypto Jackpot with real players. Join the pot, compete for the prize and verify every round with PVPspinArena's provably fair system.",
       site: true,
-      extraLinks: [{ rel: "preload", as: "image", href: arenaLogo, type: "image/webp" }],
+      extraLinks: [
+        { rel: "preload", as: "image", href: arenaLogo, type: "image/webp", fetchPriority: "high" },
+        ...jackpotPlayerLinks(loaderData),
+      ],
     }),
   component: Index,
 });

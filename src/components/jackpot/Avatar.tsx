@@ -2,13 +2,12 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { avatarSrc } from "@/lib/avatar";
 
-// Avatars that have already painted. A new <img> starts transparent until
-// onLoad, so navigating between the game pages faded every face back in.
-const paintedAvatars = new Set<string>();
-
 /**
  * The one avatar renderer for every surface. `previewSrc` is only for the
  * player's own unsaved crop preview and accepts local `blob:` URLs only.
+ * The photo is in the document at full opacity, with the letter behind it, so a
+ * hard refresh paints the face as soon as the bytes arrive. It does not wait
+ * for hydration to flip an opacity gate.
  */
 export function PlayerAvatar({
   src,
@@ -16,19 +15,19 @@ export function PlayerAvatar({
   className,
   color,
   previewSrc,
+  priority = false,
 }: {
   src?: string | null | undefined;
   name?: string | undefined;
   className?: string | undefined;
   color?: string | undefined;
   previewSrc?: string | null | undefined;
+  /** Eager, high-priority fetch for faces that are on screen at first paint. */
+  priority?: boolean | undefined;
 }) {
   const safe = previewSrc?.startsWith("blob:") ? previewSrc : avatarSrc(src);
-  const known = !!safe && paintedAvatars.has(safe);
   const [failed, setFailed] = useState<string | null>(null);
-  const [loaded, setLoaded] = useState<string | null>(null);
-  const show = safe && failed !== safe;
-  const visible = known || loaded === safe;
+  const show = !!safe && failed !== safe;
   return (
     <span
       className={cn(
@@ -37,37 +36,22 @@ export function PlayerAvatar({
       )}
       style={{ ["--tw-ring-color" as string]: color ?? "var(--border)" }}
     >
-      {show && !visible ? (
-        <span className="absolute inset-0 grid place-items-center font-display text-xs">
-          {name?.[0]?.toUpperCase() ?? "?"}
-        </span>
-      ) : null}
+      <span className="absolute inset-0 grid place-items-center font-display text-xs">
+        {name?.[0]?.toUpperCase() ?? "?"}
+      </span>
       {show ? (
         <img
-          ref={(img) => {
-            if (img?.complete && img.naturalWidth > 0 && loaded !== safe) setLoaded(safe);
-          }}
           src={safe}
           alt={name ?? ""}
-          className={cn(
-            "absolute inset-0 h-full w-full object-cover",
-            visible ? "opacity-100" : "opacity-0",
-          )}
-          loading={known ? "eager" : "lazy"}
-          decoding={known ? "sync" : "async"}
+          className="absolute inset-0 h-full w-full object-cover"
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : undefined}
+          decoding="async"
           draggable={false}
           referrerPolicy="no-referrer"
-          onLoad={() => {
-            if (safe) paintedAvatars.add(safe);
-            setLoaded(safe);
-          }}
           onError={() => setFailed(safe)}
         />
-      ) : (
-        <span className="absolute inset-0 grid place-items-center font-display text-xs">
-          {name?.[0]?.toUpperCase() ?? "?"}
-        </span>
-      )}
+      ) : null}
     </span>
   );
 }
