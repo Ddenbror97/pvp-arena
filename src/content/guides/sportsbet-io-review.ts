@@ -222,7 +222,9 @@ Two words, sportsbet io, are enough to search. They are not enough to deposit.
 
 Depositing needs the domain, the company, and a stake you can lose. The rest of the legend can stay in other articles.
 
-This book is not the esports-leaning brand. [The esports-leaning book](/guides/thunderpick-review) is that other review.`,
+This book is not the esports-leaning brand. [The esports-leaning book](/guides/thunderpick-review) is that other review.
+
+A different offshore FAQ shows $110 to win $100 and code 5017 at 15% with a 5x roll. That read is [the .co rules and promotions pages](/guides/justbet-review).`
     },
   ],
   faqs: [

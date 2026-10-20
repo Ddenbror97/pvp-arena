@@ -136,7 +136,9 @@ Then close the tab or play only what this site actually offers. Jackpot, Coinfli
 
 One offshore rulebook prints the ID ask in advance, including a utility bill before funds move. That dated read is [the Costa Rica book's printed ID rule](/guides/wagerweb-review).
 
-Another licensing page names Anjouan and prices major markets at -105, without printing a licence number. The note is [that -105 page, dated](/guides/bet105-review).`
+Another licensing page names Anjouan and prices major markets at -105, without printing a licence number. The note is [that -105 page, dated](/guides/bet105-review).
+
+A .co book prints a $1 online minimum and welcome code 5017, and still no licence number on the pages opened. The dated read is [that FAQ and promotions page](/guides/justbet-review).`
     },
   ],
   faqs: [

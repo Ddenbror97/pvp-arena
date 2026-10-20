@@ -4485,4 +4485,20 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "lucky rebel",
     "125% welcome from the operator page. An unpublished cashier clock stays off the page.",
   ),
+  p(
+    30,
+    "Sports betting",
+    "Pick'em apps",
+    "prizepicks-promo-code",
+    "prizepicks promo code",
+    "Signup-string page only. how-does-prizepicks-work keeps the keyword prizepicks.",
+  ),
+  p(
+    30,
+    "Sports betting",
+    "Offshore sportsbooks",
+    "justbet-review",
+    "justbet",
+    "justbet.co review. The Australian racing site with a similar name stays off this page.",
+  ),
 ];

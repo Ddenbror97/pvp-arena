@@ -117,7 +117,9 @@ After settlement the seed is published. [Fairness](/fairness) recomputes the has
 
 PVPspinArena does not offer a more-or-less board. It offers Jackpot, Coinflip, and Roulette, funded with USDC or ETH on Base. This guide cites no user counts and no fee percent. The fee on a round is the fee that round shows. If you wanted a stat line, use the app's slip and its state check. If you wanted a shared pot you can recompute, Jackpot is the product. Adults 18+ only. This is not financial, legal, or tax advice.
 
-A second app matches the first deposit up to $100 in promo funds that expire in 7 days. The help-center read is [a deposit match paid as promo](/guides/parlayplay-review).`
+A second app matches the first deposit up to $100 in promo funds that expire in 7 days. The help-center read is [a deposit match paid as promo](/guides/parlayplay-review).
+
+The same operator's promo URL and help article did not print the same signup string on 20 October 2026. The $150 is bonus lineups if the first lineup wins. See [those disagreeing signup pages](/guides/prizepicks-promo-code).`
     },
   ],
   faqs: [

@@ -426,6 +426,8 @@ import { guide as seoParlayplayReview } from "./parlayplay-review";
 import { guide as seoVavadaReview } from "./vavada-review";
 import { guide as seoHeritageSportsReview } from "./heritage-sports-review";
 import { guide as seoLuckyRebelReview } from "./lucky-rebel-review";
+import { guide as seoPrizepicksPromoCode } from "./prizepicks-promo-code";
+import { guide as seoJustbetReview } from "./justbet-review";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1408,6 +1410,8 @@ export const GUIDES: Guide[] = [
   seoVavadaReview,
   seoHeritageSportsReview,
   seoLuckyRebelReview,
+  seoPrizepicksPromoCode,
+  seoJustbetReview,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -3238,6 +3242,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "bet105-review",
         "heritage-sports-review",
         "lucky-rebel-review",
+        "justbet-review",
       ],
     },
     { name: "Office pools", slugs: ["bracket-pool", "super-bowl-squares"] },
@@ -3247,7 +3252,13 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     },
     {
       name: "Fantasy and friend bets",
-      slugs: ["wagr-review", "splash-sports-review", "fantasy-football-payouts", "parlayplay-review"],
+      slugs: [
+        "wagr-review",
+        "splash-sports-review",
+        "fantasy-football-payouts",
+        "parlayplay-review",
+        "prizepicks-promo-code",
+      ],
     },
     {
       name: "Golf games",
