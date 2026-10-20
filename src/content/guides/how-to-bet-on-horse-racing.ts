@@ -61,7 +61,9 @@ The morning line is one handicapper's morning forecast. It is useful as a map of
 
 Win, place and show prices come from three different pools. A place ticket can cash when your horse runs second. The price is whatever that place pool produces, which [win place show betting](/guides/win-place-show-betting) works through with numbers. An exacta cashes only in the order you wrote, unless you bought a box or a key that already includes the other orders. Those structures, and the n × (n − 1) cost, are on the [exacta bet](/guides/exacta-bet) page. Trifecta and superfecta pages in this cluster do the same job for three and four horses.
 
-Across the board means the same stake on win, place and show. A $2 across-the-board ticket costs $6. It is three bets, not a discount.`,
+Across the board means the same stake on win, place and show. A $2 across-the-board ticket costs $6. It is three bets, not a discount.
+
+A single-race menu is not six winners. [The six-race ticket](/guides/pick-6-horse-racing) is usually a carryover pool, not a fixed multiple.`,
     },
     {
       id: "payout-math",
@@ -154,6 +156,7 @@ Leave with the tickets you cashed and the ones you did not. The uncashed ones ar
     "exacta-bet",
     "horse-racing-odds-explained",
     "handicapping-horses",
+    "pick-6-horse-racing",
   ],
   updated: "2026-10-06",
 };

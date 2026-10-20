@@ -152,7 +152,9 @@ Whether a rewards lobby is lawful where you live is a question for the statute a
 
 [Cap the session before the tiles multiply](/responsible-gambling). A lobby is built to offer another tile when one ends. Another tile is more time, not a higher rate.
 
-The $9.50 net is roulette after a fee. It is not Swagbucks redemption, and it does not crown a game.`,
+The $9.50 net is roulette after a fee. It is not Swagbucks redemption, and it does not crown a game.
+
+Points on one site are not points on the next. [The other survey lobby](/guides/inboxdollars-games) has its own redemption screen.`,
     },
   ],
   faqs: [
@@ -189,6 +191,7 @@ The $9.50 net is roulette after a fee. It is not Swagbucks redemption, and it do
     "givvy-review",
     "lucky-match-review",
     "pch-games-review",
+    "inboxdollars-games",
   ],
   updated: "2026-10-20",
 };

@@ -34,7 +34,9 @@ The [Foundations](/guides/topics/foundations) topic splits those words before yo
 
 North Carolina’s 2023 sports-wagering law, widely discussed as House Bill 347, is what the 2024 launch implemented. A bill number is a starting point. The operator list is the part that tells you who is actually licensed this month.
 
-Worked example 1. You are in Charlotte and an app offers both a Panthers moneyline and a slot lobby. The moneyline may be inside the sports law if the operator is on the official list and you are in the state. The slot lobby is a different product. You do not fund the lobby because the moneyline was legal.`,
+Worked example 1. You are in Charlotte and an app offers both a Panthers moneyline and a slot lobby. The moneyline may be inside the sports law if the operator is on the official list and you are in the state. The slot lobby is a different product. You do not fund the lobby because the moneyline was legal.
+
+North Carolina's meaning of online does not cross the border. [Virginia, read on its own](/guides/online-gambling-legal-virginia) is a different agency and a different product list.`,
     },
     {
       id: "sports",
@@ -161,6 +163,7 @@ PVPspinArena is not a North Carolina sportsbook and not a tribal casino. It offe
     "sweepstakes-casino-legal-states",
     "gambling-age-us",
     "what-is-sports-betting",
+    "online-gambling-legal-virginia",
   ],
   updated: "2026-10-06",
 };

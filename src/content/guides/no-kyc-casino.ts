@@ -145,7 +145,9 @@ A no KYC cashier also means you cannot lean on a bank to reverse a bet. The chai
 
 Before a first deposit, read [how it works](/how-it-works) so you know the games are PvP Jackpot, Coinflip and Roulette, not a hidden house book dressed up as privacy.
 
-If you only wanted less paperwork, you already have the honest version of the product. If you wanted a private room, you are reading the wrong promise. Keep the budget small enough that a public hash is an acceptable record. That is the adult version of no KYC: less paperwork, the same Base explorer.`,
+If you only wanted less paperwork, you already have the honest version of the product. If you wanted a private room, you are reading the wrong promise. Keep the budget small enough that a public hash is an acceptable record. That is the adult version of no KYC: less paperwork, the same Base explorer.
+
+When the check breaks, a cute name does not repair it. [The panda-named brand](/guides/golden-panda-casino-review) publishes neither a fee nor a license on this site.`,
     },
     {
       id: "summary",
@@ -158,7 +160,9 @@ For day-to-day play, behave as if the cashier is paperless and the ledger is pub
 
 The same pitch shows up on sports tickets. A [no KYC sportsbook](/guides/no-kyc-sportsbook) can skip documents at signup and still freeze the withdrawal. The coin does not remove the question.
 
-Skipping identity checks is not the same as skipping a cashier read. The [Brango brand note](/guides/brango-casino-review), the [Wild Casino brand](/guides/wild-casino-review) and the [Ducky Luck mascot](/guides/ducky-luck-casino-review) leave payout clocks blank. So do [Lucky Creek](/guides/lucky-creek-casino-review), the [Everygame lobby warning](/guides/everygame-casino-review) and the [FortuneJack pot contrast](/guides/fortunejack-review).`,
+Skipping identity checks is not the same as skipping a cashier read. The [Brango brand note](/guides/brango-casino-review), the [Wild Casino brand](/guides/wild-casino-review) and the [Ducky Luck mascot](/guides/ducky-luck-casino-review) leave payout clocks blank. So do [Lucky Creek](/guides/lucky-creek-casino-review), the [Everygame lobby warning](/guides/everygame-casino-review) and the [FortuneJack pot contrast](/guides/fortunejack-review).
+
+Skipping identity checks is not a brand review. [One brand with a blank license cell](/guides/razed-casino-review) does not become verified by being discussed here.`,
     },
   ],
   faqs: [
@@ -204,6 +208,8 @@ Skipping identity checks is not the same as skipping a cashier read. The [Brango
     "vpn-casino",
     "aml-gambling",
     "brango-casino-review",
+    "razed-casino-review",
+    "golden-panda-casino-review",
   ],
   updated: "2026-09-26",
 };

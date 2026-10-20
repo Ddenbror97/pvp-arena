@@ -38,7 +38,9 @@ The slice is not free RTP. The base game is built a little leaner, or a dedicate
 - **Local.** One machine or one site instance feeds one meter. The pool grows slower and the hit rate, while still rare, is the rate of that one model.
 - **Networked.** Thousands of terminals feed one meter. The prize can look lottery-sized because the skim has a huge base. Your personal chance per spin does not improve; you just watch a larger number.
 
-Our [slot machine odds guide](/guides/slot-machine-odds) is the right parent: this is a slot (or sometimes a table side-bet) with an extra, extremely skewed, payline.`,
+Our [slot machine odds guide](/guides/slot-machine-odds) is the right parent: this is a slot (or sometimes a table side-bet) with an extra, extremely skewed, payline.
+
+A meter needs a skim you can read. [The branded fortune jackpot](/guides/divine-fortune-slot) is a title search, not a measured meter.`,
     },
     {
       id: "long-shot",
@@ -133,7 +135,9 @@ Write a spin cap that assumes the jackpot will not hit, because that is the defa
 - [Roulette](/roulette) — 33 slots, 16 Purple, 16 Silver, 1 Green, no hidden jackpot strip.
 - [Fairness](/fairness) — verify the committed result.
 
-If you came here because a lobby tile said “$4.2m jackpot”, use this page to price that tile as a long shot, then look at a pot whose probability you can write as a fraction.`,
+If you came here because a lobby tile said “$4.2m jackpot”, use this page to price that tile as a long shot, then look at a pot whose probability you can write as a fraction.
+
+Linked cabinets are not one published jackpot on this site. [The linked dragon cabinets](/guides/dragon-link-slot) refuse a made-up meter total.`,
     },
     {
       id: "lottery",
@@ -206,6 +210,8 @@ A PvP jackpot pot is a different object. On PVPspinArena your chance is your sha
     "rtp-calculator",
     "expected-value-gambling",
     "variance-in-gambling",
+    "divine-fortune-slot",
+    "dragon-link-slot",
   ],
   updated: "2026-09-26",
 };

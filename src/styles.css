@@ -450,33 +450,6 @@ html[data-theme="light"] .bet-col-RED { border-color: color-mix(in oklab, var(--
 html[data-theme="light"] .bet-col-GREEN { border-color: color-mix(in oklab, var(--rl-green) 40%, transparent); background: color-mix(in oklab, var(--rl-green) 8%, var(--card)); }
 html[data-theme="light"] .bet-col-BLACK { border-color: var(--border); background: var(--card); }
 html[data-theme="light"] :is(.bet-chip-RED, .bet-chip-GREEN, .bet-chip-BLACK) { background: var(--secondary); }
-/* When the strip stops, the winning column turns green and the others red. */
-:is(.bet-col-RED, .bet-col-GREEN, .bet-col-BLACK)[data-result="win"] {
-  border-color: color-mix(in oklab, var(--success) 70%, transparent);
-  background: color-mix(in oklab, var(--success) 16%, var(--card));
-  color: var(--success);
-  box-shadow: 0 0 28px color-mix(in oklab, var(--success) 32%, transparent);
-}
-:is(.bet-col-RED, .bet-col-GREEN, .bet-col-BLACK)[data-result="loss"] {
-  border-color: color-mix(in oklab, var(--destructive) 55%, transparent);
-  background: color-mix(in oklab, var(--destructive) 12%, var(--card));
-  color: var(--destructive);
-}
-:is(.bet-col-RED, .bet-col-GREEN, .bet-col-BLACK)[data-result] :is(.bet-chip-RED, .bet-chip-GREEN, .bet-chip-BLACK) {
-  color: inherit;
-  border-color: color-mix(in oklab, currentColor 42%, transparent);
-  background: color-mix(in oklab, currentColor 10%, transparent);
-}
-html[data-theme="light"] :is(.bet-col-RED, .bet-col-GREEN, .bet-col-BLACK)[data-result="win"] {
-  border-color: color-mix(in oklab, var(--success) 55%, transparent);
-  background: color-mix(in oklab, var(--success) 12%, var(--card));
-  color: var(--success);
-}
-html[data-theme="light"] :is(.bet-col-RED, .bet-col-GREEN, .bet-col-BLACK)[data-result="loss"] {
-  border-color: color-mix(in oklab, var(--destructive) 45%, transparent);
-  background: color-mix(in oklab, var(--destructive) 8%, var(--card));
-  color: var(--destructive);
-}
 
 @media (prefers-reduced-motion: no-preference) {
   html.theme-switching :where(body, main, footer, .bg-background, .bg-card, .bg-popover, .bg-muted, .bg-secondary, .bg-surface, .border-border) {

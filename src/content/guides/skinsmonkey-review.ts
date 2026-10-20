@@ -169,7 +169,9 @@ A skinsmonkey promo code that adds a "bonus item" can change the offer without s
 
 Cash-out is a further step. Swapping into a skin is not the same as holding dollars. If you need cash or crypto, you still have a sale to do, with a marketplace's own charge.
 
-That charge is also not published here.`,
+That charge is also not published here.
+
+Chips in a brand are not a chip set and not this trade bot. [The chips-named casino brand](/guides/chips-gg-review) is a different product.`,
     },
     {
       id: "legal",
@@ -184,7 +186,9 @@ Local rules can restrict the dollar pot even when a skin swap is a separate ques
 
 If swapping "to get back to even" is driving the session, open [responsible gambling](/responsible-gambling). A confirm button is as easy to spam as a bet button.
 
-Editorial comparison only. No code and no claim that we timed a trade.`,
+Editorial comparison only. No code and no claim that we timed a trade.
+
+A trade bot does not audit the next logo. [Another skin desk](/guides/g4skins-review) has no published fee here.`,
     },
   ],
   faqs: [
@@ -223,6 +227,8 @@ Our comparison pot is $60, the fee is $3, and the winner receives $57.`,
     "cs2-skin-prices",
     "tradeit-gg-review",
     "skinbaron-review",
+    "g4skins-review",
+    "chips-gg-review",
   ],
   updated: "2026-10-20",
 };

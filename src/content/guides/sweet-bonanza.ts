@@ -178,7 +178,9 @@ Nothing here is a legal opinion, a tax worksheet, or a stake suggestion. A win c
 
 If spending stops being money you can lose, use the limits on [responsible play tools](/responsible-gambling). A longer tumble is not a reason to raise the stake. A missing RTP is not a reason to call the game loose.
 
-Real-money availability is only where that casino is allowed to offer it. A search result, a stream, or this guide does not make a title legal in your location. If the site refuses your region, that refusal is the current answer.`,
+Real-money availability is only where that casino is allowed to offer it. A search result, a stream, or this guide does not make a title legal in your location. If the site refuses your region, that refusal is the current answer.
+
+The reel game is not the presenter wheel. [The live show that borrows the candy name](/guides/sweet-bonanza-candyland) is a different product.`,
     },
   ],
   faqs: [
@@ -214,6 +216,7 @@ Real-money availability is only where that casino is allowed to offer it. A sear
     "slot-volatility",
     "fruit-party-slot",
     "megaways-slots",
+    "sweet-bonanza-candyland",
   ],
   updated: "2026-10-20",
 };

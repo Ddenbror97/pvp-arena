@@ -114,7 +114,9 @@ We traced the voids to background tabs. Browsers slow timers in hidden tabs, and
 
 At PVPspinArena the answers are short. The server seed hash is published before the deal and every dealt player adds a reveal. The Hands tab recomputes the deck. The fee is 5% of a pot, only after a flop. The [how to play poker](/guides/how-to-play-poker) guide covers the rules if you are new. Play only if you are 18 or over and can afford the downswings, and stop when the budget says stop.
 
-Room brands are not this explanation of rake. The [Replay cashier](/guides/replay-poker-review), the [Black Chip rake gap](/guides/black-chip-poker-review) and the [PokerStars casino tab](/guides/pokerstars-casino-review) leave the other room's schedule unpublished.`,
+Room brands are not this explanation of rake. The [Replay cashier](/guides/replay-poker-review), the [Black Chip rake gap](/guides/black-chip-poker-review) and the [PokerStars casino tab](/guides/pokerstars-casino-review) leave the other room's schedule unpublished.
+
+Crypto poker is a category. [One crypto-funded room brand](/guides/coinpoker-review) is a single cashier, not these six-max tables.`,
     },
   ],
   faqs: [
@@ -156,6 +158,7 @@ Room brands are not this explanation of rake. The [Replay cashier](/guides/repla
     "crypto-jackpot",
     "replay-poker-review",
     "black-chip-poker-review",
+    "coinpoker-review",
   ],
   updated: "2026-10-15",
 };

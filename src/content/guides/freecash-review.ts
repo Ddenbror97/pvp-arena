@@ -151,7 +151,9 @@ An advertisement is not a license. A badge that says the site is allowed in your
 
 [Keep a limit on time and on any money you later stake](/responsible-gambling). Offer walls can slide into paid games without announcing the change of product. When a row asks for a deposit, you have left the chore and entered a wager. Read that row as a wager.
 
-The $4 suppose is not income. The $19 Coinflip payout is not a rewards cash-out.`,
+The $4 suppose is not income. The $19 Coinflip payout is not a rewards cash-out.
+
+One rewards cashier does not price the next. [A different rewards name](/guides/money-well-review) leaves the payout unpublished.`,
     },
   ],
   faqs: [
@@ -188,6 +190,7 @@ The $4 suppose is not income. The $19 Coinflip payout is not a rewards cash-out.
     "givvy-review",
     "cash-giraffe-review",
     "tapjoy-review",
+    "money-well-review",
   ],
   updated: "2026-10-20",
 };

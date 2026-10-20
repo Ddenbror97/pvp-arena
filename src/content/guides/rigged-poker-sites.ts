@@ -123,7 +123,9 @@ You cannot, from the outside, stare at a few hands and prove a deck was stacked.
 
 People sometimes confuse a house-banked game with a cheated poker room. In video poker or a house table, the paytable is the opponent and the edge is printed. In a player-versus-player cash game the house should make its money from a published rake, not from secret holes. If a site blurs those, read [crypto poker](/guides/crypto-poker) for the player-versus-player shape and keep this page for the trust checks.
 
-PVPspinArena does not deal poker. Its public notes on [fairness](/fairness) cover the games it does run. Borrowing that language to bless a third-party poker app would be a mistake. If the poker site cannot explain itself, walk away before the first buy-in. Adults 18+. One failure is enough for your own money.`,
+PVPspinArena does not deal poker. Its public notes on [fairness](/fairness) cover the games it does run. Borrowing that language to bless a third-party poker app would be a mistake. If the poker site cannot explain itself, walk away before the first buy-in. Adults 18+. One failure is enough for your own money.
+
+A rigged-site test is not a verdict on one hand. [The 2022 streamed hand](/guides/garrett-adelstein) stays an argument, not a finding that cheating was proved.`,
     },
     {
       id: "leave",
@@ -180,6 +182,12 @@ Rigged poker sites are a trust problem you can often see from the footer, the ca
       url: "https://www.ncpgambling.org/",
     },
   ],
-  related: ["collusion-in-poker", "chip-dumping", "fake-casino-sites", "are-online-casinos-rigged"],
+  related: [
+    "collusion-in-poker",
+    "chip-dumping",
+    "fake-casino-sites",
+    "are-online-casinos-rigged",
+    "garrett-adelstein",
+  ],
   updated: "2026-09-29",
 };

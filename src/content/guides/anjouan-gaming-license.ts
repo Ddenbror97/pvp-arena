@@ -41,7 +41,7 @@ export const guide: Guide = {
     {
       id: "keeping-the-claim-in-proportion",
       title: "Keeping the claim in proportion",
-      body: "Use the Anjouan gaming license as a name check. After the name check, spend your attention on the cashier, the game rules, and the law where you live. If any of those fail, the seal does not repair them. If all of them pass to your satisfaction, the seal still did not create the pass. It only failed to be the problem.\n\nOperators change jurisdictions when rules tighten elsewhere. A new badge after a news cycle is a reason to reread the terms, not a reason to relax. Write down the entity name on the day you first deposit, and look again if the footer changes. The games can stay familiar while the company behind them becomes a different company.\n\nStop when the entertainment budget is gone. No issuer's logo changes that limit, and no argument about Comoros law makes a loss into an investment. If you need help because gambling has stopped being entertainment, use a local support line rather than a casino chat.\n\nThe rest of this subject is on the [Foundations guides](/guides/topics/foundations). See [crypto casino license](/guides/crypto-casino-license), [curacao gambling license](/guides/curacao-gambling-license), [what is a crypto casino](/guides/what-is-a-crypto-casino). PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in US dollars. Read [responsible gambling](/responsible-gambling) before you play.",
+      body: "Use the Anjouan gaming license as a name check. After the name check, spend your attention on the cashier, the game rules, and the law where you live. If any of those fail, the seal does not repair them. If all of them pass to your satisfaction, the seal still did not create the pass. It only failed to be the problem.\n\nOperators change jurisdictions when rules tighten elsewhere. A new badge after a news cycle is a reason to reread the terms, not a reason to relax. Write down the entity name on the day you first deposit, and look again if the footer changes. The games can stay familiar while the company behind them becomes a different company.\n\nStop when the entertainment budget is gone. No issuer's logo changes that limit, and no argument about Comoros law makes a loss into an investment. If you need help because gambling has stopped being entertainment, use a local support line rather than a casino chat.\n\nThe rest of this subject is on the [Foundations guides](/guides/topics/foundations). See [crypto casino license](/guides/crypto-casino-license), [curacao gambling license](/guides/curacao-gambling-license), [what is a crypto casino](/guides/what-is-a-crypto-casino). PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in US dollars. Read [responsible gambling](/responsible-gambling) before you play.\n\nA seal is not a brand. [The bets.io search](/guides/bets-io-review) keeps withdrawal time and bonus unpublished.",
     },
   ],
   faqs: [
@@ -72,6 +72,6 @@ export const guide: Guide = {
       url: "https://anjouangaming.com/about-the-authority/",
     },
   ],
-  related: ["crypto-casino-license", "curacao-gambling-license"],
+  related: ["crypto-casino-license", "curacao-gambling-license", "bets-io-review"],
   updated: "2026-09-26",
 };

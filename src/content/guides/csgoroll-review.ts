@@ -164,7 +164,9 @@ This review did not time one.
 
 Bonus language that quotes a percent "back" still sits on top of the wheel's price. Record the wheel fee first. Record the rebate second.
 
-Do not subtract a rumor from a blank cell.`,
+Do not subtract a rumor from a blank cell.
+
+A colored wheel is not every skin bet. [A skin-betting brand](/guides/skinbet-review) is a different cashier, still not a skincare product.`,
     },
     {
       id: "legal",
@@ -214,6 +216,7 @@ This is an editorial comparison of formats. It is not a bonus offer and it does 
     "pvp-gambling",
     "csgoempire-review",
     "csgo-big-review",
+    "skinbet-review",
   ],
   updated: "2026-10-20",
 };

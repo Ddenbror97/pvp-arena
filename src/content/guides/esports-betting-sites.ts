@@ -141,7 +141,9 @@ A book that scores six or seven and looks boring is usually safer than a book th
 
 Title-specific markets — League of Legends, Valorant, CS2, Dota 2, Rocket League — live on their own pages in this cluster. Use those after you have a book you can defend, not before. A perfect score on this card does not make a first-blood prop cheap. It only means the shop will still be there when you want your money back.
 
-If betting is already taking more time or money than you planned, stop shopping books. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Licensed operators should honour site-level exclusion; national schemes and blocking software cover more than one lobby. A checklist is for choosing a shop. It is not a reason to keep depositing.`,
+If betting is already taking more time or money than you planned, stop shopping books. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Licensed operators should honour site-level exclusion; national schemes and blocking software cover more than one lobby. A checklist is for choosing a shop. It is not a reason to keep depositing.
+
+A scorecard is not a license. [One esports-leaning book](/guides/thunderpick-review) leaves bonus, timing, and US access unpublished.`,
     },
   ],
   faqs: [
@@ -186,6 +188,7 @@ If betting is already taking more time or money than you planned, stop shopping 
     "esports-match-fixing",
     "rocket-league-betting",
     "esports-betting-legal",
+    "thunderpick-review",
   ],
   updated: "2026-09-26",
   cta: {

@@ -146,7 +146,9 @@ The absence of chips removes some of the psychological padding: the amount you s
 
 Where a physical casino relies on chip security features and cameras, PVPspinArena relies on committed seeds: the result of every round is fixed before the round begins, and any settled round can be verified on the [fairness](/fairness) page. That is the online counterpart to UV marks and RFID tags, a way to check that what you were paid matches what the game promised.
 
-Play is for adults 18 and over. Whatever the unit, chip or stablecoin, set the limit in money before you start.`,
+Play is for adults 18 and over. Whatever the unit, chip or stablecoin, set the limit in money before you start.
+
+A casino color scheme is not a shopping list. [Buying a set for a kitchen table](/guides/poker-chip-set) is clay versus plastic, not a cage denomination.`,
     },
   ],
   faqs: [
@@ -188,6 +190,7 @@ Play is for adults 18 and over. Whatever the unit, chip or stablecoin, set the l
     "casino-surveillance",
     "casino-terminology",
     "house-edge",
+    "poker-chip-set",
   ],
   updated: "2026-09-27",
 };

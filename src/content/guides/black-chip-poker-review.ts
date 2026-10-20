@@ -202,7 +202,9 @@ No license number and no statute number are printed. A seal remains a seal until
 
 This draft has no affiliate link. A room link inserted later would be advertising, and it would still not be a rake.
 
-When the session no longer matches the loss limit you set before you sat, use [responsible gambling](/responsible-gambling). An unpublished rake is not a reason to stay and look for it with a larger buy-in.`,
+When the session no longer matches the loss limit you set before you sat, use [responsible gambling](/responsible-gambling). An unpublished rake is not a reason to stay and look for it with a larger buy-in.
+
+One offshore room does not set the next rake. [Another room with an unpublished rake](/guides/pokerok-review) keeps US access off this page too.`,
     },
   ],
   faqs: [
@@ -232,6 +234,6 @@ When the session no longer matches the loss limit you set before you sat, use [r
     },
   ],
   sources: [],
-  related: ["crypto-poker", "replay-poker-review", "how-to-play-poker"],
+  related: ["crypto-poker", "replay-poker-review", "how-to-play-poker", "pokerok-review"],
   updated: "2026-10-20",
 };

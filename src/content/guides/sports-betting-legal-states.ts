@@ -75,7 +75,9 @@ If a blog shows a coloured US map, look at the date, the legend (retail vs onlin
 
 We will not fill the empty rows with state names here. That is how explainer pages become silently false. The honest sentence is: **look up your state gaming control board, lottery commission or tribal regulator, then look up the operator.**
 
-If you need a dated snapshot for homework, use a primary source: the regulator’s own operator list, a signed bill, or the compact PDF. A social-media map from 2021 that still paints three states wrong is how people deposit in the wrong place. Where is sports betting legal is a present-tense question. Answer it in the present tense.`,
+If you need a dated snapshot for homework, use a primary source: the regulator’s own operator list, a signed bill, or the compact PDF. A social-media map from 2021 that still paints three states wrong is how people deposit in the wrong place. Where is sports betting legal is a present-tense question. Answer it in the present tense.
+
+A national snapshot does not freeze Minnesota. [The Minnesota sports-betting question](/guides/gambling-legal-minnesota) refuses a yes or no and sends you to the state.`,
     },
     {
       id: "products",
@@ -195,6 +197,7 @@ A sportsbook licence is not an online-casino licence. [Is online casino legal](/
     "esports-betting",
     "sweepstakes-casino-legal-states",
     "is-online-casino-legal",
+    "gambling-legal-minnesota",
   ],
   updated: "2026-09-26",
 };

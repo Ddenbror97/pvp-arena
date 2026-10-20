@@ -9,8 +9,7 @@ export const guide: Guide = {
   description:
     "The buffalo slot machine name covers several sequels. This page will not pick one. RTP is unpublished. Our $30 Purple and $45 Slott examples use our fees.",
   h1: "Buffalo slot machine in 2026: a cabinet name, not a chosen sequel",
-  answer:
-    `Buffalo slot machine is a cabinet name that shows up on more than one sequel in the wild. This page will not guess which sequel a casino installed, and it will not print a return or a max win.
+  answer: `Buffalo slot machine is a cabinet name that shows up on more than one sequel in the wild. This page will not guess which sequel a casino installed, and it will not print a return or a max win.
 
 Those figures are not published here. Our own examples stay on our games: $30 on Purple, and a $45 Slott win that pays the winner $40.50 after a 10% fee.`,
   facts: [
@@ -60,7 +59,9 @@ Online lobbies add another layer. A buffalo slot machine online result might be 
 
 [Slots settled in crypto](/guides/crypto-slots) are a rail question. The rail does not identify the sequel either. Coin in, chip in, or bill in, the help screen is still the document that would have to print a return.
 
-[Low-denomination cabinets](/guides/penny-slots-online) are about stake size. Stake size does not choose among buffalo sequels. A penny bet on an unknown title is still an unknown title.`,
+[Low-denomination cabinets](/guides/penny-slots-online) are about stake size. Stake size does not choose among buffalo sequels. A penny bet on an unknown title is still an unknown title.
+
+The glass that says Grand is not this page. [A separate buffalo cabinet](/guides/buffalo-grand-slot) has its own rules screen.`,
     },
     {
       id: "fees",
@@ -184,7 +185,9 @@ Receipt risk: $57 is a Purple hit on a $30 stake after a $3 fee. It is a good nu
 
 Chasing a sequel because a clip showed a large hit is how denominators disappear. [Responsible gambling support](/responsible-gambling) is the counter to a clip.
 
-A help screen you read is evidence. A species of animal is not.`,
+A help screen you read is evidence. A species of animal is not.
+
+A buffalo glass does not price a desert wolf. [The desert wolf respin](/guides/wolf-gold-slot) is that other animal title.`,
     },
     {
       id: "legal",
@@ -199,7 +202,9 @@ Follow the venue's own age and location checks. Skipping them is outside this ar
 
 No affiliate link is embedded. A later link to a casino that hosts one of these titles should be read as advertising.
 
-If sequel-hunting becomes the session, stop with [responsible play](/responsible-gambling). The next cabinet will still have horns on the glass. You do not have to fund it to finish the thought.`,
+If sequel-hunting becomes the session, stop with [responsible play](/responsible-gambling). The next cabinet will still have horns on the glass. You do not have to fund it to finish the thought.
+
+Wolf Run is not Wolf Gold and not a buffalo. [The other wolf glass](/guides/wolf-run-slot) keeps the third name apart.`,
     },
   ],
   faqs: [
@@ -236,6 +241,9 @@ If sequel-hunting becomes the session, stop with [responsible play](/responsible
     "penny-slots-online",
     "moon-princess-slot",
     "queen-of-the-nile-slot",
+    "buffalo-grand-slot",
+    "wolf-gold-slot",
+    "wolf-run-slot",
   ],
   updated: "2026-10-20",
 };

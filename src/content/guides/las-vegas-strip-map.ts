@@ -94,7 +94,9 @@ If you take the suppose cab, you spent $20 to arrive. That $20 is not a chip. It
 
 Example. Jackpot pot $16. The fee is 5% at settlement, so $0.80. The winner receives 95%, so $15.20. Players funded the pot. There is no boulevard and no cab. The bet control shows the stake. The example is not a live lobby pot and not a resort minimum.
 
-Keep $20 in the transport suppose and $0.80 in the pot example. Adding them produces a fee no one charges.`,
+Keep $20 in the transport suppose and $0.80 in the pot example. Adding them produces a fee no one charges.
+
+A Strip map misses downtown. [The Horseshoe and the 1970 series](/guides/benny-binion) is the downtown founder, not a net-worth figure.`,
     },
     {
       id: "data",
@@ -152,7 +154,9 @@ Which buildings may offer which games is a licensing question. An ad on a map pi
 
 [Set the loss limit before you arrive](/responsible-gambling). Geography makes people romantic about sessions. The $15.20 winner share on a $16 pot is a fee example. It is not a reason to walk farther.
 
-The boulevard is a place. The pot is a rule. They meet only in this comparison, and they do not merge.`,
+The boulevard is a place. The pot is a rule. They meet only in this comparison, and they do not merge.
+
+A map of the Strip is not an online license. [Whether the state's online offer matches the floor](/guides/online-gambling-legal-nevada) stays with the Gaming Control Board, not with this map.`,
     },
   ],
   faqs: [
@@ -188,6 +192,8 @@ The boulevard is a place. The pot is a rule. They meet only in this comparison, 
     "penny-slots-online",
     "biggest-casino-in-the-world",
     "fontainebleau-las-vegas-casino",
+    "online-gambling-legal-nevada",
+    "benny-binion",
   ],
   updated: "2026-10-20",
 };

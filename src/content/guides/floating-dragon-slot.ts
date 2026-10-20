@@ -173,7 +173,9 @@ It is not legal advice, not tax advice, and not a ranking of buy prices. Wins ma
 
 If spending leaves the affordable pile, open [ways to stop](/responsible-gambling). A near-complete locked board is a poor reason to press buy.
 
-Real-money availability is only where that casino is allowed to offer the title, including whichever buttons that build shows in your region. A button you saw in a video may be absent on your account. Absence is an answer, not a prompt to route around the check.`,
+Real-money availability is only where that casino is allowed to offer the title, including whichever buttons that build shows in your region. A button you saw in a video may be absent on your account. Absence is an answer, not a prompt to route around the check.
+
+A floating dragon feature is not Dragon Cash and not a linked meter. [The cash dragon, not the linked one](/guides/dragon-cash-slot) is its own title.`,
     },
   ],
   faqs: [
@@ -209,6 +211,7 @@ Real-money availability is only where that casino is allowed to offer the title,
     "slot-volatility",
     "golden-goddess-slot",
     "zeus-vs-hades-slot",
+    "dragon-cash-slot",
   ],
   updated: "2026-10-20",
 };

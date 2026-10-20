@@ -71,7 +71,9 @@ Parents: a teen with a borrowed wallet is not a “free casino game” problem o
 
 KYC after a win is how licensed operators catch borrowed IDs. Crypto operators that never KYC can miss that — which is a reason they are risky, not a reason they are “better for 19-year-olds.” Do not use this guide to shop for a brand that will not ask.
 
-If you are 18–20 and a site lets you in, that is not a legal memo you can show a court. It is a site taking your deposit.`,
+If you are 18–20 and a site lets you in, that is not a legal memo you can show a court. It is a site taking your deposit.
+
+Age rules on tribal floors follow the compact and the nation, not one federal birthday. [Tribal Class III compacts](/guides/native-american-casinos) name the 1988 act and stop before a section number.`,
     },
     {
       id: "not-database",
@@ -180,6 +182,7 @@ If you are not sure you meet the local minimum, do not deposit while you “look
     "online-casino-real-money",
     "underage-gambling-risks",
     "is-online-casino-legal",
+    "native-american-casinos",
   ],
   updated: "2026-09-26",
 };

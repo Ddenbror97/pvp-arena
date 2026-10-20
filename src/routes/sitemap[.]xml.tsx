@@ -8,6 +8,8 @@ const STATIC_PATHS = [
   "/",
   "/coinflip",
   "/roulette",
+  "/slott",
+  "/poker",
   "/fairness",
   "/about",
   "/how-it-works",

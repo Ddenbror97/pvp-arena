@@ -132,7 +132,9 @@ A hop bet is a one-roll proposition: specific pair, or a two-way total. One-roll
 
 You place $12 on 6 (a 7:6 unit). In a long session the 6-versus-7 decision happens often. Confirm the house wording: 7:6 usually means $14 profit on $12, so a win returns $26 total. Lose and the $12 is gone.
 
-If win returns $12 + $14 = $26, EV = (5/11)×26 = 11.818, edge on $12 is 1 − 11.818/12 = 1.52%. Fifty such decisions: $600 action, expected cost about $9. Same fifty hops on yo at $12: far uglier. Stay on the line unless you have priced the place vig out loud.`,
+If win returns $12 + $14 = $26, EV = (5/11)×26 = 11.818, edge on $12 is 1 − 11.818/12 = 1.52%. Fifty such decisions: $600 action, expected cost about $9. Same fifty hops on yo at $12: far uglier. Stay on the line unless you have priced the place vig out loud.
+
+Come and place are not the field. [The one-roll field price](/guides/craps-field-bet) is 5.56% when 2 and 12 both pay 2 to 1, and 2.78% when 12 pays 3 to 1.`,
     },
     {
       id: "limits",
@@ -187,6 +189,7 @@ Which bets to use, and which to skip, is [craps strategy](/guides/craps-strategy
     "online-casino-games",
     "online-craps",
     "craps-strategy",
+    "craps-field-bet",
   ],
   updated: "2026-09-26",
 };

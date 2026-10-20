@@ -160,7 +160,9 @@ Finally, remember that educational pages — including this one — are not a re
 4. Cap the bankroll; use [responsible gambling](/responsible-gambling) tools.
 5. Stop if the search becomes about bypassing law rather than playing inside it.
 
-Self-exclusion: [gambling self-exclusion](/guides/gambling-self-exclusion).`,
+Self-exclusion: [gambling self-exclusion](/guides/gambling-self-exclusion).
+
+A national crypto answer is not a state license. [One mountain state's own page](/guides/online-gambling-legal-colorado) is a place to practice reading the regulator instead of a blog.`,
     },
     {
       id: "bottom",
@@ -211,6 +213,7 @@ The country pages that sit under this question are [crypto casino New Zealand](/
     "gambling-age-us",
     "is-online-casino-legal",
     "prediction-market-legal-us",
+    "online-gambling-legal-colorado",
   ],
   updated: "2026-09-26",
 };

@@ -173,7 +173,9 @@ Impersonation grows with fame. Extra letters and a different top-level domain ar
 
 Bonus risk uses the same adjective. "Big deposit match" without a playthrough, a list of excluded modes, and an expiry is a headline. Headlines do not reduce an unpublished edge.
 
-This page prints no match percentage because none was verified.`,
+This page prints no match percentage because none was verified.
+
+One lobby's game list is not the next brand. [A different skin lobby](/guides/csgofast-review) leaves fees and codes unpublished.`,
     },
     {
       id: "legal",
@@ -186,7 +188,9 @@ Steam's subscriber rules still limit commercial gambling that uses the platform,
 
 If the large prizes are pulling you into another deposit, open [responsible gambling](/responsible-gambling) and stop. The adjective is an invitation. The limit you set is the decision.
 
-The review is editorial. It offers no code and claims no special access to the brand's books.`,
+The review is editorial. It offers no code and claims no special access to the brand's books.
+
+A number in a brand is not a price. [The 500-named lobby](/guides/csgo500-review) is a separate review.`,
     },
   ],
   faqs: [
@@ -223,6 +227,8 @@ The review is editorial. It offers no code and claims no special access to the b
     "provably-fair-games",
     "csgoluck-review",
     "rustclash-review",
+    "csgofast-review",
+    "csgo500-review",
   ],
   updated: "2026-10-20",
 };

@@ -113,7 +113,9 @@ This guide is not a live feed. Compacts get amended. A local card-room ordinance
 
 A legal card room can still be a financial problem. Legality is permission, not a budget. If play has stopped being entertainment, use [responsible gambling](/responsible-gambling) resources and 1-800-GAMBLER in the United States.
 
-PVPspinArena is not a California card room, not a tribal casino, and not a sportsbook. It offers hashed player-versus-player games. That catalog does not put the site on a California licence list, and it does not make another company’s online slots legal. If you needed a single sentence: tribes and card rooms and the lottery are the established legal markets; statewide online sports betting and statewide cash online casinos are not established by the 2022 vote; sweepstakes questions belong on their own page.`,
+PVPspinArena is not a California card room, not a tribal casino, and not a sportsbook. It offers hashed player-versus-player games. That catalog does not put the site on a California licence list, and it does not make another company’s online slots legal. If you needed a single sentence: tribes and card rooms and the lottery are the established legal markets; statewide online sports betting and statewide cash online casinos are not established by the 2022 vote; sweepstakes questions belong on their own page.
+
+California's split does not travel to the islands. [The island question](/guides/gambling-legal-hawaii) is a different market, and it is still not a statute cite.`,
     },
   ],
   faqs: [
@@ -166,6 +168,7 @@ PVPspinArena is not a California card room, not a tribal casino, and not a sport
     "sweepstakes-casino-legal-states",
     "sweepstakes-casinos-legal-california",
     "gambling-age-us",
+    "gambling-legal-hawaii",
   ],
   updated: "2026-10-06",
 };

@@ -144,7 +144,9 @@ Write the specialist’s next-step sentence down before you hang up. Memory afte
 - **Debt advice.** Free non-profit debt services are safer than a new loan to “clear” gambling debts with a win.
 - **Site tools.** Limits, cool-offs, exclusion. Read [how it works](/how-it-works) so you know what a session actually costs on this site.
 
-None of these compete with 1-800-GAMBLER. They are what you do with the hour after you hang up.`,
+None of these compete with 1-800-GAMBLER. They are what you do with the hour after you hang up.
+
+The hotline is not a meeting list. [The fellowship, not the hotline](/guides/gamblers-anonymous) started in Los Angeles in 1957 and does not replace 1-800-GAMBLER.`,
     },
     {
       id: "next",
@@ -195,6 +197,7 @@ If you hang up and feel nothing happened, check whether you wrote a next step. A
     "gambling-budget",
     "help-someone-gambling-addiction",
     "gambling-addiction-treatment",
+    "gamblers-anonymous",
   ],
   updated: "2026-09-26",
   cta: {

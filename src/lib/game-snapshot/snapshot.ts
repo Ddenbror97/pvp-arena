@@ -36,6 +36,21 @@ export const GUIDE_GAME_DATA: Readonly<Record<string, SnapshotGame>> = {
   "black-chip-poker-review": "poker",
   "pokerstars-casino-review": "poker",
   "csgoroll-review": "roulette",
+  "2-7-triple-draw": "poker",
+  "big-o-poker": "poker",
+  "coinpoker-review": "poker",
+  "double-double-bonus-poker": "poker",
+  "how-to-host-a-poker-night": "poker",
+  "joker-poker": "poker",
+  "open-face-chinese-poker": "poker",
+  "poker-chip-set": "poker",
+  "poker-equity-calculator": "poker",
+  "pokerok-review": "poker",
+  "razz-poker": "poker",
+  "short-deck-poker": "poker",
+  "slow-play-poker": "poker",
+  "straddle-poker": "poker",
+  "swc-poker-review": "poker",
 };
 
 /** First entry that is not the current guide wins. */

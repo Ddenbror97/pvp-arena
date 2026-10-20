@@ -113,7 +113,9 @@ Do not treat a Sunday ticket and a Jackpot share as the same “action.” They 
 
 A Coinflip is a 50/50, then a 5% pot fee. That is not a reason to “hedge” a lost spread on a flip. It is a reason to notice that the products are not substitutes.
 
-If you opened this pillar because a search mixed “sports betting” with this brand, keep the split: we teach the vocabulary here so you can read a book. We do not operate the book.`,
+If you opened this pillar because a search mixed “sports betting” with this brand, keep the split: we teach the vocabulary here so you can read a book. We do not operate the book.
+
+The idea of a bet is not a brand. [One crypto-facing book](/guides/sportsbet-io-review) does not get a bonus figure here.`,
     },
     {
       id: "cluster",
@@ -142,7 +144,9 @@ Use the [responsible gambling](/responsible-gambling) page for site tools and he
 
 PVPspinArena will still be here as a hashed PvP site if you only wanted to understand why a −110 line is not a coin. It will not take your team. It will not tell you the team is due. If the question you came with was “what is sports betting,” the short answer is a priced risk on a real event, sold with a fee in the odds, to adults who can afford to lose the stake.
 
-Not every sports bet is a posted price from a book. [Peer to peer sports betting](/guides/peer-to-peer-sports-betting) needs another punter on the other side. A [betting exchange](/guides/betting-exchange-explained) lets you lay as well as back. [F1 betting](/guides/f1-betting) is an outright and a podium, not a point spread.`,
+Not every sports bet is a posted price from a book. [Peer to peer sports betting](/guides/peer-to-peer-sports-betting) needs another punter on the other side. A [betting exchange](/guides/betting-exchange-explained) lets you lay as well as back. [F1 betting](/guides/f1-betting) is an outright and a podium, not a point spread.
+
+Stopping is not a review, but the brand people mean is [the book-and-casino brand](/guides/mybookie-casino-review), with lines left off that page.`,
     },
   ],
   faqs: [
@@ -186,6 +190,8 @@ Not every sports bet is a posted price from a book. [Peer to peer sports betting
     "implied-probability",
     "house-edge",
     "esports-betting",
+    "sportsbet-io-review",
+    "mybookie-casino-review",
   ],
   updated: "2026-09-26",
 };

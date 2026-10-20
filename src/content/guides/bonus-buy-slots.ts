@@ -59,7 +59,9 @@ Those prize bands are teaching colour, not a studio par sheet. A single $400 fea
 
 If the feature’s mean interval is 250 base spins at $1, the average *wait cost* is $250 of 96% base action (expected leak $10) plus whatever the feature then pays as part of the mix. The buy charges $80 now for a ticket whose RTP is a different line on the sheet. It is not “saving” the 249 dry spins. Those spins were other bets. You do not get a refund for skips you did not take.
 
-[Slot machine odds](/guides/slot-machine-odds) is the parent: the buy is a second odds product sitting on the same hidden strips.`,
+[Slot machine odds](/guides/slot-machine-odds) is the parent: the buy is a second odds product sitting on the same hidden strips.
+
+A buy button's price is whatever the glass says. [The western title with a buy reputation](/guides/wanted-dead-or-a-wild) is one name people paste in from a clip.`,
     },
     {
       id: "variance",
@@ -114,7 +116,9 @@ A PvP pot on this site does not sell a skip. Your chance is your share. Paying m
 - [Roulette](/roulette) — 33 slots, 16 Purple, 16 Silver, 1 Green, no bonus round to purchase.
 - [Fairness](/fairness) — verify the committed result.
 
-If a lobby tile’s “BUY 100×” is why you opened this page, treat it as a larger negative-EV ticket with a published multiple and an unpublished strip. Then decide whether that ticket is entertainment you can lose.`,
+If a lobby tile’s “BUY 100×” is why you opened this page, treat it as a larger negative-EV ticket with a published multiple and an unpublished strip. Then decide whether that ticket is entertainment you can lose.
+
+Prison art is not a buy-price formula. [The prison-themed title](/guides/san-quentin-slot) does not print a return here.`,
     },
     {
       id: "faster-leak",
@@ -190,6 +194,8 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     "slot-machine-odds",
     "progressive-jackpot-odds",
     "twitch-slots-ban",
+    "wanted-dead-or-a-wild",
+    "san-quentin-slot",
   ],
   updated: "2026-09-26",
 };
