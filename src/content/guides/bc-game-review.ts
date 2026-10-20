@@ -112,7 +112,9 @@ A BC.Game note has an extra line the other reviews do not: the token. Write whet
 
 Do not let the size of the lobby fill the page. A grid of tiles is not research. One tile, opened, with the rules read, is the review. Quests and rain go in a separate line marked optional. If you did not opt in, write "not opted in" so a later withdrawal delay is not a mystery.
 
-Date it. Promotions on a site this busy change quickly. An undated bonus percentage is how people lock a balance they did not mean to lock. If the note makes you want a second account to catch another quest, that is the signal to close the tab, not to register again.`,
+Date it. Promotions on a site this busy change quickly. An undated bonus percentage is how people lock a balance they did not mean to lock. If the note makes you want a second account to catch another quest, that is the signal to close the tab, not to register again.
+
+A different Curaçao file, token 748, names a lobby whose gaming-licence heading was empty. [That empty heading](/guides/mbit-casino-review) is not a quest on this site.`,
     },
   ],
   faqs: [

@@ -146,7 +146,9 @@ The pieces of a check live on their own pages. [SHA-256](/guides/sha256-explaine
 
 A stronger privacy primitive some on-chain games talk about is a [zero-knowledge proof](/guides/zero-knowledge-proof-gambling).
 
-Dice on one Curaçao casino shows a server seed, its hash, and a client seed inside My Bets. That is a per-bet record, not a licence. The page is [dice seeds on a licensed cashier](/guides/trustdice-review).`
+Dice on one Curaçao casino shows a server seed, its hash, and a client seed inside My Bets. That is a per-bet record, not a licence. The page is [dice seeds on a licensed cashier](/guides/trustdice-review).
+
+A 590% welcome pack still had no recomputable seed on the docs we opened. [The pack without a seed](/guides/betfury-review) is a bonus file, not a fairness proof.`
     },
   ],
   faqs: [

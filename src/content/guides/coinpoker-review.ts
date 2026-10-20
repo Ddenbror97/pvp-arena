@@ -196,7 +196,9 @@ Keep both. The article holds the line that our tables are a different product, a
 
 If the screenshot shows a rake, store it in their folder with the date. Do not paste it over our 5% sentence.
 
-A current crypto-room brand is not the early bitcoin name. [The early bitcoin room name](/guides/swc-poker-review) is a history page, and its present rake is still not published here.`,
+A current crypto-room brand is not the early bitcoin name. [The early bitcoin room name](/guides/swc-poker-review) is a history page, and its present rake is still not published here.
+
+Medium Rare's card room is a different contract. [Those card-room rules](/guides/stake-poker) name a 100% wager line before withdrawal and do not print a rakeback code. Their poker path returned 404.`,
     },
   ],
   faqs: [

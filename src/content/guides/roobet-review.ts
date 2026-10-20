@@ -112,7 +112,11 @@ Write the Roobet note as if the stream did not exist. First line: the original o
 
 If a clip is why you arrived, add a sixth line that says "ad" and stop treating it as evidence. The clip cannot show your withdrawal. Only your txid can. If the site blocks you, the note ends there. Do not continue it on a lookalike domain.
 
-Roobet's interface is built to feel quick. Add one sentence in the note about a timer: how long you will stay. Speed is not an edge, but it is how an edge gets paid faster. If you cannot name the timer, you are not ready to deposit, however finished the rest of the review looks.`,
+Roobet's interface is built to feel quick. Add one sentence in the note about a timer: how long you will stay. Speed is not an edge, but it is how an edge gets paid faster. If you cannot name the timer, you are not ready to deposit, however finished the rest of the review looks.
+
+One welcome page types codes and a weekly BTC cap. [Those typed codes](/guides/7bit-casino-review) belong to Kika, not to this lobby.
+
+Halcyon prints a handling charge of up to 5% and no public bonus code on the pages opened. [That handling cap](/guides/cloudbet-review) is not a cashier test we ran here.`,
     },
   ],
   faqs: [

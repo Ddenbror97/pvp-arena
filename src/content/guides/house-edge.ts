@@ -215,7 +215,9 @@ If you want the arithmetic, [how to calculate house edge](/guides/how-to-calcula
 
 The [law of large numbers](/guides/law-of-large-numbers-gambling) is why that long-run average actually arrives. A crash homepage can print the edge as a tilde. On 20 October 2026 one Ethereum game showed about 2% beside a 2.50 ETH max bet. The snapshot is [that printed tilde, dated](/guides/ethercrash-review).
 
-An indexed sports perk calls -108 a 20% discount. The save versus -110 is about $2 per $100 of profit. The arithmetic is [that -108 claim, dated](/guides/heritage-sports-review).`
+An indexed sports perk calls -108 a 20% discount. The save versus -110 is about $2 per $100 of profit. The arithmetic is [that -108 claim, dated](/guides/heritage-sports-review).
+
+A blocked rules page is not a house edge. [The US block, dated](/guides/paripesa-review) left RTP unpublished because no game help loaded.`
     },
   ],
   faqs: [

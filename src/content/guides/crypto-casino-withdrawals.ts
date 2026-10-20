@@ -200,7 +200,9 @@ On Base, routine withdrawals can arrive within minutes because blocks are fast a
 
 Verify your wallet early, use the right network, keep transaction hashes and be wary of sites that add fees or conditions only after you ask to withdraw.
 
-More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).`,
+More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).
+
+One homepage says about two minutes, and the terms do not print the same clock. [That two-minute sentence](/guides/cloudbet-review) is a claim we did not time. Handling can still reach 5%.`,
     },
   ],
   faqs: [

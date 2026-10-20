@@ -119,7 +119,9 @@ If any line is blank, you are not finished with the review, even if the lobby lo
 
 Date the note. Stake can edit originals, sports rules and geo blocks without telling a blog. A note without a date becomes a rumour you will repeat. If you already feel pulled to deposit in order to "see for yourself" beyond the small test, stop. Curiosity at that size is a loss budget, and it belongs in the gambling budget, not in a new tab.
 
-Stake's own tiles are a separate catalogue from the studio lobby. The [Stake originals games](/guides/stake-originals-games) page is where the house price and the seed check for those tiles belong.`,
+Stake's own tiles are a separate catalogue from the studio lobby. The [Stake originals games](/guides/stake-originals-games) page is where the house price and the seed check for those tiles belong.
+
+The card-room file is not this lobby. [The card-room rules](/guides/stake-poker) left the public poker bonus code and the standard tournament fee unpublished. The United States is on the prohibited list.`,
     },
   ],
   faqs: [

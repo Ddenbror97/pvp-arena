@@ -138,7 +138,11 @@ Other offshore papers players meet on crypto sites are the [Anjouan gaming licen
 
 One operator's certificate is OGL/2024/664/0280, status active, granted 16 July 2024. The company match is [that active certificate, named](/guides/trustdice-review).
 
-Token 935 names Asobi NV and marks the licence revoked. The January 2026 terms still do not print a number. That clash is [the registers versus the terms](/guides/metawin-review).`
+Token 935 names Asobi NV and marks the licence revoked. The January 2026 terms still do not print a number. That clash is [the registers versus the terms](/guides/metawin-review).
+
+Certificate token 748 was the file we could open when the operator's own licence heading was blank. [That token, dated](/guides/mbit-casino-review) does not print a match percent.
+
+Token 601 was readable when the player rules returned a US block. [The certificate we could open](/guides/paripesa-review) does not fill in a bonus percent.`
     },
   ],
   faqs: [

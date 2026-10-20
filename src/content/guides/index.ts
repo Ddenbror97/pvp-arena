@@ -446,6 +446,12 @@ import { guide as seoPublicBettingPercentages } from "./public-betting-percentag
 import { guide as seoDanielNegreanu } from "./daniel-negreanu";
 import { guide as seoWsopMainEvent } from "./wsop-main-event";
 import { guide as seoHustlerCasinoLive } from "./hustler-casino-live";
+import { guide as seoMbitCasinoReview } from "./mbit-casino-review";
+import { guide as seoSevenBitCasinoReview } from "./7bit-casino-review";
+import { guide as seoCloudbetReview } from "./cloudbet-review";
+import { guide as seoBetfuryReview } from "./betfury-review";
+import { guide as seoParipesaReview } from "./paripesa-review";
+import { guide as seoStakePoker } from "./stake-poker";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1448,6 +1454,12 @@ export const GUIDES: Guide[] = [
   seoDanielNegreanu,
   seoWsopMainEvent,
   seoHustlerCasinoLive,
+  seoMbitCasinoReview,
+  seoSevenBitCasinoReview,
+  seoCloudbetReview,
+  seoBetfuryReview,
+  seoParipesaReview,
+  seoStakePoker,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -2249,6 +2261,11 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "trustdice-review",
         "vavada-review",
         "metawin-review",
+        "mbit-casino-review",
+        "7bit-casino-review",
+        "cloudbet-review",
+        "betfury-review",
+        "paripesa-review",
       ],
     },
     {
@@ -3031,6 +3048,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "acr-poker-review",
         "real-money-poker-apps",
         "coinpoker-review",
+        "stake-poker",
         "pokerok-review",
         "swc-poker-review",
       ],

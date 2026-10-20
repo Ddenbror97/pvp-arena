@@ -176,7 +176,9 @@ A footer badge still has to match a register. The [Malta Gaming Authority licenc
 
 A different certificate names VAVADA.COM under OGL/2024/252/0153. The domain check is [the certificate versus the terms host](/guides/vavada-review).
 
-One domain appears on two registers under two companies: Rivolo Limited, ALSI-202602025-FI1, and Asobi NV, ALSI-152312009-FI3. The dated note is [those two numbers for one lobby](/guides/metawin-review).`
+One domain appears on two registers under two companies: Rivolo Limited, ALSI-202602025-FI1, and Asobi NV, ALSI-152312009-FI3. The dated note is [those two numbers for one lobby](/guides/metawin-review).
+
+Token 81 and the about page do not have to name the same company until you check. [The about page versus the token](/guides/7bit-casino-review) is that pair.`
     },
   ],
   faqs: [
