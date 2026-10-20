@@ -458,6 +458,11 @@ import { guide as seoPulszBingoReview } from "./pulsz-bingo-review";
 import { guide as seoRebetReview } from "./rebet-review";
 import { guide as seoFliffReview } from "./fliff-review";
 import { guide as seoThrillzzReview } from "./thrillzz-review";
+import { guide as seoBetonlineReview } from "./betonline-review";
+import { guide as seoBetanysportsReview } from "./betanysports-review";
+import { guide as seoBovadaReview } from "./bovada-review";
+import { guide as seoBetusReview } from "./betus-review";
+import { guide as seoXbetReview } from "./xbet-review";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1472,6 +1477,11 @@ export const GUIDES: Guide[] = [
   seoRebetReview,
   seoFliffReview,
   seoThrillzzReview,
+  seoBetonlineReview,
+  seoBetanysportsReview,
+  seoBovadaReview,
+  seoBetusReview,
+  seoXbetReview,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -3327,6 +3337,11 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "heritage-sports-review",
         "lucky-rebel-review",
         "justbet-review",
+        "betonline-review",
+        "betanysports-review",
+        "bovada-review",
+        "betus-review",
+        "xbet-review",
       ],
     },
     { name: "Office pools", slugs: ["bracket-pool", "super-bowl-squares", "pick-em-pool"] },

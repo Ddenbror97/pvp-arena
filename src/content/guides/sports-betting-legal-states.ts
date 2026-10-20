@@ -155,7 +155,9 @@ A licence you checked last season can expire or change products. Recheck when yo
 
 Where is sports betting legal is a present-tense, local, product-specific fact. If you cannot name the commission and the operator on the same day you deposit, you do not have that fact yet. Wait until you do.
 
-A sportsbook licence is not an online-casino licence. [Is online casino legal](/guides/is-online-casino-legal) is the separate map. Event-contract products are a third regime, covered in [prediction markets and US law](/guides/prediction-market-legal-us).`,
+A sportsbook licence is not an online-casino licence. [Is online casino legal](/guides/is-online-casino-legal) is the separate map. Event-contract products are a third regime, covered in [prediction markets and US law](/guides/prediction-market-legal-us).
+
+A restricted-state list on one .lv sportsbook is a house geo rule, not a state commission. [That list](/guides/bovada-review) still prints no licence number.`,
     },
   ],
   faqs: [

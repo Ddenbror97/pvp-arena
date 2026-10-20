@@ -130,7 +130,11 @@ Pros. The juice is a number. The domain warning is specific. 2FA is required on 
 
 Cons. No licence number on the licensing page. The 15-minute line is untested by us. "We do not limit winners" sits next to a freeze power for suspicious payments. A bonus can change the no-KYC path. Anjouan is not your state commission.
 
-Who should stay out: minors, anyone who needs a local regulator, anyone who will click a bonus and then complain about documents, and anyone betting money with a due date. [Heritage's -108 wording](/guides/heritage-sports-review) is a different reduced-juice claim. Update this page if bet105.ag prints a licence number or changes -105.`,
+Who should stay out: minors, anyone who needs a local regulator, anyone who will click a bonus and then complain about documents, and anyone betting money with a due date. [Heritage's -108 wording](/guides/heritage-sports-review) is a different reduced-juice claim. Update this page if bet105.ag prints a licence number or changes -105.
+
+The sports host asked for a password, and the other hosts returned Incapsula. [That blocked read](/guides/betanysports-review) left the bonus percent and the withdrawal clock unpublished.
+
+Costa Rica terms and a Curaçao help page do not name the same jurisdiction. [That clash](/guides/xbet-review) is why no licence number is printed there. The brand was not merged with other names that share the letters.`,
     },
   ],
   faqs: [

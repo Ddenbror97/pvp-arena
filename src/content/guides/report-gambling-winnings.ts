@@ -158,7 +158,9 @@ Finally, remember that educational pages — including this one — are not a re
 
 Play [Jackpot](/) or [Roulette](/roulette) only if you can afford the entertainment cost and the paperwork. If wins are already funding chasing, stop — [gambling self-exclusion](/guides/gambling-self-exclusion).
 
-A jackpot withholding line is its own worksheet. [Lottery taxes](/guides/lottery-taxes) covers the cash option and the state share, separate from the form on this page.`,
+A jackpot withholding line is its own worksheet. [Lottery taxes](/guides/lottery-taxes) covers the cash option and the state share, separate from the form on this page.
+
+A 72-hour hold is not a delivery time. [The rollover rules dated 16 July 2026](/guides/betus-review) leave the fee dollars and the post-hold clock unpublished. IRS Topic 419 still taxes the win.`,
     },
   ],
   faqs: [

@@ -138,7 +138,11 @@ One offshore rulebook prints the ID ask in advance, including a utility bill bef
 
 Another licensing page names Anjouan and prices major markets at -105, without printing a licence number. The note is [that -105 page, dated](/guides/bet105-review).
 
-A .co book prints a $1 online minimum and welcome code 5017, and still no licence number on the pages opened. The dated read is [that FAQ and promotions page](/guides/justbet-review).`
+A .co book prints a $1 online minimum and welcome code 5017, and still no licence number on the pages opened. The dated read is [that FAQ and promotions page](/guides/justbet-review).
+
+A Panama help center, terms dated 2 March 2026, left the licence number and the welcome percent unpublished. [That help center](/guides/betonline-review) is not the other Panama book.
+
+The about page and the ID page were opened, and neither printed a US state licence. [Those .lv pages](/guides/bovada-review) also left the sports minimum bet unpublished.`
     },
   ],
   faqs: [

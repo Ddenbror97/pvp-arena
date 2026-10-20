@@ -157,7 +157,9 @@ Pros. The $1 online minimum is printed. The 1x deposit roll is printed. Dormant 
 
 Cons. No licence number on the rules page. They can pull a bonus with no explanation. They can no-action a bad line. Crypto speed is not published. Management decisions are final in their text.
 
-Not for minors, anyone who needs a regulator you can write, anyone farming both sides, or anyone sending rent. More reading: [a Costa Rica book's rules](/guides/wagerweb-review) and [Heritage's -108 claim](/guides/heritage-sports-review). If the help articles move, date a new read.`,
+Not for minors, anyone who needs a regulator you can write, anyone farming both sides, or anyone sending rent. More reading: [a Costa Rica book's rules](/guides/wagerweb-review) and [Heritage's -108 claim](/guides/heritage-sports-review). If the help articles move, date a new read.
+
+Withdrawal limits dated 25 June 2026 still do not name a licence number. [Those limit tables](/guides/betonline-review) stay on that help center. We did not time a cash-out.`,
     },
   ],
   faqs: [
