@@ -33,6 +33,8 @@ export const GUIDE_GAME_DATA: Readonly<Record<string, SnapshotGame>> = {
   "how-to-play-poker": "poker",
   "texas-holdem-rules": "poker",
   "replay-poker-review": "poker",
+  "black-chip-poker-review": "poker",
+  "pokerstars-casino-review": "poker",
   "csgoroll-review": "roulette",
 };
 

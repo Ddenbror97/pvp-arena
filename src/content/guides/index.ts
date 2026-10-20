@@ -785,6 +785,58 @@ import { guide as lostSweetBonanza } from "./sweet-bonanza";
 import { guide as lostTopDollarSlot } from "./top-dollar-slot";
 import { guide as lostYayCasinoReview } from "./yay-casino-review";
 import { guide as lostZeusVsHadesSlot } from "./zeus-vs-hades-slot";
+import { guide as lostAtsInBetting } from "./ats-in-betting";
+import { guide as lostBanditCampReview } from "./bandit-camp-review";
+import { guide as lostBingoHallsNearMe } from "./bingo-halls-near-me";
+import { guide as lostBlackChipPokerReview } from "./black-chip-poker-review";
+import { guide as lostBloxflipReview } from "./bloxflip-review";
+import { guide as lostBrangoCasinoReview } from "./brango-casino-review";
+import { guide as lostBuff163Review } from "./buff163-review";
+import { guide as lostCashGiraffeReview } from "./cash-giraffe-review";
+import { guide as lostCashmanCasinoReview } from "./cashman-casino-review";
+import { guide as lostChancedCasinoReview } from "./chanced-casino-review";
+import { guide as lostClashGgReview } from "./clash-gg-review";
+import { guide as lostClubwptGoldReview } from "./clubwpt-gold-review";
+import { guide as lostCoinHuntWorldReview } from "./coin-hunt-world-review";
+import { guide as lostCrownCoinsCasinoReview } from "./crown-coins-casino-review";
+import { guide as lostCsgoluckReview } from "./csgoluck-review";
+import { guide as lostDuckyLuckCasinoReview } from "./ducky-luck-casino-review";
+import { guide as lostEverygameCasinoReview } from "./everygame-casino-review";
+import { guide as lostFarmskinsReview } from "./farmskins-review";
+import { guide as lostFontainebleauLasVegasCasino } from "./fontainebleau-las-vegas-casino";
+import { guide as lostFortuneCoinsReview } from "./fortune-coins-review";
+import { guide as lostFortunejackReview } from "./fortunejack-review";
+import { guide as lostFreecashReview } from "./freecash-review";
+import { guide as lostFunrizeReview } from "./funrize-review";
+import { guide as lostHallOfGodsSlot } from "./hall-of-gods-slot";
+import { guide as lostHellcaseReview } from "./hellcase-review";
+import { guide as lostHorseRacingTerms } from "./horse-racing-terms";
+import { guide as lostHypedropReview } from "./hypedrop-review";
+import { guide as lostIgnitionCasinoReview } from "./ignition-casino-review";
+import { guide as lostJackbitReview } from "./jackbit-review";
+import { guide as lostLasVegasStripMap } from "./las-vegas-strip-map";
+import { guide as lostLuckyCreekCasinoReview } from "./lucky-creek-casino-review";
+import { guide as lostLuckyMatchReview } from "./lucky-match-review";
+import { guide as lostMahjongCashReview } from "./mahjong-cash-review";
+import { guide as lostModoCasinoReview } from "./modo-casino-review";
+import { guide as lostOnlineGamblingLegalKentucky } from "./online-gambling-legal-kentucky";
+import { guide as lostPackdrawReview } from "./packdraw-review";
+import { guide as lostPkInBetting } from "./pk-in-betting";
+import { guide as lostPokerstarsCasinoReview } from "./pokerstars-casino-review";
+import { guide as lostRainbetReview } from "./rainbet-review";
+import { guide as lostRollaCasinoReview } from "./rolla-casino-review";
+import { guide as lostSixty6CasinoReview } from "./sixty6-casino-review";
+import { guide as lostSkinclubReview } from "./skinclub-review";
+import { guide as lostSkinsmonkeyReview } from "./skinsmonkey-review";
+import { guide as lostSolitaireSmashReview } from "./solitaire-smash-review";
+import { guide as lostSpreeCasinoReview } from "./spree-casino-review";
+import { guide as lostSwagbucksGames } from "./swagbucks-games";
+import { guide as lostTradeitGgReview } from "./tradeit-gg-review";
+import { guide as lostWildCasinoReview } from "./wild-casino-review";
+import { guide as lostWinnaCasinoReview } from "./winna-casino-review";
+import { guide as lostWorldwinnerReview } from "./worldwinner-review";
+import { guide as lostWowVegasReview } from "./wow-vegas-review";
+import { guide as lostZulaCasinoReview } from "./zula-casino-review";
 
 export type { Guide, GuideCluster } from "./types";
 
@@ -1575,6 +1627,58 @@ export const GUIDES: Guide[] = [
   lostTopDollarSlot,
   lostYayCasinoReview,
   lostZeusVsHadesSlot,
+  lostAtsInBetting,
+  lostBanditCampReview,
+  lostBingoHallsNearMe,
+  lostBlackChipPokerReview,
+  lostBloxflipReview,
+  lostBrangoCasinoReview,
+  lostBuff163Review,
+  lostCashGiraffeReview,
+  lostCashmanCasinoReview,
+  lostChancedCasinoReview,
+  lostClashGgReview,
+  lostClubwptGoldReview,
+  lostCoinHuntWorldReview,
+  lostCrownCoinsCasinoReview,
+  lostCsgoluckReview,
+  lostDuckyLuckCasinoReview,
+  lostEverygameCasinoReview,
+  lostFarmskinsReview,
+  lostFontainebleauLasVegasCasino,
+  lostFortuneCoinsReview,
+  lostFortunejackReview,
+  lostFreecashReview,
+  lostFunrizeReview,
+  lostHallOfGodsSlot,
+  lostHellcaseReview,
+  lostHorseRacingTerms,
+  lostHypedropReview,
+  lostIgnitionCasinoReview,
+  lostJackbitReview,
+  lostLasVegasStripMap,
+  lostLuckyCreekCasinoReview,
+  lostLuckyMatchReview,
+  lostMahjongCashReview,
+  lostModoCasinoReview,
+  lostOnlineGamblingLegalKentucky,
+  lostPackdrawReview,
+  lostPkInBetting,
+  lostPokerstarsCasinoReview,
+  lostRainbetReview,
+  lostRollaCasinoReview,
+  lostSixty6CasinoReview,
+  lostSkinclubReview,
+  lostSkinsmonkeyReview,
+  lostSolitaireSmashReview,
+  lostSpreeCasinoReview,
+  lostSwagbucksGames,
+  lostTradeitGgReview,
+  lostWildCasinoReview,
+  lostWinnaCasinoReview,
+  lostWorldwinnerReview,
+  lostWowVegasReview,
+  lostZulaCasinoReview,
 ];
 
 export type ClusterInfo = {
