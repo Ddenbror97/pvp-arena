@@ -21,7 +21,7 @@ export const guide: Guide = {
     {
       id: "trust-the-in-app-network-list",
       title: "Trust the in-app network list",
-      body: "MetaMask’s native networks are Ethereum and other EVM chains. Open the network control and read the name before every send. That in-app list is the source of truth. A site can request that you add a network. Add one only when you already know why, from a source you opened yourself. If the list and a blog post disagree, believe the list. Features move. The screen in your hand is the one that will build the transaction.\n\nThe same address style can appear on more than one EVM network because the key is shared and the ledgers are not. A token balance on one network is not a balance on another. Sending on the wrong network is the ordinary way to strand funds while the wallet “worked.” Check the asset name too. Lookalike tickers exist. If you cannot see the network and the asset in the confirmation, do not confirm.\n\nMetaMask does not natively hold Solana, Bitcoin, or XRP the way Phantom or a Bitcoin wallet does. How to use MetaMask does not include a Snap tutorial. Snaps and bridges are optional add-ons with extra trust, and fake sites copy install steps. For those chains, use a wallet built for them. Staying inside the networks the app lists is the use pattern that matches the product.",
+      body: "Open the network or account control and read the name before every send. That in-app list is the source of truth. A site can request that you add a network. Add one only when you already know why, from a source you opened yourself. If the list and a blog post disagree, believe the list. Features move. The screen in your hand is the one that will build the transaction.\n\nThe same address style can appear on more than one EVM network because the key is shared and the ledgers are not. A token balance on one network is not a balance on another. Sending on the wrong network is the ordinary way to strand funds while the wallet “worked.” Check the asset name too. Lookalike tickers exist. If you cannot see the network and the asset in the confirmation, do not confirm.\n\nMetaMask's getting-started page, checked 20 October 2026, says the app can manage Ethereum, Solana, and Bitcoin keys. That page did not name XRP. Address formats still differ, so a Bitcoin or Solana destination is not an Ethereum 0x address. How to use MetaMask does not include a Snap tutorial. Snaps and bridges are optional add-ons with extra trust, and fake sites copy install steps. For those chains, use a wallet built for them. Staying inside the networks the app lists is the use pattern that matches the product.",
     },
     {
       id: "receive-send-and-read-the-fee",
@@ -60,7 +60,7 @@ export const guide: Guide = {
     },
     {
       q: "Can I use MetaMask on Solana or Bitcoin?",
-      a: "Native use is Ethereum and EVM chains. It does not natively hold Solana, Bitcoin, or XRP the way a dedicated wallet does, so use those wallets for those chains.",
+      a: "MetaMask's getting-started page, checked 20 October 2026, says the app can manage Ethereum, Solana, and Bitcoin keys. It did not name XRP. Confirm the account type in the app before you send.",
     },
     {
       q: "Is a token swap required before every transfer?",
@@ -71,7 +71,12 @@ export const guide: Guide = {
       a: "PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in USD and does not require MetaMask. If you connect any wallet, never type the Secret Recovery Phrase into the site.",
     },
   ],
-  sources: [],
+    sources: [
+    {
+      label: "MetaMask Help Center — Getting started, checked 20 October 2026",
+      url: "https://support.metamask.io/start/getting-started-with-metamask/",
+    },
+  ],
   related: ["metamask-casino", "how-to-swap-tokens"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

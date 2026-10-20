@@ -1,0 +1,1214 @@
+{
+  "reviewed": 241,
+  "sourceAdded": 17,
+  "citationWithheld": 4,
+  "noSourceRequired": 220,
+  "method": "Each of the 241 guides that had an empty sources array was classified from its full answer, facts, sections, and FAQs. A source was added only when a primary page had been fetched and matched a claim on that guide. Legal pages that refuse to state a statute were left without a guessed citation. Guides that leave outside fees, licences, or returns unpublished were not given a marketing URL.",
+  "guides": [
+    {
+      "slug": "blockchain-confirmations",
+      "decision": "source-added",
+      "why": "Cited Bitcoin Developer Guide \u2014 Block chain. Blockchain confirmations are the way wallets and cashiers describe how deeply a transfer has been buried in a chain."
+    },
+    {
+      "slug": "does-metamask-support-bitcoin",
+      "decision": "source-added",
+      "why": "Cited MetaMask Help Center \u2014 Getting started, checked 20 October 2026. Does MetaMask support Bitcoin? MetaMask's getting-started page, checked 20 October 2026, says the app can manage Bitcoin keys as well as Ethereum and Solana keys."
+    },
+    {
+      "slug": "does-metamask-support-solana",
+      "decision": "source-added",
+      "why": "Cited MetaMask Help Center \u2014 Getting started, checked 20 October 2026. Does MetaMask support Solana? MetaMask's getting-started page, checked 20 October 2026, says the app can manage Solana keys as well as Ethereum and Bitcoin keys."
+    },
+    {
+      "slug": "does-metamask-support-xrp",
+      "decision": "source-added",
+      "why": "Cited MetaMask Help Center \u2014 Getting started, checked 20 October 2026. Does MetaMask support XRP is a yes-or-no question with a two-part answer."
+    },
+    {
+      "slug": "ecogra-certification",
+      "decision": "source-added",
+      "why": "Cited eCOGRA \u2014 testing and certification services. eCOGRA certification, in the sense players meet it, is a testing-lab engagement."
+    },
+    {
+      "slug": "erc20-vs-trc20",
+      "decision": "source-added",
+      "why": "Cited EIP-20: Token Standard; TRON docs \u2014 TRC-20. ERC-20 vs TRC-20, often searched as erc20 vs trc20, is a comparison of two token standards on two different blockchains, not a comparison of two nicknames for one coin."
+    },
+    {
+      "slug": "export-metamask-private-key",
+      "decision": "source-added",
+      "why": "Cited MetaMask Help Center \u2014 Export an account private key. Export MetaMask private key is a request the wallet can fulfill and almost nobody should make."
+    },
+    {
+      "slug": "how-to-create-a-crypto-wallet",
+      "decision": "source-added",
+      "why": "Cited ethereum.org \u2014 Ethereum wallets. How to create a crypto wallet starts with one decision: who can spend the coins when you are not looking."
+    },
+    {
+      "slug": "how-to-delete-metamask-account",
+      "decision": "source-added",
+      "why": "Cited MetaMask Help Center \u2014 Getting started, checked 20 October 2026. How to delete MetaMask account data is a local cleanup, not an on-chain eraser."
+    },
+    {
+      "slug": "how-to-install-metamask",
+      "decision": "source-added",
+      "why": "Cited MetaMask Help Center \u2014 Getting started, checked 20 October 2026. How to install MetaMask starts with the publisher, not with a casino banner."
+    },
+    {
+      "slug": "how-to-use-metamask",
+      "decision": "source-added",
+      "why": "Cited MetaMask Help Center \u2014 Getting started, checked 20 October 2026. How to use MetaMask is a handful of habits inside the official app: unlock with the local password, pick an account, pick a network from the list the app shows, and read every prompt before you confirm."
+    },
+    {
+      "slug": "metamask-login-help",
+      "decision": "source-added",
+      "why": "Cited MetaMask Help Center \u2014 Getting started, checked 20 October 2026. A MetaMask login is the moment a website asks your wallet to share a public address, and sometimes to sign a short message."
+    },
+    {
+      "slug": "metamask-scams",
+      "decision": "source-added",
+      "why": "Cited MetaMask Help Center \u2014 Getting started, checked 20 October 2026. MetaMask scams rarely break the cryptography."
+    },
+    {
+      "slug": "what-is-a-crypto-wallet-address",
+      "decision": "source-added",
+      "why": "Cited ethereum.org \u2014 Ethereum wallets. What is a crypto wallet address? It is the public string you give someone so they can send coins to you."
+    },
+    {
+      "slug": "what-is-a-hardware-wallet",
+      "decision": "source-added",
+      "why": "Cited ethereum.org \u2014 Ethereum wallets. What is a hardware wallet, in the sense that matters when you move money? It is a small physical device whose job is to hold private keys and to sign transactions only after you confirm the details on its own screen."
+    },
+    {
+      "slug": "what-is-metamask",
+      "decision": "source-added",
+      "why": "Cited MetaMask Help Center \u2014 Getting started, checked 20 October 2026. What is MetaMask? It is a self-custody wallet for Ethereum and other EVM chains, shipped as a browser extension and a mobile app."
+    },
+    {
+      "slug": "21-blitz-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. 21 Blitz is a fast 21-style scoring game in search traffic, and it is not casino blackjack unless the on-screen rules say so."
+    },
+    {
+      "slug": "aml-gambling",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. AML gambling refers to the anti-money-laundering controls a gambling operator is expected to run so that bets, deposits, and withdrawals are not used to hide the origin of criminal money."
+    },
+    {
+      "slug": "are-online-casinos-safe",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. Are online casinos safe? Some are careful businesses with a license you can verify, rules you can read, and withdrawals that match those rules."
+    },
+    {
+      "slug": "asgard-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (18 times). A marketing URL would pretend those cells were verified. Asgard slot is a Norse-themed reel game, and it is a different product from a Vikings title that may share hammers or longships in the artwork."
+    },
+    {
+      "slug": "ats-in-betting",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (9 times). A marketing URL would pretend those cells were verified. What does ATS mean? It means against the spread."
+    },
+    {
+      "slug": "aviator-game-guide",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. The Aviator game is a named crash game built around a plane."
+    },
+    {
+      "slug": "bandit-camp-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Bandit camp is a Rust-era case site in search, and a camp theme is not a published edge."
+    },
+    {
+      "slug": "beam-boys-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (40 times). A marketing URL would pretend those cells were verified. Beam boys can offer bonus modes that are bought at different prices."
+    },
+    {
+      "slug": "best-payout-online-casinos",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. Best payout online casinos is a search that bundles three different promises."
+    },
+    {
+      "slug": "bets-io-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (24 times). A marketing URL would pretend those cells were verified. Bets io is the two-word spelling this page uses for a brand people also write with a dot, and the scene is a $100 bet against the house."
+    },
+    {
+      "slug": "big-bass-amazon-xtreme",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (31 times). A marketing URL would pretend those cells were verified. Big bass amazon xtreme is a later name in a fish-collection series, not a guarantee that the reel strip matches an earlier title."
+    },
+    {
+      "slug": "big-bass-bonanza",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (20 times). A marketing URL would pretend those cells were verified. Big bass bonanza is the fish-collection name people mean when they search the original, and later Big Bass titles are different games."
+    },
+    {
+      "slug": "big-bass-splash",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Big bass splash is another fish title, not Big Bass Bonanza, and it does not inherit that other name's paytable."
+    },
+    {
+      "slug": "big-time-cash-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (28 times). A marketing URL would pretend those cells were verified. Big time cash is a cash-game app search: a listing that talks about cashing out, not a progressive meter on a casino floor, and big time cash legit means matching the developer, reading whether you are earning a reward or staking money, ..."
+    },
+    {
+      "slug": "biggest-casino-in-the-world",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (11 times). A marketing URL would pretend those cells were verified. Biggest casino in the world is a title that flips when you change the unit."
+    },
+    {
+      "slug": "bingo-bash-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (16 times). A marketing URL would pretend those cells were verified. Bingo bash is a social bingo app search."
+    },
+    {
+      "slug": "bingo-halls-near-me",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (9 times). A marketing URL would pretend those cells were verified. Bingo halls near me are rooms with a session price, paper or electronic cards, and a prize the caller announces."
+    },
+    {
+      "slug": "bitkingz-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (23 times). A marketing URL would pretend those cells were verified. Bitkingz is a crypto-casino brand search, and the name does not create a bitcoin balance."
+    },
+    {
+      "slug": "bitstarz-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (26 times). A marketing URL would pretend those cells were verified. Bitstarz is a very well-known crypto casino name, and the scene is an almost-spin of about thirty dollars driven by familiarity."
+    },
+    {
+      "slug": "bitz-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (23 times). A marketing URL would pretend those cells were verified. Bitz casino is a different spelling from Bitstarz, and the scene is the pause before a deposit when the missing letters become obvious."
+    },
+    {
+      "slug": "black-chip-poker-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (25 times). A marketing URL would pretend those cells were verified. Black chip poker is a poker room people search by name, and this page does not quote a rake schedule."
+    },
+    {
+      "slug": "bloodycase-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. BloodyCase is a case brand in the skin-opening genre."
+    },
+    {
+      "slug": "bloxflip-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (14 times). A marketing URL would pretend those cells were verified. Bloxflip is a Roblox-item site in search, and the items in that game are not dollars."
+    },
+    {
+      "slug": "blum-crypto",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (10 times). A marketing URL would pretend those cells were verified. Blum in this search is the Telegram crypto mini-app and the airdrop talk around it, not a generic word."
+    },
+    {
+      "slug": "bonanza-megaways-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (33 times). A marketing URL would pretend those cells were verified. Bonanza megaways is the title players treat as the one that made reactions famous: a cascade that can keep paying inside a single paid spin."
+    },
+    {
+      "slug": "brango-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (25 times). A marketing URL would pretend those cells were verified. Brango casino is a casino brand in search, not a bingo caller and not a crypto wallet."
+    },
+    {
+      "slug": "bubble-cash-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (16 times). A marketing URL would pretend those cells were verified. Bubble cash is a skill-match app search, and it is a different query from a bubble craps machine."
+    },
+    {
+      "slug": "buff163-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (21 times). A marketing URL would pretend those cells were verified. Buff163 is a Chinese market people use as a price benchmark for skins."
+    },
+    {
+      "slug": "buffalo-grand-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (16 times). A marketing URL would pretend those cells were verified. Buffalo grand is a titled reel search of its own, different from the neighboring animal slot, and this page does not repeat that guide."
+    },
+    {
+      "slug": "buffalo-king-megaways",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (21 times). A marketing URL would pretend those cells were verified. Buffalo king megaways is a buffalo-themed reel game with changing reel heights, and it is a different page from the buffalo slot machine guide and from Buffalo Grand."
+    },
+    {
+      "slug": "buffalo-slot-machine",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (24 times). A marketing URL would pretend those cells were verified. Buffalo slot machine is a cabinet name that shows up on more than one sequel in the wild."
+    },
+    {
+      "slug": "cafe-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (28 times). A marketing URL would pretend those cells were verified. Cafe casino is a themed brand search, and the cafe artwork is decoration rather than a license or a clock."
+    },
+    {
+      "slug": "cash-bandits-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (19 times). A marketing URL would pretend those cells were verified. Cash bandits is a branded slot that dresses the reels in vaults, masks, and money art."
+    },
+    {
+      "slug": "cash-eruption-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (21 times). A marketing URL would pretend those cells were verified. Cash eruption slot is a volcano-branded cabinet title people meet on a casino floor or in a lobby tile."
+    },
+    {
+      "slug": "cash-frenzy-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (14 times). A marketing URL would pretend those cells were verified. Cash frenzy is pace marketing."
+    },
+    {
+      "slug": "cash-giraffe-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (21 times). A marketing URL would pretend those cells were verified. Cash Giraffe is a rewards giraffe, not a bank."
+    },
+    {
+      "slug": "cashman-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (18 times). A marketing URL would pretend those cells were verified. Cashman casino is a long-running social casino name that people confuse with a cash prize."
+    },
+    {
+      "slug": "casino-withdrawal-pending",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. Casino withdrawal pending is a status word doing two jobs, and mixing them up wastes hours."
+    },
+    {
+      "slug": "chanced-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (20 times). A marketing URL would pretend those cells were verified. Chanced casino is a brand, and the word inside it is not a math lesson about chance."
+    },
+    {
+      "slug": "chips-gg-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (22 times). A marketing URL would pretend those cells were verified. Chips gg is a casino and skin brand in search, and the scene is a $40 deposit that would become a balance rather than a parcel of clay poker chips."
+    },
+    {
+      "slug": "clash-gg-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Clash gg is the brand search for a case-and-battle site people still type in 2026."
+    },
+    {
+      "slug": "cleopatra-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (18 times). A marketing URL would pretend those cells were verified. Cleopatra slot is a branded reel name that has been reprinted in more than one version over the years, and those versions differ."
+    },
+    {
+      "slug": "clubwpt-gold-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (20 times). A marketing URL would pretend those cells were verified. Clubwpt gold is searched as a poker-flavored sweeps club, not as a World Series satellite and not as the poker table on this site."
+    },
+    {
+      "slug": "coin-hunt-world-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Coin Hunt World is an earn-by-walking crypto game in search."
+    },
+    {
+      "slug": "coinpoker-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (21 times). A marketing URL would pretend those cells were verified. CoinPoker is a crypto-funded poker-room brand."
+    },
+    {
+      "slug": "coins-game-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (25 times). A marketing URL would pretend those cells were verified. Coins game casino is the brand on a coin-themed lobby, and the scene is a $25 deposit that has not been praised into a bonus."
+    },
+    {
+      "slug": "connect-ledger-to-metamask",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. Connect Ledger to MetaMask when you want MetaMask's screens and a Ledger's keys."
+    },
+    {
+      "slug": "crapless-craps",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (10 times). A marketing URL would pretend those cells were verified. Crapless craps is the variant where a come-out pass wins only on 7, and where 2, 3, 11 and 12 become points instead of instant winners or losers, which is the only variant this page covers."
+    },
+    {
+      "slug": "craps-field-bet",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (11 times). A marketing URL would pretend those cells were verified. A craps field bet wins if the next roll totals 2, 3, 4, 9, 10, 11, or 12, and it loses on 5, 6, 7, and 8, with the edge set by how 2 and 12 are paid."
+    },
+    {
+      "slug": "crown-coins-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (19 times). A marketing URL would pretend those cells were verified. Crown coins casino is a search for a branded balance, and a crown on that screen is not a dollar and not a chip with a face value."
+    },
+    {
+      "slug": "crypto-casino-games",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. Crypto casino games are the wagers you can place on a site that uses cryptocurrency to move money in, money out, or both."
+    },
+    {
+      "slug": "crypto-casino-minimum-deposit",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. A crypto casino minimum deposit is the smallest amount that cashier says it will credit."
+    },
+    {
+      "slug": "crypto-prediction-markets",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. Crypto prediction markets are places to trade a share that pays if an event happens."
+    },
+    {
+      "slug": "cryptorino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (22 times). A marketing URL would pretend those cells were verified. Cryptorino is a brand whose name mashes crypto and rhino, and this page is neither a wildlife slot review nor a wallet review."
+    },
+    {
+      "slug": "cs-money-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (24 times). A marketing URL would pretend those cells were verified. cs.money is the brand spelling, dot included, for a trade site, and the scene is a quote that has not sent."
+    },
+    {
+      "slug": "cs2-case-prices",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (11 times). A marketing URL would pretend those cells were verified. CS2 case prices are what third-party markets charge for the container, and those numbers move."
+    },
+    {
+      "slug": "cs2-case-simulator",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (9 times). A marketing URL would pretend those cells were verified. A CS2 case simulator spends no money and plays an animation of a case opening."
+    },
+    {
+      "slug": "csgo-big-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (18 times). A marketing URL would pretend those cells were verified. Csgo big is a search phrase for a multi-game skin site whose name sounds large."
+    },
+    {
+      "slug": "csgo-net-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (20 times). A marketing URL would pretend those cells were verified. Csgo net is how people search a case site that wears a .net domain, and a .net case site is still a case site."
+    },
+    {
+      "slug": "csgo500-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (28 times). A marketing URL would pretend those cells were verified. Csgo500 is a numbered brand in the skin-lobby results, and the scene is a trade that would take a finish and credit something back."
+    },
+    {
+      "slug": "csgoempire-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (22 times). A marketing URL would pretend those cells were verified. Csgoempire is remembered as a lobby that bundled roulette, coinflip, and cases under one login."
+    },
+    {
+      "slug": "csgofast-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (28 times). A marketing URL would pretend those cells were verified. Csgofast is a skin-site search built around speed, and the scene is a common finish worth about $12 that a page wants sent before a clock or a fee is visible."
+    },
+    {
+      "slug": "csgoluck-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (19 times). A marketing URL would pretend those cells were verified. Csgoluck puts luck in the name, and the games offered under that name are not a list this page will freeze."
+    },
+    {
+      "slug": "csgoroll-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (16 times). A marketing URL would pretend those cells were verified. Csgoroll is the search name for a skin roulette brand people still ask about in 2026."
+    },
+    {
+      "slug": "daddyskins-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (19 times). A marketing URL would pretend those cells were verified. DaddySkins is a case site."
+    },
+    {
+      "slug": "dancing-drums-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (20 times). A marketing URL would pretend those cells were verified. Dancing drums slot is a reel game dressed in a drum feature, and the costume is not a return."
+    },
+    {
+      "slug": "dara-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (14 times). A marketing URL would pretend those cells were verified. Dara casino is a brand people look up, and the syllables are not a country and not a payment app."
+    },
+    {
+      "slug": "datdrop-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Datdrop is a case-opening brand that shows up constantly in search."
+    },
+    {
+      "slug": "diamonds-casino-game",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (24 times). A marketing URL would pretend those cells were verified. Diamonds game is a crowded query: card players hear the diamond suit, slot players hear a gem machine, and the search this page takes up is a cash-out game, an app or title people ask about cashing."
+    },
+    {
+      "slug": "divine-fortune-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (20 times). A marketing URL would pretend those cells were verified. Divine fortune is a reel title whose marketing leans on progressive-style branding, and this note prints no meter, seed, or must-hit line because none of those figures was verified."
+    },
+    {
+      "slug": "dmarket-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (21 times). A marketing URL would pretend those cells were verified. DMarket is the search name for a large skin marketplace, and the scene is a common finish quoted around $12 that you would list for sale."
+    },
+    {
+      "slug": "dogs-telegram",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (21 times). A marketing URL would pretend those cells were verified. Dogs Telegram is the chat tap-and-earn title people open when they want to know whether a dog score cashes out, and dogs telegram legit, here, means the checks you can actually do: who presents the mini-app, what a cash-out panel prints,..."
+    },
+    {
+      "slug": "dominoes-gold-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (12 times). A marketing URL would pretend those cells were verified. Dominoes Gold is a cash-style tile app."
+    },
+    {
+      "slug": "double-double-bonus-poker",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (19 times). A marketing URL would pretend those cells were verified. Double double bonus poker is a video-poker paytable that pays extra on four aces when a kicker the glass names sits with them, and the coin rows on that machine are the contract."
+    },
+    {
+      "slug": "dragon-cash-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. Dragon cash is a titled reel game, and Dragon Link is a different product, so the two dragon names do not share a paytable on this page even though searchers mix them."
+    },
+    {
+      "slug": "dragon-link-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (20 times). A marketing URL would pretend those cells were verified. Dragon link slot is a linked-jackpot cabinet family: machines on a bank can share a meter, and that family is a different product from Dragon Cash."
+    },
+    {
+      "slug": "ducky-luck-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (22 times). A marketing URL would pretend those cells were verified. Ducky luck casino puts luck in the name, and that wording is the product's joke."
+    },
+    {
+      "slug": "everygame-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (21 times). A marketing URL would pretend those cells were verified. Everygame casino is a brand name, not a promise that every game is in the lobby, and not a catalog this page will freeze."
+    },
+    {
+      "slug": "farmskins-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (14 times). A marketing URL would pretend those cells were verified. Farmskins is a case brand in search, and farming openings is not a strategy that beats an unpublished drop table."
+    },
+    {
+      "slug": "first-touchdown-scorer-bets",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (8 times). A marketing URL would pretend those cells were verified. A first touchdown scorer ticket wins only when that named player scores the first touchdown, not when they score later."
+    },
+    {
+      "slug": "floating-dragon-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (35 times). A marketing URL would pretend those cells were verified. Floating dragon uses hold and spin as the name of a lock-and-respin feature."
+    },
+    {
+      "slug": "fontainebleau-las-vegas-casino",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (13 times). A marketing URL would pretend those cells were verified. Fontainebleau Las Vegas is a Strip resort that stalled for years and opened in 2023."
+    },
+    {
+      "slug": "fortune-coins-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (24 times). A marketing URL would pretend those cells were verified. Fortune coins is a brand search where the first word is a mood, not a price."
+    },
+    {
+      "slug": "fortunejack-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (24 times). A marketing URL would pretend those cells were verified. FortuneJack is a crypto-casino search, and the name sits close to the word jackpot without being the ticket pot on this site."
+    },
+    {
+      "slug": "freecash-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (16 times). A marketing URL would pretend those cells were verified. Freecash is a rewards site, not a casino and not a wage."
+    },
+    {
+      "slug": "fruit-party-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (35 times). A marketing URL would pretend those cells were verified. Fruit party slot can look like another cluster game that tumbles candy symbols, and the two can still be different titles with different paytables."
+    },
+    {
+      "slug": "fruit-shop-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (32 times). A marketing URL would pretend those cells were verified. Fruit shop is a fruit-machine name in search, not a description of the edge."
+    },
+    {
+      "slug": "funrize-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (14 times). A marketing URL would pretend those cells were verified. Funrize is a brand that leads with fun, and fun is the marketing."
+    },
+    {
+      "slug": "g4skins-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (23 times). A marketing URL would pretend those cells were verified. G4skins is a skin-site name people type when they want items to change hands, and the scene is a trade window that would send your skin."
+    },
+    {
+      "slug": "gambling-memes",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (5 times). A marketing URL would pretend those cells were verified. Gambling memes are jokes about losses, parlays, and superstition."
+    },
+    {
+      "slug": "gambling-songs",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (3 times). A marketing URL would pretend those cells were verified. Gambling songs are records about cards, dice, luck, or a city built on bets."
+    },
+    {
+      "slug": "gambling-tattoos",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (5 times). A marketing URL would pretend those cells were verified. Gambling tattoos are culture and personal meaning worn on skin: dice, cards, chips, horseshoes, and other pictures people choose."
+    },
+    {
+      "slug": "game-taco-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (16 times). A marketing URL would pretend those cells were verified. Game Taco is a taco-branded skill app acting as a tournament cashier."
+    },
+    {
+      "slug": "gamezop-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (29 times). A marketing URL would pretend those cells were verified. Gamezop is a skill-game catalog search."
+    },
+    {
+      "slug": "garrett-adelstein",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (12 times). A marketing URL would pretend those cells were verified. Garrett Adelstein is a cash-game pro seen on Hustler Casino Live."
+    },
+    {
+      "slug": "gates-of-olympus",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. Gates of olympus is a heavily searched reel title marketed with tumbles and multipliers, and the search count only shows that many people typed the name."
+    },
+    {
+      "slug": "givvy-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Givvy is a rewards app in this review: tasks or play pay only up to the amount the cash-out screen will release."
+    },
+    {
+      "slug": "golden-goddess-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (32 times). A marketing URL would pretend those cells were verified. Golden goddess is a slot name whose cabinets sometimes print a Super Stacks label."
+    },
+    {
+      "slug": "golden-hearts-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (12 times). A marketing URL would pretend those cells were verified. Golden hearts casino puts a heart in the title, and a heart there is a suit joke rather than a video-poker paytable."
+    },
+    {
+      "slug": "golden-panda-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (25 times). A marketing URL would pretend those cells were verified. Golden panda casino is a first-visit problem: a banner, a button, and words that feel like an offer."
+    },
+    {
+      "slug": "gsn-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. GSN casino is Game Show Network's social casino, and this article is not a guide to television episodes, air times, or hosts."
+    },
+    {
+      "slug": "hall-of-gods-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (14 times). A marketing URL would pretend those cells were verified. Hall of Gods is a progressive slot, and a progressive jackpot figure changes."
+    },
+    {
+      "slug": "hellcase-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Hellcase is a case brand with a grim theme, and the theme is not the odds."
+    },
+    {
+      "slug": "hello-millions-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (36 times). A marketing URL would pretend those cells were verified. Hello millions is a sweeps-style social casino search, not a skin marketplace and not a Las Vegas casino."
+    },
+    {
+      "slug": "hold-and-win-slots",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Hold and win slots names a mechanic many titles use, not a single branded game, and the usual idea is that some symbols stay put while other positions respin under that title's own rules."
+    },
+    {
+      "slug": "horse-racing-terms",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (10 times). A marketing URL would pretend those cells were verified. Horse racing terms on this page are only the words defined below: furlong, morning line, win, place, show, exacta, and trifecta."
+    },
+    {
+      "slug": "how-do-online-casinos-make-money",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. How do online casinos make money if the lobby is full of stories about winners? They make it from the structure of the bets, not from any one spin or flip."
+    },
+    {
+      "slug": "how-do-sweepstakes-casinos-make-money",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. How do sweepstakes casinos make money when the lobby looks like slots and the rules talk about promotional play? The customer-facing answer is the gold-coin package."
+    },
+    {
+      "slug": "how-to-add-litecoin-to-metamask",
+      "decision": "source-added",
+      "why": "Cited MetaMask Help Center \u2014 Getting started, checked 20 October 2026. How to add Litecoin to MetaMask is a search that usually starts from a true need and a false assumption."
+    },
+    {
+      "slug": "how-to-send-crypto",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. How to send crypto is a short checklist you follow every time, including the times you feel sure."
+    },
+    {
+      "slug": "how-to-start-an-online-casino",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. How to start an online casino is a business question, and this page treats it as one."
+    },
+    {
+      "slug": "how-to-withdraw-from-metamask",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. How to withdraw from MetaMask is a send you sign yourself."
+    },
+    {
+      "slug": "huff-n-puff-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Huff n puff slot is a named game, not a nursery rhyme and not a strategy."
+    },
+    {
+      "slug": "hypedrop-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (16 times). A marketing URL would pretend those cells were verified. Hypedrop is a case and upgrade search, and this page treats it as a case-shop question: what the site sells, and what you cannot verify."
+    },
+    {
+      "slug": "ignition-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (25 times). A marketing URL would pretend those cells were verified. Ignition casino is a poker-and-casino brand people ask about for anonymity and payouts, and this page prints neither a license number nor a payout clock."
+    },
+    {
+      "slug": "inboxdollars-games",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (19 times). A marketing URL would pretend those cells were verified. InboxDollars games are tiles inside a survey and rewards site, where play, videos, or tasks can credit an account toward a redemption, and inboxdollars games legit means you read the tile's condition and the redemption menu, including wh..."
+    },
+    {
+      "slug": "invaders-from-the-planet-moolah",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (31 times). A marketing URL would pretend those cells were verified. Invaders from the planet moolah is a commercial slot name whose search results talk about cascading aliens."
+    },
+    {
+      "slug": "jack-and-the-beanstalk-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (16 times). A marketing URL would pretend those cells were verified. Jack and the beanstalk slot is a fairy-tale name several studios have put on a reel, and the stalk, the beans, and the giant are scenery rather than one shared paytable."
+    },
+    {
+      "slug": "jackbit-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (19 times). A marketing URL would pretend those cells were verified. Jackbit reads like a jackpot bit, and it is still a brand, not the ticket pot on this site and not a bitcoin address."
+    },
+    {
+      "slug": "jackpota-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (18 times). A marketing URL would pretend those cells were verified. Jackpota is a brand search whose name sounds like a shared pot, and that sound is the trap."
+    },
+    {
+      "slug": "jackpotjoy-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. Jackpotjoy is a long-running slots brand, separate from PVPspinArena's Jackpot game, which is a player pot on this site."
+    },
+    {
+      "slug": "jammin-jars-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (20 times). A marketing URL would pretend those cells were verified. Jammin jars is a grid that scores when matching symbols touch, which is cluster pays, not a painted payline."
+    },
+    {
+      "slug": "joker-poker",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. Joker poker deals a five-card video hand and treats one joker as a wild card, and the paytable printed on that machine is the contract that pays you."
+    },
+    {
+      "slug": "key-drop-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (19 times). A marketing URL would pretend those cells were verified. Key drop is a case-site search for a virtual case, not a door key, a car key, or a locksmith visit."
+    },
+    {
+      "slug": "las-atlantis-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (25 times). A marketing URL would pretend those cells were verified. Las atlantis casino is often discussed as an offshore cashier, and the scene is the cashout panel after a session, not a welcome package."
+    },
+    {
+      "slug": "las-vegas-strip-map",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (6 times). A marketing URL would pretend those cells were verified. A Las Vegas Strip map, for a gambler, starts with one correction."
+    },
+    {
+      "slug": "legendz-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. Legendz is a brand query dressed in legend art, and the costume is not a license."
+    },
+    {
+      "slug": "live-betting-strategy",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. A live betting strategy is a plan for sports after the event has started."
+    },
+    {
+      "slug": "lobstermania-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (16 times). A marketing URL would pretend those cells were verified. Lobstermania slot is a long-running branded cabinet that people look up from casino floors, after a shell, a boat, or a bonus watched over a shoulder."
+    },
+    {
+      "slug": "lonestar-casino-review",
+      "decision": "citation-withheld",
+      "why": "Refuses a legal conclusion and does not print a statute or licence number, so no statute URL was invented. Lonestar casino sounds like Texas, and a sound is not a statute."
+    },
+    {
+      "slug": "lootfarm-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (23 times). A marketing URL would pretend those cells were verified. Lootfarm is a trade and marketplace-style search, and the scene is an unaccepted swap with your finish on one side and a listed finish on the other."
+    },
+    {
+      "slug": "lotsa-slots-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (25 times). A marketing URL would pretend those cells were verified. Lotsa slots is a social slots app search, and a crowded lobby is a menu, not a higher return."
+    },
+    {
+      "slug": "lucky-block-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (22 times). A marketing URL would pretend those cells were verified. Lucky block casino is a brand search, and the word block is not a blockchain audit."
+    },
+    {
+      "slug": "lucky-creek-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (21 times). A marketing URL would pretend those cells were verified. Lucky creek casino uses a creek as scenery, and the cashier is the review, because water, trees, and the word lucky do not identify who holds the balance or when a withdrawal clears."
+    },
+    {
+      "slug": "lucky-match-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Lucky Match is a rewards or match app in search, and this page does not confirm a cash prize."
+    },
+    {
+      "slug": "madame-destiny-megaways",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (22 times). A marketing URL would pretend those cells were verified. Madame destiny megaways is a fortune-teller reel game whose reel heights can change, because the Megaways license is a changing-ways mechanic."
+    },
+    {
+      "slug": "mahjong-cash-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (16 times). A marketing URL would pretend those cells were verified. Mahjong Cash is an app."
+    },
+    {
+      "slug": "mega-bonanza-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (23 times). A marketing URL would pretend those cells were verified. Mega bonanza casino is a brand people look up, and it is not the Bonanza Megaways slot."
+    },
+    {
+      "slug": "megaways-slots",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (34 times). A marketing URL would pretend those cells were verified. Megaways slots are a reel mechanic, not a single game and not a single RTP."
+    },
+    {
+      "slug": "mental-2-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (18 times). A marketing URL would pretend those cells were verified. Mental 2 is a sequel-style reel title marketed with high-volatility language and a dark tone, and adult readers are the only audience for this note."
+    },
+    {
+      "slug": "metamask-swap-fees",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. MetaMask swap fees are not one number you can memorize."
+    },
+    {
+      "slug": "middling-in-betting",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (9 times). A marketing URL would pretend those cells were verified. Middling is betting both sides of a moved line so a final number in the gap wins both tickets."
+    },
+    {
+      "slug": "modo-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (24 times). A marketing URL would pretend those cells were verified. Modo casino is a sweeps name in search, and this page does not merge it with crypto casinos."
+    },
+    {
+      "slug": "money-well-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (23 times). A marketing URL would pretend those cells were verified. Money well, in this search, is a rewards or cash-app question: people want the redemption menu and a way to leave with money, and money well legit means checking the developer line, the unit of the balance, and the payout rule on that ap..."
+    },
+    {
+      "slug": "moon-princess-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Moon princess uses princess powers as feature names, which you read in a help file rather than in a strategy."
+    },
+    {
+      "slug": "moonspin-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (25 times). A marketing URL would pretend those cells were verified. Moonspin is a brand search that usually means a sweeps-style lobby, a redeem control, and a hunt for a code."
+    },
+    {
+      "slug": "mybookie-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (22 times). A marketing URL would pretend those cells were verified. Mybookie casino is the casino side of a sportsbook brand, and the scene is the click that switches tabs after you looked at a game."
+    },
+    {
+      "slug": "new-crypto-casinos",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. New crypto casinos show up whenever a team opens a site that takes cryptocurrency and pays winners in crypto or in US dollars."
+    },
+    {
+      "slug": "new-sweepstakes-casinos",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. New sweepstakes casinos show up with a fresh lobby, a welcome banner, and very little operating history you can see."
+    },
+    {
+      "slug": "no-deposit-sweepstakes-casinos",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. No deposit sweepstakes casinos advertise a grant of coins when you register, confirm an email, or finish a profile, without buying a gold-coin package."
+    },
+    {
+      "slug": "nolimit-coins-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (18 times). A marketing URL would pretend those cells were verified. Nolimit coins is a sweeps-style search that collides with NoLimit City, the slot studio."
+    },
+    {
+      "slug": "nrfi-betting",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (10 times). A marketing URL would pretend those cells were verified. NRFI means no run in the first inning of a baseball game."
+    },
+    {
+      "slug": "online-casino-delaware",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. Online casino Delaware is a search about a small state with years of legal gambling conversation behind it."
+    },
+    {
+      "slug": "online-craps",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. Online craps takes the pit game and puts it on a screen."
+    },
+    {
+      "slug": "online-gambling-legal-kentucky",
+      "decision": "citation-withheld",
+      "why": "Refuses a legal conclusion and does not print a statute or licence number, so no statute URL was invented. Is online gambling legal in Kentucky? This page does not answer with a homemade yes or no."
+    },
+    {
+      "slug": "online-gambling-legal-south-carolina",
+      "decision": "citation-withheld",
+      "why": "Refuses a legal conclusion and does not print a statute or licence number, so no statute URL was invented. Is online gambling legal in South Carolina? The living statute and the regulator's own words are the answer, and this article will not invent a substitute sentence."
+    },
+    {
+      "slug": "packdraw-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. Packdraw sells openings, and drawing a pack is a purchase against a table rather than a match against a person."
+    },
+    {
+      "slug": "pch-games-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (13 times). A marketing URL would pretend those cells were verified. PCH Games is the app-shaped search for Publishers Clearing House, a company that built a sweepstakes reputation on mail and television long before phones."
+    },
+    {
+      "slug": "pick-6-horse-racing",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (9 times). A marketing URL would pretend those cells were verified. Pick 6 horse racing asks you to name the winner of six races in a row, with the money in a parimutuel pool that commonly carries into a later card if nobody hits all six."
+    },
+    {
+      "slug": "piggy-bankin-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (37 times). A marketing URL would pretend those cells were verified. Piggy bankin stages a bonus that breaks a bank, and the break is theatre."
+    },
+    {
+      "slug": "pk-in-betting",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (10 times). A marketing URL would pretend those cells were verified. What does PK mean in betting? PK means pick'em, a spread of zero."
+    },
+    {
+      "slug": "pokerok-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (26 times). A marketing URL would pretend those cells were verified. PokerOK is a poker-room name this page will not badge as safe."
+    },
+    {
+      "slug": "pokerstars-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (23 times). A marketing URL would pretend those cells were verified. PokerStars casino is the casino-tab search, and the cardroom under the same brand family is a different product."
+    },
+    {
+      "slug": "polymarket-alternatives",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. Polymarket alternatives are other places to buy and sell a share that pays if an event happens."
+    },
+    {
+      "slug": "pool-payday-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (12 times). A marketing URL would pretend those cells were verified. Pool Payday is a billiards cash app in plain terms: players pay an entry and a prize is paid out."
+    },
+    {
+      "slug": "pump-game-crypto",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (30 times). A marketing URL would pretend those cells were verified. Pump game is an ambiguous search: one reading is a crypto tap-to-earn title, while other readings are a token-launch product people shorten to the same word, or an unrelated game that merely uses it."
+    },
+    {
+      "slug": "queen-of-the-nile-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (20 times). A marketing URL would pretend those cells were verified. Queen of the nile is a cabinet name that might be a floor machine or an online copy, and those are not automatically one paytable."
+    },
+    {
+      "slug": "quick-hit-platinum",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (20 times). A marketing URL would pretend those cells were verified. Quick hit platinum is a tier name on a cabinet family people see in a bank of machines on a casino floor."
+    },
+    {
+      "slug": "quinella-bet",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (8 times). A marketing URL would pretend those cells were verified. A quinella bet wins when the two horses you named finish first and second, in either order, and one ticket covers both sequences."
+    },
+    {
+      "slug": "rainbet-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (18 times). A marketing URL would pretend those cells were verified. Rainbet is a high-volume crypto brand search, and volume is not a reserve audit, a license, or a coin list."
+    },
+    {
+      "slug": "razed-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (28 times). A marketing URL would pretend those cells were verified. Razed casino is the name on a late reel, and the scene is a single $5 spin while the room is already dark."
+    },
+    {
+      "slug": "razor-shark-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. Razor shark slot is a reel title marketed with mystery stacks and nudges, words that describe a clip people remember and do not describe a price."
+    },
+    {
+      "slug": "rbxflip-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Rbxflip names a style of coinflip that uses Roblox limiteds or game balances, which Roblox did not design as casino chips."
+    },
+    {
+      "slug": "realprize-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (13 times). A marketing URL would pretend those cells were verified. Realprize asks a cashier question, which is whether a prize can actually be redeemed, and the word real inside the brand does not answer it."
+    },
+    {
+      "slug": "red-dog-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (29 times). A marketing URL would pretend those cells were verified. Red dog casino is the brand people are searching, while Red Dog is also the name of a spread card game that this page refuses to turn into a payout table."
+    },
+    {
+      "slug": "replay-poker-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (22 times). A marketing URL would pretend those cells were verified. Replay poker can stay a play-chip app until a cashier converts those chips into money you can take out."
+    },
+    {
+      "slug": "rillabox-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. Rillabox sits in searches for box sites that feel like a toy."
+    },
+    {
+      "slug": "rolla-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (19 times). A marketing URL would pretend those cells were verified. Rolla casino is a brand that sounds like a dice roll, and this page stays on the cashier anyway."
+    },
+    {
+      "slug": "rollercoin-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (21 times). A marketing URL would pretend those cells were verified. RollerCoin is a crypto earn game of clicks and short browser tasks."
+    },
+    {
+      "slug": "rustchance-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (13 times). A marketing URL would pretend those cells were verified. Rustchance puts chance in the name, and the word is marketing."
+    },
+    {
+      "slug": "rustclash-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Rustclash is the query for lobbies that take Rust skins as wagers."
+    },
+    {
+      "slug": "rustmagic-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. Rustmagic uses magic in the name, and magic implies a trick."
+    },
+    {
+      "slug": "san-quentin-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (20 times). A marketing URL would pretend those cells were verified. San quentin slot is a marketing title that uses prison imagery on a reel game for adult readers."
+    },
+    {
+      "slug": "second-chance-lottery",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. A second chance lottery takes a ticket that did not win its original game and enters it in an extra drawing whose prize is whatever that drawing lists, which is not a second chance at the same jackpot."
+    },
+    {
+      "slug": "sent-crypto-to-wrong-network",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. Sent crypto to wrong network means the chain you selected included the transfer, and the receiver was watching a different chain."
+    },
+    {
+      "slug": "shuffle-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (26 times). A marketing URL would pretend those cells were verified. Shuffle casino is a company search, and a shuffle is only a dealer action that reorders cards."
+    },
+    {
+      "slug": "sixty6-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. Sixty6 casino puts the number 66 inside a brand name, and that number is not a pocket on our wheel and not a keno pick on this page."
+    },
+    {
+      "slug": "skinbaron-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (18 times). A marketing URL would pretend those cells were verified. SkinBaron is a skin marketplace search."
+    },
+    {
+      "slug": "skinbet-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (25 times). A marketing URL would pretend those cells were verified. Skinbet is a skin-gambling brand search, and a cream or clinic reading of those letters is a different product."
+    },
+    {
+      "slug": "skinclub-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (18 times). A marketing URL would pretend those cells were verified. Skinclub is a case club in search results, and membership language is not a lower house edge."
+    },
+    {
+      "slug": "skinrave-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. Skinrave, in search, points at a case site that sells an opening rather than a match against another player."
+    },
+    {
+      "slug": "skinsmonkey-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (13 times). A marketing URL would pretend those cells were verified. Skinsmonkey is a trade-bot search, and the fee on each trade is not published on this page."
+    },
+    {
+      "slug": "slot-machine-for-sale",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (13 times). A marketing URL would pretend those cells were verified. A slot machine for sale is a used cabinet treated as property."
+    },
+    {
+      "slug": "sloto-cash-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (25 times). A marketing URL would pretend those cells were verified. Sloto cash is a casino brand search, and the word cash inside it is not a promise that a slot will pay you."
+    },
+    {
+      "slug": "slots-lv-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (25 times). A marketing URL would pretend those cells were verified. Slots lv is an online casino brand search, and the dotted name is not a directory of Las Vegas penny machines."
+    },
+    {
+      "slug": "smart-contract-audit",
+      "decision": "no-source-required",
+      "why": "Explains a rule or how to read a product and does not pin an outside figure a primary document would have to carry. A smart contract audit is a paid review of program code, usually at one recorded commit or one deployed bytecode hash."
+    },
+    {
+      "slug": "solitaire-smash-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (14 times). A marketing URL would pretend those cells were verified. Solitaire Smash is a different app from the cash solitaire titles reviewed beside it."
+    },
+    {
+      "slug": "sportsbet-io-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (26 times). A marketing URL would pretend those cells were verified. Sportsbet io is a two-word search for a crypto sportsbook that also runs a casino, and the scene is a crypto balance followed by one live hand."
+    },
+    {
+      "slug": "spree-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Spree casino is a brand whose name sounds like a shopping binge, and a binge is a bad mood for a cashier."
+    },
+    {
+      "slug": "stack-em-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (31 times). A marketing URL would pretend those cells were verified. Stack em only becomes a numbers problem when the help screen shows the cap on stacked multipliers."
+    },
+    {
+      "slug": "sugar-rush-1000-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (12 times). A marketing URL would pretend those cells were verified. Sugar rush 1000 puts 1000 in the name as a label, not as a verified max win."
+    },
+    {
+      "slug": "swagbucks-games",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Swagbucks games are a rewards lobby inside a points site."
+    },
+    {
+      "slug": "swc-poker-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (26 times). A marketing URL would pretend those cells were verified. SWC poker points at Seals With Clubs, an early bitcoin poker room."
+    },
+    {
+      "slug": "sweet-bonanza-candyland",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (17 times). A marketing URL would pretend those cells were verified. Sweet bonanza candyland is a live game-show product built around a presenter, a wheel, and bonus games, and it is not the Sweet Bonanza slot."
+    },
+    {
+      "slug": "sweet-bonanza",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (30 times). A marketing URL would pretend those cells were verified. Sweet bonanza is a candy cluster slot sold against a paytable, not against another player."
+    },
+    {
+      "slug": "tapjoy-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (16 times). A marketing URL would pretend those cells were verified. Tapjoy is an offer wall that lives inside other apps, and an offer that does not credit is a tracking problem you document with screenshots."
+    },
+    {
+      "slug": "tf2-keys",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (11 times). A marketing URL would pretend those cells were verified. TF2 keys are cosmetic-economy items people treat like currency."
+    },
+    {
+      "slug": "thunderpick-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (19 times). A marketing URL would pretend those cells were verified. Thunderpick is an esports-leaning book, not a weather site, and the scene is a three-leg parlay the book prices."
+    },
+    {
+      "slug": "top-dollar-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (35 times). A marketing URL would pretend those cells were verified. Top dollar slot is a classic three-reel name that can point at a physical cabinet, a digital copy, or both."
+    },
+    {
+      "slug": "tradeit-gg-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (20 times). A marketing URL would pretend those cells were verified. Tradeit gg is a trade-bot search, and the per-trade charge is not published on this page."
+    },
+    {
+      "slug": "vikings-go-berzerk-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Vikings go berzerk is a reel title marketed around sticky wilds and a longship theme, and no multiple is quoted because a number that was not read on the glass would be an invention."
+    },
+    {
+      "slug": "vpn-casino",
+      "decision": "citation-withheld",
+      "why": "Refuses a legal conclusion and does not print a statute or licence number, so no statute URL was invented. A VPN casino search usually means someone wants to open a real-money site from a place that site, or that person's state, does not allow."
+    },
+    {
+      "slug": "wanted-dead-or-a-wild",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (22 times). A marketing URL would pretend those cells were verified. Wanted dead or a wild is western duel marketing on a reel game, with a reputation for a bonus buy."
+    },
+    {
+      "slug": "wild-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (15 times). A marketing URL would pretend those cells were verified. Wild casino is a brand people search, and this page refuses the card-rule reading of the same word without teaching it."
+    },
+    {
+      "slug": "winna-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (24 times). A marketing URL would pretend those cells were verified. Winna casino is searched as a crypto-style casino, and a brand name that sounds like a win is not a positive expected value."
+    },
+    {
+      "slug": "wolf-gold-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (19 times). A marketing URL would pretend those cells were verified. Wolf gold is a commercial reel title people search because the desert art wraps a money-respin feature, and that costume is not a price this file will print."
+    },
+    {
+      "slug": "wolf-run-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (16 times). A marketing URL would pretend those cells were verified. Wolf run slot is another wolf title, different from Wolf Gold, and this page covers the run only without reviewing the desert money-respin game or sharing a return with it."
+    },
+    {
+      "slug": "worldwinner-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (12 times). A marketing URL would pretend those cells were verified. WorldWinner is a skill-tournament brand: you enter a game, a score is ranked, and a prize is paid from entries."
+    },
+    {
+      "slug": "wow-vegas-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (25 times). A marketing URL would pretend those cells were verified. Wow vegas is a brand whose second word points at a city, and a city in a name is not a Nevada license and not a trip to the Strip."
+    },
+    {
+      "slug": "wsm-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (20 times). A marketing URL would pretend those cells were verified. WSM casino is a brand search often tied to a meme token, and the scene is one slot spin urged after a ticker landed in chat."
+    },
+    {
+      "slug": "x-empire-telegram",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (21 times). A marketing URL would pretend those cells were verified. X empire is a Telegram tap title in this search, where you build a cartoon empire by tapping and then ask whether the empire cashes out."
+    },
+    {
+      "slug": "yay-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (21 times). A marketing URL would pretend those cells were verified. Yay casino is a sweeps-style brand search, and the useful review starts at the cashier rather than a slot catalog."
+    },
+    {
+      "slug": "yescoin-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (23 times). A marketing URL would pretend those cells were verified. Yescoin is a coin-named rewards or tap app in the way this search is used, and yescoin legit means you can point at the operator credit, the unit on the balance, and a cash-out rule the app itself displays."
+    },
+    {
+      "slug": "zeus-vs-hades-slot",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (37 times). A marketing URL would pretend those cells were verified. Zeus vs hades puts two modes inside one title, and two modes mean two math models."
+    },
+    {
+      "slug": "zula-casino-review",
+      "decision": "no-source-required",
+      "why": "Leaves outside fees, licences, returns, or payout claims as \u201cnot published\u201d (21 times). A marketing URL would pretend those cells were verified. Zula casino draws heavy search traffic, and high search volume is not a trust signal."
+    }
+  ]
+}

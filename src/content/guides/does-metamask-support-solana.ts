@@ -8,9 +8,9 @@ export const guide: Guide = {
   title: "Does MetaMask Support Solana for Casino Deposits?",
   h1: "Does MetaMask Support Solana for Casino Deposits?",
   description:
-    "Does MetaMask support Solana natively? Its home networks are Ethereum and EVM chains. For Solana gambling, use a Solana wallet.",
+    "Does MetaMask support Solana? The vendor help page now says the app can manage Solana keys. Match the address type before you send.",
   answer:
-    "Does MetaMask support Solana? Not in the native way a Solana wallet does. MetaMask’s home networks are Ethereum and other EVM chains. Solana uses different addresses, different tokens, and different signatures. The company does not hold your Secret Recovery Phrase, and there is no password reset that recovers a lost phrase, on Solana or anywhere else. If a page says you must paste that phrase into a site to “enable Solana,” the page is hostile.\n\nThe network list inside your own MetaMask install is the source of truth when articles disagree. Labels and add-ons change. A missing network in that list is not a reason to trust a popup you did not go looking for. Gambling is only for people 18 or older, or the age required where you live, and only with money you can afford to lose. Picking the right wallet does not make a Solana wager a good bet.",
+    "Does MetaMask support Solana? MetaMask's getting-started page, checked 20 October 2026, says the app can manage Solana keys as well as Ethereum and Bitcoin keys. Solana uses different addresses, different tokens, and different signatures. The company does not hold your Secret Recovery Phrase, and there is no password reset that recovers a lost phrase, on Solana or anywhere else. If a page says you must paste that phrase into a site to “enable Solana,” the page is hostile.\n\nThe network list inside your own MetaMask install is the source of truth when articles disagree. Labels and add-ons change. A missing network in that list is not a reason to trust a popup you did not go looking for. Gambling is only for people 18 or older, or the age required where you live, and only with money you can afford to lose. Picking the right wallet does not make a Solana wager a good bet.",
   facts: [],
   sections: [
     {
@@ -52,7 +52,7 @@ export const guide: Guide = {
   faqs: [
     {
       q: "Does MetaMask support Solana natively?",
-      a: "MetaMask’s native networks are Ethereum and EVM chains. It does not natively hold Solana the way a Solana wallet does, and the network list in your app is the source of truth.",
+      a: "MetaMask's getting-started page, checked 20 October 2026, says the app can manage Solana keys. A Solana address is still not an Ethereum 0x address. The account list in your install is what that install can send.",
     },
     {
       q: "Should I install a Snap so MetaMask can reach Solana?",
@@ -71,7 +71,12 @@ export const guide: Guide = {
       a: "PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in USD and does not require MetaMask. It is not a Solana deposit product, so SOL in any wallet is not how those games are settled.",
     },
   ],
-  sources: [],
+    sources: [
+    {
+      label: "MetaMask Help Center — Getting started, checked 20 October 2026",
+      url: "https://support.metamask.io/start/getting-started-with-metamask/",
+    },
+  ],
   related: ["solana-casino", "phantom-wallet-gambling"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

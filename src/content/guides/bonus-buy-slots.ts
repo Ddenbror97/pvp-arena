@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Typical published multiples sit around 50× to 100× the spin stake, sometimes more.",
     "The buy raises variance immediately; a $1 game becomes an $80 decision in one click.",
     "Streamer overlays made buys look normal; an overlay is not a lab sheet.",
-    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -109,7 +109,7 @@ A PvP pot on this site does not sell a skip. Your chance is your share. Paying m
     {
       id: "not-here",
       title: "PVPspinArena does not sell bonus buys",
-      body: `No reels, no feature store. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `No reels, no feature store. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 - [Jackpot](/) — raise stake to raise share. The extra dollars are visible probability, not a skip.
 - [Coinflip](/coinflip) — one flip. There is no “buy the flip.”
@@ -175,7 +175,7 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     },
     {
       q: "Does PVPspinArena have bonus buy slots?",
-      a: "No. This site does not offer house-banked slots or feature buys. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. This site does not offer house-banked slots or feature buys. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
     },
     {
       q: "Do streamers prove that buys are +EV?",
@@ -197,5 +197,5 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     "wanted-dead-or-a-wild",
     "san-quentin-slot",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

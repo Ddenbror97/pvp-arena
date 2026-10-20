@@ -199,7 +199,7 @@ Telegram “double signals” sell the same product with extra steps. The signal
     },
     {
       q: "Does PVPspinArena have double or nothing?",
-      a: "No. It offers Jackpot, Coinflip, Roulette, and P2P Slott. Coinflip is a single 50/50, not a built-in parlay ladder.",
+      a: "No. It offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. Coinflip is a single 50/50, not a built-in parlay ladder.",
     },
   ],
   sources: [
@@ -210,5 +210,5 @@ Telegram “double signals” sell the same product with extra steps. The signal
     },
   ],
   related: ["double-or-nothing-game", "house-edge", "martingale-strategy", "coin-flip-odds"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

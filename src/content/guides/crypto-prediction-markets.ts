@@ -10,7 +10,7 @@ export const guide: Guide = {
   description:
     "Crypto prediction markets sell a share that pays if an event happens. Learn what the product is, then use the comparison page to judge a specific venue.",
   answer:
-    "Crypto prediction markets are places to trade a share that pays if an event happens. You might see a question about an election, a sports result, a price level, or a date a public body will act. You pay a price in a crypto asset, often a stablecoin. If the event meets the contract’s test, the share settles at the published high value. If it does not, the share settles at the published low value, which may be zero. That payoff is the product. Everything else is venue, rail, and interface.\n\nThis page explains the object. It does not rank venues and it does not invent volume. When you already understand the share and you want to compare stand-ins, use [polymarket alternatives](/guides/polymarket-alternatives). When you are thinking about wallet-based casino games and need that separate definition, use [web3 casino](/guides/web3-casino). Those are neighboring topics. They are not the same article as this one.\n\nThis page is for adults 18 or older, or the age required where you live. A share can expire worthless. If putting money on an event stops being entertainment you can afford, stop and use the limits on our [responsible gambling](/responsible-gambling) page. Whether a given venue may accept you is a legal question this page does not decide. Rules change. PVPspinArena does not list these markets. It offers jackpot, coinflip, and roulette in USD only.",
+    "Crypto prediction markets are places to trade a share that pays if an event happens. You might see a question about an election, a sports result, a price level, or a date a public body will act. You pay a price in a crypto asset, often a stablecoin. If the event meets the contract’s test, the share settles at the published high value. If it does not, the share settles at the published low value, which may be zero. That payoff is the product. Everything else is venue, rail, and interface.\n\nThis page explains the object. It does not rank venues and it does not invent volume. When you already understand the share and you want to compare stand-ins, use [polymarket alternatives](/guides/polymarket-alternatives). When you are thinking about wallet-based casino games and need that separate definition, use [web3 casino](/guides/web3-casino). Those are neighboring topics. They are not the same article as this one.\n\nThis page is for adults 18 or older, or the age required where you live. A share can expire worthless. If putting money on an event stops being entertainment you can afford, stop and use the limits on our [responsible gambling](/responsible-gambling) page. Whether a given venue may accept you is a legal question this page does not decide. Rules change. PVPspinArena does not list these markets. It offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only.",
   facts: [],
   sections: [
     {
@@ -58,7 +58,7 @@ export const guide: Guide = {
     },
     {
       q: "Is this the same as a web3 casino?",
-      a: "No. A web3 casino is a game settled by a disclosed game rule, often with a wallet. A prediction market is a share on an outside event. PVPspinArena offers jackpot, coinflip, and roulette in USD only, which is neither product.",
+      a: "No. A web3 casino is a game settled by a disclosed game rule, often with a wallet. A prediction market is a share on an outside event. PVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only, which is neither product.",
     },
   ],
   sources: [],
@@ -68,5 +68,5 @@ export const guide: Guide = {
     "prediction-market-legal-us",
     "is-crypto-gambling-legal",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

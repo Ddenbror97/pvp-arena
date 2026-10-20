@@ -3,7 +3,8 @@ import { GAME_FACT_PAGES, type GameFactPage } from "@/lib/seo/game-facts";
 
 /** Crawlable rules under a game lobby. The figures match the published terms. */
 export function GameFacts({ game }: { game: keyof typeof GAME_FACT_PAGES }) {
-  const page: GameFactPage = GAME_FACT_PAGES[game];
+  const page: GameFactPage | undefined = GAME_FACT_PAGES[game];
+  if (!page) return null;
   const headingId = `${page.id}-how-it-works`;
   return (
     <section

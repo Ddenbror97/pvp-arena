@@ -10,7 +10,7 @@ export const guide: Guide = {
   description:
     "Before you try a new sweepstakes casino: check how old the brand really is, read redemption complaints, watch coin expiry and look past the launch offer.",
   answer:
-    "New sweepstakes casinos show up with a fresh lobby, a welcome banner, and very little operating history you can see. This page is a way to judge that launch. It asks how old the brand actually is, what redemption complaints repeat, and how coin expiry is written. It is for adults 18 or older, or the age required where you live. Prize play can spend money you meant to keep. If it stops feeling like entertainment, stop and use the limits on our [responsible gambling](/responsible-gambling) page.\n\nThis is not legal advice. Sweepstakes rules and state positions change. Confirm the current terms and your local rules before you buy coins or request a prize. PVPspinArena is not a sweepstakes casino. It offers jackpot, coinflip, and roulette in USD only.\n\nA ranked “best new” list goes stale the week a cashier changes. The standing checklist for terms, playthrough, geography, and redeem friction lives on [best sweepstakes casinos](/guides/best-sweepstakes-casinos). Use that page when you want the full scorecard. Use this page when the thing you do not know yet is whether the brand has been around long enough to judge.",
+    "New sweepstakes casinos show up with a fresh lobby, a welcome banner, and very little operating history you can see. This page is a way to judge that launch. It asks how old the brand actually is, what redemption complaints repeat, and how coin expiry is written. It is for adults 18 or older, or the age required where you live. Prize play can spend money you meant to keep. If it stops feeling like entertainment, stop and use the limits on our [responsible gambling](/responsible-gambling) page.\n\nThis is not legal advice. Sweepstakes rules and state positions change. Confirm the current terms and your local rules before you buy coins or request a prize. PVPspinArena is not a sweepstakes casino. It offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only.\n\nA ranked “best new” list goes stale the week a cashier changes. The standing checklist for terms, playthrough, geography, and redeem friction lives on [best sweepstakes casinos](/guides/best-sweepstakes-casinos). Use that page when you want the full scorecard. Use this page when the thing you do not know yet is whether the brand has been around long enough to judge.",
   facts: [],
   sections: [
     {
@@ -68,5 +68,5 @@ export const guide: Guide = {
   ],
   sources: [],
   related: ["best-sweepstakes-casinos", "new-crypto-casinos"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

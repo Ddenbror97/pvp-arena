@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Hit rate counts any paying combination, including wins smaller than the stake.",
     "Two 96% RTP slots can feel opposite: one dribbles small hits, the other waits for a rare bonus.",
     "Progressive jackpots skim extra from the base game, so the advertised top prize sits on a very small probability.",
-    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -179,7 +179,7 @@ See also [loose slots](/guides/loose-slots).`,
     },
     {
       q: "Does PVPspinArena have slot machines?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide explains slot odds so you can read a title on another site.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This guide explains slot odds so you can read a title on another site.",
     },
     {
       q: "Can I calculate slot odds from the symbols I see?",
@@ -205,5 +205,5 @@ See also [loose slots](/guides/loose-slots).`,
     "megaways-slots",
     "hold-and-win-slots",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

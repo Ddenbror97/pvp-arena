@@ -23,7 +23,7 @@ export const guide: Guide = {
     "You do not need to play a hand every orbit; folding is a complete action.",
     "Position means you act after more players and see more information.",
     "A written session cap matters more than a starting-hand chart you ignore when bored.",
-    "This site does not deal beginner tables. It is Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "This site deals six-max No-Limit Hold'em from $0.02/$0.05 blinds. It is not a coaching service.",
   ],
   sections: [
     {
@@ -33,7 +33,7 @@ export const guide: Guide = {
 
 This [poker](/guides/topics/poker) guide is for adults 18+. How to play poker for beginners is not “click every pot until it clicks”. It is a first filter so you do not donate the blinds plus a stack on 7-2 because you were curious.
 
-Write a [gambling budget](/guides/gambling-budget) first. If the buy-in is money you need on Thursday, you are not practising. You are gambling with rent. PVPspinArena is not where you practise flop texture; if you are here for a hashed pot, use [Coinflip](/coinflip) and keep it inside the same budget.
+Write a [gambling budget](/guides/gambling-budget) first. If the buy-in is money you need on Thursday, you are not practising. You are gambling with rent. PVPspinArena deals six-max No-Limit Hold'em if you want a table, and [Coinflip](/coinflip) if you want a hashed pot. Keep either inside the same budget.
 
 ### Software before pride
 
@@ -200,5 +200,5 @@ Words you will hear in the first session are in [poker slang](/guides/poker-slan
     "gambling-budget",
     "poker-slang",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

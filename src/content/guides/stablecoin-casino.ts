@@ -32,7 +32,7 @@ Adults 18+ only. A dollar token is still crypto: you can send it to the wrong ch
 
 A dollar chip also makes **loss visible**. A 0.002 BTC wipe hides in the chart. A $40 USDC wipe is $40. That clarity is the point of the hub. If you do not want to see the dollar line, you are not choosing a chip. You are choosing fog.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott. Balances are dollar cents after on-chain Bitcoin, or USDC or ETH on Base.`,
+PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. Balances are dollar cents after on-chain Bitcoin, or USDC or ETH on Base.`,
     },
     {
       id: "usdc-vs-usdt",
@@ -188,5 +188,5 @@ If a landing page says “any stablecoin” and then shows one address, it is ly
     { label: "Wikipedia: Stablecoin", url: "https://en.wikipedia.org/wiki/Stablecoin" },
   ],
   related: ["usdc-casino", "usdt-casino", "what-is-a-stablecoin", "usdc-vs-usdt-gambling"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 That is the whole definition. Fast and cheap is a property of the rail. It is not a promise the games are fair, licensed or solvent.
 
-This guide is in [crypto payments](/guides/topics/crypto-payments). Adults 18+ only. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, with on-chain Bitcoin, plus USDC or ETH on Base. It is not a Lightning cashier.
+This guide is in [crypto payments](/guides/topics/crypto-payments). Adults 18+ only. PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, with on-chain Bitcoin, plus USDC or ETH on Base. It is not a Lightning cashier.
 
 On-chain BTC rooms are covered in [bitcoin casino](/guides/bitcoin-casino). Read that page if your coins are sitting in a bc1 address and you have never opened a Lightning wallet. This page is the invoice rail.
 
@@ -188,5 +188,5 @@ PVPspinArena will not take the Lightning invoice. On-chain Bitcoin is a separate
     "base-network",
     "does-metamask-support-bitcoin",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

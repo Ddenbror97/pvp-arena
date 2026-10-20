@@ -10,7 +10,7 @@ export const guide: Guide = {
   description:
     "Polymarket alternatives are other venues for event shares. Compare custody, the resolution source, and who can sign up. This page does not rank brands.",
   answer:
-    "Polymarket alternatives are other places to buy and sell a share that pays if an event happens. People search the phrase when they want a stand-in: another venue, another set of rules, maybe another country list. This page is how to compare those stand-ins. It does not crown a replacement, and it does not quote trading volume. A comparison you can rerun is worth more than a ranking that expired when someone bought an ad.\n\nThe product itself — what the share pays, and why the trading price is not a promise — is on [crypto prediction markets](/guides/crypto-prediction-markets). Read that first if the object is still fuzzy. This page assumes you know you want an event share and you are choosing a counterparty and a rule set. Custody language that also shows up in wallet-based casinos is on [decentralized casino explained](/guides/decentralized-casino-explained). The casino page is about games. Steal its custody questions, not its game list.\n\nThis page is for adults 18 or older, or the age required where you live. A share can settle at zero. If that loss stops being acceptable, stop and use the limits on our [responsible gambling](/responsible-gambling) page. Eligibility and legality vary by venue and by state, and they change. This is not a legal opinion. PVPspinArena is not one of these venues. It offers jackpot, coinflip, and roulette in USD only.",
+    "Polymarket alternatives are other places to buy and sell a share that pays if an event happens. People search the phrase when they want a stand-in: another venue, another set of rules, maybe another country list. This page is how to compare those stand-ins. It does not crown a replacement, and it does not quote trading volume. A comparison you can rerun is worth more than a ranking that expired when someone bought an ad.\n\nThe product itself — what the share pays, and why the trading price is not a promise — is on [crypto prediction markets](/guides/crypto-prediction-markets). Read that first if the object is still fuzzy. This page assumes you know you want an event share and you are choosing a counterparty and a rule set. Custody language that also shows up in wallet-based casinos is on [decentralized casino explained](/guides/decentralized-casino-explained). The casino page is about games. Steal its custody questions, not its game list.\n\nThis page is for adults 18 or older, or the age required where you live. A share can settle at zero. If that loss stops being acceptable, stop and use the limits on our [responsible gambling](/responsible-gambling) page. Eligibility and legality vary by venue and by state, and they change. This is not a legal opinion. PVPspinArena is not one of these venues. It offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only.",
   facts: [],
   sections: [
     {
@@ -58,10 +58,10 @@ export const guide: Guide = {
     },
     {
       q: "Does PVPspinArena belong on this list?",
-      a: "No. PVPspinArena offers jackpot, coinflip, and roulette in USD only. It is not an event-contract venue and not a stand-in for one.",
+      a: "No. PVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only. It is not an event-contract venue and not a stand-in for one.",
     },
   ],
   sources: [],
   related: ["crypto-prediction-markets", "decentralized-casino-explained"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

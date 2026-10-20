@@ -150,7 +150,7 @@ If you review with software, tag hands by the decision, not by the result. “Fo
       title: "Summary: levers, not a personality",
       body: `Texas holdem strategy, at this level: tighter early, wider late, ranges instead of one hand, sizes with a job, c-bets that notice texture, and stack depth that changes which hands belong. No secret system. No wage.
 
-If studying lines has become a reason to sit longer than the budget, stop. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). This site is 18+ and is not a Hold'em client.
+If studying lines has become a reason to sit longer than the budget, stop. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). This site is 18+ and runs six-max No-Limit Hold'em.
 
 If you take one default into a session, take position. Open tighter up front, wider on the button, and fold the hands you cannot name a flop plan for. Sizing and c-bets come after that sentence is automatic. A fancy barrel from the wrong seat is still the wrong seat. Make the seat right first. Then spend a chip.
 
@@ -202,5 +202,5 @@ The book that taught a generation of Hold'em is tied to [Doyle Brunson](/guides/
     "poker-math",
     "doyle-brunson",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

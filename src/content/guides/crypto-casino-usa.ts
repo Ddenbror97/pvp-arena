@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 Adults 18+ only — age floors can be higher by product and state; see [gambling age us](/guides/gambling-age-us). Read [what is a crypto casino](/guides/what-is-a-crypto-casino) for the product definition.
 
-This sits in [Foundations](/guides/topics/foundations). PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. We will not claim a state casino licence we do not have. If you need a licensed US casino or sportsbook, use the operator list from your state regulator.
+This sits in [Foundations](/guides/topics/foundations). PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. We will not claim a state casino licence we do not have. If you need a licensed US casino or sportsbook, use the operator list from your state regulator.
 
 If play is already harmful, use [responsible gambling](/responsible-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion).
 ### Extra diligence notes
@@ -194,5 +194,5 @@ A network trick is not a licence. The [VPN casino](/guides/vpn-casino) page is w
     "crypto-casino-license",
     "vpn-casino",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

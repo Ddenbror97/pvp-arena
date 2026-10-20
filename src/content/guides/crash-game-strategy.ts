@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Auto cash-out and manual cash-out change timing friction, not the edge of a stated target.",
     "Instant 1.00x crashes are often how part of the house edge is built in.",
     "Doubling after losses raises ruin risk; it does not raise RTP.",
-    "PVPspinArena does not offer a crash gambling game; it runs Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "PVPspinArena does not offer a crash gambling game; it runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -198,5 +198,5 @@ Cashout targets on a branded crash game are covered in [JetX](/guides/jetx-game)
     "aviator-game-guide",
     "jetx-game",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

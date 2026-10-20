@@ -182,7 +182,7 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     },
     {
       q: "Does PVPspinArena have case battles?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. Jackpot and Coinflip take a 5% fee on the pot. P2P Slott takes 10% of the players' pot.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. Jackpot and Coinflip take a 5% fee on the pot. P2P Slott takes 10% of the players' pot.",
     },
   ],
   sources: [
@@ -200,7 +200,7 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     "best-csgo-gambling-sites",
     "csgo-coinflip-sites",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-20",
   cta: {
     title: "Head-to-head, without the case edge",
     text: "Create a free account and try Jackpot or Coinflip, where the pot goes to the players.",

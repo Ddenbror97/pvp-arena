@@ -15,7 +15,7 @@ export const guide: Guide = {
     "CS:GO was replaced by Counter-Strike 2 in 2023; the site formats carried over.",
     "Jackpot, coinflip and coloured roulette are the classic CS:GO-era game types.",
     "Skin values move with the market; USDC stays close to one US dollar.",
-    "PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott in US dollars, not skins.",
+    "PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in US dollars, not skins.",
     "Every PVPspinArena round can be checked on the public Fairness page.",
   ],
   sections: [
@@ -218,7 +218,7 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     "esports-betting",
     "cs2-betting",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-20",
   cta: {
     title: "The CS:GO classics, with USDC",
     text: "Create a free account and play Jackpot, Coinflip and Roulette with results you can verify.",

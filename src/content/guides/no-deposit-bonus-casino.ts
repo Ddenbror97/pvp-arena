@@ -137,7 +137,7 @@ PVPspinArena will not give you that tutorial pack. Watch a live [Jackpot](/) rou
     {
       id: "summary",
       title: "Summary and when to stop",
-      body: `No deposit bonus casinos sell a screenshot. The terms sell a meter. Sweepstakes free SC is the same meter with a different coin. This site does not run that product. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars — no Gold Coins, no free SC.
+      body: `No deposit bonus casinos sell a screenshot. The terms sell a meter. Sweepstakes free SC is the same meter with a different coin. This site does not run that product. PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars — no Gold Coins, no free SC.
 
 If you are claiming pack after pack because the last meter almost finished, stop. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A no-deposit banner is a poor reason to stay logged in.`,
     },
@@ -187,5 +187,5 @@ If you are claiming pack after pack because the last meter almost finished, stop
     "gambling-budget",
     "no-deposit-sweepstakes-casinos",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

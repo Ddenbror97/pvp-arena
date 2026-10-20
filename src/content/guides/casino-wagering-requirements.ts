@@ -123,7 +123,7 @@ A no-meter site can still hurt a budget. Fast pots and a cheap network make it e
     {
       id: "summary",
       title: "Summary and when to stop",
-      body: `Wagering requirements explained: a multiple, a base, weights, a clock and often a cap. Sweepstakes playthrough is the same machine. This site does not run it. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.
+      body: `Wagering requirements explained: a multiple, a base, weights, a clock and often a cap. Sweepstakes playthrough is the same machine. This site does not run it. PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.
 
 You must be 18 or over. If you are depositing to finish a meter you already resent, stop. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A multiple is not a debt you owe the lobby.
 
@@ -175,5 +175,5 @@ The multiple is easier to see as a total than as a slogan. The [wagering require
     "fake-casino-sites",
     "wagering-requirement-calculator",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

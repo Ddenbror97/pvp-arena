@@ -10,7 +10,7 @@ export const guide: Guide = {
     "Tower game gambling explained: crash-like ladders, per-rung survival, short-paid multipliers, and how cashing out does not create an edge.",
   h1: "Tower game gambling: ladder rungs, crash maths and cash-out",
   answer:
-    "Tower game gambling is a crash-style ladder: each rung you climb is a survival check, and the multiplier ticks up if you live. You may cash out after any safe rung or go on and bust. The chance of reaching height h is the product of the per-rung survival rates. Payouts sit below 1 / that product, so every extra floor is still negative EV. PVPspinArena does not offer a tower; it runs Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "Tower game gambling is a crash-style ladder: each rung you climb is a survival check, and the multiplier ticks up if you live. You may cash out after any safe rung or go on and bust. The chance of reaching height h is the product of the per-rung survival rates. Payouts sit below 1 / that product, so every extra floor is still negative EV. PVPspinArena does not offer a tower; it runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   facts: [
     "A tower is a sequence of survival checks, not a skill climb and not a Minesweeper puzzle.",
     "P(reach floor h) = product of the survival probabilities on floors 1…h.",
@@ -87,7 +87,7 @@ Do not treat a tower as [mines](/guides/mines-game-casino) unless the grid and l
     {
       id: "not-here",
       title: "PVPspinArena does not offer a tower",
-      body: `There is no ladder and no crash bar here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `There is no ladder and no crash bar here. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 - [Jackpot](/) — pot share is chance.
 - [Coinflip](/coinflip) — 50/50, fee published.
@@ -176,7 +176,7 @@ Climbing further is a chosen cashout, not a skill edge. [Tower game strategy](/g
     },
     {
       q: "Does PVPspinArena have a tower game?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide is for ladder tiles you meet elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This guide is for ladder tiles you meet elsewhere.",
     },
     {
       q: "Why link crash gambling from a tower page?",
@@ -199,5 +199,5 @@ Climbing further is a chosen cashout, not a skill edge. [Tower game strategy](/g
     "online-casino-games",
     "tower-game-strategy",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

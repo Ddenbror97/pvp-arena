@@ -16,7 +16,7 @@ export const guide: Guide = {
     "RTP applies to the total stake, not to the coin size alone.",
     "Ways and cluster pays change how wins are counted, not the house edge.",
     "Turning lines off can void features and rarely improves RTP.",
-    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -223,5 +223,5 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     "how-do-slot-machines-work",
     "rtp-explained",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

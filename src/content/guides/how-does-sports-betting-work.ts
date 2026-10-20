@@ -173,7 +173,7 @@ After the ticket exists, the book may offer to buy it back. That sale is [cash o
     },
     {
       q: "Does PVPspinArena take live or pre-match sports bets?",
-      a: "No. It is not a sportsbook. It offers Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. It is not a sportsbook. It offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
     },
     {
       q: "Why did my limit drop after I won?",
@@ -197,5 +197,5 @@ After the ticket exists, the book may offer to buy it back. That sale is [cash o
     "sports-betting-with-crypto",
     "live-betting-strategy",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

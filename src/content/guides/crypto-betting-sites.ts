@@ -158,7 +158,7 @@ The same books show up as installs. A [crypto betting app](/guides/crypto-bettin
     },
     {
       q: "Does PVPspinArena take sports bets?",
-      a: "No. It runs Jackpot, Coinflip, Roulette, and P2P Slott. Use this checklist on any sportsbook you consider, and use Fairness here only for these games.",
+      a: "No. It runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. Use this checklist on any sportsbook you consider, and use Fairness here only for these games.",
     },
     {
       q: "What is the first check I should run?",
@@ -178,5 +178,5 @@ The same books show up as installs. A [crypto betting app](/guides/crypto-bettin
     "no-kyc-casino",
     "online-gambling",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

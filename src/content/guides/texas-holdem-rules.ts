@@ -17,7 +17,7 @@ export const guide: Guide = {
     "How to play Texas Holdem step by step: hole cards, blinds, the flop, turn and river, every betting action, showdown rules and a worked beginner hand.",
   h1: "How to play Texas Holdem: hole cards, streets and showdown",
   answer:
-    "How to play Texas Holdem is the Hold'em rule sheet: two hole cards, blinds, four betting streets, five community cards, and a showdown that uses the best five-card hand. No-limit means you may shove your stack. The room still takes rake. PVPspinArena is not a Hold'em client. It runs Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "How to play Texas Holdem is the Hold'em rule sheet: two hole cards, blinds, four betting streets, five community cards, and a showdown that uses the best five-card hand. No-limit means you may shove your stack. The room still takes rake. PVPspinArena runs six-max No-Limit Hold'em, plus Jackpot, Coinflip, Roulette, and P2P Slott.",
   facts: [
     "Each player gets two private hole cards; the board gets five community cards.",
     "Betting streets are preflop, flop, turn and river, in that order.",
@@ -210,5 +210,5 @@ A full deck is the game above. [The 36-card deck](/guides/short-deck-poker) drop
     "crypto-poker",
     "short-deck-poker",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

@@ -29,7 +29,7 @@ export const guide: Guide = {
       title: "What a crypto sportsbook actually sells",
       body: `A crypto sportsbook is an online bookmaker with a blockchain cashier. You send coins, receive a betting balance, and strike prices on listed events: leagues, props, sometimes [esports betting](/guides/esports-betting). Cashouts go back out as crypto. The product is still a price on a future fact about a match, not a shuffled deck and not a PvP pot.
 
-This [games and odds](/guides/topics/games-and-odds) guide is for adults aged 18 or over. It explains deposits, implied odds and integrity risk, then contrasts that book with a verifiable round on PVPspinArena. This site does not take team bets. It runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.
+This [games and odds](/guides/topics/games-and-odds) guide is for adults aged 18 or over. It explains deposits, implied odds and integrity risk, then contrasts that book with a verifiable round on PVPspinArena. This site does not take team bets. It runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.
 
 "Anonymous sports betting" in ads usually means a light sign-up and a crypto send. It does not mean the book has no records, that your chain activity is invisible, or that the bet is legal where you live. A public BTC payment to a known deposit cluster is a breadcrumb. A stablecoin send on a transparent ledger is a breadcrumb. If you need privacy, a sportsbook is the wrong tool; if you need a priced football market, accept that the book will know your account.
 
@@ -175,5 +175,5 @@ One sport people try to fund with a coin is racing. [Crypto horse racing betting
     "crypto-slots",
     "slot-machine-odds",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

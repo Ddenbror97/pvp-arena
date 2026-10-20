@@ -8,7 +8,7 @@ export const guide: Guide = {
   title: "What Is MetaMask? A Self-Custody Wallet, Explained",
   h1: "What Is MetaMask? A Self-Custody Wallet, Explained",
   description:
-    "What is MetaMask? A self-custody wallet for Ethereum and EVM chains: what the recovery phrase does, what sites can see, and connecting versus sending.",
+    "What is MetaMask? A self-custody wallet. The vendor says it can manage Ethereum, Solana, and Bitcoin keys. You still hold the phrase.",
   answer:
     "What is MetaMask? It is a self-custody wallet for Ethereum and other EVM chains, shipped as a browser extension and a mobile app. You hold the keys. The company does not hold your Secret Recovery Phrase, and there is no password reset that recovers a lost phrase. The app shows balances, builds transactions, and asks you to confirm them. Funds are not an account balance sitting on MetaMask’s servers. If you lose the phrase and have no other backup, the company cannot recreate it.\n\nThat design is the whole product. A website can request a connection. It cannot spend from your wallet unless you approve a transaction or a token allowance. Gambling is only for people 18 or older, or the age required where you live, and only with money you can afford to lose. Understanding the wallet does not make a wager profitable.",
   facts: [],
@@ -26,7 +26,7 @@ export const guide: Guide = {
     {
       id: "ethereum-evm-chains-and-what-it-does-not-hold-na",
       title: "Ethereum, EVM chains, and what it does not hold natively",
-      body: "MetaMask’s native networks are Ethereum and EVM chains that speak the same style of address and transaction. You can add networks the app supports, and the network list inside your install is the source of truth. Marketing pages and casino help desks go stale. If a network is not in the app you are holding, do not follow a popup from a random tab that offers to “fix” that by collecting your phrase.\n\nMetaMask does not natively hold Solana, Bitcoin, or XRP the way Phantom or a Bitcoin wallet does. Those assets live on different systems, with different address formats and different signing rules. Optional Snaps or bridges sometimes claim to extend a wallet toward another chain. They are add-ons with extra trust: more code, more prompts, and another place a fake site can imitate. This guide does not walk through installing a Snap. If you need Solana for a Solana game, use a Solana wallet. If you need bitcoin, use a Bitcoin wallet. Forcing those assets into an EVM interface is how people send coins to an address that cannot receive them.\n\nThe same 0x-style address can exist on more than one EVM network because the key is the same and the ledgers are not. A token you see on one network is not automatically on another. Read the network name in the app before you send. Gas, the fee for the transaction, is paid in the network’s native coin, and the wallet shows an estimate before you confirm. Do not treat a ticker symbol alone as proof you are on the right ledger.",
+      body: "EVM chains share an address style and a transaction style. You can add EVM networks the app supports, and the account list inside your install is the source of truth for what that copy can send. Marketing pages and casino help desks go stale. If a network is not in the app you are holding, do not follow a popup from a random tab that offers to “fix” that by collecting your phrase.\n\nMetaMask's getting-started page, checked 20 October 2026, says the app can manage Ethereum, Solana, and Bitcoin keys. That page did not name XRP. Address formats still differ, so a Bitcoin or Solana destination is not an Ethereum 0x address. Those assets live on different systems, with different address formats and different signing rules. Optional Snaps or bridges sometimes claim to extend a wallet toward another chain. They are add-ons with extra trust: more code, more prompts, and another place a fake site can imitate. This guide does not walk through installing a Snap. If you need Solana for a Solana game, use a Solana wallet. If you need bitcoin, use a Bitcoin wallet. Forcing those assets into an EVM interface is how people send coins to an address that cannot receive them.\n\nThe same 0x-style address can exist on more than one EVM network because the key is the same and the ledgers are not. A token you see on one network is not automatically on another. Read the network name in the app before you send. Gas, the fee for the transaction, is paid in the network’s native coin, and the wallet shows an estimate before you confirm. Do not treat a ticker symbol alone as proof you are on the right ledger.",
     },
     {
       id: "accounts-addresses-and-what-strangers-can-see",
@@ -64,14 +64,19 @@ export const guide: Guide = {
     },
     {
       q: "Can MetaMask hold Solana, Bitcoin, or XRP the way a dedicated wallet does?",
-      a: "Its native networks are Ethereum and EVM chains. It does not natively hold Solana, Bitcoin, or XRP the way Phantom or a Bitcoin wallet does, and the in-app network list is the source of truth for your install.",
+      a: "MetaMask's getting-started page, checked 20 October 2026, says the app can manage Ethereum, Solana, and Bitcoin keys. It did not name XRP. The account list in your install is still what that install can send.",
     },
     {
       q: "Do I need MetaMask to use PVPspinArena?",
       a: "PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in USD and does not require MetaMask. A wallet connection is optional and must never include your Secret Recovery Phrase.",
     },
   ],
-  sources: [],
+    sources: [
+    {
+      label: "MetaMask Help Center — Getting started, checked 20 October 2026",
+      url: "https://support.metamask.io/start/getting-started-with-metamask/",
+    },
+  ],
   related: ["metamask-casino", "crypto-wallet-for-gambling"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

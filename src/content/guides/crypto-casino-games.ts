@@ -63,10 +63,10 @@ export const guide: Guide = {
     },
     {
       q: "Can every crypto site offer every game?",
-      a: "No. Each operator chooses a catalog, and some products are limited to a few games. PVPspinArena offers jackpot, coinflip, and roulette, settled in US dollars. It does not offer house-banked slots, sports betting, crash, craps, baccarat, or sweepstakes.",
+      a: "No. Each operator chooses a catalog, and some products are limited to a few games. PVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker, settled in US dollars. It does not offer house-banked slots, sports betting, crash, craps, baccarat, or sweepstakes.",
     },
   ],
   sources: [],
   related: ["online-casino-games", "best-casino-game-odds"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

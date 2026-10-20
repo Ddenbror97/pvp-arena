@@ -10,7 +10,7 @@ export const guide: Guide = {
   description:
     "The Aviator game is a crash-style plane round with a rising multiplier. This guide covers the round itself and why a signal chat is not an edge.",
   answer:
-    "The Aviator game is a named crash game built around a plane. A round begins, the plane leaves the ground, and a multiplier ticks upward. You choose whether to cash out at the multiplier showing now. If the plane flies away before that cashout, the stake you put on that round is lost. This page is what that round looks like, why the climbing number is not a prediction, and why a copied signal-group message is not an edge.\n\nOdds math for crash games in general is on [crash gambling](/guides/crash-gambling). Cashout targets, expected value, and the risk of ruin are on [crash game strategy](/guides/crash-game-strategy). Those pages own the numbers and the betting systems. This page stays with the screen in front of you.\n\nThis page is for adults 18 or older, or the age required where you live. A round can take the whole stake. If play stops being entertainment, stop and use the limits on our [responsible gambling](/responsible-gambling) page. PVPspinArena does not offer Aviator. It offers jackpot, coinflip, and roulette in USD only.",
+    "The Aviator game is a named crash game built around a plane. A round begins, the plane leaves the ground, and a multiplier ticks upward. You choose whether to cash out at the multiplier showing now. If the plane flies away before that cashout, the stake you put on that round is lost. This page is what that round looks like, why the climbing number is not a prediction, and why a copied signal-group message is not an edge.\n\nOdds math for crash games in general is on [crash gambling](/guides/crash-gambling). Cashout targets, expected value, and the risk of ruin are on [crash game strategy](/guides/crash-game-strategy). Those pages own the numbers and the betting systems. This page stays with the screen in front of you.\n\nThis page is for adults 18 or older, or the age required where you live. A round can take the whole stake. If play stops being entertainment, stop and use the limits on our [responsible gambling](/responsible-gambling) page. PVPspinArena does not offer Aviator. It offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only.",
   facts: [],
   sections: [
     {
@@ -58,10 +58,10 @@ export const guide: Guide = {
     },
     {
       q: "Does PVPspinArena offer Aviator?",
-      a: "No. PVPspinArena does not offer the Aviator game. It offers jackpot, coinflip, and roulette in USD only.",
+      a: "No. PVPspinArena does not offer the Aviator game. It offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only.",
     },
   ],
   sources: [],
   related: ["crash-gambling", "crash-game-strategy"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

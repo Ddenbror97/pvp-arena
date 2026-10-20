@@ -16,7 +16,7 @@ export const guide: Guide = {
     {
       id: "what-the-install-actually-puts-on-the-device",
       title: "What the install actually puts on the device",
-      body: "On a computer, the install adds an extension to one browser profile. A work profile and a personal profile do not share it. On a phone, the install adds the official app from the official app store. Either copy can create a new vault or restore an existing one. The local password you choose encrypts that vault on that device. It is not an account password stored at the company, and it will not follow you to a new computer unless you restore with the phrase.\n\nThe first launch asks whether you are new or whether you already have a Secret Recovery Phrase. New means the app generates the phrase and shows it once for you to record offline. Restore means you type an existing phrase into the official app, not into a website, because you already created that wallet somewhere else. Both paths end with addresses the app can display. Neither path gives the company a copy of the words.\n\nAfterward the wallet can show Ethereum and other EVM networks. The network list inside the app is the source of truth for what that install supports. MetaMask does not natively hold Solana, Bitcoin, or XRP the way Phantom or a Bitcoin wallet does. Do not judge the install a failure because those assets are absent. Do not fix that absence by adding a Snap from a link in an ad. Snaps and bridges are optional add-ons with extra trust, and this guide will not walk through a Snap install a fake site could copy.",
+      body: "On a computer, the install adds an extension to one browser profile. A work profile and a personal profile do not share it. On a phone, the install adds the official app from the official app store. Either copy can create a new vault or restore an existing one. The local password you choose encrypts that vault on that device. It is not an account password stored at the company, and it will not follow you to a new computer unless you restore with the phrase.\n\nThe first launch asks whether you are new or whether you already have a Secret Recovery Phrase. New means the app generates the phrase and shows it once for you to record offline. Restore means you type an existing phrase into the official app, not into a website, because you already created that wallet somewhere else. Both paths end with addresses the app can display. Neither path gives the company a copy of the words.\n\nAfterward the wallet can show Ethereum and other EVM networks. The network list inside the app is the source of truth for what that install supports. MetaMask's getting-started page, checked 20 October 2026, says the app can manage Ethereum, Solana, and Bitcoin keys. That page did not name XRP. Address formats still differ, so a Bitcoin or Solana destination is not an Ethereum 0x address. Do not judge the install a failure because those assets are absent. Do not fix that absence by adding a Snap from a link in an ad. Snaps and bridges are optional add-ons with extra trust, and this guide will not walk through a Snap install a fake site could copy.",
     },
     {
       id: "official-listing-versus-a-lookalike",
@@ -55,7 +55,7 @@ export const guide: Guide = {
     },
     {
       q: "Can I install MetaMask and hold Solana or Bitcoin natively?",
-      a: "The native networks are Ethereum and EVM chains. The install does not turn MetaMask into a Solana or Bitcoin wallet, and the in-app network list is the source of truth afterward.",
+      a: "MetaMask's getting-started page, checked 20 October 2026, says the app can manage Ethereum, Solana, and Bitcoin keys. The account list after install is what that copy can send.",
     },
     {
       q: "Should the download page ask me to type a seed phrase?",
@@ -66,7 +66,12 @@ export const guide: Guide = {
       a: "PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in USD and does not require MetaMask. Install a wallet only if you have your own reason to hold EVM assets.",
     },
   ],
-  sources: [],
+    sources: [
+    {
+      label: "MetaMask Help Center — Getting started, checked 20 October 2026",
+      url: "https://support.metamask.io/start/getting-started-with-metamask/",
+    },
+  ],
   related: ["is-metamask-safe", "metamask-casino"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

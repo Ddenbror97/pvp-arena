@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Crash and Plinko feel similar and behave differently. Compare house edge, variance, control and bankroll needs to pick the right one.",
   h1: "Crash vs Plinko: Which Instant Game Suits Your Bankroll?",
   answer:
-    "A crash game versus plinko is a variance comparison on the same honesty test: house edge equals one minus expected return per dollar wagered. Crash maps a target multiplier m to win chance about (1 − e)/m; plinko maps binomial bucket probabilities P(k) to multipliers m_k and sums Σ P(k)m_k. Both can sit near 97–99% RTP with very different session shapes — crash is a single threshold draw; plinko is a fixed board per ball. Neither product becomes plus-EV from risk labels or cash-out timing. PVPspinArena does not offer crash or plinko; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "A crash game versus plinko is a variance comparison on the same honesty test: house edge equals one minus expected return per dollar wagered. Crash maps a target multiplier m to win chance about (1 − e)/m; plinko maps binomial bucket probabilities P(k) to multipliers m_k and sums Σ P(k)m_k. Both can sit near 97–99% RTP with very different session shapes — crash is a single threshold draw; plinko is a fixed board per ball. Neither product becomes plus-EV from risk labels or cash-out timing. PVPspinArena does not offer crash or plinko; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   facts: [
     "Crash at target m typically has P(win) ≈ (1 − house edge) / m; payout m; EV per dollar ≈ 1 − edge.",
     "Plinko with fair pegs has P(k) = C(n,k)/2^n; house edge = 1 − Σ P(k)m_k for the chosen risk row.",
@@ -166,7 +166,7 @@ Use crash vs plinko to choose variance **elsewhere** after you multiply both boa
       title: "Summary",
       body: `Crash vs plinko is not a contest for “better odds.” It is crash’s 1/m threshold versus plinko’s binomial bucket row, usually with similar RTP bands and opposite textures. Edge is 1 − E per dollar wagered; speed and variance decide how fast a capped budget moves.
 
-Price crash targets with the curve, price plinko with Σ P m, cap volume, and ignore hot graphs. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott — use those when you want published local odds instead of two house originals.
+Price crash targets with the curve, price plinko with Σ P m, cap volume, and ignore hot graphs. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker — use those when you want published local odds instead of two house originals.
 
 Pick the shape you can stop on. Neither shape turns negative EV positive.
 
@@ -206,7 +206,7 @@ If you are new to originals, price plinko first because the bucket row is finite
     },
     {
       q: "Does PVPspinArena have crash or plinko?",
-      a: "No. It offers Jackpot, Coinflip, Roulette, and P2P Slott. Use this guide to compare originals elsewhere.",
+      a: "No. It offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. Use this guide to compare originals elsewhere.",
     },
   ],
   sources: [
@@ -217,5 +217,5 @@ If you are new to originals, price plinko first because the bucket row is finite
     { label: "Wikipedia: Expected value", url: "https://en.wikipedia.org/wiki/Expected_value" },
   ],
   related: ["crash-gambling", "plinko-gambling", "plinko-odds", "house-edge"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

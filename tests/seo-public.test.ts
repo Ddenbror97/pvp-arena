@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { canonicalUrl, indexableHead } from "@/lib/seo/indexable-head";
+import { rootHead } from "@/lib/seo/root-head";
 import { GAME_FACT_PAGES } from "@/lib/seo/game-facts";
 import { STATIC_PATHS } from "@/routes/sitemap[.]xml";
 
@@ -102,5 +103,14 @@ describe("public SEO facts", () => {
       }
     }
     expect(hits).toEqual([]);
+  });
+
+  it("noindexes an unknown URL from the root head and leaves a real page indexable", () => {
+    const missing = rootHead(true, "/app.css", "/slot.webp");
+    expect(missing.meta).toContainEqual({ name: "robots", content: "noindex" });
+    expect(missing.meta).toContainEqual({ title: "Page not found | PVPspinArena" });
+    const found = rootHead(false, "/app.css", "/slot.webp");
+    expect(found.meta.some((item) => item.name === "robots")).toBe(false);
+    expect(found.links[0]).toMatchObject({ rel: "stylesheet", href: "/app.css" });
   });
 });

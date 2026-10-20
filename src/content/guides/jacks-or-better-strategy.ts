@@ -22,7 +22,7 @@ export const guide: Guide = {
     "With perfect play, that full-pay game is about 99.54% RTP. Other sheets pay less.",
     "A pair of jacks or better already pays. A lower pair does not.",
     "The royal is usually quoted at the max-coin rate. Fewer coins often pay a smaller royal.",
-    "PVPspinArena does not offer video poker. Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena does not offer video poker. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -171,5 +171,5 @@ PVPspinArena does not install these machines. The [poker topic](/guides/topics/p
     },
   ],
   related: ["video-poker-paytables", "deuces-wild", "rtp-explained", "house-edge"],
-  updated: "2026-09-29",
+  updated: "2026-10-20",
 };

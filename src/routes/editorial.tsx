@@ -79,8 +79,9 @@ function EditorialPage() {
       <h2>Dates</h2>
       <p>
         Each guide shows one date, the last material update. There is no separate first-published
-        date in the content record, so the page does not invent one. A date is not a claim that a
-        lawyer, an auditor, or a player re-tested the page that day.
+        date in the content record, so the page does not invent one, and the article markup uses
+        that update as dateModified only. A date is not a claim that a lawyer, an auditor, or a
+        player re-tested the page that day.
       </p>
 
       <h2>Sources</h2>

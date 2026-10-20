@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Betting systems change the shape of losses, not the sign of expected value.",
     "Independent spins have no memory; a dry hour does not raise the next hit chance.",
     "Higher RTP and lower turnover are the only cost levers you can choose from the outside.",
-    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -185,7 +185,7 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     },
     {
       q: "Does PVPspinArena have a slot system?",
-      a: "No. This site's slot game is P2P Slott, a 1v1 duel, and it does not publish a reel-beating method. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. This site's slot game is P2P Slott, a 1v1 duel, and it does not publish a reel-beating method. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
     },
     {
       q: "Can a bonus buy be +EV?",
@@ -208,5 +208,5 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     "gamblers-fallacy",
     "expected-value-gambling",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

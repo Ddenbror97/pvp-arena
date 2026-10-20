@@ -30,7 +30,7 @@ Arbitrum is not one product name. One is the main rollup. Nova is a separate cha
 
 This guide lives with other rails in [crypto payments](/guides/topics/crypto-payments). It is the Arbitrum twin of the [Avalanche casino](/guides/avalanche-casino) explainer: teach the chain, then show why this site is not on it.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott. Deposits are on-chain Bitcoin, and USDC and ETH on Base. It is not an ARB casino, not an Arbitrum One casino, and it will not credit an Arbiscan transaction.
+PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. Deposits are on-chain Bitcoin, and USDC and ETH on Base. It is not an ARB casino, not an Arbitrum One casino, and it will not credit an Arbiscan transaction.
 
 ARB the governance token is not the chip. Some rooms take ARB. Many take ETH and USDC only. Read the cashier asset list. A wallet that shows a large ARB balance and empty ETH cannot pay gas and cannot satisfy a USDC deposit field. Three tickers, three jobs.`,
     },
@@ -193,5 +193,5 @@ Write three lines on paper before any first send: chain ID 42161 or 8453, token 
     },
   ],
   related: ["base-vs-ethereum", "gas-fees-explained", "usdc-casino", "polygon-casino"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

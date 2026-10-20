@@ -10,7 +10,7 @@ export const guide: Guide = {
     "How a live dealer casino table works: studio streams, the same house edges as the felt, latency, limits, and why a camera is not a PvP pot.",
   h1: "Live dealer casino: studios, pace and the same house edges",
   answer:
-    "A live dealer casino table is a filmed pit: a human deals, spins or rolls on camera, and you bet in a browser or app. The house edge is the game’s edge — banker baccarat, 3:2 blackjack, single-zero roulette — not a discount for being “real.” You are trusting a studio, a shoe or a wheel, and a cashier. PVPspinArena does not offer live dealer tables; Jackpot, Coinflip, Roulette, and P2P Slott are the live games here.",
+    "A live dealer casino table is a filmed pit: a human deals, spins or rolls on camera, and you bet in a browser or app. The house edge is the game’s edge — banker baccarat, 3:2 blackjack, single-zero roulette — not a discount for being “real.” You are trusting a studio, a shoe or a wheel, and a cashier. PVPspinArena does not offer live dealer tables; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games here.",
   facts: [
     "Live dealer means a studio stream plus the ordinary rules of the named game, not a new math model.",
     "Banker baccarat is still about 1.06%; European red is still about 2.70%; 6:5 blackjack is still expensive.",
@@ -95,7 +95,7 @@ If the stream lags, you might see a card before your UI accepts a click — or t
     {
       id: "not-here",
       title: "PVPspinArena has no live dealer pit",
-      body: `There is no studio baccarat, no filmed wheel and no host. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `There is no studio baccarat, no filmed wheel and no host. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 - [Jackpot](/) — pot share is chance.
 - [Coinflip](/coinflip) — 50/50, fee published.
@@ -178,7 +178,7 @@ A live roulette show with extra multipliers is [Lightning Roulette](/guides/ligh
     },
     {
       q: "Does PVPspinArena have live dealer games?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide explains live studios you will see on other sites.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This guide explains live studios you will see on other sites.",
     },
     {
       q: "Can I count cards on live blackjack?",
@@ -206,5 +206,5 @@ A live roulette show with extra multipliers is [Lightning Roulette](/guides/ligh
     "crazy-time",
     "lightning-roulette",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

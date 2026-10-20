@@ -89,7 +89,7 @@ If the session starts to feel like chasing, stop. [Responsible gambling](/respon
     {
       id: "stop",
       title: "Where this site stops",
-      body: `PVPspinArena still offers Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If pai gow poker was the thing you wanted to use, you will not find it in the header. That mismatch is a reason to close the tab, not a reason to force the cashier.
+      body: `PVPspinArena still offers six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If pai gow poker was the thing you wanted to use, you will not find it in the header. That mismatch is a reason to close the tab, not a reason to force the cashier.
 
 Write that down as part of any pai gow poker note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
 
@@ -110,7 +110,7 @@ What goes wrong. The usual failure is believing the first sentence of an ad. The
 
 A note with empty cells. Columns: definition, price, constraint, date, loss limit. Five cells.
 
-Where this site stops. PVPspinArena still offers Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If pai gow poker was the thing you wanted to use, you will not find it in the header.
+Where this site stops. PVPspinArena still offers six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If pai gow poker was the thing you wanted to use, you will not find it in the header.
 
 The older Chinese-domino game that shares the name is [pai gow tiles](/guides/pai-gow-tiles).
 
@@ -166,7 +166,7 @@ Then close the tab or play only what this site actually offers. Jackpot, Coinfli
     },
   ],
   related: ["baccarat-rules", "craps-odds", "house-edge", "online-casino-games", "pai-gow-tiles"],
-  updated: "2026-09-27",
+  updated: "2026-10-20",
   cta: {
     title: "This site is a pot, not that product",
     text: "PVPspinArena does not offer the product described on this page. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",

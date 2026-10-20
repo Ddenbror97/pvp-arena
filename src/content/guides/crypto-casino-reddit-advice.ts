@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 Start from [what is a crypto casino](/guides/what-is-a-crypto-casino) and [best crypto gambling sites](/guides/best-crypto-gambling-sites) so you already have a checklist before you open a thread.
 
-This [Foundations](/guides/topics/foundations) page is for adults 18+. Not legal advice. We will not list “approved” subreddits or codes. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars — judge it with primary docs, not comment karma.
+This [Foundations](/guides/topics/foundations) page is for adults 18+. Not legal advice. We will not list “approved” subreddits or codes. PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars — judge it with primary docs, not comment karma.
 
 If threads are already a compulsion loop, step away. Use [responsible gambling](/responsible-gambling).
 ### Extra diligence notes
@@ -209,5 +209,5 @@ Help links stay on [responsible gambling](/responsible-gambling). Self-exclusion
     "what-is-a-crypto-casino",
     "new-crypto-casinos",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

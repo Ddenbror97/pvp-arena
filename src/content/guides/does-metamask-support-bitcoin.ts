@@ -8,9 +8,9 @@ export const guide: Guide = {
   title: "Does MetaMask Support Bitcoin? EVM Limits Explained",
   h1: "Does MetaMask Support Bitcoin? EVM Limits Explained",
   description:
-    "Does MetaMask support Bitcoin natively? It holds Ethereum and EVM assets. For bitcoin gambling, use a Bitcoin wallet instead.",
+    "Does MetaMask support Bitcoin? The vendor help page now says the app can manage Bitcoin keys. Match the address type before you send.",
   answer:
-    "Does MetaMask support Bitcoin? Not the way a Bitcoin wallet does. MetaMask’s native networks are Ethereum and other EVM chains. Bitcoin uses its own addresses, its own fees, and its own transaction rules. A wrapped token that trades on an EVM chain can mention bitcoin in the name and still be a different asset. The company does not hold your Secret Recovery Phrase, and there is no password reset that recovers a lost phrase. No toggle on a casino site changes that.\n\nThe network list inside your MetaMask app is the source of truth. If it shows EVM networks and not a native bitcoin account, believe the app. Gambling is only for people 18 or older, or the age required where you live, and only with money you can afford to lose. Getting onto the right chain does not make the wager favorable.",
+    "Does MetaMask support Bitcoin? MetaMask's getting-started page, checked 20 October 2026, says the app can manage Bitcoin keys as well as Ethereum and Solana keys. Bitcoin uses its own addresses, its own fees, and its own transaction rules. A wrapped token that trades on an EVM chain can mention bitcoin in the name and still be a different asset. The company does not hold your Secret Recovery Phrase, and there is no password reset that recovers a lost phrase. No toggle on a casino site changes that.\n\nThe network list inside your MetaMask app is the source of truth. If it shows EVM networks and not a native bitcoin account, believe the app. Gambling is only for people 18 or older, or the age required where you live, and only with money you can afford to lose. Getting onto the right chain does not make the wager favorable.",
   facts: [],
   sections: [
     {
@@ -52,7 +52,7 @@ export const guide: Guide = {
   faqs: [
     {
       q: "Does MetaMask support Bitcoin natively?",
-      a: "MetaMask’s native networks are Ethereum and EVM chains, and it does not natively hold bitcoin the way a Bitcoin wallet does. The in-app network list is the source of truth for your install.",
+      a: "MetaMask's getting-started page, checked 20 October 2026, says the app can manage Bitcoin keys. A bitcoin address is still not an Ethereum 0x address. The account list in your install is what that install can send.",
     },
     {
       q: "Is a wrapped bitcoin token the same as BTC in a Bitcoin wallet?",
@@ -71,7 +71,12 @@ export const guide: Guide = {
       a: "PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in USD and does not require MetaMask. Native bitcoin and Lightning are not how those games are settled.",
     },
   ],
-  sources: [],
+    sources: [
+    {
+      label: "MetaMask Help Center — Getting started, checked 20 October 2026",
+      url: "https://support.metamask.io/start/getting-started-with-metamask/",
+    },
+  ],
   related: ["bitcoin-casino", "lightning-network-gambling", "bitcoin-fees"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

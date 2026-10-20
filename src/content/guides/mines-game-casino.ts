@@ -144,7 +144,7 @@ A verified map can still pay 1.80x on a 2.02x fair survival. Honesty of the shuf
     {
       id: "not-here",
       title: "PVPspinArena does not offer mines",
-      body: `There is no mines tile grid on this site. The live set is Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `There is no mines tile grid on this site. The live set is Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 Mines is a house-banked survival ladder. Our games split a player pot, spin a counted wheel, or run a 1v1 reel duel.
 
@@ -207,7 +207,7 @@ If a site sells a “mines predictor,” read [mines predictor](/guides/mines-pr
     },
     {
       q: "Does PVPspinArena have mines?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide explains mines so you can price a grid on another site.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This guide explains mines so you can price a grid on another site.",
     },
     {
       q: "Are mines provably fair?",
@@ -234,5 +234,5 @@ If a site sells a “mines predictor,” read [mines predictor](/guides/mines-pr
     "mines-game-strategy",
     "mines-predictor",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

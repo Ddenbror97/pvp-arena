@@ -10,7 +10,7 @@ export const guide: Guide = {
   description:
     "Online craps replaces dice in your hand with a button grid on a screen. This guide covers that table difference and sends the odds math to a separate page.",
   answer:
-    "Online craps takes the pit game and puts it on a screen. In a physical pit you stand at a rail, the stick runs the dice, and a shooter throws. Online, you do not have dice in your hand. The layout is a button grid. You press a spot, a stake is proposed, and a roll is produced by a random-number game or by a live table you only watch. That is the difference this page is about.\n\nThe numbers — which bets pay how much, and why proposition spots are expensive — live on [craps odds](/guides/craps-odds). This page does not rebuild that table. Where craps sits among other lobby tiles is part of [online casino games](/guides/online-casino-games). Read that when you want the wider menu. Stay here for the table itself: no dice in your hand, and a layout you click.\n\nThis page is for adults 18 or older, or the age required where you live. A roll can lose the stake on that bet. If play stops being entertainment, stop and use the limits on our [responsible gambling](/responsible-gambling) page. PVPspinArena does not offer craps. It offers jackpot, coinflip, and roulette in USD only.",
+    "Online craps takes the pit game and puts it on a screen. In a physical pit you stand at a rail, the stick runs the dice, and a shooter throws. Online, you do not have dice in your hand. The layout is a button grid. You press a spot, a stake is proposed, and a roll is produced by a random-number game or by a live table you only watch. That is the difference this page is about.\n\nThe numbers — which bets pay how much, and why proposition spots are expensive — live on [craps odds](/guides/craps-odds). This page does not rebuild that table. Where craps sits among other lobby tiles is part of [online casino games](/guides/online-casino-games). Read that when you want the wider menu. Stay here for the table itself: no dice in your hand, and a layout you click.\n\nThis page is for adults 18 or older, or the age required where you live. A roll can lose the stake on that bet. If play stops being entertainment, stop and use the limits on our [responsible gambling](/responsible-gambling) page. PVPspinArena does not offer craps. It offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only.",
   facts: [],
   sections: [
     {
@@ -58,10 +58,10 @@ export const guide: Guide = {
     },
     {
       q: "Does PVPspinArena offer craps?",
-      a: "No. PVPspinArena does not offer online craps. It offers jackpot, coinflip, and roulette in USD only.",
+      a: "No. PVPspinArena does not offer online craps. It offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only.",
     },
   ],
   sources: [],
   related: ["craps-odds", "online-casino-games", "crapless-craps"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };
