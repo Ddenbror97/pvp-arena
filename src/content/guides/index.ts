@@ -739,6 +739,52 @@ import { guide as ngPokerStaking } from "./poker-staking";
 import { guide as ngSitAndGoPoker } from "./sit-and-go-poker";
 import { guide as ngSpinAndGo } from "./spin-and-go";
 import { guide as ngCashGamePoker } from "./cash-game-poker";
+import { guide as lost21BlitzReview } from "./21-blitz-review";
+import { guide as lostBeamBoysSlot } from "./beam-boys-slot";
+import { guide as lostBigBassAmazonXtreme } from "./big-bass-amazon-xtreme";
+import { guide as lostBonanzaMegawaysSlot } from "./bonanza-megaways-slot";
+import { guide as lostCafeCasinoReview } from "./cafe-casino-review";
+import { guide as lostCryptorinoReview } from "./cryptorino-review";
+import { guide as lostCs2CasePrices } from "./cs2-case-prices";
+import { guide as lostCs2CaseSimulator } from "./cs2-case-simulator";
+import { guide as lostCsgoBigReview } from "./csgo-big-review";
+import { guide as lostCsgoNetReview } from "./csgo-net-review";
+import { guide as lostCsgoempireReview } from "./csgoempire-review";
+import { guide as lostCsgorollReview } from "./csgoroll-review";
+import { guide as lostDatdropReview } from "./datdrop-review";
+import { guide as lostDominoesGoldReview } from "./dominoes-gold-review";
+import { guide as lostFirstTouchdownScorerBets } from "./first-touchdown-scorer-bets";
+import { guide as lostFloatingDragonSlot } from "./floating-dragon-slot";
+import { guide as lostFruitPartySlot } from "./fruit-party-slot";
+import { guide as lostFruitShopSlot } from "./fruit-shop-slot";
+import { guide as lostGamblingTattoos } from "./gambling-tattoos";
+import { guide as lostGameTacoReview } from "./game-taco-review";
+import { guide as lostGivvyReview } from "./givvy-review";
+import { guide as lostGoldenGoddessSlot } from "./golden-goddess-slot";
+import { guide as lostInvadersFromThePlanetMoolah } from "./invaders-from-the-planet-moolah";
+import { guide as lostJackpotaReview } from "./jackpota-review";
+import { guide as lostMegawaysSlots } from "./megaways-slots";
+import { guide as lostOnlineCasinoDelaware } from "./online-casino-delaware";
+import { guide as lostOnlineGamblingLegalSouthCarolina } from "./online-gambling-legal-south-carolina";
+import { guide as lostPaOnlineCasino } from "./pa-online-casino";
+import { guide as lostPchGamesReview } from "./pch-games-review";
+import { guide as lostPiggyBankinSlot } from "./piggy-bankin-slot";
+import { guide as lostPoolPaydayReview } from "./pool-payday-review";
+import { guide as lostRbxflipReview } from "./rbxflip-review";
+import { guide as lostRedDogCasinoReview } from "./red-dog-casino-review";
+import { guide as lostReplayPokerReview } from "./replay-poker-review";
+import { guide as lostRillaboxReview } from "./rillabox-review";
+import { guide as lostRustchanceReview } from "./rustchance-review";
+import { guide as lostRustclashReview } from "./rustclash-review";
+import { guide as lostRustmagicReview } from "./rustmagic-review";
+import { guide as lostShuffleCasinoReview } from "./shuffle-casino-review";
+import { guide as lostSkinraveReview } from "./skinrave-review";
+import { guide as lostSlotMachineForSale } from "./slot-machine-for-sale";
+import { guide as lostStackEmSlot } from "./stack-em-slot";
+import { guide as lostSweetBonanza } from "./sweet-bonanza";
+import { guide as lostTopDollarSlot } from "./top-dollar-slot";
+import { guide as lostYayCasinoReview } from "./yay-casino-review";
+import { guide as lostZeusVsHadesSlot } from "./zeus-vs-hades-slot";
 
 export type { Guide, GuideCluster } from "./types";
 
@@ -1483,6 +1529,52 @@ export const GUIDES: Guide[] = [
   ngSitAndGoPoker,
   ngSpinAndGo,
   ngCashGamePoker,
+  lost21BlitzReview,
+  lostBeamBoysSlot,
+  lostBigBassAmazonXtreme,
+  lostBonanzaMegawaysSlot,
+  lostCafeCasinoReview,
+  lostCryptorinoReview,
+  lostCs2CasePrices,
+  lostCs2CaseSimulator,
+  lostCsgoBigReview,
+  lostCsgoNetReview,
+  lostCsgoempireReview,
+  lostCsgorollReview,
+  lostDatdropReview,
+  lostDominoesGoldReview,
+  lostFirstTouchdownScorerBets,
+  lostFloatingDragonSlot,
+  lostFruitPartySlot,
+  lostFruitShopSlot,
+  lostGamblingTattoos,
+  lostGameTacoReview,
+  lostGivvyReview,
+  lostGoldenGoddessSlot,
+  lostInvadersFromThePlanetMoolah,
+  lostJackpotaReview,
+  lostMegawaysSlots,
+  lostOnlineCasinoDelaware,
+  lostOnlineGamblingLegalSouthCarolina,
+  lostPaOnlineCasino,
+  lostPchGamesReview,
+  lostPiggyBankinSlot,
+  lostPoolPaydayReview,
+  lostRbxflipReview,
+  lostRedDogCasinoReview,
+  lostReplayPokerReview,
+  lostRillaboxReview,
+  lostRustchanceReview,
+  lostRustclashReview,
+  lostRustmagicReview,
+  lostShuffleCasinoReview,
+  lostSkinraveReview,
+  lostSlotMachineForSale,
+  lostStackEmSlot,
+  lostSweetBonanza,
+  lostTopDollarSlot,
+  lostYayCasinoReview,
+  lostZeusVsHadesSlot,
 ];
 
 export type ClusterInfo = {
