@@ -205,6 +205,39 @@ d("house bots", () => {
     await invariants();
   });
 
+  it("lets a partner call a bot while the bot bankroll is empty", async () => {
+    const dom = await domain();
+    await enableBots(50_000);
+    const a = await newUser("partnerbot");
+    await sql`insert into pvp_test.partners (user_id, created_by) values (${a}, ${a})`;
+    expect(await bankroll(dom.asset, dom.account_type)).toBe(0);
+    const { game_id } = await create(a, 500);
+    const joined = await callFlip(a, game_id);
+    expect(joined.joined).toBe(true);
+    expect(await bankroll(dom.asset, dom.account_type)).toBe(0);
+    const [open] = await sql`select amount::bigint amount from pvp_test.bot_house_open where user_id = ${joined.opponent_id!}`;
+    expect(Number(open!.amount)).toBe(500);
+    await new Promise((r) => setTimeout(r, 80));
+    await as(null, async (tx) => {
+      await tx`select pvp_test.coinflip_tick()`;
+    });
+    const done = await game(game_id);
+    expect(done.status).toBe("COMPLETED");
+    expect(await userBal(joined.opponent_id!, "user_available", dom.asset, dom.account_type)).toBe(0);
+    expect(await userBal(joined.opponent_id!, "user_locked", dom.asset, dom.account_type)).toBe(0);
+    expect(await bankroll(dom.asset, dom.account_type)).toBe(0);
+    const left = await sql`select 1 from pvp_test.bot_house_open`;
+    expect(left.length).toBe(0);
+    await invariants();
+  });
+
+  it("still refuses a regular player when the bot bankroll cannot cover the stake", async () => {
+    await enableBots(50_000);
+    const a = await newUser("broke");
+    const { game_id } = await create(a, 500);
+    await expectErr(callFlip(a, game_id), "BOT_UNFUNDED");
+  });
+
   it("matches the TypeScript decision for the same public cards", async () => {
     const styles: BotStyle[] = ["casual", "standard", "competitive"];
     const spots: Array<Omit<BotView, "style" | "roll">> = [
