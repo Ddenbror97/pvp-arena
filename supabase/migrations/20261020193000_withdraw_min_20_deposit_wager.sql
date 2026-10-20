@@ -8,7 +8,8 @@ set min_withdrawal_cents = 2000;
 
 drop trigger if exists chain_networks_readonly on public.chain_networks;
 update public.chain_networks
-set min_withdrawal_cents = 2000;
+set min_withdrawal_cents = 2000
+where min_withdrawal_cents < 2000;
 create trigger chain_networks_readonly
   before update or delete on public.chain_networks
   for each row execute function public.crypto_allowlist_guard();
