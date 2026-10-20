@@ -108,7 +108,9 @@ This is not a ranking of books. PVPspinArena is not in that market. If you only 
 
 Worked reminder: a $50 ticket at −110 has the same juice math on a licensed app and on an unlicensed site. The legal difference is the wrapper, not the 52.38% break-even.
 
-A second illustration: you win $800 on an unlicensed book and the cashout queue lasts three weeks. You have no commission to write. A licensed book can still be slow; you at least have a named office. That is what “legal” buys you as a customer. It does not buy you a plus-EV ticket.`,
+A second illustration: you win $800 on an unlicensed book and the cashout queue lasts three weeks. You have no commission to write. A licensed book can still be slow; you at least have a named office. That is what “legal” buys you as a customer. It does not buy you a plus-EV ticket.
+
+One public rulebook names Costa Rica law and still prints no licence number. The dated read is [one offshore rulebook, dated](/guides/wagerweb-review).`,
     },
     {
       id: "check",

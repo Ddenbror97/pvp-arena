@@ -4405,4 +4405,28 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "yescoin",
     "yescoin is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
   ),
+  p(
+    30,
+    "Sports betting",
+    "Offshore sportsbooks",
+    "wagerweb-review",
+    "wagerweb",
+    "Costa Rica rules-page review. No invented cashier clock or bonus percent. Distinct from what-is-sports-betting and no-kyc-sportsbook.",
+  ),
+  p(
+    30,
+    "Foundations",
+    "Crypto casinos",
+    "yeet-casino-review",
+    "yeet casino",
+    "help.yeet.com review. United States is restricted. Distinct from generic crypto-casino explainers.",
+  ),
+  p(
+    30,
+    "Foundations",
+    "Crypto casinos",
+    "ethercrash-review",
+    "ethercrash",
+    "Single-site crash review from the homepage. crash-gambling keeps the game explainer.",
+  ),
 ];

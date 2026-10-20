@@ -226,7 +226,7 @@ Your choice of target is really a choice of how bumpy you want the ride to be. I
       title: "Where crash games came from",
       body: `Crash-style games became popular in the mid-2010s on CS:GO skin gambling sites, where players could bet skins on the rising multiplier. Their mix of simple rules, social feeds showing other players' cash-outs and fast rounds made them very popular on stream.
 
-After Valve's 2016 crackdown on skin gambling, many crash games moved to crypto casinos. The format has stayed much the same, and many crypto sites now use a hash chain to make every crash point verifiable. Our [skin gambling vs crypto guide](/guides/skin-gambling-vs-crypto) explains how the wider market shifted. The named plane round is covered on its own in the [Aviator game guide](/guides/aviator-game-guide). PVPspinArena does not offer that game.`,
+After Valve's 2016 crackdown on skin gambling, many crash games moved to crypto casinos. The format has stayed much the same, and many crypto sites now use a hash chain to make every crash point verifiable. Our [skin gambling vs crypto guide](/guides/skin-gambling-vs-crypto) explains how the wider market shifted. The named plane round is covered on its own in the [Aviator game guide](/guides/aviator-game-guide). PVPspinArena does not offer that game. One Ethereum homepage, checked 20 October 2026, printed an edge of about 2% next to a verifier. That snapshot is [the crash site's own edge line](/guides/ethercrash-review).`,
     },
     {
       id: "checklist",

@@ -84,7 +84,9 @@ If the session starts to feel like chasing, stop. [Responsible gambling](/respon
 | Rules | Settlement, voids, and who can be refused |
 | Cashier | A small test, timed, with the transaction id |
 | Country | Whether you are allowed, without a workaround |
-| Stop | The loss limit, written before the deposit |`,
+| Stop | The loss limit, written before the deposit |
+
+A 2026 help page walks a 100% match at 35 times deposit plus bonus: $100 plus $100 means $7,000 of wagers. The cases are in [that published 35× bonus maths](/guides/yeet-casino-review).`,
     },
     {
       id: "stop",

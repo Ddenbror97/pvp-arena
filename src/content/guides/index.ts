@@ -416,6 +416,9 @@ import { guide as gapHighLimitSlots } from "./high-limit-slots";
 import { guide as gapBlackjackTournaments } from "./blackjack-tournaments";
 import { guide as gapHeadsUpPokerStrategy } from "./heads-up-poker-strategy";
 import { guide as gapPolymarketVsKalshi } from "./polymarket-vs-kalshi";
+import { guide as seoWagerwebReview } from "./wagerweb-review";
+import { guide as seoYeetCasinoReview } from "./yeet-casino-review";
+import { guide as seoEthercrashReview } from "./ethercrash-review";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1388,6 +1391,9 @@ export const GUIDES: Guide[] = [
   gapBlackjackTournaments,
   gapHeadsUpPokerStrategy,
   gapPolymarketVsKalshi,
+  seoWagerwebReview,
+  seoYeetCasinoReview,
+  seoEthercrashReview,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -2184,6 +2190,8 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "gamdom-alternatives",
         "duelbits-alternatives",
         "stake-originals-games",
+        "yeet-casino-review",
+        "ethercrash-review",
       ],
     },
     {
@@ -3209,6 +3217,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "matched-betting",
         "no-kyc-sportsbook",
         "sportsbet-io-review",
+        "wagerweb-review",
       ],
     },
     { name: "Office pools", slugs: ["bracket-pool", "super-bowl-squares"] },

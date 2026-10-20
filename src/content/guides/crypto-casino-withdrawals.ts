@@ -182,7 +182,7 @@ A site's approach to fairness is also a useful signal. Sites that let you verify
 - **Exchange address used.** Some exchanges do not credit transfers from certain senders or networks. Withdrawing to your own wallet first is safest; see our [crypto wallet for gambling guide](/guides/crypto-wallet-for-gambling).
 - **Withdrawal marked finished but you are unsure.** Look up the hash on a block explorer to confirm the recipient and amount.
 
-For how PVPspinArena handles balances and payouts in general, read [how it works](/how-it-works), or visit your [wallet](/wallet) page to see your history.`,
+For how PVPspinArena handles balances and payouts in general, read [how it works](/how-it-works), or visit your [wallet](/wallet) page to see your history. One operator's own FAQ puts crypto cash-outs at minutes up to 24 hours, and still requires the deposit to be wagered once. Notes from that page are in [a cashier that quotes its own clock](/guides/yeet-casino-review).`,
     },
     {
       id: "plan",
