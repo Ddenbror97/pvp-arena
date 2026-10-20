@@ -175,7 +175,7 @@ The other video-poker family with its own full-pay chart is [Deuces Wild](/guide
     },
     {
       q: "Does PVPspinArena have video poker?",
-      a: "No. It is not a casino floor and not a poker room. It offers Jackpot, Coinflip and Roulette.",
+      a: "No video poker. Six-max No-Limit Hold'em is a different game, with a 5% fee only after a flop. Jackpot, Coinflip, and Roulette are separate.",
     },
   ],
   sources: [

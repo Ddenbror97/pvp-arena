@@ -119,7 +119,7 @@ A scratch ticket prints its return on the back. [Scratch off odds](/guides/scrat
       title: "RTP on PVPspinArena and on slots",
       body: `Slots hide the paytable behind thousands of symbol combinations and bonus states. You cannot usually derive RTP with a napkin. You rely on the published figure, and you still need a huge sample before your personal return resembles it. Slot volatility also means a 96% game can return 30% or 250% in a short sitting. That is the point of [variance in gambling](/guides/variance-in-gambling).
 
-PVPspinArena’s four games are simple enough to price without a lab report.
+PVPspinArena’s five games are simple enough to price without a lab report.
 
 ### Roulette
 

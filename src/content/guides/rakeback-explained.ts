@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Rakeback is a share of that cut, paid to the player or an affiliate deal.",
     "Contribution is usually based on weighted contributed rake, not on whether you won the pot.",
     "Casino “rakeback” on slots is often just cashback with borrowed language.",
-    "PVPspinArena is not a poker room; see crypto poker for how tables actually run.",
+    "PVPspinArena runs six-max Hold'em. No rakeback schedule is published. The fee is 5% of a pot only after a flop.",
   ],
   sections: [
     {
@@ -168,7 +168,7 @@ If a deal only works at hours you do not have, it is not a deal. It is a job lis
     },
     {
       q: "Does PVPspinArena pay rakeback?",
-      a: "No. It is not a poker room. PvP Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. There is no rake-and-rebate ladder.",
+      a: "No rakeback schedule is published. Six-max Hold'em takes 5% of a pot only after a flop. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. There is no rake-and-rebate ladder.",
     },
   ],
   sources: [

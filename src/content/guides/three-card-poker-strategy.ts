@@ -160,7 +160,7 @@ Write the number of hands before you post the first Ante. Speed will eat an unco
     },
     {
       q: "Does PVPspinArena offer Three Card Poker?",
-      a: "No. It is not a poker room and not a side-game pit. It offers Jackpot, Coinflip and Roulette.",
+      a: "No Three Card Poker and no side-game pit. Six-max No-Limit Hold'em is a different game, with a 5% fee only after a flop. Jackpot, Coinflip, and Roulette are separate.",
     },
   ],
   sources: [

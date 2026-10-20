@@ -22,7 +22,7 @@ export const guide: Guide = {
     "The buy-in is usually prize pool plus a fee. Only the prize-pool part is paid to places.",
     "Payouts are top-heavy. Second place can be worth a lot, or nothing, depending on the posted table.",
     "You cannot rebuy in a classic freezeout. Chips you lose are gone for that event.",
-    "PVPspinArena does not run sit and goes. It is not a poker room.",
+    "PVPspinArena does not run sit and goes. It does run six-max No-Limit Hold'em cash games.",
   ],
   sections: [
     {
@@ -108,7 +108,7 @@ Watch the payout before you treat heads-up as a must-win war. If second place al
 
 Deal-making, if the client allows it, is a separate agreement to split the remaining pool. Read the numbers. A deal can be fair, and it can also be a big stack leaning on a short stack. You do not have to accept a chop. You also do not have to prove anything by refusing a chop that matches the chips.
 
-PVPspinArena will not deal this final match. It is not a poker room. If you leave the client and want a one-shot contest instead, that is a different product with a different fee, not a shortcut to a sit and go trophy.`,
+PVPspinArena will not deal this final match. It does not run sit and goes. Its poker is six-max cash Hold'em, with a 5% fee only after a flop. If you leave the client and want a one-shot contest instead, that is a different product with a different fee, not a shortcut to a sit and go trophy.`,
     },
     {
       id: "checklist",
@@ -147,7 +147,7 @@ Read the table. Then register, or do not. The seats will fill without you if the
     },
     {
       q: "Does PVPspinArena run sit and go poker?",
-      a: "No. It is not a poker room. Jackpot and Coinflip take 5% of a single pot. They do not use rising blinds or a payout ladder.",
+      a: "No sit and go and no rising blinds. Six-max cash Hold'em is live, with a 5% fee only after a flop. Jackpot and Coinflip take 5% of a single pot and have no payout ladder.",
     },
   ],
   sources: [

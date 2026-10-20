@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Poker bankroll management in numbers: 20 to 40 buy-ins for cash games, more for tournaments, a worked 50NL example, downswings and where Kelly helps.",
   h1: "Poker bankroll management: buy-in counts, not a promise",
   answer:
-    "Poker bankroll management is a rule for how many buy-ins you keep at a stake so a normal downswing does not force you to quit or to chase. It is risk control, not a winning system. If you do not have an edge after rake, a bigger roll only delays ruin. PVPspinArena is not a poker room and does not need a Hold'em roll.",
+    "Poker bankroll management is a rule for how many buy-ins you keep at a stake so a normal downswing does not force you to quit or to chase. It is risk control, not a winning system. If you do not have an edge after rake, a bigger roll only delays ruin. PVPspinArena runs six-max No-Limit Hold'em. A guide's buy-in count is not a requirement to sit, and it does not create an edge.",
   facts: [
     "A cash-game guideline is often 20–40 full buy-ins at the stake you are playing.",
     "Tournaments usually need more buy-ins than cash because payouts are lumpier.",
@@ -34,7 +34,7 @@ This [poker](/guides/topics/poker) page is for adults 18+. It sits next to a [ga
 
 If you do not have a skill edge after rake, you do not need 40 buy-ins. You need a smaller stake or a stop. [How to win at poker](/guides/how-to-win-at-poker) is honest about that. A fat roll is not an edge.
 
-PVPspinArena is not a poker room. Size [Coinflip](/coinflip) from a budget, not from a 30-buy-in Hold'em rule.
+Size [Coinflip](/coinflip) from a budget, not from a 30-buy-in Hold'em rule. The poker tables are a separate stake, with buy-ins of 40 to 125 big blinds.
 
 ### What the pile is not
 
@@ -141,7 +141,7 @@ Once a month, ask only two questions. Did I follow the move-down line? Did I spe
       title: "Summary: enough buy-ins to survive the width, or a budget if you cannot",
       body: `Poker bankroll management is a solvency rule. Twenty to forty cash buy-ins is a teaching band. Tournaments need more. Kelly does not rescue a guessed minus edge. A roll is not a winning system.
 
-If you cannot keep a cap, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). PVPspinArena is 18+ and is not a poker room. Use a budget here the same way you would at a table.
+If you cannot keep a cap, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). PVPspinArena is 18+ and runs six-max No-Limit Hold'em. Use a budget here the same way you would at any table.
 
 A last check before you sit: can you lose three buy-ins this week and still follow the move-down line without borrowing? If no, the stake is too high or the pile is not a roll. Lower the stake. That sentence is the entire policy. Everything else is commentary. Commentary does not reload you. The line does — or it sends you home, which is also a reload of a different kind.`,
     },
@@ -169,7 +169,7 @@ A last check before you sit: can you lose three buy-ins this week and still foll
     },
     {
       q: "Does PVPspinArena require a poker bankroll?",
-      a: "No. It does not offer poker. Size Jackpot, Coinflip and Roulette from an entertainment budget.",
+      a: "The Hold'em tables take a buy-in of 40 to 125 big blinds, from $0.02/$0.05 up to $5/$10. A guide's buy-in count is not a requirement to sit. Jackpot, Coinflip, and Roulette are still sized from an entertainment budget, not from a professional roll.",
     },
   ],
   sources: [

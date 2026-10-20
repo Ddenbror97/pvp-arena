@@ -178,13 +178,13 @@ The same ideas sit under every game in the [poker topic hub](/guides/topics/poke
     {
       id: "pvp",
       title: "The same arithmetic on a hashed PvP round",
-      body: `PVPspinArena is a player-vs-player crypto casino with four games, settled in US dollars and open to adults 18+ only. There is no poker on the site, but the maths in this guide applies directly.
+      body: `PVPspinArena settles in US dollars and is open to adults 18+ only. [Poker](/poker) is six-max No-Limit Hold'em. The fee is 5% of a pot only after a flop, so the arithmetic in this guide is the arithmetic on that table. A preflop hand pays no fee. Nothing here promises a win rate.
 
 - **Equity:** in [Jackpot](/), your win chance equals your share of the pot. Put in $30 of a $120 pot and your equity is 25%, just like a range calculation, except the number is exact rather than estimated.
-- **EV:** [Coinflip](/coinflip) is a 50/50 between two players; the winner takes the pot minus any fee shown before entry, so EV before that fee is zero.
+- **EV:** [Coinflip](/coinflip) is a 50/50 between two players; the winner takes the pot minus a 5% fee, so the fee is the cost and the coin itself is even.
 - **Edge:** on [Roulette](/roulette), 16 Purple and 16 Silver slots pay 2x and 1 Green pays 14x on a 33-slot wheel. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Purple is (16/33) × 2 = 0.970 per unit staked before the win fee.
 
-The difference from poker is that there is no decision that moves the probability: no fold equity, no outs to count, no ICM. Every round comes from committed seeds that you can check on the [fairness page](/fairness) after settlement. If a session stops being entertainment, the [responsible gambling](/responsible-gambling) page has limits and help links.`,
+Jackpot, Coinflip, and Roulette have no decision that moves the probability: no fold equity, no outs to count, no ICM. Poker does. Every settled round can be recomputed from committed seeds on the [fairness page](/fairness). If a session stops being entertainment, the [responsible gambling](/responsible-gambling) page has limits and help links.`,
     },
   ],
   faqs: [

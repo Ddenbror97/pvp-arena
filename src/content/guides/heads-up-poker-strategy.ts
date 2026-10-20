@@ -124,7 +124,7 @@ Facts worth dating:
 
 Heads-up play widens ranges because there is nobody left to act behind you except one opponent. Position still matters on every hand. Small edges need a large number of hands before they show up, and rake on a short match can eat the edge before that happens. A solver line you cannot explain is a costume.
 
-Write the buy-in and the stop. PVPspinArena is not a poker room. The coin pot is a different contract.
+Write the buy-in and the stop. PVPspinArena runs six-max tables, not heads-up. The fee is 5% of a pot only after a flop. The coin pot is a different contract.
 
 Do the arithmetic before you call it a bargain. A wagering multiple times the chip is the amount you must bet. A commission comes off the winner. A hold inside the odds is already the cost. An RTP, when a game prints one, is a long-run return, not a promise about tonight. If the live page will not give you the input, the output stays unknown. Unknown is a reason to skip, including when a heads up poker strategy search feels urgent.
 

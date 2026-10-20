@@ -14,10 +14,10 @@ export const guide: Guide = {
   ],
   title: "How to Play Poker for Beginners: First Session",
   description:
-    "How to play poker for beginners: first-session setup, simple starting hands, position, folds, and a budget. No secret system, no poker room here.",
+    "How to play poker for beginners: first-session setup, simple starting hands, position, folds, and a budget. No secret system and no promised win rate.",
   h1: "How to play poker for beginners: a first-session rule sheet",
   answer:
-    "How to play poker for beginners is a short list: learn Hold'em streets, memorise hand rankings, play few hands, prefer the button, fold when you are lost, and cap the money before you sit. You will still lose nights. Rake and variance do not wait until you are ready. PVPspinArena is not a beginner poker room.",
+    "How to play poker for beginners is a short list: learn Hold'em streets, memorise hand rankings, play few hands, prefer the button, fold when you are lost, and cap the money before you sit. You will still lose nights. Rake and variance do not wait until you are ready. PVPspinArena runs six-max No-Limit Hold'em. It is not a coaching service and it does not promise a win rate.",
   facts: [
     "Beginners lose the most money on junk hands out of position, not on missing a fancy bluff.",
     "You do not need to play a hand every orbit; folding is a complete action.",
@@ -154,7 +154,7 @@ If you want volume, watch a mid-stakes stream with the sound off and name the ac
       title: "Summary: fewer hands, later seats, a written cap",
       body: `How to play poker for beginners: learn streets and rankings, raise or fold a short list of hands, prefer the button, fold when the story is gone, and leave when the note says leave. You will still have losing nights. That is the game.
 
-If the first sessions are already hard to stop, skip the next video. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). This site is 18+ and is not a poker room.
+If the first sessions are already hard to stop, skip the next video. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). This site is 18+ and runs six-max No-Limit Hold'em. The fee is 5% of a pot only after a flop.
 
 You are allowed to stay a beginner for a long time. That is not an insult. It is a stake and a filter. Move up only when the cap is easy and the folds are boring. Boring is the goal. Excitement is usually a second buy-in. If you want excitement, budget it as entertainment and do not call it practice. Practice is the quiet orbit where you fold 72o without a speech.
 
@@ -180,7 +180,7 @@ Words you will hear in the first session are in [poker slang](/guides/poker-slan
     },
     {
       q: "Does PVPspinArena have beginner poker tables?",
-      a: "No. It does not offer poker. Use a poker room for Hold'em and this site only for its PvP games.",
+      a: "Six-max No-Limit Hold'em is available, with blinds from $0.02/$0.05 to $5/$10. The tables are not a lesson and they do not promise a win. The fee is 5% of a pot only after a flop.",
     },
     {
       q: "When should a beginner stop for the night?",

@@ -148,7 +148,7 @@ If you still hold skins you want to sell, that is a marketplace problem, not a c
 
 Warning signs: staking rent money, chasing after a lost coinflip, or raising stake because a jackpot “looks due.” Those are the same harms as any casino product. [Gambling addiction signs](/guides/gambling-addiction-signs) and [responsible gambling](/responsible-gambling) are the exit ramps.
 
-How the four games on this site differ is summarised on [how it works](/how-it-works). Use P2P rooms for entertainment you can price. Do not use them as income.
+How the five games on this site differ is summarised on [how it works](/how-it-works). Use P2P rooms for entertainment you can price. Do not use them as income.
 
 Friends and small games use the same pot. [Betting with friends online](/guides/bet-with-friends-online), a [duel arena](/guides/duel-arena-gambling) and [rock paper scissors for money](/guides/rock-paper-scissors-for-money) are that pot with a different reveal.`,
     },

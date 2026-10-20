@@ -121,7 +121,7 @@ The dollars above illustrate published rules. They are not a transcript of a liv
 
 A guide should never name a treasury address.
 
-The result comes from a seed committed before the round. [A check you can recompute](/guides/provably-fair-games) is the general idea. On our four games you do that recompute at [fairness](/fairness).
+The result comes from a seed committed before the round. [A check you can recompute](/guides/provably-fair-games) is the general idea. On our five games you do that recompute at [fairness](/fairness).
 
 Matching the commit to the result is the whole test. It says nothing about a skin site's wheel, a sportsbook, or a case page.
 

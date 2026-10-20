@@ -15,7 +15,7 @@ export const guide: Guide = {
     "CSGOLuck is a brand search with luck in the name.",
     "The menu of games is not frozen in this review.",
     "A provably fair seed for the brand is not published here.",
-    "Our four games use a committed seed you can recompute.",
+    "Our five games use a committed seed you can recompute.",
     "A $13 Silver hit nets $24.70. A $40 pot pays the winner $38.",
   ],
   sections: [
@@ -48,7 +48,7 @@ A badge that says fair is not a method. A method names the commit, the reveal, a
 | Item | Luck-branded site | Our committed seed |
 | --- | --- | --- |
 | What the name suggests | chance | a hash you can check |
-| Game list in this article | not frozen | four games, rules published |
+| Game list in this article | not frozen | five games, rules published |
 | Provably fair | not published | yes, seed committed before the round |
 | Where you recompute | not published | the fairness page |
 | Worked Silver stake | not their wheel | $13 on our wheel |
@@ -124,7 +124,7 @@ The $40 jackpot does not inherit that wheel. A winner who staked $10 of the $40 
     },
     {
       id: "data",
-      title: "How our seed stays tied to our four games",
+      title: "How our seed stays tied to our five games",
       body: `The committed seed covers our roulette, jackpot, coinflip, and Slott. [Roulette](/roulette) is the $13 Silver contract: 16 Purple, 16 Silver, 1 Green. [Jackpot](/) is the $40 pot.
 
 [Fairness](/fairness) is where you recompute.
@@ -152,7 +152,7 @@ No recent winner is named. Open the game for a block loaded from play.`,
 - [ ] I can price a $13 Silver hit as $26 gross, a $1.30 fee, and $24.70 net.
 - [ ] I can price a $40 pot as a $2 fee and a $38 winner.
 - [ ] I kept the wheel's about 7.88% off the jackpot example.
-- [ ] I know our seed covers our four games only.
+- [ ] I know our seed covers our five games only.
 - [ ] I refused a promo code from this page.
 - [ ] I set a loss cap that does not depend on the word luck.`,
     },

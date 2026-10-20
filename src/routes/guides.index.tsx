@@ -6,9 +6,9 @@ import { EeatNote } from "@/components/seo/EeatNote";
 import { publisherNode } from "@/lib/seo/publisher";
 import { OG_SITE_URL, ogImageMeta } from "@/lib/og";
 
-const TITLE = "Gambling Guides: 700+ Free Guides on Odds and Crypto";
+const TITLE = "Gambling Guides: Odds, Poker, Crypto and Fairness";
 const DESC =
-  "Over 700 free guides to casino odds, card and dice game rules, crypto deposits, provably fair play, sports betting and lottery maths, grouped by topic.";
+  "Free guides to casino odds, card and dice rules, poker, crypto deposits, provably fair checks, sports betting and lottery maths, grouped by topic.";
 
 export const Route = createFileRoute("/guides/")({
   loader: () => getGuidesHub(),

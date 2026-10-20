@@ -150,7 +150,7 @@ A bluff still has to be the right price. [Bluffing in poker](/guides/bluffing-in
       title: "Summary: call ÷ (pot + call), then be honest about outs",
       body: `Pot odds are a fraction. Compare it to equity. Use 9/46, not a vibe. Implied odds need leftover stacks, not hope. Rake shrinks the pot you can win.
 
-If you are calling every draw “because pot odds” without doing the sum, stop and write the numbers — or stop playing. If stopping is already hard, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). PVPspinArena is 18+ and is not a poker room.
+If you are calling every draw “because pot odds” without doing the sum, stop and write the numbers — or stop playing. If stopping is already hard, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). PVPspinArena is 18+ and runs six-max No-Limit Hold'em. Pot odds still have to be calculated. The fee is 5% of a pot only after a flop.
 
 Carry one shortcut if you hate arithmetic: a nine-out turn draw wants a call of about one-fifth of the new pot or less. A gutshot wants far less, or implied odds you can actually point at. If you cannot point, fold. The shortcut is not a system. It is the 20% line in street clothes. Use it, then leave when the note says leave.
 

@@ -58,7 +58,7 @@ Watching cards mix can be honest theater and still leave you unable to prove the
 
 The site locks a hash first. The result has to fit the hash. You check the fit yourself.
 
-Our four games use that commit. Jackpot, Coinflip, Roulette, and P2P Slott each lock a seed before the round. The brand column does not inherit that sentence.
+Our five games use that commit. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker each lock a seed before the round. Poker takes 5% of a pot only after a flop. The brand column does not inherit that sentence.
 
 [Casinos funded by coins you send](/guides/what-is-a-crypto-casino) is the broader lobby type. A crypto deposit does not imply a published seed, and a published seed does not imply a fast cashier. Keep the tests in separate rows.`,
     },

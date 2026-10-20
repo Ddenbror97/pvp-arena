@@ -70,7 +70,7 @@ Use your real details. If cash play is closed where you live, the argument later
 | Your job | Play the match or the bracket | Accept the price of the odds | Stake a pot, or bet a color |
 | Prize money | Entries minus the fee | Paid by the edge over time | Other players, or the wheel |
 | Fee | Posted on the entry before you confirm. | Built into the odds | 5% of the pot on Jackpot and Coinflip; 5% of the winning payout on Roulette; 10% of the players' pot on P2P Slott |
-| Skill | Possible, and noisy in short games | Usually none | None on these four games |
+| Skill | Possible, and noisy in short games | Usually none | None on Jackpot, Coinflip, Roulette, or Slott. Poker is six-max Hold'em, where decisions matter |
 | Check | The ticket and the reported result | Published math, when it exists | A settled round on the fairness page |
 | Balance | The site cashier | A casino account | USD balance; Bitcoin or USDC/ETH on Base |
 

@@ -16,13 +16,13 @@ export const guide: Guide = {
     "How to win at poker without a profit promise: skill versus other players, rake as a cost, variance, and why no system deletes those.",
   h1: "How to win at poker: skill, rake and variance — not a promise",
   answer:
-    "How to win at poker, honestly, is a three-part account: you need a skill edge against the other seats, you need that edge to exceed rake, and you need a sample and a bankroll that survive variance. None of that is a promise of profit. Many diligent players still lose after fees. There is no secret system. PVPspinArena is not a poker room.",
+    "How to win at poker, honestly, is a three-part account: you need a skill edge against the other seats, you need that edge to exceed rake, and you need a sample and a bankroll that survive variance. None of that is a promise of profit. Many diligent players still lose after fees. There is no secret system. PVPspinArena runs six-max No-Limit Hold'em and does not promise a win rate.",
   facts: [
     "Poker is player-versus-player; the room is paid by rake, not by a colour paytable.",
     "A positive win rate before rake can be a losing rate after rake.",
     "Short samples are dominated by variance; a week is not a career.",
     "No betting progression or “always raise” slogan creates an edge.",
-    "PVPspinArena does not offer poker and does not pay a poker win rate.",
+    "PVPspinArena runs six-max No-Limit Hold'em. The fee is 5% of a pot only after a flop. It does not promise a win rate.",
   ],
   sections: [
     {
@@ -142,7 +142,7 @@ None of that is a reason to hide deposits. If the honest units make you sick, th
       title: "Summary: define the mean, pay the rake, survive the width",
       body: `How to win at poker, as a definition: beat the other seats by more than rake, over a sample that variance cannot impersonate, with money you can afford to see swing. How to win at poker, as a promise: nobody honest will give you one.
 
-If the hunt for a win rate is already taking rent money, stop. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). PVPspinArena is 18+ and is not a poker room.
+If the hunt for a win rate is already taking rent money, stop. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). PVPspinArena is 18+ and runs six-max No-Limit Hold'em. The fee is 5% of a pot only after a flop. That fee is not a win rate.
 
 Keep the definition boring enough to write on a card: edge versus people, minus rake, over a sample, inside a roll. If any piece is missing, you do not have a win. You have a night. Nights are allowed. Careers are optional and rare. Do not borrow the career word for a night you liked.
 
@@ -168,7 +168,7 @@ The satellite-to-Main-Event path that filled the online boom is [Chris Moneymake
     },
     {
       q: "Does PVPspinArena have a poker win rate?",
-      a: "No. It does not offer poker. Its games have posted pot math or a house-banked wheel.",
+      a: "No published win rate. Six-max No-Limit Hold'em is available, and the fee is 5% of a pot only after a flop. Jackpot, Coinflip, and Roulette use posted pot math or a house-banked wheel.",
     },
     {
       q: "What should I do if I keep losing?",

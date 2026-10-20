@@ -103,7 +103,7 @@ No cashout duration is assigned to the brand. A long lobby does not imply a shor
 
 A complete-sounding name is a gift to copycats. [Sites that imitate a known lobby](/guides/fake-casino-sites) can claim a wide catalog in a headline. A matching domain is still required before the company name counts.
 
-Our four games are Coinflip, Roulette, Slott, and Jackpot, plus a poker table. That sentence is about us. It is not their inventory.`,
+Our five games are Coinflip, Roulette, Slott, Jackpot, and six-max poker. Poker takes 5% of a pot only after a flop. That sentence is about us. It is not their inventory.`,
     },
     {
       id: "examples",

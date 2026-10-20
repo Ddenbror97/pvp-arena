@@ -1,37 +1,49 @@
 # PVPspinArena
 
-> PVPspinArena (https://pvpspinarena.com) is a player-vs-player crypto gaming site with three games: Jackpot, Coinflip, and Roulette. Balances are shown in US dollars and funded with Bitcoin, or with USDC or ETH on Base. Each result is computed on the server from a seed whose SHA-256 hash is published before the round; after settlement the seed is revealed so anyone can recompute the outcome. Adults 18+ only. Play only with money you can afford to lose.
+> PVPspinArena (https://pvpspinarena.com) is a player-vs-player crypto gaming site with five games: Jackpot, Coinflip, Roulette, P2P Slott, and six-max No-Limit Texas Hold'em. Balances are shown in US dollars and funded with Bitcoin, or with USDC or ETH on Base. Each result is computed on the server from a seed whose SHA-256 hash is published before the round; after settlement the seed is revealed so anyone can recompute the outcome. Adults 18+ only. Play only with money you can afford to lose.
 
-Jackpot and Coinflip are player versus player: the pot is the players' wagers, and the winner receives it minus any fee shown before entry. Roulette is a shared house-banked wheel, not a pot. The browser animation does not decide the result. PVPspinArena is not affiliated with Valve, Counter-Strike, or Steam.
+Jackpot, Coinflip, P2P Slott, and Poker are player versus player: the pot is the players' wagers, and the winner receives it minus the fee for that game. Roulette is a shared house-banked wheel, not a pot. The browser animation does not decide the result. A committed seed lets you recompute a published result. It does not insure a balance, protect a wallet, or remove the fee. PVPspinArena is not affiliated with Valve, Counter-Strike, or Steam. No gambling licence number, audit firm, or company registration is published on the site.
 
 ## Games
 
-- [Jackpot](https://pvpspinarena.com/): shared pot; every cent is one ticket, so win chance equals your share of the pot
-- [Coinflip](https://pvpspinarena.com/coinflip): one versus one; one player picks heads or tails, the other takes the opposite side; one bit of HMAC-SHA256 gives each side a 50% chance
-- [Roulette](https://pvpspinarena.com/roulette): continuous rounds on a 15-slot wheel; 7 Purple and 7 Silver pay 2x, 1 Green pays 14x
+- [Jackpot](https://pvpspinarena.com/): shared pot; every cent is one ticket, so win chance equals your share of the pot. Fee: 5% of the pot at settlement. The winner receives 95%.
+- [Coinflip](https://pvpspinarena.com/coinflip): one versus one; one player picks heads or tails, the other takes the opposite side; one bit of HMAC-SHA256 gives each side a 50% chance. Fee: 5% of the combined pot. The winner receives 95%.
+- [Roulette](https://pvpspinarena.com/roulette): timed rounds on a 33-slot wheel; 16 Purple and 16 Silver pay 2x, 1 Green pays 14x. Fee: 5% of each winning payout. After that fee, Purple or Silver returns about 92.12% (about a 7.88% house edge) and Green returns about 40.30% (about a 59.70% house edge).
+- [P2P Slott](https://pvpspinarena.com/slott): two players, equal stakes, six spins each, higher score wins. Fee: 10% of the players' pot on a win. A draw refunds both stakes. A bomb ends the match and the house keeps both stakes.
+- [Poker](https://pvpspinarena.com/poker): six-max No-Limit Hold'em, blinds from $0.02/$0.05 to $5/$10. Fee: 5% of a pot only when a flop is dealt. Preflop hands pay no fee.
 
 ## How the site works
 
 - [How it works](https://pvpspinarena.com/how-it-works): account, wallet, deposits, each game, and verification
 - [Fairness](https://pvpspinarena.com/fairness): the commit-reveal protocol and an in-browser verifier
 - [About](https://pvpspinarena.com/about): what the platform is and is not
+- [Editorial policy](https://pvpspinarena.com/editorial): no named author, what dates and sources mean, how to send a correction
 - [Responsible gambling](https://pvpspinarena.com/responsible-gambling): limits and self-exclusion
 
 ## Guides
 
-Educational guides live at [Guides](https://pvpspinarena.com/guides). The complete URL list, including every published guide, is [sitemap.xml](https://pvpspinarena.com/sitemap.xml). Topic hubs:
+Educational guides live at [Guides](https://pvpspinarena.com/guides). The complete URL list, including every published guide, is [sitemap.xml](https://pvpspinarena.com/sitemap.xml). Topic hubs are published only when a cluster has at least three guides. Current hubs:
 
-- [Foundations](https://pvpspinarena.com/guides/topics/foundations): what a crypto casino is and how to judge trust
-- [Provably fair](https://pvpspinarena.com/guides/topics/provably-fair): commitments, hashes, and checking a result
-- [CS:GO heritage](https://pvpspinarena.com/guides/topics/csgo-heritage): PvP formats and the skin-era background
-- [Skill wagers](https://pvpspinarena.com/guides/topics/skill-wagers): cash matches, wager apps, and escrow
-- [Games and odds](https://pvpspinarena.com/guides/topics/games-and-odds): RTP, house edge, and game maths
-- [Crypto payments](https://pvpspinarena.com/guides/topics/crypto-payments): wallets, networks, deposits, and cashouts
-- [Responsible play](https://pvpspinarena.com/guides/topics/responsible-play): budgets and staying in control
-- [Casino knowledge](https://pvpspinarena.com/guides/topics/casino-knowledge): history, probability, and how casinos run
-- [Lottery](https://pvpspinarena.com/guides/topics/lottery): ticket odds, payout choice, taxes, pools, and 50/50 raffles
-- [Horse racing](https://pvpspinarena.com/guides/topics/horse-racing): straight bets, exotics, tote odds, and Derby tickets
-- [Prediction markets](https://pvpspinarena.com/guides/topics/prediction-markets): pick'em apps, event contracts, and election prices
+- [Foundations](https://pvpspinarena.com/guides/topics/foundations)
+- [Provably fair](https://pvpspinarena.com/guides/topics/provably-fair)
+- [CS:GO heritage](https://pvpspinarena.com/guides/topics/csgo-heritage)
+- [Games and odds](https://pvpspinarena.com/guides/topics/games-and-odds)
+- [Crypto payments](https://pvpspinarena.com/guides/topics/crypto-payments)
+- [Responsible play](https://pvpspinarena.com/guides/topics/responsible-play)
+- [Sweepstakes](https://pvpspinarena.com/guides/topics/sweepstakes)
+- [Poker](https://pvpspinarena.com/guides/topics/poker)
+- [Esports betting](https://pvpspinarena.com/guides/topics/esports-betting)
+- [Skill wagers](https://pvpspinarena.com/guides/topics/skill-wagers)
+- [Casino games](https://pvpspinarena.com/guides/topics/casino-games)
+- [Sports betting](https://pvpspinarena.com/guides/topics/sports-betting)
+- [Blackjack](https://pvpspinarena.com/guides/topics/blackjack)
+- [Slots](https://pvpspinarena.com/guides/topics/slots)
+- [Casino knowledge](https://pvpspinarena.com/guides/topics/casino-knowledge)
+- [Game shows](https://pvpspinarena.com/guides/topics/game-shows)
+- [Games of chance](https://pvpspinarena.com/guides/topics/games-of-chance)
+- [Lottery](https://pvpspinarena.com/guides/topics/lottery)
+- [Horse racing](https://pvpspinarena.com/guides/topics/horse-racing)
+- [Prediction markets](https://pvpspinarena.com/guides/topics/prediction-markets)
 
 ## Optional
 

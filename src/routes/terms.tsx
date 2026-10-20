@@ -1,27 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ogImageMeta } from "@/lib/og";
 import { LegalPage } from "@/components/LegalPage";
+import { indexableHead } from "@/lib/seo/indexable-head";
 
 export const Route = createFileRoute("/terms")({
-  head: () => ({
-    meta: [
-      { title: "Terms of Service: Fees, Deposits and Rules | PVPspinArena" },
-      {
-        name: "description",
-        content:
-          "Terms for PVPspinArena: eligibility, the 5% fee on Jackpot, Coinflip and Roulette, the 10% fee on P2P Slott, Bitcoin and Base deposits, and account rules.",
-      },
-      { property: "og:title", content: "Terms of Service: Fees, Deposits and Rules | PVPspinArena" },
-      {
-        property: "og:description",
-        content:
-          "Rules for using PVPspinArena, including the 5% fee on Jackpot, Coinflip and Roulette and the 10% fee on P2P Slott.",
-      },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-      ...ogImageMeta(),
-    ],
-  }),
+  head: () =>
+    indexableHead({
+      path: "/terms",
+      title: "Terms of Service: Fees, Deposits and Rules | PVPspinArena",
+      description:
+        "Terms for PVPspinArena: eligibility, fees on Jackpot, Coinflip, Roulette, P2P Slott and poker, Bitcoin and Base deposits, and account rules.",
+      crumb: "Terms",
+    }),
   component: TermsPage,
 });
 
@@ -29,7 +18,7 @@ function TermsPage() {
   return (
     <LegalPage title="Terms">
       <p>
-        <strong>Last updated October 9, 2026.</strong>
+        <strong>Last updated October 20, 2026.</strong>
       </p>
       <p>
         These terms are the rules for using PVPspinArena at pvpspinarena.com. By creating an account
@@ -37,7 +26,10 @@ function TermsPage() {
       </p>
 
       <h2>The Service</h2>
-        <p>PVPspinArena offers four games: Jackpot, Coinflip, Roulette, and P2P Slott.</p>
+      <p>
+        PVPspinArena offers five games: Jackpot, Coinflip, Roulette, P2P Slott, and six-max No-Limit
+        Texas Hold&apos;em poker.
+      </p>
       <p>
         Your playable balance is maintained as a US-dollar ledger, counted in cents. Bitcoin, and
         USDC and ETH on the Base network, can be used to add funds and cash out. They are not
@@ -80,8 +72,9 @@ function TermsPage() {
       <p>
         Jackpot and Coinflip charge a <strong>5% fee</strong> on the pot when the round settles.
         Roulette charges a <strong>5% fee</strong> on each winning payout when the round settles.
-        P2P Slott charges a <strong>10% fee</strong> on the players&apos; pot when a player wins.
-        If either player lands a bomb, the match ends and the house keeps both stakes.
+        P2P Slott charges a <strong>10% fee</strong> on the players&apos; pot when a player wins. If
+        either player lands a bomb, the match ends and the house keeps both stakes. Poker charges a{" "}
+        <strong>5% fee</strong> on a pot only when a flop is dealt.
       </p>
 
       <h3>Jackpot</h3>
@@ -105,7 +98,8 @@ function TermsPage() {
       </p>
       <p>
         The game fee is not charged again when depositing or withdrawing. It is taken from the
-        Jackpot, Coinflip or P2P Slott pot, or from a Roulette winning payout, at settlement.
+        Jackpot, Coinflip, P2P Slott, or poker pot, or from a Roulette winning payout, at
+        settlement. Poker takes its fee only after a flop.
       </p>
       <p>If a round is cancelled, the affected stakes are refunded without the game fee.</p>
 
@@ -117,6 +111,23 @@ function TermsPage() {
         stakes with no fee. If either player lands a bomb, the match ends immediately, both stakes
         stay with the house, and any promotional bonus is returned. A match already open keeps the
         rules it was created with.
+      </p>
+
+      <h3>Poker</h3>
+      <p>
+        Poker is six-max No-Limit Texas Hold&apos;em against the other seated players. Blinds run
+        from $0.02/$0.05 to $5/$10. A buy-in is 40 to 125 big blinds, depending on the stakes, and
+        each player has 20 seconds to act. Chips stay at the seat between hands and return to the
+        dollar balance when you leave.
+      </p>
+      <p>
+        The fee is 5% of each pot, and only when a flop is dealt. A hand that ends before the flop
+        pays no fee. Uncalled chips are returned before the fee and are not charged.
+      </p>
+      <p>
+        Each seated player commits a secret used in the shuffle. If a player does not reveal that
+        secret in time, the hand is voided before any card or blind and no money moves. Finished
+        hands can be recomputed from the table&apos;s Hands tab.
       </p>
 
       <h3>Roulette</h3>
@@ -201,7 +212,10 @@ function TermsPage() {
 
       <h2>Responsible Play</h2>
       <p>Only use money you can afford to lose.</p>
-      <p>Jackpot, Coinflip, Roulette, and P2P Slott involve real money and can result in losses.</p>
+      <p>
+        Jackpot, Coinflip, Roulette, P2P Slott, and Poker involve real money and can result in
+        losses.
+      </p>
       <p>
         The <Link to="/responsible-gambling">Responsible Gambling</Link> page provides information
         about self-exclusion and available support resources.

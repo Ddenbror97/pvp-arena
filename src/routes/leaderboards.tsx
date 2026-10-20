@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, useMatch } from "@tanstack/react-router";
 import { LeaderboardIndex } from "@/components/leaderboard/PublicLeaderboards";
+import { indexableHead } from "@/lib/seo/indexable-head";
 import { useQuerySeed } from "@/lib/first-paint";
 import { loadPublicListPaint } from "@/lib/leaderboard/paint";
 
@@ -8,20 +9,13 @@ export const Route = createFileRoute("/leaderboards")({
     location.pathname === "/leaderboards" || location.pathname === "/leaderboards/"
       ? loadPublicListPaint()
       : null,
-  head: () => ({
-    meta: [
-      { title: "Leaderboards — PVPspinArena" },
-      {
-        name: "description",
-        content: "Partner wager races on PVPspinArena. Rankings use settled real-money stakes.",
-      },
-      { property: "og:title", content: "Leaderboards — PVPspinArena" },
-      {
-        property: "og:description",
-        content: "Partner wager races ranked from settled real-money stakes.",
-      },
-    ],
-  }),
+  head: () =>
+    indexableHead({
+      path: "/leaderboards",
+      title: "Leaderboards — PVPspinArena",
+      description: "Partner wager races on PVPspinArena. Rankings use settled real-money stakes.",
+      crumb: "Leaderboards",
+    }),
   component: LeaderboardsLayout,
 });
 

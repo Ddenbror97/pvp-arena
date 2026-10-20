@@ -2,31 +2,21 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ogImageMeta } from "@/lib/og";
+import { indexableHead } from "@/lib/seo/indexable-head";
 import { LegalPage } from "@/components/LegalPage";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/responsible-gambling")({
-  head: () => ({
-    meta: [
-      { title: "Responsible Gambling: Budgets, Self-Exclusion and Help" },
-      {
-        name: "description",
-        content:
-          "Responsible gambling on PVPspinArena: what Jackpot, Coinflip and Roulette really cost, how to set a budget or self-exclude, and where to get help fast.",
-      },
-      { property: "og:title", content: "Responsible Gambling: Budgets, Self-Exclusion and Help" },
-      {
-        property: "og:description",
-        content: "How to keep play in bounds on PVPspinArena, and where to get help.",
-      },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-      ...ogImageMeta(),
-    ],
-  }),
+  head: () =>
+    indexableHead({
+      path: "/responsible-gambling",
+      title: "Responsible Gambling: Budgets, Self-Exclusion and Help",
+      description:
+        "Responsible gambling on PVPspinArena: what Jackpot, Coinflip, Roulette, Slott and poker cost, how to budget or self-exclude, and where to get help.",
+      crumb: "Responsible gambling",
+    }),
   component: ResponsiblePage,
 });
 
@@ -37,8 +27,8 @@ function ResponsiblePage() {
         <strong>Last updated October 20, 2026.</strong>
       </p>
       <p>
-        Jackpot, Coinflip, and Roulette are real-money games. They are not a way to make money or
-        recover financial losses.
+        Jackpot, Coinflip, Roulette, P2P Slott, and Poker are real-money games. They are not a way
+        to make money or recover financial losses.
       </p>
       <p>
         Only play with money you can afford to lose, and stop if gambling stops feeling like
@@ -59,6 +49,11 @@ function ResponsiblePage() {
         After that fee, a Purple or Silver bet has a theoretical average return of about 92.12% of
         the stake, a <strong>7.88% house edge</strong>. A Green bet returns about 40.30%, a{" "}
         <strong>59.70% house edge</strong>.
+      </p>
+      <p>
+        Poker is six-max No-Limit Hold&apos;em. The fee is <strong>5% of each pot</strong>, and only
+        when a flop is dealt. A hand that ends before the flop pays no fee. Folding, calling, or
+        raising does not remove that fee, and no betting pattern guarantees a profit.
       </p>
       <p>
         The <Link to="/terms">Terms</Link> explain the game rules and fees in more detail.

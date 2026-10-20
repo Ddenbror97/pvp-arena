@@ -16,7 +16,7 @@ export const guide: Guide = {
     "GTO poker strategy in plain language: equilibrium versus exploitation, why mixed frequencies exist, and why this is not a solver tutorial.",
   h1: "GTO poker strategy: equilibrium versus exploitation, simply",
   answer:
-    "GTO poker strategy means playing toward a game-theory equilibrium: a mix of bets and folds that cannot be exploited even if the opponent knows your plan. Exploitative strategy abandons that mix to attack a specific leak. GTO is a reference, not a salary and not a solver tutorial. Rake still applies. PVPspinArena is not a poker room.",
+    "GTO poker strategy means playing toward a game-theory equilibrium: a mix of bets and folds that cannot be exploited even if the opponent knows your plan. Exploitative strategy abandons that mix to attack a specific leak. GTO is a reference, not a salary and not a solver tutorial. Rake still applies. PVPspinArena runs six-max No-Limit Hold'em, and the fee is 5% of a pot only after a flop. The site does not play GTO for you.",
   facts: [
     "GTO is an unexploitable mix, not a promise that every hand wins.",
     "Exploitative play prints more against a known leak and loses more if you guessed the leak wrong.",
@@ -142,7 +142,7 @@ If a training site sells “GTO for micros” as a personality, ask what rake mo
       title: "Summary: a baseline, then a read, then a budget",
       body: `GTO poker strategy is an unexploitable mix. Exploitative strategy is a deliberate leak-hunt. Use the first when you have no read; use the second when you have a real one. Do not treat a solver screenshot as a personality. Do not treat either as a promise.
 
-If theory study is keeping you at tables you cannot afford, stop. Read [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). PVPspinArena is 18+ and is not a poker room.
+If theory study is keeping you at tables you cannot afford, stop. Read [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). PVPspinArena is 18+ and runs six-max No-Limit Hold'em. Studying a solver does not change the 5% fee taken only after a flop.
 
 Remember the two-column table: balance when you have no read, attack when you have a real one. That is the whole amateur version of GTO poker strategy. Everything else is homework. Homework does not get to spend the rent. The budget does. If the folder is more exciting than the cap, close the folder. The mix will wait. The bills will not.
 
@@ -174,7 +174,7 @@ A mixed check is not a tutorial in trapping. [Trapping with a made hand](/guides
     },
     {
       q: "Does PVPspinArena use GTO?",
-      a: "No. It does not offer poker. There is no multi-street range to balance on Jackpot, Coinflip or Roulette.",
+      a: "No. Six-max No-Limit Hold'em is on the site, and the site does not play a GTO strategy for you. Jackpot, Coinflip, and Roulette have no multi-street range to balance.",
     },
   ],
   sources: [

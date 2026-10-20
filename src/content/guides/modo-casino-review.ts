@@ -179,7 +179,7 @@ The second risk is the reverse import. Someone treats our Base deposits as proof
 
 Their product is unpublished on that point. The assets do not travel by association.
 
-The third risk is using provable fairness as a halo. Our four games commit a seed. A halo does not extend the seed to a prize app.
+The third risk is using provable fairness as a halo. Our five games commit a seed. A halo does not extend the seed to a prize app.
 
 Their provably fair cell stays not published.
 

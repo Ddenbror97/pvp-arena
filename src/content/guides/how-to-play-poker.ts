@@ -15,10 +15,10 @@ export const guide: Guide = {
   ],
   title: "How to Play Poker: Rules, Hands and Streets",
   description:
-    "How to play poker from blinds to showdown: streets, hand rankings, betting actions, rake, and why PVPspinArena is not a poker room.",
+    "How to play poker from blinds to showdown: streets, hand rankings, betting actions, rake, and a 5% fee only after the flop.",
   h1: "How to play poker: blinds, streets, showdown and rake",
   answer:
-    "How to play poker is a sequence, not a slogan. You post blinds, receive hole cards, bet through streets, and either fold or go to showdown, where the best five-card hand wins the pot. Skill shows up in which pots you enter and how you size bets. Rake and variance still tax every session. PVPspinArena is not a poker room: it runs Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "How to play poker is a sequence, not a slogan. You post blinds, receive hole cards, bet through streets, and either fold or go to showdown, where the best five-card hand wins the pot. Skill shows up in which pots you enter and how you size bets. Rake and variance still tax every session. PVPspinArena runs six-max No-Limit Hold'em, plus Jackpot, Coinflip, Roulette, and P2P Slott. The poker fee is 5% of a pot only after a flop.",
   facts: [
     "A standard poker hand uses a 52-card deck; most online cash games are No-Limit Texas Hold'em.",
     "Each betting street is a chance to fold, check, call, bet or raise before more cards appear.",
@@ -34,7 +34,7 @@ export const guide: Guide = {
 
 This [poker](/guides/topics/poker) guide is for adults aged 18 or over. It teaches the common rules of [cash-game Hold'em](/guides/cash-game-poker) so you can sit down without inventing streets. A one-table tournament with a fixed prize is a [sit and go](/guides/sit-and-go-poker), which is not the cash game this page walks through. It will not sell a secret winning system. There is not one.
 
-PVPspinArena is not a poker room. If you want a hashed pot with published odds, use [Jackpot](/), [Coinflip](/coinflip) or [Roulette](/roulette). Those games do not deal hole cards. Do not treat a coinflip as a flop.
+PVPspinArena also runs six-max No-Limit Hold'em at [poker](/poker), with a 5% fee only after a flop. Jackpot, Coinflip, and Roulette do not deal hole cards. Do not treat a coinflip as a flop.
 
 If you want the cashier-and-rake version of online tables, start with [crypto poker](/guides/crypto-poker) after you finish the streets on this page.
 
@@ -187,7 +187,7 @@ Learning the streets is not hosting. [A home game with a written blind](/guides/
     },
     {
       q: "Does PVPspinArena offer poker tables?",
-      a: "No. It is not a poker room. It offers player-versus-player Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "Yes. Six-max No-Limit Hold'em is live. The fee is 5% of a pot only after a flop. Jackpot, Coinflip, Roulette, and P2P Slott are separate games.",
     },
     {
       q: "Is rake cheating?",

@@ -23,7 +23,7 @@ export const guide: Guide = {
     "Betting streets are preflop, flop, turn and river, in that order.",
     "You may use any five cards from your two plus the five; you do not have to use both hole cards.",
     "No-limit lets you bet any legal amount up to your remaining stack.",
-    "PVPspinArena does not deal Texas Hold'em. It is not a poker room.",
+    "PVPspinArena deals six-max No-Limit Hold'em. The fee is 5% of a pot only after a flop.",
   ],
   sections: [
     {
@@ -187,7 +187,7 @@ A full deck is the game above. [The 36-card deck](/guides/short-deck-poker) drop
     },
     {
       q: "Does PVPspinArena have Texas Hold'em tables?",
-      a: "No. It is not a poker room. It offers Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "Yes. Six-max No-Limit Hold'em is live, with blinds from $0.02/$0.05 to $5/$10. The fee is 5% of a pot only after a flop. Jackpot, Coinflip, Roulette, and P2P Slott are separate games.",
     },
     {
       q: "What happens if two players have the same hand?",

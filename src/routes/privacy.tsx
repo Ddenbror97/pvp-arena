@@ -1,26 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ogImageMeta } from "@/lib/og";
 import { LegalPage } from "@/components/LegalPage";
+import { indexableHead } from "@/lib/seo/indexable-head";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
-    meta: [
-      { title: "Privacy Policy: What PVPspinArena Collects and Shows" },
-      {
-        name: "description",
-        content:
-          "Privacy policy for PVPspinArena, including Discord sign-in, account data, wallet records, and what other players can see.",
-      },
-      { property: "og:title", content: "Privacy Policy: What PVPspinArena Collects and Shows" },
-      {
-        property: "og:description",
-        content: "What PVPspinArena collects, why we use it, and what other players can see.",
-      },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-      ...ogImageMeta(),
-    ],
-  }),
+  head: () =>
+    indexableHead({
+      path: "/privacy",
+      title: "Privacy Policy: What PVPspinArena Collects and Shows",
+      description:
+        "Privacy policy for PVPspinArena, including Discord sign-in, account data, wallet records, and what other players can see.",
+      crumb: "Privacy",
+    }),
   component: PrivacyPage,
 });
 

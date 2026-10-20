@@ -60,7 +60,7 @@ Pending versus available is the column people skip. Pending can expire, reverse,
 | --- | --- | --- | --- | --- | --- |
 | Givvy | not published | not published; tasks may not be opponents at all | not published | not published | not published |
 | House-banked casino | inside the paytable; no percent is fixed here | the house | not published | not published | not published |
-| PvP Spin Arena | Slott keeps 10% on a win. A bomb ends the match and the house keeps both stakes. Jackpot and Coinflip each keep 5% when a pot settles. Roulette takes 5% from a winning payout | other players | balance updates when the round settles | yes, those four games show a seed committed before play | shown on the bet control |
+| PvP Spin Arena | Slott keeps 10% on a win. A bomb ends the match and the house keeps both stakes. Jackpot and Coinflip each keep 5% when a pot settles. Roulette takes 5% from a winning payout | other players | balance updates when the round settles | yes, those five games show a seed committed before play | shown on the bet control |
 
 Slott is not a commercial slot machine and not a rewards row. It is a player-versus-player game with a win cut and a bomb. Putting it in the table gives you a fee that has a sentence. It does not describe Givvy's take, which stays unpublished.
 
@@ -165,7 +165,7 @@ The ceiling is the cash-out screen. The minimum is not published here. Earnings 
     },
     {
       q: "Does the fairness tool audit a rewards ledger?",
-      a: "No. It checks seeds on our four games. A task credit needs the app's own available balance, which we do not claim to have reconciled.",
+      a: "No. It checks seeds on our five games. A task credit needs the app's own available balance, which we do not claim to have reconciled.",
     },
   ],
   sources: [],

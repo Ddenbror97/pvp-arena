@@ -159,7 +159,7 @@ Play only if those three documents are acceptable on the day you deposit. If one
     },
     {
       q: "Does PVPspinArena run ACR tables?",
-      a: "No. It is not a poker room. Jackpot and Coinflip take 5% of the pot. You verify those rounds on this site's Fairness page, not inside ACR.",
+      a: "No. It does not run ACR tables. Its own poker is six-max No-Limit Hold'em, with a 5% fee only after a flop. Jackpot and Coinflip take 5% of the pot. You verify those rounds on this site's Fairness page, not inside ACR.",
     },
   ],
   sources: [

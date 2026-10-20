@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Poker tips that hold up: position, fewer junk hands, pot odds, tilt control and a bankroll cap. No secret system. Not a poker room.",
   h1: "Poker tips: position, folds, odds and a hard stop",
   answer:
-    "Poker tips worth keeping are boring: play fewer hands out of position, fold when the price is wrong, size bets for a reason, stop when the budget says stop, and treat rake as a real cost. They will not make you rich. They will stop some of the leaks that feel like bad luck. PVPspinArena is not a poker room and does not need these tips to run a coinflip.",
+    "Poker tips worth keeping are boring: play fewer hands out of position, fold when the price is wrong, size bets for a reason, stop when the budget says stop, and treat rake as a real cost. They will not make you rich. They will stop some of the leaks that feel like bad luck. PVPspinArena runs six-max No-Limit Hold'em, with a 5% fee only after a flop. These tips are not a promise about that table, and they are not required to price a coinflip.",
   facts: [
     "Position is information; early seats should play tighter than the button.",
     "Most beginner losses are extra calls, not missed bluffs.",
@@ -139,7 +139,7 @@ The same tip applies to hour of day. A Tuesday morning micro table can be a diff
       title: "Summary: fewer leaks, not a personality makeover",
       body: `Poker tips that hold up: tighter early, raise-or-fold preflop, price your calls, plan the street, cap the night, name the rake. They will not make you a winner. They will make you a cheaper customer if you are going to sit anyway.
 
-If tips have become a reason to keep depositing, stop. Read [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). PVPspinArena is 18+ and is not a poker room.
+If tips have become a reason to keep depositing, stop. Read [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). PVPspinArena is 18+ and runs six-max No-Limit Hold'em. Tips do not remove the fee.
 
 Keep the list short enough to obey when you are losing. A long list you abandon on tilt is theatre. Three defaults — tighter early, price the call, cap the night — beat twelve slogans. When those three are automatic, add one more. That is the whole method. It will not make you a winner. It will make the next orbit cheaper than the last one you played on vibes. If you cannot name the three defaults without this page, you are not short of tips. You are short of reps. Sit a cheaper table and repeat the same three until they are boring. Boring is the point.`,
     },
@@ -167,7 +167,7 @@ Keep the list short enough to obey when you are losing. A long list you abandon 
     },
     {
       q: "Does PVPspinArena need poker tips?",
-      a: "No. It does not offer poker. Its games publish pot shares or colour prices instead.",
+      a: "The Hold'em tables are six-max no-limit, with a 5% fee only after a flop. These tips are general advice, not a promise about those tables. Jackpot, Coinflip, and Roulette publish pot shares or colour prices instead.",
     },
   ],
   sources: [

@@ -26,7 +26,7 @@ export const guide: Guide = {
 
 "Satoshi lottery" usually means tiny ticket prices, because a satoshi is a small fraction of a BTC. Cheap tickets do not improve the odds. They only change the unit.
 
-This [games and odds](/guides/topics/games-and-odds) guide is for adults aged 18 or over. It teaches lottery maths honestly, then contrasts it with PVPspinArena. This site is not a lottery, not a sportsbook and not a poker room. Its Jackpot game is a hashed player-versus-player pot: every cent you add is a ticket to that pot, and one player takes what remains after any posted fee.
+This [games and odds](/guides/topics/games-and-odds) guide is for adults aged 18 or over. It teaches lottery maths honestly, then contrasts it with PVPspinArena. This site is not a lottery and not a sportsbook. It does run six-max No-Limit Hold'em, with a 5% fee only after a flop. Its Jackpot game is a hashed player-versus-player pot: every cent you add is a ticket to that pot, and one player takes what remains after any posted fee.
 
 If you hold BTC and wanted a [bitcoin casino](/guides/bitcoin-casino) instead, that is still a different cashier. This site takes USDC and ETH on Base.`,
     },

@@ -104,7 +104,7 @@ Strategy notes are not a biography. [The televised cash-game name](/guides/tom-d
 
 A stop-loss fits because nothing forces you to finish. It keeps one session from becoming the monthly roll. Pick the number when you are calm.
 
-Compare a single [Coinflip](/coinflip) if you want to see a posted fee with no streets. Two players build a pot. This site takes 5% of that pot. The hand is over. Cash game poker takes its fee across many pots and asks you to decide on every street. PVPspinArena is not a poker room, so it will not host your $1/$2 seat. The balance here is USD, funded with Bitcoin or with USDC or ETH on Base. Roulette is a separate house wheel: 33 slots, 16 Purple, 16 Silver at 2x, 1 Green at 14x, 5% taken from winning payouts, about 7.88% on Purple and Silver after the fee. That wheel is not a ring game.
+Compare a single [Coinflip](/coinflip) if you want to see a posted fee with no streets. Two players build a pot. This site takes 5% of that pot. The hand is over. Cash game poker takes its fee across many pots and asks you to decide on every street. PVPspinArena hosts six-max cash Hold'em, including $1/$2, with a 5% fee only after a flop. The balance here is USD, funded with Bitcoin or with USDC or ETH on Base. Roulette is a separate house wheel: 33 slots, 16 Purple, 16 Silver at 2x, 1 Green at 14x, 5% taken from winning payouts, about 7.88% on Purple and Silver after the fee. That wheel is not a ring game.
 
 Do not "play it off" because the cashier takes time. Waiting on a withdrawal is not a reason to open another table. Close the client.
 
@@ -147,7 +147,7 @@ If the fee card is missing, ask or leave. A table that will not show its price i
     },
     {
       q: "Can I play cash game poker on PVPspinArena?",
-      a: "No. The site is not a poker room. Coinflip and Jackpot take 5% of the pot once. They do not use blinds, streets, or a chip rack you can rebuy.",
+      a: "Yes. Six-max No-Limit Hold'em cash tables are live, from $0.02/$0.05 to $5/$10, including $1/$2. The fee is 5% of a pot only after a flop. Coinflip and Jackpot are separate pots with a 5% fee and no streets.",
     },
   ],
   sources: [

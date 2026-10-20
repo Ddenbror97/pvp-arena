@@ -17,7 +17,7 @@ export const guide: Guide = {
     "Rooms ban it in their terms and may close the accounts involved.",
     "There is no stake size, hand choice, or method on this page.",
     "The player response is to report the table and stop playing it.",
-    "PVPspinArena does not offer poker. It runs Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "PVPspinArena runs six-max No-Limit Hold'em plus Jackpot, Coinflip, Roulette, and P2P Slott. Dumping chips is not ordinary play on any of them.",
   ],
   sections: [
     {
@@ -143,7 +143,7 @@ PVPspinArena does not run poker and will not referee a hand from another site. T
     },
     {
       q: "Does PVPspinArena have poker chip games?",
-      a: "No. PVPspinArena does not offer poker. Adults 18+ can use Jackpot, Coinflip and Roulette. Those games are not a way to move a poker stack.",
+      a: "Yes, six-max No-Limit Hold'em is live for adults 18+. Deliberately losing a pot to move chips is not a normal contest. Jackpot, Coinflip, Roulette, and Slott are not a way to move a stack either. Report the table to contact@pvpspinarena.com and stop playing it.",
     },
   ],
   sources: [

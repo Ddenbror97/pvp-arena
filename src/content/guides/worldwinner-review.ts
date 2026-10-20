@@ -58,7 +58,7 @@ Written as an editorial review. There is no bonus code on this page. We are not 
 | --- | --- | --- | --- | --- | --- |
 | WorldWinner | not published | the field the event seats; bot claims are not measured here | not published | not published | not published |
 | House-banked casino | inside the paytable; no percent is fixed here | the house | not published | not published | not published |
-| PvP Spin Arena | Jackpot keeps 5% of the pot at settlement and the winner receives 95%. Coinflip keeps 5% and cannot be canceled. Roulette takes 5% from a winning payout. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, those four games use a seed committed before the round | shown on the bet control |
+| PvP Spin Arena | Jackpot keeps 5% of the pot at settlement and the winner receives 95%. Coinflip keeps 5% and cannot be canceled. Roulette takes 5% from a winning payout. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, those five games use a seed committed before the round | shown on the bet control |
 
 A comment thread that names a percent is not a schedule. Schedules change by game, by buy-in, and by day. Copy the numbers from the confirm screen into a note you date. That note is yours. It is not a figure this review will adopt next week.
 

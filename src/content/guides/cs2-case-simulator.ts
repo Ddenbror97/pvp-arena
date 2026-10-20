@@ -60,7 +60,7 @@ A simulator can still be useful as a tour of names and finishes, the way a museu
 | --- | --- | --- | --- | --- | --- |
 | CS2 case simulator | not published; a click may cost $0 and still mis-teach | a script, not a table of people | not published | not published | not published |
 | House-banked case or loot product | inside the unpublished weights; no rate is printed here | the operator who sells the open | not published | not published | not published |
-| PvP Spin Arena | Coinflip takes 5% of the pot and the winner receives 95%. Jackpot uses the same 5% of the pot. Roulette takes 5% from a winning payout. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, because those four games commit a seed ahead of the round | shown on the bet control |
+| PvP Spin Arena | Coinflip takes 5% of the pot and the winner receives 95%. Jackpot uses the same 5% of the pot. Roulette takes 5% from a winning payout. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, because those five games commit a seed ahead of the round | shown on the bet control |
 
 The house row refuses a percentage on purpose. Skin communities repeat drop figures that this desk has not verified against a primary table in this task. Repeating them would look like reporting. It would be copying.
 
@@ -164,7 +164,7 @@ The simulator spends nothing and proves nothing about Valve. The paid open is a 
     },
     {
       q: "Can fairness verify a simulator reel?",
-      a: "No. The seed check covers our four games. A simulator that does not publish a matching commit cannot be cleared by our tool.",
+      a: "No. The seed check covers our five games. A simulator that does not publish a matching commit cannot be cleared by our tool.",
     },
   ],
   sources: [],

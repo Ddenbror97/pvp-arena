@@ -75,7 +75,7 @@ A csgoempire withdrawal time would be a cashier test: deposit, request, clock. T
 
 Our cell describes the round balance, not a bank transfer.
 
-[A seed you can recompute](/guides/provably-fair-games) applies to our four games. Whether Empire publishes a seed for each mode is not established here, so the provably fair cell is not published rather than a yes or a no.`,
+[A seed you can recompute](/guides/provably-fair-games) applies to our five games. Whether Empire publishes a seed for each mode is not established here, so the provably fair cell is not published rather than a yes or a no.`,
     },
     {
       id: "steps",

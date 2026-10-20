@@ -100,7 +100,7 @@ PVPspinArena still does not accept XRP. A successful rehearsal somewhere else do
 
 If a casino blocks your country, stop. This page will not describe a bypass. If you are sending XRP to chase a loss from another coin, stop. The chain fee being small is not a reason to continue.
 
-A useful session ends with the float you set aside, whether that float comes home or not. [How it works](/how-it-works) describes the four games on this site. It does not describe a XRP lobby, because there is not one.`,
+A useful session ends with the float you set aside, whether that float comes home or not. [How it works](/how-it-works) describes the five games on this site. It does not describe a XRP lobby, because there is not one.`,
     },
   ],
   faqs: [
