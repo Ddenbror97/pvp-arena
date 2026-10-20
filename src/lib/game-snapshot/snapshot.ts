@@ -32,6 +32,10 @@ export const GUIDE_GAME_DATA: Readonly<Record<string, SnapshotGame>> = {
   "rigged-poker-sites": "poker",
   "how-to-play-poker": "poker",
   "texas-holdem-rules": "poker",
+  "replay-poker-review": "poker",
+  "black-chip-poker-review": "poker",
+  "pokerstars-casino-review": "poker",
+  "csgoroll-review": "roulette",
 };
 
 /** First entry that is not the current guide wins. */
