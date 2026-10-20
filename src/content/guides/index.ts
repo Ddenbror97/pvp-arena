@@ -483,6 +483,7 @@ import { guide as seoStarburstSlot } from "./starburst-slot";
 import { guide as seoMegaMoolahSlot } from "./mega-moolah-slot";
 import { guide as seoGambaCasinoReview } from "./gamba-casino-review";
 import { guide as seoMetaspinsReview } from "./metaspins-review";
+import { guide as seoBetdexReview } from "./betdex-review";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1522,6 +1523,7 @@ export const GUIDES: Guide[] = [
   seoMegaMoolahSlot,
   seoGambaCasinoReview,
   seoMetaspinsReview,
+  seoBetdexReview,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -3398,7 +3400,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     { name: "Office pools", slugs: ["bracket-pool", "super-bowl-squares", "pick-em-pool"] },
     {
       name: "Exchanges",
-      slugs: ["novig-review", "prophetx-review", "sporttrade-review", "novig-vs-prophetx", "smarkets-review"],
+      slugs: ["novig-review", "prophetx-review", "sporttrade-review", "novig-vs-prophetx", "smarkets-review", "betdex-review"],
     },
     {
       name: "Fantasy and friend bets",

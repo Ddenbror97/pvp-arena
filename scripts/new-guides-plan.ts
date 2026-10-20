@@ -4941,4 +4941,12 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "metaspins",
     "Costa Rica 3-102-959384 SRL. Anjouan ALSI-202606048-FI2. 1x deposit wager. Welcome percent not published.",
   ),
+  p(
+    30,
+    "Sports betting",
+    "Exchanges",
+    "betdex-review",
+    "betdex",
+    "Docs host: 1% of net market profit. www terms returned 404. Not a US state book.",
+  ),
 ];

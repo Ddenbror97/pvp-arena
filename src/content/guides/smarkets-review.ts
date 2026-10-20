@@ -119,7 +119,9 @@ $100 of net winnings at 2% leaves $98 after a $2 charge. A lay at 3.40 that wins
 
 Four $50 Jackpot entries pay the winner $190 from a $200 pot. Roulette on Purple or Silver is about 7.88% after the fee, Slott takes 10% of the winning pot, and the Coinflip minimum is $1. Those figures are in the [terms](/terms).
 
-[Coinflip](/coinflip) shows the cut before you match. [Fairness](/fairness) checks our seed. A matched lay can still lose its liability.`,
+[Coinflip](/coinflip) shows the cut before you match. [Fairness](/fairness) checks our seed. A matched lay can still lose its liability.
+
+[A docs host that prints 1% of net market profit](/guides/betdex-review) is a third commission schedule. Do not paste that percent onto this tier table.`,
     },
     {
       id: "check",

@@ -99,7 +99,9 @@ Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVP
 
 If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
 
-[The automated market on overtime.io](/guides/overtime-markets-review) hits a pool. It is not a back-and-lay queue.`,
+[The automated market on overtime.io](/guides/overtime-markets-review) hits a pool. It is not a back-and-lay queue.
+
+[A back-and-lay file that names Anjouan and 1% on net profit](/guides/betdex-review) is another exchange shape. Read its docs host, not a mirror domain.`,
     },
     {
       id: "close",
