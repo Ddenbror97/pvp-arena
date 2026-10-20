@@ -119,7 +119,9 @@ PVPspinArena does not offer a more-or-less board. It offers Jackpot, Coinflip, a
 
 A second app matches the first deposit up to $100 in promo funds that expire in 7 days. The help-center read is [a deposit match paid as promo](/guides/parlayplay-review).
 
-The same operator's promo URL and help article did not print the same signup string on 20 October 2026. The $150 is bonus lineups if the first lineup wins. See [those disagreeing signup pages](/guides/prizepicks-promo-code).`
+The same operator's promo URL and help article did not print the same signup string on 20 October 2026. The $150 is bonus lineups if the first lineup wins. See [those disagreeing signup pages](/guides/prizepicks-promo-code).
+
+Another board prices an all-in ticket as a return on the dollar and caps one lineup at $50,000. Rules version 1.29 is [that pay scale](/guides/dabble-review).`
     },
   ],
   faqs: [

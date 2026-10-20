@@ -4517,4 +4517,20 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "betr picks",
     "Flex and no-sweat review from Betr help. Does not replace the PrizePicks explainer.",
   ),
+  p(
+    30,
+    "Foundations",
+    "Crypto casinos",
+    "metawin-review",
+    "metawin",
+    "January 2026 terms plus two live registers and a revoked Curaçao certificate. curacao-gambling-license keeps the explainer.",
+  ),
+  p(
+    30,
+    "Sports betting",
+    "Pick'em apps",
+    "dabble-review",
+    "dabble",
+    "US pick'em rules v1.29. prizepicks and parlay betting explained stay on their own pages.",
+  ),
 ];

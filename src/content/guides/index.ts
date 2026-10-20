@@ -430,6 +430,8 @@ import { guide as seoPrizepicksPromoCode } from "./prizepicks-promo-code";
 import { guide as seoJustbetReview } from "./justbet-review";
 import { guide as seoSleeperPicksReview } from "./sleeper-picks-review";
 import { guide as seoBetrPicksReview } from "./betr-picks-review";
+import { guide as seoMetawinReview } from "./metawin-review";
+import { guide as seoDabbleReview } from "./dabble-review";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1416,6 +1418,8 @@ export const GUIDES: Guide[] = [
   seoJustbetReview,
   seoSleeperPicksReview,
   seoBetrPicksReview,
+  seoMetawinReview,
+  seoDabbleReview,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -2216,6 +2220,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "ethercrash-review",
         "trustdice-review",
         "vavada-review",
+        "metawin-review",
       ],
     },
     {
@@ -3264,6 +3269,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "prizepicks-promo-code",
         "sleeper-picks-review",
         "betr-picks-review",
+        "dabble-review",
       ],
     },
     {

@@ -174,7 +174,9 @@ If a brand will not give you a number you can paste into a regulator search, the
 
 A footer badge still has to match a register. The [Malta Gaming Authority licence](/guides/malta-gaming-authority-license) is a real Maltese permission, not a passport into the UK or the US. [AML in gambling](/guides/aml-gambling) is why a licensed cashier asks who you are.
 
-A different certificate names VAVADA.COM under OGL/2024/252/0153. The domain check is [the certificate versus the terms host](/guides/vavada-review).`
+A different certificate names VAVADA.COM under OGL/2024/252/0153. The domain check is [the certificate versus the terms host](/guides/vavada-review).
+
+One domain appears on two registers under two companies: Rivolo Limited, ALSI-202602025-FI1, and Asobi NV, ALSI-152312009-FI3. The dated note is [those two numbers for one lobby](/guides/metawin-review).`
     },
   ],
   faqs: [

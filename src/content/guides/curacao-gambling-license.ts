@@ -136,7 +136,9 @@ If you only remember one line: permission to operate is not a proof of the draw,
 
 Other offshore papers players meet on crypto sites are the [Anjouan gaming license](/guides/anjouan-gaming-license) and the [Kahnawake gaming license](/guides/kahnawake-gaming-license). Each is a different issuer. None of them is a US state licence.
 
-One operator's certificate is OGL/2024/664/0280, status active, granted 16 July 2024. The company match is [that active certificate, named](/guides/trustdice-review).`
+One operator's certificate is OGL/2024/664/0280, status active, granted 16 July 2024. The company match is [that active certificate, named](/guides/trustdice-review).
+
+Token 935 names Asobi NV and marks the licence revoked. The January 2026 terms still do not print a number. That clash is [the registers versus the terms](/guides/metawin-review).`
     },
   ],
   faqs: [

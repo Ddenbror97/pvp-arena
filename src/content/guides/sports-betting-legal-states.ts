@@ -112,7 +112,9 @@ A second illustration: you win $800 on an unlicensed book and the cashout queue 
 
 One public rulebook names Costa Rica law and still prints no licence number. The dated read is [one offshore rulebook, dated](/guides/wagerweb-review).
 
-A second offshore page says Anjouan is not a state commission and still offers a -105 price on major markets. See [the reduced-juice licence page](/guides/bet105-review).`
+A second offshore page says Anjouan is not a state commission and still offers a -105 price on major markets. See [the reduced-juice licence page](/guides/bet105-review).
+
+A US pick'em help article dated 13 July 2026 splits states, and rules version 1.29 prices an all-in ticket as a return on the dollar. That read is [the state split and the pay table](/guides/dabble-review).`
     },
     {
       id: "check",
