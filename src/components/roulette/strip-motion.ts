@@ -126,15 +126,23 @@ const LAND_FACE = 34;
 export const STRIP_COIN = 108;
 export const STRIP_GAP = 8;
 export const STRIP_TILE = STRIP_COIN + STRIP_GAP;
+/** Four full tiles and wider keep the 108px coin. Matches `.roulette-rail` in styles.css. */
+export const RAIL_DESKTOP_MIN = STRIP_TILE * 4;
+/** Below this width the gap drops from 8px to 4px. Matches the tight container query. */
+export const RAIL_TIGHT_MAX = 72 * 4;
 
 export type StripMetrics = { coin: number; gap: number; tile: number; compact: boolean };
+
+export function railBoxHeight(metrics: StripMetrics): number {
+  return metrics.coin + (metrics.compact ? 28 : 16);
+}
 
 /** Phone widths fit four larger coins. Wider screens keep the 108px coin. */
 export function stripMetrics(width: number): StripMetrics {
   const full = { coin: STRIP_COIN, gap: STRIP_GAP, tile: STRIP_TILE, compact: false };
-  if (!(width > 0) || width >= STRIP_TILE * 4) return full;
+  if (!(width > 0) || width >= RAIL_DESKTOP_MIN) return full;
   const pitch = width / 4;
-  const gap = pitch < 72 ? 4 : 8;
+  const gap = pitch < RAIL_TIGHT_MAX / 4 ? 4 : 8;
   const coin = Math.min(STRIP_COIN, Math.max(56, Math.floor(pitch - gap)));
   return { coin, gap, tile: coin + gap, compact: true };
 }

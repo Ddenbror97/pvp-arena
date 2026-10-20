@@ -105,48 +105,48 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
       </>
     ) : null;
 
+  const needsSetup = !signedOut && !profile && needsProfile;
   return (
     <SlipCard title={myTotal > 0 ? "Add to your entry" : "Join the pot"}>
-      {!signedOut && !profile && needsProfile ? (
-        <p className="mt-5 text-sm text-muted-foreground">
-          Finish setting up your profile to play.
-        </p>
-      ) : (
-        <>
-          {signedOut ? null : <SlipBalance cents={balance} loading={!userId || wallet.isLoading} />}
-          <SlipLabel htmlFor="entry-amount">Entry</SlipLabel>
-          <StakeInput
-            id="entry-amount"
-            value={input}
-            onChange={setInput}
-            quick={QUICK_AMOUNTS}
-            min={min}
-            max={signedOut ? maxEntry : Math.max(0, max)}
-            invalid={!valid && !!input}
-            disabled={pending}
-          />
+      <SlipBalance
+        cents={signedOut ? null : balance}
+        loading={!signedOut && (!userId || wallet.isLoading)}
+      />
+      <SlipLabel htmlFor="entry-amount">Entry</SlipLabel>
+      <StakeInput
+        id="entry-amount"
+        value={input}
+        onChange={setInput}
+        quick={QUICK_AMOUNTS}
+        min={min}
+        max={signedOut ? maxEntry : Math.max(0, max)}
+        invalid={!valid && !!input}
+        disabled={pending || needsSetup}
+      />
 
-          {signedOut ? (
-            <SignInPlayButton />
-          ) : (
-            <PlayButton
-              onClick={submit}
-              disabled={!profile || !affordable || pending || closed}
-              label={
-                closed
-                  ? "No more entries"
-                  : pending
-                    ? "Entering…"
-                    : myTotal > 0
-                      ? "Add entry"
-                      : "Enter jackpot"
-              }
-              amount={closed ? null : valid ? amount : null}
-            />
-          )}
-          <SlipNote error={error}>Every draw is verifiable.</SlipNote>
-        </>
+      {signedOut ? (
+        <SignInPlayButton />
+      ) : (
+        <PlayButton
+          onClick={submit}
+          disabled={needsSetup || !profile || !affordable || pending || closed}
+          label={
+            needsSetup
+              ? "Finish profile"
+              : closed
+                ? "No more entries"
+                : pending
+                  ? "Entering…"
+                  : myTotal > 0
+                    ? "Add entry"
+                    : "Enter jackpot"
+          }
+          amount={closed || needsSetup ? null : valid ? amount : null}
+        />
       )}
+      <SlipNote error={needsSetup ? undefined : error}>
+        {needsSetup ? "Finish setting up your profile to play." : "Every draw is verifiable."}
+      </SlipNote>
     </SlipCard>
   );
 }

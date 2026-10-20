@@ -10,12 +10,13 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { MessageSquare, Send } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { readAuthHint } from "@/lib/auth-hint";
 import { useGameChat } from "@/lib/chat/api";
 import type { ChatMessage } from "@/lib/chat/messages";
 import { sendChatMessage } from "@/lib/chat/chat.functions";
 import { CHAT_CONFIG, SHARED_CHAT_ROOM, type ChatRoom } from "@/lib/chat/config";
 import { chatMessageFor } from "@/lib/chat/errors";
-import { ChatMessageRow } from "./ChatMessageRow";
+import { CHAT_AVATAR, CHAT_HEADROOM, ChatMessageRow } from "./ChatMessageRow";
 import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import { cn } from "@/lib/utils";
 
@@ -39,7 +40,10 @@ export function GameChat({
 }) {
   // Every game page shows the same shared chat.
   const gameType = SHARED_CHAT_ROOM;
-  const { userId, profile } = useAuth();
+  const { userId, profile, ready } = useAuth();
+  const [hint] = useState(readAuthHint);
+  const signedOut = !userId && (ready || !hint);
+  const logId = `chat-log-${gameType}`;
   const { messages, historyLoaded, status, hasMore, loadingOlder, loadOlder } = useGameChat(
     gameType,
     userId,
@@ -90,8 +94,7 @@ export function GameChat({
     prevHeight.current = el.scrollHeight;
   }, [shown]);
 
-  // Avatars, prestige frames, and the composer all change the list height after the
-  // first paint. While the reader is pinned, follow that height to the true bottom.
+  // Rows and the composer keep a constant box. This only follows a real new line.
   useLayoutEffect(() => {
     const el = listRef.current;
     const content = contentRef.current;
@@ -160,7 +163,7 @@ export function GameChat({
     >
       <header
         hidden={bare}
-        className="flex items-center justify-between border-b border-border px-3.5 py-2.5"
+        className="flex h-11 shrink-0 items-center justify-between border-b border-border px-3.5"
       >
         <div className="flex items-center gap-2.5">
           <MessageSquare
@@ -171,11 +174,17 @@ export function GameChat({
             Live chat
           </h2>
         </div>
-        <span className="flex items-center justify-end gap-2 text-xs text-foreground/85">
-          {status === "offline" ? "Reconnecting..." : status === "live" ? "Live" : "Connecting..."}
+        <span className="inline-flex h-4 w-32 shrink-0 items-center justify-end gap-2 text-xs text-foreground/85">
+          <span className="truncate">
+            {status === "offline"
+              ? "Reconnecting..."
+              : status === "live"
+                ? "Live"
+                : "Connecting..."}
+          </span>
           <span
             className={cn(
-              "h-1.5 w-1.5 rounded-full",
+              "h-1.5 w-1.5 shrink-0 rounded-full",
               status === "live"
                 ? "bg-success shadow-[0_0_6px_var(--success)]"
                 : "bg-muted-foreground/50",
@@ -187,51 +196,61 @@ export function GameChat({
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="relative min-h-0 flex-1">
           <div
+            id={logId}
             ref={listRef}
+            data-chat-log=""
             onScroll={onScroll}
             className="no-scrollbar absolute inset-0 overflow-y-auto [overflow-anchor:none]"
           >
             <div ref={contentRef}>
-            {/* Reserved top strip: constant height so "Start of chat" / "Loading..."
+              {/* Reserved top strip: constant height so "Start of chat" / "Loading..."
                     never appear late and push the messages down. */}
-            <div
-              className="flex h-8 shrink-0 items-center justify-center text-[10px] uppercase tracking-widest text-muted-foreground/75"
-              aria-hidden={!loadingOlder}
-            >
-              {loadingOlder
-                ? "Loading..."
-                : !hasMore && historyLoaded && messages.length > 0
-                  ? "Start of chat"
-                  : ""}
-            </div>
-            {messages.length === 0 && !historyLoaded && (
-              <ul aria-busy="true" className="space-y-3 px-3 py-3">
-                {[0, 1, 2, 3, 4, 5].map((i) => (
-                  <li key={i} className="flex animate-pulse items-start gap-2">
-                    <span className="h-6 w-6 shrink-0 rounded-[8%] bg-muted" />
-                    <span
-                      className="h-4 rounded bg-muted"
-                      style={{ width: `${45 + ((i * 17) % 40)}%` }}
-                    />
-                  </li>
+              <div
+                className="flex h-8 shrink-0 items-center justify-center text-[10px] uppercase tracking-widest text-muted-foreground/75"
+                aria-hidden={!loadingOlder}
+              >
+                {loadingOlder
+                  ? "Loading..."
+                  : !hasMore && historyLoaded && messages.length > 0
+                    ? "Start of chat"
+                    : ""}
+              </div>
+              {messages.length === 0 && !historyLoaded && (
+                <ul aria-busy="true" className="pb-1">
+                  {[0, 1, 2, 3, 4, 5].map((i) => (
+                    <li key={i} className="flex animate-pulse items-start gap-2.5 px-3.5 py-1.5">
+                      <span className="shrink-0" style={{ paddingTop: CHAT_HEADROOM }}>
+                        <span
+                          className="block rounded-[8%] bg-muted"
+                          style={{ width: CHAT_AVATAR, height: CHAT_AVATAR }}
+                        />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block h-3 w-24 rounded bg-muted" />
+                        <span
+                          className="mt-1 block h-4 rounded bg-muted"
+                          style={{ width: `${45 + ((i * 17) % 40)}%` }}
+                        />
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {messages.length === 0 && historyLoaded && (
+                <p className="px-4 py-10 text-center text-sm text-muted-foreground">
+                  No messages yet. Say hi!
+                </p>
+              )}
+              <ul className="pb-1">
+                {shown.map((m) => (
+                  <ChatMessageRow
+                    key={m.id}
+                    m={m}
+                    mine={m.user_id === userId}
+                    identity={identities.get(m.user_id)}
+                  />
                 ))}
               </ul>
-            )}
-            {messages.length === 0 && historyLoaded && (
-              <p className="px-4 py-10 text-center text-sm text-muted-foreground">
-                No messages yet. Say hi!
-              </p>
-            )}
-            <ul className="pb-1">
-              {shown.map((m) => (
-                <ChatMessageRow
-                  key={m.id}
-                  m={m}
-                  mine={m.user_id === userId}
-                  identity={identities.get(m.user_id)}
-                />
-              ))}
-            </ul>
             </div>
           </div>
           {unseen && (
@@ -244,21 +263,22 @@ export function GameChat({
             </button>
           )}
         </div>
-        {!userId ? (
-          <div className="px-3 py-3 text-center text-xs text-muted-foreground">
-            <Link to="/auth" className="font-semibold text-primary hover:underline">
-              Sign in
-            </Link>{" "}
-            to send a message
-          </div>
-        ) : (
-          <form onSubmit={submit} className="p-2.5">
-            {error && (
-              <p role="alert" className="mb-1.5 px-1 text-[11px] text-destructive">
-                {error}
-              </p>
-            )}
-            <div className="flex items-center gap-2">
+        <div className="shrink-0 border-t border-border px-2.5 pt-1.5 pb-2.5">
+          <p
+            role={error ? "alert" : undefined}
+            className="mb-1 h-4 truncate px-1 text-[11px] leading-4 text-destructive"
+          >
+            {userId ? (error ?? "") : ""}
+          </p>
+          {signedOut ? (
+            <p className="flex h-10 items-center justify-center text-xs text-muted-foreground">
+              <Link to="/auth" className="font-semibold text-primary hover:underline">
+                Sign in
+              </Link>{" "}
+              to send a message
+            </p>
+          ) : (
+            <form onSubmit={submit} className="flex h-10 items-center gap-2">
               <input
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -276,10 +296,15 @@ export function GameChat({
               >
                 <Send className="h-4 w-4" />
               </button>
-            </div>
-          </form>
-        )}
+            </form>
+          )}
+        </div>
       </div>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `(function(){var el=document.getElementById(${JSON.stringify(logId)});if(!el)return;void el.offsetHeight;el.scrollTop=el.scrollHeight;})();`,
+        }}
+      />
     </section>
   );
 }

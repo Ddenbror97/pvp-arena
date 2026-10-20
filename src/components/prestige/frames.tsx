@@ -189,6 +189,10 @@ export function crownAspect(assetKey: string | null | undefined): number {
   return (assetKey && CROWNS[assetKey]?.aspect) || 0.75;
 }
 
+/** Every painted frame and crown, so a list can reserve the tallest crown before identities load. */
+export const FRAME_ASSET_KEYS = Object.keys(FRAMES);
+export const CROWN_ASSET_KEYS = Object.keys(CROWNS);
+
 const paintedArt = new Set<string>();
 
 function Art({ src, className, style, animated }: ArtProps & { src: string }) {

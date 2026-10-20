@@ -1,7 +1,14 @@
-import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
+import {
+  PlayerPrestigeIdentity,
+  reservedCrownHeadroom,
+} from "@/components/prestige/PlayerPrestigeIdentity";
 import type { PrestigeIdentity } from "@/lib/prestige/api";
 import type { ChatMessage } from "@/lib/chat/messages";
 import { cn } from "@/lib/utils";
+
+export const CHAT_AVATAR = 32;
+/** Reserved on every row, crowned or not, so identities cannot change the line height. */
+export const CHAT_HEADROOM = reservedCrownHeadroom(CHAT_AVATAR);
 
 const time = (iso: string) =>
   new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -17,7 +24,7 @@ export function ChatMessageRow({
   identity?: PrestigeIdentity | undefined;
 }) {
   return (
-    <li className="flex gap-2.5 px-3.5 py-1.5">
+    <li className="flex items-start gap-2.5 px-3.5 py-1.5">
       <PlayerPrestigeIdentity
         avatar={m.avatar_url}
         name={m.display_name}
@@ -25,7 +32,8 @@ export function ChatMessageRow({
         crown={identity?.crown}
         level={identity?.level}
         tier={identity?.tier}
-        size={32}
+        size={CHAT_AVATAR}
+        minHeadroom={CHAT_HEADROOM}
       />
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
@@ -39,7 +47,7 @@ export function ChatMessageRow({
           </span>
           <time
             suppressHydrationWarning
-            className="tabular shrink-0 text-[11px] text-muted-foreground"
+            className="tabular inline-block w-[4.75rem] shrink-0 text-right text-[11px] text-muted-foreground"
             dateTime={m.created_at}
           >
             {time(m.created_at)}

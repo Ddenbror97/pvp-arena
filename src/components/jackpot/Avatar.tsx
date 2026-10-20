@@ -38,7 +38,9 @@ export function PlayerAvatar({
       style={{ ["--tw-ring-color" as string]: color ?? "var(--border)" }}
     >
       {show && !visible ? (
-        <span className="font-display text-xs">{name?.[0]?.toUpperCase() ?? "?"}</span>
+        <span className="absolute inset-0 grid place-items-center font-display text-xs">
+          {name?.[0]?.toUpperCase() ?? "?"}
+        </span>
       ) : null}
       {show ? (
         <img
@@ -48,8 +50,8 @@ export function PlayerAvatar({
           src={safe}
           alt={name ?? ""}
           className={cn(
-            "h-full w-full object-cover",
-            visible ? "opacity-100" : "absolute opacity-0",
+            "absolute inset-0 h-full w-full object-cover",
+            visible ? "opacity-100" : "opacity-0",
           )}
           loading={known ? "eager" : "lazy"}
           decoding={known ? "sync" : "async"}
@@ -62,7 +64,9 @@ export function PlayerAvatar({
           onError={() => setFailed(safe)}
         />
       ) : (
-        <span className="font-display text-xs">{name?.[0]?.toUpperCase() ?? "?"}</span>
+        <span className="absolute inset-0 grid place-items-center font-display text-xs">
+          {name?.[0]?.toUpperCase() ?? "?"}
+        </span>
       )}
     </span>
   );

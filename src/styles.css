@@ -354,6 +354,51 @@ header.site-chrome {
 .header-wallet-asset { color: #c4b5fd; }
 .header-wallet-pulse { background: rgb(255 255 255 / 12%); }
 
+/* Roulette rail. Size is a container query so the first paint already has the
+   phone or desktop coin. 464px is four 116px tiles; under 288px the pitch is
+   below 72px and the gap is 4px. See RAIL_DESKTOP_MIN / RAIL_TIGHT_MAX. */
+.roulette-rail-slot { container-type: inline-size; width: 100%; }
+.roulette-rail {
+  --rail-coin: 108px;
+  --rail-gap: 8px;
+  height: calc(var(--rail-coin) + 16px);
+}
+.roulette-coin {
+  width: var(--rail-coin);
+  height: var(--rail-coin);
+}
+.roulette-coin-img {
+  width: calc(var(--rail-coin) - 4px);
+  height: calc(var(--rail-coin) - 4px);
+}
+.roulette-rail-track {
+  top: 14px;
+  left: 0;
+  gap: var(--rail-gap);
+  /* Same place stripTranslate() writes once the clock is running: center minus the rest offset. */
+  transform: translate3d(
+    calc(50cqw - (var(--rail-laps) * (var(--rail-coin) + var(--rail-gap)) + var(--rail-coin) / 2)),
+    0,
+    0
+  );
+}
+.roulette-rail[data-spinning="1"]:not(.is-set) .roulette-rail-track { opacity: 0; }
+.roulette-rail-fade { width: 6rem; }
+@container (max-width: 463.98px) {
+  .roulette-rail {
+    --rail-gap: 8px;
+    --rail-coin: max(56px, min(108px, calc(100cqw / 4 - 8px)));
+    height: calc(var(--rail-coin) + 28px);
+  }
+  .roulette-rail-fade { width: 1rem; }
+}
+@container (max-width: 287.98px) {
+  .roulette-rail {
+    --rail-gap: 4px;
+    --rail-coin: max(56px, min(108px, calc(100cqw / 4 - 4px)));
+  }
+}
+
 /* Jackpot wheel, coinflip table, and roulette strip use the light card in the light theme. */
 html[data-theme="light"] .game-stage {
   color-scheme: light;

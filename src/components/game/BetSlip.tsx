@@ -20,8 +20,10 @@ export function SlipCard({
 }) {
   return (
     <div className={cn("rounded-xl border border-border bg-card p-4", className)}>
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="font-display text-xs uppercase tracking-widest">{title}</h2>
+      <div className="flex h-4 items-center justify-between gap-2">
+        <h2 className="min-w-0 truncate font-display text-xs uppercase leading-4 tracking-widest">
+          {title}
+        </h2>
         {tag}
       </div>
       {children}
@@ -51,7 +53,8 @@ export function SlipLabel({ children, htmlFor }: { children: ReactNode; htmlFor?
   );
 }
 
-const chip = "tabular rounded-lg border py-1.5 text-xs font-semibold transition active:scale-95 disabled:opacity-50";
+const chip =
+  "tabular rounded-lg border py-1.5 text-xs font-semibold transition active:scale-95 disabled:opacity-50";
 const chipIdle =
   "border-border bg-secondary/60 text-foreground/85 hover:border-primary/50 hover:text-foreground";
 const chipOn =
@@ -297,7 +300,7 @@ export function SlipNote({ error, children }: { error?: ReactNode; children?: Re
   return (
     <p
       className={cn(
-        "mt-2 min-h-4 text-center text-[11px] leading-4",
+        "mt-2 h-4 truncate text-center text-[11px] leading-4",
         error ? "text-destructive" : "text-muted-foreground",
       )}
       aria-live="polite"

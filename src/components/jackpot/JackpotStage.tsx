@@ -232,7 +232,7 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
         {game ? (
           <Link
             to="/fairness"
-            className="mt-2 inline-flex max-w-full items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+            className="mt-2 inline-flex h-[17px] max-w-full items-center gap-1.5 text-[11px] leading-[17px] text-muted-foreground hover:text-foreground"
           >
             <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
             <span className="truncate">

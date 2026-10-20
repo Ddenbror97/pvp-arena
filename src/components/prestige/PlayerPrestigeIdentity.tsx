@@ -1,6 +1,14 @@
 import type { CSSProperties } from "react";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
-import { AvatarFrame, CrownAccessory, crownAspect, frameClip, frameOpening } from "./frames";
+import {
+  AvatarFrame,
+  CROWN_ASSET_KEYS,
+  CrownAccessory,
+  FRAME_ASSET_KEYS,
+  crownAspect,
+  frameClip,
+  frameOpening,
+} from "./frames";
 
 /**
  * Where a crown sits on an identity of `size` px: its base rests on the top
@@ -22,6 +30,21 @@ export function crownPlacement(
   return { inset, width, height, top, headroom: Math.max(0, Math.ceil(-top)) };
 }
 
+/**
+ * Tallest crown this avatar size can wear. Chat rows reserve it on the first
+ * paint, so a late identity never pushes the name or the message down.
+ */
+export function reservedCrownHeadroom(size: number): number {
+  let max = 0;
+  for (const crown of CROWN_ASSET_KEYS) {
+    max = Math.max(max, crownPlacement(size, undefined, crown).headroom);
+    for (const frame of FRAME_ASSET_KEYS) {
+      max = Math.max(max, crownPlacement(size, frame, crown).headroom);
+    }
+  }
+  return max;
+}
+
 export function PlayerPrestigeIdentity({
   avatar,
   name,
@@ -33,11 +56,14 @@ export function PlayerPrestigeIdentity({
   showMeta = false,
   previewSrc,
   reserveHeadroom = true,
+  minHeadroom = 0,
   className,
 }: {
   previewSrc?: string | null | undefined;
   /** Off where the parent has fixed height with spare room above (e.g. the site header). */
   reserveHeadroom?: boolean | undefined;
+  /** Always keep at least this many pixels, even before a crown is known. */
+  minHeadroom?: number | undefined;
   avatar?: string | null | undefined;
   name?: string | null | undefined;
   frame?: string | null | undefined;
@@ -52,14 +78,16 @@ export function PlayerPrestigeIdentity({
   const place = crownPlacement(size, frame, crown);
   const clip = frameClip(frame);
   const style: CSSProperties = { width: size, height: size };
+  const photo = Math.max(0, size - place.inset * 2);
+  const pad = reserveHeadroom ? Math.max(place.headroom, minHeadroom) : 0;
   return (
     <span
       className={
         className
-          ? `inline-flex flex-col items-center ${className}`
-          : "inline-flex flex-col items-center"
+          ? `inline-flex shrink-0 flex-col items-center ${className}`
+          : "inline-flex shrink-0 flex-col items-center"
       }
-      style={reserveHeadroom && place.headroom ? { paddingTop: place.headroom } : undefined}
+      style={pad ? { paddingTop: pad } : undefined}
     >
       <span
         className="relative inline-flex shrink-0"
@@ -69,7 +97,13 @@ export function PlayerPrestigeIdentity({
       >
         <span
           className={`absolute overflow-clip ${clip ? "" : "rounded-[8%]"}`}
-          style={{ inset: place.inset, clipPath: clip }}
+          style={{
+            top: place.inset,
+            left: place.inset,
+            width: photo,
+            height: photo,
+            clipPath: clip,
+          }}
         >
           <PlayerAvatar
             src={avatar}

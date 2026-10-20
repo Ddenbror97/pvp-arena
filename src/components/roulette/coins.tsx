@@ -19,22 +19,25 @@ export function CoinImg({
   c,
   className,
   size = 64,
+  fluid = false,
 }: {
   c: RlColor;
   className?: string;
   size?: number;
+  /** Size comes from CSS so the first paint matches the measured rail. */
+  fluid?: boolean;
 }) {
   const k = COIN[c];
   return (
     <img
       src={k.src}
       alt={k.label}
-      width={size}
-      height={size}
+      width={fluid ? undefined : size}
+      height={fluid ? undefined : size}
       decoding="async"
       draggable={false}
       className={className}
-      style={{ filter: k.filter, width: size, height: size }}
+      style={fluid ? { filter: k.filter } : { filter: k.filter, width: size, height: size }}
     />
   );
 }

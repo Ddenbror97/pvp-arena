@@ -249,7 +249,9 @@ export function RouletteGame() {
       {layout.length ? (
         <RouletteStrip layout={layout} game={g} now={now} />
       ) : (
-        <div className="h-[124px] animate-pulse rounded-xl bg-card" />
+        <div className="roulette-rail-slot">
+          <div className="roulette-rail animate-pulse rounded-xl bg-card" />
+        </div>
       )}
 
       <div
