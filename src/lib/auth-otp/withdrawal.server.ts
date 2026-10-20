@@ -14,12 +14,12 @@ import { verifyFailure } from "./signup.server";
 import { workerEnv } from "@/lib/worker-env";
 
 export type CodeStart =
-  { ok: true; challengeId: string; maskedEmail: string } | { ok: false; error: string };
+  | { ok: true; challengeId: string; maskedEmail: string; reused?: boolean }
+  | { ok: false; error: string };
 
 const NETWORKS: Record<number, string> = { 1: "Ethereum", 8453: "Base", 84532: "Base Sepolia" };
 const usd = (cents: number) => `$${(cents / 100).toFixed(2)}`;
-export const PARTNER_BLOCKED =
-  "You cant withdraw right now, try again later";
+export const PARTNER_BLOCKED = "You cant withdraw right now, try again later";
 
 function describe(_userId: string, t: WithdrawalTarget): string[] {
   if (t.rail === "btc") return [`Amount: ${usd(t.usdCents)} in BTC`, `To: ${t.address.trim()}`];

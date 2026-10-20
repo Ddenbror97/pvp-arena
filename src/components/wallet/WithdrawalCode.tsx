@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { OtpInput } from "@/components/auth/OtpInput";
@@ -41,8 +41,11 @@ export function useWithdrawalCode() {
         toast.error(r.error);
         return false;
       }
+      const same = sent?.challengeId === r.challengeId;
       setSent({ scope, challengeId: r.challengeId, maskedEmail: r.maskedEmail });
-      setCode("");
+      if (!same) setCode("");
+      setPrompt((n) => n + 1);
+      if (r.reused) toast.message("Enter the code we already sent to your email.");
       return true;
     } finally {
       setSending(false);
@@ -85,13 +88,22 @@ export function WithdrawalCodeField({
   confirmLabel?: string;
 }) {
   const sent = ctl.sentFor(target);
-  const challengeId = ctl.sent?.challengeId;
-  const [open, setOpen] = useState(false);
-
+  const ticket = `${ctl.sent?.challengeId ?? ""}:${ctl.prompt}`;
+  const [dismissed, setDismissed] = useState<string | null>(null);
+  // Open on the same paint as a successful send, including a code that was already emailed.
+  const open = sent && dismissed !== ticket;
+  const allowClose = useRef(false);
   useEffect(() => {
-    if (sent) setOpen(true);
-    else setOpen(false);
-  }, [sent, challengeId, ctl.prompt]);
+    if (!open) {
+      allowClose.current = false;
+      return;
+    }
+    allowClose.current = false;
+    const id = window.setTimeout(() => {
+      allowClose.current = true;
+    }, 400);
+    return () => window.clearTimeout(id);
+  }, [open, ticket]);
 
   if (!sent) return null;
   const ready = ctl.code.length === 6;
@@ -101,12 +113,18 @@ export function WithdrawalCodeField({
         <button
           type="button"
           className="text-xs font-semibold text-primary hover:underline"
-          onClick={() => setOpen(true)}
+          onClick={() => setDismissed(null)}
         >
           Enter email code
         </button>
       )}
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog
+        open={open}
+        onOpenChange={(next) => {
+          // Ignore the opener click landing on the new overlay and closing it immediately.
+          if (!next && allowClose.current) setDismissed(ticket);
+        }}
+      >
         <DialogContent
           className="max-w-[18rem] gap-3 p-4 sm:rounded-xl"
           onOpenAutoFocus={(event) => event.preventDefault()}
