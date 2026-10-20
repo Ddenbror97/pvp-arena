@@ -127,7 +127,11 @@ PVPspinArena will not sell you a chip subscription. A pot is a pot. If you are h
 
 You must be 18 or over, or older if your law says so. If chip packs, streaks or a sister “rewards” lobby are already hard to put down, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Points that cannot cash out can still take the evening.
 
-Social lobbies still need their own cashier note. [Lotsa Slots as a chip lobby](/guides/lotsa-slots-review) and [Bingo Bash free chips](/guides/bingo-bash-review) are not cash. The [PCH token screen](/guides/pch-games-review), the [Legendz license gap](/guides/legendz-review), [Real Prize's redeem test](/guides/realprize-review) and [Golden Hearts as a brand](/guides/golden-hearts-casino-review) follow that split.`,
+Social lobbies still need their own cashier note. [Lotsa Slots as a chip lobby](/guides/lotsa-slots-review) and [Bingo Bash free chips](/guides/bingo-bash-review) are not cash. The [PCH token screen](/guides/pch-games-review), the [Legendz license gap](/guides/legendz-review), [Real Prize's redeem test](/guides/realprize-review) and [Golden Hearts as a brand](/guides/golden-hearts-casino-review) follow that split.
+
+A sweeps sportsbook, terms v2.2 dated 24 June 2026, left the public code unpublished because the promo URLs were blocked. [That sports-entry PDF](/guides/sportzino-review) is not a points lobby.
+
+One social sportsbook's promo page did print FLIFFBONUS. [That promo page](/guides/fliff-review) still left the handling-fee amount unpublished. It is not a state-licensed book.`
     },
   ],
   faqs: [

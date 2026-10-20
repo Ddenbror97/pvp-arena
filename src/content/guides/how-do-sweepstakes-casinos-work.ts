@@ -140,7 +140,11 @@ A no-purchase entry is the legal theory, and it is also a marketing tile. [No-de
 
 A worked loop is not a brand verdict. The [Jackpota pot contrast](/guides/jackpota-review) and the [Spree session cap](/guides/spree-casino-review) show two ways to read a cashier. [Chanced's unpublished percent](/guides/chanced-casino-review), the [Funrize prize exit](/guides/funrize-review), [Cashman's social chips](/guides/cashman-casino-review) and the [Wow Vegas name](/guides/wow-vegas-review) are the same test on other lobbies.
 
-The two-coin loop is not a brand. [One sweeps cashier](/guides/moonspin-review) has no promo code on this site.`,
+The two-coin loop is not a brand. [One sweeps cashier](/guides/moonspin-review) has no promo code on this site.
+
+A bingo operator's terms are v3.2, dated 1 September 2026. The homepage and the sweeps-rules URL did not load. [That help desk](/guides/pulsz-bingo-review) left the redeem minimum unpublished.
+
+One sweeps sports product prices Prize Tickets and left the dollar per ticket unpublished. [Those official sweeps rules](/guides/thrillzz-review) also left the public code blank.`
     },
   ],
   faqs: [

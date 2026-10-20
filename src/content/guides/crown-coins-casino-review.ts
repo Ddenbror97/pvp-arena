@@ -208,7 +208,11 @@ No license number is attached to the icon. A crown is not a seal of a gaming boa
 
 If an outbound link is added later, count it as advertising. The draft has no affiliate instruction and no code.
 
-[The responsible-play page](/responsible-gambling) is available when a branded counter starts to feel like savings. Savings have a face value. This counter, on the evidence here, does not.`,
+[The responsible-play page](/responsible-gambling) is available when a branded counter starts to feel like savings. Savings have a face value. This counter, on the evidence here, does not.
+
+One sweeps app left the dollar value of 1 RCH unpublished. [Those fantasy terms](/guides/rebet-review) also left the public code and the redeem dollar floor blank.
+
+A refer-a-friend clause is not a cash-out clock. [The prize-ticket FAQ](/guides/thrillzz-review) does not print a ticket redemption speed.`
     },
   ],
   faqs: [

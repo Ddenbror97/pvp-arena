@@ -452,6 +452,12 @@ import { guide as seoCloudbetReview } from "./cloudbet-review";
 import { guide as seoBetfuryReview } from "./betfury-review";
 import { guide as seoParipesaReview } from "./paripesa-review";
 import { guide as seoStakePoker } from "./stake-poker";
+import { guide as seoLuckylandSlotsReview } from "./luckyland-slots-review";
+import { guide as seoSportzinoReview } from "./sportzino-review";
+import { guide as seoPulszBingoReview } from "./pulsz-bingo-review";
+import { guide as seoRebetReview } from "./rebet-review";
+import { guide as seoFliffReview } from "./fliff-review";
+import { guide as seoThrillzzReview } from "./thrillzz-review";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1460,6 +1466,12 @@ export const GUIDES: Guide[] = [
   seoBetfuryReview,
   seoParipesaReview,
   seoStakePoker,
+  seoLuckylandSlotsReview,
+  seoSportzinoReview,
+  seoPulszBingoReview,
+  seoRebetReview,
+  seoFliffReview,
+  seoThrillzzReview,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -2974,6 +2986,17 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "jackpotjoy-review",
         "moonspin-review",
         "nolimit-coins-review",
+      ],
+    },
+    {
+      name: "Sweeps sports and bingo",
+      slugs: [
+        "luckyland-slots-review",
+        "sportzino-review",
+        "pulsz-bingo-review",
+        "rebet-review",
+        "fliff-review",
+        "thrillzz-review",
       ],
     },
     {

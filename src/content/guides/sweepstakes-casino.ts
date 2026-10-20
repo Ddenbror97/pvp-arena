@@ -146,7 +146,11 @@ Brand cashiers are separate notes, not a ranking. The [Yay redeem path](/guides/
 
 A sweeps definition is not that brand, and that brand is not our Jackpot. [The long-running slots brand](/guides/jackpotjoy-review) keeps the names apart.
 
-One sweeps sports product left the promo code and the dollar minimum unpublished. [Those sports-entry rules](/guides/onyx-odds-review) stay on that page.`,
+One sweeps sports product left the promo code and the dollar minimum unpublished. [Those sports-entry rules](/guides/onyx-odds-review) stay on that page.
+
+Sweeps Rules 29.0, dated 18 March 2026, left the public promo code and the processing-fee amount unpublished. [That slots rules PDF](/guides/luckyland-slots-review) is not a sports entry.
+
+A brand page asks for the word redeem instead of withdraw. [That wording](/guides/fliff-review) is the prize desk, and the code on the promo page is FLIFFBONUS.`
     },
   ],
   faqs: [

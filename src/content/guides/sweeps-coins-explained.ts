@@ -134,7 +134,11 @@ This site does not run that paperwork loop. A USDC withdrawal on Base is a trans
       title: "Summary and when to stop",
       body: `Sweeps Coins are the promotional chip on a sweepstakes casino. They arrive with packs, dailies or mail-in rules. They redeem only after playthrough, floors, identity checks, and a state filter. They are not USDC. This site does not issue them.
 
-You must be 18 or over. If you are buying bundles to finish an SC meter you no longer enjoy, stop. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A promotional chip is a poor reason to chase.`,
+You must be 18 or over. If you are buying bundles to finish an SC meter you no longer enjoy, stop. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A promotional chip is a poor reason to chase.
+
+One sports sweeps brand publishes both a coin that dies in the lobby and a coin that might redeem. [The June 2026 eligibility file](/guides/sportzino-review) does not print one nationwide age.
+
+A five-day prize lock is not a cash withdrawal we timed. [The RCH rules](/guides/rebet-review) do not print a guaranteed payout clock.`
     },
   ],
   faqs: [
