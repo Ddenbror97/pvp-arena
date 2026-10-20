@@ -329,36 +329,30 @@ header.site-chrome {
     linear-gradient(90deg, transparent 55%, rgb(110 120 240 / 7%) 88%, rgb(120 130 250 / 11%));
 }
 .header-wallet {
-  border-color: rgb(140 150 240 / 16%);
-  background: linear-gradient(180deg, #1b2248, #12182f);
-  color: #eef0fb;
+  border-color: rgb(255 255 255 / 8%);
+  background: #12162e;
+  color: #fff;
   text-decoration: none;
 }
-.header-wallet:hover { border-color: rgb(167 176 255 / 36%); background: linear-gradient(180deg, #222a56, #161d3a); }
+.header-wallet:hover { border-color: rgb(167 139 250 / 35%); }
 .header-wallet:focus-visible { outline: 2px solid #b57bff; outline-offset: 2px; }
 .header-wallet-label {
-  display: flex;
-  height: 100%;
+  display: inline-flex;
+  height: 2rem;
   align-items: center;
   justify-content: center;
-  background: rgb(255 255 255 / 6%);
-  color: #e7e4ff;
-  font-size: 11px;
+  padding: 0 0.95rem;
+  border-radius: 0.65rem;
+  color: #fff;
+  background: radial-gradient(ellipse at 50% 40%, #7c3aed 0%, #5b21b6 58%, #3b0764 100%);
+  box-shadow: 0 0 14px rgb(109 40 217 / 35%), inset 0 0 0 1px rgb(196 181 253 / 28%);
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
-.header-wallet:hover .header-wallet-label { background: rgb(139 92 246 / 32%); color: #fff; }
-.header-wallet-asset { color: #9eb6ff; }
+.header-wallet:hover .header-wallet-label { filter: brightness(1.08); }
+.header-wallet-asset { color: #c4b5fd; }
 .header-wallet-pulse { background: rgb(255 255 255 / 12%); }
-@media (min-width: 640px) {
-  .header-wallet-label {
-    height: 2rem;
-    padding: 0 0.85rem;
-    border-radius: 999px;
-    font-size: 12px;
-    letter-spacing: 0.01em;
-  }
-}
 
 /* Jackpot wheel, coinflip table, and roulette strip use the light card in the light theme. */
 html[data-theme="light"] .game-stage {

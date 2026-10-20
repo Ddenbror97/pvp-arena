@@ -116,7 +116,7 @@ export function SiteHeader({ className }: { className?: string }) {
             </Link>
           ) : null}
         </nav>
-        <div className="col-start-4 flex h-11 shrink-0 items-center justify-end gap-2 sm:col-auto sm:ml-auto sm:min-w-[19rem] sm:gap-3">
+        <div className="col-start-4 flex h-11 shrink-0 items-center justify-end gap-2 sm:col-auto sm:ml-auto sm:min-w-[17.5rem] sm:gap-3">
           {!showWallet ? (
             <Button asChild size="sm" className="shrink-0 font-display">
               <Link to="/auth">Sign in</Link>
