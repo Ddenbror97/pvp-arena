@@ -10,7 +10,7 @@ import { WalletGroupPlaceholder } from "@/components/wallet/HeaderWalletFrame";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
 import { equippedAssets, usePrestige } from "@/components/prestige/PrestigeProvider";
 import { Dices, Coins, CircleDot, Cherry, Spade, ShieldCheck } from "lucide-react";
-import { arenaLogo } from "@/assets/media";
+import { arenaLogo, arenaLogoLight } from "@/assets/media";
 import { TokenMark } from "@/components/wallet/TokenMark";
 import { SoundToggle } from "@/components/SoundToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -188,7 +188,16 @@ export function SiteFooter({ className }: { className?: string }) {
               height={128}
               loading="lazy"
               decoding="async"
-              className="h-10 w-auto"
+              className="brand-for-dark h-10 w-auto"
+            />
+            <img
+              src={arenaLogoLight}
+              alt=""
+              width={240}
+              height={128}
+              loading="lazy"
+              decoding="async"
+              className="brand-for-light h-10 w-auto"
             />
           </Link>
           <p className="mt-3 max-w-xs text-sm text-muted-foreground">
