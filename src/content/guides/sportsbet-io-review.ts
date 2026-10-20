@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "sportsbet-io-review",
-  cluster: "Foundations",
+  cluster: "Sports betting",
   keyword: "sportsbet io",
   secondary: ["sportsbet io bonus code", "sportsbet io withdrawal time", "is sportsbet io legit"],
   title: "Sportsbet.io Review: Crypto Book, Blank Desk",
@@ -41,7 +41,7 @@ Codes live in the drawer of other websites. This drawer is empty.
 
 A sportsbet io bonus code would need wagering rules we do not have. PVPspinArena is not an affiliate.
 
-The [foundations hub](/guides/topics/foundations) collects the cashier questions. [A pattern for crypto-casino licenses](/guides/crypto-casino-license) is how to read a seal if you find one. Finding one is your job, not a result already done here.`,
+The [sports-betting hub](/guides/topics/sports-betting) collects the book questions. [A pattern for crypto-casino licenses](/guides/crypto-casino-license) is how to read a seal if you find one. Finding one is your job, not a result already done here.`,
     },
     {
       id: "wallet",

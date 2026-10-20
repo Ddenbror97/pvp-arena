@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "dogs-telegram",
-  cluster: "Skill wagers",
+  cluster: "Foundations",
   keyword: "dogs telegram",
   secondary: ["dogs telegram legit", "dogs telegram payout", "dogs telegram real money"],
   title: "Dogs Telegram: A Tap Cashout You Can Check",
@@ -45,7 +45,7 @@ A unit becomes spendable money only when the same product states a rate and a me
 
 [Chat accounts that take wagers inside a messenger](/guides/telegram-casino-bot) are a neighboring risk, because a tap title and a betting bot can share a chat list. [Paid games that advertise cash](/guides/games-that-pay-real-money) shows how wide that shelf is. [When practice can move a result](/guides/skill-based-gambling) matters only if the taps are a scored contest against a rule, which a simple counter often is not.
 
-These notes sit with the [skill-wager guides](/guides/topics/skill-wagers). The subject is a chat earn loop. PVPspinArena is not an affiliate of it, and this page lists no code.`,
+These notes sit with the [foundations guides](/guides/topics/foundations). The subject is a chat earn loop. PVPspinArena is not an affiliate of it, and this page lists no code.`,
     },
     {
       id: "compared",

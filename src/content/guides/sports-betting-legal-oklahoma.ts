@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "sports-betting-legal-oklahoma",
-  cluster: "Foundations",
+  cluster: "Sports betting",
   keyword: "is sports betting legal in oklahoma",
   secondary: [
     "sports betting legal in oklahoma 2026",
@@ -43,7 +43,7 @@ Lottery play is a different product. An online casino is a different product.
 
 A sweepstakes coin shop is a different product. Stuffing them into the sportsbook question makes a headline and ruins a reading.
 
-[Foundations notes](/guides/topics/foundations) are where those product names get separated before anyone argues about a state.
+[Sports-betting notes](/guides/topics/sports-betting) are where those product names get separated before anyone argues about a state.
 
 [How a casino site is discussed nationally](/guides/is-online-casino-legal) stays in its lane. Do not drag it across the Oklahoma line and call it a compact.
 

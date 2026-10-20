@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "x-empire-telegram",
-  cluster: "Skill wagers",
+  cluster: "Foundations",
   keyword: "x empire",
   secondary: ["x empire legit", "x empire payout", "x empire real money"],
   title: "X Empire Telegram: Taps and the Cash-Out Ask",
@@ -42,7 +42,7 @@ If the control is a promise of later, later is not a figure. The cell remains no
 
 [Casino bots that live in the same messenger](/guides/telegram-casino-bot) are the nearby hazard: a tap empire and a betting bot can share a chat list. [Skill that changes a result](/guides/skill-based-gambling) is the wrong test for a tap that mostly counts. [The edge on a priced wager](/guides/house-edge) applies after someone is actually risking a stake.
 
-Those pages hang off [skill-wager guides](/guides/topics/skill-wagers). PVPspinArena is not an affiliate of the tap title. No code is listed.`,
+Those pages hang off [foundations guides](/guides/topics/foundations). PVPspinArena is not an affiliate of the tap title. No code is listed.`,
     },
     {
       id: "compared",

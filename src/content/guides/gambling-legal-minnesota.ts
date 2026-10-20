@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "gambling-legal-minnesota",
-  cluster: "Foundations",
+  cluster: "Sports betting",
   keyword: "is sports betting legal in minnesota",
   secondary: [
     "sports betting legal in minnesota 2026",
@@ -41,7 +41,7 @@ Tribal Class III gaming runs under a compact with the state. Which sketch matche
 
 Online casino rules do not finish the sportsbook question. Lottery rules do not finish it either. [The national online-casino primer](/guides/is-online-casino-legal) holds the casino version so a sports headline cannot borrow it.
 
-[The foundations hub](/guides/topics/foundations) is the shelf for that split. Use it when casino, lottery, and sportsbook still sound like one industry.
+[The sports-betting hub](/guides/topics/sports-betting) is the shelf for this question. Use it when casino, lottery, and sportsbook still sound like one industry.
 
 This file prints no statute number. A guessed citation would be a fake law. It also names no app as licensed in Minnesota.
 

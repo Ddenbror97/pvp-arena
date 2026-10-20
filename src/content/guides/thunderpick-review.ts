@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "thunderpick-review",
-  cluster: "Foundations",
+  cluster: "Esports betting",
   keyword: "thunderpick",
   secondary: ["thunderpick bonus code", "thunderpick withdrawal time", "is thunderpick legit"],
   title: "Thunderpick Review: Esports Book, Not Weather",
@@ -49,7 +49,7 @@ Domain that matches. Cashier that says crypto, card, or something else in its ow
 
 A tidy slip is not that checklist.
 
-Read [whether esports betting is legal](/guides/esports-betting-legal) as a category note. It does not clear this book for your address. The [foundations hub](/guides/topics/foundations) is the shelf for the rest of the cashier questions.`,
+Read [whether esports betting is legal](/guides/esports-betting-legal) as a category note. It does not clear this book for your address. The [esports hub](/guides/topics/esports-betting) is the shelf for the rest of the book questions.`,
     },
     {
       id: "parlay-versus-pot",

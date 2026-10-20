@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "yescoin-review",
-  cluster: "Skill wagers",
+  cluster: "Foundations",
   keyword: "yescoin",
   secondary: ["yescoin legit", "yescoin payout", "yescoin real money"],
   title: "Yescoin Review: A Rewards Coin, Not Bitcoin",
@@ -38,7 +38,7 @@ A chart in a channel is not the third line. A friend converting "coins" at a rat
 
 [What a house edge measures](/guides/house-edge) comes later, after a stake exists. A counter has no edge until it asks you to risk something.
 
-Find the cluster on [skill-wager guides](/guides/topics/skill-wagers). This file lists no code. PVPspinArena is not an affiliate of the coin-named app.`,
+Find the cluster on [foundations guides](/guides/topics/foundations). This file lists no code. PVPspinArena is not an affiliate of the coin-named app.`,
     },
     {
       id: "compared",

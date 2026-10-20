@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "native-american-casinos",
-  cluster: "Casino knowledge",
+  cluster: "Foundations",
   keyword: "native american casinos",
   secondary: ["native american casinos explained", "native american casinos examples"],
   title: "Native American Casinos: IGRA and Compacts",
@@ -36,7 +36,7 @@ A compact is an agreement between a tribe and a state. It is not a slogan and no
 
 The year distinguishes a federal frame from a rumor that "tribes can do anything." The frame is real. The rumor is not a rule you can play under. Read the compact that actually applies, or read the regulator, before you treat a billboard as permission.
 
-The [casino knowledge hub](/guides/topics/casino-knowledge) holds this explainer next to math pages. [Is crypto gambling legal](/guides/is-crypto-gambling-legal) is a different question.
+The [US casino-law hub](/guides/topics/foundations) holds this explainer beside other law pages. [Is crypto gambling legal](/guides/is-crypto-gambling-legal) is a different question.
 
 [Gambling age in the US](/guides/gambling-age-us) is a different question again. Crypto is not a loophole through either one.
 

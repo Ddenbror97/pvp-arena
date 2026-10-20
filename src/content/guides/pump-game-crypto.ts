@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "pump-game-crypto",
-  cluster: "Skill wagers",
+  cluster: "Foundations",
   keyword: "pump game",
   secondary: ["pump game legit", "pump game payout", "pump game real money"],
   title: "Pump Game: Ambiguous Name, Unverified Payout",
@@ -42,7 +42,7 @@ A comment that announces a price verifies none of those four. The operator's own
 
 [A messenger account that accepts bets](/guides/telegram-casino-bot) is one way a tap title gets confused with a casino. [The cut a priced game keeps](/guides/house-edge) is the essay for after you have a stake, not a nickname. [Entry-fee tournaments with a posted rake](/guides/skillz-review) are a third shape: you pay to enter a match, which a free tap counter usually is not.
 
-The notes live under [skill-wager guides](/guides/topics/skill-wagers). We do not list a code, and PVPspinArena is not an affiliate of the titles this keyword might mean.`,
+The notes live under [foundations guides](/guides/topics/foundations). We do not list a code, and PVPspinArena is not an affiliate of the titles this keyword might mean.`,
     },
     {
       id: "compared",

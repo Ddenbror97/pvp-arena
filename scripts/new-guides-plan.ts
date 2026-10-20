@@ -3664,7 +3664,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Mixed games",
     "2-7-triple-draw",
     "2-7 triple draw",
     "2-7 triple draw is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3672,7 +3672,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Ways and feature cabinets",
     "asgard-slot",
     "asgard slot",
     "asgard slot is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3680,7 +3680,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Casino knowledge",
-    "Wave 2 people",
+    "Famous gamblers",
     "benny-binion",
     "benny binion",
     "benny binion is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3688,7 +3688,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "Offshore crypto cashiers",
     "bets-io-review",
     "bets io",
     "bets io is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3696,7 +3696,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Mixed games",
     "big-o-poker",
     "big o poker",
     "big o poker is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3704,7 +3704,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Skill wagers",
-    "Wave 2 reward apps",
+    "Rewards apps",
     "big-time-cash-review",
     "big time cash",
     "big time cash is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3712,7 +3712,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "Offshore crypto cashiers",
     "bitstarz-review",
     "bitstarz",
     "bitstarz is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3720,7 +3720,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "Offshore crypto cashiers",
     "bitz-casino-review",
     "bitz casino",
     "bitz casino is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3728,7 +3728,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Link and classic cabinets",
     "buffalo-grand-slot",
     "buffalo grand",
     "buffalo grand is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3736,7 +3736,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Ways and feature cabinets",
     "buffalo-king-megaways",
     "buffalo king megaways",
     "buffalo king megaways is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3744,7 +3744,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Link and classic cabinets",
     "cash-bandits-slot",
     "cash bandits",
     "cash bandits is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3752,7 +3752,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Link and classic cabinets",
     "cash-eruption-slot",
     "cash eruption slot",
     "cash eruption slot is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3760,7 +3760,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Lottery",
-    "Wave 2 draws",
+    "Jackpot games",
     "cash4life-lottery",
     "cash4life",
     "cash4life is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3768,7 +3768,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "CS:GO heritage",
-    "Wave 2 skin desks",
+    "Skin wheels and lobbies",
     "chips-gg-review",
     "chips gg",
     "chips gg is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3776,7 +3776,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Link and classic cabinets",
     "cleopatra-slot",
     "cleopatra slot",
     "cleopatra slot is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3784,7 +3784,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Rooms and apps",
     "coinpoker-review",
     "coinpoker",
     "coinpoker is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3792,7 +3792,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "Offshore crypto cashiers",
     "coins-game-casino-review",
     "coins game casino",
     "coins game casino is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3800,7 +3800,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Casino games",
-    "Wave 2 table bets",
+    "Craps bets",
     "crapless-craps",
     "crapless craps",
     "crapless craps is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3808,7 +3808,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Casino games",
-    "Wave 2 table bets",
+    "Craps bets",
     "craps-field-bet",
     "craps field bet",
     "craps field bet is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3816,7 +3816,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "CS:GO heritage",
-    "Wave 2 skin desks",
+    "Trade bots and prices",
     "cs-money-review",
     "cs.money",
     "cs.money is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3824,7 +3824,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "CS:GO heritage",
-    "Wave 2 skin desks",
+    "Skin wheels and lobbies",
     "csgo500-review",
     "csgo500",
     "csgo500 is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3832,7 +3832,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "CS:GO heritage",
-    "Wave 2 skin desks",
+    "Skin wheels and lobbies",
     "csgofast-review",
     "csgofast",
     "csgofast is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3840,7 +3840,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Skill wagers",
-    "Wave 2 reward apps",
+    "Rewards apps",
     "diamonds-casino-game",
     "diamonds game",
     "diamonds game is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3848,7 +3848,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Link and classic cabinets",
     "divine-fortune-slot",
     "divine fortune",
     "divine fortune is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3856,15 +3856,15 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "CS:GO heritage",
-    "Wave 2 skin desks",
+    "Trade bots and prices",
     "dmarket-review",
     "dmarket",
     "dmarket is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
   ),
   p(
     29,
-    "Skill wagers",
-    "Wave 2 reward apps",
+    "Foundations",
+    "Earn-by-playing",
     "dogs-telegram",
     "dogs telegram",
     "dogs telegram is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3872,7 +3872,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Variants and money",
     "double-double-bonus-poker",
     "double double bonus poker",
     "double double bonus poker is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3880,7 +3880,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Link and classic cabinets",
     "dragon-cash-slot",
     "dragon cash",
     "dragon cash is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3888,7 +3888,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Link and classic cabinets",
     "dragon-link-slot",
     "dragon link slot",
     "dragon link slot is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3896,7 +3896,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Casino knowledge",
-    "Wave 2 people",
+    "Famous gamblers",
     "frank-rosenthal",
     "frank rosenthal",
     "frank rosenthal is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3904,7 +3904,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "CS:GO heritage",
-    "Wave 2 skin desks",
+    "Trade bots and prices",
     "g4skins-review",
     "g4skins",
     "g4skins is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3912,7 +3912,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Responsible play",
-    "Wave 2 help",
+    "Addiction and help",
     "gamblers-anonymous",
     "gamblers anonymous",
     "gamblers anonymous is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3920,15 +3920,15 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "US casino law",
     "gambling-legal-hawaii",
     "is gambling legal in hawaii",
     "is gambling legal in hawaii is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
   ),
   p(
     29,
-    "Foundations",
-    "Wave 2 cashiers and states",
+    "Sports betting",
+    "Law and results",
     "gambling-legal-minnesota",
     "is sports betting legal in minnesota",
     "is sports betting legal in minnesota is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3936,7 +3936,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Casino knowledge",
-    "Wave 2 people",
+    "Famous gamblers",
     "garrett-adelstein",
     "garrett adelstein",
     "garrett adelstein is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3944,7 +3944,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Ways and feature cabinets",
     "gates-of-olympus",
     "gates of olympus",
     "gates of olympus is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3952,7 +3952,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "Offshore crypto cashiers",
     "golden-panda-casino-review",
     "golden panda casino",
     "golden panda casino is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3960,7 +3960,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Sweepstakes",
-    "Wave 2 sweeps brands",
+    "Clubs and social apps",
     "gsn-casino-review",
     "gsn casino",
     "gsn casino is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3968,7 +3968,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Maths and features",
     "hold-and-win-slots",
     "hold and win slots",
     "hold and win slots is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3976,7 +3976,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Home games and tools",
     "how-to-host-a-poker-night",
     "how to host a poker night",
     "how to host a poker night is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3984,7 +3984,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Skill wagers",
-    "Wave 2 reward apps",
+    "Rewards apps",
     "inboxdollars-games",
     "inboxdollars games",
     "inboxdollars games is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -3992,7 +3992,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Link and classic cabinets",
     "jack-and-the-beanstalk-slot",
     "jack and the beanstalk slot",
     "jack and the beanstalk slot is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4000,7 +4000,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Sweepstakes",
-    "Wave 2 sweeps brands",
+    "More sweeps cashiers",
     "jackpotjoy-review",
     "jackpotjoy",
     "jackpotjoy is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4008,7 +4008,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Ways and feature cabinets",
     "jammin-jars-slot",
     "jammin jars",
     "jammin jars is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4016,7 +4016,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Variants and money",
     "joker-poker",
     "joker poker",
     "joker poker is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4024,7 +4024,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "CS:GO heritage",
-    "Wave 2 skin desks",
+    "Case shops",
     "key-drop-review",
     "key drop",
     "key drop is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4032,7 +4032,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "Offshore crypto cashiers",
     "las-atlantis-casino-review",
     "las atlantis casino",
     "las atlantis casino is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4040,7 +4040,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Link and classic cabinets",
     "lobstermania-slot",
     "lobstermania slot",
     "lobstermania slot is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4048,7 +4048,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "CS:GO heritage",
-    "Wave 2 skin desks",
+    "Trade bots and prices",
     "lootfarm-review",
     "lootfarm",
     "lootfarm is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4056,7 +4056,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Ways and feature cabinets",
     "madame-destiny-megaways",
     "madame destiny megaways",
     "madame destiny megaways is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4064,7 +4064,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Ways and feature cabinets",
     "mental-2-slot",
     "mental 2",
     "mental 2 is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4072,7 +4072,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Skill wagers",
-    "Wave 2 reward apps",
+    "Rewards apps",
     "money-well-review",
     "money well",
     "money well is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4080,7 +4080,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Sweepstakes",
-    "Wave 2 sweeps brands",
+    "More sweeps cashiers",
     "moonspin-review",
     "moonspin",
     "moonspin is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4088,15 +4088,15 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "Offshore crypto cashiers",
     "mybookie-casino-review",
     "mybookie casino",
     "mybookie casino is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
   ),
   p(
     29,
-    "Casino knowledge",
-    "Wave 2 people",
+    "Foundations",
+    "US casino law",
     "native-american-casinos",
     "native american casinos",
     "native american casinos is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4104,7 +4104,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Sweepstakes",
-    "Wave 2 sweeps brands",
+    "More sweeps cashiers",
     "nolimit-coins-review",
     "nolimit coins",
     "nolimit coins is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4112,7 +4112,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "US casino law",
     "online-gambling-legal-colorado",
     "is online gambling legal in colorado",
     "is online gambling legal in colorado is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4120,7 +4120,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "US casino law",
     "online-gambling-legal-illinois",
     "is online gambling legal in illinois",
     "is online gambling legal in illinois is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4128,7 +4128,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "US casino law",
     "online-gambling-legal-missouri",
     "is online gambling legal in missouri",
     "is online gambling legal in missouri is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4136,7 +4136,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "US casino law",
     "online-gambling-legal-nevada",
     "is online gambling legal in nevada",
     "is online gambling legal in nevada is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4144,7 +4144,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "US casino law",
     "online-gambling-legal-virginia",
     "is online gambling legal in virginia",
     "is online gambling legal in virginia is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4152,7 +4152,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "US casino law",
     "online-gambling-legal-wisconsin",
     "is online gambling legal in wisconsin",
     "is online gambling legal in wisconsin is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4160,7 +4160,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Mixed games",
     "open-face-chinese-poker",
     "open face chinese poker",
     "open face chinese poker is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4168,7 +4168,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Casino knowledge",
-    "Wave 2 people",
+    "Famous gamblers",
     "phil-hellmuth",
     "phil hellmuth",
     "phil hellmuth is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4176,7 +4176,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Horse racing",
-    "Wave 2 exotics",
+    "Exotic bets",
     "pick-6-horse-racing",
     "pick 6 horse racing",
     "pick 6 horse racing is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4184,7 +4184,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Home games and tools",
     "poker-chip-set",
     "poker chip set",
     "poker chip set is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4192,7 +4192,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Home games and tools",
     "poker-equity-calculator",
     "poker equity calculator",
     "poker equity calculator is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4200,15 +4200,15 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Rooms and apps",
     "pokerok-review",
     "pokerok",
     "pokerok is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
   ),
   p(
     29,
-    "Skill wagers",
-    "Wave 2 reward apps",
+    "Foundations",
+    "Earn-by-playing",
     "pump-game-crypto",
     "pump game",
     "pump game is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4216,7 +4216,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Link and classic cabinets",
     "quick-hit-platinum",
     "quick hit platinum",
     "quick hit platinum is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4224,7 +4224,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Horse racing",
-    "Wave 2 exotics",
+    "Exotic bets",
     "quinella-bet",
     "quinella bet",
     "quinella bet is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4232,7 +4232,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "Offshore crypto cashiers",
     "razed-casino-review",
     "razed casino",
     "razed casino is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4240,7 +4240,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Ways and feature cabinets",
     "razor-shark-slot",
     "razor shark slot",
     "razor shark slot is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4248,7 +4248,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Mixed games",
     "razz-poker",
     "razz poker",
     "razz poker is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4256,7 +4256,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Ways and feature cabinets",
     "san-quentin-slot",
     "san quentin slot",
     "san quentin slot is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4264,7 +4264,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Lottery",
-    "Wave 2 draws",
+    "State games and scratchers",
     "second-chance-lottery",
     "second chance lottery",
     "second chance lottery is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4272,7 +4272,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Mixed games",
     "short-deck-poker",
     "short deck poker",
     "short deck poker is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4280,7 +4280,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "CS:GO heritage",
-    "Wave 2 skin desks",
+    "Skin wheels and lobbies",
     "skinbet-review",
     "skinbet",
     "skinbet is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4288,23 +4288,23 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Strategy",
     "slow-play-poker",
     "slow play poker",
     "slow play poker is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
   ),
   p(
     29,
-    "Foundations",
-    "Wave 2 cashiers and states",
+    "Sports betting",
+    "Law and results",
     "sports-betting-legal-oklahoma",
     "is sports betting legal in oklahoma",
     "is sports betting legal in oklahoma is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
   ),
   p(
     29,
-    "Foundations",
-    "Wave 2 cashiers and states",
+    "Sports betting",
+    "Books and exchanges",
     "sportsbet-io-review",
     "sportsbet io",
     "sportsbet io is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4312,7 +4312,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Strategy",
     "straddle-poker",
     "straddle poker",
     "straddle poker is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4320,7 +4320,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Poker",
-    "Wave 2 poker",
+    "Rooms and apps",
     "swc-poker-review",
     "swc poker",
     "swc poker is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4328,15 +4328,15 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Game shows",
-    "Wave 2 live shows",
+    "Live game shows",
     "sweet-bonanza-candyland",
     "sweet bonanza candyland",
     "sweet bonanza candyland is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
   ),
   p(
     29,
-    "Foundations",
-    "Wave 2 cashiers and states",
+    "Esports betting",
+    "How to bet",
     "thunderpick-review",
     "thunderpick",
     "thunderpick is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4344,7 +4344,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Casino knowledge",
-    "Wave 2 people",
+    "Famous gamblers",
     "tom-dwan",
     "tom dwan",
     "tom dwan is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4352,7 +4352,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Ways and feature cabinets",
     "vikings-go-berzerk-slot",
     "vikings go berzerk",
     "vikings go berzerk is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4360,7 +4360,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Ways and feature cabinets",
     "wanted-dead-or-a-wild",
     "wanted dead or a wild",
     "wanted dead or a wild is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4368,7 +4368,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Link and classic cabinets",
     "wolf-gold-slot",
     "wolf gold",
     "wolf gold is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4376,7 +4376,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Slots",
-    "Wave 2 named slots",
+    "Link and classic cabinets",
     "wolf-run-slot",
     "wolf run slot",
     "wolf run slot is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
@@ -4384,23 +4384,23 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     29,
     "Foundations",
-    "Wave 2 cashiers and states",
+    "Offshore crypto cashiers",
     "wsm-casino-review",
     "wsm casino",
     "wsm casino is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
   ),
   p(
     29,
-    "Skill wagers",
-    "Wave 2 reward apps",
+    "Foundations",
+    "Earn-by-playing",
     "x-empire-telegram",
     "x empire",
     "x empire is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
   ),
   p(
     29,
-    "Skill wagers",
-    "Wave 2 reward apps",
+    "Foundations",
+    "Earn-by-playing",
     "yescoin-review",
     "yescoin",
     "yescoin is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",

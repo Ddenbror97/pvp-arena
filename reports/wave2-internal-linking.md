@@ -43,7 +43,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Chips.gg Review: A Casino Brand, Not a Shop
 
 - URL: `https://pvpspinarena.com/guides/chips-gg-review`
-- Cluster: CS:GO heritage / Wave 2 skin desks
+- Cluster: CS:GO heritage / Skin wheels and lobbies
 - Hub: `https://pvpspinarena.com/guides/topics/csgo-heritage` (already linked)
 - Existing guides it already linked: `skin-cashout-guide`, `csfloat-vs-skinport`, `valve-gambling-lawsuit`
 - New sibling added: [Another skin desk](https://pvpspinarena.com/guides/g4skins-review)
@@ -54,7 +54,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### cs.money Review: Quote the Trade, Fee Unlisted
 
 - URL: `https://pvpspinarena.com/guides/cs-money-review`
-- Cluster: CS:GO heritage / Wave 2 skin desks
+- Cluster: CS:GO heritage / Trade bots and prices
 - Hub: `https://pvpspinarena.com/guides/topics/csgo-heritage` (already linked)
 - Existing guides it already linked: `sell-skins-for-crypto`, `skin-cashout-guide`, `valve-gambling-lawsuit`
 - New sibling added: [A trade-style desk](https://pvpspinarena.com/guides/lootfarm-review)
@@ -65,7 +65,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### CSGO500 Review: Read the Cashier Before a Trade
 
 - URL: `https://pvpspinarena.com/guides/csgo500-review`
-- Cluster: CS:GO heritage / Wave 2 skin desks
+- Cluster: CS:GO heritage / Skin wheels and lobbies
 - Hub: `https://pvpspinarena.com/guides/topics/csgo-heritage` (already linked)
 - Existing guides it already linked: `csfloat-vs-skinport`, `skin-cashout-guide`, `valve-gambling-lawsuit`
 - New sibling added: [The case shop](https://pvpspinarena.com/guides/key-drop-review)
@@ -76,7 +76,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### CSGOFast Review: Speed Claims, Fee Unpublished
 
 - URL: `https://pvpspinarena.com/guides/csgofast-review`
-- Cluster: CS:GO heritage / Wave 2 skin desks
+- Cluster: CS:GO heritage / Skin wheels and lobbies
 - Hub: `https://pvpspinarena.com/guides/topics/csgo-heritage` (already linked)
 - Existing guides it already linked: `skin-cashout-guide`, `sell-skins-for-crypto`, `valve-gambling-lawsuit`
 - New sibling added: [The lobby with a number in the name](https://pvpspinarena.com/guides/csgo500-review)
@@ -87,7 +87,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### DMarket Review: Marketplace Fees Unpublished
 
 - URL: `https://pvpspinarena.com/guides/dmarket-review`
-- Cluster: CS:GO heritage / Wave 2 skin desks
+- Cluster: CS:GO heritage / Trade bots and prices
 - Hub: `https://pvpspinarena.com/guides/topics/csgo-heritage` (already linked)
 - Existing guides it already linked: `csfloat-vs-skinport`, `sell-skins-for-crypto`, `valve-gambling-lawsuit`
 - New sibling added: [The desk whose name uses a dot](https://pvpspinarena.com/guides/cs-money-review)
@@ -98,7 +98,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### G4Skins Review: Trade Window Versus a Case
 
 - URL: `https://pvpspinarena.com/guides/g4skins-review`
-- Cluster: CS:GO heritage / Wave 2 skin desks
+- Cluster: CS:GO heritage / Trade bots and prices
 - Hub: `https://pvpspinarena.com/guides/topics/csgo-heritage` (already linked)
 - Existing guides it already linked: `csfloat-vs-skinport`, `sell-skins-for-crypto`, `valve-gambling-lawsuit`
 - New sibling added: [The chips-named brand](https://pvpspinarena.com/guides/chips-gg-review)
@@ -109,7 +109,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Key-Drop Review: Virtual Case, Not a Metal Key
 
 - URL: `https://pvpspinarena.com/guides/key-drop-review`
-- Cluster: CS:GO heritage / Wave 2 skin desks
+- Cluster: CS:GO heritage / Case shops
 - Hub: `https://pvpspinarena.com/guides/topics/csgo-heritage` (already linked)
 - Existing guides it already linked: `csgoroll-review`, `sell-skins-for-crypto`, `valve-gambling-lawsuit`
 - New sibling added: [A skin-betting brand](https://pvpspinarena.com/guides/skinbet-review)
@@ -120,7 +120,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### LootFarm Review: A Swap Desk, Fees Unpublished
 
 - URL: `https://pvpspinarena.com/guides/lootfarm-review`
-- Cluster: CS:GO heritage / Wave 2 skin desks
+- Cluster: CS:GO heritage / Trade bots and prices
 - Hub: `https://pvpspinarena.com/guides/topics/csgo-heritage` (already linked)
 - Existing guides it already linked: `csfloat-vs-skinport`, `sell-skins-for-crypto`, `valve-gambling-lawsuit`
 - New sibling added: [The larger marketplace desk](https://pvpspinarena.com/guides/dmarket-review)
@@ -131,7 +131,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Skinbet Review: Gambling Brand, Not Skin Care
 
 - URL: `https://pvpspinarena.com/guides/skinbet-review`
-- Cluster: CS:GO heritage / Wave 2 skin desks
+- Cluster: CS:GO heritage / Skin wheels and lobbies
 - Hub: `https://pvpspinarena.com/guides/topics/csgo-heritage` (already linked)
 - Existing guides it already linked: `csgoroll-review`, `skin-cashout-guide`, `valve-gambling-lawsuit`
 - New sibling added: [Another skin lobby](https://pvpspinarena.com/guides/csgofast-review)
@@ -142,7 +142,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Crapless Craps: 2, 3, 11 and 12 as Points
 
 - URL: `https://pvpspinarena.com/guides/crapless-craps`
-- Cluster: Casino games / Wave 2 craps prices
+- Cluster: Casino games / Craps bets
 - Hub: `https://pvpspinarena.com/guides/topics/casino-games` (already linked)
 - Existing guides it already linked: `craps-odds`, `online-craps`, `sic-bo-online`
 - New sibling added: [The one-roll field](https://pvpspinarena.com/guides/craps-field-bet)
@@ -153,7 +153,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Craps Field Bet Odds on Two Payoff Schedules
 
 - URL: `https://pvpspinarena.com/guides/craps-field-bet`
-- Cluster: Casino games / Wave 2 craps prices
+- Cluster: Casino games / Craps bets
 - Hub: `https://pvpspinarena.com/guides/topics/casino-games` (already linked)
 - Existing guides it already linked: `craps-odds`, `online-craps`, `house-edge`
 - New sibling added: [The variant where craps numbers become points](https://pvpspinarena.com/guides/crapless-craps)
@@ -164,7 +164,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Benny Binion: Horseshoe, WSOP, No Net Worth
 
 - URL: `https://pvpspinarena.com/guides/benny-binion`
-- Cluster: Casino knowledge / Wave 2 people and places
+- Cluster: Casino knowledge / Famous gamblers
 - Hub: `https://pvpspinarena.com/guides/topics/casino-knowledge` (already linked)
 - Existing guides it already linked: `texas-holdem-rules`, `how-to-play-poker`, `cash-game-poker`, `house-edge`
 - New sibling added: [Tribal gaming under the 1988 federal frame](https://pvpspinarena.com/guides/native-american-casinos)
@@ -175,7 +175,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Frank Rosenthal Facts: Story Without a Fortune
 
 - URL: `https://pvpspinarena.com/guides/frank-rosenthal`
-- Cluster: Casino knowledge / Wave 2 people and places
+- Cluster: Casino knowledge / Famous gamblers
 - Hub: `https://pvpspinarena.com/guides/topics/casino-knowledge` (already linked)
 - Existing guides it already linked: `house-edge`, `gamblers-fallacy`, `law-of-large-numbers-gambling`, `are-online-casinos-safe`
 - New sibling added: [The Horseshoe founder](https://pvpspinarena.com/guides/benny-binion)
@@ -186,7 +186,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Garrett Adelstein Facts: Hand, Not a Verdict
 
 - URL: `https://pvpspinarena.com/guides/garrett-adelstein`
-- Cluster: Casino knowledge / Wave 2 people and places
+- Cluster: Casino knowledge / Famous gamblers
 - Hub: `https://pvpspinarena.com/guides/topics/casino-knowledge` (already linked)
 - Existing guides it already linked: `rigged-poker-sites`, `cash-game-poker`, `how-to-play-poker`, `texas-holdem-rules`
 - New sibling added: [The bracelet-record holder](https://pvpspinarena.com/guides/phil-hellmuth)
@@ -197,8 +197,8 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Native American Casinos: IGRA and Compacts
 
 - URL: `https://pvpspinarena.com/guides/native-american-casinos`
-- Cluster: Casino knowledge / Wave 2 people and places
-- Hub: `https://pvpspinarena.com/guides/topics/casino-knowledge` (already linked)
+- Cluster: Foundations / US casino law
+- Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `is-crypto-gambling-legal`, `gambling-age-us`, `house-edge`, `are-online-casinos-safe`
 - New sibling added: [The skim-era Strip operator](https://pvpspinarena.com/guides/frank-rosenthal)
 - Existing pages that now link here: `gambling-age-us` in `online-crypto`
@@ -208,7 +208,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Phil Hellmuth Facts: 17 Bracelets, Not Worth
 
 - URL: `https://pvpspinarena.com/guides/phil-hellmuth`
-- Cluster: Casino knowledge / Wave 2 people and places
+- Cluster: Casino knowledge / Famous gamblers
 - Hub: `https://pvpspinarena.com/guides/topics/casino-knowledge` (already linked)
 - Existing guides it already linked: `texas-holdem-rules`, `how-to-play-poker`, `poker-bankroll-management`, `gto-poker-strategy`
 - New sibling added: [The cash-game high-stakes name](https://pvpspinarena.com/guides/tom-dwan)
@@ -219,7 +219,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Tom Dwan: Cash Pots, Challenge, No Net Worth
 
 - URL: `https://pvpspinarena.com/guides/tom-dwan`
-- Cluster: Casino knowledge / Wave 2 people and places
+- Cluster: Casino knowledge / Famous gamblers
 - Hub: `https://pvpspinarena.com/guides/topics/casino-knowledge` (already linked)
 - Existing guides it already linked: `how-to-play-poker`, `cash-game-poker`, `texas-holdem-rules`, `poker-pot-odds`
 - New sibling added: [The streamed cash-game pro](https://pvpspinarena.com/guides/garrett-adelstein)
@@ -230,7 +230,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Bets.io Review: A $100 Bet and a Blank Cashier
 
 - URL: `https://pvpspinarena.com/guides/bets-io-review`
-- Cluster: Foundations / Wave 2 offshore cashiers
+- Cluster: Foundations / Offshore crypto cashiers
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `stake-alternatives`, `curacao-gambling-license`, `fake-casino-sites`, `is-crypto-gambling-legal`
 - New sibling added: [The coins-named casino brand](https://pvpspinarena.com/guides/coins-game-casino-review)
@@ -241,7 +241,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Bitstarz Review: Famous Name, Blank Cashier
 
 - URL: `https://pvpspinarena.com/guides/bitstarz-review`
-- Cluster: Foundations / Wave 2 offshore cashiers
+- Cluster: Foundations / Offshore crypto cashiers
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `fake-casino-sites`, `house-edge`, `are-online-casinos-safe`, `no-kyc-casino`, `crypto-casino-usa`
 - New sibling added: [The shorter name people confuse with it](https://pvpspinarena.com/guides/bitz-casino-review)
@@ -252,7 +252,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Bitz Casino Review: Not the Bitstarz Spelling
 
 - URL: `https://pvpspinarena.com/guides/bitz-casino-review`
-- Cluster: Foundations / Wave 2 offshore cashiers
+- Cluster: Foundations / Offshore crypto cashiers
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `fake-casino-sites`, `house-edge`, `crypto-casino-license`, `anjouan-gaming-license`, `crypto-casino-usa`
 - New sibling added: [The longer famous name](https://pvpspinarena.com/guides/bitstarz-review)
@@ -263,7 +263,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Coins Game Casino Review: A $25 Deposit Scene
 
 - URL: `https://pvpspinarena.com/guides/coins-game-casino-review`
-- Cluster: Foundations / Wave 2 offshore cashiers
+- Cluster: Foundations / Offshore crypto cashiers
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `no-kyc-casino`, `crypto-casino-usa`, `crypto-casino-license`, `fake-casino-sites`, `is-crypto-gambling-legal`
 - New sibling added: [The meme-token casino name](https://pvpspinarena.com/guides/wsm-casino-review)
@@ -274,7 +274,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Is Gambling Legal in Hawaii? Confirm the State
 
 - URL: `https://pvpspinarena.com/guides/gambling-legal-hawaii`
-- Cluster: Foundations / Wave 2 state lines
+- Cluster: Foundations / US casino law
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `is-online-casino-legal`, `online-gambling-legal-kentucky`, `sweepstakes-vs-crypto-casino`, `sweepstakes-casino-legal-states`, `crypto-casino-usa`, `gambling-age-us`, `esports-betting-legal`
 - New sibling added: [The state with the famous casino floor](https://pvpspinarena.com/guides/online-gambling-legal-nevada)
@@ -285,8 +285,8 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Is Sports Betting Legal in Minnesota? Start Here
 
 - URL: `https://pvpspinarena.com/guides/gambling-legal-minnesota`
-- Cluster: Foundations / Wave 2 state lines
-- Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
+- Cluster: Sports betting / Law and results
+- Hub: `https://pvpspinarena.com/guides/topics/sports-betting` (already linked)
 - Existing guides it already linked: `is-online-casino-legal`, `online-gambling-legal-kentucky`, `is-crypto-gambling-legal`, `sweepstakes-casino-legal-states`, `crypto-casino-usa`, `gambling-age-us`, `esports-betting-legal`
 - New sibling added: [The neighboring online question](https://pvpspinarena.com/guides/online-gambling-legal-wisconsin)
 - Existing pages that now link here: `sports-betting-legal-states` in `snapshot`
@@ -296,7 +296,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Golden Panda Casino Review: A Banner Is Not a Code
 
 - URL: `https://pvpspinarena.com/guides/golden-panda-casino-review`
-- Cluster: Foundations / Wave 2 offshore cashiers
+- Cluster: Foundations / Offshore crypto cashiers
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `fake-casino-sites`, `are-online-casinos-safe`, `no-kyc-casino`, `crypto-casino-usa`, `is-crypto-gambling-legal`
 - New sibling added: [The other blank offshore cashier](https://pvpspinarena.com/guides/razed-casino-review)
@@ -307,7 +307,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Las Atlantis Review: Offshore Cashier, No Bonus
 
 - URL: `https://pvpspinarena.com/guides/las-atlantis-casino-review`
-- Cluster: Foundations / Wave 2 offshore cashiers
+- Cluster: Foundations / Offshore crypto cashiers
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `are-online-casinos-safe`, `no-kyc-casino`, `crypto-casino-license`, `fake-casino-sites`, `crypto-casino-usa`
 - New sibling added: [The book-and-casino brand](https://pvpspinarena.com/guides/mybookie-casino-review)
@@ -318,7 +318,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### MyBookie Casino Review: The Casino Tab Only
 
 - URL: `https://pvpspinarena.com/guides/mybookie-casino-review`
-- Cluster: Foundations / Wave 2 offshore cashiers
+- Cluster: Foundations / Offshore crypto cashiers
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `house-edge`, `is-crypto-gambling-legal`, `crypto-casino-usa`
 - New sibling added: [An offshore cashier with a resort name](https://pvpspinarena.com/guides/las-atlantis-casino-review)
@@ -329,7 +329,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Online Gambling Legal in Colorado? Sort the Products
 
 - URL: `https://pvpspinarena.com/guides/online-gambling-legal-colorado`
-- Cluster: Foundations / Wave 2 state lines
+- Cluster: Foundations / US casino law
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `is-online-casino-legal`, `online-gambling-legal-kentucky`, `esports-betting-legal`, `sweepstakes-vs-crypto-casino`, `crypto-casino-usa`, `gambling-age-us`
 - New sibling added: [The island market with no Strip](https://pvpspinarena.com/guides/gambling-legal-hawaii)
@@ -340,7 +340,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Online Gambling Legal in Illinois? Terminals Differ
 
 - URL: `https://pvpspinarena.com/guides/online-gambling-legal-illinois`
-- Cluster: Foundations / Wave 2 state lines
+- Cluster: Foundations / US casino law
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `is-online-casino-legal`, `online-gambling-legal-kentucky`, `is-crypto-gambling-legal`, `sweepstakes-casino-legal-states`, `crypto-casino-usa`, `gambling-age-us`, `esports-betting-legal`
 - New sibling added: [Virginia's online question](https://pvpspinarena.com/guides/online-gambling-legal-virginia)
@@ -351,7 +351,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Is Online Gambling Legal in Missouri? Check First
 
 - URL: `https://pvpspinarena.com/guides/online-gambling-legal-missouri`
-- Cluster: Foundations / Wave 2 state lines
+- Cluster: Foundations / US casino law
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `is-online-casino-legal`, `online-gambling-legal-kentucky`, `is-crypto-gambling-legal`, `sweepstakes-casino-legal-states`, `crypto-casino-usa`, `gambling-age-us`, `esports-betting-legal`
 - New sibling added: [The Oklahoma sports question](https://pvpspinarena.com/guides/sports-betting-legal-oklahoma)
@@ -362,7 +362,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Is Online Gambling Legal in Nevada? Check the Board
 
 - URL: `https://pvpspinarena.com/guides/online-gambling-legal-nevada`
-- Cluster: Foundations / Wave 2 state lines
+- Cluster: Foundations / US casino law
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `is-online-casino-legal`, `online-gambling-legal-kentucky`, `is-crypto-gambling-legal`, `sweepstakes-casino-legal-states`, `crypto-casino-usa`, `gambling-age-us`, `esports-betting-legal`
 - New sibling added: [A mountain state people lump in with Nevada](https://pvpspinarena.com/guides/online-gambling-legal-colorado)
@@ -373,7 +373,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Online Gambling in Virginia: What This Page Claims
 
 - URL: `https://pvpspinarena.com/guides/online-gambling-legal-virginia`
-- Cluster: Foundations / Wave 2 state lines
+- Cluster: Foundations / US casino law
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `is-online-casino-legal`, `online-gambling-legal-kentucky`, `crypto-casino-usa`, `esports-betting-legal`, `sweepstakes-vs-crypto-casino`, `is-crypto-gambling-legal`, `gambling-age-us`
 - New sibling added: [The Illinois terminal market](https://pvpspinarena.com/guides/online-gambling-legal-illinois)
@@ -384,7 +384,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Online Gambling Legal in Wisconsin? Sort Products
 
 - URL: `https://pvpspinarena.com/guides/online-gambling-legal-wisconsin`
-- Cluster: Foundations / Wave 2 state lines
+- Cluster: Foundations / US casino law
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `is-online-casino-legal`, `online-gambling-legal-kentucky`, `is-crypto-gambling-legal`, `gambling-age-us`, `sweepstakes-casino-legal-states`, `crypto-casino-usa`
 - New sibling added: [The sports-betting question next door](https://pvpspinarena.com/guides/gambling-legal-minnesota)
@@ -395,7 +395,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Razed Casino Review: One Late Spin, No Clock
 
 - URL: `https://pvpspinarena.com/guides/razed-casino-review`
-- Cluster: Foundations / Wave 2 offshore cashiers
+- Cluster: Foundations / Offshore crypto cashiers
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `house-edge`, `stake-alternatives`, `crypto-casino-license`, `anjouan-gaming-license`, `fake-casino-sites`, `is-crypto-gambling-legal`
 - New sibling added: [The panda-named cashier](https://pvpspinarena.com/guides/golden-panda-casino-review)
@@ -406,8 +406,8 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Sports Betting Legal in Oklahoma? Tribal Frame
 
 - URL: `https://pvpspinarena.com/guides/sports-betting-legal-oklahoma`
-- Cluster: Foundations / Wave 2 state lines
-- Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
+- Cluster: Sports betting / Law and results
+- Hub: `https://pvpspinarena.com/guides/topics/sports-betting` (already linked)
 - Existing guides it already linked: `is-online-casino-legal`, `online-gambling-legal-kentucky`, `esports-betting-legal`, `sweepstakes-vs-crypto-casino`, `is-crypto-gambling-legal`, `gambling-age-us`
 - New sibling added: [The Missouri online question](https://pvpspinarena.com/guides/online-gambling-legal-missouri)
 - Existing pages that now link here: `is-gambling-legal-in-texas` in `online`
@@ -417,8 +417,8 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Sportsbet.io Review: Crypto Book, Blank Desk
 
 - URL: `https://pvpspinarena.com/guides/sportsbet-io-review`
-- Cluster: Foundations / Wave 2 offshore cashiers
-- Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
+- Cluster: Sports betting / Books and exchanges
+- Hub: `https://pvpspinarena.com/guides/topics/sports-betting` (already linked)
 - Existing guides it already linked: `crypto-casino-license`, `stake-alternatives`, `fake-casino-sites`, `curacao-gambling-license`, `crypto-casino-usa`
 - New sibling added: [The esports-leaning book](https://pvpspinarena.com/guides/thunderpick-review)
 - Existing pages that now link here: `what-is-sports-betting` in `contrast`
@@ -428,8 +428,8 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Thunderpick Review: Esports Book, Not Weather
 
 - URL: `https://pvpspinarena.com/guides/thunderpick-review`
-- Cluster: Foundations / Wave 2 offshore cashiers
-- Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
+- Cluster: Esports betting / How to bet
+- Hub: `https://pvpspinarena.com/guides/topics/esports-betting` (already linked)
 - Existing guides it already linked: `esports-betting-legal`, `house-edge`, `fake-casino-sites`, `curacao-gambling-license`, `is-crypto-gambling-legal`
 - New sibling added: [A different sports-and-crypto book](https://pvpspinarena.com/guides/sportsbet-io-review)
 - Existing pages that now link here: `esports-betting-sites` in `scorecard`
@@ -439,7 +439,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### WSM Casino Review: Meme Token, No Price Here
 
 - URL: `https://pvpspinarena.com/guides/wsm-casino-review`
-- Cluster: Foundations / Wave 2 offshore cashiers
+- Cluster: Foundations / Offshore crypto cashiers
 - Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `are-online-casinos-safe`, `house-edge`, `fake-casino-sites`, `anjouan-gaming-license`, `is-crypto-gambling-legal`
 - New sibling added: [The bets.io brand search](https://pvpspinarena.com/guides/bets-io-review)
@@ -450,7 +450,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Sweet Bonanza Candyland: Live Wheel, Not a Slot
 
 - URL: `https://pvpspinarena.com/guides/sweet-bonanza-candyland`
-- Cluster: Game shows / Wave 2 live wheels
+- Cluster: Game shows / Live game shows
 - Hub: `https://pvpspinarena.com/guides/topics/game-shows` (already linked)
 - Existing guides it already linked: `sweet-bonanza`, `crazy-time`, `slot-machine-odds`, `house-edge`
 - New sibling added: [The tumble tile people search next](https://pvpspinarena.com/guides/gates-of-olympus)
@@ -461,7 +461,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Pick 6 Horse Racing: Pools and Carryovers
 
 - URL: `https://pvpspinarena.com/guides/pick-6-horse-racing`
-- Cluster: Horse racing / Wave 2 exotics
+- Cluster: Horse racing / Exotic bets
 - Hub: `https://pvpspinarena.com/guides/topics/horse-racing` (already linked)
 - Existing guides it already linked: `how-to-bet-on-horse-racing`, `exacta-bet`, `horse-racing-odds-explained`
 - New sibling added: [An either-order two-horse bet](https://pvpspinarena.com/guides/quinella-bet)
@@ -472,7 +472,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Quinella Bet: Top Two Horses in Either Order
 
 - URL: `https://pvpspinarena.com/guides/quinella-bet`
-- Cluster: Horse racing / Wave 2 exotics
+- Cluster: Horse racing / Exotic bets
 - Hub: `https://pvpspinarena.com/guides/topics/horse-racing` (already linked)
 - Existing guides it already linked: `how-to-bet-on-horse-racing`, `exacta-bet`, `horse-racing-odds-explained`
 - New sibling added: [The six-race carryover](https://pvpspinarena.com/guides/pick-6-horse-racing)
@@ -483,7 +483,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Cash4Life Odds, Daily Prize, and the 2026 End
 
 - URL: `https://pvpspinarena.com/guides/cash4life-lottery`
-- Cluster: Lottery / Wave 2 lottery products
+- Cluster: Lottery / Jackpot games
 - Hub: `https://pvpspinarena.com/guides/topics/lottery` (already linked)
 - Existing guides it already linked: `odds-of-winning-the-lottery`, `lottery-taxes`, `what-to-do-if-you-win-the-lottery`
 - New sibling added: [Entering a losing ticket in a later draw](https://pvpspinarena.com/guides/second-chance-lottery)
@@ -494,7 +494,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Second Chance Lottery: Extra Drawing Rules
 
 - URL: `https://pvpspinarena.com/guides/second-chance-lottery`
-- Cluster: Lottery / Wave 2 lottery products
+- Cluster: Lottery / State games and scratchers
 - Hub: `https://pvpspinarena.com/guides/topics/lottery` (already linked)
 - Existing guides it already linked: `odds-of-winning-the-lottery`, `quick-pick-lottery`, `lottery-taxes`
 - New sibling added: [The retired life-annuity draw](https://pvpspinarena.com/guides/cash4life-lottery)
@@ -505,7 +505,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### 2-7 Triple Draw: Rules for Deuce-to-Seven Low
 
 - URL: `https://pvpspinarena.com/guides/2-7-triple-draw`
-- Cluster: Poker / Wave 2 poker study
+- Cluster: Poker / Mixed games
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `how-to-play-poker`, `seven-card-stud`, `cash-game-poker`, `poker-bankroll-management`
 - New sibling added: [Ace-to-five stud low](https://pvpspinarena.com/guides/razz-poker)
@@ -516,7 +516,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Big O Poker Rules: Five-Card Pot-Limit Omaha
 
 - URL: `https://pvpspinarena.com/guides/big-o-poker`
-- Cluster: Poker / Wave 2 poker study
+- Cluster: Poker / Mixed games
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `omaha-poker-rules`, `texas-holdem-rules`, `poker-pot-odds`, `poker-bankroll-management`, `crypto-poker`, `cash-game-poker`
 - New sibling added: [The 36-card hold'em variant](https://pvpspinarena.com/guides/short-deck-poker)
@@ -527,7 +527,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### CoinPoker Review: A Crypto Room, Not Ours
 
 - URL: `https://pvpspinarena.com/guides/coinpoker-review`
-- Cluster: Poker / Wave 2 poker rooms
+- Cluster: Poker / Rooms and apps
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `crypto-poker`, `real-money-poker-apps`, `black-chip-poker-review`, `replay-poker-review`, `rigged-poker-sites`
 - New sibling added: [The early bitcoin room name](https://pvpspinarena.com/guides/swc-poker-review)
@@ -538,7 +538,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Double Double Bonus Poker: Aces and a Kicker
 
 - URL: `https://pvpspinarena.com/guides/double-double-bonus-poker`
-- Cluster: Poker / Wave 2 poker study
+- Cluster: Poker / Variants and money
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `video-poker-paytables`, `jacks-or-better-strategy`, `cash-game-poker`
 - New sibling added: [The joker-wild machine](https://pvpspinarena.com/guides/joker-poker)
@@ -549,7 +549,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### How to Host a Poker Night for Adult Friends
 
 - URL: `https://pvpspinarena.com/guides/how-to-host-a-poker-night`
-- Cluster: Poker / Wave 2 poker study
+- Cluster: Poker / Home games and tools
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `texas-holdem-rules`, `how-to-play-poker`, `cash-game-poker`, `poker-bankroll-management`
 - New sibling added: [A home chip set](https://pvpspinarena.com/guides/poker-chip-set)
@@ -560,7 +560,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Joker Poker: Wild Card Rules, No RTP Printed
 
 - URL: `https://pvpspinarena.com/guides/joker-poker`
-- Cluster: Poker / Wave 2 poker study
+- Cluster: Poker / Variants and money
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `video-poker-paytables`, `jacks-or-better-strategy`, `how-to-play-poker`, `gambling-age-us`
 - New sibling added: [The four-aces kicker paytable](https://pvpspinarena.com/guides/double-double-bonus-poker)
@@ -571,7 +571,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Open Face Chinese Poker: Rows, Royalties, Fouls
 
 - URL: `https://pvpspinarena.com/guides/open-face-chinese-poker`
-- Cluster: Poker / Wave 2 poker study
+- Cluster: Poker / Mixed games
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `how-to-play-poker`, `texas-holdem-rules`, `video-poker-paytables`, `seven-card-stud`
 - New sibling added: [Checking a monster in hold'em](https://pvpspinarena.com/guides/slow-play-poker)
@@ -582,7 +582,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Poker Chip Set: Clay, Plastic, and a 1/2 Breakdown
 
 - URL: `https://pvpspinarena.com/guides/poker-chip-set`
-- Cluster: Poker / Wave 2 poker study
+- Cluster: Poker / Home games and tools
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `how-to-play-poker`, `casino-chip-values`, `cash-game-poker`, `texas-holdem-rules`, `poker-bankroll-management`
 - New sibling added: [Hosting the night those chips are for](https://pvpspinarena.com/guides/how-to-host-a-poker-night)
@@ -593,7 +593,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Poker Equity Calculator: Hands, Ranges, All-Ins
 
 - URL: `https://pvpspinarena.com/guides/poker-equity-calculator`
-- Cluster: Poker / Wave 2 poker study
+- Cluster: Poker / Home games and tools
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `how-to-play-poker`, `poker-pot-odds`, `gto-poker-strategy`, `texas-holdem-rules`, `poker-bankroll-management`
 - New sibling added: [The extra blind that changes the price](https://pvpspinarena.com/guides/straddle-poker)
@@ -604,7 +604,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### PokerOK Review: What Legit Means You Can Check
 
 - URL: `https://pvpspinarena.com/guides/pokerok-review`
-- Cluster: Poker / Wave 2 poker rooms
+- Cluster: Poker / Rooms and apps
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `crypto-poker`, `real-money-poker-apps`, `rigged-poker-sites`, `black-chip-poker-review`, `replay-poker-review`
 - New sibling added: [The crypto-funded room brand](https://pvpspinarena.com/guides/coinpoker-review)
@@ -615,7 +615,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Razz Poker Rules: Ace-to-Five Stud Lowball
 
 - URL: `https://pvpspinarena.com/guides/razz-poker`
-- Cluster: Poker / Wave 2 poker study
+- Cluster: Poker / Mixed games
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `seven-card-stud`, `crypto-poker`, `poker-bankroll-management`, `how-to-play-poker`
 - New sibling added: [Deuce-to-seven draw](https://pvpspinarena.com/guides/2-7-triple-draw)
@@ -626,7 +626,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Short Deck Poker Rules: 36 Cards and Rankings
 
 - URL: `https://pvpspinarena.com/guides/short-deck-poker`
-- Cluster: Poker / Wave 2 poker study
+- Cluster: Poker / Mixed games
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `texas-holdem-rules`, `crypto-poker`, `poker-pot-odds`, `omaha-poker-rules`, `poker-bankroll-management`
 - New sibling added: [Five-card Omaha](https://pvpspinarena.com/guides/big-o-poker)
@@ -637,7 +637,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Slow Play Poker: When a Trap Check Leaks
 
 - URL: `https://pvpspinarena.com/guides/slow-play-poker`
-- Cluster: Poker / Wave 2 poker study
+- Cluster: Poker / Strategy
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `texas-holdem-rules`, `gto-poker-strategy`, `cash-game-poker`, `poker-pot-odds`
 - New sibling added: [the game that shows every card face up](https://pvpspinarena.com/guides/open-face-chinese-poker)
@@ -648,7 +648,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Straddle Poker: The Voluntary Blind Explained
 
 - URL: `https://pvpspinarena.com/guides/straddle-poker`
-- Cluster: Poker / Wave 2 poker study
+- Cluster: Poker / Strategy
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `texas-holdem-rules`, `cash-game-poker`, `poker-pot-odds`, `poker-bankroll-management`
 - New sibling added: [A hand-versus-range calculator](https://pvpspinarena.com/guides/poker-equity-calculator)
@@ -659,7 +659,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### SWC Poker Review: History, Rake Unpublished
 
 - URL: `https://pvpspinarena.com/guides/swc-poker-review`
-- Cluster: Poker / Wave 2 poker rooms
+- Cluster: Poker / Rooms and apps
 - Hub: `https://pvpspinarena.com/guides/topics/poker` (already linked)
 - Existing guides it already linked: `crypto-poker`, `real-money-poker-apps`, `black-chip-poker-review`, `replay-poker-review`, `rigged-poker-sites`
 - New sibling added: [Another offshore room search](https://pvpspinarena.com/guides/pokerok-review)
@@ -670,7 +670,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Gamblers Anonymous Explained: Fellowship, 1957
 
 - URL: `https://pvpspinarena.com/guides/gamblers-anonymous`
-- Cluster: Responsible play / Fellowships
+- Cluster: Responsible play / Addiction and help
 - Hub: `https://pvpspinarena.com/guides/topics/responsible-play` (already linked)
 - Existing guides it already linked: `gambling-self-exclusion`, `how-to-stop-gambling`, `underage-gambling-risks`, `gambling-blocker-apps`, `house-edge`
 - New sibling added: none. No other new guide shares this intent.
@@ -681,7 +681,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Big Time Cash: App Cashout, Not a Jackpot
 
 - URL: `https://pvpspinarena.com/guides/big-time-cash-review`
-- Cluster: Skill wagers / Wave 2 reward and tap apps
+- Cluster: Skill wagers / Rewards apps
 - Hub: `https://pvpspinarena.com/guides/topics/skill-wagers` (already linked)
 - Existing guides it already linked: `skill-based-gambling`, `games-that-pay-real-money`, `pvp-gambling`
 - New sibling added: [The crowded diamonds name](https://pvpspinarena.com/guides/diamonds-casino-game)
@@ -692,7 +692,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Diamonds Game: Crowded Name, Cash-Out Question
 
 - URL: `https://pvpspinarena.com/guides/diamonds-casino-game`
-- Cluster: Skill wagers / Wave 2 reward and tap apps
+- Cluster: Skill wagers / Rewards apps
 - Hub: `https://pvpspinarena.com/guides/topics/skill-wagers` (already linked)
 - Existing guides it already linked: `games-that-pay-real-money`, `solitaire-cash-review`, `house-edge`
 - New sibling added: [The big-time cash app search](https://pvpspinarena.com/guides/big-time-cash-review)
@@ -703,8 +703,8 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Dogs Telegram: A Tap Cashout You Can Check
 
 - URL: `https://pvpspinarena.com/guides/dogs-telegram`
-- Cluster: Skill wagers / Wave 2 reward and tap apps
-- Hub: `https://pvpspinarena.com/guides/topics/skill-wagers` (already linked)
+- Cluster: Foundations / Earn-by-playing
+- Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `telegram-casino-bot`, `games-that-pay-real-money`, `skill-based-gambling`
 - New sibling added: [The other Telegram empire tap](https://pvpspinarena.com/guides/x-empire-telegram)
 - Existing pages that now link here: `telegram-casino-bot` in `what-it-is`
@@ -714,7 +714,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### InboxDollars Games: Surveys Versus a Casino
 
 - URL: `https://pvpspinarena.com/guides/inboxdollars-games`
-- Cluster: Skill wagers / Wave 2 reward and tap apps
+- Cluster: Skill wagers / Rewards apps
 - Hub: `https://pvpspinarena.com/guides/topics/skill-wagers` (already linked)
 - Existing guides it already linked: `games-that-pay-real-money`, `skillz-review`, `solitaire-cash-review`
 - New sibling added: [A different rewards cashier](https://pvpspinarena.com/guides/money-well-review)
@@ -725,7 +725,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Money Well: Rewards Search, Apart from Jackpot
 
 - URL: `https://pvpspinarena.com/guides/money-well-review`
-- Cluster: Skill wagers / Wave 2 reward and tap apps
+- Cluster: Skill wagers / Rewards apps
 - Hub: `https://pvpspinarena.com/guides/topics/skill-wagers` (already linked)
 - Existing guides it already linked: `games-that-pay-real-money`, `skill-based-gambling`, `solitaire-cash-review`
 - New sibling added: [The survey-site games lobby](https://pvpspinarena.com/guides/inboxdollars-games)
@@ -736,8 +736,8 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Pump Game: Ambiguous Name, Unverified Payout
 
 - URL: `https://pvpspinarena.com/guides/pump-game-crypto`
-- Cluster: Skill wagers / Wave 2 reward and tap apps
-- Hub: `https://pvpspinarena.com/guides/topics/skill-wagers` (already linked)
+- Cluster: Foundations / Earn-by-playing
+- Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `telegram-casino-bot`, `house-edge`, `skillz-review`
 - New sibling added: [the coin-named rewards app](https://pvpspinarena.com/guides/yescoin-review)
 - Existing pages that now link here: `blum-crypto` in `risks`
@@ -747,8 +747,8 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### X Empire Telegram: Taps and the Cash-Out Ask
 
 - URL: `https://pvpspinarena.com/guides/x-empire-telegram`
-- Cluster: Skill wagers / Wave 2 reward and tap apps
-- Hub: `https://pvpspinarena.com/guides/topics/skill-wagers` (already linked)
+- Cluster: Foundations / Earn-by-playing
+- Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `telegram-casino-bot`, `skill-based-gambling`, `house-edge`
 - New sibling added: [The dog-named Telegram tap](https://pvpspinarena.com/guides/dogs-telegram)
 - Existing pages that now link here: `telegram-casino-bot` in `summary`
@@ -758,8 +758,8 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Yescoin Review: A Rewards Coin, Not Bitcoin
 
 - URL: `https://pvpspinarena.com/guides/yescoin-review`
-- Cluster: Skill wagers / Wave 2 reward and tap apps
-- Hub: `https://pvpspinarena.com/guides/topics/skill-wagers` (already linked)
+- Cluster: Foundations / Earn-by-playing
+- Hub: `https://pvpspinarena.com/guides/topics/foundations` (already linked)
 - Existing guides it already linked: `telegram-casino-bot`, `pvp-gambling`, `house-edge`
 - New sibling added: [The ambiguously named pump search](https://pvpspinarena.com/guides/pump-game-crypto)
 - Existing pages that now link here: `blum-crypto` in `legal`
@@ -769,7 +769,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Asgard Slot: Norse Theme, Separate from Vikings
 
 - URL: `https://pvpspinarena.com/guides/asgard-slot`
-- Cluster: Slots / Wave 2 slot titles
+- Cluster: Slots / Ways and feature cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `penny-slots-online`, `megaways-slots`, `house-edge`, `slot-volatility`
 - New sibling added: [the other Norse cabinet](https://pvpspinarena.com/guides/vikings-go-berzerk-slot)
@@ -780,7 +780,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Buffalo Grand Slot: A Different Animal Title
 
 - URL: `https://pvpspinarena.com/guides/buffalo-grand-slot`
-- Cluster: Slots / Wave 2 slot titles
+- Cluster: Slots / Link and classic cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `buffalo-slot-machine`, `slot-machine-odds`, `high-limit-slots`, `penny-slots-online`
 - New sibling added: [the Megaways buffalo](https://pvpspinarena.com/guides/buffalo-king-megaways)
@@ -791,7 +791,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Buffalo King Megaways: Three Different Buffalo Pages
 
 - URL: `https://pvpspinarena.com/guides/buffalo-king-megaways`
-- Cluster: Slots / Wave 2 slot titles
+- Cluster: Slots / Ways and feature cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `buffalo-slot-machine`, `megaways-slots`, `slot-volatility`, `high-limit-slots`
 - New sibling added: [The non-Megaways buffalo cabinet](https://pvpspinarena.com/guides/buffalo-grand-slot)
@@ -802,7 +802,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Cash Bandits Slot: Heist Theme, Unpublished RTP
 
 - URL: `https://pvpspinarena.com/guides/cash-bandits-slot`
-- Cluster: Slots / Wave 2 slot titles
+- Cluster: Slots / Link and classic cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `slot-machine-odds`, `high-limit-slots`, `house-edge`, `slot-volatility`
 - New sibling added: [The volcano cabinet](https://pvpspinarena.com/guides/cash-eruption-slot)
@@ -813,7 +813,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Cash Eruption Slot: Volcano Cabinet, Not Geology
 
 - URL: `https://pvpspinarena.com/guides/cash-eruption-slot`
-- Cluster: Slots / Wave 2 slot titles
+- Cluster: Slots / Link and classic cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `slot-machine-odds`, `penny-slots-online`, `house-edge`, `slot-battles`
 - New sibling added: [The heist cabinet](https://pvpspinarena.com/guides/cash-bandits-slot)
@@ -824,7 +824,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Cleopatra Slot: Versions Differ, RTP Unpublished
 
 - URL: `https://pvpspinarena.com/guides/cleopatra-slot`
-- Cluster: Slots / Wave 2 slot titles
+- Cluster: Slots / Link and classic cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `rtp-calculator`, `buffalo-slot-machine`, `high-limit-slots`, `slot-battles`
 - New sibling added: [the beanstalk versions](https://pvpspinarena.com/guides/jack-and-the-beanstalk-slot)
@@ -835,7 +835,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Divine Fortune Slot: Branding Without a Meter
 
 - URL: `https://pvpspinarena.com/guides/divine-fortune-slot`
-- Cluster: Slots / Wave 2 slot titles
+- Cluster: Slots / Link and classic cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `progressive-jackpot-odds`, `rtp-calculator`, `house-edge`
 - New sibling added: [The hold-and-respin mechanic](https://pvpspinarena.com/guides/hold-and-win-slots)
@@ -846,7 +846,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Dragon Cash Slot: Not the Dragon Link Game
 
 - URL: `https://pvpspinarena.com/guides/dragon-cash-slot`
-- Cluster: Slots / Wave 2 slot titles
+- Cluster: Slots / Link and classic cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `slot-machine-odds`, `penny-slots-online`, `slot-battles`
 - New sibling added: [The linked-jackpot dragon](https://pvpspinarena.com/guides/dragon-link-slot)
@@ -857,7 +857,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Dragon Link Slot: Linked Jackpot, No Total Here
 
 - URL: `https://pvpspinarena.com/guides/dragon-link-slot`
-- Cluster: Slots / Wave 2 slot titles
+- Cluster: Slots / Link and classic cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `slot-machine-odds`, `high-limit-slots`, `house-edge`, `penny-slots-online`
 - New sibling added: [The standalone dragon title](https://pvpspinarena.com/guides/dragon-cash-slot)
@@ -868,7 +868,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Gates of Olympus: Popular Is Not a Better Price
 
 - URL: `https://pvpspinarena.com/guides/gates-of-olympus`
-- Cluster: Slots / Wave 2 slot titles
+- Cluster: Slots / Ways and feature cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `sweet-bonanza`, `slot-volatility`, `rtp-calculator`
 - New sibling added: [The live candy wheel](https://pvpspinarena.com/guides/sweet-bonanza-candyland)
@@ -879,7 +879,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Hold and Win Slots: A Mechanic, Not One RTP
 
 - URL: `https://pvpspinarena.com/guides/hold-and-win-slots`
-- Cluster: Slots / Wave 2 slot titles
+- Cluster: Slots / Maths and features
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `bonus-buy-slots`, `slot-volatility`, `rtp-calculator`
 - New sibling added: [One branded jackpot title](https://pvpspinarena.com/guides/divine-fortune-slot)
@@ -890,7 +890,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Jack and the Beanstalk Slot: Many Studio Builds
 
 - URL: `https://pvpspinarena.com/guides/jack-and-the-beanstalk-slot`
-- Cluster: Slots / Wave 2 slot titles
+- Cluster: Slots / Link and classic cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `slot-machine-odds`, `rtp-calculator`, `slot-volatility`
 - New sibling added: [the Egyptian cabinet with many versions](https://pvpspinarena.com/guides/cleopatra-slot)
@@ -901,7 +901,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Jammin Jars Slot: Cluster Pays, Not a Payline
 
 - URL: `https://pvpspinarena.com/guides/jammin-jars-slot`
-- Cluster: Slots / Wave 2 more slot titles
+- Cluster: Slots / Ways and feature cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `slot-machine-odds`, `penny-slots-online`, `house-edge`, `slot-volatility`
 - New sibling added: [The changing-reel fortune title](https://pvpspinarena.com/guides/madame-destiny-megaways)
@@ -912,7 +912,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Lobstermania Slot: A Floor Cabinet People Search
 
 - URL: `https://pvpspinarena.com/guides/lobstermania-slot`
-- Cluster: Slots / Wave 2 more slot titles
+- Cluster: Slots / Link and classic cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `buffalo-slot-machine`, `slot-machine-odds`, `penny-slots-online`, `high-limit-slots`
 - New sibling added: [The platinum tier name](https://pvpspinarena.com/guides/quick-hit-platinum)
@@ -923,7 +923,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Madame Destiny Megaways: Changing Reel Heights
 
 - URL: `https://pvpspinarena.com/guides/madame-destiny-megaways`
-- Cluster: Slots / Wave 2 more slot titles
+- Cluster: Slots / Ways and feature cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `megaways-slots`, `rtp-calculator`, `slot-machine-odds`, `bonus-buy-slots`
 - New sibling added: [The jar cluster grid](https://pvpspinarena.com/guides/jammin-jars-slot)
@@ -934,7 +934,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Mental 2 Slot: High-Volatility Sequel Marketing
 
 - URL: `https://pvpspinarena.com/guides/mental-2-slot`
-- Cluster: Slots / Wave 2 more slot titles
+- Cluster: Slots / Ways and feature cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `slot-volatility`, `high-limit-slots`, `house-edge`
 - New sibling added: [The prison-themed follow-up search](https://pvpspinarena.com/guides/san-quentin-slot)
@@ -945,7 +945,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Quick Hit Platinum: Floor Cabinet, Not Higher RTP
 
 - URL: `https://pvpspinarena.com/guides/quick-hit-platinum`
-- Cluster: Slots / Wave 2 more slot titles
+- Cluster: Slots / Link and classic cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `slot-machine-odds`, `penny-slots-online`, `house-edge`, `slot-battles`, `rtp-calculator`
 - New sibling added: [the lobster cabinet](https://pvpspinarena.com/guides/lobstermania-slot)
@@ -956,7 +956,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Razor Shark Slot: Mystery Stacks, No Multiple
 
 - URL: `https://pvpspinarena.com/guides/razor-shark-slot`
-- Cluster: Slots / Wave 2 more slot titles
+- Cluster: Slots / Ways and feature cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `buffalo-slot-machine`, `slot-machine-odds`, `slot-volatility`, `penny-slots-online`
 - New sibling added: [The western bonus title](https://pvpspinarena.com/guides/wanted-dead-or-a-wild)
@@ -967,7 +967,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### San Quentin Slot: Prison Theme for Adult Readers
 
 - URL: `https://pvpspinarena.com/guides/san-quentin-slot`
-- Cluster: Slots / Wave 2 more slot titles
+- Cluster: Slots / Ways and feature cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `slot-volatility`, `bonus-buy-slots`, `house-edge`, `high-limit-slots`
 - New sibling added: [The sequel-styled neighbor](https://pvpspinarena.com/guides/mental-2-slot)
@@ -978,7 +978,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Vikings Go Berzerk: Sticky Wilds, No Multiple
 
 - URL: `https://pvpspinarena.com/guides/vikings-go-berzerk-slot`
-- Cluster: Slots / Wave 2 more slot titles
+- Cluster: Slots / Ways and feature cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `slot-volatility`, `bonus-buy-slots`, `megaways-slots`
 - New sibling added: [The hall-themed neighbor](https://pvpspinarena.com/guides/asgard-slot)
@@ -989,7 +989,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Wanted Dead or a Wild: Bonus Buy, No Multiple
 
 - URL: `https://pvpspinarena.com/guides/wanted-dead-or-a-wild`
-- Cluster: Slots / Wave 2 more slot titles
+- Cluster: Slots / Ways and feature cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `slot-volatility`, `bonus-buy-slots`, `rtp-calculator`, `slot-battles`
 - New sibling added: [The shark nudge title](https://pvpspinarena.com/guides/razor-shark-slot)
@@ -1000,7 +1000,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Wolf Gold Slot: Desert Respins, No RTP Here
 
 - URL: `https://pvpspinarena.com/guides/wolf-gold-slot`
-- Cluster: Slots / Wave 2 more slot titles
+- Cluster: Slots / Link and classic cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `buffalo-slot-machine`, `slot-machine-odds`, `slot-volatility`, `house-edge`
 - New sibling added: [The other wolf title](https://pvpspinarena.com/guides/wolf-run-slot)
@@ -1011,7 +1011,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Wolf Run Slot: Another Wolf, Not Wolf Gold
 
 - URL: `https://pvpspinarena.com/guides/wolf-run-slot`
-- Cluster: Slots / Wave 2 more slot titles
+- Cluster: Slots / Link and classic cabinets
 - Hub: `https://pvpspinarena.com/guides/topics/slots` (already linked)
 - Existing guides it already linked: `buffalo-slot-machine`, `slot-volatility`, `house-edge`, `slot-battles`
 - New sibling added: [The desert wolf cabinet](https://pvpspinarena.com/guides/wolf-gold-slot)
@@ -1022,7 +1022,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### GSN Casino Review: Social Casino, Not a Guide
 
 - URL: `https://pvpspinarena.com/guides/gsn-casino-review`
-- Cluster: Sweepstakes / Wave 2 sweeps brands
+- Cluster: Sweepstakes / Clubs and social apps
 - Hub: `https://pvpspinarena.com/guides/topics/sweepstakes` (already linked)
 - Existing guides it already linked: `gold-coins-vs-sweeps-coins`, `sweeps-coins-explained`, `how-do-sweepstakes-casinos-work`, `sweepstakes-vs-crypto-casino`, `no-deposit-sweepstakes-casinos`, `sweepstakes-casino-legal-states`
 - New sibling added: [The long-running slots brand](https://pvpspinarena.com/guides/jackpotjoy-review)
@@ -1033,7 +1033,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### JackpotJoy Review: Slots Brand, Not Our Pot
 
 - URL: `https://pvpspinarena.com/guides/jackpotjoy-review`
-- Cluster: Sweepstakes / Wave 2 sweeps brands
+- Cluster: Sweepstakes / More sweeps cashiers
 - Hub: `https://pvpspinarena.com/guides/topics/sweepstakes` (already linked)
 - Existing guides it already linked: `gold-coins-vs-sweeps-coins`, `sweeps-coins-explained`, `how-do-sweepstakes-casinos-work`, `sweepstakes-vs-crypto-casino`, `no-deposit-sweepstakes-casinos`, `sweepstakes-casino-legal-states`
 - New sibling added: [The TV-network social casino](https://pvpspinarena.com/guides/gsn-casino-review)
@@ -1044,7 +1044,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### Moonspin Review: Redeem and No Deposit Bonus
 
 - URL: `https://pvpspinarena.com/guides/moonspin-review`
-- Cluster: Sweepstakes / Wave 2 sweeps brands
+- Cluster: Sweepstakes / More sweeps cashiers
 - Hub: `https://pvpspinarena.com/guides/topics/sweepstakes` (already linked)
 - Existing guides it already linked: `gold-coins-vs-sweeps-coins`, `sweeps-coins-explained`, `how-do-sweepstakes-casinos-work`, `sweepstakes-vs-crypto-casino`, `no-deposit-sweepstakes-casinos`, `sweepstakes-casino-legal-states`
 - New sibling added: [The sweeps name that collides with a slot studio](https://pvpspinarena.com/guides/nolimit-coins-review)
@@ -1055,7 +1055,7 @@ Phase 3, low priority, is not implemented. It is further old-to-old links inside
 ### NoLimit Coins Review: Name Collision Warning
 
 - URL: `https://pvpspinarena.com/guides/nolimit-coins-review`
-- Cluster: Sweepstakes / Wave 2 sweeps brands
+- Cluster: Sweepstakes / More sweeps cashiers
 - Hub: `https://pvpspinarena.com/guides/topics/sweepstakes` (already linked)
 - Existing guides it already linked: `gold-coins-vs-sweeps-coins`, `sweeps-coins-explained`, `how-do-sweepstakes-casinos-work`, `sweepstakes-vs-crypto-casino`, `no-deposit-sweepstakes-casinos`, `sweepstakes-casino-legal-states`
 - New sibling added: [The other sweeps cashier](https://pvpspinarena.com/guides/moonspin-review)
