@@ -157,7 +157,7 @@ The line to leave with: Solitaire Clash is legit in the narrow sense only when y
     },
     {
       q: "Does this site run Solitaire Clash?",
-      a: "No. Solitaire Clash is AviaGames’ app. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, with a 5% pot fee on the first two and a wheel fee on Roulette.",
+      a: "No. Solitaire Clash is AviaGames’ app. PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, with a 5% pot fee on the first two and a wheel fee on Roulette.",
     },
   ],
   sources: [
@@ -170,5 +170,5 @@ The line to leave with: Solitaire Clash is legit in the narrow sense only when y
     "bingo-cash-review",
     "solitaire-rules",
   ],
-  updated: "2026-10-07",
+  updated: "2026-10-20",
 };

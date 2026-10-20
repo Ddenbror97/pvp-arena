@@ -78,7 +78,7 @@ Card-based casinos must run identity checks tied to banking rules. Crypto casino
 - **Original games** built by the site itself, such as crash, dice, plinko or mines, usually provably fair.
 - **Player-vs-player formats** such as jackpot pots and coinflips, where players compete against each other and the site takes a fee rather than betting against you.
 
-PVPspinArena focuses on four games. In [Jackpot](/), every cent you add to the pot is one ticket and one winner takes the pot after a 5% fee. In [Coinflip](/coinflip), one player creates a game and another matches it, a single random bit decides who wins, and the winner receives 95% of the pot. [Roulette](/roulette) is a shared wheel of 33 slots: 16 Purple and 16 Silver slots pay 2x and one Green slot pays 14x, then a 5% fee comes off the winning payout. [P2P Slott](/slott) is a 1v1 reel duel; the winner receives 90% of the players' pot. The [crypto jackpot guide](/guides/crypto-jackpot) covers how pot-based odds work.`,
+PVPspinArena focuses on five games. In [Jackpot](/), every cent you add to the pot is one ticket and one winner takes the pot after a 5% fee. In [Coinflip](/coinflip), one player creates a game and another matches it, a single random bit decides who wins, and the winner receives 95% of the pot. [Roulette](/roulette) is a shared wheel of 33 slots: 16 Purple and 16 Silver slots pay 2x and one Green slot pays 14x, then a 5% fee comes off the winning payout. [P2P Slott](/slott) is a 1v1 reel duel; the winner receives 90% of the players' pot. [Poker](/poker) is six-max No-Limit Hold'em, and the fee is 5% of a pot only after a flop. The [crypto jackpot guide](/guides/crypto-jackpot) covers how pot-based odds work.`,
     },
     {
       id: "benefits",

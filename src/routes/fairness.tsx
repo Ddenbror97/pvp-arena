@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ogImageMeta } from "@/lib/og";
+import { indexableHead } from "@/lib/seo/indexable-head";
 import { useState } from "react";
 import { drawTicket, hexToBytes, sha256Hex } from "@/lib/jackpot/fairness";
 import {
@@ -20,25 +20,14 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/fairness")({
-  head: () => ({
-    meta: [
-      { title: "Fairness — Provably Fair Games | PVPspinArena" },
-      {
-        name: "description",
-        content:
-          "See how every result is decided: committed seeds, HMAC-SHA256 draws and unbiased sampling. Verify Jackpot, Coinflip, Roulette, Slott and poker hands yourself.",
-      },
-      { property: "og:title", content: "Fairness — Provably Fair Games | PVPspinArena" },
-      {
-        property: "og:description",
-        content:
-          "Commit/reveal draws with HMAC-SHA256 and unbiased ticket mapping. Verify any game yourself.",
-      },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-      ...ogImageMeta(),
-    ],
-  }),
+  head: () =>
+    indexableHead({
+      path: "/fairness",
+      title: "Fairness — Provably Fair Games | PVPspinArena",
+      description:
+        "See how every result is decided: committed seeds, HMAC-SHA256 draws and unbiased sampling. Verify Jackpot, Coinflip, Roulette, Slott and poker hands yourself.",
+      crumb: "Fairness",
+    }),
   component: FairnessPage,
 });
 

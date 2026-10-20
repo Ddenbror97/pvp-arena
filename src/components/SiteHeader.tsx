@@ -237,6 +237,11 @@ export function SiteFooter({ className }: { className?: string }) {
               </Link>
             </li>
             <li>
+              <Link to="/fairness" className={footerLink}>
+                Fairness
+              </Link>
+            </li>
+            <li>
               <Link to="/guides" className={footerLink}>
                 Crypto casino guides
               </Link>
@@ -305,6 +310,11 @@ export function SiteFooter({ className }: { className?: string }) {
             <li>
               <Link to="/responsible-gambling" className={footerLink}>
                 Responsible gambling
+              </Link>
+            </li>
+            <li>
+              <Link to="/editorial" className={footerLink}>
+                Editorial policy
               </Link>
             </li>
           </ul>

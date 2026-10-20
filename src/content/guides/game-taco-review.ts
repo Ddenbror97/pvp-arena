@@ -160,7 +160,7 @@ No sentence here is an earnings promise. The lobby you see is the catalog. The p
     },
     {
       q: "Can I use the fairness tool on a phone score?",
-      a: "No. The seed check covers our four games. A leaderboard score needs the app's own history, which this page does not claim to have audited.",
+      a: "No. The seed check covers our five games. A leaderboard score needs the app's own history, which this page does not claim to have audited.",
     },
     {
       q: "Is this an affiliate offer?",

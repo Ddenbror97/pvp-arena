@@ -60,7 +60,7 @@ Pennsylvania gets a mention so it is not forgotten and not absorbed. Its board, 
 | --- | --- | --- | --- | --- | --- |
 | Delaware casino product | not published | not published | not published | not published | not published |
 | House-banked casino generally | paytable edge; no percent is assigned in this row | the house | not published | not published | not published |
-| PvP Spin Arena | 5% of a Jackpot or Coinflip pot, winner receives 95%. Roulette's Purple or Silver edge is about 7.88% after the win fee. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, a seed is committed before each of the four games | shown on the bet control |
+| PvP Spin Arena | 5% of a Jackpot or Coinflip pot, winner receives 95%. Roulette's Purple or Silver edge is about 7.88% after the win fee. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, a seed is committed before each of the five games | shown on the bet control |
 
 Put the two kinds of "edge" on the table and do not let them rhyme. A state tax or a state-authorized hold is a public-policy number this page marks not published. A 5% pot fee is a product rule you can read before you play. They are not substitutes. Paying our fee does not mean Delaware authorized the round. Seeing a Delaware headline does not waive the fee on a game you open here.
 

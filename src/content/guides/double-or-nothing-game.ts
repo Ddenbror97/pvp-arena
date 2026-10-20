@@ -16,7 +16,7 @@ export const guide: Guide = {
     "If each step wins with probability p and pays 2x, EV per step is 2p; edge is 1 − 2p.",
     "n precommitted doubles multiply those factors: expected remaining ≈ (2p)^n of the first stake’s EV path.",
     "Variance explodes: the typical path is a bust; the mean is held up by rare full streaks.",
-    "PVPspinArena does not offer double or nothing gambling as a product; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena does not offer double or nothing gambling as a product; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -84,7 +84,7 @@ Do not confuse this with a 5% fee [Coinflip](/coinflip). One flip is one step. R
     {
       id: "not-here",
       title: "PVPspinArena does not offer a double-or-nothing original",
-      body: `There is no 2x-or-bust ladder here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `There is no 2x-or-bust ladder here. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 - [Jackpot](/) — pot share, not a parlay button.
 - [Coinflip](/coinflip) — one 50/50 at a time, a 5% pot fee.
@@ -192,5 +192,5 @@ Pressing again is a second bet at the same edge. [Double or nothing strategy](/g
     "double-or-nothing-strategy",
     "flat-betting",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

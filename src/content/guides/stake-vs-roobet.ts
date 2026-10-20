@@ -150,7 +150,7 @@ Then close the tab or play only what this site actually offers. Jackpot, Coinfli
     },
     {
       q: "Does PVPspinArena replace either brand?",
-      a: "No. This site runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It is not a Stake or Roobet lobby.",
+      a: "No. This site runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It is not a Stake or Roobet lobby.",
     },
     {
       q: "Should I open both?",
@@ -164,7 +164,7 @@ Then close the tab or play only what this site actually offers. Jackpot, Coinfli
     },
   ],
   related: ["what-is-a-crypto-casino", "stake-alternatives", "house-edge", "provably-fair-casino"],
-  updated: "2026-09-27",
+  updated: "2026-10-20",
   cta: {
     title: "This site is a pot, not that product",
     text: "PVPspinArena does not offer the product described on this page. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",

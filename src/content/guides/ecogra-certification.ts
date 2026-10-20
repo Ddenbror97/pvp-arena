@@ -31,7 +31,7 @@ export const guide: Guide = {
     {
       id: "how-to-use-the-mark-without-worshipping-it",
       title: "How to use the mark without worshipping it",
-      body: "Treat eCOGRA certification as a dated lab statement. Verify it on the lab's own channel when that channel exists. Match the brand. Match the games you actually play, or admit you are playing something outside the list. Then put the PDF down and look at the product.\n\nIf the site also offers a player-checkable proof, use the proof for the bet in front of you. A lab cannot sit inside every round. A published commitment scheme can. The two are complementary when both are real, and the proof is the one that touches your round. If the site offers neither a current certificate nor a proof, you are trusting the operator's word. That can be a conscious choice for entertainment money. It should not be a confused choice you justify with a logo you never opened.\n\nPVPspinArena offers jackpot, coinflip, and roulette settled in USD. Deposit and payout wallets are separate. This guide does not claim an eCOGRA certification for that site. The fairness story to read there is the one the site publishes for its games, not a lab badge you fill in from memory. A seal count, a pass rate, and a pretend certificate do not belong in that gap.\n\nCompare like with like if you are choosing between operators. A current report on the exact games you play is more informative than a famous logo on a different product. A clear proof you can run yourself may answer a question the lab never took on. A license lookup answers a third question. Keep the questions apart so a single badge cannot do all three jobs.",
+      body: "Treat eCOGRA certification as a dated lab statement. Verify it on the lab's own channel when that channel exists. Match the brand. Match the games you actually play, or admit you are playing something outside the list. Then put the PDF down and look at the product.\n\nIf the site also offers a player-checkable proof, use the proof for the bet in front of you. A lab cannot sit inside every round. A published commitment scheme can. The two are complementary when both are real, and the proof is the one that touches your round. If the site offers neither a current certificate nor a proof, you are trusting the operator's word. That can be a conscious choice for entertainment money. It should not be a confused choice you justify with a logo you never opened.\n\nPVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker settled in USD. Deposit and payout wallets are separate. This guide does not claim an eCOGRA certification for that site. The fairness story to read there is the one the site publishes for its games, not a lab badge you fill in from memory. A seal count, a pass rate, and a pretend certificate do not belong in that gap.\n\nCompare like with like if you are choosing between operators. A current report on the exact games you play is more informative than a famous logo on a different product. A clear proof you can run yourself may answer a question the lab never took on. A license lookup answers a third question. Keep the questions apart so a single badge cannot do all three jobs.",
     },
     {
       id: "when-the-seal-and-the-site-disagree",
@@ -66,7 +66,9 @@ export const guide: Guide = {
       a: "This guide does not treat PVPspinArena as an eCOGRA-certified casino, and the site's published fairness tools are a different kind of evidence from a lab seal. Jackpot, coinflip, and roulette there settle in USD, and a missing seal is not something you should replace with a guess.",
     },
   ],
-  sources: [],
+    sources: [
+    { label: "eCOGRA — testing and certification services", url: "https://ecogra.org/" },
+  ],
   related: ["casino-fairness-audits", "are-online-casinos-rigged"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

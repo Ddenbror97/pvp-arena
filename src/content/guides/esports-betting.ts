@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Bookmaker odds include a margin, often called the vig or overround, so implied probabilities add up to more than 100%.",
     "The Esports Integrity Commission (ESIC) investigates match-fixing, betting offences and related corruption.",
     "Lower-tier online cups generally have less public information and, historically, more integrity cases than Majors.",
-    "PVPspinArena does not take esports bets; it runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.",
+    "PVPspinArena does not take esports bets; it runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.",
   ],
   sections: [
     {
@@ -185,5 +185,5 @@ Whether a match ticket is allowed is not the same page as how the odds work. [Es
     "csgo-coinflip-sites",
     "csgo-case-battle-sites",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

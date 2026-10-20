@@ -17,7 +17,7 @@ export const guide: Guide = {
     "Banker with a 5% commission is about 1.06% house edge; player is about 1.24%.",
     "A common 8:1 tie bet is about 14.4% — a side price, not a “lucky” third option.",
     "Eights or nines on the first two cards are naturals; no third card is drawn.",
-    "PVPspinArena does not offer baccarat; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena does not offer baccarat; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -111,7 +111,7 @@ If you want a 50/50 that actually pays 2x on a player pot, that is [Coinflip](/c
     {
       id: "not-here",
       title: "PVPspinArena does not offer baccarat",
-      body: `There is no player/banker grid here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `There is no player/banker grid here. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 - [Jackpot](/) — chance = your stake / pot.
 - [Roulette](/roulette) — 33 slots, about 7.88% on Purple or Silver and about 59.70% on Green after the 5% win fee.
@@ -179,7 +179,7 @@ Playing the same game with a wallet is [crypto baccarat](/guides/crypto-baccarat
     },
     {
       q: "Does PVPspinArena have baccarat?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This how-to is for tables you meet elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This how-to is for tables you meet elsewhere.",
     },
     {
       q: "Is no-commission baccarat a better deal?",
@@ -203,5 +203,5 @@ Playing the same game with a wallet is [crypto baccarat](/guides/crypto-baccarat
     "baccarat-strategy",
     "crypto-baccarat",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

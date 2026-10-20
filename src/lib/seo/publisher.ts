@@ -6,6 +6,7 @@ export const CORRECTIONS_EMAIL = "contact@pvpspinarena.com";
 export function publisherNode() {
   return {
     "@type": "Organization" as const,
+    "@id": `${OG_SITE_URL}/#organization`,
     name: "PVPspinArena",
     url: OG_SITE_URL,
     logo: { "@type": "ImageObject" as const, url: OG_IMAGE_URL },

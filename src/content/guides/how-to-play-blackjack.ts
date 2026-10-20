@@ -136,7 +136,7 @@ Single-deck, six-deck and eight-deck games move a few cells and a few hundredths
     {
       id: "not-here",
       title: "PVPspinArena does not deal blackjack",
-      body: `There is no 21 table, no strategy grid to tap, and no dealer soft-17 toggle on this site. The live games are Jackpot, Coinflip, Roulette, and P2P Slott. None of them hides the price behind a colour chart.
+      body: `There is no 21 table, no strategy grid to tap, and no dealer soft-17 toggle on this site. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. None of them hides the price behind a colour chart.
 
 - [Jackpot](/) — chance equals your stake divided by the pot.
 - [Coinflip](/coinflip) — a 50/50 bit with the fee in the open.
@@ -207,5 +207,5 @@ Counting is a later skill; the legal status of that skill is [is card counting i
     "house-edge",
     "is-card-counting-illegal",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

@@ -60,7 +60,7 @@ Deck composition is the reason the chart fails to travel. Casino basic strategy 
 | --- | --- | --- | --- | --- | --- |
 | 21 Blitz | not published | not published | not published | not published | not published |
 | House-banked blackjack or casino | inside the rules and paytable; no edge percent is set in this cell | the house | not published | not published | not published |
-| PvP Spin Arena | Roulette takes 5% from each winning payout. Purple and Silver carry about a 7.88% edge after that fee. A Jackpot or Coinflip pot is charged 5%. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, four games, with the seed committed before the result is shown | shown on the bet control |
+| PvP Spin Arena | Roulette takes 5% from each winning payout. Purple and Silver carry about a 7.88% edge after that fee. A Jackpot or Coinflip pot is charged 5%. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, five games, with the seed committed before the result is shown | shown on the bet control |
 
 The house row refuses a memorized blackjack percent. Those figures depend on rules this page has not pinned to the brand. The roulette line above is a priced wheel, not a 21 score.`,
     },

@@ -80,7 +80,7 @@ Instant “fortune wheel” originals sometimes use 20–30 wedges with multipli
     {
       id: "not-here",
       title: "PVPspinArena does not offer a money wheel",
-      body: `There is no Big Six and no branded WOF slot here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `There is no Big Six and no branded WOF slot here. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 - [Jackpot](/) — pot share is chance.
 - [Coinflip](/coinflip) — 50/50, fee published.
@@ -191,5 +191,5 @@ A live money-wheel with the same family of segments is [Dream Catcher](/guides/d
     "wheel-of-fortune-odds",
     "dream-catcher-game",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

@@ -4,7 +4,7 @@ const BASE_URL = "https://pvpspinarena.com";
 
 // Public, indexable static pages. Auth, account pages, prestige and
 // per-round game pages are intentionally excluded (they carry noindex).
-const STATIC_PATHS = [
+export const STATIC_PATHS = [
   "/",
   "/coinflip",
   "/roulette",
@@ -16,6 +16,8 @@ const STATIC_PATHS = [
   "/terms",
   "/privacy",
   "/responsible-gambling",
+  "/editorial",
+  "/leaderboards",
   "/guides",
 ];
 

@@ -21,7 +21,7 @@ export const guide: Guide = {
     "A fairness page you can recompute beats a marketing claim that outcomes are “provably fair.”",
     "A small deposit-and-withdraw test reveals more than a welcome-bonus headline.",
     "Licence seals are claims until you verify them on the regulator’s own register.",
-    "PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars; it is not a Stake clone and does not sell itself as a licensed US or UK casino.",
+    "PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars; it is not a Stake clone and does not sell itself as a licensed US or UK casino.",
   ],
   sections: [
     {
@@ -202,5 +202,5 @@ Do not let a shorter spelling inherit the famous name. [The shorter name beside 
     "bitstarz-review",
     "bitz-casino-review",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

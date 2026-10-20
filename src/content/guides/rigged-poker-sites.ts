@@ -22,7 +22,7 @@ export const guide: Guide = {
     "If you cannot name the poker software, you cannot tell who is responsible for the shuffle.",
     "A tiny site with a crowded lobby of instant, silent accounts is a reason to close the tab.",
     "Cheating hurts the other seats. This page will not teach anyone how to rig a game.",
-    "PVPspinArena does not run a poker room. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "PVPspinArena runs six-max No-Limit Hold'em. The other live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -189,5 +189,5 @@ Rigged poker sites are a trust problem you can often see from the footer, the ca
     "are-online-casinos-rigged",
     "garrett-adelstein",
   ],
-  updated: "2026-09-29",
+  updated: "2026-10-20",
 };

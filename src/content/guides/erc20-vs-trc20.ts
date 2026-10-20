@@ -36,7 +36,7 @@ export const guide: Guide = {
     {
       id: "choosing-a-network-without-a-fake-fee-table",
       title: "Choosing a network without a fake fee table",
-      body: 'Pick the network the receiver listed, not the network you wish they listed. If you hold the other version, the honest options are to withdraw on the network you hold only if the receiver also accepts it, or to exchange or convert through a service you trust so that you end up holding the version they accept. A conversion is a trade or a bridge-style move you choose on purpose, with fees shown before you confirm. It is not something you improvise by sending to a foreign address and hoping the ticker matches.\n\nWhen both networks are accepted, people compare cost, speed, and how comfortable they are with each chain. Those are real preferences. They still have to be read off the withdrawal screen today, because congestion and exchange pricing change. [Crypto casino deposit fees](/guides/crypto-casino-deposit-fees) separates the chain fee, the exchange fee, and any site surcharge. Use it when the question is "what am I paying," not when the question is "which standard is this token." [USDT casino](/guides/usdt-casino) is the place for how Tether deposits are treated at gambling sites, including the habit of listing several networks under one ticker.\n\nGambling is for adults 18 or older, or the age required where you live, and only with money you can afford to lose. Choosing a cheaper network does not change the house edge or the odds of a peer game. It only changes whether the chip arrives.\n\nPVPspinArena offers jackpot, coinflip, and roulette settled in USD. It is not an ERC-20 USDT cashier and it is not a TRC-20 USDT cashier. The published rail is USDC and ETH on Base. Deposit and payout wallets are separate. If you hold USDT, this comparison still matters at the exchange where you convert or withdraw, because picking the wrong USDT network there can strand the transfer before you ever reach a Base deposit. Follow the network name on the screen that is about to broadcast, every time.',
+      body: 'Pick the network the receiver listed, not the network you wish they listed. If you hold the other version, the honest options are to withdraw on the network you hold only if the receiver also accepts it, or to exchange or convert through a service you trust so that you end up holding the version they accept. A conversion is a trade or a bridge-style move you choose on purpose, with fees shown before you confirm. It is not something you improvise by sending to a foreign address and hoping the ticker matches.\n\nWhen both networks are accepted, people compare cost, speed, and how comfortable they are with each chain. Those are real preferences. They still have to be read off the withdrawal screen today, because congestion and exchange pricing change. [Crypto casino deposit fees](/guides/crypto-casino-deposit-fees) separates the chain fee, the exchange fee, and any site surcharge. Use it when the question is "what am I paying," not when the question is "which standard is this token." [USDT casino](/guides/usdt-casino) is the place for how Tether deposits are treated at gambling sites, including the habit of listing several networks under one ticker.\n\nGambling is for adults 18 or older, or the age required where you live, and only with money you can afford to lose. Choosing a cheaper network does not change the house edge or the odds of a peer game. It only changes whether the chip arrives.\n\nPVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker settled in USD. It is not an ERC-20 USDT cashier and it is not a TRC-20 USDT cashier. The published rail is USDC and ETH on Base. Deposit and payout wallets are separate. If you hold USDT, this comparison still matters at the exchange where you convert or withdraw, because picking the wrong USDT network there can strand the transfer before you ever reach a Base deposit. Follow the network name on the screen that is about to broadcast, every time.',
     },
     {
       id: "a-practical-check-before-you-confirm",
@@ -63,10 +63,13 @@ export const guide: Guide = {
     },
     {
       q: "Does PVPspinArena take ERC-20 or TRC-20 USDT?",
-      a: "PVPspinArena offers jackpot, coinflip, and roulette settled in USD, and its published deposit rail is USDC and ETH on Base, not USDT on Ethereum or TRON. Use the asset and network the cashier lists, and read the USDT casino guide if you are comparing Tether sites.",
+      a: "PVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker settled in USD, and its published deposit rail is USDC and ETH on Base, not USDT on Ethereum or TRON. Use the asset and network the cashier lists, and read the USDT casino guide if you are comparing Tether sites.",
     },
   ],
-  sources: [],
+    sources: [
+    { label: "EIP-20: Token Standard", url: "https://eips.ethereum.org/EIPS/eip-20" },
+    { label: "TRON docs — TRC-20", url: "https://developers.tron.network/docs/trc20" },
+  ],
   related: ["crypto-casino-deposit-fees", "usdt-casino"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

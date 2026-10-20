@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Virtual strips are weighted: a jackpot symbol can occupy one stop among hundreds.",
     "Most studio slots are certified RNG products, not commit-reveal games you can recompute.",
     "Bonus states hold a large share of RTP on many titles; the base game can be lean on purpose.",
-    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -219,5 +219,5 @@ Why a reel is built to feel “almost” is the [Skinner box](/guides/skinner-bo
     "crypto-slots",
     "skinner-box-slot-machines",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

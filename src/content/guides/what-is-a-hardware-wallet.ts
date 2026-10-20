@@ -36,7 +36,7 @@ export const guide: Guide = {
     {
       id: "what-the-device-does-not-do",
       title: "What the device does not do",
-      body: "A hardware wallet does not make a bad payment a good payment. If you confirm an address that belongs to a scammer, the chip will sign faithfully. If you approve a token permission you do not understand, the chip will sign that too, when the screen shows it and you accept. The device raises the cost of stealing the key. It does not understand your intent beyond the fields it can display.\n\nIt does not choose a network for you. Sending on the wrong chain is still your mistake. It also does not replace a small hot wallet for everyday spending. That split, including any casino connection, is covered in [cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet). This page will not walk through those patterns. Gambling is for adults 18 or older, or the age required where you live, and only with money you can afford to lose.\n\nIt does not prove that a website is honest. PVPspinArena offers jackpot, coinflip, and roulette settled in USD. Deposit and payout wallets are separate. A hardware device does not audit those games, and you do not need this device to understand that a deposit address and a payout address are different destinations. Check each one on a screen you trust.\n\nIt does not stay safe if you buy it from a stranger who preloaded a seed. Generate your own. It does not stay safe if you disable every warning in the companion app because the warnings slow you down. The warnings are the product.",
+      body: "A hardware wallet does not make a bad payment a good payment. If you confirm an address that belongs to a scammer, the chip will sign faithfully. If you approve a token permission you do not understand, the chip will sign that too, when the screen shows it and you accept. The device raises the cost of stealing the key. It does not understand your intent beyond the fields it can display.\n\nIt does not choose a network for you. Sending on the wrong chain is still your mistake. It also does not replace a small hot wallet for everyday spending. That split, including any casino connection, is covered in [cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet). This page will not walk through those patterns. Gambling is for adults 18 or older, or the age required where you live, and only with money you can afford to lose.\n\nIt does not prove that a website is honest. PVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker settled in USD. Deposit and payout wallets are separate. A hardware device does not audit those games, and you do not need this device to understand that a deposit address and a payout address are different destinations. Check each one on a screen you trust.\n\nIt does not stay safe if you buy it from a stranger who preloaded a seed. Generate your own. It does not stay safe if you disable every warning in the companion app because the warnings slow you down. The warnings are the product.",
     },
     {
       id: "how-to-check-a-receive-address",
@@ -66,7 +66,9 @@ export const guide: Guide = {
       a: "Brand differences belong on the Ledger versus Trezor page. Whether to connect a hardware device to a gambling site belongs on the cold wallet versus hot wallet page.",
     },
   ],
-  sources: [],
+    sources: [
+    { label: "ethereum.org — Ethereum wallets", url: "https://ethereum.org/en/wallets/" },
+  ],
   related: ["cold-wallet-vs-hot-wallet", "ledger-vs-trezor"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

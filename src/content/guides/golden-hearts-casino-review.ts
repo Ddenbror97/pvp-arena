@@ -63,7 +63,7 @@ A golden outline around a heart is ink. Ink does not specify which hands pay, or
 | --- | --- | --- | --- | --- | --- |
 | Golden hearts casino | not published | not published | not published | not published | not published |
 | A house-banked casino | not published | the house | not published | not published | not published |
-| PvP Spin Arena | Jackpot and Coinflip take 5% of the pot. Roulette takes 5% of the winning payout. Slott takes 10% of a win | another player, or the wheel | balance updates when the round settles | yes on those four games, via a seed committed beforehand | shown on the bet control |
+| PvP Spin Arena | Jackpot and Coinflip take 5% of the pot. Roulette takes 5% of the winning payout. Slott takes 10% of a win | another player, or the wheel | balance updates when the round settles | yes on those five games, via a seed committed beforehand | shown on the bet control |
 
 No golden hearts sweeps rate is printed here, because none was read off their screen for this assignment. A forum percent would be the same class of error as a borrowed poker chart.
 

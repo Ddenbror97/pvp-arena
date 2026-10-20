@@ -120,7 +120,7 @@ Supervisors usually hold a higher-level gaming licence or registration than deal
 
 ### How the same idea works on PVPspinArena
 
-PVPspinArena has no pit, no dealer and no supervisor at a table, because nobody on the house side handles chips. Its four games, [Jackpot](/), Coinflip, Roulette, and P2P Slott, settle from committed seeds, and anyone can re-check a finished round on the [fairness](/fairness) page. That replaces the pit's human controls with arithmetic you can verify yourself: Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee you can check rather than trust. Play is 18+.`,
+PVPspinArena has no pit and no supervisor handling chips. [Poker](/poker) shows an animated dealer; the shuffle is the committed protocol, not a person in a pit. Jackpot, Coinflip, Roulette, P2P Slott, and that poker table settle from committed seeds, and anyone can re-check a finished round on the [fairness](/fairness) page. Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Poker takes 5% of a pot only after a flop. Play is 18+.`,
     },
   ],
   faqs: [

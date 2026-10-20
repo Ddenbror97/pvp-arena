@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Advertised slot RTP often sits between 94% and 98%, which is a 2% to 6% house edge per spin.",
     "Volatility describes how lumpy that RTP is: low-volatility games hit small wins often, high-volatility games pay rarely and large.",
     "Most studio slots are certified RNG products, not commit-reveal games you can verify spin by spin.",
-    "PVPspinArena's slot game is P2P Slott, a 1v1 duel. Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -126,7 +126,7 @@ If you want the pot you can actually measure, open [Jackpot](/) or read the [gam
     {
       id: "not-here",
       title: "The slot game here is P2P Slott",
-      body: `The reel game is [P2P Slott](/slott), a 1v1 duel on a 5 by 4 grid. The live set is Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `The reel game is [P2P Slott](/slott), a 1v1 duel on a 5 by 4 grid. The live set is Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 That is a product choice, not a moral ranking. Slots are a fine entertainment format if you treat RTP as a cost and volatility as a warning. They are a poor format if you want to verify a result or compute your chance from the screen in front of you.
 
@@ -189,7 +189,7 @@ PVPspinArena's slot game is P2P Slott, a 1v1 duel. If you want published odds an
     },
     {
       q: "Does PVPspinArena have crypto slots?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide exists so you can judge slots you see on other sites.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This guide exists so you can judge slots you see on other sites.",
     },
     {
       q: "Do slot bonuses raise RTP?",
@@ -213,5 +213,5 @@ PVPspinArena's slot game is P2P Slott, a 1v1 duel. If you want published odds an
     "golden-goddess-slot",
     "zeus-vs-hades-slot",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

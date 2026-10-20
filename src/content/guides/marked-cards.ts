@@ -100,7 +100,7 @@ Card counting is a different subject. Counting uses cards that have already been
       title: "A deck you can check without touching it",
       body: `Physical cards have to be trusted in the room: the seal, the shuffle, the faces, the people. A hashed player-versus-player round moves the check to a procedure you can rerun after the result.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott settled in US dollars. There is no paper deck on those games, so there is no back to mark and no dealer to partner with. Coinflip is a 50/50 between two players. Roulette is a 33-slot wheel, 16 purple and 16 silver paying 2x and 1 green paying 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Jackpot gives a win chance equal to your share of the pot, and the winner takes the pot minus any fee shown before entry. The seeds behind a settled round are on the [fairness](/fairness) page.
+PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settled in US dollars. There is no paper deck on those games, so there is no back to mark and no dealer to partner with. Coinflip is a 50/50 between two players. Roulette is a 33-slot wheel, 16 purple and 16 silver paying 2x and 1 green paying 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Jackpot gives a win chance equal to your share of the pot, and the winner takes the pot minus any fee shown before entry. The seeds behind a settled round are on the [fairness](/fairness) page.
 
 Adults only, 18+. Limits and help are on the [responsible gambling](/responsible-gambling) page. For an honest home deck, [how to shuffle cards](/guides/how-to-shuffle-cards) covers why one sloppy mix is not a shuffle. Change the deck when the backs stop looking alike.
 
@@ -147,5 +147,5 @@ See also [hole carding](/guides/hole-carding), [past posting](/guides/past-posti
     "casino-surveillance",
     "how-to-shuffle-cards",
   ],
-  updated: "2026-09-29",
+  updated: "2026-10-20",
 };

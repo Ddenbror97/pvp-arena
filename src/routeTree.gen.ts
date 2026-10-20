@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CoinflipRouteImport } from './routes/coinflip'
+import { Route as EditorialRouteImport } from './routes/editorial'
 import { Route as FairnessRouteImport } from './routes/fairness'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
@@ -47,8 +48,8 @@ import { Route as LeaderboardsPUsernameRouteImport } from './routes/leaderboards
 import { Route as ApiPublicBtcpayWebhookRouteImport } from './routes/api/public/btcpay/webhook'
 import { Route as ApiPublicCronBtcpayReconcileRouteImport } from './routes/api/public/cron/btcpay-reconcile'
 import { Route as ApiPublicCronCryptoDepositsRouteImport } from './routes/api/public/cron/crypto-deposits'
-import { Route as ApiPublicCronCryptoSweepsRouteImport } from './routes/api/public/cron/crypto-sweeps'
 import { Route as ApiPublicCronCryptoReconcileRouteImport } from './routes/api/public/cron/crypto-reconcile'
+import { Route as ApiPublicCronCryptoSweepsRouteImport } from './routes/api/public/cron/crypto-sweeps'
 import { Route as ApiPublicCronCryptoWithdrawalsRouteImport } from './routes/api/public/cron/crypto-withdrawals'
 import { Route as ApiPublicDiditWebhookRouteImport } from './routes/api/public/didit/webhook'
 import { Route as ApiPublicNowpaymentsIpnRouteImport } from './routes/api/public/nowpayments/ipn'
@@ -76,6 +77,11 @@ const AuthRoute = AuthRouteImport.update({
 const CoinflipRoute = CoinflipRouteImport.update({
   id: '/coinflip',
   path: '/coinflip',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EditorialRoute = EditorialRouteImport.update({
+  id: '/editorial',
+  path: '/editorial',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FairnessRoute = FairnessRouteImport.update({
@@ -248,16 +254,16 @@ const ApiPublicCronCryptoDepositsRoute =
     path: '/api/public/cron/crypto-deposits',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicCronCryptoSweepsRoute =
-  ApiPublicCronCryptoSweepsRouteImport.update({
-    id: '/api/public/cron/crypto-sweeps',
-    path: '/api/public/cron/crypto-sweeps',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicCronCryptoReconcileRoute =
   ApiPublicCronCryptoReconcileRouteImport.update({
     id: '/api/public/cron/crypto-reconcile',
     path: '/api/public/cron/crypto-reconcile',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicCronCryptoSweepsRoute =
+  ApiPublicCronCryptoSweepsRouteImport.update({
+    id: '/api/public/cron/crypto-sweeps',
+    path: '/api/public/cron/crypto-sweeps',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicCronCryptoWithdrawalsRoute =
@@ -288,6 +294,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/coinflip': typeof CoinflipRouteWithChildren
+  '/editorial': typeof EditorialRoute
   '/fairness': typeof FairnessRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
@@ -321,8 +328,8 @@ export interface FileRoutesByFullPath {
   '/api/public/btcpay/webhook': typeof ApiPublicBtcpayWebhookRoute
   '/api/public/cron/btcpay-reconcile': typeof ApiPublicCronBtcpayReconcileRoute
   '/api/public/cron/crypto-deposits': typeof ApiPublicCronCryptoDepositsRoute
-  '/api/public/cron/crypto-sweeps': typeof ApiPublicCronCryptoSweepsRoute
   '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
+  '/api/public/cron/crypto-sweeps': typeof ApiPublicCronCryptoSweepsRoute
   '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
   '/api/public/didit/webhook': typeof ApiPublicDiditWebhookRoute
   '/api/public/nowpayments/ipn': typeof ApiPublicNowpaymentsIpnRoute
@@ -333,6 +340,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/coinflip': typeof CoinflipRouteWithChildren
+  '/editorial': typeof EditorialRoute
   '/fairness': typeof FairnessRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
@@ -366,8 +374,8 @@ export interface FileRoutesByTo {
   '/api/public/btcpay/webhook': typeof ApiPublicBtcpayWebhookRoute
   '/api/public/cron/btcpay-reconcile': typeof ApiPublicCronBtcpayReconcileRoute
   '/api/public/cron/crypto-deposits': typeof ApiPublicCronCryptoDepositsRoute
-  '/api/public/cron/crypto-sweeps': typeof ApiPublicCronCryptoSweepsRoute
   '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
+  '/api/public/cron/crypto-sweeps': typeof ApiPublicCronCryptoSweepsRoute
   '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
   '/api/public/didit/webhook': typeof ApiPublicDiditWebhookRoute
   '/api/public/nowpayments/ipn': typeof ApiPublicNowpaymentsIpnRoute
@@ -380,6 +388,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/coinflip': typeof CoinflipRouteWithChildren
+  '/editorial': typeof EditorialRoute
   '/fairness': typeof FairnessRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
@@ -413,8 +422,8 @@ export interface FileRoutesById {
   '/api/public/btcpay/webhook': typeof ApiPublicBtcpayWebhookRoute
   '/api/public/cron/btcpay-reconcile': typeof ApiPublicCronBtcpayReconcileRoute
   '/api/public/cron/crypto-deposits': typeof ApiPublicCronCryptoDepositsRoute
-  '/api/public/cron/crypto-sweeps': typeof ApiPublicCronCryptoSweepsRoute
   '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
+  '/api/public/cron/crypto-sweeps': typeof ApiPublicCronCryptoSweepsRoute
   '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
   '/api/public/didit/webhook': typeof ApiPublicDiditWebhookRoute
   '/api/public/nowpayments/ipn': typeof ApiPublicNowpaymentsIpnRoute
@@ -427,6 +436,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/coinflip'
+    | '/editorial'
     | '/fairness'
     | '/how-it-works'
     | '/leaderboards'
@@ -460,8 +470,8 @@ export interface FileRouteTypes {
     | '/api/public/btcpay/webhook'
     | '/api/public/cron/btcpay-reconcile'
     | '/api/public/cron/crypto-deposits'
-    | '/api/public/cron/crypto-sweeps'
     | '/api/public/cron/crypto-reconcile'
+    | '/api/public/cron/crypto-sweeps'
     | '/api/public/cron/crypto-withdrawals'
     | '/api/public/didit/webhook'
     | '/api/public/nowpayments/ipn'
@@ -472,6 +482,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/coinflip'
+    | '/editorial'
     | '/fairness'
     | '/how-it-works'
     | '/leaderboards'
@@ -505,8 +516,8 @@ export interface FileRouteTypes {
     | '/api/public/btcpay/webhook'
     | '/api/public/cron/btcpay-reconcile'
     | '/api/public/cron/crypto-deposits'
-    | '/api/public/cron/crypto-sweeps'
     | '/api/public/cron/crypto-reconcile'
+    | '/api/public/cron/crypto-sweeps'
     | '/api/public/cron/crypto-withdrawals'
     | '/api/public/didit/webhook'
     | '/api/public/nowpayments/ipn'
@@ -518,6 +529,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/coinflip'
+    | '/editorial'
     | '/fairness'
     | '/how-it-works'
     | '/leaderboards'
@@ -551,8 +563,8 @@ export interface FileRouteTypes {
     | '/api/public/btcpay/webhook'
     | '/api/public/cron/btcpay-reconcile'
     | '/api/public/cron/crypto-deposits'
-    | '/api/public/cron/crypto-sweeps'
     | '/api/public/cron/crypto-reconcile'
+    | '/api/public/cron/crypto-sweeps'
     | '/api/public/cron/crypto-withdrawals'
     | '/api/public/didit/webhook'
     | '/api/public/nowpayments/ipn'
@@ -565,6 +577,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   CoinflipRoute: typeof CoinflipRouteWithChildren
+  EditorialRoute: typeof EditorialRoute
   FairnessRoute: typeof FairnessRoute
   HowItWorksRoute: typeof HowItWorksRoute
   LeaderboardsRoute: typeof LeaderboardsRouteWithChildren
@@ -586,8 +599,8 @@ export interface RootRouteChildren {
   ApiPublicBtcpayWebhookRoute: typeof ApiPublicBtcpayWebhookRoute
   ApiPublicCronBtcpayReconcileRoute: typeof ApiPublicCronBtcpayReconcileRoute
   ApiPublicCronCryptoDepositsRoute: typeof ApiPublicCronCryptoDepositsRoute
-  ApiPublicCronCryptoSweepsRoute: typeof ApiPublicCronCryptoSweepsRoute
   ApiPublicCronCryptoReconcileRoute: typeof ApiPublicCronCryptoReconcileRoute
+  ApiPublicCronCryptoSweepsRoute: typeof ApiPublicCronCryptoSweepsRoute
   ApiPublicCronCryptoWithdrawalsRoute: typeof ApiPublicCronCryptoWithdrawalsRoute
   ApiPublicDiditWebhookRoute: typeof ApiPublicDiditWebhookRoute
   ApiPublicNowpaymentsIpnRoute: typeof ApiPublicNowpaymentsIpnRoute
@@ -629,6 +642,13 @@ declare module '@tanstack/react-router' {
       path: '/coinflip'
       fullPath: '/coinflip'
       preLoaderRoute: typeof CoinflipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/editorial': {
+      id: '/editorial'
+      path: '/editorial'
+      fullPath: '/editorial'
+      preLoaderRoute: typeof EditorialRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fairness': {
@@ -862,18 +882,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronCryptoDepositsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/cron/crypto-sweeps': {
-      id: '/api/public/cron/crypto-sweeps'
-      path: '/api/public/cron/crypto-sweeps'
-      fullPath: '/api/public/cron/crypto-sweeps'
-      preLoaderRoute: typeof ApiPublicCronCryptoSweepsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/cron/crypto-reconcile': {
       id: '/api/public/cron/crypto-reconcile'
       path: '/api/public/cron/crypto-reconcile'
       fullPath: '/api/public/cron/crypto-reconcile'
       preLoaderRoute: typeof ApiPublicCronCryptoReconcileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cron/crypto-sweeps': {
+      id: '/api/public/cron/crypto-sweeps'
+      path: '/api/public/cron/crypto-sweeps'
+      fullPath: '/api/public/cron/crypto-sweeps'
+      preLoaderRoute: typeof ApiPublicCronCryptoSweepsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/cron/crypto-withdrawals': {
@@ -982,6 +1002,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   CoinflipRoute: CoinflipRouteWithChildren,
+  EditorialRoute: EditorialRoute,
   FairnessRoute: FairnessRoute,
   HowItWorksRoute: HowItWorksRoute,
   LeaderboardsRoute: LeaderboardsRouteWithChildren,
@@ -1003,8 +1024,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBtcpayWebhookRoute: ApiPublicBtcpayWebhookRoute,
   ApiPublicCronBtcpayReconcileRoute: ApiPublicCronBtcpayReconcileRoute,
   ApiPublicCronCryptoDepositsRoute: ApiPublicCronCryptoDepositsRoute,
-  ApiPublicCronCryptoSweepsRoute: ApiPublicCronCryptoSweepsRoute,
   ApiPublicCronCryptoReconcileRoute: ApiPublicCronCryptoReconcileRoute,
+  ApiPublicCronCryptoSweepsRoute: ApiPublicCronCryptoSweepsRoute,
   ApiPublicCronCryptoWithdrawalsRoute: ApiPublicCronCryptoWithdrawalsRoute,
   ApiPublicDiditWebhookRoute: ApiPublicDiditWebhookRoute,
   ApiPublicNowpaymentsIpnRoute: ApiPublicNowpaymentsIpnRoute,

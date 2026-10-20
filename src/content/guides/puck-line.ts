@@ -29,7 +29,7 @@ Hockey scores in single goals, so 1.5 is a wide hook relative to a typical final
 
 Start with [Sports betting guides](/guides/topics/sports-betting) if the menu of prices is still new. A [moneyline](/guides/moneyline-betting-explained) asks only who wins. The puck line asks by how many. [Over/under betting](/guides/over-under-betting) asks a third question: how many total goals, not who covered.
 
-Adults 18+ only. This is not legal advice and not a promo. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott. It does not sell a puck line. [Fairness](/fairness) checks those hashed rounds. [Jackpot](/) is a shared pot, not an NHL handicap. If a session turns into chasing, stop and use [responsible gambling](/responsible-gambling).`,
+Adults 18+ only. This is not legal advice and not a promo. PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. It does not sell a puck line. [Fairness](/fairness) checks those hashed rounds. [Jackpot](/) is a shared pot, not an NHL handicap. If a session turns into chasing, stop and use [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "settlement",
@@ -155,5 +155,5 @@ Keep the lesson in one sentence: minus 1.5 needs two goals, plus 1.5 survives a 
     "over-under-betting",
     "implied-probability",
   ],
-  updated: "2026-10-06",
+  updated: "2026-10-20",
 };

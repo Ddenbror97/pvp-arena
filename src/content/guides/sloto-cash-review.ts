@@ -73,7 +73,7 @@ Do not translate "not published" into cheap or expensive. Both words would be a 
 
 Our minimum is the figure on the bet control at the moment you play. It is not a site-wide number this guide is allowed to freeze.
 
-Their randomizer, if described anywhere, was not confirmed for this article. The provably fair cell stays not published. Our yes applies to our four games only.
+Their randomizer, if described anywhere, was not confirmed for this article. The provably fair cell stays not published. Our yes applies to our five games only.
 
 [What separates a crypto cashier from a slogan](/guides/what-is-a-crypto-casino) helps when the rail is coins. A brand that says cash might still settle in chips, cards, or coins. The deposit screen is the authority.`,
     },

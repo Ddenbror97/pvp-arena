@@ -60,7 +60,7 @@ Artists sell composition, placement, and healing advice. They do not sell probab
 | --- | --- | --- | --- | --- | --- |
 | Gambling tattoo | not a wager; shop price not published | nobody at a table | not published | not a game | not a bet |
 | House-banked casino | inside the paytable; no single figure is set here | the house | not published | not published | not published |
-| PvP Spin Arena | Coinflip and Jackpot take 5% of the pot; winner receives 95%. Roulette takes 5% from a winning payout. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, four games, and the seed is committed before the result | shown on the bet control |
+| PvP Spin Arena | Coinflip and Jackpot take 5% of the pot; winner receives 95%. Roulette takes 5% from a winning payout. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, five games, and the seed is committed before the result | shown on the bet control |
 
 The coin does not look at your sleeve. Two players commit, the seed was committed earlier, and 5% of the pot leaves at settlement. A fresher tattoo and a faded tattoo produce the same percent. That is the point of putting the fee in a culture article: culture is allowed to be meaningful and still irrelevant to the arithmetic.
 

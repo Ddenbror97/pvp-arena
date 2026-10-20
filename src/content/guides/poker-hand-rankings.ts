@@ -151,7 +151,7 @@ If you want the streets that produce these hands, stay in this cluster. If you w
       title: "Summary: name five cards, then stop arguing",
       body: `Poker hand rankings are an ordered catalogue. Higher category wins. Kickers break ties. Suits do not. Full houses beat flushes. Five cards, not six.
 
-Use the table at showdown and when you name the nuts. Use a budget when you sit. PVPspinArena is not a poker room. If rankings became a reason to chase “one more hand” you cannot afford, stop. Read [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). This cluster is 18+.
+Use the table at showdown and when you name the nuts. Use a budget when you sit. PVPspinArena runs six-max No-Limit Hold'em, and the same rankings decide a showdown there. If rankings became a reason to chase “one more hand” you cannot afford, stop. Read [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). This cluster is 18+.
 
 If you remember only three lines: full house beats flush, five cards not six, suits do not break ties. Those three stop the expensive misreads. The rest of the table is still worth memorising. Those three are worth not arguing about at 1 a.m. Name the five cards, push the pot, and sit the next hand only if the note says you still can.
 

@@ -106,7 +106,7 @@ Licensed iGaming or a state sportsbook operates under a named regulator. You sti
 
 A sweepstakes casino argues it is entertainment plus a promotion. The complaint path is often the operator, a card network, and a consumer-protection office. That is a different stack.
 
-A [crypto casino](/guides/what-is-a-crypto-casino) such as this site’s category neighbour uses digital assets. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It is not Gold Coins. Crypto does not erase geography. [No-KYC casino](/guides/no-kyc-casino) pages that say “legal everywhere” are selling a mood, not a statute.
+A [crypto casino](/guides/what-is-a-crypto-casino) such as this site’s category neighbour uses digital assets. PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It is not Gold Coins. Crypto does not erase geography. [No-KYC casino](/guides/no-kyc-casino) pages that say “legal everywhere” are selling a mood, not a statute.
 
 Use the product name that matches the cashier in front of you. Then apply that product’s availability rules. Mixing the names is how people quote a sportsbook licence at a Sweeps Coin redeem desk.
 
@@ -177,5 +177,5 @@ A state map does not review a cashier. [ClubWPT Gold's poker-flavored club](/gui
     "online-casino-legal-florida",
     "online-casino-legal-maryland",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

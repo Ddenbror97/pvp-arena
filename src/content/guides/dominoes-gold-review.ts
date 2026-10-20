@@ -60,7 +60,7 @@ A rake does not become a tip you can ignore because you are better than the tabl
 | --- | --- | --- | --- | --- | --- |
 | Dominoes Gold | not published | other players, if the table is multiplayer | not published | not published | not published |
 | House-banked casino | paytable price, no single edge written here | the house | not published | not published | not published |
-| PvP Spin Arena | Coinflip and Jackpot take 5% of the pot; the winner receives 95%. Roulette takes 5% off a winning payout. Slott keeps 10% on a win | other players | balance updates when the round settles | yes on four games, from a seed committed early | shown on the bet control |
+| PvP Spin Arena | Coinflip and Jackpot take 5% of the pot; the winner receives 95%. Roulette takes 5% off a winning payout. Slott keeps 10% on a win | other players | balance updates when the round settles | yes on five games, from a seed committed early | shown on the bet control |
 
 If the tile app prints a percentage in its help text, check it against the prize sum on the table you are joining. A help-text percent that does not match the sum is a brochure. The sum is the rake you are about to pay. This review will not pick a brochure percent and call it current.
 

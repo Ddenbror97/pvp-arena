@@ -129,7 +129,7 @@ Free slots aimed at adults can still sit next to real-money cashiers. If you are
     {
       id: "not-here",
       title: "The slot game here is P2P Slott",
-      body: `There is no free reel demo. The reel game is [P2P Slott](/slott), a 1v1 duel on a 5 by 4 grid. The live set is Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `There is no free reel demo. The reel game is [P2P Slott](/slott), a 1v1 duel on a 5 by 4 grid. The live set is Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 - [Jackpot](/) — player pot, chance = your stake divided by the pot.
 - [Coinflip](/coinflip) — 50/50 duel, fee published.
@@ -185,7 +185,7 @@ If stopping is already hard, use [how to stop gambling](/guides/how-to-stop-gamb
     },
     {
       q: "Does PVPspinArena have free slots?",
-      a: "No. PVPspinArena does not offer demo slots. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. PVPspinArena does not offer demo slots. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
     },
   ],
   sources: [
@@ -204,5 +204,5 @@ If stopping is already hard, use [how to stop gambling](/guides/how-to-stop-gamb
     "rtp-explained",
     "crypto-slots",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

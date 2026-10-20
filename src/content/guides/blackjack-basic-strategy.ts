@@ -122,7 +122,7 @@ If blackjack or any other game is becoming hard to put down, use the [responsibl
     {
       id: "not-here",
       title: "PVPspinArena does not deal blackjack",
-      body: `There is no 21 table and no strategy chart to memorise here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott. None of them has a hidden “correct play” matrix: the prices are on the screen.
+      body: `There is no 21 table and no strategy chart to memorise here. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. None of them has a hidden “correct play” matrix: the prices are on the screen.
 
 - [Jackpot](/) — chance = your stake / pot.
 - [Coinflip](/coinflip) — 50/50, fee in the open.
@@ -211,5 +211,5 @@ The research line that produced charts and counts is summarised on [Edward Thorp
     "martingale-calculator",
     "edward-thorp",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

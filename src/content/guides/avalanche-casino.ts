@@ -30,7 +30,7 @@ Avalanche is not one ledger. The X-Chain (exchange), P-Chain (platform / validat
 
 This guide lives with other rails in [crypto payments](/guides/topics/crypto-payments). It is the Avalanche twin of the [Solana casino](/guides/solana-casino) explainer: teach the chain, then show why this site is not on it.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott. Deposits are on-chain Bitcoin, and USDC and ETH on Base. It is not an AVAX casino, not a C-Chain casino, and it will not credit a Snowtrace transaction.`,
+PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. Deposits are on-chain Bitcoin, and USDC and ETH on Base. It is not an AVAX casino, not a C-Chain casino, and it will not credit a Snowtrace transaction.`,
     },
     {
       id: "c-chain-fees",
@@ -203,5 +203,5 @@ PVPspinArena is not an Avalanche casino. Fund USDC or ETH on Base, then deposit.
     "base-vs-ethereum",
     "ethereum-gambling",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

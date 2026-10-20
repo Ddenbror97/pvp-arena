@@ -134,7 +134,7 @@ Roobet's interface is built to feel quick. Add one sentence in the note about a 
     },
     {
       q: "Does this site offer Roobet games?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott, with USDC or ETH on Base.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, with USDC or ETH on Base.",
     },
   ],
   sources: [
@@ -154,7 +154,7 @@ Roobet's interface is built to feel quick. Add one sentence in the note about a 
     "house-edge",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-20",
   cta: {
     title: "A pot is not a lobby",
     text: "Roobet is someone else's casino. PVPspinArena only runs Jackpot, Coinflip and Roulette between players, with USDC or ETH on Base.",

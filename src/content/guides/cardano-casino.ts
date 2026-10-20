@@ -100,13 +100,13 @@ PVPspinArena still does not accept ADA. A successful rehearsal somewhere else do
 
 If a casino blocks your country, stop. This page will not describe a bypass. If you are sending ADA to chase a loss from another coin, stop. The chain fee being small is not a reason to continue.
 
-A useful session ends with the float you set aside, whether that float comes home or not. [How it works](/how-it-works) describes the four games on this site. It does not describe a ADA lobby, because there is not one.`,
+A useful session ends with the float you set aside, whether that float comes home or not. [How it works](/how-it-works) describes the five games on this site. It does not describe a ADA lobby, because there is not one.`,
     },
   ],
   faqs: [
     {
       q: "Does a Cardano casino accept MetaMask?",
-      a: "Not for native ADA. MetaMask is built for Ethereum-style networks. Use a Cardano wallet unless the casino clearly asks for a wrapped token on a network MetaMask actually has.",
+      a: "Not for native ADA. MetaMask's getting-started page, checked 20 October 2026, names Ethereum, Solana, and Bitcoin, and does not name Cardano. Use a Cardano wallet unless the casino clearly asks for a wrapped token on a network the wallet actually shows.",
     },
     {
       q: "Are Cardano fees the house edge?",
@@ -134,6 +134,10 @@ A useful session ends with the float you set aside, whether that float comes hom
       label: "GambleAware",
       url: "https://www.gambleaware.org/",
     },
+    {
+      label: "MetaMask Help Center — Getting started, checked 20 October 2026",
+      url: "https://support.metamask.io/start/getting-started-with-metamask/",
+    },
   ],
   related: [
     "ethereum-gambling",
@@ -142,7 +146,7 @@ A useful session ends with the float you set aside, whether that float comes hom
     "crypto-casino-withdrawals",
     "usdc-casino",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-20",
   cta: {
     title: "This cashier is Base",
     text: "PVPspinArena does not take ADA. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars. A ADA balance in another wallet is not a deposit here.",

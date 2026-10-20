@@ -26,7 +26,7 @@ export const guide: Guide = {
 
 People mix USDC up with USDT and with "crypto dollars" invented by a gambling brand. Circle is the issuer. Tether issues USDT. A casino that shows $10.00 after a 10 USDC deposit is keeping its own ledger; the tokens themselves sat in the deposit address.
 
-This page is part of the [crypto payments](/guides/topics/crypto-payments) guides. It is written for adults aged 18 or over who want to understand the coin before they send it. PVPspinArena uses USDC as a deposit asset for Jackpot, Coinflip, Roulette, and P2P Slott. It is not a poker room, sportsbook or lottery, and it does not take USDT. On-chain Bitcoin is a separate deposit.
+This page is part of the [crypto payments](/guides/topics/crypto-payments) guides. It is written for adults aged 18 or over who want to understand the coin before they send it. PVPspinArena uses USDC as a deposit asset for Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. It is not a sportsbook or a lottery, and it does not take USDT. On-chain Bitcoin is a separate deposit.
 
 If you need the broader category first, start with [what is a stablecoin](/guides/what-is-a-stablecoin). If you already know you will deposit here, the [USDC casino](/guides/usdc-casino) guide walks the send and cashout steps.`,
     },

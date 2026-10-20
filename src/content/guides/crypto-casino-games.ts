@@ -21,7 +21,7 @@ export const guide: Guide = {
     {
       id: "house-banked-games-and-peer-to-peer-pots",
       title: "House-banked games and peer-to-peer pots",
-      body: "In a house-banked game the operator is the counterparty. You win if the published outcome hits, and the paytable says what you receive. The operator can offer that bet because the paytable, over many rounds, is built to retain a margin. You do not need a secret formula to use that fact. You need the paytable, and you need to believe the draw follows the rules you were shown.\n\nIn a peer-to-peer game the other players fund the prize. Jackpot-style pots and matched coinflips work this way when the site says so. The operator runs the round, holds the stakes, and reveals a result. Its income, if it takes one, should be a fee you can see before you enter. If the fee is missing from the screen and missing from the rules, you cannot price the game.\n\nRoulette-style wheels can be either, depending on the site. Some wheels are house games with fixed multipliers. Some are player pots. The art on the tile will not tell you. The rules will. PVPspinArena offers four games: jackpot, coinflip, roulette, and P2P Slott, and it settles them in US dollars. Jackpot and coinflip are player pots. Roulette on that site is a wheel with a published paytable. The site does not offer house-banked slots, sports betting, crash, craps, baccarat, or sweepstakes, so a guide to those products is about the wider market, not about that lobby.\n\nMixing the two models in one balance is normal. Mixing them without labels is not. Before you move a balance from a peer-to-peer game into a house game, reread the payout. You are changing who you are betting against.",
+      body: "In a house-banked game the operator is the counterparty. You win if the published outcome hits, and the paytable says what you receive. The operator can offer that bet because the paytable, over many rounds, is built to retain a margin. You do not need a secret formula to use that fact. You need the paytable, and you need to believe the draw follows the rules you were shown.\n\nIn a peer-to-peer game the other players fund the prize. Jackpot-style pots and matched coinflips work this way when the site says so. The operator runs the round, holds the stakes, and reveals a result. Its income, if it takes one, should be a fee you can see before you enter. If the fee is missing from the screen and missing from the rules, you cannot price the game.\n\nRoulette-style wheels can be either, depending on the site. Some wheels are house games with fixed multipliers. Some are player pots. The art on the tile will not tell you. The rules will. PVPspinArena offers five games: jackpot, coinflip, roulette, P2P Slott, and six-max No-Limit Hold'em, and it settles them in US dollars. Jackpot, coinflip, and poker are player pots. Poker takes 5% of a pot only after a flop. Roulette on that site is a wheel with a published paytable. The site does not offer house-banked slots, sports betting, crash, craps, baccarat, or sweepstakes, so a guide to those products is about the wider market, not about that lobby.\n\nMixing the two models in one balance is normal. Mixing them without labels is not. Before you move a balance from a peer-to-peer game into a house game, reread the payout. You are changing who you are betting against.",
     },
     {
       id: "how-a-round-is-settled",
@@ -63,10 +63,10 @@ export const guide: Guide = {
     },
     {
       q: "Can every crypto site offer every game?",
-      a: "No. Each operator chooses a catalog, and some products are limited to a few games. PVPspinArena offers jackpot, coinflip, and roulette, settled in US dollars. It does not offer house-banked slots, sports betting, crash, craps, baccarat, or sweepstakes.",
+      a: "No. Each operator chooses a catalog, and some products are limited to a few games. PVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker, settled in US dollars. It does not offer house-banked slots, sports betting, crash, craps, baccarat, or sweepstakes.",
     },
   ],
   sources: [],
   related: ["online-casino-games", "best-casino-game-odds"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

@@ -10,7 +10,7 @@ export const guide: Guide = {
     "How a dice duel works: two totals compared, what ties do to the price, and why a “higher roll wins” button is not a fair 50/50.",
   h1: "Dice duel: two-cube rules, ties and the house take",
   answer:
-    "A dice duel is a showdown of two rolls — usually two dice each, sometimes one. Higher total wins. If ties push and the winner is paid even money, the game is fair before any fee. If ties lose, or the house takes ties, the keep equals the tie rate (about 11.3% for 2d6 vs 2d6). PVPspinArena does not offer a dice duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "A dice duel is a showdown of two rolls — usually two dice each, sometimes one. Higher total wins. If ties push and the winner is paid even money, the game is fair before any fee. If ties lose, or the house takes ties, the keep equals the tie rate (about 11.3% for 2d6 vs 2d6). PVPspinArena does not offer a dice duel; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   facts: [
     "Two independent 2d6 totals tie in 146 of 1,296 ordered outcomes, about 11.27%.",
     "If ties push and winners take 2x, expected return is 100% before a commission.",
@@ -80,7 +80,7 @@ If the UI says “dice war” and hides the tie line in a footnote, assume the e
     {
       id: "not-here",
       title: "PVPspinArena does not offer a dice duel",
-      body: `There is no two-cube showdown here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `There is no two-cube showdown here. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 - [Jackpot](/) — pot share is chance.
 - [Coinflip](/coinflip) — a single 50/50 bit, a 5% pot fee, no tie-eat.
@@ -164,7 +164,7 @@ Cap rematches. One hundred $6 ties-lose 2d6 duels is $600 through 11.27%, about 
     },
     {
       q: "Does PVPspinArena have a dice duel?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide prices duel buttons you will see elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This guide prices duel buttons you will see elsewhere.",
     },
     {
       q: "What should I read first on the help screen?",
@@ -189,5 +189,5 @@ Cap rematches. One hundred $6 ties-lose 2d6 duels is $600 through 11.27%, about 
     "house-edge",
     "online-casino-games",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

@@ -60,7 +60,7 @@ Skill does not cancel a rake. If you win 55% of even matches and the take is lar
 | --- | --- | --- | --- | --- | --- |
 | Pool Payday | not published | other entrants, if the lobby matches that way | not published | not published | not published |
 | House-banked casino | set inside the paytable; no single figure is printed here | the house | not published | not published | not published |
-| PvP Spin Arena | 5% of a Jackpot or Coinflip pot; winner receives 95%. Roulette takes 5% from each winning payout. Slott keeps 10% of a win | other players | balance updates when the round settles | yes, the four games commit a seed before the draw | shown on the bet control |
+| PvP Spin Arena | 5% of a Jackpot or Coinflip pot; winner receives 95%. Roulette takes 5% from each winning payout. Slott keeps 10% of a win | other players | balance updates when the round settles | yes, the five games commit a seed before the draw | shown on the bet control |
 
 [The price built into the odds](/guides/house-edge) explains the house row in general. Pool Payday's row stays unpublished until the app itself prints a cut. Do not paste a percentage from a forum into that cell and call it research.
 

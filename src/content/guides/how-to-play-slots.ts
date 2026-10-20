@@ -17,7 +17,7 @@ export const guide: Guide = {
     "The paytable and info panel are the only public rules; artwork is not a probability table.",
     "Autoplay repeats the same bet; it does not improve RTP.",
     "Turning lines off rarely helps and can void features; drop the stake instead if the total is too high.",
-    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -141,7 +141,7 @@ If you play on a phone, the same rules apply with worse ergonomics: one-thumb tu
     {
       id: "not-here",
       title: "The slot game here is P2P Slott",
-      body: `[P2P Slott](/slott) is the five-reel game, a 1v1 duel on a 5 by 4 grid. The winner receives 90% of the players' pot. The live set is Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `[P2P Slott](/slott) is the five-reel game, a 1v1 duel on a 5 by 4 grid. The winner receives 90% of the players' pot. The live set is Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 - [Jackpot](/) — join a pot, chance = share.
 - [Coinflip](/coinflip) — pick a side, 50/50 plus a published fee.
@@ -208,7 +208,7 @@ The coin size is not the price. [Penny slots](/guides/penny-slots-online) can st
     },
     {
       q: "Does PVPspinArena have online slots?",
-      a: "No. This site offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide is a controls tutorial for slots you meet elsewhere.",
+      a: "No. This site offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This guide is a controls tutorial for slots you meet elsewhere.",
     },
     {
       q: "Can I learn to win by practising in demo?",
@@ -231,5 +231,5 @@ The coin size is not the price. [Penny slots](/guides/penny-slots-online) can st
     "slot-machine-odds",
     "online-slots-real-money",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

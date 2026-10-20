@@ -60,7 +60,7 @@ Cheapest is a sort order, not a bargain, until you know what the sort is ranking
 | --- | --- | --- | --- | --- | --- |
 | CS2 case on a market | not published | other traders, plus the marketplace's cut if it takes one | not published | not published | not published |
 | House-style paid open | weights not published on this page | the seller of the open | not published | not published | not published |
-| PvP Spin Arena | Jackpot and Coinflip take 5% of the pot; the winner receives 95%. Roulette takes 5% off a winning payout. Slott keeps 10% on a win | other players | balance updates when the round settles | yes for four games once a seed has been committed | shown on the bet control |
+| PvP Spin Arena | Jackpot and Coinflip take 5% of the pot; the winner receives 95%. Roulette takes 5% off a winning payout. Slott keeps 10% on a win | other players | balance updates when the round settles | yes for five games once a seed has been committed | shown on the bet control |
 
 A key, if a particular open requires one, is another price. It is not published in this file. Adding a remembered key price to a remembered case price is how two stale numbers become a fake total. Read both from the same day's sources or add nothing.
 

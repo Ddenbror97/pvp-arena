@@ -10,7 +10,7 @@ export const guide: Guide = {
   description:
     "Prediction market legal US status turns on event contracts and commodities rules, apart from state sportsbook law. This is not legal advice.",
   answer:
-    "Prediction market legal US questions do not have one national on-off switch this page can flip for you. Event contracts, the Commodity Futures Trading Commission, and state gaming statutes sit in different regimes. A careful reading starts with which product you mean and which regulator has actually spoken about it. This is not legal advice. Rules change. Nothing here says a named venue is legal in every state.\n\nThis page is for adults 18 or older, or the age required where you live. Funding an event contract can lose the money you post. If that stops being something you can afford, stop and use the limits on our [responsible gambling](/responsible-gambling) page. PVPspinArena does not offer prediction markets. It offers jackpot, coinflip, and roulette in USD only.\n\nWhat the product is — a share that pays if an event happens — is explained on [crypto prediction markets](/guides/crypto-prediction-markets). Whether a crypto casino wager is legal where you live is a different article, [is crypto gambling legal](/guides/is-crypto-gambling-legal). Do not treat those answers as interchangeable with the paragraphs below.",
+    "Prediction market legal US questions do not have one national on-off switch this page can flip for you. Event contracts, the Commodity Futures Trading Commission, and state gaming statutes sit in different regimes. A careful reading starts with which product you mean and which regulator has actually spoken about it. This is not legal advice. Rules change. Nothing here says a named venue is legal in every state.\n\nThis page is for adults 18 or older, or the age required where you live. Funding an event contract can lose the money you post. If that stops being something you can afford, stop and use the limits on our [responsible gambling](/responsible-gambling) page. PVPspinArena does not offer prediction markets. It offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only.\n\nWhat the product is — a share that pays if an event happens — is explained on [crypto prediction markets](/guides/crypto-prediction-markets). Whether a crypto casino wager is legal where you live is a different article, [is crypto gambling legal](/guides/is-crypto-gambling-legal). Do not treat those answers as interchangeable with the paragraphs below.",
   facts: [],
   sections: [
     {
@@ -65,5 +65,5 @@ export const guide: Guide = {
     { label: "U.S. Commodity Futures Trading Commission", url: "https://www.cftc.gov/" },
   ],
   related: ["crypto-prediction-markets", "is-crypto-gambling-legal"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

@@ -18,7 +18,7 @@ export function seoHead(opts: {
       { name: "robots", content: "index, follow" },
       { property: "og:title", content: opts.title },
       { property: "og:description", content: opts.description },
-      { property: "og:type", content: "article" },
+      { property: "og:type", content: "website" },
       { property: "og:url", content: url },
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),

@@ -22,7 +22,7 @@ export const guide: Guide = {
     "A club chip balance is not the same object as cash in a bank or a coin in a wallet you control.",
     "Real-money settlement, when it happens, may be a private deal with a host rather than a withdrawal button run by the app company.",
     "Any pot fee belongs on the table you joined. Copy it. Do not trust a review that prints a percent it did not read.",
-    "PVPspinArena is not a poker room and does not host ClubGG tables.",
+    "PVPspinArena does not host ClubGG tables. Its own poker is six-max No-Limit Hold'em.",
   ],
   sections: [
     {
@@ -142,7 +142,7 @@ If you play, play at stakes the checklist survived. Copy the fee from the table.
     },
     {
       q: "Does PVPspinArena host ClubGG games?",
-      a: "No. It is not a poker room. It offers Jackpot and Coinflip at 5% of the pot, plus a house roulette wheel. Your ClubGG club is a separate app.",
+      a: "No. It does not host ClubGG. Its own poker is six-max No-Limit Hold'em, with a 5% fee only after a flop. Jackpot and Coinflip take 5% of the pot, and roulette is a house wheel. Your ClubGG club is a separate app.",
     },
   ],
   sources: [

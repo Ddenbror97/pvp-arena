@@ -21,7 +21,7 @@ export const guide: Guide = {
     "RTP applies to total wagered, not to the size of your deposit.",
     "Fast autoplay turns a small deposit into a large turnover in minutes.",
     "Withdrawals, wagering and KYC sit on the cashier, not on the reel art.",
-    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -186,7 +186,7 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     },
     {
       q: "Does PVPspinArena have real-money slots?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide is for pricing slots you see elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This guide is for pricing slots you see elsewhere.",
     },
     {
       q: "Are slot bonuses free extra money?",
@@ -209,5 +209,5 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     "slot-machine-odds",
     "bonus-buy-slots",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

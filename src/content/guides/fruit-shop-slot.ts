@@ -80,7 +80,7 @@ It also does not default to a harsh one. The default in this article is a blank.
 
 Balances are dollars. You can fund with USDC or ETH on Base, or Bitcoin through the cashier. Guides do not name a treasury address.
 
-Match our commit to the result on [the fairness checker](/fairness). That tool is about our four games.
+Match our commit to the result on [the fairness checker](/fairness). That tool is about our five games.
 
 It does not grade a fruit studio. A seed for this title is not published here.`,
     },

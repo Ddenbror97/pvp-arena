@@ -72,7 +72,6 @@ export const Route = createFileRoute("/guides/$slug")({
         description: g.description,
         url,
         inLanguage: "en",
-        datePublished: g.updated,
         dateModified: g.updated,
         keywords: [g.keyword, ...g.secondary].join(", "),
         image: `${OG_SITE_URL}/og-cover.png`,

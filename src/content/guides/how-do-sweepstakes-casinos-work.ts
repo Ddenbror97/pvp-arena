@@ -15,7 +15,7 @@ export const guide: Guide = {
     "How do sweepstakes casinos work, step by step: account, Gold Coins, Sweeps Coins, playthrough, redeem checks, and how that loop differs from a hashed USDC pot.",
   h1: "How do sweepstakes casinos work? From coins to a redeem request",
   answer:
-    "How do sweepstakes casinos work? You create an account, receive Gold Coins for fun play and Sweeps Coins as promotional entries, play under a playthrough rule, then request a redeem if you clear the floor, the identity checks and the state filter. That is the loop. PVPspinArena is not on that loop. It runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.",
+    "How do sweepstakes casinos work? You create an account, receive Gold Coins for fun play and Sweeps Coins as promotional entries, play under a playthrough rule, then request a redeem if you clear the floor, the identity checks and the state filter. That is the loop. PVPspinArena is not on that loop. It runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.",
   howTo: true,
   facts: [
     "The loop is account → coins → play → playthrough → redeem request → review → payout or denial.",
@@ -189,5 +189,5 @@ The two-coin loop is not a brand. [One sweeps cashier](/guides/moonspin-review) 
     "moonspin-review",
     "nolimit-coins-review",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

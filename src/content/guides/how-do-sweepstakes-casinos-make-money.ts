@@ -10,7 +10,7 @@ export const guide: Guide = {
   description:
     "Sweepstakes casinos make money mainly by selling gold-coin packages in USD. This page covers that sale and leaves the coin rules to the linked guides.",
   answer:
-    "How do sweepstakes casinos make money when the lobby looks like slots and the rules talk about promotional play? The customer-facing answer is the gold-coin package. You pay a price in USD, or you authorize some other payment the cashier lists, and the site adds the entertainment coin that package describes. That purchase is the sale. Prizes the rules later allow are a cost, not the price tag you paid at checkout.\n\nThis page is for adults 18 or older, or the age required where you live. Buying a package can spend money you will not get back as a prize. If spending stops feeling optional, stop and use the limits on our [responsible gambling](/responsible-gambling) page. This is not legal advice. Sweepstakes rules and state positions change.\n\nPVPspinArena does not use this model. It offers jackpot, coinflip, and roulette in USD only. There is no gold-coin catalog and no sweeps prize desk.\n\nTwo neighboring pages already cover the pieces this one will not repeat. What each coin is, and which balance the rules connect to a prize request, is [sweeps coins explained](/guides/sweeps-coins-explained). The sequence from signup through play to a redeem request is [how do sweepstakes casinos work](/guides/how-do-sweepstakes-casinos-work). Read those when you want the mechanics. Stay here when you want the business object: the package on the cashier.",
+    "How do sweepstakes casinos make money when the lobby looks like slots and the rules talk about promotional play? The customer-facing answer is the gold-coin package. You pay a price in USD, or you authorize some other payment the cashier lists, and the site adds the entertainment coin that package describes. That purchase is the sale. Prizes the rules later allow are a cost, not the price tag you paid at checkout.\n\nThis page is for adults 18 or older, or the age required where you live. Buying a package can spend money you will not get back as a prize. If spending stops feeling optional, stop and use the limits on our [responsible gambling](/responsible-gambling) page. This is not legal advice. Sweepstakes rules and state positions change.\n\nPVPspinArena does not use this model. It offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only. There is no gold-coin catalog and no sweeps prize desk.\n\nTwo neighboring pages already cover the pieces this one will not repeat. What each coin is, and which balance the rules connect to a prize request, is [sweeps coins explained](/guides/sweeps-coins-explained). The sequence from signup through play to a redeem request is [how do sweepstakes casinos work](/guides/how-do-sweepstakes-casinos-work). Read those when you want the mechanics. Stay here when you want the business object: the package on the cashier.",
   facts: [],
   sections: [
     {
@@ -58,10 +58,10 @@ export const guide: Guide = {
     },
     {
       q: "Does PVPspinArena use this model?",
-      a: "No. PVPspinArena offers jackpot, coinflip, and roulette in USD only. It does not sell gold-coin packages or run a sweeps redemption desk.",
+      a: "No. PVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only. It does not sell gold-coin packages or run a sweeps redemption desk.",
     },
   ],
   sources: [],
   related: ["how-do-sweepstakes-casinos-work", "sweeps-coins-explained"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

@@ -10,7 +10,7 @@ export const guide: Guide = {
   description:
     "A live betting strategy for in-play sports has to account for moving prices, feed latency, and tighter limits. No system here guarantees a profit.",
   answer:
-    "A live betting strategy is a plan for sports after the event has started. The score is moving, the clock is moving, and the sportsbook is moving the price. You are not locking a number the way you might have before the opening whistle. You are asking the book to accept a ticket at a price it can withdraw while your finger is still on the button. Limits, latency, and that moving price are the whole problem. There is no guaranteed system underneath them.\n\nThis page is about in-play sports: football, basketball, baseball, soccer, and the rest of the traditional card. In-play esports, with pauses and stream delay of its own, is [live esports betting](/guides/live-esports-betting). How a pre-match price becomes a payout is [how does sports betting work](/guides/how-does-sports-betting-work). Use those pages for their topics. Stay here for the live sports window.\n\nThis page is for adults 18 or older, or the age required where you live. A live ticket can lose as soon as the next play. If betting stops being entertainment, stop and use the limits on our [responsible gambling](/responsible-gambling) page. PVPspinArena does not offer a sportsbook. It offers jackpot, coinflip, and roulette in USD only.",
+    "A live betting strategy is a plan for sports after the event has started. The score is moving, the clock is moving, and the sportsbook is moving the price. You are not locking a number the way you might have before the opening whistle. You are asking the book to accept a ticket at a price it can withdraw while your finger is still on the button. Limits, latency, and that moving price are the whole problem. There is no guaranteed system underneath them.\n\nThis page is about in-play sports: football, basketball, baseball, soccer, and the rest of the traditional card. In-play esports, with pauses and stream delay of its own, is [live esports betting](/guides/live-esports-betting). How a pre-match price becomes a payout is [how does sports betting work](/guides/how-does-sports-betting-work). Use those pages for their topics. Stay here for the live sports window.\n\nThis page is for adults 18 or older, or the age required where you live. A live ticket can lose as soon as the next play. If betting stops being entertainment, stop and use the limits on our [responsible gambling](/responsible-gambling) page. PVPspinArena does not offer a sportsbook. It offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only.",
   facts: [],
   sections: [
     {
@@ -63,5 +63,5 @@ export const guide: Guide = {
   ],
   sources: [],
   related: ["live-esports-betting", "how-does-sports-betting-work"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

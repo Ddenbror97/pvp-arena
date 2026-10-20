@@ -10,7 +10,7 @@ export const guide: Guide = {
     "Predictors do not exist. This calculator shows win probability, expected value and break-even hit rate at every crash cashout target.",
   h1: "Crash Cashout Calculator: Probability at Every Multiplier",
   answer:
-    "A crash game predictor cannot work: the crash point is fixed before the round and is independent of charts, bots and prior multipliers. What a crash cashout calculator can show is win probability at a target m, expected value at a stated RTP, and how often you must hit just to break even. Those are distribution facts, not forecasts of the next tick. PVPspinArena does not offer crash today; Jackpot, Coinflip, Roulette, and P2P Slott are the live games. 18+ only.",
+    "A crash game predictor cannot work: the crash point is fixed before the round and is independent of charts, bots and prior multipliers. What a crash cashout calculator can show is win probability at a target m, expected value at a stated RTP, and how often you must hit just to break even. Those are distribution facts, not forecasts of the next tick. PVPspinArena does not offer crash today; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games. 18+ only.",
   facts: [
     "No signal app can read a future crash point that was already committed in a fair design.",
     "On a standard model, P(reach m) ≈ RTP / m (equivalently (1 − edge) / m).",
@@ -264,7 +264,7 @@ Foundations refresher: [Foundations topic](/guides/topics/foundations). Help: [r
     },
     {
       q: "Does PVPspinArena have crash?",
-      a: "Not currently. The live games are Jackpot, Coinflip, Roulette, and P2P Slott. This page is educational maths for crash titles elsewhere.",
+      a: "Not currently. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This page is educational maths for crash titles elsewhere.",
     },
   ],
   sources: [
@@ -281,5 +281,5 @@ Foundations refresher: [Foundations topic](/guides/topics/foundations). Help: [r
     "provably-fair-calculator",
     "martingale-strategy",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

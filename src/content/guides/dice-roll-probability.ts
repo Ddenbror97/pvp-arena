@@ -115,7 +115,7 @@ They cannot make the next roll due. They cannot turn a short-paid bet into a lon
     {
       id: "not-here",
       title: "What PVPspinArena uses instead of dice",
-      body: `There is no die table and no roll-under slider here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `There is no die table and no roll-under slider here. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 - [Jackpot](/guides/crypto-jackpot) — chance = your stake / pot.
 - [Coinflip](/coinflip) — a single HMAC bit, 50/50, not 6/36.
@@ -197,7 +197,7 @@ A three-dice cage game priced against you is [chuck-a-luck](/guides/chuck-a-luck
     },
     {
       q: "Does PVPspinArena have a dice game?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide is the combination-count reference for dice you meet elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This guide is the combination-count reference for dice you meet elsewhere.",
     },
     {
       q: "What are the odds of rolling double sixes?",
@@ -219,5 +219,5 @@ A three-dice cage game priced against you is [chuck-a-luck](/guides/chuck-a-luck
     "chuck-a-luck",
     "lucky-numbers-gambling",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

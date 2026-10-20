@@ -16,7 +16,7 @@ export const guide: Guide = {
     "A widely cited 54-stop American money wheel has twenty-four $1 stops paying 2x (~11.11% edge on that bet).",
     "Logo and joker stops often carry the worst edge because the posted 40:1 or 41x looks generous versus a 1-in-54 true price.",
     "TV Wheel of Fortune slot games are not priced by counting pegs on a floor spinner; read slot RTP instead.",
-    "PVPspinArena does not offer a money wheel; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena does not offer a money wheel; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -184,7 +184,7 @@ Live-show multipliers on a similar wheel are in [Dream Catcher](/guides/dream-ca
     },
     {
       q: "Does PVPspinArena have a Wheel of Fortune wheel?",
-      a: "No. It offers Jackpot, Coinflip, Roulette, and P2P Slott. Roulette is a 33-slot wheel with a published colour edge.",
+      a: "No. It offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. Roulette is a 33-slot wheel with a published colour edge.",
     },
   ],
   sources: [
@@ -198,5 +198,5 @@ Live-show multipliers on a similar wheel are in [Dream Catcher](/guides/dream-ca
     "coin-flip-odds",
     "dream-catcher-game",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

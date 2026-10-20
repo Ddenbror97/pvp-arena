@@ -128,7 +128,7 @@ Write a spin cap that assumes the jackpot will not hit, because that is the defa
     {
       id: "not-here",
       title: "What you will find on PVPspinArena instead",
-      body: `There is no progressive reel and no networked meter. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `There is no progressive reel and no networked meter. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 - [Jackpot](/guides/crypto-jackpot) — a pot of player stakes, chance = share.
 - [Coinflip](/coinflip) — two players, 50/50.
@@ -213,5 +213,5 @@ A PvP jackpot pot is a different object. On PVPspinArena your chance is your sha
     "divine-fortune-slot",
     "dragon-link-slot",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

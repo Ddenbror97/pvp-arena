@@ -141,7 +141,7 @@ It is not a Telegram screenshot, and this guide does not paste one.
 
 [Fairness](/fairness) checks the seed committed before the round. The result has to match. That check does not validate a points ledger, an airdrop list, or a candle on an exchange.
 
-Provably fair is a property of our four games. It is not a claim about the mini-app.
+Provably fair is a property of our five games. It is not a claim about the mini-app.
 
 You fund our balance with USDC or ETH on Base, or with Bitcoin through the cashier. No address is printed. A bot that asks you to paste a recovery phrase is not this cashier.
 

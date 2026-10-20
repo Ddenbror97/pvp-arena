@@ -19,8 +19,8 @@ export const guide: Guide = {
   facts: [
     "MetaMask and Trust Wallet are both self-custody apps, not exchange accounts.",
     "Losing the seed phrase has the same result in either app: the keys are gone.",
-    "MetaMask is built for Ethereum and other EVM networks.",
-    "Trust Wallet is built to show many chains, including networks MetaMask does not treat as native.",
+    "MetaMask's getting-started page, checked 20 October 2026, says the app can manage Ethereum, Solana, and Bitcoin keys. The installed account list is the source of truth.",
+    "Trust Wallet is built to show many chains. Compare the account list in the app you installed, not a remembered chart.",
     "Swap prices belong on the quote you confirm, not in a frozen comparison table.",
     "Adults 18 or older only. This page is not financial advice and does not rank a winner.",
   ],
@@ -85,7 +85,7 @@ A comparison that says one phrase is recoverable and the other is not is describ
 
 Open the swap only from the app you installed. Read the token contract context the wallet shows if you do not recognize the asset. Cancel when the output is vague. A cheaper quote on the wrong network is not a savings. It is a token you may be unable to deposit.
 
-Gas is a separate line from a swap spread. On Ethereum-style networks you pay gas to get the transaction in. On other networks the fee has another name and another asset. Trust Wallet's extra chains mean extra fee assets. MetaMask's EVM focus means you still need the native coin of the network you selected. Neither fact is a permanent discount.
+Gas is a separate line from a swap spread. On Ethereum-style networks you pay gas to get the transaction in. On other networks the fee has another name and another asset. Trust Wallet's extra chains mean extra fee assets. Whichever network you selected in either app, you still need that network's fee asset. Neither fact is a permanent discount.
 
 ### What a fair fee note looks like
 
@@ -183,6 +183,10 @@ MetaMask vs Trust Wallet ends there. The rest is execution on the app you picked
   ],
   sources: [
     { label: "MetaMask", url: "https://metamask.io/" },
+    {
+      label: "MetaMask Help Center — Getting started, checked 20 October 2026",
+      url: "https://support.metamask.io/start/getting-started-with-metamask/",
+    },
     { label: "Trust Wallet", url: "https://trustwallet.com/" },
     { label: "Ethereum.org: wallets", url: "https://ethereum.org/en/wallets/" },
   ],
@@ -192,5 +196,5 @@ MetaMask vs Trust Wallet ends there. The rest is execution on the app you picked
     "what-is-metamask",
     "wallet-security-checklist",
   ],
-  updated: "2026-09-29",
+  updated: "2026-10-20",
 };

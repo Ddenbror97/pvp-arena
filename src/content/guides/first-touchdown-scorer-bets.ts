@@ -60,7 +60,7 @@ Passing touchdowns, rushing touchdowns, and a score on special teams can all be 
 | --- | --- | --- | --- | --- | --- |
 | First touchdown scorer ticket | inside the price; not printed as a live line | usually the book | not published | not published | not published |
 | House-banked casino | paytable hold, unnumbered in this row | the house | not published | not published | not published |
-| PvP Spin Arena | 5% of a Jackpot or Coinflip pot; winner receives 95%. Roulette takes 5% from a winning payout. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, four games carry a seed committed beforehand | shown on the bet control |
+| PvP Spin Arena | 5% of a Jackpot or Coinflip pot; winner receives 95%. Roulette takes 5% from a winning payout. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, five games carry a seed committed beforehand | shown on the bet control |
 
 The vig on a prop is real and invisible until you convert the price into a probability and compare it with your own number. This article shows the conversion on a suppose. It does not show the book's number, because the book moves and this file does not.
 

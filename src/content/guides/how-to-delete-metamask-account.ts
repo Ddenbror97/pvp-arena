@@ -21,7 +21,7 @@ export const guide: Guide = {
     {
       id: "the-chain-still-has-the-address",
       title: "The chain still has the address",
-      body: "Balances live on the networks, not in the extension’s graphics. After you uninstall, a block explorer can still show the address if you look it up, and anyone who has the keys can still move what is there. How to delete a MetaMask account in the interface therefore does not “wipe” a token. If tokens remain, they remain. If you wanted them gone from your control, you had to send them somewhere else while you could still sign, or you had to accept that the phrase still controls them.\n\nSending them somewhere else means a normal transfer you confirm in the app: the right account, the right network from the in-app list, the right destination. MetaMask’s native networks are Ethereum and EVM chains. It does not natively hold Solana, Bitcoin, or XRP the way a dedicated wallet does. Do not try to “delete” a missing Solana balance by installing a Snap from a help page. This guide will not walk through that install. Snaps and bridges are optional add-ons with extra trust. If the asset is on another chain, use that chain’s wallet, and back up that wallet’s phrase too.\n\nThere is also nothing to gain by publishing the phrase and calling it a deletion. Publishing the phrase donates the funds to whoever imports it first. The address still exists. You have only added new signers you do not know. Destruction, if you truly want no one to have the coins, is a transfer to an address you accept as gone, done while you still control the keys. That is a serious step. Do it only when you understand there is no undo, and do not do it because a stranger dared you.",
+      body: "Balances live on the networks, not in the extension’s graphics. After you uninstall, a block explorer can still show the address if you look it up, and anyone who has the keys can still move what is there. How to delete a MetaMask account in the interface therefore does not “wipe” a token. If tokens remain, they remain. If you wanted them gone from your control, you had to send them somewhere else while you could still sign, or you had to accept that the phrase still controls them.\n\nSending them somewhere else means a normal transfer you confirm in the app: the right account, the right network from the in-app list, the right destination. MetaMask's getting-started page, checked 20 October 2026, says the app can manage Ethereum, Solana, and Bitcoin keys. It did not name XRP. Address formats still differ. Do not try to “delete” a missing Solana balance by installing a Snap from a help page. This guide will not walk through that install. Snaps and bridges are optional add-ons with extra trust. If the asset is on another chain, use that chain’s wallet, and back up that wallet’s phrase too.\n\nThere is also nothing to gain by publishing the phrase and calling it a deletion. Publishing the phrase donates the funds to whoever imports it first. The address still exists. You have only added new signers you do not know. Destruction, if you truly want no one to have the coins, is a transfer to an address you accept as gone, done while you still control the keys. That is a serious step. Do it only when you understand there is no undo, and do not do it because a stranger dared you.",
     },
     {
       id: "back-up-then-decide-what-you-are-removing",
@@ -66,7 +66,12 @@ export const guide: Guide = {
       a: "PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in USD and does not require MetaMask. Closing a site profile does not remove keys from your device or erase balances on a chain.",
     },
   ],
-  sources: [],
+    sources: [
+    {
+      label: "MetaMask Help Center — Getting started, checked 20 October 2026",
+      url: "https://support.metamask.io/start/getting-started-with-metamask/",
+    },
+  ],
   related: ["seed-phrase", "self-custody-wallet"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

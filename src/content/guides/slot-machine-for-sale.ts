@@ -60,7 +60,7 @@ A cabinet that cannot accept money is furniture with a theme. A cabinet that can
 | --- | --- | --- | --- | --- | --- |
 | Used slot cabinet | not published | not a player-versus-player match | not published | not published | not published |
 | House-banked casino | set in the paytable; no single percent is printed in this cell | the house | not published | not published | not published |
-| PvP Spin Arena | About 7.88% theoretical edge on Purple or Silver after the win fee. Jackpot and Coinflip use a 5% charge on the pot. Slott keeps 10% on a win | other players | balance updates when the round settles | yes on the four games, seed committed first | shown on the bet control |
+| PvP Spin Arena | About 7.88% theoretical edge on Purple or Silver after the win fee. Jackpot and Coinflip use a 5% charge on the pot. Slott keeps 10% on a win | other players | balance updates when the round settles | yes on the five games, seed committed first | shown on the bet control |
 
 The 7.88% line is roulette, not a slot cabinet. Our wheel has 33 slots, 16 Purple, 16 Silver, and 1 Green. Purple and Silver pay 2x, then a 5% fee comes off the winning payout. The arithmetic is (16/33) times (2 times 0.95) minus 1, which is about −0.0788. In words: expected loss about 7.88 cents per $1 on Purple or Silver after the win fee. That sentence is a published edge. A seller's asking price is not.
 

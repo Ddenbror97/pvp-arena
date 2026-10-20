@@ -30,7 +30,7 @@ The phrase **pvp casino games** covers jackpots, coinflips, and other head-to-he
 
 Write the settlement sentence in your own words before you deposit. If you cannot say who pays a winner, you do not understand the product yet. That one sentence prevents most “I thought it was PvP” surprises after a loss.
 
-This page sits in [CS:GO heritage](/guides/topics/csgo-heritage) because that is where most players first saw the model. Adults 18+ only. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. Jackpot, Coinflip, and P2P Slott are PvP. Roulette is not.
+This page sits in [CS:GO heritage](/guides/topics/csgo-heritage) because that is where most players first saw the model. Adults 18+ only. PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. Jackpot, Coinflip, and P2P Slott are PvP. Roulette is not.
 
 If a lobby page never states who funds the prize, treat the product as unclear until you find the rule in writing. Marketing words like “community” and “arena” do not settle the question.
 
@@ -53,7 +53,7 @@ Timing matters. A late deposit into a filling pot buys the same tickets per doll
 
 On PVPspinArena the live Jackpot is on the [home page](/). Deposits are USDC or ETH on Base after wallet verification. The site does not take a Steam trade. Skins are not stakes. If you still think in inventory value, read the [CS:GO gambling history](/guides/csgo-gambling-history) page for why item cashiers were a worse unit of account.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.`,
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.`,
     },
     {
       id: "coinflip",
@@ -156,5 +156,5 @@ How it works on this site is summarised on [how it works](/how-it-works). Deposi
     },
   ],
   related: ["pvp-gambling", "csgo-coinflip", "coin-flip-odds", "house-edge"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

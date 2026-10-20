@@ -21,7 +21,7 @@ export const guide: Guide = {
     "A one-rank spread has about an 8% win chance on a fresh deck; even money is catastrophic.",
     "Higher-lower on a middle card is near a coin flip; ties that lose add several percent of edge.",
     "Passing tight spreads is often the best hi lo strategy in home games and some casino tables.",
-    "PVPspinArena does not offer hi-lo; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena does not offer hi-lo; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -226,5 +226,5 @@ Electronic versions sometimes bundle hi-lo beside [wheel of fortune casino game]
     { label: "Wikipedia: Expected value", url: "https://en.wikipedia.org/wiki/Expected_value" },
   ],
   related: ["hi-lo-card-game", "house-edge", "expected-value-gambling", "gambling-budget"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

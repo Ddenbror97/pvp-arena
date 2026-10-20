@@ -89,7 +89,7 @@ If the session starts to feel like chasing, stop. [Responsible gambling](/respon
     {
       id: "stop",
       title: "Where this site stops",
-      body: `PVPspinArena still offers Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If heads up poker strategy was the thing you wanted to use, you will not find it in the header. That mismatch is a reason to close the tab, not a reason to force the cashier.
+      body: `PVPspinArena still offers six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If heads up poker strategy was the thing you wanted to use, you will not find it in the header. That mismatch is a reason to close the tab, not a reason to force the cashier.
 
 Write that down as part of any heads up poker strategy note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
 
@@ -110,7 +110,7 @@ What goes wrong. The usual failure is believing the first sentence of an ad. The
 
 A note with empty cells. Columns: definition, price, constraint, date, loss limit. Five cells.
 
-Where this site stops. PVPspinArena still offers Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If heads up poker strategy was the thing you wanted to use, you will not find it in the header.
+Where this site stops. PVPspinArena still offers six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If heads up poker strategy was the thing you wanted to use, you will not find it in the header.
 
 Read that list once, from the top, and stop where a cell is empty. The empty cell is the decision. Filling it from a clip, a chat, or this paragraph is how a heads up poker strategy note turns into an advertisement you wrote for yourself.
 
@@ -124,7 +124,7 @@ Facts worth dating:
 
 Heads-up play widens ranges because there is nobody left to act behind you except one opponent. Position still matters on every hand. Small edges need a large number of hands before they show up, and rake on a short match can eat the edge before that happens. A solver line you cannot explain is a costume.
 
-Write the buy-in and the stop. PVPspinArena is not a poker room. The coin pot is a different contract.
+Write the buy-in and the stop. PVPspinArena runs six-max tables, not heads-up. The fee is 5% of a pot only after a flop. The coin pot is a different contract.
 
 Do the arithmetic before you call it a bargain. A wagering multiple times the chip is the amount you must bet. A commission comes off the winner. A hold inside the odds is already the cost. An RTP, when a game prints one, is a long-run return, not a promise about tonight. If the live page will not give you the input, the output stays unknown. Unknown is a reason to skip, including when a heads up poker strategy search feels urgent.
 
@@ -170,7 +170,7 @@ Then close the tab or play only what this site actually offers. Jackpot, Coinfli
     "poker-bankroll-management",
     "phil-ivey",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-20",
   cta: {
     title: "This site is a pot, not that product",
     text: "PVPspinArena does not offer the product described on this page. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",

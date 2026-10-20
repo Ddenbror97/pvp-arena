@@ -16,7 +16,7 @@ export const guide: Guide = {
     {
       id: "what-a-metamask-login-is-asking-for",
       title: "What a MetaMask login is asking for",
-      body: "A normal connect request tells the site that a wallet is present, lets you choose which account address to share, and may ask you to sign a human-readable message. Sharing the address reveals public information. Signing a plain message does not broadcast a token transfer and does not set a spending allowance. You can reject the popup and the tokens stay where they are.\n\nThe local password is easy to confuse with a website password. You type it into the MetaMask extension or the official mobile app to decrypt the vault on that device. The company cannot email a replacement Secret Recovery Phrase. If you still have the phrase, you can restore the same accounts inside the official app and choose a new local password there. If the phrase is gone and you have no other vault backup, nobody at the company can rebuild the keys. A page that says support will reset the phrase is describing a power the product does not have.\n\nOne phrase can derive many accounts, and each account has its own address. The site stores the address you picked, not a single bucket called “your MetaMask.” If you funded a second account and connected the first, the login still succeeded and the site is looking at the wrong address. Networks are a separate choice. MetaMask’s native networks are Ethereum and other EVM chains. The list inside your own app is the source of truth for what that install can show. A login can finish on one network while a later send points at another.\n\nPVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in USD. MetaMask is not required. If a wallet is used, the useful action is a connection or a readable signature, then a transfer you confirm on purpose. The site does not need your phrase to settle those games in dollars.",
+      body: "A normal connect request tells the site that a wallet is present, lets you choose which account address to share, and may ask you to sign a human-readable message. Sharing the address reveals public information. Signing a plain message does not broadcast a token transfer and does not set a spending allowance. You can reject the popup and the tokens stay where they are.\n\nThe local password is easy to confuse with a website password. You type it into the MetaMask extension or the official mobile app to decrypt the vault on that device. The company cannot email a replacement Secret Recovery Phrase. If you still have the phrase, you can restore the same accounts inside the official app and choose a new local password there. If the phrase is gone and you have no other vault backup, nobody at the company can rebuild the keys. A page that says support will reset the phrase is describing a power the product does not have.\n\nOne phrase can derive many accounts, and each account has its own address. The site stores the address you picked, not a single bucket called “your MetaMask.” If you funded a second account and connected the first, the login still succeeded and the site is looking at the wrong address. Networks are a separate choice. MetaMask's getting-started page, checked 20 October 2026, says the app can manage Ethereum, Solana, and Bitcoin keys. The account list inside your own app is the source of truth for what that install can send. A login can finish on one network while a later send points at another.\n\nPVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in USD. MetaMask is not required. If a wallet is used, the useful action is a connection or a readable signature, then a transfer you confirm on purpose. The site does not need your phrase to settle those games in dollars.",
     },
     {
       id: "extension-browser-profile-or-a-fake-site",
@@ -66,7 +66,12 @@ export const guide: Guide = {
       a: "PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in USD and does not require MetaMask. If you connect a wallet, you still should never paste a Secret Recovery Phrase into the site.",
     },
   ],
-  sources: [],
+    sources: [
+    {
+      label: "MetaMask Help Center — Getting started, checked 20 October 2026",
+      url: "https://support.metamask.io/start/getting-started-with-metamask/",
+    },
+  ],
   related: ["walletconnect-casino", "is-metamask-safe"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

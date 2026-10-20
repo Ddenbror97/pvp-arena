@@ -31,7 +31,7 @@ export const guide: Guide = {
     {
       id: "unlimited-approvals-and-blind-signatures",
       title: "Unlimited approvals and blind signatures",
-      body: "An unlimited token approval lets a contract move that token from your address later, up to the whole balance, without a new confirmation for each pull. The wallet is working as designed when it asks you to set that cap. The scam is the context: a login, an airdrop, a “wallet repair,” or a gambling cashier that only needed a normal transfer. Reject unlimited caps you did not decide to grant. A spending approval is not how you prove you own an address.\n\nA blind signature is a request that shows a hash or a blob you cannot read, dressed up as a login or a claim. A normal message signature shows a sentence. If you cannot tell what you are authorizing, you are not informed enough to press confirm. Reject it. Blind requests are a favorite because they look technical, and people assume the technical look means the site is allowed to skip plain language. It is not.\n\nMetaMask’s native networks are Ethereum and EVM chains. Scam pages sometimes add a detour: install a Snap, add a network, or bridge to Solana or Bitcoin “to secure the wallet.” This guide will not repeat those clicks. Snaps and bridges are optional add-ons with extra trust, and a walkthrough is exactly what a fake site clones. The in-app network list is the source of truth. If a repair flow is not already inside the app you opened from the toolbar, it is not a repair.",
+      body: "An unlimited token approval lets a contract move that token from your address later, up to the whole balance, without a new confirmation for each pull. The wallet is working as designed when it asks you to set that cap. The scam is the context: a login, an airdrop, a “wallet repair,” or a gambling cashier that only needed a normal transfer. Reject unlimited caps you did not decide to grant. A spending approval is not how you prove you own an address.\n\nA blind signature is a request that shows a hash or a blob you cannot read, dressed up as a login or a claim. A normal message signature shows a sentence. If you cannot tell what you are authorizing, you are not informed enough to press confirm. Reject it. Blind requests are a favorite because they look technical, and people assume the technical look means the site is allowed to skip plain language. It is not.\n\nMetaMask's getting-started page, checked 20 October 2026, says the app can manage Ethereum, Solana, and Bitcoin keys. Scam pages sometimes add a detour: install a Snap, add a network, or bridge to Solana or Bitcoin “to secure the wallet.” This guide will not repeat those clicks. Snaps and bridges are optional add-ons with extra trust, and a walkthrough is exactly what a fake site clones. The in-app network list is the source of truth. If a repair flow is not already inside the app you opened from the toolbar, it is not a repair.",
     },
     {
       id: "what-to-do-instead-of-improvising",
@@ -71,7 +71,12 @@ export const guide: Guide = {
       a: "PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in USD and does not require MetaMask. No site can stop you from signing a bad prompt in a different tab, so the refusal still has to happen in the wallet.",
     },
   ],
-  sources: [],
+    sources: [
+    {
+      label: "MetaMask Help Center — Getting started, checked 20 October 2026",
+      url: "https://support.metamask.io/start/getting-started-with-metamask/",
+    },
+  ],
   related: ["wallet-security-checklist", "seed-phrase"],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

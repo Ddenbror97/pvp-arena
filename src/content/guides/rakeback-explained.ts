@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Rakeback is a share of that cut, paid to the player or an affiliate deal.",
     "Contribution is usually based on weighted contributed rake, not on whether you won the pot.",
     "Casino “rakeback” on slots is often just cashback with borrowed language.",
-    "PVPspinArena is not a poker room; see crypto poker for how tables actually run.",
+    "PVPspinArena runs six-max Hold'em. No rakeback schedule is published. The fee is 5% of a pot only after a flop.",
   ],
   sections: [
     {
@@ -30,7 +30,7 @@ In cash-game poker the room does not play a hand against you. Players play each 
 - **Time rake / deal-making fees.** A charge per hour or per hand, common at higher stakes.
 - **Tournament fees.** A buy-in split into prize pool and fee (the “+$10” on a $100+$10). That fee is not pot rake but it is the same idea: the house is paid for hosting.
 
-This [Foundations](/guides/topics/foundations) page is for adults 18+. For how crypto rooms deal cards and what you can actually verify, read [crypto poker](/guides/crypto-poker). Named-room advertising of a rakeback percent is in the [ACR poker review](/guides/acr-poker-review). Read the deal page, not a remembered percent. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott. A 5% fee on Jackpot and Coinflip pots is a published fee, not poker rakeback.
+This [Foundations](/guides/topics/foundations) page is for adults 18+. For how crypto rooms deal cards and what you can actually verify, read [crypto poker](/guides/crypto-poker). Named-room advertising of a rakeback percent is in the [ACR poker review](/guides/acr-poker-review). Read the deal page, not a remembered percent. PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. A 5% fee on Jackpot and Coinflip pots is a published fee, not poker rakeback.
 
 If poker volume is already a problem, skip the rebate math and use [responsible gambling](/responsible-gambling).
 
@@ -168,7 +168,7 @@ If a deal only works at hours you do not have, it is not a deal. It is a job lis
     },
     {
       q: "Does PVPspinArena pay rakeback?",
-      a: "No. It is not a poker room. PvP Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. There is no rake-and-rebate ladder.",
+      a: "No rakeback schedule is published. Six-max Hold'em takes 5% of a pot only after a flop. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. There is no rake-and-rebate ladder.",
     },
   ],
   sources: [
@@ -183,5 +183,5 @@ If a deal only works at hours you do not have, it is not a deal. It is a job lis
     "what-is-a-crypto-casino",
     "cashback-casino-bonus",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

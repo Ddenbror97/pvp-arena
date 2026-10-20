@@ -60,7 +60,7 @@ House-banked sites, player-versus-player pots, and promotional apps can all be "
 | --- | --- | --- | --- | --- | --- |
 | South Carolina legal status | not published | not a betting opponent | not published | not published | not published |
 | House-banked casino | a paytable hold this row does not number | the house | not published | not published | not published |
-| PvP Spin Arena | 5% of the pot on Jackpot and Coinflip, winner receives 95%. Roulette takes 5% from the winning payout. Slott keeps 10% of a win | other players | balance updates when the round settles | yes on four games when the seed was committed up front | shown on the bet control |
+| PvP Spin Arena | 5% of the pot on Jackpot and Coinflip, winner receives 95%. Roulette takes 5% from the winning payout. Slott keeps 10% of a win | other players | balance updates when the round settles | yes on five games when the seed was committed up front | shown on the bet control |
 
 A reader who wants "the edge in South Carolina" is often mixing a tax, a hold, and a product fee. This table lets the state row stay blank while the product row stays specific. Blank is not a hint that the edge is zero. Blank means go read the code and the cashier you actually face.
 

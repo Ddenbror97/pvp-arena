@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Standard action: ante, then call 2× ante or fold after the flop is out.",
     "With a common call-on-pair-of-fours-or-better chart, the ante edge is often about 2.1% to 2.4%.",
     "The AA / pair-plus side bet is a separate, usually much fatter, product.",
-    "PVPspinArena does not offer casino holdem; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena does not offer casino holdem; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -82,7 +82,7 @@ Dealer qualifying rules differ by studio. Some casino holdem variants make the d
     {
       id: "not-here",
       title: "PVPspinArena does not offer casino holdem",
-      body: `There is no ante/call grid here. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `There is no ante/call grid here. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 - [Jackpot](/) — other players’ stakes are the pot; your chance is your share.
 - [Coinflip](/coinflip) — 50/50, fee published, no hand ranks.
@@ -167,7 +167,7 @@ Cap the number of antes, not “until I flop a set.” Eighty $10 antes is $800,
     },
     {
       q: "Does PVPspinArena have casino holdem?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide is for house holdem tables you meet elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This guide is for house holdem tables you meet elsewhere.",
     },
     {
       q: "Does a live dealer change the holdem edge?",
@@ -189,5 +189,5 @@ Cap the number of antes, not “until I flop a set.” Eighty $10 antes is $800,
     "house-edge",
     "live-dealer-casino",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

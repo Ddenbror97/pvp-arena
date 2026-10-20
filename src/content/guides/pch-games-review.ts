@@ -60,7 +60,7 @@ A puzzle score inside an app is not automatically a skill wager, and it is not a
 | --- | --- | --- | --- | --- | --- |
 | PCH Games token | not published | not published | not published | not published | not published |
 | House-banked casino | inside the paytable; no single edge is fixed in this row | the house | not published | not published | not published |
-| PvP Spin Arena | Roulette takes 5% from each winning payout. Jackpot and Coinflip take 5% of the pot, and the winner receives 95%. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, readers recompute the four games from a seed set beforehand | shown on the bet control |
+| PvP Spin Arena | Roulette takes 5% from each winning payout. Jackpot and Coinflip take 5% of the pot, and the winner receives 95%. Slott keeps 10% on a win | other players | balance updates when the round settles | yes, readers recompute the five games from a seed set beforehand | shown on the bet control |
 
 House games and token apps can both be slow to cash out. This page will not assign either of them a number of days. Our side is narrower: the balance updates when the round settles. That sentence is about the round, not about a bank wire to a token company.
 

@@ -147,7 +147,7 @@ If you cannot explain the deal without the phrase "you know what I mean," you do
     },
     {
       q: "Does PVPspinArena offer poker staking?",
-      a: "No. It is not a poker room and it does not keep makeup. Coinflip and Jackpot charge 5% of the pot and finish. There is no horse and no backer share.",
+      a: "No staking ledger and no makeup are published. Six-max Hold'em is live, with a 5% fee only after a flop. Coinflip and Jackpot charge 5% of the pot and finish. There is no horse and no backer share.",
     },
   ],
   sources: [

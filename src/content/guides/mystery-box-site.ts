@@ -144,7 +144,7 @@ More case shops use the same rule: no borrowed drop rate. The [DaddySkins case n
     },
     {
       q: "Does PVPspinArena offer this?",
-      a: "No. The site runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.",
+      a: "No. The site runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.",
     },
     {
       q: "Is this legal advice?",
@@ -173,7 +173,7 @@ More case shops use the same rule: no borrowed drop rate. The [DaddySkins case n
     "daddyskins-review",
     "bloodycase-review",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-20",
   cta: {
     title: "This site is a pot, not that product",
     text: "PVPspinArena does not offer the product described on this page. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",

@@ -22,7 +22,7 @@ export const guide: Guide = {
     "You use your two hole cards plus three community cards. The dealer has no hand to beat.",
     "A common paytable pushes some middle pairs and pays jacks or better and above.",
     "One standard sheet is often published near a 4.9% house edge. The felt you see controls the price.",
-    "PVPspinArena does not offer Mississippi Stud. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "PVPspinArena does not offer Mississippi Stud. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
   ],
   sections: [
     {
@@ -177,5 +177,5 @@ There is no system that turns a near 4.9% standard sheet into a payday. Betting 
     },
   ],
   related: ["ultimate-texas-holdem", "let-it-ride-poker", "casino-hold-em", "poker-hand-rankings"],
-  updated: "2026-09-29",
+  updated: "2026-10-20",
 };

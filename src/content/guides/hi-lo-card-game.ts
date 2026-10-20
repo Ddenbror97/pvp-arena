@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Casino higher-lower: one card is shown; you pick higher or lower for the next card.",
     "A consecutive pair has no inside ranks; a 3–king spread is a very different ticket.",
     "Ties (same rank) are the usual leak: they may lose, push, or trigger a special pay.",
-    "PVPspinArena does not offer a hi lo card game; Jackpot, Coinflip, Roulette, and P2P Slott are the live games.",
+    "PVPspinArena does not offer a hi lo card game; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
   ],
   sections: [
     {
@@ -85,7 +85,7 @@ Do not confuse this with [crypto blackjack](/guides/crypto-blackjack). Hi-lo doe
     {
       id: "not-here",
       title: "PVPspinArena does not offer hi-lo",
-      body: `There is no in-between table and no higher-lower button. The live games are Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `There is no in-between table and no higher-lower button. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 - [Jackpot](/) — pot share, not a spread.
 - [Coinflip](/coinflip) — 50/50 without leftover ranks.
@@ -163,7 +163,7 @@ The next card still has a price. [Hi-Lo strategy](/guides/hi-lo-strategy) is the
     },
     {
       q: "Does PVPspinArena have a hi lo card game?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, and P2P Slott. This guide distinguishes the two hi-lo families you will see elsewhere.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This guide distinguishes the two hi-lo families you will see elsewhere.",
     },
     {
       q: "Does a pair pay in Acey-Deucey?",
@@ -189,5 +189,5 @@ The next card still has a price. [Hi-Lo strategy](/guides/hi-lo-strategy) is the
     "double-or-nothing-game",
     "hi-lo-strategy",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };

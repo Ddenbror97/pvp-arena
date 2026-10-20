@@ -18,6 +18,7 @@ import { PrestigeProvider } from "@/components/prestige/PrestigeProvider";
 import { MobileTabBar, SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { arenaLogo } from "@/assets/media";
 import { SLOT_STAGE } from "@/lib/slott/stage";
+import { rootHead } from "@/lib/seo/root-head";
 import { installGameSounds, setWheelCueEnabled } from "@/lib/sound";
 import { SlotJoinNotice } from "@/components/slott/SlotJoinNotice";
 
@@ -107,33 +108,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "PVPspinArena — PvP Crypto Jackpot" },
-      {
-        name: "description",
-        content: "Live PvP jackpot with provably fair, server-decided draws.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "theme-color", content: "#080b19" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
-      // Start the reel backdrop with the document so a later client navigation
-      // paints it from cache instead of popping it in after the reels.
-      {
-        rel: "preload",
-        as: "image",
-        href: SLOT_STAGE,
-        type: "image/webp",
-        fetchPriority: "high",
-      },
-    ],
-  }),
+  head: ({ matches, match }) =>
+    rootHead(
+      match.globalNotFound === true ||
+        matches.some((item) => item.status === "notFound" || item.globalNotFound === true),
+      appCss,
+      SLOT_STAGE,
+    ),
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,

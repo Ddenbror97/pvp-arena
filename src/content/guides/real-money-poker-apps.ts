@@ -107,7 +107,7 @@ Try to answer this without depositing: if I stop tonight, what exact button pays
 
 Bonuses that require volume push you through extra fees. On a player table, extra hands mean extra rake. On a house game, extra spins mean extra edge. Either way, "free" chips with a playthrough are a bill. Write the requirement in hands or in dollars before you opt in.
 
-The [home page](/) of this site lists what is actually offered here: Jackpot, Coinflip, and Roulette, in a USD balance. It is not a Hold'em client and it will not cash a club chip. Use it only if a single pot or a wheel is what you wanted. Use a poker room only if you wanted people, a fee card, and a cashier you have read.`,
+The [home page](/) and the [poker lobby](/poker) list what is offered here: Jackpot, Coinflip, Roulette, P2P Slott, and six-max No-Limit Hold'em, in a USD balance. It will not cash a club chip. Use the poker lobby if you wanted a six-max table, a fee card, and a cashier you have read.`,
     },
     {
       id: "checklist",
@@ -159,5 +159,5 @@ Pick one on purpose. Then read the table and the cashier, or the host's written 
     "acr-poker-review",
     "crypto-poker",
   ],
-  updated: "2026-10-07",
+  updated: "2026-10-20",
 };

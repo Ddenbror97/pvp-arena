@@ -143,13 +143,13 @@ In other words, the legal question online is usually a contractual one: what did
     {
       id: "pvp",
       title: "No shoe to count on PVPspinArena",
-      body: `PVPspinArena is a player-vs-player crypto casino for adults 18+ only, with four games settled in US dollars. None of them uses a deck, so there is nothing to count and no dealer deciding when to shuffle.
+      body: `PVPspinArena is a player-vs-player crypto casino for adults 18+ only, settled in US dollars. Jackpot, Coinflip, Roulette, and P2P Slott do not use a deck, so there is no shoe to count. [Poker](/poker) is six-max No-Limit Hold'em. Counting a blackjack shoe does not apply to it, and the cards are not dealt by a person deciding when to shuffle.
 
-- [Coinflip](/coinflip) is a 50/50 between two players. The winner takes the pot minus any fee shown before entry.
-- In [Jackpot](/), your win chance equals your share of the pot.
+- [Coinflip](/coinflip) is a 50/50 between two players. The winner takes the pot minus a 5% fee.
+- In [Jackpot](/), your win chance equals your share of the pot. The fee is 5% of the pot.
 - [Roulette](/roulette) uses a 33-slot wheel: 16 Purple and 16 Silver slots pay 2x, and 1 Green pays 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee, and no betting pattern changes that.
 
-Each round comes from committed seeds, so the result is fixed before anyone can react to it, and you can verify any settled round on the [fairness page](/fairness). If play stops being fun, the [responsible gambling](/responsible-gambling) page has limits and support links.
+Each of those rounds comes from committed seeds, so the result is fixed before anyone can react to it, and you can verify a settled round on the [fairness page](/fairness). If play stops being fun, the [responsible gambling](/responsible-gambling) page has limits and support links.
 
 See also [hole carding](/guides/hole-carding).`,
     },

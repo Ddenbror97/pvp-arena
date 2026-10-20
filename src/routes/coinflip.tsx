@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, useMatch } from "@tanstack/react-router";
-import { ogImageMeta } from "@/lib/og";
+import { GameFacts } from "@/components/seo/GameFacts";
+import { indexableHead } from "@/lib/seo/indexable-head";
 import { CreatePanel } from "@/components/coinflip/CreatePanel";
 import { OpenGames, RecentCoinflips } from "@/components/coinflip/OpenGames";
 import { GameChat } from "@/components/chat/GameChat";
@@ -8,25 +9,14 @@ import { useCoinflipRealtime } from "@/lib/coinflip/api";
 import { loadCoinflipPaint, useQuerySeed } from "@/lib/first-paint";
 
 export const Route = createFileRoute("/coinflip")({
-  head: () => ({
-    meta: [
-      { title: "PvP Coinflip | 1v1 Crypto Coin Flip | PVPspinArena" },
-      {
-        name: "description",
-        content:
-          "Play crypto Coinflip against real players. Pick your side, join the battle and verify every result with PVPspinArena's provably fair system.",
-      },
-      { property: "og:title", content: "PvP Coinflip | 1v1 Crypto Coin Flip | PVPspinArena" },
-      {
-        property: "og:description",
-        content:
-          "Play crypto Coinflip against real players. Pick your side, join the battle and verify every result with PVPspinArena's provably fair system.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      ...ogImageMeta(),
-    ],
-  }),
+  head: () =>
+    indexableHead({
+      path: "/coinflip",
+      title: "PvP Coinflip | 1v1 Crypto Coin Flip | PVPspinArena",
+      description:
+        "Play crypto Coinflip against real players. Pick your side, join the battle and verify every result with PVPspinArena's provably fair system.",
+      crumb: "Coinflip",
+    }),
   loader: ({ location }) => loadCoinflipPaint(location.pathname),
   component: CoinflipLayout,
 });
@@ -77,6 +67,7 @@ function Lobby() {
         />
       </div>
       <RecentCoinflips />
+      <GameFacts game="coinflip" />
     </>
   );
 }

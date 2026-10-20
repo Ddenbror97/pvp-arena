@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import "@/lib/roulette/tick.functions";
-import { ogImageMeta } from "@/lib/og";
+import { GameFacts } from "@/components/seo/GameFacts";
+import { indexableHead } from "@/lib/seo/indexable-head";
 import { RouletteGame } from "@/components/roulette/RouletteGame";
 import { RecentRounds } from "@/components/roulette/RecentRounds";
 import { GameChat } from "@/components/chat/GameChat";
@@ -9,34 +10,20 @@ import { coinHeads, coinTails, rouletteGreen } from "@/assets/media";
 import { loadRoulettePaint, useQuerySeed } from "@/lib/first-paint";
 
 export const Route = createFileRoute("/roulette")({
-  head: () => ({
-    meta: [
-      { title: "PVPspinArena Roulette: 2x and 14x Provably Fair Spins" },
-      {
-        name: "description",
-        content:
-          "Spin a 33-slot crypto roulette wheel: Purple or Silver pays 2x, Green pays 14x. Fast timed rounds in USD, and every result is provably fair and checkable.",
-      },
-      {
-        property: "og:title",
-        content: "PVPspinArena Roulette: 2x and 14x Provably Fair Spins",
-      },
-      {
-        property: "og:description",
-        content:
-          "Spin a 33-slot crypto roulette wheel: Purple or Silver pays 2x, Green pays 14x. Fast timed rounds in USD, and every result is provably fair and checkable.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      ...ogImageMeta(),
-    ],
-    links: [coinHeads, coinTails, rouletteGreen].map((href) => ({
-      rel: "preload",
-      as: "image",
-      href,
-      type: "image/webp",
-    })),
-  }),
+  head: () =>
+    indexableHead({
+      path: "/roulette",
+      title: "PVPspinArena Roulette: 2x and 14x Provably Fair Spins",
+      description:
+        "Spin a 33-slot crypto roulette wheel: Purple or Silver pays 2x, Green pays 14x. Fast timed rounds in USD, and every result is provably fair and checkable.",
+      crumb: "Roulette",
+      extraLinks: [coinHeads, coinTails, rouletteGreen].map((href) => ({
+        rel: "preload",
+        as: "image" as const,
+        href,
+        type: "image/webp",
+      })),
+    }),
   loader: () => loadRoulettePaint(),
   component: RoulettePage,
 });
@@ -75,6 +62,7 @@ function RoulettePage() {
         </div>
       </div>
       <RecentRounds />
+      <GameFacts game="roulette" />
     </>
   );
 }

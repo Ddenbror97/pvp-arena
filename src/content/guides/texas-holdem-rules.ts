@@ -17,13 +17,13 @@ export const guide: Guide = {
     "How to play Texas Holdem step by step: hole cards, blinds, the flop, turn and river, every betting action, showdown rules and a worked beginner hand.",
   h1: "How to play Texas Holdem: hole cards, streets and showdown",
   answer:
-    "How to play Texas Holdem is the Hold'em rule sheet: two hole cards, blinds, four betting streets, five community cards, and a showdown that uses the best five-card hand. No-limit means you may shove your stack. The room still takes rake. PVPspinArena is not a Hold'em client. It runs Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "How to play Texas Holdem is the Hold'em rule sheet: two hole cards, blinds, four betting streets, five community cards, and a showdown that uses the best five-card hand. No-limit means you may shove your stack. The room still takes rake. PVPspinArena runs six-max No-Limit Hold'em, plus Jackpot, Coinflip, Roulette, and P2P Slott.",
   facts: [
     "Each player gets two private hole cards; the board gets five community cards.",
     "Betting streets are preflop, flop, turn and river, in that order.",
     "You may use any five cards from your two plus the five; you do not have to use both hole cards.",
     "No-limit lets you bet any legal amount up to your remaining stack.",
-    "PVPspinArena does not deal Texas Hold'em. It is not a poker room.",
+    "PVPspinArena deals six-max No-Limit Hold'em. The fee is 5% of a pot only after a flop.",
   ],
   sections: [
     {
@@ -187,7 +187,7 @@ A full deck is the game above. [The 36-card deck](/guides/short-deck-poker) drop
     },
     {
       q: "Does PVPspinArena have Texas Hold'em tables?",
-      a: "No. It is not a poker room. It offers Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "Yes. Six-max No-Limit Hold'em is live, with blinds from $0.02/$0.05 to $5/$10. The fee is 5% of a pot only after a flop. Jackpot, Coinflip, Roulette, and P2P Slott are separate games.",
     },
     {
       q: "What happens if two players have the same hand?",
@@ -210,5 +210,5 @@ A full deck is the game above. [The 36-card deck](/guides/short-deck-poker) drop
     "crypto-poker",
     "short-deck-poker",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-20",
 };
