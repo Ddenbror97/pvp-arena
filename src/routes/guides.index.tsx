@@ -2,7 +2,9 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import type { HubGuide } from "@/lib/guides/pages";
 import { getGuidesHub } from "@/lib/guides/pages.functions";
-import { OG_SITE_URL } from "@/lib/og";
+import { EeatNote } from "@/components/seo/EeatNote";
+import { publisherNode } from "@/lib/seo/publisher";
+import { OG_SITE_URL, ogImageMeta } from "@/lib/og";
 
 const TITLE = "Gambling Guides: 700+ Free Guides on Odds and Crypto";
 const DESC =
@@ -18,7 +20,9 @@ export const Route = createFileRoute("/guides/")({
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${OG_SITE_URL}/guides` },
-      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "index, follow" },
+      { name: "twitter:card", content: "summary_large_image" },
+      ...ogImageMeta(),
     ],
     links: [{ rel: "canonical", href: `${OG_SITE_URL}/guides` }],
     scripts: [
@@ -31,6 +35,7 @@ export const Route = createFileRoute("/guides/")({
               "@type": "CollectionPage",
               name: TITLE,
               url: `${OG_SITE_URL}/guides`,
+              publisher: publisherNode(),
               hasPart: (loaderData?.guides ?? []).map((g) => ({
                 "@type": "Article",
                 headline: g.h1,
@@ -133,6 +138,7 @@ function GuidesHub() {
           wagers, lottery, horse racing, prediction markets, and sports bets sit beside the crypto
           casino topics, and every article stays linked here and on its topic page.
         </p>
+        <EeatNote className="mt-5 max-w-2xl" />
         <label className="mt-6 block max-w-md text-sm">
           <span className="font-medium text-foreground">Search guides</span>
           <input

@@ -1,6 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { EeatNote } from "@/components/seo/EeatNote";
+import { publisherNode } from "@/lib/seo/publisher";
 import { getTopicPage } from "@/lib/guides/pages.functions";
-import { OG_SITE_URL } from "@/lib/og";
+import { OG_SITE_URL, ogImageMeta } from "@/lib/og";
 
 export const Route = createFileRoute("/guides/topics/$topic")({
   loader: async ({ params }) => {
@@ -25,7 +27,9 @@ export const Route = createFileRoute("/guides/topics/$topic")({
         { property: "og:description", content: t.description },
         { property: "og:type", content: "website" },
         { property: "og:url", content: url },
-        { name: "twitter:card", content: "summary" },
+        { name: "robots", content: "index, follow" },
+        { name: "twitter:card", content: "summary_large_image" },
+        ...ogImageMeta(),
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [
@@ -39,6 +43,7 @@ export const Route = createFileRoute("/guides/topics/$topic")({
                 name: t.title,
                 description: t.description,
                 url,
+                publisher: publisherNode(),
                 ...(pillar
                   ? {
                       mainEntity: {
@@ -120,6 +125,7 @@ function TopicPage() {
           {t.name} guides
         </h1>
         <p className="mt-5 max-w-3xl leading-relaxed text-muted-foreground">{t.intro}</p>
+        <EeatNote className="mt-5 max-w-3xl" />
       </header>
 
       {pillar && (

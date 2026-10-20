@@ -5,6 +5,8 @@ import { GuideBody, GuideInline, GuideLinkTargets } from "@/components/guides/Gu
 import { GuideScrollCta } from "@/components/guides/GuideScrollCta";
 import { GuideWidget } from "@/components/guides/GuideWidgets";
 import { GameDataSnapshot } from "@/components/guides/GameDataSnapshot";
+import { EeatNote, PublishedBy } from "@/components/seo/EeatNote";
+import { publisherNode } from "@/lib/seo/publisher";
 import { SeoFaq, SeoCta } from "@/components/seo/SeoPage";
 import {
   GUIDE_GAME_DATA,
@@ -14,7 +16,7 @@ import {
 import { getGameSnapshot } from "@/lib/game-snapshot/snapshot.functions";
 import { getGuidePage } from "@/lib/guides/pages.functions";
 import type { GuideLink, GuidePageData } from "@/lib/guides/pages";
-import { OG_SITE_URL } from "@/lib/og";
+import { OG_SITE_URL, ogImageMeta } from "@/lib/og";
 
 const SNAPSHOT_WAIT_MS = 400;
 
@@ -73,8 +75,11 @@ export const Route = createFileRoute("/guides/$slug")({
         datePublished: g.updated,
         dateModified: g.updated,
         keywords: [g.keyword, ...g.secondary].join(", "),
-        author: { "@type": "Organization", name: "PVPspinArena", url: OG_SITE_URL },
-        publisher: { "@type": "Organization", name: "PVPspinArena", url: OG_SITE_URL },
+        image: `${OG_SITE_URL}/og-cover.png`,
+        mainEntityOfPage: url,
+        isAccessibleForFree: true,
+        author: publisherNode(),
+        publisher: publisherNode(),
       },
       {
         "@type": "BreadcrumbList",
@@ -144,7 +149,9 @@ export const Route = createFileRoute("/guides/$slug")({
         { property: "og:description", content: g.description },
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
-        { name: "twitter:card", content: "summary" },
+        { name: "robots", content: "index, follow" },
+        { name: "twitter:card", content: "summary_large_image" },
+        ...ogImageMeta(),
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [
@@ -221,13 +228,12 @@ function GuideArticle({
         <p className="mt-5 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
           {g.answer}
         </p>
-        <p className="mt-6 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+        <EeatNote className="mt-5 max-w-3xl" />
+        <p className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <Clock className="h-3.5 w-3.5" /> {minutes} min read
           </span>
-          <span>
-            By the PVPspinArena team · Updated <time dateTime={g.updated}>{updated}</time>
-          </span>
+          <PublishedBy updated={g.updated} label={updated} />
         </p>
       </header>
 
