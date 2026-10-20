@@ -39,14 +39,18 @@ export function SiteHeader({ className }: { className?: string }) {
   return (
     <header className={cn("site-chrome sticky top-0 z-30 overflow-x-clip border-b", className)}>
       <div className="mx-auto grid h-14 w-full max-w-full grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-2 px-2 sm:flex sm:h-16 sm:gap-4 sm:px-4 lg:gap-6 lg:px-6">
-        <Link to="/" className="shrink-0" aria-label="PVPspinArena">
+        <Link
+          to="/"
+          className="block h-8 w-[3.75rem] shrink-0 sm:h-10 sm:w-[4.6875rem]"
+          aria-label="PVPspinArena"
+        >
           <img
             src={arenaLogo}
             alt="PVPspinArena"
             width={240}
             height={128}
             decoding="async"
-            className="h-8 w-auto sm:h-10"
+            className="block h-full w-full max-w-none object-contain"
           />
         </Link>
         <div className="flex items-center sm:gap-1">
