@@ -56,7 +56,9 @@ Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVP
 
 If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
 
-More on the surrounding ideas: [moneyline](/guides/moneyline-betting-explained), [gambling budget](/guides/gambling-budget).`,
+More on the surrounding ideas: [moneyline](/guides/moneyline-betting-explained), [gambling budget](/guides/gambling-budget).
+
+Two prop shapes need their own arithmetic. [Middling a moved line](/guides/middling-in-betting) is two tickets, not a free bet. [No run in the first inning](/guides/nrfi-betting) settles on that inning, not the final score.`,
     },
     {
       id: "cashier",
@@ -170,6 +172,8 @@ Then close the tab or play only what this site actually offers. Jackpot, Coinfli
     "how-does-sports-betting-work",
     "point-spread-explained",
     "moneyline-betting-explained",
+    "middling-in-betting",
+    "nrfi-betting",
   ],
   updated: "2026-09-27",
   cta: {

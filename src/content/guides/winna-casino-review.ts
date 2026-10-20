@@ -223,6 +223,12 @@ When the session stops being a bounded amount, leave through [responsible play t
     },
   ],
   sources: [],
-  related: ["no-kyc-casino", "fake-casino-sites", "curacao-gambling-license"],
+  related: [
+    "no-kyc-casino",
+    "fake-casino-sites",
+    "curacao-gambling-license",
+    "brango-casino-review",
+    "ducky-luck-casino-review",
+  ],
   updated: "2026-10-20",
 };

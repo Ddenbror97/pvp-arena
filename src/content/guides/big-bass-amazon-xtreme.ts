@@ -201,6 +201,12 @@ The later fish name is a cash game only where that operator may run it. Permissi
     },
   ],
   sources: [],
-  related: ["slot-machine-odds", "crypto-slots", "free-slots"],
+  related: [
+    "slot-machine-odds",
+    "crypto-slots",
+    "free-slots",
+    "big-bass-splash",
+    "buffalo-slot-machine",
+  ],
   updated: "2026-10-20",
 };

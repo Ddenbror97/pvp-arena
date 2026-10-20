@@ -211,6 +211,12 @@ The bank is a cash offer only where that operator is permitted to run it. A vide
     },
   ],
   sources: [],
-  related: ["how-do-slot-machines-work", "house-edge", "penny-slots-online"],
+  related: [
+    "how-do-slot-machines-work",
+    "house-edge",
+    "penny-slots-online",
+    "stack-em-slot",
+    "beam-boys-slot",
+  ],
   updated: "2026-10-20",
 };

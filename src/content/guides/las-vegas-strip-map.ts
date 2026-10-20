@@ -182,6 +182,12 @@ The boulevard is a place. The pot is a rule. They meet only in this comparison, 
     },
   ],
   sources: [],
-  related: ["las-vegas-history", "house-edge", "penny-slots-online"],
+  related: [
+    "las-vegas-history",
+    "house-edge",
+    "penny-slots-online",
+    "biggest-casino-in-the-world",
+    "fontainebleau-las-vegas-casino",
+  ],
   updated: "2026-10-20",
 };

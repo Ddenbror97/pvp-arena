@@ -208,6 +208,13 @@ This is an editorial explanation of a product shape. It is not a bonus, and it d
     },
   ],
   sources: [],
-  related: ["csgo-case-opening", "cs2-case-battle", "cs2-skin-prices", "sell-skins-for-crypto"],
+  related: [
+    "csgo-case-opening",
+    "cs2-case-battle",
+    "cs2-skin-prices",
+    "sell-skins-for-crypto",
+    "datdrop-review",
+    "clash-gg-review",
+  ],
   updated: "2026-10-20",
 };

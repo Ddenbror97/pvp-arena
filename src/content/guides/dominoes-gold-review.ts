@@ -169,6 +169,13 @@ The cut is unknown until the prize list speaks. The code is absent from this pag
     },
   ],
   sources: [],
-  related: ["solitaire-for-money", "skill-based-gambling", "skillz-review", "house-edge"],
+  related: [
+    "solitaire-for-money",
+    "skill-based-gambling",
+    "skillz-review",
+    "house-edge",
+    "bubble-cash-review",
+    "mahjong-cash-review",
+  ],
   updated: "2026-10-20",
 };

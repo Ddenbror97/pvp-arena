@@ -102,7 +102,9 @@ Exotic probables are a further pool. An exacta probable assumes an ordered pair.
 - Check whether the payoff you are staring at is for $1, $2 or your dime ticket.
 - You are 18+. The morning line is not a contract you can cash.
 
-Late money is normal. A horse that shortens from 6-1 to 3-1 in two minutes has new information or a lot of enthusiasm. You do not have to follow it. You do have to throw away the morning-line 6-1 if you are about to be paid 3-1. Recalculate. The pool will not honour the number you preferred.`,
+Late money is normal. A horse that shortens from 6-1 to 3-1 in two minutes has new information or a lot of enthusiasm. You do not have to follow it. You do have to throw away the morning-line 6-1 if you are about to be paid 3-1. Recalculate. The pool will not honour the number you preferred.
+
+The price pages assume the words. The [horse racing glossary](/guides/horse-racing-terms) defines a furlong, the morning line, and the order of an exacta without pretending to be today's tote.`,
     },
     {
       id: "breakage-live",
@@ -149,6 +151,7 @@ Keep the three sentences that matter. The morning line is a guess. The tote is t
     "win-place-show-betting",
     "odds-converter",
     "implied-probability",
+    "horse-racing-terms",
   ],
   updated: "2026-10-06",
 };

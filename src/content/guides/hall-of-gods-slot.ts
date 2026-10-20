@@ -184,6 +184,13 @@ The $114 winner share is a player pot after a 5% fee. It is not a Hall of Gods j
     },
   ],
   sources: [],
-  related: ["slot-machine-odds", "rtp-explained", "crypto-slots", "house-edge"],
+  related: [
+    "slot-machine-odds",
+    "rtp-explained",
+    "crypto-slots",
+    "house-edge",
+    "huff-n-puff-slot",
+    "dancing-drums-slot",
+  ],
   updated: "2026-10-20",
 };

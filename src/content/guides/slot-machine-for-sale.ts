@@ -168,6 +168,13 @@ The purchase, if you make one, is property plus a device question. The spin on a
     },
   ],
   sources: [],
-  related: ["slot-machine-odds", "penny-slots-online", "las-vegas-history", "house-edge"],
+  related: [
+    "slot-machine-odds",
+    "penny-slots-online",
+    "las-vegas-history",
+    "house-edge",
+    "bingo-halls-near-me",
+    "slot-machine-for-sale",
+  ],
   updated: "2026-10-20",
 };

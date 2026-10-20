@@ -109,7 +109,9 @@ Superstition is a cheap hobby until it prices your bets. The test is whether the
       title: "Why the rituals survive the math",
       body: `They survive because wins are emotional and losses are easy to reclassify as “almost” or as a cold seat. They survive because groups reward the story: a table likes a hot shooter more than it likes a probability lecture. They survive because a little ritual calms people down, and calm play can accidentally be better play, which then gets credited to the charm instead of to the calm. That last loop is the kind one. If a hat helps you stick to a limit, the hat is a reminder, not a force. Give the credit to the limit.
 
-They also survive advertising. Games are dressed in luck, gold, and numbers that already mean something in your culture. The art is allowed to be pretty. The art is not a probability amendment. When you want the cultural story, use the lucky-number and horseshoe pages. When you want the bias, use the illusion and fallacy pages. When you want a result you can check, use a game that publishes its rule. A charm will come along if you like. It will not come along as a partner in the math.`,
+They also survive advertising. Games are dressed in luck, gold, and numbers that already mean something in your culture. The art is allowed to be pretty. The art is not a probability amendment. When you want the cultural story, use the lucky-number and horseshoe pages. When you want the bias, use the illusion and fallacy pages. When you want a result you can check, use a game that publishes its rule. A charm will come along if you like. It will not come along as a partner in the math.
+
+Pictures and jokes are not charms. [Gambling tattoos](/guides/gambling-tattoos) are ink. [Gambling memes](/guides/gambling-memes) are jokes. [Songs about cards](/guides/gambling-songs) do not move a probability.`,
     },
   ],
   faqs: [
@@ -154,6 +156,8 @@ They also survive advertising. Games are dressed in luck, gold, and numbers that
     "horseshoe-luck",
     "gamblers-fallacy",
     "slot-machine-myths",
+    "gambling-tattoos",
+    "gambling-memes",
   ],
   updated: "2026-10-06",
 };

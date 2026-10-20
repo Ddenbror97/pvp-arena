@@ -223,6 +223,12 @@ The page is an editorial review of a search product. It is not a listing of our 
     },
   ],
   sources: [],
-  related: ["csfloat-vs-skinport", "sell-skins-for-crypto", "cs2-skin-prices"],
+  related: [
+    "csfloat-vs-skinport",
+    "sell-skins-for-crypto",
+    "cs2-skin-prices",
+    "buff163-review",
+    "cs2-case-prices",
+  ],
   updated: "2026-10-20",
 };

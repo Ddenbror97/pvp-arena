@@ -219,6 +219,12 @@ No code appears in this draft. An outbound link added later would be advertising
     },
   ],
   sources: [],
-  related: ["sweepstakes-casino", "social-casino", "yay-casino-review"],
+  related: [
+    "sweepstakes-casino",
+    "social-casino",
+    "yay-casino-review",
+    "realprize-review",
+    "spree-casino-review",
+  ],
   updated: "2026-10-20",
 };

@@ -207,6 +207,13 @@ This is an editorial comparison of formats. It is not a bonus offer and it does 
     },
   ],
   sources: [],
-  related: ["provably-fair-games", "house-edge", "cs2-skin-prices", "pvp-gambling"],
+  related: [
+    "provably-fair-games",
+    "house-edge",
+    "cs2-skin-prices",
+    "pvp-gambling",
+    "csgoempire-review",
+    "csgo-big-review",
+  ],
   updated: "2026-10-20",
 };

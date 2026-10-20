@@ -227,6 +227,8 @@ That fee is ours, and Purple is 16 of 33 slots.`,
     "gold-coins-vs-sweeps-coins",
     "how-do-sweepstakes-casinos-work",
     "cafe-casino-review",
+    "hello-millions-review",
+    "wow-vegas-review",
   ],
   updated: "2026-10-20",
 };

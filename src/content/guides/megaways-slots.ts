@@ -211,6 +211,12 @@ Real-money access exists only where that casino is allowed to offer the specific
     },
   ],
   sources: [],
-  related: ["slot-paylines-explained", "house-edge", "how-do-slot-machines-work"],
+  related: [
+    "slot-paylines-explained",
+    "house-edge",
+    "how-do-slot-machines-work",
+    "bonanza-megaways-slot",
+    "sugar-rush-1000-slot",
+  ],
   updated: "2026-10-20",
 };

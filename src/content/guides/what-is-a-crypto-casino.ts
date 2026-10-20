@@ -146,7 +146,9 @@ If you are new, start with the [provably fair casino guide](/guides/provably-fai
 
 More foundations reading lives in our [Foundations guides](/guides/topics/foundations).
 
-Two follow-ups belong here. [Crypto casino versus a traditional casino](/guides/crypto-casino-vs-traditional-casino) is the payment and licence contrast. [How online casinos make money](/guides/how-do-online-casinos-make-money) is the edge, the fee and the bonus, whether or not the cashier is a coin.`,
+Two follow-ups belong here. [Crypto casino versus a traditional casino](/guides/crypto-casino-vs-traditional-casino) is the payment and licence contrast. [How online casinos make money](/guides/how-do-online-casinos-make-money) is the edge, the fee and the bonus, whether or not the cashier is a coin.
+
+Four brand notes sit beside this definition and print no license number. Read the [cafe-themed cashier](/guides/cafe-casino-review), the [Rainbet volume warning](/guides/rainbet-review), [Winna against a positive-EV myth](/guides/winna-casino-review) and the [Ignition cashier](/guides/ignition-casino-review).`,
     },
   ],
   faqs: [
@@ -184,6 +186,7 @@ Two follow-ups belong here. [Crypto casino versus a traditional casino](/guides/
     "best-crypto-gambling-sites",
     "crypto-casino-vs-traditional-casino",
     "crypto-casino-reddit-advice",
+    "cafe-casino-review",
   ],
   updated: "2026-09-25",
 };

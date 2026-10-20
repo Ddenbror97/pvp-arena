@@ -206,6 +206,12 @@ An editorial page, not a coupon. No code. A later link out, to splash or to the 
     },
   ],
   sources: [],
-  related: ["hall-of-gods-slot", "crypto-slots", "house-edge"],
+  related: [
+    "hall-of-gods-slot",
+    "crypto-slots",
+    "house-edge",
+    "buffalo-slot-machine",
+    "moon-princess-slot",
+  ],
   updated: "2026-10-20",
 };

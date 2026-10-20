@@ -247,6 +247,8 @@ Purple is 16 of 33 slots, so a hit is not the typical spin.`,
     "gold-coins-vs-sweeps-coins",
     "house-edge",
     "cryptorino-review",
+    "modo-casino-review",
+    "fortune-coins-review",
   ],
   updated: "2026-10-20",
 };

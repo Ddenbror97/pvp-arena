@@ -161,7 +161,9 @@ A few table rules keep money games friendly:
 - keep coins in view so everyone can count lives;
 - set a stop: a number of games or a time, not "until I win it back".
 
-Money play is for adults (18+ or your local legal age). If a friendly game is turning into chasing losses, the [responsible gambling](/responsible-gambling) page lists tools and help lines.`,
+Money play is for adults (18+ or your local legal age). If a friendly game is turning into chasing losses, the [responsible gambling](/responsible-gambling) page lists tools and help lines.
+
+Palace is a shedding game, not a race to 31. The [Palace setup and powers](/guides/palace-card-game) are the rules if the loser is the person left holding cards.`,
     },
     {
       id: "pvp",
@@ -213,6 +215,7 @@ See also [tonk](/guides/tonk-card-game) and [scopa](/guides/scopa-rules).`,
     "how-to-play-spades",
     "52-card-deck",
     "tonk-card-game",
+    "palace-card-game",
   ],
   updated: "2026-09-27",
 };

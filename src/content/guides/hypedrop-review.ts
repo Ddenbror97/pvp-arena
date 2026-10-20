@@ -218,6 +218,13 @@ This is an editorial note about a search. It does not sell cases and it does not
     },
   ],
   sources: [],
-  related: ["cs2-case-prices", "skinrave-review", "house-edge", "csgo-case-opening"],
+  related: [
+    "cs2-case-prices",
+    "skinrave-review",
+    "house-edge",
+    "csgo-case-opening",
+    "rillabox-review",
+    "csgo-net-review",
+  ],
   updated: "2026-10-20",
 };

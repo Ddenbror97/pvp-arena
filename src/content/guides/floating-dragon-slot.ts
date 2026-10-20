@@ -203,6 +203,12 @@ Real-money availability is only where that casino is allowed to offer the title,
     },
   ],
   sources: [],
-  related: ["bonus-buy-slots", "rtp-explained", "slot-volatility"],
+  related: [
+    "bonus-buy-slots",
+    "rtp-explained",
+    "slot-volatility",
+    "golden-goddess-slot",
+    "zeus-vs-hades-slot",
+  ],
   updated: "2026-10-20",
 };

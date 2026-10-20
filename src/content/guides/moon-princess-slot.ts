@@ -209,6 +209,12 @@ No code is included. What you are reading is an editorial review. Advertising is
     },
   ],
   sources: [],
-  related: ["sweet-bonanza", "megaways-slots", "house-edge"],
+  related: [
+    "sweet-bonanza",
+    "megaways-slots",
+    "house-edge",
+    "queen-of-the-nile-slot",
+    "big-bass-bonanza",
+  ],
   updated: "2026-10-20",
 };

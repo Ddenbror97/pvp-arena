@@ -207,6 +207,12 @@ This is an editorial review, not a coupon. There is no code. A later link to a b
     },
   ],
   sources: [],
-  related: ["hall-of-gods-slot", "penny-slots-online", "rtp-explained"],
+  related: [
+    "hall-of-gods-slot",
+    "penny-slots-online",
+    "rtp-explained",
+    "big-bass-bonanza",
+    "big-bass-amazon-xtreme",
+  ],
   updated: "2026-10-20",
 };

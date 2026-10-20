@@ -125,7 +125,9 @@ PVPspinArena will not sell you a chip subscription. A pot is a pot. If you are h
       title: "Summary and when to stop",
       body: `A social casino is virtual chips with no cash desk. A sweepstakes casino adds a redeemable promotional chip. This site is a USDC and ETH PvP room for Jackpot, Coinflip and Roulette. It is not a social casino and it is not Gold Coins.
 
-You must be 18 or over, or older if your law says so. If chip packs, streaks or a sister “rewards” lobby are already hard to put down, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Points that cannot cash out can still take the evening.`,
+You must be 18 or over, or older if your law says so. If chip packs, streaks or a sister “rewards” lobby are already hard to put down, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Points that cannot cash out can still take the evening.
+
+Social lobbies still need their own cashier note. [Lotsa Slots as a chip lobby](/guides/lotsa-slots-review) and [Bingo Bash free chips](/guides/bingo-bash-review) are not cash. The [PCH token screen](/guides/pch-games-review), the [Legendz license gap](/guides/legendz-review), [Real Prize's redeem test](/guides/realprize-review) and [Golden Hearts as a brand](/guides/golden-hearts-casino-review) follow that split.`,
     },
   ],
   faqs: [
@@ -168,6 +170,8 @@ You must be 18 or over, or older if your law says so. If chip packs, streaks or 
     "sweepstakes-vs-crypto-casino",
     "what-is-a-crypto-casino",
     "house-edge",
+    "lotsa-slots-review",
+    "bingo-bash-review",
   ],
   updated: "2026-09-26",
 };

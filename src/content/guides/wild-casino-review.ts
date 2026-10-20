@@ -218,6 +218,12 @@ Leave through [responsible gambling](/responsible-gambling) when the amount you 
     },
   ],
   sources: [],
-  related: ["house-edge", "fake-casino-sites", "pvp-gambling"],
+  related: [
+    "house-edge",
+    "fake-casino-sites",
+    "pvp-gambling",
+    "ignition-casino-review",
+    "fortunejack-review",
+  ],
   updated: "2026-10-20",
 };

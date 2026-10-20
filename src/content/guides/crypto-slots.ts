@@ -139,7 +139,9 @@ That is a product choice, not a moral ranking. Slots are a fine entertainment fo
 
 If a crypto lobby’s slot list is the reason you opened this page, price those slots with RTP and hit-rate honesty, then decide whether you still want a game that cannot show you the strips.
 
-A useful contrast is pace. A PvP jackpot round has a join window and a single draw. A slot can fire hundreds of independent house bets in that same window. The edge per spin may look smaller than a Purple or Silver edge of about 7.88% after the win fee, but the turnover can be much larger. Always multiply. A 3% slot on $400 spun is a $12 expected tab; a 7.88% Purple or Silver wheel on $60 spun is about $4.73. The “safer RTP” game was the more expensive hour.`,
+A useful contrast is pace. A PvP jackpot round has a join window and a single draw. A slot can fire hundreds of independent house bets in that same window. The edge per spin may look smaller than a Purple or Silver edge of about 7.88% after the win fee, but the turnover can be much larger. Always multiply. A 3% slot on $400 spun is a $12 expected tab; a 7.88% Purple or Silver wheel on $60 spun is about $4.73. The “safer RTP” game was the more expensive hour.
+
+More cabinets refuse a copied percent. [Golden Goddess stacks](/guides/golden-goddess-slot), [Zeus versus Hades modes](/guides/zeus-vs-hades-slot) and [Planet Moolah cascades](/guides/invaders-from-the-planet-moolah) are title notes. [Hall of Gods](/guides/hall-of-gods-slot), [Huff N Puff](/guides/huff-n-puff-slot) and [Dancing Drums](/guides/dancing-drums-slot) print no jackpot meter.`,
     },
     {
       id: "checklist",
@@ -208,6 +210,8 @@ PVPspinArena's slot game is P2P Slott, a 1v1 duel. If you want published odds an
     "crypto-dice-game",
     "dice-roll-probability",
     "mines-game-casino",
+    "golden-goddess-slot",
+    "zeus-vs-hades-slot",
   ],
   updated: "2026-09-26",
 };

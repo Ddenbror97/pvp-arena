@@ -105,7 +105,9 @@ If you want the house, accept the edge and the session limit. Do not accept a st
 
 Skip any alternative that pays you only in a currency you cannot withdraw, then sells you the withdrawal. That is a locked door with a points balance painted on it. The same red flags from the checklist move with you to the next logo. A new brand does not reset them.
 
-This review will go stale on purpose. Fees, games, and regions change. The structure will not: entries in, rake out, prizes to a few places, complaints you should test rather than recite. Re-read the confirm screen. It is more current than any article, including this one.`,
+This review will go stale on purpose. Fees, games, and regions change. The structure will not: entries in, rake out, prizes to a few places, complaints you should test rather than recite. Re-read the confirm screen. It is more current than any article, including this one.
+
+Other skill cashiers are not Skillz. [WorldWinner's entry fee](/guides/worldwinner-review), the [pool app rake](/guides/pool-payday-review), the [Game Taco lobby](/guides/game-taco-review) and [Solitaire Smash versus other solitaire apps](/guides/solitaire-smash-review) each keep their own cut unpublished.`,
     },
     {
       id: "who-should-walk-away",
@@ -150,6 +152,13 @@ The fairest line in this skillz review is the dull one. Read the entry, read the
       url: "https://www.skillz.com/",
     },
   ],
-  related: ["skill-based-gambling", "provably-fair-casino", "pvp-casino-games", "fake-casino-sites"],
+  related: [
+    "skill-based-gambling",
+    "provably-fair-casino",
+    "pvp-casino-games",
+    "fake-casino-sites",
+    "worldwinner-review",
+    "pool-payday-review",
+  ],
   updated: "2026-10-06",
 };

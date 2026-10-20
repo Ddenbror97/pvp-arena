@@ -235,6 +235,11 @@ Editorial, not an announcement. No code. Any later outbound link should be read 
     },
   ],
   sources: [],
-  related: ["coin-hunt-world-review", "what-is-a-crypto-casino", "fake-casino-sites"],
+  related: [
+    "coin-hunt-world-review",
+    "what-is-a-crypto-casino",
+    "fake-casino-sites",
+    "rollercoin-review",
+  ],
   updated: "2026-10-20",
 };

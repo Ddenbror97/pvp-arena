@@ -56,7 +56,9 @@ If the session starts to feel like chasing, stop. [Responsible gambling](/respon
 
 More on the surrounding ideas: [moneyline](/guides/moneyline-betting-explained), [gambling budget](/guides/gambling-budget).
 
-A bet on a team to win the season, not the week, is a [futures bet](/guides/futures-bet).`,
+A bet on a team to win the season, not the week, is a [futures bet](/guides/futures-bet).
+
+Three football words are their own pages. A [first-touchdown ticket](/guides/first-touchdown-scorer-bets) is not any score. [Against the spread](/guides/ats-in-betting) is not the win-loss record. [PK, a pick'em](/guides/pk-in-betting) is a zero spread, and the ticket still decides a tie.`,
     },
     {
       id: "cashier",
@@ -171,6 +173,8 @@ A season-long pick-one-team contest is a [survivor pool](/guides/survivor-pool),
     "point-spread-explained",
     "moneyline-betting-explained",
     "survivor-pool",
+    "first-touchdown-scorer-bets",
+    "ats-in-betting",
   ],
   updated: "2026-09-27",
   cta: {

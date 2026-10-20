@@ -223,6 +223,12 @@ Editorial only. No code, no store link that pays us, no request that you deposit
     },
   ],
   sources: [],
-  related: ["sell-skins-for-crypto", "cs2-skin-prices", "fake-casino-sites"],
+  related: [
+    "sell-skins-for-crypto",
+    "cs2-skin-prices",
+    "fake-casino-sites",
+    "skinsmonkey-review",
+    "tradeit-gg-review",
+  ],
   updated: "2026-10-20",
 };

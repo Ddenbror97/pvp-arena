@@ -213,6 +213,12 @@ Editorial review, not a promotion. No code. A later link out to the brand is adv
     },
   ],
   sources: [],
-  related: ["is-gambling-legal-in-texas", "social-casino", "wow-vegas-review"],
+  related: [
+    "is-gambling-legal-in-texas",
+    "social-casino",
+    "wow-vegas-review",
+    "lotsa-slots-review",
+    "bingo-bash-review",
+  ],
   updated: "2026-10-20",
 };

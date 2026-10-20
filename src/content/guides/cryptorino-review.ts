@@ -225,6 +225,13 @@ No affiliate link is included. If a brand URL is added later, treat the click as
     },
   ],
   sources: [],
-  related: ["what-is-a-crypto-casino", "crypto-slots", "no-kyc-casino", "house-edge"],
+  related: [
+    "what-is-a-crypto-casino",
+    "crypto-slots",
+    "no-kyc-casino",
+    "house-edge",
+    "winna-casino-review",
+    "brango-casino-review",
+  ],
   updated: "2026-10-20",
 };

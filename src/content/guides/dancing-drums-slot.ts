@@ -236,6 +236,13 @@ Dancing drums slot is a commercial title with an unpublished return. The names d
     },
   ],
   sources: [],
-  related: ["slot-machine-odds", "rtp-explained", "crypto-slots", "house-edge"],
+  related: [
+    "slot-machine-odds",
+    "rtp-explained",
+    "crypto-slots",
+    "house-edge",
+    "top-dollar-slot",
+    "floating-dragon-slot",
+  ],
   updated: "2026-10-20",
 };

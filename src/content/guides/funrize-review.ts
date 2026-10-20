@@ -229,6 +229,8 @@ If a link to the brand is attached later, read it as advertising. Nothing above 
     "sweepstakes-casino",
     "fake-casino-sites",
     "sweepstakes-casino-legal-states",
+    "legendz-review",
+    "realprize-review",
   ],
   updated: "2026-10-20",
 };

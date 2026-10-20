@@ -168,6 +168,13 @@ The company is the search intent. The token is not cash until a redeem rule says
     },
   ],
   sources: [],
-  related: ["sweepstakes-casino", "sweeps-coins-explained", "social-casino", "fake-casino-sites"],
+  related: [
+    "sweepstakes-casino",
+    "sweeps-coins-explained",
+    "social-casino",
+    "fake-casino-sites",
+    "freecash-review",
+    "cash-giraffe-review",
+  ],
   updated: "2026-10-20",
 };

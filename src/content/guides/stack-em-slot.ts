@@ -209,6 +209,12 @@ Cash ladders exist only where that operator may offer the game. A clip with a hu
     },
   ],
   sources: [],
-  related: ["slot-volatility", "rtp-explained", "crypto-slots"],
+  related: [
+    "slot-volatility",
+    "rtp-explained",
+    "crypto-slots",
+    "beam-boys-slot",
+    "piggy-bankin-slot",
+  ],
   updated: "2026-10-20",
 };

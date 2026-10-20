@@ -2096,6 +2096,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "is-gambling-legal-in-georgia",
         "is-gambling-legal-in-tennessee",
         "online-gambling-legal-north-carolina",
+        "pa-online-casino",
+        "online-casino-delaware",
+        "online-gambling-legal-kentucky",
+        "online-gambling-legal-south-carolina",
         "online-casino-legal-new-york",
       ],
     },
@@ -2106,6 +2110,39 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Prediction markets",
       slugs: ["crypto-prediction-markets", "polymarket-alternatives", "polymarket-vs-kalshi"],
+    },
+    {
+      name: "Brand cashiers",
+      slugs: [
+        "cafe-casino-review",
+        "red-dog-casino-review",
+        "shuffle-casino-review",
+        "cryptorino-review",
+        "winna-casino-review",
+        "brango-casino-review",
+        "ducky-luck-casino-review",
+        "wild-casino-review",
+        "ignition-casino-review",
+        "fortunejack-review",
+      ],
+    },
+    {
+      name: "More brand cashiers",
+      slugs: [
+        "rainbet-review",
+        "lucky-creek-casino-review",
+        "jackbit-review",
+        "everygame-casino-review",
+        "bitkingz-review",
+        "lucky-block-casino-review",
+        "slots-lv-review",
+        "mega-bonanza-casino-review",
+        "sloto-cash-review",
+      ],
+    },
+    {
+      name: "Earn-by-playing",
+      slugs: ["coin-hunt-world-review", "rollercoin-review", "blum-crypto"],
     },
   ],
   "Provably fair": [
@@ -2241,6 +2278,52 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "mystery-box-site",
         "valve-gambling-lawsuit",
       ],
+    },
+    {
+      name: "Skin wheels and lobbies",
+      slugs: [
+        "csgoroll-review",
+        "csgoempire-review",
+        "csgo-big-review",
+        "csgoluck-review",
+        "rustclash-review",
+        "rustchance-review",
+        "rustmagic-review",
+        "bandit-camp-review",
+      ],
+    },
+    {
+      name: "Case shops",
+      slugs: [
+        "hellcase-review",
+        "packdraw-review",
+        "skinrave-review",
+        "datdrop-review",
+        "clash-gg-review",
+        "skinclub-review",
+        "daddyskins-review",
+        "bloodycase-review",
+        "farmskins-review",
+        "hypedrop-review",
+        "rillabox-review",
+        "csgo-net-review",
+      ],
+    },
+    {
+      name: "Trade bots and prices",
+      slugs: [
+        "skinsmonkey-review",
+        "tradeit-gg-review",
+        "skinbaron-review",
+        "buff163-review",
+        "cs2-case-prices",
+        "cs2-case-simulator",
+        "tf2-keys",
+      ],
+    },
+    {
+      name: "Roblox item sites",
+      slugs: ["rbxflip-review", "bloxflip-review"],
     },
   ],
   "Games & odds": [
@@ -2556,6 +2639,44 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "sweepstakes-vs-crypto-casino",
       ],
     },
+    {
+      name: "Sweeps cashiers",
+      slugs: [
+        "yay-casino-review",
+        "zula-casino-review",
+        "crown-coins-casino-review",
+        "modo-casino-review",
+        "fortune-coins-review",
+        "hello-millions-review",
+        "wow-vegas-review",
+        "jackpota-review",
+      ],
+    },
+    {
+      name: "More sweeps cashiers",
+      slugs: [
+        "spree-casino-review",
+        "rolla-casino-review",
+        "sixty6-casino-review",
+        "chanced-casino-review",
+        "cashman-casino-review",
+        "funrize-review",
+        "legendz-review",
+        "realprize-review",
+      ],
+    },
+    {
+      name: "Clubs and social apps",
+      slugs: [
+        "clubwpt-gold-review",
+        "golden-hearts-casino-review",
+        "dara-casino-review",
+        "cash-frenzy-review",
+        "lonestar-casino-review",
+        "lotsa-slots-review",
+        "bingo-bash-review",
+      ],
+    },
   ],
   Poker: [
     {
@@ -2601,7 +2722,15 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     },
     {
       name: "Rooms and apps",
-      slugs: ["clubgg-review", "pokerbros-review", "acr-poker-review", "real-money-poker-apps"],
+      slugs: [
+        "clubgg-review",
+        "pokerbros-review",
+        "replay-poker-review",
+        "black-chip-poker-review",
+        "pokerstars-casino-review",
+        "acr-poker-review",
+        "real-money-poker-apps",
+      ],
     },
     {
       name: "Formats and staking",
@@ -2673,6 +2802,32 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "backgammon-for-money",
         "gin-rummy-for-money",
         "trivia-for-money",
+      ],
+    },
+    {
+      name: "Skill cashiers",
+      slugs: [
+        "worldwinner-review",
+        "pool-payday-review",
+        "game-taco-review",
+        "solitaire-smash-review",
+        "21-blitz-review",
+        "dominoes-gold-review",
+        "bubble-cash-review",
+        "mahjong-cash-review",
+        "gamezop-review",
+      ],
+    },
+    {
+      name: "Rewards apps",
+      slugs: [
+        "pch-games-review",
+        "freecash-review",
+        "cash-giraffe-review",
+        "tapjoy-review",
+        "givvy-review",
+        "swagbucks-games",
+        "lucky-match-review",
       ],
     },
   ],
@@ -2818,6 +2973,16 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
       name: "Law and results",
       slugs: ["sports-betting-legal-states", "how-old-to-sports-bet", "prediction-market-legal-us"],
     },
+    {
+      name: "Line words and props",
+      slugs: [
+        "first-touchdown-scorer-bets",
+        "ats-in-betting",
+        "pk-in-betting",
+        "middling-in-betting",
+        "nrfi-betting",
+      ],
+    },
   ],
   Blackjack: [
     {
@@ -2874,6 +3039,45 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
       ],
     },
     { name: "Slot duels", slugs: ["slot-battles"] },
+    {
+      name: "Cluster and ways titles",
+      slugs: [
+        "sweet-bonanza",
+        "fruit-party-slot",
+        "megaways-slots",
+        "bonanza-megaways-slot",
+        "sugar-rush-1000-slot",
+        "fruit-shop-slot",
+      ],
+    },
+    {
+      name: "Fish and cabinet names",
+      slugs: [
+        "big-bass-bonanza",
+        "big-bass-amazon-xtreme",
+        "big-bass-splash",
+        "buffalo-slot-machine",
+        "moon-princess-slot",
+        "queen-of-the-nile-slot",
+      ],
+    },
+    {
+      name: "Feature titles",
+      slugs: [
+        "golden-goddess-slot",
+        "zeus-vs-hades-slot",
+        "invaders-from-the-planet-moolah",
+        "hall-of-gods-slot",
+        "huff-n-puff-slot",
+        "dancing-drums-slot",
+        "top-dollar-slot",
+        "floating-dragon-slot",
+      ],
+    },
+    {
+      name: "More cabinets",
+      slugs: ["piggy-bankin-slot", "stack-em-slot", "beam-boys-slot"],
+    },
   ],
   "Casino knowledge": [
     {
@@ -2972,6 +3176,22 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "famous-casino-heists",
         "gambling-superstitions",
       ],
+    },
+    {
+      name: "The Strip",
+      slugs: [
+        "fontainebleau-las-vegas-casino",
+        "las-vegas-strip-map",
+        "biggest-casino-in-the-world",
+      ],
+    },
+    {
+      name: "Pictures and songs",
+      slugs: ["gambling-tattoos", "gambling-memes", "gambling-songs"],
+    },
+    {
+      name: "Cabinets and rooms",
+      slugs: ["slot-machine-for-sale", "bingo-halls-near-me"],
     },
   ],
   "Game shows": [
@@ -3147,6 +3367,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "how-to-bet-on-horse-racing",
         "horse-racing-odds-explained",
         "win-place-show-betting",
+        "horse-racing-terms",
         "kentucky-derby-betting",
       ],
     },

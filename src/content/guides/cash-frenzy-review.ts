@@ -210,6 +210,12 @@ This page is an editorial review. It is not a bonus offer. No code is tucked int
     },
   ],
   sources: [],
-  related: ["wow-vegas-review", "zula-casino-review", "sweepstakes-casino"],
+  related: [
+    "wow-vegas-review",
+    "zula-casino-review",
+    "sweepstakes-casino",
+    "lonestar-casino-review",
+    "lotsa-slots-review",
+  ],
   updated: "2026-10-20",
 };

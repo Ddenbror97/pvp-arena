@@ -240,6 +240,13 @@ This page is about chips and redeem sentences. It does not reuse keno odds as a 
     },
   ],
   sources: [],
-  related: ["social-casino", "keno-vs-bingo", "sweepstakes-casino", "house-edge"],
+  related: [
+    "social-casino",
+    "keno-vs-bingo",
+    "sweepstakes-casino",
+    "house-edge",
+    "clubwpt-gold-review",
+    "golden-hearts-casino-review",
+  ],
   updated: "2026-10-20",
 };

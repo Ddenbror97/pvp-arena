@@ -99,7 +99,9 @@ For bingo, cost is card price times how many cards you buy, times the hold, with
 
 [Crypto bingo](/guides/crypto-bingo) is a payment and venue variant of bingo, not a third draw. If the card, the pattern, and the prize pool are bingo, a crypto cashier does not turn the hold into a keno paytable. Read the prize rule in the same way you would on paper.
 
-If gambling is no longer a planned spend, stop and use the limits, time-outs, and help links on the [responsible gambling](/responsible-gambling) page. Switching from keno to bingo, or the other way, does not reset a loss. It buys a different product with a different clock. The clock is the part people underestimate. Name it, name the hold, and buy only the paper whose price you just calculated.`,
+If gambling is no longer a planned spend, stop and use the limits, time-outs, and help links on the [responsible gambling](/responsible-gambling) page. Switching from keno to bingo, or the other way, does not reset a loss. It buys a different product with a different clock. The clock is the part people underestimate. Name it, name the hold, and buy only the paper whose price you just calculated.
+
+A local room is a third product. [What to ask at a bingo hall door](/guides/bingo-halls-near-me) covers the session price and the prize the caller announces.`,
     },
   ],
   faqs: [
@@ -132,7 +134,13 @@ If gambling is no longer a planned spend, stop and use the limits, time-outs, an
     },
     { label: "Wikipedia: Bingo", url: "https://en.wikipedia.org/wiki/Bingo" },
   ],
-  related: ["keno-odds", "keno-strategy", "bingo-patterns", "crypto-bingo"],
+  related: [
+    "keno-odds",
+    "keno-strategy",
+    "bingo-patterns",
+    "crypto-bingo",
+    "bingo-halls-near-me",
+  ],
   updated: "2026-09-29",
   howTo: false,
 };

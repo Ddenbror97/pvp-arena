@@ -242,6 +242,13 @@ A skill score is a different system, and a craps layout is a third one. Neither 
     },
   ],
   sources: [],
-  related: ["online-craps", "skill-based-gambling", "games-that-pay-real-money", "skillz-review"],
+  related: [
+    "online-craps",
+    "skill-based-gambling",
+    "games-that-pay-real-money",
+    "skillz-review",
+    "mahjong-cash-review",
+    "gamezop-review",
+  ],
   updated: "2026-10-20",
 };

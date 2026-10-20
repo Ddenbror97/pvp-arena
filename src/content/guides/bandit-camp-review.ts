@@ -216,6 +216,12 @@ Artwork is not a substitute.`,
     },
   ],
   sources: [],
-  related: ["rust-gambling", "cs2-skin-prices", "csgoroll-review", "house-edge"],
+  related: [
+    "rust-gambling",
+    "cs2-skin-prices",
+    "csgoroll-review",
+    "house-edge",
+    "csgoempire-review",
+  ],
   updated: "2026-10-20",
 };

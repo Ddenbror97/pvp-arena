@@ -181,6 +181,13 @@ The $4 suppose is not income. The $19 Coinflip payout is not a rewards cash-out.
     },
   ],
   sources: [],
-  related: ["games-that-pay-real-money", "fake-casino-sites", "skill-based-gambling", "givvy-review"],
+  related: [
+    "games-that-pay-real-money",
+    "fake-casino-sites",
+    "skill-based-gambling",
+    "givvy-review",
+    "cash-giraffe-review",
+    "tapjoy-review",
+  ],
   updated: "2026-10-20",
 };

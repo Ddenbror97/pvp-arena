@@ -233,6 +233,8 @@ Ticket size still sets the chance. The figure is not a Slots.lv prize.`,
     "house-edge",
     "no-kyc-casino",
     "cafe-casino-review",
+    "mega-bonanza-casino-review",
+    "sloto-cash-review",
   ],
   updated: "2026-10-20",
 };

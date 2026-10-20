@@ -211,6 +211,12 @@ Cash play shows up only where that operator may legally offer the alien title. A
     },
   ],
   sources: [],
-  related: ["slot-machine-odds", "free-slots", "scatter-symbols"],
+  related: [
+    "slot-machine-odds",
+    "free-slots",
+    "scatter-symbols",
+    "hall-of-gods-slot",
+    "huff-n-puff-slot",
+  ],
   updated: "2026-10-20",
 };

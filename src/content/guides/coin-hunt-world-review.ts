@@ -184,6 +184,13 @@ The $2 fee is Coinflip's. It is not a toll on a sidewalk, and it does not reveal
     },
   ],
   sources: [],
-  related: ["what-is-a-crypto-casino", "games-that-pay-real-money", "pvp-gambling", "provably-fair-games"],
+  related: [
+    "what-is-a-crypto-casino",
+    "games-that-pay-real-money",
+    "pvp-gambling",
+    "provably-fair-games",
+    "rollercoin-review",
+    "blum-crypto",
+  ],
   updated: "2026-10-20",
 };

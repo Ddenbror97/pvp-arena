@@ -169,6 +169,13 @@ Nothing here tells you to download a brand, to enter a code, or to treat billiar
     },
   ],
   sources: [],
-  related: ["skill-based-gambling", "skillz-review", "solitaire-for-money", "house-edge"],
+  related: [
+    "skill-based-gambling",
+    "skillz-review",
+    "solitaire-for-money",
+    "house-edge",
+    "game-taco-review",
+    "solitaire-smash-review",
+  ],
   updated: "2026-10-20",
 };

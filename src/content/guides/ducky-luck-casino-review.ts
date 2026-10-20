@@ -221,6 +221,12 @@ If the joke stops being funny and the stakes stop being planned, step away with 
     },
   ],
   sources: [],
-  related: ["fake-casino-sites", "what-is-a-crypto-casino", "red-dog-casino-review"],
+  related: [
+    "fake-casino-sites",
+    "what-is-a-crypto-casino",
+    "red-dog-casino-review",
+    "wild-casino-review",
+    "ignition-casino-review",
+  ],
   updated: "2026-10-20",
 };

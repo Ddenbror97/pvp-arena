@@ -225,6 +225,12 @@ Editorial, not an offer. No code. Any later outbound link to the brand should be
     },
   ],
   sources: [],
-  related: ["csgo-case-opening", "hellcase-review", "house-edge"],
+  related: [
+    "csgo-case-opening",
+    "hellcase-review",
+    "house-edge",
+    "bloodycase-review",
+    "farmskins-review",
+  ],
   updated: "2026-10-20",
 };

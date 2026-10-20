@@ -254,6 +254,8 @@ Silver is 16 of 33 slots.`,
     "how-do-sweepstakes-casinos-work",
     "sweepstakes-casino",
     "house-edge",
+    "crown-coins-casino-review",
+    "modo-casino-review",
   ],
   updated: "2026-10-20",
 };

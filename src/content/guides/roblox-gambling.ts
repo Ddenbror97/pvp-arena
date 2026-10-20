@@ -68,7 +68,9 @@ If behaviour already looks compulsive, read [gambling addiction signs](/guides/g
 - Requests for more money to “win it back.”
 - New devices logging into the account.
 
-Respond with controls and conversation, not spectacle. Remove payment methods first. Then review chat and friends lists together.`,
+Respond with controls and conversation, not spectacle. Remove payment methods first. Then review chat and friends lists together.
+
+Two item-flip brands sit in that warning, not as endorsed rooms. The [RBXFlip limiteds note](/guides/rbxflip-review) and the [Bloxflip item warning](/guides/bloxflip-review) both treat game items as something other than dollars.`,
     },
     {
       id: "reporting",
@@ -196,6 +198,8 @@ End every funding or cashout day by locking the wallet, closing extra tabs, and 
     "gambling-age-us",
     "fake-casino-sites",
     "skin-gambling-vs-crypto",
+    "rbxflip-review",
+    "bloxflip-review",
   ],
   updated: "2026-09-26",
 };

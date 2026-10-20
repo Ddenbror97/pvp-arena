@@ -211,6 +211,12 @@ Cash access for either mode depends on that operator being allowed to offer the 
     },
   ],
   sources: [],
-  related: ["slot-volatility", "rtp-explained", "bonus-buy-slots"],
+  related: [
+    "slot-volatility",
+    "rtp-explained",
+    "bonus-buy-slots",
+    "invaders-from-the-planet-moolah",
+    "hall-of-gods-slot",
+  ],
   updated: "2026-10-20",
 };

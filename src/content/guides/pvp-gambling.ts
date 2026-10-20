@@ -144,7 +144,9 @@ Ready to see it in action? Watch a live [Jackpot](/) round, or open [Coinflip](/
 
 More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).
 
-The formats that sit under this idea are a [PvP casino](/guides/pvp-casino-games), [head to head betting](/guides/head-to-head-betting) and [skill-based gambling](/guides/skill-based-gambling). A game-item pot such as [OSRS gambling](/guides/osrs-gambling) is the same shape with a worse bankroll.`,
+The formats that sit under this idea are a [PvP casino](/guides/pvp-casino-games), [head to head betting](/guides/head-to-head-betting) and [skill-based gambling](/guides/skill-based-gambling). A game-item pot such as [OSRS gambling](/guides/osrs-gambling) is the same shape with a worse bankroll.
+
+Skin-era pots used this shape and still do not publish one edge for every mode. The [coloured skin wheel](/guides/csgoroll-review), the [bundled empire lobby](/guides/csgoempire-review), [CSGOBig's mode list](/guides/csgo-big-review) and [CSGOLuck's game list](/guides/csgoluck-review) are brand notes beside the fee you can actually read here.`,
     },
   ],
   faqs: [

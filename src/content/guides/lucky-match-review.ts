@@ -181,6 +181,12 @@ Nothing in the Silver arithmetic confirms a match app cash prize. That confirmat
     },
   ],
   sources: [],
-  related: ["games-that-pay-real-money", "fake-casino-sites", "skill-based-gambling"],
+  related: [
+    "games-that-pay-real-money",
+    "fake-casino-sites",
+    "skill-based-gambling",
+    "pch-games-review",
+    "freecash-review",
+  ],
   updated: "2026-10-20",
 };

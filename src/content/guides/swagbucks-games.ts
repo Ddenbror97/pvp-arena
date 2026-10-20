@@ -182,6 +182,13 @@ The $9.50 net is roulette after a fee. It is not Swagbucks redemption, and it do
     },
   ],
   sources: [],
-  related: ["games-that-pay-real-money", "house-edge", "skill-based-gambling", "givvy-review"],
+  related: [
+    "games-that-pay-real-money",
+    "house-edge",
+    "skill-based-gambling",
+    "givvy-review",
+    "lucky-match-review",
+    "pch-games-review",
+  ],
   updated: "2026-10-20",
 };

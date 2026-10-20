@@ -238,6 +238,8 @@ The cut is ours. It is not the brand's edge.`,
     "what-is-a-crypto-casino",
     "house-edge",
     "fake-casino-sites",
+    "cryptorino-review",
+    "winna-casino-review",
   ],
   updated: "2026-10-20",
 };

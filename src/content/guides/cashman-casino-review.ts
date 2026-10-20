@@ -230,6 +230,8 @@ An outbound link added later is advertising. Do not read this draft as an affili
     "gold-coins-vs-sweeps-coins",
     "sweeps-coins-explained",
     "jackpota-review",
+    "funrize-review",
+    "legendz-review",
   ],
   updated: "2026-10-20",
 };

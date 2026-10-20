@@ -103,7 +103,9 @@ If you want a house game, know you are paying for the session. The paytable is t
 
 If you want a job, this is the wrong page. Games that pay real money pay some users every day and take a margin from the pool. A job pays you for time without requiring you to beat a rake. Mixing those hopes is how entertainment budgets become debts.
 
-Time is the hidden stake in skill games. A 2 edge per hour, if you even have it, is a bad wage. Price the hour. Then decide if you would have played anyway. If you would not, you are working a shift with a chance of going backward. That is a strange job to apply for.`,
+Time is the hidden stake in skill games. A 2 edge per hour, if you even have it, is a bad wage. Price the hour. Then decide if you would have played anyway. If you would not, you are working a shift with a chance of going backward. That is a strange job to apply for.
+
+Rewards walls are not a tournament purse. The [Freecash credit test](/guides/freecash-review), [Swagbucks points](/guides/swagbucks-games) and the [Tapjoy offer wall](/guides/tapjoy-review) pay only what the screen posts. [Cash Giraffe](/guides/cash-giraffe-review), the [Givvy minimum](/guides/givvy-review) and [Lucky Match](/guides/lucky-match-review) are the same kind of screen.`,
     },
     {
       id: "stop-rules",
@@ -148,6 +150,13 @@ The useful summary is short. Games that pay real money are real when the cashier
       url: "https://en.wikipedia.org/wiki/Game_of_skill",
     },
   ],
-  related: ["skill-based-gambling", "pvp-casino-games", "online-casino-real-money", "fake-casino-sites"],
+  related: [
+    "skill-based-gambling",
+    "pvp-casino-games",
+    "online-casino-real-money",
+    "fake-casino-sites",
+    "freecash-review",
+    "swagbucks-games",
+  ],
   updated: "2026-10-06",
 };

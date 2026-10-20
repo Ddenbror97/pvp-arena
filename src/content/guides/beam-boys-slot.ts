@@ -210,6 +210,12 @@ Real-money availability is only where that casino is allowed to offer the title 
     },
   ],
   sources: [],
-  related: ["bonus-buy-slots", "house-edge", "slot-machine-odds"],
+  related: [
+    "bonus-buy-slots",
+    "house-edge",
+    "slot-machine-odds",
+    "piggy-bankin-slot",
+    "stack-em-slot",
+  ],
   updated: "2026-10-20",
 };

@@ -209,6 +209,12 @@ A paid reaction spin is offered only where that operator may run this name. Repu
     },
   ],
   sources: [],
-  related: ["slot-paylines-explained", "house-edge", "how-to-play-slots"],
+  related: [
+    "slot-paylines-explained",
+    "house-edge",
+    "how-to-play-slots",
+    "sugar-rush-1000-slot",
+    "fruit-shop-slot",
+  ],
   updated: "2026-10-20",
 };

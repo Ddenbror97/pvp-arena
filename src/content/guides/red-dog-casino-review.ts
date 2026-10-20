@@ -242,6 +242,8 @@ The fee is ours. It is not a card-game odds quote and not a brand fee.`,
     "fake-casino-sites",
     "house-edge",
     "no-kyc-casino",
+    "shuffle-casino-review",
+    "cryptorino-review",
   ],
   updated: "2026-10-20",
 };

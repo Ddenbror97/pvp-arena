@@ -218,6 +218,12 @@ If play leaves the amount you set, use [responsible gambling resources](/respons
     },
   ],
   sources: [],
-  related: ["what-is-a-crypto-casino", "house-edge", "shuffle-casino-review"],
+  related: [
+    "what-is-a-crypto-casino",
+    "house-edge",
+    "shuffle-casino-review",
+    "ducky-luck-casino-review",
+    "wild-casino-review",
+  ],
   updated: "2026-10-20",
 };
