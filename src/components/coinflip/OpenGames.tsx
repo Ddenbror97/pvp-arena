@@ -237,14 +237,73 @@ function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin:
   );
 }
 
-export function RecentCoinflips() {
+export function RecentCoinflips({ layout = "wide" }: { layout?: "wide" | "rail" }) {
   const paintedAt = getRouteApi("/coinflip").useLoaderData().recent?.at;
   const { rows, isLoading, page, hasNext, hasPrev, next, prev, pauseProps } = usePagedRecent(
     "coinflip-recent",
     fetchRecentCoinflips,
   );
+  if (layout === "rail") {
+    return (
+      <section
+        className="hidden min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-card xl:flex"
+        {...pauseProps}
+      >
+        <header className="flex items-center justify-between border-b border-border px-3 py-2">
+          <h2 className="font-display text-xs uppercase tracking-widest">Recent</h2>
+        </header>
+        {!rows.length ? (
+          <p className="px-3 py-8 text-center text-sm text-muted-foreground">
+            {isLoading ? "Loading..." : "No completed games yet."}
+          </p>
+        ) : (
+          <>
+            <ul className="min-h-0 flex-1 divide-y divide-border overflow-y-auto">
+              {rows.map((g) => {
+                const creatorWon = g.winner_id === g.creator_id;
+                const winner = creatorWon ? g.creator : g.opponent;
+                const loser = creatorWon ? g.opponent : g.creator;
+                const winSide = (g.winning_side ??
+                  (creatorWon ? g.creator_side : opposite(g.creator_side as CoinSide))) as CoinSide;
+                return (
+                  <li key={g.id}>
+                    <Link
+                      to="/coinflip/$gameId"
+                      params={{ gameId: String(g.id) }}
+                      className="flex items-center gap-2 px-3 py-2 text-sm transition hover:bg-secondary/50"
+                    >
+                      <SideCoinImg side={winSide} className="h-6 w-6" />
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate font-semibold">
+                          {winner?.username ?? "unknown"}
+                        </span>
+                        <span className="block truncate text-[11px] text-muted-foreground">
+                          vs {loser?.username ?? "unknown"}
+                          {g.completed_at ? ` · ${timeAgo(g.completed_at, paintedAt)}` : ""}
+                        </span>
+                      </span>
+                      <span className="tabular shrink-0 font-semibold">
+                        {formatUsd(g.pot_amount)}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            <RecentPager
+              page={page}
+              hasPrev={hasPrev}
+              hasNext={hasNext}
+              onPrev={prev}
+              onNext={next}
+            />
+          </>
+        )}
+      </section>
+    );
+  }
   return (
-    <section className={EDGE_TO_EDGE} {...pauseProps}>
+    <section className={cn(EDGE_TO_EDGE, "xl:hidden")} {...pauseProps}>
       <h2 className="section-kicker mb-2 font-display text-xs uppercase tracking-widest">
         Recent coinflips
       </h2>
