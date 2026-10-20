@@ -149,7 +149,7 @@ export const RouletteStrip = memo(function RouletteStrip({
             className={cn(
               "relative flex shrink-0 items-center justify-center rounded-full",
               done && !win && "opacity-35",
-              win && "z-10 scale-110",
+              win && "z-10",
             )}
             style={{
               width: metrics.coin,
@@ -157,15 +157,7 @@ export const RouletteStrip = memo(function RouletteStrip({
               filter: win ? `drop-shadow(0 0 18px ${COIN[c].glow})` : undefined,
             }}
           >
-            <CoinImg
-              c={c}
-              size={metrics.coin - 4}
-              className={cn(
-                "rounded-full",
-                win &&
-                  "scale-110 animate-[pulse_1.8s_ease-in-out_infinite] transition-transform duration-700",
-              )}
-            />
+            <CoinImg c={c} size={metrics.coin - 4} className="rounded-full" />
           </div>
         );
       }),
