@@ -4949,4 +4949,28 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "betdex",
     "Docs host: 1% of net market profit. www terms returned 404. Not a US state book.",
   ),
+  p(
+    30,
+    "Casino games",
+    "Table games",
+    "craps-table-layout",
+    "craps table layout",
+    "Pass, come, and field from New Jersey 13:69F. Edge percents are our arithmetic.",
+  ),
+  p(
+    30,
+    "Blackjack",
+    "Decisions",
+    "blackjack-surrender",
+    "blackjack surrender",
+    "N.J.A.C. 13:69F-2.8 half back. A printed edge percent stays unpublished.",
+  ),
+  p(
+    30,
+    "Blackjack",
+    "Decisions",
+    "blackjack-hand-signals",
+    "blackjack hand signals",
+    "MGM tap, wave, chips, and V. A New Jersey gesture chart is not published.",
+  ),
 ];

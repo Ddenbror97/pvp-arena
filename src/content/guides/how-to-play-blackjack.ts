@@ -158,7 +158,9 @@ Write the four felt facts, load a matching chart, and keep the same [gambling bu
 
 If blackjack or any other game is becoming hard to put down, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A perfect walkthrough does not make a session healthier. The [responsible gambling](/responsible-gambling) page is the on-site start if you need limits tonight.
 
-Counting is a later skill; the legal status of that skill is [is card counting illegal](/guides/is-card-counting-illegal).`,
+Counting is a later skill; the legal status of that skill is [is card counting illegal](/guides/is-card-counting-illegal).
+
+[Motions a dealer is told to read](/guides/blackjack-hand-signals) are tap, wave, extra chips, and a V. A regulator gesture chart was not on the New Jersey PDF.`,
     },
   ],
   faqs: [

@@ -114,7 +114,9 @@ Many multi-deck charts surrender hard 16 versus 9, 10 and ace, and hard 15 versu
 
 ### Insurance is not surrender
 
-Insurance is a side bet on a ten in the hole. It is usually a bad price. [What is insurance in blackjack](/guides/blackjack-insurance) is the sibling. Do not confuse “I will protect this hand” with a posted surrender button.`,
+Insurance is a side bet on a ten in the hole. It is usually a bad price. [What is insurance in blackjack](/guides/blackjack-insurance) is the sibling. Do not confuse “I will protect this hand” with a posted surrender button.
+
+[New Jersey's half-back section](/guides/blackjack-surrender) quotes 13:69F-2.8. A chart cell is not the same as a rule the pit posted.`,
     },
     {
       id: "table",

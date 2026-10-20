@@ -158,6 +158,8 @@ Stretch Player B across a month. Never doubling on a clean six-deck S17 table is
 
 [How many decks in blackjack](/guides/how-many-decks-blackjack) explains why a single-deck double-versus-ace cell does not belong on an eight-deck RNG app. [Crypto blackjack](/guides/crypto-blackjack) is the felt checklist if you sit elsewhere.
 
+[Extra chips on the layout](/guides/blackjack-hand-signals) is how a live dealer is told you doubled. The chip motion is not the chart cell.
+
 Adults 18+: a correct double is still a wager with a leftover tax. Meaningful decisions are compatible with a negative expectation.
 
 If you came from slots, the double button feels like a bonus buy: more money, more drama. It is not a bonus buy. There is no extra reel. There is one card and a dealer rule. [What is insurance in blackjack](/guides/blackjack-insurance) is the other extra-money offer that usually deserves a no; doubles deserve a chart, not a yes-to-everything. Keep the two buttons in different mental boxes.`,

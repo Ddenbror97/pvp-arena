@@ -142,7 +142,9 @@ Shooters have long rolls and short ones, and memorable hands get retold. Each ro
 
 Some players arrange the dice before throwing and claim a controlled toss can shift the frequency of 7. The evidence offered is mostly anecdotal and disputed, casinos require both dice to hit the back wall, and no widely accepted independent test has shown a reliable edge. Treat it as ritual, not strategy.
 
-Craps descends from the older English game hazard, covered in [hazard dice game](/guides/hazard-dice-game). If you want to play digitally, [online craps](/guides/online-craps) covers where and how, and the wider [casino games hub](/guides/topics/casino-games) compares edges across the floor.`,
+Craps descends from the older English game hazard, covered in [hazard dice game](/guides/hazard-dice-game). If you want to play digitally, [online craps](/guides/online-craps) covers where and how, and the wider [casino games hub](/guides/topics/casino-games) compares edges across the floor.
+
+[Where pass, come, and field sit on the felt](/guides/craps-table-layout) is the map. This page is the price of those spots.`,
     },
     {
       id: "pvp",

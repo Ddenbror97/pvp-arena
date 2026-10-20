@@ -484,6 +484,9 @@ import { guide as seoMegaMoolahSlot } from "./mega-moolah-slot";
 import { guide as seoGambaCasinoReview } from "./gamba-casino-review";
 import { guide as seoMetaspinsReview } from "./metaspins-review";
 import { guide as seoBetdexReview } from "./betdex-review";
+import { guide as seoCrapsTableLayout } from "./craps-table-layout";
+import { guide as seoBlackjackSurrender } from "./blackjack-surrender";
+import { guide as seoBlackjackHandSignals } from "./blackjack-hand-signals";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1524,6 +1527,9 @@ export const GUIDES: Guide[] = [
   seoGambaCasinoReview,
   seoMetaspinsReview,
   seoBetdexReview,
+  seoCrapsTableLayout,
+  seoBlackjackSurrender,
+  seoBlackjackHandSignals,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -3280,6 +3286,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "baccarat-strategy",
         "french-roulette",
         "roulette-calculator",
+        "craps-table-layout",
         "sic-bo-strategy",
         "dragon-tiger",
         "teen-patti",
@@ -3467,6 +3474,8 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "blackjack-insurance",
         "blackjack-tournaments",
         "blackjack-side-bets",
+        "blackjack-surrender",
+        "blackjack-hand-signals",
       ],
     },
     {

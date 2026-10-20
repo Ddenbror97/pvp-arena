@@ -108,7 +108,9 @@ Total-dependent charts look only at your sum and the up-card. Composition-depend
 
 ### Surrender cells
 
-Where late surrender exists, many multi-deck charts surrender hard 16 versus 9, 10 and ace, and hard 15 versus 10. Refusing those exits keeps a full unit in a hand the chart already priced as a half-unit loss. That is not bravery. It is a higher mean cost.`,
+Where late surrender exists, many multi-deck charts surrender hard 16 versus 9, 10 and ace, and hard 15 versus 10. Refusing those exits keeps a full unit in a hand the chart already priced as a half-unit loss. That is not bravery. It is a higher mean cost.
+
+[The New Jersey half-back contract](/guides/blackjack-surrender) is the rule those cells assume. If the felt does not offer it, the cell is not playable.`,
     },
     {
       id: "responsible",
