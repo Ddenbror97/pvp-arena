@@ -119,7 +119,7 @@ export function WalletChoices({
   isLocked?: (kind: WalletKind) => boolean;
 }) {
   return (
-    <div className="grid grid-cols-2 gap-1.5" role="group" aria-label="Choose a wallet">
+    <div className="grid grid-cols-2 gap-1" role="group" aria-label="Choose a wallet">
       {(["metamask", "coinbase"] as const).map((kind) => {
         const opening = (busy && active === kind) || isLocked?.(kind) === true;
         const detected = installed.has(kind);
@@ -134,18 +134,18 @@ export function WalletChoices({
             disabled={isLocked ? isLocked(kind) : busy && active === kind}
             onClick={() => onChoose(kind)}
             title={WALLET_LABEL[kind]}
-            className={`flex h-11 min-w-0 items-center gap-2 rounded-lg border px-2.5 text-left transition-colors disabled:opacity-60 ${
+            className={`flex h-9 min-w-0 items-center gap-1.5 rounded-lg border px-2 text-left transition-colors disabled:opacity-60 ${
               active === kind
                 ? "border-primary bg-primary/10"
                 : "border-border bg-background hover:border-primary/50 hover:bg-secondary/40"
             }`}
           >
-            <WalletMark kind={kind} className="h-5 w-5 shrink-0" />
+            <WalletMark kind={kind} className="h-4 w-4 shrink-0" />
             <span className="min-w-0">
-              <span className="block truncate text-xs font-semibold leading-tight">
+              <span className="block truncate text-[11px] font-semibold leading-tight">
                 {opening ? "Opening…" : WALLET_LABEL[kind]}
               </span>
-              <span className="block truncate text-[11px] leading-tight text-muted-foreground">
+              <span className="block truncate text-[10px] leading-tight text-muted-foreground">
                 {hint}
               </span>
             </span>

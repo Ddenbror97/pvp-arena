@@ -40,6 +40,7 @@ import { requestWalletChallenge, verifyWalletSignature } from "@/lib/web3/wallet
 import { matchingVerifiedAddress } from "@/lib/web3/verified-wallet";
 import { userWalletsQuery } from "@/components/wallet/WalletCard";
 import { WalletChoices, WalletMark } from "@/components/wallet/WalletBrand";
+import { cn } from "@/lib/utils";
 
 /** Opens the linked MetaMask or Coinbase wallet for an ETH or USDC payment. */
 /** Synchronous send lock. The second click in the same turn loses. */
@@ -58,6 +59,7 @@ export function VerifiedWalletActions({
   onAddress,
   onLabel,
   payments = true,
+  className,
 }: {
   purpose: "deposit" | "withdraw";
   chainId: number;
@@ -69,6 +71,7 @@ export function VerifiedWalletActions({
   onLabel?: (label: string) => void;
   /** Bitcoin has its own address. The logo buttons stay; send and cashout stay on ETH and USDC. */
   payments?: boolean;
+  className?: string;
 }) {
   const { userId } = useAuth();
   const qc = useQueryClient();
@@ -470,12 +473,15 @@ export function VerifiedWalletActions({
   }
 
   return (
-    <div className="mt-2 space-y-1.5" data-testid="verified-wallet-actions">
+    <div
+      className={cn("flex min-h-0 flex-col gap-1.5", className ?? "mt-1.5")}
+      data-testid="verified-wallet-actions"
+    >
       <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
         {purpose === "deposit" ? "Pay with" : "Cash out with"}
       </p>
-      {verified.length > 0 && (
-        <div className="flex flex-wrap gap-1.5" role="group" aria-label="Verified wallets">
+      {verified.length > 1 && (
+        <div className="flex flex-wrap gap-1" role="group" aria-label="Verified wallets">
           {verified.map((row) => {
             const remembered = recallWalletKind(row.address);
             const selected =
@@ -494,7 +500,7 @@ export function VerifiedWalletActions({
                 type="button"
                 size="sm"
                 variant={selected ? "default" : "secondary"}
-                className="h-9 gap-1.5"
+                className="h-7 gap-1 px-2"
                 aria-pressed={selected}
                 disabled={busy !== null}
                 onClick={() => {
@@ -510,7 +516,7 @@ export function VerifiedWalletActions({
                   void connect(remembered, differentAccount ? "switch" : "open");
                 }}
               >
-                {remembered ? <WalletMark kind={remembered} className="h-4 w-4" /> : null}
+                {remembered ? <WalletMark kind={remembered} className="h-3.5 w-3.5" /> : null}
                 {chip}
               </Button>
             );
@@ -533,9 +539,9 @@ export function VerifiedWalletActions({
         onChoose={(item) => void connect(item, kind === item && connected ? "switch" : "open")}
       />
       {payments && connected && matched && purpose === "deposit" && (
-        <div className="space-y-2 rounded-lg border border-border bg-muted/20 p-2.5">
-          <p className="text-xs text-muted-foreground">
-            Sending from {label} · {shortAddress(connected)}
+        <div className="mt-auto flex flex-col gap-1.5">
+          <p className="truncate text-[11px] text-muted-foreground">
+            From {shortAddress(connected)}
           </p>
           {wrongNetwork ? (
             <Button
@@ -572,7 +578,7 @@ export function VerifiedWalletActions({
                   id="wallet-send-amount"
                   inputMode="decimal"
                   autoComplete="off"
-                  className="h-9 pl-7 font-mono"
+                  className="h-8 pl-7 font-mono"
                   placeholder="0.00"
                   value={amount}
                   onChange={(event) => setAmount(event.target.value)}
@@ -580,7 +586,7 @@ export function VerifiedWalletActions({
               </div>
               <Button
                 type="button"
-                className="h-9 w-full"
+                className="h-8 w-full"
                 disabled={
                   busy !== null ||
                   !asset ||
@@ -595,9 +601,6 @@ export function VerifiedWalletActions({
             </>
           )}
         </div>
-      )}
-      {payments && connected && matched && purpose === "withdraw" && (
-        <p className="text-xs text-muted-foreground">Pays your {label}.</p>
       )}
       {err && (
         <p role="alert" className="text-xs text-destructive">

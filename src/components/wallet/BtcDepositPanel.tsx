@@ -319,7 +319,7 @@ export function BtcDepositPanel({
               </span>
               <Input
                 id="btc-deposit-amount"
-                className="h-9 pl-7 font-mono"
+                className="h-8 pl-7 font-mono"
                 inputMode="decimal"
                 autoComplete="off"
                 value={amount}
@@ -368,20 +368,21 @@ export function BtcDepositPanel({
               </span>
               <Input
                 id="btc-cashout-amount"
-                className="h-9 pl-7 font-mono"
+                className="h-8 pl-7 font-mono"
                 inputMode="decimal"
                 value={outAmount}
                 onChange={(event) => setOutAmount(event.target.value)}
                 aria-label="Bitcoin cashout amount in USD"
               />
             </div>
-            <div className="mt-1.5 grid grid-cols-3 gap-1.5">
+            <div className="mt-1 grid grid-cols-3 gap-1">
               {["20", "50", "100"].map((preset) => (
                 <Button
                   key={preset}
                   type="button"
                   size="sm"
                   variant="secondary"
+                  className="h-7"
                   onClick={() => setOutAmount(preset)}
                 >
                   ${preset}
@@ -389,13 +390,13 @@ export function BtcDepositPanel({
               ))}
             </div>
           </div>
-          <div className="space-y-1.5 rounded-lg border border-border bg-muted/30 p-2.5 text-xs text-muted-foreground">
+          <div className="space-y-1.5 rounded-lg border border-border bg-muted/30 p-2 text-xs text-muted-foreground">
             <label htmlFor="btc-cashout-address" className="font-semibold text-foreground">
               To a bc1 address
             </label>
             <Input
               id="btc-cashout-address"
-              className="h-9 font-mono text-xs"
+              className="h-8 font-mono text-xs"
               value={outAddress}
               onChange={(event) => setOutAddress(event.target.value)}
               placeholder="bc1…"
@@ -417,7 +418,7 @@ export function BtcDepositPanel({
           <div className="mt-auto space-y-2">
             <Button
               type="button"
-              className="h-9 w-full"
+              className="h-8 w-full"
               onClick={cashout}
               disabled={outBusy || !payout.isFetched || !payout.data?.available}
             >
