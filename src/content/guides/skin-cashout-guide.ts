@@ -75,6 +75,8 @@ If a site refuses your country, stop. Do not route through a stranger. Trade ban
 
 [Fake casino sites](/guides/fake-casino-sites) documents lookalike patterns. The same tricks power fake cashout portals. Confirm bot names. Cancel wrong offers. Support lives on the real site, not in a DM.
 
+[An old case host that now 302s elsewhere](/guides/csgopolygon-review) is not a marketplace you already vetted. Read the destination before you trade.
+
 Also watch your own account health. A [Steam trade ban](/guides/steam-trade-ban) ends the cashout story regardless of how good the bid was.
 
 [Confirming a trade offer from a stranger](/guides/csgo-trade-bot) is a different risk from selling a skin on a marketplace you typed yourself.`,

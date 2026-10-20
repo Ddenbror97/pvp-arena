@@ -132,6 +132,8 @@ Fake casino sites exist because haste is profitable. The checklist is slow on pu
 
 [A help article that says deposit bonuses are not offered](/guides/gamba-casino-review) is still worth opening on the real domain. A chat code is not a substitute for that sentence.
 
+[A case host that stopped at Just a moment](/guides/csgocases-review) is the same habit: do not fund a page that never rendered terms.
+
 Work the list even when the site looks like us. A clone can copy the lobby CSS and still change the deposit address or wrap a drain approval in a “verify to claim” button. Believe the wallet prompt and the host you typed. Do not believe a Discord moderator who found you first.
 
 Adults 18+ only. If a clone’s joke is that nobody checks age, that is another reason to leave. PVPspinArena will not migrate you to a new URL in a chat. If someone does that in our name, they are running a fake casino site.`,

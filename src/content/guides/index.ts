@@ -487,6 +487,8 @@ import { guide as seoBetdexReview } from "./betdex-review";
 import { guide as seoCrapsTableLayout } from "./craps-table-layout";
 import { guide as seoBlackjackSurrender } from "./blackjack-surrender";
 import { guide as seoBlackjackHandSignals } from "./blackjack-hand-signals";
+import { guide as seoCsgocasesReview } from "./csgocases-review";
+import { guide as seoCsgopolygonReview } from "./csgopolygon-review";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1530,6 +1532,8 @@ export const GUIDES: Guide[] = [
   seoCrapsTableLayout,
   seoBlackjackSurrender,
   seoBlackjackHandSignals,
+  seoCsgocasesReview,
+  seoCsgopolygonReview,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -2685,6 +2689,8 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "rillabox-review",
         "csgo-net-review",
         "key-drop-review",
+        "csgocases-review",
+        "csgopolygon-review",
       ],
     },
     {

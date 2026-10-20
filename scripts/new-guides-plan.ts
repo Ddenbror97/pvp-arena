@@ -4973,4 +4973,20 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "blackjack hand signals",
     "MGM tap, wave, chips, and V. A New Jersey gesture chart is not published.",
   ),
+  p(
+    30,
+    "CS:GO heritage",
+    "Case shops",
+    "csgocases-review",
+    "csgocases",
+    "Homepage, /terms, and /tos returned HTTP 403. Odds and a promo code stay unpublished.",
+  ),
+  p(
+    30,
+    "CS:GO heritage",
+    "Case shops",
+    "csgopolygon-review",
+    "csgopolygon",
+    "HTTP 302 to plg.bet. Old /terms returned 404. Licence number not published.",
+  ),
 ];

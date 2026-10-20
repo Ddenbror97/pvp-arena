@@ -161,7 +161,9 @@ A hashed dollar pot is a different object from a skin. The pot is a number of do
 
 A skin is a license with a price that moves and a delivery that Valve can delay. Losing a flip loses the stake you posted. Confirming the wrong trade can lose the item you meant to keep.
 
-[Turning a skin into a cash balance](/guides/skin-cashout-guide) is a third object. A marketplace sale is not a bot trade, and a skin is not the $95 in example B.`,
+[Turning a skin into a cash balance](/guides/skin-cashout-guide) is a third object. A marketplace sale is not a bot trade, and a skin is not the $95 in example B.
+
+[A host that left its old name via a redirect](/guides/csgopolygon-review) is a fourth object. The Location header is not a drop table.`,
     },
     {
       id: "checklist",

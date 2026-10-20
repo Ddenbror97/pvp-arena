@@ -184,7 +184,9 @@ Each case brand gets its own odds cell, and this page does not fill it. See the 
 
 Our [CS:GO jackpot guide](/guides/csgo-jackpot) and [PvP gambling guide](/guides/pvp-gambling) explain how the pot and duel formats work.
 
-[A bot that asks you to send items first](/guides/csgo-trade-bot) is not a case with a drop list. Confirming the wrong offer can lose the item.`,
+[A bot that asks you to send items first](/guides/csgo-trade-bot) is not a case with a drop list. Confirming the wrong offer can lose the item.
+
+[A case domain that returned only a challenge page](/guides/csgocases-review) did not publish a drop list on 20 October 2026. A 403 is not odds.`,
     },
     {
       id: "history",
