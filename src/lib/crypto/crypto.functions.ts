@@ -5,7 +5,6 @@ import { requireLiveSession } from "@/integrations/supabase/live-session";
 import { centsToWei } from "./allowlist";
 import { usableDisplayPrice } from "./eth-price";
 import { isTransientRpcFailure } from "./rpc-retry";
-import { withdrawalCodeSchema } from "@/lib/auth-otp/withdrawal.functions";
 import {
   bonusWithdrawBlockedMessage,
   parseWithdrawCashSnapshot,
@@ -366,7 +365,7 @@ export const quoteEthWithdrawal = createServerFn({ method: "POST" })
     };
   });
 
-/** Early answer before a withdrawal code is emailed. The request decides again under the treasury lock. */
+/** Early answer before a cash out is submitted. The request decides again under the treasury lock. */
 export const checkWithdrawalLiquidity = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth, requireLiveSession])
   .inputValidator((d) =>
@@ -403,7 +402,6 @@ export const requestCryptoWithdrawal = createServerFn({ method: "POST" })
         chainId: chainIdSchema,
         toAddress: z.string().regex(/^0x[0-9a-fA-F]{40}$/),
       })
-      .merge(withdrawalCodeSchema)
       .parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -418,15 +416,10 @@ export const requestCryptoWithdrawal = createServerFn({ method: "POST" })
       usdCents: data.usdCents,
       address: data.toAddress,
     };
-    const { noticeWithdrawal, verifyWithdrawalCode } =
+    const { noticeWithdrawal, withdrawalBlocked } =
       await import("@/lib/auth-otp/withdrawal.server");
-    const verified = await verifyWithdrawalCode({
-      userId: context.userId,
-      challengeId: data.challengeId,
-      code: data.code,
-      target,
-    });
-    if (!verified.ok) return { ok: false as const, error: verified.error };
+    const blocked = await withdrawalBlocked(context.userId);
+    if (blocked) return { ok: false as const, error: blocked };
     const { data: linkedWallets } = await (
       await admin()
     )

@@ -19,7 +19,6 @@ import {
 import { bitcoinPaymentUri, btcInvoicePhase } from "@/lib/crypto/btcpay/policy";
 import { announceDepositSubmitted } from "@/lib/crypto/deposit-notify";
 import { announceWithdrawalSubmitted } from "@/lib/crypto/withdraw-notify";
-import { useWithdrawalCode, WithdrawalCodeField } from "@/components/wallet/WithdrawalCode";
 import { PartnerProfitNote, usePartnerProfitHold } from "@/components/wallet/PartnerProfitHold";
 
 const DEFAULT_DEPOSIT_USD = "10";
@@ -58,7 +57,6 @@ export function BtcDepositPanel({
   const autoEnsureDone = useRef(false);
   const [outBusy, setOutBusy] = useState(false);
   const cashoutLock = useRef(false);
-  const emailCode = useWithdrawalCode();
   const heldCents = usePartnerProfitHold(!!payout.data?.enabled);
   const [invoiceId, setInvoiceId] = useState<string | null>(null);
   const latest = useQuery({
@@ -128,9 +126,6 @@ export function BtcDepositPanel({
   const payoutsOn = !!payout.data?.enabled;
   const cents = parseUsdToCents(amount);
   const outCents = parseUsdToCents(outAmount);
-  const outTarget = { rail: "btc" as const, usdCents: outCents ?? 0, address: outAddress };
-  const outProof = emailCode.proof(outTarget);
-  const outCodeSent = emailCode.sentFor(outTarget);
 
   async function start(nextCents = cents) {
     if (busy || starting.current) return;
@@ -251,19 +246,13 @@ export function BtcDepositPanel({
     if (!claimSendLock(cashoutLock)) return;
     setOutBusy(true);
     try {
-      if (!outProof) {
-        await emailCode.send(outTarget);
-        return;
-      }
       const result = await cashoutFn({
-        data: { usdCents: outCents, address: outAddress, ...outProof },
+        data: { usdCents: outCents, address: outAddress },
       });
       if (!result.ok) {
         toast.error(result.error);
-        emailCode.failed(result.error);
         return;
       }
-      emailCode.clear();
       announceWithdrawalSubmitted({
         usdCents: outCents,
         asset: "BTC",
@@ -414,7 +403,7 @@ export function BtcDepositPanel({
             />
             <p className="min-h-[2.5rem] sm:min-h-4">
               {payout.data?.minCents != null
-                ? `Minimum ${formatUsd(payout.data.minCents)}. A code is emailed to approve each cashout.`
+                ? `Minimum ${formatUsd(payout.data.minCents)}.`
                 : "\u00a0"}
             </p>
           </div>
@@ -426,20 +415,13 @@ export function BtcDepositPanel({
             </p>
           )}
           <div className="mt-auto space-y-2">
-            <WithdrawalCodeField
-              ctl={emailCode}
-              target={outTarget}
-              disabled={outBusy}
-              onConfirm={() => void cashout()}
-              confirmLabel={outBusy ? "Requesting…" : "Confirm cashout"}
-            />
             <Button
               type="button"
               className="h-9 w-full"
               onClick={cashout}
               disabled={outBusy || !payout.isFetched || !payout.data?.available}
             >
-              {outBusy ? "Requesting…" : outCodeSent ? "Enter code" : "Cash out BTC"}
+              {outBusy ? "Requesting…" : "Cash out BTC"}
             </Button>
           </div>
         </div>

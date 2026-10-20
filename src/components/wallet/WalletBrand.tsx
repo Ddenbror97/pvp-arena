@@ -134,7 +134,11 @@ export function WalletChoices({
             disabled={isLocked ? isLocked(kind) : busy && active === kind}
             onClick={() => onChoose(kind)}
             title={WALLET_LABEL[kind]}
-            className="flex h-10 min-w-0 items-center gap-1.5 rounded-lg border border-border bg-background px-2 text-left transition-colors hover:border-primary/50 hover:bg-secondary/40 disabled:opacity-60"
+            className={`flex h-11 min-w-0 items-center gap-2 rounded-lg border px-2.5 text-left transition-colors disabled:opacity-60 ${
+              active === kind
+                ? "border-primary bg-primary/10"
+                : "border-border bg-background hover:border-primary/50 hover:bg-secondary/40"
+            }`}
           >
             <WalletMark kind={kind} className="h-5 w-5 shrink-0" />
             <span className="min-w-0">

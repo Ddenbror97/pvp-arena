@@ -20,14 +20,12 @@ import {
   writeStoredRail,
   type FundingAsset,
 } from "@/lib/crypto/rails";
-import { depositWaitPhrase } from "@/lib/crypto/deposit-notice";
 import { announceWithdrawalSubmitted } from "@/lib/crypto/withdraw-notify";
 import { useCryptoActivity, type CryptoActivity } from "@/components/wallet/RailPreference";
 import { BtcDepositPanel } from "@/components/wallet/BtcDepositPanel";
 import { getBtcDepositConfig, getBtcPayoutConfig } from "@/lib/crypto/btcpay/btcpay.functions";
 import { claimSendLock, VerifiedWalletActions } from "@/components/wallet/VerifiedWalletActions";
 import { TokenMark } from "@/components/wallet/TokenMark";
-import { useWithdrawalCode, WithdrawalCodeField } from "@/components/wallet/WithdrawalCode";
 import { PartnerProfitNote, usePartnerProfitHold } from "@/components/wallet/PartnerProfitHold";
 import {
   BonusCashoutNotice,
@@ -61,9 +59,6 @@ type WithdrawalReview = {
   };
 };
 
-function shortAddress(value: string) {
-  return `${value.slice(0, 6)}…${value.slice(-4)}`;
-}
 function storage() {
   try {
     return typeof localStorage === "undefined" ? null : localStorage;
@@ -131,7 +126,7 @@ function CurrencyList({
               <span className="min-w-0 text-left">
                 <span className="block truncate text-xs font-medium leading-4">{row.label}</span>
                 <span className="block h-3 truncate text-[10px] font-normal leading-3 text-muted-foreground">
-                  {row.closed ? "Disabled" : ""}
+                  {row.closed ? "Disabled" : floors[row.key] ? `From ${formatUsd(floors[row.key])}` : ""}
                 </span>
               </span>
             </button>
@@ -274,11 +269,11 @@ export function CryptoRails({
   const [chainId, setChainId] = useState<number>(8453);
   const [amount, setAmount] = useState("20");
   const [outAddress, setOutAddress] = useState("");
+  const [walletLabel, setWalletLabel] = useState("your linked wallet");
   const [withdrawalReview, setWithdrawalReview] = useState<WithdrawalReview | null>(null);
   const [busy, setBusy] = useState(false);
   const withdrawLock = useRef(false);
   const [now, setNow] = useState(() => Date.now());
-  const emailCode = useWithdrawalCode();
   const heldCents = usePartnerProfitHold(true);
   const data: CryptoActivity | undefined = activity.data;
   const withdrawSnap = data?.withdraw ?? null;
@@ -297,17 +292,6 @@ export function CryptoRails({
     ? Math.max(0, Math.ceil((new Date(withdrawalReview.quote.expires_at).getTime() - now) / 1000))
     : 0;
   const assetKeys = assets.map((item) => item.asset_key).join("\n");
-  const codeTarget =
-    withdrawalReview && chain
-      ? {
-          rail: "evm" as const,
-          chainId: chain.chain_id,
-          asset: withdrawalReview.asset,
-          usdCents: withdrawalReview.usdCents,
-          address: withdrawalReview.toAddress,
-        }
-      : null;
-  const codeProof = codeTarget ? emailCode.proof(codeTarget) : null;
   const minDepositCents = chain?.min_deposit_cents ?? data?.settings.min_deposit_cents ?? 200;
   const minWithdrawCents =
     chain?.min_withdrawal_cents ?? data?.settings.min_withdrawal_cents ?? 2000;
@@ -421,13 +405,6 @@ export function CryptoRails({
           toAddress,
           quote: null,
         });
-      await emailCode.send({
-        rail: "evm",
-        chainId: chain.chain_id,
-        asset: withdrawAsset.asset_key,
-        usdCents: cents,
-        address: toAddress,
-      });
     } catch {
       toast.error("Withdrawals are unavailable right now.");
     } finally {
@@ -437,7 +414,7 @@ export function CryptoRails({
   }
   async function confirmWithdrawal() {
     if (withdrawLock.current || busy) return;
-    if (!withdrawalReview || !chain || !codeProof) return;
+    if (!withdrawalReview || !chain) return;
     if (!claimSendLock(withdrawLock)) return;
     setBusy(true);
     try {
@@ -448,15 +425,12 @@ export function CryptoRails({
           quoteId: withdrawalReview.quote?.quote_id ?? null,
           chainId: chain.chain_id,
           toAddress: withdrawalReview.toAddress,
-          ...codeProof,
         },
       });
       if (!result.ok) {
         toast.error(result.error);
-        emailCode.failed(result.error);
         return;
       }
-      emailCode.clear();
       announceWithdrawalSubmitted({
         usdCents: withdrawalReview.usdCents,
         asset: withdrawalReview.asset,
@@ -532,7 +506,7 @@ export function CryptoRails({
             <p className="mt-0.5 text-[11px] text-muted-foreground">
               {depositRail === "BTC"
                 ? "Send Bitcoin to the address below."
-                : `Connect a wallet and send ${depositAsset?.asset_key ?? "crypto"} on ${chainName}.`}
+                : `Send ${depositAsset?.asset_key ?? "USDC"} from MetaMask or Coinbase on ${chainName}.`}
             </p>
           </div>
         </div>
@@ -546,28 +520,14 @@ export function CryptoRails({
             floors={depositFloors}
             layout="row"
           />
-          <div className="min-h-[18.5rem] min-w-0">
-            <div className={depositRail === "BTC" ? undefined : "hidden"}>
-              <BtcDepositPanel mode="deposit" active={depositRail === "BTC"} />
-            </div>
-            <div className={depositRail === "BTC" ? "hidden" : undefined}>
-              {networkPicker()}
-              <div className="rounded-lg border border-border bg-muted/30 p-2.5 text-xs leading-relaxed text-muted-foreground">
-                <p className="font-semibold text-foreground">Send from a linked wallet</p>
-                <p className="mt-1">
-                  Connect MetaMask or Coinbase Wallet, sign once to link it, then send{" "}
-                  {depositAsset?.asset_key ?? "USDC or ETH"} on {chainName}. Minimum{" "}
-                  {formatUsd(minDepositCents)}. The balance updates within{" "}
-                  {depositWaitPhrase(chain?.network_mode)}. A send from an unlinked wallet is not
-                  credited.
-                </p>
-                {data && !data.settings.deposits_enabled ? (
-                  <p className="mt-2 text-destructive">Deposits are paused.</p>
-                ) : null}
-              </div>
-            </div>
+          <div className={depositRail === "BTC" ? undefined : "hidden"}>
+            <BtcDepositPanel mode="deposit" active={depositRail === "BTC"} />
           </div>
-          {depositRail !== "BTC" ? (
+          <div className={depositRail === "BTC" ? "hidden" : "space-y-2.5"}>
+            {networkPicker()}
+            {data && !data.settings.deposits_enabled ? (
+              <p className="text-xs text-destructive">Deposits are paused.</p>
+            ) : null}
             <VerifiedWalletActions
               purpose="deposit"
               chainId={chain?.chain_id ?? chainId}
@@ -575,7 +535,7 @@ export function CryptoRails({
               minCents={minDepositCents}
               payments
             />
-          ) : null}
+          </div>
         </div>
       </section>
       <section
@@ -592,7 +552,7 @@ export function CryptoRails({
             <p className="mt-0.5 text-[11px] text-muted-foreground">
               {withdrawRail === "BTC"
                 ? "Cash out to a bc1 address."
-                : "Cash out to a Base address."}
+                : `Pays ${walletLabel} on ${chainName}.`}
             </p>
           </div>
         </div>
@@ -622,6 +582,7 @@ export function CryptoRails({
                 setOutAddress(address);
                 setWithdrawalReview(null);
               }}
+              onLabel={setWalletLabel}
               payments
             />
           ) : null}
@@ -643,8 +604,8 @@ export function CryptoRails({
                   <dd className="font-mono font-semibold">{receiveUnits}</dd>
                 </div>
                 <div className="flex justify-between gap-3 px-2.5 py-1.5">
-                  <dt className="text-muted-foreground">To</dt>
-                  <dd className="font-mono">{shortAddress(withdrawalReview.toAddress)}</dd>
+                  <dt className="text-muted-foreground">Pays</dt>
+                  <dd className="font-semibold">{walletLabel}</dd>
                 </div>
                 <div className="flex justify-between gap-3 px-2.5 py-1.5">
                   <dt className="text-muted-foreground">Network</dt>
@@ -671,33 +632,15 @@ export function CryptoRails({
                   This amount requires review before it is sent.
                 </p>
               )}
-              {codeTarget && (
-                <WithdrawalCodeField
-                  ctl={emailCode}
-                  target={codeTarget}
-                  disabled={busy}
-                  onConfirm={() => void confirmWithdrawal()}
-                  confirmLabel={busy ? "Submitting…" : "Confirm withdrawal"}
-                />
-              )}
-              {codeTarget && !emailCode.sentFor(codeTarget) && !emailCode.sending && (
-                <Button
-                  variant="secondary"
-                  className="w-full"
-                  onClick={() => void emailCode.send(codeTarget)}
-                >
-                  Email me a withdrawal code
-                </Button>
-              )}
               <div className="grid gap-2 sm:grid-cols-2">
                 <Button variant="secondary" onClick={() => setWithdrawalReview(null)}>
                   Back
                 </Button>
                 <Button
                   onClick={confirmWithdrawal}
-                  disabled={busy || !codeProof || (!!withdrawalReview.quote && quoteLeft === 0)}
+                  disabled={busy || (!!withdrawalReview.quote && quoteLeft === 0)}
                 >
-                  {busy ? "Submitting…" : "Confirm withdrawal"}
+                  {busy ? "Submitting…" : "Confirm cash out"}
                 </Button>
               </div>
             </div>
@@ -718,24 +661,11 @@ export function CryptoRails({
               {withdrawSnap ? (
                 <BonusCashoutNotice snap={withdrawSnap} availableCents={availableCents} />
               ) : null}
-              <div className="space-y-1.5 rounded-lg border border-border bg-muted/30 p-2.5 text-xs text-muted-foreground">
-                <label htmlFor="evm-cashout-address" className="font-semibold text-foreground">
-                  To your linked wallet
-                </label>
-                <Input
-                  id="evm-cashout-address"
-                  className="h-9 font-mono text-xs"
-                  value={outAddress}
-                  readOnly
-                  placeholder="Connect a wallet"
-                  aria-label="Linked wallet cashout address"
-                />
-                <p>
-                  Connect MetaMask or Coinbase above. Cashouts go to that wallet. Minimum{" "}
-                  {formatUsd(chain?.min_withdrawal_cents ?? data.settings.min_withdrawal_cents)}. A
-                  code is emailed to approve each cashout.
-                </p>
-              </div>
+              <p className="text-xs text-muted-foreground">
+                {outOk
+                  ? `Pays ${walletLabel}. Minimum ${formatUsd(chain?.min_withdrawal_cents ?? data.settings.min_withdrawal_cents)}.`
+                  : "Connect MetaMask or Coinbase above. Cash outs go to that wallet."}
+              </p>
               {withdrawAsset && !withdrawAsset.payout_ready ? (
                 <p className="text-xs text-destructive">
                   {withdrawAsset.asset_key} withdrawals are temporarily unavailable while that
