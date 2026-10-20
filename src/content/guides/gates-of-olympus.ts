@@ -180,7 +180,9 @@ Leave the candy neighbor on its own page. Leave this title's multiple, if it has
 
 A one-dollar house spin on this famous tile can be the most viewed button in a lobby and still hide the share that dollar is expected to return. The $10 pot fee and the $1.60 peer fee are visible without a search ranking. Visibility is the difference the fame argument keeps missing.
 
-A tumble on this tile is not a presenter show. [The live candy wheel](/guides/sweet-bonanza-candyland) prices a round with a host, not a spin on this glass.`,
+A tumble on this tile is not a presenter show. [The live candy wheel](/guides/sweet-bonanza-candyland) prices a round with a host, not a spin on this glass.
+
+A later Pragmatic cluster title prints 96.06% and a 10,000x cap on the studio news post. [Those roaming-wild sheets](/guides/fire-portals-slot) do not rewrite this tumble game.`,
     },
   ],
   faqs: [

@@ -185,7 +185,9 @@ When the stake is no longer money you can afford to lose, open [the limit tools]
 
 Real-money access exists only where that casino is allowed to offer the specific title. A mechanic label in a search box does not travel with permission. If the cashier refuses your region, believe the cashier.
 
-A second titled game, not a second definition, is [the fortune title on changing reels](/guides/madame-destiny-megaways).`,
+A second titled game, not a second definition, is [the fortune title on changing reels](/guides/madame-destiny-megaways).
+
+Pragmatic's first Megaways sequel prints 96.50% on the studio page and 200,704 ways on the 30 April 2020 launch note. [That safari sequel's sheet](/guides/great-rhino-megaways) is one title, not the whole mechanic.`,
     },
   ],
   faqs: [

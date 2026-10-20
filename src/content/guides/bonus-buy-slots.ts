@@ -153,7 +153,9 @@ If you cannot name the buy multiple and the buy RTP from the info panel, you can
       title: "When the buy button is the habit",
       body: `Buys compress the session into fewer, louder decisions. That pace is a risk factor. If you are chaining buys to erase the last 0.4×, stop.
 
-Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). [Responsible gambling](/responsible-gambling) lists limits and helplines including 1-800-GAMBLER. A feature you paid to skip toward is still a house game. Close it the same way you would close the base.`,
+Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). [Responsible gambling](/responsible-gambling) lists limits and helplines including 1-800-GAMBLER. A feature you paid to skip toward is still a house game. Close it the same way you would close the base.
+
+One Pragmatic cluster page, opened 20 October 2026, prints 96.06% and leaves the bonus-buy price unpublished. [The roaming-wild sheet](/guides/fire-portals-slot) is that blank, not a buy multiple you can assume.`,
     },
   ],
   faqs: [

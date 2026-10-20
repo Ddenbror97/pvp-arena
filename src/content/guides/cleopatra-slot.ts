@@ -183,7 +183,9 @@ A cleopatra slot demo search often assumes one address covers every generation. 
 
 If two people argue about free-game counts, ask which version each opened. Both counts can be honest and still describe different glasses. The argument does not mint a shared return.
 
-Cleopatra has been reskinned for years. A fairy-tale glass with several versions of its own is [the beanstalk versions](/guides/jack-and-the-beanstalk-slot).`,
+Cleopatra has been reskinned for years. A fairy-tale glass with several versions of its own is [the beanstalk versions](/guides/jack-and-the-beanstalk-slot).
+
+A three-reel diamond cabinet from the same era left its return unpublished on the sheets opened 20 October 2026. [That IGT diamond cabinet](/guides/double-diamond-slot) records the blank instead of borrowing a percent from a later 3X4X5X build.`,
     },
   ],
   faqs: [

@@ -179,7 +179,9 @@ A practical rule of thumb, not a system: if you insist on high volatility, bring
       title: "When the spike is the hook",
       body: `High volatility is designed to be chased. If you are raising stake after a drought or reloading to “see the feature,” the band is no longer information. It is a hook.
 
-Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). [Responsible gambling](/responsible-gambling) lists limits and helplines including 1-800-GAMBLER. A volatility lecture is not a reason to sit through one more desert.`,
+Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). [Responsible gambling](/responsible-gambling) lists limits and helplines including 1-800-GAMBLER. A volatility lecture is not a reason to sit through one more desert.
+
+One Hacksaw page marks volatility 5/5 and prints 96.30%, 92.40%, and 88.40% on the same sheet. [That punk cabinet](/guides/chaos-crew-slot) is the 5/5 example. The payline line on that page lists both 15 and 19.`,
     },
   ],
   faqs: [

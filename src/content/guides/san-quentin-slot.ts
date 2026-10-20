@@ -181,7 +181,9 @@ The comparison that can be checked is a player-versus-player fee after a settled
 
 If a friend sends a screenshot of a huge hit, ask which build and which stake. Without those two, the picture is a mood, not a price, and it does not belong in the same column as a $7.20 win fee you can recompute.
 
-Prison art does not set the price of the other grim title. [The sequel-styled neighbor](/guides/mental-2-slot) keeps its own rules screen.`,
+Prison art does not set the price of the other grim title. [The sequel-styled neighbor](/guides/mental-2-slot) keeps its own rules screen.
+
+A later Nolimit western prints 96.08%, a 300,000× cap, and a hit frequency of 9.08% on the studio page. [Those RIP figures](/guides/tombstone-rip-slot) belong to that title, not to this prison poster.`,
     },
   ],
   faqs: [

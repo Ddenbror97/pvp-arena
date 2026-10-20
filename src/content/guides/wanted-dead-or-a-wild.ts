@@ -187,7 +187,9 @@ Friends who quote a cap from a different western slot are importing another glas
 
 Clips that show a huge result and skip the misses train you to ignore the gap. If the clip will not say how many presses it cut, treat it as a mood, not a price.
 
-A western bonus-buy reputation is not a shark nudge. [The shark nudge title](/guides/razor-shark-slot) is the other feature people describe from a video.`,
+A western bonus-buy reputation is not a shark nudge. [The shark nudge title](/guides/razor-shark-slot) is the other feature people describe from a video.
+
+A different studio's cluster game does print a buy-style mode at 3× stake on its own page. [That raccoon sheet](/guides/le-bandit-slot) is not this western poster, and its percents stay on that page.`,
     },
   ],
   faqs: [

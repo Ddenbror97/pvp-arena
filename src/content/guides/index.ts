@@ -434,6 +434,12 @@ import { guide as seoMetawinReview } from "./metawin-review";
 import { guide as seoDabbleReview } from "./dabble-review";
 import { guide as seoPokerSolver } from "./poker-solver";
 import { guide as seoSmarketsReview } from "./smarkets-review";
+import { guide as seoDoubleDiamondSlot } from "./double-diamond-slot";
+import { guide as seoFirePortalsSlot } from "./fire-portals-slot";
+import { guide as seoLeBanditSlot } from "./le-bandit-slot";
+import { guide as seoTombstoneRipSlot } from "./tombstone-rip-slot";
+import { guide as seoGreatRhinoMegaways } from "./great-rhino-megaways";
+import { guide as seoChaosCrewSlot } from "./chaos-crew-slot";
 
 import { guide as ngLawOfLargeNumbersGambling } from "./law-of-large-numbers-gambling";
 import { guide as ngMontyHallProblem } from "./monty-hall-problem";
@@ -1424,6 +1430,12 @@ export const GUIDES: Guide[] = [
   seoDabbleReview,
   seoPokerSolver,
   seoSmarketsReview,
+  seoDoubleDiamondSlot,
+  seoFirePortalsSlot,
+  seoLeBanditSlot,
+  seoTombstoneRipSlot,
+  seoGreatRhinoMegaways,
+  seoChaosCrewSlot,
   ngLawOfLargeNumbersGambling,
   ngMontyHallProblem,
   ngRegressionToTheMeanGambling,
@@ -3433,6 +3445,17 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "san-quentin-slot",
         "vikings-go-berzerk-slot",
         "wanted-dead-or-a-wild",
+      ],
+    },
+    {
+      name: "Studio RTP sheets",
+      slugs: [
+        "double-diamond-slot",
+        "fire-portals-slot",
+        "le-bandit-slot",
+        "tombstone-rip-slot",
+        "great-rhino-megaways",
+        "chaos-crew-slot",
       ],
     },
   ],

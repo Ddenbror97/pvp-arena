@@ -170,7 +170,9 @@ Suppose a certificate says 96.12% over 100 million simulated spins. Your 150-spi
 
 If you are opening titles to “see the strips” you will never be shown, or chasing a near-miss as if it were data, step away. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). [Responsible gambling](/responsible-gambling) lists limits and helplines. A mechanics page is not a reason to keep mapping losses.
 
-Why a reel is built to feel “almost” is the [Skinner box](/guides/skinner-box-slot-machines).`,
+Why a reel is built to feel “almost” is the [Skinner box](/guides/skinner-box-slot-machines).
+
+A 5×5 punk title prints three RTP files and a 10,000× cap, and the same page lists both 15 and 19 paylines. [That clash on the studio page](/guides/chaos-crew-slot) is a reason to read the glass in front of you.`,
     },
   ],
   faqs: [

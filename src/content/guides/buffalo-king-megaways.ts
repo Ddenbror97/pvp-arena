@@ -189,7 +189,9 @@ A ways counter that jumps is the mechanic, not a missing number this page forgot
 
 Take the loss limit from your budget, not from how familiar the herd feels. Familiar animals are where session clocks get ignored. The clock still runs.
 
-A Megaways buffalo is not the older cabinet. [The non-Megaways buffalo cabinet](/guides/buffalo-grand-slot) is the other name people type.`,
+A Megaways buffalo is not the older cabinet. [The non-Megaways buffalo cabinet](/guides/buffalo-grand-slot) is the other name people type.
+
+A 2020 safari Megaways sequel prints 96.50% and leaves volatility unpublished. [Those rhino sheets](/guides/great-rhino-megaways) are not this buffalo cabinet.`,
     },
   ],
   faqs: [

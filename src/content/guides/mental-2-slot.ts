@@ -176,7 +176,9 @@ The earlier release, if you played one, had its own glass. Sequel marketing does
 
 No scene from the marketing needs to be retold to make that decision. The decision is a number on a screen plus a cap you wrote down. If the number is missing, the decision can still be to leave.
 
-A sequel name is not a shared paytable with every grim cabinet. [The prison-themed follow-up search](/guides/san-quentin-slot) is a different title, still without a printed return on this site.`,
+A sequel name is not a shared paytable with every grim cabinet. [The prison-themed follow-up search](/guides/san-quentin-slot) is a different title, still without a printed return on this site.
+
+Another Nolimit page, opened 20 October 2026, prints 96.08% and a max-win probability of 1 in 130 million. [The western RIP sheet](/guides/tombstone-rip-slot) is that grid. Do not paste it onto this sequel.`,
     },
   ],
   faqs: [

@@ -128,7 +128,9 @@ When the spin ends, including every drop, read the pay banner against those four
 - **Volatility as comfort, not as value.** A chain-heavy game can eat a session and then pay a picture. That shape is [how the draw works](/guides/how-do-slot-machines-work) plus a group counter, not a warmer machine.
 - **A stop that survives a chain.** Decide it before the spin. A cascade in progress is the worst moment to renegotiate.
 
-No cluster size, no grid, and no tumble count beats the edge. The format is a way of scoring symbols. The price is still the return on the stake. If the only reason to prefer one title is that it has been dropping, you are back to a hot-machine story, and this format does not make that story true.`,
+No cluster size, no grid, and no tumble count beats the edge. The format is a way of scoring symbols. The price is still the return on the stake. If the only reason to prefer one title is that it has been dropping, you are back to a hot-machine story, and this format does not make that story true.
+
+A Hacksaw 6×5 cluster page prints four RTP files and a 10,000x cap, with BonusHunt listed at 3× stake. [The raccoon cluster sheet](/guides/le-bandit-slot) is that set. It is not a stand-in for every cluster title.`,
     },
   ],
   faqs: [
