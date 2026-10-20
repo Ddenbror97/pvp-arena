@@ -135,7 +135,9 @@ Your chance equals your share of the pot. With a 5% fee, expected return is 95% 
 
 ### 18+ and cost
 
-None of these figures is a reason to play more. They are a reason to know the price. If the entertainment is not worth the expected cost, do not buy it. PVPspinArena is 18+ only.`,
+None of these figures is a reason to play more. They are a reason to know the price. If the entertainment is not worth the expected cost, do not buy it. PVPspinArena is 18+ only.
+
+A series is not one RTP. [Big Bass Bonanza](/guides/big-bass-bonanza), [Big Bass Amazon Xtreme](/guides/big-bass-amazon-xtreme) and [Big Bass Splash](/guides/big-bass-splash) stay on separate glasses. The [buffalo cabinet name](/guides/buffalo-slot-machine), [Moon Princess powers](/guides/moon-princess-slot) and [Queen of the Nile](/guides/queen-of-the-nile-slot) do the same.`,
     },
     {
       id: "use-rtp",
@@ -199,6 +201,7 @@ If you want the dollar formula for one bet, continue with expected value. If you
     "odds-converter",
     "best-payout-online-casinos",
     "law-of-large-numbers-gambling",
+    "big-bass-bonanza",
   ],
   updated: "2026-09-26",
 };

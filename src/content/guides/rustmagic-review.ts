@@ -215,6 +215,13 @@ This file reviews a category editorially. It offers no bonus and claims no affil
     },
   ],
   sources: [],
-  related: ["rust-gambling", "provably-fair-games", "fake-casino-sites", "sell-skins-for-crypto"],
+  related: [
+    "rust-gambling",
+    "provably-fair-games",
+    "fake-casino-sites",
+    "sell-skins-for-crypto",
+    "bandit-camp-review",
+    "csgoroll-review",
+  ],
   updated: "2026-10-20",
 };

@@ -138,7 +138,9 @@ PVPspinArena will not convert your USDC into Sweeps Coins. If you are here, you 
 
 Play only if you are 18 or over, can afford the purchase as entertainment, and have read the redeem rules before you pay. If the meter, the chase, or the “one more bundle” loop is already a problem, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Those pages beat another Gold Coin pack.
 
-Two questions sit beside the coin split. [How sweepstakes casinos make money](/guides/how-do-sweepstakes-casinos-make-money) is the business. [New sweepstakes casinos](/guides/new-sweepstakes-casinos) are just newer versions of the same contract.`,
+Two questions sit beside the coin split. [How sweepstakes casinos make money](/guides/how-do-sweepstakes-casinos-make-money) is the business. [New sweepstakes casinos](/guides/new-sweepstakes-casinos) are just newer versions of the same contract.
+
+Brand cashiers are separate notes, not a ranking. The [Yay redeem path](/guides/yay-casino-review) and the [Zula traffic warning](/guides/zula-casino-review) both start at the coin screen. [Crown-branded coins](/guides/crown-coins-casino-review), the [Modo sweeps name](/guides/modo-casino-review), [Fortune's coin rate](/guides/fortune-coins-review) and the [Hello Millions cashier](/guides/hello-millions-review) each leave unpublished fees blank.`,
     },
   ],
   faqs: [

@@ -229,6 +229,13 @@ If sequel-hunting becomes the session, stop with [responsible play](/responsible
     },
   ],
   sources: [],
-  related: ["slot-machine-odds", "rtp-explained", "crypto-slots", "penny-slots-online"],
+  related: [
+    "slot-machine-odds",
+    "rtp-explained",
+    "crypto-slots",
+    "penny-slots-online",
+    "moon-princess-slot",
+    "queen-of-the-nile-slot",
+  ],
   updated: "2026-10-20",
 };

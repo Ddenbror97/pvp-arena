@@ -201,6 +201,12 @@ Real-money availability is only where that casino is allowed to offer the game. 
     },
   ],
   sources: [],
-  related: ["online-slots-real-money", "is-online-casino-legal", "house-edge"],
+  related: [
+    "online-slots-real-money",
+    "is-online-casino-legal",
+    "house-edge",
+    "zeus-vs-hades-slot",
+    "invaders-from-the-planet-moolah",
+  ],
   updated: "2026-10-20",
 };

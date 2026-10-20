@@ -243,6 +243,8 @@ That settlement is not a chain transfer and not their redeem.`,
     "sweepstakes-casino",
     "sweeps-coins-explained",
     "provably-fair-games",
+    "fortune-coins-review",
+    "hello-millions-review",
   ],
   updated: "2026-10-20",
 };

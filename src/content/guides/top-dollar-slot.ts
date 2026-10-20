@@ -219,6 +219,12 @@ Real-money spins are available only where that casino is allowed to offer the di
     },
   ],
   sources: [],
-  related: ["slot-machine-odds", "las-vegas-history", "penny-slots-online"],
+  related: [
+    "slot-machine-odds",
+    "las-vegas-history",
+    "penny-slots-online",
+    "floating-dragon-slot",
+    "golden-goddess-slot",
+  ],
   updated: "2026-10-20",
 };

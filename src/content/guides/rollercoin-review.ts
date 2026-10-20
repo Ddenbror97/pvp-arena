@@ -227,6 +227,11 @@ Editorial only. No code. Any later outbound link to the brand should be read as 
     },
   ],
   sources: [],
-  related: ["coin-hunt-world-review", "what-is-a-crypto-casino", "fake-casino-sites"],
+  related: [
+    "coin-hunt-world-review",
+    "what-is-a-crypto-casino",
+    "fake-casino-sites",
+    "blum-crypto",
+  ],
   updated: "2026-10-20",
 };

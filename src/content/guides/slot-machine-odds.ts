@@ -117,7 +117,9 @@ If you play slots elsewhere, take the RTP as a cost rate and the volatility as a
 
 ### What a “97% slot” still costs
 
-Ninety-seven percent sounds almost even. On $3 spins × 200 autoplay it is $600 wagered and about $18 expected. That is a restaurant bill for a feature you may not see. High volatility can hide that bill behind one screenshot or double it in a dry clip. The word “almost even” is how people skip the multiplication. Do the multiplication, then decide whether the hour is worth the expected tab plus the chance of a worse tab.`,
+Ninety-seven percent sounds almost even. On $3 spins × 200 autoplay it is $600 wagered and about $18 expected. That is a restaurant bill for a feature you may not see. High volatility can hide that bill behind one screenshot or double it in a dry clip. The word “almost even” is how people skip the multiplication. Do the multiplication, then decide whether the hour is worth the expected tab plus the chance of a worse tab.
+
+Named titles do not share one return. The [candy cluster paytable](/guides/sweet-bonanza), [variable-ways reels](/guides/megaways-slots) and [Bonanza reactions](/guides/bonanza-megaways-slot) each say the RTP cell is unpublished. So do [Fruit Party](/guides/fruit-party-slot), the [Fruit Shop name](/guides/fruit-shop-slot) and [Sugar Rush 1000](/guides/sugar-rush-1000-slot).`,
     },
     {
       id: "mechanics",
@@ -197,6 +199,8 @@ See also [loose slots](/guides/loose-slots).`,
     "mines-game-casino",
     "limbo-game-strategy",
     "loose-slots",
+    "sweet-bonanza",
+    "megaways-slots",
   ],
   updated: "2026-09-26",
 };

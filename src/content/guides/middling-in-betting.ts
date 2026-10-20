@@ -237,6 +237,12 @@ A later outbound link to a sportsbook should be read as advertising.`,
     },
   ],
   sources: [],
-  related: ["nfl-betting", "house-edge", "ats-in-betting"],
+  related: [
+    "nfl-betting",
+    "house-edge",
+    "ats-in-betting",
+    "nrfi-betting",
+    "first-touchdown-scorer-bets",
+  ],
   updated: "2026-10-20",
 };

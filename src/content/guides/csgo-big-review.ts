@@ -216,6 +216,13 @@ The review is editorial. It offers no code and claims no special access to the b
     },
   ],
   sources: [],
-  related: ["pvp-gambling", "house-edge", "cs2-skin-prices", "provably-fair-games"],
+  related: [
+    "pvp-gambling",
+    "house-edge",
+    "cs2-skin-prices",
+    "provably-fair-games",
+    "csgoluck-review",
+    "rustclash-review",
+  ],
   updated: "2026-10-20",
 };

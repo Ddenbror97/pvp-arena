@@ -231,6 +231,12 @@ If the visit stops matching the limit you set before you opened a thumbnail, use
     },
   ],
   sources: [],
-  related: ["fake-casino-sites", "no-kyc-casino", "cafe-casino-review"],
+  related: [
+    "fake-casino-sites",
+    "no-kyc-casino",
+    "cafe-casino-review",
+    "bitkingz-review",
+    "lucky-block-casino-review",
+  ],
   updated: "2026-10-20",
 };

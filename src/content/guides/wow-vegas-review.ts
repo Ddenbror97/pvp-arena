@@ -253,6 +253,8 @@ Settlement updates our balance. It is not a cage on a boulevard.`,
     "sweepstakes-casino-legal-states",
     "pa-online-casino",
     "sweepstakes-casino",
+    "jackpota-review",
+    "yay-casino-review",
   ],
   updated: "2026-10-20",
 };

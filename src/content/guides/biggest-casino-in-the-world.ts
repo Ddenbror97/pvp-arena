@@ -223,6 +223,11 @@ The page is editorial. It does not sell a room and it does not sell a bonus. Any
     },
   ],
   sources: [],
-  related: ["las-vegas-history", "fontainebleau-las-vegas-casino", "house-edge"],
+  related: [
+    "las-vegas-history",
+    "fontainebleau-las-vegas-casino",
+    "house-edge",
+    "las-vegas-strip-map",
+  ],
   updated: "2026-10-20",
 };

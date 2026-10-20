@@ -228,6 +228,12 @@ If the session outgrows the amount you named, use [responsible gambling help](/r
     },
   ],
   sources: [],
-  related: ["provably-fair-games", "fake-casino-sites", "curacao-gambling-license"],
+  related: [
+    "provably-fair-games",
+    "fake-casino-sites",
+    "curacao-gambling-license",
+    "fortunejack-review",
+    "cafe-casino-review",
+  ],
   updated: "2026-10-20",
 };

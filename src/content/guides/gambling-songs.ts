@@ -233,6 +233,12 @@ Any later outbound link should be read as advertising.`,
     },
   ],
   sources: [],
-  related: ["las-vegas-history", "gambling-superstitions", "house-edge"],
+  related: [
+    "las-vegas-history",
+    "gambling-superstitions",
+    "house-edge",
+    "gambling-tattoos",
+    "gambling-memes",
+  ],
   updated: "2026-10-20",
 };

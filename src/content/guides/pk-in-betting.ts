@@ -183,6 +183,12 @@ Read the ticket. That sentence is the legal-adjacent habit this glossary is will
     },
   ],
   sources: [],
-  related: ["nfl-betting", "prop-bets-explained", "house-edge"],
+  related: [
+    "nfl-betting",
+    "prop-bets-explained",
+    "house-edge",
+    "middling-in-betting",
+    "nrfi-betting",
+  ],
   updated: "2026-10-20",
 };

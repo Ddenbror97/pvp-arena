@@ -165,6 +165,13 @@ The chart stays in the casino book it was written for. The fee stays unpublished
     },
   ],
   sources: [],
-  related: ["skill-based-gambling", "house-edge", "skillz-review", "is-online-casino-legal"],
+  related: [
+    "skill-based-gambling",
+    "house-edge",
+    "skillz-review",
+    "is-online-casino-legal",
+    "dominoes-gold-review",
+    "bubble-cash-review",
+  ],
   updated: "2026-10-20",
 };

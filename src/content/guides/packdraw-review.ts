@@ -228,6 +228,12 @@ This review will not fill it.`,
     },
   ],
   sources: [],
-  related: ["cs2-case-simulator", "csgo-case-opening", "pvp-gambling", "skinrave-review"],
+  related: [
+    "cs2-case-simulator",
+    "csgo-case-opening",
+    "pvp-gambling",
+    "skinrave-review",
+    "datdrop-review",
+  ],
   updated: "2026-10-20",
 };

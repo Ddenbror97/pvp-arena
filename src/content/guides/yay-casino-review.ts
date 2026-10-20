@@ -235,6 +235,8 @@ If play stops being entertainment, leave the cashier and use [responsible play t
     "sweeps-coins-explained",
     "how-do-sweepstakes-casinos-work",
     "social-casino",
+    "zula-casino-review",
+    "crown-coins-casino-review",
   ],
   updated: "2026-10-20",
 };

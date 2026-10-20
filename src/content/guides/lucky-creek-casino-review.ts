@@ -230,6 +230,12 @@ If the amount in play is no longer the amount you planned, use [responsible gamb
     },
   ],
   sources: [],
-  related: ["what-is-a-crypto-casino", "house-edge", "curacao-gambling-license"],
+  related: [
+    "what-is-a-crypto-casino",
+    "house-edge",
+    "curacao-gambling-license",
+    "jackbit-review",
+    "everygame-casino-review",
+  ],
   updated: "2026-10-20",
 };

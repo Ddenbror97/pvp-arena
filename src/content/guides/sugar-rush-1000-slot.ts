@@ -202,6 +202,11 @@ Editorial, not a bonus. No code hides in the label. An outbound link on a later 
     },
   ],
   sources: [],
-  related: ["sweet-bonanza", "crypto-slots", "slot-machine-odds"],
+  related: [
+    "sweet-bonanza",
+    "crypto-slots",
+    "slot-machine-odds",
+    "fruit-shop-slot",
+  ],
   updated: "2026-10-20",
 };

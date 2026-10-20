@@ -200,6 +200,12 @@ If the joke stops being funny and starts being the reason you stay, [responsible
     },
   ],
   sources: [],
-  related: ["sweeps-coins-explained", "fortune-coins-review", "wow-vegas-review"],
+  related: [
+    "sweeps-coins-explained",
+    "fortune-coins-review",
+    "wow-vegas-review",
+    "dara-casino-review",
+    "cash-frenzy-review",
+  ],
   updated: "2026-10-20",
 };

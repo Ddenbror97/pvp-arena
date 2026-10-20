@@ -153,7 +153,9 @@ Rules change often, so check current laws for your country rather than relying o
 - What is the real market price of the items I would receive?
 - Who holds the licence, and where?
 
-These are the same questions our [are online casinos rigged guide](/guides/are-online-casinos-rigged) recommends for any gambling site.`,
+These are the same questions our [are online casinos rigged guide](/guides/are-online-casinos-rigged) recommends for any gambling site.
+
+Each case brand gets its own odds cell, and this page does not fill it. See the [Hellcase theme note](/guides/hellcase-review), [PackDraw as a purchase](/guides/packdraw-review), the [SkinRave drop table](/guides/skinrave-review), [DatDrop's price read](/guides/datdrop-review), [Clash.gg battles](/guides/clash-gg-review) and the [SkinClub membership claim](/guides/skinclub-review).`,
     },
     {
       id: "vs-pvp",
@@ -278,6 +280,8 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     "csgo-trade-up-contract",
     "cs2-case-battle",
     "loot-boxes-and-gambling",
+    "hellcase-review",
+    "packdraw-review",
   ],
   updated: "2026-09-25",
 };

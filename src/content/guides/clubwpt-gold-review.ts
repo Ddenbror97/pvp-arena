@@ -237,6 +237,12 @@ The brand's rake is not published.`,
     },
   ],
   sources: [],
-  related: ["texas-holdem-rules", "replay-poker-review", "sweepstakes-casino"],
+  related: [
+    "texas-holdem-rules",
+    "replay-poker-review",
+    "sweepstakes-casino",
+    "golden-hearts-casino-review",
+    "dara-casino-review",
+  ],
   updated: "2026-10-20",
 };

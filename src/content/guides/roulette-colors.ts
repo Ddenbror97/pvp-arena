@@ -108,7 +108,9 @@ The logic is the classic one. Two common colors pay roughly even money, and one 
 
 ### Checking the result
 
-Each round is provably fair. You can check any round number on the [fairness page](/fairness), as explained in our [provably fair roulette guide](/guides/provably-fair-roulette).`,
+Each round is provably fair. You can check any round number on the [fairness page](/fairness), as explained in our [provably fair roulette guide](/guides/provably-fair-roulette).
+
+A skin-site wheel is not this dollar wheel. The [CSGORoll format note](/guides/csgoroll-review) sets that coloured item wheel next to the 33-slot table and does not copy the brand's edge.`,
     },
     {
       id: "myths",
@@ -253,6 +255,7 @@ European and French layouts use the same colours; the rule that changes the pric
     "coin-flip-odds",
     "crypto-roulette",
     "french-roulette",
+    "csgoroll-review",
   ],
   updated: "2026-09-25",
 };

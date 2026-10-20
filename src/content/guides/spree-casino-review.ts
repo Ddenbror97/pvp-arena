@@ -236,6 +236,8 @@ Equal tickets have equal chance before the draw.`,
     "gold-coins-vs-sweeps-coins",
     "fake-casino-sites",
     "house-edge",
+    "rolla-casino-review",
+    "sixty6-casino-review",
   ],
   updated: "2026-10-20",
 };

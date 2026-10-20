@@ -222,6 +222,12 @@ If the session leaves the budget you set, use [responsible play](/responsible-ga
     },
   ],
   sources: [],
-  related: ["house-edge", "no-kyc-casino", "shuffle-casino-review"],
+  related: [
+    "house-edge",
+    "no-kyc-casino",
+    "shuffle-casino-review",
+    "lucky-creek-casino-review",
+    "jackbit-review",
+  ],
   updated: "2026-10-20",
 };

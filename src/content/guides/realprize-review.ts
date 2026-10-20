@@ -213,6 +213,12 @@ This is an editor's comparison, not an offer. No promo code is included. If a li
     },
   ],
   sources: [],
-  related: ["sweepstakes-casino", "zula-casino-review", "sweeps-coins-explained"],
+  related: [
+    "sweepstakes-casino",
+    "zula-casino-review",
+    "sweeps-coins-explained",
+    "spree-casino-review",
+    "rolla-casino-review",
+  ],
   updated: "2026-10-20",
 };

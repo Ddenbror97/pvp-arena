@@ -229,6 +229,8 @@ Players cannot cancel. The match is still not the brand's game.`,
     "gold-coins-vs-sweeps-coins",
     "pvp-gambling",
     "fake-casino-sites",
+    "yay-casino-review",
+    "zula-casino-review",
   ],
   updated: "2026-10-20",
 };

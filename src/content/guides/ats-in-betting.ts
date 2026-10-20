@@ -185,6 +185,12 @@ The definition is the whole product of this page. The rest is a warning not to i
     },
   ],
   sources: [],
-  related: ["nfl-betting", "house-edge", "prop-bets-explained"],
+  related: [
+    "nfl-betting",
+    "house-edge",
+    "prop-bets-explained",
+    "pk-in-betting",
+    "middling-in-betting",
+  ],
   updated: "2026-10-20",
 };

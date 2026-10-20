@@ -141,7 +141,9 @@ Mixing option 1 and option 2 through a trade bot gives you the downside of both:
 
 If you switch to a crypto balance, learn the network first, send a test amount, and never type a seed phrase into a "support" form. Those habits matter more than which colour the wheel uses. The rust-themed overlay was never the hard part. The hard part was always what you were actually staking.
 
-A last habit that saves inventories: keep the items you would be sad to lose off any account that can click a trade offer after midnight. Use a mule inventory if you insist on testing a site — then notice that you already admitted the bot is a thief’s mailbox. Adults 18+ can choose a cash pot instead. They should not have to launder that choice through a jacket skin Facepunch never sold as a chip.`,
+A last habit that saves inventories: keep the items you would be sad to lose off any account that can click a trade offer after midnight. Use a mule inventory if you insist on testing a site — then notice that you already admitted the bot is a thief’s mailbox. Adults 18+ can choose a cash pot instead. They should not have to launder that choice through a jacket skin Facepunch never sold as a chip.
+
+Rust item sites are not one fee. The [RustClash cosmetic pot](/guides/rustclash-review), the [RustChance percent test](/guides/rustchance-review), the [RustMagic commit check](/guides/rustmagic-review) and the [Bandit Camp case note](/guides/bandit-camp-review) each mark the brand edge as not published.`,
     },
   ],
   faqs: [
@@ -182,6 +184,14 @@ A last habit that saves inventories: keep the items you would be sad to lose off
     },
     { label: "UK Gambling Commission", url: "https://www.gamblingcommission.gov.uk/" },
   ],
-  related: ["pvp-gambling", "rust-skin-prices", "tf2-gambling", "csgo-coinflip", "cs2-roulette"],
+  related: [
+    "pvp-gambling",
+    "rust-skin-prices",
+    "tf2-gambling",
+    "csgo-coinflip",
+    "cs2-roulette",
+    "rustclash-review",
+    "rustchance-review",
+  ],
   updated: "2026-09-26",
 };

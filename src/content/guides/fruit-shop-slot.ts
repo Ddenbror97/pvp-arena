@@ -207,6 +207,12 @@ Real-money availability is only where that casino is allowed to offer the title 
     },
   ],
   sources: [],
-  related: ["penny-slots-online", "slot-machine-myths", "crypto-slots"],
+  related: [
+    "penny-slots-online",
+    "slot-machine-myths",
+    "crypto-slots",
+    "sweet-bonanza",
+    "fruit-party-slot",
+  ],
   updated: "2026-10-20",
 };

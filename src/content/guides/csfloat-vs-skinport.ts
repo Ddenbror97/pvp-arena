@@ -157,7 +157,9 @@ Private Discord deals, “middleman trusted in the server,” and gambling overl
 
 Fees will keep changing. A workflow that starts with “open the live fee page” survives that. A workflow that starts with “I saw a tweet that Book A is 1 percent cheaper” does not.
 
-If you only remember one sentence: pick the model that matches the *item*, then read today’s cashier rules. The logo is decoration.`,
+If you only remember one sentence: pick the model that matches the *item*, then read today’s cashier rules. The logo is decoration.
+
+Trade bots and benchmark boards are a different job from this storefront comparison. Read the [SkinsMonkey bot fee](/guides/skinsmonkey-review), the [Tradeit confirm screen](/guides/tradeit-gg-review), the [SkinBaron sale note](/guides/skinbaron-review) and the [Buff163 price-benchmark warning](/guides/buff163-review).`,
     },
     {
       id: "stop",
@@ -216,6 +218,8 @@ Pick a model that matches the item. Read the live fee page. Complete one sale or
     "steam-market-fees",
     "cs2-skin-prices",
     "cs2-trading-sites",
+    "skinsmonkey-review",
+    "tradeit-gg-review",
   ],
   updated: "2026-09-26",
 };

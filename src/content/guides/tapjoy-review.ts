@@ -238,6 +238,12 @@ Offer tracking is screenshots and the host app's support path. Those are differe
     },
   ],
   sources: [],
-  related: ["freecash-review", "givvy-review", "games-that-pay-real-money", "fake-casino-sites"],
+  related: [
+    "freecash-review",
+    "givvy-review",
+    "games-that-pay-real-money",
+    "fake-casino-sites",
+    "swagbucks-games",
+  ],
   updated: "2026-10-20",
 };

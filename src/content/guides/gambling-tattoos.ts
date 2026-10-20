@@ -168,6 +168,13 @@ Dice stay decoration. The ace keeps its several histories. The fee on a posted g
     },
   ],
   sources: [],
-  related: ["gambling-superstitions", "las-vegas-history", "lucky-numbers-gambling", "house-edge"],
+  related: [
+    "gambling-superstitions",
+    "las-vegas-history",
+    "lucky-numbers-gambling",
+    "house-edge",
+    "gambling-memes",
+    "gambling-songs",
+  ],
   updated: "2026-10-20",
 };

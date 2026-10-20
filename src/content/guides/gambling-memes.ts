@@ -233,6 +233,12 @@ No promo code is buried in a caption here. If someone DMs you a code attached to
     },
   ],
   sources: [],
-  related: ["gambling-superstitions", "gamblers-fallacy", "house-edge"],
+  related: [
+    "gambling-superstitions",
+    "gamblers-fallacy",
+    "house-edge",
+    "gambling-songs",
+    "gambling-tattoos",
+  ],
   updated: "2026-10-20",
 };

@@ -183,6 +183,13 @@ The $32 pot is our illustration. It is not a solitaire prize, and it does not me
     },
   ],
   sources: [],
-  related: ["solitaire-cash-review", "solitaire-clash-review", "solitaire-for-money", "skill-based-gambling"],
+  related: [
+    "solitaire-cash-review",
+    "solitaire-clash-review",
+    "solitaire-for-money",
+    "skill-based-gambling",
+    "21-blitz-review",
+    "dominoes-gold-review",
+  ],
   updated: "2026-10-20",
 };

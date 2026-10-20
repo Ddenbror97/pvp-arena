@@ -204,6 +204,12 @@ The piece is an editorial review. It offers no code. A later outbound link is ad
     },
   ],
   sources: [],
-  related: ["megaways-slots", "house-edge", "penny-slots-online"],
+  related: [
+    "megaways-slots",
+    "house-edge",
+    "penny-slots-online",
+    "dancing-drums-slot",
+    "top-dollar-slot",
+  ],
   updated: "2026-10-20",
 };

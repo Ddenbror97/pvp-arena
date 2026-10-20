@@ -200,6 +200,12 @@ Real-money availability is only where that casino is allowed to offer this fruit
     },
   ],
   sources: [],
-  related: ["cluster-pays-slots", "rtp-explained", "crypto-slots"],
+  related: [
+    "cluster-pays-slots",
+    "rtp-explained",
+    "crypto-slots",
+    "megaways-slots",
+    "bonanza-megaways-slot",
+  ],
   updated: "2026-10-20",
 };

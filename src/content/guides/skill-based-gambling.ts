@@ -131,7 +131,9 @@ Coinflip: 50/50 before fee. Live on [Coinflip](/coinflip). Heritage context in [
 
 Roulette: house-banked colours on [Roulette](/roulette). Edge is published; it is not a skill ladder.
 
-Fairness notes: [Fairness](/fairness). Product overview: [how it works](/how-it-works).`,
+Fairness notes: [Fairness](/fairness). Product overview: [how it works](/how-it-works).
+
+A skill label still hides a rake. [21 Blitz scoring](/guides/21-blitz-review), the [dominoes entry cut](/guides/dominoes-gold-review) and [Bubble Cash matches](/guides/bubble-cash-review) are app notes. [Gamezop's catalog](/guides/gamezop-review) and the [Mahjong Cash app](/guides/mahjong-cash-review) do not inherit a fee from this page.`,
     },
     {
       id: "legal-marketing",
@@ -180,6 +182,13 @@ If you need a break, take one before the next deposit.`,
       url: "https://www.begambleaware.org/understanding-gambling",
     },
   ],
-  related: ["coin-flip-odds", "expected-value-gambling", "house-edge", "pvp-gambling"],
+  related: [
+    "coin-flip-odds",
+    "expected-value-gambling",
+    "house-edge",
+    "pvp-gambling",
+    "21-blitz-review",
+    "dominoes-gold-review",
+  ],
   updated: "2026-09-26",
 };

@@ -228,6 +228,12 @@ If spending leaves the bound you chose, open [responsible gambling](/responsible
     },
   ],
   sources: [],
-  related: ["fake-casino-sites", "house-edge", "cryptorino-review"],
+  related: [
+    "fake-casino-sites",
+    "house-edge",
+    "cryptorino-review",
+    "everygame-casino-review",
+    "bitkingz-review",
+  ],
   updated: "2026-10-20",
 };

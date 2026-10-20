@@ -208,6 +208,13 @@ The piece is an editorial review of a category. It is not a coupon and it does n
     },
   ],
   sources: [],
-  related: ["rust-gambling", "sell-skins-for-crypto", "fake-casino-sites", "house-edge"],
+  related: [
+    "rust-gambling",
+    "sell-skins-for-crypto",
+    "fake-casino-sites",
+    "house-edge",
+    "rustchance-review",
+    "rustmagic-review",
+  ],
   updated: "2026-10-20",
 };

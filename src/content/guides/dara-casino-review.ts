@@ -205,6 +205,12 @@ Editorial, not a promotion. There is no code. A later outbound link should be re
     },
   ],
   sources: [],
-  related: ["social-casino", "yay-casino-review", "fortune-coins-review"],
+  related: [
+    "social-casino",
+    "yay-casino-review",
+    "fortune-coins-review",
+    "cash-frenzy-review",
+    "lonestar-casino-review",
+  ],
   updated: "2026-10-20",
 };

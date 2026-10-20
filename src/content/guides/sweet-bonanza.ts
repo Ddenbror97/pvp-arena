@@ -208,6 +208,12 @@ Real-money availability is only where that casino is allowed to offer it. A sear
     },
   ],
   sources: [],
-  related: ["cluster-pays-slots", "rtp-explained", "slot-volatility"],
+  related: [
+    "cluster-pays-slots",
+    "rtp-explained",
+    "slot-volatility",
+    "fruit-party-slot",
+    "megaways-slots",
+  ],
   updated: "2026-10-20",
 };

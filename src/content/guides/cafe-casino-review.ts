@@ -225,6 +225,8 @@ Equal tickets share the draw equally. The figure is not a Cafe payout.`,
     "no-kyc-casino",
     "fake-casino-sites",
     "curacao-gambling-license",
+    "red-dog-casino-review",
+    "shuffle-casino-review",
   ],
   updated: "2026-10-20",
 };

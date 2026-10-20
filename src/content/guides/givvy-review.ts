@@ -169,6 +169,13 @@ The ceiling is the cash-out screen. The minimum is not published here. Earnings 
     },
   ],
   sources: [],
-  related: ["skill-based-gambling", "games-that-pay-real-money", "fake-casino-sites", "house-edge"],
+  related: [
+    "skill-based-gambling",
+    "games-that-pay-real-money",
+    "fake-casino-sites",
+    "house-edge",
+    "swagbucks-games",
+    "lucky-match-review",
+  ],
   updated: "2026-10-20",
 };

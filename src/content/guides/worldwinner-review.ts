@@ -174,6 +174,14 @@ Nothing in the suppose authorizes a fee you did not see. Nothing in our 5% rule 
     },
   ],
   sources: [],
-  related: ["skill-based-gambling", "skillz-review", "solitaire-for-money", "house-edge", "games-that-pay-real-money"],
+  related: [
+    "skill-based-gambling",
+    "skillz-review",
+    "solitaire-for-money",
+    "house-edge",
+    "games-that-pay-real-money",
+    "pool-payday-review",
+    "game-taco-review",
+  ],
   updated: "2026-10-20",
 };

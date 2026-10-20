@@ -130,7 +130,9 @@ PVPspinArena will not launch a play token to keep you on the site. If you want g
 
 A second pass on the same pitch, in plainer words: if the studio vanished tomorrow, what do you still hold? A fun save file is a game. A token that only trades on their dex is a receipt. An NFT that points at a dead server is a picture of a receipt. Write those three answers before you buy a “starter bundle.” If you cannot write them, you are buying a trailer.
 
-Hours count. A loop that pays $4 a day after inflation and takes five hours is a $0.80 hourly story before you subtract the NFT that already dropped. Compare that to any other use of the same evening, including not playing. PVPspinArena will not pretend a [Jackpot](/) pot is a wage. If you still want chance games, use a dollar balance, a written cap and the [responsible gambling](/responsible-gambling) tools when the cap starts to move.`,
+Hours count. A loop that pays $4 a day after inflation and takes five hours is a $0.80 hourly story before you subtract the NFT that already dropped. Compare that to any other use of the same evening, including not playing. PVPspinArena will not pretend a [Jackpot](/) pot is a wage. If you still want chance games, use a dollar balance, a written cap and the [responsible gambling](/responsible-gambling) tools when the cap starts to move.
+
+Earn-by-clicking apps are not a casino bankroll. [Coin Hunt walks](/guides/coin-hunt-world-review), [RollerCoin clicks](/guides/rollercoin-review) and the [Blum mini-app](/guides/blum-crypto) publish no daily rate on this site.`,
     },
     {
       id: "adult",
@@ -185,6 +187,8 @@ If a friend forwards a “new Axie” with a higher advertised daily dollar, run
     "nft-gambling",
     "web3-casino",
     "are-online-casinos-rigged",
+    "coin-hunt-world-review",
+    "rollercoin-review",
   ],
   updated: "2026-09-26",
 };

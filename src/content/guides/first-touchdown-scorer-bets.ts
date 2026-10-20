@@ -169,6 +169,13 @@ First means first. Anytime means any. The board you can see is the only board. T
     },
   ],
   sources: [],
-  related: ["nfl-betting", "prop-bets-explained", "house-edge", "pvp-gambling"],
+  related: [
+    "nfl-betting",
+    "prop-bets-explained",
+    "house-edge",
+    "pvp-gambling",
+    "ats-in-betting",
+    "pk-in-betting",
+  ],
   updated: "2026-10-20",
 };

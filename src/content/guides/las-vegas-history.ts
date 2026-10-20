@@ -91,7 +91,9 @@ Old casinos were imploded on live television to make room for new ones. The 1990
 
 Since the 2000s Strip resorts have earned more from rooms, food, entertainment and conventions than from gaming. Las Vegas now draws around 40 million visitors in a typical recent year. Pro sports arrived with the NHL’s Golden Knights (2017) and the NFL’s Raiders (2020). The Sphere venue opened in 2023, the same year Formula 1 raced on the Strip, and the Super Bowl was played in the city in February 2024.
 
-The city also lived through hard years. The 2008 financial crisis stopped several projects, and on 1 October 2017 a gunman firing from Mandalay Bay killed 60 people at a country music festival, the deadliest mass shooting by a single gunman in US history. In March 2020 Nevada closed all casinos for about eleven weeks during the pandemic. Macau has also overtaken the Strip in gambling revenue since the mid-2000s.`,
+The city also lived through hard years. The 2008 financial crisis stopped several projects, and on 1 October 2017 a gunman firing from Mandalay Bay killed 60 people at a country music festival, the deadliest mass shooting by a single gunman in US history. In March 2020 Nevada closed all casinos for about eleven weeks during the pandemic. Macau has also overtaken the Strip in gambling revenue since the mid-2000s.
+
+Later visits need a narrower page. The [Fontainebleau opening](/guides/fontainebleau-las-vegas-casino) is one resort. The [Strip as a walk, not a city](/guides/las-vegas-strip-map) is orientation. [Biggest-casino claims](/guides/biggest-casino-in-the-world) depend on the unit. A [used slot cabinet](/guides/slot-machine-for-sale) is a purchase, not a spin.`,
     },
     {
       id: "maths",
@@ -169,6 +171,7 @@ See also [the Riviera](/guides/riviera-casino) and [the Black Book](/guides/casi
     "history-of-poker",
     "casino-surveillance",
     "riviera-casino",
+    "fontainebleau-las-vegas-casino",
   ],
   updated: "2026-09-27",
 };

@@ -219,6 +219,12 @@ The review is editorial. It does not offer a bonus. Any later outbound brand lin
     },
   ],
   sources: [],
-  related: ["csgo-case-opening", "hellcase-review", "house-edge"],
+  related: [
+    "csgo-case-opening",
+    "hellcase-review",
+    "house-edge",
+    "farmskins-review",
+    "hypedrop-review",
+  ],
   updated: "2026-10-20",
 };

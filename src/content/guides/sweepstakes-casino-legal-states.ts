@@ -126,7 +126,9 @@ If you opened this article because a streamer said “sweeps is legal now,” tr
 
 If the hunt for a “legal state” has become the session, stop playing and stop shopping. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A moving map is a reason to pause, not a reason to open a third brand.
 
-Real-money online casinos are a different product from sweepstakes. The national frame is [is online casino legal](/guides/is-online-casino-legal), with state notes for [Ohio](/guides/online-casino-legal-ohio), [Florida](/guides/online-casino-legal-florida) and [Maryland](/guides/online-casino-legal-maryland). Those pages are not permission to play.`,
+Real-money online casinos are a different product from sweepstakes. The national frame is [is online casino legal](/guides/is-online-casino-legal), with state notes for [Ohio](/guides/online-casino-legal-ohio), [Florida](/guides/online-casino-legal-florida) and [Maryland](/guides/online-casino-legal-maryland). Those pages are not permission to play.
+
+A state map does not review a cashier. [ClubWPT Gold's poker-flavored club](/guides/clubwpt-gold-review) and the [Dara brand note](/guides/dara-casino-review) still need the redeem screen. [Cash Frenzy's pace](/guides/cash-frenzy-review), the [Lonestar name versus Texas law](/guides/lonestar-casino-review), [Sixty6 versus a 33-slot wheel](/guides/sixty6-casino-review) and the [Rolla brand, not craps](/guides/rolla-casino-review) are those notes.`,
     },
   ],
   faqs: [

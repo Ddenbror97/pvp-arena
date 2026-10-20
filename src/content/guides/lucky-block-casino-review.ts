@@ -242,6 +242,13 @@ Green is a single pocket with 14x gross. Do not reuse the Purple percent for Gre
     },
   ],
   sources: [],
-  related: ["provably-fair-games", "what-is-a-crypto-casino", "house-edge", "fake-casino-sites"],
+  related: [
+    "provably-fair-games",
+    "what-is-a-crypto-casino",
+    "house-edge",
+    "fake-casino-sites",
+    "slots-lv-review",
+    "mega-bonanza-casino-review",
+  ],
   updated: "2026-10-20",
 };

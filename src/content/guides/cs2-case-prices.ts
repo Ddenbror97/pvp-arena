@@ -168,6 +168,13 @@ The case is the container. The skin is the item. Today's dollar price is on the 
     },
   ],
   sources: [],
-  related: ["cs2-skin-prices", "csgo-case-opening", "csfloat-vs-skinport", "sell-skins-for-crypto"],
+  related: [
+    "cs2-skin-prices",
+    "csgo-case-opening",
+    "csfloat-vs-skinport",
+    "sell-skins-for-crypto",
+    "cs2-case-simulator",
+    "tf2-keys",
+  ],
   updated: "2026-10-20",
 };

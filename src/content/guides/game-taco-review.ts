@@ -168,6 +168,13 @@ No sentence here is an earnings promise. The lobby you see is the catalog. The p
     },
   ],
   sources: [],
-  related: ["skill-based-gambling", "skillz-review", "games-that-pay-real-money", "pvp-gambling"],
+  related: [
+    "skill-based-gambling",
+    "skillz-review",
+    "games-that-pay-real-money",
+    "pvp-gambling",
+    "solitaire-smash-review",
+    "21-blitz-review",
+  ],
   updated: "2026-10-20",
 };

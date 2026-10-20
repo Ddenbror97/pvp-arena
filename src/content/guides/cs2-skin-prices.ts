@@ -127,7 +127,9 @@ Repeat the exercise on a low-volume souvenir. Steam last sold at $220 three week
 
 Using skins as chips stacks three bets: the game result, the site's valuation, and the market after you win. You can "win" a pot and still be down versus the cash you could have kept. That is not a secret edge. It is extra variance you did not need.
 
-A [gambling budget](/guides/gambling-budget) is easier when the unit does not need a float check. PVPspinArena shows balances in US dollars after a USDC or ETH deposit on Base. Ten dollars is ten dollars until you bet it. That will not make you a better trader. It will stop you confusing a Doppler phase with a bankroll.`,
+A [gambling budget](/guides/gambling-budget) is easier when the unit does not need a float check. PVPspinArena shows balances in US dollars after a USDC or ETH deposit on Base. Ten dollars is ten dollars until you bet it. That will not make you a better trader. It will stop you confusing a Doppler phase with a bankroll.
+
+A skin price is not a case price and not a key. The [CS2 case price caution](/guides/cs2-case-prices) refuses a live list. The [case simulator versus a paid open](/guides/cs2-case-simulator) spends no inventory. A [TF2 key used as currency](/guides/tf2-keys) is a different game's item.`,
     },
     {
       id: "tools",
@@ -199,6 +201,8 @@ Re-check bid, ask and last fills whenever an overlay shows one “value.” If y
     "cs2-knife-prices",
     "cs2-doppler-phases",
     "case-hardened-blue-gem",
+    "cs2-case-prices",
+    "cs2-case-simulator",
   ],
   updated: "2026-09-26",
 };

@@ -183,6 +183,13 @@ Tile names remain on their own page. Fees remain unpublished. The $4 take remain
     },
   ],
   sources: [],
-  related: ["mahjong-gambling", "mahjong-tiles", "skill-based-gambling", "house-edge"],
+  related: [
+    "mahjong-gambling",
+    "mahjong-tiles",
+    "skill-based-gambling",
+    "house-edge",
+    "gamezop-review",
+    "worldwinner-review",
+  ],
   updated: "2026-10-20",
 };

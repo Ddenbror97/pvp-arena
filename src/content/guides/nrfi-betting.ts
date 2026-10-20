@@ -239,6 +239,11 @@ Any later outbound link to a book should be read as advertising.`,
     },
   ],
   sources: [],
-  related: ["prop-bets-explained", "house-edge", "ats-in-betting"],
+  related: [
+    "prop-bets-explained",
+    "house-edge",
+    "ats-in-betting",
+    "first-touchdown-scorer-bets",
+  ],
   updated: "2026-10-20",
 };

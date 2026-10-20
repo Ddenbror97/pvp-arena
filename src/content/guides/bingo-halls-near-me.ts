@@ -181,6 +181,12 @@ The $45 pot is a fee lesson about a player game. It does not buy a card, and it 
     },
   ],
   sources: [],
-  related: ["keno-vs-bingo", "house-edge", "las-vegas-history"],
+  related: [
+    "keno-vs-bingo",
+    "house-edge",
+    "las-vegas-history",
+    "slot-machine-for-sale",
+    "bingo-halls-near-me",
+  ],
   updated: "2026-10-20",
 };

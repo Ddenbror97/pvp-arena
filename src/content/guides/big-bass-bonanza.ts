@@ -208,6 +208,11 @@ Real-money play exists only where that operator may offer it. [Tools for stoppin
     },
   ],
   sources: [],
-  related: ["big-bass-amazon-xtreme", "rtp-explained", "slot-machine-odds"],
+  related: [
+    "big-bass-amazon-xtreme",
+    "rtp-explained",
+    "slot-machine-odds",
+    "big-bass-splash",
+  ],
   updated: "2026-10-20",
 };

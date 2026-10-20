@@ -244,6 +244,13 @@ A skill catalog is a different system, and a country question is a third one. Ne
     },
   ],
   sources: [],
-  related: ["skill-based-gambling", "games-that-pay-real-money", "skillz-review", "solitaire-for-money"],
+  related: [
+    "skill-based-gambling",
+    "games-that-pay-real-money",
+    "skillz-review",
+    "solitaire-for-money",
+    "worldwinner-review",
+    "pool-payday-review",
+  ],
   updated: "2026-10-20",
 };

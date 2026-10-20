@@ -168,6 +168,13 @@ The simulator spends nothing and proves nothing about Valve. The paid open is a 
     },
   ],
   sources: [],
-  related: ["csgo-case-opening", "cs2-case-battle", "cs2-skin-prices", "loot-boxes-and-gambling"],
+  related: [
+    "csgo-case-opening",
+    "cs2-case-battle",
+    "cs2-skin-prices",
+    "loot-boxes-and-gambling",
+    "tf2-keys",
+    "skinsmonkey-review",
+  ],
   updated: "2026-10-20",
 };

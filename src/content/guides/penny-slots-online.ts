@@ -132,7 +132,9 @@ Date the note on the same line as the stake and the loss limit. When the limit i
 
 One clean test beats a pile of tabs. Use the smallest stake the cashier will accept, on the asset and network the cashier names, then withdraw a fraction before you add more. Time it. Save the identifier. If the site asks who you are, answer or leave. Do not shop for a version of penny slots online that skips the question. The question is part of the product.
 
-Then close the tab or play only what this site actually offers. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars, adults 18+ only. A second account is not a fresh start.`,
+Then close the tab or play only what this site actually offers. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars, adults 18+ only. A second account is not a fresh start.
+
+A penny denomination is not these cabinets. The [Top Dollar name](/guides/top-dollar-slot), [Floating Dragon hold-and-spin](/guides/floating-dragon-slot) and the [Piggy Bankin bonus](/guides/piggy-bankin-slot) keep their returns unpublished. [Stack 'Em caps](/guides/stack-em-slot) and [Beam Boys bonus modes](/guides/beam-boys-slot) do too.`,
     },
   ],
   faqs: [
@@ -163,7 +165,14 @@ Then close the tab or play only what this site actually offers. Jackpot, Coinfli
       url: "https://www.gambleaware.org/",
     },
   ],
-  related: ["how-to-play-slots", "slot-volatility", "online-slots-real-money", "slot-machine-odds"],
+  related: [
+    "how-to-play-slots",
+    "slot-volatility",
+    "online-slots-real-money",
+    "slot-machine-odds",
+    "top-dollar-slot",
+    "floating-dragon-slot",
+  ],
   updated: "2026-09-27",
   cta: {
     title: "This site is a pot, not that product",

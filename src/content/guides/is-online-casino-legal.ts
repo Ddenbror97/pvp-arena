@@ -41,7 +41,7 @@ export const guide: Guide = {
     {
       id: "three-states-people-ask-about-next",
       title: "Three states people ask about next",
-      body: "Ohio, Florida, and Maryland come up because each has a real gambling market that is easy to misunderstand. In each one, commercial real-money online casino play is not an open statewide market the way sports betting is in some states. Retail rules and tribal rules, where tribal gaming exists, are separate. None of the summaries below is a permission, a statute citation, or a claim that the law is frozen.\n\n[Online casino legal Ohio](/guides/online-casino-legal-ohio) explains how to read Ohio's picture: a casino regulator, retail gambling, sports wagering as its own product, and no assumption that a phone casino is part of that package.\n\n[Online casino legal Florida](/guides/online-casino-legal-florida) covers a market shaped by tribal agreements and a state gaming commission, and why a sports-betting dispute is not an online-casino statute.\n\n[Online casino legal Maryland](/guides/online-casino-legal-maryland) separates regulated sports wagering and licensed retail casinos from an open statewide online casino market, and points you at the lottery and gaming agency's current pages.\n\nIf you live somewhere else, do not stretch those three articles to fit. Find the regulator for your state and read what it says it licenses.",
+      body: "Ohio, Florida, and Maryland come up because each has a real gambling market that is easy to misunderstand. In each one, commercial real-money online casino play is not an open statewide market the way sports betting is in some states. Retail rules and tribal rules, where tribal gaming exists, are separate. None of the summaries below is a permission, a statute citation, or a claim that the law is frozen.\n\n[Online casino legal Ohio](/guides/online-casino-legal-ohio) explains how to read Ohio's picture: a casino regulator, retail gambling, sports wagering as its own product, and no assumption that a phone casino is part of that package.\n\n[Online casino legal Florida](/guides/online-casino-legal-florida) covers a market shaped by tribal agreements and a state gaming commission, and why a sports-betting dispute is not an online-casino statute.\n\n[Online casino legal Maryland](/guides/online-casino-legal-maryland) separates regulated sports wagering and licensed retail casinos from an open statewide online casino market, and points you at the lottery and gaming agency's current pages.\n\nIf you live somewhere else, do not stretch those three articles to fit. Find the regulator for your state and read what it says it licenses.\n\nFour more state questions stay off this national page and invent no statute number. Read [Pennsylvania's licensed market](/guides/pa-online-casino), the [Delaware check](/guides/online-casino-delaware), the [Kentucky question beside the Derby](/guides/online-gambling-legal-kentucky) and the [South Carolina split](/guides/online-gambling-legal-south-carolina).",
     },
     {
       id: "how-to-read-a-regulator-page",
@@ -87,6 +87,8 @@ export const guide: Guide = {
     "online-casino-legal-ohio",
     "online-casino-legal-florida",
     "online-casino-legal-maryland",
+    "pa-online-casino",
+    "online-casino-delaware",
   ],
   updated: "2026-09-26",
 };
