@@ -110,6 +110,7 @@ export interface PokerSeat {
   user_id: string;
   username: string;
   avatar_url: string | null;
+  is_bot?: boolean;
   stack: number;
   pending: number;
   state: "ACTIVE" | "SITTING_OUT";
@@ -211,7 +212,7 @@ export interface LobbyTable {
   max_seats: number;
   hand_count: number;
   live: boolean;
-  players: { username: string; avatar_url: string | null }[];
+  players: { username: string; avatar_url: string | null; is_bot?: boolean }[];
 }
 export interface Lobby {
   enabled: boolean;
@@ -319,6 +320,16 @@ export const pokerNudge = (table: number): RpcResult<string> =>
 /** Tells the table this seat's player is still here; seats not seen for 20 s sit out before a deal. */
 export const pokerHeartbeat = (table: number): RpcResult<null> =>
   db.rpc("poker_heartbeat", { p_table: table });
+export const pokerCallBot = (
+  table: number,
+  key: string,
+): RpcResult<{
+  ok: boolean;
+  joined: boolean;
+  reason?: string;
+  duplicate?: boolean;
+  user_id?: string;
+}> => db.rpc("poker_call_bot", { p_table: table, p_key: key });
 
 export function useLobby() {
   return useQuery({ queryKey: ["poker-lobby"], queryFn: fetchLobby, refetchInterval: 10_000 });
@@ -429,6 +440,14 @@ const MESSAGES: Record<string, string> = {
   TOP_UP_REQUIRED: "Top up before sitting back in.",
   LEAVING: "You're leaving this table.",
   RATE_LIMITED: "Too many requests. Wait a moment and try again.",
+  BOTS_DISABLED: "Automated opponents are not available right now.",
+  BOT_UNFUNDED: "No automated opponent is available for that buy-in.",
+  BOT_EXPOSURE_LIMIT: "No automated opponent is available for that buy-in.",
+  BOT_TABLE_FULL: "This table already has the maximum number of bots.",
+  BOTS_BUSY: "Every automated opponent is already seated.",
+  NO_SEAT: "That seat was just taken.",
+  NOT_SEATED: "Take a seat before calling a bot.",
+  BOT_NOT_WITHDRAWABLE: "Bot balances can't be withdrawn.",
 };
 
 export function pokerError(e: { message?: string } | null | undefined) {

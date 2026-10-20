@@ -43,6 +43,10 @@ const MESSAGES: Record<string, string> = {
   MATCH_NOT_ACTIVE: "This match isn't running.",
   TURN_NOT_EXPIRED: "Your opponent still has time left.",
   INVALID_IDEMPOTENCY_KEY: "Please try again.",
+  BOTS_DISABLED: "Automated opponents are not available right now.",
+  BOT_UNFUNDED: "No automated opponent is available for that stake.",
+  BOT_EXPOSURE_LIMIT: "No automated opponent is available for that stake.",
+  BOT_NOT_WITHDRAWABLE: "Bot balances can't be withdrawn.",
 };
 
 export function friendlyError(e: unknown): string {

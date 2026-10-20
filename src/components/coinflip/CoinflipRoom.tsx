@@ -9,7 +9,8 @@ import {
 } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, ShieldCheck, XCircle } from "lucide-react";
+import { toast } from "sonner";
+import { CheckCircle2, Loader2, ShieldCheck, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { serverOffset, useNow, useServerClock, useWalletRealtime } from "@/lib/jackpot/api";
@@ -24,12 +25,15 @@ import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import { APP } from "@/lib/config";
 import { emitSound } from "@/lib/sound";
 import {
+  coinflipCallBot,
   fetchCoinflip,
   opposite,
   useCoinflipRealtime,
   type CfGameView,
   type CoinSide,
 } from "@/lib/coinflip/api";
+import { friendlyError } from "@/lib/jackpot/errors";
+import { useBotConfig } from "@/lib/bots";
 import type { PrestigeIdentity } from "@/lib/prestige/api";
 import { verifyCoinflip, type CoinflipCheck } from "@/lib/fairness/coinflip";
 import { coinHeads as headsAsset, coinTails as tailsAsset } from "@/assets/media";
@@ -44,6 +48,7 @@ const IN_PROGRESS = ["READY", "FLIPPING", "SETTLEMENT"];
 
 export function CoinflipRoom({ id }: { id: number }) {
   const { userId } = useAuth();
+  const bots = useBotConfig();
   useWalletRealtime(userId);
   useCoinflipRealtime();
   const qc = useQueryClient();
@@ -114,6 +119,8 @@ export function CoinflipRoom({ id }: { id: number }) {
           now={now}
           me={userId}
           identities={identities}
+          botsReady={bots.isSuccess}
+          botsOn={bots.data?.coinflip === true}
         />
       </StageBox>
 
@@ -211,6 +218,8 @@ function MatchStage({
   now,
   me,
   identities,
+  botsReady,
+  botsOn,
 }: {
   g: CfGameView;
   phase: string;
@@ -220,6 +229,8 @@ function MatchStage({
   now: number;
   me: string | null;
   identities: Map<string, PrestigeIdentity>;
+  botsReady: boolean;
+  botsOn: boolean;
 }) {
   const avatarSize = useMatchAvatarSize();
   const compact = avatarSize < 100;
@@ -278,7 +289,7 @@ function MatchStage({
           band={band}
         />
       </div>
-      <StageNote g={g} phase={phase} now={now} />
+      <StageNote g={g} phase={phase} now={now} me={me} botsReady={botsReady} botsOn={botsOn} />
       {/* Sits in the stage's existing padding, so the card does not grow when the coin lands. */}
       <p className="tabular pointer-events-none absolute inset-x-0 bottom-2 text-center text-xs leading-4 text-muted-foreground sm:bottom-3">
         {feeLine}
@@ -343,14 +354,80 @@ function PlayerSlot({
           </div>
         )}
       </div>
-      <div className="mt-3 max-w-full truncate text-sm font-semibold sm:text-base">
-        {uid ? (p?.username ?? "player") : "Waiting..."}
+      <div className="mt-3 flex max-w-full items-center justify-center gap-1.5 text-sm font-semibold sm:text-base">
+        <span className="truncate">{uid ? (p?.username ?? "player") : "Waiting..."}</span>
+        {p?.is_bot ? <BotTag /> : null}
       </div>
     </div>
   );
 }
 
-function StageNote({ g, phase, now }: { g: CfGameView; phase: string; now: number }) {
+function BotTag() {
+  return (
+    <span className="shrink-0 rounded border border-emerald-300/50 px-1 py-px text-[10px] font-semibold leading-none tracking-wide text-emerald-200">
+      BOT
+    </span>
+  );
+}
+
+function CallBot({ gameId, enabled }: { gameId: number; enabled: boolean }) {
+  const qc = useQueryClient();
+  const [pending, setPending] = useState(false);
+  const key = useRef(crypto.randomUUID());
+
+  async function call() {
+    if (!enabled || pending) return;
+    setPending(true);
+    const { data, error } = await coinflipCallBot(gameId, key.current);
+    setPending(false);
+    if (error) {
+      if (!/fetch|network/i.test(error.message)) key.current = crypto.randomUUID();
+      toast.error(friendlyError(error));
+    } else if (data && data.joined === false && data.reason) {
+      key.current = crypto.randomUUID();
+      toast.error(friendlyError(new Error(data.reason)));
+    }
+    void qc.invalidateQueries({ queryKey: ["coinflip", gameId] });
+    void qc.invalidateQueries({ queryKey: ["coinflip-open"] });
+  }
+
+  return (
+    <div className="mt-1.5 flex flex-col items-center gap-0.5">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="h-8 w-28"
+        disabled={!enabled || pending}
+        onClick={() => void call()}
+      >
+        {pending ? <Loader2 className="animate-spin" /> : null}
+        Call Bot
+      </Button>
+      <p className="text-[11px] leading-4 text-muted-foreground">
+        {enabled
+          ? "Play against an automated opponent."
+          : "Automated opponents are not available right now."}
+      </p>
+    </div>
+  );
+}
+
+function StageNote({
+  g,
+  phase,
+  now,
+  me,
+  botsReady,
+  botsOn,
+}: {
+  g: CfGameView;
+  phase: string;
+  now: number;
+  me: string | null;
+  botsReady: boolean;
+  botsOn: boolean;
+}) {
   if (phase === "waiting") {
     const left = Math.max(0, Math.ceil((new Date(g.expires_at).getTime() - now) / 1000));
     const clock =
@@ -359,13 +436,15 @@ function StageNote({ g, phase, now }: { g: CfGameView; phase: string; now: numbe
         : left >= 60
           ? `${Math.floor(left / 60)}m ${left % 60}s`
           : `${left}s`;
+    const mine = !!me && me === g.creator_id;
     return (
-      <div className="mt-3 text-center">
-        <div className="font-display text-lg">Waiting for opponent...</div>
-        <div className="mt-1 text-sm text-muted-foreground">
-          Waiting for <b>{opposite(g.creator_side as CoinSide)}</b> · expires in{" "}
+      <div className="mt-1 text-center">
+        <div className="font-display text-base leading-5">Waiting for opponent...</div>
+        <div className="text-xs text-muted-foreground">
+          {formatUsd(g.amount)} stake · <b>{opposite(g.creator_side as CoinSide)}</b> ·{" "}
           <span className="tabular">{clock}</span>
         </div>
+        {mine && botsReady ? <CallBot gameId={g.id} enabled={botsOn} /> : null}
       </div>
     );
   }

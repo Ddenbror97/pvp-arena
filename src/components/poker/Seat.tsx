@@ -129,7 +129,7 @@ export const Seat = memo(function Seat({
         folded && "poker-seat-folded",
       )}
       data-anchor={`seat-${seatNo}`}
-      aria-label={`${isMe ? "You" : seat.username}, ${money(stack)}${status ? `, ${status}` : ""}${turn ? ", to act" : ""}`}
+      aria-label={`${isMe ? "You" : seat.username}${seat.is_bot ? ", bot" : ""}, ${money(stack)}${status ? `, ${status}` : ""}${turn ? ", to act" : ""}`}
     >
       <div className="poker-avatar">
         {src ? (
@@ -162,7 +162,10 @@ export const Seat = memo(function Seat({
           ))}
         </div>
         <div className="poker-plate">
-          <span className="poker-plate-name">{isMe ? "You" : seat.username}</span>
+          <span className="poker-plate-name">
+            <span className="poker-plate-name-text">{isMe ? "You" : seat.username}</span>
+            {seat.is_bot ? <span className="poker-bot-tag">BOT</span> : null}
+          </span>
           <span className="poker-plate-stack">
             <span className="poker-plate-chip" aria-hidden />
             {money(stack)}

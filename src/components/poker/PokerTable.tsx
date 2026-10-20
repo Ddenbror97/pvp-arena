@@ -11,6 +11,7 @@ import {
   pokerCommitChain,
   pokerError,
   pokerHeartbeat,
+  pokerCallBot,
   pokerLeave,
   pokerNudge,
   pokerReveal,
@@ -21,6 +22,7 @@ import {
   type TableState,
 } from "@/lib/poker/api";
 import { chainNeedsRotation, newChainHead, revealFor } from "@/lib/poker/chain";
+import { useBotConfig } from "@/lib/bots";
 import { BuyInDialog } from "./BuyInDialog";
 import { TableScreen } from "./TableScreen";
 import type { ActIntent } from "./ActionBar";
@@ -66,6 +68,9 @@ export function PokerTable({ id }: { id: number }) {
   const me = state?.me ?? null;
   const mySeat = me?.seat_no ?? null;
   const [busy, setBusy] = useState(false);
+  const bots = useBotConfig();
+  const botKey = useRef(crypto.randomUUID());
+  const [callingBot, setCallingBot] = useState(false);
   const [dialog, setDialog] = useState<{ kind: "sit"; seat: number } | { kind: "topup" } | null>(
     null,
   );
@@ -270,6 +275,25 @@ export function PokerTable({ id }: { id: number }) {
     void qc.invalidateQueries({ queryKey: ["wallet"] });
   };
 
+  const callBot = async () => {
+    if (callingBot || !bots.data?.poker) return;
+    setCallingBot(true);
+    setBusy(true);
+    const { data, error } = await pokerCallBot(id, botKey.current);
+    setBusy(false);
+    setCallingBot(false);
+    if (error) {
+      if (!/fetch|network/i.test(error.message)) botKey.current = crypto.randomUUID();
+      toast.error(pokerError(error));
+    } else if (data && data.joined === false) {
+      botKey.current = crypto.randomUUID();
+      toast.error(pokerError({ message: data.reason ?? "NO_SEAT" }));
+    } else {
+      botKey.current = crypto.randomUUID();
+    }
+    void refresh();
+  };
+
   const sitOut = async (out: boolean) => {
     if (!userId) return;
     setBusy(true);
@@ -395,6 +419,7 @@ export function PokerTable({ id }: { id: number }) {
   );
 
   const room = seat ? t.max_buy_in - seat.stack - seat.pending : 0;
+  const openSeat = state.seats.length < t.max_seats;
   const controls = seat ? (
     <div className="poker-seat-controls">
       {seat.pending > 0 ? (
@@ -424,6 +449,24 @@ export function PokerTable({ id }: { id: number }) {
         )}
         {seat.state === "SITTING_OUT" ? "I'm back" : "Sit out"}
       </button>
+      {openSeat && bots.isSuccess ? (
+        <>
+          <button
+            type="button"
+            className="poker-btn poker-btn-ghost poker-btn-bot"
+            disabled={busy || callingBot || !bots.data?.poker || seat.leaving}
+            onClick={() => void callBot()}
+          >
+            {callingBot ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+            Call Bot
+          </button>
+          <p className="poker-bot-note">
+            {bots.data?.poker
+              ? "Play against an automated opponent."
+              : "Automated opponents are not available right now."}
+          </p>
+        </>
+      ) : null}
       <button
         type="button"
         className="poker-btn poker-btn-ghost poker-btn-leave"

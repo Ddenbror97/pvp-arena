@@ -1797,7 +1797,12 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
   box-shadow: 0 0.3em 0.8em rgb(0 0 0 / 45%);
 }
 .poker-seat-me .poker-plate { border-color: rgb(197 139 255 / 75%); box-shadow: 0 0 0.9em rgb(150 80 255 / 40%), 0 0.3em 0.8em rgb(0 0 0 / 45%); }
-.poker-plate-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.poker-plate-name { display: flex; align-items: center; gap: 0.3em; max-width: 100%; min-width: 0; font-weight: 600; }
+.poker-plate-name-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.poker-bot-tag {
+  flex: none; padding: 0.05em 0.32em; border-radius: 0.28em; border: 1px solid rgb(125 255 106 / 55%);
+  font-size: 0.68em; font-weight: 700; letter-spacing: 0.04em; line-height: 1.2; color: #b6ffad;
+}
 .poker-plate-stack { display: inline-flex; align-items: center; gap: 0.35em; font-weight: 700; color: #f1ecff; font-variant-numeric: tabular-nums; }
 .poker-plate-chip {
   width: 0.85em; height: 0.85em; border-radius: 50%;
@@ -1963,7 +1968,8 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 .poker-status:empty { display: none; }
 
 .poker-seat-controls { display: grid; grid-template-columns: auto auto; justify-items: stretch; gap: 0.45em; }
-.poker-seat-controls > .poker-btn-leave, .poker-pending { grid-column: 1 / -1; }
+.poker-seat-controls > .poker-btn-leave, .poker-seat-controls > .poker-btn-bot, .poker-pending, .poker-bot-note { grid-column: 1 / -1; }
+.poker-bot-note { justify-self: end; font-size: 0.75em; line-height: 1.2; color: var(--ink-muted); text-align: right; }
 .poker-pending { justify-self: end; font-size: 0.8em; color: var(--ink-muted); text-align: right; }
 
 /* Actions */
