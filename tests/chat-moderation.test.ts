@@ -16,6 +16,7 @@ import {
 } from "../src/lib/chat/messages";
 import { chatMessageFor } from "../src/lib/chat/errors";
 import { ChatMessageRow } from "../src/components/chat/ChatMessageRow";
+import { chatDayLabel, continuesPlayerTurn } from "../src/lib/chat/time";
 
 const sev = (t: string) => classifyMessage(t).severity;
 
@@ -131,9 +132,7 @@ describe("request validation", () => {
     expect(chatMessageFor("CHAT_RATE_LIMITED")).toBe(
       "You're sending messages too fast. Please wait a few seconds.",
     );
-    expect(chatMessageFor("CHAT_MUTED")).toBe(
-      "You're temporarily blocked from sending messages.",
-    );
+    expect(chatMessageFor("CHAT_MUTED")).toBe("You're temporarily blocked from sending messages.");
     expect(chatMessageFor("CHAT_BLOCKED")).toBe("This message can't be sent.");
     expect(chatMessageFor("SOMETHING_INTERNAL")).toBe(chatMessageFor("CHAT_GENERIC"));
   });
@@ -208,5 +207,39 @@ describe("client merge / realtime payloads", () => {
       expect(html).not.toMatch(/<script|<img|<iframe|<a |<b /i);
       expect(html).not.toContain("href=");
     }
+  });
+});
+
+describe("chat time structure", () => {
+  const at = (id: string, iso: string, user = "a") =>
+    msg(id, iso, { user_id: user, display_name: user });
+
+  it("keeps a follow-up from the same player under one clock", () => {
+    const first = at("1", "2026-10-21T18:58:00Z");
+    const next = at("2", "2026-10-21T19:01:00Z");
+    expect(continuesPlayerTurn(first, next)).toBe(true);
+    expect(continuesPlayerTurn(first, at("3", "2026-10-21T19:04:00Z"))).toBe(false);
+    expect(continuesPlayerTurn(first, at("4", "2026-10-21T18:59:00Z", "b"))).toBe(false);
+  });
+
+  it("starts a new turn when the local day changes", () => {
+    const evening = at("1", new Date(2026, 9, 21, 23, 58).toISOString());
+    const morning = at("2", new Date(2026, 9, 22, 0, 1).toISOString());
+    expect(continuesPlayerTurn(evening, morning)).toBe(false);
+    expect(chatDayLabel(evening.created_at, new Date(evening.created_at))).toBe("Today");
+    expect(chatDayLabel(evening.created_at, new Date(morning.created_at))).toBe("Yesterday");
+  });
+
+  it("hides the name and clock on a continued line", () => {
+    const html = renderToStaticMarkup(
+      createElement(ChatMessageRow, {
+        m: msg("1", "2026-10-21T18:58:00Z", { display_name: "Ace", message: "again" }),
+        mine: false,
+        continued: true,
+      }),
+    );
+    expect(html).not.toContain("Ace");
+    expect(html).not.toContain("<time");
+    expect(html).toContain("again");
   });
 });

@@ -1,4 +1,5 @@
 import {
+  Fragment,
   startTransition,
   useEffect,
   useLayoutEffect,
@@ -15,6 +16,7 @@ import { useGameChat } from "@/lib/chat/api";
 import type { ChatMessage } from "@/lib/chat/messages";
 import { sendChatMessage } from "@/lib/chat/chat.functions";
 import { CHAT_CONFIG, SHARED_CHAT_ROOM, type ChatRoom } from "@/lib/chat/config";
+import { chatDayKey, chatDayLabel, continuesPlayerTurn } from "@/lib/chat/time";
 import { chatMessageFor } from "@/lib/chat/errors";
 import { CHAT_AVATAR, CHAT_HEADROOM, ChatMessageRow } from "./ChatMessageRow";
 import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
@@ -242,14 +244,32 @@ export function GameChat({
                 </p>
               )}
               <ul className="pb-1">
-                {shown.map((m) => (
-                  <ChatMessageRow
-                    key={m.id}
-                    m={m}
-                    mine={m.user_id === userId}
-                    identity={identities.get(m.user_id)}
-                  />
-                ))}
+                {shown.map((m, index) => {
+                  const prev = shown[index - 1];
+                  const newDay = !prev || chatDayKey(prev.created_at) !== chatDayKey(m.created_at);
+                  return (
+                    <Fragment key={m.id}>
+                      {newDay ? (
+                        <li className="flex items-center gap-2 px-3.5 pt-2 pb-1">
+                          <span className="h-px flex-1 bg-border" />
+                          <span
+                            suppressHydrationWarning
+                            className="text-[10px] tracking-widest text-muted-foreground uppercase"
+                          >
+                            {chatDayLabel(m.created_at)}
+                          </span>
+                          <span className="h-px flex-1 bg-border" />
+                        </li>
+                      ) : null}
+                      <ChatMessageRow
+                        m={m}
+                        mine={m.user_id === userId}
+                        identity={identities.get(m.user_id)}
+                        continued={!newDay && continuesPlayerTurn(prev, m)}
+                      />
+                    </Fragment>
+                  );
+                })}
               </ul>
             </div>
           </div>
