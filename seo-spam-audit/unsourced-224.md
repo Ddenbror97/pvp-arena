@@ -25,10 +25,10 @@ Eighteen files contain some other percentage. Sixteen of those are classroom ari
 
 ## What changed
 
-Three craps pages stated a house edge with no source. Wikipedia's craps article records the same figures, so those pages now cite it:
+Three craps pages stated a house edge with no source. The figures were checked against two-dice counts and against Michael Shackleford's Wizard of Odds pages, which state the same contracts. Those pages now cite him:
 
-- `craps-field-bet`: 5.56% when 2 and 12 both pay 2 to 1, and 2.78% when 12 pays 3 to 1.
-- `crapless-craps` and the one sentence in `online-craps`: 5.38% house edge on the crapless variant.
+- `craps-field-bet`: 2/36 (about 5.56%) when 2 and 12 both pay 2 to 1, and 1/36 (about 2.78%) when 2 pays 2 to 1 and 12 pays 3 to 1. Shackleford's house-edge appendix lists both schedules.
+- `crapless-craps` and the one sentence in `online-craps`: even-money pass, no odds, come-out wins only on 7. The pass wins with probability 6557/13860, so the edge is 373/6930 (about 5.382%, written as about 5.38%). Shackleford's crapless page records 373/6930 = 5.382% for that pass. Odds, place, hardways, the field, and standard craps are not given this edge.
 
 A felt that pays a different schedule is still "not published" on these pages. No RTP, licence number, or bonus term was added for any casino or slot.
 

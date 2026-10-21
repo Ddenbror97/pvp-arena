@@ -67,7 +67,7 @@ If the point boxes include 2, 3, 11, and 12, you are in the variant. If those to
 | 12 | point | not rebuilt here | not a separate edge |
 | Any odds bet behind the line | not priced | not priced | not published |
 
-The 5.38% figure is the even-money pass with no odds. Wikipedia's craps page records that house edge for this variant. Do not apply it to a chip you put behind the line, and do not apply it to the field, the hardways, or a standard table.`,
+The 5.38% figure is the even-money pass with no odds. Only a 7 wins the come-out, which is 6 of 36 pairs. Every other total becomes a point and wins only if it repeats before a 7. Adding those paths, the pass wins with probability 6557/13860. On an even-money bet the house edge is 1 minus twice that probability, which is 373/6930, about 5.382%, and that rounds to about 5.38%. Michael Shackleford records the same fraction for this pass. Do not apply it to a chip you put behind the line, and do not apply it to the field, the hardways, or a standard table.`,
     },
     {
       id: "odds",
@@ -207,7 +207,10 @@ A pass line that turns 2, 3, 11, and 12 into points is not the field. [The one-r
     },
   ],
   sources: [
-    { label: "Wikipedia: Craps (crapless craps house edge)", url: "https://en.wikipedia.org/wiki/Craps" },
+    {
+      label: "Wizard of Odds: crapless craps pass bet (Michael Shackleford)",
+      url: "https://wizardofodds.com/games/crapless-craps/",
+    },
   ],
   related: ["online-craps", "craps-odds", "craps-strategy", "sic-bo-online", "craps-field-bet"],
   updated: "2026-10-21",
