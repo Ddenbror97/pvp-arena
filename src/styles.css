@@ -664,12 +664,20 @@ html[data-theme="light"] :is(.bet-chip-RED, .bet-chip-GREEN, .bet-chip-BLACK) { 
   will-change: transform;
 }
 /* The blurred ring repaints on every frame. Hold it still while the wheel is
-   spinning so that paint cannot steal frames from the rotor. */
+   spinning, and for a beat after it stops, so that paint cannot steal the landing. */
 [data-ring-paused] > .rgb-ring,
 [data-spinning] > .rgb-ring { animation-play-state: paused; }
-.jp-wheel-rotor { will-change: rotate; }
+.jp-wheel-rotor { will-change: transform; contain: paint; }
+.jp-wheel-shade {
+  position: absolute; inset: 0; z-index: 1; border-radius: 9999px; pointer-events: none;
+  animation: jp-shade-in 480ms ease 160ms both;
+}
+@keyframes jp-shade-in { from { opacity: 0; } to { opacity: 1; } }
 .rgb-ring-blur { inset: -14px; filter: blur(22px); opacity: 0.75; }
-@media (prefers-reduced-motion: reduce) { .rgb-ring { animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .rgb-ring { animation: none; }
+  .jp-wheel-shade { animation: none; opacity: 1; }
+}
 
 /* Prestige showcase art: transform-only motion, used on the Prestige page and previews. */
 @keyframes prestige-breathe { 50% { transform: translateY(-2%) scale(1.03); } }

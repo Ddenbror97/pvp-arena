@@ -1,11 +1,16 @@
 import { describe, expect, it } from "vitest";
 import {
+  wheelClockDrift,
   wheelEase,
   wheelRotateFrames,
+  wheelShouldSeek,
   wheelSpeed,
+  wheelStartTime,
   wheelTimingFunction,
   wheelTimingStops,
   WHEEL_EASE_STEPS,
+  WHEEL_RING_HOLD_MS,
+  WHEEL_SEEK_MS,
 } from "../src/lib/jackpot/wheel-motion";
 
 describe("jackpot wheel motion", () => {
@@ -37,8 +42,21 @@ describe("jackpot wheel motion", () => {
     expect(wheelTimingFunction()).toMatch(/^linear\(0\.0000,/);
     expect(wheelTimingFunction()).toMatch(/,1\.0000\)$/);
     const frames = wheelRotateFrames(target);
-    expect(frames[0]).toEqual({ rotate: "0.000deg", offset: 0 });
-    expect(frames.at(-1)?.rotate).toBe(`${target.toFixed(3)}deg`);
+    expect(frames[0]).toEqual({ transform: "rotate(0.000deg)", offset: 0 });
+    expect(frames.at(-1)?.transform).toBe(`rotate(${target.toFixed(3)}deg)`);
     expect(frames.at(-1)?.offset).toBe(1);
+  });
+
+  it("anchors the spin to the server clock and ignores small drift", () => {
+    const startAt = 2_000;
+    const startTime = wheelStartTime(1_000, 5_000, startAt);
+    expect(startTime).toBe(-2_000);
+    expect(wheelClockDrift(1_000, startTime, 5_000, startAt)).toBe(0);
+    expect(wheelClockDrift(2_000, startTime, 6_200, startAt)).toBe(200);
+    expect(wheelShouldSeek(80, 8_000)).toBe(false);
+    expect(wheelShouldSeek(200, 400)).toBe(false);
+    expect(wheelShouldSeek(WHEEL_SEEK_MS, 8_000)).toBe(true);
+    expect(wheelShouldSeek(WHEEL_SEEK_MS, 0)).toBe(false);
+    expect(WHEEL_RING_HOLD_MS).toBeGreaterThan(400);
   });
 });

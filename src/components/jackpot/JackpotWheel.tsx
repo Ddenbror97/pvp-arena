@@ -1,35 +1,20 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
-import { avatarSrc } from "@/lib/avatar";
 import { wheelSegments } from "@/lib/jackpot/math";
 import { JACKPOT_SPIN_MS } from "@/lib/jackpot/reveal";
-import { wheelEase, wheelRotateFrames, wheelTimingFunction } from "@/lib/jackpot/wheel-motion";
-import { playerColor } from "@/lib/jackpot/colors";
+import { loadWheelFace, paintWheel, wheelSlices } from "@/lib/jackpot/wheel-bitmap";
+import { wheelTextureQuiet, winnerShade } from "@/lib/jackpot/wheel-picture";
+import {
+  WHEEL_RING_HOLD_MS,
+  wheelClockDrift,
+  wheelRotateFrames,
+  wheelShouldSeek,
+  wheelStartTime,
+  wheelTimingFunction,
+} from "@/lib/jackpot/wheel-motion";
 import type { PlayerRow } from "@/lib/jackpot/api";
 import { emitSound } from "@/lib/sound";
 
 const useIso = typeof window === "undefined" ? useEffect : useLayoutEffect;
-/** Ignore sub-frame clock noise. A larger gap is a real correction and is applied once. */
-const SEEK_MS = 80;
-
-const R = 200;
-const INNER = 138;
-
-function arcPath(startDeg: number, endDeg: number, r: number, inner: number) {
-  const toXY = (deg: number, rad: number) => {
-    const a = ((deg - 90) * Math.PI) / 180;
-    return [R + rad * Math.cos(a), R + rad * Math.sin(a)];
-  };
-  const sweep = endDeg - startDeg;
-  if (sweep >= 359.999) {
-    return `M ${R} ${R - r} A ${r} ${r} 0 1 1 ${R - 0.01} ${R - r} L ${R - 0.01} ${R - inner} A ${inner} ${inner} 0 1 0 ${R} ${R - inner} Z`;
-  }
-  const large = sweep > 180 ? 1 : 0;
-  const [x1, y1] = toXY(startDeg, r);
-  const [x2, y2] = toXY(endDeg, r);
-  const [x3, y3] = toXY(endDeg, inner);
-  const [x4, y4] = toXY(startDeg, inner);
-  return `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} L ${x3} ${y3} A ${inner} ${inner} 0 ${large} 0 ${x4} ${y4} Z`;
-}
 
 export interface SpinTarget {
   winnerId: string;
@@ -51,13 +36,32 @@ interface Props {
 
 /** Presentation length of the wheel spin. Three seconds longer than the old 7.6s so the spin is the focus. */
 export const SPIN_MS = JACKPOT_SPIN_MS;
+/** Ratchet updates. Coarse on purpose: the picture does not wait on the audio clock. */
+const CUE_MS = 50;
+
+function wheelTimelineNow(): number | null {
+  const t = document.timeline?.currentTime;
+  return typeof t === "number" && Number.isFinite(t) ? t : null;
+}
 
 export function JackpotWheel({ players, spin, now, highlightId, roundId = 0, children }: Props) {
   const segments = useMemo(() => wheelSegments(players), [players]);
+  const slices = useMemo(() => wheelSlices(segments, roundId), [segments, roundId]);
+  const pictureKey = slices
+    .map(
+      (slice) =>
+        `${slice.start.toFixed(3)}:${slice.end.toFixed(3)}:${slice.color}:${slice.avatar ?? ""}`,
+    )
+    .join("|");
   const rotor = useRef<HTMLDivElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
   const box = useRef<HTMLDivElement>(null);
   const nowRef = useRef(now);
   nowRef.current = now;
+  const spinRef = useRef(spin);
+  spinRef.current = spin;
+  const slicesRef = useRef(slices);
+  slicesRef.current = slices;
   const winnerSeg = spin ? segments.find((s) => s.user_id === spin.winnerId) : undefined;
 
   // Final rotation: land inside the winner's slice at a spot derived from the
@@ -69,19 +73,69 @@ export function JackpotWheel({ players, spin, now, highlightId, roundId = 0, chi
     return 8 * 360 + (360 - angle);
   }, [spin, winnerSeg]);
 
-  const rotAt = (t: number) => {
-    if (!spin || target == null) return 0;
-    const p = Math.min(1, Math.max(0, (t - spin.startAt) / SPIN_MS));
-    return target * wheelEase(p);
-  };
-  // The first paint only. Later renders must not write `rotate`: the stage
-  // ticks several times a second, and each write rewound the wheel.
-  const painted = useRef<string | null>(null);
-  if (painted.current == null) painted.current = `${rotAt(now())}deg`;
+  // Bake slices and faces into one bitmap. A later face decode waits out the
+  // slow end of a spin so the landing is not a texture upload.
+  useIso(() => {
+    const el = canvas.current;
+    const stage = rotor.current;
+    if (!el || !stage) return;
+    let dead = false;
+    let timer = 0;
+    let raf = 0;
+    let lastCss = 0;
+    const draw = (reason: "content" | "size") => {
+      if (dead) return;
+      const css = stage.clientWidth;
+      if (css < 2) return;
+      const start = spinRef.current?.startAt;
+      const remain = start == null ? Number.POSITIVE_INFINITY : start + SPIN_MS - nowRef.current();
+      if (reason === "content" && wheelTextureQuiet(remain, el.dataset["ready"] === "1")) {
+        clearTimeout(timer);
+        timer = window.setTimeout(() => draw("content"), remain + 40);
+        return;
+      }
+      paintWheel(el, css, slicesRef.current);
+      if (el.width > 0) el.dataset["ready"] = "1";
+      lastCss = css;
+    };
+    const schedule = (reason: "content" | "size") => {
+      if (reason === "size") {
+        cancelAnimationFrame(raf);
+        draw("size");
+        return;
+      }
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => draw("content"));
+    };
+    draw("content");
+    const urls = new Set(
+      slicesRef.current.flatMap((slice) => (slice.avatar ? [slice.avatar] : [])),
+    );
+    for (const url of urls) {
+      void loadWheelFace(url).then(() => {
+        if (!dead) schedule("content");
+      });
+    }
+    const resize = new ResizeObserver(() => {
+      const css = stage.clientWidth;
+      if (Math.abs(css - lastCss) < 2) return;
+      schedule("size");
+    });
+    resize.observe(stage);
+    const theme = new MutationObserver(() => schedule("content"));
+    theme.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => {
+      dead = true;
+      clearTimeout(timer);
+      cancelAnimationFrame(raf);
+      resize.disconnect();
+      theme.disconnect();
+    };
+  }, [pictureKey]);
 
-  // One compositor animation for the whole spin. Server time only corrects it
-  // when the clock is actually off, so a busy main thread cannot make the
-  // wheel step. Hidden tabs seek back onto the same angle as everyone else.
+  // One compositor transform for the whole spin. The clock is anchored once.
+  // Nothing in this effect reads the animation back, so a busy main thread
+  // cannot make the wheel step. A hidden tab is re-anchored from the clocks.
   const startAt = spin?.startAt;
   useIso(() => {
     const el = rotor.current;
@@ -89,59 +143,98 @@ export function JackpotWheel({ players, spin, now, highlightId, roundId = 0, chi
     if (!el) return;
     if (startAt == null || target == null) {
       for (const running of el.getAnimations()) running.cancel();
-      el.style.rotate = "0deg";
+      el.style.transform = "";
       if (stage) delete stage.dataset["spinning"];
       return;
     }
     const started = startAt;
+    const distance = target;
     let anim: Animation;
     try {
-      anim = el.animate([{ rotate: "0deg" }, { rotate: `${target}deg` }], {
+      anim = el.animate([{ transform: "rotate(0deg)" }, { transform: `rotate(${distance}deg)` }], {
         duration: SPIN_MS,
         easing: wheelTimingFunction(),
         fill: "both",
       });
     } catch {
-      anim = el.animate(wheelRotateFrames(target), {
+      anim = el.animate(wheelRotateFrames(distance), {
         duration: SPIN_MS,
         easing: "linear",
         fill: "both",
       });
     }
-    let raf = 0;
-    let stopped = false;
-    let primed = false;
-    const tick = () => {
+    const timeline = wheelTimelineNow();
+    let startTime = timeline == null ? null : wheelStartTime(timeline, nowRef.current(), started);
+    if (startTime != null) anim.startTime = startTime;
+
+    let ringTimer = 0;
+    const elapsed0 = nowRef.current() - started;
+    if (stage && elapsed0 < SPIN_MS + WHEEL_RING_HOLD_MS) {
+      stage.dataset["spinning"] = "1";
+      ringTimer = window.setTimeout(
+        () => {
+          delete stage.dataset["spinning"];
+        },
+        Math.max(0, SPIN_MS - elapsed0) + WHEEL_RING_HOLD_MS,
+      );
+    }
+
+    let alignTimer = 0;
+    const align = () => {
+      if (startTime == null) return;
+      const serverNow = nowRef.current();
+      const remain = started + SPIN_MS - serverNow;
+      const timelineNow = wheelTimelineNow();
+      if (timelineNow == null || remain <= 0) {
+        clearInterval(alignTimer);
+        document.removeEventListener("visibilitychange", align);
+        return;
+      }
+      const drift = wheelClockDrift(timelineNow, startTime, serverNow, started);
+      if (!wheelShouldSeek(drift, remain)) return;
+      startTime = wheelStartTime(timelineNow, serverNow, started);
+      anim.startTime = startTime;
+    };
+    if (elapsed0 < SPIN_MS) {
+      alignTimer = window.setInterval(align, 1000);
+      document.addEventListener("visibilitychange", align);
+    }
+
+    let stopped = elapsed0 >= SPIN_MS;
+    let cueTimer = 0;
+    let armTimer = 0;
+    const cue = () => {
       const elapsed = nowRef.current() - started;
-      const clamped = Math.min(SPIN_MS, Math.max(0, elapsed));
-      const shown = Number(anim.currentTime ?? 0);
-      if (!primed || Math.abs(shown - clamped) > SEEK_MS) {
-        anim.currentTime = clamped;
-        primed = true;
-      }
-      const moving = elapsed >= 0 && elapsed < SPIN_MS;
-      if (stage && moving !== (stage.dataset["spinning"] === "1")) {
-        if (moving) stage.dataset["spinning"] = "1";
-        else delete stage.dataset["spinning"];
-      }
-      if (moving) emitSound("wheel_spin", { elapsedMs: elapsed });
-      if (!stopped && elapsed >= SPIN_MS) {
+      if (stopped) return;
+      if (elapsed < 0) return;
+      if (elapsed >= SPIN_MS) {
         stopped = true;
         emitSound("spin_stop");
+        return;
       }
-      if (elapsed < 0) anim.pause();
-      else if (clamped < SPIN_MS && anim.playState === "paused") anim.play();
-      if (elapsed < SPIN_MS + 40) raf = requestAnimationFrame(tick);
+      emitSound("wheel_spin", { elapsedMs: elapsed });
     };
-    tick();
+    const armCue = () => {
+      const elapsed = nowRef.current() - started;
+      if (elapsed < 0) {
+        armTimer = window.setTimeout(armCue, Math.min(CUE_MS, -elapsed));
+        return;
+      }
+      cue();
+      if (!stopped) cueTimer = window.setInterval(cue, CUE_MS);
+    };
+    if (!stopped) armCue();
+
     return () => {
-      cancelAnimationFrame(raf);
+      clearTimeout(ringTimer);
+      clearTimeout(armTimer);
+      clearInterval(cueTimer);
+      clearInterval(alignTimer);
+      document.removeEventListener("visibilitychange", align);
       anim.cancel();
       if (stage) delete stage.dataset["spinning"];
       emitSound("spin_stop");
     };
-    // `target` already folds in the winner. Primitives, so a fresh spin object
-    // with the same round does not cancel the running animation.
   }, [startAt, target]);
 
   // Pause the decorative RGB ring while the page scrolls or the wheel is off-screen:
@@ -171,73 +264,30 @@ export function JackpotWheel({ players, spin, now, highlightId, roundId = 0, chi
     };
   }, []);
 
+  const shade =
+    highlightId && winnerSeg && target != null && highlightId === winnerSeg.user_id
+      ? {
+          background: winnerShade(winnerSeg.start, winnerSeg.end),
+          transform: `rotate(${target}deg)`,
+        }
+      : null;
+
   return (
     <div
       ref={box}
       data-panel
       className="game-stage relative mx-auto aspect-square w-full max-w-[min(340px,86vw)] touch-pan-y sm:max-w-[460px] [&_*]:touch-pan-y"
     >
-      {/* pointer */}
       <div className="absolute left-1/2 top-[-6px] z-20 -translate-x-1/2">
         <div className="h-0 w-0 border-x-[14px] border-t-[22px] border-x-transparent border-t-primary drop-shadow-[0_0_10px_var(--primary)]" />
       </div>
       <div aria-hidden className="rgb-ring rgb-ring-blur" />
       <div aria-hidden className="rgb-ring" />
       <div className="jp-wheel-base absolute inset-0 rounded-full bg-surface ring-1 ring-border" />
-      <div
-        ref={rotor}
-        className="jp-wheel-rotor absolute inset-0"
-        style={{ rotate: painted.current }}
-        suppressHydrationWarning
-      >
-        <svg viewBox={`0 0 ${R * 2} ${R * 2}`} className="h-full w-full overflow-visible">
-          {segments.length === 0 && (
-            <circle
-              cx={R}
-              cy={R}
-              r={(R + INNER) / 2 - 4}
-              fill="none"
-              stroke="var(--wheel-tick, var(--border))"
-              strokeWidth={R - INNER - 8}
-              strokeDasharray="4 10"
-            />
-          )}
-          {segments.map((s, i) => {
-            const mid = (s.start + s.end) / 2;
-            const a = ((mid - 90) * Math.PI) / 180;
-            const rr = (R + INNER) / 2 - 4;
-            const dim = highlightId && highlightId !== s.user_id;
-            return (
-              <g key={s.user_id} opacity={dim ? 0.25 : 1} style={{ transition: "opacity 600ms" }}>
-                <path
-                  d={arcPath(s.start, s.end, R - 8, INNER)}
-                  fill={playerColor(i, roundId)}
-                  stroke="var(--background)"
-                  strokeWidth={2.5}
-                />
-                {s.end - s.start > 14 && avatarSrc(s.profiles?.avatar_url) && (
-                  <g
-                    transform={`translate(${R + rr * Math.cos(a)} ${R + rr * Math.sin(a)}) rotate(${mid})`}
-                  >
-                    <clipPath id={`clip-${s.user_id}`}>
-                      <circle r={15} />
-                    </clipPath>
-                    <circle r={17} fill="var(--background)" />
-                    <image
-                      href={avatarSrc(s.profiles?.avatar_url)!}
-                      x={-15}
-                      y={-15}
-                      width={30}
-                      height={30}
-                      clipPath={`url(#clip-${s.user_id})`}
-                    />
-                  </g>
-                )}
-              </g>
-            );
-          })}
-        </svg>
+      <div ref={rotor} className="jp-wheel-rotor absolute inset-0">
+        <canvas ref={canvas} className="block h-full w-full" aria-hidden />
       </div>
+      {shade ? <div aria-hidden className="jp-wheel-shade" style={shade} /> : null}
       <div className="jp-wheel-hub absolute inset-[18%] z-10 flex items-center justify-center rounded-full bg-background ring-1 ring-border">
         {children}
       </div>

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useRef } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
@@ -33,6 +33,8 @@ function fmtClock(ms: number) {
 }
 
 const Celebration = lazy(() => import("./Celebration").then((m) => ({ default: m.Celebration })));
+/** Confetti waits until the wheel has stopped. The burst blur is a paint spike. */
+const CELEBRATION_DELAY_MS = 450;
 
 export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
   const { userId } = useAuth();
@@ -122,6 +124,17 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
     }
     prev.current = { id: game.id, players: game.player_count, end: endMs, status: game.status };
   }, [game, endMs]);
+
+  const wonRound = phase === "winner" && stage?.winner_id === userId ? stage.id : null;
+  const [celebrate, setCelebrate] = useState(false);
+  useEffect(() => {
+    if (wonRound == null) {
+      setCelebrate(false);
+      return;
+    }
+    const id = window.setTimeout(() => setCelebrate(true), CELEBRATION_DELAY_MS);
+    return () => clearTimeout(id);
+  }, [wonRound]);
 
   const winner = stage ? players.find((p) => p.user_id === stage.winner_id) : null;
   const winnerIdentity = winner ? identities.get(winner.user_id) : undefined;
@@ -275,7 +288,7 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
         </section>
       </section>
 
-      {phase === "winner" && stage?.winner_id === userId && (
+      {celebrate && (
         <Suspense fallback={null}>
           <Celebration />
         </Suspense>
