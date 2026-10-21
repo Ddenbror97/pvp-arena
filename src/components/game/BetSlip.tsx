@@ -251,8 +251,8 @@ const playBtn =
 function PlayContent({ label, amount }: { label: ReactNode; amount?: number | null | undefined }) {
   return amount != null ? (
     <>
-      <span className="truncate">{label}</span>
-      <span className="tabular shrink-0 rounded-lg bg-black/20 px-2 py-0.5 text-sm">
+      <span className="min-w-0 flex-1 truncate text-left">{label}</span>
+      <span className="tabular inline-flex h-6 min-w-16 shrink-0 items-center justify-center rounded-lg bg-black/20 px-2 text-sm">
         {formatUsd(amount)}
       </span>
     </>

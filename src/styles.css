@@ -6,14 +6,18 @@
 /* Short phones (SE, small Androids): the slot cabinet tightens so the reels stay readable. */
 @custom-variant short (@media (max-width: 639.98px) and (max-height: 700px));
 
-/* Metric-matched fallbacks: text keeps the same size and line breaks while the web fonts load (no swap shift). */
+/* Metric-matched fallbacks, used only if a face cannot be decoded. The latin
+   Manrope and Unbounded files are inlined into this stylesheet, so a hard
+   refresh paints them with the first frame instead of swapping glyphs later. */
 @font-face { font-family: "Manrope Fallback"; src: local("Arial"), local("Liberation Sans"), local("Helvetica"); size-adjust: 104.2%; ascent-override: 102.3%; descent-override: 28.79%; line-gap-override: 0%; }
 @font-face { font-family: "Unbounded Fallback"; src: local("Arial"), local("Liberation Sans"), local("Helvetica"); size-adjust: 138.58%; ascent-override: 71.8%; descent-override: 17.68%; line-gap-override: 0%; }
 @font-face { font-family: "JetBrains Mono Fallback"; src: local("Courier New"), local("Liberation Mono"), local("Menlo"); size-adjust: 99.98%; ascent-override: 102.02%; descent-override: 30%; line-gap-override: 0%; }
 
-/* Self-hosted faces — skip the render-blocking fonts.googleapis.com stylesheet. */
-@font-face { font-family: "Manrope"; src: url("https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSg.woff2") format("woff2"); font-display: swap; font-weight: 400 700; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: "Unbounded"; src: url("https://fonts.gstatic.com/s/unbounded/v12/Yq6W-LOTXCb04q32xlpwu8Zf.woff2") format("woff2"); font-display: swap; font-weight: 500 700; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+/* Latin subsets, OFL, inlined into this stylesheet. The page stays hidden until
+   these two faces are ready (see FONT_BOOT), so the first visible frame is
+   already the final glyph width. */
+@font-face { font-family: "Manrope"; src: url("./fonts/manrope-latin.woff2") format("woff2"); font-display: swap; font-weight: 400 700; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Unbounded"; src: url("./fonts/unbounded-latin.woff2") format("woff2"); font-display: swap; font-weight: 500 700; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @font-face { font-family: "JetBrains Mono"; src: url("https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2") format("woff2"); font-display: swap; font-weight: 400 600; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 
 html.slott-noscroll { overflow-y: hidden; }
@@ -338,6 +342,9 @@ header.site-chrome {
 .header-wallet:focus-visible { outline: 2px solid #b57bff; outline-offset: 2px; }
 .header-wallet-label {
   display: inline-flex;
+  box-sizing: border-box;
+  width: 4.5rem;
+  flex: 0 0 auto;
   height: 2rem;
   align-items: center;
   justify-content: center;

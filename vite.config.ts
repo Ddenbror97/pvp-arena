@@ -4,6 +4,7 @@
 //     nitro (build-only using cloudflare as a default target), VITE_* env injection, @ path alias,
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
+import { readFileSync } from "node:fs";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 const DEV_WASM = "\0dev-wasm-module:";
@@ -12,6 +13,21 @@ let serving = false;
 export default defineConfig({
   vite: {
     plugins: [
+      {
+        // Manrope and Unbounded are part of the render-blocking stylesheet, so
+        // button labels and the header wallet paint in their final face.
+        name: "inline-text-faces",
+        enforce: "pre",
+        transform(code, id) {
+          const file = id.split("?")[0];
+          if (!file.endsWith("/src/styles.css") || !code.includes("./fonts/")) return null;
+          const dir = file.slice(0, file.lastIndexOf("/"));
+          return code.replace(/url\("(\.\/fonts\/[^"]+)"\)/g, (_match, rel: string) => {
+            const bytes = readFileSync(`${dir}/${rel.slice(2)}`);
+            return `url("data:font/woff2;base64,${bytes.toString("base64")}")`;
+          });
+        },
+      },
       {
         // Avatar codecs import precompiled WebAssembly (`*.wasm?module`). In builds Vite
         // leaves them as imports and Nitro's WASM support turns them into Worker wasm

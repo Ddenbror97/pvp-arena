@@ -49,6 +49,28 @@ describe("hard-refresh layout reserves", () => {
     const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
     expect(css).toContain(".header-wallet-amount");
     expect(css).toMatch(/\.header-wallet-amount\s*\{[^}]*min-width:\s*4\.75rem/);
+    expect(css).toContain('url("./fonts/unbounded-latin.woff2")');
+    expect(css).toContain('url("./fonts/manrope-latin.woff2")');
+    expect(css).not.toContain("fonts.gstatic.com/s/unbounded");
+    expect(css).not.toContain("fonts.gstatic.com/s/manrope");
+    expect(css).toMatch(/\.header-wallet-label\s*\{[^}]*width:\s*4\.5rem/);
+    const root = readFileSync(new URL("../src/routes/__root.tsx", import.meta.url), "utf8");
+    expect(root).toContain('document.fonts.load("16px Manrope")');
+    expect(root).toContain('document.fonts.load("16px Unbounded")');
+    expect(root).toContain("fonts-ready");
+    const frame = readFileSync(
+      new URL("../src/components/wallet/HeaderWalletFrame.tsx", import.meta.url),
+      "utf8",
+    );
+    expect(frame).toContain("<UsdcBalance loading");
+    const slip = readFileSync(
+      new URL("../src/components/game/BetSlip.tsx", import.meta.url),
+      "utf8",
+    );
+    expect(slip).toContain("text-left");
+    expect(slip).toContain("min-w-16");
+    const vite = readFileSync(new URL("../vite.config.ts", import.meta.url), "utf8");
+    expect(vite).toContain("inline-text-faces");
     for (const html of [
       renderToStaticMarkup(UsdcBalance({ loading: true, available: 0 })),
       renderToStaticMarkup(UsdcBalance({ loading: false, available: 123456 })),

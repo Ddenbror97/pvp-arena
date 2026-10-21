@@ -42,19 +42,7 @@ export function WalletAction() {
 export function WalletGroupPlaceholder() {
   return (
     <Link to="/wallet" aria-label="Wallet, USDC balance loading" className={walletNavClass}>
-      <span className="flex items-center gap-2">
-        <span
-          aria-hidden
-          className="header-wallet-amount header-wallet-pulse animate-pulse rounded"
-        />
-        <span className="flex items-center gap-1">
-          <span aria-hidden className="header-wallet-pulse h-4 w-4 animate-pulse rounded-full" />
-          <span
-            aria-hidden
-            className="header-wallet-asset header-wallet-pulse h-2.5 animate-pulse rounded"
-          />
-        </span>
-      </span>
+      <UsdcBalance loading />
       <WalletAction />
     </Link>
   );
