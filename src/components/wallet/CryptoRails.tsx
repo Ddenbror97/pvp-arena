@@ -558,7 +558,9 @@ export function CryptoRails({
             <p className="mt-0.5 text-[11px] text-muted-foreground">
               {withdrawRail === "BTC"
                 ? "Cash out to a bc1 address."
-                : `Pays ${walletLabel} on ${chainName}.`}
+                : walletLabel === "your linked wallet"
+                  ? `To your linked wallet on ${chainName}.`
+                  : `To ${walletLabel} on ${chainName}.`}
             </p>
           </div>
         </div>
