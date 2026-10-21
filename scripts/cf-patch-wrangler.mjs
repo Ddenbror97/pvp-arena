@@ -19,14 +19,18 @@ cfg.vars = {
   SUPABASE_PROJECT_ID: process.env.SUPABASE_PROJECT_ID ?? "",
   SUPABASE_PUBLISHABLE_KEY: process.env.SUPABASE_PUBLISHABLE_KEY ?? "",
   VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? "",
-  VITE_SUPABASE_PROJECT_ID: process.env.VITE_SUPABASE_PROJECT_ID ?? process.env.SUPABASE_PROJECT_ID ?? "",
+  VITE_SUPABASE_PROJECT_ID:
+    process.env.VITE_SUPABASE_PROJECT_ID ?? process.env.SUPABASE_PROJECT_ID ?? "",
   VITE_SUPABASE_PUBLISHABLE_KEY:
     process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_PUBLISHABLE_KEY ?? "",
   BTCPAY_MIN_DEPOSIT_CENTS: process.env.BTCPAY_MIN_DEPOSIT_CENTS ?? "200",
+  // Exact string "true" turns on the five-game PVP1 signup invite.
+  GAME_SIGNUP_PROMO_ENABLED: "true",
 };
 const flags = Array.isArray(cfg.compatibility_flags) ? cfg.compatibility_flags : [];
 if (!flags.includes("nodejs_compat")) flags.push("nodejs_compat");
-if (!flags.includes("nodejs_compat_populate_process_env")) flags.push("nodejs_compat_populate_process_env");
+if (!flags.includes("nodejs_compat_populate_process_env"))
+  flags.push("nodejs_compat_populate_process_env");
 cfg.compatibility_flags = flags;
 writeFileSync(path, JSON.stringify(cfg, null, 2));
 console.log("Patched", path, "name=", cfg.name);

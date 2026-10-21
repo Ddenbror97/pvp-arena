@@ -72,6 +72,9 @@ describe("game signup invite policy", () => {
     expect(gameSignupPromoEnabled("TRUE")).toBe(false);
     expect(gameSignupPromoEnabled("true")).toBe(true);
     expect(readFileSync(".env.example", "utf8")).not.toMatch(/^GAME_SIGNUP_PROMO_ENABLED=true/m);
+    expect(readFileSync("scripts/cf-patch-wrangler.mjs", "utf8")).toContain(
+      'GAME_SIGNUP_PROMO_ENABLED: "true"',
+    );
   });
 
   it("uses only the Cloudflare connecting IP and fails closed without it", () => {
