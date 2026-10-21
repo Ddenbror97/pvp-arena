@@ -1,4 +1,5 @@
 import dealerCutout from "@/assets/poker/dealer.webp";
+import { preloadDealerFrames } from "@/lib/poker/dealer-frames";
 
 /**
  * Dealer character art. The default is the supplied PVP dealer cutout (transparent WebP,
@@ -36,4 +37,5 @@ export function warmDealer() {
   img.decoding = "async";
   img.src = DEALER_IMAGE;
   void img.decode().catch(() => {});
+  void preloadDealerFrames();
 }

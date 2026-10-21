@@ -1,6 +1,22 @@
-import { memo, useEffect, useRef, useState, type ReactNode } from "react";
+import { memo, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { DEALER_IMAGE, DEALER_RIG, DEALER_SIZE } from "@/lib/poker/assets";
+import {
+  DEALER_CLIPS,
+  DealerClipRunner,
+  clipForPose,
+  type DealerClipId,
+} from "@/lib/poker/dealer-clips";
+import {
+  DEALER_ANCHOR,
+  DEALER_CANVAS,
+  DEALER_DECK,
+  DEALER_IDLE_URL,
+  loadDealerFrame,
+  peekDealerFrame,
+  preloadDealerFrames,
+} from "@/lib/poker/dealer-frames";
 import type { DealerPose } from "@/lib/poker/director";
+import { useReducedMotion } from "@/lib/poker/prefs";
 import { cn } from "@/lib/utils";
 import { dealerMouthLevel, useDealerSpeaking } from "./usePresentation";
 
@@ -40,34 +56,137 @@ const JAW_MASK = `radial-gradient(ellipse ${pct(0.046)} ${pct(0.05)} at ${pct(M.
 /** Speech loudness (RMS of a normalised clip) to how far the jaw opens, 0..1. */
 const openFor = (rms: number) => Math.min(1, Math.max(0, (rms - 0.03) * 4));
 
+export interface DealerPreview {
+  clip: DealerClipId;
+  nonce: number;
+}
+
+function openingFrame(pose: DealerPose): { frame: string; clip: string } {
+  const clip = clipForPose(pose);
+  return { frame: DEALER_CLIPS[clip].frames[0]?.frame ?? "idle", clip };
+}
+
 /**
- * The dealer: an animated cutout rig built from the supplied character art (not a 3D or
- * facially rigged model). Layers of the same image move independently: the whole figure
- * sways and leans toward the seat she is attending to, the torso breathes, the head turns
- * and tilts, each hand works on its own, and the jaw opens with the loudness of the line
- * she is speaking (a syllable rhythm when the browser's speech engine is talking, since it
- * exposes no audio). Poses and focus come from the presentation director, so every
- * deliberate movement follows a real table event.
+ * The dealer. Live poses come from the presentation director and play as ordered
+ * stills from the two sprite sheets. The sheets are separate generated poses, so
+ * the arm changes in steps. There is no crossfade between different arm positions.
+ * If a frame fails to load, the original single-image rig is the fallback. The jaw
+ * on that rig still follows the line she is speaking. Frame mode keeps the caption,
+ * the voice, and a speaking glow, because the jaw cannot track a swapped face.
  */
 export const Dealer = memo(function Dealer({
   pose,
   look,
   caption,
   className,
+  preview = null,
+  motion,
 }: {
   pose: DealerPose;
   /** Where she looks: x in -1 (left) .. 1 (right), y in 0 (level) .. 1 (down toward the near seats). */
   look: { x: number; y: number } | null;
   caption: string | null;
   className?: string;
+  /** Dev gallery. Restarts the named clip. The table leaves this unset. */
+  preview?: DealerPreview | null;
+  /** Overrides the system reduced-motion setting. The gallery uses this. */
+  motion?: "full" | "reduced";
 }) {
-  const [failed, setFailed] = useState(false);
+  const systemReduced = useReducedMotion();
+  const reduced = motion === "reduced" ? true : motion === "full" ? false : systemReduced;
   const speaking = useDealerSpeaking();
   const root = useRef<HTMLDivElement>(null);
+  const [failed, setFailed] = useState(false);
+  const [framesOk, setFramesOk] = useState(true);
+  const [paused, setPaused] = useState(false);
+  const [shown, setShown] = useState(() => openingFrame(pose));
+  const [heldUrl, setHeldUrl] = useState(DEALER_IDLE_URL);
+  const ready = framesOk ? peekDealerFrame(shown.frame) : null;
+  const src = ready ?? heldUrl;
+  const previewClip = preview?.clip;
+  const previewNonce = preview?.nonce;
+
+  useEffect(() => {
+    void preloadDealerFrames();
+  }, []);
+
+  useEffect(() => {
+    if (!framesOk || ready) return;
+    let cancel = false;
+    void loadDealerFrame(shown.frame)
+      .then((url) => {
+        if (!cancel) setHeldUrl(url);
+      })
+      .catch(() => {
+        if (!cancel) setFramesOk(false);
+      });
+    return () => {
+      cancel = true;
+    };
+  }, [framesOk, ready, shown.frame]);
+
+  useLayoutEffect(() => {
+    const runner = new DealerClipRunner();
+    const now = performance.now();
+    if (previewClip) runner.play(previewClip, now, reduced);
+    else runner.pose(pose, now, reduced);
+    if (typeof document !== "undefined" && document.hidden) {
+      runner.pause(now);
+      setPaused(true);
+    }
+    let dead = false;
+    let timer = 0;
+    const pump = () => {
+      if (dead) return;
+      const sample = runner.sample(performance.now());
+      setShown((cur) =>
+        cur.frame === sample.frame && cur.clip === sample.clip
+          ? cur
+          : { frame: sample.frame, clip: sample.clip },
+      );
+      if (sample.nextAt != null) {
+        timer = window.setTimeout(pump, Math.max(16, sample.nextAt - performance.now()));
+        return;
+      }
+      const quiet =
+        !previewClip &&
+        pose === "idle" &&
+        !reduced &&
+        sample.clip === "idle" &&
+        !document.hidden &&
+        window.innerWidth >= 720;
+      if (!quiet) return;
+      timer = window.setTimeout(() => {
+        if (dead || document.hidden || window.innerWidth < 720) return;
+        runner.nudge("wink", performance.now());
+        pump();
+      }, 9000 + Math.random() * 5000);
+    };
+    pump();
+    const onVis = () => {
+      const t = performance.now();
+      window.clearTimeout(timer);
+      if (document.hidden) {
+        runner.pause(t);
+        setPaused(true);
+        return;
+      }
+      runner.resume(t);
+      setPaused(false);
+      pump();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      dead = true;
+      runner.dispose();
+      window.clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [pose, reduced, previewClip, previewNonce]);
 
   useEffect(() => {
     const el = root.current;
-    if (!el || typeof window === "undefined") return;
+    if (!el || framesOk || typeof window === "undefined") return;
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
     let open = 0;
     let raf = 0;
@@ -91,7 +210,7 @@ export const Dealer = memo(function Dealer({
     };
     raf = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(raf);
-  }, [speaking]);
+  }, [speaking, framesOk]);
 
   const layer = (mask: string, cls: string, children?: ReactNode) => (
     <span className={cn("poker-dealer-layer", cls)}>
@@ -109,27 +228,48 @@ export const Dealer = memo(function Dealer({
     </span>
   );
   const silhouette = `url("${DEALER_IMAGE}")`;
+  const box = framesOk ? DEALER_CANVAS : DEALER_SIZE;
+  const deck = framesOk ? DEALER_DECK : DEALER_RIG.deck;
   return (
     <div
       ref={root}
       className={cn("poker-dealer", className)}
       data-pose={pose}
+      data-clip={shown.clip}
+      data-frame={shown.frame}
+      data-frames={framesOk ? "1" : "0"}
+      data-paused={paused ? "1" : "0"}
       data-speaking={speaking ? "1" : "0"}
       data-looking={look ? "1" : "0"}
       style={
         {
-          aspectRatio: `${DEALER_SIZE.w} / ${DEALER_SIZE.h}`,
+          aspectRatio: `${box.w} / ${box.h}`,
           "--neck-x": pct(DEALER_RIG.neck.x),
           "--neck-y": pct(DEALER_RIG.neck.y),
           "--torso-y": pct(t1),
+          "--dealer-ax": pct(DEALER_ANCHOR.x),
+          "--dealer-ay": pct(DEALER_ANCHOR.y),
           "--lx": (look?.x ?? 0).toFixed(3),
           "--ly": (look?.y ?? 0).toFixed(3),
-        } as React.CSSProperties
+        } as CSSProperties
       }
     >
       <span className="poker-dealer-glow" aria-hidden />
       <span className="poker-dealer-shadow" aria-hidden />
-      {failed ? (
+      {framesOk ? (
+        <span className="poker-dealer-motion" role="img" aria-label="PVP dealer">
+          <img
+            className="poker-dealer-frame"
+            src={src}
+            alt=""
+            width={DEALER_CANVAS.w}
+            height={DEALER_CANVAS.h}
+            decoding="async"
+            draggable={false}
+            onError={() => setFramesOk(false)}
+          />
+        </span>
+      ) : failed ? (
         <span className="poker-dealer-fallback" role="img" aria-label="Dealer">
           <span>Dealer</span>
         </span>
@@ -178,11 +318,15 @@ export const Dealer = memo(function Dealer({
       <span
         className="poker-dealer-deck"
         data-anchor="deck"
-        style={{ left: pct(DEALER_RIG.deck.x), top: pct(DEALER_RIG.deck.y) }}
+        style={{ left: pct(deck.x), top: pct(deck.y) }}
         aria-hidden
       >
-        <span className="poker-riffle poker-riffle-l" />
-        <span className="poker-riffle poker-riffle-r" />
+        {framesOk ? null : (
+          <>
+            <span className="poker-riffle poker-riffle-l" />
+            <span className="poker-riffle poker-riffle-r" />
+          </>
+        )}
       </span>
       <span className="poker-dealer-label">Dealer</span>
       <span className="poker-dealer-caption" aria-live="polite">

@@ -1,0 +1,853 @@
+{
+  "canvas": {
+    "w": 640,
+    "h": 674
+  },
+  "anchor": [
+    236.32,
+    74.0
+  ],
+  "scale": {
+    "a": 1,
+    "b": 1.5265
+  },
+  "frames": [
+    {
+      "id": "idle",
+      "sheet": "a",
+      "file": "frames/idle.webp",
+      "sourceBox": [
+        0,
+        0,
+        269,
+        668
+      ],
+      "head": [
+        19,
+        259
+      ],
+      "scale": 1.0,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        95,
+        4
+      ],
+      "touchLeft": 0,
+      "touchRight": 819,
+      "opaque": 134989
+    },
+    {
+      "id": "wink",
+      "sheet": "a",
+      "file": "frames/wink.webp",
+      "sourceBox": [
+        269,
+        0,
+        526,
+        668
+      ],
+      "head": [
+        276,
+        521
+      ],
+      "scale": 1.0,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        104,
+        4
+      ],
+      "touchLeft": 938,
+      "touchRight": 988,
+      "opaque": 135029
+    },
+    {
+      "id": "shuffle-look",
+      "sheet": "a",
+      "file": "frames/shuffle-look.webp",
+      "sourceBox": [
+        526,
+        0,
+        777,
+        668
+      ],
+      "head": [
+        533,
+        774
+      ],
+      "scale": 1.0,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        108,
+        4
+      ],
+      "touchLeft": 720,
+      "touchRight": 1011,
+      "opaque": 127669
+    },
+    {
+      "id": "deal-center",
+      "sheet": "a",
+      "file": "frames/deal-center.webp",
+      "sourceBox": [
+        777,
+        0,
+        1025,
+        668
+      ],
+      "head": [
+        780,
+        1022
+      ],
+      "scale": 1.0,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        110,
+        2
+      ],
+      "touchLeft": 847,
+      "touchRight": 982,
+      "opaque": 123314
+    },
+    {
+      "id": "deal-side",
+      "sheet": "a",
+      "file": "frames/deal-side.webp",
+      "sourceBox": [
+        1025,
+        0,
+        1269,
+        668
+      ],
+      "head": [
+        1034,
+        1263
+      ],
+      "scale": 1.0,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        116,
+        4
+      ],
+      "touchLeft": 871,
+      "touchRight": 0,
+      "opaque": 116436
+    },
+    {
+      "id": "cards-fan",
+      "sheet": "a",
+      "file": "frames/cards-fan.webp",
+      "sourceBox": [
+        0,
+        668,
+        274,
+        1240
+      ],
+      "head": [
+        31,
+        264
+      ],
+      "scale": 1.0,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        76,
+        69
+      ],
+      "touchLeft": 0,
+      "touchRight": 905,
+      "opaque": 126062
+    },
+    {
+      "id": "waiting",
+      "sheet": "a",
+      "file": "frames/waiting.webp",
+      "sourceBox": [
+        274,
+        668,
+        526,
+        1240
+      ],
+      "head": [
+        287,
+        515
+      ],
+      "scale": 1.0,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        118,
+        48
+      ],
+      "touchLeft": 992,
+      "touchRight": 1060,
+      "opaque": 117264
+    },
+    {
+      "id": "celebrate",
+      "sheet": "a",
+      "file": "frames/celebrate.webp",
+      "sourceBox": [
+        526,
+        668,
+        777,
+        1240
+      ],
+      "head": [
+        540,
+        763
+      ],
+      "scale": 1.0,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        103,
+        63
+      ],
+      "touchLeft": 977,
+      "touchRight": 896,
+      "opaque": 118786
+    },
+    {
+      "id": "disappointed",
+      "sheet": "a",
+      "file": "frames/disappointed.webp",
+      "sourceBox": [
+        777,
+        668,
+        1028,
+        1240
+      ],
+      "head": [
+        794,
+        1010
+      ],
+      "scale": 1.0,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        107,
+        54
+      ],
+      "touchLeft": 829,
+      "touchRight": 697,
+      "opaque": 116052
+    },
+    {
+      "id": "point",
+      "sheet": "a",
+      "file": "frames/point.webp",
+      "sourceBox": [
+        1028,
+        668,
+        1269,
+        1240
+      ],
+      "head": [
+        1043,
+        1264
+      ],
+      "scale": 1.0,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        101,
+        67
+      ],
+      "touchLeft": 724,
+      "touchRight": 14,
+      "opaque": 113460
+    },
+    {
+      "id": "shuffle-01",
+      "sheet": "b",
+      "file": "frames/shuffle-01.webp",
+      "sourceBox": [
+        0,
+        0,
+        252,
+        358
+      ],
+      "head": [
+        67,
+        216
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        18,
+        65
+      ],
+      "touchLeft": 151,
+      "touchRight": 532,
+      "opaque": 66110
+    },
+    {
+      "id": "shuffle-02",
+      "sheet": "b",
+      "file": "frames/shuffle-02.webp",
+      "sourceBox": [
+        252,
+        0,
+        482,
+        358
+      ],
+      "head": [
+        288,
+        435
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        64,
+        65
+      ],
+      "touchLeft": 538,
+      "touchRight": 471,
+      "opaque": 63604
+    },
+    {
+      "id": "shuffle-03",
+      "sheet": "b",
+      "file": "frames/shuffle-03.webp",
+      "sourceBox": [
+        482,
+        0,
+        738,
+        358
+      ],
+      "head": [
+        527,
+        678
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        49,
+        66
+      ],
+      "touchLeft": 494,
+      "touchRight": 477,
+      "opaque": 67593
+    },
+    {
+      "id": "shuffle-04",
+      "sheet": "b",
+      "file": "frames/shuffle-04.webp",
+      "sourceBox": [
+        738,
+        0,
+        980,
+        358
+      ],
+      "head": [
+        798,
+        948
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        21,
+        65
+      ],
+      "touchLeft": 496,
+      "touchRight": 478,
+      "opaque": 65895
+    },
+    {
+      "id": "shuffle-05",
+      "sheet": "b",
+      "file": "frames/shuffle-05.webp",
+      "sourceBox": [
+        980,
+        0,
+        1182,
+        358
+      ],
+      "head": [
+        1012,
+        1161
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        71,
+        65
+      ],
+      "touchLeft": 503,
+      "touchRight": 561,
+      "opaque": 59625
+    },
+    {
+      "id": "deal-reach",
+      "sheet": "b",
+      "file": "frames/deal-reach.webp",
+      "sourceBox": [
+        1182,
+        0,
+        1536,
+        358
+      ],
+      "head": [
+        1205,
+        1350
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        97,
+        59
+      ],
+      "touchLeft": 558,
+      "touchRight": 0,
+      "opaque": 67426
+    },
+    {
+      "id": "deal-02",
+      "sheet": "b",
+      "file": "frames/deal-02.webp",
+      "sourceBox": [
+        0,
+        358,
+        210,
+        708
+      ],
+      "head": [
+        8,
+        204
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        99,
+        71
+      ],
+      "touchLeft": 107,
+      "touchRight": 498,
+      "opaque": 54790
+    },
+    {
+      "id": "deal-03",
+      "sheet": "b",
+      "file": "frames/deal-03.webp",
+      "sourceBox": [
+        210,
+        358,
+        430,
+        708
+      ],
+      "head": [
+        218,
+        411
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        82,
+        69
+      ],
+      "touchLeft": 474,
+      "touchRight": 454,
+      "opaque": 56588
+    },
+    {
+      "id": "deal-04",
+      "sheet": "b",
+      "file": "frames/deal-04.webp",
+      "sourceBox": [
+        430,
+        358,
+        655,
+        708
+      ],
+      "head": [
+        448,
+        643
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        76,
+        68
+      ],
+      "touchLeft": 435,
+      "touchRight": 455,
+      "opaque": 57398
+    },
+    {
+      "id": "deal-05",
+      "sheet": "b",
+      "file": "frames/deal-05.webp",
+      "sourceBox": [
+        655,
+        358,
+        884,
+        708
+      ],
+      "head": [
+        668,
+        862
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        52,
+        69
+      ],
+      "touchLeft": 436,
+      "touchRight": 309,
+      "opaque": 58476
+    },
+    {
+      "id": "deal-06",
+      "sheet": "b",
+      "file": "frames/deal-06.webp",
+      "sourceBox": [
+        884,
+        358,
+        1122,
+        708
+      ],
+      "head": [
+        894,
+        1111
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        2,
+        66
+      ],
+      "touchLeft": 379,
+      "touchRight": 403,
+      "opaque": 61377
+    },
+    {
+      "id": "deal-square",
+      "sheet": "b",
+      "file": "frames/deal-square.webp",
+      "sourceBox": [
+        1122,
+        358,
+        1342,
+        708
+      ],
+      "head": [
+        1135,
+        1348
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        46,
+        72
+      ],
+      "touchLeft": 403,
+      "touchRight": 580,
+      "opaque": 58524
+    },
+    {
+      "id": "cards-fan-b",
+      "sheet": "b",
+      "file": "frames/cards-fan-b.webp",
+      "sourceBox": [
+        1342,
+        358,
+        1536,
+        708
+      ],
+      "head": [
+        1352,
+        1535
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        70,
+        66
+      ],
+      "touchLeft": 548,
+      "touchRight": 536,
+      "opaque": 54623
+    },
+    {
+      "id": "fan-b2",
+      "sheet": "b",
+      "file": "frames/fan-b2.webp",
+      "sourceBox": [
+        0,
+        708,
+        200,
+        1024
+      ],
+      "head": [
+        36,
+        177
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        65,
+        74
+      ],
+      "touchLeft": 457,
+      "touchRight": 469,
+      "opaque": 53667
+    },
+    {
+      "id": "wait-b2",
+      "sheet": "b",
+      "file": "frames/wait-b2.webp",
+      "sourceBox": [
+        200,
+        708,
+        388,
+        1024
+      ],
+      "head": [
+        223,
+        366
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        99,
+        74
+      ],
+      "touchLeft": 474,
+      "touchRight": 567,
+      "opaque": 52094
+    },
+    {
+      "id": "point-b2",
+      "sheet": "b",
+      "file": "frames/point-b2.webp",
+      "sourceBox": [
+        388,
+        708,
+        576,
+        1024
+      ],
+      "head": [
+        414,
+        550
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        91,
+        74
+      ],
+      "touchLeft": 555,
+      "touchRight": 514,
+      "opaque": 51275
+    },
+    {
+      "id": "thoughtful",
+      "sheet": "b",
+      "file": "frames/thoughtful.webp",
+      "sourceBox": [
+        576,
+        708,
+        770,
+        1024
+      ],
+      "head": [
+        602,
+        739
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        88,
+        74
+      ],
+      "touchLeft": 530,
+      "touchRight": 519,
+      "opaque": 52723
+    },
+    {
+      "id": "celebrate-b2",
+      "sheet": "b",
+      "file": "frames/celebrate-b2.webp",
+      "sourceBox": [
+        770,
+        708,
+        964,
+        1024
+      ],
+      "head": [
+        801,
+        936
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        79,
+        74
+      ],
+      "touchLeft": 547,
+      "touchRight": 539,
+      "opaque": 52174
+    },
+    {
+      "id": "playful",
+      "sheet": "b",
+      "file": "frames/playful.webp",
+      "sourceBox": [
+        964,
+        708,
+        1153,
+        1024
+      ],
+      "head": [
+        992,
+        1128
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        84,
+        74
+      ],
+      "touchLeft": 551,
+      "touchRight": 494,
+      "opaque": 51455
+    },
+    {
+      "id": "playful-2",
+      "sheet": "b",
+      "file": "frames/playful-2.webp",
+      "sourceBox": [
+        1153,
+        708,
+        1343,
+        1024
+      ],
+      "head": [
+        1177,
+        1315
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        94,
+        74
+      ],
+      "touchLeft": 502,
+      "touchRight": 496,
+      "opaque": 52069
+    },
+    {
+      "id": "blow-kiss",
+      "sheet": "b",
+      "file": "frames/blow-kiss.webp",
+      "sourceBox": [
+        1343,
+        708,
+        1536,
+        1024
+      ],
+      "head": [
+        1370,
+        1509
+      ],
+      "scale": 1.5265,
+      "anchor": [
+        236.32,
+        74.0
+      ],
+      "offset": [
+        93,
+        74
+      ],
+      "touchLeft": 496,
+      "touchRight": 463,
+      "opaque": 52034
+    }
+  ]
+}

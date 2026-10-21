@@ -3,6 +3,7 @@ import { GameFacts } from "@/components/seo/GameFacts";
 import { indexableHead } from "@/lib/seo/indexable-head";
 import { loadPokerPaint, useQuerySeed } from "@/lib/first-paint";
 import { DEALER_IMAGE } from "@/lib/poker/assets";
+import { DEALER_IDLE_URL } from "@/lib/poker/dealer-frames";
 import { PokerLobby } from "@/components/poker/PokerLobby";
 
 export const Route = createFileRoute("/poker")({
@@ -21,6 +22,13 @@ export const Route = createFileRoute("/poker")({
           type: "image/webp",
           fetchPriority: "high",
         },
+        {
+          rel: "preload",
+          as: "image",
+          href: DEALER_IDLE_URL,
+          type: "image/webp",
+          fetchPriority: "high",
+        },
       ],
     }),
   loader: ({ location }) => loadPokerPaint(location.pathname),
@@ -30,7 +38,8 @@ export const Route = createFileRoute("/poker")({
 function PokerLayout() {
   const table = useMatch({ from: "/poker/$tableId", shouldThrow: false });
   const replay = useMatch({ from: "/poker/replay", shouldThrow: false });
-  if (table || replay) return <Outlet />;
+  const dealerGallery = useMatch({ from: "/poker/dealer", shouldThrow: false });
+  if (table || replay || dealerGallery) return <Outlet />;
   return <PokerLobbyPage />;
 }
 
