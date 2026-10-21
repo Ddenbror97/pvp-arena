@@ -157,7 +157,7 @@ export function InvitePanel() {
           </Button>
         ) : null}
       </div>
-      <div className="mt-3 grid grid-cols-4 gap-2 text-xs">
+      <div className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4 lg:grid-cols-2">
         <Stat label="Invited" value={dash.data ? String(dash.data.invited) : "\u00a0"} />
         <Stat label="Qualified" value={dash.data ? String(dash.data.qualified) : "\u00a0"} />
         <Stat label="Earned" value={dash.data ? formatUsd(dash.data.earned_cents) : "\u00a0"} />

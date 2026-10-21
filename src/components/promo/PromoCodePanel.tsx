@@ -108,7 +108,7 @@ export function PromoCodePanel() {
       ) : null}
       {mine.data?.code ? null : (
         <>
-          <form onSubmit={claim} className="mt-3 flex flex-col gap-2 sm:flex-row">
+          <form onSubmit={claim} className="mt-3 flex flex-col gap-2 sm:flex-row lg:flex-col">
             <Input
               value={code}
               onChange={(e) => {
@@ -127,7 +127,7 @@ export function PromoCodePanel() {
             />
             <Button
               type="submit"
-              className="min-h-11 sm:w-auto"
+              className="min-h-11 sm:w-auto lg:w-full"
               disabled={busy || code.trim().length < 4}
             >
               {busy ? "Claiming…" : "Claim"}

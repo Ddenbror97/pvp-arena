@@ -104,95 +104,109 @@ function ProfilePage() {
   const stats = useQuery({ ...statsQuery(userId ?? ""), enabled: !!userId });
 
   return (
-    <div className="mx-auto max-w-3xl space-y-3">
-      {!profile ? (
-        <div className="flex h-[62px] items-center gap-3" aria-busy="true">
-          <div className="h-14 w-14 shrink-0 animate-pulse rounded-[8%] bg-muted" />
-          <div className="h-10 min-w-0 flex-1 animate-pulse rounded-lg bg-muted" />
-        </div>
-      ) : (
-        <div className="space-y-2">
-          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
-            <PlayerPrestigeIdentity
-              avatar={profile.avatar_url}
-              name={profile.username}
-              frame={style.frame}
-              crown={style.crown}
-              level={prestige.state?.level}
-              tier={prestige.state?.tier}
-              size={56}
-            />
-            <div className="min-w-0">
-              <h1 className="truncate font-display text-lg">@{profile.username}</h1>
-              <p className="truncate text-xs text-muted-foreground">
-                {prestige.state ? `${prestige.state.tier} · Level ${prestige.state.level} · ` : null}
-                Joined {new Date(profile.created_at).toLocaleDateString()}
-              </p>
+    <div className="mx-auto w-full max-w-3xl lg:max-w-6xl">
+      <div className="grid items-start gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,24rem)] lg:gap-4">
+        <div className="min-w-0 space-y-3">
+          {!profile ? (
+            <div className="flex h-[62px] items-center gap-3" aria-busy="true">
+              <div className="h-14 w-14 shrink-0 animate-pulse rounded-[8%] bg-muted lg:hidden" />
+              <div className="h-10 min-w-0 flex-1 animate-pulse rounded-lg bg-muted" />
             </div>
-            <Button variant="secondary" size="sm" onClick={signOut}>
-              Sign out
-            </Button>
-          </div>
-          <nav aria-label="Account" className="flex flex-wrap gap-x-3 gap-y-1">
-            <Link to="/prestige" className="whitespace-nowrap text-xs text-primary hover:underline">
-              Your prestige
-            </Link>
-            <Link
-              to="/profile/security"
-              className="whitespace-nowrap text-xs text-primary hover:underline"
-            >
-              Security
-            </Link>
-            {isAdmin.data && (
-              <Link
-                to="/admin"
-                search={{ section: "overview" }}
-                className="whitespace-nowrap text-xs text-primary hover:underline"
-              >
-                Admin panel
-              </Link>
-            )}
-            {leaderboardAccess.data?.partner && (
-              <Link
-                to="/partner/leaderboards"
-                className="whitespace-nowrap text-xs text-primary hover:underline"
-              >
-                Leaderboards
-              </Link>
-            )}
-          </nav>
-        </div>
-      )}
-
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-5">
-        {[
-          ["Balance", wallet.isLoading ? "\u00a0" : formatUsd(wallet.data?.available ?? 0)],
-          ["Played", stats.isLoading ? "\u00a0" : String(stats.data?.games_played ?? 0)],
-          ["Wins", stats.isLoading ? "\u00a0" : String(stats.data?.games_won ?? 0)],
-          ["Wagered", stats.isLoading ? "\u00a0" : formatUsd(stats.data?.total_wagered ?? 0)],
-          ["Won", stats.isLoading ? "\u00a0" : formatUsd(stats.data?.total_won ?? 0)],
-        ].map(([k, v]) => (
-          <div key={k} className="bg-card px-2.5 py-2 last:col-span-2 sm:last:col-span-1">
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{k}</div>
-            <div className="tabular mt-0.5 h-5 truncate text-sm font-semibold leading-none">
-              {v}
+          ) : (
+            <div className="space-y-2">
+              <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
+                <div className="lg:hidden">
+                  <PlayerPrestigeIdentity
+                    avatar={profile.avatar_url}
+                    name={profile.username}
+                    frame={style.frame}
+                    crown={style.crown}
+                    level={prestige.state?.level}
+                    tier={prestige.state?.tier}
+                    size={56}
+                  />
+                </div>
+                <div className="min-w-0 lg:col-start-1">
+                  <h1 className="truncate font-display text-lg">@{profile.username}</h1>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {prestige.state
+                      ? `${prestige.state.tier} · Level ${prestige.state.level} · `
+                      : null}
+                    Joined {new Date(profile.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <Button variant="secondary" size="sm" className="lg:col-start-2" onClick={signOut}>
+                  Sign out
+                </Button>
+              </div>
+              <nav aria-label="Account" className="flex flex-wrap gap-x-3 gap-y-1">
+                <Link
+                  to="/prestige"
+                  className="whitespace-nowrap text-xs text-primary hover:underline"
+                >
+                  Your prestige
+                </Link>
+                <Link
+                  to="/profile/security"
+                  className="whitespace-nowrap text-xs text-primary hover:underline"
+                >
+                  Security
+                </Link>
+                {isAdmin.data && (
+                  <Link
+                    to="/admin"
+                    search={{ section: "overview" }}
+                    className="whitespace-nowrap text-xs text-primary hover:underline"
+                  >
+                    Admin panel
+                  </Link>
+                )}
+                {leaderboardAccess.data?.partner && (
+                  <Link
+                    to="/partner/leaderboards"
+                    className="whitespace-nowrap text-xs text-primary hover:underline"
+                  >
+                    Leaderboards
+                  </Link>
+                )}
+              </nav>
             </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-5">
+            {[
+              ["Balance", wallet.isLoading ? "\u00a0" : formatUsd(wallet.data?.available ?? 0)],
+              ["Played", stats.isLoading ? "\u00a0" : String(stats.data?.games_played ?? 0)],
+              ["Wins", stats.isLoading ? "\u00a0" : String(stats.data?.games_won ?? 0)],
+              ["Wagered", stats.isLoading ? "\u00a0" : formatUsd(stats.data?.total_wagered ?? 0)],
+              ["Won", stats.isLoading ? "\u00a0" : formatUsd(stats.data?.total_won ?? 0)],
+            ].map(([k, v]) => (
+              <div key={k} className="bg-card px-2.5 py-2 last:col-span-2 sm:last:col-span-1">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {k}
+                </div>
+                <div className="tabular mt-0.5 h-5 truncate text-sm font-semibold leading-none">
+                  {v}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+
+          <div className="grid gap-3 lg:grid-cols-2">
+            <InvitePanel />
+            <PromoCodePanel />
+          </div>
+        </div>
+
+        <div id="avatar" className="scroll-mt-20 lg:sticky lg:top-20">
+          <AvatarManager
+            frame={style.frame}
+            crown={style.crown}
+            level={prestige.state?.level}
+            tier={prestige.state?.tier}
+          />
+        </div>
       </div>
-
-      <InvitePanel />
-      <PromoCodePanel />
-
-      <div id="avatar" className="scroll-mt-20">
-        <AvatarManager
-          frame={style.frame}
-          crown={style.crown}
-          level={prestige.state?.level}
-          tier={prestige.state?.tier}
-        />
-      </div>
-
     </div>
   );
 }

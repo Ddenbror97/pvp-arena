@@ -218,13 +218,13 @@ export function AvatarManager({
   return (
     <section
       aria-labelledby="avatar-heading"
-      className="rounded-lg border border-border bg-card p-3"
+      className="@container rounded-lg border border-border bg-card p-3"
     >
       <h2 id="avatar-heading" className="font-display text-xs uppercase tracking-widest">
         Avatar
       </h2>
-      <div className="mt-3 grid gap-3 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
-        <div className="flex items-center gap-4 sm:flex-col sm:gap-2">
+      <div className="mt-3 grid gap-3 @min-[32rem]:grid-cols-[auto_minmax(0,1fr)] @min-[32rem]:items-center">
+        <div className="flex items-center gap-4 @min-[32rem]:flex-col @min-[32rem]:gap-2">
           <div className="relative">
             <PlayerPrestigeIdentity
               avatar={profile.avatar_url}
@@ -244,7 +244,7 @@ export function AvatarManager({
               </span>
             ) : null}
           </div>
-          <div className="min-w-0 sm:text-center">
+          <div className="min-w-0 @min-[32rem]:text-center">
             <p className="text-sm font-semibold">{custom ? "Custom avatar" : "Default avatar"}</p>
             {justSaved ? (
               <p className="text-xs text-muted-foreground" aria-live="polite">
@@ -278,8 +278,8 @@ export function AvatarManager({
             </span>
             <div>
               <p className="text-sm font-semibold">
-                <span className="hidden sm:inline">Drag an image here, or </span>
-                <span className="sm:hidden">Upload a photo</span>
+                <span className="hidden @min-[32rem]:inline">Drag an image here, or </span>
+                <span className="@min-[32rem]:hidden">Upload a photo</span>
               </p>
               <p className="mt-1 text-xs text-muted-foreground">{AVATAR_LIMITS_LABEL}</p>
             </div>
@@ -308,7 +308,7 @@ export function AvatarManager({
           ) : null}
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <span className="w-full text-xs text-muted-foreground sm:mr-1 sm:w-auto">
+            <span className="w-full text-xs text-muted-foreground @min-[32rem]:mr-1 @min-[32rem]:w-auto">
               Or a built-in style
             </span>
             {AVATAR_STYLES.map((s) => {
