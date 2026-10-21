@@ -155,7 +155,7 @@ export function SiteHeader({ className }: { className?: string }) {
 
 function DiscordMark() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3.5 w-3.5">
       <path
         fill="currentColor"
         d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.36-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02C2.44 9.42 1.69 13.38 2.06 17.3c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.08.22.17.33.25c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z"
@@ -166,7 +166,7 @@ function DiscordMark() {
 
 function RedditMark() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3.5 w-3.5">
       <path
         fill="currentColor"
         d="M14.5 3.3a1.2 1.2 0 0 1 1.38.98l.22 1.24a4.4 4.4 0 0 1 2.28.86 2.25 2.25 0 1 1 1.5 3.98c0 .172.16.0.3 1.33 0 3.13-3.36 5.66-7.5 5.66S4.8 14.82 4.8 11.7c0-.46.06-.9.16-1.33a2.25 2.25 0 1 1 1.5-3.98 4.4 4.4 0 0 1 2.28-.86l.22-1.24A1.2 1.2 0 0 1 10.34 3l3.16.56a.3.3 0 0 1 .24.3l-.16.88 1.02-.18a.3.3 0 0 1 .3.24l.22 1.24a.3.3 0 0 1-.24.35l-1.06.19c.10.20.0.2.28.5.96 0 1.74.78 1.74 1.74S13.96 10.6 13 10.6s-1.74-.78-1.74-1.74c0-.3.08-.59.22-.83H12c-2.9 0-5.26 1.86-5.26 4.16S9.1 16.35 12 16.35s5.26-1.86 5.26-4.16c0-1.76-1.38-3.28-3.38-3.84l-.06-.34.68-.12ZM9.7 12.05a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 0 0 0-2.3Zm4.6 0a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 0 0 0-2.3Zm-4.42 3.2a.4.4 0 0 0-.1.55c.64.9 1.86 1.5 3.22 1.5s2.58-.6 3.22-1.5a.4.4 0 1 0-.64-.48c-.5.68-1.46 1.14-2.58 1.14s-2.08-.46-2.58-1.14a.4.4 0 0 0-.54-.07Z"
@@ -181,54 +181,115 @@ export function SiteFooter({ className }: { className?: string }) {
 
   return (
     <footer className={cn("canvas mt-10 border-t border-border pb-20 lg:pb-0", className)}>
-      <div className="mx-auto grid max-w-none gap-10 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[minmax(12rem,1.1fr)_repeat(4,minmax(0,1fr))] lg:gap-8 lg:py-12">
-        <div className="sm:col-span-2 lg:col-span-1">
-          <Link to="/" className="footer-wordmark inline-flex" aria-label="PVPspinArena home">
-            <img
-              src={arenaLogo}
-              alt="PVPspinArena"
-              width={240}
-              height={128}
-              loading="lazy"
-              decoding="async"
-              className="brand-for-dark h-10 w-auto"
-            />
-            <img
-              src={arenaLogoLight}
-              alt=""
-              width={240}
-              height={128}
-              loading="lazy"
-              decoding="async"
-              className="brand-for-light h-10 w-auto"
-            />
-          </Link>
-          <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-            Where players play against players, real odds.
-          </p>
-          <h2 className="mt-5 font-display text-sm text-foreground">Currency</h2>
-          <ul className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-            {(
-              [
-                ["BTC", "Bitcoin"],
-                ["ETH", "Ether"],
-                ["USDC", "USD Coin"],
-              ] as const
-            ).map(([asset, label]) => (
-              <li
-                key={asset}
-                className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"
-              >
-                <TokenMark asset={asset} className="h-4 w-4" />
-                {label}
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className="mx-auto max-w-none px-4 py-8 sm:px-6 lg:py-10">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[minmax(12rem,1.15fr)_repeat(3,minmax(0,1fr))]">
+          <div className="sm:col-span-2 lg:col-span-1">
+            <Link to="/" className="footer-wordmark inline-flex" aria-label="PVPspinArena home">
+              <img
+                src={arenaLogo}
+                alt="PVPspinArena"
+                width={240}
+                height={128}
+                loading="lazy"
+                decoding="async"
+                className="brand-for-dark h-10 w-auto"
+              />
+              <img
+                src={arenaLogoLight}
+                alt=""
+                width={240}
+                height={128}
+                loading="lazy"
+                decoding="async"
+                className="brand-for-light h-10 w-auto"
+              />
+            </Link>
+            <p className="mt-3 max-w-xs text-sm text-muted-foreground">
+              Where players play against players, real odds.
+            </p>
+            <h2 className="mt-5 font-display text-sm text-foreground">Currency</h2>
+            <ul className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+              {(
+                [
+                  ["BTC", "Bitcoin"],
+                  ["ETH", "Ether"],
+                  ["USDC", "USD Coin"],
+                ] as const
+              ).map(([asset, label]) => (
+                <li
+                  key={asset}
+                  className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"
+                >
+                  <TokenMark asset={asset} className="h-4 w-4" />
+                  {label}
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        <nav aria-label="Explore">
+          <div>
+            <h2 className="font-display text-sm text-foreground">Join our community</h2>
+            <div className="mt-3 flex flex-col items-start gap-1.5">
+              <a
+                href="https://discord.gg/yKktkxB7jW"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full bg-[#5865F2] px-2.5 py-1 text-xs font-semibold text-white transition-colors hover:bg-[#4752C4]"
+              >
+                <DiscordMark />
+                Join Discord
+              </a>
+              <a
+                href="https://www.reddit.com/r/PvPSpinArena/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full bg-[#FF4500] px-2.5 py-1 text-xs font-semibold text-white transition-colors hover:bg-[#E03D00]"
+              >
+                <RedditMark />
+                Join Reddit
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="font-display text-sm text-foreground">Contact information</h2>
+            <a
+              href="mailto:contact@pvpspinarena.com"
+              className="mt-3 inline-block break-words text-sm text-muted-foreground transition-colors hover:text-primary"
+            >
+              Contact@pvpspinarena.com
+            </a>
+          </div>
+
+          <nav aria-label="Legal">
+            <h2 className="font-display text-sm text-foreground">Legal</h2>
+            <ul className="mt-3 space-y-2">
+              <li>
+                <Link to="/terms" className={footerLink}>
+                  Terms
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy" className={footerLink}>
+                  Privacy
+                </Link>
+              </li>
+              <li>
+                <Link to="/responsible-gambling" className={footerLink}>
+                  Responsible gambling
+                </Link>
+              </li>
+              <li>
+                <Link to="/editorial" className={footerLink}>
+                  Editorial policy
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <nav aria-label="Explore" className="mt-8 border-t border-border pt-6">
           <h2 className="font-display text-sm text-foreground">Explore</h2>
-          <ul className="mt-4 space-y-3">
+          <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-5">
             <li>
               <Link to="/how-it-works" className={footerLink}>
                 How it works
@@ -299,66 +360,6 @@ export function SiteFooter({ className }: { className?: string }) {
                 onTouchStart={() => warmRanks(qc)}
               >
                 Ranks
-              </Link>
-            </li>
-          </ul>
-        </nav>
-
-        <div>
-          <h2 className="font-display text-sm text-foreground">Join our community</h2>
-          <div className="mt-4 flex flex-col items-start gap-2">
-            <a
-              href="https://discord.gg/yKktkxB7jW"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-[#5865F2] px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#4752C4]"
-            >
-              <DiscordMark />
-              Join Discord
-            </a>
-            <a
-              href="https://www.reddit.com/r/PvPSpinArena/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-[#FF4500] px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#E03D00]"
-            >
-              <RedditMark />
-              Join Reddit
-            </a>
-          </div>
-        </div>
-
-        <div>
-          <h2 className="font-display text-sm text-foreground">Contact information</h2>
-          <a
-            href="mailto:contact@pvpspinarena.com"
-            className="mt-4 inline-block break-words text-sm text-muted-foreground transition-colors hover:text-primary"
-          >
-            Contact@pvpspinarena.com
-          </a>
-        </div>
-
-        <nav aria-label="Legal">
-          <h2 className="font-display text-sm text-foreground">Legal</h2>
-          <ul className="mt-4 space-y-3">
-            <li>
-              <Link to="/terms" className={footerLink}>
-                Terms
-              </Link>
-            </li>
-            <li>
-              <Link to="/privacy" className={footerLink}>
-                Privacy
-              </Link>
-            </li>
-            <li>
-              <Link to="/responsible-gambling" className={footerLink}>
-                Responsible gambling
-              </Link>
-            </li>
-            <li>
-              <Link to="/editorial" className={footerLink}>
-                Editorial policy
               </Link>
             </li>
           </ul>
