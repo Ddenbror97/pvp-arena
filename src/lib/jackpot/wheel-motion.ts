@@ -62,17 +62,6 @@ export function wheelTimingFunction(steps = WHEEL_EASE_STEPS): string {
     .join(",")})`;
 }
 
-/** Keyframes used when `linear()` easing is unavailable. Each step is under 180°. */
-export function wheelRotateFrames(
-  targetDeg: number,
-  steps = WHEEL_EASE_STEPS,
-): { transform: string; offset: number }[] {
-  return wheelTimingStops(steps).map((stop) => ({
-    transform: `rotate(${(targetDeg * stop.y).toFixed(3)}deg)`,
-    offset: stop.t,
-  }));
-}
-
 /** Document-timeline time at which the spin's time 0 matches `startAt` on the server clock. */
 export function wheelStartTime(timelineNow: number, serverNow: number, startAt: number): number {
   return timelineNow - (serverNow - startAt);

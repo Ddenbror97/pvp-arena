@@ -799,32 +799,6 @@ html[data-theme="light"] .chest-timer { background: rgb(255 255 255 / 0.95); col
   .loot-burst, .loot-flash, .loot-ring, .loot-particle { opacity: 0; }
 }
 
-/* Jackpot 3-2-1: every number slams in with a shockwave while a ring drains across the second. */
-@keyframes count-slam {
-  0% { transform: scale(2.2); opacity: 0; filter: blur(10px); }
-  18% { transform: scale(0.92); opacity: 1; filter: blur(0); }
-  32% { transform: scale(1.1); }
-  100% { transform: scale(1); opacity: 1; }
-}
-.animate-count-slam { animation: count-slam 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.25) both; }
-@keyframes count-shock {
-  0% { transform: scale(0.55); opacity: 0.8; }
-  100% { transform: scale(1.85); opacity: 0; }
-}
-.count-shock {
-  position: absolute; border-radius: 9999px; border: 2px solid currentColor;
-  pointer-events: none; animation: count-shock 0.85s cubic-bezier(0.1, 0.7, 0.3, 1) both;
-}
-@keyframes count-heat {
-  0%, 100% { opacity: 0.18; transform: scale(1); }
-  50% { opacity: 0.34; transform: scale(1.08); }
-}
-.count-heat { animation: count-heat 0.9s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) {
-  .animate-count-slam, .count-shock, .count-heat { animation: none; }
-}
-
-
 /* Thin overlay-style scrollbar. The transparent border insets the thumb so an 8px
    track reads as a slim pill. .no-scrollbar below still hides it where needed. */
 * {

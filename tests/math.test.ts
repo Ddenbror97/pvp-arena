@@ -4,7 +4,6 @@ import {
   estimatedChanceBps,
   formatBps,
   formatUsd,
-  landingRotation,
   nextTimer,
   parseUsdToCents,
   wheelSegments,
@@ -76,9 +75,5 @@ describe("wheel", () => {
     ]);
     expect(seg[0].end).toBeCloseTo(36);
     expect(seg[2].start).toBeCloseTo(108);
-  });
-  it("landing rotation points at the ticket", () => {
-    const rot = landingRotation(50, 100, 6, 0);
-    expect(rot % 360).toBeCloseTo(180);
   });
 });

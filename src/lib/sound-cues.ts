@@ -1,11 +1,10 @@
 import { wheelSpeed } from "@/lib/jackpot/wheel-motion";
 
 /**
- * Presentation-only cues. The jackpot ratchet lasts `SPIN_MS` and slows with
- * the wheel's own speed (`wheelSpeed`), which falls in a straight line.
+ * Presentation-only cues. The jackpot ratchet lasts `JACKPOT_SPIN_MS` and
+ * slows with the wheel's own speed (`wheelSpeed`).
  */
 
-export const WHEEL_SPIN_MS = 10_600;
 /** Linear gain vs the first live mix. 1.15 shipped, then +20% twice. */
 const CUE_GAIN = 1.66;
 
@@ -14,19 +13,6 @@ export type LandGate = { armedEnd: number; announcedEnd: number };
 /** Playback rate is the wheel's remaining speed: fast at the release, quiet at the stop. */
 export function wheelPlaybackRate(progress: number): number {
   return 0.28 + wheelSpeed(progress) * 1.08;
-}
-
-/**
- * One wheel cue at a time. A second start during the same spin is ignored,
- * so a clock resync cannot stack another recording on top.
- */
-export function claimWheelSpin(
-  now: number,
-  busyUntil: number,
-  duration = WHEEL_SPIN_MS,
-): { busyUntil: number; play: boolean } {
-  if (now < busyUntil) return { busyUntil, play: false };
-  return { busyUntil: now + duration, play: true };
 }
 
 /**

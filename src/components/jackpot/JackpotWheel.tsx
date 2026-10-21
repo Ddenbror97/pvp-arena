@@ -6,7 +6,6 @@ import { wheelTextureQuiet, winnerShade } from "@/lib/jackpot/wheel-picture";
 import {
   WHEEL_RING_HOLD_MS,
   wheelClockDrift,
-  wheelRotateFrames,
   wheelShouldSeek,
   wheelStartTime,
   wheelTimingFunction,
@@ -34,8 +33,6 @@ interface Props {
   children?: React.ReactNode;
 }
 
-/** Presentation length of the wheel spin. Three seconds longer than the old 7.6s so the spin is the focus. */
-export const SPIN_MS = JACKPOT_SPIN_MS;
 /** Ratchet updates. Coarse on purpose: the picture does not wait on the audio clock. */
 const CUE_MS = 50;
 
@@ -88,7 +85,8 @@ export function JackpotWheel({ players, spin, now, highlightId, roundId = 0, chi
       const css = stage.clientWidth;
       if (css < 2) return;
       const start = spinRef.current?.startAt;
-      const remain = start == null ? Number.POSITIVE_INFINITY : start + SPIN_MS - nowRef.current();
+      const remain =
+        start == null ? Number.POSITIVE_INFINITY : start + JACKPOT_SPIN_MS - nowRef.current();
       if (reason === "content" && wheelTextureQuiet(remain, el.dataset["ready"] === "1")) {
         clearTimeout(timer);
         timer = window.setTimeout(() => draw("content"), remain + 40);
@@ -148,34 +146,27 @@ export function JackpotWheel({ players, spin, now, highlightId, roundId = 0, chi
       return;
     }
     const started = startAt;
-    const distance = target;
-    let anim: Animation;
-    try {
-      anim = el.animate([{ transform: "rotate(0deg)" }, { transform: `rotate(${distance}deg)` }], {
-        duration: SPIN_MS,
+    const anim = el.animate(
+      [{ transform: "rotate(0deg)" }, { transform: `rotate(${target}deg)` }],
+      {
+        duration: JACKPOT_SPIN_MS,
         easing: wheelTimingFunction(),
         fill: "both",
-      });
-    } catch {
-      anim = el.animate(wheelRotateFrames(distance), {
-        duration: SPIN_MS,
-        easing: "linear",
-        fill: "both",
-      });
-    }
+      },
+    );
     const timeline = wheelTimelineNow();
     let startTime = timeline == null ? null : wheelStartTime(timeline, nowRef.current(), started);
     if (startTime != null) anim.startTime = startTime;
 
     let ringTimer = 0;
     const elapsed0 = nowRef.current() - started;
-    if (stage && elapsed0 < SPIN_MS + WHEEL_RING_HOLD_MS) {
+    if (stage && elapsed0 < JACKPOT_SPIN_MS + WHEEL_RING_HOLD_MS) {
       stage.dataset["spinning"] = "1";
       ringTimer = window.setTimeout(
         () => {
           delete stage.dataset["spinning"];
         },
-        Math.max(0, SPIN_MS - elapsed0) + WHEEL_RING_HOLD_MS,
+        Math.max(0, JACKPOT_SPIN_MS - elapsed0) + WHEEL_RING_HOLD_MS,
       );
     }
 
@@ -183,7 +174,7 @@ export function JackpotWheel({ players, spin, now, highlightId, roundId = 0, chi
     const align = () => {
       if (startTime == null) return;
       const serverNow = nowRef.current();
-      const remain = started + SPIN_MS - serverNow;
+      const remain = started + JACKPOT_SPIN_MS - serverNow;
       const timelineNow = wheelTimelineNow();
       if (timelineNow == null || remain <= 0) {
         clearInterval(alignTimer);
@@ -195,19 +186,19 @@ export function JackpotWheel({ players, spin, now, highlightId, roundId = 0, chi
       startTime = wheelStartTime(timelineNow, serverNow, started);
       anim.startTime = startTime;
     };
-    if (elapsed0 < SPIN_MS) {
+    if (elapsed0 < JACKPOT_SPIN_MS) {
       alignTimer = window.setInterval(align, 1000);
       document.addEventListener("visibilitychange", align);
     }
 
-    let stopped = elapsed0 >= SPIN_MS;
+    let stopped = elapsed0 >= JACKPOT_SPIN_MS;
     let cueTimer = 0;
     let armTimer = 0;
     const cue = () => {
       const elapsed = nowRef.current() - started;
       if (stopped) return;
       if (elapsed < 0) return;
-      if (elapsed >= SPIN_MS) {
+      if (elapsed >= JACKPOT_SPIN_MS) {
         stopped = true;
         emitSound("spin_stop");
         return;

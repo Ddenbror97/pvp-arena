@@ -4,9 +4,7 @@ export function formatUsd(cents: number | bigint): string {
   // Postgres sum(bigint) is numeric, so a report can be a fraction of a cent.
   // Round for display. A missing or non-finite value shows as zero.
   const v =
-    typeof cents === "bigint"
-      ? cents
-      : BigInt(Math.round(Number.isFinite(cents) ? cents : 0));
+    typeof cents === "bigint" ? cents : BigInt(Math.round(Number.isFinite(cents) ? cents : 0));
   const neg = v < 0n;
   const abs = neg ? -v : v;
   const dollars = (abs / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -94,10 +92,4 @@ export function wheelSegments<T extends PlayerSlice>(players: T[]) {
     const end = total ? (acc / total) * 360 : 0;
     return { ...p, start, end };
   });
-}
-
-/** Rotation that lands the wheel's top pointer on `ticket` (ticket-proportional position). */
-export function landingRotation(ticket: number, pot: number, fullSpins = 6, jitter = 0.5) {
-  const angle = pot > 0 ? ((ticket + jitter) / pot) * 360 : 0;
-  return fullSpins * 360 + (360 - angle);
 }

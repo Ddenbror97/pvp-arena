@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import {
   wheelClockDrift,
   wheelEase,
-  wheelRotateFrames,
   wheelShouldSeek,
   wheelSpeed,
   wheelStartTime,
@@ -41,10 +40,6 @@ describe("jackpot wheel motion", () => {
     expect(gap).toBeLessThan(1);
     expect(wheelTimingFunction()).toMatch(/^linear\(0\.0000,/);
     expect(wheelTimingFunction()).toMatch(/,1\.0000\)$/);
-    const frames = wheelRotateFrames(target);
-    expect(frames[0]).toEqual({ transform: "rotate(0.000deg)", offset: 0 });
-    expect(frames.at(-1)?.transform).toBe(`rotate(${target.toFixed(3)}deg)`);
-    expect(frames.at(-1)?.offset).toBe(1);
   });
 
   it("anchors the spin to the server clock and ignores small drift", () => {

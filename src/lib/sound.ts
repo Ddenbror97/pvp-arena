@@ -1,4 +1,5 @@
-import { playLandCue, playWheelCue, WHEEL_SPIN_MS } from "@/lib/sound-cues";
+import { JACKPOT_SPIN_MS } from "@/lib/jackpot/reveal";
+import { playLandCue, playWheelCue } from "@/lib/sound-cues";
 
 /**
  * Sound hooks. Register handlers to attach real audio.
@@ -8,9 +9,7 @@ import { playLandCue, playWheelCue, WHEEL_SPIN_MS } from "@/lib/sound-cues";
 export type SoundEvent =
   | "entry"
   | "player_join"
-  | "lock"
   | "spin_start"
-  | "spin_tick"
   | "spin_stop"
   | "wheel_spin"
   | "roulette_land"
@@ -154,7 +153,7 @@ function followWheel(elapsedMs: number) {
   }
   const graph = audio();
   if (!graph || graph.ctx.state !== "running") return;
-  const progress = Math.min(1, Math.max(0, elapsedMs / WHEEL_SPIN_MS));
+  const progress = Math.min(1, Math.max(0, elapsedMs / JACKPOT_SPIN_MS));
   if (progress >= 1) {
     stopWheelNow();
     return;
