@@ -73,7 +73,7 @@ The oldest PvP formats need no wheel at all. [Rock paper scissors for money](/gu
 
 ### Shared rounds that are not PvP
 
-Some games look social but are actually house-banked. PVPspinArena's [Roulette](/roulette) is one: everyone bets on the same spin, but each bet is paid at a fixed multiplier by the platform, not from other players' stakes. We describe it separately so the two models are never confused.`,
+Some games look social but are actually house-banked. PVPspinArena's [Roulette](/roulette) is one: everyone bets on the same spin, but each bet is paid at a fixed multiplier by the platform, not from other players' stakes. [CS2 roulette](/guides/cs2-roulette) is that coloured wheel, not a shared pot. We describe it separately so the two models are never confused.`,
     },
     {
       id: "fees",
@@ -90,7 +90,15 @@ For a player, the expected result of one game is:
 
 With a 5% fee that works out to an average of -$0.25 per game. With no fee it is exactly $0.00. That average is not a prediction for any single game; it is the long-run cost.
 
-On PVPspinArena the Jackpot and Coinflip fee is 5% of the pot, and the P2P Slott fee is 10%, shown before you enter a game. Always read it before you play. A PvP site that hides its fee, or changes it after you join, is a red flag.`,
+On PVPspinArena the Jackpot and Coinflip fee is 5% of the pot, and the P2P Slott fee is 10%, shown before you enter a game. Always read it before you play. A PvP site that hides its fee, or changes it after you join, is a red flag. [Betting with friends](/guides/bet-with-friends-online) is the same custody question when there is no public pot at all.
+
+| Game on this site | Who you play | Published price |
+| --- | --- | --- |
+| Jackpot | Other players' tickets in one pot | 5% of the pot; winner receives 95% |
+| Coinflip | One opponent, equal stake | 5% of the combined pot |
+| Roulette | The wheel, not the other bettors | 5% of a winning payout; Purple or Silver about a 7.88% edge after that fee |
+| P2P Slott | One opponent, equal stake | 10% of the pot when someone wins; a bomb keeps both stakes |
+| Poker | The other seated players | 5% of a pot only when a flop is dealt |`,
     },
     {
       id: "history",

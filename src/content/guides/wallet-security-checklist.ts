@@ -38,7 +38,13 @@ Mobile: official apps only. Avoid in-app browsers on casino promos for seed entr
       title: "Separating play funds from savings",
       body: `Create a dedicated play account or phrase. Fund it with a weekly ceiling. Keep long-term holdings on a hardware wallet that never clicks “connect” on a casino. If the play wallet dies, the loss is pre-accepted.
 
-[Cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet) explains the split. [What is a hardware wallet](/guides/what-is-a-hardware-wallet) covers how the device keeps keys offline, and [Ledger vs Trezor](/guides/ledger-vs-trezor) compares common hardware options. If you sign from MetaMask with the device attached, follow [connect Ledger to MetaMask](/guides/connect-ledger-to-metamask) so the key never leaves the hardware.`,
+[How to create a crypto wallet](/guides/how-to-create-a-crypto-wallet) is the setup sequence. [Cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet) explains the split.
+
+| Wallet job | What it holds | What it should never do |
+| --- | --- | --- |
+| Play wallet | This week's stake only | Store savings or a seed photo |
+| Savings wallet | Money you cannot click away | Connect to a casino or sign a casino prompt |
+| Hardware wallet | The savings keys | Type its phrase into a browser | [What is a hardware wallet](/guides/what-is-a-hardware-wallet) covers how the device keeps keys offline, and [Ledger vs Trezor](/guides/ledger-vs-trezor) compares common hardware options. If you sign from MetaMask with the device attached, follow [connect Ledger to MetaMask](/guides/connect-ledger-to-metamask) so the key never leaves the hardware.`,
     },
     {
       id: "seed-rules",

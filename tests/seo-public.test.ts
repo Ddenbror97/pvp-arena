@@ -8,6 +8,18 @@ import { STATIC_PATHS } from "@/routes/sitemap[.]xml";
 const llms = readFileSync("public/llms.txt", "utf8");
 
 describe("public SEO facts", () => {
+  it("describes the live roulette wheel as 33 slots, not a leftover 15", () => {
+    for (const file of [
+      "src/content/guides/cs2-roulette.ts",
+      "src/content/guides/hmac-sha256-provably-fair.ts",
+      "src/content/guides/provably-fair-calculator.ts",
+    ]) {
+      const text = readFileSync(file, "utf8");
+      expect(text, file).toContain("mod 33");
+      expect(text, file).not.toContain("mod 15");
+    }
+  });
+
   it("describes five games and the 33-slot wheel", () => {
     expect(llms).toContain("five games");
     expect(llms).toContain("33-slot");

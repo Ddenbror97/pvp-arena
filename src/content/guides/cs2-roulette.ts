@@ -65,9 +65,16 @@ Our [roulette colours guide](/guides/roulette-colors) goes deeper into how diffe
 Multiply the chance of winning by the total payout:
 
 - **Purple or Silver**: 0.4848 × $2 = $0.970. You get back about 97.0 cents before the win fee per dollar on average, so the edge is about 3.03% before the fee.
-- **Green**: 0.0303 × $14 = $0.424. You get back about 42.4 cents, so Green costs much more.
+- **Green**: 0.0303 × $14 = $0.424. You get back about 42.4 cents before the fee, so Green costs much more.
 
-Green is not the same price as Purple. It is more expensive and more volatile, with rare big wins and long gaps between them.
+A winning payout then loses 5%. A losing bet is not charged that fee. After it, Purple or Silver return about 92.12% of the stake, about a 7.88% house edge. Green returns about 40.30%, about a 59.70% house edge. Waiting for a colour does not change either figure.
+
+| Bet on this wheel | Chance | Sticker | Return after the 5% win fee |
+| --- | --- | --- | --- |
+| Purple or Silver | 16/33 | 2x | about 92.12% (about a 7.88% edge) |
+| Green | 1/33 | 14x | about 40.30% (about a 59.70% edge) |
+
+Green is not the same price as Purple. It is more expensive and more volatile, with rare big wins and long gaps between them. [Skin gambling versus crypto](/guides/skin-gambling-vs-crypto) is why the same colours are now staked in dollars instead of skins.
 
 ### Comparison with casino roulette
 
@@ -109,13 +116,13 @@ When the round is drawn, the result is calculated as:
 - h = HMAC-SHA256(key = server seed, message)
 - Take the first 8 bytes of h as a number r.
 - If r falls in an unusable remainder range, increase the counter and try again. This step, called rejection sampling, makes sure every slot is exactly equally likely.
-- Slot = r mod 15. The colour is the colour of that slot.
+- Slot = r mod 33. The colour is the colour of that slot on the 33-slot wheel.
 
 ### Reveal
 
 After the spin, the server seed is published. Anyone can hash it and confirm it matches the commitment, then repeat the calculation and get the same slot.
 
-This is explained in more depth in our [provably fair casino guide](/guides/provably-fair-casino). The future [provably fair roulette guide](/guides/provably-fair-roulette) will cover edge cases in detail.`,
+This is explained in more depth in our [provably fair casino guide](/guides/provably-fair-casino). The [provably fair roulette guide](/guides/provably-fair-roulette) covers the wheel check, and [peer to peer gambling](/guides/pvp-gambling) is the separate pot model this house wheel is not.`,
     },
     {
       id: "verify",
@@ -172,7 +179,7 @@ Avoid sites that promise guaranteed wins, sell "predictors" or hide how results 
       title: "Summary",
       body: `CS2 roulette is a fast colour wheel inherited from the CS:GO skin era. On PVPspinArena's 33-slot wheel, Purple and Silver each cover 16 slots and pay 2x, while Green covers 1 slot and pays 14x.
 
-Purple and Silver return about 97.0 cents per dollar before the win fee. Green returns about 42.4 cents. Green is more expensive and more volatile. Streaks and gaps are normal and no betting system changes the odds of the next spin.
+Purple and Silver return about 92.12% after the 5% win fee. Green returns about 40.30%. Green is more expensive and more volatile. Streaks and gaps are normal and no betting system changes the odds of the next spin.
 
 Each round's seed is committed with SHA-256 before betting closes, and the slot is computed with HMAC-SHA256 and rejection sampling. You can verify any finished round on the Fairness page. Play with a fixed budget and treat each spin as entertainment.
 
@@ -186,7 +193,7 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     },
     {
       q: "Which colour is the best bet?",
-      a: "On PVPspinArena's wheel, Purple and Silver return about 97.0% before the win fee and win often at 2x. Green returns about 42.4% and pays 14x, so it costs more.",
+      a: "On this wheel, Purple and Silver return about 92.12% after the 5% win fee and win often at 2x. Green returns about 40.30% after that fee and pays 14x, so it costs more. Neither colour is a system.",
     },
     {
       q: "Is CS2 roulette the same as casino roulette?",
@@ -216,5 +223,5 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     "csgo-jackpot",
     "csgo-coinflip",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
 };

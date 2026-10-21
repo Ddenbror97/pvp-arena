@@ -15,6 +15,25 @@ const PREVIEW_ZONES = [
 const isLocal = (host: string) => LOCAL_HOSTS.has(host);
 const isPreview = (host: string) => PREVIEW_ZONES.some((z) => host === z || host.endsWith(`.${z}`));
 
+/** Canonical origin. www is the same site and must not stay a second indexable host. */
+export const CANONICAL_HOST = "pvpspinarena.com";
+
+/**
+ * GET and HEAD on www.pvpspinarena.com go to the apex host in one hop.
+ * Other methods stay put so a posted callback is not turned into a GET.
+ */
+export function canonicalHostRedirect(request: Request): Response | null {
+  if (request.method !== "GET" && request.method !== "HEAD") return null;
+  const url = new URL(request.url);
+  if (url.hostname !== `www.${CANONICAL_HOST}`) return null;
+  url.protocol = "https:";
+  url.hostname = CANONICAL_HOST;
+  return new Response(null, {
+    status: 308,
+    headers: { location: url.toString(), "cache-control": "no-store" },
+  });
+}
+
 /** A plain-HTTP request to a public host is redirected to HTTPS before any app code runs. */
 export function httpsRedirect(request: Request): Response | null {
   const url = new URL(request.url);

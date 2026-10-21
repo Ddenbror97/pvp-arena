@@ -36,7 +36,7 @@ export const guide: Guide = {
     {
       id: "mistakes-that-erase-a-new-wallet",
       title: "Mistakes that erase a new wallet",
-      body: "The worst mistake is creating the wallet on a device you do not control, such as a public computer or a phone you are about to sell. The phrase and the PIN both have to live somewhere you still possess. Factory-reset a phone only after the phrase is written and you have restored it successfully on the replacement, or after the balance is zero.\n\nThe second mistake is typing the phrase into a website because a banner said the wallet was compromised and had to be verified. That is the theft, not the rescue. Close the page. Move funds only by signing inside the real app, to a new wallet whose phrase you created yourself, and only if you have a real reason to believe the first phrase was exposed.\n\nThe third mistake is mixing the savings phrase and the gambling phrase because setup felt tedious. One phrase for money you cannot afford to click away, and another for a spending balance, limits the damage when a site asks for a signature you do not understand. Creating the second wallet is the same ceremony as the first. Do not reuse the same word list.\n\nThe fourth mistake is skipping the test transfer because the fee or the wait feels annoying. A test that fails teaches you the network picker. A full balance that fails teaches you the same lesson with money you needed. Use an amount you can shrug at. Then send the rest only to the address that already received the test.",
+      body: "The worst mistake is creating the wallet on a device you do not control, such as a public computer or a phone you are about to sell. The phrase and the PIN both have to live somewhere you still possess. Factory-reset a phone only after the phrase is written and you have restored it successfully on the replacement, or after the balance is zero.\n\nThe second mistake is typing the phrase into a website because a banner said the wallet was compromised and had to be verified. That is the theft, not the rescue. Close the page. Move funds only by signing inside the real app, to a new wallet whose phrase you created yourself, and only if you have a real reason to believe the first phrase was exposed.\n\nThe third mistake is mixing the savings phrase and the gambling phrase because setup felt tedious. The [wallet security checklist](/guides/wallet-security-checklist) is the longer version of that split. One phrase for money you cannot afford to click away, and another for a spending balance, limits the damage when a site asks for a signature you do not understand. Creating the second wallet is the same ceremony as the first. Do not reuse the same word list.\n\nThe fourth mistake is skipping the test transfer because the fee or the wait feels annoying. A test that fails teaches you the network picker. A full balance that fails teaches you the same lesson with money you needed. Use an amount you can shrug at. Then send the rest only to the address that already received the test.",
     },
     {
       id: "a-wallet-you-can-still-open-next-month",
@@ -66,9 +66,7 @@ export const guide: Guide = {
       a: "You hold the keys to the wallet you create and use to deposit or receive a payout. Deposit and payout wallets are separate, and this page does not describe the site's treasury.",
     },
   ],
-    sources: [
-    { label: "ethereum.org — Ethereum wallets", url: "https://ethereum.org/en/wallets/" },
-  ],
+  sources: [{ label: "ethereum.org — Ethereum wallets", url: "https://ethereum.org/en/wallets/" }],
   related: ["crypto-wallet-for-gambling", "self-custody-wallet"],
   updated: "2026-10-21",
 };

@@ -251,6 +251,47 @@ export function SiteFooter({ className }: { className?: string }) {
             </li>
             <li>
               <Link
+                to="/guides/topics/$topic"
+                params={{ topic: "provably-fair" }}
+                className={footerLink}
+              >
+                Provably fair
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/guides/topics/$topic"
+                params={{ topic: "crypto-payments" }}
+                className={footerLink}
+              >
+                Wallets and payments
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/guides/topics/$topic"
+                params={{ topic: "csgo-heritage" }}
+                className={footerLink}
+              >
+                CS2 and PvP formats
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/guides/topics/$topic"
+                params={{ topic: "games-and-odds" }}
+                className={footerLink}
+              >
+                Odds and roulette
+              </Link>
+            </li>
+            <li>
+              <Link to="/guides/topics/$topic" params={{ topic: "lottery" }} className={footerLink}>
+                Lottery
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/leaderboards"
                 className={footerLink}
                 onMouseEnter={() => warmRanks(qc)}

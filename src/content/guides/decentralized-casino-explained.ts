@@ -63,7 +63,14 @@ You send crypto to an address the operator controls; they credit dollars or chip
 
 ### Smart contract escrow
 
-Stakes lock in a contract until a result function runs. You still trust the contract code and any admin keys that can upgrade it.
+Stakes lock in a contract until a result function runs. You still trust the contract code and any admin keys that can upgrade it. The [smart contract casino](/guides/smart-contract-casino) page is that case. A hybrid room that only publishes a hash is closer to [SHA-256](/guides/sha256-explained) than to an on-chain bet.
+
+| Model | Who can move the stake | What you can check |
+| --- | --- | --- |
+| Database balance | The operator, until withdrawal | A published seed, not the balance itself |
+| Contract escrow | The contract and any upgrade key | The bytecode and the result function |
+| Wallet-signed wager | You, one transaction at a time | The transaction you signed |
+| This site's play balance | The account, during the session | The fairness page for the round, plus the [wallet security checklist](/guides/wallet-security-checklist) for the keys that funded it |
 
 ### Wallet-native betting
 

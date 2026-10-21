@@ -130,16 +130,16 @@ For a coin, only one bit is needed. Each bit of a good HMAC output is equally li
 
 ### Many outcomes
 
-For a roulette wheel with 33 slots, you need a number between 0 and 14. A naive approach takes a large number from the hash and uses the remainder after dividing by 15. The problem is that most large ranges do not divide evenly by 15, so a few slots would be very slightly more likely.
+For a roulette wheel with 33 slots, you need a number between 0 and 32. A naive approach takes a large number from the hash and uses the remainder after dividing by 33. The problem is that most large ranges do not divide evenly by 33, so a few slots would be very slightly more likely.
 
 ### Rejection sampling
 
 PVPspinArena avoids this with rejection sampling:
 
 1. Read the first 8 bytes as a number r between 0 and 2^64 − 1.
-2. Compute the largest multiple of 15 below 2^64.
+2. Compute the largest multiple of 33 below 2^64.
 3. If r is at or above that limit, increase a counter in the message and compute a new HMAC.
-4. Otherwise, the slot is r mod 15.
+4. Otherwise, the slot is r mod 33. The live wheel length is that 33, not a leftover 15-slot layout.
 
 Rejection almost never happens, but when it does it keeps every slot exactly equally likely. This is the kind of detail worth checking when you compare provably fair sites.`,
     },

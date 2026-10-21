@@ -3,7 +3,7 @@ import "./lib/error-capture";
 import { applyWorkerEnv } from "./lib/worker-env";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
-import { httpsRedirect, withSecurityHeaders } from "./lib/security-headers";
+import { canonicalHostRedirect, httpsRedirect, withSecurityHeaders } from "./lib/security-headers";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -59,7 +59,8 @@ function movedRedirect(request: Request): Response | null {
 }
 
 async function handle(request: Request, env: unknown, ctx: unknown): Promise<Response> {
-  const redirect = httpsRedirect(request) ?? movedRedirect(request);
+  const redirect =
+    canonicalHostRedirect(request) ?? httpsRedirect(request) ?? movedRedirect(request);
   if (redirect) return redirect;
   applyWorkerEnv(env);
   applyWorkerEnv(typeof process !== "undefined" ? process.env : undefined);

@@ -72,7 +72,7 @@ If a site does not publish its algorithm in enough detail to reproduce it, no ca
 ### The mapping rules on PVPspinArena
 
 - **Coinflip**: look at the first byte of the HMAC. If it is even, the result is heads; if odd, tails.
-- **Roulette**: read the first 8 bytes as a big number r. If r is below the largest multiple of 15 under 2^64, the slot is r mod 15. Otherwise increase the counter and try again.
+- **Roulette**: read the first 8 bytes as a big number r. If r is below the largest multiple of 33 under 2^64, the slot is r mod 33. Otherwise increase the counter and try again. The modulus is the published wheel length.
 - **Jackpot**: the same rejection sampling picks a winning ticket from the total number of tickets in the pot.
 
 The [HMAC-SHA256 guide](/guides/hmac-sha256-provably-fair) explains why these steps are safe.`,
