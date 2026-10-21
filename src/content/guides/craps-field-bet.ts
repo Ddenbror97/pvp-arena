@@ -64,7 +64,9 @@ The edge falls to 1/36, about 2.78%. Label the schedule in your notes. A bare "f
 
 Per $1 bet over 36 equally likely pairs, Schedule A loses $2 in total. Schedule B loses $1 in total.
 
-Divide by 36 and you have the edges above. Do not average the two schedules into a third number. The layout uses one of them.`,
+Divide by 36 and you have the edges above. Do not average the two schedules into a third number. The layout uses one of them.
+
+Wikipedia's craps bet table lists the same two common schedules: 5.56% when 2 and 12 both pay 2 to 1, and 2.78% when 12 pays 3 to 1. A table that pays both 2 and 12 at 3 to 1 is a third schedule, and this page does not price it.`,
     },
     {
       id: "fees",
@@ -205,7 +207,9 @@ The field is one roll. [The variant where craps numbers become points](/guides/c
       a: "No. Coinflip takes 5% of the pot between two players, while the field keeps about 5.56% or about 2.78% of the stake, depending on the labeled schedule, and the bases are different.",
     },
   ],
-  sources: [],
+  sources: [
+    { label: "Wikipedia: Craps (field bet house edge)", url: "https://en.wikipedia.org/wiki/Craps" },
+  ],
   related: ["craps-odds", "online-craps", "house-edge", "sic-bo-online", "crapless-craps"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

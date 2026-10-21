@@ -67,7 +67,7 @@ If the point boxes include 2, 3, 11, and 12, you are in the variant. If those to
 | 12 | point | not rebuilt here | not a separate edge |
 | Any odds bet behind the line | not priced | not priced | not published |
 
-The 5.38% figure is the even-money pass with no odds. Do not apply it to a chip you put behind the line, and do not apply it to the field, the hardways, or a standard table.`,
+The 5.38% figure is the even-money pass with no odds. Wikipedia's craps page records that house edge for this variant. Do not apply it to a chip you put behind the line, and do not apply it to the field, the hardways, or a standard table.`,
     },
     {
       id: "odds",
@@ -206,7 +206,9 @@ A pass line that turns 2, 3, 11, and 12 into points is not the field. [The one-r
       a: "No. Craps is not offered, and Jackpot and Coinflip take 5% of the pot between players. That fee is not the 5.38% edge on an even-money crapless pass with no odds.",
     },
   ],
-  sources: [],
+  sources: [
+    { label: "Wikipedia: Craps (crapless craps house edge)", url: "https://en.wikipedia.org/wiki/Craps" },
+  ],
   related: ["online-craps", "craps-odds", "craps-strategy", "sic-bo-online", "craps-field-bet"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };
