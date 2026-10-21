@@ -127,6 +127,13 @@ async function call<T>(fn: string, args: Record<string, unknown> = {}): Promise<
 }
 
 const control = "h-9 rounded-md border border-border bg-background px-2 text-sm text-foreground";
+function creditsOnAccount(credits: number, balance: number) {
+  const left = Number(credits);
+  const cash = Number(balance);
+  if (!Number.isFinite(left) || !Number.isFinite(cash)) return 0;
+  return Math.min(Math.max(left, 0), Math.max(cash, 0));
+}
+
 const pct = (bps: number) =>
   `${(bps / 100).toLocaleString("en-US", { maximumFractionDigits: 2 })}%`;
 const when = (iso: string | null | undefined) => (iso ? new Date(iso).toLocaleString() : "—");
@@ -226,7 +233,7 @@ export function PartnersAdmin() {
     });
   }
 
-  const rows = list.data?.rows ?? [];
+  const rows = (list.data?.rows ?? []).filter((r) => r.active);
   const needle = filter.trim().toLowerCase();
   const visible = needle
     ? rows.filter(
@@ -302,7 +309,11 @@ export function PartnersAdmin() {
           />
           <Stat
             label="Credits left"
-            value={list.data ? formatUsd(sum((r) => r.credits_cents)) : "—"}
+            value={
+              list.data
+                ? formatUsd(sum((r) => creditsOnAccount(r.credits_cents, r.balance_cents)))
+                : "—"
+            }
           />
         </div>
       )}
@@ -385,7 +396,9 @@ export function PartnersAdmin() {
                 <td className="tabular px-3 py-2">
                   {formatUsd(Number(r.period.commission_cents))}
                 </td>
-                <td className="tabular px-3 py-2">{formatUsd(Number(r.credits_cents))}</td>
+                <td className="tabular px-3 py-2">
+                  {formatUsd(creditsOnAccount(r.credits_cents, r.balance_cents))}
+                </td>
                 <td className="tabular px-3 py-2">{formatUsd(Number(r.balance_cents))}</td>
               </tr>
             ))}
@@ -590,7 +603,12 @@ function PartnerDetail({
       <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
         <Stat label="Available" value={formatUsd(Number(d.available_cents))} />
         <Stat label="In games" value={formatUsd(Number(d.locked_cents))} />
-        <Stat label="Credits left" value={formatUsd(Number(d.credits_cents))} />
+        <Stat
+          label="Credits left"
+          value={formatUsd(
+            creditsOnAccount(d.credits_cents, Number(d.available_cents) + Number(d.locked_cents)),
+          )}
+        />
         <Stat label="Withdrawals" value={<span className="text-sm">{withdrawalCopy}</span>} />
         <Stat label="Attributed users" value={Number(d.attributed_users).toLocaleString("en-US")} />
         <Stat label="Commission" value={pct(d.commission_bps)} />
@@ -650,7 +668,14 @@ function PartnerDetail({
       </Section>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Settings detail={d} onSaved={refresh} />
+        <Settings
+          detail={d}
+          onSaved={refresh}
+          onRemoved={async () => {
+            await refresh();
+            onClose();
+          }}
+        />
         <div className="space-y-4">
           <TopUp detail={d} limits={limits} onSaved={refresh} />
           <RemoveCredits detail={d} onSaved={refresh} />
@@ -1025,7 +1050,15 @@ function ReleaseProfit({
   );
 }
 
-function Settings({ detail, onSaved }: { detail: Detail; onSaved: () => Promise<void> }) {
+function Settings({
+  detail,
+  onSaved,
+  onRemoved,
+}: {
+  detail: Detail;
+  onSaved: () => Promise<void>;
+  onRemoved: () => Promise<void>;
+}) {
   const [commission, setCommission] = useState(String(detail.commission_bps / 100));
   const [note, setNote] = useState(detail.note ?? "");
   const [busy, setBusy] = useState(false);
@@ -1086,7 +1119,7 @@ function Settings({ detail, onSaved }: { detail: Detail; onSaved: () => Promise<
     try {
       await call("partner_admin_remove", { p_user: detail.user_id });
       toast.success("Partner removed.");
-      await onSaved();
+      await onRemoved();
     } catch (err) {
       toast.error(errorCopy(err as { message?: string }, "Couldn't remove that partner."));
     } finally {
@@ -1326,8 +1359,14 @@ function RemoveCredits({ detail, onSaved }: { detail: Detail; onSaved: () => Pro
           {busy ? "Removing…" : "Remove credits"}
         </Button>
         <p className="text-xs text-muted-foreground">
-          {formatUsd(Number(detail.credits_cents))} of promotional credits left. Available balance{" "}
-          {formatUsd(Number(detail.available_cents))}. Deposited funds cannot be taken back.
+          {formatUsd(
+            creditsOnAccount(
+              detail.credits_cents,
+              Number(detail.available_cents) + Number(detail.locked_cents),
+            ),
+          )}{" "}
+          of promotional credits left. Available balance {formatUsd(Number(detail.available_cents))}
+          . Deposited funds cannot be taken back.
         </p>
       </form>
     </Section>
@@ -1519,8 +1558,8 @@ function Codes({ detail, onSaved }: { detail: Detail; onSaved: () => Promise<voi
         </div>
       )}
       <p className="mt-2 text-xs text-muted-foreground">
-        Viewers get the reward under the normal promo rules. A code with no claims can be deleted. A
-        code that was already claimed can be disabled, and the claim history stays.
+        Viewers get the reward under the normal promo rules. Deleting a code removes it from this
+        list. A claim that already paid still has to finish its wager.
       </p>
     </Section>
   );

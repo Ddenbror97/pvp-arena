@@ -71,11 +71,7 @@ export function PromoAdmin() {
     if (!window.confirm(`Delete promo code ${row.code}? This cannot be undone.`)) return;
     const { error } = await supabase.rpc("promo_admin_delete" as never, { p_id: row.id } as never);
     if (error) {
-      toast.error(
-        /CODE_USED/.test(error.message)
-          ? "That code has already been claimed, so it cannot be deleted. Deactivate it instead."
-          : "Couldn't delete that code.",
-      );
+      toast.error("Couldn't delete that code.");
       return;
     }
     toast.success("Promo code deleted.");
