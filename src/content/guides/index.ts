@@ -1043,6 +1043,63 @@ import { guide as w2WolfRunSlot } from "./wolf-run-slot";
 import { guide as w2WsmCasinoReview } from "./wsm-casino-review";
 import { guide as w2XEmpireTelegram } from "./x-empire-telegram";
 import { guide as w2YescoinReview } from "./yescoin-review";
+import { guide as w39MasksOfFireSlot } from "./9-masks-of-fire-slot";
+import { guide as w3BookOfRaSlot } from "./book-of-ra-slot";
+import { guide as w3DavinciDiamondsSlot } from "./davinci-diamonds-slot";
+import { guide as w3DorkUnitSlot } from "./dork-unit-slot";
+import { guide as w3ExtraChilliSlot } from "./extra-chilli-slot";
+import { guide as w3FireJokerSlot } from "./fire-joker-slot";
+import { guide as w3GemsBonanzaSlot } from "./gems-bonanza-slot";
+import { guide as w3GonzosQuestSlot } from "./gonzos-quest-slot";
+import { guide as w3HandOfAnubisSlot } from "./hand-of-anubis-slot";
+import { guide as w3KittyGlitterSlot } from "./kitty-glitter-slot";
+import { guide as w3LegacyOfDeadSlot } from "./legacy-of-dead-slot";
+import { guide as w3LuckyLadyCharmSlot } from "./lucky-lady-charm-slot";
+import { guide as w3ReactoonzSlot } from "./reactoonz-slot";
+import { guide as w3RiseOfOlympusSlot } from "./rise-of-olympus-slot";
+import { guide as w3SizzlingHotSlot } from "./sizzling-hot-slot";
+import { guide as w3TwinSpinSlot } from "./twin-spin-slot";
+import { guide as w3WheelOfFortuneSlot } from "./wheel-of-fortune-slot";
+import { guide as w3WisdomOfAthenaSlot } from "./wisdom-of-athena-slot";
+import { guide as w3AndarBahar } from "./andar-bahar";
+import { guide as w3FanTanGame } from "./fan-tan-game";
+import { guide as w3MiniBaccarat } from "./mini-baccarat";
+import { guide as w3CasinoTableRental } from "./casino-table-rental";
+import { guide as w3JamesBondRouletteStrategy } from "./james-bond-roulette-strategy";
+import { guide as w3VideoKeno } from "./video-keno";
+import { guide as w3DealOrNoDealLive } from "./deal-or-no-deal-live";
+import { guide as w3ComeBetCraps } from "./come-bet-craps";
+import { guide as w3Natural8Review } from "./natural8-review";
+import { guide as w3BadugiPoker } from "./badugi-poker";
+import { guide as w3FiveCardDraw } from "./five-card-draw";
+import { guide as w3PineapplePoker } from "./pineapple-poker";
+import { guide as w3HorsePoker } from "./horse-poker";
+import { guide as w3CBetPoker } from "./c-bet-poker";
+import { guide as w3CheckRaisePoker } from "./check-raise-poker";
+import { guide as w3DonkBetPoker } from "./donk-bet-poker";
+import { guide as w3ThreeBetPoker } from "./three-bet-poker";
+import { guide as w3IcmPoker } from "./icm-poker";
+import { guide as w3FreerollPoker } from "./freeroll-poker";
+import { guide as w3PokerHud } from "./poker-hud";
+import { guide as w3RabbitHuntingPoker } from "./rabbit-hunting-poker";
+import { guide as w3BadBeatJackpot } from "./bad-beat-jackpot";
+import { guide as w3BelmontStakesBetting } from "./belmont-stakes-betting";
+import { guide as w3PreaknessBetting } from "./preakness-betting";
+import { guide as w3BestCasinosInVegas } from "./best-casinos-in-vegas";
+import { guide as w3DowntownLasVegasCasinos } from "./downtown-las-vegas-casinos";
+import { guide as w3ElCortezCasino } from "./el-cortez-casino";
+import { guide as w3CaesarsRewardsTiers } from "./caesars-rewards-tiers";
+import { guide as w3CanYouSmokeInCasinos } from "./can-you-smoke-in-casinos";
+import { guide as w3CasinoJobs } from "./casino-jobs";
+import { guide as w3BitcasinoIoReview } from "./bitcasino-io-review";
+import { guide as w3HowlCasinoReview } from "./howl-casino-review";
+import { guide as w3KingdomCasinoReview } from "./kingdom-casino-review";
+import { guide as w3PinUpCasinoReview } from "./pin-up-casino-review";
+import { guide as w3OnlineGamblingLegalUtah } from "./online-gambling-legal-utah";
+import { guide as w3W2gForm } from "./w2g-form";
+import { guide as w3CashTornadoSlotsReview } from "./cash-tornado-slots-review";
+import { guide as w3DoubleChanceBet } from "./double-chance-bet";
+import { guide as w3Lucky15Bet } from "./lucky-15-bet";
 export const GUIDES: Guide[] = [
   whatIsACryptoCasino,
   provablyFairCasino,
@@ -2083,6 +2140,63 @@ export const GUIDES: Guide[] = [
   w2WsmCasinoReview,
   w2XEmpireTelegram,
   w2YescoinReview,
+  w39MasksOfFireSlot,
+  w3BookOfRaSlot,
+  w3DavinciDiamondsSlot,
+  w3DorkUnitSlot,
+  w3ExtraChilliSlot,
+  w3FireJokerSlot,
+  w3GemsBonanzaSlot,
+  w3GonzosQuestSlot,
+  w3HandOfAnubisSlot,
+  w3KittyGlitterSlot,
+  w3LegacyOfDeadSlot,
+  w3LuckyLadyCharmSlot,
+  w3ReactoonzSlot,
+  w3RiseOfOlympusSlot,
+  w3SizzlingHotSlot,
+  w3TwinSpinSlot,
+  w3WheelOfFortuneSlot,
+  w3WisdomOfAthenaSlot,
+  w3AndarBahar,
+  w3FanTanGame,
+  w3MiniBaccarat,
+  w3CasinoTableRental,
+  w3JamesBondRouletteStrategy,
+  w3VideoKeno,
+  w3DealOrNoDealLive,
+  w3ComeBetCraps,
+  w3Natural8Review,
+  w3BadugiPoker,
+  w3FiveCardDraw,
+  w3PineapplePoker,
+  w3HorsePoker,
+  w3CBetPoker,
+  w3CheckRaisePoker,
+  w3DonkBetPoker,
+  w3ThreeBetPoker,
+  w3IcmPoker,
+  w3FreerollPoker,
+  w3PokerHud,
+  w3RabbitHuntingPoker,
+  w3BadBeatJackpot,
+  w3BelmontStakesBetting,
+  w3PreaknessBetting,
+  w3BestCasinosInVegas,
+  w3DowntownLasVegasCasinos,
+  w3ElCortezCasino,
+  w3CaesarsRewardsTiers,
+  w3CanYouSmokeInCasinos,
+  w3CasinoJobs,
+  w3BitcasinoIoReview,
+  w3HowlCasinoReview,
+  w3KingdomCasinoReview,
+  w3PinUpCasinoReview,
+  w3OnlineGamblingLegalUtah,
+  w3W2gForm,
+  w3CashTornadoSlotsReview,
+  w3DoubleChanceBet,
+  w3Lucky15Bet,
 ];
 
 export type ClusterInfo = {
@@ -2345,6 +2459,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "flush-casino-review",
         "gamba-casino-review",
         "metaspins-review",
+        "bitcasino-io-review",
+        "howl-casino-review",
+        "kingdom-casino-review",
+        "pin-up-casino-review",
       ],
     },
     {
@@ -2397,6 +2515,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "gambling-tax-australia",
         "gambling-tax-uk",
         "gambling-tax-calculator",
+        "w2g-form",
       ],
     },
     {
@@ -2456,6 +2575,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "online-gambling-legal-virginia",
         "online-gambling-legal-wisconsin",
         "native-american-casinos",
+        "online-gambling-legal-utah",
       ],
     },
     {
@@ -3040,6 +3160,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "hello-millions-review",
         "wow-vegas-review",
         "jackpota-review",
+        "cash-tornado-slots-review",
       ],
     },
     {
@@ -3111,6 +3232,15 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "bluffing-in-poker",
         "slow-play-poker",
         "straddle-poker",
+        "c-bet-poker",
+        "check-raise-poker",
+        "donk-bet-poker",
+        "three-bet-poker",
+        "icm-poker",
+        "freeroll-poker",
+        "poker-hud",
+        "rabbit-hunting-poker",
+        "bad-beat-jackpot",
       ],
     },
     {
@@ -3146,6 +3276,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "blockchain-poker-review",
         "pokerok-review",
         "swc-poker-review",
+        "natural8-review",
       ],
     },
     {
@@ -3164,6 +3295,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "open-face-chinese-poker",
         "razz-poker",
         "short-deck-poker",
+        "badugi-poker",
+        "five-card-draw",
+        "pineapple-poker",
+        "horse-poker",
       ],
     },
     {
@@ -3297,6 +3432,11 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "dragon-tiger",
         "teen-patti",
         "pai-gow-tiles",
+        "andar-bahar",
+        "fan-tan-game",
+        "mini-baccarat",
+        "casino-table-rental",
+        "james-bond-roulette-strategy",
       ],
     },
     {
@@ -3312,11 +3452,13 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "pai-gow-poker",
         "casino-war-game",
         "sic-bo-online",
+        "video-keno",
+        "deal-or-no-deal-live",
       ],
     },
     {
       name: "Craps bets",
-      slugs: ["crapless-craps", "craps-field-bet"],
+      slugs: ["crapless-craps", "craps-field-bet", "come-bet-craps"],
     },
   ],
   "Sports betting": [
@@ -3342,7 +3484,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     },
     {
       name: "Sport lines",
-      slugs: ["puck-line", "run-line", "draw-no-bet", "asian-handicap", "both-teams-to-score"],
+      slugs: ["puck-line", "run-line", "draw-no-bet", "asian-handicap", "both-teams-to-score", "double-chance-bet"],
     },
     {
       name: "Parlays and futures",
@@ -3353,6 +3495,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "hedge-betting",
         "futures-bet",
         "bonus-bets-explained",
+        "lucky-15-bet",
       ],
     },
     {
@@ -3600,6 +3743,24 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "chaos-crew-slot",
         "starburst-slot",
         "mega-moolah-slot",
+        "9-masks-of-fire-slot",
+        "book-of-ra-slot",
+        "davinci-diamonds-slot",
+        "dork-unit-slot",
+        "extra-chilli-slot",
+        "fire-joker-slot",
+        "gems-bonanza-slot",
+        "gonzos-quest-slot",
+        "hand-of-anubis-slot",
+        "kitty-glitter-slot",
+        "legacy-of-dead-slot",
+        "lucky-lady-charm-slot",
+        "reactoonz-slot",
+        "rise-of-olympus-slot",
+        "sizzling-hot-slot",
+        "twin-spin-slot",
+        "wheel-of-fortune-slot",
+        "wisdom-of-athena-slot",
       ],
     },
   ],
@@ -3667,6 +3828,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "riviera-casino",
         "oldest-casino",
         "casino-black-book",
+        "best-casinos-in-vegas",
+        "downtown-las-vegas-casinos",
+        "el-cortez-casino",
+        "caesars-rewards-tiers",
       ],
     },
     {
@@ -3679,6 +3844,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "casino-cage",
         "casino-marker",
         "casino-architecture",
+        "can-you-smoke-in-casinos",
       ],
     },
     {
@@ -3693,7 +3859,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     },
     {
       name: "Casino jobs",
-      slugs: ["pit-boss", "dealer-school", "casino-dealer-salary", "casino-host"],
+      slugs: ["pit-boss", "dealer-school", "casino-dealer-salary", "casino-host", "casino-jobs"],
     },
     {
       name: "Culture and belief",
@@ -3905,6 +4071,8 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "horse-racing-terms",
         "kentucky-derby-betting",
         "breeders-cup-betting",
+        "belmont-stakes-betting",
+        "preakness-betting",
       ],
     },
     {
