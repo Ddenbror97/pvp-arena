@@ -20,7 +20,7 @@ export default defineConfig({
         enforce: "pre",
         transform(code, id) {
           const file = id.split("?")[0];
-          if (!file.endsWith("/src/styles.css") || !code.includes("./fonts/")) return null;
+          if (file === undefined || !file.endsWith("/src/styles.css") || !code.includes("./fonts/")) return null;
           const dir = file.slice(0, file.lastIndexOf("/"));
           return code.replace(/url\("(\.\/fonts\/[^"]+)"\)/g, (_match, rel: string) => {
             const bytes = readFileSync(`${dir}/${rel.slice(2)}`);
