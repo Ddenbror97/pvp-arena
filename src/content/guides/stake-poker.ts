@@ -12,9 +12,9 @@ export const guide: Guide = {
   answer:
     "Stake poker, in the card-room rules opened 20 October 2026, lists Hold'em and Omaha cash games at 7% rake with published caps. The operator is Medium Rare N.V. under licence OGL/2024/1451/0918. A poker bonus code and a cash-out clock are not published. We did not open an account.",
   facts: [
-    "Last tested 20 October 2026. Opened the card-room rules, the terms, and the Curaçao certificate that names stake.com. The path /poker returned 404.",
+    "The rake table and the Curaçao certificate are the 20 October 2026 read. stake.com/poker returned 404 that day. On 21 October 2026 the poker path, the card-room rules, and the terms returned 403, so the rake table was not re-read.",
     "Stake poker cash Hold'em and Omaha are tabled at 7% with a cap that changes by blinds and player count.",
-    "Terms require a 100% wager of each deposit before a fiat or crypto withdrawal. The processing clock is not published.",
+    "Stake's help center, updated 24 August 2026, requires a 100% wager of each deposit before a crypto withdrawal or a tip, and it quotes clause 8.5 for a fiat withdrawal. The processing clock is not published.",
     "Certificate: Medium Rare N.V., company 145353, licence OGL/2024/1451/0918, granted 9 June 2025, status Active.",
     "A public poker bonus code is not on the card-room page. We did not sit a hand.",
   ],
@@ -22,7 +22,7 @@ export const guide: Guide = {
     {
       id: "room",
       title: "The policy page, not a 404 lobby path",
-      body: `Opened 20 October 2026. stake.com/poker returned 404. The rules that loaded are the card-room policy.
+      body: `Opened 20 October 2026. stake.com/poker returned 404. The rules that loaded are the card-room policy. On 21 October 2026 a direct request to that path, to the card-room rules, and to the terms returned 403, so the 404 is not restated as a status checked that day. The rake figures below stay the 20 October read.
 
 They bind you with the terms and the Stake Poker Security and Ecology Policy.
 
@@ -77,7 +77,7 @@ Do not paste a casino code into a poker cashier and assume the card-room rules h
       title: "The cashier rule that sits over the room",
       body: `### Stake poker withdrawal
 
-The card-room page does not print a cash-out clock. Clause 8.5 requires a 100% wager of a deposit before a fiat withdrawal. Clause 8.10 requires the same 100% before a crypto withdrawal.
+The card-room page does not print a cash-out clock. The 20 October terms read numbered a 100% wager of a deposit before a fiat withdrawal as clause 8.5, and the same 100% before a crypto withdrawal as clause 8.10. Those two policy URLs returned 403 on 21 October 2026, so the clause numbers were not re-read there. Stake's help center, updated 24 August 2026, still says every deposit must be wagered 100% before a crypto withdrawal or a tip, and it quotes clause 8.5 for a fiat withdrawal.
 
 The minimum is identified when you withdraw, so a number is not published in the clause. A fee may be charged at their discretion. The fee amount and the processing time are not published.
 
@@ -183,9 +183,9 @@ Bounty events split a shared elimination. All-in tournaments deal you all-in eve
 | Support | support@stake.com. Complaints acknowledged within one week |
 | Bonus terms | Public poker code not published. VIP contribution is not a printed code |
 
-Pros: the rake table is numeric, including caps. The licence on the terms matches a certificate that names the domain. The 60-minute rejoin rule and the 100% wager rule are written in sentences.
+Pros: the 20 October rake table is numeric, including caps. The licence on the terms matched a certificate that names the domain on that read. The 60-minute rejoin rule is from that read. The 100% wager rule is restated by Stake's help center.
 
-Cons: /poker was a 404, so the rules live on a policy URL. A standard tournament fee percent is not published. The cash-out clock is not published.
+Cons: stake.com/poker returned 404 on 20 October 2026, and a direct request on 21 October 2026 was refused. A standard tournament fee percent is not published. The cash-out clock is not published.
 
 The withdrawal minimum is not published in the clause. There is no public poker code.
 
@@ -201,7 +201,7 @@ Read Stake poker caps on the card-room page before you buy in. If a later row is
     },
     {
       q: "What rake does the card room print?",
-      a: "Stake poker lists Hold'em and Omaha cash games at 7%, with caps by blinds and seats. Next! is also 7%. Points rummy is 15%, and deals rummy tournaments are 10%. A single percent for every regular tournament is not published. The rules say that fee is stated in the lobby.",
+      a: "On the 20 October 2026 card-room read, Hold'em and Omaha cash games are 7%, with caps by blinds and seats. Next! is also 7%. Points rummy is 15%, and deals rummy tournaments are 10%. That page returned 403 on 21 October 2026, so those percents were not re-read. A single percent for every regular tournament is not published. The rules say that fee is stated in the lobby.",
     },
     {
       q: "Is there a public poker bonus code?",
@@ -209,7 +209,7 @@ Read Stake poker caps on the card-room page before you buy in. If a later row is
     },
     {
       q: "How fast is a cash-out after poker?",
-      a: "A processing time is not published. Before a fiat or a crypto withdrawal, the terms require you to wager 100% of the deposit. The minimum appears when you request the withdrawal, and it is not printed as a number in the clause. A fee may be charged at their discretion. We did not time a cash-out.",
+      a: "A processing time is not published. Stake's help center, updated 24 August 2026, requires a 100% wager of the deposit before a crypto withdrawal, and it quotes clause 8.5 for fiat. The minimum appears when you request the withdrawal. A fee may be charged at their discretion. We did not time a cash-out.",
     },
     {
       q: "What is the going-south rule?",
@@ -222,7 +222,9 @@ Read Stake poker caps on the card-room page before you buy in. If a later row is
   ],
   sources: [
     { label: "Stake poker card-room rules, opened 20 October 2026", url: "https://stake.com/policies/card-room-rules" },
-    { label: "Stake terms, opened 20 October 2026", url: "https://stake.com/policies/terms" },
+    { label: "Stake terms, opened 20 October 2026; direct request returned 403 on 21 October 2026", url: "https://stake.com/policies/terms" },
+    { label: "Stake help: crypto wager requirement, updated 24 August 2026", url: "https://help.stake.com/en/articles/4929043-what-is-a-wager-requirement-for-crypto" },
+    { label: "Stake help: fiat clause 8.5, updated 24 August 2026", url: "https://help.stake.com/en/articles/8226254-is-there-a-wager-requirement-for-local-currencies" },
     { label: "Curaçao certificate naming stake.com, opened 20 October 2026", url: "https://cert.cga.cw/certificate?id=ZXlKcGRpSTZJbkJtT0dKb04zWTRhbmc1VERsd1RXTTRRMjVHZDNjOVBTSXNJblpoYkhWbElqb2lSVEJwU2t0emJYSm9LMUkzYm04NVVqSkZRMnRXZHowOUlpd2liV0ZqSWpvaVpEWm1NV0kwT1dNeE9XVmpaVFkyTnpFd01HVmpPV1V4WmpWaU5qRm1NVEprWXpjd05tTTJaamczWkdNM1pHSXdaVEl6T1RFeVlUSXlOell6TnpJNVpTSXNJblJoWnlJNklpSjk%3D" },
     { label: "Stake rakeback help, opened 20 October 2026", url: "https://help.stake.com/en/articles/4821738-what-is-rakeback" },
     { label: "Stake poker help collection, opened 20 October 2026", url: "https://help.stake.com/en/collections/13814894-poker" },
@@ -235,5 +237,5 @@ Read Stake poker caps on the card-room page before you buy in. If a later row is
     "crypto-casino-withdrawals",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

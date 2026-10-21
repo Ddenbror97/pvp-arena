@@ -50,7 +50,7 @@ Do not let a streamer read this page for you. Sponsorship means the face is paid
 
 Rakeback, rain and reload offers are discounts on a price you still pay. They do not set the edge to zero. Read the [rakeback](/guides/rakeback-explained) explainer and the [wagering requirements](/guides/casino-wagering-requirements) page before you accept any Rollbit promotion. A bonus you cannot clear is a smaller balance with extra rules.
 
-PVPspinArena does not run a welcome bonus, a deposit match or a rakeback ladder. The Coinflip fee is a published cut of a player-versus-player pot, shown before you play, and the default configuration is zero. That is a different price from a house game that keeps a percentage of every bet whether or not a promotion is flashing.
+PVPspinArena does not run a welcome bonus, a deposit match or a rakeback ladder. Coinflip keeps 5% of the pot when the round settles. That fee is on the [terms](/terms). That is a different price from a house game that keeps a percentage of every bet whether or not a promotion is flashing.
 
 If a review site prints a bonus percentage for Rollbit, open Rollbit's promotions page and compare. If the numbers disagree, believe the cashier you are about to use, dated today, not a blog.`,
     },

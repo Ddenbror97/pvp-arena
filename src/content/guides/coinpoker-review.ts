@@ -200,7 +200,7 @@ If the screenshot shows a rake, store it in their folder with the date. Do not p
 
 A current crypto-room brand is not the early bitcoin name. [The early bitcoin room name](/guides/swc-poker-review) is a history page, and its present rake is still not published here.
 
-Medium Rare's card room is a different contract. [Those card-room rules](/guides/stake-poker) name a 100% wager line before withdrawal and do not print a rakeback code. Their poker path returned 404.`,
+Medium Rare's card room is a different contract. [Those card-room rules](/guides/stake-poker) name a 100% wager of each deposit before withdrawal. Stake's help center, updated 24 August 2026, still states that rule for a crypto withdrawal and quotes clause 8.5 for fiat. The 20 October card-room read did not print a rakeback code. stake.com/poker returned 404 that day. A direct request on 21 October 2026 was refused, so this page does not call 404 the current status.`,
     },
   ],
   faqs: [
@@ -231,7 +231,10 @@ Our tables are a separate six-max game with a 5% fee after a flop. The shared th
       a: "Two stakes of $33 make $66. Five percent is $3.30, so the winner receives $62.70. Coinflip is not their poker client and has no rakeback.",
     },
   ],
-  sources: [],
+  sources: [
+    { label: "Stake help: crypto wager requirement, updated 24 August 2026", url: "https://help.stake.com/en/articles/4929043-what-is-a-wager-requirement-for-crypto" },
+    { label: "Stake help: fiat clause 8.5, updated 24 August 2026", url: "https://help.stake.com/en/articles/8226254-is-there-a-wager-requirement-for-local-currencies" },
+  ],
   related: [
     "crypto-poker",
     "real-money-poker-apps",
@@ -239,5 +242,5 @@ Our tables are a separate six-max game with a 5% fee after a flop. The shared th
     "rigged-poker-sites",
     "swc-poker-review",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };
