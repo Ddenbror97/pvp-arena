@@ -175,7 +175,7 @@ export function GameChat({
           </h2>
         </div>
         <span className="inline-flex h-4 w-32 shrink-0 items-center justify-end gap-2 text-xs text-foreground/85">
-          <span className="truncate">
+          <span className="inline-block w-[6.5rem] truncate text-right">
             {status === "offline"
               ? "Reconnecting..."
               : status === "live"

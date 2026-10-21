@@ -14,6 +14,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { paintSignedIn, readAuthHint } from "@/lib/auth-hint";
 import {
   money,
   pokerError,
@@ -57,11 +58,15 @@ function findTables() {
 export function PokerLobby() {
   const lobby = useLobby();
   const auth = useAuth();
-  // Auth state is client-only; defer it until after hydration to keep SSR markup identical.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  const userId = mounted ? auth.userId : null;
-  const needsProfile = mounted && auth.needsProfile;
+  // The cookie is readable on the server, so a signed-in seat button is the first paint
+  // instead of "Sign in" swapping to "Join Table" after hydration. The session is
+  // applied only after that paint, so a stale cookie cannot mismatch hydration.
+  const [hint] = useState(readAuthHint);
+  const [settled, setSettled] = useState(false);
+  useEffect(() => setSettled(true), []);
+  const signedIn = settled ? paintSignedIn(auth.ready, auth.userId, hint) : hint;
+  const userId = auth.userId;
+  const needsProfile = auth.ready && auth.needsProfile;
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [filters, setFilters] = useState<LobbyFilters>(DEFAULT_FILTERS);
@@ -120,7 +125,7 @@ export function PokerLobby() {
     }
   };
 
-  const act = { userId, needsProfile, choose };
+  const act = { userId, signedIn, needsProfile, choose };
 
   return (
     <div className="poker-lobby">
@@ -534,6 +539,7 @@ function Radio({
 
 type Act = {
   userId: string | null;
+  signedIn: boolean;
   needsProfile: boolean;
   choose: (type: LobbyType, table: LobbyTable | null) => void;
 };
@@ -543,24 +549,31 @@ function SeatButton({
   table,
   label,
   userId,
+  signedIn,
   needsProfile,
   choose,
   className,
 }: Act & { type: LobbyType; table: LobbyTable | null; label: string; className?: string }) {
-  if (!userId) {
+  if (!signedIn) {
     return (
       <Link to="/auth" className={cn("poker-btn poker-btn-raise", className)}>
         Sign in
       </Link>
     );
   }
+  // Stay at full opacity while the session catches up to the cookie, so the
+  // control does not fade in. Clicks wait until the real user id is known.
   return (
     <button
       type="button"
       className={cn("poker-btn poker-btn-raise", className)}
       disabled={needsProfile}
+      aria-disabled={!userId || needsProfile || undefined}
       title={needsProfile ? "Finish your profile to play" : undefined}
-      onClick={() => choose(type, table)}
+      onClick={() => {
+        if (!userId || needsProfile) return;
+        choose(type, table);
+      }}
     >
       {label}
     </button>
