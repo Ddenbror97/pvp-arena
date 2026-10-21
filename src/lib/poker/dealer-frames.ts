@@ -77,8 +77,10 @@ export const DEALER_CORE_FRAMES = [
   "shuffle-02",
   "shuffle-03",
   "shuffle-05",
-  "deal-02",
-  "deal-05",
+  "deal-out-1",
+  "deal-out-2",
+  "deal-back-1",
+  "deal-back-2",
   "waiting",
   "celebrate",
 ] as const;

@@ -72,9 +72,9 @@ export function DealerGallery() {
     <div className="dealer-gallery">
       <h1>Dealer frames</h1>
       <p>
-        Ordered poses from the two sheets, on the table felt. These are not consecutive
-        frames of one filmed gesture. A half-extended arm between the deck and a full
-        reach was not in the art, so the deal steps from the deck to the contact pose.
+        Ordered poses on the table felt. These are not consecutive frames of one
+        filmed gesture. The deal lifts a card, holds it with the elbow bent, opens
+        the hand, and returns to the deck.
       </p>
       <div className={cn("dealer-gallery-stage", narrow && "is-narrow")}>
         <Dealer

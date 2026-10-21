@@ -1,7 +1,7 @@
 /**
- * Frame sequences for the dealer. These are ordered poses from the two sprite
- * sheets, not consecutive frames of one recorded gesture. Missing travel
- * (a half-extended arm between the deck and a full reach) is not invented.
+ * Frame sequences for the dealer. These are ordered poses from the sprite
+ * sheets, not consecutive frames of one recorded gesture. The deal uses the
+ * arm strip: card lifted, card at a bent elbow, open hand, then the deck.
  *
  * The director still owns timing. A clip never delays a card, a bet, or a
  * payout. A newer pose replaces the clip; the same pose does not restart it.
@@ -55,13 +55,13 @@ export const DEALER_CLIPS = {
   deal: {
     rank: 50,
     hold: true,
-    // No half-extended arm exists. deal-03, deal-04, and deal-reach keep a
-    // neighbor's shoulder in the cutout, so the contact pose is deal-02.
+    // One gesture from the arm strip. The card leaves her hand before the
+    // open palm, so the flying card drawn by the table is not doubled.
     frames: [
-      { frame: "shuffle-02", ms: 120 },
-      { frame: "deal-02", ms: 360 },
-      { frame: "deal-05", ms: 200 },
-      { frame: "shuffle-01", ms: 1 },
+      { frame: "deal-out-1", ms: 140 },
+      { frame: "deal-out-2", ms: 300 },
+      { frame: "deal-back-1", ms: 190 },
+      { frame: "deal-back-2", ms: 1 },
     ],
   },
   "deal-side": {
@@ -77,10 +77,10 @@ export const DEALER_CLIPS = {
     rank: 50,
     hold: true,
     frames: [
-      { frame: "shuffle-02", ms: 80 },
-      { frame: "deal-02", ms: 400 },
-      { frame: "deal-05", ms: 180 },
-      { frame: "shuffle-01", ms: 1 },
+      { frame: "deal-out-1", ms: 100 },
+      { frame: "deal-out-2", ms: 260 },
+      { frame: "deal-back-1", ms: 170 },
+      { frame: "deal-back-2", ms: 1 },
     ],
   },
   wait: { rank: 20, hold: true, frames: [{ frame: "waiting", ms: 1 }] },
@@ -116,8 +116,8 @@ export const DEALER_RESTING: Record<DealerPose, string> = {
   intro: "idle",
   idle: "idle",
   shuffle: "shuffle-01",
-  deal: "deal-02",
-  reveal: "deal-02",
+  deal: "deal-out-2",
+  reveal: "deal-out-2",
   wait: "waiting",
   acknowledge: "celebrate",
 };

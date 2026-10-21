@@ -42,7 +42,7 @@ describe("dealer clips", () => {
       "shuffle-05",
       "shuffle-01",
     ]);
-    expect(clipFrames("deal")).toEqual(["shuffle-02", "deal-02", "deal-05", "shuffle-01"]);
+    expect(clipFrames("deal")).toEqual(["deal-out-1", "deal-out-2", "deal-back-1", "deal-back-2"]);
     expect(clipFrames("deal")).not.toContain("deal-03");
     expect(clipFrames("deal")).not.toContain("deal-04");
     expect(clipFrames("deal")).not.toContain("deal-06");
@@ -61,7 +61,7 @@ describe("dealer clips", () => {
     const runner = new DealerClipRunner();
     runner.pose("shuffle", 0, false);
     runner.pose("deal", 400, false);
-    expect(runner.sample(400)).toMatchObject({ clip: "deal", frame: "shuffle-02" });
+    expect(runner.sample(400)).toMatchObject({ clip: "deal", frame: "deal-out-1" });
   });
 
   it("ignores an idle wink during a deal and during a player's turn", () => {
@@ -97,8 +97,8 @@ describe("dealer clips", () => {
     expect(runner.sample(0)).toMatchObject({ frame: "shuffle-01", nextAt: null });
     expect(runner.sample(5000)).toMatchObject({ frame: "shuffle-01", nextAt: null });
     runner.play("deal", 6000, true);
-    expect(runner.sample(6000).frame).toBe("deal-02");
-    expect(runner.sample(9000).frame).toBe("deal-02");
+    expect(runner.sample(6000).frame).toBe("deal-out-2");
+    expect(runner.sample(9000).frame).toBe("deal-out-2");
   });
 
   it("freezes elapsed time while the page is hidden", () => {
@@ -176,6 +176,7 @@ describe("dealer frame files", () => {
     expect(new Set(ids).size).toBe(ids.length);
     expect(manifest.frames.filter((frame) => frame.sheet === "a")).toHaveLength(10);
     expect(manifest.frames.filter((frame) => frame.sheet === "b")).toHaveLength(21);
+    expect(manifest.frames.filter((frame) => frame.sheet === "c")).toHaveLength(4);
     expect(manifest.canvas).toEqual({ w: 640, h: 674 });
     for (const frame of manifest.frames) {
       expect(frame.anchor).toEqual(manifest.anchor);
@@ -193,7 +194,7 @@ describe("dealer frame files", () => {
       expect(bytes.subarray(8, 12).toString("ascii")).toBe("WEBP");
       expect(bytes.includes(Buffer.from("ALPH"))).toBe(true);
     }
-    for (const name of ["sheet-a.png", "sheet-b.png"]) {
+    for (const name of ["sheet-a.png", "sheet-b.png", "sheet-c.png"]) {
       const png = readFileSync(join(root, "src/assets/poker/dealer/source", name));
       expect(png.subarray(0, 8).toString("hex")).toBe("89504e470d0a1a0a");
       expect(png[25]).toBe(6);
