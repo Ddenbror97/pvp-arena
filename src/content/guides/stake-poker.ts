@@ -5,17 +5,17 @@ export const guide: Guide = {
   cluster: "Poker",
   keyword: "stake poker",
   secondary: ["stake poker bonus code", "stake poker withdrawal", "is stake poker legit"],
-  title: "Stake Poker Review: 7% Rake and a Wager Rule",
+  title: "Stake Poker Review: 20 October Card-Room Read",
   description:
-    "Stake poker on 20 October 2026: card-room rules print 7% cash rake. Medium Rare licence OGL/2024/1451/0918 is Active. A poker bonus code is not published.",
+    "The Stake poker 7% rake, 60-minute rejoin rule, and licence are the 20 October 2026 read, not confirmed on 21 October. No poker code is published.",
   h1: "Stake poker rules on 20 October 2026, read without a seat",
   answer:
-    "Stake poker, in the card-room rules opened 20 October 2026, lists Hold'em and Omaha cash games at 7% rake with published caps. The operator is Medium Rare N.V. under licence OGL/2024/1451/0918. A poker bonus code and a cash-out clock are not published. We did not open an account.",
+    "Stake poker, in the card-room rules opened 20 October 2026, listed Hold'em and Omaha cash games at 7% rake with published caps, and a 60-minute rejoin rule. That same read showed Medium Rare N.V. under licence OGL/2024/1451/0918, status Active. The card-room page, the terms, and the certificate were not re-opened on 21 October 2026, so the rake, the rejoin rule, and that licence status are not confirmed today. A poker bonus code and a cash-out clock were not published. We did not open an account.",
   facts: [
     "The rake table and the Curaçao certificate are the 20 October 2026 read. stake.com/poker returned 404 that day. On 21 October 2026 the poker path, the card-room rules, and the terms returned 403, so the rake table was not re-read.",
-    "Stake poker cash Hold'em and Omaha are tabled at 7% with a cap that changes by blinds and player count.",
+    "On the 20 October 2026 card-room read, cash Hold'em and Omaha were tabled at 7% with a cap that changes by blinds and player count. That page was not re-read on 21 October.",
     "Stake's help center, updated 24 August 2026, requires a 100% wager of each deposit before a crypto withdrawal or a tip, and it quotes clause 8.5 for a fiat withdrawal. The processing clock is not published.",
-    "Certificate: Medium Rare N.V., company 145353, licence OGL/2024/1451/0918, granted 9 June 2025, status Active.",
+    "On the 20 October 2026 certificate read: Medium Rare N.V., company 145353, licence OGL/2024/1451/0918, granted 9 June 2025, status Active. That certificate was not re-opened on 21 October.",
     "A public poker bonus code is not on the card-room page. We did not sit a hand.",
   ],
   sections: [
@@ -24,24 +24,24 @@ export const guide: Guide = {
       title: "The policy page, not a 404 lobby path",
       body: `Opened 20 October 2026. stake.com/poker returned 404. The rules that loaded are the card-room policy. On 21 October 2026 a direct request to that path, to the card-room rules, and to the terms returned 403, so the 404 is not restated as a status checked that day. The rake figures below stay the 20 October read.
 
-They bind you with the terms and the Stake Poker Security and Ecology Policy.
+On that read, the card-room rules said they bind you with the terms and the Stake Poker Security and Ecology Policy.
 
-Order of precedence: terms, then the card-room rules, then the ecology policy, then the game rules in each lobby.
+Order of precedence on that read: terms, then the card-room rules, then the ecology policy, then the game rules in each lobby.
 
-The terms name Medium Rare N.V., head office Seru Loraweg 17, B, Curaçao, licence OGL/2024/1451/0918. The certificate names stake.com, Medium Rare N.V., company 145353, the same licence, granted 9 June 2025, status Active.
+On that read, the terms named Medium Rare N.V., head office Seru Loraweg 17, B, Curaçao, licence OGL/2024/1451/0918. The certificate named stake.com, Medium Rare N.V., company 145353, the same licence, granted 9 June 2025, status Active. Those pages were not re-opened on 21 October 2026.
 
 This page is the card room only. The casino lobby is a different product. Read [the separate write-up of this operator's casino lobby](/guides/stake-casino-review) if that is the desk you meant.
 
 Do not treat a casino promotion as a poker code.
 
-Adults 18 or older, and the higher local age if there is one. The United States is on the prohibited-jurisdiction list in the terms. The hub for this cluster is [Poker](/guides/topics/poker).`,
+Adults 18 or older, and the higher local age if there is one. On that read, the United States was on the prohibited-jurisdiction list in the terms. The hub for this cluster is [Poker](/guides/topics/poker).`,
     },
     {
       id: "legit",
       title: "Is stake poker legit under the same licence",
       body: `### Is stake poker legit
 
-The card room is not a separate company on the pages we opened. It sits on stake.com, and that domain is the one on the Active certificate. A legit answer for the room is the same licence file, plus the rake table, plus the cashier rules in the terms.
+The card room was not a separate company on the pages opened 20 October 2026. It sat on stake.com, and that domain was the one on the certificate marked Active that day. Those pages were not re-opened on 21 October 2026, so the licence status and the rake table are not confirmed today.
 
 It is not a promise that a lobby fee matches a number we did not see. A tournament fee is applied, and the specifics are stated in the lobby.
 
@@ -53,7 +53,7 @@ Calculations of what you win or lose are at the operator's discretion, and dispu
 
 [Solver-style ranges](/guides/gto-poker-strategy) will not change the rake line. PVPspinArena is not Medium Rare.
 
-[What an Active seal does not prove](/guides/crypto-casino-license) is the cashier. The certificate names the domain. It does not print a rakeback code.`,
+[What an Active seal does not prove](/guides/crypto-casino-license) is the cashier. The certificate named the domain on that 20 October read. It did not print a rakeback code.`,
     },
     {
       id: "code",
@@ -66,7 +66,7 @@ Clause 1.7 says the room counts toward VIP progress and toward the wagering requ
 
 A rakeback help article we opened says poker rakeback is 3.5% of the rake after the VIP threshold on that page. That article is not the card-room page.
 
-The 7% rake is. The 3.5% return is not a code.
+The 7% figure is from that 20 October card-room read, which was not re-opened on 21 October. The 3.5% return is not a code.
 
 Do not paste a casino code into a poker cashier and assume the card-room rules honor it. If an offer appears inside an account, it was not on the public page we read.
 
@@ -91,20 +91,22 @@ The United States is a prohibited jurisdiction. A blocked country is a stop, not
     },
     {
       id: "rake",
-      title: "The 7% table and the caps beside it",
-      body: `Hold'em cash games are listed at 7% with three caps. At 0.05/0.10 the caps are 0.75, 1.20, and 1.5 as the table grows from two players to five or more. At 0.50/1.00 the caps are 4, 6.4, and 8.
+      title: "The 20 October rake table and its caps",
+      body: `These rows are the 20 October 2026 card-room read. That page returned 403 on 21 October 2026, so they are not confirmed today.
 
-Omaha is also 7%, with its own caps. At 0.50/1.00 Omaha those caps are 3, 3.96, and 6.
+Hold'em cash games were listed at 7% with three caps. At 0.05/0.10 the caps were 0.75, 1.20, and 1.5 as the table grew from two players to five or more. At 0.50/1.00 the caps were 4, 6.4, and 8.
 
-The Next format is 7% with one six-player cap. At 0.05/0.10 that cap is 0.7.
+Omaha was also 7%, with its own caps. At 0.50/1.00 Omaha those caps were 3, 3.96, and 6.
 
-All-in or fold uses a fixed rake plus a jackpot fee. At 0.20/0.50 each of those is 0.035.
+The Next format was 7% with one six-player cap. At 0.05/0.10 that cap was 0.7.
 
-Points rummy is 15%. Deals rummy tournaments are 10%.
+All-in or fold used a fixed rake plus a jackpot fee. At 0.20/0.50 each of those was 0.035.
+
+Points rummy was 15%. Deals rummy tournaments were 10%.
 
 Dollar signs in the poker rules are described as an approximate USD hint. The terms say the site does not exchange currency and does not warrant that hint. Read the chip unit you are actually sitting.
 
-If you leave with more than your buy-in, you cannot rejoin with a smaller stack for at least 60 minutes. Ring games are table stakes. The minimum you must play is the big blind.
+On that read, if you left with more than your buy-in, you could not rejoin with a smaller stack for at least 60 minutes. That rejoin rule was not re-opened on 21 October 2026. Ring games were described as table stakes. The minimum you had to play was the big blind.
 
 A standard tournament fee percent, outside rummy, is not published. It lives in the lobby.`,
     },
@@ -119,7 +121,7 @@ A standard tournament fee percent, outside rummy, is not published. It lives in 
 | Provably fair | No. Cards are the room's. No seed in the rules | Often no | Yes, on the games that publish a seed |
 | Minimum bet | Big blind in ring games | not published | $1 on Coinflip |
 
-| Rule on the card-room page | Figure |
+| Rule on the 20 October 2026 card-room read | Figure |
 | --- | --- |
 | Hold'em and Omaha cash rake | 7%, caps by blinds and seats |
 | Next! rake | 7%, six-player cap |
@@ -169,7 +171,7 @@ Bounty events split a shared elimination. All-in tournaments deal you all-in eve
 - [ ] I know a public poker code is not on the card-room page.
 - [ ] I know crypto and fiat withdrawals need a 100% wager of the deposit.
 - [ ] I know the cash-out clock and the minimum are not published in the terms clause.
-- [ ] I will not rebuy smaller for 60 minutes after leaving up.
+- [ ] I treat the 60-minute rejoin note as the 20 October read until I see it on the card-room page.
 - [ ] I understand a disconnect can fold me once the time bank ends.
 - [ ] I can afford to lose the buy-in. Bills stay in the bank.
 - [ ] 1-800-GAMBLER is the stop if the rake stops mattering.
@@ -197,7 +199,7 @@ Read Stake poker caps on the card-room page before you buy in. If a later row is
   faqs: [
     {
       q: "Is Stake poker legit?",
-      a: "The card room is part of stake.com, operated by Medium Rare N.V. under licence OGL/2024/1451/0918. The certificate opened on 20 October 2026 names that domain, company 145353, status Active, granted 9 June 2025. That is a real licence file. It does not publish a cash-out clock or a poker bonus code. We did not open an account.",
+      a: "On the 20 October 2026 read, the card room sat on stake.com, operated by Medium Rare N.V. under licence OGL/2024/1451/0918. The certificate opened that day named the domain, company 145353, status Active, granted 9 June 2025. That certificate was not re-opened on 21 October 2026, so this page does not confirm the status today. It did not publish a cash-out clock or a poker bonus code. We did not open an account.",
     },
     {
       q: "What rake does the card room print?",
@@ -213,7 +215,7 @@ Read Stake poker caps on the card-room page before you buy in. If a later row is
     },
     {
       q: "What is the going-south rule?",
-      a: "If you leave a table with more chips than your buy-in, you cannot rejoin that table with a smaller buy-in for at least 60 minutes. Ring games are table stakes. The minimum amount you must put in play is the big blind. Seated players are expected to take hands, not sit out as a habit.",
+      a: "On the 20 October 2026 card-room read, leaving a table with more chips than your buy-in blocked a smaller rejoin for at least 60 minutes. That page was not re-opened on 21 October 2026, so the rejoin rule is not confirmed today. Ring games were described as table stakes, and the minimum amount you had to put in play was the big blind.",
     },
     {
       q: "Who should not play?",
