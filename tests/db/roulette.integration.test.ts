@@ -130,7 +130,7 @@ async function assertInvariants() {
 d("roulette adversarial audit (isolated schema)", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
-  }, 90000);
+  }, 180_000);
   beforeEach(async () => {
     await sql`truncate pvp_test.audit_logs, pvp_test.roulette_payouts, pvp_test.roulette_results, pvp_test.roulette_bets,
       pvp_test.roulette_game_secrets, pvp_test.roulette_games, pvp_test.ledger_postings, pvp_test.ledger_transactions,
@@ -567,7 +567,7 @@ d("roulette live permissions (read-only catalog)", () => {
   beforeAll(async () => {
     const [row] = await sql`select exists(select 1 from pg_namespace where nspname = 'pvp_test') e`;
     if (!row.e) await sql.unsafe(buildTestSchemaSql());
-  }, 90000);
+  }, 180_000);
 
   it("runs the production lifecycle clock every second without browser sessions", async () => {
     const migration = readFileSync(

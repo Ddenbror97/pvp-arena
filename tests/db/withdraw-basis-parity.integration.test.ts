@@ -114,25 +114,49 @@ d("withdraw basis incremental parity", () => {
 
   it("sync latency stays bounded under repeated and concurrent calls (isolated DB)", async () => {
     const u = await user("lat");
-    await deposit(u, 50_000);
+    const ext = (
+      await sql`select pvp_test._system_account('external_custody', 'USD', 'real') id`
+    )[0].id as string;
+    const accountOf = async (id: string) =>
+      (
+        await sql`select pvp_test._user_account(${id}::uuid, 'user_available', 'USD', 'real') id`
+      )[0].id as string;
+    const avail = await accountOf(u);
+    // Committed rows are already applied. Time sync only while a deposit is still pending.
+    const timeApply = async (id: string, available: string) =>
+      sql.begin(async (db) => {
+        const txId = randomUUID();
+        await db`insert into pvp_test.ledger_transactions (id, kind, idempotency_key, account_type, user_id)
+          values (${txId}::uuid, 'deposit'::pvp_test.tx_kind, ${"lat-" + txId}, 'real', ${id}::uuid)`;
+        await db`select pvp_test._post(${txId}::uuid, ${ext}::uuid, ${-100}::bigint)`;
+        await db`select pvp_test._post(${txId}::uuid, ${available}::uuid, ${100}::bigint)`;
+        const [row] = await db`
+          select pending, extract(epoch from (t1 - t0)) * 1000 as ms
+          from (
+            select clock_timestamp() as t0,
+                   coalesce(current_setting('pvp.wb_pending', true), '') as pending
+          ) a,
+          lateral (select pvp_test._withdraw_basis_sync(), clock_timestamp() as t1) b`;
+        return { ms: Number(row.ms), pending: String(row.pending) };
+      });
+
     const samples: number[] = [];
     for (let i = 0; i < 12; i++) {
-      const [row] = await sql`
-        select extract(epoch from (t1 - t0)) * 1000 as ms
-        from (select clock_timestamp() as t0) a,
-             (select pvp_test._withdraw_basis_sync(), clock_timestamp() as t1) b`;
-      samples.push(Number(row.ms));
+      const sample = await timeApply(u, avail);
+      expect(sample.pending).toMatch(/[0-9a-f-]{36}/);
+      samples.push(sample.ms);
     }
-    await Promise.all([
-      sql`select pvp_test._withdraw_basis_sync()`,
-      sql`select pvp_test._withdraw_basis_sync()`,
-      sql`select pvp_test._withdraw_basis_sync()`,
-    ]);
-    const [row] = await sql`
-      select extract(epoch from (t1 - t0)) * 1000 as ms
-      from (select clock_timestamp() as t0) a,
-           (select pvp_test._withdraw_basis_sync(), clock_timestamp() as t1) b`;
-    samples.push(Number(row.ms));
+    const peers = await Promise.all(
+      Array.from({ length: 3 }, async () => {
+        const id = await user("latc");
+        return { id, available: await accountOf(id) };
+      }),
+    );
+    const concurrent = await Promise.all(peers.map((peer) => timeApply(peer.id, peer.available)));
+    for (const sample of concurrent) expect(sample.pending).toMatch(/[0-9a-f-]{36}/);
+    const last = await timeApply(u, avail);
+    expect(last.pending).toMatch(/[0-9a-f-]{36}/);
+    samples.push(last.ms);
     samples.sort((a, b) => a - b);
     const p99 = samples[Math.max(0, Math.ceil(0.99 * samples.length) - 1)] ?? 0;
     const p95 = samples[Math.max(0, Math.ceil(0.95 * samples.length) - 1)] ?? 0;

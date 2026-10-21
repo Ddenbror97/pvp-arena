@@ -144,7 +144,7 @@ async function driveToTerminal() {
 d("security remediation (isolated schema)", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
-  }, 60000);
+  }, 180_000);
   beforeEach(async () => {
     await sql`truncate pvp_test.audit_logs, pvp_test.coinflip_payouts, pvp_test.coinflip_results, pvp_test.coinflip_entries,
       pvp_test.coinflip_game_secrets, pvp_test.coinflip_games, pvp_test.jackpot_payouts, pvp_test.jackpot_players, pvp_test.jackpot_entries,
