@@ -156,13 +156,16 @@ export function PokerStage({
             ? player.shown_cards
             : null;
         const cards = shown ?? own;
-        const landed = player
+        // The deal animation only decides when opponent backs land. The viewer's own
+        // faces are already on the server, so a fast bot hand cannot finish before they appear.
+        const animated = player
           ? presented
             ? (pres.holeShown[seatNo] ?? 0)
             : hand!.status === "COMMIT"
               ? 0
               : 2
           : 0;
+        const landed = own && own.length === 2 ? Math.max(animated, 2) : animated;
         const turn =
           state.hand?.status === "BETTING" &&
           state.hand.to_act === seatNo &&
