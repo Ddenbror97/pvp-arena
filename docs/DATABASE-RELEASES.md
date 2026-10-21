@@ -48,6 +48,7 @@ Record each production apply here. Do not re-run apply solely to update this doc
 | `20261019231000` | `temp_two_dollar_cashout` | Temporary test floor. Base cashout minimum is $2. Bonus can be cashed out once deposits reach that same $2 minimum. Promo, referral, prize, and partner holds stay. | 2026-10-19 22:56 | Settings and chain 8453 `min_withdrawal_cents` are 200. Fee is 0. Restore both minimums to 2000 to put the $20 floor back. |
 | `20261019234000` | `partner_commission_whole_cents` | Partner commission reports are whole cents. A fractional cent was crashing the admin partners page. | 2026-10-19 23:21 | `sum(bigint)` is numeric, so 20% of 1899 cents was 379.8. The window now truncates toward zero. Reporting only. No balances change. |
 | `20261020140000` | `partner_credit_removals_admin_fk` | Index on `partner_credit_removals.admin_id` for the performance advisor | Not applied from this environment | File is in the repo. Production apply needs `SUPABASE_DB_URL`, which is not in this checkout. |
+| `20261020233000` | `slott_call_bot` | Creator of a waiting P2P Slott match can call a house bot. Reuses the committed seed, spins the bot on the existing worker, and sweeps the bot balance at settlement. `slott_enabled` copies `coinflip_enabled`. | 2026-10-21 | Applied on `dkyabirifoixnfbmheay`. `slot_call_bot` is executable by `authenticated` only. Public config reports slott on. No new bankroll allocation. |
 
 ## Rollout test gate
 

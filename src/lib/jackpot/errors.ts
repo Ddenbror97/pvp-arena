@@ -47,6 +47,7 @@ const MESSAGES: Record<string, string> = {
   BOT_UNFUNDED: "No automated opponent is available for that stake.",
   BOT_EXPOSURE_LIMIT: "No automated opponent is available for that stake.",
   BOT_NOT_WITHDRAWABLE: "Bot balances can't be withdrawn.",
+  BOTS_BUSY: "Every automated opponent is already in a match.",
 };
 
 export function friendlyError(e: unknown): string {

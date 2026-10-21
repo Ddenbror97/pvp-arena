@@ -7,7 +7,7 @@ import { listenTopic, markChannel } from "@/lib/live-channel";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
 
-type Prof = { username: string; avatar_url: string | null } | null;
+type Prof = { username: string; avatar_url: string | null; is_bot?: boolean } | null;
 
 export type SlotStatus = "WAITING" | "ACTIVE" | "SETTLEMENT" | "COMPLETED" | "CANCELLED";
 
@@ -100,7 +100,7 @@ export interface SlotTier {
 }
 
 const SELECT =
-  "*, creator:profiles!slot_games_creator_id_fkey(username, avatar_url), opponent:profiles!slot_games_opponent_id_fkey(username, avatar_url)";
+  "*, creator:profiles!slot_games_creator_id_fkey(username, avatar_url, is_bot), opponent:profiles!slot_games_opponent_id_fkey(username, avatar_url, is_bot)";
 // Explicit columns: browsers are granted these, not idempotency keys.
 const SPIN_COLS =
   "game_id, spin_no, seat, player_id, auto, grid, wild_count, base_score, line_score, score, lines, bonus_cents, created_at, reveal_at";
@@ -265,6 +265,22 @@ export const slotJoin = (id: number, key: string) =>
 export const slotSpin = (id: number, spinNo: number, key: string) =>
   db.rpc("slot_spin", { p_game_id: id, p_spin_no: spinNo, p_idempotency_key: key });
 export const slotCancel = (id: number) => db.rpc("slot_cancel", { p_game_id: id });
+
+export async function slotCallBot(gameId: number, key: string) {
+  const { data, error } = await db.rpc("slot_call_bot", {
+    p_game_id: gameId,
+    p_idempotency_key: key,
+  });
+  return {
+    data: (data ?? null) as {
+      joined?: boolean;
+      reason?: string;
+      opponent_id?: string;
+      duplicate?: boolean;
+    } | null,
+    error: error as { message: string } | null,
+  };
+}
 
 export const seatOf = (
   g: Pick<SlotGame, "creator_id" | "opponent_id">,

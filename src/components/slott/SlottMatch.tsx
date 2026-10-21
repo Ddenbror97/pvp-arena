@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { serverOffset, useNow, useServerClock, useWalletRealtime } from "@/lib/jackpot/api";
 import { formatUsd } from "@/lib/jackpot/math";
 import { friendlyError } from "@/lib/jackpot/errors";
+import { useBotConfig } from "@/lib/bots";
 import { emitSound } from "@/lib/sound";
 import { channelLive } from "@/lib/live-channel";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
@@ -19,6 +20,7 @@ import {
   slotCreate,
   fetchSlotSpins,
   seatOf,
+  slotCallBot,
   slotJoin,
   slotSpin,
   turnSeat,
@@ -69,6 +71,7 @@ const FX_WINDOW_MS = 4000;
 
 export function SlottMatch({ id }: { id: number }) {
   const { userId, profile } = useAuth();
+  const bots = useBotConfig();
   useEffect(() => bindSlotAudio(), []);
   useWalletRealtime(userId);
   useSlotRealtime(id);
@@ -270,7 +273,9 @@ export function SlottMatch({ id }: { id: number }) {
 
   // Spin action: one idempotency key per spin number, reused on retry of this match only.
   const [pending, setPending] = useState(false);
+  const [callingBot, setCallingBot] = useState(false);
   const [auto, setAuto] = useState(false);
+  const botKey = useRef(crypto.randomUUID());
   const keys = useRef(new Map<number, string>());
   const spinLock = useRef(false);
   useEffect(() => {
@@ -348,6 +353,24 @@ export function SlottMatch({ id }: { id: number }) {
       setPending(false);
     }
   }
+  async function callBot() {
+    if (callingBot || !bots.data?.slott || !g || me !== "A" || g.status !== "WAITING") return;
+    setCallingBot(true);
+    const { data, error } = await slotCallBot(g.id, botKey.current);
+    setCallingBot(false);
+    if (error) {
+      if (!/fetch|network/i.test(error.message)) botKey.current = crypto.randomUUID();
+      toast.error(friendlyError(error));
+    } else if (data && data.joined === false && data.reason) {
+      botKey.current = crypto.randomUUID();
+      toast.error(friendlyError(new Error(data.reason)));
+    } else {
+      botKey.current = crypto.randomUUID();
+    }
+    void qc.invalidateQueries({ queryKey: ["slot", g.id] });
+    void qc.invalidateQueries({ queryKey: ["wallet"] });
+  }
+
   useEffect(() => {
     if (auto && canSpin && latestTallied) void doSpin();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -399,7 +422,7 @@ export function SlottMatch({ id }: { id: number }) {
         stake={g.stake}
         active={active}
         dim={lost}
-        badge={me === s ? "YOU" : null}
+        badge={me === s ? "YOU" : p?.is_bot ? "BOT" : null}
         score={g.status === "WAITING" ? null : s === "A" ? scoreA : scoreB}
         spins={g.status === "WAITING" ? null : [s === "A" ? doneA : doneB, perSeat]}
         status={
@@ -446,16 +469,32 @@ export function SlottMatch({ id }: { id: number }) {
             }
           : null,
     },
-    aux: (
-      <AuxButton
-        onClick={() => setAuto(!auto)}
-        disabled={!(g.status === "ACTIVE" && me)}
-        active={auto}
-        label="Auto spin"
-      >
-        AUTO
-      </AuxButton>
-    ),
+    aux:
+      g.status === "WAITING" && me === "A" && bots.isSuccess ? (
+        <div className="flex w-full flex-col items-center gap-0.5">
+          <AuxButton
+            onClick={() => void callBot()}
+            disabled={callingBot || !bots.data?.slott}
+            label="Call bot"
+          >
+            {callingBot ? "…" : "CALL BOT"}
+          </AuxButton>
+          <p className="text-center text-[10px] leading-tight text-muted-foreground">
+            {bots.data?.slott
+              ? "Play against an automated opponent."
+              : "Automated opponents are not available right now."}
+          </p>
+        </div>
+      ) : (
+        <AuxButton
+          onClick={() => setAuto(!auto)}
+          disabled={!(g.status === "ACTIVE" && me)}
+          active={auto}
+          label="Auto spin"
+        >
+          AUTO
+        </AuxButton>
+      ),
     value: { label: "TOTAL PRIZE", amount: total },
   };
 

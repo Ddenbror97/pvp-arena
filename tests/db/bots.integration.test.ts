@@ -102,7 +102,7 @@ async function fundBots(cents: number, asset: string, accountType: string) {
 
 async function enableBots(exposure: number) {
   await sql`update pvp_test.bot_config set enabled = true, coinflip_enabled = true, poker_enabled = true,
-    max_exposure_cents = ${exposure}`;
+    slott_enabled = true, max_exposure_cents = ${exposure}`;
   await sql`update pvp_test.poker_config set enabled = true`;
 }
 
@@ -123,7 +123,7 @@ d("house bots", () => {
     await sql`select pvp_test._system_account('bot_bankroll', 'USD', 'real')`;
     await sql`select pvp_test._system_account('bot_bankroll', 'TEST_USD', 'test_credit')`;
     await sql`update pvp_test.bot_config set enabled = false, coinflip_enabled = false, poker_enabled = false,
-      max_exposure_cents = 0`;
+      slott_enabled = false, max_exposure_cents = 0`;
     await sql`update pvp_test.coinflip_config set pre_delay_ms = 20, animation_ms = 20, waiting_timeout_seconds = 120`;
   });
 
@@ -131,8 +131,9 @@ d("house bots", () => {
     const cfg = (await sql`select pvp_test.bot_public_config() c`)[0]!.c as {
       coinflip: boolean;
       poker: boolean;
+      slott: boolean;
     };
-    expect(cfg).toEqual({ coinflip: false, poker: false });
+    expect(cfg).toEqual({ coinflip: false, poker: false, slott: false });
     const dom = await domain();
     expect(await bankroll(dom.asset, dom.account_type)).toBe(0);
     await invariants();
@@ -396,6 +397,85 @@ d("house bots", () => {
     expect(await userBal(called.user_id, "user_available", dom.asset, dom.account_type)).toBe(0);
     expect(await userBal(called.user_id, "user_locked", dom.asset, dom.account_type)).toBe(0);
     expect(await bankroll(dom.asset, dom.account_type)).toBe(50_000);
+    await invariants();
+  });
+
+  it("joins a funded slott bot on the committed seed, then sweeps it after the match", async () => {
+    const dom = await domain();
+    await fundBots(50_000, dom.asset, dom.account_type);
+    await enableBots(50_000);
+    await sql`update pvp_test.slot_config set pre_delay_ms = 0, spin_ms = 500, base_spins = 2, max_spins = 2, turn_seconds = 5, fee_bps = 1000`;
+    await sql`update pvp_test.slot_promo_config set enabled = false`;
+    const a = await newUser("slothost");
+    const stake = 500;
+    const created = await as(a, async (tx) => {
+      const [row] = await tx`select pvp_test.slot_create(${stake}, ${randomUUID()}) r`;
+      return row!.r as { game_id: number };
+    });
+    const gameId = created.game_id;
+    const before = (await sql`select server_seed_hash, status from pvp_test.slot_games where id = ${gameId}`)[0]!;
+    const [secretBefore] = await sql`select encode(server_seed, 'hex') s from pvp_test.slot_game_secrets where game_id = ${gameId}`;
+    await sql`update pvp_test.bot_config set slott_enabled = false`;
+    await expectErr(
+      as(a, (tx) => tx`select pvp_test.slot_call_bot(${gameId}, ${randomUUID()})`),
+      "BOTS_DISABLED",
+    );
+    const still = (await sql`select status, opponent_id, server_seed_hash from pvp_test.slot_games where id = ${gameId}`)[0]!;
+    expect(still.status).toBe("WAITING");
+    expect(still.opponent_id).toBeNull();
+    expect(still.server_seed_hash).toBe(before.server_seed_hash);
+    await sql`update pvp_test.bot_config set slott_enabled = true`;
+    const stranger = await newUser("stranger");
+    await expectErr(
+      as(stranger, (tx) => tx`select pvp_test.slot_call_bot(${gameId}, ${randomUUID()})`),
+      "FORBIDDEN",
+    );
+    const key = randomUUID();
+    const joined = await as(a, async (tx) => {
+      const [row] = await tx`select pvp_test.slot_call_bot(${gameId}, ${key}) r`;
+      return row!.r as { joined: boolean; opponent_id: string; duplicate?: boolean };
+    });
+    expect(joined.joined).toBe(true);
+    const again = await as(a, async (tx) => {
+      const [row] = await tx`select pvp_test.slot_call_bot(${gameId}, ${key}) r`;
+      return row!.r as { joined: boolean; duplicate?: boolean };
+    });
+    expect(again.duplicate).toBe(true);
+    expect(again.joined).toBe(true);
+    const live = (await sql`select status, opponent_id, server_seed_hash from pvp_test.slot_games where id = ${gameId}`)[0]!;
+    expect(live.status).toBe("ACTIVE");
+    expect(live.opponent_id).toBe(joined.opponent_id);
+    expect(live.server_seed_hash).toBe(before.server_seed_hash);
+    const [secretAfter] = await sql`select encode(server_seed, 'hex') s from pvp_test.slot_game_secrets where game_id = ${gameId}`;
+    expect(secretAfter!.s).toBe(secretBefore!.s);
+    const [botProf] = await sql`select is_bot from pvp_test.profiles where id = ${joined.opponent_id}`;
+    expect(botProf!.is_bot).toBe(true);
+    const funded = 50_000;
+
+    await sql`update pvp_test.slot_games set turn_opens_at = clock_timestamp(), turn_deadline = clock_timestamp() + interval '30 seconds' where id = ${gameId}`;
+    await as(a, (tx) => tx`select pvp_test.slot_spin(${gameId}, 1, ${randomUUID()})`);
+    await sql`update pvp_test.slot_games set turn_opens_at = clock_timestamp(), turn_deadline = clock_timestamp() + interval '30 seconds' where id = ${gameId} and ends_at is null`;
+    const spun = await as(null, async (tx) => {
+      const [row] = await tx`select pvp_test.slot_advance(${gameId}) r`;
+      return row!.r as string;
+    });
+    expect(spun).toBe("bot_spun");
+    await new Promise((r) => setTimeout(r, 800));
+    const settled = await as(null, async (tx) => {
+      const [row] = await tx`select pvp_test.slot_advance(${gameId}) r`;
+      return row!.r as string;
+    });
+    expect(settled).toBe("settled");
+    const done = (await sql`select status, outcome, winner_id, payout_amount, fee_amount, bonus_total from pvp_test.slot_games where id = ${gameId}`)[0]!;
+    expect(done.status).toBe("COMPLETED");
+    expect(Number(done.bonus_total)).toBe(0);
+    expect(await userBal(joined.opponent_id, "user_available", dom.asset, dom.account_type)).toBe(0);
+    expect(await userBal(joined.opponent_id, "user_locked", dom.asset, dom.account_type)).toBe(0);
+    const bankAfter = await bankroll(dom.asset, dom.account_type);
+    if (done.outcome === "DRAW") expect(bankAfter).toBe(funded);
+    else if (done.outcome === "BOMB") expect(bankAfter).toBe(funded - stake);
+    else if (done.winner_id === joined.opponent_id) expect(bankAfter).toBe(funded - stake + Number(done.payout_amount));
+    else expect(bankAfter).toBe(funded - stake);
     await invariants();
   });
 });

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export type BotPublicConfig = { coinflip: boolean; poker: boolean };
+export type BotPublicConfig = { coinflip: boolean; poker: boolean; slott: boolean };
 
 /** Public flags only. Stake still comes from the house bot bankroll, which is funded separately. */
 export function useBotConfig() {
@@ -13,7 +13,11 @@ export function useBotConfig() {
       const { data, error } = await (supabase as any).rpc("bot_public_config");
       if (error) throw error;
       const row = (data ?? {}) as Partial<BotPublicConfig>;
-      return { coinflip: row.coinflip === true, poker: row.poker === true };
+      return {
+        coinflip: row.coinflip === true,
+        poker: row.poker === true,
+        slott: row.slott === true,
+      };
     },
     staleTime: 30_000,
     retry: false,
