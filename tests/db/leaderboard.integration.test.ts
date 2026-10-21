@@ -112,6 +112,32 @@ async function settledFlip(
   return game.id as number;
 }
 
+/** Settled play must be at least half of real deposits before a cash-out check can pass. */
+async function coverDepositWager(user: string) {
+  const [cover] = await sql`select
+    coalesce(pvp_test._deposit_wager_cents(${user}::uuid), 0)::bigint as wagered,
+    coalesce((
+      select sum(p.amount) from pvp_test.ledger_postings p
+      join pvp_test.ledger_transactions t on t.id = p.tx_id
+      join pvp_test.wallet_accounts w on w.id = p.account_id
+      where w.owner_id = ${user}::uuid and w.account_type = 'real' and t.kind = 'deposit' and p.amount > 0
+    ), 0)::bigint as deposits,
+    coalesce((
+      select balance from pvp_test.wallet_accounts
+      where owner_id = ${user}::uuid and kind = 'user_available' and asset = 'USD' and account_type = 'real'
+    ), 0)::bigint as available`;
+  const gap = Math.ceil(Number(cover.deposits) / 2) - Number(cover.wagered);
+  if (gap <= 0) return;
+  expect(Number(cover.available)).toBeGreaterThanOrEqual(gap);
+  const wagerTx = randomUUID();
+  await sql.begin(async (db) => {
+    await db`insert into pvp_test.ledger_transactions (id, kind, idempotency_key, account_type, user_id, memo)
+      values (${wagerTx}::uuid, 'coinflip_entry', ${"lb-wager-" + wagerTx}, 'real', ${user}::uuid, 'Settled play')`;
+    await db`select pvp_test._post(${wagerTx}::uuid, pvp_test._user_account(${user}::uuid, 'user_available', 'USD', 'real'), ${-gap}::bigint)`;
+    await db`select pvp_test._post(${wagerTx}::uuid, pvp_test._user_account(${user}::uuid, 'user_locked', 'USD', 'real'), ${gap}::bigint)`;
+  });
+}
+
 d("partner leaderboards", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
@@ -349,6 +375,9 @@ d("partner leaderboards", () => {
     await expect(
       sql`select pvp_test._assert_reward_holds(${playerA}::uuid, 500, 500)`,
     ).rejects.toThrow(/LEADERBOARD_PLAYTHROUGH/);
+    // Later flips add deposits. Cover the half-deposit play rule before each
+    // cash-out check that the prize hold itself should allow.
+    await coverDepositWager(playerA);
     await sql`select pvp_test._assert_reward_holds(${playerA}::uuid, 800, 300)`;
     await expect(
       sql`select pvp_test._assert_reward_holds(${playerA}::uuid, 800, 301)`,
@@ -407,6 +436,7 @@ d("partner leaderboards", () => {
       await sql`select qualifying_wager_cents, status from pvp_test.leaderboard_prize_holds where user_id = ${playerA}::uuid`;
     expect(Number(cleared.qualifying_wager_cents)).toBe(500);
     expect(cleared.status).toBe("COMPLETED");
+    await coverDepositWager(playerA);
     await sql`select pvp_test._assert_reward_holds(${playerA}::uuid, 500, 500)`;
 
     await expect(

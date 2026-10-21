@@ -54,6 +54,16 @@ create index if not exists user_prestige_equipped_frame_id_idx on public.user_pr
 create index if not exists user_reward_claims_reward_id_idx on public.user_reward_claims (reward_id);
 
 -- signup_blocked_ips was created in production outside the migration history.
+-- A fresh database has to create it before the index below, or that statement fails.
 -- prod-only:begin
+create table if not exists public.signup_blocked_ips (
+  ip_hash text primary key,
+  blocked_at timestamptz not null default now(),
+  blocked_by uuid references public.profiles (id),
+  reason text
+);
+alter table public.signup_blocked_ips enable row level security;
+revoke all on table public.signup_blocked_ips from public, anon, authenticated;
+grant all on table public.signup_blocked_ips to service_role;
 create index if not exists signup_blocked_ips_blocked_by_idx on public.signup_blocked_ips (blocked_by);
 -- prod-only:end

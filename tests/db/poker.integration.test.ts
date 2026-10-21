@@ -267,6 +267,9 @@ async function nextHand(table: number) {
     if (ms > 0) await sleep(ms);
   }
   await sql`update pvp_test.poker_tables set next_due_at = clock_timestamp() where id = ${table} and next_due_at is not null`;
+  // The client heartbeats while it is still at the table. A 20s gap sits the seat out as away.
+  await sql`update pvp_test.poker_seats set last_seen_at = clock_timestamp()
+    where table_id = ${table} and status = 'SEATED'`;
   await tick();
   const h = await latestHand(table);
   return h && h.id !== last?.id ? h : null;
