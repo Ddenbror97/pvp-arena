@@ -20,14 +20,22 @@ import {
 } from "@/lib/discord-auth";
 import { PromoCodeField } from "@/components/promo/PromoCodePanel";
 import { peekPromoCode, rememberPromoCode } from "@/lib/promo/claim";
+import {
+  browserStore,
+  clearAuthNext,
+  parseAuthSearch,
+  readAuthNext,
+  readInviteOrigin,
+  writeAuthNext,
+  type GamePath,
+} from "@/lib/promo/game-signup-policy";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>): { mode?: "signup" } =>
-    search["mode"] === "signup" ? { mode: "signup" } : {},
+  validateSearch: (search: Record<string, unknown>) => parseAuthSearch(search),
   head: () => ({
     meta: [
       { title: "Sign in — PVPspinArena" },
@@ -45,6 +53,10 @@ export const Route = createFileRoute("/auth")({
 
 type Pending = { challengeId: string; email: string; maskedEmail: string };
 const PENDING_KEY = "pvp-signup-pending";
+
+function goAfterAuth(navigate: (opts: { to: GamePath }) => void, next: GamePath | null) {
+  navigate({ to: next ?? "/" });
+}
 
 function DiscordMark() {
   return (
@@ -67,7 +79,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [username, setUsername] = useState("");
-  const [promo, setPromo] = useState(() => peekPromoCode());
+  const [promo, setPromo] = useState(() => (search.code === "PVP1" ? "PVP1" : peekPromoCode()));
   const [age, setAge] = useState(false);
   const [busy, setBusy] = useState(false);
   const [forgot, setForgot] = useState(false);
@@ -75,11 +87,21 @@ function AuthPage() {
   const { userId } = useAuth();
   const navigate = useNavigate();
   const oauthLock = useRef(false);
+  const left = useRef(false);
   const start = useServerFn(startSignupFn);
 
   useEffect(() => {
-    if (userId) navigate({ to: "/" });
-  }, [userId, navigate]);
+    if (search.next) writeAuthNext(browserStore(), search.next);
+  }, [search.next]);
+
+  useEffect(() => {
+    if (!userId || left.current) return;
+    left.current = true;
+    const store = browserStore();
+    const next = readAuthNext(store, search.next);
+    clearAuthNext(store);
+    goAfterAuth(navigate, next);
+  }, [userId, navigate, search.next]);
 
   useEffect(() => {
     const search = new URLSearchParams(window.location.search);
@@ -135,6 +157,9 @@ function AuthPage() {
           maskedEmail: r.maskedEmail,
         });
       } else {
+        if (readInviteOrigin(browserStore()) && promo.trim()) {
+          rememberPromoCode(promo, { kind: "email", email: email.trim().toLowerCase() });
+        }
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error)
           throw new Error(
@@ -158,7 +183,9 @@ function AuthPage() {
       toast.error(discordSignInMessage("", ""));
       return;
     }
-    if (mode === "signup") rememberPromoCode(promo, { kind: "discord" });
+    if (mode === "signup" || readInviteOrigin(browserStore())) {
+      rememberPromoCode(promo, { kind: "discord" });
+    }
     setBusy(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: DISCORD_PROVIDER,

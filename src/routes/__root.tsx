@@ -21,6 +21,7 @@ import { SLOT_STAGE } from "@/lib/slott/stage";
 import { rootHead } from "@/lib/seo/root-head";
 import { installGameSounds, setWheelCueEnabled } from "@/lib/sound";
 import { SlotJoinNotice } from "@/components/slott/SlotJoinNotice";
+import { GameSignupPromo } from "@/components/promo/GameSignupPromo";
 
 const ProfileSetupDialog = lazy(() =>
   import("@/components/ProfileSetupDialog").then((m) => ({ default: m.ProfileSetupDialog })),
@@ -188,9 +189,10 @@ function GameSounds() {
 }
 
 const RootOverlays = memo(function RootOverlays() {
-  const { userId, needsProfile } = useAuth();
+  const { ready, userId, needsProfile } = useAuth();
   return (
     <>
+      {ready && !userId ? <GameSignupPromo /> : null}
       {needsProfile ? (
         <Suspense fallback={null}>
           <ProfileSetupDialog />

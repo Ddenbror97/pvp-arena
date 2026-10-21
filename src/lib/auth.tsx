@@ -1,5 +1,13 @@
 import { writeAuthHint } from "@/lib/auth-hint";
 import { claimRememberedPromo, peekPromoCode } from "@/lib/promo/claim";
+import { recordGameSignupEventFn } from "@/lib/promo/game-signup.functions";
+import {
+  accountCreatedRecently,
+  browserStore,
+  clearInviteOrigin,
+  promoClaimAnalyticsEvent,
+  readInviteOrigin,
+} from "@/lib/promo/game-signup-policy";
 import { claimPartnerAttribution } from "@/lib/partner/acquire.functions";
 import { claimReferral } from "@/lib/referral/referral.functions";
 import { useQueryClient } from "@tanstack/react-query";
@@ -73,8 +81,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const claimed = useRef<string | null>(null);
   const partnerClaimed = useRef<string | null>(null);
   const promoClaimed = useRef<string | null>(null);
+  const signupNoted = useRef(false);
   const claim = useServerFn(claimReferral);
   const claimPartner = useServerFn(claimPartnerAttribution);
+  const recordSignupEvent = useServerFn(recordGameSignupEventFn);
   const queryClient = useQueryClient();
 
   const doLoad = useCallback(async (s: Session | null) => {
@@ -183,17 +193,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [profile, claimPartner]);
 
   useEffect(() => {
+    if (!session || !profile || signupNoted.current) return;
+    const origin = readInviteOrigin(browserStore());
+    if (!origin || !accountCreatedRecently(session.user.created_at, Date.now())) return;
+    signupNoted.current = true;
+    void recordSignupEvent({ data: { event: "promo_signup_completed" } });
+  }, [session, profile, recordSignupEvent]);
+
+  useEffect(() => {
     if (!profile || !session || promoClaimed.current === profile.id || !peekPromoCode()) return;
     promoClaimed.current = profile.id;
+    const origin = readInviteOrigin(browserStore());
     void claimRememberedPromo({ id: session.user.id, email: session.user.email ?? null }).then(
       (result) => {
-        if (result === "retry" || result === "none") promoClaimed.current = null;
-        if (result === "done") {
-          void queryClient.invalidateQueries({ queryKey: ["wallet"] });
+        if (result.status === "retry" || result.status === "none") {
+          promoClaimed.current = null;
+          if (result.status === "none" && origin) clearInviteOrigin(browserStore());
+          return;
         }
+        void queryClient.invalidateQueries({ queryKey: ["wallet"] });
+        const event = origin ? promoClaimAnalyticsEvent(result) : null;
+        if (event) void recordSignupEvent({ data: { event } });
+        if (origin) clearInviteOrigin(browserStore());
       },
     );
-  }, [profile, session, queryClient]);
+  }, [profile, session, queryClient, recordSignupEvent]);
 
   const value: AuthState = {
     ready,
