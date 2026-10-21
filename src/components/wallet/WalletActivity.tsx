@@ -7,16 +7,13 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { cancelCryptoWithdrawal } from "@/lib/crypto/crypto.functions";
+import { fundingExplorerHref } from "@/lib/crypto/btc-trace";
 import { fundingStatusLabel } from "@/lib/crypto/cashout-copy";
 import { formatCryptoUnits } from "@/lib/crypto/rails";
 import { formatUsd } from "@/lib/jackpot/math";
 import { useCryptoActivity, type CryptoActivity } from "@/components/wallet/RailPreference";
 import { TokenMark } from "@/components/wallet/TokenMark";
 
-const EXPLORERS: Record<number, string> = {
-  8453: "https://basescan.org",
-  1: "https://etherscan.io",
-};
 const KIND_LABEL: Record<string, string> = {
   jackpot_entry: "Jackpot entry",
   jackpot_settlement: "Jackpot settlement",
@@ -135,7 +132,7 @@ export function fundingEvents(data: CryptoActivity | undefined): FundingEvent[] 
       at: row.at,
       usdCents: row.usd_cents,
       outgoing: false,
-      txHash: null,
+      txHash: row.txid,
       chainId: null,
       cancelable: false,
       credited: row.status === "CREDITED",
@@ -165,7 +162,7 @@ export function fundingEvents(data: CryptoActivity | undefined): FundingEvent[] 
       at: row.at,
       usdCents: row.usd_cents,
       outgoing: true,
-      txHash: null,
+      txHash: row.txid,
       chainId: null,
       cancelable: false,
       credited: true,
@@ -176,11 +173,11 @@ export function fundingEvents(data: CryptoActivity | undefined): FundingEvent[] 
 }
 
 function TxLink({ hash, chainId }: { hash: string | null; chainId: number | null }) {
-  if (!hash) return null;
-  const explorer = EXPLORERS[chainId ?? 8453] ?? "https://basescan.org";
+  const href = fundingExplorerHref(hash, chainId);
+  if (!href || !hash) return null;
   return (
     <a
-      href={`${explorer}/tx/${hash}`}
+      href={href}
       target="_blank"
       rel="noreferrer"
       className="inline-flex items-center gap-1 font-mono text-primary hover:underline"

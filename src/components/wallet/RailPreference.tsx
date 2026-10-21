@@ -1,5 +1,6 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { bitcoinTxid } from "@/lib/crypto/btc-trace";
 import { getCryptoActivity } from "@/lib/crypto/crypto.functions";
 import { parseWithdrawCashSnapshot, type WithdrawCashSnapshot } from "@/lib/crypto/bonus-withdraw";
 import { parseFundingChains, type FundingChain, type RailMovement } from "@/lib/crypto/rails";
@@ -38,6 +39,7 @@ export type BitcoinActivity = {
   at: string;
   btc_due: string | null;
   required_confirmations: number;
+  txid: string | null;
 };
 
 export type BitcoinPayoutActivity = {
@@ -46,6 +48,7 @@ export type BitcoinPayoutActivity = {
   status: string;
   at: string;
   address: string;
+  txid: string | null;
 };
 
 export function parseCryptoActivity(raw: unknown): CryptoActivity {
@@ -149,6 +152,7 @@ function parseBitcoinActivity(value: unknown): BitcoinActivity[] {
         required_confirmations: Number.isInteger(row["required_confirmations"])
           ? Number(row["required_confirmations"])
           : 2,
+        txid: bitcoinTxid(row["txid"]),
       },
     ];
   });
@@ -170,6 +174,7 @@ function parseBitcoinPayouts(value: unknown): BitcoinPayoutActivity[] {
         status: row["status"],
         at: typeof at === "string" ? at : "",
         address: typeof row["address"] === "string" ? row["address"] : "",
+        txid: bitcoinTxid(row["payout_txid"]),
       },
     ];
   });

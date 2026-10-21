@@ -1,5 +1,6 @@
 import { createInvoice, getBtcUsdRate, getInvoice, getPaymentMethods } from "./client.server";
 import { readBtcpayConfig, readBtcpayPayoutConfig, type BtcpayConfig } from "./config.server";
+import { bitcoinTxid, traceablePaymentTxid } from "../btc-trace";
 import {
   centsToUsdAmount,
   readBtcUsdMicro,
@@ -80,11 +81,21 @@ function covered(row: InvoiceRow): boolean {
   return Number.isFinite(credited) && credited >= row.usd_cents;
 }
 
+type ReconcileOutcome = "CREDITED" | "OPEN" | "CLOSED" | "REVIEW";
+
 /** Credit settled on-chain sats at the invoice rate, including partial and late payments. */
 export async function reconcileInvoice(
   config: Enabled,
   row: InvoiceRow,
-): Promise<"CREDITED" | "OPEN" | "CLOSED" | "REVIEW"> {
+): Promise<ReconcileOutcome> {
+  return (await reconcileInvoiceSeen(config, row)).outcome;
+}
+
+/** Same credit path, plus the on-chain id a player can follow. */
+export async function reconcileInvoiceSeen(
+  config: Enabled,
+  row: InvoiceRow,
+): Promise<{ outcome: ReconcileOutcome; txid: string | null }> {
   const admin = await db();
   const [invoiceBody, methodBody] = await Promise.all([
     getInvoice(config, row.btcpay_invoice_id),
@@ -92,8 +103,10 @@ export async function reconcileInvoice(
   ]);
   const invoice = readInvoiceView(invoiceBody);
   const payments = readPayments(methodBody);
-  if (!invoice || invoice.id !== row.btcpay_invoice_id) return "OPEN";
-  if (invoice.currency.toUpperCase() !== "USD") return "OPEN";
+  const txid = traceablePaymentTxid(payments, config.onchainMethod);
+  const done = (outcome: ReconcileOutcome) => ({ outcome, txid });
+  if (!invoice || invoice.id !== row.btcpay_invoice_id) return done("OPEN");
+  if (invoice.currency.toUpperCase() !== "USD") return done("OPEN");
   const now = new Date().toISOString();
   if (invoice.orderId && invoice.orderId !== row.id) {
     await admin
@@ -101,7 +114,7 @@ export async function reconcileInvoice(
       .update({ status: "REVIEW", closed_reason: "ORDER_MISMATCH", updated_at: now })
       .eq("id", row.id)
       .in("status", WATCH);
-    return "REVIEW";
+    return done("REVIEW");
   }
   if (invoice.status === "Invalid") {
     await admin
@@ -109,17 +122,17 @@ export async function reconcileInvoice(
       .update({ status: "INVALID", updated_at: now })
       .eq("id", row.id)
       .in("status", ["NEW", "PROCESSING", "SETTLED", "EXPIRED"]);
-    return "CLOSED";
+    return done("CLOSED");
   }
   const received = receivedOnchain(payments, config.onchainMethod, invoice.expiresAtUnix);
-  if (!received) return "OPEN";
+  if (!received) return done("OPEN");
   if (received.lightning) {
     await admin
       .from("btcpay_invoices")
       .update({ status: "REVIEW", closed_reason: "LIGHTNING", updated_at: now })
       .eq("id", row.id)
       .in("status", WATCH);
-    return "REVIEW";
+    return done("REVIEW");
   }
   const outputs = settledOutputs(payments, config.onchainMethod);
   if (outputs && (row.status === "CREDITED" || row.status === "DISPUTED")) {
@@ -133,13 +146,13 @@ export async function reconcileInvoice(
       })),
     });
     const notedStatus = (noted.data as { status?: string } | null)?.status;
-    if (notedStatus === "DISPUTED") return "REVIEW";
+    if (notedStatus === "DISPUTED") return done("REVIEW");
   }
   if (received.sats > 0n) {
     const settled = outputs?.filter((output) => output.status === "Settled") ?? null;
     if (!settled || settled.length === 0) {
       console.error("[btcpay] BTC_DEPOSIT_IDENTITY_MISSING", { invoice: row.id });
-      return "OPEN";
+      return done("OPEN");
     }
     const rateMicro = received.lateSats > 0n ? await storeRateMicro() : null;
     const credited = await admin.rpc("btcpay_credit_received", {
@@ -158,13 +171,13 @@ export async function reconcileInvoice(
         status: output.status,
       })),
     });
-    if (credited.error) return "OPEN";
+    if (credited.error) return done("OPEN");
     const body = credited.data as { status?: string; delta?: number | string } | null;
     const status = body?.status;
     const delta = Number(body?.delta ?? 0);
-    if (status === "CREDITED") return delta > 0 ? "CREDITED" : "OPEN";
-    if (status === "REVIEW") return "REVIEW";
-    if (status !== "DUST") return "OPEN";
+    if (status === "CREDITED") return done(delta > 0 ? "CREDITED" : "OPEN");
+    if (status === "REVIEW") return done("REVIEW");
+    if (status !== "DUST") return done("OPEN");
   }
   if (received.confirming) {
     await admin
@@ -172,7 +185,7 @@ export async function reconcileInvoice(
       .update({ status: "PROCESSING", updated_at: now })
       .eq("id", row.id)
       .in("status", ["NEW", "EXPIRED"]);
-    return "OPEN";
+    return done("OPEN");
   }
   const closed = terminalStatus(invoice.status);
   if (closed) {
@@ -181,7 +194,7 @@ export async function reconcileInvoice(
       .update({ status: closed, updated_at: now })
       .eq("id", row.id)
       .in("status", OPEN);
-    return "CLOSED";
+    return done("CLOSED");
   }
   if (invoice.status === "Processing" && row.status === "NEW") {
     await admin
@@ -197,7 +210,7 @@ export async function reconcileInvoice(
       .eq("id", row.id)
       .in("status", ["NEW", "PROCESSING"]);
   }
-  return "OPEN";
+  return done("OPEN");
 }
 
 export async function reconcileBtcpayInvoices(): Promise<
@@ -451,6 +464,20 @@ export async function loadBtcInvoice(userId: string, id: string) {
         network: string;
       })
     | null;
+}
+
+/** Stored deposit id for an invoice the caller already scoped to this user. */
+export async function loadDepositTraceTxid(invoiceId: string): Promise<string | null> {
+  const admin = await db();
+  const { data } = await admin
+    .from("btcpay_deposit_outputs")
+    .select("txid")
+    .eq("invoice_id", invoiceId)
+    .in("status", ["Settled", "Processing"])
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle<{ txid: string }>();
+  return bitcoinTxid(data?.txid);
 }
 
 export async function reconcileByBtcpayId(invoiceId: string, storeId: string): Promise<void> {

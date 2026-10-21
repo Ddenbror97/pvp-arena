@@ -6,10 +6,11 @@ import { readBtcpayConfig, readBtcpayPayoutConfig } from "./config.server";
 import {
   createBtcInvoiceForUser,
   loadBtcInvoice,
+  loadDepositTraceTxid,
   loadLatestOpenBtcInvoice,
-  reconcileInvoice,
+  reconcileInvoiceSeen,
 } from "./reconcile.server";
-import { cancelBtcPayout, requestBtcPayout } from "./payout.server";
+import { cancelBtcPayout, loadLatestPayoutTxid, requestBtcPayout } from "./payout.server";
 
 export const getBtcDepositConfig = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth, requireLiveSession])
@@ -48,6 +49,7 @@ export const getOpenBtcInvoice = createServerFn({ method: "GET" })
         expiresAt: row.expires_at,
         network: row.network,
         requiredConfirmations: row.required_confirmations,
+        txid: await loadDepositTraceTxid(row.id),
       },
     };
   });
@@ -60,7 +62,7 @@ export const getBtcInvoice = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const row = await loadBtcInvoice(context.userId, data.id);
     if (!row) return { ok: false as const, error: "Invoice not found." };
-    const snapshot = (fresh: typeof row) => ({
+    const snapshot = (fresh: typeof row, txid: string | null) => ({
       ok: true as const,
       invoice: {
         id: fresh.id,
@@ -71,16 +73,28 @@ export const getBtcInvoice = createServerFn({ method: "POST" })
         expiresAt: fresh.expires_at,
         network: fresh.network,
         requiredConfirmations: fresh.required_confirmations,
+        txid,
       },
     });
     const live = row.status === "NEW" || row.status === "PROCESSING" || row.status === "SETTLED";
+    const watching = row.status === "PROCESSING" || row.status === "SETTLED";
     const config = readBtcpayConfig();
-    if (config.ok && config.enabled && live && (data.refresh || !row.address)) {
-      await reconcileInvoice(config, row).catch(() => undefined);
-      return snapshot((await loadBtcInvoice(context.userId, data.id)) ?? row);
+    let txid: string | null = null;
+    let fresh = row;
+    if (config.ok && config.enabled && live && (data.refresh || !row.address || watching)) {
+      const seen = await reconcileInvoiceSeen(config, row).catch(() => null);
+      txid = seen?.txid ?? null;
+      fresh = (await loadBtcInvoice(context.userId, data.id)) ?? row;
     }
-    return snapshot(row);
+    if (!txid) txid = await loadDepositTraceTxid(fresh.id);
+    return snapshot(fresh, txid);
   });
+
+export const getBtcCashoutTrace = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth, requireLiveSession])
+  .handler(async ({ context }) => ({
+    txid: await loadLatestPayoutTxid(context.userId),
+  }));
 
 export const getBtcPayoutConfig = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth, requireLiveSession])

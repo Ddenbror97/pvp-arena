@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { encodeQR } from "qr";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { BitcoinTxTrace } from "@/components/wallet/BitcoinTxTrace";
 import { DepositAddress } from "@/components/wallet/DepositAddress";
 import { Input } from "@/components/ui/input";
 import { formatUsd, parseUsdToCents } from "@/lib/jackpot/math";
@@ -13,15 +14,20 @@ import {
   getBtcDepositConfig,
   getBtcInvoice,
   getOpenBtcInvoice,
+  getBtcCashoutTrace,
   getBtcPayoutConfig,
   requestBtcCashout,
 } from "@/lib/crypto/btcpay/btcpay.functions";
+import { mempoolTxUrl } from "@/lib/crypto/btc-trace";
 import { bitcoinPaymentUri, btcInvoicePhase } from "@/lib/crypto/btcpay/policy";
 import { announceDepositSubmitted } from "@/lib/crypto/deposit-notify";
 import { announceWithdrawalSubmitted } from "@/lib/crypto/withdraw-notify";
 import { PartnerProfitNote, usePartnerProfitHold } from "@/components/wallet/PartnerProfitHold";
 import { BonusCashoutNotice, cashoutMaxCents } from "@/components/wallet/BonusCashoutNotice";
-import { bonusWithdrawBlockedMessage, type WithdrawCashSnapshot } from "@/lib/crypto/bonus-withdraw";
+import {
+  bonusWithdrawBlockedMessage,
+  type WithdrawCashSnapshot,
+} from "@/lib/crypto/bonus-withdraw";
 
 const DEFAULT_DEPOSIT_USD = "10";
 
@@ -44,6 +50,7 @@ export function BtcDepositPanel({
   const invoiceFn = useServerFn(getBtcInvoice);
   const openFn = useServerFn(getOpenBtcInvoice);
   const cashoutFn = useServerFn(requestBtcCashout);
+  const cashoutTraceFn = useServerFn(getBtcCashoutTrace);
   const qc = useQueryClient();
   const config = useQuery({
     queryKey: ["btc-deposit-config"],
@@ -171,6 +178,7 @@ export function BtcDepositPanel({
         expiresAt: result.expiresAt,
         network: result.network,
         requiredConfirmations: result.requiredConfirmations,
+        txid: null,
       };
       setInvoiceId(result.id);
       qc.setQueryData(["btc-invoice", result.id], { ok: true as const, invoice: created });
@@ -272,6 +280,7 @@ export function BtcDepositPanel({
       setOutAddress("");
       qc.invalidateQueries({ queryKey: ["wallet"] });
       qc.invalidateQueries({ queryKey: ["crypto-activity"] });
+      qc.invalidateQueries({ queryKey: ["btc-cashout-trace"] });
     } catch {
       toast.error("Bitcoin cashouts are unavailable right now.");
     } finally {
@@ -281,23 +290,38 @@ export function BtcDepositPanel({
   }
 
   const amountDirty = phase === "pay" && open != null && open.usdCents !== cents;
+  const depositTrace =
+    open?.txid && mempoolTxUrl(open.txid) && (phase === "confirming" || phase === "crediting") ? (
+      <BitcoinTxTrace txid={open?.txid} />
+    ) : null;
+  const cashoutTrace = useQuery({
+    queryKey: ["btc-cashout-trace"],
+    queryFn: () => cashoutTraceFn(),
+    enabled: mode === "withdraw" && active,
+    staleTime: 8_000,
+    refetchInterval: mode === "withdraw" && active ? 8_000 : false,
+  });
 
   return (
     <div className="min-w-0">
       {mode === "deposit" && (depositsOn || !config.isFetched) ? (
         <>
           {open && phase && (phase === "credited" || phase === "review" || phase === "closed") ? (
-            <p className="mb-2 text-sm font-medium">
-              {phase === "credited" && "Deposit confirmed. Added to your balance."}
-              {phase === "review" && "This payment needs a review before it can be added."}
-              {phase === "closed" && "This invoice is closed. Enter an amount to deposit again."}
-            </p>
+            <div className="mb-2 space-y-1">
+              <p className="text-sm font-medium">
+                {phase === "credited" && "Deposit confirmed. Added to your balance."}
+                {phase === "review" && "This payment needs a review before it can be added."}
+                {phase === "closed" && "This invoice is closed. Enter an amount to deposit again."}
+              </p>
+              {phase === "closed" ? null : <BitcoinTxTrace txid={open.txid} />}
+            </div>
           ) : null}
           <DepositAddress
             network="Bitcoin network"
             address={open?.address ?? null}
             qr={payQr}
             copiedLabel="Bitcoin address copied"
+            extra={depositTrace}
             note={
               phase === "confirming" || phase === "crediting"
                 ? ""
@@ -438,6 +462,7 @@ export function BtcDepositPanel({
             >
               {outBusy ? "Requesting…" : "Cash out BTC"}
             </Button>
+            <BitcoinTxTrace txid={cashoutTrace.data?.txid} />
           </div>
         </div>
       ) : mode === "withdraw" ? (

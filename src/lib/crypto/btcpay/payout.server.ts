@@ -1,3 +1,4 @@
+import { bitcoinTxid } from "../btc-trace";
 import {
   BtcpayError,
   approvePayout,
@@ -108,6 +109,8 @@ type RowResult<T> = { data: T; error: { message: string } | null };
 type Filter = {
   eq: (column: string, value: string) => Filter;
   in: (column: string, values: readonly string[]) => Filter;
+  order: (column: string, options: { ascending: boolean }) => Filter;
+  limit: (count: number) => Filter;
   maybeSingle: () => Promise<RowResult<unknown>>;
   then: Promise<RowResult<unknown[]>>["then"];
 };
@@ -124,6 +127,20 @@ async function db() {
       args: Record<string, unknown>,
     ) => Promise<{ data: unknown; error: { message: string } | null }>;
   };
+}
+
+/** Latest cashout for this user. A missing id means the send is not on-chain yet. */
+export async function loadLatestPayoutTxid(userId: string): Promise<string | null> {
+  const admin = await db();
+  const { data } = await admin
+    .from("btcpay_payouts")
+    .select("payout_txid")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const row = data as { payout_txid?: unknown } | null;
+  return bitcoinTxid(row?.payout_txid);
 }
 
 const OPEN = ["HOLD", "AWAITING_APPROVAL", "QUEUED"];

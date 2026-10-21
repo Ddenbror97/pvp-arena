@@ -12,6 +12,7 @@ export function DepositAddress({
   pending = false,
   emptyAddress,
   heading = "Deposit address",
+  extra = null,
   children,
 }: {
   network: string;
@@ -22,6 +23,8 @@ export function DepositAddress({
   pending?: boolean;
   emptyAddress?: string;
   heading?: string;
+  /** Quiet follow-up under the note, such as a transaction link. */
+  extra?: ReactNode;
   children?: ReactNode;
 }) {
   const waiting = !address && pending;
@@ -86,6 +89,7 @@ export function DepositAddress({
           )}
         </p>
       )}
+      {extra ? <div className="mt-2">{extra}</div> : null}
     </div>
   );
 }
