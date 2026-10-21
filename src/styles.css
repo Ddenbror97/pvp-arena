@@ -1406,6 +1406,24 @@ html[data-theme="light"] .slott-card .slott-chip:not(.slott-cabinet *) {
   transform: rotate(180deg);
 }
 
+/* Poker buy-in. Fade only: the shared dialog zoom scales the centred window,
+   so its edges travel as it opens. Opacity does not move the box. */
+@keyframes poker-buyin-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes poker-buyin-out { from { opacity: 1; } to { opacity: 0; } }
+.poker-buyin[data-state="open"] { animation: poker-buyin-in 140ms ease-out; }
+.poker-buyin[data-state="closed"] { animation: poker-buyin-out 90ms ease-in; }
+.poker-slider {
+  display: block;
+  height: 1.25rem;
+  margin: 0;
+  accent-color: var(--primary);
+  touch-action: pan-x;
+}
+@media (prefers-reduced-motion: reduce) {
+  .poker-buyin[data-state="open"],
+  .poker-buyin[data-state="closed"] { animation: none; }
+}
+
 /* ================= Poker table ================= */
 /*
  * Full-screen game. Three layers: the room (.poker-env) fills the viewport; the stage is one
