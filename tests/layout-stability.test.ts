@@ -1,5 +1,8 @@
 import { readFileSync } from "node:fs";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { UsdcBalance } from "../src/components/wallet/HeaderWalletFrame";
+import { paintSignedIn } from "../src/lib/auth-hint";
 import {
   crownPlacement,
   reservedCrownHeadroom,
@@ -40,5 +43,31 @@ describe("hard-refresh layout reserves", () => {
     expect(railBoxHeight(phone)).toBe(phone.coin + 28);
     expect(stripMetrics(200).gap).toBe(4);
     expect(stripMetrics(RAIL_DESKTOP_MIN).compact).toBe(false);
+  });
+
+  it("keeps the header balance in the same box as its loading pulse", () => {
+    const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+    expect(css).toContain(".header-wallet-amount");
+    expect(css).toMatch(/\.header-wallet-amount\s*\{[^}]*min-width:\s*4\.75rem/);
+    for (const html of [
+      renderToStaticMarkup(UsdcBalance({ loading: true, available: 0 })),
+      renderToStaticMarkup(UsdcBalance({ loading: false, available: 123456 })),
+    ]) {
+      expect(html).toContain("header-wallet-amount");
+      expect(html).not.toContain("w-[4.75rem]");
+    }
+  });
+
+  it("paints signed-in chrome from the cookie until the session resolves", () => {
+    expect(paintSignedIn(false, null, true)).toBe(true);
+    expect(paintSignedIn(false, null, false)).toBe(false);
+    expect(paintSignedIn(true, "user", false)).toBe(true);
+    expect(paintSignedIn(true, null, true)).toBe(false);
+    const lobby = readFileSync(
+      new URL("../src/components/poker/PokerLobby.tsx", import.meta.url),
+      "utf8",
+    );
+    expect(lobby).toContain("paintSignedIn");
+    expect(lobby).not.toContain("setMounted");
   });
 });

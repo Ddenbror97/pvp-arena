@@ -17,9 +17,12 @@ export function UsdcBalance({
   return (
     <span className="flex min-w-0 items-center gap-2">
       {loading ? (
-        <span aria-hidden className="header-wallet-pulse h-3.5 w-[4.75rem] animate-pulse rounded" />
+        <span
+          aria-hidden
+          className="header-wallet-amount header-wallet-pulse animate-pulse rounded"
+        />
       ) : (
-        <span className="tabular text-sm font-semibold leading-none">{usd}</span>
+        <span className="header-wallet-amount text-sm font-semibold">{usd}</span>
       )}
       <span className="flex shrink-0 items-center gap-1">
         <TokenMark asset="USDC" className="h-4 w-4" />
@@ -40,10 +43,16 @@ export function WalletGroupPlaceholder() {
   return (
     <Link to="/wallet" aria-label="Wallet, USDC balance loading" className={walletNavClass}>
       <span className="flex items-center gap-2">
-        <span aria-hidden className="header-wallet-pulse h-3.5 w-[4.75rem] animate-pulse rounded" />
+        <span
+          aria-hidden
+          className="header-wallet-amount header-wallet-pulse animate-pulse rounded"
+        />
         <span className="flex items-center gap-1">
           <span aria-hidden className="header-wallet-pulse h-4 w-4 animate-pulse rounded-full" />
-          <span aria-hidden className="header-wallet-pulse h-2.5 w-8 animate-pulse rounded" />
+          <span
+            aria-hidden
+            className="header-wallet-asset header-wallet-pulse h-2.5 animate-pulse rounded"
+          />
         </span>
       </span>
       <WalletAction />

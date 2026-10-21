@@ -351,7 +351,21 @@ header.site-chrome {
   letter-spacing: 0.04em;
 }
 .header-wallet:hover .header-wallet-label { filter: brightness(1.08); }
-.header-wallet-asset { color: #c4b5fd; }
+.header-wallet-asset { display: inline-block; width: 2rem; color: #c4b5fd; text-align: center; }
+/* The loading pulse and the dollar amount share one box, so a resolved balance
+   does not slide the USDC mark or the profile avatar. Wider than $9,999.99
+   the figure grows once; it never shrinks below the pulse. */
+.header-wallet-amount {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 4.75rem;
+  height: 0.875rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  line-height: 0.875rem;
+  white-space: nowrap;
+}
 .header-wallet-pulse { background: rgb(255 255 255 / 12%); }
 
 /* Roulette rail. Size is a container query so the first paint already has the

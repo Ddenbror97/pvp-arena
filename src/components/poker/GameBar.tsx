@@ -1,7 +1,8 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { paintSignedIn, readAuthHint } from "@/lib/auth-hint";
 import { useWallet } from "@/lib/jackpot/api";
 import { arenaLogo, arenaLogoLight } from "@/assets/media";
 import { WalletGroupPlaceholder } from "@/components/wallet/HeaderWalletFrame";
@@ -56,15 +57,22 @@ export function GameBrand() {
 /** Balance, wallet, profile and site menu for the full-screen table. */
 export function GameAccount() {
   const { userId, profile, ready } = useAuth();
+  const [hint] = useState(readAuthHint);
+  const [settled, setSettled] = useState(false);
+  useEffect(() => setSettled(true), []);
+  const showWallet = settled ? paintSignedIn(ready, userId, hint) : hint;
   const prestige = usePrestige();
   const style = equippedAssets(prestige.state);
   const wallet = useWallet(userId);
   return (
     <div className="poker-account">
-      {userId ? (
+      {showWallet ? (
         <>
           <Suspense fallback={<WalletGroupPlaceholder />}>
-            <HeaderWallet available={wallet.data?.available} loading={!ready || wallet.isLoading} />
+            <HeaderWallet
+              available={wallet.data?.available}
+              loading={!ready || !userId || wallet.isLoading}
+            />
           </Suspense>
           <Link to="/profile" aria-label="Profile" className="poker-account-avatar">
             <PlayerPrestigeIdentity
@@ -79,11 +87,11 @@ export function GameAccount() {
             />
           </Link>
         </>
-      ) : ready ? (
+      ) : (
         <Link to="/auth" className="poker-signin">
           Sign in
         </Link>
-      ) : null}
+      )}
       <ThemeToggle className="poker-icon-btn" />
       <DropdownMenu>
         <DropdownMenuTrigger className="poker-icon-btn" aria-label="Menu">

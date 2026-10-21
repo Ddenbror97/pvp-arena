@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
 import { prefetchGamePage } from "@/lib/first-paint";
-import { readAuthHint } from "@/lib/auth-hint";
+import { paintSignedIn, readAuthHint } from "@/lib/auth-hint";
 import { useWallet } from "@/lib/jackpot/api";
 import { Button } from "@/components/ui/button";
 import { WalletGroupPlaceholder } from "@/components/wallet/HeaderWalletFrame";
@@ -35,7 +35,7 @@ export function SiteHeader({ className }: { className?: string }) {
   const link =
     "relative text-[13.5px] text-foreground/80 transition-colors hover:text-foreground [&.active]:font-medium [&.active]:text-foreground [&.active]:after:absolute [&.active]:after:inset-x-0 [&.active]:after:-bottom-[0.95rem] [&.active]:after:h-[3px] [&.active]:after:rounded-full [&.active]:after:bg-[#8830e7] [&.active]:after:shadow-[0_2px_10px_1px_rgb(139_53_236/65%)]";
   // A stored session means the signed-in wallet group is the final shape, so reserve it now.
-  const showWallet = ready ? Boolean(userId) : hint;
+  const showWallet = paintSignedIn(ready, userId, hint);
   return (
     <header className={cn("site-chrome sticky top-0 z-30 overflow-x-clip border-b", className)}>
       <div className="mx-auto grid h-14 w-full max-w-full grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-2 px-2 sm:flex sm:h-16 sm:gap-4 sm:px-4 lg:gap-6 lg:px-6">
