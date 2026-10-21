@@ -4,176 +4,84 @@ export const guide: Guide = {
   slug: "ton-wallet",
   cluster: "Crypto payments",
   keyword: "ton wallet",
-  secondary: ["ton wallet"],
+  secondary: ["tonkeeper", "toncoin wallet", "ton vs ethereum"],
   title: "TON Wallet: Custody for Toncoin, Not for This Site",
   description:
-    "A TON wallet holds Toncoin. Tonkeeper is a common one. MetaMask does not. This site does not accept TON. Adults 18+. Adults 18+ only.",
+    "A TON wallet holds Toncoin on The Open Network. An Ethereum seed will not restore it. This site's terms accept Bitcoin and Base, not TON.",
   h1: "TON wallet: hold Toncoin before you trust a bot",
   answer:
-    "A TON wallet stores Toncoin and talks to the TON blockchain. Tonkeeper and Telegram's wallet features are the usual tools. An Ethereum seed will not restore one. A bot that asks you to paste the recovery phrase is stealing it. PVPspinArena does not accept TON and is not a Telegram bot.",
+    "A ton wallet stores Toncoin and talks to The Open Network, which is not Ethereum and not Base. Tonkeeper is a widely used app for that network. A MetaMask secret will not restore a TON account. A bot that asks you to paste the recovery phrase is stealing it. PVPspinArena's terms do not list TON as a deposit asset.",
   facts: [
-    "A TON wallet stores Toncoin and talks to the TON blockchain.",
-    "The price is a number you can point at today, or it is unknown.",
-    "Country rules and age rules still apply. Adults 18+ only.",
-    "A guide is not a licence, a tax opinion, or a bypass.",
-    "PVPspinArena does not add this product to Jackpot, Coinflip, Roulette, P2P Slott, or six-max poker.",
+    "TON is a separate network with its own addresses. An Ethereum address is not a TON address.",
+    "Tonkeeper is one common TON wallet. It is not a Base or Ethereum wallet.",
+    "This site's terms accept Bitcoin, and USDC or ETH on Base. TON is not on that list.",
+    "Never type a recovery phrase into a website, a support chat, or a Telegram bot.",
+    "A token that happens to be called the same thing on another chain is a different asset.",
   ],
   sections: [
     {
-      id: "scope",
-      title: "What ton wallet refers to",
-      body: `A TON wallet stores Toncoin and talks to the TON blockchain. Tonkeeper and Telegram's wallet features are the usual tools. An Ethereum seed will not restore one. A bot that asks you to paste the recovery phrase is stealing it. PVPspinArena does not accept TON and is not a Telegram bot. Keep that definition in the first line of your note so a later paragraph does not drift into a different product with a similar name.
+      id: "network",
+      title: "Why a TON wallet is not MetaMask",
+      body: `The Open Network uses its own accounts and its own address format. Software built for Ethereum, including MetaMask, speaks a different protocol. Importing a twelve-word Ethereum secret into a TON app, or the reverse, is not a restore. It is either ignored or, worse, handed to an app you did not mean to trust.
 
-Put today's date on any ton wallet figure you keep. If the logged-in page does not show the ton wallet figure, leave the cell blank. A percent copied from a clip is not a ton wallet source.
+Tonkeeper is a normal example of a TON wallet people actually install. The official TON docs are the place to confirm how that network expects you to receive Toncoin. This page will not walk through a seed backup, because a backup written into a chat is how the coins leave.
 
-You need to be 18, or older where local law sets a higher age, before any ton wallet stake. This ton wallet page is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from ton wallet. It does not sell ton wallet, and a guide is not a licence.
-
-If a ton wallet session turns into chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A new login does not erase a ton wallet limit you already set.
-
-Start in [Crypto payments](/guides/topics/crypto-payments). Related reading: [gas fees](/guides/gas-fees-explained), [how to create a crypto wallet](/guides/how-to-create-a-crypto-wallet), [Ethereum gambling](/guides/ethereum-gambling). The product on this site, if you wanted a hashed pot instead, is [wallet](/wallet).`,
+You are in [Crypto payments](/guides/topics/crypto-payments). [How to create a crypto wallet](/guides/how-to-create-a-crypto-wallet) is the general key-custody page. [Base versus Ethereum](/guides/base-vs-ethereum) is a different pair of networks that do share an address style, which is its own mistake. TON does not share that style.`,
     },
     {
-      id: "price",
-      title: "The number that matters",
-      body: `Find the price: a wagering multiple, a commission percent, an RTP, a fee, or a hold. If ton wallet marketing will not state it, the price is unknown. Unknown is not free. Write unknown and decide whether you still want the product.
+      id: "not-here",
+      title: "This cashier does not take TON",
+      body: `The terms say the playable balance is a US-dollar ledger. Bitcoin, and USDC or ETH on Base, can fund it and cash out. They are not separate playable balances, and TON is not named.
 
-Date the ton wallet note on the day you can still open the live page. Leave a blank when the ton wallet page has no figure. A video is a poor place to borrow a ton wallet percentage.
+If a page, a bot, or a "support" account tells you to deposit Toncoin to play here, it is not describing these terms. Stop and open the site you typed yourself. [Wallet security checklist](/guides/wallet-security-checklist) is the short version: no seed phrase in a form, no unlimited approval for a transfer that should be a simple send.
 
-Adults only, 18 or the higher local age. Nothing here is a lawyer's letter, a ton wallet code, or a selection. The games on this site, unlike ton wallet, are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Ton wallet is not one of them, and the article is not a licence.
-
-Stop a ton wallet session that has become a chase. The limit is [responsible gambling](/responsible-gambling). Another account does not clear the ton wallet session you already played.`,
+[How it works](/how-it-works) lists the games after a dollar balance exists. None of them are priced in Toncoin.`,
     },
     {
-      id: "rules",
-      title: "The rule people skip",
-      body: `Read the constraint that sits under the headline. For a ton wallet note, it might be expiry, game weighting, a licence that does not cover your country, a gas sponsor who can censor, or a settlement source for an event. The constraint is the product as much as the headline is.
+      id: "bots",
+      title: "Telegram is where the theft story usually starts",
+      body: `TON activity clusters in Telegram. That is also where fake airdrops, fake support, and fake "connect your wallet" bots live. A real wallet connection does not require you to reveal the phrase that recreates the account. A prompt that wants the phrase wants the account.
 
-When you record a ton wallet price, write the date beside it. A ton wallet cell with no logged-in source stays empty. Do not fill a ton wallet blank from a recording.
+Check the app you installed against the publisher you meant, not against a reply in a group. [Fake casino sites](/guides/fake-casino-sites) is the same pattern on the web: a lookalike that arrives the week a brand is being searched.
 
-Play only at 18, or older if your law requires it, including for ton wallet. This is a ton wallet explainer, not legal advice and not a code to redeem. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, separate from ton wallet. The desk does not offer ton wallet, and these paragraphs are not a licence.
-
-Chasing a ton wallet loss is the moment to stop. Use [responsible gambling](/responsible-gambling). A second profile is not a new budget.
-
-More on the surrounding ideas: [Base network](/guides/base-network), [crypto casino withdrawals](/guides/crypto-casino-withdrawals).`,
+Adults only. A wallet guide is not a reason to gamble with money you need. [Responsible gambling](/responsible-gambling) still applies if the TON you hold is going to be staked somewhere else.`,
     },
     {
-      id: "cashier",
-      title: "What goes wrong",
-      body: `The usual failure is believing the first sentence of an ad. The second is stacking a second account to catch the same ton wallet offer. The third is using a coin, a bot, or a smart wallet as if it replaced the rule. It does not.
+      id: "if-you-hold-it",
+      title: "If you do hold Toncoin",
+      body: `Send a small test to your own TON address and confirm it in a block explorer you chose, not in a link from a stranger. Fees and memo or comment fields, where a service demands them, are that service's rule. This site has no TON memo because it has no TON deposit.
 
-Keep the ton wallet date on the same line as the figure. If you cannot open the ton wallet page while logged in, do not invent the percent. A borrowed ton wallet number is worse than a blank cell.
+Do not bridge or swap into a "wrapped" asset because a guide told you the ticker matched. [Gas fees explained](/guides/gas-fees-explained) is about EVM gas, not TON fees. Different networks, different bills.
 
-The age floor for ton wallet is 18, or higher where you live. No ton wallet sentence here is a promo code, a pick, or legal advice. PVPspinArena settles six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in US dollars, separate from ton wallet. It does not operate ton wallet, and a guide cannot license you.
-
-Leave the ton wallet session if it starts to feel like a chase. [Responsible gambling](/responsible-gambling) is that boundary. Switching accounts does not reset it.`,
-    },
-    {
-      id: "table",
-      title: "A note with empty cells",
-      body: `Columns: definition, price, constraint, date, loss limit. Five cells. ton wallet research that cannot fill them is not finished. Do not fill them from this paragraph if the live page disagrees. The live page wins.
-
-A ton wallet note without a date is a guess. Confirm the ton wallet figure on a page you can open, or leave the cell blank. Clips do not publish a ton wallet price you can rely on.
-
-Stay at 18-plus for ton wallet, or the older age your region sets. Treat this ton wallet page as explanation, not as advice, a code, or a tip. The live catalog, which does not include ton wallet, is Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, in US dollars. ton wallet is absent from that catalog, and the page is not a licence.
-
-A chase is a finished ton wallet decision. Stop, and read [responsible gambling](/responsible-gambling). Opening another ton wallet account is not a fresh bankroll.
-
-| Check | What to record for ton wallet |
-| --- | --- |
-| Price | The number on the screen today, not a memory |
-| Rules | Settlement, voids, and who can be refused |
-| Cashier | A small test, timed, with the transaction id |
-| Country | Whether you are allowed, without a workaround |
-| Stop | The loss limit, written before the deposit |`,
-    },
-    {
-      id: "stop",
-      title: "Where this site stops",
-      body: `PVPspinArena still offers six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If ton wallet was the thing you wanted to use, you will not find it in the header. That mismatch is a reason to close the tab, not a reason to force the cashier.
-
-Write the ton wallet source and the date before the conclusion. An empty ton wallet cell means the live page did not show the figure. That blank is more honest than a ton wallet percent from a video.
-
-Eighteen is the ton wallet minimum, unless local law is older. This ton wallet note is not legal advice, not a code, and not a recommendation. Poker at six-max, plus Jackpot, Coinflip, Roulette, and P2P Slott, is what settles in US dollars here, not ton wallet. The site does not sell ton wallet, and the text is not a licence.
-
-If ton wallet play becomes chasing, stop there. [Responsible gambling](/responsible-gambling) holds the limit. A replacement ton wallet account is not a clean record.`,
-    },
-    {
-      id: "close",
-      title: "A note you can keep",
-      body: `What ton wallet refers to. A TON wallet stores Toncoin and talks to the TON blockchain. Tonkeeper and Telegram's wallet features are the usual tools.
-
-The number that matters. Find the price: a wagering multiple, a commission percent, an RTP, a fee, or a hold. If ton wallet marketing will not state it, the price is unknown.
-
-The rule people skip. Read the constraint that sits under the headline. For a ton wallet note, it might be expiry, game weighting, a licence that does not cover your country, a gas sponsor who can censor, or a settlement source for an event.
-
-What goes wrong. The usual failure is believing the first sentence of an ad. The second is stacking a second account to catch the same ton wallet offer.
-
-A note with empty cells. Columns: definition, price, constraint, date, loss limit. Five cells.
-
-Where this site stops. PVPspinArena still offers six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If ton wallet was the thing you wanted to use, you will not find it in the header.
-
-Go down the ton wallet rows in order and halt where a cell is blank. The blank is the answer. Filling it from a video or from this page turns the note into copy you made for the brand.
-
-Facts worth dating:
-
-- A TON wallet stores Toncoin and talks to the TON blockchain.
-- The price is a number you can point at today, or it is unknown.
-- Country rules and age rules still apply. Adults 18+ only.
-- A guide is not a licence, a tax opinion, or a bypass.
-- PVPspinArena does not add this product to six-max poker, Jackpot, Coinflip, Roulette, or P2P Slott.
-
-A fee you do not see is still a fee. Someone pays gas, a sponsor, or a spread. A smart-contract wallet can add recovery and also add a guardian or a bug between you and the coins. A TON wallet is a different chain from the Base transfer this cashier expects. Paste nothing that looks like a recovery phrase into a bot.
-
-Test a small send on the network the screen names. If the asset is one this site does not accept, leave it in your own wallet. Do not bridge it out of impatience and call the loss a deposit.
-
-Run the ton wallet numbers first. The multiple times the chip is the stake you still have to place. A commission is deducted from the winner. Odds that hide a hold have already charged you. RTP, if printed, describes a long run and not this session. Missing inputs stay unknown. Urgency around ton wallet is not a reason to guess.
-
-Write the ton wallet stake, the loss limit, and today's date together. Reach the limit and stop. Leave the rest unread for now. A finished stop is the point, because a fresh logo used as comfort becomes the next deposit.
-
-Prefer one small ton wallet test over many open tabs. Stake the cashier's minimum, on the asset and network it names, and withdraw a fraction before you add funds. Record the time and the id. Answer an identity question or leave. A ton wallet path that skips the question is a different product, and not a better one.
-
-Then close the tab or play only what this site actually offers. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, for adults 18+ only. A new ton wallet login does not clear the limit you already hit.`,
+This page is not a review of Tonkeeper and not an endorsement of any TON casino.`,
     },
   ],
   faqs: [
     {
-      q: "What should I check first for ton wallet?",
-      a: "The definition and the price. If either is missing on the live page, stop. A blog, including this one, does not replace the operator's current terms.",
+      q: "Can I restore a TON wallet with a MetaMask seed?",
+      a: "No. TON is not Ethereum. The secrets and the addresses belong to different networks.",
     },
     {
-      q: "Is this available on PVPspinArena?",
-      a: "No. Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, settled in US dollars. This topic is explained so you can tell it apart from those games.",
+      q: "Does PVPspinArena accept TON or Toncoin?",
+      a: "No. The terms list Bitcoin, and USDC or ETH on Base.",
     },
     {
-      q: "Does crypto change the rule?",
-      a: "No. A wallet transfer does not create a licence, delete a tax question, or remove wagering requirements.",
+      q: "Is Tonkeeper the only TON wallet?",
+      a: "No. It is a common one. Whichever app you use, confirm the publisher and never reveal the recovery phrase.",
     },
     {
-      q: "Can you give me a code or a bypass?",
-      a: "No. Codes expire and bypasses are not something this site will write.",
+      q: "A bot says it will credit TON if I paste my phrase. What then?",
+      a: "Close it. Pasting the phrase gives the bot the account. A deposit does not work that way.",
     },
     {
-      q: "When do I stop reading?",
-      a: "When the note says not allowed, when you are chasing a loss, or when the product is not the one you came for.",
+      q: "Can I swap TON to USDC and then deposit?",
+      a: "Only if you end up with USDC on Base, which is the network the terms name, and you send it yourself. A swap on TON is not a Base deposit.",
     },
   ],
   sources: [
-    {
-      label: "GambleAware",
-      url: "https://www.gambleaware.org/",
-    },
+    { label: "TON documentation", url: "https://docs.ton.org/" },
+    { label: "PVPspinArena terms: accepted networks", url: "https://pvpspinarena.com/terms" },
   ],
-  related: [
-    "gas-fees-explained",
-    "how-to-create-a-crypto-wallet",
-    "ethereum-gambling",
-    "base-network",
-  ],
+  related: ["how-to-create-a-crypto-wallet", "wallet-security-checklist", "base-vs-ethereum", "gas-fees-explained"],
   updated: "2026-10-21",
-  cta: {
-    title: "This site is a pot, not that product",
-    text: "PVPspinArena does not offer the product described on this page. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
-    primary: { to: "/wallet", label: "Open the wallet page" },
-    secondary: { to: "/how-it-works", label: "How this site works" },
-  },
 };

@@ -4,171 +4,82 @@ export const guide: Guide = {
   slug: "casino-referral-bonus",
   cluster: "Foundations",
   keyword: "casino referral bonus",
-  secondary: ["casino referral bonus"],
+  secondary: ["refer a friend casino", "referral wagering", "casino referral code"],
   title: "Casino Referral Bonus: Who Is Paid, and When",
   description:
-    "A casino referral bonus pays you for sending players. It is commission, often with a hold on the payout. Not a code. Adults 18+.",
-  h1: "Casino referral bonus: you are being paid to recruit",
+    "A casino referral bonus pays you, a friend, or both after their deposit or their wagering. It is not wages. Read whose play releases it. Not an offer.",
+  h1: "Casino referral bonus: two people, one set of conditions",
   answer:
-    "A casino referral bonus is a payment for bringing in other players, usually a cut of their losses or a flat chip after they deposit. You are not getting a gift. You are in a commercial relationship. Read who gets paid, when it unlocks, and what happens if the referred player is you on a second account.",
+    "A casino referral bonus is a payment or a chip credit for introducing another customer. Sometimes the new player gets a match, sometimes the referrer gets a flat credit, and often both sides face wagering or a minimum deposit. It is not a salary. The credit appears only if the contract's conditions happen. This site's terms do not publish a referral bonus.",
   facts: [
-    "A casino referral bonus is a payment for bringing in other players, usually a cut of their losses or a flat chip after they deposit.",
-    "The price is a number you can point at today, or it is unknown.",
-    "Country rules and age rules still apply. Adults 18+ only.",
-    "A guide is not a licence, a tax opinion, or a bypass.",
-    "PVPspinArena does not add this product to Jackpot, Coinflip, Roulette, P2P Slott, or six-max poker.",
+    "Read who is paid: the new player, the referrer, or both.",
+    "A code or a link is the tracking method. It is not itself the payment.",
+    "The release condition is usually a deposit, a wagering total, or both, inside a time limit.",
+    "Self-referral, duplicate accounts, and brand-bidding are common reasons a program voids the credit.",
+    "No rate on this page is a live offer. Copy the figure from the program you actually joined.",
   ],
   sections: [
     {
-      id: "scope",
-      title: "What casino referral bonus refers to",
-      body: `A casino referral bonus is a payment for bringing in other players, usually a cut of their losses or a flat chip after they deposit. You are not getting a gift. You are in a commercial relationship. Read who gets paid, when it unlocks, and what happens if the referred player is you on a second account. Keep that definition in the first line of your note so a later paragraph does not drift into a different product with a similar name.
+      id: "two-sides",
+      title: "Separate the two sides of the deal",
+      body: `Write two lines. Line one is what the new player receives, and what they must deposit or wager. Line two is what you receive, and what they must do before you receive it. Programs mix these into one banner. They are different contracts.
 
-Put today's date on any casino referral bonus figure you keep. If the logged-in page does not show the casino referral bonus figure, leave the cell blank. A percent copied from a clip is not a casino referral bonus source.
+A match for the friend is a [deposit match bonus](/guides/deposit-match-bonus) with an extra tracking code. Your reward might be a flat amount after their first deposit, or a small share of their net losses, which is an affiliate deal wearing a friendlier name. [Crypto casino affiliate program](/guides/crypto-casino-affiliate-program) is that second shape. Do not assume a "friend bonus" is the flat kind.
 
-You need to be 18, or older where local law sets a higher age, before any casino referral bonus stake. This casino referral bonus page is not legal advice, not a promo code, and not a pick. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are what PVPspinArena runs, settled in US dollars. It does not sell casino referral bonus, and a guide is not a licence.
-
-If a casino referral bonus session turns into chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A new login does not erase a casino referral bonus limit you already set.
-
-Start in [Foundations](/guides/topics/foundations). Related reading: [what a crypto casino is](/guides/what-is-a-crypto-casino), [Stake alternatives](/guides/stake-alternatives), [house edge](/guides/house-edge). The product on this site, if you wanted a hashed pot instead, is [Coinflip](/coinflip).`,
+The page sits in [Foundations](/guides/topics/foundations). It does not rank programs.`,
     },
     {
-      id: "price",
-      title: "The number that matters",
-      body: `Find the price: a wagering multiple, a commission percent, an RTP, a fee, or a hold. If casino referral bonus marketing will not state it, the price is unknown. Unknown is not free. Write unknown and decide whether you still want the product.
+      id: "conditions",
+      title: "Conditions that void the credit",
+      body: `Minimum deposit, minimum odds or minimum stake, excluded games, a deadline, and a country list. Miss one and the credit does not leave "pending."
 
-Date the casino referral bonus note on the day you can still open the live page. Leave a blank when the casino referral bonus page has no figure. A video is a poor place to borrow a casino referral bonus percentage.
+Self-referral is the clause people test. A second account in your own name, or a household the terms treat as one person, is a reason the program states for taking the credit back. Duplicate-account rules are the operator's, and they are allowed to be strict. Read them before you send the link to someone you live with.
 
-Adults only, 18 or the higher local age. Nothing here is a lawyer's letter, a casino referral bonus code, or a selection. The games on this site, unlike casino referral bonus, are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Casino referral bonus is not one of them, and the article is not a licence.
-
-Stop a casino referral bonus session that has become a chase. The limit is [responsible gambling](/responsible-gambling). Another account does not clear the casino referral bonus session you already played.`,
+Wagering on your reward, if the reward is bonus chips rather than withdrawable cash, follows [casino wagering requirements](/guides/casino-wagering-requirements). Pending cash and bonus chips are not the same balance.`,
     },
     {
-      id: "rules",
-      title: "The rule people skip",
-      body: `Read the constraint that sits under the headline. For a casino referral bonus note, it might be expiry, game weighting, a licence that does not cover your country, a gas sponsor who can censor, or a settlement source for an event. The constraint is the product as much as the headline is.
+      id: "not-income",
+      title: "It is not a job, and it is not risk-free",
+      body: `A referral credit depends on another adult choosing to gamble. You do not control their session, their chargeback, or a later void. Chasing referrals by staking your own money to "qualify" the account is how a side deal becomes the gambling.
 
-When you record a casino referral bonus price, write the date beside it. A casino referral bonus cell with no logged-in source stays empty. Do not fill a casino referral bonus blank from a recording.
+If the friend does not understand the wagering, do not send the link. Adults only, and [responsible gambling](/responsible-gambling) applies to both of you.
 
-Play only at 18, or older if your law requires it, including for casino referral bonus. This is a casino referral bonus explainer, not legal advice and not a code to redeem. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, separate from casino referral bonus. The desk does not offer casino referral bonus, and these paragraphs are not a licence.
-
-Chasing a casino referral bonus loss is the moment to stop. Use [responsible gambling](/responsible-gambling). A second profile is not a new budget.
-
-More on the surrounding ideas: [provably fair casino](/guides/provably-fair-casino), [casino bonuses explained](/guides/casino-bonuses-explained).`,
+Tax treatment of a referral credit is not settled by this page. A US reader should look at [reporting gambling winnings](/guides/report-gambling-winnings). A UK reader should look at [gambling tax UK](/guides/gambling-tax-uk), and still ask an adviser if the activity has become a trade.`,
     },
     {
-      id: "cashier",
-      title: "What goes wrong",
-      body: `The usual failure is believing the first sentence of an ad. The second is stacking a second account to catch the same casino referral bonus offer. The third is using a coin, a bot, or a smart wallet as if it replaced the rule. It does not.
+      id: "here",
+      title: "What this site will not pay you for",
+      body: `The [terms](/terms) describe game fees and the cashier. They do not quote a referral rate. Do not invent one from a forum. If a partner page exists for a specific code, the rate on that page that day is the rate, and this guide is not it.
 
-Keep the casino referral bonus date on the same line as the figure. If you cannot open the casino referral bonus page while logged in, do not invent the percent. A borrowed casino referral bonus number is worse than a blank cell.
-
-The age floor for casino referral bonus is 18, or higher where you live. No casino referral bonus sentence here is a promo code, a pick, or legal advice. PVPspinArena settles six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in US dollars, separate from casino referral bonus. It does not operate casino referral bonus, and a guide cannot license you.
-
-Leave the casino referral bonus session if it starts to feel like a chase. [Responsible gambling](/responsible-gambling) is that boundary. Switching accounts does not reset it.`,
-    },
-    {
-      id: "table",
-      title: "A note with empty cells",
-      body: `Columns: definition, price, constraint, date, loss limit. Five cells. casino referral bonus research that cannot fill them is not finished. Do not fill them from this paragraph if the live page disagrees. The live page wins.
-
-A casino referral bonus note without a date is a guess. Confirm the casino referral bonus figure on a page you can open, or leave the cell blank. Clips do not publish a casino referral bonus price you can rely on.
-
-Stay at 18-plus for casino referral bonus, or the older age your region sets. Treat this casino referral bonus page as explanation, not as advice, a code, or a tip. The live catalog, which does not include casino referral bonus, is Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, in US dollars. casino referral bonus is absent from that catalog, and the page is not a licence.
-
-A chase is a finished casino referral bonus decision. Stop, and read [responsible gambling](/responsible-gambling). Opening another casino referral bonus account is not a fresh bankroll.
-
-| Check | What to record for casino referral bonus |
-| --- | --- |
-| Price | The number on the screen today, not a memory |
-| Rules | Settlement, voids, and who can be refused |
-| Cashier | A small test, timed, with the transaction id |
-| Country | Whether you are allowed, without a workaround |
-| Stop | The loss limit, written before the deposit |`,
-    },
-    {
-      id: "stop",
-      title: "Where this site stops",
-      body: `PVPspinArena still offers six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If casino referral bonus was the thing you wanted to use, you will not find it in the header. That mismatch is a reason to close the tab, not a reason to force the cashier.
-
-Write the casino referral bonus source and the date before the conclusion. An empty casino referral bonus cell means the live page did not show the figure. That blank is more honest than a casino referral bonus percent from a video.
-
-Eighteen is the casino referral bonus minimum, unless local law is older. This casino referral bonus note is not legal advice, not a code, and not a recommendation. Poker at six-max, plus Jackpot, Coinflip, Roulette, and P2P Slott, is what settles in US dollars here, not casino referral bonus. The site does not sell casino referral bonus, and the text is not a licence.
-
-If casino referral bonus play becomes chasing, stop there. [Responsible gambling](/responsible-gambling) holds the limit. A replacement casino referral bonus account is not a clean record.`,
-    },
-    {
-      id: "close",
-      title: "A note you can keep",
-      body: `What casino referral bonus refers to. A casino referral bonus is a payment for bringing in other players, usually a cut of their losses or a flat chip after they deposit. You are not getting a gift.
-
-The number that matters. Find the price: a wagering multiple, a commission percent, an RTP, a fee, or a hold. If casino referral bonus marketing will not state it, the price is unknown.
-
-The rule people skip. Read the constraint that sits under the headline. For a casino referral bonus note, it might be expiry, game weighting, a licence that does not cover your country, a gas sponsor who can censor, or a settlement source for an event.
-
-What goes wrong. The usual failure is believing the first sentence of an ad. The second is stacking a second account to catch the same casino referral bonus offer.
-
-A note with empty cells. Columns: definition, price, constraint, date, loss limit. Five cells.
-
-Where this site stops. PVPspinArena still offers six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If casino referral bonus was the thing you wanted to use, you will not find it in the header.
-
-Start at the top of the casino referral bonus note and stop when a cell has no source. Leave it empty. Borrowing the missing line from a chat is how the note starts selling.
-
-Facts worth dating:
-
-- A casino referral bonus is a payment for bringing in other players, usually a cut of their losses or a flat chip after they deposit.
-- The price is a number you can point at today, or it is unknown.
-- Country rules and age rules still apply. Adults 18+ only.
-- A guide is not a licence, a tax opinion, or a bypass.
-- PVPspinArena does not add this product to six-max poker, Jackpot, Coinflip, Roulette, or P2P Slott.
-
-Operator pages in this cluster are checklists. A licence badge is a claim until you find the same name on the regulator's own register. A bonus chip is a wagering contract until you multiply the requirement by the games that count. A referral fee is a commission for sending someone else into that contract. None of those rows is a rank, and none of them is a code this site will print.
-
-If two brands are in the note, give each one its own cashier test. Do not let the louder stream decide the column. If the product is an event market or a tax question, use the public manual or the register, then stop. This page is not a ruling on your facts.
-
-Price casino referral bonus before you call the offer cheap. Multiply the chip by the wagering multiple to see what you must bet. Take commission off any winner. Treat a hold inside the odds as money already gone. A printed RTP is a long-run return, not tonight's result. No input on the live page means no output you can trust. Skip it, even when the casino referral bonus search feels urgent.
-
-Write the casino referral bonus stake, the loss limit, and today's date together. Reach the limit and stop. Leave the rest unread for now. A finished stop is the point, because a fresh logo used as comfort becomes the next deposit.
-
-Test casino referral bonus once, cleanly, instead of collecting tabs. The smallest named stake, on the named asset and network, is enough, and a partial withdrawal comes before a larger deposit. Keep the time and the identifier. Identity questions get an answer or an exit. Skipping them is not a feature of casino referral bonus.
-
-Play only the games this site actually offers after you close the tab. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker settle in US dollars, adults 18+ only. Another casino referral bonus account is not a reset of the last one.`,
+[What a crypto casino is](/guides/what-is-a-crypto-casino) explains the product people are actually funding. A referral does not change the price of the game.`,
     },
   ],
   faqs: [
     {
-      q: "What should I check first for casino referral bonus?",
-      a: "The definition and the price. If either is missing on the live page, stop. A blog, including this one, does not replace the operator's current terms.",
+      q: "When does a referral bonus get paid?",
+      a: "When the conditions in that program are met, often a qualifying deposit or a wagering total by the new player, inside a deadline. Pending is not paid.",
     },
     {
-      q: "Is this available on PVPspinArena?",
-      a: "No. Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, settled in US dollars. This topic is explained so you can tell it apart from those games.",
+      q: "Can I refer myself?",
+      a: "Programs commonly void self-referral and duplicate accounts. Assume you cannot unless the terms explicitly allow the arrangement you have in mind.",
     },
     {
-      q: "Does crypto change the rule?",
-      a: "No. A wallet transfer does not create a licence, delete a tax question, or remove wagering requirements.",
+      q: "Is the friend's match the same as my reward?",
+      a: "No. One can be a deposit match for them and the other a flat credit or a revenue share for you. Read both lines.",
     },
     {
-      q: "Can you give me a code or a bypass?",
-      a: "No. Codes expire and bypasses are not something this site will write.",
+      q: "Does the bonus make their play positive expectation?",
+      a: "No. It may add chips or a small credit. The game's edge and the wagering still apply.",
     },
     {
-      q: "When do I stop reading?",
-      a: "When the note says not allowed, when you are chasing a loss, or when the product is not the one you came for.",
+      q: "Does PVPspinArena publish a referral bonus in its terms?",
+      a: "No. The terms describe fees and the cashier, not a refer-a-friend rate.",
     },
   ],
   sources: [
-    {
-      label: "GambleAware",
-      url: "https://www.gambleaware.org/",
-    },
+    { label: "UK Gambling Commission LCCP 5.1.1: rewards and bonuses", url: "https://www.gamblingcommission.gov.uk/licensees-and-businesses/lccp/condition/5-1-1-sr-code" },
+    { label: "PVPspinArena terms", url: "https://pvpspinarena.com/terms" },
   ],
-  related: ["what-is-a-crypto-casino", "stake-alternatives", "house-edge", "provably-fair-casino"],
+  related: ["deposit-match-bonus", "crypto-casino-affiliate-program", "casino-wagering-requirements", "gambling-tax-uk"],
   updated: "2026-10-21",
-  cta: {
-    title: "This site is a pot, not that product",
-    text: "PVPspinArena does not offer the product described on this page. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
-    primary: { to: "/coinflip", label: "Open Coinflip" },
-    secondary: { to: "/how-it-works", label: "How this site works" },
-  },
 };

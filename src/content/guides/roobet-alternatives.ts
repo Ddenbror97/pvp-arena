@@ -151,9 +151,6 @@ Write the date beside fee tables and withdrawal limits. Keep play funds in a sep
       body: `Roobet alternatives should be compared on fairness, price, cashier behaviour, licence verification and product fit. Ignore affiliate stars. Adults 18+. Not legal advice. Apply the same checklist to every brand, including ours.
 
 Return to the checklist quarterly. Brands change coats. Your criteria should not.
-### Extra diligence notes
-
-Write the date beside fee tables and withdrawal limits. Keep play funds in a separate wallet. If shopping for Roobet alternatives becomes chase behaviour, stop and use self-exclusion tools instead of opening another lobby.
 
 Practical close: keep a one-page note with domain, deposit txid, round ID and withdrawal txid for every new site. That note is cheaper than memory after a dispute. Cap the weekly total you are willing to lose across all brands combined, not per lobby. If the note already shows harm — hiding sessions, chasing, borrowing — stop shopping and use responsible-gambling tools before you open another account.
 

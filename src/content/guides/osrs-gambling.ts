@@ -55,15 +55,7 @@ The social script is familiar: challenge, accept, pride, rematch. Rematches are 
 
 For the Arena-shaped version of this habit, combat knowledge mattered, but so did reading the exact agreement. Cash parallels are 1v1 coinflip rooms priced with fees — see [coin flip odds](/guides/coin-flip-odds) and [CS:GO coinflip](/guides/csgo-coinflip) for the shooter analogue. Those products remove combat skill and leave chance plus a fee. Different game. Clearer price.
 
-Do not “practice” with stakes you cannot rebuild. Practice without a stake, or do not practice at all.
-
-Write the osrs gambling fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three osrs gambling lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
-
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from osrs gambling. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
-
-A clearer osrs gambling label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
-
-Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.`,
+Do not “practice” with stakes you cannot rebuild. Practice without a stake, or do not practice at all.`,
     },
     {
       id: "dice-hosts",

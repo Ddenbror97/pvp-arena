@@ -10,6 +10,7 @@ import {
   wordCount,
   type Guide,
 } from "../src/content/guides";
+import { criticalQualityFailures } from "../src/lib/guides/quality";
 import { NEW_GUIDES } from "./new-guides-plan";
 
 const STATIC = new Set([
@@ -67,7 +68,6 @@ for (const slug of targets) {
   if (owner && owner !== slug) err(`keyword already used by ${owner}`);
   if (plannedKeywords.get(g.keyword.toLowerCase()) !== slug)
     err("keyword clashes with another planned guide");
-  if (wc < 1850 || wc > 2400) err(`word count ${wc} (need 1850-2400)`);
   if (g.title.length < 40 || g.title.length > 59)
     err(`title length ${g.title.length} (need 40-59)`);
   if (g.description.length < 120 || g.description.length > 159)
@@ -81,7 +81,7 @@ for (const slug of targets) {
     ...g.facts,
     ...g.sections.map((s) => s.body),
     ...g.faqs.map((f) => `${f.q}\n${f.a}`),
-  ].join("\n");
+  ].join("\n\n");
   const links = [...body.matchAll(/\]\((\/[^)\s]*)\)/g)].map(
     (m) => m[1]!.split("#")[0]!.split("?")[0]!.replace(/\/$/, "") || "/",
   );
@@ -105,6 +105,7 @@ for (const slug of targets) {
   if (!g.sections.some((s) => /\]\((\/(?!guides\/)[^)]*)\)/.test(s.body)))
     err("no site link (e.g. /roulette, /responsible-gambling) in sections");
   for (const r of g.related) if (!guideSlugs.has(r)) err(`unknown related ${r}`);
+  for (const problem of criticalQualityFailures(body)) err(problem);
   if (planned && !CLUSTER_GROUPS[planned.cluster].some((grp) => grp.slugs.includes(slug)))
     err("slug missing from CLUSTER_GROUPS");
   if (errs.length) fail++;

@@ -59,22 +59,6 @@ Warning signs: one friend always owes, stakes rise to “make it fair,” or som
 
 [Gambling budget](/guides/gambling-budget) still helps: each person names a max weekly social-bet number.
 
-Write the online betting with friends fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three online betting with friends lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
-
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from online betting with friends. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
-
-A clearer online betting with friends label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
-
-Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
-
-Streaks change mood, not probability. A fair coinflip does not owe you a win after five losses. A jackpot ticket does not become warmer because the pot looks large on screen. Re-read the fee after a win streak. Re-read the budget after a loss streak. Then follow the written stop time.
-
-Clone domains and fake support accounts target duel keywords hard. Bookmark the real site. Refuse seed-phrase requests. Refuse unlimited token approvals for a simple deposit. Message signatures that only prove address control are normal. Spending approvals that can drain USDC later are not required for a plain transfer.
-
-Social pressure raises stakes faster than maths. Mute chats that bait “one more.” End the night with zero open IOUs if you bet with friends. Automated settlement exists so relationships do not become ledgers. If a friend cannot pay, stop betting with them rather than escalating.
-
-Long-run cost is the fee or the house edge. Short-run results are noise around that cost. Track dollars, not feelings. If you cannot explain the settlement rule in one sentence, do not deposit. If you can explain it and still cannot afford the loss, do not deposit either.
-
 An office draw needs rules before the numbers are called. A [lottery pool agreement](/guides/lottery-pool-agreement) is that contract.`,
     },
     {
@@ -84,23 +68,7 @@ An office draw needs rules before the numbers are called. A [lottery pool agreem
 
 Read [PvP gambling](/guides/pvp-gambling) and [coin flip odds](/guides/coin-flip-odds) so everyone understands the cut. Open [Coinflip](/coinflip) only after both friends agree the fee is acceptable entertainment cost.
 
-Jackpot on the [home page](/) is a multi-player pot, not a two-friend match, unless your whole group joins knowingly.
-
-Write the online betting with friends fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three online betting with friends lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
-
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from online betting with friends. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
-
-A clearer online betting with friends label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
-
-Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
-
-Streaks change mood, not probability. A fair coinflip does not owe you a win after five losses. A jackpot ticket does not become warmer because the pot looks large on screen. Re-read the fee after a win streak. Re-read the budget after a loss streak. Then follow the written stop time.
-
-Clone domains and fake support accounts target duel keywords hard. Bookmark the real site. Refuse seed-phrase requests. Refuse unlimited token approvals for a simple deposit. Message signatures that only prove address control are normal. Spending approvals that can drain USDC later are not required for a plain transfer.
-
-Social pressure raises stakes faster than maths. Mute chats that bait “one more.” End the night with zero open IOUs if you bet with friends. Automated settlement exists so relationships do not become ledgers. If a friend cannot pay, stop betting with them rather than escalating.
-
-Long-run cost is the fee or the house edge. Short-run results are noise around that cost. Track dollars, not feelings. If you cannot explain the settlement rule in one sentence, do not deposit. If you can explain it and still cannot afford the loss, do not deposit either.`,
+Jackpot on the [home page](/) is a multi-player pot, not a two-friend match, unless your whole group joins knowingly.`,
     },
     {
       id: "fairness",

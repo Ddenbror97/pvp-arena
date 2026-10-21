@@ -1,0 +1,714 @@
+{
+  "guides_in_files": 1096,
+  "guides_published": 1096,
+  "unpublished_slugs": [],
+  "topics_published": [
+    {
+      "slug": "foundations",
+      "name": "Foundations"
+    },
+    {
+      "slug": "provably-fair",
+      "name": "Provably fair"
+    },
+    {
+      "slug": "csgo-heritage",
+      "name": "CS:GO heritage"
+    },
+    {
+      "slug": "games-and-odds",
+      "name": "Games & odds"
+    },
+    {
+      "slug": "crypto-payments",
+      "name": "Crypto payments"
+    },
+    {
+      "slug": "responsible-play",
+      "name": "Responsible play"
+    },
+    {
+      "slug": "sweepstakes",
+      "name": "Sweepstakes"
+    },
+    {
+      "slug": "poker",
+      "name": "Poker"
+    },
+    {
+      "slug": "esports-betting",
+      "name": "Esports betting"
+    },
+    {
+      "slug": "skill-wagers",
+      "name": "Skill wagers"
+    },
+    {
+      "slug": "casino-games",
+      "name": "Casino games"
+    },
+    {
+      "slug": "sports-betting",
+      "name": "Sports betting"
+    },
+    {
+      "slug": "blackjack",
+      "name": "Blackjack"
+    },
+    {
+      "slug": "slots",
+      "name": "Slots"
+    },
+    {
+      "slug": "casino-knowledge",
+      "name": "Casino knowledge"
+    },
+    {
+      "slug": "game-shows",
+      "name": "Game shows"
+    },
+    {
+      "slug": "games-of-chance",
+      "name": "Games of chance"
+    },
+    {
+      "slug": "lottery",
+      "name": "Lottery"
+    },
+    {
+      "slug": "horse-racing",
+      "name": "Horse racing"
+    },
+    {
+      "slug": "prediction-markets",
+      "name": "Prediction markets"
+    }
+  ],
+  "topic_slugs_published": [
+    "foundations",
+    "provably-fair",
+    "csgo-heritage",
+    "games-and-odds",
+    "crypto-payments",
+    "responsible-play",
+    "sweepstakes",
+    "poker",
+    "esports-betting",
+    "skill-wagers",
+    "casino-games",
+    "sports-betting",
+    "blackjack",
+    "slots",
+    "casino-knowledge",
+    "game-shows",
+    "games-of-chance",
+    "lottery",
+    "horse-racing",
+    "prediction-markets"
+  ],
+  "repeated_paragraphs_at_least_8": 43,
+  "action_counts": {
+    "Keep": 906,
+    "Improve": 190
+  },
+  "policy_counts": {
+    "none": 1055,
+    "monitor": 41
+  },
+  "cluster_counts": {
+    "Foundations": 160,
+    "Provably fair": 20,
+    "CS:GO heritage": 105,
+    "Crypto payments": 98,
+    "Responsible play": 16,
+    "Games & odds": 67,
+    "Blackjack": 17,
+    "Sweepstakes": 49,
+    "Esports betting": 12,
+    "Casino games": 42,
+    "Slots": 89,
+    "Poker": 72,
+    "Sports betting": 94,
+    "Lottery": 21,
+    "Horse racing": 13,
+    "Casino knowledge": 77,
+    "Games of chance": 82,
+    "Game shows": 10,
+    "Prediction markets": 8,
+    "Skill wagers": 44
+  },
+  "duplicate_groups": 0,
+  "intent_groups": 20,
+  "quality_min": 66,
+  "quality_max": 100,
+  "quality_mean": 93,
+  "word_min": 673,
+  "word_max": 2399,
+  "with_table": 888,
+  "with_worked": 965,
+  "with_profit_phrase": 22,
+  "zero_sources": 224,
+  "plug_share_over_0_12": 184,
+  "jaccard_over_0_38": 0,
+  "jaccard_over_0_5": 0,
+  "entity_jaccard_over_0_72": 0,
+  "disclaimer_over_0_12": 23,
+  "game_fit_direct": 69,
+  "game_fit_illustration": 52,
+  "table_opps": 12,
+  "checklist_opps": 23,
+  "example_opps": 17,
+  "game_data_opps": 121,
+  "keyword_skeleton": 0,
+  "shared_disclaimer": 13,
+  "repeated_fee_block": 0,
+  "low_source_legal": 17,
+  "orphanish": 61,
+  "top_plug": [
+    {
+      "slug": "usdc-casino",
+      "cluster": "Crypto payments",
+      "plug": 0.378,
+      "j": 0.013,
+      "nearest": "how-to-buy-usdc",
+      "sources": 3,
+      "action": "Keep"
+    },
+    {
+      "slug": "minecraft-gambling",
+      "cluster": "CS:GO heritage",
+      "plug": 0.336,
+      "j": 0.238,
+      "nearest": "valve-gambling-lawsuit",
+      "sources": 1,
+      "action": "Improve"
+    },
+    {
+      "slug": "mystery-box-site",
+      "cluster": "CS:GO heritage",
+      "plug": 0.333,
+      "j": 0.229,
+      "nearest": "valve-gambling-lawsuit",
+      "sources": 1,
+      "action": "Improve"
+    },
+    {
+      "slug": "valve-gambling-lawsuit",
+      "cluster": "CS:GO heritage",
+      "plug": 0.329,
+      "j": 0.238,
+      "nearest": "minecraft-gambling",
+      "sources": 1,
+      "action": "Improve"
+    },
+    {
+      "slug": "metamask-casino",
+      "cluster": "Crypto payments",
+      "plug": 0.319,
+      "j": 0.009,
+      "nearest": "how-to-buy-usdc",
+      "sources": 4,
+      "action": "Keep"
+    },
+    {
+      "slug": "coinbase-wallet-casino",
+      "cluster": "Crypto payments",
+      "plug": 0.319,
+      "j": 0.005,
+      "nearest": "buy-crypto-with-card",
+      "sources": 4,
+      "action": "Keep"
+    },
+    {
+      "slug": "litecoin-casino",
+      "cluster": "Crypto payments",
+      "plug": 0.319,
+      "j": 0.017,
+      "nearest": "dogecoin-casino",
+      "sources": 3,
+      "action": "Keep"
+    },
+    {
+      "slug": "cash-out-betting",
+      "cluster": "Sports betting",
+      "plug": 0.319,
+      "j": 0.28,
+      "nearest": "matched-betting",
+      "sources": 1,
+      "action": "Improve"
+    },
+    {
+      "slug": "bitcoin-casino",
+      "cluster": "Crypto payments",
+      "plug": 0.313,
+      "j": 0.008,
+      "nearest": "litecoin-casino",
+      "sources": 3,
+      "action": "Keep"
+    },
+    {
+      "slug": "stablecoin-payments-gambling",
+      "cluster": "Crypto payments",
+      "plug": 0.3,
+      "j": 0.008,
+      "nearest": "stablecoin-casino",
+      "sources": 3,
+      "action": "Keep"
+    },
+    {
+      "slug": "no-kyc-sportsbook",
+      "cluster": "Sports betting",
+      "plug": 0.296,
+      "j": 0.24,
+      "nearest": "matched-betting",
+      "sources": 1,
+      "action": "Improve"
+    },
+    {
+      "slug": "matched-betting",
+      "cluster": "Sports betting",
+      "plug": 0.29,
+      "j": 0.28,
+      "nearest": "cash-out-betting",
+      "sources": 1,
+      "action": "Improve"
+    },
+    {
+      "slug": "no-kyc-casino",
+      "cluster": "Foundations",
+      "plug": 0.287,
+      "j": 0.003,
+      "nearest": "crypto-betting-sites",
+      "sources": 3,
+      "action": "Keep"
+    },
+    {
+      "slug": "prop-bets-explained",
+      "cluster": "Sports betting",
+      "plug": 0.275,
+      "j": 0.251,
+      "nearest": "cash-out-betting",
+      "sources": 1,
+      "action": "Improve"
+    },
+    {
+      "slug": "betting-exchange-explained",
+      "cluster": "Sports betting",
+      "plug": 0.274,
+      "j": 0.265,
+      "nearest": "cash-out-betting",
+      "sources": 1,
+      "action": "Improve"
+    },
+    {
+      "slug": "duelbits-alternatives",
+      "cluster": "Foundations",
+      "plug": 0.27,
+      "j": 0.247,
+      "nearest": "gamdom-alternatives",
+      "sources": 1,
+      "action": "Improve"
+    },
+    {
+      "slug": "anonymous-casino",
+      "cluster": "Foundations",
+      "plug": 0.268,
+      "j": 0.002,
+      "nearest": "no-kyc-casino",
+      "sources": 4,
+      "action": "Keep"
+    },
+    {
+      "slug": "what-is-usdc",
+      "cluster": "Crypto payments",
+      "plug": 0.267,
+      "j": 0.006,
+      "nearest": "usdc-casino",
+      "sources": 3,
+      "action": "Keep"
+    },
+    {
+      "slug": "wolf-gold-slot",
+      "cluster": "Slots",
+      "plug": 0.267,
+      "j": 0.016,
+      "nearest": "razor-shark-slot",
+      "sources": 0,
+      "action": "Keep"
+    },
+    {
+      "slug": "solana-casino",
+      "cluster": "Crypto payments",
+      "plug": 0.266,
+      "j": 0.014,
+      "nearest": "dogecoin-casino",
+      "sources": 3,
+      "action": "Keep"
+    },
+    {
+      "slug": "gamdom-alternatives",
+      "cluster": "Foundations",
+      "plug": 0.265,
+      "j": 0.247,
+      "nearest": "duelbits-alternatives",
+      "sources": 1,
+      "action": "Improve"
+    },
+    {
+      "slug": "stake-vs-roobet",
+      "cluster": "Foundations",
+      "plug": 0.265,
+      "j": 0.205,
+      "nearest": "gamdom-alternatives",
+      "sources": 1,
+      "action": "Improve"
+    },
+    {
+      "slug": "what-is-a-crypto-casino",
+      "cluster": "Foundations",
+      "plug": 0.264,
+      "j": 0.006,
+      "nearest": "casino-terminology",
+      "sources": 3,
+      "action": "Keep"
+    },
+    {
+      "slug": "stake-originals-games",
+      "cluster": "Foundations",
+      "plug": 0.264,
+      "j": 0.24,
+      "nearest": "duelbits-alternatives",
+      "sources": 1,
+      "action": "Improve"
+    },
+    {
+      "slug": "sweet-bonanza",
+      "cluster": "Slots",
+      "plug": 0.252,
+      "j": 0.024,
+      "nearest": "big-bass-bonanza",
+      "sources": 0,
+      "action": "Keep"
+    }
+  ],
+  "top_similarity": [
+    {
+      "slug": "crypto-casino-ireland",
+      "cluster": "Foundations",
+      "j": 0.374,
+      "entityJ": 0.394,
+      "entityNearest": "crypto-casino-india",
+      "nearest": "crypto-casino-netherlands",
+      "kw": 0.67,
+      "plug": 0.115,
+      "disclaimer": 0.029,
+      "action": "Improve"
+    },
+    {
+      "slug": "crypto-casino-netherlands",
+      "cluster": "Foundations",
+      "j": 0.374,
+      "entityJ": 0.385,
+      "entityNearest": "crypto-casino-ireland",
+      "nearest": "crypto-casino-ireland",
+      "kw": 0.67,
+      "plug": 0.107,
+      "disclaimer": 0.028,
+      "action": "Improve"
+    },
+    {
+      "slug": "crypto-casino-south-africa",
+      "cluster": "Foundations",
+      "j": 0.369,
+      "entityJ": 0.381,
+      "entityNearest": "crypto-casino-ireland",
+      "nearest": "crypto-casino-ireland",
+      "kw": 0.5,
+      "plug": 0.103,
+      "disclaimer": 0.029,
+      "action": "Improve"
+    },
+    {
+      "slug": "crypto-casino-new-zealand",
+      "cluster": "Foundations",
+      "j": 0.368,
+      "entityJ": 0.374,
+      "entityNearest": "crypto-casino-ireland",
+      "nearest": "crypto-casino-ireland",
+      "kw": 0.5,
+      "plug": 0.115,
+      "disclaimer": 0.029,
+      "action": "Improve"
+    },
+    {
+      "slug": "crypto-casino-canada",
+      "cluster": "Foundations",
+      "j": 0.367,
+      "entityJ": 0.456,
+      "entityNearest": "crypto-casino-australia",
+      "nearest": "crypto-casino-australia",
+      "kw": 0.67,
+      "plug": 0.074,
+      "disclaimer": 0,
+      "action": "Improve"
+    },
+    {
+      "slug": "crypto-casino-australia",
+      "cluster": "Foundations",
+      "j": 0.367,
+      "entityJ": 0.456,
+      "entityNearest": "crypto-casino-canada",
+      "nearest": "crypto-casino-canada",
+      "kw": 0.67,
+      "plug": 0.071,
+      "disclaimer": 0.025,
+      "action": "Improve"
+    },
+    {
+      "slug": "crypto-casino-india",
+      "cluster": "Foundations",
+      "j": 0.362,
+      "entityJ": 0.394,
+      "entityNearest": "crypto-casino-ireland",
+      "nearest": "crypto-casino-netherlands",
+      "kw": 0.67,
+      "plug": 0.116,
+      "disclaimer": 0.027,
+      "action": "Improve"
+    },
+    {
+      "slug": "crypto-casino-uk",
+      "cluster": "Foundations",
+      "j": 0.352,
+      "entityJ": 0.352,
+      "entityNearest": "crypto-casino-australia",
+      "nearest": "crypto-casino-australia",
+      "kw": 1,
+      "plug": 0.067,
+      "disclaimer": 0.022,
+      "action": "Improve"
+    },
+    {
+      "slug": "crypto-casino-reddit-advice",
+      "cluster": "Foundations",
+      "j": 0.333,
+      "entityJ": 0.409,
+      "entityNearest": "crypto-casino-canada",
+      "nearest": "crypto-casino-canada",
+      "kw": 0.5,
+      "plug": 0.038,
+      "disclaimer": 0.038,
+      "action": "Improve"
+    },
+    {
+      "slug": "gambling-winnings-tax-canada",
+      "cluster": "Foundations",
+      "j": 0.324,
+      "entityJ": 0.332,
+      "entityNearest": "gambling-tax-australia",
+      "nearest": "crypto-casino-canada",
+      "kw": 0.5,
+      "plug": 0.012,
+      "disclaimer": 0,
+      "action": "Improve"
+    },
+    {
+      "slug": "crypto-betting-app",
+      "cluster": "Foundations",
+      "j": 0.323,
+      "entityJ": 0.323,
+      "entityNearest": "crypto-casino-australia",
+      "nearest": "crypto-casino-australia",
+      "kw": 0.5,
+      "plug": 0.069,
+      "disclaimer": 0.02,
+      "action": "Improve"
+    },
+    {
+      "slug": "esports-betting-legal",
+      "cluster": "Foundations",
+      "j": 0.314,
+      "entityJ": 0.314,
+      "entityNearest": "crypto-casino-canada",
+      "nearest": "crypto-casino-canada",
+      "kw": 0.2,
+      "plug": 0.051,
+      "disclaimer": 0,
+      "action": "Improve"
+    },
+    {
+      "slug": "gambling-tax-australia",
+      "cluster": "Foundations",
+      "j": 0.311,
+      "entityJ": 0.332,
+      "entityNearest": "gambling-winnings-tax-canada",
+      "nearest": "crypto-casino-australia",
+      "kw": 0.67,
+      "plug": 0.02,
+      "disclaimer": 0,
+      "action": "Improve"
+    },
+    {
+      "slug": "is-crypto-gambling-legal",
+      "cluster": "Foundations",
+      "j": 0.302,
+      "entityJ": 0.301,
+      "entityNearest": "esports-betting-legal",
+      "nearest": "esports-betting-legal",
+      "kw": 0.5,
+      "plug": 0.038,
+      "disclaimer": 0,
+      "action": "Improve"
+    },
+    {
+      "slug": "xrp-casino",
+      "cluster": "Crypto payments",
+      "j": 0.302,
+      "entityJ": 0.301,
+      "entityNearest": "monero-casino",
+      "nearest": "monero-casino",
+      "kw": 0.33,
+      "plug": 0.132,
+      "disclaimer": 0.03,
+      "action": "Improve"
+    },
+    {
+      "slug": "monero-casino",
+      "cluster": "Crypto payments",
+      "j": 0.302,
+      "entityJ": 0.301,
+      "entityNearest": "xrp-casino",
+      "nearest": "xrp-casino",
+      "kw": 0.33,
+      "plug": 0.129,
+      "disclaimer": 0.029,
+      "action": "Improve"
+    },
+    {
+      "slug": "binance-coin-casino",
+      "cluster": "Crypto payments",
+      "j": 0.301,
+      "entityJ": 0.29,
+      "entityNearest": "ton-casino",
+      "nearest": "ton-casino",
+      "kw": 0.25,
+      "plug": 0.192,
+      "disclaimer": 0.03,
+      "action": "Improve"
+    },
+    {
+      "slug": "ton-casino",
+      "cluster": "Crypto payments",
+      "j": 0.301,
+      "entityJ": 0.291,
+      "entityNearest": "monero-casino",
+      "nearest": "binance-coin-casino",
+      "kw": 0.33,
+      "plug": 0.188,
+      "disclaimer": 0.076,
+      "action": "Improve"
+    },
+    {
+      "slug": "shiba-inu-casino",
+      "cluster": "Crypto payments",
+      "j": 0.3,
+      "entityJ": 0.3,
+      "entityNearest": "xrp-casino",
+      "nearest": "xrp-casino",
+      "kw": 0.25,
+      "plug": 0.13,
+      "disclaimer": 0.03,
+      "action": "Improve"
+    },
+    {
+      "slug": "report-gambling-winnings",
+      "cluster": "Foundations",
+      "j": 0.299,
+      "entityJ": 0.312,
+      "entityNearest": "crypto-casino-australia",
+      "nearest": "crypto-casino-australia",
+      "kw": 0.4,
+      "plug": 0,
+      "disclaimer": 0,
+      "action": "Improve"
+    },
+    {
+      "slug": "gambling-loss-deduction",
+      "cluster": "Foundations",
+      "j": 0.295,
+      "entityJ": 0.316,
+      "entityNearest": "gambling-winnings-tax-canada",
+      "nearest": "gambling-winnings-tax-canada",
+      "kw": 0.25,
+      "plug": 0.015,
+      "disclaimer": 0,
+      "action": "Improve"
+    },
+    {
+      "slug": "cardano-casino",
+      "cluster": "Crypto payments",
+      "j": 0.295,
+      "entityJ": 0.301,
+      "entityNearest": "monero-casino",
+      "nearest": "monero-casino",
+      "kw": 0.33,
+      "plug": 0.124,
+      "disclaimer": 0.029,
+      "action": "Improve"
+    },
+    {
+      "slug": "matched-betting",
+      "cluster": "Sports betting",
+      "j": 0.28,
+      "entityJ": 0.295,
+      "entityNearest": "cash-out-betting",
+      "nearest": "cash-out-betting",
+      "kw": 0.5,
+      "plug": 0.29,
+      "disclaimer": 0.194,
+      "action": "Improve"
+    },
+    {
+      "slug": "cash-out-betting",
+      "cluster": "Sports betting",
+      "j": 0.28,
+      "entityJ": 0.295,
+      "entityNearest": "matched-betting",
+      "nearest": "matched-betting",
+      "kw": 0.33,
+      "plug": 0.319,
+      "disclaimer": 0.207,
+      "action": "Improve"
+    },
+    {
+      "slug": "crypto-casino-usa",
+      "cluster": "Foundations",
+      "j": 0.276,
+      "entityJ": 0.276,
+      "entityNearest": "crypto-casino-australia",
+      "nearest": "crypto-casino-australia",
+      "kw": 0.67,
+      "plug": 0.069,
+      "disclaimer": 0.03,
+      "action": "Keep"
+    }
+  ],
+  "games_in_fact_pages": [
+    "jackpot",
+    "coinflip",
+    "roulette",
+    "slott",
+    "poker"
+  ],
+  "weights": {
+    "intent": 16,
+    "originality": 14,
+    "factual": 14,
+    "practical": 12,
+    "trust": 10,
+    "uniqueness": 14,
+    "editorial": 10,
+    "examples": 6,
+    "technical": 4
+  }
+}

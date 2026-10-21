@@ -4,182 +4,88 @@ export const guide: Guide = {
   slug: "gambling-tax-uk",
   cluster: "Foundations",
   keyword: "gambling tax uk",
-  secondary: ["gambling tax uk"],
+  secondary: ["hmrc gambling winnings", "are gambling winnings taxable uk", "remote gaming duty"],
   title: "Gambling Tax UK: What HMRC Tells Casual Players",
   description:
-    "Gambling tax UK notes: HMRC's public line is that casual player winnings are not taxed as income. Records still matter. Not tax advice.",
+    "HMRC's manual says casual betting is not a trade, so punter profits are not taxed and losses are not relieved. Operators pay duty. Not tax advice.",
   h1: "Gambling tax UK: player winnings and what HMRC publishes",
   answer:
-    "Gambling tax UK questions usually start from HMRC's published view that casual gambling winnings are not taxed as income for the player, while operators pay duties of their own. That sentence is not a ruling on your facts, not advice about crypto records, and not a reason to hide a withdrawal. Read HMRC, or ask a tax adviser.",
+    "Gambling tax UK questions for a casual player start in HMRC's Business Income Manual: betting and gambling, as such, do not constitute a trade. A mere punter is not taxed on the profits and does not get relief for the losses. The operator, not the customer, is the one who registers for gambling duty. That is not a ruling on your own facts.",
   facts: [
-    "Gambling tax UK questions usually start from HMRC's published view that casual gambling winnings are not taxed as income for the player, while operators pay duties of their own.",
-    "The price is a number you can point at today, or it is unknown.",
-    "Country rules and age rules still apply. Adults 18+ only.",
-    "A guide is not a licence, a tax opinion, or a bypass.",
-    "PVPspinArena does not add this product to six-max poker, Jackpot, Coinflip, Roulette, or P2P Slott.",
+    "BIM22015 says betting and gambling as such are not trading, citing Graham v Green.",
+    "The same manual says an organised activity that makes profits from the gambling public will normally be trading.",
+    "Section 51 of the Taxation of Chargeable Gains Act 1992 says winnings from betting, lotteries, or games with prizes are not chargeable gains.",
+    "The Gambling Commission has stated that customer winnings are tax-free and that duty falls on the operator's gross gambling yield.",
+    "GOV.UK's gambling-tax registration is for businesses offering betting or gaming, not for a person filing a casual win.",
   ],
   sections: [
     {
-      id: "scope",
-      title: "What gambling tax uk refers to",
-      body: `Gambling tax UK questions usually start from HMRC's published view that casual gambling winnings are not taxed as income for the player, while operators pay duties of their own. That sentence is not a ruling on your facts, not advice about crypto records, and not a reason to hide a withdrawal. Read HMRC, or ask a tax adviser. Keep that definition in the first line of your note so a later paragraph does not drift into a different product with a similar name.
+      id: "punter",
+      title: "What HMRC says about a punter",
+      body: `HMRC's Business Income Manual, BIM22015, is the page to open. It says the basic position is that betting and gambling, as such, do not constitute trading. It quotes Rowlatt J in Graham v Green: a bet is an agreement that one person pays another on an event. It also records that courts have not treated a mere punter as carrying on a business. The consequence HMRC states is direct: the punter is not taxable on the profits and receives no relief for the losses.
 
-Put today's date on any gambling tax uk figure you keep. If the logged-in page does not show the gambling tax uk figure, leave the cell blank. A percent copied from a clip is not a gambling tax uk source.
+That is the opposite of the US starting point described on [reporting gambling winnings](/guides/report-gambling-winnings). Do not copy an IRS habit onto a UK return.
 
-You need to be 18, or older where local law sets a higher age, before any gambling tax uk stake. This gambling tax uk page is not legal advice, not a promo code, and not a pick. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott are what PVPspinArena runs, settled in US dollars. It does not sell gambling tax uk, and a guide is not a licence.
+The same paragraph draws the line that people skip. An organised activity to make profits out of the gambling public will normally amount to trading. The bookmaker is the example HMRC gives. A person who only stakes is not that person. A person who is in substance running a book is a different question, and this page will not decide which one you are.
 
-If a gambling tax uk session turns into chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A new login does not erase a gambling tax uk limit you already set.
-
-Start in [Foundations](/guides/topics/foundations). Related reading: [what a crypto casino is](/guides/what-is-a-crypto-casino), [Stake alternatives](/guides/stake-alternatives), [house edge](/guides/house-edge). The product on this site, if you wanted a hashed pot instead, is [Coinflip](/coinflip).
-
-Player records in general are on [crypto gambling taxes](/guides/crypto-gambling-taxes), with country siblings for [Australian gambling tax](/guides/gambling-tax-australia) and [Canadian gambling winnings tax](/guides/gambling-winnings-tax-canada).`,
+This sits in [Foundations](/guides/topics/foundations) next to the other country notes. It is education, not advice. A tax adviser who can see your facts is the person who can apply the manual to you.`,
     },
     {
-      id: "price",
-      title: "The number that matters",
-      body: `Find the price: a wagering multiple, a commission percent, an RTP, a fee, or a hold. If gambling tax uk marketing will not state it, the price is unknown. Unknown is not free. Write unknown and decide whether you still want the product.
+      id: "gains",
+      title: "Winnings are not a capital gain either",
+      body: `Section 51 of the Taxation of Chargeable Gains Act 1992 declares that winnings from betting, including pool betting, or from lotteries or games with prizes, are not chargeable gains. No chargeable gain or allowable loss accrues on the disposal of rights to those winnings.
 
-Date the gambling tax uk note on the day you can still open the live page. Leave a blank when the gambling tax uk page has no figure. A video is a poor place to borrow a gambling tax uk percentage.
+Read that beside BIM22015, not instead of it. One section is about capital gains. The manual is about whether the activity is a trade for income tax. A casual punter is outside both, on the words of those texts. A business that lives off other people's stakes is the case the manual sends the other way.
 
-Adults only, 18 or the higher local age. Nothing here is a lawyer's letter, a gambling tax uk code, or a selection. The games on this site, unlike gambling tax uk, are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Gambling tax uk is not one of them, and the article is not a licence.
-
-Stop a gambling tax uk session that has become a chase. The limit is [responsible gambling](/responsible-gambling). Another account does not clear the gambling tax uk session you already played.`,
+[Crypto gambling taxes](/guides/crypto-gambling-taxes) is where wallet records come in. A tax-free win can still leave a trail of transfers. Keeping the trail is not the same thing as owing income tax on the win.`,
     },
     {
-      id: "rules",
-      title: "The rule people skip",
-      body: `Read the constraint that sits under the headline. For a gambling tax uk note, it might be expiry, game weighting, a licence that does not cover your country, a gas sponsor who can censor, or a settlement source for an event. The constraint is the product as much as the headline is.
+      id: "duty",
+      title: "Duty is the operator's bill",
+      body: `The Gambling Commission, answering a freedom-of-information request, said customer winnings in the UK are tax-free regardless of amount, and that tax is levied on the operator's gross gambling yield. GOV.UK's "Register for gambling tax" page is aimed at the business: General Betting Duty, Pool Betting Duty, or Remote Gaming Duty if you offer betting or gaming to people in the UK.
 
-When you record a gambling tax uk price, write the date beside it. A gambling tax uk cell with no logged-in source stays empty. Do not fill a gambling tax uk blank from a recording.
+If a site's support chat tells you to pay "your gambling tax" before a withdrawal, that sentence is not BIM22015. It is a reason to stop and check you are on the real domain. [Fake casino sites](/guides/fake-casino-sites) covers the shape of that trick.
 
-Play only at 18, or older if your law requires it, including for gambling tax uk. This is a gambling tax uk explainer, not legal advice and not a code to redeem. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, separate from gambling tax uk. The desk does not offer gambling tax uk, and these paragraphs are not a licence.
-
-Chasing a gambling tax uk loss is the moment to stop. Use [responsible gambling](/responsible-gambling). A second profile is not a new budget.
-
-More on the surrounding ideas: [provably fair casino](/guides/provably-fair-casino), [casino bonuses explained](/guides/casino-bonuses-explained).`,
+Adults 18+ only. Tax status does not make a stake safe. [Responsible gambling](/responsible-gambling) still applies when the money is needed for a bill.`,
     },
     {
-      id: "cashier",
-      title: "What goes wrong",
-      body: `The usual failure is believing the first sentence of an ad. The second is stacking a second account to catch the same gambling tax uk offer. The third is using a coin, a bot, or a smart wallet as if it replaced the rule. It does not.
+      id: "limits",
+      title: "What this page refuses to decide",
+      body: `It does not tell you whether your company, your syndicate, or your spread-bet account is a trade. BIM22015 points at a further page for spread-bet exceptions and says a spread-bet punter is not normally trading. "Not normally" is HMRC's phrase. Keep it.
 
-Keep the gambling tax uk date on the same line as the figure. If you cannot open the gambling tax uk page while logged in, do not invent the percent. A borrowed gambling tax uk number is worse than a blank cell.
+It does not cover residency, split years, or crypto that was already a capital asset before you staked it. Those are questions for current HMRC guidance and a qualified adviser.
 
-The age floor for gambling tax uk is 18, or higher where you live. No gambling tax uk sentence here is a promo code, a pick, or legal advice. PVPspinArena settles six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in US dollars, separate from gambling tax uk. It does not operate gambling tax uk, and a guide cannot license you.
-
-Leave the gambling tax uk session if it starts to feel like a chase. [Responsible gambling](/responsible-gambling) is that boundary. Switching accounts does not reset it.`,
-    },
-    {
-      id: "table",
-      title: "A note with empty cells",
-      body: `Columns: definition, price, constraint, date, loss limit. Five cells. gambling tax uk research that cannot fill them is not finished. Do not fill them from this paragraph if the live page disagrees. The live page wins.
-
-A gambling tax uk note without a date is a guess. Confirm the gambling tax uk figure on a page you can open, or leave the cell blank. Clips do not publish a gambling tax uk price you can rely on.
-
-Stay at 18-plus for gambling tax uk, or the older age your region sets. Treat this gambling tax uk page as explanation, not as advice, a code, or a tip. The live catalog, which does not include gambling tax uk, is Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, in US dollars. gambling tax uk is absent from that catalog, and the page is not a licence.
-
-A chase is a finished gambling tax uk decision. Stop, and read [responsible gambling](/responsible-gambling). Opening another gambling tax uk account is not a fresh bankroll.
-
-| Check | What to record for gambling tax uk |
-| --- | --- |
-| Price | The number on the screen today, not a memory |
-| Rules | Settlement, voids, and who can be refused |
-| Cashier | A small test, timed, with the transaction id |
-| Country | Whether you are allowed, without a workaround |
-| Stop | The loss limit, written before the deposit |`,
-    },
-    {
-      id: "stop",
-      title: "Where this site stops",
-      body: `PVPspinArena still offers six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If gambling tax uk was the thing you wanted to use, you will not find it in the header. That mismatch is a reason to close the tab, not a reason to force the cashier.
-
-Write the gambling tax uk source and the date before the conclusion. An empty gambling tax uk cell means the live page did not show the figure. That blank is more honest than a gambling tax uk percent from a video.
-
-Eighteen is the gambling tax uk minimum, unless local law is older. This gambling tax uk note is not legal advice, not a code, and not a recommendation. Poker at six-max, plus Jackpot, Coinflip, Roulette, and P2P Slott, is what settles in US dollars here, not gambling tax uk. The site does not sell gambling tax uk, and the text is not a licence.
-
-If gambling tax uk play becomes chasing, stop there. [Responsible gambling](/responsible-gambling) holds the limit. A replacement gambling tax uk account is not a clean record.`,
-    },
-    {
-      id: "close",
-      title: "A note you can keep",
-      body: `What gambling tax uk refers to. Gambling tax UK questions usually start from HMRC's published view that casual gambling winnings are not taxed as income for the player, while operators pay duties of their own. That sentence is not a ruling on your facts, not advice about crypto records, and not a reason to hide a withdrawal.
-
-The number that matters. Find the price: a wagering multiple, a commission percent, an RTP, a fee, or a hold. If gambling tax uk marketing will not state it, the price is unknown.
-
-The rule people skip. Read the constraint that sits under the headline. For a gambling tax uk note, it might be expiry, game weighting, a licence that does not cover your country, a gas sponsor who can censor, or a settlement source for an event.
-
-What goes wrong. The usual failure is believing the first sentence of an ad. The second is stacking a second account to catch the same gambling tax uk offer.
-
-A note with empty cells. Columns: definition, price, constraint, date, loss limit. Five cells.
-
-Where this site stops. PVPspinArena still offers six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If gambling tax uk was the thing you wanted to use, you will not find it in the header.
-
-Start at the top of the gambling tax uk note and stop when a cell has no source. Leave it empty. Borrowing the missing line from a chat is how the note starts selling.
-
-Facts worth dating:
-
-- Gambling tax UK questions usually start from HMRC's published view that casual gambling winnings are not taxed as income for the player, while operators pay duties of their own.
-- The price is a number you can point at today, or it is unknown.
-- Country rules and age rules still apply. Adults 18+ only.
-- A guide is not a licence, a tax opinion, or a bypass.
-- PVPspinArena does not add this product to Jackpot, Coinflip, Roulette, P2P Slott, or six-max poker.
-
-Operator pages in this cluster are checklists. A licence badge is a claim until you find the same name on the regulator's own register. A bonus chip is a wagering contract until you multiply the requirement by the games that count. A referral fee is a commission for sending someone else into that contract. None of those rows is a rank, and none of them is a code this site will print.
-
-If two brands are in the note, give each one its own cashier test. Do not let the louder stream decide the column. If the product is an event market or a tax question, use the public manual or the register, then stop. This page is not a ruling on your facts.
-
-Price gambling tax uk before you call the offer cheap. Multiply the chip by the wagering multiple to see what you must bet. Take commission off any winner. Treat a hold inside the odds as money already gone. A printed RTP is a long-run return, not tonight's result. No input on the live page means no output you can trust. Skip it, even when the gambling tax uk search feels urgent.
-
-Put the date, the stake, and the gambling tax uk loss limit on one line. Hitting the limit ends the session. Other tabs can wait. Stopping is a complete choice, and a new logo opened to feel better is how the note turns into another deposit.
-
-Test gambling tax uk once, cleanly, instead of collecting tabs. The smallest named stake, on the named asset and network, is enough, and a partial withdrawal comes before a larger deposit. Keep the time and the identifier. Identity questions get an answer or an exit. Skipping them is not a feature of gambling tax uk.
-
-Close the tab when gambling tax uk is not on offer here. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars for adults 18 and older. A second profile does not make the earlier limit disappear.`,
+Country notes that are not this one: [Australian gambling tax](/guides/gambling-tax-australia) and [Canadian gambling winnings tax](/guides/gambling-winnings-tax-canada). Do not mix their rules into a UK return.`,
     },
   ],
   faqs: [
     {
-      q: "What should I check first for gambling tax uk?",
-      a: "The definition and the price. If either is missing on the live page, stop. A blog, including this one, does not replace the operator's current terms.",
+      q: "Does a UK player pay income tax on casual gambling winnings?",
+      a: "HMRC's BIM22015 says betting and gambling as such are not a trade, so a mere punter is not taxed on the profits and gets no loss relief. That is not a personal ruling.",
     },
     {
-      q: "Is this available on PVPspinArena?",
-      a: "No. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. This topic is explained so you can tell it apart from those games.",
+      q: "Are gambling winnings a capital gain in the UK?",
+      a: "Section 51 of the Taxation of Chargeable Gains Act 1992 says winnings from betting, lotteries, or games with prizes are not chargeable gains.",
     },
     {
-      q: "Does crypto change the rule?",
-      a: "No. A wallet transfer does not create a licence, delete a tax question, or remove wagering requirements.",
+      q: "Who pays UK gambling duty?",
+      a: "The operator. GOV.UK tells businesses that offer betting or gaming to people in the UK to register for the relevant duty. The Gambling Commission has said customer winnings are tax-free.",
     },
     {
-      q: "Can you give me a code or a bypass?",
-      a: "No. Codes expire and bypasses are not something this site will write.",
+      q: "Does a large win have to go on a self-assessment return as income?",
+      a: "HMRC's manual does not treat a mere punter's win as trading income. If your activity is organised profit from other people's gambling, the same manual says that will normally be trading. Ask an adviser if you are unsure which side you are on.",
     },
     {
-      q: "When do I stop reading?",
-      a: "When the note says not allowed, when you are chasing a loss, or when the product is not the one you came for.",
+      q: "Does this apply to crypto casinos?",
+      a: "The punter-versus-trade distinction is about the activity, not the chip. Keep transfer records. Do not assume a wallet makes a win either taxable or invisible.",
     },
   ],
   sources: [
-    {
-      label: "HMRC Business Income Manual, betting and gambling",
-      url: "https://www.gov.uk/hmrc-internal-manuals/business-income-manual/bim22017",
-    },
-    {
-      label: "GambleAware",
-      url: "https://www.gambleaware.org/",
-    },
+    { label: "HMRC Business Income Manual BIM22015", url: "https://www.gov.uk/hmrc-internal-manuals/business-income-manual/bim22015" },
+    { label: "Taxation of Chargeable Gains Act 1992, section 51", url: "https://www.legislation.gov.uk/ukpga/1992/12/section/51" },
+    { label: "Gambling Commission: customer winnings", url: "https://www.gamblingcommission.gov.uk/about-us/freedomofinformation/winnings-from-gambling-for-customers" },
+    { label: "GOV.UK: register for gambling tax", url: "https://www.gov.uk/register-pay-gambling-tax" },
   ],
-  related: [
-    "crypto-gambling-taxes",
-    "gambling-tax-australia",
-    "gambling-winnings-tax-canada",
-    "what-is-a-crypto-casino",
-  ],
+  related: ["crypto-gambling-taxes", "report-gambling-winnings", "gambling-tax-australia", "gambling-winnings-tax-canada"],
   updated: "2026-10-21",
-  cta: {
-    title: "This site is a pot, not that product",
-    text: "PVPspinArena does not offer the product described on this page. Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott settle in US dollars.",
-    primary: { to: "/coinflip", label: "Open Coinflip" },
-    secondary: { to: "/how-it-works", label: "How this site works" },
-  },
 };

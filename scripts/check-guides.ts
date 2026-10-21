@@ -1,5 +1,6 @@
 // Run: bun scripts/check-guides.ts
 import { GUIDES, getGuide, publishedTopics, wordCount } from "../src/content/guides";
+import { criticalQualityFailures } from "../src/lib/guides/quality";
 import { NEW_GUIDES } from "./new-guides-plan";
 
 const STATIC = new Set([
@@ -443,6 +444,7 @@ const PLANNED = new Set([
 for (const g of NEW_GUIDES) PLANNED.add(g.slug);
 
 let fail = 0;
+let unsourced = 0;
 const err = (m: string) => {
   fail++;
   console.log("  FAIL " + m);
@@ -452,7 +454,6 @@ const slugs = new Set<string>(),
 for (const g of GUIDES) {
   const wc = wordCount(g);
   console.log(`${g.slug}: ${wc} words, title ${g.title.length}, desc ${g.description.length}`);
-  if (wc < 1850 || wc > 2400) err(`word count ${wc}`);
   if (g.title.length < 40 || g.title.length > 59) err(`title length ${g.title.length}`);
   if (g.description.length < 120 || g.description.length > 159)
     err(`desc length ${g.description.length}`);
@@ -471,7 +472,7 @@ for (const g of GUIDES) {
     ...g.faqs.map((f) => `${f.q}\n${f.a}`),
     g.cta?.primary.to ?? "",
     g.cta?.secondary.to ?? "",
-  ].join("\n");
+  ].join("\n\n");
   const links = [...body.matchAll(/\]\((\/[^)\s]*)\)/g)].map(
     (m) => m[1].split("#")[0].split("?")[0].replace(/\/$/, "") || "/",
   );
@@ -499,6 +500,13 @@ for (const g of GUIDES) {
   if (!g.sections.some((s) => s.body.includes("/guides/topics/"))) err("no topic hub link");
   if (!g.sections.some((s) => /\]\((\/(?!guides\/)[^)]*)\)/.test(s.body))) err("no site links");
   for (const r of g.related) if (!getGuide(r)) err(`unknown related ${r}`);
+  for (const problem of criticalQualityFailures(body)) err(problem);
+  if (g.sources.length < 1) unsourced++;
+}
+if (unsourced > 0) {
+  console.log(
+    `\n${unsourced} published guide(s) have no sources. That is recorded, not filled in. Do not invent a citation to clear the gap.`,
+  );
 }
 console.log(fail ? `\n${fail} problem(s)` : `\nAll ${GUIDES.length} guides pass.`);
 process.exit(fail ? 1 : 0);

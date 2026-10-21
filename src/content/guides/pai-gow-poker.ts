@@ -7,170 +7,78 @@ export const guide: Guide = {
   secondary: ["pai gow poker"],
   title: "Pai Gow Poker: The House Way, Ties and the Edge",
   description:
-    "Pai gow poker uses seven cards split into two hands. The house way, copy hands and ties set a small edge. Rules, not a system.",
-  h1: "Pai gow poker: seven cards, two hands, a small edge",
+    "Pai gow poker deals seven cards into a five-card hand and a two-card hand. You must beat both. Ties go to the banker. Copy the commission from the table.",
+  h1: "Pai gow poker: two hands, and a tie that belongs to the banker",
   answer:
-    "Pai gow poker deals seven cards. You split them into a five-card hand and a two-card hand, both of which must beat the dealer's matching hands. Copy hands push. The house way is a fixed setting strategy for the dealer. The edge is small and real. This site does not deal the game.",
+    "Pai gow poker uses a 52-card deck plus one joker. You and the banker each get seven cards and set a five-card hand that must outrank a two-card hand. You win the bet only if both of your hands beat the banker's matching hands. One win and one loss is a push. A copy on either hand goes to the banker. Commission, when a table charges it, is part of the price.",
   facts: [
-    "Pai gow poker deals seven cards.",
-    "The price is a number you can point at today, or it is unknown.",
-    "Country rules and age rules still apply. Adults 18+ only.",
-    "A guide is not a licence, a tax opinion, or a bypass.",
-    "PVPspinArena does not add this product to six-max poker, Jackpot, Coinflip, Roulette, or P2P Slott.",
+    "The five-card hand must rank above the two-card hand. A hand set the other way is a foul.",
+    "The joker is a bug in the five-card hand at most tables: it completes a straight or flush, and otherwise plays as an ace. In the two-card hand it plays as an ace, except where a house says it is wild.",
+    "Winning both hands wins the bet. Splitting the hands pushes. Losing both loses. Ties on a hand go to the banker.",
+    "Many casinos take a commission on winnings, often described as 5%. Many California rooms charge a flat fee instead. Read the plaque.",
+    "The house way is a posted setting order for the banker's cards. It is not a strategy you have to follow when you are the player, unless you are co-banking.",
   ],
   sections: [
     {
-      id: "scope",
-      title: "What pai gow poker refers to",
-      body: `Pai gow poker deals seven cards. You split them into a five-card hand and a two-card hand, both of which must beat the dealer's matching hands. Copy hands push. The house way is a fixed setting strategy for the dealer. The edge is small and real. This site does not deal the game. Keep that definition in the first line of your note so a later paragraph does not drift into a different product with a similar name.
+      id: "deal",
+      title: "What you are setting",
+      body: `Seven cards become two poker hands. The five-card hand uses ordinary poker ranks, with one common exception: at most casinos the wheel, ace-2-3-4-5, is the second-highest straight, not the lowest. California and Michigan rooms often do not use that exception. The two-card hand is only a pair or a high card. It cannot be a straight or a flush, because it has two cards.
 
-Put today's date on any pai gow poker figure you keep. If the logged-in page does not show the pai gow poker figure, leave the cell blank. A percent copied from a clip is not a pai gow poker source.
+You place the two-card hand in front. If it outranks the five-card hand, you have fouled, and the usual penalty is that the hand is lost or reset by the house rule. Check which.
 
-You need to be 18, or older where local law sets a higher age, before any pai gow poker stake. This pai gow poker page is not legal advice, not a promo code, and not a pick. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott are what PVPspinArena runs, settled in US dollars. It does not sell pai gow poker, and a guide is not a licence.
-
-If a pai gow poker session turns into chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A new login does not erase a pai gow poker limit you already set.
-
-Start in [Casino games](/guides/topics/casino-games). Related reading: [baccarat rules](/guides/baccarat-rules), [craps odds](/guides/craps-odds), [house edge](/guides/house-edge). The product on this site, if you wanted a hashed pot instead, is [Roulette](/roulette).`,
+The deal itself is seven piles of seven, with four cards unused. A dice roll or a random number picks which pile starts. None of that changes the ranking. [How to play poker](/guides/how-to-play-poker) is the ranking language. Pai gow is not hold'em.`,
     },
     {
-      id: "price",
-      title: "The number that matters",
-      body: `Find the price: a wagering multiple, a commission percent, an RTP, a fee, or a hold. If pai gow poker marketing will not state it, the price is unknown. Unknown is not free. Write unknown and decide whether you still want the product.
+      id: "joker",
+      title: "The joker is usually a bug, not a wild card",
+      body: `In the five-card hand the joker completes a straight or a flush when it can. If it cannot, it is an ace. That is why five aces is a possible hand and ranks above a straight flush. In the two-card hand the same card is an ace at most tables. A few southern California rooms play it wild there. "Wild" and "bug" produce different hands. The felt, not a memory of another casino, decides.
 
-Date the pai gow poker note on the day you can still open the live page. Leave a blank when the pai gow poker page has no figure. A video is a poor place to borrow a pai gow poker percentage.
-
-Adults only, 18 or the higher local age. Nothing here is a lawyer's letter, a pai gow poker code, or a selection. The games on this site, unlike pai gow poker, are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Pai gow poker is not one of them, and the article is not a licence.
-
-Stop a pai gow poker session that has become a chase. The limit is [responsible gambling](/responsible-gambling). Another account does not clear the pai gow poker session you already played.`,
+When you are unsure how a joker plays in a straight, set the five-card hand first and ask before the cards go in. A mis-set joker is a foul if the two-card hand ends up higher.`,
     },
     {
-      id: "rules",
-      title: "The rule people skip",
-      body: `Read the constraint that sits under the headline. For a pai gow poker note, it might be expiry, game weighting, a licence that does not cover your country, a gas sponsor who can censor, or a settlement source for an event. The constraint is the product as much as the headline is.
+      id: "banker",
+      title: "Why the banker wins the copies",
+      body: `Each hand is compared on its own. Both of yours higher: you win even money, before commission. One each: push, and the stake stays. Both of the banker's higher: you lose. If one hand is a copy, the banker wins that comparison, so a lost five-card hand plus a copied two-card hand is a loss, not a push.
 
-When you record a pai gow poker price, write the date beside it. A pai gow poker cell with no logged-in source stays empty. Do not fill a pai gow poker blank from a recording.
+That copy rule is the structural edge. It is small per hand and it is real. Casino-banked games also make the dealer set cards by a printed house way, so the dealer is not playing a hidden strategy against you. If you bank, you may set as you like. If you co-bank with the house, you usually must use the house way too.
 
-Play only at 18, or older if your law requires it, including for pai gow poker. This is a pai gow poker explainer, not legal advice and not a code to redeem. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, separate from pai gow poker. The desk does not offer pai gow poker, and these paragraphs are not a licence.
+Commission is separate from the copy rule. Wikipedia's summary of casino practice says many casinos take 5% of winnings, and many California card rooms charge a flat fee whether you win or lose. Those are different prices. An online table can be different again. Copy the number off the rules you are playing. Do not import 5% into a game that posts something else.
 
-Chasing a pai gow poker loss is the moment to stop. Use [responsible gambling](/responsible-gambling). A second profile is not a new budget.
-
-More on the surrounding ideas: [online casino games](/guides/online-casino-games), [keno odds](/guides/keno-odds).`,
+[House edge](/guides/house-edge) is the general idea. This page does not print a single edge for every pai gow room, because the commission and the house way change it.`,
     },
     {
-      id: "cashier",
-      title: "What goes wrong",
-      body: `The usual failure is believing the first sentence of an ad. The second is stacking a second account to catch the same pai gow poker offer. The third is using a coin, a bot, or a smart wallet as if it replaced the rule. It does not.
+      id: "online",
+      title: "What to read before you click deal",
+      body: `Joker rule, wheel ranking, commission or flat fee, whether you can bank, and what a foul costs. Side bets, including fortune-style bets on a seven-card rank, are a second game with their own paytable. Ignore them until the main bet makes sense.
 
-Keep the pai gow poker date on the same line as the figure. If you cannot open the pai gow poker page while logged in, do not invent the percent. A borrowed pai gow poker number is worse than a blank cell.
-
-The age floor for pai gow poker is 18, or higher where you live. No pai gow poker sentence here is a promo code, a pick, or legal advice. PVPspinArena settles six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in US dollars, separate from pai gow poker. It does not operate pai gow poker, and a guide cannot license you.
-
-Leave the pai gow poker session if it starts to feel like a chase. [Responsible gambling](/responsible-gambling) is that boundary. Switching accounts does not reset it.`,
-    },
-    {
-      id: "table",
-      title: "A note with empty cells",
-      body: `Columns: definition, price, constraint, date, loss limit. Five cells. pai gow poker research that cannot fill them is not finished. Do not fill them from this paragraph if the live page disagrees. The live page wins.
-
-A pai gow poker note without a date is a guess. Confirm the pai gow poker figure on a page you can open, or leave the cell blank. Clips do not publish a pai gow poker price you can rely on.
-
-Stay at 18-plus for pai gow poker, or the older age your region sets. Treat this pai gow poker page as explanation, not as advice, a code, or a tip. The live catalog, which does not include pai gow poker, is Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, in US dollars. pai gow poker is absent from that catalog, and the page is not a licence.
-
-A chase is a finished pai gow poker decision. Stop, and read [responsible gambling](/responsible-gambling). Opening another pai gow poker account is not a fresh bankroll.
-
-| Check | What to record for pai gow poker |
-| --- | --- |
-| Price | The number on the screen today, not a memory |
-| Rules | Settlement, voids, and who can be refused |
-| Cashier | A small test, timed, with the transaction id |
-| Country | Whether you are allowed, without a workaround |
-| Stop | The loss limit, written before the deposit |`,
-    },
-    {
-      id: "stop",
-      title: "Where this site stops",
-      body: `PVPspinArena still offers six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If pai gow poker was the thing you wanted to use, you will not find it in the header. That mismatch is a reason to close the tab, not a reason to force the cashier.
-
-Write the pai gow poker source and the date before the conclusion. An empty pai gow poker cell means the live page did not show the figure. That blank is more honest than a pai gow poker percent from a video.
-
-Eighteen is the pai gow poker minimum, unless local law is older. This pai gow poker note is not legal advice, not a code, and not a recommendation. Poker at six-max, plus Jackpot, Coinflip, Roulette, and P2P Slott, is what settles in US dollars here, not pai gow poker. The site does not sell pai gow poker, and the text is not a licence.
-
-If pai gow poker play becomes chasing, stop there. [Responsible gambling](/responsible-gambling) holds the limit. A replacement pai gow poker account is not a clean record.`,
-    },
-    {
-      id: "close",
-      title: "A note you can keep",
-      body: `What pai gow poker refers to. Pai gow poker deals seven cards. You split them into a five-card hand and a two-card hand, both of which must beat the dealer's matching hands.
-
-The number that matters. Find the price: a wagering multiple, a commission percent, an RTP, a fee, or a hold. If pai gow poker marketing will not state it, the price is unknown.
-
-The rule people skip. Read the constraint that sits under the headline. For a pai gow poker note, it might be expiry, game weighting, a licence that does not cover your country, a gas sponsor who can censor, or a settlement source for an event.
-
-What goes wrong. The usual failure is believing the first sentence of an ad. The second is stacking a second account to catch the same pai gow poker offer.
-
-A note with empty cells. Columns: definition, price, constraint, date, loss limit. Five cells.
-
-Where this site stops. PVPspinArena still offers six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. If pai gow poker was the thing you wanted to use, you will not find it in the header.
-
-The older Chinese-domino game that shares the name is [pai gow tiles](/guides/pai-gow-tiles).
-
-Read the pai gow poker list once, from the top, and stop at the first empty cell. That empty cell is the decision. A clip, a chat, or this paragraph must not become the advertisement you write for yourself.
-
-Facts worth dating:
-
-- Pai gow poker deals seven cards.
-- The price is a number you can point at today, or it is unknown.
-- Country rules and age rules still apply. Adults 18+ only.
-- A guide is not a licence, a tax opinion, or a bypass.
-- PVPspinArena does not add this product to Jackpot, Coinflip, Roulette, P2P Slott, or six-max poker.
-
-These felt games are house-banked. The edge is in the rule you skip: the tie in war, the house way in pai gow, the triple in sic bo. A high payout on a rare bet is the rare bet being rare, not a discount. Learn the one wager with the smaller edge if you learn any, and still treat it as a cost.
-
-This site does not deal those games. Roulette here is a published wheel, separate from a three-dice menu or a seven-card split.
-
-Do the pai gow poker arithmetic before you call it a bargain. A wagering multiple times the chip is the amount you must bet. Commission comes off the winner. A hold inside the odds is already the cost. An RTP, when a game prints one, is a long-run return, not a promise about tonight. If the live page will not give you the input, the output stays unknown. Unknown is a reason to skip, including when a pai gow poker search feels urgent.
-
-Date the pai gow poker note on the same line as the stake and the loss limit. When the limit is reached, stop. The rest of the reading can wait. Waiting is a finished decision, and opening another logo to repair the feeling is how a short note becomes a second deposit.
-
-Prefer one small pai gow poker test over many open tabs. Stake the cashier's minimum, on the asset and network it names, and withdraw a fraction before you add funds. Record the time and the id. Answer an identity question or leave. A pai gow poker path that skips the question is a different product, and not a better one.
-
-Then close the tab or play only what this site actually offers. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, for adults 18+ only. A new pai gow poker login does not clear the limit you already hit.`,
+PVPspinArena does not deal pai gow. [Responsible gambling](/responsible-gambling) still applies if you play it somewhere else. The [casino games](/guides/topics/casino-games) topic collects the other tables. [Baccarat rules](/guides/baccarat-rules) are the nearest cousin only in the sense that both are banker-versus-player comparisons. The hands are not alike. [Expected value](/guides/expected-value-gambling) is how to price a commission once you have the actual percent.`,
     },
   ],
   faqs: [
     {
-      q: "What should I check first for pai gow poker?",
-      a: "The definition and the price. If either is missing on the live page, stop. A blog, including this one, does not replace the operator's current terms.",
+      q: "Do I have to win both hands?",
+      a: "Yes, to win the bet. Winning one and losing one is a push. A tie on a hand is a win for the banker.",
     },
     {
-      q: "Is this available on PVPspinArena?",
-      a: "No. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. This topic is explained so you can tell it apart from those games.",
+      q: "Can I set the two-card hand higher than the five-card hand?",
+      a: "No. That is a foul. Houses either forfeit it or rearrange it by their rule.",
     },
     {
-      q: "Does crypto change the rule?",
-      a: "No. A wallet transfer does not create a licence, delete a tax question, or remove wagering requirements.",
+      q: "Is the joker wild?",
+      a: "In the five-card hand it is usually a bug: straight, flush, or ace. In the two-card hand it is usually an ace. A house that calls it wild will say so.",
     },
     {
-      q: "Can you give me a code or a bypass?",
-      a: "No. Codes expire and bypasses are not something this site will write.",
+      q: "Is the commission always 5%?",
+      a: "No. Five percent of winnings is common in the published descriptions of many casinos, and a flat fee is common in many California rooms. Use the table you are sitting at.",
     },
     {
-      q: "When do I stop reading?",
-      a: "When the note says not allowed, when you are chasing a loss, or when the product is not the one you came for.",
+      q: "Does the house way apply to my cards?",
+      a: "Not unless you are banking under a co-bank rule that requires it. The house way is how the banker sets. You may set a legal hand your own way.",
     },
   ],
   sources: [
-    {
-      label: "GambleAware",
-      url: "https://www.gambleaware.org/",
-    },
+    { label: "Wikipedia: Pai gow poker", url: "https://en.wikipedia.org/wiki/Pai_gow_poker" },
   ],
-  related: ["baccarat-rules", "craps-odds", "house-edge", "online-casino-games", "pai-gow-tiles"],
+  related: ["house-edge", "baccarat-rules", "how-to-play-poker", "expected-value-gambling"],
   updated: "2026-10-21",
-  cta: {
-    title: "This site is a pot, not that product",
-    text: "PVPspinArena does not offer the product described on this page. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker settle in US dollars.",
-    primary: { to: "/roulette", label: "Open Roulette" },
-    secondary: { to: "/how-it-works", label: "How this site works" },
-  },
 };
