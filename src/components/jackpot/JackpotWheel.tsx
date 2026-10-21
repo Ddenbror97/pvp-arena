@@ -1,11 +1,15 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { avatarSrc } from "@/lib/avatar";
 import { wheelSegments } from "@/lib/jackpot/math";
 import { JACKPOT_SPIN_MS } from "@/lib/jackpot/reveal";
-import { wheelEase } from "@/lib/jackpot/wheel-motion";
+import { wheelEase, wheelRotateFrames, wheelTimingFunction } from "@/lib/jackpot/wheel-motion";
 import { playerColor } from "@/lib/jackpot/colors";
 import type { PlayerRow } from "@/lib/jackpot/api";
 import { emitSound } from "@/lib/sound";
+
+const useIso = typeof window === "undefined" ? useEffect : useLayoutEffect;
+/** Ignore sub-frame clock noise. A larger gap is a real correction and is applied once. */
+const SEEK_MS = 80;
 
 const R = 200;
 const INNER = 138;
@@ -50,7 +54,8 @@ export const SPIN_MS = JACKPOT_SPIN_MS;
 
 export function JackpotWheel({ players, spin, now, highlightId, roundId = 0, children }: Props) {
   const segments = useMemo(() => wheelSegments(players), [players]);
-  const svg = useRef<SVGSVGElement>(null);
+  const rotor = useRef<HTMLDivElement>(null);
+  const box = useRef<HTMLDivElement>(null);
   const nowRef = useRef(now);
   nowRef.current = now;
   const winnerSeg = spin ? segments.find((s) => s.user_id === spin.winnerId) : undefined;
@@ -69,41 +74,78 @@ export function JackpotWheel({ players, spin, now, highlightId, roundId = 0, chi
     const p = Math.min(1, Math.max(0, (t - spin.startAt) / SPIN_MS));
     return target * wheelEase(p);
   };
+  // The first paint only. Later renders must not write `rotate`: the stage
+  // ticks several times a second, and each write rewound the wheel.
+  const painted = useRef<string | null>(null);
+  if (painted.current == null) painted.current = `${rotAt(now())}deg`;
 
-  // Clock-driven animation: position depends only on server time, never on
-  // when this browser received the result. Hidden tabs resume at the right spot.
-  // `now` is read from a ref so a clock correction moves the wheel and the
-  // ratchet together without tearing the loop down and leaving the old cue.
-  useEffect(() => {
-    if (!spin || target == null) {
-      if (svg.current) svg.current.style.transform = "rotate(0deg)";
+  // One compositor animation for the whole spin. Server time only corrects it
+  // when the clock is actually off, so a busy main thread cannot make the
+  // wheel step. Hidden tabs seek back onto the same angle as everyone else.
+  const startAt = spin?.startAt;
+  useIso(() => {
+    const el = rotor.current;
+    const stage = box.current;
+    if (!el) return;
+    if (startAt == null || target == null) {
+      for (const running of el.getAnimations()) running.cancel();
+      el.style.rotate = "0deg";
+      if (stage) delete stage.dataset["spinning"];
       return;
+    }
+    const started = startAt;
+    let anim: Animation;
+    try {
+      anim = el.animate([{ rotate: "0deg" }, { rotate: `${target}deg` }], {
+        duration: SPIN_MS,
+        easing: wheelTimingFunction(),
+        fill: "both",
+      });
+    } catch {
+      anim = el.animate(wheelRotateFrames(target), {
+        duration: SPIN_MS,
+        easing: "linear",
+        fill: "both",
+      });
     }
     let raf = 0;
     let stopped = false;
-    const loop = () => {
-      const t = nowRef.current();
-      if (svg.current) svg.current.style.transform = `rotate(${rotAt(t)}deg)`;
-      const elapsed = t - spin.startAt;
-      if (elapsed >= 0 && elapsed < SPIN_MS) {
-        emitSound("wheel_spin", { elapsedMs: elapsed });
+    let primed = false;
+    const tick = () => {
+      const elapsed = nowRef.current() - started;
+      const clamped = Math.min(SPIN_MS, Math.max(0, elapsed));
+      const shown = Number(anim.currentTime ?? 0);
+      if (!primed || Math.abs(shown - clamped) > SEEK_MS) {
+        anim.currentTime = clamped;
+        primed = true;
       }
+      const moving = elapsed >= 0 && elapsed < SPIN_MS;
+      if (stage && moving !== (stage.dataset["spinning"] === "1")) {
+        if (moving) stage.dataset["spinning"] = "1";
+        else delete stage.dataset["spinning"];
+      }
+      if (moving) emitSound("wheel_spin", { elapsedMs: elapsed });
       if (!stopped && elapsed >= SPIN_MS) {
         stopped = true;
         emitSound("spin_stop");
       }
-      if (elapsed < SPIN_MS + 50) raf = requestAnimationFrame(loop);
+      if (elapsed < 0) anim.pause();
+      else if (clamped < SPIN_MS && anim.playState === "paused") anim.play();
+      if (elapsed < SPIN_MS + 40) raf = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(loop);
+    tick();
     return () => {
       cancelAnimationFrame(raf);
+      anim.cancel();
+      if (stage) delete stage.dataset["spinning"];
       emitSound("spin_stop");
     };
-  }, [spin, target]); // eslint-disable-line react-hooks/exhaustive-deps
+    // `target` already folds in the winner. Primitives, so a fresh spin object
+    // with the same round does not cancel the running animation.
+  }, [startAt, target]);
 
   // Pause the decorative RGB ring while the page scrolls or the wheel is off-screen:
   // repainting the rotating gradient + blur during scroll caused jank on mid-range phones.
-  const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = box.current;
     if (!el) return;
@@ -142,59 +184,60 @@ export function JackpotWheel({ players, spin, now, highlightId, roundId = 0, chi
       <div aria-hidden className="rgb-ring rgb-ring-blur" />
       <div aria-hidden className="rgb-ring" />
       <div className="jp-wheel-base absolute inset-0 rounded-full bg-surface ring-1 ring-border" />
-      <svg
-        ref={svg}
-        viewBox={`0 0 ${R * 2} ${R * 2}`}
+      <div
+        ref={rotor}
+        className="jp-wheel-rotor absolute inset-0"
+        style={{ rotate: painted.current }}
         suppressHydrationWarning
-        className="absolute inset-0 h-full w-full overflow-visible will-change-transform"
-        style={{ transform: `rotate(${rotAt(now())}deg)` }}
       >
-        {segments.length === 0 && (
-          <circle
-            cx={R}
-            cy={R}
-            r={(R + INNER) / 2 - 4}
-            fill="none"
-            stroke="var(--wheel-tick, var(--border))"
-            strokeWidth={R - INNER - 8}
-            strokeDasharray="4 10"
-          />
-        )}
-        {segments.map((s, i) => {
-          const mid = (s.start + s.end) / 2;
-          const a = ((mid - 90) * Math.PI) / 180;
-          const rr = (R + INNER) / 2 - 4;
-          const dim = highlightId && highlightId !== s.user_id;
-          return (
-            <g key={s.user_id} opacity={dim ? 0.25 : 1} style={{ transition: "opacity 600ms" }}>
-              <path
-                d={arcPath(s.start, s.end, R - 8, INNER)}
-                fill={playerColor(i, roundId)}
-                stroke="var(--background)"
-                strokeWidth={2.5}
-              />
-              {s.end - s.start > 14 && avatarSrc(s.profiles?.avatar_url) && (
-                <g
-                  transform={`translate(${R + rr * Math.cos(a)} ${R + rr * Math.sin(a)}) rotate(${mid})`}
-                >
-                  <clipPath id={`clip-${s.user_id}`}>
-                    <circle r={15} />
-                  </clipPath>
-                  <circle r={17} fill="var(--background)" />
-                  <image
-                    href={avatarSrc(s.profiles?.avatar_url)!}
-                    x={-15}
-                    y={-15}
-                    width={30}
-                    height={30}
-                    clipPath={`url(#clip-${s.user_id})`}
-                  />
-                </g>
-              )}
-            </g>
-          );
-        })}
-      </svg>
+        <svg viewBox={`0 0 ${R * 2} ${R * 2}`} className="h-full w-full overflow-visible">
+          {segments.length === 0 && (
+            <circle
+              cx={R}
+              cy={R}
+              r={(R + INNER) / 2 - 4}
+              fill="none"
+              stroke="var(--wheel-tick, var(--border))"
+              strokeWidth={R - INNER - 8}
+              strokeDasharray="4 10"
+            />
+          )}
+          {segments.map((s, i) => {
+            const mid = (s.start + s.end) / 2;
+            const a = ((mid - 90) * Math.PI) / 180;
+            const rr = (R + INNER) / 2 - 4;
+            const dim = highlightId && highlightId !== s.user_id;
+            return (
+              <g key={s.user_id} opacity={dim ? 0.25 : 1} style={{ transition: "opacity 600ms" }}>
+                <path
+                  d={arcPath(s.start, s.end, R - 8, INNER)}
+                  fill={playerColor(i, roundId)}
+                  stroke="var(--background)"
+                  strokeWidth={2.5}
+                />
+                {s.end - s.start > 14 && avatarSrc(s.profiles?.avatar_url) && (
+                  <g
+                    transform={`translate(${R + rr * Math.cos(a)} ${R + rr * Math.sin(a)}) rotate(${mid})`}
+                  >
+                    <clipPath id={`clip-${s.user_id}`}>
+                      <circle r={15} />
+                    </clipPath>
+                    <circle r={17} fill="var(--background)" />
+                    <image
+                      href={avatarSrc(s.profiles?.avatar_url)!}
+                      x={-15}
+                      y={-15}
+                      width={30}
+                      height={30}
+                      clipPath={`url(#clip-${s.user_id})`}
+                    />
+                  </g>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
       <div className="jp-wheel-hub absolute inset-[18%] z-10 flex items-center justify-center rounded-full bg-background ring-1 ring-border">
         {children}
       </div>

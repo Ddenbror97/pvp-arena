@@ -663,7 +663,11 @@ html[data-theme="light"] :is(.bet-chip-RED, .bet-chip-GREEN, .bet-chip-BLACK) { 
   animation: rgb-spin 4s linear infinite;
   will-change: transform;
 }
-[data-ring-paused] > .rgb-ring { animation-play-state: paused; }
+/* The blurred ring repaints on every frame. Hold it still while the wheel is
+   spinning so that paint cannot steal frames from the rotor. */
+[data-ring-paused] > .rgb-ring,
+[data-spinning] > .rgb-ring { animation-play-state: paused; }
+.jp-wheel-rotor { will-change: rotate; }
 .rgb-ring-blur { inset: -14px; filter: blur(22px); opacity: 0.75; }
 @media (prefers-reduced-motion: reduce) { .rgb-ring { animation: none; } }
 
