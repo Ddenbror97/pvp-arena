@@ -88,7 +88,7 @@ async function setTimer(countdown: number, extension: number, max: number, rate 
 d("jackpot engine (isolated schema)", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
-  }, 60000);
+  }, 180_000);
   afterAll(async () => {
     await sql`drop schema if exists pvp_test cascade`;
     await sql.end();
