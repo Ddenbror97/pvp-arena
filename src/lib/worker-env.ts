@@ -28,6 +28,8 @@ const KNOWN = [
   "DIDIT_API_KEY",
   "DIDIT_WORKFLOW_ID",
   "DIDIT_WEBHOOK_SECRET",
+  "GAME_SIGNUP_PROMO_ENABLED",
+  "OTP_PEPPER",
 ] as const;
 
 let bindings: Record<string, string> = {};

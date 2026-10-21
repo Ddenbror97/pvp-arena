@@ -18,7 +18,7 @@ function TermsPage() {
   return (
     <LegalPage title="Terms">
       <p>
-        <strong>Last updated October 20, 2026.</strong>
+        <strong>Last updated October 21, 2026.</strong>
       </p>
       <p>
         These terms are the rules for using PVPspinArena at pvpspinarena.com. By creating an account
@@ -209,6 +209,24 @@ function TermsPage() {
       <p>
         Chat is plain text. Do not post private keys, seed phrases, passwords, or another
         person&apos;s personal information.
+      </p>
+
+      <h2 id="promotional-credit">Promotional Credit</h2>
+      <p>
+        A promotional code, when one is offered, can add promotional play credit to your playable
+        balance. That credit is not a Bitcoin, USDC, or ETH deposit, and it is not a cash transfer.
+      </p>
+      <p>
+        The code, the amount, how many claims are left, and any expiry are the ones configured for
+        that offer. Each account can redeem one promo code, and each network can redeem one. A code
+        that is inactive, expired, used up, or already redeemed on the account or network is
+        declined.
+      </p>
+      <p>
+        Promotional play credit has to be wagered for the amount of that credit before it counts as
+        played. Withdrawals stay under the Deposits and Withdrawals rules on this page, including
+        the minimum cashout and the requirement to wager at least half of the dollars you have
+        deposited. You must be 18 or older.
       </p>
 
       <h2>Responsible Play</h2>

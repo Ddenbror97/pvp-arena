@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { formatUsd } from "@/lib/jackpot/math";
+import { promoClaimSucceeded } from "@/lib/promo/game-signup-policy";
 
 const KEY = "pvp-signup-promo";
 
@@ -9,9 +10,7 @@ export type PromoClaimResult = { ok?: boolean; reason?: string; reward_cents?: n
 export type SignupAccount = { id: string; email?: string | null };
 
 type PromoBind =
-  | { kind: "email"; email: string }
-  | { kind: "discord" }
-  | { kind: "account"; accountId: string };
+  { kind: "email"; email: string } | { kind: "discord" } | { kind: "account"; accountId: string };
 
 type StoredPromo = { v: 1; code: string; bind: PromoBind };
 
@@ -47,13 +46,21 @@ function readStored(): StoredPromo | "legacy" | null {
     const bind = parsed.bind;
     if (!bind || typeof bind !== "object" || !("kind" in bind)) return "legacy";
     if (bind.kind === "email" && typeof bind.email === "string" && bind.email.trim()) {
-      return { v: 1, code: parsed.code.trim().slice(0, 16), bind: { kind: "email", email: bind.email.trim().toLowerCase() } };
+      return {
+        v: 1,
+        code: parsed.code.trim().slice(0, 16),
+        bind: { kind: "email", email: bind.email.trim().toLowerCase() },
+      };
     }
     if (bind.kind === "discord") {
       return { v: 1, code: parsed.code.trim().slice(0, 16), bind: { kind: "discord" } };
     }
     if (bind.kind === "account" && typeof bind.accountId === "string" && bind.accountId) {
-      return { v: 1, code: parsed.code.trim().slice(0, 16), bind: { kind: "account", accountId: bind.accountId } };
+      return {
+        v: 1,
+        code: parsed.code.trim().slice(0, 16),
+        bind: { kind: "account", accountId: bind.accountId },
+      };
     }
     return "legacy";
   } catch {
@@ -180,31 +187,36 @@ export function openPromoClaim(code: string): { announce: () => boolean; release
   };
 }
 
+export type RememberedPromoClaim =
+  { status: "none" } | { status: "retry" } | { status: "done"; ok: boolean; reason?: string };
+
 /** Claim the code typed at signup. A rejected code still leaves the account in place. */
-export async function claimRememberedPromo(account: SignupAccount): Promise<"none" | "done" | "retry"> {
+export async function claimRememberedPromo(account: SignupAccount): Promise<RememberedPromoClaim> {
   const status = signupPromoStatus(account);
-  if (status === "empty") return "none";
-  if (status === "wait") return "retry";
+  if (status === "empty") return { status: "none" };
+  if (status === "wait") return { status: "retry" };
   if (status === "abandon") {
     forgetPromoCode();
-    return "none";
+    return { status: "none" };
   }
   const code = peekPromoCode();
-  if (!code) return "none";
+  if (!code) return { status: "none" };
   const flight = openPromoClaim(code);
   try {
     const result = await claimPromoCode(code);
     forgetPromoCode();
     if (flight.announce()) {
-      if (result.ok)
+      if (promoClaimSucceeded(result))
         toast.success(
           `Promo claimed — ${formatUsd(result.reward_cents ?? 0)} added to your balance.`,
         );
       else toast.error(promoClaimError(result));
     }
-    return "done";
+    return result.reason
+      ? { status: "done", ok: result.ok === true, reason: result.reason }
+      : { status: "done", ok: result.ok === true };
   } catch {
     flight.release();
-    return "retry";
+    return { status: "retry" };
   }
 }
