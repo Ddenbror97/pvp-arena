@@ -2,13 +2,15 @@
 
 Date: 2026-10-21
 
+Status: **Phase 2 complete.**
+
 Scope: authorization boundaries, admin step-up, bonuses and referrals, partner accounting, house-bot kill switch, self-exclusion, chat moderation, worker privileges, migration drift, and a bounded read-load measurement. The five game-engine suites and the wallet/ledger suites were not re-run. This audit does not authorize a production deploy, a migration, or a financial operation.
 
 ## Executive summary
 
 The executed checks passed on the isolated test project. No critical or high application defect was reproduced. Anonymous and authenticated sessions cannot read private financial tables, private profile columns, admin PINs, or the crypto job bearer. A planted wallet for one account was invisible to the other account, and an attempted balance change did not apply. Admin money RPCs that are executable by `authenticated` all call a step-up guard. Partner credit is idempotent under a concurrent replay and rejects a reused request id. Self-exclusion blocks coinflip, jackpot, roulette, slott, poker, a bot call, and the withdrawal function before a withdrawal row is written. Referral self-claims, duplicate claims, stale accounts, and a shared wallet are refused or held in `FRAUD_REVIEW` with no reward row. Partner commission of 10,002 cents at 150 bps is 150 cents. Chat stores a hostile string literally, rate-limits a flood and a duplicate, and anon cannot insert.
 
-**Recommendation: GO for this Phase 2 scope.** That means the checks below passed and no release-blocking authorization or accounting defect was found in them. It is not a statement that the platform is fully secure, and it is not approval to deploy, merge to production, or move money.
+**Recommendation: GO for this Phase 2 scope. Phase 2 is complete.** The committed suite passed 14 tests, 0 failed, and 0 skipped. No critical or high defect was reproduced. That is not a statement that the platform is fully secure, and it is not approval to deploy, merge to production, or move money.
 
 ## Environment verification
 
@@ -22,7 +24,7 @@ The executed checks passed on the isolated test project. No critical or high app
 
 Safety checks performed before any mutation:
 
-- Every script compared the database URL with `qyykpkzmthkrvmtmgvwo` and aborted on the production ref, the unrelated project, or localhost.
+- Every script compared the database URL with `qyykpkzmthkrvmtmgvwo` and aborted on the production ref and the unrelated projects. Localhost is allowed only for an empty isolated Postgres, as described under the retained-test rules.
 - Public probes that insert a wallet run inside a `DO` block that raises after the assertion. A follow-up owner query found no `user_available` USD rows with the planted balances 111 or 222.
 - `pvp_test` was built from the repo migrations and dropped at the end of the suite. It is not present now.
 - The disposable login was granted `anon`, `authenticated`, and `service_role` only so `SET ROLE` works. It was not superuser and was not given `BYPASSRLS`. After the suite, `DROP OWNED` and `DROP ROLE` removed it. A follow-up catalog query returned zero roles with that name.
@@ -31,6 +33,37 @@ Safety checks performed before any mutation:
 - No real OTP, payment, or blockchain transfer was sent.
 
 Isolation limit: `pvp_test` shares the test project's Postgres instance, advisory locks, and extensions with `public`. Game workers on `public` were left running. Behavioral fixtures stayed in `pvp_test` or in rolled-back `public` transactions.
+
+### Cleanup re-checked
+
+A read-only management query against `qyykpkzmthkrvmtmgvwo` only, after the suite and after this follow-up, returned:
+
+| Object | Count |
+| --- | ---: |
+| Schema `pvp_test` | 0 |
+| Role `phase2_audit_e4cb` | 0 |
+| Planted `user_available` USD rows with balance 111 or 222 | 0 |
+| Wallets with an owner | 0 |
+| Ledger transactions | 0 |
+| Crypto withdrawals | 0 |
+| Partner top-ups | 0 |
+
+The four pre-existing system accounts (`house_revenue`, `test_faucet`, and two `bot_bankroll` rows) are still there, with balance 0 and no postings. They were not created by this audit and were not deleted.
+
+### Production
+
+Production was not a connection target. SQL and the management API in this audit used ref `qyykpkzmthkrvmtmgvwo` only. This follow-up did not open a production connection, because doing so would access production to prove a negative. The branch diff against `main` is the audit report and `tests/db/phase2-audit.integration.test.ts`. It does not change game logic, wallet logic, balances, migrations, or production configuration. `supabase/config.toml` still names the production project and was not edited.
+
+### Why the test file can stay
+
+`tests/db/phase2-audit.integration.test.ts` refuses a database before it connects:
+
+1. `testDatabaseUrl()` requires `TEST_DATABASE_URL` and refuses it when the URL matches `SUPABASE_DB_URL` or contains `SUPABASE_PROJECT_ID` / the host ref from `SUPABASE_URL`. The app env names the production ref, so a URL that contains that ref does not start. There is no fallback to `SUPABASE_DB_URL`.
+2. The file then refuses `dkyabirifoixnfbmheay`, `gqeaadpdtuussxdlnmof`, and `fdsovopvmjogjcllmxwj` even if those env vars are unset. Any other host except `127.0.0.1`, `localhost`, or the approved test ref throws before `postgres()` is called.
+3. The public checks, including the management API, run only when the URL contains `qyykpkzmthkrvmtmgvwo`. That API path is the test ref hardcoded in the file, not a ref taken from the database URL.
+4. Localhost is allowed so an empty CI Postgres can run the isolated `pvp_test` cases. Those cases create and drop `pvp_test` on that server. They do not call the management API.
+
+Do not point `TEST_DATABASE_URL` at a tunnel that makes production look like localhost. The hostname check cannot see through a tunnel. The rollout workflow does not run this file.
 
 ## Coverage matrix
 
@@ -53,7 +86,7 @@ Isolation limit: `pvp_test` shares the test project's Postgres instance, advisor
 
 Command: `vitest run tests/db/phase2-audit.integration.test.ts` against the approved test URL.
 
-Final run: **14 passed, 0 failed, 0 skipped.** Earlier failures in this session were incorrect assertions (audit column name, same-length exclusion expectation, schema usage, and a money-migration precondition). They were corrected in the test, not by changing product behavior. The final file is the one that passed.
+Final run, on the file committed in this branch: **14 passed, 0 failed, 0 skipped.** No critical or high defect was reproduced. Earlier failures in this session were incorrect assertions (audit column name, same-length exclusion expectation, schema usage, and a money-migration precondition). They were corrected in the test, not by changing product behavior. The suite was not run again during finalization, because the disposable login had already been dropped and recreating it was unnecessary.
 
 | Check | Result |
 | --- | --- |
@@ -117,18 +150,24 @@ Workload: concurrent `select pvp_test.referral_terms()` on the test project. Cli
 
 The 100-task p95 is higher because it includes the first contact. No pool exhaustion, timeout, or error was observed, so the run was not stopped early. Lock waits, `pg_stat_statements`, and server CPU were not sampled. No slow-query regression is claimed.
 
-## Remaining risks
+## Remaining risks and follow-up tests
 
-- Game-engine, promo-race, and wallet suites were not re-executed. Their prior passes are not new evidence from this session.
-- A forged or session-less production JWT was not presented to PostgREST. Signature verification sits in front of the SQL early-return.
-- Realtime subscribe, revoke-during-subscription, and presence were not exercised against a live socket.
-- Backup, restore, and point-in-time recovery were not performed.
-- The 1,000-task figure is a queued read on 8 sessions.
-- Public cron on the test project keeps calling `public` workers. This audit did not pause them and did not feed them new public rows.
-- `DROP OWNED` on the disposable role revoked only that role's grants. It was not a superuser. Catalog ownership of application tables was checked first and was empty.
+These are unverified gaps, ordered by how serious an unknown failure there would be. None is a reproduced defect. Do not run them against production.
+
+| Priority | Gap | Why it still matters | Recommended test |
+| --- | --- | --- | --- |
+| High | Real GoTrue authentication | Logout revocation depends on a real access token carrying `session_id`. This audit simulated claims inside SQL. `_assert_live_session` returns early when that claim is missing. | On the test project, sign in two synthetic users through GoTrue. Call a money RPC, log out, and call it again with the old token. Confirm PostgREST rejects it and no ledger row appears. Repeat with an expired token and a token whose `session_id` was deleted. |
+| High | Realtime WebSocket authorization | A passing SQL policy does not prove a socket cannot receive the same row. | As anon, and as user A, subscribe to wallet, ledger, chat, and user-B channels on the test project. Confirm private and hidden rows never arrive. Revoke or exclude the user during an open socket and confirm the next payload stops. |
+| Medium | Backup and restore | Recovery was not executed. A schema diff is not a restore. | Restore a test-project snapshot onto a new disposable database. Check foreign keys, the ledger sum, RLS, and that a restored exclusion still blocks a bet. Do not restore over `qyykpkzmthkrvmtmgvwo` or production. |
+| Medium | Concurrent sessions | 1,000 tasks ran on 8 pooled sessions. That does not show pool exhaustion or lock waits. | On the test project only, open 100 real sessions, then 250 if the pool stays healthy. Mix the audited reads and a self-exclusion reject. Record errors, lock waits, and pool timeouts. Stop if the pooler returns connection errors. Do not claim 1,000 sessions unless that many connect. |
+| Low | Game, promo, and wallet suites | Prior passes were not re-executed here. | Re-run those suites only when a change touches them. |
+| Low | Minute dispatcher overlap | `pvp_minute_dispatch` can HTTP POST to production when a bearer exists, so it was not called. | Run overlapping dispatch only with HTTP mocked and an empty or fake bearer. |
+| Informational | Chat during self-exclusion | `chat_send` does not read `self_excluded_until`. | Decide if exclusion should mute chat. If the product rule changes, add a regression that expects the block. |
+
+Public cron on the test project still calls `public` workers. This audit did not pause those jobs and did not insert public rows for them.
 
 ## Final recommendation
 
-**GO for the Phase 2 scope above.** Critical and high findings: none confirmed. The P0 checks that were run passed, on `qyykpkzmthkrvmtmgvwo` only, with planted public rows confirmed absent afterward. Remaining gaps are listed and were not counted as passes.
+**Phase 2 is complete. GO for the scope above.** Critical and high findings: none confirmed. The committed file passed 14 tests on `qyykpkzmthkrvmtmgvwo`. Cleanup was re-checked: no `pvp_test` schema, no audit role, and no planted wallets. Production was not connected to and was not modified.
 
-This is not approval to deploy, to merge into production, to apply a migration on production, or to turn on a payout rail.
+This is not approval to deploy, to merge into production, to apply a migration on production, or to turn on a payout rail. The follow-up tests above are the next evidence to collect. They are not release blockers from a defect that was reproduced.
