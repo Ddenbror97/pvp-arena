@@ -258,7 +258,7 @@ export function RecentCoinflips({ layout = "wide" }: { layout?: "wide" | "rail" 
           </p>
         ) : (
           <>
-            <ul className="min-h-0 flex-1 divide-y divide-border overflow-y-auto">
+            <ul className="no-scrollbar min-h-0 flex-1 divide-y divide-border overflow-y-auto">
               {rows.map((g) => {
                 const creatorWon = g.winner_id === g.creator_id;
                 const winner = creatorWon ? g.creator : g.opponent;
