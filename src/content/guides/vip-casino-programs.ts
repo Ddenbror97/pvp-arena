@@ -37,7 +37,7 @@ Perks you will see advertised:
 - Faster KYC and higher withdrawal caps.
 - Bonus customisation.
 
-This [Foundations](/guides/topics/foundations) page is for adults 18+. It will not rank VIP rooms. PVPspinArena does not sell a public tier shop on Jackpot, Coinflip or Roulette. You see the same [house edge](/guides/house-edge) and the same [Fairness](/fairness) method at $1 as at $20. That is the point of a published game: status does not rewrite the wheel.
+This [Foundations](/guides/topics/foundations) page is for adults 18+. It will not rank VIP rooms. PVPspinArena does not sell a public tier shop on [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), or [P2P Slott](/slott). You see the same [house edge](/guides/house-edge) and the same [Fairness](/fairness) method at $1 as at $20. That is the point of a published game: status does not rewrite the wheel.
 
 If a host is already texting you after midnight, that is pressure. Use [responsible gambling](/responsible-gambling) if the texts are working.
 
@@ -202,5 +202,5 @@ The person who actually works a high-value account is the [casino host](/guides/
     "house-edge",
     "casino-host",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

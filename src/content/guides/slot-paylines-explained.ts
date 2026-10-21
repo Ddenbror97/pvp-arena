@@ -200,7 +200,7 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     },
     {
       q: "Does PVPspinArena have payline slots?",
-      a: "No. This site's slot game is P2P Slott, a 1v1 duel. Jackpot, Coinflip and Roulette use published fractions instead of painted lines.",
+      a: "No. This site's slot game is P2P Slott, a 1v1 duel. Jackpot, Coinflip, Roulette, and six-max poker use published fractions instead of painted lines.",
     },
     {
       q: "Why did a 20× win barely change my balance?",

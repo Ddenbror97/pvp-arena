@@ -150,10 +150,10 @@ Adults only. If gambling has stopped being optional, use [responsible gambling](
     "gambling-self-exclusion",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
   cta: {
     title: "Rules first, cashier second",
-    text: "PVPspinArena does not claim a local casino licence in your country. If a product is not allowed where you live, do not use a workaround. Jackpot, Coinflip and Roulette are the only games here.",
+    text: "PVPspinArena does not claim a local casino licence in your country. If a product is not allowed where you live, do not use a workaround. Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip are the only games here.",
     primary: { to: "/responsible-gambling", label: "Responsible gambling" },
     secondary: { to: "/terms", label: "Read the terms" },
   },

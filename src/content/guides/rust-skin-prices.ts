@@ -146,7 +146,7 @@ None of this is an argument to “invest.” It is why a screenshot is not a sta
 - **Holds and bans.** Steam can delay or lock the account. [Skin gambling vs crypto](/guides/skin-gambling-vs-crypto) is the general case.
 - **Agreement.** Using Steam to gamble is against Valve’s Subscriber Agreement.
 
-A dollar stablecoin is a boring chip: one unit, one chain, no workshop lore. PVPspinArena uses USDC or ETH on Base for player-versus-player Jackpot, Coinflip and Roulette. It does not list Rust cosmetics and is not a Kick or Twitch house. Watch a pot on [Jackpot](/) if you want to see a USD stake with no skin ticker. The pot share is a percent of dollars, not a percent of a Facepunch store tag. That is the whole point of a dollar chip: everyone in the room is counting the same unit.
+A dollar stablecoin is a boring chip: one unit, one chain, no workshop lore. PVPspinArena uses USDC or ETH on Base for player-versus-player Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. It does not list Rust cosmetics and is not a Kick or Twitch house. Watch a pot on [Jackpot](/) if you want to see a USD stake with no skin ticker. The pot share is a percent of dollars, not a percent of a Facepunch store tag. That is the whole point of a dollar chip: everyone in the room is counting the same unit.
 
 If the urge is already “deposit the whole wardrobe,” that is a budget problem, not a pricing problem. 18+ only.
 
@@ -206,5 +206,5 @@ If you only remember one method: bid, ask, last three sales, fee, hold. Five num
     },
   ],
   related: ["pvp-gambling", "tf2-gambling", "rust-gambling", "csgo-coinflip", "cs2-roulette"],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

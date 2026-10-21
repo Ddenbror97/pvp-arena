@@ -168,7 +168,7 @@ Asking these questions takes a few minutes, and the answers tell you a lot about
       title: "How PVPspinArena fits the checklist",
       body: `PVPspinArena was built as a crypto version of the CS:GO-era classics:
 
-- **Games:** Jackpot, Coinflip and Roulette. No case openings, case battles or crash.
+- **Games:** P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. No case openings, case battles or crash.
 - **Stakes:** USDC on Base, shown in US dollars. No skins.
 - **Fees:** 5% fee on player-vs-player Jackpot and Coinflip pots; Roulette's Purple or Silver edge is about 7.88% after the win fee.
 - **Fairness:** every round can be checked on the [Fairness page](/fairness).
@@ -218,10 +218,10 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     "esports-betting",
     "cs2-betting",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
   cta: {
     title: "The CS:GO classics, with USDC",
-    text: "Create a free account and play Jackpot, Coinflip and Roulette with results you can verify.",
+    text: "Create a free account and play Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot with results you can verify.",
     primary: { to: "/auth", label: "Sign in" },
     secondary: { to: "/", label: "Jackpot" },
   },

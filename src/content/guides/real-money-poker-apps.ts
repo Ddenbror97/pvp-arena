@@ -22,7 +22,7 @@ export const guide: Guide = {
     "A club or agent app may show chips while a person, not the app company, owes the cash-out.",
     "Video poker and other house games use poker hands and a fixed pay table. You are not bluffing a neighbor.",
     "Play-money and 'no purchase necessary' apps can look like cash games until you try to redeem.",
-    "PVPspinArena is not a poker app. Jackpot and Coinflip take 5% of the pot.",
+    "PVPspinArena is a browser six-max table, not a downloadable poker app. Poker takes 5% only after a flop. Jackpot and Coinflip take 5% of the pot.",
   ],
   sections: [
     {
@@ -146,7 +146,7 @@ Pick one on purpose. Then read the table and the cashier, or the host's written 
     },
     {
       q: "Is PVPspinArena a real money poker app?",
-      a: "No. It does not deal poker. Jackpot and Coinflip are player pots with 5% taken. Roulette is a 33-slot house wheel. The balance is USD.",
+      a: "It is a browser table, not a downloadable app. Six-max No-Limit Hold'em charges 5% only after a flop. Jackpot and Coinflip take 5% of the pot. Roulette is a 33-slot wheel. The balance is USD.",
     },
   ],
   sources: [
@@ -159,5 +159,5 @@ Pick one on purpose. Then read the table and the cashier, or the host's written 
     "acr-poker-review",
     "crypto-poker",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

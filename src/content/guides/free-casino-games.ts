@@ -36,7 +36,7 @@ export const guide: Guide = {
 
 This [Foundations](/guides/topics/foundations) guide is for adults 18+. It will not list “best free slots” or rank brands. If you came here to find a loophole into [online casino real money](/guides/online-casino-real-money) without a deposit, read [free spins no deposit](/guides/free-spins-no-deposit) instead — and read the wagering line first.
 
-PVPspinArena does not market a separate social-coin economy. You can watch live [Jackpot](/), [Coinflip](/coinflip) or [Roulette](/roulette) rounds and check them on [Fairness](/fairness) without depositing. Watching is not the same as a studio demo, but it is a way to learn pace without a stake.
+PVPspinArena does not market a separate social-coin economy. You can watch live [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette) rounds and check them on [Fairness](/fairness) without depositing. Watching is not the same as a studio demo, but it is a way to learn pace without a stake.
 
 “Play for free” search results also include apps that sell coin packs after a tutorial. That is not a demo. That is a shop. If the store button is the product, you are not practising. You are buying a currency with no cashout, which can still harm a budget. Keep the words separate: demo, social shop, sweeps, cash.
 
@@ -188,5 +188,5 @@ If you used this page to justify one more demo hour, look at the clock. A practi
     "gambling-budget",
     "loss-aversion-gambling",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

@@ -118,7 +118,7 @@ Verifiable random function oracles deliver a random word plus a proof that nodes
 
 ### Centralised server seed with chain payout
 
-Hybrid brands run animations on servers, publish HMAC proofs, and only use contracts for token movements. PVPspinArena follows that pattern for Jackpot, Coinflip and [Roulette](/roulette): commit-reveal on the server, not Chainlink on-chain vrf, with verification on [how it works](/how-it-works).
+Hybrid brands run animations on servers, publish HMAC proofs, and only use contracts for token movements. PVPspinArena follows that pattern for [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), and [Roulette](/roulette): commit-reveal on the server, not Chainlink on-chain vrf, with verification on [how it works](/how-it-works).
 
 ### Choosing what to trust
 
@@ -229,7 +229,7 @@ Some on-chain games buy randomness from a network instead of publishing a seed. 
     },
     {
       q: "Does PVPspinArena run games inside smart contracts?",
-      a: "No. Jackpot, Coinflip and Roulette settle on servers with commit-reveal HMAC fairness you can check after each round. Wallet flows handle deposits and withdrawals separately.",
+      a: "No. Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip settle on servers with commit-reveal HMAC fairness you can check after each round. Wallet flows handle deposits and withdrawals separately.",
     },
     {
       q: "How do I verify an on-chain bet?",
@@ -250,5 +250,5 @@ Some on-chain games buy randomness from a network instead of publishing a seed. 
     "provably-fair-casino",
     "smart-contract-audit",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

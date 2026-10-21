@@ -34,11 +34,11 @@ If you cannot write those lines, you are not ready to wager. Adults 18+ only. An
 
 This guide sits in [CS:GO heritage](/guides/topics/csgo-heritage) because friend lobbies and stream audience flips trained that social pattern. PVPspinArena offers structured PvP settlement with USDC or ETH on Base, not a group chat ledger.
 
-Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
+Write the online betting with friends fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three online betting with friends lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from online betting with friends. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
-A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
+A clearer online betting with friends label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
 Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
 
@@ -59,11 +59,11 @@ Warning signs: one friend always owes, stakes rise to “make it fair,” or som
 
 [Gambling budget](/guides/gambling-budget) still helps: each person names a max weekly social-bet number.
 
-Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
+Write the online betting with friends fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three online betting with friends lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from online betting with friends. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
-A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
+A clearer online betting with friends label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
 Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
 
@@ -86,11 +86,11 @@ Read [PvP gambling](/guides/pvp-gambling) and [coin flip odds](/guides/coin-flip
 
 Jackpot on the [home page](/) is a multi-player pot, not a two-friend match, unless your whole group joins knowingly.
 
-Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
+Write the online betting with friends fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three online betting with friends lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from online betting with friends. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
-A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
+A clearer online betting with friends label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
 Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
 
@@ -158,7 +158,7 @@ An office sheet still needs its own fee written down before the season. [Survivo
     },
     {
       q: "Does PVPspinArena support private group ledgers?",
-      a: "No. It offers Jackpot, Coinflip and Roulette with on-site balances. Coinflip is the 1v1 settlement tool.",
+      a: "No. It offers Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott with on-site balances. Coinflip is the 1v1 settlement tool.",
     },
     {
       q: "Are underage friend bets okay if stakes are tiny?",
@@ -176,5 +176,5 @@ An office sheet still needs its own fee written down before the season. [Survivo
     },
   ],
   related: ["pvp-gambling", "coin-flip-odds", "gambling-budget", "csgo-coinflip"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

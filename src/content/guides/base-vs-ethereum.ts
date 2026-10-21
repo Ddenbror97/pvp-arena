@@ -28,7 +28,7 @@ Base is a layer 2 built on the OP Stack and incubated by Coinbase. It executes t
 
 Base vs Ethereum for a casino deposit is therefore: which watcher is running, and what will the transfer cost. It is not "which coin is more legitimate." Both are real networks. Sending on the one the site does not watch is a failed deposit that looks successful on an explorer.
 
-PVPspinArena is PvP Jackpot, Coinflip and Roulette for adults 18+. It settled on Base so small dollar stakes do not die in mainnet gas. Read the [Base network](/guides/base-network) guide for the architecture and [ethereum gambling](/guides/ethereum-gambling) for ETH-specific rails. This cluster lives under [crypto payments](/guides/topics/crypto-payments).`,
+PVPspinArena is PvP Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot for adults 18+. It settled on Base so small dollar stakes do not die in mainnet gas. Read the [Base network](/guides/base-network) guide for the architecture and [ethereum gambling](/guides/ethereum-gambling) for ETH-specific rails. This cluster lives under [crypto payments](/guides/topics/crypto-payments).`,
     },
     {
       id: "fees",
@@ -124,7 +124,7 @@ Recovery is not a product feature. Do not send again to "unstick" a wrong-chain 
 2. Profile verification signature.
 3. Copy the Base address from the real site.
 4. Send. Wait for the credit notice.
-5. Play Jackpot, Coinflip or [Roulette](/roulette) only after dollars appear.
+5. Play [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), or [Coinflip](/coinflip) only after dollars appear.
 6. Withdraw under the published limits: $250/day, review over $25.
 
 Base vs Ethereum is not a loyalty test. Use mainnet when a contract or a casino actually lives there. Use Base here. The cheap, fast network is the correct one only because the site said so.`,
@@ -200,5 +200,5 @@ If you are new to layer 2s, do one dry run with $2 of USDC on Base before you mo
     "crypto-bridge",
     "bitcoin-casino",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

@@ -10,7 +10,7 @@ export const guide: Guide = {
     "Work out a stake size your bankroll can survive. Enter bankroll, edge and volatility to see risk of ruin and sensible stop-loss settings.",
   h1: "Bankroll Calculator: Sizing Stakes to Survive Variance",
   answer:
-    "A bankroll calculator turns a cash roll, a stake size, a win chance and a house edge into session maths: how many bets you can place, how fast expected loss accumulates, and a rough sense of risk of ruin if you keep firing the same stake. It does not invent an edge. On minus-EV games the calculator’s job is survival and budget control, not growth. PVPspinArena is 18+; treat any roll you stake on Jackpot, Coinflip or Roulette as money you can lose.",
+    "A bankroll calculator turns a cash roll, a stake size, a win chance and a house edge into session maths: how many bets you can place, how fast expected loss accumulates, and a rough sense of risk of ruin if you keep firing the same stake. It does not invent an edge. On minus-EV games the calculator’s job is survival and budget control, not growth. PVPspinArena is 18+; treat any roll you stake on [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), or [six-max poker](/poker) as money you can lose.",
   facts: [
     "Bankroll is the cash you will not top up mid-session; stake is one bet from that roll.",
     "Units in bankroll = bankroll ÷ stake. Fifty units is a common entertainment floor for flat bets.",
@@ -274,5 +274,5 @@ The calculator sizes a roll; [risk of ruin](/guides/risk-of-ruin) is the formula
     "house-edge",
     "risk-of-ruin",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

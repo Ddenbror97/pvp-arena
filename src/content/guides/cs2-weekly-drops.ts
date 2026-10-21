@@ -26,7 +26,7 @@ export const guide: Guide = {
 
 This is the same habit people still call a CSGO weekly drop. The client changed. The idea — play, unlock, receive a pool item — did not.
 
-This guide sits in [CS:GO heritage](/guides/topics/csgo-heritage). Adults 18+ only. PVPspinArena does not grant drops. [How it works](/how-it-works) is about Jackpot, Coinflip and Roulette in dollars.
+This guide sits in [CS:GO heritage](/guides/topics/csgo-heritage). Adults 18+ only. PVPspinArena does not grant drops. [How it works](/how-it-works) is about Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in dollars.
 
 If your search was really “how to get free skins,” the wider warning page is [how to get free CS2 skins](/guides/free-cs2-skins). This page is the weekly machine in detail.
 
@@ -193,5 +193,5 @@ Play because you wanted a match. Take the drop if it arrives. Do not build a nig
     "csgo-case-opening",
     "cs2-case-odds",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

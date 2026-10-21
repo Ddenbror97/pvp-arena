@@ -130,7 +130,7 @@ On-chain casinos can publish their contract code and have it audited. That lets 
 - Can you verify results in your browser or with independent tools?
 - Is the house edge or fee stated openly?
 
-PVPspinArena lets you verify every Jackpot, Coinflip and Roulette round on its Fairness page.`,
+PVPspinArena lets you verify every Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot round on its Fairness page.`,
     },
     {
       id: "pvp",
@@ -245,5 +245,5 @@ More foundations reading lives in our [Foundations guides](/guides/topics/founda
     "crypto-prediction-markets",
     "polymarket-alternatives",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
 };

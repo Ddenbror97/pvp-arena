@@ -29,7 +29,7 @@ Juice still sits on both sides of a spread. A minus 110 price still asks you to 
 
 Props are the extra menu: points, rebounds, assists, and sometimes combos. [Prop bets explained](/guides/prop-bets-explained) is the general settlement lesson. The WNBA version adds a practical warning. Limits are often lower, and a player news item can move a thin prop faster than a deep NBA total. You are not "early" just because the app let you click. You might be the entire bet the book felt like taking.
 
-[Sports betting guides](/guides/topics/sports-betting) is the cluster. Adults 18+ only. PVPspinArena is not a sportsbook. [Fairness](/fairness) checks Jackpot, Coinflip and Roulette. [Jackpot](/) is a player pot, not a quarter line on a basket. [Responsible gambling](/responsible-gambling) is the page if a short slate turns into a daily habit you did not budget.`,
+[Sports betting guides](/guides/topics/sports-betting) is the cluster. Adults 18+ only. PVPspinArena is not a sportsbook. [Fairness](/fairness) checks Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip. [Jackpot](/) is a player pot, not a quarter line on a basket. [Responsible gambling](/responsible-gambling) is the page if a short slate turns into a daily habit you did not budget.`,
     },
     {
       id: "softer",
@@ -145,7 +145,7 @@ A softer market is a reason to be careful. Thin prices move. If you cannot write
     },
     {
       q: "Can I bet the WNBA on PVPspinArena?",
-      a: "No. This site is not a sportsbook and does not post WNBA spreads, totals, or props. Jackpot, Coinflip and Roulette are the games, for adults 18+ only. A hashed pot does not grade a box score, a scratch, or a point spread.",
+      a: "No. This site is not a sportsbook and does not post WNBA spreads, totals, or props. P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette are the games, for adults 18+ only. A hashed pot does not grade a box score, a scratch, or a point spread.",
     },
   ],
   sources: [
@@ -157,5 +157,5 @@ A softer market is a reason to be careful. Thin prices move. If you cannot write
     },
   ],
   related: ["nba-betting", "prop-bets-explained", "point-spread-explained", "over-under-betting"],
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

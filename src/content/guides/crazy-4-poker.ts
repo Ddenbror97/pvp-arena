@@ -165,7 +165,7 @@ Then write a stop in ante units, and remember each ante drags a bonus chip with 
     },
     {
       q: "Does PVPspinArena offer Crazy 4 Poker?",
-      a: "No. This site offers Jackpot, Coinflip, and Roulette. The guide is for adults 18+ reading a house poker table dealt elsewhere.",
+      a: "No. This site offers P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. The guide is for adults 18+ reading a house poker table dealt elsewhere.",
     },
   ],
   sources: [
@@ -188,5 +188,5 @@ Then write a stop in ante units, and remember each ante drags a bonus chip with 
     "pai-gow-poker",
     "poker-hand-rankings",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

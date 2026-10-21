@@ -169,7 +169,7 @@ More poker topics, from rules to strategy, are collected in the [poker topic hub
     {
       id: "pvp",
       title: "Slang in a hashed PvP game",
-      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, for adults 18+ only: [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette). A lot of poker slang translates cleanly.
+      body: `PVPspinArena runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), house-banked [Roulette](/roulette), and [P2P Slott](/slott) settled in US dollars, for adults 18+ only. A lot of poker slang translates cleanly.
 
 - A **coin flip** in poker means a roughly even all-in. On Coinflip it means exactly 50/50 between two players, with the winner taking the pot minus any fee shown before entry.
 - **Equity** in Jackpot is literal: your win chance equals your share of the pot.
@@ -219,5 +219,5 @@ What replaces "was the dealer honest?" is a check you can do yourself: each roun
     "texas-holdem-rules",
     "casino-terminology",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
 };

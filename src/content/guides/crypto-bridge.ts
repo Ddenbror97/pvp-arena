@@ -27,7 +27,7 @@ export const guide: Guide = {
 
 There are several designs (lock-and-mint, burn-and-mint, liquidity pools, official canonical bridges). As a player you do not need the white paper. You need to know that **two transactions, two fees and a third-party contract** now sit between you and the casino.
 
-Bridges are for adults who already understand wallet risk. They are not a gambling product. Using one before Jackpot, Coinflip or Roulette does not change the odds. It only changes how you fund a dollar chip.
+Bridges are for adults who already understand wallet risk. They are not a gambling product. Using one before [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), or [Jackpot](/) does not change the odds. It only changes how you fund a dollar chip.
 
 PVPspinArena never asks you to bridge into a "site bridge address." You send USDC or ETH on Base to the deposit address on the [wallet](/wallet) page. Official-looking bridge pages in ads are a common phishing pattern. Background reading lives under [crypto payments](/guides/topics/crypto-payments).`,
     },
@@ -156,7 +156,7 @@ A bridge UI can sit on "waiting for destination" for minutes. That is normal. Cl
 
 If you are tired or rushing to catch a Jackpot pot, do not bridge. Use an exchange withdrawal in the morning. Cross-chain machinery plus gambling urgency is a bad mix. The pot will be gone; your coins do not need to be gone too.
 
-PVPspinArena will still be PvP Jackpot, Coinflip and Roulette tomorrow, with the same Base deposit rules. A crypto bridge is optional infrastructure, not part of the game.`,
+PVPspinArena will still be PvP Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip tomorrow, with the same Base deposit rules. A crypto bridge is optional infrastructure, not part of the game.`,
     },
   ],
   faqs: [
@@ -198,5 +198,5 @@ PVPspinArena will still be PvP Jackpot, Coinflip and Roulette tomorrow, with the
     "dogecoin-casino",
     "sent-crypto-to-wrong-network",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

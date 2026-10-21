@@ -160,7 +160,7 @@ This page is about the bend. The drawing rules and the bet prices live on the ru
     },
     {
       q: "Does PVPspinArena deal squeeze baccarat?",
-      a: "No. This site offers Jackpot, Coinflip, and Roulette. Reveal timing does not change a settled roulette result either. Adults 18+ only.",
+      a: "No. This site offers Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. Reveal timing does not change a settled roulette result either. Adults 18+ only.",
     },
   ],
   sources: [
@@ -172,5 +172,5 @@ This page is about the bend. The drawing rules and the bet prices live on the ru
     { label: "Wikipedia: Baccarat", url: "https://en.wikipedia.org/wiki/Baccarat_(card_game)" },
   ],
   related: ["baccarat-rules", "baccarat-strategy", "illusion-of-control", "crypto-baccarat"],
-  updated: "2026-09-29",
+  updated: "2026-10-21",
 };

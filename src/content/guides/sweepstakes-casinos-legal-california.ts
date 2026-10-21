@@ -147,7 +147,7 @@ Drop those. Open the official sources. If they are unclear, the adult move is to
     {
       id: "this-site",
       title: "What to do with the uncertainty",
-      body: `PVPspinArena is not a sweepstakes casino. It does not sell Gold Coins or Sweeps Coins. It runs player-versus-player Jackpot, Coinflip, and Roulette. That difference does not answer the California sweepstakes question, and it does not make every crypto product lawful where you live. Read the terms for how this site describes itself. Do not borrow those terms as a substitute for another operator's rules.
+      body: `PVPspinArena is not a sweepstakes casino. It does not sell Gold Coins or Sweeps Coins. It runs player-versus-player Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip. That difference does not answer the California sweepstakes question, and it does not make every crypto product lawful where you live. Read the terms for how this site describes itself. Do not borrow those terms as a substitute for another operator's rules.
 
 If the search for a legal green light has become the session, stop shopping. Uncertainty is a reason to pause, not a reason to open a second brand with a looser footer. A lawyer can give advice to you. This URL cannot.
 
@@ -200,5 +200,5 @@ That packet is the outcome this guide can honestly offer. A yes or a no would be
     "sweepstakes-casino",
     "how-do-sweepstakes-casinos-work",
   ],
-  updated: "2026-09-29",
+  updated: "2026-10-21",
 };

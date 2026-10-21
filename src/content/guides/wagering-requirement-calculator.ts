@@ -10,7 +10,7 @@ export const guide: Guide = {
     "Calculate what clearing a bonus actually costs: turnover, game weighting, time limits and whether the offer is worth taking at all.",
   h1: "Wagering Requirement Calculator: Bonus Turnover and True Value",
   answer:
-    "Casino wagering requirements are the playthrough multiple attached to bonus money: you must stake a stated amount before cash-out unlocks. A wagering requirement calculator multiplies the base (bonus only, or deposit plus bonus) by the multiple, adjusts for game weighting, and estimates expected cost using house edge on that turnover. PVPspinArena does not run a welcome-bonus meter; Jackpot, Coinflip and Roulette post fees and edges instead. 18+ only.",
+    "Casino wagering requirements are the playthrough multiple attached to bonus money: you must stake a stated amount before cash-out unlocks. A wagering requirement calculator multiplies the base (bonus only, or deposit plus bonus) by the multiple, adjusts for game weighting, and estimates expected cost using house edge on that turnover. PVPspinArena does not run a welcome-bonus meter; Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip post fees and edges instead. 18+ only.",
   facts: [
     "Turnover needed = wagering multiple × eligible base (bonus, or deposit + bonus).",
     "Game weighting can shrink how much a stake counts toward the meter.",
@@ -272,7 +272,7 @@ Home: [PVPspinArena](/). Help if bonuses are chasing fuel: [responsible gambling
     },
     {
       q: "Does PVPspinArena have wagering requirements?",
-      a: "No welcome-bonus playthrough meter. Games are Jackpot, Coinflip and Roulette with posted fees and edges instead of rollover homework.",
+      a: "No welcome-bonus playthrough meter. Games are Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip with posted fees and edges instead of rollover homework.",
     },
   ],
   sources: [
@@ -289,5 +289,5 @@ Home: [PVPspinArena](/). Help if bonuses are chasing fuel: [responsible gambling
     "expected-value-gambling",
     "rakeback-explained",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

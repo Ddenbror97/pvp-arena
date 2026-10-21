@@ -21,7 +21,7 @@ export const guide: Guide = {
     "On-chain deposits prove a payment, not that a match was settled on the right score.",
     "Implied probability from odds is always less than 100% across a market once the book’s margin is included.",
     "Event integrity (referees, injuries, spot-fixing) is a sports problem, not a wallet problem.",
-    "PVPspinArena is not a sportsbook. It runs hashed PvP Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "PVPspinArena is not a sportsbook. It runs hashed PvP Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
   ],
   sections: [
     {
@@ -128,7 +128,7 @@ PVPspinArena's [Roulette](/roulette) is a 33-slot wheel with posted multipliers,
 
 Boosts, "profit boosts" and boosted parlays are just another shaded price with a sticker. Compute the implied probability of the boosted number and compare it with a sharp book. Crypto settlement does not make a bad boost good.
 
-PVPspinArena will not price your team. If you want a verifiable pot, use Jackpot, Coinflip or Roulette and read the fairness method. If you want sports, use a book you have researched and a budget you can lose. Adults aged 18 or over should price the vig first, then the coin, then the book. A cheap USDT send does not repair a bad number.
+PVPspinArena will not price your team. If you want a verifiable pot, use [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette) and read the fairness method. If you want sports, use a book you have researched and a budget you can lose. Adults aged 18 or over should price the vig first, then the coin, then the book. A cheap USDT send does not repair a bad number.
 
 Keep those products in different mental accounts so a bad Sunday slate does not become an excuse to "win it back" on a hashed wheel — or the other way around.
 
@@ -150,7 +150,7 @@ One sport people try to fund with a coin is racing. [Crypto horse racing betting
     },
     {
       q: "Does PVPspinArena take football or esports bets?",
-      a: "No. It is not a sportsbook. It offers player-versus-player Jackpot, Coinflip and Roulette.",
+      a: "No. It is not a sportsbook. It offers player-versus-player Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "What is the biggest extra risk of bitcoin sports betting?",
@@ -175,5 +175,5 @@ One sport people try to fund with a coin is racing. [Crypto horse racing betting
     "crypto-slots",
     "slot-machine-odds",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

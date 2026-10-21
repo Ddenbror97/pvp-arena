@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Some operators call the same idea a cursor, round index or bet index; the job is identical.",
     "Without a changing counter, two bets with the same seeds would always produce the same result.",
     "Verification needs the revealed server seed, the client seed if used, and the exact nonce from that bet.",
-    "PVPspinArena commits a fresh server seed per Jackpot, Coinflip or Roulette round rather than a long-lived seed plus nonce stream.",
+    "PVPspinArena commits a fresh server seed per [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), or [Coinflip](/coinflip) round rather than a long-lived seed plus nonce stream.",
   ],
   sections: [
     {
@@ -34,7 +34,7 @@ The important order does not change. The operator publishes a hash of the server
 
 ### Round-based alternatives
 
-Not every game uses a long-lived seed plus nonce. Player-vs-player rounds often commit one seed for that round alone, then reveal it when the pot settles. PVPspinArena follows that pattern on Jackpot, Coinflip and [Roulette](/roulette). The idea is the same: the inputs that decide the result are fixed before the outcome is shown, and you can recompute them later on the [Fairness](/fairness) page.`,
+Not every game uses a long-lived seed plus nonce. Player-vs-player rounds often commit one seed for that round alone, then reveal it when the pot settles. PVPspinArena follows that pattern on [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), and [Jackpot](/). The idea is the same: the inputs that decide the result are fixed before the outcome is shown, and you can recompute them later on the [Fairness](/fairness) page.`,
     },
     {
       id: "definitions",
@@ -234,7 +234,7 @@ Some brands bolt house games onto a PvP lobby. Those house tabs may still show n
     },
     {
       q: "Does PVPspinArena use a personal nonce stream?",
-      a: "Jackpot, Coinflip and Roulette commit a server seed per round and reveal it after settlement. That is round-based commit-reveal rather than a long-lived seed with a player nonce.",
+      a: "Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot commit a server seed per round and reveal it after settlement. That is round-based commit-reveal rather than a long-lived seed with a player nonce.",
     },
     {
       q: "Can a casino skip nonces to cheat?",
@@ -255,5 +255,5 @@ Some brands bolt house games onto a PvP lobby. Those house tabs may still show n
     "commit-reveal-scheme",
     "provably-fair-casino",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

@@ -119,7 +119,7 @@ If the tile fails to load, you have a product problem with the operator's integr
 
 Read the help file for the return and the rules. Read the operator's license line and see whether it matches the company in the terms. Read any seed or shuffle procedure the site actually lets you recompute. [Fairness](/fairness) on this site explains how PVPspinArena documents its own games. That page is not a certificate for Evolution, Pragmatic Play, NetEnt, or Play'n GO. Those studios are not the product behind that link.
 
-This site's live games are Jackpot, Coinflip, and Roulette. They are not a rented lobby of third-party slots. A guide to providers is here so the word "provider" stops meaning "the casino" in every sentence. If you came to verify a spin on this site, use the fairness page for that spin. If you came to understand a commercial lobby elsewhere, separate the studio that built the client from the operator that took the bet.
+This site's live games are Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. They are not a rented lobby of third-party slots. A guide to providers is here so the word "provider" stops meaning "the casino" in every sentence. If you came to verify a spin on this site, use the fairness page for that spin. If you came to understand a commercial lobby elsewhere, separate the studio that built the client from the operator that took the bet.
 
 No logo removes the house price. A high advertised return is still under 100% on a normal casino slot. Short sessions swing around that average. The provider's trailer is not a forecast.
 
@@ -173,5 +173,5 @@ Leave when the stop hits. A new tile from the same studio is a new session with 
     { label: "Pragmatic Play", url: "https://www.pragmaticplay.com/" },
   ],
   related: ["how-do-slot-machines-work", "rtp-explained", "crypto-slots", "online-casino-games"],
-  updated: "2026-09-29",
+  updated: "2026-10-21",
 };

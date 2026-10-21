@@ -10,7 +10,7 @@ export const guide: Guide = {
     "Wolf run slot is another wolf title, different from Wolf Gold. The rules screen of this title pays and can change by casino. A $44 pot pays the winner $41.80.",
   h1: "Wolf run slot in 2026: a second wolf title, separate from Wolf Gold",
   answer:
-    "Wolf run slot is another wolf title, different from Wolf Gold, and this page covers the run only without reviewing the desert money-respin game or sharing a return with it. People mix the two because the animal matches and the second word does not. The run pays from the rules screen inside the game, a casino can change that figure, and a demo is sometimes in a lobby without a promise for either wolf.",
+    "Wolf run slot is another wolf title, different from Wolf Gold, and this page covers the run only without reviewing the desert money-respin game or sharing a return with it. The run pays from the rules screen inside the game, a casino can change that figure, and a demo is sometimes in a lobby without a promise for either wolf.",
   facts: [
     "Wolf run slot and Wolf Gold are different titles.",
     "This page is the run title. The desert money-respin game is not reviewed here.",

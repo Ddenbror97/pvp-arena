@@ -106,7 +106,7 @@ It is also a poor fit if you need a yes-or-no legal blessing. You will not get o
 
 [Fairness](/fairness) checks the published seed against the hash. The check can show that the ticket matches the commit. It cannot show that an event contract used the right resolution source. Kalshi does not settle Jackpot, and Jackpot does not list event contracts.
 
-PVPspinArena offers Jackpot, Coinflip, and Roulette, funded with USDC or ETH on Base. It does not offer Kalshi. This review cites no volume, no user count, and no fee percent for those games. Choose the object. A 40-cent contract is a priced claim on the outside world. A Jackpot ticket is a share of a pot.
+PVPspinArena offers Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, funded with USDC or ETH on Base. It does not offer Kalshi. This review cites no volume, no user count, and no fee percent for those games. Choose the object. A 40-cent contract is a priced claim on the outside world. A Jackpot ticket is a share of a pot.
 
 Checklist before the order:
 
@@ -153,5 +153,5 @@ Adults 18+ only. Not financial, legal, or tax advice.`,
     "is-kalshi-gambling",
     "crypto-prediction-markets",
   ],
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

@@ -134,7 +134,7 @@ Adults sometimes play crazy eights for a cent a point or a fixed stake on the ma
 
 Either way the score is a count of cardboard, not a system. Catching an eight is 50 points of luck as much as tactics. Playing to 100 just gives that luck more hands to average out.
 
-If you want a result with no suit to name, PVPspinArena runs Jackpot, [Coinflip](/coinflip) and Roulette settled in US dollars. Play is 18+ only. Coinflip is a 50/50 between two players. Roulette is a 33-slot wheel that returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee, a 7.88 percent on Purple or Silver after the win fee edge. Jackpot pays the pot according to your share. Seeds are committed before the round. Check any settled round on the [fairness](/fairness) page.
+If you want a result with no suit to name, PVPspinArena runs [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), and [Jackpot](/) settled in US dollars. Play is 18+ only. Coinflip is a 50/50 between two players. Roulette is a 33-slot wheel that returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee, a 7.88 percent on Purple or Silver after the win fee edge. Jackpot pays the pot according to your share. Seeds are committed before the round. Check any settled round on the [fairness](/fairness) page.
 
 The [responsible gambling](/responsible-gambling) page is the limit when a match stops being a match. Drawing until you hit a playable card is a house rule. It is not a way to get even.
 
@@ -175,5 +175,5 @@ See also [go fish](/guides/go-fish-rules), [president](/guides/president-card-ga
     "52-card-deck",
   ],
   howTo: true,
-  updated: "2026-09-29",
+  updated: "2026-10-21",
 };

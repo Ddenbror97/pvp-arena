@@ -141,7 +141,7 @@ Keep the lesson in one sentence: minus 1.5 needs two goals, plus 1.5 survives a 
     },
     {
       q: "Can I bet a puck line on PVPspinArena?",
-      a: "No. This site is not a sportsbook and does not post team handicaps. The games are Jackpot, Coinflip and Roulette for adults 18+. A hashed pot does not settle an NHL margin, an empty-net goal, or a shootout. Fairness checks on this site verify those rounds only.",
+      a: "No. This site is not a sportsbook and does not post team handicaps. The games are Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott for adults 18+. A hashed pot does not settle an NHL margin, an empty-net goal, or a shootout. Fairness checks on this site verify those rounds only.",
     },
   ],
   sources: [
@@ -155,5 +155,5 @@ Keep the lesson in one sentence: minus 1.5 needs two goals, plus 1.5 survives a 
     "over-under-betting",
     "implied-probability",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

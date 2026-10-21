@@ -133,7 +133,7 @@ Another soft flag is a support agent who offers to “unlock redeem” if you bu
     {
       id: "not-this-site",
       title: "Why this site is not on the list",
-      body: `PVPspinArena is player-versus-player Jackpot, Coinflip and Roulette with USDC or ETH on Base. It is not a sweepstakes casino. It does not sell Gold Coins. If you apply the eight points here, you should be comparing hashed pots, posted fees, and the [Fairness](/fairness) verifier — which is the [crypto checklist](/guides/best-crypto-gambling-sites), not this one.
+      body: `PVPspinArena is player-versus-player Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip with USDC or ETH on Base. It is not a sweepstakes casino. It does not sell Gold Coins. If you apply the eight points here, you should be comparing hashed pots, posted fees, and the [Fairness](/fairness) verifier — which is the [crypto checklist](/guides/best-crypto-gambling-sites), not this one.
 
 Do not treat a high crypto-checklist score as a sweepstakes recommendation. Do not treat a high sweepstakes score as a reason to send USDC. Two products. Two scorecards.
 
@@ -164,7 +164,7 @@ You must be 18 or over. If shopping for a “best” lobby has become the sessio
     },
     {
       q: "Is PVPspinArena one of the best sweepstakes casinos?",
-      a: "No, because it is not a sweepstakes casino. It is a PvP Jackpot, Coinflip and Roulette site funded with USDC or ETH on Base. Use the crypto-site checklist if you are judging this domain, not the sweepstakes scorecard. There are no Gold Coins here to rank.",
+      a: "No, because it is not a sweepstakes casino. It is a PvP Slott, six-max poker, Jackpot, Coinflip, and Roulette site funded with USDC or ETH on Base. Use the crypto-site checklist if you are judging this domain, not the sweepstakes scorecard. There are no Gold Coins here to rank.",
     },
     {
       q: "What if two sites tie on the checklist?",
@@ -193,5 +193,5 @@ You must be 18 or over. If shopping for a “best” lobby has become the sessio
     "new-sweepstakes-casinos",
     "no-deposit-sweepstakes-casinos",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

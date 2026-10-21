@@ -134,7 +134,7 @@ Once credited, balances on PVPspinArena are in US dollars. A later withdrawal go
     {
       id: "pvp-and-limits",
       title: "What PVPspinArena expects if you still use Phantom",
-      body: `PVPspinArena runs player-versus-player Jackpot, Coinflip and Roulette. It is not a Solana program you sign inside Phantom. Money in is a Base transfer. Money out is a Base transfer from the site’s payout wallet after checks.
+      body: `PVPspinArena runs player-versus-player Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot. It is not a Solana program you sign inside Phantom. Money in is a Base transfer. Money out is a Base transfer from the site’s payout wallet after checks.
 
 If Phantom now shows Base in your build, you could in theory hold Base USDC there and send it, but only after you verify that exact address on the site. Many players find MetaMask or another EVM wallet clearer for Base because the network switch is explicit. Either way, the rules are the same:
 
@@ -200,5 +200,5 @@ For PVPspinArena, plan USDC or ETH on Base, verify by signing a message and send
     "self-custody-wallet",
     "does-metamask-support-solana",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

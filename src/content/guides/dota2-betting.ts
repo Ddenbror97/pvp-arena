@@ -10,13 +10,13 @@ export const guide: Guide = {
     "How to judge Dota 2 betting sites: licence, patch-aware markets, settlement, margin and withdrawals. A checklist, not a ranked list of named books.",
   h1: "Dota 2 betting sites: how to judge a book, not a brand list",
   answer:
-    "Dota 2 betting sites are bookmakers that price Dota 2 matches. Judge them with a checklist: licence, both sides of a two-way line, settlement rules for remakes and stand-ins, a measurable margin, and withdrawals you can complete. A ranked table of named brands is advertising. This page will not publish one. PVPspinArena is not a Dota book. It runs hashed PvP Jackpot, Coinflip and Roulette.",
+    "Dota 2 betting sites are bookmakers that price Dota 2 matches. Judge them with a checklist: licence, both sides of a two-way line, settlement rules for remakes and stand-ins, a measurable margin, and withdrawals you can complete. A ranked table of named brands is advertising. This page will not publish one. PVPspinArena is not a Dota book. It runs hashed PvP Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   facts: [
     "A Dota 2 betting site is a book: it sets prices and keeps a margin in every market.",
     "Patches, drafts and stand-ins can move a series after you click.",
     "First blood, first Roshan and kill totals are easy to watch and often juicier than the moneyline.",
     "Licence and void rules matter more than a The International welcome bonus.",
-    "PVPspinArena does not take Dota bets; it runs hashed Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not take Dota bets; it runs hashed Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot.",
   ],
   sections: [
     {
@@ -171,7 +171,7 @@ If betting is already taking more time or money than you planned, stop shopping 
     },
     {
       q: "Does PVPspinArena offer Dota 2 betting?",
-      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. It is not a sportsbook. It runs hashed six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Do Dota patches make old odds useless?",
@@ -198,10 +198,10 @@ If betting is already taking more time or money than you planned, stop shopping 
     "lol-betting",
     "implied-probability",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   cta: {
     title: "This site is not a book",
-    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip and Roulette. It does not take Dota bets.",
+    text: "PVPspinArena runs hashed PvP Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot. It does not take Dota bets.",
     primary: { to: "/fairness", label: "Fairness" },
     secondary: { to: "/coinflip", label: "Coinflip" },
   },

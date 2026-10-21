@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Confirmed cases have led to bans; lower-tier events have historically been more exposed than Majors.",
     "A wild price is more often a stale book or missing information than a 'gift'.",
     "Licensed books may void or limit markets when a tournament is under review.",
-    "PVPspinArena does not take match bets; it runs hashed Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not take match bets; it runs hashed Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
   ],
   sections: [
     {
@@ -153,7 +153,7 @@ PVPspinArena will not settle your integrity argument. It will not take the other
     },
     {
       q: "Does PVPspinArena take bets on matches under investigation?",
-      a: "PVPspinArena does not take match bets at all. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "PVPspinArena does not take match bets at all. It runs hashed Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott.",
     },
     {
       q: "Where do I report a genuine integrity concern?",
@@ -177,10 +177,10 @@ PVPspinArena will not settle your integrity argument. It will not take the other
     "esports-odds-explained",
     "how-to-bet-on-esports",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   cta: {
     title: "This site is not a book",
-    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip and Roulette. It does not take match bets.",
+    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. It does not take match bets.",
     primary: { to: "/fairness", label: "Fairness" },
     secondary: { to: "/coinflip", label: "Coinflip" },
   },

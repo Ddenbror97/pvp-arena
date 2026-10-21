@@ -173,7 +173,7 @@ Do not let a shorter spelling inherit the famous name. [The shorter name beside 
     },
     {
       q: "Is PVPspinArena a Stake alternative?",
-      a: "It is a different product: Jackpot, Coinflip and Roulette with USDC/ETH on Base. Call it an alternative only if that product fits. We do not claim a US or UK casino licence.",
+      a: "It is a different product: Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip with USDC/ETH on Base. Call it an alternative only if that product fits. We do not claim a US or UK casino licence.",
     },
     {
       q: "Should I chase the biggest welcome bonus?",
@@ -202,5 +202,5 @@ Do not let a shorter spelling inherit the famous name. [The shorter name beside 
     "bitstarz-review",
     "bitz-casino-review",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 The slogan "not your keys, not your coins" is the contrast. On an exchange you see a number. The exchange signs the real transactions. If the exchange freezes the account or fails, you are in their queue. In self-custody you are the signer. You are also the person who can lose everything with one bad paste.
 
-This [crypto payments](/guides/topics/crypto-payments) how-to is for adults aged 18 or over. PVPspinArena expects a self-custody sender so it can match the on-chain from-address to your account. It is a PvP Jackpot, Coinflip and Roulette site, not a wallet vendor and not an exchange.
+This [crypto payments](/guides/topics/crypto-payments) how-to is for adults aged 18 or over. PVPspinArena expects a self-custody sender so it can match the on-chain from-address to your account. It is a PvP Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip site, not a wallet vendor and not an exchange.
 
 "Not your keys" is a custody slogan, not a fairness slogan. Holding keys does not let you recompute a game. It lets you refuse a send and keep what you did not deposit.
 
@@ -76,7 +76,7 @@ After you deposit, the casino holds a balance. That slice is no longer self-cust
 4. **Fund the wallet** with USDC on Base and a little ETH for gas. Buy on an exchange, withdraw on Base, or swap carefully.
 5. **Open your [profile](/profile)** and connect the wallet. Sign the verification message. Read the message; it should not spend tokens.
 6. **Copy the deposit address** from the wallet page. Send a small USDC test, then the rest of the session budget.
-7. **Play only with a budget.** Jackpot, Coinflip and Roulette can take the stake. Withdraw what you want to keep.
+7. **Play only with a budget.** Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip can take the stake. Withdraw what you want to keep.
 
 If the signature prompt shows a contract interaction, a token amount or a chain you did not pick, cancel. Verification on this site is a typed message, not a swap.
 
@@ -178,6 +178,6 @@ A common beginner self-custody app is [Exodus](/guides/exodus-wallet).`,
     "multisig-wallet",
     "exodus-wallet",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   howTo: true,
 };

@@ -10,7 +10,7 @@ export const guide: Guide = {
     "How a wheel game casino prices money-wheel and Wheel of Fortune-style segments: count the pegs, read the posted multiples, compute the keep.",
   h1: "Wheel game casino: money-wheel segments and the posted pay",
   answer:
-    "A wheel game casino product is a money wheel or Wheel of Fortune-style spinner: labelled segments, a posted multiple on each label, and a house edge that comes from paying less than 1/p. Count the segments. Do not trust the TV-show brand on the glass. A common 54-stop Big Six layout keeps about 11% on the $1 spots and more than 20% on the logo. PVPspinArena does not offer a money wheel — only Jackpot, Coinflip and Roulette.",
+    "A wheel game casino product is a money wheel or Wheel of Fortune-style spinner: labelled segments, a posted multiple on each label, and a house edge that comes from paying less than 1/p. Count the segments. Do not trust the TV-show brand on the glass. A common 54-stop Big Six layout keeps about 11% on the $1 spots and more than 20% on the logo. PVPspinArena does not offer a money wheel — only Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip.",
   facts: [
     "The price is segment count times posted total payout, summed over winning stops.",
     "A widely used 54-stop American money wheel has twenty-four $1 stops that pay even money (~11.11% edge).",
@@ -191,5 +191,5 @@ A live money-wheel with the same family of segments is [Dream Catcher](/guides/d
     "wheel-of-fortune-odds",
     "dream-catcher-game",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

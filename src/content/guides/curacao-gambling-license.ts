@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 People still say "Curacao eGaming" because that was the well-known private administrator under the old sublicence system. The government has moved to a regulator commonly called the Gaming Control Board (GCB), with operators expected to hold a direct licence rather than a sublicence under a master holder. Names on footers lag that change. Read the current certificate, not a 2018 blog post.
 
-This [Foundations](/guides/topics/foundations) article is for adults aged 18 or over. It is not legal advice. A Curaçao paper does not make play lawful in your country. PVPspinArena is a PvP Jackpot, Coinflip and Roulette site on Base; judge it on its published rules and [Fairness](/fairness) tools, not on a Caribbean seal in the abstract.
+This [Foundations](/guides/topics/foundations) article is for adults aged 18 or over. It is not legal advice. A Curaçao paper does not make play lawful in your country. PVPspinArena is a PvP Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip site on Base; judge it on its published rules and [Fairness](/fairness) tools, not on a Caribbean seal in the abstract.
 
 Licences exist because gambling is a regulated product in many places, not because a PDF makes variance kinder. A well-supervised licence can still sit on a game with a 15% hold. An unlicensed hashed pot can still pay. Your job is to know which question you are asking: permission, solvency, honesty of the draw, or local legality. This page answers the first and warns you off using it as the third.`,
     },
@@ -105,7 +105,7 @@ Labs test an RNG and issue a letter. Regulators in some countries require that. 
 
 A [provably fair casino](/guides/provably-fair-casino) publishes a hash before you bet and a seed after. You recompute. That check does not need Curaçao to be true, and Curaçao does not perform that check for you.
 
-PVPspinArena's Jackpot, Coinflip and Roulette rounds are built around a commitment you can verify. That is a product choice about the draw. It is complementary to whatever corporate licences an operator holds. It is not replaced by a licence, and it does not replace your local law or a [gambling budget](/guides/gambling-budget).`,
+PVPspinArena's P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette rounds are built around a commitment you can verify. That is a product choice about the draw. It is complementary to whatever corporate licences an operator holds. It is not replaced by a licence, and it does not replace your local law or a [gambling budget](/guides/gambling-budget).`,
     },
     {
       id: "example",
@@ -186,5 +186,5 @@ Token 601 was readable when the player rules returned a US block. [The certifica
     "kahnawake-gaming-license",
     "coins-game-casino-review",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

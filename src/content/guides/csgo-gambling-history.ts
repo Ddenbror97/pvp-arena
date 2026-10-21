@@ -151,7 +151,7 @@ Many players who grew up with skin jackpots now look for the same formats with c
       body: `PVPspinArena is inspired by the CS:GO era's player-versus-player games, but it is built to avoid the problems that ended it.
 
 - **Player versus player.** Jackpot and Coinflip pots are made only of players' stakes. The site keeps only its configured fee, which is 5% of the pot.
-- **Provably fair.** Every Jackpot, Coinflip and Roulette round commits a seed hash before entries and can be verified on the [Fairness page](/fairness).
+- **Provably fair.** Every Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott round commits a seed hash before entries and can be verified on the [Fairness page](/fairness).
 - **Exact dollar balances.** Balances are held in US dollar cents and funded with USDC or ETH on Base, so there are no price disputes.
 - **Transparent payments.** Deposits and withdrawals are blockchain transactions you can look up, with published limits and review thresholds.
 - **No skins, no Steam trading.** There are no trade bots and no dependence on another platform's terms.
@@ -245,5 +245,5 @@ Skin sites are a late chapter; the longer arc is [history of gambling](/guides/h
     "osrs-gambling",
     "history-of-gambling",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
 };

@@ -156,7 +156,7 @@ If you are writing a complaint or a school project, cite Twitch’s safety artic
     },
     {
       q: "Does PVPspinArena run Twitch slot streams?",
-      a: "No. This site's slot game is P2P Slott, a 1v1 duel, and it does not pay streamers to broadcast a slots overlay. The live games are hashed PvP Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. This site's slot game is P2P Slott, a 1v1 duel, and it does not pay streamers to broadcast a slots overlay. The live games are hashed PvP Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott.",
     },
   ],
   sources: [
@@ -179,5 +179,5 @@ If you are writing a complaint or a school project, cite Twitch’s safety artic
     "crypto-slots",
     "are-online-casinos-rigged",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

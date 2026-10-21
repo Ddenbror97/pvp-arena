@@ -24,7 +24,7 @@ export const guide: Guide = {
       title: "What a Duelbits review can actually settle",
       body: `A duelbits review is a buying question: people want to know whether Duelbits is worth a deposit. A page that answers with a made-up score is a sales layout. This one answers with checks you can repeat on the operator's own site today. Adults 18+ only. It is not legal advice, not a bonus code, and not a promise that Duelbits will pay you.
 
-Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Jackpot, Coinflip and Roulette, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not Duelbits, and we do not sell a licence we do not hold.
+Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not Duelbits, and we do not sell a licence we do not hold.
 
 Duelbits traffic often comes from sports intent: people comparing books, then discovering a casino tab. The review keeps those intents apart so a casino edge is not blamed on a point spread, or the reverse.
 
@@ -156,10 +156,10 @@ A different book is not automatically a better price. [Duelbits alternatives](/g
     "house-edge",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
   cta: {
     title: "A pot is not a lobby",
-    text: "Duelbits is someone else's casino. PVPspinArena only runs Jackpot, Coinflip and Roulette between players, with USDC or ETH on Base.",
+    text: "Duelbits is someone else's casino. PVPspinArena only runs P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette between players, with USDC or ETH on Base.",
     primary: { to: "/coinflip", label: "Open Coinflip" },
     secondary: { to: "/fairness", label: "Read fairness" },
   },

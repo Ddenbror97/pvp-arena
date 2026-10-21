@@ -22,7 +22,7 @@ export const guide: Guide = {
     "The process is legal check, book check, market read, odds conversion, then a budgeted stake.",
     "Implied probability is 1 divided by decimal odds; markets usually sum to more than 100%.",
     "Live clicks and parlays accelerate spend; they are not a required second step.",
-    "PVPspinArena does not take esports bets; it runs hashed Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not take esports bets; it runs hashed Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot.",
   ],
   sections: [
     {
@@ -154,7 +154,7 @@ Title menus are not the same book. [Dota 2 betting](/guides/dota2-betting) and [
     },
     {
       q: "Does PVPspinArena let me bet on esports?",
-      a: "No. It is not a sportsbook. It offers hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. It is not a sportsbook. It offers hashed Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott.",
     },
     {
       q: "How much should I stake?",
@@ -181,10 +181,10 @@ Title menus are not the same book. [Dota 2 betting](/guides/dota2-betting) and [
     "live-esports-betting",
     "sports-betting-with-crypto",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   cta: {
     title: "This site is not a book",
-    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip and Roulette. It does not take match bets.",
+    text: "PVPspinArena runs hashed PvP Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip. It does not take match bets.",
     primary: { to: "/fairness", label: "Fairness" },
     secondary: { to: "/coinflip", label: "Coinflip" },
   },

@@ -165,7 +165,7 @@ Rust item sites are not one fee. The [RustClash cosmetic pot](/guides/rustclash-
     },
     {
       q: "Does PVPspinArena take Rust skins?",
-      a: "No. PVPspinArena is a crypto PvP site. You deposit USDC or ETH on Base. Jackpot, Coinflip and Roulette settle in dollars, not items.",
+      a: "No. PVPspinArena is a crypto PvP site. You deposit USDC or ETH on Base. Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip settle in dollars, not items.",
     },
     {
       q: "What is a safer alternative to rust skin betting?",
@@ -193,5 +193,5 @@ Rust item sites are not one fee. The [RustClash cosmetic pot](/guides/rustclash-
     "rustclash-review",
     "rustchance-review",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

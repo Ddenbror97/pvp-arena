@@ -175,7 +175,7 @@ See also [hole carding](/guides/hole-carding).`,
     },
     {
       q: "Does PVPspinArena have a countable blackjack game?",
-      a: "No. PVPspinArena does not offer blackjack. Jackpot, Coinflip and Roulette have no depleting shoe.",
+      a: "No. PVPspinArena does not offer blackjack. Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip have no depleting shoe.",
     },
   ],
   sources: [
@@ -197,5 +197,5 @@ See also [hole carding](/guides/hole-carding).`,
     "mit-blackjack-team",
     "hole-carding",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

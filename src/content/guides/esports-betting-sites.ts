@@ -16,13 +16,13 @@ export const guide: Guide = {
     "How to judge esports betting sites: licence, odds margin, settlement, integrity tools and withdrawals. A checklist, not a ranked list of named books.",
   h1: "Esports betting sites: a checklist for judging a book",
   answer:
-    "Esports betting sites are bookmakers that price video-game matches. Judge them the same way you would any sportsbook: licence, published settlement rules, a measurable odds margin, integrity tools, and withdrawals you can actually complete. A ranking table of named brands goes stale the week it is published. A checklist does not. PVPspinArena is not one of those sites. It runs hashed player-versus-player Jackpot, Coinflip and Roulette.",
+    "Esports betting sites are bookmakers that price video-game matches. Judge them the same way you would any sportsbook: licence, published settlement rules, a measurable odds margin, integrity tools, and withdrawals you can actually complete. A ranking table of named brands goes stale the week it is published. A checklist does not. PVPspinArena is not one of those sites. It runs hashed player-versus-player Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   facts: [
     "An esports betting site is a book: it sets prices and keeps a margin in every market.",
     "Licence and complaint path matter more than a welcome-bonus headline.",
     "A two-way moneyline whose implied chances add to more than 100% is showing you the vig.",
     "Thin online cups need wider prices and carry more integrity risk than Majors.",
-    "PVPspinArena does not take match bets; it runs hashed PvP Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not take match bets; it runs hashed PvP Slott, six-max poker, Jackpot, Coinflip, and Roulette.",
   ],
   sections: [
     {
@@ -161,7 +161,7 @@ A scorecard is not a license. [One esports-leaning book](/guides/thunderpick-rev
     },
     {
       q: "Does PVPspinArena operate esports betting sites?",
-      a: "No. PVPspinArena is a hashed PvP site for Jackpot, Coinflip and Roulette, funded with USDC or ETH on Base. It does not price teams or take match bets.",
+      a: "No. PVPspinArena is a hashed PvP site for Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip, funded with USDC or ETH on Base. It does not price teams or take match bets.",
     },
     {
       q: "What is a reasonable first test on a new book?",
@@ -190,10 +190,10 @@ A scorecard is not a license. [One esports-leaning book](/guides/thunderpick-rev
     "esports-betting-legal",
     "thunderpick-review",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   cta: {
     title: "This site is not a book",
-    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip and Roulette. It does not price teams.",
+    text: "PVPspinArena runs hashed PvP Slott, six-max poker, Jackpot, Coinflip, and Roulette. It does not price teams.",
     primary: { to: "/fairness", label: "Fairness" },
     secondary: { to: "/coinflip", label: "Coinflip" },
   },

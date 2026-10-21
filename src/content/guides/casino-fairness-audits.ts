@@ -120,7 +120,7 @@ Look for certificate ids, expiry, and game version hashes. Missing dates suggest
 
 ### PVPspinArena scope
 
-Multiplayer Jackpot, Coinflip and [Roulette](/roulette) publish cryptographic proofs on the [Fairness](/fairness) page rather than a lab seal. Treat that as a different trust model you can exercise bet by bet using [provably fair games](/guides/provably-fair-games) steps.
+Multiplayer [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), and [Coinflip](/coinflip) publish cryptographic proofs on the [Fairness](/fairness) page rather than a lab seal. Treat that as a different trust model you can exercise bet by bet using [provably fair games](/guides/provably-fair-games) steps.
 
 ### Marketing oversell
 
@@ -301,5 +301,5 @@ A lab logo and an on-chain review are different stamps. [eCOGRA certification](/
     "ecogra-certification",
     "smart-contract-audit",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 The everyday question — what a playskin costs, how float moves a number, what a collection does to supply — belongs on [CS2 skin prices](/guides/cs2-skin-prices). That is the general price guide. Do not treat the ranked list below as a shopping list for a loadout.
 
-This article is part of the [CS:GO heritage](/guides/topics/csgo-heritage) guides. It is for adults aged 18 or over. PVPspinArena does not sell skins and does not run a marketplace. It is cash player-versus-player gaming — [Jackpot](/), Coinflip and Roulette — with USDC and ETH on Base. A trophy AK is a collectible. A $50 USDC stake is money.
+This article is part of the [CS:GO heritage](/guides/topics/csgo-heritage) guides. It is for adults aged 18 or over. PVPspinArena does not sell skins and does not run a marketplace. It is cash player-versus-player gaming — [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), and [Roulette](/roulette) — with USDC and ETH on Base. A trophy AK is a collectible. A $50 USDC stake is money.
 
 “Most expensive CSGO skin” is the same hunt with the old game name. The items carried over. The record copies are still the same inspect links.
 
@@ -158,5 +158,5 @@ You must be 18 or over to gamble. Treating record skins as an investment is stil
     "case-hardened-blue-gem",
     "cs2-agents",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

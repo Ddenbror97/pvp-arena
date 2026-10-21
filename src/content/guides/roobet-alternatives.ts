@@ -21,7 +21,7 @@ export const guide: Guide = {
     "A working small withdrawal is stronger evidence than a streamer code.",
     "Provably fair claims need a commitment you can recompute, not a slogan.",
     "Licence badges are unverified until you open the regulator’s own list.",
-    "PVPspinArena offers Jackpot, Coinflip and Roulette on Base; it is not a Roobet mirror and does not market itself as a licensed US or UK casino.",
+    "PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker on Base; it is not a Roobet mirror and does not market itself as a licensed US or UK casino.",
   ],
   sections: [
     {
@@ -172,7 +172,7 @@ If the choice is already down to two logos, use the [Roobet review](/guides/roob
     },
     {
       q: "Does PVPspinArena replace Roobet?",
-      a: "Only if you want Jackpot, Coinflip and Roulette with USDC/ETH on Base. It is a different lobby, not a feature-complete clone, and not a licensed US/UK casino claim.",
+      a: "Only if you want Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott with USDC/ETH on Base. It is a different lobby, not a feature-complete clone, and not a licensed US/UK casino claim.",
     },
     {
       q: "Should I use VPN advice from alternative blogs?",
@@ -199,5 +199,5 @@ If the choice is already down to two logos, use the [Roobet review](/guides/roob
     "fake-casino-sites",
     "crypto-casino-license",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

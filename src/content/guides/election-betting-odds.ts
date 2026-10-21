@@ -103,7 +103,7 @@ The table is a brake. Election screens are built to feel like news. The brake is
       title: "A hashed pot is not a political market",
       body: `Election betting odds move when beliefs about an election move. A hashed player-versus-player pot does not. On [Jackpot](/), players fund one pot and a committed seed selects a ticket. There is no candidate, no electoral vote, and no American odds. The result is a draw you can recompute, not a civic outcome.
 
-[Fairness](/fairness) runs that recomputation after the seed is published. It will not convert +150 into a percent, and an election market will not publish a Jackpot seed. PVPspinArena does not list political contracts. Jackpot, Coinflip, and Roulette are the games, funded with USDC or ETH on Base. This guide invents no accuracy rate for them and no fee percent.
+[Fairness](/fairness) runs that recomputation after the seed is published. It will not convert +150 into a percent, and an election market will not publish a Jackpot seed. PVPspinArena does not list political contracts. Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip are the games, funded with USDC or ETH on Base. This guide invents no accuracy rate for them and no fee percent.
 
 Checklist when you see a political price:
 
@@ -153,5 +153,5 @@ Adults 18+ only. Not financial, legal, or tax advice.`,
     "crypto-prediction-markets",
     "prediction-market-legal-us",
   ],
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

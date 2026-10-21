@@ -164,7 +164,7 @@ A five-day prize lock is not a cash withdrawal we timed. [The RCH rules](/guides
     },
     {
       q: "Does PVPspinArena give Sweeps Coins?",
-      a: "No. There is no SC balance, no Gold Coin shop, and no redeem desk for promotional chips. Games are Jackpot, Coinflip and Roulette. If you arrived looking for a two-token sweepstakes cashier, this is the wrong product. Watch a live pot instead of hunting a daily SC drop.",
+      a: "No. There is no SC balance, no Gold Coin shop, and no redeem desk for promotional chips. Games are P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. If you arrived looking for a two-token sweepstakes cashier, this is the wrong product. Watch a live pot instead of hunting a daily SC drop.",
     },
   ],
   sources: [
@@ -183,5 +183,5 @@ A five-day prize lock is not a cash withdrawal we timed. [The RCH rules](/guides
     "house-edge",
     "how-do-sweepstakes-casinos-make-money",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

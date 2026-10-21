@@ -180,7 +180,7 @@ Fixed-odds sports betting is a different product: the book margin lives in the l
       title: "Summary",
       body: `Best casino game odds rank games by house edge on the bets you actually place. Blackjack, baccarat banker, and craps pass line anchor the low end among tables; European roulette beats American; crypto originals can match ~1% only when pay curves and caps are honest. PvP with low fees can beat house curves on expected cents.
 
-Published RTP is a starting point. Rule variants, side bets, speed, and bonus terms raise realized cost. PVPspinArena offers Jackpot, Coinflip and Roulette — not crash, plinko, or mines. Use this ranking to choose tables elsewhere and to see where this site’s transparent PvP options sit on the same scale.
+Published RTP is a starting point. Rule variants, side bets, speed, and bonus terms raise realized cost. PVPspinArena offers Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot — not crash, plinko, or mines. Use this ranking to choose tables elsewhere and to see where this site’s transparent PvP options sit on the same scale.
 
 When articles claim “single best game”, replace with “best edge among rules I will actually follow with stakes I can afford”. That sentence keeps blackjack on the podium for disciplined players and Coinflip on the podium for a posted 5% pot fee, without pretending slots are secretly 99%.
 
@@ -225,5 +225,5 @@ Responsible bankroll sizing matters at every rank: low edge with huge variance s
     "coin-flip-odds",
     "crypto-casino-games",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

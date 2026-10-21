@@ -67,7 +67,7 @@ Typing a percent in a review would freeze a number the client is supposed to sho
 | --- | --- | --- | --- | --- | --- |
 | Replay Poker | not published | other people, if the app is actually poker | not published | not published | not published |
 | A house-banked casino | not published | the house | not published | not published | not published |
-| PvP Spin Arena | Poker: shown in the client, no percent in this file. Jackpot and Coinflip: 5% of the pot, and those are different games | other players | balance updates when the round settles | committed seed on Jackpot, Coinflip, Roulette, and P2P Slott; poker fee still read from the client | shown on the bet control |
+| PvP Spin Arena | Poker: shown in the client, no percent in this file. Jackpot and Coinflip: 5% of the pot, and those are different games | other players | balance updates when the round settles | committed seed on Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott; poker fee still read from the client | shown on the bet control |
 
 A replay poker withdrawal clock is the speed cell readers want. It stays not published.
 
@@ -131,7 +131,7 @@ The fee for that table is displayed in the client. This article will not repeat 
 
 If this guide is tied to the poker table, settled rounds load on the page from play. They are not typed here. You will not find a copied hand history, a username, or a live pot in the paragraphs above.
 
-[Verify a commit](/fairness) covers the seeded games: Jackpot, Coinflip, Roulette, and P2P Slott. Use it for those results.
+[Verify a commit](/fairness) covers the seeded games: six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. Use it for those results.
 
 Do not point it at a Replay Poker hand and expect a grade. A check of our seed is not an audit of their shuffle or their cashier.
 
@@ -233,5 +233,5 @@ A play-money or social room is not an early bitcoin name. [The early bitcoin roo
     "skill-based-gambling",
     "swc-poker-review",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

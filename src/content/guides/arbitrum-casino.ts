@@ -143,7 +143,7 @@ Arbitrum One is a real, widely used L2. It is still the wrong network for this c
 
 If you already hold funds on Arbitrum and you want to play here, that is a bridge-or-exchange problem onto Base, then a USDC or ETH send to the address this site shows. The bridge guide covers the general risk; this page will not walk a deposit that this site cannot see.
 
-Open [how it works](/how-it-works) for the live Jackpot, Coinflip and Roulette rules. None of those games become “Arbitrum games” because your wallet can add chain 42161.
+Open [how it works](/how-it-works) for the live Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott rules. None of those games become “Arbitrum games” because your wallet can add chain 42161.
 
 Use an Arbitrum casino only if you can state chain ID, token contract and fee asset, and only with money you can lose. Use this site only if you want hashed PvP in dollars on Base.
 
@@ -193,5 +193,5 @@ Write three lines on paper before any first send: chain ID 42161 or 8453, token 
     },
   ],
   related: ["base-vs-ethereum", "gas-fees-explained", "usdc-casino", "polygon-casino"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

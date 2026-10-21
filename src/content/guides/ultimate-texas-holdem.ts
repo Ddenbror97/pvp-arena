@@ -118,7 +118,7 @@ Blind multiples are rare, which is why ordinary wins often push that bet. Raisin
 
 Adults 18+ only. This page explains a house game. It is not a license where the game is barred, and it is not a tax opinion. If you cannot leave after the stop number, leave before the next ante. A clock works beside the loss number, because fast hands make an open session longer than it feels.
 
-PVPspinArena does not offer Ultimate Texas Hold'em. The live games here are Jackpot, Coinflip, and Roulette, settled settled in US dollars. A guide about a pit poker variant is not a deposit path into those games.`,
+PVPspinArena does not offer Ultimate Texas Hold'em. The live games here are P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette, settled in US dollars. A guide about a pit poker variant is not a deposit path into those games.`,
     },
     {
       id: "keep",
@@ -153,7 +153,7 @@ Then write a loss limit in ante units. Twenty antes is a different pile of money
     },
     {
       q: "Does PVPspinArena deal this game?",
-      a: "No. This site offers Jackpot, Coinflip, and Roulette. The guide is for adults 18+ reading a house poker variant dealt elsewhere.",
+      a: "No. This site offers Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot. The guide is for adults 18+ reading a house poker variant dealt elsewhere.",
     },
   ],
   sources: [
@@ -171,5 +171,5 @@ Then write a loss limit in ante units. Twenty antes is a different pile of money
     },
   ],
   related: ["casino-hold-em", "mississippi-stud", "texas-holdem-rules", "poker-hand-rankings"],
-  updated: "2026-09-29",
+  updated: "2026-10-21",
 };

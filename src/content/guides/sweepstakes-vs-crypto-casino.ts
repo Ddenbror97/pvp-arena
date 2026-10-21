@@ -140,7 +140,7 @@ You must be 18 or over. If you are hopping from a denied SC ticket into a crypto
     },
     {
       q: "Is PVPspinArena a sweepstakes casino that pays in USDC?",
-      a: "No. It is not a sweepstakes casino. There are no Gold Coins and no Sweeps Coins. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars. A win is the same asset, not a promotional redeem. Do not look for an SC meter beside a pot.",
+      a: "No. It is not a sweepstakes casino. There are no Gold Coins and no Sweeps Coins. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker settle in US dollars. A win is the same asset, not a promotional redeem. Do not look for an SC meter beside a pot.",
     },
     {
       q: "Which is safer, sweepstakes or crypto?",

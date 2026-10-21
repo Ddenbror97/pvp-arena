@@ -181,7 +181,7 @@ How often those hands show up, and what they are worth, is [poker math](/guides/
     },
     {
       q: "Does PVPspinArena use poker hand rankings?",
-      a: "No. This site does not deal poker. Jackpot, Coinflip and Roulette pay posted pot or colour prices.",
+      a: "Yes. Six-max No-Limit Hold'em uses these rankings. Jackpot and Coinflip pay from a player pot. Roulette pays a posted colour price.",
     },
   ],
   sources: [

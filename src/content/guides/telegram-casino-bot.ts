@@ -21,7 +21,7 @@ export const guide: Guide = {
     "A bot can post a deposit address it controls; sending coins there is a transfer you cannot reverse.",
     "Common scams include fake support accounts, malicious 'connect wallet' pages, and operators who vanish after a weekend of deposits.",
     "Dice and crash messages in chat are not a public verifier unless you can replay seeds independently.",
-    "PVPspinArena is not a Telegram bot. It is a website: Jackpot, Coinflip and Roulette in USDC and ETH on Base.",
+    "PVPspinArena is not a Telegram bot. It is a website: Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot in USDC and ETH on Base.",
   ],
   sections: [
     {
@@ -200,5 +200,5 @@ An empire score is a different bot. [The empire tap](/guides/x-empire-telegram) 
     "dogs-telegram",
     "x-empire-telegram",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

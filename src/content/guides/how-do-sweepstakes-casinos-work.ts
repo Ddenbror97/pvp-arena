@@ -166,7 +166,7 @@ One sweeps sports product prices Prize Tickets and left the dollar per ticket un
     },
     {
       q: "Does PVPspinArena work like a sweepstakes casino?",
-      a: "No. There is no GC/SC pair and no redeem desk. You deposit USDC or ETH on Base, play Jackpot, Coinflip or Roulette, and withdraw the same asset. Fairness is a hash you can recompute, not a promotional review. Do not expect a sweepstakes how-to to apply to a pot.",
+      a: "No. There is no GC/SC pair and no redeem desk. You deposit USDC or ETH on Base, play [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette), and withdraw the same asset. Fairness is a hash you can recompute, not a promotional review. Do not expect a sweepstakes how-to to apply to a pot.",
     },
     {
       q: "How long does a Sweeps Coin redeem take?",
@@ -193,5 +193,5 @@ One sweeps sports product prices Prize Tickets and left the dollar per ticket un
     "moonspin-review",
     "nolimit-coins-review",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

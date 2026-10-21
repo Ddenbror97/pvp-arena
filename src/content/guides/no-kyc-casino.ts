@@ -95,7 +95,7 @@ Reviews over $25 are not a hidden passport demand by default. They are a pause. 
 
 So you can have a no KYC casino and a fully identified Coinbase buy on the same afternoon. The chain link between the exchange withdrawal and the casino deposit is often easy to follow. The casino not storing a passport photo does not delete the exchange file.
 
-Expect more pressure over time, not less, if a site grows or touches fiat. A small PvP Jackpot, Coinflip and Roulette site that only talks to Base still sits in that wider market.
+Expect more pressure over time, not less, if a site grows or touches fiat. A small PvP Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot site that only talks to Base still sits in that wider market.
 
 Do not take legal advice from a guide. If you need to know what you must report, ask a professional where you live.
 
@@ -143,7 +143,7 @@ If play is no longer fun or controlled, use [responsible gambling](/responsible-
 
 A no KYC cashier also means you cannot lean on a bank to reverse a bet. The chain send is final after confirmations. That is the other side of skipping ID: fewer recovery tools when you make a mistake or when you should have stopped.
 
-Before a first deposit, read [how it works](/how-it-works) so you know the games are PvP Jackpot, Coinflip and Roulette, not a hidden house book dressed up as privacy.
+Before a first deposit, read [how it works](/how-it-works) so you know the games are PvP Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, not a hidden house book dressed up as privacy.
 
 If you only wanted less paperwork, you already have the honest version of the product. If you wanted a private room, you are reading the wrong promise. Keep the budget small enough that a public hash is an acceptable record. That is the adult version of no KYC: less paperwork, the same Base explorer.
 
@@ -211,5 +211,5 @@ Skipping identity checks is not a brand review. [One brand with a blank license 
     "razed-casino-review",
     "golden-panda-casino-review",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

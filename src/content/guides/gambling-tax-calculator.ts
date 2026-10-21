@@ -71,7 +71,7 @@ Suppose, as a further illustration, that $2,400 had been withheld on the $10,000
 
 Put valued dollars into the same three inputs. If your diary says $10,000 of valued wins and $4,000 of valued losses, you are back in Example 1, with the same warning that the $4,000 may not all be deductible. Deposits are not losses. Withdrawals are not wins. A session that starts at $200 and ends at $140 is not a $140 win. The movement is the candidate for the diary, and a preparer decides what the movement is on a form.
 
-PVPspinArena can show a ledger for Jackpot, Coinflip, and Roulette. It does not compute this tax and it does not issue a completed return. Export the ledger, value the tokens, and take the folder to a qualified preparer with Publication 525, Publication 529, and Topic 419 open. If the ledger is in a token, write the dollar beside each line before you type anything into the $10,000 slot.
+PVPspinArena can show a ledger for Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip. It does not compute this tax and it does not issue a completed return. Export the ledger, value the tokens, and take the folder to a qualified preparer with Publication 525, Publication 529, and Topic 419 open. If the ledger is in a token, write the dollar beside each line before you type anything into the $10,000 slot.
 
 Do not run the 24% rate on a token count. Twenty-four percent of 10,000 tokens is not a tax. Twenty-four percent of the dollar value, under a stated assumption about deductions, is the illustration.`,
     },
@@ -107,7 +107,7 @@ The second table is the scope. If you need a cell it refuses, you need the IRS p
       title: "A hashed pot is still income if it pays you",
       body: `The product does not pick the tax. A hashed player-versus-player pot and a casino game can both produce a win that belongs in the income line of this illustration. On [Jackpot](/), players fund a pot, a fee is taken when the round settles, and a committed seed picks a ticket. If you are paid, the dollar amount is a candidate for the wins column. If you lose the buy-in, it is a candidate for the losses column, subject to every limit above. The hash does not create an exemption.
 
-[Fairness](/fairness) lets you recompute the draw. That check is about whether the ticket matches the commit. It is not a tax record by itself, though the published round can sit beside your ledger as evidence of the result. PVPspinArena is not a tax preparer. Jackpot, Coinflip, and Roulette, funded with USDC or ETH on Base, are the games. This guide states no average win and no fee percent.
+[Fairness](/fairness) lets you recompute the draw. That check is about whether the ticket matches the commit. It is not a tax record by itself, though the published round can sit beside your ledger as evidence of the result. PVPspinArena is not a tax preparer. P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette, funded with USDC or ETH on Base, are the games. This guide states no average win and no fee percent.
 
 Checklist before you trust an estimate:
 
@@ -156,5 +156,5 @@ Adults 18+ only. Not tax advice, legal advice, or financial advice.`,
     "expected-value-gambling",
   ],
   widget: "gambling-tax",
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

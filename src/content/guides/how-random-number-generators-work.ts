@@ -28,7 +28,7 @@ The rest of the game is mapping. A 32-bit or 256-bit value is turned into “hea
 
 ### Where the RNG sits
 
-On a licensed slot site the RNG lives in certified server software. On a crypto PvP site it usually lives in the step that creates a server seed, then in the hash that turns seeds into a winner. PVPspinArena uses the second model for [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette). Your browser never picks the result.
+On a licensed slot site the RNG lives in certified server software. On a crypto PvP site it usually lives in the step that creates a server seed, then in the hash that turns seeds into a winner. PVPspinArena uses the second model for [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), and [six-max poker](/poker). Your browser never picks the result.
 
 ### What “random” has to mean here
 
@@ -128,7 +128,7 @@ Before a roulette round you see a 64-character hex commitment. After the spin yo
     {
       id: "pvp",
       title: "How PVPspinArena generates each result",
-      body: `Jackpot, Coinflip, Roulette, and P2P Slott are server-authoritative and provably fair.
+      body: `Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are server-authoritative and provably fair.
 
 ### Roulette
 
@@ -197,5 +197,5 @@ A physical shuffle is a different randomness problem; see [how to shuffle cards]
     "server-seed-client-seed",
     "how-to-shuffle-cards",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

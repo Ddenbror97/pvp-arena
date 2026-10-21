@@ -28,7 +28,7 @@ On Bitcoin the similar idea is a miner fee in satoshis per virtual byte. People 
 
 Gas fees explained in a gambling context: when you deposit from your own wallet, **you** pay the chain. When the casino withdraws to you, **it** pays the chain. The site may also take a game fee from a pot. Those are three different line items. None of them is a "play for free" waiver.
 
-This site is PvP Jackpot, Coinflip and Roulette, 18+. Deposits are USDC and ETH on Base, not BTC, SOL, LTC, DOGE or USDT. Payment explainers sit in [crypto payments](/guides/topics/crypto-payments).`,
+This site is PvP Slott, six-max poker, Jackpot, Coinflip, and Roulette, 18+. Deposits are USDC and ETH on Base, not BTC, SOL, LTC, DOGE or USDT. Payment explainers sit in [crypto payments](/guides/topics/crypto-payments).`,
     },
     {
       id: "who",
@@ -206,5 +206,5 @@ Bitcoin prices fees in sat/vB, not gas; that schedule is [bitcoin fees](/guides/
     "blockchain-confirmations",
     "bitcoin-fees",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

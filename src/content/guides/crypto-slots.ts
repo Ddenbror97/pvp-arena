@@ -167,7 +167,7 @@ Two hundred autoplay spins at $1 on a 96% RTP title is $200 wagered. Expected co
       title: "Summary",
       body: `Crypto slots are house-banked video slots with a crypto cashier. RTP is the cost rate; hit rate and volatility describe how that cost arrives. Most titles are certified RNG products you cannot replay from a seed. Bonuses often add wagering that applies the same edge to a larger turnover. A slot jackpot is a rare paytable event, not a shared PvP pot.
 
-PVPspinArena's slot game is P2P Slott, a 1v1 duel. If you want published odds and a result you can check, use Jackpot, Coinflip or Roulette, and keep this guide for pricing any reel game you meet elsewhere.`,
+PVPspinArena's slot game is P2P Slott, a 1v1 duel. If you want published odds and a result you can check, use [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), or [P2P Slott](/slott), and keep this guide for pricing any reel game you meet elsewhere.`,
     },
   ],
   faqs: [
@@ -213,5 +213,5 @@ PVPspinArena's slot game is P2P Slott, a 1v1 duel. If you want published odds an
     "golden-goddess-slot",
     "zeus-vs-hades-slot",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

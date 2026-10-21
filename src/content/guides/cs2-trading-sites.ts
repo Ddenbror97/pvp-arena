@@ -193,7 +193,7 @@ These habits are repetitive on purpose. Repetition is what still works at midnig
     },
     {
       q: "Does PVPspinArena compete with trading sites?",
-      a: "No. It does not buy or sell skins. It accepts USDC or ETH on Base for Jackpot, Coinflip and Roulette.",
+      a: "No. It does not buy or sell skins. It accepts USDC or ETH on Base for Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
   ],
   sources: [
@@ -212,5 +212,5 @@ These habits are repetitive on purpose. Repetition is what still works at midnig
     "steam-trade-hold",
     "how-to-sell-cs2-skins",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

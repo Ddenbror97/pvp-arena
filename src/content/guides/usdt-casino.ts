@@ -28,7 +28,7 @@ USDT is useful for gambling because it aims to stay near $1. A 50 USDT deposit i
 
 This is gambling for adults 18 or older. A stable chip does not create a winning strategy.
 
-PVPspinArena is PvP Jackpot, Coinflip and Roulette. It is a [USDC casino](/guides/usdc-casino) rail, not a USDT rail. No TRC-20, no ERC-20 USDT, no Solana USDT. This guide covers how Tether casinos handle networks and fees, how USDT compares with USDC, and how to move Tether holdings onto Base. More of that cluster sits in [crypto payments](/guides/topics/crypto-payments).`,
+PVPspinArena is PvP Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip. It is a [USDC casino](/guides/usdc-casino) rail, not a USDT rail. No TRC-20, no ERC-20 USDT, no Solana USDT. This guide covers how Tether casinos handle networks and fees, how USDT compares with USDC, and how to move Tether holdings onto Base. More of that cluster sits in [crypto payments](/guides/topics/crypto-payments).`,
     },
     {
       id: "networks",
@@ -141,7 +141,7 @@ If you want a second session later the same week, leave a little USDC and ETH on
 - USDT on Base, if your exchange offers it, unless the deposit page explicitly lists USDT — it does not.
 - Chat-offered "USDT conversion desks."
 
-Open the [wallet](/wallet) page on the real domain only. Read game rules on [how it works](/how-it-works) before you fund Jackpot, Coinflip or Roulette.
+Open the [wallet](/wallet) page on the real domain only. Read game rules on [how it works](/how-it-works) before you fund [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), or [Jackpot](/).
 
 A USDT casino is a real, common product. This site is not one. Match the token and the network, or the transfer is just a successful send to the void.`,
     },
@@ -217,5 +217,5 @@ What the token itself is, including reserves and chains, is [what is Tether](/gu
     "erc20-vs-trc20",
     "what-is-tether",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

@@ -28,7 +28,7 @@ Cheap gas made the rail popular the same way Tron and other L2s did: small sessi
 
 This guide is in [crypto payments](/guides/topics/crypto-payments). Adults 18+ only. It is the Polygon twin of the [Arbitrum casino](/guides/arbitrum-casino) and [Avalanche casino](/guides/avalanche-casino) explainers: teach the chain, then show why this site is not on it.
 
-PVPspinArena is Jackpot, Coinflip and [Roulette](/roulette) with USDC and ETH on Base. A Polygonscan hash will not credit. Do not send POL to a Base 0x and assume a bridge happens in the background. It does not.
+PVPspinArena is [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), and [six-max poker](/poker) with USDC and ETH on Base. A Polygonscan hash will not credit. Do not send POL to a Base 0x and assume a bridge happens in the background. It does not.
 
 Search ads will treat “Polygon casino” as a ranked shop list. This page will not. Cheap gas attracted a lot of rooms, including ones that only copied a cashier and never published an edge. Judge the games and the withdrawal rules first. The chain is the least interesting part of a good room and the most interesting part of a lost transfer.
 
@@ -179,5 +179,5 @@ Pick one cashier you meant to use. For this site, that cashier is Base. Convert 
     "usdc-casino",
     "tron-casino",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

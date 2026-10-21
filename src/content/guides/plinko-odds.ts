@@ -16,7 +16,7 @@ export const guide: Guide = {
     "An 8-row board has 256 equally likely paths; a 16-row board has 65,536.",
     "House edge = 1 − Σ (bucket probability × bucket multiplier).",
     "Low, medium and high risk can share one RTP and still feel opposite because the tails differ.",
-    "PVPspinArena does not offer plinko; published odds here are for Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer plinko; published odds here are for Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot.",
   ],
   sections: [
     {
@@ -226,5 +226,5 @@ Those bin probabilities are the same maths as a [plinko board](/guides/plinko-bo
     },
   ],
   related: ["plinko-gambling", "house-edge", "rtp-explained", "pachinko-odds", "plinko-board"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

@@ -30,7 +30,7 @@ MetaMask also isolates networks. An address on Ethereum mainnet and the same add
 
 Password and lock screen stop a stranger who opens your laptop for a minute. They do not stop someone who already copied the phrase. “Is MetaMask safe” is therefore a question about the threat you are facing, not a yes stamped on the logo.
 
-This page sits with the other rails in [crypto payments](/guides/topics/crypto-payments). Adults 18+ only. A safer wallet does not make a wager profitable. Jackpot, Coinflip and Roulette on PVPspinArena still have a fee or a house edge, shown in [how it works](/how-it-works).`,
+This page sits with the other rails in [crypto payments](/guides/topics/crypto-payments). Adults 18+ only. A safer wallet does not make a wager profitable. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker on PVPspinArena still have a fee or edge, shown in [how it works](/how-it-works).`,
     },
     {
       id: "does-not",
@@ -196,5 +196,5 @@ Jackpot and Coinflip are player-versus-player. Roulette is a house-banked wheel.
     "metamask-scams",
     "export-metamask-private-key",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

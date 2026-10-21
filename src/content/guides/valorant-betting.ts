@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Maps are played to a round target; overtime rules depend on the event.",
     "Pistol and round-total props are easy to watch and often carry a wider margin.",
     "A two-way moneyline whose implied chances add above 100% is showing the vig.",
-    "PVPspinArena does not price Valorant maps; it runs hashed Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not price Valorant maps; it runs hashed Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -170,7 +170,7 @@ If betting is already taking more time or money than you planned, use [how to st
     },
     {
       q: "Does PVPspinArena offer Valorant betting?",
-      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. It is not a sportsbook. It runs hashed six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Is Valorant betting legal?",
@@ -197,10 +197,10 @@ If betting is already taking more time or money than you planned, use [how to st
     "esports-odds-explained",
     "how-to-bet-on-esports",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   cta: {
     title: "This site is not a book",
-    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip and Roulette. It does not take Valorant bets.",
+    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. It does not take Valorant bets.",
     primary: { to: "/fairness", label: "Fairness" },
     secondary: { to: "/coinflip", label: "Coinflip" },
   },

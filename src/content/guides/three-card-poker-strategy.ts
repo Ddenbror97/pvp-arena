@@ -160,7 +160,7 @@ Write the number of hands before you post the first Ante. Speed will eat an unco
     },
     {
       q: "Does PVPspinArena offer Three Card Poker?",
-      a: "No Three Card Poker and no side-game pit. Six-max No-Limit Hold'em is a different game, with a 5% fee only after a flop. Jackpot, Coinflip, and Roulette are separate.",
+      a: "No Three Card Poker and no side-game pit. Six-max No-Limit Hold'em is a different game, with a 5% fee only after a flop. P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette are separate.",
     },
   ],
   sources: [
@@ -178,5 +178,5 @@ Write the number of hands before you post the first Ante. Speed will eat an unco
     "expected-value-gambling",
     "how-to-play-poker",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

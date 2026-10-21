@@ -117,7 +117,7 @@ Adults sometimes play the forfeit as a small stake instead of a deal or a drink.
       title: "A blind card and a hashed coin",
       body: `You choose which cards to park face up, when to spend a 10, and whether to pick up a pile to build four of a kind. The last face-down card is still a blind play. A 2 that resets and a 2 that burns are different games. The loser is still the last player with cards.
 
-If you want a result with no pile to pick up, PVPspinArena runs Jackpot, [Coinflip](/coinflip) and Roulette settled in US dollars. Adults 18+ only. Coinflip is a 50/50 between two players. Roulette returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee on a 33-slot wheel, a 7.88 percent on Purple or Silver after the win fee edge. Jackpot pays a shared pot by share. Seeds are committed before the round. A settled round can be checked on the [fairness](/fairness) page.
+If you want a result with no pile to pick up, PVPspinArena runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), and [P2P Slott](/slott) settled in US dollars. Adults 18+ only. Coinflip is a 50/50 between two players. Roulette returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee on a 33-slot wheel, a 7.88 percent on Purple or Silver after the win fee edge. Jackpot pays a shared pot by share. Seeds are committed before the round. A settled round can be checked on the [fairness](/fairness) page.
 
 The [responsible gambling](/responsible-gambling) page is the stop when the forfeit stops being funny. Being the palace servant for one deal is the game. Chasing it with a larger stake is not.
 
@@ -161,5 +161,5 @@ See also [president](/guides/president-card-game-rules), [crazy eights](/guides/
     "52-card-deck",
   ],
   howTo: true,
-  updated: "2026-09-29",
+  updated: "2026-10-21",
 };

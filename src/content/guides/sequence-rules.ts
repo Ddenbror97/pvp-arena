@@ -127,7 +127,7 @@ Adults sometimes stake a small amount on the match. Gambling is for adults only 
       title: "A locked row and a hashed PvP round",
       body: `The board is visible and the next card is not. You can see that Blue needs one space. You cannot see whether Blue holds that space or a two-eyed jack. A one-eyed jack removes the blocking chip only before the row is locked. At 10 or 12 players a hand is three cards, so one jack is a large share of it. [Bourré](/guides/bourre-card-game) hides a similar swing inside a trump bid.
 
-PVPspinArena does not sell Sequence. It runs Jackpot, [Coinflip](/coinflip) and Roulette for adults 18+ only, settled in US dollars. Coinflip is a 50/50 between two players. Roulette returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee on a 33-slot wheel, a 7.88 percent on Purple or Silver after the win fee edge. Jackpot pays a shared pot in proportion to your share. Seeds are committed first. A settled round can be checked on the [fairness](/fairness) page.
+PVPspinArena does not sell Sequence. It runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), and [P2P Slott](/slott) for adults 18+ only, settled in US dollars. Coinflip is a 50/50 between two players. Roulette returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee on a 33-slot wheel, a 7.88 percent on Purple or Silver after the win fee edge. Jackpot pays a shared pot in proportion to your share. Seeds are committed first. A settled round can be checked on the [fairness](/fairness) page.
 
 There is no jack to save and no corner to share. If the session turns into chasing the last result, use the limits on the [responsible gambling](/responsible-gambling) page. A second Sequence game will not unwind a coin.
 
@@ -168,5 +168,5 @@ See also [klondike solitaire](/guides/solitaire-rules), [crazy eights](/guides/c
     "how-to-shuffle-cards",
   ],
   howTo: true,
-  updated: "2026-09-29",
+  updated: "2026-10-21",
 };

@@ -57,7 +57,7 @@ On PvP casino products the price is a fee, not juice. Ask for it before you ente
       title: "2. What can you verify after the result?",
       body: `Sports results are public match scores. The risk is more about void rules, delayed settlement and live-bet latency than about a hashed seed. Read the voids: walkovers, player props, wrong-sport mappings.
 
-Casino and originals should offer a verifier or a lab story you understand. A logo is not a verifier. Our [provably fair casino](/guides/provably-fair-casino) guide is the casino half. PVPspinArena’s [Fairness](/fairness) page is the worked example for Jackpot, Coinflip and Roulette.
+Casino and originals should offer a verifier or a lab story you understand. A logo is not a verifier. Our [provably fair casino](/guides/provably-fair-casino) guide is the casino half. PVPspinArena’s [Fairness](/fairness) page is the worked example for Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot.
 
 A sportsbook that also runs hashed dice is two products. Score each product. Do not let a fair coin flip certify a football market.
 
@@ -178,5 +178,5 @@ The same books show up as installs. A [crypto betting app](/guides/crypto-bettin
     "no-kyc-casino",
     "online-gambling",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

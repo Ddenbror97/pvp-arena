@@ -162,7 +162,7 @@ Whether a match ticket is allowed is not the same page as how the odds work. [Es
     },
     {
       q: "Does PVPspinArena offer esports betting?",
-      a: "No. PVPspinArena is a crypto PvP site for Jackpot, Coinflip and Roulette, funded with USDC or ETH on Base. It does not take match bets or set team odds.",
+      a: "No. PVPspinArena is a crypto PvP site for Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip, funded with USDC or ETH on Base. It does not take match bets or set team odds.",
     },
     {
       q: "Is LoL betting different from CS2 betting?",
@@ -185,5 +185,5 @@ Whether a match ticket is allowed is not the same page as how the odds work. [Es
     "csgo-coinflip-sites",
     "csgo-case-battle-sites",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

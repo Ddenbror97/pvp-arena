@@ -146,7 +146,7 @@ If you cannot stop at the ticket cap, stop before the first mark. Chasing catche
     {
       id: "not-here",
       title: "PVPspinArena does not offer keno",
-      body: `There is no keno grid on this site. Live games are Jackpot, Coinflip and Roulette — player pots and a counted wheel, not an 80-ball house draw.
+      body: `There is no keno grid on this site. Live games are P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette — player pots and a counted wheel, not an 80-ball house draw.
 
 Use this keno strategy page when a casino or app hands you a spot picker and a paytable. Price the sheet, pick n for variance you can survive, cap tickets, and ignore hot-number overlays.
 
@@ -202,5 +202,5 @@ Spot-count advice does not change when the game is [crypto keno](/guides/crypto-
     "crypto-keno",
     "quick-pick-lottery",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

@@ -169,7 +169,7 @@ A last check before you sit: can you lose three buy-ins this week and still foll
     },
     {
       q: "Does PVPspinArena require a poker bankroll?",
-      a: "The Hold'em tables take a buy-in of 40 to 125 big blinds, from $0.02/$0.05 up to $5/$10. A guide's buy-in count is not a requirement to sit. Jackpot, Coinflip, and Roulette are still sized from an entertainment budget, not from a professional roll.",
+      a: "The Hold'em tables take a buy-in of 40 to 125 big blinds, from $0.02/$0.05 up to $5/$10. A guide's buy-in count is not a requirement to sit. Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot are still sized from an entertainment budget, not from a professional roll.",
     },
   ],
   sources: [
@@ -189,5 +189,5 @@ A last check before you sit: can you lose three buy-ins this week and still foll
     "expected-value-gambling",
     "how-to-play-poker",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

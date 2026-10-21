@@ -24,7 +24,7 @@ export const guide: Guide = {
       title: "What a BC.Game review can actually settle",
       body: `A bc game review is a buying question: people want to know whether BC.Game is worth a deposit. A page that answers with a made-up score is a sales layout. This one answers with checks you can repeat on the operator's own site today. Adults 18+ only. It is not legal advice, not a bonus code, and not a promise that BC.Game will pay you.
 
-Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Jackpot, Coinflip and Roulette, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not BC.Game, and we do not sell a licence we do not hold.
+Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not BC.Game, and we do not sell a licence we do not hold.
 
 BC.Game's search traffic is about scale and promotions: many games, frequent offers, and a token conversation that confuses new players. The review cuts the lobby down to the game you will actually open and the balance you can actually withdraw.
 
@@ -136,7 +136,7 @@ A different Curaçao file, token 748, names a lobby whose gaming-licence heading
     },
     {
       q: "Is BC.Game the same as PVPspinArena?",
-      a: "No. PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not copy the BC.Game lobby or token.",
+      a: "No. PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from bc game review. It does not copy the BC.Game lobby or token.",
     },
     {
       q: "Why did a BC.Game withdrawal wait?",
@@ -160,10 +160,10 @@ A different Curaçao file, token 748, names a lobby whose gaming-licence heading
     "house-edge",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
   cta: {
     title: "A pot is not a lobby",
-    text: "BC.Game is someone else's casino. PVPspinArena only runs Jackpot, Coinflip and Roulette between players, with USDC or ETH on Base.",
+    text: "BC.Game is someone else's casino. PVPspinArena only runs Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott between players, with USDC or ETH on Base.",
     primary: { to: "/coinflip", label: "Open Coinflip" },
     secondary: { to: "/fairness", label: "Read fairness" },
   },

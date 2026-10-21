@@ -17,7 +17,7 @@ export const guide: Guide = {
     "Demo RTP is still a long-run cost rate on those credits, not a 96% chance to finish ahead.",
     "A hot demo session does not prove the real-money build will pay you.",
     "Social-casino “free coins” and sweepstakes coins are different products from a studio demo.",
-    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; the live games are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena's slot game is P2P Slott, a 1v1 duel, alongside six-max poker, Jackpot, Coinflip, and Roulette.",
   ],
   sections: [
     {

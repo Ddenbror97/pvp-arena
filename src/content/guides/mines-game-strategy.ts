@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Survival through k safes is a product of shrinking fractions; fair pay would be 1 divided by that product.",
     "Posted multipliers sit below fair, which is the house edge on every step you take.",
     "Chasing one more tile after a long streak raises variance; it does not raise return to player.",
-    "PVPspinArena does not offer mines; live games are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer mines; live games are six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -209,7 +209,7 @@ Apps that claim to read the next mine are [mines predictors](/guides/mines-predi
     },
     {
       q: "Does PVPspinArena have mines?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip and Roulette. This guide explains mines strategy so you can price grids on other sites without myth.",
+      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This guide explains mines strategy so you can price grids on other sites without myth.",
     },
   ],
   sources: [
@@ -226,5 +226,5 @@ Apps that claim to read the next mine are [mines predictors](/guides/mines-predi
     "variance-in-gambling",
     "mines-predictor",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

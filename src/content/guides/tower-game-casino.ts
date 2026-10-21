@@ -16,7 +16,7 @@ export const guide: Guide = {
     "P(reach floor h) = product of the survival probabilities on floors 1…h.",
     "A fair cash-out at h would pay 1 / P(reach h). Casinos pay less; that gap is the edge.",
     "Choosing a higher floor raises variance. It does not raise RTP.",
-    "PVPspinArena does not offer tower game gambling; the live games are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer tower game gambling; the live games are six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {

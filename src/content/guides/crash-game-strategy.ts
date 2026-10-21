@@ -34,7 +34,7 @@ It does not answer “how do I beat the curve.” The [house edge](/guides/house
 
 Write the target in the same units the UI shows. If the bar prints two decimals, your plan is 1.50x or 2.00x, not “around two.” Vague plans become mid-round improvisation, and improvisation is how a 2x session becomes a 7x bust.
 
-Adults 18+ only. PVPspinArena does not offer crash. The live products are Jackpot, Coinflip and Roulette — for example the colour wheel on [Roulette](/roulette). More maths pages sit in [games and odds](/guides/topics/games-and-odds).`,
+Adults 18+ only. PVPspinArena does not offer crash. The live products are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker — for example the colour wheel on [Roulette](/roulette). More maths pages sit in [games and odds](/guides/topics/games-and-odds).`,
     },
     {
       id: "edge-identity",
@@ -180,7 +180,7 @@ Cashout targets on a branded crash game are covered in [JetX](/guides/jetx-game)
     },
     {
       q: "Does PVPspinArena offer crash?",
-      a: "No. It offers Jackpot, Coinflip and Roulette. Use this page to price crash elsewhere, then compare with published PvP odds.",
+      a: "No. It offers Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip. Use this page to price crash elsewhere, then compare with published PvP odds.",
     },
   ],
   sources: [
@@ -198,5 +198,5 @@ Cashout targets on a branded crash game are covered in [JetX](/guides/jetx-game)
     "aviator-game-guide",
     "jetx-game",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

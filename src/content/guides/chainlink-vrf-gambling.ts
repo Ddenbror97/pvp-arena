@@ -16,7 +16,7 @@ export const guide: Guide = {
     "On-chain games use VRF when the contract itself must settle without trusting a hidden server seed.",
     "VRF requests cost gas and add latency compared with off-chain HMAC draws.",
     "VRF proves the randomness was generated correctly for the request; it does not remove house edge or guarantee solvency.",
-    "PVPspinArena does not use Chainlink VRF; its Jackpot, Coinflip and Roulette rounds use commit-reveal HMAC.",
+    "PVPspinArena does not use Chainlink VRF; its Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker rounds use commit-reveal HMAC.",
   ],
   sections: [
     {
@@ -177,7 +177,7 @@ On-chain proofs do not manage addiction risk. Keep a budget and use [responsible
 
 ### Bottom line on PVPspinArena
 
-**Chainlink VRF gambling** is a real design family for smart-contract games. PVPspinArena’s Jackpot, Coinflip and Roulette use commit-reveal HMAC instead. Evaluate each product by the mechanism it actually ships, not by which buzzword appears in ads.`,
+**Chainlink VRF gambling** is a real design family for smart-contract games. PVPspinArena’s P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette use commit-reveal HMAC instead. Evaluate each product by the mechanism it actually ships, not by which buzzword appears in ads.`,
     },
     {
       id: "player-checklist",
@@ -251,5 +251,5 @@ When you document a VRF bet for your own records, save the request id, fulfillme
     "commit-reveal-scheme",
     "provably-fair-casino",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

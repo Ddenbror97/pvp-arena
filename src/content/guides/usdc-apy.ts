@@ -28,7 +28,7 @@ If you need the coin first — who issues it, what the reserves are, why the peg
 
 This sits in the [crypto payments](/guides/topics/crypto-payments) cluster. It is for adults aged 18 or over. It is not financial advice, not a recommendation to lend, and not a promise that any rate you saw on a screenshot still exists.
 
-PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base, for Jackpot, Coinflip, Roulette, and P2P Slott. A balance here is a game ledger. It is not a savings account.`,
+PVPspinArena accepts on-chain Bitcoin, and USDC and ETH on Base, for Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. A balance here is a game ledger. It is not a savings account.`,
     },
     {
       id: "where",
@@ -101,7 +101,7 @@ Scam tiles copy real brand names. “Circle yield” on a connect-wallet page th
       title: "Why a casino balance is not yield",
       body: `A USDC casino credits a ledger when your transfer confirms. That ledger is for play. It does not accrue USDC APY. It does not compound. It is not Circle yield. Leaving $200 on a gambling site “to earn” is a category error. You are leaving a game balance that can be wagered, limited, or withdrawn under that site’s rules.
 
-On PVPspinArena the balance is dollars after a USDC or ETH deposit on Base. Jackpot, Coinflip and Roulette are player-versus-player games. They are not a money-market fund. If you want the deposit steps, that is [USDC casino](/guides/usdc-casino), not this page.
+On PVPspinArena the balance is dollars after a USDC or ETH deposit on Base. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott are player-versus-player games. They are not a money-market fund. If you want the deposit steps, that is [USDC casino](/guides/usdc-casino), not this page.
 
 A win on Coinflip is not yield. It is a bet that settled. A loss is not a “negative APY.” Mixing gambling results into a savings spreadsheet is how people convince themselves they have a rate. They have a hobby with a house fee or a PvP fee and a lot of variance.
 
@@ -198,5 +198,5 @@ If chasing a USDC savings rate has become a way to fund more play, stop. Use the
     "stablecoin-casino",
     "usdt-casino",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

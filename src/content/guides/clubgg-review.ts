@@ -102,7 +102,7 @@ Keep the answers. If the deal changes, the old note is what you compare against.
     {
       id: "versus-site",
       title: "A club ledger versus a posted pot fee",
-      body: `PVPspinArena does not run ClubGG, and it does not deal poker. Jackpot and Coinflip take 5% of the pot. Two players who each put $10 into a coinflip build a $20 pot; 5% of that pot is $1, and the winner is paid from what remains. The fee is a property of the pot, not a private chat. The balance is USD. Funding is Bitcoin, or USDC or ETH on Base.
+      body: `PVPspinArena does not run ClubGG. It does deal six-max No-Limit Hold'em. Jackpot and Coinflip take 5% of the pot. Two players who each put $10 into a coinflip build a $20 pot; 5% of that pot is $1, and the winner is paid from what remains. The fee is a property of the pot, not a private chat. The balance is USD. Funding is Bitcoin, or USDC or ETH on Base.
 
 Roulette on the same site is a different product again: a 33-slot house wheel with 16 Purple, 16 Silver that pay 2x, and 1 Green that pays 14x, with 5% taken from winning payouts. After that fee, Purple and Silver carry about a 7.88% edge. You are playing the wheel, not another person. Slott, also not poker, is 1v1: 10% on a win, or both stakes kept when a bomb hits. None of those games will teach you to play a club table, and a club table will not verify like a hashed one-shot pot.
 

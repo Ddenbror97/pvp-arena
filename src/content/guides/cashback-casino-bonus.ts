@@ -29,7 +29,7 @@ export const guide: Guide = {
 
 This is different from a deposit match, which adds money up front and then traps it in wagering. Cashback is usually backward-looking. That feels kinder. It is still a [casino bonus](/guides/casino-bonuses-explained) with terms.
 
-Adults 18+ only. This [Foundations](/guides/topics/foundations) page will not rank “best cashback casinos.” PVPspinArena does not run a published cashback ladder on Jackpot, Coinflip or Roulette. The product price is the fee or [house edge](/guides/house-edge), shown in [how it works](/how-it-works).
+Adults 18+ only. This [Foundations](/guides/topics/foundations) page will not rank “best cashback casinos.” PVPspinArena does not run a published cashback ladder on [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), or [six-max poker](/poker). The product price is the fee or [house edge](/guides/house-edge), shown in [how it works](/how-it-works).
 
 Cashback is often sold as “playing with a safety net.” The net has holes: excluded games, a cap, a delay, and sometimes extra wagering. A safety net that pays next Wednesday does not help Tuesday night’s rent. If you need a net, you need a smaller stake, not a rebate.
 
@@ -172,5 +172,5 @@ If a rebate lands, withdraw it or leave it. Do not open a game to “celebrate.�
     "gambling-budget",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

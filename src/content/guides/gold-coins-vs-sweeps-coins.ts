@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Gold Coins vs Sweeps Coins: which chip is entertainment, which chip might redeem, why operators split them, and how USDC on this site differs.",
   h1: "Gold Coins vs Sweeps Coins: fun chips versus promotional chips",
   answer:
-    "Gold Coins vs Sweeps Coins is the two-token wallet on a sweepstakes casino. Gold Coins are the paid entertainment chip you usually cannot redeem. Sweeps Coins are the promotional chip that may redeem after playthrough and checks. PVPspinArena has neither. Balances here are USDC or ETH on Base for Jackpot, Coinflip and Roulette.",
+    "Gold Coins vs Sweeps Coins is the two-token wallet on a sweepstakes casino. Gold Coins are the paid entertainment chip you usually cannot redeem. Sweeps Coins are the promotional chip that may redeem after playthrough and checks. PVPspinArena has neither. Balances here are USDC or ETH on Base for Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot.",
   facts: [
     "Gold Coins are typically purchased and are not cashable on a standard sweepstakes lobby.",
     "Sweeps Coins are issued as promotional entries and carry the redeem rules.",
@@ -119,7 +119,7 @@ If you share a household tablet, the toggle is also how someone else spends your
     {
       id: "summary",
       title: "Summary and when to stop",
-      body: `Gold Coins vs Sweeps Coins is entertainment versus a gated promotional chip. Operators split them on purpose. This site does not. PVPspinArena uses USDC or ETH on Base for Jackpot, Coinflip and Roulette.
+      body: `Gold Coins vs Sweeps Coins is entertainment versus a gated promotional chip. Operators split them on purpose. This site does not. PVPspinArena uses USDC or ETH on Base for Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
 
 You must be 18 or over. If you are buying Gold Coin packs only to chase a Sweeps Coin floor, you are in the loop the split was built to create. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion) rather than another bundle.
 
@@ -143,7 +143,7 @@ One bingo lobby says the mobile app is Gold Coins only and sweepstakes mode is o
     },
     {
       q: "Are Gold Coins or Sweeps Coins used on PVPspinArena?",
-      a: "Neither. This site does not run a two-token sweepstakes wallet. You deposit USDC or ETH on Base. Games are Jackpot, Coinflip and Roulette. There is no GC shop and no SC redeem desk. A dollar here does not split into fun chips and promo chips.",
+      a: "Neither. This site does not run a two-token sweepstakes wallet. You deposit USDC or ETH on Base. Games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. There is no GC shop and no SC redeem desk. A dollar here does not split into fun chips and promo chips.",
     },
     {
       q: "Why is my Gold Coin balance so much larger than Sweeps Coins?",
@@ -169,5 +169,5 @@ One bingo lobby says the mobile app is Gold Coins only and sweepstakes mode is o
     "how-do-sweepstakes-casinos-work",
     "house-edge",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

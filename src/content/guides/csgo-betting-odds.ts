@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Series, map-winner and handicap lines are different contracts with different void rules.",
     "Implied probability from decimal odds is 1 ÷ D; two-way markets usually sum above 100%.",
     "Round handicaps depend on overtime rules and whether a replayed pistol counts.",
-    "PVPspinArena does not price CS2 maps; it runs hashed Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not price CS2 maps; it runs hashed Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip.",
   ],
   sections: [
     {
@@ -148,7 +148,7 @@ If converting CSGO odds has become a way to stay in the session, stop. Use [how 
     },
     {
       q: "Does PVPspinArena post CSGO odds?",
-      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. It is not a sportsbook. It runs hashed six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Where should I read about CS2 betting as a whole?",
@@ -175,10 +175,10 @@ If converting CSGO odds has become a way to stay in the session, stop. Use [how 
     "valorant-betting",
     "how-to-bet-on-esports",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   cta: {
     title: "This site is not a book",
-    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip and Roulette. It does not post CSGO odds.",
+    text: "PVPspinArena runs hashed PvP Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. It does not post CSGO odds.",
     primary: { to: "/fairness", label: "Fairness" },
     secondary: { to: "/coinflip", label: "Coinflip" },
   },

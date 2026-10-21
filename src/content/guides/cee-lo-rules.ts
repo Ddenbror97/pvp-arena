@@ -148,7 +148,7 @@ The mathematical edge in cee lo is small. The practical edge from cheating is no
       title: "Cee lo and PvP dice online",
       body: `The banker structure is the interesting part of cee lo: one player takes a small built-in edge, and rotating the bank shares it out. Head-to-head online games make the same idea explicit. [Dice duel](/guides/dice-duel-game) compares player-vs-player dice formats if that is the side of cee lo you enjoy.
 
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott: Jackpot, [Coinflip](/coinflip) and Roulette. Coinflip is the purest version of a fair street bet: two players, 50/50, and the winner takes the pot minus any fee shown before entry. Roulette has a fixed edge that is much higher on Green than on Purple or Silver on a 33-slot wheel, so it is closer to always betting against the bank. Instead of watching someone's wrist, you verify: every settled round comes from committed seeds that you can recompute on the [fairness](/fairness) page.
+PVPspinArena runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), house-banked [Roulette](/roulette), and [P2P Slott](/slott). Coinflip is the purest version of a fair street bet: two players, 50/50, and the winner takes the pot minus any fee shown before entry. Roulette has a fixed edge that is much higher on Green than on Purple or Silver on a 33-slot wheel, so it is closer to always betting against the bank. Instead of watching someone's wrist, you verify: every settled round comes from committed seeds that you can recompute on the [fairness](/fairness) page.
 
 Keep stakes to money you are happy to lose, set a stopping point before you start, and use the [responsible gambling](/responsible-gambling) tools if a dice circle turns into chasing losses.`,
     },
@@ -187,5 +187,5 @@ Keep stakes to money you are happy to lose, set a stopping point before you star
     "dice-roll-probability",
     "house-edge",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
 };

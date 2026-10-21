@@ -158,7 +158,7 @@ Public functions show payout tables, but biased randomness inputs still produce 
 
 ### Server-side provably fair
 
-Hybrid decentralised brands may run animations off-chain while publishing HMAC proofs. PVPspinArena uses commit-reveal server seeds for Jackpot, Coinflip and [Roulette](/roulette), verifiable after settlement on [how it works](/how-it-works).
+Hybrid decentralised brands may run animations off-chain while publishing HMAC proofs. PVPspinArena uses commit-reveal server seeds for [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), and [six-max poker](/poker), verifiable after settlement on [how it works](/how-it-works).
 
 ### Certified RNG labs
 
@@ -283,5 +283,5 @@ During your first week on any decentralised label, write nightly notes: where fu
     "crypto-casino-license",
     "polymarket-alternatives",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

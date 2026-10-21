@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Favorite −3.5 must win by 4 or more. Underdog +3.5 cashes on a loss by 1–3 or any win.",
     "A whole number can push: the stake is usually refunded if the margin matches the spread exactly.",
     "Standard juice is often −110 on both sides, so you must win more than 52.38% of ATS bets to break even.",
-    "PVPspinArena does not take spreads. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "PVPspinArena does not take spreads. It runs hashed Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
   ],
   sections: [
     {

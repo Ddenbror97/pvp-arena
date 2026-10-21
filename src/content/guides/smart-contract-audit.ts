@@ -41,7 +41,7 @@ export const guide: Guide = {
     {
       id: "a-badge-is-not-the-engagement",
       title: "A badge is not the engagement",
-      body: "Teams buy the review, then buy a graphic. The graphic is easy to copy onto a lookalike domain. The engagement is the scope letter plus the report. When you evaluate a casino, open the report from the auditor's site if they host one, or from a repository commit, not only from the casino's footer image. Match the project name. Match the chain. Match the address. Then decide what you still do not know.\n\nNothing in that process makes gambling safe, legal where you live, or profitable. It makes one technical claim checkable. Leave the claim unchecked and the badge is decoration.\n\nThe rest of this subject is on the [Provably fair guides](/guides/topics/provably-fair). See [smart contract casino](/guides/smart-contract-casino), [casino fairness audits](/guides/casino-fairness-audits), [provably fair casino](/guides/provably-fair-casino). PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in US dollars. Read [fairness checks](/fairness) before you play.",
+      body: "Teams buy the review, then buy a graphic. The graphic is easy to copy onto a lookalike domain. The engagement is the scope letter plus the report. When you evaluate a casino, open the report from the auditor's site if they host one, or from a repository commit, not only from the casino's footer image. Match the project name. Match the chain. Match the address. Then decide what you still do not know.\n\nNothing in that process makes gambling safe, legal where you live, or profitable. It makes one technical claim checkable. Leave the claim unchecked and the badge is decoration.\n\nThe rest of this subject is on the [Provably fair guides](/guides/topics/provably-fair). See [smart contract casino](/guides/smart-contract-casino), [casino fairness audits](/guides/casino-fairness-audits), [provably fair casino](/guides/provably-fair-casino). Six-max poker, jackpot, coinflip, roulette, and P2P Slott settle at PVPspinArena in US dollars. Read [fairness checks](/fairness) before you play.",
     },
   ],
   faqs: [
@@ -68,5 +68,5 @@ export const guide: Guide = {
   ],
   sources: [],
   related: ["smart-contract-casino", "casino-fairness-audits"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

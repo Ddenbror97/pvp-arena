@@ -246,7 +246,7 @@ Use the calculator to avoid mixing 5/2 with +150 as if they disagreed. They do n
 
 ### Site context
 
-PVPspinArena games are Jackpot, Coinflip and Roulette — peer pots and a 33-slot wheel, not a sportsbook grid. For fairness and seeds see [Fairness](/fairness). If the sheet is being used to chase, close it and read [responsible gambling](/responsible-gambling). 18+ only.
+PVPspinArena games are P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette — peer pots and a 33-slot wheel, not a sportsbook grid. For fairness and seeds see [Fairness](/fairness). If the sheet is being used to chase, close it and read [responsible gambling](/responsible-gambling). 18+ only.
 
 ### One-minute worksheet
 
@@ -293,5 +293,5 @@ After every conversion, multiply stake × decimal on paper once. If the screen a
     "expected-value-gambling",
     "house-edge",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

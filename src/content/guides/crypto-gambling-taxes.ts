@@ -33,7 +33,7 @@ If you live outside the United States, stop treating this as your rulebook. Othe
 
 This page sits in [foundations](/guides/topics/foundations) because record-keeping is part of using any [crypto casino](/guides/what-is-a-crypto-casino), including a [USDC casino](/guides/usdc-casino). If gambling is already costing more than a tax worksheet, use the [responsible gambling page](/responsible-gambling) and the [how to stop gambling guide](/guides/how-to-stop-gambling) first. A clean spreadsheet is not a reason to keep playing.
 
-PVPspinArena offers Jackpot, Coinflip and Roulette settled in US dollars. We can describe how our ledger looks. We cannot tell you the line on your Form 1040.`,
+PVPspinArena offers Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot settled in US dollars. We can describe how our ledger looks. We cannot tell you the line on your Form 1040.`,
     },
     {
       id: "income",
@@ -210,5 +210,5 @@ Player winnings and operator duty are different questions, and a wallet company 
     "gambling-tax-australia",
     "does-metamask-report-to-irs",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

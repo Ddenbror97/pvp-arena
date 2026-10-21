@@ -121,7 +121,7 @@ On PVPspinArena, a $20 ticket in a $200 Jackpot pot is 10%. You can write that b
 
 You must be 18+ (or older where your law says so). If the site will take a deposit from a teenager, that is a reason to leave, not a bargain.
 
-A streamer shouting “real money slots” is still an affiliate hour. The [Twitch slots ban](/guides/twitch-slots-ban) is the distribution history. A facecam is not a fairness check. For hashed results on this site, use [Fairness](/fairness) on Jackpot, Coinflip and Roulette — not as a slot substitute, as a different product.`,
+A streamer shouting “real money slots” is still an affiliate hour. The [Twitch slots ban](/guides/twitch-slots-ban) is the distribution history. A facecam is not a fairness check. For hashed results on this site, use [Fairness](/fairness) on Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott — not as a slot substitute, as a different product.`,
     },
     {
       id: "checklist",
@@ -209,5 +209,5 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     "slot-machine-odds",
     "bonus-buy-slots",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

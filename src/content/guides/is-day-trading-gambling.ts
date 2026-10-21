@@ -101,7 +101,7 @@ SEC investor education is the source to read beside the papers. It is written fo
       title: "A hashed pot is a third product, with a published draw",
       body: `Day trading is not a casino spin, and neither of them is a hashed player-versus-player pot. On [Jackpot](/), players fund one pot and a committed seed picks a ticket. The chance is the share of tickets. There is no order book, no 55% win-rate story, and no earnings report. The draw is the product.
 
-[Fairness](/fairness) recomputes the hash when the seed is published. That check can confirm the ticket. It cannot tell you whether your trading record has an edge, and a broker will not publish a Jackpot seed. PVPspinArena does not offer a brokerage and does not day trade for you. Jackpot, Coinflip, and Roulette are the games, funded with USDC or ETH on Base. This page states no profit rate and no fee percent for them.
+[Fairness](/fairness) recomputes the hash when the seed is published. That check can confirm the ticket. It cannot tell you whether your trading record has an edge, and a broker will not publish a Jackpot seed. PVPspinArena does not offer a brokerage and does not day trade for you. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott are the games, funded with USDC or ETH on Base. This page states no profit rate and no fee percent for them.
 
 Checklist before you call a trading day anything but entertainment:
 
@@ -151,5 +151,5 @@ Adults 18+ only. Not financial, legal, or tax advice.`,
     "variance-in-gambling",
     "skill-based-gambling",
   ],
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

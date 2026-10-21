@@ -182,7 +182,7 @@ Canasta rewards partnership judgement: when to freeze the pile, when to hold a p
       title: "Canasta odds and a hashed PvP round",
       body: `Canasta's odds are driven by composition: 12 wild cards, 4 red threes and a 108-card stock that nobody can see. A fair game depends on a thorough shuffle of two decks, which takes more work than one, as the [how to shuffle cards](/guides/how-to-shuffle-cards) guide explains.
 
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott with no melds to plan: Jackpot, Coinflip and [Roulette](/roulette). A Coinflip is a straight 50/50. Roulette is a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Instead of shuffled decks, results come from seeds committed before the round and revealed afterward, and any settled round can be checked on the [fairness](/fairness) page. The skill in canasta has no counterpart there; [expected value in gambling](/guides/expected-value-gambling) explains how to think about the cost of pure-chance play.
+PVPspinArena runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), house-banked [Roulette](/roulette), and [P2P Slott](/slott) with no melds to plan. A Coinflip is a straight 50/50. Roulette is a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Instead of shuffled decks, results come from seeds committed before the round and revealed afterward, and any settled round can be checked on the [fairness](/fairness) page. The skill in canasta has no counterpart there; [expected value in gambling](/guides/expected-value-gambling) explains how to think about the cost of pure-chance play.
 
 In the same cluster, see also [how to play spades](/guides/how-to-play-spades) and [how to play gin rummy](/guides/how-to-play-gin-rummy).
 
@@ -231,5 +231,5 @@ See also [phase 10](/guides/phase-10-rules).`,
     "how-to-play-spades",
     "phase-10-rules",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
 };

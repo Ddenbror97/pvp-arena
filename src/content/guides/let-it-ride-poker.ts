@@ -119,7 +119,7 @@ The deck is shuffled again under the house rules. Your three new hole cards are 
 
 Adults 18+ only. This page explains a casino table game. It is not permission to play where you are underage or unlicensed, and it is not a tax opinion. If the pull-back feels impossible because you want every hand to be a royal, the chart will not survive the session. Leave while bet 3 is still unposted.
 
-PVPspinArena does not offer Let It Ride. The live games here are Jackpot, Coinflip, and Roulette settled in US dollars. A paytable poker game is not hiding inside those products.`,
+PVPspinArena does not offer Let It Ride. The live games here are Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot settled in US dollars. A paytable poker game is not hiding inside those products.`,
     },
     {
       id: "keep",
@@ -156,7 +156,7 @@ Read the layout you are sitting at, then decide whether the pull-back is a game 
     },
     {
       q: "Does PVPspinArena offer Let It Ride?",
-      a: "No. This site offers Jackpot, Coinflip, and Roulette. The guide is for adults 18+ reading a house paytable game dealt elsewhere.",
+      a: "No. This site offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. The guide is for adults 18+ reading a house paytable game dealt elsewhere.",
     },
   ],
   sources: [
@@ -171,5 +171,5 @@ Read the layout you are sitting at, then decide whether the pull-back is a game 
     },
   ],
   related: ["crazy-4-poker", "three-card-poker-strategy", "casino-hold-em", "poker-hand-rankings"],
-  updated: "2026-09-29",
+  updated: "2026-10-21",
 };

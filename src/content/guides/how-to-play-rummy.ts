@@ -169,7 +169,7 @@ Rummy has meaningful skill, since counting outs, watching discards and managing 
       title: "Draw odds and a hashed PvP round",
       body: `The outs arithmetic above is ordinary conditional probability: count the helpful unseen cards and divide by all unseen cards. It only works if the stock is truly random, which depends on an honest shuffle and cut.
 
-PVPspinArena applies the same requirement to digital rounds. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott: Jackpot, [Coinflip](/coinflip) and Roulette. A Coinflip is a fair 50/50 between two players. On Roulette's 33-slot wheel, Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee on average, about a 7.88% house edge on Purple or Silver after the 5% win fee. Results come from seeds committed before the round and revealed afterwards, so any settled round can be checked on the [fairness](/fairness) page, which plays the role of an honest cut.
+PVPspinArena applies the same requirement to digital rounds. It runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), house-banked [Roulette](/roulette), and [P2P Slott](/slott). A Coinflip is a fair 50/50 between two players. On Roulette's 33-slot wheel, Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee on average, about a 7.88% house edge on Purple or Silver after the 5% win fee. Results come from seeds committed before the round and revealed afterwards, so any settled round can be checked on the [fairness](/fairness) page, which plays the role of an honest cut.
 
 The difference is skill. In rummy, good discards shift your odds over many hands. In a coin flip there is nothing to optimise, and [expected value in gambling](/guides/expected-value-gambling) explains how to price that entertainment.
 
@@ -214,5 +214,5 @@ See also [phase 10](/guides/phase-10-rules) and [tonk](/guides/tonk-card-game).`
     "how-to-play-spades",
     "phase-10-rules",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
 };

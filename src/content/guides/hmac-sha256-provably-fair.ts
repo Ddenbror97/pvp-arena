@@ -16,7 +16,7 @@ export const guide: Guide = {
     "HMAC is defined in RFC 2104 and turns any hash function into a keyed message authentication code.",
     "The same key and message always produce the same HMAC; changing either changes the output completely.",
     "Provably fair games publish SHA-256(server seed) before play and reveal the seed afterwards.",
-    "PVPspinArena uses HMAC-SHA256 with the server seed as key for Jackpot, Coinflip and Roulette.",
+    "PVPspinArena uses HMAC-SHA256 with the server seed as key for Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -150,7 +150,7 @@ Rejection almost never happens, but when it does it keeps every slot exactly equ
 
 ### On PVPspinArena
 
-1. Open the [Fairness page](/fairness) and pick Jackpot, Coinflip or Roulette.
+1. Open the [Fairness page](/fairness) and pick [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), or [P2P Slott](/slott).
 2. Enter the game or round number.
 3. The page shows the revealed seed, the commitment, the message and the HMAC output, all computed in your browser.
 
@@ -213,7 +213,7 @@ More provably fair reading lives in our [Provably fair guides](/guides/topics/pr
     },
     {
       q: "Which PVPspinArena games use HMAC-SHA256?",
-      a: "All of them. Jackpot, Coinflip and Roulette each compute results with HMAC-SHA256 keyed by a server seed committed before the game.",
+      a: "All of them. Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot each compute results with HMAC-SHA256 keyed by a server seed committed before the game.",
     },
   ],
   sources: [
@@ -240,5 +240,5 @@ More provably fair reading lives in our [Provably fair guides](/guides/topics/pr
     "nonce-and-cursor-provably-fair",
     "sha256-explained",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
 };

@@ -26,7 +26,7 @@ export const guide: Guide = {
 
 The games are still gambling. They are for adults 18 or older. A joke coin does not make a jackpot less real. If you would not stake the same dollars in USDC, do not stake them because the ticker is DOGE.
 
-PVPspinArena is not in this category. It is player-versus-player Jackpot, Coinflip and Roulette, funded with USDC and ETH on Base. It is not a SOL, LTC, DOGE or USDT casino. On-chain Bitcoin credits a dollar balance. This article explains how DOGE deposits work on sites that accept them, why the price is the main risk, and how to move value onto Base if you want a dollar chip. Related explainers live under [crypto payments](/guides/topics/crypto-payments).`,
+PVPspinArena is not in this category. It is player-versus-player Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip, funded with USDC and ETH on Base. It is not a SOL, LTC, DOGE or USDT casino. On-chain Bitcoin credits a dollar balance. This article explains how DOGE deposits work on sites that accept them, why the price is the main risk, and how to move value onto Base if you want a dollar chip. Related explainers live under [crypto payments](/guides/topics/crypto-payments).`,
     },
     {
       id: "deposits",
@@ -67,7 +67,7 @@ A [gambling budget](/guides/gambling-budget) is easier in a currency that does n
     {
       id: "dollar-chip",
       title: "Why a dollar balance is easier to budget",
-      body: `A dollar stablecoin is designed to stay near $1. A 25 USDC deposit is about $25 until you wager it. Wins and losses then come from Jackpot, Coinflip or Roulette, not from a meme tape.
+      body: `A dollar stablecoin is designed to stay near $1. A 25 USDC deposit is about $25 until you wager it. Wins and losses then come from [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), or [six-max poker](/poker), not from a meme tape.
 
 PVPspinArena keeps internal balances in US dollar cents. That is the point of a [USDC casino](/guides/usdc-casino) ledger. ETH deposits are converted to dollars at credit time so the credited amount does not keep tracking ETH.
 
@@ -188,5 +188,5 @@ It will not list DOGE to make the meme easier. It will not match a DOGE txid. It
     { label: "Circle — USDC", url: "https://www.circle.com/en/usdc" },
   ],
   related: ["usdc-casino", "tron-casino", "avalanche-casino", "arbitrum-casino", "base-network"],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

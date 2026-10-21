@@ -41,7 +41,7 @@ export const guide: Guide = {
     {
       id: "what-not-to-add-to-a-simple-send",
       title: "What not to add to a simple send",
-      body: 'Do not grant a token allowance because a page called it a deposit. A normal transfer moves a specific amount. An approval lets another contract pull tokens later. If you wanted to pay a fixed amount to an address, the confirmation screen should describe a transfer of that amount. When the words say approve, permit, or unlimited, cancel and reread the instructions.\n\nDo not send from a shared or public computer. The phrase and the unlocked wallet are both at risk, and the clipboard is not yours. Do not let a stranger share your screen and "help" you click confirm. You can read a help article without handing over the mouse.\n\nDo not split one payment into many tiny sends to test the fee, the address, and your nerves all at once. One test and one main transfer are enough. Extra sends create extra hashes to explain and extra chances to paste the wrong string.\n\nThe rest of this subject is on the [Crypto payments guides](/guides/topics/crypto-payments). See [gas fees explained](/guides/gas-fees-explained), [stuck crypto transaction](/guides/stuck-crypto-transaction), [crypto wallet for gambling](/guides/crypto-wallet-for-gambling). PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in US dollars. Read [wallet](/wallet) before you play.',
+      body: 'Do not grant a token allowance because a page called it a deposit. A normal transfer moves a specific amount. An approval lets another contract pull tokens later. If you wanted to pay a fixed amount to an address, the confirmation screen should describe a transfer of that amount. When the words say approve, permit, or unlimited, cancel and reread the instructions.\n\nDo not send from a shared or public computer. The phrase and the unlocked wallet are both at risk, and the clipboard is not yours. Do not let a stranger share your screen and "help" you click confirm. You can read a help article without handing over the mouse.\n\nDo not split one payment into many tiny sends to test the fee, the address, and your nerves all at once. One test and one main transfer are enough. Extra sends create extra hashes to explain and extra chances to paste the wrong string.\n\nThe rest of this subject is on the [Crypto payments guides](/guides/topics/crypto-payments). See [gas fees explained](/guides/gas-fees-explained), [stuck crypto transaction](/guides/stuck-crypto-transaction), [crypto wallet for gambling](/guides/crypto-wallet-for-gambling). PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in US dollars. Read [wallet](/wallet) before you play.',
     },
   ],
   faqs: [
@@ -68,5 +68,5 @@ export const guide: Guide = {
   ],
   sources: [],
   related: ["gas-fees-explained", "stuck-crypto-transaction"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

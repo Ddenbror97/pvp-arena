@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Separator order in HMAC messages is part of the protocol; swapping client seed and nonce breaks honest checks even on honest sites.",
     "Round-based PvP games may omit a personal nonce and instead publish one server seed per pot shared by all tickets.",
     "A passing check proves consistency with published rules, not that the rules favour the player or remove house edge.",
-    "PVPspinArena reveals server seeds after Jackpot, Coinflip and Roulette settle so you can rerun the same HMAC path shown on Fairness.",
+    "PVPspinArena reveals server seeds after Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip settle so you can rerun the same HMAC path shown on Fairness.",
   ],
   sections: [
     {
@@ -290,6 +290,6 @@ Before you trust a site long term, verify at least three bets you did not win, n
     "server-seed-client-seed",
     "provably-fair-casino",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   howTo: true,
 };

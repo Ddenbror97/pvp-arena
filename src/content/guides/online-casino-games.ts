@@ -11,13 +11,13 @@ export const guide: Guide = {
     "How to read casino games in an online lobby: table, live, RNG and specialty tiles, plus how RTP and house edge describe the same price.",
   h1: "Casino games: lobby taxonomy and how to read RTP",
   answer:
-    "Casino games in an online lobby are not one product. Table tiles, live-dealer streams, instant RNG originals and slots all price risk differently. RTP is the long-run share of stakes paid back; house edge is 100% minus that number. Read the paytable or rule sheet, not the thumbnail. PVPspinArena does not offer a casino lobby — only Jackpot, Coinflip and Roulette — so this page is a map for games you meet elsewhere.",
+    "Casino games in an online lobby are not one product. Table tiles, live-dealer streams, instant RNG originals and slots all price risk differently. RTP is the long-run share of stakes paid back; house edge is 100% minus that number. Read the paytable or rule sheet, not the thumbnail. PVPspinArena does not offer a casino lobby — only Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker — so this page is a map for games you meet elsewhere.",
   facts: [
     "A lobby tile is a marketing label; the price lives in the rule sheet, paytable or posted segments.",
     "RTP and house edge are the same measurement written from opposite sides: RTP + edge = 100%.",
     "Side bets and novelty buttons usually carry a much higher edge than the main box.",
     "Live-dealer and RNG versions of the same name can share an edge and still feel nothing alike.",
-    "PVPspinArena does not offer these casino games; the live products are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer these casino games; the live products are Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -120,7 +120,7 @@ This site is 18+ only. We will not list “best casinos,” “best slots” or 
     {
       id: "checklist",
       title: "A five-minute lobby checklist",
-      body: `Before you click a tile that is not Jackpot, Coinflip or Roulette:
+      body: `Before you click a tile that is not [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), or [P2P Slott](/slott):
 
 1. **Who banks?** House paytable, live studio, or other players?
 2. **What is the sample space?** Cards, 36 dice pairs, 80 keno balls, 54 wheel pegs, or a 0–100 slider?
@@ -216,5 +216,5 @@ A few felt games are easy to misread from the name. [Pai gow poker](/guides/pai-
     "crypto-casino-games",
     "online-craps",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

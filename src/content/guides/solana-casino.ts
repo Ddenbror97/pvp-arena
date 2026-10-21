@@ -28,7 +28,7 @@ Speed is the product pitch. Solana is built for high throughput, so a deposit ca
 
 Speed does not change the nature of the games. Gambling is for adults 18 or older. A fast chain can empty a budget faster than a slow one because you can deposit again immediately.
 
-PVPspinArena is player-versus-player: Jackpot, Coinflip and Roulette. It is not a solana casino and it does not watch Solana. Deposits are USDC and ETH on Base. This guide covers how SOL deposits work on sites that do accept them, then the path from a Solana wallet onto Base if you want to use PVPspinArena. More payment guides sit in the [crypto payments](/guides/topics/crypto-payments) topic.`,
+PVPspinArena is player-versus-player: P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. It is not a solana casino and it does not watch Solana. Deposits are USDC and ETH on Base. This guide covers how SOL deposits work on sites that do accept them, then the path from a Solana wallet onto Base if you want to use PVPspinArena. More payment guides sit in the [crypto payments](/guides/topics/crypto-payments) topic.`,
     },
     {
       id: "speed-fees",
@@ -139,7 +139,7 @@ You still hold 1.25 SOL in Phantom and about 2 USDC plus leftover ETH in MetaMas
 
 If a promotional page or chat says you can "deposit SOL to PVPspinArena," treat it as a fake. The real deposit screen lists Base and a 0x address.
 
-Games are PvP Jackpot, Coinflip and Roulette. Fairness details are on the [fairness](/fairness) page. Nothing about Solana's speed changes those game rules.
+Games are PvP Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. Fairness details are on the [fairness](/fairness) page. Nothing about Solana's speed changes those game rules.
 
 A solana casino can be a fair product when it publishes the exact mint and network, uses a real Solana address, and explains confirmation rules. It is the wrong deposit target for this site. Convert, withdraw on Base, then play in dollars.`,
     },
@@ -213,5 +213,5 @@ Getting SOL onto a wallet before you deposit is [how to buy Solana](/guides/how-
     "does-metamask-support-solana",
     "how-to-buy-solana",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

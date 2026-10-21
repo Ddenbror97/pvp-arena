@@ -20,7 +20,7 @@ export const guide: Guide = {
     "Every provably fair check has three steps: verify the commitment, recompute the hash, map it to a result.",
     "A calculator is only useful if it uses the exact algorithm and message format the site publishes.",
     "Seeds are usually shown as hex; entering them as plain text is the most common checking mistake.",
-    "PVPspinArena's calculator runs in your browser on the Fairness page for Jackpot, Coinflip and Roulette.",
+    "PVPspinArena's calculator runs in your browser on the Fairness page for Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
     "You can reproduce any PVPspinArena result with standard SHA-256 and HMAC-SHA256 tools.",
   ],
   sections: [
@@ -83,7 +83,7 @@ The [HMAC-SHA256 guide](/guides/hmac-sha256-provably-fair) explains why these st
       body: `The easiest way to check a PVPspinArena game is the built-in verifier.
 
 1. Open [Fairness](/fairness).
-2. Choose the tab for the game: Jackpot, Coinflip or Roulette.
+2. Choose the tab for the game: [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), or [six-max poker](/poker).
 3. Enter the game or round number. For Roulette you can type it with or without the # symbol, such as #389.
 4. Press verify.
 
@@ -245,6 +245,6 @@ More provably fair reading lives in our [Provably fair guides](/guides/topics/pr
     "server-seed-client-seed",
     "commit-reveal-scheme",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
   howTo: true,
 };

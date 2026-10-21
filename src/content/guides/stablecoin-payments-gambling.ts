@@ -28,7 +28,7 @@ That is why casinos like them. Players can size a $2 Coinflip without converting
 
 Gambling remains 18+. A dollar chip does not reduce house edge or PvP variance. It only stops the chip itself from being a second market bet.
 
-PVPspinArena uses this model with USDC (and ETH converted to dollars at credit). Games are Jackpot, Coinflip and Roulette. This guide compares USDC and USDT as payment rails, then explains fees, peg risk and the Base-only rule. Browse neighbouring articles in [crypto payments](/guides/topics/crypto-payments).`,
+PVPspinArena uses this model with USDC (and ETH converted to dollars at credit). Games are P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. This guide compares USDC and USDT as payment rails, then explains fees, peg risk and the Base-only rule. Browse neighbouring articles in [crypto payments](/guides/topics/crypto-payments).`,
     },
     {
       id: "usdc-usdt",
@@ -192,5 +192,5 @@ Used this way, stablecoin payments do the job they were hired for: move a known 
     { label: "Circle — USDC on Base", url: "https://www.circle.com/en/usdc" },
   ],
   related: ["usdc-casino", "usdc-apy", "what-is-usdc", "what-is-a-stablecoin", "stablecoin-casino"],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

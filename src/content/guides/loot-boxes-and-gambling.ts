@@ -182,7 +182,7 @@ Paid randomness shows up outside Steam cases. A [mystery box site](/guides/myste
     },
     {
       q: "Does PVPspinArena sell loot boxes?",
-      a: "No. It offers Jackpot, Coinflip and Roulette with stated economics and USDC or ETH deposits on Base.",
+      a: "No. It offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker with stated economics and USDC or ETH deposits on Base.",
     },
   ],
   sources: [
@@ -196,5 +196,5 @@ Paid randomness shows up outside Steam cases. A [mystery box site](/guides/myste
     },
   ],
   related: ["csgo-case-opening", "cs2-case-odds", "skin-gambling-vs-crypto", "gambling-age-us"],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

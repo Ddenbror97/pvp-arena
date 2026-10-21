@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Fixed-odds virtual racing prices each horse so implied probabilities sum to more than 100 percent (the overround).",
     "Live horse betting uses pari-mutuel pools or bookmaker odds on a real race; that is a different product.",
     "Aviator-style crash games are not horse races; a rising plane or a horse graphic does not change a crash curve.",
-    "PVPspinArena is not a horse book. It runs Jackpot, Coinflip and Roulette in USDC and ETH on Base.",
+    "PVPspinArena is not a horse book. It runs Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in USDC and ETH on Base.",
   ],
   sections: [
     {
@@ -180,7 +180,7 @@ Reading form, pace and class before you price a runner is [handicapping horses](
     },
     {
       q: "Does PVPspinArena offer horse racing?",
-      a: "No. It offers Jackpot, Coinflip and Roulette in USDC and ETH on Base. It is not a horse book.",
+      a: "No. It offers P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette in USDC and ETH on Base. It is not a horse book.",
     },
     {
       q: "Can I beat virtual horse racing with form study?",
@@ -214,5 +214,5 @@ Reading form, pace and class before you price a runner is [handicapping horses](
     "crypto-slots",
     "handicapping-horses",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

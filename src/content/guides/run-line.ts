@@ -142,7 +142,7 @@ Keep one sentence: minus 1.5 needs two runs, plus 1.5 survives a one-run loss, a
     },
     {
       q: "Can I bet a run line on PVPspinArena?",
-      a: "No. This site is not a sportsbook and does not post run lines. Jackpot, Coinflip and Roulette are the games, for adults 18+ only. A hashed round does not grade a baseball margin, a listed pitcher, or extra innings. Fairness checks here do not settle a final score.",
+      a: "No. This site is not a sportsbook and does not post run lines. P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette are the games, for adults 18+ only. A hashed round does not grade a baseball margin, a listed pitcher, or extra innings. Fairness checks here do not settle a final score.",
     },
   ],
   sources: [
@@ -156,5 +156,5 @@ Keep one sentence: minus 1.5 needs two runs, plus 1.5 survives a one-run loss, a
     "over-under-betting",
     "puck-line",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

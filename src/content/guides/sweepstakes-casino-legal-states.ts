@@ -106,7 +106,7 @@ Licensed iGaming or a state sportsbook operates under a named regulator. You sti
 
 A sweepstakes casino argues it is entertainment plus a promotion. The complaint path is often the operator, a card network, and a consumer-protection office. That is a different stack.
 
-A [crypto casino](/guides/what-is-a-crypto-casino) such as this site’s category neighbour uses digital assets. PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It is not Gold Coins. Crypto does not erase geography. [No-KYC casino](/guides/no-kyc-casino) pages that say “legal everywhere” are selling a mood, not a statute.
+A [crypto casino](/guides/what-is-a-crypto-casino) such as this site’s category neighbour uses digital assets. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott are what PVPspinArena runs, settled in US dollars. It is not Gold Coins. Crypto does not erase geography. [No-KYC casino](/guides/no-kyc-casino) pages that say “legal everywhere” are selling a mood, not a statute.
 
 Use the product name that matches the cashier in front of you. Then apply that product’s availability rules. Mixing the names is how people quote a sportsbook licence at a Sweeps Coin redeem desk.
 
@@ -115,7 +115,7 @@ Three states where that product is easy to confuse with a casino are [is gamblin
     {
       id: "this-site",
       title: "What this site is — and is not",
-      body: `PVPspinArena is player-versus-player Jackpot, Coinflip and Roulette. Deposits are USDC or ETH on Base. You can read the [terms](/terms) and the [about](/about) page for how the room describes itself. You will not find a Sweeps Coin official-rules PDF because the product is not a sweepstakes casino.
+      body: `PVPspinArena is player-versus-player: P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. Deposits are USDC or ETH on Base. You can read the [terms](/terms) and the [about](/about) page for how the room describes itself. You will not find a Sweeps Coin official-rules PDF because the product is not a sweepstakes casino.
 
 If you opened this article because a streamer said “sweeps is legal now,” treat that as entertainment. Streamers are not your attorney general. If you opened it because a lobby blocked your ZIP, believe the block and then read the primary sources — not a VPN guide.`,
     },
@@ -146,7 +146,7 @@ A state map does not review a cashier. [ClubWPT Gold's poker-flavored club](/gui
     },
     {
       q: "Is PVPspinArena a legal sweepstakes casino in my state?",
-      a: "PVPspinArena is not a sweepstakes casino. It is a PvP Jackpot, Coinflip and Roulette site using USDC or ETH on Base. You must still follow the law where you live. This answer is not a licence opinion. Crypto rails do not write you a state permission slip.",
+      a: "PVPspinArena is not a sweepstakes casino. It is a PvP Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot site using USDC or ETH on Base. You must still follow the law where you live. This answer is not a licence opinion. Crypto rails do not write you a state permission slip.",
     },
     {
       q: "Can I use a VPN to play from a blocked state?",
@@ -177,5 +177,5 @@ A state map does not review a cashier. [ClubWPT Gold's poker-flavored club](/gui
     "online-casino-legal-florida",
     "online-casino-legal-maryland",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

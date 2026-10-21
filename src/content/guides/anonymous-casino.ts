@@ -129,7 +129,7 @@ Withdrawals are capped at $250 per day and reviewed over $25. Those controls are
 
 If you want the money path without the privacy myth, use the [wallet](/wallet) page after you verify. Send USDC or ETH on Base. Expect the hash to exist forever.
 
-Other players in a PvP pot can see that someone joined and what the pot did. They may not see your legal name. They may see enough timing to gossip. That is the social layer of Jackpot, Coinflip and Roulette, not a bug in the cashier.
+Other players in a PvP pot can see that someone joined and what the pot did. They may not see your legal name. They may see enough timing to gossip. That is the social layer of P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette, not a bug in the cashier.
 
 Fairness pages that let anyone recheck a finished game add more public data. That is good for trust. It is bad for a fantasy of secret play. Use [Fairness](/fairness) when you care about the result, not when you want the result unpublished.`,
     },
@@ -145,7 +145,7 @@ Fairness pages that let anyone recheck a finished game add more public data. Tha
 5. **Assume screenshots leak.** Blur addresses and balances.
 6. **Stop when it is no longer entertainment.** Privacy tricks will not fix harm. Use [responsible gambling](/responsible-gambling) if you need a break.
 
-PVPspinArena runs PvP Jackpot, Coinflip and Roulette. Other players may see that a pot was joined. That is the game, not a betrayal of a privacy promise the site should not have made.
+PVPspinArena runs PvP Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. Other players may see that a pot was joined. That is the game, not a betrayal of a privacy promise the site should not have made.
 
 If you need to stop, privacy is the wrong project. Use [responsible gambling](/responsible-gambling) tools and step away. An extra wallet will not fix a binge. An extra VPN will not fix a debt.
 
@@ -160,7 +160,7 @@ A dedicated wallet, a written budget and a bookmarked URL are the whole privacy 
 
 Read the no-KYC guide if you only needed the cashier definition. Stay here if you needed the reminder that wallets are labels. Then decide whether you still want to deposit. Wanting less paperwork is reasonable. Wanting to vanish from Base is not something this product can sell.
 
-If you still deposit, use a dedicated wallet, a written budget and the official site. Check payouts on an explorer. That is adult privacy: fewer unnecessary files, not a disappearing act. PvP Jackpot, Coinflip and Roulette will still leave a trail of pots and hashes. That trail is how you verify you were paid. If the trail bothers you more than the games interest you, do not deposit. There is no settings toggle that unpublishes Base.
+If you still deposit, use a dedicated wallet, a written budget and the official site. Check payouts on an explorer. That is adult privacy: fewer unnecessary files, not a disappearing act. PvP Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot will still leave a trail of pots and hashes. That trail is how you verify you were paid. If the trail bothers you more than the games interest you, do not deposit. There is no settings toggle that unpublishes Base.
 
 A state prize claim is a different privacy problem. [How to claim lottery winnings anonymously](/guides/claim-lottery-winnings-anonymously) is about the ticket, not an online account.`,
     },
@@ -207,5 +207,5 @@ A state prize claim is a different privacy problem. [How to claim lottery winnin
     "crypto-casino-license",
     "proof-of-reserves",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

@@ -156,7 +156,7 @@ Counting in cards follows the same logic; the [52-card deck](/guides/52-card-dec
       title: "Tiles, chance and a verifiable shuffle",
       body: `A mahjong game mixes chance and skill. The wall is random, so any single hand can go either way, but over many sessions, counting tiles, choosing efficient waits and defending against dangerous discards separate strong players from weak ones. The same mix appears in [dominoes](/guides/dominoes-rules), which uses a smaller, simpler tile set.
 
-The weak point of any physical shuffle is trust: you rely on everyone having mixed the tiles honestly. Online games replace the table shuffle with software, and players deserve a way to check it. PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars: Jackpot, [Coinflip](/coinflip) and Roulette. Each result comes from committed seeds that are revealed after the round, so anyone can confirm on [fairness](/fairness) that the outcome was fixed before bets closed. A coin flip is a fair 50/50; Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee on average, about a 7.88% Purple or Silver edge after the win fee.
+The weak point of any physical shuffle is trust: you rely on everyone having mixed the tiles honestly. Online games replace the table shuffle with software, and players deserve a way to check it. PVPspinArena runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), house-banked [Roulette](/roulette), and [P2P Slott](/slott) settled in US dollars. Each result comes from committed seeds that are revealed after the round, so anyone can confirm on [fairness](/fairness) that the outcome was fixed before bets closed. A coin flip is a fair 50/50; Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee on average, about a 7.88% Purple or Silver edge after the win fee.
 
 If you play mahjong or anything else for money, you must be 18+ (or the local legal age), agree the stakes before the first tile is drawn, and keep a limit. The tools at [responsible gambling](/responsible-gambling) help if a regular game starts to feel like a problem.
 
@@ -198,5 +198,5 @@ In the same cluster, see also [mexican train rules](/guides/mexican-train-rules)
     "tavla",
     "chicken-foot-dominoes",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
 };

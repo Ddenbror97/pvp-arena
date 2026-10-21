@@ -218,7 +218,7 @@ Electronic versions sometimes bundle hi-lo beside [wheel of fortune casino game]
     },
     {
       q: "Does PVPspinArena have hi lo?",
-      a: "No. Live games are Jackpot, Coinflip and Roulette. This guide explains hi lo strategy for tables on other sites.",
+      a: "No. Live games are P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. This guide explains hi lo strategy for tables on other sites.",
     },
   ],
   sources: [
@@ -226,5 +226,5 @@ Electronic versions sometimes bundle hi-lo beside [wheel of fortune casino game]
     { label: "Wikipedia: Expected value", url: "https://en.wikipedia.org/wiki/Expected_value" },
   ],
   related: ["hi-lo-card-game", "house-edge", "expected-value-gambling", "gambling-budget"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

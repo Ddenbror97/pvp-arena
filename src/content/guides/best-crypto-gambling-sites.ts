@@ -48,7 +48,7 @@ What to check:
 - Is the formula written down clearly, including how a number becomes a winner?
 - Can you check an old round by its number?
 
-On PVPspinArena every Jackpot, Coinflip and Roulette round can be checked on the [Fairness page](/fairness). The site commits to each seed before the round and uses HMAC-SHA256 with rejection sampling so no outcome is favoured.`,
+On PVPspinArena every Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot round can be checked on the [Fairness page](/fairness). The site commits to each seed before the round and uses HMAC-SHA256 with rejection sampling so no outcome is favoured.`,
     },
     {
       id: "fees",
@@ -205,7 +205,7 @@ More foundations reading lives in our [Foundations guides](/guides/topics/founda
     "new-crypto-casinos",
     "are-online-casinos-safe",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
   cta: {
     title: "Try a site you can check",
     text: "Create a free account, watch live rounds and verify any result before you deposit a cent.",

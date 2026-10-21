@@ -17,7 +17,7 @@ export const guide: Guide = {
     "Rooms ban it in their terms and may close the accounts involved.",
     "There is no stake size, hand choice, or method on this page.",
     "The player response is to report the table and stop playing it.",
-    "PVPspinArena runs six-max No-Limit Hold'em plus Jackpot, Coinflip, Roulette, and P2P Slott. Dumping chips is not ordinary play on any of them.",
+    "PVPspinArena runs six-max No-Limit Hold'em plus Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. Dumping chips is not ordinary play on any of them.",
   ],
   sections: [
     {
@@ -121,7 +121,7 @@ Adults 18+. Suspicion plus anger is how people deposit again. The deposit is opt
 
 [Poker bankroll management](/guides/poker-bankroll-management) only works when the chips at risk are in a real game. [Rakeback explained](/guides/rakeback-explained) only describes a rebate on real play. Neither page is a cover for moving stacks. If you need a limit because the session will not end, open [responsible gambling](/responsible-gambling) and use it. Adults 18+.
 
-PVPspinArena does not run poker and will not referee a hand from another site. The [poker topic](/guides/topics/poker) is reading, not a table. When you come back to it, come back for games where every seat is trying to win. Chip dumping is the name for the case where that stopped being true, and the ban is the room saying the case is not welcome.`,
+PVPspinArena deals six-max poker and will not referee a hand from another site. The [poker topic](/guides/topics/poker) is the rules for that table. When you come back to it, come back for games where every seat is trying to win. Chip dumping is the name for the case where that stopped being true, and the ban is the room saying the case is not welcome.`,
     },
   ],
   faqs: [
@@ -166,5 +166,5 @@ PVPspinArena does not run poker and will not referee a hand from another site. T
     "how-to-play-poker",
     "poker-bankroll-management",
   ],
-  updated: "2026-09-29",
+  updated: "2026-10-21",
 };

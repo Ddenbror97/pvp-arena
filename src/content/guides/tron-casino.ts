@@ -26,7 +26,7 @@ export const guide: Guide = {
 
 Tron became popular with [USDT casino](/guides/usdt-casino) cashiers because TRC-20 transfers have often been cheaper than Ethereum mainnet ERC-20 transfers. Cheap and fast is the pitch. The cost of that pitch is a crowded set of lookalike tickers and a high rate of wrong-network losses.
 
-This [crypto payments](/guides/topics/crypto-payments) guide is for adults aged 18 or over. It teaches how Tron deposits actually fail, then contrasts that with PVPspinArena. This site is PvP Jackpot, Coinflip and Roulette on Base. It is not a TRX casino, not a TRC-20 casino and not a Tron gambling brand.
+This [crypto payments](/guides/topics/crypto-payments) guide is for adults aged 18 or over. It teaches how Tron deposits actually fail, then contrasts that with PVPspinArena. This site is PvP Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip on Base. It is not a TRX casino, not a TRC-20 casino and not a Tron gambling brand.
 
 Marketing pages say "Tron gambling" as if the chain were a game. The chain is a settlement rail. The games can be slots, sports, poker or hashed pots. Judge the rail for fees and address format. Judge the games for odds and fairness. A cheap TRC-20 send into an opaque lobby is still an opaque lobby.`,
     },
@@ -160,5 +160,5 @@ Convert, or stay on the sites that name TRC-20.`,
     "base-network",
     "base-vs-ethereum",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

@@ -161,7 +161,7 @@ If your group likes a partnership bidding game on a double-6 set, [Texas 42 domi
 
 The honest way to think about a stake is that luck dominates any single round. The shuffle decides your seven tiles, and the draw decides what you find. Skill shows up across many rounds as slightly lower totals, not as a guaranteed win tonight.
 
-PVPspinArena takes the skill layer out entirely. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott: [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette), settled in US dollars. Coinflip is a fair 50/50 between two players, and in Jackpot your win chance equals your share of the pot. Every result comes from committed seeds, and any settled round can be checked on the [fairness](/fairness) page, much like being able to turn over the boneyard afterwards and confirm nobody stacked it. If playing for stakes stops being fun, the [responsible gambling](/responsible-gambling) page has limits and help links.`,
+PVPspinArena takes the skill layer out entirely. It runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), house-banked [Roulette](/roulette), and [P2P Slott](/slott), settled in US dollars. Coinflip is a fair 50/50 between two players, and in Jackpot your win chance equals your share of the pot. Every result comes from committed seeds, and any settled round can be checked on the [fairness](/fairness) page, much like being able to turn over the boneyard afterwards and confirm nobody stacked it. If playing for stakes stops being fun, the [responsible gambling](/responsible-gambling) page has limits and help links.`,
     },
   ],
   faqs: [
@@ -201,5 +201,5 @@ PVPspinArena takes the skill layer out entirely. It runs Jackpot, Coinflip, hous
     "mahjong-tiles",
     "mahjong-gambling",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
 };

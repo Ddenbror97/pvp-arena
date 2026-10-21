@@ -139,7 +139,7 @@ Asian handicap is a book product with a margin inside a precise shape. Use it wh
     },
     {
       q: "Can I bet an Asian handicap on PVPspinArena?",
-      a: "No. This site does not offer soccer handicaps. The games are Jackpot, Coinflip and Roulette for adults 18+. A hashed round will not split a stake, refund a 0–0, or grade a quarter-goal line. Fairness checks here verify game reveals, not a match clock.",
+      a: "No. This site does not offer soccer handicaps. The games are Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip for adults 18+. A hashed round will not split a stake, refund a 0–0, or grade a quarter-goal line. Fairness checks here verify game reveals, not a match clock.",
     },
   ],
   sources: [
@@ -148,5 +148,5 @@ Asian handicap is a book product with a margin inside a precise shape. Use it wh
     { label: "FIFA", url: "https://www.fifa.com" },
   ],
   related: ["soccer-betting", "draw-no-bet", "moneyline-betting-explained", "over-under-betting"],
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

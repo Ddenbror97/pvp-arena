@@ -148,7 +148,7 @@ When you are done, remove the card from wallets you do not use daily. A stolen p
 
 If the exchange offers a first-time card fee discount, still compare the USDC that arrives after withdrawal. A 1% card promo does not help if the widget dumps you on Ethereum and you pay more to reach Base. The cheapest first click is not always the cheapest credited dollar.
 
-For PvP Jackpot, Coinflip or Roulette, size the buy to the budget you already wrote, plus a little gas and a test deposit. Buying “extra in case I run hot” is how a card becomes a second ATM. If you already hit this week’s budget, do not open a second ramp to get around a decline. That decline was useful information.`,
+For PvP [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), or [six-max poker](/poker), size the buy to the budget you already wrote, plus a little gas and a test deposit. Buying “extra in case I run hot” is how a card becomes a second ATM. If you already hit this week’s budget, do not open a second ramp to get around a decline. That decline was useful information.`,
     },
     {
       id: "summary",
@@ -206,6 +206,6 @@ A different on-ramp with its own limits is [buy crypto with PayPal](/guides/buy-
     "buy-crypto-with-paypal",
     "crypto-debit-card",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   howTo: true,
 };

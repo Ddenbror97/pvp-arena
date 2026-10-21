@@ -20,7 +20,7 @@ export const guide: Guide = {
     "The game formula turns the seed into an outcome anyone can recompute.",
     "Mapping numbers to outcomes must avoid bias, for example with rejection sampling.",
     "Provably fair proves the result was not changed, not that the game is profitable.",
-    "PVPspinArena Jackpot, Coinflip and Roulette can all be verified on the Fairness page.",
+    "PVPspinArena Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker can all be verified on the Fairness page.",
   ],
   sections: [
     {
@@ -181,7 +181,7 @@ More provably fair reading lives in our [Provably fair guides](/guides/topics/pr
     },
     {
       q: "Which PVPspinArena games are provably fair?",
-      a: "Jackpot, Coinflip and Roulette. Every round of each can be checked on the Fairness page.",
+      a: "Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot. Every round of each can be checked on the Fairness page.",
     },
   ],
   sources: [
@@ -204,10 +204,10 @@ More provably fair reading lives in our [Provably fair guides](/guides/topics/pr
     "server-seed-client-seed",
     "hmac-sha256-provably-fair",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
   cta: {
     title: "Verify a round yourself",
-    text: "Create a free account to play Jackpot, Coinflip and Roulette, and check any round on the Fairness page.",
+    text: "Create a free account to play Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip, and check any round on the Fairness page.",
     primary: { to: "/auth", label: "Sign in" },
     secondary: { to: "/fairness", label: "Fairness" },
   },

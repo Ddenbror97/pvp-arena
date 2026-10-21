@@ -28,11 +28,11 @@ That made the Arena a social gambling floor inside a fantasy MMO. Combat knowled
 
 This guide sits in [CS:GO heritage](/guides/topics/csgo-heritage) because both CS skin rooms and OSRS stake culture taught gamers to treat inventory as chips. Adults 18+ only. We will not teach rule exploits or how to defraud players.
 
-Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
+Write the duel arena fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three duel arena lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from duel arena. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
-A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
+A clearer duel arena label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
 Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
 
@@ -58,11 +58,11 @@ Jagex publishes rules against real-world trading for gold and accounts. Buying g
 
 Educational framing only: if you still play OSRS, keep stakes inside entertainment you can lose, and never share passwords or authenticator codes.
 
-Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
+Write the duel arena fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three duel arena lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from duel arena. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
-A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
+A clearer duel arena label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
 Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
 
@@ -88,11 +88,11 @@ Long-run cost is the fee or the house edge. Short-run results are noise around t
 
 Cash does not make gambling “safe.” It makes the dollar cost honest.
 
-Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
+Write the duel arena fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three duel arena lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from duel arena. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
-A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
+A clearer duel arena label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
 Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
 
@@ -171,5 +171,5 @@ If staking is about anger, loneliness, or chasing, stop. [Gambling addiction sig
     { label: "Jagex — Account security", url: "https://www.jagex.com/en-GB/account-security" },
   ],
   related: ["pvp-gambling", "csgo-gambling-history", "coin-flip-odds", "fake-casino-sites"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

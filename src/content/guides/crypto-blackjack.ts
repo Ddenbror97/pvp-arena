@@ -163,7 +163,7 @@ If you sit at a crypto 21 table at all, play the main box with a matching chart,
       title: "Summary",
       body: `Blackjack crypto is blackjack with a wallet. RTP lives in the rule sheet and in whether you play the matching chart. 6:5 blackjack and H17 are expensive. A hashed shoe can prove a deal; it cannot turn the house into a player pot and it rarely leaves a countable remainder. Counting does not work on per-hand shuffles.
 
-PVPspinArena does not offer blackjack. For a chance you can write as a fraction of a pot or a count of coloured slots, use Jackpot, Coinflip or Roulette, and verify on the Fairness page.`,
+PVPspinArena does not offer blackjack. For a chance you can write as a fraction of a pot or a count of coloured slots, use [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette), and verify on the Fairness page.`,
     },
   ],
   faqs: [
@@ -201,5 +201,5 @@ PVPspinArena does not offer blackjack. For a chance you can write as a fraction 
     { label: "Wikipedia: Return to player", url: "https://en.wikipedia.org/wiki/Return_to_player" },
   ],
   related: ["crypto-jackpot", "crypto-poker", "crypto-lottery", "bitcoin-lottery", "crypto-bingo"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

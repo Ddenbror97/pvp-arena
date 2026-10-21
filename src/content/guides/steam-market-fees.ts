@@ -151,7 +151,7 @@ Valve's [Subscriber Agreement](https://store.steampowered.com/subscriber_agreeme
       title: "Fifteen percent is a cashier, not a game",
       body: `Steam market fees on Valve items are usually 5% + 10%. The two listing boxes exist because of that stack. Trade-ups and case items still have to sell. Skin gambling adds more spreads. USDC does not take a 15 percent Community Market cut.
 
-PVPspinArena will not list a skin for you. Convert on a market you accept, then play Jackpot, Coinflip or Roulette in dollars if you still want a session. Keep Steam for games, not for a hidden rake.
+PVPspinArena will not list a skin for you. Convert on a market you accept, then play [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), or [P2P Slott](/slott) in dollars if you still want a session. Keep Steam for games, not for a hidden rake.
 
 Fifteen percent is not a conspiracy. It is a published cashier. Once you see both boxes, you can stop treating a Steam print as cash. That is the whole skill. After that, the only decision left is whether a session is still worth a fixed dollar amount.`,
     },
@@ -201,6 +201,6 @@ Fifteen percent is not a conspiracy. It is a published cashier. Once you see bot
     "cs2-armory-pass",
     "cs2-operation",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   howTo: true,
 };

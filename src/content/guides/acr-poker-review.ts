@@ -22,7 +22,7 @@ export const guide: Guide = {
     "A homepage number is not a traffic report. Count tables at the stake you play.",
     "Rakeback, if offered, is a contract on fees. Read the base and the percent on the deal page.",
     "A crypto cashout is finished when the cashier's asset arrives where you control it.",
-    "PVPspinArena is not ACR and does not deal Hold'em.",
+    "PVPspinArena is not ACR. It deals six-max Hold'em.",
   ],
   sections: [
     {
@@ -172,5 +172,5 @@ Play only if those three documents are acceptable on the day you deposit. If one
     "real-money-poker-apps",
     "crypto-poker",
   ],
-  updated: "2026-10-07",
+  updated: "2026-10-21",
 };

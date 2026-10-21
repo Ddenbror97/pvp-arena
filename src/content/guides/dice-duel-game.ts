@@ -16,7 +16,7 @@ export const guide: Guide = {
     "If ties push and winners take 2x, expected return is 100% before a commission.",
     "If ties lose (or the house wins ties), the house edge is about 11.27% on 2d6 versus 2d6.",
     "One die versus one die ties 1/6 of the time; ties-lose then keeps 16.67%.",
-    "PVPspinArena does not offer dice duel; the live games are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer dice duel; the live games are six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {

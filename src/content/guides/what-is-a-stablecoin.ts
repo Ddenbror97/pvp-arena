@@ -100,7 +100,7 @@ What a reserve report does not tell you:
 - That a game result was honest. Fairness is a different question; see a [provably fair casino](/guides/provably-fair-casino) for hashed seeds.
 - That your wallet is safe. A stolen seed phrase empties USDC as easily as ETH.
 
-A dollar token also does not remove gambling risk. Jackpot, Coinflip and Roulette are still games of chance for adults. A stable unit of account only means a $5 stake is still about $5 if you sit idle.
+A dollar token also does not remove gambling risk. Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot are still games of chance for adults. A stable unit of account only means a $5 stake is still about $5 if you sit idle.
 
 History is the other teacher. When a large dollar coin traded a few cents off for a day, casinos that priced chips in that coin had to decide whether to freeze deposits, reprice, or eat the gap. Players who thought "stable" meant "cannot move" discovered that the peg is a market. When an algorithmic coin collapsed, anyone who used it as a chip discovered that the game never started; the token itself was the loss.
 
@@ -174,5 +174,5 @@ The largest dollar stablecoin by float is [Tether](/guides/what-is-tether).`,
     "stablecoin-payments-gambling",
     "what-is-tether",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

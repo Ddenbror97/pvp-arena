@@ -102,7 +102,7 @@ If you are using the lawsuit as a reason to deposit more, you have left the ques
       title: "A hashed pot does not settle the legal fight",
       body: `None of the CFTC filings or the state complaints turn an event contract into a hashed player-versus-player pot. On [Jackpot](/), players fund one pot and a committed seed picks a ticket. The outcome is a draw, published so it can be checked. It is not an election, a total, or a data print. State gaming law and federal exchange law are the wrong captions for that draw, and this page will not pretend a Jackpot ticket answers "is Kalshi gambling."
 
-[Fairness](/fairness) recomputes the hash after the seed is out. The recomputation tests the draw. It does not test whether a state court will call an event contract a wager. Kalshi does not run that pot. PVPspinArena does not list event contracts. The games here are Jackpot, Coinflip, and Roulette, funded with USDC or ETH on Base. No user count and no fee percent are stated, because this guide is not a performance ad.
+[Fairness](/fairness) recomputes the hash after the seed is out. The recomputation tests the draw. It does not test whether a state court will call an event contract a wager. Kalshi does not run that pot. PVPspinArena does not list event contracts. The games here are Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot, funded with USDC or ETH on Base. No user count and no fee percent are stated, because this guide is not a performance ad.
 
 Checklist while the category is disputed:
 
@@ -149,5 +149,5 @@ Adults 18+ only. Not legal, financial, or tax advice.`,
     "is-crypto-gambling-legal",
     "polymarket-vs-kalshi",
   ],
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

@@ -173,7 +173,7 @@ Double-or-nothing strategy elsewhere still reduces to: know p, cap n, write the 
 
 Do not trust popup doubles after wins, mid-streak renegotiation, or martingale recovery. Precommit n, verify p, cap the first stake, and stop.
 
-PVPspinArena offers Jackpot, Coinflip and Roulette — no streak ladder. Use this page when another product flashes 2× or bust, and treat the stop rule as the only lever that is not folklore.
+PVPspinArena offers Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip — no streak ladder. Use this page when another product flashes 2× or bust, and treat the stop rule as the only lever that is not folklore.
 
 Write the plan on paper: “Max 2 doubles on crash 2×, $5 start, stop.” When the third win tempts you, the paper beats the button. Streak products are designed so the third and fourth wins feel “almost there.” Almost there is still (2p)^3 or (2p)^4 of your original EV — lower than you think if p is 49%. The screenshot is step five; your path is usually step two or bust.
 
@@ -210,5 +210,5 @@ Telegram “double signals” sell the same product with extra steps. The signal
     },
   ],
   related: ["double-or-nothing-game", "house-edge", "martingale-strategy", "coin-flip-odds"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

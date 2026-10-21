@@ -29,7 +29,7 @@ export const guide: Guide = {
       title: "What a Stake review can actually settle",
       body: `A stake casino review is a buying question: people want to know whether Stake is worth a deposit. A page that answers with a made-up score is a sales layout. This one answers with checks you can repeat on the operator's own site today. Adults 18+ only. It is not legal advice, not a bonus code, and not a promise that Stake will pay you.
 
-Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Jackpot, Coinflip and Roulette, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not Stake, and we do not sell a licence we do not hold.
+Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not Stake, and we do not sell a licence we do not hold.
 
 Stake's public reputation is size: a busy sportsbook, a casino lobby, and originals that many players meet before they meet a third-party slot. Size is not a cashier. The review question is whether you can prove a result and retrieve a test withdrawal in a country Stake actually serves.
 
@@ -139,7 +139,7 @@ The card-room file is not this lobby. [The card-room rules](/guides/stake-poker)
     },
     {
       q: "Does PVPspinArena run Stake games?",
-      a: "No. This site runs Jackpot, Coinflip and Roulette between players, with USDC or ETH on Base. It is not a Stake skin and it does not pay Stake rakeback.",
+      a: "No. This site runs P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette between players, with USDC or ETH on Base. It is not a Stake skin and it does not pay Stake rakeback.",
     },
     {
       q: "Can you use Stake everywhere?",
@@ -163,10 +163,10 @@ The card-room file is not this lobby. [The card-room rules](/guides/stake-poker)
     "house-edge",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
   cta: {
     title: "A pot is not a lobby",
-    text: "Stake is someone else's casino. PVPspinArena only runs Jackpot, Coinflip and Roulette between players, with USDC or ETH on Base.",
+    text: "Stake is someone else's casino. PVPspinArena only runs Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott between players, with USDC or ETH on Base.",
     primary: { to: "/coinflip", label: "Open Coinflip" },
     secondary: { to: "/fairness", label: "Read fairness" },
   },

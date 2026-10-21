@@ -127,7 +127,7 @@ If a box is blank, stop selling. Super Bowl squares fail in the rules, not in th
     },
     {
       q: "Can I play Super Bowl squares on PVPspinArena?",
-      a: "No. This site does not run a squares grid or an NFL pool. Jackpot, Coinflip and Roulette are the games, adults 18+ only. A hashed pot is not a 10 by 10 of last digits. Run squares with friends under rules you write down, or skip them.",
+      a: "No. This site does not run a squares grid or an NFL pool. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott are the games, adults 18+ only. A hashed pot is not a 10 by 10 of last digits. Run squares with friends under rules you write down, or skip them.",
     },
   ],
   sources: [
@@ -136,5 +136,5 @@ If a box is blank, stop selling. Super Bowl squares fail in the rules, not in th
     { label: "Wikipedia: Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
   ],
   related: ["bet-with-friends-online", "bracket-pool", "nfl-betting", "peer-to-peer-gambling"],
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

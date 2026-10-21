@@ -24,7 +24,7 @@ export const guide: Guide = {
       title: "What a Rollbit review can actually settle",
       body: `A rollbit review is a buying question: people want to know whether Rollbit is worth a deposit. A page that answers with a made-up score is a sales layout. This one answers with checks you can repeat on the operator's own site today. Adults 18+ only. It is not legal advice, not a bonus code, and not a promise that Rollbit will pay you.
 
-Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Jackpot, Coinflip and Roulette, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not Rollbit, and we do not sell a licence we do not hold.
+Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not Rollbit, and we do not sell a licence we do not hold.
 
 Rollbit searches collide with speculation. People want a casino review and end up reading a token chart. This page refuses that collision. Gambling balances and token inventory are different risks.
 
@@ -134,7 +134,7 @@ Date, country, and loss limit close the note. A community chat is not one of the
     },
     {
       q: "Does PVPspinArena have a token?",
-      a: "No. Balances are the USDC or ETH you use on Base for Jackpot, Coinflip and Roulette. There is no project token to chart.",
+      a: "No. Balances are the USDC or ETH you use on Base for Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip. There is no project token to chart.",
     },
   ],
   sources: [
@@ -154,10 +154,10 @@ Date, country, and loss limit close the note. A community chat is not one of the
     "house-edge",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
   cta: {
     title: "A pot is not a lobby",
-    text: "Rollbit is someone else's casino. PVPspinArena only runs Jackpot, Coinflip and Roulette between players, with USDC or ETH on Base.",
+    text: "Rollbit is someone else's casino. PVPspinArena only runs Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott between players, with USDC or ETH on Base.",
     primary: { to: "/coinflip", label: "Open Coinflip" },
     secondary: { to: "/fairness", label: "Read fairness" },
   },

@@ -156,7 +156,7 @@ If the exchange path is available, use it. You already accepted that venue’s i
 
 If step 2 fails or the explorer still shows BNB Chain, stop. The casino cannot see that ledger.
 
-After a successful credit, you can join Jackpot, Coinflip or Roulette. Withdrawals leave from the site, not from a Trust Wallet “cash out” button. Request USDC on Base to an address you control. Expect the $250 daily cap and a review when the amount is over $25. Import USDC on Base in Trust Wallet if the incoming payout does not show automatically.`,
+After a successful credit, you can join [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette). Withdrawals leave from the site, not from a Trust Wallet “cash out” button. Request USDC on Base to an address you control. Expect the $250 daily cap and a review when the amount is over $25. Import USDC on Base in Trust Wallet if the incoming payout does not show automatically.`,
     },
     {
       id: "summary",
@@ -207,6 +207,6 @@ If you remember only one Trust Wallet habit, make it this: read the network subt
     "cold-wallet-vs-hot-wallet",
     "ledger-vs-trezor",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   howTo: true,
 };

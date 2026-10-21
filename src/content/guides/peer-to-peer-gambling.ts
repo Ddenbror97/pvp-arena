@@ -30,11 +30,11 @@ This guide sits with [CS:GO heritage](/guides/topics/csgo-heritage) because that
 
 For the broader vocabulary of player pots, read [PvP gambling](/guides/pvp-gambling). This page focuses on the P2P label searchers use and the checks that still apply.
 
-Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
+Write the p2p gambling fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three p2p gambling lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from p2p gambling. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
-A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
+A clearer p2p gambling label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
 Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
 
@@ -65,11 +65,11 @@ Create, join, watch, settle. The format came from streams and Discord lobbies. C
 
 None of those reasons make the next flip profitable. They explain the product preference. Price the fee the same way you would price a [house edge](/guides/house-edge) on a table game.
 
-Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
+Write the p2p gambling fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three p2p gambling lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from p2p gambling. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
-A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
+A clearer p2p gambling label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
 Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
 
@@ -100,9 +100,9 @@ Case battles and other comparison modes can be P2P if player stakes fund the pri
 
 Shared roulette with fixed multipliers, crash curves paid by the house, and most slots. PVPspinArena’s [Roulette](/roulette) is in this group on purpose.
 
-Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
+Write the p2p gambling fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three p2p gambling lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from p2p gambling. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
 Sharing one jackpot ticket needs the same kind of rules. A [lottery pool agreement](/guides/lottery-pool-agreement) writes them down. A grid of final scores is a different friends game. [Super Bowl squares](/guides/super-bowl-squares) explains who owns which box.`,
     },
@@ -186,5 +186,5 @@ Friends and small games use the same pot. [Betting with friends online](/guides/
     },
   ],
   related: ["pvp-gambling", "house-edge", "csgo-gambling-history", "provably-fair-casino"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

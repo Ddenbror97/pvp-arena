@@ -181,7 +181,7 @@ If the honest after-fee number is small, that is the answer. Padding the total w
 
 Write two totals on paper: **keep** (items you would not sell) and **sellable** (items you would list this month). Only the sellable column is inventory value in any useful sense. A souvenir you will never list is a decoration. Counting it at a 2018 peak is how “worth $3k” posts get written.
 
-PVPspinArena will not import this worksheet. It does not list skins, open cases or sit on Kick or Twitch as a house casino. It runs player-versus-player Jackpot, Coinflip and Roulette with USDC or ETH on Base. Price the loadout here; play, if you play, with a balance you can count in dollars.`,
+PVPspinArena will not import this worksheet. It does not list skins, open cases or sit on Kick or Twitch as a house casino. It runs player-versus-player Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot with USDC or ETH on Base. Price the loadout here; play, if you play, with a balance you can count in dollars.`,
     },
   ],
   faqs: [
@@ -228,7 +228,7 @@ PVPspinArena will not import this worksheet. It does not list skins, open cases 
     "cs2-knife-prices",
     "cs2-doppler-phases",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   howTo: true,
   widget: "cs2-inventory",
 };

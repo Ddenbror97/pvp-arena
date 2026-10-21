@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 That model became common because Bitcoin is public, transferable without a card network, and familiar to people who already hold crypto. It is still a form of gambling for adults aged 18 or over, and a BTC-denominated site does not change the odds of any game.
 
-PVPspinArena accepts on-chain Bitcoin as well as USDC and ETH on Base. The games are [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette). A Bitcoin deposit is credited in US dollars, so the chip does not stay in BTC while you play. It is not a SOL, LTC, DOGE, USDT or Lightning cashier. A [USDC casino](/guides/usdc-casino) deposit is the other rail if you would rather not wait on Bitcoin confirmations.
+PVPspinArena accepts on-chain Bitcoin as well as USDC and ETH on Base. The games are [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), and [six-max poker](/poker). A Bitcoin deposit is credited in US dollars, so the chip does not stay in BTC while you play. It is not a SOL, LTC, DOGE, USDT or Lightning cashier. A [USDC casino](/guides/usdc-casino) deposit is the other rail if you would rather not wait on Bitcoin confirmations.
 
 This guide explains how BTC deposits, fees and withdrawals work, including the on-chain Bitcoin deposit on PVPspinArena.`,
     },
@@ -119,7 +119,7 @@ This cluster of payment guides lives under [crypto payments](/guides/topics/cryp
 1. **Open the [wallet page](/wallet) and choose Bitcoin.** Enter $40. The invoice shows the exact BTC to send and the confirmations required.
 2. **Send that on-chain amount** from a Bitcoin wallet to the invoice address. MetaMask does not hold native BTC. Do not send a Lightning invoice.
 3. **Wait for those confirmations.** The site credits US dollars, not a BTC play balance. A smaller confirmed amount can still credit at the same rate.
-4. **Play from the dollar balance.** Jackpot, Coinflip and Roulette all use that balance.
+4. **Play from the dollar balance.** P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette all use that balance.
 5. **Cash out in Bitcoin** to an address that starts with bc1, or cash out USDC or ETH on Base instead.
 
 Sending that BTC to the USDC or ETH address on Base will not credit. Withdrawing USDC on Ethereum mainnet will not credit either, and recovering a wrong-network transfer is not guaranteed. USDC on Base is covered in [how to buy USDC](/guides/how-to-buy-usdc).`,
@@ -141,7 +141,7 @@ Sending that BTC to the USDC or ETH address on Base will not credit. Withdrawing
 - Never share a seed phrase with a casino, a support chat or a "bonus" site.
 - Bookmark the real domain and ignore deposit links in messages.
 - Send only what you planned to play with. Keep long-term BTC in a separate wallet.
-- Read [how it works](/how-it-works) so you know Jackpot, Coinflip and Roulette before you deposit.
+- Read [how it works](/how-it-works) so you know P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette before you deposit.
 
 A bitcoin casino that keeps the stack in BTC is a different product. On PVPspinArena the deposit can be Bitcoin, and the balance you play with is still US dollars, fixed when the deposit credits.
 
@@ -197,5 +197,5 @@ A cheaper-fee bitcoin fork used at some cashiers is [bitcoin cash casino](/guide
     "bitcoin-cash-casino",
     "bitcoin-faucet",
   ],
-  updated: "2026-10-07",
+  updated: "2026-10-21",
 };

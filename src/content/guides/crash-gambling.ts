@@ -266,7 +266,7 @@ A named crash title with its own RTP card is [JetX](/guides/jetx-game).`,
     },
     {
       q: "Does PVPspinArena have a crash game?",
-      a: "No. PVPspinArena currently offers Jackpot, Coinflip and Roulette. This guide explains crash so you can understand it wherever you see it.",
+      a: "No. PVPspinArena currently offers Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip. This guide explains crash so you can understand it wherever you see it.",
     },
     {
       q: "Is auto cash-out better than manual cash-out?",
@@ -292,5 +292,5 @@ A named crash title with its own RTP card is [JetX](/guides/jetx-game).`,
     "aviator-game-guide",
     "jetx-game",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
 };

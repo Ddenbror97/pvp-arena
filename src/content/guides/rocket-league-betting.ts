@@ -16,7 +16,7 @@ export const guide: Guide = {
     "A 'game' is one five-minute clock, plus overtime if the event uses it.",
     "Goal totals and game handicaps depend on whether overtime goals count.",
     "A two-way moneyline whose implied chances add above 100% is showing the vig.",
-    "PVPspinArena does not price RLCS; it runs hashed Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not price RLCS; it runs hashed Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip.",
   ],
   sections: [
     {
@@ -163,7 +163,7 @@ If betting is already taking more time or money than you planned, use [how to st
     },
     {
       q: "Does PVPspinArena offer Rocket League betting?",
-      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
     },
     {
       q: "Is Rocket League betting legal?",
@@ -190,10 +190,10 @@ If betting is already taking more time or money than you planned, use [how to st
     "how-to-bet-on-esports",
     "implied-probability",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   cta: {
     title: "This site is not a book",
-    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip and Roulette. It does not take Rocket League bets.",
+    text: "PVPspinArena runs hashed PvP Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot. It does not take Rocket League bets.",
     primary: { to: "/fairness", label: "Fairness" },
     secondary: { to: "/coinflip", label: "Coinflip" },
   },

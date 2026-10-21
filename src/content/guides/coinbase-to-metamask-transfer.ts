@@ -142,7 +142,7 @@ Phishing sites clone Coinbase send forms. Bookmark Coinbase.com. A page that ask
 
 If step 3 had shown Ethereum, you would stop and not repeat the 53 USDC send.
 
-After the site credits $50, you can play Jackpot, Coinflip or Roulette with money you can lose. A later cash-out is a site payout on Base, not a Coinbase reversal. Daily withdrawals cap at $250. Amounts over $25 wait for review. Coinbase is out of that story once the coins left the exchange.`,
+After the site credits $50, you can play [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), or [six-max poker](/poker) with money you can lose. A later cash-out is a site payout on Base, not a Coinbase reversal. Daily withdrawals cap at $250. Amounts over $25 wait for review. Coinbase is out of that story once the coins left the exchange.`,
     },
     {
       id: "summary",
@@ -195,6 +195,6 @@ Save the Coinbase receipt and the Base hash together. If you later ask why MetaM
     "how-to-buy-usdc",
     "how-to-withdraw-from-metamask",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   howTo: true,
 };

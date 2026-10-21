@@ -161,7 +161,7 @@ Gin rewards skill more than many card games: discard reading and knock timing pr
       title: "Gin rummy maths and a hashed PvP round",
       body: `Gin decisions are probability decisions. After the deal, 31 cards remain in the stock. If you need one of three unseen cards to go gin, the chance your next stock draw hits is 3/31, about 9.7%, before accounting for cards your opponent may hold. That is the kind of estimate strong players make on every turn.
 
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott where there are no draws to count: Jackpot, [Coinflip](/coinflip) and Roulette. A Coinflip is an even 50/50. Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Results come from committed seeds, and anyone can verify a settled round on the [fairness](/fairness) page, much as a fresh deck and a cut keep a gin table honest. None of that gives a player an edge; for gin's skill side, compare the [how to play Spades](/guides/how-to-play-spades) guide.
+PVPspinArena runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), house-banked [Roulette](/roulette), and [P2P Slott](/slott) where there are no draws to count. A Coinflip is an even 50/50. Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Results come from committed seeds, and anyone can verify a settled round on the [fairness](/fairness) page, much as a fresh deck and a cut keep a gin table honest. None of that gives a player an edge; for gin's skill side, compare the [how to play Spades](/guides/how-to-play-spades) guide.
 
 See also [tonk](/guides/tonk-card-game).`,
     },
@@ -204,5 +204,5 @@ See also [tonk](/guides/tonk-card-game).`,
     "31-card-game",
     "tonk-card-game",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
 };

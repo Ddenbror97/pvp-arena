@@ -118,7 +118,7 @@ A knife fails that test in four ways:
 3. **The rails take a cut.** Steam's 15 percent, third-party spreads and skin-site deposit rates are fees you do not see on a USDC transfer of the same dollars.
 4. **Cashing out is another market.** Winning a knife is not winning dollars. You still have to sell it.
 
-USDC is designed to stay near one dollar. On PVPspinArena you deposit USDC or ETH on Base; ETH is converted and balances are shown in USD. There is no float inspector and no Doppler phase. The round is Jackpot, Coinflip or Roulette. Results can be checked on the [fairness](/fairness) page.
+USDC is designed to stay near one dollar. On PVPspinArena you deposit USDC or ETH on Base; ETH is converted and balances are shown in USD. There is no float inspector and no Doppler phase. The round is [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), or [Coinflip](/coinflip). Results can be checked on the [fairness](/fairness) page.
 
 That is the contrast, not a claim that crypto play is "safe." You can still lose the stake. You cannot lose an extra 12 percent because the bid walked away while the wheel was spinning.
 
@@ -194,5 +194,5 @@ PVPspinArena runs cash PvP — Jackpot and Coinflip — plus a coloured Roulette
     "cs2-agents",
     "cs2-charms",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

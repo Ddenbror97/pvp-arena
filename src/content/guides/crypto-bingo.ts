@@ -16,7 +16,7 @@ export const guide: Guide = {
     "UK-style 90-ball bingo uses a 9×3 ticket with 15 numbers drawn from 1–90, often paying 1-line, 2-line and full house.",
     "Bingo RTP is set by card price and the prize table, not by 'feeling lucky' on a pattern.",
     "Online crypto bingo almost always uses a software RNG for the draw, not a mechanical blower.",
-    "PVPspinArena is not a bingo hall. It runs Jackpot, Coinflip and Roulette in USDC and ETH on Base.",
+    "PVPspinArena is not a bingo hall. It runs Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in USDC and ETH on Base.",
   ],
   sections: [
     {
@@ -176,7 +176,7 @@ PVPspinArena is not a bingo hall and not a scratch-card vendor. It is cash PvP p
     },
     {
       q: "Does PVPspinArena offer bingo?",
-      a: "No. It offers Jackpot, Coinflip and Roulette. A bingo card is not a PvP pot on this site.",
+      a: "No. It offers Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip. A bingo card is not a PvP pot on this site.",
     },
     {
       q: "Where is the house edge in a pool bingo game?",
@@ -202,5 +202,5 @@ PVPspinArena is not a bingo hall and not a scratch-card vendor. It is cash PvP p
     "sports-betting-with-crypto",
     "plinko-gambling",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

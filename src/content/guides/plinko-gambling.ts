@@ -175,7 +175,7 @@ None of these stories produce a positive expected value. They only change how fa
       title: "Summary",
       body: `Plinko gambling is a binomial drop with a payout row that pays less than true odds. Row count sets the number of bounces and the tail thickness. Risk level reallocates multipliers between the middle and the edges. RTP and house edge describe the same leak; typical boards sit around 1% to 3% per ball, and fast auto-drops apply that leak to a large total wagered.
 
-You can verify a path when the site commits seeds. You cannot verify your way into an edge. PVPspinArena does not offer plinko. Use [how it works](/how-it-works) for the live Jackpot, Coinflip and Roulette rules, and treat any board that hides its bucket probabilities as a toy you have not priced.
+You can verify a path when the site commits seeds. You cannot verify your way into an edge. PVPspinArena does not offer plinko. Use [how it works](/how-it-works) for the live Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott rules, and treat any board that hides its bucket probabilities as a toy you have not priced.
 
 The board price and a betting system on top of it are different pages. [Plinko strategy](/guides/plinko-strategy) is the second one, and it does not remove the edge on the first.
 
@@ -228,5 +228,5 @@ The physical board the online game copies is explained in [plinko board](/guides
     "plinko-strategy",
     "plinko-board",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

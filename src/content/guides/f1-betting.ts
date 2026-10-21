@@ -24,11 +24,11 @@ export const guide: Guide = {
       title: "What F1 Betting is selling",
       body: `Race markets price an outright winner, podiums and head-to-head driver matchups. There is no point spread in the NFL sense. Safety cars, penalties and classification rules decide settlement. You are not funding a pot against another fan. You are taking a number the book offered. If the number is not on your slip, you do not have the bet you remember from a preview show.
 
-Write that down as part of any f1 betting note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+Put today's date on any f1 betting figure you keep. If the logged-in page does not show the f1 betting figure, leave the cell blank. A percent copied from a clip is not a f1 betting source.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+You need to be 18, or older where local law sets a higher age, before any f1 betting stake. This f1 betting page is not legal advice, not a promo code, and not a pick. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are what PVPspinArena runs, settled in US dollars. It does not sell f1 betting, and a guide is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
+If a f1 betting session turns into chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A new login does not erase a f1 betting limit you already set.
 
 Start in [Sports betting](/guides/topics/sports-betting). Related reading: [what sports betting is](/guides/what-is-sports-betting), [how sports betting works](/guides/how-does-sports-betting-work), [point spread](/guides/point-spread-explained). The product on this site, if you wanted a hashed pot instead, is [responsible gambling](/responsible-gambling).`,
     },
@@ -37,22 +37,22 @@ Start in [Sports betting](/guides/topics/sports-betting). Related reading: [what
       title: "How the main market is priced",
       body: `An outright in a twenty-driver field is a long-shot market. The hold on those tickets is often wider than a head-to-head between two drivers. Write an example in your own sport's units before you stake. A worked example on paper is the whole skill this page is willing to teach. It will not name a side.
 
-Write that down as part of any f1 betting note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+Date the f1 betting note on the day you can still open the live page. Leave a blank when the f1 betting page has no figure. A video is a poor place to borrow a f1 betting percentage.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+Adults only, 18 or the higher local age. Nothing here is a lawyer's letter, a f1 betting code, or a selection. The games on this site, unlike f1 betting, are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. F1 betting is not one of them, and the article is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
+Stop a f1 betting session that has become a chase. The limit is [responsible gambling](/responsible-gambling). Another account does not clear the f1 betting session you already played.`,
     },
     {
       id: "rules",
       title: "Props and extras cost more",
       body: `Player props, method props, correct scores and accumulators are optional markets with their own holds. They are often wider than the main line because they are harder to hedge and easier to advertise. Add them only if you can state the settlement rule in one sentence.
 
-Write that down as part of any f1 betting note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+When you record a f1 betting price, write the date beside it. A f1 betting cell with no logged-in source stays empty. Do not fill a f1 betting blank from a recording.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+Play only at 18, or older if your law requires it, including for f1 betting. This is a f1 betting explainer, not legal advice and not a code to redeem. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, separate from f1 betting. The desk does not offer f1 betting, and these paragraphs are not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
+Chasing a f1 betting loss is the moment to stop. Use [responsible gambling](/responsible-gambling). A second profile is not a new budget.
 
 More on the surrounding ideas: [moneyline](/guides/moneyline-betting-explained), [gambling budget](/guides/gambling-budget).`,
     },
@@ -61,22 +61,22 @@ More on the surrounding ideas: [moneyline](/guides/moneyline-betting-explained),
       title: "Rules that change the ticket",
       body: `Read voids and pushes. A game that does not finish, a fighter who misses weight, a tennis retirement, a race classification, or a postponed kickoff can settle differently from the story you told yourself. Cash out, if the book offers it, is a new price, not the original ticket.
 
-Write that down as part of any f1 betting note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+Keep the f1 betting date on the same line as the figure. If you cannot open the f1 betting page while logged in, do not invent the percent. A borrowed f1 betting number is worse than a blank cell.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+The age floor for f1 betting is 18, or higher where you live. No f1 betting sentence here is a promo code, a pick, or legal advice. PVPspinArena settles six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in US dollars, separate from f1 betting. It does not operate f1 betting, and a guide cannot license you.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
+Leave the f1 betting session if it starts to feel like a chase. [Responsible gambling](/responsible-gambling) is that boundary. Switching accounts does not reset it.`,
     },
     {
       id: "table",
       title: "A note before any stake",
       body: `Record the market, the price, the stake, and the loss limit. One game. No parlay built to 'get even.' Country and age rules still apply. A crypto sportsbook is still a sportsbook.
 
-Write that down as part of any f1 betting note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+A f1 betting note without a date is a guess. Confirm the f1 betting figure on a page you can open, or leave the cell blank. Clips do not publish a f1 betting price you can rely on.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+Stay at 18-plus for f1 betting, or the older age your region sets. Treat this f1 betting page as explanation, not as advice, a code, or a tip. The live catalog, which does not include f1 betting, is Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, in US dollars. f1 betting is absent from that catalog, and the page is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
+A chase is a finished f1 betting decision. Stop, and read [responsible gambling](/responsible-gambling). Opening another f1 betting account is not a fresh bankroll.
 
 | Check | What to record for f1 betting |
 | --- | --- |
@@ -91,11 +91,11 @@ If the session starts to feel like chasing, stop. [Responsible gambling](/respon
       title: "Stop treating it like a pot",
       body: `PVPspinArena will not book your F1 ticket. Coinflip here is a 50/50 player pot with a published fee, not a spread. If f1 betting was the goal, a hashed coin will not satisfy it, and this page should not pretend otherwise.
 
-Write that down as part of any f1 betting note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+Write the f1 betting source and the date before the conclusion. An empty f1 betting cell means the live page did not show the figure. That blank is more honest than a f1 betting percent from a video.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+Eighteen is the f1 betting minimum, unless local law is older. This f1 betting note is not legal advice, not a code, and not a recommendation. Poker at six-max, plus Jackpot, Coinflip, Roulette, and P2P Slott, is what settles in US dollars here, not f1 betting. The site does not sell f1 betting, and the text is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
+If f1 betting play becomes chasing, stop there. [Responsible gambling](/responsible-gambling) holds the limit. A replacement f1 betting account is not a clean record.`,
     },
     {
       id: "close",
@@ -112,7 +112,7 @@ A note before any stake. Record the market, the price, the stake, and the loss l
 
 Stop treating it like a pot. PVPspinArena will not book your F1 ticket. Coinflip here is a 50/50 player pot with a published fee, not a spread.
 
-Read that list once, from the top, and stop where a cell is empty. The empty cell is the decision. Filling it from a clip, a chat, or this paragraph is how a f1 betting note turns into an advertisement you wrote for yourself.
+Go down the f1 betting rows in order and halt where a cell is blank. The blank is the answer. Filling it from a video or from this page turns the note into copy you made for the brand.
 
 Facts worth dating:
 
@@ -126,13 +126,13 @@ A sportsbook price already contains the book's margin. Research can find a short
 
 Peer markets and exchanges fail differently from a book: you may not get filled, and a lay has a liability. Matched-betting talk is about a promotion's terms, not about a team. This site will not book the event, lay the side, or help anyone skip an identity check.
 
-Do the arithmetic before you call it a bargain. A wagering multiple times the chip is the amount you must bet. A commission comes off the winner. A hold inside the odds is already the cost. An RTP, when a game prints one, is a long-run return, not a promise about tonight. If the live page will not give you the input, the output stays unknown. Unknown is a reason to skip, including when a f1 betting search feels urgent.
+Do the f1 betting arithmetic before you call it a bargain. A wagering multiple times the chip is the amount you must bet. Commission comes off the winner. A hold inside the odds is already the cost. An RTP, when a game prints one, is a long-run return, not a promise about tonight. If the live page will not give you the input, the output stays unknown. Unknown is a reason to skip, including when a f1 betting search feels urgent.
 
-Date the note on the same line as the stake and the loss limit. When the limit is reached, stop. The rest of the reading can wait. Waiting is a finished decision, and opening another logo to repair the feeling is how a short note becomes a second deposit.
+Put the date, the stake, and the f1 betting loss limit on one line. Hitting the limit ends the session. Other tabs can wait. Stopping is a complete choice, and a new logo opened to feel better is how the note turns into another deposit.
 
-One clean test beats a pile of tabs. Use the smallest stake the cashier will accept, on the asset and network the cashier names, then withdraw a fraction before you add more. Time it. Save the identifier. If the site asks who you are, answer or leave. Do not shop for a version of f1 betting that skips the question. The question is part of the product.
+Test f1 betting once, cleanly, instead of collecting tabs. The smallest named stake, on the named asset and network, is enough, and a partial withdrawal comes before a larger deposit. Keep the time and the identifier. Identity questions get an answer or an exit. Skipping them is not a feature of f1 betting.
 
-Then close the tab or play only what this site actually offers. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars, adults 18+ only. A second account is not a fresh start.`,
+Then close the tab or play only what this site actually offers. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, for adults 18+ only. A new f1 betting login does not clear the limit you already hit.`,
     },
   ],
   faqs: [
@@ -150,7 +150,7 @@ Then close the tab or play only what this site actually offers. Jackpot, Coinfli
     },
     {
       q: "Can I place this bet on PVPspinArena?",
-      a: "No. There is no sportsbook here. The games are Jackpot, Coinflip and Roulette.",
+      a: "No. There is no sportsbook here. The games are P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette.",
     },
     {
       q: "What if the event is postponed?",
@@ -169,10 +169,10 @@ Then close the tab or play only what this site actually offers. Jackpot, Coinfli
     "point-spread-explained",
     "moneyline-betting-explained",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
   cta: {
     title: "This site is a pot, not that product",
-    text: "PVPspinArena does not offer the product described on this page. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
+    text: "PVPspinArena does not offer the product described on this page. Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott settle in US dollars.",
     primary: { to: "/responsible-gambling", label: "Responsible gambling" },
     secondary: { to: "/how-it-works", label: "How this site works" },
   },

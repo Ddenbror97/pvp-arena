@@ -110,7 +110,7 @@ For many players, a strong licence is enough reassurance. Others prefer to verif
 
 ### On PVPspinArena
 
-Every Jackpot, Coinflip and Roulette round commits a SHA-256 hash of a 32-byte seed before entries open. Results come from HMAC-SHA256, and you can verify any round in your browser on the [Fairness page](/fairness). See our [provably fair casino guide](/guides/provably-fair-casino) for more.`,
+Every P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette round commits a SHA-256 hash of a 32-byte seed before entries open. Results come from HMAC-SHA256, and you can verify any round in your browser on the [Fairness page](/fairness). See our [provably fair casino guide](/guides/provably-fair-casino) for more.`,
     },
     {
       id: "streaks",
@@ -246,5 +246,5 @@ Rigged and unsafe are different complaints. [Are online casinos safe](/guides/ar
     "are-online-casinos-safe",
     "ecogra-certification",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
 };

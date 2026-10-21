@@ -116,7 +116,7 @@ Adults sometimes stake a small amount on the winner. That is gambling, and it is
 
 Nothing in that is a system that beats the shuffle. Four honest kings still look like a lie. Four fake kings still look like a lie. Only the flip of those cards settles the pile.
 
-PVPspinArena does not deal this game. It runs Jackpot, [Coinflip](/coinflip) and Roulette settled in US dollars, for adults 18+ only. Coinflip is a 50/50 between two players, with no rank to claim. Roulette is a 33-slot wheel that returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee, a 7.88 percent on Purple or Silver after the win fee edge. Jackpot pays a shared pot according to your share. Seeds are committed before the round. You can check a settled round on the [fairness](/fairness) page.
+PVPspinArena does not deal this game. It runs [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), and [Jackpot](/) settled in US dollars, for adults 18+ only. Coinflip is a 50/50 between two players, with no rank to claim. Roulette is a 33-slot wheel that returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee, a 7.88 percent on Purple or Silver after the win fee edge. Jackpot pays a shared pot according to your share. Seeds are committed before the round. You can check a settled round on the [fairness](/fairness) page.
 
 If the call stops being funny and the stake starts climbing, stop. The [responsible gambling](/responsible-gambling) page has the tools. The next ace is not an apology for the last pile.
 
@@ -157,5 +157,5 @@ See also [president](/guides/president-card-game-rules), [crazy eights](/guides/
     "how-to-shuffle-cards",
   ],
   howTo: true,
-  updated: "2026-09-29",
+  updated: "2026-10-21",
 };

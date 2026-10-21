@@ -184,7 +184,7 @@ The book that taught a generation of Hold'em is tied to [Doyle Brunson](/guides/
     },
     {
       q: "Does PVPspinArena use Hold'em strategy?",
-      a: "No. It does not offer Texas Hold'em. Its games are Jackpot, Coinflip and Roulette.",
+      a: "No. It does not offer Texas Hold'em. Its games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
     },
   ],
   sources: [
@@ -202,5 +202,5 @@ The book that taught a generation of Hold'em is tied to [Doyle Brunson](/guides/
     "poker-math",
     "doyle-brunson",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

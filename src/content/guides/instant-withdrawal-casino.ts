@@ -143,7 +143,7 @@ Keep the request ids from step 2 and step 4. If you later open support, those id
 
 A $20 request that already has a confirmed hash is done from your side. Refreshing the wallet page will not make the block arrive faster. A $80 request without a hash is still in review. Those are different waits, and mixing them in one support message slows both. Instant, here, means the site is working the request, not that your clock has stopped.
 
-Play Jackpot, Coinflip or Roulette only with money you can lose. Fast withdrawals do not make a session cheaper. They only return what you still have.`,
+Play [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette) only with money you can lose. Fast withdrawals do not make a session cheaper. They only return what you still have.`,
     },
     {
       id: "summary",
@@ -194,5 +194,5 @@ If you are comparing brands, time a $10 withdrawal on a weekday and write down t
     "coinbase-to-metamask-transfer",
     "best-payout-online-casinos",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

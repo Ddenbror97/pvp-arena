@@ -118,7 +118,7 @@ A useful session ends with the float you set aside, whether that float comes hom
     },
     {
       q: "Can I deposit ADA on PVPspinArena?",
-      a: "No. This site takes USDC or ETH on Base for Jackpot, Coinflip and Roulette. ADA is not a listed rail.",
+      a: "No. This site takes USDC or ETH on Base for Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. ADA is not a listed rail.",
     },
     {
       q: "Does ADA make gambling anonymous?",
@@ -146,10 +146,10 @@ A useful session ends with the float you set aside, whether that float comes hom
     "crypto-casino-withdrawals",
     "usdc-casino",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
   cta: {
     title: "This cashier is Base",
-    text: "PVPspinArena does not take ADA. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars. A ADA balance in another wallet is not a deposit here.",
+    text: "PVPspinArena does not take ADA. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker settle in US dollars. A ADA balance in another wallet is not a deposit here.",
     primary: { to: "/wallet", label: "Open the wallet page" },
     secondary: { to: "/how-it-works", label: "How the site works" },
   },

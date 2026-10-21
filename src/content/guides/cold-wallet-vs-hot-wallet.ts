@@ -28,7 +28,7 @@ A hot wallet is software on a laptop, phone or extension. MetaMask, many mobile 
 
 A cold wallet keeps keys offline. The common form is a hardware wallet: a small device that signs inside its own chip. Paper or metal backups of a seed are also "cold storage" in the backup sense, but a steel plate cannot send USDC. Someone still has to load those words into a signer.
 
-This sits in the [crypto payments](/guides/topics/crypto-payments) cluster. It is for adults aged 18 or over who will move a gambling budget, not their rent. PVPspinArena is a PvP Jackpot, Coinflip and Roulette site. It is not a reason to plug your life savings into a browser.
+This sits in the [crypto payments](/guides/topics/crypto-payments) cluster. It is for adults aged 18 or over who will move a gambling budget, not their rent. PVPspinArena is a PvP Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker site. It is not a reason to plug your life savings into a browser.
 
 Exchange accounts are a third category people call a wallet. They are custodial hot wallets you do not sign. Useful for buying USDC. Poor as the last hop if a casino matches a verified from-address, and poor as long-term storage.
 
@@ -135,7 +135,7 @@ Riley can also send a cashout straight to the hardware address if that address i
 
 Travel and inheritance are the late-night questions. A hardware device in checked luggage plus a seed in the same bag is one loss event. A seed only in your head is one medical event away from a permanent lockout. Write a simple instruction for a trusted person that does not live in the same cloud folder as a seed photo.
 
-PVPspinArena asks for a signature and a Base transfer, not for a hardware seed. Treat every stake as money you can lose, and keep the device that holds the rest offline. The site's Jackpot, Coinflip and Roulette rounds do not get safer because the leftover USDC is cold. Adults aged 18 or over who only remember one habit should remember this: the casino sees the hot address; the cold seed never types itself into a browser.
+PVPspinArena asks for a signature and a Base transfer, not for a hardware seed. Treat every stake as money you can lose, and keep the device that holds the rest offline. The site's P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette rounds do not get safer because the leftover USDC is cold. Adults aged 18 or over who only remember one habit should remember this: the casino sees the hot address; the cold seed never types itself into a browser.
 
 They get less catastrophic when the leftover was never in the hot wallet.
 
@@ -184,5 +184,5 @@ A third model, neither a single hot key nor a hardware stick, is a [multisig wal
     "what-is-a-hardware-wallet",
     "multisig-wallet",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

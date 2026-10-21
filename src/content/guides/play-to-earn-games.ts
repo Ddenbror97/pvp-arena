@@ -28,7 +28,7 @@ The pitch from 2020–2022 was straightforward: play is work, work should pay, a
 
 This page is part of our [foundations cluster](/guides/topics/foundations). The neighbouring [GameFi guide](/guides/gamefi) covers the wider category. Here the job is narrower: how the reward loop works, why it so often inflates, and why a [crypto casino](/guides/what-is-a-crypto-casino) balance is a different product even when both use a wallet.
 
-PVPspinArena does not pay you for grinding. It does not have a guild, a scholarship or a governance token. If you deposit USDC, you have a dollar balance you can stake on Jackpot, Coinflip or Roulette. That is entertainment with a cost, not a job.`,
+PVPspinArena does not pay you for grinding. It does not have a guild, a scholarship or a governance token. If you deposit USDC, you have a dollar balance you can stake on [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette). That is entertainment with a cost, not a job.`,
     },
     {
       id: "tokens",
@@ -109,7 +109,7 @@ If you still want to try a title, cap the money and the hours as you would any s
 | Hidden extra bet | Inflation and floor price | Usually none, if the unit is a stablecoin |
 | Can you "work" your way out? | The pitch says yes | No. More play is more exposure |
 
-A casino does not owe you a yield. On PVPspinArena you send USDC or ETH on Base, the site credits dollars, and you stake on [Jackpot](/), [Coinflip](/coinflip) or [Roulette](/roulette). You can lose. You cannot grind a governance token to offset the loss. That honesty is the feature.
+A casino does not owe you a yield. On PVPspinArena you send USDC or ETH on Base, the site credits dollars, and you stake on [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), or [six-max poker](/poker). You can lose. You cannot grind a governance token to offset the loss. That honesty is the feature.
 
 A [web3 casino](/guides/web3-casino) may still use a wallet and a chain. It should not need you to recruit scholars. If a "casino" is paying you to play in its own coin, ask whether you are the liquidity for someone else's exit. That is P2E wearing a felt table.`,
     },
@@ -165,7 +165,7 @@ If a friend forwards a “new Axie” with a higher advertised daily dollar, run
     },
     {
       q: "Is PVPspinArena a play to earn game?",
-      a: "No. It is a crypto PvP casino. You deposit USDC or ETH, play Jackpot, Coinflip or Roulette, and there is no grind token or scholarship.",
+      a: "No. It is a crypto PvP casino. You deposit USDC or ETH, play [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), or [P2P Slott](/slott), and there is no grind token or scholarship.",
     },
     {
       q: "Can I treat P2E earnings like a salary?",
@@ -190,5 +190,5 @@ If a friend forwards a “new Axie” with a higher advertised daily dollar, run
     "coin-hunt-world-review",
     "rollercoin-review",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

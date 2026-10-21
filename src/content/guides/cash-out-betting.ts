@@ -24,11 +24,11 @@ export const guide: Guide = {
       title: "What cash out betting is",
       body: `You placed a bet at one price. Later the book shows a figure it will pay to close that bet. If you accept, the original contract ends. You do not 'lock the same bet.' You sell it. That sale is cash out betting, and it is optional.
 
-Write that down as part of any cash out betting note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+Put today's date on any cash out betting figure you keep. If the logged-in page does not show the cash out betting figure, leave the cell blank. A percent copied from a clip is not a cash out betting source.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+You need to be 18, or older where local law sets a higher age, before any cash out betting stake. This cash out betting page is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, settled in US dollars. It does not sell cash out betting, and a guide is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
+If a cash out betting session turns into chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A new login does not erase a cash out betting limit you already set.
 
 Start in [Sports betting](/guides/topics/sports-betting). Related reading: [what sports betting is](/guides/what-is-sports-betting), [how sports betting works](/guides/how-does-sports-betting-work), [point spread](/guides/point-spread-explained). The product on this site, if you wanted a hashed pot instead, is [responsible gambling](/responsible-gambling).`,
     },
@@ -37,11 +37,11 @@ Start in [Sports betting](/guides/topics/sports-betting). Related reading: [what
       title: "Why the number looks short",
       body: `The figure is built from the book's current price on the remaining chance, minus a margin, and sometimes minus a delay. It will often look smaller than the payout you daydream about. That gap is the product. Comparing it to your original odds without the remaining probability is how people call a fair-looking offer a theft.
 
-Write that down as part of any cash out betting note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+Date the cash out betting note on the day you can still open the live page. Leave a blank when the cash out betting page has no figure. A video is a poor place to borrow a cash out betting percentage.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+Adults only, 18 or the higher local age. Nothing here is a lawyer's letter, a cash out betting code, or a selection. The games on this site, unlike cash out betting, are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Cash out betting is not one of them, and the article is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
+Stop a cash out betting session that has become a chase. The limit is [responsible gambling](/responsible-gambling). Another account does not clear the cash out betting session you already played.
 
 Closing the ticket yourself with a second bet is [hedge betting](/guides/hedge-betting). You choose that stake. The book does not hand you the number.`,
     },
@@ -50,11 +50,11 @@ Closing the ticket yourself with a second bet is [hedge betting](/guides/hedge-b
       title: "The offer can vanish",
       body: `Live prices move. A cash-out quote can expire or reprice while your finger is on it. A failed click is not a settlement. Screenshot the quote only if the bet slip confirms the sale. Until then you still hold the original ticket, for better or worse.
 
-Write that down as part of any cash out betting note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+When you record a cash out betting price, write the date beside it. A cash out betting cell with no logged-in source stays empty. Do not fill a cash out betting blank from a recording.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+Play only at 18, or older if your law requires it, including for cash out betting. This is a cash out betting explainer, not legal advice and not a code to redeem. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, separate from cash out betting. The desk does not offer cash out betting, and these paragraphs are not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
+Chasing a cash out betting loss is the moment to stop. Use [responsible gambling](/responsible-gambling). A second profile is not a new budget.
 
 More on the surrounding ideas: [moneyline](/guides/moneyline-betting-explained), [gambling budget](/guides/gambling-budget).`,
     },
@@ -63,22 +63,22 @@ More on the surrounding ideas: [moneyline](/guides/moneyline-betting-explained),
       title: "Promotions and cash out",
       body: `Free bets and boosts often say cash out cancels the promotion. Read that line before the match, when you are calm. Cashing out a bonus bet and then complaining that the bonus vanished is a rules problem you could have seen.
 
-Write that down as part of any cash out betting note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+Keep the cash out betting date on the same line as the figure. If you cannot open the cash out betting page while logged in, do not invent the percent. A borrowed cash out betting number is worse than a blank cell.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+The age floor for cash out betting is 18, or higher where you live. No cash out betting sentence here is a promo code, a pick, or legal advice. PVPspinArena settles six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in US dollars, separate from cash out betting. It does not operate cash out betting, and a guide cannot license you.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
+Leave the cash out betting session if it starts to feel like a chase. [Responsible gambling](/responsible-gambling) is that boundary. Switching accounts does not reset it.`,
     },
     {
       id: "table",
       title: "Write the two prices",
       body: `Note the original stake, the original price, the cash-out figure, and the time. Two numbers, one decision. If you do not know which event state the quote assumed, you do not understand the sale.
 
-Write that down as part of any cash out betting note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+A cash out betting note without a date is a guess. Confirm the cash out betting figure on a page you can open, or leave the cell blank. Clips do not publish a cash out betting price you can rely on.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+Stay at 18-plus for cash out betting, or the older age your region sets. Treat this cash out betting page as explanation, not as advice, a code, or a tip. The live catalog, which does not include cash out betting, is Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, in US dollars. cash out betting is absent from that catalog, and the page is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
+A chase is a finished cash out betting decision. Stop, and read [responsible gambling](/responsible-gambling). Opening another cash out betting account is not a fresh bankroll.
 
 | Check | What to record for cash out betting |
 | --- | --- |
@@ -91,13 +91,13 @@ If the session starts to feel like chasing, stop. [Responsible gambling](/respon
     {
       id: "stop",
       title: "A pot does not cash out",
-      body: `Jackpot, Coinflip and Roulette on this site resolve when the round resolves. There is no button that sells a coinflip back halfway through a hash. If you wanted that sports feature, it is not here.
+      body: `Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott on this site resolve when the round resolves. There is no button that sells a coinflip back halfway through a hash. If you wanted that sports feature, it is not here.
 
-Write that down as part of any cash out betting note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+Write the cash out betting source and the date before the conclusion. An empty cash out betting cell means the live page did not show the figure. That blank is more honest than a cash out betting percent from a video.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+Eighteen is the cash out betting minimum, unless local law is older. This cash out betting note is not legal advice, not a code, and not a recommendation. Poker at six-max, plus Jackpot, Coinflip, Roulette, and P2P Slott, is what settles in US dollars here, not cash out betting. The site does not sell cash out betting, and the text is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
+If cash out betting play becomes chasing, stop there. [Responsible gambling](/responsible-gambling) holds the limit. A replacement cash out betting account is not a clean record.`,
     },
     {
       id: "close",
@@ -112,9 +112,9 @@ Promotions and cash out. Free bets and boosts often say cash out cancels the pro
 
 Write the two prices. Note the original stake, the original price, the cash-out figure, and the time. Two numbers, one decision.
 
-A pot does not cash out. Jackpot, Coinflip and Roulette on this site resolve when the round resolves. There is no button that sells a coinflip back halfway through a hash.
+A pot does not cash out. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott on this site resolve when the round resolves. There is no button that sells a coinflip back halfway through a hash.
 
-Read that list once, from the top, and stop where a cell is empty. The empty cell is the decision. Filling it from a clip, a chat, or this paragraph is how a cash out betting note turns into an advertisement you wrote for yourself.
+Start at the top of the cash out betting note and stop when a cell has no source. Leave it empty. Borrowing the missing line from a chat is how the note starts selling.
 
 Facts worth dating:
 
@@ -128,13 +128,13 @@ A sportsbook price already contains the book's margin. Research can find a short
 
 Peer markets and exchanges fail differently from a book: you may not get filled, and a lay has a liability. Matched-betting talk is about a promotion's terms, not about a team. This site will not book the event, lay the side, or help anyone skip an identity check.
 
-Do the arithmetic before you call it a bargain. A wagering multiple times the chip is the amount you must bet. A commission comes off the winner. A hold inside the odds is already the cost. An RTP, when a game prints one, is a long-run return, not a promise about tonight. If the live page will not give you the input, the output stays unknown. Unknown is a reason to skip, including when a cash out betting search feels urgent.
+Do the cash out betting arithmetic before you call it a bargain. A wagering multiple times the chip is the amount you must bet. Commission comes off the winner. A hold inside the odds is already the cost. An RTP, when a game prints one, is a long-run return, not a promise about tonight. If the live page will not give you the input, the output stays unknown. Unknown is a reason to skip, including when a cash out betting search feels urgent.
 
-Date the note on the same line as the stake and the loss limit. When the limit is reached, stop. The rest of the reading can wait. Waiting is a finished decision, and opening another logo to repair the feeling is how a short note becomes a second deposit.
+Date the cash out betting note on the same line as the stake and the loss limit. When the limit is reached, stop. The rest of the reading can wait. Waiting is a finished decision, and opening another logo to repair the feeling is how a short note becomes a second deposit.
 
-One clean test beats a pile of tabs. Use the smallest stake the cashier will accept, on the asset and network the cashier names, then withdraw a fraction before you add more. Time it. Save the identifier. If the site asks who you are, answer or leave. Do not shop for a version of cash out betting that skips the question. The question is part of the product.
+Test cash out betting once, cleanly, instead of collecting tabs. The smallest named stake, on the named asset and network, is enough, and a partial withdrawal comes before a larger deposit. Keep the time and the identifier. Identity questions get an answer or an exit. Skipping them is not a feature of cash out betting.
 
-Then close the tab or play only what this site actually offers. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars, adults 18+ only. A second account is not a fresh start.`,
+Close the tab when cash out betting is not on offer here. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars for adults 18 and older. A second profile does not make the earlier limit disappear.`,
     },
   ],
   faqs: [
@@ -171,10 +171,10 @@ Then close the tab or play only what this site actually offers. Jackpot, Coinfli
     "point-spread-explained",
     "moneyline-betting-explained",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
   cta: {
     title: "This site is a pot, not that product",
-    text: "PVPspinArena does not offer the product described on this page. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
+    text: "PVPspinArena does not offer the product described on this page. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
     primary: { to: "/responsible-gambling", label: "Responsible gambling" },
     secondary: { to: "/how-it-works", label: "How this site works" },
   },

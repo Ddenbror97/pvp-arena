@@ -18,13 +18,13 @@ export const guide: Guide = {
     "How to play poker from blinds to showdown: streets, hand rankings, betting actions, rake, and a 5% fee only after the flop.",
   h1: "How to play poker: blinds, streets, showdown and rake",
   answer:
-    "How to play poker is a sequence, not a slogan. You post blinds, receive hole cards, bet through streets, and either fold or go to showdown, where the best five-card hand wins the pot. Skill shows up in which pots you enter and how you size bets. Rake and variance still tax every session. PVPspinArena runs six-max No-Limit Hold'em, plus Jackpot, Coinflip, Roulette, and P2P Slott. The poker fee is 5% of a pot only after a flop.",
+    "How to play poker is a sequence, not a slogan. You post blinds, receive hole cards, bet through streets, and either fold or go to showdown, where the best five-card hand wins the pot. Skill shows up in which pots you enter and how you size bets. Rake and variance still tax every session. PVPspinArena runs six-max No-Limit Hold'em, plus six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. The poker fee is 5% of a pot only after a flop.",
   facts: [
     "A standard poker hand uses a 52-card deck; most online cash games are No-Limit Texas Hold'em.",
     "Each betting street is a chance to fold, check, call, bet or raise before more cards appear.",
     "Showdown compares the best five-card hand each remaining player can make.",
     "Rake is the room's cut of the pot or a time fee; it is how a poker room is paid.",
-    "PVPspinArena does not deal poker. Its live games are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena deals six-max No-Limit Hold'em. Jackpot, Coinflip, Roulette, and P2P Slott are the other live games.",
   ],
   sections: [
     {
@@ -187,7 +187,7 @@ Learning the streets is not hosting. [A home game with a written blind](/guides/
     },
     {
       q: "Does PVPspinArena offer poker tables?",
-      a: "Yes. Six-max No-Limit Hold'em is live. The fee is 5% of a pot only after a flop. Jackpot, Coinflip, Roulette, and P2P Slott are separate games.",
+      a: "Yes. Six-max No-Limit Hold'em is live. The fee is 5% of a pot only after a flop. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are separate games.",
     },
     {
       q: "Is rake cheating?",

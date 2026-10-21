@@ -145,7 +145,7 @@ A useful session ends with the float you set aside, whether that float comes hom
   updated: "2026-09-27",
   cta: {
     title: "This cashier is Base",
-    text: "PVPspinArena does not take SHIB. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars. A SHIB balance in another wallet is not a deposit here.",
+    text: "PVPspinArena does not take SHIB. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars. A SHIB balance in another wallet is not a deposit here.",
     primary: { to: "/wallet", label: "Open the wallet page" },
     secondary: { to: "/how-it-works", label: "How the site works" },
   },

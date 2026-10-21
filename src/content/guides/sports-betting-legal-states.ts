@@ -179,7 +179,7 @@ A restricted-state list on one .lv sportsbook is a house geo rule, not a state c
     },
     {
       q: "Does PVPspinArena offer legal sports betting?",
-      a: "No. It is not a sportsbook in any state. It offers hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. It is not a sportsbook in any state. It offers hashed Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
     },
     {
       q: "Can I use a licensed app while I travel?",

@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Hashing is fast to compute forward but impractical to reverse without guessing the entire high-entropy server seed.",
     "Commitments use SHA-256 on the server seed; bet outcomes usually use HMAC-SHA256 with extra message fields like nonces.",
     "Two different inputs can theoretically collide, but no practical collision attack affects fair gambling checks players run at home.",
-    "PVPspinArena shows a SHA-256 hash of the server seed before Jackpot, Coinflip and Roulette rounds lock betting.",
+    "PVPspinArena shows a SHA-256 hash of the server seed before Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker rounds lock betting.",
   ],
   sections: [
     {
@@ -141,7 +141,7 @@ Players may add a client seed before bets lock. Outcomes then use HMAC with both
 
 ### Round flow on PVPspinArena
 
-Jackpot, Coinflip and [Roulette](/roulette) show the commitment during open betting, then reveal after settlement on the [Fairness](/fairness) page following the [commit-reveal scheme](/guides/commit-reveal-scheme).
+[Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), and [Coinflip](/coinflip) show the commitment during open betting, then reveal after settlement on the [Fairness](/fairness) page following the [commit-reveal scheme](/guides/commit-reveal-scheme).
 
 ### Timing attacks players fear
 
@@ -297,5 +297,5 @@ A hash match only proves the operator revealed the seed they committed. It does 
     "provably-fair-calculator",
     "provably-fair-casino",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

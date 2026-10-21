@@ -116,7 +116,7 @@ A second illustration: you turn 21 at 12:01 a.m. The app may still need a docume
     {
       id: "pvp",
       title: "PVPspinArena is 18+ and still not a book",
-      body: `This site’s games are Jackpot, Coinflip and [Roulette](/roulette). The audience is adults 18 or over. That is a site rule and a responsible-play rule. It does not authorize a 18-year-old to open a 21+ sportsbook, and it does not authorize a 21-year-old to treat this lobby as a moneyline board.
+      body: `This site’s games are [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), and [Jackpot](/). The audience is adults 18 or over. That is a site rule and a responsible-play rule. It does not authorize a 18-year-old to open a 21+ sportsbook, and it does not authorize a 21-year-old to treat this lobby as a moneyline board.
 
 If you arrived from a search for the sports age and you only wanted a hashed pot, stay on the PvP products and read [fairness](/fairness). If you arrived because you are not sure you are old enough for a book, the correct next click is the regulator, not a deposit address.
 
@@ -194,5 +194,5 @@ Terms dated 11 March 2025 sit on a .pa host and still do not name which US state
     "sports-betting-with-crypto",
     "how-to-stop-gambling",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

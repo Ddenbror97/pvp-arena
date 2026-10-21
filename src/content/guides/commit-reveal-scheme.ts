@@ -167,7 +167,7 @@ Old hash functions like MD5 are broken for collisions. Modern systems use SHA-25
 
 ### On PVPspinArena
 
-The [Fairness page](/fairness) does this automatically for Jackpot, Coinflip and Roulette. Enter a finished round number, and your browser hashes the revealed seed and compares it with the stored commitment before recomputing the result.
+The [Fairness page](/fairness) does this automatically for Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip. Enter a finished round number, and your browser hashes the revealed seed and compares it with the stored commitment before recomputing the result.
 
 ### What to do if it does not match
 
@@ -249,5 +249,5 @@ Commit-reveal hides a value until reveal; a [zero-knowledge proof](/guides/zero-
     "provably-fair-games",
     "zero-knowledge-proof-gambling",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
 };

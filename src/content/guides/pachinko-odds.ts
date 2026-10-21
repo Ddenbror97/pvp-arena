@@ -16,7 +16,7 @@ export const guide: Guide = {
     "This guide will not invent a single “Japanese parlour RTP.” Hall settings and exchange rates vary and are not a public lab figure.",
     "Online clones are typically slots or peg boards; those have countable or posted models.",
     "A peg-board cousin you can price is plinko: bin probabilities times posted multiples.",
-    "PVPspinArena does not offer pachinko; the live games are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer pachinko; the live games are six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {

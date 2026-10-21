@@ -22,7 +22,7 @@ export const guide: Guide = {
     "Every posted number embeds a margin. Implied chances across a full market add to more than 100%.",
     "Common tickets are moneyline, point spread, over/under and parlays that stack several legs.",
     "Most recreational bettors lose over time because the vig is a fee on every dollar turned over.",
-    "PVPspinArena is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "PVPspinArena is not a sportsbook. It runs hashed Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -111,7 +111,7 @@ Do not treat a Sunday ticket and a Jackpot share as the same “action.” They 
 | Can you recompute the result from a seed? | No | Yes, after reveal |
 | Where the margin lives | Vig in the odds | Fee on the pot, or a posted house paytable |
 | Information edge | Possible in theory, rare in practice | Not a scouting problem |
-| This site take the bet? | No | Yes, as Jackpot, Coinflip or Roulette |
+| This site take the bet? | No | Yes, as [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), or [Jackpot](/) |
 
 A Coinflip is a 50/50, then a 5% pot fee. That is not a reason to “hedge” a lost spread on a flip. It is a reason to notice that the products are not substitutes.
 
@@ -160,7 +160,7 @@ Stopping is not a review, but the brand people mean is [the book-and-casino bran
     },
     {
       q: "Is PVPspinArena a sportsbook?",
-      a: "No. It does not take team, total or parlay bets. It runs hashed Jackpot, Coinflip and Roulette with USDC or ETH on Base.",
+      a: "No. It does not take team, total or parlay bets. It runs hashed P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette with USDC or ETH on Base.",
     },
     {
       q: "Why do implied probabilities add to more than 100%?",
@@ -197,5 +197,5 @@ Stopping is not a review, but the brand people mean is [the book-and-casino bran
     "sportsbet-io-review",
     "mybookie-casino-review",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

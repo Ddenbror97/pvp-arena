@@ -16,7 +16,7 @@ export const guide: Guide = {
     "The chance a random first tile is safe equals (25 − mines) / 25 on a 25-tile board.",
     "Each extra safe pick is a new conditional probability: remaining safe tiles over remaining tiles.",
     "Cashout multipliers are short-paid versus those survival odds, which is the house edge.",
-    "PVPspinArena does not offer mines; the live games are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer mines; the live games are six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -181,7 +181,7 @@ If you change mine count mid-session, recompute before the next grid. Players tr
       title: "Summary",
       body: `A mines game casino round hides a chosen number of mines on a grid, usually 5×5. Survival probabilities are a falling product of remaining safe tiles over remaining tiles. Cashouts pay less than the reciprocal of that product, and that gap is the house edge. The last tiles are not a bonus level; they are extra negative-EV steps sold with a large number on the screen.
 
-PVPspinArena does not offer mines. Use Jackpot, Coinflip or Roulette when you want a chance you can write down, and use this guide to refuse a grid that will not show its survival math.
+PVPspinArena does not offer mines. Use [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), or [P2P Slott](/slott) when you want a chance you can write down, and use this guide to refuse a grid that will not show its survival math.
 
 Choosing the next tile feels like a system. [Mines strategy](/guides/mines-game-strategy) is the set of those systems. The mine count was already in the round.
 
@@ -234,5 +234,5 @@ If a site sells a “mines predictor,” read [mines predictor](/guides/mines-pr
     "mines-game-strategy",
     "mines-predictor",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

@@ -32,7 +32,7 @@ export const guide: Guide = {
 
 This [poker](/guides/topics/poker) guide is for adults 18+. It will not tell you that you will make money. It will tell you what would have to be true for money to show up in the mean, and why the mean is not tonight.
 
-PVPspinArena cannot host that experiment. It runs [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette). Those have posted prices, not a win rate versus other Hold'em seats.
+PVPspinArena cannot host that experiment. It runs [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), and [six-max poker](/poker). Those have posted prices, not a win rate versus other Hold'em seats.
 
 ### Two clocks people confuse
 
@@ -168,7 +168,7 @@ The satellite-to-Main-Event path that filled the online boom is [Chris Moneymake
     },
     {
       q: "Does PVPspinArena have a poker win rate?",
-      a: "No published win rate. Six-max No-Limit Hold'em is available, and the fee is 5% of a pot only after a flop. Jackpot, Coinflip, and Roulette use posted pot math or a house-banked wheel.",
+      a: "No published win rate. Six-max No-Limit Hold'em is available, and the fee is 5% of a pot only after a flop. P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette use posted pot math or a house-banked wheel.",
     },
     {
       q: "What should I do if I keep losing?",
@@ -190,5 +190,5 @@ The satellite-to-Main-Event path that filled the online boom is [Chris Moneymake
     "how-to-play-poker",
     "chris-moneymaker",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

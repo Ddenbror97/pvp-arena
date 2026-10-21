@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 The wallet screen can look identical. The network dropdown is the whole game. Ethereum gambling for adults 18 or over still needs a budget, honest cashout rules and a clear house or PvP fee. Cheap gas does not make a bet safer.
 
-PVPspinArena is PvP Jackpot, Coinflip and Roulette. It takes **ETH on Base** and **USDC on Base**. It also accepts on-chain Bitcoin. It is not a SOL, LTC, DOGE or USDT casino, and it is not a mainnet-ETH casino. This guide is how ETH deposits, gas and layer 2s work, and how to deposit here without paying mainnet prices. The rest of the cluster is under [crypto payments](/guides/topics/crypto-payments).`,
+PVPspinArena is PvP Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. It takes **ETH on Base** and **USDC on Base**. It also accepts on-chain Bitcoin. It is not a SOL, LTC, DOGE or USDT casino, and it is not a mainnet-ETH casino. This guide is how ETH deposits, gas and layer 2s work, and how to deposit here without paying mainnet prices. The rest of the cluster is under [crypto payments](/guides/topics/crypto-payments).`,
     },
     {
       id: "mainnet",
@@ -153,7 +153,7 @@ If you used a bridge and the claim on Base never happened, that is a bridge-supp
     {
       id: "pvp",
       title: "ETH on PVPspinArena after it credits",
-      body: `Once ETH or USDC credits, your balance is in dollars. Games are Jackpot, Coinflip and Roulette. Platform fees, if any, appear before you join. Withdrawals: $250 daily limit, review over $25, USDC or ETH out on Base.
+      body: `Once ETH or USDC credits, your balance is in dollars. Games are P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. Platform fees, if any, appear before you join. Withdrawals: $250 daily limit, review over $25, USDC or ETH out on Base.
 
 ### After the session
 
@@ -207,5 +207,5 @@ Layer-2 confirmations are fast enough that you can deposit, lose, and deposit ag
     "bitcoin-casino",
     "solana-casino",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

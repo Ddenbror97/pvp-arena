@@ -41,7 +41,7 @@ export const guide: Guide = {
     {
       id: "a-lab-result-is-a-document",
       title: "A lab result is a document",
-      body: "eCOGRA certification is useful when you can point at the document and say what it tested and when. It is decoration when you can only point at a logo. Decoration is allowed on websites. It is a bad reason to fund an account. Read the scope, read the date, and keep the claim as small as the page you actually opened. Then decide, with money you can lose, whether the games themselves are something you understand well enough to play.\n\nThe rest of this subject is on the [Provably fair guides](/guides/topics/provably-fair). See [casino fairness audits](/guides/casino-fairness-audits), [are online casinos rigged](/guides/are-online-casinos-rigged), [provably fair casino](/guides/provably-fair-casino). PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in US dollars. Read [fairness checks](/fairness) before you play.",
+      body: "eCOGRA certification is useful when you can point at the document and say what it tested and when. It is decoration when you can only point at a logo. Decoration is allowed on websites. It is a bad reason to fund an account. Read the scope, read the date, and keep the claim as small as the page you actually opened. Then decide, with money you can lose, whether the games themselves are something you understand well enough to play.\n\nThe rest of this subject is on the [Provably fair guides](/guides/topics/provably-fair). See [casino fairness audits](/guides/casino-fairness-audits), [are online casinos rigged](/guides/are-online-casinos-rigged), [provably fair casino](/guides/provably-fair-casino). PVPspinArena settles jackpot, coinflip, six-max poker, roulette, and P2P Slott in US dollars. Read [fairness checks](/fairness) before you play.",
     },
   ],
   faqs: [
@@ -70,5 +70,5 @@ export const guide: Guide = {
     { label: "eCOGRA — testing and certification services", url: "https://ecogra.org/" },
   ],
   related: ["casino-fairness-audits", "are-online-casinos-rigged"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

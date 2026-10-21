@@ -156,7 +156,7 @@ If you cannot finish the list, do not pay. Play the free chips, or play nothing.
     },
     {
       q: "Can I verify a PokerBros hand on PVPspinArena?",
-      a: "No. This site is not a poker client. Jackpot and Coinflip take 5% of the pot. Roulette is a house wheel. Those checks do not apply to a club app.",
+      a: "No. This site is not a PokerBros client. It deals six-max Hold'em. Jackpot and Coinflip take 5% of the pot. Roulette is a house wheel. Those checks do not verify a club app.",
     },
   ],
   sources: [
@@ -169,5 +169,5 @@ If you cannot finish the list, do not pay. Play the free chips, or play nothing.
     "real-money-poker-apps",
     "crypto-poker",
   ],
-  updated: "2026-10-07",
+  updated: "2026-10-21",
 };

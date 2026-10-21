@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Banker baccarat is still about 1.06%; European red is still about 2.70%; 6:5 blackjack is still expensive.",
     "Pace is slower than instant RNG, so hourly turnover is usually lower for the same stake.",
     "You generally cannot rebuild a physical shoe from a hash the way you can rebuild a committed RNG result.",
-    "PVPspinArena does not offer live dealer; the products are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer live dealer; the products are P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette.",
   ],
   sections: [
     {
@@ -206,5 +206,5 @@ A live roulette show with extra multipliers is [Lightning Roulette](/guides/ligh
     "crazy-time",
     "lightning-roulette",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Human RPS can include exploitable patterns; random server RPS usually does not.",
     "Many “RPS” casino widgets are just reskinned RNG with a fee or edge.",
     "PvP coinflip is a clearer binary duel if you want two-sided stakes.",
-    "PVPspinArena does not offer RPS; it offers Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer RPS; it offers Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -28,11 +28,11 @@ In a park, the game can include timing and pattern reading. Online, many product
 
 This page sits in [CS:GO heritage](/guides/topics/csgo-heritage) beside other duel formats players met in gaming communities. Adults 18+ only. PVPspinArena does not run an RPS table. If you want a cash duel here, use [Coinflip](/coinflip).
 
-Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
+Write the rock paper scissors for money fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three rock paper scissors for money lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from rock paper scissors for money. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
-A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
+A clearer rock paper scissors for money label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
 Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
 
@@ -53,11 +53,11 @@ Add a fee on a PvP pot and the long-run expected value turns negative the same w
 
 [Implied probability](/guides/implied-probability) helps if a site posts RPS side prices instead of a pure peer pot.
 
-Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
+Write the rock paper scissors for money fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three rock paper scissors for money lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from rock paper scissors for money. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
-A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
+A clearer rock paper scissors for money label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
 Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
 
@@ -78,11 +78,11 @@ Most online money widgets do not give you that window. They draw moves with a ge
 
 [How random number generators work](/guides/how-random-number-generators-work) and [provably fair games](/guides/provably-fair-games) are the right technical pages when a site claims fair RPS online.
 
-Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
+Write the rock paper scissors for money fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three rock paper scissors for money lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from rock paper scissors for money. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
-A clearer product label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
+A clearer rock paper scissors for money label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
 
 Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
 
@@ -105,7 +105,7 @@ Long-run cost is the fee or the house edge. Short-run results are noise around t
 
 Only the first can be a true PvP duel, and only if stakes fund the prize. [PvP gambling](/guides/pvp-gambling) is the funding model checklist. [Fake casino sites](/guides/fake-casino-sites) still applies to flashy RPS landing pages from ads.
 
-Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.`,
+Write the rock paper scissors for money fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three rock paper scissors for money lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.`,
     },
     {
       id: "safer-duel",
@@ -162,5 +162,5 @@ Heritage context for duel culture: [CS:GO gambling history](/guides/csgo-gamblin
     },
   ],
   related: ["coin-flip-odds", "pvp-gambling", "provably-fair-games", "house-edge"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

@@ -155,7 +155,7 @@ A feature that locks symbols is a category, not a single RTP. [The hold-and-resp
       title: "Summary",
       body: `Slot machine odds are RTP, hit rate and volatility sitting on a hidden weighted strip. RTP is the cost per dollar spun. Hit rate counts tiny pays. Volatility explains why two 96% games feel unrelated and why one spin is silence. Progressives add a long-shot prize funded by a skim.
 
-PVPspinArena's slot game is P2P Slott, a 1v1 duel. Use this page to stop treating a session as a measurement, and use Jackpot, Coinflip or Roulette when you want the sample space printed next to the bet.
+PVPspinArena's slot game is P2P Slott, a 1v1 duel. Use this page to stop treating a session as a measurement, and use [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), or [P2P Slott](/slott) when you want the sample space printed next to the bet.
 
 See also [loose slots](/guides/loose-slots).`,
     },
@@ -205,5 +205,5 @@ See also [loose slots](/guides/loose-slots).`,
     "megaways-slots",
     "hold-and-win-slots",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

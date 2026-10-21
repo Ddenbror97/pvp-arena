@@ -135,7 +135,7 @@ Riichi clubs in Japan often charge a table fee and keep play social. High-unit g
 3. Stop at the loss cap. Do not raise the unit to "get even."
 4. Settle in full before anyone leaves. IOUs are how friendly games become ugly.
 
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars: Jackpot, [Coinflip](/coinflip) and Roulette. There is no tile skill. A Coinflip is a fair 50/50. Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Results come from committed seeds, and any settled round can be checked on [fairness](/fairness). The parallel with a mahjong table is trust in the shuffle: at a physical table you watch the wash and the cut; on a hashed PvP round you check the reveal.
+PVPspinArena runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), house-banked [Roulette](/roulette), and [P2P Slott](/slott) settled in US dollars. There is no tile skill. A Coinflip is a fair 50/50. Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Results come from committed seeds, and any settled round can be checked on [fairness](/fairness). The parallel with a mahjong table is trust in the shuffle: at a physical table you watch the wash and the cut; on a hashed PvP round you check the reveal.
 
 If the unit has already climbed past what you wrote down, the game is no longer priced entertainment. Stop. Gambling is 18+ and optional.
 
@@ -183,5 +183,5 @@ In the same cluster, see also [dominoes rules](/guides/dominoes-rules) and [mexi
     "expected-value-gambling",
     "mexican-train-rules",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
 };

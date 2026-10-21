@@ -145,7 +145,7 @@ The multiple is easier to see as a total than as a slogan. The [wagering require
     },
     {
       q: "Does PVPspinArena have wagering requirements?",
-      a: "No. There is no welcome bonus and no Sweeps Coin playthrough. You play Jackpot, Coinflip or Roulette with USDC or ETH on Base. The cost is the posted pot fee or the wheel edge, not a hidden multiple. Do not hunt a playthrough bar in settings. It is not there.",
+      a: "No. There is no welcome bonus and no Sweeps Coin playthrough. You play [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), or [P2P Slott](/slott) with USDC or ETH on Base. The cost is the posted pot fee or the wheel edge, not a hidden multiple. Do not hunt a playthrough bar in settings. It is not there.",
     },
     {
       q: "Is a 1× wagering bonus actually free money?",
@@ -175,5 +175,5 @@ The multiple is easier to see as a total than as a slogan. The [wagering require
     "fake-casino-sites",
     "wagering-requirement-calculator",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

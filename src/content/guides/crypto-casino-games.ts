@@ -41,7 +41,7 @@ export const guide: Guide = {
     {
       id: "where-the-catalog-talk-should-go-next",
       title: "Where the catalog talk should go next",
-      body: "The wider family of casino games, including ones a crypto site may not carry, is easier to map when the payment method is set aside. [Online casino games](/guides/online-casino-games) explains the usual categories and what the names refer to, so a tile in a crypto lobby does not get a free pass from an old assumption.\n\nOnce you can see a paytable, the next skill is comparing the price of one ruleset with another. [Best casino game odds](/guides/best-casino-game-odds) shows how to read odds without treating a slogan as a measurement. Use it on the rules in front of you. Do not borrow a number from a different game and pretend it transferred.\n\nKeep the adult boundary on every site you open after this one. Gambling is for people 18 or older, or the age required where you live. Set a dollar limit, take a break when you hit it, and use the responsible-gambling tools the operator publishes if play stops being something you can leave.\n\nThe rest of this subject is on the [Casino games guides](/guides/topics/casino-games). See [online casino games](/guides/online-casino-games), [best casino game odds](/guides/best-casino-game-odds). PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in US dollars. Read [roulette](/roulette) before you play.\n\nAlso read [craps odds](/guides/craps-odds).",
+      body: "The wider family of casino games, including ones a crypto site may not carry, is easier to map when the payment method is set aside. [Online casino games](/guides/online-casino-games) explains the usual categories and what the names refer to, so a tile in a crypto lobby does not get a free pass from an old assumption.\n\nOnce you can see a paytable, the next skill is comparing the price of one ruleset with another. [Best casino game odds](/guides/best-casino-game-odds) shows how to read odds without treating a slogan as a measurement. Use it on the rules in front of you. Do not borrow a number from a different game and pretend it transferred.\n\nKeep the adult boundary on every site you open after this one. Gambling is for people 18 or older, or the age required where you live. Set a dollar limit, take a break when you hit it, and use the responsible-gambling tools the operator publishes if play stops being something you can leave.\n\nThe rest of this subject is on the [Casino games guides](/guides/topics/casino-games). See [online casino games](/guides/online-casino-games), [best casino game odds](/guides/best-casino-game-odds). PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in US dollars. Read [roulette](/roulette) before you play.\n\nAlso read [craps odds](/guides/craps-odds).",
     },
   ],
   faqs: [
@@ -68,5 +68,5 @@ export const guide: Guide = {
   ],
   sources: [],
   related: ["online-casino-games", "best-casino-game-odds"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

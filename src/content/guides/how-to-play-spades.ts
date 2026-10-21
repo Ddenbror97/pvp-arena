@@ -156,7 +156,7 @@ Over a single hand, the deal dominates. Over dozens of games, bidding accuracy a
       title: "From a card table to a hashed PvP round",
       body: `Spades shows two forces that appear in every wager: randomness from the deal and decisions made by players. A fair game needs a fair shuffle that nobody can steer, which is why card clubs use cuts, fresh decks and rotating dealers.
 
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott with no card skill involved: Jackpot, [Coinflip](/coinflip) and Roulette. A Coinflip is a straight 50/50 between two players. Roulette is a shared 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Instead of a dealer's shuffle, each result comes from committed seeds that are revealed after the round, and any settled round can be checked on the [fairness](/fairness) page. The idea is the same as an honest cut of the cards: nobody should be able to know or change the outcome before bets close.
+PVPspinArena runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), house-banked [Roulette](/roulette), and [P2P Slott](/slott) with no card skill involved. A Coinflip is a straight 50/50 between two players. Roulette is a shared 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Instead of a dealer's shuffle, each result comes from committed seeds that are revealed after the round, and any settled round can be checked on the [fairness](/fairness) page. The idea is the same as an honest cut of the cards: nobody should be able to know or change the outcome before bets close.
 
 The difference is that Spades rewards skill over many hands, while a coin flip has no skill edge to find. Treat any money game as entertainment with a cost, and read [expected value in gambling](/guides/expected-value-gambling) if you want to put numbers on that cost.
 
@@ -208,5 +208,5 @@ See also [hearts](/guides/hearts-card-game-rules).`,
     "how-to-play-gin-rummy",
     "hearts-card-game-rules",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
 };

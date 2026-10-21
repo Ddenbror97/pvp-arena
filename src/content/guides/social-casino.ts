@@ -15,7 +15,7 @@ export const guide: Guide = {
     "What a social casino is, how virtual chips differ from Sweeps Coins, why free play still has a house edge, and how that compares with a USDC PvP site.",
   h1: "Social casino: virtual chips, no cash desk, still a house edge",
   answer:
-    "A social casino is a game lobby that uses virtual chips you cannot redeem for money. You play slots or tables for points, streaks and leaderboards. A sweepstakes casino looks similar but adds Sweeps Coins that may cash out. PVPspinArena is neither: it is player-versus-player Jackpot, Coinflip and Roulette with USDC or ETH on Base, not a social casino and not Gold Coins.",
+    "A social casino is a game lobby that uses virtual chips you cannot redeem for money. You play slots or tables for points, streaks and leaderboards. A sweepstakes casino looks similar but adds Sweeps Coins that may cash out. PVPspinArena is neither: it is player-versus-player Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker with USDC or ETH on Base, not a social casino and not Gold Coins.",
   facts: [
     "Social casino chips are entertainment points. They do not become cash on a typical site.",
     "The lobby can still charge you through optional chip packs, ads, or a later sweepstakes layer.",
@@ -61,7 +61,7 @@ That does not make social play “safe” in the habit sense. It makes the loss 
 | Sweepstakes casino | Gold Coins + Sweeps Coins | Sweeps Coins, if terms allow | Coin bundles |
 | Crypto PvP (this site) | USDC or ETH on Base | Withdrawal of the same asset | Deposit to a pot |
 
-This site’s games are Jackpot, Coinflip and Roulette. They are not social slots. If you want a hashed result rather than a points pot, use the [Fairness](/fairness) page after a round — that tool does not exist on a social chip meter.`,
+This site’s games are Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot. They are not social slots. If you want a hashed result rather than a points pot, use the [Fairness](/fairness) page after a round — that tool does not exist on a social chip meter.`,
     },
     {
       id: "edge",
@@ -123,7 +123,7 @@ PVPspinArena will not sell you a chip subscription. A pot is a pot. If you are h
     {
       id: "summary",
       title: "Summary and when to stop",
-      body: `A social casino is virtual chips with no cash desk. A sweepstakes casino adds a redeemable promotional chip. This site is a USDC and ETH PvP room for Jackpot, Coinflip and Roulette. It is not a social casino and it is not Gold Coins.
+      body: `A social casino is virtual chips with no cash desk. A sweepstakes casino adds a redeemable promotional chip. This site is a USDC and ETH PvP room for P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. It is not a social casino and it is not Gold Coins.
 
 You must be 18 or over, or older if your law says so. If chip packs, streaks or a sister “rewards” lobby are already hard to put down, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Points that cannot cash out can still take the evening.
 
@@ -149,7 +149,7 @@ One social sportsbook's promo page did print FLIFFBONUS. [That promo page](/guid
     },
     {
       q: "Does PVPspinArena run a social casino?",
-      a: "No. PVPspinArena does not sell virtual chips or Gold Coins. It runs player-versus-player Jackpot, Coinflip and Roulette funded with USDC or ETH on Base. A dollar here is a pot dollar, not a point. There is no social chip shop and no leaderboard that pays cash.",
+      a: "No. PVPspinArena does not sell virtual chips or Gold Coins. It runs player-versus-player Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip funded with USDC or ETH on Base. A dollar here is a pot dollar, not a point. There is no social chip shop and no leaderboard that pays cash.",
     },
     {
       q: "Why do social casinos sell chip packs if they cannot cash out?",
@@ -177,5 +177,5 @@ One social sportsbook's promo page did print FLIFFBONUS. [That promo page](/guid
     "lotsa-slots-review",
     "bingo-bash-review",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

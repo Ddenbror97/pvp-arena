@@ -26,7 +26,7 @@ export const guide: Guide = {
 
 Learning the words is not about sounding like a regular. It is about reading rules correctly, comparing games fairly and spotting when something is vague on purpose.
 
-This glossary is organised into groups: betting basics, odds and payouts, game formats, provably fair terms, crypto payment terms and responsible play. Where it helps, each term uses an example from the games on PVPspinArena: [Jackpot](/), [Coinflip](/coinflip) and [Roulette](/roulette).
+This glossary is organised into groups: betting basics, odds and payouts, game formats, provably fair terms, crypto payment terms and responsible play. Where it helps, each term uses an example from the games on PVPspinArena: [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), and [P2P Slott](/slott).
 
 If you are completely new, start with our guide on [what a crypto casino is](/guides/what-is-a-crypto-casino), then come back here whenever a word is unclear.`,
     },
@@ -323,5 +323,5 @@ What those words mean at a live table, including tipping and phones, is [casino 
     "best-crypto-gambling-sites",
     "casino-etiquette",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
 };

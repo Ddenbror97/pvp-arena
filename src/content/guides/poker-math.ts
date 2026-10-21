@@ -184,7 +184,7 @@ The same ideas sit under every game in the [poker topic hub](/guides/topics/poke
 - **EV:** [Coinflip](/coinflip) is a 50/50 between two players; the winner takes the pot minus a 5% fee, so the fee is the cost and the coin itself is even.
 - **Edge:** on [Roulette](/roulette), 16 Purple and 16 Silver slots pay 2x and 1 Green pays 14x on a 33-slot wheel. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Purple is (16/33) × 2 = 0.970 per unit staked before the win fee.
 
-Jackpot, Coinflip, and Roulette have no decision that moves the probability: no fold equity, no outs to count, no ICM. Poker does. Every settled round can be recomputed from committed seeds on the [fairness page](/fairness). If a session stops being entertainment, the [responsible gambling](/responsible-gambling) page has limits and help links.`,
+Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip have no decision that moves the probability: no fold equity, no outs to count, no ICM. Poker does. Every settled round can be recomputed from committed seeds on the [fairness page](/fairness). If a session stops being entertainment, the [responsible gambling](/responsible-gambling) page has limits and help links.`,
     },
   ],
   faqs: [
@@ -231,5 +231,5 @@ Jackpot, Coinflip, and Roulette have no decision that moves the probability: no 
     "expected-value-gambling",
     "poker-bankroll-management",
   ],
-  updated: "2026-09-27",
+  updated: "2026-10-21",
 };

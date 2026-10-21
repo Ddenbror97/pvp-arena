@@ -130,7 +130,7 @@ A hashed [Roulette](/roulette) spin is not a review tool for a bad spread. Do no
     {
       id: "not-pvp",
       title: "This site will not complete the last tap",
-      body: `PVPspinArena will not accept the slip. If you followed this how-to and then arrived here expecting a team board, you are in the wrong cashier. Jackpot, Coinflip and Roulette are hashed games. You can watch a live [Jackpot](/) pot or a flip and verify the reveal. You cannot park a Sunday moneyline on this domain.
+      body: `PVPspinArena will not accept the slip. If you followed this how-to and then arrived here expecting a team board, you are in the wrong cashier. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are hashed games. You can watch a live [Jackpot](/) pot or a flip and verify the reveal. You cannot park a Sunday moneyline on this domain.
 
 That split is the point of the cluster. Learn the sports procedure so you do not confuse a juice line with a 2x colour. Use a licensed book if you still want the ticket, in a place where that book is allowed to take you.
 
@@ -165,7 +165,7 @@ Prices that move during the event are a different product from the number you to
     },
     {
       q: "Can I place a sports bet on PVPspinArena?",
-      a: "No. This site is not a sportsbook. It offers hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. This site is not a sportsbook. It offers hashed six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "What should I write down after I bet?",
@@ -192,5 +192,5 @@ Prices that move during the event are a different product from the number you to
     "implied-probability",
     "kelly-criterion",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

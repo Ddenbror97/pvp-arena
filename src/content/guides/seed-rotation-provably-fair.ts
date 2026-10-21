@@ -247,7 +247,7 @@ Rotation discipline is easiest when you treat it like closing a shop till: count
     },
     {
       q: "How does PVPspinArena handle rotation?",
-      a: "Each Jackpot, Coinflip and Roulette round uses its own committed seed that is revealed after settlement, so you are not managing a long-lived pair.",
+      a: "Each Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot round uses its own committed seed that is revealed after settlement, so you are not managing a long-lived pair.",
     },
     {
       q: "What if the revealed seed does not match the hash?",
@@ -267,5 +267,5 @@ Rotation discipline is easiest when you treat it like closing a shop till: count
     "commit-reveal-scheme",
     "hmac-sha256-provably-fair",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

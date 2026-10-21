@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Common props include first blood, first dragon, first baron and kill totals.",
     "A two-way moneyline whose implied chances add above 100% is showing the book's margin.",
     "Drafts, patches and last-minute stand-ins can move a result after you click.",
-    "PVPspinArena does not price LoL series; it runs hashed Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not price LoL series; it runs hashed Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot.",
   ],
   sections: [
     {
@@ -151,7 +151,7 @@ If betting is already taking more time or money than you planned, use [how to st
     },
     {
       q: "Does PVPspinArena offer League of Legends betting?",
-      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. It is not a sportsbook. It runs hashed six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
     },
     {
       q: "Do patches change LoL odds?",
@@ -178,10 +178,10 @@ If betting is already taking more time or money than you planned, use [how to st
     "how-to-bet-on-esports",
     "dota2-betting",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   cta: {
     title: "This site is not a book",
-    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip and Roulette. It does not take LoL bets.",
+    text: "PVPspinArena runs hashed PvP Slott, six-max poker, Jackpot, Coinflip, and Roulette. It does not take LoL bets.",
     primary: { to: "/fairness", label: "Fairness" },
     secondary: { to: "/coinflip", label: "Coinflip" },
   },

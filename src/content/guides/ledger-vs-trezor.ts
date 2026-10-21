@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 Both brands are self-custody devices. You hold the keys. Ledger does not become your bank; Trezor does not become your bank. If that idea is new, start with [self-custody wallet](/guides/self-custody-wallet).
 
-This page is in the [crypto payments](/guides/topics/crypto-payments) cluster. It is for adults aged 18 or over. PVPspinArena is a crypto casino (Jackpot, Coinflip, Roulette, and P2P Slott) that accepts on-chain Bitcoin, and USDC and ETH on Base. We verify a wallet with a signed message. We never ask for a seed.
+This page is in the [crypto payments](/guides/topics/crypto-payments) cluster. It is for adults aged 18 or over. PVPspinArena is a crypto casino (Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott) that accepts on-chain Bitcoin, and USDC and ETH on Base. We verify a wallet with a signed message. We never ask for a seed.
 
 Trezor vs Ledger Nano is the same comparison with an older product name. Nano S, Nano S Plus and Nano X are Ledger’s well-known line. Trezor’s line is Model One, Model T, Safe 3 and Safe 5. Feature tables go stale when a new SKU ships; the chip-and-backup split below lasts longer.`,
     },

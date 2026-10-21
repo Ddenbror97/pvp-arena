@@ -121,7 +121,7 @@ Some casinos have offered a paid one-pass Klondike, sometimes called Las Vegas s
 
 The same split shows up in dice games. [Farkle](/guides/farkle-rules) lets you choose when to bank. [Yahtzee](/guides/yahtzee-rules) lets you choose which box to fill. Klondike lets you choose which legal move to make, and then the face-down cards answer. None of the three removes the shuffle or the dice.
 
-PVPspinArena is a different kind of chance. It runs Jackpot, [Coinflip](/coinflip) and Roulette settled in US dollars, for adults 18+ only. A Coinflip is a 50/50 between two players. Roulette is a 33-slot wheel. Purple and Silver return 32/33 before the win fee, about a 7.88% edge after it, and Green returns 14/33. Jackpot pays from a shared pot, with a win chance equal to your share. Seeds are committed before the round. Any settled round can be checked on the [fairness](/fairness) page. There is no tableau to solve and no redeal to argue about.
+PVPspinArena is a different kind of chance. It runs [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), and [Roulette](/roulette) settled in US dollars, for adults 18+ only. A Coinflip is a 50/50 between two players. Roulette is a 33-slot wheel. Purple and Silver return 32/33 before the win fee, about a 7.88% edge after it, and Green returns 14/33. Jackpot pays from a shared pot, with a win chance equal to your share. Seeds are committed before the round. Any settled round can be checked on the [fairness](/fairness) page. There is no tableau to solve and no redeal to argue about.
 
 If a session stops being a game and starts being a chase, stop. The [responsible gambling](/responsible-gambling) page has limits and tools. A second deal of Klondike will not repair a loss on a coin.
 
@@ -165,5 +165,5 @@ See also [double solitaire](/guides/double-solitaire), [nertz](/guides/nertz-rul
     "52-card-deck",
   ],
   howTo: true,
-  updated: "2026-09-29",
+  updated: "2026-10-21",
 };

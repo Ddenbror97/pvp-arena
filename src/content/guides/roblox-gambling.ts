@@ -84,7 +84,7 @@ If money left a card to an off-platform casino, contact the bank about unauthori
       title: "Safer alternatives",
       body: `Play Roblox as a game: creation, social maps, official events—without side pots. For adult gambling, use age-gated products that state their rules and accept funds you already own, never a child’s Roblox login.
 
-PVPspinArena offers Jackpot, [Coinflip](/coinflip) and Roulette for adults with USDC or ETH on Base. It is not a Roblox casino and will never ask for a Roblox password. Keep those worlds separate.`,
+PVPspinArena offers [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), and [Roulette](/roulette) for adults with USDC or ETH on Base. It is not a Roblox casino and will never ask for a Roblox password. Keep those worlds separate.`,
     },
     {
       id: "extra-depth",
@@ -201,5 +201,5 @@ End every funding or cashout day by locking the wallet, closing extra tabs, and 
     "rbxflip-review",
     "bloxflip-review",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

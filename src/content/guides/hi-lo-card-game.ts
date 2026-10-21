@@ -10,7 +10,7 @@ export const guide: Guide = {
     "Hi lo card game explained: Acey-Deucey / in-between versus casino higher-lower, how the spread sets the price, and typical house-edge shapes.",
   h1: "Hi lo card game: Acey-Deucey, in-between and casino higher-lower",
   answer:
-    "A hi lo card game is not one ruleset. Acey-Deucey and in-between ask whether the next card falls strictly between two up-cards. Casino higher-lower asks whether the next card is above or below one up-card. Those are different sample spaces and different edges. Red Dog is a casino cousin of the spread bet. PVPspinArena does not offer hi-lo — only Jackpot, Coinflip and Roulette.",
+    "A hi lo card game is not one ruleset. Acey-Deucey and in-between ask whether the next card falls strictly between two up-cards. Casino higher-lower asks whether the next card is above or below one up-card. Those are different sample spaces and different edges. Red Dog is a casino cousin of the spread bet. PVPspinArena does not offer hi-lo — only Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
   facts: [
     "Acey-Deucey / in-between: two cards define a spread; you bet the third sits strictly inside.",
     "Casino higher-lower: one card is shown; you pick higher or lower for the next card.",
@@ -189,5 +189,5 @@ The next card still has a price. [Hi-Lo strategy](/guides/hi-lo-strategy) is the
     "double-or-nothing-game",
     "hi-lo-strategy",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

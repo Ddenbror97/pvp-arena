@@ -174,7 +174,7 @@ A mixed check is not a tutorial in trapping. [Trapping with a made hand](/guides
     },
     {
       q: "Does PVPspinArena use GTO?",
-      a: "No. Six-max No-Limit Hold'em is on the site, and the site does not play a GTO strategy for you. Jackpot, Coinflip, and Roulette have no multi-street range to balance.",
+      a: "No. Six-max No-Limit Hold'em is on the site, and the site does not play a GTO strategy for you. P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette have no multi-street range to balance.",
     },
   ],
   sources: [
@@ -192,5 +192,5 @@ A mixed check is not a tutorial in trapping. [Trapping with a made hand](/guides
     "slow-play-poker",
     "phil-hellmuth",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

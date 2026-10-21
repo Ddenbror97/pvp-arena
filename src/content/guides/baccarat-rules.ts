@@ -10,7 +10,7 @@ export const guide: Guide = {
     "How to play baccarat: player, banker and tie rules, the third-card tableau, and why banker is about 1.06% while tie is a much fatter price.",
   h1: "How to play baccarat: banker, player, tie and the real edges",
   answer:
-    "How to play baccarat is simpler than the tuxedos suggest. You bet player, banker or tie before any cards. Each side gets two cards; a third may be drawn from a fixed tableau. Nines beat eights; hands are modulo 10. Banker at 5% commission is about a 1.06% house edge, player about 1.24%, and a typical 8:1 tie about 14.4%. PVPspinArena does not offer baccarat — only Jackpot, Coinflip and Roulette.",
+    "How to play baccarat is simpler than the tuxedos suggest. You bet player, banker or tie before any cards. Each side gets two cards; a third may be drawn from a fixed tableau. Nines beat eights; hands are modulo 10. Banker at 5% commission is about a 1.06% house edge, player about 1.24%, and a typical 8:1 tie about 14.4%. PVPspinArena does not offer baccarat — only P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette.",
   howTo: true,
   facts: [
     "You do not choose hits. The tableau decides every third card.",
@@ -203,5 +203,5 @@ Playing the same game with a wallet is [crypto baccarat](/guides/crypto-baccarat
     "baccarat-strategy",
     "crypto-baccarat",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

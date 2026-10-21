@@ -87,7 +87,7 @@ This section is for guardians and adults. It is not instructions for minors to f
       title: "Safer competitive options",
       body: `Want competition without a pot? Use ranked modes, official competitive paths, and creator maps that do not require side stakes. Want adult wagering with transparent rails? Use age-gated products that state their edge and accept funds you already control—such as crypto casinos you vetted—rather than Fortnite side pots.
 
-PVPspinArena runs Jackpot, [Coinflip](/coinflip) and Roulette with USDC or ETH on Base. It is not a Fortnite site. Keep products separate in your head so ban risk and bankroll risk stay intelligible.`,
+PVPspinArena runs [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), and [Roulette](/roulette) with USDC or ETH on Base. It is not a Fortnite site. Keep products separate in your head so ban risk and bankroll risk stay intelligible.`,
     },
     {
       id: "extra-depth",
@@ -183,5 +183,5 @@ These habits are repetitive on purpose. Repetition is what still works at midnig
     },
   ],
   related: ["esports-betting", "skin-changer-ban-risk", "gambling-age-us", "fake-casino-sites"],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

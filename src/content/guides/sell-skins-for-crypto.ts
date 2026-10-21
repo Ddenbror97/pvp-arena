@@ -173,7 +173,7 @@ Align the cashout network with the spend network. Base USDC for Base play beats 
     },
     {
       q: "Does PVPspinArena buy CS2 skins?",
-      a: "No. Convert elsewhere, then deposit USDC or ETH on Base if you still want to play Jackpot, Coinflip or Roulette.",
+      a: "No. Convert elsewhere, then deposit USDC or ETH on Base if you still want to play [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette).",
     },
   ],
   sources: [
@@ -193,5 +193,5 @@ Align the cashout network with the spend network. Base USDC for Base play beats 
     "steam-trade-hold",
     "lootfarm-review",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

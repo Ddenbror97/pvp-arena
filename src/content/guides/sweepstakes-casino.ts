@@ -16,7 +16,7 @@ export const guide: Guide = {
     "What a sweepstakes casino is, how Gold Coins and Sweeps Coins work, what cash-out playthrough means, and why PVPspinArena is a different product.",
   h1: "Sweepstakes casino: two coins, playthrough, then maybe cash",
   answer:
-    "A sweepstakes casino is a social-style lobby that sells Gold Coins for entertainment and issues Sweeps Coins that can sometimes be redeemed after playthrough. It is not a licensed sportsbook and it is not a crypto cashier. PVPspinArena is player-versus-player Jackpot, Coinflip and Roulette with USDC or ETH on Base. It is not a sweepstakes casino and it does not sell Gold Coins.",
+    "A sweepstakes casino is a social-style lobby that sells Gold Coins for entertainment and issues Sweeps Coins that can sometimes be redeemed after playthrough. It is not a licensed sportsbook and it is not a crypto cashier. PVPspinArena is player-versus-player: P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette with USDC or ETH on Base. It is not a sweepstakes casino and it does not sell Gold Coins.",
   facts: [
     "Most sweepstakes lobbies run two balances: Gold Coins for fun play and Sweeps Coins for promotional play that may redeem.",
     "A purchase usually buys Gold Coins; Sweeps Coins arrive as a promotional allotment with extra rules.",
@@ -136,7 +136,7 @@ A television network's lobby is still a social product. [The network's social lo
     {
       id: "summary",
       title: "Summary and when to stop",
-      body: `A sweepstakes casino is a two-coin promotional lobby: Gold Coins for paid fun play, Sweeps Coins for entries that may redeem after playthrough, identity checks, and a state filter. It is not this site. PVPspinArena runs player-versus-player Jackpot, Coinflip and Roulette with USDC or ETH on Base.
+      body: `A sweepstakes casino is a two-coin promotional lobby: Gold Coins for paid fun play, Sweeps Coins for entries that may redeem after playthrough, identity checks, and a state filter. It is not this site. PVPspinArena runs player-versus-player Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker with USDC or ETH on Base.
 
 Play only if you are 18 or over, can afford the purchase as entertainment, and have read the redeem rules before you pay. If the meter, the chase, or the “one more bundle” loop is already a problem, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Those pages beat another Gold Coin pack.
 
@@ -168,7 +168,7 @@ A brand page asks for the word redeem instead of withdraw. [That wording](/guide
     },
     {
       q: "Does PVPspinArena offer Sweeps Coins?",
-      a: "No. This site does not sell Gold Coins and does not issue Sweeps Coins. Balances are USDC or ETH on Base. Games are Jackpot, Coinflip and Roulette. If you want a two-token sweepstakes lobby, you are on the wrong domain.",
+      a: "No. This site does not sell Gold Coins and does not issue Sweeps Coins. Balances are USDC or ETH on Base. Games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. If you want a two-token sweepstakes lobby, you are on the wrong domain.",
     },
     {
       q: "Why do redemptions get denied?",
@@ -199,5 +199,5 @@ A brand page asks for the word redeem instead of withdraw. [That wording](/guide
     "jackpotjoy-review",
     "gsn-casino-review",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

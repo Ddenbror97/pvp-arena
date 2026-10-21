@@ -17,7 +17,7 @@ export const guide: Guide = {
     "How to play Texas Holdem step by step: hole cards, blinds, the flop, turn and river, every betting action, showdown rules and a worked beginner hand.",
   h1: "How to play Texas Holdem: hole cards, streets and showdown",
   answer:
-    "How to play Texas Holdem is the Hold'em rule sheet: two hole cards, blinds, four betting streets, five community cards, and a showdown that uses the best five-card hand. No-limit means you may shove your stack. The room still takes rake. PVPspinArena runs six-max No-Limit Hold'em, plus Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "How to play Texas Holdem is the Hold'em rule sheet: two hole cards, blinds, four betting streets, five community cards, and a showdown that uses the best five-card hand. No-limit means you may shove your stack. The room still takes rake. PVPspinArena runs six-max No-Limit Hold'em, plus Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott.",
   facts: [
     "Each player gets two private hole cards; the board gets five community cards.",
     "Betting streets are preflop, flop, turn and river, in that order.",
@@ -165,7 +165,7 @@ Write it on a card if you have to: **button = last after flop; blinds = forced m
       title: "Summary: Hold'em is an order of streets, not a paytable",
       body: `How to play Texas Holdem: two hole cards, blinds, preflop action, three flop cards, turn, river, then showdown or an earlier fold. No-limit sizes sit on top of that order. Rake sits on top of the pot.
 
-PVPspinArena does not run this loop. Verify a hashed PvP result on [fairness](/fairness) if you play here; that check is for Jackpot, Coinflip and Roulette, not for a flop. If Hold'em or any other game is already costing more than a planned budget, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Adults 18+ only.
+PVPspinArena does not run this loop. Verify a hashed PvP result on [fairness](/fairness) if you play here; that check is for Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot, not for a flop. If Hold'em or any other game is already costing more than a planned budget, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). Adults 18+ only.
 
 A full deck is the game above. [The 36-card deck](/guides/short-deck-poker) drops twos through fives and is not dealt on these tables.`,
     },
@@ -189,7 +189,7 @@ A full deck is the game above. [The 36-card deck](/guides/short-deck-poker) drop
     },
     {
       q: "Does PVPspinArena have Texas Hold'em tables?",
-      a: "Yes. Six-max No-Limit Hold'em is live, with blinds from $0.02/$0.05 to $5/$10. The fee is 5% of a pot only after a flop. Jackpot, Coinflip, Roulette, and P2P Slott are separate games.",
+      a: "Yes. Six-max No-Limit Hold'em is live, with blinds from $0.02/$0.05 to $5/$10. The fee is 5% of a pot only after a flop. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott are separate games.",
     },
     {
       q: "What happens if two players have the same hand?",
@@ -212,5 +212,5 @@ A full deck is the game above. [The 36-card deck](/guides/short-deck-poker) drop
     "crypto-poker",
     "short-deck-poker",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

@@ -206,7 +206,7 @@ Opening one case and betting cases against someone else are different products. 
     },
     {
       q: "Are these the odds on PVPspinArena?",
-      a: "No. This site does not open CS2 cases. It runs PvP Jackpot, Coinflip and Roulette with crypto on Base.",
+      a: "No. This site does not open CS2 cases. It runs PvP Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker with crypto on Base.",
     },
   ],
   sources: [
@@ -226,7 +226,7 @@ Opening one case and betting cases against someone else are different products. 
     "csgo-trade-up-contract",
     "csgo-case-opening",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   howTo: true,
   widget: "cs2-case-odds",
 };

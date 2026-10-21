@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Client seeds are chosen by the player and mixed into each result.",
     "A nonce is a counter that makes every bet with the same seed pair produce a new result.",
     "Client seeds suit single-player games against the house; shared PvP rounds need one input for everyone.",
-    "PVPspinArena commits a fresh server seed for every Jackpot, Coinflip and Roulette round.",
+    "PVPspinArena commits a fresh server seed for every Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot round.",
   ],
   sections: [
     {
@@ -96,7 +96,7 @@ Shared games usually commit to a single server seed for each round **before any 
 
 ### On PVPspinArena
 
-Every Jackpot, Coinflip and Roulette round has its own 32-byte server seed. Its SHA-256 hash is shown before the round accepts entries. The result is HMAC-SHA256 of the seed with a message containing the game name, round number, draw version and, for Jackpot and Roulette, a counter. There is no client seed or per-player nonce, because every player shares the same result.`,
+Every Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot round has its own 32-byte server seed. Its SHA-256 hash is shown before the round accepts entries. The result is HMAC-SHA256 of the seed with a message containing the game name, round number, draw version and, for Jackpot and Roulette, a counter. There is no client seed or per-player nonce, because every player shares the same result.`,
     },
     {
       id: "trade-offs",
@@ -160,7 +160,7 @@ Revealing a server seed means every past result with it can be checked, but it a
 
 ### Per-round reveal
 
-In shared PvP games, each round's seed is revealed when the round settles. You can verify a Jackpot, Coinflip or Roulette result on PVPspinArena as soon as the round ends. Completed Jackpot rounds also have public audit pages.
+In shared PvP games, each round's seed is revealed when the round settles. You can verify a [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), or [Jackpot](/) result on PVPspinArena as soon as the round ends. Completed Jackpot rounds also have public audit pages.
 
 ### Draw versions
 
@@ -193,7 +193,7 @@ For how to protect yourself from scams more broadly, see the [crypto wallet guid
       title: "Summary",
       body: `A server seed is the site's secret random input, committed with a SHA-256 hash before play and revealed afterwards. A client seed is your own input, often created with a client seed generator, and a nonce counts your bets so each one is unique. Together they stop both the site and the player from controlling the result in single-player games.
 
-Shared PvP games use one server seed per round, committed before anyone joins, because many players share one outcome. PVPspinArena does this for Jackpot, Coinflip and Roulette and lets you verify every settled round. No seed is luckier than another, and no predictor can beat a sound system.
+Shared PvP games use one server seed per round, committed before anyone joins, because many players share one outcome. PVPspinArena does this for Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip and lets you verify every settled round. No seed is luckier than another, and no predictor can beat a sound system.
 
 More provably fair reading lives in our [Provably fair guides](/guides/topics/provably-fair).`,
     },
@@ -238,5 +238,5 @@ More provably fair reading lives in our [Provably fair guides](/guides/topics/pr
     "commit-reveal-scheme",
     "seed-rotation-provably-fair",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
 };

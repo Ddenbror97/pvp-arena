@@ -41,7 +41,7 @@ export const guide: Guide = {
     {
       id: "a-count-is-a-depth-so-treat-it-like-one",
       title: "A count is a depth, so treat it like one",
-      body: "Watch blockchain confirmations until the receiver's rule is met, then stop watching the count and start watching the credit. If the count never starts, change articles and diagnose a stuck or missing broadcast. If the count finishes and the credit never starts, talk to the receiver with the hash. If the fee surprised you, read the fee guide next time before you send, not as a way to edit a block that is already buried.\n\nDepth does not make a wrong address right. A transfer to the wrong place confirms just as calmly as a transfer to the right place. The count is evidence of inclusion. The address field is evidence of destination. Read both.\n\nThe rest of this subject is on the [Crypto payments guides](/guides/topics/crypto-payments). See [stuck crypto transaction](/guides/stuck-crypto-transaction), [crypto casino deposit fees](/guides/crypto-casino-deposit-fees), [crypto wallet for gambling](/guides/crypto-wallet-for-gambling). PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in US dollars. Read [wallet](/wallet) before you play.",
+      body: "Watch blockchain confirmations until the receiver's rule is met, then stop watching the count and start watching the credit. If the count never starts, change articles and diagnose a stuck or missing broadcast. If the count finishes and the credit never starts, talk to the receiver with the hash. If the fee surprised you, read the fee guide next time before you send, not as a way to edit a block that is already buried.\n\nDepth does not make a wrong address right. A transfer to the wrong place confirms just as calmly as a transfer to the right place. The count is evidence of inclusion. The address field is evidence of destination. Read both.\n\nThe rest of this subject is on the [Crypto payments guides](/guides/topics/crypto-payments). See [stuck crypto transaction](/guides/stuck-crypto-transaction), [crypto casino deposit fees](/guides/crypto-casino-deposit-fees), [crypto wallet for gambling](/guides/crypto-wallet-for-gambling). PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in US dollars. Read [wallet](/wallet) before you play.",
     },
   ],
   faqs: [
@@ -73,5 +73,5 @@ export const guide: Guide = {
     },
   ],
   related: ["stuck-crypto-transaction", "crypto-casino-deposit-fees"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

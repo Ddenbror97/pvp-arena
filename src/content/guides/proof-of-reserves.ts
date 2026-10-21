@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 A casino or exchange can publish wallet balances on a block explorer without a Merkle tree. That is a screenshot of addresses, not a proof that those addresses are all the wallets, or that customer IOUs were fully counted.
 
-This [Foundations](/guides/topics/foundations) guide is for adults aged 18 or over. It explains what a POR attestation actually shows, then contrasts it with a hashed PvP result. PVPspinArena is a Jackpot, Coinflip and Roulette site that credits USDC and ETH on Base. On-chain deposits and payouts have hashes you can look up. That is payment evidence. It is not automatically a proof-of-reserves ceremony, and it is not a substitute for the [Fairness](/fairness) page.
+This [Foundations](/guides/topics/foundations) guide is for adults aged 18 or over. It explains what a POR attestation actually shows, then contrasts it with a hashed PvP result. PVPspinArena is a P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette site that credits USDC and ETH on Base. On-chain deposits and payouts have hashes you can look up. That is payment evidence. It is not automatically a proof-of-reserves ceremony, and it is not a substitute for the [Fairness](/fairness) page.
 
 If you are asking [are online casinos rigged](/guides/are-online-casinos-rigged), keep site solvency and game honesty on two lines. A solvent cheat can still tilt an RNG. An insolvent honest hashed pot can still fail to pay. POR talk after 2022 often arrived as a banner on the same week as a new deposit campaign. Read the snapshot date before you increase a balance because a root was tweeted.`,
     },
@@ -174,5 +174,5 @@ Merkle proofs of balances are related to, but not the same as, a [zero-knowledge
     "are-online-casinos-rigged",
     "zero-knowledge-proof-gambling",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

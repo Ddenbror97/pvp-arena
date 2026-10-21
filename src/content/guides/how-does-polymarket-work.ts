@@ -104,7 +104,7 @@ The second table is the same example as the prose, put where you can see the for
       title: "A hashed pot does not resolve an outside event",
       body: `Polymarket pays because a written event met a rule. A hashed player-versus-player pot pays because a committed draw selected a ticket. On [Jackpot](/), the players fund the pot, a fee is taken at settlement, and a seed maps to the winner. There is no Yes share, no USDC election market, and no 63 cent probability display. A news event cannot change the ticket.
 
-[Fairness](/fairness) recomputes that hash after the seed is published. The check is about the draw. It does not audit a prediction-market resolution source, and Polymarket does not publish a Jackpot seed. PVPspinArena does not host these markets. It offers Jackpot, Coinflip, and Roulette, funded with USDC or ETH on Base. This page states no volume and no fee percent for those games.
+[Fairness](/fairness) recomputes that hash after the seed is published. The check is about the draw. It does not audit a prediction-market resolution source, and Polymarket does not publish a Jackpot seed. PVPspinArena does not host these markets. It offers Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip, funded with USDC or ETH on Base. This page states no volume and no fee percent for those games.
 
 Checklist before you buy a share:
 
@@ -151,5 +151,5 @@ Adults 18+ only. Not financial, legal, or tax advice.`,
     "crypto-prediction-markets",
     "election-betting-odds",
   ],
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

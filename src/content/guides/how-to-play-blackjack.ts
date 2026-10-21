@@ -23,7 +23,7 @@ export const guide: Guide = {
     "You act first; busting loses even if the dealer later busts too.",
     "A natural two-card 21 should pay 3:2 on a clean table; 6:5 is a different, more expensive game.",
     "Illustration, not a quote for every felt: six-deck S17 3:2 with a matching chart often leaves about 0.5% house edge.",
-    "PVPspinArena does not deal blackjack; Jackpot, Coinflip and Roulette publish prices without a 21 grid.",
+    "PVPspinArena does not deal blackjack; P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette publish prices without a 21 grid.",
   ],
   sections: [
     {
@@ -182,7 +182,7 @@ Counting is a later skill; the legal status of that skill is [is card counting i
     },
     {
       q: "Does PVPspinArena offer blackjack?",
-      a: "No. PVPspinArena does not deal blackjack. Live games are Jackpot, Coinflip and Roulette.",
+      a: "No. PVPspinArena does not deal blackjack. Live games are P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette.",
     },
     {
       q: "Should I raise bets after I learn the rules?",
@@ -209,5 +209,5 @@ Counting is a later skill; the legal status of that skill is [is card counting i
     "house-edge",
     "is-card-counting-illegal",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

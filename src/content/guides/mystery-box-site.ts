@@ -24,11 +24,11 @@ export const guide: Guide = {
       title: "What a mystery box site sells",
       body: `The page shows a watch, a knife skin, or a console. The contract is a random roll. Mystery box site marketing leans on the picture. The maths leans on the probability of each picture. Those are different objects.
 
-Write that down as part of any mystery box site note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+Put today's date on any mystery box site figure you keep. If the logged-in page does not show the mystery box site figure, leave the cell blank. A percent copied from a clip is not a mystery box site source.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+You need to be 18, or older where local law sets a higher age, before any mystery box site stake. This mystery box site page is not legal advice, not a promo code, and not a pick. PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell mystery box site, and a guide is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
+If a mystery box site session turns into chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A new login does not erase a mystery box site limit you already set.
 
 Start in [CS2 and CS:GO](/guides/topics/csgo-heritage). Related reading: [loot boxes and gambling](/guides/loot-boxes-and-gambling), [Roblox gambling](/guides/roblox-gambling), [Fortnite gambling](/guides/fortnite-gambling). The product on this site, if you wanted a hashed pot instead, is [fairness](/fairness).`,
     },
@@ -37,22 +37,22 @@ Start in [CS2 and CS:GO](/guides/topics/csgo-heritage). Related reading: [loot b
       title: "Odds or it is not a price",
       body: `If the site will not show the chance of each item, you cannot compute an edge. 'Up to' a value is not a probability. A published table can still be stale. Date the table you use. One honest table beats a grid of prizes with no percents.
 
-Write that down as part of any mystery box site note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+Date the mystery box site note on the day you can still open the live page. Leave a blank when the mystery box site page has no figure. A video is a poor place to borrow a mystery box site percentage.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+Adults only, 18 or the higher local age. Nothing here is a lawyer's letter, a mystery box site code, or a selection. The games on this site, unlike mystery box site, are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Mystery box site is not one of them, and the article is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
+Stop a mystery box site session that has become a chase. The limit is [responsible gambling](/responsible-gambling). Another account does not clear the mystery box site session you already played.`,
     },
     {
       id: "rules",
       title: "Resale is the real payout",
       body: `An item listed at a catalog price may sell for much less on a real market. The payout that matters is the price you can get this week, after fees. A box priced below the catalog average and above the resale average is a loss wearing a bargain.
 
-Write that down as part of any mystery box site note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+When you record a mystery box site price, write the date beside it. A mystery box site cell with no logged-in source stays empty. Do not fill a mystery box site blank from a recording.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+Play only at 18, or older if your law requires it, including for mystery box site. This is a mystery box site explainer, not legal advice and not a code to redeem. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, separate from mystery box site. The desk does not offer mystery box site, and these paragraphs are not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
+Chasing a mystery box site loss is the moment to stop. Use [responsible gambling](/responsible-gambling). A second profile is not a new budget.
 
 More on the surrounding ideas: [CS:GO gambling history](/guides/csgo-gambling-history), [skin gambling versus crypto](/guides/skin-gambling-vs-crypto).`,
     },
@@ -61,22 +61,22 @@ More on the surrounding ideas: [CS:GO gambling history](/guides/csgo-gambling-hi
       title: "Skins and chargebacks",
       body: `Skin boxes sit next to case opening. The same problems apply: bot inventories, delayed trades, and sites that look like a brand you know. Read the loot-box and case pages on this site for the wider pattern. Do not send a card payment to a site that will not name a company.
 
-Write that down as part of any mystery box site note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+Keep the mystery box site date on the same line as the figure. If you cannot open the mystery box site page while logged in, do not invent the percent. A borrowed mystery box site number is worse than a blank cell.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+The age floor for mystery box site is 18, or higher where you live. No mystery box site sentence here is a promo code, a pick, or legal advice. PVPspinArena settles six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in US dollars, separate from mystery box site. It does not operate mystery box site, and a guide cannot license you.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
+Leave the mystery box site session if it starts to feel like a chase. [Responsible gambling](/responsible-gambling) is that boundary. Switching accounts does not reset it.`,
     },
     {
       id: "table",
       title: "A table you can actually fill",
       body: `Columns: cost per open, chance of each tier, resale of each tier after fees, and the company name. If resale is blank, the expected value is blank. Do not fill it with the site's own 'value' sticker.
 
-Write that down as part of any mystery box site note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+A mystery box site note without a date is a guess. Confirm the mystery box site figure on a page you can open, or leave the cell blank. Clips do not publish a mystery box site price you can rely on.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+Stay at 18-plus for mystery box site, or the older age your region sets. Treat this mystery box site page as explanation, not as advice, a code, or a tip. The live catalog, which does not include mystery box site, is Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, in US dollars. mystery box site is absent from that catalog, and the page is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.
+A chase is a finished mystery box site decision. Stop, and read [responsible gambling](/responsible-gambling). Opening another mystery box site account is not a fresh bankroll.
 
 | Check | What to record for mystery box site |
 | --- | --- |
@@ -91,11 +91,11 @@ If the session starts to feel like chasing, stop. [Responsible gambling](/respon
       title: "Not a jackpot pot",
       body: `A jackpot on PVPspinArena is a pool of player stakes drawn by a hash. A mystery box is a house selling a random item. Opening a box is not entering that pool.
 
-Write that down as part of any mystery box site note, with today's date. If the figure is not on a page you can open while logged in, leave the cell blank. A blank cell is more honest than a percentage copied from a video.
+Write the mystery box site source and the date before the conclusion. An empty mystery box site cell means the live page did not show the figure. That blank is more honest than a mystery box site percent from a video.
 
-Adults 18+ only. This is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell the product this page describes, and a guide is not a licence.
+Eighteen is the mystery box site minimum, unless local law is older. This mystery box site note is not legal advice, not a code, and not a recommendation. Poker at six-max, plus Jackpot, Coinflip, Roulette, and P2P Slott, is what settles in US dollars here, not mystery box site. The site does not sell mystery box site, and the text is not a licence.
 
-If the session starts to feel like chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A second account is not a reset.`,
+If mystery box site play becomes chasing, stop there. [Responsible gambling](/responsible-gambling) holds the limit. A replacement mystery box site account is not a clean record.`,
     },
     {
       id: "close",
@@ -112,7 +112,7 @@ A table you can actually fill. Columns: cost per open, chance of each tier, resa
 
 Not a jackpot pot. A jackpot on PVPspinArena is a pool of player stakes drawn by a hash. A mystery box is a house selling a random item.
 
-Read that list once, from the top, and stop where a cell is empty. The empty cell is the decision. Filling it from a clip, a chat, or this paragraph is how a mystery box site note turns into an advertisement you wrote for yourself.
+Start at the top of the mystery box site note and stop when a cell has no source. Leave it empty. Borrowing the missing line from a chat is how the note starts selling.
 
 Facts worth dating:
 
@@ -126,13 +126,13 @@ Items, skins and mystery drops are a poor bankroll because the resale price move
 
 If the odds of each prize are not on the page, you do not have a price. If the company will not name itself, you do not have a counterparty. PVPspinArena does not take skins, run a Minecraft lobby, or sell a box.
 
-Do the arithmetic before you call it a bargain. A wagering multiple times the chip is the amount you must bet. A commission comes off the winner. A hold inside the odds is already the cost. An RTP, when a game prints one, is a long-run return, not a promise about tonight. If the live page will not give you the input, the output stays unknown. Unknown is a reason to skip, including when a mystery box site search feels urgent.
+Run the mystery box site numbers first. The multiple times the chip is the stake you still have to place. A commission is deducted from the winner. Odds that hide a hold have already charged you. RTP, if printed, describes a long run and not this session. Missing inputs stay unknown. Urgency around mystery box site is not a reason to guess.
 
-Date the note on the same line as the stake and the loss limit. When the limit is reached, stop. The rest of the reading can wait. Waiting is a finished decision, and opening another logo to repair the feeling is how a short note becomes a second deposit.
+Write the mystery box site stake, the loss limit, and today's date together. Reach the limit and stop. Leave the rest unread for now. A finished stop is the point, because a fresh logo used as comfort becomes the next deposit.
 
-One clean test beats a pile of tabs. Use the smallest stake the cashier will accept, on the asset and network the cashier names, then withdraw a fraction before you add more. Time it. Save the identifier. If the site asks who you are, answer or leave. Do not shop for a version of mystery box site that skips the question. The question is part of the product.
+Test mystery box site once, cleanly, instead of collecting tabs. The smallest named stake, on the named asset and network, is enough, and a partial withdrawal comes before a larger deposit. Keep the time and the identifier. Identity questions get an answer or an exit. Skipping them is not a feature of mystery box site.
 
-Then close the tab or play only what this site actually offers. Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars, adults 18+ only. A second account is not a fresh start.
+Then close the tab or play only what this site actually offers. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, for adults 18+ only. A new mystery box site login does not clear the limit you already hit.
 
 More case shops use the same rule: no borrowed drop rate. The [DaddySkins case note](/guides/daddyskins-review), [BloodyCase](/guides/bloodycase-review) and [FarmSkins](/guides/farmskins-review) stay on that rule. [HypeDrop](/guides/hypedrop-review), [RillaBox as a toy-priced box](/guides/rillabox-review) and the [CSGO.net domain](/guides/csgo-net-review) do too.`,
     },
@@ -173,10 +173,10 @@ More case shops use the same rule: no borrowed drop rate. The [DaddySkins case n
     "daddyskins-review",
     "bloodycase-review",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
   cta: {
     title: "This site is a pot, not that product",
-    text: "PVPspinArena does not offer the product described on this page. Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
+    text: "PVPspinArena does not offer the product described on this page. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
     primary: { to: "/fairness", label: "Read fairness" },
     secondary: { to: "/how-it-works", label: "How this site works" },
   },

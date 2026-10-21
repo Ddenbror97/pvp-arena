@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Hit chances are hypergeometric: C(n,k) × C(80−n, 20−k) / C(80,20), not “1 in 4 because 20/80.”",
     "A 1-spot that pays 3x total on a hit (true p = 20/80) is a 25% house edge.",
     "Multi-spot jackpots fund themselves with fat edges on the catches you actually hit.",
-    "PVPspinArena does not offer keno; the live games are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer keno; the live games are six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {

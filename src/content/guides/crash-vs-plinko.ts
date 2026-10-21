@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Plinko with fair pegs has P(k) = C(n,k)/2^n; house edge = 1 − Σ P(k)m_k for the chosen risk row.",
     "Low crash targets and low plinko risk both reduce variance; high targets and high plinko risk concentrate return in rare tails.",
     "Speed multiplies total action on both originals; edge applies to wagered volume, not deposit size.",
-    "PVPspinArena does not offer crash or plinko; published odds here are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer crash or plinko; published odds here are Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip.",
   ],
   sections: [
     {
@@ -217,5 +217,5 @@ If you are new to originals, price plinko first because the bucket row is finite
     { label: "Wikipedia: Expected value", url: "https://en.wikipedia.org/wiki/Expected_value" },
   ],
   related: ["crash-gambling", "plinko-gambling", "plinko-odds", "house-edge"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

@@ -23,7 +23,7 @@ export const guide: Guide = {
     "The result is derived from the seed with a deterministic formula such as HMAC-SHA256.",
     "After the game the seed is revealed so anyone can recompute the hash and the result.",
     "Provably fair proves the draw was not altered. It does not remove the house edge or fee.",
-    "On PVPspinArena you can check Jackpot, Coinflip and Roulette results on the Fairness page.",
+    "On PVPspinArena you can check Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott results on the Fairness page.",
   ],
   sections: [
     {
@@ -197,5 +197,5 @@ A 590% welcome pack still had no recomputable seed on the docs we opened. [The p
     "casino-fairness-audits",
     "zero-knowledge-proof-gambling",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
 };

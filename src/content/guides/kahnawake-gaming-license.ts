@@ -41,7 +41,7 @@ export const guide: Guide = {
     {
       id: "a-permit-is-a-filter-not-a-strategy",
       title: "A permit is a filter, not a strategy",
-      body: "Use a Kahnawake gaming license as evidence that a named commission lists a named operator, after you have checked the list. Combine that with public game rules, a cashier you have tested with an amount you can afford to lose, and a clear view of whether you are allowed to play at all. Drop any one of those and the others do not repair it.\n\nDo not pay extra for a \"licensed\" table that hides its rules. Do not ignore an operator with a long paper trail because a forum prefers a different country. Do not deposit this month's rent because a commission's name sounded official. The permit is a piece of institutional history attached to a company. Your loss is still your loss.\n\nWhen the session stops being fun, stop. Help for problem gambling is local and health-related. It is not a customer-support queue, and it is not something a gaming commission's logo can handle for you.\n\nThe rest of this subject is on the [Foundations guides](/guides/topics/foundations). See [crypto casino license](/guides/crypto-casino-license), [what is a crypto casino](/guides/what-is-a-crypto-casino). PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in US dollars. Read [responsible gambling](/responsible-gambling) before you play.\n\nAlso read [are online casinos rigged](/guides/are-online-casinos-rigged).",
+      body: "Use a Kahnawake gaming license as evidence that a named commission lists a named operator, after you have checked the list. Combine that with public game rules, a cashier you have tested with an amount you can afford to lose, and a clear view of whether you are allowed to play at all. Drop any one of those and the others do not repair it.\n\nDo not pay extra for a \"licensed\" table that hides its rules. Do not ignore an operator with a long paper trail because a forum prefers a different country. Do not deposit this month's rent because a commission's name sounded official. The permit is a piece of institutional history attached to a company. Your loss is still your loss.\n\nWhen the session stops being fun, stop. Help for problem gambling is local and health-related. It is not a customer-support queue, and it is not something a gaming commission's logo can handle for you.\n\nThe rest of this subject is on the [Foundations guides](/guides/topics/foundations). See [crypto casino license](/guides/crypto-casino-license), [what is a crypto casino](/guides/what-is-a-crypto-casino). PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in US dollars. Read [responsible gambling](/responsible-gambling) before you play.\n\nAlso read [are online casinos rigged](/guides/are-online-casinos-rigged).",
     },
   ],
   faqs: [
@@ -70,5 +70,5 @@ export const guide: Guide = {
     { label: "Kahnawà:ke Gaming Commission", url: "https://gamingcommission.ca/" },
   ],
   related: ["crypto-casino-license"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

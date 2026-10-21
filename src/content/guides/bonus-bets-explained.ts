@@ -29,7 +29,7 @@ People read "free $100" and picture $100 in the cashier. The cashier picture is 
 
 Read the label. Some credits are site credit that does return stake and then locks you into rollover. Some are bonus bets that never return stake and might still be tied to a deposit you made with cash. The deposit is yours and can be lost on other bets. The token is not. Mixing those two in your head is how "free" becomes a deposit you chase.
 
-[Sports betting guides](/guides/topics/sports-betting) holds the market pages. Adults 18+ only. PVPspinArena does not issue sportsbook bonus bets. [Fairness](/fairness) checks Jackpot, Coinflip and Roulette. [Jackpot](/) is a pot, not a free-bet token. [Responsible gambling](/responsible-gambling) applies when a token is the excuse for a deposit you did not plan. [Gambling budget](/guides/gambling-budget) is the ceiling. A token does not raise it.`,
+[Sports betting guides](/guides/topics/sports-betting) holds the market pages. Adults 18+ only. PVPspinArena does not issue sportsbook bonus bets. [Fairness](/fairness) checks Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. [Jackpot](/) is a pot, not a free-bet token. [Responsible gambling](/responsible-gambling) applies when a token is the excuse for a deposit you did not plan. [Gambling budget](/guides/gambling-budget) is the ceiling. A token does not raise it.`,
     },
     {
       id: "payout",
@@ -108,7 +108,7 @@ Casino welcome bonuses with wagering requirements are explained elsewhere. Do no
     {
       id: "not-a-book",
       title: "This site does not issue that token",
-      body: `PVPspinArena will not hand you a $50 sportsbook bonus bet or lay the other side of it. There is no conversion desk. Jackpot, Coinflip and Roulette are the games. [Fairness](/fairness) verifies a reveal. It does not verify a free-bet term.
+      body: `PVPspinArena will not hand you a $50 sportsbook bonus bet or lay the other side of it. There is no conversion desk. Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip are the games. [Fairness](/fairness) verifies a reveal. It does not verify a free-bet term.
 
 If the token's terms are opaque, skip the offer. Opaque is expensive. Adults 18+ only. A banner is not cash, and stake not returned is the reason the banner can say a big number.`,
     },
@@ -132,7 +132,7 @@ If the token's terms are opaque, skip the offer. Opaque is expensive. Adults 18+
     },
     {
       q: "Does PVPspinArena offer sportsbook free bets?",
-      a: "No. This site is not a sportsbook and does not issue bonus bet tokens on teams. Jackpot, Coinflip and Roulette are the games, adults 18+ only. A hashed pot does not pay profit-only on a football price or convert a free-bet face value.",
+      a: "No. This site is not a sportsbook and does not issue bonus bet tokens on teams. P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette are the games, adults 18+ only. A hashed pot does not pay profit-only on a football price or convert a free-bet face value.",
     },
   ],
   sources: [
@@ -141,5 +141,5 @@ If the token's terms are opaque, skip the offer. Opaque is expensive. Adults 18+
     { label: "GambleAware", url: "https://www.gambleaware.org/" },
   ],
   related: ["matched-betting", "casino-bonuses-explained", "gambling-budget", "implied-probability"],
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

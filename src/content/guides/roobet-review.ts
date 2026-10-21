@@ -24,7 +24,7 @@ export const guide: Guide = {
       title: "What a Roobet review can actually settle",
       body: `A roobet review is a buying question: people want to know whether Roobet is worth a deposit. A page that answers with a made-up score is a sales layout. This one answers with checks you can repeat on the operator's own site today. Adults 18+ only. It is not legal advice, not a bonus code, and not a promise that Roobet will pay you.
 
-Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Jackpot, Coinflip and Roulette, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not Roobet, and we do not sell a licence we do not hold.
+Start in [Foundations](/guides/topics/foundations). Read [what a crypto casino is](/guides/what-is-a-crypto-casino) if the lobby language is new, then [Stake alternatives](/guides/stake-alternatives) for the checklist this review borrows. PVPspinArena is a separate product: Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot, funded with USDC or ETH on Base. Open [Coinflip](/coinflip) only if that is the game you meant. We are not Roobet, and we do not sell a licence we do not hold.
 
 Roobet searches often start from a stream. The reviewer job is to ignore the stream and open the rules: originals, slots, cashier, and whether your country is on the allowed list.
 
@@ -162,10 +162,10 @@ Halcyon prints a handling charge of up to 5% and no public bonus code on the pag
     "house-edge",
     "what-is-a-crypto-casino",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
   cta: {
     title: "A pot is not a lobby",
-    text: "Roobet is someone else's casino. PVPspinArena only runs Jackpot, Coinflip and Roulette between players, with USDC or ETH on Base.",
+    text: "Roobet is someone else's casino. PVPspinArena only runs Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip between players, with USDC or ETH on Base.",
     primary: { to: "/coinflip", label: "Open Coinflip" },
     secondary: { to: "/fairness", label: "Read fairness" },
   },

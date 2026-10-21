@@ -101,7 +101,7 @@ A bankroll cap keeps one slate from being the whole plan. Five percent of a $1,0
 
 [Fairness](/fairness) republishes the seed after the round so the hash and the ticket can be recomputed. That page cannot tell you whether a GPP lineup had a high floor. A DFS site does not publish a Jackpot seed, because a lineup is graded by a stat feed and a payout table, not by a committed draw.
 
-PVPspinArena does not run daily fantasy contests and does not sell lineups. Jackpot, Coinflip, and Roulette are the games, played from USDC or ETH on Base. This guide states no site-wide win rate and no fee percent. The contest math above is teaching arithmetic for DFS lobbies, not a description of Jackpot.
+PVPspinArena does not run daily fantasy contests and does not sell lineups. Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot are the games, played from USDC or ETH on Base. This guide states no site-wide win rate and no fee percent. The contest math above is teaching arithmetic for DFS lobbies, not a description of Jackpot.
 
 Checklist before you submit a lineup:
 
@@ -150,5 +150,5 @@ Adults 18+ only. Not financial, legal, or tax advice.`,
     "expected-value-gambling",
     "how-does-prizepicks-work",
   ],
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

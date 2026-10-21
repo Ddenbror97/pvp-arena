@@ -175,7 +175,7 @@ The other video-poker family with its own full-pay chart is [Deuces Wild](/guide
     },
     {
       q: "Does PVPspinArena have video poker?",
-      a: "No video poker. Six-max No-Limit Hold'em is a different game, with a 5% fee only after a flop. Jackpot, Coinflip, and Roulette are separate.",
+      a: "No video poker. Six-max No-Limit Hold'em is a different game, with a 5% fee only after a flop. P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette are separate.",
     },
   ],
   sources: [
@@ -196,5 +196,5 @@ The other video-poker family with its own full-pay chart is [Deuces Wild](/guide
     "joker-poker",
     "double-double-bonus-poker",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

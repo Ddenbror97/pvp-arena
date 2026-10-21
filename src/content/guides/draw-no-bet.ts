@@ -29,7 +29,7 @@ That refund is why the price shrinks. The book is no longer paying you for the r
 
 The [moneyline](/guides/moneyline-betting-explained) in a two-way sport has no draw to remove. Importing that habit into football is how bettors treat the draw as a nuisance instead of a real score. DNB is the product that agrees with them, for a fee built into the shorter odds. [Asian handicap](/guides/asian-handicap) 0 is the same agreement under another name.
 
-[Sports betting guides](/guides/topics/sports-betting) holds the rest of the menu. Adults 18+ only. PVPspinArena is not a sportsbook. [Fairness](/fairness) checks Jackpot, Coinflip and Roulette. [Jackpot](/) is a pot, not a 1X2 coupon. [Responsible gambling](/responsible-gambling) is the stop if a refunded draw sends you hunting a second match to "use the money." A refund is your stake back. It is not a win you are owed to press.`,
+[Sports betting guides](/guides/topics/sports-betting) holds the rest of the menu. Adults 18+ only. PVPspinArena is not a sportsbook. [Fairness](/fairness) checks Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot. [Jackpot](/) is a pot, not a 1X2 coupon. [Responsible gambling](/responsible-gambling) is the stop if a refunded draw sends you hunting a second match to "use the money." A refund is your stake back. It is not a win you are owed to press.`,
     },
     {
       id: "settlement",
@@ -117,7 +117,7 @@ DNB is the smarter soccer bet when the refund is the result you refuse to lose o
     {
       id: "not-a-book",
       title: "A refund is not a pot on this site",
-      body: `PVPspinArena will not book a match, refund a 1–1, or lay handicap 0. Jackpot, Coinflip and Roulette do not settle football. [Fairness](/fairness) verifies a seed reveal. It does not verify a late equalizer.
+      body: `PVPspinArena will not book a match, refund a 1–1, or lay handicap 0. Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot do not settle football. [Fairness](/fairness) verifies a seed reveal. It does not verify a late equalizer.
 
 If draw no bet was the product, a coin will not replace the refund rule. A push on a sportsbook and a void on a postponed match are book rules. They are not a jackpot share.
 
@@ -143,7 +143,7 @@ When a refunded draw makes you open a second match at a worse price, stop. The s
     },
     {
       q: "Can I place draw no bet on PVPspinArena?",
-      a: "No. There is no soccer book here. Jackpot, Coinflip and Roulette are the games, adults 18+ only. A hashed pot does not refund a draw, grade 90 minutes, or pay a three-way price. Fairness checks on this site do not settle a match.",
+      a: "No. There is no soccer book here. Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot are the games, adults 18+ only. A hashed pot does not refund a draw, grade 90 minutes, or pay a three-way price. Fairness checks on this site do not settle a match.",
     },
   ],
   sources: [
@@ -152,5 +152,5 @@ When a refunded draw makes you open a second match at a worse price, stop. The s
     { label: "FIFA", url: "https://www.fifa.com" },
   ],
   related: ["soccer-betting", "asian-handicap", "moneyline-betting-explained", "implied-probability"],
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

@@ -26,7 +26,7 @@ export const guide: Guide = {
 
 This page sits in the [CS:GO heritage](/guides/topics/csgo-heritage) cluster. It is written for adults aged 18 or over who want to understand agent collections, rarity and resale — not for anyone looking to treat cosmetics as a job.
 
-PVPspinArena is not a skin marketplace and does not buy, sell or store agents. It is a crypto player-versus-player site: [Jackpot](/), Coinflip and Roulette, with USDC and ETH on Base. If you later contrast cash PvP with using cosmetics as chips, that split matters: an agent is a Steam item with a fluctuating market, while a USDC stake is a dollar amount you can withdraw to a wallet.
+PVPspinArena is not a skin marketplace and does not buy, sell or store agents. It is a crypto player-versus-player site: [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), and [six-max poker](/poker), with USDC and ETH on Base. If you later contrast cash PvP with using cosmetics as chips, that split matters: an agent is a Steam item with a fluctuating market, while a USDC stake is a dollar amount you can withdraw to a wallet.
 
 Agent skins is a common search phrase. Treat it as a nickname. Technically an agent is a character, not a weapon finish. The market still prices agents like other tradable cosmetics, which is why people lump them in with skins.`,
     },
@@ -192,5 +192,5 @@ Valve can change drop pools, retire a pass, or alter the market fee. None of tho
     "cs2-float-checker",
     "cs2-inventory-value",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

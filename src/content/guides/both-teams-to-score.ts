@@ -29,7 +29,7 @@ That is why the market feels simple and still gets mis-logged. People remember t
 
 Own goals count for the team that is credited on the scoreboard. If the rules of the competition give that goal to the opponent, BTTS sees the goal. You are not grading intent. You are grading the numbers the book uses, which follow the official score.
 
-[Sports betting guides](/guides/topics/sports-betting) is the cluster. Adults 18+ only. PVPspinArena does not price goals. [Fairness](/fairness) checks Jackpot, Coinflip and Roulette. [Jackpot](/) is a pot, not a both-teams ticket. [Responsible gambling](/responsible-gambling) is the page if a 1–0 in the 89th minute sends you into a live BTTS at a rotten number.`,
+[Sports betting guides](/guides/topics/sports-betting) is the cluster. Adults 18+ only. PVPspinArena does not price goals. [Fairness](/fairness) checks P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. [Jackpot](/) is a pot, not a both-teams ticket. [Responsible gambling](/responsible-gambling) is the page if a 1–0 in the 89th minute sends you into a live BTTS at a rotten number.`,
     },
     {
       id: "rules",
@@ -151,7 +151,7 @@ Common mistakes, collected: equating BTTS with the total, parlaying them by refl
     },
     {
       q: "Can I bet both teams to score on PVPspinArena?",
-      a: "No. This site is not a sportsbook and does not grade soccer goals. Jackpot, Coinflip and Roulette are the games, for adults 18+ only. A hashed pot does not settle a 1–1, a clean sheet, or a 90-minute clock. Fairness checks here do not read a scoreboard.",
+      a: "No. This site is not a sportsbook and does not grade soccer goals. Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot are the games, for adults 18+ only. A hashed pot does not settle a 1–1, a clean sheet, or a 90-minute clock. Fairness checks here do not read a scoreboard.",
     },
   ],
   sources: [
@@ -160,5 +160,5 @@ Common mistakes, collected: equating BTTS with the total, parlaying them by refl
     { label: "FIFA", url: "https://www.fifa.com" },
   ],
   related: ["over-under-betting", "soccer-betting", "implied-probability", "draw-no-bet"],
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

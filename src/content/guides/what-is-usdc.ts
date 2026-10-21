@@ -134,7 +134,7 @@ Keep a written [gambling budget](/guides/gambling-budget) before the first 25 US
     {
       id: "summary",
       title: "Summary: Circle's dollar token, your send, the site's ledger",
-      body: `USDC is Circle's dollar stablecoin, reserved and redeemable at the issuer for eligible customers, and issued on several chains. Casinos use it because a dollar in is a dollar on the chip. PVPspinArena accepts USDC and ETH on Base, and on-chain Bitcoin, shows dollars after credit, and is a jackpot, coinflip, roulette, and P2P Slott site — not a USDT or Tron casino.
+      body: `USDC is Circle's dollar stablecoin, reserved and redeemable at the issuer for eligible customers, and issued on several chains. Casinos use it because a dollar in is a dollar on the chip. PVPspinArena accepts USDC and ETH on Base, and on-chain Bitcoin, shows dollars after credit, and is a jackpot, coinflip, roulette, P2P Slott, and six-max poker site — not a USDT or Tron casino.
 
 Check the network, verify the wallet, and keep a budget before the first send.
 

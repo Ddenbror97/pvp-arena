@@ -29,7 +29,7 @@ The seed is a committee's label. It is useful as a map of the bracket. It is not
 
 [Point spread explained](/guides/point-spread-explained) is the handicap. [Moneyline betting](/guides/moneyline-betting-explained) is who wins. [Bracket pool](/guides/bracket-pool) is the friends' sheet that scores picks by round. Those three get confused every March because the television shows one bracket and the book shows a board. They grade differently.
 
-[Sports betting guides](/guides/topics/sports-betting) is the cluster. Adults 18+ only. This is not legal advice and not a card of sides. PVPspinArena does not post tournament lines. [Fairness](/fairness) checks Jackpot, Coinflip and Roulette. [Jackpot](/) is a pot, not a region. [Responsible gambling](/responsible-gambling) is the stop if a first-round loss becomes a live bet you cannot explain.`,
+[Sports betting guides](/guides/topics/sports-betting) is the cluster. Adults 18+ only. This is not legal advice and not a card of sides. PVPspinArena does not post tournament lines. [Fairness](/fairness) checks P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. [Jackpot](/) is a pot, not a region. [Responsible gambling](/responsible-gambling) is the stop if a first-round loss becomes a live bet you cannot explain.`,
     },
     {
       id: "seeds",
@@ -115,7 +115,7 @@ Live tips, kept short: fewer clicks after a bad beat, no parlay built from four 
     {
       id: "not-a-book",
       title: "A bracket on this site is not for sale",
-      body: `PVPspinArena will not book a region, a 12-seed, or a championship future. There is no spread on a college game here. Jackpot, Coinflip and Roulette settle without a tournament clock. [Fairness](/fairness) verifies a reveal. It does not verify a buzzer beater.
+      body: `PVPspinArena will not book a region, a 12-seed, or a championship future. There is no spread on a college game here. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker settle without a tournament clock. [Fairness](/fairness) verifies a reveal. It does not verify a buzzer beater.
 
 March Madness betting, if you do it, belongs at a book you are allowed to use or in a pool whose sheet you can read. Adults 18+ only. When the history is clear and you still cannot name the contract, do not stake. The seed will still be there tomorrow, until that club loses.`,
     },
@@ -139,7 +139,7 @@ March Madness betting, if you do it, belongs at a book you are allowed to use or
     },
     {
       q: "Can I bet March Madness on PVPspinArena?",
-      a: "No. This site is not a sportsbook and does not post tournament spreads, moneylines, or futures. The games are Jackpot, Coinflip and Roulette, adults 18+ only. A hashed round does not grade a seed, a bracket, or a buzzer beater.",
+      a: "No. This site is not a sportsbook and does not post tournament spreads, moneylines, or futures. The games are Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip, adults 18+ only. A hashed round does not grade a seed, a bracket, or a buzzer beater.",
     },
   ],
   sources: [
@@ -148,5 +148,5 @@ March Madness betting, if you do it, belongs at a book you are allowed to use or
     { label: "Wikipedia: Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
   ],
   related: ["bracket-pool", "point-spread-explained", "moneyline-betting-explained", "over-under-betting"],
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

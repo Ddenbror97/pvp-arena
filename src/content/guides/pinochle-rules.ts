@@ -128,7 +128,7 @@ Where adults play pinochle for a stake per point or a set amount on the game, th
       title: "A 250-point play and a hashed coin",
       body: `The 250 points in the play are a closed box. Meld sits on top of them, and the bid is a promise that meld plus your share of that 250 will clear a number. The first of two identical trump cards wins if they meet. If you cannot say how many trump have fallen, you are guessing a bid you already made.
 
-PVPspinArena does not deal pinochle. It runs Jackpot, [Coinflip](/coinflip) and Roulette settled in US dollars, for adults 18+ only. Coinflip is a 50/50 between two players. Roulette is a 33-slot wheel that returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee, a 7.88 percent on Purple or Silver after the win fee edge. Jackpot pays a shared pot by your share of it. Seeds are committed before the round. You can check a settled round on the [fairness](/fairness) page.
+PVPspinArena does not deal pinochle. It runs [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), and [Roulette](/roulette) settled in US dollars, for adults 18+ only. Coinflip is a 50/50 between two players. Roulette is a 33-slot wheel that returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee, a 7.88 percent on Purple or Silver after the win fee edge. Jackpot pays a shared pot by your share of it. Seeds are committed before the round. You can check a settled round on the [fairness](/fairness) page.
 
 There is no meld to argue and no dix to forget. If the points stop being the game, the [responsible gambling](/responsible-gambling) page has the limits. A bigger bid will not repair the last set.
 
@@ -172,5 +172,5 @@ See also [hearts](/guides/hearts-card-game-rules) and [cribbage](/guides/cribbag
     "cribbage-rules",
   ],
   howTo: true,
-  updated: "2026-09-29",
+  updated: "2026-10-21",
 };

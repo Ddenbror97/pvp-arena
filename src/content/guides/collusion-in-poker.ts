@@ -22,7 +22,7 @@ export const guide: Guide = {
     "A team that shares a plan or a bankroll at the same table is still collusion.",
     "Chip dumping is a related fraud. This page names it and does not teach it.",
     "The player response is to leave the table and use the room's report form.",
-    "PVPspinArena does not run poker. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
+    "PVPspinArena deals six-max poker and will not referee a hand from another site. Jackpot, Coinflip, Roulette, and P2P Slott are the other live games.",
   ],
   sections: [
     {
@@ -168,5 +168,5 @@ Collusion in poker is a shared interest against everyone else. Soft play and tea
     },
   ],
   related: ["chip-dumping", "rigged-poker-sites", "how-to-play-poker", "poker-tips"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

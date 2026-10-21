@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Implied probability from decimal odds is 1 ÷ D, before you ask whether that matches reality.",
     "A two-way market whose implied chances sum above 100% is showing overround.",
     "American, decimal and fractional labels are formats; they do not change the contract.",
-    "PVPspinArena does not price teams; it runs hashed PvP Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not price teams; it runs hashed PvP Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -152,7 +152,7 @@ If the slip is the only reason the match is interesting, that is a warning sign.
     },
     {
       q: "Does PVPspinArena publish esports odds?",
-      a: "No. It is not a sportsbook. It offers hashed player-versus-player Jackpot, Coinflip and Roulette.",
+      a: "No. It is not a sportsbook. It offers hashed player-versus-player Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip.",
     },
     {
       q: "Why do prop odds look juicier than the moneyline?",
@@ -182,10 +182,10 @@ If the slip is the only reason the match is interesting, that is a warning sign.
     "esports-betting-sites",
     "live-esports-betting",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   cta: {
     title: "This site is not a book",
-    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip and Roulette. It does not post team odds.",
+    text: "PVPspinArena runs hashed PvP Slott, six-max poker, Jackpot, Coinflip, and Roulette. It does not post team odds.",
     primary: { to: "/fairness", label: "Fairness" },
     secondary: { to: "/coinflip", label: "Coinflip" },
   },

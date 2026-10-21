@@ -10,13 +10,13 @@ export const guide: Guide = {
     "Craps odds on the pass line versus propositions: the 36-pair table, 1.41% line edge, and why any-seven is a 16.67% price on the same cubes.",
   h1: "Craps odds: pass line versus proposition bets on the same cubes",
   answer:
-    "Craps odds start with 36 equally likely two-dice pairs, then a payoff schedule. The pass-line sequence uses those pairs and still keeps about 1.41%. Don’t-pass is about 1.36%. Proposition bets use the same cubes and short-pay hard: any seven at 5x is a 16.67% house edge. The dice can be fair while the chip is not. PVPspinArena does not offer craps — only Jackpot, Coinflip and Roulette.",
+    "Craps odds start with 36 equally likely two-dice pairs, then a payoff schedule. The pass-line sequence uses those pairs and still keeps about 1.41%. Don’t-pass is about 1.36%. Proposition bets use the same cubes and short-pay hard: any seven at 5x is a 16.67% house edge. The dice can be fair while the chip is not. PVPspinArena does not offer craps — only Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot.",
   facts: [
     "Two distinguishable dice make 36 ordered pairs; 7 appears in 6 of them (16.67%).",
     "Pass line is about 1.41% house edge; don’t-pass is about 1.36% because 12 usually pushes.",
     "True odds behind the line, where offered, pay the point’s real ratio and add no extra edge on that extra chip.",
     "Any seven, yo, horn and most hop bets are high-edge propositions on the same 36 pairs.",
-    "PVPspinArena does not offer craps; the live games are Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not offer craps; the live games are six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -191,5 +191,5 @@ Which bets to use, and which to skip, is [craps strategy](/guides/craps-strategy
     "craps-strategy",
     "craps-field-bet",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

@@ -145,7 +145,7 @@ PVPspinArena will not ingest a float. Balances are USDC or ETH on Base. You can 
 
 If someone offers a “float unlock” browser extension that wants your Steam login, close it. You only need a number and this box.
 
-18+ only. A cleaner float is not an edge on Jackpot, Coinflip or Roulette.`,
+18+ only. A cleaner float is not an edge on [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette).`,
     },
     {
       id: "finish-range",
@@ -224,7 +224,7 @@ If two sites disagree on the fourth decimal, believe the inspect payload over a 
     "most-expensive-cs2-skins",
     "cs2-knife-prices",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   howTo: true,
   widget: "cs2-float",
 };

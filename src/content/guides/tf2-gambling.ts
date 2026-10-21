@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Hats and Unusual effects can be worth many keys; their prices move with fashion, not with a pot share.",
     "Steam's Subscriber Agreement restricts using Steam for gambling; third-party TF2 sites sit outside Valve's product.",
     "Skin-era jackpot and coinflip formats were reused for TF2 keys the same way they were for CS skins.",
-    "PVPspinArena does not take TF2 items. It is USDC and ETH on Base, Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not take TF2 items. It is USDC and ETH on Base, Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip.",
   ],
   sections: [
     {
@@ -134,7 +134,7 @@ If the site is a Telegram bot or a cloned lobby, walk away. If play is no longer
       title: "Keys are items. Pots should be cash",
       body: `TF2 gambling is skin gambling with a different backpack: keys as chips, hats as jackpot filler, bots as cashiers, and Steam's rules hanging over the trade. Site risk and ToS risk sit on top of ordinary minus-EV games.
 
-PVPspinArena will not take a Mann Co. key. Convert to USDC or ETH on Base if you want Jackpot, Coinflip or Roulette here. Keep the Unusual on the account you actually play TF2 with.
+PVPspinArena will not take a Mann Co. key. Convert to USDC or ETH on Base if you want [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), or [Coinflip](/coinflip) here. Keep the Unusual on the account you actually play TF2 with.
 
 A cash pot will not make you a better Pyro. It will not make the Unusual rarer. It only stops the site from being an extra appraiser between you and a number you can write down. If that is not worth a sell, keep the hat and skip the queue. Write the dollar number once. Then decide.`,
     },
@@ -181,5 +181,5 @@ A cash pot will not make you a better Pyro. It will not make the Unusual rarer. 
     },
   ],
   related: ["pvp-gambling", "rust-gambling", "rust-skin-prices", "csgo-coinflip", "cs2-roulette"],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

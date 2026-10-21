@@ -135,7 +135,7 @@ Encode a third player who uses Table A’s rules and stands every 16 versus 7–
     {
       id: "live",
       title: "What you can verify here instead",
-      body: `You do not need a blackjack simulator to price Jackpot, Coinflip or Roulette. The probabilities are on the screen. [How to play blackjack](/guides/how-to-play-blackjack) remains a rules walkthrough for other sites. [How many decks in blackjack](/guides/how-many-decks-blackjack) explains why an “infinite deck” setting in someone else’s sim belongs next to eight-deck, not next to a 1970s single-deck story.
+      body: `You do not need a blackjack simulator to price [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), or [Jackpot](/). The probabilities are on the screen. [How to play blackjack](/guides/how-to-play-blackjack) remains a rules walkthrough for other sites. [How many decks in blackjack](/guides/how-many-decks-blackjack) explains why an “infinite deck” setting in someone else’s sim belongs next to eight-deck, not next to a 1970s single-deck story.
 
 If a YouTube description says “our sim proves blackjack is beatable online”, ask three questions: When is the shoe rebuilt? What does a natural pay? Which chart and error rate? If the answers are “every hand”, “6:5”, and “I eyeball it”, the sim is a trailer, not a lab.
 
@@ -200,5 +200,5 @@ A sim that prints a ruin percentage is estimating [risk of ruin](/guides/risk-of
     "card-counting",
     "risk-of-ruin",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

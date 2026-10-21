@@ -29,7 +29,7 @@ The point is not motivation. The point is arithmetic you can audit. Net profit w
 
 This is not a bankroll-management guide. It does not tell you what fraction of a roll to put on a spread. Sizing is a different subject. Here the stake column is a fact about a ticket you already placed, or are about to place. The loss limit you refuse to cross lives on [gambling budget](/guides/gambling-budget). Use that page for the ceiling. Use this page for the rows under it.
 
-[Sports betting guides](/guides/topics/sports-betting) is the cluster if the markets themselves are still fuzzy. Adults 18+ only. PVPspinArena is not a sportsbook, so it will not fill this sheet for you. [Fairness](/fairness) checks Jackpot, Coinflip and Roulette. [Jackpot](/) is a pot with a different kind of record. [Responsible gambling](/responsible-gambling) matters more than a perfect spreadsheet if you are logging to justify the next deposit.`,
+[Sports betting guides](/guides/topics/sports-betting) is the cluster if the markets themselves are still fuzzy. Adults 18+ only. PVPspinArena is not a sportsbook, so it will not fill this sheet for you. [Fairness](/fairness) checks P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. [Jackpot](/) is a pot with a different kind of record. [Responsible gambling](/responsible-gambling) matters more than a perfect spreadsheet if you are logging to justify the next deposit.`,
     },
     {
       id: "columns",
@@ -109,7 +109,7 @@ Spotting leaks is sorting, not a new strategy. Sort by market. Sort by live vers
     {
       id: "not-a-book",
       title: "A spreadsheet is not a sportsbook",
-      body: `PVPspinArena will not store your hockey prices or compute a closing line. The games here are Jackpot, Coinflip and Roulette. [Fairness](/fairness) lets you check a reveal. It does not grade a run line. [Jackpot](/) is a pot you can watch settle. It is not a wager log for a league.
+      body: `PVPspinArena will not store your hockey prices or compute a closing line. The games here are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. [Fairness](/fairness) lets you check a reveal. It does not grade a run line. [Jackpot](/) is a pot you can watch settle. It is not a wager log for a league.
 
 Keep the template small so you will actually fill it. Six columns beat a dashboard you abandon on Sunday. Adults 18+ only. If the sheet becomes a way to argue yourself into a larger stake, close it and keep the loss limit instead.`,
     },
@@ -133,7 +133,7 @@ Keep the template small so you will actually fill it. Six columns beat a dashboa
     },
     {
       q: "Does PVPspinArena track sportsbook bets?",
-      a: "No. This site is not a sportsbook and does not log team prices. Jackpot, Coinflip and Roulette are the games, adults 18+ only. Use your own sheet for sports wagers placed somewhere else. Fairness tools here check hashed rounds, not a closing line.",
+      a: "No. This site is not a sportsbook and does not log team prices. Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot are the games, adults 18+ only. Use your own sheet for sports wagers placed somewhere else. Fairness tools here check hashed rounds, not a closing line.",
     },
   ],
   sources: [
@@ -143,5 +143,5 @@ Keep the template small so you will actually fill it. Six columns beat a dashboa
   ],
   related: ["closing-line-value", "gambling-budget", "implied-probability", "moneyline-betting-explained"],
   widget: "bet-tracker",
-  updated: "2026-10-06",
+  updated: "2026-10-21",
 };

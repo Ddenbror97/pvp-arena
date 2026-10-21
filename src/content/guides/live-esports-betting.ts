@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Implied probability is still 1 ÷ decimal odds; live does not remove overround.",
     "Stream delay and feed delay are part of the product, not an edge you can VPN away.",
     "Cash-out is another shaded price, not a fairness feature.",
-    "PVPspinArena does not take in-play match bets; it runs hashed Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not take in-play match bets; it runs hashed Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot.",
   ],
   sections: [
     {
@@ -156,7 +156,7 @@ PVPspinArena will not price your live futures. If you come here after an in-play
     },
     {
       q: "Does PVPspinArena offer live esports betting?",
-      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. It is not a sportsbook. It runs hashed Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott.",
     },
     {
       q: "Do I need live betting to bet on esports?",
@@ -184,10 +184,10 @@ PVPspinArena will not price your live futures. If you come here after an in-play
     "esports-betting-sites",
     "live-betting-strategy",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   cta: {
     title: "This site is not a book",
-    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip and Roulette. It does not take live match bets.",
+    text: "PVPspinArena runs hashed PvP Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot. It does not take live match bets.",
     primary: { to: "/fairness", label: "Fairness" },
     secondary: { to: "/coinflip", label: "Coinflip" },
   },

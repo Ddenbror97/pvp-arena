@@ -41,7 +41,7 @@ export const guide: Guide = {
     {
       id: "a-short-notebook-before-you-pay",
       title: "A short notebook before you pay",
-      body: "Keep the notebook dull. Legal name. Rules date. Statement descriptor. Expiry quotes for each coin. The redemption minimum as a number, copied, not remembered. Whether identity documents are required before the first prize request. Whether support will issue a ticket id. Two or three complaint themes, each with a date, or a note that public history is too thin to show a theme.\n\nIf any line is blank, you are deciding with a gap. You can still decide. You should know which gap you accepted. A new brand’s gap is wider than an old brand’s gap because fewer prize cycles have been visible. That is the whole point of treating “new” as its own reading, separate from a general quality checklist.\n\nRe-open the notebook when the rules date changes. A site that was acceptable on Monday can publish a harder expiry on Thursday. Your screenshot is the comparison. Set a USD stop before the first package, and stop when you hit it.\n\nThe rest of this subject is on the [Sweepstakes guides](/guides/topics/sweepstakes). See [best sweepstakes casinos](/guides/best-sweepstakes-casinos), [new crypto casinos](/guides/new-crypto-casinos), [sweepstakes casino](/guides/sweepstakes-casino). PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in US dollars. Read [responsible gambling](/responsible-gambling) before you play.",
+      body: "Keep the notebook dull. Legal name. Rules date. Statement descriptor. Expiry quotes for each coin. The redemption minimum as a number, copied, not remembered. Whether identity documents are required before the first prize request. Whether support will issue a ticket id. Two or three complaint themes, each with a date, or a note that public history is too thin to show a theme.\n\nIf any line is blank, you are deciding with a gap. You can still decide. You should know which gap you accepted. A new brand’s gap is wider than an old brand’s gap because fewer prize cycles have been visible. That is the whole point of treating “new” as its own reading, separate from a general quality checklist.\n\nRe-open the notebook when the rules date changes. A site that was acceptable on Monday can publish a harder expiry on Thursday. Your screenshot is the comparison. Set a USD stop before the first package, and stop when you hit it.\n\nThe rest of this subject is on the [Sweepstakes guides](/guides/topics/sweepstakes). See [best sweepstakes casinos](/guides/best-sweepstakes-casinos), [new crypto casinos](/guides/new-crypto-casinos), [sweepstakes casino](/guides/sweepstakes-casino). PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in US dollars. Read [responsible gambling](/responsible-gambling) before you play.",
     },
   ],
   faqs: [
@@ -68,5 +68,5 @@ export const guide: Guide = {
   ],
   sources: [],
   related: ["best-sweepstakes-casinos", "new-crypto-casinos"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

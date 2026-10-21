@@ -131,7 +131,7 @@ You want both when you can get both. If you can only get one, know which questio
 
 A lab certificate on an RNG is a third artefact. It says a sample of output looked unbiased in a test last year. It does not bind today's server, and it does not name your payout wallet. People paste all three — licence, lab, hash — into one sentence. Keep them apart.
 
-PVPspinArena publishes fairness so you can check Jackpot, Coinflip and Roulette. Open [fairness](/fairness). A footer seal would not replace that page, and that page does not replace your local law.
+PVPspinArena publishes fairness so you can check Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. Open [fairness](/fairness). A footer seal would not replace that page, and that page does not replace your local law.
 
 A license is not a token price, and a hash is not either. [The meme-token casino name](/guides/wsm-casino-review) gets no investment note and no bonus.`,
     },
@@ -159,7 +159,7 @@ Read the [terms](/terms) for the legal wrapper we actually publish. Use the veri
 
 A future licence page, if we add one, will be a lookup you can repeat — not a gold badge in a screenshot. Until you can repeat a lookup, treat marketing as marketing.
 
-Hashed results on Jackpot, Coinflip and Roulette answer the spin. They do not answer whether you are allowed to play from your chair. Do not treat a commit-reveal as a permission slip. Do not treat a permission slip as a commit-reveal. Adults keep those files in different folders.
+Hashed results on P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette answer the spin. They do not answer whether you are allowed to play from your chair. Do not treat a commit-reveal as a permission slip. Do not treat a permission slip as a commit-reveal. Adults keep those files in different folders.
 
 If you need a responsible-gambling stop, the licence footer will not provide it. Use the [responsible gambling](/responsible-gambling) page and the tools where you live.
 
@@ -233,5 +233,5 @@ Token 81 and the about page do not have to name the same company until you check
     "aml-gambling",
     "wsm-casino-review",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

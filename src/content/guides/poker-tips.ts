@@ -22,7 +22,7 @@ export const guide: Guide = {
     "Most beginner losses are extra calls, not missed bluffs.",
     "A tip that ignores rake is incomplete.",
     "Tilt turns one bad beat into a second buy-in; that is optional.",
-    "This site does not deal poker. Tips here are for rooms that do.",
+    "This site deals six-max No-Limit Hold'em. The tips below are habits, not a promise about the next hand.",
   ],
   sections: [
     {
@@ -167,7 +167,7 @@ Keep the list short enough to obey when you are losing. A long list you abandon 
     },
     {
       q: "Does PVPspinArena need poker tips?",
-      a: "The Hold'em tables are six-max no-limit, with a 5% fee only after a flop. These tips are general advice, not a promise about those tables. Jackpot, Coinflip, and Roulette publish pot shares or colour prices instead.",
+      a: "The Hold'em tables are six-max no-limit, with a 5% fee only after a flop. These tips are general advice, not a promise about those tables. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker publish pot shares or colour prices instead.",
     },
   ],
   sources: [
@@ -182,5 +182,5 @@ Keep the list short enough to obey when you are losing. A long list you abandon 
     "poker-for-beginners",
     "poker-bankroll-management",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

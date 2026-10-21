@@ -21,7 +21,7 @@ export const guide: Guide = {
     "You are betting on a real contest: form, stand-ins and rare integrity problems can all matter.",
     "Settlement follows the book's rules and a data feed, not a casino seed you can recompute.",
     "A crypto cashier changes how you deposit, not the nature of the book.",
-    "PVPspinArena does not take match bets; it runs hashed Jackpot, Coinflip and Roulette.",
+    "PVPspinArena does not take match bets; it runs hashed P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette.",
   ],
   sections: [
     {
@@ -33,7 +33,7 @@ The opponent is the book, not the other bettors watching the same stream. Other 
 
 This page sits in the [esports betting topic](/guides/topics/esports-betting). The product explainer is [esports betting](/guides/esports-betting). The shopper's scorecard is [esports betting sites](/guides/esports-betting-sites). Here the job is narrower: what the institution is, how it makes money, and why a hashed PvP round is not a substitute.
 
-Adults 18+ only, or the higher legal age where you live. PVPspinArena does not operate a book. It runs [Jackpot](/), [Coinflip](/coinflip) and Roulette with USDC or ETH on Base. If a search mixed "esports sportsbook" with this brand, keep reading for the contrast, not for a line on tonight's match.
+Adults 18+ only, or the higher legal age where you live. PVPspinArena does not operate a book. It runs [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), and [Jackpot](/) with USDC or ETH on Base. If a search mixed "esports sportsbook" with this brand, keep reading for the contrast, not for a line on tonight's match.
 
 A sportsbook can sit inside a larger casino lobby. That does not merge the contracts. The match ticket is still a price on an external fact. The slot or the hashed pot is still an internal game. Mixing them after a lost map is how people double a bad night. The [how to bet on esports](/guides/how-to-bet-on-esports) walkthrough is the click sequence if you still want a book ticket. This page is the institution.`,
     },
@@ -139,7 +139,7 @@ If betting is already taking more time or money than you planned, use [how to st
     },
     {
       q: "Does PVPspinArena operate an esports sportsbook?",
-      a: "No. It runs hashed Jackpot, Coinflip and Roulette. It does not set team odds or settle maps.",
+      a: "No. It runs hashed Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip. It does not set team odds or settle maps.",
     },
     {
       q: "Can I verify a sportsbook ticket like a provably fair round?",
@@ -170,10 +170,10 @@ If betting is already taking more time or money than you planned, use [how to st
     "how-to-bet-on-esports",
     "house-edge",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
   cta: {
     title: "This site is not a book",
-    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip and Roulette. It does not operate an esports sportsbook.",
+    text: "PVPspinArena runs hashed PvP Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. It does not operate an esports sportsbook.",
     primary: { to: "/fairness", label: "Fairness" },
     secondary: { to: "/coinflip", label: "Coinflip" },
   },

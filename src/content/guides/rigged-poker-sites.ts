@@ -22,7 +22,7 @@ export const guide: Guide = {
     "If you cannot name the poker software, you cannot tell who is responsible for the shuffle.",
     "A tiny site with a crowded lobby of instant, silent accounts is a reason to close the tab.",
     "Cheating hurts the other seats. This page will not teach anyone how to rig a game.",
-    "PVPspinArena runs six-max No-Limit Hold'em. The other live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
+    "PVPspinArena runs six-max No-Limit Hold'em. The other live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
   ],
   sections: [
     {
@@ -96,7 +96,7 @@ You are not expected to audit source code. You are expected to notice when there
 
 This table is a refusal list, not a build guide. It will not tell you how a client should shuffle. It tells you when you lack the facts a player needs.
 
-[Provably fair games](/guides/provably-fair-games) describe a commit-and-reveal style used on some crypto games. A poker site that never mentions anything like it, and also never names a conventional provider, has given you no story you can check. Silence is not the same as a proof. The [fairness](/fairness) page on this site explains Jackpot, Coinflip, Roulette, and P2P Slott. It is not a certificate for someone else's poker client.`,
+[Provably fair games](/guides/provably-fair-games) describe a commit-and-reveal style used on some crypto games. A poker site that never mentions anything like it, and also never names a conventional provider, has given you no story you can check. Silence is not the same as a proof. The [fairness](/fairness) page on this site explains Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott. It is not a certificate for someone else's poker client.`,
     },
     {
       id: "lobby",
@@ -123,7 +123,7 @@ You cannot, from the outside, stare at a few hands and prove a deck was stacked.
 
 People sometimes confuse a house-banked game with a cheated poker room. In video poker or a house table, the paytable is the opponent and the edge is printed. In a player-versus-player cash game the house should make its money from a published rake, not from secret holes. If a site blurs those, read [crypto poker](/guides/crypto-poker) for the player-versus-player shape and keep this page for the trust checks.
 
-PVPspinArena does not deal poker. Its public notes on [fairness](/fairness) cover the games it does run. Borrowing that language to bless a third-party poker app would be a mistake. If the poker site cannot explain itself, walk away before the first buy-in. Adults 18+. One failure is enough for your own money.
+PVPspinArena deals six-max No-Limit Hold'em against other players. Its public notes on [fairness](/fairness) cover the games it runs. Borrowing that language to bless a third-party poker app would be a mistake. If the poker site cannot explain itself, walk away before the first buy-in. Adults 18+. One failure is enough for your own money.
 
 A rigged-site test is not a verdict on one hand. [The 2022 streamed hand](/guides/garrett-adelstein) stays an argument, not a finding that cheating was proved.`,
     },
@@ -141,7 +141,7 @@ What a report can include is what you observed: the stall, the missing company n
 - Do not treat a big loss as evidence you must win it back tonight.
 - If gambling is no longer a choice you can pause, use [responsible gambling](/responsible-gambling).
 
-This site still only offers Jackpot, Coinflip and Roulette. The [poker topic](/guides/topics/poker) is for rules, bankroll, and strategy under the assumption that the game is what it says. That assumption is yours to reject before you fund the account.
+This site also runs Jackpot, Coinflip, Roulette, and P2P Slott beside six-max Hold'em. The [poker topic](/guides/topics/poker) is for rules, bankroll, and strategy under the assumption that the game is what it says. That assumption is yours to reject before you fund the account.
 
 Rigged poker sites are a trust problem you can often see from the footer, the cashier, and the lobby. You do not have to catch a dealer in the act. You have to be willing to leave while your balance is still in your own wallet.`,
     },
@@ -165,7 +165,7 @@ Rigged poker sites are a trust problem you can often see from the footer, the ca
     },
     {
       q: "Does PVPspinArena host poker tables?",
-      a: "No. PVPspinArena runs Jackpot, Coinflip and Roulette for adults 18+. It does not operate a poker room and it cannot investigate one.",
+      a: "Yes. Six-max No-Limit Hold'em, plus Jackpot, Coinflip, Roulette, and P2P Slott, for adults 18+. It cannot investigate a third-party poker app.",
     },
   ],
   sources: [
@@ -189,5 +189,5 @@ Rigged poker sites are a trust problem you can often see from the footer, the ca
     "are-online-casinos-rigged",
     "garrett-adelstein",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

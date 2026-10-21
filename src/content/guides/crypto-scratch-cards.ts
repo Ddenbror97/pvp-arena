@@ -21,7 +21,7 @@ export const guide: Guide = {
     "RTP equals the long-run share of card prices returned as prizes; house edge is 100% minus RTP.",
     "Physical lottery scratchers often return well under 80% of sales as prizes; online cards vary and must be read per title.",
     "The scratch animation does not generate the result; the RNG or a pre-printed prize does.",
-    "PVPspinArena does not sell scratch cards. It runs Jackpot, Coinflip and Roulette in USDC and ETH on Base.",
+    "PVPspinArena does not sell scratch cards. It runs Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip in USDC and ETH on Base.",
   ],
   sections: [
     {
@@ -176,7 +176,7 @@ The foil is allowed to be fun. It is not allowed to be a mystery table. If the c
     },
     {
       q: "Does PVPspinArena sell scratch cards?",
-      a: "No. It offers Jackpot, Coinflip and Roulette. There is no instant-win foil product.",
+      a: "No. It offers Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip. There is no instant-win foil product.",
     },
     {
       q: "Does scratching slowly change the odds?",
@@ -206,5 +206,5 @@ The foil is allowed to be fun. It is not allowed to be a mystery table. If the c
     "plinko-gambling",
     "plinko-odds",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

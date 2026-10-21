@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Fair cash-out at h pays 1 divided by P(reach h); posted multipliers sit below that.",
     "Difficulty settings that add bombs per row change survival, not the sign of EV on a consistent table.",
     "Cashing out early lowers variance; climbing late raises it while RTP stays near the banner on clean math.",
-    "PVPspinArena does not offer tower games; Jackpot, Coinflip and Roulette are live here.",
+    "PVPspinArena does not offer tower games; Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot are live here.",
   ],
   sections: [
     {
@@ -205,7 +205,7 @@ Write the invert result on the same sticky note as your rung cap. If the math sa
     },
     {
       q: "Does PVPspinArena have a tower game?",
-      a: "No. Live games are Jackpot, Coinflip, Roulette, and P2P Slott.",
+      a: "No. Live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
     },
   ],
   sources: [
@@ -222,5 +222,5 @@ Write the invert result on the same sticky note as your rung cap. If the math sa
     "variance-in-gambling",
     "loss-aversion-gambling",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

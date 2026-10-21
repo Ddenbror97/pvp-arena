@@ -41,7 +41,7 @@ export const guide: Guide = {
     {
       id: "keeping-the-term-in-its-lane",
       title: "Keeping the term in its lane",
-      body: 'People search "AML gambling" hoping for a loophole, a definition, or a promise that licensed sites are safe. The definition is the operator\'s anti-money-laundering program. There is no loophole section coming. Safety is not what the acronym measures. AML can coexist with a rigged game, a slow cashier, or a fair game that still has a house edge. It can be absent at a site that pays quickly until the day it does not.\n\nUse the term to understand why a licensed cashier asks questions. Use the license guide to understand what the paper adds. Use the no-KYC guide to understand the privacy sales pitch. Then bet only what you are prepared to lose, or do not bet. The controls are not your edge.\n\nThe rest of this subject is on the [Foundations guides](/guides/topics/foundations). See [no kyc casino](/guides/no-kyc-casino), [crypto casino license](/guides/crypto-casino-license), [what is a crypto casino](/guides/what-is-a-crypto-casino). PVPspinArena settles jackpot, coinflip, roulette, and P2P Slott in US dollars. Read [responsible gambling](/responsible-gambling) before you play.',
+      body: 'People search "AML gambling" hoping for a loophole, a definition, or a promise that licensed sites are safe. The definition is the operator\'s anti-money-laundering program. There is no loophole section coming. Safety is not what the acronym measures. AML can coexist with a rigged game, a slow cashier, or a fair game that still has a house edge. It can be absent at a site that pays quickly until the day it does not.\n\nUse the term to understand why a licensed cashier asks questions. Use the license guide to understand what the paper adds. Use the no-KYC guide to understand the privacy sales pitch. Then bet only what you are prepared to lose, or do not bet. The controls are not your edge.\n\nThe rest of this subject is on the [Foundations guides](/guides/topics/foundations). See [no kyc casino](/guides/no-kyc-casino), [crypto casino license](/guides/crypto-casino-license), [what is a crypto casino](/guides/what-is-a-crypto-casino). Six-max poker, jackpot, coinflip, roulette, and P2P Slott settle at PVPspinArena in US dollars. Read [responsible gambling](/responsible-gambling) before you play.',
     },
   ],
   faqs: [
@@ -68,5 +68,5 @@ export const guide: Guide = {
   ],
   sources: [],
   related: ["no-kyc-casino", "crypto-casino-license"],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

@@ -153,7 +153,7 @@ If step 2 used Ethereum by accident, do not send that USDC to the site. Move it 
 
 If you are still funding from Coinbase.com, treat the withdrawal network as the whole game. Base is the chain this site watches. Everything else is a delay or a loss until you correct it.
 
-When you are ready to play, open PvP Jackpot, Coinflip or Roulette with a budget you wrote down before the first deposit. A working Coinbase Wallet setup does not change the odds. It only changes whether the dollars you meant to risk actually arrive. If a prompt ever asks you to approve unlimited USDC “so the casino can settle faster,” reject it and leave. That is not how this site pays or receives money.`,
+When you are ready to play, open PvP [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), or [P2P Slott](/slott) with a budget you wrote down before the first deposit. A working Coinbase Wallet setup does not change the odds. It only changes whether the dollars you meant to risk actually arrive. If a prompt ever asks you to approve unlimited USDC “so the casino can settle faster,” reject it and leave. That is not how this site pays or receives money.`,
     },
   ],
   faqs: [
@@ -195,5 +195,5 @@ When you are ready to play, open PvP Jackpot, Coinflip or Roulette with a budget
     "self-custody-wallet",
     "cold-wallet-vs-hot-wallet",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-21",
 };

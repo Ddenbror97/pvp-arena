@@ -149,7 +149,7 @@ Our [are online casinos rigged guide](/guides/are-online-casinos-rigged) has a l
     {
       id: "pvpspinarena",
       title: "How PVPspinArena handles randomness",
-      body: `PVPspinArena uses a provably fair commit-reveal protocol for Jackpot, Coinflip, Roulette, and P2P Slott.
+      body: `PVPspinArena uses a provably fair commit-reveal protocol for Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott.
 
 ### Jackpot and Coinflip
 

@@ -258,7 +258,7 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     },
     {
       q: "Can I use skins on PVPspinArena?",
-      a: "No. PVPspinArena uses USDC on Base, with balances shown in USD. It offers Jackpot, Coinflip and Roulette formats inspired by the CS:GO era.",
+      a: "No. PVPspinArena uses USDC on Base, with balances shown in USD. It offers six-max poker, P2P Slott, Jackpot, Coinflip, and Roulette. Jackpot and Coinflip echo the CS:GO-era pots.",
     },
   ],
   sources: [
@@ -281,5 +281,5 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     "fortnite-gambling",
     "roblox-gambling",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-21",
 };

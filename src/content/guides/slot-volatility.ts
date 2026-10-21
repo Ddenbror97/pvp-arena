@@ -205,7 +205,7 @@ One Hacksaw page marks volatility 5/5 and prints 96.30%, 92.40%, and 88.40% on t
     },
     {
       q: "Does PVPspinArena have high-volatility slots?",
-      a: "No. This site's slot game is P2P Slott, a 1v1 duel. Jackpot, Coinflip and Roulette have published chances instead of hidden feature intervals.",
+      a: "No. This site's slot game is P2P Slott, a 1v1 duel. Jackpot, Coinflip, Roulette, and six-max poker have published chances instead of hidden feature intervals.",
     },
   ],
   sources: [
