@@ -115,6 +115,12 @@ Acting first, your check gives that information away. Pagat says the flop round 
 
 How PvP compares: a flop bet is a decision among players. [Poker](/poker) here is six-max No-Limit Hold'em, and the fee is 5% of the pot only after a flop, whether you bet or check.
 
+The cash list is eight tables. Micro is $0.02/$0.05 and $0.05/$0.10, buy-in $2 to $10. Low is $0.10/$0.25 and $0.25/$0.50, buy-in $10 to $50.
+
+Mid is $0.50/$1 and $1/$2, buy-in $40 to $250. High is $2/$5, buy-in $200 to $500. VIP is $5/$10, buy-in $400 to $1,000.
+
+Each decision lasts 20 seconds. Uncalled chips come back before the fee, so a preflop fold does not pay the 5%.
+
 A settled hand can be recomputed on the [fairness page](/fairness). That check does not grade your flop choice, and it does not pay you for a good texture.
 
 | Board, from glossary language | What is on it | What a continuation is not |
@@ -213,5 +219,5 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
     "icm-poker",
     "gto-poker-strategy",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

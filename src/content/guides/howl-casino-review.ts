@@ -109,6 +109,12 @@ A house-banked casino prices a game against its book. This site prices a pot bet
 
 How PvP compares: their article describes a seed on their games. [Coinflip](/coinflip) is a pot on this site. Two $50 stakes make a $100 pot, the fee is $5, and the winner receives $95.
 
+The second player has to match that stake exactly and takes the other side. One bit of HMAC-SHA256 over the committed seed picks the winner, so each side is 50% before the fee.
+
+The coin on screen shows the stored bit.
+
+On [Jackpot](/), every cent is one ticket. A $10 entry in a $100 pot is 10% of the tickets, and the winner receives the pot minus 5%.
+
 Check that round on the [fairness page](/fairness). The page audits this site's commit. It does not audit Genius Touch BV.
 
 Purple and Silver roulette here are about a 7.88% edge after the 5% win fee.
@@ -226,5 +232,5 @@ Who should stay out: anyone under 18, anyone in a place on their list, anyone wh
     "house-edge",
     "cash-tornado-slots-review",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

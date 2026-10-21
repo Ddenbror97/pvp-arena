@@ -91,6 +91,10 @@ A $20 Purple stake that wins pays $40 before the fee. Five percent of $40 is $2,
 
 Most Purple stakes lose the $20. The edge is about 7.88%, from 16/33 times 1.90, minus 1.
 
+A $10 Green stake that hits pays 14 times the stake, which is $140. Five percent of $140 is $7, so the credit is $133. The terms put that long-run return near 40.30% after the fee, about a 59.70% edge, because Green is 1 slot in 33.
+
+The wheel on screen shows the slot the committed seed already stored.
+
 That is a larger percent than 2.70%, on a different wheel, with a different bet. It is not a rescue from the Bond layout, and the Bond layout is not offered here.
 
 A settled round can be recomputed on the [fairness page](/fairness). The check matches this site's seed. It does not audit a 37-pocket wheel.
@@ -204,5 +208,5 @@ The [terms](/terms) list this site's 33-slot wheel and its fee. They do not list
     "house-edge",
     "live-dealer-casino",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

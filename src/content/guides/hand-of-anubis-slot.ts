@@ -119,6 +119,14 @@ If a later studio page adds an RTP, that page becomes the sheet. Until then, the
 
 How PvP compares: the pyramid post does not price a spin with a printed return. [P2P Slott](/slott) prices a reel duel against another player and takes 10% of a winning pot.
 
+The duel is a 5 by 4 grid, six spins each. Five paylines score a left-to-right run: three of a kind times 5, four times 15, and five times 50. Common symbols score 1 point, rare 2, epic 4, legendary 8, and WILD 10.
+
+Anubis and Horus are common symbols on that grid, worth 1 point each. The names are this site's art. They are not the Hacksaw title.
+
+Three WILDs add 20% of the stake to the shared pot, four add 50%, five add 100%, and six or more add 300%. A per-match cap can reduce that award.
+
+A bomb ends the match and the house keeps both stakes. A lasting tie refunds both stakes with no fee.
+
 Roulette on this site uses 33 pockets, with 16 Purple, 16 Silver, and 1 Green. Purple and Silver pay 2x, then 5% comes off that winning payout, so a hit keeps 1.90 times the stake.
 
 Sixteen divided by 33, times 1.90, minus 1, is about −0.0788. That is the 7.88% edge. Green pays 14x, and this page does not quote a Green edge.
@@ -217,5 +225,5 @@ PVPspinArena does not offer this title. If play stops being a bounded spend, cal
     "gamblers-fallacy",
     "slot-machine-odds",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };

@@ -107,6 +107,10 @@ You can lose with aces full and still receive nothing, if the room has no such p
 
 How PvP compares: the side prize is an extra pool taken with the rake. [Poker](/poker) here charges 5% of the pot only after a flop, and that fee is the whole posted price.
 
+The lobby [Jackpot](/) is a different pot. Every cent is one ticket, so a $10 entry in a $100 pot is 1,000 tickets out of 10,000. The winner receives the pot minus 5%, and a $200 pot pays $190.
+
+Entries lock when the timer ends. A 3-2-1 countdown plays, then the wheel shows the ticket the committed seed already picked. That draw does not pay a beaten full house.
+
 There is no second prize when aces full loses. A settled hand can be recomputed on the [fairness page](/fairness). That check does not audit a card-club meter.
 
 | Question | Glossary page | Natural8 house rules | This site |
@@ -206,5 +210,5 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
     "pineapple-poker",
     "poker-bankroll-management",
   ],
-  updated: "2026-10-20",
+  updated: "2026-10-21",
 };
