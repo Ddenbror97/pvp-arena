@@ -146,7 +146,7 @@ Cash pots often pay a percentage to the room up to a cap. Some clubs charge time
 
 Before you sit, read: stakes, no-limit or not, rake or time, kill or jackpot drop if any, and whether the buy-in is short or full. A $2/$5 table with a $100 max is a different game from $2/$5 with a $1,000 max. The rules of cards are the same. The stack-depth rules of decisions are not.
 
-Kill pots and jackpot drops, when present, take extra chips from qualifying pots. They are still rules you pay. A “bad beat jackpot” drop is not free insurance. It is another line on the sticker. If you cannot find the drop, ask before you sit, the same way you ask the rake cap.
+Kill pots and jackpot drops, when present, take extra chips from qualifying pots. They are still rules you pay. A [side prize for a beaten full house](/guides/bad-beat-jackpot) is not free insurance. It is another line on the sticker. If you cannot find the drop, ask before you sit, the same way you ask the rake cap.
 
 ### Straddles and extras
 

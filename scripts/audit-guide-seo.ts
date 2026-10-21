@@ -122,9 +122,11 @@ function add(f: Omit<Finding, "implemented">) {
 
 const incomingBody = new Map<string, number>();
 const incomingRelated = new Map<string, number>();
+const outgoingGuideLinks = new Map<string, number>();
 for (const g of GUIDES) {
   incomingBody.set(g.slug, 0);
   incomingRelated.set(g.slug, 0);
+  outgoingGuideLinks.set(g.slug, 0);
 }
 
 const titleOwners = new Map<string, string[]>();
@@ -166,7 +168,10 @@ for (const g of GUIDES) {
         add({ sourceFile: file, sourceUrl: url, destinationUrl: l.href, issue: "self-link", severity: "low", cluster: g.cluster, evidence: `anchor "${l.anchor}"`, recommendedFix: "Remove the self-link." });
       } else if (!published.has(dest)) {
         add({ sourceFile: file, sourceUrl: url, destinationUrl: l.href, issue: "broken-guide-link", severity: "high", cluster: g.cluster, evidence: `anchor "${l.anchor}"`, recommendedFix: "Point the link at a published guide." });
-      } else incomingBody.set(dest, (incomingBody.get(dest) ?? 0) + 1);
+      } else {
+        incomingBody.set(dest, (incomingBody.get(dest) ?? 0) + 1);
+        outgoingGuideLinks.set(g.slug, (outgoingGuideLinks.get(g.slug) ?? 0) + 1);
+      }
     } else if (l.kind === "hub") {
       const dest = l.href.slice("/guides/topics/".length);
       if (!topics.has(dest)) {
@@ -306,6 +311,7 @@ const report = {
   },
   inventory: {
     publishedGuides: GUIDES.length,
+    legacyGuides: GUIDES.length - newestGuides.length,
     expectedAbout: 1040,
     discrepancy: GUIDES.length - 1040,
     hubsDefined: CLUSTERS.length,
@@ -315,6 +321,14 @@ const report = {
     newestNotInGuides: newestMissingFromRegistry,
     guidesAudited: GUIDES.length,
     coverage: 1,
+    draftsExcluded: "Files on disk that are not imported into GUIDES are not published and are not linked.",
+    zeroIncomingBodyLinks: GUIDES.filter((g) => (incomingBody.get(g.slug) ?? 0) === 0).length,
+    zeroContextualGuideOutlinks: GUIDES.filter((g) => (outgoingGuideLinks.get(g.slug) ?? 0) === 0).length,
+    zeroRelatedSlugs: GUIDES.filter((g) => g.related.length === 0).length,
+    clustersWithoutPillar: CLUSTERS.filter((c) => !GUIDES.some((g) => g.cluster === c.name && g.pillar)).map((c) => c.name),
+    brokenGuideLinks: findings.filter((f) => f.issue === "broken-guide-link" || f.issue === "broken-related" || f.issue === "broken-hub-link").length,
+    duplicateSlugs: GUIDES.length - new Set(GUIDES.map((g) => g.slug)).size,
+    guideRedirectRoutes: "None. src/routes has no redirect from /guides. Canonicals are /guides/$slug.",
   },
   issueCounts: Object.fromEntries([...byIssue.entries()].sort((a, b) => b[1] - a[1])),
   findings,
