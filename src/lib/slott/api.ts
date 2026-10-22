@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { listenTopic, markChannel } from "@/lib/live-channel";
+import { listenTopic, markChannel, noteChannelEvent } from "@/lib/live-channel";
 
 // slot_* tables are newer than the generated Database types; rows are typed here.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -236,6 +236,8 @@ export function useSlotRealtime(gameId?: number) {
       "game:slot",
       (_event, payload) => {
         const row = payload as { id?: number; status?: string };
+        noteChannelEvent("slot");
+        if (row?.id != null) noteChannelEvent(`slot:${Number(row.id)}`);
         qc.invalidateQueries({ queryKey: ["slot-open"] });
         qc.invalidateQueries({ queryKey: ["slot-live"] });
         if (row?.id != null) {

@@ -30,9 +30,9 @@ export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const { GUIDES, publishedTopics } = await import("@/content/guides");
+        const { allGuideMeta, publishedTopics } = await import("@/lib/guides/catalog");
         const entries: string[] = STATIC_PATHS.map((p) => urlEntry(p));
-        for (const g of GUIDES) entries.push(urlEntry(`/guides/${g.slug}`, g.updated));
+        for (const g of allGuideMeta()) entries.push(urlEntry(`/guides/${g.slug}`, g.updated));
         for (const t of publishedTopics()) entries.push(urlEntry(`/guides/topics/${t.slug}`));
 
         const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries.join("\n")}\n</urlset>\n`;

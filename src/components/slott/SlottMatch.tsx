@@ -4,12 +4,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArrowLeft, CheckCircle2, Gem, ShieldCheck, XCircle } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { serverOffset, useNow, useServerClock, useWalletRealtime } from "@/lib/jackpot/api";
+import { serverOffset, useServerClock, useWalletRealtime } from "@/lib/jackpot/api";
 import { formatUsd } from "@/lib/jackpot/math";
 import { friendlyError } from "@/lib/jackpot/errors";
 import { useBotConfig } from "@/lib/bots";
 import { emitSound } from "@/lib/sound";
-import { channelLive } from "@/lib/live-channel";
+import { channelFresh, channelLive } from "@/lib/live-channel";
+import { SLOT_FRESH_MS, slotRefetchMs } from "@/lib/slott/poll";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
 import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
 import type { PrestigeIdentity } from "@/lib/prestige/api";
@@ -64,6 +65,7 @@ import { TargetChip } from "./SpinFx";
 import { scoreFxEndMs } from "./strike";
 import { reelValues, TALLY_STEP_MS, tallyEndMs, tallyStartMs } from "./tally";
 import { IDLE_GRID, landedAt, presentSpinStart, spinArrivedLive, type ReelSpin } from "./timing";
+import { useNextInstant } from "./moment";
 
 const Celebration = lazy(() =>
   import("@/components/jackpot/Celebration").then((m) => ({ default: m.Celebration })),
@@ -102,7 +104,6 @@ export function SlottMatch({ id }: { id: number }) {
       window.removeEventListener("focus", refresh);
     };
   }, [id, qc]);
-  const serverNow = useServerClock();
   const live = (s?: string) => s === "ACTIVE" || s === "SETTLEMENT";
   const gq = useQuery({
     queryKey: ["slot", id],
@@ -112,11 +113,13 @@ export function SlottMatch({ id }: { id: number }) {
         () => qc.getQueryData<SlotGameView | null>(["slot", id]),
         preferNewerSlotGame,
       ),
-    refetchInterval: (q) => {
-      const liveFeed = channelLive("slot");
-      if (q.state.data?.status === "WAITING") return liveFeed ? 8000 : 4000;
-      return live(q.state.data?.status) ? (liveFeed ? 4000 : 1500) : false;
-    },
+    refetchInterval: (q) =>
+      slotRefetchMs({
+        kind: "game",
+        status: q.state.data?.status,
+        channelUp: channelLive("slot"),
+        fresh: channelFresh(`slot:${id}`, SLOT_FRESH_MS, Date.now(), "slot"),
+      }),
   });
   const g = gq.data ?? null;
   const sq = useQuery({
@@ -128,13 +131,25 @@ export function SlottMatch({ id }: { id: number }) {
         mergeSlotSpins,
       ),
     enabled: !!g && g.status !== "WAITING",
-    refetchInterval: live(g?.status) ? (channelLive("slot") ? 4000 : 1500) : false,
+    refetchInterval: () =>
+      slotRefetchMs({
+        kind: "spins",
+        status: g?.status,
+        channelUp: channelLive("slot"),
+        fresh: channelFresh(`slot:${id}`, SLOT_FRESH_MS, Date.now(), "slot"),
+      }),
   });
   const bq = useQuery({
     queryKey: ["slot-bonus", id],
     queryFn: () => fetchSlotBonuses(id),
     enabled: !!g && g.status !== "WAITING",
-    refetchInterval: live(g?.status) ? (channelLive("slot") ? 8000 : 3000) : false,
+    refetchInterval: () =>
+      slotRefetchMs({
+        kind: "bonus",
+        status: g?.status,
+        channelUp: channelLive("slot"),
+        fresh: channelFresh(`slot:${id}`, SLOT_FRESH_MS, Date.now(), "slot"),
+      }),
   });
   const identities = usePrestigeIdentities(
     [g?.creator_id, g?.opponent_id].filter((x): x is string => !!x),
@@ -142,8 +157,7 @@ export function SlottMatch({ id }: { id: number }) {
   const spins = sq.data ?? [];
   const bonuses = bq.data ?? [];
 
-  const now = Date.now();
-  const snow = serverNow();
+  const offset = serverOffset();
   const me = g ? seatOf(g, userId) : null;
   const spinMs = g?.spin_ms ?? 3200;
   const latest = spins.length ? spins[spins.length - 1]! : null;
@@ -175,7 +189,13 @@ export function SlottMatch({ id }: { id: number }) {
     if (shown.current.has(key)) {
       const cached = shown.current.get(key);
       if (cached) {
-        return { key, grid: latest.grid, prev, startAt: cached.startAt, durationMs: cached.durationMs };
+        return {
+          key,
+          grid: latest.grid,
+          prev,
+          startAt: cached.startAt,
+          durationMs: cached.durationMs,
+        };
       }
       if (!liveArrival && clickedAt == null) return null;
       shown.current.delete(key);
@@ -197,7 +217,11 @@ export function SlottMatch({ id }: { id: number }) {
   }, [latest?.spin_no, latest?.reveal_at, id, g?.spin_ms, kickTick, spins.length, boardReady]);
   const showingLatest =
     !!reelSpin && !reelSpin.pending && !!latest && reelSpin.key === `${id}:${latest.spin_no}`;
-  const latestStart = showingLatest ? reelSpin.startAt : latest ? toLocal(latest.reveal_at) - spinMs : 0;
+  const latestStart = showingLatest
+    ? reelSpin.startAt
+    : latest
+      ? toLocal(latest.reveal_at) - spinMs
+      : 0;
   const latestLandAt = latest
     ? landedAt({
         grid: latest.grid,
@@ -205,6 +229,22 @@ export function SlottMatch({ id }: { id: number }) {
         durationMs: showingLatest ? reelSpin.durationMs : spinMs,
       })
     : 0;
+  const marks: number[] = [];
+  if (latestLandAt > 0) {
+    marks.push(latestLandAt);
+    if (latest) {
+      marks.push(latestLandAt + tallyEndMs(latest.lines));
+      marks.push(latestLandAt + scoreFxEndMs(tallyStartMs(latest.lines)));
+      marks.push(latestLandAt + FX_WINDOW_MS);
+    }
+  }
+  if (reelSpin) marks.push(landedAt(reelSpin));
+  if (g?.turn_opens_at) marks.push(new Date(g.turn_opens_at).getTime() - offset);
+  if (g?.turn_deadline) marks.push(new Date(g.turn_deadline).getTime() - offset);
+  const clockOn = live(g?.status) || marks.some((mark) => mark > Date.now());
+  const ticked = useNextInstant(marks, clockOn);
+  const now = clockOn ? ticked : Date.now();
+  const snow = now + offset;
   const latestLanded = !latest || (reelSpin?.pending ? true : now >= latestLandAt);
   const landed = spins.filter((s) => s !== latest || latestLanded);
   const latestTallied =
@@ -219,16 +259,13 @@ export function SlottMatch({ id }: { id: number }) {
     latest && Number(latest.bonus_cents) > 0
       ? { tier: latestBonus?.tier ?? "WILD", cents: Number(latest.bonus_cents) }
       : null;
-  const fresh =
-    !!latest && latestLanded && !reelSpin?.pending && now - latestLandAt < FX_WINDOW_MS;
+  const fresh = !!latest && latestLanded && !reelSpin?.pending && now - latestLandAt < FX_WINDOW_MS;
   // The callout waits a second, then holds. It clears before a newer spin can paint over it.
   const showHit =
     !!latest &&
     latestLanded &&
     !reelSpin?.pending &&
     now < latestLandAt + scoreFxEndMs(tallyStartMs(latest.lines));
-  // Every tick re-renders the whole match; only countdowns and landing reels need 150 ms.
-  useNow(live(g?.status) || !latestTallied || fresh || showHit ? 150 : 1000);
   const level = latest
     ? winLevel(
         latest.lines.reduce((a, l) => a + l.score, 0),
@@ -334,8 +371,6 @@ export function SlottMatch({ id }: { id: number }) {
   const turnOpen = !!turn && opensAt != null && snow >= opensAt && latestLanded;
   const myTurn = !!me && turn === me;
   const canSpin = myTurn && turnOpen && !pending && (g == null || heldSpin !== g.next_spin);
-  const secondsLeft =
-    deadline != null ? Math.max(0, Math.ceil((deadline - snow) / 100) / 10) : null;
 
   async function doSpin() {
     if (!g) return;
@@ -369,46 +404,46 @@ export function SlottMatch({ id }: { id: number }) {
         if (!/STALE_ACTION|TURN_NOT_OPEN/.test(error.message)) toast.error(friendlyError(error));
         setAuto(false);
       } else if (data) {
-      const r = data as {
-        spin_no: number;
-        seat: "A" | "B";
-        grid: number[];
-        score: number;
-        wild_count: number;
-        lines: SlotSpin["lines"];
-        bonus_cents: number;
-        reveal_at: string;
-      };
-      qc.setQueryData<SlotSpin[]>(["slot-spins", g.id], (old = []) =>
-        old.some((s) => s.spin_no === r.spin_no)
-          ? old
-          : [
-              ...old,
-              {
-                game_id: g.id,
-                spin_no: r.spin_no,
-                seat: r.seat,
-                player_id: userId!,
-                auto: false,
-                grid: r.grid,
-                wild_count: r.wild_count,
-                base_score: 0,
-                line_score: 0,
-                score: r.score,
-                lines: r.lines,
-                bonus_cents: Number(r.bonus_cents),
-                created_at: r.reveal_at,
-                reveal_at: r.reveal_at,
-              },
-            ].sort((a, b) => a.spin_no - b.spin_no),
-      );
+        const r = data as {
+          spin_no: number;
+          seat: "A" | "B";
+          grid: number[];
+          score: number;
+          wild_count: number;
+          lines: SlotSpin["lines"];
+          bonus_cents: number;
+          reveal_at: string;
+        };
+        qc.setQueryData<SlotSpin[]>(["slot-spins", g.id], (old = []) =>
+          old.some((s) => s.spin_no === r.spin_no)
+            ? old
+            : [
+                ...old,
+                {
+                  game_id: g.id,
+                  spin_no: r.spin_no,
+                  seat: r.seat,
+                  player_id: userId!,
+                  auto: false,
+                  grid: r.grid,
+                  wild_count: r.wild_count,
+                  base_score: 0,
+                  line_score: 0,
+                  score: r.score,
+                  lines: r.lines,
+                  bonus_cents: Number(r.bonus_cents),
+                  created_at: r.reveal_at,
+                  reveal_at: r.reveal_at,
+                },
+              ].sort((a, b) => a.spin_no - b.spin_no),
+        );
       } else {
         heldRef.current = null;
         setHeldSpin(null);
       }
-    qc.invalidateQueries({ queryKey: ["slot", id] });
-    qc.invalidateQueries({ queryKey: ["slot-spins", id] });
-    qc.invalidateQueries({ queryKey: ["slot-bonus", id] });
+      qc.invalidateQueries({ queryKey: ["slot", id] });
+      qc.invalidateQueries({ queryKey: ["slot-spins", id] });
+      qc.invalidateQueries({ queryKey: ["slot-bonus", id] });
     } finally {
       spinLock.current = false;
       setPending(false);
@@ -450,7 +485,7 @@ export function SlottMatch({ id }: { id: number }) {
   const spinning =
     (!!latest && !latestLanded) ||
     (!!kick.current && (!latest || latest.spin_no < kick.current.spinNo));
-  const event = describeLatest(latest, latestLanded, bonuses, g, turn, me, secondsLeft);
+  const event = describeLatest(latest, latestLanded, bonuses, g, turn, me, deadline);
 
   // The challenger's deciding spin (even spin numbers from base_spins on) becomes a target chase.
   const deciding = (n: number) => n % 2 === 0 && n >= g.base_spins;
@@ -490,7 +525,8 @@ export function SlottMatch({ id }: { id: number }) {
     const idn = uid ? identities.get(uid) : undefined;
     const active = turn === s;
     const won = g.status === "COMPLETED" && !!uid && g.winner_id === uid;
-    const lost = g.status === "COMPLETED" && (g.outcome === "BOMB" || (g.outcome === "WIN" && !won));
+    const lost =
+      g.status === "COMPLETED" && (g.outcome === "BOMB" || (g.outcome === "WIN" && !won));
     return (
       <SeatPanel
         compact={compact}
@@ -510,7 +546,15 @@ export function SlottMatch({ id }: { id: number }) {
             won ? (
               "WINNER"
             ) : active && g.status === "ACTIVE" ? (
-              `${me === s ? "YOUR TURN" : "SPINNING"}${secondsLeft != null && !spinning ? ` · ${fmtLeft(secondsLeft)}s` : ""}`
+              <>
+                {me === s ? "YOUR TURN" : "SPINNING"}
+                {deadline != null && !spinning ? (
+                  <>
+                    {" "}
+                    · <LiveSeconds deadline={deadline} />
+                  </>
+                ) : null}
+              </>
             ) : null
           ) : (
             <SeatStatus
@@ -519,7 +563,7 @@ export function SlottMatch({ id }: { id: number }) {
               active={active}
               won={won}
               isMe={me === s}
-              secondsLeft={spinning ? null : secondsLeft}
+              deadline={spinning ? null : deadline}
               hasUser={!!uid}
             />
           )
@@ -582,113 +626,113 @@ export function SlottMatch({ id }: { id: number }) {
     <div>
       <h1 className="sr-only">P2P Slott match #{g.id}</h1>
       <div className="lg:h-[calc(100dvh-4rem)]">
-      <SlotCabinet
-        bleed
-        className="lg:h-full"
-        toolbar={
-          <div className="mb-1.5 flex items-center justify-between gap-3 text-xs lg:mb-0 lg:px-1">
-            <Link
-              to="/slott"
-              className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" /> P2P Slott lobby
-            </Link>
-            <span className="tabular text-muted-foreground">Match #{g.id}</span>
-          </div>
-        }
-        shake={fresh && level >= 2 ? `${latest!.spin_no}` : null}
-        top={
-          <PotHeader
-            match={g.stake}
-            pot={g.p2p_pot}
-            bonus={bonusShown}
-            maxWin={maxWin}
-            bonusKey={bonusShown}
-          />
-        }
-        seats={
-          <>
-            {seat("A", true)}
-            {seat("B", true)}
-          </>
-        }
-        duel={
-          g.status === "WAITING" || g.status === "CANCELLED" ? null : (
-            <DuelBar
-              a={scoreA}
-              b={scoreB}
-              nameA={whoName(g, "A")}
-              nameB={whoName(g, "B")}
-              me={me}
-              turn={turn}
-              doneA={doneA}
-              doneB={doneB}
-              perSeat={perSeat}
-              left={g.base_spins - Math.min(g.base_spins, landed.length)}
+        <SlotCabinet
+          bleed
+          className="lg:h-full"
+          toolbar={
+            <div className="mb-1.5 flex items-center justify-between gap-3 text-xs lg:mb-0 lg:px-1">
+              <Link
+                to="/slott"
+                className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" /> P2P Slott lobby
+              </Link>
+              <span className="tabular text-muted-foreground">Match #{g.id}</span>
+            </div>
+          }
+          shake={fresh && level >= 2 ? `${latest!.spin_no}` : null}
+          top={
+            <PotHeader
+              match={g.stake}
+              pot={g.p2p_pot}
+              bonus={bonusShown}
+              maxWin={maxWin}
+              bonusKey={bonusShown}
             />
-          )
-        }
-        left={seat("A", false)}
-        right={seat("B", false)}
-        reels={
-          <Reels
-            spin={reelSpin}
-            grid={grid}
-            highlight={highlight}
-            landed={!reelSpin || now >= landedAt(reelSpin)}
-            fx={
-              <>
-                {fresh && hasBomb(latest!.grid) ? (
-                  <BombFx key={latest!.spin_no} who={whoName(g, latest!.seat)} />
-                ) : showHit ? (
-                  <SpinFx
-                    key={latest!.spin_no}
-                    grid={latest!.grid}
-                    lines={latest!.lines}
-                    score={latest!.score}
-                    bonus={bonusFx}
-                    who={reveal?.who}
-                    target={latestIsFinal ? finalChase : null}
-                    onTarget={() => playStingSfx("target")}
-                  />
-                ) : null}
-                {finalChase != null && !finished && !(latestIsFinal && latestLanded) ? (
-                  <TargetChip target={finalChase} label={`${whoName(g, "B")} · FINAL SPIN`} />
-                ) : showFinalFlag ? (
-                  <div className="pointer-events-none absolute inset-x-0 top-[5%] flex justify-center">
-                    <div className="slott-final-flag">FINAL SPIN</div>
-                  </div>
-                ) : null}
-                {callout ? (
-                  <LeadCallout
-                    key={callout.key}
-                    name={whoName(g, callout.seat)}
-                    you={callout.seat === me}
-                    seat={callout.seat}
-                  />
-                ) : null}
-                {g.status === "CANCELLED" ||
-                (finished && !(fresh && hasBomb(latest!.grid))) ||
-                (g.status === "WAITING" && me !== "A") ? (
-                  <Overlay g={g} me={me} userId={userId} hasProfile={!!profile} spins={spins} />
-                ) : null}
-              </>
-            }
-          />
-        }
-        event={event}
-        asideLeft={
-          <SidePot
-            match={g.stake}
-            pot={g.p2p_pot}
-            bonus={bonusShown}
-            maxWin={maxWin}
-            bonusKey={bonusShown}
-          />
-        }
-        asideRight={<SideControls {...controls} />}
-        bottom={<BottomBar bet={<BetChip amount={g.stake} />} {...controls} />}
-      />
+          }
+          seats={
+            <>
+              {seat("A", true)}
+              {seat("B", true)}
+            </>
+          }
+          duel={
+            g.status === "WAITING" || g.status === "CANCELLED" ? null : (
+              <DuelBar
+                a={scoreA}
+                b={scoreB}
+                nameA={whoName(g, "A")}
+                nameB={whoName(g, "B")}
+                me={me}
+                turn={turn}
+                doneA={doneA}
+                doneB={doneB}
+                perSeat={perSeat}
+                left={g.base_spins - Math.min(g.base_spins, landed.length)}
+              />
+            )
+          }
+          left={seat("A", false)}
+          right={seat("B", false)}
+          reels={
+            <Reels
+              spin={reelSpin}
+              grid={grid}
+              highlight={highlight}
+              landed={!reelSpin || now >= landedAt(reelSpin)}
+              fx={
+                <>
+                  {fresh && hasBomb(latest!.grid) ? (
+                    <BombFx key={latest!.spin_no} who={whoName(g, latest!.seat)} />
+                  ) : showHit ? (
+                    <SpinFx
+                      key={latest!.spin_no}
+                      grid={latest!.grid}
+                      lines={latest!.lines}
+                      score={latest!.score}
+                      bonus={bonusFx}
+                      who={reveal?.who}
+                      target={latestIsFinal ? finalChase : null}
+                      onTarget={() => playStingSfx("target")}
+                    />
+                  ) : null}
+                  {finalChase != null && !finished && !(latestIsFinal && latestLanded) ? (
+                    <TargetChip target={finalChase} label={`${whoName(g, "B")} · FINAL SPIN`} />
+                  ) : showFinalFlag ? (
+                    <div className="pointer-events-none absolute inset-x-0 top-[5%] flex justify-center">
+                      <div className="slott-final-flag">FINAL SPIN</div>
+                    </div>
+                  ) : null}
+                  {callout ? (
+                    <LeadCallout
+                      key={callout.key}
+                      name={whoName(g, callout.seat)}
+                      you={callout.seat === me}
+                      seat={callout.seat}
+                    />
+                  ) : null}
+                  {g.status === "CANCELLED" ||
+                  (finished && !(fresh && hasBomb(latest!.grid))) ||
+                  (g.status === "WAITING" && me !== "A") ? (
+                    <Overlay g={g} me={me} userId={userId} hasProfile={!!profile} spins={spins} />
+                  ) : null}
+                </>
+              }
+            />
+          }
+          event={event}
+          asideLeft={
+            <SidePot
+              match={g.stake}
+              pot={g.p2p_pot}
+              bonus={bonusShown}
+              maxWin={maxWin}
+              bonusKey={bonusShown}
+            />
+          }
+          asideRight={<SideControls {...controls} />}
+          bottom={<BottomBar bet={<BetChip amount={g.stake} />} {...controls} />}
+        />
       </div>
 
       <div className="mt-3 grid gap-3 lg:grid-cols-2 lg:px-6 lg:pb-8">
@@ -757,13 +801,24 @@ function Avatar({
   );
 }
 
+function LiveSeconds({ deadline }: { deadline: number }) {
+  const serverNow = useServerClock();
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick((tick) => tick + 1), 100);
+    return () => clearInterval(id);
+  }, [deadline]);
+  const left = Math.max(0, Math.ceil((deadline - serverNow()) / 100) / 10);
+  return <>{fmtLeft(left)}s</>;
+}
+
 function SeatStatus({
   seat,
   g,
   active,
   won,
   isMe,
-  secondsLeft,
+  deadline,
   hasUser,
 }: {
   seat: "A" | "B";
@@ -771,7 +826,7 @@ function SeatStatus({
   active: boolean;
   won: boolean;
   isMe: boolean;
-  secondsLeft: number | null;
+  deadline: number | null;
   hasUser: boolean;
 }) {
   if (g.status === "ACTIVE" && active && isMe) {
@@ -780,26 +835,46 @@ function SeatStatus({
         className="slott-turn rounded-xl py-2.5 text-[11px] font-semibold tracking-wider text-primary-soft"
         data-seat={seat}
       >
-        YOUR TURN{secondsLeft != null ? ` · ${fmtLeft(secondsLeft)}s` : ""}
+        YOUR TURN
+        {deadline != null ? (
+          <>
+            {" "}
+            · <LiveSeconds deadline={deadline} />
+          </>
+        ) : null}
       </div>
     );
   }
   const text =
-    g.status === "ACTIVE" && active
-      ? `SPINNING${secondsLeft != null ? ` · ${fmtLeft(secondsLeft)}s` : ""}`
-      : won
-        ? "WINNER"
-        : g.status === "COMPLETED"
-          ? g.outcome === "DRAW"
-            ? "DRAW"
-            : g.outcome === "BOMB"
-              ? "BOMB"
-              : "—"
-          : g.status === "WAITING"
-            ? hasUser
-              ? "READY"
-              : "WAITING…"
-            : "WAITING…";
+    g.status === "ACTIVE" && active ? (
+      <>
+        SPINNING
+        {deadline != null ? (
+          <>
+            {" "}
+            · <LiveSeconds deadline={deadline} />
+          </>
+        ) : null}
+      </>
+    ) : won ? (
+      "WINNER"
+    ) : g.status === "COMPLETED" ? (
+      g.outcome === "DRAW" ? (
+        "DRAW"
+      ) : g.outcome === "BOMB" ? (
+        "BOMB"
+      ) : (
+        "—"
+      )
+    ) : g.status === "WAITING" ? (
+      hasUser ? (
+        "READY"
+      ) : (
+        "WAITING…"
+      )
+    ) : (
+      "WAITING…"
+    );
   return (
     <div
       className={cn(
@@ -829,7 +904,7 @@ function describeLatest(
   g: SlotGameView,
   turn: "A" | "B" | null,
   me: "A" | "B" | null,
-  secondsLeft: number | null,
+  deadline: number | null,
 ) {
   if (g.status === "WAITING") return "";
   if (g.status === "COMPLETED")
@@ -847,9 +922,20 @@ function describeLatest(
   if (hasBomb(latest.grid))
     return `${whoName(g, latest.seat)} hit the bomb. Both stakes go to the house.`;
   const b = bonuses.find((x) => x.spin_no === latest.spin_no);
-  const next = turn
-    ? ` · ${turn === me ? "your turn" : `${whoName(g, turn)} next`}${secondsLeft != null ? ` (${fmtLeft(secondsLeft)}s)` : ""}`
-    : "";
+  const next = turn ? (
+    <>
+      {" "}
+      · {turn === me ? "your turn" : `${whoName(g, turn)} next`}
+      {deadline != null ? (
+        <>
+          {" "}
+          (<LiveSeconds deadline={deadline} />)
+        </>
+      ) : null}
+    </>
+  ) : (
+    ""
+  );
   if (Number(latest.bonus_cents) > 0)
     return (
       <>
@@ -863,7 +949,13 @@ function describeLatest(
   const lines = latest.lines.length
     ? ` · ${latest.lines.length} line win${latest.lines.length > 1 ? "s" : ""}`
     : "";
-  return `${whoName(g, latest.seat)} scored ${latest.score}${lines}${next}`;
+  return (
+    <>
+      {whoName(g, latest.seat)} scored {latest.score}
+      {lines}
+      {next}
+    </>
+  );
 }
 
 /** Same stake, same opponent: accept their rematch if they opened one, otherwise open ours. */

@@ -1,19 +1,17 @@
-import {
-  CLUSTERS,
-  clusterInfo,
-  familyOf,
-  groupOf,
-  getGuide,
-  getTopic,
-  GUIDES,
-  groupsFor,
-  guidesInCluster,
-  isPublishedGuide,
-  publishedTopics,
-  wordCount,
-  type Guide,
-} from "@/content/guides";
+import { CLUSTERS, clusterInfo, familyOf, groupOf } from "@/content/guides/clusters";
+import type { Guide } from "@/content/guides/types";
+import { wordCount } from "@/content/guides/text";
 import { GAME_GUIDE_LINKS, GUIDE_GAME_DATA } from "@/lib/game-snapshot/snapshot";
+import { loadGuideBody } from "@/lib/guides/bodies";
+import {
+  allGuideMeta,
+  guideMeta,
+  isPublishedGuide,
+  metaGroups,
+  metasInCluster,
+  publishedTopics,
+  type GuideMeta,
+} from "@/lib/guides/catalog";
 import type {
   GuideLink,
   GuidePageData,
@@ -23,28 +21,29 @@ import type {
   TopicPageData,
 } from "./pages";
 
-const link = (g: Guide): GuideLink => ({ slug: g.slug, h1: g.h1 });
-const isGuide = (g: Guide | undefined): g is Guide => !!g;
+const link = (g: { slug: string; h1: string }): GuideLink => ({ slug: g.slug, h1: g.h1 });
+const isMeta = (g: GuideMeta | undefined): g is GuideMeta => !!g;
 
 function linkTargets(g: Guide): LinkTargets {
   const text = JSON.stringify(g);
   const guides = new Set<string>();
   const topics = new Set<string>();
+  const published = new Set(publishedTopics().map((topic) => topic.slug));
   for (const [, slug = ""] of text.matchAll(/\/guides\/topics\/([^\s)"#?/\\]+)/g))
-    if (getTopic(slug)) topics.add(slug);
+    if (published.has(slug)) topics.add(slug);
   for (const [, slug = ""] of text.matchAll(/\/guides\/([^\s)"#?/\\]+)/g))
     if (isPublishedGuide(slug)) guides.add(slug);
   return { guides: [...guides], topics: [...topics] };
 }
 
-export function guidePage(slug: string): GuidePageData | null {
-  const g = getGuide(slug);
-  if (!g) return null;
-  const topic = getTopic(clusterInfo(g.cluster).slug);
-  const pillar = guidesInCluster(g.cluster).find((x) => x.pillar && x.slug !== g.slug);
+export async function guidePage(slug: string): Promise<GuidePageData | null> {
+  const g = await loadGuideBody(slug);
+  if (!g || !guideMeta(slug)) return null;
+  const topic = publishedTopics().find((item) => item.slug === clusterInfo(g.cluster).slug);
+  const pillar = metasInCluster(g.cluster).find((item) => item.pillar && item.slug !== g.slug);
   const game = GUIDE_GAME_DATA[g.slug];
   const pick = (slugs: string[]) => {
-    const hit = slugs.map((s) => getGuide(s)).find((x) => x && x.slug !== g.slug);
+    const hit = slugs.map((item) => guideMeta(item)).find((item) => item && item.slug !== g.slug);
     return hit ? link(hit) : null;
   };
   return {
@@ -53,12 +52,17 @@ export function guidePage(slug: string): GuidePageData | null {
     topic: topic ? { slug: topic.slug } : null,
     pillar: pillar ? link(pillar) : null,
     related: g.related
-      .map((s) => getGuide(s))
-      .filter(isGuide)
-      .map((r) => ({ slug: r.slug, h1: r.h1, cluster: r.cluster, description: r.description })),
+      .map((item) => guideMeta(item))
+      .filter(isMeta)
+      .map((item) => ({
+        slug: item.slug,
+        h1: item.h1,
+        cluster: item.cluster,
+        description: item.description,
+      })),
     family: familyOf(g.slug)
-      .map((s) => getGuide(s))
-      .filter((x): x is Guide => !!x && !g.related.includes(x.slug))
+      .map((item) => guideMeta(item))
+      .filter((item): item is GuideMeta => !!item && !g.related.includes(item.slug))
       .slice(0, 16)
       .map(link),
     familyName: groupOf(g.slug)?.name ?? null,
@@ -73,59 +77,71 @@ export function guidePage(slug: string): GuidePageData | null {
 }
 
 export function guidesHub(): GuidesHubData {
+  const guides = allGuideMeta();
+  const topics = new Set(publishedTopics().map((topic) => topic.slug));
   return {
-    guides: GUIDES.map((g) => ({
-      slug: g.slug,
-      h1: g.h1,
-      keyword: g.keyword,
-      title: g.title,
-      cluster: g.cluster,
+    guides: guides.map((guide) => ({
+      slug: guide.slug,
+      h1: guide.h1,
+      keyword: guide.keyword,
+      title: guide.title,
+      cluster: guide.cluster,
     })),
-    clusters: CLUSTERS.filter((c) => GUIDES.some((g) => g.cluster === c.name)).map((c) => {
-      const pillar = GUIDES.find((g) => g.cluster === c.name && g.pillar);
+    clusters: CLUSTERS.filter((cluster) =>
+      guides.some((guide) => guide.cluster === cluster.name),
+    ).map((cluster) => {
+      const pillar = guides.find((guide) => guide.cluster === cluster.name && guide.pillar);
       return {
-        name: c.name,
-        slug: c.slug,
-        blurb: c.blurb,
-        topic: !!getTopic(c.slug),
+        name: cluster.name,
+        slug: cluster.slug,
+        blurb: cluster.blurb,
+        topic: topics.has(cluster.slug),
         pillar: pillar ? { slug: pillar.slug, description: pillar.description } : null,
-        groups: groupsFor(c.name).map((g) => ({
-          name: g.name,
-          slugs: g.guides.map((x) => x.slug),
+        groups: metaGroups(cluster.name).map((group) => ({
+          name: group.name,
+          slugs: group.guides.map((guide) => guide.slug),
         })),
       };
     }),
   };
 }
 
-export function topicPage(slug: string): TopicPageData | null {
-  const t = getTopic(slug);
-  if (!t) return null;
-  const list = guidesInCluster(t.name);
-  const pillar = list.find((g) => g.pillar);
-  const card = (g: Guide): TopicCard => ({ slug: g.slug, h1: g.h1, description: g.description });
-  const groups = groupsFor(t.name);
-  const grouped = new Set(groups.flatMap((g) => g.guides.map((x) => x.slug)));
+export async function topicPage(slug: string): Promise<TopicPageData | null> {
+  const topic = publishedTopics().find((item) => item.slug === slug);
+  if (!topic) return null;
+  const list = metasInCluster(topic.name);
+  const pillar = list.find((guide) => guide.pillar);
+  const pillarBody = pillar ? await loadGuideBody(pillar.slug) : null;
+  if (pillar && !pillarBody) return null;
+  const card = (guide: GuideMeta): TopicCard => ({
+    slug: guide.slug,
+    h1: guide.h1,
+    description: guide.description,
+  });
+  const groups = metaGroups(topic.name);
+  const grouped = new Set(groups.flatMap((group) => group.guides.map((guide) => guide.slug)));
   return {
     topic: {
-      name: t.name,
-      slug: t.slug,
-      title: t.title,
-      description: t.description,
-      intro: t.intro,
+      name: topic.name,
+      slug: topic.slug,
+      title: topic.title,
+      description: topic.description,
+      intro: topic.intro,
     },
     count: list.length,
-    pillar: pillar ? { ...link(pillar), answer: pillar.answer } : null,
+    pillar: pillar && pillarBody ? { ...link(pillar), answer: pillarBody.answer } : null,
     groups: groups
-      .map((g) => ({
-        name: g.name,
-        cards: g.guides.filter((x) => x.slug !== pillar?.slug).map(card),
+      .map((group) => ({
+        name: group.name,
+        cards: group.guides.filter((guide) => guide.slug !== pillar?.slug).map(card),
       }))
-      .filter((g) => g.cards.length),
-    ungrouped: list.filter((g) => g.slug !== pillar?.slug && !grouped.has(g.slug)).map(card),
+      .filter((group) => group.cards.length > 0),
+    ungrouped: list
+      .filter((guide) => guide.slug !== pillar?.slug && !grouped.has(guide.slug))
+      .map(card),
     others: publishedTopics()
-      .filter((o) => o.slug !== t.slug)
-      .map((o) => ({ slug: o.slug, name: o.name })),
+      .filter((item) => item.slug !== topic.slug)
+      .map((item) => ({ slug: item.slug, name: item.name })),
     articles: list.map(link),
   };
 }

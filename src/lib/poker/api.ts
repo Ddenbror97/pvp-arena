@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { listenTopic, markChannel } from "@/lib/live-channel";
+import { channelFresh, listenTopic, markChannel, noteChannelEvent } from "@/lib/live-channel";
 import { rememberCommitment } from "./commitments";
+import { pokerRefetchMs } from "./poll";
 
 export const REFETCH_COALESCE_MS = 250;
 
@@ -347,7 +348,11 @@ export function useTableState(id: number, userId: string | null) {
   const q = useQuery({
     queryKey: ["poker-table", id, userId],
     queryFn: () => fetchTableState(id),
-    refetchInterval: (query) => (query.state.data?.hand ? 1500 : 3000),
+    refetchInterval: (query) =>
+      pokerRefetchMs(
+        query.state.data?.hand?.status,
+        channelFresh(`poker:${id}`, 3_000, Date.now(), "poker"),
+      ),
     refetchIntervalInBackground: seated,
     refetchOnWindowFocus: true,
     staleTime: 0,
@@ -369,6 +374,7 @@ export function useTableState(id: number, userId: string | null) {
     const stop = listenTopic(
       `poker:table:${id}`,
       (_event, payload) => {
+        noteChannelEvent(`poker:${id}`);
         const v = Number((payload as { version?: number }).version);
         if (lastVersion.current !== null && v <= lastVersion.current) return;
         lastVersion.current = v;

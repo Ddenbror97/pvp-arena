@@ -6,6 +6,7 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { readFileSync } from "node:fs";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { emitGuideAssets } from "./scripts/emit-guide-assets";
 
 const DEV_WASM = "\0dev-wasm-module:";
 let serving = false;
@@ -14,13 +15,20 @@ export default defineConfig({
   vite: {
     plugins: [
       {
+        name: "guide-bodies",
+        async config() {
+          await emitGuideAssets();
+        },
+      },
+      {
         // Manrope and Unbounded are part of the render-blocking stylesheet, so
         // button labels and the header wallet paint in their final face.
         name: "inline-text-faces",
         enforce: "pre",
         transform(code, id) {
           const file = id.split("?")[0];
-          if (file === undefined || !file.endsWith("/src/styles.css") || !code.includes("./fonts/")) return null;
+          if (file === undefined || !file.endsWith("/src/styles.css") || !code.includes("./fonts/"))
+            return null;
           const dir = file.slice(0, file.lastIndexOf("/"));
           return code.replace(/url\("(\.\/fonts\/[^"]+)"\)/g, (_match, rel: string) => {
             const bytes = readFileSync(`${dir}/${rel.slice(2)}`);

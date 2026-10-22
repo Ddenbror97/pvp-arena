@@ -34,6 +34,31 @@ const KNOWN = [
 
 let bindings: Record<string, string> = {};
 
+type AssetFetcher = {
+  fetch: (input: Request) => Promise<Response>;
+};
+
+let assets: AssetFetcher | undefined;
+
+export function assetsFromEnv(env: unknown): AssetFetcher | undefined {
+  if (!env || typeof env !== "object" || !("ASSETS" in env)) return undefined;
+  const candidate = (env as { ASSETS?: AssetFetcher }).ASSETS;
+  return candidate && typeof candidate.fetch === "function" ? candidate : undefined;
+}
+
+function captureAssets(env: unknown) {
+  const candidate = assetsFromEnv(env);
+  if (candidate) assets = candidate;
+}
+
+/** Cloudflare static assets. Guide bodies are files, not Worker modules. */
+export function workerAssets(): AssetFetcher | undefined {
+  if (assets) return assets;
+  // Nitro's Cloudflare handler stores the request env here before SSR runs.
+  captureAssets((globalThis as { __env__?: unknown }).__env__);
+  return assets;
+}
+
 function sharedBindings(): Record<string, string> {
   const current = (globalThis as Record<string, unknown>)[GLOBAL_KEY];
   return current && typeof current === "object" ? (current as Record<string, string>) : {};
@@ -87,6 +112,7 @@ export function applyWorkerEnv(env: unknown) {
   hydrateFromDotEnv();
   if (!env || typeof env !== "object") return;
   const source = env as Record<string, unknown>;
+  captureAssets(source);
   const next: Record<string, string> = { ...sharedBindings() };
   for (const [key, value] of Object.entries(source)) {
     if (typeof value === "string" && value.length > 0) next[key] = value;

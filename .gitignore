@@ -24,6 +24,10 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Guide article bodies are static assets. The Worker keeps a generated catalog.
+public/guide-bodies/
+src/content/guides/catalog.generated.ts
+
 # Base deposit HD backups. The generator encrypts these. Never commit them.
 *.deposit-hd.txt
 *.deposit-hd.xpub

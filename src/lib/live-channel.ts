@@ -2,6 +2,18 @@ import type { RealtimeChannel } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
 const open = new Map<string, number>();
+const lastEvent = new Map<string, number>();
+
+/** A broadcast just arrived on this channel. Polls use it to skip a duplicate read. */
+export function noteChannelEvent(name: string, at = Date.now()) {
+  lastEvent.set(name, at);
+}
+
+export function channelFresh(name: string, withinMs: number, now = Date.now(), liveName = name) {
+  if (!channelLive(liveName)) return false;
+  const at = lastEvent.get(name);
+  return at != null && now - at <= withinMs;
+}
 
 /** Reference-counted realtime subscription. Polls read this and back off while a channel is up. */
 export function markChannel(name: string, up: boolean) {

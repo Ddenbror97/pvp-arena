@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import type { GuideCluster } from "@/content/guides";
+import type { GuideCluster } from "@/content/guides/types";
 
 type Game = { to: "/" | "/coinflip" | "/roulette"; name: string; hook: string };
 
