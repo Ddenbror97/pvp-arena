@@ -643,6 +643,18 @@ d("live database permissions (read-only catalog checks)", () => {
       "prestige_award_wager(uuid,text,text,bigint,jsonb)",
       "leaderboard_tick()",
       "_poker_require_admin()",
+      "_pool_settle(bigint,uuid,text)",
+      "_pool_seat(pvp_test.pool_matches,uuid)",
+      "_pool_user_for_seat(pvp_test.pool_matches,text)",
+      "pool_xor64(numeric,numeric)",
+      "pool_fnv(text)",
+      "pool_state_canon(jsonb)",
+      "pool_state_hash(jsonb)",
+      "pool_expected_milli(integer)",
+      "pool_play(jsonb,jsonb)",
+      "pool_fresh_state(bytea)",
+      "pool_forfeit_seat(bigint,text)",
+      "pool_commit_shot(bigint,integer,jsonb,text,jsonb)",
     ]) {
       const [r] = await sql.unsafe(
         `select has_function_privilege('anon','pvp_test.${f}','execute') a, has_function_privilege('authenticated','pvp_test.${f}','execute') u`,
@@ -680,6 +692,9 @@ d("live database permissions (read-only catalog checks)", () => {
       "poker_lobby()",
       "poker_table_state(bigint)",
       "bot_public_config()",
+      "pool_lobby()",
+      "pool_record(bigint)",
+      "pool_state(bigint)",
     ];
     const SIGNED_IN_FNS = [
       ...PUBLIC_FNS,
@@ -763,6 +778,12 @@ d("live database permissions (read-only catalog checks)", () => {
       "poker_admin_collusion_signals(integer,integer,integer)",
       "poker_admin_recover_settlement(bigint,text,text)",
       "poker_worker_health()",
+      "pool_cancel(bigint)",
+      "pool_forfeit(bigint)",
+      "pool_matchmake(bigint,text)",
+      "pool_nudge(bigint)",
+      "pool_prepare_shot(bigint,jsonb,text)",
+      "pool_touch(bigint)",
     ];
     const executable = async (role: string) => {
       const rows = await sql.begin(async (tx) => {

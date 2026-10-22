@@ -7,7 +7,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
 import { testDatabaseUrl } from "./test-url";
-import { applyTimeout, freshTable, stateHash } from "../../src/lib/pool/rules";
+import { playShot } from "../../src/lib/pool/play";
+import { applyTimeout, freshTable, stateHash, type TableState } from "../../src/lib/pool/rules";
+import { bytesFromHex } from "../../src/lib/pool/verify";
 
 const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
@@ -29,6 +31,17 @@ async function newUser(name: string) {
   const id = randomUUID();
   await as(id, (tx) => tx`select pvp_test.ensure_profile(${name}, true)`);
   return id;
+}
+
+function asJson(value: unknown) {
+  return sql.json(JSON.parse(JSON.stringify(value)));
+}
+
+async function beginReal(matchId: number): Promise<TableState> {
+  const [secret] = await sql`select pvp_test.pool_read_secret(${matchId}) seed`;
+  const table = freshTable(bytesFromHex(String(secret.seed)));
+  await sql`select pvp_test.pool_begin(${matchId}, ${asJson(table)}::jsonb)`;
+  return table;
 }
 
 const bal = async (uid: string, kind = "user_available") =>
@@ -53,6 +66,10 @@ d("pool ledger (isolated schema)", () => {
     const [row] =
       await sql`select pvp_test.pool_state_hash(${sql.json(JSON.parse(JSON.stringify(table)))}::jsonb) as h`;
     expect(row.h).toBe(stateHash(table));
+    const seed = Uint8Array.from({ length: 32 }, (_, i) => i + 3);
+    const [fresh] =
+      await sql`select pvp_test.pool_state_hash(pvp_test.pool_fresh_state(decode(${Buffer.from(seed).toString("hex")}, 'hex'))) h`;
+    expect(fresh.h).toBe(stateHash(freshTable(seed)));
   });
 
   it("locks a stake, refunds a cancel, and pays 95% with a 5% fee", async () => {
@@ -85,27 +102,12 @@ d("pool ledger (isolated schema)", () => {
     expect(joined.match_id).toBe(again.match_id);
     expect(await bal(b, "user_locked")).toBe(100);
 
-    const table = freshTable(new Uint8Array(32).fill(4));
-    const hash = stateHash(table);
-    await sql`select pvp_test.pool_begin(${joined.match_id}, ${sql.json(JSON.parse(JSON.stringify(table)))}::jsonb)`;
+    const table = await beginReal(joined.match_id);
     const [started] =
       await sql`select state_hash, status from pvp_test.pool_matches where id = ${joined.match_id}`;
     expect(started.status).toBe("PLAYING");
-    expect(started.state_hash).toBe(hash);
-
-    const won = {
-      ...table,
-      shot: 1,
-      winner: "A",
-      reason: "FORFEIT",
-      turn: "B",
-      ballInHand: false,
-      kitchenOnly: false,
-    };
-    const wonHash = stateHash(won);
-    await sql`insert into pvp_test.pool_pending (match_id, seq, user_id, idempotency_key, input)
-      values (${joined.match_id}, 1, ${a}, ${randomUUID()}, '{}'::jsonb)`;
-    await sql`select pvp_test.pool_commit_shot(${joined.match_id}, 1, ${sql.json(JSON.parse(JSON.stringify(won)))}::jsonb, ${wonHash}, '{"reason":"FORFEIT"}'::jsonb)`;
+    expect(started.state_hash).toBe(stateHash(table));
+    await sql`select pvp_test.pool_forfeit_seat(${joined.match_id}, 'B')`;
 
     const [done] =
       await sql`select status, fee_amount, payout_amount, winner_id from pvp_test.pool_matches where id = ${joined.match_id}`;
@@ -123,9 +125,7 @@ d("pool ledger (isolated schema)", () => {
       await sql`select coalesce(sum(balance), 0)::bigint s from pvp_test.wallet_accounts`;
     expect(Number(books.s)).toBe(0);
 
-    await expect(
-      sql`select pvp_test.pool_commit_shot(${joined.match_id}, 1, ${sql.json(won)}::jsonb, ${wonHash}, '{}'::jsonb)`,
-    ).resolves.toBeTruthy();
+    await sql`select pvp_test.pool_forfeit_seat(${joined.match_id}, 'B')`;
     const [once] =
       await sql`select count(*)::int c from pvp_test.ledger_transactions where game_id = ${joined.match_id} and kind = 'pool_settlement'`;
     expect(once.c).toBe(1);
@@ -160,8 +160,7 @@ d("pool ledger (isolated schema)", () => {
     await as(b, async (tx) => {
       await tx`select pvp_test.pool_matchmake(500, ${randomUUID()})`;
     });
-    const table = freshTable(new Uint8Array(32).fill(8));
-    await sql`select pvp_test.pool_begin(${made.match_id}, ${sql.json(JSON.parse(JSON.stringify(table)))}::jsonb)`;
+    const table = await beginReal(made.match_id);
     await sql`select pvp_test._pool_log_timeout(${made.match_id})`;
     const [row] =
       await sql`select state_hash from pvp_test.pool_matches where id = ${made.match_id}`;
@@ -184,15 +183,14 @@ d("pool ledger (isolated schema)", () => {
     expect(typeof starting.s.server_seed_hash).toBe("string");
 
     const secret = await sql`select pvp_test.pool_read_secret(${made.match_id}) seed`;
-    const table = freshTable(new Uint8Array(32).fill(9));
-    await sql`select pvp_test.pool_begin(${made.match_id}, ${sql.json(JSON.parse(JSON.stringify(table)))}::jsonb)`;
+    await beginReal(made.match_id);
     const [live] = await sql`select pvp_test.pool_state(${made.match_id}) s`;
     expect(live.s.status).toBe("PLAYING");
     expect(live.s.server_seed).toBe(secret[0].seed);
     expect(live.s.server_seed_hash).toBe(starting.s.server_seed_hash);
   });
 
-  it("rejects a shot hash that does not match the submitted table", async () => {
+  it("rejects a forged rack and a self-consistent wrong winner", async () => {
     const a = await newUser("iris");
     const b = await newUser("jules");
     const made = await as(a, async (tx) => {
@@ -202,20 +200,74 @@ d("pool ledger (isolated schema)", () => {
     await as(b, async (tx) => {
       await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
     });
-    const table = freshTable(new Uint8Array(32).fill(6));
-    await sql`select pvp_test.pool_begin(${made.match_id}, ${sql.json(JSON.parse(JSON.stringify(table)))}::jsonb)`;
-    await sql`insert into pvp_test.pool_pending (match_id, seq, user_id, idempotency_key, input)
-      values (${made.match_id}, 1, ${a}, ${randomUUID()}, '{}'::jsonb)`;
-    const forged = { ...table, shot: 1, winner: "A", reason: "EIGHT_BALL" };
+    const forgedRack = freshTable(new Uint8Array(32).fill(6));
     await expect(
-      sql`select pvp_test.pool_commit_shot(${made.match_id}, 1, ${sql.json(JSON.parse(JSON.stringify(forged)))}::jsonb, ${"0".repeat(16)}, '{}'::jsonb)`,
-    ).rejects.toThrow(/HASH_MISMATCH/);
+      sql`select pvp_test.pool_begin(${made.match_id}, ${asJson(forgedRack)}::jsonb)`,
+    ).rejects.toThrow(/BAD_RACK/);
+    const [starting] =
+      await sql`select status from pvp_test.pool_matches where id = ${made.match_id}`;
+    expect(starting.status).toBe("STARTING");
+
+    const table = await beginReal(made.match_id);
+    const cue = table.balls.find((ball) => ball.id === 0);
+    if (!cue) throw new Error("missing cue");
+    const shot = {
+      angleMilli: 0,
+      power: 6500,
+      spinX: 200,
+      spinY: -150,
+      placeX: cue.x,
+      placeY: cue.y,
+      calledPocket: null,
+      key: randomUUID(),
+    };
+    const played = playShot(table, shot);
+    expect(played.ok).toBe(true);
+    if (!played.ok) return;
+    const forged = {
+      ...played.state,
+      winner: "A" as const,
+      reason: "EIGHT_BALL",
+      turn: "B" as const,
+    };
+    const forgedHash = stateHash(forged);
+    expect(forgedHash).toBe(stateHash(forged));
+    const shifted = {
+      ...played.state,
+      balls: played.state.balls.map((ball) => (ball.id === 0 ? { ...ball, x: ball.x + 1 } : ball)),
+    };
+    const shiftedHash = stateHash(shifted);
+    expect(shiftedHash).not.toBe(played.hash);
+    await sql`insert into pvp_test.pool_pending (match_id, seq, user_id, idempotency_key, input)
+      values (${made.match_id}, 1, ${a}, ${shot.key}, ${asJson(shot)}::jsonb)`;
+    await expect(
+      sql`select pvp_test.pool_commit_shot(${made.match_id}, 1, ${asJson(forged)}::jsonb, ${forgedHash}, '{}'::jsonb)`,
+    ).rejects.toThrow(/RESULT_MISMATCH/);
+    await expect(
+      sql`select pvp_test.pool_commit_shot(${made.match_id}, 1, ${asJson(shifted)}::jsonb, ${shiftedHash}, '{}'::jsonb)`,
+    ).rejects.toThrow(/RESULT_MISMATCH/);
+    const tampered = {
+      ...table,
+      balls: table.balls.map((ball) => (ball.id === 0 ? { ...ball, x: ball.x + 50 } : ball)),
+    };
+    await sql`update pvp_test.pool_matches set state = ${asJson(tampered)}::jsonb where id = ${made.match_id}`;
+    await expect(
+      sql`select pvp_test.pool_commit_shot(${made.match_id}, 1, ${asJson(played.state)}::jsonb, ${played.hash}, '{}'::jsonb)`,
+    ).rejects.toThrow(/STATE_DIVERGED/);
+    await sql`update pvp_test.pool_matches set state = ${asJson(table)}::jsonb where id = ${made.match_id}`;
     const [still] = await sql`select status from pvp_test.pool_matches where id = ${made.match_id}`;
     expect(still.status).toBe("PLAYING");
     const [paid] =
       await sql`select count(*)::int c from pvp_test.ledger_transactions where game_id = ${made.match_id} and kind = 'pool_settlement'`;
     expect(paid.c).toBe(0);
-  });
+
+    await sql`select pvp_test.pool_commit_shot(${made.match_id}, 1, ${asJson(played.state)}::jsonb, ${played.hash}, ${asJson(played.event)}::jsonb)`;
+    const [row] =
+      await sql`select state_hash, winner_id from pvp_test.pool_matches where id = ${made.match_id}`;
+    expect(row.state_hash).toBe(played.hash);
+    if (played.state.winner == null) expect(row.winner_id).toBeNull();
+    else expect(row.winner_id).toBe(played.state.winner === "A" ? a : b);
+  }, 60_000);
 
   it("pays 95 percent at every stake and refuses a second settlement", async () => {
     const waiting =
@@ -242,20 +294,8 @@ d("pool ledger (isolated schema)", () => {
       });
       expect(joined.role).toBe("joined");
       expect(joined.match_id).toBe(made.match_id);
-      const table = freshTable(new Uint8Array(32).fill(stake % 255));
-      const won = {
-        ...table,
-        shot: 1,
-        winner: "B",
-        reason: "FORFEIT",
-        turn: "A",
-        ballInHand: false,
-        kitchenOnly: false,
-      };
-      await sql`select pvp_test.pool_begin(${made.match_id}, ${sql.json(JSON.parse(JSON.stringify(table)))}::jsonb)`;
-      await sql`insert into pvp_test.pool_pending (match_id, seq, user_id, idempotency_key, input)
-        values (${made.match_id}, 1, ${a}, ${randomUUID()}, '{}'::jsonb)`;
-      await sql`select pvp_test.pool_commit_shot(${made.match_id}, 1, ${sql.json(JSON.parse(JSON.stringify(won)))}::jsonb, ${stateHash(won)}, '{"reason":"FORFEIT"}'::jsonb)`;
+      await beginReal(made.match_id);
+      await sql`select pvp_test.pool_forfeit_seat(${made.match_id}, 'A')`;
       const pot = stake * 2;
       const fee = Math.floor((pot * 500) / 10000);
       const [done] =
@@ -265,7 +305,7 @@ d("pool ledger (isolated schema)", () => {
       expect(done.winner_id).toBe(b);
       expect(await bal(a)).toBe(beforeA - stake);
       expect(await bal(b)).toBe(beforeB - stake + (pot - fee));
-      await sql`select pvp_test.pool_commit_shot(${made.match_id}, 1, ${sql.json(JSON.parse(JSON.stringify(won)))}::jsonb, ${stateHash(won)}, '{}'::jsonb)`;
+      await sql`select pvp_test.pool_forfeit_seat(${made.match_id}, 'A')`;
       const [once] =
         await sql`select count(*)::int c from pvp_test.ledger_transactions where game_id = ${made.match_id} and kind = 'pool_settlement'`;
       expect(once.c).toBe(1);
@@ -285,8 +325,7 @@ d("pool ledger (isolated schema)", () => {
     await as(b, async (tx) => {
       await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
     });
-    const table = freshTable(new Uint8Array(32).fill(11));
-    await sql`select pvp_test.pool_begin(${made.match_id}, ${sql.json(JSON.parse(JSON.stringify(table)))}::jsonb)`;
+    await beginReal(made.match_id);
     await sql`update pvp_test.pool_matches set seen_a = clock_timestamp() - interval '20 seconds',
       turn_deadline = clock_timestamp() - interval '1 second' where id = ${made.match_id}`;
     const [grace] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
@@ -321,13 +360,45 @@ d("pool ledger (isolated schema)", () => {
     await as(b, async (tx) => {
       await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
     });
-    const table = freshTable(new Uint8Array(32).fill(12));
-    await sql`select pvp_test.pool_begin(${made.match_id}, ${sql.json(JSON.parse(JSON.stringify(table)))}::jsonb)`;
+    await beginReal(made.match_id);
     await expect(
       as(a, async (tx) => {
         await tx`select pvp_test.pool_prepare_shot(${made.match_id}, ${tx.json({ angleMilli: 0, power: 1000, calledPocket: null })}::jsonb, ${randomUUID()})`;
       }),
     ).rejects.toThrow(/BAD_SHOT/);
+  });
+
+  it("blocks service-role settlement shortcuts", async () => {
+    const names = [
+      "_pool_settle",
+      "_pool_refund",
+      "_pool_debit",
+      "_pool_log_timeout",
+      "_pool_tick_one",
+      "pool_forfeit_seat",
+      "pool_play",
+      "pool_recorded_prior",
+    ];
+    const grants = await sql<{ proname: string; ok: boolean }[]>`
+      select p.proname, has_function_privilege('service_role', p.oid, 'execute') ok
+      from pg_proc p
+      join pg_namespace n on n.oid = p.pronamespace
+      where n.nspname = 'pvp_test' and p.proname = any(${names})
+    `;
+    expect(grants.map((row) => row.proname).sort()).toEqual([...names].sort());
+    expect(grants.every((row) => row.ok === false)).toBe(true);
+    const [table] = await sql<{ upd: boolean; secret: boolean }[]>`
+      select has_table_privilege('service_role', 'pvp_test.pool_matches', 'UPDATE') upd,
+             has_table_privilege('service_role', 'pvp_test.pool_secrets', 'SELECT') secret
+    `;
+    expect(table.upd).toBe(false);
+    expect(table.secret).toBe(false);
+    await expect(
+      sql.begin(async (tx) => {
+        await tx`set local role service_role`;
+        await tx`select pvp_test._pool_settle(1, ${randomUUID()}::uuid, 'FORGED')`;
+      }),
+    ).rejects.toThrow(/permission denied/i);
   });
 
   it("blocks a self-excluded player from opening a table", async () => {

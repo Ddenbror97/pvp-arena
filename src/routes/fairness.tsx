@@ -672,6 +672,8 @@ one reconnect window per shot; coming back does not restart the clock
 refunds: cancel while waiting, start timeout, or both gone before the break
 
 winner = pvp-8ball-v1(rack, steps) under pool-phys-v1
+the database rebuilds that rack and each shot before it pays
+a self-consistent hash is not a payout
 a paid winner that is not that output is not a verified result
 a later physics version will not confirm this match`}</pre>
         </details>
