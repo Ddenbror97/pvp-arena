@@ -14,7 +14,7 @@ export const DEALER_ANCHOR = {
   y: anchorY / manifest.canvas.h,
 };
 /** Deck in her hands on the idle frame, as a fraction of the shared canvas. */
-export const DEALER_DECK = { x: 0.4, y: 0.91 };
+export const DEALER_DECK = { x: 0.39, y: 0.91 };
 
 export const DEALER_IDLE_URL = idleUrl;
 
