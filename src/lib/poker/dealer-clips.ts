@@ -88,7 +88,7 @@ export const DEALER_CLIPS = {
     rank: 30,
     hold: false,
     then: "idle",
-    frames: [{ frame: "celebrate", ms: 1200 }],
+    frames: [{ frame: "celebrate", ms: 2200 }],
   },
   // Single poses. There is no travel into the point, the fan, or the frown.
   // The finger-on-chin cutout (playful-2) and the file named thoughtful (a point

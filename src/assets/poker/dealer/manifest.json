@@ -222,12 +222,12 @@
         74.0
       ],
       "offset": [
-        103,
-        63
+        34,
+        74
       ],
-      "touchLeft": 977,
-      "touchRight": 896,
-      "opaque": 118786
+      "touchLeft": 0,
+      "touchRight": 0,
+      "opaque": 140219
     },
     {
       "id": "disappointed",

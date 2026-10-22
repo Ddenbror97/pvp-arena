@@ -30,8 +30,8 @@ describe("dealer clips", () => {
     expect(clipActiveMs("deal")).toBeLessThanOrEqual(900);
     expect(clipActiveMs("wink")).toBeGreaterThanOrEqual(300);
     expect(clipActiveMs("wink")).toBeLessThanOrEqual(500);
-    expect(clipActiveMs("celebrate")).toBeGreaterThanOrEqual(1000);
-    expect(clipActiveMs("celebrate")).toBeLessThanOrEqual(1500);
+    expect(clipActiveMs("celebrate")).toBeGreaterThanOrEqual(2000);
+    expect(clipActiveMs("celebrate")).toBeLessThanOrEqual(2500);
   });
 
   it("orders the shuffle and the deal from the poses that actually show that motion", () => {
@@ -88,7 +88,8 @@ describe("dealer clips", () => {
     expect(table.sample(8000).frame).toBe("waiting");
     table.pose("acknowledge", 9000, false);
     expect(table.sample(9000)).toMatchObject({ clip: "celebrate", frame: "celebrate" });
-    expect(table.sample(10200)).toMatchObject({ clip: "idle", frame: "idle" });
+    expect(table.sample(10200)).toMatchObject({ clip: "celebrate", frame: "celebrate" });
+    expect(table.sample(11200)).toMatchObject({ clip: "idle", frame: "idle" });
   });
 
   it("holds one resting pose when motion is reduced", () => {
