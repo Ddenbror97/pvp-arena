@@ -132,6 +132,32 @@ function subscribe(ch: ReturnType<SupabaseClient["channel"]>, ms = 8_000) {
   });
 }
 
+/** Resolves when a handler observes `{kind: "user_available"}`. The deadline is a failure, not a wait the assertion depends on. */
+function walletBroadcastGate(ms = 20_000) {
+  let settled = false;
+  let succeed: () => void = () => {};
+  const promise = new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      reject(new Error("wallet broadcast timed out before kind=user_available"));
+    }, ms);
+    succeed = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve();
+    };
+  });
+  void promise.catch(() => {});
+  return {
+    promise,
+    note(payload: Record<string, unknown>) {
+      if (payload.kind === "user_available") succeed();
+    },
+  };
+}
+
 async function cleanupHostedUsers() {
   await mgmt(`
     do $body$
@@ -467,8 +493,11 @@ describe("phase 3 hosted test project", () => {
     await userA.realtime.setAuth(a.access!);
     const own = userA.channel(`wallet:${a.id}`, { config: { private: true } });
     const ownEvents: Record<string, unknown>[] = [];
+    const ownWallet = walletBroadcastGate();
     own.on("broadcast", { event: "changed" }, (msg) => {
-      ownEvents.push((msg.payload ?? {}) as Record<string, unknown>);
+      const payload = (msg.payload ?? {}) as Record<string, unknown>;
+      ownEvents.push(payload);
+      ownWallet.note(payload);
     });
     const ownStatus = await subscribe(own);
     const game = userA.channel("game:coinflip", { config: { private: true } });
@@ -482,49 +511,69 @@ describe("phase 3 hosted test project", () => {
     await watcher.realtime.setAuth(a.access!);
     const watchCh = watcher.channel(`wallet:${a.id}`, { config: { private: true } });
     const forged: Record<string, unknown>[] = [];
+    const watchWallet = walletBroadcastGate();
     watchCh.on("broadcast", { event: "changed" }, (msg) => {
-      forged.push((msg.payload ?? {}) as Record<string, unknown>);
+      const payload = (msg.payload ?? {}) as Record<string, unknown>;
+      forged.push(payload);
+      watchWallet.note(payload);
     });
     const watchStatus = await subscribe(watchCh);
-    const send = await own.send({ type: "broadcast", event: "changed", payload: { kind: "forged", balance: 1 } });
-    await new Promise((r) => setTimeout(r, 1_500));
     const leakedRows: unknown[] = [];
     const changes = userA.channel("phase3-wallet-changes");
     changes.on("postgres_changes", { event: "*", schema: "public", table: "wallet_accounts" }, (msg) => {
       leakedRows.push(msg);
     });
     const changesStatus = await subscribe(changes, 6_000);
-
-    await mgmt(`
-      insert into public.profiles (id, username, age_confirmed_at)
-      values ('${a.id}', 'p3rt${a.id.replace(/-/g, "").slice(0, 10)}', now())
-      on conflict (id) do nothing;
-      insert into public.wallet_accounts (owner_id, kind, asset, account_type, balance)
-      values ('${a.id}', 'user_available', 'TEST_USD', 'test_credit', 25);
-      insert into public.game_chat_messages (game_type, user_id, message, status, moderation_provider, created_at, moderated_at)
-      values ('jackpot', '${a.id}', 'phase3-hidden-marker', 'hidden', 'rules', now(), now());
-    `);
-    await new Promise((r) => setTimeout(r, 2_500));
-    const wallets = await authFetch(keys, `/rest/v1/wallet_accounts?select=balance,owner_id&owner_id=eq.${a.id}`, {
-      token: b.access,
-    });
-    const walletBody = await wallets.text();
-    await mgmt(`
-      delete from public.game_chat_messages where user_id = '${a.id}';
-      delete from public.wallet_accounts where owner_id = '${a.id}';
-      delete from public.profiles where id = '${a.id}';
-    `);
     const reconnectClient = client(keys, a.access);
     await reconnectClient.realtime.setAuth(a.access!);
     const again = reconnectClient.channel(`wallet:${a.id}`, { config: { private: true } });
-    const reconnect = await subscribe(again);
-    await userA.removeChannel(own);
-    await userA.removeChannel(game);
-    await userA.removeChannel(changes);
-    await watcher.removeChannel(watchCh);
-    await reconnectClient.removeChannel(again);
-    await userB.removeChannel(cross);
-    await anon.removeChannel(chat);
+
+    let send: Awaited<ReturnType<typeof own.send>> | undefined;
+    let walletBody = "";
+    let reconnect = "";
+    try {
+      expect(ownStatus).toBe("SUBSCRIBED");
+      expect(watchStatus).toBe("SUBSCRIBED");
+      send = await own.send({ type: "broadcast", event: "changed", payload: { kind: "forged", balance: 1 } });
+      try {
+        await mgmt(`
+          insert into public.profiles (id, username, age_confirmed_at)
+          values ('${a.id}', 'p3rt${a.id.replace(/-/g, "").slice(0, 10)}', now())
+          on conflict (id) do nothing;
+          insert into public.wallet_accounts (owner_id, kind, asset, account_type, balance)
+          values ('${a.id}', 'user_available', 'TEST_USD', 'test_credit', 25);
+          insert into public.game_chat_messages (game_type, user_id, message, status, moderation_provider, created_at, moderated_at)
+          values ('jackpot', '${a.id}', 'phase3-hidden-marker', 'hidden', 'rules', now(), now());
+        `);
+        const [stored] = await mgmt<{ balance: number }[]>(
+          `select balance::int as balance from public.wallet_accounts
+           where owner_id = '${a.id}' and kind = 'user_available' and account_type = 'test_credit'`,
+        );
+        expect(stored?.balance).toBe(25);
+        await Promise.all([ownWallet.promise, watchWallet.promise]);
+        const wallets = await authFetch(keys, `/rest/v1/wallet_accounts?select=balance,owner_id&owner_id=eq.${a.id}`, {
+          token: b.access,
+        });
+        walletBody = await wallets.text();
+      } finally {
+        await mgmt(`
+          delete from public.game_chat_messages where user_id = '${a.id}';
+          delete from public.wallet_accounts where owner_id = '${a.id}';
+          delete from public.profiles where id = '${a.id}';
+        `);
+      }
+      reconnect = await subscribe(again);
+    } finally {
+      await Promise.all([
+        userA.removeChannel(own),
+        userA.removeChannel(game),
+        userA.removeChannel(changes),
+        watcher.removeChannel(watchCh),
+        reconnectClient.removeChannel(again),
+        userB.removeChannel(cross),
+        anon.removeChannel(chat),
+      ]);
+    }
 
     const ownPayload = [...ownEvents, ...forged];
     results.realtime = {

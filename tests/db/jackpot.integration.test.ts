@@ -381,7 +381,6 @@ d("jackpot engine (isolated schema)", () => {
 
   it("SQL draw and TypeScript verifier agree on random seeds (incl. rejection sampling)", async () => {
     const ns = [1n, 2n, 3n, 100n, 12485n, 999999937n, (1n << 62n) + 1n, 9223372036854775807n];
-    let retried = 0;
     for (let i = 0; i < 80; i++) {
       const seed = randomUUID().replace(/-/g, "") + randomUUID().replace(/-/g, "");
       const n = ns[i % ns.length];
@@ -389,8 +388,25 @@ d("jackpot engine (isolated schema)", () => {
       const ts = await drawTicket(seed, i, 1, n);
       expect(ts.ticket.toString()).toBe(row.ticket);
       expect(ts.counter).toBe(row.counter);
-      if (row.counter > 0) retried++;
     }
-    expect(retried).toBeGreaterThan(0); // N = 2^62+1 rejects ~25% of samples
   }, 30000);
+
+  it("a fixed seed forces rejection sampling and SQL returns the same counter", async () => {
+    const n = (1n << 62n) + 1n;
+    const gameId = 7;
+    let found: { seed: string; ticket: bigint; counter: number } | undefined;
+    for (let i = 0; i < 256; i++) {
+      const seed = i.toString(16).padStart(64, "0");
+      const ts = await drawTicket(seed, gameId, 1, n);
+      if (ts.counter > 0) {
+        found = { seed, ticket: ts.ticket, counter: ts.counter };
+        break;
+      }
+    }
+    expect(found).toBeDefined();
+    const [row] = await sql`select (t).ticket::text, (t).counter from (select pvp_test.jackpot_draw_ticket(decode(${found!.seed},'hex'), ${gameId}, 1, ${n.toString()}::bigint) t) x`;
+    expect(row.ticket).toBe(found!.ticket.toString());
+    expect(row.counter).toBe(found!.counter);
+    expect(found!.counter).toBeGreaterThan(0);
+  });
 });

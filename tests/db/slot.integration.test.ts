@@ -657,7 +657,22 @@ d("P2P Slott engine (isolated schema)", { timeout: LONG }, () => {
     await expectErr(as(a, (tx) => tx`select pvp_test.slot_spin(${id}, 2, ${randomUUID()}, 999999)`), "does not exist");
     const g = await playAll(id, a, b);
     await expectErr(sql`update pvp_test.slot_games set winner_id = ${a} where id = ${id}`, "IMMUTABLE_RECORD");
+    // A bomb keeps both stakes and writes no payout. The immutability trigger
+    // only runs when a row matches, so that outcome gets an explicit payout row.
+    let payouts = await sql`select beneficiary_id, amount from pvp_test.slot_payouts where game_id = ${id} order by beneficiary_id`;
+    if (payouts.length === 0) {
+      expect(g.outcome).toBe("BOMB");
+      const [tx] = await sql`select id from pvp_test.ledger_transactions where game_id = ${id} and kind = 'slot_settlement'`;
+      expect(tx?.id).toBeTruthy();
+      await sql`insert into pvp_test.slot_payouts (game_id, beneficiary_id, kind, amount, ledger_tx_id)
+        values (${id}, ${a}, 'WINNER', 500, ${tx.id})`;
+      payouts = await sql`select beneficiary_id, amount from pvp_test.slot_payouts where game_id = ${id} order by beneficiary_id`;
+    }
+    expect(payouts.length).toBeGreaterThan(0);
+    const before = payouts.map((p) => ({ beneficiary_id: p.beneficiary_id, amount: String(p.amount) }));
     await expectErr(sql`update pvp_test.slot_payouts set amount = 1 where game_id = ${id}`, "IMMUTABLE_RECORD");
+    const after = await sql`select beneficiary_id, amount from pvp_test.slot_payouts where game_id = ${id} order by beneficiary_id`;
+    expect(after.map((p) => ({ beneficiary_id: p.beneficiary_id, amount: String(p.amount) }))).toEqual(before);
     expect(g.status).toBe("COMPLETED");
   }, LONG);
 
