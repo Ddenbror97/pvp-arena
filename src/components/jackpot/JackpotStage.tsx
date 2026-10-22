@@ -1,5 +1,4 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { useBalanceHold } from "@/lib/balance-hold";
@@ -21,7 +20,6 @@ import {
   reservedCrownHeadroom,
 } from "@/components/prestige/PlayerPrestigeIdentity";
 import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
-import { ShieldCheck } from "lucide-react";
 import { GameChat } from "@/components/chat/GameChat";
 import type { JackpotPaint } from "@/lib/first-paint";
 
@@ -159,12 +157,6 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
 
       {/* Wheel */}
       <section className="order-1 flex flex-col items-center justify-center rounded-xl border border-border bg-card px-3 py-3 lg:order-2 lg:h-full lg:min-h-0">
-        <div className="mb-2 text-center">
-          <div className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            Jackpot{" "}
-            <span className="tabular inline-block min-w-[4ch] text-left">#{game?.id ?? "—"}</span>
-          </div>
-        </div>
         <JackpotWheel
           players={players}
           spin={spin}
@@ -247,19 +239,6 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
             </div>
           )}
         </JackpotWheel>
-        {game ? (
-          <Link
-            to="/fairness"
-            className="mt-2 inline-flex h-[17px] max-w-full items-center gap-1.5 text-[11px] leading-[17px] text-muted-foreground hover:text-foreground"
-          >
-            <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">
-              Seed commitment <span className="tabular">{game.server_seed_hash.slice(0, 16)}…</span>
-            </span>
-          </Link>
-        ) : (
-          <div aria-hidden className="mt-2 h-[17px]" />
-        )}
       </section>
 
       {/* Entry */}

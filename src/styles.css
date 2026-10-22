@@ -338,7 +338,6 @@ header.site-chrome {
   color: #fff;
   text-decoration: none;
 }
-.header-wallet:hover { border-color: rgb(167 139 250 / 35%); }
 .header-wallet:focus-visible { outline: 2px solid #b57bff; outline-offset: 2px; }
 .header-wallet-label {
   display: inline-flex;
@@ -357,7 +356,6 @@ header.site-chrome {
   font-weight: 700;
   letter-spacing: 0.04em;
 }
-.header-wallet:hover .header-wallet-label { filter: brightness(1.08); }
 .header-wallet-asset { display: inline-block; width: 2rem; color: #c4b5fd; text-align: center; }
 /* The loading pulse and the dollar amount share one box, so a resolved balance
    does not slide the USDC mark or the profile avatar. Wider than $9,999.99
@@ -2288,7 +2286,6 @@ html[data-theme="light"] .poker-account .header-wallet-label {
   color: #fff;
   background: linear-gradient(180deg, #9b5cff, #7c3aed);
 }
-html[data-theme="light"] .poker-account .header-wallet:hover .header-wallet-label { filter: brightness(1.06); }
 html[data-theme="light"] :is(.poker-hud-panel, .poker-game-pill, .poker-info-panel, .poker-chat-dock, .poker-status, .poker-action-buttons) {
   box-shadow: 0 0.6em 1.6em rgb(60 30 120 / 14%), inset 0 1px 0 rgb(255 255 255 / 70%);
 }
