@@ -9,8 +9,15 @@ import {
   stopVariant,
   tierLevel,
 } from "@/components/slott/presentation";
+import {
+  lightningPolyline,
+  scoreFxEndMs,
+  scoreRevealAtMs,
+  strikeColor,
+} from "@/components/slott/strike";
+import { tallyStartMs } from "@/components/slott/tally";
 import { presentSpinStart, reelStops } from "@/components/slott/timing";
-import { SYMBOLS, WEIGHT_TOTAL } from "@/lib/slott/paytable";
+import { SYMBOLS, WEIGHT_TOTAL, type LineWin } from "@/lib/slott/paytable";
 
 describe("slot presentation", () => {
   afterEach(() => {
@@ -94,5 +101,22 @@ describe("slot presentation", () => {
       startAt: now,
       durationMs: 720,
     });
+  });
+
+  it("holds the name and score for a second after the line, then long enough to read", () => {
+    const lines = [{ line: 1, symbol: 0, count: 3, score: 15 }] satisfies LineWin[];
+    const start = tallyStartMs(lines);
+    expect(scoreRevealAtMs(start) - start).toBe(1000);
+    expect(scoreFxEndMs(start) - scoreRevealAtMs(start)).toBe(2600);
+    expect(scoreRevealAtMs(tallyStartMs([])) - tallyStartMs([])).toBe(1000);
+  });
+
+  it("strikes through the matched cells and varies the bolt by rarity", () => {
+    const points = lightningPolyline([1, 1, 1, 1, 1], 3, 4).split(" ");
+    expect(points[0]).toBe("50,150");
+    expect(points[points.length - 1]).toBe("250,150");
+    expect(points.length).toBeGreaterThan(4);
+    expect(strikeColor("legendary")).not.toBe(strikeColor("common"));
+    expect(lightningPolyline([0, 0, 0], 0, 1)).toBe("");
   });
 });

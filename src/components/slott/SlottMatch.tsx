@@ -61,6 +61,7 @@ import {
   SlotCabinet,
 } from "./SlotCabinet";
 import { TargetChip } from "./SpinFx";
+import { scoreFxEndMs } from "./strike";
 import { reelValues, TALLY_STEP_MS, tallyEndMs, tallyStartMs } from "./tally";
 import { IDLE_GRID, landedAt, presentSpinStart, spinArrivedLive, type ReelSpin } from "./timing";
 
@@ -220,10 +221,14 @@ export function SlottMatch({ id }: { id: number }) {
       : null;
   const fresh =
     !!latest && latestLanded && !reelSpin?.pending && now - latestLandAt < FX_WINDOW_MS;
-  // The payline leaves when the score finishes counting, so it cannot sit on the next spin.
-  const showHit = fresh && !latestTallied;
+  // The callout waits a second, then holds. It clears before a newer spin can paint over it.
+  const showHit =
+    !!latest &&
+    latestLanded &&
+    !reelSpin?.pending &&
+    now < latestLandAt + scoreFxEndMs(tallyStartMs(latest.lines));
   // Every tick re-renders the whole match; only countdowns and landing reels need 150 ms.
-  useNow(live(g?.status) || !latestTallied || fresh ? 150 : 1000);
+  useNow(live(g?.status) || !latestTallied || fresh || showHit ? 150 : 1000);
   const level = latest
     ? winLevel(
         latest.lines.reduce((a, l) => a + l.score, 0),

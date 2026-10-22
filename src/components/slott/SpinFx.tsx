@@ -4,7 +4,7 @@ import { formatUsd } from "@/lib/jackpot/math";
 import { cn } from "@/lib/utils";
 import { bestLineCaption, hitsDoneMs, LINE_DRAW_MS, lineColor, orderLines, reachMs } from "./hits";
 import { fxTier } from "./presentation";
-import { useCountUp } from "./SlotCabinet";
+import { lightningPolyline, scoreRevealAtMs, strikeColor } from "./strike";
 import { reelValues, TALLY_STEP_MS, tallyStartMs } from "./tally";
 
 const TIER: Record<string, string> = {
@@ -55,6 +55,13 @@ export const SpinFx = memo(function SpinFx({
                 ? "slott-marquee slott-marquee-mega absolute inset-0"
                 : "slott-marquee absolute inset-0"
             }
+          />
+        ) : null}
+        {ordered.length ? (
+          <div
+            aria-hidden
+            className="slott-strike-wash pointer-events-none absolute inset-0"
+            style={{ animationDelay: `${reachMs(0, 0, ordered[0]!.count)}ms` }}
           />
         ) : null}
         {ordered.length ? (
@@ -124,6 +131,34 @@ export const SpinFx = memo(function SpinFx({
                   })}
                 </g>
               );
+            })}
+            {ordered.map((l, i) => {
+              const rows = PAYLINES[l.line - 1]!;
+              const delay = reachMs(i, 0, l.count);
+              const color = strikeColor(SYMBOLS[l.symbol]?.rarity);
+              const bolts = [lightningPolyline(rows, l.count, l.line * 17 + l.symbol)];
+              if (l.count >= 4) bolts.push(lightningPolyline(rows, l.count, l.line * 29 + 3));
+              return bolts.map((points, fork) => (
+                <g
+                  key={`${l.line}-${fork}`}
+                  style={{ "--d": `${delay + fork * 90}ms` } as CSSProperties}
+                >
+                  <polyline
+                    points={points}
+                    pathLength={1}
+                    stroke={color}
+                    strokeWidth={fork ? 8 : 14}
+                    className="slott-bolt slott-bolt-glow"
+                  />
+                  <polyline
+                    points={points}
+                    pathLength={1}
+                    stroke="#fff"
+                    strokeWidth={fork ? 2 : 3}
+                    className="slott-bolt"
+                  />
+                </g>
+              ));
             })}
           </svg>
         ) : null}
@@ -230,9 +265,14 @@ function Tally({
   const lineScore = lines.reduce((a, l) => a + l.score, 0);
   const start = tallyStartMs(lines);
   const [step, setStep] = useState(-1);
+  const [scoreOn, setScoreOn] = useState(false);
   useEffect(() => {
     const timers = values.map((_, i) => setTimeout(() => setStep(i), start + i * TALLY_STEP_MS));
-    return () => timers.forEach(clearTimeout);
+    const scoreTimer = setTimeout(() => setScoreOn(true), scoreRevealAtMs(start));
+    return () => {
+      timers.forEach(clearTimeout);
+      clearTimeout(scoreTimer);
+    };
     // One run per mount (SpinFx remounts per spin).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -242,7 +282,6 @@ function Tally({
       : step >= REELS - 1
         ? score
         : lineScore + values.slice(0, step + 1).reduce((a, v) => a + v, 0);
-  const shown = useCountUp(running, 160);
   const hit = target != null && target > 0 && running >= target;
   const told = useRef(false);
   useEffect(() => {
@@ -278,16 +317,16 @@ function Tally({
           ))
         : null}
       {target != null ? <TargetChip target={target} running={running} live={step >= 0} /> : null}
-      {step >= 0 ? (
+      {scoreOn ? (
         <div
           className="slott-score-burst absolute inset-x-0 flex justify-center"
           data-parked={parked ? "true" : "false"}
           data-hit={hit ? "true" : "false"}
         >
-          <div className="max-w-[92%] text-center">
-            {who ? <div className="slott-score-burst-name truncate">{who}</div> : null}
-            <div className="slott-score-burst-num tabular">+{shown}</div>
-            {line ? <div className="slott-score-burst-line truncate">{line}</div> : null}
+          <div className="max-w-[96%] text-center">
+            {who ? <div className="slott-score-burst-name">{who}</div> : null}
+            <div className="slott-score-burst-num tabular">+{score}</div>
+            {line ? <div className="slott-score-burst-line">{line}</div> : null}
           </div>
         </div>
       ) : null}
