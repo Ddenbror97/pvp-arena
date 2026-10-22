@@ -2804,13 +2804,7 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-screen { position: absolute; inset: 0; overflow: hidden; color: #f6f3ff; }
 .pool-room { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 42%; }
 .pool-felt { position: absolute; z-index: 1; left: 4.8rem; right: 1.1rem; top: 5.7rem; bottom: 4.9rem; container-type: size; }
-.pool-felt-frame {
-  position: absolute; left: 50%; top: 52%;
-  width: min(100cqw, calc(100cqh * 2));
-  height: min(100cqh, calc(100cqw / 2));
-  transform: translate(-50%, -50%);
-  filter: drop-shadow(0 28px 36px rgb(0 0 0 / 55%));
-}
+.pool-felt-frame { position: absolute; inset: 0; }
 .pool-canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 .pool-brand, .pool-vs, .pool-tools, .pool-prize, .pool-power, .pool-dock, .pool-banner, .pool-sheet, .pool-confirm, .pool-pockets { position: absolute; z-index: 3; }
 .pool-brand { top: 0.8rem; left: 0.9rem; display: flex; align-items: center; gap: 0.55rem; }
@@ -2883,7 +2877,7 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-switch.is-on { background: #7c3aed; }
 .pool-switch.is-on span { transform: translateX(1.02rem); }
 .pool-banner {
-  left: 50%; bottom: 5.2rem; transform: translateX(-50%); max-width: min(38rem, calc(100% - 2rem));
+  left: 50%; top: 4.7rem; transform: translateX(-50%); max-width: min(38rem, calc(100% - 2rem));
   margin: 0; padding: 0.5rem 0.75rem; border-radius: 0.75rem; text-align: center; font-size: 0.8rem;
   background: rgb(8 6 16 / 84%); border: 1px solid rgb(255 255 255 / 12%);
 }
@@ -2905,6 +2899,7 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
   .pool-pips { display: none; }
   .pool-prize { display: none; }
   .pool-felt { left: 0.45rem; right: 0.45rem; top: 7.4rem; bottom: 6.4rem; }
+  .pool-banner { top: 6.6rem; }
   .pool-power { top: auto; bottom: 4.6rem; left: 0.45rem; transform: none; }
   .pool-power input { height: 4.5rem; }
   .pool-dock { flex-wrap: wrap; bottom: 0.45rem; }
