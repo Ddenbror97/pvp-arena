@@ -89,9 +89,7 @@ export const Reels = memo(function Reels({
           />
         ))}
       </div>
-      {fx ? (
-        <div className="slott-fx pointer-events-none absolute inset-0 z-20">{fx}</div>
-      ) : null}
+      {fx ? <div className="slott-fx pointer-events-none absolute inset-0 z-20">{fx}</div> : null}
     </div>
   );
 });
@@ -157,17 +155,11 @@ function Reel({
     }
     const cell = 100 / total;
     const anim = spin.pending
-      ? el.animate(
-          [
-            { transform: "translateY(0%)" },
-            { transform: `translateY(${end}%)` },
-          ],
-          {
-            duration: Math.max(480, Math.round(spin.durationMs * 0.42)),
-            iterations: Infinity,
-            easing: "linear",
-          },
-        )
+      ? el.animate([{ transform: "translateY(0%)" }, { transform: `translateY(${end}%)` }], {
+          duration: Math.max(480, Math.round(spin.durationMs * 0.42)),
+          iterations: Infinity,
+          easing: "linear",
+        })
       : el.animate(
           [
             { transform: "translateY(0%)", offset: 0 },
@@ -204,11 +196,12 @@ function Reel({
       className={cn(
         "relative z-[1] aspect-[1/4] overflow-hidden",
         seamless ? "slott-reel-seam" : "slott-reel rounded-md sm:rounded-lg",
+        live && "slott-reel-live",
       )}
     >
       <div
         ref={strip}
-        className="absolute inset-x-0 top-0 will-change-transform"
+        className="slott-strip absolute inset-x-0 top-0"
         style={{
           height: `${(cells.length / ROWS) * 100}%`,
           transform:
@@ -243,9 +236,11 @@ function Reel({
                 src={SYMBOL_IMG[s]}
                 alt={final ? (sym?.name ?? "Bomb") : ""}
                 draggable={false}
+                decoding={final ? "sync" : "async"}
                 style={vars}
                 className={cn(
-                  "relative select-none object-contain transition-[filter,opacity] duration-300",
+                  "relative select-none object-contain",
+                  !live && "transition-[filter,opacity] duration-300",
                   s === BOMB && "slott-bomb-symbol",
                   final && landed && s === WILD && "slott-wild-glow",
                   hit && (h.big ? "slott-hit slott-hit-big" : "slott-hit"),

@@ -1,6 +1,5 @@
 import { memo, useEffect, useRef, useState, type CSSProperties } from "react";
 import { PAYLINES, REELS, ROWS, SYMBOLS, WILD, type LineWin } from "@/lib/slott/paytable";
-import { SYMBOL_IMG } from "@/lib/slott/symbols";
 import { formatUsd } from "@/lib/jackpot/math";
 import { cn } from "@/lib/utils";
 import { hitsDoneMs, LINE_DRAW_MS, lineColor, orderLines, reachMs } from "./hits";
@@ -40,160 +39,167 @@ export const SpinFx = memo(function SpinFx({
   const best = ordered[ordered.length - 1];
   const done = hitsDoneMs(lines);
   const bannerAt = tier === "medium" ? done + 40 : done + 80;
+  const parked = !!bonus || (tier !== "none" && tier !== "small");
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-lg">
-      {tier === "large" || tier === "exceptional" ? (
-        <div className="slott-flash absolute inset-0" style={{ animationDelay: `${bannerAt}ms` }} />
-      ) : null}
-      {tier === "large" || tier === "exceptional" ? (
-        <div
-          className={
-            tier === "exceptional"
-              ? "slott-marquee slott-marquee-mega absolute inset-0"
-              : "slott-marquee absolute inset-0"
-          }
-        />
-      ) : null}
-      {ordered.length ? (
-        <svg
-          viewBox="0 0 500 400"
-          preserveAspectRatio="none"
-          className="absolute inset-0 h-full w-full"
-        >
-          {ordered.map((l, i) => {
-            const rows = PAYLINES[l.line - 1]!;
-            const pts = rows
-              .slice(0, l.count)
-              .map((row, reel) => `${reel * 100 + 50},${row * 100 + 50}`);
-            const color = lineColor(l.line);
-            return (
-              <g
-                key={l.line}
-                style={
-                  {
-                    "--d": `${reachMs(i, 0, l.count)}ms`,
-                    "--draw": `${LINE_DRAW_MS}ms`,
-                  } as CSSProperties
-                }
-                className="slott-line"
-              >
-                <polyline
-                  points={pts.join(" ")}
-                  fill="none"
-                  stroke={color}
-                  strokeWidth={14}
-                  strokeOpacity={0.35}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  pathLength={1}
-                />
-                <polyline
-                  points={pts.join(" ")}
-                  fill="none"
-                  stroke={color}
-                  strokeWidth={7}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  pathLength={1}
-                />
-                <polyline
-                  points={pts.join(" ")}
-                  fill="none"
-                  stroke="#fff"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  pathLength={1}
-                />
-                {pts.map((p, j) => {
-                  const [x, y] = p.split(",");
-                  return (
-                    <circle
-                      key={j}
-                      cx={x}
-                      cy={y}
-                      r={9}
-                      fill={color}
-                      className="slott-line-dot"
-                      style={{ animationDelay: `${reachMs(i, j, l.count)}ms` }}
-                    />
-                  );
-                })}
-              </g>
-            );
-          })}
-        </svg>
-      ) : null}
-      {ordered.map((l, i) => {
-        const rows = PAYLINES[l.line - 1]!;
-        const reel = l.count - 1;
-        const left = Math.min(88, ((reel * 100 + 50) / 500) * 100 + 7);
-        const top = ((rows[reel]! * 100 + 50) / 400) * 100;
-        return (
-          <span
-            key={l.line}
-            className="slott-line-tag tabular absolute -translate-x-1/2 -translate-y-1/2 rounded-full px-1.5 py-0.5 font-display text-[10px] text-black sm:px-2 sm:text-xs"
-            style={{
-              left: `${left}%`,
-              top: `${top}%`,
-              background: lineColor(l.line),
-              animationDelay: `${reachMs(i, reel, l.count) + 60}ms`,
-            }}
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-10">
+      <div className="absolute inset-0 overflow-hidden rounded-lg">
+        {tier === "large" || tier === "exceptional" ? (
+          <div
+            className="slott-flash absolute inset-0"
+            style={{ animationDelay: `${bannerAt}ms` }}
+          />
+        ) : null}
+        {tier === "large" || tier === "exceptional" ? (
+          <div
+            className={
+              tier === "exceptional"
+                ? "slott-marquee slott-marquee-mega absolute inset-0"
+                : "slott-marquee absolute inset-0"
+            }
+          />
+        ) : null}
+        {ordered.length ? (
+          <svg
+            viewBox="0 0 500 400"
+            preserveAspectRatio="none"
+            className="absolute inset-0 h-full w-full"
           >
-            +{l.score}
-          </span>
-        );
-      })}
-
-      {tier === "exceptional" ? (
-        <div
-          className="slott-rays absolute left-1/2 top-1/2 h-[180%] w-[180%] -translate-x-1/2 -translate-y-1/2"
-          style={{ animationDelay: `${bannerAt}ms` }}
-        />
-      ) : null}
-      {tier === "medium" ? (
-        <Coins n={7} delay={bannerAt} seed={lineScore + 3} />
-      ) : tier === "large" ? (
-        <Coins n={12} delay={bannerAt} seed={lineScore} />
-      ) : tier === "exceptional" ? (
-        <Coins n={18} delay={bannerAt} seed={lineScore + 11} />
-      ) : null}
-
-      <div className="absolute inset-0 grid place-items-center">
-        <div className="flex flex-col items-center text-center">
-          {bonus ? (
-            <div className="slott-banner" style={{ animationDelay: `${bannerAt}ms` }}>
-              <div className="slott-banner-title font-display text-[clamp(1.4rem,6vw,3rem)] leading-none">
-                {TIER[bonus.tier] ?? bonus.tier}
-              </div>
-              <div className="tabular mt-1 rounded-full bg-black/60 px-3 py-0.5 font-display text-[clamp(0.8rem,2.6vw,1.15rem)] text-gold">
-                +{formatUsd(bonus.cents)} to the pot
-              </div>
-            </div>
-          ) : tier === "medium" ? (
-            <div
-              className="slott-banner slott-banner-mid"
-              style={{ animationDelay: `${bannerAt}ms` }}
+            {ordered.map((l, i) => {
+              const rows = PAYLINES[l.line - 1]!;
+              const pts = rows
+                .slice(0, l.count)
+                .map((row, reel) => `${reel * 100 + 50},${row * 100 + 50}`);
+              const color = lineColor(l.line);
+              return (
+                <g
+                  key={l.line}
+                  style={
+                    {
+                      "--d": `${reachMs(i, 0, l.count)}ms`,
+                      "--draw": `${LINE_DRAW_MS}ms`,
+                    } as CSSProperties
+                  }
+                  className="slott-line"
+                >
+                  <polyline
+                    points={pts.join(" ")}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth={14}
+                    strokeOpacity={0.35}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    pathLength={1}
+                  />
+                  <polyline
+                    points={pts.join(" ")}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth={7}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    pathLength={1}
+                  />
+                  <polyline
+                    points={pts.join(" ")}
+                    fill="none"
+                    stroke="#fff"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    pathLength={1}
+                  />
+                  {pts.map((p, j) => {
+                    const [x, y] = p.split(",");
+                    return (
+                      <circle
+                        key={j}
+                        cx={x}
+                        cy={y}
+                        r={9}
+                        fill={color}
+                        className="slott-line-dot"
+                        style={{ animationDelay: `${reachMs(i, j, l.count)}ms` }}
+                      />
+                    );
+                  })}
+                </g>
+              );
+            })}
+          </svg>
+        ) : null}
+        {ordered.map((l, i) => {
+          const rows = PAYLINES[l.line - 1]!;
+          const reel = l.count - 1;
+          const left = Math.min(88, ((reel * 100 + 50) / 500) * 100 + 7);
+          const top = ((rows[reel]! * 100 + 50) / 400) * 100;
+          return (
+            <span
+              key={l.line}
+              className="slott-line-tag tabular absolute -translate-x-1/2 -translate-y-1/2 rounded-full px-1.5 py-0.5 font-display text-[10px] text-black sm:px-2 sm:text-xs"
+              style={{
+                left: `${left}%`,
+                top: `${top}%`,
+                background: lineColor(l.line),
+                animationDelay: `${reachMs(i, reel, l.count) + 60}ms`,
+              }}
             >
-              <div className="slott-banner-title font-display text-[clamp(1.2rem,4.5vw,2rem)] leading-none">
-                WIN
+              +{l.score}
+            </span>
+          );
+        })}
+
+        {tier === "exceptional" ? (
+          <div
+            className="slott-rays absolute left-1/2 top-1/2 h-[180%] w-[180%] -translate-x-1/2 -translate-y-1/2"
+            style={{ animationDelay: `${bannerAt}ms` }}
+          />
+        ) : null}
+        {tier === "medium" ? (
+          <Coins n={7} delay={bannerAt} seed={lineScore + 3} />
+        ) : tier === "large" ? (
+          <Coins n={12} delay={bannerAt} seed={lineScore} />
+        ) : tier === "exceptional" ? (
+          <Coins n={18} delay={bannerAt} seed={lineScore + 11} />
+        ) : null}
+
+        <div className="absolute inset-0 grid place-items-center">
+          <div className="flex flex-col items-center text-center">
+            {bonus ? (
+              <div className="slott-banner" style={{ animationDelay: `${bannerAt}ms` }}>
+                <div className="slott-banner-title font-display text-[clamp(1.4rem,6vw,3rem)] leading-none">
+                  {TIER[bonus.tier] ?? bonus.tier}
+                </div>
+                <div className="tabular mt-1 rounded-full bg-black/60 px-3 py-0.5 font-display text-[clamp(0.8rem,2.6vw,1.15rem)] text-gold">
+                  +{formatUsd(bonus.cents)} to the pot
+                </div>
               </div>
-            </div>
-          ) : tier === "large" || tier === "exceptional" ? (
-            <div className="slott-banner" style={{ animationDelay: `${bannerAt}ms` }}>
-              <div className="slott-banner-title font-display text-[clamp(1.5rem,6.5vw,3.2rem)] leading-none">
-                {tier === "exceptional" ? "MEGA WIN" : "BIG WIN"}
+            ) : tier === "medium" ? (
+              <div
+                className="slott-banner slott-banner-mid"
+                style={{ animationDelay: `${bannerAt}ms` }}
+              >
+                <div className="slott-banner-title font-display text-[clamp(1.2rem,4.5vw,2rem)] leading-none">
+                  WIN
+                </div>
               </div>
-            </div>
-          ) : null}
+            ) : tier === "large" || tier === "exceptional" ? (
+              <div className="slott-banner" style={{ animationDelay: `${bannerAt}ms` }}>
+                <div className="slott-banner-title font-display text-[clamp(1.5rem,6.5vw,3.2rem)] leading-none">
+                  {tier === "exceptional" ? "MEGA WIN" : "BIG WIN"}
+                </div>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
       <Tally
         grid={grid}
         lines={lines}
         score={score}
-        label={best ? `${best.count}× ${SYMBOLS[best.symbol]!.name}` : who}
-        icon={best?.symbol}
+        who={who}
+        line={best ? `${best.count}× ${SYMBOLS[best.symbol]!.name}` : undefined}
+        parked={parked}
         target={target}
         onTarget={onTarget}
       />
@@ -206,16 +212,18 @@ function Tally({
   grid,
   lines,
   score,
-  label,
-  icon,
+  who,
+  line,
+  parked,
   target,
   onTarget,
 }: {
   grid: number[];
   lines: LineWin[];
   score: number;
-  label?: string | undefined;
-  icon?: number | undefined;
+  who?: string | undefined;
+  line?: string | undefined;
+  parked: boolean;
   target?: number | null | undefined;
   onTarget?: (() => void) | undefined;
 }) {
@@ -272,23 +280,15 @@ function Tally({
         : null}
       {target != null ? <TargetChip target={target} running={running} live={step >= 0} /> : null}
       {step >= 0 ? (
-        <div className="absolute inset-x-0 bottom-[8%] flex justify-center">
-          <div
-            className={cn(
-              "slott-tally-pill flex items-center gap-1.5 rounded-full bg-black/70 px-3 py-1 backdrop-blur-sm",
-              step >= REELS - 1 && "slott-tally-done",
-              hit && "ring-2 ring-gold",
-            )}
-          >
-            {icon != null ? (
-              <img src={SYMBOL_IMG[icon]} alt="" className="h-6 w-6 sm:h-7 sm:w-7" />
-            ) : null}
-            <span className="tabular font-display text-lg text-white sm:text-2xl">+{shown}</span>
-            {label ? (
-              <span className="max-w-[9rem] truncate text-[10px] font-semibold uppercase tracking-wider text-primary-soft sm:text-xs">
-                {label}
-              </span>
-            ) : null}
+        <div
+          className="slott-score-burst absolute inset-x-0 flex justify-center"
+          data-parked={parked ? "true" : "false"}
+          data-hit={hit ? "true" : "false"}
+        >
+          <div className="max-w-[92%] text-center">
+            {who ? <div className="slott-score-burst-name truncate">{who}</div> : null}
+            <div className="slott-score-burst-num tabular">+{shown}</div>
+            {line ? <div className="slott-score-burst-line truncate">{line}</div> : null}
           </div>
         </div>
       ) : null}
