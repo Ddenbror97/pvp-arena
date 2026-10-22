@@ -1,6 +1,50 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
+function readDotEnv(filePath) {
+  const out = {};
+  if (!existsSync(filePath)) return out;
+  for (const line of readFileSync(filePath, "utf8").split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) continue;
+    const i = trimmed.indexOf("=");
+    const key = trimmed.slice(0, i).trim();
+    let value = trimmed.slice(i + 1).trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    if (value) out[key] = value;
+  }
+  return out;
+}
+
+// An empty shell variable must not win. `node --env-file` leaves existing
+// empty values in place, and writing those into wrangler.json blanks the Worker.
+function envValue(name, file) {
+  const fromProcess = process.env[name];
+  if (typeof fromProcess === "string" && fromProcess.length > 0) return fromProcess;
+  return file[name] ?? "";
+}
+
+function requireEnv(name, file) {
+  const value = envValue(name, file);
+  if (!value) {
+    console.error(
+      `Refusing to patch Worker config: ${name} is empty. An empty shell variable must not overwrite .env.`,
+    );
+    process.exit(1);
+  }
+  return value;
+}
+
+const dotenv = readDotEnv(resolve(".env"));
+const supabaseUrl = requireEnv("SUPABASE_URL", dotenv);
+const supabaseProjectId = requireEnv("SUPABASE_PROJECT_ID", dotenv);
+const supabasePublishableKey = requireEnv("SUPABASE_PUBLISHABLE_KEY", dotenv);
+
 const path = resolve(".output/server/wrangler.json");
 const cfg = JSON.parse(readFileSync(path, "utf8"));
 cfg.name = "pvpspinarena";
@@ -15,18 +59,23 @@ cfg.routes = [
 ];
 cfg.vars = {
   ...(cfg.vars ?? {}),
-  SUPABASE_URL: process.env.SUPABASE_URL ?? "",
-  SUPABASE_PROJECT_ID: process.env.SUPABASE_PROJECT_ID ?? "",
-  SUPABASE_PUBLISHABLE_KEY: process.env.SUPABASE_PUBLISHABLE_KEY ?? "",
-  VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? "",
-  VITE_SUPABASE_PROJECT_ID:
-    process.env.VITE_SUPABASE_PROJECT_ID ?? process.env.SUPABASE_PROJECT_ID ?? "",
+  SUPABASE_URL: supabaseUrl,
+  SUPABASE_PROJECT_ID: supabaseProjectId,
+  SUPABASE_PUBLISHABLE_KEY: supabasePublishableKey,
+  VITE_SUPABASE_URL: envValue("VITE_SUPABASE_URL", dotenv) || supabaseUrl,
+  VITE_SUPABASE_PROJECT_ID: envValue("VITE_SUPABASE_PROJECT_ID", dotenv) || supabaseProjectId,
   VITE_SUPABASE_PUBLISHABLE_KEY:
-    process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_PUBLISHABLE_KEY ?? "",
-  BTCPAY_MIN_DEPOSIT_CENTS: process.env.BTCPAY_MIN_DEPOSIT_CENTS ?? "200",
+    envValue("VITE_SUPABASE_PUBLISHABLE_KEY", dotenv) || supabasePublishableKey,
+  BTCPAY_MIN_DEPOSIT_CENTS: envValue("BTCPAY_MIN_DEPOSIT_CENTS", dotenv) || "200",
   // Exact string "true" turns on the five-game PVP1 signup invite.
   GAME_SIGNUP_PROMO_ENABLED: "true",
 };
+console.log(
+  "Supabase Worker vars restored",
+  `url=${supabaseUrl.length}`,
+  `project=${supabaseProjectId.length}`,
+  `publishable=${supabasePublishableKey.length}`,
+);
 const flags = Array.isArray(cfg.compatibility_flags) ? cfg.compatibility_flags : [];
 if (!flags.includes("nodejs_compat")) flags.push("nodejs_compat");
 if (!flags.includes("nodejs_compat_populate_process_env"))
