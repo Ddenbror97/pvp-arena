@@ -121,7 +121,7 @@ How PvP compares: the pyramid post does not price a spin with a printed return. 
 
 The duel is a 5 by 4 grid, six spins each. Five paylines score a left-to-right run: three of a kind times 5, four times 15, and five times 50. Common symbols score 1 point, rare 2, epic 4, legendary 8, and WILD 10.
 
-Anubis and Horus are common symbols on that grid, worth 1 point each. The names are this site's art. They are not the Hacksaw title.
+Sapphire and Amethyst are common symbols on that grid, worth 1 point each. The names are this site's art. They are not the Hacksaw title.
 
 Three WILDs add 20% of the stake to the shared pot, four add 50%, five add 100%, and six or more add 300%. A per-match cap can reduce that award.
 

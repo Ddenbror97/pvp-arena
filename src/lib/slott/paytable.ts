@@ -37,13 +37,13 @@ const RARITY_WEIGHT: Record<Rarity, number> = {
 };
 
 const DEFS: [key: string, name: string, rarity: Rarity][] = [
-  ["glove", "Glove", "common"],
-  ["pistol", "Pistol", "common"],
-  ["knife", "Knife", "common"],
+  ["glove", "Sapphire", "common"],
+  ["pistol", "Amethyst", "common"],
+  ["knife", "Dagger", "common"],
   ["helmet", "Helmet", "common"],
-  ["vest", "Horus", "common"],
-  ["chest-gold", "Gold chest", "rare"],
-  ["grenade", "Grenade", "common"],
+  ["vest", "Armor", "common"],
+  ["chest-gold", "Chest", "rare"],
+  ["grenade", "Potion", "common"],
   ["wild", "WILD", "wild"],
   ["crystal", "Crystal", "epic"],
   ["lightning", "Lightning", "rare"],
@@ -51,11 +51,11 @@ const DEFS: [key: string, name: string, rarity: Rarity][] = [
   ["crown", "Crown", "epic"],
   ["star", "Eye", "epic"],
   ["fire", "Fire", "rare"],
-  ["w-coin", "W coin", "rare"],
-  ["gas-mask", "Anubis", "common"],
+  ["w-coin", "Diadem", "rare"],
+  ["gas-mask", "Spike", "common"],
   ["dragon-coin", "Dragon coin", "epic"],
   ["diamond", "Diamond", "legendary"],
-  ["chest-purple", "Purple chest", "rare"],
+  ["chest-purple", "Orb", "rare"],
   ["dragon", "Dragon", "legendary"],
 ];
 
