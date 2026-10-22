@@ -12,6 +12,7 @@ import { LeaderboardsAdmin } from "@/components/leaderboard/LeaderboardsAdmin";
 import { LedgerCashflow } from "@/components/admin/LedgerCashflow";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { currentHealthFailure } from "@/lib/admin/health";
 import {
   adminErrorCopy,
   adminQuery,
@@ -388,6 +389,7 @@ function Overview({
   const q = useOverview();
   const d = q.data;
   const round = live?.roulette;
+  const failure = live ? currentHealthFailure(live) : null;
   const phaseEnd =
     round?.status === "BETTING"
       ? round.betting_ends_at
@@ -447,18 +449,18 @@ function Overview({
             </li>
             <li className="flex items-center justify-between gap-3 px-3 py-2">
               <span>Latest failure</span>
-              {live.latest_failure ? (
+              {failure ? (
                 <button
                   type="button"
                   className={cn(
                     "max-w-[14rem] truncate text-right text-sm underline-offset-2 hover:underline",
                     tone["down"],
                   )}
-                  title={`${live.latest_failure.game_type ?? "system"} · ${when(live.latest_failure.created_at)} — open in logs`}
-                  onClick={() => onOpenLogs(live.latest_failure!.action)}
+                  title={`${failure.game_type ?? "system"} · ${when(failure.created_at)} — open in logs`}
+                  onClick={() => onOpenLogs(failure.action)}
                 >
-                  {live.latest_failure.action}
-                  {live.latest_failure.game_type ? ` (${live.latest_failure.game_type})` : ""}
+                  {failure.action}
+                  {failure.game_type ? ` (${failure.game_type})` : ""}
                 </button>
               ) : (
                 <span className="text-muted-foreground">none</span>
