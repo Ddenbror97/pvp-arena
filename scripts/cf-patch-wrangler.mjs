@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const path = resolve(".output/server/wrangler.json");
@@ -34,6 +34,17 @@ if (!flags.includes("nodejs_compat_populate_process_env"))
 cfg.compatibility_flags = flags;
 writeFileSync(path, JSON.stringify(cfg, null, 2));
 console.log("Patched", path, "name=", cfg.name);
+
+// Guide JSON keeps a stable URL. Browsers must revalidate so a deploy cannot
+// keep yesterday's article. Hashed /assets/* stay immutable.
+const headersPath = resolve(".output/public/_headers");
+let headers = existsSync(headersPath) ? readFileSync(headersPath, "utf8") : "";
+if (!headers.includes("/guide-bodies/*")) {
+  if (headers.length > 0 && !headers.endsWith("\n")) headers += "\n";
+  headers += "/guide-bodies/*\n  Cache-Control: public, max-age=0, must-revalidate\n";
+  writeFileSync(headersPath, headers);
+  console.log("Patched", headersPath, "guide-bodies revalidate");
+}
 
 const ssrDir = resolve(".output/server/_ssr");
 const ssrFiles = readdirSync(ssrDir);
