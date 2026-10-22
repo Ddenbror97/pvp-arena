@@ -17,7 +17,15 @@ import {
 } from "@/lib/pool/api";
 import { submitPoolShot } from "@/lib/pool/pool.functions";
 import { playShot } from "@/lib/pool/play";
-import { POCKETS, simulate, type Ball, type ShotInput } from "@/lib/pool/physics";
+import {
+  BALL_R,
+  POCKETS,
+  TABLE_H,
+  TABLE_W,
+  simulate,
+  type Ball,
+  type ShotInput,
+} from "@/lib/pool/physics";
 import {
   applyForfeit,
   applyTimeout,
@@ -29,7 +37,15 @@ import {
   seatGroup,
   seedHash,
 } from "@/lib/pool/rules";
-import { cueSound, foulSound, pocketSound } from "@/lib/pool/sfx";
+import {
+  ballSound,
+  cueSound,
+  cushionSound,
+  foulSound,
+  pocketSound,
+  resultSound,
+  tickSound,
+} from "@/lib/pool/sfx";
 import { bytesFromHex, replayMatch, stepsFromRecord } from "@/lib/pool/verify";
 import { PoolTable } from "./PoolTable";
 
@@ -98,6 +114,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const shotList = view?.events;
   const shotsRef = useRef(shotList);
   shotsRef.current = shotList;
+  const sawLive = useRef(false);
   const tableHash = view?.state_hash ?? null;
 
   useEffect(() => {
@@ -156,20 +173,49 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     setFrames(sim.frames);
     setFrame(0);
     cueSound();
-    if (Array.isArray(last.event["pocketed"]) && last.event["pocketed"].length > 0) pocketSound();
-    if (last.event["foul"] === true) foulSound();
   }, [serverSeed, tableHash, reduce]);
+
+  useEffect(() => {
+    if (!view) return;
+    if (view.status === "PLAYING" || view.status === "STARTING") sawLive.current = true;
+    if (view.status !== "COMPLETED" || !sawLive.current || userId == null || view.winner_id == null)
+      return;
+    sawLive.current = false;
+    resultSound(view.winner_id === userId);
+  }, [view, userId]);
 
   useEffect(() => {
     if (!frames || frames.length === 0) return;
     let i = 0;
+    let prev = frames[0];
+    let lastNoise = 0;
+    const shots = shotsRef.current;
+    const last = shots?.[shots.length - 1];
+    const fouled = last?.kind === "shot" && last.event["foul"] === true;
     const id = window.setInterval(() => {
       i += 1;
       if (i >= frames.length) {
         window.clearInterval(id);
+        if (fouled) foulSound();
         setFrames(null);
         return;
       }
+      const next = frames[i];
+      if (prev && next) {
+        const hit = impactOf(prev, next);
+        const now = performance.now();
+        if (hit.pocket) pocketSound();
+        else if (now - lastNoise > 48) {
+          if (hit.ball > 700) {
+            ballSound(Math.min(1, hit.ball / 9000));
+            lastNoise = now;
+          } else if (hit.rail > 700) {
+            cushionSound(Math.min(1, hit.rail / 9000));
+            lastNoise = now;
+          }
+        }
+      }
+      prev = next;
       setFrame(i);
     }, 16);
     return () => window.clearInterval(id);
@@ -314,7 +360,10 @@ export function PoolMatch({ matchId }: { matchId: number }) {
               kitchenOnly={false}
               calledPocket={null}
               showAim
+              showCue
+              rolling={false}
               placing={false}
+              legalAt={() => true}
               onAim={() => {}}
               onPlace={() => {}}
             />
@@ -354,18 +403,40 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const groupA = state ? seatGroup(state, "A") : null;
   const groupB = state ? seatGroup(state, "B") : null;
   const clock = Math.max(0, Math.ceil(left / 1000));
+  const lastEvent = view.events[view.events.length - 1];
+  const fouled =
+    lastEvent?.kind === "shot" && lastEvent.event["foul"] === true && !!state?.ballInHand;
+  const youWon = view.status === "COMPLETED" && userId != null && view.winner_id === userId;
+  const youLost =
+    view.status === "COMPLETED" &&
+    userId != null &&
+    view.winner_id != null &&
+    view.winner_id !== userId;
+  const pays = view.payout_amount ?? view.pot - Math.floor((view.pot * view.fee_bps) / 10_000);
   const notice =
     view.status === "WAITING"
       ? "Waiting for an opponent. The rack seed stays hidden until someone sits."
-      : view.status === "CANCELLED"
-        ? `Cancelled${view.cancel_reason ? `: ${view.cancel_reason}` : ""}. Stakes were refunded with no fee.`
-        : view.status === "COMPLETED" && winnerName
-          ? `${winnerName} wins${view.win_reason ? ` · ${REASONS[view.win_reason] ?? view.win_reason}` : ""}. Payout ${dollars(view.payout_amount)}, fee ${dollars(view.fee_amount)}.`
-          : state?.ballInHand
-            ? state.kitchenOnly
-              ? "Ball in hand. Place the cue ball in the kitchen, aim, then shoot."
-              : "Ball in hand. Place the cue ball, aim, then shoot."
-            : null;
+      : view.status === "STARTING"
+        ? "Match starting."
+        : view.status === "CANCELLED"
+          ? `Cancelled${view.cancel_reason ? `: ${view.cancel_reason}` : ""}. Stakes were refunded with no fee.`
+          : view.status === "COMPLETED" && winnerName
+            ? `${youWon ? "Victory" : youLost ? "Defeat" : "Match over"}. ${winnerName} wins${view.win_reason ? ` · ${REASONS[view.win_reason] ?? view.win_reason}` : ""}. Payout ${dollars(view.payout_amount)}, fee ${dollars(view.fee_amount)}.`
+            : fouled
+              ? state?.kitchenOnly
+                ? "Foul. Ball in hand, in the kitchen."
+                : "Foul. Ball in hand."
+              : state?.ballInHand
+                ? state.kitchenOnly
+                  ? "Ball in hand. Place the cue ball in the kitchen."
+                  : "Ball in hand."
+                : shootingEight
+                  ? "Final 8-ball. Call a pocket, then shoot."
+                  : mine
+                    ? "Your turn."
+                    : view.status === "PLAYING"
+                      ? "Opponent's turn."
+                      : null;
 
   const leave = () => {
     if (view.status === "WAITING" && seat === "A") {
@@ -442,6 +513,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         <span>
           <small>Prize pool</small>
           <strong>{dollars(view.pot)}</strong>
+          <em>Pays {dollars(pays)}</em>
         </span>
       </div>
 
@@ -453,6 +525,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           max={10000}
           value={power}
           disabled={!mine}
+          style={{
+            background: `linear-gradient(to top, #7c3aed ${Math.round(power / 100)}%, rgba(255,255,255,0.16) ${Math.round(power / 100)}%)`,
+          }}
           onChange={(event) => setPower(Number(event.target.value))}
         />
         <span>{Math.round(power / 100)}%</span>
@@ -468,6 +543,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             kitchenOnly={!!state?.kitchenOnly}
             calledPocket={called}
             showAim={!!mine && frames == null && aimAssist}
+            showCue={!!mine && frames == null}
+            rolling={frames != null}
+            legalAt={(x, y) => (state ? legalPlacement(state, x, y) : false)}
             placing={!!mine && !!state?.ballInHand}
             onAim={setAngle}
             onPlace={(x, y) => {
@@ -527,7 +605,10 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           type="button"
           className="pool-shoot"
           disabled={!mine || busy}
-          onClick={() => void takeShot()}
+          onClick={() => {
+            tickSound();
+            void takeShot();
+          }}
         >
           {busy ? "Playing…" : "Shoot"}
         </button>
@@ -535,29 +616,22 @@ export function PoolMatch({ matchId }: { matchId: number }) {
 
       {sheet ? (
         <div className="pool-sheet">
-          <label>
-            Side
-            <input
-              type="range"
-              min={-1000}
-              max={1000}
-              value={spinX}
-              disabled={!mine}
-              onChange={(event) => setSpinX(Number(event.target.value))}
-            />
-          </label>
-          <label>
-            Follow
-            <input
-              type="range"
-              min={-1000}
-              max={1000}
-              value={spinY}
-              disabled={!mine}
-              onChange={(event) => setSpinY(Number(event.target.value))}
-            />
-          </label>
+          <SpinPad
+            spinX={spinX}
+            spinY={spinY}
+            disabled={!mine}
+            onChange={(x, y) => {
+              setSpinX(x);
+              setSpinY(y);
+            }}
+          />
+          <p className="pool-spin-read">
+            Side {spinX} · Follow {spinY}
+          </p>
           <p>
+            Hold Shift while aiming for a finer angle. The dot is where the tip meets the cue ball.
+          </p>
+          <p className="pool-seed">
             Seed {view.server_seed_hash.slice(0, 16)}…
             {seedOk === true ? " Rack matches the commitment." : ""}
             {seedOk === false ? " Rack seed does not match the commitment." : ""}
@@ -643,7 +717,7 @@ function SeatCard({
 }) {
   const initial = name.slice(0, 1).toUpperCase();
   return (
-    <div className={align === "end" ? "pool-seat is-end" : "pool-seat"}>
+    <div className={`pool-seat${align === "end" ? " is-end" : ""}${active ? " is-live" : ""}`}>
       {align === "end" ? null : <Face avatar={avatar} initial={initial} active={active} />}
       <span className="pool-seat-copy">
         <strong>
@@ -662,6 +736,91 @@ function SeatCard({
         </span>
       </span>
       {align === "end" ? <Face avatar={avatar} initial={initial} active={active} /> : null}
+    </div>
+  );
+}
+
+function impactOf(prev: readonly Ball[], next: readonly Ball[]) {
+  let pocket = false;
+  let ball = 0;
+  let rail = 0;
+  for (const nb of next) {
+    const ob = prev.find((item) => item.id === nb.id);
+    if (!ob) continue;
+    if (!ob.pocketed && nb.pocketed) pocket = true;
+    const before = Math.hypot(ob.vx, ob.vy);
+    const after = Math.hypot(nb.vx, nb.vy);
+    const drop = before - after;
+    if (drop < 700 || before < 1200) continue;
+    const nearRail =
+      nb.x < BALL_R + 14_000 ||
+      nb.y < BALL_R + 14_000 ||
+      nb.x > TABLE_W - BALL_R - 14_000 ||
+      nb.y > TABLE_H - BALL_R - 14_000;
+    if (nearRail) rail = Math.max(rail, drop);
+    else ball = Math.max(ball, drop);
+  }
+  return { pocket, ball, rail };
+}
+
+function clampSpin(value: number): number {
+  return Math.max(-1000, Math.min(1000, value));
+}
+
+function SpinPad({
+  spinX,
+  spinY,
+  disabled,
+  onChange,
+}: {
+  spinX: number;
+  spinY: number;
+  disabled: boolean;
+  onChange: (spinX: number, spinY: number) => void;
+}) {
+  const pad = useRef<HTMLDivElement>(null);
+  const setFrom = (clientX: number, clientY: number) => {
+    const el = pad.current;
+    if (!el || disabled) return;
+    const rect = el.getBoundingClientRect();
+    const max = rect.width * 0.36;
+    let dx = clientX - (rect.left + rect.width / 2);
+    let dy = clientY - (rect.top + rect.height / 2);
+    const dist = Math.hypot(dx, dy);
+    if (dist > max && dist > 0) {
+      dx = (dx / dist) * max;
+      dy = (dy / dist) * max;
+    }
+    onChange(clampSpin(Math.round((dx / max) * 1000)), clampSpin(Math.round((-dy / max) * 1000)));
+  };
+  return (
+    <div
+      ref={pad}
+      className="pool-spin"
+      role="group"
+      aria-label="Cue tip contact"
+      tabIndex={disabled ? -1 : 0}
+      onPointerDown={(event) => {
+        event.currentTarget.setPointerCapture(event.pointerId);
+        setFrom(event.clientX, event.clientY);
+      }}
+      onPointerMove={(event) => {
+        if (event.currentTarget.hasPointerCapture(event.pointerId))
+          setFrom(event.clientX, event.clientY);
+      }}
+      onDoubleClick={() => onChange(0, 0)}
+      onKeyDown={(event) => {
+        const step = event.shiftKey ? 40 : 120;
+        if (event.key === "ArrowLeft") onChange(clampSpin(spinX - step), spinY);
+        else if (event.key === "ArrowRight") onChange(clampSpin(spinX + step), spinY);
+        else if (event.key === "ArrowUp") onChange(spinX, clampSpin(spinY + step));
+        else if (event.key === "ArrowDown") onChange(spinX, clampSpin(spinY - step));
+        else if (event.key === "Home") onChange(0, 0);
+        else return;
+        event.preventDefault();
+      }}
+    >
+      <i style={{ left: `${50 + (spinX / 1000) * 36}%`, top: `${50 - (spinY / 1000) * 36}%` }} />
     </div>
   );
 }
