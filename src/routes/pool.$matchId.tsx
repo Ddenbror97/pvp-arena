@@ -28,6 +28,6 @@ function Page() {
   const { matchId } = Route.useParams();
   const id = Number(matchId);
   if (!Number.isSafeInteger(id) || id <= 0)
-    return <p className="text-sm">That match does not exist.</p>;
+    return <p className="pool-missing">That match does not exist.</p>;
   return <PoolMatch matchId={id} />;
 }

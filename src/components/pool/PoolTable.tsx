@@ -71,12 +71,36 @@ export function PoolTable({
       const r = (BALL_R / TABLE_W) * innerW;
 
       ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = "#3a2414";
+      ctx.fillStyle = "#100c18";
       ctx.beginPath();
-      ctx.roundRect(padX * 0.35, padY * 0.35, w - padX * 0.7, h - padY * 0.7, 18 * dpr);
+      ctx.roundRect(padX * 0.22, padY * 0.22, w - padX * 0.44, h - padY * 0.44, 22 * dpr);
       ctx.fill();
-      ctx.fillStyle = "#0e6b45";
+      ctx.strokeStyle = "rgba(210, 186, 255, 0.28)";
+      ctx.lineWidth = 1.5 * dpr;
+      ctx.stroke();
+      const felt = ctx.createLinearGradient(0, padY, 0, padY + innerH);
+      felt.addColorStop(0, "#7a45d6");
+      felt.addColorStop(0.55, "#5b2eb8");
+      felt.addColorStop(1, "#4a239e");
+      ctx.fillStyle = felt;
       ctx.fillRect(padX, padY, innerW, innerH);
+      ctx.fillStyle = "#f4f1ff";
+      const diamond = (x: number, y: number) => {
+        const s = 5 * dpr;
+        ctx.beginPath();
+        ctx.moveTo(x, y - s);
+        ctx.lineTo(x + s * 0.72, y);
+        ctx.lineTo(x, y + s);
+        ctx.lineTo(x - s * 0.72, y);
+        ctx.closePath();
+        ctx.fill();
+      };
+      for (const t of [0.2, 0.5, 0.8]) {
+        diamond(padX + innerW * t, padY * 0.58);
+        diamond(padX + innerW * t, h - padY * 0.58);
+      }
+      diamond(padX * 0.58, padY + innerH * 0.5);
+      diamond(w - padX * 0.58, padY + innerH * 0.5);
 
       if (kitchenOnly) {
         ctx.strokeStyle = "rgba(255,255,255,0.35)";
@@ -98,13 +122,34 @@ export function PoolTable({
       const cue = balls.find((b) => b.id === 0);
       const from = ghost ?? (cue && !cue.pocketed ? cue : null);
       if (showAim && from) {
-        const reach = innerW * (0.08 + (power / 10_000) * 0.28);
+        const reach = innerW * (0.12 + (power / 10_000) * 0.34);
         const rad = (angleMilli / 1000) * (Math.PI / 180);
-        ctx.strokeStyle = "rgba(255,255,255,0.85)";
-        ctx.lineWidth = 2 * dpr;
+        const ox = px(from.x);
+        const oy = py(from.y);
+        ctx.save();
+        ctx.strokeStyle = "rgba(255,255,255,0.92)";
+        ctx.lineWidth = Math.max(1.5, 1.6 * dpr);
+        ctx.setLineDash([3 * dpr, 8 * dpr]);
         ctx.beginPath();
-        ctx.moveTo(px(from.x), py(from.y));
-        ctx.lineTo(px(from.x) + Math.cos(rad) * reach, py(from.y) + Math.sin(rad) * reach);
+        ctx.moveTo(ox + Math.cos(rad) * (r + 4 * dpr), oy + Math.sin(rad) * (r + 4 * dpr));
+        ctx.lineTo(ox + Math.cos(rad) * reach, oy + Math.sin(rad) * reach);
+        ctx.stroke();
+        ctx.restore();
+        const stick = r * (7 + (power / 10_000) * 6);
+        const bx = ox - Math.cos(rad) * (r + 3 * dpr);
+        const by = oy - Math.sin(rad) * (r + 3 * dpr);
+        ctx.strokeStyle = "#d7b48a";
+        ctx.lineWidth = Math.max(3, r * 0.34);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(bx, by);
+        ctx.lineTo(bx - Math.cos(rad) * stick, by - Math.sin(rad) * stick);
+        ctx.stroke();
+        ctx.strokeStyle = "#1a1a1a";
+        ctx.lineWidth = Math.max(2, r * 0.22);
+        ctx.beginPath();
+        ctx.moveTo(bx, by);
+        ctx.lineTo(bx - Math.cos(rad) * r * 0.7, by - Math.sin(rad) * r * 0.7);
         ctx.stroke();
       }
 
@@ -164,7 +209,7 @@ export function PoolTable({
   return (
     <canvas
       ref={ref}
-      className="h-full w-full touch-none rounded-xl"
+      className="pool-canvas"
       aria-label="Pool table"
       onPointerDown={(event) => {
         event.currentTarget.setPointerCapture(event.pointerId);

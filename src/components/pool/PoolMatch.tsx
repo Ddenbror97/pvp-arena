@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { ChevronDown, Settings } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import room from "@/assets/pool/room.webp";
 import { useAuth } from "@/lib/auth";
 import {
-  money,
   poolCancel,
   poolForfeit,
   poolMessage,
@@ -23,6 +23,7 @@ import {
   applyTimeout,
   freshTable,
   groupClear,
+  groupOf,
   legalPlacement,
   placeCue,
   seatGroup,
@@ -77,6 +78,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const [called, setCalled] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirmForfeit, setConfirmForfeit] = useState(false);
+  const [aimAssist, setAimAssist] = useState(true);
+  const [sheet, setSheet] = useState(false);
   const [frames, setFrames] = useState<Ball[][] | null>(null);
   const [frame, setFrame] = useState(0);
   const [seedOk, setSeedOk] = useState<boolean | null>(null);
@@ -173,6 +176,10 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   }, [frames]);
 
   const shown = frames?.[frame] ?? state?.balls ?? [];
+  const previewBalls = useMemo(
+    () => freshTable(Uint8Array.from({ length: 32 }, (_, i) => (i * 17 + 3) & 255)).balls,
+    [],
+  );
   const group = state && seat ? seatGroup(state, seat) : null;
   const shootingEight =
     !!state && !!group && groupClear(state.balls, group) && !state.breakShot && mine;
@@ -244,9 +251,96 @@ export function PoolMatch({ matchId }: { matchId: number }) {
 
   if (!view) {
     return (
-      <p className="text-sm text-muted-foreground">
-        {query.isError ? "This match is not available." : "Loading the table…"}
-      </p>
+      <Shell>
+        <div className="pool-brand">
+          <span className="pool-brand-mark" aria-hidden>
+            8
+          </span>
+          <span>
+            <strong>POOL</strong>
+            <small>PVP · Real money</small>
+          </span>
+        </div>
+        <div className="pool-vs" aria-hidden>
+          <span className="pool-seat">
+            <span className="pool-face">
+              <span>A</span>
+            </span>
+            <span className="pool-seat-copy">
+              <strong>Player</strong>
+              <small>$0.00</small>
+            </span>
+          </span>
+          <span className="pool-vs-mark">VS</span>
+          <span className="pool-seat is-end">
+            <span className="pool-seat-copy">
+              <strong>Waiting</strong>
+              <small>$0.00</small>
+            </span>
+            <span className="pool-face">
+              <span>B</span>
+            </span>
+          </span>
+        </div>
+        <div className="pool-tools">
+          <Link to="/pool" className="pool-leave">
+            Leave game
+          </Link>
+          <span className="pool-gear" aria-hidden>
+            <Settings className="h-4 w-4" />
+          </span>
+        </div>
+        <div className="pool-prize">
+          <span className="pool-prize-icon" aria-hidden>
+            $
+          </span>
+          <span>
+            <small>Prize pool</small>
+            <strong>$0.00</strong>
+          </span>
+        </div>
+        <label className="pool-power">
+          <span className="sr-only">Power</span>
+          <input type="range" min={1} max={10000} defaultValue={5000} disabled />
+          <span>50%</span>
+        </label>
+        <div className="pool-felt">
+          <div className="pool-felt-frame">
+            <PoolTable
+              balls={previewBalls}
+              angleMilli={0}
+              power={5000}
+              ghost={null}
+              kitchenOnly={false}
+              calledPocket={null}
+              showAim
+              placing={false}
+              onAim={() => {}}
+              onPlace={() => {}}
+            />
+          </div>
+        </div>
+        <div className="pool-dock">
+          <span className="pool-chip">
+            Standard <ChevronDown className="h-3.5 w-3.5" />
+          </span>
+          <span className="pool-chip">
+            White ball <ChevronDown className="h-3.5 w-3.5" />
+          </span>
+          <span className="pool-assist">
+            Aim assist
+            <span className="pool-switch is-on">
+              <span />
+            </span>
+          </span>
+          <button type="button" className="pool-shoot" disabled>
+            Shoot
+          </button>
+        </div>
+        <p className="pool-banner">
+          {query.isError ? "This match is not available." : "Loading the table…"}
+        </p>
+      </Shell>
     );
   }
 
@@ -256,208 +350,334 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       : view.winner_id === view.opponent_id
         ? names.B
         : null;
+  const balls = state?.balls ?? [];
+  const groupA = state ? seatGroup(state, "A") : null;
+  const groupB = state ? seatGroup(state, "B") : null;
+  const clock = Math.max(0, Math.ceil(left / 1000));
+  const notice =
+    view.status === "WAITING"
+      ? "Waiting for an opponent. The rack seed stays hidden until someone sits."
+      : view.status === "CANCELLED"
+        ? `Cancelled${view.cancel_reason ? `: ${view.cancel_reason}` : ""}. Stakes were refunded with no fee.`
+        : view.status === "COMPLETED" && winnerName
+          ? `${winnerName} wins${view.win_reason ? ` · ${REASONS[view.win_reason] ?? view.win_reason}` : ""}. Payout ${dollars(view.payout_amount)}, fee ${dollars(view.fee_amount)}.`
+          : state?.ballInHand
+            ? state.kitchenOnly
+              ? "Ball in hand. Place the cue ball in the kitchen, aim, then shoot."
+              : "Ball in hand. Place the cue ball, aim, then shoot."
+            : null;
+
+  const leave = () => {
+    if (view.status === "WAITING" && seat === "A") {
+      void poolCancel(view.id).then(() => {
+        void qc.invalidateQueries({ queryKey: ["pool-match", matchId] });
+        void qc.invalidateQueries({ queryKey: ["wallet"] });
+      });
+      return;
+    }
+    if (seat && view.status === "PLAYING") {
+      setConfirmForfeit(true);
+      return;
+    }
+  };
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <Link to="/pool" className="text-sm text-primary hover:underline">
-          Lobby
-        </Link>
-        <p className="text-sm text-muted-foreground">
-          {money(view.stake)} each · pot {money(view.pot)} · winner receives{" "}
-          {money(Math.floor((view.pot * (10000 - view.fee_bps)) / 10000))}
-        </p>
+    <Shell>
+      <div className="pool-brand">
+        <span className="pool-brand-mark" aria-hidden>
+          8
+        </span>
+        <span>
+          <strong>POOL</strong>
+          <small>PVP · Real money</small>
+        </span>
       </div>
 
-      <div className="grid gap-2 sm:grid-cols-2">
-        <PlayerChip
+      <div className="pool-vs" aria-label="Players">
+        <SeatCard
           name={names.A}
-          label="Breaks"
+          avatar={view.creator?.avatar_url}
+          stake={view.stake}
+          ids={pips(balls, groupA)}
           active={state?.turn === "A" && view.status === "PLAYING"}
+          clock={state?.turn === "A" && view.status === "PLAYING" ? clock : null}
         />
-        <PlayerChip
+        <span className="pool-vs-mark">VS</span>
+        <SeatCard
           name={names.B}
-          label="Challenger"
+          avatar={view.opponent?.avatar_url}
+          stake={view.opponent_id ? view.stake : 0}
+          ids={pips(balls, groupB)}
           active={state?.turn === "B" && view.status === "PLAYING"}
+          clock={state?.turn === "B" && view.status === "PLAYING" ? clock : null}
+          align="end"
         />
       </div>
 
-      <div className="aspect-[2/1] w-full overflow-hidden rounded-2xl border border-border bg-[#123]">
-        <PoolTable
-          balls={shown}
-          angleMilli={angle}
-          power={power}
-          ghost={ghost}
-          kitchenOnly={!!state?.kitchenOnly}
-          calledPocket={called}
-          showAim={!!mine && frames == null}
-          placing={!!mine && !!state?.ballInHand}
-          onAim={setAngle}
-          onPlace={(x, y) => {
-            if (state && legalPlacement(state, x, y)) setPlace({ x, y });
-          }}
-        />
+      <div className="pool-tools">
+        {(view.status === "WAITING" && seat === "A") || (seat && view.status === "PLAYING") ? (
+          <button type="button" className="pool-leave" onClick={leave}>
+            Leave game
+          </button>
+        ) : (
+          <Link to="/pool" className="pool-leave">
+            Leave game
+          </Link>
+        )}
+        <button
+          type="button"
+          className="pool-gear"
+          aria-expanded={sheet}
+          aria-label="Shot settings"
+          onClick={() => setSheet((open) => !open)}
+        >
+          <Settings className="h-4 w-4" />
+        </button>
       </div>
 
-      {view.status === "WAITING" ? (
-        <div className="rounded-xl border border-border bg-card p-4 text-sm">
-          <p>Waiting for an opponent. The rack seed stays hidden until someone sits.</p>
-          <p className="mt-2 break-all font-mono text-xs text-muted-foreground">
-            {view.server_seed_hash}
-          </p>
-          {seat === "A" ? (
-            <Button
-              variant="outline"
-              className="mt-3 min-h-11"
-              onClick={() => {
-                void poolCancel(view.id).then(() => {
-                  void qc.invalidateQueries({ queryKey: ["pool-match", matchId] });
-                  void qc.invalidateQueries({ queryKey: ["wallet"] });
-                });
-              }}
+      <div className="pool-prize">
+        <span className="pool-prize-icon" aria-hidden>
+          $
+        </span>
+        <span>
+          <small>Prize pool</small>
+          <strong>{dollars(view.pot)}</strong>
+        </span>
+      </div>
+
+      <label className="pool-power">
+        <span className="sr-only">Power</span>
+        <input
+          type="range"
+          min={1}
+          max={10000}
+          value={power}
+          disabled={!mine}
+          onChange={(event) => setPower(Number(event.target.value))}
+        />
+        <span>{Math.round(power / 100)}%</span>
+      </label>
+
+      <div className="pool-felt">
+        <div className="pool-felt-frame">
+          <PoolTable
+            balls={shown}
+            angleMilli={angle}
+            power={power}
+            ghost={ghost}
+            kitchenOnly={!!state?.kitchenOnly}
+            calledPocket={called}
+            showAim={!!mine && frames == null && aimAssist}
+            placing={!!mine && !!state?.ballInHand}
+            onAim={setAngle}
+            onPlace={(x, y) => {
+              if (state && legalPlacement(state, x, y)) setPlace({ x, y });
+            }}
+          />
+        </div>
+      </div>
+
+      {notice ? <p className="pool-banner">{notice}</p> : null}
+      {replayNote ? <p className="pool-banner">{replayNote}</p> : null}
+
+      {shootingEight ? (
+        <div className="pool-pockets" role="group" aria-label="Called pocket">
+          {POCKETS.map((pocket) => (
+            <button
+              key={pocket.id}
+              type="button"
+              className={called === pocket.id ? "is-on" : ""}
+              onClick={() => setCalled(pocket.id)}
             >
-              Cancel and refund
-            </Button>
-          ) : null}
+              Pocket {pocket.id + 1}
+            </button>
+          ))}
         </div>
       ) : null}
 
-      {view.status === "CANCELLED" ? (
-        <p className="rounded-xl border border-border bg-card p-4 text-sm">
-          Cancelled{view.cancel_reason ? `: ${view.cancel_reason}` : ""}. Stakes were refunded with
-          no fee.
-        </p>
-      ) : null}
-
-      {view.status === "COMPLETED" && winnerName ? (
-        <p className="rounded-xl border border-border bg-card p-4 text-sm">
-          {winnerName} wins
-          {view.win_reason ? ` · ${REASONS[view.win_reason] ?? view.win_reason}` : ""}. Payout{" "}
-          {money(view.payout_amount)}, fee {money(view.fee_amount)}.
-        </p>
-      ) : null}
-
-      {view.status === "PLAYING" ? (
-        <div className="rounded-xl border border-border bg-card p-3">
-          <div className="flex items-center justify-between text-sm">
-            <span>{mine ? "Your shot" : `${names[state?.turn ?? "A"]}'s shot`}</span>
-            <span className="tabular">{Math.max(0, Math.ceil(left / 1000))}s</span>
-          </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {state?.open
-              ? "Table is open."
-              : `Groups: ${names.A} ${state?.groupA ?? "—"}, ${names.B} the other.`}
-            {state?.ballInHand ? " Ball in hand." : ""}
-            {state?.kitchenOnly ? " Break from the kitchen." : ""}
-          </p>
-          {mine ? (
-            <div className="mt-3 grid gap-3">
-              <label className="text-xs text-muted-foreground">
-                Power {Math.round(power / 100)}
-                <input
-                  className="mt-1 w-full"
-                  type="range"
-                  min={1}
-                  max={10000}
-                  value={power}
-                  onChange={(event) => setPower(Number(event.target.value))}
-                />
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <label className="text-xs text-muted-foreground">
-                  Side
-                  <input
-                    className="mt-1 w-full"
-                    type="range"
-                    min={-1000}
-                    max={1000}
-                    value={spinX}
-                    onChange={(event) => setSpinX(Number(event.target.value))}
-                  />
-                </label>
-                <label className="text-xs text-muted-foreground">
-                  Follow
-                  <input
-                    className="mt-1 w-full"
-                    type="range"
-                    min={-1000}
-                    max={1000}
-                    value={spinY}
-                    onChange={(event) => setSpinY(Number(event.target.value))}
-                  />
-                </label>
-              </div>
-              {shootingEight ? (
-                <div className="grid grid-cols-3 gap-2">
-                  {POCKETS.map((pocket) => (
-                    <button
-                      key={pocket.id}
-                      type="button"
-                      className={`min-h-11 rounded-lg border text-xs ${called === pocket.id ? "border-primary text-primary" : "border-border"}`}
-                      onClick={() => setCalled(pocket.id)}
-                    >
-                      Pocket {pocket.id + 1}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
-              <Button className="min-h-11" disabled={busy} onClick={() => void takeShot()}>
-                {busy ? "Playing the shot…" : "Shoot"}
-              </Button>
-            </div>
-          ) : null}
-        </div>
-      ) : null}
-
-      <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-        <span className="break-all">Seed hash {view.server_seed_hash.slice(0, 16)}…</span>
-        {seedOk === true ? <span>Rack matches the committed seed.</span> : null}
-        {seedOk === false ? <span>Rack seed does not match the commitment.</span> : null}
-        {view.server_seed ? (
+      <div className="pool-dock">
+        <button
+          type="button"
+          className="pool-chip"
+          aria-expanded={sheet}
+          onClick={() => setSheet((open) => !open)}
+        >
+          Standard <ChevronDown className="h-3.5 w-3.5" />
+        </button>
+        <button
+          type="button"
+          className={state?.ballInHand ? "pool-chip is-on" : "pool-chip"}
+          aria-pressed={!!state?.ballInHand}
+        >
+          White ball <ChevronDown className="h-3.5 w-3.5" />
+        </button>
+        <label className="pool-assist">
+          Aim assist
           <button
             type="button"
-            className="text-primary hover:underline"
-            onClick={() => void checkReplay()}
+            role="switch"
+            aria-checked={aimAssist}
+            className={aimAssist ? "pool-switch is-on" : "pool-switch"}
+            onClick={() => setAimAssist((on) => !on)}
           >
-            Replay the shots
+            <span />
           </button>
-        ) : null}
-        {seat && view.status === "PLAYING" ? (
-          confirmForfeit ? (
-            <>
-              <span>Forfeit gives the match to your opponent.</span>
-              <button
-                type="button"
-                className="text-destructive"
-                onClick={() => {
-                  void poolForfeit(view.id).then(() => {
-                    void qc.invalidateQueries({ queryKey: ["pool-match", matchId] });
-                  });
-                }}
-              >
-                Confirm forfeit
-              </button>
-              <button type="button" onClick={() => setConfirmForfeit(false)}>
-                Keep playing
-              </button>
-            </>
-          ) : (
-            <button type="button" onClick={() => setConfirmForfeit(true)}>
-              Forfeit
-            </button>
-          )
-        ) : null}
+        </label>
+        <button
+          type="button"
+          className="pool-shoot"
+          disabled={!mine || busy}
+          onClick={() => void takeShot()}
+        >
+          {busy ? "Playing…" : "Shoot"}
+        </button>
       </div>
-      {replayNote ? <p className="text-sm">{replayNote}</p> : null}
+
+      {sheet ? (
+        <div className="pool-sheet">
+          <label>
+            Side
+            <input
+              type="range"
+              min={-1000}
+              max={1000}
+              value={spinX}
+              disabled={!mine}
+              onChange={(event) => setSpinX(Number(event.target.value))}
+            />
+          </label>
+          <label>
+            Follow
+            <input
+              type="range"
+              min={-1000}
+              max={1000}
+              value={spinY}
+              disabled={!mine}
+              onChange={(event) => setSpinY(Number(event.target.value))}
+            />
+          </label>
+          <p>
+            Seed {view.server_seed_hash.slice(0, 16)}…
+            {seedOk === true ? " Rack matches the commitment." : ""}
+            {seedOk === false ? " Rack seed does not match the commitment." : ""}
+          </p>
+          {view.server_seed ? (
+            <button type="button" onClick={() => void checkReplay()}>
+              Replay the shots
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
+      {confirmForfeit ? (
+        <div className="pool-confirm">
+          <p>Forfeit gives the match to your opponent.</p>
+          <button
+            type="button"
+            onClick={() => {
+              void poolForfeit(view.id).then(() => {
+                void qc.invalidateQueries({ queryKey: ["pool-match", matchId] });
+              });
+            }}
+          >
+            Confirm forfeit
+          </button>
+          <button type="button" onClick={() => setConfirmForfeit(false)}>
+            Keep playing
+          </button>
+        </div>
+      ) : null}
+    </Shell>
+  );
+}
+
+function Shell({ children }: { children: ReactNode }) {
+  return (
+    <div className="pool-screen">
+      <img src={room} alt="" width={1280} height={720} className="pool-room" decoding="async" />
+      {children}
     </div>
   );
 }
 
-function PlayerChip({ name, label, active }: { name: string; label: string; active: boolean }) {
+function dollars(cents: number | null | undefined): string {
+  const v = Number(cents ?? 0) / 100;
+  return `$${v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+const PIP = ["#f4d35e", "#3a86ff", "#e63946", "#9b5de5", "#f77f00", "#2a9d8f", "#9b2226"];
+
+function pipColor(id: number): string {
+  const n = id > 8 ? id - 9 : id - 1;
+  return PIP[n] ?? "#cccccc";
+}
+
+function pips(
+  balls: readonly { id: number; pocketed: boolean }[],
+  group: "solids" | "stripes" | null,
+) {
+  if (!group) return [];
+  return balls
+    .filter((ball) => groupOf(ball.id) === group && !ball.pocketed)
+    .map((ball) => ball.id)
+    .sort((a, b) => a - b);
+}
+
+function SeatCard({
+  name,
+  avatar,
+  stake,
+  ids,
+  active,
+  clock,
+  align = "start",
+}: {
+  name: string;
+  avatar?: string | null | undefined;
+  stake: number;
+  ids: number[];
+  active: boolean;
+  clock: number | null;
+  align?: "start" | "end";
+}) {
+  const initial = name.slice(0, 1).toUpperCase();
   return (
-    <div className={`rounded-xl border px-3 py-2 ${active ? "border-primary" : "border-border"}`}>
-      <p className="text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
-      <p className="font-display text-sm">{name}</p>
+    <div className={align === "end" ? "pool-seat is-end" : "pool-seat"}>
+      {align === "end" ? null : <Face avatar={avatar} initial={initial} active={active} />}
+      <span className="pool-seat-copy">
+        <strong>
+          {name}
+          {clock != null ? <em>{clock}s</em> : null}
+        </strong>
+        <small>{dollars(stake)}</small>
+        <span className="pool-pips" aria-hidden>
+          {ids.map((id) => (
+            <i
+              key={id}
+              className={id > 8 ? "is-stripe" : ""}
+              style={{ background: pipColor(id) }}
+            />
+          ))}
+        </span>
+      </span>
+      {align === "end" ? <Face avatar={avatar} initial={initial} active={active} /> : null}
     </div>
+  );
+}
+
+function Face({
+  avatar,
+  initial,
+  active,
+}: {
+  avatar?: string | null | undefined;
+  initial: string;
+  active: boolean;
+}) {
+  return (
+    <span className={active ? "pool-face is-on" : "pool-face"}>
+      {avatar ? <img src={avatar} alt="" /> : <span>{initial}</span>}
+    </span>
   );
 }
