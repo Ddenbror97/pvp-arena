@@ -195,12 +195,12 @@
         74.0
       ],
       "offset": [
-        118,
-        48
+        80,
+        69
       ],
-      "touchLeft": 992,
-      "touchRight": 1060,
-      "opaque": 117264
+      "touchLeft": 0,
+      "touchRight": 0,
+      "opaque": 131392
     },
     {
       "id": "celebrate",
