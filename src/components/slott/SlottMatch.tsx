@@ -50,7 +50,6 @@ import {
   playTallySfx,
 } from "./sfx";
 import { isBaseFinalSpin } from "./presentation";
-import { SlotSoundControl } from "./SlotSound";
 import {
   AuxButton,
   BetChip,
@@ -589,10 +588,7 @@ export function SlottMatch({ id }: { id: number }) {
             >
               <ArrowLeft className="h-3.5 w-3.5" /> P2P Slott lobby
             </Link>
-            <span className="flex items-center gap-2">
-              <SlotSoundControl />
-              <span className="tabular text-muted-foreground">Match #{g.id}</span>
-            </span>
+            <span className="tabular text-muted-foreground">Match #{g.id}</span>
           </div>
         }
         shake={fresh && level >= 2 ? `${latest!.spin_no}` : null}

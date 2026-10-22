@@ -4,46 +4,8 @@ import { hitsDoneMs, orderLines, rarityRank, reachMs, type WinLevel } from "./hi
 import { fxTier, stopVariant } from "./presentation";
 import { reelStops, teases, type ReelSpin } from "./timing";
 
-const VOLUME_KEY = "pvp-slott-volume";
-let slotGain = 1;
-const volumeListeners = new Set<() => void>();
-
-function readSlotVolume() {
-  if (typeof localStorage === "undefined") return;
-  try {
-    const raw = localStorage.getItem(VOLUME_KEY);
-    if (raw == null) return;
-    const n = Number(raw);
-    if (Number.isFinite(n)) slotGain = Math.min(1, Math.max(0, n));
-  } catch {
-    /* private mode */
-  }
-}
-
-readSlotVolume();
-
-export function slotVolume() {
-  return slotGain;
-}
-
-export function subscribeSlotVolume(listener: () => void) {
-  volumeListeners.add(listener);
-  return () => volumeListeners.delete(listener);
-}
-
-/** Persists the slot mix. 0 silences slot cues without changing the site mute. */
-export function setSlotVolume(next: number) {
-  slotGain = Math.min(1, Math.max(0, next));
-  try {
-    localStorage.setItem(VOLUME_KEY, String(slotGain));
-  } catch {
-    /* private mode */
-  }
-  volumeListeners.forEach((listener) => listener());
-}
-
 function scaled(volume: number) {
-  return Math.min(1.15, Math.max(0, volume * slotGain));
+  return Math.min(1.15, Math.max(0, volume));
 }
 
 /** Major pentatonic from C5: every combination of notes sounds consonant. */
@@ -347,7 +309,7 @@ function slotOutput(ctx: AudioContext, master: GainNode) {
 }
 
 function playSlot(play: (ctx: AudioContext, out: GainNode) => void) {
-  if (holders === 0 || slotGain <= 0) return;
+  if (holders === 0) return;
   playSynth((ctx, master) => {
     if (holders === 0) return;
     play(ctx, slotOutput(ctx, master));
