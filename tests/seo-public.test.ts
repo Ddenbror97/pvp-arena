@@ -20,12 +20,15 @@ describe("public SEO facts", () => {
     }
   });
 
-  it("describes five games and the 33-slot wheel", () => {
-    expect(llms).toContain("five games");
+  it("describes six games and the 33-slot wheel", () => {
+    expect(llms).toContain("six games");
+    expect(llms).toContain("8-ball");
     expect(llms).toContain("33-slot");
     expect(llms).toContain("P2P Slott");
     expect(llms).toContain("six-max");
     expect(llms).toContain("5% of a pot only when a flop is dealt");
+    expect(llms).toContain("rack seed does not pick the winner");
+    expect(llms).not.toContain("five games");
     expect(llms).not.toContain("three games");
     expect(llms).not.toContain("15-slot");
   });
@@ -92,6 +95,10 @@ describe("public SEO facts", () => {
     expect(
       GAME_FACT_PAGES.poker.facts.some((f) => f.text.includes("only when a flop is dealt")),
     ).toBe(true);
+    expect(GAME_FACT_PAGES.pool.facts.some((f) => f.text.includes("5% of the pot"))).toBe(true);
+    expect(GAME_FACT_PAGES.pool.facts.some((f) => f.text.includes("does not draw a winner"))).toBe(
+      true,
+    );
     expect(blob).not.toMatch(/guaranteed fairness|risk-free|100% secure/i);
   });
 

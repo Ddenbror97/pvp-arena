@@ -13,6 +13,8 @@ import CF_VECTORS from "@/lib/fairness/coinflip-v1-vectors.json";
 import { rouletteMessage, verifyRoulette } from "@/lib/fairness/roulette";
 import { verifySlott } from "@/lib/fairness/slott";
 import { fetchSlotGame, fetchSlotSpins } from "@/lib/slott/api";
+import { fetchPoolState } from "@/lib/pool/api";
+import { bytesFromHex, replayMatch, stepsFromRecord } from "@/lib/pool/verify";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +27,7 @@ export const Route = createFileRoute("/fairness")({
       path: "/fairness",
       title: "Fairness — Provably Fair Games | PVPspinArena",
       description:
-        "See how every result is decided: committed seeds, HMAC-SHA256 draws and unbiased sampling. Verify Jackpot, Coinflip, Roulette, Slott and poker hands yourself.",
+        "Check a draw from its committed seed, a poker shuffle from the players' secrets, or an 8-ball match by replaying the shots. The rack seed does not pick the winner.",
       crumb: "Fairness",
     }),
   component: FairnessPage,
@@ -76,7 +78,7 @@ Shuffle (Fisher-Yates over cards 0..51, i = 51 down to 1):
 A missing reveal voids the hand before any card or blind: no money moves.
 After the hand: server_seed is published and anyone can rebuild the whole deck.`;
 
-type Tab = "jackpot" | "coinflip" | "roulette" | "slott" | "poker";
+type Tab = "jackpot" | "coinflip" | "roulette" | "slott" | "poker" | "pool";
 
 function FairnessPage() {
   const [tab, setTab] = useState<Tab>("jackpot");
@@ -85,13 +87,14 @@ function FairnessPage() {
     <div className="mx-auto w-full max-w-6xl">
       <h1 className="font-display text-2xl sm:text-3xl">Fairness protocol</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        Every result is decided on the server with cryptographic randomness before any animation
-        plays. We commit to a secret seed before a round opens and reveal it afterwards, so anyone
-        can recompute the outcome.
+        Jackpot, Coinflip, Roulette and P2P Slott commit a secret seed and reveal it so you can
+        recompute the draw. Poker publishes the shuffle. 8-ball does not draw a winner: the seed
+        only racks the balls, and you replay the shots through the published rules. A paid winner
+        that disagrees with that replay is not a verified result.
       </p>
 
       <div
-        className="mt-5 grid grid-cols-3 gap-1.5 sm:grid-cols-5 rounded-xl border border-border bg-card p-1.5"
+        className="mt-5 grid grid-cols-3 gap-1.5 sm:grid-cols-6 rounded-xl border border-border bg-card p-1.5"
         role="tablist"
         aria-label="Protocol"
       >
@@ -102,6 +105,7 @@ function FairnessPage() {
             ["roulette", "Roulette"],
             ["slott", "P2P Slott"],
             ["poker", "Poker"],
+            ["pool", "8-ball"],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -131,8 +135,10 @@ function FairnessPage() {
           <RouletteSection />
         ) : tab === "slott" ? (
           <SlottSection />
-        ) : (
+        ) : tab === "poker" ? (
           <PokerSection />
+        ) : (
+          <PoolSection />
         )}
       </div>
       <p className="mt-8 text-center text-sm text-muted-foreground">
@@ -552,6 +558,111 @@ function PokerSection() {
           Voids are public and attributed, and repeated voids sit a player out. The server deals the
           cards, so the protocol proves the deck was not chosen; it cannot prove nobody looked.
         </p>
+      </div>
+    </section>
+  );
+}
+
+function PoolSection() {
+  const [id, setId] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [out, setOut] = useState<string | null>(null);
+
+  const run = async () => {
+    setBusy(true);
+    setOut(null);
+    try {
+      const matchId = Number(id.trim());
+      if (!Number.isInteger(matchId) || matchId < 1) throw new Error("Enter a match number.");
+      const view = await fetchPoolState(matchId);
+      if (!view.server_seed) {
+        setOut("The rack seed is still hidden. It is published once someone sits down.");
+        return;
+      }
+      const steps = stepsFromRecord(view.events);
+      if (!steps) {
+        setOut("The shot list could not be read.");
+        return;
+      }
+      const replay = await replayMatch(
+        bytesFromHex(view.server_seed),
+        view.server_seed_hash,
+        steps,
+      );
+      const paid =
+        view.winner_id == null
+          ? replay.winner == null
+          : (replay.winner === "A" && view.winner_id === view.creator_id) ||
+            (replay.winner === "B" && view.winner_id === view.opponent_id);
+      const lines = [
+        replay.seedOk ? "Seed matches the commitment." : "Seed does not match the commitment.",
+        replay.ok && paid
+          ? "Replay matches the stored result."
+          : "Replay does not match the stored result.",
+        replay.winner
+          ? `Rules winner: seat ${replay.winner}${replay.reason ? ` (${replay.reason})` : ""}.`
+          : "The replay has no winner yet.",
+        `Steps checked: ${replay.steps.length}.`,
+      ];
+      setOut(lines.join("\n"));
+    } catch (error) {
+      setOut(error instanceof Error ? error.message : "Could not load that match.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section aria-label="8-ball fairness">
+      <p className="text-sm text-muted-foreground">
+        8-ball is skill plus a published ruleset. The server does not pick who wins. It runs the
+        same function a replay runs, so a browser cannot submit pocketed balls or a payout. The only
+        random value is the rack. A timeout or a forfeit is the rule for not acting, not a house
+        choice.
+      </p>
+      <div className="grid gap-4">
+        <Card title="Replay a match">
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Label className="sr-only" htmlFor="pool-match">
+              Match number
+            </Label>
+            <Input
+              id="pool-match"
+              inputMode="numeric"
+              placeholder="Match number"
+              value={id}
+              onChange={(event) => setId(event.target.value)}
+            />
+            <Button type="button" disabled={busy} onClick={() => void run()}>
+              {busy ? "Replaying…" : "Replay"}
+            </Button>
+          </div>
+          {out ? (
+            <pre className="tabular mt-3 whitespace-pre-wrap break-all rounded-xl bg-background/60 p-3 text-xs">
+              {out}
+            </pre>
+          ) : null}
+          <Link
+            to="/pool"
+            className="mt-3 inline-block text-sm font-semibold text-primary hover:underline"
+          >
+            Open the 8-ball lobby
+          </Link>
+        </Card>
+        <details className="rounded-2xl border border-border bg-card p-4" open>
+          <summary className="cursor-pointer font-display text-sm">What is committed</summary>
+          <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{`rack seed = 32 random bytes, hidden while the table is waiting
+commitment = SHA-256(rack seed), published when the table opens
+rack = Fisher-Yates of balls 1-7 and 9-15; the 8 stays in the centre
+
+each step is one of:
+  shot     angle, power, side, follow, cue placement, called pocket for the 8
+  timeout  the seat to act did not shoot before the clock
+  forfeit  that seat left the match, or timed out three times
+
+winner = pvp-8ball-v1(rack, steps)
+a paid winner that is not that output is not a verified result`}</pre>
+        </details>
       </div>
     </section>
   );

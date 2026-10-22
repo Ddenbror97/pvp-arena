@@ -13,6 +13,7 @@ import {
   Network,
   ArrowRight,
   Spade,
+  Circle,
 } from "lucide-react";
 import {
   SeoPage,
@@ -31,7 +32,7 @@ import { seoHead, type Faq } from "@/components/seo/seo-head";
 const FAQS: Faq[] = [
   {
     q: "What is PVPspinArena?",
-    a: "PVPspinArena is a player-vs-player crypto gaming platform with five games: Jackpot, Coinflip, Roulette, P2P Slott and six-max Texas Hold'em poker. Balances are held in US dollars and funded with Bitcoin, or with USDC or ETH on the Base network. Every game result is decided on the server using a committed random seed, and the seed is revealed after the game so anyone can recompute the outcome on the Fairness page.",
+    a: "PVPspinArena is a player-vs-player crypto gaming platform with six games: Jackpot, Coinflip, Roulette, P2P Slott, six-max Texas Hold'em poker and 1v1 8-ball. Balances are held in US dollars and funded with Bitcoin, or with USDC or ETH on the Base network. Draws publish a committed seed and reveal it so anyone can recompute them. 8-ball pays the seat the rules name after the shots. That rack seed does not pick the winner.",
   },
   {
     q: "What does PVP mean on PVPspinArena?",
@@ -43,7 +44,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "What games are available?",
-    a: "Five games are live today. Jackpot is a shared pot where every cent you add is one ticket in the draw. Coinflip is a one-on-one match decided by one random bit. Roulette is a continuous round with Purple and Silver paying 2x and Green paying 14x. P2P Slott is a 1 vs 1 slot duel where the higher score takes the pot. Poker is six-max No-Limit Texas Hold'em, from $0.02/$0.05 to $5/$10 blinds, with a 5% fee only on hands that reach the flop.",
+    a: "Six games are live today. Jackpot is a shared pot where every cent you add is one ticket in the draw. Coinflip is a one-on-one match decided by one random bit. Roulette is a continuous round with Purple and Silver paying 2x and Green paying 14x. P2P Slott is a 1 vs 1 slot duel where the higher score takes the pot. Poker is six-max No-Limit Texas Hold'em, from $0.02/$0.05 to $5/$10 blinds, with a 5% fee only on hands that reach the flop. 8-ball is a 1v1 match: the winner is whoever the rules name after the shots, and the fee is 5% of the pot.",
   },
   {
     q: "How is PVPspinArena inspired by the CS:GO betting era?",
@@ -111,24 +112,24 @@ function AboutPage() {
               accounting stays strict behind it.
             </p>
             <p>
-              We keep the product deliberately small. There are five games, one wallet, one balance
-              in US dollars and one commit-and-reveal approach to fairness shared across all of
-              them. A narrow scope means each part can be built carefully, explained clearly and
-              verified by anyone who wants to look.
+              We keep the product deliberately small. There are six games, one wallet and one balance
+              in US dollars. Draws use a commit-and-reveal seed. 8-ball publishes the rack, then
+              pays the winner the rules name. A narrow scope means each part can be built carefully,
+              explained clearly and verified by anyone who wants to look.
             </p>
           </>
         }
       >
         <SeoGrid cols={3}>
           <SeoCard icon={<Swords className="h-5 w-5" />} title="Players, not the house">
-            <p>Jackpot, Coinflip, Slott and poker pots are formed by the players in the game.</p>
+            <p>Jackpot, Coinflip, Slott, poker and 8-ball pots are formed by the players in the game.</p>
           </SeoCard>
           <SeoCard
             icon={<ShieldCheck className="h-5 w-5" />}
-            title="Server-decided results"
+            title="Published rules"
             accent="gold"
           >
-            <p>The browser animates the result; it never chooses it.</p>
+            <p>The browser shows the result. It does not file the winner or the payout.</p>
           </SeoCard>
           <SeoCard icon={<Wallet className="h-5 w-5" />} title="One USD balance" accent="rival">
             <p>Fund with Bitcoin, or with USDC or ETH on Base. Play and withdraw in US dollars.</p>
@@ -286,11 +287,11 @@ function AboutPage() {
       <SeoSection
         id="games"
         eyebrow="The games"
-        title="Five games, one balance"
+        title="Six games, one balance"
         intro={
           <p>
-            All five games use the same wallet balance, the same commit-and-reveal fairness and the
-            same live interface.
+            All six games use the same wallet balance. Draws commit a seed. 8-ball commits the rack
+            and pays the winner the shots produce.
           </p>
         }
       >
@@ -331,6 +332,10 @@ function AboutPage() {
             Six-max No-Limit Texas Hold'em cash tables from $0.02/$0.05 to $5/$10. Every player
             dealt in helps shuffle the deck, and the 5% fee applies only to hands that see a flop.
           </GameCard>
+          <GameCard icon={<Circle className="h-5 w-5" />} name="8-ball" to="/pool" cta="Play 8-ball">
+            A 1v1 match from $1 to $50. The winner is whoever the rules name after the shots. The
+            rack seed only places the balls. The fee is 5% of the pot when someone wins.
+          </GameCard>
         </SeoGrid>
       </SeoSection>
 
@@ -346,10 +351,11 @@ function AboutPage() {
               SHA-256 hash. That hash is a commitment: it fixes the seed without revealing it.
             </p>
             <p>
-              When the round resolves, the result is computed from the seed with HMAC-SHA256. For
+              When a draw resolves, the result is computed from the seed with HMAC-SHA256. For
               Jackpot, rejection sampling maps the output to a ticket with no modulo bias. After
               settlement, the seed is published. Anyone can hash it, confirm it matches the earlier
-              commitment, and recompute the winner.
+              commitment, and recompute the winner. 8-ball uses the same commitment for the rack
+              only. The winner is a replay of the shots, timeouts and forfeits.
             </p>
           </>
         }

@@ -21,6 +21,7 @@ import {
 } from "@/lib/slott/api";
 import { warmSlotStage } from "@/lib/slott/stage";
 import { fetchLobby, type Lobby } from "@/lib/poker/api";
+import { fetchPoolLobby, type PoolLobby } from "@/lib/pool/api";
 import { warmDealer } from "@/lib/poker/assets";
 import {
   fetchCurrentRound,
@@ -94,6 +95,7 @@ export type SlottPaint = {
 };
 
 export type PokerPaint = { lobby: Fresh<Lobby> };
+export type PoolPaint = { lobby: Fresh<PoolLobby> | null };
 
 function cap<T>(promise: Promise<T>, deadline: number): Promise<T | undefined> {
   const ms = deadline - Date.now();
@@ -425,6 +427,18 @@ export async function loadPokerPaint(pathname: string): Promise<PokerPaint> {
   return servePaint("poker", EMPTY_POKER, buildPokerPaint);
 }
 
+const EMPTY_POOL: PoolPaint = { lobby: null };
+
+async function buildPoolPaint(deadline: number): Promise<PoolPaint> {
+  const at = Date.now();
+  return { lobby: fresh(await cap(fetchPoolLobby(), deadline), at) };
+}
+
+export async function loadPoolPaint(pathname: string): Promise<PoolPaint> {
+  if (inBrowser || (pathname !== "/pool" && pathname !== "/pool/")) return EMPTY_POOL;
+  return servePaint("pool", EMPTY_POOL, buildPoolPaint);
+}
+
 /**
  * Fill react-query for a game page before the visitor clicks the header.
  * The route loaders skip these reads in the browser so the old page stays up;
@@ -432,8 +446,12 @@ export async function loadPokerPaint(pathname: string): Promise<PokerPaint> {
  */
 export function prefetchGamePage(
   qc: QueryClient,
-  path: "/" | "/coinflip" | "/roulette" | "/slott" | "/poker",
+  path: "/" | "/coinflip" | "/roulette" | "/slott" | "/poker" | "/pool",
 ) {
+  if (path === "/pool") {
+    void qc.prefetchQuery({ queryKey: ["pool-lobby"], queryFn: fetchPoolLobby });
+    return;
+  }
   if (path === "/poker") {
     warmDealer();
     void qc.prefetchQuery({ queryKey: ["poker-lobby"], queryFn: fetchLobby });

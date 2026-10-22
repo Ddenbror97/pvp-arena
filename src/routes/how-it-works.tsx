@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   MonitorX,
   Spade,
+  Target,
 } from "lucide-react";
 import {
   SeoPage,
@@ -34,7 +35,7 @@ import { LINE_MULT, PAYLINES, REELS, SYMBOLS, type Rarity } from "@/lib/slott/pa
 const FAQS: Faq[] = [
   {
     q: "How does a PVP casino work?",
-    a: "In a player-vs-player casino you compete with other players instead of betting against fixed odds set by the operator. On PVPspinArena, Jackpot, Coinflip, P2P Slott and Poker pots are made up of the players' wagers, and the winner receives the pot minus the fee taken when the round settles. The platform runs the round, decides the result with a committed random seed, settles balances and publishes the data needed to verify it.",
+    a: "In a player-vs-player casino you compete with other players instead of betting against fixed odds set by the operator. On PVPspinArena, Jackpot, Coinflip, P2P Slott, Poker and 8-ball pots are made up of the players' wagers, and the winner receives the pot minus the fee taken when the round settles. Jackpot, Coinflip, Roulette and P2P Slott publish a committed seed for the draw. Poker mixes each player's secret into the shuffle. 8-ball pays the seat the rules name after the shots. The rack seed does not pick that winner.",
   },
   {
     q: "How does PVPspinArena Coinflip work?",
@@ -54,15 +55,15 @@ const FAQS: Faq[] = [
   },
   {
     q: "What does provably fair mean?",
-    a: "Provably fair means you can check a result yourself instead of trusting the operator. Before a round, the server publishes the SHA-256 hash of a secret seed. After the round, it reveals the seed. You can hash the seed to confirm it matches the commitment, then recompute the result with the published formula. If both match, the result could not have been changed after the commitment.",
+    a: "Provably fair means you can check a result yourself instead of trusting the operator. Before a round, the server publishes the SHA-256 hash of a secret seed. After the round, it reveals the seed. For a draw, you hash the seed and recompute the published formula. For 8-ball, that seed only racks the balls. You then replay every shot, timeout and forfeit. If the replay names the paid winner, the result was not swapped.",
   },
   {
     q: "How are game outcomes determined?",
-    a: "Outcomes are computed on the server, never in your browser. Each game uses HMAC-SHA256 with the round's secret seed as the key and a fixed message made from the game type, game id and version. Jackpot maps the output to a ticket with rejection sampling, Coinflip uses one bit, and Roulette maps the output to one of 33 slots. The animation only shows the stored result.",
+    a: "A draw is computed on the server, never in your browser. Jackpot, Coinflip, Roulette and P2P Slott use HMAC-SHA256 with the round's secret seed. Jackpot maps the output to a ticket with rejection sampling, Coinflip uses one bit, and Roulette maps the output to one of 33 slots. 8-ball is not a draw: the server runs the published rules on the shots you sent and pays the seat those rules name. The animation only shows that stored result.",
   },
   {
     q: "Can I verify a completed game?",
-    a: "Yes. Once a game is settled its seed is published alongside the original hash. Open the Fairness page, choose Jackpot, Coinflip, Roulette or P2P Slott, and enter the game details. Poker hands are verified from the Hands tab at the table. The verifier runs in your browser, recomputes the hash and the result, and shows whether they match the recorded outcome. You can also reproduce the calculation with any standard HMAC-SHA256 tool.",
+    a: "Yes. Once a game is settled its seed is published alongside the original hash. Open the Fairness page, choose Jackpot, Coinflip, Roulette, P2P Slott or 8-ball, and enter the game details. Poker hands are verified from the Hands tab at the table. 8-ball replays the shot list. The verifier runs in your browser and shows whether it matches the recorded outcome.",
   },
   {
     q: "Can you play slots against other players?",
@@ -74,13 +75,13 @@ const FAQS: Faq[] = [
   },
   {
     q: "What is the house fee?",
-    a: "Jackpot, Coinflip and Roulette take 5% when the round settles. On P2P Slott the fee is 10% of the players' pot, taken when the match ends and shown on the result; promotional WILD bonuses are paid in full, a draw refunds both stakes, and a bomb ends the match with the house keeping both stakes. Poker takes 5% of each pot only when a flop is dealt, with no fee on hands that end preflop.",
+    a: "Jackpot, Coinflip and Roulette take 5% when the round settles. On P2P Slott the fee is 10% of the players' pot, taken when the match ends and shown on the result; promotional WILD bonuses are paid in full, a draw refunds both stakes, and a bomb ends the match with the house keeping both stakes. Poker takes 5% of each pot only when a flop is dealt, with no fee on hands that end preflop. 8-ball takes 5% of the pot when a player wins the match. A cancel refunds both stakes.",
   },
 ];
 
 const TITLE = "How PVPspinArena Works | PVP Crypto Casino Games";
 const DESC =
-  "How PVPspinArena works: Jackpot, Coinflip, Roulette, a 1v1 slot duel and six-max Hold'em poker, all on one USD balance with verifiable results.";
+  "How PVPspinArena works: Jackpot, Coinflip, Roulette, a 1v1 slot duel, six-max Hold'em and 8-ball, all on one USD balance with verifiable results.";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () =>
@@ -97,10 +98,10 @@ export const Route = createFileRoute("/how-it-works")({
 const JOURNEY = [
   ["Access your account", "Sign in with a 6-digit email code."],
   ["Fund your wallet", "Deposit Bitcoin, or USDC or ETH on Base."],
-  ["Choose a game", "Jackpot, Coinflip, Roulette, P2P Slott or Poker."],
+  ["Choose a game", "Jackpot, Coinflip, Roulette, P2P Slott, Poker or 8-ball."],
   ["Review the rules", "Wager, chance, multipliers and any fee."],
   ["Create or join", "Enter a pot, match a flip, bet or take a seat."],
-  ["Game resolves", "The server computes the committed result."],
+  ["Game resolves", "A draw, the cards, or the shots settle the round."],
   ["Verify", "Check the revealed seed against the result."],
 ];
 
@@ -116,11 +117,12 @@ function HowItWorksPage() {
       >
         <p>
           PVPspinArena runs fast player-vs-player rounds with a single US-dollar balance. You fund
-          your wallet with digital assets, pick a game, and every result is computed on the server
-          from a seed that was committed before the round began. P2P Slott is a 1 vs 1 slot duel.
-          The higher score takes the pot, unless a bomb ends the match and the house keeps both
-          stakes. Poker is six-max No-Limit Hold'em against other players, with a deck every player
-          at the table helps shuffle.
+          your wallet with digital assets, pick a game, and check the result after it settles.
+          Jackpot, Coinflip, Roulette and P2P Slott commit a seed before the round. Poker mixes each
+          player's secret into the shuffle. 8-ball pays the winner the rules name after the shots;
+          its seed only racks the balls. P2P Slott is a 1 vs 1 slot duel. The higher score takes the
+          pot, unless a bomb ends the match and the house keeps both stakes. Poker is six-max
+          No-Limit Hold'em against other players.
         </p>
         <p>
           Here is the whole journey, from your first sign-in to checking a finished game yourself.
@@ -144,8 +146,8 @@ function HowItWorksPage() {
         </ol>
         <p className="mt-4 max-w-3xl text-sm text-muted-foreground">
           The steps are the same for every game, but the mechanics in step five differ: Jackpot,
-          Coinflip, P2P Slott and Poker are player-vs-player, while Roulette is a shared round with
-          fixed multipliers.
+          Coinflip, P2P Slott, Poker and 8-ball are player-vs-player, while Roulette is a shared round
+          with fixed multipliers.
         </p>
       </section>
 
@@ -444,6 +446,29 @@ function HowItWorksPage() {
             </ol>
             <SeoLink to="/how-it-works#poker">Tables, fees and fairness</SeoLink>
           </SeoCard>
+          <SeoCard icon={<Target className="h-5 w-5" />} title="8-ball">
+            <ol className="list-decimal space-y-1 pl-5">
+              <li>
+                <strong>Stake:</strong> both players put in the same amount, from $1 to $50.
+              </li>
+              <li>
+                <strong>Rack:</strong> a committed seed shuffles the balls. It does not pick a
+                winner.
+              </li>
+              <li>
+                <strong>Shots:</strong> 30 seconds each. You aim, then press Shoot. The server runs
+                the published rules.
+              </li>
+              <li>
+                <strong>Win:</strong> a legal 8-ball. An early 8, the wrong pocket, or a scratch on
+                the 8 loses.
+              </li>
+              <li>
+                <strong>Fee:</strong> 5% of the pot when someone wins. A cancel refunds both stakes.
+              </li>
+            </ol>
+            <SeoLink to="/pool">Open the 8-ball lobby</SeoLink>
+          </SeoCard>
         </SeoGrid>
       </SeoSection>
 
@@ -719,15 +744,16 @@ function HowItWorksPage() {
           <SeoCallout title="PVP vs house-banked, in one line">
             <p>
               In a PVP game your winnings come from the other players in the round. Jackpot,
-              Coinflip, P2P Slott and Poker work that way. In a house-banked game such as Roulette,
+              Coinflip, P2P Slott, Poker and 8-ball work that way. In a house-banked game such as
+              Roulette,
               bets are paid at fixed multipliers regardless of what anyone else bets.
             </p>
           </SeoCallout>
           <SeoCallout title="What your browser does — and doesn't do">
             <p>
-              Your browser shows timers, wheels and coins, and sends your requests to join or bet.
-              It never picks a result, sets a balance or approves a payout. Those steps only happen
-              on the server.
+              Your browser shows the table, the wheel and the cards, and sends the action you chose.
+              It does not name a winner, set a balance or approve a payout. The server runs the
+              published rule for that game and pays the seat that rule names.
             </p>
           </SeoCallout>
         </div>

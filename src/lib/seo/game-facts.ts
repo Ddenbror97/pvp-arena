@@ -192,4 +192,38 @@ export const GAME_FACT_PAGES: Record<string, GameFactPage> = {
       },
     ],
   },
+  pool: {
+    id: "pool",
+    name: "8-ball",
+    facts: [
+      {
+        label: "How you enter",
+        text: "Two players stake the same amount from the US-dollar balance. Stakes are $1, $2, $5, $10, $25 and $50. The first player waits. The second player joins that stake. There is no house opponent.",
+      },
+      {
+        label: "How the winner is chosen",
+        text: "The winner is whoever the published 8-ball rules name after the shots. Pocketing the 8-ball legally wins. An early 8, the 8 in the wrong pocket, or a scratch on the 8 loses. Three shot-clock timeouts, or an explicit forfeit, give the match to the other player. The server runs that function so a browser cannot file a win. It does not draw a winner.",
+      },
+      {
+        label: "The rack seed",
+        text: "Before the table opens, the server publishes the SHA-256 hash of a 32-byte seed. That seed only shuffles the coloured balls. The 8-ball stays in the centre of the rack. Shots are not given a random error.",
+      },
+      {
+        label: "Fee",
+        text: "When the match settles, 5% of the pot is kept as the fee. The winner receives the other 95%. A cancel or a match that ends before the break refunds both stakes with no fee.",
+      },
+      {
+        label: "Checking the result",
+        text: "After the match leaves the waiting room the seed is revealed. Anyone can replay the shot list, the timeouts and the forfeits. A paid winner that disagrees with that replay is not a verified result. The check does not promise a win or protect the wallet that funded the stake.",
+      },
+      { label: "Who can play", text: AGE },
+    ],
+    reads: [
+      {
+        to: "/guides/$slug",
+        slug: "8-ball-pool-for-money",
+        label: "What a cash 8-ball match is",
+      },
+    ],
+  },
 };

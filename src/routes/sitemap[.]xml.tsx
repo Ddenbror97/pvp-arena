@@ -10,6 +10,7 @@ export const STATIC_PATHS = [
   "/roulette",
   "/slott",
   "/poker",
+  "/pool",
   "/fairness",
   "/about",
   "/how-it-works",

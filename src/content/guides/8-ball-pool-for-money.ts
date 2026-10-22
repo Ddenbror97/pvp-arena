@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Matchmaking against similar players shrinks easy wins.",
     "Cheating tools matter more than cue-ball spin if the client is a phone.",
     "A free 8-ball app and a cash pool app are different products, even when the cloth looks the same.",
-    "PVPspinArena does not host pool. Do not look for a table on the casino pages.",
+    "PVPspinArena hosts 1v1 8-ball. The winner is the rules replay of the shots. The rack seed does not pick the winner.",
   ],
   sections: [
     {
@@ -77,7 +77,7 @@ Identity checks are normal once money is real. They are not normal when they app
 
 If the match itself is disputed, the payout clock should pause under a written rule, not under a silent freeze. You want a deadline: evidence in, decision out, credit released or entry returned. “Pending review” with no date is where balances go to be forgotten.
 
-This site’s casino games settle under their own rules and can be checked on the [fairness](/fairness) page. That page does not review a pool match. Do not open a casino ticket because a pool app would not pay.`,
+This site’s games settle under their own rules and can be checked on the [fairness](/fairness) page. The 8-ball tab replays a match from its rack seed and shot list. Do not open a ticket here because some other pool app would not pay.`,
     },
     {
       id: "checklist",
@@ -145,7 +145,7 @@ If you wanted a short chance game instead of a match, say so and play one with a
     },
     {
       q: "Does PVPspinArena run 8-ball?",
-      a: "No. The site runs Coinflip, Jackpot, and Roulette. Pool skill does not carry over to those games.",
+      a: "Yes. Two players stake the same amount on the 8-ball table. The winner is whoever the published rules name after the shots. A 5% fee comes off the pot. The rack seed only places the balls.",
     },
   ],
   sources: [
@@ -156,5 +156,5 @@ If you wanted a short chance game instead of a match, say so and play one with a
     },
   ],
   related: ["skill-based-gambling", "fake-casino-sites", "peer-to-peer-gambling", "bet-with-friends-online"],
-  updated: "2026-10-06",
+  updated: "2026-10-22",
 };

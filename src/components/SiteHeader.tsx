@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { WalletGroupPlaceholder } from "@/components/wallet/HeaderWalletFrame";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
 import { equippedAssets, usePrestige } from "@/components/prestige/PrestigeProvider";
-import { Dices, Coins, CircleDot, Cherry, Spade, ShieldCheck } from "lucide-react";
+import { Dices, Coins, CircleDot, Cherry, Spade, ShieldCheck, Circle } from "lucide-react";
 import { arenaLogo, arenaLogoLight } from "@/assets/media";
 import { TokenMark } from "@/components/wallet/TokenMark";
 import { SoundToggle } from "@/components/SoundToggle";
@@ -60,7 +60,7 @@ export function SiteHeader({ className }: { className?: string }) {
           <SoundToggle />
           <span aria-hidden className="hidden h-7 w-px bg-white/[0.07] lg:block" />
         </div>
-        <nav className="relative hidden min-w-0 items-center gap-7 lg:flex lg:self-stretch">
+        <nav className="relative hidden min-w-0 items-center gap-4 lg:flex lg:self-stretch xl:gap-6">
           <span
             aria-hidden
             className="header-tab pointer-events-none absolute top-0 bottom-[5px] -left-[100vw] -right-28 -z-10"
@@ -110,6 +110,15 @@ export function SiteHeader({ className }: { className?: string }) {
             onTouchStart={() => prefetchGamePage(qc, "/poker")}
           >
             Poker
+          </Link>
+          <Link
+            to="/pool"
+            className={link}
+            onMouseEnter={() => prefetchGamePage(qc, "/pool")}
+            onFocus={() => prefetchGamePage(qc, "/pool")}
+            onTouchStart={() => prefetchGamePage(qc, "/pool")}
+          >
+            8-ball
           </Link>
           <Link to="/fairness" className={link}>
             Fairness
@@ -406,6 +415,10 @@ export function MobileTabBar({ className }: { className?: string }) {
       <Link to="/poker" className={tab} onTouchStart={() => prefetchGamePage(qc, "/poker")}>
         <Spade className="h-5 w-5" />
         Poker
+      </Link>
+      <Link to="/pool" className={tab} onTouchStart={() => prefetchGamePage(qc, "/pool")}>
+        <Circle className="h-5 w-5" />
+        8-ball
       </Link>
       <Link to="/fairness" className={tab}>
         <ShieldCheck className="h-5 w-5" />

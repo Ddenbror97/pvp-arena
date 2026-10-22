@@ -8,7 +8,7 @@ export const Route = createFileRoute("/terms")({
       path: "/terms",
       title: "Terms of Service: Fees, Deposits and Rules | PVPspinArena",
       description:
-        "Terms for PVPspinArena: eligibility, fees on Jackpot, Coinflip, Roulette, P2P Slott and poker, Bitcoin and Base deposits, and account rules.",
+        "Terms for PVPspinArena: eligibility, fees on Jackpot, Coinflip, Roulette, P2P Slott, poker and 8-ball, Bitcoin and Base deposits, and account rules.",
       crumb: "Terms",
     }),
   component: TermsPage,
@@ -27,8 +27,8 @@ function TermsPage() {
 
       <h2>The Service</h2>
       <p>
-        PVPspinArena offers five games: Jackpot, Coinflip, Roulette, P2P Slott, and six-max No-Limit
-        Texas Hold&apos;em poker.
+        PVPspinArena offers six games: Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit
+        Texas Hold&apos;em poker, and 1v1 8-ball.
       </p>
       <p>
         Your playable balance is maintained as a US-dollar ledger, counted in cents. Bitcoin, and
@@ -74,7 +74,8 @@ function TermsPage() {
         Roulette charges a <strong>5% fee</strong> on each winning payout when the round settles.
         P2P Slott charges a <strong>10% fee</strong> on the players&apos; pot when a player wins. If
         either player lands a bomb, the match ends and the house keeps both stakes. Poker charges a{" "}
-        <strong>5% fee</strong> on a pot only when a flop is dealt.
+        <strong>5% fee</strong> on a pot only when a flop is dealt. 8-ball charges a{" "}
+        <strong>5% fee</strong> on the pot when a match is won.
       </p>
 
       <h3>Jackpot</h3>
@@ -98,8 +99,9 @@ function TermsPage() {
       </p>
       <p>
         The game fee is not charged again when depositing or withdrawing. It is taken from the
-        Jackpot, Coinflip, P2P Slott, or poker pot, or from a Roulette winning payout, at
-        settlement. Poker takes its fee only after a flop.
+        Jackpot, Coinflip, P2P Slott, poker, or 8-ball pot, or from a Roulette winning payout, at
+        settlement. Poker takes its fee only after a flop. 8-ball takes its fee only when a player
+        wins the match.
       </p>
       <p>If a round is cancelled, the affected stakes are refunded without the game fee.</p>
 
@@ -128,6 +130,18 @@ function TermsPage() {
         Each seated player commits a secret used in the shuffle. If a player does not reveal that
         secret in time, the hand is voided before any card or blind and no money moves. Finished
         hands can be recomputed from the table&apos;s Hands tab.
+      </p>
+
+      <h3>8-ball</h3>
+      <p>
+        8-ball is a 1v1 match. Both players stake the same amount. The winner is the player the
+        published rules name after the shots, a forfeit, or three shot-clock timeouts. The rack seed
+        only places the balls. It does not choose the winner.
+      </p>
+      <p>
+        At settlement, 5% of the pot is retained as the game fee. The winner receives the remaining
+        95%. A cancelled match, or a match that ends before the break because both players left,
+        refunds both stakes with no fee.
       </p>
 
       <h3>Roulette</h3>

@@ -1,8 +1,8 @@
 # PVPspinArena
 
-> PVPspinArena (https://pvpspinarena.com) is a player-vs-player crypto gaming site with five games: Jackpot, Coinflip, Roulette, P2P Slott, and six-max No-Limit Texas Hold'em. Balances are shown in US dollars and funded with Bitcoin, or with USDC or ETH on Base. Each result is computed on the server from a seed whose SHA-256 hash is published before the round; after settlement the seed is revealed so anyone can recompute the outcome. Adults 18+ only. Play only with money you can afford to lose.
+> PVPspinArena (https://pvpspinarena.com) is a player-vs-player crypto gaming site with six games: Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit Texas Hold'em, and 1v1 8-ball. Balances are shown in US dollars and funded with Bitcoin, or with USDC or ETH on Base. Draws publish a SHA-256 seed hash before the round and reveal the seed after settlement. 8-ball's seed only racks the balls; the winner is a replay of the shots. Adults 18+ only. Play only with money you can afford to lose.
 
-Jackpot, Coinflip, P2P Slott, and Poker are player versus player: the pot is the players' wagers, and the winner receives it minus the fee for that game. Roulette is a shared house-banked wheel, not a pot. The browser animation does not decide the result. A committed seed lets you recompute a published result. It does not insure a balance, protect a wallet, or remove the fee. PVPspinArena is not affiliated with Valve, Counter-Strike, or Steam. No gambling licence number, audit firm, or company registration is published on the site.
+Jackpot, Coinflip, P2P Slott, Poker and 8-ball are player versus player: the pot is the players' wagers, and the winner receives it minus the fee for that game. Roulette is a shared house-banked wheel, not a pot. The browser animation does not decide the result. A committed seed lets you recompute a published draw. An 8-ball replay lets you recompute the winner from the shots. Neither check insures a balance, protects a wallet, or removes the fee. PVPspinArena is not affiliated with Valve, Counter-Strike, or Steam. No gambling licence number, audit firm, or company registration is published on the site.
 
 ## Games
 
@@ -11,6 +11,7 @@ Jackpot, Coinflip, P2P Slott, and Poker are player versus player: the pot is the
 - [Roulette](https://pvpspinarena.com/roulette): timed rounds on a 33-slot wheel; 16 Purple and 16 Silver pay 2x, 1 Green pays 14x. Fee: 5% of each winning payout. After that fee, Purple or Silver returns about 92.12% (about a 7.88% house edge) and Green returns about 40.30% (about a 59.70% house edge).
 - [P2P Slott](https://pvpspinarena.com/slott): two players, equal stakes, six spins each, higher score wins. Fee: 10% of the players' pot on a win. A draw refunds both stakes. A bomb ends the match and the house keeps both stakes.
 - [Poker](https://pvpspinarena.com/poker): six-max No-Limit Hold'em, blinds from $0.02/$0.05 to $5/$10. Fee: 5% of a pot only when a flop is dealt. Preflop hands pay no fee.
+- [8-ball](https://pvpspinarena.com/pool): 1v1, stakes $1 to $50. The winner is whoever the published rules name after the shots. The rack seed does not pick the winner. Fee: 5% of the pot when a player wins. A cancel refunds both stakes.
 
 ## How the site works
 
