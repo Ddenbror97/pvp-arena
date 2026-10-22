@@ -1148,17 +1148,6 @@ html[data-theme="light"] .slott-cell[data-rarity="epic"] { --rim: #b04bf0; --glo
 html[data-theme="light"] .slott-cell[data-rarity="legendary"] { --rim: #f0b020; --glow: rgb(240 160 20 / 55%); }
 html[data-theme="light"] .slott-cell[data-rarity="common"]::before { box-shadow: 0 0 0 2px oklch(1 0 0 / 95%), 0 0 0 3px var(--rim), 0 8px 14px -6px oklch(0.32 0.1 295 / 40%); }
 html[data-theme="light"] .slott-cell[data-rarity="common"] > img:not(.slott-hit):not(.saturate-50) { filter: saturate(0.75) brightness(0.95); }
-html[data-theme="light"] .slott-panel {
-  background:
-    radial-gradient(120% 50% at 50% 0%, oklch(0.95 0.04 300 / 70%), transparent 70%),
-    oklch(1 0 0);
-  box-shadow: var(--elev-2);
-}
-html[data-theme="light"] .slott-panel::before {
-  inset: 0;
-  border-radius: inherit;
-  opacity: 0.85;
-}
 html[data-theme="light"] .slott-dialog {
   background:
     radial-gradient(90% 40% at 50% 0%, oklch(0.95 0.04 300 / 80%), transparent 70%),

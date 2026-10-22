@@ -2,7 +2,7 @@ import { memo, useEffect, useRef, useState, type CSSProperties } from "react";
 import { PAYLINES, REELS, ROWS, SYMBOLS, WILD, type LineWin } from "@/lib/slott/paytable";
 import { formatUsd } from "@/lib/jackpot/math";
 import { cn } from "@/lib/utils";
-import { hitsDoneMs, LINE_DRAW_MS, lineColor, orderLines, reachMs } from "./hits";
+import { bestLineCaption, hitsDoneMs, LINE_DRAW_MS, lineColor, orderLines, reachMs } from "./hits";
 import { fxTier } from "./presentation";
 import { useCountUp } from "./SlotCabinet";
 import { reelValues, TALLY_STEP_MS, tallyStartMs } from "./tally";
@@ -36,7 +36,6 @@ export const SpinFx = memo(function SpinFx({
   const ordered = orderLines(lines);
   const lineScore = lines.reduce((a, l) => a + l.score, 0);
   const tier = fxTier(lineScore, !!bonus);
-  const best = ordered[ordered.length - 1];
   const done = hitsDoneMs(lines);
   const bannerAt = tier === "medium" ? done + 40 : done + 80;
   const parked = !!bonus || (tier !== "none" && tier !== "small");
@@ -198,7 +197,7 @@ export const SpinFx = memo(function SpinFx({
         lines={lines}
         score={score}
         who={who}
-        line={best ? `${best.count}× ${SYMBOLS[best.symbol]!.name}` : undefined}
+        line={bestLineCaption(lines, (id) => SYMBOLS[id]!.name)}
         parked={parked}
         target={target}
         onTarget={onTarget}

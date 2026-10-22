@@ -298,6 +298,8 @@ type Opts = { volume?: number; ambient?: boolean };
 /** Pages currently showing P2P Slott. Audio is audible only while this is positive. */
 let holders = 0;
 let slotBus: GainNode | null = null;
+/** The reel cue currently scheduled. A newer spin disconnects it. */
+let reelBus: GainNode | null = null;
 
 /** Keep slot cues alive while a slot screen is mounted, and mute them the moment it leaves. */
 export function bindSlotAudio() {
@@ -308,7 +310,20 @@ export function bindSlotAudio() {
   };
 }
 
+/** Disconnect one reel cue. A newer spin calls this before it decides it has nothing to play. */
+export function releaseReelAudio<T extends { disconnect(): void }>(bus: T | null): null {
+  if (bus) {
+    try {
+      bus.disconnect();
+    } catch {
+      /* already disconnected */
+    }
+  }
+  return null;
+}
+
 function silenceSlotSfx() {
+  reelBus = releaseReelAudio(reelBus);
   const bus = slotBus;
   slotBus = null;
   if (!bus) return;
@@ -351,8 +366,10 @@ export function playSpinSfx(
     const now = ctx.currentTime;
     const base = now + (startAt - Date.now()) / 1000;
     const at = stops.map((s) => base + s / 1000);
+    reelBus = releaseReelAudio(reelBus);
     if (at[at.length - 1]! <= now) return;
     const b = bus(ctx, out, scaled(volume));
+    reelBus = b;
     const start = Math.max(now, base);
     if (start <= now + 0.05) spinWhoosh(ctx, b, start);
     ratchet(ctx, b, Math.max(now, base + 0.12), at);

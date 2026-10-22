@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { reelStops, teases, type ReelSpin } from "./timing";
 import type { HitCell } from "./hits";
 import { prefersReducedMotion, spinAccent } from "./presentation";
+import { claimReelRun, reelStrip, releaseReelRun } from "./reel-run";
 
 const FILLER_BASE = 14;
 const FILLER_STEP = 5;
@@ -126,11 +127,10 @@ function Reel({
         k,
       )
     : [];
-  const cells = spin?.pending
-    ? [...head, ...blur, ...head]
-    : spin
-      ? [...head, ...blur, ...column]
-      : column;
+  const cells = reelStrip(
+    spin ? { pending: !!spin.pending, head, filler: blur, column } : null,
+    column,
+  );
   // CSS delays are relative to when the style was first applied, so pin the offset per spin.
   const mount = useRef<{ key: string; since: number } | null>(null);
   if (spin && mount.current?.key !== spin.key)
@@ -142,16 +142,13 @@ function Reel({
     const el = strip.current;
     if (!el || !spin) return;
     const token = spin.pending ? `${spin.key}:loop` : spin.key;
-    if (ran.current === token) return;
+    if (!claimReelRun(ran, token)) return;
     const travel = spin.pending ? stop : Math.max(stop, 400);
-    ran.current = token;
     const total = cells.length;
     const end = -((total - ROWS) / total) * 100;
     if (calm) {
       if (!spin.pending) el.style.transform = `translateY(${end}%)`;
-      return () => {
-        if (ran.current === token) ran.current = null;
-      };
+      return () => releaseReelRun(ran, token);
     }
     const cell = 100 / total;
     const anim = spin.pending
@@ -179,7 +176,7 @@ function Reel({
         );
     return () => {
       anim.cancel();
-      if (ran.current === token) ran.current = null;
+      releaseReelRun(ran, token);
     };
     // cells are derived from spin; the key guards re-runs.
     // eslint-disable-next-line react-hooks/exhaustive-deps

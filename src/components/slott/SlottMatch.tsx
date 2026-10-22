@@ -35,8 +35,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Reels } from "./Reels";
 import { SpinFx } from "./SpinFx";
-import { hitCells, NO_HITS, winLevel } from "./hits";
-import { BOMB, hasBomb } from "@/lib/slott/paytable";
+import { hitCells, NO_HITS, spinReveal, winLevel } from "./hits";
+import { admitSpin, reuseSpinKey } from "./spin-guard";
+import { BOMB, hasBomb, SYMBOLS } from "@/lib/slott/paytable";
+import { mergeSlotSpins, preferNewerSlotGame, reconcileAfter } from "@/lib/slott/reconcile";
 import { SYMBOL_IMG } from "@/lib/slott/symbols";
 import {
   bindSlotAudio,
@@ -104,7 +106,12 @@ export function SlottMatch({ id }: { id: number }) {
   const live = (s?: string) => s === "ACTIVE" || s === "SETTLEMENT";
   const gq = useQuery({
     queryKey: ["slot", id],
-    queryFn: () => fetchSlotGame(id),
+    queryFn: () =>
+      reconcileAfter(
+        () => fetchSlotGame(id),
+        () => qc.getQueryData<SlotGameView | null>(["slot", id]),
+        preferNewerSlotGame,
+      ),
     refetchInterval: (q) => {
       const liveFeed = channelLive("slot");
       if (q.state.data?.status === "WAITING") return liveFeed ? 8000 : 4000;
@@ -114,7 +121,12 @@ export function SlottMatch({ id }: { id: number }) {
   const g = gq.data ?? null;
   const sq = useQuery({
     queryKey: ["slot-spins", id],
-    queryFn: () => fetchSlotSpins(id),
+    queryFn: () =>
+      reconcileAfter(
+        () => fetchSlotSpins(id),
+        () => qc.getQueryData<SlotSpin[]>(["slot-spins", id]),
+        mergeSlotSpins,
+      ),
     enabled: !!g && g.status !== "WAITING",
     refetchInterval: live(g?.status) ? (channelLive("slot") ? 4000 : 1500) : false,
   });
@@ -294,27 +306,48 @@ export function SlottMatch({ id }: { id: number }) {
   const [pending, setPending] = useState(false);
   const [callingBot, setCallingBot] = useState(false);
   const [auto, setAuto] = useState(false);
+  const [heldSpin, setHeldSpin] = useState<number | null>(null);
   const botKey = useRef(crypto.randomUUID());
   const keys = useRef(new Map<number, string>());
   const spinLock = useRef(false);
+  const heldRef = useRef<number | null>(null);
   useEffect(() => {
     keys.current.clear();
     spinLock.current = false;
+    heldRef.current = null;
+    setHeldSpin(null);
     kick.current = null;
   }, [id]);
+  useEffect(() => {
+    if (heldRef.current != null && g && g.next_spin > heldRef.current) {
+      heldRef.current = null;
+      setHeldSpin(null);
+    }
+  }, [g, g?.next_spin]);
   const turn = g && g.status === "ACTIVE" && !g.ends_at ? turnSeat(g.next_spin) : null;
   const opensAt = g?.turn_opens_at ? new Date(g.turn_opens_at).getTime() : null;
   const deadline = g?.turn_deadline ? new Date(g.turn_deadline).getTime() : null;
   const turnOpen = !!turn && opensAt != null && snow >= opensAt && latestLanded;
   const myTurn = !!me && turn === me;
-  const canSpin = myTurn && turnOpen && !pending;
+  const canSpin = myTurn && turnOpen && !pending && (g == null || heldSpin !== g.next_spin);
   const secondsLeft =
     deadline != null ? Math.max(0, Math.ceil((deadline - snow) / 100) / 10) : null;
 
   async function doSpin() {
-    if (spinLock.current || !g || !canSpin) return;
+    if (!g) return;
+    if (
+      !admitSpin({
+        locked: spinLock.current,
+        held: heldRef.current,
+        canSpin,
+        nextSpin: g.next_spin,
+      })
+    )
+      return;
     spinLock.current = true;
     const n = g.next_spin;
+    heldRef.current = n;
+    setHeldSpin(n);
     const key = keys.current.get(n) ?? crypto.randomUUID();
     keys.current.set(n, key);
     kick.current = { spinNo: n, at: Date.now() };
@@ -323,7 +356,9 @@ export function SlottMatch({ id }: { id: number }) {
     try {
       const { data, error } = await slotSpin(g.id, n, key);
       if (error) {
-        if (!/fetch|network/i.test(error.message)) keys.current.delete(n);
+        heldRef.current = null;
+        setHeldSpin(null);
+        if (!reuseSpinKey(error.message)) keys.current.delete(n);
         kick.current = null;
         shown.current.delete(`${id}:${n}`);
         setKickTick((tick) => tick + 1);
@@ -363,7 +398,10 @@ export function SlottMatch({ id }: { id: number }) {
               },
             ].sort((a, b) => a.spin_no - b.spin_no),
       );
-    }
+      } else {
+        heldRef.current = null;
+        setHeldSpin(null);
+      }
     qc.invalidateQueries({ queryKey: ["slot", id] });
     qc.invalidateQueries({ queryKey: ["slot-spins", id] });
     qc.invalidateQueries({ queryKey: ["slot-bonus", id] });
@@ -438,6 +476,9 @@ export function SlottMatch({ id }: { id: number }) {
     finalChase == null &&
     focusNo != null &&
     isBaseFinalSpin(focusNo, perSeat);
+  const reveal = latest
+    ? spinReveal(latest, { A: whoName(g, "A"), B: whoName(g, "B") }, (id) => SYMBOLS[id]!.name)
+    : null;
 
   const seat = (s: "A" | "B", compact: boolean) => {
     const uid = s === "A" ? g.creator_id : g.opponent_id;
@@ -605,7 +646,7 @@ export function SlottMatch({ id }: { id: number }) {
                     lines={latest!.lines}
                     score={latest!.score}
                     bonus={bonusFx}
-                    who={whoName(g, latest!.seat)}
+                    who={reveal?.who}
                     target={latestIsFinal ? finalChase : null}
                     onTarget={() => playStingSfx("target")}
                   />

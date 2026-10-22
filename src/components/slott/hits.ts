@@ -12,6 +12,28 @@ export function orderLines(lines: LineWin[]): LineWin[] {
   return [...lines].sort((a, b) => a.score - b.score || a.line - b.line);
 }
 
+/** Highest line, matching the line drawn last. Absent when the spin has no line. */
+export function bestLineCaption(
+  lines: LineWin[],
+  nameOf: (symbol: number) => string,
+): string | undefined {
+  const best = orderLines(lines).at(-1);
+  return best ? `${best.count}× ${nameOf(best.symbol)}` : undefined;
+}
+
+/** The floating score uses the seat that actually spun, and that spin's server score. */
+export function spinReveal(
+  spin: { seat: "A" | "B"; score: number; lines: LineWin[] },
+  names: { A: string; B: string },
+  nameOf: (symbol: number) => string,
+) {
+  return {
+    who: names[spin.seat],
+    score: spin.score,
+    line: bestLineCaption(spin.lines, nameOf),
+  };
+}
+
 /** When the drawing line reaches reel `reel` of a run of `count`. */
 export function reachMs(order: number, reel: number, count: number) {
   return order * LINE_GAP_MS + Math.round((LINE_DRAW_MS * reel) / Math.max(1, count - 1));
