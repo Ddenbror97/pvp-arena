@@ -12,6 +12,7 @@ export default defineConfig({
     // Point TEST_DATABASE_URL at an isolated Postgres before running them.
     include: ["tests/**/*.test.ts", "tests/**/*.test.tsx"],
     fileParallelism: false,
+    maxWorkers: 1,
     testTimeout: 15000,
   },
 });

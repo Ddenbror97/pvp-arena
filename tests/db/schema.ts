@@ -57,6 +57,11 @@ export function buildTestSchemaSql(skip: readonly string[] = []): string {
   // cannot access; point them at a local stand-in table.
   s = s.replace(/auth\.users/g, "pvp_test.test_auth_users");
   s = s.replace(/auth\.sessions/g, "pvp_test.test_auth_sessions");
+  // 20261021195500 closes poker_table_state with `end $fn$` and no semicolon.
+  // Each migration file is applied on its own in production. This builder
+  // concatenates them, so the missing terminator is a syntax error at the
+  // next statement and the schema is never created.
+  s = s.replace(/end \$fn\$(?!\s*;)/gi, "end $fn$;");
   return `drop schema if exists pvp_test cascade;
 create schema pvp_test;
 create table pvp_test.test_auth_users (id uuid primary key, email text, email_confirmed_at timestamptz);

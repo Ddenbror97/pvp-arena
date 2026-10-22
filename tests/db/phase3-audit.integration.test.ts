@@ -708,6 +708,7 @@ describe("phase 3 isolated restore, cron, and faults", () => {
     const admin = postgres(localAdminUrl(), { max: 1, onnotice: () => {} });
     await admin.unsafe(`drop database if exists phase3_audit with (force)`);
     await admin.unsafe(`drop database if exists phase3_restore with (force)`);
+    await admin.unsafe(`drop role if exists phase3_pool`);
     await admin.end();
     writeFileSync("/tmp/phase3-results.json", JSON.stringify(results, null, 2));
   }, 60_000);
