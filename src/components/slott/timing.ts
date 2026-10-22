@@ -1,4 +1,5 @@
 import { ROWS, WILD } from "@/lib/slott/paytable";
+import { prefersReducedMotion } from "./presentation";
 
 /** Shown before the first spin (the machine at rest). Reel-major, like the server grid. */
 export const IDLE_GRID = [0, 5, 10, 15, 1, 6, 11, 16, 7, 8, 12, 17, 3, 2, 13, 18, 4, 9, 14, 19];
@@ -16,6 +17,8 @@ export interface ReelSpin {
 
 /** A shown spin is never shorter than this. Seeking a late clock is what snaps the board. */
 const MIN_VISIBLE_MS = 2400;
+/** Reduced motion still lands, then settles, without the full reel travel. */
+const REDUCED_VISIBLE_MS = 720;
 
 /**
  * `openedOn` is the spin already on the board when this view armed.
@@ -40,7 +43,8 @@ export function presentSpinStart(
   clickedAt?: number | null,
   liveArrival = false,
 ): { startAt: number; durationMs: number } | null {
-  const duration = Math.max(durationMs, MIN_VISIBLE_MS);
+  const full = Math.max(durationMs, MIN_VISIBLE_MS);
+  const duration = prefersReducedMotion() ? Math.min(REDUCED_VISIBLE_MS, full) : full;
   if (clickedAt != null || liveArrival) return { startAt: now, durationMs: duration };
   const elapsed = now - serverStartAt;
   if (elapsed >= 0 && elapsed < duration) return { startAt: now, durationMs: duration };

@@ -128,10 +128,10 @@ export function SlotCabinet({
   useEffect(() => {
     if (!shake || !frame.current || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     frame.current.animate(
-      [0, -5, 5, -4, 4, -2, 2, 0].map((x, i) => ({
-        transform: `translate(${x}px, ${i % 2 ? 1 : -1}px)`,
+      [0, -3, 3, -2, 2, -1, 1, 0].map((x) => ({
+        transform: `translateX(${x}px)`,
       })),
-      { duration: 480, easing: "ease-out" },
+      { duration: 420, easing: "ease-out" },
     );
   }, [shake]);
   return (
@@ -363,6 +363,8 @@ export function SeatPanel({
   spins,
   status,
   compact,
+  ahead,
+  live,
 }: {
   seat: "A" | "B";
   avatar: ReactNode;
@@ -376,15 +378,34 @@ export function SeatPanel({
   spins?: [number, number] | null | undefined;
   status?: ReactNode;
   compact?: boolean | undefined;
+  /** This seat is ahead after the latest counted spin. */
+  ahead?: boolean | undefined;
+  /** This seat's spin is the one on the clock. */
+  live?: boolean | undefined;
 }) {
   const shown = useCountUp(score ?? 0);
+  const seenScore = useRef<number | null>(null);
+  const [pop, setPop] = useState(false);
+  useEffect(() => {
+    if (score == null) return;
+    if (seenScore.current == null) {
+      seenScore.current = score;
+      return;
+    }
+    if (seenScore.current === score) return;
+    seenScore.current = score;
+    setPop(true);
+    const t = setTimeout(() => setPop(false), 460);
+    return () => clearTimeout(t);
+  }, [score]);
   if (compact) {
     return (
       <div
         data-seat={seat}
         className={cn(
           "slott-chip min-w-0 rounded-xl p-1.5 sm:p-2",
-          active && "slott-turn",
+          active && !ahead && "slott-turn",
+          ahead && "slott-ahead",
           dim && "opacity-55",
         )}
       >
@@ -401,14 +422,20 @@ export function SeatPanel({
             </div>
           </div>
           {score != null ? (
-            <div className="tabular shrink-0 font-display text-lg leading-none sm:text-xl">
+            <div
+              className={cn(
+                "tabular shrink-0 font-display text-lg leading-none sm:text-xl",
+                ahead && "slott-score-ahead",
+                pop && "slott-score-pop",
+              )}
+            >
               {shown}
             </div>
           ) : null}
         </div>
         <div className="mt-1 flex min-h-3.5 items-center justify-between gap-1">
           {spins ? (
-            <Pips used={spins[0]} of={spins[1]} />
+            <Pips used={spins[0]} of={spins[1]} live={live} />
           ) : (
             <span className="tabular text-[10px] text-muted-foreground">
               {stake != null ? formatUsd(stake) : ""}
@@ -426,7 +453,8 @@ export function SeatPanel({
       data-seat={seat}
       className={cn(
         "slott-seat rounded-xl p-2 text-center xl:p-2.5",
-        active && "slott-turn",
+        active && !ahead && "slott-turn",
+        ahead && "slott-ahead",
         dim && "opacity-55",
       )}
     >
@@ -447,10 +475,18 @@ export function SeatPanel({
       {score != null ? (
         <div className="slott-score mt-2.5 rounded-lg px-2 py-1.5">
           <div className="text-[9px] tracking-wider text-muted-foreground">SCORE</div>
-          <div className="tabular font-display text-xl leading-tight">{shown}</div>
+          <div
+            className={cn(
+              "tabular font-display text-xl leading-tight",
+              ahead && "slott-score-ahead",
+              pop && "slott-score-pop",
+            )}
+          >
+            {shown}
+          </div>
           {spins ? (
             <div className="mt-1 flex justify-center">
-              <Pips used={spins[0]} of={spins[1]} />
+              <Pips used={spins[0]} of={spins[1]} live={live} />
             </div>
           ) : null}
         </div>
@@ -460,19 +496,16 @@ export function SeatPanel({
   );
 }
 
-function Pips({ used, of }: { used: number; of: number }) {
+function Pips({ used, of, live }: { used: number; of: number; live?: boolean | undefined }) {
+  const current = live && used < of ? used : -1;
   return (
-    <span
-      className="flex items-center gap-[3px]"
-      aria-label={`${Math.min(used, of)} of ${of} spins used`}
-    >
+    <span className="slott-pips" aria-label={`${Math.min(used, of)} of ${of} spins`}>
       {Array.from({ length: of }, (_, i) => (
         <span
           key={i}
-          className={cn(
-            "h-1.5 w-1.5 rounded-full sm:h-2 sm:w-2",
-            i < used ? "bg-primary-soft shadow-[0_0_6px_rgb(170_120_255/0.9)]" : "bg-foreground/15",
-          )}
+          data-state={i < used ? "done" : i === current ? "current" : "open"}
+          data-final={i === of - 1 ? "true" : undefined}
+          className="slott-pip"
         />
       ))}
       {used > of ? (

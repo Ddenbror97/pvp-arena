@@ -5,6 +5,7 @@ import { SYMBOL_IMG } from "@/lib/slott/symbols";
 import { cn } from "@/lib/utils";
 import { reelStops, teases, type ReelSpin } from "./timing";
 import type { HitCell } from "./hits";
+import { prefersReducedMotion, spinAccent } from "./presentation";
 
 const FILLER_BASE = 14;
 const FILLER_STEP = 5;
@@ -44,8 +45,16 @@ export const Reels = memo(function Reels({
 }) {
   const stops = spin && !spin.pending ? reelStops(spin.grid, spin.durationMs) : null;
   const tease = !!spin && !spin.pending && teases(spin.grid);
+  const calm = prefersReducedMotion();
+  const spinNo = Number(spin?.key.split(":").pop());
+  const accent = spinAccent(Number.isFinite(spinNo) ? spinNo : 0);
+  const spinning = !!spin && !landed && !calm;
   return (
-    <div className={cn("slott-reels relative", className)}>
+    <div
+      className={cn("slott-reels relative", className)}
+      data-live={spinning ? "true" : "false"}
+      style={{ "--slott-accent": accent } as CSSProperties}
+    >
       <div
         className={cn(
           "relative grid grid-cols-5",
@@ -75,6 +84,7 @@ export const Reels = memo(function Reels({
             column={grid.slice(r * ROWS, r * ROWS + ROWS)}
             highlight={highlight}
             landed={landed}
+            calm={calm}
             seamless={seamless}
           />
         ))}
@@ -94,6 +104,7 @@ function Reel({
   column,
   highlight,
   landed,
+  calm,
   seamless,
 }: {
   reel: number;
@@ -103,6 +114,7 @@ function Reel({
   column: number[];
   highlight: Map<number, HitCell>;
   landed: boolean;
+  calm: boolean;
   seamless?: boolean | undefined;
 }) {
   const strip = useRef<HTMLDivElement>(null);
@@ -126,7 +138,7 @@ function Reel({
   if (spin && mount.current?.key !== spin.key)
     mount.current = { key: spin.key, since: Date.now() - spin.startAt };
   const since = spin ? mount.current!.since : Infinity;
-  const live = !!spin && (spin.pending || since < stop);
+  const live = !!spin && !calm && (spin.pending || since < stop);
 
   useLayoutEffect(() => {
     const el = strip.current;
@@ -137,6 +149,13 @@ function Reel({
     ran.current = token;
     const total = cells.length;
     const end = -((total - ROWS) / total) * 100;
+    if (calm) {
+      if (!spin.pending) el.style.transform = `translateY(${end}%)`;
+      return () => {
+        if (ran.current === token) ran.current = null;
+      };
+    }
+    const cell = 100 / total;
     const anim = spin.pending
       ? el.animate(
           [
@@ -152,10 +171,12 @@ function Reel({
       : el.animate(
           [
             { transform: "translateY(0%)", offset: 0 },
-            { transform: `translateY(${(1 / total) * 30}%)`, offset: 0.045 },
-            { transform: `translateY(${end * 0.18}%)`, offset: 0.2 },
-            { transform: `translateY(${end * 0.72}%)`, offset: 0.62 },
-            { transform: `translateY(${end - (0.22 / total) * 100}%)`, offset: 0.9 },
+            { transform: `translateY(${cell * 0.28}%)`, offset: 0.055 },
+            { transform: `translateY(${end * 0.1}%)`, offset: 0.2 },
+            { transform: `translateY(${end * 0.7}%)`, offset: 0.58 },
+            { transform: `translateY(${end * 0.94}%)`, offset: 0.8 },
+            { transform: `translateY(${end - cell * 0.42}%)`, offset: 0.91 },
+            { transform: `translateY(${end + cell * 0.1}%)`, offset: 0.965 },
             { transform: `translateY(${end}%)`, offset: 1 },
           ],
           {
@@ -240,6 +261,12 @@ function Reel({
           <div
             className="slott-reel-sheen absolute inset-0"
             style={{ animation: `slott-fade-out ${stop}ms linear ${at(0)} both` }}
+          />
+          <div
+            className="slott-streak absolute inset-0"
+            style={{
+              animation: `slott-fade-out ${Math.max(120, stop - 80)}ms linear ${at(0)} both`,
+            }}
           />
           {teaseStyle ? (
             <div className="slott-tease-glow absolute inset-0" style={teaseStyle} />

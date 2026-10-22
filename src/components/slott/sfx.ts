@@ -1,7 +1,50 @@
 import { audioRunning, playSynth } from "@/lib/sound";
 import type { LineWin } from "@/lib/slott/paytable";
 import { hitsDoneMs, orderLines, rarityRank, reachMs, type WinLevel } from "./hits";
+import { fxTier, stopVariant } from "./presentation";
 import { reelStops, teases, type ReelSpin } from "./timing";
+
+const VOLUME_KEY = "pvp-slott-volume";
+let slotGain = 1;
+const volumeListeners = new Set<() => void>();
+
+function readSlotVolume() {
+  if (typeof localStorage === "undefined") return;
+  try {
+    const raw = localStorage.getItem(VOLUME_KEY);
+    if (raw == null) return;
+    const n = Number(raw);
+    if (Number.isFinite(n)) slotGain = Math.min(1, Math.max(0, n));
+  } catch {
+    /* private mode */
+  }
+}
+
+readSlotVolume();
+
+export function slotVolume() {
+  return slotGain;
+}
+
+export function subscribeSlotVolume(listener: () => void) {
+  volumeListeners.add(listener);
+  return () => volumeListeners.delete(listener);
+}
+
+/** Persists the slot mix. 0 silences slot cues without changing the site mute. */
+export function setSlotVolume(next: number) {
+  slotGain = Math.min(1, Math.max(0, next));
+  try {
+    localStorage.setItem(VOLUME_KEY, String(slotGain));
+  } catch {
+    /* private mode */
+  }
+  volumeListeners.forEach((listener) => listener());
+}
+
+function scaled(volume: number) {
+  return Math.min(1.15, Math.max(0, volume * slotGain));
+}
 
 /** Major pentatonic from C5: every combination of notes sounds consonant. */
 const SCALE = [
@@ -118,10 +161,28 @@ function ratchet(ctx: AudioContext, out: AudioNode, from: number, stops: number[
   }
 }
 
-function reelStop(ctx: AudioContext, out: AudioNode, t: number, reel: number) {
-  burst(ctx, out, t, { dur: 0.08, peak: 0.1, filter: "lowpass", freq: 1500 });
-  tone(ctx, out, t, 170 + reel * 12, { peak: 0.14, decay: 0.14, glideTo: 60 });
-  tone(ctx, out, t, 1900 + reel * 90, { type: "triangle", peak: 0.018, decay: 0.035 });
+const STOP_THUD = [156, 174, 142, 188];
+const STOP_CLICK = [1680, 1980, 2140, 1820];
+
+function reelStop(ctx: AudioContext, out: AudioNode, t: number, reel: number, variant: number) {
+  const thud = STOP_THUD[variant % STOP_THUD.length]!;
+  const click = STOP_CLICK[variant % STOP_CLICK.length]!;
+  burst(ctx, out, t, { dur: 0.08, peak: 0.09, filter: "lowpass", freq: 1400 + variant * 80 });
+  tone(ctx, out, t, thud + reel * 8, { peak: 0.12, decay: 0.14, glideTo: 58 });
+  tone(ctx, out, t, click + reel * 40, { type: "triangle", peak: 0.016, decay: 0.035 });
+}
+
+/** Soft acceleration at the start of the travel. Kept under the ratchet. */
+function spinWhoosh(ctx: AudioContext, out: AudioNode, t: number) {
+  tone(ctx, out, t, 96, { peak: 0.035, attack: 0.03, decay: 0.26, glideTo: 210 });
+  burst(ctx, out, t, {
+    dur: 0.1,
+    peak: 0.016,
+    filter: "bandpass",
+    freq: 700,
+    freqTo: 2200,
+    q: 0.7,
+  });
 }
 
 /** Rising tension while the last reels decide a WILD bonus. */
@@ -271,7 +332,7 @@ function slotOutput(ctx: AudioContext, master: GainNode) {
 }
 
 function playSlot(play: (ctx: AudioContext, out: GainNode) => void) {
-  if (holders === 0) return;
+  if (holders === 0 || slotGain <= 0) return;
   playSynth((ctx, master) => {
     if (holders === 0) return;
     play(ctx, slotOutput(ctx, master));
@@ -283,7 +344,7 @@ export function playSpinSfx(
   startAt: number,
   stops: number[],
   teaseFrom: number | null,
-  { volume = 1, ambient = false }: Opts = {},
+  { volume = 1, ambient = false, spinNo = 0 }: Opts & { spinNo?: number } = {},
 ) {
   if (ambient && !audioRunning()) return;
   playSlot((ctx, out) => {
@@ -291,17 +352,27 @@ export function playSpinSfx(
     const base = now + (startAt - Date.now()) / 1000;
     const at = stops.map((s) => base + s / 1000);
     if (at[at.length - 1]! <= now) return;
-    const b = bus(ctx, out, volume);
+    const b = bus(ctx, out, scaled(volume));
+    const start = Math.max(now, base);
+    if (start <= now + 0.05) spinWhoosh(ctx, b, start);
     ratchet(ctx, b, Math.max(now, base + 0.12), at);
-    at.forEach((t, r) => t >= now && reelStop(ctx, b, t, r));
+    at.forEach((t, r) => t >= now && reelStop(ctx, b, t, r, stopVariant(spinNo, r)));
     if (teaseFrom != null)
       riser(ctx, b, Math.max(now, base + teaseFrom / 1000), at[at.length - 1]!);
   });
 }
 
+function spinNoFromKey(key: string) {
+  const n = Number(key.split(":").pop());
+  return Number.isFinite(n) ? n : 0;
+}
+
 export function playReelSpin(spin: ReelSpin, opts?: Opts) {
   const stops = reelStops(spin.grid, spin.durationMs);
-  playSpinSfx(spin.startAt, stops, teases(spin.grid) ? stops[2]! : null, opts);
+  playSpinSfx(spin.startAt, stops, teases(spin.grid) ? stops[2]! : null, {
+    ...opts,
+    spinNo: spinNoFromKey(spin.key),
+  });
 }
 
 /** One rising tick per reel as its points count in, then a soft "banked" chime. */
@@ -314,7 +385,7 @@ export function playTallySfx(
   if (ambient && !audioRunning()) return;
   playSlot((ctx, out) => {
     const t0 = ctx.currentTime + startMs / 1000;
-    const b = bus(ctx, out, volume * 0.8);
+    const b = bus(ctx, out, scaled(volume * 0.8));
     values.forEach((v, i) => {
       const t = t0 + (i * stepMs) / 1000;
       tone(ctx, b, t, note(i + Math.min(4, Math.floor(v / 6))), {
@@ -334,7 +405,7 @@ export function playTallySfx(
 export function playStingSfx(kind: "lead" | "target", { volume = 1 }: Opts = {}) {
   playSlot((ctx, out) => {
     const t = ctx.currentTime + 0.02;
-    const b = bus(ctx, out, volume);
+    const b = bus(ctx, out, scaled(volume));
     const run = kind === "target" ? [4, 6, 8, 9] : [2, 4, 6];
     run.forEach((n, i) =>
       tone(ctx, b, t + i * 0.07, note(n), {
@@ -364,7 +435,9 @@ export function playHitSfx(
   if (ambient && !audioRunning()) return;
   playSlot((ctx, out) => {
     const t0 = ctx.currentTime + 0.02;
-    const b = bus(ctx, out, volume);
+    const b = bus(ctx, out, scaled(volume));
+    const lineScore = lines.reduce((sum, line) => sum + line.score, 0);
+    const tier = fxTier(lineScore, bonus);
     if (level >= 3) boom(ctx, b, t0);
     if (bonus) magicSweep(ctx, b, t0 + 0.08);
     orderLines(lines).forEach((l, i) => {
@@ -373,11 +446,32 @@ export function playHitSfx(
         pling(ctx, b, t0 + reachMs(i, reel, l.count) / 1000, i + reel, rank);
       lineChord(ctx, b, t0 + reachMs(i, l.count - 1, l.count) / 1000 + 0.06, l.count, rank);
     });
+    if (tier === "medium") coins(ctx, b, t0 + hitsDoneMs(lines) / 1000, 6, 0.45);
     if (level >= 2) {
       const done = t0 + hitsDoneMs(lines) / 1000 + 0.12;
       fanfare(ctx, b, done, level);
-      coins(ctx, b, done + 0.2, level >= 3 ? 28 : 14, level >= 3 ? 1.7 : 1);
+      coins(ctx, b, done + 0.2, level >= 3 ? 18 : 12, level >= 3 ? 1.4 : 0.9);
     }
+  });
+}
+
+/** End of the match. A loss stays quiet. A bomb already played on the spin that caused it. */
+export function playMatchSfx(kind: "win" | "lose" | "draw") {
+  playSlot((ctx, out) => {
+    const t = ctx.currentTime + 0.05;
+    const b = bus(ctx, out, scaled(kind === "win" ? 0.85 : 0.5));
+    if (kind === "win") {
+      fanfare(ctx, b, t, 2);
+      coins(ctx, b, t + 0.28, 8, 0.7);
+      return;
+    }
+    if (kind === "draw") {
+      tone(ctx, b, t, note(4), { type: "triangle", peak: 0.028, decay: 0.35 });
+      tone(ctx, b, t + 0.16, note(4), { type: "triangle", peak: 0.024, decay: 0.45 });
+      return;
+    }
+    tone(ctx, b, t, note(5), { type: "sine", peak: 0.028, decay: 0.32, glideTo: note(1) });
+    tone(ctx, b, t + 0.2, note(2), { type: "sine", peak: 0.018, decay: 0.4 });
   });
 }
 
@@ -385,7 +479,7 @@ export function playHitSfx(
 export function playBombSfx({ volume = 1 }: Opts = {}) {
   playSlot((ctx, out) => {
     const t = ctx.currentTime + 0.01;
-    const b = bus(ctx, out, volume * 1.15);
+    const b = bus(ctx, out, scaled(volume));
     boom(ctx, b, t);
     boom(ctx, b, t + 0.18);
     burst(ctx, b, t + 0.02, { dur: 0.7, peak: 0.14, filter: "bandpass", freq: 1400, freqTo: 180, q: 0.6 });

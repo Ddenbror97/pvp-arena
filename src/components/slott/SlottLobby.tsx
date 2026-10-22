@@ -36,6 +36,7 @@ import { bindSlotAudio, playHitSfx, playReelSpin, playTallySfx } from "./sfx";
 import { reelValues, TALLY_STEP_MS, tallyStartMs } from "./tally";
 import { PotHeader, SeatPanel, SlotCabinet } from "./SlotCabinet";
 import { HowItWorks, StepRail } from "./HowItWorks";
+import { SlotSoundControl } from "./SlotSound";
 import { IDLE_GRID, landedAt, type ReelSpin } from "./timing";
 import { RECENT_PAGE_SIZE, RecentPager, usePagedRecent } from "@/components/recent/usePagedRecent";
 
@@ -434,13 +435,16 @@ export function SlottLobby({ paintedAt }: { paintedAt?: number | undefined }) {
           1 vs 1 slot duel · the other player is your only opponent
         </p>
       </div>
-      <button
-        type="button"
-        onClick={() => setRules(true)}
-        className="slott-chip flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-primary-soft"
-      >
-        <BookOpen className="h-3.5 w-3.5" /> How it works
-      </button>
+      <div className="flex shrink-0 items-center gap-2">
+        <SlotSoundControl />
+        <button
+          type="button"
+          onClick={() => setRules(true)}
+          className="slott-chip flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-primary-soft"
+        >
+          <BookOpen className="h-3.5 w-3.5" /> How it works
+        </button>
+      </div>
     </div>
   );
   const rulesDialog = (
@@ -597,13 +601,16 @@ export function SlottLobby({ paintedAt }: { paintedAt?: number | undefined }) {
             count={cfg.isError ? undefined : othersOpen.length}
             live
           />
-          <button
-            type="button"
-            onClick={() => setRules(true)}
-            className="slott-row flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1 text-[11px] font-semibold text-primary-soft"
-          >
-            <BookOpen className="h-3.5 w-3.5" /> How it works
-          </button>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <SlotSoundControl />
+            <button
+              type="button"
+              onClick={() => setRules(true)}
+              className="slott-row flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1 text-[11px] font-semibold text-primary-soft"
+            >
+              <BookOpen className="h-3.5 w-3.5" /> How it works
+            </button>
+          </div>
         </div>
         <div className="mt-3 min-h-0 flex-1 overflow-hidden">
           {cfg.isError ? (

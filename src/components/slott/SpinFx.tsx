@@ -3,7 +3,8 @@ import { PAYLINES, REELS, ROWS, SYMBOLS, WILD, type LineWin } from "@/lib/slott/
 import { SYMBOL_IMG } from "@/lib/slott/symbols";
 import { formatUsd } from "@/lib/jackpot/math";
 import { cn } from "@/lib/utils";
-import { hitsDoneMs, LINE_DRAW_MS, lineColor, orderLines, reachMs, winLevel } from "./hits";
+import { hitsDoneMs, LINE_DRAW_MS, lineColor, orderLines, reachMs } from "./hits";
+import { fxTier } from "./presentation";
 import { useCountUp } from "./SlotCabinet";
 import { reelValues, TALLY_STEP_MS, tallyStartMs } from "./tally";
 
@@ -35,19 +36,19 @@ export const SpinFx = memo(function SpinFx({
 }) {
   const ordered = orderLines(lines);
   const lineScore = lines.reduce((a, l) => a + l.score, 0);
-  const level = winLevel(lineScore, !!bonus);
+  const tier = fxTier(lineScore, !!bonus);
   const best = ordered[ordered.length - 1];
   const done = hitsDoneMs(lines);
-  const bannerAt = level >= 2 ? done + 80 : 0;
+  const bannerAt = tier === "medium" ? done + 40 : done + 80;
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-lg">
-      {level >= 2 ? (
+      {tier === "large" || tier === "exceptional" ? (
         <div className="slott-flash absolute inset-0" style={{ animationDelay: `${bannerAt}ms` }} />
       ) : null}
-      {level >= 2 ? (
+      {tier === "large" || tier === "exceptional" ? (
         <div
           className={
-            level === 3
+            tier === "exceptional"
               ? "slott-marquee slott-marquee-mega absolute inset-0"
               : "slott-marquee absolute inset-0"
           }
@@ -144,13 +145,19 @@ export const SpinFx = memo(function SpinFx({
         );
       })}
 
-      {level === 3 ? (
+      {tier === "exceptional" ? (
         <div
           className="slott-rays absolute left-1/2 top-1/2 h-[180%] w-[180%] -translate-x-1/2 -translate-y-1/2"
           style={{ animationDelay: `${bannerAt}ms` }}
         />
       ) : null}
-      {level >= 2 ? <Coins n={level === 3 ? 26 : 14} delay={bannerAt} /> : null}
+      {tier === "medium" ? (
+        <Coins n={7} delay={bannerAt} seed={lineScore + 3} />
+      ) : tier === "large" ? (
+        <Coins n={12} delay={bannerAt} seed={lineScore} />
+      ) : tier === "exceptional" ? (
+        <Coins n={18} delay={bannerAt} seed={lineScore + 11} />
+      ) : null}
 
       <div className="absolute inset-0 grid place-items-center">
         <div className="flex flex-col items-center text-center">
@@ -163,10 +170,19 @@ export const SpinFx = memo(function SpinFx({
                 +{formatUsd(bonus.cents)} to the pot
               </div>
             </div>
-          ) : level >= 2 ? (
+          ) : tier === "medium" ? (
+            <div
+              className="slott-banner slott-banner-mid"
+              style={{ animationDelay: `${bannerAt}ms` }}
+            >
+              <div className="slott-banner-title font-display text-[clamp(1.2rem,4.5vw,2rem)] leading-none">
+                WIN
+              </div>
+            </div>
+          ) : tier === "large" || tier === "exceptional" ? (
             <div className="slott-banner" style={{ animationDelay: `${bannerAt}ms` }}>
               <div className="slott-banner-title font-display text-[clamp(1.5rem,6.5vw,3.2rem)] leading-none">
-                {level === 3 ? "MEGA WIN" : "BIG WIN"}
+                {tier === "exceptional" ? "MEGA WIN" : "BIG WIN"}
               </div>
             </div>
           ) : null}
@@ -333,21 +349,22 @@ export function TargetChip({
   );
 }
 
-function Coins({ n, delay }: { n: number; delay: number }) {
+function Coins({ n, delay, seed = 0 }: { n: number; delay: number; seed?: number }) {
   return (
     <>
       {Array.from({ length: n }, (_, i) => {
-        const x = ((i * 37) % 100) - 50;
-        const d = 800 + ((i * 53) % 700);
+        const k = i + (seed % 17);
+        const x = ((k * 37) % 100) - 50;
+        const d = 760 + ((k * 53) % 520);
         return (
           <span
             key={i}
             className="slott-coin absolute left-1/2 top-1/2"
             style={
               {
-                "--dx": `${x * 3.2}px`,
-                "--dy": `${-70 - ((i * 29) % 130)}px`,
-                animationDelay: `${delay + ((i * 41) % 320)}ms`,
+                "--dx": `${x * 2.6}px`,
+                "--dy": `${-64 - ((k * 29) % 110)}px`,
+                animationDelay: `${delay + ((k * 41) % 280)}ms`,
                 animationDuration: `${d}ms`,
               } as CSSProperties
             }

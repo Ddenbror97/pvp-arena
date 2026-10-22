@@ -38,7 +38,17 @@ import { SpinFx } from "./SpinFx";
 import { hitCells, NO_HITS, winLevel } from "./hits";
 import { BOMB, hasBomb } from "@/lib/slott/paytable";
 import { SYMBOL_IMG } from "@/lib/slott/symbols";
-import { bindSlotAudio, playBombSfx, playHitSfx, playReelSpin, playStingSfx, playTallySfx } from "./sfx";
+import {
+  bindSlotAudio,
+  playBombSfx,
+  playHitSfx,
+  playMatchSfx,
+  playReelSpin,
+  playStingSfx,
+  playTallySfx,
+} from "./sfx";
+import { isBaseFinalSpin } from "./presentation";
+import { SlotSoundControl } from "./SlotSound";
 import {
   AuxButton,
   BetChip,
@@ -263,11 +273,20 @@ export function SlottMatch({ id }: { id: number }) {
 
   const finished = g?.status === "COMPLETED" && latestTallied;
   const played = useRef(false);
+  const sawLive = useRef(false);
+  useEffect(() => {
+    if (g && g.status !== "COMPLETED") sawLive.current = true;
+  }, [g]);
   useEffect(() => {
     if (!finished || !g || played.current || !me) return;
     played.current = true;
-    if (g.outcome === "WIN") emitSound(g.winner_id === userId ? "win" : "lose");
-    else if (g.outcome === "BOMB") emitSound("lose");
+    if (g.outcome === "WIN") {
+      const won = g.winner_id === userId;
+      emitSound(won ? "win" : "lose");
+      if (sawLive.current) playMatchSfx(won ? "win" : "lose");
+    } else if (g.outcome === "DRAW") {
+      if (sawLive.current) playMatchSfx("draw");
+    } else if (g.outcome === "BOMB") emitSound("lose");
     qc.invalidateQueries({ queryKey: ["wallet"] });
   }, [finished, g, me, userId, qc]);
 
@@ -405,6 +424,20 @@ export function SlottMatch({ id }: { id: number }) {
     finalNo != null ? sumBefore("A", finalNo) - sumBefore("B", finalNo) + 1 : null;
   const finalChase = finalTarget != null && finalTarget > 0 ? finalTarget : null;
   const latestIsFinal = !!latest && latest.spin_no === finalNo;
+  const focusNo =
+    kick.current && (!latest || latest.spin_no < kick.current.spinNo)
+      ? kick.current.spinNo
+      : latest && !latestTallied
+        ? latest.spin_no
+        : turn && g.status === "ACTIVE"
+          ? g.next_spin
+          : null;
+  const showFinalFlag =
+    g.status === "ACTIVE" &&
+    !finished &&
+    finalChase == null &&
+    focusNo != null &&
+    isBaseFinalSpin(focusNo, perSeat);
 
   const seat = (s: "A" | "B", compact: boolean) => {
     const uid = s === "A" ? g.creator_id : g.opponent_id;
@@ -425,6 +458,8 @@ export function SlottMatch({ id }: { id: number }) {
         badge={me === s ? "YOU" : p?.is_bot ? "BOT" : null}
         score={g.status === "WAITING" ? null : s === "A" ? scoreA : scoreB}
         spins={g.status === "WAITING" ? null : [s === "A" ? doneA : doneB, perSeat]}
+        ahead={lead !== 0 && (s === "A" ? lead > 0 : lead < 0)}
+        live={active && g.status === "ACTIVE"}
         status={
           compact ? (
             won ? (
@@ -513,7 +548,10 @@ export function SlottMatch({ id }: { id: number }) {
             >
               <ArrowLeft className="h-3.5 w-3.5" /> P2P Slott lobby
             </Link>
-            <span className="tabular text-muted-foreground">Match #{g.id}</span>
+            <span className="flex items-center gap-2">
+              <SlotSoundControl />
+              <span className="tabular text-muted-foreground">Match #{g.id}</span>
+            </span>
           </div>
         }
         shake={fresh && level >= 2 ? `${latest!.spin_no}` : null}
@@ -540,6 +578,10 @@ export function SlottMatch({ id }: { id: number }) {
               nameA={whoName(g, "A")}
               nameB={whoName(g, "B")}
               me={me}
+              turn={turn}
+              doneA={doneA}
+              doneB={doneB}
+              perSeat={perSeat}
               left={g.base_spins - Math.min(g.base_spins, landed.length)}
             />
           )
@@ -570,6 +612,10 @@ export function SlottMatch({ id }: { id: number }) {
                 ) : null}
                 {finalChase != null && !finished && !(latestIsFinal && latestLanded) ? (
                   <TargetChip target={finalChase} label={`${whoName(g, "B")} · FINAL SPIN`} />
+                ) : showFinalFlag ? (
+                  <div className="pointer-events-none absolute inset-x-0 top-[5%] flex justify-center">
+                    <div className="slott-final-flag">FINAL SPIN</div>
+                  </div>
                 ) : null}
                 {callout ? (
                   <LeadCallout
@@ -752,7 +798,7 @@ function describeLatest(
         : `Match over · ${g.score_a} – ${g.score_b}`;
   if (!latest)
     return turn
-      ? `${turn === me ? "Your" : `${whoName(g, turn)}'s`} turn — first of ${g.base_spins} spins.`
+      ? `${turn === me ? "Your" : `${whoName(g, turn)}'s`} turn — spin 1 of ${g.base_spins / 2}.`
       : "Match starting…";
   if (!landed)
     return <span className="text-primary-soft">{whoName(g, latest.seat)} is spinning…</span>;
@@ -855,6 +901,10 @@ function DuelBar({
   nameA,
   nameB,
   me,
+  turn,
+  doneA,
+  doneB,
+  perSeat,
   left,
 }: {
   a: number;
@@ -862,11 +912,22 @@ function DuelBar({
   nameA: string;
   nameB: string;
   me: "A" | "B" | null;
+  turn: "A" | "B" | null;
+  doneA: number;
+  doneB: number;
+  perSeat: number;
   left: number;
 }) {
   const total = a + b;
   const share = total ? (a / total) * 100 : 50;
   const lead = a === b ? null : a > b ? "A" : "B";
+  const index = turn === "A" ? doneA : turn === "B" ? doneB : null;
+  const spinLabel =
+    turn && index != null
+      ? `${turn === me ? "YOUR" : (turn === "A" ? nameA : nameB).toUpperCase()} ${
+          index >= perSeat ? `EXTRA ${index - perSeat + 1}` : `SPIN ${index + 1}/${perSeat}`
+        }`
+      : null;
   return (
     <div className="flex items-center gap-2 text-[10px] font-semibold tracking-wider sm:text-[11px]">
       <span
@@ -896,9 +957,11 @@ function DuelBar({
         {b}
       </span>
       <span className="hidden shrink-0 text-muted-foreground sm:inline">
-        {lead
-          ? `${lead === me ? "YOU" : (lead === "A" ? nameA : nameB).toUpperCase()} +${Math.abs(a - b)}`
-          : "LEVEL"}
+        {spinLabel ??
+          (lead
+            ? `${lead === me ? "YOU" : (lead === "A" ? nameA : nameB).toUpperCase()} +${Math.abs(a - b)}`
+            : "LEVEL")}
+        {lead && spinLabel ? ` · +${Math.abs(a - b)}` : ""}
         {left > 0 ? ` · ${left} LEFT` : ""}
       </span>
     </div>
@@ -990,7 +1053,7 @@ function Overlay({
     ) : null;
   } else if (g.outcome === "BOMB") {
     body = (
-      <>
+      <div className="slott-result slott-result-bomb">
         <div className="text-[11px] font-semibold tracking-[0.16em] text-sky-300">BOMB</div>
         <div className="mt-1 font-display text-2xl">House takes the pot</div>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -1000,12 +1063,15 @@ function Overlay({
         <Button asChild size="sm" className="mt-3 font-display">
           <Link to="/slott">Back to lobby</Link>
         </Button>
-      </>
+      </div>
     );
   } else if (g.outcome === "DRAW") {
     body = (
-      <>
-        <div className="font-display text-2xl">Draw</div>
+      <div className="slott-result slott-result-draw">
+        <div className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground">
+          DRAW
+        </div>
+        <div className="mt-1 font-display text-2xl">Scores are level</div>
         <p className="mt-1 text-sm text-muted-foreground">
           Both stakes were refunded. Bonus money returned to the promo budget.
         </p>
@@ -1016,16 +1082,17 @@ function Overlay({
             <Link to="/slott">Play a match</Link>
           </Button>
         )}
-      </>
+      </div>
     );
   } else {
     const name = g.winner_id === g.creator_id ? g.creator?.username : g.opponent?.username;
     const margin = Math.abs(g.score_a - g.score_b);
     const best = spins.reduce<SlotSpin | null>((b, s) => (!b || s.score > b.score ? s : b), null);
+    const mine = g.winner_id === userId;
     body = (
-      <>
+      <div className={mine ? "slott-result slott-result-win" : "slott-result slott-result-lose"}>
         <div className="text-[11px] font-semibold tracking-[0.16em] text-primary-soft">
-          {g.winner_id === userId ? "YOU WIN" : "WINNER"}
+          {mine ? "YOU WIN" : "MATCH OVER"}
         </div>
         <div className="mt-1 truncate font-display text-xl sm:text-2xl">{name ?? "player"}</div>
         <div className="slott-banner-title tabular mt-1 font-display text-3xl sm:text-4xl">
@@ -1040,6 +1107,9 @@ function Overlay({
             </>
           ) : null}
         </p>
+        {me && !mine ? (
+          <p className="mt-1 text-xs text-muted-foreground">You finished behind on the score.</p>
+        ) : null}
         <p className="tabular mt-0.5 text-[11px] text-muted-foreground">
           {g.fee_bps > 0 && g.fee_amount === 0 ? (
             <>P2P {formatUsd(g.p2p_pot)} · fee-free win</>
@@ -1057,7 +1127,7 @@ function Overlay({
             <Link to="/slott">Play a match</Link>
           </Button>
         )}
-      </>
+      </div>
     );
   }
   return (
