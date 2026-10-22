@@ -49,6 +49,7 @@ create table public.pool_matches (
   seen_b timestamptz,
   grace_until timestamptz,
   grace_seat text,
+  grace_shot int,
   winner_id uuid,
   win_reason text,
   version int not null default 0,
@@ -528,8 +529,13 @@ begin
   if (p_input->>'power')::int is null or (p_input->>'power')::int < 1 or (p_input->>'power')::int > 10000 then
     raise exception 'BAD_SHOT';
   end if;
-  if (p_input->>'spinX')::int < -1000 or (p_input->>'spinX')::int > 1000
+  if (p_input->>'spinX') is null or (p_input->>'spinY') is null
+     or (p_input->>'spinX')::int < -1000 or (p_input->>'spinX')::int > 1000
      or (p_input->>'spinY')::int < -1000 or (p_input->>'spinY')::int > 1000 then
+    raise exception 'BAD_SHOT';
+  end if;
+  if p_input->>'calledPocket' is not null
+     and ((p_input->>'calledPocket')::int < 0 or (p_input->>'calledPocket')::int > 5) then
     raise exception 'BAD_SHOT';
   end if;
   select * into pend from pool_pending where match_id = g.id;
@@ -658,24 +664,19 @@ end $$;
 
 create or replace function public.pool_touch(p_match bigint) returns jsonb
 language plpgsql security definer set search_path = public as $$
-declare uid uuid := auth.uid(); g public.pool_matches; cfg public.pool_config; seat text;
+declare uid uuid := auth.uid(); g public.pool_matches; seat text;
 begin
   if uid is null then raise exception 'AUTH_REQUIRED'; end if;
+  perform public._assert_live_session();
   select * into g from pool_matches where id = p_match for update;
   if not found then raise exception 'MATCH_NOT_FOUND'; end if;
   seat := public._pool_seat(g, uid);
   if seat is null then raise exception 'FORBIDDEN'; end if;
-  select * into cfg from pool_config;
   update pool_matches set
     seen_a = case when seat = 'A' then clock_timestamp() else seen_a end,
     seen_b = case when seat = 'B' then clock_timestamp() else seen_b end,
     grace_until = case when grace_seat = seat then null else grace_until end,
-    grace_seat = case when grace_seat = seat then null else grace_seat end,
-    turn_deadline = case
-      when grace_seat = seat and state->>'turn' = seat
-        then clock_timestamp() + make_interval(secs => cfg.shot_seconds)
-      else turn_deadline
-    end
+    grace_seat = case when grace_seat = seat then null else grace_seat end
     where id = g.id;
   return jsonb_build_object('ok', true);
 end $$;
@@ -711,9 +712,13 @@ begin
   if g.turn_deadline is null or g.turn_deadline > clock_timestamp() then return 'waiting'; end if;
   seat := g.state->>'turn';
   seen := case seat when 'A' then g.seen_a else g.seen_b end;
-  if seen < clock_timestamp() - interval '15 seconds' and g.grace_until is null then
+  -- One reconnect window per shot. Coming back does not start a new shot clock,
+  -- and a second drop on the same shot is a timeout.
+  if seen < clock_timestamp() - interval '15 seconds' and g.grace_until is null
+     and g.grace_shot is distinct from shots then
     update pool_matches set grace_until = clock_timestamp() + make_interval(secs => cfg.reconnect_seconds),
-      grace_seat = seat, turn_deadline = clock_timestamp() + make_interval(secs => cfg.reconnect_seconds)
+      grace_seat = seat, grace_shot = shots,
+      turn_deadline = clock_timestamp() + make_interval(secs => cfg.reconnect_seconds)
       where id = g.id;
     return 'grace';
   end if;
@@ -787,7 +792,9 @@ declare g public.pool_matches; seed text;
 begin
   select * into g from pool_matches where id = p_match;
   if not found then raise exception 'MATCH_NOT_FOUND'; end if;
-  if g.status <> 'WAITING' then
+  -- STARTING still has a refund if the table never opens. The seed stays hidden
+  -- until the rack is the live match, so nobody can read it and walk away.
+  if g.status in ('PLAYING', 'COMPLETED') then
     select encode(server_seed, 'hex') into seed from pool_secrets where match_id = g.id;
   end if;
   return jsonb_build_object(
@@ -838,10 +845,13 @@ revoke all on function public.pool_prepare_shot(bigint, jsonb, text) from public
 revoke all on function public.pool_forfeit(bigint) from public, anon;
 revoke all on function public.pool_touch(bigint) from public, anon;
 revoke all on function public.pool_nudge(bigint) from public, anon;
+revoke all on function public.pool_lobby(), public.pool_state(bigint), public.pool_record(bigint) from public;
 grant execute on function public.pool_matchmake(bigint, text), public.pool_cancel(bigint),
   public.pool_prepare_shot(bigint, jsonb, text), public.pool_forfeit(bigint),
-  public.pool_touch(bigint), public.pool_nudge(bigint), public.pool_lobby(), public.pool_state(bigint),
-  public.pool_record(bigint) to anon, authenticated;
+  public.pool_touch(bigint), public.pool_nudge(bigint)
+  to authenticated;
+grant execute on function public.pool_lobby(), public.pool_state(bigint), public.pool_record(bigint)
+  to anon, authenticated;
 
 revoke all on function public.pool_read_secret(bigint), public.pool_begin(bigint, jsonb),
   public.pool_refund_starting(bigint), public.pool_abort_shot(bigint),

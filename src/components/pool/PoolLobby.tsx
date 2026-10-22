@@ -13,7 +13,7 @@ const FEATURES = [
   { icon: Zap, title: "PVP matches", text: "Real players, real money" },
   { icon: Trophy, title: "Skill based", text: "Show your skills and climb the ranks" },
   { icon: Coins, title: "Instant games", text: "Quick matches anytime" },
-  { icon: Shield, title: "Fair & secure", text: "Provably fair matchmaking" },
+  { icon: Shield, title: "Fair & secure", text: "Committed rack, replayed shots" },
 ] as const;
 
 export function PoolLobby() {
@@ -158,6 +158,24 @@ export function PoolLobby() {
           </ul>
         </section>
       </div>
+      <section className="pool-rules" aria-label="8-ball rules">
+        <h2>Rules</h2>
+        <ul>
+          <li>Call a pocket only for the 8. Any other of your balls may fall in any pocket.</li>
+          <li>The 8 on the break wins unless the cue ball is scratched. That scratch loses.</li>
+          <li>
+            The 8 before your group is clear loses, including on the same shot as your last ball.
+          </li>
+          <li>The 8 in the wrong pocket loses. A scratch while pocketing the 8 loses.</li>
+          <li>The table is open until a legal pocket assigns solids or stripes.</li>
+          <li>A foul is ball in hand anywhere. The opening break is from the kitchen.</li>
+          <li>
+            The shot clock is 30 seconds. One reconnect does not start it over. Three timeouts
+            forfeit.
+          </li>
+          <li>The winner receives 95% of the pot. A refund is only before the break.</li>
+        </ul>
+      </section>
     </div>
   );
 }

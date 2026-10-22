@@ -576,7 +576,7 @@ function PoolSection() {
       if (!Number.isInteger(matchId) || matchId < 1) throw new Error("Enter a match number.");
       const view = await fetchPoolState(matchId);
       if (!view.server_seed) {
-        setOut("The rack seed is still hidden. It is published once someone sits down.");
+        setOut("The rack seed is still hidden. It is published once the match is playing.");
         return;
       }
       const steps = stepsFromRecord(view.events);
@@ -617,8 +617,10 @@ function PoolSection() {
       <p className="text-sm text-muted-foreground">
         8-ball is skill plus a published ruleset. The server does not pick who wins. It runs the
         same function a replay runs, so a browser cannot submit pocketed balls or a payout. The only
-        random value is the rack. A timeout or a forfeit is the rule for not acting, not a house
-        choice.
+        random value is the rack, and that seed stays hidden until the match is playing. A timeout
+        or a forfeit is the rule for not acting, not a house choice. This page proves the shot list.
+        It does not reverse a payment. A match checks out only under physics pool-phys-v1 and rules
+        pvp-8ball-v1.
       </p>
       <div className="grid gap-4">
         <Card title="Replay a match">
@@ -651,17 +653,27 @@ function PoolSection() {
         </Card>
         <details className="rounded-2xl border border-border bg-card p-4" open>
           <summary className="cursor-pointer font-display text-sm">What is committed</summary>
-          <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{`rack seed = 32 random bytes, hidden while the table is waiting
+          <pre className="tabular mt-3 overflow-x-auto text-[11px] leading-relaxed text-muted-foreground">{`rack seed = 32 random bytes, hidden until the match is playing
 commitment = SHA-256(rack seed), published when the table opens
 rack = Fisher-Yates of balls 1-7 and 9-15; the 8 stays in the centre
+shots have no random error
 
 each step is one of:
   shot     angle, power, side, follow, cue placement, called pocket for the 8
   timeout  the seat to act did not shoot before the clock
-  forfeit  that seat left the match, or timed out three times
+  forfeit  that seat left, timed out three times, or both seats left on that turn
 
-winner = pvp-8ball-v1(rack, steps)
-a paid winner that is not that output is not a verified result`}</pre>
+call a pocket only for the 8
+8 on the break wins, unless the cue ball is also scratched
+8 before your group is clear loses, including with your last object ball
+8 in the wrong pocket, or a scratch on the 8, loses
+a foul is ball in hand anywhere; the break is kitchen only
+one reconnect window per shot; coming back does not restart the clock
+refunds: cancel while waiting, start timeout, or both gone before the break
+
+winner = pvp-8ball-v1(rack, steps) under pool-phys-v1
+a paid winner that is not that output is not a verified result
+a later physics version will not confirm this match`}</pre>
         </details>
       </div>
     </section>

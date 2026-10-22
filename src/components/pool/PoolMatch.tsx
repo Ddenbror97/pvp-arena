@@ -415,7 +415,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const pays = view.payout_amount ?? view.pot - Math.floor((view.pot * view.fee_bps) / 10_000);
   const notice =
     view.status === "WAITING"
-      ? "Waiting for an opponent. The rack seed stays hidden until someone sits."
+      ? "Waiting for an opponent. The rack seed stays hidden until the match is playing."
       : view.status === "STARTING"
         ? "Match starting."
         : view.status === "CANCELLED"

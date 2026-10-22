@@ -13,7 +13,8 @@
  *
  * A foul is ball-in-hand anywhere, except the break, which is kitchen only.
  * Three shot-clock timeouts forfeit. A disconnect does not refund a match
- * that has already had a shot.
+ * that has already had a shot. Each shot gets one reconnect window, and
+ * coming back does not start a new shot clock.
  */
 
 import { sha256Hex } from "@/lib/fairness/core";
