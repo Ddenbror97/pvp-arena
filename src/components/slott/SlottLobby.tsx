@@ -36,7 +36,6 @@ import { bindSlotAudio, playHitSfx, playReelSpin, playTallySfx } from "./sfx";
 import { reelValues, TALLY_STEP_MS, tallyStartMs } from "./tally";
 import { PotHeader, SeatPanel, SlotCabinet } from "./SlotCabinet";
 import { HowItWorks, StepRail } from "./HowItWorks";
-import { SlotSoundControl } from "./SlotSound";
 import { IDLE_GRID, landedAt, type ReelSpin } from "./timing";
 import { RECENT_PAGE_SIZE, RecentPager, usePagedRecent } from "@/components/recent/usePagedRecent";
 
@@ -436,7 +435,6 @@ export function SlottLobby({ paintedAt }: { paintedAt?: number | undefined }) {
         </p>
       </div>
       <div className="flex shrink-0 items-center gap-2">
-        <SlotSoundControl />
         <button
           type="button"
           onClick={() => setRules(true)}
@@ -602,7 +600,6 @@ export function SlottLobby({ paintedAt }: { paintedAt?: number | undefined }) {
             live
           />
           <div className="flex shrink-0 items-center gap-1.5">
-            <SlotSoundControl />
             <button
               type="button"
               onClick={() => setRules(true)}
