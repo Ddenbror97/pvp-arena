@@ -238,6 +238,7 @@ function RootComponent() {
   const walletHome = pathname === "/wallet";
   const pokerTable = /^\/poker\/[^/]+\/?$/.test(pathname);
   const pokerLobby = pathname === "/poker" || pathname === "/poker/";
+  const poolLobby = pathname === "/pool" || pathname === "/pool/";
   useLayoutEffect(() => {
     if (!slottLobby) return;
     const apply = () =>
@@ -274,9 +275,11 @@ function RootComponent() {
                   ? "poker-root"
                   : pokerLobby
                     ? "poker-lobby-main w-full max-w-none overflow-x-clip px-3 pt-3 pb-10 sm:px-4 lg:px-6 min-h-[calc(100dvh-3.5rem)] sm:min-h-[calc(100dvh-4rem)]"
-                    : wide
-                      ? "canvas mx-auto flex min-h-[calc(100dvh-3.5rem)] w-full max-w-full flex-col overflow-x-clip px-4 pt-6 pb-4 sm:min-h-[calc(100dvh-4rem)] lg:px-6"
-                      : `canvas mx-auto w-full max-w-7xl overflow-x-clip ${slott ? `px-3 pt-3 pb-8 sm:px-4 sm:pt-3 lg:max-w-none ${slottLobby ? "lg:h-[calc(100dvh-4rem)] lg:overflow-hidden lg:px-6 lg:pr-0 lg:pt-2 lg:pb-0" : "lg:px-0 lg:pt-0 lg:pb-0"}` : walletHome ? "px-4 py-4" : "px-4 py-8"} sm:min-h-[calc(100dvh-4rem)] min-h-[calc(100dvh-3.5rem)]`
+                    : poolLobby
+                      ? "pool-lobby-main w-full max-w-none overflow-x-clip p-0"
+                      : wide
+                        ? "canvas mx-auto flex min-h-[calc(100dvh-3.5rem)] w-full max-w-full flex-col overflow-x-clip px-4 pt-6 pb-4 sm:min-h-[calc(100dvh-4rem)] lg:px-6"
+                        : `canvas mx-auto w-full max-w-7xl overflow-x-clip ${slott ? `px-3 pt-3 pb-8 sm:px-4 sm:pt-3 lg:max-w-none ${slottLobby ? "lg:h-[calc(100dvh-4rem)] lg:overflow-hidden lg:px-6 lg:pr-0 lg:pt-2 lg:pb-0" : "lg:px-0 lg:pt-0 lg:pb-0"}` : walletHome ? "px-4 py-4" : "px-4 py-8"} sm:min-h-[calc(100dvh-4rem)] min-h-[calc(100dvh-3.5rem)]`
             }
           >
             <Outlet />

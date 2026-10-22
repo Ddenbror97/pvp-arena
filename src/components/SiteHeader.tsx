@@ -118,7 +118,7 @@ export function SiteHeader({ className }: { className?: string }) {
             onFocus={() => prefetchGamePage(qc, "/pool")}
             onTouchStart={() => prefetchGamePage(qc, "/pool")}
           >
-            8-ball
+            8 Pool
           </Link>
           <Link to="/fairness" className={link}>
             Fairness
@@ -417,8 +417,7 @@ export function MobileTabBar({ className }: { className?: string }) {
         Poker
       </Link>
       <Link to="/pool" className={tab} onTouchStart={() => prefetchGamePage(qc, "/pool")}>
-        <Circle className="h-5 w-5" />
-        8-ball
+        <Circle className="h-5 w-5" />8 Pool
       </Link>
       <Link to="/fairness" className={tab}>
         <ShieldCheck className="h-5 w-5" />

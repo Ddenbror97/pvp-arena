@@ -2,11 +2,19 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { ArrowRight, Coins, Shield, Trophy, Zap } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import hero from "@/assets/pool/hero.webp";
 import { useAuth } from "@/lib/auth";
 import { STAKES, money, poolMessage, usePoolLobby } from "@/lib/pool/api";
 import { enterPool } from "@/lib/pool/pool.functions";
+
+const FEATURES = [
+  { icon: Zap, title: "PVP matches", text: "Real players, real money" },
+  { icon: Trophy, title: "Skill based", text: "Show your skills and climb the ranks" },
+  { icon: Coins, title: "Instant games", text: "Quick matches anytime" },
+  { icon: Shield, title: "Fair & secure", text: "Provably fair matchmaking" },
+] as const;
 
 export function PoolLobby() {
   const { userId } = useAuth();
@@ -17,7 +25,8 @@ export function PoolLobby() {
   const [stake, setStake] = useState<number>(500);
   const [busy, setBusy] = useState(false);
   const stakes = lobby.data?.stakes?.length ? lobby.data.stakes : [...STAKES];
-  const fee = ((lobby.data?.fee_bps ?? 500) / 100).toString();
+  const openTables = lobby.data?.open ?? [];
+  const recent = lobby.data?.recent ?? [];
 
   const play = async () => {
     if (!userId) {
@@ -42,76 +51,113 @@ export function PoolLobby() {
   };
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <section className="rounded-2xl border border-border bg-card p-4 sm:p-5">
-        <h1 className="font-display text-2xl">8-ball</h1>
-        <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          Two players, one table. The winner is whoever the rules name after the shots. The rack
-          seed only places the balls. A {fee}% fee comes off the pot when someone wins, and the
-          winner receives the rest.
-        </p>
-        <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-6">
-          {stakes.map((cents) => (
-            <button
-              key={cents}
-              type="button"
-              onClick={() => setStake(cents)}
-              className={`min-h-11 rounded-lg border font-display text-sm ${
-                stake === cents
-                  ? "border-primary bg-primary/15 text-primary"
-                  : "border-border text-foreground"
-              }`}
-            >
-              {money(cents)}
-            </button>
-          ))}
+    <div className="pool-lobby">
+      <section className="pool-hero" aria-labelledby="pool-wordmark">
+        <img
+          src={hero}
+          alt=""
+          width={1280}
+          height={720}
+          decoding="async"
+          fetchPriority="high"
+          className="pool-hero-art"
+        />
+        <div className="pool-hero-shade" aria-hidden />
+        <div className="pool-hero-copy">
+          <h1 id="pool-wordmark" className="pool-wordmark">
+            <span className="pool-eight" aria-hidden>
+              <svg className="pool-crown" viewBox="0 0 64 36" fill="none">
+                <path
+                  d="M6 28 L10 10 L22 20 L32 4 L42 20 L54 10 L58 28 Z"
+                  fill="url(#pool-gold)"
+                  stroke="#f8e7a2"
+                  strokeWidth="1.4"
+                  strokeLinejoin="round"
+                />
+                <path d="M8 30 h48 v4 h-48 z" fill="url(#pool-gold)" />
+                <circle cx="10" cy="10" r="2.2" fill="#fff4c8" />
+                <circle cx="32" cy="5" r="2.4" fill="#fff4c8" />
+                <circle cx="54" cy="10" r="2.2" fill="#fff4c8" />
+                <defs>
+                  <linearGradient id="pool-gold" x1="8" y1="4" x2="56" y2="32">
+                    <stop stopColor="#fff1b8" />
+                    <stop offset="0.45" stopColor="#f5c542" />
+                    <stop offset="1" stopColor="#b8860b" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <span className="pool-eight-ball">
+                <span className="pool-eight-spot">8</span>
+              </span>
+            </span>
+            <span className="pool-word">POOL</span>
+          </h1>
+          <p className="pool-tag">
+            Real players <span aria-hidden>·</span> Real skills <span aria-hidden>·</span> Real wins
+          </p>
+          <ul className="pool-features">
+            {FEATURES.map((feature) => (
+              <li key={feature.title} className="pool-feature">
+                <span className="pool-feature-icon">
+                  <feature.icon aria-hidden className="h-4 w-4" />
+                </span>
+                <h2>{feature.title}</h2>
+                <p>{feature.text}</p>
+              </li>
+            ))}
+          </ul>
+          <button type="button" className="pool-play" disabled={busy} onClick={() => void play()}>
+            {busy ? "Finding a match…" : "Play 8 Pool Now"}
+            {busy ? null : <ArrowRight aria-hidden className="h-5 w-5" />}
+          </button>
+          <div className="pool-stakes" role="group" aria-label="Stake">
+            {stakes.map((cents) => (
+              <button
+                key={cents}
+                type="button"
+                aria-pressed={stake === cents}
+                onClick={() => setStake(cents)}
+                className={stake === cents ? "pool-stake is-on" : "pool-stake"}
+              >
+                {money(cents)}
+              </button>
+            ))}
+          </div>
         </div>
-        <Button
-          className="mt-4 min-h-11 w-full sm:w-auto"
-          disabled={busy}
-          onClick={() => void play()}
-        >
-          {busy ? "Finding a match…" : userId ? `Play ${money(stake)}` : "Sign in to play"}
-        </Button>
-        <p className="mt-3 text-xs text-muted-foreground">
-          Same rules at every stake. No house opponent. A waiting table is a real player.
-        </p>
       </section>
 
-      <aside className="flex flex-col gap-4">
-        <section className="rounded-2xl border border-border bg-card p-4">
-          <h2 className="font-display text-sm uppercase tracking-widest">Waiting</h2>
-          <ul className="mt-3 space-y-2">
-            {(lobby.data?.open ?? []).length === 0 ? (
-              <li className="text-sm text-muted-foreground">
-                No open tables. Your stake opens one.
-              </li>
+      <div className="pool-below">
+        <section className="pool-side">
+          <h2>Waiting</h2>
+          <ul>
+            {openTables.length === 0 ? (
+              <li>No open tables. Your stake opens one.</li>
             ) : (
-              lobby.data?.open.map((table) => (
-                <li key={table.id} className="flex items-center justify-between text-sm">
+              openTables.map((table) => (
+                <li key={table.id}>
                   <span>{table.username}</span>
-                  <span className="tabular text-muted-foreground">{money(table.stake)}</span>
+                  <span className="tabular">{money(table.stake)}</span>
                 </li>
               ))
             )}
           </ul>
         </section>
-        <section className="rounded-2xl border border-border bg-card p-4">
-          <h2 className="font-display text-sm uppercase tracking-widest">Recent</h2>
-          <ul className="mt-3 space-y-2">
-            {(lobby.data?.recent ?? []).length === 0 ? (
-              <li className="text-sm text-muted-foreground">No finished matches yet.</li>
+        <section className="pool-side">
+          <h2>Recent</h2>
+          <ul>
+            {recent.length === 0 ? (
+              <li>No finished matches yet.</li>
             ) : (
-              lobby.data?.recent.map((match) => (
-                <li key={match.id} className="text-sm">
-                  <span className="text-foreground">{match.winner ?? "Player"}</span>
-                  <span className="text-muted-foreground"> won {money(match.payout_amount)}</span>
+              recent.map((match) => (
+                <li key={match.id}>
+                  <span>{match.winner ?? "Player"}</span>
+                  <span> won {money(match.payout_amount)}</span>
                 </li>
               ))
             )}
           </ul>
         </section>
-      </aside>
+      </div>
     </div>
   );
 }
