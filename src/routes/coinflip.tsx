@@ -76,7 +76,7 @@ function CoinflipDuel() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [navigate]);
-  const close = () => navigate({ to: "/coinflip", replace: true });
+  const close = () => navigate({ to: "/coinflip", replace: true, resetScroll: false });
   return (
     <div className="cf-duel-pop" role="dialog" aria-modal="true" aria-labelledby="cf-duel-title">
       <button type="button" className="cf-duel-scrim" aria-label="Close coinflip" onClick={close} />

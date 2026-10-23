@@ -1351,12 +1351,23 @@ html.intro-seen .intro-gate { display: none !important; }
 .cf-duel-card {
   position: relative;
   z-index: 1;
-  width: min(56rem, calc(100vw - 1.5rem));
+  /* 100% of the overlay, not 100vw: the scrollbar gutter is outside 100% and must not move the card.
+     Height is body padding (2.15rem) + header rows (1.25 + 0.75 + 2) + stage gap (0.75)
+     + stage (21rem, 26rem from 640px) + fairness gap (0.5) + fairness bar (1.25 + 1rem + 2px)
+     + this border (2px). The game row scrolls inside; it cannot resize the window. */
+  display: flex;
+  flex-direction: column;
+  width: min(56rem, 100%);
+  height: calc(30.65rem + 4px);
+  max-height: calc(100dvh - 2rem);
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 14%);
   border-radius: 1.25rem;
   background: #070a17;
   box-shadow: 0 24px 80px rgb(0 0 0 / 55%);
+}
+@media (min-width: 640px) {
+  .cf-duel-card { height: calc(35.65rem + 4px); }
 }
 .cf-duel-x {
   position: absolute;
@@ -1381,8 +1392,10 @@ html.intro-seen .intro-gate { display: none !important; }
 .cf-duel-body {
   position: relative;
   z-index: 1;
-  max-height: min(88dvh, 46rem);
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: auto;
+  scrollbar-gutter: stable;
   padding: 1rem 1.1rem 1.15rem;
 }
 .cf-duel-card .cf-game-window {

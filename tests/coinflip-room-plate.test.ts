@@ -23,6 +23,20 @@ describe("coinflip room plate", () => {
     expect(route).toContain("cf-duel-card");
     expect(route).not.toContain("cf-duel-room");
     expect(route).toContain('to: "/coinflip"');
+    expect(route).toContain("resetScroll: false");
+    expect(open).toContain("resetScroll={false}");
+    expect(open).toContain("resetScroll: false");
+    const create = readFileSync(
+      new URL("../src/components/coinflip/CreatePanel.tsx", import.meta.url),
+      "utf8",
+    );
+    expect(create).toContain("resetScroll: false");
+    const card = css.slice(css.indexOf(".cf-duel-card {"), css.indexOf(".cf-duel-x"));
+    expect(card).toContain("width: min(56rem, 100%)");
+    expect(card).not.toMatch(/width:[^;]*100vw/);
+    expect(card).toContain("height: calc(30.65rem + 4px)");
+    expect(css).toContain(".cf-duel-card { height: calc(35.65rem + 4px); }");
+    expect(room).toContain("FairnessShell");
     expect(route).not.toContain("cf-home-match");
     expect(route).toContain("cf-room");
     expect(route).toContain('rel: "preload"');

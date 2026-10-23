@@ -142,6 +142,7 @@ export function CoinflipRoomFallback() {
   return (
     <RoomFrame title="Coinflip">
       <StageBox className="animate-pulse" />
+      <FairnessShell />
     </RoomFrame>
   );
 }
@@ -160,6 +161,7 @@ function RoomFrame({
       <div className="flex h-5 items-center justify-between pr-8">
         <Link
           to="/coinflip"
+          resetScroll={false}
           className="text-sm leading-5 text-muted-foreground hover:text-foreground"
         >
           ← Coinflip lobby
@@ -578,19 +580,27 @@ function Countdown({
   );
 }
 
-function FairnessPanel({ g }: { g: CfGameView }) {
-  const [res, setRes] = useState<{ ok: boolean; checks: CoinflipCheck[] } | null>(null);
+function FairnessShell({ hash, children }: { hash?: string; children?: ReactNode }) {
   return (
     <details className="group mt-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm">
       <summary className="flex cursor-pointer list-none items-center gap-2 text-xs text-muted-foreground hover:text-foreground">
-        <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+        <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
         <span className="font-display uppercase tracking-widest">Provably fair</span>
         <span className="tabular hidden truncate sm:inline">
-          · {g.server_seed_hash.slice(0, 16)}…
+          {hash ? `· ${hash.slice(0, 16)}…` : "·"}
         </span>
         <span className="ml-auto group-open:hidden">Details</span>
         <span className="ml-auto hidden group-open:inline">Hide</span>
       </summary>
+      {children}
+    </details>
+  );
+}
+
+function FairnessPanel({ g }: { g: CfGameView }) {
+  const [res, setRes] = useState<{ ok: boolean; checks: CoinflipCheck[] } | null>(null);
+  return (
+    <FairnessShell hash={g.server_seed_hash}>
       <dl className="mt-3 grid gap-2 sm:grid-cols-2">
         <Row k="Server seed hash (committed at creation)" v={g.server_seed_hash} />
         <Row k="Message" v={`PVPCasino:coinflip:${g.protocol_version}:${g.id}:${g.draw_version}`} />
@@ -636,7 +646,7 @@ function FairnessPanel({ g }: { g: CfGameView }) {
           ))}
         </ul>
       )}
-    </details>
+    </FairnessShell>
   );
 }
 

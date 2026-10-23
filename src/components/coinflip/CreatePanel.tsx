@@ -76,7 +76,7 @@ export function CreatePanel() {
     const gid = (data as { game_id: number }).game_id;
     setPending(false);
     openRoom(qc, router, gid);
-    navigate({ to: "/coinflip/$gameId", params: { gameId: String(gid) } });
+    navigate({ to: "/coinflip/$gameId", params: { gameId: String(gid) }, resetScroll: false });
   }
 
   const signedOut = !userId && (ready || !hint);

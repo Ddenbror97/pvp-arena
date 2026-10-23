@@ -98,6 +98,7 @@ function LiveCard({ g }: { g: CfGameView }) {
     <Link
       to="/coinflip/$gameId"
       params={{ gameId: String(g.id) }}
+      resetScroll={false}
       className="cf-game-window flex min-w-0 items-center gap-2.5 rounded-2xl border border-primary/40 bg-card p-3 transition hover:border-primary sm:gap-4 sm:p-4"
     >
       <LiveCoin g={g} />
@@ -198,7 +199,7 @@ function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin:
       qc.invalidateQueries({ queryKey: ["wallet"] });
       setPending(false);
       openRoom(qc, router, g.id);
-      navigate({ to: "/coinflip/$gameId", params: { gameId: String(g.id) } });
+      navigate({ to: "/coinflip/$gameId", params: { gameId: String(g.id) }, resetScroll: false });
     } finally {
       joining.current = false;
     }
@@ -219,7 +220,7 @@ function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin:
       <div className="shrink-0">
         {mine ? (
           <Button asChild size="sm" variant="secondary" className="min-h-11">
-            <Link to="/coinflip/$gameId" params={{ gameId: String(g.id) }}>
+            <Link to="/coinflip/$gameId" params={{ gameId: String(g.id) }} resetScroll={false}>
               Open
             </Link>
           </Button>
@@ -270,6 +271,7 @@ export function RecentCoinflips({ layout = "wide" }: { layout?: "wide" | "rail" 
                     <Link
                       to="/coinflip/$gameId"
                       params={{ gameId: String(g.id) }}
+                      resetScroll={false}
                       className="flex items-center gap-2 px-3 py-2 text-sm transition hover:bg-secondary/50"
                     >
                       <SideCoinImg side={winSide} className="h-6 w-6" />
@@ -336,6 +338,7 @@ export function RecentCoinflips({ layout = "wide" }: { layout?: "wide" | "rail" 
                   <Link
                     to="/coinflip/$gameId"
                     params={{ gameId: String(g.id) }}
+                    resetScroll={false}
                     className="grid grid-cols-[2rem_minmax(0,1fr)_4.5rem] items-center gap-2 px-3 py-1.5 text-sm transition hover:bg-secondary/50 sm:grid-cols-[4.5rem_minmax(0,1fr)_5rem_6rem_5rem]"
                   >
                     <span className="tabular text-xs text-muted-foreground">#{g.id}</span>
