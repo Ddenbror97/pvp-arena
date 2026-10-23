@@ -450,7 +450,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           </span>
         </div>
         <div className="pool-tools">
-          <Link to="/pool" className="pool-leave">
+          <Link to="/8-ball-pool" className="pool-leave">
             Leave game
           </Link>
           <span className="pool-gear" aria-hidden>
@@ -643,7 +643,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             Leave game
           </button>
         ) : (
-          <Link to="/pool" className="pool-leave">
+          <Link to="/8-ball-pool" className="pool-leave">
             Leave game
           </Link>
         )}

@@ -112,11 +112,11 @@ export function SiteHeader({ className }: { className?: string }) {
             Poker
           </Link>
           <Link
-            to="/pool"
+            to="/8-ball-pool"
             className={link}
-            onMouseEnter={() => prefetchGamePage(qc, "/pool")}
-            onFocus={() => prefetchGamePage(qc, "/pool")}
-            onTouchStart={() => prefetchGamePage(qc, "/pool")}
+            onMouseEnter={() => prefetchGamePage(qc, "/8-ball-pool")}
+            onFocus={() => prefetchGamePage(qc, "/8-ball-pool")}
+            onTouchStart={() => prefetchGamePage(qc, "/8-ball-pool")}
           >
             8 Pool
           </Link>
@@ -416,7 +416,11 @@ export function MobileTabBar({ className }: { className?: string }) {
         <Spade className="h-5 w-5" />
         Poker
       </Link>
-      <Link to="/pool" className={tab} onTouchStart={() => prefetchGamePage(qc, "/pool")}>
+      <Link
+        to="/8-ball-pool"
+        className={tab}
+        onTouchStart={() => prefetchGamePage(qc, "/8-ball-pool")}
+      >
         <Circle className="h-5 w-5" />8 Pool
       </Link>
       <Link to="/fairness" className={tab}>

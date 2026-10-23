@@ -66,7 +66,7 @@ export function PoolLobby() {
         />
         <div className="pool-hero-shade" aria-hidden />
         <div className="pool-hero-copy">
-          <h1 id="pool-wordmark" className="pool-wordmark">
+          <p id="pool-wordmark" className="pool-wordmark">
             <span className="pool-eight" aria-hidden>
               <svg className="pool-crown" viewBox="0 0 64 36" fill="none">
                 <path
@@ -93,7 +93,8 @@ export function PoolLobby() {
               </span>
             </span>
             <span className="pool-word">POOL</span>
-          </h1>
+          </p>
+          <h1 className="pool-seo-h1">8 Ball Pool for Real Money (Crypto PvP)</h1>
           <p className="pool-tag">
             Real players <span aria-hidden>·</span> Real skills <span aria-hidden>·</span> Real wins
           </p>
@@ -149,8 +150,12 @@ export function PoolLobby() {
             )}
           </ul>
         </section>
-        <section className="pool-side">
-          <h2>Recent</h2>
+        <section className="pool-side" aria-labelledby="pool-settled">
+          <h2 id="pool-settled">Settled matches</h2>
+          <p className="pool-settled-note">
+            Fee on a finished match: {((lobby.data?.fee_bps ?? 500) / 100).toLocaleString("en-US")}%
+            of the pot. This list is what the lobby returns. It does not publish a break-win rate.
+          </p>
           <ul>
             {recent.length === 0 ? (
               <li>No finished matches yet.</li>
@@ -160,8 +165,8 @@ export function PoolLobby() {
                   <span>{match.winner ?? "Player"}</span>
                   <span>
                     {" "}
-                    won {money(match.payout_amount)}
-                    {match.fee_amount != null ? ` · fee ${money(match.fee_amount)}` : ""}
+                    won {money(match.payout_amount)} from a {money(match.pot)} pot
+                    {match.fee_amount != null ? ` after a ${money(match.fee_amount)} fee` : ""}
                   </span>
                 </li>
               ))

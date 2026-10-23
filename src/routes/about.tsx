@@ -332,7 +332,7 @@ function AboutPage() {
             Six-max No-Limit Texas Hold'em cash tables from $0.02/$0.05 to $5/$10. Every player
             dealt in helps shuffle the deck, and the 5% fee applies only to hands that see a flop.
           </GameCard>
-          <GameCard icon={<Circle className="h-5 w-5" />} name="8-ball" to="/pool" cta="Play 8-ball">
+          <GameCard icon={<Circle className="h-5 w-5" />} name="8-ball" to="/8-ball-pool" cta="Play 8-ball">
             A 1v1 match from $1 to $50. The winner is whoever the rules name after the shots. The
             rack seed only places the balls. The fee is 5% of the pot when someone wins.
           </GameCard>

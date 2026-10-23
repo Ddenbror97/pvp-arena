@@ -221,6 +221,11 @@ export const GAME_FACT_PAGES: Record<string, GameFactPage> = {
     reads: [
       {
         to: "/guides/$slug",
+        slug: "8-ball-pool-hub",
+        label: "How 8 ball pool online maps to a money match",
+      },
+      {
+        to: "/guides/$slug",
         slug: "8-ball-pool-for-money",
         label: "What a cash 8-ball match is",
       },

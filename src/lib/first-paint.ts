@@ -435,7 +435,14 @@ async function buildPoolPaint(deadline: number): Promise<PoolPaint> {
 }
 
 export async function loadPoolPaint(pathname: string): Promise<PoolPaint> {
-  if (inBrowser || (pathname !== "/pool" && pathname !== "/pool/")) return EMPTY_POOL;
+  if (
+    inBrowser ||
+    (pathname !== "/pool" &&
+      pathname !== "/pool/" &&
+      pathname !== "/8-ball-pool" &&
+      pathname !== "/8-ball-pool/")
+  )
+    return EMPTY_POOL;
   return servePaint("pool", EMPTY_POOL, buildPoolPaint);
 }
 
@@ -446,9 +453,9 @@ export async function loadPoolPaint(pathname: string): Promise<PoolPaint> {
  */
 export function prefetchGamePage(
   qc: QueryClient,
-  path: "/" | "/coinflip" | "/roulette" | "/slott" | "/poker" | "/pool",
+  path: "/" | "/coinflip" | "/roulette" | "/slott" | "/poker" | "/pool" | "/8-ball-pool",
 ) {
-  if (path === "/pool") {
+  if (path === "/pool" || path === "/8-ball-pool") {
     void qc.prefetchQuery({ queryKey: ["pool-lobby"], queryFn: fetchPoolLobby });
     return;
   }

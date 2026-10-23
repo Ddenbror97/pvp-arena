@@ -238,7 +238,11 @@ function RootComponent() {
   const walletHome = pathname === "/wallet";
   const pokerTable = /^\/poker\/[^/]+\/?$/.test(pathname);
   const pokerLobby = pathname === "/poker" || pathname === "/poker/";
-  const poolLobby = pathname === "/pool" || pathname === "/pool/";
+  const poolLobby =
+    pathname === "/pool" ||
+    pathname === "/pool/" ||
+    pathname === "/8-ball-pool" ||
+    pathname === "/8-ball-pool/";
   const poolMatch = /^\/pool\/[^/]+\/?$/.test(pathname);
   useLayoutEffect(() => {
     if (!slottLobby) return;

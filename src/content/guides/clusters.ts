@@ -1133,6 +1133,41 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
   ],
   "Skill wagers": [
     {
+      name: "8-ball money matches",
+      slugs: [
+        "8-ball-pool-hub",
+        "pool-betting",
+        "8-ball-pool-real-money",
+        "crypto-8-ball-pool",
+        "pool-games-for-money",
+        "pool-cash-app-review",
+        "is-8-ball-pool-rigged",
+        "pool-hustling",
+        "skill-games-for-money-pool",
+        "8-ball-pool-free-coins",
+        "8-ball-pool-unblocked",
+        "8-ball-pool-1v1",
+        "8-ball-pool-casino",
+        "best-pool-games",
+        "8-ball-strike-review",
+        "8-ball-pool-discord",
+        "8-ball-pool-rank",
+      ],
+    },
+    {
+      name: "8-ball skill",
+      slugs: [
+        "how-to-win-8-ball-pool",
+        "8-ball-pool-break",
+        "8-ball-pool-aim",
+        "pool-shots",
+        "pool-terminology",
+        "fargo-rate",
+        "best-pool-cue",
+        "pool-table-size",
+      ],
+    },
+    {
       name: "Cash games",
       slugs: ["games-that-pay-real-money", "skillz-review"],
     },
@@ -1581,6 +1616,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
   ],
   "Casino knowledge": [
     {
+      name: "Pool events",
+      slugs: ["pool-tournaments", "us-open-pool", "mosconi-cup", "apa-pool-league"],
+    },
+    {
       name: "Probability and paradoxes",
       slugs: [
         "law-of-large-numbers-gambling",
@@ -1723,6 +1762,21 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     },
   ],
   "Games of chance": [
+    {
+      name: "Pool rules",
+      slugs: [
+        "8-ball-pool-rules",
+        "pool-scratch-rules",
+        "9-ball-rules",
+        "10-ball-pool",
+        "straight-pool",
+        "cutthroat-pool",
+        "one-pocket-pool",
+        "bank-pool",
+        "killer-pool",
+        "pool-vs-snooker",
+      ],
+    },
     { name: "Push-your-luck dice", slugs: ["farkle-rules", "pig-dice-game", "shut-the-box"] },
     {
       name: "Dice races and scorecards",

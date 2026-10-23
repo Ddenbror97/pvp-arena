@@ -646,7 +646,7 @@ function PoolSection() {
             </pre>
           ) : null}
           <Link
-            to="/pool"
+            to="/8-ball-pool"
             className="mt-3 inline-block text-sm font-semibold text-primary hover:underline"
           >
             Open the 8-ball lobby
