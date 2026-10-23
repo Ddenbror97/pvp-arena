@@ -258,7 +258,7 @@ function bronzeCorners(
   rail: number,
   radius: number,
 ) {
-  const span = rail * 1.45;
+  const span = rail * 1.05;
   ctx.save();
   ctx.beginPath();
   ctx.rect(x, y, span, span);
@@ -266,14 +266,16 @@ function bronzeCorners(
   ctx.rect(x, y + h - span, span, span);
   ctx.rect(x + w - span, y + h - span, span, span);
   ctx.clip();
-  const metal = ctx.createLinearGradient(x, y, x + w, y + h);
-  metal.addColorStop(0, "#f6ecd8");
-  metal.addColorStop(0.35, "#e2c392");
-  metal.addColorStop(0.7, "#b8894e");
-  metal.addColorStop(1, "#7a5730");
+  const metal = ctx.createLinearGradient(x, y, x + span, y + span);
+  metal.addColorStop(0, "#f3e4c4");
+  metal.addColorStop(0.4, "#c49a58");
+  metal.addColorStop(1, "#5c3e22");
   roundedRect(ctx, x, y, w, h, radius);
   ctx.fillStyle = metal;
   ctx.fill();
+  ctx.strokeStyle = "rgba(255, 244, 220, 0.55)";
+  ctx.lineWidth = Math.max(1.1, rail * 0.055);
+  ctx.stroke();
   ctx.restore();
 }
 

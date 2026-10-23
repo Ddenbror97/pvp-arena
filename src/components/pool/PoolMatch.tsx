@@ -471,7 +471,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         <label className="pool-power">
           <span className="sr-only">Power</span>
           <input type="range" min={1} max={10000} value={power} disabled />
-          <span>{Math.round(power / 100)}%</span>
+          <span>{powerReadout(power)}</span>
         </label>
         <div className="pool-felt">
           <div className="pool-felt-frame">
@@ -498,12 +498,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           </div>
         </div>
         <div className="pool-dock">
-          <span className="pool-chip">
-            Standard <ChevronDown className="h-3.5 w-3.5" />
-          </span>
-          <span className="pool-chip">
-            White ball <ChevronDown className="h-3.5 w-3.5" />
-          </span>
+          <span className="pool-chip">Spin</span>
+          <span className="pool-chip">Cue ball set</span>
           <span className="pool-assist">
             Aim assist
             <span className="pool-switch is-on">
@@ -586,7 +582,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   };
 
   return (
-    <Shell>
+    <Shell calling={shootingEight}>
       <div className="pool-brand">
         <span className="pool-brand-mark" aria-hidden>
           8
@@ -679,12 +675,12 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           value={power}
           disabled
           tabIndex={-1}
-          aria-valuetext={`${Math.round(power / 100)} percent`}
+          aria-valuetext={powerReadout(power)}
           style={{
             background: `linear-gradient(to top, #7c3aed ${Math.round(power / 100)}%, rgba(255,255,255,0.16) ${Math.round(power / 100)}%)`,
           }}
         />
-        <span>{Math.round(power / 100)}%</span>
+        <span>{powerReadout(power)}</span>
       </label>
 
       <div
@@ -896,13 +892,18 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   );
 }
 
-function Shell({ children }: { children: ReactNode }) {
+function Shell({ children, calling = false }: { children: ReactNode; calling?: boolean }) {
   return (
-    <div className="pool-screen">
+    <div className={calling ? "pool-screen is-calling" : "pool-screen"}>
       <div className="pool-room" aria-hidden />
       {children}
     </div>
   );
+}
+
+function powerReadout(power: number): string {
+  const pct = Math.round(power / 100);
+  return pct >= 1 ? `${pct}%` : "Power";
 }
 
 function dollars(cents: number | null | undefined): string {
