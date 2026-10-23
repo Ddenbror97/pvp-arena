@@ -1,4 +1,4 @@
-import { PHYSICS_VERSION, simulate, type ShotInput } from "./physics";
+import { PHYSICS_VERSION, simulate, type PhysicsId, type ShotInput } from "./physics";
 import { applyPlayedShot, placeCue, stateHash, type ShotEvent, type TableState } from "./rules";
 import { replayMatch, type MatchStep } from "./verify";
 
@@ -24,7 +24,7 @@ export async function confirmedWinner(
   seed: Uint8Array,
   publishedHash: string,
   steps: readonly MatchStep[],
-  physics?: "pool-phys-v1" | "pool-phys-v2" | "pool-phys-v3",
+  physics?: PhysicsId,
 ): Promise<{ ok: true; winner: "A" | "B" | null; hash: string } | { ok: false; error: string }> {
   const replay = await replayMatch(seed, publishedHash, steps, physics ?? PHYSICS_VERSION);
   if (!replay.ok) return { ok: false, error: "REPLAY_MISMATCH" };

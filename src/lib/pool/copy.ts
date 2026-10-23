@@ -56,7 +56,7 @@ export const POOL_RULES: readonly { title: string; body: string }[] = [
   },
   {
     title: "Open table",
-    body: "The table stays open until a legal pocket assigns solids (1–7) or stripes (9–15).",
+    body: "The table stays open until a legal shot pockets a solid or a stripe. That includes the break. The first ball down makes that group yours, and your opponent takes the other group. Solids are 1–7. Stripes are 9–15. A foul does not choose a group.",
   },
   {
     title: "Your group",
@@ -126,6 +126,8 @@ export type MatchNoticeInput = {
   kitchenOnly: boolean;
   shootingEight: boolean;
   pocketChosen: boolean;
+  /** The rules already named a winner, and the match status has not caught up. */
+  decided: boolean;
   mine: boolean;
   group: "solids" | "stripes" | null;
   breakShot: boolean;
@@ -159,6 +161,30 @@ export function matchNotice(input: MatchNoticeInput): string | null {
   }
   if (input.rolling) return "Balls moving";
   if (input.busy) return "Sending your shot";
+  if (input.decided) {
+    const why = winSentence(input.winReason);
+    if (input.youWon) return why ? `You won the rack. ${why}` : "You won the rack.";
+    if (input.youLost) return why ? `You lost the rack. ${why}` : "You lost the rack.";
+    return why ? `Match over. ${why}` : "Match over.";
+  }
+  if (input.shootingEight) {
+    if (!input.mine) {
+      return input.ballInHand
+        ? "Opponent has ball in hand and is shooting the 8-ball."
+        : "Opponent is shooting the 8-ball.";
+    }
+    if (input.ballInHand) {
+      const line = input.pocketChosen
+        ? "Place the cue ball, then pocket the 8-ball in the pocket you chose."
+        : "Place the cue ball, then choose a pocket for the 8-ball.";
+      return input.fouled ? `Foul. ${line}` : line;
+    }
+    if (!input.pocketChosen) return "Choose a pocket for the 8-ball";
+    return "Pocket the 8-ball in the pocket you chose";
+  }
+  if (!input.mine && (input.fouled || input.ballInHand)) {
+    return input.fouled ? "Foul. Opponent has ball in hand." : "Opponent has ball in hand.";
+  }
   if (input.fouled && input.kitchenOnly) {
     return "Foul. Ball in hand — place the cue ball behind the head string.";
   }
@@ -170,8 +196,6 @@ export function matchNotice(input: MatchNoticeInput): string | null {
   if (input.ballInHand && input.kitchenOnly) {
     return "Ball in hand — place the cue ball behind the head string.";
   }
-  if (input.shootingEight && !input.pocketChosen) return "Choose a pocket for the 8-ball";
-  if (input.shootingEight) return "Pocket the 8-ball in the pocket you chose";
   if (input.mine && input.breakShot)
     return "Your turn. Drag to aim, drag back, and release to shoot.";
   if (input.mine && input.group === "solids") return "Your turn. Pocket your remaining solids.";

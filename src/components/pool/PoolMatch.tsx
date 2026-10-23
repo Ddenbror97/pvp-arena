@@ -359,8 +359,14 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     [],
   );
   const group = state && seat ? seatGroup(state, seat) : null;
-  const shootingEight =
-    !!state && !!group && groupClear(state.balls, group) && !state.breakShot && mine;
+  const turnGroup = state ? seatGroup(state, state.turn) : null;
+  const eightForShooter =
+    !!state &&
+    state.winner == null &&
+    !!turnGroup &&
+    groupClear(state.balls, turnGroup) &&
+    !state.breakShot;
+  const shootingEight = eightForShooter && mine;
   const ghost = mine && state?.ballInHand ? place : null;
 
   const names = useMemo(() => {
@@ -657,12 +663,15 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const lastEvent = view.events[view.events.length - 1];
   const fouled =
     lastEvent?.kind === "shot" && lastEvent.event["foul"] === true && !!state?.ballInHand;
-  const youWon = view.status === "COMPLETED" && userId != null && view.winner_id === userId;
-  const youLost =
-    view.status === "COMPLETED" &&
+  const rackWinner = state?.winner ?? null;
+  const youWon =
     userId != null &&
-    view.winner_id != null &&
-    view.winner_id !== userId;
+    (view.status === "COMPLETED" ? view.winner_id === userId : rackWinner === seat);
+  const youLost =
+    userId != null &&
+    (view.status === "COMPLETED"
+      ? view.winner_id != null && view.winner_id !== userId
+      : rackWinner != null && rackWinner !== seat);
   const pays = view.payout_amount ?? view.pot - Math.floor((view.pot * view.fee_bps) / 10_000);
   const fee = view.fee_amount ?? view.pot - pays;
   const notice = matchNotice({
@@ -670,13 +679,14 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     youWon,
     youLost,
     payout: dollars(youWon ? pays : (view.payout_amount ?? pays)),
-    winReason: view.win_reason,
+    winReason: view.win_reason ?? state?.reason ?? null,
     cancelReason: view.cancel_reason,
     fouled,
     ballInHand: !!state?.ballInHand,
     kitchenOnly: !!state?.kitchenOnly,
-    shootingEight,
+    shootingEight: eightForShooter,
     pocketChosen: called != null,
+    decided: rackWinner != null && view.status !== "COMPLETED",
     mine,
     group,
     breakShot: !!state?.breakShot,
@@ -1124,8 +1134,12 @@ function SeatCard({
           {slots.map((ball) => (
             <i
               key={ball.id}
-              className={ball.down ? (ball.stripe ? "is-down is-stripe" : "is-down") : "is-up"}
-              style={ball.down ? { background: pipColor(ball.id) } : undefined}
+              className={
+                ball.id < 1
+                  ? "is-up"
+                  : `${ball.down ? "is-down" : "is-up"} ${ball.stripe ? "is-stripe" : "is-solid"}`
+              }
+              style={ball.id > 0 ? { ["--pip" as string]: pipColor(ball.id) } : undefined}
             />
           ))}
         </span>

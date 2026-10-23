@@ -14,6 +14,7 @@ const base = {
   kitchenOnly: false,
   shootingEight: false,
   pocketChosen: false,
+  decided: false,
   mine: true,
   group: null as "solids" | "stripes" | null,
   breakShot: false,
@@ -73,6 +74,28 @@ describe("match notice", () => {
     expect(matchNotice({ ...base, shootingEight: true, pocketChosen: false })).toBe(
       "Choose a pocket for the 8-ball",
     );
+    expect(
+      matchNotice({ ...base, shootingEight: true, ballInHand: true, pocketChosen: false }),
+    ).toBe("Place the cue ball, then choose a pocket for the 8-ball.");
+    expect(
+      matchNotice({ ...base, shootingEight: true, ballInHand: true, fouled: true, pocketChosen: false }),
+    ).toBe("Foul. Place the cue ball, then choose a pocket for the 8-ball.");
+    expect(matchNotice({ ...base, shootingEight: true, mine: false, ballInHand: true })).toBe(
+      "Opponent has ball in hand and is shooting the 8-ball.",
+    );
+    expect(matchNotice({ ...base, shootingEight: true, mine: false, ballInHand: false })).toBe(
+      "Opponent is shooting the 8-ball.",
+    );
+    expect(matchNotice({ ...base, mine: false, ballInHand: true })).toBe("Opponent has ball in hand.");
+    expect(
+      matchNotice({
+        ...base,
+        decided: true,
+        youWon: true,
+        winReason: "EIGHT_BALL",
+        ballInHand: true,
+      }),
+    ).toBe("You won the rack. The 8-ball fell in the called pocket.");
     expect(matchNotice({ ...base, group: "solids" })).toBe(
       "Your turn. Pocket your remaining solids.",
     );

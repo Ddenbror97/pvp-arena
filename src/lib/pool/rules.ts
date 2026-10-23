@@ -6,6 +6,11 @@
  * Rack seed shuffles the fourteen coloured balls. The 8 is fixed in the centre
  * of the third row. That seed is the only randomness. Shots are not noised.
  *
+ * The first solid or stripe legally pocketed assigns that group to the
+ * shooter, including on the break. The other seat takes the other group.
+ * If that shot pockets both groups, the first ball down still chooses.
+ * A foul does not claim a group.
+ *
  * Call-pocket applies only to the 8. Any other of your balls may fall in any
  * pocket. Pocketing the 8 on the break wins unless the cue ball is also
  * scratched, which loses. Pocketing the 8 before your group is clear loses.
@@ -20,9 +25,11 @@
 import { sha256Hex } from "@/lib/fairness/core";
 import {
   BALL_R,
+  PHYSICS_VERSION,
   TABLE_H,
   TABLE_W,
   type Ball,
+  type PhysicsId,
   type ShotInput,
   type SimResult,
   cloneBalls,
@@ -37,7 +44,7 @@ export type Seat = "A" | "B";
 export type TableState = {
   v: 1;
   rules: typeof RULES_VERSION;
-  physics: "pool-phys-v1" | "pool-phys-v2" | "pool-phys-v3";
+  physics: PhysicsId;
   balls: Ball[];
   open: boolean;
   groupA: Group | null;
@@ -70,6 +77,15 @@ export function other(seat: Seat): Seat {
 export function groupOf(id: number): Group | null {
   if (id >= 1 && id <= 7) return "solids";
   if (id >= 9 && id <= 15) return "stripes";
+  return null;
+}
+
+/** First object ball that fell. Solids are 1–7, stripes are 9–15. The 8 does not choose a group. */
+export function firstPocketedGroup(pocketed: readonly number[]): Group | null {
+  for (const id of pocketed) {
+    const group = groupOf(id);
+    if (group) return group;
+  }
   return null;
 }
 
@@ -163,7 +179,7 @@ export function rackBalls(seed: Uint8Array): Ball[] {
 
 export function freshTable(
   seed: Uint8Array,
-  physics: TableState["physics"] = "pool-phys-v3",
+  physics: TableState["physics"] = PHYSICS_VERSION,
 ): TableState {
   return {
     v: 1,
@@ -313,7 +329,7 @@ export function applyShot(
   if (!foul && pocketed.length === 0 && !sim.railAfterContact && !state.breakShot) foul = "NO_RAIL";
 
   if (!foul && state.open) {
-    const firstGroup = pocketed.map(groupOf).find((g): g is Group => g != null);
+    const firstGroup = firstPocketedGroup(pocketed);
     if (firstGroup) {
       next.open = false;
       next.groupA = me === "A" ? firstGroup : firstGroup === "solids" ? "stripes" : "solids";

@@ -1,4 +1,4 @@
-import { simulate, type ShotInput } from "./physics";
+import { PHYSICS_VERSION, simulate, type PhysicsId, type ShotInput } from "./physics";
 import {
   ENGINE_VERSION,
   RULES_VERSION,
@@ -93,7 +93,7 @@ export async function replayMatch(
   seed: Uint8Array,
   publishedHash: string,
   stepsIn: readonly MatchStep[],
-  physics: "pool-phys-v1" | "pool-phys-v2" | "pool-phys-v3" = "pool-phys-v3",
+  physics: PhysicsId = PHYSICS_VERSION,
 ): Promise<Replay> {
   const seedOk = await committedSeedOk(seed, publishedHash);
   let state = freshTable(seed, physics);

@@ -4,6 +4,7 @@ import {
   PHYSICS_V1,
   PHYSICS_V2,
   PHYSICS_V3,
+  PHYSICS_V4,
   POCKETS,
   TABLE_H,
   TABLE_W,
@@ -19,11 +20,13 @@ import {
 import { confirmedWinner, playShot } from "../src/lib/pool/play";
 import {
   applyPlayedShot,
+  applyShot,
   applyTimeout,
   freshTable,
   groupClear,
   legalPlacement,
   placeCue,
+  seatGroup,
   rackBalls,
   seedHash,
   stateHash,
@@ -128,9 +131,15 @@ describe("pool physics", () => {
     expect(launchSpeed(10_000, PHYSICS_V2)).toBe(14_000);
     expect(launchSpeed(6_000, PHYSICS_V3)).toBe(8_400);
     expect(launchSpeed(10_000, PHYSICS_V3)).toBe(28_000);
+    expect(launchSpeed(10_000, PHYSICS_V4)).toBe(16_800);
+    expect(launchSpeed(6_000, PHYSICS_V4)).toBe(5_040);
+    expect(launchSpeed(1, PHYSICS_V4)).toBe(1);
+    expect(launchSpeed(10_000)).toBe(16_800);
     expect(rollDrop(14_000, PHYSICS_V2)).toBe(4 + Math.trunc(14_000 / 900));
     expect(rollDrop(28_000, PHYSICS_V3)).toBe(2 + Math.trunc(28_000 / 1_500));
+    expect(rollDrop(16_800, PHYSICS_V4)).toBe(2 + Math.trunc(16_800 / 1_500));
     expect(rollDrop(14_000, PHYSICS_V1)).toBe(32 + Math.trunc(14_000 / 160));
+    expect(freshTable(new Uint8Array(32)).physics).toBe(PHYSICS_V4);
   });
 
   it("sends a full-power smash farther than the previous roll", () => {
@@ -169,6 +178,30 @@ describe("pool physics", () => {
     expect(v3Mean / seeds.length).toBeGreaterThan(450_000);
     expect(v3Far).toBeGreaterThan(v2Far);
     expect(v3Far).toBeGreaterThanOrEqual(6);
+  });
+
+  it("runs a full smash slower than v3 and still past the v2 roll", () => {
+    const salt = 7;
+    const meanOf = (physics: "pool-phys-v2" | "pool-phys-v3" | "pool-phys-v4") => {
+      const table = freshTable(Uint8Array.from({ length: 32 }, (_, i) => i + salt), physics);
+      const start = new Map(table.balls.map((ball) => [ball.id, { x: ball.x, y: ball.y }]));
+      const result = simulate(table.balls, shot({ angleMilli: 0, power: 10_000 }), false, physics);
+      let sum = 0;
+      let count = 0;
+      for (const ball of result.balls) {
+        if (ball.id === 0) continue;
+        const from = start.get(ball.id);
+        if (!from) continue;
+        sum += Math.hypot(ball.x - from.x, ball.y - from.y);
+        count += 1;
+      }
+      return sum / count;
+    };
+    const v2 = meanOf(PHYSICS_V2);
+    const v3 = meanOf(PHYSICS_V3);
+    const v4 = meanOf(PHYSICS_V4);
+    expect(v4).toBeLessThan(v3);
+    expect(v4).toBeGreaterThan(v2);
   });
 
   it("replays an open v2 match on v2 when the rack says so", async () => {
@@ -228,6 +261,74 @@ describe("pool physics", () => {
 });
 
 describe("pool rules", () => {
+  const rackSim = (
+    state: ReturnType<typeof freshTable>,
+    pocketed: number[],
+    firstContact: number,
+    cueScratch = false,
+  ) => {
+    const down = new Set(pocketed);
+    return {
+      balls: state.balls.map((ball) => ({
+        ...ball,
+        vx: 0,
+        vy: 0,
+        spin: 0,
+        pocketed: ball.pocketed || down.has(ball.id),
+      })),
+      pocketed,
+      pocketOf: Object.fromEntries(pocketed.filter((id) => id !== 0).map((id) => [id, 0])),
+      firstContact,
+      railAfterContact: true,
+      breakRails: 4,
+      cueScratch,
+      frames: [],
+    };
+  };
+
+  it("gives the breaker solids when the first ball down is a solid", () => {
+    const state = freshTable(new Uint8Array(32).fill(3));
+    const applied = applyShot(state, rackSim(state, [1], 1));
+    expect(applied.event.foul).toBe(false);
+    expect(applied.state.open).toBe(false);
+    expect(applied.state.groupA).toBe("solids");
+    expect(seatGroup(applied.state, "A")).toBe("solids");
+    expect(seatGroup(applied.state, "B")).toBe("stripes");
+    expect(applied.state.turn).toBe("A");
+    expect(applied.event.continue).toBe(true);
+  });
+
+  it("keeps the first ball when the break pockets both groups", () => {
+    const state = freshTable(new Uint8Array(32).fill(4));
+    const applied = applyShot(state, rackSim(state, [11, 1], 11));
+    expect(applied.state.groupA).toBe("stripes");
+    expect(seatGroup(applied.state, "A")).toBe("stripes");
+    expect(seatGroup(applied.state, "B")).toBe("solids");
+    expect(applied.state.turn).toBe("A");
+  });
+
+  it("gives seat B solids when they pocket the first solid", () => {
+    const state = freshTable(new Uint8Array(32).fill(5));
+    state.turn = "B";
+    state.breakShot = false;
+    state.ballInHand = false;
+    const applied = applyShot(state, rackSim(state, [3], 3));
+    expect(applied.state.open).toBe(false);
+    expect(applied.state.groupA).toBe("stripes");
+    expect(seatGroup(applied.state, "B")).toBe("solids");
+    expect(applied.state.turn).toBe("B");
+  });
+
+  it("does not assign a group when the break scratches", () => {
+    const state = freshTable(new Uint8Array(32).fill(6));
+    const applied = applyShot(state, rackSim(state, [1, 0], 1, true));
+    expect(applied.event.foul).toBe(true);
+    expect(applied.state.open).toBe(true);
+    expect(applied.state.groupA).toBeNull();
+    expect(applied.state.turn).toBe("B");
+    expect(applied.state.ballInHand).toBe(true);
+  });
+
   it("assigns the first legally pocketed group and keeps the turn", () => {
     const state = freshTable(new Uint8Array(32).fill(3));
     state.breakShot = false;

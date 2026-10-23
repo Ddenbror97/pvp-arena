@@ -1,18 +1,21 @@
 /**
- * Integer micrometre pool physics. A new rack stores pool-phys-v3.
- * pool-phys-v1 and pool-phys-v2 stay so a match already stamped with them
- * replays under the drag it started with.
+ * Integer micrometre pool physics. A new rack stores pool-phys-v4.
+ * Older ids stay so a match already stamped with them replays under the
+ * launch and drag it started with.
  *
  * Table: 2.54 m by 1.27 m. Ball diameter 57.15 mm. One tick is 1/240 s.
- * v1 and v2 stay under half a radius per tick. A v3 full smash is 28_000,
- * still under one radius, so two balls closing cannot step through each other.
+ * v1 and v2 stay under half a radius per tick. A v3 full smash is 28_000.
+ * v4 is that smash at 60% speed, still under one radius, so two balls
+ * closing cannot step through each other.
  */
 
-/** v1 dies before the rack. v2 reaches it. v3 keeps that path under 60% power and lets a full smash run. */
+/** v1 dies before the rack. v2 reaches it. v3 adds break speed. v4 keeps that path at 60% speed. */
 export const PHYSICS_V1 = "pool-phys-v1";
 export const PHYSICS_V2 = "pool-phys-v2";
 export const PHYSICS_V3 = "pool-phys-v3";
-export const PHYSICS_VERSION = PHYSICS_V3;
+export const PHYSICS_V4 = "pool-phys-v4";
+export const PHYSICS_VERSION = PHYSICS_V4;
+export type PhysicsId = typeof PHYSICS_V1 | typeof PHYSICS_V2 | typeof PHYSICS_V3 | typeof PHYSICS_V4;
 
 export const TABLE_W = 2_540_000;
 export const TABLE_H = 1_270_000;
@@ -222,20 +225,25 @@ function bounce(b: Ball, rails: Set<number>, hitObject: boolean, railAfter: { on
  */
 export function rollDrop(speed: number, physics = PHYSICS_VERSION): number {
   if (physics === PHYSICS_V1) return 32 + Math.trunc(speed / 160);
-  if (physics === PHYSICS_V3) return 2 + Math.trunc(speed / 1_500);
+  if (physics === PHYSICS_V3 || physics === PHYSICS_V4) return 2 + Math.trunc(speed / 1_500);
   return 4 + Math.trunc(speed / 900);
 }
 
 /**
  * Micrometres per tick. v1 and v2 stay linear up to 14_000.
- * v3 matches them through 60% power, then adds break speed. Full power is 28_000,
- * under one ball radius per tick so one ball cannot step through another.
+ * v3 matches them through 60% power, then adds break speed. Full power is 28_000.
+ * v4 is 60% of that launch, so a full smash is 16_800. Cloth drag stays the v3
+ * curve, so the balls still travel, just slower.
  */
 export function launchSpeed(power: number, physics = PHYSICS_VERSION): number {
   const clamped = Math.max(1, Math.min(10_000, power | 0));
   const base = Math.trunc((clamped * MAX_SPEED) / 10_000);
-  if (physics !== PHYSICS_V3 || clamped <= 6_000) return base;
-  return base + Math.trunc(((clamped - 6_000) * 14_000) / 4_000);
+  const boosted =
+    (physics === PHYSICS_V3 || physics === PHYSICS_V4) && clamped > 6_000
+      ? base + Math.trunc(((clamped - 6_000) * 14_000) / 4_000)
+      : base;
+  if (physics !== PHYSICS_V4) return boosted;
+  return Math.max(1, Math.trunc((boosted * 60) / 100));
 }
 
 function damp(b: Ball, physics: string) {
