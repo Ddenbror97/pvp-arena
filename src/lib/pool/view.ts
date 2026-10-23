@@ -4,7 +4,7 @@ import { BALL_R, TABLE_H, TABLE_W } from "@/lib/pool/physics";
 export const FAR = 1;
 
 /** Rail thickness as a fraction of the playing surface's short side. */
-export const RAIL_OF_SHORT = 0.086;
+export const RAIL_OF_SHORT = 0.128;
 
 export type View = {
   /** Cloth points. tableX is clamped to the playing surface. */
