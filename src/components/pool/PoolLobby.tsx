@@ -2,13 +2,29 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, CircleDollarSign, Crown, Percent, RefreshCw, ShieldCheck, Timer, Trophy } from "lucide-react";
+import {
+  ArrowRight,
+  CircleDollarSign,
+  Crown,
+  Percent,
+  RefreshCw,
+  ShieldCheck,
+  Timer,
+  Trophy,
+} from "lucide-react";
 import { toast } from "sonner";
 import hero from "@/assets/pool/hero.webp";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { useAuth } from "@/lib/auth";
-import { STAKES, fetchMyPool, money, poolMessage, usePoolLobby, type OpenTable } from "@/lib/pool/api";
-import { FEE_BPS, formatCents, parseStakeDollars, stakeDraft } from "@/lib/pool/copy";
+import {
+  STAKES,
+  fetchMyPool,
+  money,
+  poolMessage,
+  usePoolLobby,
+  type OpenTable,
+} from "@/lib/pool/api";
+import { formatCents, parseStakeDollars, stakeDraft } from "@/lib/pool/copy";
 import { enterPool } from "@/lib/pool/pool.functions";
 
 function timeLeft(iso: string, now: number): string {
@@ -20,12 +36,6 @@ function timeLeft(iso: string, now: number): string {
   const seconds = total % 60;
   if (hours > 0) return `${hours}h ${minutes.toString().padStart(2, "0")}m`;
   return minutes > 0 ? `${minutes}m ${seconds.toString().padStart(2, "0")}s` : `${seconds}s`;
-}
-
-function quoted(stakeCents: number, feeBps: number) {
-  const pot = stakeCents * 2;
-  const fee = Math.floor((pot * feeBps) / 10_000);
-  return { pot, payout: pot - fee };
 }
 
 function tablePayout(table: OpenTable): number {
@@ -57,8 +67,6 @@ export function PoolLobby() {
   const stakeMin = Math.min(...stakes);
   const stakeMax = Math.max(...stakes);
   const stake = parseStakeDollars(draft, stakeMin, stakeMax);
-  const feeBps = lobby.data?.fee_bps ?? FEE_BPS;
-  const quote = stake == null ? null : quoted(stake, feeBps);
   const openTables = [...(lobby.data?.open ?? [])].sort((a, b) => {
     const rank = (table: OpenTable) => (stake != null && table.stake === stake ? 0 : 1);
     return rank(a) - rank(b) || a.id - b.id;
@@ -204,22 +212,6 @@ export function PoolLobby() {
           </div>
         </div>
         <div className="pool-quote">
-          <p className="pool-quote-pot">
-            <span className="pool-quote-k">Total pot</span>
-            <strong>
-              <CircleDollarSign aria-hidden />
-              {quote ? formatCents(quote.pot) : "—"}
-            </strong>
-          </p>
-          <p className="pool-quote-win">
-            <span className="pool-quote-k">
-              Winner receives <span>({feeBps / 100}% fee)</span>
-            </span>
-            <strong>
-              <Trophy aria-hidden />
-              {quote ? formatCents(quote.payout) : "—"}
-            </strong>
-          </p>
           <button
             type="button"
             className="pool-play pool-create"
@@ -337,7 +329,9 @@ export function PoolLobby() {
                           onClick={() => void enter({ matchId: table.id })}
                         >
                           {busy === table.id ? "Joining…" : "Join table"}
-                          {busy === table.id ? null : <ArrowRight aria-hidden className="h-3.5 w-3.5" />}
+                          {busy === table.id ? null : (
+                            <ArrowRight aria-hidden className="h-3.5 w-3.5" />
+                          )}
                         </button>
                       )}
                     </div>

@@ -2552,22 +2552,9 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 }
 .pool-stake:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .pool-quote {
-  display: flex; align-items: center; gap: 0.85rem; padding-left: 0.85rem;
+  display: flex; align-items: center; padding-left: 0.85rem;
   border-left: 1px solid rgb(168 85 247 / 32%);
 }
-.pool-quote p { margin: 0; }
-.pool-quote-k {
-  display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgb(210 196 245 / 72%); white-space: nowrap;
-}
-.pool-quote-k span { color: rgb(210 196 245 / 52%); }
-.pool-quote strong {
-  display: flex; align-items: center; gap: 0.28rem; margin-top: 0.08rem;
-  font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums;
-}
-.pool-quote svg { width: 0.95rem; height: 0.95rem; flex: none; }
-.pool-quote-pot svg { color: #c084fc; }
-.pool-quote-win strong, .pool-quote-win svg { color: #3dff8a; }
 .pool-create { align-self: center; height: 2.5rem; margin-top: 0; padding: 0 1rem; border-radius: 0.7rem; font-size: 0.8rem; flex: none; }
 .pool-below { display: grid; gap: 0.75rem; padding: 0 0 1rem; }
 .pool-side {
@@ -2653,8 +2640,7 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
   }
 }
 @media (max-width: 560px) {
-  .pool-quote { display: grid; grid-template-columns: 1fr 1fr; }
-  .pool-create { grid-column: 1 / -1; justify-content: center; }
+  .pool-create { width: 100%; justify-content: center; }
   .pool-side li.pool-open { grid-template-areas: "face who who" "stats stats stats" "action action action"; }
   .pool-join { width: 100%; }
   .pool-side-head { flex-wrap: wrap; }

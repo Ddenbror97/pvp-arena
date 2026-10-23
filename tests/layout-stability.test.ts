@@ -95,9 +95,18 @@ describe("hard-refresh layout reserves", () => {
 
   it("warms both 8-ball pages the same way as the other games", () => {
     const router = readFileSync(new URL("../src/router.tsx", import.meta.url), "utf8");
-    const header = readFileSync(new URL("../src/components/SiteHeader.tsx", import.meta.url), "utf8");
-    const lobbyRoute = readFileSync(new URL("../src/routes/8-ball-pool.tsx", import.meta.url), "utf8");
-    const matchRoute = readFileSync(new URL("../src/routes/pool.$matchId.tsx", import.meta.url), "utf8");
+    const header = readFileSync(
+      new URL("../src/components/SiteHeader.tsx", import.meta.url),
+      "utf8",
+    );
+    const lobbyRoute = readFileSync(
+      new URL("../src/routes/8-ball-pool.tsx", import.meta.url),
+      "utf8",
+    );
+    const matchRoute = readFileSync(
+      new URL("../src/routes/pool.$matchId.tsx", import.meta.url),
+      "utf8",
+    );
     const lobby = readFileSync(
       new URL("../src/components/pool/PoolLobby.tsx", import.meta.url),
       "utf8",
@@ -113,6 +122,9 @@ describe("hard-refresh layout reserves", () => {
     expect(lobby).toContain("loadRouteChunk");
     expect(lobby).toContain("matchId: table.id");
     expect(lobby).toContain("Open tables");
+    expect(lobby).toContain("Create game");
+    expect(lobby).not.toContain("Total pot");
+    expect(lobby).not.toContain("Winner receives");
     expect(matchRoute).not.toContain("room.webp");
     expect(lobbyRoute).toContain("hero.webp");
   });
