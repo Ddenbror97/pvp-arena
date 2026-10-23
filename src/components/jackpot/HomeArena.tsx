@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import room from "@/assets/jackpot/room.webp";
 import type { JackpotPaint } from "@/lib/first-paint";
 import { JackpotStage } from "./JackpotStage";
 import { RecentGames } from "./RecentGames";
@@ -10,9 +11,21 @@ export default function HomeArena({ chat }: { chat: JackpotPaint["chat"] }) {
   }, []);
 
   return (
-    <>
-      <JackpotStage chat={chat} />
-      <RecentGames />
-    </>
+    <div className="jp-home">
+      <img
+        className="jp-room"
+        src={room}
+        alt=""
+        width={1280}
+        height={720}
+        decoding="async"
+        fetchPriority="high"
+      />
+      <div className="jp-room-shade" aria-hidden />
+      <div className="jp-home-body">
+        <JackpotStage chat={chat} />
+        <RecentGames />
+      </div>
+    </div>
   );
 }

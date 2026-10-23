@@ -107,7 +107,7 @@ export function EntryPanel({ game, myTotal, closed }: Props) {
 
   const needsSetup = !signedOut && !profile && needsProfile;
   return (
-    <SlipCard title={myTotal > 0 ? "Add to your entry" : "Join the pot"}>
+    <SlipCard className="jp-panel" title={myTotal > 0 ? "Add to your entry" : "Join the pot"}>
       <SlipBalance
         cents={signedOut ? null : balance}
         loading={!signedOut && (!userId || wallet.isLoading)}

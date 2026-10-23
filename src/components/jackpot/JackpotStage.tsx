@@ -152,11 +152,11 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
     <div className="grid gap-4 lg:h-[34rem] lg:grid-cols-[260px_minmax(0,1fr)_280px] lg:items-stretch xl:grid-cols-[280px_minmax(0,1fr)_300px]">
       {/* Chat. Same 34rem window as the coinflip and roulette side chats. */}
       <section className="order-4 h-72 sm:h-80 lg:order-1 lg:h-full lg:min-h-0">
-        <GameChat gameType="jackpot" initial={chat} className="h-full" />
+        <GameChat gameType="jackpot" initial={chat} className="h-full jp-panel" />
       </section>
 
       {/* Wheel */}
-      <section className="order-1 flex flex-col items-center justify-center rounded-xl border border-border bg-card px-3 py-3 lg:order-2 lg:h-full lg:min-h-0">
+      <section className="jp-wheel-well order-1 flex flex-col items-center justify-center rounded-xl border px-3 py-3 lg:order-2 lg:h-full lg:min-h-0">
         <JackpotWheel
           players={players}
           spin={spin}
@@ -244,7 +244,7 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
       {/* Entry */}
       <section className="order-2 flex min-h-0 flex-col gap-4 lg:order-3 lg:h-full lg:overflow-hidden">
         <EntryPanel game={game} myTotal={my?.total_amount ?? 0} closed={closed} />
-        <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-card">
+        <section className="jp-panel flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border">
           <header className="flex items-center justify-between border-b border-border px-3 py-2">
             <h2 className="font-display text-xs uppercase tracking-widest">Players</h2>
             <span className="tabular text-xs text-muted-foreground">

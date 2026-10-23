@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { arenaLogo } from "@/assets/media";
+import room from "@/assets/jackpot/room.webp";
 import HomeArena from "@/components/jackpot/HomeArena";
 import { GameFacts } from "@/components/seo/GameFacts";
 import { indexableHead } from "@/lib/seo/indexable-head";
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/")({
         "Play crypto Jackpot with real players. Join the pot, compete for the prize and verify every round with PVPspinArena's provably fair system.",
       site: true,
       extraLinks: [
+        { rel: "preload", as: "image", href: room, type: "image/webp", fetchPriority: "high" },
         { rel: "preload", as: "image", href: arenaLogo, type: "image/webp", fetchPriority: "high" },
         ...jackpotPlayerLinks(loaderData),
       ],
