@@ -95,7 +95,7 @@ If the browser match itself will not load, the reason may be a filter, a browser
     {
       id: "adults-filters-and-the-stake",
       title: "Adults, filters, and the stake",
-      body: `An adult on a network that allows the site can play. The shot clock is 30 seconds. Three timeouts forfeit that seat. An explicit forfeit gives the match to the other player. Call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches, and that scratch loses. The table is open until a legal pocket assigns solids or stripes. A foul is ball in hand anywhere. The break is from the kitchen. If nobody joins within 24 hours, the stake comes back and no fee is charged.
+      body: `An adult on a network that allows the site can play. The shot clock is 30 seconds. Three timeouts forfeit that seat. Leaving the live table keeps 10% of that player's stake with the site and returns the rest. The other player gets their stake back and the table closes. Call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches, and that scratch loses. The table is open until a legal pocket assigns solids or stripes. A foul is ball in hand anywhere. The break is from the kitchen. If nobody joins within 24 hours, the stake comes back and no fee is charged.
 
 WPA rules effective 21 October 2026 are the contrast: call-shot, and a legal 8 on the break is spotted or rebroken. This browser table is not that book. The rack hash is still published before the balls show, the seed only shuffles coloured balls, and the 8 stays in the centre. New matches use pool-phys-v2.
 

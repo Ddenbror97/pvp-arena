@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { matchNotice, parseStakeDollars, spinSentence, stakeDraft, stakeQuote, winSentence } from "../src/lib/pool/copy";
+import { leaveTake, matchNotice, parseStakeDollars, spinSentence, stakeDraft, stakeQuote, winSentence } from "../src/lib/pool/copy";
 
 const STAKES = [100, 200, 500, 1000, 2500, 5000];
 
@@ -34,6 +34,17 @@ describe("stake quote", () => {
       expect(quote.fee).toBe(Math.floor((quote.pot * 500) / 10_000));
     }
     expect(stakeQuote(500)).toEqual({ stake: 500, pot: 1000, fee: 50, payout: 950 });
+  });
+
+  it("keeps 10% of the leaver's stake and returns the rest", () => {
+    expect(leaveTake(100)).toEqual({ fee: 10, back: 90, opponent: 100 });
+    expect(leaveTake(101)).toEqual({ fee: 10, back: 91, opponent: 101 });
+    expect(leaveTake(5000)).toEqual({ fee: 500, back: 4500, opponent: 5000 });
+    for (const stake of [100, 101, 250, 500, 1000, 2500, 3333, 5000]) {
+      const split = leaveTake(stake);
+      expect(split.fee + split.back).toBe(stake);
+      expect(split.fee + split.back + split.opponent).toBe(stake * 2);
+    }
   });
 
   it("reads a typed dollar stake inside $1 to $50", () => {
@@ -74,6 +85,15 @@ describe("match notice", () => {
     expect(matchNotice({ ...base, status: "CANCELLED" })).toBe(
       "Match cancelled. Both stakes were refunded.",
     );
+    expect(
+      matchNotice({ ...base, status: "CANCELLED", cancelReason: "PLAYER_LEFT", youLeft: true, stakeCents: 500 }),
+    ).toBe("You left this table. $0.50 stayed with the site. $4.50 is back in your balance.");
+    expect(
+      matchNotice({ ...base, status: "CANCELLED", cancelReason: "PLAYER_LEFT", stakeCents: 500 }),
+    ).toBe("The other player left. Your $5.00 is back. This table is closed.");
+    expect(
+      matchNotice({ ...base, status: "CANCELLED", cancelReason: "PLAYER_LEFT", seat: null, stakeCents: 500 }),
+    ).toBe("A player left. This table is closed.");
     expect(matchNotice({ ...base, fouled: true, ballInHand: true })).toBe(
       "Foul. Ball in hand — place the cue ball.",
     );

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { CircleHelp, Crown, MessageSquare, Settings, Volume2, VolumeX } from "lucide-react";
@@ -8,7 +8,7 @@ import { arenaLogo } from "@/assets/media";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import {
-  poolForfeit,
+  poolLeave,
   poolMessage,
   poolNudge,
   poolTouch,
@@ -42,6 +42,7 @@ import {
 import { ballSound, cueSound, cushionSound, pocketSound } from "@/lib/pool/sfx";
 import { bytesFromHex, replayMatch, stepsFromRecord } from "@/lib/pool/verify";
 import {
+  leaveTake,
   matchNotice,
   POCKET_LABELS,
   POOL_RULES,
@@ -104,6 +105,7 @@ function useCountdown(deadline: string | null, serverNow: string | undefined) {
 
 export function PoolMatch({ matchId }: { matchId: number }) {
   const { userId } = useAuth();
+  const navigate = useNavigate();
   const qc = useQueryClient();
   const query = usePoolState(matchId);
   const view = query.data;
@@ -117,7 +119,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const [place, setPlace] = useState<{ x: number; y: number } | null>(null);
   const [called, setCalled] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
-  const [confirmForfeit, setConfirmForfeit] = useState(false);
+  const [confirmLeave, setConfirmLeave] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const [sheet, setSheet] = useState(false);
   const [frames, setFrames] = useState<Ball[][] | null>(null);
   const [stroke, setStroke] = useState<{
@@ -533,7 +536,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   ]);
 
   useEffect(() => {
-    if (!mine) return;
+    if (!mine || confirmLeave || leaving) return;
     const onKey = (event: KeyboardEvent) => {
       const tag = (event.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
@@ -557,7 +560,16 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [mine, takeShot]);
+  }, [confirmLeave, leaving, mine, takeShot]);
+
+  useEffect(() => {
+    if (!confirmLeave) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !leaving) setConfirmLeave(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [confirmLeave, leaving]);
 
   const checkReplay = async () => {
     if (!view?.server_seed || !view.state) return;
@@ -622,7 +634,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         </div>
         <div className="pool-tools">
           <Link to="/8-ball-pool" className="pool-leave">
-            Leave game
+            Back to lobby
           </Link>
           <span className="pool-gear" aria-hidden>
             <Settings className="h-4 w-4" />
@@ -691,6 +703,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     payout: dollars(youWon ? pays : (view.payout_amount ?? pays)),
     winReason: view.win_reason ?? state?.reason ?? null,
     cancelReason: view.cancel_reason,
+    youLeft: userId != null && view.left_by === userId,
+    stakeCents: view.stake,
     fouled,
     ballInHand: !!state?.ballInHand,
     kitchenOnly: !!state?.kitchenOnly,
@@ -724,14 +738,37 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     !busy &&
     view.status === "PLAYING" &&
     !rulesOpen &&
-    !confirmForfeit;
+    !confirmLeave;
   const closeTutorial = () => {
     dismissPoolTutorial();
     setTutorialStep(null);
   };
 
   const leave = () => {
-    if (seat && view.status === "PLAYING") setConfirmForfeit(true);
+    if (seat && view.status === "PLAYING" && !leaving) setConfirmLeave(true);
+  };
+  const closed = view.status === "CANCELLED" && view.cancel_reason === "PLAYER_LEFT";
+  const youLeft = userId != null && view.left_by === userId;
+  const split = leaveTake(view.stake);
+  const otherName = seat === "B" ? names.A : names.B;
+  const confirmLeaveNow = async () => {
+    if (leaving) return;
+    setLeaving(true);
+    const { data, error } = await poolLeave(view.id);
+    if (error) {
+      setLeaving(false);
+      const code = error.message.match(/[A-Z][A-Z0-9_]{2,}/)?.[0];
+      toast.error(poolMessage(code));
+      return;
+    }
+    const left = data != null && typeof data === "object" && (data as { left?: boolean }).left === true;
+    await qc.invalidateQueries({ queryKey: ["pool-match", matchId] });
+    if (left) {
+      await navigate({ to: "/8-ball-pool" });
+      return;
+    }
+    setLeaving(false);
+    setConfirmLeave(false);
   };
 
   return (
@@ -770,11 +807,11 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       <div className="pool-tools">
         {seat && view.status === "PLAYING" ? (
           <button type="button" className="pool-leave" onClick={leave}>
-            Leave game
+            Leave table
           </button>
         ) : (
           <Link to="/8-ball-pool" className="pool-leave">
-            {view.status === "WAITING" ? "Back to lobby" : "Leave game"}
+            Back to lobby
           </Link>
         )}
         <button
@@ -832,7 +869,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         </div>
       </div>
 
-      {banner && view.status !== "COMPLETED" ? (
+      {banner && view.status !== "COMPLETED" && !closed ? (
         <p className="pool-banner" role="status" aria-live="polite">
           {banner}
         </p>
@@ -947,22 +984,66 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         </div>
       ) : null}
 
-      {confirmForfeit ? (
-        <div className="pool-confirm">
-          <p>Forfeit gives the match and the payout to your opponent.</p>
-          <button
-            type="button"
-            onClick={() => {
-              void poolForfeit(view.id).then(() => {
-                void qc.invalidateQueries({ queryKey: ["pool-match", matchId] });
-              });
-            }}
+      {confirmLeave && !closed ? (
+        <div
+          className="pool-confirm-back"
+          role="presentation"
+          onClick={() => {
+            if (!leaving) setConfirmLeave(false);
+          }}
+        >
+          <div
+            className="pool-confirm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pool-leave-title"
+            onClick={(event) => event.stopPropagation()}
           >
-            Confirm forfeit
-          </button>
-          <button type="button" onClick={() => setConfirmForfeit(false)}>
-            Keep playing
-          </button>
+            <strong id="pool-leave-title">Leave this table?</strong>
+            <p>
+              You get {dollars(split.back)} back. The site keeps {dollars(split.fee)}, which is 10% of
+              your stake. {otherName} gets their {dollars(view.stake)} back, and this table closes.
+            </p>
+            <div className="pool-confirm-actions">
+              <button
+                type="button"
+                className="pool-leave-stay"
+                disabled={leaving}
+                autoFocus
+                onClick={() => setConfirmLeave(false)}
+              >
+                Stay
+              </button>
+              <button
+                type="button"
+                className="pool-leave-go"
+                disabled={leaving}
+                onClick={() => {
+                  void confirmLeaveNow();
+                }}
+              >
+                {leaving ? "Leaving…" : "Leave table"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {closed ? (
+        <div className="pool-closed" role="status">
+          <div className="pool-closed-card">
+            <strong>
+              {youLeft ? "You left this table" : seat ? `${otherName} left` : "This table is closed"}
+            </strong>
+            <p>
+              {youLeft
+                ? `${dollars(split.fee)} stayed with the site. ${dollars(split.back)} is back in your balance.`
+                : seat
+                  ? `Your ${dollars(view.stake)} is back. This table is closed.`
+                  : "A player left, and the table is closed."}
+            </p>
+            <Link to="/8-ball-pool">Back to the lobby</Link>
+          </div>
         </div>
       ) : null}
     </Shell>

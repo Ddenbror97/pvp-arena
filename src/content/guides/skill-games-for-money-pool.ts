@@ -97,7 +97,7 @@ This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Stri
       title: "A rule book is not a statute",
       body: `WPA rules effective 21 October 2026 play 8-ball as call-shot. You call ball and pocket, and a legal 8 on the break is spotted or rebroken rather than scored as a win. This table calls a pocket only for the 8. Other balls may fall in any pocket. A legal 8 on the break wins unless the cue ball scratches, and that scratch loses. Early 8 loses. Wrong pocket loses. A scratch while pocketing the 8 loses. The break starts in the kitchen. The shot clock is 30 seconds, and the third timeout forfeits the seat.
 
-Those sentences are house rules. They are not a statute about skill, and they are not the WPA book with a fee glued on. The citation exists so a league player does not stake under the wrong expectations. An explicit forfeit still gives the match to the other player. The law where you live decides whether the stake was allowed.
+Those sentences are house rules. They are not a statute about skill, and they are not the WPA book with a fee glued on. The citation exists so a league player does not stake under the wrong expectations. Leaving the live table is not a win for the other player. The site keeps 10% of the leaver's stake, the rest is returned, and the opponent's stake is returned in full. The law where you live decides whether the stake was allowed.
 
 The APA team manual bans gambling at APA functions: wagers, side bets, side pots, selling teams, auctions, Calcuttas. League rule, not a statute, and not a label for this website.`,
     },

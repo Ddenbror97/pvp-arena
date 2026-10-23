@@ -33,6 +33,12 @@ export function stakeQuote(stakeCents: number) {
   return { stake: stakeCents, pot, fee, payout: pot - fee };
 }
 
+/** Leave-table split. 10% of the leaver's stake stays with the site. Integer cents. */
+export function leaveTake(stakeCents: number) {
+  const fee = Math.trunc(stakeCents / 10);
+  return { fee, back: stakeCents - fee, opponent: stakeCents };
+}
+
 const WIN_REASON: Record<string, string> = {
   EIGHT_BALL: "The 8-ball fell in the called pocket.",
   EIGHT_ON_BREAK: "The 8-ball fell on the break.",
@@ -80,7 +86,7 @@ export const POOL_RULES: readonly { title: string; body: string }[] = [
   },
   {
     title: "Waiting",
-    body: "A table with no opponent stays open for 24 hours, then the stake is refunded. There is no cancel. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays their shots. Leaving a live match forfeits, and your opponent is paid.",
+    body: "A table with no opponent stays open for 24 hours, then the stake is refunded. There is no cancel. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays their shots. Leaving a live table keeps 10% of your stake with the site and returns the rest. Your opponent gets their stake back, and the table closes. Three timeouts still forfeit the match.",
   },
   {
     title: "Disconnect",
@@ -137,6 +143,10 @@ export type MatchNoticeInput = {
   reconnecting: boolean;
   seat: "A" | "B" | null;
   cancelReason?: string | null;
+  /** The signed-in player is the one who left. */
+  youLeft?: boolean;
+  /** Stake in cents. Used when a player leaves a live table. */
+  stakeCents?: number;
   /** Milliseconds until the rack opens. Used while the match is STARTING. */
   opensIn?: number | null;
   standIn?: "mine" | "theirs" | null;
@@ -158,9 +168,21 @@ export function matchNotice(input: MatchNoticeInput): string | null {
     return `${who}. The rack opens in ${secs} seconds.`;
   }
   if (input.status === "CANCELLED") {
-    return input.cancelReason === "WAITING_EXPIRED"
-      ? "No opponent joined in 24 hours. Your stake was refunded."
-      : "Match cancelled. Both stakes were refunded.";
+    if (input.cancelReason === "WAITING_EXPIRED") {
+      return "No opponent joined in 24 hours. Your stake was refunded.";
+    }
+    if (input.cancelReason === "PLAYER_LEFT") {
+      const stake = input.stakeCents ?? 0;
+      const split = leaveTake(stake);
+      if (input.youLeft) {
+        return `You left this table. ${formatCents(split.fee)} stayed with the site. ${formatCents(split.back)} is back in your balance.`;
+      }
+      if (input.seat) {
+        return `The other player left. Your ${formatCents(stake)} is back. This table is closed.`;
+      }
+      return "A player left. This table is closed.";
+    }
+    return "Match cancelled. Both stakes were refunded.";
   }
   if (input.status === "COMPLETED") {
     const why = winSentence(input.winReason);

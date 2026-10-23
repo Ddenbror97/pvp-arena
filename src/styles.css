@@ -3021,7 +3021,7 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-felt-frame { position: absolute; inset: 0; overflow: visible; }
 .pool-canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 .pool-cue { position: absolute; z-index: 2; pointer-events: none; }
-.pool-vs, .pool-tools, .pool-banner, .pool-sheet, .pool-confirm, .pool-pockets { position: absolute; z-index: 3; }
+.pool-vs, .pool-tools, .pool-banner, .pool-sheet, .pool-pockets { position: absolute; z-index: 3; }
 .pool-vs {
   top: 0.4rem; left: 50%; transform: translateX(-50%);
   display: flex; align-items: center; gap: 0.85rem;
@@ -3121,11 +3121,11 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 }
 .pool-pockets button { min-height: 2.75rem; padding: 0 0.55rem; border-radius: 999px; border: 1px solid rgb(255 255 255 / 16%); background: rgb(8 6 16 / 80%); color: #fff; font-size: 0.72rem; }
 .pool-pockets button.is-on { border-color: #e9d5ff; color: #e9d5ff; }
-.pool-sheet, .pool-confirm {
+.pool-sheet {
   right: 0.85rem; bottom: 4.4rem; width: min(18rem, calc(100% - 1.7rem));
   padding: 0.8rem; border-radius: 0.9rem; background: rgb(10 8 20 / 92%); border: 1px solid rgb(190 150 255 / 28%);
 }
-.pool-confirm p, .pool-sheet p { display: block; font-size: 0.75rem; color: #ddd4f8; }
+.pool-sheet p { display: block; font-size: 0.75rem; color: #ddd4f8; }
 .pool-spin {
   position: relative; width: 7.4rem; height: 7.4rem; margin: 0.15rem auto 0.2rem; border-radius: 50%; touch-action: none;
   background: radial-gradient(circle at 34% 30%, #fff, #efeae0 46%, #c9c2b3 78%, #9a9386);
@@ -3138,11 +3138,32 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-spin-read { margin: 0.15rem 0 0; text-align: center; }
 .pool-sheet p { margin: 0.45rem 0 0; }
 .pool-sheet .pool-seed { word-break: break-all; }
-.pool-sheet button, .pool-confirm button { margin-top: 0.45rem; margin-right: 0.4rem; color: #e9d5ff; }
+.pool-sheet button { margin-top: 0.45rem; margin-right: 0.4rem; color: #e9d5ff; }
+.pool-confirm-back, .pool-closed {
+  position: absolute; inset: 0; z-index: 8; display: grid; place-items: center; padding: 1rem;
+  background: rgb(5 4 12 / 62%);
+}
+.pool-confirm, .pool-closed-card {
+  width: min(26rem, calc(100% - 0.5rem)); padding: 1.15rem 1.2rem 1.05rem; border-radius: 1rem;
+  background: rgb(16 12 28 / 96%); border: 1px solid rgb(190 150 255 / 40%);
+  box-shadow: 0 18px 50px rgb(0 0 0 / 45%); text-align: left;
+}
+.pool-confirm strong, .pool-closed-card strong { display: block; font-size: 1.15rem; color: #fff; }
+.pool-confirm p, .pool-closed-card p { margin: 0.55rem 0 0; font-size: 0.92rem; line-height: 1.45; color: #ddd4f8; }
+.pool-confirm-actions { display: flex; gap: 0.55rem; margin-top: 1rem; }
+.pool-confirm-actions button, .pool-closed-card a {
+  flex: 1; display: inline-flex; align-items: center; justify-content: center;
+  min-height: 2.75rem; margin: 0; border-radius: 999px; font-size: 0.92rem; font-weight: 700;
+}
+.pool-leave-stay { border: 1px solid rgb(255 255 255 / 22%); background: transparent; color: #fff; }
+.pool-leave-go { border: 0; background: #c026d3; color: #fff; }
+.pool-leave-go:disabled, .pool-leave-stay:disabled { opacity: 0.65; }
+.pool-closed-card a { width: 100%; margin-top: 1rem; background: #fff; color: #1a1028; text-decoration: none; }
 .pool-missing { position: absolute; inset: 0; display: grid; place-items: center; color: #ddd4f8; }
 .pool-leave:focus-visible, .pool-chat-toggle:focus-visible, .pool-gear:focus-visible,
 .pool-pockets button:focus-visible, .pool-tutorial button:focus-visible, .pool-rules-pop button:focus-visible,
-.pool-result a:focus-visible, .pool-result button:focus-visible, .pool-sheet button:focus-visible {
+.pool-result a:focus-visible, .pool-result button:focus-visible, .pool-sheet button:focus-visible,
+.pool-confirm button:focus-visible, .pool-closed-card a:focus-visible {
   outline: 2px solid #fff; outline-offset: 2px;
 }
 .pool-tutorial, .pool-rules-pop, .pool-result {

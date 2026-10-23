@@ -57,6 +57,7 @@ export type PoolView = {
   version: number;
   server_now: string;
   cancel_reason: string | null;
+  left_by?: string | null;
   creator: PoolPerson;
   opponent: PoolPerson;
   events: PoolEvent[];
@@ -149,7 +150,7 @@ export async function fetchPoolState(id: number): Promise<PoolView> {
   return unwrap<PoolView>(data, error);
 }
 
-export const poolForfeit = (id: number) => db.rpc("pool_forfeit", { p_match: id });
+export const poolLeave = (id: number) => db.rpc("pool_leave", { p_match: id });
 export async function poolTouch(id: number) {
   const first = await db.rpc("pool_touch", { p_match: id });
   if (!first.error) return first;

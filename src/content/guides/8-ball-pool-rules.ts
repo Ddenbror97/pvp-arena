@@ -93,7 +93,7 @@ Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is cre
 
 The fee is 5% of the pot, and the winner is credited 95%. Posted stakes are $1, $2, $5, $10, $25, and $50. This cashier does not offer 9-ball, 10-ball, straight pool, one-pocket, bank, cutthroat, or killer for money. Those games can be read. They cannot be staked here. A player who wants full WPA call shot will not find it in this lobby. A player who wants a called 8, a 30-second clock, and a published 5% fee will find that card on the match.
 
-Each shot has 30 seconds. If the shooter has not been seen for 15 seconds, that shot gets one reconnect window of 45 seconds. Coming back does not start a new 30-second clock, and a second drop on the same shot is a timeout. Three timeouts forfeit the seat. A waiting table with no opponent stays open for 24 hours and then returns the stake. A player cannot cancel it. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays that player's shots. If both players are unseen for 180 seconds before any shot, both stakes return. After a shot has been played, that same absence forfeits the seat whose turn it is.`,
+Each shot has 30 seconds. If the shooter has not been seen for 15 seconds, that shot gets one reconnect window of 45 seconds. Coming back does not start a new 30-second clock, and a second drop on the same shot is a timeout. Three timeouts forfeit the seat. A waiting table with no opponent stays open for 24 hours and then returns the stake. A player cannot cancel it. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays that player's shots. If both players are unseen for 180 seconds before any shot, both stakes return. After a shot has been played, that same absence forfeits the seat whose turn it is. That absence is not the Leave table button. Leave table keeps 10% of the leaver's stake with the site, returns the other 90%, refunds the opponent's stake, and closes the table with no winner.`,
     },
     {
       id: "more",
@@ -102,7 +102,7 @@ Each shot has 30 seconds. If the shooter has not been seen for 15 seconds, that 
 
 A dry break and a foul break are easy to mash together, and the October 2026 book keeps them apart. When nothing falls, four object balls have to reach a rail or the break is illegal. When the 8 falls on a foul break, the incoming player is handed options. When the 8 falls on a legal break, the breaker spots that 8 and plays on, or breaks again. Nobody spots the solids and stripes that also fell on a legal break. If a friend retells the break as "8 ball, I win," ask which card was agreed. The WPA answer and the answer on this site are both printable. They are not the same sentence.
 
-Before a cash rack on this site, read the short card out loud. Pocket call for the 8 only. Break 8 wins unless the cue ball scratches. Early 8 loses. Wrong pocket loses. Scratch on the 8 loses. Ball in hand anywhere after a foul. Thirty seconds, and three timeouts forfeit the seat. Five percent of the pot stays with the site, and 95% is credited to the winner. The stake buttons are $1, $2, $5, $10, $25, and $50. If the argument is about a WPA safety or a called solid, you are in the wrong room for that argument. This lobby will not switch books mid-rack.`,
+Before a cash rack on this site, read the short card out loud. Pocket call for the 8 only. Break 8 wins unless the cue ball scratches. Early 8 loses. Wrong pocket loses. Scratch on the 8 loses. Ball in hand anywhere after a foul. Thirty seconds, and three timeouts forfeit the seat. Five percent of the pot stays with the site, and 95% is credited to the winner. Leaving a live table is separate: 10% of the leaver's stake stays with the site, both players get the rest of their own stakes back, and the table closes. The stake buttons are $1, $2, $5, $10, $25, and $50. If the argument is about a WPA safety or a called solid, you are in the wrong room for that argument. This lobby will not switch books mid-rack.`,
     },
   ],
   faqs: [
@@ -120,7 +120,7 @@ Before a cash rack on this site, read the short card out loud. Pocket call for t
     },
     {
       q: "What does this site do with the 8?",
-      a: "You call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches, and that scratch loses. An early 8 loses. The wrong pocket loses. A scratch while pocketing the 8 loses. A foul is ball in hand anywhere. Three timeouts forfeit.",
+      a: "You call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches, and that scratch loses. An early 8 loses. The wrong pocket loses. A scratch while pocketing the 8 loses. A foul is ball in hand anywhere. Three timeouts forfeit. Leaving a live table is not that forfeit: the site keeps 10% of your stake, returns the other 90%, and refunds your opponent.",
     },
     {
       q: "Which pool games can you stake here?",

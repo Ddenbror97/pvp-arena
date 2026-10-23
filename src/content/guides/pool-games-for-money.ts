@@ -95,7 +95,7 @@ Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is cred
       title: "Promo credit can enter, and it stays bonus",
       body: `Promo credit and partner credit can be staked. Deposited or won money is used first. Bonus a player loses to the other stays bonus, so a promotional balance does not come back as withdrawable cash. If nobody joins within 24 hours, the stake comes back and no fee is charged. After the break, the result stands.
 
-The shot clock is 30 seconds. Three timeouts forfeit the seat that used them. An explicit forfeit gives the match to the other player. Those are ways a pot ends without a made ball. They are written before the stake, so a timeout is not a surprise invoice.
+The shot clock is 30 seconds. Three timeouts forfeit the seat that used them. Leaving the table keeps 10% of the leaver's stake with the site. The rest of that stake, and the other player's full stake, are returned, and the table closes. Those are ways a pot ends without a made ball. They are written before the stake, so a timeout is not a surprise invoice.
 
 Open table lasts until a legal pocket assigns solids or stripes. A foul is ball in hand anywhere, and the break is from the kitchen. Call a pocket only when the ball is the 8. Ordinary balls may fall anywhere. The credit is 95% of the pot in the US-dollar balance when the match settles. That is the speed this page states. It does not state another app's speed.`,
     },

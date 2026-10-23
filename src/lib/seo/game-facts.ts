@@ -202,7 +202,7 @@ export const GAME_FACT_PAGES: Record<string, GameFactPage> = {
       },
       {
         label: "How the winner is chosen",
-        text: "The winner is whoever the published 8-ball rules name after the shots. A legal 8-ball wins. An early 8, the 8 in the wrong pocket, or a scratch on the 8 loses. Three shot-clock timeouts, or leaving a live match, give the match to the other player. The server runs that function. It does not draw a winner.",
+        text: "The winner is whoever the published 8-ball rules name after the shots. A legal 8-ball wins. An early 8, the 8 in the wrong pocket, or a scratch on the 8 loses. Three shot-clock timeouts give the match to the other player. Leaving a live table does not. The site keeps 10% of the leaver's stake, returns the rest, and returns the other player's stake. The table closes. The server runs that function. It does not draw a winner.",
       },
       {
         label: "Fee",
@@ -218,7 +218,7 @@ export const GAME_FACT_PAGES: Record<string, GameFactPage> = {
       },
       {
         label: "If a round is cancelled",
-        text: "If nobody joins within 24 hours, the stake is refunded and no fee is charged. A player cannot cancel a waiting table. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays that player's shots. If both players leave before the break, both stakes are refunded with no fee.",
+        text: "If nobody joins within 24 hours, the stake is refunded and no fee is charged. A player cannot cancel a waiting table. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays that player's shots. If both players leave before the break, both stakes are refunded with no fee. If one player leaves a live table, the site keeps 10% of that stake, returns the rest, and refunds the other player. The table closes.",
       },
       { label: "Who can play", text: AGE },
     ],
