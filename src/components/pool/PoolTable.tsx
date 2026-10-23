@@ -19,12 +19,11 @@ import {
   type BallSprite,
 } from "@/lib/pool/spheres";
 import { buildTable, whenTableArt } from "@/lib/pool/table-paint";
-import { ballRadiusPx, extraCueGutter, fitCueButt, spanPx, viewOf } from "@/lib/pool/view";
+import { ballRadiusPx, spanPx, viewOf } from "@/lib/pool/view";
 import {
   aimStep,
   pointerIntent,
   powerFromPull,
-  PULL_FULL_PX,
   startAim,
   type AimGesture,
 } from "@/lib/pool/aim-gesture";
@@ -108,7 +107,6 @@ function tablePoint(canvas: HTMLCanvasElement, clientX: number, clientY: number)
   const point = viewOf(w, h).unproject(px, py);
   return { x: Math.round(point.x), y: Math.round(point.y) };
 }
-
 
 type Motion = {
   x: number;
@@ -225,7 +223,6 @@ function drawCue(
   angleMilli: number,
   gapBalls: number,
   alpha: number,
-  bounds: { w: number; h: number; margin: number },
 ) {
   const dir = aimDir(angleMilli);
   const gap = BALL_R * gapBalls;
@@ -233,9 +230,7 @@ function drawCue(
   const tip = atDist(gap);
   const tipScale = tip.scale;
   const length = BALL_R * 46;
-  const reach = atDist(gap + length);
-  const butt = fitCueButt(tip, reach, bounds.w, bounds.h, bounds.margin);
-  if (Math.hypot(butt.x - tip.x, butt.y - tip.y) < 8) return;
+  const butt = atDist(gap + length);
   const along = (t: number): Pt => ({
     x: tip.x + (butt.x - tip.x) * t,
     y: tip.y + (butt.y - tip.y) * t,
@@ -250,7 +245,14 @@ function drawCue(
   ctx.save();
   ctx.globalAlpha = alpha;
   ctx.lineJoin = "round";
-  stick(ctx, shift(tip, width * 0.55), shift(butt, width * 0.7), width * 0.7, width * 1.05, "rgba(0,0,0,0.32)");
+  stick(
+    ctx,
+    shift(tip, width * 0.55),
+    shift(butt, width * 0.7),
+    width * 0.7,
+    width * 1.05,
+    "rgba(0,0,0,0.32)",
+  );
 
   const shaft = ctx.createLinearGradient(tip.x, tip.y, along(0.62).x, along(0.62).y);
   shaft.addColorStop(0, "#f3d7a4");
@@ -538,25 +540,7 @@ export function PoolTable({
     const syncCue = () => {
       const cue = cueRef.current;
       const screen = canvas.closest(".pool-screen");
-      const felt = canvas.closest(".pool-felt");
       if (!cue || !(screen instanceof HTMLElement)) return;
-      if (felt instanceof HTMLElement) {
-        const screenBox = screen.getBoundingClientRect();
-        const feltBox = felt.getBoundingClientRect();
-        const applied = Number(screen.dataset["cueGutter"] ?? "0");
-        const gutter = Number.isFinite(applied) ? applied : 0;
-        const next = extraCueGutter({
-          feltW: Math.round(feltBox.width),
-          feltH: Math.round(feltBox.height + gutter),
-          baseBottom: Math.round(screenBox.bottom - feltBox.bottom - gutter),
-          room: PULL_FULL_PX + 72,
-          minFeltH: 200,
-        });
-        if (Math.abs(next - gutter) > 1) {
-          screen.dataset["cueGutter"] = String(next);
-          screen.style.setProperty("--pool-cue-gutter", `${next}px`);
-        }
-      }
       const screenBox = screen.getBoundingClientRect();
       const tableBox = canvas.getBoundingClientRect();
       const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -572,7 +556,12 @@ export function PoolTable({
         cue.width = bitmapW;
         cue.height = bitmapH;
       }
-      cueBox.current = { ox: (tableBox.left - screenBox.left) * dpr, oy: (tableBox.top - screenBox.top) * dpr, w: bitmapW, h: bitmapH };
+      cueBox.current = {
+        ox: (tableBox.left - screenBox.left) * dpr,
+        oy: (tableBox.top - screenBox.top) * dpr,
+        w: bitmapW,
+        h: bitmapH,
+      };
     };
     let frame = 0;
     let stop = false;
@@ -816,31 +805,19 @@ export function PoolTable({
             gap = 1.05;
             alpha = 1 - (t - 0.62) / 0.38;
           }
-          if (cueCtx && cueCanvas) {
-            drawCue(cueCtx, projectCue, innerW, strike, strike.angle, gap, Math.max(0, alpha), {
-              w: cueCanvas.width,
-              h: cueCanvas.height,
-              margin: 8 * dpr,
-            });
+          if (cueCtx) {
+            drawCue(cueCtx, projectCue, innerW, strike, strike.angle, gap, Math.max(0, alpha));
           }
           again = true;
         }
-      } else if (showCue && from && cueCtx && cueCanvas) {
+      } else if (showCue && from && cueCtx) {
         const gap = 1.28 + (power / 10_000) * 4.4;
         const alpha = Math.min(1, (now - cueIn.current) / 140);
         if (alpha < 1) again = true;
-        drawCue(cueCtx, projectCue, innerW, from, angleMilli, gap, alpha, {
-          w: cueCanvas.width,
-          h: cueCanvas.height,
-          margin: 8 * dpr,
-        });
-      } else if (watching && watchFrom && cueCtx && cueCanvas && !replaying) {
+        drawCue(cueCtx, projectCue, innerW, from, angleMilli, gap, alpha);
+      } else if (watching && watchFrom && cueCtx && !replaying) {
         const gap = 1.28 + (watching.power / 10_000) * 4.4;
-        drawCue(cueCtx, projectCue, innerW, watchFrom, watching.angle, gap, 0.42, {
-          w: cueCanvas.width,
-          h: cueCanvas.height,
-          margin: 8 * dpr,
-        });
+        drawCue(cueCtx, projectCue, innerW, watchFrom, watching.angle, gap, 0.42);
       }
 
       if (!layerRef.current || layerRef.current.disposed) {
@@ -940,17 +917,7 @@ export function PoolTable({
       cancelAnimationFrame(frame);
       observer.disconnect();
     };
-  }, [
-    balls,
-    ghost,
-    kitchenOnly,
-    calledPocket,
-    showCue,
-    replay,
-    stroke,
-    placing,
-    draft,
-  ]);
+  }, [balls, ghost, kitchenOnly, calledPocket, showCue, replay, stroke, placing, draft]);
 
   useEffect(() => {
     kickRef.current();
@@ -986,7 +953,15 @@ export function PoolTable({
     const dragged =
       gestureRef.current?.kind === "cue-stick"
         ? cueScreenDist(canvas, event.clientX, event.clientY, cue) - restDistRef.current
-        : pullBackPx(canvas, origin.x, origin.y, event.clientX, event.clientY, cue, angleRef.current);
+        : pullBackPx(
+            canvas,
+            origin.x,
+            origin.y,
+            event.clientX,
+            event.clientY,
+            cue,
+            angleRef.current,
+          );
     const next = powerFromPull(dragged);
     if (next === pullRef.current) return;
     pullRef.current = next;
@@ -1028,64 +1003,72 @@ export function PoolTable({
 
   return (
     <>
-    <canvas ref={cueRef} className="pool-cue" aria-hidden />
-    <canvas
-      ref={ref}
-      className="pool-canvas"
-      aria-label="Pool table. Drag to aim. Drag back and release to shoot. On a phone, drag with your finger. Drag the cue ball when it is ball in hand."
-      onPointerDown={(event) => {
-        if (pointerRef.current != null) return;
-        pointerRef.current = event.pointerId;
-        try {
-          event.currentTarget.setPointerCapture(event.pointerId);
-        } catch {
-          // Capture fails for a pointer that was already released. Aim still applies.
-        }
-        originRef.current = { x: event.clientX, y: event.clientY };
-        pullRef.current = 0;
-        const point = tablePoint(event.currentTarget, event.clientX, event.clientY);
-        const cue = cuePoint();
-        if (cue) restDistRef.current = cueScreenDist(event.currentTarget, event.clientX, event.clientY, cue);
-        if (!showCueRef.current && !placing) {
-          hintRef.current?.(replayRef.current ? "Balls are still moving." : "It is not your shot.");
-          return;
-        }
-        if (placing && pointerIntent(true, point, cue) === "place") {
-          gestureRef.current = { kind: "place" };
-          setDraft(point);
-          if (legalRef.current(point.x, point.y)) placeRef.current(point.x, point.y);
-          else hintRef.current?.("That spot is not open.");
-          return;
-        }
-        if (!cue) return;
-        const started = startAim(point, cue, angleRef.current);
-        gestureRef.current = started;
-        if (started.kind === "absolute" || started.kind === "cue-stick") aimAt(event);
-      }}
-      onPointerMove={(event) => {
-        if (pointerRef.current !== event.pointerId) return;
-        const captured = event.currentTarget.hasPointerCapture(event.pointerId);
-        if (!captured && event.buttons === 0) return;
-        if (gestureRef.current?.kind === "place") {
+      <canvas ref={cueRef} className="pool-cue" aria-hidden />
+      <canvas
+        ref={ref}
+        className="pool-canvas"
+        aria-label="Pool table. Drag to aim. Drag back and release to shoot. On a phone, drag with your finger. Drag the cue ball when it is ball in hand."
+        onPointerDown={(event) => {
+          if (pointerRef.current != null) return;
+          pointerRef.current = event.pointerId;
+          try {
+            event.currentTarget.setPointerCapture(event.pointerId);
+          } catch {
+            // Capture fails for a pointer that was already released. Aim still applies.
+          }
+          originRef.current = { x: event.clientX, y: event.clientY };
+          pullRef.current = 0;
           const point = tablePoint(event.currentTarget, event.clientX, event.clientY);
-          setDraft(point);
-          if (legalRef.current(point.x, point.y)) placeRef.current(point.x, point.y);
-          return;
-        }
-        aimAt(event);
-      }}
-      onPointerUp={(event) => {
-        if (pointerRef.current !== event.pointerId) return;
-        pointerRef.current = null;
-        aimAt(event);
-        endGesture(true);
-      }}
-      onPointerCancel={(event) => {
-        if (pointerRef.current !== event.pointerId) return;
-        pointerRef.current = null;
-        endGesture(false);
-      }}
-    />
+          const cue = cuePoint();
+          if (cue)
+            restDistRef.current = cueScreenDist(
+              event.currentTarget,
+              event.clientX,
+              event.clientY,
+              cue,
+            );
+          if (!showCueRef.current && !placing) {
+            hintRef.current?.(
+              replayRef.current ? "Balls are still moving." : "It is not your shot.",
+            );
+            return;
+          }
+          if (placing && pointerIntent(true, point, cue) === "place") {
+            gestureRef.current = { kind: "place" };
+            setDraft(point);
+            if (legalRef.current(point.x, point.y)) placeRef.current(point.x, point.y);
+            else hintRef.current?.("That spot is not open.");
+            return;
+          }
+          if (!cue) return;
+          const started = startAim(point, cue, angleRef.current);
+          gestureRef.current = started;
+          if (started.kind === "absolute" || started.kind === "cue-stick") aimAt(event);
+        }}
+        onPointerMove={(event) => {
+          if (pointerRef.current !== event.pointerId) return;
+          const captured = event.currentTarget.hasPointerCapture(event.pointerId);
+          if (!captured && event.buttons === 0) return;
+          if (gestureRef.current?.kind === "place") {
+            const point = tablePoint(event.currentTarget, event.clientX, event.clientY);
+            setDraft(point);
+            if (legalRef.current(point.x, point.y)) placeRef.current(point.x, point.y);
+            return;
+          }
+          aimAt(event);
+        }}
+        onPointerUp={(event) => {
+          if (pointerRef.current !== event.pointerId) return;
+          pointerRef.current = null;
+          aimAt(event);
+          endGesture(true);
+        }}
+        onPointerCancel={(event) => {
+          if (pointerRef.current !== event.pointerId) return;
+          pointerRef.current = null;
+          endGesture(false);
+        }}
+      />
     </>
   );
 }

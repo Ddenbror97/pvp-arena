@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { BALL_R, POCKETS, TABLE_H, TABLE_W } from "../src/lib/pool/physics";
-import { ballRadiusPx, extraCueGutter, FAR, fitCueButt, spanPx, viewOf } from "../src/lib/pool/view";
+import { readFileSync } from "node:fs";
+import { ballRadiusPx, FAR, spanPx, viewOf } from "../src/lib/pool/view";
 
 describe("pool view", () => {
   it("sends every cloth point back to itself", () => {
@@ -80,26 +81,27 @@ describe("pool view", () => {
     }
   });
 
-  it("keeps a bottom-rail cue on the screen and leaves room to pull it back", () => {
-    const room = 252;
-    const desk = extraCueGutter({ feltW: 846, feltH: 675, baseBottom: 19, room, minFeltH: 200 });
-    expect(desk).toBe(0);
-    const laptop = extraCueGutter({ feltW: 686, feltH: 495, baseBottom: 19, room, minFeltH: 200 });
-    expect(laptop).toBeGreaterThan(40);
-    const feltH = 495 - laptop;
-    expect(feltH).toBeGreaterThanOrEqual(200);
-    const view = viewOf(686, feltH);
-    const ball = view.projectOpen(TABLE_W / 2, 58_570 + BALL_R);
-    expect(feltH - ball.y + 19 + laptop).toBeGreaterThanOrEqual(room);
-    const cramped = extraCueGutter({ feltW: 680, feltH: 340, baseBottom: 12, room, minFeltH: 200 });
-    expect(340 - cramped).toBeGreaterThanOrEqual(200);
+  it("centers the cloth when the felt is only a little taller than the table", () => {
+    const view = viewOf(900, 520);
+    const outerH = view.innerH + view.rail * 2;
+    const slack = 520 - outerH;
+    expect(slack).toBeGreaterThan(0);
+    expect(slack).toBeLessThan(outerH * 0.45);
+    expect(view.padY).toBeCloseTo(slack / 2 + view.rail, 4);
+  });
 
-    const tip = { x: 400, y: 500 };
-    const butt = fitCueButt(tip, { x: 400, y: 860 }, 800, 640, 12);
-    expect(butt.x).toBeCloseTo(400, 4);
-    expect(butt.y).toBeCloseTo(628, 4);
-    expect(butt.y).toBeGreaterThan(tip.y);
-    const inside = fitCueButt(tip, { x: 460, y: 560 }, 800, 640, 12);
-    expect(inside).toEqual({ x: 460, y: 560 });
+  it("keeps the full cue on the screen canvas and does not shrink the felt for it", () => {
+    const table = readFileSync(
+      new URL("../src/components/pool/PoolTable.tsx", import.meta.url),
+      "utf8",
+    );
+    const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+    expect(table).toContain('className="pool-cue"');
+    expect(table).toContain('closest(".pool-screen")');
+    expect(table).toContain("const length = BALL_R * 46");
+    expect(table).not.toContain("fitCueButt");
+    expect(table).not.toContain("extraCueGutter");
+    expect(css).not.toContain("pool-cue-gutter");
+    expect(css).toContain("bottom: 1.2rem");
   });
 });

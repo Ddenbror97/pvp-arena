@@ -2676,8 +2676,8 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
   transform: translateY(-50%); pointer-events: none;
   filter: drop-shadow(0 0 16px rgb(168 85 247 / 80%)) drop-shadow(0 10px 18px rgb(0 0 0 / 55%));
 }
-.pool-felt { position: absolute; z-index: 1; left: var(--pool-felt-left); right: var(--pool-felt-right); top: 8.85rem; bottom: calc(1.2rem + var(--pool-cue-gutter, 0px)); container-type: size; overflow: visible; }
-.pool-screen.is-calling .pool-felt { bottom: calc(4.5rem + var(--pool-cue-gutter, 0px)); }
+.pool-felt { position: absolute; z-index: 1; left: var(--pool-felt-left); right: var(--pool-felt-right); top: 8.85rem; bottom: 1.2rem; container-type: size; overflow: visible; }
+.pool-screen.is-calling .pool-felt { bottom: 4.5rem; }
 .pool-screen.is-calling .pool-pockets { bottom: 0.65rem; }
 .pool-felt-frame { position: absolute; inset: 0; overflow: visible; }
 .pool-canvas { display: block; width: 100%; height: 100%; touch-action: none; }
@@ -2865,8 +2865,8 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
     translate: 0 120%; visibility: hidden;
   }
   .pool-screen[data-chat="open"] .pool-chat { translate: 0 0; visibility: visible; }
-  .pool-felt { top: 8.5rem; bottom: calc(3.4rem + var(--pool-cue-gutter, 0px)); }
-  .pool-screen.is-calling .pool-felt { bottom: calc(7.4rem + var(--pool-cue-gutter, 0px)); }
+  .pool-felt { top: 8.5rem; bottom: 3.4rem; }
+  .pool-screen.is-calling .pool-felt { bottom: 7.4rem; }
   .pool-screen.is-calling .pool-pockets { bottom: 3.5rem; }
   .pool-banner { top: 6.9rem; max-width: calc(100% - 1rem); }
 }
@@ -2887,8 +2887,8 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 }
 @media (max-height: 520px) and (min-width: 1024px) {
   .pool-chat { top: 4rem; height: min(34rem, calc(100% - 4.6rem)); }
-  .pool-felt { bottom: calc(0.7rem + var(--pool-cue-gutter, 0px)); }
+  .pool-felt { bottom: 0.7rem; }
 }
 @media (max-height: 520px) and (max-width: 1023.98px) {
-  .pool-felt { bottom: calc(3.15rem + var(--pool-cue-gutter, 0px)); }
+  .pool-felt { bottom: 3.15rem; }
 }
