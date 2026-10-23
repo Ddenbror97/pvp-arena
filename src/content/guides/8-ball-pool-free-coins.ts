@@ -10,10 +10,8 @@ export const guide: Guide = {
     "8 ball pool free coins in a coin client are not cash. This page does not know the coin price. A real payout here is 95% of a cash pot, not a coin cashout.",
   h1: "8 ball pool free coins stay in the coin client",
   answer:
-    "8 ball pool free coins are a game currency in the coin clients people already know, and they are not a US-dollar balance on this site. Semrush, US, 22 October 2026, put the phrase near 210 searches, difficulty 15. This page does not know the coin price, and it does not run a coin cashout.",
+    "8 ball pool free coins are a game currency in the coin clients people already know, and they are not a US-dollar balance on this site. This page does not know the coin price, and it does not run a coin cashout.",
   facts: [
-    "8 ball pool free coins: about 210 US searches, difficulty 15, on 22 October 2026.",
-    "The coins variant was about 170 at difficulty 19. The rewards variant was about 140 at difficulty 18.",
     "Miniclip-style coins are not cash. This page does not know what one coin is worth.",
     "A real payout here is 95% of a cash pot, credited when the match settles.",
     "PVPspinArena publishes the page. No named author. Last check 22 October 2026.",
@@ -21,35 +19,21 @@ export const guide: Guide = {
   sections: [
     {
       id: "october-coin-counts",
-      title: "Coins, rewards, and the October counts",
-      body: `8 ball pool free coins was about 210 US searches a month in the Semrush pull of 22 October 2026, at keyword difficulty 15. The coins variant sat near 170 at difficulty 19. The rewards variant sat near 140 at difficulty 18. Those are easy-looking keywords next to the harder money phrases. Easy does not mean the coins spend like dollars.
+      title: "Coins and rewards are not a cash balance",
+      body: `Free coins and free rewards are a currency inside a coin client. They are not dollars, and a familiar phrase does not make them spend like cash.
 
 The search usually wants a pile of free currency inside a coin client, often the Miniclip-style game with cues and a long progression. That currency buys items inside that client, when the client says it does. This page does not know the coin price. It will not print a rate such as a thousand coins to a dollar, because no such rate was measured here. A forum rate would be fiction.
 
 PVPspinArena publishes this explanation. There is no named author. The last check was 22 October 2026. The point of the page is the cashier difference, not a coin method.`,
     },
     {
-      id: "who-pays",
-      title: "Coins, rewards, and a dollar pot",
-      body: `8 ball pool free coins and a cash pot share a table graphic and not a cashier. Only the pot has a fee this page will print.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
       id: "where",
       title: "Cash pages that are not coin farms",
-      body: `Read the fee before you read a story about a hustler. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [a dollar credit at settlement](/guides/8-ball-pool-real-money), [a cash-app search with an unknown cut](/guides/pool-cash-app-review), [the browser game, not a coin file](/guides/8-ball-pool-unblocked). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `Free coins in a phone client are not a cash balance. The cash pot they get confused with is on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [a crypto 8 ball match](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
+The neighbouring money pages are [a dollar credit at settlement](/guides/8-ball-pool-real-money), [a cash-app search with an unknown cut](/guides/pool-cash-app-review), and [the browser game, not a coin file](/guides/8-ball-pool-unblocked). The group is the [skill wagers guides](/guides/topics/skill-wagers).
+
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "currency-without-a-price",
@@ -59,17 +43,6 @@ Open [a crypto 8 ball match](/8-ball-pool) for the match. The [fairness replay](
 This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. The Miniclip name shows up because the coin search is attached to that style of client. The name is not a licence number, a rake, or a shop price. Those cells stay empty on purpose.
 
 If a video offers a code for free coins, the code is not printed here. This page has no promo code for a coin client and no promo code for the cash match. Copying one from a comment would invent an endorsement.`,
-    },
-    {
-      id: "two-pots",
-      title: "The cash alternative to a coin balance",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $5.00 versus $5.00
-
-Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is credited $9.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "checklist",
@@ -101,15 +74,6 @@ The rules that pay the cash winner are the house 8-ball rules. Call a pocket onl
 
 No weekly tournament and no break-win rate are published. A coin leaderboard from another app is not evidence of either. Whether cash play is allowed depends on where you live. This page is not legal advice.`,
     },
-    {
-      id: "more",
-      title: "Free currency and the pot it does not buy",
-      body: `Difficulty 15 on about 210 searches is why 8 ball pool free coins attracts thin pages full of codes. The coins variant, about 170 at difficulty 19, and the rewards variant, about 140 at difficulty 18, pull in the same direction. This page answers with a price it can defend and a price it cannot. It cannot defend a coin-to-dollar rate, because it has not measured one. It can defend a pot: 5% kept, 95% credited in dollars when the match settles. The rest of the coin economy stays outside the article.
-
-A Miniclip-style client and a cash 1v1 can share a cue and a rack graphic. They do not share a cashier. Coins buy what that client lists. The cash match pays the other player, minus the fee. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, so it will not rank a coin shop against those apps. It also will not call a coin client a scam for selling cosmetics. Cosmetics are not the claim under review. The claim under review is that free coins are not a payout.
-
-If the goal is spendable money, skip the coin pile. Post cash, from one dollar to fifty, against one other player. Bonus credit stays out. An empty table refunds the stake after 24 hours and charges nothing. After the break, the 30-second clock runs, and three timeouts forfeit the seat. The winner's dollars show up in the US-dollar balance at settlement. That is the only speed stated here. No coin cashout, no PayPal window, and no invented coin price will be added to make the free-coin query feel served. No weekly tournament converts coins into a prize either.`,
-    },
   ],
   faqs: [
     {
@@ -122,7 +86,7 @@ If the goal is spendable money, skip the coin pile. Post cash, from one dollar t
     },
     {
       q: "What sat next to the free-coin query in October 2026?",
-      a: "The coins variant was near 170 US searches at difficulty 19. The rewards variant was near 140 at difficulty 18. The head phrase, 8 ball pool free coins, was near 210 at difficulty 15. Those are demand figures, not exchange rates.",
+      a: "Those are demand figures, not exchange rates.",
     },
     {
       q: "Does this page know Miniclip's fee or coin shop?",

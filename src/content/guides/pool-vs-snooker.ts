@@ -12,8 +12,6 @@ export const guide: Guide = {
   answer:
     "Any pool vs snooker comparison has to start with the equipment. The games use different tables, snooker uses smaller balls, and snooker is played with fifteen reds plus colours. The cushion-and-pocket geometry is not an 8-ball layout. This site does not book snooker, and it will not print odds.",
   facts: [
-    "Semrush, United States, 22 October 2026: pool vs snooker was about 720 searches a month at keyword difficulty 17.",
-    "Snooker betting was about 880 searches at difficulty 66 in that pull. That head term is out of reach for this page.",
     "No price, moneyline, or total is printed here. This site does not book snooker.",
     "The WPA PDF is a pool book. It is not a snooker rulebook, and it is not cited as one.",
     "No named author. Equipment contrast only: table, ball size, fifteen reds plus colours, and pocket geometry.",
@@ -27,27 +25,13 @@ export const guide: Guide = {
 Size and table are enough to stop the common shortcut, which is to call snooker "pool, but posh" or pool "snooker, but short." Those jokes erase the set of balls and the pockets. A player who has only stood at one table will mis-aim on the other for reasons that are physical, not mystical. Start there. The betting conversation can wait, and on this page it will wait forever.`,
     },
     {
-      id: "who-pays",
-      title: "A pool cashier, not a snooker board",
-      body: `Snooker is not on the cashier. The rows compare 8-ball products, including this site, because 8-ball is the cue game with a pot here. Nothing in the grid is a snooker price.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
       id: "where",
       title: "Pool rules if the comparison sent you back to the table",
-      body: `Put the page next to the rest of the table talk. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [8-ball, call and break](/guides/8-ball-pool-rules), [9-ball order](/guides/9-ball-rules), [straight pool points](/guides/straight-pool). The cluster lives with the [games of chance guides](/guides/topics/games-of-chance).
+      body: `Snooker and pool share a cue and not much else. This site's money game is 8-ball, mapped on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [the cash 8 ball game](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
+The other rule cards are [8-ball, call and break](/guides/8-ball-pool-rules), [9-ball order](/guides/9-ball-rules), and [straight pool points](/guides/straight-pool). The group is the [games of chance guides](/guides/topics/games-of-chance).
+
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "reds",
@@ -55,17 +39,6 @@ Open [the cash 8 ball game](/8-ball-pool) for the match. The [fairness replay](/
       body: `Snooker's set, for this comparison, is fifteen reds plus colours. That is a different population from a pool rack. Eight-ball sorts fifteen object balls into solids, stripes, and the 8. Nine-ball sorts nine numbered balls and pays the 9. Snooker sorts reds and a group of colours, and the sequence of play is its own game. This page will not assign point values to those colours. A points table was not part of the facts gathered here, and a famous total dropped in for colour would be an invented exhibit.
 
 What you can hold onto is the shape of the set. Reds are numerous. Colours are a separate family that returns to the conversation of the game in a way a pocketed stripe in 8-ball does not. If you need the scoring detail, you need a snooker book. You do not need this page to fake one. The contrast that belongs here is population and purpose: fifteen reds plus colours, against pool's object balls and a cue ball.`,
-    },
-    {
-      id: "two-pots",
-      title: "Dollars for 8-ball, none for a snooker ticket",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $5.00 versus $5.00
-
-Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is credited $9.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "checklist",
@@ -89,18 +62,9 @@ Geometry is why a pool safety and a snooker safety are not the same drawing. You
     {
       id: "no-odds",
       title: "A betting phrase this page will not price",
-      body: `Semrush on 22 October 2026 put pool vs snooker near 720 searches a month at difficulty 17. That is the phrase this page can answer with tables, ball size, reds, colours, and pocket geometry. Snooker betting, in the same pull, was about 880 searches at difficulty 66. Difficulty 66 is a harder head term. It is out of reach here, which means this page will not dress itself up as a board. No moneyline, no total, no futures number, no "value" pick.
+      body: `That is the phrase this page can answer with tables, ball size, reds, colours, and pocket geometry. It is out of reach here, which means this page will not dress itself up as a board. No moneyline, no total, no futures number, no "value" pick.
 
 This site does not book snooker. It books 8-ball between two players. A reader who arrived hoping for a ticket should leave without one. A reader who arrived hoping to know why the games feel different should leave with the equipment list and a refusal. The refusal is the original part. Odds copied from a memory of a televised final would be the ordinary kind of spam. Leave with the equipment list instead.`,
-    },
-    {
-      id: "more",
-      title: "What the comparison is allowed to say",
-      body: `Different table, smaller balls, fifteen reds plus colours, and a cushion-and-pocket geometry that is not 8-ball. Those four notes are the whole factual contrast this page claims. They are enough to answer pool vs snooker without a museum of dimensions. They are not enough to coach a snooker break-off or a pool break. Coaching would require rules this page has not been given for snooker, and the pool rules live on the pool pages. Stay on the equipment. The moment a sentence needs a pocket measurement, delete the sentence. Dimensions are how this comparison goes wrong.
-
-The WPA file is a pool document with a date, 21 October 2026, and an index page beside the PDF. Use it when the argument is about a legal break in 9-ball or a called 8. Do not use it when the argument is about a red and a colour. Snooker's own authorities are outside this citation list on purpose. Adding a governing-body link this draft was not given would be a decorative source. Decorative sources are how equipment pages rot into fake expertise. The pool book stays. The snooker book is someone else's job.
-
-Difficulty 17 on pool vs snooker and difficulty 66 on snooker betting are not invitations. The first number says a clear equipment page can compete for a modest query. The second number says a betting head term is crowded and out of reach, so this page names it only to decline it. About 720 and about 880 monthly searches, United States, 22 October 2026, are counts of curiosity. They are not odds. This site does not book snooker. If you want a pot, the pot is 8-ball, and it is a match you play, not a ticket on a frame you watch.`,
     },
   ],
   faqs: [
@@ -110,7 +74,7 @@ Difficulty 17 on pool vs snooker and difficulty 66 on snooker betting are not in
     },
     {
       q: "Where are the snooker odds?",
-      a: "Nowhere on this page. Inventing a price would be a fake. Semrush on 22 October 2026 put snooker betting near 880 monthly searches at difficulty 66, which is a harder head term than pool vs snooker and out of reach here. This site does not book snooker.",
+      a: "Nowhere on this page. Inventing a price would be a fake. This site does not book snooker.",
     },
     {
       q: "Does the WPA PDF explain snooker?",
@@ -122,7 +86,7 @@ Difficulty 17 on pool vs snooker and difficulty 66 on snooker betting are not in
     },
     {
       q: "Why mention snooker betting at all?",
-      a: "Because the query sits next to pool vs snooker and is easy to stuff with made-up numbers. Naming it as about 880 searches at difficulty 66, and then refusing a price, is the opposite of stuffing. The page's own phrase is the equipment comparison.",
+      a: "Because the query sits next to pool vs snooker and is easy to stuff with made-up numbers. The page's own phrase is the equipment comparison.",
     },
     {
       q: "Can the same cue play both games?",
@@ -136,12 +100,6 @@ Difficulty 17 on pool vs snooker and difficulty 66 on snooker betting are not in
     },
     { label: "WPA rules index", url: "https://wpapool.com/rules/" },
   ],
-  related: [
-    "8-ball-pool-for-money",
-    "pool-payday-review",
-    "games-that-pay-real-money",
-    "8-ball-pool-rules",
-    "9-ball-rules",
-  ],
+  related: ["8-ball-pool-hub", "8-ball-pool-rules", "9-ball-rules"],
   updated: "2026-10-23",
 };

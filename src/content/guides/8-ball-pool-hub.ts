@@ -12,10 +12,10 @@ export const guide: Guide = {
   answer:
     "8 ball pool online usually means a browser or a phone client where two people play 8-ball. Most of those clients pay in coins. A money match is the smaller set: both players post cash, a fee comes off the pot, and the winner is named by written rules. On this site the fee is 5% of the pot. The rack seed does not choose the winner.",
   facts: [
-    "Head terms such as 8 ball pool at KD 90 are not what this hub is trying to win today.",
-    "Semrush US, pulled 22 October 2026: 8 ball pool online was about 2,900 searches a month at KD 83.",
-    "Zero-volume phrases are placed here so the page exists before the searches do.",
     "This site's 8-ball is call-pocket on the 8 only. WPA 8-ball, effective 21 October 2026, is call-shot.",
+    "The fee is 5% of the pot. The winner is credited 95% when the match settles.",
+    "Stakes are $1, $2, $5, $10, $25, and $50. An unmatched table refunds the stake after 24 hours, with no fee.",
+    "New matches store the current physics id on the rack. An older match stays on the id it was played with.",
     "Published by PVPspinArena. No named author is on file. Last rules check: 22 October 2026.",
   ],
   sections: [
@@ -24,9 +24,9 @@ export const guide: Guide = {
       title: "What people mean by 8 ball pool online",
       body: `Type 8 ball pool online and you get a pile of clients that look like the same table. Miniclip's free game is the one with coins, cues, and a long progression. A skill-cash app is a different cashier wrapped around a cue game. A crypto-funded 1v1 is a third thing: both stakes sit in escrow, a published fee comes off, and the winner is a rules result.
 
-Semrush, US, 22 October 2026, put 8 ball pool online near 2,900 searches a month with keyword difficulty 83. 8 ball pool game was another 2,900 at 88. Pool game online was about 2,400 at 85. Billiards online was about 1,900 at 77. Those numbers are hard. This hub does not pretend to outrank the app stores on them this month. It exists so the money intent has a front door, and so the easier rule pages can point back to a match.
+The useful split is the cashier. A coin client, a skill-cash app, and a two-player cash pot can share a screenshot and still pay three different ways. This hub is the front door for the cash pot. Rule pages point here when the question turns into money.
 
-The head term 8 ball pool was about 74,000 searches at difficulty 90. That belongs on the game page over time, at /8-ball-pool, not as a thin guide that repeats the words. The slug stays short on purpose. Crypto and real-money stay in the title, so this hub does not fight the game URL and the game URL does not fight the guides.`,
+If you want to play, the match is on [the 8-ball table](/8-ball-pool). This guide answers which lookalike table is a money match. It is not a second copy of the game page.`,
     },
     {
       id: "who-pays",
@@ -47,18 +47,11 @@ Competitor cells stay blank on purpose. This page does not guess another company
     {
       id: "where",
       title: "Where the rest of the cluster sits",
-      body: `Put the page next to the rest of the table talk. Skill, as a category, is discussed on [skill-based gambling](/guides/skill-based-gambling). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [crypto 8 ball](/guides/crypto-8-ball-pool), [pool betting](/guides/pool-betting), [the rules split](/guides/8-ball-pool-rules), [why chat is not a cashier](/guides/8-ball-pool-discord). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `The money match is one table. How a stake between players differs from a house game is discussed on [skill-based gambling](/guides/skill-based-gambling). The longer fee write-up is [8 ball pool for money](/guides/8-ball-pool-for-money). [Pool Payday](/guides/pool-payday-review) is reviewed without a guessed rake. Other stake games are on [games that pay real money](/guides/games-that-pay-real-money).
 
-Open [the 8 ball table](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
-    },
-    {
-      id: "first-mover",
-      title: "Phrases with no volume yet",
-      body: `A crypto 8 ball pool match on this site is a bitcoin pool game only because Bitcoin can fund the dollar balance. There is no 8 ball pool nft. There is no 8 ball pool web3 token. An 8 ball pool usdt transfer, an 8 ball pool solana transfer, and an 8 ball pool ethereum transfer are deposits into that balance. An 8 ball pool wager is the stake both players post. An 8 ball pool bitcoin label does not change the 5% fee.
+For the pieces of this table, read [crypto 8 ball](/guides/crypto-8-ball-pool), [pool betting](/guides/pool-betting), [the rules split](/guides/8-ball-pool-rules), and [why chat is not a cashier](/guides/8-ball-pool-discord). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-Crypto billiards and a billiards crypto game are the same table. 8 ball pool pvp means the opponent is a person. A pvp pool game is not a house wheel. This is not an 8 ball pool stake casino under another brand. People who want to gamble on pool, or to bet on pool games, are describing a match. Whether the question is pool gambling legal, or is betting on pool legal, is a local law question. This page will not answer it with a state list.
-
-An 8 ball pool legit check is the replay. An 8 ball pool payout is 95% of the pot, credited when the match settles. Semrush had no monthly figure for those phrases on 22 October 2026. That is the gap. It is not a promise they will be searched.`,
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "two-pots",
@@ -67,9 +60,7 @@ An 8 ball pool legit check is the replay. An 8 ball pool payout is 95% of the po
 
 Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
 
-### A second stake: $5.00 versus $5.00
-
-Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is credited $9.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
+The same 5% applies from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "checklist",
@@ -97,7 +88,7 @@ If you learned on a league night, read the list before you stake. A safety you e
       title: "What the settled-match list is",
       body: `The lobby prints finished matches it actually has: winner, payout, pot, and fee. The published fee is 5% of the pot, and the live lobby reports that rate from the server. The list does not print a break-win rate. This page will not invent one. A monthly "pool stats" box that made up matches played, average pot, or a break percentage would be a fake original. The original data is the list, and it is empty when no match has settled.
 
-Stakes are $1, $2, $5, $10, $25 and $50. Promo credit and partner credit can fund a stake. Deposited money is used first. There is no house opponent. The playing surface is 2.54 m by 1.27 m. New matches store physics id pool-phys-v2. An older match stays on the physics it was played with.
+Stakes are $1, $2, $5, $10, $25 and $50. Promo credit and partner credit can fund a stake. Deposited money is used first. There is no house opponent. The playing surface is 2.54 m by 1.27 m. New matches store the current physics id on the rack. An older match stays on the physics it was played with.
 
 No weekly crypto tournament is published here yet. A leaderboard of invented brackets would be the same kind of fake. When a bracket exists, it can have a page. Until then the settled list is the public record.`,
     },
@@ -113,15 +104,15 @@ No weekly crypto tournament is published here yet. A leaderboard of invented bra
     },
     {
       q: "Is it fair?",
-      a: "The server publishes a SHA-256 hash of a 32-byte rack seed before play, hides the seed until the match is playing, and replays the shot list under pool-phys-v2. The seed only shuffles the coloured balls. The 8 stays in the centre. Shots are not given a random error.",
+      a: "The server publishes a SHA-256 hash of a 32-byte rack seed before play, hides the seed until the match is playing, and replays the shot list under the physics id stored with that rack. The seed only shuffles the coloured balls. The 8 stays in the centre. Shots are not given a random error.",
     },
     {
       q: "What does crypto 8 ball pool mean here?",
       a: "Bitcoin, USDC or ETH on Base can fund the US-dollar balance. There is no separate 8 ball pool bitcoin table, no 8 ball pool nft, and no 8 ball pool web3 token. An 8 ball pool wager is the cash stake.",
     },
     {
-      q: "Why are some phrases on this page with no search volume?",
-      a: "Semrush showed no data on 22 October 2026 for phrases such as pvp pool game, 8 ball pool usdt, 8 ball pool solana, and 8 ball pool ethereum. They are named here so the page is the one that already uses them. They are not a claim that those products exist as separate games.",
+      q: "What if the other player never joins?",
+      a: "If nobody matches the stake within 24 hours, the stake is refunded and no fee is charged. After the break, the match is played out under the written rules.",
     },
     {
       q: "Is betting on pool legal?",

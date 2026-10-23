@@ -10,9 +10,8 @@ export const guide: Guide = {
     "Pool table size uses the usual 7, 8, and 9 foot names. This playing surface is 2.54 m by 1.27 m. Five feet of cue room is a planning figure, not a WPA line.",
   h1: "Pool table size, named the way shops name it",
   answer:
-    "pool table size is usually spoken as 7 foot, 8 foot, or 9 foot, and those names are what people mean in a shop. The figure used for this page is about 2,400 searches a month at keyword difficulty 25. This site's playing surface is 2.54 m by 1.27 m, which is the size of a 9-foot playing surface. A planning figure people use is roughly 5 feet of cue room past the rails. That figure is not a line in the WPA book.",
+    "pool table size is usually spoken as 7 foot, 8 foot, or 9 foot, and those names are what people mean in a shop. This site's playing surface is 2.54 m by 1.27 m, which is the size of a 9-foot playing surface. A planning figure people use is roughly 5 feet of cue room past the rails.",
   facts: [
-    "Pool table size is carried near 2,400 monthly searches, keyword difficulty 25.",
     "7 foot, 8 foot, and 9 foot are the usual names, not a price list.",
     "The playing surface here is 2.54 m by 1.27 m.",
     "Roughly 5 feet of cue room past the rails is a planning figure, not a WPA rule.",
@@ -24,23 +23,12 @@ export const guide: Guide = {
       title: "Three names, used loosely and often",
       body: `Pool table size, in ordinary speech, collapses a lot of carpentry into three labels. People say 7 foot for the bar box, 8 foot for a middle table some homes buy, and 9 foot for the table they saw on television. The labels refer to the playing surface more honestly than to the outer cabinet, and even then the inches vary by maker. This page will not publish a secret fourth standard or a tolerance it did not measure.
 
-About 2,400 monthly searches at keyword difficulty 25 is the figure carried for the phrase. That is a real information query. The honest answer is the three names plus the one surface this match actually uses. It is not a catalogue. No slate thickness, no cushion profile, and no branded rail is ranked. Those would be shop specifications this site does not sell and has not tested.`,
-    },
-    {
-      id: "two-pots",
-      title: "The cloth is one size. The stake is your choice",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $10.00 versus $10.00
-
-Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is credited $19.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
+That is a real information query. The honest answer is the three names plus the one surface this match actually uses. It is not a catalogue. No slate thickness, no cushion profile, and no branded rail is ranked. Those would be shop specifications this site does not sell and has not tested.`,
     },
     {
       id: "ours",
       title: "The cloth this match always uses",
-      body: `The playing surface is 2.54 m by 1.27 m. That rectangle is the size of a 9-foot playing surface, and it is the only one the money match runs. Each ball in the replay is 57.15 mm across. A ball counts as pocketed when its centre enters a circle of radius 54 mm at a corner or 48 mm at a side. Those circles are the capture this replay uses. They are not a cushion catalogue and not a line in the WPA book. A speed you learned on a 7-foot box will run long here. Long kicks stay long. The ghost ball is still just a picture of contact, with no make percentage published for either size. Physics id pool-phys-v2 replays the shot on this rectangle. It does not roll a miss to simulate a smaller table.
+      body: `The playing surface is 2.54 m by 1.27 m. That rectangle is the size of a 9-foot playing surface, and it is the only one the money match runs. Each ball in the replay is 57.15 mm across. A ball counts as pocketed when its centre enters a circle of radius 54 mm at a corner or 48 mm at a side. Those circles are the capture this replay uses. They are not a cushion catalogue and not a line in the WPA book. A speed you learned on a 7-foot box will run long here. Long kicks stay long. The ghost ball is still just a picture of contact, with no make percentage published for either size. The physics id stored with that rack replays the shot on this rectangle. It does not roll a miss to simulate a smaller table.
 
 You call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches. Three timeouts forfeit. Stakes are equal: $1, $2, $5, $10, $25, or $50. The fee is 5% of the pot. Table size does not open a second stake list. A bigger cloth is not a handicap and not a FargoRate input on this cashier.`,
     },
@@ -59,25 +47,11 @@ You call a pocket only for the 8. The 8 on the break wins unless the cue ball sc
     {
       id: "where",
       title: "Size beside the cue and the book",
-      body: `The internal links are the map. The match is the thing they point at. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [cue length and shop talk](/guides/best-pool-cue), [event rooms versus this cloth](/guides/pool-tournaments), [what the book actually specifies](/guides/8-ball-pool-rules). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `The money match uses one cloth, 2.54 m by 1.27 m. What that cloth pays is on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [the cash 8 ball game](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
-    },
-    {
-      id: "who-pays",
-      title: "The same names on three kinds of table",
-      body: `Pool table size changes the walk to a pocket. It does not by itself tell you whether the client pays coins, a prize, or a cash pot.
+The technique next to this is [cue length and shop talk](/guides/best-pool-cue), [event rooms versus this cloth](/guides/pool-tournaments), and [what the book actually specifies](/guides/8-ball-pool-rules). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "room",
@@ -93,15 +67,6 @@ It also will not invent a price for the room. Hourly hall rates, basement renova
 
 The WPA rules describe how the games are played. They are the reference when this page talks about call-shot versus our call-the-8-only split. They are not a furniture manual. Jump shots remain absent as a button, and they are often illegal in bar rules regardless of whether the bar box is 7 foot. Bring the size into your stance. Leave the fee at 5%, and leave the room price where the hall printed it.`,
     },
-    {
-      id: "more",
-      title: "Measuring the cloth you are actually on",
-      body: `If you are buying a home table, measure the room before you fall in love with the 9-foot name. The planning figure of roughly 5 feet past the rails is a starting sketch, and stairs, posts, and a low light will edit it. This page stops at the sketch. A salesperson who quotes a different clearance is talking about their product. Write their number on their paperwork. Do not ask a rules guide to launder it into a specification or a fee.
-
-On this site you do not bring a table. The surface is already 2.54 m by 1.27 m, every match, both seats. That removes the argument about whether someone plays better on a bar box. You both have the long cloth. The edge, if you have one, is the leave and the safety, not the slate. No APA skill level shortens the rectangle. No rank from a free client shrinks it either. Both players walk the same 2.54 m by 1.27 m.
-
-Tournament television uses large tables, and league nights use whatever the host room owns. Those rooms can be any of the three names. This match is not a weekly bracket and it does not publish a leaderboard of table sizes. One surface, one rule card, one fee. If you need the organizer's purse for a famous event, that number lives on the organizer's page. It is not hiding inside a measurement of the cloth, and this page will not invent the purse to decorate the size.`,
-    },
   ],
   faqs: [
     {
@@ -110,7 +75,7 @@ Tournament television uses large tables, and league nights use whatever the host
     },
     {
       q: "How big is the table on this site?",
-      a: "The playing surface is 2.54 m by 1.27 m, and each ball is 57.15 mm across. A ball is pocketed in the replay when its centre enters a 54 mm radius at a corner or a 48 mm radius at a side. Physics id pool-phys-v2 runs on that cloth, with no random miss.",
+      a: "The playing surface is 2.54 m by 1.27 m, and each ball is 57.15 mm across. A ball is pocketed in the replay when its centre enters a 54 mm radius at a corner or a 48 mm radius at a side. The physics id stored with that rack runs on that cloth, with no random miss.",
     },
     {
       q: "How much room do you need around a table?",
@@ -136,12 +101,6 @@ Tournament television uses large tables, and league nights use whatever the host
     },
     { label: "WPA rules index", url: "https://wpapool.com/rules/" },
   ],
-  related: [
-    "8-ball-pool-for-money",
-    "pool-payday-review",
-    "games-that-pay-real-money",
-    "best-pool-cue",
-    "8-ball-pool-rules",
-  ],
+  related: ["8-ball-pool-hub", "best-pool-cue", "8-ball-pool-rules"],
   updated: "2026-10-23",
 };

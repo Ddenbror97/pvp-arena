@@ -10,9 +10,8 @@ export const guide: Guide = {
     "8 ball strike is a searched name, and this page does not know that product's fee. It is not labeled legit or a scam. No promo code is offered. Our fee is 5%.",
   h1: "8 ball strike, reviewed only as far as the facts go",
   answer:
-    "8 ball strike is a name people search, and this review does not know that product's fee. Semrush, on the primary figures used here, puts the phrase near 1,600 searches a month, keyword difficulty 44, advertiser cost about $1.90. The page does not call the product legit and does not call it a scam. There is no promo code. The only fee printed is this site's own: 5% of the pot.",
+    "8 ball strike is a name people search, and this review does not know that product's fee. The page does not call the product legit and does not call it a scam. There is no promo code. The only fee printed is this site's own: 5% of the pot.",
   facts: [
-    "Semrush primary figures used here: about 1,600 monthly searches, keyword difficulty 44, CPC about $1.90.",
     "This page does not know 8 ball strike's fee and will not invent one.",
     "The product is not labeled legit and not labeled a scam.",
     "No promo code is offered for that product or for this one.",
@@ -22,16 +21,20 @@ export const guide: Guide = {
     {
       id: "unknown-fee",
       title: "The fee is the hole in the review",
-      body: `8 ball strike is searched hard enough to tempt a confident review. Semrush's primary figures, as used on this page, are about 1,600 monthly searches, keyword difficulty 44, and a CPC around $1.90. Confidence would be a percentage. The percentage is the thing this page does not have. A skill-cash app can change its cut, its regions, and its cashier between the day a guide is drafted and the day you deposit. Copying a number from a forum would freeze someone's screenshot into a citation.
+      body: `8 ball strike is searched hard enough to tempt a confident review. Confidence would be a percentage. The percentage is the thing this page does not have. A skill-cash app can change its cut, its regions, and its cashier between the day a guide is drafted and the day you deposit. Copying a number from a forum would freeze someone's screenshot into a citation.
 
 So the review says: fee unknown. That is a complete sentence. It is the same sentence the Pool Payday review earns by refusing a rake it cannot see. Two products, one method. If a later draft fills the blank without a source from the company, the draft has become fiction. Leave the blank where a reader can see it.`,
     },
     {
       id: "where",
       title: "The blank column, opened further",
-      body: `These are the other doors, in a useful order. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [three kinds of pool game](/guides/best-pool-games), [who pays the winner](/guides/8-ball-pool-casino), [free progression, not a fee](/guides/8-ball-pool-rank). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `8 Ball Strike's fee is not known to this page, so it is not invented. The fee that is known is the 8-ball pot on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [the cash 8 ball game](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
+The neighbouring money pages are [three kinds of pool game](/guides/best-pool-games), [who pays the winner](/guides/8-ball-pool-casino), and [free progression, not a fee](/guides/8-ball-pool-rank). The group is the [skill wagers guides](/guides/topics/skill-wagers).
+
+Strike stays in the unknown-fee column with [Pool Payday](/guides/pool-payday-review). The printed 5% pot is [8 ball pool for money](/guides/8-ball-pool-for-money). Neighbouring stake games are [games that pay real money](/guides/games-that-pay-real-money).
+
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "no-verdict",
@@ -57,50 +60,14 @@ What it can warn, without naming the app a cheat, is the general pattern. Findin
       title: "A missing code is not an oversight",
       body: `No promo code appears here because publishing one would be a partnership this page does not have. A code also goes stale, and a stale code is a small lie. The same absence applies to this website: there is no coupon that reduces the 5% fee. The fee is the fee. Stakes are $1, $2, $5, $10, $25, and $50. The winner receives 95% of the pot. An empty table returns both stakes after 24 hours.
 
-If an affiliate page offers a code beside a star rating, that page has a commercial relationship it should disclose. This one discloses the opposite: no relationship, no code, no stars. The $1.90 CPC figure is an advertising-cost estimate from the Semrush figures above. It is not a bounty this site is paying you, and it is not a bounty the other product authorized us to quote as a bonus.`,
-    },
-    {
-      id: "who-pays",
-      title: "A named app beside a known fee",
-      body: `8 ball strike sits in the skill-cash column. The table leaves that column's fee blank and prints 5% only for this pot.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
-      id: "two-pots",
-      title: "Their rake is blank. Ours is not",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $25.00 versus $25.00
-
-Both players post $25.00. The pot is $50.00. The fee is $2.50. The winner is credited $47.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
+If an affiliate page offers a code beside a star rating, that page has a commercial relationship it should disclose. This one discloses the opposite: no relationship, no code, no stars. It is not a bounty this site is paying you, and it is not a bounty the other product authorized us to quote as a bonus.`,
     },
     {
       id: "ours",
       title: "The match this review can describe in full",
-      body: `Our table is 1v1 8-ball. The payer is the other player, minus 5%, not a house bankroll. You cannot share an account. A friend matches the stake. Settlement is the replay under pool-phys-v2, with no random miss. You call a pocket only on the 8. The 8 on the break wins unless the cue ball scratches. Three timeouts forfeit. The surface is 2.54 m by 1.27 m. No FargoRate and no APA skill level are stored. Cue upgrades are not sold. Ranks do not set the stake. A make-on-the-break rate is not published.
+      body: `Our table is 1v1 8-ball. The payer is the other player, minus 5%, not a house bankroll. You cannot share an account. A friend matches the stake. Settlement is the replay under the physics id stored with that rack, with no random miss. You call a pocket only on the 8. The 8 on the break wins unless the cue ball scratches. Three timeouts forfeit. The surface is 2.54 m by 1.27 m. No FargoRate and no APA skill level are stored. Cue upgrades are not sold. Ranks do not set the stake. A make-on-the-break rate is not published.
 
 That list is longer than the strike section because the list is ours. A review that spends its length on an unknown app and a sentence on the known one has the proportions backwards. Use the strike section to avoid a fake rake. Use this section if you came to play. The rules page is the longer rule card. This page is the boundary around someone else's product.`,
-    },
-    {
-      id: "more",
-      title: "A review that stays inside what it checked",
-      body: `Difficulty 44 is a crowd. Crowded reviews win by sounding certain. Certainty about a fee you did not read is how a wrong 8% or a wrong 12% spreads. This page would rather lose that crowd than join it. The Semrush primary numbers justify writing the page. They do not justify a verdict. When you see 1,600 and $1.90, read them as attention, then look for the blank where the rake should be. The blank is the finding, and it should stay blank.
-
-Pool Payday remains the model. That guide's job was to say what it could prove about a named app and to stop. This guide copies the job, not the sentences, and not a number. If Pool Payday's fee is still unpublished there, it is still unpublished here. Do not average the two unknowns into a category rake for skill-cash pool. The category, on the best-games page, is a column with an empty fee cell. Empty is allowed. Filling it is not.
-
-If you deposit with them anyway, deposit where they tell you inside their product, on the day you do it, and keep their receipt. If you play here, post through the cashier, expect 95% when the rules name you, and do not ask a chat admin to hold the stake. Seed phrases stay untyped. Promo codes stay uninvented. The rest of the cluster can teach the leave. This page only had to keep a review from becoming a poster with a fake rake.`,
     },
   ],
   faqs: [
@@ -125,8 +92,8 @@ If you deposit with them anyway, deposit where they tell you inside their produc
       a: "1v1 8-ball, equal stakes from $1 to $50, winner credited 95%, settlement by replay. You call a pocket only for the 8. There is no house opponent. No FargoRate is applied.",
     },
     {
-      q: "Why mention Semrush numbers at all?",
-      a: "Because the primary figures, about 1,600 searches, difficulty 44, CPC about $1.90, explain why a review page exists. They are not a quality score. Difficulty 44 means other pages compete. Competing is not a reason to invent a rake.",
+      q: "Can Strike's unknown fee be treated as 5%?",
+      a: "No. Five percent is this site's pot fee. It is not a guess about 8 Ball Strike, Pool Payday, or any other app. An unknown cut stays blank.",
     },
   ],
   sources: [

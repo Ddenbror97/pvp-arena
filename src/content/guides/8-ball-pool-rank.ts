@@ -10,9 +10,8 @@ export const guide: Guide = {
     "8 ball pool rank on a free client is levels, cues, and a pass. Reward lists are not known here. Ranks do not set the stake. The cash match is equal money.",
   h1: "8 ball pool rank, as progression that stays in the free game",
   answer:
-    "8 ball pool rank, in the free clients people mean, is a progression of levels, cues, and a pass. The figure used here is about 110 searches a month at keyword difficulty 23. This page does not know the rewards attached to those level names. Ranks do not set the stake on this site. Equal cash is the match, and a legendary cue does not change it.",
+    "8 ball pool rank, in the free clients people mean, is a progression of levels, cues, and a pass. This page does not know the rewards attached to those level names. Ranks do not set the stake on this site. Equal cash is the match, and a legendary cue does not change it.",
   facts: [
-    "8 ball pool rank is carried near 110 monthly searches, keyword difficulty 23.",
     "Miniclip-style ranks, legendary cues, and a pass are free-game progression.",
     "The reward for each level name is not known to this page, so it is not listed.",
     "A cue upgrade in that client is cosmetic coins, and the coin price is not published here.",
@@ -22,27 +21,16 @@ export const guide: Guide = {
     {
       id: "progression",
       title: "A ladder the free game owns",
-      body: `8 ball pool rank is how a free client keeps you in the client. You win coins, you climb, a cue changes colour, a pass offers a season of extra cosmetics. About 110 searches a month at keyword difficulty 23 is enough of a question to deserve a straight answer, and not enough of a question to justify a fake reward table. The straight answer is that those rewards are the free game's, and this page does not know the level names' payouts.
+      body: `8 ball pool rank is how a free client keeps you in the client. You win coins, you climb, a cue changes colour, a pass offers a season of extra cosmetics. The straight answer is that those rewards are the free game's, and this page does not know the level names' payouts.
 
 Miniclip-style is a description of the genre, not a claim that every client uses one identical ladder. If your client calls the top step something else, the something else is still not stored here. Printing a guessed list of level names would be a glossary of the same kind this site refused for hustler slang. Unknown stays unlabeled.`,
-    },
-    {
-      id: "two-pots",
-      title: "Equal cash, with the ladder left outside",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $5.00 versus $5.00
-
-Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is credited $9.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "cosmetics",
       title: "Legendary cues spend coins",
       body: `A legendary cue, in that progression, is a picture you paid for with cosmetic coins. The coin price is not published on this page. It is not cash, and it does not withdraw as cash from this site, because this site did not sell it. Cue upgrades are not a product beside our stake. Shop talk about 18 to 21 ounces and a 12 to 13 mm tip is a different conversation, labeled as shop talk on the cue page, and it is not a WPA specification either.
 
-Physics id pool-phys-v2 does not receive the cosmetic. There is no random miss that a legendary cue is allowed to cancel. Ghost-ball aim is still a teaching picture without a measured make percentage. If the free client draws an aim line as a reward for a rank, that line is their teaching layer. It does not travel.`,
+The physics id stored with that rack does not receive the cosmetic. There is no random miss that a legendary cue is allowed to cancel. Ghost-ball aim is still a teaching picture without a measured make percentage. If the free client draws an aim line as a reward for a rank, that line is their teaching layer. It does not travel.`,
     },
     {
       id: "checklist",
@@ -59,25 +47,11 @@ Physics id pool-phys-v2 does not receive the cosmetic. There is no random miss t
     {
       id: "where",
       title: "Ranks beside cues and the three kinds of game",
-      body: `The internal links are the map. The match is the thing they point at. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [free play versus a pot](/guides/best-pool-games), [cues this site does not sell](/guides/best-pool-cue), [another named app, fee unknown](/guides/8-ball-strike-review). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `A free-game rank does not set the stake. Both players post the same cash, as [8 ball pool online](/guides/8-ball-pool-hub) describes.
 
-Open [the browser 8 ball match](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
-    },
-    {
-      id: "who-pays",
-      title: "Progression versus a stake",
-      body: `8 ball pool rank matters inside a free client. It does not price a coin game, a skill-cash app, and this pot as if they shared one ladder.
+The neighbouring money pages are [free play versus a pot](/guides/best-pool-games), [cues this site does not sell](/guides/best-pool-cue), and [another named app, fee unknown](/guides/8-ball-strike-review). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "equal",
@@ -92,15 +66,6 @@ The fee stays 5% of the pot. The winner is credited 95%. You call a pocket only 
       body: `Chat sellers offer levels, cues, and passes for crypto sent to a personal address. That offer has two problems. The goods are a free game's database, which this site does not control and will not promise to deliver. The payment is off-site, which is how people get cheated whether the goods exist or not. There is no [official Discord table](/guides/8-ball-pool-discord) or Telegram table here to make the seller legitimate. A seed phrase is never the trade.
 
 If you want the free game's progression, use that game's own store and accept that this page does not know the prices. If you want a money match, use the cashier and accept that your rank will not be on the scoreboard, because there is no rank scoreboard. The best-games page keeps the free client and the pot in separate columns so this confusion has somewhere systematic to go.`,
-    },
-    {
-      id: "more",
-      title: "Leaving the ladder in the client that built it",
-      body: `Difficulty 23 on about 110 searches is a page that can tell the truth without a table of made-up rewards. The truth is short. Ranks, legendary cues, and a pass are progression. The rewards of the named levels are unknown here. They do not set a US-dollar stake. Repeating a wiki of level numbers would look helpful for a week and then be wrong. Unknown is more stable than a copied season. When the free client changes the pass, this paragraph does not have to change with it.
-
-Players sometimes want the cash table to feel like the climb they already enjoy. The climb is a good evening. It is a bad pricing model. If a rank posted $10 and a lower rank were forced to post $50, the match would be a handicap wearing a badge. Our match is the opposite. Pick the same button. Play the called 8. Take 95% or lose the stake. The badge can stay on the other app, next to the coins that bought it.
-
-A friend who outranks you in a free client is not owed games, and you are not owed a head start. APA gives or gets games on a scoresheet this site does not keep. FargoRate speaks in points this site does not read. The rank speaks in levels this site does not store. Three systems, zero effect on the button. Play even. If the gap in skill is the whole story, the fee will not rescue the shorter player, and a cosmetic cue will not rescue them either.`,
     },
   ],
   faqs: [

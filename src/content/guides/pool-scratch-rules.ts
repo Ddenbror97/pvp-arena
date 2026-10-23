@@ -16,11 +16,9 @@ export const guide: Guide = {
   answer:
     "People searching pool scratch rules are facing three different answers in one phrase. Bar rooms often treat a scratch with the 8 as loss of game, and those house cards still vary. The WPA book effective 21 October 2026 does not treat an 8 on a legal break as a loss. On this site, a scratch with the 8 loses, including when that 8 fell on the break.",
   facts: [
-    "Semrush, United States, 22 October 2026: pool scratch rules was about 1,600 searches a month at keyword difficulty 14.",
-    "What happens if you scratch on the 8 ball was about 260 searches at difficulty 7 in that pull.",
-    "8 ball pool scratch was about 110 searches at difficulty 11.",
     "WPA 9-ball gives ball in hand anywhere after a standard foul. One-pocket and bank pool keep a scratch behind the head string.",
     "No byline on this page. Scratch contrasts use the WPA PDF effective 21 October 2026 and this site's 8-ball card.",
+    "On this table, a scratch while pocketing the 8 loses, including when the 8 fell on the break.",
   ],
   sections: [
     {
@@ -52,20 +50,11 @@ This site's 8-ball uses a third sentence. A scratch while pocketing the 8 loses 
     {
       id: "where",
       title: "Where the cue ball rule is written next",
-      body: `If you only follow one trail, follow the fee and the rules, then the neighbours. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [the 8-ball card](/guides/8-ball-pool-rules), [9-ball fouls](/guides/9-ball-rules), [a kitchen scratch](/guides/one-pocket-pool). The cluster lives with the [games of chance guides](/guides/topics/games-of-chance).
+      body: `A scratch is a foul with a named cue-ball penalty. It is not the fee. The fee lives on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [the cash 8 ball game](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
-    },
-    {
-      id: "two-pots",
-      title: "A scratch does not change the fee",
-      body: `### $25 versus $25
+The other rule cards are [the 8-ball card](/guides/8-ball-pool-rules), [9-ball fouls](/guides/9-ball-rules), and [a kitchen scratch](/guides/one-pocket-pool). The group is the [games of chance guides](/guides/topics/games-of-chance).
 
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $5.00 versus $5.00
-
-Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is credited $9.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "break-scratch",
@@ -79,32 +68,7 @@ A WPA legal break keeps the rack alive. Spot the 8 and accept, or rebreak. A fou
       title: "Fouls that move the cue ball and fouls that end the rack",
       body: `A scratch that only hands over ball in hand is a foul. A scratch that ends the rack is a loss. This site draws that line at the 8. Ordinary fouls are ball in hand anywhere. The 8 with a scratch is the end. The shot clock is 30 seconds. Three timeouts forfeit the seat, which is another way to lose with the cue ball still on the cloth. The fee is 5% of the pot and the winner receives 95%. Stakes run from $1 to $50.
 
-The cashier still only runs this 8-ball. It does not run 9-ball, 10-ball, straight pool, one-pocket, bank, cutthroat, or killer for money, so a scratch rule from those games is reading material rather than a button. Semrush on 22 October 2026 put pool scratch rules near 1,600 searches at difficulty 14. The narrower 8-ball questions sat at about 260 and about 110. The counts explain the traffic. They do not merge the three rooms into one rule.`,
-    },
-    {
-      id: "who-pays",
-      title: "The only cashier this scratch page will price",
-      body: `A scratch page still gets readers who want a cash table. The grid is about who pays on 8-ball. It is not a scratch diagram, and it does not borrow another company's rake.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
-      id: "more",
-      title: "Asking the scratch question while the balls are still racked",
-      body: `The head string is a real line, and several games use it as a fence. One-pocket and bank pool park a scratch behind that line. The incoming player shoots out of the kitchen. Nine-ball, after a standard foul, picks up the fence: the cue ball may be placed on either side of the line, anywhere the cloth is legal. This site's ordinary 8-ball foul follows the open-bed version. Mixing the fence into that foul, because a friend learned one-pocket first, changes the leave you are allowed to play. Name the game, then name the square.
-
-At a bar, the useful question is narrow. If the 8 falls and the cue ball falls, who wins? If only the cue ball falls, is it ball in hand, ball in hand in the kitchen, or loss of game? Write the answer on a coaster if the stake is real. House rules vary, which is a fact about bars, not a shrug. The WPA PDF is a published book with a date, 21 October 2026, and it still has to be the book you agreed to. A coaster that contradicts it is the rule of that table for that night.
-
-Search volume does not pick a winner. Difficulty 14 on pool scratch rules means more pages can compete for the phrase. It does not mean the cue ball has one home. This site publishes the loss on a scratched 8 because that is the match it settles. It publishes the WPA legal-break spot because readers arrive with that book in mind. Both sentences can sit on one page. Only one of them settles a given rack, and only after someone has said which rack it is. Name that card before the stake moves.`,
+The cashier still only runs this 8-ball. It does not run 9-ball, 10-ball, straight pool, one-pocket, bank, cutthroat, or killer for money, so a scratch rule from those games is reading material rather than a button. The narrower 8-ball questions sat at about 260 and about 110. The counts explain the traffic. They do not merge the three rooms into one rule.`,
     },
   ],
   faqs: [
@@ -129,8 +93,8 @@ Search volume does not pick a winner. Difficulty 14 on pool scratch rules means 
       a: "It runs 8-ball. It does not run 9-ball, 10-ball, straight pool, one-pocket, bank, cutthroat, or killer for money. A scratch chapter for those games is explanation. It is not a second cashier.",
     },
     {
-      q: "Why do the scratch searches look easier than pool rules?",
-      a: "The 22 October 2026 US pull put pool scratch rules near difficulty 14, the 8-ball scratch question near difficulty 7, and 8 ball pool scratch near difficulty 11. Easier difficulty is not a smaller argument. The 8 still needs a named book.",
+      q: "Which scratch rule does this table use?",
+      a: "A scratch while pocketing the 8 loses, including on the break. That is this table's card. It is not every bar's card, and it is not the WPA rule for a legal break 8.",
     },
   ],
   sources: [
@@ -140,12 +104,6 @@ Search volume does not pick a winner. Difficulty 14 on pool scratch rules means 
     },
     { label: "WPA rules index", url: "https://wpapool.com/rules/" },
   ],
-  related: [
-    "8-ball-pool-for-money",
-    "pool-payday-review",
-    "games-that-pay-real-money",
-    "8-ball-pool-rules",
-    "one-pocket-pool",
-  ],
+  related: ["8-ball-pool-hub", "8-ball-pool-rules", "one-pocket-pool"],
   updated: "2026-10-23",
 };

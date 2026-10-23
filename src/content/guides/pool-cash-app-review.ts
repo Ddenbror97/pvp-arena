@@ -10,9 +10,8 @@ export const guide: Guide = {
     "This pool cash app page does not know Pool Cash's fee, has no payout receipt, and prints no promo code. It will not call the app a scam or legit.",
   h1: "Pool cash app: an unknown cut beside a pot this page can price",
   answer:
-    "A pool cash app, as this review uses the words, is a phone cashier wrapped around a cue game, and this page will not invent its cut. Semrush, US, 22 October 2026, put pool cash app near 720 searches a month, difficulty 32, click price near $6.14. There is no payout receipt here, and there is no promo code.",
+    "A pool cash app, as this review uses the words, is a phone cashier wrapped around a cue game, and this page will not invent its cut. There is no payout receipt here, and there is no promo code.",
   facts: [
-    "Semrush US, 22 October 2026: pool cash app about 720 searches, difficulty 32, click price near $6.14.",
     "Pool cash real money and is pool cash legit are in the brief with no separate volume printed here.",
     "This page has no Pool Cash payout receipt and prints no promo code.",
     "It will not call Pool Cash a scam, and it will not call Pool Cash legit.",
@@ -22,34 +21,22 @@ export const guide: Guide = {
     {
       id: "review-without-a-receipt",
       title: "The review this page can honestly write",
-      body: `Pool cash app was a large query in the Semrush US pull of 22 October 2026: about 720 searches a month, keyword difficulty 32, click price near $6.14. Pool cash real money and is pool cash legit sit beside it in the brief. No separate monthly volume for those two is printed here, so none is supplied. Size of the search is not a verdict.
+      body: `Pool cash real money and is pool cash legit sit beside it in the brief. No separate monthly volume for those two is printed here, so none is supplied. Size of the search is not a verdict.
 
 A useful review of a cash app names the entry, names the prize, and subtracts. This page cannot do that subtraction for Pool Cash. It has no payout receipt. It will not call the app a scam, because a missing receipt is not proof of theft. It will not call the app legit, because a missing receipt is not proof of a fair cashier. Both labels would be theatre.
 
 PVPspinArena publishes this page. There is no named author. The last check was 22 October 2026. Nothing here is an affiliate code, and nothing here is legal advice about where a phone cashier is allowed.`,
     },
     {
-      id: "who-pays",
-      title: "Unknown app cut versus a printed pot fee",
-      body: `A pool cash app review that invents a rake is worse than a blank cell. The only priced cut on this page is 5% of a pot.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
       id: "where",
       title: "Reviews and pots that share the shelf",
-      body: `Put the page next to the rest of the table talk. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [playing pool for a posted pot](/guides/pool-games-for-money), [coin clients beside cash apps](/guides/8-ball-pool-free-coins), [another cue-app search](/guides/8-ball-strike-review). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `This page will not grade Pool Cash without a receipt. The only cashier it can describe in full is the one on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [open a pool wager](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
+The neighbouring money pages are [playing pool for a posted pot](/guides/pool-games-for-money), [coin clients beside cash apps](/guides/8-ball-pool-free-coins), and [another cue-app search](/guides/8-ball-strike-review). The group is the [skill wagers guides](/guides/topics/skill-wagers).
+
+A receipt-free app stays in the blank column. The fee article that does have numbers is [8 ball pool for money](/guides/8-ball-pool-for-money), beside the [Pool Payday review](/guides/pool-payday-review) and [games that pay real money](/guides/games-that-pay-real-money).
+
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "entries-minus-prizes",
@@ -59,17 +46,6 @@ Open [open a pool wager](/8-ball-pool) for the match. The [fairness replay](/fai
 This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. The same silence covers payout speed and any licence number. A comment that offers a percentage is not a source. A screenshot that this page did not capture is not a source. The Pool Payday review on this site already uses that refusal. This Pool Cash page uses it again, with a different brand and no shared anecdote.
 
 No promo code is printed. If a code appears under this article later, in a chat or a repost, it did not come from this text. Treat it as unpublished.`,
-    },
-    {
-      id: "two-pots",
-      title: "The shape of a five percent pot",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $2.00 versus $2.00
-
-Both players post $2.00. The pot is $4.00. The fee is $0.20. The winner is credited $3.80. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "checklist",
@@ -101,15 +77,6 @@ The match a reader can audit without Pool Cash is the one this site runs. Call a
 
 Whether either product is allowed depends on where you live. This page is not legal advice, and it will not name a state as open or closed. The APA ban on gambling at APA functions remains a league rule, not a substitute for that local question.`,
     },
-    {
-      id: "more",
-      title: "Demand is not a completed audit",
-      body: `Seven hundred and twenty searches a month is enough to attract sloppy reviews. Keyword difficulty 32 and a click price near $6.14, in the 22 October 2026 US pull, say the phrase is contested and that advertisers have bid around it. Neither fact reveals Pool Cash's take. A page that prints a percentage it did not measure is doing the opposite of a review. This one prints the refusal, the missing receipt, and the missing promo code, then stops. Pool cash real money and is pool cash legit are answered with that same stop.
-
-The shape to compare, once the blank is admitted, is a pot with a posted percent. Five percent of the pot, winner credited 95% in a US-dollar balance when the match settles. A two-dollar stake is small and still has the fee: four dollars in the middle, twenty cents kept, three dollars and eighty cents to the winner. The twenty cents appears only if someone wins. An empty table returns the stake after 24 hours. That worked example teaches the shape. It is not a reconstruction of Pool Cash's cashier, and it is not a claim about Skillz or Miniclip.
-
-Readers who want a code should look at the app, not at this URL. Nothing in the facts, the table, or the closing notes is a coupon. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, and a code would not disclose those fees anyway. If you stake here, you are on 1v1 8-ball. Promo credit and partner credit can fund the stake. If you stake in an app, write down the entry and the prize yourself. This text will not do it for you, and it is not legal advice about either choice.`,
-    },
   ],
   faqs: [
     {
@@ -133,8 +100,8 @@ Readers who want a code should look at the app, not at this URL. Nothing in the 
       a: "Payout speed, licence numbers, and prize ladders for Pool Cash are not on this page. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. Inventing any of those figures would be a fake review.",
     },
     {
-      q: "Does a large search count settle the question?",
-      a: "About 720 monthly searches means people are looking. It does not mean the app's take has been audited here. Pool cash real money and is pool cash legit are the neighbouring questions, and they get the same refusal.",
+      q: "Does a popular app name mean the fee was checked?",
+      a: "No. This page has not audited Pool Cash. A large name is not a receipt, and the take stays blank until one exists.",
     },
   ],
   sources: [

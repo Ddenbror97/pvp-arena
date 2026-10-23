@@ -12,7 +12,6 @@ export const guide: Guide = {
   answer:
     "10 ball pool, in the WPA rules effective 21 October 2026, is call shot played in numerical order. The 10 wins only when it is the last object ball and the shooter called it. A ball that falls on a shot you did not call, with no foul, lets the opponent choose who shoots next.",
   facts: [
-    "Semrush, United States, 22 October 2026: 10 ball pool was about 720 searches a month at keyword difficulty 16.",
     "There is no safety call in this 10-ball chapter. A push out still exists, on the same terms as 9-ball.",
     "The 10 is spotted unless the pocketing was the called winning shot.",
     "Three consecutive fouls lose the rack.",
@@ -27,27 +26,13 @@ export const guide: Guide = {
 That single limit is why players who like 9-ball sometimes hate 10-ball, and why players who like call shot put up with the numbers. Luck can still hide the lowest ball or kiss the 10 toward a pocket. Luck does not cash the rack unless the call matches the ball that fell and the 10 was last. The paraphrase stops there. The PDF's longer call language is not pasted onto this page.`,
     },
     {
-      id: "who-pays",
-      title: "Payment comparison, still the 8-ball table",
-      body: `10-ball readers sometimes want a money match. This site's paying game is 8-ball. The rows below are that comparison, not a 10-ball stake that does not exist here.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
       id: "where",
       title: "Called shots beside the rotation games",
-      body: `Read the fee before you read a story about a hustler. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [the 9-ball push](/guides/9-ball-rules), [a called bank](/guides/bank-pool), [8-ball calls](/guides/8-ball-pool-rules). The cluster lives with the [games of chance guides](/guides/topics/games-of-chance).
+      body: `10-ball is a called rotation game. This site does not run it for money. The 8-ball cashier is [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [the browser 8 ball match](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
+The other rule cards are [the 9-ball push](/guides/9-ball-rules), [a called bank](/guides/bank-pool), and [8-ball calls](/guides/8-ball-pool-rules). The group is the [games of chance guides](/guides/topics/games-of-chance).
+
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "triangle-push",
@@ -55,17 +40,6 @@ Open [the browser 8 ball match](/8-ball-pool) for the match. The [fairness repla
       body: `The rack is a triangle, not the 9-ball diamond. The 1 is on the foot spot. The 10 is in the middle of the pack. Break from the same family of rules that 9-ball uses for a push afterward: if the break was not a foul, the second shot may be a push out. Wrong-ball-first and the no-rail requirement are suspended for that shot. The opponent then chooses who shoots. A pushed 10 that falls is not a win. The 10 is spotted unless the pocketing was the called shot that won the rack.
 
 Later in the rack there is no safety call. You do not announce "safety" to change the meaning of a ball that drops. If you meant to play safe and a ball falls without a foul, you live with the 10-ball consequence for a pocketed ball that was not the called shot. The opponent chooses the next shooter. The missing safety call is a feature of this chapter, not an oversight in the summary.`,
-    },
-    {
-      id: "two-pots",
-      title: "Dollars this page will actually do",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $2.00 versus $2.00
-
-Both players post $2.00. The pot is $4.00. The fee is $0.20. The winner is credited $3.80. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "checklist",
@@ -91,16 +65,7 @@ The 10 follows a stricter bookkeeping rule than the lower balls. It is spotted u
       title: "Why this cashier has no 10-ball button",
       body: `This site does not run 10-ball for money. The rules above are WPA paraphrase so a reader can tell 10-ball from 9-ball and from this site's 8-ball. The stake lobby sells 8-ball: call a pocket only for the 8, a 5% fee, winner 95%, stakes from $1 to $50. It does not sell a called 10. It also does not sell 9-ball, straight pool, one-pocket, bank, cutthroat, or killer.
 
-Semrush on 22 October 2026 put 10 ball pool near 720 searches a month at difficulty 16. That is enough curiosity to deserve a straight answer, and not a reason to pretend a button exists. If you want three fouls to lose a 10-ball rack, play that game where it is offered. Three consecutive fouls do lose the rack in the WPA chapter. They do not create a match on this website. Read the called pocket before you celebrate a fallen 10.`,
-    },
-    {
-      id: "more",
-      title: "What the call changes after the balls are moving",
-      body: `Picture two racks that look alike for three shots. In 9-ball the lowest ball is struck first, a legal 9 ends it, and you do not owe the room a pocket name for every scoring stroke under the facts on the 9-ball page. In 10-ball you still strike the lowest ball first, and you also owe a call. The 10 pays only at the end, and only if you named it. A kiss that drops the 10 while the 6 is still out is a spotted 10 in the call-shot game. The racks share rotation. They do not share the moment the money ball counts.
-
-The opponent's choice is the quiet rule that decides sloppy pockets. You called the 3 in the corner and the 3 went in the side, with the cue ball staying on the table and no other foul. The 3 can remain pocketed. The next line of the score is not "shoot again." The opponent looks at the leave and picks the shooter. If the ball that fell was the 10, and it was not the called last-ball win, the 10 is lifted and spotted before that choice matters. Early 10s do not stick.
-
-A push out does not smuggle a safety system into the rest of the game. It is shot two, after a break that was not a foul, with wrong-ball-first and the rail requirement lifted, and with the opponent choosing the next shooter. From shot three onward you have calls, fouls, and the three-foul loss. You do not have a safety announcement to protect a ball that drops by accident. Players who want that announcement are describing 8-ball in the WPA book, where a safety may be called. Ten-ball, on these facts, leaves that tool out.`,
+That is enough curiosity to deserve a straight answer, and not a reason to pretend a button exists. If you want three fouls to lose a 10-ball rack, play that game where it is offered. Three consecutive fouls do lose the rack in the WPA chapter. They do not create a match on this website. Read the called pocket before you celebrate a fallen 10.`,
     },
   ],
   faqs: [
@@ -136,12 +101,6 @@ A push out does not smuggle a safety system into the rest of the game. It is sho
     },
     { label: "WPA rules index", url: "https://wpapool.com/rules/" },
   ],
-  related: [
-    "8-ball-pool-for-money",
-    "pool-payday-review",
-    "games-that-pay-real-money",
-    "9-ball-rules",
-    "bank-pool",
-  ],
+  related: ["8-ball-pool-hub", "9-ball-rules", "bank-pool"],
   updated: "2026-10-23",
 };

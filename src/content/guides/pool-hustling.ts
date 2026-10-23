@@ -10,9 +10,8 @@ export const guide: Guide = {
     "A pool hustler hides the stake. Minnesota Fats was Rudolf Wanderone's nickname. Fast Eddie Felson is a fictional character. This page is not legal advice.",
   h1: "Pool hustler culture, and the stake this site posts in the open",
   answer:
-    "A pool hustler, in the culture this page describes, plays for money while hiding the stake or hiding how good they are. Semrush, US, 22 October 2026, put pool hustler near 170 searches, difficulty 39, and pool hustling near 90 at difficulty 10. A declared 5% pot is a different room.",
+    "A pool hustler, in the culture this page describes, plays for money while hiding the stake or hiding how good they are. A declared 5% pot is a different room.",
   facts: [
-    "Pool hustler: about 170 US searches, difficulty 39. Pool hustling: about 90, difficulty 10. Pull dated 22 October 2026.",
     "Minnesota Fats was a nickname used by Rudolf Wanderone. This page adds no biography and no quotation.",
     "Fast Eddie Felson is a fictional character from The Hustler, not a historical player.",
     "Hustling for undeclared money can be fraud. This page is not legal advice.",
@@ -22,7 +21,7 @@ export const guide: Guide = {
     {
       id: "hidden-money",
       title: "Hidden money versus a posted stake",
-      body: `Pool hustler and pool hustling are culture queries. In the Semrush US pull of 22 October 2026, pool hustler was about 170 searches at difficulty 39, and pool hustling was about 90 at difficulty 10. The harder head term and the easier activity term describe the same folklore: money on a table where one player knows more than the other about the stake, the skill, or both.
+      body: `Pool hustler and pool hustling are culture queries. The harder head term and the easier activity term describe the same folklore: money on a table where one player knows more than the other about the stake, the skill, or both.
 
 A bar stake with no called rules is the old shape. If the scratch on the 8 was never said, the argument starts when the ball drops. This site is the other shape. Both players pick from $1, $2, $5, $10, $25, or $50 and post the same cash. The fee is 5% of the pot. Fifty dollars against fifty is a hundred-dollar pot, a five-dollar fee, and ninety-five dollars credited to the winner. The number is on the table before the break.
 
@@ -52,20 +51,11 @@ Pool hustling as a search is broader than either name. People want the atmospher
     {
       id: "where",
       title: "Declared stakes and public ratings",
-      body: `If you only follow one trail, follow the fee and the rules, then the neighbours. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [a declared pool bet](/guides/pool-betting), [a public rating](/guides/fargo-rate), [skill, with the fee still on](/guides/skill-games-for-money-pool). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `A hustle hides the stake or the skill. A posted pot does neither. The dollars are on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [start a two-player pot](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
-    },
-    {
-      id: "two-pots",
-      title: "A declared pot, including the largest stake",
-      body: `### $25 versus $25
+The neighbouring money pages are [a declared pool bet](/guides/pool-betting), [a public rating](/guides/fargo-rate), and [skill, with the fee still on](/guides/skill-games-for-money-pool). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $50.00 versus $50.00
-
-Both players post $50.00. The pot is $100.00. The fee is $5.00. The winner is credited $95.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "fraud-and-apa",
@@ -79,36 +69,11 @@ This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Stri
     {
       id: "what-gets-published-first",
       title: "What a declared match publishes first",
-      body: `Before the balls are shown, this match publishes a SHA-256 hash of the 32-byte rack seed. The seed later shuffles only the coloured balls, and the 8 stays in the centre. Shots are not randomly missed. New matches use physics id pool-phys-v2. The fairness page can replay them. None of that is a disguise. A hustle depends on someone knowing less. A hash is an attempt to let both players know the rack commitment at the same time.
+      body: `Before the balls are shown, this match publishes a SHA-256 hash of the 32-byte rack seed. The seed later shuffles only the coloured balls, and the 8 stays in the centre. Shots are not randomly missed. New matches store the current physics id on the rack. The fairness page can replay them. None of that is a disguise. A hustle depends on someone knowing less. A hash is an attempt to let both players know the rack commitment at the same time.
 
-The rules are also posted. Call a pocket only for the 8. The break 8 wins unless the cue ball scratches. Early 8 loses. The shot clock is 30 seconds. Three timeouts forfeit the seat. A player who leaves a live table pays 10% of their own stake to the site. The other 90% returns, the opponent keeps their stake, and the table is gone. Promo credit and partner credit can be staked. Deposited money is used first. If nobody joins within 24 hours, the stake comes back and no fee is charged. There is no weekly tournament and no published break-win rate to dangle as bait.
+The rules are also posted. Call a pocket only for the 8. The break 8 wins unless the cue ball scratches. Early 8 loses. The shot clock is 30 seconds. Three timeouts forfeit the seat. A player who leaves a live table pays 10% of their own stake to the site. The other 90% returns, the opponent's stake is refunded, and the table closes with no winner. Promo credit and partner credit can be staked. Deposited money is used first. If nobody joins within 24 hours, the stake comes back and no fee is charged. There is no weekly tournament and no published break-win rate to dangle as bait.
 
 WPA rules effective 21 October 2026 call shots, and a legal break 8 is spotted or rebroken. This table does not. PVPspinArena publishes the page. No named author is on it.`,
-    },
-    {
-      id: "who-pays",
-      title: "A hidden bet versus a posted stake",
-      body: `Pool hustler searches mix films, bar bets, and apps. This page prices only the declared pot, and it leaves other fees unknown.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
-      id: "more",
-      title: "Culture is not a playbook",
-      body: `Difficulty 39 on pool hustler and difficulty 10 on pool hustling, from the 22 October 2026 US pull, say the folklore is searched and the head term is not an easy win for a new page. The volumes, about 170 and about 90, are modest. They do not justify invented quotes from Rudolf Wanderone or a fake record for a film character. Minnesota Fats stays a nickname. Fast Eddie Felson stays fiction from The Hustler. If a paragraph online adds a line they never said in a source this page holds, this page will not repeat it.
-
-A declared fifty-dollar match is the top of the stake list, not a hustle script. Both players post $50. The pot is $100. The fee is $5. The winner is credited $95. That is 5% of the pot, the same rate as a one-dollar match. The loser is out the whole stake. The winner's net against their own stake is $45. Against an equal player, half the matches do not cover a fee that pays 95% back. The arithmetic is the warning. It is not a measured win rate, and no break-win rate is published to decorate it.
-
-League night and a website are different rooms. The APA list, wagers through Calcuttas, binds APA functions. It does not silently become the criminal code, and it does not licence this site. Undeclared hustling can still be fraud where you live. This page will not map that risk onto a state. The product alternative is narrow: same stake, posted 5% fee, hash before the rack, replay after the shot. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, so it will not rank those apps as safer hustles or as worse ones.`,
     },
   ],
   faqs: [

@@ -48,20 +48,11 @@ A real pot on this site is two stakes already inside the ledger. You do not prep
     {
       id: "where",
       title: "The match the chat was imitating",
-      body: `If you only follow one trail, follow the fee and the rules, then the neighbours. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [the actual two-player match](/guides/8-ball-pool-1v1), [where the table lives](/guides/8-ball-pool-hub), [a stake that stays on the site](/guides/pool-betting). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `There is no official Discord table. Paying a stranger in chat is how the stake disappears. The real match is described on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [open a pool wager](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
-    },
-    {
-      id: "two-pots",
-      title: "The pot never lives in a DM",
-      body: `### $25 versus $25
+The neighbouring money pages are [the actual two-player match](/guides/8-ball-pool-1v1) and [a stake that stays on the site](/guides/pool-betting). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $1.00 versus $1.00
-
-Both players post $1.00. The pot is $2.00. The fee is $0.10. The winner is credited $1.90. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "seed",
@@ -73,34 +64,9 @@ This is not a colourful extra warning. It is the same rule as the stake rule. Mo
     {
       id: "real-match",
       title: "What a real two-player stake looks like",
-      body: `Two accounts. Equal stakes from $1, $2, $5, $10, $25, or $50. One opponent. Call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches. Three timeouts forfeit. The surface is 2.54 m by 1.27 m. Physics id pool-phys-v2, no random miss. No FargoRate, no APA skill level, no rank that sets the stake. Cue upgrades are not sold. Settlement is the replay. The winner is credited 95%.
+      body: `Two accounts. Equal stakes from $1, $2, $5, $10, $25, or $50. One opponent. Call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches. Three timeouts forfeit. The surface is 2.54 m by 1.27 m. The physics id stored with that rack, no random miss. No FargoRate, no APA skill level, no rank that sets the stake. Cue upgrades are not sold. Settlement is the replay. The winner is credited 95%.
 
 A friend can be the opponent. A stranger in the product lobby can be the opponent. A stranger who will only play if you pay them in a DM cannot. You cannot both sit on one account to make the chat simpler. The account split is the product. When the rack ends, stop or play another. Do not move the celebration back into a room that is now asking for a rematch off-site.`,
-    },
-    {
-      id: "who-pays",
-      title: "Chat rooms versus a posted stake",
-      body: `8 ball pool discord looks like a lobby. A free client's chat, a prize app's chat, and this cashier are three different places to put money, and only one of them is ours.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
-      id: "more",
-      title: "Talk about the game. Pay inside the game",
-      body: `Communities are allowed to exist. People share leaves, argue about English, and post tables they own. None of that requires a deposit. 8 ball pool discord, as a social hobby, is outside this page's authority. The page starts when the hobby asks for a wallet. At that moment the advice is short: do not pay. Come to the cashier, where the other stake is visible before the break and the replay is visible after it. Visibility is the feature chat cannot copy.
-
-Telegram follows the same line as Discord. A channel with a tip bot, a middleman, and a promise of better odds is still off-site. This site does not run that channel. It does not recognize the middleman's ledger. A make-on-the-break rate is not published here, so a chat prop on the break 8 has no number from us to use. If they quote one, they invented it. Invented odds plus an off-site wallet is two reasons to leave, and either one was enough.
-
-If a friend already uses a server to coordinate times, keep the server for the clock and the cashier for the money. Send a time. Do not send a seed. Do not send a screenshot of a balance as proof you will pay later. Post the stake, let them post theirs, play, and let 5% be the only cut. Three timeouts still forfeit even if the voice chat is funny. The rules do not pause for the room you are not officially in.`,
     },
   ],
   faqs: [

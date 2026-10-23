@@ -12,7 +12,6 @@ export const guide: Guide = {
   answer:
     "A cutthroat pool game, as people commonly play it, is three players with five balls each. One person takes 1 through 5, one takes 6 through 10, and one takes 11 through 15. You shoot the other players' balls. The last player with a ball left wins. House rules past that pattern vary, and there is no single official rulebook on this page.",
   facts: [
-    "Semrush, United States, 22 October 2026: cutthroat pool was about 720 searches a month at keyword difficulty 15.",
     "The common pattern is three players, five balls each, shooting the other groups, last ball standing.",
     "Scratches, the break, and hitting your own ball are house questions. This page does not crown one answer.",
     "The WPA PDF cited here covers the numbered rule games. It is not a cutthroat statute.",
@@ -29,16 +28,18 @@ That picture is widely played. It is not a single official rulebook, and this pa
     {
       id: "where",
       title: "Party games and the two-player card",
-      body: `These are the other doors, in a useful order. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [lives, not groups](/guides/killer-pool), [two-player 8-ball](/guides/8-ball-pool-rules), [the money-match hub](/guides/8-ball-pool-hub). The cluster lives with the [games of chance guides](/guides/topics/games-of-chance).
+      body: `Cutthroat is three players and five balls each. This table is two players and groups. The money version of the two-player game is [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [the 8 ball table](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
+The other rule cards are [lives, not groups](/guides/killer-pool) and [two-player 8-ball](/guides/8-ball-pool-rules). The group is the [games of chance guides](/guides/topics/games-of-chance).
+
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "last-ball",
       title: "Last ball standing is the usual idea",
       body: `The play is a hunt for other people's balls. Every ball you pocket from an opponent's five brings that opponent closer to having nothing left. When two sets are gone, the player who still has a ball wins under the common pattern. While all three sets remain, the table is a small war of five-ball groups rather than a two-player race. Some rooms let you pocket your own ball and treat it as a wound. Some rooms forbid the hit.
 
-This page lists both habits as things rooms do, and it refuses to pick a winner between them. Semrush on 22 October 2026 put cutthroat pool near 720 searches a month at difficulty 15. That is enough traffic to describe the common pattern in plain words. It is not enough traffic to justify a fictional governing body. Three players, five balls each, shoot the others, last ball left wins. Past that sentence, ask the house.`,
+This page lists both habits as things rooms do, and it refuses to pick a winner between them. That is enough traffic to describe the common pattern in plain words. It is not enough traffic to justify a fictional governing body. Three players, five balls each, shoot the others, last ball left wins. Past that sentence, ask the house.`,
     },
     {
       id: "checklist",
@@ -60,47 +61,11 @@ This page lists both habits as things rooms do, and it refuses to pick a winner 
 What you can settle before the break is short and useful. Ask who owns 1 through 5, what happens if your own ball falls, and what the cue ball falling costs. If money or pride is involved, write the answers where everyone can see them. After the balls stop, memory favours the speaker who is about to lose a ball. The common pattern is enough to start a friendly rack. It is a poor judge of a dispute nobody named in advance.`,
     },
     {
-      id: "who-pays",
-      title: "A two-player cashier beside a three-player game",
-      body: `Cutthroat is a three-player bar pattern. The rows below are still this site's 8-ball payment comparison, because that is the only cue pot this page will put a number on.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
-      id: "two-pots",
-      title: "The pot is 8-ball, not a five-ball group",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $1.00 versus $1.00
-
-Both players post $1.00. The pot is $2.00. The fee is $0.10. The winner is credited $1.90. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
-    },
-    {
       id: "not-our-pot",
       title: "A bar game with no pot on this site",
       body: `This site does not stake cutthroat. The lobby is a two-player 8-ball match. A three-handed group game has no button beside that match. Killer is absent too, and so are 9-ball, 10-ball, straight pool, one-pocket, and bank. A searcher who wanted a cash cutthroat app will not find a hidden rake on this page. Inventing another company's fee would be the same kind of fake as inventing an official cutthroat book.
 
 Read the five-ball pattern. Play it where three people agree on the gaps. Do not expect the 8-ball cashier to score groups of 1 through 5. Two friends and a stranger can still play the pattern on a bar table without this website being part of the stake. If they want a recorded pot, they need a room that actually books three players. This one books two, and only at 8-ball. The pattern can be read here. The pot cannot be posted here.`,
-    },
-    {
-      id: "more",
-      title: "What to ask before the triangle comes apart",
-      body: `The numbers are the whole assignment this page will defend. Balls 1, 2, 3, 4, and 5 travel together. Balls 6 through 10 travel together. Balls 11 through 15 travel together. Nothing in that split says where each ball sits inside the triangle. A house diagram that puts lows on the left is a house diagram. Follow it if you are in that house. Do not carry it to the next bar and call it universal. The universal piece, as far as this page will go, is five balls and a duty to hunt the other two sets.
-
-Elimination is gradual. You can have four balls left and still be in the rack. You can have one. The common win arrives when the other two players have none. A dramatic last shot that clears two opponents on one stroke is still the same rule: look at who has a ball remaining. If the stroke also pocketed one of your own, you are in the part of the night this page refused to legislate. Stop and read whatever you wrote down before the break. If you wrote nothing, you have a conversation, not a rule.
-
-Money makes the gap expensive. A friendly rack can survive an unclear scratch. A stake cannot. This website will not paper over that by offering the game. There is no three-player pot, no cutthroat fee, and no promise that 1 through 5 will be scored by the 8-ball engine. Use the page as a description of the common bar pattern. Use the people at the table as the legislature for everything else. That split is deliberate. A longer page that invented the legislature would be a worse guide. Leave the gap where readers can see it.`,
     },
   ],
   faqs: [
@@ -126,7 +91,7 @@ Money makes the gap expensive. A friendly rack can survive an unclear scratch. A
     },
     {
       q: "Why describe a game you will not book?",
-      a: "Because the search is real. Semrush on 22 October 2026 put cutthroat pool near 720 monthly searches at difficulty 15. A straight description of the common pattern is the page. A made-up rulebook would be worse than a gap.",
+      a: "Because the search is real. A straight description of the common pattern is the page. A made-up rulebook would be worse than a gap.",
     },
   ],
   sources: [
@@ -136,12 +101,6 @@ Money makes the gap expensive. A friendly rack can survive an unclear scratch. A
     },
     { label: "WPA rules index", url: "https://wpapool.com/rules/" },
   ],
-  related: [
-    "8-ball-pool-for-money",
-    "pool-payday-review",
-    "games-that-pay-real-money",
-    "killer-pool",
-    "8-ball-pool-rules",
-  ],
+  related: ["8-ball-pool-hub", "killer-pool", "8-ball-pool-rules"],
   updated: "2026-10-23",
 };
