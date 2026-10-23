@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { BALL_R, POCKETS, TABLE_H, TABLE_W } from "../src/lib/pool/physics";
-import { ballRadiusPx, spanPx, viewOf } from "../src/lib/pool/view";
+import { ballRadiusPx, FAR, spanPx, viewOf } from "../src/lib/pool/view";
 
 describe("pool view", () => {
   it("sends every cloth point back to itself", () => {
@@ -18,23 +18,65 @@ describe("pool view", () => {
     expect(max).toBeLessThan(1e-4);
   });
 
-  it("draws each ball at its real width across the rails", () => {
+  it("keeps a 2:1 overhead cloth with one scale for every ball", () => {
+    const view = viewOf(1440, 800);
+    expect(FAR).toBe(1);
+    expect(view.innerW / view.innerH).toBeCloseTo(TABLE_W / TABLE_H, 6);
+    expect(view.project(0, 0).scale).toBe(view.project(TABLE_W, TABLE_H).scale);
+    const diameter = ballRadiusPx(view.innerW, 1) * 2;
+    expect(view.innerW / diameter).toBeCloseTo(TABLE_W / (BALL_R * 2), 6);
+    const bottom = view.project(TABLE_W / 2, 0);
+    const top = view.project(TABLE_W / 2, BALL_R * 2);
+    expect(Math.abs(bottom.y - top.y)).toBeCloseTo(diameter, 4);
+    expect(view.padX).toBeGreaterThanOrEqual(view.rail - 0.01);
+    expect(view.padY).toBeGreaterThanOrEqual(view.rail - 0.01);
+  });
+
+  it("maps a rightward drag toward the rack", () => {
     const view = viewOf(1200, 640);
-    const near = view.project(0, TABLE_H / 2);
-    const across = view.innerW / (ballRadiusPx(view.innerW, near.scale) * 2);
-    expect(across).toBeCloseTo(TABLE_H / (BALL_R * 2), 6);
+    const cue = view.project(TABLE_W / 4, TABLE_H / 2);
+    const ahead = view.unproject(cue.x + 48, cue.y);
+    expect(ahead.x).toBeGreaterThan(TABLE_W / 4 + 1000);
+    expect(Math.abs(ahead.y - TABLE_H / 2)).toBeLessThan(1);
   });
 
   it("keeps pocket mouths on the physics centres", () => {
-    const view = viewOf(1000, 600);
-    for (const pocket of POCKETS) {
-      const p = view.project(pocket.x, pocket.y);
-      const back = view.unproject(p.x, p.y);
-      expect(Math.abs(back.x - pocket.x)).toBeLessThan(1e-3);
-      expect(Math.abs(back.y - pocket.y)).toBeLessThan(1e-3);
-      expect(spanPx(view.innerW, p.scale, pocket.r)).toBeGreaterThan(
-        ballRadiusPx(view.innerW, p.scale),
-      );
+    for (const [w, h] of [
+      [1440, 800],
+      [1000, 600],
+      [390, 700],
+    ] as const) {
+      const view = viewOf(w, h);
+      const clothLeft = view.padX;
+      const clothRight = view.padX + view.innerW;
+      const clothTop = view.padY;
+      const clothBottom = view.padY + view.innerH;
+      expect(POCKETS).toHaveLength(6);
+      for (const pocket of POCKETS) {
+        const p = view.project(pocket.x, pocket.y);
+        const back = view.unproject(p.x, p.y);
+        expect(Math.abs(back.x - pocket.x)).toBeLessThan(1e-3);
+        expect(Math.abs(back.y - pocket.y)).toBeLessThan(1e-3);
+        const mouth = spanPx(view.innerW, p.scale, pocket.r);
+        expect(mouth).toBeGreaterThan(ballRadiusPx(view.innerW, p.scale));
+        const inset = Math.min(pocket.x, TABLE_W - pocket.x, pocket.y, TABLE_H - pocket.y);
+        const dist = Math.min(
+          Math.abs(p.x - clothLeft),
+          Math.abs(p.x - clothRight),
+          Math.abs(p.y - clothTop),
+          Math.abs(p.y - clothBottom),
+        );
+        expect(dist).toBeCloseTo(spanPx(view.innerW, 1, inset), 3);
+        expect(p.x).toBeGreaterThan(clothLeft - view.rail);
+        expect(p.x).toBeLessThan(clothRight + view.rail);
+        expect(p.y).toBeGreaterThan(clothTop - view.rail);
+        expect(p.y).toBeLessThan(clothBottom + view.rail);
+      }
+      const sideA = view.project(TABLE_W / 2, 18_000);
+      const sideB = view.project(TABLE_W / 2, TABLE_H - 18_000);
+      expect(sideA.x).toBeCloseTo(sideB.x, 4);
+      const centerY = view.padY + view.innerH / 2;
+      expect((sideA.y + sideB.y) / 2).toBeCloseTo(centerY, 3);
     }
   });
 });

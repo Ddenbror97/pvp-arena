@@ -113,8 +113,7 @@ describe("hard-refresh layout reserves", () => {
     expect(lobby).toContain("loadRouteChunk");
     expect(lobby).toContain("matchId: table.id");
     expect(lobby).toContain("Open tables");
-    expect(matchRoute).toContain('rel: "preload"');
-    expect(matchRoute).toContain("room.webp");
-    expect(matchRoute).toContain('fetchPriority: "high"');
+    expect(matchRoute).not.toContain("room.webp");
+    expect(lobbyRoute).toContain("hero.webp");
   });
 });

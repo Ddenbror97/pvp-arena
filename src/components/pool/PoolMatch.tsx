@@ -4,7 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ChevronDown, Settings, Volume2, VolumeX } from "lucide-react";
 import { toast } from "sonner";
-import room from "@/assets/pool/room.webp";
 import { useAuth } from "@/lib/auth";
 import {
   poolForfeit,
@@ -900,7 +899,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
 function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="pool-screen">
-      <img src={room} alt="" width={1280} height={720} className="pool-room" decoding="async" />
+      <div className="pool-room" aria-hidden />
       {children}
     </div>
   );

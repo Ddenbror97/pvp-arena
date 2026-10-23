@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import room from "@/assets/pool/room.webp";
 import { ogImageMeta } from "@/lib/og";
 import { PoolMatch } from "@/components/pool/PoolMatch";
 
@@ -20,9 +19,6 @@ export const Route = createFileRoute("/pool/$matchId")({
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),
-    ],
-    links: [
-      { rel: "preload", as: "image", href: room, type: "image/webp", fetchPriority: "high" },
     ],
   }),
   component: Page,

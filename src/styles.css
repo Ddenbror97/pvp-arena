@@ -2842,8 +2842,21 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-root { position: relative; width: 100%; height: calc(100dvh - 3.5rem); overflow: hidden; background: #07060f; }
 @media (min-width: 640px) { .pool-root { height: calc(100dvh - 4rem); } }
 .pool-screen { position: absolute; inset: 0; overflow: hidden; color: #f6f3ff; }
-.pool-room { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 42%; }
-.pool-felt { position: absolute; z-index: 1; left: 4.8rem; right: 1.1rem; top: 6.35rem; bottom: 4.9rem; container-type: size; }
+.pool-room {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 46% 32% at 16% 18%, rgb(96 48 150 / 0.32), transparent 70%),
+    radial-gradient(ellipse 40% 28% at 88% 82%, rgb(72 32 130 / 0.24), transparent 72%),
+    radial-gradient(ellipse 55% 42% at 50% 58%, rgb(48 24 78 / 0.22), transparent 68%),
+    repeating-linear-gradient(122deg, rgb(255 255 255 / 0.02) 0 1px, transparent 1px 11px),
+    repeating-linear-gradient(32deg, rgb(0 0 0 / 0.28) 0 1px, transparent 1px 16px),
+    linear-gradient(168deg, #1c1824 0%, #0c0b10 46%, #16131c 100%);
+}
+.pool-room::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 48%, transparent 36%, rgb(0 0 0 / 0.42) 100%);
+}
+.pool-felt { position: absolute; z-index: 1; left: 11.25rem; right: 0.85rem; top: 5.85rem; bottom: 3.45rem; container-type: size; }
 .pool-felt-frame { position: absolute; inset: 0; }
 .pool-canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 .pool-brand, .pool-vs, .pool-tools, .pool-prize, .pool-power, .pool-dock, .pool-banner, .pool-sheet, .pool-confirm, .pool-pockets { position: absolute; z-index: 3; }
@@ -2887,15 +2900,16 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-leave { padding: 0 0.9rem; }
 .pool-gear { width: 2.4rem; justify-content: center; padding: 0; }
 .pool-prize {
-  top: 5.5rem; left: 0.85rem; display: flex; align-items: center; gap: 0.5rem;
+  top: 4.55rem; left: 0.75rem; display: flex; align-items: center; gap: 0.5rem;
   padding: 0.45rem 0.75rem 0.45rem 0.45rem; border-radius: 0.9rem;
-  background: rgb(8 6 18 / 80%); border: 1px solid rgb(255 255 255 / 10%);
+  background: rgb(8 6 18 / 82%); border: 1px solid rgb(255 255 255 / 12%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 28%);
 }
 .pool-prize-icon { display: grid; place-items: center; width: 1.8rem; height: 1.8rem; border-radius: 0.5rem; background: #22c55e; color: #052e16; font-weight: 800; }
 .pool-prize small { display: block; font-size: 0.68rem; color: #c4b5fd; }
 .pool-prize strong { display: block; font-family: var(--font-display); font-size: 1.02rem; }
 .pool-prize em { display: block; margin-top: 0.05rem; font-style: normal; font-size: 0.68rem; color: #ddd4f8; }
-.pool-power { left: 1.05rem; top: 58%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
+.pool-power { left: 0.9rem; top: 54%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
 .pool-power input {
   writing-mode: vertical-lr; direction: rtl; appearance: none; width: 0.55rem; height: 9.2rem;
   border-radius: 999px; border: 1px solid rgb(255 255 255 / 16%); background: rgb(255 255 255 / 14%); cursor: default;
@@ -2913,7 +2927,7 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-switch.is-on { background: #7c3aed; }
 .pool-switch.is-on span { transform: translateX(1.02rem); }
 .pool-banner {
-  left: 50%; top: 4.55rem; transform: translateX(-50%); max-width: min(38rem, calc(100% - 2rem));
+  left: 50%; top: 3.95rem; transform: translateX(-50%); max-width: min(38rem, calc(100% - 2rem));
   margin: 0; padding: 0.35rem 0.7rem; border-radius: 0.75rem; text-align: center; font-size: 0.78rem;
   background: rgb(8 6 16 / 84%); border: 1px solid rgb(255 255 255 / 12%);
 }
@@ -2974,7 +2988,7 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
   .pool-seat { padding-inline: 0.4rem; }
   .pool-pips { display: flex; }
   .pool-prize { display: none; }
-  .pool-felt { left: 1.45rem; right: 0.35rem; top: 8.15rem; bottom: 7.35rem; }
+  .pool-felt { left: 0.4rem; right: 0.4rem; top: 8.05rem; bottom: 6.5rem; }
   .pool-banner { top: 6.15rem; padding: 0.28rem 0.6rem; font-size: 0.72rem; }
   .pool-power { top: auto; bottom: 6.85rem; left: 0.15rem; transform: none; }
   .pool-power input { height: 4.4rem; }
@@ -2984,7 +2998,7 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 @media (max-height: 520px) {
   .pool-brand small, .pool-pips { display: none; }
   .pool-vs { top: 0.3rem; }
-  .pool-felt { top: 3.15rem; bottom: 3.15rem; }
+  .pool-felt { left: 4.6rem; right: 0.45rem; top: 3.15rem; bottom: 3.15rem; }
   .pool-banner { top: 2.55rem; }
   .pool-power { bottom: 3.05rem; }
   .pool-power input { height: 2.8rem; }

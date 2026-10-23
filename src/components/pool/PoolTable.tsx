@@ -89,31 +89,21 @@ function tablePoint(canvas: HTMLCanvasElement, clientX: number, clientY: number)
   return { x: Math.round(point.x), y: Math.round(point.y) };
 }
 
-function corners(
-  project: (x: number, y: number) => { x: number; y: number; scale: number },
-  outset: number,
-): Pt[] {
-  const nearLeft = project(0, 0);
-  const farLeft = project(TABLE_W, 0);
-  const farRight = project(TABLE_W, TABLE_H);
-  const nearRight = project(0, TABLE_H);
-  return [
-    { x: nearLeft.x - outset, y: nearLeft.y + outset },
-    { x: farLeft.x - outset, y: farLeft.y - outset },
-    { x: farRight.x + outset, y: farRight.y - outset },
-    { x: nearRight.x + outset, y: nearRight.y + outset },
-  ];
-}
-
-function trace(ctx: CanvasRenderingContext2D, pts: readonly Pt[], fresh = true) {
-  const first = pts[0];
-  if (!first) return;
-  if (fresh) ctx.beginPath();
-  ctx.moveTo(first.x, first.y);
-  for (let i = 1; i < pts.length; i++) {
-    const p = pts[i];
-    if (p) ctx.lineTo(p.x, p.y);
-  }
+function roundedRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  const radius = Math.max(0, Math.min(r, w / 2, h / 2));
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
   ctx.closePath();
 }
 
@@ -132,6 +122,9 @@ function addHoles(
 }
 
 function diamond(ctx: CanvasRenderingContext2D, x: number, y: number, s: number) {
+  ctx.save();
+  ctx.shadowColor = "rgba(167, 109, 255, 0.9)";
+  ctx.shadowBlur = s * 1.6;
   ctx.beginPath();
   ctx.moveTo(x, y - s);
   ctx.lineTo(x + s * 0.62, y);
@@ -139,14 +132,16 @@ function diamond(ctx: CanvasRenderingContext2D, x: number, y: number, s: number)
   ctx.lineTo(x - s * 0.62, y);
   ctx.closePath();
   const g = ctx.createLinearGradient(x, y - s, x, y + s);
-  g.addColorStop(0, "#ffffff");
-  g.addColorStop(0.42, "#ece6da");
-  g.addColorStop(1, "#b7ad9c");
+  g.addColorStop(0, "#f4e9ff");
+  g.addColorStop(0.45, "#c084fc");
+  g.addColorStop(1, "#7e22ce");
   ctx.fillStyle = g;
   ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,0.7)";
-  ctx.lineWidth = Math.max(1, s * 0.12);
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = "rgba(255,255,255,0.72)";
+  ctx.lineWidth = Math.max(0.6, s * 0.1);
   ctx.stroke();
+  ctx.restore();
 }
 
 function noiseLayer(w: number, h: number): HTMLCanvasElement {
@@ -214,87 +209,72 @@ function paintPocket(
   const len = Math.hypot(dx, dy) || 1;
   const ux = dx / len;
   const uy = dy / len;
-  const px = -uy;
-  const py = ux;
 
   ctx.beginPath();
-  ctx.arc(p.x, p.y, mouth * 1.28, 0, Math.PI * 2);
-  const leather = ctx.createRadialGradient(
-    p.x - ux * mouth * 0.15,
-    p.y - uy * mouth * 0.15,
-    mouth * 0.2,
-    p.x,
-    p.y,
-    mouth * 1.28,
-  );
-  leather.addColorStop(0, "#8a6244");
-  leather.addColorStop(0.55, "#6b4630");
-  leather.addColorStop(0.82, "#3a2418");
-  leather.addColorStop(1, "#1a100c");
-  ctx.fillStyle = leather;
+  ctx.arc(p.x, p.y, mouth * 1.14, 0, Math.PI * 2);
+  const metal = ctx.createLinearGradient(p.x - mouth, p.y - mouth, p.x + mouth, p.y + mouth);
+  metal.addColorStop(0, "#f7edd8");
+  metal.addColorStop(0.38, "#d4b483");
+  metal.addColorStop(0.72, "#8d6b3f");
+  metal.addColorStop(1, "#2c2116");
+  ctx.fillStyle = metal;
   ctx.fill();
 
   ctx.beginPath();
-  ctx.arc(p.x, p.y, mouth * 0.98, 0, Math.PI * 2);
+  ctx.arc(p.x, p.y, mouth, 0, Math.PI * 2);
   const hole = ctx.createRadialGradient(
-    p.x - ux * mouth * 0.12,
-    p.y - uy * mouth * 0.16,
-    mouth * 0.04,
-    p.x + ux * mouth * 0.04,
-    p.y + uy * mouth * 0.06,
+    p.x - ux * mouth * 0.18,
+    p.y - uy * mouth * 0.22,
+    mouth * 0.05,
+    p.x,
+    p.y,
     mouth,
   );
   hole.addColorStop(0, "#000000");
-  hole.addColorStop(0.42, "#050408");
-  hole.addColorStop(0.78, "#100c10");
-  hole.addColorStop(1, "#1c1412");
+  hole.addColorStop(0.5, "#05060a");
+  hole.addColorStop(0.82, "#121018");
+  hole.addColorStop(1, "#241c2c");
   ctx.fillStyle = hole;
   ctx.fill();
 
   ctx.beginPath();
-  ctx.ellipse(
-    p.x + ux * mouth * 0.06,
-    p.y + uy * mouth * 0.1,
-    mouth * 0.58,
-    mouth * 0.42,
-    Math.atan2(uy, ux),
-    0,
-    Math.PI * 2,
-  );
-  ctx.fillStyle = "rgba(0,0,0,0.5)";
+  ctx.arc(p.x, p.y, mouth * 0.96, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(0,0,0,0.8)";
+  ctx.lineWidth = Math.max(1, mouth * 0.07);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(p.x - ux * mouth * 0.28, p.y - uy * mouth * 0.28, mouth * 0.34, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(255,255,255,0.08)";
+  ctx.lineWidth = Math.max(1, mouth * 0.04);
+  ctx.stroke();
+}
+
+function bronzeCorners(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  rail: number,
+  radius: number,
+) {
+  const span = rail * 1.45;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, span, span);
+  ctx.rect(x + w - span, y, span, span);
+  ctx.rect(x, y + h - span, span, span);
+  ctx.rect(x + w - span, y + h - span, span, span);
+  ctx.clip();
+  const metal = ctx.createLinearGradient(x, y, x + w, y + h);
+  metal.addColorStop(0, "#f6ecd8");
+  metal.addColorStop(0.35, "#e2c392");
+  metal.addColorStop(0.7, "#b8894e");
+  metal.addColorStop(1, "#7a5730");
+  roundedRect(ctx, x, y, w, h, radius);
+  ctx.fillStyle = metal;
   ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(p.x, p.y, mouth * 1.04, 0, Math.PI * 2);
-  ctx.strokeStyle = "rgba(214, 176, 140, 0.55)";
-  ctx.lineWidth = Math.max(1.25, mouth * 0.075);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(p.x, p.y, mouth * 0.9, 0, Math.PI * 2);
-  ctx.strokeStyle = "rgba(0,0,0,0.65)";
-  ctx.lineWidth = Math.max(1, mouth * 0.06);
-  ctx.stroke();
-
-  const jawR = mouth * 0.42;
-  for (const side of [-1, 1]) {
-    const jx = p.x + px * mouth * 1.02 * side + ux * mouth * 0.08;
-    const jy = p.y + py * mouth * 1.02 * side + uy * mouth * 0.08;
-    const jaw = ctx.createRadialGradient(
-      jx - mouth * 0.08,
-      jy - mouth * 0.1,
-      jawR * 0.15,
-      jx,
-      jy,
-      jawR,
-    );
-    jaw.addColorStop(0, "#d7b08a");
-    jaw.addColorStop(0.45, "#8d5e3c");
-    jaw.addColorStop(1, "#2c1a12");
-    ctx.beginPath();
-    ctx.arc(jx, jy, jawR, 0, Math.PI * 2);
-    ctx.fillStyle = jaw;
-    ctx.fill();
-  }
+  ctx.restore();
 }
 
 function buildTable(w: number, h: number): HTMLCanvasElement {
@@ -304,120 +284,136 @@ function buildTable(w: number, h: number): HTMLCanvasElement {
   const ctx = canvas.getContext("2d");
   if (!ctx) return canvas;
   const view = viewOf(w, h);
-  const { project, innerW, padX, padY } = view;
-  const sidePocket = POCKETS[1];
-  const overhang = sidePocket ? spanPx(innerW, 1, sidePocket.r - sidePocket.y) : 24;
-  const rail = Math.min(Math.min(padX, padY) - 3, Math.max(overhang + 16, Math.min(w, h) * 0.078));
-  const bevel = rail * 0.62;
-  const cushion = rail * 0.34;
-  const woodPts = corners(project, rail);
-  const bevelPts = corners(project, bevel);
-  const nosePts = corners(project, cushion);
-  const feltPts = corners(project, 0);
+  const { project, innerW, innerH, padX, padY, rail } = view;
+  const clothX = padX;
+  const clothY = padY;
+  const outerX = clothX - rail;
+  const outerY = clothY - rail;
+  const outerW = innerW + rail * 2;
+  const outerH = innerH + rail * 2;
+  const outerR = rail * 0.92;
+  const cushion = rail * 0.36;
+  const midX = clothX + innerW / 2;
+  const midY = clothY + innerH / 2;
 
   ctx.clearRect(0, 0, w, h);
+
   ctx.save();
-  ctx.filter = "blur(16px)";
-  ctx.fillStyle = "rgba(0,0,0,0.42)";
-  trace(
-    ctx,
-    corners(project, rail * 0.72).map((p) => ({ x: p.x, y: p.y + rail * 0.28 })),
-  );
+  ctx.filter = "blur(18px)";
+  ctx.fillStyle = "rgba(0,0,0,0.48)";
+  roundedRect(ctx, outerX + rail * 0.15, outerY + rail * 0.42, outerW, outerH, outerR);
   ctx.fill();
   ctx.restore();
 
-  const wood = ctx.createLinearGradient(0, h, w, 0);
-  wood.addColorStop(0, "#1a120e");
-  wood.addColorStop(0.45, "#3a2a22");
-  wood.addColorStop(1, "#100c0a");
-  ctx.fillStyle = wood;
-  trace(ctx, woodPts);
+  const cabinet = ctx.createLinearGradient(outerX, outerY, outerX, outerY + outerH);
+  cabinet.addColorStop(0, "#3a3a40");
+  cabinet.addColorStop(0.045, "#1c1c22");
+  cabinet.addColorStop(0.18, "#0c0c10");
+  cabinet.addColorStop(0.82, "#07070a");
+  cabinet.addColorStop(0.96, "#16161c");
+  cabinet.addColorStop(1, "#2a2a30");
+  roundedRect(ctx, outerX, outerY, outerW, outerH, outerR);
+  ctx.fillStyle = cabinet;
   ctx.fill();
-  ctx.strokeStyle = "rgba(255, 228, 196, 0.34)";
-  ctx.lineWidth = Math.max(1.5, rail * 0.035);
-  ctx.stroke();
-
-  ctx.fillStyle = "#5a4334";
-  trace(ctx, woodPts);
-  trace(ctx, bevelPts, false);
-  ctx.fill("evenodd");
-  ctx.strokeStyle = "rgba(255, 236, 214, 0.2)";
-  ctx.lineWidth = Math.max(1, rail * 0.03);
-  trace(ctx, bevelPts);
-  ctx.stroke();
 
   ctx.save();
-  trace(ctx, feltPts);
-  addHoles(ctx, project, innerW, 1.14);
+  roundedRect(ctx, outerX, outerY, outerW, outerH * 0.48, outerR);
+  ctx.clip();
+  const gloss = ctx.createLinearGradient(outerX, outerY, outerX + outerW, outerY + outerH * 0.4);
+  gloss.addColorStop(0, "rgba(255,255,255,0.16)");
+  gloss.addColorStop(0.35, "rgba(255,255,255,0.04)");
+  gloss.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = gloss;
+  ctx.fillRect(outerX, outerY, outerW, outerH * 0.48);
+  ctx.restore();
+
+  ctx.save();
+  const led = Math.max(1.25, rail * 0.055);
+  roundedRect(
+    ctx,
+    outerX + led,
+    outerY + led,
+    outerW - led * 2,
+    outerH - led * 2,
+    Math.max(0, outerR - led),
+  );
+  ctx.strokeStyle = "rgba(186, 140, 255, 0.78)";
+  ctx.lineWidth = led;
+  ctx.shadowColor = "rgba(140, 70, 255, 0.55)";
+  ctx.shadowBlur = rail * 0.28;
+  ctx.stroke();
+  ctx.restore();
+
+  bronzeCorners(ctx, outerX, outerY, outerW, outerH, rail, outerR);
+
+  roundedRect(
+    ctx,
+    clothX - cushion,
+    clothY - cushion,
+    innerW + cushion * 2,
+    innerH + cushion * 2,
+    cushion * 0.85,
+  );
+  const rubber = ctx.createLinearGradient(clothX, clothY - cushion, clothX, clothY + cushion);
+  rubber.addColorStop(0, "#2a2238");
+  rubber.addColorStop(0.45, "#120e18");
+  rubber.addColorStop(1, "#241c30");
+  ctx.fillStyle = rubber;
+  ctx.fill();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(clothX, clothY, innerW, innerH);
+  addHoles(ctx, project, innerW, 1);
   ctx.clip("evenodd");
-  const cloth = ctx.createRadialGradient(
-    w * 0.5,
-    h * 0.46,
-    innerW * 0.04,
-    w * 0.5,
-    h * 0.5,
-    innerW * 0.72,
-  );
-  cloth.addColorStop(0, "#6e3eae");
-  cloth.addColorStop(0.62, "#5b3296");
-  cloth.addColorStop(1, "#3d206e");
+  const cloth = ctx.createRadialGradient(midX, midY, innerH * 0.05, midX, midY, innerW * 0.62);
+  cloth.addColorStop(0, "#7a3ec4");
+  cloth.addColorStop(0.42, "#642eab");
+  cloth.addColorStop(0.78, "#4c208c");
+  cloth.addColorStop(1, "#351466");
   ctx.fillStyle = cloth;
-  ctx.fillRect(0, 0, w, h);
-  const shade = ctx.createRadialGradient(
-    w * 0.5,
-    h * 0.48,
-    innerW * 0.08,
-    w * 0.5,
-    h * 0.5,
-    innerW * 0.62,
-  );
-  shade.addColorStop(0, "rgba(255,255,255,0.05)");
-  shade.addColorStop(0.55, "rgba(255,255,255,0)");
-  shade.addColorStop(1, "rgba(10,0,20,0.4)");
-  ctx.fillStyle = shade;
-  ctx.fillRect(0, 0, w, h);
+  ctx.fillRect(clothX, clothY, innerW, innerH);
+  const light = ctx.createRadialGradient(midX, midY - innerH * 0.08, innerH * 0.02, midX, midY, innerW * 0.48);
+  light.addColorStop(0, "rgba(255,255,255,0.09)");
+  light.addColorStop(0.55, "rgba(255,255,255,0)");
+  light.addColorStop(1, "rgba(18,0,32,0.28)");
+  ctx.fillStyle = light;
+  ctx.fillRect(clothX, clothY, innerW, innerH);
   ctx.globalCompositeOperation = "overlay";
-  ctx.globalAlpha = 0.55;
-  ctx.drawImage(noiseLayer(w, h), 0, 0);
+  ctx.globalAlpha = 0.38;
+  ctx.drawImage(noiseLayer(w, h), clothX, clothY, innerW, innerH);
   ctx.globalCompositeOperation = "source-over";
   ctx.globalAlpha = 1;
-  ctx.strokeStyle = "rgba(18, 0, 32, 0.55)";
-  ctx.lineWidth = Math.max(10, rail * 0.55);
-  trace(ctx, feltPts);
-  ctx.stroke();
+  ctx.strokeStyle = "rgba(20, 0, 36, 0.45)";
+  ctx.lineWidth = Math.max(8, rail * 0.28);
+  ctx.strokeRect(clothX, clothY, innerW, innerH);
   ctx.restore();
 
   ctx.save();
-  trace(ctx, nosePts);
-  trace(ctx, feltPts, false);
-  addHoles(ctx, project, innerW, 1.35);
-  ctx.fillStyle = "#241433";
-  ctx.fill("evenodd");
-  ctx.restore();
-  ctx.save();
-  trace(ctx, feltPts);
-  addHoles(ctx, project, innerW, 1.35);
+  ctx.beginPath();
+  ctx.rect(clothX, clothY, innerW, innerH);
+  addHoles(ctx, project, innerW, 1);
   ctx.clip("evenodd");
-  ctx.strokeStyle = "rgba(214, 186, 255, 0.28)";
+  ctx.strokeStyle = "rgba(232, 206, 160, 0.42)";
   ctx.lineWidth = Math.max(1.25, rail * 0.045);
-  trace(ctx, feltPts);
-  ctx.stroke();
+  ctx.strokeRect(clothX, clothY, innerW, innerH);
   ctx.restore();
 
   for (const pocket of POCKETS) paintPocket(ctx, project, innerW, pocket);
 
-  const mark = (tableX: number, tableY: number, ox: number, oy: number) => {
-    const p = project(tableX, tableY);
-    diamond(ctx, p.x + ox, p.y + oy, Math.max(5, innerW * 0.0075 * p.scale));
-  };
-  const inset = rail * 0.52;
-  for (const t of [0.18, 0.34, 0.66, 0.82]) {
-    mark(t * TABLE_W, 0, -inset, 0);
-    mark(t * TABLE_W, TABLE_H, inset, 0);
+  const sight = Math.max(3.2, innerW * 0.0042);
+  const out = rail * 0.46;
+  for (const n of [1, 2, 3, 5, 6, 7]) {
+    const top = project((n / 8) * TABLE_W, TABLE_H);
+    const bottom = project((n / 8) * TABLE_W, 0);
+    diamond(ctx, top.x, top.y - out, sight);
+    diamond(ctx, bottom.x, bottom.y + out, sight);
   }
-  for (const t of [0.3, 0.5, 0.7]) {
-    mark(0, t * TABLE_H, 0, inset);
-    mark(TABLE_W, t * TABLE_H, 0, -inset);
+  for (const t of [0.25, 0.5, 0.75]) {
+    const left = project(0, t * TABLE_H);
+    const right = project(TABLE_W, t * TABLE_H);
+    diamond(ctx, left.x - out, left.y, sight);
+    diamond(ctx, right.x + out, right.y, sight);
   }
   return canvas;
 }
