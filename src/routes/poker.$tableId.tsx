@@ -2,6 +2,7 @@ import { createFileRoute, ClientOnly } from "@tanstack/react-router";
 import { ogImageMeta } from "@/lib/og";
 import room from "@/assets/poker/room.webp";
 import { DEALER_IMAGE } from "@/lib/poker/assets";
+import { PokerRoom } from "@/components/poker/PokerRoom";
 import { PokerTable } from "@/components/poker/PokerTable";
 
 export const Route = createFileRoute("/poker/$tableId")({
@@ -32,7 +33,7 @@ function Page() {
     <ClientOnly
       fallback={
         <div className="poker-screen">
-          <div className="poker-env" aria-hidden />
+          <PokerRoom />
           <div className="poker-stage-wrap">
             <div className="poker-stage is-wide" />
           </div>

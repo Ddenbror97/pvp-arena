@@ -5,6 +5,7 @@ import { money, type TableState } from "@/lib/poker/api";
 import { usePokerPrefs, useReducedMotion } from "@/lib/poker/prefs";
 import { warmDealer } from "@/lib/poker/assets";
 import { ActionBar, type ActIntent } from "./ActionBar";
+import { PokerRoom } from "./PokerRoom";
 import { GameAccount, GameBrand } from "./GameBar";
 import { Onboarding } from "./Onboarding";
 import { PokerStage } from "./PokerStage";
@@ -69,7 +70,7 @@ export function TableScreen(p: TableScreenProps) {
 
   return (
     <div className="poker-screen" data-chat={chatOpen ? "open" : "closed"}>
-      <div className="poker-env" aria-hidden />
+      <PokerRoom />
 
       <header className="poker-topbar">
         <div className="poker-topbar-left">

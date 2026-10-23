@@ -24,6 +24,7 @@ import {
 import { chainNeedsRotation, newChainHead, revealFor } from "@/lib/poker/chain";
 import { useBotConfig } from "@/lib/bots";
 import { BuyInDialog } from "./BuyInDialog";
+import { PokerRoom } from "./PokerRoom";
 import { TableScreen } from "./TableScreen";
 import type { ActIntent } from "./ActionBar";
 
@@ -346,7 +347,7 @@ export function PokerTable({ id }: { id: number }) {
   if (q.isLoading || !ready)
     return (
       <div className="poker-screen" aria-busy="true">
-        <div className="poker-env" aria-hidden />
+        <PokerRoom />
         <div className="poker-stage-wrap">
           <div className="poker-stage is-wide animate-pulse">
             <div className="poker-table">
@@ -360,7 +361,7 @@ export function PokerTable({ id }: { id: number }) {
   if (!state)
     return (
       <div className="poker-screen grid place-items-center">
-        <div className="poker-env" aria-hidden />
+        <PokerRoom />
         <div className="poker-hud-panel relative max-w-md p-8 text-center">
           <p className="font-display text-xl">Table not available</p>
           <p className="mt-2 text-sm text-[var(--ink-muted)]">
