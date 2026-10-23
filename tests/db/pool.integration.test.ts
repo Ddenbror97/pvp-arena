@@ -743,6 +743,63 @@ d("pool ledger (isolated schema)", () => {
     expect(live.stand_in).toBeNull();
   });
 
+  it("plays the break when the creator left before the rack opened", async () => {
+    const a = await newUser("xenia");
+    const b = await newUser("yorick");
+    await sql`update pvp_test.pool_matches set expires_at = clock_timestamp() - interval '1 second' where status = 'WAITING'`;
+    await sql`select pvp_test.pool_tick()`;
+    const made = await as(a, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
+      return row.r as { match_id: number };
+    });
+    await as(b, async (tx) => {
+      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
+    });
+    await sql`update pvp_test.pool_matches set
+      seen_a = clock_timestamp() - interval '2 minutes',
+      seen_b = clock_timestamp(),
+      phase_at = clock_timestamp() - interval '61 seconds'
+      where id = ${made.match_id}`;
+    const [opened] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
+    expect(opened.r).toBe("opened");
+    const [live] = await sql`select stand_in, state,
+      seen_a < clock_timestamp() - interval '60 seconds' as creator_still_away
+      from pvp_test.pool_matches where id = ${made.match_id}`;
+    expect(live.stand_in).toBe("A");
+    expect(live.creator_still_away).toBe(true);
+    expect(live.state.turn).toBe("A");
+    expect(live.state.ballInHand).toBe(true);
+    expect(live.state.breakShot).toBe(true);
+    const [held] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
+    expect(held.r).toBe("waiting");
+  });
+
+  it("stands in for an opponent who never reached the table", async () => {
+    const a = await newUser("zelda");
+    const b = await newUser("anton");
+    await sql`update pvp_test.pool_matches set expires_at = clock_timestamp() - interval '1 second' where status = 'WAITING'`;
+    await sql`select pvp_test.pool_tick()`;
+    const made = await as(a, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
+      return row.r as { match_id: number };
+    });
+    await as(b, async (tx) => {
+      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
+    });
+    await sql`update pvp_test.pool_matches set
+      seen_a = clock_timestamp(),
+      seen_b = null,
+      phase_at = clock_timestamp() - interval '61 seconds'
+      where id = ${made.match_id}`;
+    const [opened] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
+    expect(opened.r).toBe("opened");
+    const [live] = await sql`select stand_in, seen_b, state->>'turn' as turn
+      from pvp_test.pool_matches where id = ${made.match_id}`;
+    expect(live.stand_in).toBe("B");
+    expect(live.seen_b).toBeNull();
+    expect(live.turn).toBe("A");
+  });
+
   it("walks live tables and skips when the tick is already running", async () => {
     const [tick] = await sql`select pvp_test.pool_tick() r`;
     const row = tick.r as { processed?: number; skipped?: string };
