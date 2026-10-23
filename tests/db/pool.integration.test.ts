@@ -114,12 +114,20 @@ d("pool ledger (isolated schema)", () => {
       const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
+    const joinKey = randomUUID();
     const joined = await as(b, async (tx) => {
-      const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
+      const [row] = await tx`select pvp_test.pool_matchmake(100, ${joinKey}) r`;
       return row.r as { match_id: number; role: string };
     });
     expect(joined.role).toBe("joined");
     expect(joined.match_id).toBe(again.match_id);
+    const retried = await as(b, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_matchmake(100, ${joinKey}) r`;
+      return row.r as { match_id: number; duplicate: boolean; role: string };
+    });
+    expect(retried.duplicate).toBe(true);
+    expect(retried.role).toBe("joined");
+    expect(retried.match_id).toBe(again.match_id);
     expect(await bal(b, "user_locked")).toBe(100);
 
     const table = await beginReal(joined.match_id);

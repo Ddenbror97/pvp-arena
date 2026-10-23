@@ -75,7 +75,7 @@ begin
         from poker_hands h2 where h2.table_id = t.id and h2.status = 'COMPLETED' order by h2.id desc limit 12) x),
     'me', me
   );
-end $fn$
+end $fn$;
 
 
 drop function if exists public.poker_heartbeat(bigint);

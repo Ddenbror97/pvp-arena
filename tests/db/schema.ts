@@ -61,10 +61,9 @@ export function buildTestSchemaSql(skip: readonly string[] = []): string {
   // database on some machines is 16, which rejects the word and never builds
   // the schema. Dropping it here does not restore the privilege in production.
   s = s.replace(/, maintain\b/gi, "");
-  // 20261021195500 closes poker_table_state with `end $fn$` and no semicolon.
-  // Each migration file is applied on its own in production. This builder
-  // concatenates them, so the missing terminator is a syntax error at the
-  // next statement and the schema is never created.
+  // 20261021195500 must end poker_table_state with a semicolon. Without it,
+  // the next statement in that file is a syntax error and a fresh database
+  // stops there. The replace still repairs a copy that is missing it.
   s = s.replace(/end \$fn\$(?!\s*;)/gi, "end $fn$;");
   return `drop schema if exists pvp_test cascade;
 create schema pvp_test;
