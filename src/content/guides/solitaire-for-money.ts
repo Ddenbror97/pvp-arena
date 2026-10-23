@@ -82,7 +82,7 @@ A recording can be a fair way to remove wait time, if it was drawn from a pool y
 
 Rating pools do the same quiet thing without any recording. Beat weak scores and the matcher, if it is competent, will stop serving them. The game gets “harder” because you were the reason the easy scores were unfair to someone else. That experience feels like a rig. Sometimes it is a rig. Sometimes it is a ladder. The notebook is how you tell them apart over time, and even then you might be wrong. Being wrong is affordable only at small stakes.
 
-[8 ball pool for money](/guides/8-ball-pool-for-money) meets the same matcher problem on a table. [Play chess for money](/guides/play-chess-for-money) meets it with ratings that are at least public in serious pools. Solitaire apps are often less transparent than a chess rating. Pay less where you can see less.
+[8 ball pool for money](/guides/8-ball-pool-for-money) meets the same matcher problem on a table. The rest of that table’s pages sit under [8 ball pool online](/guides/8-ball-pool-hub). [Play chess for money](/guides/play-chess-for-money) meets it with ratings that are at least public in serious pools. Solitaire apps are often less transparent than a chess rating. Pay less where you can see less.
 
 The [skill wagers topic](/guides/topics/skill-wagers) gathers those comparisons. Other stake pages are [spades for money](/guides/spades-for-money), [gin rummy for money](/guides/gin-rummy-for-money), and [trivia for money](/guides/trivia-for-money). The brand page is the [Solitaire Cash review](/guides/solitaire-cash-review). It will not log into your match and name the opponent.`,
     },

@@ -29,7 +29,7 @@ A safety is not a back door into those points. Balls pocketed on a safety are sp
     {
       id: "who-pays",
       title: "Points there, a pot only on 8-ball",
-      body: `Straight pool is scored in points. The table below is not a point sheet. It is the 8-ball payment comparison for this site, because that is the cue game with a pot.
+      body: `Straight pool is scored in points. The table below is not a point sheet. It is the 8-ball payment comparison for this site, because that is the cue game with a pot. The card for that pot is [8 ball pool rules](/guides/8-ball-pool-rules).
 
 | Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
 | --- | --- | --- | --- |

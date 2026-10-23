@@ -84,7 +84,7 @@ Competitor cells stay blank on purpose. This page does not guess another company
       title: "Settlement is the replay",
       body: `The argument, if there is one, ends when the server recomputes the shots. That recomputation is the settlement. It uses physics id pool-phys-v2. It does not add a random miss, so a thin cut that missed was a thin cut. The rack seed was hashed before the balls were shown and it only shuffles colours. The 8 stays in the centre of the rack. A browser cannot file a win the replay rejects.
 
-The fee is 5% of the pot, taken when the match settles. The winner's credit is 95%. A cancel before the break returns both stakes and charges nothing. Three timeouts forfeit the seat that burned them. You call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches. Those rules are the match. A chat message is not a second settlement desk.`,
+The fee is 5% of the pot, taken when the match settles. The winner's credit is 95%. A cancel before the break returns both stakes and charges nothing. Three timeouts forfeit the seat that burned them. You call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches. Those rules are the match, and they are written on [8 ball pool rules](/guides/8-ball-pool-rules). A chat message is not a second settlement desk.`,
     },
     {
       id: "where-not",

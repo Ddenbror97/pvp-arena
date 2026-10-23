@@ -28,7 +28,7 @@ This is not a casino wheel. [Skill-based gambling](/guides/skill-based-gambling)
 
 “Best ways to win real cash” is the search phrase people use. The useful reading is narrower. The best structure is a rated pool, a visible rake, a draw rule, and a fair-play check you can survive. There is no best site on this page, and there is no method that turns a hobby into wages. If you need the money, you cannot afford the entry.
 
-[8 ball pool for money](/guides/8-ball-pool-for-money) is the same entry-and-rake shape on a table. The map of those shapes is [games that pay real money](/guides/games-that-pay-real-money).
+[8 ball pool for money](/guides/8-ball-pool-for-money) is the same entry-and-rake shape on a table. The pages for this site’s table are collected at [8 ball pool online](/guides/8-ball-pool-hub). The map of those shapes is [games that pay real money](/guides/games-that-pay-real-money).
 
 [Bet with friends online](/guides/bet-with-friends-online) covers a private stake between people who already know each other. Cash chess sites are for strangers, which is why escrow and engine checks exist. A friend who says “I’m not using a computer” is a different risk from a stranger who will not turn on a camera or a fair-play tool.
 

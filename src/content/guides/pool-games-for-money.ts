@@ -104,7 +104,7 @@ Open table lasts until a legal pocket assigns solids or stripes. A foul is ball 
       title: "A pot with no published bracket",
       body: `People searching pool tournaments for money want a field, a buy-in, and a prize list. This site has not published that field. Until it does, the only money game to describe is the 1v1 pot. Treating a future bracket as if it already had a prize pool would invent prize money, which this page will not do.
 
-The 8-ball that settles the pot is also not the WPA call-shot book. Rules effective 21 October 2026 call the ball and the pocket, and a legal 8 on the break is spotted or rebroken. Here a legal 8 on the break wins unless the cue ball scratches, and that scratch loses. Early 8, wrong pocket, and a scratch while pocketing the 8 all lose.
+The 8-ball that settles the pot is also not the WPA call-shot book. That split is written out on [8 ball pool rules](/guides/8-ball-pool-rules). Rules effective 21 October 2026 call the ball and the pocket, and a legal 8 on the break is spotted or rebroken. Here a legal 8 on the break wins unless the cue ball scratches, and that scratch loses. Early 8, wrong pocket, and a scratch while pocketing the 8 all lose.
 
 Whether you may play pool for money at all depends on where you live. This page is not legal advice. The APA team manual's ban on gambling at APA functions is a league rule, covering wagers and side bets at those events. It is not a map of statutes, and it is not a ruling on this website. PVPspinArena publishes the page with no named author.`,
     },

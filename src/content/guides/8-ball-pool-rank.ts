@@ -89,7 +89,7 @@ The fee stays 5% of the pot. The winner is credited 95%. You call a pocket only 
     {
       id: "not-for-sale",
       title: "Do not buy a rank from a person",
-      body: `Chat sellers offer levels, cues, and passes for crypto sent to a personal address. That offer has two problems. The goods are a free game's database, which this site does not control and will not promise to deliver. The payment is off-site, which is how people get cheated whether the goods exist or not. There is no official Discord or Telegram table here to make the seller legitimate. A seed phrase is never the trade.
+      body: `Chat sellers offer levels, cues, and passes for crypto sent to a personal address. That offer has two problems. The goods are a free game's database, which this site does not control and will not promise to deliver. The payment is off-site, which is how people get cheated whether the goods exist or not. There is no [official Discord table](/guides/8-ball-pool-discord) or Telegram table here to make the seller legitimate. A seed phrase is never the trade.
 
 If you want the free game's progression, use that game's own store and accept that this page does not know the prices. If you want a money match, use the cashier and accept that your rank will not be on the scoreboard, because there is no rank scoreboard. The best-games page keeps the free client and the pot in separate columns so this confusion has somewhere systematic to go.`,
     },
@@ -142,6 +142,7 @@ A friend who outranks you in a free client is not owed games, and you are not ow
     "games-that-pay-real-money",
     "best-pool-games",
     "best-pool-cue",
+    "8-ball-pool-discord",
   ],
   updated: "2026-10-22",
 };

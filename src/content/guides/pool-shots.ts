@@ -100,7 +100,7 @@ Jump shots are a separate idea: the cue ball leaves the cloth and comes down pas
 
 English on a bank changes the angle the cue ball takes afterward, which is why players add it and then wonder why the object ball missed. Aim the object ball first. Add only enough side to park. Follow and draw belong to the same decision. A stop shot, cue ball dying at contact, is often the best pool shot in a rack because the leave is obvious. Obvious leaves win money matches. Mysterious curves win comments in a chat, not the pot.
 
-Three timeouts forfeit, so do not spend them inventing a masse. Look once for the safety, once for the straightforward pocket, and shoot. The 8 still needs a called pocket if it is the ball you are banking or kicking at. Ordinary balls do not. The WPA call-shot book is a different product. Here the shot list is physical, and the calling rule is narrow on purpose. Narrow is easier to remember once the stake is already posted and the clock is running.`,
+Three timeouts forfeit, so do not spend them inventing a masse. Look once for the safety, once for the straightforward pocket, and shoot. The 8 still needs a called pocket if it is the ball you are banking or kicking at. Ordinary balls do not. The WPA call-shot book is a different product, and [8 ball pool rules](/guides/8-ball-pool-rules) is the page that keeps the two cards apart. Here the shot list is physical, and the calling rule is narrow on purpose. Narrow is easier to remember once the stake is already posted and the clock is running.`,
     },
   ],
   faqs: [

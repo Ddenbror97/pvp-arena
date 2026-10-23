@@ -82,7 +82,7 @@ Both players post $2.00. The pot is $4.00. The fee is $0.20. The winner is credi
     {
       id: "still-pool",
       title: "The cloth is still 8-ball",
-      body: `Calling the product a casino does not turn the 8 into a roulette pocket. You call a pocket only for the 8. Any other of your balls may fall anywhere. The 8 on the break wins unless the cue ball scratches, and that scratch loses. Three timeouts forfeit the seat. The WPA book effective 21 October 2026 is call-shot and does not award the break 8. Read the split so a league habit does not donate a rack you did not mean to donate.
+      body: `Calling the product a casino does not turn the 8 into a roulette pocket. You call a pocket only for the 8. Any other of your balls may fall anywhere. The 8 on the break wins unless the cue ball scratches, and that scratch loses. Three timeouts forfeit the seat. The WPA book effective 21 October 2026 is call-shot and does not award the break 8. Read the split on [8 ball pool rules](/guides/8-ball-pool-rules) so a league habit does not donate a rack you did not mean to donate.
 
 The playing surface is 2.54 m by 1.27 m. Pattern play, a leave, and a safety when the 8 is near their pocket are still the strategy. No win rate is promised. A make-on-the-break rate is not published. Ghost-ball aim is a teaching picture without a measured make percentage. The casino word does not add a chart the strategy pages refused to invent.`,
     },

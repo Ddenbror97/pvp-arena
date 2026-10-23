@@ -1,0 +1,254 @@
+[
+  {
+    "source_url": "/guides/8-ball-pool-1v1",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/8-ball-pool-aim",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/8-ball-pool-casino",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/8-ball-pool-for-money",
+    "destination_url": "/guides/8-ball-pool-hub",
+    "anchor_text": "8 ball pool online hub",
+    "relationship_type": "old-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/8-ball-pool-for-money",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules",
+    "relationship_type": "old-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/8-ball-pool-hub",
+    "destination_url": "/guides/8-ball-pool-discord",
+    "anchor_text": "why chat is not a cashier",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/8-ball-pool-rank",
+    "destination_url": "/guides/8-ball-pool-discord",
+    "anchor_text": "official Discord table",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/8-ball-pool-real-money",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/bank-pool",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8-ball",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/crypto-8-ball-pool",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/gamersaloon-review",
+    "destination_url": "/guides/8-ball-pool-hub",
+    "anchor_text": "8 ball pool online",
+    "relationship_type": "old-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/games-that-pay-real-money",
+    "destination_url": "/guides/8-ball-pool-hub",
+    "anchor_text": "8 ball pool online",
+    "relationship_type": "old-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/how-to-win-8-ball-pool",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/killer-pool",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/one-pocket-pool",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8-ball",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/play-chess-for-money",
+    "destination_url": "/guides/8-ball-pool-hub",
+    "anchor_text": "8 ball pool online",
+    "relationship_type": "old-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/pool-betting",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/pool-games-for-money",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/pool-payday-review",
+    "destination_url": "/guides/8-ball-pool-hub",
+    "anchor_text": "8 ball pool online",
+    "relationship_type": "old-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/pool-shots",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/solitaire-for-money",
+    "destination_url": "/guides/8-ball-pool-hub",
+    "anchor_text": "8 ball pool online",
+    "relationship_type": "old-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/straight-pool",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules",
+    "relationship_type": "new-to-new",
+    "placement": "body",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/8-ball-pool-for-money",
+    "destination_url": "/guides/8-ball-pool-hub",
+    "anchor_text": "8 ball pool online: which table is a money match",
+    "relationship_type": "old-to-new",
+    "placement": "related",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/8-ball-pool-for-money",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules on a call-shot table and on this one",
+    "relationship_type": "old-to-new",
+    "placement": "related",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/pool-payday-review",
+    "destination_url": "/guides/8-ball-pool-hub",
+    "anchor_text": "8 ball pool online: which table is a money match",
+    "relationship_type": "old-to-new",
+    "placement": "related",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/8-ball-pool-hub",
+    "destination_url": "/guides/8-ball-pool-rules",
+    "anchor_text": "8 ball pool rules on a call-shot table and on this one",
+    "relationship_type": "new-to-new",
+    "placement": "related",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/8-ball-pool-hub",
+    "destination_url": "/guides/8-ball-pool-discord",
+    "anchor_text": "8 ball pool discord, and why the stake stays out of it",
+    "relationship_type": "new-to-new",
+    "placement": "related",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  },
+  {
+    "source_url": "/guides/8-ball-pool-rank",
+    "destination_url": "/guides/8-ball-pool-discord",
+    "anchor_text": "8 ball pool discord, and why the stake stays out of it",
+    "relationship_type": "new-to-new",
+    "placement": "related",
+    "cluster": "8-ball pool",
+    "implementation_status": "added"
+  }
+]

@@ -59,7 +59,7 @@ Nothing on this page is a licence, a law firm memo, or a promise that a skill ar
     {
       id: "how-a-pot-settles",
       title: "How the pot settles, shot by shot",
-      body: `You pick a stake. The other player matches it. The server commits a rack seed hash before the balls are shown. You play. The winner is the rules result: a legal 8, an early 8 loss, a wrong-pocket 8, a scratch on the 8, three timeouts, or a forfeit. The server recomputes the shots. A browser cannot file a win the replay rejects.
+      body: `You pick a stake. The other player matches it. The server commits a rack seed hash before the balls are shown. You play. The winner is the [8 ball pool rules](/guides/8-ball-pool-rules) result: a legal 8, an early 8 loss, a wrong-pocket 8, a scratch on the 8, three timeouts, or a forfeit. The server recomputes the shots. A browser cannot file a win the replay rejects.
 
 There is no line, no juice in the sportsbook sense, and no live price that moves. The only number that moves money to the house is 5% of the pot at settlement. Deposits and withdrawals are not charged that fee again. A table cancelled before the break refunds both stakes with no fee.
 

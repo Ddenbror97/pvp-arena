@@ -89,7 +89,7 @@ Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is cred
     {
       id: "money-table",
       title: "What changes when the rack is cash",
-      body: `This match is 1v1 8-ball only. It is not a race and it is not a handicap. You call a pocket only for the 8. Any other of your balls may fall in any pocket. The 8 on the break wins unless the cue ball scratches, and that scratch loses. Three timeouts forfeit the seat. The World Pool-Billiard Association book effective 21 October 2026 is call-shot, and it does not award the rack for an 8 on the break. Read that split before you stake.
+      body: `This match is 1v1 8-ball only. It is not a race and it is not a handicap. You call a pocket only for the 8. Any other of your balls may fall in any pocket. The 8 on the break wins unless the cue ball scratches, and that scratch loses. Three timeouts forfeit the seat. The World Pool-Billiard Association book effective 21 October 2026 is call-shot, and it does not award the rack for an 8 on the break. Read that split on [8 ball pool rules](/guides/8-ball-pool-rules) before you stake.
 
 Stakes are $1, $2, $5, $10, $25, and $50, posted equally. The fee is 5% of the pot. No FargoRate is applied and no APA skill level is stored. The playing surface is 2.54 m by 1.27 m, a 9-foot playing surface, under physics id pool-phys-v2. The engine adds no random miss. A make-on-the-break rate is not published here, and neither is a ghost-ball make percentage.`,
     },

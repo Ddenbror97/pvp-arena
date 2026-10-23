@@ -91,7 +91,7 @@ Semrush on 22 October 2026 put killer pool near 70 searches a month at difficult
       title: "A party format, not the money 8-ball table",
       body: `This site does not run killer for money. It is not a standard stake game here, and it will not be described as one in order to catch a search. The lobby books 8-ball between two players. It does not book a ring of lives. Cutthroat, the other informal game in this set, is also unstaked. So are 9-ball, 10-ball, straight pool, one-pocket, and bank.
 
-You can still learn the shape. Lives, often three. A miss or a scratch can spend one. The rest is the host's. If someone offers a killer pot and cites this page as the rulebook, they are citing a page that refused to be a rulebook. Send them back to the napkin. The 8-ball match, if they want a recorded pot instead, has its own card and its own fee, and it does not use lives. A napkin at the party is the only rule card.`,
+You can still learn the shape. Lives, often three. A miss or a scratch can spend one. The rest is the host's. If someone offers a killer pot and cites this page as the rulebook, they are citing a page that refused to be a rulebook. Send them back to the napkin. The 8-ball match, if they want a recorded pot instead, has its own card on [8 ball pool rules](/guides/8-ball-pool-rules) and its own fee, and it does not use lives. A napkin at the party is the only rule card.`,
     },
     {
       id: "more",

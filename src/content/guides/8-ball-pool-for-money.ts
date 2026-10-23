@@ -77,7 +77,7 @@ Identity checks are normal once money is real. They are not normal when they app
 
 If the match itself is disputed, the payout clock should pause under a written rule, not under a silent freeze. You want a deadline: evidence in, decision out, credit released or entry returned. “Pending review” with no date is where balances go to be forgotten.
 
-This site’s games settle under their own rules and can be checked on the [fairness](/fairness) page. The 8-ball tab replays a match from its rack seed and shot list. Do not open a ticket here because some other pool app would not pay.`,
+This site’s games settle under their own rules and can be checked on the [fairness](/fairness) page. The [8 ball pool online hub](/guides/8-ball-pool-hub) is the map of the cluster, and [8 ball pool rules](/guides/8-ball-pool-rules) is where this table’s card is set beside the WPA book. The 8-ball match replays from its rack seed and shot list. Do not open a ticket here because some other pool app would not pay.`,
     },
     {
       id: "checklist",
@@ -155,6 +155,13 @@ If you wanted a short chance game instead of a match, say so and play one with a
       url: "https://en.wikipedia.org/wiki/Match_fixing",
     },
   ],
-  related: ["skill-based-gambling", "fake-casino-sites", "peer-to-peer-gambling", "bet-with-friends-online"],
+  related: [
+    "8-ball-pool-hub",
+    "8-ball-pool-rules",
+    "skill-based-gambling",
+    "fake-casino-sites",
+    "peer-to-peer-gambling",
+    "bet-with-friends-online",
+  ],
   updated: "2026-10-22",
 };

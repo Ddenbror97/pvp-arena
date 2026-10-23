@@ -89,7 +89,7 @@ No weekly tournament is published, so there is no tournament prize to wait on. N
       title: "The result that earns the credit",
       body: `The credit follows a rules result on this table. Call a pocket only for the 8. Any other ball of the shooter's group may fall in any pocket. The 8 on the break wins unless the cue ball scratches, and that scratch loses. An early 8 loses. The 8 in the wrong pocket loses. A scratch while pocketing the 8 loses. The table stays open until a legal pocket assigns solids or stripes. A foul is ball in hand anywhere. The break is taken from the kitchen.
 
-That list is not the World Pool-Billiard Association book. WPA rules effective 21 October 2026 call shots, and a legal 8 on the break is spotted or rebroken rather than paid as a win. Read the contrast before staking if the only 8-ball you know is call-shot.
+That list is not the World Pool-Billiard Association book. WPA rules effective 21 October 2026 call shots, and a legal 8 on the break is spotted or rebroken rather than paid as a win. Read the contrast on [8 ball pool rules](/guides/8-ball-pool-rules) before staking if the only 8-ball you know is call-shot.
 
 The American Poolplayers Association team manual prohibits gambling at APA functions, including wagers, side bets, side pots, selling teams, auctions, and Calcuttas. That is a league rule for league events. It is not a statute, and it does not label any place as open. Permission still depends on where you live.`,
     },

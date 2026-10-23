@@ -89,7 +89,7 @@ The playing surface is 2.54 m by 1.27 m. Long rails are long. A speed that dies 
     {
       id: "called",
       title: "Aim is not the same as a called shot",
-      body: `You can aim an ordinary ball at a pocket with care and still have a legal hit if it falls somewhere else, or if another of your balls falls with it. This table calls a pocket only on the 8. The WPA book effective 21 October 2026 calls ball and pocket. Players who grew up in that book will over-call shots here. That is a rules habit, not an aiming virtue. Say the pocket when the ball is the 8. Stay quiet, and accurate, on the rest.
+      body: `You can aim an ordinary ball at a pocket with care and still have a legal hit if it falls somewhere else, or if another of your balls falls with it. This table calls a pocket only on the 8. The WPA book effective 21 October 2026 calls ball and pocket. Players who grew up in that book will over-call shots here. That is a rules habit, not an aiming virtue. The two cards are compared on [8 ball pool rules](/guides/8-ball-pool-rules). Say the pocket when the ball is the 8. Stay quiet, and accurate, on the rest.
 
 The 8 in the wrong pocket loses. A scratch while pocketing the 8 loses. Aim the 8 as carefully as any other ball, then add the call. No FargoRate widens the pocket. No APA skill level does either. Equal stakes mean the better line is the whole edge, minus the 5% fee when the rack pays.`,
     },

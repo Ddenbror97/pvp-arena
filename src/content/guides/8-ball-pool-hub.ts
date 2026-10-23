@@ -47,7 +47,7 @@ Competitor cells stay blank on purpose. This page does not guess another company
     {
       id: "where",
       title: "Where the rest of the cluster sits",
-      body: `Put the page next to the rest of the table talk. Skill, as a category, is discussed on [skill-based gambling](/guides/skill-based-gambling). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [crypto 8 ball](/guides/crypto-8-ball-pool), [pool betting](/guides/pool-betting), [the rules split](/guides/8-ball-pool-rules). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `Put the page next to the rest of the table talk. Skill, as a category, is discussed on [skill-based gambling](/guides/skill-based-gambling). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [crypto 8 ball](/guides/crypto-8-ball-pool), [pool betting](/guides/pool-betting), [the rules split](/guides/8-ball-pool-rules), [why chat is not a cashier](/guides/8-ball-pool-discord). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
 
 Open [the 8 ball table](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
     },
@@ -141,6 +141,8 @@ No weekly crypto tournament is published here yet. A leaderboard of invented bra
     "games-that-pay-real-money",
     "crypto-8-ball-pool",
     "pool-betting",
+    "8-ball-pool-rules",
+    "8-ball-pool-discord",
   ],
   updated: "2026-10-22",
 };

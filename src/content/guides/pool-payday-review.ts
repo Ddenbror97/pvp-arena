@@ -96,7 +96,7 @@ A settled-round block on the game page is loaded from play. This article does no
       title: "How PvP compares with a cue-game cashier",
       body: `Jackpot is the chance cousin of an entry-fee table. Open the [Jackpot lobby](/) and read the pot before you commit. The 5% rule is what produced the $72 example. [Poker](/poker) is another table entirely: cards and betting rounds, not a cue ball and not a spinner.
 
-[Fairness](/fairness) lets a reader recompute a finished Jackpot, Coinflip, Roulette, or Slott round from the seed committed before that round. The check matches the commit to the result. It does not audit a billiards app, a sportsbook, or anyone else's cashier. A green check on our seed says nothing about who you played on a phone.
+[Fairness](/fairness) lets a reader recompute a finished Jackpot, Coinflip, Roulette, or Slott round from the seed committed before that round. The check matches the commit to the result. It does not audit a billiards app, a sportsbook, or anyone else's cashier. The 8-ball match this site does run is mapped on [8 ball pool online](/guides/8-ball-pool-hub), which is not a review of Pool Payday. A green check on our seed says nothing about who you played on a phone.
 
 Play is denominated in US dollars. You can add funds as USDC or ETH on Base, or send Bitcoin through the cashier. The minimum is whatever the bet control shows. This page does not invent a site-wide floor, and it does not name a treasury address.
 
@@ -170,6 +170,7 @@ Nothing here tells you to download a brand, to enter a code, or to treat billiar
   ],
   sources: [],
   related: [
+    "8-ball-pool-hub",
     "skill-based-gambling",
     "skillz-review",
     "solitaire-for-money",

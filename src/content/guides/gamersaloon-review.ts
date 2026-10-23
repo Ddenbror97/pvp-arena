@@ -28,7 +28,7 @@ Betting on your own gaming skills is the sales line, and it is also the risk. Yo
 
 The contract is the challenge screen: stake, game, format, fee, and what a dispute does. Chat is only where you met.
 
-In-browser games on the same account, pool or darts or whatever the arcade lists this month, are a second catalog. A short browser round and a full console match do not share a skill sample. [8-ball pool for money](/guides/8-ball-pool-for-money) is the page for pool as a money game. This GamerSaloon review only notes that a browser table can sit beside a console challenge under one login. Read the entry you are actually accepting.
+In-browser games on the same account, pool or darts or whatever the arcade lists this month, are a second catalog. A short browser round and a full console match do not share a skill sample. [8-ball pool for money](/guides/8-ball-pool-for-money) is the page for pool as a money game. The wider set on this site is [8 ball pool online](/guides/8-ball-pool-hub). This GamerSaloon review only notes that a browser table can sit beside a console challenge under one login. Read the entry you are actually accepting.
 
 Eighteen plus. Some regions allow cash skill games and some do not. The site’s own restricted list is the list that matters, and it can change. This is not legal advice. Publisher rules for the console game still apply on top of the lobby’s rules.`,
     },

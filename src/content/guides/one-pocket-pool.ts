@@ -22,7 +22,7 @@ export const guide: Guide = {
     {
       id: "race-eight",
       title: "A foot pocket you choose, and a race to eight",
-      body: `One pocket, in the WPA rules effective 21 October 2026, gives each player one foot pocket. The breaker chooses a pocket, and the other foot pocket belongs to the opponent. The first player to pocket eight balls in their own pocket wins the rack. Balls are not a private group the way solids are in 8-ball. Any object ball can score, and it scores only if it finishes in your pocket.
+      body: `One pocket, in the WPA rules effective 21 October 2026, gives each player one foot pocket. The breaker chooses a pocket, and the other foot pocket belongs to the opponent. The first player to pocket eight balls in their own pocket wins the rack. Balls are not a private group the way solids are in [8-ball](/guides/8-ball-pool-rules). Any object ball can score, and it scores only if it finishes in your pocket.
 
 Eight is a small number and a long game, because the intention is narrow even when the jaws are wide. A ball that drops in the opponent's foot pocket is their point. The breaker's choice of side is the first rules act of the rack, and the book allows that choice. This page will not add a veto for the opponent, and it will not add a coin flip. You pick, they receive the other corner, and both of you hunt the same fifteen balls toward different holes.`,
     },

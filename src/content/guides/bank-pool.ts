@@ -91,7 +91,7 @@ A foul costs one point on its own. You can lose ground without anyone banking an
       title: "A one-point foul and a kitchen cue ball",
       body: `A scratch sends the incoming player to ball in hand above the head string. The cue ball stays in the kitchen, as it does after a one-pocket scratch, and it does not roam the table the way a standard 9-ball foul allows. From the kitchen you still have to hit the called ball first if you intend to score, and you still have to have called the cushions. The foul that produced the scratch has already cost a point.
 
-This site does not run bank pool for money. Semrush on 22 October 2026 put the query near 260 searches a month at difficulty 29, with an estimated click price of about $2.38. That price is what an advertiser might pay for the visit. It is not a stake this lobby will accept, and it is not evidence the game is a good bet. The race to five and the race to eight remain reading. The button on this site remains 8-ball.`,
+This site does not run bank pool for money. Semrush on 22 October 2026 put the query near 260 searches a month at difficulty 29, with an estimated click price of about $2.38. That price is what an advertiser might pay for the visit. It is not a stake this lobby will accept, and it is not evidence the game is a good bet. The race to five and the race to eight remain reading. The button on this site remains [8-ball](/guides/8-ball-pool-rules).`,
     },
     {
       id: "more",
