@@ -1557,6 +1557,51 @@ html[data-theme="light"] .jp-home :is(.text-muted-foreground, .section-kicker) {
   color: rgb(214 206 240 / 84%);
 }
 
+/* Coinflip lobby. Same penthouse treatment, with the two coins on the platform. */
+.cf-home {
+  --cf-bleed-x: 1rem;
+  --cf-bleed-t: 1.5rem;
+  position: relative;
+  isolation: isolate;
+  margin: calc(var(--cf-bleed-t) * -1) calc(var(--cf-bleed-x) * -1) 0;
+  padding: 0.85rem var(--cf-bleed-x) 1.25rem;
+  color: #f4f1ff;
+}
+@media (min-width: 1024px) {
+  .cf-home { --cf-bleed-x: 1.5rem; }
+}
+.cf-room {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 46%;
+  pointer-events: none;
+  background: #070514;
+}
+.cf-room-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(5 4 16 / 58%) 0%, rgb(5 4 16 / 10%) 16%, transparent 32%, transparent 70%, rgb(6 4 16 / 78%) 100%),
+    radial-gradient(ellipse at 50% 48%, transparent 22%, rgb(0 0 0 / 40%) 100%);
+}
+.cf-home-body { position: relative; z-index: 1; }
+.cf-home .bg-card {
+  background-color: rgb(8 6 20 / 74%);
+  border-color: rgb(255 255 255 / 12%);
+  box-shadow: 0 18px 40px rgb(0 0 0 / 34%);
+  backdrop-filter: blur(16px);
+}
+html[data-theme="light"] .cf-home { color: #f4f1ff; }
+html[data-theme="light"] .cf-home :is(.text-muted-foreground, .section-kicker) {
+  color: rgb(214 206 240 / 84%);
+}
+
 /* ================= Poker table ================= */
 /*
  * Full-screen game. Three layers: the room (.poker-env) fills the viewport; the stage is one
