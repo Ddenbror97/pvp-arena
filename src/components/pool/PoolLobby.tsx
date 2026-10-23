@@ -248,7 +248,7 @@ export function PoolLobby() {
             }}
           >
             {busy === "play" ? "Creating…" : "Create game"}
-            {busy === "play" ? null : <ArrowRight aria-hidden className="h-4 w-4" />}
+            {busy === "play" ? null : <ArrowRight aria-hidden className="h-3.5 w-3.5" />}
           </button>
         </div>
       </section>
@@ -339,7 +339,7 @@ export function PoolLobby() {
                           onFocus={warmMatch}
                         >
                           Open table
-                          <ArrowRight aria-hidden className="h-4 w-4" />
+                          <ArrowRight aria-hidden className="h-3.5 w-3.5" />
                         </Link>
                       ) : (
                         <button
@@ -352,7 +352,7 @@ export function PoolLobby() {
                           onClick={() => void enter({ matchId: table.id })}
                         >
                           {busy === table.id ? "Joining…" : "Join table"}
-                          {busy === table.id ? null : <ArrowRight aria-hidden className="h-4 w-4" />}
+                          {busy === table.id ? null : <ArrowRight aria-hidden className="h-3.5 w-3.5" />}
                         </button>
                       )}
                     </div>

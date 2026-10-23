@@ -2689,7 +2689,7 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
 /* ---- 8 Pool lobby ---- */
 .pool-lobby-main { background: #07060f; color: #f4f1ff; }
 .pool-lobby {
-  display: flex; flex-direction: column; gap: 1rem; max-width: 1680px; margin-inline: auto;
+  display: flex; flex-direction: column; gap: 0.75rem; max-width: 1680px; margin-inline: auto;
   padding: 0.75rem 0.75rem 0;
 }
 @media (min-width: 640px) { .pool-lobby { padding: 0.75rem 1rem 0; } }
@@ -2790,27 +2790,27 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
 .pool-play:disabled { cursor: wait; opacity: 0.75; }
 .pool-play:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 .pool-buyin {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1rem 1.5rem;
-  padding: 0.95rem 1.05rem; border-radius: 1.15rem; border: 1px solid rgb(168 85 247 / 38%);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.65rem 1rem;
+  min-height: 4.75rem; padding: 0.55rem 0.75rem; border-radius: 1rem; border: 1px solid rgb(168 85 247 / 38%);
   background:
     radial-gradient(80% 140% at 100% 0%, rgb(124 58 237 / 24%), transparent 58%),
     linear-gradient(180deg, rgb(24 14 52 / 96%), rgb(10 8 26 / 96%));
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%), 0 0 0 1px rgb(88 28 135 / 20%), 0 16px 40px rgb(0 0 0 / 28%);
 }
 .pool-buyin-label {
-  display: flex; align-items: center; gap: 0.45rem; margin: 0 0 0.6rem;
-  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #d8c4ff;
+  display: flex; align-items: center; gap: 0.4rem; margin: 0 0 0.35rem;
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #d8c4ff;
 }
 .pool-count {
   display: inline-grid; place-items: center; min-width: 1.2rem; height: 1.2rem; padding: 0 0.28rem;
   border-radius: 0.35rem; background: #7c3aed; color: #fff; font-size: 0.68rem; font-weight: 700;
   letter-spacing: 0; line-height: 1;
 }
-.pool-stakes { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0; }
+.pool-stakes { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; }
 .pool-stake {
-  min-width: 2.75rem; height: 2.2rem; padding: 0 0.75rem; border-radius: 0.65rem; cursor: pointer;
+  min-width: 2.35rem; height: 2rem; padding: 0 0.6rem; border-radius: 0.6rem; cursor: pointer;
   border: 1px solid rgb(255 255 255 / 14%); background: rgb(8 6 22 / 72%); color: #fff;
-  font-family: var(--font-display); font-size: 0.84rem; font-weight: 600;
+  font-family: var(--font-display); font-size: 0.75rem; font-weight: 600;
 }
 .pool-stake.is-on {
   border-color: #d8b4fe; background: #7c3aed;
@@ -2818,7 +2818,7 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
 }
 .pool-stake:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .pool-quote {
-  display: flex; align-items: center; gap: 1.35rem; padding-left: 1.35rem;
+  display: flex; align-items: center; gap: 0.85rem; padding-left: 0.85rem;
   border-left: 1px solid rgb(168 85 247 / 32%);
 }
 .pool-quote p { margin: 0; }
@@ -2828,16 +2828,16 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
 }
 .pool-quote-k span { color: rgb(210 196 245 / 52%); }
 .pool-quote strong {
-  display: flex; align-items: center; gap: 0.35rem; margin-top: 0.18rem;
-  font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums;
+  display: flex; align-items: center; gap: 0.28rem; margin-top: 0.08rem;
+  font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums;
 }
-.pool-quote svg { width: 1.15rem; height: 1.15rem; flex: none; }
+.pool-quote svg { width: 0.95rem; height: 0.95rem; flex: none; }
 .pool-quote-pot svg { color: #c084fc; }
 .pool-quote-win strong, .pool-quote-win svg { color: #3dff8a; }
-.pool-create { align-self: center; height: 2.85rem; margin-top: 0; padding: 0 1.25rem; flex: none; }
-.pool-below { display: grid; gap: 0.75rem; padding: 0 0 1.25rem; }
+.pool-create { align-self: center; height: 2.5rem; margin-top: 0; padding: 0 1rem; border-radius: 0.7rem; font-size: 0.8rem; flex: none; }
+.pool-below { display: grid; gap: 0.75rem; padding: 0 0 1rem; }
 .pool-side {
-  border-radius: 1.15rem; border: 1px solid rgb(168 85 247 / 32%); padding: 1rem 1.1rem 0.4rem;
+  border-radius: 0.9rem; border: 1px solid rgb(168 85 247 / 32%); padding: 0.65rem 0.8rem 0.2rem;
   background:
     radial-gradient(70% 90% at 100% 0%, rgb(124 58 237 / 14%), transparent 52%),
     linear-gradient(180deg, rgb(18 12 42 / 96%), rgb(10 8 26 / 96%));
@@ -2845,43 +2845,43 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
 }
 .pool-side-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
 .pool-side h2 {
-  display: flex; align-items: center; gap: 0.5rem; margin: 0;
-  font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: 0; text-transform: none; color: #fff;
+  display: flex; align-items: center; gap: 0.4rem; margin: 0;
+  font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; letter-spacing: 0; text-transform: none; color: #fff;
 }
-.pool-side-sub { margin: 0.28rem 0 0; font-size: 0.84rem; color: rgb(206 196 230 / 72%); }
-.pool-side-tools { display: flex; align-items: center; gap: 0.75rem; flex: none; padding-top: 0.15rem; }
-.pool-live { display: inline-flex; align-items: center; gap: 0.4rem; color: #4ade80; font-size: 0.84rem; font-weight: 600; }
+.pool-side-sub { margin: 0.12rem 0 0; font-size: 0.75rem; color: rgb(206 196 230 / 72%); }
+.pool-side-tools { display: flex; align-items: center; gap: 0.55rem; flex: none; padding-top: 0.05rem; }
+.pool-live { display: inline-flex; align-items: center; gap: 0.35rem; color: #4ade80; font-size: 0.75rem; font-weight: 600; }
 .pool-live.is-off { color: #f0b4b4; }
 .pool-live-dot {
   width: 0.48rem; height: 0.48rem; border-radius: 50%; background: currentColor;
   box-shadow: 0 0 8px currentColor;
 }
 .pool-refresh {
-  display: grid; place-items: center; width: 2.2rem; height: 2.2rem; padding: 0; border-radius: 0.7rem; cursor: pointer;
+  display: grid; place-items: center; width: 2rem; height: 2rem; padding: 0; border-radius: 0.6rem; cursor: pointer;
   border: 1px solid rgb(168 85 247 / 48%); background: rgb(124 58 237 / 20%); color: #e9d5ff;
 }
 .pool-refresh svg { width: 1rem; height: 1rem; }
 .pool-refresh.is-spin svg { animation: pool-lobby-spin 0.8s linear infinite; }
 .pool-refresh:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 @keyframes pool-lobby-spin { to { transform: rotate(360deg); } }
-.pool-side ul { margin: 0.75rem 0 0.2rem; padding: 0; list-style: none; }
+.pool-side ul { margin: 0.45rem 0 0.1rem; padding: 0; list-style: none; }
 .pool-side li { font-size: 0.875rem; color: rgb(226 220 245 / 78%); }
 .pool-side li + li { margin-top: 0.15rem; }
 .pool-side li.pool-open {
   display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "face who action" "stats stats stats";
-  align-items: center; gap: 0.7rem 0.9rem; margin-top: 0; padding: 0.85rem 0.15rem;
+  align-items: center; gap: 0.45rem 0.7rem; margin-top: 0; padding: 0.5rem 0.1rem;
   border-top: 1px solid rgb(168 85 247 / 18%);
 }
-.pool-side li.pool-open:first-child { border-top: 0; padding-top: 0.35rem; }
-.pool-open-avatar { position: relative; grid-area: face; width: 2.85rem; height: 2.85rem; }
-.pool-open-face { width: 2.85rem; height: 2.85rem; }
+.pool-side li.pool-open:first-child { border-top: 0; padding-top: 0.2rem; }
+.pool-open-avatar { position: relative; grid-area: face; width: 2.25rem; height: 2.25rem; }
+.pool-open-face { width: 2.25rem; height: 2.25rem; }
 .pool-open-crown {
   position: absolute; top: -0.32rem; right: -0.18rem; z-index: 1; width: 0.95rem; height: 0.95rem;
   color: #f4d35e; filter: drop-shadow(0 1px 2px rgb(0 0 0 / 65%));
 }
 .pool-open-who { grid-area: who; min-width: 0; }
-.pool-open-who strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff; font-size: 0.98rem; }
-.pool-open-who span { display: block; margin-top: 0.12rem; font-size: 0.78rem; line-height: 1.35; color: rgb(206 196 230 / 72%); }
+.pool-open-who strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff; font-size: 0.82rem; }
+.pool-open-who span { display: block; margin-top: 0.06rem; font-size: 0.7rem; line-height: 1.3; color: rgb(206 196 230 / 72%); }
 .pool-open-time { font-variant-numeric: tabular-nums; color: #d7c4ff; }
 .pool-open-stats { grid-area: stats; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.45rem 0.8rem; }
 .pool-open-stats p { margin: 0; }
@@ -2890,18 +2890,18 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
   color: rgb(210 196 245 / 62%);
 }
 .pool-open-stats strong {
-  display: flex; align-items: center; gap: 0.28rem; margin-top: 0.12rem;
-  font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums;
+  display: flex; align-items: center; gap: 0.22rem; margin-top: 0.06rem;
+  font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums;
 }
-.pool-open-stats svg { width: 0.95rem; height: 0.95rem; flex: none; color: #c084fc; }
+.pool-open-stats svg { width: 0.85rem; height: 0.85rem; flex: none; color: #c084fc; }
 .pool-open-stats .is-win strong, .pool-open-stats .is-win svg { color: #3dff8a; }
 .pool-open-actions { grid-area: action; display: flex; align-items: center; justify-content: flex-end; }
 .pool-join {
-  display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: 2.6rem; padding: 0 1.15rem;
-  border: 0; border-radius: 999px; cursor: pointer; color: #fff; text-decoration: none; white-space: nowrap;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem; height: 2rem; min-height: 2rem; padding: 0 0.75rem;
+  border: 0; border-radius: 0.6rem; cursor: pointer; color: #fff; text-decoration: none; white-space: nowrap;
   background: linear-gradient(180deg, #c084fc, #7c3aed 55%, #6d28d9);
-  box-shadow: 0 8px 18px rgb(124 58 237 / 32%);
-  font-family: var(--font-display); font-size: 0.88rem; font-weight: 700;
+  box-shadow: 0 4px 12px rgb(124 58 237 / 28%);
+  font-family: var(--font-display); font-size: 0.72rem; font-weight: 700;
 }
 .pool-join:disabled { cursor: wait; opacity: 0.7; }
 .pool-join:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
