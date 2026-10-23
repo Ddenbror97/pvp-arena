@@ -44,7 +44,7 @@ Whether a cash match is allowed depends on where you live. This page is not lega
 - Name the stake in dollars before anyone breaks.
 - Expect the US-dollar balance to update when the match settles.
 - Do not budget a PayPal or Cash App arrival from this page.
-- Use withdrawable cash. Bonus credit cannot be staked.
+- Promo credit and partner credit can fund a stake. Deposited money is used first.
 - On a $10 match, read a $20 pot and a $1 fee.
 - Stop if you cannot say whether a cash stake is allowed where you live.`,
     },
@@ -53,7 +53,7 @@ Whether a cash match is allowed depends on where you live. This page is not lega
       title: "Three products hiding in one query",
       body: `Three products sit under the same search. A Miniclip-style client pays coins and cosmetics. A skill-cash app takes an entry and assigns a prize. This site runs a 1v1 cash match: both players post the same stake from a US-dollar balance, and the winner is the rules result. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. Those cells stay empty. A forum percentage pasted into them would be fiction.
 
-The stake list is $1, $2, $5, $10, $25, and $50. The buy-in is cash only. Bonus credit cannot be staked, so a promotional balance does not enter the pot. Cancel the table before the break and both stakes come back with no fee. After the break, the match is played out, forfeited, or lost on the written rules.
+The stake list is $1, $2, $5, $10, $25, and $50. Promo credit and partner credit can enter the pot. Deposited or won money is used first, and bonus lost to the other player stays bonus. Cancel the table before the break and both stakes come back with no fee. After the break, the match is played out, forfeited, or lost on the written rules.
 
 A $5 stake against another $5 stake builds a $10 pot. Five percent of that pot is $0.50, and the winner is credited $9.50. The other five buttons are in the table below.`,
     },
@@ -135,7 +135,7 @@ Payout speed is the sentence this page will stand on: the dollar balance updates
     },
     {
       q: "Which stakes can two players post?",
-      a: "The list is $1, $2, $5, $10, $25, and $50. A $1 stake credits the winner $1.90. A $50 stake credits $95. Both players post the same amount from a US-dollar balance. Bonus credit cannot be used as the buy-in.",
+      a: "The list is $1, $2, $5, $10, $25, and $50. A $1 stake credits the winner $1.90. A $50 stake credits $95. Both players post the same amount from a US-dollar balance. Promo credit and partner credit can be the buy-in. Deposited money is used first.",
     },
     {
       q: "What if the table is cancelled before the break?",

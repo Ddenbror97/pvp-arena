@@ -19,7 +19,7 @@ export const POOL_FAQS = [
   },
   {
     q: "What does a crypto 8 ball pool wager cost?",
-    a: "The stakes are $1, $2, $5, $10, $25 and $50. Bitcoin, USDC or ETH on Base can fund the US-dollar balance. They are not a separate playable balance, and bonus credit cannot be used as a stake.",
+    a: "The stakes are $1, $2, $5, $10, $25 and $50. Bitcoin, USDC or ETH on Base can fund the US-dollar balance. They are not a separate playable balance. Promo credit and partner credit can fund a stake. Deposited or won money is used first, and bonus you lose to the other player stays bonus.",
   },
   {
     q: "Is betting on pool legal?",
@@ -70,8 +70,9 @@ export function PoolMoneyCopy() {
         People who want to gamble on pool or bet on pool games are looking for a match like this.
         Whether the question is pool gambling legal, or is betting on pool legal, depends on where
         you live. This page is not a statute and not legal advice. An 8 ball pool legit check is the
-        replay. An 8 ball pool payout is the 95% credited when the match settles. Buy-ins are cash
-        only. Bonus credit is not a stake.
+        replay. An 8 ball pool payout is the 95% credited when the match settles. Promo credit and
+        partner credit can fund a stake. Deposited or won money is used first. Bonus you lose to
+        the other player stays bonus.
       </p>
       <p className="mt-3">
         You must be 18 or older, and permitted to play for money where you live. Only use money you

@@ -114,7 +114,7 @@ Whether a cash match is allowed depends on where you live. This page is not lega
 
 Cheat, hack, long line, and cue hack are crowded or at least present in the October pull, from about 480 on hack down to about 20 on the two short phrases. This page lists them so the intent is acknowledged. It then withholds every operational detail. No store, no file name, no toggle, no client build. An aim assist that lives on a handset cannot edit the server's shot. If a video claims otherwise, the video is not a source for this article, and it will not be summarised into steps.
 
-The money question hides inside the rigged question. A one-dollar stake looks too small to cheat for, and the fee is still ten cents on a two-dollar pot. Scale it up and the same 5% applies through $50. Bonus credit cannot be used to test the table for free. Cancel before the break if the hash is missing, and both stakes return with no fee. After the break, play the shot clock of 30 seconds and let the replay be the argument. The published stake list runs from one dollar to fifty. That is the whole remedy on this page.`,
+The money question hides inside the rigged question. A one-dollar stake looks too small to cheat for, and the fee is still ten cents on a two-dollar pot. Scale it up and the same 5% applies through $50. Promo credit can fund a stake, and it is still a real stake: losing it does not make the rack free. Cancel before the break if the hash is missing, and both stakes return with no fee. After the break, play the shot clock of 30 seconds and let the replay be the argument. The published stake list runs from one dollar to fifty. That is the whole remedy on this page.`,
     },
   ],
   faqs: [

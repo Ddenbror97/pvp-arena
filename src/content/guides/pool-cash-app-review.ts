@@ -88,7 +88,7 @@ Both players post $2.00. The pot is $4.00. The fee is $0.20. The winner is credi
       title: "A five percent pot beside an unknown cut",
       body: `The comparison this page will make is a shape comparison. A cash app takes an entry and pays a prize, and the cut is whatever is left when both are known. A pot on this site takes two equal stakes and keeps 5% of the combined pot. The winner receives 95%, credited to the US-dollar balance when the match settles. Two dollars against two dollars is a four-dollar pot, a fee of twenty cents, and a winner credit of three dollars and eighty cents. Twenty dollars against twenty is a forty-dollar pot, a two-dollar fee, and thirty-eight dollars to the winner.
 
-That second shape is not a guess about Pool Cash. It is the published rule of the 1v1 8-ball match. Stakes run $1, $2, $5, $10, $25, and $50. The buy-in is cash only. Bonus credit cannot be staked. Cancel before the break and both stakes return with no fee.
+That second shape is not a guess about Pool Cash. It is the published rule of the 1v1 8-ball match. Stakes run $1, $2, $5, $10, $25, and $50. Promo credit and partner credit can be staked. Deposited money is used first. Cancel before the break and both stakes return with no fee.
 
 Crypto can fund the dollar balance: Bitcoin, USDC, or ETH on Base. Funding is not a fee, and it is not a promo. There is no NFT and no web3 token attached to the comparison.`,
     },
@@ -108,7 +108,7 @@ Whether either product is allowed depends on where you live. This page is not le
 
 The shape to compare, once the blank is admitted, is a pot with a posted percent. Five percent of the pot, winner credited 95% in a US-dollar balance when the match settles. A two-dollar stake is small and still has the fee: four dollars in the middle, twenty cents kept, three dollars and eighty cents to the winner. Cancel before the break and the twenty cents never appears. That worked example teaches the shape. It is not a reconstruction of Pool Cash's cashier, and it is not a claim about Skillz or Miniclip.
 
-Readers who want a code should look at the app, not at this URL. Nothing in the facts, the table, or the closing notes is a coupon. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, and a code would not disclose those fees anyway. If you stake here, you are on 1v1 8-ball, cash only, with bonus credit refused. If you stake in an app, write down the entry and the prize yourself. This text will not do it for you, and it is not legal advice about either choice.`,
+Readers who want a code should look at the app, not at this URL. Nothing in the facts, the table, or the closing notes is a coupon. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, and a code would not disclose those fees anyway. If you stake here, you are on 1v1 8-ball. Promo credit and partner credit can fund the stake. If you stake in an app, write down the entry and the prize yourself. This text will not do it for you, and it is not legal advice about either choice.`,
     },
   ],
   faqs: [

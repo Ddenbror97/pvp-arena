@@ -94,7 +94,7 @@ Competitor cells stay blank on purpose. This page does not guess another company
       title: "What five percent costs on a funded pot",
       body: `The cost is 5% of the pot, taken when the match settles. The winner is credited 95%. Stake $25 against $25 and the pot is $50, the fee is $2.50, and the winner is credited $47.50. Stake $5 against $5 and the pot is $10, the fee is $0.50, and the winner is credited $9.50. Crypto funding does not rewrite those dollars. The full button list is on [8 ball pool real money](/guides/8-ball-pool-real-money).
 
-This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. A crypto label on someone else's app would not fill those cells. Cancel before the break and both stakes return with no fee. The buy-in is cash only. Bonus credit cannot be staked, even if it arrived beside a deposit.
+This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. A crypto label on someone else's app would not fill those cells. Cancel before the break and both stakes return with no fee. Promo credit and partner credit can be staked. Deposited money is used first, even when a bonus arrived beside that deposit.
 
 No weekly tournament is published, and no break-win rate is published. A seed that shuffles coloured balls is not a jackpot wheel. It also does not promise that the break wins often enough to cover the fee.`,
     },

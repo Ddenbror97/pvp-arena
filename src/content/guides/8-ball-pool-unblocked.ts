@@ -56,7 +56,7 @@ Open [the 1v1 stake lobby](/8-ball-pool) for the match. The [fairness replay](/f
       title: "A browser on a computer, not an installer",
       body: `8 ball pool pc was about 260 US searches at difficulty 69 in the same pull. Difficulty 69 is a hard keyword, owned in practice by app stores and big clients. On this site the PC version is the same browser match a phone can open. There is no desktop installer to download from these pages, and no file name will be invented to fill the search.
 
-The match, when an adult plays it for money, is 1v1 8-ball. Stakes are $1, $2, $5, $10, $25, or $50 from a US-dollar balance. The fee is 5% of the pot. The winner is credited 95% when the match settles. Twenty-five dollars against twenty-five is a fifty-dollar pot, a fee of two dollars and fifty cents, and a credit of forty-seven dollars and fifty cents. The buy-in is cash only. Bonus credit cannot be staked.
+The match, when an adult plays it for money, is 1v1 8-ball. Stakes are $1, $2, $5, $10, $25, or $50 from a US-dollar balance. The fee is 5% of the pot. The winner is credited 95% when the match settles. Twenty-five dollars against twenty-five is a fifty-dollar pot, a fee of two dollars and fifty cents, and a credit of forty-seven dollars and fifty cents. Promo credit and partner credit can fund the stake. Deposited money is used first.
 
 Bitcoin, USDC, or ETH on Base can fund that dollar balance. There is no NFT and no web3 token, and there is no separate table hiding behind a PC download.`,
     },
@@ -108,7 +108,7 @@ Whether the cash stake is legal depends on where you live. This page is not lega
 
 The PC and APK numbers explain the other doors people try. 8 ball pool pc, about 260 searches at difficulty 69, is answered with the browser. The apk line, about 390 at difficulty 73, is answered with a warning: sideloading an APK is a malware risk, and this page will not name a download. No store is linked. No version number is given, because a version number would be a breadcrumb to a file. A desktop shortcut to the browser is the only "PC app" consistent with what is actually published.
 
-Money, for an adult who is allowed to play, is still the pot. Stakes run from $1 to $50. The winner receives 95% when the match settles, in the US-dollar balance. Crypto can fund that balance and does not create a second game. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, and it will not send a reader to an APK of those brands to find out. Bonus credit cannot be staked. Cancel before the break and both stakes come back. The filter question and the fee question stay separate.`,
+Money, for an adult who is allowed to play, is still the pot. Stakes run from $1 to $50. The winner receives 95% when the match settles, in the US-dollar balance. Crypto can fund that balance and does not create a second game. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, and it will not send a reader to an APK of those brands to find out. Promo credit and partner credit can be staked. Cancel before the break and both stakes come back. The filter question and the fee question stay separate.`,
     },
   ],
   faqs: [

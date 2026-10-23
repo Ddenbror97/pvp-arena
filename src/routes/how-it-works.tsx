@@ -466,6 +466,10 @@ function HowItWorksPage() {
               <li>
                 <strong>Fee:</strong> 5% of the pot when someone wins. A cancel refunds both stakes.
               </li>
+              <li>
+                Promo and partner credit can fund a stake. Deposited or won money is used first,
+                and bonus you lose to the other player stays bonus.
+              </li>
             </ol>
             <SeoLink to="/8-ball-pool">Open the 8-ball lobby</SeoLink>
           </SeoCard>

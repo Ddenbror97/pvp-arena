@@ -213,6 +213,10 @@ export const GAME_FACT_PAGES: Record<string, GameFactPage> = {
         text: "When the match settles, 5% of the pot is kept as the fee. The winner receives the other 95%. A cancel or a match that ends before the break refunds both stakes with no fee.",
       },
       {
+        label: "Promo credit",
+        text: "Promo and partner credit can be used for a stake. Deposited or won money is used first. Bonus you lose to the other player stays bonus.",
+      },
+      {
         label: "Checking the result",
         text: "Once the match is playing, the seed is revealed. Anyone can replay the shot list, the timeouts and the forfeits under the physics id stored with that rack, pool-phys-v1 or pool-phys-v2, and rules pvp-8ball-v1. An older match stays on the physics it was played with. A paid winner that disagrees with that replay is not a verified result. The check does not move money back.",
       },

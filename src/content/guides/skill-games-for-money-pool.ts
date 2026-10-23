@@ -88,7 +88,7 @@ Competitor cells stay blank on purpose. This page does not guess another company
       title: "The fee that sits on top of an edge",
       body: `A skill edge and a fee can occupy the same match. The fee here is 5% of the pot, and the winner is credited 95% when the match settles. Ten dollars against ten dollars builds a twenty-dollar pot, a one-dollar fee, and a nineteen-dollar credit. Twenty dollars against twenty is the familiar forty-dollar pot, two-dollar fee, and thirty-eight-dollar credit. Win exactly half the time against an equal player and the fee is a slow leak, because the credit is smaller than two stakes.
 
-That arithmetic is not a measured break-win rate. None is published. No weekly tournament is published either, so there is no multi-round skill sample with a posted prize. The sample you can actually play is one rack at a time, cash only. Bonus credit cannot be staked. Cancel before the break and both stakes return with no fee.
+That arithmetic is not a measured break-win rate. None is published. No weekly tournament is published either, so there is no multi-round skill sample with a posted prize. The sample you can actually play is one rack at a time. Promo credit and partner credit can be staked, and deposited money is used first. Cancel before the break and both stakes return with no fee.
 
 This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. An app can be full of skill and still keep an unpublished cut. The unknown cut is not evidence that this 5% is universal.`,
     },
@@ -108,7 +108,7 @@ The APA team manual bans gambling at APA functions: wagers, side bets, side pots
 
 Legal classification is the piece this page refuses to flatten. A place can treat a skill wager as gambling. Another place can draw a distinction, and that distinction can change. No list of states is offered, because this site has not published one and will not invent one. The APA manual's ban is narrower still: it governs APA functions, not every browser. If you need a ruling, you need a source that is actually law where you live. This article is not that source, and it is not legal advice.
 
-The practical test before a stake is short. Read the hash. Read that only the 8 is called. Read the 5% fee in dollars for the stake you picked, from $1 through $50. Read that bonus credit cannot enter. Then decide. A win credits 95% of the pot to the US-dollar balance when the match settles. A loss takes the stake. Neither result proves a legal theory. Neither result is a break-win statistic, because no such rate is published. Set a loss stop before the first rack, and keep the session inside a number chosen first.`,
+The practical test before a stake is short. Read the hash. Read that only the 8 is called. Read the 5% fee in dollars for the stake you picked, from $1 through $50. Read that promo credit and partner credit can enter, and that deposited money is used first. Then decide. A win credits 95% of the pot to the US-dollar balance when the match settles. A loss takes the stake. Neither result proves a legal theory. Neither result is a break-win statistic, because no such rate is published. Set a loss stop before the first rack, and keep the session inside a number chosen first.`,
     },
   ],
   faqs: [

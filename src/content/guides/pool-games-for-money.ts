@@ -86,14 +86,14 @@ Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is cred
 - Decide whether you are paying an app entry or posting a pot.
 - Leave Pool Payday, Skillz, Miniclip, Pool Cash, and 8 Ball Strike fees blank.
 - Ignore a weekly tournament this site has not published.
-- Stake cash only. Bonus credit is refused.
+- Promo credit and partner credit can fund a stake. Deposited money is used first.
 - Read $5 versus $5 as a $10 pot and a $0.50 fee.
 - Ask whether a cash stake is allowed where you live before you call it legal.`,
     },
     {
       id: "cash-in-bonus-out",
-      title: "Cash in, bonus credit out",
-      body: `The buy-in is withdrawable cash. Bonus credit cannot be staked. A promotional balance can sit on an account and still be refused at the table. That rule keeps the pot limited to money both players could have withdrawn instead of playing. Cancel before the break and both stakes return with no fee. After the break, the result stands.
+      title: "Promo credit can enter, and it stays bonus",
+      body: `Promo credit and partner credit can be staked. Deposited or won money is used first. Bonus a player loses to the other stays bonus, so a promotional balance does not come back as withdrawable cash. Cancel before the break and both stakes return with no fee. After the break, the result stands.
 
 The shot clock is 30 seconds. Three timeouts forfeit the seat that used them. An explicit forfeit gives the match to the other player. Those are ways a pot ends without a made ball. They are written before the stake, so a timeout is not a surprise invoice.
 
@@ -115,7 +115,7 @@ Whether you may play pool for money at all depends on where you live. This page 
 
 A skill app and a crypto-funded pot can both be "pool for cash" in a search box. The app shape hides the cut until you subtract prizes from entries, and only when the app shows both. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, so the subtraction cannot be finished for them. The pot shape prints the cut first: 5% of the pot, winner 95%, credited in dollars when the match settles. Crypto is only how the dollar balance may have been funded.
 
-No tournament page means no tournament strategy. Pool tournaments for money, about 20 searches in that pull, stays a demand note. There is no field size, no weekly prize, and no break-win percentage to quote. The match you can actually enter is 1v1, cash only, stakes from $1 to $50, cancel-before-break refunds both players, and three timeouts forfeit the seat. Bonus credit cannot buy the seat. The dollar balance is credited only when a real match settles, and only at 95% of the pot. Set a loss number before you queue.`,
+No tournament page means no tournament strategy. Pool tournaments for money, about 20 searches in that pull, stays a demand note. There is no field size, no weekly prize, and no break-win percentage to quote. The match you can actually enter is 1v1, stakes from $1 to $50, cancel-before-break refunds both players, and three timeouts forfeit the seat. Promo credit and partner credit can buy the seat. The dollar balance is credited only when a real match settles, and only at 95% of the pot. Set a loss number before you queue.`,
     },
   ],
   faqs: [
@@ -137,7 +137,7 @@ No tournament page means no tournament strategy. Pool tournaments for money, abo
     },
     {
       q: "Can bonus credit buy the seat?",
-      a: "No. The buy-in is cash only. Bonus credit cannot be staked. A cancel before the break returns both cash stakes and charges nothing.",
+      a: "Yes. Promo credit and partner credit can buy the seat. Deposited or won money is used first, and bonus you lose to the other player stays bonus. A cancel before the break returns both stakes and charges nothing.",
     },
     {
       q: "Does difficulty 0 mean the match is a good bet?",

@@ -97,7 +97,7 @@ If you learned on a league night, read the list before you stake. A safety you e
       title: "What the settled-match list is",
       body: `The lobby prints finished matches it actually has: winner, payout, pot, and fee. The published fee is 5% of the pot, and the live lobby reports that rate from the server. The list does not print a break-win rate. This page will not invent one. A monthly "pool stats" box that made up matches played, average pot, or a break percentage would be a fake original. The original data is the list, and it is empty when no match has settled.
 
-Stakes are $1, $2, $5, $10, $25 and $50. Buy-ins are withdrawable cash. Bonus credit is refused. There is no house opponent. The playing surface is 2.54 m by 1.27 m. New matches store physics id pool-phys-v2. An older match stays on the physics it was played with.
+Stakes are $1, $2, $5, $10, $25 and $50. Promo credit and partner credit can fund a stake. Deposited money is used first. There is no house opponent. The playing surface is 2.54 m by 1.27 m. New matches store physics id pool-phys-v2. An older match stays on the physics it was played with.
 
 No weekly crypto tournament is published here yet. A leaderboard of invented brackets would be the same kind of fake. When a bracket exists, it can have a page. Until then the settled list is the public record.`,
     },

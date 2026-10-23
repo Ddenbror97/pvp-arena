@@ -126,7 +126,7 @@ A friend who wants a casino night can still play you. They post the same stake. 
     },
     {
       q: "Can I play the house for a bonus?",
-      a: "There is no house opponent and no promo code on this page. Bonus credit is not how this match is staked. Buy-ins are withdrawable cash. If a page offers a code for a different 8-ball casino, this guide does not know that code and will not invent one.",
+      a: "There is no house opponent and no promo code printed on this page. Promo credit and partner credit already on the account can fund a stake. Deposited money is used first. If a page offers a code for a different 8-ball casino, this guide does not know that code and will not invent one.",
     },
   ],
   sources: [

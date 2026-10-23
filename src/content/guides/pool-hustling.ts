@@ -81,7 +81,7 @@ This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Stri
       title: "What a declared match publishes first",
       body: `Before the balls are shown, this match publishes a SHA-256 hash of the 32-byte rack seed. The seed later shuffles only the coloured balls, and the 8 stays in the centre. Shots are not randomly missed. New matches use physics id pool-phys-v2. The fairness page can replay them. None of that is a disguise. A hustle depends on someone knowing less. A hash is an attempt to let both players know the rack commitment at the same time.
 
-The rules are also posted. Call a pocket only for the 8. The break 8 wins unless the cue ball scratches. Early 8 loses. The shot clock is 30 seconds. Three timeouts forfeit the seat. An explicit forfeit gives the match to the other player. Cash only: bonus credit cannot be staked. Cancel before the break and both stakes return with no fee. There is no weekly tournament and no published break-win rate to dangle as bait.
+The rules are also posted. Call a pocket only for the 8. The break 8 wins unless the cue ball scratches. Early 8 loses. The shot clock is 30 seconds. Three timeouts forfeit the seat. An explicit forfeit gives the match to the other player. Promo credit and partner credit can be staked. Deposited money is used first. Cancel before the break and both stakes return with no fee. There is no weekly tournament and no published break-win rate to dangle as bait.
 
 WPA rules effective 21 October 2026 call shots, and a legal break 8 is spotted or rebroken. This table does not. PVPspinArena publishes the page. No named author is on it.`,
     },
@@ -108,7 +108,7 @@ Competitor cells stay blank on purpose. This page does not guess another company
 
 A declared fifty-dollar match is the top of the stake list, not a hustle script. Both players post $50. The pot is $100. The fee is $5. The winner is credited $95. That is 5% of the pot, the same rate as a one-dollar match. The loser is out the whole stake. The winner's net against their own stake is $45. Against an equal player, half the matches do not cover a fee that pays 95% back. The arithmetic is the warning. It is not a measured win rate, and no break-win rate is published to decorate it.
 
-League night and a website are different rooms. The APA list, wagers through Calcuttas, binds APA functions. It does not silently become the criminal code, and it does not licence this site. Undeclared hustling can still be fraud where you live. This page will not map that risk onto a state. The product alternative is narrow: same stake, posted 5% fee, cash only, hash before the rack, replay after the shot. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, so it will not rank those apps as safer hustles or as worse ones.`,
+League night and a website are different rooms. The APA list, wagers through Calcuttas, binds APA functions. It does not silently become the criminal code, and it does not licence this site. Undeclared hustling can still be fraud where you live. This page will not map that risk onto a state. The product alternative is narrow: same stake, posted 5% fee, hash before the rack, replay after the shot. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, so it will not rank those apps as safer hustles or as worse ones.`,
     },
   ],
   faqs: [

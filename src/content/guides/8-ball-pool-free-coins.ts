@@ -79,7 +79,7 @@ Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is cred
 - Do not treat a coin balance as withdrawable cash.
 - Do not invent a coin-to-dollar rate. None is published here.
 - If you want a payout, post a cash stake instead.
-- Leave bonus credit out of the buy-in.
+- Promo credit and partner credit can fund a stake. Coins still cannot.
 - Expect 95% of the pot, not a coin cashout.
 - Ignore a reward screen that quotes a price this page has not seen.`,
     },
@@ -88,14 +88,14 @@ Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is cred
       title: "The cash alternative is the pot, not a coin cashout",
       body: `The alternative with a real payout is the 1v1 cash match. Both players post the same stake from $1, $2, $5, $10, $25, or $50. The fee is 5% of the pot. The winner is credited 95% in the US-dollar balance when the match settles. Five dollars against five is a ten-dollar pot, a fifty-cent fee, and nine dollars and fifty cents to the winner. Twenty dollars against twenty is a forty-dollar pot, a two-dollar fee, and thirty-eight dollars to the winner.
 
-That is not a coin cashout. There is no window that turns a coin balance into those dollars. Bonus credit cannot be staked, so a promotional balance on this site is also not a back door into the pot. The buy-in is cash only. Cancel before the break and both cash stakes return with no fee.
+That is not a coin cashout. There is no window that turns a coin balance into those dollars. Promo credit and partner credit can be staked. That is still not a coin cashout: deposited money is used first, and bonus lost to the other player stays bonus. Cancel before the break and both stakes return with no fee.
 
 Bitcoin, USDC, or ETH on Base can fund the dollar balance. Funding is still dollars at the table. There is no NFT prize and no web3 token paid instead of the 95%.`,
     },
     {
       id: "bonus-credit-and-buy-in",
       title: "Bonus credit, rewards, and the buy-in rule",
-      body: `A reward and a bonus get confused because both feel free. On this site, bonus credit cannot be staked. The pot is built from withdrawable cash. A player who only holds bonus credit cannot open a money match with it. That rule is the opposite of a coin grind that hopes a free balance will later be sold.
+      body: `A reward and a bonus get confused because both feel free. On this site, promo credit and partner credit can open a money match. Deposited or won money is used first. Bonus lost to the other player stays bonus, which is the opposite of a coin grind that hopes a free balance will later be sold.
 
 The rules that pay the cash winner are the house 8-ball rules. Call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches. An early 8 loses. The shot clock is 30 seconds. Three timeouts forfeit the seat. An explicit forfeit gives the match to the other player. WPA rules effective 21 October 2026 call shots, and a legal break 8 is spotted or rebroken. This table does not follow that book.
 
@@ -134,7 +134,7 @@ If the goal is spendable money, skip the coin pile. Post cash, from one dollar t
     },
     {
       q: "Can bonus credit or a reward be staked?",
-      a: "Bonus credit cannot be staked. The buy-in is cash only, from $1, $2, $5, $10, $25, or $50. A reward screen in a free game can hand out coins or cues. None of those are a buy-in here.",
+      a: "Promo credit and partner credit can be staked, from $1, $2, $5, $10, $25, or $50. A reward screen in a free game can hand out coins or cues. None of those coins are a buy-in here.",
     },
   ],
   sources: [
