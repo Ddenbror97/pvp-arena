@@ -144,55 +144,52 @@ function diamond(ctx: CanvasRenderingContext2D, x: number, y: number, s: number)
   ctx.restore();
 }
 
-function noiseLayer(w: number, h: number): HTMLCanvasElement {
-  const sw = 220;
-  const sh = 120;
-  const small = document.createElement("canvas");
-  small.width = sw;
-  small.height = sh;
-  const sctx = small.getContext("2d");
-  const cloth = document.createElement("canvas");
-  cloth.width = w;
-  cloth.height = h;
-  if (!sctx) return cloth;
-  const img = sctx.createImageData(sw, sh);
-  const cell = 7;
-  const hash = (ix: number, iy: number) => {
-    let n = (ix * 374761393 + iy * 668265263) | 0;
-    n = Math.imul(n ^ (n >>> 13), 1274126177);
-    return ((n ^ (n >>> 16)) >>> 0) / 4294967295;
-  };
-  const value = (x: number, y: number) => {
-    const x0 = Math.floor(x);
-    const y0 = Math.floor(y);
-    const fx = x - x0;
-    const fy = y - y0;
-    const sx = fx * fx * (3 - 2 * fx);
-    const sy = fy * fy * (3 - 2 * fy);
-    const a = hash(x0, y0);
-    const b = hash(x0 + 1, y0);
-    const c = hash(x0, y0 + 1);
-    const d = hash(x0 + 1, y0 + 1);
-    return a * (1 - sx) * (1 - sy) + b * sx * (1 - sy) + c * (1 - sx) * sy + d * sx * sy;
-  };
-  for (let y = 0; y < sh; y++) {
-    for (let x = 0; x < sw; x++) {
-      const coarse = value(x / cell, y / cell);
-      const fine = value(x / 2.5, y / 2.5);
-      const v = Math.round(118 + coarse * 42 + fine * 18);
-      const i = (y * sw + x) * 4;
-      img.data[i] = v;
-      img.data[i + 1] = v - 8;
-      img.data[i + 2] = v + 6;
+function weaveHash(ix: number, iy: number): number {
+  let n = (ix * 374761393 + iy * 668265263) | 0;
+  n = Math.imul(n ^ (n >>> 13), 1274126177);
+  return ((n ^ (n >>> 16)) >>> 0) / 4294967295;
+}
+
+/** Tileable wool nap. Built once and repeated, so the cloth is not a stretched stain. */
+let clothWeave: HTMLCanvasElement | null = null;
+function feltWeave(): HTMLCanvasElement {
+  if (clothWeave) return clothWeave;
+  const w = 256;
+  const h = 256;
+  const tile = document.createElement("canvas");
+  tile.width = w;
+  tile.height = h;
+  const ctx = tile.getContext("2d");
+  clothWeave = tile;
+  if (!ctx) return tile;
+  const img = ctx.createImageData(w, h);
+  const clamp = (n: number) => Math.max(0, Math.min(255, Math.round(n)));
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const fine = weaveHash(x, y);
+      const nap = weaveHash(x >> 2, y);
+      const grain = (fine - 0.5) * 14 + (nap - 0.5) * 16;
+      const i = (y * w + x) * 4;
+      img.data[i] = clamp(96 + grain * 0.85);
+      img.data[i + 1] = clamp(38 + grain * 0.28);
+      img.data[i + 2] = clamp(158 + grain * 0.55);
       img.data[i + 3] = 255;
     }
   }
-  sctx.putImageData(img, 0, 0);
-  const ctx = cloth.getContext("2d");
-  if (!ctx) return cloth;
-  ctx.imageSmoothingEnabled = true;
-  ctx.drawImage(small, 0, 0, w, h);
-  return cloth;
+  ctx.putImageData(img, 0, 0);
+  for (let i = 0; i < 46; i++) {
+    const y = weaveHash(i, 11) * h;
+    const x0 = weaveHash(i, 12) * w;
+    const len = 22 + weaveHash(i, 13) * 54;
+    ctx.strokeStyle =
+      i % 2 === 0 ? "rgba(244, 228, 255, 0.13)" : "rgba(36, 8, 64, 0.16)";
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(x0, y);
+    ctx.lineTo(x0 + len, y + (weaveHash(i, 14) - 0.5) * 1.4);
+    ctx.stroke();
+  }
+  return tile;
 }
 
 function paintPocket(
@@ -368,24 +365,22 @@ function buildTable(w: number, h: number): HTMLCanvasElement {
   ctx.rect(clothX, clothY, innerW, innerH);
   addHoles(ctx, project, innerW, 1);
   ctx.clip("evenodd");
-  const cloth = ctx.createRadialGradient(midX, midY, innerH * 0.05, midX, midY, innerW * 0.62);
-  cloth.addColorStop(0, "#7a3ec4");
-  cloth.addColorStop(0.42, "#642eab");
-  cloth.addColorStop(0.78, "#4c208c");
-  cloth.addColorStop(1, "#351466");
-  ctx.fillStyle = cloth;
+  const weave = ctx.createPattern(feltWeave(), "repeat");
+  ctx.fillStyle = weave ?? "#5a218f";
   ctx.fillRect(clothX, clothY, innerW, innerH);
-  const light = ctx.createRadialGradient(midX, midY - innerH * 0.08, innerH * 0.02, midX, midY, innerW * 0.48);
-  light.addColorStop(0, "rgba(255,255,255,0.09)");
-  light.addColorStop(0.55, "rgba(255,255,255,0)");
-  light.addColorStop(1, "rgba(18,0,32,0.28)");
+  const light = ctx.createRadialGradient(
+    midX,
+    midY - innerH * 0.12,
+    innerH * 0.04,
+    midX,
+    midY,
+    innerW * 0.55,
+  );
+  light.addColorStop(0, "rgba(255,255,255,0.07)");
+  light.addColorStop(0.5, "rgba(255,255,255,0)");
+  light.addColorStop(1, "rgba(16,0,28,0.22)");
   ctx.fillStyle = light;
   ctx.fillRect(clothX, clothY, innerW, innerH);
-  ctx.globalCompositeOperation = "overlay";
-  ctx.globalAlpha = 0.38;
-  ctx.drawImage(noiseLayer(w, h), clothX, clothY, innerW, innerH);
-  ctx.globalCompositeOperation = "source-over";
-  ctx.globalAlpha = 1;
   ctx.strokeStyle = "rgba(20, 0, 36, 0.45)";
   ctx.lineWidth = Math.max(8, rail * 0.28);
   ctx.strokeRect(clothX, clothY, innerW, innerH);
@@ -539,31 +534,70 @@ function drawCue(
     x: tip.x + (butt.x - tip.x) * t,
     y: tip.y + (butt.y - tip.y) * t,
   });
-  const ferrule = along(0.055);
-  const grip = along(0.72);
-  const width = Math.max(2.2, ballRadiusPx(innerW, tipScale) * 0.16);
+  const width = Math.max(3.2, ballRadiusPx(innerW, tipScale) * 0.42);
+  const shift = (p: Pt, amount: number): Pt => {
+    const dx = butt.x - tip.x;
+    const dy = butt.y - tip.y;
+    const len = Math.hypot(dx, dy) || 1;
+    return { x: p.x + (-dy / len) * amount, y: p.y + (dx / len) * amount };
+  };
   ctx.save();
   ctx.globalAlpha = alpha;
+  ctx.lineJoin = "round";
+  stick(ctx, shift(tip, width * 0.55), shift(butt, width * 0.7), width * 0.7, width * 1.05, "rgba(0,0,0,0.32)");
+
+  const shaft = ctx.createLinearGradient(tip.x, tip.y, along(0.62).x, along(0.62).y);
+  shaft.addColorStop(0, "#f3d7a4");
+  shaft.addColorStop(0.45, "#e2b56a");
+  shaft.addColorStop(1, "#c48945");
+  stick(ctx, along(0.07), along(0.62), width * 0.62, width * 0.92, shaft);
+  for (const band of [-0.22, -0.06, 0.1, 0.24]) {
+    stick(
+      ctx,
+      shift(along(0.12), width * band),
+      shift(along(0.58), width * band),
+      0.35,
+      0.45,
+      "rgba(92, 48, 18, 0.28)",
+    );
+  }
   stick(
     ctx,
-    { x: tip.x + width * 0.35, y: tip.y + width * 0.85 },
-    { x: butt.x + width * 0.45, y: butt.y + width * 0.95 },
-    width * 0.9,
-    width * 1.3,
-    "rgba(0,0,0,0.28)",
+    shift(along(0.1), -width * 0.22),
+    shift(along(0.58), -width * 0.28),
+    width * 0.08,
+    width * 0.1,
+    "rgba(255,236,210,0.42)",
   );
-  const shaft = ctx.createLinearGradient(tip.x, tip.y, butt.x, butt.y);
-  shaft.addColorStop(0, "#f6e2c4");
-  shaft.addColorStop(0.35, "#e2b56a");
-  shaft.addColorStop(0.72, "#c48a42");
-  shaft.addColorStop(1, "#8d5a2b");
-  stick(ctx, tip, butt, width * 0.92, width * 1.42, shaft);
-  stick(ctx, along(0.08), along(0.96), width * 0.22, width * 0.28, "rgba(255,236,210,0.34)");
-  stick(ctx, along(0.2), along(0.9), width * 0.08, width * 0.1, "rgba(92, 52, 24, 0.28)");
-  stick(ctx, grip, butt, width * 1.15, width * 1.5, "#1a1412");
-  stick(ctx, along(0.78), along(0.97), width * 0.28, width * 0.36, "rgba(255,255,255,0.14)");
-  stick(ctx, tip, ferrule, width * 0.9, width * 0.98, "#f7f4ee");
-  stick(ctx, tip, along(0.02), width * 0.72, width * 0.8, "#6b4a2e");
+
+  stick(ctx, along(0.615), along(0.645), width * 0.94, width * 1.02, "#d7b56a");
+  stick(ctx, along(0.64), along(0.655), width * 0.9, width * 0.96, "#1c140e");
+
+  const wrap = ctx.createLinearGradient(along(0.66).x, along(0.66).y, along(0.9).x, along(0.9).y);
+  wrap.addColorStop(0, "#3a2a1c");
+  wrap.addColorStop(0.5, "#24180f");
+  wrap.addColorStop(1, "#4a3422");
+  stick(ctx, along(0.655), along(0.9), width * 1.02, width * 1.22, wrap);
+  stick(
+    ctx,
+    shift(along(0.68), -width * 0.28),
+    shift(along(0.88), -width * 0.32),
+    width * 0.06,
+    width * 0.07,
+    "rgba(255, 220, 170, 0.22)",
+  );
+
+  const buttWood = ctx.createLinearGradient(along(0.9).x, along(0.9).y, butt.x, butt.y);
+  buttWood.addColorStop(0, "#8d5a2e");
+  buttWood.addColorStop(1, "#4a2c16");
+  stick(ctx, along(0.9), along(0.975), width * 1.18, width * 1.34, buttWood);
+  stick(ctx, along(0.97), butt, width * 1.28, width * 1.22, "#14110e");
+  stick(ctx, along(0.985), butt, width * 0.7, width * 0.55, "#c4a574");
+
+  stick(ctx, along(0.018), along(0.072), width * 0.58, width * 0.66, "#f6f3ec");
+  stick(ctx, along(0.068), along(0.084), width * 0.66, width * 0.7, "#1a120c");
+  stick(ctx, tip, along(0.02), width * 0.5, width * 0.56, "#3a2c22");
+  stick(ctx, tip, along(0.008), width * 0.36, width * 0.4, "#6a5040");
   ctx.restore();
 }
 
