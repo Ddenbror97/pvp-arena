@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, Coins, Shield, Trophy, Zap } from "lucide-react";
+import { ArrowRight, Percent, ShieldCheck, Timer } from "lucide-react";
 import { toast } from "sonner";
 import hero from "@/assets/pool/hero.webp";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
@@ -21,13 +21,6 @@ function timeLeft(iso: string, now: number): string {
   if (hours > 0) return `${hours}h ${minutes.toString().padStart(2, "0")}m`;
   return minutes > 0 ? `${minutes}m ${seconds.toString().padStart(2, "0")}s` : `${seconds}s`;
 }
-
-const FEATURES = [
-  { icon: Zap, title: "PVP matches", text: "Real players, real money" },
-  { icon: Trophy, title: "Skill based", text: "Show your skills and climb the ranks" },
-  { icon: Coins, title: "Instant games", text: "Quick matches anytime" },
-  { icon: Shield, title: "Fair & secure", text: "Committed rack, replayed shots" },
-] as const;
 
 export function PoolLobby() {
   const { userId } = useAuth();
@@ -90,61 +83,18 @@ export function PoolLobby() {
 
   return (
     <div className="pool-lobby">
-      <section className="pool-hero" aria-labelledby="pool-wordmark">
-        <img
-          src={hero}
-          alt=""
-          width={1280}
-          height={720}
-          decoding="async"
-          fetchPriority="high"
-          className="pool-hero-art"
-        />
-        <div className="pool-hero-shade" aria-hidden />
+      <section className="pool-hero" aria-labelledby="pool-title">
         <div className="pool-hero-copy">
-          <p id="pool-wordmark" className="pool-wordmark">
-            <span className="pool-eight" aria-hidden>
-              <svg className="pool-crown" viewBox="0 0 64 36" fill="none">
-                <path
-                  d="M6 28 L10 10 L22 20 L32 4 L42 20 L54 10 L58 28 Z"
-                  fill="url(#pool-gold)"
-                  stroke="#f8e7a2"
-                  strokeWidth="1.4"
-                  strokeLinejoin="round"
-                />
-                <path d="M8 30 h48 v4 h-48 z" fill="url(#pool-gold)" />
-                <circle cx="10" cy="10" r="2.2" fill="#fff4c8" />
-                <circle cx="32" cy="5" r="2.4" fill="#fff4c8" />
-                <circle cx="54" cy="10" r="2.2" fill="#fff4c8" />
-                <defs>
-                  <linearGradient id="pool-gold" x1="8" y1="4" x2="56" y2="32">
-                    <stop stopColor="#fff1b8" />
-                    <stop offset="0.45" stopColor="#f5c542" />
-                    <stop offset="1" stopColor="#b8860b" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              <span className="pool-eight-ball">
-                <span className="pool-eight-spot">8</span>
-              </span>
+          <h1 id="pool-title" className="pool-hero-title">
+            <span className="pool-hero-eight" aria-hidden>
+              <span>8</span>
             </span>
-            <span className="pool-word">POOL</span>
+            <span className="pool-hero-word">Pool</span>
+          </h1>
+          <p className="pool-hero-modes">
+            8-ball <span aria-hidden>•</span> 1v1 <span aria-hidden>•</span> Call the 8
           </p>
-          <h1 className="pool-seo-h1">8 Ball Pool for Real Money (Crypto PvP)</h1>
-          <p className="pool-tag">
-            Real players <span aria-hidden>·</span> Real skills <span aria-hidden>·</span> Real wins
-          </p>
-          <ul className="pool-features">
-            {FEATURES.map((feature) => (
-              <li key={feature.title} className="pool-feature">
-                <span className="pool-feature-icon">
-                  <feature.icon aria-hidden className="h-4 w-4" />
-                </span>
-                <h2>{feature.title}</h2>
-                <p>{feature.text}</p>
-              </li>
-            ))}
-          </ul>
+          <p className="pool-hero-sub">Real players. Real skills. Real wins.</p>
           <button
             type="button"
             className="pool-play"
@@ -154,30 +104,80 @@ export function PoolLobby() {
             onTouchStart={warmMatch}
             onClick={() => void enter({ stake })}
           >
-            {busy === "play" ? "Finding a match…" : "Play 8 Pool Now"}
-            {busy === "play" ? null : <ArrowRight aria-hidden className="h-5 w-5" />}
+            {busy === "play" ? "Finding a table…" : "Find a table"}
+            {busy === "play" ? null : <ArrowRight aria-hidden className="h-4 w-4" />}
           </button>
-          <div className="pool-stakes" role="group" aria-label="Stake per player">
-            {stakes.map((cents) => (
-              <button
-                key={cents}
-                type="button"
-                aria-pressed={stake === cents}
-                onClick={() => setStake(cents)}
-                className={stake === cents ? "pool-stake is-on" : "pool-stake"}
-              >
-                {money(cents)}
-              </button>
-            ))}
-          </div>
-          <p className="pool-quote">
-            You stake {formatCents(quote.stake)}. Pot {formatCents(quote.pot)}. Platform fee{" "}
-            {formatCents(quote.fee)} (5%). Winner receives {formatCents(quote.payout)}. If nobody
-            joins within 24 hours, the stake is refunded. Join an open table to play that
-            opponent. Play takes the oldest open table at this stake, or opens a new one.
+        </div>
+
+        <div className="pool-hero-art" aria-hidden>
+          <span className="pool-hero-ball is-eight">
+            <b>8</b>
+          </span>
+          <span className="pool-hero-ball is-cue" />
+          <img
+            src={hero}
+            alt=""
+            width={1280}
+            height={720}
+            decoding="async"
+            fetchPriority="high"
+            className="pool-hero-player"
+          />
+        </div>
+
+        <div className="pool-hero-panel">
+          <p className="pool-hero-panel-title">
+            Play <span aria-hidden>•</span> Win <span aria-hidden>•</span> Repeat
           </p>
+          <ul>
+            <li>
+              <span className="pool-hero-icon">
+                <Timer aria-hidden />
+              </span>
+              <span className="pool-hero-feature-title">30s shots</span>
+              <span className="pool-hero-feature-sub">Three timeouts forfeit</span>
+            </li>
+            <li>
+              <span className="pool-hero-icon">
+                <ShieldCheck aria-hidden />
+              </span>
+              <span className="pool-hero-feature-title">Provably fair</span>
+              <span className="pool-hero-feature-sub">Committed rack, replayed shots</span>
+            </li>
+            <li>
+              <span className="pool-hero-icon">
+                <Percent aria-hidden />
+              </span>
+              <span className="pool-hero-feature-title">Fair fee</span>
+              <span className="pool-hero-feature-sub">5% of the pot</span>
+            </li>
+          </ul>
         </div>
       </section>
+
+      <div className="pool-buyin">
+        <p className="pool-buyin-label" id="pool-stake-label">
+          Stake
+        </p>
+        <div className="pool-stakes" role="group" aria-labelledby="pool-stake-label">
+          {stakes.map((cents) => (
+            <button
+              key={cents}
+              type="button"
+              aria-pressed={stake === cents}
+              onClick={() => setStake(cents)}
+              className={stake === cents ? "pool-stake is-on" : "pool-stake"}
+            >
+              {money(cents)}
+            </button>
+          ))}
+        </div>
+        <p className="pool-quote">
+          You stake {formatCents(quote.stake)}. Pot {formatCents(quote.pot)}. Fee{" "}
+          {formatCents(quote.fee)} (5%). Winner receives {formatCents(quote.payout)}. Play joins
+          the oldest open table at this stake, or opens one. An empty table refunds after 24 hours.
+        </p>
+      </div>
 
       <div className="pool-below">
         <section className="pool-side" aria-labelledby="pool-open">
