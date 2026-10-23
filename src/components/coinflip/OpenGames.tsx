@@ -98,7 +98,7 @@ function LiveCard({ g }: { g: CfGameView }) {
     <Link
       to="/coinflip/$gameId"
       params={{ gameId: String(g.id) }}
-      className="flex min-w-0 items-center gap-2.5 rounded-2xl border border-primary/40 bg-card p-3 transition hover:border-primary sm:gap-4 sm:p-4"
+      className="cf-game-window flex min-w-0 items-center gap-2.5 rounded-2xl border border-primary/40 bg-card p-3 transition hover:border-primary sm:gap-4 sm:p-4"
     >
       <LiveCoin g={g} />
       <div className="min-w-0 flex-1">
@@ -205,7 +205,7 @@ function OpenCard({ g, mine, canJoin }: { g: CfGameView; mine: boolean; canJoin:
   }
 
   return (
-    <div className="flex min-w-0 items-center gap-2.5 rounded-2xl border border-border bg-card p-3 sm:gap-4 sm:p-4">
+    <div className="cf-game-window flex min-w-0 items-center gap-2.5 rounded-2xl border border-border bg-card p-3 sm:gap-4 sm:p-4">
       <SideCoinImg side={side} className="h-10 w-10 sm:h-11 sm:w-11" />
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-semibold">{g.creator?.username ?? "player"}</div>

@@ -1606,6 +1606,22 @@ html[data-theme="light"] .jp-home :is(.text-muted-foreground, .section-kicker) {
   box-shadow: 0 18px 40px rgb(0 0 0 / 34%);
   backdrop-filter: blur(16px);
 }
+/* Open-game rows and the match stage sit on the room. A filled card would hide it. */
+.cf-home .cf-game-window {
+  background-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+/* Same plate as the lobby. At xl the lobby grid is 34rem plus this padding, shorter than 16:9. */
+.cf-home-match { min-height: calc(100cqw * 9 / 16); }
+@media (min-width: 1280px) {
+  .cf-home-match { min-height: calc(34rem + 0.85rem + 1.25rem); }
+}
+/* Unlayered so it wins over the base-layer left slash on these rooms. */
+html:has(.jp-home)::before,
+html:has(.cf-home)::before {
+  background-image: none;
+}
 html[data-theme="light"] .cf-home { color: #f4f1ff; }
 html[data-theme="light"] .cf-home :is(.text-muted-foreground, .section-kicker) {
   color: rgb(214 206 240 / 84%);

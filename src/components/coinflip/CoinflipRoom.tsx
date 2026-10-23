@@ -203,7 +203,7 @@ const CENTER_COIN_BOX = CENTER_COIN * 1.5;
 const CENTER_COUNTDOWN = 148;
 /** Same box for the loading state, the countdown and the flip, so landing on a game does not move the page. */
 const STAGE_BOX =
-  "game-stage relative mt-3 h-[21rem] touch-pan-y overflow-clip rounded-2xl border border-border bg-card p-4 sm:h-[26rem] sm:px-10 sm:py-8";
+  "game-stage cf-game-window relative mt-3 h-[21rem] touch-pan-y overflow-clip rounded-2xl border border-border bg-card p-4 sm:h-[26rem] sm:px-10 sm:py-8";
 
 function StageBox({ children, className }: { children?: ReactNode; className?: string }) {
   return <div className={className ? `${STAGE_BOX} ${className}` : STAGE_BOX}>{children}</div>;

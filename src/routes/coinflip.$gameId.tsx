@@ -1,4 +1,5 @@
 import { createFileRoute, ClientOnly } from "@tanstack/react-router";
+import room from "@/assets/coinflip/room.webp";
 import { ogImageMeta } from "@/lib/og";
 import { CoinflipRoom, CoinflipRoomFallback } from "@/components/coinflip/CoinflipRoom";
 
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/coinflip/$gameId")({
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageMeta(),
     ],
+    links: [{ rel: "preload", as: "image", href: room, type: "image/webp", fetchPriority: "high" }],
   }),
   component: Page,
 });

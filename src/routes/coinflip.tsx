@@ -9,41 +9,55 @@ import { useSeedIdentities } from "@/components/prestige/PrestigeProvider";
 import { useCoinflipRealtime } from "@/lib/coinflip/api";
 import { loadCoinflipPaint, useQuerySeed } from "@/lib/first-paint";
 
+const roomPreload = {
+  rel: "preload" as const,
+  as: "image" as const,
+  href: room,
+  type: "image/webp",
+  fetchPriority: "high" as const,
+};
+
 export const Route = createFileRoute("/coinflip")({
-  head: ({ match }) => {
-    const lobby = match.pathname === "/coinflip" || match.pathname === "/coinflip/";
-    return indexableHead({
+  head: () =>
+    indexableHead({
       path: "/coinflip",
       title: "PvP Coinflip | 1v1 Crypto Coin Flip | PVPspinArena",
       description:
         "Play crypto Coinflip against real players. Pick your side, join the battle and verify every result with PVPspinArena's provably fair system.",
       crumb: "Coinflip",
-      ...(lobby
-        ? {
-            extraLinks: [
-              {
-                rel: "preload",
-                as: "image",
-                href: room,
-                type: "image/webp",
-                fetchPriority: "high" as const,
-              },
-            ],
-          }
-        : {}),
-    });
-  },
+      extraLinks: [roomPreload],
+    }),
   loader: ({ location }) => loadCoinflipPaint(location.pathname),
   component: CoinflipLayout,
 });
 
 function CoinflipLayout() {
   const child = useMatch({ from: "/coinflip/$gameId", shouldThrow: false });
-  if (child) return <Outlet />;
   return (
     <>
-      <h1 className="sr-only">Coinflip</h1>
-      <Lobby />
+      {child ? null : <h1 className="sr-only">Coinflip</h1>}
+      <div key="cf-home" className={child ? "cf-home cf-home-match" : "cf-home"}>
+        <img
+          className="cf-room-fill"
+          src={room}
+          alt=""
+          width={1280}
+          height={720}
+          decoding="async"
+        />
+        <img
+          className="cf-room"
+          src={room}
+          alt=""
+          width={1280}
+          height={720}
+          decoding="async"
+          fetchPriority="high"
+        />
+        <div className="cf-room-shade" aria-hidden />
+        <div className="cf-home-body">{child ? <Outlet /> : <Lobby />}</div>
+      </div>
+      {child ? null : <GameFacts game="coinflip" />}
     </>
   );
 }
@@ -68,44 +82,21 @@ function Lobby() {
   );
   return (
     <>
-      <div className="cf-home">
-        <img
-          className="cf-room-fill"
-          src={room}
-          alt=""
-          width={1280}
-          height={720}
-          decoding="async"
-        />
-        <img
-          className="cf-room"
-          src={room}
-          alt=""
-          width={1280}
-          height={720}
-          decoding="async"
-          fetchPriority="high"
-        />
-        <div className="cf-room-shade" aria-hidden />
-        <div className="cf-home-body">
-          <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-4 xl:h-[34rem] xl:grid-cols-[280px_minmax(0,1fr)_300px] xl:items-stretch xl:gap-4">
-            <div className="order-1 min-w-0 lg:order-2 xl:h-full xl:min-h-0 xl:overflow-y-auto">
-              <OpenGames />
-            </div>
-            <div className="order-2 flex min-w-0 flex-col gap-4 lg:order-1 xl:order-3 xl:h-full xl:min-h-0 xl:overflow-hidden">
-              <CreatePanel />
-              <RecentCoinflips layout="rail" />
-            </div>
-            <GameChat
-              gameType="coinflip"
-              initial={paint.chat}
-              className="order-3 h-72 sm:h-80 lg:col-span-2 xl:order-1 xl:col-span-1 xl:h-full xl:min-h-0"
-            />
-          </div>
-          <RecentCoinflips />
+      <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-4 xl:h-[34rem] xl:grid-cols-[280px_minmax(0,1fr)_300px] xl:items-stretch xl:gap-4">
+        <div className="order-1 min-w-0 lg:order-2 xl:h-full xl:min-h-0 xl:overflow-y-auto">
+          <OpenGames />
         </div>
+        <div className="order-2 flex min-w-0 flex-col gap-4 lg:order-1 xl:order-3 xl:h-full xl:min-h-0 xl:overflow-hidden">
+          <CreatePanel />
+          <RecentCoinflips layout="rail" />
+        </div>
+        <GameChat
+          gameType="coinflip"
+          initial={paint.chat}
+          className="order-3 h-72 sm:h-80 lg:col-span-2 xl:order-1 xl:col-span-1 xl:h-full xl:min-h-0"
+        />
       </div>
-      <GameFacts game="coinflip" />
+      <RecentCoinflips />
     </>
   );
 }
