@@ -57,6 +57,7 @@ Record each production apply here. Do not re-run apply solely to update this doc
 | `20261022223000` | `pool_recompute` | The database replays the rack and each shot before a payout. `slot_tick_worker` also calls `pool_tick`. | 2026-10-23 10:19 | Worker body still calls `_poker_due_tables`. `pool_tick` processed 0. Authenticated can matchmake and cannot commit a shot. |
 | `20261023013000` | `pool_phys_v2` | Break roll reaches the rack from the head string. | 2026-10-23 10:19 | Applied with the recompute migration. `pool_play` is not executable by anon or authenticated. |
 | `20261023153000` | `pool_forfeit_closed` | A forfeit of a match that is no longer playing returns `forfeited: false`. | 2026-10-23 10:19 | `pool_forfeit` contains the playing-status guard. Anon cannot read `pool_secrets`. Realtime publishes `pool_matches`. |
+| `20261023161000` | `pool_promo_parity` | 8-ball buy-ins spend eligible cash first, then promo, referral, prize, and partner credit. Bonus lost to the other player stays bonus. A completed real match counts toward playthrough, and a partner who loses to a regular player records partner profit. | 2026-10-23 11:03 | Applied on `dkyabirifoixnfbmheay`. `_pool_debit` no longer raises `CASH_ONLY_BUY_IN`. Anon and authenticated cannot execute `_pool_debit`. `pool_completed_hooks` is present. No wallet posting. |
 
 ## Rollout test gate
 
