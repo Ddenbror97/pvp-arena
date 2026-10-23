@@ -80,7 +80,7 @@ export const POOL_RULES: readonly { title: string; body: string }[] = [
   },
   {
     title: "Waiting",
-    body: "A table with no opponent stays open for 24 hours, then the stake is refunded. There is no cancel. Leaving a live match forfeits, and your opponent is paid.",
+    body: "A table with no opponent stays open for 24 hours, then the stake is refunded. There is no cancel. After someone sits, the rack opens in 60 seconds. If the player who opened the table never comes to it, the table plays their shots. Leaving a live match forfeits, and your opponent is paid.",
   },
   {
     title: "Disconnect",
@@ -137,6 +137,9 @@ export type MatchNoticeInput = {
   reconnecting: boolean;
   seat: "A" | "B" | null;
   cancelReason?: string | null;
+  /** Milliseconds until the rack opens. Used while the match is STARTING. */
+  opensIn?: number | null;
+  standIn?: "mine" | "theirs" | null;
 };
 
 /** Primary match line. Internal codes stay out of this sentence. */
@@ -147,7 +150,13 @@ export function matchNotice(input: MatchNoticeInput): string | null {
       ? "Waiting for an opponent. Your stake stays locked for up to 24 hours."
       : "Waiting for an opponent";
   }
-  if (input.status === "STARTING") return input.seat === "A" ? "You break" : "Opponent breaks";
+  if (input.status === "STARTING") {
+    const who = input.seat === "A" ? "You break" : "Opponent breaks";
+    const secs = input.opensIn == null ? null : Math.max(0, Math.ceil(input.opensIn / 1000));
+    if (secs == null) return `${who}. The rack opens in 60 seconds.`;
+    if (secs <= 0) return `${who}. Opening the rack.`;
+    return `${who}. The rack opens in ${secs} seconds.`;
+  }
   if (input.status === "CANCELLED") {
     return input.cancelReason === "WAITING_EXPIRED"
       ? "No opponent joined in 24 hours. Your stake was refunded."
@@ -161,6 +170,12 @@ export function matchNotice(input: MatchNoticeInput): string | null {
   }
   if (input.rolling) return "Balls moving";
   if (input.busy) return "Sending your shot";
+  if (input.standIn === "theirs" && !input.mine && input.status === "PLAYING") {
+    return "Opponent is away. The table is playing their shots.";
+  }
+  if (input.standIn === "mine" && input.mine) {
+    return "You were away. The table is playing your shots until you take over.";
+  }
   if (input.decided) {
     const why = winSentence(input.winReason);
     if (input.youWon) return why ? `You won the rack. ${why}` : "You won the rack.";

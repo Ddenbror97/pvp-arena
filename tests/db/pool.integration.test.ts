@@ -40,6 +40,12 @@ function asJson(value: unknown) {
 async function beginReal(matchId: number): Promise<TableState> {
   const [secret] = await sql`select pvp_test.pool_read_secret(${matchId}) seed`;
   const table = freshTable(bytesFromHex(String(secret.seed)));
+  // These racks are two present players. An unseen creator would be played by the table.
+  await sql`
+    update pvp_test.pool_matches
+    set seen_a = clock_timestamp(), seen_b = clock_timestamp()
+    where id = ${matchId}
+  `;
   await sql`select pvp_test.pool_begin(${matchId}, ${asJson(table)}::jsonb)`;
   return table;
 }
@@ -482,6 +488,7 @@ d("pool ledger (isolated schema)", () => {
       "_pool_debit",
       "_pool_log_timeout",
       "_pool_tick_one",
+      "_pool_request_stand_in",
       "pool_forfeit_seat",
       "pool_play",
       "pool_recorded_prior",

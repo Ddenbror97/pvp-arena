@@ -59,6 +59,15 @@ describe("match notice", () => {
       "Waiting for an opponent. Your stake stays locked for up to 24 hours.",
     );
     expect(matchNotice({ ...base, status: "WAITING", seat: "B" })).toBe("Waiting for an opponent");
+    expect(matchNotice({ ...base, status: "STARTING", opensIn: 42_000 })).toBe(
+      "You break. The rack opens in 42 seconds.",
+    );
+    expect(matchNotice({ ...base, status: "STARTING", seat: "B", opensIn: null })).toBe(
+      "Opponent breaks. The rack opens in 60 seconds.",
+    );
+    expect(
+      matchNotice({ ...base, mine: false, standIn: "theirs", status: "PLAYING" }),
+    ).toBe("Opponent is away. The table is playing their shots.");
     expect(matchNotice({ ...base, status: "CANCELLED", cancelReason: "WAITING_EXPIRED" })).toBe(
       "No opponent joined in 24 hours. Your stake was refunded.",
     );

@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, Percent, ShieldCheck, Timer } from "lucide-react";
 import { toast } from "sonner";
 import hero from "@/assets/pool/hero.webp";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { useAuth } from "@/lib/auth";
-import { STAKES, money, poolMessage, usePoolLobby, type OpenTable } from "@/lib/pool/api";
+import { STAKES, fetchMyPool, money, poolMessage, usePoolLobby, type OpenTable } from "@/lib/pool/api";
 import { formatCents, parseStakeDollars, stakeDraft, stakeQuote } from "@/lib/pool/copy";
 import { enterPool } from "@/lib/pool/pool.functions";
 
@@ -32,7 +32,15 @@ export function PoolLobby() {
   const [draft, setDraft] = useState("5");
   const [busy, setBusy] = useState<number | "play" | null>(null);
   const keys = useRef(new Map<string, string>());
+  const seenStatus = useRef<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  const mine = useQuery({
+    queryKey: ["pool-mine", userId],
+    queryFn: () => fetchMyPool(userId!),
+    enabled: !!userId,
+    refetchInterval: (q) =>
+      q.state.data?.status === "WAITING" && q.state.data.creator_id === userId ? 4_000 : 20_000,
+  });
   const stakes = lobby.data?.stakes?.length ? lobby.data.stakes : [...STAKES];
   const stakeMin = Math.min(...stakes);
   const stakeMax = Math.max(...stakes);
@@ -45,6 +53,16 @@ export function PoolLobby() {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    const row = mine.data;
+    if (!row || !userId || row.creator_id !== userId) return;
+    const prev = seenStatus.current;
+    seenStatus.current = `${row.id}:${row.status}`;
+    if (prev === `${row.id}:WAITING` && (row.status === "STARTING" || row.status === "PLAYING")) {
+      void navigate({ to: "/pool/$matchId", params: { matchId: String(row.id) } });
+    }
+  }, [mine.data, navigate, userId]);
 
   const warmMatch = () => {
     for (const path of ["/pool", "/pool/$matchId"]) {

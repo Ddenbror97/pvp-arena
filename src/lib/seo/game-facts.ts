@@ -218,7 +218,7 @@ export const GAME_FACT_PAGES: Record<string, GameFactPage> = {
       },
       {
         label: "If a round is cancelled",
-        text: "If nobody joins within 24 hours, the stake is refunded and no fee is charged. A player cannot cancel a waiting table. A match that does not open within 30 seconds after both players are seated, or that ends before the break because both players left, refunds both stakes with no fee.",
+        text: "If nobody joins within 24 hours, the stake is refunded and no fee is charged. A player cannot cancel a waiting table. After both players are seated, the rack opens in 60 seconds. If the player who opened the table never comes to it, the table plays that player's shots. If both players leave before the break, both stakes are refunded with no fee.",
       },
       { label: "Who can play", text: AGE },
     ],

@@ -153,9 +153,10 @@ function TermsPage() {
       <p>
         At settlement, 5% of the pot is retained as the game fee. The winner receives the remaining
         95%. If nobody joins within 24 hours, the stake is refunded with no fee. A player cannot
-        cancel a waiting table. A match that does not open within 30 seconds after both players are
-        seated, or that ends before the break because both players left, refunds both stakes with
-        no fee. Leaving after a shot has been played does not refund.
+        cancel a waiting table. After both players are seated, the rack opens in 60 seconds. If the
+        player who opened the table never comes to it, the table plays that player's shots. If both
+        players leave before the break, both stakes are refunded with no fee. Leaving after a shot
+        has been played does not refund.
       </p>
 
       <h3>Roulette</h3>

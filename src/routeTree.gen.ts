@@ -55,6 +55,7 @@ import { Route as ApiPublicCronCryptoDepositsRouteImport } from './routes/api/pu
 import { Route as ApiPublicCronCryptoReconcileRouteImport } from './routes/api/public/cron/crypto-reconcile'
 import { Route as ApiPublicCronCryptoSweepsRouteImport } from './routes/api/public/cron/crypto-sweeps'
 import { Route as ApiPublicCronCryptoWithdrawalsRouteImport } from './routes/api/public/cron/crypto-withdrawals'
+import { Route as ApiPublicCronPoolStandInRouteImport } from './routes/api/public/cron/pool-stand-in'
 import { Route as ApiPublicDiditWebhookRouteImport } from './routes/api/public/didit/webhook'
 import { Route as ApiPublicNowpaymentsIpnRouteImport } from './routes/api/public/nowpayments/ipn'
 import { Route as ApiPublicAvatarStyleSeedRouteImport } from './routes/api/public/avatar.$style.$seed'
@@ -296,6 +297,12 @@ const ApiPublicCronCryptoWithdrawalsRoute =
     path: '/api/public/cron/crypto-withdrawals',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicCronPoolStandInRoute =
+  ApiPublicCronPoolStandInRouteImport.update({
+    id: '/api/public/cron/pool-stand-in',
+    path: '/api/public/cron/pool-stand-in',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicDiditWebhookRoute = ApiPublicDiditWebhookRouteImport.update({
   id: '/api/public/didit/webhook',
   path: '/api/public/didit/webhook',
@@ -359,6 +366,7 @@ export interface FileRoutesByFullPath {
   '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
   '/api/public/cron/crypto-sweeps': typeof ApiPublicCronCryptoSweepsRoute
   '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
+  '/api/public/cron/pool-stand-in': typeof ApiPublicCronPoolStandInRoute
   '/api/public/didit/webhook': typeof ApiPublicDiditWebhookRoute
   '/api/public/nowpayments/ipn': typeof ApiPublicNowpaymentsIpnRoute
   '/api/public/avatar/$style/$seed': typeof ApiPublicAvatarStyleSeedRoute
@@ -409,6 +417,7 @@ export interface FileRoutesByTo {
   '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
   '/api/public/cron/crypto-sweeps': typeof ApiPublicCronCryptoSweepsRoute
   '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
+  '/api/public/cron/pool-stand-in': typeof ApiPublicCronPoolStandInRoute
   '/api/public/didit/webhook': typeof ApiPublicDiditWebhookRoute
   '/api/public/nowpayments/ipn': typeof ApiPublicNowpaymentsIpnRoute
   '/api/public/avatar/$style/$seed': typeof ApiPublicAvatarStyleSeedRoute
@@ -461,6 +470,7 @@ export interface FileRoutesById {
   '/api/public/cron/crypto-reconcile': typeof ApiPublicCronCryptoReconcileRoute
   '/api/public/cron/crypto-sweeps': typeof ApiPublicCronCryptoSweepsRoute
   '/api/public/cron/crypto-withdrawals': typeof ApiPublicCronCryptoWithdrawalsRoute
+  '/api/public/cron/pool-stand-in': typeof ApiPublicCronPoolStandInRoute
   '/api/public/didit/webhook': typeof ApiPublicDiditWebhookRoute
   '/api/public/nowpayments/ipn': typeof ApiPublicNowpaymentsIpnRoute
   '/api/public/avatar/$style/$seed': typeof ApiPublicAvatarStyleSeedRoute
@@ -513,6 +523,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/crypto-reconcile'
     | '/api/public/cron/crypto-sweeps'
     | '/api/public/cron/crypto-withdrawals'
+    | '/api/public/cron/pool-stand-in'
     | '/api/public/didit/webhook'
     | '/api/public/nowpayments/ipn'
     | '/api/public/avatar/$style/$seed'
@@ -563,6 +574,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/crypto-reconcile'
     | '/api/public/cron/crypto-sweeps'
     | '/api/public/cron/crypto-withdrawals'
+    | '/api/public/cron/pool-stand-in'
     | '/api/public/didit/webhook'
     | '/api/public/nowpayments/ipn'
     | '/api/public/avatar/$style/$seed'
@@ -614,6 +626,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/crypto-reconcile'
     | '/api/public/cron/crypto-sweeps'
     | '/api/public/cron/crypto-withdrawals'
+    | '/api/public/cron/pool-stand-in'
     | '/api/public/didit/webhook'
     | '/api/public/nowpayments/ipn'
     | '/api/public/avatar/$style/$seed'
@@ -652,6 +665,7 @@ export interface RootRouteChildren {
   ApiPublicCronCryptoReconcileRoute: typeof ApiPublicCronCryptoReconcileRoute
   ApiPublicCronCryptoSweepsRoute: typeof ApiPublicCronCryptoSweepsRoute
   ApiPublicCronCryptoWithdrawalsRoute: typeof ApiPublicCronCryptoWithdrawalsRoute
+  ApiPublicCronPoolStandInRoute: typeof ApiPublicCronPoolStandInRoute
   ApiPublicDiditWebhookRoute: typeof ApiPublicDiditWebhookRoute
   ApiPublicNowpaymentsIpnRoute: typeof ApiPublicNowpaymentsIpnRoute
   ApiPublicAvatarStyleSeedRoute: typeof ApiPublicAvatarStyleSeedRoute
@@ -981,6 +995,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronCryptoWithdrawalsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/pool-stand-in': {
+      id: '/api/public/cron/pool-stand-in'
+      path: '/api/public/cron/pool-stand-in'
+      fullPath: '/api/public/cron/pool-stand-in'
+      preLoaderRoute: typeof ApiPublicCronPoolStandInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/didit/webhook': {
       id: '/api/public/didit/webhook'
       path: '/api/public/didit/webhook'
@@ -1119,6 +1140,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCronCryptoReconcileRoute: ApiPublicCronCryptoReconcileRoute,
   ApiPublicCronCryptoSweepsRoute: ApiPublicCronCryptoSweepsRoute,
   ApiPublicCronCryptoWithdrawalsRoute: ApiPublicCronCryptoWithdrawalsRoute,
+  ApiPublicCronPoolStandInRoute: ApiPublicCronPoolStandInRoute,
   ApiPublicDiditWebhookRoute: ApiPublicDiditWebhookRoute,
   ApiPublicNowpaymentsIpnRoute: ApiPublicNowpaymentsIpnRoute,
   ApiPublicAvatarStyleSeedRoute: ApiPublicAvatarStyleSeedRoute,

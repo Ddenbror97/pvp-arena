@@ -15,7 +15,8 @@ import {
   usePoolState,
   type PoolView,
 } from "@/lib/pool/api";
-import { submitPoolShot } from "@/lib/pool/pool.functions";
+import { nudgePoolStandIn, openPool, submitPoolShot } from "@/lib/pool/pool.functions";
+import { standInDue } from "@/lib/pool/stand-in";
 import { playShot } from "@/lib/pool/play";
 import {
   BALL_R,
@@ -83,12 +84,30 @@ function useRemaining(deadline: string | null, serverNow: string | undefined) {
   return left;
 }
 
+function useCountdown(deadline: string | null, serverNow: string | undefined) {
+  const [left, setLeft] = useState<number | null>(null);
+  useEffect(() => {
+    if (!deadline || !serverNow) {
+      setLeft(null);
+      return;
+    }
+    const skew = Date.now() - Date.parse(serverNow);
+    const tick = () => setLeft(Date.parse(deadline) - (Date.now() - skew));
+    tick();
+    const id = window.setInterval(tick, 200);
+    return () => window.clearInterval(id);
+  }, [deadline, serverNow]);
+  return left;
+}
+
 export function PoolMatch({ matchId }: { matchId: number }) {
   const { userId } = useAuth();
   const qc = useQueryClient();
   const query = usePoolState(matchId);
   const view = query.data;
   const shoot = useServerFn(submitPoolShot);
+  const openRack = useServerFn(openPool);
+  const playAway = useServerFn(nudgePoolStandIn);
   const [angle, setAngle] = useState(0);
   const [power, setPower] = useState(1);
   const [spinX, setSpinX] = useState(0);
@@ -113,6 +132,10 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const [offline, setOffline] = useState(false);
   const [muted, setMuted] = useState(false);
   const left = useRemaining(view?.turn_deadline ?? null, view?.server_now);
+  const opensLeft = useCountdown(
+    view?.status === "STARTING" ? (view.opens_at ?? null) : null,
+    view?.server_now,
+  );
   const seat = view ? seatOf(view, userId) : null;
   const state = view?.state ?? null;
   const mine =
@@ -135,6 +158,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const serverReady = useRef(false);
   const heldPreview = useRef(false);
   const presenceWarned = useRef(false);
+  const opening = useRef(false);
+  const awayAt = useRef(0);
   const tableHash = view?.state_hash ?? null;
   const physicsId = view?.state?.physics ?? null;
   const updatedAt = query.dataUpdatedAt;
@@ -249,6 +274,47 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     if (liveId == null || liveStatus !== "PLAYING" || left > 0) return;
     void poolNudge(liveId);
   }, [liveId, liveStatus, left]);
+
+  useEffect(() => {
+    if (liveId == null || liveStatus !== "STARTING" || opensLeft == null || opensLeft > 1_200) return;
+    if (opening.current) return;
+    opening.current = true;
+    void openRack({ data: { matchId: liveId } }).finally(() => {
+      window.setTimeout(() => {
+        opening.current = false;
+      }, 2_000);
+    });
+  }, [liveId, liveStatus, opensLeft, openRack]);
+
+  useEffect(() => {
+    if (!view || view.status !== "PLAYING" || (view.stand_in !== "A" && view.stand_in !== "B")) return;
+    if (!view.state || view.state.turn !== view.stand_in || view.state.winner) return;
+    if (!view.turn_deadline || !view.server_now) return;
+    const deadline = view.turn_deadline;
+    const skew = Date.now() - Date.parse(view.server_now);
+    const seconds = view.shot_seconds ?? 30;
+    const matchId = view.id;
+    const tick = () => {
+      if (!standInDue(deadline, Date.now() - skew, seconds)) return;
+      if (Date.now() - awayAt.current < 3_000) return;
+      awayAt.current = Date.now();
+      void playAway({ data: { matchId } });
+    };
+    tick();
+    const id = window.setInterval(tick, 1_000);
+    return () => window.clearInterval(id);
+  }, [
+    view?.id,
+    view?.status,
+    view?.stand_in,
+    view?.state?.turn,
+    view?.state?.shot,
+    view?.state?.winner,
+    view?.turn_deadline,
+    view?.server_now,
+    view?.shot_seconds,
+    playAway,
+  ]);
 
   useEffect(() => {
     const shots = shotsRef.current;
@@ -664,6 +730,13 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     offline,
     reconnecting: query.isError && view.status !== "COMPLETED" && view.status !== "CANCELLED",
     seat,
+    opensIn: view.status === "STARTING" ? opensLeft : null,
+    standIn:
+      view.stand_in && view.status === "PLAYING"
+        ? view.stand_in === seat
+          ? "mine"
+          : "theirs"
+        : null,
   });
   const banner =
     aimHint && mine && frames == null && !busy && !fouled && view.status === "PLAYING"
@@ -708,6 +781,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           group={groupA}
           ahead={ballsAhead(balls, groupA, groupB)}
           present
+          away={view.stand_in === "A" && view.status === "PLAYING"}
           active={state?.turn === "A" && view.status === "PLAYING"}
           clock={state?.turn === "A" && view.status === "PLAYING" ? clock : null}
         />
@@ -721,6 +795,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           group={groupB}
           ahead={ballsAhead(balls, groupB, groupA)}
           present={view.opponent_id != null}
+          away={view.stand_in === "B" && view.status === "PLAYING"}
           active={state?.turn === "B" && view.status === "PLAYING"}
           clock={state?.turn === "B" && view.status === "PLAYING" ? clock : null}
           align="end"
@@ -1041,6 +1116,7 @@ function SeatCard({
   group,
   ahead,
   present,
+  away = false,
   active,
   clock,
   align = "start",
@@ -1053,6 +1129,7 @@ function SeatCard({
   group: "solids" | "stripes" | null;
   ahead: boolean;
   present: boolean;
+  away?: boolean;
   active: boolean;
   clock: number | null;
   align?: "start" | "end";
@@ -1078,6 +1155,7 @@ function SeatCard({
         <strong>
           {ahead ? <Crown className="pool-crown" aria-hidden /> : null}
           {you ? `${name} (you)` : name}
+          {away ? " · table" : null}
           {active ? <span className="sr-only">, your turn</span> : null}
           {clock != null ? <em aria-label={`Shot clock ${clock} seconds`}>{clock}s</em> : null}
         </strong>

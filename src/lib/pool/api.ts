@@ -60,6 +60,18 @@ export type PoolView = {
   creator: PoolPerson;
   opponent: PoolPerson;
   events: PoolEvent[];
+  phase_at?: string;
+  stand_in?: "A" | "B" | null;
+  opens_at?: string | null;
+  shot_seconds?: number;
+};
+
+export type MyPool = {
+  id: number;
+  status: PoolView["status"];
+  creator_id: string;
+  opponent_id: string | null;
+  opponent: { username: string } | null;
 };
 
 const MESSAGES: Record<string, string> = {
@@ -87,6 +99,8 @@ const MESSAGES: Record<string, string> = {
   FORBIDDEN: "You are not in this match.",
   SEED_MISMATCH: "The rack did not match the committed seed. Both stakes were refunded.",
   START_FAILED: "The table could not open. Both stakes were refunded.",
+  NOT_OPEN_YET: "The rack is still waiting to open.",
+  STAND_IN_CLEARED: "That player is back at the table.",
 };
 
 export function poolMessage(code: string | null | undefined): string {
@@ -112,6 +126,22 @@ function unwrap<T>(data: unknown, error: { message: string } | null): T {
 export async function fetchPoolLobby(): Promise<PoolLobby> {
   const { data, error } = await db.rpc("pool_lobby");
   return unwrap<PoolLobby>(data, error);
+}
+
+/** The viewer's own table that is still waiting or in progress. */
+export async function fetchMyPool(uid: string): Promise<MyPool | null> {
+  const { data, error } = await db
+    .from("pool_matches")
+    .select(
+      "id, status, creator_id, opponent_id, opponent:profiles!pool_matches_opponent_id_fkey(username)",
+    )
+    .or(`creator_id.eq.${uid},opponent_id.eq.${uid}`)
+    .in("status", ["WAITING", "STARTING", "PLAYING"])
+    .order("id", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return (data ?? null) as MyPool | null;
 }
 
 export async function fetchPoolState(id: number): Promise<PoolView> {
