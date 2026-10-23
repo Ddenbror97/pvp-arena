@@ -92,4 +92,27 @@ describe("hard-refresh layout reserves", () => {
     expect(lobby).toContain("paintSignedIn");
     expect(lobby).not.toContain("setMounted");
   });
+
+  it("warms both 8-ball pages the same way as the other games", () => {
+    const router = readFileSync(new URL("../src/router.tsx", import.meta.url), "utf8");
+    const header = readFileSync(new URL("../src/components/SiteHeader.tsx", import.meta.url), "utf8");
+    const lobbyRoute = readFileSync(new URL("../src/routes/8-ball-pool.tsx", import.meta.url), "utf8");
+    const matchRoute = readFileSync(new URL("../src/routes/pool.$matchId.tsx", import.meta.url), "utf8");
+    const lobby = readFileSync(
+      new URL("../src/components/pool/PoolLobby.tsx", import.meta.url),
+      "utf8",
+    );
+    for (const path of ["/8-ball-pool", "/pool", "/pool/$matchId", "/poker", "/poker/$tableId"]) {
+      expect(router).toContain(`"${path}"`);
+    }
+    expect(header).toContain('prefetchGamePage(qc, "/8-ball-pool")');
+    expect(header).toContain("warmPoolPages(router)");
+    expect(lobbyRoute).not.toContain("PoolMatch");
+    expect(lobbyRoute).not.toContain("@/lib/pool/physics");
+    expect(lobby).not.toContain("@/lib/pool/physics");
+    expect(lobby).toContain("loadRouteChunk");
+    expect(matchRoute).toContain('rel: "preload"');
+    expect(matchRoute).toContain("room.webp");
+    expect(matchRoute).toContain('fetchPriority: "high"');
+  });
 });

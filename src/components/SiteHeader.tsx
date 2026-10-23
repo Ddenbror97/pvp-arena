@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter, type AnyRouter } from "@tanstack/react-router";
 import { useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
 import { prefetchGamePage } from "@/lib/first-paint";
@@ -25,8 +25,17 @@ function warmRanks(qc: QueryClient) {
   void import("@/lib/leaderboard/paint").then((m) => m.prefetchPublicList(qc));
 }
 
+/** Lobby data is prefetched separately. These two chunks are the pages themselves. */
+function warmPoolPages(router: AnyRouter) {
+  for (const path of ["/8-ball-pool", "/pool", "/pool/$matchId"]) {
+    const route = (router.routesByPath as unknown as Record<string, unknown>)[path];
+    if (route) void router.loadRouteChunk(route as never)?.catch(() => {});
+  }
+}
+
 export function SiteHeader({ className }: { className?: string }) {
   const qc = useQueryClient();
+  const router = useRouter();
   const { userId, profile, ready } = useAuth();
   const prestige = usePrestige();
   const style = equippedAssets(prestige.state);
@@ -114,9 +123,18 @@ export function SiteHeader({ className }: { className?: string }) {
           <Link
             to="/8-ball-pool"
             className={link}
-            onMouseEnter={() => prefetchGamePage(qc, "/8-ball-pool")}
-            onFocus={() => prefetchGamePage(qc, "/8-ball-pool")}
-            onTouchStart={() => prefetchGamePage(qc, "/8-ball-pool")}
+            onMouseEnter={() => {
+              prefetchGamePage(qc, "/8-ball-pool");
+              warmPoolPages(router);
+            }}
+            onFocus={() => {
+              prefetchGamePage(qc, "/8-ball-pool");
+              warmPoolPages(router);
+            }}
+            onTouchStart={() => {
+              prefetchGamePage(qc, "/8-ball-pool");
+              warmPoolPages(router);
+            }}
           >
             8 Pool
           </Link>
@@ -381,6 +399,7 @@ export function SiteFooter({ className }: { className?: string }) {
 /** Phone-only bottom tab bar: primary navigation within thumb reach. */
 export function MobileTabBar({ className }: { className?: string }) {
   const qc = useQueryClient();
+  const router = useRouter();
   const tab =
     "flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors [&.active]:text-primary";
   return (
@@ -419,7 +438,10 @@ export function MobileTabBar({ className }: { className?: string }) {
       <Link
         to="/8-ball-pool"
         className={tab}
-        onTouchStart={() => prefetchGamePage(qc, "/8-ball-pool")}
+        onTouchStart={() => {
+          prefetchGamePage(qc, "/8-ball-pool");
+          warmPoolPages(router);
+        }}
       >
         <Circle className="h-5 w-5" />8 Pool
       </Link>

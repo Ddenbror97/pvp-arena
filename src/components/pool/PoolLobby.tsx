@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, Coins, Shield, Trophy, Zap } from "lucide-react";
@@ -20,6 +20,7 @@ const FEATURES = [
 export function PoolLobby() {
   const { userId } = useAuth();
   const navigate = useNavigate();
+  const router = useRouter();
   const qc = useQueryClient();
   const lobby = usePoolLobby();
   const open = useServerFn(enterPool);
@@ -29,6 +30,13 @@ export function PoolLobby() {
   const quote = stakeQuote(stake);
   const openTables = lobby.data?.open ?? [];
   const recent = lobby.data?.recent ?? [];
+
+  const warmMatch = () => {
+    for (const path of ["/pool", "/pool/$matchId"]) {
+      const route = (router.routesByPath as unknown as Record<string, unknown>)[path];
+      if (route) void router.loadRouteChunk(route as never)?.catch(() => {});
+    }
+  };
 
   const play = async () => {
     if (!userId) {
@@ -109,7 +117,15 @@ export function PoolLobby() {
               </li>
             ))}
           </ul>
-          <button type="button" className="pool-play" disabled={busy} onClick={() => void play()}>
+          <button
+            type="button"
+            className="pool-play"
+            disabled={busy}
+            onMouseEnter={warmMatch}
+            onFocus={warmMatch}
+            onTouchStart={warmMatch}
+            onClick={() => void play()}
+          >
             {busy ? "Finding a match…" : "Play 8 Pool Now"}
             {busy ? null : <ArrowRight aria-hidden className="h-5 w-5" />}
           </button>
