@@ -16,7 +16,7 @@ import {
   type BallLayer,
   type BallSprite,
 } from "@/lib/pool/spheres";
-import { buildTable } from "@/lib/pool/table-paint";
+import { buildTable, whenTableArt } from "@/lib/pool/table-paint";
 import { ballRadiusPx, spanPx, viewOf } from "@/lib/pool/view";
 import {
   aimStep,
@@ -530,12 +530,13 @@ export function PoolTable({
       if (!ctx) return false;
       let again = false;
       if (!cacheRef.current || cacheRef.current.w !== w || cacheRef.current.h !== h) {
-        cacheRef.current = { w, h, canvas: buildTable(w, h) };
+        const painted = buildTable(w, h);
+        if (painted) cacheRef.current = { w, h, canvas: painted };
       }
       const view = viewOf(w, h);
       const { project, innerW } = view;
       ctx.clearRect(0, 0, w, h);
-      ctx.drawImage(cacheRef.current.canvas, 0, 0);
+      if (cacheRef.current) ctx.drawImage(cacheRef.current.canvas, 0, 0);
 
       if (kitchenOnly && placing) {
         const a = project(TABLE_W / 4, 0);
@@ -832,6 +833,9 @@ export function PoolTable({
     kickRef.current = () => {
       if (!stop) loop();
     };
+    void whenTableArt().then(() => {
+      if (!stop) kickRef.current();
+    });
     loop();
     const observer = new ResizeObserver(() => {
       cacheRef.current = null;
