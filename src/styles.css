@@ -1331,48 +1331,40 @@ html.intro-seen .intro-gate { display: none !important; }
   box-shadow: none;
   backdrop-filter: none;
 }
-/* The match is the same penthouse, covering the viewport, with the duel floating on it.
-   Main is the fixed layer: container-type on .cf-home would trap a fixed descendant. */
-html.cf-noscroll, html.cf-noscroll body { overflow: hidden; overscroll-behavior: none; }
-.cf-match-screen {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100dvh;
-  max-width: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background: #070514;
-}
-.cf-home-match {
+/* The duel is a window over the lobby. The penthouse fills that window. */
+.cf-duel-fill,
+.cf-duel-room,
+.cf-duel-shade {
   position: absolute;
   inset: 0;
-  margin: 0;
-  height: auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  padding: 5.5rem 1rem 1.5rem;
-  background: #070514;
+  z-index: 0;
+  pointer-events: none;
 }
-@media (max-width: 1023px) {
-  .cf-home-match { padding-bottom: calc(4.75rem + env(safe-area-inset-bottom)); }
-}
-.cf-home-match .cf-home-body { width: 100%; margin-block: auto; }
-.cf-home-match .cf-room,
-.cf-home-match .cf-room-fill {
-  inset: 0;
+.cf-duel-fill,
+.cf-duel-room {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center center;
-  filter: none;
 }
-.cf-home-match .cf-room-shade {
-  background: linear-gradient(180deg, rgb(5 4 16 / 62%) 0%, rgb(5 4 16 / 16%) 14%, transparent 30%, transparent 74%, rgb(5 4 16 / 40%) 100%);
+.cf-duel-fill {
+  filter: blur(22px) brightness(0.48) saturate(1.1);
+  transform: scale(1.08);
+}
+.cf-duel-shade {
+  background: linear-gradient(180deg, rgb(5 4 16 / 58%) 0%, rgb(5 4 16 / 14%) 18%, transparent 34%, transparent 68%, rgb(5 4 16 / 62%) 100%);
+}
+.cf-duel-body {
+  position: relative;
+  z-index: 1;
+  max-height: min(88dvh, 46rem);
+  overflow: auto;
+  padding: 1rem 1.1rem 1.15rem;
+}
+.cf-duel-card .cf-game-window {
+  background-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 /* Unlayered so it wins over the base-layer left slash on these rooms. */
 html:has(.jp-home)::before,

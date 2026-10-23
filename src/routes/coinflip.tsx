@@ -1,10 +1,11 @@
-import { createFileRoute, Outlet, useMatch } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useMatch, useNavigate } from "@tanstack/react-router";
 import room from "@/assets/coinflip/room.webp";
 import { GameFacts } from "@/components/seo/GameFacts";
 import { indexableHead } from "@/lib/seo/indexable-head";
 import { CreatePanel } from "@/components/coinflip/CreatePanel";
 import { OpenGames, RecentCoinflips } from "@/components/coinflip/OpenGames";
 import { GameChat } from "@/components/chat/GameChat";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useSeedIdentities } from "@/components/prestige/PrestigeProvider";
 import { useCoinflipRealtime } from "@/lib/coinflip/api";
 import { loadCoinflipPaint, useQuerySeed } from "@/lib/first-paint";
@@ -33,10 +34,11 @@ export const Route = createFileRoute("/coinflip")({
 
 function CoinflipLayout() {
   const child = useMatch({ from: "/coinflip/$gameId", shouldThrow: false });
+  const navigate = useNavigate();
   return (
     <>
-      {child ? null : <h1 className="sr-only">Coinflip</h1>}
-      <div key="cf-home" className={child ? "cf-home cf-home-match" : "cf-home"}>
+      <h1 className="sr-only">Coinflip</h1>
+      <div key="cf-home" className="cf-home">
         <img
           className="cf-room-fill"
           src={room}
@@ -55,9 +57,42 @@ function CoinflipLayout() {
           fetchPriority="high"
         />
         <div className="cf-room-shade" aria-hidden />
-        <div className="cf-home-body">{child ? <Outlet /> : <Lobby />}</div>
+        <div className="cf-home-body">
+          <Lobby />
+        </div>
       </div>
-      {child ? null : <GameFacts game="coinflip" />}
+      <GameFacts game="coinflip" />
+      <Dialog
+        open={!!child}
+        onOpenChange={(open) => {
+          if (!open) navigate({ to: "/coinflip", replace: true });
+        }}
+      >
+        <DialogContent className="cf-duel-card w-[min(56rem,calc(100%-1.5rem))] max-w-none gap-0 overflow-hidden border-white/15 bg-[#070514] p-0 sm:rounded-2xl [&>button]:z-20">
+          <DialogTitle className="sr-only">Coinflip duel</DialogTitle>
+          <DialogDescription className="sr-only">
+            The duel stays open over the coinflip lobby.
+          </DialogDescription>
+          <img
+            className="cf-duel-fill"
+            src={room}
+            alt=""
+            width={1280}
+            height={720}
+            decoding="async"
+          />
+          <img
+            className="cf-duel-room"
+            src={room}
+            alt=""
+            width={1280}
+            height={720}
+            decoding="async"
+          />
+          <div className="cf-duel-shade" aria-hidden />
+          <div className="cf-duel-body">{child ? <Outlet /> : null}</div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

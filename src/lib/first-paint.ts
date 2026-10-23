@@ -346,7 +346,11 @@ async function buildCoinflipPaint(deadline: number): Promise<CoinflipPaint> {
 }
 
 export async function loadCoinflipPaint(pathname: string): Promise<CoinflipPaint> {
-  if (inBrowser || (pathname !== "/coinflip" && pathname !== "/coinflip/")) return EMPTY_COINFLIP;
+  const lobby =
+    pathname === "/coinflip" ||
+    pathname === "/coinflip/" ||
+    /^\/coinflip\/[^/]+\/?$/.test(pathname);
+  if (inBrowser || !lobby) return EMPTY_COINFLIP;
   return servePaint("coinflip", EMPTY_COINFLIP, buildCoinflipPaint);
 }
 
@@ -435,8 +439,7 @@ async function buildPoolPaint(deadline: number): Promise<PoolPaint> {
 }
 
 export async function loadPoolPaint(pathname: string): Promise<PoolPaint> {
-  if (inBrowser || (pathname !== "/8-ball-pool" && pathname !== "/8-ball-pool/"))
-    return EMPTY_POOL;
+  if (inBrowser || (pathname !== "/8-ball-pool" && pathname !== "/8-ball-pool/")) return EMPTY_POOL;
   return servePaint("pool", EMPTY_POOL, buildPoolPaint);
 }
 

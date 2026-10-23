@@ -157,7 +157,7 @@ function RoomFrame({
 }) {
   return (
     <div className="mx-auto w-full max-w-4xl">
-      <div className="flex h-5 items-center justify-between">
+      <div className="flex h-5 items-center justify-between pr-8">
         <Link
           to="/coinflip"
           className="text-sm leading-5 text-muted-foreground hover:text-foreground"
