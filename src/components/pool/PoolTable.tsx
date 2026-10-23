@@ -27,6 +27,7 @@ import {
   startAim,
   type AimGesture,
 } from "@/lib/pool/aim-gesture";
+import { shortAimLine } from "@/lib/pool/aim-line";
 
 const SOLIDS = ["#f0c410", "#1d4ed8", "#dc2626", "#7c3aed", "#ea580c", "#15803d", "#7f1d1d"];
 
@@ -129,6 +130,35 @@ type PlayHead = {
 
 function aimDir(angleMilli: number) {
   return { x: cosMicro(angleMilli) / 1_000_000, y: sinMicro(angleMilli) / 1_000_000 };
+}
+
+/** Shot direction only. The stroke fades out and never traces the object ball. */
+function drawAimLine(
+  ctx: CanvasRenderingContext2D,
+  project: (x: number, y: number) => { x: number; y: number },
+  from: { x: number; y: number },
+  angleMilli: number,
+  balls: readonly Ball[],
+  dpr: number,
+) {
+  const line = shortAimLine(balls, from, angleMilli);
+  if (!line) return;
+  const a = project(line.from.x, line.from.y);
+  const b = project(line.to.x, line.to.y);
+  if (Math.hypot(b.x - a.x, b.y - a.y) < 2) return;
+  const ink = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+  ink.addColorStop(0, "rgba(244, 226, 170, 0.92)");
+  ink.addColorStop(0.62, "rgba(244, 226, 170, 0.42)");
+  ink.addColorStop(1, "rgba(244, 226, 170, 0)");
+  ctx.save();
+  ctx.strokeStyle = ink;
+  ctx.lineWidth = Math.max(2, dpr * 1.45);
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.stroke();
+  ctx.restore();
 }
 
 function blendBalls(a: readonly Ball[], b: readonly Ball[], t: number, into: Ball[]): Ball[] {
@@ -716,6 +746,10 @@ export function PoolTable({
           Math.PI * 2,
         );
         ctx.fill();
+      }
+
+      if (showCue && from && !replaying && !strikeRef.current) {
+        drawAimLine(ctx, project, from, angleMilli, shown, dpr);
       }
 
       const cueCanvas = cueRef.current;

@@ -101,7 +101,7 @@ export const POOL_RULES: readonly { title: string; body: string }[] = [
 export const TUTORIAL_STEPS: readonly { title: string; body: string }[] = [
   {
     title: "Drag to aim",
-    body: "Drag across the table to aim. On a phone, drag with your finger. A drag that starts on the cue ball aims once it moves. Hold Shift, or use the arrow keys, for a finer angle.",
+    body: "Drag across the table to aim. A short line shows the shot direction and stops before the object ball. On a phone, drag with your finger. A drag that starts on the cue ball aims once it moves. Hold Shift, or use the arrow keys, for a finer angle.",
   },
   {
     title: "Drag back to shoot",
