@@ -2,7 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ChevronDown, Settings, Volume2, VolumeX } from "lucide-react";
+import { ChevronDown, CircleHelp, Crown, Settings, Volume2, VolumeX } from "lucide-react";
+import room from "@/assets/pool/room.webp";
+import { arenaLogo } from "@/assets/media";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import {
@@ -29,7 +31,6 @@ import {
   applyTimeout,
   freshTable,
   groupClear,
-  groupOf,
   legalPlacement,
   placeCue,
   seatGroup,
@@ -518,6 +519,12 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             <span className="pool-seat-copy">
               <strong>Player</strong>
               <small>$0.00</small>
+              <span className="pool-down">Open</span>
+              <span className="pool-pips">
+                {Array.from({ length: 7 }, (_, index) => (
+                  <i key={index} className="is-up" />
+                ))}
+              </span>
             </span>
           </span>
           <span className="pool-vs-mark">VS</span>
@@ -525,6 +532,12 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             <span className="pool-seat-copy">
               <strong>Waiting</strong>
               <small>$0.00</small>
+              <span className="pool-down">Waiting</span>
+              <span className="pool-pips">
+                {Array.from({ length: 7 }, (_, index) => (
+                  <i key={index} className="is-up" />
+                ))}
+              </span>
             </span>
             <span className="pool-face">
               <span>B</span>
@@ -669,9 +682,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         </span>
         <span>
           <strong>POOL</strong>
-          <small>
-            Pot {dollars(view.pot)} · pays {dollars(pays)}
-          </small>
+          <small>PVP · Real money</small>
         </span>
       </div>
 
@@ -681,8 +692,10 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           you={seat === "A"}
           avatar={view.creator?.avatar_url}
           stake={view.stake}
-          ids={pips(balls, groupA)}
+          rack={ballRack(balls, groupA)}
           group={groupA}
+          ahead={ballsAhead(balls, groupA, groupB)}
+          present
           active={state?.turn === "A" && view.status === "PLAYING"}
           clock={state?.turn === "A" && view.status === "PLAYING" ? clock : null}
         />
@@ -692,8 +705,10 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           you={seat === "B"}
           avatar={view.opponent?.avatar_url}
           stake={view.opponent_id ? view.stake : 0}
-          ids={pips(balls, groupB)}
+          rack={ballRack(balls, groupB)}
           group={groupB}
+          ahead={ballsAhead(balls, groupB, groupA)}
+          present={view.opponent_id != null}
           active={state?.turn === "B" && view.status === "PLAYING"}
           clock={state?.turn === "B" && view.status === "PLAYING" ? clock : null}
           align="end"
@@ -712,20 +727,21 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         )}
         <button
           type="button"
-          className="pool-leave"
-          aria-expanded={rulesOpen}
-          onClick={() => setRulesOpen((open) => !open)}
-        >
-          Rules
-        </button>
-        <button
-          type="button"
           className="pool-gear"
           aria-expanded={sheet}
           aria-label="Shot settings and fairness"
           onClick={() => setSheet((open) => !open)}
         >
           <Settings className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          className="pool-gear"
+          aria-expanded={rulesOpen}
+          aria-label="Rules"
+          onClick={() => setRulesOpen((open) => !open)}
+        >
+          <CircleHelp className="h-4 w-4" />
         </button>
       </div>
 
@@ -739,10 +755,12 @@ export function PoolMatch({ matchId }: { matchId: number }) {
               ? "Stakes refunded"
               : view.status === "WAITING"
                 ? "Stake locked until the match starts"
-                : `Pot · 5% fee ${dollars(fee)}`}
+                : "Prize pool"}
           </small>
           <strong>{dollars(view.pot)}</strong>
-          <em>Winner receives {dollars(pays)}</em>
+          <em>
+            Winner receives {dollars(pays)} · fee {dollars(fee)}
+          </em>
         </span>
       </div>
 
@@ -975,7 +993,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
 function Shell({ children, calling = false }: { children: ReactNode; calling?: boolean }) {
   return (
     <div className={calling ? "pool-screen is-calling" : "pool-screen"}>
-      <div className="pool-room" aria-hidden />
+      <div className="pool-room" style={{ backgroundImage: `url(${room})` }} aria-hidden>
+        <img className="pool-room-logo" src={arenaLogo} alt="" />
+      </div>
       {children}
     </div>
   );
@@ -998,15 +1018,29 @@ function pipColor(id: number): string {
   return PIP[n] ?? "#cccccc";
 }
 
-function pips(
+type RackBall = { id: number; down: boolean; stripe: boolean };
+
+function ballRack(
   balls: readonly { id: number; pocketed: boolean }[],
   group: "solids" | "stripes" | null,
-) {
+): RackBall[] {
   if (!group) return [];
-  return balls
-    .filter((ball) => groupOf(ball.id) === group && !ball.pocketed)
-    .map((ball) => ball.id)
-    .sort((a, b) => a - b);
+  const ids = group === "solids" ? [1, 2, 3, 4, 5, 6, 7] : [9, 10, 11, 12, 13, 14, 15];
+  return ids.map((id) => ({
+    id,
+    down: balls.some((ball) => ball.id === id && ball.pocketed),
+    stripe: id > 8,
+  }));
+}
+
+function ballsAhead(
+  balls: readonly { id: number; pocketed: boolean }[],
+  group: "solids" | "stripes" | null,
+  other: "solids" | "stripes" | null,
+): boolean {
+  if (!group || !other) return false;
+  const down = (side: "solids" | "stripes") => ballRack(balls, side).filter((ball) => ball.down).length;
+  return down(group) > down(other);
 }
 
 function SeatCard({
@@ -1014,8 +1048,10 @@ function SeatCard({
   you,
   avatar,
   stake,
-  ids,
+  rack,
   group,
+  ahead,
+  present,
   active,
   clock,
   align = "start",
@@ -1024,38 +1060,53 @@ function SeatCard({
   you: boolean;
   avatar?: string | null | undefined;
   stake: number;
-  ids: number[];
+  rack: RackBall[];
   group: "solids" | "stripes" | null;
+  ahead: boolean;
+  present: boolean;
   active: boolean;
   clock: number | null;
   align?: "start" | "end";
 }) {
   const initial = name.slice(0, 1).toUpperCase();
-  const groupLabel = group === "solids" ? "Solids" : group === "stripes" ? "Stripes" : null;
+  const down = rack.filter((ball) => ball.down).length;
+  const groupLabel = group === "solids" ? "solids" : group === "stripes" ? "stripes" : null;
+  const slots =
+    rack.length > 0
+      ? rack
+      : Array.from({ length: 7 }, (_, index) => ({ id: -(index + 1), down: false, stripe: false }));
+  const rackLabel = groupLabel
+    ? `${down} of 7 ${groupLabel} down`
+    : present
+      ? "Groups not chosen yet"
+      : "Waiting for an opponent";
   return (
     <div className={`pool-seat${align === "end" ? " is-end" : ""}${active ? " is-live" : ""}`}>
-      {align === "end" ? null : <Face avatar={avatar} initial={initial} active={active} />}
+      {align === "end" ? null : (
+        <Face avatar={avatar} initial={initial} active={active} present={present} />
+      )}
       <span className="pool-seat-copy">
         <strong>
+          {ahead ? <Crown className="pool-crown" aria-hidden /> : null}
           {you ? `${name} (you)` : name}
           {active ? <span className="sr-only">, your turn</span> : null}
           {clock != null ? <em aria-label={`Shot clock ${clock} seconds`}>{clock}s</em> : null}
         </strong>
-        <small>
-          {dollars(stake)}
-          {groupLabel ? ` · ${groupLabel}` : ""}
-        </small>
-        <span className="pool-pips" aria-hidden>
-          {ids.map((id) => (
+        <small>{dollars(stake)}</small>
+        <span className="pool-down">{groupLabel ? `${down} down` : present ? "Open" : "Waiting"}</span>
+        <span className="pool-pips" role="img" aria-label={rackLabel}>
+          {slots.map((ball) => (
             <i
-              key={id}
-              className={id > 8 ? "is-stripe" : ""}
-              style={{ background: pipColor(id) }}
+              key={ball.id}
+              className={ball.down ? (ball.stripe ? "is-down is-stripe" : "is-down") : "is-up"}
+              style={ball.down ? { background: pipColor(ball.id) } : undefined}
             />
           ))}
         </span>
       </span>
-      {align === "end" ? <Face avatar={avatar} initial={initial} active={active} /> : null}
+      {align === "end" ? (
+        <Face avatar={avatar} initial={initial} active={active} present={present} />
+      ) : null}
     </div>
   );
 }
@@ -1150,14 +1201,17 @@ function Face({
   avatar,
   initial,
   active,
+  present,
 }: {
   avatar?: string | null | undefined;
   initial: string;
   active: boolean;
+  present: boolean;
 }) {
   return (
     <span className={active ? "pool-face is-on" : "pool-face"}>
       {avatar ? <img src={avatar} alt="" /> : <span>{initial}</span>}
+      {present ? <i className="pool-presence" aria-hidden /> : null}
     </span>
   );
 }
