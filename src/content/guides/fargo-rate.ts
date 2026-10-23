@@ -10,7 +10,7 @@ export const guide: Guide = {
     "Fargo rate comes from games won and lost. Equal ratings mean even. About 100 points is a 2:1 gap. This site applies no FargoRate. Cash stakes here are equal.",
   h1: "What a fargo rate says about one game",
   answer:
-    "fargo rate is a rating built from games won and lost. The same rating means the two players are treated as even. On the figures used for this page, fargo rate is about 8,100 searches a month at keyword difficulty 28, and fargo rating about 4,400 at difficulty 70. This site does not apply a FargoRate to a stake. A fair cash match here is equal money, not a secret handicap.",
+    "fargo rate is a rating built from games won and lost. The same rating means the two players are treated as even. This site does not apply a FargoRate to a stake. A fair cash match here is equal money, not a secret handicap.",
   facts: [
     "FargoRate's own description: ratings come from games won and lost, and equal ratings mean an even game.",
     "About 100 points apart is a 2:1 game-win ratio, about 200 is 4:1, and about 300 is 8:1, as FargoRate states it.",
@@ -24,14 +24,16 @@ export const guide: Guide = {
       title: "Wins, losses, and an even number",
       body: `A fargo rate is FargoRate's running picture of results. The homepage grounds it in games won and lost. If two players carry the same rating, the system calls that matchup even. That is a statement about a large history of games, not a promise about the next rack on a website that never reads the number. You can be even on paper and still play a poor safety today.
 
-The search is large. About 8,100 monthly searches for fargo rate at keyword difficulty 28, and about 4,400 for fargo rating at difficulty 70, are the figures used here. Difficulty 70 is a crowded head term. This page explains the public description. It does not pretend to be the rating site, and it does not pretend the rating settles a pot. Settlement on this site is still the 8-ball replay, rating or no rating.`,
+This page explains the public description. It does not pretend to be the rating site, and it does not pretend the rating settles a pot. Settlement on this site is still the 8-ball replay, rating or no rating.`,
     },
     {
       id: "where",
       title: "Ratings beside league nights and the Cup",
-      body: `These are the other doors, in a useful order. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [APA skill levels](/guides/apa-pool-league), [the Cup note that uses FargoRate](/guides/mosconi-cup), [equal stakes, not a price](/guides/pool-betting). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `FargoRate is a public rating built from games won and lost. This table does not read it. Equal-stake settlement is on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [the 1v1 stake lobby](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
+The technique next to this is [APA skill levels](/guides/apa-pool-league), [the Cup note that uses FargoRate](/guides/mosconi-cup), and [equal stakes, not a price](/guides/pool-betting). The group is the [skill wagers guides](/guides/topics/skill-wagers).
+
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "gaps",
@@ -57,34 +59,7 @@ There is no top and no bottom. The scale is not a percentage from 0 to 100. Pros
       title: "Which games go into the number",
       body: `FargoRate says it rates 8-ball, 9-ball, and 10-ball played on 7-foot or 9-foot tables. A global optimization runs daily at 6am GMT. That is the update rhythm on the homepage, not a live tick inside this match. Our playing surface is 2.54 m by 1.27 m, which is a 9-foot playing surface, and the game is 8-ball only. Games here are not described by FargoRate as an input, and this page will not claim they move anyone's rating.
 
-Physics id pool-phys-v2 replays shots. It does not look up a rating before the break. The rack seed shuffles colours. The better player, if there is one, has to aim. No random miss narrows the gap that FargoRate would have described as 2:1 or 8:1. The cloth is the same size for both seats, 2.54 m by 1.27 m, on every rack you post.`,
-    },
-    {
-      id: "who-pays",
-      title: "A rating site is not a cashier",
-      body: `A fargo rate search often wants a handicap. The three products below do not become the same product just because a rating exists somewhere else.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
-      id: "two-pots",
-      title: "Equal stakes, with the gap left outside",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $50.00 versus $50.00
-
-Both players post $50.00. The pot is $100.00. The fee is $5.00. The winner is credited $95.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
+The physics id stored with that rack replays shots. It does not look up a rating before the break. The rack seed shuffles colours. The better player, if there is one, has to aim. No random miss narrows the gap that FargoRate would have described as 2:1 or 8:1. The cloth is the same size for both seats, 2.54 m by 1.27 m, on every rack you post.`,
     },
     {
       id: "not-here",
@@ -92,15 +67,6 @@ Both players post $50.00. The pot is $100.00. The fee is $5.00. The winner is cr
       body: `A fair money match is usually equal stakes, not a secret handicap. This site takes that sentence literally. You post the same dollars as the other player. The fee is 5% of the pot and the winner receives 95%. Nobody receives a shorter race because a rating says they are the underdog. If you want a handicapped race, you are describing league play, and the APA Equalizer is the system that league uses for skill levels. It is a different page.
 
 Stakes remain $1, $2, $5, $10, $25, and $50. Three timeouts forfeit. You call a pocket only on the 8. The 8 on the break wins unless the cue ball scratches. None of those rules consults a rating. Bringing a FargoRate printout into a dispute will not change the replay. The replay is the settlement. Cue upgrades are not sold as a way to close a rating gap either.`,
-    },
-    {
-      id: "more",
-      title: "Using the number without staking it",
-      body: `A rating is a conversation about who is likely to win a long series of games. A single rack is a noisy sample of that conversation. Two players 100 points apart are about 2:1 in FargoRate's game-win wording, which still leaves the shorter player winning a game about one time in three. People hear 2:1 and stake as if the result were scheduled. It is not. On this site the stake is equal anyway, so the ratio is background, not a payout table.
-
-The APA Equalizer does not speak in FargoRate points. It speaks in skill levels and race lengths on a scoresheet. Mixing the words is how a player demands three games on a website that offers one rack for equal cash. Read the Equalizer page if you play APA. Read this page if you want to know why the rating will not move the pot. The sources are the FargoRate homepage and the Equalizer page, and this guide stays inside what those pages support.
-
-No formula beyond the published ratios appears here on purpose. A clever equation would be an invention. The daily 6am GMT optimization is FargoRate's process, described so you know the number is not a live pulse. This match does not wait for 6am, does not submit a score, and does not store the rating beside your name. Equal cash, a called 8, and a 5% fee are the entire model. The model is small because the match is one rack.`,
     },
   ],
   faqs: [
@@ -133,12 +99,6 @@ No formula beyond the published ratios appears here on purpose. A clever equatio
     { label: "FargoRate", url: "https://fargorate.com/" },
     { label: "APA Equalizer", url: "https://poolplayers.com/equalizer/" },
   ],
-  related: [
-    "8-ball-pool-for-money",
-    "pool-payday-review",
-    "games-that-pay-real-money",
-    "apa-pool-league",
-    "mosconi-cup",
-  ],
+  related: ["8-ball-pool-hub", "apa-pool-league", "mosconi-cup"],
   updated: "2026-10-23",
 };

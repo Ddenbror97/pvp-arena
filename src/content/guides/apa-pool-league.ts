@@ -10,9 +10,8 @@ export const guide: Guide = {
     "APA pool sets skill levels at the local league office. In 8-ball you give or get games. The manual bans gambling at APA functions. No skill level is stored.",
   h1: "APA pool, as the league describes the handicap",
   answer:
-    "apa pool is a league system that sets skill levels and race lengths, and it is not the 1v1 cash table on this site. The figure used for the phrase is about 12,100 searches a month at keyword difficulty 51. Skill levels are set by the local league office from scoresheets, records, tournament results, and handicap committees. This page does not copy the whole race chart. It also does not store an APA skill level on your account.",
+    "apa pool is a league system that sets skill levels and race lengths, and it is not the 1v1 cash table on this site. Skill levels are set by the local league office from scoresheets, records, tournament results, and handicap committees. This page does not copy the whole race chart. It also does not store an APA skill level on your account.",
   facts: [
-    "APA pool is carried near 12,100 monthly searches, keyword difficulty 51. This page does not pretend to be the league.",
     "The local league office sets skill levels from scoresheets, records, tournament results, and handicap committees.",
     "In 8-ball you give or get games. The scoresheet chart says how long each skill level's race is.",
     "A published example: SL6 against SL4 races 5 to 3. SL5 against a non-rated player, who plays as SL3, races 4 to 2.",
@@ -22,7 +21,7 @@ export const guide: Guide = {
     {
       id: "who-sets",
       title: "The office sets the number, not the player",
-      body: `Apa pool, at about 12,100 searches a month and keyword difficulty 51, is the league's own name used as a query. Difficulty 51 means the league, its app, and its host rooms already answer it. This page explains the handicap in public language and then says what this cashier does not do. It does not pretend to outrank the league on the head term.
+      body: `This page explains the handicap in public language and then says what this cashier does not do.
 
 Skill levels are set by the local league office. The inputs the Equalizer page describes are scoresheets, records, tournament results, and handicap committees. A player does not pick a flattering number on the way in the door. A non-rated player, in the published example this guide is allowed to use, plays as SL3. That example is not a promise about every new player in every format. It is the example the Equalizer page gives, and this summary stops at it.`,
     },
@@ -48,20 +47,11 @@ If your pairing is not one of those two, look at the scoresheet in the league, o
     {
       id: "where",
       title: "The league beside the rating and the Cup",
-      body: `If you only follow one trail, follow the fee and the rules, then the neighbours. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [a rating that is not a skill level](/guides/fargo-rate), [the 2025 Cup note](/guides/mosconi-cup), [events versus a weekly league](/guides/pool-tournaments). The cluster lives with the [casino knowledge guides](/guides/topics/casino-knowledge).
+      body: `APA skill levels and the Equalizer belong to the league. They are not stored on this account. The cash match is [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [the 8 ball table](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
-    },
-    {
-      id: "two-pots",
-      title: "Equal games are not an APA race",
-      body: `### $25 versus $25
+The other event notes are [a rating that is not a skill level](/guides/fargo-rate), [the 2025 Cup note](/guides/mosconi-cup), and [events versus a weekly league](/guides/pool-tournaments). The group is the [casino knowledge guides](/guides/topics/casino-knowledge).
 
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $5.00 versus $5.00
-
-Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is credited $9.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "nine-and-ban",
@@ -75,32 +65,7 @@ The official team manual prohibits gambling at APA functions. The prohibition is
       title: "Nothing in the cashier is an SL",
       body: `No APA skill level is stored on this account. A fair money match here is equal stakes, not a secret handicap. You do not give games and you do not get games. You post $1, $2, $5, $10, $25, or $50, the same as the other seat. The fee is 5% of the pot. The winner receives 95%. FargoRate is a separate system and is not applied either. The Mosconi note's race-to-five and race-to-11 language stays in that note.
 
-The rules you do play are 8-ball, call pocket only on the 8, break 8 wins unless the cue ball scratches, three timeouts forfeit, surface 2.54 m by 1.27 m, physics pool-phys-v2, no random miss. Cue upgrades are not sold. A make-on-the-break rate is not published. Those are the house facts of this table. They are not a replacement Equalizer, and they should not be carried back into a league night as if the league had adopted them.`,
-    },
-    {
-      id: "who-pays",
-      title: "A league night versus a cash rack",
-      body: `APA pool is a league with a handicap. A free client, a prize app, and this equal-stake table are not that league, even if the search arrives here.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
-      id: "more",
-      title: "Using two examples without redrawing the chart",
-      body: `SL6 versus SL4 at 5 to 3 is one cell. SL5 versus a non-rated SL3 at 4 to 2 is another cell. A reader who builds the rest of the grid from those two cells is guessing. The scoresheet is the grid. The Equalizer page is the explanation of who fills it in. This guide's job is to show that the handicap is a race length, that the office owns the skill level, and that a cash website with one rack is a different instrument. Stop at the two examples when you quote us.
-
-The gambling ban is narrow and serious. Narrow, because it governs APA functions, not every private table on earth. Serious, because the manual is the league's own document and the link is right here. Do not soften it into a suggestion. Do not widen it into a claim that this paragraph has settled the law where you live. Law is not what a team manual is for. The manual is for the function. Read it before you put a side pot on a league match.
-
-Difficulty 51 on a 12,100-search phrase is a clue to stay useful and modest. Useful is the office, the two examples, the 9-ball point, and the ban. Modest is the refusal to host a fake league, to store an SL, or to sell a cue that claims to raise one. Your match here, if you play one, is equal cash against one person. The replay names the winner. The league, if you also play there, keeps its own book and its own chart.`,
+The rules you do play are 8-ball, call pocket only on the 8, break 8 wins unless the cue ball scratches, three timeouts forfeit, surface 2.54 m by 1.27 m, the physics id stored with that rack, no random miss. Cue upgrades are not sold. A make-on-the-break rate is not published. Those are the house facts of this table. They are not a replacement Equalizer, and they should not be carried back into a league night as if the league had adopted them.`,
     },
   ],
   faqs: [
@@ -137,12 +102,6 @@ Difficulty 51 on a 12,100-search phrase is a clue to stay useful and modest. Use
       url: "https://media.poolplayers.com/tmrb/team-manual-english.pdf",
     },
   ],
-  related: [
-    "8-ball-pool-for-money",
-    "pool-payday-review",
-    "games-that-pay-real-money",
-    "fargo-rate",
-    "mosconi-cup",
-  ],
+  related: ["8-ball-pool-hub", "fargo-rate", "mosconi-cup"],
   updated: "2026-10-23",
 };

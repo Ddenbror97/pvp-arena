@@ -10,10 +10,8 @@ export const guide: Guide = {
     "Pool betting here means two players stake the same cash on 8-ball. The fee is 5% of the pot. It is not a sportsbook price, and it is not legal advice.",
   h1: "Pool betting without pretending the table is a sportsbook",
   answer:
-    "Pool betting, on this page, means both players post the same stake and the rules name a winner. It is not a moneyline on a televised match, and it is not a ticket against the house. The fee is 5% of the pot. Semrush US on 22 October 2026 put pool betting near 90 searches a month, difficulty 14, and a high advertiser cost, about $18.53.",
+    "Pool betting, on this page, means both players post the same stake and the rules name a winner. It is not a moneyline on a televised match, and it is not a ticket against the house. The fee is 5% of the pot.",
   facts: [
-    "Pool gambling was about 70 searches, difficulty 42, the same $18.53 CPC in that pull.",
-    "Betting on pool was about 40 at difficulty 52. 8 ball pool betting was about 20 at difficulty 0.",
     "APA's team manual bans gambling at APA functions. That is an event rule, not a map of US law.",
     "A sportsbook price and a player pot are different products that share the word pool.",
     "No named author. Last check of this site's fee: 22 October 2026.",
@@ -22,18 +20,20 @@ export const guide: Guide = {
     {
       id: "three-meanings",
       title: "Three things the phrase is used for",
-      body: `People say pool betting and mean a bar stake, a phone app, or a price on a professional match. The arithmetic is not the same. A bar stake is two wallets and an argument if the scratch rule was never said. An app is an entry and a prize with a take in the middle. A sportsbook ticket is a price on an event you do not play. This site is only the middle shape, and only for the 8-ball match it actually runs.
-
-The October 2026 US pull is small and expensive for advertisers. Pool betting, about 90 searches, difficulty 14, CPC about $18.53. Pool gambling, about 70, difficulty 42, the same CPC. Betting on pool, about 40, difficulty 52. 8 ball pool betting, 8 ball pool gambling, and billiards betting sat near 20 with difficulty 0. Small volume with a high click price is why the page exists. It is not a forecast of profit.
+      body: `People say pool betting and mean a bar stake, a phone app, or a price on a professional match. The arithmetic is not the same. A bar stake is two wallets and an argument if the scratch rule was never said. An app is an entry and a prize with a take in the middle. A sportsbook ticket is a price on an event you do not play. This site is the first of those shapes, and only for the 8-ball match it actually runs: both players post the same cash and a written rule names the winner.
 
 If you came from a pick'em or a survivor pool, that word is a shared pot on sports. It is not a cue. Those guides live elsewhere. Keep the cue in the sentence when you mean the table.`,
     },
     {
       id: "where",
       title: "Pages that sit next to a stake",
-      body: `These are the other doors, in a useful order. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [the hub](/guides/8-ball-pool-hub), [skill or chance](/guides/skill-games-for-money-pool), [a casino table versus a pot](/guides/8-ball-pool-casino). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `A bar stake, an app prize, and a sportsbook ticket are three different bets. The fee on this site's 8-ball pot is worked on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [a crypto 8 ball match](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
+The neighbouring money pages are [skill or chance](/guides/skill-games-for-money-pool) and [a casino table versus a pot](/guides/8-ball-pool-casino). The group is the [skill wagers guides](/guides/topics/skill-wagers).
+
+The longer fee article is [8 ball pool for money](/guides/8-ball-pool-for-money). [Pool Payday](/guides/pool-payday-review) leaves an unknown rake blank. Other stake games are on [games that pay real money](/guides/games-that-pay-real-money).
+
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "apa-ban",
@@ -66,33 +66,6 @@ There is no line, no juice in the sportsbook sense, and no live price that moves
 If someone in a chat offers pool betting and asks you to send crypto to a personal address first, that is not this cashier. Close it. A seed phrase is never part of a stake.`,
     },
     {
-      id: "who-pays",
-      title: "What kind of bet the search might mean",
-      body: `Pool betting searches land on apps, books, and bar bets. Only one row has a fee this site will print.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
-      id: "two-pots",
-      title: "The only price this page will do in dollars",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $50.00 versus $50.00
-
-Both players post $50.00. The pot is $100.00. The fee is $5.00. The winner is credited $95.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
-    },
-    {
       id: "what-we-will-not-price",
       title: "Odds this page will not print",
       body: `A televised 9-ball final has a favourite. This page does not have that price, so it will not invent minus 180 or any other number. A break-win rate for money 8-ball is a real question and this lobby does not publish one. Printing 40% or 55% because it sounds familiar would be a guess.
@@ -121,7 +94,7 @@ That is the whole betting model on this table. Skill can move the win rate. It c
     },
     {
       q: "Does a high advertiser cost mean the bet is a good idea?",
-      a: "No. The $18.53 figure is what Semrush estimated advertisers might pay for a click in that October 2026 pull. It is not a return, and it is not a reason to raise a stake.",
+      a: "No. It is not a return, and it is not a reason to raise a stake.",
     },
     {
       q: "Can you gamble on pool with crypto?",

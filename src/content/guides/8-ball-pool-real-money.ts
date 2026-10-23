@@ -18,10 +18,8 @@ export const guide: Guide = {
     "8 ball pool real money here is a 1v1 cash match. The fee is 5% of the pot. The dollar balance is credited when the match settles. PayPal is not the payout.",
   h1: "8 ball pool real money, and the only speed this page will state",
   answer:
-    "8 ball pool real money, on this site, means two players post the same cash stake and the winner is paid from that pot. The fee is 5% of the pot. The US-dollar balance is credited when the match settles. Semrush, US, 22 October 2026, put the phrase near 50 searches a month, difficulty 49, click price near $3.23.",
+    "8 ball pool real money, on this site, means two players post the same cash stake and the winner is paid from that pot. The fee is 5% of the pot. The US-dollar balance is credited when the match settles.",
   facts: [
-    "Semrush US, 22 October 2026: about 50 searches, difficulty 49, click price near $3.23.",
-    "8 ball pool cash was about 70 at difficulty 29. 8 ball pool money was about 40 at difficulty 40.",
     "The winner is credited 95% of the pot in the US-dollar balance when the match settles.",
     "PayPal and Cash App are search phrases here. They are not payout rails this page claims.",
     "Published by PVPspinArena. No named author. Last check 22 October 2026.",
@@ -29,10 +27,8 @@ export const guide: Guide = {
   sections: [
     {
       id: "what-the-counts-measure",
-      title: "What the October counts are measuring",
-      body: `Semrush, US, 22 October 2026, put 8 ball pool real money near 50 searches a month, keyword difficulty 49, click price near $3.23. 8 ball pool cash was near 70 at difficulty 29. 8 ball pool money was near 40 at difficulty 40. 8 ball pool for cash was near 20. Money app, earn money, paypal, and cash app were marked about 20 in that same pull. A click price is an advertiser estimate, not a return.
-
-The intent is practical: whether a win becomes spendable money, which products pay, and how fast. This site credits the US-dollar balance when the match settles. That is the only speed stated here. PayPal and Cash App are search strings on this page, not payout methods. No other app's arrival time is stated, because no receipt for those apps is on file.
+      title: "What a cash win actually is",
+      body: `The practical question is whether a win becomes spendable money, which products pay, and how fast. This site credits the US-dollar balance when the match settles. That is the only speed stated here. PayPal and Cash App are search strings on this page, not payout methods. No other app's arrival time is stated, because no receipt for those apps is on file.
 
 Whether a cash match is allowed depends on where you live. This page is not legal advice. PVPspinArena publishes it, with no named author, and the fee was last checked on 22 October 2026.`,
     },
@@ -60,25 +56,13 @@ A $5 stake against another $5 stake builds a $10 pot. Five percent of that pot i
     {
       id: "where",
       title: "Cash pages that sit beside this one",
-      body: `If you only follow one trail, follow the fee and the rules, then the neighbours. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [playing pool for a pot](/guides/pool-games-for-money), [funding the balance with crypto](/guides/crypto-8-ball-pool), [why coins are not cash](/guides/8-ball-pool-free-coins). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `Real money here means a US-dollar balance, not coins and not a payment app this page has not audited. The comparison of those products is on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [the 1v1 stake lobby](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
-    },
-    {
-      id: "two-pots",
-      title: "The six stakes the lobby posts",
-      body: `The buy-in buttons are $1, $2, $5, $10, $25, and $50. Both players post the same one. The pot is twice that stake. The fee is 5% of the pot, taken in cents, and the winner is credited the rest. On these six amounts the 5% lands on a whole cent, so the credit is exact.
+The neighbouring money pages are [playing pool for a pot](/guides/pool-games-for-money), [funding the balance with crypto](/guides/crypto-8-ball-pool), and [why coins are not cash](/guides/8-ball-pool-free-coins). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-| Each stake | Pot | Fee | Winner credited | Net if you win |
-| --- | --- | --- | --- | --- |
-| $1.00 | $2.00 | $0.10 | $1.90 | $0.90 |
-| $2.00 | $4.00 | $0.20 | $3.80 | $1.80 |
-| $5.00 | $10.00 | $0.50 | $9.50 | $4.50 |
-| $10.00 | $20.00 | $1.00 | $19.00 | $9.00 |
-| $25.00 | $50.00 | $2.50 | $47.50 | $22.50 |
-| $50.00 | $100.00 | $5.00 | $95.00 | $45.00 |
+How a settled match is credited is written at length in [8 ball pool for money](/guides/8-ball-pool-for-money). An unknown app cut stays unknown in the [Pool Payday review](/guides/pool-payday-review). A wider list of stake games is [games that pay real money](/guides/games-that-pay-real-money).
 
-Against an equal player the break-even share is the stake divided by the credit, about 52.63% on every row. That is the price of the fee. It is the same player trying to beat you, not a wheel. If nobody joins within 24 hours, the stake is refunded and no fee is charged. Open [the 8 ball lobby](/8-ball-pool) to see the same six buttons.`,
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "when-the-balance-moves",
@@ -97,31 +81,6 @@ No weekly tournament is published, so there is no tournament prize to wait on. N
 That list is not the World Pool-Billiard Association book. WPA rules effective 21 October 2026 call shots, and a legal 8 on the break is spotted or rebroken rather than paid as a win. Read the contrast on [8 ball pool rules](/guides/8-ball-pool-rules) before staking if the only 8-ball you know is call-shot.
 
 The American Poolplayers Association team manual prohibits gambling at APA functions, including wagers, side bets, side pots, selling teams, auctions, and Calcuttas. That is a league rule for league events. It is not a statute, and it does not label any place as open. Permission still depends on where you live.`,
-    },
-    {
-      id: "who-pays",
-      title: "Which product actually pays cash",
-      body: `8 ball pool real money mixes coin clients, skill-cash apps, and a posted pot. Only one fee is known on this page.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
-      id: "more",
-      title: "What a cash search still leaves open",
-      body: `A session of small stakes is still the fee, repeated. Two players on a $10 stake build a $20 pot. The fee is $1 and the winner is credited $19, so the winner's net against their own stake is $9 and the loser is down $10. Trade wins evenly and the fee is the leak. The break-even share against an equal opponent is the stake divided by the credit, 10 divided by 19. That figure is arithmetic from the published fee. It is not a measured break-win rate, and this lobby does not publish one. Treat it as the price of sitting down, then set a loss stop before the first break.
-
-Earn money, money app, paypal, and cash app are the short queries in the October pull, each marked about 20. They read like a job listing. The product is a match. Bitcoin, USDC, or ETH on Base can fund the US-dollar balance, and the stake is still dollars. There is no NFT, no web3 token, and no separate USDT, Solana, or Ethereum table. There is also no weekly tournament to grind. A player who wants a bracket will not find one published here, and a made-up prize pool will not be added to fill the gap.
-
-Payout speed is the sentence this page will stand on: the dollar balance updates when the match settles. It will not stand on a PayPal window, a Cash App window, or a clock copied from another brand. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, and it does not know their payout clocks either. If the table is still empty after 24 hours, both stakes return and the fee is not charged. After the break, the shot clock is 30 seconds. Three timeouts forfeit the seat.`,
     },
   ],
   faqs: [

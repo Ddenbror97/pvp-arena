@@ -16,39 +16,27 @@ export const guide: Guide = {
     "8 ball pool crypto on this site funds a US-dollar pot. Bitcoin, USDC, or ETH on Base can deposit. The fee is 5% of the pot. There is no separate token table.",
   h1: "8 ball pool crypto means a dollar pot with a crypto on-ramp",
   answer:
-    "8 ball pool crypto, on this site, means Bitcoin, USDC, or ETH on Base can fund a US-dollar balance that pays a 1v1 8-ball pot. The fee is 5% of that pot. Semrush showed no monthly volume for the phrase on 22 October 2026, so this page is early on purpose.",
+    "8 ball pool crypto, on this site, means Bitcoin, USDC, or ETH on Base can fund a US-dollar balance that pays a 1v1 8-ball pot. The fee is 5% of that pot.",
   facts: [
-    "Semrush US, 22 October 2026: 8 ball pool crypto had no monthly volume.",
     "Bitcoin, USDC, or ETH on Base can fund the US-dollar balance. The stake is still dollars.",
     "No NFT, no web3 token, and no separate USDT, Solana, or Ethereum table.",
-    "A SHA-256 rack hash is published before the balls are shown. New matches use pool-phys-v2.",
+    "A SHA-256 rack hash is published before the balls are shown. New matches store the current physics id on the rack.",
     "PVPspinArena publishes this page. No named author. Last check 22 October 2026.",
   ],
   sections: [
     {
       id: "funding-not-a-token",
       title: "A funding rail, not a token table",
-      body: `8 ball pool crypto had no monthly volume in the Semrush US pull of 22 October 2026. The page exists before a head term does. Bitcoin pool game, 8 ball pool bitcoin, crypto pool game, 8 ball pool wager, and pool 1v1 money also had no figure that day. Naming them does not pretend Semrush missed a crowd. It fixes the wording this site already uses.
+      body: `8 ball pool crypto, on this site, means a cash 8-ball match whose US-dollar balance can be funded with Bitcoin, USDC, or ETH on Base. The stake is still dollars. There is no separate bitcoin table.
 
 Crypto here funds a US-dollar balance. Bitcoin, USDC, or ETH on Base can supply that balance. The match is still 1v1 8-ball for a dollar stake picked from $1, $2, $5, $10, $25, or $50. There is no NFT. There is no web3 token. There is no separate USDT table, no Solana table, and no Ethereum table under another name. An 8 ball pool wager is the cash both players post.
 
 PVPspinArena publishes the page with no named author. The last check was 22 October 2026. Whether funding a stake this way is allowed depends on where you live. This page is not legal advice.`,
     },
     {
-      id: "two-pots",
-      title: "What five percent costs in dollars",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $25.00 versus $25.00
-
-Both players post $25.00. The pot is $50.00. The fee is $2.50. The winner is credited $47.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
-    },
-    {
       id: "hash-before-the-break",
       title: "The hash a player can check",
-      body: `Before the table opens, the server publishes a SHA-256 hash of a 32-byte seed. The seed stays hidden until the match is playing. It only shuffles the coloured balls. The 8 stays in the centre of the rack. Shots are not given a random error, so a miss is the stroke that was played. A new match stores the physics id pool-phys-v2. The replay on the fairness page recomputes that shot list.
+      body: `Before the table opens, the server publishes a SHA-256 hash of a 32-byte seed. The seed stays hidden until the match is playing. It only shuffles the coloured balls. The 8 stays in the centre of the rack. Shots are not given a random error, so a miss is the stroke that was played. A new match stores the current physics id on the rack. The replay on the fairness page recomputes that shot list.
 
 The playing surface is 2.54 m by 1.27 m. The hash does not change the felt, and the felt does not pick the winner. Read the hash, play, then open the seed and the replay. If the hash does not match the revealed seed, the rack commitment failed. That check is what provably fair means on this game.
 
@@ -69,25 +57,11 @@ A picture drawn on one phone stays on that phone. The server stores the shot and
     {
       id: "where",
       title: "Neighbours of a crypto-funded match",
-      body: `The internal links are the map. The match is the thing they point at. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [cash credited in dollars](/guides/8-ball-pool-real-money), [whether the replay can be checked](/guides/is-8-ball-pool-rigged), [a stake between two players](/guides/pool-betting). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `Crypto on this table funds the dollar balance. It does not create a token game. The stake math for that balance is on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [play 8 ball for a pot](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
-    },
-    {
-      id: "who-pays",
-      title: "Crypto funding versus a coin client",
-      body: `8 ball pool crypto is a funding question and a fee question. Competitor cuts stay blank. The pot fee here is 5%.
+The neighbouring money pages are [cash credited in dollars](/guides/8-ball-pool-real-money), [whether the replay can be checked](/guides/is-8-ball-pool-rigged), and [a stake between two players](/guides/pool-betting). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "five-percent-on-crypto-pot",
@@ -107,15 +81,6 @@ The World Pool-Billiard Association book effective 21 October 2026 calls every s
 
 The credit is dollars in the balance. A token is not offered instead. Adults play only where a stake is allowed. This page will not name a place and call the game legal or banned there.`,
     },
-    {
-      id: "more",
-      title: "Phrases with no volume, and the fee that still exists",
-      body: `Zero volume is a publishing choice, not a traffic forecast. On 22 October 2026 the US pull had no monthly number for 8 ball pool crypto, and none for bitcoin pool game, 8 ball pool bitcoin, crypto pool game, 8 ball pool wager, or pool 1v1 money. A later month may look different. This page will not backfill a guess. What it can already say is the product shape: crypto funds dollars, two players post the same stake, and 5% of the pot is the operator fee at settlement. The winner's 95% is a balance credit, not a new coin.
-
-Provably fair, on this match, is a hash you can compare and a replay you can recompute. The 32-byte seed is hidden while the balls are still unknown, then shown once the match is playing. It shuffles only the coloured balls. The 8 is racked in the centre every time. Physics for a new match is pool-phys-v2, on a surface of 2.54 m by 1.27 m. None of that is a random miss added to a good stroke. A disputed ball is a replay question. It is not a reason to install anything.
-
-The 5% cost is easy to skip because the funding feels like the product. It is not. Twenty-five dollars against twenty-five is a fifty-dollar pot and a two-dollar-fifty fee. Lose the match and the whole stake is gone. Win it and the credit is forty-seven dollars and fifty cents, which is less than both stakes combined. Against an equal player the fee is the entire house take. Skill can change how often you win. It cannot repeal the two dollars and fifty cents. The fee is skipped only when an empty table expires after 24 hours. After the break, settlement always includes it.`,
-    },
   ],
   faqs: [
     {
@@ -132,15 +97,15 @@ The 5% cost is easy to skip because the funding feels like the product. It is no
     },
     {
       q: "Do shots include a random miss?",
-      a: "Shots are not given a random error. A new match stores the physics id pool-phys-v2. The fairness page replays the shot list that was actually played.",
+      a: "Shots are not given a random error. A new match stores the current physics id on the rack. The fairness page replays the shot list that was actually played.",
     },
     {
       q: "What does the five percent come off?",
       a: "It comes off the pot when the match settles. A $25 stake against $25 makes a $50 pot, a fee of two dollars and fifty cents, and a winner credit of forty-seven dollars and fifty cents. That number is this table's fee, not another app's.",
     },
     {
-      q: "Why mention phrases Semrush did not score?",
-      a: "Bitcoin pool game, 8 ball pool bitcoin, crypto pool game, 8 ball pool wager, and pool 1v1 money had no monthly figure in the 22 October 2026 pull. The page uses them so the wording is already precise. It does not invent a search count for them.",
+      q: "Is there a separate bitcoin table?",
+      a: "No. Bitcoin, USDC, or ETH on Base can fund the US-dollar balance. The stake is still dollars. There is no NFT and no separate token table.",
     },
   ],
   sources: [

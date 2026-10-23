@@ -10,9 +10,8 @@ export const guide: Guide = {
     "8 ball pool casino usually means a house game paid from the house bankroll. This table pays from the other player's stake minus 5%. There is no house opponent.",
   h1: "8 ball pool casino, and who actually pays the winner",
   answer:
-    "8 ball pool casino is the phrase people use when they expect a house game, and a house game pays from the house bankroll. The figure used here is about 20 searches a month at keyword difficulty 0. This table pays from the other player's stake minus 5%. There is no house opponent shooting back at you, and there is no house edge hiding inside the balls.",
+    "8 ball pool casino is the phrase people use when they expect a house game, and a house game pays from the house bankroll. This table pays from the other player's stake minus 5%. There is no house opponent shooting back at you, and there is no house edge hiding inside the balls.",
   facts: [
-    "8 ball pool casino is carried near 20 monthly searches, keyword difficulty 0.",
     "A house game pays the winner from the house bankroll.",
     "This table pays the winner from the other player's stake, minus a 5% fee.",
     "The fee is not a second edge stacked on a random miss. Shots are not randomly missed.",
@@ -24,48 +23,23 @@ export const guide: Guide = {
       title: "Two ways a winner can get paid",
       body: `8 ball pool casino, said carefully, names a hope: that a cue game will pay the way a house game pays. In a house game the casino books the bet and pays from its bankroll if you win. The price of that arrangement is the house edge, built into the rules of the wheel or the cards. In this match the other player books the other half. You win their stake, minus 5%, or they win yours on the same terms. The site's revenue is the fee. It is not a second game running under the cloth.
 
-About 20 monthly searches at keyword difficulty 0 is a small phrase. Small is useful. A page can say the distinction without fighting a head term. Players who wanted a house shooter will not find one. Players who wanted a person will find the other seat.`,
-    },
-    {
-      id: "who-pays",
-      title: "Who funds the payout",
-      body: `8 ball pool casino sounds like a house game. The three columns below show a coin table, a prize app, and a player pot that never was the house.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
+Small is useful. A page can say the distinction without fighting a head term. Players who wanted a house shooter will not find one. Players who wanted a person will find the other seat.`,
     },
     {
       id: "where",
       title: "The pot beside the bet and the hub",
-      body: `Read the fee before you read a story about a hustler. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [the two-player stake](/guides/8-ball-pool-1v1), [a bet that is not a ticket](/guides/pool-betting), [the product map](/guides/8-ball-pool-hub). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `A house game pays from the house bankroll. This match pays from the other player's stake. The fee line is on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [the 1v1 stake lobby](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
+The neighbouring money pages are [the two-player stake](/guides/8-ball-pool-1v1) and [a bet that is not a ticket](/guides/pool-betting). The group is the [skill wagers guides](/guides/topics/skill-wagers).
+
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "fee",
       title: "The fee is the only house number",
       body: `Five percent of the pot is taken at settlement. The winner is credited 95%. Deposits are not taxed again by that percentage, and an empty table returns both stakes after 24 hours. There is no juice in the sportsbook sense, because there is no price on a match you are not playing. Pool betting, as a separate page, is the same idea stated for people who arrived with the word bet.
 
-Do not stack an imaginary miss on top of the fee. Physics id pool-phys-v2 does not randomly fail a shot that was played truly. A bad line misses because it was a bad line. The replay will show it. If the site wanted a hidden edge, a random miss would be the dishonest way to build one. That mechanism is not in the engine. The published mechanism is the 5% line, readable before you post.`,
-    },
-    {
-      id: "two-pots",
-      title: "A pot is not a house bankroll",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $2.00 versus $2.00
-
-Both players post $2.00. The pot is $4.00. The fee is $0.20. The winner is credited $3.80. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
+Do not stack an imaginary miss on top of the fee. The physics id stored with that rack does not randomly fail a shot that was played truly. A bad line misses because it was a bad line. The replay will show it. If the site wanted a hidden edge, a random miss would be the dishonest way to build one. That mechanism is not in the engine. The published mechanism is the 5% line, readable before you post.`,
     },
     {
       id: "checklist",
@@ -75,7 +49,7 @@ Both players post $2.00. The pot is $4.00. The fee is $0.20. The winner is credi
 - Ask who pays you. Here it is the other player's stake.
 - Write the fee as 5% of the pot, not as a hidden wheel.
 - Do not look for a house shooter.
-- Remember there is no random miss in pool-phys-v2.
+- Remember there is no random miss in the current physics.
 - Keep APA gambling rules at APA functions, not as a slogan for this pot.
 - Refuse a casino chat that wants a seed phrase.`,
     },
@@ -93,15 +67,6 @@ The playing surface is 2.54 m by 1.27 m. Pattern play, a leave, and a safety whe
 
 No skill level is stored, so the casino does not comp you a shorter race. No FargoRate is stored, so it does not comp you a rating gap. Cue upgrades are not sold. Ranks from a free game do not set the stake. Equal cash is the match. If the word casino made you expect a loyalty ladder, the ladder is not on this table. The ladder, if you want one, is the free client's, and its rewards are not known to this page.`,
     },
-    {
-      id: "more",
-      title: "Using the casino word without borrowing a wheel",
-      body: `Say the payer before you say the game. If the payer is the house, you are in a house game and you should read that game's edge. If the payer is the other player minus 5%, you are here. Mixing the sentences is how a 5% fee gets described as if the balls were a slot. They are not. The balls follow pool-phys-v2. The person across from you is trying to pocket the 8 in the pocket you both understand has to be called.
-
-Keyword difficulty 0 on a 20-search phrase means almost nobody is competing for the wording, which is a reason to be exact rather than loud. Exact is: no house opponent, no random miss, no promo code, stakes from $1 to $50, winner credited 95%. Loud would be a fake RTP pasted from a slot guide. This match does not have an RTP of that kind. It has two win rates, yours and theirs, and a fee that skims the pot either way.
-
-A friend who wants a casino night can still play you. They post the same stake. They do not become the house by sitting down, and you do not become the house by winning. The next rack is even again. Three timeouts still forfeit. The seed phrase still stays out of the chat. When the session is enough, it is enough. The pot does not chase you with a bonus that has to be wagered through a wheel or a second game.`,
-    },
   ],
   faqs: [
     {
@@ -110,7 +75,7 @@ A friend who wants a casino night can still play you. They post the same stake. 
     },
     {
       q: "Then why do people say 8 ball pool casino?",
-      a: "The phrase is small, about 20 searches at keyword difficulty 0, and it borrows casino because money moves. Money moving is not the same as a house edge on a wheel. The edge here, if you call the fee an edge, is 5% of a pot between two players.",
+      a: "Money moving is not the same as a house edge on a wheel. The edge here, if you call the fee an edge, is 5% of a pot between two players.",
     },
     {
       q: "Does the physics favour the site?",

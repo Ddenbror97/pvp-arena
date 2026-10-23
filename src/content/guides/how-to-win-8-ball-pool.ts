@@ -12,7 +12,6 @@ export const guide: Guide = {
   answer:
     "8 ball pool tips, on a cash table, are choices about the next ball and the cue ball you leave behind it. How to win 8 ball pool is the same search with a smaller count, about 30 a month, beside strategy and tricks near 20. None of those phrases is a promised win rate. The useful work is pattern play, a leave, and a safety when the 8 sits near the other pocket.",
   facts: [
-    "The figures used here put how to win near 30 monthly searches, strategy near 20, and tricks near 20.",
     "A fair cash match on this site is equal stakes. No secret handicap is written into the seat.",
     "The fee is 5% of the pot. The winner is credited 95% when the match settles.",
     "You call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches.",
@@ -29,9 +28,11 @@ Stop when the 8 sits in the jaws of their pocket and you still have a choice. A 
     {
       id: "where",
       title: "Tips that sit next to this one",
-      body: `These are the other doors, in a useful order. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [the opening break](/guides/8-ball-pool-break), [aim and spin](/guides/8-ball-pool-aim), [banks, kicks, and safeties](/guides/pool-shots). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `Pattern, leave, and an early safety decide more racks than a trick shot. When the rack is for cash, the price of winning is the fee on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [open a pool wager](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
+The technique next to this is [the opening break](/guides/8-ball-pool-break), [aim and spin](/guides/8-ball-pool-aim), and [banks, kicks, and safeties](/guides/pool-shots). The group is the [skill wagers guides](/guides/topics/skill-wagers).
+
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "leave",
@@ -60,47 +61,11 @@ Open [open a pool wager](/8-ball-pool) for the match. The [fairness replay](/fai
 Do not fire a low-percentage bank when a safety exists. The bank might fall on a given night. This page will not invent the odds that it does. When the safety is available and the bank needs two rails plus a wish, the safety is the strategy. Hero shots are how a session of equal players gets expensive, one donated rack at a time. The fee does not refund a brave miss, and the other player keeps the inning.`,
     },
     {
-      id: "who-pays",
-      title: "Where a tip actually gets paid",
-      body: `People who search 8 ball pool tips are often looking at a free client, a prize app, and a cash pot as if they were one game.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
-      id: "two-pots",
-      title: "What the tip is worth in a pot",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $5.00 versus $5.00
-
-Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is credited $9.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
-    },
-    {
       id: "money-table",
       title: "What changes when the rack is cash",
       body: `This match is 1v1 8-ball only. It is not a race and it is not a handicap. You call a pocket only for the 8. Any other of your balls may fall in any pocket. The 8 on the break wins unless the cue ball scratches, and that scratch loses. Three timeouts forfeit the seat. The World Pool-Billiard Association book effective 21 October 2026 is call-shot, and it does not award the rack for an 8 on the break. Read that split on [8 ball pool rules](/guides/8-ball-pool-rules) before you stake.
 
-Stakes are $1, $2, $5, $10, $25, and $50, posted equally. The fee is 5% of the pot. No FargoRate is applied and no APA skill level is stored. The playing surface is 2.54 m by 1.27 m, a 9-foot playing surface, under physics id pool-phys-v2. The engine adds no random miss. A make-on-the-break rate is not published here, and neither is a ghost-ball make percentage.`,
-    },
-    {
-      id: "more",
-      title: "Leaves, fees, and the shot you skip",
-      body: `A useful leave is boring to watch and expensive to skip. Put the cue ball on the correct side of the next object ball, close enough that speed is a choice rather than a rescue. If the next ball is frozen on the rail, arrive on the side that lets you see it. English can bend the cue ball into that parking spot. It should not be asked to steer the object ball into a pocket you aimed wrong. When the parking spot does not exist, play the safety on this shot, not on the next one.
-
-The cash part is simple enough to say without a slogan. Both players choose the same stake from the published list, the pot is the sum, and settlement keeps 5%. A win credits 95% to the rules winner. That winner is a legal 8, or the opponent's loss on an early 8, a wrong pocket, a scratch on the 8, three timeouts, or a forfeit. An empty table returns both stakes after 24 hours. Nothing in that arithmetic is a forecast of how often you will be the winner.
-
-Ghost-ball aim belongs in the lesson, not in a statistic. Picture the ball that would fill the pocket, then hit the real object ball at that contact point. The picture does not come with a make percentage, because this page never measured one. The same restraint covers the break. People ask how often the 8 falls on the snap. The lobby does not print that rate, so a tip that quotes one is borrowing a number from somewhere else. Play the pattern you can see.`,
+Stakes are $1, $2, $5, $10, $25, and $50, posted equally. The fee is 5% of the pot. No FargoRate is applied and no APA skill level is stored. The playing surface is 2.54 m by 1.27 m, a 9-foot playing surface, under the physics id stored with that rack. The engine adds no random miss. A make-on-the-break rate is not published here, and neither is a ghost-ball make percentage.`,
     },
   ],
   faqs: [
@@ -136,12 +101,6 @@ Ghost-ball aim belongs in the lesson, not in a statistic. Picture the ball that 
     },
     { label: "WPA rules index", url: "https://wpapool.com/rules/" },
   ],
-  related: [
-    "8-ball-pool-for-money",
-    "pool-payday-review",
-    "games-that-pay-real-money",
-    "8-ball-pool-break",
-    "8-ball-pool-aim",
-  ],
+  related: ["8-ball-pool-hub", "8-ball-pool-break", "8-ball-pool-aim"],
   updated: "2026-10-23",
 };

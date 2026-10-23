@@ -10,9 +10,8 @@ export const guide: Guide = {
     "Skill games for money still pay a fee. A seed shuffles this rack. Shots are not randomly missed. The fee is 5% of the pot. It depends on where you live.",
   h1: "Skill games for money, the rack shuffle, and the fee that remains",
   answer:
-    "Skill games for money include a cash pool match only where the law allows it, and this page will not decide that for you. On this table a seed shuffles the rack and shots are not randomly missed. The fee is still 5% of the pot. Semrush, US, 22 October 2026, put the phrase near 110 searches, difficulty 41, click price near $4.46.",
+    "Skill games for money include a cash pool match only where the law allows it, and this page will not decide that for you. On this table a seed shuffles the rack and shots are not randomly missed. The fee is still 5% of the pot.",
   facts: [
-    "Skill games for money: about 110 US searches, difficulty 41, click price near $4.46, on 22 October 2026.",
     "The rack seed shuffles coloured balls only. Shots are not given a random error.",
     "A 5% pot fee still applies. Skill does not delete it.",
     "This page does not say pool is always legal skill gaming. It depends on where you live.",
@@ -22,29 +21,18 @@ export const guide: Guide = {
     {
       id: "label-this-page-will-not-stamp",
       title: "A legal label this page will not stamp",
-      body: `Skill games for money is a classification fight as much as a search. Semrush, US, 22 October 2026, put it near 110 searches a month, difficulty 41, click price near $4.46. Advertisers pay attention to the phrase. A court, a regulator, or a statute where you live may not use the advertisers' definition. This page will not pretend they do.
+      body: `Skill games for money is a classification fight as much as a search. Advertisers pay attention to the phrase. A court, a regulator, or a statute where you live may not use the advertisers' definition. This page will not pretend they do.
 
 Pool can reward practice. A player who pots more balls, over a long run, wins more of these matches than a player who does not. That observation is not a ruling that the match is legal skill gaming in every place. This page does not say pool is always legal skill gaming. Whether a cash stake is allowed depends on where you live. This is not legal advice, and no state is named as open or closed.
 
 PVPspinArena publishes the page. There is no named author. The product facts below were last checked on 22 October 2026. They describe the table. They do not licence it.`,
     },
     {
-      id: "two-pots",
-      title: "The fee on a skill result",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $10.00 versus $10.00
-
-Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is credited $19.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
-    },
-    {
       id: "where-chance-sits",
       title: "Where chance sits, and where it does not",
       body: `Chance on this match is the rack. A 32-byte seed shuffles the coloured balls. A SHA-256 hash of that seed is published before the table opens, and the seed stays hidden until the match is playing. The 8 is not shuffled into a corner. It stays in the centre. Two players therefore face the same unknown layout, committed in advance, and neither player chose it.
 
-The shots are a different layer. They are not given a random error. Physics id pool-phys-v2 is stored for a new match, on a playing surface of 2.54 m by 1.27 m, and the fairness page recomputes the shot list. A miss can still happen because the cue speed, the aim, or the leave was wrong. That is the player's stroke. It is not a dice roll inserted after a good hit.
+The shots are a different layer. They are not given a random error. The current physics id is stored with a new rack, on a playing surface of 2.54 m by 1.27 m, and the fairness page recomputes the shot list. A miss can still happen because the cue speed, the aim, or the leave was wrong. That is the player's stroke. It is not a dice roll inserted after a good hit.
 
 The open table lasts until a legal pocket assigns solids or stripes. A foul is ball in hand anywhere. Those rules change the value of a shot. They do not randomise it.`,
     },
@@ -63,25 +51,11 @@ The open table lasts until a legal pocket assigns solids or stripes. A foul is b
     {
       id: "where",
       title: "Rules pages that feed this question",
-      body: `The internal links are the map. The match is the thing they point at. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [call-pocket only on the 8](/guides/8-ball-pool-rules), [a money match in practice](/guides/pool-games-for-money), [how 9-ball is a different game](/guides/9-ball-rules). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `Calling the match a skill game does not remove the fee. The worked pot is on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [the 8 ball table](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
-    },
-    {
-      id: "who-pays",
-      title: "Skill, chance, and a posted fee",
-      body: `Skill games for money get compared to chance games and to apps. This page prices only its own 5% pot.
+The neighbouring money pages are [call-pocket only on the 8](/guides/8-ball-pool-rules), [a money match in practice](/guides/pool-games-for-money), and [how 9-ball is a different game](/guides/9-ball-rules). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "fee-on-the-edge",
@@ -101,15 +75,6 @@ Those sentences are house rules. They are not a statute about skill, and they ar
 
 The APA team manual bans gambling at APA functions: wagers, side bets, side pots, selling teams, auctions, Calcuttas. League rule, not a statute, and not a label for this website.`,
     },
-    {
-      id: "more",
-      title: "Practice, the shuffle, and the cut",
-      body: `Keyword difficulty 41, on about 110 US searches and a click price near $4.46, means skill games for money is a contested phrase. The contest is not settled by calling pool a game of skill in the first line and moving on. The rack is partly chance, because a seed shuffles the coloured balls and hides them behind a hash until play. The shot is partly skill, because pool-phys-v2 does not sprinkle random error on the cue ball. The pot is partly a price, because 5% leaves with the operator even when the better player wins. All three can be true in one match.
-
-Legal classification is the piece this page refuses to flatten. A place can treat a skill wager as gambling. Another place can draw a distinction, and that distinction can change. No list of states is offered, because this site has not published one and will not invent one. The APA manual's ban is narrower still: it governs APA functions, not every browser. If you need a ruling, you need a source that is actually law where you live. This article is not that source, and it is not legal advice.
-
-The practical test before a stake is short. Read the hash. Read that only the 8 is called. Read the 5% fee in dollars for the stake you picked, from $1 through $50. Read that promo credit and partner credit can enter, and that deposited money is used first. Then decide. A win credits 95% of the pot to the US-dollar balance when the match settles. A loss takes the stake. Neither result proves a legal theory. Neither result is a break-win statistic, because no such rate is published. Set a loss stop before the first rack, and keep the session inside a number chosen first.`,
-    },
   ],
   faqs: [
     {
@@ -122,7 +87,7 @@ The practical test before a stake is short. Read the hash. Read that only the 8 
     },
     {
       q: "Are the shots themselves random?",
-      a: "Shots are not randomly missed. A new match uses physics id pool-phys-v2, and the fairness page can replay the list. A player can still miss because of aim, speed, and the leave. That miss is the stroke.",
+      a: "Shots are not randomly missed. A new match stores the current physics id on the rack, and the fairness page can replay the list. A player can still miss because of aim, speed, and the leave. That miss is the stroke.",
     },
     {
       q: "If practice helps, why is there a fee?",

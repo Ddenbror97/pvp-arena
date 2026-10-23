@@ -10,10 +10,8 @@ export const guide: Guide = {
     "8 ball pool unblocked usually means a school filter. This site is an 18+ browser game, not an unblocker and not an APK. Sideloading an APK is a malware risk.",
   h1: "8 ball pool unblocked is a school search, and this site is not the workaround",
   answer:
-    "8 ball pool unblocked is usually a search for a school-filter workaround, and this site is not that workaround. It is a browser game for adults 18+. Semrush, US, 22 October 2026, put the phrase near 5,400 searches a month at difficulty 48. Sideloading an APK is a malware risk, and this page will not name a download.",
+    "8 ball pool unblocked is usually a search for a school-filter workaround, and this site is not that workaround. It is a browser game for adults 18+. Sideloading an APK is a malware risk, and this page will not name a download.",
   facts: [
-    "8 ball pool unblocked: about 5,400 US searches a month, difficulty 48, on 22 October 2026.",
-    "8 ball pool pc was about 260 at difficulty 69. The apk line was about 390 at difficulty 73.",
     "This site is a browser game for adults 18+. It is not a school unblocker and not an APK.",
     "Sideloading an APK is a malware risk. This page will not name a download or a store.",
     "PVPspinArena publishes the page. No named author. Last check 22 October 2026.",
@@ -21,55 +19,30 @@ export const guide: Guide = {
   sections: [
     {
       id: "why-the-query-is-large",
-      title: "Why the unblocked query is large",
-      body: `8 ball pool unblocked was about 5,400 US searches a month in the Semrush pull of 22 October 2026, at keyword difficulty 48. That is the largest phrase in this cluster by a wide margin, and most of the intent is a school or library filter. People want the coin game to load on a network that blocks games. This site is not a tool for that job. It is a browser game for adults 18+.
+      title: "This site is not a filter workaround",
+      body: `People want the coin game to load on a network that blocks games. This site is not a tool for that job. It is a browser game for adults 18+.
 
-Difficulty 48 means the phrase is already crowded with pages that promise a mirror. This page will not join them. It will not list bypass methods. A network administrator's block is their rule. Circumventing it is outside the product and outside this article.
+This page will not join them. It will not list bypass methods. A network administrator's block is their rule. Circumventing it is outside the product and outside this article.
 
-PVPspinArena publishes the page with no named author. The last check was 22 October 2026. Adults who are allowed to stake can read the fee below. Students looking for a classroom copy should close the tab.`,
-    },
-    {
-      id: "who-pays",
-      title: "Filter workaround versus an adult browser match",
-      body: `8 ball pool unblocked mixes a school workaround, a PC search, and an APK search. This site is a browser match for adults, with a 5% pot fee when money is staked.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
+PVPspinArena publishes the page with no named author. The last check was 22 October 2026. Adults who are allowed to stake can read the fee on the money-match hub. Students looking for a classroom copy should close the tab.`,
     },
     {
       id: "where",
       title: "Adult pages, not classroom mirrors",
-      body: `Put the page next to the rest of the table talk. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [the online hub for the money match](/guides/8-ball-pool-hub), [coins versus a cash pot](/guides/8-ball-pool-free-coins), [a 1v1 match for adults](/guides/8-ball-pool-1v1). The cluster lives with the [skill wagers guides](/guides/topics/skill-wagers).
+      body: `This site is a browser match for adults. It is not a school unblocker and it is not an APK. The money table, for someone allowed to use it, is on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [the 1v1 stake lobby](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
+The neighbouring money pages are [coins versus a cash pot](/guides/8-ball-pool-free-coins) and [a 1v1 match for adults](/guides/8-ball-pool-1v1). The group is the [skill wagers guides](/guides/topics/skill-wagers).
+
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "browser-on-a-computer",
       title: "A browser on a computer, not an installer",
-      body: `8 ball pool pc was about 260 US searches at difficulty 69 in the same pull. Difficulty 69 is a hard keyword, owned in practice by app stores and big clients. On this site the PC version is the same browser match a phone can open. There is no desktop installer to download from these pages, and no file name will be invented to fill the search.
+      body: `On this site the PC version is the same browser match a phone can open. There is no desktop installer to download from these pages, and no file name will be invented to fill the search.
 
 The match, when an adult plays it for money, is 1v1 8-ball. Stakes are $1, $2, $5, $10, $25, or $50 from a US-dollar balance. The fee is 5% of the pot. The winner is credited 95% when the match settles. Twenty-five dollars against twenty-five is a fifty-dollar pot, a fee of two dollars and fifty cents, and a credit of forty-seven dollars and fifty cents. Promo credit and partner credit can fund the stake. Deposited money is used first.
 
 Bitcoin, USDC, or ETH on Base can fund that dollar balance. There is no NFT and no web3 token, and there is no separate table hiding behind a PC download.`,
-    },
-    {
-      id: "two-pots",
-      title: "The stake, if you are allowed to post one",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $25.00 versus $25.00
-
-Both players post $25.00. The pot is $50.00. The fee is $2.50. The winner is credited $47.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "checklist",
@@ -86,7 +59,7 @@ Both players post $25.00. The pot is $50.00. The fee is $2.50. The winner is cre
     {
       id: "apk-line-malware-risk",
       title: "The APK line, and the malware risk",
-      body: `The apk query in the 22 October 2026 note was about 390 searches at difficulty 73. High difficulty and a sideload habit are a bad pair. An APK installed from outside a store you trust is a common way to pick up malware. This page will not name a download, will not name a file, and will not link a store. Sideloading an APK is a malware risk. That sentence is the whole of the advice.
+      body: `High difficulty and a sideload habit are a bad pair. An APK installed from outside a store you trust is a common way to pick up malware. This page will not name a download, will not name a file, and will not link a store. Sideloading an APK is a malware risk. That sentence is the whole of the advice.
 
 No mirror site is recommended either. A page that offers "unblocked" 8-ball often wants the install, the ad, or the account. This article does not know which of those pages are clean, so it will not sort them. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, and it does not know their installers. Unknown fee, unknown file.
 
@@ -97,18 +70,9 @@ If the browser match itself will not load, the reason may be a filter, a browser
       title: "Adults, filters, and the stake",
       body: `An adult on a network that allows the site can play. The shot clock is 30 seconds. Three timeouts forfeit that seat. Leaving the live table keeps 10% of that player's stake with the site and returns the rest. The other player gets their stake back and the table closes. Call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches, and that scratch loses. The table is open until a legal pocket assigns solids or stripes. A foul is ball in hand anywhere. The break is from the kitchen. If nobody joins within 24 hours, the stake comes back and no fee is charged.
 
-WPA rules effective 21 October 2026 are the contrast: call-shot, and a legal 8 on the break is spotted or rebroken. This browser table is not that book. The rack hash is still published before the balls show, the seed only shuffles coloured balls, and the 8 stays in the centre. New matches use pool-phys-v2.
+WPA rules effective 21 October 2026 are the contrast: call-shot, and a legal 8 on the break is spotted or rebroken. This browser table is not that book. The rack hash is still published before the balls show, the seed only shuffles coloured balls, and the 8 stays in the centre. New matches store the current physics id on the rack.
 
 Whether the cash stake is legal depends on where you live. This page is not legal advice and names no state. A school rule against games is also not a gambling statute. No weekly tournament is published for anyone, adult or otherwise.`,
-    },
-    {
-      id: "more",
-      title: "What this page will not unlock",
-      body: `Five thousand four hundred searches a month will keep producing unblock lists. Difficulty 48 says those lists already compete. This page's job is the refusal. 8 ball pool unblocked, in the way the query is usually meant, is a filter workaround. The product at this domain is an 18+ browser game. It does not ship a classroom mode or a network bypass. If a network blocks games, that block stands. Adults with an ordinary connection can open the match and read the 5% fee before they stake. No download is named anywhere in this refusal.
-
-The PC and APK numbers explain the other doors people try. 8 ball pool pc, about 260 searches at difficulty 69, is answered with the browser. The apk line, about 390 at difficulty 73, is answered with a warning: sideloading an APK is a malware risk, and this page will not name a download. No store is linked. No version number is given, because a version number would be a breadcrumb to a file. A desktop shortcut to the browser is the only "PC app" consistent with what is actually published.
-
-Money, for an adult who is allowed to play, is still the pot. Stakes run from $1 to $50. The winner receives 95% when the match settles, in the US-dollar balance. Crypto can fund that balance and does not create a second game. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, and it will not send a reader to an APK of those brands to find out. Promo credit and partner credit can be staked. If the table is still empty after 24 hours, the stake comes back. The filter question and the fee question stay separate.`,
     },
   ],
   faqs: [
@@ -118,15 +82,15 @@ Money, for an adult who is allowed to play, is still the pot. Stakes run from $1
     },
     {
       q: "Can the same match be opened on a PC?",
-      a: "8 ball pool pc was about 260 searches at difficulty 69 in the October 2026 pull. On this site that means a browser on a computer. It does not mean a desktop installer offered from this page.",
+      a: "On this site that means a browser on a computer. It does not mean a desktop installer offered from this page.",
     },
     {
       q: "Where is the APK?",
-      a: "This page will not name a download. The apk line in that pull was about 390 searches at difficulty 73. Sideloading an APK is a malware risk, and no store is linked.",
+      a: "This page will not name a download. Sideloading an APK is a malware risk, and no store is linked.",
     },
     {
       q: "Why is the unblocked query so large?",
-      a: "Semrush recorded about 5,400 US searches a month at difficulty 48. A lot of that intent is a filter workaround. This page answers the adult money game and refuses the workaround.",
+      a: "A lot of that intent is a filter workaround. This page answers the adult money game and refuses the workaround.",
     },
     {
       q: "Are school rules and gambling law the same question?",

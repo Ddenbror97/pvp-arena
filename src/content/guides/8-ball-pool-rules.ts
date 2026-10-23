@@ -12,8 +12,6 @@ export const guide: Guide = {
   answer:
     "8 ball pool rules in the World Pool-Billiard Association book effective 21 October 2026 are call shot, except on the break. A group is chosen by legally pocketing a called ball while the table is open. An 8 on a legal break is spotted and accepted, or the breaker rebreaks. It is not a win. This site's money table calls a pocket only for the 8, and an 8 on the break wins unless the cue ball scratches.",
   facts: [
-    "Semrush, United States, 22 October 2026: 8 ball pool rules was about 1,900 searches a month, keyword difficulty 56.",
-    "In that same pull, pool rules was about 4,400 searches a month at difficulty 51.",
     "WPA 8-ball spots the 8 only. Other object balls are not put back up.",
     "This site's fee is 5% of the pot. Stakes are $1 to $50. The shot clock is 30 seconds, and three timeouts forfeit.",
     "No named author. The PDF cited is the WPA rules of play effective 21 October 2026.",
@@ -29,9 +27,11 @@ While the table is open, hitting the 8 first is a foul unless a group has alread
     {
       id: "where",
       title: "Rule pages that sit beside 8-ball",
-      body: `These are the other doors, in a useful order. The map of these pages is [8 ball pool online](/guides/8-ball-pool-hub). The cash page that stays as it was written is [8 ball pool for money](/guides/8-ball-pool-for-money). The review that will not invent a rake is [Pool Payday](/guides/pool-payday-review). The wider list is [games that pay real money](/guides/games-that-pay-real-money). Neighbours: [scratch on the 8](/guides/pool-scratch-rules), [9-ball in order](/guides/9-ball-rules), [how a rack is won](/guides/how-to-win-8-ball-pool). The cluster lives with the [games of chance guides](/guides/topics/games-of-chance).
+      body: `This card is how 8-ball is called on this table, and how that differs from the WPA book. The fee, if you play for a stake, is on [8 ball pool online](/guides/8-ball-pool-hub).
 
-Open [play 8 ball for a pot](/8-ball-pool) for the match. The [fairness replay](/fairness) recomputes shots. It does not pay you twice. Adults 18+ only, and only where a stake is allowed. [Responsible gambling](/responsible-gambling) is the limit page. Nothing here is legal advice. A state is not named as legal or illegal, because this site has not published that ruling.`,
+The other rule cards are [scratch on the 8](/guides/pool-scratch-rules), [9-ball in order](/guides/9-ball-rules), and [how a rack is won](/guides/how-to-win-8-ball-pool). The group is the [games of chance guides](/guides/topics/games-of-chance).
+
+The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
     },
     {
       id: "break-eight",
@@ -60,33 +60,6 @@ If the break pockets nothing, a rail test applies. At least four object balls mu
 Once a group has been cleared, the 8 becomes the ball that group is allowed to play. Spotting stays narrow in this chapter. A stripe or a solid that is already down is not returned to the table as a general foul penalty. The 8 returns when a specific rule calls for it, including the legal-break case of spot and accept. A room that spots every fouled ball is using a house card. Name the card, WPA or house, before anyone treats a missed call as a stake.`,
     },
     {
-      id: "who-pays",
-      title: "Which 8-ball product is actually paying",
-      body: `Several products share the name 8 ball. The rows below separate a free client, a skill-cash app, and the cash 8-ball on this site. The WPA book is a fourth thing, and it is not a row in the fee table.
-
-| Question | Miniclip 8 Ball Pool | Skill-cash apps such as Pool Payday or Skillz | PVPspinArena 8 ball |
-| --- | --- | --- | --- |
-| Who you play | Other people, on a free client | Other people, for a prize the app describes | One other person, for the same cash stake |
-| Fee | Not published on this page | Not published on this page | 5% of the pot when the match settles |
-| Payout method | Coins and cosmetics, not a cash balance | A cashier this page has not audited | US-dollar balance |
-| Payout speed | Not a cash out | Not published on this page | Credited when the match settles |
-| Provably fair | No shot replay of this site's kind | Not published on this page | Rack hash, then a shot replay |
-| Minimum stake | Free, or coins | Not published on this page | $1 |
-
-Competitor cells stay blank on purpose. This page does not guess another company's rake.`,
-    },
-    {
-      id: "two-pots",
-      title: "What this site's 8-ball pot pays",
-      body: `### $25 versus $25
-
-Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
-
-### A second stake: $10.00 versus $10.00
-
-Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is credited $19.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
-    },
-    {
       id: "this-table",
       title: "The card this site stakes",
       body: `The money game on this site uses a shorter call. You name a pocket only when the ball is the 8. Any other of your balls may drop in any pocket. An 8 on the break wins unless the cue ball scratches, and that scratch loses the rack. An early 8, pocketed before your group is clear, loses. The 8 in the wrong pocket loses. A scratch while the 8 goes in loses as well. A foul gives ball in hand anywhere on the table. The shot clock is 30 seconds, and the third timeout forfeits that seat.
@@ -94,15 +67,6 @@ Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is cre
 The fee is 5% of the pot, and the winner is credited 95%. Posted stakes are $1, $2, $5, $10, $25, and $50. This cashier does not offer 9-ball, 10-ball, straight pool, one-pocket, bank, cutthroat, or killer for money. Those games can be read. They cannot be staked here. A player who wants full WPA call shot will not find it in this lobby. A player who wants a called 8, a 30-second clock, and a published 5% fee will find that card on the match.
 
 Each shot has 30 seconds. If the shooter has not been seen for 15 seconds, that shot gets one reconnect window of 45 seconds. Coming back does not start a new 30-second clock, and a second drop on the same shot is a timeout. Three timeouts forfeit the seat. A waiting table with no opponent stays open for 24 hours and then returns the stake. A player cannot cancel it. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays that player's shots. If both players are unseen for 180 seconds before any shot, both stakes return. After a shot has been played, that same absence forfeits the seat whose turn it is. That absence is not the Leave table button. Leave table keeps 10% of the leaver's stake with the site, returns the other 90%, refunds the opponent's stake, and closes the table with no winner.`,
-    },
-    {
-      id: "more",
-      title: "Reading the open table without guessing the book",
-      body: `Groups on an open table are a result, not a preference you lock by talking. Pocket a called solid legally and you are solids. Pocket a called stripe legally and you are stripes. The opponent receives the other set. If the called ball misses and a different ball falls, the table can stay open, because the call is what assigns the group. That is why a sloppy early run is dangerous under call shot. You may have pocketed balls and still own nothing. The 8 remains out of bounds as a first-contact ball until a group is cleared. Safety is a legal announcement in this chapter, so a player who is out of shape can say safety.
-
-A dry break and a foul break are easy to mash together, and the October 2026 book keeps them apart. When nothing falls, four object balls have to reach a rail or the break is illegal. When the 8 falls on a foul break, the incoming player is handed options. When the 8 falls on a legal break, the breaker spots that 8 and plays on, or breaks again. Nobody spots the solids and stripes that also fell on a legal break. If a friend retells the break as "8 ball, I win," ask which card was agreed. The WPA answer and the answer on this site are both printable. They are not the same sentence.
-
-Before a cash rack on this site, read the short card out loud. Pocket call for the 8 only. Break 8 wins unless the cue ball scratches. Early 8 loses. Wrong pocket loses. Scratch on the 8 loses. Ball in hand anywhere after a foul. Thirty seconds, and three timeouts forfeit the seat. Five percent of the pot stays with the site, and 95% is credited to the winner. Leaving a live table is separate: 10% of the leaver's stake stays with the site, both players get the rest of their own stakes back, and the table closes. The stake buttons are $1, $2, $5, $10, $25, and $50. If the argument is about a WPA safety or a called solid, you are in the wrong room for that argument. This lobby will not switch books mid-rack.`,
     },
   ],
   faqs: [
@@ -127,8 +91,8 @@ Before a cash rack on this site, read the short card out loud. Pocket call for t
       a: "8-ball only, at $1, $2, $5, $10, $25, or $50. The winner receives 95% of the pot because the fee is 5%. This site does not run 9-ball, 10-ball, straight pool, one-pocket, bank, cutthroat, or killer for money.",
     },
     {
-      q: "Why is pool rules a harder neighbouring search?",
-      a: "Semrush on 22 October 2026 put pool rules near 4,400 monthly searches at difficulty 51, and 8 ball pool rules near 1,900 at difficulty 56. Both are crowded. This page answers the rule split. It does not pretend to be the whole of every bar in the country.",
+      q: "Does this page cover every bar's house rules?",
+      a: "No. Bar cards vary, and this page is not a catalogue of every room. It states the WPA contrast used here and the card this table actually plays.",
     },
   ],
   sources: [
@@ -138,12 +102,6 @@ Before a cash rack on this site, read the short card out loud. Pocket call for t
     },
     { label: "WPA rules index", url: "https://wpapool.com/rules/" },
   ],
-  related: [
-    "8-ball-pool-for-money",
-    "pool-payday-review",
-    "games-that-pay-real-money",
-    "pool-scratch-rules",
-    "9-ball-rules",
-  ],
+  related: ["8-ball-pool-hub", "pool-scratch-rules", "9-ball-rules"],
   updated: "2026-10-23",
 };
