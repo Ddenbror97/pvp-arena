@@ -81,22 +81,6 @@ function CoinflipDuel() {
     <div className="cf-duel-pop" role="dialog" aria-modal="true" aria-labelledby="cf-duel-title">
       <button type="button" className="cf-duel-scrim" aria-label="Close coinflip" onClick={close} />
       <div className="cf-duel-card">
-        <img
-          className="cf-duel-fill"
-          src={room}
-          alt=""
-          width={1280}
-          height={720}
-          decoding="async"
-        />
-        <img
-          className="cf-duel-room"
-          src={room}
-          alt=""
-          width={1280}
-          height={720}
-          decoding="async"
-        />
         <button type="button" className="cf-duel-x" aria-label="Close" onClick={close}>
           <X className="h-4 w-4" />
         </button>

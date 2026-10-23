@@ -21,6 +21,7 @@ describe("coinflip room plate", () => {
     expect(route).toContain('role="dialog"');
     expect(route).toContain("cf-duel-pop");
     expect(route).toContain("cf-duel-card");
+    expect(route).not.toContain("cf-duel-room");
     expect(route).toContain('to: "/coinflip"');
     expect(route).not.toContain("cf-home-match");
     expect(route).toContain("cf-room");
@@ -31,6 +32,8 @@ describe("coinflip room plate", () => {
     expect(css).toContain("html:has(.jp-home)::before");
     expect(css).toContain("html:has(.cf-home)::before");
     expect(css).toContain(".cf-duel-card .cf-game-window");
+    expect(css).toContain("background: #070a17");
+    expect(css).not.toContain(".cf-duel-room");
     expect(css).not.toContain(".cf-match-screen");
     expect(css).not.toContain("cf-home-match");
     expect(root).not.toContain("cf-match-screen");
