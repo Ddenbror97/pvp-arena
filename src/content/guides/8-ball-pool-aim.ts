@@ -102,7 +102,7 @@ Draw and follow are speed and tip height, not magic. A low tip with a level cue 
 
 The replay will show the same miss twice. That is the point of pool-phys-v2. It is not a second chance and it is not a random reroll. If your aim was a half-tip off, the recomputed shot is a half-tip off. Use that to correct the picture, not to argue the table cheated the cut. The rack seed shuffled colours. It did not choose whether your contact point was true. Fix the picture, then take the next rack with that correction.
 
-The shot the server stores is a set of integers. Aim is stored in millidegrees. Power runs from 1 to 10,000, and the slider opens at 4,500. Side spin, and follow or draw, each run from −1,000 to 1,000. Double-click the spin control to clear it. Hold Shift, or use the arrow keys, for a finer angle. Those integers are not then given a random error.`,
+The shot the server stores is a set of integers. Aim is stored in millidegrees. Power runs from 1 to 10,000 and is how far you drag the cue back before you release. A mouse drag back shoots when you let go. A finger does that same drag on a phone. There is no shoot button. Side spin, and follow or draw, each run from −1,000 to 1,000. Double-click the spin control to clear it. Hold Shift, or use the arrow keys, for a finer angle. Those integers are not then given a random error.`,
     },
   ],
   faqs: [

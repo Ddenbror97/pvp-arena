@@ -30,7 +30,7 @@ export function winSentence(reason: string | null | undefined): string | null {
 export const POOL_RULES: readonly { title: string; body: string }[] = [
   {
     title: "Break",
-    body: "Player A breaks from behind the head string. Drag the cue ball to move it, then drag the table to aim.",
+    body: "Player A breaks from behind the head string. Drag the cue ball to place it, then drag the table to aim. Drag back and release to shoot. On a phone, drag with your finger.",
   },
   {
     title: "Open table",
@@ -73,11 +73,11 @@ export const POOL_RULES: readonly { title: string; body: string }[] = [
 export const TUTORIAL_STEPS: readonly { title: string; body: string }[] = [
   {
     title: "Drag to aim",
-    body: "Drag across the table. A drag that starts on the cue ball aims too, once your finger moves. Hold Shift, or use the arrow keys, for a finer angle.",
+    body: "Drag across the table to aim. On a phone, drag with your finger. A drag that starts on the cue ball aims once it moves. Hold Shift, or use the arrow keys, for a finer angle.",
   },
   {
-    title: "Set your power",
-    body: "The slider beside the table is power. It stays where you leave it until you change it.",
+    title: "Drag back to shoot",
+    body: "Click and drag back to pull the cue. Further back is more power. Let go of the mouse to shoot. On a phone, drag back with your finger and lift it to shoot. There is no shoot button.",
   },
   {
     title: "Add spin",
@@ -150,10 +150,11 @@ export function matchNotice(input: MatchNoticeInput): string | null {
   }
   if (input.shootingEight && !input.pocketChosen) return "Choose a pocket for the 8-ball";
   if (input.shootingEight) return "Pocket the 8-ball in the pocket you chose";
-  if (input.mine && input.breakShot) return "Your turn. Drag to aim, then shoot.";
+  if (input.mine && input.breakShot)
+    return "Your turn. Drag to aim, drag back, and release to shoot.";
   if (input.mine && input.group === "solids") return "Your turn. Pocket your remaining solids.";
   if (input.mine && input.group === "stripes") return "Your turn. Pocket your remaining stripes.";
-  if (input.mine) return "Your turn. Drag to aim.";
+  if (input.mine) return "Your turn. Drag back and release to shoot.";
   if (input.status === "PLAYING") return "Opponent's turn";
   return null;
 }

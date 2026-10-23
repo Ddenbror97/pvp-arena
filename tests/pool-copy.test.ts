@@ -60,6 +60,12 @@ describe("match notice", () => {
     expect(matchNotice({ ...base, group: "solids" })).toBe(
       "Your turn. Pocket your remaining solids.",
     );
+    expect(matchNotice({ ...base, breakShot: true, group: null })).toBe(
+      "Your turn. Drag to aim, drag back, and release to shoot.",
+    );
+    expect(matchNotice({ ...base, group: null })).toBe(
+      "Your turn. Drag back and release to shoot.",
+    );
     expect(matchNotice({ ...base, mine: false })).toBe("Opponent's turn");
     expect(matchNotice({ ...base, rolling: true })).toBe("Balls moving");
     expect(matchNotice({ ...base, busy: true })).toBe("Sending your shot");

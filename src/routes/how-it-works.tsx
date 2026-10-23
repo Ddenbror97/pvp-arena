@@ -458,8 +458,9 @@ function HowItWorksPage() {
                 winner.
               </li>
               <li>
-                <strong>Shots:</strong> 30 seconds each. You aim, then press Shoot. The server runs
-                the published rules.
+                <strong>Shots:</strong> 30 seconds each. Drag to aim, drag back for power, and
+                release to shoot. On a phone, drag with your finger. The server runs the published
+                rules.
               </li>
               <li>
                 <strong>Win:</strong> a legal 8-ball. An early 8, the wrong pocket, or a scratch on

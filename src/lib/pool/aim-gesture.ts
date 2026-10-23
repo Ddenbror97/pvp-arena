@@ -1,4 +1,4 @@
-import { BALL_R } from "@/lib/pool/physics";
+import { BALL_R, cosMicro, sinMicro } from "@/lib/pool/physics";
 
 export { BALL_R };
 
@@ -15,6 +15,14 @@ export const PLACE_GRAB_R = Math.round(BALL_R * 1.45);
 
 /** Movement required before a press on the cue ball changes the angle. */
 export const AIM_DEADZONE = Math.round(BALL_R * 0.28);
+
+/**
+ * Screen pixels of backward drag before a release shoots.
+ * A short slip while aiming stays an aim. A longer pull is power.
+ */
+export const PULL_DEAD_PX = 28;
+/** Backward drag, in screen pixels, that reaches full power. */
+export const PULL_FULL_PX = 180;
 
 export type AimGesture = { kind: "absolute" } | { kind: "from-cue"; origin: Point; armed: boolean };
 
@@ -39,6 +47,23 @@ export function startAim(point: Point, cue: Point): AimGesture {
   return { kind: "absolute" };
 }
 
+/** 0 until the drag back is deliberate. 10000 at a full pull. */
+export function powerFromPull(pixels: number): number {
+  if (!Number.isFinite(pixels) || pixels <= PULL_DEAD_PX) return 0;
+  const span = PULL_FULL_PX - PULL_DEAD_PX;
+  const t = Math.min(1, (pixels - PULL_DEAD_PX) / span);
+  return Math.max(1, Math.round(t * 10_000));
+}
+
+/** The pointer is on the butt side of the cue, outside the ball, so the aim stays. */
+function pulledBehind(point: Point, cue: Point, angleMilli: number): boolean {
+  const dx = point.x - cue.x;
+  const dy = point.y - cue.y;
+  if (dx * dx + dy * dy < CUE_GRAB_R * CUE_GRAB_R) return false;
+  const along = (dx * cosMicro(angleMilli) + dy * sinMicro(angleMilli)) / 1_000_000;
+  return along < -CUE_GRAB_R;
+}
+
 export function angleOf(dx: number, dy: number): number {
   if (dx === 0 && dy === 0) return 0;
   let deg = (Math.atan2(dy, dx) * 180) / Math.PI;
@@ -58,7 +83,7 @@ export function fineTune(current: number, next: number): number {
  * Absolute aim points from the cue through the pointer.
  * A gesture that began on the cue ball aims along the drag, after a dead zone,
  * so the angle does not jump on the press.
- * Sliding back onto the cue ball keeps the last angle.
+ * Sliding back onto the cue ball, or pulling behind it, keeps the last angle.
  */
 export function aimStep(
   gesture: AimGesture,
@@ -74,6 +99,9 @@ export function aimStep(
     if (!gesture.armed && moved < AIM_DEADZONE * AIM_DEADZONE) {
       return { gesture, angle: null };
     }
+    if (gesture.armed && pulledBehind(point, cue, angleMilli)) {
+      return { gesture, angle: null };
+    }
     if (moved < 1) return { gesture: { ...gesture, armed: true }, angle: null };
     const next = angleOf(dx, dy);
     return {
@@ -81,6 +109,7 @@ export function aimStep(
       angle: fine ? fineTune(angleMilli, next) : next,
     };
   }
+  if (pulledBehind(point, cue, angleMilli)) return { gesture, angle: null };
   const dx = point.x - cue.x;
   const dy = point.y - cue.y;
   if (dx * dx + dy * dy < CUE_GRAB_R * CUE_GRAB_R) return { gesture, angle: null };

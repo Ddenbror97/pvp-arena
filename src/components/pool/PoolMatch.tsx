@@ -84,7 +84,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const view = query.data;
   const shoot = useServerFn(submitPoolShot);
   const [angle, setAngle] = useState(0);
-  const [power, setPower] = useState(4500);
+  const [power, setPower] = useState(1);
   const [spinX, setSpinX] = useState(0);
   const [spinY, setSpinY] = useState(0);
   const [place, setPlace] = useState<{ x: number; y: number } | null>(null);
@@ -308,12 +308,13 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     };
   }, [view]);
 
-  const takeShot = useCallback(async () => {
+  const takeShot = useCallback(async (pulled?: number) => {
+    const shotPower = pulled ?? power;
     if (!state || !mine || busy || shooting.current || frames) return;
     shooting.current = true;
     const input: ShotInput = {
       angleMilli: angle,
-      power,
+      power: shotPower,
       spinX,
       spinY,
       placeX: state.ballInHand ? (place?.x ?? null) : null,
@@ -337,7 +338,10 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     try {
       const result = await shoot({ data: { matchId, key: crypto.randomUUID(), shot: input } });
       if (!result.ok) toast.error(poolMessage(result.error));
-      else setPlace(null);
+      else {
+        setPlace(null);
+        setPower(1);
+      }
       void qc.invalidateQueries({ queryKey: ["pool-match", matchId] });
       void qc.invalidateQueries({ queryKey: ["wallet"] });
     } catch {
@@ -475,7 +479,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             <PoolTable
               balls={previewBalls}
               angleMilli={0}
-              power={5000}
+              power={power}
               spinX={0}
               spinY={0}
               ghost={null}
@@ -507,9 +511,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
               <span />
             </span>
           </span>
-          <button type="button" className="pool-shoot" disabled>
-            Shoot
-          </button>
         </div>
         <p className="pool-banner">
           {query.isError
@@ -543,9 +544,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     view.winner_id !== userId;
   const pays = view.payout_amount ?? view.pot - Math.floor((view.pot * view.fee_bps) / 10_000);
   const fee = view.fee_amount ?? view.pot - pays;
-  const placeReady =
-    !state?.ballInHand || (place != null && legalPlacement(state, place.x, place.y));
-  const needsPocket = shootingEight && called == null;
   const notice = matchNotice({
     status: view.status,
     youWon,
@@ -674,18 +672,18 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       </div>
 
       <label className="pool-power">
-        <span className="sr-only">Set your power</span>
+        <span className="sr-only">Power</span>
         <input
           type="range"
           min={1}
           max={10000}
           value={power}
-          disabled={!mine}
+          disabled
+          tabIndex={-1}
           aria-valuetext={`${Math.round(power / 100)} percent`}
           style={{
             background: `linear-gradient(to top, #7c3aed ${Math.round(power / 100)}%, rgba(255,255,255,0.16) ${Math.round(power / 100)}%)`,
           }}
-          onChange={(event) => setPower(Number(event.target.value))}
         />
         <span>{Math.round(power / 100)}%</span>
       </label>
@@ -717,6 +715,14 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             onAim={(next) => {
               setAimHint(null);
               setAngle(next);
+            }}
+            onPower={(next) => {
+              setAimHint(null);
+              setPower(next);
+            }}
+            onShoot={(pulled) => {
+              tickSound();
+              void takeShot(pulled);
             }}
             onAimHint={setAimHint}
             onSample={onSample}
@@ -791,26 +797,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             <span />
           </button>
         </label>
-        <button
-          type="button"
-          className="pool-shoot"
-          aria-busy={busy}
-          disabled={!mine || busy || frames != null || needsPocket || !placeReady}
-          onClick={() => {
-            tickSound();
-            void takeShot();
-          }}
-        >
-          {view.status === "COMPLETED"
-            ? "Match over"
-            : view.status === "CANCELLED"
-              ? "Cancelled"
-              : busy
-                ? "Sending shot…"
-                : frames
-                  ? "Balls moving"
-                  : "Shoot"}
-        </button>
       </div>
 
       {sheet ? (
@@ -826,8 +812,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           />
           <p className="pool-spin-read">{spinSentence(spinX, spinY)}</p>
           <p>
-            Hold Shift while you drag for a finer angle. The dot is where the tip meets the cue
-            ball.
+            Drag on the table to aim. Drag back and release to shoot. On a phone, drag with your
+            finger. Hold Shift while you drag for a finer angle. The dot is where the tip meets the
+            cue ball.
           </p>
           <button type="button" onClick={() => toggleSoundMuted()}>
             {muted ? (

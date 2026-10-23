@@ -2915,7 +2915,7 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-power { left: 1.05rem; top: 58%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
 .pool-power input {
   writing-mode: vertical-lr; direction: rtl; appearance: none; width: 0.55rem; height: 9.2rem;
-  border-radius: 999px; border: 1px solid rgb(255 255 255 / 16%); background: rgb(255 255 255 / 14%); cursor: pointer;
+  border-radius: 999px; border: 1px solid rgb(255 255 255 / 16%); background: rgb(255 255 255 / 14%); cursor: default;
 }
 .pool-power input::-webkit-slider-thumb {
   appearance: none; width: 0.95rem; height: 0.95rem; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px rgb(124 58 237 / 45%);
@@ -2924,12 +2924,6 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-dock { left: 0.85rem; right: 0.85rem; bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
 .pool-chip, .pool-assist { padding: 0 0.8rem; }
 .pool-chip.is-on { border-color: #d8b4fe; box-shadow: 0 0 12px rgb(168 85 247 / 40%); }
-.pool-shoot {
-  margin-left: auto; height: 2.85rem; padding: 0 1.35rem; border: 0; border-radius: 999px; cursor: pointer; color: #fff;
-  background: linear-gradient(180deg, #d8b4fe, #7c3aed 58%, #6d28d9);
-  box-shadow: 0 10px 24px rgb(124 58 237 / 48%); font-family: var(--font-display); font-size: 1.02rem; font-weight: 700;
-}
-.pool-shoot:disabled { cursor: default; opacity: 0.5; }
 .pool-switch { position: relative; width: 2.35rem; height: 1.3rem; padding: 0.12rem; border: 0; border-radius: 999px; background: #3b3458; }
 .pool-switch span, .pool-assist > .pool-switch::after { content: ""; }
 .pool-switch span { display: block; width: 1.05rem; height: 1.05rem; border-radius: 50%; background: #fff; }
@@ -2963,7 +2957,7 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-sheet .pool-seed { word-break: break-all; }
 .pool-sheet button, .pool-confirm button { margin-top: 0.45rem; margin-right: 0.4rem; color: #e9d5ff; }
 .pool-missing { position: absolute; inset: 0; display: grid; place-items: center; color: #ddd4f8; }
-.pool-shoot:focus-visible, .pool-leave:focus-visible, .pool-chip:focus-visible, .pool-gear:focus-visible,
+.pool-leave:focus-visible, .pool-chip:focus-visible, .pool-gear:focus-visible,
 .pool-pockets button:focus-visible, .pool-tutorial button:focus-visible, .pool-rules-pop button:focus-visible,
 .pool-result a:focus-visible, .pool-result button:focus-visible, .pool-sheet button:focus-visible {
   outline: 2px solid #fff; outline-offset: 2px;
@@ -3003,7 +2997,6 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
   .pool-power input { height: 4.4rem; }
   .pool-power span:last-child { order: -1; }
   .pool-dock { flex-wrap: wrap; bottom: 0.4rem; }
-  .pool-shoot { margin-left: 0; }
 }
 @media (max-height: 520px) {
   .pool-brand small, .pool-pips { display: none; }

@@ -19,7 +19,13 @@ import {
   type BallSprite,
 } from "@/lib/pool/spheres";
 import { ballRadiusPx, spanPx, viewOf } from "@/lib/pool/view";
-import { aimStep, pointerIntent, startAim, type AimGesture } from "@/lib/pool/aim-gesture";
+import {
+  aimStep,
+  pointerIntent,
+  powerFromPull,
+  startAim,
+  type AimGesture,
+} from "@/lib/pool/aim-gesture";
 
 const SOLIDS = ["#f0c410", "#1d4ed8", "#dc2626", "#7c3aed", "#ea580c", "#15803d", "#7f1d1d"];
 
@@ -45,6 +51,33 @@ function mix(hex: string, toward: number, amount: number): string {
 }
 
 type Pt = { x: number; y: number };
+
+/** Screen pixels the pointer has moved opposite the shot. Positive is a pull-back. */
+function pullBackPx(
+  canvas: HTMLCanvasElement,
+  originX: number,
+  originY: number,
+  clientX: number,
+  clientY: number,
+  cue: { x: number; y: number },
+  angleMilli: number,
+): number {
+  const rect = canvas.getBoundingClientRect();
+  if (rect.width < 1 || rect.height < 1) return 0;
+  const view = viewOf(canvas.clientWidth, canvas.clientHeight);
+  const span = BALL_R * 4;
+  const dirX = cosMicro(angleMilli) / 1_000_000;
+  const dirY = sinMicro(angleMilli) / 1_000_000;
+  const from = view.project(cue.x, cue.y);
+  const to = view.project(cue.x + dirX * span, cue.y + dirY * span);
+  const sx = to.x - from.x;
+  const sy = to.y - from.y;
+  const len = Math.hypot(sx, sy);
+  if (len < 1) return 0;
+  const dx = ((clientX - originX) / rect.width) * canvas.clientWidth;
+  const dy = ((clientY - originY) / rect.height) * canvas.clientHeight;
+  return -((dx * sx + dy * sy) / len);
+}
 
 function tablePoint(canvas: HTMLCanvasElement, clientX: number, clientY: number) {
   const rect = canvas.getBoundingClientRect();
@@ -739,6 +772,8 @@ type Props = {
   replay: readonly Ball[][] | null;
   stroke: Stroke | null;
   onAim: (angleMilli: number) => void;
+  onPower?: (power: number) => void;
+  onShoot?: (power: number) => void;
   onPlace: (x: number, y: number) => void;
   onSample: (prev: readonly Ball[], next: readonly Ball[]) => void;
   onReplayDone: () => void;
@@ -747,7 +782,7 @@ type Props = {
   legalAt: (x: number, y: number) => boolean;
 };
 
-/** The cloth is a view. A drag sets aim or the cue-ball spot. It never takes the shot. */
+/** A drag aims or places the cue ball. Dragging back charges power, and releasing shoots. */
 export function PoolTable({
   balls,
   angleMilli,
@@ -762,6 +797,8 @@ export function PoolTable({
   replay,
   stroke,
   onAim,
+  onPower,
+  onShoot,
   onPlace,
   onSample,
   onReplayDone,
@@ -777,6 +814,12 @@ export function PoolTable({
   legalRef.current = legalAt;
   const aimRef = useRef(onAim);
   aimRef.current = onAim;
+  const powerCb = useRef(onPower);
+  powerCb.current = onPower;
+  const shootRef = useRef(onShoot);
+  shootRef.current = onShoot;
+  const pullRef = useRef(0);
+  const originRef = useRef<{ x: number; y: number } | null>(null);
   const placeRef = useRef(onPlace);
   placeRef.current = onPlace;
   const hintRef = useRef(onAimHint);
@@ -1181,6 +1224,18 @@ export function PoolTable({
     return ballsRef.current.find((ball) => ball.id === 0) ?? null;
   };
 
+  const charge = (event: PointerEvent<HTMLCanvasElement>, cue: { x: number; y: number }) => {
+    const canvas = ref.current;
+    const origin = originRef.current;
+    if (!canvas || !origin || gestureRef.current?.kind === "place") return;
+    const next = powerFromPull(
+      pullBackPx(canvas, origin.x, origin.y, event.clientX, event.clientY, cue, angleRef.current),
+    );
+    if (next === pullRef.current) return;
+    pullRef.current = next;
+    powerCb.current?.(next === 0 ? 1 : next);
+  };
+
   const aimAt = (event: PointerEvent<HTMLCanvasElement>) => {
     const canvas = ref.current;
     const gesture = gestureRef.current;
@@ -1189,27 +1244,42 @@ export function PoolTable({
     const point = tablePoint(canvas, event.clientX, event.clientY);
     const step = aimStep(gesture, point, cue, angleRef.current, event.shiftKey);
     gestureRef.current = step.gesture;
-    if (step.angle != null) aimRef.current(step.angle);
+    if (step.angle != null) {
+      angleRef.current = step.angle;
+      aimRef.current(step.angle);
+    }
+    charge(event, cue);
   };
 
-  const endGesture = () => {
+  const endGesture = (shoot: boolean) => {
     const gesture = gestureRef.current;
+    const pulled = pullRef.current;
     gestureRef.current = null;
+    pullRef.current = 0;
+    originRef.current = null;
     setDraft(null);
-    if (gesture?.kind === "from-cue" && !gesture.armed) hintRef.current?.("Drag to aim.");
+    if (!gesture || gesture.kind === "place") return;
+    if (shoot && pulled > 0) {
+      shootRef.current?.(pulled);
+      return;
+    }
+    if (gesture.kind === "from-cue" && !gesture.armed) hintRef.current?.("Drag to aim.");
+    else hintRef.current?.("Drag back and release to shoot.");
   };
 
   return (
     <canvas
       ref={ref}
       className="pool-canvas"
-      aria-label="Pool table. Drag to aim. Drag the cue ball when it is ball in hand."
+      aria-label="Pool table. Drag to aim. Drag back and release to shoot. On a phone, drag with your finger. Drag the cue ball when it is ball in hand."
       onPointerDown={(event) => {
         try {
           event.currentTarget.setPointerCapture(event.pointerId);
         } catch {
           // Capture fails for a pointer that was already released. Aim still applies.
         }
+        originRef.current = { x: event.clientX, y: event.clientY };
+        pullRef.current = 0;
         const point = tablePoint(event.currentTarget, event.clientX, event.clientY);
         const cue = cuePoint();
         if (!showCueRef.current && !placing) {
@@ -1239,8 +1309,8 @@ export function PoolTable({
         }
         aimAt(event);
       }}
-      onPointerUp={endGesture}
-      onPointerCancel={endGesture}
+      onPointerUp={() => endGesture(true)}
+      onPointerCancel={() => endGesture(false)}
     />
   );
 }

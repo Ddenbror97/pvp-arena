@@ -3,8 +3,11 @@ import {
   AIM_DEADZONE,
   BALL_R,
   CUE_GRAB_R,
+  PULL_DEAD_PX,
+  PULL_FULL_PX,
   aimStep,
   pointerIntent,
+  powerFromPull,
   startAim,
   type AimGesture,
   type Point,
@@ -87,6 +90,23 @@ describe("pointer aim", () => {
     const played = follow(start, [], true, 0);
     expect(played.current).toBeGreaterThan(0);
     expect(played.current).toBeLessThan(20_000);
+  });
+
+  it("keeps the aim when the pointer is pulled behind the cue ball", () => {
+    const start = { x: cue.x + BALL_R * 4, y: cue.y };
+    const behind = { x: cue.x - BALL_R * 4, y: cue.y };
+    const played = follow(start, [behind]);
+    expect(played.angles[0]).toBe(0);
+    expect(played.current).toBe(0);
+  });
+
+  it("maps a backward drag to power and ignores a short slip", () => {
+    expect(powerFromPull(0)).toBe(0);
+    expect(powerFromPull(PULL_DEAD_PX)).toBe(0);
+    expect(powerFromPull(PULL_DEAD_PX + 1)).toBeGreaterThan(0);
+    expect(powerFromPull((PULL_DEAD_PX + PULL_FULL_PX) / 2)).toBeGreaterThan(4000);
+    expect(powerFromPull(PULL_FULL_PX)).toBe(10_000);
+    expect(powerFromPull(PULL_FULL_PX + 80)).toBe(10_000);
   });
 
   it("places only when ball-in-hand starts on the cue ball", () => {
