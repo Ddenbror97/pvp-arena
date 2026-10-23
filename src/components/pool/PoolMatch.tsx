@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ChevronDown, CircleHelp, Crown, Settings, Volume2, VolumeX } from "lucide-react";
+import { CircleHelp, Crown, MessageSquare, Settings, Volume2, VolumeX } from "lucide-react";
 import room from "@/assets/pool/room.webp";
 import { arenaLogo } from "@/assets/media";
 import { toast } from "sonner";
@@ -50,6 +50,8 @@ import {
 } from "@/lib/pool/copy";
 import { dismissPoolTutorial, poolTutorialDismissed } from "@/lib/pool/prefs";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
+import { GameChat } from "@/components/chat/GameChat";
+import { SHARED_CHAT_ROOM } from "@/lib/chat/config";
 import { PoolTable } from "./PoolTable";
 
 function shotKey(input: ShotInput): string {
@@ -585,15 +587,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   if (!view) {
     return (
       <Shell>
-        <div className="pool-brand">
-          <span className="pool-brand-mark" aria-hidden>
-            8
-          </span>
-          <span>
-            <strong>POOL</strong>
-            <small>PVP · Real money</small>
-          </span>
-        </div>
         <div className="pool-vs" aria-hidden>
           <span className="pool-seat">
             <span className="pool-face">
@@ -635,20 +628,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             <Settings className="h-4 w-4" />
           </span>
         </div>
-        <div className="pool-prize">
-          <span className="pool-prize-icon" aria-hidden>
-            $
-          </span>
-          <span>
-            <small>Prize pool</small>
-            <strong>$0.00</strong>
-          </span>
-        </div>
-        <label className="pool-power">
-          <span className="sr-only">Power</span>
-          <input type="range" min={1} max={10000} value={power} disabled />
-          <span>{powerReadout(power)}</span>
-        </label>
         <div className="pool-felt">
           <div className="pool-felt-frame">
             <PoolTable
@@ -669,10 +648,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
               onReplayDone={() => {}}
             />
           </div>
-        </div>
-        <div className="pool-dock">
-          <span className="pool-chip">Spin</span>
-          <span className="pool-chip">Cue ball set</span>
         </div>
         <p className="pool-banner">
           {query.isError
@@ -761,16 +736,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
 
   return (
     <Shell calling={shootingEight}>
-      <div className="pool-brand">
-        <span className="pool-brand-mark" aria-hidden>
-          8
-        </span>
-        <span>
-          <strong>POOL</strong>
-          <small>PVP · Real money</small>
-        </span>
-      </div>
-
       <div className="pool-vs" aria-label="Players">
         <SeatCard
           name={names.A}
@@ -831,42 +796,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           <CircleHelp className="h-4 w-4" />
         </button>
       </div>
-
-      <div className="pool-prize">
-        <span className="pool-prize-icon" aria-hidden>
-          $
-        </span>
-        <span>
-          <small>
-            {view.status === "CANCELLED"
-              ? "Stakes refunded"
-              : view.status === "WAITING"
-                ? "Stake locked until the match starts"
-                : "Prize pool"}
-          </small>
-          <strong>{dollars(view.pot)}</strong>
-          <em>
-            Winner receives {dollars(pays)} · fee {dollars(fee)}
-          </em>
-        </span>
-      </div>
-
-      <label className="pool-power">
-        <span className="sr-only">Power</span>
-        <input
-          type="range"
-          min={1}
-          max={10000}
-          value={power}
-          disabled
-          tabIndex={-1}
-          aria-valuetext={powerReadout(power)}
-          style={{
-            background: `linear-gradient(to top, #7c3aed ${Math.round(power / 100)}%, rgba(255,255,255,0.16) ${Math.round(power / 100)}%)`,
-          }}
-        />
-        <span>{powerReadout(power)}</span>
-      </label>
 
       <div className="pool-felt">
         <div className="pool-felt-frame">
@@ -941,20 +870,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           ))}
         </div>
       ) : null}
-
-      <div className="pool-dock">
-        <button
-          type="button"
-          className="pool-chip"
-          aria-expanded={sheet}
-          onClick={() => setSheet((open) => !open)}
-        >
-          Spin <ChevronDown className="h-3.5 w-3.5" />
-        </button>
-        <span className={state?.ballInHand ? "pool-chip is-on" : "pool-chip"} aria-live="polite">
-          {state?.ballInHand ? "Place the cue ball" : "Cue ball set"}
-        </span>
-      </div>
 
       {sheet ? (
         <div className="pool-sheet">
@@ -1055,19 +970,28 @@ export function PoolMatch({ matchId }: { matchId: number }) {
 }
 
 function Shell({ children, calling = false }: { children: ReactNode; calling?: boolean }) {
+  const [chatOpen, setChatOpen] = useState(false);
   return (
-    <div className={calling ? "pool-screen is-calling" : "pool-screen"}>
+    <div
+      className={calling ? "pool-screen is-calling" : "pool-screen"}
+      data-chat={chatOpen ? "open" : "closed"}
+    >
       <div className="pool-room" style={{ backgroundImage: `url(${room})` }} aria-hidden>
         <img className="pool-room-logo" src={arenaLogo} alt="" />
       </div>
       {children}
+      <GameChat gameType={SHARED_CHAT_ROOM} className="pool-chat" />
+      <button
+        type="button"
+        className="pool-chat-toggle"
+        aria-expanded={chatOpen}
+        onClick={() => setChatOpen((open) => !open)}
+      >
+        <MessageSquare className="h-4 w-4" aria-hidden />
+        {chatOpen ? "Close chat" : "Live chat"}
+      </button>
     </div>
   );
-}
-
-function powerReadout(power: number): string {
-  const pct = Math.round(power / 100);
-  return pct >= 1 ? `${pct}%` : "Power";
 }
 
 function dollars(cents: number | null | undefined): string {
