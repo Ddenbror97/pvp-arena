@@ -214,7 +214,7 @@ export const GAME_FACT_PAGES: Record<string, GameFactPage> = {
       },
       {
         label: "Checking the result",
-        text: "Once the match is playing, the seed is revealed. Anyone can replay the shot list, the timeouts and the forfeits under physics pool-phys-v1 and rules pvp-8ball-v1. A later engine will not confirm an older match. A paid winner that disagrees with that replay is not a verified result. The check does not move money back.",
+        text: "Once the match is playing, the seed is revealed. Anyone can replay the shot list, the timeouts and the forfeits under the physics id stored with that rack, pool-phys-v1 or pool-phys-v2, and rules pvp-8ball-v1. An older match stays on the physics it was played with. A paid winner that disagrees with that replay is not a verified result. The check does not move money back.",
       },
       { label: "Who can play", text: AGE },
     ],

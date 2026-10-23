@@ -9,7 +9,7 @@ export function playShot(
   const working = structuredClone(state);
   const placed = placeCue(working, input);
   if (placed) return { ok: false, error: placed };
-  const sim = simulate(working.balls, input, false);
+  const sim = simulate(working.balls, input, false, state.physics);
   const applied = applyPlayedShot(working, sim, input.calledPocket);
   if (applied.event.reason === "CALL_POCKET") return { ok: false, error: "CALL_POCKET" };
   const hash = stateHash(applied.state);

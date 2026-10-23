@@ -2935,3 +2935,13 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
   .pool-dock { flex-wrap: wrap; bottom: 0.4rem; }
   .pool-shoot { margin-left: 0; }
 }
+@media (max-height: 520px) {
+  .pool-brand small, .pool-pips { display: none; }
+  .pool-vs { top: 0.3rem; }
+  .pool-felt { top: 3.15rem; bottom: 3.15rem; }
+  .pool-banner { top: 2.55rem; }
+  .pool-power { bottom: 3.05rem; }
+  .pool-power input { height: 2.8rem; }
+  .pool-dock { bottom: 0.2rem; }
+  .pool-pockets { bottom: 3rem; }
+}

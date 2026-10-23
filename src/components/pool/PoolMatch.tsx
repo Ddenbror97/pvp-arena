@@ -115,7 +115,10 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const shotsRef = useRef(shotList);
   shotsRef.current = shotList;
   const sawLive = useRef(false);
+  const shooting = useRef(false);
+  const presenceWarned = useRef(false);
   const tableHash = view?.state_hash ?? null;
+  const updatedAt = query.dataUpdatedAt;
 
   useEffect(() => {
     if (!serverSeed) return;
@@ -131,12 +134,37 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   useEffect(() => {
     if (liveId == null || seat == null || liveStatus === "COMPLETED" || liveStatus === "CANCELLED")
       return;
-    const beat = window.setInterval(() => {
-      void poolTouch(liveId);
-    }, 8_000);
-    void poolTouch(liveId);
-    return () => window.clearInterval(beat);
-  }, [liveId, liveStatus, seat]);
+    let stopped = false;
+    const beat = () => {
+      // A hidden tab is a drop, not a presence. The server grants one reconnect window.
+      if (stopped || document.visibilityState === "hidden") return;
+      void poolTouch(liveId).then((res) => {
+        if (!res.error) {
+          presenceWarned.current = false;
+          return;
+        }
+        if (!presenceWarned.current) {
+          presenceWarned.current = true;
+          console.warn("pool presence", res.error.message);
+        }
+      });
+    };
+    beat();
+    const id = window.setInterval(beat, 4_000);
+    const onShow = () => {
+      if (document.visibilityState === "visible") beat();
+    };
+    document.addEventListener("visibilitychange", onShow);
+    window.addEventListener("focus", onShow);
+    window.addEventListener("pageshow", onShow);
+    return () => {
+      stopped = true;
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onShow);
+      window.removeEventListener("focus", onShow);
+      window.removeEventListener("pageshow", onShow);
+    };
+  }, [liveId, liveStatus, seat, updatedAt]);
 
   useEffect(() => {
     if (liveId == null || liveStatus !== "PLAYING" || left > 0) return;
@@ -189,21 +217,25 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     let i = 0;
     let prev = frames[0];
     let lastNoise = 0;
+    let stopped = false;
     const shots = shotsRef.current;
     const last = shots?.[shots.length - 1];
     const fouled = last?.kind === "shot" && last.event["foul"] === true;
-    const id = window.setInterval(() => {
-      i += 1;
-      if (i >= frames.length) {
-        window.clearInterval(id);
-        if (fouled) foulSound();
-        setFrames(null);
+    // Step several recorded ticks per paint. A 16ms React render of every
+    // physics sample blocks heartbeats and the shot controls for the whole roll.
+    let raf = 0;
+    let stamp = 0;
+    const tick = (now: number) => {
+      if (stopped) return;
+      if (now - stamp < 40) {
+        raf = requestAnimationFrame(tick);
         return;
       }
-      const next = frames[i];
-      if (prev && next) {
+      stamp = now;
+      const nextIndex = Math.min(frames.length - 1, i + 4);
+      const next = frames[nextIndex];
+      if (prev && next && nextIndex !== i) {
         const hit = impactOf(prev, next);
-        const now = performance.now();
         if (hit.pocket) pocketSound();
         else if (now - lastNoise > 48) {
           if (hit.ball > 700) {
@@ -216,9 +248,20 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         }
       }
       prev = next;
+      i = nextIndex;
+      if (i >= frames.length - 1) {
+        if (fouled) foulSound();
+        setFrames(null);
+        return;
+      }
       setFrame(i);
-    }, 16);
-    return () => window.clearInterval(id);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => {
+      stopped = true;
+      cancelAnimationFrame(raf);
+    };
   }, [frames]);
 
   const shown = frames?.[frame] ?? state?.balls ?? [];
@@ -240,7 +283,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   }, [view]);
 
   const takeShot = async () => {
-    if (!state || !mine) return;
+    if (!state || !mine || busy || shooting.current) return;
+    shooting.current = true;
     const input: ShotInput = {
       angleMilli: angle,
       power,
@@ -254,10 +298,12 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       state.ballInHand &&
       (input.placeX == null || !legalPlacement(state, input.placeX, input.placeY ?? 0))
     ) {
+      shooting.current = false;
       toast.error(poolMessage("ILLEGAL_PLACEMENT"));
       return;
     }
     if (shootingEight && called == null) {
+      shooting.current = false;
       toast.error(poolMessage("CALL_POCKET"));
       return;
     }
@@ -271,9 +317,37 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     } catch {
       toast.error(poolMessage("REQUEST_FAILED"));
     } finally {
+      shooting.current = false;
       setBusy(false);
     }
   };
+
+  useEffect(() => {
+    if (!mine) return;
+    const onKey = (event: KeyboardEvent) => {
+      const tag = (event.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      const step = event.altKey ? 1 : event.shiftKey ? 100 : 1_000;
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        setAngle((current) => (current - step + 360_000) % 360_000);
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        setAngle((current) => (current + step) % 360_000);
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setPower((current) => Math.min(10_000, current + 500));
+      } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setPower((current) => Math.max(1, current - 500));
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        void takeShot();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mine, takeShot]);
 
   const checkReplay = async () => {
     if (!view?.server_seed || !view.state) return;
@@ -282,7 +356,12 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       setReplayNote("The shot list could not be read.");
       return;
     }
-    const replay = await replayMatch(bytesFromHex(view.server_seed), view.server_seed_hash, steps);
+    const replay = await replayMatch(
+      bytesFromHex(view.server_seed),
+      view.server_seed_hash,
+      steps,
+      view.state?.physics ?? "pool-phys-v2",
+    );
     const paid =
       view.winner_id == null
         ? replay.winner == null
@@ -347,8 +426,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         </div>
         <label className="pool-power">
           <span className="sr-only">Power</span>
-          <input type="range" min={1} max={10000} defaultValue={5000} disabled />
-          <span>50%</span>
+          <input type="range" min={1} max={10000} value={power} disabled />
+          <span>{Math.round(power / 100)}%</span>
         </label>
         <div className="pool-felt">
           <div className="pool-felt-frame">
@@ -533,7 +612,14 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         <span>{Math.round(power / 100)}%</span>
       </label>
 
-      <div className="pool-felt">
+      <div
+        className="pool-felt"
+        data-angle={angle}
+        data-power={power}
+        data-spin-x={spinX}
+        data-spin-y={spinY}
+        data-rolling={frames ? "1" : "0"}
+      >
         <div className="pool-felt-frame">
           <PoolTable
             balls={shown}
@@ -818,6 +904,7 @@ function SpinPad({
         else if (event.key === "Home") onChange(0, 0);
         else return;
         event.preventDefault();
+        event.stopPropagation();
       }}
     >
       <i style={{ left: `${50 + (spinX / 1000) * 36}%`, top: `${50 - (spinY / 1000) * 36}%` }} />

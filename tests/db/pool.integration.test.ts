@@ -350,6 +350,91 @@ d("pool ledger (isolated schema)", () => {
     expect(row.state.winner).toBeNull();
   });
 
+  it("forfeits only when both seats have gone quiet after a shot", async () => {
+    const a = await newUser("nora");
+    const b = await newUser("otto");
+    const made = await as(a, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
+      return row.r as { match_id: number };
+    });
+    await as(b, async (tx) => {
+      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
+    });
+    await beginReal(made.match_id);
+    await as(a, async (tx) => {
+      await tx`select pvp_test.pool_touch(${made.match_id})`;
+    });
+    await as(b, async (tx) => {
+      await tx`select pvp_test.pool_touch(${made.match_id})`;
+    });
+    await sql`update pvp_test.pool_matches set turn_deadline = clock_timestamp() + interval '20 seconds'
+      where id = ${made.match_id}`;
+    const [live] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
+    expect(live.r).toBe("waiting");
+
+    await sql`update pvp_test.pool_matches set
+      state = jsonb_set(state, '{shot}', '1'::jsonb),
+      seen_a = clock_timestamp() - interval '181 seconds',
+      seen_b = clock_timestamp() - interval '181 seconds'
+      where id = ${made.match_id}`;
+    const [gone] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
+    expect(gone.r).toBe("forfeit_absent");
+    const [done] =
+      await sql`select status, win_reason, winner_id from pvp_test.pool_matches where id = ${made.match_id}`;
+    expect(done.status).toBe("COMPLETED");
+    expect(done.win_reason).toBe("FORFEIT");
+    expect(done.winner_id).toBe(b);
+  });
+
+  it("keeps the server clock when a player heartbeats, and does not abandon a live seat", async () => {
+    const a = await newUser("pia");
+    const b = await newUser("quin");
+    const made = await as(a, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
+      return row.r as { match_id: number };
+    });
+    await as(b, async (tx) => {
+      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
+    });
+    await beginReal(made.match_id);
+    await as(a, async (tx) => {
+      await tx`select pvp_test.pool_touch(${made.match_id})`;
+    });
+    await as(b, async (tx) => {
+      await tx`select pvp_test.pool_touch(${made.match_id})`;
+    });
+    const [before] =
+      await sql`select turn_deadline from pvp_test.pool_matches where id = ${made.match_id}`;
+    await as(a, async (tx) => {
+      await tx`select pvp_test.pool_touch(${made.match_id})`;
+    });
+    const [refreshed] =
+      await sql`select turn_deadline from pvp_test.pool_matches where id = ${made.match_id}`;
+    expect(new Date(refreshed.turn_deadline).getTime()).toBe(
+      new Date(before.turn_deadline).getTime(),
+    );
+
+    await sql`update pvp_test.pool_matches set
+      seen_b = clock_timestamp() - interval '181 seconds',
+      turn_deadline = clock_timestamp() + interval '20 seconds'
+      where id = ${made.match_id}`;
+    const [oneLive] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
+    expect(oneLive.r).toBe("waiting");
+
+    await sql`update pvp_test.pool_matches set
+      seen_a = clock_timestamp(),
+      turn_deadline = clock_timestamp() - interval '1 second'
+      where id = ${made.match_id}`;
+    const [clock] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
+    expect(clock.r).toBe("timeout");
+    const [row] =
+      await sql`select status, win_reason, state from pvp_test.pool_matches where id = ${made.match_id}`;
+    expect(row.status).toBe("PLAYING");
+    expect(row.win_reason).toBeNull();
+    expect(row.state.timeouts.A).toBe(1);
+    expect(row.state.winner).toBeNull();
+  });
+
   it("rejects a shot with no spin", async () => {
     const a = await newUser("mina");
     const b = await newUser("nils");

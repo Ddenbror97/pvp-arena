@@ -864,7 +864,11 @@ export function PoolTable({
       className="pool-canvas"
       aria-label="Pool table"
       onPointerDown={(event) => {
-        event.currentTarget.setPointerCapture(event.pointerId);
+        try {
+          event.currentTarget.setPointerCapture(event.pointerId);
+        } catch {
+          // Capture fails for a pointer that was already released. Aim still applies.
+        }
         if (placing) {
           const point = tablePoint(event.currentTarget, event.clientX, event.clientY);
           setDraft(point);

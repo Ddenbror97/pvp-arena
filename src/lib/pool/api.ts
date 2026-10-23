@@ -134,7 +134,16 @@ export async function fetchPoolState(id: number): Promise<PoolView> {
 
 export const poolCancel = (id: number) => db.rpc("pool_cancel", { p_match: id });
 export const poolForfeit = (id: number) => db.rpc("pool_forfeit", { p_match: id });
-export const poolTouch = (id: number) => db.rpc("pool_touch", { p_match: id });
+export async function poolTouch(id: number) {
+  const first = await db.rpc("pool_touch", { p_match: id });
+  if (!first.error) return first;
+  // A stale access token makes the presence call look anonymous. Refresh once and retry.
+  if (/jwt|session|auth/i.test(first.error.message)) {
+    const refreshed = await supabase.auth.refreshSession();
+    if (!refreshed.error) return db.rpc("pool_touch", { p_match: id });
+  }
+  return first;
+}
 export const poolNudge = (id: number) => db.rpc("pool_nudge", { p_match: id });
 
 export function usePoolLobby() {
@@ -156,6 +165,9 @@ export function usePoolState(id: number) {
       if (status === "COMPLETED" || status === "CANCELLED") return false;
       return 1_000;
     },
+    // A seated player's poll is also how the page stays present. Hidden tabs keep asking.
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
   });
   useEffect(() => {
     if (!Number.isInteger(id) || id < 1) return;

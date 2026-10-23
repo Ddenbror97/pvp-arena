@@ -7,7 +7,9 @@
  * Speed is capped below half a radius per tick so balls cannot tunnel.
  */
 
-export const PHYSICS_VERSION = "pool-phys-v1";
+/** Matches already stored under v1 keep that drag. New racks use v2, which can cross the table. */
+export const PHYSICS_V1 = "pool-phys-v1";
+export const PHYSICS_VERSION = "pool-phys-v2";
 
 export const TABLE_W = 2_540_000;
 export const TABLE_H = 1_270_000;
@@ -205,14 +207,20 @@ function bounce(b: Ball, rails: Set<number>, hitObject: boolean, railAfter: { on
   }
 }
 
-function damp(b: Ball) {
+/** Per-tick speed lost to cloth. v1 stops a full-power cue before the rack. */
+export function rollDrop(speed: number, physics = PHYSICS_VERSION): number {
+  if (physics === PHYSICS_V1) return 32 + Math.trunc(speed / 160);
+  return 4 + Math.trunc(speed / 900);
+}
+
+function damp(b: Ball, physics: string) {
   if (b.pocketed) return;
   const speed = isqrt(b.vx * b.vx + b.vy * b.vy);
   if (speed < 70) {
     b.vx = 0;
     b.vy = 0;
   } else {
-    const drop = 32 + Math.trunc(speed / 160);
+    const drop = rollDrop(speed, physics);
     const next = speed - drop;
     if (next <= 0) {
       b.vx = 0;
@@ -233,7 +241,12 @@ export function moving(balls: readonly Ball[]): boolean {
  * Run one shot from a placed cue. `record` keeps every fourth tick for animation.
  * The returned balls are at rest.
  */
-export function simulate(start: readonly Ball[], shot: ShotInput, record = false): SimResult {
+export function simulate(
+  start: readonly Ball[],
+  shot: ShotInput,
+  record = false,
+  physics = PHYSICS_VERSION,
+): SimResult {
   const balls = cloneBalls(start);
   const cue = balls.find((b) => b.id === 0);
   if (!cue || cue.pocketed) {
@@ -299,7 +312,7 @@ export function simulate(start: readonly Ball[], shot: ShotInput, record = false
         continue;
       }
       bounce(b, rails, hitObject, railAfter);
-      damp(b);
+      damp(b, physics);
     }
     if (record && tick % 4 === 0) frames.push(cloneBalls(balls));
   }
