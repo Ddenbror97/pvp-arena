@@ -92,6 +92,22 @@ describe("pointer aim", () => {
     expect(played.current).toBeLessThan(20_000);
   });
 
+  it("rotates the cue when a drag starts on the stick and moves around the ball", () => {
+    const start = { x: cue.x - BALL_R * 4, y: cue.y };
+    const below = { x: cue.x, y: cue.y - BALL_R * 4 };
+    const played = follow(start, [below]);
+    expect(played.gesture).toMatchObject({ kind: "cue-stick" });
+    expect(played.angles[0]).toBe(0);
+    expect(played.current).toBe(90_000);
+  });
+
+  it("keeps the stick aim when the cue is pulled straight back", () => {
+    const start = { x: cue.x - BALL_R * 4, y: cue.y };
+    const farther = { x: cue.x - BALL_R * 8, y: cue.y };
+    const played = follow(start, [farther]);
+    expect(played.current).toBe(0);
+  });
+
   it("keeps the aim when the pointer is pulled behind the cue ball", () => {
     const start = { x: cue.x + BALL_R * 4, y: cue.y };
     const behind = { x: cue.x - BALL_R * 4, y: cue.y };

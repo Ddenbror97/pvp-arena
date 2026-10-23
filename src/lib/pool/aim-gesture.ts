@@ -24,7 +24,15 @@ export const PULL_DEAD_PX = 28;
 /** Backward drag, in screen pixels, that reaches full power. */
 export const PULL_FULL_PX = 180;
 
-export type AimGesture = { kind: "absolute" } | { kind: "from-cue"; origin: Point; armed: boolean };
+/**
+ * `cue-stick` starts on the butt of the cue. The stick stays between the
+ * pointer and the ball, so dragging around the ball rotates the shot and
+ * dragging away from the ball is only power.
+ */
+export type AimGesture =
+  | { kind: "absolute" }
+  | { kind: "from-cue"; origin: Point; armed: boolean }
+  | { kind: "cue-stick" };
 
 export function grabsCue(point: Point, cue: Point): boolean {
   const dx = point.x - cue.x;
@@ -38,13 +46,31 @@ export function pointerIntent(placing: boolean, point: Point, cue: Point | null)
   return grabsCue(point, cue) ? "place" : "aim";
 }
 
-export function startAim(point: Point, cue: Point): AimGesture {
+export function startAim(point: Point, cue: Point, angleMilli = 0): AimGesture {
   const dx = point.x - cue.x;
   const dy = point.y - cue.y;
   if (dx * dx + dy * dy < CUE_GRAB_R * CUE_GRAB_R) {
     return { kind: "from-cue", origin: point, armed: false };
   }
+  if (behindCue(point, cue, angleMilli)) return { kind: "cue-stick" };
   return { kind: "absolute" };
+}
+
+/** The pointer is on the butt side of the current shot, where the cue is drawn. */
+export function behindCue(point: Point, cue: Point, angleMilli: number): boolean {
+  const dx = point.x - cue.x;
+  const dy = point.y - cue.y;
+  if (dx * dx + dy * dy < CUE_GRAB_R * CUE_GRAB_R) return false;
+  const along = (dx * cosMicro(angleMilli) + dy * sinMicro(angleMilli)) / 1_000_000;
+  return along < 0;
+}
+
+/** Shot direction when the pointer is holding the cue butt. */
+export function stickAngle(point: Point, cue: Point): number | null {
+  const dx = cue.x - point.x;
+  const dy = cue.y - point.y;
+  if (dx * dx + dy * dy < 1) return null;
+  return angleOf(dx, dy);
 }
 
 /** 0 until the drag back is deliberate. 10000 at a full pull. */
@@ -55,13 +81,9 @@ export function powerFromPull(pixels: number): number {
   return Math.max(1, Math.round(t * 10_000));
 }
 
-/** The pointer is on the butt side of the cue, outside the ball, so the aim stays. */
+/** The pointer is on the butt side of the cue, outside the ball, so a forward aim stays put. */
 function pulledBehind(point: Point, cue: Point, angleMilli: number): boolean {
-  const dx = point.x - cue.x;
-  const dy = point.y - cue.y;
-  if (dx * dx + dy * dy < CUE_GRAB_R * CUE_GRAB_R) return false;
-  const along = (dx * cosMicro(angleMilli) + dy * sinMicro(angleMilli)) / 1_000_000;
-  return along < -CUE_GRAB_R;
+  return behindCue(point, cue, angleMilli);
 }
 
 export function angleOf(dx: number, dy: number): number {
@@ -83,7 +105,8 @@ export function fineTune(current: number, next: number): number {
  * Absolute aim points from the cue through the pointer.
  * A gesture that began on the cue ball aims along the drag, after a dead zone,
  * so the angle does not jump on the press.
- * Sliding back onto the cue ball, or pulling behind it, keeps the last angle.
+ * A drag that starts on the cue stick rotates with the pointer.
+ * Sliding back onto the cue ball, or pulling a forward aim behind it, keeps the last angle.
  */
 export function aimStep(
   gesture: AimGesture,
@@ -92,6 +115,11 @@ export function aimStep(
   angleMilli: number,
   fine: boolean,
 ): { gesture: AimGesture; angle: number | null } {
+  if (gesture.kind === "cue-stick") {
+    const next = stickAngle(point, cue);
+    if (next == null) return { gesture, angle: null };
+    return { gesture, angle: fine ? fineTune(angleMilli, next) : next };
+  }
   if (gesture.kind === "from-cue") {
     const dx = point.x - gesture.origin.x;
     const dy = point.y - gesture.origin.y;

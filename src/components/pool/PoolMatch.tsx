@@ -56,6 +56,18 @@ import { dismissPoolTutorial, poolTutorialDismissed } from "@/lib/pool/prefs";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
 import { PoolTable } from "./PoolTable";
 
+function shotKey(input: ShotInput): string {
+  return [
+    input.angleMilli,
+    input.power,
+    input.spinX,
+    input.spinY,
+    input.placeX ?? "",
+    input.placeY ?? "",
+    input.calledPocket ?? "",
+  ].join(":");
+}
+
 function seatOf(view: PoolView, userId: string | null): "A" | "B" | null {
   if (!userId) return null;
   if (userId === view.creator_id) return "A";
@@ -122,6 +134,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   shotsRef.current = shotList;
   const sawLive = useRef(false);
   const shooting = useRef(false);
+  const previewKey = useRef<string | null>(null);
+  const serverReady = useRef(false);
+  const heldPreview = useRef(false);
   const presenceWarned = useRef(false);
   const tableHash = view?.state_hash ?? null;
   const physicsId = view?.state?.physics ?? null;
@@ -144,9 +159,16 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     }
   }, []);
   const onReplayDone = useCallback(() => {
+    if (previewKey.current && !serverReady.current) {
+      heldPreview.current = true;
+      return;
+    }
     const shots = shotsRef.current;
     const last = shots?.[shots.length - 1];
     if (last?.kind === "shot" && last.event["foul"] === true) foulSound();
+    previewKey.current = null;
+    serverReady.current = false;
+    heldPreview.current = false;
     setFrames(null);
     setStroke(null);
   }, []);
@@ -234,12 +256,14 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   useEffect(() => {
     const shots = shotsRef.current;
     if (!serverSeed || !shots?.length || reduce || !physicsId) {
+      if (previewKey.current) return;
       setFrames(null);
       setStroke(null);
       return;
     }
     const last = shots[shots.length - 1];
     if (!last || last.kind !== "shot") {
+      if (previewKey.current) return;
       setFrames(null);
       setStroke(null);
       return;
@@ -247,6 +271,21 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     const prior = stepsFromRecord(shots.slice(0, -1));
     const input = stepsFromRecord([last])?.[0];
     if (!prior || !input || input.kind !== "shot") return;
+    if (previewKey.current === shotKey(input.input)) {
+      serverReady.current = true;
+      if (heldPreview.current) {
+        if (last.event["foul"] === true) foulSound();
+        previewKey.current = null;
+        serverReady.current = false;
+        heldPreview.current = false;
+        setFrames(null);
+        setStroke(null);
+      }
+      return;
+    }
+    previewKey.current = null;
+    serverReady.current = false;
+    heldPreview.current = false;
     let table = freshTable(bytesFromHex(serverSeed), physicsId);
     for (const step of prior) {
       if (step.kind === "timeout") table = applyTimeout(table);
@@ -307,12 +346,12 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     };
   }, [view]);
 
-  const takeShot = useCallback(async (pulled?: number) => {
+  const takeShot = useCallback(async (pulled?: number, angleMilli = angle) => {
     const shotPower = pulled ?? power;
     if (!state || !mine || busy || shooting.current || frames) return;
     shooting.current = true;
     const input: ShotInput = {
-      angleMilli: angle,
+      angleMilli,
       power: shotPower,
       spinX,
       spinY,
@@ -333,17 +372,56 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       toast.error(poolMessage("CALL_POCKET"));
       return;
     }
+    if (!reduce && physicsId) {
+      const placed = structuredClone(state);
+      if (!placeCue(placed, input)) {
+        const opening = placed.balls.map((ball) => ({ ...ball }));
+        const cue = opening.find((ball) => ball.id === 0);
+        const sim = simulate(placed.balls, input, true, physicsId);
+        const sequence = [opening, ...sim.frames];
+        const rest = sim.balls;
+        const tail = sequence[sequence.length - 1];
+        const alreadyRest =
+          tail != null &&
+          tail.every(
+            (ball, index) =>
+              ball.pocketed === rest[index]?.pocketed &&
+              ball.x === rest[index]?.x &&
+              ball.y === rest[index]?.y,
+          );
+        if (!alreadyRest) sequence.push(rest);
+        previewKey.current = shotKey(input);
+        serverReady.current = false;
+        heldPreview.current = false;
+        setFrames(sequence);
+        setStroke(
+          cue ? { x: cue.x, y: cue.y, angle: input.angleMilli, power: input.power } : null,
+        );
+        cueSound();
+      }
+    }
     setBusy(true);
     try {
       const result = await shoot({ data: { matchId, key: crypto.randomUUID(), shot: input } });
-      if (!result.ok) toast.error(poolMessage(result.error));
-      else {
+      if (!result.ok) {
+        previewKey.current = null;
+        serverReady.current = false;
+        heldPreview.current = false;
+        setFrames(null);
+        setStroke(null);
+        toast.error(poolMessage(result.error));
+      } else {
         setPlace(null);
         setPower(1);
       }
       void qc.invalidateQueries({ queryKey: ["pool-match", matchId] });
       void qc.invalidateQueries({ queryKey: ["wallet"] });
     } catch {
+      previewKey.current = null;
+      serverReady.current = false;
+      heldPreview.current = false;
+      setFrames(null);
+      setStroke(null);
       toast.error(poolMessage("REQUEST_FAILED"));
     } finally {
       shooting.current = false;
@@ -362,6 +440,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     shootingEight,
     spinX,
     frames,
+    physicsId,
+    reduce,
     spinY,
     state,
   ]);
@@ -715,9 +795,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
               setAimHint(null);
               setPower(next);
             }}
-            onShoot={(pulled) => {
+            onShoot={(pulled, shotAngle) => {
               tickSound();
-              void takeShot(pulled);
+              void takeShot(pulled, shotAngle);
             }}
             onAimHint={setAimHint}
             onSample={onSample}

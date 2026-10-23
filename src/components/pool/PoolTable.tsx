@@ -79,6 +79,23 @@ function pullBackPx(
   return -((dx * sx + dy * sy) / len);
 }
 
+/** Screen pixels from the cue ball to the pointer. A longer gap is a harder pull. */
+function cueScreenDist(
+  canvas: HTMLCanvasElement,
+  clientX: number,
+  clientY: number,
+  cue: { x: number; y: number },
+): number {
+  const rect = canvas.getBoundingClientRect();
+  if (rect.width < 1 || rect.height < 1) return 0;
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  const px = ((clientX - rect.left) / rect.width) * w;
+  const py = ((clientY - rect.top) / rect.height) * h;
+  const at = viewOf(w, h).project(cue.x, cue.y);
+  return Math.hypot(px - at.x, py - at.y);
+}
+
 function tablePoint(canvas: HTMLCanvasElement, clientX: number, clientY: number) {
   const rect = canvas.getBoundingClientRect();
   const w = canvas.clientWidth;
@@ -805,7 +822,7 @@ type Props = {
   stroke: Stroke | null;
   onAim: (angleMilli: number) => void;
   onPower?: (power: number) => void;
-  onShoot?: (power: number) => void;
+  onShoot?: (power: number, angleMilli: number) => void;
   onPlace: (x: number, y: number) => void;
   onSample: (prev: readonly Ball[], next: readonly Ball[]) => void;
   onReplayDone: () => void;
@@ -861,7 +878,13 @@ export function PoolTable({
   const ghostRef = useRef(ghost);
   ghostRef.current = ghost;
   const angleRef = useRef(angleMilli);
-  angleRef.current = angleMilli;
+  const powerRef = useRef(power);
+  const spinXRef = useRef(spinX);
+  const spinYRef = useRef(spinY);
+  const kickRef = useRef<() => void>(() => {});
+  const restDistRef = useRef(0);
+  spinXRef.current = spinX;
+  spinYRef.current = spinY;
   const showCueRef = useRef(showCue);
   showCueRef.current = showCue;
   const replayRef = useRef(replay);
@@ -879,6 +902,10 @@ export function PoolTable({
   const cueIn = useRef(0);
   const cueWas = useRef(false);
   const [draft, setDraft] = useState<{ x: number; y: number } | null>(null);
+  if (gestureRef.current == null) {
+    angleRef.current = angleMilli;
+    powerRef.current = power;
+  }
 
   useEffect(() => {
     if (!placing) setDraft(null);
@@ -890,6 +917,10 @@ export function PoolTable({
     let frame = 0;
     let stop = false;
     const paint = () => {
+      const angleMilli = angleRef.current;
+      const power = powerRef.current;
+      const spinX = spinXRef.current;
+      const spinY = spinYRef.current;
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       const cssW = Math.max(1, canvas.clientWidth);
       const cssH = Math.max(1, canvas.clientHeight);
@@ -1218,6 +1249,9 @@ export function PoolTable({
       cancelAnimationFrame(frame);
       if (paint()) frame = requestAnimationFrame(loop);
     };
+    kickRef.current = () => {
+      if (!stop) loop();
+    };
     loop();
     const observer = new ResizeObserver(() => {
       cacheRef.current = null;
@@ -1226,15 +1260,31 @@ export function PoolTable({
     observer.observe(canvas);
     return () => {
       stop = true;
+      kickRef.current = () => {};
       cancelAnimationFrame(frame);
       observer.disconnect();
     };
   }, [
     balls,
+    ghost,
+    kitchenOnly,
+    calledPocket,
+    showAim,
+    showCue,
+    replay,
+    stroke,
+    placing,
+    draft,
+  ]);
+
+  useEffect(() => {
+    kickRef.current();
+  }, [
     angleMilli,
     power,
     spinX,
     spinY,
+    balls,
     ghost,
     kitchenOnly,
     calledPocket,
@@ -1260,12 +1310,15 @@ export function PoolTable({
     const canvas = ref.current;
     const origin = originRef.current;
     if (!canvas || !origin || gestureRef.current?.kind === "place") return;
-    const next = powerFromPull(
-      pullBackPx(canvas, origin.x, origin.y, event.clientX, event.clientY, cue, angleRef.current),
-    );
+    const dragged =
+      gestureRef.current?.kind === "cue-stick"
+        ? cueScreenDist(canvas, event.clientX, event.clientY, cue) - restDistRef.current
+        : pullBackPx(canvas, origin.x, origin.y, event.clientX, event.clientY, cue, angleRef.current);
+    const next = powerFromPull(dragged);
     if (next === pullRef.current) return;
     pullRef.current = next;
-    powerCb.current?.(next === 0 ? 1 : next);
+    powerRef.current = next === 0 ? 1 : next;
+    powerCb.current?.(powerRef.current);
   };
 
   const aimAt = (event: PointerEvent<HTMLCanvasElement>) => {
@@ -1281,6 +1334,7 @@ export function PoolTable({
       aimRef.current(step.angle);
     }
     charge(event, cue);
+    kickRef.current();
   };
 
   const endGesture = (shoot: boolean) => {
@@ -1292,7 +1346,7 @@ export function PoolTable({
     setDraft(null);
     if (!gesture || gesture.kind === "place") return;
     if (shoot && pulled > 0) {
-      shootRef.current?.(pulled);
+      shootRef.current?.(pulled, angleRef.current);
       return;
     }
     if (gesture.kind === "from-cue" && !gesture.armed) hintRef.current?.("Drag to aim.");
@@ -1314,6 +1368,7 @@ export function PoolTable({
         pullRef.current = 0;
         const point = tablePoint(event.currentTarget, event.clientX, event.clientY);
         const cue = cuePoint();
+        if (cue) restDistRef.current = cueScreenDist(event.currentTarget, event.clientX, event.clientY, cue);
         if (!showCueRef.current && !placing) {
           hintRef.current?.(replayRef.current ? "Balls are still moving." : "It is not your shot.");
           return;
@@ -1326,9 +1381,9 @@ export function PoolTable({
           return;
         }
         if (!cue) return;
-        const started = startAim(point, cue);
+        const started = startAim(point, cue, angleRef.current);
         gestureRef.current = started;
-        if (started.kind === "absolute") aimAt(event);
+        if (started.kind === "absolute" || started.kind === "cue-stick") aimAt(event);
       }}
       onPointerMove={(event) => {
         const captured = event.currentTarget.hasPointerCapture(event.pointerId);
@@ -1341,7 +1396,10 @@ export function PoolTable({
         }
         aimAt(event);
       }}
-      onPointerUp={() => endGesture(true)}
+      onPointerUp={(event) => {
+        aimAt(event);
+        endGesture(true);
+      }}
       onPointerCancel={() => endGesture(false)}
     />
   );
