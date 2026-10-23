@@ -137,21 +137,6 @@ export function PoolLobby() {
             8-ball <span aria-hidden>•</span> 1v1 <span aria-hidden>•</span> Call the 8
           </p>
           <p className="pool-hero-sub">Real players. Real skills. Real wins.</p>
-          <button
-            type="button"
-            className="pool-play"
-            disabled={busy != null || stake == null}
-            onMouseEnter={warmMatch}
-            onFocus={warmMatch}
-            onTouchStart={warmMatch}
-            onClick={() => {
-              if (stake == null) return;
-              void enter({ stake });
-            }}
-          >
-            {busy === "play" ? "Creating…" : "Create game"}
-            {busy === "play" ? null : <ArrowRight aria-hidden className="h-4 w-4" />}
-          </button>
         </div>
 
         <div className="pool-hero-art" aria-hidden>
