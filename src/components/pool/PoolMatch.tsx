@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -282,7 +282,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     };
   }, [view]);
 
-  const takeShot = async () => {
+  const takeShot = useCallback(async () => {
     if (!state || !mine || busy || shooting.current) return;
     shooting.current = true;
     const input: ShotInput = {
@@ -320,7 +320,21 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       shooting.current = false;
       setBusy(false);
     }
-  };
+  }, [
+    angle,
+    busy,
+    called,
+    matchId,
+    mine,
+    place,
+    power,
+    qc,
+    shoot,
+    shootingEight,
+    spinX,
+    spinY,
+    state,
+  ]);
 
   useEffect(() => {
     if (!mine) return;
