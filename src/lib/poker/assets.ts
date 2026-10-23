@@ -1,4 +1,5 @@
 import dealerCutout from "@/assets/poker/dealer.webp";
+import room from "@/assets/poker/room.webp";
 import { preloadDealerFrames } from "@/lib/poker/dealer-frames";
 
 /**
@@ -7,6 +8,9 @@ import { preloadDealerFrames } from "@/lib/poker/dealer-frames";
  */
 export const DEALER_IMAGE =
   (import.meta.env["VITE_POKER_DEALER_IMAGE"] as string | undefined) || dealerCutout;
+
+/** In-game penthouse. One URL for the preload, the warm decode, and the painted plate. */
+export const POKER_ROOM = room;
 
 /** Intrinsic size of the dealer art, so the box is reserved before it loads (no layout shift). */
 export const DEALER_SIZE = { w: 682, h: 799 };
@@ -31,8 +35,22 @@ export const DEALER_RIG = {
   handSplit: 0.523,
 };
 
+let roomWarmed = false;
+
+/** Decode the penthouse before the table mounts, so the plate is ready to paint. */
+export function warmPokerRoom() {
+  if (typeof window === "undefined" || typeof Image === "undefined" || roomWarmed) return;
+  roomWarmed = true;
+  const img = new Image();
+  img.decoding = "sync";
+  img.fetchPriority = "high";
+  img.src = POKER_ROOM;
+  void img.decode().catch(() => {});
+}
+
 export function warmDealer() {
   if (typeof window === "undefined") return;
+  warmPokerRoom();
   const img = new Image();
   img.decoding = "async";
   img.src = DEALER_IMAGE;

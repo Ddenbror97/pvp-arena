@@ -1,16 +1,19 @@
-import room from "@/assets/poker/room.webp";
+import { POKER_ROOM, warmPokerRoom } from "@/lib/poker/assets";
 
-/** Full-bleed penthouse. The table route preloads this same URL at high priority. */
+// Start the decode as soon as the table chunk loads, before React paints the plate.
+warmPokerRoom();
+
+/** Full-bleed penthouse. One element for the whole table visit, decoded ahead of the felt. */
 export function PokerRoom() {
   return (
     <div className="poker-env" aria-hidden>
       <img
         className="poker-room"
-        src={room}
+        src={POKER_ROOM}
         alt=""
         width={1280}
         height={720}
-        decoding="async"
+        decoding="sync"
         fetchPriority="high"
       />
     </div>

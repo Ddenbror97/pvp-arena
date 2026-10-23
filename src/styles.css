@@ -1462,8 +1462,10 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
     calc((var(--poker-rail-w) + var(--pad-r) - var(--poker-chat-space)) / 2),
     calc(5rem - 0.18 * (100vw - var(--poker-chat-space) - var(--poker-rail-w) - var(--pad-r)))
   );
-  position: relative; width: 100%; height: 100dvh; overflow: hidden; isolation: isolate;
-  font-size: var(--hud-fs); color: var(--ink); background: #05040f;
+  /* The penthouse is a sibling behind this screen and stays mounted, so the plate is not
+     decoded again when the table arrives. The screen stays clear so that photo shows through. */
+  position: relative; z-index: 1; width: 100%; height: 100dvh; overflow: hidden; isolation: isolate;
+  font-size: var(--hud-fs); color: var(--ink); background: transparent;
 }
 .poker-env {
   position: absolute; inset: 0; z-index: 0; pointer-events: none;

@@ -5,7 +5,6 @@ import { money, type TableState } from "@/lib/poker/api";
 import { usePokerPrefs, useReducedMotion } from "@/lib/poker/prefs";
 import { warmDealer } from "@/lib/poker/assets";
 import { ActionBar, type ActIntent } from "./ActionBar";
-import { PokerRoom } from "./PokerRoom";
 import { GameAccount, GameBrand } from "./GameBar";
 import { Onboarding } from "./Onboarding";
 import { PokerStage } from "./PokerStage";
@@ -31,8 +30,9 @@ export interface TableScreenProps {
 }
 
 /**
- * Full-screen table. Layers: environment, the stage (table, dealer, seats, cards; one
- * coordinate system that keeps its aspect ratio and fits the viewport), then overlay
+ * Full-screen table. The penthouse stays mounted behind this screen. Inside it: the stage
+ * (table, dealer, seats, cards; one coordinate system that keeps its aspect ratio and fits
+ * the viewport), then overlay
  * panels anchored to the viewport edges: brand and account on top, chat in a
  * left-hand column, actions centered under the felt, seat controls at the bottom right.
  */
@@ -70,8 +70,6 @@ export function TableScreen(p: TableScreenProps) {
 
   return (
     <div className="poker-screen" data-chat={chatOpen ? "open" : "closed"}>
-      <PokerRoom />
-
       <header className="poker-topbar">
         <div className="poker-topbar-left">
           <GameBrand />

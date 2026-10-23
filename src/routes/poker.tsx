@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, useMatch } from "@tanstack/react-router";
 import { GameFacts } from "@/components/seo/GameFacts";
 import { indexableHead } from "@/lib/seo/indexable-head";
 import { loadPokerPaint, useQuerySeed } from "@/lib/first-paint";
-import { DEALER_IMAGE } from "@/lib/poker/assets";
+import { DEALER_IMAGE, POKER_ROOM } from "@/lib/poker/assets";
 import { DEALER_IDLE_URL } from "@/lib/poker/dealer-frames";
 import { PokerLobby } from "@/components/poker/PokerLobby";
 
@@ -15,6 +15,13 @@ export const Route = createFileRoute("/poker")({
         "Six-max No-Limit Texas Hold'em against real players. Cash stacks, a 5% fee only after a flop, and a shuffle you can recompute.",
       crumb: "Poker",
       extraLinks: [
+        {
+          rel: "preload",
+          as: "image",
+          href: POKER_ROOM,
+          type: "image/webp",
+          fetchPriority: "high",
+        },
         {
           rel: "preload",
           as: "image",

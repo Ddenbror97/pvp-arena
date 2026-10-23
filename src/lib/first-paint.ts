@@ -22,7 +22,7 @@ import {
 import { warmSlotStage } from "@/lib/slott/stage";
 import { fetchLobby, type Lobby } from "@/lib/poker/api";
 import { fetchPoolLobby, type PoolLobby } from "@/lib/pool/api";
-import { warmDealer } from "@/lib/poker/assets";
+import { warmDealer, warmPokerRoom } from "@/lib/poker/assets";
 import {
   fetchCurrentRound,
   fetchHistory,
@@ -457,6 +457,7 @@ export function prefetchGamePage(
     return;
   }
   if (path === "/poker") {
+    warmPokerRoom();
     warmDealer();
     void qc.prefetchQuery({ queryKey: ["poker-lobby"], queryFn: fetchLobby });
     return;

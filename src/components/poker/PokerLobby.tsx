@@ -25,7 +25,7 @@ import {
   type LobbyType,
 } from "@/lib/poker/api";
 import { newChainHead } from "@/lib/poker/chain";
-import { DEALER_IMAGE, DEALER_SIZE } from "@/lib/poker/assets";
+import { DEALER_IMAGE, DEALER_SIZE, warmPokerRoom } from "@/lib/poker/assets";
 import {
   CATEGORIES,
   DEFAULT_FILTERS,
@@ -63,7 +63,10 @@ export function PokerLobby() {
   // applied only after that paint, so a stale cookie cannot mismatch hydration.
   const [hint] = useState(readAuthHint);
   const [settled, setSettled] = useState(false);
-  useEffect(() => setSettled(true), []);
+  useEffect(() => {
+    setSettled(true);
+    warmPokerRoom();
+  }, []);
   const signedIn = settled ? paintSignedIn(auth.ready, auth.userId, hint) : hint;
   const userId = auth.userId;
   const needsProfile = auth.ready && auth.needsProfile;
