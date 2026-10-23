@@ -19,6 +19,7 @@ import {
   type BallSprite,
 } from "@/lib/pool/spheres";
 import { ballRadiusPx, spanPx, viewOf } from "@/lib/pool/view";
+import { aimStep, pointerIntent, startAim, type AimGesture } from "@/lib/pool/aim-gesture";
 
 const SOLIDS = ["#f0c410", "#1d4ed8", "#dc2626", "#7c3aed", "#ea580c", "#15803d", "#7f1d1d"];
 
@@ -741,6 +742,7 @@ type Props = {
   onPlace: (x: number, y: number) => void;
   onSample: (prev: readonly Ball[], next: readonly Ball[]) => void;
   onReplayDone: () => void;
+  onAimHint?: (text: string) => void;
   placing: boolean;
   legalAt: (x: number, y: number) => boolean;
 };
@@ -763,6 +765,7 @@ export function PoolTable({
   onPlace,
   onSample,
   onReplayDone,
+  onAimHint,
   placing,
   legalAt,
 }: Props) {
@@ -772,6 +775,23 @@ export function PoolTable({
   const strikeRef = useRef<(Pose & { t0: number }) | null>(null);
   const legalRef = useRef(legalAt);
   legalRef.current = legalAt;
+  const aimRef = useRef(onAim);
+  aimRef.current = onAim;
+  const placeRef = useRef(onPlace);
+  placeRef.current = onPlace;
+  const hintRef = useRef(onAimHint);
+  hintRef.current = onAimHint;
+  const ballsRef = useRef(balls);
+  ballsRef.current = balls;
+  const ghostRef = useRef(ghost);
+  ghostRef.current = ghost;
+  const angleRef = useRef(angleMilli);
+  angleRef.current = angleMilli;
+  const showCueRef = useRef(showCue);
+  showCueRef.current = showCue;
+  const replayRef = useRef(replay);
+  replayRef.current = replay;
+  const gestureRef = useRef<AimGesture | { kind: "place" } | null>(null);
   const sampleRef = useRef(onSample);
   sampleRef.current = onSample;
   const doneRef = useRef(onReplayDone);
@@ -1155,61 +1175,72 @@ export function PoolTable({
     return () => layerRef.current?.dispose();
   }, []);
 
+  const cuePoint = () => {
+    const placed = ghostRef.current;
+    if (placed) return placed;
+    return ballsRef.current.find((ball) => ball.id === 0) ?? null;
+  };
+
   const aimAt = (event: PointerEvent<HTMLCanvasElement>) => {
     const canvas = ref.current;
-    if (!canvas) return;
+    const gesture = gestureRef.current;
+    const cue = cuePoint();
+    if (!canvas || !gesture || gesture.kind === "place" || !cue) return;
     const point = tablePoint(canvas, event.clientX, event.clientY);
-    const cue = balls.find((ball) => ball.id === 0);
-    const from = ghost ?? cue;
-    if (!from) return;
-    const dx = point.x - from.x;
-    const dy = point.y - from.y;
-    if (dx * dx + dy * dy < BALL_R * BALL_R) return;
-    let deg = (Math.atan2(dy, dx) * 180) / Math.PI;
-    if (deg < 0) deg += 360;
-    const next = Math.round(deg * 1000) % 360_000;
-    if (event.shiftKey) {
-      let delta = next - angleMilli;
-      if (delta > 180_000) delta -= 360_000;
-      if (delta < -180_000) delta += 360_000;
-      onAim((angleMilli + Math.round(delta * 0.22) + 360_000) % 360_000);
-      return;
-    }
-    onAim(next);
+    const step = aimStep(gesture, point, cue, angleRef.current, event.shiftKey);
+    gestureRef.current = step.gesture;
+    if (step.angle != null) aimRef.current(step.angle);
+  };
+
+  const endGesture = () => {
+    const gesture = gestureRef.current;
+    gestureRef.current = null;
+    setDraft(null);
+    if (gesture?.kind === "from-cue" && !gesture.armed) hintRef.current?.("Drag to aim.");
   };
 
   return (
     <canvas
       ref={ref}
       className="pool-canvas"
-      aria-label="Pool table"
+      aria-label="Pool table. Drag to aim. Drag the cue ball when it is ball in hand."
       onPointerDown={(event) => {
         try {
           event.currentTarget.setPointerCapture(event.pointerId);
         } catch {
           // Capture fails for a pointer that was already released. Aim still applies.
         }
-        if (placing) {
-          const point = tablePoint(event.currentTarget, event.clientX, event.clientY);
-          setDraft(point);
-          if (legalAt(point.x, point.y)) onPlace(point.x, point.y);
+        const point = tablePoint(event.currentTarget, event.clientX, event.clientY);
+        const cue = cuePoint();
+        if (!showCueRef.current && !placing) {
+          hintRef.current?.(replayRef.current ? "Balls are still moving." : "It is not your shot.");
           return;
         }
-        aimAt(event);
+        if (placing && pointerIntent(true, point, cue) === "place") {
+          gestureRef.current = { kind: "place" };
+          setDraft(point);
+          if (legalRef.current(point.x, point.y)) placeRef.current(point.x, point.y);
+          else hintRef.current?.("That spot is not open.");
+          return;
+        }
+        if (!cue) return;
+        const started = startAim(point, cue);
+        gestureRef.current = started;
+        if (started.kind === "absolute") aimAt(event);
       }}
       onPointerMove={(event) => {
         const captured = event.currentTarget.hasPointerCapture(event.pointerId);
         if (!captured && event.buttons === 0) return;
-        if (placing) {
+        if (gestureRef.current?.kind === "place") {
           const point = tablePoint(event.currentTarget, event.clientX, event.clientY);
           setDraft(point);
-          if (legalAt(point.x, point.y)) onPlace(point.x, point.y);
+          if (legalRef.current(point.x, point.y)) placeRef.current(point.x, point.y);
           return;
         }
         aimAt(event);
       }}
-      onPointerUp={() => setDraft(null)}
-      onPointerCancel={() => setDraft(null)}
+      onPointerUp={endGesture}
+      onPointerCancel={endGesture}
     />
   );
 }

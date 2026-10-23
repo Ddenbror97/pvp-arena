@@ -126,6 +126,11 @@ d("pool ledger (isolated schema)", () => {
     expect(Number(books.s)).toBe(0);
 
     await sql`select pvp_test.pool_forfeit_seat(${joined.match_id}, 'B')`;
+    const closed = await as(b, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_forfeit(${joined.match_id}) r`;
+      return row.r as { forfeited: boolean };
+    });
+    expect(closed.forfeited).toBe(false);
     const [once] =
       await sql`select count(*)::int c from pvp_test.ledger_transactions where game_id = ${joined.match_id} and kind = 'pool_settlement'`;
     expect(once.c).toBe(1);
