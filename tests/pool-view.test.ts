@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { BALL_R, POCKETS, TABLE_H, TABLE_W } from "../src/lib/pool/physics";
-import { ballRadiusPx, FAR, spanPx, viewOf } from "../src/lib/pool/view";
+import { ballRadiusPx, extraCueGutter, FAR, fitCueButt, spanPx, viewOf } from "../src/lib/pool/view";
 
 describe("pool view", () => {
   it("sends every cloth point back to itself", () => {
@@ -78,5 +78,28 @@ describe("pool view", () => {
       const centerY = view.padY + view.innerH / 2;
       expect((sideA.y + sideB.y) / 2).toBeCloseTo(centerY, 3);
     }
+  });
+
+  it("keeps a bottom-rail cue on the screen and leaves room to pull it back", () => {
+    const room = 252;
+    const desk = extraCueGutter({ feltW: 846, feltH: 675, baseBottom: 19, room, minFeltH: 200 });
+    expect(desk).toBe(0);
+    const laptop = extraCueGutter({ feltW: 686, feltH: 495, baseBottom: 19, room, minFeltH: 200 });
+    expect(laptop).toBeGreaterThan(40);
+    const feltH = 495 - laptop;
+    expect(feltH).toBeGreaterThanOrEqual(200);
+    const view = viewOf(686, feltH);
+    const ball = view.projectOpen(TABLE_W / 2, 58_570 + BALL_R);
+    expect(feltH - ball.y + 19 + laptop).toBeGreaterThanOrEqual(room);
+    const cramped = extraCueGutter({ feltW: 680, feltH: 340, baseBottom: 12, room, minFeltH: 200 });
+    expect(340 - cramped).toBeGreaterThanOrEqual(200);
+
+    const tip = { x: 400, y: 500 };
+    const butt = fitCueButt(tip, { x: 400, y: 860 }, 800, 640, 12);
+    expect(butt.x).toBeCloseTo(400, 4);
+    expect(butt.y).toBeCloseTo(628, 4);
+    expect(butt.y).toBeGreaterThan(tip.y);
+    const inside = fitCueButt(tip, { x: 460, y: 560 }, 800, 640, 12);
+    expect(inside).toEqual({ x: 460, y: 560 });
   });
 });

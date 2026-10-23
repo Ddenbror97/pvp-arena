@@ -3,7 +3,7 @@
  * The stored shot is exact and replayable. The miss is in the aim that was
  * chosen, not in the physics. The same seed and rack always pick the same shot.
  */
-import { BALL_R, PHYSICS_V6, POCKETS, TABLE_H, TABLE_W, cushionLimit, simulate, type Ball, type ShotInput } from "./physics";
+import { BALL_R, PHYSICS_V6, PHYSICS_V7, POCKETS, TABLE_H, TABLE_W, cushionLimit, simulate, type Ball, type ShotInput } from "./physics";
 import { defaultCueSpot, groupClear, groupOf, legalPlacement, seatGroup, type TableState } from "./rules";
 
 export const STAND_IN_THINK_MS = 6_000;
@@ -15,6 +15,11 @@ export function standInDue(turnDeadlineIso: string, nowMs: number, shotSeconds =
   if (!Number.isFinite(deadline)) return false;
   const thinkAt = deadline - Math.max(0, shotSeconds * 1000 - STAND_IN_THINK_MS);
   return nowMs >= thinkAt && nowMs < deadline + STAND_IN_OVERDUE_MS;
+}
+
+/** v6 and v7 share the 11 mph pull. Older racks stay on the softer launch. */
+function firmLaunch(physics: string): boolean {
+  return physics === PHYSICS_V6 || physics === PHYSICS_V7;
 }
 
 function rngOf(seed: Uint8Array, shot: number): () => number {
@@ -194,14 +199,16 @@ function withCue(balls: readonly Ball[], shot: ShotInput): Ball[] {
 function easeScratch(state: TableState, shot: ShotInput): ShotInput {
   const sim = simulate(withCue(state.balls, shot), shot, false, state.physics);
   if (!sim.cueScratch) return shot;
-  const floor = state.breakShot ? (state.physics === PHYSICS_V6 ? 7_600 : 5_200) : 2_500;
+  const floor = state.breakShot ? (firmLaunch(state.physics) ? 7_600 : 5_200) : 2_500;
   return { ...shot, power: Math.max(floor, Math.round(shot.power * 0.62)) };
 }
 
 function breakShot(state: TableState, cue: Ball, rng: Rng): ShotInput {
   const wall = cushionLimit(state.physics);
   let x = Math.floor(TABLE_W / 4) - BALL_R - Math.round(rng() * 70_000);
-  let y = Math.floor(TABLE_H / 2) + Math.round((rng() - 0.5) * 150_000);
+  // v7 cloth is quicker, so a cue started low in the kitchen only clips the rack.
+  const ySpan = state.physics === PHYSICS_V7 ? 48_000 : 150_000;
+  let y = Math.floor(TABLE_H / 2) + Math.round((rng() - 0.5) * ySpan);
   x = Math.max(wall.minX + 2_000, Math.min(Math.floor(TABLE_W / 4), x));
   y = Math.max(wall.minY + 2_000, Math.min(wall.maxY - 2_000, y));
   if (!legalPlacement(state, x, y)) {
@@ -210,11 +217,12 @@ function breakShot(state: TableState, cue: Ball, rng: Rng): ShotInput {
   }
   const ax = Math.floor((TABLE_W * 3) / 4) + Math.round((rng() - 0.5) * 18_000);
   const ay = Math.floor(TABLE_H / 2) + Math.round((rng() - 0.5) * 32_000);
-  const wander = state.physics === PHYSICS_V6 ? 900 : 2_400;
+  const wander = firmLaunch(state.physics) ? 900 : 2_400;
   const angle = milliOf(ax - x, ay - y) + (rng() + rng() - 1) * wander;
-  // v6 cloth stops a ball in about one table length, so the break has to be a firm pull.
-  const power =
-    state.physics === PHYSICS_V6 ? 8_400 + Math.round(rng() * 1_600) : 6_200 + Math.round(rng() * 2_600);
+  // v6 and v7 launch at the same cue speed, so the break stays a firm pull.
+  const power = firmLaunch(state.physics)
+    ? 8_400 + Math.round(rng() * 1_600)
+    : 6_200 + Math.round(rng() * 2_600);
   return shotOf(angle, power, { x, y }, null);
 }
 

@@ -1,5 +1,5 @@
 /**
- * Integer micrometre pool physics. A new rack stores pool-phys-v6.
+ * Integer micrometre pool physics. A new rack stores pool-phys-v7.
  * Older ids stay so a match already stamped with them replays under the
  * launch and drag it started with.
  *
@@ -13,6 +13,9 @@
  * throws every ball the length of the table, so the player pull is not a break.
  * v6 is a power shot of about 11 mph, and heavier cloth stops it in about
  * 1.6 table lengths. A half-power hit stays short of the far cushion.
+ * v7 keeps that launch. Drag is 1 + speed/340, and the ball coasts until
+ * speed falls under 18, so a half-power object ball runs about one length
+ * and eases out instead of freezing while it is still moving.
  */
 
 /** v1 dies before the rack. v2 reaches it. v3 adds break speed. v4 keeps that path at 60% speed. */
@@ -24,17 +27,20 @@ export const PHYSICS_V4 = "pool-phys-v4";
 export const PHYSICS_V5 = "pool-phys-v5";
 /** v6 is an 11 mph power shot on heavier cloth. Full power travels about 1.6 table lengths. */
 export const PHYSICS_V6 = "pool-phys-v6";
-export const PHYSICS_VERSION = PHYSICS_V6;
+/** v7 is the v6 launch on cloth that lets a struck ball roll out. */
+export const PHYSICS_V7 = "pool-phys-v7";
+export const PHYSICS_VERSION = PHYSICS_V7;
 export type PhysicsId =
   | typeof PHYSICS_V1
   | typeof PHYSICS_V2
   | typeof PHYSICS_V3
   | typeof PHYSICS_V4
   | typeof PHYSICS_V5
-  | typeof PHYSICS_V6;
+  | typeof PHYSICS_V6
+  | typeof PHYSICS_V7;
 
 function usesNose(physics: string): boolean {
-  return physics === PHYSICS_V5 || physics === PHYSICS_V6;
+  return physics === PHYSICS_V5 || physics === PHYSICS_V6 || physics === PHYSICS_V7;
 }
 
 /**
@@ -278,6 +284,7 @@ function bounce(
  */
 export function rollDrop(speed: number, physics = PHYSICS_VERSION): number {
   if (physics === PHYSICS_V1) return 32 + Math.trunc(speed / 160);
+  if (physics === PHYSICS_V7) return 1 + Math.trunc(speed / 340);
   if (physics === PHYSICS_V6) return 2 + Math.trunc(speed / 260);
   if (physics === PHYSICS_V3 || physics === PHYSICS_V4 || physics === PHYSICS_V5) {
     return 2 + Math.trunc(speed / 1_500);
@@ -294,7 +301,9 @@ export function rollDrop(speed: number, physics = PHYSICS_VERSION): number {
  */
 export function launchSpeed(power: number, physics = PHYSICS_VERSION): number {
   const clamped = Math.max(1, Math.min(10_000, power | 0));
-  if (physics === PHYSICS_V6) return Math.max(1, Math.trunc((clamped * 20_000) / 10_000));
+  if (physics === PHYSICS_V6 || physics === PHYSICS_V7) {
+    return Math.max(1, Math.trunc((clamped * 20_000) / 10_000));
+  }
   const base = Math.trunc((clamped * MAX_SPEED) / 10_000);
   const boosted =
     (physics === PHYSICS_V3 || physics === PHYSICS_V4 || physics === PHYSICS_V5) && clamped > 6_000
@@ -307,7 +316,10 @@ export function launchSpeed(power: number, physics = PHYSICS_VERSION): number {
 function damp(b: Ball, physics: string) {
   if (b.pocketed) return;
   const speed = isqrt(b.vx * b.vx + b.vy * b.vy);
-  if (speed < 70) {
+  // v7 keeps creeping until the roll is too slow to see. Older ids still
+  // freeze under 70 so a stored rack replays the stop it was played with.
+  const rest = physics === PHYSICS_V7 ? 18 : 70;
+  if (speed < rest) {
     b.vx = 0;
     b.vy = 0;
   } else {

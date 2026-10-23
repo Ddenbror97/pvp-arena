@@ -593,7 +593,8 @@ function PoolSection() {
         view.state?.physics === "pool-phys-v3" ||
         view.state?.physics === "pool-phys-v4" ||
         view.state?.physics === "pool-phys-v5" ||
-        view.state?.physics === "pool-phys-v6"
+        view.state?.physics === "pool-phys-v6" ||
+        view.state?.physics === "pool-phys-v7"
           ? view.state.physics
           : "pool-phys-v2",
       );
@@ -630,7 +631,7 @@ function PoolSection() {
         It closes the match, keeps 10% of the leaver's stake, and returns the rest of both stakes.
         This page proves the shot list.
         It does not reverse a payment. A match checks out under the physics id stored with its rack
-        (pool-phys-v1, pool-phys-v2, pool-phys-v3, pool-phys-v4, pool-phys-v5, or pool-phys-v6) and rules pvp-8ball-v1.
+        (pool-phys-v1 through pool-phys-v7) and rules pvp-8ball-v1.
       </p>
       <div className="grid gap-4">
         <Card title="Replay a match">

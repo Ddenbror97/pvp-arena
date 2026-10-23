@@ -1,4 +1,4 @@
-import { BALL_R, TABLE_H, TABLE_W } from "@/lib/pool/physics";
+import { BALL_R, CUSHION_V5, TABLE_H, TABLE_W } from "@/lib/pool/physics";
 
 /** Overhead camera. Scale stays 1, so both ends of the table are the same size. */
 export const FAR = 1;
@@ -40,7 +40,9 @@ export function viewOf(w: number, h: number): View {
   const padX = (w - innerW) / 2;
   const outerH = innerH + rail * 2;
   const slackY = h - outerH;
-  const originY = slackY > outerH * 0.45 ? slackY * 0.2 : slackY / 2;
+  // Spare height sits under the cloth. A cue aimed off the bottom rail needs
+  // that room. A tall screen still keeps a short margin above the top rail.
+  const originY = Math.max(0, slackY * 0.22);
   const padY = originY + rail;
   const place = (tableX: number, tableY: number) => ({
     x: padX + (tableX / TABLE_W) * innerW,
@@ -63,4 +65,72 @@ export function spanPx(innerW: number, scale: number, tableUnits: number): numbe
 
 export function ballRadiusPx(innerW: number, scale: number): number {
   return spanPx(innerW, scale, BALL_R);
+}
+
+/** Pixels from a ball on the bottom cushion to the bottom of a felt canvas. */
+export function bottomRailClearance(w: number, h: number): number {
+  const view = viewOf(Math.max(1, w), Math.max(1, h));
+  const at = view.projectOpen(TABLE_W / 2, CUSHION_V5.bottom + BALL_R);
+  return h - at.y;
+}
+
+/**
+ * Extra pixels under the felt so a bottom-rail ball keeps `room` pixels of
+ * screen below it. Stops once the felt would shrink under `minFeltH`.
+ */
+export function extraCueGutter(input: {
+  feltW: number;
+  feltH: number;
+  baseBottom: number;
+  room: number;
+  minFeltH: number;
+}): number {
+  const feltW = Math.max(1, input.feltW);
+  const feltH = Math.max(1, input.feltH);
+  const minFeltH = Math.max(1, Math.min(input.minFeltH, feltH));
+  const maxExtra = feltH - minFeltH;
+  const clearance = (extra: number) =>
+    input.baseBottom + extra + bottomRailClearance(feltW, Math.max(1, feltH - extra));
+  if (clearance(0) >= input.room) return 0;
+  if (maxExtra <= 0) return 0;
+  if (clearance(maxExtra) < input.room) return Math.round(maxExtra);
+  let lo = 0;
+  let hi = maxExtra;
+  for (let i = 0; i < 20; i++) {
+    const mid = (lo + hi) / 2;
+    if (clearance(mid) >= input.room) hi = mid;
+    else lo = mid;
+  }
+  return Math.ceil(hi);
+}
+
+/** Farthest cue butt that still sits inside the screen bitmap. */
+export function fitCueButt(
+  tip: { x: number; y: number },
+  butt: { x: number; y: number },
+  width: number,
+  height: number,
+  margin: number,
+): { x: number; y: number } {
+  const dx = butt.x - tip.x;
+  const dy = butt.y - tip.y;
+  const hiX = Math.max(margin, width - margin);
+  const hiY = Math.max(margin, height - margin);
+  let t = axisExit(tip.x, dx, margin, hiX, 1);
+  t = axisExit(tip.y, dy, margin, hiY, t);
+  return { x: tip.x + dx * t, y: tip.y + dy * t };
+}
+
+function axisExit(origin: number, delta: number, lo: number, hi: number, tMax: number): number {
+  if (Math.abs(delta) < 1e-6) return origin >= lo && origin <= hi ? tMax : 0;
+  let near = (lo - origin) / delta;
+  let far = (hi - origin) / delta;
+  if (near > far) {
+    const swap = near;
+    near = far;
+    far = swap;
+  }
+  const exit = Math.min(tMax, far);
+  if (exit < 0) return 0;
+  return exit;
 }

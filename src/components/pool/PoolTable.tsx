@@ -19,11 +19,12 @@ import {
   type BallSprite,
 } from "@/lib/pool/spheres";
 import { buildTable, whenTableArt } from "@/lib/pool/table-paint";
-import { ballRadiusPx, spanPx, viewOf } from "@/lib/pool/view";
+import { ballRadiusPx, extraCueGutter, fitCueButt, spanPx, viewOf } from "@/lib/pool/view";
 import {
   aimStep,
   pointerIntent,
   powerFromPull,
+  PULL_FULL_PX,
   startAim,
   type AimGesture,
 } from "@/lib/pool/aim-gesture";
@@ -224,6 +225,7 @@ function drawCue(
   angleMilli: number,
   gapBalls: number,
   alpha: number,
+  bounds: { w: number; h: number; margin: number },
 ) {
   const dir = aimDir(angleMilli);
   const gap = BALL_R * gapBalls;
@@ -231,7 +233,9 @@ function drawCue(
   const tip = atDist(gap);
   const tipScale = tip.scale;
   const length = BALL_R * 46;
-  const butt = atDist(gap + length);
+  const reach = atDist(gap + length);
+  const butt = fitCueButt(tip, reach, bounds.w, bounds.h, bounds.margin);
+  if (Math.hypot(butt.x - tip.x, butt.y - tip.y) < 8) return;
   const along = (t: number): Pt => ({
     x: tip.x + (butt.x - tip.x) * t,
     y: tip.y + (butt.y - tip.y) * t,
@@ -534,7 +538,25 @@ export function PoolTable({
     const syncCue = () => {
       const cue = cueRef.current;
       const screen = canvas.closest(".pool-screen");
+      const felt = canvas.closest(".pool-felt");
       if (!cue || !(screen instanceof HTMLElement)) return;
+      if (felt instanceof HTMLElement) {
+        const screenBox = screen.getBoundingClientRect();
+        const feltBox = felt.getBoundingClientRect();
+        const applied = Number(screen.dataset["cueGutter"] ?? "0");
+        const gutter = Number.isFinite(applied) ? applied : 0;
+        const next = extraCueGutter({
+          feltW: Math.round(feltBox.width),
+          feltH: Math.round(feltBox.height + gutter),
+          baseBottom: Math.round(screenBox.bottom - feltBox.bottom - gutter),
+          room: PULL_FULL_PX + 72,
+          minFeltH: 200,
+        });
+        if (Math.abs(next - gutter) > 1) {
+          screen.dataset["cueGutter"] = String(next);
+          screen.style.setProperty("--pool-cue-gutter", `${next}px`);
+        }
+      }
       const screenBox = screen.getBoundingClientRect();
       const tableBox = canvas.getBoundingClientRect();
       const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -794,19 +816,31 @@ export function PoolTable({
             gap = 1.05;
             alpha = 1 - (t - 0.62) / 0.38;
           }
-          if (cueCtx) {
-            drawCue(cueCtx, projectCue, innerW, strike, strike.angle, gap, Math.max(0, alpha));
+          if (cueCtx && cueCanvas) {
+            drawCue(cueCtx, projectCue, innerW, strike, strike.angle, gap, Math.max(0, alpha), {
+              w: cueCanvas.width,
+              h: cueCanvas.height,
+              margin: 8 * dpr,
+            });
           }
           again = true;
         }
-      } else if (showCue && from && cueCtx) {
+      } else if (showCue && from && cueCtx && cueCanvas) {
         const gap = 1.28 + (power / 10_000) * 4.4;
         const alpha = Math.min(1, (now - cueIn.current) / 140);
         if (alpha < 1) again = true;
-        drawCue(cueCtx, projectCue, innerW, from, angleMilli, gap, alpha);
-      } else if (watching && watchFrom && cueCtx && !replaying) {
+        drawCue(cueCtx, projectCue, innerW, from, angleMilli, gap, alpha, {
+          w: cueCanvas.width,
+          h: cueCanvas.height,
+          margin: 8 * dpr,
+        });
+      } else if (watching && watchFrom && cueCtx && cueCanvas && !replaying) {
         const gap = 1.28 + (watching.power / 10_000) * 4.4;
-        drawCue(cueCtx, projectCue, innerW, watchFrom, watching.angle, gap, 0.42);
+        drawCue(cueCtx, projectCue, innerW, watchFrom, watching.angle, gap, 0.42, {
+          w: cueCanvas.width,
+          h: cueCanvas.height,
+          margin: 8 * dpr,
+        });
       }
 
       if (!layerRef.current || layerRef.current.disposed) {
