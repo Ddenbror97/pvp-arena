@@ -80,7 +80,7 @@ export const POOL_RULES: readonly { title: string; body: string }[] = [
   },
   {
     title: "Waiting",
-    body: "A table with no opponent stays open for 24 hours, then the stake is refunded. There is no cancel. After someone sits, the rack opens in 60 seconds. If the player who opened the table never comes to it, the table plays their shots. Leaving a live match forfeits, and your opponent is paid.",
+    body: "A table with no opponent stays open for 24 hours, then the stake is refunded. There is no cancel. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays their shots. Leaving a live match forfeits, and your opponent is paid.",
   },
   {
     title: "Disconnect",

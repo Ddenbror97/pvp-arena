@@ -119,8 +119,8 @@ export const enterPool = createServerFn({ method: "POST" })
     const role = row?.role === "joined" ? "joined" : "created";
     if (!Number.isInteger(matchId) || matchId < 1)
       return { ok: false as const, error: "REQUEST_FAILED" };
-    // The rack stays STARTING for a minute. The match page and the one-second
-    // tick open it. Joining does not start the shot clock.
+    // Joining does not start the shot clock. The match page and the one-second
+    // tick open the rack once both players are present, or after the away wait.
     return { ok: true as const, matchId, role, duplicate: row?.duplicate === true };
   });
 

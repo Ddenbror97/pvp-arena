@@ -567,6 +567,50 @@ d("pool ledger (isolated schema)", () => {
     ).rejects.toThrow(/MATCH_NOT_OPEN/);
   });
 
+  it("opens the rack when both players are present and waits when one is away", async () => {
+    const a = await newUser("vera");
+    const b = await newUser("walt");
+    const made = await as(a, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
+      return row.r as { match_id: number };
+    });
+    await as(b, async (tx) => {
+      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
+    });
+    const [held] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
+    expect(held.r).toBe("idle");
+    const [far] = await sql`select pvp_test.pool_state(${made.match_id}) s`;
+    const wait =
+      new Date(far.s.opens_at).getTime() - new Date(far.s.server_now).getTime();
+    expect(wait).toBeGreaterThan(50_000);
+
+    await as(b, async (tx) => {
+      await tx`select pvp_test.pool_touch(${made.match_id})`;
+    });
+    const [one] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
+    expect(one.r).toBe("idle");
+
+    await sql`update pvp_test.pool_matches set
+      seen_a = clock_timestamp() - interval '20 seconds',
+      seen_b = clock_timestamp()
+      where id = ${made.match_id}`;
+    const [stale] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
+    expect(stale.r).toBe("idle");
+
+    await as(a, async (tx) => {
+      await tx`select pvp_test.pool_touch(${made.match_id})`;
+    });
+    const [ready] = await sql`select pvp_test.pool_state(${made.match_id}) s`;
+    const soon = new Date(ready.s.opens_at).getTime() - new Date(ready.s.server_now).getTime();
+    expect(soon).toBeLessThan(2_000);
+    const [opened] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
+    expect(opened.r).toBe("opened");
+    const [live] =
+      await sql`select status, stand_in from pvp_test.pool_matches where id = ${made.match_id}`;
+    expect(live.status).toBe("PLAYING");
+    expect(live.stand_in).toBeNull();
+  });
+
   it("blocks a self-excluded player from opening a table", async () => {
     const a = await newUser("fiona");
     await sql`update pvp_test.profiles set self_excluded_until = clock_timestamp() + interval '1 day' where id = ${a}`;
