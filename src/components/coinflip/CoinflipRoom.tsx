@@ -2,13 +2,14 @@ import {
   lazy,
   Suspense,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
   type ReactNode,
 } from "react";
 import { Link } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { CheckCircle2, Loader2, ShieldCheck, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +23,7 @@ import {
   PlayerPrestigeIdentity,
 } from "@/components/prestige/PlayerPrestigeIdentity";
 import { usePrestigeIdentities } from "@/components/prestige/PrestigeProvider";
+import { cosmeticArtReady, cosmeticArtSrc, warmCosmeticArt } from "@/components/prestige/frames";
 import { APP } from "@/lib/config";
 import { emitSound } from "@/lib/sound";
 import {
@@ -34,7 +36,7 @@ import {
 } from "@/lib/coinflip/api";
 import { friendlyError } from "@/lib/jackpot/errors";
 import { useBotConfig } from "@/lib/bots";
-import type { PrestigeIdentity } from "@/lib/prestige/api";
+import { identityQueryKey, type PrestigeIdentity } from "@/lib/prestige/api";
 import { verifyCoinflip, type CoinflipCheck } from "@/lib/fairness/coinflip";
 import { coinHeads as headsAsset, coinTails as tailsAsset } from "@/assets/media";
 import { Button } from "@/components/ui/button";
@@ -57,6 +59,9 @@ export function CoinflipRoom({ id }: { id: number }) {
   const q = useQuery({
     queryKey: ["coinflip", id],
     queryFn: () => fetchCoinflip(id),
+    // The lobby already has this row. Show it with the popup instead of waiting
+    // for a second read before the portraits can paint.
+    placeholderData: () => cachedCoinflip(qc, id),
     // The one-second worker advances deadlines. This poll only refreshes the view.
     refetchInterval: (query) => {
       const s = query.state.data?.status;
@@ -66,9 +71,12 @@ export function CoinflipRoom({ id }: { id: number }) {
     },
   });
   const g = q.data ?? null;
-  const identities = usePrestigeIdentities(
-    [g?.creator_id, g?.opponent_id].filter((id): id is string => !!id),
-  );
+  const playerIds = [g?.creator_id, g?.opponent_id].filter((id): id is string => !!id);
+  const identities = usePrestigeIdentities(playerIds);
+  const identityState = qc.getQueryState<PrestigeIdentity[]>([
+    "prestige-identities",
+    identityQueryKey(playerIds),
+  ]);
 
   const now = serverNow();
   const start = g?.animation_start_at ? new Date(g.animation_start_at).getTime() : null;
@@ -119,6 +127,7 @@ export function CoinflipRoom({ id }: { id: number }) {
           now={now}
           me={userId}
           identities={identities}
+          identityState={identityState}
           botsReady={bots.isSuccess}
           botsOn={bots.data?.coinflip === true}
         />
@@ -220,6 +229,7 @@ function MatchStage({
   now,
   me,
   identities,
+  identityState,
   botsReady,
   botsOn,
 }: {
@@ -231,6 +241,7 @@ function MatchStage({
   now: number;
   me: string | null;
   identities: Map<string, PrestigeIdentity>;
+  identityState: { status: string; fetchStatus: string } | undefined;
   botsReady: boolean;
   botsOn: boolean;
 }) {
@@ -266,6 +277,7 @@ function MatchStage({
           slot="creator"
           phase={phase}
           identity={identities.get(g.creator_id)}
+          identityPending={frameStillLoading(identities, identityState, g.creator_id)}
           avatarSize={avatarSize}
           band={band}
         />
@@ -287,6 +299,9 @@ function MatchStage({
           slot="opponent"
           phase={phase}
           identity={g.opponent_id ? identities.get(g.opponent_id) : undefined}
+          identityPending={
+            !!g.opponent_id && frameStillLoading(identities, identityState, g.opponent_id)
+          }
           avatarSize={avatarSize}
           band={band}
         />
@@ -300,11 +315,36 @@ function MatchStage({
   );
 }
 
+function frameStillLoading(
+  identities: Map<string, PrestigeIdentity>,
+  state: { status: string; fetchStatus: string } | undefined,
+  uid: string,
+) {
+  if (identities.has(uid)) return false;
+  if (!state || state.status === "pending" || state.fetchStatus === "fetching") return true;
+  return false;
+}
+
+/** Lobby lists this game already. The popup can paint from that row while its own read lands. */
+function cachedCoinflip(qc: QueryClient, id: number): CfGameView | undefined {
+  const lists = [
+    ...qc.getQueriesData<CfGameView[]>({ queryKey: ["coinflip-open"] }),
+    ...qc.getQueriesData<CfGameView[]>({ queryKey: ["coinflip-live"] }),
+    ...qc.getQueriesData<CfGameView[]>({ queryKey: ["coinflip-recent"] }),
+  ];
+  for (const [, rows] of lists) {
+    const hit = rows?.find((row) => row.id === id);
+    if (hit) return hit;
+  }
+  return undefined;
+}
+
 function PlayerSlot({
   g,
   slot,
   phase,
   identity,
+  identityPending,
   avatarSize,
   band,
 }: {
@@ -312,6 +352,7 @@ function PlayerSlot({
   slot: "creator" | "opponent";
   phase: string;
   identity?: PrestigeIdentity | undefined;
+  identityPending: boolean;
   avatarSize: number;
   band: number;
 }) {
@@ -321,32 +362,59 @@ function PlayerSlot({
   const p = slot === "creator" ? g.creator : g.opponent;
   const uid = slot === "creator" ? g.creator_id : g.opponent_id;
   const lost = phase === "result" && g.winner_id && g.winner_id !== uid;
+  const frameSrc = cosmeticArtSrc(identity?.frame);
+  const crownSrc = cosmeticArtSrc(identity?.crown);
+  const known = !!identity || !identityPending;
+  const artReady =
+    (!frameSrc || cosmeticArtReady(frameSrc)) && (!crownSrc || cosmeticArtReady(crownSrc));
+  const [shown, setShown] = useState(false);
+  useLayoutEffect(() => {
+    if (!known || shown) return;
+    const srcs = [frameSrc, crownSrc].filter((src): src is string => !!src);
+    let live = true;
+    void Promise.all(srcs.map((src) => warmCosmeticArt(src))).then(() => {
+      if (live) setShown(true);
+    });
+    return () => {
+      live = false;
+    };
+  }, [known, frameSrc, crownSrc, shown]);
+  const reveal = known && (shown || artReady);
   return (
     <div className={`flex min-w-0 flex-col items-center text-center ${lost ? "opacity-40" : ""}`}>
       <div className="grid place-items-center" style={{ height: band }}>
         {uid ? (
-          <span className="relative inline-flex">
-            <PlayerPrestigeIdentity
-              avatar={p?.avatar_url}
-              name={p?.username}
-              frame={identity?.frame}
-              crown={identity?.crown}
-              level={identity?.level}
-              tier={identity?.tier}
-              size={avatarSize}
-              reserveHeadroom={false}
+          reveal ? (
+            <span className="relative inline-flex">
+              <PlayerPrestigeIdentity
+                avatar={p?.avatar_url}
+                name={p?.username}
+                frame={identity?.frame}
+                crown={identity?.crown}
+                level={identity?.level}
+                tier={identity?.tier}
+                size={avatarSize}
+                reserveHeadroom={false}
+                priority
+              />
+              <SideCoin
+                side={side}
+                overlay
+                className="absolute z-30"
+                style={coinBadgePlacement(
+                  avatarSize,
+                  !!identity?.frame,
+                  slot === "creator" ? "left" : "right",
+                )}
+              />
+            </span>
+          ) : (
+            <div
+              aria-hidden
+              className="rounded-[8%] bg-muted"
+              style={{ width: avatarSize, height: avatarSize }}
             />
-            <SideCoin
-              side={side}
-              overlay
-              className="absolute z-30"
-              style={coinBadgePlacement(
-                avatarSize,
-                !!identity?.frame,
-                slot === "creator" ? "left" : "right",
-              )}
-            />
-          </span>
+          )
         ) : (
           <div
             className="flex items-center justify-center rounded-[8%] border-2 border-dashed border-border text-2xl text-muted-foreground"

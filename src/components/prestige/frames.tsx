@@ -200,6 +200,40 @@ export function cosmeticArtSrc(assetKey: string | null | undefined): string | nu
 }
 
 const paintedArt = new Set<string>();
+const warmingArt = new Map<string, Promise<void>>();
+
+/** True once this frame or crown has decoded, so a portrait can wait for its rim. */
+export function cosmeticArtReady(src: string | null | undefined): boolean {
+  return !!src && paintedArt.has(src);
+}
+
+/** Decode a frame or crown before the portrait mounts. Repeat calls share one request. */
+export function warmCosmeticArt(src: string): Promise<void> {
+  if (paintedArt.has(src)) return Promise.resolve();
+  const pending = warmingArt.get(src);
+  if (pending) return pending;
+  const job = new Promise<void>((resolve) => {
+    const finish = () => {
+      paintedArt.add(src);
+      resolve();
+    };
+    if (typeof Image === "undefined") {
+      finish();
+      return;
+    }
+    const img = new Image();
+    img.onload = finish;
+    img.onerror = finish;
+    img.src = src;
+    if (img.complete) {
+      img.onload = null;
+      img.onerror = null;
+      finish();
+    }
+  });
+  warmingArt.set(src, job);
+  return job;
+}
 
 function Art({
   src,
@@ -215,7 +249,7 @@ function Art({
       alt=""
       aria-hidden
       draggable={false}
-      decoding="async"
+      decoding={priority ? "sync" : "async"}
       loading={eager ? "eager" : "lazy"}
       fetchPriority={priority ? "high" : undefined}
       onLoad={() => paintedArt.add(src)}

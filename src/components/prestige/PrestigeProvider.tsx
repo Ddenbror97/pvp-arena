@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { queryOptions, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryOptions, useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
 import {
   cosmeticRows,
@@ -138,13 +138,38 @@ export function useSeedIdentities(
   }
 }
 
+/**
+ * Frames already fetched for these players, even when they were stored under a
+ * wider list key. A duel asks for two ids; the lobby stored them with the chat.
+ */
+export function identityRowsOnHand(qc: QueryClient, ids: string[]): PrestigeIdentity[] | undefined {
+  if (!ids.length) return undefined;
+  const want = new Set(ids);
+  const found = new Map<string, PrestigeIdentity>();
+  for (const [, rows] of qc.getQueriesData<PrestigeIdentity[]>({
+    queryKey: ["prestige-identities"],
+  })) {
+    if (!rows) continue;
+    for (const row of rows) {
+      if (want.has(row.user_id)) found.set(row.user_id, row);
+    }
+  }
+  if (found.size === 0) return undefined;
+  return ids.flatMap((id) => {
+    const row = found.get(id);
+    return row ? [row] : [];
+  });
+}
+
 export function usePrestigeIdentities(ids: string[]) {
+  const qc = useQueryClient();
   const key = identityQueryKey(ids);
   const q = useQuery({
     queryKey: ["prestige-identities", key],
     queryFn: () => fetchIdentities(key),
     enabled: key.length > 0,
     staleTime: 30_000,
+    placeholderData: () => identityRowsOnHand(qc, key),
   });
   const map = useMemo(() => {
     const m = new Map<string, PrestigeIdentity>();

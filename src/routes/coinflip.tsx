@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { createFileRoute, Outlet, useMatch, useNavigate } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import room from "@/assets/coinflip/room.webp";
@@ -8,6 +8,7 @@ import { CreatePanel } from "@/components/coinflip/CreatePanel";
 import { OpenGames, RecentCoinflips } from "@/components/coinflip/OpenGames";
 import { GameChat } from "@/components/chat/GameChat";
 import { useSeedIdentities } from "@/components/prestige/PrestigeProvider";
+import { cosmeticArtSrc, warmCosmeticArt } from "@/components/prestige/frames";
 import { useCoinflipRealtime } from "@/lib/coinflip/api";
 import { loadCoinflipPaint, useQuerySeed } from "@/lib/first-paint";
 
@@ -113,6 +114,15 @@ function Lobby() {
     ],
     paint.identities,
   );
+  // Decode the rims before a duel opens, so the popup does not paint a bare face first.
+  useLayoutEffect(() => {
+    for (const row of paint.identities?.rows ?? []) {
+      const frame = cosmeticArtSrc(row.frame);
+      const crown = cosmeticArtSrc(row.crown);
+      if (frame) void warmCosmeticArt(frame);
+      if (crown) void warmCosmeticArt(crown);
+    }
+  }, [paint.identities]);
   return (
     <>
       <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-4 xl:h-[var(--lobby-chat)] xl:grid-cols-[280px_minmax(0,1fr)_300px] xl:items-stretch xl:gap-4">
