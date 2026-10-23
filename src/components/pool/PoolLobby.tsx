@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, Percent, ShieldCheck, Timer } from "lucide-react";
+import { ArrowRight, CircleDollarSign, Crown, Percent, RefreshCw, ShieldCheck, Timer, Trophy } from "lucide-react";
 import { toast } from "sonner";
 import hero from "@/assets/pool/hero.webp";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { useAuth } from "@/lib/auth";
 import { STAKES, fetchMyPool, money, poolMessage, usePoolLobby, type OpenTable } from "@/lib/pool/api";
-import { formatCents, parseStakeDollars, stakeDraft, stakeQuote } from "@/lib/pool/copy";
+import { FEE_BPS, formatCents, parseStakeDollars, stakeDraft } from "@/lib/pool/copy";
 import { enterPool } from "@/lib/pool/pool.functions";
 
 function timeLeft(iso: string, now: number): string {
@@ -22,6 +22,17 @@ function timeLeft(iso: string, now: number): string {
   return minutes > 0 ? `${minutes}m ${seconds.toString().padStart(2, "0")}s` : `${seconds}s`;
 }
 
+function quoted(stakeCents: number, feeBps: number) {
+  const pot = stakeCents * 2;
+  const fee = Math.floor((pot * feeBps) / 10_000);
+  return { pot, payout: pot - fee };
+}
+
+function tablePayout(table: OpenTable): number {
+  const fee = Math.floor((table.pot * table.fee_bps) / 10_000);
+  return table.pot - fee;
+}
+
 export function PoolLobby() {
   const { userId } = useAuth();
   const navigate = useNavigate();
@@ -31,6 +42,7 @@ export function PoolLobby() {
   const open = useServerFn(enterPool);
   const [draft, setDraft] = useState("5");
   const [busy, setBusy] = useState<number | "play" | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const keys = useRef(new Map<string, string>());
   const seenStatus = useRef<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
@@ -45,10 +57,13 @@ export function PoolLobby() {
   const stakeMin = Math.min(...stakes);
   const stakeMax = Math.max(...stakes);
   const stake = parseStakeDollars(draft, stakeMin, stakeMax);
+  const feeBps = lobby.data?.fee_bps ?? FEE_BPS;
+  const quote = stake == null ? null : quoted(stake, feeBps);
   const openTables = [...(lobby.data?.open ?? [])].sort((a, b) => {
     const rank = (table: OpenTable) => (stake != null && table.stake === stake ? 0 : 1);
     return rank(a) - rank(b) || a.id - b.id;
   });
+  const atStake = stake == null ? 0 : openTables.filter((table) => table.stake === stake).length;
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(id);
@@ -63,6 +78,15 @@ export function PoolLobby() {
       void navigate({ to: "/pool/$matchId", params: { matchId: String(row.id) } });
     }
   }, [mine.data, navigate, userId]);
+
+  const refreshLobby = async () => {
+    setRefreshing(true);
+    try {
+      await qc.invalidateQueries({ queryKey: ["pool-lobby"] });
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const warmMatch = () => {
     for (const path of ["/pool", "/pool/$matchId"]) {
@@ -172,77 +196,140 @@ export function PoolLobby() {
         </div>
       </section>
 
-      <div className="pool-buyin">
-        <p className="pool-buyin-label" id="pool-stake-label">
-          Stake
-        </p>
-        <div className="pool-stakes" role="group" aria-labelledby="pool-stake-label">
-          {stakes.map((cents) => (
-            <button
-              key={cents}
-              type="button"
-              aria-pressed={stake === cents}
-              onClick={() => setDraft(stakeDraft(cents))}
-              className={stake === cents ? "pool-stake is-on" : "pool-stake"}
-            >
-              {money(cents)}
-            </button>
-          ))}
-        </div>
-        <label className={stake == null ? "pool-amount is-bad" : "pool-amount"}>
-          <span>$</span>
-          <input
-            inputMode="decimal"
-            autoComplete="off"
-            aria-label="Stake in dollars"
-            aria-invalid={stake == null}
-            value={draft}
-            onChange={(event) => setDraft(event.target.value)}
-          />
-        </label>
-        {stake == null ? (
-          <p className="pool-stake-hint">
-            Enter {formatCents(stakeMin)} to {formatCents(stakeMax)}.
+      <section className="pool-buyin" aria-labelledby="pool-stake-label">
+        <div className="pool-buyin-pick">
+          <p className="pool-buyin-label" id="pool-stake-label">
+            Your stake
+            <span className="pool-count" title="Open tables at this stake">
+              {atStake}
+            </span>
           </p>
-        ) : null}
-      </div>
+          <div className="pool-stakes" role="group" aria-labelledby="pool-stake-label">
+            {stakes.map((cents) => (
+              <button
+                key={cents}
+                type="button"
+                aria-pressed={stake === cents}
+                onClick={() => setDraft(stakeDraft(cents))}
+                className={stake === cents ? "pool-stake is-on" : "pool-stake"}
+              >
+                {money(cents)}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="pool-quote">
+          <p className="pool-quote-pot">
+            <span className="pool-quote-k">Total pot</span>
+            <strong>
+              <CircleDollarSign aria-hidden />
+              {quote ? formatCents(quote.pot) : "—"}
+            </strong>
+          </p>
+          <p className="pool-quote-win">
+            <span className="pool-quote-k">
+              Winner receives <span>({feeBps / 100}% fee)</span>
+            </span>
+            <strong>
+              <Trophy aria-hidden />
+              {quote ? formatCents(quote.payout) : "—"}
+            </strong>
+          </p>
+          <button
+            type="button"
+            className="pool-play pool-create"
+            disabled={busy != null || stake == null}
+            onMouseEnter={warmMatch}
+            onFocus={warmMatch}
+            onTouchStart={warmMatch}
+            onClick={() => {
+              if (stake == null) return;
+              void enter({ stake });
+            }}
+          >
+            {busy === "play" ? "Creating…" : "Create game"}
+            {busy === "play" ? null : <ArrowRight aria-hidden className="h-4 w-4" />}
+          </button>
+        </div>
+      </section>
 
       <div className="pool-below">
         <section className="pool-side" aria-labelledby="pool-open">
-          <h2 id="pool-open">
-            Open tables
-            {openTables.length > 0 ? <span className="pool-open-count">{openTables.length}</span> : null}
-          </h2>
+          <div className="pool-side-head">
+            <div>
+              <h2 id="pool-open">
+                Open tables
+                <span className="pool-count">{openTables.length}</span>
+              </h2>
+              <p className="pool-side-sub">Join a game or create your own table.</p>
+            </div>
+            <div className="pool-side-tools">
+              <span className={lobby.isError ? "pool-live is-off" : "pool-live"}>
+                <span className="pool-live-dot" aria-hidden />
+                {lobby.isError ? "Reconnecting" : "Live lobby"}
+              </span>
+              <button
+                type="button"
+                className={refreshing ? "pool-refresh is-spin" : "pool-refresh"}
+                aria-label="Refresh open tables"
+                onClick={() => void refreshLobby()}
+              >
+                <RefreshCw aria-hidden />
+              </button>
+            </div>
+          </div>
           <ul>
             {openTables.length === 0 ? (
               <li>No open tables.</li>
             ) : (
               openTables.map((table) => {
                 const mine = table.creator_id === userId;
-                const payout = stakeQuote(table.stake).payout;
+                const payout = tablePayout(table);
                 return (
-                  <li
-                    key={table.id}
-                    className={
-                      stake != null && table.stake === stake ? "pool-open is-stake" : "pool-open"
-                    }
-                  >
-                    <PlayerAvatar
-                      name={table.username}
-                      src={table.avatar_url}
-                      className="pool-open-face"
-                    />
+                  <li key={table.id} className="pool-open">
+                    <span className="pool-open-avatar">
+                      <PlayerAvatar
+                        name={table.username}
+                        src={table.avatar_url}
+                        color="#e8b923"
+                        className="pool-open-face rounded-full"
+                      />
+                      <Crown className="pool-open-crown" aria-hidden />
+                    </span>
                     <div className="pool-open-who">
                       <strong>{table.username}</strong>
                       <span>
-                        {mine ? "Your table · " : null}
-                        Stake {money(table.stake)} · pot {money(table.pot)} · win {money(payout)}
+                        Waiting for opponent
+                        <span className="pool-open-time" suppressHydrationWarning>
+                          {" "}
+                          · {timeLeft(table.expires_at, now)}
+                        </span>
                       </span>
                     </div>
+                    <div className="pool-open-stats">
+                      <p>
+                        <span>Stake</span>
+                        <strong>
+                          <CircleDollarSign aria-hidden />
+                          {formatCents(table.stake)}
+                        </strong>
+                      </p>
+                      <p>
+                        <span>Pot</span>
+                        <strong>
+                          <CircleDollarSign aria-hidden />
+                          {formatCents(table.pot)}
+                        </strong>
+                      </p>
+                      <p className="is-win">
+                        <span>To winner</span>
+                        <strong>
+                          <Trophy aria-hidden />
+                          {formatCents(payout)}
+                        </strong>
+                      </p>
+                    </div>
                     <div className="pool-open-actions">
-                      <span className="pool-open-time" suppressHydrationWarning>
-                        {timeLeft(table.expires_at, now)}
-                      </span>
                       {mine ? (
                         <Link
                           to="/pool/$matchId"
@@ -251,7 +338,8 @@ export function PoolLobby() {
                           onMouseEnter={warmMatch}
                           onFocus={warmMatch}
                         >
-                          Open
+                          Open table
+                          <ArrowRight aria-hidden className="h-4 w-4" />
                         </Link>
                       ) : (
                         <button
@@ -263,7 +351,8 @@ export function PoolLobby() {
                           onTouchStart={warmMatch}
                           onClick={() => void enter({ matchId: table.id })}
                         >
-                          {busy === table.id ? "Joining…" : `Join ${money(table.stake)}`}
+                          {busy === table.id ? "Joining…" : "Join table"}
+                          {busy === table.id ? null : <ArrowRight aria-hidden className="h-4 w-4" />}
                         </button>
                       )}
                     </div>

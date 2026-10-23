@@ -2790,74 +2790,143 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
 .pool-play:disabled { cursor: wait; opacity: 0.75; }
 .pool-play:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 .pool-buyin {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 0.55rem 0.75rem;
-  padding: 0.75rem 0.9rem; border-radius: 1rem; border: 1px solid rgb(181 123 255 / 16%);
-  background: rgb(12 10 28 / 80%);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1rem 1.5rem;
+  padding: 0.95rem 1.05rem; border-radius: 1.15rem; border: 1px solid rgb(168 85 247 / 38%);
+  background:
+    radial-gradient(80% 140% at 100% 0%, rgb(124 58 237 / 24%), transparent 58%),
+    linear-gradient(180deg, rgb(24 14 52 / 96%), rgb(10 8 26 / 96%));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%), 0 0 0 1px rgb(88 28 135 / 20%), 0 16px 40px rgb(0 0 0 / 28%);
 }
 .pool-buyin-label {
-  margin: 0; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #c58bff;
+  display: flex; align-items: center; gap: 0.45rem; margin: 0 0 0.6rem;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #d8c4ff;
 }
-.pool-stakes { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; }
+.pool-count {
+  display: inline-grid; place-items: center; min-width: 1.2rem; height: 1.2rem; padding: 0 0.28rem;
+  border-radius: 0.35rem; background: #7c3aed; color: #fff; font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0; line-height: 1;
+}
+.pool-stakes { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0; }
 .pool-stake {
-  min-width: 2.8rem; min-height: 2rem; padding: 0 0.7rem; border-radius: 999px; cursor: pointer;
-  border: 1px solid rgb(255 255 255 / 18%); background: rgb(8 4 20 / 48%); color: #fff;
-  font-family: var(--font-display); font-size: 0.8rem;
+  min-width: 2.75rem; height: 2.2rem; padding: 0 0.75rem; border-radius: 0.65rem; cursor: pointer;
+  border: 1px solid rgb(255 255 255 / 14%); background: rgb(8 6 22 / 72%); color: #fff;
+  font-family: var(--font-display); font-size: 0.84rem; font-weight: 600;
 }
 .pool-stake.is-on {
-  border-color: #e9d5ff; background: rgb(124 58 237 / 55%);
-  box-shadow: 0 0 14px rgb(168 85 247 / 45%);
+  border-color: #d8b4fe; background: #7c3aed;
+  box-shadow: 0 0 16px rgb(124 58 237 / 55%);
 }
 .pool-stake:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-.pool-amount {
-  display: inline-flex; align-items: center; gap: 0.15rem; height: 2rem; padding: 0 0.75rem;
-  border-radius: 999px; border: 1px solid rgb(255 255 255 / 18%); background: rgb(8 4 20 / 48%); color: #fff;
+.pool-quote {
+  display: flex; align-items: center; gap: 1.35rem; padding-left: 1.35rem;
+  border-left: 1px solid rgb(168 85 247 / 32%);
 }
-.pool-amount span { font-family: var(--font-display); font-size: 0.8rem; color: #c58bff; }
-.pool-amount input {
-  width: 4.6rem; border: 0; padding: 0; background: transparent; color: inherit;
-  font-family: var(--font-display); font-size: 0.8rem; outline: none;
+.pool-quote p { margin: 0; }
+.pool-quote-k {
+  display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgb(210 196 245 / 72%); white-space: nowrap;
 }
-.pool-amount.is-bad { border-color: #f87171; }
-.pool-stake-hint { flex: 1 1 12rem; margin: 0; font-size: 0.78rem; color: #f0b4b4; }
-.pool-below {
-  display: grid; gap: 0.75rem; padding: 0 0 1.25rem;
+.pool-quote-k span { color: rgb(210 196 245 / 52%); }
+.pool-quote strong {
+  display: flex; align-items: center; gap: 0.35rem; margin-top: 0.18rem;
+  font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums;
 }
+.pool-quote svg { width: 1.15rem; height: 1.15rem; flex: none; }
+.pool-quote-pot svg { color: #c084fc; }
+.pool-quote-win strong, .pool-quote-win svg { color: #3dff8a; }
+.pool-create { align-self: center; height: 2.85rem; margin-top: 0; padding: 0 1.25rem; flex: none; }
+.pool-below { display: grid; gap: 0.75rem; padding: 0 0 1.25rem; }
 .pool-side {
-  border-radius: 1rem; border: 1px solid rgb(255 255 255 / 8%); background: rgb(16 12 32 / 80%); padding: 0.9rem 1rem;
+  border-radius: 1.15rem; border: 1px solid rgb(168 85 247 / 32%); padding: 1rem 1.1rem 0.4rem;
+  background:
+    radial-gradient(70% 90% at 100% 0%, rgb(124 58 237 / 14%), transparent 52%),
+    linear-gradient(180deg, rgb(18 12 42 / 96%), rgb(10 8 26 / 96%));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 5%), 0 16px 40px rgb(0 0 0 / 22%);
 }
+.pool-side-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
 .pool-side h2 {
-  margin: 0; font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: #c4b5fd;
+  display: flex; align-items: center; gap: 0.5rem; margin: 0;
+  font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: 0; text-transform: none; color: #fff;
 }
-.pool-side ul { margin: 0.7rem 0 0; padding: 0; list-style: none; }
-.pool-side li { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.875rem; color: rgb(226 220 245 / 78%); }
-.pool-side li + li { margin-top: 0.45rem; }
-.pool-open-count {
-  margin-left: 0.45rem; color: #fff; font-size: 0.72rem;
+.pool-side-sub { margin: 0.28rem 0 0; font-size: 0.84rem; color: rgb(206 196 230 / 72%); }
+.pool-side-tools { display: flex; align-items: center; gap: 0.75rem; flex: none; padding-top: 0.15rem; }
+.pool-live { display: inline-flex; align-items: center; gap: 0.4rem; color: #4ade80; font-size: 0.84rem; font-weight: 600; }
+.pool-live.is-off { color: #f0b4b4; }
+.pool-live-dot {
+  width: 0.48rem; height: 0.48rem; border-radius: 50%; background: currentColor;
+  box-shadow: 0 0 8px currentColor;
 }
+.pool-refresh {
+  display: grid; place-items: center; width: 2.2rem; height: 2.2rem; padding: 0; border-radius: 0.7rem; cursor: pointer;
+  border: 1px solid rgb(168 85 247 / 48%); background: rgb(124 58 237 / 20%); color: #e9d5ff;
+}
+.pool-refresh svg { width: 1rem; height: 1rem; }
+.pool-refresh.is-spin svg { animation: pool-lobby-spin 0.8s linear infinite; }
+.pool-refresh:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@keyframes pool-lobby-spin { to { transform: rotate(360deg); } }
+.pool-side ul { margin: 0.75rem 0 0.2rem; padding: 0; list-style: none; }
+.pool-side li { font-size: 0.875rem; color: rgb(226 220 245 / 78%); }
+.pool-side li + li { margin-top: 0.15rem; }
 .pool-side li.pool-open {
-  display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); column-gap: 0.7rem; row-gap: 0.35rem;
-  align-items: center; min-height: 4.6rem; margin-top: 0.55rem; padding-top: 0.55rem;
-  border-top: 1px solid rgb(255 255 255 / 8%); justify-content: initial;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "face who action" "stats stats stats";
+  align-items: center; gap: 0.7rem 0.9rem; margin-top: 0; padding: 0.85rem 0.15rem;
+  border-top: 1px solid rgb(168 85 247 / 18%);
 }
-.pool-side li.pool-open:first-child { margin-top: 0.35rem; padding-top: 0; border-top: 0; }
-.pool-side li.pool-open.is-stake { border-radius: 0.75rem; background: rgb(124 58 237 / 16%); padding-inline: 0.45rem; }
-.pool-open-face { grid-row: 1; grid-column: 1; width: 2.4rem; height: 2.4rem; border-radius: 50%; }
-.pool-open-who { grid-row: 1; grid-column: 2; min-width: 0; }
-.pool-open-who strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff; font-size: 0.92rem; }
-.pool-open-who span { display: block; margin-top: 0.12rem; font-size: 0.75rem; line-height: 1.35; color: rgb(226 220 245 / 78%); }
-.pool-open-actions { grid-column: 1 / -1; display: flex; align-items: center; justify-content: flex-end; gap: 0.4rem; min-height: 2rem; }
-.pool-open-time { margin-right: auto; font-variant-numeric: tabular-nums; font-size: 0.75rem; color: #d7c4ff; min-width: 5.5rem; }
+.pool-side li.pool-open:first-child { border-top: 0; padding-top: 0.35rem; }
+.pool-open-avatar { position: relative; grid-area: face; width: 2.85rem; height: 2.85rem; }
+.pool-open-face { width: 2.85rem; height: 2.85rem; }
+.pool-open-crown {
+  position: absolute; top: -0.32rem; right: -0.18rem; z-index: 1; width: 0.95rem; height: 0.95rem;
+  color: #f4d35e; filter: drop-shadow(0 1px 2px rgb(0 0 0 / 65%));
+}
+.pool-open-who { grid-area: who; min-width: 0; }
+.pool-open-who strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff; font-size: 0.98rem; }
+.pool-open-who span { display: block; margin-top: 0.12rem; font-size: 0.78rem; line-height: 1.35; color: rgb(206 196 230 / 72%); }
+.pool-open-time { font-variant-numeric: tabular-nums; color: #d7c4ff; }
+.pool-open-stats { grid-area: stats; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.45rem 0.8rem; }
+.pool-open-stats p { margin: 0; }
+.pool-open-stats span {
+  display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgb(210 196 245 / 62%);
+}
+.pool-open-stats strong {
+  display: flex; align-items: center; gap: 0.28rem; margin-top: 0.12rem;
+  font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums;
+}
+.pool-open-stats svg { width: 0.95rem; height: 0.95rem; flex: none; color: #c084fc; }
+.pool-open-stats .is-win strong, .pool-open-stats .is-win svg { color: #3dff8a; }
+.pool-open-actions { grid-area: action; display: flex; align-items: center; justify-content: flex-end; }
 .pool-join {
-  display: inline-flex; align-items: center; justify-content: center; min-height: 2rem; padding: 0 0.8rem;
-  border: 0; border-radius: 999px; cursor: pointer; color: #fff; text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: 2.6rem; padding: 0 1.15rem;
+  border: 0; border-radius: 999px; cursor: pointer; color: #fff; text-decoration: none; white-space: nowrap;
   background: linear-gradient(180deg, #c084fc, #7c3aed 55%, #6d28d9);
-  font-family: var(--font-display); font-size: 0.78rem; font-weight: 700;
+  box-shadow: 0 8px 18px rgb(124 58 237 / 32%);
+  font-family: var(--font-display); font-size: 0.88rem; font-weight: 700;
 }
 .pool-join:disabled { cursor: wait; opacity: 0.7; }
 .pool-join:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-@media (min-width: 640px) {
-  .pool-side li.pool-open { grid-template-columns: 2.4rem minmax(0, 1fr) auto; min-height: 3.5rem; }
-  .pool-open-actions { grid-column: 3; grid-row: 1; }
+@media (min-width: 960px) {
+  .pool-side li.pool-open {
+    grid-template-columns: auto minmax(8rem, 1.05fr) minmax(16rem, 1.6fr) auto;
+    grid-template-areas: "face who stats action";
+  }
+}
+@media (max-width: 900px) {
+  .pool-buyin { grid-template-columns: 1fr; }
+  .pool-quote {
+    border-left: 0; padding-left: 0; padding-top: 0.85rem; flex-wrap: wrap;
+    border-top: 1px solid rgb(168 85 247 / 28%);
+  }
+}
+@media (max-width: 560px) {
+  .pool-quote { display: grid; grid-template-columns: 1fr 1fr; }
+  .pool-create { grid-column: 1 / -1; justify-content: center; }
+  .pool-side li.pool-open { grid-template-areas: "face who who" "stats stats stats" "action action action"; }
+  .pool-join { width: 100%; }
+  .pool-side-head { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pool-refresh.is-spin svg { animation: none; }
 }
 /* Daylight lobby. The hero stays a dark banner. The page, stake bar, tables, and how-it-works stay light. */
 html[data-theme="light"] .pool-lobby-main {
@@ -2868,7 +2937,8 @@ html[data-theme="light"] .pool-lobby-main {
     linear-gradient(180deg, #f7f4fe, #f3f1f9 40rem);
 }
 html[data-theme="light"] .pool-hero { color: #f4f1ff; }
-html[data-theme="light"] .pool-buyin {
+html[data-theme="light"] .pool-buyin,
+html[data-theme="light"] .pool-side {
   background: #fff;
   border-color: rgb(109 40 217 / 16%);
   box-shadow: 0 1px 3px rgb(30 20 70 / 6%);
@@ -2884,24 +2954,33 @@ html[data-theme="light"] .pool-stake.is-on {
   border-color: #7c3aed;
   box-shadow: none;
 }
-html[data-theme="light"] .pool-amount {
-  color: #1b1636;
-  background: #fff;
-  border-color: rgb(109 40 217 / 22%);
-}
-html[data-theme="light"] .pool-side {
-  background: #fff;
-  border-color: rgb(109 40 217 / 14%);
-  box-shadow: 0 1px 3px rgb(30 20 70 / 6%);
-}
-html[data-theme="light"] .pool-side h2 { color: #6d28d9; }
+html[data-theme="light"] .pool-quote { border-left-color: rgb(109 40 217 / 16%); }
+html[data-theme="light"] .pool-quote-k,
+html[data-theme="light"] .pool-quote-k span,
+html[data-theme="light"] .pool-side-sub,
+html[data-theme="light"] .pool-open-stats span { color: #5f5b7d; }
+html[data-theme="light"] .pool-quote strong,
+html[data-theme="light"] .pool-side h2,
+html[data-theme="light"] .pool-open-who strong,
+html[data-theme="light"] .pool-open-stats strong { color: #1b1636; }
+html[data-theme="light"] .pool-quote-pot svg,
+html[data-theme="light"] .pool-open-stats svg { color: #7c3aed; }
+html[data-theme="light"] .pool-quote-win strong,
+html[data-theme="light"] .pool-quote-win svg,
+html[data-theme="light"] .pool-open-stats .is-win strong,
+html[data-theme="light"] .pool-open-stats .is-win svg { color: #059669; }
 html[data-theme="light"] .pool-side li { color: #3f3a5c; }
-html[data-theme="light"] .pool-open-count { color: #1b1636; }
-html[data-theme="light"] .pool-open-who strong { color: #1b1636; }
 html[data-theme="light"] .pool-open-who span,
 html[data-theme="light"] .pool-open-time { color: #5f5b7d; }
 html[data-theme="light"] .pool-side li.pool-open { border-top-color: rgb(27 22 54 / 8%); }
-html[data-theme="light"] .pool-side li.pool-open.is-stake { background: rgb(124 58 237 / 8%); }
+html[data-theme="light"] .pool-live { color: #059669; }
+html[data-theme="light"] .pool-live.is-off { color: #b91c1c; }
+html[data-theme="light"] .pool-live-dot { box-shadow: none; }
+html[data-theme="light"] .pool-refresh {
+  background: #f6f3ff;
+  color: #6d28d9;
+  border-color: rgb(109 40 217 / 28%);
+}
 html[data-theme="light"] .pool-facts section {
   background: #fff;
   color: var(--foreground);
