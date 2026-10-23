@@ -88,6 +88,76 @@ export function bytesFromHex(hex: string): Uint8Array {
   return out;
 }
 
+function playListedStep(
+  state: TableState,
+  step: MatchStep,
+): { state: TableState; got: string } | { error: string } {
+  if (step.kind === "timeout") {
+    const next = applyTimeout(state);
+    return { state: next, got: stateHash(next) };
+  }
+  if (step.kind === "forfeit") {
+    const next = applyForfeit(state, step.seat);
+    return { state: next, got: stateHash(next) };
+  }
+  const working = structuredClone(state);
+  const placed = placeCue(working, step.input);
+  if (placed) return { error: placed };
+  const sim = simulate(working.balls, step.input, false, working.physics);
+  const applied = applyPlayedShot(working, sim, step.input.calledPocket);
+  if (applied.event.reason === "CALL_POCKET") return { error: "CALL_POCKET" };
+  return { state: applied.state, got: stateHash(applied.state) };
+}
+
+/** A table already rolled through the first `steps` accepted hashes. */
+export type ReplayCursor = {
+  seedKey: string;
+  physics: PhysicsId;
+  steps: number;
+  lastHash: string;
+  state: TableState;
+};
+
+/**
+ * Roll `stepsIn` from the rack, or from a cursor that already matches a prefix.
+ * A stale cursor fails. The caller retries with a null cursor before rejecting a shot.
+ */
+export function resumeReplay(
+  seed: Uint8Array,
+  seedKey: string,
+  stepsIn: readonly MatchStep[],
+  physics: PhysicsId,
+  cursor: ReplayCursor | null,
+): { ok: true; state: TableState; cursor: ReplayCursor } | { ok: false } {
+  const reusable =
+    cursor != null &&
+    cursor.seedKey === seedKey &&
+    cursor.physics === physics &&
+    cursor.steps <= stepsIn.length &&
+    (cursor.steps === 0 || stepsIn[cursor.steps - 1]?.hash === cursor.lastHash);
+  let state = reusable ? cursor.state : freshTable(seed, physics);
+  const from = reusable ? cursor.steps : 0;
+  for (let i = from; i < stepsIn.length; i++) {
+    const step = stepsIn[i];
+    if (!step) return { ok: false };
+    const played = playListedStep(state, step);
+    if ("error" in played || played.got !== step.hash) return { ok: false };
+    state = played.state;
+    if (state.winner && i < stepsIn.length - 1) return { ok: false };
+  }
+  return {
+    ok: true,
+    state,
+    cursor: {
+      seedKey,
+      physics,
+      steps: stepsIn.length,
+      lastHash: stepsIn.length > 0 ? (stepsIn[stepsIn.length - 1]?.hash ?? "") : stateHash(state),
+      state,
+    },
+  };
+}
+
 /** Replay a match from the committed seed and the accepted step list. */
 export async function replayMatch(
   seed: Uint8Array,
@@ -99,25 +169,14 @@ export async function replayMatch(
   let state = freshTable(seed, physics);
   const steps: Replay["steps"] = [];
   for (const step of stepsIn) {
-    if (step.kind === "timeout") state = applyTimeout(state);
-    else if (step.kind === "forfeit") state = applyForfeit(state, step.seat);
-    else {
-      const placed = placeCue(state, step.input);
-      if (placed) {
-        steps.push({ shot: state.shot, ok: false, got: placed, expected: step.hash });
-        break;
-      }
-      const sim = simulate(state.balls, step.input, false, state.physics);
-      const applied = applyPlayedShot(state, sim, step.input.calledPocket);
-      if (applied.event.reason === "CALL_POCKET") {
-        steps.push({ shot: state.shot, ok: false, got: "CALL_POCKET", expected: step.hash });
-        break;
-      }
-      state = applied.state;
+    const played = playListedStep(state, step);
+    if ("error" in played) {
+      steps.push({ shot: state.shot, ok: false, got: played.error, expected: step.hash });
+      break;
     }
-    const got = stateHash(state);
-    steps.push({ shot: state.shot, ok: got === step.hash, got, expected: step.hash });
-    if (got !== step.hash || state.winner) break;
+    state = played.state;
+    steps.push({ shot: state.shot, ok: played.got === step.hash, got: played.got, expected: step.hash });
+    if (played.got !== step.hash || state.winner) break;
   }
   return {
     ok: seedOk && steps.length === stepsIn.length && steps.every((s) => s.ok),

@@ -27,9 +27,7 @@ import {
   type ShotInput,
 } from "@/lib/pool/physics";
 import {
-  applyForfeit,
   applyPlayedShot,
-  applyTimeout,
   freshTable,
   groupClear,
   defaultCueSpot,
@@ -40,7 +38,7 @@ import {
   stateHash,
 } from "@/lib/pool/rules";
 import { ballSound, cueSound, cushionSound, pocketSound } from "@/lib/pool/sfx";
-import { bytesFromHex, replayMatch, stepsFromRecord } from "@/lib/pool/verify";
+import { bytesFromHex, replayMatch, resumeReplay, stepsFromRecord, type ReplayCursor } from "@/lib/pool/verify";
 import {
   leaveTake,
   matchNotice,
@@ -74,19 +72,6 @@ function seatOf(view: PoolView, userId: string | null): "A" | "B" | null {
   return null;
 }
 
-function useRemaining(deadline: string | null, serverNow: string | undefined) {
-  const [left, setLeft] = useState(30_000);
-  useEffect(() => {
-    if (!deadline || !serverNow) return;
-    const skew = Date.now() - Date.parse(serverNow);
-    const tick = () => setLeft(Date.parse(deadline) - (Date.now() - skew));
-    tick();
-    const id = window.setInterval(tick, 200);
-    return () => window.clearInterval(id);
-  }, [deadline, serverNow]);
-  return left;
-}
-
 function useCountdown(deadline: string | null, serverNow: string | undefined) {
   const [left, setLeft] = useState<number | null>(null);
   useEffect(() => {
@@ -97,7 +82,7 @@ function useCountdown(deadline: string | null, serverNow: string | undefined) {
     const skew = Date.now() - Date.parse(serverNow);
     const tick = () => setLeft(Date.parse(deadline) - (Date.now() - skew));
     tick();
-    const id = window.setInterval(tick, 200);
+    const id = window.setInterval(tick, 1_000);
     return () => window.clearInterval(id);
   }, [deadline, serverNow]);
   return left;
@@ -136,7 +121,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const [tutorialStep, setTutorialStep] = useState<number | null>(null);
   const [offline, setOffline] = useState(false);
   const [muted, setMuted] = useState(false);
-  const left = useRemaining(view?.turn_deadline ?? null, view?.server_now);
+  const turnDeadline = view?.turn_deadline ?? null;
   const opensLeft = useCountdown(
     view?.status === "STARTING" ? (view.opens_at ?? null) : null,
     view?.server_now,
@@ -155,6 +140,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const shotsRef = useRef(shotList);
   shotsRef.current = shotList;
   const shotLock = useRef(false);
+  const replayCursor = useRef<ReplayCursor | null>(null);
+  const nudgedDeadline = useRef<string | null>(null);
   const pendingShot = useRef<number | null>(null);
   const previewKey = useRef<string | null>(null);
   const previewHash = useRef<string | null>(null);
@@ -167,7 +154,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const awayAt = useRef(0);
   const tableHash = view?.state_hash ?? null;
   const physicsId = view?.state?.physics ?? null;
-  const updatedAt = query.dataUpdatedAt;
   const noiseAt = useRef(0);
   const onSample = useCallback((prev: readonly Ball[], next: readonly Ball[]) => {
     const hit = impactOf(prev, next, physicsId);
@@ -273,12 +259,20 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       window.removeEventListener("focus", onShow);
       window.removeEventListener("pageshow", onShow);
     };
-  }, [liveId, liveStatus, seat, updatedAt]);
+  }, [liveId, liveStatus, seat]);
 
   useEffect(() => {
-    if (liveId == null || liveStatus !== "PLAYING" || left > 0) return;
-    void poolNudge(liveId);
-  }, [liveId, liveStatus, left]);
+    if (liveId == null || liveStatus !== "PLAYING" || !turnDeadline) return;
+    if (nudgedDeadline.current === turnDeadline) return;
+    const serverNow = view?.server_now;
+    const skew = serverNow ? Date.now() - Date.parse(serverNow) : 0;
+    const delay = Math.max(0, Date.parse(turnDeadline) - (Date.now() - skew));
+    const id = window.setTimeout(() => {
+      nudgedDeadline.current = turnDeadline;
+      void poolNudge(liveId);
+    }, delay);
+    return () => window.clearTimeout(id);
+  }, [liveId, liveStatus, turnDeadline]);
 
   useEffect(() => {
     if (liveId == null || liveStatus !== "STARTING" || opensLeft == null || opensLeft > 1_200) return;
@@ -358,16 +352,14 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     previewHash.current = null;
     serverReady.current = false;
     heldPreview.current = false;
-    let table = freshTable(bytesFromHex(serverSeed), physicsId);
-    for (const step of prior) {
-      if (step.kind === "timeout") table = applyTimeout(table);
-      else if (step.kind === "forfeit") table = applyForfeit(table, step.seat);
-      else {
-        const played = playShot(table, step.input);
-        if (!played.ok) return;
-        table = played.state;
-      }
-    }
+    const seedBytes = bytesFromHex(serverSeed);
+    const seedKey = `${liveId ?? 0}:${serverSeed}:${physicsId}`;
+    let rolled = resumeReplay(seedBytes, seedKey, prior, physicsId, replayCursor.current);
+    if (!rolled.ok) rolled = resumeReplay(seedBytes, seedKey, prior, physicsId, null);
+    if (!rolled.ok) return;
+    const carried = resumeReplay(seedBytes, seedKey, [...prior, input], physicsId, rolled.cursor);
+    replayCursor.current = carried.ok ? carried.cursor : rolled.cursor;
+    const table = rolled.state;
     const placed = structuredClone(table);
     placeCue(placed, input.input);
     const opening = placed.balls.map((ball) => ({ ...ball }));
@@ -681,7 +673,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const balls = state?.balls ?? [];
   const groupA = state ? seatGroup(state, "A") : null;
   const groupB = state ? seatGroup(state, "B") : null;
-  const clock = Math.max(0, Math.ceil(left / 1000));
   const lastEvent = view.events[view.events.length - 1];
   const fouled =
     lastEvent?.kind === "shot" && lastEvent.event["foul"] === true && !!state?.ballInHand;
@@ -785,7 +776,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           away={view.stand_in === "A" && view.status === "PLAYING"}
           active={state?.turn === "A" && view.status === "PLAYING"}
           hand={!!state?.ballInHand && state?.turn === "A" && view.status === "PLAYING"}
-          clock={state?.turn === "A" && view.status === "PLAYING" ? clock : null}
+          deadline={state?.turn === "A" && view.status === "PLAYING" ? turnDeadline : null}
+          serverNow={view.server_now}
         />
         <span className="pool-vs-mark">VS</span>
         <SeatCard
@@ -799,7 +791,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           away={view.stand_in === "B" && view.status === "PLAYING"}
           active={state?.turn === "B" && view.status === "PLAYING"}
           hand={!!state?.ballInHand && state?.turn === "B" && view.status === "PLAYING"}
-          clock={state?.turn === "B" && view.status === "PLAYING" ? clock : null}
+          deadline={state?.turn === "B" && view.status === "PLAYING" ? turnDeadline : null}
+          serverNow={view.server_now}
           align="end"
         />
       </div>
@@ -1075,6 +1068,20 @@ function Shell({ children, calling = false }: { children: ReactNode; calling?: b
   );
 }
 
+function ShotClock({ deadline, serverNow }: { deadline: string; serverNow: string | undefined }) {
+  const [left, setLeft] = useState(30_000);
+  useEffect(() => {
+    if (!serverNow) return;
+    const skew = Date.now() - Date.parse(serverNow);
+    const tick = () => setLeft(Date.parse(deadline) - (Date.now() - skew));
+    tick();
+    const id = window.setInterval(tick, 250);
+    return () => window.clearInterval(id);
+  }, [deadline, serverNow]);
+  const clock = Math.max(0, Math.ceil(left / 1000));
+  return <em aria-label={`Shot clock ${clock} seconds`}>{clock}s</em>;
+}
+
 function dollars(cents: number | null | undefined): string {
   const v = Number(cents ?? 0) / 100;
   return `$${v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -1123,7 +1130,8 @@ function SeatCard({
   away = false,
   active,
   hand = false,
-  clock,
+  deadline,
+  serverNow,
   align = "start",
 }: {
   name: string;
@@ -1136,7 +1144,8 @@ function SeatCard({
   away?: boolean;
   active: boolean;
   hand?: boolean;
-  clock: number | null;
+  deadline: string | null;
+  serverNow: string | undefined;
   align?: "start" | "end";
 }) {
   const initial = name.slice(0, 1).toUpperCase();
@@ -1162,7 +1171,7 @@ function SeatCard({
           {name}
           {away ? " · table" : null}
           {active ? <span className="sr-only">, your turn</span> : null}
-          {clock != null ? <em aria-label={`Shot clock ${clock} seconds`}>{clock}s</em> : null}
+          {deadline ? <ShotClock deadline={deadline} serverNow={serverNow} /> : null}
         </strong>
         <small>{dollars(stake)}</small>
         <span className="pool-down">

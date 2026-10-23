@@ -1,5 +1,5 @@
 import type { ShotInput } from "./physics";
-import { confirmedWinner, playShot } from "./play";
+import { confirmStep, playShot } from "./play";
 import { chooseStandInShot, standInDue } from "./stand-in";
 import type { TableState } from "./rules";
 import { bytesFromHex, stepsFromRecord } from "./verify";
@@ -109,7 +109,8 @@ export async function playStandInMatch(
   const prior = stepsFromRecord(fresh?.events);
   const published = typeof fresh?.server_seed_hash === "string" ? fresh.server_seed_hash : "";
   if (!prior) return fail("REPLAY_MISMATCH");
-  const confirmed = await confirmedWinner(
+  const confirmed = await confirmStep(
+    String(matchId),
     seed,
     published,
     [...prior, { kind: "shot", input: shot, hash: played.hash }],

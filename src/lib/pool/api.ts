@@ -182,8 +182,8 @@ export function usePoolState(id: number) {
       if (status === "COMPLETED" || status === "CANCELLED") return false;
       return 1_000;
     },
-    // A seated player's poll is also how the page stays present. Hidden tabs keep asking.
-    refetchIntervalInBackground: true,
+    // Presence is the 4-second touch while the tab is visible. A hidden tab is away.
+    refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
   });
   useEffect(() => {

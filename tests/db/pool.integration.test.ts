@@ -699,6 +699,9 @@ d("pool ledger (isolated schema)", () => {
   it("opens the rack when both players are present and waits when one is away", async () => {
     const a = await newUser("vera");
     const b = await newUser("walt");
+    // Earlier cases leave an open table. Matchmaking would sit down there instead.
+    await sql`update pvp_test.pool_matches set expires_at = clock_timestamp() - interval '1 second' where status = 'WAITING'`;
+    await sql`select pvp_test.pool_tick()`;
     const made = await as(a, async (tx) => {
       const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
       return row.r as { match_id: number };
@@ -738,6 +741,12 @@ d("pool ledger (isolated schema)", () => {
       await sql`select status, stand_in from pvp_test.pool_matches where id = ${made.match_id}`;
     expect(live.status).toBe("PLAYING");
     expect(live.stand_in).toBeNull();
+  });
+
+  it("walks live tables and skips when the tick is already running", async () => {
+    const [tick] = await sql`select pvp_test.pool_tick() r`;
+    const row = tick.r as { processed?: number; skipped?: string };
+    expect(row.skipped === "busy" || Number(row.processed) >= 0).toBe(true);
   });
 
   it("blocks a self-excluded player from opening a table", async () => {

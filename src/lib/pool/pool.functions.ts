@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { requireLiveSession } from "@/integrations/supabase/live-session";
 import { POOL_STAKE_MAX, POOL_STAKE_MIN } from "./copy";
 import type { ShotInput } from "./physics";
-import { confirmedWinner, playShot } from "./play";
+import { confirmStep, playShot } from "./play";
 import { freshTable, seedHash, type TableState } from "./rules";
 import { bytesFromHex, stepsFromRecord } from "./verify";
 
@@ -204,7 +204,8 @@ export const submitPoolShot = createServerFn({ method: "POST" })
     const published = typeof view?.server_seed_hash === "string" ? view.server_seed_hash : "";
     if (!seed || seed.length !== 32 || !prior) return fail("REPLAY_MISMATCH");
 
-    const confirmed = await confirmedWinner(
+    const confirmed = await confirmStep(
+      String(data.matchId),
       seed,
       published,
       [...prior, { kind: "shot", input: shot, hash: played.hash }],

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { simulate } from "../src/lib/pool/physics";
-import { confirmedWinner, playShot } from "../src/lib/pool/play";
+import { confirmStep, confirmedWinner, playShot } from "../src/lib/pool/play";
 import { freshTable, seedHash, stateHash } from "../src/lib/pool/rules";
 import { replayMatch } from "../src/lib/pool/verify";
 
@@ -55,6 +55,28 @@ describe("pool replay", () => {
     const wrongSeed = await replayMatch(seed, "ab".repeat(32), steps);
     expect(wrongSeed.seedOk).toBe(false);
     expect(wrongSeed.ok).toBe(false);
+  });
+
+  it("confirms the next shot from the previous roll", async () => {
+    const { table, shot } = breakShot();
+    const first = playShot(table, shot);
+    expect(first.ok).toBe(true);
+    if (!first.ok) return;
+    const second = { ...shot, angleMilli: 15_000, power: 4_200, spinX: 0, spinY: 0 };
+    const follow = playShot(first.state, second);
+    expect(follow.ok).toBe(true);
+    if (!follow.ok) return;
+    const published = await seedHash(seed);
+    const steps = [
+      { kind: "shot" as const, input: shot, hash: first.hash },
+      { kind: "shot" as const, input: second, hash: follow.hash },
+    ];
+    const full = await confirmedWinner(seed, published, steps, table.physics);
+    const key = "cursor-check";
+    const opened = await confirmStep(key, seed, published, [steps[0]!], table.physics);
+    const continued = await confirmStep(key, seed, published, steps, table.physics);
+    expect(opened.ok).toBe(true);
+    expect(continued).toEqual(full);
   });
 
   it("keeps the 8 in the centre slot for every seed byte", () => {
