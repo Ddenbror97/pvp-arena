@@ -3009,7 +3009,7 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-pips i.is-up.is-solid,
 .pool-pips i.is-up.is-stripe { opacity: 0.34; }
 .pool-tools { top: 0.8rem; right: 0.85rem; display: flex; gap: 0.4rem; }
-.pool-leave, .pool-gear, .pool-chip, .pool-assist {
+.pool-leave, .pool-gear, .pool-chip {
   display: inline-flex; align-items: center; gap: 0.35rem; height: 2.4rem; border-radius: 999px;
   border: 1px solid rgb(255 255 255 / 14%); background: rgb(10 8 20 / 76%); color: #fff; font-size: 0.82rem;
 }
@@ -3035,13 +3035,8 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 }
 .pool-power span:last-child { font-size: 0.72rem; }
 .pool-dock { left: 0.85rem; right: 0.85rem; bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
-.pool-chip, .pool-assist { padding: 0 0.8rem; }
+.pool-chip { padding: 0 0.8rem; }
 .pool-chip.is-on { border-color: #d8b4fe; box-shadow: 0 0 12px rgb(168 85 247 / 40%); }
-.pool-switch { position: relative; width: 2.35rem; height: 1.3rem; padding: 0.12rem; border: 0; border-radius: 999px; background: #3b3458; }
-.pool-switch span, .pool-assist > .pool-switch::after { content: ""; }
-.pool-switch span { display: block; width: 1.05rem; height: 1.05rem; border-radius: 50%; background: #fff; }
-.pool-switch.is-on { background: #7c3aed; }
-.pool-switch.is-on span { transform: translateX(1.02rem); }
 .pool-banner {
   left: 50%; top: 5.7rem; transform: translateX(-50%); max-width: min(32rem, calc(100% - 24rem));
   margin: 0; padding: 0.32rem 0.75rem; border-radius: 999px; text-align: center; font-size: 0.78rem;

@@ -1,52 +1,50 @@
 import { playSynth } from "@/lib/sound";
 
-function tone(freq: number, dur: number, gain: number, type: OscillatorType, delay = 0) {
+/**
+ * Physical ball impacts only. A short noise click plus a fast pitch drop
+ * reads as a hit. No tones, chimes, or result stingers.
+ */
+function impact(opts: {
+  bodyHz: number;
+  clickHz: number;
+  dur: number;
+  bodyGain: number;
+  clickGain: number;
+  low?: boolean;
+  delay?: number;
+}) {
   playSynth((ctx, out) => {
+    const t = ctx.currentTime + (opts.delay ?? 0);
+    const dur = opts.dur;
+    const body = opts.bodyHz * (0.94 + Math.random() * 0.1);
     const osc = ctx.createOscillator();
-    const g = ctx.createGain();
-    const t = ctx.currentTime + delay;
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, t);
-    g.gain.setValueAtTime(gain, t);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    osc.connect(g);
-    g.connect(out);
+    const og = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(body, t);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(28, body * 0.32), t + dur);
+    og.gain.setValueAtTime(opts.bodyGain, t);
+    og.gain.exponentialRampToValueAtTime(0.0001, t + dur * 0.62);
+    osc.connect(og);
+    og.connect(out);
     osc.start(t);
-    osc.stop(t + dur);
-  });
-}
+    osc.stop(t + dur + 0.02);
 
-function knock(freq: number, dur: number, gain: number, noiseGain: number) {
-  playSynth((ctx, out) => {
-    const t = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const g = ctx.createGain();
-    osc.type = "triangle";
-    osc.frequency.setValueAtTime(freq, t);
-    osc.frequency.exponentialRampToValueAtTime(Math.max(40, freq * 0.6), t + dur);
-    g.gain.setValueAtTime(gain, t);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    osc.connect(g);
-    g.connect(out);
-    osc.start(t);
-    osc.stop(t + dur);
-
-    const count = Math.max(1, Math.floor(ctx.sampleRate * dur));
-    const buffer = ctx.createBuffer(1, count, ctx.sampleRate);
+    const samples = Math.max(1, Math.floor(ctx.sampleRate * Math.min(0.026, dur)));
+    const buffer = ctx.createBuffer(1, samples, ctx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < data.length; i++) {
-      const env = 1 - i / data.length;
-      data[i] = (Math.random() * 2 - 1) * env * env;
+      const env = (1 - i / data.length) ** 3.4;
+      data[i] = (Math.random() * 2 - 1) * env;
     }
     const src = ctx.createBufferSource();
     src.buffer = buffer;
     const filter = ctx.createBiquadFilter();
-    filter.type = "bandpass";
-    filter.frequency.value = freq * 6;
-    filter.Q.value = 0.6;
+    filter.type = opts.low ? "lowpass" : "highpass";
+    filter.frequency.value = opts.clickHz;
+    filter.Q.value = opts.low ? 0.6 : 0.45;
     const ng = ctx.createGain();
-    ng.gain.setValueAtTime(noiseGain, t);
-    ng.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    ng.gain.setValueAtTime(opts.clickGain, t);
+    ng.gain.exponentialRampToValueAtTime(0.0001, t + Math.min(0.022, dur));
     src.connect(filter);
     filter.connect(ng);
     ng.connect(out);
@@ -54,40 +52,59 @@ function knock(freq: number, dur: number, gain: number, noiseGain: number) {
   });
 }
 
-export function cueSound() {
-  knock(210, 0.07, 0.07, 0.05);
+/** Cue tip striking the cue ball. Harder pulls are louder and a little longer. */
+export function cueSound(power = 8000) {
+  const s = Math.max(0.12, Math.min(1, power / 10000));
+  impact({
+    bodyHz: 150 + s * 120,
+    clickHz: 1600 + s * 1800,
+    dur: 0.045 + s * 0.04,
+    bodyGain: 0.04 + s * 0.08,
+    clickGain: 0.07 + s * 0.1,
+  });
 }
 
+/** Ball against ball. Strength is the speed change of the collision, 0 to 1. */
 export function ballSound(strength: number) {
   const s = Math.max(0, Math.min(1, strength));
-  knock(380 + s * 520, 0.045, 0.03 + s * 0.06, 0.03 + s * 0.07);
+  impact({
+    bodyHz: 380 + s * 520,
+    clickHz: 2400 + s * 3200,
+    dur: 0.018 + s * 0.016,
+    bodyGain: 0.015 + s * 0.04,
+    clickGain: 0.045 + s * 0.11,
+  });
 }
 
+/** Ball into the cushion. Dull, short, and low. */
 export function cushionSound(strength: number) {
   const s = Math.max(0, Math.min(1, strength));
-  knock(160 + s * 140, 0.06, 0.025 + s * 0.04, 0.02 + s * 0.04);
+  impact({
+    bodyHz: 78 + s * 70,
+    clickHz: 520 + s * 380,
+    dur: 0.04 + s * 0.028,
+    bodyGain: 0.03 + s * 0.045,
+    clickGain: 0.018 + s * 0.03,
+    low: true,
+  });
 }
 
+/** Ball dropping through the pocket mouth, then a short settle. */
 export function pocketSound() {
-  tone(520, 0.09, 0.045, "sine");
-  tone(240, 0.14, 0.03, "triangle", 0.03);
-}
-
-export function foulSound() {
-  tone(140, 0.16, 0.04, "sine");
-  tone(98, 0.2, 0.03, "triangle", 0.04);
-}
-
-export function tickSound() {
-  tone(880, 0.03, 0.02, "sine");
-}
-
-export function resultSound(win: boolean) {
-  if (win) {
-    tone(494, 0.1, 0.04, "sine");
-    tone(659, 0.16, 0.045, "sine", 0.09);
-    return;
-  }
-  tone(220, 0.2, 0.035, "sine");
-  tone(174, 0.24, 0.025, "triangle", 0.08);
+  impact({
+    bodyHz: 96,
+    clickHz: 420,
+    dur: 0.07,
+    bodyGain: 0.055,
+    clickGain: 0.028,
+    low: true,
+  });
+  impact({
+    bodyHz: 140,
+    clickHz: 900,
+    dur: 0.02,
+    bodyGain: 0.012,
+    clickGain: 0.035,
+    delay: 0.042,
+  });
 }

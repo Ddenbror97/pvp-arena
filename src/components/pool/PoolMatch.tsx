@@ -38,15 +38,7 @@ import {
   seedHash,
   stateHash,
 } from "@/lib/pool/rules";
-import {
-  ballSound,
-  cueSound,
-  cushionSound,
-  foulSound,
-  pocketSound,
-  resultSound,
-  tickSound,
-} from "@/lib/pool/sfx";
+import { ballSound, cueSound, cushionSound, pocketSound } from "@/lib/pool/sfx";
 import { bytesFromHex, replayMatch, stepsFromRecord } from "@/lib/pool/verify";
 import {
   matchNotice,
@@ -105,7 +97,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const [called, setCalled] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirmForfeit, setConfirmForfeit] = useState(false);
-  const [aimAssist, setAimAssist] = useState(true);
   const [sheet, setSheet] = useState(false);
   const [frames, setFrames] = useState<Ball[][] | null>(null);
   const [stroke, setStroke] = useState<{
@@ -135,7 +126,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const shotList = view?.events;
   const shotsRef = useRef(shotList);
   shotsRef.current = shotList;
-  const sawLive = useRef(false);
   const shotLock = useRef(false);
   const pendingShot = useRef<number | null>(null);
   const previewKey = useRef<string | null>(null);
@@ -156,7 +146,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       pocketSound();
       return;
     }
-    if (now - noiseAt.current <= 48) return;
+    if (now - noiseAt.current <= 32) return;
     if (hit.ball > 700) {
       ballSound(Math.min(1, hit.ball / 9000));
       noiseAt.current = now;
@@ -172,8 +162,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       return;
     }
     const shots = shotsRef.current;
-    const last = shots?.[shots.length - 1];
-    if (last?.kind === "shot" && last.event["foul"] === true) foulSound();
     previewKey.current = null;
     previewHash.current = null;
     serverReady.current = false;
@@ -286,7 +274,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     ) {
       serverReady.current = true;
       if (heldPreview.current) {
-        if (last.event["foul"] === true) foulSound();
         previewKey.current = null;
         previewHash.current = null;
         serverReady.current = false;
@@ -331,17 +318,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     setStroke(
       cue ? { x: cue.x, y: cue.y, angle: input.input.angleMilli, power: input.input.power } : null,
     );
-    cueSound();
+    cueSound(input.input.power);
   }, [serverSeed, tableHash, reduce, physicsId]);
-
-  useEffect(() => {
-    if (!view) return;
-    if (view.status === "PLAYING" || view.status === "STARTING") sawLive.current = true;
-    if (view.status !== "COMPLETED" || !sawLive.current || userId == null || view.winner_id == null)
-      return;
-    sawLive.current = false;
-    resultSound(view.winner_id === userId);
-  }, [view, userId]);
 
   useEffect(() => {
     if (!shotLock.current || pendingShot.current == null) return;
@@ -433,7 +411,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         setStroke(
           cue ? { x: cue.x, y: cue.y, angle: input.angleMilli, power: input.power } : null,
         );
-        cueSound();
+        cueSound(input.power);
       }
     }
     setBusy(true);
@@ -611,12 +589,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
               balls={previewBalls}
               angleMilli={0}
               power={power}
-              spinX={0}
-              spinY={0}
               ghost={null}
               kitchenOnly={false}
               calledPocket={null}
-              showAim
               showCue
               replay={null}
               stroke={null}
@@ -632,12 +607,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         <div className="pool-dock">
           <span className="pool-chip">Spin</span>
           <span className="pool-chip">Cue ball set</span>
-          <span className="pool-assist">
-            Aim assist
-            <span className="pool-switch is-on">
-              <span />
-            </span>
-          </span>
         </div>
         <p className="pool-banner">
           {query.isError
@@ -830,12 +799,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             balls={balls}
             angleMilli={angle}
             power={power}
-            spinX={spinX}
-            spinY={spinY}
             ghost={ghost}
             kitchenOnly={!!state?.kitchenOnly}
             calledPocket={called}
-            showAim={!!mine && frames == null && aimAssist}
             showCue={!!mine && frames == null}
             replay={frames}
             stroke={stroke}
@@ -850,7 +816,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
               setPower(next);
             }}
             onShoot={(pulled, shotAngle) => {
-              tickSound();
               void takeShot(pulled, shotAngle);
             }}
             onAimHint={setAimHint}
@@ -914,18 +879,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         <span className={state?.ballInHand ? "pool-chip is-on" : "pool-chip"} aria-live="polite">
           {state?.ballInHand ? "Place the cue ball" : "Cue ball set"}
         </span>
-        <label className="pool-assist">
-          Aim assist
-          <button
-            type="button"
-            role="switch"
-            aria-checked={aimAssist}
-            className={aimAssist ? "pool-switch is-on" : "pool-switch"}
-            onClick={() => setAimAssist((on) => !on)}
-          >
-            <span />
-          </button>
-        </label>
       </div>
 
       {sheet ? (

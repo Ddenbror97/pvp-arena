@@ -6,8 +6,6 @@ import {
   sinMicro,
   TABLE_H,
   TABLE_W,
-  traceAim,
-  type AimTrace,
   type Ball,
   type Pocket,
 } from "@/lib/pool/physics";
@@ -294,74 +292,6 @@ function drawCue(
   ctx.restore();
 }
 
-function drawGuide(
-  ctx: CanvasRenderingContext2D,
-  project: (x: number, y: number) => { x: number; y: number; scale: number },
-  innerW: number,
-  dpr: number,
-  guide: AimTrace,
-) {
-  const strokeTo = (a: { x: number; y: number }, b: { x: number; y: number }) => {
-    const p = project(a.x, a.y);
-    const q = project(b.x, b.y);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-    ctx.lineTo(q.x, q.y);
-    ctx.stroke();
-  };
-  const start = {
-    x: guide.from.x + guide.dir.x * BALL_R * 1.15,
-    y: guide.from.y + guide.dir.y * BALL_R * 1.15,
-  };
-  const reach = Math.hypot(guide.cueStop.x - start.x, guide.cueStop.y - start.y);
-  ctx.lineCap = "round";
-  ctx.lineWidth = Math.max(1, dpr * 1.05);
-  if (reach > BALL_R * 0.4) {
-    ctx.strokeStyle = "rgba(255,255,255,0.88)";
-    ctx.setLineDash([2.5 * dpr, 7 * dpr]);
-    strokeTo(start, guide.cueStop);
-    ctx.setLineDash([]);
-  }
-  if (guide.cueBank) {
-    const end = {
-      x: guide.cueBank.at.x + guide.cueBank.dir.x * TABLE_W * 0.16,
-      y: guide.cueBank.at.y + guide.cueBank.dir.y * TABLE_W * 0.16,
-    };
-    ctx.strokeStyle = "rgba(244, 211, 94, 0.8)";
-    ctx.setLineDash([2 * dpr, 6 * dpr]);
-    strokeTo(guide.cueBank.at, end);
-    ctx.setLineDash([]);
-  }
-  const hit = guide.contact;
-  if (!hit) return "open";
-  const ghost = project(hit.cue.x, hit.cue.y);
-  ctx.beginPath();
-  ctx.arc(ghost.x, ghost.y, ballRadiusPx(innerW, ghost.scale), 0, Math.PI * 2);
-  ctx.strokeStyle = "rgba(255,255,255,0.5)";
-  ctx.lineWidth = Math.max(1, dpr);
-  ctx.stroke();
-  if (guide.objectStop) {
-    const span = Math.hypot(guide.objectStop.x - hit.object.x, guide.objectStop.y - hit.object.y);
-    if (span > BALL_R * 0.6) {
-      ctx.strokeStyle = "rgba(255,255,255,0.55)";
-      ctx.lineWidth = Math.max(1, dpr);
-      ctx.setLineDash([]);
-      strokeTo(hit.object, guide.objectStop);
-    }
-  }
-  if (guide.objectBank) {
-    const end = {
-      x: guide.objectBank.at.x + guide.objectBank.dir.x * TABLE_W * 0.14,
-      y: guide.objectBank.at.y + guide.objectBank.dir.y * TABLE_W * 0.14,
-    };
-    ctx.strokeStyle = "rgba(244, 211, 94, 0.75)";
-    ctx.setLineDash([2 * dpr, 5 * dpr]);
-    strokeTo(guide.objectBank.at, end);
-    ctx.setLineDash([]);
-  }
-  return "ball";
-}
-
 function paintBall(
   ctx: CanvasRenderingContext2D,
   id: number,
@@ -487,12 +417,9 @@ type Props = {
   balls: readonly Ball[];
   angleMilli: number;
   power: number;
-  spinX: number;
-  spinY: number;
   ghost: { x: number; y: number } | null;
   kitchenOnly: boolean;
   calledPocket: number | null;
-  showAim: boolean;
   showCue: boolean;
   replay: readonly Ball[][] | null;
   stroke: Stroke | null;
@@ -512,12 +439,9 @@ export function PoolTable({
   balls,
   angleMilli,
   power,
-  spinX,
-  spinY,
   ghost,
   kitchenOnly,
   calledPocket,
-  showAim,
   showCue,
   replay,
   stroke,
@@ -556,12 +480,8 @@ export function PoolTable({
   ghostRef.current = ghost;
   const angleRef = useRef(angleMilli);
   const powerRef = useRef(power);
-  const spinXRef = useRef(spinX);
-  const spinYRef = useRef(spinY);
   const kickRef = useRef<() => void>(() => {});
   const restDistRef = useRef(0);
-  spinXRef.current = spinX;
-  spinYRef.current = spinY;
   const showCueRef = useRef(showCue);
   showCueRef.current = showCue;
   const replayRef = useRef(replay);
@@ -596,8 +516,6 @@ export function PoolTable({
     const paint = () => {
       const angleMilli = angleRef.current;
       const power = powerRef.current;
-      const spinX = spinXRef.current;
-      const spinY = spinYRef.current;
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       const cssW = Math.max(1, canvas.clientWidth);
       const cssH = Math.max(1, canvas.clientHeight);
@@ -713,21 +631,6 @@ export function PoolTable({
 
       const cueBall = shown.find((ball) => ball.id === 0);
       const from = ghost ?? (cueBall && !cueBall.pocketed ? { x: cueBall.x, y: cueBall.y } : null);
-      if (showAim && from) {
-        const aimed = shown.map((ball) =>
-          ball.id === 0 ? { ...ball, x: from.x, y: from.y, vx: 0, vy: 0, pocketed: false } : ball,
-        );
-        const guide = traceAim(aimed, {
-          angleMilli,
-          power,
-          spinX,
-          spinY,
-          placeX: null,
-          placeY: null,
-          calledPocket: null,
-        });
-        canvas.dataset["guide"] = guide ? drawGuide(ctx, project, innerW, dpr, guide) : "";
-      } else canvas.dataset["guide"] = "";
 
       const motion = motionRef.current;
       const replaying = !!(replay && replay.length > 0);
@@ -946,7 +849,6 @@ export function PoolTable({
     ghost,
     kitchenOnly,
     calledPocket,
-    showAim,
     showCue,
     replay,
     stroke,
@@ -959,13 +861,10 @@ export function PoolTable({
   }, [
     angleMilli,
     power,
-    spinX,
-    spinY,
     balls,
     ghost,
     kitchenOnly,
     calledPocket,
-    showAim,
     showCue,
     replay,
     stroke,
