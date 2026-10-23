@@ -82,11 +82,11 @@ export const POOL_RULES: readonly { title: string; body: string }[] = [
   },
   {
     title: "Shot clock",
-    body: "You have 30 seconds. The clock does not restart when you reconnect. Three timeouts forfeit the match.",
+    body: "You have 30 seconds. While you are at the table the clock starts again, so a live match is not forfeited for aiming. If you leave, the clock does not restart when you reconnect. Three timeouts away forfeit the match.",
   },
   {
     title: "Waiting",
-    body: "A table with no opponent stays open for 24 hours, then the stake is refunded. There is no cancel. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays their shots. Leaving a live table keeps 10% of your stake with the site and returns the rest. Your opponent gets their stake back, and the table closes. Three timeouts still forfeit the match.",
+    body: "A table with no opponent stays open for 24 hours, then the stake is refunded. There is no cancel. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays their shots. Leaving a live table keeps 10% of your stake with the site and returns the rest. Your opponent gets their stake back, and the table closes. Three timeouts while a player is away still forfeit the match.",
   },
   {
     title: "Disconnect",
@@ -101,7 +101,7 @@ export const POOL_RULES: readonly { title: string; body: string }[] = [
 export const TUTORIAL_STEPS: readonly { title: string; body: string }[] = [
   {
     title: "Drag to aim",
-    body: "Drag across the table to aim. A short line shows the shot direction and stops before the object ball. On a phone, drag with your finger. A drag that starts on the cue ball aims once it moves. Hold Shift, or use the arrow keys, for a finer angle.",
+    body: "Drag across the table to aim. A line shows the shot direction and stops before the object ball. Your opponent sees a faint cue on that line. On a phone, drag with your finger. A drag that starts on the cue ball aims once it moves. Hold Shift, or use the arrow keys, for a finer angle.",
   },
   {
     title: "Drag back to shoot",

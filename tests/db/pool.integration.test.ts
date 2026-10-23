@@ -583,12 +583,41 @@ d("pool ledger (isolated schema)", () => {
       turn_deadline = clock_timestamp() - interval '1 second'
       where id = ${made.match_id}`;
     const [clock] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
-    expect(clock.r).toBe("timeout");
+    expect(clock.r).toBe("held");
+    const [row] =
+      await sql`select status, win_reason, state, turn_deadline from pvp_test.pool_matches where id = ${made.match_id}`;
+    expect(row.status).toBe("PLAYING");
+    expect(row.win_reason).toBeNull();
+    expect(row.state.timeouts.A).toBe(0);
+    expect(row.state.turn).toBe("A");
+    expect(row.state.winner).toBeNull();
+    expect(new Date(row.turn_deadline).getTime()).toBeGreaterThan(Date.now() + 20_000);
+  });
+
+  it("does not forfeit a seat that is still at the table", async () => {
+    const a = await newUser("rhea");
+    const b = await newUser("sol");
+    const made = await as(a, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
+      return row.r as { match_id: number };
+    });
+    await as(b, async (tx) => {
+      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
+    });
+    await beginReal(made.match_id);
+    for (let i = 0; i < 3; i++) {
+      await sql`update pvp_test.pool_matches set
+        seen_a = clock_timestamp(),
+        turn_deadline = clock_timestamp() - interval '1 second'
+        where id = ${made.match_id}`;
+      const [tick] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
+      expect(tick.r).toBe("held");
+    }
     const [row] =
       await sql`select status, win_reason, state from pvp_test.pool_matches where id = ${made.match_id}`;
     expect(row.status).toBe("PLAYING");
     expect(row.win_reason).toBeNull();
-    expect(row.state.timeouts.A).toBe(1);
+    expect(row.state.timeouts.A).toBe(0);
     expect(row.state.winner).toBeNull();
   });
 

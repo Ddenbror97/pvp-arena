@@ -140,6 +140,7 @@ function drawAimLine(
   angleMilli: number,
   balls: readonly Ball[],
   dpr: number,
+  fade = 1,
 ) {
   const line = shortAimLine(balls, from, angleMilli);
   if (!line) return;
@@ -147,8 +148,8 @@ function drawAimLine(
   const b = project(line.to.x, line.to.y);
   if (Math.hypot(b.x - a.x, b.y - a.y) < 2) return;
   const ink = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-  ink.addColorStop(0, "rgba(244, 226, 170, 0.92)");
-  ink.addColorStop(0.62, "rgba(244, 226, 170, 0.42)");
+  ink.addColorStop(0, `rgba(244, 226, 170, ${0.92 * fade})`);
+  ink.addColorStop(0.62, `rgba(244, 226, 170, ${0.42 * fade})`);
   ink.addColorStop(1, "rgba(244, 226, 170, 0)");
   ctx.save();
   ctx.strokeStyle = ink;
@@ -423,6 +424,9 @@ function paintBall(
 
 type Stroke = { x: number; y: number; angle: number; power: number };
 
+/** The other player's live aim. x and y are set while they place the cue ball. */
+export type WatchedAim = { angle: number; power: number; x?: number; y?: number };
+
 type Props = {
   balls: readonly Ball[];
   angleMilli: number;
@@ -442,6 +446,8 @@ type Props = {
   onAimHint?: (text: string) => void;
   placing: boolean;
   legalAt: (x: number, y: number) => boolean;
+  /** Faint cue and line while the other player aims. */
+  watch?: WatchedAim | null;
 };
 
 /** A drag aims or places the cue ball. Dragging back charges power, and releasing shoots. */
@@ -464,6 +470,7 @@ export function PoolTable({
   onAimHint,
   placing,
   legalAt,
+  watch = null,
 }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
   const cueRef = useRef<HTMLCanvasElement>(null);
@@ -492,6 +499,8 @@ export function PoolTable({
   ghostRef.current = ghost;
   const angleRef = useRef(angleMilli);
   const powerRef = useRef(power);
+  const watchRef = useRef(watch);
+  watchRef.current = watch;
   const kickRef = useRef<() => void>(() => {});
   const restDistRef = useRef(0);
   const showCueRef = useRef(showCue);
@@ -748,8 +757,15 @@ export function PoolTable({
         ctx.fill();
       }
 
+      const watching = watchRef.current;
+      const watchFrom =
+        watching && watching.x != null && watching.y != null
+          ? { x: watching.x, y: watching.y }
+          : from;
       if (showCue && from && !replaying && !strikeRef.current) {
         drawAimLine(ctx, project, from, angleMilli, shown, dpr);
+      } else if (watching && watchFrom && !replaying && !strikeRef.current) {
+        drawAimLine(ctx, project, watchFrom, watching.angle, shown, dpr, 0.55);
       }
 
       const cueCanvas = cueRef.current;
@@ -788,6 +804,9 @@ export function PoolTable({
         const alpha = Math.min(1, (now - cueIn.current) / 140);
         if (alpha < 1) again = true;
         drawCue(cueCtx, projectCue, innerW, from, angleMilli, gap, alpha);
+      } else if (watching && watchFrom && cueCtx && !replaying) {
+        const gap = 1.28 + (watching.power / 10_000) * 4.4;
+        drawCue(cueCtx, projectCue, innerW, watchFrom, watching.angle, gap, 0.42);
       }
 
       if (!layerRef.current || layerRef.current.disposed) {
@@ -913,6 +932,7 @@ export function PoolTable({
     stroke,
     placing,
     draft,
+    watch,
   ]);
 
   useEffect(() => {

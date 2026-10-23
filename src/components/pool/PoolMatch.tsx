@@ -6,6 +6,7 @@ import { CircleHelp, Crown, MessageSquare, Settings, Volume2, VolumeX } from "lu
 import room from "@/assets/pool/room.webp";
 import { arenaLogo } from "@/assets/media";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import {
   poolLeave,
@@ -38,6 +39,8 @@ import {
   stateHash,
 } from "@/lib/pool/rules";
 import { ballSound, cueSound, cushionSound, pocketSound } from "@/lib/pool/sfx";
+import type { RealtimeChannel } from "@supabase/supabase-js";
+import type { WatchedAim } from "@/components/pool/PoolTable";
 import { bytesFromHex, replayMatch, resumeReplay, stepsFromRecord, type ReplayCursor } from "@/lib/pool/verify";
 import {
   leaveTake,
@@ -117,6 +120,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const [seedOk, setSeedOk] = useState<boolean | null>(null);
   const [replayNote, setReplayNote] = useState<string | null>(null);
   const [aimHint, setAimHint] = useState<string | null>(null);
+  const [watch, setWatch] = useState<WatchedAim | null>(null);
+  const [aimOpen, setAimOpen] = useState(false);
   const [rulesOpen, setRulesOpen] = useState(false);
   const [tutorialStep, setTutorialStep] = useState<number | null>(null);
   const [offline, setOffline] = useState(false);
@@ -409,6 +414,67 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     !state.breakShot;
   const shootingEight = eightForShooter && mine;
   const ghost = mine && state?.ballInHand ? place : null;
+  const aimBus = useRef<RealtimeChannel | null>(null);
+  const aimSeat = useRef(seat);
+  aimSeat.current = seat;
+
+  useEffect(() => {
+    if (liveId == null || liveStatus !== "PLAYING") {
+      setWatch(null);
+      return;
+    }
+    const channel = supabase.channel(`pool-aim-${liveId}`, {
+      config: { broadcast: { self: false, ack: false } },
+    });
+    channel.on("broadcast", { event: "aim" }, (msg) => {
+      const payload = (msg as { payload?: Record<string, unknown> }).payload ?? {};
+      const from = payload["seat"];
+      const angleMilli = payload["angle"];
+      const pulled = payload["power"];
+      if (typeof from !== "string" || from === aimSeat.current) return;
+      if (typeof angleMilli !== "number" || typeof pulled !== "number") return;
+      const x = payload["x"];
+      const y = payload["y"];
+      setWatch({
+        angle: angleMilli,
+        power: pulled,
+        ...(typeof x === "number" && typeof y === "number" ? { x, y } : {}),
+      });
+    });
+    channel.subscribe((status) => {
+      setAimOpen(status === "SUBSCRIBED");
+    });
+    aimBus.current = channel;
+    return () => {
+      aimBus.current = null;
+      setAimOpen(false);
+      setWatch(null);
+      void supabase.removeChannel(channel);
+    };
+  }, [liveId, liveStatus]);
+
+  useEffect(() => {
+    if (mine) setWatch(null);
+  }, [mine]);
+
+  useEffect(() => {
+    if (!mine || !aimOpen || liveStatus !== "PLAYING" || seat == null) return;
+    const channel = aimBus.current;
+    if (!channel) return;
+    const handle = window.setTimeout(() => {
+      void channel.send({
+        type: "broadcast",
+        event: "aim",
+        payload: {
+          seat,
+          angle,
+          power,
+          ...(ghost ? { x: ghost.x, y: ghost.y } : {}),
+        },
+      });
+    }, 50);
+    return () => window.clearTimeout(handle);
+  }, [mine, aimOpen, liveStatus, seat, angle, power, ghost]);
 
   const names = useMemo(() => {
     if (!view) return { A: "Player A", B: "Player B" };
@@ -837,6 +903,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             kitchenOnly={!!state?.kitchenOnly}
             calledPocket={called}
             showCue={!!mine && frames == null}
+            watch={!mine && frames == null ? watch : null}
             replay={frames}
             stroke={stroke}
             legalAt={(x, y) => (state ? legalPlacement(state, x, y) : false)}

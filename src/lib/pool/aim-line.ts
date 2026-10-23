@@ -1,10 +1,10 @@
 import { BALL_R, cosMicro, cushionLimit, sinMicro, type Ball } from "@/lib/pool/physics";
 
 /**
- * Nine ball diameters from the cue center. Long enough to see the shot
- * direction, short of a length of the table.
+ * Fourteen ball diameters from the cue center. Long enough to read the shot,
+ * short of a length of the table.
  */
-export const AIM_LINE_REACH = BALL_R * 18;
+export const AIM_LINE_REACH = BALL_R * 28;
 
 /** The stroke starts just clear of the cue ball. */
 export const AIM_LINE_GAP = Math.round(BALL_R * 1.28);
