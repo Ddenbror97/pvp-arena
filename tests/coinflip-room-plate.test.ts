@@ -18,7 +18,8 @@ describe("coinflip room plate", () => {
 
   it("keeps the lobby on screen and opens a match in a popup", () => {
     expect(route).toContain("<Lobby />");
-    expect(route).toContain("<Dialog");
+    expect(route).toContain('role="dialog"');
+    expect(route).toContain("cf-duel-pop");
     expect(route).toContain("cf-duel-card");
     expect(route).toContain('to: "/coinflip"');
     expect(route).not.toContain("cf-home-match");

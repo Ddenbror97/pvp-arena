@@ -1332,6 +1332,47 @@ html.intro-seen .intro-gate { display: none !important; }
   backdrop-filter: none;
 }
 /* The duel is a window over the lobby. The penthouse fills that window. */
+.cf-duel-pop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+.cf-duel-scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: rgb(5 4 12 / 72%);
+  cursor: pointer;
+}
+.cf-duel-card {
+  position: relative;
+  z-index: 1;
+  width: min(56rem, calc(100vw - 1.5rem));
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 1.25rem;
+  background: #070514;
+  box-shadow: 0 24px 80px rgb(0 0 0 / 55%);
+}
+.cf-duel-x {
+  position: absolute;
+  z-index: 2;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(8 6 18 / 72%);
+  color: #f4f1ff;
+  cursor: pointer;
+}
 .cf-duel-fill,
 .cf-duel-room,
 .cf-duel-shade {
