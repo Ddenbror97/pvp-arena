@@ -28,6 +28,7 @@ import {
 } from "@/lib/pool/physics";
 import {
   applyForfeit,
+  applyPlayedShot,
   applyTimeout,
   freshTable,
   groupClear,
@@ -35,6 +36,7 @@ import {
   placeCue,
   seatGroup,
   seedHash,
+  stateHash,
 } from "@/lib/pool/rules";
 import {
   ballSound,
@@ -134,8 +136,12 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const shotsRef = useRef(shotList);
   shotsRef.current = shotList;
   const sawLive = useRef(false);
-  const shooting = useRef(false);
+  const shotLock = useRef(false);
+  const pendingShot = useRef<number | null>(null);
   const previewKey = useRef<string | null>(null);
+  const previewHash = useRef<string | null>(null);
+  const framesRef = useRef<Ball[][] | null>(null);
+  framesRef.current = frames;
   const serverReady = useRef(false);
   const heldPreview = useRef(false);
   const presenceWarned = useRef(false);
@@ -159,7 +165,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       noiseAt.current = now;
     }
   }, []);
-  const onReplayDone = useCallback(() => {
+  const onReplayDone = useCallback((finished?: readonly Ball[][] | null) => {
+    if (finished && finished !== framesRef.current) return;
     if (previewKey.current && !serverReady.current) {
       heldPreview.current = true;
       return;
@@ -168,6 +175,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     const last = shots?.[shots.length - 1];
     if (last?.kind === "shot" && last.event["foul"] === true) foulSound();
     previewKey.current = null;
+    previewHash.current = null;
     serverReady.current = false;
     heldPreview.current = false;
     setFrames(null);
@@ -272,11 +280,15 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     const prior = stepsFromRecord(shots.slice(0, -1));
     const input = stepsFromRecord([last])?.[0];
     if (!prior || !input || input.kind !== "shot") return;
-    if (previewKey.current === shotKey(input.input)) {
+    if (
+      previewKey.current === shotKey(input.input) &&
+      input.hash === previewHash.current
+    ) {
       serverReady.current = true;
       if (heldPreview.current) {
         if (last.event["foul"] === true) foulSound();
         previewKey.current = null;
+        previewHash.current = null;
         serverReady.current = false;
         heldPreview.current = false;
         setFrames(null);
@@ -285,6 +297,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       return;
     }
     previewKey.current = null;
+    previewHash.current = null;
     serverReady.current = false;
     heldPreview.current = false;
     let table = freshTable(bytesFromHex(serverSeed), physicsId);
@@ -330,6 +343,17 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     resultSound(view.winner_id === userId);
   }, [view, userId]);
 
+  useEffect(() => {
+    if (!shotLock.current || pendingShot.current == null) return;
+    const shot = state?.shot ?? 0;
+    const turnGone = state != null && seat != null && state.turn !== seat;
+    const finished = liveStatus !== "PLAYING" && liveStatus !== "STARTING";
+    if (shot >= pendingShot.current || turnGone || finished) {
+      shotLock.current = false;
+      pendingShot.current = null;
+    }
+  }, [state?.shot, state?.turn, seat, liveStatus]);
+
   const previewBalls = useMemo(
     () => freshTable(Uint8Array.from({ length: 32 }, (_, i) => (i * 17 + 3) & 255)).balls,
     [],
@@ -349,8 +373,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
 
   const takeShot = useCallback(async (pulled?: number, angleMilli = angle) => {
     const shotPower = pulled ?? power;
-    if (!state || !mine || busy || shooting.current || frames) return;
-    shooting.current = true;
+    if (shotLock.current || !state || !mine || frames) return;
+    shotLock.current = true;
+    pendingShot.current = state.shot + 1;
     const input: ShotInput = {
       angleMilli,
       power: shotPower,
@@ -364,12 +389,14 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       state.ballInHand &&
       (input.placeX == null || !legalPlacement(state, input.placeX, input.placeY ?? 0))
     ) {
-      shooting.current = false;
+      shotLock.current = false;
+      pendingShot.current = null;
       toast.error(poolMessage("ILLEGAL_PLACEMENT"));
       return;
     }
     if (shootingEight && called == null) {
-      shooting.current = false;
+      shotLock.current = false;
+      pendingShot.current = null;
       toast.error(poolMessage("CALL_POCKET"));
       return;
     }
@@ -391,7 +418,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
               ball.y === rest[index]?.y,
           );
         if (!alreadyRest) sequence.push(rest);
+        const applied = applyPlayedShot(placed, sim, input.calledPocket);
         previewKey.current = shotKey(input);
+        previewHash.current = stateHash(applied.state);
         serverReady.current = false;
         heldPreview.current = false;
         setFrames(sequence);
@@ -406,8 +435,11 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       const result = await shoot({ data: { matchId, key: crypto.randomUUID(), shot: input } });
       if (!result.ok) {
         previewKey.current = null;
+        previewHash.current = null;
         serverReady.current = false;
         heldPreview.current = false;
+        shotLock.current = false;
+        pendingShot.current = null;
         setFrames(null);
         setStroke(null);
         toast.error(poolMessage(result.error));
@@ -419,18 +451,19 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       void qc.invalidateQueries({ queryKey: ["wallet"] });
     } catch {
       previewKey.current = null;
+      previewHash.current = null;
       serverReady.current = false;
       heldPreview.current = false;
+      shotLock.current = false;
+      pendingShot.current = null;
       setFrames(null);
       setStroke(null);
       toast.error(poolMessage("REQUEST_FAILED"));
     } finally {
-      shooting.current = false;
       setBusy(false);
     }
   }, [
     angle,
-    busy,
     called,
     matchId,
     mine,

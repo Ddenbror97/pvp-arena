@@ -360,6 +360,30 @@ describe("pool rules", () => {
     expect(legalPlacement(state, Math.floor(TABLE_W / 2), Math.floor(TABLE_H / 2))).toBe(false);
   });
 
+  it("hashes the animated shot the same way the paid shot is hashed", () => {
+    const seed = Uint8Array.from({ length: 32 }, (_, i) => i + 4);
+    const table = freshTable(seed);
+    const cue = table.balls.find((ball) => ball.id === 0);
+    if (!cue) throw new Error("cue");
+    const input = shot({ angleMilli: 1_500, power: 9_000, placeX: cue.x, placeY: cue.y });
+    const paid = playShot(table, input);
+    expect(paid.ok).toBe(true);
+    if (!paid.ok) return;
+    const placed = structuredClone(table);
+    placeCue(placed, input);
+    const sim = simulate(placed.balls, input, true, table.physics);
+    const animated = stateHash(applyPlayedShot(placed, sim, input.calledPocket).state);
+    expect(animated).toBe(paid.hash);
+    const stale = structuredClone(table);
+    const object = stale.balls.find((ball) => ball.id === 1);
+    if (!object) throw new Error("object");
+    object.x += 8_000;
+    const other = playShot(stale, input);
+    expect(other.ok).toBe(true);
+    if (!other.ok) return;
+    expect(other.hash).not.toBe(paid.hash);
+  });
+
   it("pays only the winner a full replay of the shots produces", async () => {
     const seed = Uint8Array.from({ length: 32 }, (_, i) => i + 9);
     const table = freshTable(seed);

@@ -825,7 +825,7 @@ type Props = {
   onShoot?: (power: number, angleMilli: number) => void;
   onPlace: (x: number, y: number) => void;
   onSample: (prev: readonly Ball[], next: readonly Ball[]) => void;
-  onReplayDone: () => void;
+  onReplayDone: (finished: readonly Ball[][]) => void;
   onAimHint?: (text: string) => void;
   placing: boolean;
   legalAt: (x: number, y: number) => boolean;
@@ -859,6 +859,7 @@ export function PoolTable({
   const cacheRef = useRef<{ w: number; h: number; canvas: HTMLCanvasElement } | null>(null);
   const motionRef = useRef(new Map<number, Motion>());
   const strikeRef = useRef<(Pose & { t0: number }) | null>(null);
+  const pointerRef = useRef<number | null>(null);
   const legalRef = useRef(legalAt);
   legalRef.current = legalAt;
   const aimRef = useRef(onAim);
@@ -1027,7 +1028,7 @@ export function PoolTable({
           if (head.i < replay.length - 1) again = true;
           else if (!head.done) {
             head.done = true;
-            doneRef.current();
+            doneRef.current(replay);
           }
         }
       } else if (head.key) {
@@ -1345,7 +1346,7 @@ export function PoolTable({
     originRef.current = null;
     setDraft(null);
     if (!gesture || gesture.kind === "place") return;
-    if (shoot && pulled > 0) {
+    if (shoot && pulled > 0 && showCueRef.current) {
       shootRef.current?.(pulled, angleRef.current);
       return;
     }
@@ -1359,6 +1360,8 @@ export function PoolTable({
       className="pool-canvas"
       aria-label="Pool table. Drag to aim. Drag back and release to shoot. On a phone, drag with your finger. Drag the cue ball when it is ball in hand."
       onPointerDown={(event) => {
+        if (pointerRef.current != null) return;
+        pointerRef.current = event.pointerId;
         try {
           event.currentTarget.setPointerCapture(event.pointerId);
         } catch {
@@ -1386,6 +1389,7 @@ export function PoolTable({
         if (started.kind === "absolute" || started.kind === "cue-stick") aimAt(event);
       }}
       onPointerMove={(event) => {
+        if (pointerRef.current !== event.pointerId) return;
         const captured = event.currentTarget.hasPointerCapture(event.pointerId);
         if (!captured && event.buttons === 0) return;
         if (gestureRef.current?.kind === "place") {
@@ -1397,10 +1401,16 @@ export function PoolTable({
         aimAt(event);
       }}
       onPointerUp={(event) => {
+        if (pointerRef.current !== event.pointerId) return;
+        pointerRef.current = null;
         aimAt(event);
         endGesture(true);
       }}
-      onPointerCancel={() => endGesture(false)}
+      onPointerCancel={(event) => {
+        if (pointerRef.current !== event.pointerId) return;
+        pointerRef.current = null;
+        endGesture(false);
+      }}
     />
   );
 }
