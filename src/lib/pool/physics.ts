@@ -1,5 +1,5 @@
 /**
- * Integer micrometre pool physics. A new rack stores pool-phys-v5.
+ * Integer micrometre pool physics. A new rack stores pool-phys-v6.
  * Older ids stay so a match already stamped with them replays under the
  * launch and drag it started with.
  *
@@ -7,6 +7,12 @@
  * v1 and v2 stay under half a radius per tick. A v3 full smash is 28_000.
  * v4 is that smash at 60% speed, still under one radius, so two balls
  * closing cannot step through each other.
+ *
+ * A real firm shot is about 6 mph and, on cloth, dies after roughly one
+ * length of the table. A tournament break is 22–26 mph; that speed is what
+ * throws every ball the length of the table, so the player pull is not a break.
+ * v6 is a power shot of about 11 mph, and heavier cloth stops it in about
+ * 1.6 table lengths. A half-power hit stays short of the far cushion.
  */
 
 /** v1 dies before the rack. v2 reaches it. v3 adds break speed. v4 keeps that path at 60% speed. */
@@ -16,8 +22,20 @@ export const PHYSICS_V3 = "pool-phys-v3";
 export const PHYSICS_V4 = "pool-phys-v4";
 /** v5 keeps the v4 launch and stops the ball on the cushion nose of the table art. */
 export const PHYSICS_V5 = "pool-phys-v5";
-export const PHYSICS_VERSION = PHYSICS_V5;
-export type PhysicsId = typeof PHYSICS_V1 | typeof PHYSICS_V2 | typeof PHYSICS_V3 | typeof PHYSICS_V4 | typeof PHYSICS_V5;
+/** v6 is an 11 mph power shot on heavier cloth. Full power travels about 1.6 table lengths. */
+export const PHYSICS_V6 = "pool-phys-v6";
+export const PHYSICS_VERSION = PHYSICS_V6;
+export type PhysicsId =
+  | typeof PHYSICS_V1
+  | typeof PHYSICS_V2
+  | typeof PHYSICS_V3
+  | typeof PHYSICS_V4
+  | typeof PHYSICS_V5
+  | typeof PHYSICS_V6;
+
+function usesNose(physics: string): boolean {
+  return physics === PHYSICS_V5 || physics === PHYSICS_V6;
+}
 
 /**
  * How far the ball edge sits inside the old rectangle, in micrometres.
@@ -27,7 +45,7 @@ export type PhysicsId = typeof PHYSICS_V1 | typeof PHYSICS_V2 | typeof PHYSICS_V
 export const CUSHION_V5 = { left: 59_642, right: 58_288, top: 63_875, bottom: 58_570 } as const;
 
 export function cushionLimit(physics: string = PHYSICS_VERSION) {
-  if (physics === PHYSICS_V5) {
+  if (usesNose(physics)) {
     return {
       minX: CUSHION_V5.left + BALL_R,
       maxX: TABLE_W - CUSHION_V5.right - BALL_R,
@@ -144,7 +162,7 @@ function pocketId(b: Ball): number | null {
  * v5 jaws reach the nose, because that nose is in front of the side pockets.
  */
 export function cushionOpen(x: number, y: number, physics = PHYSICS_VERSION): boolean {
-  const jaw = physics === PHYSICS_V5 ? 28_000 : 22_000;
+  const jaw = usesNose(physics) ? 28_000 : 22_000;
   for (const p of POCKETS) {
     const dx = x - p.x;
     const dy = y - p.y;
@@ -216,7 +234,7 @@ function bounce(
   let hit = false;
   // v5 pocket centres sit past the nose. A ball in the jaw keeps going so it
   // can fall in. Older racks still pull a jaw ball back to the outer wall.
-  const hold = open && physics === PHYSICS_V5;
+  const hold = open && usesNose(physics);
   if (b.x < left) {
     if (!hold) b.x = left;
     if (!open) {
@@ -260,6 +278,7 @@ function bounce(
  */
 export function rollDrop(speed: number, physics = PHYSICS_VERSION): number {
   if (physics === PHYSICS_V1) return 32 + Math.trunc(speed / 160);
+  if (physics === PHYSICS_V6) return 2 + Math.trunc(speed / 260);
   if (physics === PHYSICS_V3 || physics === PHYSICS_V4 || physics === PHYSICS_V5) {
     return 2 + Math.trunc(speed / 1_500);
   }
@@ -271,9 +290,11 @@ export function rollDrop(speed: number, physics = PHYSICS_VERSION): number {
  * v3 matches them through 60% power, then adds break speed. Full power is 28_000.
  * v4 is 60% of that launch, so a full smash is 16_800. Cloth drag stays the v3
  * curve, so the balls still travel, just slower.
+ * v6 maps the pull onto a power shot: 20_000 µm/tick is 10.7 mph.
  */
 export function launchSpeed(power: number, physics = PHYSICS_VERSION): number {
   const clamped = Math.max(1, Math.min(10_000, power | 0));
+  if (physics === PHYSICS_V6) return Math.max(1, Math.trunc((clamped * 20_000) / 10_000));
   const base = Math.trunc((clamped * MAX_SPEED) / 10_000);
   const boosted =
     (physics === PHYSICS_V3 || physics === PHYSICS_V4 || physics === PHYSICS_V5) && clamped > 6_000

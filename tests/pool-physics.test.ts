@@ -6,6 +6,7 @@ import {
   PHYSICS_V3,
   PHYSICS_V4,
   PHYSICS_V5,
+  PHYSICS_V6,
   POCKETS,
   cushionLimit,
   TABLE_H,
@@ -139,13 +140,17 @@ describe("pool physics", () => {
     expect(launchSpeed(1, PHYSICS_V4)).toBe(1);
     expect(launchSpeed(10_000, PHYSICS_V5)).toBe(16_800);
     expect(launchSpeed(6_000, PHYSICS_V5)).toBe(5_040);
-    expect(launchSpeed(10_000)).toBe(16_800);
+    expect(launchSpeed(10_000, PHYSICS_V6)).toBe(20_000);
+    expect(launchSpeed(5_000, PHYSICS_V6)).toBe(10_000);
+    expect(launchSpeed(1, PHYSICS_V6)).toBe(2);
+    expect(launchSpeed(10_000)).toBe(20_000);
     expect(rollDrop(14_000, PHYSICS_V2)).toBe(4 + Math.trunc(14_000 / 900));
     expect(rollDrop(28_000, PHYSICS_V3)).toBe(2 + Math.trunc(28_000 / 1_500));
     expect(rollDrop(16_800, PHYSICS_V4)).toBe(2 + Math.trunc(16_800 / 1_500));
     expect(rollDrop(16_800, PHYSICS_V5)).toBe(2 + Math.trunc(16_800 / 1_500));
+    expect(rollDrop(20_000, PHYSICS_V6)).toBe(2 + Math.trunc(20_000 / 260));
     expect(rollDrop(14_000, PHYSICS_V1)).toBe(32 + Math.trunc(14_000 / 160));
-    expect(freshTable(new Uint8Array(32)).physics).toBe(PHYSICS_V5);
+    expect(freshTable(new Uint8Array(32)).physics).toBe(PHYSICS_V6);
   });
 
   it("sends a full-power smash farther than the previous roll", () => {
@@ -513,6 +518,54 @@ describe("pool rules", () => {
     expect(other.ok).toBe(true);
     if (!other.ok) return;
     expect(other.hash).not.toBe(paid.hash);
+  });
+
+  it("stops a firm hit inside one length and keeps a cluster off the far cushion", () => {
+    const pathOf = (frames: readonly Ball[][], id: number, x0: number, y0: number) => {
+      let path = 0;
+      let x = x0;
+      let y = y0;
+      for (const frame of frames) {
+        const ball = frame.find((item) => item.id === id);
+        if (!ball || ball.pocketed) break;
+        path += Math.hypot(ball.x - x, ball.y - y);
+        x = ball.x;
+        y = ball.y;
+      }
+      return path;
+    };
+    const y = Math.floor(TABLE_H / 2);
+    const open = simulate(
+      [{ id: 0, x: Math.floor(TABLE_W / 4), y, vx: 0, vy: 0, spin: 0, pocketed: false }],
+      shot({ power: 10_000 }),
+      true,
+      PHYSICS_V6,
+    );
+    const openPath = pathOf(open.frames, 0, Math.floor(TABLE_W / 4), y);
+    expect(open.frames.length).toBeLessThan(320);
+    expect(openPath).toBeGreaterThan(TABLE_W * 1.35);
+    expect(openPath).toBeLessThan(TABLE_W * 1.75);
+    const hit = simulate(
+      [
+        { id: 0, x: 500_000, y, vx: 0, vy: 0, spin: 0, pocketed: false },
+        { id: 1, x: 900_000, y, vx: 0, vy: 0, spin: 0, pocketed: false },
+      ],
+      shot({ power: 5_000 }),
+      true,
+      PHYSICS_V6,
+    );
+    expect(pathOf(hit.frames, 1, 900_000, y)).toBeLessThan(TABLE_W * 0.85);
+    const table = freshTable(Uint8Array.from({ length: 32 }, (_, i) => i + 7));
+    const start = new Map(table.balls.map((ball) => [ball.id, { x: ball.x, y: ball.y }]));
+    const broke = simulate(table.balls, shot({ power: 10_000 }), true, PHYSICS_V6);
+    let moved = 0;
+    for (const [id, from] of start) {
+      if (id === 0) continue;
+      const travelled = pathOf(broke.frames, id, from.x, from.y);
+      expect(travelled).toBeLessThan(TABLE_W * 0.85);
+      if (travelled > 200_000) moved += 1;
+    }
+    expect(moved).toBeGreaterThanOrEqual(3);
   });
 
   it("stops a ball on the cushion nose and leaves older racks on the outer wall", () => {
