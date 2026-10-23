@@ -814,14 +814,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         <span>{powerReadout(power)}</span>
       </label>
 
-      <div
-        className="pool-felt"
-        data-angle={angle}
-        data-power={power}
-        data-spin-x={spinX}
-        data-spin-y={spinY}
-        data-rolling={frames ? "1" : "0"}
-      >
+      <div className="pool-felt">
         <div className="pool-felt-frame">
           <PoolTable
             balls={balls}

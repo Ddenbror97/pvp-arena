@@ -7,8 +7,6 @@ import type { TableState } from "./rules";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
 
-export type PoolRole = "created" | "joined";
-
 export type OpenTable = {
   id: number;
   creator_id: string;
@@ -18,20 +16,6 @@ export type OpenTable = {
   expires_at: string;
   username: string;
   avatar_url: string | null;
-  rating: number;
-};
-
-export type RecentMatch = {
-  id: number;
-  stake: number;
-  pot: number;
-  fee_amount: number | null;
-  payout_amount: number | null;
-  win_reason: string | null;
-  completed_at: string;
-  winner: string | null;
-  creator: string | null;
-  opponent: string | null;
 };
 
 export type PoolLobby = {
@@ -40,7 +24,6 @@ export type PoolLobby = {
   stakes: number[];
   shot_seconds: number;
   open: OpenTable[];
-  recent: RecentMatch[];
 };
 
 export type PoolEvent = {

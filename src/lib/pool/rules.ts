@@ -427,7 +427,3 @@ export function applyTimeout(state: TableState): TableState {
   next.shot += 1;
   return next;
 }
-
-export function resting(balls: readonly Ball[]): Ball[] {
-  return balls.map((b) => ({ ...b, vx: 0, vy: 0, spin: 0 }));
-}

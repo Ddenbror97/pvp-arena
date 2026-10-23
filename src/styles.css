@@ -2744,7 +2744,6 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
   mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 100%);
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 100%);
 }
-.pool-hero-ball { display: none; }
 .pool-hero-panel { display: none; }
 @media (min-width: 640px) {
   .pool-hero-copy { padding: 1.6rem 2rem; }
@@ -2765,25 +2764,6 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
     position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: center; margin: 1rem 1rem 1rem 0; padding: 0.9rem 0.7rem;
     border-radius: 1rem; border: 1px solid rgb(181 123 255 / 16%); background: rgb(8 7 26 / 72%); backdrop-filter: blur(6px);
   }
-}
-.pool-hero-ball {
-  position: absolute; border-radius: 50%;
-}
-.pool-hero-ball.is-eight {
-  left: 6%; bottom: 24%; width: 3.35rem; height: 3.35rem; z-index: 3;
-  background: radial-gradient(circle at 34% 28%, #5c5c5c, #141414 46%, #000 74%);
-  box-shadow: 0 10px 16px rgb(0 0 0 / 50%), 0 0 16px rgb(163 91 255 / 40%);
-}
-.pool-hero-ball.is-eight b {
-  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-  display: grid; place-items: center; width: 1.35rem; height: 1.35rem; border-radius: 50%;
-  background: radial-gradient(circle at 40% 32%, #fff, #e8e8e8); color: #111;
-  font-family: var(--font-display); font-size: 0.85rem; font-weight: 800; line-height: 1;
-}
-.pool-hero-ball.is-cue {
-  left: 26%; bottom: 38%; width: 2.35rem; height: 2.35rem; z-index: 3;
-  background: radial-gradient(circle at 34% 28%, #fff, #f4efe4 42%, #d5cbb8 74%);
-  box-shadow: 0 8px 14px rgb(0 0 0 / 40%), 0 0 12px rgb(163 91 255 / 28%);
 }
 .pool-hero-panel-title { margin: 0; text-align: center; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; }
 .pool-hero-panel-title span { margin-inline: 0.2em; color: #a35bff; }
@@ -2870,7 +2850,6 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
   background: linear-gradient(180deg, #c084fc, #7c3aed 55%, #6d28d9);
   font-family: var(--font-display); font-size: 0.78rem; font-weight: 700;
 }
-.pool-join.is-quiet { background: transparent; border: 1px solid rgb(255 255 255 / 22%); }
 .pool-join:disabled { cursor: wait; opacity: 0.7; }
 .pool-join:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 @media (min-width: 640px) {

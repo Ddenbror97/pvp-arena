@@ -113,10 +113,6 @@ export function PoolLobby() {
         </div>
 
         <div className="pool-hero-art" aria-hidden>
-          <span className="pool-hero-ball is-eight">
-            <b>8</b>
-          </span>
-          <span className="pool-hero-ball is-cue" />
           <img
             src={hero}
             alt=""

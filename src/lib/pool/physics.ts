@@ -1,7 +1,7 @@
 /**
- * Pool physics v1. Integer micrometres and integer ticks, so a shot replays
- * without depending on frame rate or Math.sin. The Worker is the authority.
- * Clients animate the same function and snap to the server hash if they differ.
+ * Integer micrometre pool physics. A new rack stores pool-phys-v3.
+ * pool-phys-v1 and pool-phys-v2 stay so a match already stamped with them
+ * replays under the drag it started with.
  *
  * Table: 2.54 m by 1.27 m. Ball diameter 57.15 mm. One tick is 1/240 s.
  * v1 and v2 stay under half a radius per tick. A v3 full smash is 28_000,
