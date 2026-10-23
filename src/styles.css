@@ -2695,7 +2695,7 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
 @media (min-width: 640px) { .pool-lobby { padding: 0.75rem 1rem 0; } }
 @media (min-width: 1024px) { .pool-lobby { padding: 0.75rem 1.5rem 0; } }
 .pool-hero {
-  position: relative; isolation: isolate; overflow: hidden; display: grid; min-height: 13.5rem; border-radius: 1.25rem;
+  position: relative; isolation: isolate; overflow: hidden; display: grid; min-height: 13rem; border-radius: 1.25rem;
   border: 1px solid rgb(181 123 255 / 16%);
   background:
     radial-gradient(38% 90% at 58% 62%, rgb(139 53 236 / 42%), transparent 72%),
@@ -2711,7 +2711,7 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
     linear-gradient(90deg, transparent, rgb(197 139 255 / 35%), transparent) 62% 15% / 30% 1px no-repeat;
 }
 .pool-hero::after {
-  content: ""; position: absolute; z-index: 1; left: 28%; right: 8%; bottom: -3.4rem; height: 5.6rem; border-radius: 50%; pointer-events: none;
+  content: ""; position: absolute; z-index: 1; left: 22%; right: 6%; bottom: -3.2rem; height: 5.5rem; border-radius: 50%; pointer-events: none;
   border-top: 2px solid rgb(197 139 255 / 70%);
   background: radial-gradient(ellipse at 50% 0%, #22105a, #0b0720 70%);
   box-shadow: 0 -6px 32px rgb(163 91 255 / 45%);
@@ -2739,31 +2739,34 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
 .pool-hero-sub { margin: 0; font-size: 0.95rem; color: rgb(238 240 251 / 88%); }
 .pool-hero-art { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .pool-hero-player {
-  position: absolute; top: 0; right: 0; height: 100%; width: auto; max-width: 72%;
-  object-fit: contain; object-position: center right; opacity: 0.92;
-  mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 100%);
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 100%);
+  position: absolute; top: 0; right: 0; height: 100%; width: 78%; max-width: none;
+  object-fit: cover; object-position: 62% 50%; opacity: 0.92;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 16%, #000 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 16%, #000 100%);
 }
 .pool-hero-panel { display: none; }
 @media (min-width: 640px) {
-  .pool-hero-copy { padding: 1.6rem 2rem; }
-  .pool-hero-player { max-width: 62%; opacity: 1; }
+  .pool-hero-copy { padding: 1.75rem 2rem; }
+  .pool-hero-player { width: 68%; opacity: 1; }
 }
 @media (min-width: 1024px) {
-  .pool-hero { grid-template-columns: minmax(18rem, 0.9fr) minmax(18rem, 1.25fr) 17.5rem; height: 22rem; }
-  .pool-hero-copy { padding: 1.6rem 2.25rem; }
+  .pool-hero { grid-template-columns: minmax(20rem, 1fr) minmax(16rem, 1.05fr) 16rem; height: 15rem; }
+  .pool-hero-copy { padding: 1.75rem 2.5rem; }
   .pool-hero-art { position: relative; inset: auto; }
   .pool-hero-player {
-    left: 50%; right: auto; top: 0; height: 100%; width: 100%; max-width: 100%; opacity: 1;
-    transform: translateX(-50%); object-fit: contain; object-position: center;
-    filter: drop-shadow(0 0 28px rgb(139 53 236 / 28%));
-    mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
-    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+    inset: 0; width: 100%; height: 100%; max-width: none; opacity: 1;
+    object-fit: cover; object-position: 60% 48%;
+    filter: none;
+    mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 100%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 100%);
   }
   .pool-hero-panel {
-    position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: center; margin: 1rem 1rem 1rem 0; padding: 0.9rem 0.7rem;
+    position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: center; margin: 1rem 1rem 1rem 0; padding: 1rem 0.75rem;
     border-radius: 1rem; border: 1px solid rgb(181 123 255 / 16%); background: rgb(8 7 26 / 72%); backdrop-filter: blur(6px);
   }
+}
+@media (min-width: 1280px) {
+  .pool-hero { grid-template-columns: minmax(22rem, 1fr) minmax(18rem, 1.1fr) 18rem; }
 }
 .pool-hero-panel-title { margin: 0; text-align: center; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; }
 .pool-hero-panel-title span { margin-inline: 0.2em; color: #a35bff; }
