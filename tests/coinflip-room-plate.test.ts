@@ -40,7 +40,8 @@ describe("coinflip room plate", () => {
     expect(route).not.toContain("cf-home-match");
     expect(route).toContain("cf-room");
     expect(route).toContain('rel: "preload"');
-    expect(route).toContain("xl:h-[34rem]");
+    expect(route).toContain("xl:h-[var(--lobby-chat)]");
+    expect(css).toContain("--lobby-chat: calc(34rem + 1.5rem - 0.85rem)");
     expect(game).toContain('rel: "preload"');
     expect(game).toContain("@/assets/coinflip/room.webp");
     expect(css).toContain("html:has(.jp-home)::before");
@@ -64,11 +65,13 @@ describe("coinflip room plate", () => {
     expect(roulette).toContain('className="order-2 h-64 xl:order-1 xl:h-[34rem]"');
     expect(roulette).toContain("xl:grid-cols-[280px_minmax(0,1fr)]");
     expect(route).toContain(
-      'className="order-3 h-64 lg:col-span-2 xl:order-1 xl:col-span-1 xl:h-[34rem] xl:min-h-0"',
+      'className="order-3 h-64 lg:col-span-2 xl:order-1 xl:col-span-1 xl:h-[var(--lobby-chat)] xl:min-h-0"',
     );
     expect(route).toContain("xl:grid-cols-[280px_minmax(0,1fr)_300px]");
     expect(route).not.toContain("h-72");
-    expect(jackpot).toContain('className="order-4 h-64 xl:order-1 xl:h-[34rem] xl:min-h-0"');
+    expect(jackpot).toContain(
+      'className="order-4 h-64 xl:order-1 xl:h-[var(--lobby-chat)] xl:min-h-0"',
+    );
     expect(jackpot).toContain("xl:grid-cols-[280px_minmax(0,1fr)_300px]");
     expect(jackpot).not.toContain("260px");
     expect(jackpot).not.toContain("h-72");

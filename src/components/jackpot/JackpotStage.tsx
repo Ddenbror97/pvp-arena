@@ -149,9 +149,9 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
   );
 
   return (
-    <div className="grid gap-4 xl:h-[34rem] xl:grid-cols-[280px_minmax(0,1fr)_300px] xl:items-stretch">
-      {/* Chat. Same window as roulette: 16rem until xl, then 280px by 34rem. */}
-      <section className="order-4 h-64 xl:order-1 xl:h-[34rem] xl:min-h-0">
+    <div className="grid gap-4 xl:h-[var(--lobby-chat)] xl:grid-cols-[280px_minmax(0,1fr)_300px] xl:items-stretch">
+      {/* Chat. 16rem until xl. From xl it grows past 34rem so its bottom meets roulette. */}
+      <section className="order-4 h-64 xl:order-1 xl:h-[var(--lobby-chat)] xl:min-h-0">
         <GameChat gameType="jackpot" initial={chat} className="h-full jp-panel" />
       </section>
 

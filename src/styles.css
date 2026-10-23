@@ -1234,6 +1234,10 @@ html.intro-seen .intro-gate { display: none !important; }
 .jp-home {
   --jp-bleed-x: 1rem;
   --jp-bleed-t: 1.5rem;
+  /* Roulette's chat starts at main's pt-6 (1.5rem) and is 34rem tall.
+     This room cancels that padding and keeps 0.85rem, so the column is the
+     difference taller and the two bottoms meet. */
+  --lobby-chat: calc(34rem + 1.5rem - 0.85rem);
   position: relative;
   isolation: isolate;
   container-type: inline-size;
@@ -1297,6 +1301,7 @@ html.intro-seen .intro-gate { display: none !important; }
 .cf-home {
   --cf-bleed-x: 1rem;
   --cf-bleed-t: 1.5rem;
+  --lobby-chat: calc(34rem + 1.5rem - 0.85rem);
   position: relative;
   isolation: isolate;
   container-type: inline-size;
