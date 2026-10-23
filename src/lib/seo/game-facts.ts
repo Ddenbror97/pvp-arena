@@ -198,40 +198,40 @@ export const GAME_FACT_PAGES: Record<string, GameFactPage> = {
     facts: [
       {
         label: "How you enter",
-        text: "Two players stake the same amount from the US-dollar balance. Stakes are $1, $2, $5, $10, $25 and $50. The first player waits. The second player joins that stake. There is no house opponent.",
+        text: "Two players stake the same amount from a US-dollar balance. The stakes are $1, $2, $5, $10, $25 and $50. Join an open table, or play to take the oldest open table at that stake. There is no house opponent. Promo and partner credit can fund a stake. Deposited or won money is used first.",
       },
       {
         label: "How the winner is chosen",
-        text: "The winner is whoever the published 8-ball rules name after the shots. Pocketing the 8-ball legally wins. An early 8, the 8 in the wrong pocket, or a scratch on the 8 loses. Three shot-clock timeouts, or an explicit forfeit, give the match to the other player. The server runs that function so a browser cannot file a win. It does not draw a winner.",
-      },
-      {
-        label: "The rack seed",
-        text: "Before the table opens, the server publishes the SHA-256 hash of a 32-byte seed. The seed itself stays hidden until the match is playing, so a player cannot read the rack and then take a refund. That seed only shuffles the coloured balls. The 8-ball stays in the centre of the rack. Shots are not given a random error.",
+        text: "The winner is whoever the published 8-ball rules name after the shots. A legal 8-ball wins. An early 8, the 8 in the wrong pocket, or a scratch on the 8 loses. Three shot-clock timeouts, or leaving a live match, give the match to the other player. The server runs that function. It does not draw a winner.",
       },
       {
         label: "Fee",
-        text: "When the match settles, 5% of the pot is kept as the fee. The winner receives the other 95%. If nobody joins within 24 hours, the stake is refunded and no fee is charged. A player cannot cancel a waiting table.",
+        text: "When the match settles, 5% of the pot is kept as the fee. The winner receives the other 95%.",
       },
       {
-        label: "Promo credit",
-        text: "Promo and partner credit can be used for a stake. Deposited or won money is used first. Bonus you lose to the other player stays bonus.",
+        label: "Payout",
+        text: "The winner's share is credited to the US-dollar balance. Bitcoin, and USDC or ETH on Base, fund that balance. They are not separate playable balances. Bonus you lose to the other player stays bonus.",
       },
       {
         label: "Checking the result",
-        text: "Once the match is playing, the seed is revealed. Anyone can replay the shot list, the timeouts and the forfeits under the physics id stored with that rack, pool-phys-v1 or pool-phys-v2, and rules pvp-8ball-v1. An older match stays on the physics it was played with. A paid winner that disagrees with that replay is not a verified result. The check does not move money back.",
+        text: "Before the table opens, the server publishes the SHA-256 hash of a 32-byte rack seed. The seed is revealed once the match is playing. It only shuffles the coloured balls. The 8 stays in the centre. The Fairness page replays the shot list under the physics id stored with that rack. A paid winner that disagrees with that replay is not a verified result. The check does not move money back, remove the fee, or protect a wallet.",
+      },
+      {
+        label: "If a round is cancelled",
+        text: "If nobody joins within 24 hours, the stake is refunded and no fee is charged. A player cannot cancel a waiting table. A match that does not open within 30 seconds after both players are seated, or that ends before the break because both players left, refunds both stakes with no fee.",
       },
       { label: "Who can play", text: AGE },
     ],
     reads: [
       {
         to: "/guides/$slug",
-        slug: "8-ball-pool-hub",
-        label: "How 8 ball pool online maps to a money match",
+        slug: "8-ball-pool-rules",
+        label: "8 ball pool rules on this table",
       },
       {
         to: "/guides/$slug",
-        slug: "8-ball-pool-for-money",
-        label: "What a cash 8-ball match is",
+        slug: "8-ball-pool-hub",
+        label: "How 8 ball pool online maps to a money match",
       },
     ],
   },

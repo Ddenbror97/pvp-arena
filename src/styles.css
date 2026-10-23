@@ -2837,23 +2837,6 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
   .pool-side li.pool-open { grid-template-columns: 2.4rem minmax(0, 1fr) auto; min-height: 3.5rem; }
   .pool-open-actions { grid-column: 3; grid-row: 1; }
 }
-.pool-rules {
-  margin: 0 1rem 2rem;
-  border-radius: 1rem;
-  border: 1px solid rgb(255 255 255 / 8%);
-  background: rgb(16 12 32 / 80%);
-  padding: 0.9rem 1rem 1rem;
-  color: rgb(226 220 245 / 78%);
-}
-@media (min-width: 800px) {
-  .pool-rules { margin: 0 2rem 2rem; }
-}
-.pool-rules h2 {
-  margin: 0; font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: #c4b5fd;
-}
-.pool-rules ul { margin: 0.7rem 0 0; padding-left: 1.1rem; }
-.pool-rules li { margin-top: 0.35rem; font-size: 0.875rem; }
-
 /* ---- 8 Pool match, edge to edge under the header ---- */
 html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behavior: none; }
 .pool-root { position: relative; width: 100%; height: calc(100dvh - 3.5rem); overflow: hidden; background: #07060f; }

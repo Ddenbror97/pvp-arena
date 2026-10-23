@@ -99,6 +99,9 @@ describe("public SEO facts", () => {
     expect(GAME_FACT_PAGES.pool.facts.some((f) => f.text.includes("does not draw a winner"))).toBe(
       true,
     );
+    expect(GAME_FACT_PAGES.pool.facts.map((f) => f.label)).toEqual(
+      GAME_FACT_PAGES.jackpot.facts.map((f) => f.label),
+    );
     expect(blob).not.toMatch(/guaranteed fairness|risk-free|100% secure/i);
   });
 

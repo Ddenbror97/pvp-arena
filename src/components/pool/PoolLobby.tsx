@@ -8,7 +8,7 @@ import hero from "@/assets/pool/hero.webp";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { useAuth } from "@/lib/auth";
 import { STAKES, money, poolMessage, usePoolLobby, type OpenTable } from "@/lib/pool/api";
-import { formatCents, POOL_RULES, stakeQuote } from "@/lib/pool/copy";
+import { formatCents, stakeQuote } from "@/lib/pool/copy";
 import { enterPool } from "@/lib/pool/pool.functions";
 
 function timeLeft(iso: string, now: number): string {
@@ -269,17 +269,6 @@ export function PoolLobby() {
           </ul>
         </section>
       </div>
-      <section className="pool-rules" aria-label="8-ball rules">
-        <h2>Rules</h2>
-        <ul>
-          {POOL_RULES.map((rule) => (
-            <li key={rule.title}>
-              <strong>{rule.title}. </strong>
-              {rule.body}
-            </li>
-          ))}
-        </ul>
-      </section>
     </div>
   );
 }

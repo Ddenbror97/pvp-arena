@@ -1,12 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import hero from "@/assets/pool/hero.webp";
 import { PoolLobby } from "@/components/pool/PoolLobby";
-import {
-  POOL_FAQS,
-  POOL_PAGE_DESCRIPTION,
-  POOL_PAGE_TITLE,
-  PoolMoneyCopy,
-} from "@/components/pool/PoolMoneyCopy";
+import { POOL_FAQS, POOL_PAGE_DESCRIPTION, POOL_PAGE_TITLE } from "@/components/pool/PoolMoneyCopy";
 import { GameFacts } from "@/components/seo/GameFacts";
 import { loadPoolPaint, useQuerySeed } from "@/lib/first-paint";
 import { OG_SITE_URL } from "@/lib/og";
@@ -84,7 +79,6 @@ function EightBallPage() {
   return (
     <>
       <PoolLobby />
-      <PoolMoneyCopy />
       <div className="px-4 pb-28 sm:px-6 lg:pb-10">
         <GameFacts game="pool" />
       </div>
