@@ -57,6 +57,10 @@ export function buildTestSchemaSql(skip: readonly string[] = []): string {
   // cannot access; point them at a local stand-in table.
   s = s.replace(/auth\.users/g, "pvp_test.test_auth_users");
   s = s.replace(/auth\.sessions/g, "pvp_test.test_auth_sessions");
+  // MAINTAIN is a Postgres 17 table privilege. Production runs 17. The isolated
+  // database on some machines is 16, which rejects the word and never builds
+  // the schema. Dropping it here does not restore the privilege in production.
+  s = s.replace(/, maintain\b/gi, "");
   // 20261021195500 closes poker_table_state with `end $fn$` and no semicolon.
   // Each migration file is applied on its own in production. This builder
   // concatenates them, so the missing terminator is a syntax error at the
