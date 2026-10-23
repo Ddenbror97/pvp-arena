@@ -10,10 +10,9 @@ import { WalletGroupPlaceholder } from "@/components/wallet/HeaderWalletFrame";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
 import { equippedAssets, usePrestige } from "@/components/prestige/PrestigeProvider";
 import { Dices, Coins, CircleDot, Cherry, Spade, ShieldCheck, Circle } from "lucide-react";
-import { arenaLogo, arenaLogoLight } from "@/assets/media";
+import { arenaLogo } from "@/assets/media";
 import { TokenMark } from "@/components/wallet/TokenMark";
 import { SoundToggle } from "@/components/SoundToggle";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 // Signed-in only, so logged-out visitors never download the balance chip.
@@ -64,8 +63,6 @@ export function SiteHeader({ className }: { className?: string }) {
         </Link>
         <div className="flex items-center sm:gap-1">
           <span aria-hidden className="mr-1 hidden h-7 w-px bg-white/[0.07] sm:block" />
-          <ThemeToggle />
-          <span aria-hidden className="hidden h-7 w-px bg-white/[0.07] sm:block" />
           <SoundToggle />
           <span aria-hidden className="hidden h-7 w-px bg-white/[0.07] lg:block" />
         </div>
@@ -219,16 +216,7 @@ export function SiteFooter({ className }: { className?: string }) {
                 height={128}
                 loading="lazy"
                 decoding="async"
-                className="brand-for-dark h-10 w-auto"
-              />
-              <img
-                src={arenaLogoLight}
-                alt=""
-                width={240}
-                height={128}
-                loading="lazy"
-                decoding="async"
-                className="brand-for-light h-10 w-auto"
+                className="h-10 w-auto"
               />
             </Link>
             <p className="mt-3 max-w-xs text-sm text-muted-foreground">

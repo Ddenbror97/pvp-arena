@@ -51,9 +51,9 @@ const GROUPS: { rarity: Rarity; label: string; tone: string }[] = [
   {
     rarity: "epic",
     label: "Epic",
-    tone: "text-fuchsia-300 [html[data-theme=light]_&]:text-fuchsia-600",
+    tone: "text-fuchsia-300",
   },
-  { rarity: "rare", label: "Rare", tone: "text-sky-300 [html[data-theme=light]_&]:text-sky-600" },
+  { rarity: "rare", label: "Rare", tone: "text-sky-300" },
   { rarity: "common", label: "Common", tone: "text-muted-foreground" },
 ];
 

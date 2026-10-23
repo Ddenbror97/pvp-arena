@@ -4,9 +4,8 @@ import { Menu } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { paintSignedIn, readAuthHint } from "@/lib/auth-hint";
 import { useWallet } from "@/lib/jackpot/api";
-import { arenaLogo, arenaLogoLight } from "@/assets/media";
+import { arenaLogo } from "@/assets/media";
 import { WalletGroupPlaceholder } from "@/components/wallet/HeaderWalletFrame";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
 import { equippedAssets, usePrestige } from "@/components/prestige/PrestigeProvider";
 import {
@@ -35,22 +34,7 @@ const GAMES = [
 export function GameBrand() {
   return (
     <Link to="/" className="poker-brand" aria-label="PVPspinArena home">
-      <img
-        src={arenaLogo}
-        alt="PVPspinArena"
-        width={240}
-        height={128}
-        decoding="async"
-        className="brand-for-dark"
-      />
-      <img
-        src={arenaLogoLight}
-        alt=""
-        width={240}
-        height={128}
-        decoding="async"
-        className="brand-for-light"
-      />
+      <img src={arenaLogo} alt="PVPspinArena" width={240} height={128} decoding="async" />
     </Link>
   );
 }
@@ -93,7 +77,6 @@ export function GameAccount() {
           Sign in
         </Link>
       )}
-      <ThemeToggle className="poker-icon-btn" />
       <DropdownMenu>
         <DropdownMenuTrigger className="poker-icon-btn" aria-label="Menu">
           <Menu className="h-4 w-4" />

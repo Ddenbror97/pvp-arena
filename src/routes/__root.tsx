@@ -9,8 +9,6 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { lazy, memo, Suspense, useEffect, useLayoutEffect, type ReactNode } from "react";
-import { ensureTheme } from "@/lib/theme";
-
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider, useAuth } from "@/lib/auth";
@@ -32,19 +30,17 @@ const DepositNotice = lazy(() =>
   import("@/components/wallet/DepositNotice").then((m) => ({ default: m.DepositNotice })),
 );
 
-/** Apply the stored theme before first paint. Dark is the default. */
 /** Reveal only after the inlined faces are usable, so button and wallet text never swap width. */
 const FONT_BOOT =
   '(function(){var shown=false;function show(){if(shown)return;shown=true;var root=document.documentElement;root.classList.add("fonts-ready");if(document.body)document.body.style.opacity="1";new MutationObserver(function(){if(!root.classList.contains("fonts-ready"))root.classList.add("fonts-ready");}).observe(root,{attributes:true,attributeFilter:["class"]});}try{Promise.all([document.fonts.load("16px Manrope"),document.fonts.load("16px Unbounded")]).then(show,show);}catch(e){show();}setTimeout(show,1200);})();';
 
 const THEME_BOOT =
-  '(function(){try{var t=localStorage.getItem("pvp-spin-arena-theme");if(t!=="light")t="dark";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();';
+  '(function(){try{localStorage.removeItem("pvp-spin-arena-theme");}catch(e){}document.documentElement.setAttribute("data-theme","dark");})();';
 
-/** First paint matches the stored theme, before stylesheets or React. */
+/** First paint is the dark shell, before stylesheets or React. */
 const PAINT_CSS = `
 html{background:#03060e;color-scheme:dark;overflow-x:clip;overflow-y:auto;scrollbar-gutter:stable}
 html:not(.fonts-ready) body{opacity:0}
-html[data-theme=light]{background:#f3f1f9;color-scheme:light}
 body{overflow-x:clip}
 #intro-boot{display:none;position:fixed;inset:0;z-index:200;width:100%;height:100dvh;overflow:hidden;background:#000}
 .intro-half{position:absolute;left:0;right:0;height:50%;overflow:hidden;background:#000}
@@ -182,13 +178,6 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-function ThemeSync() {
-  useLayoutEffect(() => {
-    ensureTheme();
-  }, []);
-  return null;
-}
-
 function GameSounds() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   useLayoutEffect(() => {
@@ -272,7 +261,6 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <PrestigeProvider>
-          <ThemeSync />
           <GameSounds />
           <SiteHeader className={pokerTable ? "hidden" : ""} />
           <main

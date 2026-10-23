@@ -120,14 +120,11 @@ export function JackpotWheel({ players, spin, now, highlightId, roundId = 0, chi
       schedule("size");
     });
     resize.observe(stage);
-    const theme = new MutationObserver(() => schedule("content"));
-    theme.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     return () => {
       dead = true;
       clearTimeout(timer);
       cancelAnimationFrame(raf);
       resize.disconnect();
-      theme.disconnect();
     };
   }, [pictureKey]);
 
