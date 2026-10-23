@@ -11,6 +11,7 @@ export type PoolRole = "created" | "joined";
 
 export type OpenTable = {
   id: number;
+  creator_id: string;
   stake: number;
   pot: number;
   fee_bps: number;
@@ -88,6 +89,8 @@ const MESSAGES: Record<string, string> = {
   CASH_ONLY_BUY_IN: "Pool uses withdrawable cash. Bonus credit is not a stake.",
   ALREADY_IN_MATCH: "Finish your current match first.",
   TOO_MANY_OPEN_GAMES: "You already have three tables waiting.",
+  MATCH_NOT_OPEN: "That table was just taken, or it closed.",
+  OWN_TABLE: "That table is yours. Open it to wait, or cancel it.",
   RATE_LIMITED: "Too many new tables. Wait a few minutes.",
   NOT_YOUR_TURN: "It is the other player's shot.",
   TURN_EXPIRED: "The shot clock ran out.",

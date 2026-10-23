@@ -1,14 +1,24 @@
-import { useState } from "react";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, Coins, Shield, Trophy, Zap } from "lucide-react";
 import { toast } from "sonner";
 import hero from "@/assets/pool/hero.webp";
+import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { useAuth } from "@/lib/auth";
-import { STAKES, money, poolMessage, usePoolLobby } from "@/lib/pool/api";
+import { STAKES, money, poolCancel, poolMessage, usePoolLobby, type OpenTable } from "@/lib/pool/api";
 import { formatCents, POOL_RULES, stakeQuote } from "@/lib/pool/copy";
 import { enterPool } from "@/lib/pool/pool.functions";
+
+function timeLeft(iso: string, now: number): string {
+  const ms = new Date(iso).getTime() - now;
+  if (!Number.isFinite(ms) || ms <= 0) return "closing";
+  const total = Math.ceil(ms / 1000);
+  const minutes = Math.floor(total / 60);
+  const seconds = total % 60;
+  return minutes > 0 ? `${minutes}m ${seconds.toString().padStart(2, "0")}s` : `${seconds}s`;
+}
 
 const FEATURES = [
   { icon: Zap, title: "PVP matches", text: "Real players, real money" },
@@ -25,11 +35,21 @@ export function PoolLobby() {
   const lobby = usePoolLobby();
   const open = useServerFn(enterPool);
   const [stake, setStake] = useState<number>(500);
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState<number | "play" | null>(null);
+  const keys = useRef(new Map<string, string>());
+  const [now, setNow] = useState(() => Date.now());
   const stakes = lobby.data?.stakes?.length ? lobby.data.stakes : [...STAKES];
   const quote = stakeQuote(stake);
-  const openTables = lobby.data?.open ?? [];
+  const openTables = [...(lobby.data?.open ?? [])].sort((a, b) => {
+    const rank = (table: OpenTable) => (table.stake === stake ? 0 : 1);
+    return rank(a) - rank(b) || a.id - b.id;
+  });
   const recent = lobby.data?.recent ?? [];
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
 
   const warmMatch = () => {
     for (const path of ["/pool", "/pool/$matchId"]) {
@@ -38,25 +58,48 @@ export function PoolLobby() {
     }
   };
 
-  const play = async () => {
+  const enter = async (input: { stake?: number; matchId?: number }) => {
     if (!userId) {
       void navigate({ to: "/auth" });
       return;
     }
-    setBusy(true);
+    if (busy != null) return;
+    const token = input.matchId != null ? `join:${input.matchId}` : `play:${input.stake ?? ""}`;
+    const key = keys.current.get(token) ?? crypto.randomUUID();
+    keys.current.set(token, key);
+    setBusy(input.matchId ?? "play");
     try {
-      const result = await open({ data: { stake, key: crypto.randomUUID() } });
+      const result = await open({ data: { ...input, key } });
       if (!result.ok) {
+        keys.current.delete(token);
         toast.error(poolMessage(result.error));
         return;
       }
+      keys.current.delete(token);
       void qc.invalidateQueries({ queryKey: ["wallet"] });
       void qc.invalidateQueries({ queryKey: ["pool-lobby"] });
       void navigate({ to: "/pool/$matchId", params: { matchId: String(result.matchId) } });
     } catch {
       toast.error(poolMessage("REQUEST_FAILED"));
     } finally {
-      setBusy(false);
+      setBusy(null);
+    }
+  };
+
+  const cancelTable = async (id: number) => {
+    if (busy != null) return;
+    setBusy(id);
+    try {
+      const { error } = await poolCancel(id);
+      if (error) {
+        const code = error.message.match(/[A-Z][A-Z0-9_]{2,}/)?.[0] ?? "REQUEST_FAILED";
+        toast.error(poolMessage(code));
+        return;
+      }
+      void qc.invalidateQueries({ queryKey: ["wallet"] });
+      void qc.invalidateQueries({ queryKey: ["pool-lobby"] });
+    } finally {
+      setBusy(null);
     }
   };
 
@@ -120,14 +163,14 @@ export function PoolLobby() {
           <button
             type="button"
             className="pool-play"
-            disabled={busy}
+            disabled={busy != null}
             onMouseEnter={warmMatch}
             onFocus={warmMatch}
             onTouchStart={warmMatch}
-            onClick={() => void play()}
+            onClick={() => void enter({ stake })}
           >
-            {busy ? "Finding a match…" : "Play 8 Pool Now"}
-            {busy ? null : <ArrowRight aria-hidden className="h-5 w-5" />}
+            {busy === "play" ? "Finding a match…" : "Play 8 Pool Now"}
+            {busy === "play" ? null : <ArrowRight aria-hidden className="h-5 w-5" />}
           </button>
           <div className="pool-stakes" role="group" aria-label="Stake per player">
             {stakes.map((cents) => (
@@ -145,24 +188,85 @@ export function PoolLobby() {
           <p className="pool-quote">
             You stake {formatCents(quote.stake)}. Pot {formatCents(quote.pot)}. Platform fee{" "}
             {formatCents(quote.fee)} (5%). Winner receives {formatCents(quote.payout)}. Cancel
-            before the break and both stakes are refunded.
+            before the break and both stakes are refunded. Join an open table to play that
+            opponent. Play takes the oldest open table at this stake, or opens a new one.
           </p>
         </div>
       </section>
 
       <div className="pool-below">
-        <section className="pool-side">
-          <h2>Waiting for an opponent</h2>
+        <section className="pool-side" aria-labelledby="pool-open">
+          <h2 id="pool-open">
+            Open tables
+            {openTables.length > 0 ? <span className="pool-open-count">{openTables.length}</span> : null}
+          </h2>
           <ul>
             {openTables.length === 0 ? (
               <li>No open tables. Choose a stake and play to open one.</li>
             ) : (
-              openTables.map((table) => (
-                <li key={table.id}>
-                  <span>{table.username}</span>
-                  <span className="tabular">{money(table.stake)}</span>
-                </li>
-              ))
+              openTables.map((table) => {
+                const mine = table.creator_id === userId;
+                const payout = stakeQuote(table.stake).payout;
+                return (
+                  <li
+                    key={table.id}
+                    className={
+                      table.stake === stake ? "pool-open is-stake" : "pool-open"
+                    }
+                  >
+                    <PlayerAvatar
+                      name={table.username}
+                      src={table.avatar_url}
+                      className="pool-open-face"
+                    />
+                    <div className="pool-open-who">
+                      <strong>{table.username}</strong>
+                      <span>
+                        {mine ? "Your table · " : null}
+                        Stake {money(table.stake)} · pot {money(table.pot)} · win {money(payout)}
+                      </span>
+                    </div>
+                    <div className="pool-open-actions">
+                      <span className="pool-open-time" suppressHydrationWarning>
+                        {timeLeft(table.expires_at, now)}
+                      </span>
+                      {mine ? (
+                        <>
+                          <Link
+                            to="/pool/$matchId"
+                            params={{ matchId: String(table.id) }}
+                            className="pool-join"
+                            onMouseEnter={warmMatch}
+                            onFocus={warmMatch}
+                          >
+                            Open
+                          </Link>
+                          <button
+                            type="button"
+                            className="pool-join is-quiet"
+                            disabled={busy != null}
+                            onClick={() => void cancelTable(table.id)}
+                          >
+                            {busy === table.id ? "Cancelling…" : "Cancel"}
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          type="button"
+                          className="pool-join"
+                          disabled={busy != null}
+                          onMouseEnter={warmMatch}
+                          onFocus={warmMatch}
+                          onTouchStart={warmMatch}
+                          onClick={() => void enter({ matchId: table.id })}
+                        >
+                          {busy === table.id ? "Joining…" : `Join ${money(table.stake)}`}
+                        </button>
+                      )}
+                    </div>
+                  </li>
+                );
+              })
             )}
           </ul>
         </section>

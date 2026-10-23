@@ -449,7 +449,9 @@ function HowItWorksPage() {
           <SeoCard icon={<Target className="h-5 w-5" />} title="8-ball">
             <ol className="list-decimal space-y-1 pl-5">
               <li>
-                <strong>Stake:</strong> both players put in the same amount, from $1 to $50.
+                <strong>Stake:</strong> both players put in the same amount, from $1 to $50. Join
+                an open table to play that opponent, or play to take the oldest open table at the
+                stake you picked.
               </li>
               <li>
                 <strong>Rack:</strong> a committed seed shuffles the balls. It does not pick a

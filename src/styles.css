@@ -2808,6 +2808,35 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
 .pool-side ul { margin: 0.7rem 0 0; padding: 0; list-style: none; }
 .pool-side li { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.875rem; color: rgb(226 220 245 / 78%); }
 .pool-side li + li { margin-top: 0.45rem; }
+.pool-open-count {
+  margin-left: 0.45rem; color: #fff; font-size: 0.72rem;
+}
+.pool-side li.pool-open {
+  display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); column-gap: 0.7rem; row-gap: 0.35rem;
+  align-items: center; min-height: 4.6rem; margin-top: 0.55rem; padding-top: 0.55rem;
+  border-top: 1px solid rgb(255 255 255 / 8%); justify-content: initial;
+}
+.pool-side li.pool-open:first-child { margin-top: 0.35rem; padding-top: 0; border-top: 0; }
+.pool-side li.pool-open.is-stake { border-radius: 0.75rem; background: rgb(124 58 237 / 16%); padding-inline: 0.45rem; }
+.pool-open-face { grid-row: 1; grid-column: 1; width: 2.4rem; height: 2.4rem; border-radius: 50%; }
+.pool-open-who { grid-row: 1; grid-column: 2; min-width: 0; }
+.pool-open-who strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff; font-size: 0.92rem; }
+.pool-open-who span { display: block; margin-top: 0.12rem; font-size: 0.75rem; line-height: 1.35; color: rgb(226 220 245 / 78%); }
+.pool-open-actions { grid-column: 1 / -1; display: flex; align-items: center; justify-content: flex-end; gap: 0.4rem; min-height: 2rem; }
+.pool-open-time { margin-right: auto; font-variant-numeric: tabular-nums; font-size: 0.75rem; color: #d7c4ff; min-width: 4.5rem; }
+.pool-join {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 2rem; padding: 0 0.8rem;
+  border: 0; border-radius: 999px; cursor: pointer; color: #fff; text-decoration: none;
+  background: linear-gradient(180deg, #c084fc, #7c3aed 55%, #6d28d9);
+  font-family: var(--font-display); font-size: 0.78rem; font-weight: 700;
+}
+.pool-join.is-quiet { background: transparent; border: 1px solid rgb(255 255 255 / 22%); }
+.pool-join:disabled { cursor: wait; opacity: 0.7; }
+.pool-join:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (min-width: 640px) {
+  .pool-side li.pool-open { grid-template-columns: 2.4rem minmax(0, 1fr) auto; min-height: 3.5rem; }
+  .pool-open-actions { grid-column: 3; grid-row: 1; }
+}
 .pool-rules {
   margin: 0 1rem 2rem;
   border-radius: 1rem;

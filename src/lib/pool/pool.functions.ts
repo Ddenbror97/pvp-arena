@@ -90,10 +90,23 @@ async function beginJoined(matchId: number): Promise<{ ok: true } | { ok: false;
 
 export const enterPool = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth, requireLiveSession])
-  .inputValidator((input: unknown) => z.object({ stake: stakeSchema, key: keySchema }).parse(input))
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        stake: stakeSchema.optional(),
+        matchId: z.number().int().positive().optional(),
+        key: keySchema,
+      })
+      .parse(input),
+  )
   .handler(async ({ data, context }) => {
     const user = context.supabase as unknown as Rpc;
-    const made = await user.rpc("pool_matchmake", { p_stake: data.stake, p_key: data.key });
+    if (data.matchId == null && data.stake == null)
+      return { ok: false as const, error: "STAKE_NOT_ALLOWED" };
+    const made =
+      data.matchId != null
+        ? await user.rpc("pool_join", { p_match: data.matchId, p_key: data.key })
+        : await user.rpc("pool_matchmake", { p_stake: data.stake, p_key: data.key });
     if (made.error) return { ok: false as const, error: rpcError(made.error) };
     const row = asRecord(made.data);
     const matchId = Number(row?.match_id);

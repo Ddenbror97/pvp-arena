@@ -111,6 +111,8 @@ describe("hard-refresh layout reserves", () => {
     expect(lobbyRoute).not.toContain("@/lib/pool/physics");
     expect(lobby).not.toContain("@/lib/pool/physics");
     expect(lobby).toContain("loadRouteChunk");
+    expect(lobby).toContain("matchId: table.id");
+    expect(lobby).toContain("Open tables");
     expect(matchRoute).toContain('rel: "preload"');
     expect(matchRoute).toContain("room.webp");
     expect(matchRoute).toContain('fetchPriority: "high"');

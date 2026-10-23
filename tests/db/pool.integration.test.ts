@@ -491,6 +491,58 @@ d("pool ledger (isolated schema)", () => {
     ).rejects.toThrow(/permission denied/i);
   });
 
+  it("joins the open table you pick and leaves the other waiting", async () => {
+    const a = await newUser("sela");
+    const c = await newUser("tomas");
+    const d = await newUser("uma");
+    const older = await as(a, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
+      return row.r as { match_id: number };
+    });
+    const newer = await as(a, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
+      return row.r as { match_id: number };
+    });
+    expect(newer.match_id).not.toBe(older.match_id);
+    const [lobby] = await sql`select pvp_test.pool_lobby() lobby`;
+    const open = lobby.lobby.open as { id: number; creator_id: string }[];
+    expect(open.find((table) => Number(table.id) === newer.match_id)?.creator_id).toBe(a);
+    await expect(
+      as(a, async (tx) => {
+        await tx`select pvp_test.pool_join(${older.match_id}, ${randomUUID()})`;
+      }),
+    ).rejects.toThrow(/OWN_TABLE/);
+
+    const key = randomUUID();
+    const joined = await as(c, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_join(${newer.match_id}, ${key}) r`;
+      return row.r as { match_id: number; role: string; duplicate: boolean };
+    });
+    expect(joined.role).toBe("joined");
+    expect(joined.duplicate).toBe(false);
+    expect(Number(joined.match_id)).toBe(newer.match_id);
+    const again = await as(c, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_join(${newer.match_id}, ${key}) r`;
+      return row.r as { duplicate: boolean; match_id: number };
+    });
+    expect(again.duplicate).toBe(true);
+    expect(Number(again.match_id)).toBe(newer.match_id);
+
+    const [still] = await sql`select status from pvp_test.pool_matches where id = ${older.match_id}`;
+    const [taken] =
+      await sql`select status, opponent_id from pvp_test.pool_matches where id = ${newer.match_id}`;
+    expect(still.status).toBe("WAITING");
+    expect(taken.status).toBe("STARTING");
+    expect(taken.opponent_id).toBe(c);
+    expect(await bal(c, "user_locked")).toBe(100);
+
+    await expect(
+      as(d, async (tx) => {
+        await tx`select pvp_test.pool_join(${newer.match_id}, ${randomUUID()})`;
+      }),
+    ).rejects.toThrow(/MATCH_NOT_OPEN/);
+  });
+
   it("blocks a self-excluded player from opening a table", async () => {
     const a = await newUser("fiona");
     await sql`update pvp_test.profiles set self_excluded_until = clock_timestamp() + interval '1 day' where id = ${a}`;
