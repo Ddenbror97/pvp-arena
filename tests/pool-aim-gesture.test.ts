@@ -117,12 +117,21 @@ describe("pointer aim", () => {
   });
 
   it("maps a backward drag to power and ignores a short slip", () => {
+    const at = (fraction: number) => PULL_DEAD_PX + fraction * (PULL_FULL_PX - PULL_DEAD_PX);
     expect(powerFromPull(0)).toBe(0);
     expect(powerFromPull(PULL_DEAD_PX)).toBe(0);
     expect(powerFromPull(PULL_DEAD_PX + 1)).toBeGreaterThan(0);
-    expect(powerFromPull((PULL_DEAD_PX + PULL_FULL_PX) / 2)).toBeGreaterThan(4000);
-    expect(powerFromPull(PULL_FULL_PX)).toBe(10_000);
-    expect(powerFromPull(PULL_FULL_PX + 80)).toBe(10_000);
+    expect(powerFromPull(at(0.2))).toBe(2_000);
+    expect(powerFromPull(at(0.3))).toBe(3_000);
+    expect(powerFromPull(at(0.5))).toBe(4_000);
+    expect(powerFromPull(PULL_FULL_PX)).toBe(8_000);
+    expect(powerFromPull(PULL_FULL_PX + 80)).toBe(8_000);
+    let prev = 0;
+    for (let px = 0; px <= PULL_FULL_PX + 40; px += 1) {
+      const next = powerFromPull(px);
+      expect(next).toBeGreaterThanOrEqual(prev);
+      prev = next;
+    }
   });
 
   it("places only when ball-in-hand starts on the cue ball", () => {

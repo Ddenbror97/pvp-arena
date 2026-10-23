@@ -73,12 +73,24 @@ export function stickAngle(point: Point, cue: Point): number | null {
   return angleOf(dx, dy);
 }
 
-/** 0 until the drag back is deliberate. 10000 at a full pull. */
+/**
+ * Straight through 30% of a full pull. Past that the shot is about 20% softer,
+ * blended in by 45% so a longer drag never loses power. A full pull is 8000.
+ */
 export function powerFromPull(pixels: number): number {
   if (!Number.isFinite(pixels) || pixels <= PULL_DEAD_PX) return 0;
   const span = PULL_FULL_PX - PULL_DEAD_PX;
   const t = Math.min(1, (pixels - PULL_DEAD_PX) / span);
-  return Math.max(1, Math.round(t * 10_000));
+  return Math.max(1, Math.round(softenPull(t) * 10_000));
+}
+
+function softenPull(t: number): number {
+  if (t <= 0.3) return t;
+  const soft = t * 0.8;
+  const knee = 0.45;
+  if (t >= knee) return soft;
+  const u = (t - 0.3) / (knee - 0.3);
+  return t * (1 - u) + soft * u;
 }
 
 /** The pointer is on the butt side of the cue, outside the ball, so a forward aim stays put. */
