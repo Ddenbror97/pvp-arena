@@ -1,17 +1,22 @@
 import { describe, expect, it } from "vitest";
 import {
   BALL_R,
+  PHYSICS_V1,
+  PHYSICS_V2,
+  PHYSICS_V3,
   POCKETS,
   TABLE_H,
   TABLE_W,
   cosMicro,
   isqrt,
+  launchSpeed,
+  rollDrop,
   simulate,
   sinMicro,
   type Ball,
   type ShotInput,
 } from "../src/lib/pool/physics";
-import { playShot } from "../src/lib/pool/play";
+import { confirmedWinner, playShot } from "../src/lib/pool/play";
 import {
   applyPlayedShot,
   applyTimeout,
@@ -116,6 +121,71 @@ describe("pool physics", () => {
       expect(b.x).toBeLessThanOrEqual(TABLE_W - BALL_R + 1);
       expect(b.y).toBeLessThanOrEqual(TABLE_H - BALL_R + 1);
     }
+  });
+
+  it("keeps the v2 cue speed through 60% and adds break speed only after that", () => {
+    expect(launchSpeed(10_000, PHYSICS_V1)).toBe(14_000);
+    expect(launchSpeed(10_000, PHYSICS_V2)).toBe(14_000);
+    expect(launchSpeed(6_000, PHYSICS_V3)).toBe(8_400);
+    expect(launchSpeed(10_000, PHYSICS_V3)).toBe(28_000);
+    expect(rollDrop(14_000, PHYSICS_V2)).toBe(4 + Math.trunc(14_000 / 900));
+    expect(rollDrop(28_000, PHYSICS_V3)).toBe(2 + Math.trunc(28_000 / 1_500));
+    expect(rollDrop(14_000, PHYSICS_V1)).toBe(32 + Math.trunc(14_000 / 160));
+  });
+
+  it("sends a full-power smash farther than the previous roll", () => {
+    const seeds = [7, 19, 41];
+    const spread = (physics: "pool-phys-v2" | "pool-phys-v3", salt: number) => {
+      const table = freshTable(Uint8Array.from({ length: 32 }, (_, i) => i + salt), physics);
+      const start = new Map(table.balls.map((ball) => [ball.id, { x: ball.x, y: ball.y }]));
+      const result = simulate(table.balls, shot({ angleMilli: 0, power: 10_000 }), true, physics);
+      const peak = new Map<number, number>();
+      for (const frame of [table.balls, ...result.frames, result.balls]) {
+        for (const ball of frame) {
+          if (ball.id === 0) continue;
+          const from = start.get(ball.id);
+          if (!from) continue;
+          const travelled = Math.hypot(ball.x - from.x, ball.y - from.y);
+          peak.set(ball.id, Math.max(peak.get(ball.id) ?? 0, travelled));
+        }
+      }
+      const distances = [...peak.values()];
+      const mean = distances.reduce((sum, value) => sum + value, 0) / distances.length;
+      return { mean, far: distances.filter((value) => value > 700_000).length };
+    };
+    let v2Mean = 0;
+    let v3Mean = 0;
+    let v2Far = 0;
+    let v3Far = 0;
+    for (const salt of seeds) {
+      const older = spread(PHYSICS_V2, salt);
+      const newer = spread(PHYSICS_V3, salt);
+      v2Mean += older.mean;
+      v3Mean += newer.mean;
+      v2Far += older.far;
+      v3Far += newer.far;
+    }
+    expect(v3Mean / seeds.length).toBeGreaterThan((v2Mean / seeds.length) * 2);
+    expect(v3Mean / seeds.length).toBeGreaterThan(450_000);
+    expect(v3Far).toBeGreaterThan(v2Far);
+    expect(v3Far).toBeGreaterThanOrEqual(6);
+  });
+
+  it("replays an open v2 match on v2 when the rack says so", async () => {
+    const seed = Uint8Array.from({ length: 32 }, (_, i) => i + 11);
+    const table = freshTable(seed, PHYSICS_V2);
+    const cue = table.balls.find((b) => b.id === 0);
+    if (!cue) throw new Error("cue");
+    const input = shot({ angleMilli: 0, power: 10_000, placeX: cue.x, placeY: cue.y });
+    const played = playShot(table, input);
+    expect(played.ok).toBe(true);
+    if (!played.ok) return;
+    const published = await seedHash(seed);
+    const steps = [{ kind: "shot" as const, input, hash: played.hash }];
+    const same = await confirmedWinner(seed, published, steps, PHYSICS_V2);
+    const drifted = await confirmedWinner(seed, published, steps, PHYSICS_V3);
+    expect(same).toEqual({ ok: true, winner: played.state.winner, hash: played.hash });
+    expect(drifted.ok).toBe(false);
   });
 
   it("reaches the rack from the head string only under the newer roll", () => {
@@ -225,7 +295,7 @@ describe("pool rules", () => {
     eight.y = pocket.y;
     cue.x = eight.x - 100_000;
     cue.y = eight.y;
-    const sim = simulate(state.balls, shot({ angleMilli: 0, power: 8500 }));
+    const sim = simulate(state.balls, shot({ angleMilli: 0, power: 6000 }));
     expect(sim.pocketed).toContain(8);
     const applied = applyPlayedShot(state, sim, 5);
     expect(applied.state.winner).toBe("B");

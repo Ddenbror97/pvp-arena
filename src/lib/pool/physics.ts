@@ -4,12 +4,15 @@
  * Clients animate the same function and snap to the server hash if they differ.
  *
  * Table: 2.54 m by 1.27 m. Ball diameter 57.15 mm. One tick is 1/240 s.
- * Speed is capped below half a radius per tick so balls cannot tunnel.
+ * v1 and v2 stay under half a radius per tick. A v3 full smash is 28_000,
+ * still under one radius, so two balls closing cannot step through each other.
  */
 
-/** Matches already stored under v1 keep that drag. New racks use v2, which can cross the table. */
+/** v1 dies before the rack. v2 reaches it. v3 keeps that path under 60% power and lets a full smash run. */
 export const PHYSICS_V1 = "pool-phys-v1";
-export const PHYSICS_VERSION = "pool-phys-v2";
+export const PHYSICS_V2 = "pool-phys-v2";
+export const PHYSICS_V3 = "pool-phys-v3";
+export const PHYSICS_VERSION = PHYSICS_V3;
 
 export const TABLE_W = 2_540_000;
 export const TABLE_H = 1_270_000;
@@ -212,10 +215,27 @@ function bounce(b: Ball, rails: Set<number>, hitObject: boolean, railAfter: { on
   }
 }
 
-/** Per-tick speed lost to cloth. v1 stops a full-power cue before the rack. */
+/**
+ * Per-tick speed lost to cloth.
+ * v1 stops a full-power cue before the rack.
+ * v3 trims the constant drag so a ball that leaves the rack still reaches a cushion.
+ */
 export function rollDrop(speed: number, physics = PHYSICS_VERSION): number {
   if (physics === PHYSICS_V1) return 32 + Math.trunc(speed / 160);
+  if (physics === PHYSICS_V3) return 2 + Math.trunc(speed / 1_500);
   return 4 + Math.trunc(speed / 900);
+}
+
+/**
+ * Micrometres per tick. v1 and v2 stay linear up to 14_000.
+ * v3 matches them through 60% power, then adds break speed. Full power is 28_000,
+ * under one ball radius per tick so one ball cannot step through another.
+ */
+export function launchSpeed(power: number, physics = PHYSICS_VERSION): number {
+  const clamped = Math.max(1, Math.min(10_000, power | 0));
+  const base = Math.trunc((clamped * MAX_SPEED) / 10_000);
+  if (physics !== PHYSICS_V3 || clamped <= 6_000) return base;
+  return base + Math.trunc(((clamped - 6_000) * 14_000) / 4_000);
 }
 
 function damp(b: Ball, physics: string) {
@@ -243,9 +263,9 @@ export function moving(balls: readonly Ball[]): boolean {
 }
 
 /** Same launch `simulate` applies. Returns follow so the contact impulse can use it. */
-function launchCue(cue: Ball, shot: ShotInput): number {
+function launchCue(cue: Ball, shot: ShotInput, physics: string): number {
   const power = Math.max(1, Math.min(10_000, shot.power | 0));
-  const speed = Math.trunc((power * MAX_SPEED) / 10_000);
+  const speed = launchSpeed(power, physics);
   const cos = cosMicro(shot.angleMilli | 0);
   const sin = sinMicro(shot.angleMilli | 0);
   cue.vx = Math.trunc((speed * cos) / 1_000_000);
@@ -328,7 +348,7 @@ export function simulate(
       frames: [],
     };
   }
-  const follow = launchCue(cue, shot);
+  const follow = launchCue(cue, shot, physics);
   const pocketed: number[] = [];
   const pocketOf: Record<number, number> = {};
   const first = { id: null as number | null };
@@ -415,7 +435,7 @@ export function traceAim(
   const cue = balls.find((b) => b.id === 0);
   if (!cue || cue.pocketed) return null;
   const from = { x: cue.x, y: cue.y };
-  const follow = launchCue(cue, shot);
+  const follow = launchCue(cue, shot, physics);
   const launch = { vx: cue.vx, vy: cue.vy };
   const pocketed: number[] = [];
   const pocketOf: Record<number, number> = {};

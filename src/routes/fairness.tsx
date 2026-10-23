@@ -588,7 +588,11 @@ function PoolSection() {
         bytesFromHex(view.server_seed),
         view.server_seed_hash,
         steps,
-        view.state?.physics === "pool-phys-v1" ? "pool-phys-v1" : "pool-phys-v2",
+        view.state?.physics === "pool-phys-v1"
+          ? "pool-phys-v1"
+          : view.state?.physics === "pool-phys-v3"
+            ? "pool-phys-v3"
+            : "pool-phys-v2",
       );
       const paid =
         view.winner_id == null
@@ -621,7 +625,7 @@ function PoolSection() {
         random value is the rack, and that seed stays hidden until the match is playing. A timeout
         or a forfeit is the rule for not acting, not a house choice. This page proves the shot list.
         It does not reverse a payment. A match checks out under the physics id stored with its rack
-        (pool-phys-v1 or pool-phys-v2) and rules pvp-8ball-v1.
+        (pool-phys-v1, pool-phys-v2, or pool-phys-v3) and rules pvp-8ball-v1.
       </p>
       <div className="grid gap-4">
         <Card title="Replay a match">

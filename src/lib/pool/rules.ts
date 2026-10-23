@@ -37,7 +37,7 @@ export type Seat = "A" | "B";
 export type TableState = {
   v: 1;
   rules: typeof RULES_VERSION;
-  physics: "pool-phys-v1" | "pool-phys-v2";
+  physics: "pool-phys-v1" | "pool-phys-v2" | "pool-phys-v3";
   balls: Ball[];
   open: boolean;
   groupA: Group | null;
@@ -163,7 +163,7 @@ export function rackBalls(seed: Uint8Array): Ball[] {
 
 export function freshTable(
   seed: Uint8Array,
-  physics: TableState["physics"] = "pool-phys-v2",
+  physics: TableState["physics"] = "pool-phys-v3",
 ): TableState {
   return {
     v: 1,

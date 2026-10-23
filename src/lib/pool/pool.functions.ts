@@ -160,10 +160,12 @@ export const submitPoolShot = createServerFn({ method: "POST" })
     const published = typeof view?.server_seed_hash === "string" ? view.server_seed_hash : "";
     if (!seed || seed.length !== 32 || !prior) return fail("REPLAY_MISMATCH");
 
-    const confirmed = await confirmedWinner(seed, published, [
-      ...prior,
-      { kind: "shot", input: shot, hash: played.hash },
-    ]);
+    const confirmed = await confirmedWinner(
+      seed,
+      published,
+      [...prior, { kind: "shot", input: shot, hash: played.hash }],
+      table.physics,
+    );
     if (
       !confirmed.ok ||
       confirmed.hash !== played.hash ||

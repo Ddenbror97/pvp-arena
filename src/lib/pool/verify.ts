@@ -93,7 +93,7 @@ export async function replayMatch(
   seed: Uint8Array,
   publishedHash: string,
   stepsIn: readonly MatchStep[],
-  physics: "pool-phys-v1" | "pool-phys-v2" = "pool-phys-v2",
+  physics: "pool-phys-v1" | "pool-phys-v2" | "pool-phys-v3" = "pool-phys-v3",
 ): Promise<Replay> {
   const seedOk = await committedSeedOk(seed, publishedHash);
   let state = freshTable(seed, physics);
