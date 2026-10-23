@@ -53,7 +53,7 @@ Whether a cash match is allowed depends on where you live. This page is not lega
       title: "Three products hiding in one query",
       body: `Three products sit under the same search. A Miniclip-style client pays coins and cosmetics. A skill-cash app takes an entry and assigns a prize. This site runs a 1v1 cash match: both players post the same stake from a US-dollar balance, and the winner is the rules result. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. Those cells stay empty. A forum percentage pasted into them would be fiction.
 
-The stake list is $1, $2, $5, $10, $25, and $50. Promo credit and partner credit can enter the pot. Deposited or won money is used first, and bonus lost to the other player stays bonus. Cancel the table before the break and both stakes come back with no fee. After the break, the match is played out, forfeited, or lost on the written rules.
+The stake list is $1, $2, $5, $10, $25, and $50. Promo credit and partner credit can enter the pot. Deposited or won money is used first, and bonus lost to the other player stays bonus. If nobody joins within 24 hours, both stakes come back with no fee. After the break, the match is played out, forfeited, or lost on the written rules.
 
 A $5 stake against another $5 stake builds a $10 pot. Five percent of that pot is $0.50, and the winner is credited $9.50. The other five buttons are in the table below.`,
     },
@@ -78,7 +78,7 @@ Open [the 1v1 stake lobby](/8-ball-pool) for the match. The [fairness replay](/f
 | $25.00 | $50.00 | $2.50 | $47.50 | $22.50 |
 | $50.00 | $100.00 | $5.00 | $95.00 | $45.00 |
 
-Against an equal player the break-even share is the stake divided by the credit, about 52.63% on every row. That is the price of the fee. It is the same player trying to beat you, not a wheel. A cancel before the break returns both stakes and charges no fee. Open [the 8 ball lobby](/8-ball-pool) to see the same six buttons.`,
+Against an equal player the break-even share is the stake divided by the credit, about 52.63% on every row. That is the price of the fee. It is the same player trying to beat you, not a wheel. If nobody joins within 24 hours, the stake is refunded and no fee is charged. Open [the 8 ball lobby](/8-ball-pool) to see the same six buttons.`,
     },
     {
       id: "when-the-balance-moves",
@@ -121,7 +121,7 @@ Competitor cells stay blank on purpose. This page does not guess another company
 
 Earn money, money app, paypal, and cash app are the short queries in the October pull, each marked about 20. They read like a job listing. The product is a match. Bitcoin, USDC, or ETH on Base can fund the US-dollar balance, and the stake is still dollars. There is no NFT, no web3 token, and no separate USDT, Solana, or Ethereum table. There is also no weekly tournament to grind. A player who wants a bracket will not find one published here, and a made-up prize pool will not be added to fill the gap.
 
-Payout speed is the sentence this page will stand on: the dollar balance updates when the match settles. It will not stand on a PayPal window, a Cash App window, or a clock copied from another brand. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, and it does not know their payout clocks either. If the table is cancelled before the break, both stakes return and the fee is not charged. After the break, the shot clock is 30 seconds. Three timeouts forfeit the seat.`,
+Payout speed is the sentence this page will stand on: the dollar balance updates when the match settles. It will not stand on a PayPal window, a Cash App window, or a clock copied from another brand. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, and it does not know their payout clocks either. If the table is still empty after 24 hours, both stakes return and the fee is not charged. After the break, the shot clock is 30 seconds. Three timeouts forfeit the seat.`,
     },
   ],
   faqs: [
@@ -138,8 +138,8 @@ Payout speed is the sentence this page will stand on: the dollar balance updates
       a: "The list is $1, $2, $5, $10, $25, and $50. A $1 stake credits the winner $1.90. A $50 stake credits $95. Both players post the same amount from a US-dollar balance. Promo credit and partner credit can be the buy-in. Deposited money is used first.",
     },
     {
-      q: "What if the table is cancelled before the break?",
-      a: "Both stakes are refunded. No fee is taken on that cancel. After the break, the match ends on the rules, on three timeouts, or on an explicit forfeit.",
+      q: "What if nobody joins?",
+      a: "The table stays open for 24 hours. Then the stake is refunded and no fee is taken. A player cannot cancel it sooner. After someone joins, the match ends on the rules, on three timeouts, or on an explicit forfeit.",
     },
     {
       q: "How fast does the winner see the money?",

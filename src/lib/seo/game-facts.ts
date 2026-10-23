@@ -210,7 +210,7 @@ export const GAME_FACT_PAGES: Record<string, GameFactPage> = {
       },
       {
         label: "Fee",
-        text: "When the match settles, 5% of the pot is kept as the fee. The winner receives the other 95%. A cancel or a match that ends before the break refunds both stakes with no fee.",
+        text: "When the match settles, 5% of the pot is kept as the fee. The winner receives the other 95%. If nobody joins within 24 hours, the stake is refunded and no fee is charged. A player cannot cancel a waiting table.",
       },
       {
         label: "Promo credit",

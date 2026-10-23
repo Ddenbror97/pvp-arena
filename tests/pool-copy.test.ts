@@ -38,7 +38,13 @@ describe("stake quote", () => {
 
 describe("match notice", () => {
   it("uses plain language and hides engine codes", () => {
-    expect(matchNotice({ ...base, status: "WAITING" })).toBe("Waiting for opponent");
+    expect(matchNotice({ ...base, status: "WAITING" })).toBe(
+      "Waiting for an opponent. Your stake stays locked for up to 24 hours.",
+    );
+    expect(matchNotice({ ...base, status: "WAITING", seat: "B" })).toBe("Waiting for an opponent");
+    expect(matchNotice({ ...base, status: "CANCELLED", cancelReason: "WAITING_EXPIRED" })).toBe(
+      "No opponent joined in 24 hours. Your stake was refunded.",
+    );
     expect(matchNotice({ ...base, status: "CANCELLED" })).toBe(
       "Match cancelled. Both stakes were refunded.",
     );

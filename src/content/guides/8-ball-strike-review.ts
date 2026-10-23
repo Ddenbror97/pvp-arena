@@ -55,7 +55,7 @@ What it can warn, without naming the app a cheat, is the general pattern. Findin
     {
       id: "no-code",
       title: "A missing code is not an oversight",
-      body: `No promo code appears here because publishing one would be a partnership this page does not have. A code also goes stale, and a stale code is a small lie. The same absence applies to this website: there is no coupon that reduces the 5% fee. The fee is the fee. Stakes are $1, $2, $5, $10, $25, and $50. The winner receives 95% of the pot. A cancel before the break returns both stakes.
+      body: `No promo code appears here because publishing one would be a partnership this page does not have. A code also goes stale, and a stale code is a small lie. The same absence applies to this website: there is no coupon that reduces the 5% fee. The fee is the fee. Stakes are $1, $2, $5, $10, $25, and $50. The winner receives 95% of the pot. An empty table returns both stakes after 24 hours.
 
 If an affiliate page offers a code beside a star rating, that page has a commercial relationship it should disclose. This one discloses the opposite: no relationship, no code, no stars. The $1.90 CPC figure is an advertising-cost estimate from the Semrush figures above. It is not a bounty this site is paying you, and it is not a bounty the other product authorized us to quote as a bonus.`,
     },
@@ -84,7 +84,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $25.00 versus $25.00
 
-Both players post $25.00. The pot is $50.00. The fee is $2.50. The winner is credited $47.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $25.00. The pot is $50.00. The fee is $2.50. The winner is credited $47.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "ours",

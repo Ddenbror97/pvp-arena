@@ -84,7 +84,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $5.00 versus $5.00
 
-Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is credited $9.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is credited $9.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "money-table",
@@ -98,7 +98,7 @@ Stakes are $1, $2, $5, $10, $25, and $50, posted equally. The fee is 5% of the p
       title: "Leaves, fees, and the shot you skip",
       body: `A useful leave is boring to watch and expensive to skip. Put the cue ball on the correct side of the next object ball, close enough that speed is a choice rather than a rescue. If the next ball is frozen on the rail, arrive on the side that lets you see it. English can bend the cue ball into that parking spot. It should not be asked to steer the object ball into a pocket you aimed wrong. When the parking spot does not exist, play the safety on this shot, not on the next one.
 
-The cash part is simple enough to say without a slogan. Both players choose the same stake from the published list, the pot is the sum, and settlement keeps 5%. A win credits 95% to the rules winner. That winner is a legal 8, or the opponent's loss on an early 8, a wrong pocket, a scratch on the 8, three timeouts, or a forfeit. A table cancelled before the break returns both stakes. Nothing in that arithmetic is a forecast of how often you will be the winner.
+The cash part is simple enough to say without a slogan. Both players choose the same stake from the published list, the pot is the sum, and settlement keeps 5%. A win credits 95% to the rules winner. That winner is a legal 8, or the opponent's loss on an early 8, a wrong pocket, a scratch on the 8, three timeouts, or a forfeit. An empty table returns both stakes after 24 hours. Nothing in that arithmetic is a forecast of how often you will be the winner.
 
 Ghost-ball aim belongs in the lesson, not in a statistic. Picture the ball that would fill the pocket, then hit the real object ball at that contact point. The picture does not come with a make percentage, because this page never measured one. The same restraint covers the break. People ask how often the 8 falls on the snap. The lobby does not print that rate, so a tip that quotes one is borrowing a number from somewhere else. Play the pattern you can see.`,
     },

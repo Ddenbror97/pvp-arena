@@ -69,7 +69,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $25.00 versus $25.00
 
-Both players post $25.00. The pot is $50.00. The fee is $2.50. The winner is credited $47.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $25.00. The pot is $50.00. The fee is $2.50. The winner is credited $47.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "checklist",
@@ -95,7 +95,7 @@ If the browser match itself will not load, the reason may be a filter, a browser
     {
       id: "adults-filters-and-the-stake",
       title: "Adults, filters, and the stake",
-      body: `An adult on a network that allows the site can play. The shot clock is 30 seconds. Three timeouts forfeit that seat. An explicit forfeit gives the match to the other player. Call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches, and that scratch loses. The table is open until a legal pocket assigns solids or stripes. A foul is ball in hand anywhere. The break is from the kitchen. Cancel before the break and both stakes return with no fee.
+      body: `An adult on a network that allows the site can play. The shot clock is 30 seconds. Three timeouts forfeit that seat. An explicit forfeit gives the match to the other player. Call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches, and that scratch loses. The table is open until a legal pocket assigns solids or stripes. A foul is ball in hand anywhere. The break is from the kitchen. If nobody joins within 24 hours, the stake comes back and no fee is charged.
 
 WPA rules effective 21 October 2026 are the contrast: call-shot, and a legal 8 on the break is spotted or rebroken. This browser table is not that book. The rack hash is still published before the balls show, the seed only shuffles coloured balls, and the 8 stays in the centre. New matches use pool-phys-v2.
 
@@ -108,7 +108,7 @@ Whether the cash stake is legal depends on where you live. This page is not lega
 
 The PC and APK numbers explain the other doors people try. 8 ball pool pc, about 260 searches at difficulty 69, is answered with the browser. The apk line, about 390 at difficulty 73, is answered with a warning: sideloading an APK is a malware risk, and this page will not name a download. No store is linked. No version number is given, because a version number would be a breadcrumb to a file. A desktop shortcut to the browser is the only "PC app" consistent with what is actually published.
 
-Money, for an adult who is allowed to play, is still the pot. Stakes run from $1 to $50. The winner receives 95% when the match settles, in the US-dollar balance. Crypto can fund that balance and does not create a second game. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, and it will not send a reader to an APK of those brands to find out. Promo credit and partner credit can be staked. Cancel before the break and both stakes come back. The filter question and the fee question stay separate.`,
+Money, for an adult who is allowed to play, is still the pot. Stakes run from $1 to $50. The winner receives 95% when the match settles, in the US-dollar balance. Crypto can fund that balance and does not create a second game. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, and it will not send a reader to an APK of those brands to find out. Promo credit and partner credit can be staked. If the table is still empty after 24 hours, the stake comes back. The filter question and the fee question stay separate.`,
     },
   ],
   faqs: [

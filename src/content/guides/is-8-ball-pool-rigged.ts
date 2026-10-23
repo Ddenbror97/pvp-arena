@@ -96,7 +96,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $1.00 versus $1.00
 
-Both players post $1.00. The pot is $2.00. The fee is $0.10. The winner is credited $1.90. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $1.00. The pot is $2.00. The fee is $0.10. The winner is credited $1.90. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "losses-the-rules-name",
@@ -114,7 +114,7 @@ Whether a cash match is allowed depends on where you live. This page is not lega
 
 Cheat, hack, long line, and cue hack are crowded or at least present in the October pull, from about 480 on hack down to about 20 on the two short phrases. This page lists them so the intent is acknowledged. It then withholds every operational detail. No store, no file name, no toggle, no client build. An aim assist that lives on a handset cannot edit the server's shot. If a video claims otherwise, the video is not a source for this article, and it will not be summarised into steps.
 
-The money question hides inside the rigged question. A one-dollar stake looks too small to cheat for, and the fee is still ten cents on a two-dollar pot. Scale it up and the same 5% applies through $50. Promo credit can fund a stake, and it is still a real stake: losing it does not make the rack free. Cancel before the break if the hash is missing, and both stakes return with no fee. After the break, play the shot clock of 30 seconds and let the replay be the argument. The published stake list runs from one dollar to fifty. That is the whole remedy on this page.`,
+The money question hides inside the rigged question. A one-dollar stake looks too small to cheat for, and the fee is still ten cents on a two-dollar pot. Scale it up and the same 5% applies through $50. Promo credit can fund a stake, and it is still a real stake: losing it does not make the rack free. An empty table returns the stake after 24 hours, with no fee. The rack hash is published before the balls are dealt. After the break, play the shot clock of 30 seconds and let the replay be the argument. The published stake list runs from one dollar to fifty. That is the whole remedy on this page.`,
     },
   ],
   faqs: [

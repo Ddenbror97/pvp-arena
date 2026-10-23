@@ -43,7 +43,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $25.00 versus $25.00
 
-Both players post $25.00. The pot is $50.00. The fee is $2.50. The winner is credited $47.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $25.00. The pot is $50.00. The fee is $2.50. The winner is credited $47.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "hash-before-the-break",
@@ -94,7 +94,7 @@ Competitor cells stay blank on purpose. This page does not guess another company
       title: "What five percent costs on a funded pot",
       body: `The cost is 5% of the pot, taken when the match settles. The winner is credited 95%. Stake $25 against $25 and the pot is $50, the fee is $2.50, and the winner is credited $47.50. Stake $5 against $5 and the pot is $10, the fee is $0.50, and the winner is credited $9.50. Crypto funding does not rewrite those dollars. The full button list is on [8 ball pool real money](/guides/8-ball-pool-real-money).
 
-This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. A crypto label on someone else's app would not fill those cells. Cancel before the break and both stakes return with no fee. Promo credit and partner credit can be staked. Deposited money is used first, even when a bonus arrived beside that deposit.
+This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. A crypto label on someone else's app would not fill those cells. If nobody joins within 24 hours, the stake comes back and no fee is charged. Promo credit and partner credit can be staked. Deposited money is used first, even when a bonus arrived beside that deposit.
 
 No weekly tournament is published, and no break-win rate is published. A seed that shuffles coloured balls is not a jackpot wheel. It also does not promise that the break wins often enough to cover the fee.`,
     },
@@ -114,7 +114,7 @@ The credit is dollars in the balance. A token is not offered instead. Adults pla
 
 Provably fair, on this match, is a hash you can compare and a replay you can recompute. The 32-byte seed is hidden while the balls are still unknown, then shown once the match is playing. It shuffles only the coloured balls. The 8 is racked in the centre every time. Physics for a new match is pool-phys-v2, on a surface of 2.54 m by 1.27 m. None of that is a random miss added to a good stroke. A disputed ball is a replay question. It is not a reason to install anything.
 
-The 5% cost is easy to skip because the funding feels like the product. It is not. Twenty-five dollars against twenty-five is a fifty-dollar pot and a two-dollar-fifty fee. Lose the match and the whole stake is gone. Win it and the credit is forty-seven dollars and fifty cents, which is less than both stakes combined. Against an equal player the fee is the entire house take. Skill can change how often you win. It cannot repeal the two dollars and fifty cents. Cancel before the break and both stakes return with the fee skipped. After the break, settlement always includes it.`,
+The 5% cost is easy to skip because the funding feels like the product. It is not. Twenty-five dollars against twenty-five is a fifty-dollar pot and a two-dollar-fifty fee. Lose the match and the whole stake is gone. Win it and the credit is forty-seven dollars and fifty cents, which is less than both stakes combined. Against an equal player the fee is the entire house take. Skill can change how often you win. It cannot repeal the two dollars and fifty cents. The fee is skipped only when an empty table expires after 24 hours. After the break, settlement always includes it.`,
     },
   ],
   faqs: [

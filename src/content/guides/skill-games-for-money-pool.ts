@@ -37,7 +37,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $10.00 versus $10.00
 
-Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is credited $19.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is credited $19.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "where-chance-sits",
@@ -88,7 +88,7 @@ Competitor cells stay blank on purpose. This page does not guess another company
       title: "The fee that sits on top of an edge",
       body: `A skill edge and a fee can occupy the same match. The fee here is 5% of the pot, and the winner is credited 95% when the match settles. Ten dollars against ten dollars builds a twenty-dollar pot, a one-dollar fee, and a nineteen-dollar credit. Twenty dollars against twenty is the familiar forty-dollar pot, two-dollar fee, and thirty-eight-dollar credit. Win exactly half the time against an equal player and the fee is a slow leak, because the credit is smaller than two stakes.
 
-That arithmetic is not a measured break-win rate. None is published. No weekly tournament is published either, so there is no multi-round skill sample with a posted prize. The sample you can actually play is one rack at a time. Promo credit and partner credit can be staked, and deposited money is used first. Cancel before the break and both stakes return with no fee.
+That arithmetic is not a measured break-win rate. None is published. No weekly tournament is published either, so there is no multi-round skill sample with a posted prize. The sample you can actually play is one rack at a time. Promo credit and partner credit can be staked, and deposited money is used first. If nobody joins within 24 hours, the stake comes back and no fee is charged.
 
 This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. An app can be full of skill and still keep an unpublished cut. The unknown cut is not evidence that this 5% is universal.`,
     },

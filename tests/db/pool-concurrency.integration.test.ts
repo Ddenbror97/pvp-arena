@@ -103,7 +103,12 @@ async function sweep() {
   `;
   for (const match of open) {
     if (match.status === "WAITING") {
-      await as(String(match.creator_id), (tx) => tx`select pvp_test.pool_cancel(${match.id})`);
+      await sql`
+        update pvp_test.pool_matches
+        set expires_at = clock_timestamp() - interval '1 second'
+        where id = ${match.id}
+      `;
+      await sql`select pvp_test._pool_tick_one(${match.id})`;
     } else if (match.status === "STARTING") {
       await sql`select pvp_test.pool_refund_starting(${match.id})`;
     } else {
@@ -233,7 +238,12 @@ d("pool matches stay isolated under concurrency", () => {
       )[0].balance,
     );
     expect(locked).toBe(100);
-    await as(uid, (tx) => tx`select pvp_test.pool_cancel(${ok[0]!.match_id})`);
+    await sql`
+      update pvp_test.pool_matches
+      set expires_at = clock_timestamp() - interval '1 second'
+      where id = ${ok[0]!.match_id}
+    `;
+    await sql`select pvp_test._pool_tick_one(${ok[0]!.match_id})`;
     const available = Number(
       (
         await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = 'user_available' and account_type = 'test_credit'`
@@ -318,7 +328,12 @@ d("pool matches stay isolated under concurrency", () => {
       where owner_id = ${uid} and kind = 'user_locked' and account_type = 'test_credit'
     `;
     expect(Number(locked.balance)).toBe(100);
-    await as(uid, (tx) => tx`select pvp_test.pool_cancel(${first.match_id})`);
+    await sql`
+      update pvp_test.pool_matches
+      set expires_at = clock_timestamp() - interval '1 second'
+      where id = ${first.match_id}
+    `;
+    await sql`select pvp_test._pool_tick_one(${first.match_id})`;
     expect(await books()).toBe(0);
   });
 

@@ -89,8 +89,9 @@ const MESSAGES: Record<string, string> = {
   CASH_ONLY_BUY_IN: "Pool uses withdrawable cash. Bonus credit is not a stake.",
   ALREADY_IN_MATCH: "Finish your current match first.",
   TOO_MANY_OPEN_GAMES: "You already have three tables waiting.",
+  CANCEL_DISABLED: "A waiting table stays open until someone joins. An empty table refunds after 24 hours.",
   MATCH_NOT_OPEN: "That table was just taken, or it closed.",
-  OWN_TABLE: "That table is yours. Open it to wait, or cancel it.",
+  OWN_TABLE: "That table is yours. Open it and wait for an opponent.",
   RATE_LIMITED: "Too many new tables. Wait a few minutes.",
   NOT_YOUR_TURN: "It is the other player's shot.",
   TURN_EXPIRED: "The shot clock ran out.",
@@ -135,7 +136,6 @@ export async function fetchPoolState(id: number): Promise<PoolView> {
   return unwrap<PoolView>(data, error);
 }
 
-export const poolCancel = (id: number) => db.rpc("pool_cancel", { p_match: id });
 export const poolForfeit = (id: number) => db.rpc("pool_forfeit", { p_match: id });
 export async function poolTouch(id: number) {
   const first = await db.rpc("pool_touch", { p_match: id });

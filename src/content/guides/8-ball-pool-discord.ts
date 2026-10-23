@@ -43,7 +43,7 @@ The search exists because free games already have communities, and money games a
       title: "Off-site payment is the method, not a rumour",
       body: `The cheat is simple and it does not need a new name. Someone in a chat offers a match, a tournament, or a better price than the 5% fee. They ask you to send crypto to a personal address, or to a moderator, before any ball is racked. You send it. The match never appears in a replay you can recompute. That is how people get cheated. The logo on their profile does not change the direction of the money.
 
-A real pot on this site is two stakes already inside the ledger. You do not prepay a human. You do not get a better fee for leaving the site. The fee is 5% at settlement, or nothing if the table is cancelled before the break. Any offer that beats that fee by moving the funds into a chat is not a discount. It is an exit from the only settlement this page recognizes.`,
+A real pot on this site is two stakes already inside the ledger. You do not prepay a human. You do not get a better fee for leaving the site. The fee is 5% at settlement, or nothing if the table is still empty after 24 hours. Any offer that beats that fee by moving the funds into a chat is not a discount. It is an exit from the only settlement this page recognizes.`,
     },
     {
       id: "where",
@@ -61,7 +61,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $1.00 versus $1.00
 
-Both players post $1.00. The pot is $2.00. The fee is $0.10. The winner is credited $1.90. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $1.00. The pot is $2.00. The fee is $0.10. The winner is credited $1.90. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "seed",

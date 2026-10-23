@@ -76,7 +76,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $5.00 versus $5.00
 
-Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is credited $9.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is credited $9.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "checklist",
@@ -93,7 +93,7 @@ Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is cred
     {
       id: "cash-in-bonus-out",
       title: "Promo credit can enter, and it stays bonus",
-      body: `Promo credit and partner credit can be staked. Deposited or won money is used first. Bonus a player loses to the other stays bonus, so a promotional balance does not come back as withdrawable cash. Cancel before the break and both stakes return with no fee. After the break, the result stands.
+      body: `Promo credit and partner credit can be staked. Deposited or won money is used first. Bonus a player loses to the other stays bonus, so a promotional balance does not come back as withdrawable cash. If nobody joins within 24 hours, the stake comes back and no fee is charged. After the break, the result stands.
 
 The shot clock is 30 seconds. Three timeouts forfeit the seat that used them. An explicit forfeit gives the match to the other player. Those are ways a pot ends without a made ball. They are written before the stake, so a timeout is not a surprise invoice.
 
@@ -115,7 +115,7 @@ Whether you may play pool for money at all depends on where you live. This page 
 
 A skill app and a crypto-funded pot can both be "pool for cash" in a search box. The app shape hides the cut until you subtract prizes from entries, and only when the app shows both. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, so the subtraction cannot be finished for them. The pot shape prints the cut first: 5% of the pot, winner 95%, credited in dollars when the match settles. Crypto is only how the dollar balance may have been funded.
 
-No tournament page means no tournament strategy. Pool tournaments for money, about 20 searches in that pull, stays a demand note. There is no field size, no weekly prize, and no break-win percentage to quote. The match you can actually enter is 1v1, stakes from $1 to $50, cancel-before-break refunds both players, and three timeouts forfeit the seat. Promo credit and partner credit can buy the seat. The dollar balance is credited only when a real match settles, and only at 95% of the pot. Set a loss number before you queue.`,
+No tournament page means no tournament strategy. Pool tournaments for money, about 20 searches in that pull, stays a demand note. There is no field size, no weekly prize, and no break-win percentage to quote. The match you can actually enter is 1v1, stakes from $1 to $50, an empty table refunds after 24 hours, and three timeouts forfeit the seat. Promo credit and partner credit can buy the seat. The dollar balance is credited only when a real match settles, and only at 95% of the pot. Set a loss number before you queue.`,
     },
   ],
   faqs: [
@@ -137,7 +137,7 @@ No tournament page means no tournament strategy. Pool tournaments for money, abo
     },
     {
       q: "Can bonus credit buy the seat?",
-      a: "Yes. Promo credit and partner credit can buy the seat. Deposited or won money is used first, and bonus you lose to the other player stays bonus. A cancel before the break returns both stakes and charges nothing.",
+      a: "Yes. Promo credit and partner credit can buy the seat. Deposited or won money is used first, and bonus you lose to the other player stays bonus. An empty table refunds both stakes after 24 hours and charges nothing.",
     },
     {
       q: "Does difficulty 0 mean the match is a good bet?",

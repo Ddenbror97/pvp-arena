@@ -63,7 +63,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $10.00 versus $10.00
 
-Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is credited $19.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is credited $19.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "leave-after",
@@ -128,7 +128,7 @@ People ask for a drill that raises the break-win rate by a stated amount. There 
     },
     {
       q: "Is the break a separate bet?",
-      a: "No. The stake is on the rack. The fee is 5% of the pot at settlement, whether the rack ends on the break or ten shots later. A cancel before the break returns both stakes.",
+      a: "No. The stake is on the rack. The fee is 5% of the pot at settlement, whether the rack ends on the break or ten shots later. An empty table returns both stakes after 24 hours.",
     },
   ],
   sources: [

@@ -72,7 +72,7 @@ d("pool ledger (isolated schema)", () => {
     expect(fresh.h).toBe(stateHash(freshTable(seed)));
   });
 
-  it("locks a stake, refunds a cancel, and pays 95% with a 5% fee", async () => {
+  it("locks a stake, refunds an empty wait, and pays 95% with a 5% fee", async () => {
     const a = await newUser("alice");
     const b = await newUser("bobby");
     const before = await bal(a);
@@ -83,10 +83,24 @@ d("pool ledger (isolated schema)", () => {
     expect(created.role).toBe("created");
     expect(await bal(a)).toBe(before - 100);
     expect(await bal(a, "user_locked")).toBe(100);
+    const [life] = await sql`
+      select extract(epoch from (expires_at - created_at))::int secs
+      from pvp_test.pool_matches where id = ${created.match_id}
+    `;
+    expect(life.secs).toBe(86400);
+    await expect(
+      as(a, async (tx) => {
+        await tx`select pvp_test.pool_cancel(${created.match_id})`;
+      }),
+    ).rejects.toThrow(/CANCEL_DISABLED/);
 
-    await as(a, async (tx) => {
-      await tx`select pvp_test.pool_cancel(${created.match_id})`;
-    });
+    await sql`
+      update pvp_test.pool_matches
+      set expires_at = clock_timestamp() - interval '1 second'
+      where id = ${created.match_id}
+    `;
+    const [expired] = await sql`select pvp_test._pool_tick_one(${created.match_id}) r`;
+    expect(expired.r).toBe("refunded");
     expect(await bal(a)).toBe(before);
     expect(await bal(a, "user_locked")).toBe(0);
 
@@ -278,9 +292,12 @@ d("pool ledger (isolated schema)", () => {
     const waiting =
       await sql`select id, creator_id from pvp_test.pool_matches where status = 'WAITING'`;
     for (const open of waiting) {
-      await as(String(open.creator_id), async (tx) => {
-        await tx`select pvp_test.pool_cancel(${open.id})`;
-      });
+      await sql`
+        update pvp_test.pool_matches
+        set expires_at = clock_timestamp() - interval '1 second'
+        where id = ${open.id} and status = 'WAITING'
+      `;
+      await sql`select pvp_test._pool_tick_one(${open.id})`;
     }
     const stakes = [100, 200, 500, 1000, 2500, 5000];
     for (const stake of stakes) {

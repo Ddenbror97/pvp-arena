@@ -69,7 +69,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $5.00 versus $5.00
 
-Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is credited $9.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is credited $9.50. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "checklist",
@@ -88,7 +88,7 @@ Both players post $5.00. The pot is $10.00. The fee is $0.50. The winner is cred
       title: "The cash alternative is the pot, not a coin cashout",
       body: `The alternative with a real payout is the 1v1 cash match. Both players post the same stake from $1, $2, $5, $10, $25, or $50. The fee is 5% of the pot. The winner is credited 95% in the US-dollar balance when the match settles. Five dollars against five is a ten-dollar pot, a fifty-cent fee, and nine dollars and fifty cents to the winner. Twenty dollars against twenty is a forty-dollar pot, a two-dollar fee, and thirty-eight dollars to the winner.
 
-That is not a coin cashout. There is no window that turns a coin balance into those dollars. Promo credit and partner credit can be staked. That is still not a coin cashout: deposited money is used first, and bonus lost to the other player stays bonus. Cancel before the break and both stakes return with no fee.
+That is not a coin cashout. There is no window that turns a coin balance into those dollars. Promo credit and partner credit can be staked. That is still not a coin cashout: deposited money is used first, and bonus lost to the other player stays bonus. If nobody joins within 24 hours, the stake comes back and no fee is charged.
 
 Bitcoin, USDC, or ETH on Base can fund the dollar balance. Funding is still dollars at the table. There is no NFT prize and no web3 token paid instead of the 95%.`,
     },
@@ -108,7 +108,7 @@ No weekly tournament and no break-win rate are published. A coin leaderboard fro
 
 A Miniclip-style client and a cash 1v1 can share a cue and a rack graphic. They do not share a cashier. Coins buy what that client lists. The cash match pays the other player, minus the fee. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees, so it will not rank a coin shop against those apps. It also will not call a coin client a scam for selling cosmetics. Cosmetics are not the claim under review. The claim under review is that free coins are not a payout.
 
-If the goal is spendable money, skip the coin pile. Post cash, from one dollar to fifty, against one other player. Bonus credit stays out. A cancel before the break refunds both stakes and charges nothing. After the break, the 30-second clock runs, and three timeouts forfeit the seat. The winner's dollars show up in the US-dollar balance at settlement. That is the only speed stated here. No coin cashout, no PayPal window, and no invented coin price will be added to make the free-coin query feel served. No weekly tournament converts coins into a prize either.`,
+If the goal is spendable money, skip the coin pile. Post cash, from one dollar to fifty, against one other player. Bonus credit stays out. An empty table refunds the stake after 24 hours and charges nothing. After the break, the 30-second clock runs, and three timeouts forfeit the seat. The winner's dollars show up in the US-dollar balance at settlement. That is the only speed stated here. No coin cashout, no PayPal window, and no invented coin price will be added to make the free-coin query feel served. No weekly tournament converts coins into a prize either.`,
     },
   ],
   faqs: [

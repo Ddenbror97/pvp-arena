@@ -57,8 +57,8 @@ export const POOL_RULES: readonly { title: string; body: string }[] = [
     body: "You have 30 seconds. The clock does not restart when you reconnect. Three timeouts forfeit the match.",
   },
   {
-    title: "Leave and cancel",
-    body: "Cancel while you are waiting and both stakes come back, with no fee. Leaving a live match forfeits. Your opponent is paid.",
+    title: "Waiting",
+    body: "A table with no opponent stays open for 24 hours, then the stake is refunded. There is no cancel. Leaving a live match forfeits, and your opponent is paid.",
   },
   {
     title: "Disconnect",
@@ -112,14 +112,23 @@ export type MatchNoticeInput = {
   offline: boolean;
   reconnecting: boolean;
   seat: "A" | "B" | null;
+  cancelReason?: string | null;
 };
 
 /** Primary match line. Internal codes stay out of this sentence. */
 export function matchNotice(input: MatchNoticeInput): string | null {
   if (input.offline || input.reconnecting) return "Reconnecting";
-  if (input.status === "WAITING") return "Waiting for opponent";
+  if (input.status === "WAITING") {
+    return input.seat === "A"
+      ? "Waiting for an opponent. Your stake stays locked for up to 24 hours."
+      : "Waiting for an opponent";
+  }
   if (input.status === "STARTING") return input.seat === "A" ? "You break" : "Opponent breaks";
-  if (input.status === "CANCELLED") return "Match cancelled. Both stakes were refunded.";
+  if (input.status === "CANCELLED") {
+    return input.cancelReason === "WAITING_EXPIRED"
+      ? "No opponent joined in 24 hours. Your stake was refunded."
+      : "Match cancelled. Both stakes were refunded.";
+  }
   if (input.status === "COMPLETED") {
     const why = winSentence(input.winReason);
     if (input.youWon) return why ? `You won ${input.payout}. ${why}` : `You won ${input.payout}`;

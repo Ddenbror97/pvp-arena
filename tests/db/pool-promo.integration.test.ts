@@ -126,9 +126,12 @@ d("pool promo and partner credit", () => {
       const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
-    await as(a, async (tx) => {
-      await tx`select pvp_test.pool_cancel(${waiting.match_id})`;
-    });
+    await sql`
+      update pvp_test.pool_matches
+      set expires_at = clock_timestamp() - interval '1 second'
+      where id = ${waiting.match_id}
+    `;
+    await sql`select pvp_test._pool_tick_one(${waiting.match_id})`;
     expect(await basis(a)).toEqual({ eligible: 0, bonus: 1000 });
 
     const matchId = await openPlaying(a, b);

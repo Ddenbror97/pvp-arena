@@ -11,7 +11,7 @@ export const POOL_FAQS = [
   },
   {
     q: "What fee does the match take?",
-    a: "When a match settles, 5% of the pot is the fee and the winner receives the other 95%. A $10 versus $10 match is a $20 pot, a $1 fee, and $19 to the winner. A cancel before the break refunds both stakes with no fee.",
+    a: "When a match settles, 5% of the pot is the fee and the winner receives the other 95%. A $10 versus $10 match is a $20 pot, a $1 fee, and $19 to the winner. If nobody joins within 24 hours, the stake is refunded and no fee is charged.",
   },
   {
     q: "How do you prove a match was fair?",
@@ -44,7 +44,7 @@ export function PoolMoneyCopy() {
         other seat. The shot clock is 30 seconds. When the match settles, 5% of the pot is the fee
         and the winner receives the other 95%. A $10 versus $10 match is a $20 pot, a $1 fee, and
         $19 to the winner. A $5 versus $5 match is a $10 pot, a $0.50 fee, and $9.50 to the winner.
-        A waiting table that is cancelled before the break refunds both stakes and charges nothing.
+        A waiting table stays open for 24 hours. If nobody joins, the stake is refunded and no fee is charged. A player cannot cancel it.
       </p>
       <p className="mt-3">
         The rack is not the result. Before the table opens, the server publishes the SHA-256 hash of

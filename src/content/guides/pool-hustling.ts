@@ -65,7 +65,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $50.00 versus $50.00
 
-Both players post $50.00. The pot is $100.00. The fee is $5.00. The winner is credited $95.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $50.00. The pot is $100.00. The fee is $5.00. The winner is credited $95.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "fraud-and-apa",
@@ -81,7 +81,7 @@ This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Stri
       title: "What a declared match publishes first",
       body: `Before the balls are shown, this match publishes a SHA-256 hash of the 32-byte rack seed. The seed later shuffles only the coloured balls, and the 8 stays in the centre. Shots are not randomly missed. New matches use physics id pool-phys-v2. The fairness page can replay them. None of that is a disguise. A hustle depends on someone knowing less. A hash is an attempt to let both players know the rack commitment at the same time.
 
-The rules are also posted. Call a pocket only for the 8. The break 8 wins unless the cue ball scratches. Early 8 loses. The shot clock is 30 seconds. Three timeouts forfeit the seat. An explicit forfeit gives the match to the other player. Promo credit and partner credit can be staked. Deposited money is used first. Cancel before the break and both stakes return with no fee. There is no weekly tournament and no published break-win rate to dangle as bait.
+The rules are also posted. Call a pocket only for the 8. The break 8 wins unless the cue ball scratches. Early 8 loses. The shot clock is 30 seconds. Three timeouts forfeit the seat. An explicit forfeit gives the match to the other player. Promo credit and partner credit can be staked. Deposited money is used first. If nobody joins within 24 hours, the stake comes back and no fee is charged. There is no weekly tournament and no published break-win rate to dangle as bait.
 
 WPA rules effective 21 October 2026 call shots, and a legal break 8 is spotted or rebroken. This table does not. PVPspinArena publishes the page. No named author is on it.`,
     },

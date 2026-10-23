@@ -75,7 +75,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "What is the house fee?",
-    a: "Jackpot, Coinflip and Roulette take 5% when the round settles. On P2P Slott the fee is 10% of the players' pot, taken when the match ends and shown on the result; promotional WILD bonuses are paid in full, a draw refunds both stakes, and a bomb ends the match with the house keeping both stakes. Poker takes 5% of each pot only when a flop is dealt, with no fee on hands that end preflop. 8-ball takes 5% of the pot when a player wins the match. A cancel refunds both stakes.",
+    a: "Jackpot, Coinflip and Roulette take 5% when the round settles. On P2P Slott the fee is 10% of the players' pot, taken when the match ends and shown on the result; promotional WILD bonuses are paid in full, a draw refunds both stakes, and a bomb ends the match with the house keeping both stakes. Poker takes 5% of each pot only when a flop is dealt, with no fee on hands that end preflop. 8-ball takes 5% of the pot when a player wins the match. An empty table refunds the stake after 24 hours. A player cannot cancel a waiting table.",
   },
 ];
 
@@ -466,7 +466,8 @@ function HowItWorksPage() {
                 the 8 loses.
               </li>
               <li>
-                <strong>Fee:</strong> 5% of the pot when someone wins. A cancel refunds both stakes.
+                <strong>Fee:</strong> 5% of the pot when someone wins. An empty table refunds
+                the stake after 24 hours. There is no cancel.
               </li>
               <li>
                 Promo and partner credit can fund a stake. Deposited or won money is used first,

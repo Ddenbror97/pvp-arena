@@ -778,7 +778,6 @@ d("live database permissions (read-only catalog checks)", () => {
       "poker_admin_collusion_signals(integer,integer,integer)",
       "poker_admin_recover_settlement(bigint,text,text)",
       "poker_worker_health()",
-      "pool_cancel(bigint)",
       "pool_forfeit(bigint)",
       "pool_join(bigint,text)",
       "pool_matchmake(bigint,text)",

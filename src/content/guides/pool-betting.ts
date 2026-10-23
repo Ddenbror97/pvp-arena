@@ -61,7 +61,7 @@ Nothing on this page is a licence, a law firm memo, or a promise that a skill ar
       title: "How the pot settles, shot by shot",
       body: `You pick a stake. The other player matches it. The server commits a rack seed hash before the balls are shown. You play. The winner is the [8 ball pool rules](/guides/8-ball-pool-rules) result: a legal 8, an early 8 loss, a wrong-pocket 8, a scratch on the 8, three timeouts, or a forfeit. The server recomputes the shots. A browser cannot file a win the replay rejects.
 
-There is no line, no juice in the sportsbook sense, and no live price that moves. The only number that moves money to the house is 5% of the pot at settlement. Deposits and withdrawals are not charged that fee again. A table cancelled before the break refunds both stakes with no fee.
+There is no line, no juice in the sportsbook sense, and no live price that moves. The only number that moves money to the house is 5% of the pot at settlement. Deposits and withdrawals are not charged that fee again. An empty table refunds both stakes after 24 hours, with no fee.
 
 If someone in a chat offers pool betting and asks you to send crypto to a personal address first, that is not this cashier. Close it. A seed phrase is never part of a stake.`,
     },
@@ -90,7 +90,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $50.00 versus $50.00
 
-Both players post $50.00. The pot is $100.00. The fee is $5.00. The winner is credited $95.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $50.00. The pot is $100.00. The fee is $5.00. The winner is credited $95.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "what-we-will-not-price",

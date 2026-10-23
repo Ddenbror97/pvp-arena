@@ -35,7 +35,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $10.00 versus $10.00
 
-Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is credited $19.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is credited $19.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "accounts",
@@ -84,7 +84,7 @@ Competitor cells stay blank on purpose. This page does not guess another company
       title: "Settlement is the replay",
       body: `The argument, if there is one, ends when the server recomputes the shots. That recomputation is the settlement. It uses physics id pool-phys-v2. It does not add a random miss, so a thin cut that missed was a thin cut. The rack seed was hashed before the balls were shown and it only shuffles colours. The 8 stays in the centre of the rack. A browser cannot file a win the replay rejects.
 
-The fee is 5% of the pot, taken when the match settles. The winner's credit is 95%. A cancel before the break returns both stakes and charges nothing. Three timeouts forfeit the seat that burned them. You call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches. Those rules are the match, and they are written on [8 ball pool rules](/guides/8-ball-pool-rules). A chat message is not a second settlement desk.`,
+The fee is 5% of the pot, taken when the match settles. The winner's credit is 95%. An empty table refunds both stakes after 24 hours and charges nothing. Three timeouts forfeit the seat that burned them. You call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches. Those rules are the match, and they are written on [8 ball pool rules](/guides/8-ball-pool-rules). A chat message is not a second settlement desk.`,
     },
     {
       id: "where-not",

@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import hero from "@/assets/pool/hero.webp";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { useAuth } from "@/lib/auth";
-import { STAKES, money, poolCancel, poolMessage, usePoolLobby, type OpenTable } from "@/lib/pool/api";
+import { STAKES, money, poolMessage, usePoolLobby, type OpenTable } from "@/lib/pool/api";
 import { formatCents, POOL_RULES, stakeQuote } from "@/lib/pool/copy";
 import { enterPool } from "@/lib/pool/pool.functions";
 
@@ -15,8 +15,10 @@ function timeLeft(iso: string, now: number): string {
   const ms = new Date(iso).getTime() - now;
   if (!Number.isFinite(ms) || ms <= 0) return "closing";
   const total = Math.ceil(ms / 1000);
-  const minutes = Math.floor(total / 60);
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
   const seconds = total % 60;
+  if (hours > 0) return `${hours}h ${minutes.toString().padStart(2, "0")}m`;
   return minutes > 0 ? `${minutes}m ${seconds.toString().padStart(2, "0")}s` : `${seconds}s`;
 }
 
@@ -81,23 +83,6 @@ export function PoolLobby() {
       void navigate({ to: "/pool/$matchId", params: { matchId: String(result.matchId) } });
     } catch {
       toast.error(poolMessage("REQUEST_FAILED"));
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const cancelTable = async (id: number) => {
-    if (busy != null) return;
-    setBusy(id);
-    try {
-      const { error } = await poolCancel(id);
-      if (error) {
-        const code = error.message.match(/[A-Z][A-Z0-9_]{2,}/)?.[0] ?? "REQUEST_FAILED";
-        toast.error(poolMessage(code));
-        return;
-      }
-      void qc.invalidateQueries({ queryKey: ["wallet"] });
-      void qc.invalidateQueries({ queryKey: ["pool-lobby"] });
     } finally {
       setBusy(null);
     }
@@ -187,8 +172,8 @@ export function PoolLobby() {
           </div>
           <p className="pool-quote">
             You stake {formatCents(quote.stake)}. Pot {formatCents(quote.pot)}. Platform fee{" "}
-            {formatCents(quote.fee)} (5%). Winner receives {formatCents(quote.payout)}. Cancel
-            before the break and both stakes are refunded. Join an open table to play that
+            {formatCents(quote.fee)} (5%). Winner receives {formatCents(quote.payout)}. If nobody
+            joins within 24 hours, the stake is refunded. Join an open table to play that
             opponent. Play takes the oldest open table at this stake, or opens a new one.
           </p>
         </div>
@@ -231,25 +216,15 @@ export function PoolLobby() {
                         {timeLeft(table.expires_at, now)}
                       </span>
                       {mine ? (
-                        <>
-                          <Link
-                            to="/pool/$matchId"
-                            params={{ matchId: String(table.id) }}
-                            className="pool-join"
-                            onMouseEnter={warmMatch}
-                            onFocus={warmMatch}
-                          >
-                            Open
-                          </Link>
-                          <button
-                            type="button"
-                            className="pool-join is-quiet"
-                            disabled={busy != null}
-                            onClick={() => void cancelTable(table.id)}
-                          >
-                            {busy === table.id ? "Cancelling…" : "Cancel"}
-                          </button>
-                        </>
+                        <Link
+                          to="/pool/$matchId"
+                          params={{ matchId: String(table.id) }}
+                          className="pool-join"
+                          onMouseEnter={warmMatch}
+                          onFocus={warmMatch}
+                        >
+                          Open
+                        </Link>
                       ) : (
                         <button
                           type="button"

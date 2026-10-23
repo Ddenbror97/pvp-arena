@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import room from "@/assets/pool/room.webp";
 import { useAuth } from "@/lib/auth";
 import {
-  poolCancel,
   poolForfeit,
   poolMessage,
   poolNudge,
@@ -553,6 +552,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     youLost,
     payout: dollars(youWon ? pays : (view.payout_amount ?? pays)),
     winReason: view.win_reason,
+    cancelReason: view.cancel_reason,
     fouled,
     ballInHand: !!state?.ballInHand,
     kitchenOnly: !!state?.kitchenOnly,
@@ -585,17 +585,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   };
 
   const leave = () => {
-    if (view.status === "WAITING" && seat === "A") {
-      void poolCancel(view.id).then(() => {
-        void qc.invalidateQueries({ queryKey: ["pool-match", matchId] });
-        void qc.invalidateQueries({ queryKey: ["wallet"] });
-      });
-      return;
-    }
-    if (seat && view.status === "PLAYING") {
-      setConfirmForfeit(true);
-      return;
-    }
+    if (seat && view.status === "PLAYING") setConfirmForfeit(true);
   };
 
   return (
@@ -638,13 +628,13 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       </div>
 
       <div className="pool-tools">
-        {(view.status === "WAITING" && seat === "A") || (seat && view.status === "PLAYING") ? (
+        {seat && view.status === "PLAYING" ? (
           <button type="button" className="pool-leave" onClick={leave}>
             Leave game
           </button>
         ) : (
           <Link to="/8-ball-pool" className="pool-leave">
-            Leave game
+            {view.status === "WAITING" ? "Back to lobby" : "Leave game"}
           </Link>
         )}
         <button

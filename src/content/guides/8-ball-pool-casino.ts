@@ -52,7 +52,7 @@ Open [the 1v1 stake lobby](/8-ball-pool) for the match. The [fairness replay](/f
     {
       id: "fee",
       title: "The fee is the only house number",
-      body: `Five percent of the pot is taken at settlement. The winner is credited 95%. Deposits are not taxed again by that percentage, and a rack cancelled before the break returns both stakes. There is no juice in the sportsbook sense, because there is no price on a match you are not playing. Pool betting, as a separate page, is the same idea stated for people who arrived with the word bet.
+      body: `Five percent of the pot is taken at settlement. The winner is credited 95%. Deposits are not taxed again by that percentage, and an empty table returns both stakes after 24 hours. There is no juice in the sportsbook sense, because there is no price on a match you are not playing. Pool betting, as a separate page, is the same idea stated for people who arrived with the word bet.
 
 Do not stack an imaginary miss on top of the fee. Physics id pool-phys-v2 does not randomly fail a shot that was played truly. A bad line misses because it was a bad line. The replay will show it. If the site wanted a hidden edge, a random miss would be the dishonest way to build one. That mechanism is not in the engine. The published mechanism is the 5% line, readable before you post.`,
     },
@@ -65,7 +65,7 @@ Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50
 
 ### A second stake: $2.00 versus $2.00
 
-Both players post $2.00. The pot is $4.00. The fee is $0.20. The winner is credited $3.80. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $2.00. The pot is $4.00. The fee is $0.20. The winner is credited $3.80. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. If nobody joins within 24 hours, the stake is refunded and no fee is charged.`,
     },
     {
       id: "checklist",

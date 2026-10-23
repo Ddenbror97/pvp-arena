@@ -670,7 +670,7 @@ call a pocket only for the 8
 8 in the wrong pocket, or a scratch on the 8, loses
 a foul is ball in hand anywhere; the break is kitchen only
 one reconnect window per shot; coming back does not restart the clock
-refunds: cancel while waiting, start timeout, or both gone before the break
+refunds: empty table after 24 hours, start timeout, or both gone before the break
 
 winner = pvp-8ball-v1(rack, steps) under pool-phys-v1
 the database rebuilds that rack and each shot before it pays
