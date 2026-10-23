@@ -55,7 +55,7 @@ Whether a cash match is allowed depends on where you live. This page is not lega
 
 The stake list is $1, $2, $5, $10, $25, and $50. The buy-in is cash only. Bonus credit cannot be staked, so a promotional balance does not enter the pot. Cancel the table before the break and both stakes come back with no fee. After the break, the match is played out, forfeited, or lost on the written rules.
 
-A $20 stake against another $20 stake builds a $40 pot. Five percent of that pot is $2, and the winner is credited $38. A smaller example is the $5 match: a $10 pot, a fee of $0.50, and $9.50 credited to the winner.`,
+A $5 stake against another $5 stake builds a $10 pot. Five percent of that pot is $0.50, and the winner is credited $9.50. The other five buttons are in the table below.`,
     },
     {
       id: "where",
@@ -66,14 +66,19 @@ Open [the 1v1 stake lobby](/8-ball-pool) for the match. The [fairness replay](/f
     },
     {
       id: "two-pots",
-      title: "A pot in dollars, twice",
-      body: `### $20 versus $20
+      title: "The six stakes the lobby posts",
+      body: `The buy-in buttons are $1, $2, $5, $10, $25, and $50. Both players post the same one. The pot is twice that stake. The fee is 5% of the pot, taken in cents, and the winner is credited the rest. On these six amounts the 5% lands on a whole cent, so the credit is exact.
 
-Both players post $20. The pot is $40. The fee is 5% of that pot, which is $2. The winner is credited $38. You risked $20. If you win, the credit is $38, so the net if you win is $18 and the net if you lose is minus $20. The win rate that breaks even against an equal player is 20/38, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
+| Each stake | Pot | Fee | Winner credited | Net if you win |
+| --- | --- | --- | --- | --- |
+| $1.00 | $2.00 | $0.10 | $1.90 | $0.90 |
+| $2.00 | $4.00 | $0.20 | $3.80 | $1.80 |
+| $5.00 | $10.00 | $0.50 | $9.50 | $4.50 |
+| $10.00 | $20.00 | $1.00 | $19.00 | $9.00 |
+| $25.00 | $50.00 | $2.50 | $47.50 | $22.50 |
+| $50.00 | $100.00 | $5.00 | $95.00 | $45.00 |
 
-### A second stake: $10.00 versus $10.00
-
-Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is credited $19.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Against an equal player the break-even share is the stake divided by the credit, about 52.63% on every row. That is the price of the fee. It is the same player trying to beat you, not a wheel. A cancel before the break returns both stakes and charges no fee. Open [the 8 ball lobby](/8-ball-pool) to see the same six buttons.`,
     },
     {
       id: "when-the-balance-moves",
@@ -130,7 +135,7 @@ Payout speed is the sentence this page will stand on: the dollar balance updates
     },
     {
       q: "Which stakes can two players post?",
-      a: "The list is $1, $2, $5, $10, $25, and $50. Both players post the same amount from a US-dollar balance. Bonus credit cannot be used as the buy-in.",
+      a: "The list is $1, $2, $5, $10, $25, and $50. A $1 stake credits the winner $1.90. A $50 stake credits $95. Both players post the same amount from a US-dollar balance. Bonus credit cannot be used as the buy-in.",
     },
     {
       q: "What if the table is cancelled before the break?",
@@ -159,5 +164,5 @@ Payout speed is the sentence this page will stand on: the dollar balance updates
     "pool-cash-app-review",
     "skill-games-for-money-pool",
   ],
-  updated: "2026-10-22",
+  updated: "2026-10-23",
 };

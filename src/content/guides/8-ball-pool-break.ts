@@ -24,7 +24,9 @@ export const guide: Guide = {
       title: "What the opening hit is for",
       body: `An 8 ball pool break is the only shot that starts with a full triangle and a cue ball behind the head string. You are trying to spread your future problems so that shot two has a pocket and a leave. Power without a place to stand is just noise. If the wings stay frozen and the 8 is the only ball that moved, you have a hard rack and you earned it. Look at the balls that went to rails. Those are the ones that might be next.
 
-The kitchen is the area behind the head string. The opening cue ball lives there. After a foul later, ball in hand is anywhere on this table, which is a different privilege. Do not confuse the two and place the break cue ball down-table. The shot clock still runs. Three timeouts forfeit the seat, including if you spend them admiring the rack.`,
+The kitchen is the area behind the head string. The opening cue ball lives there, on the head string, at one quarter of the table length. Seat A breaks. Seat B does not. After a foul later, ball in hand is anywhere on this table, which is a different privilege. Do not confuse the two and place the break cue ball down-table. The shot clock still runs. Three timeouts forfeit the seat, including if you spend them admiring the rack.
+
+The rack is the same shape every match. The 8 sits in the centre of the third row. The 32-byte seed shuffles only the other fourteen balls, and the two balls in the back corners are placed on opposite groups, one solid and one stripe. The seed does not choose the winner.`,
     },
     {
       id: "checklist",
@@ -55,9 +57,9 @@ Open [the browser 8 ball match](/8-ball-pool) for the match. The [fairness repla
     {
       id: "two-pots",
       title: "A break still settles like any other rack",
-      body: `### $20 versus $20
+      body: `### $25 versus $25
 
-Both players post $20. The pot is $40. The fee is 5% of that pot, which is $2. The winner is credited $38. You risked $20. If you win, the credit is $38, so the net if you win is $18 and the net if you lose is minus $20. The win rate that breaks even against an equal player is 20/38, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
+Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
 
 ### A second stake: $10.00 versus $10.00
 
@@ -143,5 +145,5 @@ People ask for a drill that raises the break-win rate by a stated amount. There 
     "how-to-win-8-ball-pool",
     "8-ball-pool-rules",
   ],
-  updated: "2026-10-22",
+  updated: "2026-10-23",
 };

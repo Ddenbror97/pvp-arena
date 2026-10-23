@@ -29,9 +29,9 @@ About 2,400 monthly searches at keyword difficulty 25 is the figure carried for 
     {
       id: "two-pots",
       title: "The cloth is one size. The stake is your choice",
-      body: `### $20 versus $20
+      body: `### $25 versus $25
 
-Both players post $20. The pot is $40. The fee is 5% of that pot, which is $2. The winner is credited $38. You risked $20. If you win, the credit is $38, so the net if you win is $18 and the net if you lose is minus $20. The win rate that breaks even against an equal player is 20/38, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
+Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
 
 ### A second stake: $10.00 versus $10.00
 
@@ -40,7 +40,7 @@ Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is cre
     {
       id: "ours",
       title: "The cloth this match always uses",
-      body: `The playing surface is 2.54 m by 1.27 m. That rectangle is the size of a 9-foot playing surface, and it is the only one the money match runs. A speed you learned on a 7-foot box will run long here. Long kicks stay long. The ghost ball is still just a picture of contact, with no make percentage published for either size. Physics id pool-phys-v2 replays the shot on this rectangle. It does not roll a miss to simulate a smaller table.
+      body: `The playing surface is 2.54 m by 1.27 m. That rectangle is the size of a 9-foot playing surface, and it is the only one the money match runs. Each ball in the replay is 57.15 mm across. A ball counts as pocketed when its centre enters a circle of radius 54 mm at a corner or 48 mm at a side. Those circles are the capture this replay uses. They are not a cushion catalogue and not a line in the WPA book. A speed you learned on a 7-foot box will run long here. Long kicks stay long. The ghost ball is still just a picture of contact, with no make percentage published for either size. Physics id pool-phys-v2 replays the shot on this rectangle. It does not roll a miss to simulate a smaller table.
 
 You call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches. Three timeouts forfeit. Stakes are equal: $1, $2, $5, $10, $25, or $50. The fee is 5% of the pot. Table size does not open a second stake list. A bigger cloth is not a handicap and not a FargoRate input on this cashier.`,
     },
@@ -110,7 +110,7 @@ Tournament television uses large tables, and league nights use whatever the host
     },
     {
       q: "How big is the table on this site?",
-      a: "The playing surface is 2.54 m by 1.27 m. That is the size of a 9-foot playing surface. Every money match uses that cloth. Physics id pool-phys-v2 runs on it, with no random miss.",
+      a: "The playing surface is 2.54 m by 1.27 m, and each ball is 57.15 mm across. A ball is pocketed in the replay when its centre enters a 54 mm radius at a corner or a 48 mm radius at a side. Physics id pool-phys-v2 runs on that cloth, with no random miss.",
     },
     {
       q: "How much room do you need around a table?",
@@ -143,5 +143,5 @@ Tournament television uses large tables, and league nights use whatever the host
     "best-pool-cue",
     "8-ball-pool-rules",
   ],
-  updated: "2026-10-22",
+  updated: "2026-10-23",
 };

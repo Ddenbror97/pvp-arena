@@ -78,9 +78,9 @@ Competitor cells stay blank on purpose. This page does not guess another company
     {
       id: "two-pots",
       title: "What this site's 8-ball pot pays",
-      body: `### $20 versus $20
+      body: `### $25 versus $25
 
-Both players post $20. The pot is $40. The fee is 5% of that pot, which is $2. The winner is credited $38. You risked $20. If you win, the credit is $38, so the net if you win is $18 and the net if you lose is minus $20. The win rate that breaks even against an equal player is 20/38, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
+Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
 
 ### A second stake: $10.00 versus $10.00
 
@@ -91,7 +91,9 @@ Both players post $10.00. The pot is $20.00. The fee is $1.00. The winner is cre
       title: "The card this site stakes",
       body: `The money game on this site uses a shorter call. You name a pocket only when the ball is the 8. Any other of your balls may drop in any pocket. An 8 on the break wins unless the cue ball scratches, and that scratch loses the rack. An early 8, pocketed before your group is clear, loses. The 8 in the wrong pocket loses. A scratch while the 8 goes in loses as well. A foul gives ball in hand anywhere on the table. The shot clock is 30 seconds, and the third timeout forfeits that seat.
 
-The fee is 5% of the pot, and the winner is credited 95%. Posted stakes are $1, $2, $5, $10, $25, and $50. This cashier does not offer 9-ball, 10-ball, straight pool, one-pocket, bank, cutthroat, or killer for money. Those games can be read. They cannot be staked here. A player who wants full WPA call shot will not find it in this lobby. A player who wants a called 8, a 30-second clock, and a published 5% fee will find that card on the match.`,
+The fee is 5% of the pot, and the winner is credited 95%. Posted stakes are $1, $2, $5, $10, $25, and $50. This cashier does not offer 9-ball, 10-ball, straight pool, one-pocket, bank, cutthroat, or killer for money. Those games can be read. They cannot be staked here. A player who wants full WPA call shot will not find it in this lobby. A player who wants a called 8, a 30-second clock, and a published 5% fee will find that card on the match.
+
+Each shot has 30 seconds. If the shooter has not been seen for 15 seconds, that shot gets one reconnect window of 45 seconds. Coming back does not start a new 30-second clock, and a second drop on the same shot is a timeout. Three timeouts forfeit the seat. A waiting table with no opponent expires after 180 seconds and both stakes return. If the matched table does not open within 30 seconds, both stakes return. If both players are unseen for 180 seconds before any shot, both stakes return. After a shot has been played, that same absence forfeits the seat whose turn it is.`,
     },
     {
       id: "more",
@@ -143,5 +145,5 @@ Before a cash rack on this site, read the short card out loud. Pocket call for t
     "pool-scratch-rules",
     "9-ball-rules",
   ],
-  updated: "2026-10-22",
+  updated: "2026-10-23",
 };

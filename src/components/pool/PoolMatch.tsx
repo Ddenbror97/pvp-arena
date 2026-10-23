@@ -752,7 +752,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             {youWon ? "" : winnerName ? ` ${winnerName} won.` : ""}
           </p>
           {replayNote ? <p>{replayNote}</p> : null}
-          <Link to="/pool">Back to the lobby</Link>
+          <Link to="/8-ball-pool">Back to the lobby</Link>
           {view.server_seed ? (
             <button type="button" onClick={() => void checkReplay()}>
               Check this match

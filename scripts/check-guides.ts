@@ -9,7 +9,6 @@ const STATIC = new Set([
   "/roulette",
   "/slott",
   "/poker",
-  "/pool",
   "/8-ball-pool",
   "/fairness",
   "/about",

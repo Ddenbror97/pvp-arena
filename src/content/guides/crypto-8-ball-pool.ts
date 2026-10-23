@@ -37,9 +37,9 @@ PVPspinArena publishes the page with no named author. The last check was 22 Octo
     {
       id: "two-pots",
       title: "What five percent costs in dollars",
-      body: `### $20 versus $20
+      body: `### $25 versus $25
 
-Both players post $20. The pot is $40. The fee is 5% of that pot, which is $2. The winner is credited $38. You risked $20. If you win, the credit is $38, so the net if you win is $18 and the net if you lose is minus $20. The win rate that breaks even against an equal player is 20/38, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
+Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
 
 ### A second stake: $25.00 versus $25.00
 
@@ -92,7 +92,7 @@ Competitor cells stay blank on purpose. This page does not guess another company
     {
       id: "five-percent-on-crypto-pot",
       title: "What five percent costs on a funded pot",
-      body: `The cost is 5% of the pot, taken when the match settles. The winner is credited 95%. Stake $25 against $25 and the pot is $50, the fee is $2.50, and the winner is credited $47.50. The familiar $20 match is a $40 pot, a $2 fee, and $38 to the winner. The $5 match is a $10 pot, a $0.50 fee, and $9.50. Crypto funding does not rewrite those dollars.
+      body: `The cost is 5% of the pot, taken when the match settles. The winner is credited 95%. Stake $25 against $25 and the pot is $50, the fee is $2.50, and the winner is credited $47.50. Stake $5 against $5 and the pot is $10, the fee is $0.50, and the winner is credited $9.50. Crypto funding does not rewrite those dollars. The full button list is on [8 ball pool real money](/guides/8-ball-pool-real-money).
 
 This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. A crypto label on someone else's app would not fill those cells. Cancel before the break and both stakes return with no fee. The buy-in is cash only. Bonus credit cannot be staked, even if it arrived beside a deposit.
 
@@ -157,5 +157,5 @@ The 5% cost is easy to skip because the funding feels like the product. It is no
     "8-ball-pool-hub",
     "8-ball-pool-1v1",
   ],
-  updated: "2026-10-22",
+  updated: "2026-10-23",
 };

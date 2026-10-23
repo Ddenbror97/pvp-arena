@@ -90,9 +90,9 @@ Competitor cells stay blank on purpose. This page does not guess another company
     {
       id: "two-pots",
       title: "The fee is real, the random miss is not",
-      body: `### $20 versus $20
+      body: `### $25 versus $25
 
-Both players post $20. The pot is $40. The fee is 5% of that pot, which is $2. The winner is credited $38. You risked $20. If you win, the credit is $38, so the net if you win is $18 and the net if you lose is minus $20. The win rate that breaks even against an equal player is 20/38, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
+Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
 
 ### A second stake: $1.00 versus $1.00
 
@@ -110,7 +110,7 @@ Whether a cash match is allowed depends on where you live. This page is not lega
     {
       id: "more",
       title: "What the replay does not promise",
-      body: `A replay proves the shot that was stored. It does not prove you will win the next one. Physics id pool-phys-v2 recomputes the list. It does not add a pity miss or a lucky kiss. The rack hash proves the coloured balls were fixed before you saw them, with the 8 left in the centre. It does not prove the leave will be friendly. People still lose clean matches. The fee still comes off the pot at 5%. Calling that loss a rig, without opening the replay, skips the only check this site actually offers.
+      body: `A replay proves the shot that was stored. It does not prove you will win the next one. Physics id pool-phys-v2 recomputes the list in integer micrometres, 240 steps a second, and stops by 8 seconds. It does not call a floating-point sine, so two machines do not drift apart, and it does not add a pity miss or a lucky kiss. The rules id stored with the rack is pvp-8ball-v1. The client animation is a picture of that result. If the picture and the server hash disagree, the hash is the result. The rack hash proves the coloured balls were fixed before you saw them, with the 8 left in the centre. It does not prove the leave will be friendly. People still lose clean matches. The fee still comes off the pot at 5%. Calling that loss a rig, without opening the replay, skips the only check this site actually offers.
 
 Cheat, hack, long line, and cue hack are crowded or at least present in the October pull, from about 480 on hack down to about 20 on the two short phrases. This page lists them so the intent is acknowledged. It then withholds every operational detail. No store, no file name, no toggle, no client build. An aim assist that lives on a handset cannot edit the server's shot. If a video claims otherwise, the video is not a source for this article, and it will not be summarised into steps.
 
@@ -157,5 +157,5 @@ The money question hides inside the rigged question. A one-dollar stake looks to
     "pool-scratch-rules",
     "8-ball-pool-hub",
   ],
-  updated: "2026-10-22",
+  updated: "2026-10-23",
 };

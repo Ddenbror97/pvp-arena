@@ -78,9 +78,9 @@ Competitor cells stay blank on purpose. This page does not guess another company
     {
       id: "two-pots",
       title: "Their rake is blank. Ours is not",
-      body: `### $20 versus $20
+      body: `### $25 versus $25
 
-Both players post $20. The pot is $40. The fee is 5% of that pot, which is $2. The winner is credited $38. You risked $20. If you win, the credit is $38, so the net if you win is $18 and the net if you lose is minus $20. The win rate that breaks even against an equal player is 20/38, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
+Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
 
 ### A second stake: $25.00 versus $25.00
 
@@ -143,5 +143,5 @@ If you deposit with them anyway, deposit where they tell you inside their produc
     "best-pool-games",
     "8-ball-pool-casino",
   ],
-  updated: "2026-10-22",
+  updated: "2026-10-23",
 };

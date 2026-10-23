@@ -84,22 +84,22 @@ Competitor cells stay blank on purpose. This page does not guess another company
     {
       id: "two-pots",
       title: "The only price this page will do in dollars",
-      body: `### $20 versus $20
+      body: `### $25 versus $25
 
-Both players post $20. The pot is $40. The fee is 5% of that pot, which is $2. The winner is credited $38. You risked $20. If you win, the credit is $38, so the net if you win is $18 and the net if you lose is minus $20. The win rate that breaks even against an equal player is 20/38, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
+Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
 
-### A second stake: $20.00 versus $20.00
+### A second stake: $50.00 versus $50.00
 
-Both players post $20.00. The pot is $40.00. The fee is $2.00. The winner is credited $38.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
+Both players post $50.00. The pot is $100.00. The fee is $5.00. The winner is credited $95.00. Break-even win rate is 52.63%. The same 5% is on every stake from $1 to $50. A cancel before the break returns both stakes and charges no fee.`,
     },
     {
       id: "what-we-will-not-price",
       title: "Odds this page will not print",
       body: `A televised 9-ball final has a favourite. This page does not have that price, so it will not invent minus 180 or any other number. A break-win rate for money 8-ball is a real question and this lobby does not publish one. Printing 40% or 55% because it sounds familiar would be a guess.
 
-What you can compute is the fee. Against an equal player, a 5% pot fee means you need to win about 52.63% of $20 matches to break even, because you risk $20 to receive $38. If your opponent is better, the fee makes a bad match worse. If your opponent is worse, the fee still takes $2 from a $40 pot before you enjoy the gap.
+What you can compute is the fee. Against an equal player, a 5% pot fee means you need to win about 52.63% of $25 matches to break even, because you risk $25 to receive $47.50. If your opponent is better, the fee makes a bad match worse. If your opponent is worse, the fee still takes $2.50 from a $50 pot before you enjoy the gap.
 
-That is the whole betting model on this table. Skill can move the win rate. It cannot repeal the $2.`,
+That is the whole betting model on this table. Skill can move the win rate. It cannot repeal the $2.50.`,
     },
   ],
   faqs: [
@@ -142,5 +142,5 @@ That is the whole betting model on this table. Skill can move the win rate. It c
     "8-ball-pool-hub",
     "is-crypto-gambling-legal",
   ],
-  updated: "2026-10-22",
+  updated: "2026-10-23",
 };

@@ -33,7 +33,7 @@ export const guide: Guide = {
 
 This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. Inventing their rake is not allowed. Real money pool games and real money pool app are phrases people use for the whole shelf. No volume for those two phrases is printed in this brief, so none is invented.
 
-The pot that is known is simple. Stakes are $1, $2, $5, $10, $25, or $50. The fee is 5% of the pot. A $5 stake against $5 is a $10 pot, a $0.50 fee, and $9.50 to the winner. A $20 stake against $20 is a $40 pot, a $2 fee, and $38 to the winner.`,
+The pot that is known is simple. Stakes are $1, $2, $5, $10, $25, or $50. The fee is 5% of the pot. A $5 stake against $5 is a $10 pot, a $0.50 fee, and $9.50 to the winner. A $25 stake against $25 is a $50 pot, a $2.50 fee, and $47.50 to the winner.`,
     },
     {
       id: "who-pays",
@@ -70,9 +70,9 @@ Crypto can fund the dollar balance that posts the stake: Bitcoin, USDC, or ETH o
     {
       id: "two-pots",
       title: "The pot this page can price",
-      body: `### $20 versus $20
+      body: `### $25 versus $25
 
-Both players post $20. The pot is $40. The fee is 5% of that pot, which is $2. The winner is credited $38. You risked $20. If you win, the credit is $38, so the net if you win is $18 and the net if you lose is minus $20. The win rate that breaks even against an equal player is 20/38, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
+Both players post $25. The pot is $50. The fee is 5% of that pot, which is $2.50. The winner is credited $47.50. You risked $25. If you win, the credit is $47.50, so the net if you win is $22.50 and the net if you lose is minus $25. The win rate that breaks even against an equal player is 25/47.50, about 52.63%. That is the price of the fee. It is not a house edge on a wheel, because the other player is trying to beat you.
 
 ### A second stake: $5.00 versus $5.00
 
@@ -158,5 +158,5 @@ No tournament page means no tournament strategy. Pool tournaments for money, abo
     "best-pool-games",
     "pool-hustling",
   ],
-  updated: "2026-10-22",
+  updated: "2026-10-23",
 };

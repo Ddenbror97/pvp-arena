@@ -39,7 +39,7 @@ Every cluster that contains guides is published. No cluster is missing its group
 ## Links before this change
 
 - Broken internal guide, topic, or site links: 0.
-- Links to `/pool` (which redirects to `/8-ball-pool`): 0. Guide bodies already use `/8-ball-pool`.
+- Links to `/pool`: 0. The public match address is `/8-ball-pool`. Guide bodies already use that path.
 - Duplicate keywords: 0.
 - Guides in no subcluster: 0.
 - Older guides with a body or `related` link to any of the 39: 0.
