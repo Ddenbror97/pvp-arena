@@ -183,20 +183,6 @@ function stick(
   ctx.fill();
 }
 
-function insideFrame(p: Pt, w: number, h: number, margin: number) {
-  return p.x >= margin && p.y >= margin && p.x <= w - margin && p.y <= h - margin;
-}
-
-function containedButt(tip: Pt, butt: Pt, w: number, h: number, margin: number): Pt {
-  let t = 1;
-  for (let i = 0; i < 12; i++) {
-    const at = { x: tip.x + (butt.x - tip.x) * t, y: tip.y + (butt.y - tip.y) * t };
-    if (insideFrame(at, w, h, margin) || t < 0.08) return at;
-    t *= 0.72;
-  }
-  return tip;
-}
-
 function drawCue(
   ctx: CanvasRenderingContext2D,
   projectOpen: (x: number, y: number) => { x: number; y: number; scale: number },
@@ -205,22 +191,14 @@ function drawCue(
   angleMilli: number,
   gapBalls: number,
   alpha: number,
-  w: number,
-  h: number,
 ) {
   const dir = aimDir(angleMilli);
   const gap = BALL_R * gapBalls;
   const atDist = (dist: number) => projectOpen(from.x - dir.x * dist, from.y - dir.y * dist);
   const tip = atDist(gap);
   const tipScale = tip.scale;
-  const margin = Math.max(8, Math.min(w, h) * 0.015);
-  let length = BALL_R * 46;
-  let butt: Pt = atDist(gap + length);
-  for (let i = 0; i < 6 && !insideFrame(butt, w, h, margin); i++) {
-    length *= 0.8;
-    butt = atDist(gap + length);
-  }
-  butt = containedButt(tip, butt, w, h, margin);
+  const length = BALL_R * 46;
+  const butt = atDist(gap + length);
   const along = (t: number): Pt => ({
     x: tip.x + (butt.x - tip.x) * t,
     y: tip.y + (butt.y - tip.y) * t,
@@ -456,6 +434,8 @@ export function PoolTable({
   legalAt,
 }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const cueRef = useRef<HTMLCanvasElement>(null);
+  const cueBox = useRef({ ox: 0, oy: 0, w: 0, h: 0 });
   const cacheRef = useRef<{ w: number; h: number; canvas: HTMLCanvasElement } | null>(null);
   const motionRef = useRef(new Map<number, Motion>());
   const strikeRef = useRef<(Pose & { t0: number }) | null>(null);
@@ -510,6 +490,27 @@ export function PoolTable({
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
+    const syncCue = () => {
+      const cue = cueRef.current;
+      const screen = canvas.closest(".pool-screen");
+      if (!cue || !(screen instanceof HTMLElement)) return;
+      const screenBox = screen.getBoundingClientRect();
+      const tableBox = canvas.getBoundingClientRect();
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const left = screenBox.left - tableBox.left;
+      const top = screenBox.top - tableBox.top;
+      cue.style.left = `${left}px`;
+      cue.style.top = `${top}px`;
+      cue.style.width = `${screenBox.width}px`;
+      cue.style.height = `${screenBox.height}px`;
+      const bitmapW = Math.max(1, Math.round(screenBox.width * dpr));
+      const bitmapH = Math.max(1, Math.round(screenBox.height * dpr));
+      if (cue.width !== bitmapW || cue.height !== bitmapH) {
+        cue.width = bitmapW;
+        cue.height = bitmapH;
+      }
+      cueBox.current = { ox: (tableBox.left - screenBox.left) * dpr, oy: (tableBox.top - screenBox.top) * dpr, w: bitmapW, h: bitmapH };
+    };
     let frame = 0;
     let stop = false;
     const paint = () => {
@@ -714,6 +715,16 @@ export function PoolTable({
         ctx.fill();
       }
 
+      const cueCanvas = cueRef.current;
+      const cueCtx = cueCanvas?.getContext("2d");
+      if (cueCanvas && cueCtx) {
+        cueCtx.setTransform(1, 0, 0, 1, 0, 0);
+        cueCtx.clearRect(0, 0, cueCanvas.width, cueCanvas.height);
+      }
+      const projectCue = (x: number, y: number) => {
+        const p = view.projectOpen(x, y);
+        return { x: p.x + cueBox.current.ox, y: p.y + cueBox.current.oy, scale: p.scale };
+      };
       const strike = strikeRef.current;
       if (showCue && !cueWas.current) cueIn.current = now;
       cueWas.current = showCue;
@@ -730,24 +741,16 @@ export function PoolTable({
             gap = 1.05;
             alpha = 1 - (t - 0.62) / 0.38;
           }
-          drawCue(
-            ctx,
-            view.projectOpen,
-            innerW,
-            strike,
-            strike.angle,
-            gap,
-            Math.max(0, alpha),
-            w,
-            h,
-          );
+          if (cueCtx) {
+            drawCue(cueCtx, projectCue, innerW, strike, strike.angle, gap, Math.max(0, alpha));
+          }
           again = true;
         }
-      } else if (showCue && from) {
+      } else if (showCue && from && cueCtx) {
         const gap = 1.28 + (power / 10_000) * 4.4;
         const alpha = Math.min(1, (now - cueIn.current) / 140);
         if (alpha < 1) again = true;
-        drawCue(ctx, view.projectOpen, innerW, from, angleMilli, gap, alpha, w, h);
+        drawCue(cueCtx, projectCue, innerW, from, angleMilli, gap, alpha);
       }
 
       if (!layerRef.current || layerRef.current.disposed) {
@@ -830,12 +833,16 @@ export function PoolTable({
     void whenTableArt().then(() => {
       if (!stop) kickRef.current();
     });
+    syncCue();
     loop();
     const observer = new ResizeObserver(() => {
       cacheRef.current = null;
+      syncCue();
       loop();
     });
     observer.observe(canvas);
+    const screen = canvas.closest(".pool-screen");
+    if (screen) observer.observe(screen);
     return () => {
       stop = true;
       kickRef.current = () => {};
@@ -928,6 +935,8 @@ export function PoolTable({
   };
 
   return (
+    <>
+    <canvas ref={cueRef} className="pool-cue" aria-hidden />
     <canvas
       ref={ref}
       className="pool-canvas"
@@ -985,5 +994,6 @@ export function PoolTable({
         endGesture(false);
       }}
     />
+    </>
   );
 }

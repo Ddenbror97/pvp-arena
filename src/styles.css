@@ -2913,8 +2913,8 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-screen {
   --pool-chat-w: 17.5rem;
   --pool-chat-l: 0.7rem;
-  --pool-felt-left: calc(var(--pool-chat-l) + var(--pool-chat-w) + 0.85rem);
-  --pool-felt-right: 15.5rem;
+  --pool-felt-left: calc(var(--pool-chat-l) + var(--pool-chat-w) + 0.45rem);
+  --pool-felt-right: 18.5rem;
   --pool-col: calc(var(--pool-felt-left) + (100% - var(--pool-felt-left) - var(--pool-felt-right)) / 2);
   position: absolute; inset: 0; overflow: hidden; color: #f6f3ff;
 }
@@ -2936,11 +2936,12 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
   transform: translateY(-50%); pointer-events: none;
   filter: drop-shadow(0 0 16px rgb(168 85 247 / 80%)) drop-shadow(0 10px 18px rgb(0 0 0 / 55%));
 }
-.pool-felt { position: absolute; z-index: 1; left: var(--pool-felt-left); right: var(--pool-felt-right); top: 8.85rem; bottom: 1.2rem; container-type: size; }
+.pool-felt { position: absolute; z-index: 1; left: var(--pool-felt-left); right: var(--pool-felt-right); top: 8.85rem; bottom: 1.2rem; container-type: size; overflow: visible; }
 .pool-screen.is-calling .pool-felt { bottom: 4.5rem; }
 .pool-screen.is-calling .pool-pockets { bottom: 0.65rem; }
-.pool-felt-frame { position: absolute; inset: 0; }
+.pool-felt-frame { position: absolute; inset: 0; overflow: visible; }
 .pool-canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.pool-cue { position: absolute; z-index: 2; pointer-events: none; }
 .pool-vs, .pool-tools, .pool-banner, .pool-sheet, .pool-confirm, .pool-pockets { position: absolute; z-index: 3; }
 .pool-vs {
   top: 0.4rem; left: 50%; transform: translateX(-50%);

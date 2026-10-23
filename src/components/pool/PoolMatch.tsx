@@ -739,7 +739,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       <div className="pool-vs" aria-label="Players">
         <SeatCard
           name={names.A}
-          you={seat === "A"}
           avatar={view.creator?.avatar_url}
           stake={view.stake}
           rack={ballRack(balls, groupA)}
@@ -753,7 +752,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         <span className="pool-vs-mark">VS</span>
         <SeatCard
           name={names.B}
-          you={seat === "B"}
           avatar={view.opponent?.avatar_url}
           stake={view.opponent_id ? view.stake : 0}
           rack={ballRack(balls, groupB)}
@@ -1033,7 +1031,6 @@ function ballsAhead(
 
 function SeatCard({
   name,
-  you,
   avatar,
   stake,
   rack,
@@ -1046,7 +1043,6 @@ function SeatCard({
   align = "start",
 }: {
   name: string;
-  you: boolean;
   avatar?: string | null | undefined;
   stake: number;
   rack: RackBall[];
@@ -1078,7 +1074,7 @@ function SeatCard({
       <span className="pool-seat-copy">
         <strong>
           {ahead ? <Crown className="pool-crown" aria-hidden /> : null}
-          {you ? `${name} (you)` : name}
+          {name}
           {away ? " · table" : null}
           {active ? <span className="sr-only">, your turn</span> : null}
           {clock != null ? <em aria-label={`Shot clock ${clock} seconds`}>{clock}s</em> : null}
