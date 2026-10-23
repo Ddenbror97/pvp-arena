@@ -1555,23 +1555,18 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 }
 .poker-env {
   position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background:
-    radial-gradient(34% 30% at 50% 10%, rgb(139 53 236 / 38%), transparent 70%),
-    radial-gradient(70% 45% at 50% 105%, rgb(90 40 200 / 30%), transparent 70%),
-    radial-gradient(120% 80% at 50% 45%, #140c34 0%, #0a0820 55%, #05040f 100%);
+  background-color: #05040f;
+  background-image: url("./assets/poker/room.webp");
+  background-size: cover;
+  background-position: center 42%;
+  background-repeat: no-repeat;
 }
-.poker-env::before, .poker-env::after {
-  content: ""; position: absolute; top: 0; bottom: 0; width: 22%;
+.poker-env::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
   background:
-    linear-gradient(90deg, transparent 0 18%, rgb(170 100 255 / 70%) 18% 18.6%, transparent 18.6% 46%,
-      rgb(170 100 255 / 40%) 46% 46.4%, transparent 46.4% 78%, rgb(170 100 255 / 25%) 78% 78.3%, transparent 78.3%),
-    linear-gradient(90deg, rgb(60 25 140 / 35%), transparent);
-  filter: drop-shadow(0 0 0.6vw rgb(150 80 255 / 80%));
-  mask-image: linear-gradient(180deg, transparent, #000 12%, #000 70%, transparent);
-  opacity: 0.95;
+    linear-gradient(180deg, rgb(5 4 12 / 55%) 0%, rgb(5 4 12 / 10%) 14%, transparent 30%),
+    radial-gradient(ellipse at 50% 64%, transparent 34%, rgb(0 0 0 / 36%) 100%);
 }
-.poker-env::before { left: 0; }
-.poker-env::after { right: 0; scale: -1 1; }
 
 /* ---- Stage: fits the viewport, keeps its aspect ---- */
 .poker-stage-wrap {
@@ -1589,6 +1584,7 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 
 /* Table: platform, neon rail, felt. Shapes are elliptical stadiums from their own box. */
 .poker-wall-mark {
+  display: none;
   position: absolute; z-index: 1; left: 50%; top: 0.5%; translate: -50% 0; pointer-events: none;
   font-family: var(--font-display); font-weight: 900; font-style: italic; letter-spacing: 0.02em; line-height: 1;
   font-size: 7.4cqw; color: transparent;
@@ -2337,14 +2333,7 @@ html[data-theme="light"] .poker-stage {
   --neon-hot: #c58bff;
   --neon-glow: rgb(150 80 255 / 55%);
 }
-html[data-theme="light"] .poker-env {
-  background:
-    radial-gradient(34% 30% at 50% 10%, rgb(139 53 236 / 16%), transparent 70%),
-    radial-gradient(70% 45% at 50% 105%, rgb(124 58 237 / 14%), transparent 70%),
-    radial-gradient(120% 80% at 50% 45%, #fbf9ff 0%, #f1ecfb 55%, #e4dcf5 100%);
-}
-html[data-theme="light"] .poker-env::before,
-html[data-theme="light"] .poker-env::after { opacity: 0.45; filter: none; }
+html[data-theme="light"] .poker-env { background-color: #05040f; }
 html[data-theme="light"] .poker-wall-mark {
   background: linear-gradient(180deg, rgb(109 40 217 / 26%), rgb(124 58 237 / 4%)); background-clip: text; -webkit-background-clip: text;
   filter: none;
