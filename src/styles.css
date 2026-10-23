@@ -1230,14 +1230,20 @@ html.intro-seen .intro-gate { display: none !important; }
   .poker-buyin[data-state="closed"] { animation: none; }
 }
 
+/* Shared chat column. The rooms cancel main's 1.5rem top padding and keep 0.85rem,
+   so roulette is lifted by that 0.65rem and the column grows by the same amount.
+   The Live chat bar and the bottom of the window then stay put across the three pages. */
+.jp-home,
+.cf-home,
+.roulette-board {
+  --lobby-chat: calc(34rem + 1.5rem - 0.85rem);
+}
+.roulette-board { margin-top: calc(0.85rem - 1.5rem); }
+
 /* Jackpot home. The penthouse is one preloaded image behind the live table. */
 .jp-home {
   --jp-bleed-x: 1rem;
   --jp-bleed-t: 1.5rem;
-  /* Roulette's chat starts at main's pt-6 (1.5rem) and is 34rem tall.
-     This room cancels that padding and keeps 0.85rem, so the column is the
-     difference taller and the two bottoms meet. */
-  --lobby-chat: calc(34rem + 1.5rem - 0.85rem);
   position: relative;
   isolation: isolate;
   container-type: inline-size;
@@ -1301,7 +1307,6 @@ html.intro-seen .intro-gate { display: none !important; }
 .cf-home {
   --cf-bleed-x: 1rem;
   --cf-bleed-t: 1.5rem;
-  --lobby-chat: calc(34rem + 1.5rem - 0.85rem);
   position: relative;
   isolation: isolate;
   container-type: inline-size;

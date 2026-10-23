@@ -49,12 +49,12 @@ function RoulettePage() {
   return (
     <>
       <h1 className="sr-only">Roulette</h1>
-      <div className="min-h-[1307px] xl:min-h-0">
-        <div className="grid items-stretch gap-3 xl:grid-cols-[280px_minmax(0,1fr)] xl:min-h-[546px]">
+      <div className="roulette-board min-h-[1307px] xl:min-h-0">
+        <div className="grid items-stretch gap-3 xl:grid-cols-[280px_minmax(0,1fr)] xl:min-h-[var(--lobby-chat)]">
           <GameChat
             gameType="roulette"
             initial={paint.chat}
-            className="order-2 h-64 xl:order-1 xl:h-[34rem]"
+            className="order-2 h-64 xl:order-1 xl:h-[var(--lobby-chat)]"
           />
           <div className="order-1 flex min-h-0 min-w-0 flex-col game-panel rounded-xl border p-2.5 xl:order-2 xl:h-full xl:py-2">
             <RouletteGame />

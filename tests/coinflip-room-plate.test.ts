@@ -62,7 +62,9 @@ describe("coinflip room plate", () => {
       new URL("../src/components/jackpot/JackpotStage.tsx", import.meta.url),
       "utf8",
     );
-    expect(roulette).toContain('className="order-2 h-64 xl:order-1 xl:h-[34rem]"');
+    expect(roulette).toContain("roulette-board");
+    expect(roulette).toContain('className="order-2 h-64 xl:order-1 xl:h-[var(--lobby-chat)]"');
+    expect(css).toContain(".roulette-board { margin-top: calc(0.85rem - 1.5rem); }");
     expect(roulette).toContain("xl:grid-cols-[280px_minmax(0,1fr)]");
     expect(route).toContain(
       'className="order-3 h-64 lg:col-span-2 xl:order-1 xl:col-span-1 xl:h-[var(--lobby-chat)] xl:min-h-0"',
