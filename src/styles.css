@@ -2065,7 +2065,7 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 .poker-stage.is-tall .poker-coach { width: auto; left: 3%; right: 3%; top: auto; bottom: 3%; }
 
 /* ---- HUD: anchored to the viewport ---- */
-.poker-hud-panel, .poker-game-pill, .poker-info-panel, .poker-chat-dock, .poker-status, .poker-action-buttons {
+.poker-hud-panel, .poker-game-pill, .poker-chat-dock, .poker-status, .poker-action-buttons {
   background: var(--hud-bg); border: 1px solid var(--hud-border); border-radius: var(--hud-radius);
   box-shadow: 0 0.8em 2em rgb(0 0 0 / 45%), inset 0 1px 0 rgb(255 255 255 / 5%);
   backdrop-filter: blur(10px);
@@ -2084,6 +2084,7 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 .poker-game-pill-icon { width: 1.6em; height: 1.6em; flex: none; color: #c9b4ff; fill: rgb(181 123 255 / 35%); }
 .poker-game-pill-title { font-family: var(--font-display); font-size: 1.12em; font-weight: 700; line-height: 1.2; }
 .poker-game-pill-sub { font-size: 0.8em; color: var(--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.poker-top-tools { display: flex; align-items: center; gap: 0.55em; }
 .poker-account { display: flex; align-items: center; gap: 0.6em; }
 .poker-account-avatar { display: block; border-radius: 999px; }
 .poker-signin {
@@ -2096,28 +2097,6 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 }
 .poker-icon-btn:hover { background: rgb(139 53 236 / 35%); }
 
-.poker-info-panel {
-  position: absolute; z-index: 30; right: var(--pad-r); top: calc(var(--pad-t) + 4.2em);
-  width: var(--poker-rail-w); padding: 0.85em 1em;
-}
-.poker-info-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5em; margin-bottom: 0.55em; }
-.poker-info-head h2 { font-family: var(--font-display); font-size: 1em; font-weight: 700; }
-.poker-info-head .poker-icon-btn { width: 2em; height: 2em; }
-.poker-info-list { display: grid; grid-template-columns: auto auto; gap: 0.35em 1em; font-size: 0.82em; white-space: nowrap; }
-.poker-info-list dt { color: var(--ink-muted); }
-.poker-info-list dd { text-align: right; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
-.poker-info-compact { display: none; }
-.poker-info { position: relative; }
-.poker-info-summary {
-  list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4em; height: 2.4em; padding: 0 0.8em;
-  border-radius: 0.65em; font-size: 0.85em; font-weight: 600; color: #e6e8f7; background: rgb(11 9 30 / 80%); border: 1px solid var(--hud-border);
-}
-.poker-info-summary::-webkit-details-marker { display: none; }
-.poker-info-summary:focus-visible { outline: 2px solid #b57bff; outline-offset: 2px; }
-.poker-info[open] > .poker-info-list {
-  position: absolute; right: 0; top: calc(100% + 0.4em); z-index: 2; padding: 0.75em 0.9em; border-radius: 0.8em;
-  background: rgb(8 7 22 / 96%); border: 1px solid rgb(181 123 255 / 25%); box-shadow: 0 12px 30px rgb(0 0 0 / 50%);
-}
 .poker-offline {
   position: absolute; z-index: 35; left: 50%; top: var(--pad-t); translate: -50% 0; display: inline-flex; align-items: center; gap: 0.4rem;
   padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.75rem; background: rgb(120 20 40 / 88%); color: #ffe3e8;
@@ -2125,7 +2104,9 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 
 /* Chat and hands. Desktop: a left-hand column the same size as the other live chats. */
 .poker-chat-dock {
-  position: absolute; z-index: 30; top: var(--pad-t); left: var(--pad-l); bottom: auto; right: auto;
+  --poker-chat-box: min(var(--poker-chat-h), calc(100dvh - var(--pad-t) - var(--pad-b)));
+  position: absolute; z-index: 30; left: var(--pad-l); bottom: auto; right: auto;
+  top: max(var(--pad-t), calc((100dvh - var(--poker-chat-box)) / 2));
   width: var(--poker-chat-w); height: var(--poker-chat-h);
   max-height: calc(100dvh - var(--pad-t) - var(--pad-b));
 }
@@ -2220,7 +2201,6 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 @media (max-width: 1023.98px) {
   .poker-stage-wrap { left: 0; right: 0; }
   .poker-topbar { left: var(--pad-l); right: var(--pad-r); }
-  .poker-info-panel { right: var(--pad-r); }
   .poker-bottom {
     left: var(--pad-l); right: var(--pad-r);
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -2242,9 +2222,6 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
   .poker-stage-wrap { position: relative; inset: auto; grid-area: stage; }
   .poker-topbar { position: relative; inset: auto; grid-area: top; padding: var(--pad-t) var(--pad-r) 0 0; flex-wrap: wrap; justify-content: flex-end; }
   .poker-topbar-left { display: none; }
-  .poker-info-panel { display: none; }
-  .poker-info-compact { display: flex; gap: 0.4em; position: absolute; z-index: 30; top: var(--pad-t); left: var(--pad-l); }
-  .poker-info[open] > .poker-info-list { left: 0; right: auto; }
   .poker-bottom {
     position: relative; inset: auto; grid-area: bottom; padding: 0 var(--pad-r) var(--pad-b) 0;
     grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "act act" "chat side"; align-content: end;
@@ -2270,8 +2247,6 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
   .poker-brand img { width: clamp(5rem, 22vw, 7.5rem); }
   .poker-game-pill { display: none; }
   .poker-stage-wrap { position: relative; inset: auto; grid-area: stage; }
-  .poker-info-panel { display: none; }
-  .poker-info-compact { display: flex; gap: 0.4em; grid-area: stage; align-self: start; justify-self: end; z-index: 30; margin: 0.4em var(--pad-r) 0 0; }
   .poker-offline { position: relative; grid-area: stage; align-self: start; justify-self: center; left: auto; top: 3.2em; translate: none; }
   .poker-bottom {
     position: relative; inset: auto; grid-area: bottom; padding: 0 var(--pad-r) var(--pad-b) var(--pad-l);
@@ -2303,7 +2278,7 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 /* Chat as a bottom sheet in compact modes */
 @media (orientation: landscape) and (max-height: 560px), (max-aspect-ratio: 5 / 6) {
   .poker-chat-dock {
-    position: fixed; z-index: 45; left: 0; right: 0; bottom: 0; width: auto; height: min(62dvh, 26rem);
+    position: fixed; z-index: 45; top: auto; left: 0; right: 0; bottom: 0; width: auto; height: min(62dvh, 26rem);
     padding-bottom: env(safe-area-inset-bottom); border-radius: 1.1em 1.1em 0 0; background: var(--hud-bg-solid);
     translate: 0 105%; visibility: hidden; transition: translate 0.25s ease, visibility 0s linear 0.25s;
   }
@@ -2360,16 +2335,15 @@ html[data-theme="light"] .poker-account .header-wallet-label {
   color: #fff;
   background: linear-gradient(180deg, #9b5cff, #7c3aed);
 }
-html[data-theme="light"] :is(.poker-hud-panel, .poker-game-pill, .poker-info-panel, .poker-chat-dock, .poker-status, .poker-action-buttons) {
+html[data-theme="light"] :is(.poker-hud-panel, .poker-game-pill, .poker-chat-dock, .poker-status, .poker-action-buttons) {
   box-shadow: 0 0.6em 1.6em rgb(60 30 120 / 14%), inset 0 1px 0 rgb(255 255 255 / 70%);
 }
 html[data-theme="light"] .poker-game-pill-icon { color: #7c3aed; fill: rgb(139 53 236 / 20%); }
-html[data-theme="light"] :is(.poker-icon-btn, .poker-info-summary, .poker-preset) {
+html[data-theme="light"] :is(.poker-icon-btn, .poker-preset) {
   color: var(--ink); background: rgb(255 255 255 / 86%); border-color: rgb(109 40 217 / 18%);
 }
 html[data-theme="light"] .poker-icon-btn:hover { background: rgb(139 53 236 / 14%); }
 html[data-theme="light"] .poker-preset.is-on { color: #fff; background: #7c3aed; border-color: #7c3aed; }
-html[data-theme="light"] .poker-info[open] > .poker-info-list { background: #fff; border-color: rgb(109 40 217 / 18%); box-shadow: 0 12px 30px rgb(60 30 120 / 16%); }
 html[data-theme="light"] .poker-panel-head { border-bottom-color: rgb(27 22 54 / 8%); }
 html[data-theme="light"] .poker-panel .poker-chat { --border: rgb(27 22 54 / 10%); }
 html[data-theme="light"] .poker-hand-row { background: rgb(27 22 54 / 4%); }

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Info, MessageSquare, Spade, WifiOff } from "lucide-react";
+import { ArrowLeft, MessageSquare, Spade, WifiOff } from "lucide-react";
 import { money, type TableState } from "@/lib/poker/api";
 import { usePokerPrefs, useReducedMotion } from "@/lib/poker/prefs";
 import { warmDealer } from "@/lib/poker/assets";
@@ -32,9 +32,8 @@ export interface TableScreenProps {
 /**
  * Full-screen table. Layers: environment, the stage (table, dealer, seats, cards; one
  * coordinate system that keeps its aspect ratio and fits the viewport), then overlay
- * panels anchored to the viewport edges: brand and account on top, table info in the
- * right-hand rail, chat in a left-hand column, actions centered under the felt, seat
- * controls in that same rail.
+ * panels anchored to the viewport edges: brand and account on top, chat in a
+ * left-hand column, actions centered under the felt, seat controls at the bottom right.
  */
 export function TableScreen(p: TableScreenProps) {
   const { state } = p;
@@ -66,26 +65,7 @@ export function TableScreen(p: TableScreenProps) {
     if (!myTurn && h?.actions.some((a) => a.seat_no === p.mySeat && !a.action.startsWith("POST")))
       setFirstTurn(false);
   }, [myTurn, h, p.mySeat]);
-  const feePct = (state.config.fee_bps / 100).toLocaleString("en-US", { maximumFractionDigits: 2 });
   const blinds = `${money(t.small_blind)} / ${money(t.big_blind)}`;
-  const info = (
-    <dl className="poker-info-list">
-      <dt>Blinds</dt>
-      <dd>{blinds}</dd>
-      <dt>Min buy-in</dt>
-      <dd>{money(t.min_buy_in)}</dd>
-      <dt>Max buy-in</dt>
-      <dd>{money(t.max_buy_in)}</dd>
-      <dt>Players</dt>
-      <dd>
-        {state.seats.length} / {t.max_seats}
-      </dd>
-      <dt>Rake</dt>
-      <dd>{feePct}% if a flop is dealt</dd>
-      <dt>Turn time</dt>
-      <dd>{state.config.action_seconds}s</dd>
-    </dl>
-  );
 
   return (
     <div className="poker-screen" data-chat={chatOpen ? "open" : "closed"}>
@@ -107,7 +87,10 @@ export function TableScreen(p: TableScreenProps) {
             </div>
           </div>
         </div>
-        <GameAccount />
+        <div className="poker-top-tools">
+          <TableSettings voiceAvailable={voiceSupported()} />
+          <GameAccount />
+        </div>
       </header>
 
       <div className="poker-stage-wrap">
@@ -127,25 +110,6 @@ export function TableScreen(p: TableScreenProps) {
             </>
           }
         />
-      </div>
-
-      <aside className="poker-info-panel" aria-label="Table info">
-        <div className="poker-info-head">
-          <h2>Table info</h2>
-          <TableSettings voiceAvailable={voiceSupported()} />
-        </div>
-        {info}
-      </aside>
-      <div className="poker-info-compact">
-        <details className="poker-info">
-          <summary className="poker-info-summary">
-            <Info className="h-3.5 w-3.5" aria-hidden />
-            <span className="max-w-[9rem] truncate">{t.name}</span>
-            <span className="text-[var(--ink-muted)]">{blinds}</span>
-          </summary>
-          {info}
-        </details>
-        <TableSettings voiceAvailable={voiceSupported()} />
       </div>
 
       {p.offline ? (
