@@ -6,9 +6,20 @@ import {
   sinMicro,
   TABLE_H,
   TABLE_W,
+  traceAim,
+  type AimTrace,
   type Ball,
+  type Pocket,
 } from "@/lib/pool/physics";
+import {
+  createBallLayer,
+  identityOrientation,
+  rollOrientation,
+  type BallLayer,
+  type BallSprite,
+} from "@/lib/pool/spheres";
 import { ballRadiusPx, spanPx, viewOf } from "@/lib/pool/view";
+import { aimStep, pointerIntent, startAim, type AimGesture } from "@/lib/pool/aim-gesture";
 
 const SOLIDS = ["#f0c410", "#1d4ed8", "#dc2626", "#7c3aed", "#ea580c", "#15803d", "#7f1d1d"];
 
@@ -17,6 +28,11 @@ function colorOf(id: number): string {
   if (id === 8) return "#141414";
   const n = id > 8 ? id - 9 : id - 1;
   return SOLIDS[n] ?? "#cccccc";
+}
+
+function colorRgb(id: number): [number, number, number] {
+  const n = Number.parseInt(colorOf(id).slice(1), 16);
+  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
 }
 
 function mix(hex: string, toward: number, amount: number): string {
@@ -151,6 +167,103 @@ function noiseLayer(w: number, h: number): HTMLCanvasElement {
   return cloth;
 }
 
+function paintPocket(
+  ctx: CanvasRenderingContext2D,
+  project: (x: number, y: number) => { x: number; y: number; scale: number },
+  innerW: number,
+  pocket: Pocket,
+) {
+  const p = project(pocket.x, pocket.y);
+  const mouth = spanPx(innerW, p.scale, pocket.r);
+  const cloth = project(TABLE_W / 2, TABLE_H / 2);
+  const dx = cloth.x - p.x;
+  const dy = cloth.y - p.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  const px = -uy;
+  const py = ux;
+
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, mouth * 1.28, 0, Math.PI * 2);
+  const leather = ctx.createRadialGradient(
+    p.x - ux * mouth * 0.15,
+    p.y - uy * mouth * 0.15,
+    mouth * 0.2,
+    p.x,
+    p.y,
+    mouth * 1.28,
+  );
+  leather.addColorStop(0, "#8a6244");
+  leather.addColorStop(0.55, "#6b4630");
+  leather.addColorStop(0.82, "#3a2418");
+  leather.addColorStop(1, "#1a100c");
+  ctx.fillStyle = leather;
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, mouth * 0.98, 0, Math.PI * 2);
+  const hole = ctx.createRadialGradient(
+    p.x - ux * mouth * 0.12,
+    p.y - uy * mouth * 0.16,
+    mouth * 0.04,
+    p.x + ux * mouth * 0.04,
+    p.y + uy * mouth * 0.06,
+    mouth,
+  );
+  hole.addColorStop(0, "#000000");
+  hole.addColorStop(0.42, "#050408");
+  hole.addColorStop(0.78, "#100c10");
+  hole.addColorStop(1, "#1c1412");
+  ctx.fillStyle = hole;
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.ellipse(
+    p.x + ux * mouth * 0.06,
+    p.y + uy * mouth * 0.1,
+    mouth * 0.58,
+    mouth * 0.42,
+    Math.atan2(uy, ux),
+    0,
+    Math.PI * 2,
+  );
+  ctx.fillStyle = "rgba(0,0,0,0.5)";
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, mouth * 1.04, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(214, 176, 140, 0.55)";
+  ctx.lineWidth = Math.max(1.25, mouth * 0.075);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, mouth * 0.9, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(0,0,0,0.65)";
+  ctx.lineWidth = Math.max(1, mouth * 0.06);
+  ctx.stroke();
+
+  const jawR = mouth * 0.42;
+  for (const side of [-1, 1]) {
+    const jx = p.x + px * mouth * 1.02 * side + ux * mouth * 0.08;
+    const jy = p.y + py * mouth * 1.02 * side + uy * mouth * 0.08;
+    const jaw = ctx.createRadialGradient(
+      jx - mouth * 0.08,
+      jy - mouth * 0.1,
+      jawR * 0.15,
+      jx,
+      jy,
+      jawR,
+    );
+    jaw.addColorStop(0, "#d7b08a");
+    jaw.addColorStop(0.45, "#8d5e3c");
+    jaw.addColorStop(1, "#2c1a12");
+    ctx.beginPath();
+    ctx.arc(jx, jy, jawR, 0, Math.PI * 2);
+    ctx.fillStyle = jaw;
+    ctx.fill();
+  }
+}
+
 function buildTable(w: number, h: number): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
   canvas.width = w;
@@ -258,46 +371,7 @@ function buildTable(w: number, h: number): HTMLCanvasElement {
   ctx.stroke();
   ctx.restore();
 
-  for (const pocket of POCKETS) {
-    const p = project(pocket.x, pocket.y);
-    const mouth = spanPx(innerW, p.scale, pocket.r);
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, mouth * 1.22, 0, Math.PI * 2);
-    const leather = ctx.createRadialGradient(
-      p.x,
-      p.y - mouth * 0.2,
-      mouth * 0.4,
-      p.x,
-      p.y,
-      mouth * 1.22,
-    );
-    leather.addColorStop(0, "#1a0c08");
-    leather.addColorStop(0.72, "#1a0c08");
-    leather.addColorStop(0.84, "#5a3a28");
-    leather.addColorStop(1, "#2a1812");
-    ctx.fillStyle = leather;
-    ctx.fill();
-    const hole = ctx.createRadialGradient(
-      p.x - mouth * 0.15,
-      p.y - mouth * 0.2,
-      mouth * 0.05,
-      p.x,
-      p.y,
-      mouth,
-    );
-    hole.addColorStop(0, "#020103");
-    hole.addColorStop(0.7, "#0a0709");
-    hole.addColorStop(1, "#140e0c");
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, mouth * 0.96, 0, Math.PI * 2);
-    ctx.fillStyle = hole;
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, mouth * 1.08, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(90, 58, 40, 0.9)";
-    ctx.lineWidth = Math.max(1.5, mouth * 0.1);
-    ctx.stroke();
-  }
+  for (const pocket of POCKETS) paintPocket(ctx, project, innerW, pocket);
 
   const mark = (tableX: number, tableY: number, ox: number, oy: number) => {
     const p = project(tableX, tableY);
@@ -320,42 +394,53 @@ type Motion = {
   y: number;
   roll: number;
   heading: number;
+  rot: number[];
   falling: number | null;
   done: boolean;
 };
 
 type Pose = { x: number; y: number; angle: number; power: number };
 
+type PlayHead = {
+  key: readonly Ball[][] | null;
+  i: number;
+  stamp: number;
+  done: boolean;
+};
+
 function aimDir(angleMilli: number) {
   return { x: cosMicro(angleMilli) / 1_000_000, y: sinMicro(angleMilli) / 1_000_000 };
 }
 
-function firstBall(
-  from: { x: number; y: number },
-  angleMilli: number,
-  balls: readonly Ball[],
-): { x: number; y: number } | null {
-  const dir = aimDir(angleMilli);
-  let bestT = Infinity;
-  let best: { x: number; y: number } | null = null;
-  for (const ball of balls) {
-    if (ball.pocketed || ball.id === 0) continue;
-    const fx = ball.x - from.x;
-    const fy = ball.y - from.y;
-    const along = fx * dir.x + fy * dir.y;
-    if (along <= 0) continue;
-    const dx = ball.x - (from.x + dir.x * along);
-    const dy = ball.y - (from.y + dir.y * along);
-    const rad = BALL_R * 2;
-    const miss = dx * dx + dy * dy;
-    if (miss > rad * rad) continue;
-    const t = along - Math.sqrt(rad * rad - miss);
-    if (t > BALL_R && t < bestT) {
-      bestT = t;
-      best = { x: from.x + dir.x * t, y: from.y + dir.y * t };
+function blendBalls(a: readonly Ball[], b: readonly Ball[], t: number, into: Ball[]): Ball[] {
+  const span = Math.min(a.length, b.length);
+  if (into.length !== span) into.length = span;
+  const k = Math.max(0, Math.min(1, t));
+  for (let i = 0; i < span; i++) {
+    const from = a[i];
+    const to = b[i];
+    if (!from || !to) continue;
+    const pocketed = k > 0.35 ? to.pocketed : from.pocketed;
+    let row = into[i];
+    if (!row) {
+      row = { ...from };
+      into[i] = row;
+    }
+    row.id = to.id;
+    row.pocketed = pocketed;
+    row.spin = to.spin;
+    row.vx = to.vx;
+    row.vy = to.vy;
+    if (from.pocketed || to.pocketed) {
+      const held = to.pocketed ? to : from;
+      row.x = held.x;
+      row.y = held.y;
+    } else {
+      row.x = from.x + (to.x - from.x) * k;
+      row.y = from.y + (to.y - from.y) * k;
     }
   }
-  return best;
+  return into;
 }
 
 function stick(
@@ -381,6 +466,20 @@ function stick(
   ctx.fill();
 }
 
+function insideFrame(p: Pt, w: number, h: number, margin: number) {
+  return p.x >= margin && p.y >= margin && p.x <= w - margin && p.y <= h - margin;
+}
+
+function containedButt(tip: Pt, butt: Pt, w: number, h: number, margin: number): Pt {
+  let t = 1;
+  for (let i = 0; i < 12; i++) {
+    const at = { x: tip.x + (butt.x - tip.x) * t, y: tip.y + (butt.y - tip.y) * t };
+    if (insideFrame(at, w, h, margin) || t < 0.08) return at;
+    t *= 0.72;
+  }
+  return tip;
+}
+
 function drawCue(
   ctx: CanvasRenderingContext2D,
   projectOpen: (x: number, y: number) => { x: number; y: number; scale: number },
@@ -389,35 +488,120 @@ function drawCue(
   angleMilli: number,
   gapBalls: number,
   alpha: number,
+  w: number,
+  h: number,
 ) {
   const dir = aimDir(angleMilli);
   const gap = BALL_R * gapBalls;
-  const length = BALL_R * 52;
-  const at = (dist: number) => projectOpen(from.x - dir.x * dist, from.y - dir.y * dist);
-  const tip = at(gap);
-  const ferrule = at(gap + BALL_R * 1.7);
-  const grip = at(gap + length * 0.74);
-  const butt = at(gap + length);
-  const width = Math.max(2.4, ballRadiusPx(innerW, tip.scale) * 0.15);
+  const atDist = (dist: number) => projectOpen(from.x - dir.x * dist, from.y - dir.y * dist);
+  const tip = atDist(gap);
+  const tipScale = tip.scale;
+  const margin = Math.max(8, Math.min(w, h) * 0.015);
+  let length = BALL_R * 46;
+  let butt: Pt = atDist(gap + length);
+  for (let i = 0; i < 6 && !insideFrame(butt, w, h, margin); i++) {
+    length *= 0.8;
+    butt = atDist(gap + length);
+  }
+  butt = containedButt(tip, butt, w, h, margin);
+  const along = (t: number): Pt => ({
+    x: tip.x + (butt.x - tip.x) * t,
+    y: tip.y + (butt.y - tip.y) * t,
+  });
+  const ferrule = along(0.055);
+  const grip = along(0.72);
+  const width = Math.max(2.2, ballRadiusPx(innerW, tipScale) * 0.16);
   ctx.save();
   ctx.globalAlpha = alpha;
-  const shaft = ctx.createLinearGradient(tip.x, tip.y, butt.x, butt.y);
-  shaft.addColorStop(0, "#f3ddb8");
-  shaft.addColorStop(0.4, "#e0b56d");
-  shaft.addColorStop(1, "#b88848");
-  stick(ctx, tip, butt, width, width * 1.35, shaft);
   stick(
     ctx,
-    { x: (tip.x + butt.x) / 2, y: (tip.y + butt.y) / 2 },
-    butt,
-    width * 0.28,
-    width * 0.34,
-    "rgba(255,236,210,0.35)",
+    { x: tip.x + width * 0.35, y: tip.y + width * 0.85 },
+    { x: butt.x + width * 0.45, y: butt.y + width * 0.95 },
+    width * 0.9,
+    width * 1.3,
+    "rgba(0,0,0,0.28)",
   );
-  stick(ctx, grip, butt, width * 1.2, width * 1.45, "#1c1614");
-  stick(ctx, tip, ferrule, width * 0.95, width, "#f6f3ec");
-  stick(ctx, tip, at(gap + BALL_R * 0.48), width * 0.78, width * 0.86, "#8d6b45");
+  const shaft = ctx.createLinearGradient(tip.x, tip.y, butt.x, butt.y);
+  shaft.addColorStop(0, "#f6e2c4");
+  shaft.addColorStop(0.35, "#e2b56a");
+  shaft.addColorStop(0.72, "#c48a42");
+  shaft.addColorStop(1, "#8d5a2b");
+  stick(ctx, tip, butt, width * 0.92, width * 1.42, shaft);
+  stick(ctx, along(0.08), along(0.96), width * 0.22, width * 0.28, "rgba(255,236,210,0.34)");
+  stick(ctx, along(0.2), along(0.9), width * 0.08, width * 0.1, "rgba(92, 52, 24, 0.28)");
+  stick(ctx, grip, butt, width * 1.15, width * 1.5, "#1a1412");
+  stick(ctx, along(0.78), along(0.97), width * 0.28, width * 0.36, "rgba(255,255,255,0.14)");
+  stick(ctx, tip, ferrule, width * 0.9, width * 0.98, "#f7f4ee");
+  stick(ctx, tip, along(0.02), width * 0.72, width * 0.8, "#6b4a2e");
   ctx.restore();
+}
+
+function drawGuide(
+  ctx: CanvasRenderingContext2D,
+  project: (x: number, y: number) => { x: number; y: number; scale: number },
+  innerW: number,
+  dpr: number,
+  guide: AimTrace,
+) {
+  const strokeTo = (a: { x: number; y: number }, b: { x: number; y: number }) => {
+    const p = project(a.x, a.y);
+    const q = project(b.x, b.y);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(q.x, q.y);
+    ctx.stroke();
+  };
+  const start = {
+    x: guide.from.x + guide.dir.x * BALL_R * 1.15,
+    y: guide.from.y + guide.dir.y * BALL_R * 1.15,
+  };
+  const reach = Math.hypot(guide.cueStop.x - start.x, guide.cueStop.y - start.y);
+  ctx.lineCap = "round";
+  ctx.lineWidth = Math.max(1, dpr * 1.05);
+  if (reach > BALL_R * 0.4) {
+    ctx.strokeStyle = "rgba(255,255,255,0.88)";
+    ctx.setLineDash([2.5 * dpr, 7 * dpr]);
+    strokeTo(start, guide.cueStop);
+    ctx.setLineDash([]);
+  }
+  if (guide.cueBank) {
+    const end = {
+      x: guide.cueBank.at.x + guide.cueBank.dir.x * TABLE_W * 0.16,
+      y: guide.cueBank.at.y + guide.cueBank.dir.y * TABLE_W * 0.16,
+    };
+    ctx.strokeStyle = "rgba(244, 211, 94, 0.8)";
+    ctx.setLineDash([2 * dpr, 6 * dpr]);
+    strokeTo(guide.cueBank.at, end);
+    ctx.setLineDash([]);
+  }
+  const hit = guide.contact;
+  if (!hit) return "open";
+  const ghost = project(hit.cue.x, hit.cue.y);
+  ctx.beginPath();
+  ctx.arc(ghost.x, ghost.y, ballRadiusPx(innerW, ghost.scale), 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(255,255,255,0.5)";
+  ctx.lineWidth = Math.max(1, dpr);
+  ctx.stroke();
+  if (guide.objectStop) {
+    const span = Math.hypot(guide.objectStop.x - hit.object.x, guide.objectStop.y - hit.object.y);
+    if (span > BALL_R * 0.6) {
+      ctx.strokeStyle = "rgba(255,255,255,0.55)";
+      ctx.lineWidth = Math.max(1, dpr);
+      ctx.setLineDash([]);
+      strokeTo(hit.object, guide.objectStop);
+    }
+  }
+  if (guide.objectBank) {
+    const end = {
+      x: guide.objectBank.at.x + guide.objectBank.dir.x * TABLE_W * 0.14,
+      y: guide.objectBank.at.y + guide.objectBank.dir.y * TABLE_W * 0.14,
+    };
+    ctx.strokeStyle = "rgba(244, 211, 94, 0.75)";
+    ctx.setLineDash([2 * dpr, 5 * dpr]);
+    strokeTo(guide.objectBank.at, end);
+    ctx.setLineDash([]);
+  }
+  return "ball";
 }
 
 function paintBall(
@@ -434,29 +618,6 @@ function paintBall(
   if (radius < 1) return;
   ctx.save();
   ctx.globalAlpha = fade;
-  const shadow = ctx.createRadialGradient(
-    sx,
-    sy + radius * 0.72,
-    radius * 0.1,
-    sx,
-    sy + radius * 0.72,
-    radius * 1.15,
-  );
-  shadow.addColorStop(0, "rgba(6, 0, 16, 0.5)");
-  shadow.addColorStop(1, "rgba(6, 0, 16, 0)");
-  ctx.fillStyle = shadow;
-  ctx.beginPath();
-  ctx.ellipse(
-    sx + radius * 0.06,
-    sy + radius * 0.72,
-    radius * 0.92,
-    radius * 0.38,
-    0,
-    0,
-    Math.PI * 2,
-  );
-  ctx.fill();
-
   ctx.beginPath();
   ctx.arc(sx, sy, radius, 0, Math.PI * 2);
   ctx.clip();
@@ -562,18 +723,26 @@ function paintBall(
   ctx.restore();
 }
 
+type Stroke = { x: number; y: number; angle: number; power: number };
+
 type Props = {
   balls: readonly Ball[];
   angleMilli: number;
   power: number;
+  spinX: number;
+  spinY: number;
   ghost: { x: number; y: number } | null;
   kitchenOnly: boolean;
   calledPocket: number | null;
   showAim: boolean;
   showCue: boolean;
-  rolling: boolean;
+  replay: readonly Ball[][] | null;
+  stroke: Stroke | null;
   onAim: (angleMilli: number) => void;
   onPlace: (x: number, y: number) => void;
+  onSample: (prev: readonly Ball[], next: readonly Ball[]) => void;
+  onReplayDone: () => void;
+  onAimHint?: (text: string) => void;
   placing: boolean;
   legalAt: (x: number, y: number) => boolean;
 };
@@ -583,25 +752,57 @@ export function PoolTable({
   balls,
   angleMilli,
   power,
+  spinX,
+  spinY,
   ghost,
   kitchenOnly,
   calledPocket,
   showAim,
   showCue,
-  rolling,
+  replay,
+  stroke,
   onAim,
   onPlace,
+  onSample,
+  onReplayDone,
+  onAimHint,
   placing,
   legalAt,
 }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
   const cacheRef = useRef<{ w: number; h: number; canvas: HTMLCanvasElement } | null>(null);
   const motionRef = useRef(new Map<number, Motion>());
-  const poseRef = useRef<Pose | null>(null);
   const strikeRef = useRef<(Pose & { t0: number }) | null>(null);
-  const rollingRef = useRef(false);
   const legalRef = useRef(legalAt);
   legalRef.current = legalAt;
+  const aimRef = useRef(onAim);
+  aimRef.current = onAim;
+  const placeRef = useRef(onPlace);
+  placeRef.current = onPlace;
+  const hintRef = useRef(onAimHint);
+  hintRef.current = onAimHint;
+  const ballsRef = useRef(balls);
+  ballsRef.current = balls;
+  const ghostRef = useRef(ghost);
+  ghostRef.current = ghost;
+  const angleRef = useRef(angleMilli);
+  angleRef.current = angleMilli;
+  const showCueRef = useRef(showCue);
+  showCueRef.current = showCue;
+  const replayRef = useRef(replay);
+  replayRef.current = replay;
+  const gestureRef = useRef<AimGesture | { kind: "place" } | null>(null);
+  const sampleRef = useRef(onSample);
+  sampleRef.current = onSample;
+  const doneRef = useRef(onReplayDone);
+  doneRef.current = onReplayDone;
+  const playRef = useRef<PlayHead>({ key: null, i: 0, stamp: 0, done: false });
+  const blendRef = useRef<Ball[]>([]);
+  const layerRef = useRef<BallLayer | null | undefined>(undefined);
+  const offscreenRef = useRef<HTMLCanvasElement | null>(null);
+  const frameStamp = useRef(0);
+  const cueIn = useRef(0);
+  const cueWas = useRef(false);
   const [draft, setDraft] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
@@ -674,44 +875,168 @@ export function PoolTable({
         }
       }
 
-      const cue = balls.find((ball) => ball.id === 0);
-      const from = ghost ?? (cue && !cue.pocketed ? { x: cue.x, y: cue.y } : null);
-      if (showCue && from) poseRef.current = { x: from.x, y: from.y, angle: angleMilli, power };
-      if (rolling && !rollingRef.current && poseRef.current) {
-        strikeRef.current = { ...poseRef.current, t0: performance.now() };
+      const now = performance.now();
+      if (frameStamp.current) {
+        canvas.dataset["frameMs"] = (now - frameStamp.current).toFixed(1);
       }
-      rollingRef.current = rolling;
+      frameStamp.current = now;
 
-      if (showAim && from) {
-        const dir = aimDir(angleMilli);
-        const hit = firstBall(from, angleMilli, balls);
-        const reach = TABLE_W * 0.36;
-        const end = hit ?? { x: from.x + dir.x * reach, y: from.y + dir.y * reach };
-        const start = project(from.x + dir.x * BALL_R * 1.15, from.y + dir.y * BALL_R * 1.15);
-        const tip = project(end.x, end.y);
-        ctx.strokeStyle = "rgba(255,255,255,0.9)";
-        ctx.lineWidth = Math.max(1, dpr * 1.05);
-        ctx.lineCap = "round";
-        ctx.setLineDash([2.5 * dpr, 7 * dpr]);
-        ctx.beginPath();
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(tip.x, tip.y);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        if (hit) {
-          const ghostP = project(hit.x, hit.y);
-          const ghostR = ballRadiusPx(innerW, ghostP.scale);
-          ctx.beginPath();
-          ctx.arc(ghostP.x, ghostP.y, ghostR, 0, Math.PI * 2);
-          ctx.strokeStyle = "rgba(255,255,255,0.45)";
-          ctx.lineWidth = Math.max(1, dpr);
-          ctx.stroke();
+      const head = playRef.current;
+      let shown: readonly Ball[] = balls;
+      if (replay && replay.length > 0) {
+        if (head.key !== replay) {
+          head.key = replay;
+          head.i = 0;
+          head.stamp = now;
+          head.done = false;
+          if (stroke) {
+            strikeRef.current = {
+              x: stroke.x,
+              y: stroke.y,
+              angle: stroke.angle,
+              power: stroke.power,
+              t0: now,
+            };
+          }
         }
+        const release = head.stamp + (stroke ? 90 : 0);
+        const opening = replay[0] ?? balls;
+        if (now < release) {
+          shown = opening;
+          again = true;
+        } else {
+          const elapsed = now - release;
+          const target = Math.min(replay.length - 1, Math.floor(elapsed / 10));
+          const stepTo = Math.min(target, head.i + 6);
+          while (head.i < stepTo) {
+            const prev = replay[head.i];
+            const next = replay[head.i + 1];
+            if (prev && next) sampleRef.current(prev, next);
+            head.i += 1;
+          }
+          const curr = replay[head.i] ?? opening;
+          const upcoming = replay[Math.min(replay.length - 1, head.i + 1)] ?? curr;
+          const frac = head.i >= replay.length - 1 ? 1 : Math.min(1, (elapsed - head.i * 10) / 10);
+          shown = blendBalls(curr, upcoming, frac, blendRef.current);
+          if (head.i < replay.length - 1) again = true;
+          else if (!head.done) {
+            head.done = true;
+            doneRef.current();
+          }
+        }
+      } else if (head.key) {
+        head.key = null;
+      }
+
+      const cueBall = shown.find((ball) => ball.id === 0);
+      const from = ghost ?? (cueBall && !cueBall.pocketed ? { x: cueBall.x, y: cueBall.y } : null);
+      if (showAim && from) {
+        const aimed = shown.map((ball) =>
+          ball.id === 0 ? { ...ball, x: from.x, y: from.y, vx: 0, vy: 0, pocketed: false } : ball,
+        );
+        const guide = traceAim(aimed, {
+          angleMilli,
+          power,
+          spinX,
+          spinY,
+          placeX: null,
+          placeY: null,
+          calledPocket: null,
+        });
+        canvas.dataset["guide"] = guide ? drawGuide(ctx, project, innerW, dpr, guide) : "";
+      } else canvas.dataset["guide"] = "";
+
+      const motion = motionRef.current;
+      const replaying = !!(replay && replay.length > 0);
+      const sprites: { ball: Ball; x: number; y: number; fade: number; scale: number }[] = [];
+      for (const ball of shown) {
+        let m = motion.get(ball.id);
+        if (!m) {
+          m = {
+            x: ball.x,
+            y: ball.y,
+            roll: 0,
+            heading: 0,
+            rot: identityOrientation(),
+            falling: null,
+            done: false,
+          };
+          motion.set(ball.id, m);
+        }
+        if (ball.pocketed) {
+          if (m.falling == null && !m.done) m.falling = now;
+          if (m.falling != null && !m.done) {
+            const age = now - m.falling;
+            if (age < 190) {
+              const k = 1 - age / 190;
+              sprites.push({
+                ball,
+                x: m.x,
+                y: m.y,
+                fade: 0.2 + k * 0.8,
+                scale: 0.22 + k * 0.78,
+              });
+              again = true;
+            } else m.done = true;
+          }
+          continue;
+        }
+        m.falling = null;
+        m.done = false;
+        const drawX = !replaying && ball.id === 0 && ghost ? ghost.x : ball.x;
+        const drawY = !replaying && ball.id === 0 && ghost ? ghost.y : ball.y;
+        const dx = drawX - m.x;
+        const dy = drawY - m.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist > BALL_R * 3) {
+          m.x = drawX;
+          m.y = drawY;
+        } else if (dist > 80) {
+          const before = project(m.x, m.y);
+          const after = project(drawX, drawY);
+          const sdx = after.x - before.x;
+          const sdy = after.y - before.y;
+          m.rot = rollOrientation(m.rot, sdx, sdy, dist);
+          m.roll += dist / BALL_R;
+          if (sdx * sdx + sdy * sdy > 0.2) m.heading = Math.atan2(sdy, sdx);
+          m.x = drawX;
+          m.y = drawY;
+        }
+        sprites.push({ ball, x: drawX, y: drawY, fade: 1, scale: 1 });
+      }
+      sprites.sort((a, b) => project(a.x, a.y).y - project(b.x, b.y).y);
+      for (const sprite of sprites) {
+        const p = project(sprite.x, sprite.y);
+        const radius = ballRadiusPx(innerW, p.scale) * sprite.scale;
+        const shadow = ctx.createRadialGradient(
+          p.x,
+          p.y + radius * 0.72,
+          radius * 0.1,
+          p.x,
+          p.y + radius * 0.72,
+          radius * 1.2,
+        );
+        shadow.addColorStop(0, `rgba(6, 0, 16, ${0.45 * sprite.fade})`);
+        shadow.addColorStop(1, "rgba(6, 0, 16, 0)");
+        ctx.fillStyle = shadow;
+        ctx.beginPath();
+        ctx.ellipse(
+          p.x + radius * 0.06,
+          p.y + radius * 0.72,
+          radius * 0.92,
+          radius * 0.36,
+          0,
+          0,
+          Math.PI * 2,
+        );
+        ctx.fill();
       }
 
       const strike = strikeRef.current;
+      if (showCue && !cueWas.current) cueIn.current = now;
+      cueWas.current = showCue;
       if (strike) {
-        const t = (performance.now() - strike.t0) / 150;
+        const t = (now - strike.t0) / 160;
         if (t >= 1) strikeRef.current = null;
         else {
           const pulled = 1.28 + (strike.power / 10_000) * 4.4;
@@ -723,67 +1048,75 @@ export function PoolTable({
             gap = 1.05;
             alpha = 1 - (t - 0.62) / 0.38;
           }
-          drawCue(ctx, view.projectOpen, innerW, strike, strike.angle, gap, Math.max(0, alpha));
+          drawCue(
+            ctx,
+            view.projectOpen,
+            innerW,
+            strike,
+            strike.angle,
+            gap,
+            Math.max(0, alpha),
+            w,
+            h,
+          );
           again = true;
         }
       } else if (showCue && from) {
         const gap = 1.28 + (power / 10_000) * 4.4;
-        drawCue(ctx, view.projectOpen, innerW, from, angleMilli, gap, 1);
+        const alpha = Math.min(1, (now - cueIn.current) / 140);
+        if (alpha < 1) again = true;
+        drawCue(ctx, view.projectOpen, innerW, from, angleMilli, gap, alpha, w, h);
       }
 
-      const motion = motionRef.current;
-      const sprites: { ball: Ball; x: number; y: number; fade: number; scale: number }[] = [];
-      for (const ball of balls) {
-        let m = motion.get(ball.id);
-        if (!m) {
-          m = { x: ball.x, y: ball.y, roll: 0, heading: 0, falling: null, done: false };
-          motion.set(ball.id, m);
-        }
-        if (ball.pocketed) {
-          if (m.falling == null && !m.done) m.falling = performance.now();
-          if (m.falling != null && !m.done) {
-            const age = performance.now() - m.falling;
-            if (age < 190) {
-              const k = 1 - age / 190;
-              sprites.push({ ball, x: m.x, y: m.y, fade: 0.35 + k * 0.65, scale: 0.28 + k * 0.72 });
-              again = true;
-            } else m.done = true;
-          }
-          continue;
-        }
-        const dx = ball.x - m.x;
-        const dy = ball.y - m.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist > 80) {
-          const before = project(m.x, m.y);
-          const after = project(ball.x, ball.y);
-          const sdx = after.x - before.x;
-          const sdy = after.y - before.y;
-          if (sdx * sdx + sdy * sdy > 0.2) m.heading = Math.atan2(sdy, sdx);
-          m.roll += dist / BALL_R;
-          m.x = ball.x;
-          m.y = ball.y;
-        }
-        const drawX = ball.id === 0 && ghost ? ghost.x : ball.x;
-        const drawY = ball.id === 0 && ghost ? ghost.y : ball.y;
-        sprites.push({ ball, x: drawX, y: drawY, fade: 1, scale: 1 });
+      if (!layerRef.current || layerRef.current.disposed) {
+        const off = document.createElement("canvas");
+        offscreenRef.current = off;
+        layerRef.current = createBallLayer(off);
       }
-      sprites.sort((a, b) => project(a.x, a.y).y - project(b.x, b.y).y);
-      for (const sprite of sprites) {
-        const p = project(sprite.x, sprite.y);
-        const moved = motion.get(sprite.ball.id);
-        const moving = sprite.fade === 1 && Math.hypot(sprite.ball.vx, sprite.ball.vy) > 40;
-        paintBall(
-          ctx,
-          sprite.ball.id,
-          p.x,
-          p.y,
-          ballRadiusPx(innerW, p.scale) * sprite.scale,
-          moving ? (moved?.roll ?? 0) : 0,
-          moved?.heading ?? 0,
-          moving,
-          sprite.fade,
-        );
+      const layer = layerRef.current;
+      const offscreen = offscreenRef.current;
+      let usedGl = false;
+      if (layer && offscreen) {
+        const glSprites: BallSprite[] = sprites.map((sprite) => {
+          const p = project(sprite.x, sprite.y);
+          const radius = ballRadiusPx(innerW, p.scale) * sprite.scale;
+          const sink = sprite.fade < 1 ? (1 - sprite.fade) * radius * 0.65 : 0;
+          const moved = motion.get(sprite.ball.id);
+          return {
+            id: sprite.ball.id,
+            x: p.x,
+            y: p.y + sink,
+            radius,
+            fade: sprite.fade,
+            color: colorRgb(sprite.ball.id),
+            stripe: sprite.ball.id > 8,
+            rot: moved?.rot ?? identityOrientation(),
+          };
+        });
+        layer.resize(w, h);
+        usedGl = layer.draw(glSprites);
+        if (usedGl) ctx.drawImage(offscreen, 0, 0);
+      }
+      canvas.dataset["renderer"] = usedGl ? "webgl" : "canvas";
+      if (!usedGl) {
+        for (const sprite of sprites) {
+          const p = project(sprite.x, sprite.y);
+          const moved = motion.get(sprite.ball.id);
+          const moving = sprite.fade === 1 && Math.hypot(sprite.ball.vx, sprite.ball.vy) > 40;
+          const sink =
+            sprite.fade < 1 ? (1 - sprite.fade) * ballRadiusPx(innerW, p.scale) * 0.4 : 0;
+          paintBall(
+            ctx,
+            sprite.ball.id,
+            p.x,
+            p.y + sink,
+            ballRadiusPx(innerW, p.scale) * sprite.scale,
+            moving ? (moved?.roll ?? 0) : 0,
+            moved?.heading ?? 0,
+            moving,
+            sprite.fade,
+          );
+        }
       }
 
       if (placing && from) {
@@ -825,67 +1158,89 @@ export function PoolTable({
     balls,
     angleMilli,
     power,
+    spinX,
+    spinY,
     ghost,
     kitchenOnly,
     calledPocket,
     showAim,
     showCue,
-    rolling,
+    replay,
+    stroke,
     placing,
     draft,
   ]);
 
+  useEffect(() => {
+    return () => layerRef.current?.dispose();
+  }, []);
+
+  const cuePoint = () => {
+    const placed = ghostRef.current;
+    if (placed) return placed;
+    return ballsRef.current.find((ball) => ball.id === 0) ?? null;
+  };
+
   const aimAt = (event: PointerEvent<HTMLCanvasElement>) => {
     const canvas = ref.current;
-    if (!canvas) return;
+    const gesture = gestureRef.current;
+    const cue = cuePoint();
+    if (!canvas || !gesture || gesture.kind === "place" || !cue) return;
     const point = tablePoint(canvas, event.clientX, event.clientY);
-    const cue = balls.find((ball) => ball.id === 0);
-    const from = ghost ?? cue;
-    if (!from) return;
-    const dx = point.x - from.x;
-    const dy = point.y - from.y;
-    if (dx * dx + dy * dy < BALL_R * BALL_R) return;
-    let deg = (Math.atan2(dy, dx) * 180) / Math.PI;
-    if (deg < 0) deg += 360;
-    const next = Math.round(deg * 1000) % 360_000;
-    if (event.shiftKey) {
-      let delta = next - angleMilli;
-      if (delta > 180_000) delta -= 360_000;
-      if (delta < -180_000) delta += 360_000;
-      onAim((angleMilli + Math.round(delta * 0.22) + 360_000) % 360_000);
-      return;
-    }
-    onAim(next);
+    const step = aimStep(gesture, point, cue, angleRef.current, event.shiftKey);
+    gestureRef.current = step.gesture;
+    if (step.angle != null) aimRef.current(step.angle);
+  };
+
+  const endGesture = () => {
+    const gesture = gestureRef.current;
+    gestureRef.current = null;
+    setDraft(null);
+    if (gesture?.kind === "from-cue" && !gesture.armed) hintRef.current?.("Drag to aim.");
   };
 
   return (
     <canvas
       ref={ref}
       className="pool-canvas"
-      aria-label="Pool table"
+      aria-label="Pool table. Drag to aim. Drag the cue ball when it is ball in hand."
       onPointerDown={(event) => {
-        event.currentTarget.setPointerCapture(event.pointerId);
-        if (placing) {
-          const point = tablePoint(event.currentTarget, event.clientX, event.clientY);
-          setDraft(point);
-          if (legalAt(point.x, point.y)) onPlace(point.x, point.y);
+        try {
+          event.currentTarget.setPointerCapture(event.pointerId);
+        } catch {
+          // Capture fails for a pointer that was already released. Aim still applies.
+        }
+        const point = tablePoint(event.currentTarget, event.clientX, event.clientY);
+        const cue = cuePoint();
+        if (!showCueRef.current && !placing) {
+          hintRef.current?.(replayRef.current ? "Balls are still moving." : "It is not your shot.");
           return;
         }
-        aimAt(event);
+        if (placing && pointerIntent(true, point, cue) === "place") {
+          gestureRef.current = { kind: "place" };
+          setDraft(point);
+          if (legalRef.current(point.x, point.y)) placeRef.current(point.x, point.y);
+          else hintRef.current?.("That spot is not open.");
+          return;
+        }
+        if (!cue) return;
+        const started = startAim(point, cue);
+        gestureRef.current = started;
+        if (started.kind === "absolute") aimAt(event);
       }}
       onPointerMove={(event) => {
         const captured = event.currentTarget.hasPointerCapture(event.pointerId);
         if (!captured && event.buttons === 0) return;
-        if (placing) {
+        if (gestureRef.current?.kind === "place") {
           const point = tablePoint(event.currentTarget, event.clientX, event.clientY);
           setDraft(point);
-          if (legalAt(point.x, point.y)) onPlace(point.x, point.y);
+          if (legalRef.current(point.x, point.y)) placeRef.current(point.x, point.y);
           return;
         }
         aimAt(event);
       }}
-      onPointerUp={() => setDraft(null)}
-      onPointerCancel={() => setDraft(null)}
+      onPointerUp={endGesture}
+      onPointerCancel={endGesture}
     />
   );
 }

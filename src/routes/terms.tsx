@@ -136,12 +136,24 @@ function TermsPage() {
       <p>
         8-ball is a 1v1 match. Both players stake the same amount. The winner is the player the
         published rules name after the shots, a forfeit, or three shot-clock timeouts. The rack seed
-        only places the balls. It does not choose the winner.
+        only places the balls. It does not choose the winner. The seed stays hidden until the match
+        is playing. Reading it is not a reason for a refund.
+      </p>
+      <p>
+        Call a pocket only for the 8. The 8 on the break wins unless the cue ball is scratched,
+        which loses. Pocketing the 8 before your group is clear loses, including on the same shot as
+        your last object ball. The 8 in the wrong pocket loses, and a scratch while pocketing the 8
+        loses. The table stays open until a legal pocket assigns solids or stripes. A foul is ball
+        in hand anywhere, except the opening break, which is from the kitchen. A foul is an illegal
+        break, no contact, the wrong first ball, a scratch, or no rail after contact when nothing
+        was pocketed. Each shot has a 30 second clock and one reconnect window. Coming back does not
+        start that clock over. If both players leave after the break, the player whose turn it is
+        forfeits.
       </p>
       <p>
         At settlement, 5% of the pot is retained as the game fee. The winner receives the remaining
         95%. A cancelled match, or a match that ends before the break because both players left,
-        refunds both stakes with no fee.
+        refunds both stakes with no fee. Leaving after a shot has been played does not refund.
       </p>
 
       <h3>Roulette</h3>

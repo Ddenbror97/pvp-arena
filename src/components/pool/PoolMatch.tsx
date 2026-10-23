@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ChevronDown, Settings } from "lucide-react";
+import { ChevronDown, Settings, Volume2, VolumeX } from "lucide-react";
 import { toast } from "sonner";
 import room from "@/assets/pool/room.webp";
 import { useAuth } from "@/lib/auth";
@@ -47,18 +47,16 @@ import {
   tickSound,
 } from "@/lib/pool/sfx";
 import { bytesFromHex, replayMatch, stepsFromRecord } from "@/lib/pool/verify";
+import {
+  matchNotice,
+  POCKET_LABELS,
+  POOL_RULES,
+  spinSentence,
+  TUTORIAL_STEPS,
+} from "@/lib/pool/copy";
+import { dismissPoolTutorial, poolTutorialDismissed } from "@/lib/pool/prefs";
+import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
 import { PoolTable } from "./PoolTable";
-
-const REASONS: Record<string, string> = {
-  EIGHT_BALL: "8-ball",
-  EIGHT_ON_BREAK: "8 on the break",
-  EIGHT_EARLY: "8-ball early",
-  EIGHT_WRONG_POCKET: "8-ball in the wrong pocket",
-  SCRATCH_ON_EIGHT: "scratch on the 8-ball",
-  EIGHT_AND_SCRATCH_ON_BREAK: "scratch on the break 8",
-  FORFEIT: "forfeit",
-  TIMEOUT_FORFEIT: "three shot-clock timeouts",
-};
 
 function seatOf(view: PoolView, userId: string | null): "A" | "B" | null {
   if (!userId) return null;
@@ -97,9 +95,19 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const [aimAssist, setAimAssist] = useState(true);
   const [sheet, setSheet] = useState(false);
   const [frames, setFrames] = useState<Ball[][] | null>(null);
-  const [frame, setFrame] = useState(0);
+  const [stroke, setStroke] = useState<{
+    x: number;
+    y: number;
+    angle: number;
+    power: number;
+  } | null>(null);
   const [seedOk, setSeedOk] = useState<boolean | null>(null);
   const [replayNote, setReplayNote] = useState<string | null>(null);
+  const [aimHint, setAimHint] = useState<string | null>(null);
+  const [rulesOpen, setRulesOpen] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState<number | null>(null);
+  const [offline, setOffline] = useState(false);
+  const [muted, setMuted] = useState(false);
   const left = useRemaining(view?.turn_deadline ?? null, view?.server_now);
   const seat = view ? seatOf(view, userId) : null;
   const state = view?.state ?? null;
@@ -115,7 +123,64 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const shotsRef = useRef(shotList);
   shotsRef.current = shotList;
   const sawLive = useRef(false);
+  const shooting = useRef(false);
+  const presenceWarned = useRef(false);
   const tableHash = view?.state_hash ?? null;
+  const physicsId = view?.state?.physics ?? null;
+  const updatedAt = query.dataUpdatedAt;
+  const noiseAt = useRef(0);
+  const onSample = useCallback((prev: readonly Ball[], next: readonly Ball[]) => {
+    const hit = impactOf(prev, next);
+    const now = performance.now();
+    if (hit.pocket) {
+      pocketSound();
+      return;
+    }
+    if (now - noiseAt.current <= 48) return;
+    if (hit.ball > 700) {
+      ballSound(Math.min(1, hit.ball / 9000));
+      noiseAt.current = now;
+    } else if (hit.rail > 700) {
+      cushionSound(Math.min(1, hit.rail / 9000));
+      noiseAt.current = now;
+    }
+  }, []);
+  const onReplayDone = useCallback(() => {
+    const shots = shotsRef.current;
+    const last = shots?.[shots.length - 1];
+    if (last?.kind === "shot" && last.event["foul"] === true) foulSound();
+    setFrames(null);
+    setStroke(null);
+  }, []);
+
+  useEffect(() => {
+    setTutorialStep(poolTutorialDismissed() ? null : 0);
+    const syncMute = () => setMuted(soundMuted());
+    syncMute();
+    const unsubscribe = subscribeSound(syncMute);
+    const syncLine = () => setOffline(!navigator.onLine);
+    syncLine();
+    window.addEventListener("offline", syncLine);
+    window.addEventListener("online", syncLine);
+    return () => {
+      unsubscribe();
+      window.removeEventListener("offline", syncLine);
+      window.removeEventListener("online", syncLine);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!state?.ballInHand) {
+      setPlace(null);
+      return;
+    }
+    const cue = state.balls.find((ball) => ball.id === 0 && !ball.pocketed);
+    setPlace((current) => {
+      if (current && legalPlacement(state, current.x, current.y)) return current;
+      if (cue && legalPlacement(state, cue.x, cue.y)) return { x: cue.x, y: cue.y };
+      return null;
+    });
+  }, [state]);
 
   useEffect(() => {
     if (!serverSeed) return;
@@ -131,12 +196,37 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   useEffect(() => {
     if (liveId == null || seat == null || liveStatus === "COMPLETED" || liveStatus === "CANCELLED")
       return;
-    const beat = window.setInterval(() => {
-      void poolTouch(liveId);
-    }, 8_000);
-    void poolTouch(liveId);
-    return () => window.clearInterval(beat);
-  }, [liveId, liveStatus, seat]);
+    let stopped = false;
+    const beat = () => {
+      // A hidden tab is a drop, not a presence. The server grants one reconnect window.
+      if (stopped || document.visibilityState === "hidden") return;
+      void poolTouch(liveId).then((res) => {
+        if (!res.error) {
+          presenceWarned.current = false;
+          return;
+        }
+        if (!presenceWarned.current) {
+          presenceWarned.current = true;
+          console.warn("pool presence", res.error.message);
+        }
+      });
+    };
+    beat();
+    const id = window.setInterval(beat, 4_000);
+    const onShow = () => {
+      if (document.visibilityState === "visible") beat();
+    };
+    document.addEventListener("visibilitychange", onShow);
+    window.addEventListener("focus", onShow);
+    window.addEventListener("pageshow", onShow);
+    return () => {
+      stopped = true;
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onShow);
+      window.removeEventListener("focus", onShow);
+      window.removeEventListener("pageshow", onShow);
+    };
+  }, [liveId, liveStatus, seat, updatedAt]);
 
   useEffect(() => {
     if (liveId == null || liveStatus !== "PLAYING" || left > 0) return;
@@ -145,19 +235,21 @@ export function PoolMatch({ matchId }: { matchId: number }) {
 
   useEffect(() => {
     const shots = shotsRef.current;
-    if (!serverSeed || !shots?.length || reduce) {
+    if (!serverSeed || !shots?.length || reduce || !physicsId) {
       setFrames(null);
+      setStroke(null);
       return;
     }
     const last = shots[shots.length - 1];
     if (!last || last.kind !== "shot") {
       setFrames(null);
+      setStroke(null);
       return;
     }
     const prior = stepsFromRecord(shots.slice(0, -1));
     const input = stepsFromRecord([last])?.[0];
     if (!prior || !input || input.kind !== "shot") return;
-    let table = freshTable(bytesFromHex(serverSeed));
+    let table = freshTable(bytesFromHex(serverSeed), physicsId);
     for (const step of prior) {
       if (step.kind === "timeout") table = applyTimeout(table);
       else if (step.kind === "forfeit") table = applyForfeit(table, step.seat);
@@ -169,11 +261,27 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     }
     const placed = structuredClone(table);
     placeCue(placed, input.input);
-    const sim = simulate(placed.balls, input.input, true);
-    setFrames(sim.frames);
-    setFrame(0);
+    const opening = placed.balls.map((ball) => ({ ...ball }));
+    const cue = opening.find((ball) => ball.id === 0);
+    const sim = simulate(placed.balls, input.input, true, physicsId);
+    const sequence = [opening, ...sim.frames];
+    const rest = sim.balls;
+    const tail = sequence[sequence.length - 1];
+    const alreadyRest =
+      tail != null &&
+      tail.every(
+        (ball, index) =>
+          ball.pocketed === rest[index]?.pocketed &&
+          ball.x === rest[index]?.x &&
+          ball.y === rest[index]?.y,
+      );
+    if (!alreadyRest) sequence.push(rest);
+    setFrames(sequence);
+    setStroke(
+      cue ? { x: cue.x, y: cue.y, angle: input.input.angleMilli, power: input.input.power } : null,
+    );
     cueSound();
-  }, [serverSeed, tableHash, reduce]);
+  }, [serverSeed, tableHash, reduce, physicsId]);
 
   useEffect(() => {
     if (!view) return;
@@ -184,44 +292,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     resultSound(view.winner_id === userId);
   }, [view, userId]);
 
-  useEffect(() => {
-    if (!frames || frames.length === 0) return;
-    let i = 0;
-    let prev = frames[0];
-    let lastNoise = 0;
-    const shots = shotsRef.current;
-    const last = shots?.[shots.length - 1];
-    const fouled = last?.kind === "shot" && last.event["foul"] === true;
-    const id = window.setInterval(() => {
-      i += 1;
-      if (i >= frames.length) {
-        window.clearInterval(id);
-        if (fouled) foulSound();
-        setFrames(null);
-        return;
-      }
-      const next = frames[i];
-      if (prev && next) {
-        const hit = impactOf(prev, next);
-        const now = performance.now();
-        if (hit.pocket) pocketSound();
-        else if (now - lastNoise > 48) {
-          if (hit.ball > 700) {
-            ballSound(Math.min(1, hit.ball / 9000));
-            lastNoise = now;
-          } else if (hit.rail > 700) {
-            cushionSound(Math.min(1, hit.rail / 9000));
-            lastNoise = now;
-          }
-        }
-      }
-      prev = next;
-      setFrame(i);
-    }, 16);
-    return () => window.clearInterval(id);
-  }, [frames]);
-
-  const shown = frames?.[frame] ?? state?.balls ?? [];
   const previewBalls = useMemo(
     () => freshTable(Uint8Array.from({ length: 32 }, (_, i) => (i * 17 + 3) & 255)).balls,
     [],
@@ -239,8 +309,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     };
   }, [view]);
 
-  const takeShot = async () => {
-    if (!state || !mine) return;
+  const takeShot = useCallback(async () => {
+    if (!state || !mine || busy || shooting.current || frames) return;
+    shooting.current = true;
     const input: ShotInput = {
       angleMilli: angle,
       power,
@@ -254,10 +325,12 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       state.ballInHand &&
       (input.placeX == null || !legalPlacement(state, input.placeX, input.placeY ?? 0))
     ) {
+      shooting.current = false;
       toast.error(poolMessage("ILLEGAL_PLACEMENT"));
       return;
     }
     if (shootingEight && called == null) {
+      shooting.current = false;
       toast.error(poolMessage("CALL_POCKET"));
       return;
     }
@@ -271,9 +344,52 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     } catch {
       toast.error(poolMessage("REQUEST_FAILED"));
     } finally {
+      shooting.current = false;
       setBusy(false);
     }
-  };
+  }, [
+    angle,
+    busy,
+    called,
+    matchId,
+    mine,
+    place,
+    power,
+    qc,
+    shoot,
+    shootingEight,
+    spinX,
+    frames,
+    spinY,
+    state,
+  ]);
+
+  useEffect(() => {
+    if (!mine) return;
+    const onKey = (event: KeyboardEvent) => {
+      const tag = (event.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      const step = event.altKey ? 1 : event.shiftKey ? 100 : 1_000;
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        setAngle((current) => (current - step + 360_000) % 360_000);
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        setAngle((current) => (current + step) % 360_000);
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setPower((current) => Math.min(10_000, current + 500));
+      } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setPower((current) => Math.max(1, current - 500));
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        void takeShot();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mine, takeShot]);
 
   const checkReplay = async () => {
     if (!view?.server_seed || !view.state) return;
@@ -282,7 +398,12 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       setReplayNote("The shot list could not be read.");
       return;
     }
-    const replay = await replayMatch(bytesFromHex(view.server_seed), view.server_seed_hash, steps);
+    const replay = await replayMatch(
+      bytesFromHex(view.server_seed),
+      view.server_seed_hash,
+      steps,
+      view.state?.physics ?? "pool-phys-v2",
+    );
     const paid =
       view.winner_id == null
         ? replay.winner == null
@@ -290,8 +411,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           (replay.winner === "B" && view.winner_id === view.opponent_id);
     setReplayNote(
       replay.ok && paid
-        ? `Replay matches. ${replay.winner ? `Seat ${replay.winner} wins` : "No winner yet"} by the rules.`
-        : "Replay does not match the paid result.",
+        ? "These shots replay to the same result."
+        : "These shots do not replay to the paid result.",
     );
   };
 
@@ -347,8 +468,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         </div>
         <label className="pool-power">
           <span className="sr-only">Power</span>
-          <input type="range" min={1} max={10000} defaultValue={5000} disabled />
-          <span>50%</span>
+          <input type="range" min={1} max={10000} value={power} disabled />
+          <span>{Math.round(power / 100)}%</span>
         </label>
         <div className="pool-felt">
           <div className="pool-felt-frame">
@@ -356,16 +477,21 @@ export function PoolMatch({ matchId }: { matchId: number }) {
               balls={previewBalls}
               angleMilli={0}
               power={5000}
+              spinX={0}
+              spinY={0}
               ghost={null}
               kitchenOnly={false}
               calledPocket={null}
               showAim
               showCue
-              rolling={false}
+              replay={null}
+              stroke={null}
               placing={false}
               legalAt={() => true}
               onAim={() => {}}
               onPlace={() => {}}
+              onSample={() => {}}
+              onReplayDone={() => {}}
             />
           </div>
         </div>
@@ -387,7 +513,11 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           </button>
         </div>
         <p className="pool-banner">
-          {query.isError ? "This match is not available." : "Loading the table…"}
+          {query.isError
+            ? offline
+              ? "Reconnecting"
+              : "This match is not available."
+            : "Loading the table…"}
         </p>
       </Shell>
     );
@@ -413,30 +543,46 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     view.winner_id != null &&
     view.winner_id !== userId;
   const pays = view.payout_amount ?? view.pot - Math.floor((view.pot * view.fee_bps) / 10_000);
-  const notice =
-    view.status === "WAITING"
-      ? "Waiting for an opponent. The rack seed stays hidden until someone sits."
-      : view.status === "STARTING"
-        ? "Match starting."
-        : view.status === "CANCELLED"
-          ? `Cancelled${view.cancel_reason ? `: ${view.cancel_reason}` : ""}. Stakes were refunded with no fee.`
-          : view.status === "COMPLETED" && winnerName
-            ? `${youWon ? "Victory" : youLost ? "Defeat" : "Match over"}. ${winnerName} wins${view.win_reason ? ` · ${REASONS[view.win_reason] ?? view.win_reason}` : ""}. Payout ${dollars(view.payout_amount)}, fee ${dollars(view.fee_amount)}.`
-            : fouled
-              ? state?.kitchenOnly
-                ? "Foul. Ball in hand, in the kitchen."
-                : "Foul. Ball in hand."
-              : state?.ballInHand
-                ? state.kitchenOnly
-                  ? "Ball in hand. Place the cue ball in the kitchen."
-                  : "Ball in hand."
-                : shootingEight
-                  ? "Final 8-ball. Call a pocket, then shoot."
-                  : mine
-                    ? "Your turn."
-                    : view.status === "PLAYING"
-                      ? "Opponent's turn."
-                      : null;
+  const fee = view.fee_amount ?? view.pot - pays;
+  const placeReady =
+    !state?.ballInHand || (place != null && legalPlacement(state, place.x, place.y));
+  const needsPocket = shootingEight && called == null;
+  const notice = matchNotice({
+    status: view.status,
+    youWon,
+    youLost,
+    payout: dollars(youWon ? pays : (view.payout_amount ?? pays)),
+    winReason: view.win_reason,
+    fouled,
+    ballInHand: !!state?.ballInHand,
+    kitchenOnly: !!state?.kitchenOnly,
+    shootingEight,
+    pocketChosen: called != null,
+    mine,
+    group,
+    breakShot: !!state?.breakShot,
+    busy,
+    rolling: frames != null,
+    offline,
+    reconnecting: query.isError && view.status !== "COMPLETED" && view.status !== "CANCELLED",
+    seat,
+  });
+  const banner =
+    aimHint && mine && frames == null && !busy && !fouled && view.status === "PLAYING"
+      ? aimHint
+      : notice;
+  const showTutorial =
+    tutorialStep != null &&
+    mine &&
+    frames == null &&
+    !busy &&
+    view.status === "PLAYING" &&
+    !rulesOpen &&
+    !confirmForfeit;
+  const closeTutorial = () => {
+    dismissPoolTutorial();
+    setTutorialStep(null);
+  };
 
   const leave = () => {
     if (view.status === "WAITING" && seat === "A") {
@@ -460,25 +606,31 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         </span>
         <span>
           <strong>POOL</strong>
-          <small>PVP · Real money</small>
+          <small>
+            Pot {dollars(view.pot)} · pays {dollars(pays)}
+          </small>
         </span>
       </div>
 
       <div className="pool-vs" aria-label="Players">
         <SeatCard
           name={names.A}
+          you={seat === "A"}
           avatar={view.creator?.avatar_url}
           stake={view.stake}
           ids={pips(balls, groupA)}
+          group={groupA}
           active={state?.turn === "A" && view.status === "PLAYING"}
           clock={state?.turn === "A" && view.status === "PLAYING" ? clock : null}
         />
         <span className="pool-vs-mark">VS</span>
         <SeatCard
           name={names.B}
+          you={seat === "B"}
           avatar={view.opponent?.avatar_url}
           stake={view.opponent_id ? view.stake : 0}
           ids={pips(balls, groupB)}
+          group={groupB}
           active={state?.turn === "B" && view.status === "PLAYING"}
           clock={state?.turn === "B" && view.status === "PLAYING" ? clock : null}
           align="end"
@@ -497,9 +649,17 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         )}
         <button
           type="button"
+          className="pool-leave"
+          aria-expanded={rulesOpen}
+          onClick={() => setRulesOpen((open) => !open)}
+        >
+          Rules
+        </button>
+        <button
+          type="button"
           className="pool-gear"
           aria-expanded={sheet}
-          aria-label="Shot settings"
+          aria-label="Shot settings and fairness"
           onClick={() => setSheet((open) => !open)}
         >
           <Settings className="h-4 w-4" />
@@ -511,20 +671,27 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           $
         </span>
         <span>
-          <small>Prize pool</small>
+          <small>
+            {view.status === "CANCELLED"
+              ? "Stakes refunded"
+              : view.status === "WAITING"
+                ? "Stake locked until the match starts"
+                : `Pot · 5% fee ${dollars(fee)}`}
+          </small>
           <strong>{dollars(view.pot)}</strong>
-          <em>Pays {dollars(pays)}</em>
+          <em>Winner receives {dollars(pays)}</em>
         </span>
       </div>
 
       <label className="pool-power">
-        <span className="sr-only">Power</span>
+        <span className="sr-only">Set your power</span>
         <input
           type="range"
           min={1}
           max={10000}
           value={power}
           disabled={!mine}
+          aria-valuetext={`${Math.round(power / 100)} percent`}
           style={{
             background: `linear-gradient(to top, #7c3aed ${Math.round(power / 100)}%, rgba(255,255,255,0.16) ${Math.round(power / 100)}%)`,
           }}
@@ -533,21 +700,37 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         <span>{Math.round(power / 100)}%</span>
       </label>
 
-      <div className="pool-felt">
+      <div
+        className="pool-felt"
+        data-angle={angle}
+        data-power={power}
+        data-spin-x={spinX}
+        data-spin-y={spinY}
+        data-rolling={frames ? "1" : "0"}
+      >
         <div className="pool-felt-frame">
           <PoolTable
-            balls={shown}
+            balls={balls}
             angleMilli={angle}
             power={power}
+            spinX={spinX}
+            spinY={spinY}
             ghost={ghost}
             kitchenOnly={!!state?.kitchenOnly}
             calledPocket={called}
             showAim={!!mine && frames == null && aimAssist}
             showCue={!!mine && frames == null}
-            rolling={frames != null}
+            replay={frames}
+            stroke={stroke}
             legalAt={(x, y) => (state ? legalPlacement(state, x, y) : false)}
-            placing={!!mine && !!state?.ballInHand}
-            onAim={setAngle}
+            placing={!!mine && !!state?.ballInHand && frames == null}
+            onAim={(next) => {
+              setAimHint(null);
+              setAngle(next);
+            }}
+            onAimHint={setAimHint}
+            onSample={onSample}
+            onReplayDone={onReplayDone}
             onPlace={(x, y) => {
               if (state && legalPlacement(state, x, y)) setPlace({ x, y });
             }}
@@ -555,19 +738,40 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         </div>
       </div>
 
-      {notice ? <p className="pool-banner">{notice}</p> : null}
-      {replayNote ? <p className="pool-banner">{replayNote}</p> : null}
+      {banner && view.status !== "COMPLETED" ? (
+        <p className="pool-banner" role="status" aria-live="polite">
+          {banner}
+        </p>
+      ) : null}
+
+      {view.status === "COMPLETED" ? (
+        <div className="pool-result" role="status">
+          <p>{youWon ? `You won ${dollars(pays)}` : youLost ? "You lost" : "Match over"}</p>
+          <p>
+            Winner receives {dollars(pays)}. Fee {dollars(fee)}.
+            {youWon ? "" : winnerName ? ` ${winnerName} won.` : ""}
+          </p>
+          {replayNote ? <p>{replayNote}</p> : null}
+          <Link to="/pool">Back to the lobby</Link>
+          {view.server_seed ? (
+            <button type="button" onClick={() => void checkReplay()}>
+              Check this match
+            </button>
+          ) : null}
+        </div>
+      ) : null}
 
       {shootingEight ? (
-        <div className="pool-pockets" role="group" aria-label="Called pocket">
+        <div className="pool-pockets" role="group" aria-label="Choose a pocket for the 8-ball">
           {POCKETS.map((pocket) => (
             <button
               key={pocket.id}
               type="button"
               className={called === pocket.id ? "is-on" : ""}
+              aria-pressed={called === pocket.id}
               onClick={() => setCalled(pocket.id)}
             >
-              Pocket {pocket.id + 1}
+              {POCKET_LABELS[pocket.id] ?? `Pocket ${pocket.id + 1}`}
             </button>
           ))}
         </div>
@@ -580,15 +784,11 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           aria-expanded={sheet}
           onClick={() => setSheet((open) => !open)}
         >
-          Standard <ChevronDown className="h-3.5 w-3.5" />
+          Spin <ChevronDown className="h-3.5 w-3.5" />
         </button>
-        <button
-          type="button"
-          className={state?.ballInHand ? "pool-chip is-on" : "pool-chip"}
-          aria-pressed={!!state?.ballInHand}
-        >
-          White ball <ChevronDown className="h-3.5 w-3.5" />
-        </button>
+        <span className={state?.ballInHand ? "pool-chip is-on" : "pool-chip"} aria-live="polite">
+          {state?.ballInHand ? "Place the cue ball" : "Cue ball set"}
+        </span>
         <label className="pool-assist">
           Aim assist
           <button
@@ -604,13 +804,22 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         <button
           type="button"
           className="pool-shoot"
-          disabled={!mine || busy}
+          aria-busy={busy}
+          disabled={!mine || busy || frames != null || needsPocket || !placeReady}
           onClick={() => {
             tickSound();
             void takeShot();
           }}
         >
-          {busy ? "Playing…" : "Shoot"}
+          {view.status === "COMPLETED"
+            ? "Match over"
+            : view.status === "CANCELLED"
+              ? "Cancelled"
+              : busy
+                ? "Sending shot…"
+                : frames
+                  ? "Balls moving"
+                  : "Shoot"}
         </button>
       </div>
 
@@ -625,16 +834,23 @@ export function PoolMatch({ matchId }: { matchId: number }) {
               setSpinY(y);
             }}
           />
-          <p className="pool-spin-read">
-            Side {spinX} · Follow {spinY}
-          </p>
+          <p className="pool-spin-read">{spinSentence(spinX, spinY)}</p>
           <p>
-            Hold Shift while aiming for a finer angle. The dot is where the tip meets the cue ball.
+            Hold Shift while you drag for a finer angle. The dot is where the tip meets the cue
+            ball.
           </p>
+          <button type="button" onClick={() => toggleSoundMuted()}>
+            {muted ? (
+              <VolumeX className="h-4 w-4" aria-hidden />
+            ) : (
+              <Volume2 className="h-4 w-4" aria-hidden />
+            )}
+            {muted ? "Unmute" : "Mute"}
+          </button>
           <p className="pool-seed">
-            Seed {view.server_seed_hash.slice(0, 16)}…
-            {seedOk === true ? " Rack matches the commitment." : ""}
-            {seedOk === false ? " Rack seed does not match the commitment." : ""}
+            Fairness check {view.server_seed_hash.slice(0, 16)}…
+            {seedOk === true ? " The rack matches the commitment." : ""}
+            {seedOk === false ? " The rack does not match the commitment." : ""}
           </p>
           {view.server_seed ? (
             <button type="button" onClick={() => void checkReplay()}>
@@ -644,9 +860,47 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         </div>
       ) : null}
 
+      {showTutorial && tutorialStep != null ? (
+        <div className="pool-tutorial" role="dialog" aria-label="How to play">
+          <p>
+            {tutorialStep + 1} / {TUTORIAL_STEPS.length}
+          </p>
+          <strong>{TUTORIAL_STEPS[tutorialStep]?.title}</strong>
+          <p>{TUTORIAL_STEPS[tutorialStep]?.body}</p>
+          <button
+            type="button"
+            onClick={() => {
+              if (tutorialStep >= TUTORIAL_STEPS.length - 1) closeTutorial();
+              else setTutorialStep(tutorialStep + 1);
+            }}
+          >
+            {tutorialStep >= TUTORIAL_STEPS.length - 1 ? "Got it" : "Next"}
+          </button>
+          <button type="button" onClick={closeTutorial}>
+            Skip
+          </button>
+        </div>
+      ) : null}
+
+      {rulesOpen ? (
+        <div className="pool-rules-pop" role="dialog" aria-label="Rules">
+          <ul>
+            {POOL_RULES.map((rule) => (
+              <li key={rule.title}>
+                <strong>{rule.title}. </strong>
+                {rule.body}
+              </li>
+            ))}
+          </ul>
+          <button type="button" onClick={() => setRulesOpen(false)}>
+            Close
+          </button>
+        </div>
+      ) : null}
+
       {confirmForfeit ? (
         <div className="pool-confirm">
-          <p>Forfeit gives the match to your opponent.</p>
+          <p>Forfeit gives the match and the payout to your opponent.</p>
           <button
             type="button"
             onClick={() => {
@@ -700,31 +954,40 @@ function pips(
 
 function SeatCard({
   name,
+  you,
   avatar,
   stake,
   ids,
+  group,
   active,
   clock,
   align = "start",
 }: {
   name: string;
+  you: boolean;
   avatar?: string | null | undefined;
   stake: number;
   ids: number[];
+  group: "solids" | "stripes" | null;
   active: boolean;
   clock: number | null;
   align?: "start" | "end";
 }) {
   const initial = name.slice(0, 1).toUpperCase();
+  const groupLabel = group === "solids" ? "Solids" : group === "stripes" ? "Stripes" : null;
   return (
     <div className={`pool-seat${align === "end" ? " is-end" : ""}${active ? " is-live" : ""}`}>
       {align === "end" ? null : <Face avatar={avatar} initial={initial} active={active} />}
       <span className="pool-seat-copy">
         <strong>
-          {name}
-          {clock != null ? <em>{clock}s</em> : null}
+          {you ? `${name} (you)` : name}
+          {active ? <span className="sr-only">, your turn</span> : null}
+          {clock != null ? <em aria-label={`Shot clock ${clock} seconds`}>{clock}s</em> : null}
         </strong>
-        <small>{dollars(stake)}</small>
+        <small>
+          {dollars(stake)}
+          {groupLabel ? ` · ${groupLabel}` : ""}
+        </small>
         <span className="pool-pips" aria-hidden>
           {ids.map((id) => (
             <i
@@ -798,7 +1061,7 @@ function SpinPad({
       ref={pad}
       className="pool-spin"
       role="group"
-      aria-label="Cue tip contact"
+      aria-label="Spin. Drag the red dot. Up is follow, down is draw, sideways is side spin."
       tabIndex={disabled ? -1 : 0}
       onPointerDown={(event) => {
         event.currentTarget.setPointerCapture(event.pointerId);
@@ -818,6 +1081,7 @@ function SpinPad({
         else if (event.key === "Home") onChange(0, 0);
         else return;
         event.preventDefault();
+        event.stopPropagation();
       }}
     >
       <i style={{ left: `${50 + (spinX / 1000) * 36}%`, top: `${50 - (spinY / 1000) * 36}%` }} />

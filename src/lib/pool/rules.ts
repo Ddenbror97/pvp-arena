@@ -13,7 +13,8 @@
  *
  * A foul is ball-in-hand anywhere, except the break, which is kitchen only.
  * Three shot-clock timeouts forfeit. A disconnect does not refund a match
- * that has already had a shot.
+ * that has already had a shot. Each shot gets one reconnect window, and
+ * coming back does not start a new shot clock.
  */
 
 import { sha256Hex } from "@/lib/fairness/core";
@@ -36,7 +37,7 @@ export type Seat = "A" | "B";
 export type TableState = {
   v: 1;
   rules: typeof RULES_VERSION;
-  physics: "pool-phys-v1";
+  physics: "pool-phys-v1" | "pool-phys-v2";
   balls: Ball[];
   open: boolean;
   groupA: Group | null;
@@ -160,11 +161,14 @@ export function rackBalls(seed: Uint8Array): Ball[] {
   return balls;
 }
 
-export function freshTable(seed: Uint8Array): TableState {
+export function freshTable(
+  seed: Uint8Array,
+  physics: TableState["physics"] = "pool-phys-v2",
+): TableState {
   return {
     v: 1,
     rules: RULES_VERSION,
-    physics: "pool-phys-v1",
+    physics,
     balls: rackBalls(seed),
     open: true,
     groupA: null,

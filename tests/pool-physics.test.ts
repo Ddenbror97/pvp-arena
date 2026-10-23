@@ -98,7 +98,9 @@ describe("pool physics", () => {
     const aimX = pocket.x - 220_000;
     const aimY = pocket.y - 180_000;
     const balls = [still(0, aimX - 180_000, aimY - 140_000), still(8, aimX, aimY)];
-    const angle = Math.round((Math.atan2(aimY - (aimY - 140_000), aimX - (aimX - 180_000)) * 180_000) / Math.PI);
+    const angle = Math.round(
+      (Math.atan2(aimY - (aimY - 140_000), aimX - (aimX - 180_000)) * 180_000) / Math.PI,
+    );
     const result = simulate(balls, shot({ angleMilli: angle, power: 9000 }));
     expect(result.pocketed).toContain(8);
     expect(result.pocketOf[8]).toBe(5);
@@ -114,6 +116,18 @@ describe("pool physics", () => {
       expect(b.x).toBeLessThanOrEqual(TABLE_W - BALL_R + 1);
       expect(b.y).toBeLessThanOrEqual(TABLE_H - BALL_R + 1);
     }
+  });
+
+  it("reaches the rack from the head string only under the newer roll", () => {
+    const table = freshTable(Uint8Array.from({ length: 32 }, (_, i) => i + 7));
+    const cue = table.balls.find((b) => b.id === 0);
+    if (!cue) throw new Error("cue");
+    const input = shot({ angleMilli: 0, power: 10_000, placeX: cue.x, placeY: cue.y });
+    placeCue(table, input);
+    const reached = simulate(table.balls, input, false, "pool-phys-v2");
+    const stopped = simulate(table.balls, input, false, "pool-phys-v1");
+    expect(reached.firstContact).not.toBeNull();
+    expect(stopped.firstContact).toBeNull();
   });
 
   it("settles a full break without leaving balls overlapping", () => {

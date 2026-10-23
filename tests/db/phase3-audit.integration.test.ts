@@ -725,6 +725,9 @@ describe("phase 3 isolated restore, cron, and faults", () => {
     }
   })();
   const localIt = local ? it : it.skip;
+  // The dump reads the approved hosted project. Without a management token
+  // that check cannot start, so it skips the same way the hosted suite does.
+  const dumpIt = local && process.env.SUPABASE_ACCESS_TOKEN ? it : it.skip;
   let sql: postgres.Sql;
 
   beforeAll(async () => {
@@ -762,7 +765,7 @@ describe("phase 3 isolated restore, cron, and faults", () => {
     writeFileSync("/tmp/phase3-results.json", JSON.stringify(results, null, 2));
   }, 60_000);
 
-  localIt("logical dump restores ledger constraints, and a crash retries a cron gate once", async () => {
+  dumpIt("logical dump restores ledger constraints, and a crash retries a cron gate once", async () => {
     const password = randomBytes(18).toString("hex");
     const dropRole = async () => {
       await mgmt(`

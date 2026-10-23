@@ -93,9 +93,10 @@ export async function replayMatch(
   seed: Uint8Array,
   publishedHash: string,
   stepsIn: readonly MatchStep[],
+  physics: "pool-phys-v1" | "pool-phys-v2" = "pool-phys-v2",
 ): Promise<Replay> {
   const seedOk = await committedSeedOk(seed, publishedHash);
-  let state = freshTable(seed);
+  let state = freshTable(seed, physics);
   const steps: Replay["steps"] = [];
   for (const step of stepsIn) {
     if (step.kind === "timeout") state = applyTimeout(state);
@@ -106,7 +107,7 @@ export async function replayMatch(
         steps.push({ shot: state.shot, ok: false, got: placed, expected: step.hash });
         break;
       }
-      const sim = simulate(state.balls, step.input, false);
+      const sim = simulate(state.balls, step.input, false, state.physics);
       const applied = applyPlayedShot(state, sim, step.input.calledPocket);
       if (applied.event.reason === "CALL_POCKET") {
         steps.push({ shot: state.shot, ok: false, got: "CALL_POCKET", expected: step.hash });

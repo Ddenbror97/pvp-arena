@@ -7,13 +7,14 @@ import { toast } from "sonner";
 import hero from "@/assets/pool/hero.webp";
 import { useAuth } from "@/lib/auth";
 import { STAKES, money, poolMessage, usePoolLobby } from "@/lib/pool/api";
+import { formatCents, POOL_RULES, stakeQuote } from "@/lib/pool/copy";
 import { enterPool } from "@/lib/pool/pool.functions";
 
 const FEATURES = [
   { icon: Zap, title: "PVP matches", text: "Real players, real money" },
   { icon: Trophy, title: "Skill based", text: "Show your skills and climb the ranks" },
   { icon: Coins, title: "Instant games", text: "Quick matches anytime" },
-  { icon: Shield, title: "Fair & secure", text: "Provably fair matchmaking" },
+  { icon: Shield, title: "Fair & secure", text: "Committed rack, replayed shots" },
 ] as const;
 
 export function PoolLobby() {
@@ -25,6 +26,7 @@ export function PoolLobby() {
   const [stake, setStake] = useState<number>(500);
   const [busy, setBusy] = useState(false);
   const stakes = lobby.data?.stakes?.length ? lobby.data.stakes : [...STAKES];
+  const quote = stakeQuote(stake);
   const openTables = lobby.data?.open ?? [];
   const recent = lobby.data?.recent ?? [];
 
@@ -110,7 +112,7 @@ export function PoolLobby() {
             {busy ? "Finding a match…" : "Play 8 Pool Now"}
             {busy ? null : <ArrowRight aria-hidden className="h-5 w-5" />}
           </button>
-          <div className="pool-stakes" role="group" aria-label="Stake">
+          <div className="pool-stakes" role="group" aria-label="Stake per player">
             {stakes.map((cents) => (
               <button
                 key={cents}
@@ -123,15 +125,20 @@ export function PoolLobby() {
               </button>
             ))}
           </div>
+          <p className="pool-quote">
+            You stake {formatCents(quote.stake)}. Pot {formatCents(quote.pot)}. Platform fee{" "}
+            {formatCents(quote.fee)} (5%). Winner receives {formatCents(quote.payout)}. Cancel
+            before the break and both stakes are refunded.
+          </p>
         </div>
       </section>
 
       <div className="pool-below">
         <section className="pool-side">
-          <h2>Waiting</h2>
+          <h2>Waiting for an opponent</h2>
           <ul>
             {openTables.length === 0 ? (
-              <li>No open tables. Your stake opens one.</li>
+              <li>No open tables. Choose a stake and play to open one.</li>
             ) : (
               openTables.map((table) => (
                 <li key={table.id}>
@@ -151,13 +158,28 @@ export function PoolLobby() {
               recent.map((match) => (
                 <li key={match.id}>
                   <span>{match.winner ?? "Player"}</span>
-                  <span> won {money(match.payout_amount)}</span>
+                  <span>
+                    {" "}
+                    won {money(match.payout_amount)}
+                    {match.fee_amount != null ? ` · fee ${money(match.fee_amount)}` : ""}
+                  </span>
                 </li>
               ))
             )}
           </ul>
         </section>
       </div>
+      <section className="pool-rules" aria-label="8-ball rules">
+        <h2>Rules</h2>
+        <ul>
+          {POOL_RULES.map((rule) => (
+            <li key={rule.title}>
+              <strong>{rule.title}. </strong>
+              {rule.body}
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

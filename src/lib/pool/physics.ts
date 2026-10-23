@@ -7,7 +7,9 @@
  * Speed is capped below half a radius per tick so balls cannot tunnel.
  */
 
-export const PHYSICS_VERSION = "pool-phys-v1";
+/** Matches already stored under v1 keep that drag. New racks use v2, which can cross the table. */
+export const PHYSICS_V1 = "pool-phys-v1";
+export const PHYSICS_VERSION = "pool-phys-v2";
 
 export const TABLE_W = 2_540_000;
 export const TABLE_H = 1_270_000;
@@ -110,14 +112,19 @@ function pocketId(b: Ball): number | null {
   return null;
 }
 
-function nearPocket(b: Ball): boolean {
+/** Ball centre sits in a pocket mouth, where the cushion does not bounce. */
+export function cushionOpen(x: number, y: number): boolean {
   for (const p of POCKETS) {
-    const dx = b.x - p.x;
-    const dy = b.y - p.y;
+    const dx = x - p.x;
+    const dy = y - p.y;
     const mouth = p.r + 22_000;
     if (dx * dx + dy * dy <= mouth * mouth) return true;
   }
   return false;
+}
+
+function nearPocket(b: Ball): boolean {
+  return cushionOpen(b.x, b.y);
 }
 
 function resolvePair(a: Ball, b: Ball, first: { id: number | null }, follow: number): boolean {
@@ -205,14 +212,20 @@ function bounce(b: Ball, rails: Set<number>, hitObject: boolean, railAfter: { on
   }
 }
 
-function damp(b: Ball) {
+/** Per-tick speed lost to cloth. v1 stops a full-power cue before the rack. */
+export function rollDrop(speed: number, physics = PHYSICS_VERSION): number {
+  if (physics === PHYSICS_V1) return 32 + Math.trunc(speed / 160);
+  return 4 + Math.trunc(speed / 900);
+}
+
+function damp(b: Ball, physics: string) {
   if (b.pocketed) return;
   const speed = isqrt(b.vx * b.vx + b.vy * b.vy);
   if (speed < 70) {
     b.vx = 0;
     b.vy = 0;
   } else {
-    const drop = 32 + Math.trunc(speed / 160);
+    const drop = rollDrop(speed, physics);
     const next = speed - drop;
     if (next <= 0) {
       b.vx = 0;
@@ -229,11 +242,78 @@ export function moving(balls: readonly Ball[]): boolean {
   return balls.some((b) => !b.pocketed && (b.vx !== 0 || b.vy !== 0));
 }
 
+/** Same launch `simulate` applies. Returns follow so the contact impulse can use it. */
+function launchCue(cue: Ball, shot: ShotInput): number {
+  const power = Math.max(1, Math.min(10_000, shot.power | 0));
+  const speed = Math.trunc((power * MAX_SPEED) / 10_000);
+  const cos = cosMicro(shot.angleMilli | 0);
+  const sin = sinMicro(shot.angleMilli | 0);
+  cue.vx = Math.trunc((speed * cos) / 1_000_000);
+  cue.vy = Math.trunc((speed * sin) / 1_000_000);
+  const side = Math.max(-1000, Math.min(1000, shot.spinX | 0));
+  const follow = Math.max(-1000, Math.min(1000, shot.spinY | 0));
+  cue.spin = side;
+  cue.vx += Math.trunc((-sin * side * speed) / 1_000_000 / 8);
+  cue.vy += Math.trunc((cos * side * speed) / 1_000_000 / 8);
+  return follow;
+}
+
+function advance(
+  balls: Ball[],
+  first: { id: number | null },
+  follow: number,
+  pocketed: number[],
+  pocketOf: Record<number, number>,
+  rails: Set<number>,
+  railAfter: { on: boolean },
+  physics: string,
+): { moving: boolean; scratched: boolean } {
+  let any = false;
+  for (const b of balls) {
+    if (b.pocketed || (b.vx === 0 && b.vy === 0)) continue;
+    any = true;
+    b.x += b.vx;
+    b.y += b.vy;
+  }
+  if (!any) return { moving: false, scratched: false };
+  for (let n = 0; n < balls.length; n++) {
+    for (let m = n + 1; m < balls.length; m++) {
+      const a = balls[n];
+      const b = balls[m];
+      if (!a || !b) continue;
+      resolvePair(a, b, first, follow);
+    }
+  }
+  const hitObject = first.id != null;
+  let scratched = false;
+  for (const b of balls) {
+    if (b.pocketed) continue;
+    const hole = pocketId(b);
+    if (hole != null) {
+      b.pocketed = true;
+      b.vx = 0;
+      b.vy = 0;
+      pocketed.push(b.id);
+      pocketOf[b.id] = hole;
+      if (b.id === 0) scratched = true;
+      continue;
+    }
+    bounce(b, rails, hitObject, railAfter);
+    damp(b, physics);
+  }
+  return { moving: true, scratched };
+}
+
 /**
  * Run one shot from a placed cue. `record` keeps every fourth tick for animation.
  * The returned balls are at rest.
  */
-export function simulate(start: readonly Ball[], shot: ShotInput, record = false): SimResult {
+export function simulate(
+  start: readonly Ball[],
+  shot: ShotInput,
+  record = false,
+  physics = PHYSICS_VERSION,
+): SimResult {
   const balls = cloneBalls(start);
   const cue = balls.find((b) => b.id === 0);
   if (!cue || cue.pocketed) {
@@ -248,18 +328,7 @@ export function simulate(start: readonly Ball[], shot: ShotInput, record = false
       frames: [],
     };
   }
-  const power = Math.max(1, Math.min(10_000, shot.power | 0));
-  const speed = Math.trunc((power * MAX_SPEED) / 10_000);
-  const cos = cosMicro(shot.angleMilli | 0);
-  const sin = sinMicro(shot.angleMilli | 0);
-  cue.vx = Math.trunc((speed * cos) / 1_000_000);
-  cue.vy = Math.trunc((speed * sin) / 1_000_000);
-  const side = Math.max(-1000, Math.min(1000, shot.spinX | 0));
-  const follow = Math.max(-1000, Math.min(1000, shot.spinY | 0));
-  cue.spin = side;
-  cue.vx += Math.trunc((-sin * side * speed) / 1_000_000 / 8);
-  cue.vy += Math.trunc((cos * side * speed) / 1_000_000 / 8);
-
+  const follow = launchCue(cue, shot);
   const pocketed: number[] = [];
   const pocketOf: Record<number, number> = {};
   const first = { id: null as number | null };
@@ -269,38 +338,9 @@ export function simulate(start: readonly Ball[], shot: ShotInput, record = false
   let cueScratch = false;
 
   for (let tick = 0; tick < MAX_TICKS; tick++) {
-    let any = false;
-    for (const b of balls) {
-      if (b.pocketed || (b.vx === 0 && b.vy === 0)) continue;
-      any = true;
-      b.x += b.vx;
-      b.y += b.vy;
-    }
-    if (!any) break;
-    for (let n = 0; n < balls.length; n++) {
-      for (let m = n + 1; m < balls.length; m++) {
-        const a = balls[n];
-        const b = balls[m];
-        if (!a || !b) continue;
-        resolvePair(a, b, first, follow);
-      }
-    }
-    const hitObject = first.id != null;
-    for (const b of balls) {
-      if (b.pocketed) continue;
-      const hole = pocketId(b);
-      if (hole != null) {
-        b.pocketed = true;
-        b.vx = 0;
-        b.vy = 0;
-        pocketed.push(b.id);
-        pocketOf[b.id] = hole;
-        if (b.id === 0) cueScratch = true;
-        continue;
-      }
-      bounce(b, rails, hitObject, railAfter);
-      damp(b);
-    }
+    const step = advance(balls, first, follow, pocketed, pocketOf, rails, railAfter, physics);
+    if (!step.moving) break;
+    if (step.scratched) cueScratch = true;
     if (record && tick % 4 === 0) frames.push(cloneBalls(balls));
   }
   for (const b of balls) {
@@ -316,5 +356,167 @@ export function simulate(start: readonly Ball[], shot: ShotInput, record = false
     breakRails: rails.size,
     cueScratch,
     frames,
+  };
+}
+
+export type AimPoint = { x: number; y: number };
+
+/** Read-only aim guide. It steps the same `advance` as `simulate` and changes no stored shot. */
+export type AimTrace = {
+  from: AimPoint;
+  launch: { vx: number; vy: number };
+  dir: AimPoint;
+  contact: {
+    id: number;
+    cue: AimPoint;
+    object: AimPoint;
+    ovx: number;
+    ovy: number;
+  } | null;
+  cueStop: AimPoint;
+  cueBank: { at: AimPoint; dir: AimPoint } | null;
+  cuePocketed: boolean;
+  objectStop: AimPoint | null;
+  objectBank: { at: AimPoint; dir: AimPoint } | null;
+};
+
+function unitVelocity(vx: number, vy: number): AimPoint {
+  const mag = Math.hypot(vx, vy);
+  if (mag < 1e-9) return { x: 1, y: 0 };
+  return { x: vx / mag, y: vy / mag };
+}
+
+function railBounce(
+  before: { vx: number; vy: number },
+  after: { vx: number; vy: number; x: number; y: number; pocketed: boolean },
+): boolean {
+  if (after.pocketed) return false;
+  const flipX = before.vx !== 0 && after.vx !== 0 && Math.sign(before.vx) !== Math.sign(after.vx);
+  const flipY = before.vy !== 0 && after.vy !== 0 && Math.sign(before.vy) !== Math.sign(after.vy);
+  if (!flipX && !flipY) return false;
+  const onX = after.x <= BALL_R + 4 || after.x >= TABLE_W - BALL_R - 4;
+  const onY = after.y <= BALL_R + 4 || after.y >= TABLE_H - BALL_R - 4;
+  return (flipX && onX) || (flipY && onY);
+}
+
+const TRACE_TICKS = 1_200;
+
+/**
+ * First ball or first cushion along the shot the server will run.
+ * Side english is in the launch. Follow is applied at contact by `resolvePair`.
+ * Stops at one cushion. A pocket mouth is not drawn as a bank.
+ */
+export function traceAim(
+  start: readonly Ball[],
+  shot: ShotInput,
+  physics = PHYSICS_VERSION,
+): AimTrace | null {
+  const balls = cloneBalls(start);
+  const cue = balls.find((b) => b.id === 0);
+  if (!cue || cue.pocketed) return null;
+  const from = { x: cue.x, y: cue.y };
+  const follow = launchCue(cue, shot);
+  const launch = { vx: cue.vx, vy: cue.vy };
+  const pocketed: number[] = [];
+  const pocketOf: Record<number, number> = {};
+  const first = { id: null as number | null };
+  const railAfter = { on: false };
+  const rails = new Set<number>();
+  const prev = {
+    x: new Array<number>(16).fill(0),
+    y: new Array<number>(16).fill(0),
+    vx: new Array<number>(16).fill(0),
+    vy: new Array<number>(16).fill(0),
+  };
+
+  let contact: AimTrace["contact"] = null;
+  let cueStop: AimPoint = from;
+  let cueBank: AimTrace["cueBank"] = null;
+  let cuePocketed = false;
+  let objectStop: AimPoint | null = null;
+  let objectBank: AimTrace["objectBank"] = null;
+  let objectFromX = 0;
+  let objectFromY = 0;
+
+  for (let tick = 0; tick < TRACE_TICKS; tick++) {
+    for (const b of balls) {
+      prev.x[b.id] = b.x;
+      prev.y[b.id] = b.y;
+      prev.vx[b.id] = b.vx;
+      prev.vy[b.id] = b.vy;
+    }
+    const beforeId = first.id;
+    const step = advance(balls, first, follow, pocketed, pocketOf, rails, railAfter, physics);
+    if (!step.moving) {
+      cueStop = { x: cue.x, y: cue.y };
+      break;
+    }
+    if (contact == null && first.id != null && beforeId == null) {
+      const obj = balls.find((b) => b.id === first.id);
+      if (obj) {
+        contact = {
+          id: obj.id,
+          cue: { x: cue.x, y: cue.y },
+          object: { x: obj.x, y: obj.y },
+          ovx: obj.vx,
+          ovy: obj.vy,
+        };
+        objectFromX = obj.x;
+        objectFromY = obj.y;
+        cueStop = { x: cue.x, y: cue.y };
+      }
+    }
+    const hit = contact;
+    if (hit == null) {
+      if (cue.pocketed) {
+        cuePocketed = true;
+        cueStop = { x: cue.x, y: cue.y };
+        break;
+      }
+      if (railBounce({ vx: prev.vx[0] ?? 0, vy: prev.vy[0] ?? 0 }, cue)) {
+        cueStop = { x: cue.x, y: cue.y };
+        cueBank = cushionOpen(cue.x, cue.y)
+          ? null
+          : { at: cueStop, dir: unitVelocity(cue.vx, cue.vy) };
+        break;
+      }
+      cueStop = { x: cue.x, y: cue.y };
+      continue;
+    }
+    const obj = balls.find((b) => b.id === hit.id);
+    if (!obj) break;
+    if (obj.pocketed || (obj.vx === 0 && obj.vy === 0)) {
+      objectStop = { x: obj.x, y: obj.y };
+      break;
+    }
+    const before = { vx: prev.vx[obj.id] ?? 0, vy: prev.vy[obj.id] ?? 0 };
+    if (railBounce(before, obj)) {
+      objectStop = { x: obj.x, y: obj.y };
+      objectBank = cushionOpen(obj.x, obj.y)
+        ? null
+        : { at: objectStop, dir: unitVelocity(obj.vx, obj.vy) };
+      break;
+    }
+    let woke = false;
+    for (const b of balls) {
+      if (b.id === 0 || b.id === obj.id) continue;
+      const wasStill = (prev.vx[b.id] ?? 0) === 0 && (prev.vy[b.id] ?? 0) === 0;
+      if (wasStill && (b.vx !== 0 || b.vy !== 0)) woke = true;
+    }
+    objectStop = { x: obj.x, y: obj.y };
+    if (woke) break;
+    if (Math.hypot(obj.x - objectFromX, obj.y - objectFromY) > TABLE_W * 0.5) break;
+  }
+
+  return {
+    from,
+    launch,
+    dir: unitVelocity(launch.vx, launch.vy),
+    contact,
+    cueStop,
+    cueBank,
+    cuePocketed,
+    objectStop,
+    objectBank,
   };
 }
