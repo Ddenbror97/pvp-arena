@@ -97,7 +97,12 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const [aimAssist, setAimAssist] = useState(true);
   const [sheet, setSheet] = useState(false);
   const [frames, setFrames] = useState<Ball[][] | null>(null);
-  const [frame, setFrame] = useState(0);
+  const [stroke, setStroke] = useState<{
+    x: number;
+    y: number;
+    angle: number;
+    power: number;
+  } | null>(null);
   const [seedOk, setSeedOk] = useState<boolean | null>(null);
   const [replayNote, setReplayNote] = useState<string | null>(null);
   const left = useRemaining(view?.turn_deadline ?? null, view?.server_now);
@@ -118,7 +123,32 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const shooting = useRef(false);
   const presenceWarned = useRef(false);
   const tableHash = view?.state_hash ?? null;
+  const physicsId = view?.state?.physics ?? null;
   const updatedAt = query.dataUpdatedAt;
+  const noiseAt = useRef(0);
+  const onSample = useCallback((prev: readonly Ball[], next: readonly Ball[]) => {
+    const hit = impactOf(prev, next);
+    const now = performance.now();
+    if (hit.pocket) {
+      pocketSound();
+      return;
+    }
+    if (now - noiseAt.current <= 48) return;
+    if (hit.ball > 700) {
+      ballSound(Math.min(1, hit.ball / 9000));
+      noiseAt.current = now;
+    } else if (hit.rail > 700) {
+      cushionSound(Math.min(1, hit.rail / 9000));
+      noiseAt.current = now;
+    }
+  }, []);
+  const onReplayDone = useCallback(() => {
+    const shots = shotsRef.current;
+    const last = shots?.[shots.length - 1];
+    if (last?.kind === "shot" && last.event["foul"] === true) foulSound();
+    setFrames(null);
+    setStroke(null);
+  }, []);
 
   useEffect(() => {
     if (!serverSeed) return;
@@ -173,19 +203,21 @@ export function PoolMatch({ matchId }: { matchId: number }) {
 
   useEffect(() => {
     const shots = shotsRef.current;
-    if (!serverSeed || !shots?.length || reduce) {
+    if (!serverSeed || !shots?.length || reduce || !physicsId) {
       setFrames(null);
+      setStroke(null);
       return;
     }
     const last = shots[shots.length - 1];
     if (!last || last.kind !== "shot") {
       setFrames(null);
+      setStroke(null);
       return;
     }
     const prior = stepsFromRecord(shots.slice(0, -1));
     const input = stepsFromRecord([last])?.[0];
     if (!prior || !input || input.kind !== "shot") return;
-    let table = freshTable(bytesFromHex(serverSeed));
+    let table = freshTable(bytesFromHex(serverSeed), physicsId);
     for (const step of prior) {
       if (step.kind === "timeout") table = applyTimeout(table);
       else if (step.kind === "forfeit") table = applyForfeit(table, step.seat);
@@ -197,11 +229,27 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     }
     const placed = structuredClone(table);
     placeCue(placed, input.input);
-    const sim = simulate(placed.balls, input.input, true);
-    setFrames(sim.frames);
-    setFrame(0);
+    const opening = placed.balls.map((ball) => ({ ...ball }));
+    const cue = opening.find((ball) => ball.id === 0);
+    const sim = simulate(placed.balls, input.input, true, physicsId);
+    const sequence = [opening, ...sim.frames];
+    const rest = sim.balls;
+    const tail = sequence[sequence.length - 1];
+    const alreadyRest =
+      tail != null &&
+      tail.every(
+        (ball, index) =>
+          ball.pocketed === rest[index]?.pocketed &&
+          ball.x === rest[index]?.x &&
+          ball.y === rest[index]?.y,
+      );
+    if (!alreadyRest) sequence.push(rest);
+    setFrames(sequence);
+    setStroke(
+      cue ? { x: cue.x, y: cue.y, angle: input.input.angleMilli, power: input.input.power } : null,
+    );
     cueSound();
-  }, [serverSeed, tableHash, reduce]);
+  }, [serverSeed, tableHash, reduce, physicsId]);
 
   useEffect(() => {
     if (!view) return;
@@ -212,59 +260,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     resultSound(view.winner_id === userId);
   }, [view, userId]);
 
-  useEffect(() => {
-    if (!frames || frames.length === 0) return;
-    let i = 0;
-    let prev = frames[0];
-    let lastNoise = 0;
-    let stopped = false;
-    const shots = shotsRef.current;
-    const last = shots?.[shots.length - 1];
-    const fouled = last?.kind === "shot" && last.event["foul"] === true;
-    // Step several recorded ticks per paint. A 16ms React render of every
-    // physics sample blocks heartbeats and the shot controls for the whole roll.
-    let raf = 0;
-    let stamp = 0;
-    const tick = (now: number) => {
-      if (stopped) return;
-      if (now - stamp < 40) {
-        raf = requestAnimationFrame(tick);
-        return;
-      }
-      stamp = now;
-      const nextIndex = Math.min(frames.length - 1, i + 4);
-      const next = frames[nextIndex];
-      if (prev && next && nextIndex !== i) {
-        const hit = impactOf(prev, next);
-        if (hit.pocket) pocketSound();
-        else if (now - lastNoise > 48) {
-          if (hit.ball > 700) {
-            ballSound(Math.min(1, hit.ball / 9000));
-            lastNoise = now;
-          } else if (hit.rail > 700) {
-            cushionSound(Math.min(1, hit.rail / 9000));
-            lastNoise = now;
-          }
-        }
-      }
-      prev = next;
-      i = nextIndex;
-      if (i >= frames.length - 1) {
-        if (fouled) foulSound();
-        setFrames(null);
-        return;
-      }
-      setFrame(i);
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => {
-      stopped = true;
-      cancelAnimationFrame(raf);
-    };
-  }, [frames]);
-
-  const shown = frames?.[frame] ?? state?.balls ?? [];
   const previewBalls = useMemo(
     () => freshTable(Uint8Array.from({ length: 32 }, (_, i) => (i * 17 + 3) & 255)).balls,
     [],
@@ -449,16 +444,21 @@ export function PoolMatch({ matchId }: { matchId: number }) {
               balls={previewBalls}
               angleMilli={0}
               power={5000}
+              spinX={0}
+              spinY={0}
               ghost={null}
               kitchenOnly={false}
               calledPocket={null}
               showAim
               showCue
-              rolling={false}
+              replay={null}
+              stroke={null}
               placing={false}
               legalAt={() => true}
               onAim={() => {}}
               onPlace={() => {}}
+              onSample={() => {}}
+              onReplayDone={() => {}}
             />
           </div>
         </div>
@@ -636,18 +636,23 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       >
         <div className="pool-felt-frame">
           <PoolTable
-            balls={shown}
+            balls={balls}
             angleMilli={angle}
             power={power}
+            spinX={spinX}
+            spinY={spinY}
             ghost={ghost}
             kitchenOnly={!!state?.kitchenOnly}
             calledPocket={called}
             showAim={!!mine && frames == null && aimAssist}
             showCue={!!mine && frames == null}
-            rolling={frames != null}
+            replay={frames}
+            stroke={stroke}
             legalAt={(x, y) => (state ? legalPlacement(state, x, y) : false)}
             placing={!!mine && !!state?.ballInHand}
             onAim={setAngle}
+            onSample={onSample}
+            onReplayDone={onReplayDone}
             onPlace={(x, y) => {
               if (state && legalPlacement(state, x, y)) setPlace({ x, y });
             }}
