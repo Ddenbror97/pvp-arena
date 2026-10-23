@@ -103,7 +103,7 @@ export const TUTORIAL_STEPS: readonly { title: string; body: string }[] = [
   },
   {
     title: "Add spin",
-    body: "Open Spin. Drag the red dot: up is follow, down is draw, sideways is side spin. Double-click the ball to clear it.",
+    body: "Open settings with the gear. Drag the red dot: up is follow, down is draw, sideways is side spin. Double-click the ball to clear it.",
   },
   {
     title: "Turns",

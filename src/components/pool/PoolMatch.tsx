@@ -1071,7 +1071,7 @@ function SeatCard({
       ? "Groups not chosen yet"
       : "Waiting for an opponent";
   return (
-    <div className={`pool-seat${align === "end" ? " is-end" : ""}${active ? " is-live" : ""}`}>
+    <div className={`pool-seat${align === "end" ? " is-end" : ""}`}>
       {align === "end" ? null : (
         <Face avatar={avatar} initial={initial} active={active} present={present} />
       )}

@@ -495,7 +495,6 @@ export function PoolTable({
   const blendRef = useRef<Ball[]>([]);
   const layerRef = useRef<BallLayer | null | undefined>(undefined);
   const offscreenRef = useRef<HTMLCanvasElement | null>(null);
-  const frameStamp = useRef(0);
   const cueIn = useRef(0);
   const cueWas = useRef(false);
   const [draft, setDraft] = useState<{ x: number; y: number } | null>(null);
@@ -578,10 +577,6 @@ export function PoolTable({
       }
 
       const now = performance.now();
-      if (frameStamp.current) {
-        canvas.dataset["frameMs"] = (now - frameStamp.current).toFixed(1);
-      }
-      frameStamp.current = now;
 
       const head = playRef.current;
       let shown: readonly Ball[] = balls;
@@ -784,7 +779,6 @@ export function PoolTable({
         usedGl = layer.draw(glSprites);
         if (usedGl) ctx.drawImage(offscreen, 0, 0);
       }
-      canvas.dataset["renderer"] = usedGl ? "webgl" : "canvas";
       if (!usedGl) {
         for (const sprite of sprites) {
           const p = project(sprite.x, sprite.y);
