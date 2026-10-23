@@ -198,7 +198,7 @@ export const GAME_FACT_PAGES: Record<string, GameFactPage> = {
     facts: [
       {
         label: "How you enter",
-        text: "Two players stake the same amount from a US-dollar balance. The stakes are $1, $2, $5, $10, $25 and $50. Join an open table, or play to take the oldest open table at that stake. There is no house opponent. Promo and partner credit can fund a stake. Deposited or won money is used first.",
+        text: "Two players stake the same amount from a US-dollar balance. You choose any amount from $1 to $50. Quick amounts are $1, $2, $5, $10, $25 and $50. Join an open table, or create a game, which takes the oldest open table at that stake. There is no house opponent. Promo and partner credit can fund a stake. Deposited or won money is used first.",
       },
       {
         label: "How the winner is chosen",

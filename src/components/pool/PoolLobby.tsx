@@ -8,7 +8,7 @@ import hero from "@/assets/pool/hero.webp";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { useAuth } from "@/lib/auth";
 import { STAKES, money, poolMessage, usePoolLobby, type OpenTable } from "@/lib/pool/api";
-import { formatCents, stakeQuote } from "@/lib/pool/copy";
+import { formatCents, parseStakeDollars, stakeDraft, stakeQuote } from "@/lib/pool/copy";
 import { enterPool } from "@/lib/pool/pool.functions";
 
 function timeLeft(iso: string, now: number): string {
@@ -29,18 +29,18 @@ export function PoolLobby() {
   const qc = useQueryClient();
   const lobby = usePoolLobby();
   const open = useServerFn(enterPool);
-  const [stake, setStake] = useState<number>(500);
+  const [draft, setDraft] = useState("5");
   const [busy, setBusy] = useState<number | "play" | null>(null);
   const keys = useRef(new Map<string, string>());
   const [now, setNow] = useState(() => Date.now());
   const stakes = lobby.data?.stakes?.length ? lobby.data.stakes : [...STAKES];
-  const quote = stakeQuote(stake);
+  const stakeMin = Math.min(...stakes);
+  const stakeMax = Math.max(...stakes);
+  const stake = parseStakeDollars(draft, stakeMin, stakeMax);
   const openTables = [...(lobby.data?.open ?? [])].sort((a, b) => {
-    const rank = (table: OpenTable) => (table.stake === stake ? 0 : 1);
+    const rank = (table: OpenTable) => (stake != null && table.stake === stake ? 0 : 1);
     return rank(a) - rank(b) || a.id - b.id;
   });
-  const recent = lobby.data?.recent ?? [];
-
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(id);
@@ -98,13 +98,16 @@ export function PoolLobby() {
           <button
             type="button"
             className="pool-play"
-            disabled={busy != null}
+            disabled={busy != null || stake == null}
             onMouseEnter={warmMatch}
             onFocus={warmMatch}
             onTouchStart={warmMatch}
-            onClick={() => void enter({ stake })}
+            onClick={() => {
+              if (stake == null) return;
+              void enter({ stake });
+            }}
           >
-            {busy === "play" ? "Finding a table…" : "Find a table"}
+            {busy === "play" ? "Creating…" : "Create game"}
             {busy === "play" ? null : <ArrowRight aria-hidden className="h-4 w-4" />}
           </button>
         </div>
@@ -165,18 +168,29 @@ export function PoolLobby() {
               key={cents}
               type="button"
               aria-pressed={stake === cents}
-              onClick={() => setStake(cents)}
+              onClick={() => setDraft(stakeDraft(cents))}
               className={stake === cents ? "pool-stake is-on" : "pool-stake"}
             >
               {money(cents)}
             </button>
           ))}
         </div>
-        <p className="pool-quote">
-          You stake {formatCents(quote.stake)}. Pot {formatCents(quote.pot)}. Fee{" "}
-          {formatCents(quote.fee)} (5%). Winner receives {formatCents(quote.payout)}. Play joins
-          the oldest open table at this stake, or opens one. An empty table refunds after 24 hours.
-        </p>
+        <label className={stake == null ? "pool-amount is-bad" : "pool-amount"}>
+          <span>$</span>
+          <input
+            inputMode="decimal"
+            autoComplete="off"
+            aria-label="Stake in dollars"
+            aria-invalid={stake == null}
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+          />
+        </label>
+        {stake == null ? (
+          <p className="pool-stake-hint">
+            Enter {formatCents(stakeMin)} to {formatCents(stakeMax)}.
+          </p>
+        ) : null}
       </div>
 
       <div className="pool-below">
@@ -187,7 +201,7 @@ export function PoolLobby() {
           </h2>
           <ul>
             {openTables.length === 0 ? (
-              <li>No open tables. Choose a stake and play to open one.</li>
+              <li>No open tables.</li>
             ) : (
               openTables.map((table) => {
                 const mine = table.creator_id === userId;
@@ -196,7 +210,7 @@ export function PoolLobby() {
                   <li
                     key={table.id}
                     className={
-                      table.stake === stake ? "pool-open is-stake" : "pool-open"
+                      stake != null && table.stake === stake ? "pool-open is-stake" : "pool-open"
                     }
                   >
                     <PlayerAvatar
@@ -242,29 +256,6 @@ export function PoolLobby() {
                   </li>
                 );
               })
-            )}
-          </ul>
-        </section>
-        <section className="pool-side" aria-labelledby="pool-settled">
-          <h2 id="pool-settled">Settled matches</h2>
-          <p className="pool-settled-note">
-            Fee on a finished match: {((lobby.data?.fee_bps ?? 500) / 100).toLocaleString("en-US")}%
-            of the pot. This list is what the lobby returns. It does not publish a break-win rate.
-          </p>
-          <ul>
-            {recent.length === 0 ? (
-              <li>No finished matches yet.</li>
-            ) : (
-              recent.map((match) => (
-                <li key={match.id}>
-                  <span>{match.winner ?? "Player"}</span>
-                  <span>
-                    {" "}
-                    won {money(match.payout_amount)} from a {money(match.pot)} pot
-                    {match.fee_amount != null ? ` after a ${money(match.fee_amount)} fee` : ""}
-                  </span>
-                </li>
-              ))
             )}
           </ul>
         </section>

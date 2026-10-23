@@ -2739,28 +2739,28 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
 .pool-hero-sub { margin: 0; font-size: 0.95rem; color: rgb(238 240 251 / 88%); }
 .pool-hero-art { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .pool-hero-player {
-  position: absolute; top: -8%; right: -18%; height: 118%; width: auto; max-width: none; opacity: 0.42;
-  object-fit: cover; object-position: 72% 18%;
-  mask-image: linear-gradient(90deg, transparent 0%, #000 28%, #000 78%, transparent 100%), linear-gradient(#000 62%, transparent 96%);
-  mask-composite: intersect; -webkit-mask-composite: source-in;
+  position: absolute; top: 0; right: 0; height: 100%; width: auto; max-width: 72%;
+  object-fit: contain; object-position: center right; opacity: 0.92;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 100%);
 }
 .pool-hero-ball { display: none; }
 .pool-hero-panel { display: none; }
 @media (min-width: 640px) {
   .pool-hero-copy { padding: 1.6rem 2rem; }
-  .pool-hero-player { right: -6%; height: 128%; opacity: 0.72; }
+  .pool-hero-player { max-width: 62%; opacity: 1; }
 }
 @media (min-width: 1024px) {
-  .pool-hero { grid-template-columns: minmax(18rem, 0.9fr) minmax(16rem, 1.15fr) 17.5rem; height: 15.5rem; }
+  .pool-hero { grid-template-columns: minmax(18rem, 0.9fr) minmax(18rem, 1.25fr) 17.5rem; height: 22rem; }
   .pool-hero-copy { padding: 1.6rem 2.25rem; }
   .pool-hero-art { position: relative; inset: auto; }
   .pool-hero-player {
-    left: 46%; right: auto; top: auto; bottom: -6%; height: 118%; width: 168%; max-width: none; opacity: 1;
-    transform: translateX(-58%); object-position: 70% 16%;
-    filter: drop-shadow(0 0 28px rgb(139 53 236 / 35%));
-    mask-image: linear-gradient(90deg, transparent 0%, #000 16%, #000 78%, transparent 96%), linear-gradient(#000 0 70%, transparent 98%);
+    left: 50%; right: auto; top: 0; height: 100%; width: 100%; max-width: 100%; opacity: 1;
+    transform: translateX(-50%); object-fit: contain; object-position: center;
+    filter: drop-shadow(0 0 28px rgb(139 53 236 / 28%));
+    mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
   }
-  .pool-hero-ball { display: block; }
   .pool-hero-panel {
     position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: center; margin: 1rem 1rem 1rem 0; padding: 0.9rem 0.7rem;
     border-radius: 1rem; border: 1px solid rgb(181 123 255 / 16%); background: rgb(8 7 26 / 72%); backdrop-filter: blur(6px);
@@ -2825,17 +2825,19 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
   box-shadow: 0 0 14px rgb(168 85 247 / 45%);
 }
 .pool-stake:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-.pool-quote {
-  flex: 1 1 16rem; margin: 0; font-size: 0.8rem; line-height: 1.4; color: #c9bddf;
+.pool-amount {
+  display: inline-flex; align-items: center; gap: 0.15rem; height: 2rem; padding: 0 0.75rem;
+  border-radius: 999px; border: 1px solid rgb(255 255 255 / 18%); background: rgb(8 4 20 / 48%); color: #fff;
 }
-.pool-settled-note {
-  margin: 0.35rem 0 0.65rem; font-size: 0.8rem; line-height: 1.45; color: #d7c4ff;
+.pool-amount span { font-family: var(--font-display); font-size: 0.8rem; color: #c58bff; }
+.pool-amount input {
+  width: 4.6rem; border: 0; padding: 0; background: transparent; color: inherit;
+  font-family: var(--font-display); font-size: 0.8rem; outline: none;
 }
+.pool-amount.is-bad { border-color: #f87171; }
+.pool-stake-hint { flex: 1 1 12rem; margin: 0; font-size: 0.78rem; color: #f0b4b4; }
 .pool-below {
   display: grid; gap: 0.75rem; padding: 0 0 1.25rem;
-}
-@media (min-width: 800px) {
-  .pool-below { grid-template-columns: 1fr 1fr; }
 }
 .pool-side {
   border-radius: 1rem; border: 1px solid rgb(255 255 255 / 8%); background: rgb(16 12 32 / 80%); padding: 0.9rem 1rem;
@@ -2874,6 +2876,53 @@ html[data-theme="light"] .poker-return { color: #065f46; border-color: rgb(5 150
 @media (min-width: 640px) {
   .pool-side li.pool-open { grid-template-columns: 2.4rem minmax(0, 1fr) auto; min-height: 3.5rem; }
   .pool-open-actions { grid-column: 3; grid-row: 1; }
+}
+/* Daylight lobby. The hero stays a dark banner. The page, stake bar, tables, and how-it-works stay light. */
+html[data-theme="light"] .pool-lobby-main {
+  color-scheme: light;
+  color: var(--foreground);
+  background:
+    radial-gradient(60rem 26rem at 50% -6rem, rgb(139 53 236 / 12%), transparent 70%),
+    linear-gradient(180deg, #f7f4fe, #f3f1f9 40rem);
+}
+html[data-theme="light"] .pool-hero { color: #f4f1ff; }
+html[data-theme="light"] .pool-buyin {
+  background: #fff;
+  border-color: rgb(109 40 217 / 16%);
+  box-shadow: 0 1px 3px rgb(30 20 70 / 6%);
+}
+html[data-theme="light"] .pool-stake {
+  color: #1b1636;
+  background: #f6f3ff;
+  border-color: rgb(109 40 217 / 18%);
+}
+html[data-theme="light"] .pool-stake.is-on {
+  color: #fff;
+  background: #7c3aed;
+  border-color: #7c3aed;
+  box-shadow: none;
+}
+html[data-theme="light"] .pool-amount {
+  color: #1b1636;
+  background: #fff;
+  border-color: rgb(109 40 217 / 22%);
+}
+html[data-theme="light"] .pool-side {
+  background: #fff;
+  border-color: rgb(109 40 217 / 14%);
+  box-shadow: 0 1px 3px rgb(30 20 70 / 6%);
+}
+html[data-theme="light"] .pool-side h2 { color: #6d28d9; }
+html[data-theme="light"] .pool-side li { color: #3f3a5c; }
+html[data-theme="light"] .pool-open-count { color: #1b1636; }
+html[data-theme="light"] .pool-open-who strong { color: #1b1636; }
+html[data-theme="light"] .pool-open-who span,
+html[data-theme="light"] .pool-open-time { color: #5f5b7d; }
+html[data-theme="light"] .pool-side li.pool-open { border-top-color: rgb(27 22 54 / 8%); }
+html[data-theme="light"] .pool-side li.pool-open.is-stake { background: rgb(124 58 237 / 8%); }
+html[data-theme="light"] .pool-facts section {
+  background: #fff;
+  color: var(--foreground);
 }
 /* ---- 8 Pool match, edge to edge under the header ---- */
 html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behavior: none; }

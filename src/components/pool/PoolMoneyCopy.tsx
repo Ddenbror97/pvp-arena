@@ -17,7 +17,7 @@ export const POOL_FAQS = [
   },
   {
     q: "What does a crypto 8 ball pool wager cost?",
-    a: "The stakes are $1, $2, $5, $10, $25 and $50. Bitcoin, USDC or ETH on Base can fund the US-dollar balance. They are not a separate playable balance. Promo credit and partner credit can fund a stake. Deposited or won money is used first, and bonus you lose to the other player stays bonus.",
+    a: "You choose any amount from $1 to $50. Quick amounts are $1, $2, $5, $10, $25 and $50. Bitcoin, USDC or ETH on Base can fund the US-dollar balance. They are not a separate playable balance. Promo credit and partner credit can fund a stake. Deposited or won money is used first, and bonus you lose to the other player stays bonus.",
   },
   {
     q: "Is betting on pool legal?",

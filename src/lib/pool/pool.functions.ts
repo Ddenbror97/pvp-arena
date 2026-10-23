@@ -2,12 +2,13 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { requireLiveSession } from "@/integrations/supabase/live-session";
+import { POOL_STAKE_MAX, POOL_STAKE_MIN } from "./copy";
 import type { ShotInput } from "./physics";
 import { confirmedWinner, playShot } from "./play";
 import { freshTable, seedHash, type TableState } from "./rules";
 import { bytesFromHex, stepsFromRecord } from "./verify";
 
-const stakeSchema = z.number().int().positive();
+const stakeSchema = z.number().int().min(POOL_STAKE_MIN).max(POOL_STAKE_MAX);
 const keySchema = z.string().min(8).max(100);
 const shotSchema = z.object({
   angleMilli: z.number().int().min(0).max(359_999),

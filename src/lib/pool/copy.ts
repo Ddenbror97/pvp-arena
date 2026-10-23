@@ -1,6 +1,28 @@
 /** House fee is 500 basis points of the pot. Integer cents, same as settlement. */
 export const FEE_BPS = 500;
 
+/** Inclusive stake range. Matches the min and max of pool_config.stakes. */
+export const POOL_STAKE_MIN = 100;
+export const POOL_STAKE_MAX = 5000;
+
+/** Dollars typed in the lobby, as integer cents. Null when the amount is outside the range. */
+export function parseStakeDollars(
+  raw: string,
+  min = POOL_STAKE_MIN,
+  max = POOL_STAKE_MAX,
+): number | null {
+  const t = raw.trim().replace(/^\$/, "");
+  if (!/^\d{1,3}(\.\d{1,2})?$/.test(t)) return null;
+  const [whole, frac = ""] = t.split(".");
+  const cents = Number(whole) * 100 + Number(frac.padEnd(2, "0"));
+  if (!Number.isInteger(cents) || cents < min || cents > max) return null;
+  return cents;
+}
+
+export function stakeDraft(cents: number): string {
+  return (cents / 100).toFixed(cents % 100 === 0 ? 0 : 2);
+}
+
 export function formatCents(cents: number): string {
   return `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }

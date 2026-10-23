@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { matchNotice, spinSentence, stakeQuote, winSentence } from "../src/lib/pool/copy";
+import { matchNotice, parseStakeDollars, spinSentence, stakeDraft, stakeQuote, winSentence } from "../src/lib/pool/copy";
 
 const STAKES = [100, 200, 500, 1000, 2500, 5000];
 
@@ -33,6 +33,22 @@ describe("stake quote", () => {
       expect(quote.fee).toBe(Math.floor((quote.pot * 500) / 10_000));
     }
     expect(stakeQuote(500)).toEqual({ stake: 500, pot: 1000, fee: 50, payout: 950 });
+  });
+
+  it("reads a typed dollar stake inside $1 to $50", () => {
+    expect(parseStakeDollars("5")).toBe(500);
+    expect(parseStakeDollars("$10")).toBe(1000);
+    expect(parseStakeDollars("1.5")).toBe(150);
+    expect(parseStakeDollars("1.01")).toBe(101);
+    expect(parseStakeDollars("50")).toBe(5000);
+    expect(parseStakeDollars("1")).toBe(100);
+    expect(stakeDraft(500)).toBe("5");
+    expect(stakeDraft(150)).toBe("1.50");
+    expect(parseStakeDollars("0.50")).toBeNull();
+    expect(parseStakeDollars("51")).toBeNull();
+    expect(parseStakeDollars("5.555")).toBeNull();
+    expect(parseStakeDollars("")).toBeNull();
+    expect(parseStakeDollars("12", 100, 1000)).toBeNull();
   });
 });
 

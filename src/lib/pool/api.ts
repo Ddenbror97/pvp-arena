@@ -84,7 +84,7 @@ const MESSAGES: Record<string, string> = {
   PROFILE_REQUIRED: "Finish your profile first.",
   SELF_EXCLUDED: "Your account is self-excluded.",
   REAL_MONEY_DISABLED: "Real-money play is paused.",
-  STAKE_NOT_ALLOWED: "That stake is not offered.",
+  STAKE_NOT_ALLOWED: "Enter a stake from $1 to $50.",
   INSUFFICIENT_BALANCE: "Not enough available balance.",
   CASH_ONLY_BUY_IN: "Pool uses withdrawable cash. Bonus credit is not a stake.",
   ALREADY_IN_MATCH: "Finish your current match first.",
