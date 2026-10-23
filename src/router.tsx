@@ -61,6 +61,7 @@ export const getRouter = () => {
       prefetchGamePage(queryClient, "/roulette");
       prefetchGamePage(queryClient, "/slott");
       prefetchGamePage(queryClient, "/poker");
+      prefetchGamePage(queryClient, "/8-ball-pool");
     };
     const idle = (
       window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void }

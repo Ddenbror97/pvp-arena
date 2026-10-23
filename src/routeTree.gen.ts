@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as R8BallPoolRouteImport } from './routes/8-ball-pool'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -61,6 +62,11 @@ import { Route as ApiPublicAvatarStyleSeedRouteImport } from './routes/api/publi
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const R8BallPoolRoute = R8BallPoolRouteImport.update({
+  id: '/8-ball-pool',
+  path: '/8-ball-pool',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -309,6 +315,7 @@ const ApiPublicAvatarStyleSeedRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/8-ball-pool': typeof R8BallPoolRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/coinflip': typeof CoinflipRouteWithChildren
@@ -358,6 +365,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/8-ball-pool': typeof R8BallPoolRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/coinflip': typeof CoinflipRouteWithChildren
@@ -409,6 +417,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/8-ball-pool': typeof R8BallPoolRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/coinflip': typeof CoinflipRouteWithChildren
@@ -460,6 +469,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/8-ball-pool'
     | '/about'
     | '/auth'
     | '/coinflip'
@@ -509,6 +519,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/8-ball-pool'
     | '/about'
     | '/auth'
     | '/coinflip'
@@ -559,6 +570,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/8-ball-pool'
     | '/about'
     | '/auth'
     | '/coinflip'
@@ -610,6 +622,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  R8BallPoolRoute: typeof R8BallPoolRoute
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   CoinflipRoute: typeof CoinflipRouteWithChildren
@@ -651,6 +664,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/8-ball-pool': {
+      id: '/8-ball-pool'
+      path: '/8-ball-pool'
+      fullPath: '/8-ball-pool'
+      preLoaderRoute: typeof R8BallPoolRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -1069,6 +1089,7 @@ const SlottRouteWithChildren = SlottRoute._addFileChildren(SlottRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  R8BallPoolRoute: R8BallPoolRoute,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   CoinflipRoute: CoinflipRouteWithChildren,

@@ -23,7 +23,7 @@ const HeaderWallet = lazy(() =>
 
 const GAMES = [
   ["/poker", "Poker lobby"],
-  ["/pool", "8-ball"],
+  ["/8-ball-pool", "8-ball"],
   ["/", "Jackpot"],
   ["/coinflip", "Coinflip"],
   ["/roulette", "Roulette"],

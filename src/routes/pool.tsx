@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, useMatch } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect, useMatch } from "@tanstack/react-router";
 import hero from "@/assets/pool/hero.webp";
 import { GameFacts } from "@/components/seo/GameFacts";
 import { PoolLobby } from "@/components/pool/PoolLobby";
@@ -6,6 +6,10 @@ import { indexableHead } from "@/lib/seo/indexable-head";
 import { loadPoolPaint, useQuerySeed } from "@/lib/first-paint";
 
 export const Route = createFileRoute("/pool")({
+  beforeLoad: ({ location }) => {
+    const path = location.pathname.replace(/\/$/, "") || "/";
+    if (path === "/pool") throw redirect({ to: "/8-ball-pool", statusCode: 301 });
+  },
   head: () =>
     indexableHead({
       path: "/pool",

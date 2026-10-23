@@ -771,6 +771,45 @@ import { guide as ngSlotBattles } from "./slot-battles";
 import { guide as ngCodWagers } from "./cod-wagers";
 import { guide as ngPlayChessForMoney } from "./play-chess-for-money";
 import { guide as ngEightBallPoolForMoney } from "./8-ball-pool-for-money";
+import { guide as pool8BallPoolHub } from "./8-ball-pool-hub";
+import { guide as poolPoolBetting } from "./pool-betting";
+import { guide as pool8BallPoolRealMoney } from "./8-ball-pool-real-money";
+import { guide as poolCrypto8BallPool } from "./crypto-8-ball-pool";
+import { guide as poolPoolGamesForMoney } from "./pool-games-for-money";
+import { guide as poolPoolCashAppReview } from "./pool-cash-app-review";
+import { guide as poolIs8BallPoolRigged } from "./is-8-ball-pool-rigged";
+import { guide as poolPoolHustling } from "./pool-hustling";
+import { guide as poolSkillGamesForMoneyPool } from "./skill-games-for-money-pool";
+import { guide as pool8BallPoolFreeCoins } from "./8-ball-pool-free-coins";
+import { guide as pool8BallPoolUnblocked } from "./8-ball-pool-unblocked";
+import { guide as pool8BallPoolRules } from "./8-ball-pool-rules";
+import { guide as poolPoolScratchRules } from "./pool-scratch-rules";
+import { guide as pool9BallRules } from "./9-ball-rules";
+import { guide as pool10BallPool } from "./10-ball-pool";
+import { guide as poolStraightPool } from "./straight-pool";
+import { guide as poolCutthroatPool } from "./cutthroat-pool";
+import { guide as poolOnePocketPool } from "./one-pocket-pool";
+import { guide as poolBankPool } from "./bank-pool";
+import { guide as poolKillerPool } from "./killer-pool";
+import { guide as poolPoolVsSnooker } from "./pool-vs-snooker";
+import { guide as poolHowToWin8BallPool } from "./how-to-win-8-ball-pool";
+import { guide as pool8BallPoolBreak } from "./8-ball-pool-break";
+import { guide as pool8BallPoolAim } from "./8-ball-pool-aim";
+import { guide as poolPoolShots } from "./pool-shots";
+import { guide as poolPoolTerminology } from "./pool-terminology";
+import { guide as poolFargoRate } from "./fargo-rate";
+import { guide as poolBestPoolCue } from "./best-pool-cue";
+import { guide as poolPoolTableSize } from "./pool-table-size";
+import { guide as poolPoolTournaments } from "./pool-tournaments";
+import { guide as poolUsOpenPool } from "./us-open-pool";
+import { guide as poolMosconiCup } from "./mosconi-cup";
+import { guide as poolApaPoolLeague } from "./apa-pool-league";
+import { guide as pool8BallPool1v1 } from "./8-ball-pool-1v1";
+import { guide as pool8BallPoolCasino } from "./8-ball-pool-casino";
+import { guide as poolBestPoolGames } from "./best-pool-games";
+import { guide as pool8BallStrikeReview } from "./8-ball-strike-review";
+import { guide as pool8BallPoolDiscord } from "./8-ball-pool-discord";
+import { guide as pool8BallPoolRank } from "./8-ball-pool-rank";
 import { guide as ngEscrowBetting } from "./escrow-betting";
 import { guide as ngP2pBettingApp } from "./p2p-betting-app";
 import { guide as ngFiftyFiftyRaffle } from "./50-50-raffle";
@@ -1872,6 +1911,45 @@ export const GUIDES: Guide[] = [
   ngCodWagers,
   ngPlayChessForMoney,
   ngEightBallPoolForMoney,
+  pool8BallPoolHub,
+  poolPoolBetting,
+  pool8BallPoolRealMoney,
+  poolCrypto8BallPool,
+  poolPoolGamesForMoney,
+  poolPoolCashAppReview,
+  poolIs8BallPoolRigged,
+  poolPoolHustling,
+  poolSkillGamesForMoneyPool,
+  pool8BallPoolFreeCoins,
+  pool8BallPoolUnblocked,
+  pool8BallPoolRules,
+  poolPoolScratchRules,
+  pool9BallRules,
+  pool10BallPool,
+  poolStraightPool,
+  poolCutthroatPool,
+  poolOnePocketPool,
+  poolBankPool,
+  poolKillerPool,
+  poolPoolVsSnooker,
+  poolHowToWin8BallPool,
+  pool8BallPoolBreak,
+  pool8BallPoolAim,
+  poolPoolShots,
+  poolPoolTerminology,
+  poolFargoRate,
+  poolBestPoolCue,
+  poolPoolTableSize,
+  poolPoolTournaments,
+  poolUsOpenPool,
+  poolMosconiCup,
+  poolApaPoolLeague,
+  pool8BallPool1v1,
+  pool8BallPoolCasino,
+  poolBestPoolGames,
+  pool8BallStrikeReview,
+  pool8BallPoolDiscord,
+  pool8BallPoolRank,
   ngEscrowBetting,
   ngP2pBettingApp,
   ngFiftyFiftyRaffle,

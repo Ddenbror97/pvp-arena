@@ -467,7 +467,7 @@ function HowItWorksPage() {
                 <strong>Fee:</strong> 5% of the pot when someone wins. A cancel refunds both stakes.
               </li>
             </ol>
-            <SeoLink to="/pool">Open the 8-ball lobby</SeoLink>
+            <SeoLink to="/8-ball-pool">Open the 8-ball lobby</SeoLink>
           </SeoCard>
         </SeoGrid>
       </SeoSection>
