@@ -19,10 +19,9 @@ import { nudgePoolStandIn, openPool, submitPoolShot } from "@/lib/pool/pool.func
 import { standInDue } from "@/lib/pool/stand-in";
 import { playShot } from "@/lib/pool/play";
 import {
-  BALL_R,
+  PHYSICS_V5,
   POCKETS,
-  TABLE_H,
-  TABLE_W,
+  cushionLimit,
   simulate,
   type Ball,
   type ShotInput,
@@ -167,7 +166,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const updatedAt = query.dataUpdatedAt;
   const noiseAt = useRef(0);
   const onSample = useCallback((prev: readonly Ball[], next: readonly Ball[]) => {
-    const hit = impactOf(prev, next);
+    const hit = impactOf(prev, next, physicsId);
     const now = performance.now();
     if (hit.pocket) {
       pocketSound();
@@ -181,7 +180,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       cushionSound(Math.min(1, hit.rail / 9000));
       noiseAt.current = now;
     }
-  }, []);
+  }, [physicsId]);
   const onReplayDone = useCallback((finished?: readonly Ball[][] | null) => {
     if (finished && finished !== framesRef.current) return;
     if (previewKey.current && !serverReady.current) {
@@ -1102,7 +1101,7 @@ function SeatCard({
   );
 }
 
-function impactOf(prev: readonly Ball[], next: readonly Ball[]) {
+function impactOf(prev: readonly Ball[], next: readonly Ball[], physics: string | null) {
   let pocket = false;
   let ball = 0;
   let rail = 0;
@@ -1114,11 +1113,12 @@ function impactOf(prev: readonly Ball[], next: readonly Ball[]) {
     const after = Math.hypot(nb.vx, nb.vy);
     const drop = before - after;
     if (drop < 700 || before < 1200) continue;
+    const wall = cushionLimit(physics ?? PHYSICS_V5);
     const nearRail =
-      nb.x < BALL_R + 14_000 ||
-      nb.y < BALL_R + 14_000 ||
-      nb.x > TABLE_W - BALL_R - 14_000 ||
-      nb.y > TABLE_H - BALL_R - 14_000;
+      nb.x < wall.minX + 14_000 ||
+      nb.y < wall.minY + 14_000 ||
+      nb.x > wall.maxX - 14_000 ||
+      nb.y > wall.maxY - 14_000;
     if (nearRail) rail = Math.max(rail, drop);
     else ball = Math.max(ball, drop);
   }

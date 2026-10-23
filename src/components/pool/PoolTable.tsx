@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import {
   BALL_R,
+  PHYSICS_V5,
+  cushionLimit,
   cosMicro,
   POCKETS,
   sinMicro,
@@ -538,11 +540,12 @@ export function PoolTable({
       ctx.clearRect(0, 0, w, h);
       if (cacheRef.current) ctx.drawImage(cacheRef.current.canvas, 0, 0);
 
+      const felt = cushionLimit(PHYSICS_V5);
       if (kitchenOnly && placing) {
-        const a = project(TABLE_W / 4, 0);
-        const b = project(TABLE_W, 0);
-        const c = project(TABLE_W, TABLE_H);
-        const d = project(TABLE_W / 4, TABLE_H);
+        const a = project(TABLE_W / 4, felt.minY);
+        const b = project(felt.maxX, felt.minY);
+        const c = project(felt.maxX, felt.maxY);
+        const d = project(TABLE_W / 4, felt.maxY);
         ctx.fillStyle = "rgba(0,0,0,0.16)";
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
@@ -553,8 +556,8 @@ export function PoolTable({
         ctx.fill();
       }
       if (kitchenOnly) {
-        const left = project(TABLE_W / 4, BALL_R);
-        const right = project(TABLE_W / 4, TABLE_H - BALL_R);
+        const left = project(TABLE_W / 4, felt.minY);
+        const right = project(TABLE_W / 4, felt.maxY);
         ctx.strokeStyle = "rgba(255,255,255,0.32)";
         ctx.lineWidth = Math.max(1, dpr);
         ctx.setLineDash([5 * dpr, 7 * dpr]);

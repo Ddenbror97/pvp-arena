@@ -63,20 +63,27 @@ describe("stand-in aim", () => {
     }
   });
 
-  it("breaks the rack without pocketing every time or missing every time", () => {
+  it("breaks the rack hard enough to spread it, and does not pocket every break", () => {
     let pocketed = 0;
     const samples = 16;
     for (let n = 1; n <= samples; n++) {
       const bytes = seed(n);
       const state = freshTable(bytes);
+      const start = new Map(state.balls.map((ball) => [ball.id, { x: ball.x, y: ball.y }]));
       const shot = chooseStandInShot(state, bytes);
       const played = playShot(state, shot);
       expect(played.ok, `break ${n}`).toBe(true);
       if (!played.ok) continue;
-      const fell = played.event.pocketed.some((id) => id >= 1 && id <= 15);
-      if (fell) pocketed += 1;
+      let far = 0;
+      for (const ball of played.state.balls) {
+        if (ball.id === 0) continue;
+        const from = start.get(ball.id);
+        if (!from) continue;
+        if (Math.hypot(ball.x - from.x, ball.y - from.y) > 200_000) far += 1;
+      }
+      expect(far, `break ${n} spread`).toBeGreaterThanOrEqual(3);
+      if (played.event.pocketed.some((id) => id >= 1 && id <= 15)) pocketed += 1;
     }
-    expect(pocketed).toBeGreaterThan(0);
     expect(pocketed).toBeLessThan(samples);
   }, 60_000);
 

@@ -25,6 +25,7 @@
 import { sha256Hex } from "@/lib/fairness/core";
 import {
   BALL_R,
+  cushionLimit,
   PHYSICS_VERSION,
   TABLE_H,
   TABLE_W,
@@ -249,7 +250,8 @@ export function overlaps(balls: readonly Ball[], x: number, y: number, ignore: n
 
 export function legalPlacement(state: TableState, x: number, y: number): boolean {
   if (!Number.isInteger(x) || !Number.isInteger(y)) return false;
-  if (x < BALL_R || y < BALL_R || x > TABLE_W - BALL_R || y > TABLE_H - BALL_R) return false;
+  const wall = cushionLimit(state.physics);
+  if (x < wall.minX || y < wall.minY || x > wall.maxX || y > wall.maxY) return false;
   if (state.kitchenOnly && x > Math.floor(TABLE_W / 4)) return false;
   return !overlaps(state.balls, x, y, 0);
 }

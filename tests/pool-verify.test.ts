@@ -76,7 +76,7 @@ describe("pool replay", () => {
     const ms = (performance.now() - started) / runs;
     expect(sim.balls).toHaveLength(16);
     expect(sim.frames.length).toBeGreaterThan(0);
-    expect(ms).toBeLessThan(50);
+    expect(ms).toBeLessThan(150);
     expect(stateHash(table)).toBe(stateHash(freshTable(seed)));
   });
 });

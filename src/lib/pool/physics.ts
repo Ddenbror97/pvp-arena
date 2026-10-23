@@ -1,5 +1,5 @@
 /**
- * Integer micrometre pool physics. A new rack stores pool-phys-v4.
+ * Integer micrometre pool physics. A new rack stores pool-phys-v5.
  * Older ids stay so a match already stamped with them replays under the
  * launch and drag it started with.
  *
@@ -14,8 +14,29 @@ export const PHYSICS_V1 = "pool-phys-v1";
 export const PHYSICS_V2 = "pool-phys-v2";
 export const PHYSICS_V3 = "pool-phys-v3";
 export const PHYSICS_V4 = "pool-phys-v4";
-export const PHYSICS_VERSION = PHYSICS_V4;
-export type PhysicsId = typeof PHYSICS_V1 | typeof PHYSICS_V2 | typeof PHYSICS_V3 | typeof PHYSICS_V4;
+/** v5 keeps the v4 launch and stops the ball on the cushion nose of the table art. */
+export const PHYSICS_V5 = "pool-phys-v5";
+export const PHYSICS_VERSION = PHYSICS_V5;
+export type PhysicsId = typeof PHYSICS_V1 | typeof PHYSICS_V2 | typeof PHYSICS_V3 | typeof PHYSICS_V4 | typeof PHYSICS_V5;
+
+/**
+ * How far the ball edge sits inside the old rectangle, in micrometres.
+ * Measured on table.webp: the dark cushion nose is inside the cloth rectangle
+ * that was fitted to the pocket holes. Left 114, right 1605, top 117, bottom 766.
+ */
+export const CUSHION_V5 = { left: 59_642, right: 58_288, top: 63_875, bottom: 58_570 } as const;
+
+export function cushionLimit(physics: string = PHYSICS_VERSION) {
+  if (physics === PHYSICS_V5) {
+    return {
+      minX: CUSHION_V5.left + BALL_R,
+      maxX: TABLE_W - CUSHION_V5.right - BALL_R,
+      minY: CUSHION_V5.bottom + BALL_R,
+      maxY: TABLE_H - CUSHION_V5.top - BALL_R,
+    };
+  }
+  return { minX: BALL_R, maxX: TABLE_W - BALL_R, minY: BALL_R, maxY: TABLE_H - BALL_R };
+}
 
 export const TABLE_W = 2_540_000;
 export const TABLE_H = 1_270_000;
@@ -118,19 +139,23 @@ function pocketId(b: Ball): number | null {
   return null;
 }
 
-/** Ball centre sits in a pocket mouth, where the cushion does not bounce. */
-export function cushionOpen(x: number, y: number): boolean {
+/**
+ * Ball centre sits in a pocket mouth, where the cushion does not bounce.
+ * v5 jaws reach the nose, because that nose is in front of the side pockets.
+ */
+export function cushionOpen(x: number, y: number, physics = PHYSICS_VERSION): boolean {
+  const jaw = physics === PHYSICS_V5 ? 28_000 : 22_000;
   for (const p of POCKETS) {
     const dx = x - p.x;
     const dy = y - p.y;
-    const mouth = p.r + 22_000;
+    const mouth = p.r + jaw;
     if (dx * dx + dy * dy <= mouth * mouth) return true;
   }
   return false;
 }
 
-function nearPocket(b: Ball): boolean {
-  return cushionOpen(b.x, b.y);
+function nearPocket(b: Ball, physics: string): boolean {
+  return cushionOpen(b.x, b.y, physics);
 }
 
 function resolvePair(a: Ball, b: Ball, first: { id: number | null }, follow: number): boolean {
@@ -172,25 +197,35 @@ function resolvePair(a: Ball, b: Ball, first: { id: number | null }, follow: num
   return true;
 }
 
-function bounce(b: Ball, rails: Set<number>, hitObject: boolean, railAfter: { on: boolean }) {
+function bounce(
+  b: Ball,
+  rails: Set<number>,
+  hitObject: boolean,
+  railAfter: { on: boolean },
+  physics: string,
+) {
   if (b.pocketed) return;
-  const left = BALL_R;
-  const right = TABLE_W - BALL_R;
-  const top = BALL_R;
-  const bottom = TABLE_H - BALL_R;
-  const open = nearPocket(b);
+  const wall = cushionLimit(physics);
+  const left = wall.minX;
+  const right = wall.maxX;
+  const top = wall.minY;
+  const bottom = wall.maxY;
+  const open = nearPocket(b, physics);
   const speed = isqrt(b.vx * b.vx + b.vy * b.vy);
   const english = Math.trunc((b.spin * speed) / 5000);
   let hit = false;
+  // v5 pocket centres sit past the nose. A ball in the jaw keeps going so it
+  // can fall in. Older racks still pull a jaw ball back to the outer wall.
+  const hold = open && physics === PHYSICS_V5;
   if (b.x < left) {
-    b.x = left;
+    if (!hold) b.x = left;
     if (!open) {
       b.vx = -Math.trunc((b.vx * 750) / 1000);
       b.vy += english;
       hit = true;
     }
   } else if (b.x > right) {
-    b.x = right;
+    if (!hold) b.x = right;
     if (!open) {
       b.vx = -Math.trunc((b.vx * 750) / 1000);
       b.vy -= english;
@@ -198,14 +233,14 @@ function bounce(b: Ball, rails: Set<number>, hitObject: boolean, railAfter: { on
     }
   }
   if (b.y < top) {
-    b.y = top;
+    if (!hold) b.y = top;
     if (!open) {
       b.vy = -Math.trunc((b.vy * 750) / 1000);
       b.vx += english;
       hit = true;
     }
   } else if (b.y > bottom) {
-    b.y = bottom;
+    if (!hold) b.y = bottom;
     if (!open) {
       b.vy = -Math.trunc((b.vy * 750) / 1000);
       b.vx -= english;
@@ -225,7 +260,9 @@ function bounce(b: Ball, rails: Set<number>, hitObject: boolean, railAfter: { on
  */
 export function rollDrop(speed: number, physics = PHYSICS_VERSION): number {
   if (physics === PHYSICS_V1) return 32 + Math.trunc(speed / 160);
-  if (physics === PHYSICS_V3 || physics === PHYSICS_V4) return 2 + Math.trunc(speed / 1_500);
+  if (physics === PHYSICS_V3 || physics === PHYSICS_V4 || physics === PHYSICS_V5) {
+    return 2 + Math.trunc(speed / 1_500);
+  }
   return 4 + Math.trunc(speed / 900);
 }
 
@@ -239,10 +276,10 @@ export function launchSpeed(power: number, physics = PHYSICS_VERSION): number {
   const clamped = Math.max(1, Math.min(10_000, power | 0));
   const base = Math.trunc((clamped * MAX_SPEED) / 10_000);
   const boosted =
-    (physics === PHYSICS_V3 || physics === PHYSICS_V4) && clamped > 6_000
+    (physics === PHYSICS_V3 || physics === PHYSICS_V4 || physics === PHYSICS_V5) && clamped > 6_000
       ? base + Math.trunc(((clamped - 6_000) * 14_000) / 4_000)
       : base;
-  if (physics !== PHYSICS_V4) return boosted;
+  if (physics !== PHYSICS_V4 && physics !== PHYSICS_V5) return boosted;
   return Math.max(1, Math.trunc((boosted * 60) / 100));
 }
 
@@ -326,7 +363,7 @@ function advance(
       if (b.id === 0) scratched = true;
       continue;
     }
-    bounce(b, rails, hitObject, railAfter);
+    bounce(b, rails, hitObject, railAfter, physics);
     damp(b, physics);
   }
   return { moving: true, scratched };
@@ -417,13 +454,15 @@ function unitVelocity(vx: number, vy: number): AimPoint {
 function railBounce(
   before: { vx: number; vy: number },
   after: { vx: number; vy: number; x: number; y: number; pocketed: boolean },
+  physics: string,
 ): boolean {
   if (after.pocketed) return false;
   const flipX = before.vx !== 0 && after.vx !== 0 && Math.sign(before.vx) !== Math.sign(after.vx);
   const flipY = before.vy !== 0 && after.vy !== 0 && Math.sign(before.vy) !== Math.sign(after.vy);
   if (!flipX && !flipY) return false;
-  const onX = after.x <= BALL_R + 4 || after.x >= TABLE_W - BALL_R - 4;
-  const onY = after.y <= BALL_R + 4 || after.y >= TABLE_H - BALL_R - 4;
+  const wall = cushionLimit(physics);
+  const onX = after.x <= wall.minX + 4 || after.x >= wall.maxX - 4;
+  const onY = after.y <= wall.minY + 4 || after.y >= wall.maxY - 4;
   return (flipX && onX) || (flipY && onY);
 }
 
@@ -501,9 +540,9 @@ export function traceAim(
         cueStop = { x: cue.x, y: cue.y };
         break;
       }
-      if (railBounce({ vx: prev.vx[0] ?? 0, vy: prev.vy[0] ?? 0 }, cue)) {
+      if (railBounce({ vx: prev.vx[0] ?? 0, vy: prev.vy[0] ?? 0 }, cue, physics)) {
         cueStop = { x: cue.x, y: cue.y };
-        cueBank = cushionOpen(cue.x, cue.y)
+        cueBank = cushionOpen(cue.x, cue.y, physics)
           ? null
           : { at: cueStop, dir: unitVelocity(cue.vx, cue.vy) };
         break;
@@ -518,9 +557,9 @@ export function traceAim(
       break;
     }
     const before = { vx: prev.vx[obj.id] ?? 0, vy: prev.vy[obj.id] ?? 0 };
-    if (railBounce(before, obj)) {
+    if (railBounce(before, obj, physics)) {
       objectStop = { x: obj.x, y: obj.y };
-      objectBank = cushionOpen(obj.x, obj.y)
+      objectBank = cushionOpen(obj.x, obj.y, physics)
         ? null
         : { at: objectStop, dir: unitVelocity(obj.vx, obj.vy) };
       break;

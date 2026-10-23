@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import { identityOrientation, rollOrientation } from "../src/lib/pool/spheres";
 import {
   BALL_R,
+  PHYSICS_V5,
   TABLE_H,
   TABLE_W,
+  cushionLimit,
   simulate,
   traceAim,
   type Ball,
@@ -65,7 +67,8 @@ describe("pool aim trace", () => {
     expect(trace?.cuePocketed).toBe(false);
     expect(trace?.cueBank).not.toBeNull();
     expect(trace!.cueBank!.dir.x).toBeLessThan(0);
-    expect(trace!.cueStop.x).toBeGreaterThan(TABLE_W - BALL_R * 2);
+    expect(trace!.cueStop.x).toBeGreaterThan(cushionLimit(PHYSICS_V5).maxX - 40_000);
+    expect(trace!.cueStop.x).toBeLessThanOrEqual(cushionLimit(PHYSICS_V5).maxX);
   });
 
   it("does not draw a bank when the cue is headed into the side pocket", () => {

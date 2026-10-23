@@ -3,6 +3,7 @@ import { TABLE_H, TABLE_W } from "./physics";
 /**
  * Physics cloth on `src/assets/pool/table.webp` (1721×914).
  * Fit to the six holes in that art. A pocket centre lands within about 3px.
+ * The cushion nose is inside this rectangle. pool-phys-v5 stops the ball there.
  * The art is wider than the 2:1 cloth, so it is drawn with separate X and Y
  * scales. Balls stay round because the view scale does not change.
  */

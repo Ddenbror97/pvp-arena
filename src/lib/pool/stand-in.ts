@@ -3,7 +3,7 @@
  * The stored shot is exact and replayable. The miss is in the aim that was
  * chosen, not in the physics. The same seed and rack always pick the same shot.
  */
-import { BALL_R, POCKETS, TABLE_H, TABLE_W, simulate, type Ball, type ShotInput } from "./physics";
+import { BALL_R, POCKETS, TABLE_H, TABLE_W, cushionLimit, simulate, type Ball, type ShotInput } from "./physics";
 import { groupClear, groupOf, legalPlacement, seatGroup, type TableState } from "./rules";
 
 export const STAND_IN_THINK_MS = 6_000;
@@ -138,7 +138,8 @@ function linesFrom(state: TableState, cue: Ball, ids: readonly number[]): Line[]
       const uy = pdy / plen;
       const gx = ball.x - ux * BALL_R * 2;
       const gy = ball.y - uy * BALL_R * 2;
-      if (gx < BALL_R || gy < BALL_R || gx > TABLE_W - BALL_R || gy > TABLE_H - BALL_R) continue;
+      const wall = cushionLimit(state.physics);
+      if (gx < wall.minX || gy < wall.minY || gx > wall.maxX || gy > wall.maxY) continue;
       const cdx = gx - cue.x;
       const cdy = gy - cue.y;
       const clen = hypot(cdx, cdy);
@@ -198,10 +199,11 @@ function easeScratch(state: TableState, shot: ShotInput): ShotInput {
 }
 
 function breakShot(state: TableState, cue: Ball, rng: Rng): ShotInput {
+  const wall = cushionLimit(state.physics);
   let x = Math.floor(TABLE_W / 4) - BALL_R - Math.round(rng() * 70_000);
   let y = Math.floor(TABLE_H / 2) + Math.round((rng() - 0.5) * 150_000);
-  x = Math.max(BALL_R + 2_000, Math.min(Math.floor(TABLE_W / 4), x));
-  y = Math.max(BALL_R + 2_000, Math.min(TABLE_H - BALL_R - 2_000, y));
+  x = Math.max(wall.minX + 2_000, Math.min(Math.floor(TABLE_W / 4), x));
+  y = Math.max(wall.minY + 2_000, Math.min(wall.maxY - 2_000, y));
   if (!legalPlacement(state, x, y)) {
     x = cue.x;
     y = cue.y;

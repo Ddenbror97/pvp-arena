@@ -5,7 +5,9 @@ import {
   PHYSICS_V2,
   PHYSICS_V3,
   PHYSICS_V4,
+  PHYSICS_V5,
   POCKETS,
+  cushionLimit,
   TABLE_H,
   TABLE_W,
   cosMicro,
@@ -134,12 +136,15 @@ describe("pool physics", () => {
     expect(launchSpeed(10_000, PHYSICS_V4)).toBe(16_800);
     expect(launchSpeed(6_000, PHYSICS_V4)).toBe(5_040);
     expect(launchSpeed(1, PHYSICS_V4)).toBe(1);
+    expect(launchSpeed(10_000, PHYSICS_V5)).toBe(16_800);
+    expect(launchSpeed(6_000, PHYSICS_V5)).toBe(5_040);
     expect(launchSpeed(10_000)).toBe(16_800);
     expect(rollDrop(14_000, PHYSICS_V2)).toBe(4 + Math.trunc(14_000 / 900));
     expect(rollDrop(28_000, PHYSICS_V3)).toBe(2 + Math.trunc(28_000 / 1_500));
     expect(rollDrop(16_800, PHYSICS_V4)).toBe(2 + Math.trunc(16_800 / 1_500));
+    expect(rollDrop(16_800, PHYSICS_V5)).toBe(2 + Math.trunc(16_800 / 1_500));
     expect(rollDrop(14_000, PHYSICS_V1)).toBe(32 + Math.trunc(14_000 / 160));
-    expect(freshTable(new Uint8Array(32)).physics).toBe(PHYSICS_V4);
+    expect(freshTable(new Uint8Array(32)).physics).toBe(PHYSICS_V5);
   });
 
   it("sends a full-power smash farther than the previous roll", () => {
@@ -391,9 +396,10 @@ describe("pool rules", () => {
     const cue = state.balls.find((b) => b.id === 0);
     const eight = state.balls.find((b) => b.id === 8);
     const pocket = POCKETS[5];
+    const wall = cushionLimit(PHYSICS_V5);
     if (!cue || !eight || !pocket) throw new Error("setup");
-    eight.x = pocket.x - 150_000;
-    eight.y = pocket.y;
+    eight.x = pocket.x - 200_000;
+    eight.y = wall.maxY - 8_000;
     cue.x = eight.x - 100_000;
     cue.y = eight.y;
     const sim = simulate(state.balls, shot({ angleMilli: 0, power: 6000 }));
@@ -483,6 +489,40 @@ describe("pool rules", () => {
     expect(other.ok).toBe(true);
     if (!other.ok) return;
     expect(other.hash).not.toBe(paid.hash);
+  });
+
+  it("stops a ball on the cushion nose and leaves older racks on the outer wall", () => {
+    const wall = cushionLimit(PHYSICS_V5);
+    const lone = (x: number, y: number): Ball => ({
+      id: 0,
+      x,
+      y,
+      vx: 0,
+      vy: 0,
+      spin: 0,
+      pocketed: false,
+    });
+    const furthest = (physics: "pool-phys-v4" | "pool-phys-v5", angleMilli: number) => {
+      const start = lone(700_000, Math.floor(TABLE_H / 2));
+      const result = simulate([start], shot({ angleMilli, power: 9_000 }), true, physics);
+      let maxX = start.x;
+      let minY = start.y;
+      for (const frame of result.frames) {
+        const ball = frame.find((item) => item.id === 0);
+        if (!ball || ball.pocketed) continue;
+        maxX = Math.max(maxX, ball.x);
+        minY = Math.min(minY, ball.y);
+      }
+      return { maxX, minY };
+    };
+    const across = furthest(PHYSICS_V5, 0);
+    const down = furthest(PHYSICS_V5, 270_000);
+    const old = furthest(PHYSICS_V4, 0);
+    expect(across.maxX).toBeLessThanOrEqual(wall.maxX);
+    expect(across.maxX).toBeGreaterThan(wall.maxX - 60_000);
+    expect(down.minY).toBeGreaterThanOrEqual(wall.minY);
+    expect(down.minY).toBeLessThan(wall.minY + 60_000);
+    expect(old.maxX).toBeGreaterThan(TABLE_W - BALL_R - 5_000);
   });
 
   it("pays only the winner a full replay of the shots produces", async () => {
