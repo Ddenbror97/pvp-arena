@@ -24,6 +24,7 @@ import {
   applyPlayedShot,
   applyShot,
   applyTimeout,
+  defaultCueSpot,
   freshTable,
   groupClear,
   legalPlacement,
@@ -459,6 +460,29 @@ describe("pool rules", () => {
     const third = applyTimeout({ ...twice, turn: "A" });
     expect(third.winner).toBe("B");
     expect(third.reason).toBe("TIMEOUT_FORFEIT");
+  });
+
+  it("puts a scratched cue back on the cloth for the incoming player", () => {
+    const state = freshTable(new Uint8Array(32).fill(6));
+    state.breakShot = false;
+    state.kitchenOnly = false;
+    state.ballInHand = true;
+    state.turn = "B";
+    const cue = state.balls.find((ball) => ball.id === 0);
+    if (!cue) throw new Error("cue");
+    cue.pocketed = true;
+    const spot = defaultCueSpot(state);
+    expect(spot).not.toBeNull();
+    if (!spot) return;
+    expect(legalPlacement(state, spot.x, spot.y)).toBe(true);
+    expect(spot.x).toBeGreaterThan(cushionLimit(PHYSICS_V5).minX);
+    expect(spot.y).toBeGreaterThan(cushionLimit(PHYSICS_V5).minY);
+    state.kitchenOnly = true;
+    const kitchen = defaultCueSpot(state);
+    expect(kitchen).not.toBeNull();
+    if (!kitchen) return;
+    expect(kitchen.x).toBeLessThanOrEqual(Math.floor(TABLE_W / 4));
+    expect(legalPlacement(state, kitchen.x, kitchen.y)).toBe(true);
   });
 
   it("keeps the kitchen behind the head string", () => {

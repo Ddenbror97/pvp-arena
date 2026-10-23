@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { BALL_R, POCKETS, TABLE_H, TABLE_W, type Ball } from "../src/lib/pool/physics";
 import { playShot } from "../src/lib/pool/play";
-import { freshTable, type TableState } from "../src/lib/pool/rules";
+import { freshTable, legalPlacement, type TableState } from "../src/lib/pool/rules";
 import { chooseStandInShot, standInDue } from "../src/lib/pool/stand-in";
 
 function seed(n: number): Uint8Array {
@@ -86,6 +86,25 @@ describe("stand-in aim", () => {
     }
     expect(pocketed).toBeLessThan(samples);
   }, 60_000);
+
+  it("places a scratched cue for the seat that received ball in hand", () => {
+    const state = freshTable(seed(8));
+    state.breakShot = false;
+    state.kitchenOnly = false;
+    state.ballInHand = true;
+    state.open = false;
+    state.groupA = "solids";
+    state.turn = "B";
+    const cue = state.balls.find((ball) => ball.id === 0);
+    if (!cue) throw new Error("cue");
+    cue.pocketed = true;
+    const shot = chooseStandInShot(state, seed(8));
+    expect(shot.placeX).not.toBeNull();
+    expect(shot.placeY).not.toBeNull();
+    expect(legalPlacement(state, shot.placeX ?? 0, shot.placeY ?? 0)).toBe(true);
+    const played = playShot(state, shot);
+    expect(played.ok).toBe(true);
+  });
 
   it("makes a straight shot more often than a hard cut, and misses some of each", () => {
     const samples = 20;

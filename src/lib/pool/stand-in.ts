@@ -4,7 +4,7 @@
  * chosen, not in the physics. The same seed and rack always pick the same shot.
  */
 import { BALL_R, POCKETS, TABLE_H, TABLE_W, cushionLimit, simulate, type Ball, type ShotInput } from "./physics";
-import { groupClear, groupOf, legalPlacement, seatGroup, type TableState } from "./rules";
+import { defaultCueSpot, groupClear, groupOf, legalPlacement, seatGroup, type TableState } from "./rules";
 
 export const STAND_IN_THINK_MS = 6_000;
 export const STAND_IN_OVERDUE_MS = 45_000;
@@ -269,17 +269,21 @@ function looseShot(
 export function chooseStandInShot(state: TableState, seed: Uint8Array): ShotInput {
   const rng = rngOf(seed, state.shot);
   const cue = state.balls.find((ball) => ball.id === 0);
-  if (!cue || cue.pocketed) return shotOf(rng() * 360_000, 4_000, null, null);
-  if (state.breakShot) return easeScratch(state, breakShot(state, cue, rng));
+  if (!cue) return shotOf(rng() * 360_000, 4_000, null, null);
+  // A scratch leaves the cue in the pocket. The incoming seat still has to place it.
+  const recovered = cue.pocketed ? (state.ballInHand ? defaultCueSpot(state) : null) : null;
+  if (cue.pocketed && !recovered) return shotOf(rng() * 360_000, 4_000, null, null);
+  const held = recovered ? { ...cue, x: recovered.x, y: recovered.y, pocketed: false } : cue;
+  if (state.breakShot) return easeScratch(state, breakShot(state, held, rng));
 
   const group = seatGroup(state, state.turn);
   const shootingEight = group != null && groupClear(state.balls, group);
   const ids = targetIds(state, shootingEight);
-  let place: { x: number; y: number } | null = null;
-  let from = cue;
+  let place: { x: number; y: number } | null = recovered;
+  let from = held;
 
   if (state.ballInHand && ids.length > 0) {
-    const parked = linesFrom(state, cue, ids);
+    const parked = linesFrom(state, from, ids);
     const choice = pick(parked, rng);
     if (choice) {
       const spot = placeBehind(state, { x: choice.gx, y: choice.gy }, { x: choice.ox, y: choice.oy }, rng);
@@ -287,6 +291,14 @@ export function chooseStandInShot(state: TableState, seed: Uint8Array): ShotInpu
         place = spot;
         from = { ...cue, x: spot.x, y: spot.y, pocketed: false };
       }
+    }
+  }
+
+  if (state.ballInHand && !place) {
+    const spot = defaultCueSpot(state);
+    if (spot) {
+      place = spot;
+      from = { ...from, x: spot.x, y: spot.y, pocketed: false };
     }
   }
 

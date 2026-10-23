@@ -32,6 +32,7 @@ import {
   applyTimeout,
   freshTable,
   groupClear,
+  defaultCueSpot,
   legalPlacement,
   placeCue,
   seatGroup,
@@ -221,7 +222,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     setPlace((current) => {
       if (current && legalPlacement(state, current.x, current.y)) return current;
       if (cue && legalPlacement(state, cue.x, cue.y)) return { x: cue.x, y: cue.y };
-      return null;
+      return defaultCueSpot(state);
     });
   }, [state]);
 
@@ -746,6 +747,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           present
           away={view.stand_in === "A" && view.status === "PLAYING"}
           active={state?.turn === "A" && view.status === "PLAYING"}
+          hand={!!state?.ballInHand && state?.turn === "A" && view.status === "PLAYING"}
           clock={state?.turn === "A" && view.status === "PLAYING" ? clock : null}
         />
         <span className="pool-vs-mark">VS</span>
@@ -759,6 +761,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           present={view.opponent_id != null}
           away={view.stand_in === "B" && view.status === "PLAYING"}
           active={state?.turn === "B" && view.status === "PLAYING"}
+          hand={!!state?.ballInHand && state?.turn === "B" && view.status === "PLAYING"}
           clock={state?.turn === "B" && view.status === "PLAYING" ? clock : null}
           align="end"
         />
@@ -1038,6 +1041,7 @@ function SeatCard({
   present,
   away = false,
   active,
+  hand = false,
   clock,
   align = "start",
 }: {
@@ -1050,6 +1054,7 @@ function SeatCard({
   present: boolean;
   away?: boolean;
   active: boolean;
+  hand?: boolean;
   clock: number | null;
   align?: "start" | "end";
 }) {
@@ -1079,7 +1084,9 @@ function SeatCard({
           {clock != null ? <em aria-label={`Shot clock ${clock} seconds`}>{clock}s</em> : null}
         </strong>
         <small>{dollars(stake)}</small>
-        <span className="pool-down">{groupLabel ? `${down} down` : present ? "Open" : "Waiting"}</span>
+        <span className="pool-down">
+          {hand ? "Ball in hand" : groupLabel ? `${down} down` : present ? "Open" : "Waiting"}
+        </span>
         <span className="pool-pips" role="img" aria-label={rackLabel}>
           {slots.map((ball) => (
             <i

@@ -256,6 +256,35 @@ export function legalPlacement(state: TableState, x: number, y: number): boolean
   return !overlaps(state.balls, x, y, 0);
 }
 
+/** A cue that was pocketed has to come back on the cloth for the player who has ball in hand. */
+export function defaultCueSpot(state: TableState): { x: number; y: number } | null {
+  const wall = cushionLimit(state.physics);
+  const midY = Math.floor(TABLE_H / 2);
+  const kitchen = Math.floor(TABLE_W / 8);
+  const seeds = state.kitchenOnly
+    ? [
+        { x: kitchen, y: midY },
+        { x: Math.floor(TABLE_W / 4), y: midY },
+      ]
+    : [
+        { x: Math.floor(TABLE_W / 2), y: midY },
+        { x: kitchen, y: midY },
+        { x: Math.floor((TABLE_W * 3) / 4), y: midY },
+      ];
+  for (const spot of seeds) {
+    const x = Math.max(wall.minX, Math.min(wall.maxX, spot.x));
+    const y = Math.max(wall.minY, Math.min(wall.maxY, spot.y));
+    if (legalPlacement(state, x, y)) return { x, y };
+  }
+  const step = BALL_R * 3;
+  for (let x = wall.minX; x <= wall.maxX; x += step) {
+    for (let y = wall.minY; y <= wall.maxY; y += step) {
+      if (legalPlacement(state, x, y)) return { x, y };
+    }
+  }
+  return null;
+}
+
 export function placeCue(state: TableState, shot: ShotInput): string | null {
   if (!state.ballInHand) return null;
   if (shot.placeX == null || shot.placeY == null) return "PLACE_CUE";

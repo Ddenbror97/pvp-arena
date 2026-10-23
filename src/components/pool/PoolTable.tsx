@@ -811,9 +811,10 @@ export function PoolTable({
         const legal = draft == null || legalRef.current(draft.x, draft.y);
         const p = project(spot.x, spot.y);
         const radius = ballRadiusPx(innerW, p.scale);
-        if (draft && !legal) {
-          ctx.globalAlpha = 0.45;
-          paintBall(ctx, 0, p.x, p.y, radius, 0, 0, false, 0.45);
+        const cueDown = shown.some((ball) => ball.id === 0 && ball.pocketed);
+        if (cueDown || (draft && !legal)) {
+          ctx.globalAlpha = legal ? 1 : 0.45;
+          paintBall(ctx, 0, p.x, p.y, radius, 0, 0, false, legal ? 1 : 0.45);
           ctx.globalAlpha = 1;
         }
         ctx.beginPath();
