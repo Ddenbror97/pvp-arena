@@ -149,14 +149,14 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
   );
 
   return (
-    <div className="grid gap-4 lg:h-[34rem] lg:grid-cols-[260px_minmax(0,1fr)_280px] lg:items-stretch xl:grid-cols-[280px_minmax(0,1fr)_300px]">
-      {/* Chat. Same 34rem window as the coinflip and roulette side chats. */}
-      <section className="order-4 h-72 sm:h-80 lg:order-1 lg:h-full lg:min-h-0">
+    <div className="grid gap-4 xl:h-[34rem] xl:grid-cols-[280px_minmax(0,1fr)_300px] xl:items-stretch">
+      {/* Chat. Same window as roulette: 16rem until xl, then 280px by 34rem. */}
+      <section className="order-4 h-64 xl:order-1 xl:h-[34rem] xl:min-h-0">
         <GameChat gameType="jackpot" initial={chat} className="h-full jp-panel" />
       </section>
 
       {/* Wheel */}
-      <section className="jp-wheel-well order-1 flex flex-col items-center justify-center rounded-xl border px-3 py-3 lg:order-2 lg:h-full lg:min-h-0">
+      <section className="jp-wheel-well order-1 flex flex-col items-center justify-center rounded-xl border px-3 py-3 xl:order-2 xl:h-full xl:min-h-0">
         <JackpotWheel
           players={players}
           spin={spin}
@@ -242,7 +242,7 @@ export function JackpotStage({ chat }: { chat: JackpotPaint["chat"] }) {
       </section>
 
       {/* Entry */}
-      <section className="order-2 flex min-h-0 flex-col gap-4 lg:order-3 lg:h-full lg:overflow-hidden">
+      <section className="order-2 flex min-h-0 flex-col gap-4 xl:order-3 xl:h-full xl:overflow-hidden">
         <EntryPanel game={game} myTotal={my?.total_amount ?? 0} closed={closed} />
         <section className="jp-panel flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border">
           <header className="flex items-center justify-between border-b border-border px-3 py-2">

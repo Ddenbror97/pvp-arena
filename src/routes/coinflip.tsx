@@ -142,7 +142,7 @@ function Lobby() {
         <GameChat
           gameType="coinflip"
           initial={paint.chat}
-          className="order-3 h-72 sm:h-80 lg:col-span-2 xl:order-1 xl:col-span-1 xl:h-full xl:min-h-0"
+          className="order-3 h-64 lg:col-span-2 xl:order-1 xl:col-span-1 xl:h-[34rem] xl:min-h-0"
         />
       </div>
       <RecentCoinflips />

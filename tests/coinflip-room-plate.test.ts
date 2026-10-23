@@ -38,6 +38,25 @@ describe("coinflip room plate", () => {
     expect(paint).toContain("/^\\/coinflip\\/[^/]+\\/?$/");
   });
 
+  it("uses the roulette live-chat window on coinflip and jackpot", () => {
+    const roulette = readFileSync(new URL("../src/routes/roulette.tsx", import.meta.url), "utf8");
+    const jackpot = readFileSync(
+      new URL("../src/components/jackpot/JackpotStage.tsx", import.meta.url),
+      "utf8",
+    );
+    expect(roulette).toContain('className="order-2 h-64 xl:order-1 xl:h-[34rem]"');
+    expect(roulette).toContain("xl:grid-cols-[280px_minmax(0,1fr)]");
+    expect(route).toContain(
+      'className="order-3 h-64 lg:col-span-2 xl:order-1 xl:col-span-1 xl:h-[34rem] xl:min-h-0"',
+    );
+    expect(route).toContain("xl:grid-cols-[280px_minmax(0,1fr)_300px]");
+    expect(route).not.toContain("h-72");
+    expect(jackpot).toContain('className="order-4 h-64 xl:order-1 xl:h-[34rem] xl:min-h-0"');
+    expect(jackpot).toContain("xl:grid-cols-[280px_minmax(0,1fr)_300px]");
+    expect(jackpot).not.toContain("260px");
+    expect(jackpot).not.toContain("h-72");
+  });
+
   it("leaves the open-game row and the match stage clear of the room", () => {
     expect(open.match(/cf-game-window/g)?.length).toBe(2);
     expect(room).toContain("cf-game-window");
