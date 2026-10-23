@@ -13,6 +13,7 @@ describe("coinflip room plate", () => {
     new URL("../src/components/coinflip/CoinflipRoom.tsx", import.meta.url),
     "utf8",
   );
+  const root = readFileSync(new URL("../src/routes/__root.tsx", import.meta.url), "utf8");
 
   it("keeps one preloaded room behind the lobby and a match", () => {
     expect(route).not.toContain("if (child) return <Outlet />");
@@ -24,7 +25,15 @@ describe("coinflip room plate", () => {
     expect(game).toContain("@/assets/coinflip/room.webp");
     expect(css).toContain("html:has(.jp-home)::before");
     expect(css).toContain("html:has(.cf-home)::before");
-    expect(css).toContain("calc(34rem + 0.85rem + 1.25rem)");
+    expect(css).not.toContain("calc(34rem + 0.85rem + 1.25rem)");
+    const screen = css.slice(css.indexOf(".cf-match-screen"), css.indexOf(".cf-home-match {"));
+    expect(screen).toContain("position: fixed");
+    expect(screen).toContain("height: 100dvh");
+    const matchRoom = css.slice(css.indexOf(".cf-home-match .cf-room"));
+    expect(matchRoom).toMatch(/object-fit:\s*cover/);
+    expect(root).toContain("coinflipMatch");
+    expect(root).toContain("cf-match-screen");
+    expect(root).toContain("cf-noscroll");
   });
 
   it("leaves the open-game row and the match stage clear of the room", () => {
