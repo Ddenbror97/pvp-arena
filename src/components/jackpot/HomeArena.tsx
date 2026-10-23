@@ -13,6 +13,14 @@ export default function HomeArena({ chat }: { chat: JackpotPaint["chat"] }) {
   return (
     <div className="jp-home">
       <img
+        className="jp-room-fill"
+        src={room}
+        alt=""
+        width={1280}
+        height={720}
+        decoding="async"
+      />
+      <img
         className="jp-room"
         src={room}
         alt=""

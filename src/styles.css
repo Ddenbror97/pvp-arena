@@ -1513,6 +1513,9 @@ html[data-theme="light"] .slott-card .slott-chip:not(.slott-cabinet *) {
   --jp-bleed-t: 1.5rem;
   position: relative;
   isolation: isolate;
+  container-type: inline-size;
+  overflow: hidden;
+  background: #070514;
   margin: calc(var(--jp-bleed-t) * -1) calc(var(--jp-bleed-x) * -1) 0;
   padding: 0.85rem var(--jp-bleed-x) 1.25rem;
   color: #f4f1ff;
@@ -1520,16 +1523,30 @@ html[data-theme="light"] .slott-card .slott-chip:not(.slott-cabinet *) {
 @media (min-width: 1024px) {
   .jp-home { --jp-bleed-x: 1.5rem; }
 }
-.jp-room {
+.jp-room-fill,
+.cf-room-fill {
   position: absolute;
-  inset: 0;
+  inset: -4%;
+  z-index: 0;
+  width: auto;
+  height: auto;
+  object-fit: cover;
+  object-position: center center;
+  filter: blur(26px) brightness(0.48) saturate(1.12);
+  pointer-events: none;
+}
+.jp-room,
+.cf-room {
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 62%;
+  /* Full 16:9 plate, capped by the lobby so a short wide window still shows the whole scene. */
+  height: min(100%, calc(100cqw * 9 / 16));
+  object-fit: contain;
+  object-position: center center;
   pointer-events: none;
-  background: #070514;
 }
 .jp-room-shade {
   position: absolute;
@@ -1563,23 +1580,15 @@ html[data-theme="light"] .jp-home :is(.text-muted-foreground, .section-kicker) {
   --cf-bleed-t: 1.5rem;
   position: relative;
   isolation: isolate;
+  container-type: inline-size;
+  overflow: hidden;
+  background: #070514;
   margin: calc(var(--cf-bleed-t) * -1) calc(var(--cf-bleed-x) * -1) 0;
   padding: 0.85rem var(--cf-bleed-x) 1.25rem;
   color: #f4f1ff;
 }
 @media (min-width: 1024px) {
   .cf-home { --cf-bleed-x: 1.5rem; }
-}
-.cf-room {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 46%;
-  pointer-events: none;
-  background: #070514;
 }
 .cf-room-shade {
   position: absolute;

@@ -70,6 +70,14 @@ function Lobby() {
     <>
       <div className="cf-home">
         <img
+          className="cf-room-fill"
+          src={room}
+          alt=""
+          width={1280}
+          height={720}
+          decoding="async"
+        />
+        <img
           className="cf-room"
           src={room}
           alt=""
