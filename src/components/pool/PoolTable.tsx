@@ -102,6 +102,12 @@ function cueScreenDist(
   return Math.hypot(px - at.x, py - at.y);
 }
 
+/** The match screen, or the lobby stage, is the cue canvas's coordinate space. */
+function cueHost(node: HTMLElement): HTMLElement | null {
+  const host = node.closest(".pool-screen, .pool-stage");
+  return host instanceof HTMLElement ? host : null;
+}
+
 function tablePoint(canvas: HTMLCanvasElement, clientX: number, clientY: number) {
   const rect = canvas.getBoundingClientRect();
   const w = canvas.clientWidth;
@@ -638,8 +644,8 @@ export function PoolTable({
     if (!canvas) return;
     const syncCue = () => {
       const cue = cueRef.current;
-      const screen = canvas.closest(".pool-screen");
-      if (!cue || !(screen instanceof HTMLElement)) return;
+      const screen = cueHost(canvas);
+      if (!cue || !screen) return;
       const screenBox = screen.getBoundingClientRect();
       const tableBox = canvas.getBoundingClientRect();
       const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -1058,7 +1064,7 @@ export function PoolTable({
       loop();
     });
     observer.observe(canvas);
-    const screen = canvas.closest(".pool-screen");
+    const screen = cueHost(canvas);
     if (screen) observer.observe(screen);
     return () => {
       stop = true;

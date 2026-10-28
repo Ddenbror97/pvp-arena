@@ -2,19 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  ArrowRight,
-  CircleDollarSign,
-  Crown,
-  Percent,
-  RefreshCw,
-  ShieldCheck,
-  Timer,
-  Trophy,
-} from "lucide-react";
+import { ArrowRight, RefreshCw, ShieldCheck, Target, Trophy, UserRound, Users } from "lucide-react";
 import { toast } from "sonner";
-import hero from "@/assets/pool/hero.webp";
+import room from "@/assets/pool/room.webp";
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
+import { PoolTable } from "@/components/pool/PoolTable";
 import { useAuth } from "@/lib/auth";
 import {
   STAKES,
@@ -24,8 +16,27 @@ import {
   usePoolLobby,
   type OpenTable,
 } from "@/lib/pool/api";
-import { formatCents, parseStakeDollars, stakeDraft } from "@/lib/pool/copy";
+import { formatCents, parseStakeDollars, stakeDraft, stakeQuote } from "@/lib/pool/copy";
 import { enterPool } from "@/lib/pool/pool.functions";
+import { SHOWCASE_AIM, SHOWCASE_BALLS } from "@/lib/pool/showcase";
+
+const PIPS = [
+  "#f0c410",
+  "#1d4ed8",
+  "#dc2626",
+  "#7c3aed",
+  "#ea580c",
+  "#15803d",
+  "#f4f1ea",
+  "#111111",
+];
+
+const FACTS = [
+  { icon: Users, kicker: "Play", text: "1v1 matches for real stakes" },
+  { icon: Trophy, kicker: "Win", text: "95% to the winner, 5% fee" },
+  { icon: Target, kicker: "Skill", text: "Pure skill-based gameplay" },
+  { icon: ShieldCheck, kicker: "Fair", text: "Provably fair rack and replay" },
+] as const;
 
 function timeLeft(iso: string, now: number): string {
   const ms = new Date(iso).getTime() - now;
@@ -38,19 +49,71 @@ function timeLeft(iso: string, now: number): string {
   return minutes > 0 ? `${minutes}m ${seconds.toString().padStart(2, "0")}s` : `${seconds}s`;
 }
 
-function tablePayout(table: OpenTable): number {
-  const fee = Math.floor((table.pot * table.fee_bps) / 10_000);
-  return table.pot - fee;
+function BallPips() {
+  return (
+    <span className="pool-pips" aria-hidden>
+      {PIPS.map((color, index) => (
+        <i key={`${color}-${index}`} style={{ background: color }} />
+      ))}
+    </span>
+  );
+}
+
+function SeatFace({ name, src, open }: { name: string; src?: string | null; open?: boolean }) {
+  if (open) {
+    return (
+      <span className="pool-seat-open" aria-hidden>
+        <UserRound />
+      </span>
+    );
+  }
+  return (
+    <PlayerAvatar
+      name={name}
+      src={src}
+      color="#c084fc"
+      className="pool-seat-face rounded-full"
+      priority
+    />
+  );
+}
+
+function Seat({
+  name,
+  src,
+  amount,
+  open,
+  align,
+}: {
+  name: string;
+  src?: string | null;
+  amount: string;
+  open?: boolean;
+  align: "start" | "end";
+}) {
+  const face = <SeatFace name={name} src={src} open={open} />;
+  return (
+    <div className={align === "end" ? "pool-seat is-end" : "pool-seat"}>
+      {align === "start" ? face : null}
+      <div>
+        <strong>{name}</strong>
+        <span>{amount}</span>
+        <BallPips />
+      </div>
+      {align === "end" ? face : null}
+    </div>
+  );
 }
 
 export function PoolLobby() {
-  const { userId } = useAuth();
+  const { userId, profile } = useAuth();
   const navigate = useNavigate();
   const router = useRouter();
   const qc = useQueryClient();
   const lobby = usePoolLobby();
   const open = useServerFn(enterPool);
   const [draft, setDraft] = useState("5");
+  const [panel, setPanel] = useState<"games" | "create">("games");
   const [busy, setBusy] = useState<number | "play" | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const keys = useRef(new Map<string, string>());
@@ -71,7 +134,11 @@ export function PoolLobby() {
     const rank = (table: OpenTable) => (stake != null && table.stake === stake ? 0 : 1);
     return rank(a) - rank(b) || a.id - b.id;
   });
-  const atStake = stake == null ? 0 : openTables.filter((table) => table.stake === stake).length;
+  const featured = openTables.find((table) => table.stake === stake) ?? openTables[0] ?? null;
+  const shownStake = featured?.stake ?? stake ?? stakes[0] ?? 500;
+  const quote = stake == null ? null : stakeQuote(stake);
+  const youName = profile?.username || "Your seat";
+
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(id);
@@ -131,72 +198,232 @@ export function PoolLobby() {
     }
   };
 
+  const createGame = () => {
+    if (stake == null) return;
+    void enter({ stake });
+  };
+
   return (
-    <div className="pool-lobby">
-      <section className="pool-hero" aria-labelledby="pool-title">
-        <div className="pool-hero-copy">
-          <h1 id="pool-title" className="pool-hero-title">
-            <span className="pool-hero-eight" aria-hidden>
+    <section className="pool-stage" aria-labelledby="pool-title">
+      <div className="pool-stage-room" aria-hidden>
+        <img src={room} alt="" width={1920} height={1080} decoding="async" fetchPriority="high" />
+      </div>
+      <div className="pool-stage-shade" aria-hidden />
+
+      <div className="pool-stage-body">
+        <div className="pool-stage-copy">
+          <h1 id="pool-title" className="pool-stage-title">
+            <span className="pool-stage-eight" aria-hidden>
               <span>8</span>
             </span>
-            <span className="pool-hero-word">Pool</span>
+            <span className="pool-stage-word">Pool</span>
           </h1>
-          <p className="pool-hero-modes">
-            8-ball <span aria-hidden>•</span> 1v1 <span aria-hidden>•</span> Call the 8
-          </p>
-          <p className="pool-hero-sub">Real players. Real skills. Real wins.</p>
-        </div>
-
-        <div className="pool-hero-art" aria-hidden>
-          <img
-            src={hero}
-            alt=""
-            width={1280}
-            height={720}
-            decoding="async"
-            fetchPriority="high"
-            className="pool-hero-player"
-          />
-        </div>
-
-        <div className="pool-hero-panel">
-          <p className="pool-hero-panel-title">
-            Play <span aria-hidden>•</span> Win <span aria-hidden>•</span> Repeat
-          </p>
-          <ul>
-            <li>
-              <span className="pool-hero-icon">
-                <Timer aria-hidden />
-              </span>
-              <span className="pool-hero-feature-title">30s shots</span>
-              <span className="pool-hero-feature-sub">Three timeouts forfeit</span>
-            </li>
-            <li>
-              <span className="pool-hero-icon">
-                <ShieldCheck aria-hidden />
-              </span>
-              <span className="pool-hero-feature-title">Provably fair</span>
-              <span className="pool-hero-feature-sub">Committed rack, replayed shots</span>
-            </li>
-            <li>
-              <span className="pool-hero-icon">
-                <Percent aria-hidden />
-              </span>
-              <span className="pool-hero-feature-title">Fair fee</span>
-              <span className="pool-hero-feature-sub">5% of the pot</span>
-            </li>
+          <p className="pool-stage-sub">Real players. Real skills. Real wins.</p>
+          <ul className="pool-stage-facts">
+            {FACTS.map((fact) => {
+              const Icon = fact.icon;
+              return (
+                <li key={fact.kicker}>
+                  <span className="pool-stage-fact-icon">
+                    <Icon aria-hidden />
+                  </span>
+                  <span>
+                    <strong>{fact.kicker}</strong>
+                    <span>{fact.text}</span>
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </div>
-      </section>
 
-      <section className="pool-buyin" aria-labelledby="pool-stake-label">
-        <div className="pool-buyin-pick">
-          <p className="pool-buyin-label" id="pool-stake-label">
-            Your stake
-            <span className="pool-count" title="Open tables at this stake">
-              {atStake}
-            </span>
+        <div className="pool-stage-table">
+          <div className="pool-stage-vs" aria-label="Preview matchup">
+            <Seat
+              align="start"
+              name={featured ? featured.username : youName}
+              src={featured ? featured.avatar_url : profile?.avatar_url}
+              amount={formatCents(shownStake)}
+            />
+            <span className="pool-stage-vs-mark">VS</span>
+            <Seat align="end" name="Open seat" amount={formatCents(shownStake)} open />
+          </div>
+          <div className="pool-stage-felt" aria-hidden>
+            <PoolTable
+              balls={SHOWCASE_BALLS}
+              angleMilli={SHOWCASE_AIM}
+              power={0}
+              spinX={0}
+              spinY={0}
+              ghost={null}
+              kitchenOnly={false}
+              calledPocket={null}
+              showCue
+              replay={null}
+              stroke={null}
+              placing={false}
+              legalAt={() => false}
+              onAim={() => {}}
+              onPlace={() => {}}
+              onSample={() => {}}
+              onReplayDone={() => {}}
+            />
+          </div>
+          <p className="sr-only">
+            A preview of the 8-ball table, with the cue aimed at the rack and the aim guide on.
           </p>
+        </div>
+
+        <aside className="pool-stage-games" aria-labelledby="pool-open">
+          <div className="pool-stage-tabs" role="tablist" aria-label="Lobby">
+            <button
+              type="button"
+              role="tab"
+              id="pool-tab-games"
+              aria-selected={panel === "games"}
+              aria-controls="pool-panel-games"
+              onClick={() => setPanel("games")}
+            >
+              Open games
+            </button>
+            <button
+              type="button"
+              role="tab"
+              id="pool-tab-create"
+              aria-selected={panel === "create"}
+              aria-controls="pool-panel-create"
+              onClick={() => setPanel("create")}
+            >
+              Create game
+            </button>
+          </div>
+
+          {panel === "games" ? (
+            <div
+              className="pool-stage-panel"
+              role="tabpanel"
+              id="pool-panel-games"
+              aria-labelledby="pool-tab-games"
+            >
+              <div className="pool-stage-panel-head">
+                <h2 id="pool-open">
+                  Open games
+                  <span className="pool-count">{openTables.length}</span>
+                </h2>
+                <button
+                  type="button"
+                  className={refreshing ? "pool-refresh is-spin" : "pool-refresh"}
+                  aria-label="Refresh open games"
+                  onClick={() => void refreshLobby()}
+                >
+                  <RefreshCw aria-hidden />
+                </button>
+              </div>
+              <ul>
+                {openTables.length === 0 ? (
+                  <li className="pool-stage-empty">
+                    <p>{lobby.isError ? "Reconnecting to the lobby." : "No open games yet."}</p>
+                    <button type="button" onClick={() => setPanel("create")}>
+                      Create a game
+                    </button>
+                  </li>
+                ) : (
+                  openTables.map((table) => {
+                    const own = table.creator_id === userId;
+                    return (
+                      <li key={table.id}>
+                        <PlayerAvatar
+                          name={table.username}
+                          src={table.avatar_url}
+                          color="#c084fc"
+                          className="pool-row-face rounded-full"
+                        />
+                        <div className="pool-row-who">
+                          <strong>{table.username}</strong>
+                          <span>
+                            {formatCents(table.stake)}
+                            <span className="pool-row-time" suppressHydrationWarning>
+                              {" "}
+                              · {timeLeft(table.expires_at, now)}
+                            </span>
+                          </span>
+                        </div>
+                        <BallPips />
+                        {own ? (
+                          <Link
+                            to="/pool/$matchId"
+                            params={{ matchId: String(table.id) }}
+                            className="pool-join"
+                            onMouseEnter={warmMatch}
+                            onFocus={warmMatch}
+                          >
+                            Open
+                          </Link>
+                        ) : (
+                          <button
+                            type="button"
+                            className="pool-join"
+                            disabled={busy != null}
+                            onMouseEnter={warmMatch}
+                            onFocus={warmMatch}
+                            onTouchStart={warmMatch}
+                            onClick={() => void enter({ matchId: table.id })}
+                          >
+                            {busy === table.id ? "…" : "Join"}
+                          </button>
+                        )}
+                      </li>
+                    );
+                  })
+                )}
+              </ul>
+            </div>
+          ) : (
+            <div
+              className="pool-stage-panel"
+              role="tabpanel"
+              id="pool-panel-create"
+              aria-labelledby="pool-tab-create"
+            >
+              <div className="pool-stage-panel-head">
+                <h2 id="pool-open">Create game</h2>
+              </div>
+              <div className="pool-stage-create">
+                {quote == null ? (
+                  <p>Choose a stake, then open a table.</p>
+                ) : (
+                  <>
+                    <p>
+                      Open a table at <strong>{formatCents(quote.stake)}</strong>.
+                    </p>
+                    <p>
+                      The winner is paid <strong>{formatCents(quote.payout)}</strong>. The fee is{" "}
+                      {formatCents(quote.fee)}.
+                    </p>
+                    <p>If nobody joins within 24 hours, the stake is refunded.</p>
+                  </>
+                )}
+                <button
+                  type="button"
+                  className="pool-play"
+                  disabled={busy != null || stake == null}
+                  onMouseEnter={warmMatch}
+                  onFocus={warmMatch}
+                  onTouchStart={warmMatch}
+                  onClick={createGame}
+                >
+                  {busy === "play" ? "Creating…" : "Create game"}
+                  {busy === "play" ? null : <ArrowRight aria-hidden />}
+                </button>
+              </div>
+            </div>
+          )}
+        </aside>
+      </div>
+
+      <div className="pool-stage-bar">
+        <div className="pool-stage-stakes">
+          <p id="pool-stake-label">Stake amount</p>
           <div className="pool-stakes" role="group" aria-labelledby="pool-stake-label">
             {stakes.map((cents) => (
               <button
@@ -211,137 +438,19 @@ export function PoolLobby() {
             ))}
           </div>
         </div>
-        <div className="pool-quote">
-          <button
-            type="button"
-            className="pool-play pool-create"
-            disabled={busy != null || stake == null}
-            onMouseEnter={warmMatch}
-            onFocus={warmMatch}
-            onTouchStart={warmMatch}
-            onClick={() => {
-              if (stake == null) return;
-              void enter({ stake });
-            }}
-          >
-            {busy === "play" ? "Creating…" : "Create game"}
-            {busy === "play" ? null : <ArrowRight aria-hidden className="h-3.5 w-3.5" />}
-          </button>
-        </div>
-      </section>
-
-      <div className="pool-below">
-        <section className="pool-side" aria-labelledby="pool-open">
-          <div className="pool-side-head">
-            <div>
-              <h2 id="pool-open">
-                Open tables
-                <span className="pool-count">{openTables.length}</span>
-              </h2>
-              <p className="pool-side-sub">Join a game or create your own table.</p>
-            </div>
-            <div className="pool-side-tools">
-              <span className={lobby.isError ? "pool-live is-off" : "pool-live"}>
-                <span className="pool-live-dot" aria-hidden />
-                {lobby.isError ? "Reconnecting" : "Live lobby"}
-              </span>
-              <button
-                type="button"
-                className={refreshing ? "pool-refresh is-spin" : "pool-refresh"}
-                aria-label="Refresh open tables"
-                onClick={() => void refreshLobby()}
-              >
-                <RefreshCw aria-hidden />
-              </button>
-            </div>
-          </div>
-          <ul>
-            {openTables.length === 0 ? (
-              <li>No open tables.</li>
-            ) : (
-              openTables.map((table) => {
-                const mine = table.creator_id === userId;
-                const payout = tablePayout(table);
-                return (
-                  <li key={table.id} className="pool-open">
-                    <span className="pool-open-avatar">
-                      <PlayerAvatar
-                        name={table.username}
-                        src={table.avatar_url}
-                        color="#e8b923"
-                        className="pool-open-face rounded-full"
-                      />
-                      <Crown className="pool-open-crown" aria-hidden />
-                    </span>
-                    <div className="pool-open-who">
-                      <strong>{table.username}</strong>
-                      <span>
-                        Waiting for opponent
-                        <span className="pool-open-time" suppressHydrationWarning>
-                          {" "}
-                          · {timeLeft(table.expires_at, now)}
-                        </span>
-                      </span>
-                    </div>
-                    <div className="pool-open-stats">
-                      <p>
-                        <span>Stake</span>
-                        <strong>
-                          <CircleDollarSign aria-hidden />
-                          {formatCents(table.stake)}
-                        </strong>
-                      </p>
-                      <p>
-                        <span>Pot</span>
-                        <strong>
-                          <CircleDollarSign aria-hidden />
-                          {formatCents(table.pot)}
-                        </strong>
-                      </p>
-                      <p className="is-win">
-                        <span>To winner</span>
-                        <strong>
-                          <Trophy aria-hidden />
-                          {formatCents(payout)}
-                        </strong>
-                      </p>
-                    </div>
-                    <div className="pool-open-actions">
-                      {mine ? (
-                        <Link
-                          to="/pool/$matchId"
-                          params={{ matchId: String(table.id) }}
-                          className="pool-join"
-                          onMouseEnter={warmMatch}
-                          onFocus={warmMatch}
-                        >
-                          Open table
-                          <ArrowRight aria-hidden className="h-3.5 w-3.5" />
-                        </Link>
-                      ) : (
-                        <button
-                          type="button"
-                          className="pool-join"
-                          disabled={busy != null}
-                          onMouseEnter={warmMatch}
-                          onFocus={warmMatch}
-                          onTouchStart={warmMatch}
-                          onClick={() => void enter({ matchId: table.id })}
-                        >
-                          {busy === table.id ? "Joining…" : "Join table"}
-                          {busy === table.id ? null : (
-                            <ArrowRight aria-hidden className="h-3.5 w-3.5" />
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  </li>
-                );
-              })
-            )}
-          </ul>
-        </section>
+        <button
+          type="button"
+          className="pool-play pool-create"
+          disabled={busy != null || stake == null}
+          onMouseEnter={warmMatch}
+          onFocus={warmMatch}
+          onTouchStart={warmMatch}
+          onClick={createGame}
+        >
+          {busy === "play" ? "Creating…" : "Create game"}
+          {busy === "play" ? null : <ArrowRight aria-hidden />}
+        </button>
       </div>
-    </div>
+    </section>
   );
 }

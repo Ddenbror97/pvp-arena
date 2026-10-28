@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import hero from "@/assets/pool/hero.webp";
+import room from "@/assets/pool/room.webp";
 import { PoolLobby } from "@/components/pool/PoolLobby";
 import { POOL_FAQS, POOL_PAGE_DESCRIPTION, POOL_PAGE_TITLE } from "@/components/pool/PoolMoneyCopy";
 import { GameFacts } from "@/components/seo/GameFacts";
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/8-ball-pool")({
         {
           rel: "preload",
           as: "image",
-          href: hero,
+          href: room,
           type: "image/webp",
           fetchPriority: "high",
         },
@@ -79,7 +79,7 @@ function EightBallPage() {
   return (
     <>
       <PoolLobby />
-      <div className="pool-facts px-4 pb-28 sm:px-6 lg:pb-10">
+      <div className="pool-facts px-4 pb-40 sm:px-6 lg:pb-10">
         <GameFacts game="pool" />
       </div>
     </>

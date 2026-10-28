@@ -121,11 +121,12 @@ describe("hard-refresh layout reserves", () => {
     expect(lobby).not.toContain("@/lib/pool/physics");
     expect(lobby).toContain("loadRouteChunk");
     expect(lobby).toContain("matchId: table.id");
-    expect(lobby).toContain("Open tables");
+    expect(lobby).toContain("Open games");
     expect(lobby).toContain("Create game");
+    expect(lobby).toContain("Real players. Real skills. Real wins.");
     expect(lobby).not.toContain("Total pot");
     expect(lobby).not.toContain("Winner receives");
     expect(matchRoute).not.toContain("room.webp");
-    expect(lobbyRoute).toContain("hero.webp");
+    expect(lobbyRoute).toContain("room.webp");
   });
 });
