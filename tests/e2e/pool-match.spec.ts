@@ -82,10 +82,18 @@ async function register(page: Page, input: { username: string; email: string; pa
 }
 
 async function openContext(browser: Browser, ip: string): Promise<{ context: BrowserContext; page: Page }> {
-  const context = await browser.newContext({
-    extraHTTPHeaders: { "cf-connecting-ip": ip, "x-forwarded-for": ip },
-  });
+  const context = await browser.newContext();
   const page = await context.newPage();
+  // Signup rate limits read these headers on the local server. Sending them on
+  // every request makes the browser preflight to Supabase fail CORS.
+  await page.route("http://127.0.0.1:4173/**", async (route) => {
+    const headers = {
+      ...route.request().headers(),
+      "cf-connecting-ip": ip,
+      "x-forwarded-for": ip,
+    };
+    await route.continue({ headers });
+  });
   const frames: string[] = [];
   page.on("websocket", (socket) => {
     socket.on("framereceived", (frame) => {
@@ -112,8 +120,9 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
     email: `e2eb-${stamp}@example.com`,
     password,
   };
-  const hostSession = await openContext(browser, "203.0.113.10");
-  const guestSession = await openContext(browser, "203.0.113.11");
+  const octet = 20 + (Date.now() % 200);
+  const hostSession = await openContext(browser, `203.0.113.${octet}`);
+  const guestSession = await openContext(browser, `198.51.100.${octet}`);
   try {
     await register(hostSession.page, host);
     await register(guestSession.page, guest);
