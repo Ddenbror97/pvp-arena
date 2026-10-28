@@ -6,12 +6,13 @@
 import { BALL_R, PHYSICS_V6, PHYSICS_V7, POCKETS, TABLE_H, TABLE_W, cushionLimit, simulate, type Ball, type ShotInput } from "./physics";
 import { defaultCueSpot, groupClear, groupOf, legalPlacement, seatGroup, type TableState } from "./rules";
 
-export const STAND_IN_THINK_MS = 6_000;
+/** A short pause so a returning player can take the seat before the table shoots. */
+export const STAND_IN_THINK_MS = 2_000;
 export const STAND_IN_OVERDUE_MS = 45_000;
-/** The ghost cue draws back for this long before the stroke is at full power. */
+/** Ease length for a cue pull. The match does not hold a finished pull before the stroke. */
 export const STAND_IN_CUE_MS = 1_600;
-/** Replay holds the cue through the draw and the hit, then the balls move. */
-export const STAND_IN_STROKE_MS = 1_100;
+/** The ghost cue draws and hits in one motion, and the balls leave during that hit. */
+export const STAND_IN_STROKE_MS = 720;
 
 /** 0 when the cue is still at rest, 1 when the draw-back has finished. */
 export function standInCuePull(elapsedMs: number, durationMs = STAND_IN_CUE_MS): number {
@@ -26,7 +27,25 @@ export function standInShownPower(power: number, pull: number): number {
   return Math.max(1, Math.round(power * shown));
 }
 
-/** True once the seat has had a few seconds to sit down, and before the clock gives up. */
+/**
+ * Ghost stroke, from address through the draw and into the hit.
+ * `t` is 0 at the start and 1 when the cue has followed through.
+ * The ink stays faint for the whole motion.
+ */
+export function standInStroke(power: number, t: number): { gap: number; alpha: number } {
+  const clamped = Number.isFinite(t) ? Math.max(0, Math.min(1, t)) : 0;
+  const pulled = 1.28 + (Math.min(10_000, Math.max(1, power)) / 10_000) * 4.4;
+  const address = 1.28;
+  const full = pulled + 1.15;
+  let gap = 1.05;
+  let alpha = 1;
+  if (clamped < 0.34) gap = address + (full - address) * (clamped / 0.34);
+  else if (clamped < 0.62) gap = full + (1.05 - full) * ((clamped - 0.34) / 0.28);
+  else alpha = 1 - (clamped - 0.62) / 0.38;
+  return { gap, alpha: Math.max(0, alpha) * 0.42 };
+}
+
+/** True once the seat has had a moment to sit down, and before the clock gives up. */
 export function standInDue(turnDeadlineIso: string, nowMs: number, shotSeconds = 30): boolean {
   const deadline = Date.parse(turnDeadlineIso);
   if (!Number.isFinite(deadline)) return false;

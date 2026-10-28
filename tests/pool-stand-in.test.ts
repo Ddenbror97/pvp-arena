@@ -5,9 +5,12 @@ import { freshTable, legalPlacement, type TableState } from "../src/lib/pool/rul
 import {
   chooseStandInShot,
   STAND_IN_CUE_MS,
+  STAND_IN_STROKE_MS,
+  STAND_IN_THINK_MS,
   standInCuePull,
   standInDue,
   standInShownPower,
+  standInStroke,
 } from "../src/lib/pool/stand-in";
 
 function seed(n: number): Uint8Array {
@@ -47,12 +50,26 @@ const side = POCKETS[1]!;
 const object = { x: side.x, y: side.y + 260_000 };
 
 describe("stand-in aim", () => {
-  it("waits a few seconds, then stops before the seat is timed out", () => {
+  it("waits a moment, then stops before the seat is timed out", () => {
     const deadline = Date.parse("2026-10-23T15:00:30.000Z");
-    expect(standInDue("2026-10-23T15:00:30.000Z", deadline - 25_000, 30)).toBe(false);
-    expect(standInDue("2026-10-23T15:00:30.000Z", deadline - 23_000, 30)).toBe(true);
+    expect(STAND_IN_THINK_MS).toBe(2_000);
+    expect(STAND_IN_STROKE_MS).toBeLessThan(800);
+    expect(standInDue("2026-10-23T15:00:30.000Z", deadline - 29_000, 30)).toBe(false);
+    expect(standInDue("2026-10-23T15:00:30.000Z", deadline - 27_000, 30)).toBe(true);
     expect(standInDue("2026-10-23T15:00:30.000Z", deadline + 20_000, 30)).toBe(true);
     expect(standInDue("2026-10-23T15:00:30.000Z", deadline + 46_000, 30)).toBe(false);
+  });
+
+  it("draws the ghost cue from address into the hit without turning solid", () => {
+    const address = standInStroke(8_000, 0);
+    const drawn = standInStroke(8_000, 0.34);
+    const release = standInStroke(8_000, 0.5);
+    expect(address.gap).toBeCloseTo(1.28);
+    expect(address.alpha).toBeCloseTo(0.42);
+    expect(drawn.gap).toBeGreaterThan(address.gap + 3);
+    expect(release.gap).toBeLessThan(drawn.gap);
+    expect(release.alpha).toBeCloseTo(0.42);
+    expect(standInStroke(8_000, 1).alpha).toBe(0);
   });
 
   it("draws the ghost cue back until the shot is fully pulled", () => {

@@ -97,7 +97,7 @@ describe("pool view", () => {
     );
     const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
     expect(table).toContain('className="pool-cue"');
-    expect(table).toContain('closest(".pool-screen")');
+    expect(table).toContain('closest(".pool-screen, .pool-stage")');
     expect(table).toContain("const length = BALL_R * 46");
     expect(table).not.toContain("fitCueButt");
     expect(table).not.toContain("extraCueGutter");
