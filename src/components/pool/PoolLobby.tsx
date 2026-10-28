@@ -18,7 +18,7 @@ import {
 } from "@/lib/pool/api";
 import { formatCents, parseStakeDollars, stakeDraft, stakeQuote } from "@/lib/pool/copy";
 import { enterPool } from "@/lib/pool/pool.functions";
-import { SHOWCASE_AIM, SHOWCASE_BALLS } from "@/lib/pool/showcase";
+import { SHOWCASE_AIM, SHOWCASE_BALLS, SHOWCASE_POWER } from "@/lib/pool/showcase";
 
 const PIPS = [
   "#f0c410",
@@ -252,7 +252,7 @@ export function PoolLobby() {
             <PoolTable
               balls={SHOWCASE_BALLS}
               angleMilli={SHOWCASE_AIM}
-              power={0}
+              power={SHOWCASE_POWER}
               spinX={0}
               spinY={0}
               ghost={null}
@@ -347,8 +347,8 @@ export function PoolLobby() {
                               · {timeLeft(table.expires_at, now)}
                             </span>
                           </span>
+                          <BallPips />
                         </div>
-                        <BallPips />
                         {own ? (
                           <Link
                             to="/pool/$matchId"
@@ -447,7 +447,14 @@ export function PoolLobby() {
           onTouchStart={warmMatch}
           onClick={createGame}
         >
-          {busy === "play" ? "Creating…" : "Create game"}
+          {busy === "play" ? (
+            "Creating…"
+          ) : (
+            <>
+              <span className="pool-create-long">Create game</span>
+              <span className="pool-create-short">Create</span>
+            </>
+          )}
           {busy === "play" ? null : <ArrowRight aria-hidden />}
         </button>
       </div>

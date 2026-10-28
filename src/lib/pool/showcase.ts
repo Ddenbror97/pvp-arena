@@ -11,3 +11,9 @@ export const SHOWCASE_BALLS = freshTable(SEED).balls.map((ball) => ({
 
 /** 180 degrees, so the cue aims from the right-hand spot into the rack. */
 export const SHOWCASE_AIM = 180_000;
+
+/**
+ * Lightest preview power that still reaches the rack. A softer shot stops
+ * on the cloth, so the aim guide would not draw the ghost ball.
+ */
+export const SHOWCASE_POWER = 2_800;

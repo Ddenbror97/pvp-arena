@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { TABLE_H, TABLE_W } from "../src/lib/pool/physics";
-import { SHOWCASE_AIM, SHOWCASE_BALLS } from "../src/lib/pool/showcase";
+import { TABLE_H, TABLE_W, traceAim } from "../src/lib/pool/physics";
+import { SHOWCASE_AIM, SHOWCASE_BALLS, SHOWCASE_POWER } from "../src/lib/pool/showcase";
 
 describe("lobby showcase rack", () => {
   it("puts the cue on the right and aims it straight into the rack", () => {
@@ -17,5 +17,18 @@ describe("lobby showcase rack", () => {
     expect(cue.y).toBe(Math.floor(TABLE_H / 2));
     expect(SHOWCASE_AIM).toBe(180_000);
     expect(SHOWCASE_BALLS).toHaveLength(16);
+  });
+
+  it("uses a shot that reaches the rack", () => {
+    const hit = traceAim(SHOWCASE_BALLS, {
+      angleMilli: SHOWCASE_AIM,
+      power: SHOWCASE_POWER,
+      spinX: 0,
+      spinY: 0,
+      placeX: null,
+      placeY: null,
+      calledPocket: null,
+    });
+    expect(hit?.contact?.id).toBeGreaterThan(0);
   });
 });
