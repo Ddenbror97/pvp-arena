@@ -84,35 +84,38 @@ Nothing else in `src` was unused under that scan. Guide pages, NowPayments IPN (
 
 ## 5. Checks
 
-Production, after 15:52:30 UTC through about 16:05 UTC: 7 postgres log events, 0 cron lines, 0 error or warning lines.
+At 16:42 UTC, about 50 minutes after the restart: `cron.log_statement` still `off`, `cron.log_run` still `on`, postmaster start still `15:51:43 UTC`, 23 connections.
 
-Cron runs with `start_time >= 2026-10-28 15:51:43+00`, all `succeeded`:
+Every cron job has at least one succeeded run since the restart, and none failed:
 
-| Job | Runs | Last start (UTC) |
+| Job | Runs since restart | Last start (UTC) |
 |---|---:|---|
-| `pvp-coinflip-worker` | 554 | 16:01:06 |
-| `pvp-slot-worker` | 553 | 16:01:06 |
-| `pvp-roulette-worker` | 553 | 16:01:06 |
-| `pvp-jackpot-worker` | 554 | 16:01:06 |
-| `pvp-minute-dispatch` | 10 | 16:01:00 |
-| `pvp-crypto-reconcile` | 1 | 16:00:00 |
+| `pvp-coinflip-worker` | 2,972 | 16:42:01 |
+| `pvp-jackpot-worker` | 2,972 | 16:42:01 |
+| `pvp-roulette-worker` | 2,971 | 16:42:01 |
+| `pvp-slot-worker` | 2,971 | 16:42:01 |
+| `pvp-minute-dispatch` | 51 | 16:42:00 |
+| `pvp-settlement-health` | 4 | 16:38:00 |
+| `pvp-crypto-reconcile` | 3 | 16:30:00 |
 | `pvp-integrity-check` | 1 | 16:00:00 |
-| `pvp-settlement-health` | 1 | 15:53:00 |
-| `pvp-cron-history-retention` | 0 | next slot 16:17 |
-| `pvp-roulette-integrity` | 0 | next slot 16:30 |
-| `pvp-ops-retention` | 0 | next slot 16:41 |
+| `pvp-cron-history-retention` | 1 | 16:17:00 (`DELETE 14252`) |
+| `pvp-roulette-integrity` | 1 | 16:30:00 |
+| `pvp-ops-retention` | 1 | 16:41:00 |
 
-The three with zero post-restart runs are hourly. They were active, and their 15:17, 15:30, and 15:41 runs succeeded before the restart. Open money state at the same check: one roulette round in `BETTING`. No in-flight withdrawal or deposit.
+Postgres logs from 16:30 to 16:42 UTC: 51 events, 0 lines matching `cron job`, 0 lines matching error, fatal, or warning. The lines are checkpoints and `permission denied` from the anonymous RLS probe below. That probe is supposed to be denied.
 
-Repository:
+Open money state just after the restart was one roulette round in `BETTING`. No withdrawal was in `PENDING`, `HELD`, `APPROVED`, `SUBMITTING`, or `SUBMITTED`. No deposit was `DETECTED` or `CONFIRMED`.
+
+Repository, on an isolated Postgres 16 (not production):
 
 | Check | Result |
 |---|---|
 | `tsc --noEmit` | Fails on `main` already: `PoolLobby.tsx`, `PoolMatch.tsx` (`exactOptionalPropertyTypes`), and `turnstile.server.ts` (`NODE_ENV` index signature). This branch does not touch those files. |
 | `npm run lint` | Fails on `main` already: 2,106 problems, almost all `prettier/prettier`, including files this branch does not touch. |
 | `vitest run --project unit` | 501 passed, 1 failed. `tests/pool-view.test.ts` expects `closest(".pool-screen")` in `PoolTable.tsx`. That string is not in the file on `main`. |
-| `npm run build` | Passed. |
-| Database integration tests | Not run. This machine has the Postgres client only, `TEST_DATABASE_URL` is unset, and the staging project has been removed. These tests refuse the production database. |
+| `vitest run --project db` | 367 passed, 11 skipped, 1 failed. The failure is `admin_ops_query` raising `ADMIN_UNAVAILABLE` in `tests/db/perf-hot-paths.integration.test.ts`. That function wraps any internal error that way, and this Postgres has no `pg_cron`, so the worker listing inside the function cannot run. Roulette, coinflip, jackpot, slot, poker, pool, wallet, ledger, security, and RLS schema tests in the same run passed. |
+| Anonymous API RLS (`tests/db/rls.integration.test.ts`) | 9 passed against the configured project. Reads of wallet, ledger, audit, and secrets came back empty. No money was moved. |
+| `npm run build` | Passed. Server output 9.1 MB. The bundle contains `@jsquash/webp` and does not contain jpeg or png codecs. |
 
 ## Verdict for deploying this branch
 
