@@ -1,5 +1,7 @@
 # Production cleanup audit — 28 Oct 2026
 
+The logging change described below was applied later the same day. The outcome, the code removals, and the tests are in `docs/CLEANUP-APPLY-2026-10-28.md`. This file is the measurement that justified the change. It is kept as written.
+
 Read-only inspection of pvpspinarena.com (`dkyabirifoixnfbmheay`) and this repository. No production data was written. No migration was applied. No Worker was deployed. No game, wallet, or security behavior was changed.
 
 Log window: 27 Oct 2026 12:40 BRT through 28 Oct 2026 12:40 BRT. Database sizes were read at about 12:46 BRT the same day.
