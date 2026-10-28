@@ -1,0 +1,15 @@
+-- Proposal only. Do not apply to production from this file.
+--
+-- Measured 27 Oct 2026 12:40 BRT through 28 Oct 2026 12:40 BRT on
+-- dkyabirifoixnfbmheay: 711,764 of 712,655 postgres_logs events were
+-- "cron job N starting" or "cron job N completed" from the four
+-- one-second workers. cron.log_run stays on, so cron.job_run_details
+-- still records each run. Failures there are kept 7 days.
+--
+-- cron.log_statement is PGC_POSTMASTER. The new value is used after
+-- a Postgres restart, not at the next statement.
+--
+-- alter database postgres set cron.log_statement = off;
+--
+-- Rollback, also after a restart:
+-- alter database postgres set cron.log_statement = on;
