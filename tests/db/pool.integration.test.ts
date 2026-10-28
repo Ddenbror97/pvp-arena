@@ -9,7 +9,7 @@ import { buildTestSchemaSql } from "./schema";
 import { testDatabaseUrl } from "./test-url";
 import { playShot } from "../../src/lib/pool/play";
 import { applyTimeout, freshTable, stateHash, type TableState } from "../../src/lib/pool/rules";
-import { bytesFromHex } from "../../src/lib/pool/verify";
+import { bytesFromHex, tableLinks } from "../../src/lib/pool/verify";
 
 const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
@@ -423,8 +423,37 @@ d("pool ledger (isolated schema)", () => {
 
     await sql`select pvp_test.pool_commit_shot(${made.match_id}, 1, ${asJson(played.state)}::jsonb, ${played.hash}, ${asJson(played.event)}::jsonb)`;
     const [row] =
-      await sql`select state_hash, winner_id from pvp_test.pool_matches where id = ${made.match_id}`;
+      await sql`select state, state_hash, winner_id from pvp_test.pool_matches where id = ${made.match_id}`;
     expect(row.state_hash).toBe(played.hash);
+    const stored = row.state as TableState;
+    expect(stateHash(stored)).toBe(played.hash);
+    const [secretRow] = await sql`select pvp_test.pool_read_secret(${made.match_id}) seed`;
+    const rackSeed = bytesFromHex(String(secretRow.seed));
+    expect(tableLinks(rackSeed, stored, [{ kind: "shot", input: shot, hash: played.hash }])).toBe(
+      true,
+    );
+    if (played.state.winner == null) {
+      const cue2 = stored.balls.find((ball) => ball.id === 0 && !ball.pocketed);
+      const shot2 = {
+        angleMilli: 40_000,
+        power: 3_500,
+        spinX: 0,
+        spinY: 0,
+        placeX: stored.ballInHand ? (cue2?.x ?? null) : null,
+        placeY: stored.ballInHand ? (cue2?.y ?? null) : null,
+        calledPocket: null,
+        key: randomUUID(),
+      };
+      const second = playShot(stored, shot2);
+      if (second.ok) {
+        await sql`insert into pvp_test.pool_pending (match_id, seq, user_id, idempotency_key, input)
+          values (${made.match_id}, 2, ${a}, ${shot2.key}, ${asJson(shot2)}::jsonb)`;
+        await sql`select pvp_test.pool_commit_shot(${made.match_id}, 2, ${asJson(second.state)}::jsonb, ${second.hash}, ${asJson(second.event)}::jsonb)`;
+        const [later] =
+          await sql`select state_hash from pvp_test.pool_matches where id = ${made.match_id}`;
+        expect(later.state_hash).toBe(second.hash);
+      }
+    }
     if (played.state.winner == null) expect(row.winner_id).toBeNull();
     else expect(row.winner_id).toBe(played.state.winner === "A" ? a : b);
   }, 60_000);
@@ -716,7 +745,8 @@ d("pool ledger (isolated schema)", () => {
     expect(again.duplicate).toBe(true);
     expect(Number(again.match_id)).toBe(newer.match_id);
 
-    const [still] = await sql`select status from pvp_test.pool_matches where id = ${older.match_id}`;
+    const [still] =
+      await sql`select status from pvp_test.pool_matches where id = ${older.match_id}`;
     const [taken] =
       await sql`select status, opponent_id from pvp_test.pool_matches where id = ${newer.match_id}`;
     expect(still.status).toBe("WAITING");
@@ -747,8 +777,7 @@ d("pool ledger (isolated schema)", () => {
     const [held] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
     expect(held.r).toBe("idle");
     const [far] = await sql`select pvp_test.pool_state(${made.match_id}) s`;
-    const wait =
-      new Date(far.s.opens_at).getTime() - new Date(far.s.server_now).getTime();
+    const wait = new Date(far.s.opens_at).getTime() - new Date(far.s.server_now).getTime();
     expect(wait).toBeGreaterThan(50_000);
 
     await as(b, async (tx) => {

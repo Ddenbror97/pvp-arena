@@ -4,11 +4,15 @@ import { playShot } from "../src/lib/pool/play";
 import { freshTable, legalPlacement, type TableState } from "../src/lib/pool/rules";
 import {
   chooseStandInShot,
+  planStandInShot,
   STAND_IN_CUE_MS,
+  STAND_IN_RELEASE_MS,
   STAND_IN_STROKE_MS,
   STAND_IN_THINK_MS,
+  standInBallLeave,
   standInCuePull,
   standInDue,
+  standInRelease,
   standInShownPower,
   standInStroke,
 } from "../src/lib/pool/stand-in";
@@ -28,7 +32,11 @@ function move(ball: Ball, x: number, y: number, pocketed = false) {
   ball.vy = 0;
 }
 
-function layout(n: number, cue: { x: number; y: number }, object: { x: number; y: number }): TableState {
+function layout(
+  n: number,
+  cue: { x: number; y: number },
+  object: { x: number; y: number },
+): TableState {
   const state = freshTable(seed(n));
   state.breakShot = false;
   state.ballInHand = false;
@@ -70,6 +78,18 @@ describe("stand-in aim", () => {
     expect(release.gap).toBeLessThan(drawn.gap);
     expect(release.alpha).toBeCloseTo(0.42);
     expect(standInStroke(8_000, 1).alpha).toBe(0);
+  });
+
+  it("lets go from the drawn cue instead of drawing a second time", () => {
+    const drawn = standInStroke(8_000, 0.34);
+    const start = standInRelease(8_000, 0);
+    const hit = standInRelease(8_000, 0.42);
+    expect(start.gap).toBeCloseTo(drawn.gap);
+    expect(start.alpha).toBeCloseTo(drawn.alpha);
+    expect(hit.gap).toBeLessThan(start.gap - 1);
+    expect(standInRelease(8_000, 1).alpha).toBe(0);
+    expect(STAND_IN_RELEASE_MS).toBeLessThan(STAND_IN_CUE_MS);
+    expect(standInBallLeave(STAND_IN_RELEASE_MS, true)).toBeLessThan(STAND_IN_RELEASE_MS);
   });
 
   it("draws the ghost cue back until the shot is fully pulled", () => {
@@ -117,6 +137,21 @@ describe("stand-in aim", () => {
     }
     expect(pocketed).toBeLessThan(samples);
   }, 60_000);
+
+  it("aims before any ball is rolled", () => {
+    const bytes = seed(4);
+    const state = freshTable(bytes);
+    const started = performance.now();
+    let planned = planStandInShot(state, bytes);
+    for (let i = 0; i < 40; i++) planned = planStandInShot(state, bytes);
+    const chosen = chooseStandInShot(state, bytes);
+    expect((performance.now() - started) / 40).toBeLessThan(8);
+    expect(planned.angleMilli).toBe(chosen.angleMilli);
+    expect(planned.placeX).toBe(chosen.placeX);
+    expect(planned.placeY).toBe(chosen.placeY);
+    expect(planned.calledPocket).toBe(chosen.calledPocket);
+    expect(planned.power).toBeGreaterThanOrEqual(chosen.power);
+  });
 
   it("places a scratched cue for the seat that received ball in hand", () => {
     const state = freshTable(seed(8));

@@ -32,7 +32,13 @@ import {
   type AimGesture,
 } from "@/lib/pool/aim-gesture";
 import { shortAimLine } from "@/lib/pool/aim-line";
-import { standInCuePull, standInShownPower, standInStroke } from "@/lib/pool/stand-in";
+import {
+  standInBallLeave,
+  standInCuePull,
+  standInRelease,
+  standInShownPower,
+  standInStroke,
+} from "@/lib/pool/stand-in";
 
 const SOLIDS = ["#f0c410", "#1d4ed8", "#dc2626", "#7c3aed", "#ea580c", "#15803d", "#7f1d1d"];
 
@@ -520,6 +526,8 @@ type Stroke = {
   holdMs?: number;
   /** Stand-in stroke. The cue stays faint and draws straight into the hit. */
   ghost?: boolean;
+  /** The draw already played live. This stroke is only the let-go. */
+  released?: boolean;
 };
 
 /** Wall-clock time for each recorded frame. A shorter step hands the cue back sooner after a shot. */
@@ -554,6 +562,8 @@ type Props = {
   onPlace: (x: number, y: number) => void;
   onSample: (prev: readonly Ball[], next: readonly Ball[]) => void;
   onReplayDone: (finished: readonly Ball[][]) => void;
+  /** The ghost cue finished drawing back. The match lets go from here. */
+  onCuePulled?: () => void;
   onAimHint?: (text: string) => void;
   placing: boolean;
   legalAt: (x: number, y: number) => boolean;
@@ -581,6 +591,7 @@ export function PoolTable({
   onPlace,
   onSample,
   onReplayDone,
+  onCuePulled,
   onAimHint,
   placing,
   legalAt,
@@ -591,8 +602,13 @@ export function PoolTable({
   const cueBox = useRef({ ox: 0, oy: 0, w: 0, h: 0 });
   const cacheRef = useRef<{ w: number; h: number; canvas: HTMLCanvasElement } | null>(null);
   const motionRef = useRef(new Map<number, Motion>());
-  const strikeRef = useRef<(Pose & { t0: number; ms: number; ghost?: boolean }) | null>(null);
+  const strikeRef = useRef<
+    (Pose & { t0: number; ms: number; ghost?: boolean; released?: boolean }) | null
+  >(null);
   const cuePlay = useRef<{ key: string; t0: number } | null>(null);
+  const pullTold = useRef<string | null>(null);
+  const pulledCb = useRef(onCuePulled);
+  pulledCb.current = onCuePulled;
   const pointerRef = useRef<number | null>(null);
   const legalRef = useRef(legalAt);
   legalRef.current = legalAt;
@@ -766,6 +782,7 @@ export function PoolTable({
               t0: now,
               ms: stroke.holdMs ?? 160,
               ghost: stroke.ghost === true,
+              released: stroke.released === true,
             };
           }
         }
@@ -773,7 +790,9 @@ export function PoolTable({
           head.stamp +
           (stroke
             ? stroke.holdMs != null
-              ? Math.round(stroke.holdMs * (stroke.ghost ? 0.5 : 0.55))
+              ? stroke.ghost
+                ? standInBallLeave(stroke.holdMs, stroke.released === true)
+                : Math.round(stroke.holdMs * 0.55)
               : 90
             : 0);
         const opening = replay[0] ?? balls;
@@ -901,8 +920,16 @@ export function PoolTable({
         watching && watching.x != null && watching.y != null
           ? { x: watching.x, y: watching.y }
           : from;
-      if (watching && !watching.playing && watchFrom && !replaying && !strikeRef.current) {
-        drawAimLine(ctx, project, watchFrom, watching.angle, shown, dpr, 0.55);
+      if (watching && watchFrom && !replaying && !strikeRef.current) {
+        drawAimLine(
+          ctx,
+          project,
+          watchFrom,
+          watching.angle,
+          shown,
+          dpr,
+          watching.playing ? 0.35 : 0.55,
+        );
       }
 
       const cueCanvas = cueRef.current;
@@ -926,7 +953,9 @@ export function PoolTable({
           let gap = pulled;
           let alpha = 1;
           if (strike.ghost) {
-            const pose = standInStroke(strike.power, t);
+            const pose = strike.released
+              ? standInRelease(strike.power, t)
+              : standInStroke(strike.power, t);
             gap = pose.gap;
             alpha = pose.alpha;
           } else if (t < 0.28) gap = pulled + 1.15 * (t / 0.28);
@@ -949,13 +978,17 @@ export function PoolTable({
         let shownPower = watching.power;
         let alpha = 0.42;
         if (watching.playing) {
-          const key = `${watching.angle}:${watching.power}:${watching.x ?? ""}:${watching.y ?? ""}`;
+          const key = `${watching.angle}:${watching.x ?? ""}:${watching.y ?? ""}`;
           if (cuePlay.current?.key !== key) cuePlay.current = { key, t0: now };
           const reduceCue = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
           const pull = reduceCue ? 1 : standInCuePull(now - cuePlay.current.t0);
           shownPower = standInShownPower(watching.power, pull);
           alpha = 0.42;
           if (pull < 1) again = true;
+          else if (pullTold.current !== key) {
+            pullTold.current = key;
+            pulledCb.current?.();
+          }
         }
         const gap = 1.28 + (shownPower / 10_000) * 4.4;
         drawCue(cueCtx, projectCue, innerW, watchFrom, watching.angle, gap, alpha);
@@ -1011,15 +1044,12 @@ export function PoolTable({
         }
       }
 
-      const assistFrom = showCue && from && !replaying ? from : null;
-      const systemFrom =
-        !assistFrom && watching?.playing && watchFrom && !replaying ? watchFrom : null;
-      const aimedFrom = assistFrom ?? systemFrom;
+      const aimedFrom = showCue && from && !replaying ? from : null;
       if (aimedFrom && !strikeRef.current) {
-        const aimAngle = assistFrom ? angleMilli : (watching?.angle ?? angleMilli);
-        const aimPower = assistFrom ? power : (watching?.power ?? power);
-        const aimSpinX = assistFrom ? spinXRef.current : 0;
-        const aimSpinY = assistFrom ? spinYRef.current : 0;
+        const aimAngle = angleMilli;
+        const aimPower = power;
+        const aimSpinX = spinXRef.current;
+        const aimSpinY = spinYRef.current;
         const physics = physicsRef.current;
         let sig = `${aimAngle}:${aimPower}:${aimSpinX}:${aimSpinY}:${Math.round(aimedFrom.x)}:${Math.round(aimedFrom.y)}:${physics}`;
         for (const ball of shown) {

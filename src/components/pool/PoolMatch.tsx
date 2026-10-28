@@ -10,9 +10,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { poolMessage, poolNudge, poolTouch, usePoolState, type PoolView } from "@/lib/pool/api";
 import { nudgePoolStandIn, openPool, submitPoolShot } from "@/lib/pool/pool.functions";
-import { chooseStandInShot, STAND_IN_STROKE_MS, standInDue } from "@/lib/pool/stand-in";
+import {
+  planStandInShot,
+  STAND_IN_RELEASE_MS,
+  STAND_IN_STROKE_MS,
+  standInDue,
+} from "@/lib/pool/stand-in";
+import { rollStandIn } from "@/lib/pool/stand-in-roll";
 import { MAX_PULL_POWER } from "@/lib/pool/aim-gesture";
-import { playShot } from "@/lib/pool/play";
+import { recordShot } from "@/lib/pool/play";
 import {
   PHYSICS_V5,
   POCKETS,
@@ -31,11 +37,29 @@ import {
   seatGroup,
   seedHash,
   stateHash,
+  type TableState,
 } from "@/lib/pool/rules";
 import { ballSound, cueSound, cushionSound, pocketSound } from "@/lib/pool/sfx";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import type { WatchedAim } from "@/components/pool/PoolTable";
-import { bytesFromHex, replayMatch, resumeReplay, stepsFromRecord, type ReplayCursor } from "@/lib/pool/verify";
+import {
+  bytesFromHex,
+  replayMatch,
+  resumeReplay,
+  stepsFromRecord,
+  type ReplayCursor,
+} from "@/lib/pool/verify";
+
+type GhostStroke = {
+  x: number;
+  y: number;
+  angle: number;
+  power: number;
+  holdMs?: number;
+  ghost?: boolean;
+  released?: boolean;
+};
+
 import {
   leaveTake,
   matchNotice,
@@ -102,14 +126,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const [busy, setBusy] = useState(false);
   const [sheet, setSheet] = useState(false);
   const [frames, setFrames] = useState<Ball[][] | null>(null);
-  const [stroke, setStroke] = useState<{
-    x: number;
-    y: number;
-    angle: number;
-    power: number;
-    holdMs?: number;
-    ghost?: boolean;
-  } | null>(null);
+  const [stroke, setStroke] = useState<GhostStroke | null>(null);
+  const [pulling, setPulling] = useState(false);
+  const [systemShot, setSystemShot] = useState<ShotInput | null>(null);
   const [seedOk, setSeedOk] = useState<boolean | null>(null);
   const [replayNote, setReplayNote] = useState<string | null>(null);
   const [aimHint, setAimHint] = useState<string | null>(null);
@@ -143,6 +162,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const pendingShot = useRef<number | null>(null);
   const previewKey = useRef<string | null>(null);
   const previewHash = useRef<string | null>(null);
+  const previewTable = useRef<TableState | null>(null);
+  const previewFrames = useRef<Ball[][] | null>(null);
   const framesRef = useRef<Ball[][] | null>(null);
   framesRef.current = frames;
   const serverReady = useRef(false);
@@ -150,35 +171,57 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const presenceWarned = useRef(false);
   const opening = useRef(false);
   const awayAt = useRef(0);
+  const askedShot = useRef<number | null>(null);
+  const lined = useRef<number | null>(null);
+  const asking = useRef(false);
+  const shotLive = useRef(true);
+  const readyStroke = useRef<{
+    key: string;
+    sequence: Ball[][];
+    stroke: GhostStroke;
+    hash: string;
+    state: TableState;
+  } | null>(null);
+  const pullFinished = useRef(false);
+  const released = useRef(false);
+  const liveRoll = useRef<{ shot: number; failed: boolean } | null>(null);
+  const [rollNonce, setRollNonce] = useState(0);
   const tableHash = view?.state_hash ?? null;
   const physicsId = view?.state?.physics ?? null;
   const noiseAt = useRef(0);
-  const onSample = useCallback((prev: readonly Ball[], next: readonly Ball[]) => {
-    const hit = impactOf(prev, next, physicsId);
-    const now = performance.now();
-    if (hit.pocket) {
-      pocketSound();
-      return;
-    }
-    if (now - noiseAt.current <= 32) return;
-    if (hit.ball > 700) {
-      ballSound(Math.min(1, hit.ball / 9000));
-      noiseAt.current = now;
-    } else if (hit.rail > 700) {
-      cushionSound(Math.min(1, hit.rail / 9000));
-      noiseAt.current = now;
-    }
-  }, [physicsId]);
+  const onSample = useCallback(
+    (prev: readonly Ball[], next: readonly Ball[]) => {
+      const hit = impactOf(prev, next, physicsId);
+      const now = performance.now();
+      if (hit.pocket) {
+        pocketSound();
+        return;
+      }
+      if (now - noiseAt.current <= 32) return;
+      if (hit.ball > 700) {
+        ballSound(Math.min(1, hit.ball / 9000));
+        noiseAt.current = now;
+      } else if (hit.rail > 700) {
+        cushionSound(Math.min(1, hit.rail / 9000));
+        noiseAt.current = now;
+      }
+    },
+    [physicsId],
+  );
   const onReplayDone = useCallback((finished?: readonly Ball[][] | null) => {
     if (finished && finished !== framesRef.current) return;
-    if (previewKey.current && !serverReady.current) {
+    const thisPreview = previewFrames.current != null && finished === previewFrames.current;
+    if (previewKey.current && !serverReady.current && thisPreview) {
       heldPreview.current = true;
       return;
     }
-    const shots = shotsRef.current;
-    previewKey.current = null;
-    previewHash.current = null;
-    serverReady.current = false;
+    if (thisPreview) {
+      previewKey.current = null;
+      previewHash.current = null;
+      previewTable.current = null;
+      previewFrames.current = null;
+      serverReady.current = false;
+    }
     heldPreview.current = false;
     setFrames(null);
     setStroke(null);
@@ -273,7 +316,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   }, [liveId, liveStatus, turnDeadline]);
 
   useEffect(() => {
-    if (liveId == null || liveStatus !== "STARTING" || opensLeft == null || opensLeft > 1_200) return;
+    if (liveId == null || liveStatus !== "STARTING" || opensLeft == null || opensLeft > 1_200)
+      return;
     if (opening.current) return;
     opening.current = true;
     void openRack({ data: { matchId: liveId } }).finally(() => {
@@ -284,21 +328,68 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   }, [liveId, liveStatus, opensLeft, openRack]);
 
   useEffect(() => {
-    if (!view || view.status !== "PLAYING" || (view.stand_in !== "A" && view.stand_in !== "B")) return;
-    if (!view.state || view.state.turn !== view.stand_in || view.state.winner) return;
-    if (!view.turn_deadline || !view.server_now) return;
+    const away = view?.stand_in;
+    const live =
+      !!view &&
+      view.status === "PLAYING" &&
+      (away === "A" || away === "B") &&
+      view.state?.turn === away &&
+      !view.state?.winner &&
+      !!view.turn_deadline &&
+      !!view.server_now;
+    if (!live || !view.turn_deadline || !view.server_now) {
+      setPulling(false);
+      return;
+    }
     const deadline = view.turn_deadline;
     const skew = Date.now() - Date.parse(view.server_now);
     const seconds = view.shot_seconds ?? 30;
     const matchId = view.id;
+    const shotN = view.state?.shot ?? -1;
+    const undo = () => {
+      if (serverReady.current) return;
+      shotLive.current = false;
+      readyStroke.current = null;
+      previewKey.current = null;
+      previewHash.current = null;
+      previewTable.current = null;
+      previewFrames.current = null;
+      if (released.current) {
+        released.current = false;
+        setFrames(null);
+        setStroke(null);
+      }
+    };
     const tick = () => {
-      if (!standInDue(deadline, Date.now() - skew, seconds)) return;
-      if (Date.now() - awayAt.current < 800) return;
+      const due = standInDue(deadline, Date.now() - skew, seconds);
+      setPulling((on) => (on === due ? on : due));
+      if (!due || askedShot.current === shotN || asking.current) return;
+      if (Date.now() - awayAt.current < 1_500) return;
       awayAt.current = Date.now();
-      void playAway({ data: { matchId } });
+      asking.current = true;
+      shotLive.current = true;
+      void playAway({ data: { matchId } })
+        .then((result) => {
+          if (result.ok) {
+            if (result.played) askedShot.current = shotN;
+            return;
+          }
+          if (result.error === "SHOT_IN_PROGRESS") return;
+          if (result.error === "STAND_IN_CLEARED" || result.error === "NOT_YOUR_TURN") {
+            undo();
+            return;
+          }
+          undo();
+        })
+        .catch(() => {
+          undo();
+        })
+        .finally(() => {
+          asking.current = false;
+        });
     };
     tick();
-    const id = window.setInterval(tick, 1_000);
+    const id = window.setInterval(tick, 200);
     return () => window.clearInterval(id);
   }, [
     view?.id,
@@ -323,7 +414,11 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     }
     const last = shots[shots.length - 1];
     if (!last || last.kind !== "shot") {
-      if (previewKey.current) return;
+      if (previewKey.current && last?.kind !== "timeout" && last?.kind !== "forfeit") return;
+      previewKey.current = null;
+      previewHash.current = null;
+      previewTable.current = null;
+      previewFrames.current = null;
       setFrames(null);
       setStroke(null);
       return;
@@ -331,14 +426,33 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     const prior = stepsFromRecord(shots.slice(0, -1));
     const input = stepsFromRecord([last])?.[0];
     if (!prior || !input || input.kind !== "shot") return;
-    if (
-      previewKey.current === shotKey(input.input) &&
-      input.hash === previewHash.current
-    ) {
+    const mark = last.event;
+    const tableShot = mark?.["standIn"] === true || mark?.["standIn"] === "true";
+    const owned =
+      tableShot &&
+      liveRoll.current != null &&
+      !liveRoll.current.failed &&
+      state != null &&
+      state.shot === liveRoll.current.shot + 1;
+    // The cue is already drawing this shot. Replaying it here freezes that pull.
+    if (owned && previewKey.current !== shotKey(input.input)) return;
+    if (previewKey.current === shotKey(input.input) && input.hash === previewHash.current) {
       serverReady.current = true;
+      const linked = previewTable.current;
+      if (linked) {
+        replayCursor.current = {
+          seedKey: `${liveId ?? 0}:${serverSeed}:${physicsId}`,
+          physics: physicsId,
+          steps: prior.length + 1,
+          lastHash: input.hash,
+          state: linked,
+        };
+      }
       if (heldPreview.current) {
         previewKey.current = null;
         previewHash.current = null;
+        previewTable.current = null;
+        previewFrames.current = null;
         serverReady.current = false;
         heldPreview.current = false;
         setFrames(null);
@@ -348,48 +462,40 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     }
     previewKey.current = null;
     previewHash.current = null;
+    previewTable.current = null;
+    previewFrames.current = null;
     serverReady.current = false;
     heldPreview.current = false;
-    const seedBytes = bytesFromHex(serverSeed);
-    const seedKey = `${liveId ?? 0}:${serverSeed}:${physicsId}`;
-    let rolled = resumeReplay(seedBytes, seedKey, prior, physicsId, replayCursor.current);
-    if (!rolled.ok) rolled = resumeReplay(seedBytes, seedKey, prior, physicsId, null);
-    if (!rolled.ok) return;
-    const carried = resumeReplay(seedBytes, seedKey, [...prior, input], physicsId, rolled.cursor);
-    replayCursor.current = carried.ok ? carried.cursor : rolled.cursor;
-    const table = rolled.state;
-    const placed = structuredClone(table);
-    placeCue(placed, input.input);
-    const opening = placed.balls.map((ball) => ({ ...ball }));
-    const cue = opening.find((ball) => ball.id === 0);
-    const sim = simulate(placed.balls, input.input, true, physicsId);
-    const sequence = [opening, ...sim.frames];
-    const rest = sim.balls;
-    const tail = sequence[sequence.length - 1];
-    const alreadyRest =
-      tail != null &&
-      tail.every(
-        (ball, index) =>
-          ball.pocketed === rest[index]?.pocketed &&
-          ball.x === rest[index]?.x &&
-          ball.y === rest[index]?.y,
+    try {
+      const seedBytes = bytesFromHex(serverSeed);
+      const seedKey = `${liveId ?? 0}:${serverSeed}:${physicsId}`;
+      let rolled = resumeReplay(seedBytes, seedKey, prior, physicsId, replayCursor.current);
+      if (!rolled.ok) rolled = resumeReplay(seedBytes, seedKey, prior, physicsId, null);
+      if (!rolled.ok) return;
+      const carried = resumeReplay(seedBytes, seedKey, [...prior, input], physicsId, rolled.cursor);
+      replayCursor.current = carried.ok ? carried.cursor : rolled.cursor;
+      const played = recordShot(rolled.state, input.input, physicsId);
+      if (!played) return;
+      setFrames(played.sequence);
+      setStroke(
+        played.cue
+          ? {
+              x: played.cue.x,
+              y: played.cue.y,
+              angle: input.input.angleMilli,
+              power: input.input.power,
+              ...(tableShot ? { holdMs: STAND_IN_STROKE_MS, ghost: true } : {}),
+            }
+          : null,
       );
-    if (!alreadyRest) sequence.push(rest);
-    setFrames(sequence);
-    const tableShot = last.event["standIn"] === true || last.event["standIn"] === "true";
-    setStroke(
-      cue
-        ? {
-            x: cue.x,
-            y: cue.y,
-            angle: input.input.angleMilli,
-            power: input.input.power,
-            ...(tableShot ? { holdMs: STAND_IN_STROKE_MS, ghost: true } : {}),
-          }
-        : null,
-    );
-    cueSound(input.input.power);
-  }, [serverSeed, tableHash, reduce, physicsId]);
+      cueSound(input.input.power);
+    } catch (error) {
+      console.error(error);
+    }
+    // `state` is the rack for this hash. Depending on the object resimulates on
+    // every poll and freezes the cue in the middle of its draw.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serverSeed, tableHash, reduce, physicsId, liveId, rollNonce, state?.shot]);
 
   useEffect(() => {
     if (!shotLock.current || pendingShot.current == null) return;
@@ -416,14 +522,115 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     !state.breakShot;
   const shootingEight = eightForShooter && mine;
   const ghost = mine && state?.ballInHand ? place : null;
-  const systemShot = useMemo(() => {
-    if (!serverSeed || !state || liveStatus !== "PLAYING" || state.winner) return null;
+  useEffect(() => {
+    if (!serverSeed || !state || liveStatus !== "PLAYING" || state.winner || reduce || !physicsId) {
+      setSystemShot(null);
+      return;
+    }
     const away = view?.stand_in;
-    if ((away !== "A" && away !== "B") || state.turn !== away) return null;
+    if ((away !== "A" && away !== "B") || state.turn !== away) {
+      setSystemShot(null);
+      return;
+    }
     const bytes = bytesFromHex(serverSeed);
-    if (bytes.length !== 32) return null;
-    return chooseStandInShot(state, bytes);
-  }, [serverSeed, state, liveStatus, view?.stand_in]);
+    if (bytes.length !== 32) {
+      setSystemShot(null);
+      return;
+    }
+    const table = state;
+    const id = physicsId;
+    if (lined.current !== table.shot) {
+      lined.current = table.shot;
+      pullFinished.current = false;
+      released.current = false;
+      shotLive.current = true;
+      readyStroke.current = null;
+      // The aim is geometry. The roll happens off this thread, so the draw can start now.
+      setSystemShot(planStandInShot(table, bytes));
+    }
+    const shotN = table.shot;
+    liveRoll.current = { shot: shotN, failed: false };
+    if (readyStroke.current) return;
+    let cancel = false;
+    void rollStandIn(table, bytes, id)
+      .then((played) => {
+        if (!played) {
+          if (!cancel && lined.current === shotN) {
+            liveRoll.current = { shot: shotN, failed: true };
+            setRollNonce((n) => n + 1);
+          }
+          return;
+        }
+        const key = shotKey(played.shot);
+        if (previewKey.current === key && readyStroke.current?.hash === played.hash) return;
+        const aimingThis = lined.current === shotN && !cancel;
+        const stroke = {
+          x: played.cue.x,
+          y: played.cue.y,
+          angle: played.shot.angleMilli,
+          power: played.shot.power,
+          holdMs: STAND_IN_RELEASE_MS,
+          ghost: true,
+          released: true,
+        };
+        if (!aimingThis) {
+          if (framesRef.current) return;
+          setFrames(played.sequence);
+          setStroke(stroke);
+          cueSound(played.shot.power);
+          return;
+        }
+        readyStroke.current = {
+          key,
+          sequence: played.sequence,
+          hash: played.hash,
+          state: played.state,
+          stroke,
+        };
+        previewKey.current = key;
+        previewHash.current = played.hash;
+        previewTable.current = played.state;
+        previewFrames.current = null;
+        setSystemShot(played.shot);
+        if (!pullFinished.current || released.current || !shotLive.current) return;
+        released.current = true;
+        previewFrames.current = played.sequence;
+        setFrames(played.sequence);
+        setStroke(stroke);
+        cueSound(played.shot.power);
+      })
+      .catch(() => {
+        if (cancel || lined.current !== shotN) return;
+        liveRoll.current = { shot: shotN, failed: true };
+        setRollNonce((n) => n + 1);
+      });
+    return () => {
+      cancel = true;
+    };
+    // `state` is read on the render whose hash or shot changed. Depending on the
+    // object would resimulate on every one-second poll and hitch the cue pull.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    serverSeed,
+    view?.state_hash,
+    view?.stand_in,
+    state?.shot,
+    state?.turn,
+    state?.winner,
+    liveStatus,
+    physicsId,
+    reduce,
+  ]);
+  const onCuePulled = useCallback(() => {
+    pullFinished.current = true;
+    const ready = readyStroke.current;
+    if (!ready || released.current || !shotLive.current) return;
+    released.current = true;
+    previewFrames.current = ready.sequence;
+    setFrames(ready.sequence);
+    setStroke(ready.stroke);
+    cueSound(ready.stroke.power);
+  }, []);
   const aimBus = useRef<RealtimeChannel | null>(null);
   const aimSeat = useRef(seat);
   aimSeat.current = seat;
@@ -494,114 +701,123 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     };
   }, [view]);
 
-  const takeShot = useCallback(async (pulled?: number, angleMilli = angle) => {
-    const shotPower = pulled ?? power;
-    if (shotLock.current || !state || !mine || frames) return;
-    shotLock.current = true;
-    pendingShot.current = state.shot + 1;
-    const input: ShotInput = {
-      angleMilli,
-      power: shotPower,
-      spinX,
-      spinY,
-      placeX: state.ballInHand ? (place?.x ?? null) : null,
-      placeY: state.ballInHand ? (place?.y ?? null) : null,
-      calledPocket: shootingEight ? called : null,
-    };
-    if (
-      state.ballInHand &&
-      (input.placeX == null || !legalPlacement(state, input.placeX, input.placeY ?? 0))
-    ) {
-      shotLock.current = false;
-      pendingShot.current = null;
-      toast.error(poolMessage("ILLEGAL_PLACEMENT"));
-      return;
-    }
-    if (shootingEight && called == null) {
-      shotLock.current = false;
-      pendingShot.current = null;
-      toast.error(poolMessage("CALL_POCKET"));
-      return;
-    }
-    if (!reduce && physicsId) {
-      const placed = structuredClone(state);
-      if (!placeCue(placed, input)) {
-        const opening = placed.balls.map((ball) => ({ ...ball }));
-        const cue = opening.find((ball) => ball.id === 0);
-        const sim = simulate(placed.balls, input, true, physicsId);
-        const sequence = [opening, ...sim.frames];
-        const rest = sim.balls;
-        const tail = sequence[sequence.length - 1];
-        const alreadyRest =
-          tail != null &&
-          tail.every(
-            (ball, index) =>
-              ball.pocketed === rest[index]?.pocketed &&
-              ball.x === rest[index]?.x &&
-              ball.y === rest[index]?.y,
-          );
-        if (!alreadyRest) sequence.push(rest);
-        const applied = applyPlayedShot(placed, sim, input.calledPocket);
-        previewKey.current = shotKey(input);
-        previewHash.current = stateHash(applied.state);
-        serverReady.current = false;
-        heldPreview.current = false;
-        setFrames(sequence);
-        setStroke(
-          cue ? { x: cue.x, y: cue.y, angle: input.angleMilli, power: input.power } : null,
-        );
-        cueSound(input.power);
+  const takeShot = useCallback(
+    async (pulled?: number, angleMilli = angle) => {
+      const shotPower = pulled ?? power;
+      if (shotLock.current || !state || !mine || frames) return;
+      shotLock.current = true;
+      pendingShot.current = state.shot + 1;
+      const input: ShotInput = {
+        angleMilli,
+        power: shotPower,
+        spinX,
+        spinY,
+        placeX: state.ballInHand ? (place?.x ?? null) : null,
+        placeY: state.ballInHand ? (place?.y ?? null) : null,
+        calledPocket: shootingEight ? called : null,
+      };
+      if (
+        state.ballInHand &&
+        (input.placeX == null || !legalPlacement(state, input.placeX, input.placeY ?? 0))
+      ) {
+        shotLock.current = false;
+        pendingShot.current = null;
+        toast.error(poolMessage("ILLEGAL_PLACEMENT"));
+        return;
       }
-    }
-    setBusy(true);
-    try {
-      const result = await shoot({ data: { matchId, key: crypto.randomUUID(), shot: input } });
-      if (!result.ok) {
+      if (shootingEight && called == null) {
+        shotLock.current = false;
+        pendingShot.current = null;
+        toast.error(poolMessage("CALL_POCKET"));
+        return;
+      }
+      if (!reduce && physicsId) {
+        const placed = structuredClone(state);
+        if (!placeCue(placed, input)) {
+          const opening = placed.balls.map((ball) => ({ ...ball }));
+          const cue = opening.find((ball) => ball.id === 0);
+          const sim = simulate(placed.balls, input, true, physicsId);
+          const sequence = [opening, ...sim.frames];
+          const rest = sim.balls;
+          const tail = sequence[sequence.length - 1];
+          const alreadyRest =
+            tail != null &&
+            tail.every(
+              (ball, index) =>
+                ball.pocketed === rest[index]?.pocketed &&
+                ball.x === rest[index]?.x &&
+                ball.y === rest[index]?.y,
+            );
+          if (!alreadyRest) sequence.push(rest);
+          const applied = applyPlayedShot(placed, sim, input.calledPocket);
+          previewKey.current = shotKey(input);
+          previewHash.current = stateHash(applied.state);
+          previewTable.current = applied.state;
+          previewFrames.current = sequence;
+          serverReady.current = false;
+          heldPreview.current = false;
+          setFrames(sequence);
+          setStroke(
+            cue ? { x: cue.x, y: cue.y, angle: input.angleMilli, power: input.power } : null,
+          );
+          cueSound(input.power);
+        }
+      }
+      setBusy(true);
+      try {
+        const result = await shoot({ data: { matchId, key: crypto.randomUUID(), shot: input } });
+        if (!result.ok) {
+          previewKey.current = null;
+          previewHash.current = null;
+          previewTable.current = null;
+          previewFrames.current = null;
+          serverReady.current = false;
+          heldPreview.current = false;
+          shotLock.current = false;
+          pendingShot.current = null;
+          setFrames(null);
+          setStroke(null);
+          toast.error(poolMessage(result.error));
+        } else {
+          setPlace(null);
+          setPower(1);
+        }
+        void qc.invalidateQueries({ queryKey: ["pool-match", matchId] });
+        void qc.invalidateQueries({ queryKey: ["wallet"] });
+      } catch {
         previewKey.current = null;
         previewHash.current = null;
+        previewTable.current = null;
+        previewFrames.current = null;
         serverReady.current = false;
         heldPreview.current = false;
         shotLock.current = false;
         pendingShot.current = null;
         setFrames(null);
         setStroke(null);
-        toast.error(poolMessage(result.error));
-      } else {
-        setPlace(null);
-        setPower(1);
+        toast.error(poolMessage("REQUEST_FAILED"));
+      } finally {
+        setBusy(false);
       }
-      void qc.invalidateQueries({ queryKey: ["pool-match", matchId] });
-      void qc.invalidateQueries({ queryKey: ["wallet"] });
-    } catch {
-      previewKey.current = null;
-      previewHash.current = null;
-      serverReady.current = false;
-      heldPreview.current = false;
-      shotLock.current = false;
-      pendingShot.current = null;
-      setFrames(null);
-      setStroke(null);
-      toast.error(poolMessage("REQUEST_FAILED"));
-    } finally {
-      setBusy(false);
-    }
-  }, [
-    angle,
-    called,
-    matchId,
-    mine,
-    place,
-    power,
-    qc,
-    shoot,
-    shootingEight,
-    spinX,
-    frames,
-    physicsId,
-    reduce,
-    spinY,
-    state,
-  ]);
+    },
+    [
+      angle,
+      called,
+      matchId,
+      mine,
+      place,
+      power,
+      qc,
+      shoot,
+      shootingEight,
+      spinX,
+      frames,
+      physicsId,
+      reduce,
+      spinY,
+      state,
+    ],
+  );
 
   useEffect(() => {
     if (!mine) return;
@@ -743,7 +959,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     systemShot && frames == null
       ? {
           angle: systemShot.angleMilli,
-          power: 1,
+          power: pulling ? systemShot.power : 1,
+          playing: pulling,
           ...(systemShot.placeX != null && systemShot.placeY != null
             ? { x: systemShot.placeX, y: systemShot.placeY }
             : {}),
@@ -917,6 +1134,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             onAimHint={setAimHint}
             onSample={onSample}
             onReplayDone={onReplayDone}
+            onCuePulled={onCuePulled}
             onPlace={(x, y) => {
               if (state && legalPlacement(state, x, y)) setPlace({ x, y });
             }}
@@ -1059,7 +1277,11 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         <div className="pool-closed" role="status">
           <div className="pool-closed-card">
             <strong>
-              {youLeft ? "You left this table" : seat ? `${otherName} left` : "This table is closed"}
+              {youLeft
+                ? "You left this table"
+                : seat
+                  ? `${otherName} left`
+                  : "This table is closed"}
             </strong>
             <p>
               {youLeft
@@ -1148,7 +1370,8 @@ function ballsAhead(
   other: "solids" | "stripes" | null,
 ): boolean {
   if (!group || !other) return false;
-  const down = (side: "solids" | "stripes") => ballRack(balls, side).filter((ball) => ball.down).length;
+  const down = (side: "solids" | "stripes") =>
+    ballRack(balls, side).filter((ball) => ball.down).length;
   return down(group) > down(other);
 }
 

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { simulate } from "../src/lib/pool/physics";
 import { confirmStep, confirmedWinner, playShot } from "../src/lib/pool/play";
 import { freshTable, seedHash, stateHash } from "../src/lib/pool/rules";
-import { replayMatch } from "../src/lib/pool/verify";
+import { replayMatch, tableLinks } from "../src/lib/pool/verify";
 
 const seed = Uint8Array.from({ length: 32 }, (_, i) => i + 1);
 
@@ -55,6 +55,22 @@ describe("pool replay", () => {
     const wrongSeed = await replayMatch(seed, "ab".repeat(32), steps);
     expect(wrongSeed.seedOk).toBe(false);
     expect(wrongSeed.ok).toBe(false);
+  });
+
+  it("links the next shot to the stored rack", () => {
+    const { table, shot } = breakShot();
+    expect(tableLinks(seed, table, [])).toBe(true);
+    const moved = structuredClone(table);
+    const cue = moved.balls.find((ball) => ball.id === 0);
+    if (!cue) throw new Error("missing cue");
+    cue.x += 10;
+    expect(tableLinks(seed, moved, [])).toBe(false);
+    const played = playShot(table, shot);
+    expect(played.ok).toBe(true);
+    if (!played.ok) return;
+    const steps = [{ kind: "shot" as const, input: shot, hash: played.hash }];
+    expect(tableLinks(seed, played.state, steps)).toBe(true);
+    expect(tableLinks(seed, table, steps)).toBe(false);
   });
 
   it("confirms the next shot from the previous roll", async () => {

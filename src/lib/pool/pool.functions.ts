@@ -4,9 +4,9 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { requireLiveSession } from "@/integrations/supabase/live-session";
 import { POOL_STAKE_MAX, POOL_STAKE_MIN } from "./copy";
 import type { ShotInput } from "./physics";
-import { confirmStep, playShot } from "./play";
+import { playShot } from "./play";
 import { freshTable, seedHash, type TableState } from "./rules";
-import { bytesFromHex, stepsFromRecord } from "./verify";
+import { bytesFromHex, committedSeedOk, stepsFromRecord, tableLinks } from "./verify";
 
 const stakeSchema = z.number().int().min(POOL_STAKE_MIN).max(POOL_STAKE_MAX);
 const keySchema = z.string().min(8).max(100);
@@ -126,7 +126,9 @@ export const enterPool = createServerFn({ method: "POST" })
 
 export const openPool = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth, requireLiveSession])
-  .inputValidator((input: unknown) => z.object({ matchId: z.number().int().positive() }).parse(input))
+  .inputValidator((input: unknown) =>
+    z.object({ matchId: z.number().int().positive() }).parse(input),
+  )
   .handler(async ({ data, context }) => {
     const db = await admin();
     const loaded = await db.rpc("pool_state", { p_match: data.matchId });
@@ -136,7 +138,8 @@ export const openPool = createServerFn({ method: "POST" })
     if (!view || (view.creator_id !== userId && view.opponent_id !== userId)) {
       return { ok: false as const, error: "FORBIDDEN" };
     }
-    if (view.status === "PLAYING") return { ok: true as const, matchId: data.matchId, duplicate: true };
+    if (view.status === "PLAYING")
+      return { ok: true as const, matchId: data.matchId, duplicate: true };
     if (view.status !== "STARTING") return { ok: false as const, error: "MATCH_NOT_STARTING" };
     const opens = typeof view.opens_at === "string" ? Date.parse(view.opens_at) : NaN;
     const now = typeof view.server_now === "string" ? Date.parse(view.server_now) : Date.now();
@@ -150,7 +153,9 @@ export const openPool = createServerFn({ method: "POST" })
 
 export const nudgePoolStandIn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth, requireLiveSession])
-  .inputValidator((input: unknown) => z.object({ matchId: z.number().int().positive() }).parse(input))
+  .inputValidator((input: unknown) =>
+    z.object({ matchId: z.number().int().positive() }).parse(input),
+  )
   .handler(async ({ data, context }) => {
     const db = await admin();
     const loaded = await db.rpc("pool_state", { p_match: data.matchId });
@@ -203,19 +208,7 @@ export const submitPoolShot = createServerFn({ method: "POST" })
     const prior = stepsFromRecord(view?.events);
     const published = typeof view?.server_seed_hash === "string" ? view.server_seed_hash : "";
     if (!seed || seed.length !== 32 || !prior) return fail("REPLAY_MISMATCH");
-
-    const confirmed = await confirmStep(
-      String(data.matchId),
-      seed,
-      published,
-      [...prior, { kind: "shot", input: shot, hash: played.hash }],
-      table.physics,
-    );
-    if (
-      !confirmed.ok ||
-      confirmed.hash !== played.hash ||
-      confirmed.winner !== played.state.winner
-    ) {
+    if (!(await committedSeedOk(seed, published)) || !tableLinks(seed, table, prior)) {
       return fail("REPLAY_MISMATCH");
     }
 

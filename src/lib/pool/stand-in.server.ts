@@ -1,8 +1,8 @@
 import type { ShotInput } from "./physics";
-import { confirmStep, playShot } from "./play";
+import { playShot } from "./play";
 import { chooseStandInShot, standInDue } from "./stand-in";
 import type { TableState } from "./rules";
-import { bytesFromHex, stepsFromRecord } from "./verify";
+import { bytesFromHex, committedSeedOk, stepsFromRecord, tableLinks } from "./verify";
 
 const inflight = new Set<string>();
 
@@ -68,7 +68,8 @@ export async function playStandInMatch(
   if (loaded.error) return { ok: false, error: rpcError(loaded.error) };
   const view = asRecord(loaded.data);
   const table = asTable(view?.state);
-  if (!view || view.status !== "PLAYING" || !table || table.winner) return { ok: true, played: false };
+  if (!view || view.status !== "PLAYING" || !table || table.winner)
+    return { ok: true, played: false };
   if (view.stand_in !== "A" && view.stand_in !== "B") return { ok: true, played: false };
   if (table.turn !== view.stand_in) return { ok: true, played: false };
   const deadline = typeof view.turn_deadline === "string" ? view.turn_deadline : "";
@@ -116,7 +117,8 @@ async function finishStandIn(
   if (!Number.isInteger(seq)) return { ok: false, error: "BAD_STATE" };
 
   const fail = async (error: string) => {
-    await db.rpc("pool_abort_shot", { p_match: matchId });
+    // Only this attempt. A second caller can still be committing the same shot.
+    await db.rpc("pool_abort_owned", { p_match: matchId, p_key: key });
     return { ok: false as const, error };
   };
 
@@ -126,14 +128,9 @@ async function finishStandIn(
   const prior = stepsFromRecord(fresh?.events);
   const published = typeof fresh?.server_seed_hash === "string" ? fresh.server_seed_hash : "";
   if (!prior) return fail("REPLAY_MISMATCH");
-  const confirmed = await confirmStep(
-    String(matchId),
-    seed,
-    published,
-    [...prior, { kind: "shot", input: shot, hash: played.hash }],
-    priorTable.physics,
-  );
-  if (!confirmed.ok || confirmed.hash !== played.hash || confirmed.winner !== played.state.winner) {
+  // The stored rack already passed this check on the previous stroke.
+  // Rolling every earlier shot here grew past the shot clock after a few turns.
+  if (!(await committedSeedOk(seed, published)) || !tableLinks(seed, priorTable, prior)) {
     return fail("REPLAY_MISMATCH");
   }
   const committed = await db.rpc("pool_commit_shot", {
@@ -149,7 +146,7 @@ async function finishStandIn(
     if (code === "STAND_IN_CLEARED" || code === "NO_PENDING_SHOT") {
       return { ok: true, played: false };
     }
-    await db.rpc("pool_abort_shot", { p_match: matchId });
+    await db.rpc("pool_abort_owned", { p_match: matchId, p_key: key });
     return { ok: false, error: code };
   }
   return { ok: true, played: true };
