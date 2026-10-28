@@ -121,11 +121,11 @@ describe("pointer aim", () => {
     expect(powerFromPull(0)).toBe(0);
     expect(powerFromPull(PULL_DEAD_PX)).toBe(0);
     expect(powerFromPull(PULL_DEAD_PX + 1)).toBeGreaterThan(0);
-    expect(powerFromPull(at(0.2))).toBe(2_000);
-    expect(powerFromPull(at(0.3))).toBe(3_000);
-    expect(powerFromPull(at(0.5))).toBe(4_000);
-    expect(powerFromPull(PULL_FULL_PX)).toBe(8_000);
-    expect(powerFromPull(PULL_FULL_PX + 80)).toBe(8_000);
+    expect(powerFromPull(at(0.2))).toBe(1_700);
+    expect(powerFromPull(at(0.3))).toBe(2_550);
+    expect(powerFromPull(at(0.5))).toBe(3_400);
+    expect(powerFromPull(PULL_FULL_PX)).toBe(6_800);
+    expect(powerFromPull(PULL_FULL_PX + 80)).toBe(6_800);
     let prev = 0;
     for (let px = 0; px <= PULL_FULL_PX + 40; px += 1) {
       const next = powerFromPull(px);

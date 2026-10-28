@@ -69,7 +69,7 @@ The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on
       title: "When the dollar balance moves",
       body: `Settlement is a balance update, not a promise about a bank. When the match ends, 95% of the pot is credited to the winner's US-dollar balance. The 5% fee stays with the operator. The fee named here is the pot fee at settlement. This page does not describe a second cut taken at the moment of the credit, and it does not invent one.
 
-The shot clock is 30 seconds. Three timeouts forfeit that seat. Leaving a live table is not a win. The site keeps 10% of the leaver's stake and returns the rest. The other player's stake comes back, and the table closes. A player who wants a PayPal transfer, or a Cash App transfer, is asking for a rail this cashier does not describe. Speed claims for other apps are absent for the same reason.
+The shot clock is 30 seconds. Three timeouts forfeit that seat. A live table has no cash-out. Ending the match forfeits that seat, and the other player is paid the win. A player who wants a PayPal transfer, or a Cash App transfer, is asking for a rail this cashier does not describe. Speed claims for other apps are absent for the same reason.
 
 No weekly tournament is published, so there is no tournament prize to wait on. No break-win rate is published, so a fast 8 on the break is a rule result in that match and not a statistic. The public record is the settled match list the lobby actually has, which can be empty.`,
     },
@@ -98,7 +98,7 @@ The American Poolplayers Association team manual prohibits gambling at APA funct
     },
     {
       q: "What if nobody joins?",
-      a: "The table stays open for 24 hours. Then the stake is refunded and no fee is taken. A player cannot cancel it sooner. After someone joins, the match ends on the rules or on three timeouts. A player who leaves a live table pays 10% of their own stake to the site. The rest of that stake, and the other player's stake, come back.",
+      a: "The table stays open for 24 hours. Then the stake is refunded and no fee is taken. A player cannot cancel it sooner. After someone joins, the match ends on the rules or on three timeouts. A live table has no cash-out. Ending the match forfeits that seat, and the other player is paid the win.",
     },
     {
       q: "How fast does the winner see the money?",

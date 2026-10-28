@@ -153,13 +153,12 @@ function TermsPage() {
       <p>
         At settlement, 5% of the pot is retained as the game fee. The winner receives the remaining
         95%. If nobody joins within 24 hours, the stake is refunded with no fee. A player cannot
-        cancel a waiting table. When both players are at the table, the rack opens. If the
-        player who opened the table is away, the rack waits 60 seconds and then the table plays
-        that player's shots. If both
-        players leave before the break, both stakes are refunded with no fee. If one player leaves a
-        live table, the site keeps 10% of that player's stake and returns the other 90%. The other
-        player is refunded their stake in full, and the table closes. Three shot-clock timeouts still
-        forfeit the match to the other player.
+        cancel a waiting table. When both players are at the table, the rack opens. If the player
+        who opened the table is away, the rack waits 60 seconds and then the table plays that
+        player's shots. If both players leave before the break, both stakes are refunded with no
+        fee. A live table has no cash-out. Ending that match forfeits the seat. The other player is
+        paid the win, and 5% of the pot is the fee. Three shot-clock timeouts still forfeit the
+        match to the other player.
       </p>
 
       <h3>Roulette</h3>

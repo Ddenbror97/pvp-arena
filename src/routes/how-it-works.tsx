@@ -467,12 +467,12 @@ function HowItWorksPage() {
                 the 8 loses.
               </li>
               <li>
-                <strong>Fee:</strong> 5% of the pot when someone wins. An empty table refunds
-                the stake after 24 hours. There is no cancel.
+                <strong>Fee:</strong> 5% of the pot when someone wins. An empty table refunds the
+                stake after 24 hours. There is no cancel, and a live table has no cash-out.
               </li>
               <li>
-                Promo and partner credit can fund a stake. Deposited or won money is used first,
-                and bonus you lose to the other player stays bonus.
+                Promo and partner credit can fund a stake. Deposited or won money is used first, and
+                bonus you lose to the other player stays bonus.
               </li>
             </ol>
             <SeoLink to="/8-ball-pool">Open the 8-ball lobby</SeoLink>

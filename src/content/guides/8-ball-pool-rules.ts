@@ -66,7 +66,7 @@ Once a group has been cleared, the 8 becomes the ball that group is allowed to p
 
 The fee is 5% of the pot, and the winner is credited 95%. Posted stakes are $1, $2, $5, $10, $25, and $50. This cashier does not offer 9-ball, 10-ball, straight pool, one-pocket, bank, cutthroat, or killer for money. Those games can be read. They cannot be staked here. A player who wants full WPA call shot will not find it in this lobby. A player who wants a called 8, a 30-second clock, and a published 5% fee will find that card on the match.
 
-Each shot has 30 seconds. If the shooter has not been seen for 15 seconds, that shot gets one reconnect window of 45 seconds. Coming back does not start a new 30-second clock, and a second drop on the same shot is a timeout. Three timeouts forfeit the seat. A waiting table with no opponent stays open for 24 hours and then returns the stake. A player cannot cancel it. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays that player's shots. If both players are unseen for 180 seconds before any shot, both stakes return. After a shot has been played, that same absence forfeits the seat whose turn it is. That absence is not the Leave table button. Leave table keeps 10% of the leaver's stake with the site, returns the other 90%, refunds the opponent's stake, and closes the table with no winner.`,
+Each shot has 30 seconds. If the shooter has not been seen for 15 seconds, that shot gets one reconnect window of 45 seconds. Coming back does not start a new 30-second clock, and a second drop on the same shot is a timeout. Three timeouts forfeit the seat. A waiting table with no opponent stays open for 24 hours and then returns the stake. A player cannot cancel it. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays that player's shots. If both players are unseen for 180 seconds before any shot, both stakes return. After a shot has been played, that same absence forfeits the seat whose turn it is. A live table has no cash-out. Ending the match forfeits that seat, and the other player is paid the win.`,
     },
   ],
   faqs: [
@@ -84,7 +84,7 @@ Each shot has 30 seconds. If the shooter has not been seen for 15 seconds, that 
     },
     {
       q: "What does this site do with the 8?",
-      a: "You call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches, and that scratch loses. An early 8 loses. The wrong pocket loses. A scratch while pocketing the 8 loses. A foul is ball in hand anywhere. Three timeouts forfeit. Leaving a live table is not that forfeit: the site keeps 10% of your stake, returns the other 90%, and refunds your opponent.",
+      a: "You call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches, and that scratch loses. An early 8 loses. The wrong pocket loses. A scratch while pocketing the 8 loses. A foul is ball in hand anywhere. Three timeouts forfeit. A live table has no cash-out. Ending the match forfeits that seat, and the other player is paid the win.",
     },
     {
       q: "Which pool games can you stake here?",

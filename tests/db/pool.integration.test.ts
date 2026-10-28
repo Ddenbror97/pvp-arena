@@ -164,7 +164,7 @@ d("pool ledger (isolated schema)", () => {
     expect(once.c).toBe(1);
   });
 
-  it("returns 90% to the player who leaves and the full stake to the opponent", async () => {
+  it("forfeits a live table to the opponent instead of returning 90%", async () => {
     const a = await newUser("lea");
     const b = await newUser("lee");
     const stranger = await newUser("leo");
@@ -198,11 +198,10 @@ d("pool ledger (isolated schema)", () => {
       values (${joined.match_id}, 1, ${a}, ${randomUUID()}, '{"angleMilli":0,"power":1}'::jsonb)`;
     const left = await as(b, async (tx) => {
       const [row] = await tx`select pvp_test.pool_leave(${joined.match_id}) r`;
-      return row.r as { left: boolean; fee: number; back: number };
+      return row.r as { left: boolean; forfeited: boolean };
     });
     expect(left.left).toBe(true);
-    expect(Number(left.fee)).toBe(10);
-    expect(Number(left.back)).toBe(90);
+    expect(left.forfeited).toBe(true);
 
     const [committed] = await sql`
       select pvp_test.pool_commit_shot(
@@ -215,29 +214,29 @@ d("pool ledger (isolated schema)", () => {
       select status, cancel_reason, left_by, winner_id, win_reason, fee_amount, payout_amount
       from pvp_test.pool_matches where id = ${joined.match_id}
     `;
-    expect(done.status).toBe("CANCELLED");
-    expect(done.cancel_reason).toBe("PLAYER_LEFT");
+    expect(done.status).toBe("COMPLETED");
+    expect(done.cancel_reason).toBeNull();
     expect(done.left_by).toBe(b);
-    expect(done.winner_id).toBeNull();
-    expect(done.win_reason).toBeNull();
+    expect(done.winner_id).toBe(a);
+    expect(done.win_reason).toBe("FORFEIT");
     expect(Number(done.fee_amount)).toBe(10);
-    expect(done.payout_amount).toBeNull();
-    expect(await bal(a)).toBe(beforeA);
-    expect(await bal(b)).toBe(beforeB - 10);
+    expect(Number(done.payout_amount)).toBe(190);
+    expect(await bal(a)).toBe(beforeA + 90);
+    expect(await bal(b)).toBe(beforeB - 100);
     expect(await bal(a, "user_locked")).toBe(0);
     expect(await bal(b, "user_locked")).toBe(0);
 
     const [view] = await sql`select pvp_test.pool_state(${joined.match_id}) s`;
     expect(view.s.left_by).toBe(b);
-    expect(view.s.status).toBe("CANCELLED");
-    expect(view.s.cancel_reason).toBe("PLAYER_LEFT");
-    expect(view.s.winner_id).toBeNull();
+    expect(view.s.status).toBe("COMPLETED");
+    expect(view.s.winner_id).toBe(a);
+    expect(view.s.win_reason).toBe("FORFEIT");
 
     const [payouts] = await sql`
       select count(*)::int c, coalesce(sum(amount + fee), 0)::bigint s
       from pvp_test.pool_payouts where match_id = ${joined.match_id}
     `;
-    expect(payouts.c).toBe(2);
+    expect(payouts.c).toBe(1);
     expect(Number(payouts.s)).toBe(200);
 
     const again = await as(a, async (tx) => {
@@ -245,22 +244,22 @@ d("pool ledger (isolated schema)", () => {
       return row.r as { left: boolean };
     });
     expect(again.left).toBe(false);
-    const [once] = await sql`
+    const [refunds] = await sql`
       select count(*)::int c from pvp_test.ledger_transactions
       where game_id = ${joined.match_id} and kind = 'pool_refund'
     `;
-    expect(once.c).toBe(1);
+    expect(refunds.c).toBe(0);
     await sql`select pvp_test.pool_forfeit_seat(${joined.match_id}, 'B')`;
-    const [noWin] = await sql`
+    const [once] = await sql`
       select count(*)::int c from pvp_test.ledger_transactions
       where game_id = ${joined.match_id} and kind = 'pool_settlement'
     `;
-    expect(noWin.c).toBe(0);
+    expect(once.c).toBe(1);
     const [rated] = await sql`
       select count(*)::int c from pvp_test.pool_ratings
       where user_id in (${a}, ${b}) and games > 0
     `;
-    expect(rated.c).toBe(0);
+    expect(rated.c).toBe(2);
     const [pending] = await sql`
       select count(*)::int c from pvp_test.pool_pending where match_id = ${joined.match_id}
     `;
@@ -280,13 +279,12 @@ d("pool ledger (isolated schema)", () => {
     await beginReal(odd.match_id);
     const oddLeft = await as(oddA, async (tx) => {
       const [row] = await tx`select pvp_test.pool_leave(${odd.match_id}) r`;
-      return row.r as { left: boolean; fee: number; back: number };
+      return row.r as { left: boolean; forfeited: boolean };
     });
     expect(oddLeft.left).toBe(true);
-    expect(Number(oddLeft.fee)).toBe(10);
-    expect(Number(oddLeft.back)).toBe(91);
-    expect(await bal(oddA)).toBe(oddBeforeA - 10);
-    expect(await bal(oddB)).toBe(oddBeforeB);
+    expect(oddLeft.forfeited).toBe(true);
+    expect(await bal(oddA)).toBe(oddBeforeA - 101);
+    expect(await bal(oddB)).toBe(oddBeforeB + 91);
 
     const [books] =
       await sql`select coalesce(sum(balance), 0)::bigint s from pvp_test.wallet_accounts`;

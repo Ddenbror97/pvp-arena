@@ -73,18 +73,27 @@ export function stickAngle(point: Point, cue: Point): number | null {
   return angleOf(dx, dy);
 }
 
+/** A full drag, after the curve is eased by 15%. Arrow keys stop here too. */
+export const MAX_PULL_POWER = 6_800;
+
 /**
  * Straight through 30% of a full pull. Past that the shot is about 20% softer,
- * blended in by 45% so a longer drag never loses power. A full pull is 8000.
+ * blended in by 45% so a longer drag never loses power. The whole curve is
+ * then 15% softer. A full pull is 6800.
  */
 export function powerFromPull(pixels: number): number {
   if (!Number.isFinite(pixels) || pixels <= PULL_DEAD_PX) return 0;
   const span = PULL_FULL_PX - PULL_DEAD_PX;
   const t = Math.min(1, (pixels - PULL_DEAD_PX) / span);
-  return Math.max(1, Math.round(softenPull(t) * 10_000));
+  return Math.max(1, Math.min(MAX_PULL_POWER, Math.round(softenPull(t) * 10_000)));
 }
 
 function softenPull(t: number): number {
+  const shaped = shapePull(t) * 0.85;
+  return shaped;
+}
+
+function shapePull(t: number): number {
   if (t <= 0.3) return t;
   const soft = t * 0.8;
   const knee = 0.45;

@@ -627,11 +627,10 @@ function PoolSection() {
         8-ball is skill plus a published ruleset. The server does not pick who wins. It runs the
         same function a replay runs, so a browser cannot submit pocketed balls or a payout. The only
         random value is the rack, and that seed stays hidden until the match is playing. A timeout
-        or a forfeit is the rule for not acting, not a house choice. Leave table is not that forfeit.
-        It closes the match, keeps 10% of the leaver's stake, and returns the rest of both stakes.
-        This page proves the shot list.
-        It does not reverse a payment. A match checks out under the physics id stored with its rack
-        (pool-phys-v1 through pool-phys-v7) and rules pvp-8ball-v1.
+        or a forfeit is the rule for not acting, not a house choice. A live table has no cash-out.
+        Ending the match forfeits that seat, and the other player is paid the win. This page proves
+        the shot list. It does not reverse a payment. A match checks out under the physics id stored
+        with its rack (pool-phys-v1 through pool-phys-v7) and rules pvp-8ball-v1.
       </p>
       <div className="grid gap-4">
         <Card title="Replay a match">
@@ -672,8 +671,7 @@ shots have no random error
 each step is one of:
   shot     angle, power, side, follow, cue placement, called pocket for the 8
   timeout  the seat to act did not shoot before the clock
-  forfeit  that seat timed out three times, or both seats left on that turn
-  leave    not a forfeit: 10% of the leaver's stake stays with the site, both stakes otherwise return, no winner
+  forfeit  that seat timed out three times, both seats left on that turn, or a player ended the live match
 
 call a pocket only for the 8
 8 on the break wins, unless the cue ball is also scratched

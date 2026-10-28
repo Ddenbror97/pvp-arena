@@ -70,7 +70,7 @@ Bitcoin, USDC, or ETH on Base can fund the dollar balance. Funding is still doll
       title: "Bonus credit, rewards, and the buy-in rule",
       body: `A reward and a bonus get confused because both feel free. On this site, promo credit and partner credit can open a money match. Deposited or won money is used first. Bonus lost to the other player stays bonus, which is the opposite of a coin grind that hopes a free balance will later be sold.
 
-The rules that pay the cash winner are the house 8-ball rules. Call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches. An early 8 loses. The shot clock is 30 seconds. Three timeouts forfeit the seat. Leaving a live table does not pay the other player the pot. The site keeps 10% of the leaver's stake and both remaining stakes return. WPA rules effective 21 October 2026 call shots, and a legal break 8 is spotted or rebroken. This table does not follow that book.
+The rules that pay the cash winner are the house 8-ball rules. Call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches. An early 8 loses. The shot clock is 30 seconds. Three timeouts forfeit the seat. A live table has no cash-out. Ending the match forfeits that seat, and the other player is paid the win. WPA rules effective 21 October 2026 call shots, and a legal break 8 is spotted or rebroken. This table does not follow that book.
 
 No weekly tournament and no break-win rate are published. A coin leaderboard from another app is not evidence of either. Whether cash play is allowed depends on where you live. This page is not legal advice.`,
     },

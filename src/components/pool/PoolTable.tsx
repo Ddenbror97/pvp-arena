@@ -2,12 +2,15 @@ import { useEffect, useRef, useState, type PointerEvent } from "react";
 import {
   BALL_R,
   PHYSICS_V5,
+  PHYSICS_VERSION,
   cushionLimit,
   cosMicro,
   POCKETS,
   sinMicro,
   TABLE_H,
   TABLE_W,
+  traceAim,
+  type AimTrace,
   type Ball,
   type Pocket,
 } from "@/lib/pool/physics";
@@ -132,7 +135,80 @@ function aimDir(angleMilli: number) {
   return { x: cosMicro(angleMilli) / 1_000_000, y: sinMicro(angleMilli) / 1_000_000 };
 }
 
-/** Shot direction only. The stroke fades out and never traces the object ball. */
+/** Ghost ball, object path, and the first cushion. Always on while a cue is aiming. */
+function drawGuide(
+  ctx: CanvasRenderingContext2D,
+  project: (x: number, y: number) => { x: number; y: number; scale: number },
+  innerW: number,
+  dpr: number,
+  guide: AimTrace,
+) {
+  const strokeTo = (a: { x: number; y: number }, b: { x: number; y: number }) => {
+    const p = project(a.x, a.y);
+    const q = project(b.x, b.y);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(q.x, q.y);
+    ctx.stroke();
+  };
+  const start = {
+    x: guide.from.x + guide.dir.x * BALL_R * 1.15,
+    y: guide.from.y + guide.dir.y * BALL_R * 1.15,
+  };
+  const reach = Math.hypot(guide.cueStop.x - start.x, guide.cueStop.y - start.y);
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineWidth = Math.max(1.4, dpr * 1.2);
+  if (reach > BALL_R * 0.4) {
+    ctx.strokeStyle = "rgba(255,255,255,0.92)";
+    ctx.setLineDash([2.5 * dpr, 7 * dpr]);
+    strokeTo(start, guide.cueStop);
+    ctx.setLineDash([]);
+  }
+  if (guide.cueBank) {
+    const end = {
+      x: guide.cueBank.at.x + guide.cueBank.dir.x * TABLE_W * 0.16,
+      y: guide.cueBank.at.y + guide.cueBank.dir.y * TABLE_W * 0.16,
+    };
+    ctx.strokeStyle = "rgba(244, 211, 94, 0.85)";
+    ctx.setLineDash([2 * dpr, 6 * dpr]);
+    strokeTo(guide.cueBank.at, end);
+    ctx.setLineDash([]);
+  }
+  const hit = guide.contact;
+  if (!hit) {
+    ctx.restore();
+    return;
+  }
+  const ghost = project(hit.cue.x, hit.cue.y);
+  ctx.beginPath();
+  ctx.arc(ghost.x, ghost.y, ballRadiusPx(innerW, ghost.scale), 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(255,255,255,0.72)";
+  ctx.lineWidth = Math.max(1.25, dpr);
+  ctx.setLineDash([]);
+  ctx.stroke();
+  if (guide.objectStop) {
+    const span = Math.hypot(guide.objectStop.x - hit.object.x, guide.objectStop.y - hit.object.y);
+    if (span > BALL_R * 0.6) {
+      ctx.strokeStyle = "rgba(255,255,255,0.7)";
+      ctx.lineWidth = Math.max(1.25, dpr);
+      strokeTo(hit.object, guide.objectStop);
+    }
+  }
+  if (guide.objectBank) {
+    const end = {
+      x: guide.objectBank.at.x + guide.objectBank.dir.x * TABLE_W * 0.14,
+      y: guide.objectBank.at.y + guide.objectBank.dir.y * TABLE_W * 0.14,
+    };
+    ctx.strokeStyle = "rgba(244, 211, 94, 0.8)";
+    ctx.setLineDash([2 * dpr, 5 * dpr]);
+    strokeTo(guide.objectBank.at, end);
+    ctx.setLineDash([]);
+  }
+  ctx.restore();
+}
+
+/** Faint direction for the other player's live aim. */
 function drawAimLine(
   ctx: CanvasRenderingContext2D,
   project: (x: number, y: number) => { x: number; y: number },
@@ -445,6 +521,9 @@ type Props = {
   balls: readonly Ball[];
   angleMilli: number;
   power: number;
+  spinX: number;
+  spinY: number;
+  physicsId?: string;
   ghost: { x: number; y: number } | null;
   kitchenOnly: boolean;
   calledPocket: number | null;
@@ -469,6 +548,9 @@ export function PoolTable({
   balls,
   angleMilli,
   power,
+  spinX,
+  spinY,
+  physicsId = PHYSICS_VERSION,
   ghost,
   kitchenOnly,
   calledPocket,
@@ -514,6 +596,14 @@ export function PoolTable({
   ghostRef.current = ghost;
   const angleRef = useRef(angleMilli);
   const powerRef = useRef(power);
+  const spinXRef = useRef(spinX);
+  const spinYRef = useRef(spinY);
+  const physicsRef = useRef(physicsId);
+  spinXRef.current = spinX;
+  spinYRef.current = spinY;
+  physicsRef.current = physicsId;
+  const guideKey = useRef("");
+  const guideHit = useRef<AimTrace | null>(null);
   const watchRef = useRef(watch);
   watchRef.current = watch;
   const kickRef = useRef<() => void>(() => {});
@@ -785,18 +875,8 @@ export function PoolTable({
         watching && watching.x != null && watching.y != null
           ? { x: watching.x, y: watching.y }
           : from;
-      if (showCue && from && !replaying && !strikeRef.current) {
-        drawAimLine(ctx, project, from, angleMilli, shown, dpr);
-      } else if (watching && watchFrom && !replaying && !strikeRef.current) {
-        drawAimLine(
-          ctx,
-          project,
-          watchFrom,
-          watching.angle,
-          shown,
-          dpr,
-          watching.playing ? 0.95 : 0.55,
-        );
+      if (watching && !watching.playing && watchFrom && !replaying && !strikeRef.current) {
+        drawAimLine(ctx, project, watchFrom, watching.angle, shown, dpr, 0.55);
       }
 
       const cueCanvas = cueRef.current;
@@ -901,6 +981,44 @@ export function PoolTable({
         }
       }
 
+      const assistFrom = showCue && from && !replaying ? from : null;
+      const systemFrom =
+        !assistFrom && watching?.playing && watchFrom && !replaying ? watchFrom : null;
+      const aimedFrom = assistFrom ?? systemFrom;
+      if (aimedFrom && !strikeRef.current) {
+        const aimAngle = assistFrom ? angleMilli : (watching?.angle ?? angleMilli);
+        const aimPower = assistFrom ? power : (watching?.power ?? power);
+        const aimSpinX = assistFrom ? spinXRef.current : 0;
+        const aimSpinY = assistFrom ? spinYRef.current : 0;
+        const physics = physicsRef.current;
+        let sig = `${aimAngle}:${aimPower}:${aimSpinX}:${aimSpinY}:${Math.round(aimedFrom.x)}:${Math.round(aimedFrom.y)}:${physics}`;
+        for (const ball of shown) {
+          sig += `|${ball.id}:${ball.pocketed ? 1 : 0}:${Math.round(ball.x)}:${Math.round(ball.y)}`;
+        }
+        if (guideKey.current !== sig) {
+          guideKey.current = sig;
+          const aimed = shown.map((ball) =>
+            ball.id === 0
+              ? { ...ball, x: aimedFrom.x, y: aimedFrom.y, vx: 0, vy: 0, pocketed: false }
+              : ball,
+          );
+          guideHit.current = traceAim(
+            aimed,
+            {
+              angleMilli: aimAngle,
+              power: aimPower,
+              spinX: aimSpinX,
+              spinY: aimSpinY,
+              placeX: null,
+              placeY: null,
+              calledPocket: null,
+            },
+            physics,
+          );
+        }
+        if (guideHit.current) drawGuide(ctx, project, innerW, dpr, guideHit.current);
+      }
+
       if (placing && from) {
         const spot = draft ?? from;
         const legal = draft == null || legalRef.current(draft.x, draft.y);
@@ -955,6 +1073,9 @@ export function PoolTable({
   }, [
     angleMilli,
     power,
+    spinX,
+    spinY,
+    physicsId,
     balls,
     ghost,
     kitchenOnly,

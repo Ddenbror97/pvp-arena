@@ -74,7 +74,7 @@ No break-win rate is published. A claim that the break is tuned to a percentage 
     {
       id: "losses-the-rules-name",
       title: "Losses the rules already name",
-      body: `Most "rigged" stories on a call-pocket-for-the-8 table are rule stories. The table is open until a legal pocket assigns solids or stripes. A foul is ball in hand anywhere. Pocketing the 8 before your group is clear loses, including on the same shot as the last ball of the group. The 8 in the wrong pocket loses. A scratch while pocketing the 8 loses. The break is from the kitchen. Three timeouts forfeit the seat. Leaving a live table closes it. The site keeps 10% of the leaver's stake, returns the rest, and returns the other player's stake. That ending is a posted fee, not a hidden miss. None of those endings requires a hidden random number.
+      body: `Most "rigged" stories on a call-pocket-for-the-8 table are rule stories. The table is open until a legal pocket assigns solids or stripes. A foul is ball in hand anywhere. Pocketing the 8 before your group is clear loses, including on the same shot as the last ball of the group. The 8 in the wrong pocket loses. A scratch while pocketing the 8 loses. The break is from the kitchen. Three timeouts forfeit the seat. A live table has no cash-out. Ending the match forfeits that seat, and the other player is paid the win. That ending is a posted rule, not a hidden miss. None of those endings requires a hidden random number.
 
 WPA rules effective 21 October 2026 are a contrast, not a patch. That book calls shots, and a legal 8 on the break is spotted or rebroken. This table pays the break 8 unless the cue ball scratches. If you expected the WPA result, the difference can feel like a fix. It is a published difference.
 
@@ -104,7 +104,7 @@ Whether a cash match is allowed depends on where you live. This page is not lega
     },
     {
       q: "Can the shot clock look like a fix?",
-      a: "The shot clock is 30 seconds. Three timeouts forfeit that seat. Leaving a live table closes it and keeps 10% of the leaver's stake with the site. The other player is refunded. Those endings are written rules, visible before the stake, and they are not a secret miss.",
+      a: "The shot clock is 30 seconds. Three timeouts forfeit that seat. A live table has no cash-out. Ending the match forfeits that seat, and the other player is paid the win. Those endings are written rules, visible before the stake, and they are not a secret miss.",
     },
   ],
   sources: [

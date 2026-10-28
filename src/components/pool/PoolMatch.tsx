@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { CircleHelp, Crown, MessageSquare, Settings, Volume2, VolumeX } from "lucide-react";
@@ -8,16 +8,10 @@ import { arenaLogo } from "@/assets/media";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import {
-  poolLeave,
-  poolMessage,
-  poolNudge,
-  poolTouch,
-  usePoolState,
-  type PoolView,
-} from "@/lib/pool/api";
+import { poolMessage, poolNudge, poolTouch, usePoolState, type PoolView } from "@/lib/pool/api";
 import { nudgePoolStandIn, openPool, submitPoolShot } from "@/lib/pool/pool.functions";
 import { chooseStandInShot, STAND_IN_STROKE_MS, standInDue } from "@/lib/pool/stand-in";
+import { MAX_PULL_POWER } from "@/lib/pool/aim-gesture";
 import { playShot } from "@/lib/pool/play";
 import {
   PHYSICS_V5,
@@ -93,7 +87,6 @@ function useCountdown(deadline: string | null, serverNow: string | undefined) {
 
 export function PoolMatch({ matchId }: { matchId: number }) {
   const { userId } = useAuth();
-  const navigate = useNavigate();
   const qc = useQueryClient();
   const query = usePoolState(matchId);
   const view = query.data;
@@ -107,8 +100,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const [place, setPlace] = useState<{ x: number; y: number } | null>(null);
   const [called, setCalled] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
-  const [confirmLeave, setConfirmLeave] = useState(false);
-  const [leaving, setLeaving] = useState(false);
   const [sheet, setSheet] = useState(false);
   const [frames, setFrames] = useState<Ball[][] | null>(null);
   const [stroke, setStroke] = useState<{
@@ -612,7 +603,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   ]);
 
   useEffect(() => {
-    if (!mine || confirmLeave || leaving) return;
+    if (!mine) return;
     const onKey = (event: KeyboardEvent) => {
       const tag = (event.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
@@ -625,7 +616,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         setAngle((current) => (current + step) % 360_000);
       } else if (event.key === "ArrowUp") {
         event.preventDefault();
-        setPower((current) => Math.min(10_000, current + 500));
+        setPower((current) => Math.min(MAX_PULL_POWER, current + 500));
       } else if (event.key === "ArrowDown") {
         event.preventDefault();
         setPower((current) => Math.max(1, current - 500));
@@ -636,16 +627,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [confirmLeave, leaving, mine, takeShot]);
-
-  useEffect(() => {
-    if (!confirmLeave) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !leaving) setConfirmLeave(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [confirmLeave, leaving]);
+  }, [mine, takeShot]);
 
   const checkReplay = async () => {
     if (!view?.server_seed || !view.state) return;
@@ -722,6 +704,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
               balls={previewBalls}
               angleMilli={0}
               power={power}
+              spinX={0}
+              spinY={0}
               ghost={null}
               kitchenOnly={false}
               calledPocket={null}
@@ -827,39 +811,18 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     frames == null &&
     !busy &&
     view.status === "PLAYING" &&
-    !rulesOpen &&
-    !confirmLeave;
+    !rulesOpen;
   const closeTutorial = () => {
     dismissPoolTutorial();
     setTutorialStep(null);
   };
 
-  const leave = () => {
-    if (seat && view.status === "PLAYING" && !leaving) setConfirmLeave(true);
-  };
   const closed = view.status === "CANCELLED" && view.cancel_reason === "PLAYER_LEFT";
   const youLeft = userId != null && view.left_by === userId;
   const split = leaveTake(view.stake);
   const otherName = seat === "B" ? names.A : names.B;
-  const confirmLeaveNow = async () => {
-    if (leaving) return;
-    setLeaving(true);
-    const { data, error } = await poolLeave(view.id);
-    if (error) {
-      setLeaving(false);
-      const code = error.message.match(/[A-Z][A-Z0-9_]{2,}/)?.[0];
-      toast.error(poolMessage(code));
-      return;
-    }
-    const left = data != null && typeof data === "object" && (data as { left?: boolean }).left === true;
-    await qc.invalidateQueries({ queryKey: ["pool-match", matchId] });
-    if (left) {
-      await navigate({ to: "/8-ball-pool" });
-      return;
-    }
-    setLeaving(false);
-    setConfirmLeave(false);
-  };
+  const charging = !!mine && frames == null && !systemWatch && power > 1;
+  const powerPct = Math.max(0, Math.min(100, Math.round((power / MAX_PULL_POWER) * 100)));
 
   return (
     <Shell calling={shootingEight}>
@@ -897,11 +860,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       </div>
 
       <div className="pool-tools">
-        {seat && view.status === "PLAYING" ? (
-          <button type="button" className="pool-leave" onClick={leave}>
-            Leave table
-          </button>
-        ) : (
+        {view.status === "PLAYING" ? null : (
           <Link to="/8-ball-pool" className="pool-leave">
             Back to lobby
           </Link>
@@ -932,6 +891,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             balls={balls}
             angleMilli={angle}
             power={power}
+            spinX={spinX}
+            spinY={spinY}
+            physicsId={state?.physics}
             ghost={tableGhost}
             kitchenOnly={!!state?.kitchenOnly}
             calledPocket={systemWatch ? (systemShot?.calledPocket ?? null) : called}
@@ -961,6 +923,22 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           />
         </div>
       </div>
+
+      {charging ? (
+        <div
+          className="pool-energy"
+          role="meter"
+          aria-label="Shot power"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={powerPct}
+        >
+          <div className="pool-energy-track">
+            <div className="pool-energy-fill" style={{ height: `${powerPct}%` }} />
+          </div>
+          <span>{powerPct}</span>
+        </div>
+      ) : null}
 
       {banner && view.status !== "COMPLETED" && !closed ? (
         <p className="pool-banner" role="status" aria-live="polite">
@@ -1074,51 +1052,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           <button type="button" onClick={() => setRulesOpen(false)}>
             Close
           </button>
-        </div>
-      ) : null}
-
-      {confirmLeave && !closed ? (
-        <div
-          className="pool-confirm-back"
-          role="presentation"
-          onClick={() => {
-            if (!leaving) setConfirmLeave(false);
-          }}
-        >
-          <div
-            className="pool-confirm"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="pool-leave-title"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <strong id="pool-leave-title">Leave this table?</strong>
-            <p>
-              You get {dollars(split.back)} back. The site keeps {dollars(split.fee)}, which is 10% of
-              your stake. {otherName} gets their {dollars(view.stake)} back, and this table closes.
-            </p>
-            <div className="pool-confirm-actions">
-              <button
-                type="button"
-                className="pool-leave-stay"
-                disabled={leaving}
-                autoFocus
-                onClick={() => setConfirmLeave(false)}
-              >
-                Stay
-              </button>
-              <button
-                type="button"
-                className="pool-leave-go"
-                disabled={leaving}
-                onClick={() => {
-                  void confirmLeaveNow();
-                }}
-              >
-                {leaving ? "Leaving…" : "Leave table"}
-              </button>
-            </div>
-          </div>
         </div>
       ) : null}
 

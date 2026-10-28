@@ -86,7 +86,7 @@ export const POOL_RULES: readonly { title: string; body: string }[] = [
   },
   {
     title: "Waiting",
-    body: "A table with no opponent stays open for 24 hours, then the stake is refunded. There is no cancel. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays their shots. Leaving a live table keeps 10% of your stake with the site and returns the rest. Your opponent gets their stake back, and the table closes. Three timeouts while a player is away still forfeit the match.",
+    body: "A table with no opponent stays open for 24 hours, then the stake is refunded. There is no cancel, and a live table has no cash-out. When both players are at the table, the rack opens. If the player who opened the table is away, the rack waits 60 seconds and then the table plays their shots. Ending a live match forfeits that seat. The other player is paid the win, and the 5% fee is taken from the pot. Three timeouts while a player is away still forfeit the match.",
   },
   {
     title: "Disconnect",
@@ -101,7 +101,7 @@ export const POOL_RULES: readonly { title: string; body: string }[] = [
 export const TUTORIAL_STEPS: readonly { title: string; body: string }[] = [
   {
     title: "Drag to aim",
-    body: "Drag across the table to aim. A line shows the shot direction and stops before the object ball. Your opponent sees a faint cue on that line. On a phone, drag with your finger. A drag that starts on the cue ball aims once it moves. Hold Shift, or use the arrow keys, for a finer angle.",
+    body: "Drag across the table to aim. The guide is always on: it shows the cue path, a ghost ball at contact, and where the object ball goes. Your opponent sees a faint cue. On a phone, drag with your finger. A drag that starts on the cue ball aims once it moves. Hold Shift, or use the arrow keys, for a finer angle.",
   },
   {
     title: "Drag back to shoot",
