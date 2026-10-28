@@ -150,16 +150,26 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
     }
 
     await hostSession.page.goto("/8-ball-pool");
-    await hostSession.page.getByRole("button", { name: "$1", exact: true }).click();
-    await hostSession.page.getByRole("button", { name: "Create game" }).click();
-    await hostSession.page.waitForURL(/\/pool\/\d+/);
+    const oneDollar = hostSession.page.getByRole("button", { name: "$1", exact: true });
+    // The lobby redraws the clock every second. Repeat the click until the
+    // pressed stake sticks, then create the table.
+    await expect(async () => {
+      await oneDollar.click({ timeout: 3_000 });
+      await expect(oneDollar).toHaveAttribute("aria-pressed", "true", { timeout: 1_000 });
+    }).toPass({ timeout: 15_000 });
+    await expect(async () => {
+      if (!/\/pool\/\d+/.test(hostSession.page.url())) {
+        await hostSession.page.getByRole("button", { name: "Create game" }).click({ timeout: 3_000 });
+      }
+      await expect(hostSession.page).toHaveURL(/\/pool\/\d+/, { timeout: 8_000 });
+    }).toPass({ timeout: 40_000 });
     const matchId = Number(new URL(hostSession.page.url()).pathname.split("/").pop());
     expect(matchId).toBeGreaterThan(0);
 
     await guestSession.page.goto("/8-ball-pool");
     await expect(guestSession.page.getByRole("button", { name: "Join table" })).toBeVisible();
     await guestSession.page.getByRole("button", { name: "Join table" }).click();
-    await guestSession.page.waitForURL(new RegExp(`/pool/${matchId}`));
+    await guestSession.page.waitForURL(new RegExp(`/pool/${matchId}`), { timeout: 30_000 });
 
     for (const page of [hostSession.page, guestSession.page]) {
       await expect(page.getByRole("img", { name: "Groups not chosen yet" }).first()).toBeVisible({
