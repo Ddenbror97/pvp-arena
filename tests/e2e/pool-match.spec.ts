@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import postgres from "postgres";
 import { expect, test, type Browser, type BrowserContext, type Page } from "@playwright/test";
 
@@ -88,6 +88,21 @@ async function register(page: Page, input: { username: string; email: string; pa
   await expect(page.getByRole("img", { name: new RegExp(`^${input.username},`) })).toBeVisible();
 }
 
+function freshIp(slot: number): string {
+  const file = "/tmp/e2e-ip-counter";
+  let n = 0;
+  try {
+    n = Number(readFileSync(file, "utf8")) || 0;
+  } catch {
+    n = 0;
+  }
+  n += 1;
+  writeFileSync(file, String(n));
+  const third = Math.floor(n / 250) % 250;
+  const fourth = (n % 250) + 1;
+  return `172.${16 + slot}.${third}.${fourth}`;
+}
+
 async function openContext(browser: Browser, ip: string): Promise<{ context: BrowserContext; page: Page }> {
   const context = await browser.newContext();
   const page = await context.newPage();
@@ -127,9 +142,8 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
     email: `e2eb-${stamp}@example.com`,
     password,
   };
-  const octet = 20 + (Date.now() % 200);
-  const hostSession = await openContext(browser, `203.0.113.${octet}`);
-  const guestSession = await openContext(browser, `198.51.100.${octet}`);
+  const hostSession = await openContext(browser, freshIp(0));
+  const guestSession = await openContext(browser, freshIp(1));
   try {
     await register(hostSession.page, host);
     await register(guestSession.page, guest);
