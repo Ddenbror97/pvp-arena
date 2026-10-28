@@ -85,6 +85,7 @@ async function register(page: Page, input: { username: string; email: string; pa
     await page.getByRole("button", { name: "Continue" }).click();
   }
   await expect(wallet).toBeVisible();
+  await expect(page.getByRole("img", { name: new RegExp(`^${input.username},`) })).toBeVisible();
 }
 
 async function openContext(browser: Browser, ip: string): Promise<{ context: BrowserContext; page: Page }> {
@@ -134,20 +135,21 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
     await register(guestSession.page, guest);
     // A fresh database is still PRE_MIGRATION. The header chip reads the real
     // USD account, which stays at zero. Play spends the test-credit grant.
-    const grants = await sql<{ username: string; account_type: string; balance: string }[]>`
-      select p.username, w.account_type, w.balance::text
-      from public.profiles p
-      join public.wallet_accounts w on w.owner_id = p.id
-      where p.username in (${host.username}, ${guest.username})
-        and w.kind = 'user_available'
-      order by p.username, w.account_type
-    `;
-    const grantOf = (name: string, type: string) =>
-      Number(grants.find((row) => row.username === name && row.account_type === type)?.balance);
-    for (const name of [host.username, guest.username]) {
-      expect(grantOf(name, "test_credit")).toBe(100_000);
-      expect(grantOf(name, "real")).toBe(0);
-    }
+    const names = [host.username, guest.username];
+    await expect
+      .poll(async () => {
+        const grants = await sql<{ username: string; account_type: string; balance: string }[]>`
+          select p.username, w.account_type, w.balance::text
+          from public.profiles p
+          join public.wallet_accounts w on w.owner_id = p.id
+          where p.username = any(${names})
+            and w.kind = 'user_available'
+        `;
+        const grantOf = (name: string, type: string) =>
+          grants.find((row) => row.username === name && row.account_type === type)?.balance;
+        return names.every((name) => grantOf(name, "test_credit") === "100000" && grantOf(name, "real") === "0");
+      }, { timeout: 15_000 })
+      .toBe(true);
 
     await hostSession.page.goto("/8-ball-pool");
     const oneDollar = hostSession.page.getByRole("button", { name: "$1", exact: true });
@@ -249,7 +251,7 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
       select p.username, w.account_type, w.balance::text
       from public.profiles p
       join public.wallet_accounts w on w.owner_id = p.id
-      where p.username in (${host.username}, ${guest.username})
+      where p.username = any(${[host.username, guest.username]})
         and w.kind = 'user_available'
       order by p.username
     `;
