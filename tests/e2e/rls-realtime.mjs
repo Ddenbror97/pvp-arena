@@ -89,14 +89,58 @@ const ledger = await fetch(`${url}/rest/v1/ledger_postings?select=id`, {
 });
 results.push({ check: "anon jwt ledger", status: ledger.status, body: (await ledger.text()).slice(0, 80) });
 
+const PRIVATE_KEY = /^(server_seed|balance|ledger_tx_id|idempotency_key|owner_id)$/;
+
+function rowEvents(events) {
+  return events.filter((event) => event.eventType || event.new || event.old);
+}
+
+function columnKeys(events) {
+  const keys = new Set();
+  for (const event of rowEvents(events)) {
+    for (const side of ["new", "old"]) {
+      const row = event[side];
+      if (!row || typeof row !== "object") continue;
+      for (const key of Object.keys(row)) keys.add(key);
+      const state = row.state;
+      if (state && typeof state === "object") {
+        for (const key of Object.keys(state)) keys.add(`state.${key}`);
+      }
+    }
+  }
+  return [...keys].sort();
+}
+
 const match = await sql`
   select id from public.pool_matches order by id desc limit 1
 `;
 const matchId = match[0]?.id;
 if (!matchId) throw new Error("no pool match to observe");
+const [secret] = await sql`
+  select encode(server_seed, 'hex') as hex
+  from public.pool_secrets
+  where match_id = ${matchId}
+`;
+const secretHex = secret?.hex ?? "";
+if (!/^[0-9a-f]{64}$/.test(secretHex)) throw new Error("match has no 32-byte server seed");
+
+const published = await sql`
+  select tablename
+  from pg_publication_tables
+  where pubname = 'supabase_realtime'
+    and schemaname = 'public'
+    and tablename in ('pool_matches', 'pool_secrets', 'wallet_accounts', 'pool_entries')
+  order by tablename
+`;
+results.push({
+  check: "realtime publication",
+  tables: published.map((row) => row.tablename),
+});
 
 const rawListen = listen(raw, `raw-${matchId}`, "pool_matches", `id=eq.${matchId}`);
 const wrappedListen = listen(wrapped, `wrap-${matchId}`, "pool_matches", `id=eq.${matchId}`);
+const rawSecretListen = listen(raw, `raw-secret-${matchId}`, "pool_secrets", `match_id=eq.${matchId}`);
+const rawWalletListen = listen(raw, `raw-wallet-${matchId}`, "wallet_accounts");
 const walletListen = listen(authed, `wallet-${matchId}`, "wallet_accounts");
 await new Promise((resolve) => setTimeout(resolve, 2500));
 await sql`update public.pool_matches set version = version + 1 where id = ${matchId}`;
@@ -109,17 +153,51 @@ await sql`
     limit 1
   )
 `;
-const [rawResult, wrappedResult, walletResult] = await Promise.all([rawListen, wrappedListen, walletListen]);
-const walletPayloads = walletResult.events.filter((event) => event.eventType || event.new || event.table);
+const [rawResult, wrappedResult, rawSecretResult, rawWalletResult, walletResult] = await Promise.all([
+  rawListen,
+  wrappedListen,
+  rawSecretListen,
+  rawWalletListen,
+  walletListen,
+]);
+const rawRows = rowEvents(rawResult.events);
+const wrappedRows = rowEvents(wrappedResult.events);
+const rawKeys = columnKeys(rawResult.events);
+const wrappedKeys = columnKeys(wrappedResult.events);
+const rawText = JSON.stringify(rawRows);
+const wrappedText = JSON.stringify(wrappedRows);
+const seedInRaw = secretHex.length > 0 && rawText.includes(secretHex);
+const seedInWrapped = secretHex.length > 0 && wrappedText.includes(secretHex);
+const privateRawKey = rawKeys.some((key) => PRIVATE_KEY.test(key.replace(/^state\./, "")));
+const privateWrappedKey = wrappedKeys.some((key) => PRIVATE_KEY.test(key.replace(/^state\./, "")));
+const walletPayloads = rowEvents(walletResult.events);
+const rawSecretPayloads = rowEvents(rawSecretResult.events);
+const rawWalletPayloads = rowEvents(rawWalletResult.events);
 results.push({
   check: "raw publishable pool update",
   status: rawResult.status,
-  events: rawResult.events.filter((event) => event.eventType || event.new).length,
+  events: rawRows.length,
+  keys: rawKeys,
+  seedPresent: seedInRaw,
+  privateKey: privateRawKey,
 });
 results.push({
   check: "frontend wrapper pool update",
   status: wrappedResult.status,
-  events: wrappedResult.events.filter((event) => event.eventType || event.new).length,
+  events: wrappedRows.length,
+  keys: wrappedKeys,
+  seedPresent: seedInWrapped,
+  privateKey: privateWrappedKey,
+});
+results.push({
+  check: "raw publishable pool_secrets payloads",
+  status: rawSecretResult.status,
+  payloads: rawSecretPayloads.length,
+});
+results.push({
+  check: "raw publishable wallet payloads",
+  status: rawWalletResult.status,
+  payloads: rawWalletPayloads.length,
 });
 results.push({
   check: "anon wallet realtime payloads",
@@ -132,9 +210,15 @@ console.log(JSON.stringify(results, null, 2));
 const walletDenied = results.find((row) => row.check === "anon wallet select")?.status === 401;
 const secretsDenied = results.find((row) => row.check === "anon pool_secrets")?.status === 401;
 const ledgerDenied = [401, 403].includes(results.find((row) => row.check === "anon jwt ledger")?.status);
-const rawMissed = results.find((row) => row.check === "raw publishable pool update")?.events === 0;
-const wrappedSaw = results.find((row) => row.check === "frontend wrapper pool update")?.events > 0;
+const rawPublic = results.find((row) => row.check === "raw publishable pool update");
+const wrappedPublic = results.find((row) => row.check === "frontend wrapper pool update");
+const rawSawPublic = rawPublic?.events > 0 && rawPublic.seedPresent === false && rawPublic.privateKey === false;
+const wrappedSaw = wrappedPublic?.events > 0 && wrappedPublic.seedPresent === false && wrappedPublic.privateKey === false;
+const publishedTables = results.find((row) => row.check === "realtime publication")?.tables ?? [];
+const secretsUnpublished = publishedTables.includes("pool_matches") && !publishedTables.includes("pool_secrets") && !publishedTables.includes("pool_entries");
+const secretsHidden = results.find((row) => row.check === "raw publishable pool_secrets payloads")?.payloads === 0 && secretsUnpublished;
+const rawWalletHidden = results.find((row) => row.check === "raw publishable wallet payloads")?.payloads === 0;
 const walletHidden = results.find((row) => row.check === "anon wallet realtime payloads")?.payloads === 0;
-if (!walletDenied || !secretsDenied || !ledgerDenied || !rawMissed || !wrappedSaw || !walletHidden) {
+if (!walletDenied || !secretsDenied || !ledgerDenied || !rawSawPublic || !wrappedSaw || !secretsHidden || !rawWalletHidden || !walletHidden) {
   process.exitCode = 1;
 }
