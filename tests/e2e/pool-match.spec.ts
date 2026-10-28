@@ -88,6 +88,26 @@ async function register(page: Page, input: { username: string; email: string; pa
   await expect(page.getByRole("img", { name: new RegExp(`^${input.username},`) })).toBeVisible();
 }
 
+function breakCue(box: { x: number; y: number; width: number; height: number }) {
+  const tableW = 2_540_000;
+  const tableH = 1_270_000;
+  const railOfShort = 0.128;
+  const fitW = Math.max(1, box.width - 2);
+  const fitH = Math.max(1, box.height - 2);
+  const short = Math.min(
+    fitH / (1 + 2 * railOfShort),
+    fitW / (tableW / tableH + 2 * railOfShort),
+  );
+  const innerH = Math.max(1, short);
+  const innerW = innerH * (tableW / tableH);
+  const rail = railOfShort * innerH;
+  const padX = (box.width - innerW) / 2;
+  const outerH = innerH + rail * 2;
+  const slackY = box.height - outerH;
+  const padY = (slackY > outerH * 0.45 ? slackY * 0.2 : slackY / 2) + rail;
+  return { x: box.x + padX + innerW / 4, y: box.y + padY + innerH / 2 };
+}
+
 function freshIp(slot: number): string {
   const file = "/tmp/e2e-ip-counter";
   let n = 0;
@@ -210,11 +230,14 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
       const canvas = page.locator("canvas.pool-canvas");
       const box = await canvas.boundingBox();
       if (!box) throw new Error("table canvas has no box");
-      const x = box.x + box.width / 2;
-      const y = box.y + box.height / 2;
-      await page.mouse.move(x, y);
+      // The break aims right from the head-string cue ball. A pull starts
+      // behind that ball and moves further back.
+      const cue = breakCue(box);
+      const startX = cue.x - 36;
+      const startY = cue.y;
+      await page.mouse.move(startX, startY);
       await page.mouse.down();
-      await page.mouse.move(x, y + 220, { steps: 12 });
+      await page.mouse.move(startX - 220, startY, { steps: 16 });
       await page.mouse.up();
     };
 
