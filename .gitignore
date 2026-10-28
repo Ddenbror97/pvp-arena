@@ -48,3 +48,8 @@ src/content/guides/catalog.generated.ts
 *.njsproj
 *.sln
 *.sw?
+
+# Playwright output and local Supabase CLI state
+test-results/
+playwright-report/
+supabase/.temp/

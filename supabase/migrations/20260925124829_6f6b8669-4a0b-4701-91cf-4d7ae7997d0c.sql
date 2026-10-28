@@ -60,6 +60,21 @@ revoke execute on function public.crypto_credit_deposit(uuid, uuid) from public,
 
 DO $$ DECLARE r jsonb; s crypto_settings; before_bal bigint; after_bal bigint;
 BEGIN
+  -- Production recorded version 20260925124829, so this credit does not run
+  -- again there and watch_only stays as production left it. A fresh database
+  -- has no such deposit: return before the credit and before watch_only changes.
+  IF NOT EXISTS (
+    SELECT 1 FROM public.crypto_deposits WHERE id = '1690a12b-c7ce-49ce-851f-c402fc0a2c7f'
+  ) THEN
+    RAISE NOTICE 'skip admin credit: historical deposit is absent';
+    RETURN;
+  END IF;
+  IF (
+    SELECT status FROM public.crypto_deposits WHERE id = '1690a12b-c7ce-49ce-851f-c402fc0a2c7f'
+  ) = 'CREDITED' THEN
+    RAISE NOTICE 'skip admin credit: deposit already credited';
+    RETURN;
+  END IF;
   select * into s from crypto_settings for update;
   select coalesce(sum(balance),0) into before_bal from wallet_accounts where owner_id = '0c9efda3-4bbe-40cf-beaf-d05edddadcd0' and kind = 'user_available' and account_type = 'real';
   update crypto_settings set watch_only = false;

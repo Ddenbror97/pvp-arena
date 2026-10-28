@@ -1,4 +1,8 @@
 -- Allow LIQUIDITY_PENDING on crypto_withdrawals (worker already writes this status).
+-- Version 20260926160100: 20260926160000 is the public-chat migration. Production
+-- never recorded either file under 20260926160000. This constraint file keeps
+-- its own version so a fresh db push can record both. The check is idempotent:
+-- it drops the status check and adds the same wider list, including LIQUIDITY_PENDING.
 do $$
 declare c text;
 begin

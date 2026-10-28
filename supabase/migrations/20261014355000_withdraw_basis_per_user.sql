@@ -25,7 +25,11 @@
 -- other on it; the maintenance rebuild takes it exclusively so it never truncates under
 -- an in-flight apply.
 
-lock table public.ledger_transactions, public.ledger_postings in share row exclusive mode;
+-- Production recorded version 20261014355000, so this file does not run again
+-- there. supabase db push applies each statement on its own and rejects
+-- LOCK TABLE outside a transaction block. A session advisory lock is the
+-- equivalent guard when the CLI keeps one connection for the file.
+select pg_advisory_lock(hashtext('withdraw_basis_per_user'));
 select public._withdraw_basis_sync();
 
 create table public.withdraw_basis_applied (
@@ -238,3 +242,4 @@ revoke all on function public._withdraw_basis_apply_trg() from public, anon, aut
 grant execute on function public._withdraw_basis_apply_one(uuid) to service_role;
 
 select public._withdraw_basis_assert_rebuild_idempotent();
+select pg_advisory_unlock(hashtext('withdraw_basis_per_user'));

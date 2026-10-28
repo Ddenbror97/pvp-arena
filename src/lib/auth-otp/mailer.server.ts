@@ -1,5 +1,6 @@
 // Server-only Resend sender. Same path as signup codes: Lovable gateway when
 // LOVABLE_API_KEY is set, otherwise the Resend API directly.
+import { appendFileSync } from "node:fs";
 import { workerEnv } from "@/lib/worker-env";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
@@ -32,6 +33,17 @@ export async function sendAuthEmail(input: {
   html: string;
   text: string;
 }): Promise<{ ok: true } | { ok: false; error: string }> {
+  // Local browser tests have no Resend project. A development process can
+  // append the message under /tmp and treat the send as successful. Production
+  // never has NODE_ENV=development, and any other path still uses Resend.
+  const sink = process.env["NODE_ENV"] === "development" ? workerEnv("AUTH_EMAIL_SINK") : undefined;
+  if (sink && sink.startsWith("/tmp/")) {
+    appendFileSync(
+      sink,
+      `${JSON.stringify({ to: input.to, subject: input.subject, text: input.text })}\n`,
+    );
+    return { ok: true };
+  }
   let from = normaliseFrom(process.env["AUTH_EMAIL_FROM"] ?? workerEnv("AUTH_EMAIL_FROM") ?? "");
   if (!from) {
     console.warn("AUTH_EMAIL_FROM missing or malformed; using default sender");

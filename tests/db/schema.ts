@@ -31,8 +31,11 @@ export function buildTestSchemaSql(skip: readonly string[] = []): string {
   // Scheduler jobs are production-only.
   s = s.replace(/-- prod-only:begin[\s\S]*?-- prod-only:end/g, "");
   s = s.replace(/select public\._ensure_open_game\(\);/g, "");
-  // One-off production data operations (live finalize + controlled $4.50 credit)
-  // must never replay into the isolated schema.
+  // One-off production data operations (live finalize + controlled credits)
+  // must never replay into the isolated schema. The migration files also
+  // return early when those historical deposits are absent, which is what a
+  // fresh database push relies on. This strip stays so the test schema never
+  // depends on that branch.
   s = s.replace(/DO \$\$\s*DECLARE r1 jsonb; r2 jsonb; inv jsonb;[\s\S]*?END \$\$;/g, "");
   s = s.replace(/DO \$\$\s*DECLARE r jsonb; s crypto_settings;[\s\S]*?END \$\$;/g, "");
   s = s.replace(
