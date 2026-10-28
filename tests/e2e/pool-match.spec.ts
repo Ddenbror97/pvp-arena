@@ -70,6 +70,9 @@ async function register(page: Page, input: { username: string; email: string; pa
   await page.locator("#password").fill(input.password);
   await page.locator("#password-confirm").fill(input.password);
   await page.locator("#age").click();
+  await expect(page.getByRole("button", { name: "Create account" })).toBeEnabled({
+    timeout: 15_000,
+  });
   await page.getByRole("button", { name: "Create account" }).click();
   await expect(page.getByRole("heading", { name: "Check your email" })).toBeVisible();
   const code = await codeFor(input.email);

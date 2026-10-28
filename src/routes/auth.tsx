@@ -5,10 +5,13 @@ import { useServerFn } from "@tanstack/react-start";
 import { ForgotPassword } from "@/components/auth/ForgotPassword";
 import { OtpInput } from "@/components/auth/OtpInput";
 import {
+  confirmSignupHumanFn,
   resendSignupCodeFn,
   startSignupFn,
   verifySignupCodeFn,
 } from "@/lib/auth-otp/signup.functions";
+import { TurnstileField } from "@/components/auth/TurnstileField";
+import { TURNSTILE_RETRY } from "@/lib/auth-otp/turnstile";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -81,6 +84,8 @@ function AuthPage() {
   const [username, setUsername] = useState("");
   const [promo, setPromo] = useState(() => (search.code === "PVP1" ? "PVP1" : peekPromoCode()));
   const [age, setAge] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaReset, setCaptchaReset] = useState(0);
   const [busy, setBusy] = useState(false);
   const [forgot, setForgot] = useState(false);
   const [pending, setPending] = useState<Pending | null>(null);
@@ -89,6 +94,7 @@ function AuthPage() {
   const oauthLock = useRef(false);
   const left = useRef(false);
   const start = useServerFn(startSignupFn);
+  const confirmHuman = useServerFn(confirmSignupHumanFn);
 
   useEffect(() => {
     if (search.next) writeAuthNext(browserStore(), search.next);
@@ -148,9 +154,15 @@ function AuthPage() {
           throw new Error("Those email addresses don't match.");
         if (password !== passwordConfirm) throw new Error("Those passwords don't match.");
         if (!age) throw new Error("You must confirm you are 18 or older.");
+        if (!captchaToken) throw new Error(TURNSTILE_RETRY);
         rememberPromoCode(promo, { kind: "email", email: email.trim().toLowerCase() });
-        const r = await start({ data: { email, password, username, ageConfirmed: true } });
-        if (!r.ok) throw new Error(r.error);
+        const r = await start({
+          data: { email, password, username, ageConfirmed: true, captchaToken },
+        });
+        if (!r.ok) {
+          setCaptchaReset((n) => n + 1);
+          throw new Error(r.error);
+        }
         savePending({
           challengeId: r.challengeId,
           email: email.trim().toLowerCase(),
@@ -185,6 +197,20 @@ function AuthPage() {
     }
     if (mode === "signup" || readInviteOrigin(browserStore())) {
       rememberPromoCode(promo, { kind: "discord" });
+    }
+    if (mode === "signup") {
+      if (!captchaToken) {
+        oauthLock.current = false;
+        toast.error(TURNSTILE_RETRY);
+        return;
+      }
+      const gate = await confirmHuman({ data: { captchaToken } });
+      if (!gate.ok) {
+        oauthLock.current = false;
+        setCaptchaReset((n) => n + 1);
+        toast.error(gate.error);
+        return;
+      }
     }
     setBusy(true);
     const { error } = await supabase.auth.signInWithOAuth({
@@ -236,12 +262,17 @@ function AuthPage() {
           Create your account to play. You must be 18 or older.
         </p>
       ) : null}
+      {mode === "signup" ? (
+        <div className="mt-4">
+          <TurnstileField resetKey={captchaReset} onToken={setCaptchaToken} />
+        </div>
+      ) : null}
       <Button
         type="button"
         variant="outline"
         className="mt-6 min-h-11 w-full"
         size="lg"
-        disabled={busy}
+        disabled={busy || (mode === "signup" && !captchaToken)}
         onClick={continueWithDiscord}
       >
         <DiscordMark />
@@ -347,7 +378,12 @@ function AuthPage() {
             </Label>
           </div>
         )}
-        <Button type="submit" className="min-h-11 w-full font-display" size="lg" disabled={busy}>
+        <Button
+          type="submit"
+          className="min-h-11 w-full font-display"
+          size="lg"
+          disabled={busy || (mode === "signup" && !captchaToken)}
+        >
           {mode === "signin" ? "Sign in" : "Create account"}
         </Button>
       </form>

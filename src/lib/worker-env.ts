@@ -30,6 +30,7 @@ const KNOWN = [
   "DIDIT_WEBHOOK_SECRET",
   "GAME_SIGNUP_PROMO_ENABLED",
   "OTP_PEPPER",
+  "TURNSTILE_SECRET_KEY",
 ] as const;
 
 let bindings: Record<string, string> = {};

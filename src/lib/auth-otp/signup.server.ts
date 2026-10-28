@@ -1,6 +1,8 @@
 // Server-only sign-up verification flow. Never import from client code.
 import { issueCode, rpc } from "./issue.server";
 import { OTP_PURPOSE, hashIdentifier, isOtpFormat, maskEmail, otpDigest } from "./otp";
+import { TURNSTILE_RETRY } from "./turnstile";
+import { verifyTurnstile } from "./turnstile.server";
 import { workerEnv } from "@/lib/worker-env";
 import type { StartResult } from "./issue.server";
 
@@ -30,7 +32,11 @@ export async function startSignup(input: {
   username: string;
   ip: string | null;
   ua: string | null;
+  captchaToken: string;
 }): Promise<StartResult> {
+  if (!(await verifyTurnstile(input.captchaToken, input.ip))) {
+    return { ok: false, error: TURNSTILE_RETRY };
+  }
   const requestId = crypto.randomUUID();
   const email = input.email.trim().toLowerCase();
   if (email.endsWith("@bangban.uk")) {
