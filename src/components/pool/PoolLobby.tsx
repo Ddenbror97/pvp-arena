@@ -216,7 +216,7 @@ export function PoolLobby() {
   return (
     <section className="pool-stage" aria-labelledby="pool-title">
       <div className="pool-stage-room" aria-hidden>
-        <img src={room} alt="" width={1920} height={1080} decoding="async" fetchPriority="high" />
+        <img src={room} alt="" width={1280} height={720} decoding="async" fetchPriority="high" />
       </div>
       <div className="pool-stage-shade" aria-hidden />
 
