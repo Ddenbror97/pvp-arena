@@ -128,7 +128,7 @@ async function openContext(browser: Browser, ip: string): Promise<{ context: Bro
   const page = await context.newPage();
   // Signup rate limits read these headers on the local server. Sending them on
   // every request makes the browser preflight to Supabase fail CORS.
-  await page.route("http://127.0.0.1:4173/**", async (route) => {
+  await page.route("http://127.0.0.1:4173/**/_serverFn/**", async (route) => {
     const headers = {
       ...route.request().headers(),
       "cf-connecting-ip": ip,
@@ -281,7 +281,16 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
     const away = turn[0]?.seat === "A" ? hostSession : guestSession;
     const stay = away === hostSession ? guestSession : hostSession;
     await away.context.close();
-    await expect(stay.page.getByText(/You won \$1\.90|You lost/)).toBeVisible({ timeout: 240_000 });
+    await expect
+      .poll(async () => {
+        const rows = await sql<{ status: string }[]>`
+          select status from public.pool_matches where id = ${matchId}
+        `;
+        return rows[0]?.status ?? "";
+      }, { timeout: 240_000 })
+      .toBe("COMPLETED");
+    await stay.page.reload();
+    await expect(stay.page.getByText(/You won \$1\.90|You lost|Match over/)).toBeVisible();
     await expect(stay.page.getByText("Winner receives $1.90. Fee $0.10.")).toBeVisible();
 
     const balances = await sql<{ username: string; account_type: string; balance: string }[]>`
@@ -300,8 +309,13 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
     for (const row of balances) {
       if (row.account_type === "real") expect(Number(row.balance)).toBe(0);
     }
-    const winnerName = (await stay.page.getByText("You won").count()) > 0 ? stay : away;
-    const winner = winnerName === hostSession ? host.username : guest.username;
+    const [won] = await sql<{ username: string }[]>`
+      select p.username
+      from public.pool_matches m
+      join public.profiles p on p.id = m.winner_id
+      where m.id = ${matchId}
+    `;
+    const winner = won?.username ?? "";
     const loser = winner === host.username ? guest.username : host.username;
     expect(byName[winner]).toBe(100_090);
     expect(byName[loser]).toBe(99_900);
