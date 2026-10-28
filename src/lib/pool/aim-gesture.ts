@@ -56,6 +56,40 @@ export function startAim(point: Point, cue: Point, angleMilli = 0): AimGesture {
   return { kind: "absolute" };
 }
 
+/** Drawn shaft length, in table units. Matches the cue on the screen. */
+export const CUE_STICK_LEN = BALL_R * 46;
+/**
+ * Extra reach past the butt. The shaft is still grabbable when the last
+ * bit of it sits just outside the screen.
+ */
+export const CUE_STICK_PAST = BALL_R * 6;
+/** Half-width of the finger corridor around the shaft. */
+export const CUE_STICK_GRAB = Math.round(BALL_R * 2.4);
+
+/** Gap between the cue ball and the tip at this pull, matching the drawn cue. */
+export function cueStickGap(power: number): number {
+  const t = Number.isFinite(power) ? Math.min(1, Math.max(0, power / 10_000)) : 0;
+  return BALL_R * (1.28 + t * 4.4);
+}
+
+/**
+ * True when the pointer is on the shaft, including a short stub past the butt.
+ * Used when the stick leaves the table canvas, so a drag can still start there.
+ */
+export function hitsCueStick(point: Point, cue: Point, angleMilli: number, power: number): boolean {
+  const dirX = cosMicro(angleMilli) / 1_000_000;
+  const dirY = sinMicro(angleMilli) / 1_000_000;
+  const dx = point.x - cue.x;
+  const dy = point.y - cue.y;
+  const back = -(dx * dirX + dy * dirY);
+  const side = dx * -dirY + dy * dirX;
+  const gap = cueStickGap(power);
+  const start = Math.max(CUE_GRAB_R, gap * 0.85);
+  const end = gap + CUE_STICK_LEN + CUE_STICK_PAST;
+  if (back < start || back > end) return false;
+  return side * side <= CUE_STICK_GRAB * CUE_STICK_GRAB;
+}
+
 /** The pointer is on the butt side of the current shot, where the cue is drawn. */
 export function behindCue(point: Point, cue: Point, angleMilli: number): boolean {
   const dx = point.x - cue.x;

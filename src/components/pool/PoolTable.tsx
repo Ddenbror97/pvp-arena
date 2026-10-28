@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BALL_R,
   PHYSICS_V5,
@@ -25,6 +25,7 @@ import { buildTable, whenTableArt } from "@/lib/pool/table-paint";
 import { ballRadiusPx, spanPx, viewOf } from "@/lib/pool/view";
 import {
   aimStep,
+  hitsCueStick,
   pointerIntent,
   powerFromPull,
   startAim,
@@ -1104,7 +1105,7 @@ export function PoolTable({
     return ballsRef.current.find((ball) => ball.id === 0) ?? null;
   };
 
-  const charge = (event: PointerEvent<HTMLCanvasElement>, cue: { x: number; y: number }) => {
+  const charge = (event: { clientX: number; clientY: number }, cue: { x: number; y: number }) => {
     const canvas = ref.current;
     const origin = originRef.current;
     if (!canvas || !origin || gestureRef.current?.kind === "place") return;
@@ -1127,7 +1128,7 @@ export function PoolTable({
     powerCb.current?.(powerRef.current);
   };
 
-  const aimAt = (event: PointerEvent<HTMLCanvasElement>) => {
+  const aimAt = (event: { clientX: number; clientY: number; shiftKey: boolean }) => {
     const canvas = ref.current;
     const gesture = gestureRef.current;
     const cue = cuePoint();
@@ -1158,6 +1159,76 @@ export function PoolTable({
     if (gesture.kind === "from-cue" && !gesture.armed) hintRef.current?.("Drag to aim.");
     else hintRef.current?.("Drag back and release to shoot.");
   };
+
+  const aimAtRef = useRef(aimAt);
+  const endRef = useRef(endGesture);
+  aimAtRef.current = aimAt;
+  endRef.current = endGesture;
+  useEffect(() => {
+    const control = (target: EventTarget | null) =>
+      target instanceof Element &&
+      Boolean(target.closest("button, a, input, textarea, select, label, [role='button']"));
+    const down = (event: globalThis.PointerEvent) => {
+      if (event.button !== 0 || pointerRef.current != null || !showCueRef.current) return;
+      if (control(event.target)) return;
+      const canvas = ref.current;
+      const cue = cuePoint();
+      if (!canvas || !cue || event.target === canvas) return;
+      const point = tablePoint(canvas, event.clientX, event.clientY);
+      if (!hitsCueStick(point, cue, angleRef.current, powerRef.current)) return;
+      event.preventDefault();
+      pointerRef.current = event.pointerId;
+      originRef.current = { x: event.clientX, y: event.clientY };
+      pullRef.current = 0;
+      restDistRef.current = cueScreenDist(canvas, event.clientX, event.clientY, cue);
+      gestureRef.current = { kind: "cue-stick" };
+      try {
+        canvas.setPointerCapture(event.pointerId);
+      } catch {
+        // The press started outside the table. Move and release still aim.
+      }
+      aimAtRef.current({
+        clientX: event.clientX,
+        clientY: event.clientY,
+        shiftKey: event.shiftKey,
+      });
+    };
+    const move = (event: globalThis.PointerEvent) => {
+      if (pointerRef.current !== event.pointerId) return;
+      const canvas = ref.current;
+      if (canvas?.hasPointerCapture(event.pointerId)) return;
+      if (gestureRef.current?.kind !== "cue-stick") return;
+      aimAtRef.current({
+        clientX: event.clientX,
+        clientY: event.clientY,
+        shiftKey: event.shiftKey,
+      });
+    };
+    const up = (event: globalThis.PointerEvent) => {
+      if (pointerRef.current !== event.pointerId) return;
+      const canvas = ref.current;
+      if (canvas?.hasPointerCapture(event.pointerId)) return;
+      pointerRef.current = null;
+      if (gestureRef.current?.kind === "cue-stick") {
+        aimAtRef.current({
+          clientX: event.clientX,
+          clientY: event.clientY,
+          shiftKey: event.shiftKey,
+        });
+      }
+      endRef.current(event.type !== "pointercancel");
+    };
+    window.addEventListener("pointerdown", down);
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+    return () => {
+      window.removeEventListener("pointerdown", down);
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+    };
+  }, []);
 
   return (
     <>

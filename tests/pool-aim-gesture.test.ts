@@ -3,9 +3,14 @@ import {
   AIM_DEADZONE,
   BALL_R,
   CUE_GRAB_R,
+  CUE_STICK_GRAB,
+  CUE_STICK_LEN,
+  CUE_STICK_PAST,
   PULL_DEAD_PX,
   PULL_FULL_PX,
   aimStep,
+  cueStickGap,
+  hitsCueStick,
   pointerIntent,
   powerFromPull,
   startAim,
@@ -132,6 +137,27 @@ describe("pointer aim", () => {
       expect(next).toBeGreaterThanOrEqual(prev);
       prev = next;
     }
+  });
+
+  it("grabs the shaft when the butt sits just outside the screen", () => {
+    const gap = cueStickGap(0);
+    const onShaft = { x: cue.x - Math.round(gap + BALL_R * 12), y: cue.y };
+    const pastButt = {
+      x: cue.x - Math.round(gap + CUE_STICK_LEN + CUE_STICK_PAST * 0.5),
+      y: cue.y,
+    };
+    const tooFar = {
+      x: cue.x - Math.round(gap + CUE_STICK_LEN + CUE_STICK_PAST + BALL_R),
+      y: cue.y,
+    };
+    const beside = { x: onShaft.x, y: cue.y + CUE_STICK_GRAB + BALL_R };
+    const inFront = { x: cue.x + BALL_R * 4, y: cue.y };
+    expect(hitsCueStick(onShaft, cue, 0, 0)).toBe(true);
+    expect(hitsCueStick(pastButt, cue, 0, 0)).toBe(true);
+    expect(hitsCueStick(tooFar, cue, 0, 0)).toBe(false);
+    expect(hitsCueStick(beside, cue, 0, 0)).toBe(false);
+    expect(hitsCueStick(inFront, cue, 0, 0)).toBe(false);
+    expect(startAim(pastButt, cue, 0).kind).toBe("cue-stick");
   });
 
   it("places only when ball-in-hand starts on the cue ball", () => {
