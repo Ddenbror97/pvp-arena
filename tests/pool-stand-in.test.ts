@@ -2,7 +2,13 @@ import { describe, expect, it } from "vitest";
 import { BALL_R, POCKETS, TABLE_H, TABLE_W, type Ball } from "../src/lib/pool/physics";
 import { playShot } from "../src/lib/pool/play";
 import { freshTable, legalPlacement, type TableState } from "../src/lib/pool/rules";
-import { chooseStandInShot, standInDue } from "../src/lib/pool/stand-in";
+import {
+  chooseStandInShot,
+  STAND_IN_CUE_MS,
+  standInCuePull,
+  standInDue,
+  standInShownPower,
+} from "../src/lib/pool/stand-in";
 
 function seed(n: number): Uint8Array {
   const bytes = new Uint8Array(32);
@@ -47,6 +53,14 @@ describe("stand-in aim", () => {
     expect(standInDue("2026-10-23T15:00:30.000Z", deadline - 23_000, 30)).toBe(true);
     expect(standInDue("2026-10-23T15:00:30.000Z", deadline + 20_000, 30)).toBe(true);
     expect(standInDue("2026-10-23T15:00:30.000Z", deadline + 46_000, 30)).toBe(false);
+  });
+
+  it("draws the ghost cue back until the shot is fully pulled", () => {
+    expect(standInCuePull(0)).toBe(0);
+    expect(standInCuePull(STAND_IN_CUE_MS)).toBe(1);
+    expect(standInCuePull(STAND_IN_CUE_MS / 2)).toBeGreaterThan(0.7);
+    expect(standInShownPower(4_000, 0)).toBe(640);
+    expect(standInShownPower(4_000, 1)).toBe(4_000);
   });
 
   it("picks the same shot for the same rack and seed", () => {

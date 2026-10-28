@@ -8,6 +8,23 @@ import { defaultCueSpot, groupClear, groupOf, legalPlacement, seatGroup, type Ta
 
 export const STAND_IN_THINK_MS = 6_000;
 export const STAND_IN_OVERDUE_MS = 45_000;
+/** The ghost cue draws back for this long before the stroke is at full power. */
+export const STAND_IN_CUE_MS = 1_600;
+/** Replay holds the cue through the draw and the hit, then the balls move. */
+export const STAND_IN_STROKE_MS = 1_100;
+
+/** 0 when the cue is still at rest, 1 when the draw-back has finished. */
+export function standInCuePull(elapsedMs: number, durationMs = STAND_IN_CUE_MS): number {
+  if (durationMs <= 0) return 1;
+  const t = Math.max(0, Math.min(1, elapsedMs / durationMs));
+  return 1 - (1 - t) * (1 - t);
+}
+
+/** Power shown on the ghost cue. A short pull still leaves the stick readable. */
+export function standInShownPower(power: number, pull: number): number {
+  const shown = Math.max(0.16, Math.min(1, pull));
+  return Math.max(1, Math.round(power * shown));
+}
 
 /** True once the seat has had a few seconds to sit down, and before the clock gives up. */
 export function standInDue(turnDeadlineIso: string, nowMs: number, shotSeconds = 30): boolean {

@@ -17,7 +17,7 @@ import {
   type PoolView,
 } from "@/lib/pool/api";
 import { nudgePoolStandIn, openPool, submitPoolShot } from "@/lib/pool/pool.functions";
-import { standInDue } from "@/lib/pool/stand-in";
+import { chooseStandInShot, STAND_IN_STROKE_MS, standInDue } from "@/lib/pool/stand-in";
 import { playShot } from "@/lib/pool/play";
 import {
   PHYSICS_V5,
@@ -116,6 +116,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     y: number;
     angle: number;
     power: number;
+    holdMs?: number;
   } | null>(null);
   const [seedOk, setSeedOk] = useState<boolean | null>(null);
   const [replayNote, setReplayNote] = useState<string | null>(null);
@@ -383,8 +384,17 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       );
     if (!alreadyRest) sequence.push(rest);
     setFrames(sequence);
+    const tableShot = last.event["standIn"] === true || last.event["standIn"] === "true";
     setStroke(
-      cue ? { x: cue.x, y: cue.y, angle: input.input.angleMilli, power: input.input.power } : null,
+      cue
+        ? {
+            x: cue.x,
+            y: cue.y,
+            angle: input.input.angleMilli,
+            power: input.input.power,
+            ...(tableShot ? { holdMs: STAND_IN_STROKE_MS } : {}),
+          }
+        : null,
     );
     cueSound(input.input.power);
   }, [serverSeed, tableHash, reduce, physicsId]);
@@ -414,6 +424,14 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     !state.breakShot;
   const shootingEight = eightForShooter && mine;
   const ghost = mine && state?.ballInHand ? place : null;
+  const systemShot = useMemo(() => {
+    if (!serverSeed || !state || liveStatus !== "PLAYING" || state.winner) return null;
+    const away = view?.stand_in;
+    if ((away !== "A" && away !== "B") || state.turn !== away) return null;
+    const bytes = bytesFromHex(serverSeed);
+    if (bytes.length !== 32) return null;
+    return chooseStandInShot(state, bytes);
+  }, [serverSeed, state, liveStatus, view?.stand_in]);
   const aimBus = useRef<RealtimeChannel | null>(null);
   const aimSeat = useRef(seat);
   aimSeat.current = seat;
@@ -736,6 +754,21 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       : view.winner_id === view.opponent_id
         ? names.B
         : null;
+  const systemWatch: WatchedAim | null =
+    systemShot && frames == null
+      ? {
+          angle: systemShot.angleMilli,
+          power: systemShot.power,
+          playing: true,
+          ...(systemShot.placeX != null && systemShot.placeY != null
+            ? { x: systemShot.placeX, y: systemShot.placeY }
+            : {}),
+        }
+      : null;
+  const tableGhost =
+    systemWatch && systemWatch.x != null && systemWatch.y != null
+      ? { x: systemWatch.x, y: systemWatch.y }
+      : ghost;
   const balls = state?.balls ?? [];
   const groupA = state ? seatGroup(state, "A") : null;
   const groupB = state ? seatGroup(state, "B") : null;
@@ -899,15 +932,15 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             balls={balls}
             angleMilli={angle}
             power={power}
-            ghost={ghost}
+            ghost={tableGhost}
             kitchenOnly={!!state?.kitchenOnly}
-            calledPocket={called}
-            showCue={!!mine && frames == null}
-            watch={!mine && frames == null ? watch : null}
+            calledPocket={systemWatch ? (systemShot?.calledPocket ?? null) : called}
+            showCue={!!mine && frames == null && !systemWatch}
+            watch={systemWatch ?? (!mine && frames == null ? watch : null)}
             replay={frames}
             stroke={stroke}
             legalAt={(x, y) => (state ? legalPlacement(state, x, y) : false)}
-            placing={!!mine && !!state?.ballInHand && frames == null}
+            placing={!!mine && !!state?.ballInHand && frames == null && !systemWatch}
             onAim={(next) => {
               setAimHint(null);
               setAngle(next);

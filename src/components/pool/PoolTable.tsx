@@ -28,6 +28,7 @@ import {
   type AimGesture,
 } from "@/lib/pool/aim-gesture";
 import { shortAimLine } from "@/lib/pool/aim-line";
+import { standInCuePull, standInShownPower } from "@/lib/pool/stand-in";
 
 const SOLIDS = ["#f0c410", "#1d4ed8", "#dc2626", "#7c3aed", "#ea580c", "#15803d", "#7f1d1d"];
 
@@ -428,10 +429,17 @@ function paintBall(
   ctx.restore();
 }
 
-type Stroke = { x: number; y: number; angle: number; power: number };
+type Stroke = { x: number; y: number; angle: number; power: number; holdMs?: number };
 
 /** The other player's live aim. x and y are set while they place the cue ball. */
-export type WatchedAim = { angle: number; power: number; x?: number; y?: number };
+export type WatchedAim = {
+  angle: number;
+  power: number;
+  x?: number;
+  y?: number;
+  /** The table is playing this shot. The cue draws back in full view. */
+  playing?: boolean;
+};
 
 type Props = {
   balls: readonly Ball[];
@@ -483,7 +491,8 @@ export function PoolTable({
   const cueBox = useRef({ ox: 0, oy: 0, w: 0, h: 0 });
   const cacheRef = useRef<{ w: number; h: number; canvas: HTMLCanvasElement } | null>(null);
   const motionRef = useRef(new Map<number, Motion>());
-  const strikeRef = useRef<(Pose & { t0: number }) | null>(null);
+  const strikeRef = useRef<(Pose & { t0: number; ms: number }) | null>(null);
+  const cuePlay = useRef<{ key: string; t0: number } | null>(null);
   const pointerRef = useRef<number | null>(null);
   const legalRef = useRef(legalAt);
   legalRef.current = legalAt;
@@ -647,10 +656,13 @@ export function PoolTable({
               angle: stroke.angle,
               power: stroke.power,
               t0: now,
+              ms: stroke.holdMs ?? 160,
             };
           }
         }
-        const release = head.stamp + (stroke ? 90 : 0);
+        const release =
+          head.stamp +
+          (stroke ? (stroke.holdMs != null ? Math.round(stroke.holdMs * 0.55) : 90) : 0);
         const opening = replay[0] ?? balls;
         if (now < release) {
           shown = opening;
@@ -776,7 +788,15 @@ export function PoolTable({
       if (showCue && from && !replaying && !strikeRef.current) {
         drawAimLine(ctx, project, from, angleMilli, shown, dpr);
       } else if (watching && watchFrom && !replaying && !strikeRef.current) {
-        drawAimLine(ctx, project, watchFrom, watching.angle, shown, dpr, 0.55);
+        drawAimLine(
+          ctx,
+          project,
+          watchFrom,
+          watching.angle,
+          shown,
+          dpr,
+          watching.playing ? 0.95 : 0.55,
+        );
       }
 
       const cueCanvas = cueRef.current;
@@ -793,7 +813,7 @@ export function PoolTable({
       if (showCue && !cueWas.current) cueIn.current = now;
       cueWas.current = showCue;
       if (strike) {
-        const t = (now - strike.t0) / 160;
+        const t = (now - strike.t0) / strike.ms;
         if (t >= 1) strikeRef.current = null;
         else {
           const pulled = 1.28 + (strike.power / 10_000) * 4.4;
@@ -816,8 +836,19 @@ export function PoolTable({
         if (alpha < 1) again = true;
         drawCue(cueCtx, projectCue, innerW, from, angleMilli, gap, alpha);
       } else if (watching && watchFrom && cueCtx && !replaying) {
-        const gap = 1.28 + (watching.power / 10_000) * 4.4;
-        drawCue(cueCtx, projectCue, innerW, watchFrom, watching.angle, gap, 0.42);
+        let shownPower = watching.power;
+        let alpha = 0.42;
+        if (watching.playing) {
+          const key = `${watching.angle}:${watching.power}:${watching.x ?? ""}:${watching.y ?? ""}`;
+          if (cuePlay.current?.key !== key) cuePlay.current = { key, t0: now };
+          const reduceCue = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          const pull = reduceCue ? 1 : standInCuePull(now - cuePlay.current.t0);
+          shownPower = standInShownPower(watching.power, pull);
+          alpha = 0.95;
+          if (pull < 1) again = true;
+        }
+        const gap = 1.28 + (shownPower / 10_000) * 4.4;
+        drawCue(cueCtx, projectCue, innerW, watchFrom, watching.angle, gap, alpha);
       }
 
       if (!layerRef.current || layerRef.current.disposed) {

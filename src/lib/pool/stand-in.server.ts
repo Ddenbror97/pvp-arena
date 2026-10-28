@@ -4,6 +4,8 @@ import { chooseStandInShot, standInDue } from "./stand-in";
 import type { TableState } from "./rules";
 import { bytesFromHex, stepsFromRecord } from "./verify";
 
+const inflight = new Set<string>();
+
 type RpcError = { message: string } | null;
 type Rpc = {
   rpc: (fn: string, args?: Record<string, unknown>) => Promise<{ data: unknown; error: RpcError }>;
@@ -74,6 +76,21 @@ export async function playStandInMatch(
   const shotSeconds = typeof view.shot_seconds === "number" ? view.shot_seconds : 30;
   if (!deadline || !standInDue(deadline, now, shotSeconds)) return { ok: true, played: false };
 
+  const flight = `${matchId}:${table.shot}`;
+  if (inflight.has(flight)) return { ok: true, played: false };
+  inflight.add(flight);
+  try {
+    return await finishStandIn(db, matchId, table);
+  } finally {
+    inflight.delete(flight);
+  }
+}
+
+async function finishStandIn(
+  db: Rpc,
+  matchId: number,
+  table: TableState,
+): Promise<{ ok: true; played: boolean } | { ok: false; error: string }> {
   const secret = await db.rpc("pool_read_secret", { p_match: matchId });
   const hex = typeof secret.data === "string" ? secret.data : null;
   const seed = hex ? bytesFromHex(hex) : null;
@@ -128,8 +145,11 @@ export async function playStandInMatch(
   });
   if (committed.error) {
     const code = rpcError(committed.error);
+    // The other caller already finished, or still owns the pending row.
+    if (code === "STAND_IN_CLEARED" || code === "NO_PENDING_SHOT") {
+      return { ok: true, played: false };
+    }
     await db.rpc("pool_abort_shot", { p_match: matchId });
-    if (code === "STAND_IN_CLEARED" || code === "NO_PENDING_SHOT") return { ok: true, played: false };
     return { ok: false, error: code };
   }
   return { ok: true, played: true };
