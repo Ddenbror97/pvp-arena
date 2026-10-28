@@ -15,7 +15,7 @@ export function UsdcBalance({
 }) {
   const usd = formatUsd(available ?? 0);
   return (
-    <span className="flex min-w-0 items-center gap-2">
+    <span className="header-wallet-balance flex min-w-0 items-center gap-2">
       {loading ? (
         <span
           aria-hidden

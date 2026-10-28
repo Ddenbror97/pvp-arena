@@ -290,6 +290,31 @@ header.site-chrome {
   white-space: nowrap;
 }
 .header-wallet-pulse { background: rgb(255 255 255 / 12%); }
+/* Phone: logo, sound, balance, Wallet, and the avatar share one row.
+   The USDC word hides; the coin stays. A long balance ellipsizes before the avatar leaves. */
+@media (max-width: 639.98px) {
+  .header-wallet {
+    min-width: 0;
+    max-width: 100%;
+    flex-shrink: 1;
+    gap: 0.25rem;
+    padding-left: 0.45rem;
+    padding-right: 0.15rem;
+  }
+  .header-wallet-balance { gap: 0.25rem; }
+  .header-wallet-asset { display: none; }
+  .header-wallet-amount {
+    flex: 1 1 auto;
+    min-width: 3.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .header-wallet-label {
+    width: auto;
+    height: 1.75rem;
+    padding: 0 0.45rem;
+  }
+}
 
 /* Roulette rail. Size is a container query so the first paint already has the
    phone or desktop coin. 464px is four 116px tiles; under 288px the pitch is

@@ -46,7 +46,7 @@ export function SiteHeader({ className }: { className?: string }) {
   const showWallet = paintSignedIn(ready, userId, hint);
   return (
     <header className={cn("site-chrome sticky top-0 z-30 overflow-x-clip border-b", className)}>
-      <div className="mx-auto grid h-14 w-full max-w-full grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-2 px-2 sm:flex sm:h-16 sm:gap-4 sm:px-4 lg:gap-6 lg:px-6">
+      <div className="mx-auto grid h-14 w-full max-w-full grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-1.5 px-2 sm:flex sm:h-16 sm:gap-4 sm:px-4 lg:gap-6 lg:px-6">
         <Link
           to="/"
           className="block h-8 w-[3.75rem] shrink-0 sm:h-10 sm:w-[4.6875rem]"
@@ -144,7 +144,7 @@ export function SiteHeader({ className }: { className?: string }) {
             </Link>
           ) : null}
         </nav>
-        <div className="col-start-4 flex h-11 shrink-0 items-center justify-end gap-2 sm:col-auto sm:ml-auto sm:min-w-[17.5rem] sm:gap-3">
+        <div className="flex h-11 min-w-0 items-center justify-end gap-1.5 sm:ml-auto sm:min-w-[17.5rem] sm:shrink-0 sm:gap-3">
           {!showWallet ? (
             <Button asChild size="sm" className="shrink-0 font-display">
               <Link to="/auth">Sign in</Link>
@@ -157,7 +157,7 @@ export function SiteHeader({ className }: { className?: string }) {
                   loading={!ready || wallet.isLoading}
                 />
               </Suspense>
-              <Link to="/profile" aria-label="Profile" className="shrink-0">
+              <Link to="/profile" aria-label="Profile" className="inline-flex shrink-0 items-center">
                 <PlayerPrestigeIdentity
                   avatar={profile?.avatar_url}
                   name={profile?.username}
