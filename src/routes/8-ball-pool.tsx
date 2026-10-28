@@ -79,7 +79,7 @@ function EightBallPage() {
   return (
     <>
       <PoolLobby />
-      <div className="pool-facts px-4 pb-40 sm:px-6 lg:pb-10">
+      <div className="pool-facts px-4 pb-24 sm:px-6 lg:pb-10">
         <GameFacts game="pool" />
       </div>
     </>

@@ -2535,11 +2535,9 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
   font-size: clamp(1.15rem, 2vw, 1.55rem); letter-spacing: 0.04em;
   background: linear-gradient(180deg, #fff, #c4b5fd); -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.pool-pips { display: inline-flex; gap: 0.16rem; margin-top: 0.16rem; }
-.pool-pips i {
-  width: 0.46rem; height: 0.46rem; border-radius: 50%;
-  box-shadow: inset 0 -1px 1px rgb(0 0 0 / 45%), 0 0 0 1px rgb(255 255 255 / 14%);
-}
+.pool-stage .pool-pips { display: inline-flex; gap: 0.16rem; margin-top: 0.16rem; }
+.pool-stage .pool-pips i { width: 1.05rem; height: 1.05rem; }
+.pool-stage .pool-pips i > span { font-size: 0.46rem; }
 .pool-stage-felt {
   position: relative;
   width: min(100%, calc((100dvh - 20rem) * 2.05));
@@ -2614,34 +2612,35 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
   font-family: var(--font-display); font-size: 0.82rem; font-weight: 700;
 }
 .pool-stage-create {
-  padding: 0.3rem 0.95rem 1rem; color: rgb(226 220 245 / 88%); font-size: 0.88rem; line-height: 1.45;
+  display: flex; flex-direction: column;
+  padding: 0.15rem 0.95rem 1rem; color: rgb(226 220 245 / 88%); font-size: 0.88rem; line-height: 1.45;
 }
 .pool-stage-create p { margin: 0.35rem 0; }
 .pool-stage-create strong { color: #fff; }
-.pool-stage-create .pool-play { margin-top: 0.65rem; }
-.pool-stage-bar {
-  position: relative; z-index: 3;
-  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
-  margin: 0.3rem 0.75rem 0.75rem; padding: 0.55rem 0.7rem; border-radius: 1rem;
-  border: 1px solid rgb(168 85 247 / 42%);
-  background:
-    radial-gradient(80% 140% at 100% 0%, rgb(124 58 237 / 24%), transparent 56%),
-    rgb(12 9 28 / 90%);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%), 0 16px 40px rgb(0 0 0 / 38%);
-  backdrop-filter: blur(12px);
-}
-.pool-stage-stakes { min-width: 0; }
-.pool-stage-stakes p {
-  margin: 0 0 0.35rem; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em;
+.pool-stage-create .pool-play { width: 100%; margin-top: 0.75rem; }
+.pool-stake-label {
+  margin: 0.15rem 0 0.4rem; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em;
   text-transform: uppercase; color: #d8c4ff;
 }
-.pool-stakes { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; }
+.pool-stakes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35rem; margin: 0; }
 .pool-stake {
-  min-width: 2.35rem; height: 2rem; padding: 0 0.6rem; border-radius: 0.6rem; cursor: pointer;
+  width: 100%; min-width: 0; height: 2rem; padding: 0 0.35rem; border-radius: 0.6rem; cursor: pointer;
   border: 1px solid rgb(255 255 255 / 14%); background: rgb(8 6 22 / 72%); color: #fff;
   font-family: var(--font-display); font-size: 0.75rem; font-weight: 600;
 }
 .pool-stake.is-on { border-color: #d8b4fe; background: #7c3aed; box-shadow: 0 0 16px rgb(124 58 237 / 55%); }
+.pool-stake-custom {
+  display: flex; align-items: center; gap: 0.3rem; margin-top: 0.5rem;
+  height: 2.2rem; padding: 0 0.7rem; border-radius: 0.65rem;
+  border: 1px solid rgb(255 255 255 / 16%); background: rgb(8 6 22 / 72%);
+}
+.pool-stake-custom span { color: #d8c4ff; font-family: var(--font-display); font-weight: 700; }
+.pool-stake-custom input {
+  flex: 1; min-width: 0; border: 0; background: transparent; color: #fff; outline: none;
+  font-family: var(--font-display); font-size: 0.85rem; font-weight: 600;
+}
+.pool-stake-custom input::placeholder { color: rgb(214 206 236 / 55%); }
+.pool-stake-custom:focus-within { border-color: #d8b4fe; box-shadow: 0 0 0 1px rgb(216 180 254 / 45%); }
 .pool-play {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; flex: none;
   height: 2.6rem; padding: 0 1.05rem; border: 0; border-radius: 0.75rem; cursor: pointer; color: #fff;
@@ -2650,7 +2649,6 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
   font-family: var(--font-display); font-size: 0.82rem; font-weight: 700;
 }
 .pool-play svg { width: 0.95rem; height: 0.95rem; }
-.pool-create-short { display: none; }
 .pool-play:hover:not(:disabled) { filter: brightness(1.06); }
 .pool-play:disabled { cursor: wait; opacity: 0.75; }
 .pool-create { height: 2.55rem; }
@@ -2669,9 +2667,21 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
 .pool-refresh svg { width: 1rem; height: 1rem; }
 .pool-refresh.is-spin svg { animation: pool-lobby-spin 0.8s linear infinite; }
 @keyframes pool-lobby-spin { to { transform: rotate(360deg); } }
+@media (min-width: 480px) and (max-width: 1023.98px) {
+  .pool-stakes { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+@media (max-width: 699.98px) {
+  .pool-stage .pool-pips i { width: 0.78rem; height: 0.78rem; }
+  .pool-stage .pool-pips i > span { font-size: 0.34rem; }
+}
 @media (max-width: 420px) {
-  .pool-stage-games .pool-pips { display: none; }
   .pool-seat strong { max-width: 5.5rem; }
+  .pool-stage .pool-pips i { width: 0.68rem; height: 0.68rem; }
+  .pool-stage .pool-pips i > span { font-size: 0.3rem; }
+}
+@media (max-width: 380px) {
+  .pool-stage .pool-pips { width: 3.15rem; flex-wrap: wrap; gap: 0.1rem; }
+  .pool-stage .pool-pips i { width: 0.7rem; height: 0.7rem; }
 }
 @media (min-width: 700px) and (max-width: 1023.98px) {
   .pool-stage-facts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -2683,10 +2693,6 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
   .pool-stage-facts { margin-top: 0.45rem; gap: 0.3rem; }
   .pool-stage-facts li { padding: 0.32rem 0.4rem; }
   .pool-stage-vs { padding-bottom: 0.1rem; }
-  .pool-stakes { flex-wrap: nowrap; }
-  .pool-stake { min-width: 0; height: 1.75rem; padding: 0 0.32rem; font-size: 0.68rem; }
-  .pool-create { height: 2.15rem; padding: 0 0.55rem; font-size: 0.68rem; gap: 0.25rem; }
-  .pool-stage-bar { gap: 0.45rem; padding: 0.45rem 0.55rem; }
 }
 @media (max-width: 639.98px) and (max-height: 740px) {
   .pool-stage-word { font-size: 2.05rem; }
@@ -2697,21 +2703,11 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
   .pool-stage-facts { margin-top: 0.15rem; }
 }
 @media (max-width: 1023.98px) {
-  .pool-stage { padding-bottom: calc(5.6rem + env(safe-area-inset-bottom)); }
-  .pool-stage-bar {
-    position: fixed; z-index: 25; left: 0.55rem; right: 0.55rem; margin: 0;
-    bottom: calc(3.45rem + env(safe-area-inset-bottom));
-  }
+  .pool-stage { padding-bottom: calc(4.4rem + env(safe-area-inset-bottom)); }
   .pool-stage-games ul { max-height: none; }
 }
 @media (max-width: 359.98px) {
-  .pool-stage { padding-bottom: calc(6.8rem + env(safe-area-inset-bottom)); }
-  .pool-stage-bar { bottom: calc(4.7rem + env(safe-area-inset-bottom)); }
-  .pool-stage-bar .pool-create { padding: 0 0.5rem; }
-  .pool-stage-bar .pool-create-long { display: none; }
-  .pool-stage-bar .pool-create-short { display: inline; }
-  .pool-stage-bar .pool-stakes { gap: 0.18rem; }
-  .pool-stage-bar .pool-stake { flex: none; min-width: max-content; font-size: 0.6rem; padding: 0 0.22rem; }
+  .pool-stage { padding-bottom: calc(5.4rem + env(safe-area-inset-bottom)); }
 }
 @media (min-width: 1024px) {
   .pool-stage { padding-bottom: 0; }
@@ -2726,7 +2722,7 @@ html.poker-noscroll, html.poker-noscroll body { overflow: hidden; overscroll-beh
   .pool-stage-table { grid-column: 2; }
   .pool-stage-games { grid-column: 3; align-self: stretch; height: 100%; max-height: 100%; min-height: 0; }
   .pool-stage-games ul { flex: 1; }
-  .pool-stage-bar { margin: 0.35rem 1.35rem 0.85rem; padding: 0.6rem 0.85rem; }
+  .pool-stage-create { flex: 1; min-height: 0; overflow: auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   .pool-refresh.is-spin svg { animation: none; }
@@ -2826,26 +2822,36 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-down { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.04em; color: #e9d5ff; }
 .pool-pips { display: flex; gap: 0.18rem; min-height: 0.95rem; margin-top: 0.12rem; }
 .pool-pips i {
-  width: 0.95rem; height: 0.95rem; border-radius: 50%; display: block; flex: none;
+  width: 0.95rem; height: 0.95rem; border-radius: 50%; display: grid; place-items: center; flex: none;
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
 }
+.pool-pips i > span {
+  display: grid; place-items: center; width: 52%; height: 52%; border-radius: 50%;
+  background: radial-gradient(circle at 40% 32%, #fff, #efeae2 74%);
+  color: #161616; font-family: var(--font-sans); font-size: 0.4rem; font-weight: 800;
+  line-height: 1; letter-spacing: -0.03em;
+  box-shadow: inset 0 -1px 1px rgb(0 0 0 / 18%), 0 0 0 0.5px rgb(0 0 0 / 16%);
+}
+.pool-pips i > span.is-wide { font-size: 0.28rem; letter-spacing: -0.06em; }
 .pool-pips i.is-up:not(.is-solid):not(.is-stripe) {
   background: radial-gradient(circle at 35% 30%, #4a4260, #120e1c 70%);
 }
 .pool-pips i.is-solid {
   background:
-    radial-gradient(circle at 32% 28%, rgb(255 255 255 / 78%), transparent 42%),
-    var(--pip, #ccc);
+    radial-gradient(circle at 30% 24%, rgb(255 255 255 / 92%), transparent 16%),
+    radial-gradient(circle at 68% 78%, rgb(0 0 0 / 42%), transparent 36%),
+    radial-gradient(circle at 38% 34%, color-mix(in srgb, var(--pip, #ccc) 72%, white), var(--pip, #ccc) 58%, color-mix(in srgb, var(--pip, #ccc) 55%, black));
   box-shadow:
-    inset 0 -1px 2px rgb(0 0 0 / 45%),
-    inset 1px 1px 1px rgb(255 255 255 / 55%),
-    0 0 0 1px rgb(0 0 0 / 45%);
+    inset 0 -2px 3px rgb(0 0 0 / 48%),
+    inset 1px 1px 1px rgb(255 255 255 / 42%),
+    0 1px 2px rgb(0 0 0 / 40%);
 }
 .pool-pips i.is-stripe {
   background:
-    radial-gradient(circle at 32% 24%, rgb(255 255 255 / 92%), transparent 26%),
-    linear-gradient(180deg, #f7f4ee 0 27%, var(--pip, #ccc) 27% 73%, #efeae0 73% 100%);
-  box-shadow: inset 0 0 0 1px rgb(40 24 16 / 40%), inset 0 -1px 2px rgb(0 0 0 / 22%);
+    radial-gradient(circle at 30% 22%, rgb(255 255 255 / 95%), transparent 18%),
+    radial-gradient(circle at 70% 80%, rgb(0 0 0 / 28%), transparent 34%),
+    linear-gradient(180deg, #f7f4ee 0 22%, var(--pip, #ccc) 22% 78%, #efeae0 78% 100%);
+  box-shadow: inset 0 0 0 1px rgb(40 24 16 / 40%), inset 0 -2px 3px rgb(0 0 0 / 28%), 0 1px 2px rgb(0 0 0 / 35%);
 }
 .pool-pips i.is-up.is-solid,
 .pool-pips i.is-up.is-stripe { opacity: 0.34; }
@@ -2978,7 +2984,8 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
   .pool-vs { top: 3.15rem; width: calc(100% - 0.8rem); gap: 0.35rem; }
   .pool-seat { padding-inline: 0.15rem; gap: 0.4rem; }
   .pool-face { width: 2.55rem; height: 2.55rem; }
-  .pool-pips i { width: 0.58rem; height: 0.58rem; }
+  .pool-screen .pool-pips i { width: 0.58rem; height: 0.58rem; }
+  .pool-screen .pool-pips i > span { display: none; }
   .pool-room-logo { display: none; }
   .pool-felt { top: 7.6rem; }
   .pool-banner { top: 6.35rem; padding: 0.28rem 0.6rem; font-size: 0.72rem; }

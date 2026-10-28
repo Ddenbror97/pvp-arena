@@ -1220,7 +1220,11 @@ function SeatCard({
                   : `${ball.down ? "is-down" : "is-up"} ${ball.stripe ? "is-stripe" : "is-solid"}`
               }
               style={ball.id > 0 ? { ["--pip" as string]: pipColor(ball.id) } : undefined}
-            />
+            >
+              {ball.id > 0 ? (
+                <span className={ball.id > 9 ? "is-wide" : undefined}>{ball.id}</span>
+              ) : null}
+            </i>
           ))}
         </span>
       </span>

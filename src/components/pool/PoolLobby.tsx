@@ -20,16 +20,16 @@ import { formatCents, parseStakeDollars, stakeDraft, stakeQuote } from "@/lib/po
 import { enterPool } from "@/lib/pool/pool.functions";
 import { SHOWCASE_AIM, SHOWCASE_BALLS, SHOWCASE_POWER } from "@/lib/pool/showcase";
 
-const PIPS = [
-  "#f0c410",
-  "#1d4ed8",
-  "#dc2626",
-  "#7c3aed",
-  "#ea580c",
-  "#15803d",
-  "#f4f1ea",
-  "#111111",
-];
+const BALLS = [
+  { n: "1", pip: "#f0c410" },
+  { n: "2", pip: "#1d4ed8" },
+  { n: "3", pip: "#dc2626" },
+  { n: "4", pip: "#7c3aed" },
+  { n: "5", pip: "#ea580c" },
+  { n: "6", pip: "#15803d" },
+  { n: "7", pip: "#9b2226" },
+  { n: "8", pip: "#111111" },
+] as const;
 
 const FACTS = [
   { icon: Users, kicker: "Play", text: "1v1 matches for real stakes" },
@@ -52,8 +52,10 @@ function timeLeft(iso: string, now: number): string {
 function BallPips() {
   return (
     <span className="pool-pips" aria-hidden>
-      {PIPS.map((color, index) => (
-        <i key={`${color}-${index}`} style={{ background: color }} />
+      {BALLS.map((ball) => (
+        <i key={ball.n} className="is-solid is-down" style={{ ["--pip" as string]: ball.pip }}>
+          <span>{ball.n}</span>
+        </i>
       ))}
     </span>
   );
@@ -389,8 +391,35 @@ export function PoolLobby() {
                 <h2 id="pool-open">Create game</h2>
               </div>
               <div className="pool-stage-create">
+                <p id="pool-stake-label" className="pool-stake-label">
+                  Stake amount
+                </p>
+                <div className="pool-stakes" role="group" aria-labelledby="pool-stake-label">
+                  {stakes.map((cents) => (
+                    <button
+                      key={cents}
+                      type="button"
+                      aria-pressed={stake === cents}
+                      onClick={() => setDraft(stakeDraft(cents))}
+                      className={stake === cents ? "pool-stake is-on" : "pool-stake"}
+                    >
+                      {money(cents)}
+                    </button>
+                  ))}
+                </div>
+                <label className="pool-stake-custom">
+                  <span aria-hidden>$</span>
+                  <input
+                    inputMode="decimal"
+                    autoComplete="off"
+                    aria-label="Your amount"
+                    placeholder="Your amount"
+                    value={draft}
+                    onChange={(event) => setDraft(event.target.value)}
+                  />
+                </label>
                 {quote == null ? (
-                  <p>Choose a stake, then open a table.</p>
+                  <p>Enter an amount from $1 to $50.</p>
                 ) : (
                   <>
                     <p>
@@ -419,44 +448,6 @@ export function PoolLobby() {
             </div>
           )}
         </aside>
-      </div>
-
-      <div className="pool-stage-bar">
-        <div className="pool-stage-stakes">
-          <p id="pool-stake-label">Stake amount</p>
-          <div className="pool-stakes" role="group" aria-labelledby="pool-stake-label">
-            {stakes.map((cents) => (
-              <button
-                key={cents}
-                type="button"
-                aria-pressed={stake === cents}
-                onClick={() => setDraft(stakeDraft(cents))}
-                className={stake === cents ? "pool-stake is-on" : "pool-stake"}
-              >
-                {money(cents)}
-              </button>
-            ))}
-          </div>
-        </div>
-        <button
-          type="button"
-          className="pool-play pool-create"
-          disabled={busy != null || stake == null}
-          onMouseEnter={warmMatch}
-          onFocus={warmMatch}
-          onTouchStart={warmMatch}
-          onClick={createGame}
-        >
-          {busy === "play" ? (
-            "Creating…"
-          ) : (
-            <>
-              <span className="pool-create-long">Create game</span>
-              <span className="pool-create-short">Create</span>
-            </>
-          )}
-          {busy === "play" ? null : <ArrowRight aria-hidden />}
-        </button>
       </div>
     </section>
   );
