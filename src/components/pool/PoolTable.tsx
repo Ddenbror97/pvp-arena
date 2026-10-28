@@ -25,6 +25,8 @@ import { buildTable, whenTableArt } from "@/lib/pool/table-paint";
 import { ballRadiusPx, spanPx, viewOf } from "@/lib/pool/view";
 import {
   aimStep,
+  CUE_STICK_LEN,
+  fitStickEnd,
   hitsCueStick,
   pointerIntent,
   powerFromPull,
@@ -313,6 +315,7 @@ function drawCue(
   angleMilli: number,
   gapBalls: number,
   alpha: number,
+  clip: { width: number; height: number; margin: number } | null,
 ) {
   const dir = aimDir(angleMilli);
   const gap = BALL_R * gapBalls;
@@ -320,7 +323,18 @@ function drawCue(
   const tip = atDist(gap);
   const tipScale = tip.scale;
   const length = BALL_R * 46;
-  const butt = atDist(gap + length);
+  let butt = atDist(gap + length);
+  let reach = 1;
+  if (clip && clip.width > clip.margin * 2 && clip.height > clip.margin * 2) {
+    const fitted = fitStickEnd(tip, butt, {
+      minX: clip.margin,
+      minY: clip.margin,
+      maxX: clip.width - clip.margin,
+      maxY: clip.height - clip.margin,
+    });
+    butt = { ...fitted, scale: tip.scale };
+    reach = fitted.scale;
+  }
   const along = (t: number): Pt => ({
     x: tip.x + (butt.x - tip.x) * t,
     y: tip.y + (butt.y - tip.y) * t,
@@ -397,6 +411,7 @@ function drawCue(
   stick(ctx, tip, along(0.02), width * 0.5, width * 0.56, "#3a2c22");
   stick(ctx, tip, along(0.008), width * 0.36, width * 0.4, "#6a5040");
   ctx.restore();
+  return reach;
 }
 
 function paintBall(
@@ -600,6 +615,7 @@ export function PoolTable({
   const ref = useRef<HTMLCanvasElement>(null);
   const cueRef = useRef<HTMLCanvasElement>(null);
   const cueBox = useRef({ ox: 0, oy: 0, w: 0, h: 0 });
+  const stickFit = useRef(1);
   const cacheRef = useRef<{ w: number; h: number; canvas: HTMLCanvasElement } | null>(null);
   const motionRef = useRef(new Map<number, Motion>());
   const strikeRef = useRef<
@@ -934,6 +950,10 @@ export function PoolTable({
 
       const cueCanvas = cueRef.current;
       const cueCtx = cueCanvas?.getContext("2d");
+      const clip =
+        cueCanvas && cueCtx
+          ? { width: cueCanvas.width, height: cueCanvas.height, margin: 16 * dpr }
+          : null;
       if (cueCanvas && cueCtx) {
         cueCtx.setTransform(1, 0, 0, 1, 0, 0);
         cueCtx.clearRect(0, 0, cueCanvas.width, cueCanvas.height);
@@ -965,7 +985,16 @@ export function PoolTable({
             alpha = 1 - (t - 0.62) / 0.38;
           }
           if (cueCtx) {
-            drawCue(cueCtx, projectCue, innerW, strike, strike.angle, gap, Math.max(0, alpha));
+            stickFit.current = drawCue(
+              cueCtx,
+              projectCue,
+              innerW,
+              strike,
+              strike.angle,
+              gap,
+              Math.max(0, alpha),
+              clip,
+            );
           }
           again = true;
         }
@@ -973,7 +1002,7 @@ export function PoolTable({
         const gap = 1.28 + (power / 10_000) * 4.4;
         const alpha = Math.min(1, (now - cueIn.current) / 140);
         if (alpha < 1) again = true;
-        drawCue(cueCtx, projectCue, innerW, from, angleMilli, gap, alpha);
+        stickFit.current = drawCue(cueCtx, projectCue, innerW, from, angleMilli, gap, alpha, clip);
       } else if (watching && watchFrom && cueCtx && !replaying) {
         let shownPower = watching.power;
         let alpha = 0.42;
@@ -991,7 +1020,16 @@ export function PoolTable({
           }
         }
         const gap = 1.28 + (shownPower / 10_000) * 4.4;
-        drawCue(cueCtx, projectCue, innerW, watchFrom, watching.angle, gap, alpha);
+        stickFit.current = drawCue(
+          cueCtx,
+          projectCue,
+          innerW,
+          watchFrom,
+          watching.angle,
+          gap,
+          alpha,
+          clip,
+        );
       }
 
       if (!layerRef.current || layerRef.current.disposed) {
@@ -1228,7 +1266,8 @@ export function PoolTable({
       const cue = cuePoint();
       if (!canvas || !cue || event.target === canvas) return;
       const point = tablePoint(canvas, event.clientX, event.clientY);
-      if (!hitsCueStick(point, cue, angleRef.current, powerRef.current)) return;
+      if (!hitsCueStick(point, cue, angleRef.current, powerRef.current, CUE_STICK_LEN * stickFit.current))
+        return;
       event.preventDefault();
       pointerRef.current = event.pointerId;
       originRef.current = { x: event.clientX, y: event.clientY };
