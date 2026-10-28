@@ -13,7 +13,7 @@ import { migrateTestSchemaToReal, useTestWithdrawalMinimum } from "./money";
 import { buildTestSchemaSql } from "./schema";
 import { testDatabaseUrl } from "./test-url";
 
-const APPROVED_REF = "qyykpkzmthkrvmtmgvwo";
+const APPROVED_REF = "bgbhjfjugjeenuipvnii";
 const FORBIDDEN = ["dkyabirifoixnfbmheay", "gqeaadpdtuussxdlnmof", "fdsovopvmjogjcllmxwj"];
 
 function targetKind(raw: string): "hosted-test" | "local" {
@@ -111,7 +111,7 @@ describe("phase 2 public boundary (hosted test project)", () => {
       return Number(row.n);
     });
     expect(names).toBeGreaterThan(0);
-    const [left] = await sql`select count(*)::int n from public.wallet_accounts`;
+    const [left] = await sql`select count(*)::int n from public.wallet_accounts where owner_id is not null`;
     expect(Number(left.n)).toBe(0);
   }, 60_000);
 

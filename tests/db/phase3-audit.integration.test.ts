@@ -14,7 +14,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { buildTestSchemaSql } from "./schema";
 import { testDatabaseUrl } from "./test-url";
 
-const APPROVED_REF = "qyykpkzmthkrvmtmgvwo";
+const APPROVED_REF = "bgbhjfjugjeenuipvnii";
 const FORBIDDEN = ["dkyabirifoixnfbmheay", "gqeaadpdtuussxdlnmof", "fdsovopvmjogjcllmxwj"];
 const API = "https://api.supabase.com/v1";
 const PG_DUMP = "/usr/lib/postgresql/17/bin/pg_dump";
@@ -711,6 +711,7 @@ async function run(cmd: string, args: string[], env: NodeJS.ProcessEnv) {
     child.stderr.on("data", (b) => {
       stderr += String(b);
     });
+    child.on("error", () => resolve({ code: 127, stdout, stderr: stderr || "spawn failed" }));
     child.on("close", (code) => resolve({ code: code ?? 1, stdout, stderr }));
   });
 }
@@ -795,7 +796,7 @@ describe("phase 3 isolated restore, cron, and faults", () => {
     try {
     const passFile = "/tmp/phase3-audit.pgpass";
     const user = `phase3_dump_e4cb.${APPROVED_REF}`;
-    writeFileSync(passFile, `aws-0-us-east-2.pooler.supabase.com:5432:postgres:${user}:${password}\n`, { mode: 0o600 });
+    writeFileSync(passFile, `aws-0-us-east-1.pooler.supabase.com:5432:postgres:${user}:${password}\n`, { mode: 0o600 });
     const dumpPath = "/tmp/phase3-public-schema.sql";
     const dumpArgs = [
       "--schema-only",
@@ -805,7 +806,7 @@ describe("phase 3 isolated restore, cron, and faults", () => {
       "--file",
       dumpPath,
       "--dbname",
-      `postgresql://${encodeURIComponent(user)}@aws-0-us-east-2.pooler.supabase.com:5432/postgres`,
+      `postgresql://${encodeURIComponent(user)}@aws-0-us-east-1.pooler.supabase.com:5432/postgres`,
     ];
     let dumped = await run(PG_DUMP, dumpArgs, { ...process.env, PGPASSFILE: passFile });
     for (let attempt = 0; dumped.code !== 0 && attempt < 6; attempt += 1) {
