@@ -319,13 +319,12 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
     const loser = winner === host.username ? guest.username : host.username;
     expect(byName[winner]).toBe(100_090);
     expect(byName[loser]).toBe(99_900);
-    const dupes = await sql<{ n: string }[]>`
-      select count(*)::text as n from (
-        select match_id from public.pool_settlements where match_id = ${matchId}
-        group by match_id having count(*) > 1
-      ) d
+    const wins = await sql<{ n: string }[]>`
+      select count(*)::text as n
+      from public.pool_payouts
+      where match_id = ${matchId} and kind = 'WIN'
     `;
-    expect(Number(dupes[0]?.n ?? 0)).toBe(0);
+    expect(Number(wins[0]?.n ?? 0)).toBe(1);
     if (!stay.page.isClosed()) {
       await stay.page.reload();
       await expect(stay.page.getByRole("link", { name: /Wallet, \$0\.00 USDC/ })).toBeVisible();
