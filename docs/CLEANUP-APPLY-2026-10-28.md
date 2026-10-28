@@ -75,6 +75,8 @@ Avatar upload uses `@jsquash/webp` only. `package.json`, `package-lock.json`, an
 
 Nothing else in `src` was unused under that scan. Guide pages, NowPayments IPN (`nowpaymentsIpnGone`), ledger tables, and historical migrations stay. Game math was not edited.
 
+`supabase/migrations/20261028180000_admin_live_finite_age.sql` rewrites `admin_ops_query` so a `worker_tick_gate` row still at `-infinity` contributes a null age instead of failing the live view. Production gates were all finite at 13:44 BRT, so the live payload does not change until a worker has never ticked. This migration was checked on isolated Postgres and was not applied to production.
+
 ## 4. What was not changed
 
 - Worker bundle and Cloudflare deploy. `npm run build` succeeded. The server output is 9.1 MB and contains `@jsquash/webp` only. Jpeg and png were not in the bundle before this removal, so the upload size does not move.
@@ -110,15 +112,15 @@ Repository, on an isolated Postgres 16 (not production):
 
 | Check | Result |
 |---|---|
-| `tsc --noEmit` | Fails on `main` already: `PoolLobby.tsx`, `PoolMatch.tsx` (`exactOptionalPropertyTypes`), and `turnstile.server.ts` (`NODE_ENV` index signature). This branch does not touch those files. |
-| `npm run lint` | Fails on `main` already: 2,106 problems, almost all `prettier/prettier`, including files this branch does not touch. |
-| `vitest run --project unit` | 501 passed, 1 failed. `tests/pool-view.test.ts` expects `closest(".pool-screen")` in `PoolTable.tsx`. That string is not in the file on `main`. |
-| `vitest run --project db` | 367 passed, 11 skipped, 1 failed. The failure is `admin_ops_query` raising `ADMIN_UNAVAILABLE` in `tests/db/perf-hot-paths.integration.test.ts`. That function wraps any internal error that way, and this Postgres has no `pg_cron`, so the worker listing inside the function cannot run. Roulette, coinflip, jackpot, slot, poker, pool, wallet, ledger, security, and RLS schema tests in the same run passed. |
+| `tsc --noEmit` | Passed after optional props accept `undefined` and Turnstile reads `process.env["NODE_ENV"]`. |
+| `npm run lint` | Still fails on `main`: 2,106 problems, almost all `prettier/prettier`, in files this change does not reformat. |
+| `vitest run --project unit` | 502 passed. The pool cue test now expects `closest(".pool-screen, .pool-stage")`, which is the host the lobby stage and the match screen both use. |
+| `vitest run --project db` | 367 passed, 11 skipped, 1 failed before the age fix. `admin_ops_query('live')` subtracted `clock_timestamp()` from `worker_tick_gate.last_run_at`, and that column defaults to `-infinity` until the first tick. Postgres refuses that subtraction, and the handler reported `ADMIN_UNAVAILABLE`. `20261028180000_admin_live_finite_age.sql` leaves the age null for a non-finite timestamp. `tests/db/perf-hot-paths.integration.test.ts` then passed. The migration is in this branch and was not applied to production. |
 | Anonymous API RLS (`tests/db/rls.integration.test.ts`) | 9 passed against the configured project. Reads of wallet, ledger, audit, and secrets came back empty. No money was moved. |
 | `npm run build` | Passed. Server output 9.1 MB. The bundle contains `@jsquash/webp` and does not contain jpeg or png codecs. |
 
 ## Verdict for deploying this branch
 
-**GO** for the code diff: it deletes an unreferenced helper and two unused packages. It does not change a request path.
+**GO** to merge this branch, including `20261028180000_admin_live_finite_age.sql`. Typecheck and the unit suite pass. The migration only changes the age of a worker that has never ticked. It does not delete rows or change settlement.
 
-**NO-GO** for any further database delete, retention shortening, or index rebuild until staging exists and the cron primary-key `REINDEX` is rehearsed. The logging change is already in production and does not ride on this branch.
+**NO-GO** for a database delete, a shorter retention window, or `REINDEX INDEX CONCURRENTLY cron.job_run_details_pkey` until a staging database exists. The logging change is already in production and does not ride on this branch. The finite-age migration has not been applied to production.

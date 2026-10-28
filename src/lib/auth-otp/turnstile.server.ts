@@ -13,7 +13,7 @@ const ALLOWED_HOSTS = new Set([
 function turnstileSecret(): string | undefined {
   const configured = workerEnv("TURNSTILE_SECRET_KEY");
   if (configured) return configured;
-  const nodeEnv = process.env.NODE_ENV;
+  const nodeEnv = process.env["NODE_ENV"];
   if (nodeEnv === "development" || nodeEnv === "test") return TEST_SECRET;
   return undefined;
 }

@@ -529,7 +529,7 @@ type Props = {
   power: number;
   spinX: number;
   spinY: number;
-  physicsId?: string;
+  physicsId?: string | undefined;
   ghost: { x: number; y: number } | null;
   kitchenOnly: boolean;
   calledPocket: number | null;

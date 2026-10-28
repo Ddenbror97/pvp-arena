@@ -61,7 +61,15 @@ function BallPips() {
   );
 }
 
-function SeatFace({ name, src, open }: { name: string; src?: string | null; open?: boolean }) {
+function SeatFace({
+  name,
+  src,
+  open,
+}: {
+  name: string;
+  src?: string | null | undefined;
+  open?: boolean | undefined;
+}) {
   if (open) {
     return (
       <span className="pool-seat-open" aria-hidden>
@@ -88,9 +96,9 @@ function Seat({
   align,
 }: {
   name: string;
-  src?: string | null;
+  src?: string | null | undefined;
   amount: string;
-  open?: boolean;
+  open?: boolean | undefined;
   align: "start" | "end";
 }) {
   const face = <SeatFace name={name} src={src} open={open} />;
