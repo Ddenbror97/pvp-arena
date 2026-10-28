@@ -124,3 +124,53 @@ Repository, on an isolated Postgres 16 (not production):
 **GO** to merge this branch, including `20261028180000_admin_live_finite_age.sql`. Typecheck and the unit suite pass. The migration only changes the age of a worker that has never ticked. It does not delete rows or change settlement.
 
 **NO-GO** for a database delete, a shorter retention window, or `REINDEX INDEX CONCURRENTLY cron.job_run_details_pkey` until a staging database exists. The logging change is already in production and does not ride on this branch. The finite-age migration has not been applied to production.
+
+## 6. Confirmation at 17:19 BRT
+
+Checked again at 2026-10-28 20:19:23 UTC (17:19 BRT). No second restart was issued. `pg_postmaster_start_time()` is still `2026-10-28 15:51:43 UTC` (12:51 BRT).
+
+| Setting | Value | pending_restart | source |
+|---|---|---|---|
+| `cron.log_statement` | off | false | configuration file |
+| `cron.log_run` | on | false | default |
+
+The Management API config read is `{"cron.log_statement": false}`. The setting is the running value, not a value waiting for a restart.
+
+Postgres log events (`source = 'postgres_logs'`), same aggregation on both sides. The before window is 15:45:00–15:51:43 UTC (12:45–12:51 BRT, 403 seconds). The matched after window is 20:12:17–20:19:00 UTC (17:12–17:19 BRT, 403 seconds).
+
+| Window | Events | Cron start/complete lines | event_message bytes | error / fatal / warning |
+|---|---:|---:|---:|---:|
+| Before, 403s | 2,646 | 2,482 | 107,410 | 0 |
+| After, 403s | 7 | 0 | 805 | 0 |
+| After, 19:20–20:20 UTC | 28 | 0 | 3,690 | 0 |
+
+That is 6.57 postgres log events per second before the restart and 0.0078 per second in the later hour, about a 99.9% drop. The cron lines are gone. The 28 lines in that hour are checkpoints and realtime logical decoding.
+
+The last 8,000 `cron.job_run_details` rows, 19:45:43–20:19:23 UTC, contain 0 failures. All 11 jobs are active. Each has succeeded since the restart, and the newest run of every one-second worker was at 20:19:24 UTC. `worker_tick_gate` ages at that moment were 1 second for roulette, jackpot, coinflip, and slot. `pvp-cron-history-retention` succeeded at 20:17 UTC with `DELETE 14250`, so run history is still being trimmed and `cron.log_run` is still recording rows.
+
+No withdrawal was `PENDING`, `HELD`, `APPROVED`, `SUBMITTING`, or `SUBMITTED`. No deposit was `DETECTED` or `CONFIRMED`. `ledger_postings` sum to 0 across 15,888 rows. Wallet balances match the ledger (0 mismatches). No player wallet is negative. `money_real_invariants()` returned `ok_postings_zero`, `ok_custody_equals_liabilities`, and `ok_custody_equals_flows`. `settlement_retry` is empty. No roulette, coinflip, slot, or jackpot row is in a settlement status. One roulette round is `BETTING`. One pool match is `WAITING`. Jackpot 198 has one player and a pot of 100; the entry is from 15:07 UTC and the solo refund wait is 24 hours, so it is inside the normal wait. Nine older jackpot rows are `CANCELLED` with `completed_at` null; the newest of those is 2026-10-23.
+
+`net._http_response` for the prior 30 minutes was HTTP 200 only: withdrawals, sweeps, and deposits all returned `ok: true`. The request queue was empty. Auth health returned 200, GoTrue v2.197.0. PostgREST, pg_cron, pg_net, and realtime were connected. Public tables: 160 of 160 have RLS. Policies using `user_metadata`: 0.
+
+Log-ingestion billing was not readable. `GET /v1/projects/{ref}/billing/usage` and the organization usage routes returned 404. The billing-period quota is not reset by this note.
+
+Remaining log volume in that same hour is API access lines, not cron statements: `edge_logs` 2,714 events (347,510 bytes), then realtime 12, auth 4, pgbouncer 3, and auth audit 2. The edge lines are `POST/GET/PATCH` responses from `dkyabirifoixnfbmheay.supabase.co`.
+
+Checks run after this read:
+
+| Check | Result |
+|---|---|
+| `tsc --noEmit` on this branch | Passed after `scripts/emit-guide-assets.ts` wrote the gitignored catalog. |
+| `vitest run --project unit` on the pool checkout | 504 passed. |
+| `npm run build` on the pool checkout | Passed. |
+| `vitest run --project db` on the pool checkout, which does not contain the age migration | 367 passed, 11 skipped, 1 failed. The failure is still `admin_ops_query('live')` on a fresh schema whose tick gate is `-infinity`. |
+| `tests/db/perf-hot-paths.integration.test.ts` on this branch | Passed. |
+| `tests/db/realmoney.integration.test.ts` | 14 passed, including one-settlement idempotency for jackpot and roulette. |
+| `tests/db/phase3-audit.integration.test.ts` | 2 passed, 5 skipped. The skipped cases target the old hosted test project, which is not this account. |
+| `tests/db/rls.integration.test.ts` | 9 passed against production as the anonymous key. No money was moved. |
+
+## Verdict
+
+**GO** for the logging change. It is applied, the 12:51 BRT restart is still the running postmaster, the 11 jobs are succeeding, cron statement lines are gone, and ledger, deposits, withdrawals, and the four game workers are healthy.
+
+**NO-GO** for a database delete, a shorter retention window, `REINDEX INDEX CONCURRENTLY cron.job_run_details_pkey`, or applying `20261028180000_admin_live_finite_age.sql` from this confirmation. Production tick gates are finite, so the live admin view is not hitting the fresh-schema crash. That migration stays in the branch until it ships with the branch.
