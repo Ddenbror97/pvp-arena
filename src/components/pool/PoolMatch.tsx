@@ -108,6 +108,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     angle: number;
     power: number;
     holdMs?: number;
+    ghost?: boolean;
   } | null>(null);
   const [seedOk, setSeedOk] = useState<boolean | null>(null);
   const [replayNote, setReplayNote] = useState<string | null>(null);
@@ -292,7 +293,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     const matchId = view.id;
     const tick = () => {
       if (!standInDue(deadline, Date.now() - skew, seconds)) return;
-      if (Date.now() - awayAt.current < 3_000) return;
+      if (Date.now() - awayAt.current < 800) return;
       awayAt.current = Date.now();
       void playAway({ data: { matchId } });
     };
@@ -383,7 +384,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             y: cue.y,
             angle: input.input.angleMilli,
             power: input.input.power,
-            ...(tableShot ? { holdMs: STAND_IN_STROKE_MS } : {}),
+            ...(tableShot ? { holdMs: STAND_IN_STROKE_MS, ghost: true } : {}),
           }
         : null,
     );
@@ -742,8 +743,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     systemShot && frames == null
       ? {
           angle: systemShot.angleMilli,
-          power: systemShot.power,
-          playing: true,
+          power: 1,
           ...(systemShot.placeX != null && systemShot.placeY != null
             ? { x: systemShot.placeX, y: systemShot.placeY }
             : {}),
