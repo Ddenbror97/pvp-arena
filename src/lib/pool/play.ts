@@ -1,4 +1,4 @@
-import { PHYSICS_VERSION, simulate, type PhysicsId, type ShotInput } from "./physics";
+import { PHYSICS_VERSION, simulate, type Ball, type PhysicsId, type ShotInput } from "./physics";
 import { applyPlayedShot, placeCue, stateHash, type ShotEvent, type TableState } from "./rules";
 import { committedSeedOk, resumeReplay, type MatchStep, type ReplayCursor } from "./verify";
 
@@ -14,6 +14,35 @@ export function playShot(
   if (applied.event.reason === "CALL_POCKET") return { ok: false, error: "CALL_POCKET" };
   const hash = stateHash(applied.state);
   return { ok: true, state: applied.state, event: applied.event, hash };
+}
+
+/** The frames the table draws while a shot is in the air. */
+export function recordShot(
+  state: TableState,
+  input: ShotInput,
+  physicsId: string = state.physics,
+): { sequence: Ball[][]; cue: Ball; state: TableState; hash: string } | null {
+  const placed = structuredClone(state);
+  if (placeCue(placed, input)) return null;
+  const opening = placed.balls.map((ball) => ({ ...ball }));
+  const cue = opening.find((ball) => ball.id === 0);
+  if (!cue) return null;
+  const sim = simulate(placed.balls, input, true, physicsId as PhysicsId);
+  const sequence = [opening, ...sim.frames];
+  const rest = sim.balls;
+  const tail = sequence[sequence.length - 1];
+  const alreadyRest =
+    tail != null &&
+    tail.every(
+      (ball, index) =>
+        ball.pocketed === rest[index]?.pocketed &&
+        ball.x === rest[index]?.x &&
+        ball.y === rest[index]?.y,
+    );
+  if (!alreadyRest) sequence.push(rest);
+  const applied = applyPlayedShot(placed, sim, input.calledPocket);
+  if (applied.event.reason === "CALL_POCKET") return null;
+  return { sequence, cue, state: applied.state, hash: stateHash(applied.state) };
 }
 
 /**

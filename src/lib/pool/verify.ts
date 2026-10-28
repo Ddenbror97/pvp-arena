@@ -109,6 +109,21 @@ function playListedStep(
   return { state: applied.state, got: stateHash(applied.state) };
 }
 
+/**
+ * The stored rack is the last accepted step, or the fresh rack when nothing
+ * has been played. The shot path uses this instead of resimulating every
+ * earlier shot. Replaying the whole match on every stroke is what stalled
+ * the stand-in after a few shots.
+ */
+export function tableLinks(
+  seed: Uint8Array,
+  table: TableState,
+  prior: readonly MatchStep[],
+): boolean {
+  if (prior.length === 0) return stateHash(freshTable(seed, table.physics)) === stateHash(table);
+  return prior[prior.length - 1]?.hash === stateHash(table);
+}
+
 /** A table already rolled through the first `steps` accepted hashes. */
 export type ReplayCursor = {
   seedKey: string;
@@ -175,7 +190,12 @@ export async function replayMatch(
       break;
     }
     state = played.state;
-    steps.push({ shot: state.shot, ok: played.got === step.hash, got: played.got, expected: step.hash });
+    steps.push({
+      shot: state.shot,
+      ok: played.got === step.hash,
+      got: played.got,
+      expected: step.hash,
+    });
     if (played.got !== step.hash || state.winner) break;
   }
   return {

@@ -3,8 +3,26 @@
  * The stored shot is exact and replayable. The miss is in the aim that was
  * chosen, not in the physics. The same seed and rack always pick the same shot.
  */
-import { BALL_R, PHYSICS_V6, PHYSICS_V7, POCKETS, TABLE_H, TABLE_W, cushionLimit, simulate, type Ball, type ShotInput } from "./physics";
-import { defaultCueSpot, groupClear, groupOf, legalPlacement, seatGroup, type TableState } from "./rules";
+import {
+  BALL_R,
+  PHYSICS_V6,
+  PHYSICS_V7,
+  POCKETS,
+  TABLE_H,
+  TABLE_W,
+  cushionLimit,
+  simulate,
+  type Ball,
+  type ShotInput,
+} from "./physics";
+import {
+  defaultCueSpot,
+  groupClear,
+  groupOf,
+  legalPlacement,
+  seatGroup,
+  type TableState,
+} from "./rules";
 
 /** A short pause so a returning player can take the seat before the table shoots. */
 export const STAND_IN_THINK_MS = 2_000;
@@ -13,6 +31,8 @@ export const STAND_IN_OVERDUE_MS = 45_000;
 export const STAND_IN_CUE_MS = 1_600;
 /** The ghost cue draws and hits in one motion, and the balls leave during that hit. */
 export const STAND_IN_STROKE_MS = 720;
+/** Forward hit after the live pull. The draw itself already happened on the clock. */
+export const STAND_IN_RELEASE_MS = 480;
 
 /** 0 when the cue is still at rest, 1 when the draw-back has finished. */
 export function standInCuePull(elapsedMs: number, durationMs = STAND_IN_CUE_MS): number {
@@ -43,6 +63,20 @@ export function standInStroke(power: number, t: number): { gap: number; alpha: n
   else if (clamped < 0.62) gap = full + (1.05 - full) * ((clamped - 0.34) / 0.28);
   else alpha = 1 - (clamped - 0.62) / 0.38;
   return { gap, alpha: Math.max(0, alpha) * 0.42 };
+}
+
+/**
+ * The hit after a pull the player already watched.
+ * `t` is 0 at full draw and 1 when the cue has followed through.
+ */
+export function standInRelease(power: number, t: number): { gap: number; alpha: number } {
+  const clamped = Number.isFinite(t) ? Math.max(0, Math.min(1, t)) : 0;
+  return standInStroke(power, 0.34 + clamped * 0.66);
+}
+
+/** When the balls leave during a ghost stroke. A release is already past the draw. */
+export function standInBallLeave(holdMs: number, released: boolean): number {
+  return Math.round(holdMs * (released ? 0.42 : 0.5));
 }
 
 /** True once the seat has had a moment to sit down, and before the clock gives up. */
@@ -152,7 +186,9 @@ function targetIds(state: TableState, shootingEight: boolean): number[] {
   if (shootingEight) return [8];
   const group = seatGroup(state, state.turn);
   return state.balls
-    .filter((ball) => !ball.pocketed && (group ? groupOf(ball.id) === group : groupOf(ball.id) != null))
+    .filter(
+      (ball) => !ball.pocketed && (group ? groupOf(ball.id) === group : groupOf(ball.id) != null),
+    )
     .map((ball) => ball.id);
 }
 
@@ -313,7 +349,7 @@ function looseShot(
   return shotOf(angle, 3_600 + rng() * 1_800, place, called);
 }
 
-export function chooseStandInShot(state: TableState, seed: Uint8Array): ShotInput {
+function standInAim(state: TableState, seed: Uint8Array): ShotInput {
   const rng = rngOf(seed, state.shot);
   const cue = state.balls.find((ball) => ball.id === 0);
   if (!cue) return shotOf(rng() * 360_000, 4_000, null, null);
@@ -321,7 +357,7 @@ export function chooseStandInShot(state: TableState, seed: Uint8Array): ShotInpu
   const recovered = cue.pocketed ? (state.ballInHand ? defaultCueSpot(state) : null) : null;
   if (cue.pocketed && !recovered) return shotOf(rng() * 360_000, 4_000, null, null);
   const held = recovered ? { ...cue, x: recovered.x, y: recovered.y, pocketed: false } : cue;
-  if (state.breakShot) return easeScratch(state, breakShot(state, held, rng));
+  if (state.breakShot) return breakShot(state, held, rng);
 
   const group = seatGroup(state, state.turn);
   const shootingEight = group != null && groupClear(state.balls, group);
@@ -333,7 +369,12 @@ export function chooseStandInShot(state: TableState, seed: Uint8Array): ShotInpu
     const parked = linesFrom(state, from, ids);
     const choice = pick(parked, rng);
     if (choice) {
-      const spot = placeBehind(state, { x: choice.gx, y: choice.gy }, { x: choice.ox, y: choice.oy }, rng);
+      const spot = placeBehind(
+        state,
+        { x: choice.gx, y: choice.gy },
+        { x: choice.ox, y: choice.oy },
+        rng,
+      );
       if (spot) {
         place = spot;
         from = { ...cue, x: spot.x, y: spot.y, pocketed: false };
@@ -351,12 +392,26 @@ export function chooseStandInShot(state: TableState, seed: Uint8Array): ShotInpu
 
   const found = linesFrom(state, from, ids);
   const line = pick(found, rng);
-  if (!line) return easeScratch(state, looseShot(state, from, ids, place, rng, shootingEight));
-  const shot = shotOf(
+  if (!line) return looseShot(state, from, ids, place, rng, shootingEight);
+  return shotOf(
     line.angle + aimError(line.cut, rng),
     powerFor(hypot(from.x - line.ox, from.y - line.oy), rng),
     place,
     shootingEight ? line.pocketId : null,
   );
+}
+
+/**
+ * The aim the cue can show before any ball is rolled.
+ * Same angle and spot as the stored shot. Scratch softening may only lower the power.
+ */
+export function planStandInShot(state: TableState, seed: Uint8Array): ShotInput {
+  return standInAim(state, seed);
+}
+
+export function chooseStandInShot(state: TableState, seed: Uint8Array): ShotInput {
+  const shot = standInAim(state, seed);
+  const cue = state.balls.find((ball) => ball.id === 0);
+  if (!cue || (cue.pocketed && shot.placeX == null)) return shot;
   return easeScratch(state, shot);
 }
