@@ -1,0 +1,22 @@
+-- Applied on production dkyabirifoixnfbmheay at 2026-10-28 15:51:43 UTC.
+--
+-- Measured 27 Oct 2026 12:40 BRT through 28 Oct 2026 12:40 BRT:
+-- 711,764 of 712,655 postgres_logs events were "cron job N starting"
+-- or "cron job N completed" from the four one-second workers.
+--
+-- The supported change is the Supabase custom Postgres config, not
+-- ALTER DATABASE. ALTER DATABASE is not how this project stores the
+-- GUC, and a later db push must not try to set it.
+--
+-- Applied:
+--   PUT /v1/projects/dkyabirifoixnfbmheay/config/database/postgres
+--   {"cron.log_statement": false, "restart_database": true}
+--
+-- Confirmed after restart:
+--   cron.log_statement = off
+--   cron.log_run = on
+--   cron.job_run_details still receives every run
+--
+-- Rollback, which also restarts Postgres:
+--   PUT the same path with {"cron.log_statement": true, "restart_database": true}
+-- Do not run that while a withdrawal is SUBMITTING or a deposit is uncredited.
