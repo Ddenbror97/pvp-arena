@@ -13,6 +13,8 @@ import {
   standInCuePull,
   standInDue,
   standInRelease,
+  STAND_IN_HIT_T,
+  STAND_IN_RELEASE_HIT_T,
   standInShownPower,
   standInStroke,
 } from "../src/lib/pool/stand-in";
@@ -90,6 +92,10 @@ describe("stand-in aim", () => {
     expect(standInRelease(8_000, 1).alpha).toBe(0);
     expect(STAND_IN_RELEASE_MS).toBeLessThan(STAND_IN_CUE_MS);
     expect(standInBallLeave(STAND_IN_RELEASE_MS, true)).toBeLessThan(STAND_IN_RELEASE_MS);
+    expect(standInStroke(8_000, STAND_IN_HIT_T).gap).toBeCloseTo(1.05);
+    expect(standInRelease(8_000, STAND_IN_RELEASE_HIT_T).gap).toBeCloseTo(1.05);
+    expect(standInBallLeave(1_000, false)).toBe(Math.round(1_000 * STAND_IN_HIT_T));
+    expect(standInBallLeave(1_000, true)).toBe(Math.round(1_000 * STAND_IN_RELEASE_HIT_T));
   });
 
   it("draws the ghost cue back until the shot is fully pulled", () => {

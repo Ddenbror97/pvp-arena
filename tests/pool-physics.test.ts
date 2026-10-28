@@ -10,6 +10,7 @@ import {
   PHYSICS_V7,
   POCKETS,
   cushionLimit,
+  pocketAtPoint,
   TABLE_H,
   TABLE_W,
   cosMicro,
@@ -25,6 +26,7 @@ import { confirmedWinner, playShot } from "../src/lib/pool/play";
 import {
   applyPlayedShot,
   applyShot,
+  calledPocketChoice,
   applyTimeout,
   defaultCueSpot,
   freshTable,
@@ -397,6 +399,59 @@ describe("pool rules", () => {
     expect(applied.state.turn).toBe("B");
     expect(applied.state.ballInHand).toBe(true);
     expect(applied.state.winner).toBeNull();
+  });
+
+  it("keeps a wrong-ball pocket down and gives the other seat ball in hand", () => {
+    const state = freshTable(new Uint8Array(32).fill(8));
+    state.breakShot = false;
+    state.ballInHand = false;
+    state.open = false;
+    state.groupA = "solids";
+    const cue = state.balls.find((b) => b.id === 0);
+    const stripe = state.balls.find((b) => b.id === 9);
+    const pocket = POCKETS[2];
+    const wall = cushionLimit(state.physics);
+    if (!cue || !stripe || !pocket) throw new Error("setup");
+    for (const ball of state.balls) {
+      if (ball.id === 0 || ball.id === 9) continue;
+      ball.pocketed = ball.id !== 1 && ball.id !== 8;
+      if (ball.id === 1) {
+        ball.x = wall.minX + 80_000;
+        ball.y = wall.maxY - 40_000;
+      }
+      if (ball.id === 8) {
+        ball.x = wall.minX + 80_000;
+        ball.y = wall.minY + 40_000;
+      }
+    }
+    stripe.x = pocket.x - 180_000;
+    stripe.y = pocket.y + 8_000;
+    cue.x = stripe.x - 120_000;
+    cue.y = stripe.y;
+    const sim = simulate(state.balls, shot({ angleMilli: 0, power: 7_500 }));
+    expect(sim.firstContact).toBe(9);
+    expect(sim.pocketed).toContain(9);
+    const applied = applyPlayedShot(state, sim, null);
+    expect(applied.event.foul).toBe(true);
+    expect(applied.event.foulReason).toBe("WRONG_BALL");
+    expect(applied.event.continue).toBe(false);
+    expect(applied.state.winner).toBeNull();
+    expect(applied.state.turn).toBe("B");
+    expect(applied.state.ballInHand).toBe(true);
+    expect(applied.state.kitchenOnly).toBe(false);
+    expect(applied.state.open).toBe(false);
+    expect(applied.state.groupA).toBe("solids");
+    expect(applied.state.balls.find((b) => b.id === 9)?.pocketed).toBe(true);
+    expect(applied.state.balls.find((b) => b.id === 1)?.pocketed).toBe(false);
+    expect(seatGroup(applied.state, "B")).toBe("stripes");
+  });
+
+  it("locks the 8-ball pocket after the first call", () => {
+    expect(calledPocketChoice(null, 4)).toBe(4);
+    expect(calledPocketChoice(4, 1)).toBe(4);
+    expect(calledPocketChoice(null, 9)).toBeNull();
+    expect(pocketAtPoint(POCKETS[4]!.x, POCKETS[4]!.y)).toBe(4);
+    expect(pocketAtPoint(TABLE_W / 2, TABLE_H / 2)).toBeNull();
   });
 
   it("loses when the 8 falls before the group is clear", () => {

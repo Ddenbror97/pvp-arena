@@ -75,6 +75,13 @@ export function other(seat: Seat): Seat {
   return seat === "A" ? "B" : "A";
 }
 
+/** The first pocket named for the 8 stays. A later press does not move the call. */
+export function calledPocketChoice(current: number | null, picked: number): number | null {
+  if (current != null) return current;
+  if (!Number.isInteger(picked) || picked < 0 || picked > 5) return null;
+  return picked;
+}
+
 export function groupOf(id: number): Group | null {
   if (id >= 1 && id <= 7) return "solids";
   if (id >= 9 && id <= 15) return "stripes";

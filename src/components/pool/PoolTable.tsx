@@ -5,6 +5,7 @@ import {
   PHYSICS_VERSION,
   cushionLimit,
   cosMicro,
+  pocketAtPoint,
   POCKETS,
   sinMicro,
   TABLE_H,
@@ -568,6 +569,9 @@ type Props = {
   ghost: { x: number; y: number } | null;
   kitchenOnly: boolean;
   calledPocket: number | null;
+  /** The 8 is the ball, and this seat still has to name a hole. */
+  calling?: boolean;
+  onCallPocket?: (id: number) => void;
   showCue: boolean;
   replay: readonly Ball[][] | null;
   stroke: Stroke | null;
@@ -597,6 +601,8 @@ export function PoolTable({
   ghost,
   kitchenOnly,
   calledPocket,
+  calling = false,
+  onCallPocket,
   showCue,
   replay,
   stroke,
@@ -656,6 +662,12 @@ export function PoolTable({
   const guideHit = useRef<AimTrace | null>(null);
   const watchRef = useRef(watch);
   watchRef.current = watch;
+  const callingRef = useRef(calling);
+  callingRef.current = calling;
+  const calledRef = useRef(calledPocket);
+  calledRef.current = calledPocket;
+  const callRef = useRef(onCallPocket);
+  callRef.current = onCallPocket;
   const kickRef = useRef<() => void>(() => {});
   const restDistRef = useRef(0);
   const showCueRef = useRef(showCue);
@@ -767,20 +779,7 @@ export function PoolTable({
         ctx.setLineDash([]);
       }
 
-      if (calledPocket != null) {
-        const pocket = POCKETS.find((item) => item.id === calledPocket);
-        if (pocket) {
-          const p = project(pocket.x, pocket.y);
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, spanPx(innerW, p.scale, pocket.r) * 1.14, 0, Math.PI * 2);
-          ctx.strokeStyle = "rgba(244, 211, 94, 0.9)";
-          ctx.lineWidth = Math.max(2, dpr * 1.6);
-          ctx.stroke();
-        }
-      }
-
       const now = performance.now();
-
       const head = playRef.current;
       let shown: readonly Ball[] = balls;
       if (replay && replay.length > 0) {
@@ -802,14 +801,13 @@ export function PoolTable({
             };
           }
         }
+        const strokeMs = stroke?.holdMs ?? 160;
         const release =
           head.stamp +
           (stroke
-            ? stroke.holdMs != null
-              ? stroke.ghost
-                ? standInBallLeave(stroke.holdMs, stroke.released === true)
-                : Math.round(stroke.holdMs * 0.55)
-              : 90
+            ? stroke.ghost
+              ? standInBallLeave(strokeMs, stroke.released === true)
+              : Math.round(strokeMs * 0.62)
             : 0);
         const opening = replay[0] ?? balls;
         if (now < release) {
@@ -818,12 +816,20 @@ export function PoolTable({
         } else {
           const elapsed = now - release;
           const target = Math.min(replay.length - 1, Math.floor(elapsed / REPLAY_FRAME_MS));
-          const stepTo = Math.min(target, head.i + 8);
-          while (head.i < stepTo) {
-            const prev = replay[head.i];
-            const next = replay[head.i + 1];
-            if (prev && next) sampleRef.current(prev, next);
-            head.i += 1;
+          if (target > head.i) {
+            const from = head.i;
+            head.i = target;
+            if (target - from <= 4) {
+              for (let i = from; i < target; i++) {
+                const prev = replay[i];
+                const next = replay[i + 1];
+                if (prev && next) sampleRef.current(prev, next);
+              }
+            } else {
+              const prev = replay[Math.max(0, target - 1)];
+              const next = replay[target];
+              if (prev && next) sampleRef.current(prev, next);
+            }
           }
           const curr = replay[head.i] ?? opening;
           const upcoming = replay[Math.min(replay.length - 1, head.i + 1)] ?? curr;
@@ -863,7 +869,11 @@ export function PoolTable({
           motion.set(ball.id, m);
         }
         if (ball.pocketed) {
-          if (m.falling == null && !m.done) m.falling = now;
+          if (m.falling == null && !m.done) {
+            m.falling = now;
+            m.x = ball.x;
+            m.y = ball.y;
+          }
           if (m.falling != null && !m.done) {
             const age = now - m.falling;
             if (age < 190) {
@@ -904,20 +914,11 @@ export function PoolTable({
         sprites.push({ ball, x: drawX, y: drawY, fade: 1, scale: 1 });
       }
       sprites.sort((a, b) => project(a.x, a.y).y - project(b.x, b.y).y);
+      ctx.fillStyle = "rgba(6, 0, 16, 0.34)";
       for (const sprite of sprites) {
         const p = project(sprite.x, sprite.y);
         const radius = ballRadiusPx(innerW, p.scale) * sprite.scale;
-        const shadow = ctx.createRadialGradient(
-          p.x,
-          p.y + radius * 0.72,
-          radius * 0.1,
-          p.x,
-          p.y + radius * 0.72,
-          radius * 1.2,
-        );
-        shadow.addColorStop(0, `rgba(6, 0, 16, ${0.45 * sprite.fade})`);
-        shadow.addColorStop(1, "rgba(6, 0, 16, 0)");
-        ctx.fillStyle = shadow;
+        ctx.globalAlpha = 0.85 * sprite.fade;
         ctx.beginPath();
         ctx.ellipse(
           p.x + radius * 0.06,
@@ -930,6 +931,7 @@ export function PoolTable({
         );
         ctx.fill();
       }
+      ctx.globalAlpha = 1;
 
       const watching = watchRef.current;
       const watchFrom =
@@ -1082,6 +1084,32 @@ export function PoolTable({
         }
       }
 
+      const choosing = callingRef.current && calledRef.current == null;
+      if (choosing || calledRef.current != null) {
+        const hue = (now / 14) % 360;
+        for (const pocket of POCKETS) {
+          const selected = calledRef.current === pocket.id;
+          if (!choosing && !selected) continue;
+          const p = project(pocket.x, pocket.y);
+          const radius = spanPx(innerW, p.scale, pocket.r);
+          const color = selected ? "rgb(255, 214, 74)" : `hsl(${(hue + pocket.id * 58) % 360} 100% 62%)`;
+          ctx.save();
+          ctx.globalAlpha = 1;
+          ctx.strokeStyle = color;
+          ctx.lineWidth = Math.max(4, dpr * 3.2);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, radius * 1.45, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.globalAlpha = selected ? 0.55 : 0.7;
+          ctx.lineWidth = Math.max(10, dpr * 8);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, radius * 1.45, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+        if (choosing) again = true;
+      }
+
       const aimedFrom = showCue && from && !replaying ? from : null;
       if (aimedFrom && !strikeRef.current) {
         const aimAngle = angleMilli;
@@ -1184,6 +1212,7 @@ export function PoolTable({
     placing,
     draft,
     watch,
+    calling,
   ]);
 
   useEffect(() => {
@@ -1340,6 +1369,21 @@ export function PoolTable({
           originRef.current = { x: event.clientX, y: event.clientY };
           pullRef.current = 0;
           const point = tablePoint(event.currentTarget, event.clientX, event.clientY);
+          if (callingRef.current && calledRef.current == null) {
+            const hole = pocketAtPoint(point.x, point.y);
+            if (hole != null) {
+              pointerRef.current = null;
+              gestureRef.current = null;
+              try {
+                event.currentTarget.releasePointerCapture(event.pointerId);
+              } catch {
+                // The press already ended. The pocket call still stands.
+              }
+              callRef.current?.(hole);
+              kickRef.current();
+              return;
+            }
+          }
           const cue = cuePoint();
           if (cue)
             restDistRef.current = cueScreenDist(

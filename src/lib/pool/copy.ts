@@ -132,6 +132,8 @@ export type MatchNoticeInput = {
   kitchenOnly: boolean;
   shootingEight: boolean;
   pocketChosen: boolean;
+  /** Foul code from the last shot, when the table is still in that ball-in-hand. */
+  foulReason?: string | null;
   /** The rules already named a winner, and the match status has not caught up. */
   decided: boolean;
   mine: boolean;
@@ -206,21 +208,32 @@ export function matchNotice(input: MatchNoticeInput): string | null {
   }
   if (input.shootingEight) {
     if (!input.mine) {
-      return input.ballInHand
+      const eight = input.ballInHand
         ? "Opponent has ball in hand and is shooting the 8-ball."
         : "Opponent is shooting the 8-ball.";
+      if (input.fouled && input.foulReason === "WRONG_BALL")
+        return `Foul. That ball stays down. ${eight}`;
+      return eight;
     }
     if (input.ballInHand) {
       const line = input.pocketChosen
         ? "Place the cue ball, then pocket the 8-ball in the pocket you chose."
-        : "Place the cue ball, then choose a pocket for the 8-ball.";
+        : "Place the cue ball, then click a lit pocket for the 8-ball. That call stays.";
+      if (input.fouled && input.foulReason === "WRONG_BALL")
+        return `Foul. That ball stays down. ${line}`;
       return input.fouled ? `Foul. ${line}` : line;
     }
-    if (!input.pocketChosen) return "Choose a pocket for the 8-ball";
+    if (!input.pocketChosen) return "Click a lit pocket for the 8-ball. That call stays.";
     return "Pocket the 8-ball in the pocket you chose";
+  }
+  if (!input.mine && input.fouled && input.foulReason === "WRONG_BALL") {
+    return "Foul. That ball stays down. Opponent has ball in hand.";
   }
   if (!input.mine && (input.fouled || input.ballInHand)) {
     return input.fouled ? "Foul. Opponent has ball in hand." : "Opponent has ball in hand.";
+  }
+  if (input.fouled && input.foulReason === "WRONG_BALL" && input.ballInHand) {
+    return "Foul. That ball stays down. Place the cue ball.";
   }
   if (input.fouled && input.kitchenOnly) {
     return "Foul. Ball in hand — place the cue ball behind the head string.";

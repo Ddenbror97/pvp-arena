@@ -33,6 +33,10 @@ export const STAND_IN_CUE_MS = 1_600;
 export const STAND_IN_STROKE_MS = 720;
 /** Forward hit after the live pull. The draw itself already happened on the clock. */
 export const STAND_IN_RELEASE_MS = 480;
+/** Full ghost stroke time when the tip meets the cue ball. The draw is the first 0.34. */
+export const STAND_IN_HIT_T = 0.62;
+/** Release time when the tip meets the cue ball. The draw was already shown. */
+export const STAND_IN_RELEASE_HIT_T = (STAND_IN_HIT_T - 0.34) / 0.66;
 
 /** 0 when the cue is still at rest, 1 when the draw-back has finished. */
 export function standInCuePull(elapsedMs: number, durationMs = STAND_IN_CUE_MS): number {
@@ -76,7 +80,7 @@ export function standInRelease(power: number, t: number): { gap: number; alpha: 
 
 /** When the balls leave during a ghost stroke. A release is already past the draw. */
 export function standInBallLeave(holdMs: number, released: boolean): number {
-  return Math.round(holdMs * (released ? 0.42 : 0.5));
+  return Math.round(holdMs * (released ? STAND_IN_RELEASE_HIT_T : STAND_IN_HIT_T));
 }
 
 /** True once the seat has had a moment to sit down, and before the clock gives up. */

@@ -101,14 +101,26 @@ describe("match notice", () => {
       "Ball in hand — place the cue ball behind the head string.",
     );
     expect(matchNotice({ ...base, shootingEight: true, pocketChosen: false })).toBe(
-      "Choose a pocket for the 8-ball",
+      "Click a lit pocket for the 8-ball. That call stays.",
     );
     expect(
       matchNotice({ ...base, shootingEight: true, ballInHand: true, pocketChosen: false }),
-    ).toBe("Place the cue ball, then choose a pocket for the 8-ball.");
+    ).toBe("Place the cue ball, then click a lit pocket for the 8-ball. That call stays.");
     expect(
       matchNotice({ ...base, shootingEight: true, ballInHand: true, fouled: true, pocketChosen: false }),
-    ).toBe("Foul. Place the cue ball, then choose a pocket for the 8-ball.");
+    ).toBe("Foul. Place the cue ball, then click a lit pocket for the 8-ball. That call stays.");
+    expect(
+      matchNotice({
+        ...base,
+        fouled: true,
+        ballInHand: true,
+        foulReason: "WRONG_BALL",
+        mine: false,
+      }),
+    ).toBe("Foul. That ball stays down. Opponent has ball in hand.");
+    expect(
+      matchNotice({ ...base, fouled: true, ballInHand: true, foulReason: "WRONG_BALL" }),
+    ).toBe("Foul. That ball stays down. Place the cue ball.");
     expect(matchNotice({ ...base, shootingEight: true, mine: false, ballInHand: true })).toBe(
       "Opponent has ball in hand and is shooting the 8-ball.",
     );

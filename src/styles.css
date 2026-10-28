@@ -2798,8 +2798,6 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
   filter: drop-shadow(0 0 16px rgb(168 85 247 / 80%)) drop-shadow(0 10px 18px rgb(0 0 0 / 55%));
 }
 .pool-felt { position: absolute; z-index: 1; left: var(--pool-felt-left); right: var(--pool-felt-right); top: 8.85rem; bottom: 1.2rem; container-type: size; overflow: visible; }
-.pool-screen.is-calling .pool-felt { bottom: 4.5rem; }
-.pool-screen.is-calling .pool-pockets { bottom: 0.65rem; }
 .pool-felt-frame { position: absolute; inset: 0; overflow: visible; }
 .pool-canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 .pool-cue { position: absolute; z-index: 2; pointer-events: none; }
@@ -2822,7 +2820,7 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-energy span {
   font-family: var(--font-display); font-size: 0.62rem; font-weight: 700; color: #f6f3ff;
 }
-.pool-vs, .pool-tools, .pool-banner, .pool-sheet, .pool-pockets { position: absolute; z-index: 3; }
+.pool-vs, .pool-tools, .pool-banner, .pool-sheet { position: absolute; z-index: 3; }
 .pool-vs {
   top: 0.4rem; left: 50%; transform: translateX(-50%);
   display: flex; align-items: center; gap: 0.85rem;
@@ -2925,13 +2923,6 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
   line-height: 1.35; background: rgb(8 6 16 / 88%); border: 1px solid rgb(255 255 255 / 14%);
   z-index: 4;
 }
-.pool-pockets {
-  left: var(--pool-col); bottom: 0.7rem; transform: translateX(-50%);
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem;
-  max-width: calc(100% - 1rem);
-}
-.pool-pockets button { min-height: 2.75rem; padding: 0 0.55rem; border-radius: 999px; border: 1px solid rgb(255 255 255 / 16%); background: rgb(8 6 16 / 80%); color: #fff; font-size: 0.72rem; }
-.pool-pockets button.is-on { border-color: #e9d5ff; color: #e9d5ff; }
 .pool-sheet {
   right: 0.85rem; bottom: 4.4rem; width: min(18rem, calc(100% - 1.7rem));
   padding: 0.8rem; border-radius: 0.9rem; background: rgb(10 8 20 / 92%); border: 1px solid rgb(190 150 255 / 28%);
@@ -2972,31 +2963,57 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
 .pool-closed-card a { width: 100%; margin-top: 1rem; background: #fff; color: #1a1028; text-decoration: none; }
 .pool-missing { position: absolute; inset: 0; display: grid; place-items: center; color: #ddd4f8; }
 .pool-leave:focus-visible, .pool-chat-toggle:focus-visible, .pool-gear:focus-visible,
-.pool-pockets button:focus-visible, .pool-tutorial button:focus-visible, .pool-rules-pop button:focus-visible,
+.pool-tutorial button:focus-visible, .pool-rules-pop button:focus-visible,
 .pool-result a:focus-visible, .pool-result button:focus-visible, .pool-sheet button:focus-visible,
 .pool-confirm button:focus-visible, .pool-closed-card a:focus-visible {
   outline: 2px solid #fff; outline-offset: 2px;
 }
-.pool-tutorial, .pool-rules-pop, .pool-result {
+.pool-tutorial, .pool-rules-pop {
   position: absolute; z-index: 5; width: min(18rem, calc(100% - 1.5rem));
   padding: 0.75rem 0.85rem; border-radius: 0.9rem; color: #f6f3ff;
   background: rgb(10 8 20 / 94%); border: 1px solid rgb(190 150 255 / 35%);
 }
 .pool-tutorial { left: calc(var(--pool-felt-left) + 0.45rem); top: 8.6rem; }
-.pool-tutorial strong, .pool-result p:first-child { display: block; font-size: 0.95rem; }
-.pool-tutorial p, .pool-rules-pop li, .pool-result p { margin: 0.35rem 0 0; font-size: 0.78rem; line-height: 1.4; color: #ddd4f8; }
-.pool-tutorial button, .pool-rules-pop button, .pool-result button, .pool-result a {
+.pool-tutorial strong { display: block; font-size: 0.95rem; }
+.pool-tutorial p, .pool-rules-pop li { margin: 0.35rem 0 0; font-size: 0.78rem; line-height: 1.4; color: #ddd4f8; }
+.pool-tutorial button, .pool-rules-pop button {
   margin: 0.55rem 0.45rem 0 0; color: #e9d5ff; font-size: 0.82rem;
+}
+.pool-result {
+  position: absolute; inset: 0; z-index: 6; display: grid; place-items: center;
+  padding: 1rem; background: rgb(5 4 12 / 48%);
+}
+.pool-result-card {
+  width: min(22rem, calc(100% - 0.5rem)); padding: 1.35rem 1.25rem 1.15rem;
+  border-radius: 1.05rem; text-align: center; color: #f6f3ff;
+  background: rgb(16 12 28 / 96%); border: 1px solid rgb(190 150 255 / 48%);
+  box-shadow: 0 22px 60px rgb(0 0 0 / 55%);
+}
+.pool-result-card strong {
+  display: block; font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+  letter-spacing: -0.03em; line-height: 1.1;
+}
+.pool-result-pay {
+  margin: 0.45rem 0 0; font-family: var(--font-display); font-size: 1.65rem;
+  font-weight: 800; color: #f4d35e;
+}
+.pool-result-card p { margin: 0.55rem 0 0; font-size: 0.92rem; line-height: 1.45; color: #ddd4f8; }
+.pool-result-card a, .pool-result-card button {
+  display: flex; align-items: center; justify-content: center; width: 100%;
+  min-height: 2.75rem; margin: 0.7rem 0 0; border-radius: 999px; font-size: 0.95rem;
+  font-weight: 700; text-decoration: none;
+}
+.pool-result-card a { background: #fff; color: #1a1028; }
+.pool-result-card button {
+  border: 1px solid rgb(255 255 255 / 22%); background: transparent; color: #fff;
 }
 .pool-rules-pop {
   right: 0.75rem; top: 4.4rem; max-height: min(24rem, 58vh); overflow: auto;
 }
 .pool-rules-pop ul { margin: 0; padding-left: 1rem; }
-.pool-result { left: var(--pool-col); bottom: 1.5rem; transform: translateX(-50%); text-align: center; }
 .pool-sheet button { display: inline-flex; align-items: center; gap: 0.3rem; }
 @media (max-width: 860px) {
   .pool-tutorial { left: 0.45rem; right: 0.45rem; top: auto; bottom: 4.2rem; width: auto; }
-  .pool-result { bottom: 4.1rem; }
   .pool-rules-pop { left: 0.45rem; right: 0.45rem; width: auto; top: 6.4rem; }
 }
 @media (max-width: 1023.98px) {
@@ -3016,8 +3033,6 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
   }
   .pool-screen[data-chat="open"] .pool-chat { translate: 0 0; visibility: visible; }
   .pool-felt { top: 8.5rem; bottom: 3.4rem; }
-  .pool-screen.is-calling .pool-felt { bottom: 7.4rem; }
-  .pool-screen.is-calling .pool-pockets { bottom: 3.5rem; }
   .pool-banner { top: 6.9rem; max-width: calc(100% - 1rem); }
 }
 @media (max-width: 860px) {

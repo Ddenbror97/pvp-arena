@@ -21,7 +21,6 @@ import { MAX_PULL_POWER } from "@/lib/pool/aim-gesture";
 import { recordShot } from "@/lib/pool/play";
 import {
   PHYSICS_V5,
-  POCKETS,
   cushionLimit,
   simulate,
   type Ball,
@@ -29,6 +28,7 @@ import {
 } from "@/lib/pool/physics";
 import {
   applyPlayedShot,
+  calledPocketChoice,
   freshTable,
   groupClear,
   defaultCueSpot,
@@ -63,7 +63,6 @@ type GhostStroke = {
 import {
   leaveTake,
   matchNotice,
-  POCKET_LABELS,
   POOL_RULES,
   spinSentence,
   TUTORIAL_STEPS,
@@ -434,9 +433,13 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       !liveRoll.current.failed &&
       state != null &&
       state.shot === liveRoll.current.shot + 1;
+    const storedKey = shotKey(input.input);
     // The cue is already drawing this shot. Replaying it here freezes that pull.
-    if (owned && previewKey.current !== shotKey(input.input)) return;
-    if (previewKey.current === shotKey(input.input) && input.hash === previewHash.current) {
+    if (owned && previewKey.current !== storedKey && !pullFinished.current) return;
+    if (
+      (previewKey.current === storedKey && input.hash === previewHash.current) ||
+      (tableShot && framesRef.current && previewKey.current === storedKey)
+    ) {
       serverReady.current = true;
       const linked = previewTable.current;
       if (linked) {
@@ -460,38 +463,60 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       }
       return;
     }
-    previewKey.current = null;
-    previewHash.current = null;
-    previewTable.current = null;
-    previewFrames.current = null;
-    serverReady.current = false;
-    heldPreview.current = false;
-    try {
-      const seedBytes = bytesFromHex(serverSeed);
-      const seedKey = `${liveId ?? 0}:${serverSeed}:${physicsId}`;
-      let rolled = resumeReplay(seedBytes, seedKey, prior, physicsId, replayCursor.current);
-      if (!rolled.ok) rolled = resumeReplay(seedBytes, seedKey, prior, physicsId, null);
-      if (!rolled.ok) return;
-      const carried = resumeReplay(seedBytes, seedKey, [...prior, input], physicsId, rolled.cursor);
-      replayCursor.current = carried.ok ? carried.cursor : rolled.cursor;
-      const played = recordShot(rolled.state, input.input, physicsId);
-      if (!played) return;
-      setFrames(played.sequence);
-      setStroke(
-        played.cue
-          ? {
-              x: played.cue.x,
-              y: played.cue.y,
-              angle: input.input.angleMilli,
-              power: input.input.power,
-              ...(tableShot ? { holdMs: STAND_IN_STROKE_MS, ghost: true } : {}),
-            }
-          : null,
-      );
-      cueSound(input.input.power);
-    } catch (error) {
-      console.error(error);
-    }
+    // Balls are already leaving on the local roll. A second sequence restarts them.
+    if (tableShot && framesRef.current) return;
+    let cancel = false;
+    const timer = window.setTimeout(() => {
+      if (cancel || (tableShot && framesRef.current)) return;
+      previewKey.current = null;
+      previewHash.current = null;
+      previewTable.current = null;
+      previewFrames.current = null;
+      serverReady.current = false;
+      heldPreview.current = false;
+      try {
+        const seedBytes = bytesFromHex(serverSeed);
+        const seedKey = `${liveId ?? 0}:${serverSeed}:${physicsId}`;
+        let rolled = resumeReplay(seedBytes, seedKey, prior, physicsId, replayCursor.current);
+        if (!rolled.ok) rolled = resumeReplay(seedBytes, seedKey, prior, physicsId, null);
+        if (!rolled.ok || cancel) return;
+        const carried = resumeReplay(seedBytes, seedKey, [...prior, input], physicsId, rolled.cursor);
+        replayCursor.current = carried.ok ? carried.cursor : rolled.cursor;
+        const played = recordShot(rolled.state, input.input, physicsId);
+        if (!played || cancel || (tableShot && framesRef.current)) return;
+        const seenPull = tableShot && pullFinished.current;
+        previewKey.current = storedKey;
+        previewHash.current = played.hash;
+        previewTable.current = played.state;
+        previewFrames.current = played.sequence;
+        if (tableShot) released.current = true;
+        setFrames(played.sequence);
+        setStroke(
+          played.cue
+            ? {
+                x: played.cue.x,
+                y: played.cue.y,
+                angle: input.input.angleMilli,
+                power: input.input.power,
+                ...(tableShot
+                  ? {
+                      holdMs: seenPull ? STAND_IN_RELEASE_MS : STAND_IN_STROKE_MS,
+                      ghost: true,
+                      released: seenPull,
+                    }
+                  : {}),
+              }
+            : null,
+        );
+        cueSound(input.input.power);
+      } catch (error) {
+        console.error(error);
+      }
+    }, 0);
+    return () => {
+      cancel = true;
+      window.clearTimeout(timer);
+    };
     // `state` is the rack for this hash. Depending on the object resimulates on
     // every poll and freezes the cue in the middle of its draw.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -521,6 +546,10 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     groupClear(state.balls, turnGroup) &&
     !state.breakShot;
   const shootingEight = eightForShooter && mine;
+  const eightShot = shootingEight ? (state?.shot ?? -1) : -1;
+  useEffect(() => {
+    setCalled(null);
+  }, [eightShot]);
   const ghost = mine && state?.ballInHand ? place : null;
   useEffect(() => {
     if (!serverSeed || !state || liveStatus !== "PLAYING" || state.winner || reduce || !physicsId) {
@@ -976,6 +1005,10 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const lastEvent = view.events[view.events.length - 1];
   const fouled =
     lastEvent?.kind === "shot" && lastEvent.event["foul"] === true && !!state?.ballInHand;
+  const foulReason =
+    fouled && lastEvent?.kind === "shot" && typeof lastEvent.event["foulReason"] === "string"
+      ? lastEvent.event["foulReason"]
+      : null;
   const rackWinner = state?.winner ?? null;
   const youWon =
     userId != null &&
@@ -1001,6 +1034,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     kitchenOnly: !!state?.kitchenOnly,
     shootingEight: eightForShooter,
     pocketChosen: called != null,
+    foulReason,
     decided: rackWinner != null && view.status !== "COMPLETED",
     mine,
     group,
@@ -1042,7 +1076,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const powerPct = Math.max(0, Math.min(100, Math.round((power / MAX_PULL_POWER) * 100)));
 
   return (
-    <Shell calling={shootingEight}>
+    <Shell>
       <div className="pool-vs" aria-label="Players">
         <SeatCard
           name={names.A}
@@ -1114,6 +1148,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             ghost={tableGhost}
             kitchenOnly={!!state?.kitchenOnly}
             calledPocket={systemWatch ? (systemShot?.calledPocket ?? null) : called}
+            calling={shootingEight && frames == null}
+            onCallPocket={(id) => setCalled((current) => calledPocketChoice(current, id))}
             showCue={!!mine && frames == null && !systemWatch}
             watch={systemWatch ?? (!mine && frames == null ? watch : null)}
             replay={frames}
@@ -1166,34 +1202,21 @@ export function PoolMatch({ matchId }: { matchId: number }) {
 
       {view.status === "COMPLETED" ? (
         <div className="pool-result" role="status">
-          <p>{youWon ? `You won ${dollars(pays)}` : youLost ? "You lost" : "Match over"}</p>
-          <p>
-            Winner receives {dollars(pays)}. Fee {dollars(fee)}.
-            {youWon ? "" : winnerName ? ` ${winnerName} won.` : ""}
-          </p>
-          {replayNote ? <p>{replayNote}</p> : null}
-          <Link to="/8-ball-pool">Back to the lobby</Link>
-          {view.server_seed ? (
-            <button type="button" onClick={() => void checkReplay()}>
-              Check this match
-            </button>
-          ) : null}
-        </div>
-      ) : null}
-
-      {shootingEight ? (
-        <div className="pool-pockets" role="group" aria-label="Choose a pocket for the 8-ball">
-          {POCKETS.map((pocket) => (
-            <button
-              key={pocket.id}
-              type="button"
-              className={called === pocket.id ? "is-on" : ""}
-              aria-pressed={called === pocket.id}
-              onClick={() => setCalled(pocket.id)}
-            >
-              {POCKET_LABELS[pocket.id] ?? `Pocket ${pocket.id + 1}`}
-            </button>
-          ))}
+          <div className="pool-result-card">
+            <strong>{youWon ? "You won" : youLost ? "You lost" : "Match over"}</strong>
+            {youWon ? <p className="pool-result-pay">{dollars(pays)}</p> : null}
+            <p>
+              Winner receives {dollars(pays)}. Fee {dollars(fee)}.
+              {youWon ? "" : winnerName ? ` ${winnerName} won.` : ""}
+            </p>
+            {replayNote ? <p>{replayNote}</p> : null}
+            <Link to="/8-ball-pool">Back to the lobby</Link>
+            {view.server_seed ? (
+              <button type="button" onClick={() => void checkReplay()}>
+                Check this match
+              </button>
+            ) : null}
+          </div>
         </div>
       ) : null}
 
@@ -1298,13 +1321,10 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   );
 }
 
-function Shell({ children, calling = false }: { children: ReactNode; calling?: boolean }) {
+function Shell({ children }: { children: ReactNode }) {
   const [chatOpen, setChatOpen] = useState(false);
   return (
-    <div
-      className={calling ? "pool-screen is-calling" : "pool-screen"}
-      data-chat={chatOpen ? "open" : "closed"}
-    >
+    <div className="pool-screen" data-chat={chatOpen ? "open" : "closed"}>
       <div className="pool-room" style={{ backgroundImage: `url(${room})` }} aria-hidden>
         <img className="pool-room-logo" src={arenaLogo} alt="" />
       </div>

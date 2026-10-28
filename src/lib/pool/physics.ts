@@ -103,6 +103,23 @@ export const POCKETS: readonly Pocket[] = [
   { id: 5, x: TABLE_W - 48_000, y: TABLE_H - 48_000, r: 54_000 },
 ];
 
+/** The hole under a cloth point. A press on the bed returns null. */
+export function pocketAtPoint(x: number, y: number): number | null {
+  let best: number | null = null;
+  let bestD = Number.POSITIVE_INFINITY;
+  for (const pocket of POCKETS) {
+    const dx = x - pocket.x;
+    const dy = y - pocket.y;
+    const reach = pocket.r * 1.85;
+    const d = dx * dx + dy * dy;
+    if (d <= reach * reach && d < bestD) {
+      best = pocket.id;
+      bestD = d;
+    }
+  }
+  return best;
+}
+
 export type SimResult = {
   balls: Ball[];
   pocketed: number[];
