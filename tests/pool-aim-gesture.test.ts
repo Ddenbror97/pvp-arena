@@ -10,6 +10,7 @@ import {
   PULL_FULL_PX,
   aimStep,
   cueStickGap,
+  fitStickEnd,
   hitsCueStick,
   pointerIntent,
   powerFromPull,
@@ -137,6 +138,30 @@ describe("pointer aim", () => {
       expect(next).toBeGreaterThanOrEqual(prev);
       prev = next;
     }
+  });
+
+  it("keeps the cue butt inside the screen without moving the table", () => {
+    const tip = { x: 200, y: 80 };
+    const butt = { x: 200, y: 400 };
+    const screen = { minX: 0, minY: 0, maxX: 800, maxY: 220 };
+    const fitted = fitStickEnd(tip, butt, screen);
+    expect(fitted.y).toBeLessThanOrEqual(220);
+    expect(fitted.x).toBe(200);
+    expect(fitted.scale).toBeGreaterThan(0);
+    expect(fitted.scale).toBeLessThan(1);
+    const full = fitStickEnd(tip, { x: 200, y: 160 }, screen);
+    expect(full.scale).toBe(1);
+    expect(full.y).toBe(160);
+  });
+
+  it("grabs the shortened shaft and not the part that left the screen", () => {
+    const gap = cueStickGap(0);
+    const reach = CUE_STICK_LEN * 0.35;
+    const onShort = { x: cue.x - Math.round(gap + reach * 0.8), y: cue.y };
+    const oldButt = { x: cue.x - Math.round(gap + CUE_STICK_LEN * 0.9), y: cue.y };
+    expect(hitsCueStick(onShort, cue, 0, 0, reach)).toBe(true);
+    expect(hitsCueStick(oldButt, cue, 0, 0, reach)).toBe(false);
+    expect(hitsCueStick(oldButt, cue, 0, 0)).toBe(true);
   });
 
   it("grabs the shaft when the butt sits just outside the screen", () => {

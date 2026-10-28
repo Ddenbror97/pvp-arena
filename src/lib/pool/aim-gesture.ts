@@ -76,7 +76,13 @@ export function cueStickGap(power: number): number {
  * True when the pointer is on the shaft, including a short stub past the butt.
  * Used when the stick leaves the table canvas, so a drag can still start there.
  */
-export function hitsCueStick(point: Point, cue: Point, angleMilli: number, power: number): boolean {
+export function hitsCueStick(
+  point: Point,
+  cue: Point,
+  angleMilli: number,
+  power: number,
+  reach = CUE_STICK_LEN,
+): boolean {
   const dirX = cosMicro(angleMilli) / 1_000_000;
   const dirY = sinMicro(angleMilli) / 1_000_000;
   const dx = point.x - cue.x;
@@ -85,7 +91,8 @@ export function hitsCueStick(point: Point, cue: Point, angleMilli: number, power
   const side = dx * -dirY + dy * dirX;
   const gap = cueStickGap(power);
   const start = Math.max(CUE_GRAB_R, gap * 0.85);
-  const end = gap + CUE_STICK_LEN + CUE_STICK_PAST;
+  const shaft = Number.isFinite(reach) ? Math.max(0, Math.min(CUE_STICK_LEN, reach)) : CUE_STICK_LEN;
+  const end = gap + shaft + CUE_STICK_PAST;
   if (back < start || back > end) return false;
   return side * side <= CUE_STICK_GRAB * CUE_STICK_GRAB;
 }
@@ -97,6 +104,45 @@ export function behindCue(point: Point, cue: Point, angleMilli: number): boolean
   if (dx * dx + dy * dy < CUE_GRAB_R * CUE_GRAB_R) return false;
   const along = (dx * cosMicro(angleMilli) + dy * sinMicro(angleMilli)) / 1_000_000;
   return along < 0;
+}
+
+export type StickRect = { minX: number; minY: number; maxX: number; maxY: number };
+
+/**
+ * Pull the butt back along the shaft until it sits inside the screen.
+ * `scale` is the fraction of the full stick that remains. The table is not moved.
+ */
+export function fitStickEnd(
+  tip: Point,
+  butt: Point,
+  rect: StickRect,
+): { x: number; y: number; scale: number } {
+  const dx = butt.x - tip.x;
+  const dy = butt.y - tip.y;
+  const full = Math.hypot(dx, dy);
+  if (full < 1) return { x: butt.x, y: butt.y, scale: 1 };
+  let lo = 0;
+  let hi = 1;
+  const clip = (p: number, q: number) => {
+    if (Math.abs(p) < 1e-9) return q >= 0;
+    const r = q / p;
+    if (p < 0) {
+      if (r > hi) return false;
+      if (r > lo) lo = r;
+    } else {
+      if (r < lo) return false;
+      if (r < hi) hi = r;
+    }
+    return true;
+  };
+  const fits =
+    clip(-dx, tip.x - rect.minX) &&
+    clip(dx, rect.maxX - tip.x) &&
+    clip(-dy, tip.y - rect.minY) &&
+    clip(dy, rect.maxY - tip.y);
+  if (!fits || hi <= 0) return { x: tip.x, y: tip.y, scale: 0 };
+  const t = Math.min(1, hi);
+  return { x: tip.x + dx * t, y: tip.y + dy * t, scale: t };
 }
 
 /** Shot direction when the pointer is holding the cue butt. */
