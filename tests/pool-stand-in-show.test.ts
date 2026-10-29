@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
+  standInCuePlaying,
   standInRackAction,
   standInRackReady,
   standInShouldAim,
@@ -57,6 +58,14 @@ describe("stand-in picture", () => {
     expect(standInRackReady(4, 5)).toBe(true);
   });
 
+  it("keeps the cue pull after the server publishes the shot it is showing", () => {
+    expect(standInCuePlaying(null, false, false)).toBe(false);
+    expect(standInCuePlaying(null, true, false)).toBe(true);
+    expect(standInCuePlaying(4, false, false)).toBe(false);
+    expect(standInCuePlaying(4, true, false)).toBe(true);
+    expect(standInCuePlaying(4, false, true)).toBe(true);
+  });
+
   it("holds the match rack until the stand-in shot is watched", () => {
     const match = readFileSync(new URL("../src/components/pool/PoolMatch.tsx", import.meta.url), "utf8");
     const roll = match.indexOf("void rollStandIn");
@@ -64,6 +73,7 @@ describe("stand-in picture", () => {
     const between = match.slice(roll, pulled);
     expect(match).toContain("heldRack ??");
     expect(match).toContain("standInRackAction");
+    expect(match).toContain("standInCuePlaying");
     expect(between).not.toContain("cancel = true");
     expect(between).not.toContain("if (!aimingThis)");
     expect(between).toContain("showShot.current !== shotN");

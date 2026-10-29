@@ -52,3 +52,13 @@ export function standInRackAction(
 export function standInRackReady(showing: number, serverShot: number): boolean {
   return serverShot > showing;
 }
+
+/**
+ * The cue pull has to finish after the server publishes the shot.
+ * Dropping it when the turn changes left the rack frozen and the balls unplayed.
+ * `latched` is true once this picture's pull has started.
+ */
+export function standInCuePlaying(showing: number | null, due: boolean, latched: boolean): boolean {
+  if (showing == null) return due;
+  return latched || due;
+}

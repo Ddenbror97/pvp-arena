@@ -12,11 +12,13 @@ import { poolMessage, poolNudge, poolTouch, usePoolState, type PoolView } from "
 import { nudgePoolStandIn, openPool, submitPoolShot } from "@/lib/pool/pool.functions";
 import {
   planStandInShot,
+  STAND_IN_CUE_MS,
   STAND_IN_RELEASE_MS,
   STAND_IN_STROKE_MS,
   standInDue,
 } from "@/lib/pool/stand-in";
 import {
+  standInCuePlaying,
   standInRackAction,
   standInRackReady,
   standInShouldAim,
@@ -219,11 +221,21 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const framesShot = useRef<number | null>(null);
   const watchedShot = useRef<number | null>(null);
   const rollGen = useRef(0);
+  const pullLatched = useRef(false);
+  const releaseTimer = useRef<number | null>(null);
   const shotRef = useRef(0);
   shotRef.current = state?.shot ?? 0;
+  const clearRelease = () => {
+    pullLatched.current = false;
+    if (releaseTimer.current != null) {
+      window.clearTimeout(releaseTimer.current);
+      releaseTimer.current = null;
+    }
+  };
   const abortStandIn = useRef<() => void>(() => {});
   abortStandIn.current = () => {
     rollGen.current += 1;
+    clearRelease();
     showShot.current = null;
     showMatch.current = null;
     framesShot.current = null;
@@ -251,6 +263,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     const shown = showShot.current;
     if (shown == null || !standInRackReady(shown, shotRef.current)) return false;
     watchedShot.current = shown;
+    clearRelease();
     showShot.current = null;
     framesShot.current = null;
     if (lined.current === shown) lined.current = null;
@@ -264,6 +277,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     heldPreview.current = false;
     setHeldRack(null);
     setSystemShot(null);
+    setPulling(false);
     setPresentTick((n) => n + 1);
     return true;
   };
@@ -429,8 +443,43 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       !view.state?.winner &&
       !!view.turn_deadline &&
       !!view.server_now;
+    const armRelease = () => {
+      if (releaseTimer.current != null) return;
+      releaseTimer.current = window.setTimeout(() => {
+        releaseTimer.current = null;
+        pullFinished.current = true;
+        const shotShown = showShot.current;
+        if (shotShown == null || framesRef.current || released.current) return;
+        const ready = readyStroke.current;
+        if (ready && !released.current && shotLive.current) {
+          released.current = true;
+          previewFrames.current = ready.sequence;
+          framesShot.current = shotShown;
+          setFrames(ready.sequence);
+          setStroke(ready.stroke);
+          cueSound(ready.stroke.power);
+          return;
+        }
+        // The cue never got a sequence. The published server shot still has to play.
+        if (standInRackReady(shotShown, shotRef.current)) {
+          liveRoll.current = { shot: shotShown, failed: true };
+          setRollNonce((n) => n + 1);
+        }
+      }, STAND_IN_CUE_MS + 400);
+    };
+    const holdCue = () => {
+      if (showShot.current == null) {
+        pullLatched.current = false;
+        return;
+      }
+      if (!pullLatched.current && standInRackReady(showShot.current, shotRef.current)) {
+        pullLatched.current = true;
+        armRelease();
+      }
+    };
     if (!live || !view.turn_deadline || !view.server_now) {
-      setPulling(false);
+      holdCue();
+      setPulling(standInCuePlaying(showShot.current, false, pullLatched.current));
       return;
     }
     const deadline = view.turn_deadline;
@@ -446,7 +495,13 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     };
     const tick = () => {
       const due = standInDue(deadline, Date.now() - skew, seconds);
-      setPulling((on) => (on === due ? on : due));
+      if (showShot.current == null) pullLatched.current = false;
+      else if (due && !pullLatched.current) {
+        pullLatched.current = true;
+        armRelease();
+      }
+      const playing = standInCuePlaying(showShot.current, due, pullLatched.current);
+      setPulling((on) => (on === playing ? on : playing));
       if (!due || askedShot.current === shotN || asking.current) return;
       if (Date.now() - awayAt.current < 1_500) return;
       awayAt.current = Date.now();

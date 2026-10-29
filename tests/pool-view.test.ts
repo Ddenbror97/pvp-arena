@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { BALL_R, POCKETS, TABLE_H, TABLE_W } from "../src/lib/pool/physics";
 import { readFileSync } from "node:fs";
 import { ballRadiusPx, FAR, spanPx, viewOf } from "../src/lib/pool/view";
-import { nextReplayFrame, REPLAY_CATCHUP } from "../src/lib/pool/replay-pace";
+import { nextReplayFrame, REPLAY_CATCHUP, replayPocketed } from "../src/lib/pool/replay-pace";
 
 describe("pool view", () => {
   it("sends every cloth point back to itself", () => {
@@ -94,8 +94,13 @@ describe("pool view", () => {
   it("walks a late shot forward instead of skipping to the pocket", () => {
     expect(nextReplayFrame(0, 40, 80)).toBe(REPLAY_CATCHUP);
     expect(nextReplayFrame(10, 12, 80)).toBe(12);
-    expect(nextReplayFrame(70, 90, 80)).toBe(76);
+    expect(nextReplayFrame(70, 90, 80)).toBe(72);
     expect(nextReplayFrame(80, 90, 80)).toBe(80);
+    expect(replayPocketed(false, true, 0.35)).toBe(false);
+    expect(replayPocketed(false, true, 0.91)).toBe(false);
+    expect(replayPocketed(false, true, 0.92)).toBe(true);
+    expect(replayPocketed(true, false, 0)).toBe(true);
+    expect(replayPocketed(false, false, 1)).toBe(false);
   });
 
   it("keeps the full cue on the screen canvas and does not shrink the felt for it", () => {
