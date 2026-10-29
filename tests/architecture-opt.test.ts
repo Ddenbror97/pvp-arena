@@ -63,6 +63,16 @@ describe("realtime poll backoff", () => {
     expect(pokerRefetchMs(null, true)).toBe(8_000);
     expect(pokerRefetchMs("BETTING", false)).toBe(1_500);
     expect(pokerRefetchMs(null, false)).toBe(3_000);
+    expect(pokerRefetchMs("COMMIT", true, true)).toBe(1_500);
+  });
+
+  it("stretches a spectator poll only while the table channel is fresh", () => {
+    expect(pokerRefetchMs("COMMIT", true, false)).toBe(4_000);
+    expect(pokerRefetchMs("BETTING", true, false)).toBe(4_000);
+    expect(pokerRefetchMs("SETTLEMENT", true, false)).toBe(4_000);
+    expect(pokerRefetchMs(null, true, false)).toBe(8_000);
+    expect(pokerRefetchMs("BETTING", false, false)).toBe(1_500);
+    expect(pokerRefetchMs(null, false, false)).toBe(3_000);
   });
 
   it("treats a channel as fresh only while it is subscribed and recently heard", () => {
