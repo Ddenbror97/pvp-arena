@@ -66,3 +66,20 @@ export function spanPx(innerW: number, scale: number, tableUnits: number): numbe
 export function ballRadiusPx(innerW: number, scale: number): number {
   return spanPx(innerW, scale, BALL_R);
 }
+
+/**
+ * The cushion lamp, in CSS pixels. `w` and `h` are the canvas bitmap size.
+ * The box sits just outside the cloth, on the nose where the rail light is.
+ */
+export function railBox(w: number, h: number, dpr: number) {
+  const view = viewOf(w, h);
+  const scale = dpr > 0 ? dpr : 1;
+  const lamp = Math.max(7, (view.rail / scale) * 0.28);
+  return {
+    left: view.padX / scale - lamp,
+    top: view.padY / scale - lamp,
+    width: view.innerW / scale + lamp * 2,
+    height: view.innerH / scale + lamp * 2,
+    rail: lamp,
+  };
+}

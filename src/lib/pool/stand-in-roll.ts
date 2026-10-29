@@ -59,6 +59,11 @@ function cueWorker(): Worker | null {
   }
 }
 
+/** Start the stand-in worker before the first away shot, so that shot does not wait on module load. */
+export function warmStandIn(): void {
+  cueWorker();
+}
+
 /**
  * Roll the away shot off the canvas thread.
  * The cue pull keeps drawing while this runs. A worker that cannot start
