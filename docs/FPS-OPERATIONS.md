@@ -113,6 +113,12 @@ production capacity were not measured. Reproduce with the command above;
 The long existing poker-shuffle distribution test may need
 `--testTimeout=60000` on a busy workstation; do not skip its assertions.
 
+Final local verification passed 585 unit tests, both browser smoke tests,
+casino and match-worker TypeScript checks, and the production build. Targeted
+FPS lint passed. Repository-wide ESLint remains blocked by existing formatting
+and lint debt, dominated by Windows CRLF versus Prettier's LF expectations;
+this feature does not mass-format unrelated guides or configuration files.
+
 ## Remaining release gates
 
 - Run multiple independent Postgres sessions racing join/cancel/settle/expire,
