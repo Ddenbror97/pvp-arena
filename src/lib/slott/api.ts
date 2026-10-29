@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { listenTopic, markChannel, noteChannelEvent } from "@/lib/live-channel";
+import { slotFeedTargets } from "@/lib/slott/poll";
 
 // slot_* tables are newer than the generated Database types; rows are typed here.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -129,12 +130,11 @@ export async function fetchSlotGame(id: number): Promise<SlotGameView | null> {
   return data ? toGame(data) : null;
 }
 
-export async function fetchSlotSpins(id: number): Promise<SlotSpin[]> {
-  const { data, error } = await db
-    .from("slot_spins")
-    .select(SPIN_COLS)
-    .eq("game_id", id)
-    .order("spin_no");
+/** afterSpinNo loads only later spins. Zero loads the whole match. */
+export async function fetchSlotSpins(id: number, afterSpinNo = 0): Promise<SlotSpin[]> {
+  let query = db.from("slot_spins").select(SPIN_COLS).eq("game_id", id).order("spin_no");
+  if (afterSpinNo > 0) query = query.gt("spin_no", afterSpinNo);
+  const { data, error } = await query;
   if (error) throw error;
   return ((data ?? []) as SlotSpin[]).map((s) => num(s, ["game_id", "bonus_cents"]));
 }
@@ -222,7 +222,7 @@ export function useSlotConfig() {
   return useQuery({ queryKey: ["slot-config"], queryFn: fetchSlotConfig, staleTime: 60_000 });
 }
 
-/** Realtime is a hint only. Lobby lists refresh on the event; history refreshes when a match ends. */
+/** Realtime is a hint only. A live spin refreshes that match. Lists refresh when a table joins or leaves them. */
 export function useSlotRealtime(gameId?: number) {
   const qc = useQueryClient();
   useEffect(() => {
@@ -235,21 +235,25 @@ export function useSlotRealtime(gameId?: number) {
     const stop = listenTopic(
       "game:slot",
       (_event, payload) => {
-        const row = payload as { id?: number; status?: string };
+        const row = payload as {
+          id?: number;
+          status?: string;
+          next_spin?: number;
+          ends_at?: string | null;
+        };
         noteChannelEvent("slot");
         if (row?.id != null) noteChannelEvent(`slot:${Number(row.id)}`);
-        qc.invalidateQueries({ queryKey: ["slot-open"] });
-        qc.invalidateQueries({ queryKey: ["slot-live"] });
+        const targets = slotFeedTargets(row ?? {});
+        if (targets.open) qc.invalidateQueries({ queryKey: ["slot-open"] });
+        if (targets.live) qc.invalidateQueries({ queryKey: ["slot-live"] });
         if (row?.id != null) {
           const id = Number(row.id);
           qc.invalidateQueries({ queryKey: ["slot", id] });
           qc.invalidateQueries({ queryKey: ["slot-spins", id] });
           qc.invalidateQueries({ queryKey: ["slot-bonus", id] });
         }
-        if (row?.status === "COMPLETED" || row?.status === "CANCELLED") {
-          qc.invalidateQueries({ queryKey: ["slot-recent"] });
-          qc.invalidateQueries({ queryKey: ["slot-mine"] });
-        }
+        if (targets.recent) qc.invalidateQueries({ queryKey: ["slot-recent"] });
+        if (targets.mine) qc.invalidateQueries({ queryKey: ["slot-mine"] });
       },
       (status) => setLive(status === "SUBSCRIBED"),
     );

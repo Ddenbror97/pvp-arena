@@ -741,6 +741,97 @@ d("P2P Slott engine (isolated schema)", { timeout: LONG }, () => {
     await assertInvariants();
   }, LONG);
 
+  it("reads each due predicate from an index", async () => {
+    const names = (
+      await sql`select indexname from pg_indexes where schemaname = 'pvp_test' and indexname in (
+        'slot_games_due_waiting', 'slot_games_due_turn', 'slot_games_due_end',
+        'slot_games_due_settlement', 'slot_games_settlement_exhausted')`
+    ).map((r) => r.indexname);
+    expect(names).toHaveLength(5);
+    const err = await sql
+      .begin(async (tx) => {
+        await tx`set local enable_seqscan = off`;
+        await tx`select id from pvp_test.slot_games where status = 'SETTLEMENT' and settle_attempts < 8 order by id limit 1 for update skip locked`;
+        await tx`select id from pvp_test.slot_games where status = 'ACTIVE' and ends_at <= clock_timestamp() order by id limit 1 for update skip locked`;
+        await tx`select id from pvp_test.slot_games where status = 'ACTIVE' and ends_at is null and turn_deadline <= clock_timestamp() order by id limit 1 for update skip locked`;
+        await tx`select id from pvp_test.slot_games where status = 'WAITING' and expires_at <= clock_timestamp() order by id limit 1 for update skip locked`;
+        throw new Error("rollback");
+      })
+      .catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toBe("rollback");
+  });
+
+  it("one slot_tick still cancels every expired table", async () => {
+    const [a, b] = [await newUser("batcha"), await newUser("batchb")];
+    await setCfg({ waiting_timeout_seconds: 1 });
+    const aId = (await create(a, 500)).game_id;
+    const bId = (await create(b, 500)).game_id;
+    await sleep(1100);
+    const r = await tick();
+    expect(r.cancelled).toBe(2);
+    expect((await game(aId)).status).toBe("CANCELLED");
+    expect((await game(bId)).status).toBe("CANCELLED");
+    expect(await bal(a)).toBe(START);
+    expect(await bal(b)).toBe(START);
+  });
+
+  it("commits one expired table before it locks the next", async () => {
+    const [a, c] = [await newUser("duea"), await newUser("duec")];
+    await setCfg({ waiting_timeout_seconds: 1 });
+    const aId = (await create(a, 500)).game_id;
+    const cId = (await create(c, 500)).game_id;
+    expect(aId).toBeLessThan(cId);
+    await sleep(1100);
+    const src = (
+      await sql`select prosrc from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+        where n.nspname = 'pvp_test' and p.proname = 'slot_tick_worker'`
+    )[0]!.prosrc as string;
+    expect(src).toContain("_slot_tick_one(");
+    expect(src).not.toContain("slot_tick()");
+    let release: () => void = () => {};
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let locked = false;
+    const locker = sql.begin(async (tx) => {
+      await tx`select id from pvp_test.wallet_accounts
+        where owner_id = ${c}::uuid and kind in ('user_available', 'user_locked')
+        order by owner_id, kind
+        for update`;
+      locked = true;
+      await held;
+    });
+    let worker: Promise<unknown> = Promise.resolve();
+    try {
+      for (let i = 0; i < 100 && !locked; i++) await sleep(20);
+      expect(locked).toBe(true);
+      let workerDone = false;
+      worker = sql`call pvp_test.slot_tick_worker()`.finally(() => {
+        workerDone = true;
+      });
+      let seen = false;
+      for (let i = 0; i < 80; i++) {
+        const [ga, gc] = [await game(aId), await game(cId)];
+        if (ga.status === "CANCELLED" && gc.status === "WAITING" && !workerDone) {
+          seen = true;
+          break;
+        }
+        if (workerDone) break;
+        await sleep(25);
+      }
+      expect(seen).toBe(true);
+    } finally {
+      release();
+      await worker;
+      await locker;
+    }
+    expect((await game(aId)).status).toBe("CANCELLED");
+    expect((await game(cId)).status).toBe("CANCELLED");
+    expect(await bal(a)).toBe(START);
+    expect(await bal(c)).toBe(START);
+  }, LONG);
+
   it("real-money domain: bonus comes from house_bankroll and settles to the winner in USD", async () => {
     await setTiers(TEST_TIERS);
     const [a, b] = [await newUser("alice"), await newUser("bob")];
@@ -769,4 +860,5 @@ d("P2P Slott engine (isolated schema)", { timeout: LONG }, () => {
     const [s] = await sql`select coalesce(sum(balance),0)::bigint s from pvp_test.wallet_accounts where account_type = 'real'`;
     expect(Number(s.s)).toBe(0);
   }, 300_000);
+
 });

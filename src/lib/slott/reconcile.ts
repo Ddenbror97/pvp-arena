@@ -25,6 +25,20 @@ export async function reconcileAfter<P, N, R>(
   return merge(read(), next);
 }
 
+/**
+ * Last spin number when the cache is 1..n with no gaps.
+ * A hole or a cache that does not start at 1 asks for the full history.
+ */
+export function slotSpinCursor(spins: { spin_no: number }[] | undefined): number {
+  if (!spins || spins.length === 0) return 0;
+  const nos = spins.map((spin) => spin.spin_no).sort((a, b) => a - b);
+  if (nos[0] !== 1) return 0;
+  for (let i = 0; i < nos.length; i++) {
+    if (nos[i] !== i + 1) return 0;
+  }
+  return nos[nos.length - 1]!;
+}
+
 /** Keep a spin the server has already returned if an older poll arrives later. Server rows win ties. */
 export function mergeSlotSpins<T extends { game_id: number; spin_no: number }>(
   prev: T[] | undefined,
