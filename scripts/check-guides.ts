@@ -509,5 +509,9 @@ if (unsourced > 0) {
     `\n${unsourced} published guide(s) have no sources. That is recorded, not filled in. Do not invent a citation to clear the gap.`,
   );
 }
+for (const topic of publishedTopics()) {
+  const pillars = GUIDES.filter((guide) => guide.cluster === topic.name && guide.pillar);
+  if (pillars.length !== 1) err(`${topic.name}: expected one pillar, found ${pillars.length}`);
+}
 console.log(fail ? `\n${fail} problem(s)` : `\nAll ${GUIDES.length} guides pass.`);
 process.exit(fail ? 1 : 0);

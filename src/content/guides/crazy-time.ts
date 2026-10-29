@@ -3,6 +3,7 @@ import type { Guide } from "./types";
 export const guide: Guide = {
   slug: "crazy-time",
   cluster: "Game shows",
+  pillar: true,
   keyword: "crazy time",
   secondary: [
     "crazy time stats",

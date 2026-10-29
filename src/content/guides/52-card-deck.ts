@@ -3,6 +3,7 @@ import type { Guide } from "./types";
 export const guide: Guide = {
   slug: "52-card-deck",
   cluster: "Games of chance",
+  pillar: true,
   keyword: "52 card deck",
   secondary: [
     "deck of cards",
