@@ -155,7 +155,6 @@ export async function fetchPoolState(id: number): Promise<PoolView> {
   return unwrap<PoolView>(data, error);
 }
 
-export const poolLeave = (id: number) => db.rpc("pool_leave", { p_match: id });
 export async function poolTouch(id: number) {
   const first = await db.rpc("pool_touch", { p_match: id });
   if (!first.error) return first;

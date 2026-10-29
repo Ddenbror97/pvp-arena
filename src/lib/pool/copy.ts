@@ -260,12 +260,3 @@ export function spinSentence(spinX: number, spinY: number): string {
   const follow = spinY === 0 ? "no follow or draw" : spinY > 0 ? "follow" : "draw";
   return `${side}, ${follow}`;
 }
-
-export const POCKET_LABELS = [
-  "Near left",
-  "Left side",
-  "Far left",
-  "Near right",
-  "Right side",
-  "Far right",
-] as const;

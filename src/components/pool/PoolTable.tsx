@@ -8,12 +8,10 @@ import {
   pocketAtPoint,
   POCKETS,
   sinMicro,
-  TABLE_H,
   TABLE_W,
   traceAim,
   type AimTrace,
   type Ball,
-  type Pocket,
 } from "@/lib/pool/physics";
 import {
   createBallLayer,
