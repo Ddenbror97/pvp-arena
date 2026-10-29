@@ -8,6 +8,7 @@ import { randomUUID } from "node:crypto";
 import { buildTestSchemaSql } from "./schema";
 import { testDatabaseUrl } from "./test-url";
 import { playShot } from "../../src/lib/pool/play";
+import { PHYSICS_V7, PHYSICS_V8, POCKETS, TABLE_H, TABLE_W } from "../../src/lib/pool/physics";
 import { applyTimeout, freshTable, stateHash, type TableState } from "../../src/lib/pool/rules";
 import { bytesFromHex, tableLinks } from "../../src/lib/pool/verify";
 
@@ -83,6 +84,65 @@ d("pool ledger (isolated schema)", () => {
     const [fresh] =
       await sql`select pvp_test.pool_state_hash(pvp_test.pool_fresh_state(decode(${Buffer.from(seed).toString("hex")}, 'hex'))) h`;
     expect(fresh.h).toBe(stateHash(freshTable(seed)));
+  });
+
+  it("agrees with SQL when a straight ball crosses each jaw", async () => {
+    const aim = (pocketId: number, physics: TableState["physics"]) => {
+      const pocket = POCKETS[pocketId];
+      if (!pocket) throw new Error("pocket");
+      const dx = pocket.x - TABLE_W / 2;
+      const dy = pocket.y - TABLE_H / 2;
+      const len = Math.hypot(dx, dy);
+      const ux = dx / len;
+      const uy = dy / len;
+      const x = Math.round(pocket.x - ux * 350_000);
+      const y = Math.round(pocket.y - uy * 350_000);
+      const angle = Math.round((Math.atan2(pocket.y - y, pocket.x - x) * 180_000) / Math.PI);
+      const state = freshTable(Uint8Array.from({ length: 32 }, (_, i) => i + 11));
+      state.physics = physics;
+      state.breakShot = false;
+      state.ballInHand = false;
+      state.kitchenOnly = false;
+      for (const ball of state.balls) {
+        if (ball.id !== 0) ball.pocketed = true;
+        if (ball.id === 0) {
+          ball.x = x;
+          ball.y = y;
+          ball.pocketed = false;
+        }
+      }
+      return {
+        state,
+        shot: {
+          angleMilli: ((angle % 360_000) + 360_000) % 360_000,
+          power: 6_000,
+          spinX: 0,
+          spinY: 0,
+          placeX: null,
+          placeY: null,
+          calledPocket: null,
+        },
+      };
+    };
+    const agree = async (pocketId: number, physics: TableState["physics"]) => {
+      const { state, shot } = aim(pocketId, physics);
+      const played = playShot(state, shot);
+      expect(played.ok).toBe(true);
+      if (!played.ok) return;
+      const [row] = await sql`
+        select pvp_test.pool_state_canon(pvp_test.pool_play(${asJson(state)}::jsonb, ${asJson(shot)}::jsonb)) as sql_canon,
+               pvp_test.pool_state_canon(${asJson(played.state)}::jsonb) as ts_canon
+      `;
+      expect(row.sql_canon).toBe(row.ts_canon);
+      const cue = played.state.balls.find((ball) => ball.id === 0);
+      if (physics === PHYSICS_V8) expect(cue?.pocketed).toBe(true);
+      if (physics === PHYSICS_V7 && (pocketId === 0 || pocketId === 3 || pocketId === 5)) {
+        expect(cue?.pocketed).toBe(false);
+      }
+    };
+    for (const id of [0, 1, 2, 3, 4, 5]) await agree(id, PHYSICS_V8);
+    await agree(5, PHYSICS_V7);
+    await agree(0, PHYSICS_V7);
   });
 
   it("locks a stake, refunds an empty wait, and pays 95% with a 5% fee", async () => {

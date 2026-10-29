@@ -589,12 +589,13 @@ function PoolSection() {
         view.server_seed_hash,
         steps,
         view.state?.physics === "pool-phys-v1" ||
-        view.state?.physics === "pool-phys-v2" ||
-        view.state?.physics === "pool-phys-v3" ||
-        view.state?.physics === "pool-phys-v4" ||
-        view.state?.physics === "pool-phys-v5" ||
-        view.state?.physics === "pool-phys-v6" ||
-        view.state?.physics === "pool-phys-v7"
+          view.state?.physics === "pool-phys-v2" ||
+          view.state?.physics === "pool-phys-v3" ||
+          view.state?.physics === "pool-phys-v4" ||
+          view.state?.physics === "pool-phys-v5" ||
+          view.state?.physics === "pool-phys-v6" ||
+          view.state?.physics === "pool-phys-v7" ||
+          view.state?.physics === "pool-phys-v8"
           ? view.state.physics
           : "pool-phys-v2",
       );
@@ -630,7 +631,7 @@ function PoolSection() {
         or a forfeit is the rule for not acting, not a house choice. A live table has no cash-out.
         Ending the match forfeits that seat, and the other player is paid the win. This page proves
         the shot list. It does not reverse a payment. A match checks out under the physics id stored
-        with its rack (pool-phys-v1 through pool-phys-v7) and rules pvp-8ball-v1.
+        with its rack (pool-phys-v1 through pool-phys-v8) and rules pvp-8ball-v1.
       </p>
       <div className="grid gap-4">
         <Card title="Replay a match">
