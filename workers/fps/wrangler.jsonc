@@ -1,0 +1,12 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "pvpspinarena-fps",
+  "main": "index.ts",
+  "compatibility_date": "2026-10-26",
+  "durable_objects": { "bindings": [{ "name": "DUELS", "class_name": "DuelRoom" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DuelRoom"] }],
+  "vars": { "ALLOWED_ORIGIN": "http://localhost:5173", "SUPABASE_URL": "" },
+  "observability": { "enabled": true },
+  "triggers": { "crons": ["* * * * *"] },
+  "limits": { "cpu_ms": 30000 }
+}
