@@ -333,7 +333,13 @@ export const pokerCallBot = (
 }> => db.rpc("poker_call_bot", { p_table: table, p_key: key });
 
 export function useLobby() {
-  return useQuery({ queryKey: ["poker-lobby"], queryFn: fetchLobby, refetchInterval: 10_000 });
+  return useQuery({
+    queryKey: ["poker-lobby"],
+    queryFn: fetchLobby,
+    refetchInterval: 10_000,
+    // The server reuses the public list. This only stops a focus storm.
+    staleTime: 4_000,
+  });
 }
 
 /**
@@ -352,6 +358,7 @@ export function useTableState(id: number, userId: string | null) {
       pokerRefetchMs(
         query.state.data?.hand?.status,
         channelFresh(`poker:${id}`, 3_000, Date.now(), "poker"),
+        query.state.data?.me != null,
       ),
     refetchIntervalInBackground: seated,
     refetchOnWindowFocus: true,
