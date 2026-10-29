@@ -12,7 +12,8 @@ import { releaseReelAudio } from "@/components/slott/sfx";
 import { admitSpin, reuseSpinKey } from "@/components/slott/spin-guard";
 import { presentSpinStart, spinArrivedLive } from "@/components/slott/timing";
 import { BOMB, hasBomb, SYMBOLS, WEIGHT_TOTAL } from "@/lib/slott/paytable";
-import { mergeSlotSpins, preferNewerSlotGame, reconcileAfter } from "@/lib/slott/reconcile";
+import { slotFeedTargets } from "@/lib/slott/poll";
+import { mergeSlotSpins, preferNewerSlotGame, reconcileAfter, slotSpinCursor } from "@/lib/slott/reconcile";
 import { slotSpinDecision } from "@/lib/slott/spin-decision";
 
 const line = (symbol: number, count: number, score: number, n = 1) => ({
@@ -140,6 +141,59 @@ describe("slot spin server decision", () => {
 });
 
 describe("slot state reconciliation", () => {
+  it("loads only later spins when the cache is 1..n", () => {
+    expect(slotSpinCursor(undefined)).toBe(0);
+    expect(slotSpinCursor([])).toBe(0);
+    expect(slotSpinCursor([{ spin_no: 1 }, { spin_no: 2 }, { spin_no: 3 }])).toBe(3);
+    expect(slotSpinCursor([{ spin_no: 3 }, { spin_no: 1 }, { spin_no: 2 }])).toBe(3);
+    expect(slotSpinCursor([{ spin_no: 2 }])).toBe(0);
+    expect(slotSpinCursor([{ spin_no: 1 }, { spin_no: 3 }])).toBe(0);
+  });
+
+  it("merges a later page onto spins already on screen", () => {
+    const cached = [
+      { game_id: 1, spin_no: 1, score: 2 },
+      { game_id: 1, spin_no: 2, score: 4 },
+    ];
+    expect(slotSpinCursor(cached)).toBe(2);
+    const merged = mergeSlotSpins(cached, [{ game_id: 1, spin_no: 3, score: 8 }]);
+    expect(merged.map((spin) => spin.spin_no)).toEqual([1, 2, 3]);
+    expect(merged[2]?.score).toBe(8);
+  });
+
+  it("does not refresh the lobby while a match is spinning", () => {
+    expect(
+      slotFeedTargets({ id: 4, status: "ACTIVE", next_spin: 6, ends_at: null }),
+    ).toEqual({
+      open: false,
+      live: false,
+      recent: false,
+      mine: false,
+    });
+    expect(
+      slotFeedTargets({ id: 4, status: "ACTIVE", next_spin: 1, ends_at: null }).open,
+    ).toBe(true);
+    expect(
+      slotFeedTargets({ id: 4, status: "WAITING", next_spin: 1, ends_at: null }).open,
+    ).toBe(true);
+    expect(
+      slotFeedTargets({
+        id: 4,
+        status: "COMPLETED",
+        next_spin: 12,
+        ends_at: "2026-10-29T00:00:00.000Z",
+      }),
+    ).toMatchObject({ live: true, recent: true, open: false });
+    expect(
+      slotFeedTargets({
+        id: 4,
+        status: "ACTIVE",
+        next_spin: 12,
+        ends_at: "2026-10-29T00:00:00.000Z",
+      }).live,
+    ).toBe(true);
+  });
+
   it("keeps a spin that a slower poll has not seen yet", () => {
     const merged = mergeSlotSpins(
       [{ game_id: 1, spin_no: 3, score: 42 }],

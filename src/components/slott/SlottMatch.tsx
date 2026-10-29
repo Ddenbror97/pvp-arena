@@ -39,7 +39,12 @@ import { SpinFx } from "./SpinFx";
 import { hitCells, NO_HITS, spinReveal, winLevel } from "./hits";
 import { admitSpin, reuseSpinKey } from "./spin-guard";
 import { BOMB, hasBomb, SYMBOLS } from "@/lib/slott/paytable";
-import { mergeSlotSpins, preferNewerSlotGame, reconcileAfter } from "@/lib/slott/reconcile";
+import {
+  mergeSlotSpins,
+  preferNewerSlotGame,
+  reconcileAfter,
+  slotSpinCursor,
+} from "@/lib/slott/reconcile";
 import { SYMBOL_IMG } from "@/lib/slott/symbols";
 import {
   bindSlotAudio,
@@ -126,7 +131,7 @@ export function SlottMatch({ id }: { id: number }) {
     queryKey: ["slot-spins", id],
     queryFn: () =>
       reconcileAfter(
-        () => fetchSlotSpins(id),
+        () => fetchSlotSpins(id, slotSpinCursor(qc.getQueryData<SlotSpin[]>(["slot-spins", id]))),
         () => qc.getQueryData<SlotSpin[]>(["slot-spins", id]),
         mergeSlotSpins,
       ),
