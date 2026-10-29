@@ -29,6 +29,11 @@ Tonkeeper is a normal example of a TON wallet people actually install. The offic
 You are in [Crypto payments](/guides/topics/crypto-payments). [How to create a crypto wallet](/guides/how-to-create-a-crypto-wallet) is the general key-custody page. [Base versus Ethereum](/guides/base-vs-ethereum) is a different pair of networks that do share an address style, which is its own mistake. TON does not share that style.`,
     },
     {
+      id: "casino-network-check",
+      title: "Check the network before using a TON casino",
+      body: "The [TON casino guide](/guides/ton-casino) explains the difference between holding Toncoin and using it at a gambling operator. Confirm the operator and its supported deposit network independently before sending anything. PVPspinArena does not accept TON; an article about TON casinos is not a TON deposit option here.",
+    },
+    {
       id: "not-here",
       title: "This cashier does not take TON",
       body: `The terms say the playable balance is a US-dollar ledger. Bitcoin, and USDC or ETH on Base, can fund it and cash out. They are not separate playable balances, and TON is not named.
@@ -82,6 +87,11 @@ This page is not a review of Tonkeeper and not an endorsement of any TON casino.
     { label: "TON documentation", url: "https://docs.ton.org/" },
     { label: "PVPspinArena terms: accepted networks", url: "https://pvpspinarena.com/terms" },
   ],
-  related: ["how-to-create-a-crypto-wallet", "wallet-security-checklist", "base-vs-ethereum", "gas-fees-explained"],
+  related: [
+    "how-to-create-a-crypto-wallet",
+    "wallet-security-checklist",
+    "base-vs-ethereum",
+    "gas-fees-explained",
+  ],
   updated: "2026-10-21",
 };

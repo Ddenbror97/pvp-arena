@@ -29,6 +29,11 @@ export const guide: Guide = {
       body: "A healthy MetaMask login looks boring. The extension shows a popup that names the site and asks which account to connect. A second screen may ask you to sign a message you can actually read. You can reject it. You can disconnect the site later from the wallet’s connected-sites list and try again. That is the whole loop.\n\nCancel, and do not “finish the login,” if any of these appear. The page has a form for the Secret Recovery Phrase or a private key. A person in chat or on a call wants the words so they can complete the login. The first wallet request is a token spending approval, especially an unlimited one, before any readable sign-in message. The request is a blind signature: hex or a hash with no sentence, presented as a login. The popup names a different domain than the address bar.\n\nA readable signature and a token approval are different objects. The signature can prove you were present. The approval can let a contract pull a token later, up to the cap you set, including a cap that covers the whole balance. A casino login does not need that pull permission. Reject it and reopen the site from your bookmark. A site can also ask MetaMask to add a network. Confirm chain details only from a source you already trust. After you decide, the in-app network list is still the source of truth.",
     },
     {
+      id: "casino-login-or-deposit",
+      title: "A casino login is separate from a deposit",
+      body: "If the prompt comes from a gambling site, use the [MetaMask casino login and deposit walkthrough](/guides/metamask-casino) to distinguish connection, message signing, and a transfer. Fix the extension or account selection before trying the deposit again. A failed login does not justify a second transfer, a token approval, or entering your recovery phrase.",
+    },
+    {
       id: "when-the-site-expects-walletconnect-instead",
       title: "When the site expects WalletConnect instead",
       body: "Some sites never talk to the desktop extension. They show a WalletConnect button, a QR code, or a link into the phone app. That path is a pairing session between the site and a wallet you already have. It is not a new account and it is not a place to type a seed. Your keys stay in MetaMask. The session can still ask you to share an address, sign a message, or approve a transaction.\n\nUse it when the desktop browser has no extension, or when MetaMask lives on your phone and the game is open on a laptop. Scan the code with the official app. Read the domain inside the wallet before you approve. Decline pairings that arrived in a direct message. Disconnect the session when you are done so an old tab cannot keep asking for signatures. The [WalletConnect casino](/guides/walletconnect-casino) guide explains what a session can request and how phishing codes copy the real flow.\n\nIf the page shows both an extension button and a WalletConnect button, pick one and finish it. Starting both leaves you unsure which address the site stored. Connect the account that holds the funds you mean to use. Extra signatures “to refresh the login” are how a second, hostile request gets a careless click. If the website collects the Secret Recovery Phrase so the phone can connect, the website is the attack. Pairing exists so you never have to do that.",
@@ -66,7 +71,7 @@ export const guide: Guide = {
       a: "PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD and does not require MetaMask. If you connect a wallet, you still should never paste a Secret Recovery Phrase into the site.",
     },
   ],
-    sources: [
+  sources: [
     {
       label: "MetaMask Help Center — Getting started, checked 20 October 2026",
       url: "https://support.metamask.io/start/getting-started-with-metamask/",
