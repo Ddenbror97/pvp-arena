@@ -113,6 +113,7 @@ export const enterPool = createServerFn({ method: "POST" })
       data.matchId != null
         ? await user.rpc("pool_join", { p_match: data.matchId, p_key: data.key })
         : await user.rpc("pool_matchmake", { p_stake: data.stake, p_key: data.key });
+    // pool_matchmake only opens a waiting table. Joining a listed table is pool_join.
     if (made.error) return { ok: false as const, error: rpcError(made.error) };
     const row = asRecord(made.data);
     const matchId = Number(row?.match_id);

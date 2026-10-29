@@ -100,7 +100,7 @@ d("pool promo and partner credit", () => {
     });
     expect(created.role).toBe("created");
     const joined = await as(b, async (tx) => {
-      const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
+      const [row] = await tx`select pvp_test.pool_join(${created.match_id}, ${randomUUID()}) r`;
       return row.r as { match_id: number; role: string };
     });
     expect(joined.role).toBe("joined");

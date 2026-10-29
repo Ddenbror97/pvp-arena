@@ -45,6 +45,20 @@ async function matchmake(uid: string, stake = 100) {
   }
 }
 
+async function joinOpen(uid: string, matchId: number) {
+  const started = performance.now();
+  try {
+    const row = await as(uid, async (tx) => {
+      const [found] = await tx`select pvp_test.pool_join(${matchId}, ${randomUUID()}) r`;
+      return found.r as { match_id: number; role: string; duplicate: boolean };
+    });
+    return { ok: true as const, ms: performance.now() - started, ...row };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return { ok: false as const, ms: performance.now() - started, message };
+  }
+}
+
 function percentile(samples: number[], p: number) {
   const sorted = [...samples].sort((a, b) => a - b);
   const index = Math.min(sorted.length - 1, Math.max(0, Math.ceil((p / 100) * sorted.length) - 1));
@@ -124,7 +138,8 @@ async function wave(count: number) {
     const creator = await newUser(`c${count.toString(36)}${i.toString(36)}`);
     const joiner = await newUser(`j${count.toString(36)}${i.toString(36)}`);
     const created = await matchmake(creator);
-    const joined = await matchmake(joiner);
+    if (!created.ok) throw new Error(created.message);
+    const joined = await joinOpen(joiner, created.match_id);
     if (!created.ok || created.role !== "created")
       throw new Error(created.ok ? created.role : created.message);
     if (!joined.ok || joined.role !== "joined" || joined.match_id !== created.match_id) {
@@ -201,8 +216,11 @@ d("pool matches stay isolated under concurrency", () => {
     const host = await newUser("hostseat");
     const opened = await matchmake(host);
     expect(opened.ok && opened.role).toBe("created");
+    if (!opened.ok) return;
     const rivals = await Promise.all(
-      Array.from({ length: 8 }, (_, i) => newUser(`rival${i}`).then((uid) => matchmake(uid))),
+      Array.from({ length: 8 }, (_, i) =>
+        newUser(`rival${i}`).then((uid) => joinOpen(uid, opened.match_id)),
+      ),
     );
     const took = rivals.filter(
       (row) => row.ok && row.role === "joined" && row.match_id === opened.match_id,
@@ -260,9 +278,10 @@ d("pool matches stay isolated under concurrency", () => {
     const a2 = await newUser("isoa2");
     const b2 = await newUser("isob2");
     const m1 = await matchmake(a1);
-    const j1 = await matchmake(b1);
     const m2 = await matchmake(a2);
-    const j2 = await matchmake(b2);
+    if (!m1.ok || !m2.ok) throw new Error(m1.ok ? m2.message : m1.message);
+    const j1 = await joinOpen(b1, m1.match_id);
+    const j2 = await joinOpen(b2, m2.match_id);
     expect(m1.ok && j1.ok && j1.match_id).toBe(m1.match_id);
     expect(m2.ok && j2.ok && j2.match_id).toBe(m2.match_id);
     for (const id of [m1.match_id, m2.match_id]) {
@@ -342,9 +361,10 @@ d("pool matches stay isolated under concurrency", () => {
     const a = await newUser("botha");
     const b = await newUser("bothb");
     const created = await matchmake(a);
-    const joined = await matchmake(b);
+    if (!created.ok) throw new Error(created.message);
+    const joined = await joinOpen(b, created.match_id);
     expect(created.ok && joined.ok && joined.match_id).toBe(created.match_id);
-    const id = created.match_id!;
+    const id = created.match_id;
     const [secret] = await sql`select pvp_test.pool_read_secret(${id}) seed`;
     const table = freshTable(bytesFromHex(String(secret.seed)));
     await sql`select pvp_test.pool_begin(${id}, ${sql.json(JSON.parse(JSON.stringify(table)))}::jsonb)`;
@@ -395,9 +415,10 @@ d("pool matches stay isolated under concurrency", () => {
     const a = await newUser("racea");
     const b = await newUser("raceb");
     const created = await matchmake(a);
-    const joined = await matchmake(b);
+    if (!created.ok) throw new Error(created.message);
+    const joined = await joinOpen(b, created.match_id);
     expect(created.ok && joined.ok && joined.match_id).toBe(created.match_id);
-    const id = created.match_id!;
+    const id = created.match_id;
     const [secret] = await sql`select pvp_test.pool_read_secret(${id}) seed`;
     const table = freshTable(bytesFromHex(String(secret.seed)));
     const raced = await Promise.allSettled([

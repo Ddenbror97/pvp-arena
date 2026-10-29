@@ -57,6 +57,13 @@ const bal = async (uid: string, kind = "user_available") =>
     )[0].balance,
   );
 
+async function sit(uid: string, matchId: number, key = randomUUID()) {
+  return as(uid, async (tx) => {
+    const [row] = await tx`select pvp_test.pool_join(${matchId}, ${key}) r`;
+    return row.r as { match_id: number; role: string; duplicate: boolean };
+  });
+}
+
 d("pool ledger (isolated schema)", () => {
   beforeAll(async () => {
     await sql.unsafe(buildTestSchemaSql());
@@ -115,16 +122,10 @@ d("pool ledger (isolated schema)", () => {
       return row.r as { match_id: number };
     });
     const joinKey = randomUUID();
-    const joined = await as(b, async (tx) => {
-      const [row] = await tx`select pvp_test.pool_matchmake(100, ${joinKey}) r`;
-      return row.r as { match_id: number; role: string };
-    });
+    const joined = await sit(b, again.match_id, joinKey);
     expect(joined.role).toBe("joined");
-    expect(joined.match_id).toBe(again.match_id);
-    const retried = await as(b, async (tx) => {
-      const [row] = await tx`select pvp_test.pool_matchmake(100, ${joinKey}) r`;
-      return row.r as { match_id: number; duplicate: boolean; role: string };
-    });
+    expect(Number(joined.match_id)).toBe(again.match_id);
+    const retried = await sit(b, again.match_id, joinKey);
     expect(retried.duplicate).toBe(true);
     expect(retried.role).toBe("joined");
     expect(retried.match_id).toBe(again.match_id);
@@ -181,12 +182,9 @@ d("pool ledger (isolated schema)", () => {
     expect(stillWaiting.left).toBe(false);
     expect(await bal(a)).toBe(beforeA - 100);
 
-    const joined = await as(b, async (tx) => {
-      const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
-      return row.r as { match_id: number; role: string };
-    });
+    const joined = await sit(b, waiting.match_id);
     expect(joined.role).toBe("joined");
-    expect(joined.match_id).toBe(waiting.match_id);
+    expect(Number(joined.match_id)).toBe(waiting.match_id);
     await beginReal(joined.match_id);
     await expect(
       as(stranger, async (tx) => {
@@ -269,13 +267,11 @@ d("pool ledger (isolated schema)", () => {
     const oddB = await newUser("odb");
     const oddBeforeA = await bal(oddA);
     const oddBeforeB = await bal(oddB);
-    await as(oddA, async (tx) => {
-      await tx`select pvp_test.pool_matchmake(101, ${randomUUID()})`;
-    });
-    const odd = await as(oddB, async (tx) => {
+    const opened = await as(oddA, async (tx) => {
       const [row] = await tx`select pvp_test.pool_matchmake(101, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
+    const odd = await sit(oddB, opened.match_id);
     await beginReal(odd.match_id);
     const oddLeft = await as(oddA, async (tx) => {
       const [row] = await tx`select pvp_test.pool_leave(${odd.match_id}) r`;
@@ -317,9 +313,7 @@ d("pool ledger (isolated schema)", () => {
       const [row] = await tx`select pvp_test.pool_matchmake(500, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
-    await as(b, async (tx) => {
-      await tx`select pvp_test.pool_matchmake(500, ${randomUUID()})`;
-    });
+    await sit(b, made.match_id);
     const table = await beginReal(made.match_id);
     await sql`select pvp_test._pool_log_timeout(${made.match_id})`;
     const [row] =
@@ -334,9 +328,7 @@ d("pool ledger (isolated schema)", () => {
       const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
-    await as(b, async (tx) => {
-      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
-    });
+    await sit(b, made.match_id);
     const [starting] = await sql`select pvp_test.pool_state(${made.match_id}) s`;
     expect(starting.s.status).toBe("STARTING");
     expect(starting.s.server_seed).toBeNull();
@@ -357,9 +349,7 @@ d("pool ledger (isolated schema)", () => {
       const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
-    await as(b, async (tx) => {
-      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
-    });
+    await sit(b, made.match_id);
     const forgedRack = freshTable(new Uint8Array(32).fill(6));
     await expect(
       sql`select pvp_test.pool_begin(${made.match_id}, ${asJson(forgedRack)}::jsonb)`,
@@ -480,12 +470,9 @@ d("pool ledger (isolated schema)", () => {
         return row.r as { match_id: number; role: string };
       });
       expect(made.role).toBe("created");
-      const joined = await as(b, async (tx) => {
-        const [row] = await tx`select pvp_test.pool_matchmake(${stake}, ${randomUUID()}) r`;
-        return row.r as { match_id: number; role: string };
-      });
+      const joined = await sit(b, made.match_id);
       expect(joined.role).toBe("joined");
-      expect(joined.match_id).toBe(made.match_id);
+      expect(Number(joined.match_id)).toBe(made.match_id);
       await beginReal(made.match_id);
       await sql`select pvp_test.pool_forfeit_seat(${made.match_id}, 'A')`;
       const pot = stake * 2;
@@ -514,9 +501,7 @@ d("pool ledger (isolated schema)", () => {
       const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
-    await as(b, async (tx) => {
-      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
-    });
+    await sit(b, made.match_id);
     await beginReal(made.match_id);
     await sql`update pvp_test.pool_matches set seen_a = clock_timestamp() - interval '20 seconds',
       turn_deadline = clock_timestamp() - interval '1 second' where id = ${made.match_id}`;
@@ -549,9 +534,7 @@ d("pool ledger (isolated schema)", () => {
       const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
-    await as(b, async (tx) => {
-      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
-    });
+    await sit(b, made.match_id);
     await beginReal(made.match_id);
     await as(a, async (tx) => {
       await tx`select pvp_test.pool_touch(${made.match_id})`;
@@ -585,9 +568,7 @@ d("pool ledger (isolated schema)", () => {
       const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
-    await as(b, async (tx) => {
-      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
-    });
+    await sit(b, made.match_id);
     await beginReal(made.match_id);
     await as(a, async (tx) => {
       await tx`select pvp_test.pool_touch(${made.match_id})`;
@@ -636,9 +617,7 @@ d("pool ledger (isolated schema)", () => {
       const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
-    await as(b, async (tx) => {
-      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
-    });
+    await sit(b, made.match_id);
     await beginReal(made.match_id);
     for (let i = 0; i < 3; i++) {
       await sql`update pvp_test.pool_matches set
@@ -663,9 +642,7 @@ d("pool ledger (isolated schema)", () => {
       const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
-    await as(b, async (tx) => {
-      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
-    });
+    await sit(b, made.match_id);
     await beginReal(made.match_id);
     await expect(
       as(a, async (tx) => {
@@ -706,6 +683,32 @@ d("pool ledger (isolated schema)", () => {
         await tx`select pvp_test._pool_settle(1, ${randomUUID()}::uuid, 'FORGED')`;
       }),
     ).rejects.toThrow(/permission denied/i);
+  });
+
+  it("leaves both creates open when two players pick the same stake", async () => {
+    const a = await newUser("bigboy1");
+    const b = await newUser("ddenbror");
+    const first = await as(a, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
+      return row.r as { match_id: number; role: string };
+    });
+    const second = await as(b, async (tx) => {
+      const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
+      return row.r as { match_id: number; role: string };
+    });
+    expect(first.role).toBe("created");
+    expect(second.role).toBe("created");
+    expect(second.match_id).not.toBe(first.match_id);
+    const rows = await sql`
+      select id, status, opponent_id from pvp_test.pool_matches
+      where id in (${first.match_id}, ${second.match_id})
+    `;
+    expect(rows).toHaveLength(2);
+    expect(rows.every((row) => row.status === "WAITING" && row.opponent_id == null)).toBe(true);
+    const [lobby] = await sql`select pvp_test.pool_lobby() lobby`;
+    const open = (lobby.lobby.open as { id: number }[]).map((table) => Number(table.id));
+    expect(open).toContain(Number(first.match_id));
+    expect(open).toContain(Number(second.match_id));
   });
 
   it("joins the open table you pick and leaves the other waiting", async () => {
@@ -764,16 +767,14 @@ d("pool ledger (isolated schema)", () => {
   it("opens the rack when both players are present and waits when one is away", async () => {
     const a = await newUser("vera");
     const b = await newUser("walt");
-    // Earlier cases leave an open table. Matchmaking would sit down there instead.
+    // Earlier cases leave an open table. This case sits at the table it just opened.
     await sql`update pvp_test.pool_matches set expires_at = clock_timestamp() - interval '1 second' where status = 'WAITING'`;
     await sql`select pvp_test.pool_tick()`;
     const made = await as(a, async (tx) => {
       const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
-    await as(b, async (tx) => {
-      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
-    });
+    await sit(b, made.match_id);
     const [held] = await sql`select pvp_test._pool_tick_one(${made.match_id}) r`;
     expect(held.r).toBe("idle");
     const [far] = await sql`select pvp_test.pool_state(${made.match_id}) s`;
@@ -816,9 +817,7 @@ d("pool ledger (isolated schema)", () => {
       const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
-    await as(b, async (tx) => {
-      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
-    });
+    await sit(b, made.match_id);
     await sql`update pvp_test.pool_matches set
       seen_a = clock_timestamp() - interval '2 minutes',
       seen_b = clock_timestamp(),
@@ -847,9 +846,7 @@ d("pool ledger (isolated schema)", () => {
       const [row] = await tx`select pvp_test.pool_matchmake(100, ${randomUUID()}) r`;
       return row.r as { match_id: number };
     });
-    await as(b, async (tx) => {
-      await tx`select pvp_test.pool_matchmake(100, ${randomUUID()})`;
-    });
+    await sit(b, made.match_id);
     await sql`update pvp_test.pool_matches set
       seen_a = clock_timestamp(),
       seen_b = null,
