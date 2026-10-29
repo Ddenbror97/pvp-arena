@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { BALL_R, POCKETS, TABLE_H, TABLE_W } from "../src/lib/pool/physics";
 import { readFileSync } from "node:fs";
-import { ballRadiusPx, FAR, railBox, spanPx, viewOf } from "../src/lib/pool/view";
+import { ballRadiusPx, FAR, spanPx, viewOf } from "../src/lib/pool/view";
 import { nextReplayFrame, REPLAY_CATCHUP } from "../src/lib/pool/replay-pace";
 
 describe("pool view", () => {
@@ -91,22 +91,6 @@ describe("pool view", () => {
     expect(view.padY).toBeCloseTo(slack / 2 + view.rail, 4);
   });
 
-  it("puts the rail lamps on the cushion nose, inside the cabinet", () => {
-    const box = railBox(1440, 800, 1);
-    const view = viewOf(1440, 800);
-    expect(box.left).toBeGreaterThan(view.padX - view.rail);
-    expect(box.left).toBeLessThan(view.padX);
-    expect(box.top).toBeGreaterThan(view.padY - view.rail);
-    expect(box.top).toBeLessThan(view.padY);
-    expect(box.width).toBeGreaterThan(view.innerW);
-    expect(box.width).toBeLessThan(view.innerW + view.rail * 2);
-    expect(box.left).toBeGreaterThanOrEqual(0);
-    expect(box.top).toBeGreaterThanOrEqual(0);
-    expect(box.left + box.width).toBeLessThanOrEqual(1440 + 0.01);
-    expect(box.top + box.height).toBeLessThanOrEqual(800 + 0.01);
-    expect(box.rail).toBeGreaterThan(7);
-  });
-
   it("walks a late shot forward instead of skipping to the pocket", () => {
     expect(nextReplayFrame(0, 40, 80)).toBe(REPLAY_CATCHUP);
     expect(nextReplayFrame(10, 12, 80)).toBe(12);
@@ -123,6 +107,9 @@ describe("pool view", () => {
     expect(table).toContain('className="pool-cue"');
     expect(table).toContain('closest(".pool-screen, .pool-stage")');
     expect(table).toContain("const length = BALL_R * 46");
+    expect(table).toContain("drawPocketLamp");
+    expect(table).not.toContain("pool-rgb");
+    expect(css).not.toContain(".pool-rgb");
     expect(table).not.toContain("fitCueButt");
     expect(table).not.toContain("extraCueGutter");
     expect(css).not.toContain("pool-cue-gutter");
