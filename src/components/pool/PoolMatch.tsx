@@ -16,7 +16,7 @@ import {
   STAND_IN_STROKE_MS,
   standInDue,
 } from "@/lib/pool/stand-in";
-import { rollStandIn } from "@/lib/pool/stand-in-roll";
+import { rollStandIn, warmStandIn } from "@/lib/pool/stand-in-roll";
 import { MAX_PULL_POWER } from "@/lib/pool/aim-gesture";
 import { recordShot } from "@/lib/pool/play";
 import {
@@ -227,6 +227,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   }, []);
 
   useEffect(() => {
+    warmStandIn();
     setTutorialStep(poolTutorialDismissed() ? null : 0);
     const syncMute = () => setMuted(soundMuted());
     syncMute();
@@ -434,8 +435,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       state != null &&
       state.shot === liveRoll.current.shot + 1;
     const storedKey = shotKey(input.input);
-    // The cue is already drawing this shot. Replaying it here freezes that pull.
-    if (owned && previewKey.current !== storedKey && !pullFinished.current) return;
+    // The worker already owns this stand-in. Replaying it here hitches the cue
+    // and skips the ball that cue is aimed at.
+    if (owned && previewKey.current !== storedKey) return;
     if (
       (previewKey.current === storedKey && input.hash === previewHash.current) ||
       (tableShot && framesRef.current && previewKey.current === storedKey)

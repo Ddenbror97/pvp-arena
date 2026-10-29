@@ -23,7 +23,8 @@ import {
   type BallSprite,
 } from "@/lib/pool/spheres";
 import { buildTable, whenTableArt } from "@/lib/pool/table-paint";
-import { ballRadiusPx, spanPx, viewOf } from "@/lib/pool/view";
+import { nextReplayFrame } from "@/lib/pool/replay-pace";
+import { ballRadiusPx, railBox, spanPx, viewOf } from "@/lib/pool/view";
 import {
   aimStep,
   CUE_STICK_LEN,
@@ -620,6 +621,7 @@ export function PoolTable({
 }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
   const cueRef = useRef<HTMLCanvasElement>(null);
+  const rgbRef = useRef<HTMLDivElement>(null);
   const cueBox = useRef({ ox: 0, oy: 0, w: 0, h: 0 });
   const stickFit = useRef(1);
   const cacheRef = useRef<{ w: number; h: number; canvas: HTMLCanvasElement } | null>(null);
@@ -745,6 +747,15 @@ export function PoolTable({
       if (!cacheRef.current || cacheRef.current.w !== w || cacheRef.current.h !== h) {
         const painted = buildTable(w, h);
         if (painted) cacheRef.current = { w, h, canvas: painted };
+        const rgb = rgbRef.current;
+        if (rgb) {
+          const box = railBox(w, h, dpr);
+          rgb.style.left = `${box.left}px`;
+          rgb.style.top = `${box.top}px`;
+          rgb.style.width = `${box.width}px`;
+          rgb.style.height = `${box.height}px`;
+          rgb.style.setProperty("--pool-rail", `${box.rail}px`);
+        }
       }
       const view = viewOf(w, h);
       const { project, innerW } = view;
@@ -818,17 +829,12 @@ export function PoolTable({
           const target = Math.min(replay.length - 1, Math.floor(elapsed / REPLAY_FRAME_MS));
           if (target > head.i) {
             const from = head.i;
-            head.i = target;
-            if (target - from <= 4) {
-              for (let i = from; i < target; i++) {
-                const prev = replay[i];
-                const next = replay[i + 1];
-                if (prev && next) sampleRef.current(prev, next);
-              }
-            } else {
-              const prev = replay[Math.max(0, target - 1)];
-              const next = replay[target];
-              if (prev && next) sampleRef.current(prev, next);
+            const next = nextReplayFrame(from, target, replay.length - 1);
+            head.i = next;
+            for (let i = from; i < next; i++) {
+              const prev = replay[i];
+              const upcoming = replay[i + 1];
+              if (prev && upcoming) sampleRef.current(prev, upcoming);
             }
           }
           const curr = replay[head.i] ?? opening;
@@ -868,7 +874,8 @@ export function PoolTable({
           };
           motion.set(ball.id, m);
         }
-        if (ball.pocketed) {
+        const placedCue = !replaying && ball.id === 0 && ghost != null;
+        if (ball.pocketed && !placedCue) {
           if (m.falling == null && !m.done) {
             m.falling = now;
             m.x = ball.x;
@@ -892,8 +899,8 @@ export function PoolTable({
         }
         m.falling = null;
         m.done = false;
-        const drawX = !replaying && ball.id === 0 && ghost ? ghost.x : ball.x;
-        const drawY = !replaying && ball.id === 0 && ghost ? ghost.y : ball.y;
+        const drawX = placedCue && ghost ? ghost.x : ball.x;
+        const drawY = placedCue && ghost ? ghost.y : ball.y;
         const dx = drawX - m.x;
         const dy = drawY - m.y;
         const dist = Math.hypot(dx, dy);
@@ -1434,6 +1441,16 @@ export function PoolTable({
           endGesture(false);
         }}
       />
+      <div ref={rgbRef} className="pool-rgb" aria-hidden>
+        <div className="pool-rgb-bloom-wrap">
+          <div className="pool-rgb-band pool-rgb-bloom">
+            <div className="pool-rgb-spin" />
+          </div>
+        </div>
+        <div className="pool-rgb-band pool-rgb-core">
+          <div className="pool-rgb-spin" />
+        </div>
+      </div>
     </>
   );
 }

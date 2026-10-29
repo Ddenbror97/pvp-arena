@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { BALL_R, POCKETS, TABLE_H, TABLE_W } from "../src/lib/pool/physics";
 import { readFileSync } from "node:fs";
-import { ballRadiusPx, FAR, spanPx, viewOf } from "../src/lib/pool/view";
+import { ballRadiusPx, FAR, railBox, spanPx, viewOf } from "../src/lib/pool/view";
+import { nextReplayFrame, REPLAY_CATCHUP } from "../src/lib/pool/replay-pace";
 
 describe("pool view", () => {
   it("sends every cloth point back to itself", () => {
@@ -88,6 +89,29 @@ describe("pool view", () => {
     expect(slack).toBeGreaterThan(0);
     expect(slack).toBeLessThan(outerH * 0.45);
     expect(view.padY).toBeCloseTo(slack / 2 + view.rail, 4);
+  });
+
+  it("puts the rail lamps on the cushion nose, inside the cabinet", () => {
+    const box = railBox(1440, 800, 1);
+    const view = viewOf(1440, 800);
+    expect(box.left).toBeGreaterThan(view.padX - view.rail);
+    expect(box.left).toBeLessThan(view.padX);
+    expect(box.top).toBeGreaterThan(view.padY - view.rail);
+    expect(box.top).toBeLessThan(view.padY);
+    expect(box.width).toBeGreaterThan(view.innerW);
+    expect(box.width).toBeLessThan(view.innerW + view.rail * 2);
+    expect(box.left).toBeGreaterThanOrEqual(0);
+    expect(box.top).toBeGreaterThanOrEqual(0);
+    expect(box.left + box.width).toBeLessThanOrEqual(1440 + 0.01);
+    expect(box.top + box.height).toBeLessThanOrEqual(800 + 0.01);
+    expect(box.rail).toBeGreaterThan(7);
+  });
+
+  it("walks a late shot forward instead of skipping to the pocket", () => {
+    expect(nextReplayFrame(0, 40, 80)).toBe(REPLAY_CATCHUP);
+    expect(nextReplayFrame(10, 12, 80)).toBe(12);
+    expect(nextReplayFrame(70, 90, 80)).toBe(76);
+    expect(nextReplayFrame(80, 90, 80)).toBe(80);
   });
 
   it("keeps the full cue on the screen canvas and does not shrink the felt for it", () => {
