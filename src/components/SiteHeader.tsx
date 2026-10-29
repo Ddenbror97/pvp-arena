@@ -81,6 +81,9 @@ export function SiteHeader({ className }: { className?: string }) {
           >
             Jackpot
           </Link>
+          <Link to="/fps-duel" className={link}>
+            FPS Duel
+          </Link>
           <Link
             to="/coinflip"
             className={link}
@@ -157,7 +160,11 @@ export function SiteHeader({ className }: { className?: string }) {
                   loading={!ready || wallet.isLoading}
                 />
               </Suspense>
-              <Link to="/profile" aria-label="Profile" className="inline-flex shrink-0 items-center">
+              <Link
+                to="/profile"
+                aria-label="Profile"
+                className="inline-flex shrink-0 items-center"
+              >
                 <PlayerPrestigeIdentity
                   avatar={profile?.avatar_url}
                   name={profile?.username}
