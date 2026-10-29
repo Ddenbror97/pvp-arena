@@ -42,6 +42,11 @@ The rest of the layout is where the edge jumps. On that UK column a specific tri
 Use the table as a map of the published comparison, then throw it out if your rules screen disagrees. [House edge](/guides/house-edge) is how to read a payoff against a probability. [Expected value](/guides/expected-value-gambling) is the same idea in currency.`,
     },
     {
+      id: "choosing-bets",
+      title: "Compare bets before choosing a system",
+      body: "For a bet-by-bet comparison, read [Sic Bo strategy and house edges](/guides/sic-bo-strategy). Compare the payoff printed on your screen with the probability of that outcome. A staking progression cannot remove the house edge, and a lower-edge bet can still lose. The rules and price of each box matter more than a system's name.",
+    },
+    {
       id: "online",
       title: "What changes when the dice are on a screen",
       body: `The mathematics of three fair dice do not change because the shake is animated. The contract can. An online game can delete Small, change a triple payoff, or add a side bet that was never on a Macau felt. The rules page of that game is the paytable. A pretty dice cup is not.
@@ -78,9 +83,7 @@ Adults only. [Responsible gambling](/responsible-gambling) is the limit that mat
       a: "No.",
     },
   ],
-  sources: [
-    { label: "Wikipedia: Sic bo", url: "https://en.wikipedia.org/wiki/Sic_bo" },
-  ],
+  sources: [{ label: "Wikipedia: Sic bo", url: "https://en.wikipedia.org/wiki/Sic_bo" }],
   related: ["house-edge", "expected-value-gambling", "casino-war-game", "history-of-dice"],
   updated: "2026-10-21",
 };

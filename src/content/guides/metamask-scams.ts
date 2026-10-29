@@ -39,6 +39,11 @@ export const guide: Guide = {
       body: "Open the wallet from its own icon. Read the account and the network. Disconnect sites you do not recognize. Do not follow a link from the person who alarmed you. If you signed an approval you regret, stop using that tab and review allowances from a tool you navigated to yourself, which the wallet security checklist points at in more detail. If you typed the phrase anywhere but the official app during a restore you intended, create a new wallet and move funds. Speed matters after a phrase leak. A new password on the old phrase does not.\n\nDo not send a “test” of the phrase to anyone. Do not store the words in a screenshot to be helpful to the agent. Do not install a remote-control app so they can click for you. Those are the same scam with extra steps. The [seed phrase](/guides/seed-phrase) guide is where backup rules live. Follow that, not a comment under a video.\n\nPVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD and does not require MetaMask. It will not ask for a phrase, and a message that claims otherwise is impersonation. Other sites can still be honest EVM casinos or hostile copies. The difference is the prompt in your wallet and the domain you bookmarked, not the polish of the art. MetaMask scams succeed when the prompt is treated as a captcha. Treat it as a payment decision every time.",
     },
     {
+      id: "casino-connection-checks",
+      title: "Checking a casino wallet prompt",
+      body: "When a gambling site asks you to connect, compare its request with the [MetaMask casino connection and deposit guide](/guides/metamask-casino). Sharing an address, signing a readable login message, sending a deposit, and approving a contract are different actions. A connection prompt is not evidence that the operator is trustworthy, and no casino needs your recovery phrase.",
+    },
+    {
       id: "a-short-refusal-list",
       title: "A short refusal list",
       body: "You can memorize the refusals without memorizing every brand of fraud. You refuse to type the Secret Recovery Phrase into a website. You refuse to read it aloud. You refuse installers that did not come from the official store. You refuse unlimited approvals that are not a transfer you planned. You refuse signatures you cannot read. You refuse Snap and bridge instructions pasted by a stranger. You refuse urgency.\n\nNone of those refusals requires a special setting buried in a menu that changes every year. They require the official app, the network list it shows, and a willingness to cancel. Cancel is a complete security action. The funds stay. The scammer moves on to someone who wanted the airdrop more than the balance they already had.",
@@ -71,7 +76,7 @@ export const guide: Guide = {
       a: "PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD and does not require MetaMask. No site can stop you from signing a bad prompt in a different tab, so the refusal still has to happen in the wallet.",
     },
   ],
-    sources: [
+  sources: [
     {
       label: "MetaMask Help Center — Getting started, checked 20 October 2026",
       url: "https://support.metamask.io/start/getting-started-with-metamask/",

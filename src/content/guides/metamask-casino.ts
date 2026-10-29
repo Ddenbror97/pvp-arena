@@ -6,6 +6,7 @@ export const guide: Guide = {
   keyword: "metamask casino",
   secondary: [
     "metamask gambling",
+    "metamask casinos",
     "casino that accepts metamask",
     "connect metamask to casino",
     "wallet signature",
@@ -37,6 +38,11 @@ There are two common designs:
 PVPspinArena uses the first design. You sign in with an email code, then verify your MetaMask wallet on your profile. Deposits sent from that verified address on Base are matched to your account.
 
 In both designs, your funds stay in your wallet until you choose to send them. The site never has permission to move tokens out of MetaMask on its own, as long as you only sign messages and never approve token spending you do not understand.`,
+    },
+    {
+      id: "choosing-a-casino",
+      title: "How to compare MetaMask casinos",
+      body: "Start with the operator, supported network, deposit asset, withdrawal rules, and fees. Supporting MetaMask describes a wallet connection; it does not establish a casino\u0027s licensing, solvency, or fairness. Check the connection and transfer instructions before sending funds. If the extension will not connect, use [MetaMask login help](/guides/metamask-login-help). If the request asks for your recovery phrase or an unexplained spending permission, compare it with the [MetaMask scam warning signs](/guides/metamask-scams) and stop before signing.",
     },
     {
       id: "setup",

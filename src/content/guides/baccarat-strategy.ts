@@ -53,6 +53,11 @@ The commission feels like a tax, and players often switch to Player to avoid it.
 Some tables charge 4% instead of 5%. Then Banker EV = 0.4586 × 96 − 0.4462 × 100 ≈ −$0.59, an edge near 0.6%. If you find one, it is one of the better bets on a casino floor. Commission is often tracked in a box and settled at the end of the shoe, so do keep a count of what you owe.`,
     },
     {
+      id: "squeeze-versus-paytable",
+      title: "A squeeze changes the reveal, not the bet",
+      body: "A live dealer may peel the card edges slowly before revealing the result. The [baccarat squeeze guide](/guides/baccarat-squeeze) explains that presentation. It does not change the drawing rules or improve a bet's odds. A no-commission payout rule is a separate change: check that table's paytable rather than treating a squeeze label as a strategy advantage.",
+    },
+    {
       id: "no-commission",
       title: "No-commission baccarat and other rule changes",
       body: `"No commission" tables remove the 5% but take the money back another way. Two common versions:
