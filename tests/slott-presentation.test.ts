@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { winLevel } from "@/components/slott/hits";
 import {
@@ -101,6 +102,18 @@ describe("slot presentation", () => {
       startAt: now,
       durationMs: 720,
     });
+  });
+
+  it("shows the gold score and not the old point pills", () => {
+    const fx = readFileSync(new URL("../src/components/slott/SpinFx.tsx", import.meta.url), "utf8");
+    const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+    expect(fx).toContain("slott-score-burst-num");
+    expect(fx).not.toContain("slott-line-tag");
+    expect(fx).not.toContain("slott-tally-tag");
+    expect(fx).not.toContain("slott-tally-col");
+    expect(css).not.toContain("slott-line-tag");
+    expect(css).not.toContain("slott-tally-tag");
+    expect(css).not.toContain("slott-tally-col");
   });
 
   it("holds the name and score for a second after the line, then long enough to read", () => {

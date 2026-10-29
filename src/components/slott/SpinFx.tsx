@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, useState, type CSSProperties } from "react";
-import { PAYLINES, REELS, ROWS, SYMBOLS, WILD, type LineWin } from "@/lib/slott/paytable";
+import { PAYLINES, REELS, SYMBOLS, type LineWin } from "@/lib/slott/paytable";
 import { formatUsd } from "@/lib/jackpot/math";
 import { cn } from "@/lib/utils";
 import { bestLineCaption, hitsDoneMs, LINE_DRAW_MS, lineColor, orderLines, reachMs } from "./hits";
@@ -162,27 +162,6 @@ export const SpinFx = memo(function SpinFx({
             })}
           </svg>
         ) : null}
-        {ordered.map((l, i) => {
-          const rows = PAYLINES[l.line - 1]!;
-          const reel = l.count - 1;
-          const left = Math.min(88, ((reel * 100 + 50) / 500) * 100 + 7);
-          const top = ((rows[reel]! * 100 + 50) / 400) * 100;
-          return (
-            <span
-              key={l.line}
-              className="slott-line-tag tabular absolute -translate-x-1/2 -translate-y-1/2 rounded-full px-1.5 py-0.5 font-display text-[10px] text-black sm:px-2 sm:text-xs"
-              style={{
-                left: `${left}%`,
-                top: `${top}%`,
-                background: lineColor(l.line),
-                animationDelay: `${reachMs(i, reel, l.count) + 60}ms`,
-              }}
-            >
-              +{l.score}
-            </span>
-          );
-        })}
-
         {tier === "exceptional" ? (
           <div
             className="slott-rays absolute left-1/2 top-1/2 h-[180%] w-[180%] -translate-x-1/2 -translate-y-1/2"
@@ -241,7 +220,7 @@ export const SpinFx = memo(function SpinFx({
   );
 });
 
-/** Reel-by-reel cash-in of the spin's points, ending on the exact server score. */
+/** Gold score for the landed spin. The step clock only fills the final-spin target. */
 function Tally({
   grid,
   lines,
@@ -292,30 +271,6 @@ function Tally({
   }, [hit, onTarget]);
   return (
     <>
-      {step >= 0
-        ? values.slice(0, step + 1).map((_, r) => (
-            <div
-              key={r}
-              className="slott-tally-col absolute inset-y-0"
-              style={{ left: `${r * 20}%`, width: "20%" }}
-            >
-              {grid.slice(r * ROWS, r * ROWS + ROWS).map((s, row) =>
-                (SYMBOLS[s]?.value ?? 0) >= 2 ? (
-                  <span
-                    key={row}
-                    className={cn(
-                      "slott-tally-tag tabular absolute left-1/2 rounded-full px-1.5 font-display text-[10px] leading-4 sm:text-xs sm:leading-5",
-                      s === WILD ? "bg-gold text-black" : "bg-black/75 text-primary-soft",
-                    )}
-                    style={{ top: `${row * 25 + 18}%` }}
-                  >
-                    +{SYMBOLS[s]!.value}
-                  </span>
-                ) : null,
-              )}
-            </div>
-          ))
-        : null}
       {target != null ? <TargetChip target={target} running={running} live={step >= 0} /> : null}
       {scoreOn ? (
         <div
