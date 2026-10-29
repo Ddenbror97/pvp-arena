@@ -67,6 +67,7 @@ type GhostStroke = {
 };
 
 import {
+  formatCents,
   leaveTake,
   matchNotice,
   POOL_RULES,
@@ -1156,7 +1157,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     status: view.status,
     youWon,
     youLost,
-    payout: dollars(youWon ? pays : (view.payout_amount ?? pays)),
+    payout: formatCents(youWon ? pays : (view.payout_amount ?? pays)),
     winReason: view.win_reason ?? state?.reason ?? null,
     cancelReason: view.cancel_reason,
     youLeft: userId != null && view.left_by === userId,
@@ -1336,9 +1337,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         <div className="pool-result" role="status">
           <div className="pool-result-card">
             <strong>{youWon ? "You won" : youLost ? "You lost" : "Match over"}</strong>
-            {youWon ? <p className="pool-result-pay">{dollars(pays)}</p> : null}
+            {youWon ? <p className="pool-result-pay">{formatCents(pays)}</p> : null}
             <p>
-              Winner receives {dollars(pays)}. Fee {dollars(fee)}.
+              Winner receives {formatCents(pays)}. Fee {formatCents(fee)}.
               {youWon ? "" : winnerName ? ` ${winnerName} won.` : ""}
             </p>
             {replayNote ? <p>{replayNote}</p> : null}
@@ -1440,9 +1441,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
             </strong>
             <p>
               {youLeft
-                ? `${dollars(split.fee)} stayed with the site. ${dollars(split.back)} is back in your balance.`
+                ? `${formatCents(split.fee)} stayed with the site. ${formatCents(split.back)} is back in your balance.`
                 : seat
-                  ? `Your ${dollars(view.stake)} is back. This table is closed.`
+                  ? `Your ${formatCents(view.stake)} is back. This table is closed.`
                   : "A player left, and the table is closed."}
             </p>
             <Link to="/8-ball-pool">Back to the lobby</Link>
@@ -1487,11 +1488,6 @@ function ShotClock({ deadline, serverNow }: { deadline: string; serverNow: strin
   }, [deadline, serverNow]);
   const clock = Math.max(0, Math.ceil(left / 1000));
   return <em aria-label={`Shot clock ${clock} seconds`}>{clock}s</em>;
-}
-
-function dollars(cents: number | null | undefined): string {
-  const v = Number(cents ?? 0) / 100;
-  return `$${v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 const PIP = ["#f4d35e", "#3a86ff", "#e63946", "#9b5de5", "#f77f00", "#2a9d8f", "#9b2226"];
@@ -1581,7 +1577,7 @@ function SeatCard({
           {active ? <span className="sr-only">, your turn</span> : null}
           {deadline ? <ShotClock deadline={deadline} serverNow={serverNow} /> : null}
         </strong>
-        <small>{dollars(stake)}</small>
+        <small>{formatCents(stake)}</small>
         <span className="pool-down">
           {hand ? "Ball in hand" : groupLabel ? `${down} down` : present ? "Open" : "Waiting"}
         </span>
