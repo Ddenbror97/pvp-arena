@@ -1020,8 +1020,6 @@ html.intro-seen .intro-gate { display: none !important; }
 /* The line draws, holds through the tally, then fades out and stays gone. */
 .slott-line { animation: slott-line-life 3.2s linear forwards; }
 .slott-line polyline { stroke-dasharray: 1; stroke-dashoffset: 1; animation: slott-draw var(--draw, 520ms) linear var(--d, 0ms) forwards; }
-.slott-line-tag { box-shadow: 0 0 0 2px rgb(0 0 0 / 55%), 0 0 16px currentColor; animation: slott-tag 0.45s cubic-bezier(0.2, 1.8, 0.4, 1) both, slott-line-life 3.2s linear forwards; }
-@keyframes slott-tag { from { opacity: 0; transform: translate(-50%, -50%) scale(0.2); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
 .slott-flash { background: radial-gradient(circle, rgb(255 250 225 / 85%), rgb(255 200 90 / 30%) 45%, transparent 75%); opacity: 0; animation: slott-flash 0.55s ease-out both; }
 @keyframes slott-flash { 0% { opacity: 0; } 18% { opacity: 1; } 100% { opacity: 0; } }
 .slott-bomb-symbol { mix-blend-mode: screen; filter: drop-shadow(0 0 8px rgb(70 170 255 / 80%)); }
@@ -1158,11 +1156,7 @@ html.intro-seen .intro-gate { display: none !important; }
 .slott-result-draw,
 .slott-result-bomb { box-shadow: 0 0 0 1px rgb(255 255 255 / 16%), 0 18px 40px rgb(0 0 0 / 40%); }
 
-/* Cash-in tally: each reel flashes as its points count in. */
-.slott-tally-col { background: linear-gradient(180deg, transparent, rgb(160 120 255 / 28%) 50%, transparent); animation: slott-tally-col 0.55s ease-out both; }
-@keyframes slott-tally-col { 0% { opacity: 0; } 25% { opacity: 1; } 100% { opacity: 0; } }
-.slott-tally-tag { transform: translate(-50%, 0); animation: slott-tally-tag 0.9s ease-out both; box-shadow: 0 0 10px rgb(0 0 0 / 50%); }
-@keyframes slott-tally-tag { 0% { transform: translate(-50%, 6px) scale(0.5); opacity: 0; } 25% { transform: translate(-50%, 0) scale(1.15); opacity: 1; } 70% { opacity: 1; } 100% { transform: translate(-50%, -14px) scale(1); opacity: 0; } }
+/* The landed spin's points. One gold total, nothing per line or per symbol. */
 .slott-score-burst { top: 30%; padding: 0.35rem 0.5rem 0.6rem; animation: slott-score-burst 2.6s cubic-bezier(0.16, 0.84, 0.3, 1) both; }
 .slott-score-burst[data-parked="true"] { top: 58%; }
 .slott-score-burst-name {
@@ -1222,8 +1216,7 @@ html.intro-seen .intro-gate { display: none !important; }
 @keyframes slott-callout { 0% { transform: translateX(-30px) scale(0.7); opacity: 0; } 15% { transform: translateX(0) scale(1.08); opacity: 1; } 25% { transform: scale(1); } 80% { opacity: 1; } 100% { transform: translateX(30px); opacity: 0; } }
 .slott-duel-fill { transition: width 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.1); box-shadow: 0 0 10px var(--coin-heads); }
 @media (prefers-reduced-motion: reduce) {
-  .slott-tally-col, .slott-tally-tag, .slott-score-burst, .slott-target, .slott-target-hit, .slott-callout, .slott-score-pop, .slott-pip, .slott-final-flag { animation: none; }
-  .slott-tally-tag { display: none; }
+  .slott-score-burst, .slott-target, .slott-target-hit, .slott-callout, .slott-score-pop, .slott-pip, .slott-final-flag { animation: none; }
   .slott-duel-fill { transition: none; }
 }
 @media (prefers-reduced-motion: reduce) {
