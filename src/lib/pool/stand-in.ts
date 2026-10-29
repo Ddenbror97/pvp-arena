@@ -7,6 +7,7 @@ import {
   BALL_R,
   PHYSICS_V6,
   PHYSICS_V7,
+  PHYSICS_V8,
   POCKETS,
   TABLE_H,
   TABLE_W,
@@ -91,9 +92,9 @@ export function standInDue(turnDeadlineIso: string, nowMs: number, shotSeconds =
   return nowMs >= thinkAt && nowMs < deadline + STAND_IN_OVERDUE_MS;
 }
 
-/** v6 and v7 share the 11 mph pull. Older racks stay on the softer launch. */
+/** v6, v7, and v8 share the 11 mph pull. Older racks stay on the softer launch. */
 function firmLaunch(physics: string): boolean {
-  return physics === PHYSICS_V6 || physics === PHYSICS_V7;
+  return physics === PHYSICS_V6 || physics === PHYSICS_V7 || physics === PHYSICS_V8;
 }
 
 function rngOf(seed: Uint8Array, shot: number): () => number {
@@ -282,8 +283,8 @@ function easeScratch(state: TableState, shot: ShotInput): ShotInput {
 function breakShot(state: TableState, cue: Ball, rng: Rng): ShotInput {
   const wall = cushionLimit(state.physics);
   let x = Math.floor(TABLE_W / 4) - BALL_R - Math.round(rng() * 70_000);
-  // v7 cloth is quicker, so a cue started low in the kitchen only clips the rack.
-  const ySpan = state.physics === PHYSICS_V7 ? 48_000 : 150_000;
+  // v7 and v8 cloth is quicker, so a cue started low in the kitchen only clips the rack.
+  const ySpan = state.physics === PHYSICS_V7 || state.physics === PHYSICS_V8 ? 48_000 : 150_000;
   let y = Math.floor(TABLE_H / 2) + Math.round((rng() - 0.5) * ySpan);
   x = Math.max(wall.minX + 2_000, Math.min(Math.floor(TABLE_W / 4), x));
   y = Math.max(wall.minY + 2_000, Math.min(wall.maxY - 2_000, y));
@@ -295,7 +296,7 @@ function breakShot(state: TableState, cue: Ball, rng: Rng): ShotInput {
   const ay = Math.floor(TABLE_H / 2) + Math.round((rng() - 0.5) * 32_000);
   const wander = firmLaunch(state.physics) ? 900 : 2_400;
   const angle = milliOf(ax - x, ay - y) + (rng() + rng() - 1) * wander;
-  // v6 and v7 launch at the same cue speed, so the break stays a firm pull.
+  // v6, v7, and v8 launch at the same cue speed, so the break stays a firm pull.
   const power = firmLaunch(state.physics)
     ? 8_400 + Math.round(rng() * 1_600)
     : 6_200 + Math.round(rng() * 2_600);

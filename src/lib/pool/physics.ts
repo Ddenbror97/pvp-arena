@@ -1,5 +1,5 @@
 /**
- * Integer micrometre pool physics. A new rack stores pool-phys-v7.
+ * Integer micrometre pool physics. A new rack stores pool-phys-v8.
  * Older ids stay so a match already stamped with them replays under the
  * launch and drag it started with.
  *
@@ -16,6 +16,9 @@
  * v7 keeps that launch. Drag is 1 + speed/340, and the ball coasts until
  * speed falls under 18, so a half-power object ball runs about one length
  * and eases out instead of freezing while it is still moving.
+ * v8 keeps that roll. Each pocket is a straight cut in the cushion, so a
+ * ball that crosses the rail inside the cut falls. Older ids keep the
+ * circular mouth they were stamped with.
  */
 
 /** v1 dies before the rack. v2 reaches it. v3 adds break speed. v4 keeps that path at 60% speed. */
@@ -29,7 +32,9 @@ export const PHYSICS_V5 = "pool-phys-v5";
 export const PHYSICS_V6 = "pool-phys-v6";
 /** v7 is the v6 launch on cloth that lets a struck ball roll out. */
 export const PHYSICS_V7 = "pool-phys-v7";
-export const PHYSICS_VERSION = PHYSICS_V7;
+/** v8 is the v7 roll with a straight jaw at every pocket. */
+export const PHYSICS_V8 = "pool-phys-v8";
+export const PHYSICS_VERSION = PHYSICS_V8;
 export type PhysicsId =
   | typeof PHYSICS_V1
   | typeof PHYSICS_V2
@@ -37,10 +42,20 @@ export type PhysicsId =
   | typeof PHYSICS_V4
   | typeof PHYSICS_V5
   | typeof PHYSICS_V6
-  | typeof PHYSICS_V7;
+  | typeof PHYSICS_V7
+  | typeof PHYSICS_V8;
 
 function usesNose(physics: string): boolean {
-  return physics === PHYSICS_V5 || physics === PHYSICS_V6 || physics === PHYSICS_V7;
+  return (
+    physics === PHYSICS_V5 ||
+    physics === PHYSICS_V6 ||
+    physics === PHYSICS_V7 ||
+    physics === PHYSICS_V8
+  );
+}
+
+function coasts(physics: string): boolean {
+  return physics === PHYSICS_V7 || physics === PHYSICS_V8;
 }
 
 /**
@@ -181,10 +196,70 @@ function pocketId(b: Ball): number | null {
 }
 
 /**
- * Ball centre sits in a pocket mouth, where the cushion does not bounce.
+ * How far the v8 jaw runs from a cushion corner, and half the side-pocket
+ * opening, measured at the ball centre. A straight shot from mid-table meets
+ * the near rail about 42 mm past the corner and the far rail about 51 mm past
+ * it. 110 mm covers that line. The side jaw is wider than the old circular chord.
+ */
+export const CORNER_CUT = 110_000;
+export const SIDE_CUT = 72_000;
+
+/**
+ * Pocket under a ball centre that has crossed a v8 jaw. Null on the cloth,
+ * outside the cut, and for every older physics id.
+ */
+export function jawPocket(x: number, y: number, physics: string): number | null {
+  if (physics !== PHYSICS_V8) return null;
+  const wall = cushionLimit(physics);
+  const mid = TABLE_W / 2;
+  if (y < wall.minY) {
+    if (Math.abs(x - mid) <= SIDE_CUT) return 1;
+    if (x <= wall.minX + CORNER_CUT) return 0;
+    if (x >= wall.maxX - CORNER_CUT) return 2;
+    return null;
+  }
+  if (y > wall.maxY) {
+    if (Math.abs(x - mid) <= SIDE_CUT) return 4;
+    if (x <= wall.minX + CORNER_CUT) return 3;
+    if (x >= wall.maxX - CORNER_CUT) return 5;
+    return null;
+  }
+  if (x < wall.minX) {
+    if (y <= wall.minY + CORNER_CUT) return 0;
+    if (y >= wall.maxY - CORNER_CUT) return 3;
+    return null;
+  }
+  if (x > wall.maxX) {
+    if (y <= wall.minY + CORNER_CUT) return 2;
+    if (y >= wall.maxY - CORNER_CUT) return 5;
+  }
+  return null;
+}
+
+/** Cloth-side lip of the v8 cut, so the aim line does not draw rubber across a hole. */
+function jawAimOpen(x: number, y: number): boolean {
+  const wall = cushionLimit(PHYSICS_V8);
+  const lip = BALL_R;
+  const mid = TABLE_W / 2;
+  const near = y <= wall.minY + lip;
+  const far = y >= wall.maxY - lip;
+  const left = x <= wall.minX + lip;
+  const right = x >= wall.maxX - lip;
+  if ((near || far) && Math.abs(x - mid) <= SIDE_CUT) return true;
+  if (near && (x <= wall.minX + CORNER_CUT || x >= wall.maxX - CORNER_CUT)) return true;
+  if (far && (x <= wall.minX + CORNER_CUT || x >= wall.maxX - CORNER_CUT)) return true;
+  if (left && (y <= wall.minY + CORNER_CUT || y >= wall.maxY - CORNER_CUT)) return true;
+  if (right && (y <= wall.minY + CORNER_CUT || y >= wall.maxY - CORNER_CUT)) return true;
+  return false;
+}
+
+/**
+ * Ball centre sits in a pocket mouth, where the aim line does not draw a bank.
  * v5 jaws reach the nose, because that nose is in front of the side pockets.
+ * v8 uses the straight cut, plus one ball radius of cloth in front of it.
  */
 export function cushionOpen(x: number, y: number, physics = PHYSICS_VERSION): boolean {
+  if (physics === PHYSICS_V8) return jawAimOpen(x, y);
   const jaw = usesNose(physics) ? 28_000 : 22_000;
   for (const p of POCKETS) {
     const dx = x - p.x;
@@ -251,13 +326,16 @@ function bounce(
   const right = wall.maxX;
   const top = wall.minY;
   const bottom = wall.maxY;
-  const open = nearPocket(b, physics);
+  const inJaw = jawPocket(b.x, b.y, physics) != null;
+  const open = physics === PHYSICS_V8 ? inJaw : nearPocket(b, physics);
   const speed = isqrt(b.vx * b.vx + b.vy * b.vy);
   const english = Math.trunc((b.spin * speed) / 5000);
   let hit = false;
-  // v5 pocket centres sit past the nose. A ball in the jaw keeps going so it
-  // can fall in. Older racks still pull a jaw ball back to the outer wall.
-  const hold = open && usesNose(physics);
+  // v5 pocket centres sit past the nose. A ball in the circular jaw keeps
+  // going so it can fall in. Older racks still pull a jaw ball back to the
+  // outer wall. v8 only skips the cushion after the centre has crossed a cut.
+  // The wider aim mouth must not do that, or a ball rolling the rail falls in.
+  const hold = physics === PHYSICS_V8 ? inJaw : open && usesNose(physics);
   if (b.x < left) {
     if (!hold) b.x = left;
     if (!open) {
@@ -301,7 +379,7 @@ function bounce(
  */
 export function rollDrop(speed: number, physics = PHYSICS_VERSION): number {
   if (physics === PHYSICS_V1) return 32 + Math.trunc(speed / 160);
-  if (physics === PHYSICS_V7) return 1 + Math.trunc(speed / 340);
+  if (coasts(physics)) return 1 + Math.trunc(speed / 340);
   if (physics === PHYSICS_V6) return 2 + Math.trunc(speed / 260);
   if (physics === PHYSICS_V3 || physics === PHYSICS_V4 || physics === PHYSICS_V5) {
     return 2 + Math.trunc(speed / 1_500);
@@ -318,7 +396,7 @@ export function rollDrop(speed: number, physics = PHYSICS_VERSION): number {
  */
 export function launchSpeed(power: number, physics = PHYSICS_VERSION): number {
   const clamped = Math.max(1, Math.min(10_000, power | 0));
-  if (physics === PHYSICS_V6 || physics === PHYSICS_V7) {
+  if (physics === PHYSICS_V6 || coasts(physics)) {
     return Math.max(1, Math.trunc((clamped * 20_000) / 10_000));
   }
   const base = Math.trunc((clamped * MAX_SPEED) / 10_000);
@@ -335,7 +413,7 @@ function damp(b: Ball, physics: string) {
   const speed = isqrt(b.vx * b.vx + b.vy * b.vy);
   // v7 keeps creeping until the roll is too slow to see. Older ids still
   // freeze under 70 so a stored rack replays the stop it was played with.
-  const rest = physics === PHYSICS_V7 ? 18 : 70;
+  const rest = coasts(physics) ? 18 : 70;
   if (speed < rest) {
     b.vx = 0;
     b.vy = 0;
@@ -403,7 +481,7 @@ function advance(
   let scratched = false;
   for (const b of balls) {
     if (b.pocketed) continue;
-    const hole = pocketId(b);
+    const hole = pocketId(b) ?? jawPocket(b.x, b.y, physics);
     if (hole != null) {
       b.pocketed = true;
       b.vx = 0;

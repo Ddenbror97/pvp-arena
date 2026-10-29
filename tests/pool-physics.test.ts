@@ -8,8 +8,13 @@ import {
   PHYSICS_V5,
   PHYSICS_V6,
   PHYSICS_V7,
+  PHYSICS_V8,
   POCKETS,
+  CORNER_CUT,
+  SIDE_CUT,
   cushionLimit,
+  cushionOpen,
+  jawPocket,
   pocketAtPoint,
   TABLE_H,
   TABLE_W,
@@ -106,6 +111,74 @@ describe("pool physics", () => {
     expect(obj && cue && obj.x).toBeGreaterThan(cue.x);
   });
 
+  it("cuts every pocket jaw so a straight ball falls and the rail still holds", () => {
+    const wall = cushionLimit(PHYSICS_V8);
+    expect(jawPocket(wall.minX + 10_000, wall.minY - 1, PHYSICS_V8)).toBe(0);
+    expect(jawPocket(TABLE_W / 2, wall.minY - 1, PHYSICS_V8)).toBe(1);
+    expect(jawPocket(wall.maxX - 10_000, wall.minY - 1, PHYSICS_V8)).toBe(2);
+    expect(jawPocket(wall.minX + 10_000, wall.maxY + 1, PHYSICS_V8)).toBe(3);
+    expect(jawPocket(TABLE_W / 2, wall.maxY + 1, PHYSICS_V8)).toBe(4);
+    expect(jawPocket(wall.maxX - 10_000, wall.maxY + 1, PHYSICS_V8)).toBe(5);
+    expect(jawPocket(wall.minX - 1, wall.minY + 10_000, PHYSICS_V8)).toBe(0);
+    expect(jawPocket(wall.maxX + 1, wall.maxY - 10_000, PHYSICS_V8)).toBe(5);
+    expect(jawPocket(wall.minX + CORNER_CUT, wall.minY - 1, PHYSICS_V8)).toBe(0);
+    expect(jawPocket(wall.minX + CORNER_CUT + 1, wall.minY - 1, PHYSICS_V8)).toBeNull();
+    expect(jawPocket(TABLE_W / 2 + SIDE_CUT, wall.minY - 1, PHYSICS_V8)).toBe(1);
+    expect(jawPocket(TABLE_W / 2 + SIDE_CUT + 1, wall.minY - 1, PHYSICS_V8)).toBeNull();
+    expect(jawPocket(wall.minX + 10_000, wall.minY, PHYSICS_V8)).toBeNull();
+    expect(jawPocket(wall.minX + 10_000, wall.minY - 1, PHYSICS_V7)).toBeNull();
+    expect(cushionOpen(wall.minX + 10_000, wall.minY + BALL_R, PHYSICS_V8)).toBe(true);
+    expect(cushionOpen(700_000, wall.minY, PHYSICS_V8)).toBe(false);
+    expect(cushionOpen(TABLE_W / 2, wall.minY, PHYSICS_V7)).toBe(true);
+
+    const aim = (pocketId: number, physics: string, offset: number) => {
+      const pocket = POCKETS[pocketId];
+      if (!pocket) throw new Error("pocket");
+      const dx = pocket.x - TABLE_W / 2;
+      const dy = pocket.y - TABLE_H / 2;
+      const len = Math.hypot(dx, dy);
+      const ux = dx / len;
+      const uy = dy / len;
+      const dist = 350_000;
+      const x = Math.round(pocket.x - ux * dist - uy * offset);
+      const y = Math.round(pocket.y - uy * dist + ux * offset);
+      const angle = Math.round((Math.atan2(pocket.y - y, pocket.x - x) * 180_000) / Math.PI);
+      const angleMilli = ((angle % 360_000) + 360_000) % 360_000;
+      return simulate([still(0, x, y)], shot({ angleMilli, power: 6_000 }), false, physics);
+    };
+    for (const id of [0, 1, 2, 3, 4, 5]) {
+      for (const offset of [0, 12_000, -12_000, 25_000, -25_000]) {
+        const made = aim(id, PHYSICS_V8, offset);
+        expect(made.pocketOf[0], `v8 pocket ${id} offset ${offset}`).toBe(id);
+      }
+    }
+    expect(aim(5, PHYSICS_V7, 0).pocketed).not.toContain(0);
+    expect(aim(3, PHYSICS_V7, 0).pocketed).not.toContain(0);
+    expect(aim(0, PHYSICS_V7, 0).pocketed).not.toContain(0);
+
+    const rail = simulate(
+      [still(0, 700_000, 400_000)],
+      shot({ angleMilli: 270_000, power: 6_000 }),
+      false,
+      PHYSICS_V8,
+    );
+    const cue = rail.balls.find((ball) => ball.id === 0);
+    expect(cue?.pocketed).toBe(false);
+    expect(cue && cue.y).toBeGreaterThanOrEqual(wall.minY);
+    expect(cue && cue.x).toBeGreaterThan(wall.minX);
+    expect(cue && cue.x).toBeLessThan(wall.maxX);
+
+    const shortRail = simulate(
+      [still(0, 400_000, Math.floor(TABLE_H / 2))],
+      shot({ angleMilli: 180_000, power: 6_000 }),
+      false,
+      PHYSICS_V8,
+    );
+    const side = shortRail.balls.find((ball) => ball.id === 0);
+    expect(side?.pocketed).toBe(false);
+    expect(side && side.x).toBeGreaterThanOrEqual(wall.minX);
+  });
+
   it("pockets a ball aimed into a corner", () => {
     const pocket = POCKETS[5];
     expect(pocket).toBeTruthy();
@@ -149,6 +222,9 @@ describe("pool physics", () => {
     expect(launchSpeed(10_000, PHYSICS_V7)).toBe(20_000);
     expect(launchSpeed(5_000, PHYSICS_V7)).toBe(10_000);
     expect(launchSpeed(1, PHYSICS_V7)).toBe(2);
+    expect(launchSpeed(10_000, PHYSICS_V8)).toBe(20_000);
+    expect(launchSpeed(5_000, PHYSICS_V8)).toBe(10_000);
+    expect(launchSpeed(1, PHYSICS_V8)).toBe(2);
     expect(launchSpeed(10_000)).toBe(20_000);
     expect(rollDrop(14_000, PHYSICS_V2)).toBe(4 + Math.trunc(14_000 / 900));
     expect(rollDrop(28_000, PHYSICS_V3)).toBe(2 + Math.trunc(28_000 / 1_500));
@@ -157,8 +233,10 @@ describe("pool physics", () => {
     expect(rollDrop(20_000, PHYSICS_V6)).toBe(2 + Math.trunc(20_000 / 260));
     expect(rollDrop(20_000, PHYSICS_V7)).toBe(1 + Math.trunc(20_000 / 340));
     expect(rollDrop(800, PHYSICS_V7)).toBe(1 + Math.trunc(800 / 340));
+    expect(rollDrop(20_000, PHYSICS_V8)).toBe(rollDrop(20_000, PHYSICS_V7));
+    expect(rollDrop(800, PHYSICS_V8)).toBe(rollDrop(800, PHYSICS_V7));
     expect(rollDrop(14_000, PHYSICS_V1)).toBe(32 + Math.trunc(14_000 / 160));
-    expect(freshTable(new Uint8Array(32)).physics).toBe(PHYSICS_V7);
+    expect(freshTable(new Uint8Array(32)).physics).toBe(PHYSICS_V8);
   });
 
   it("sends a full-power smash farther than the previous roll", () => {
@@ -488,9 +566,9 @@ describe("pool rules", () => {
     const eight = state.balls.find((b) => b.id === 8);
     const pocket = POCKETS[2];
     if (!cue || !eight || !pocket) throw new Error("setup");
-    eight.x = pocket.x - 140_000;
-    eight.y = pocket.y + 10_000;
-    cue.x = eight.x - 110_000;
+    eight.x = pocket.x - 180_000;
+    eight.y = pocket.y + 60_000;
+    cue.x = eight.x - 90_000;
     cue.y = eight.y;
     const sim = simulate(state.balls, shot({ angleMilli: 0, power: 8000 }));
     expect(sim.pocketOf[8]).toBe(2);
