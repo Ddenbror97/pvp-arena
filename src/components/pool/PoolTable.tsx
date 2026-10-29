@@ -21,7 +21,7 @@ import {
   type BallSprite,
 } from "@/lib/pool/spheres";
 import { buildTable, whenTableArt } from "@/lib/pool/table-paint";
-import { nextReplayFrame } from "@/lib/pool/replay-pace";
+import { nextReplayFrame, REPLAY_FRAME_MS, replayPocketed } from "@/lib/pool/replay-pace";
 import { ballRadiusPx, spanPx, viewOf } from "@/lib/pool/view";
 import {
   aimStep,
@@ -135,6 +135,10 @@ type Motion = {
   rot: number[];
   falling: number | null;
   done: boolean;
+  /** True after this ball has been drawn on the cloth. A ball that starts down does not sink again. */
+  seenUp: boolean;
+  holeX: number;
+  holeY: number;
 };
 
 type Pose = { x: number; y: number; angle: number; power: number };
@@ -310,21 +314,19 @@ function blendBalls(a: readonly Ball[], b: readonly Ball[], t: number, into: Bal
     const from = a[i];
     const to = b[i];
     if (!from || !to) continue;
-    const pocketed = k > 0.35 ? to.pocketed : from.pocketed;
     let row = into[i];
     if (!row) {
       row = { ...from };
       into[i] = row;
     }
     row.id = to.id;
-    row.pocketed = pocketed;
+    row.pocketed = replayPocketed(from.pocketed, to.pocketed, k);
     row.spin = to.spin;
     row.vx = to.vx;
     row.vy = to.vy;
-    if (from.pocketed || to.pocketed) {
-      const held = to.pocketed ? to : from;
-      row.x = held.x;
-      row.y = held.y;
+    if (from.pocketed && to.pocketed) {
+      row.x = to.x;
+      row.y = to.y;
     } else {
       row.x = from.x + (to.x - from.x) * k;
       row.y = from.y + (to.y - from.y) * k;
@@ -594,8 +596,8 @@ type Stroke = {
   released?: boolean;
 };
 
-/** Wall-clock time for each recorded frame. A shorter step hands the cue back sooner after a shot. */
-const REPLAY_FRAME_MS = 6;
+/** How long a ball takes to travel the last step into the hole. */
+const SINK_MS = 240;
 
 /** The other player's live aim. x and y are set while they place the cue ball. */
 export type WatchedAim = {
@@ -908,32 +910,41 @@ export function PoolTable({
             rot: identityOrientation(),
             falling: null,
             done: false,
+            seenUp: false,
+            holeX: ball.x,
+            holeY: ball.y,
           };
           motion.set(ball.id, m);
         }
         const placedCue = !replaying && ball.id === 0 && ghost != null;
         if (ball.pocketed && !placedCue) {
           if (m.falling == null && !m.done) {
+            // Already down at the start of this picture. Replaying the drop flashes a ball that left earlier.
+            if (!m.seenUp) {
+              m.done = true;
+              continue;
+            }
             m.falling = now;
-            m.x = ball.x;
-            m.y = ball.y;
+            m.holeX = ball.x;
+            m.holeY = ball.y;
           }
           if (m.falling != null && !m.done) {
             const age = now - m.falling;
-            if (age < 190) {
-              const k = 1 - age / 190;
+            if (age < SINK_MS) {
+              const k = age / SINK_MS;
               sprites.push({
                 ball,
-                x: m.x,
-                y: m.y,
-                fade: 0.2 + k * 0.8,
-                scale: 0.22 + k * 0.78,
+                x: m.x + (m.holeX - m.x) * k,
+                y: m.y + (m.holeY - m.y) * k,
+                fade: 1 - k * 0.82,
+                scale: 1 - k * 0.62,
               });
               again = true;
             } else m.done = true;
           }
           continue;
         }
+        m.seenUp = true;
         m.falling = null;
         m.done = false;
         const drawX = placedCue && ghost ? ghost.x : ball.x;
