@@ -24,7 +24,7 @@ import {
 } from "@/lib/pool/spheres";
 import { buildTable, whenTableArt } from "@/lib/pool/table-paint";
 import { nextReplayFrame } from "@/lib/pool/replay-pace";
-import { ballRadiusPx, railBox, spanPx, viewOf } from "@/lib/pool/view";
+import { ballRadiusPx, spanPx, viewOf } from "@/lib/pool/view";
 import {
   aimStep,
   CUE_STICK_LEN,
@@ -150,6 +150,55 @@ type PlayHead = {
 
 function aimDir(angleMilli: number) {
   return { x: cosMicro(angleMilli) / 1_000_000, y: sinMicro(angleMilli) / 1_000_000 };
+}
+
+/** Same chroma as the jackpot ring, spun once every four seconds. */
+const POCKET_LAMP = [
+  "oklch(0.74 0.25 25)",
+  "oklch(0.88 0.2 90)",
+  "oklch(0.82 0.22 145)",
+  "oklch(0.76 0.17 220)",
+  "oklch(0.64 0.25 290)",
+  "oklch(0.72 0.25 340)",
+  "oklch(0.74 0.25 25)",
+];
+
+function pocketChroma(ctx: CanvasRenderingContext2D, x: number, y: number, spin: number) {
+  if (typeof ctx.createConicGradient !== "function") return "hsl(280 100% 64%)";
+  const glow = ctx.createConicGradient(spin, x, y);
+  for (let i = 0; i < POCKET_LAMP.length; i++) glow.addColorStop(i / (POCKET_LAMP.length - 1), POCKET_LAMP[i]!);
+  return glow;
+}
+
+/** Lamp on a pocket mouth. The hole stays open; the light sits on the rim. */
+function drawPocketLamp(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  radius: number,
+  now: number,
+  selected: boolean,
+) {
+  const ring = radius * 1.22;
+  const spin = ((now % 4000) / 4000) * Math.PI * 2;
+  const color = selected ? "rgb(255, 214, 90)" : pocketChroma(ctx, x, y, spin);
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.filter = `blur(${Math.max(8, radius * 0.55)}px) saturate(1.35)`;
+  ctx.globalAlpha = selected ? 0.8 : 0.9;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = Math.max(7, radius * 0.36);
+  ctx.beginPath();
+  ctx.arc(x, y, ring, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.filter = "none";
+  ctx.globalAlpha = 1;
+  ctx.lineWidth = Math.max(2.2, radius * 0.1);
+  ctx.strokeStyle = selected ? "rgb(255, 236, 180)" : color;
+  ctx.beginPath();
+  ctx.arc(x, y, ring, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
 }
 
 /** Ghost ball, object path, and the first cushion. Always on while a cue is aiming. */
@@ -388,25 +437,25 @@ function drawCue(
   stick(ctx, along(0.64), along(0.655), width * 0.9, width * 0.96, "#1c140e");
 
   const wrap = ctx.createLinearGradient(along(0.66).x, along(0.66).y, along(0.9).x, along(0.9).y);
-  wrap.addColorStop(0, "#3a2a1c");
-  wrap.addColorStop(0.5, "#24180f");
-  wrap.addColorStop(1, "#4a3422");
+  wrap.addColorStop(0, "#8d6240");
+  wrap.addColorStop(0.45, "#5c3d28");
+  wrap.addColorStop(1, "#a07850");
   stick(ctx, along(0.655), along(0.9), width * 1.02, width * 1.22, wrap);
   stick(
     ctx,
     shift(along(0.68), -width * 0.28),
     shift(along(0.88), -width * 0.32),
-    width * 0.06,
-    width * 0.07,
-    "rgba(255, 220, 170, 0.22)",
+    width * 0.1,
+    width * 0.12,
+    "rgba(255, 224, 180, 0.72)",
   );
 
   const buttWood = ctx.createLinearGradient(along(0.9).x, along(0.9).y, butt.x, butt.y);
-  buttWood.addColorStop(0, "#8d5a2e");
-  buttWood.addColorStop(1, "#4a2c16");
+  buttWood.addColorStop(0, "#c4894a");
+  buttWood.addColorStop(1, "#8d5a2e");
   stick(ctx, along(0.9), along(0.975), width * 1.18, width * 1.34, buttWood);
-  stick(ctx, along(0.97), butt, width * 1.28, width * 1.22, "#14110e");
-  stick(ctx, along(0.985), butt, width * 0.7, width * 0.55, "#c4a574");
+  stick(ctx, along(0.97), butt, width * 1.28, width * 1.22, "#3a2416");
+  stick(ctx, along(0.985), butt, width * 0.9, width * 0.7, "#e6c48a");
 
   stick(ctx, along(0.018), along(0.072), width * 0.58, width * 0.66, "#f6f3ec");
   stick(ctx, along(0.068), along(0.084), width * 0.66, width * 0.7, "#1a120c");
@@ -621,7 +670,6 @@ export function PoolTable({
 }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
   const cueRef = useRef<HTMLCanvasElement>(null);
-  const rgbRef = useRef<HTMLDivElement>(null);
   const cueBox = useRef({ ox: 0, oy: 0, w: 0, h: 0 });
   const stickFit = useRef(1);
   const cacheRef = useRef<{ w: number; h: number; canvas: HTMLCanvasElement } | null>(null);
@@ -747,15 +795,6 @@ export function PoolTable({
       if (!cacheRef.current || cacheRef.current.w !== w || cacheRef.current.h !== h) {
         const painted = buildTable(w, h);
         if (painted) cacheRef.current = { w, h, canvas: painted };
-        const rgb = rgbRef.current;
-        if (rgb) {
-          const box = railBox(w, h, dpr);
-          rgb.style.left = `${box.left}px`;
-          rgb.style.top = `${box.top}px`;
-          rgb.style.width = `${box.width}px`;
-          rgb.style.height = `${box.height}px`;
-          rgb.style.setProperty("--pool-rail", `${box.rail}px`);
-        }
       }
       const view = viewOf(w, h);
       const { project, innerW } = view;
@@ -1093,28 +1132,15 @@ export function PoolTable({
 
       const choosing = callingRef.current && calledRef.current == null;
       if (choosing || calledRef.current != null) {
-        const hue = (now / 14) % 360;
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         for (const pocket of POCKETS) {
           const selected = calledRef.current === pocket.id;
           if (!choosing && !selected) continue;
           const p = project(pocket.x, pocket.y);
           const radius = spanPx(innerW, p.scale, pocket.r);
-          const color = selected ? "rgb(255, 214, 74)" : `hsl(${(hue + pocket.id * 58) % 360} 100% 62%)`;
-          ctx.save();
-          ctx.globalAlpha = 1;
-          ctx.strokeStyle = color;
-          ctx.lineWidth = Math.max(4, dpr * 3.2);
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, radius * 1.45, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.globalAlpha = selected ? 0.55 : 0.7;
-          ctx.lineWidth = Math.max(10, dpr * 8);
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, radius * 1.45, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.restore();
+          drawPocketLamp(ctx, p.x, p.y, radius, reduce ? 0 : now, selected);
         }
-        if (choosing) again = true;
+        if (choosing && !reduce) again = true;
       }
 
       const aimedFrom = showCue && from && !replaying ? from : null;
@@ -1441,16 +1467,6 @@ export function PoolTable({
           endGesture(false);
         }}
       />
-      <div ref={rgbRef} className="pool-rgb" aria-hidden>
-        <div className="pool-rgb-bloom-wrap">
-          <div className="pool-rgb-band pool-rgb-bloom">
-            <div className="pool-rgb-spin" />
-          </div>
-        </div>
-        <div className="pool-rgb-band pool-rgb-core">
-          <div className="pool-rgb-spin" />
-        </div>
-      </div>
     </>
   );
 }
