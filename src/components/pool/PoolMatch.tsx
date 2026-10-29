@@ -16,6 +16,12 @@ import {
   STAND_IN_STROKE_MS,
   standInDue,
 } from "@/lib/pool/stand-in";
+import {
+  standInRackAction,
+  standInRackReady,
+  standInShouldAim,
+  type StandInTableView,
+} from "@/lib/pool/stand-in-show";
 import { rollStandIn, warmStandIn } from "@/lib/pool/stand-in-roll";
 import { MAX_PULL_POWER } from "@/lib/pool/aim-gesture";
 import { recordShot } from "@/lib/pool/play";
@@ -83,6 +89,25 @@ function shotKey(input: ShotInput): string {
     input.placeY ?? "",
     input.calledPocket ?? "",
   ].join(":");
+}
+
+function standInLive(
+  status: string | undefined,
+  standIn: PoolView["stand_in"],
+  table: TableState | null,
+  events: PoolView["events"] | undefined,
+): StandInTableView {
+  const last = events?.[events.length - 1];
+  const mark = last?.event;
+  return {
+    status: status ?? "",
+    standIn: standIn === "A" || standIn === "B" ? standIn : null,
+    turn: table?.turn ?? null,
+    shot: table?.shot ?? 0,
+    winner: table?.winner ?? null,
+    lastKind: last?.kind ?? null,
+    lastStandIn: mark?.["standIn"] === true || mark?.["standIn"] === "true",
+  };
 }
 
 function seatOf(view: PoolView, userId: string | null): "A" | "B" | null {
@@ -185,6 +210,62 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const released = useRef(false);
   const liveRoll = useRef<{ shot: number; failed: boolean } | null>(null);
   const [rollNonce, setRollNonce] = useState(0);
+  /** Pre-shot rack for the stand-in cue. The server rack replaces it only after the shot is watched. */
+  const [heldRack, setHeldRack] = useState<Ball[] | null>(null);
+  const [presentTick, setPresentTick] = useState(0);
+  const showShot = useRef<number | null>(null);
+  const showMatch = useRef<number | null>(null);
+  const framesShot = useRef<number | null>(null);
+  const watchedShot = useRef<number | null>(null);
+  const rollGen = useRef(0);
+  const shotRef = useRef(0);
+  shotRef.current = state?.shot ?? 0;
+  const abortStandIn = useRef<() => void>(() => {});
+  abortStandIn.current = () => {
+    rollGen.current += 1;
+    showShot.current = null;
+    showMatch.current = null;
+    framesShot.current = null;
+    readyStroke.current = null;
+    pullFinished.current = false;
+    released.current = false;
+    shotLive.current = false;
+    liveRoll.current = null;
+    lined.current = null;
+    previewKey.current = null;
+    previewHash.current = null;
+    previewTable.current = null;
+    previewFrames.current = null;
+    serverReady.current = false;
+    heldPreview.current = false;
+    setHeldRack(null);
+    setSystemShot(null);
+    setFrames(null);
+    setStroke(null);
+    setPulling(false);
+    setPresentTick((n) => n + 1);
+  };
+  const finishStandIn = useRef<() => boolean>(() => false);
+  finishStandIn.current = () => {
+    const shown = showShot.current;
+    if (shown == null || !standInRackReady(shown, shotRef.current)) return false;
+    watchedShot.current = shown;
+    showShot.current = null;
+    framesShot.current = null;
+    if (lined.current === shown) lined.current = null;
+    if (liveRoll.current?.shot === shown) liveRoll.current = null;
+    readyStroke.current = null;
+    previewKey.current = null;
+    previewHash.current = null;
+    previewTable.current = null;
+    previewFrames.current = null;
+    serverReady.current = false;
+    heldPreview.current = false;
+    setHeldRack(null);
+    setSystemShot(null);
+    setPresentTick((n) => n + 1);
+    return true;
+  };
   const tableHash = view?.state_hash ?? null;
   const physicsId = view?.state?.physics ?? null;
   const noiseAt = useRef(0);
@@ -210,11 +291,21 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   const onReplayDone = useCallback((finished?: readonly Ball[][] | null) => {
     if (finished && finished !== framesRef.current) return;
     const thisPreview = previewFrames.current != null && finished === previewFrames.current;
-    if (previewKey.current && !serverReady.current && thisPreview) {
+    // The stand-in rack stays on the last frame until the server shot is in.
+    if (
+      showShot.current != null &&
+      framesShot.current === showShot.current &&
+      !standInRackReady(showShot.current, shotRef.current)
+    ) {
       heldPreview.current = true;
       return;
     }
-    if (thisPreview) {
+    const showed = finishStandIn.current();
+    if (!showed && previewKey.current && !serverReady.current && thisPreview) {
+      heldPreview.current = true;
+      return;
+    }
+    if (thisPreview || showed) {
       previewKey.current = null;
       previewHash.current = null;
       previewTable.current = null;
@@ -348,17 +439,9 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     const shotN = view.state?.shot ?? -1;
     const undo = () => {
       if (serverReady.current) return;
-      shotLive.current = false;
-      readyStroke.current = null;
-      previewKey.current = null;
-      previewHash.current = null;
-      previewTable.current = null;
-      previewFrames.current = null;
-      if (released.current) {
-        released.current = false;
-        setFrames(null);
-        setStroke(null);
-      }
+      // The shot is already on the server. Dropping the picture would skip the balls.
+      if (showShot.current != null && standInRackReady(showShot.current, shotRef.current)) return;
+      abortStandIn.current();
     };
     const tick = () => {
       const due = standInDue(deadline, Date.now() - skew, seconds);
@@ -407,7 +490,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   useEffect(() => {
     const shots = shotsRef.current;
     if (!serverSeed || !shots?.length || reduce || !physicsId) {
-      if (previewKey.current) return;
+      if (previewKey.current || showShot.current != null) return;
       setFrames(null);
       setStroke(null);
       return;
@@ -415,6 +498,13 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     const last = shots[shots.length - 1];
     if (!last || last.kind !== "shot") {
       if (previewKey.current && last?.kind !== "timeout" && last?.kind !== "forfeit") return;
+      if (
+        (last?.kind === "timeout" || last?.kind === "forfeit") &&
+        showShot.current != null
+      ) {
+        abortStandIn.current();
+        return;
+      }
       previewKey.current = null;
       previewHash.current = null;
       previewTable.current = null;
@@ -435,6 +525,19 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       state != null &&
       state.shot === liveRoll.current.shot + 1;
     const storedKey = shotKey(input.input);
+    // The cue already finished. The server rack can take over even if the
+    // stored power differs from the aim that was on screen.
+    if (
+      heldPreview.current &&
+      showShot.current != null &&
+      state != null &&
+      standInRackReady(showShot.current, state.shot)
+    ) {
+      finishStandIn.current();
+      setFrames(null);
+      setStroke(null);
+      return;
+    }
     // The worker already owns this stand-in. Replaying it here hitches the cue
     // and skips the ball that cue is aimed at.
     if (owned && previewKey.current !== storedKey) return;
@@ -453,7 +556,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           state: linked,
         };
       }
-      if (heldPreview.current) {
+      if (heldPreview.current && (showShot.current == null || finishStandIn.current())) {
         previewKey.current = null;
         previewHash.current = null;
         previewTable.current = null;
@@ -467,6 +570,16 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     }
     // Balls are already leaving on the local roll. A second sequence restarts them.
     if (tableShot && framesRef.current) return;
+    // The local cue owns this shot. A server replay would skip the ball it is on.
+    if (tableShot && showShot.current != null && !liveRoll.current?.failed) return;
+    if (
+      tableShot &&
+      watchedShot.current != null &&
+      state != null &&
+      state.shot === watchedShot.current + 1
+    ) {
+      return;
+    }
     let cancel = false;
     const timer = window.setTimeout(() => {
       if (cancel || (tableShot && framesRef.current)) return;
@@ -491,7 +604,10 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         previewHash.current = played.hash;
         previewTable.current = played.state;
         previewFrames.current = played.sequence;
-        if (tableShot) released.current = true;
+        if (tableShot) {
+          released.current = true;
+          framesShot.current = showShot.current;
+        }
         setFrames(played.sequence);
         setStroke(
           played.cue
@@ -554,13 +670,28 @@ export function PoolMatch({ matchId }: { matchId: number }) {
   }, [eightShot]);
   const ghost = mine && state?.ballInHand ? place : null;
   useEffect(() => {
-    if (!serverSeed || !state || liveStatus !== "PLAYING" || state.winner || reduce || !physicsId) {
-      setSystemShot(null);
+    const live = standInLive(liveStatus, view?.stand_in, state, shotsRef.current);
+    if (showShot.current != null && showMatch.current !== liveId) {
+      abortStandIn.current();
       return;
     }
-    const away = view?.stand_in;
-    if ((away !== "A" && away !== "B") || state.turn !== away) {
-      setSystemShot(null);
+    const action = standInRackAction(showShot.current, live);
+    // The server shot lands while the cue is still drawing. Keep this rack and
+    // this roll; cancelling here is what made the aimed ball vanish.
+    if (action === "keep") return;
+    if (action === "abort") {
+      abortStandIn.current();
+      return;
+    }
+    if (
+      !serverSeed ||
+      !state ||
+      reduce ||
+      !physicsId ||
+      state.winner ||
+      !standInShouldAim(live)
+    ) {
+      if (showShot.current == null) setSystemShot(null);
       return;
     }
     const bytes = bytesFromHex(serverSeed);
@@ -570,31 +701,31 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     }
     const table = state;
     const id = physicsId;
-    if (lined.current !== table.shot) {
-      lined.current = table.shot;
-      pullFinished.current = false;
-      released.current = false;
-      shotLive.current = true;
-      readyStroke.current = null;
-      // The aim is geometry. The roll happens off this thread, so the draw can start now.
-      setSystemShot(planStandInShot(table, bytes));
-    }
     const shotN = table.shot;
+    showShot.current = shotN;
+    showMatch.current = liveId ?? null;
+    setHeldRack(table.balls.map((ball) => ({ ...ball })));
+    lined.current = shotN;
+    pullFinished.current = false;
+    released.current = false;
+    shotLive.current = true;
+    readyStroke.current = null;
+    heldPreview.current = false;
+    serverReady.current = false;
+    // The aim is geometry. The roll happens off this thread, so the draw can start now.
+    setSystemShot(planStandInShot(table, bytes));
     liveRoll.current = { shot: shotN, failed: false };
-    if (readyStroke.current) return;
-    let cancel = false;
+    const myGen = rollGen.current;
     void rollStandIn(table, bytes, id)
       .then((played) => {
+        if (rollGen.current !== myGen || lined.current !== shotN) return;
         if (!played) {
-          if (!cancel && lined.current === shotN) {
-            liveRoll.current = { shot: shotN, failed: true };
-            setRollNonce((n) => n + 1);
-          }
+          liveRoll.current = { shot: shotN, failed: true };
+          setRollNonce((n) => n + 1);
           return;
         }
         const key = shotKey(played.shot);
         if (previewKey.current === key && readyStroke.current?.hash === played.hash) return;
-        const aimingThis = lined.current === shotN && !cancel;
         const stroke = {
           x: played.cue.x,
           y: played.cue.y,
@@ -604,13 +735,6 @@ export function PoolMatch({ matchId }: { matchId: number }) {
           ghost: true,
           released: true,
         };
-        if (!aimingThis) {
-          if (framesRef.current) return;
-          setFrames(played.sequence);
-          setStroke(stroke);
-          cueSound(played.shot.power);
-          return;
-        }
         readyStroke.current = {
           key,
           sequence: played.sequence,
@@ -626,17 +750,19 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         if (!pullFinished.current || released.current || !shotLive.current) return;
         released.current = true;
         previewFrames.current = played.sequence;
+        framesShot.current = shotN;
         setFrames(played.sequence);
         setStroke(stroke);
         cueSound(played.shot.power);
       })
       .catch(() => {
-        if (cancel || lined.current !== shotN) return;
+        if (rollGen.current !== myGen || lined.current !== shotN) return;
         liveRoll.current = { shot: shotN, failed: true };
         setRollNonce((n) => n + 1);
       });
     return () => {
-      cancel = true;
+      // A server tick keeps showShot on this number. Only a real abort drops the roll.
+      if (showShot.current !== shotN) rollGen.current += 1;
     };
     // `state` is read on the render whose hash or shot changed. Depending on the
     // object would resimulate on every one-second poll and hitch the cue pull.
@@ -651,6 +777,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     liveStatus,
     physicsId,
     reduce,
+    presentTick,
+    liveId,
   ]);
   const onCuePulled = useCallback(() => {
     pullFinished.current = true;
@@ -658,6 +786,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     if (!ready || released.current || !shotLive.current) return;
     released.current = true;
     previewFrames.current = ready.sequence;
+    framesShot.current = showShot.current;
     setFrames(ready.sequence);
     setStroke(ready.stroke);
     cueSound(ready.stroke.power);
@@ -1001,7 +1130,8 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     systemWatch && systemWatch.x != null && systemWatch.y != null
       ? { x: systemWatch.x, y: systemWatch.y }
       : ghost;
-  const balls = state?.balls ?? [];
+  // The committed rack arrives while the cue is still on the ball. Hold the aim's rack.
+  const balls = heldRack ?? state?.balls ?? [];
   const groupA = state ? seatGroup(state, "A") : null;
   const groupB = state ? seatGroup(state, "B") : null;
   const lastEvent = view.events[view.events.length - 1];
