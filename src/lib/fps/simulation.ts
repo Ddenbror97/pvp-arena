@@ -1,4 +1,5 @@
 import { ARENA, BOXES, EYE_HEIGHT, PLAYER_RADIUS, SPAWNS } from "./map";
+import { spreadScale } from "./handling";
 import {
   validateInput,
   type Input,
@@ -166,19 +167,29 @@ function rayBox(origin: Vector, direction: Vector, center: Vector, size: Vector)
   return near;
 }
 
-function shoot(state: MatchState, seat: Seat, now: number, positions: Record<Seat, Vector>): void {
+function shoot(
+  state: MatchState,
+  seat: Seat,
+  now: number,
+  positions: Record<Seat, Vector>,
+  input: Input,
+): void {
   const p = state.players[seat],
     target = state.players[other(seat)],
     stats = WEAPONS[p.weapon];
   const start = positions[seat],
     targetStart = positions[other(seat)];
   if (p.reloadUntil || !p.ammo || now - p.lastShotAt < stats.fireIntervalMs) return;
+  p.sprayCount = now - p.lastShotAt > 300 ? 1 : (p.sprayCount ?? 0) + 1;
+  const spread =
+    stats.recoil *
+    spreadScale(p.sprayCount, Math.hypot(input.forward, input.strafe) > 0.1, p.y > 0.01);
   p.ammo--;
   p.lastShotAt = now;
   // Integer hash gives reproducible spread without random state or client-supplied seeds.
   const hash = (Math.imul(p.lastSeq + 1, 1664525) + Math.imul(state.tick, 1013904223)) >>> 0;
-  const yaw = p.yaw + ((hash % 1001) / 500 - 1) * stats.recoil;
-  const pitch = p.pitch + (((hash >>> 10) % 1001) / 500 - 1) * stats.recoil;
+  const yaw = p.yaw + ((hash % 1001) / 500 - 1) * spread;
+  const pitch = p.pitch + (((hash >>> 10) % 1001) / 500 - 1) * spread;
   const direction = {
     x: -Math.sin(yaw) * Math.cos(pitch),
     y: Math.sin(pitch),
@@ -298,7 +309,7 @@ export function stepMatch(
   // Health changes cannot suppress the opponent's shot; adjudicate only afterward.
   for (const seat of SEATS) {
     const input = accepted[seat];
-    if (input?.fire && !input.sprint) shoot(state, seat, now, positions);
+    if (input?.fire && !input.sprint) shoot(state, seat, now, positions, input);
   }
   if (state.players.A.hp <= 0 || state.players.B.hp <= 0) {
     finishRound(

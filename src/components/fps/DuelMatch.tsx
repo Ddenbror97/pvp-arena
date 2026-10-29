@@ -378,6 +378,12 @@ export function DuelMatch({
         <i />
         <i />
       </div>
+      <div className="duel-hit-marker" aria-hidden>
+        <i />
+        <i />
+        <i />
+        <i />
+      </div>
       {frame?.state.events
         .filter((e) => ["hit", "headshot"].includes(e.type) && e.seat === seat)
         .map((e, i) => (

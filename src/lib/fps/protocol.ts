@@ -32,6 +32,8 @@ export interface Player {
   lastSeq: number;
   kills: number;
   headshots: number;
+  /** Server-owned burst length; cosmetic snapshots must never supply this in input. */
+  sprayCount?: number;
   /** Server-owned jump velocity, included in snapshots for prediction. y is feet height. */
   velocityY?: number;
 }
