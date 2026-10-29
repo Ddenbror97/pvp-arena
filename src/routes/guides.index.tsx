@@ -131,7 +131,7 @@ function GuidesHub() {
           Guide library
         </p>
         <h1 className="mt-3 max-w-3xl font-display text-3xl leading-tight sm:text-5xl">
-          Crypto casino guides
+          Gambling guides: casino games, odds and crypto
         </h1>
         <p className="mt-5 max-w-2xl leading-relaxed text-muted-foreground">
           {guides.length} guides in {clusters.length} topics. Open a topic, then a guide. Skill

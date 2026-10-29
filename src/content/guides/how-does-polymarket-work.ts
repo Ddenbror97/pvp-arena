@@ -3,6 +3,7 @@ import type { Guide } from "./types";
 export const guide: Guide = {
   slug: "how-does-polymarket-work",
   cluster: "Prediction markets",
+  pillar: true,
   keyword: "how does polymarket work",
   secondary: ["polymarket shares", "polymarket usdc", "polymarket odds"],
   title: "How Does Polymarket Work? Shares, Odds and USDC Payouts",
