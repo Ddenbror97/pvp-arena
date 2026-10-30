@@ -1,6 +1,42 @@
 import { test, expect } from "@playwright/test";
 import { fixture } from "./helpers/fps-fixture";
 
+test("barrel flash stays at the muzzle and expires between shots", async ({ page }) => {
+  await fixture(page);
+  const flash = await page.evaluate(async () => {
+    const flashPath = "/src/lib/fps/muzzle-flash.ts",
+      weaponPath = "/src/lib/fps/weapon.ts";
+    const { createMuzzleFlash } = await import(flashPath),
+      { AK_MUZZLE } = await import(weaponPath);
+    const effect = createMuzzleFlash();
+    const idle = effect.root.visible;
+    effect.update(28, AK_MUZZLE.z, AK_MUZZLE.y, 1);
+    const shot = {
+      visible: effect.root.visible,
+      z: effect.root.position.z,
+      y: effect.root.position.y,
+      opacity: effect.root.children[0].material.opacity,
+    };
+    effect.update(7, AK_MUZZLE.z, AK_MUZZLE.y, 1);
+    const fading = effect.root.children[0].material.opacity;
+    effect.update(-1, AK_MUZZLE.z, AK_MUZZLE.y, 1);
+    const expired = effect.root.visible;
+    effect.root.traverse((object: { geometry?: { dispose: () => void } }) =>
+      object.geometry?.dispose(),
+    );
+    effect.root.children[0].material.dispose();
+    effect.dispose();
+    return { idle, shot, fading, expired, barrel: AK_MUZZLE };
+  });
+  expect(flash.idle).toBe(false);
+  expect(flash.shot.visible).toBe(true);
+  expect(flash.shot.y).toBe(flash.barrel.y);
+  expect(flash.shot.z).toBeCloseTo(flash.barrel.z - 0.008);
+  expect(flash.fading).toBeLessThan(flash.shot.opacity);
+  expect(flash.expired).toBe(false);
+  await page.evaluate(() => Reflect.get(window, "fpsPolishTest").dispose());
+});
+
 test("the AK uses the supplied image on volumetric furniture, with real sight apertures", async ({
   page,
 }) => {

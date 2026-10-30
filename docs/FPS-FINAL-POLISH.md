@@ -1,5 +1,32 @@
 # FPS field polish — final-polish.png reference
 
+## Grip, floor-logo and muzzle follow-up
+
+![Latest real renderer capture](screenshots/fps-grip-polish.png)
+
+`view-hands.ts` replaces the capsule hands with cupped palms, curved fingers,
+thumbs and joined wrists. The support hand wraps under the AK handguard;
+the firing hand wraps the pistol grip. Each hand's fixed parts are baked by
+material into four total draws; reload and pistol poses retain separate groups.
+
+The floor logo now fits within the field of view and uses opaque alpha-tested,
+depth-writing paint above the reflection plane. Its transparent texels preserve
+the concrete underneath. Mountains gain stratified colors, slope-based vegetation,
+rock relief and partially buried, slope-aligned instanced outcrops.
+
+`muzzle-flash.ts` replaces the solid cone with shared soft crossed flash cards.
+The flash sits at the barrel exit, varies its orientation per confirmed shot,
+fades quickly and disappears between shots. It retains the existing shot events,
+brief light pulse and smoke. It allocates no objects during automatic fire.
+
+Eight relevant Chrome checks passed, including a barrel-position/fade regression
+and actual movement, crouch, jump, full-auto release, reload and impacts. Targeted
+lint, app TypeScript and production build passed. The final 120-frame moving-camera
+sample measured 13.9 ms median / 20.8 ms p95 locally; performance remains hardware
+dependent. This follow-up is local and is not deployed.
+
+## Original daylight pass
+
 This pass follows the user's sunny industrial arena reference: blue cloudy sky,
 rocky surroundings, dark reflective concrete, warm wall fixtures, purple edge
 lighting, large floor branding and a branded first-person AK.

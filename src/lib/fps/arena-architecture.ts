@@ -154,7 +154,17 @@ export function addArenaArchitecture(scene: THREE.Scene, branding: THREE.Materia
       }
     }
     // Exact native brand artwork on the floor, with painted ring and lane markings.
-    const floorLogo = logoPlane(8.2, 4.4, 0, 0.008, side * 9);
+    const floorLogo = logoPlane(5.8, 3.1, 0, 0.012, side * 7.7);
+    floorLogo.name = `floor-logo-${side}`;
+    // Opaque alpha-tested paint sorts with the floor rather than behind its reflection.
+    const floorPaint = logoMaterial.clone();
+    floorPaint.transparent = false;
+    floorPaint.depthWrite = true;
+    floorPaint.roughness = 0.9;
+    floorPaint.metalness = 0;
+    floorPaint.polygonOffset = true;
+    floorPaint.polygonOffsetFactor = -2;
+    floorLogo.material = floorPaint;
     floorLogo.rotation.x = -Math.PI / 2;
     floorLogo.rotation.z = side === 1 ? 0 : Math.PI;
     for (const x of [-9.9, 9.9])
@@ -237,17 +247,65 @@ export function addArenaArchitecture(scene: THREE.Scene, branding: THREE.Materia
   }
   terrain.setAttribute("color", new THREE.BufferAttribute(colors, 3));
   terrain.computeVertexNormals();
+  // Stratified rock and vegetation follow the actual terrain slope, not a flat backdrop.
+  const normals = terrain.getAttribute("normal");
+  const cliffColor = new THREE.Color(),
+    mossColor = new THREE.Color(0x233a23);
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i),
+      z = p.getZ(i),
+      height = p.getY(i);
+    const strata = Math.sin(height * 2.6 + Math.sin(x * 0.16) + z * 0.08) * 0.018;
+    cliffColor.fromArray(colors, i * 3).offsetHSL(0, 0.03, strata);
+    const vegetation =
+      THREE.MathUtils.smoothstep(normals.getY(i), 0.72, 0.94) *
+      THREE.MathUtils.smoothstep(Math.sin(x * 0.29) * Math.cos(z * 0.23), -0.1, 0.6) *
+      0.65;
+    cliffColor.lerp(mossColor, vegetation);
+    colors.set([cliffColor.r, cliffColor.g, cliffColor.b], i * 3);
+  }
   const rock = new THREE.TextureLoader().load("/fps/concrete-albedo-v2.webp");
   rock.colorSpace = THREE.SRGBColorSpace;
   rock.wrapS = rock.wrapT = THREE.RepeatWrapping;
   rock.repeat.set(28, 28);
   textures.push(rock);
+  const rockBump = rock.clone();
+  rockBump.colorSpace = THREE.NoColorSpace;
+  textures.push(rockBump);
   const mountains = new THREE.Mesh(
     terrain,
-    new THREE.MeshStandardMaterial({ map: rock, vertexColors: true, roughness: 1 }),
+    new THREE.MeshStandardMaterial({
+      map: rock,
+      bumpMap: rockBump,
+      bumpScale: 0.55,
+      vertexColors: true,
+      roughness: 1,
+    }),
   );
   mountains.name = "distant-nonplayable-mountains";
   scene.add(mountains);
+  // One static draw for broken outcrops on the high slopes.
+  const outcrops = new THREE.InstancedMesh(
+    new THREE.IcosahedronGeometry(1, 0),
+    new THREE.MeshStandardMaterial({ color: 0xffffff, map: rock, roughness: 1 }),
+    160,
+  );
+  outcrops.name = "mountain-rock-outcrops";
+  const rockPose = new THREE.Object3D();
+  let rockCount = 0;
+  for (let i = 0; i < p.count && rockCount < 160; i += 37) {
+    if (p.getY(i) < 10 || normals.getY(i) < 0.8 || Math.hypot(p.getX(i), p.getZ(i)) > 130) continue;
+    const slopeNormal = new THREE.Vector3().fromBufferAttribute(normals, i);
+    rockPose.position.set(p.getX(i), p.getY(i), p.getZ(i)).addScaledVector(slopeNormal, -0.45);
+    rockPose.scale.set(0.8 + (i % 5) * 0.15, 0.55 + (i % 3) * 0.05, 0.9 + (i % 7) * 0.1);
+    rockPose.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), slopeNormal);
+    rockPose.rotateY(i * 0.71);
+    rockPose.updateMatrix();
+    outcrops.setColorAt(rockCount, cliffColor.fromArray(colors, i * 3));
+    outcrops.setMatrixAt(rockCount++, rockPose.matrix);
+  }
+  outcrops.count = rockCount;
+  scene.add(outcrops);
   const sky = new Sky();
   sky.scale.setScalar(400);
   sky.material.uniforms["turbidity"]!.value = 2;

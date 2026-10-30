@@ -8,6 +8,8 @@ import { createArenaEnvironment } from "./environment";
 import { createImpactEffects } from "./impacts";
 import { createWeaponKit, AK_MUZZLE } from "./weapon";
 import { createWetFloor } from "./floor-polish";
+import { createViewHands } from "./view-hands";
+import { createMuzzleFlash } from "./muzzle-flash";
 
 export type ArenaFrame = {
   state: MatchState;
@@ -157,15 +159,8 @@ export function mountArena(
     part.layers.set(1);
     pistolPart.add(part);
   }
-  const muzzle = new THREE.Mesh(
-    new THREE.ConeGeometry(0.035, 0.12, 6),
-    new THREE.MeshBasicMaterial({ color: 0xffcf88 }),
-  );
-  muzzle.rotation.x = -Math.PI / 2;
-  muzzle.position.set(0, 0.018, -0.58);
-  muzzle.layers.set(1);
-  weaponGroup.add(muzzle);
-  muzzle.visible = false;
+  const muzzle = createMuzzleFlash();
+  weaponGroup.add(muzzle.root);
   const smokeMaterial = new THREE.MeshBasicMaterial({
     color: 0xbcb3cb,
     transparent: true,
@@ -212,53 +207,8 @@ export function mountArena(
     bumpMap: weave,
     bumpScale: 0.0018,
   });
-  for (const [x, y, z, rx] of [
-    [0.035, -0.115, 0.13, -0.3],
-    [-0.05, -0.055, -0.22, -1.1],
-  ]) {
-    const hand = new THREE.Mesh(new THREE.CapsuleGeometry(0.028, 0.045, 4, 8), glove);
-    hand.position.set(x!, y!, z!);
-    hand.rotation.x = rx!;
-    hand.layers.set(1);
-    weaponGroup.add(hand);
-    const palm = new THREE.Vector3(x!, y!, z!),
-      elbow = new THREE.Vector3(x! > 0 ? 0.24 : -0.33, -0.45, x! > 0 ? 0.35 : 0.22);
-    const direction = palm.clone().sub(elbow);
-    const cloth = new THREE.CylinderGeometry(0.034, 0.072, direction.length(), 16, 18);
-    const clothPoints = cloth.getAttribute("position");
-    for (let i = 0; i < clothPoints.count; i++) {
-      const y = clothPoints.getY(i),
-        angle = Math.atan2(clothPoints.getZ(i), clothPoints.getX(i));
-      const fold =
-        1 +
-        Math.sin(y * 125 + Math.sin(angle * 3) * 1.5) * 0.055 +
-        Math.cos(angle * 5 + y * 40) * 0.025;
-      clothPoints.setXYZ(i, clothPoints.getX(i) * fold, y, clothPoints.getZ(i) * fold);
-    }
-    cloth.computeVertexNormals();
-    const wrist = new THREE.Mesh(cloth, sleeve);
-    wrist.position.copy(palm).add(elbow).multiplyScalar(0.5);
-    wrist.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
-    wrist.layers.set(1);
-    weaponGroup.add(wrist);
-    const cuff = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.038, 0.034, 16), glove);
-    cuff.position.copy(palm).addScaledVector(direction, -0.02);
-    cuff.quaternion.copy(wrist.quaternion);
-    cuff.layers.set(1);
-    weaponGroup.add(cuff);
-    const thumb = new THREE.Mesh(new THREE.CapsuleGeometry(0.011, 0.032, 4, 8), glove);
-    thumb.position.set(x! - 0.018, y! + 0.012, z! - 0.02);
-    thumb.rotation.set(0.3, 0, -0.6);
-    thumb.layers.set(1);
-    weaponGroup.add(thumb);
-    for (let finger = 0; finger < 4; finger++) {
-      const grip = new THREE.Mesh(new THREE.CapsuleGeometry(0.008, 0.028, 3, 5), glove);
-      grip.position.set(x! + 0.012, y! - 0.025 + finger * 0.012, z! - 0.015);
-      grip.rotation.z = Math.PI / 2;
-      grip.layers.set(1);
-      weaponGroup.add(grip);
-    }
-  }
+  const hands = createViewHands(glove, sleeve);
+  weaponGroup.add(hands.root);
   const wetFloor = createWetFloor(scene, environment.floorRoughness, [
     characters.A.root,
     characters.B.root,
@@ -434,12 +384,13 @@ export function mountArena(
       actor.root.rotation.y = other.yaw;
       actor.update(dt, now, other.pitch, other.hp > 0, !!other.crouched);
     }
-    muzzle.visible = now < muzzleUntil;
+
     const renderedWeapon = state && seat ? state.players[seat].weapon : weapon;
     const barrel = renderedWeapon === "rifle" ? AK_MUZZLE.z : -0.225;
-    muzzle.position.z = barrel - 0.06;
-    flashLight.position.set(0, 0.015, barrel);
-    flashLight.intensity = muzzle.visible ? 2.5 : 0;
+    const barrelY = renderedWeapon === "rifle" ? AK_MUZZLE.y : 0;
+    muzzle.update(muzzleUntil - now, barrel, barrelY, shotIndex);
+    flashLight.position.set(0, barrelY, barrel - 0.02);
+    flashLight.intensity = muzzle.root.visible ? 2.5 : 0;
     smoke.visible = now < smokeUntil;
     smokeMaterial.opacity = smoke.visible ? Math.max(0, (smokeUntil - now) / 240) * 0.13 : 0;
     smoke.position.set(0, 0.025 + (1 - Math.max(0, (smokeUntil - now) / 240)) * 0.08, barrel);
@@ -458,6 +409,7 @@ export function mountArena(
       ? Math.min(1, reloadRemaining / WEAPONS[renderedWeapon].reloadMs)
       : 0;
     const reloadTilt = reloadRemaining ? Math.sin(reloadProgress * Math.PI) : 0;
+    hands.update(renderedWeapon === "pistol", reloadTilt);
     magazine.position.y = -reloadTilt * 0.08;
     magazine.rotation.x = reloadTilt * 0.14;
     chargingHandle.position.z = -0.04 + kick * 0.008;
@@ -600,6 +552,7 @@ export function mountArena(
       artDisposed = true;
       logoTexture.dispose();
       weave.dispose();
+      muzzle.dispose();
       weaponKit.dispose();
       environment.dispose();
       wetFloor.dispose();
