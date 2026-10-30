@@ -827,3 +827,50 @@
   min-height: 42px;
   margin-top: 0;
 }
+/* Keep the action visible at common laptop heights without shrinking text. */
+.strike-games {
+  height: min(920px, calc(100svh - 104px));
+}
+.strike-panel {
+  padding: 16px 20px;
+}
+.strike-panel-heading {
+  margin-bottom: 14px;
+}
+.strike-fieldset {
+  margin-bottom: 14px;
+}
+.strike-entry-status {
+  min-height: 32px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+.strike-quote {
+  gap: 7px;
+  margin: 12px 0;
+  padding: 10px 0;
+}
+.strike-consent {
+  margin: 12px 0;
+}
+.strike-panel-footnote {
+  margin-top: 10px;
+}
+.strike-invitation {
+  padding: 12px 20px;
+}
+.strike-tabs button {
+  padding-top: 16px;
+  padding-bottom: 12px;
+}
+@media (max-width: 1023px) {
+  .strike-games {
+    height: 740px;
+  }
+}
+@media (max-width: 680px) {
+  .strike-games {
+    height: 720px;
+    min-height: 720px;
+  }
+}
