@@ -25,32 +25,39 @@ logout, administrative session deletion, session not-after expiry, an actual
 integrity and produced one refund with exact balance restoration. Permanent
 unit/integration tests cover the race and malformed-response boundaries.
 
-## Six remaining moderate dependency findings
+## UUID dependency remediation
 
-The latest audit reports zero critical/high and six moderate findings, all from
-one inherited UUID advisory chain:
+The six inherited findings are fixed. A clean lockfile install and npm audit now
+report zero vulnerabilities at every severity. The two vulnerable UUID 9.0.1
+copies are removed; SDK and MetaMask utils versions are unchanged.
 
-- `@metamask/connect-evm` 2.1.1: direct SDK; latest published version checked.
-- `@metamask/connect-multichain` 1.2.0: inherits mobile/RPC/utils findings.
-- `@metamask/mobile-wallet-protocol-dapp-client` 0.3.0: includes utils 9.3.0.
-- `@metamask/rpc-errors` 7.0.3: inherits utils.
-- `@metamask/utils` 11.12.1 and nested 9.3.0: inherit UUID 9.0.1.
-- `uuid` 9.0.1: lacks output-buffer bounds checks in v3/v5/v6.
+The fix pins UUID 11.1.1 only beneath the exact verified parents
+`@metamask/utils@9.3.0` and `@metamask/utils@11.12.1`. This is intentionally
+outside those parents' declared UUID 9.x range. It is a reviewed, version-scoped
+compatibility decision, not an unrestricted override or npm audit fix --force.
+Other MetaMask packages already use this same patched UUID version.
 
-The [maintainer advisory](https://github.com/uuidjs/uuid/security/advisories/GHSA-w5hq-g745-h8pq)
-identifies caller-provided buffers/offsets in v3/v5/v6; v4 checks its bounds. The
-inspected installed MetaMask utils code references UUID through `v4()` in its
-Node filesystem helper. No affected v3/v5/v6 buffer call was found in the
-application or inspected MetaMask paths. FPS simulation/admission use native
-Web Crypto and do not import the MetaMask SDK.
+The [upstream advisory](https://github.com/uuidjs/uuid/security/advisories/GHSA-w5hq-g745-h8pq)
+and [11.1.1 changelog](https://github.com/uuidjs/uuid/blob/v11.1.1/CHANGELOG.md)
+identify the backported buffer-bounds fix. Version 11.1.1 retains both CommonJS
+and ESM, unlike later ESM-only releases. Inspection of both installed utils
+versions found UUID used only as `uuid.v4()` in their filesystem helper.
 
-This is bounded reachability review, not a claim that the package graph has no
-vulnerable code. An uninspected or future caller could expose the affected API.
-The latest utils 12.0.1 is outside the installed 11.x/9.x dependency contracts;
-the latest direct SDK still inherits the older contracts. No compatible normal
-update removes the complete chain. No forced major UUID/MetaMask override or
-`npm audit fix --force` was applied. Recheck on SDK updates and before public
-cash authorization. Acceptance of this residual risk is pending user approval.
+Permanent regression tests resolve UUID from both actual MetaMask consumer
+contexts, load their real CJS and ESM helpers, check unique v4 paths and the
+unchanged deterministic/random-buffer v4 contract, and require v3/v5/v6 to
+reject short buffers, negative offsets and overflow without partial writes.
+All 14 new cases and the existing 25 wallet cases passed.
+
+The actual browser SDK bundle also initialized its EVM client/provider and
+cleanly disconnected in Chromium with analytics disabled. No wallet permissions,
+signatures, transactions or external requests were made. That test passed with
+zero page errors. A complete release rerun is required for this updated lockfile;
+previous release evidence remains historical until that rerun completes.
+
+The exact parent-version selectors deliberately require fresh review when the
+SDK or utils versions change. This resolves the advisory rather than accepting
+its remaining risk; the former dependency waiver is no longer requested.
 
 ## Competitive fairness and limits
 

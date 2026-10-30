@@ -1,11 +1,20 @@
 # FPS controlled-release verification — 2026-10-30
 
-Decision: **NO GO pending the UUID/MetaMask residual-risk approval.**
+Decision: **NO GO while the dependency-fixed candidate completes validation.**
 Source and production artifact scans passed; the frozen commit and build
 identifiers are recorded in the generated release manifest and dashboard. All complete test
 suites below passed. Production remains unchanged. This decision concerns a
 cash-disabled practice release; it never authorizes public cash, deposits,
 withdrawals or other production financial operations.
+
+## Dependency remediation update
+
+The six UUID findings have been fixed with a version-scoped compatibility pin.
+Clean install audit: zero vulnerabilities; 14 new consumer/advisory regression
+cases plus 25 existing wallet cases passed. The actual browser SDK initialized
+and disconnected without external requests. Full release validation is being
+repeated on the new dependency candidate. Counts below describe the preceding
+candidate until this report is refreshed with the new run.
 
 ## Complete verification
 
@@ -108,7 +117,7 @@ chain. The reviewed call paths use UUID v4; the advisory affects v3/v5/v6 with
 caller-supplied buffers. No reachable affected call was identified in FPS or the
 inspected wallet paths. Compatible upstream ranges do not remove the whole
 chain; no forced major override was applied. See the separate security review.
-Residual-risk approval for the cash-disabled release is pending.
+The version-scoped fix and compatibility evidence supersede this earlier risk assessment; see the updated security review.
 
 Server authority, rate bounds, hitboxes, one-use admission, private-room access,
 visibility filtering, result integrity and recovery are tested. Server latency
