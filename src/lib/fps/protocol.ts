@@ -1,5 +1,13 @@
 export type Seat = "A" | "B";
 export type Weapon = "rifle" | "pistol";
+export type RoundStats = {
+  shots: number;
+  hits: number;
+  headHits: number;
+  damage: number;
+  health: number;
+};
+export type RoundRecap = { round: number; winner: Seat | null; players: Record<Seat, RoundStats> };
 
 export interface Input {
   /** Combat input semantics, negotiated independently of the wire envelope. */
@@ -48,6 +56,7 @@ export interface Player {
 }
 
 export interface MatchState {
+  lastRound?: RoundRecap;
   /** Missing in pre-upgrade checkpoints: retain their original combat rules. */
   combatVersion?: 1 | 2;
   v: 1;
@@ -85,7 +94,12 @@ export interface MatchState {
     };
   }>;
   /** Persist with snapshots on the server; never accept this from a client. */
-  server?: { lastStepAt: number; draws: number; spreadSeed?: number };
+  server?: {
+    lastStepAt: number;
+    draws: number;
+    spreadSeed?: number;
+    roundStats?: Record<Seat, RoundStats>;
+  };
 }
 
 const KEYS = [

@@ -25,13 +25,37 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
   const latest = new Map<Page, MatchState>(),
     seats = new Map<Page, string>(),
     errors: string[] = [];
+  const dialogs: string[] = [];
+  const timings: Record<string, number> = {};
+  const requests: Array<{ path: string; ms: number }> = [];
+  const breaks = new Map<number, number>();
   for (const p of [page, other]) {
+    p.on("requestfinished", (r) => {
+      if (r.method() === "POST" && r.url().startsWith(baseURL))
+        requests.push({ path: new URL(r.url()).pathname, ms: Math.round(r.timing().responseEnd) });
+    });
+    p.on("dialog", (d) => {
+      dialogs.push(d.type());
+      void d.dismiss();
+    });
+    await p.addInitScript(() => {
+      const resume = AudioContext.prototype.resume;
+      AudioContext.prototype.resume = function () {
+        return resume
+          .call(this)
+          .then(() => new Promise<void>((resolve) => setTimeout(resolve, 1500)));
+      };
+    });
     p.on("pageerror", (e) => errors.push(e.message));
     p.on("websocket", (ws) =>
       ws.on("framereceived", ({ payload }) => {
         try {
           const data = JSON.parse(payload.toString());
-          if (data.type === "snapshot") latest.set(p, data.state);
+          if (data.type === "snapshot") {
+            latest.set(p, data.state);
+            if (p === page && data.state.phase === "round-end" && !breaks.has(data.state.round))
+              breaks.set(data.state.round, data.state.phaseEndsAt - data.serverNow);
+          }
           if (data.type === "welcome") seats.set(p, data.seat);
         } catch {
           /* not a JSON state frame */
@@ -74,9 +98,11 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     await page.getByRole("tab", { name: "Create game", exact: true }).click();
     await page.getByRole("button", { name: "$1.00", exact: true }).click();
     await page.getByLabel("I accept this entry", { exact: false }).check();
+    const createAt = Date.now();
     await page.getByRole("button", { name: "Create game", exact: true }).click();
     await expect(page).toHaveURL(/\/fps\/[a-f0-9-]{36}/);
     matchId = new URL(page.url()).pathname.split("/").at(-1)!;
+    timings.createToRoomMs = Date.now() - createAt;
     await expect(page.getByRole("heading", { name: /Room created/ })).toBeVisible();
     const room = other.locator(".strike-room-list li").filter({
       hasText: (await sql`select username from profiles where id=${users[0].id}`)[0].username,
@@ -86,12 +112,23 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     await expect(review.getByText("$1.90", { exact: true })).toBeVisible();
     await expect(review.getByRole("button", { name: "Join for $1.00" })).toBeDisabled();
     await review.getByLabel("I accept this room’s entry", { exact: false }).check();
+    const joinAt = Date.now();
     await review.getByRole("button", { name: "Join for $1.00" }).click();
     await expect(other).toHaveURL(new RegExp("/fps/" + matchId));
+    timings.joinToRoomMs = Date.now() - joinAt;
     for (const p of [other, page]) {
       const ready = p.getByRole("button", { name: "Ready & enter arena", exact: true });
       await expect(ready).toBeEnabled({ timeout: 45000 });
       await ready.click();
+      await expect
+        .poll(() => p.evaluate(() => !!document.pointerLockElement), {
+          timeout: 1000,
+          intervals: [10],
+        })
+        .toBe(true);
+      await expect(p.getByRole("button", { name: "Ready & enter arena", exact: true })).toHaveCount(
+        0,
+      );
     }
     await expect.poll(() => latest.get(page)?.phase).toBe("live");
     expect(seats.get(page)).toBe("A");
@@ -152,6 +189,37 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
         await page.waitForTimeout(250);
       }
       expect(latest.get(page)!.players.B.hp).toBe(0);
+      if (round < 3) {
+        const card = page.locator(".duel-round-card");
+        await expect(card).toBeVisible();
+        await expect(card.locator("article")).toHaveCount(1);
+        await expect(card.locator(".duel-round-avatar")).toHaveCount(1);
+        const recap = latest.get(page)!.lastRound!;
+        expect(recap.round).toBe(round);
+        expect(recap.players.A.shots).toBeGreaterThan(0);
+        expect(recap.players.A.damage).toBe(100);
+        await expect(
+          card
+            .locator("article")
+            .first()
+            .getByText(`${Math.round((recap.players.A.hits / recap.players.A.shots) * 100)}%`, {
+              exact: true,
+            }),
+        ).toBeVisible();
+        await expect(card.locator("article").first().locator("strong")).toHaveText(
+          (await sql`select username from profiles where id=${users[0].id}`)[0].username,
+        );
+        await expect(card.getByRole("button")).toHaveCount(0);
+        expect(await page.evaluate(() => !!document.pointerLockElement)).toBe(true);
+        expect(breaks.get(round)).toBeGreaterThan(2600);
+        expect(breaks.get(round)).toBeLessThanOrEqual(3000);
+        await expect(card.locator(".duel-victory-halo")).toHaveCount(1);
+        await page.screenshot({ path: `test-results/flow-round-recap-${round}.png` });
+        await expect
+          .poll(() => `${latest.get(page)?.round}:${latest.get(page)?.phase}`, { timeout: 5000 })
+          .toBe(`${round + 1}:live`);
+        await expect(card).not.toBeVisible();
+      }
       console.log(`Paid browser round ${round} completed`);
     }
     await expect(
@@ -182,6 +250,17 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
       contentType: "application/json",
     });
     expect(errors).toEqual([]);
+    expect(dialogs).toEqual([]);
+    await expect.poll(() => page.evaluate(() => document.pointerLockElement === null)).toBe(true);
+    await page.getByRole("button", { name: "Accept fresh rematch", exact: true }).click();
+    await expect(
+      page.getByRole("button", { name: "Confirm new entry", exact: true }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Keep result", exact: true }).click();
+    await info.attach("room-entry-timings", {
+      body: JSON.stringify({ ...timings, requests }),
+      contentType: "application/json",
+    });
   } finally {
     await contextB.close();
     await sql.end({ timeout: 2 });
