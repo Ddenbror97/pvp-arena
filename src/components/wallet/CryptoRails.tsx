@@ -682,8 +682,8 @@ export function CryptoRails({
                 )}
                 {withdrawAsset && !withdrawAsset.payout_ready ? (
                   <p className="text-xs text-destructive">
-                    {withdrawAsset.asset_key} withdrawals are temporarily unavailable while that
-                    payout wallet is refilled. Choose another asset or try again later.
+                    {withdrawAsset.asset_key} withdrawals are temporarily unavailable while we
+                    verify payout availability. Try again shortly or choose another asset.
                   </p>
                 ) : null}
                 <div className="space-y-1.5">
