@@ -1,59 +1,91 @@
 .strike-lobby {
-  max-width: 1680px;
-  margin: auto;
-  padding: 28px 24px 40px;
   color: #f5f3ff;
+  background: #08070f;
+  overflow-x: clip;
 }
 .strike-stage {
-  background: linear-gradient(125deg, #1b1529, #111219 65%);
-  border: 1px solid #ffffff14;
-  border-radius: 16px;
+  position: relative;
+  isolation: isolate;
+  min-height: calc(100svh - 4rem);
   overflow: hidden;
 }
+.strike-stage-room {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  background: #15101e;
+}
+.strike-stage-room img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  max-width: none;
+}
+.strike-stage-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, #060510b8 0%, #09051324 35%, #09051305 60%, #09051364 100%),
+    linear-gradient(0deg, #08070fb8, transparent 40%);
+}
 .strike-stage-body {
+  max-width: 2000px;
+  min-height: inherit;
+  margin: auto;
   display: grid;
-  grid-template-columns: 210px minmax(0, 1fr) 340px;
+  grid-template-columns: 230px minmax(0, 1fr) 340px;
+  align-items: center;
   gap: 28px;
   padding: 28px;
 }
 .strike-kicker {
-  font-size: 10px;
+  font-size: 9px;
+  letter-spacing: 0.12em;
   font-weight: 700;
-  letter-spacing: 0.13em;
-  color: #b59bcc;
+  color: #d2b7e9;
+}
+.strike-intro {
+  align-self: start;
+  padding-top: 22px;
+  text-shadow: 0 2px 14px #000;
 }
 .strike-intro h1 {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 30px;
+  font-size: 32px;
   letter-spacing: -1.5px;
   font-weight: 800;
-  margin: 25px 0 12px;
   white-space: nowrap;
+  margin: 24px 0 12px;
 }
 .strike-intro h1 > svg {
   width: 28px;
   height: 28px;
-  color: #bf7bff;
+  color: #cc8cff;
 }
 .strike-intro h1 span span {
-  color: #c184ff;
+  color: #ce9bff;
 }
 .strike-tagline {
-  font-size: 18px;
-  font-weight: 650;
+  font-size: 16px;
+  font-weight: 700;
 }
 .strike-lead {
-  font-size: 13px;
-  line-height: 1.7;
-  color: #aaa5b8;
+  font-size: 12px;
+  line-height: 1.9;
+  color: #e0d6eb;
   margin-top: 12px;
 }
 .strike-facts {
   display: grid;
-  gap: 24px;
-  margin: 36px 0;
+  gap: 22px;
+  margin: 38px 0;
   list-style: none;
   padding: 0;
 }
@@ -65,7 +97,7 @@
 .strike-facts svg {
   width: 20px;
   height: 20px;
-  color: #bd84f0;
+  color: #d8acff;
   flex-shrink: 0;
 }
 .strike-facts strong,
@@ -73,28 +105,32 @@
   display: block;
 }
 .strike-facts strong {
-  font-size: 13px;
+  font-size: 12px;
 }
 .strike-facts span {
-  font-size: 11px;
-  color: #a29caf;
-  line-height: 1.5;
+  font-size: 10px;
+  color: #dbd1e5;
+  line-height: 1.7;
   margin-top: 3px;
 }
 .strike-desktop-note {
   font-size: 10px;
-  color: #8e879f;
+  color: #c7b6d7;
 }
 .strike-showcase {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   min-width: 0;
-  align-self: center;
+  padding: 24px 0 12px;
 }
 .strike-matchup {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 14px;
-  margin-bottom: 20px;
+  text-shadow: 0 2px 8px #000;
 }
 .strike-matchup > div {
   display: flex;
@@ -113,12 +149,12 @@
 .strike-matchup small {
   display: block;
   font-size: 10px;
-  color: #a69db7;
+  color: #e6d7f3;
   margin-top: 3px;
 }
 .strike-matchup > b {
-  font-size: 11px;
-  color: #b591db;
+  font-size: 12px;
+  color: #e1bdff;
 }
 .strike-seat-avatar {
   width: 40px !important;
@@ -126,8 +162,8 @@
   flex-shrink: 0;
   display: grid;
   place-items: center;
-  border: 1px solid #bb7af54d;
-  background: #a55ce314;
+  border: 1px solid #d5a9ff99;
+  background: #160e2bb3;
   border-radius: 50%;
 }
 .strike-open-seat {
@@ -135,63 +171,36 @@
 }
 .strike-open-seat svg {
   width: 18px;
-  color: #ba95d8;
+  color: #e3c3fc;
 }
-.strike-preview {
-  position: relative;
-  margin: 0;
-  overflow: hidden;
-  border-radius: 10px;
-  border: 1px solid #af69e945;
-  background: #17111f;
-  aspect-ratio: 8/5;
-  box-shadow: 0 14px 50px #0006;
+.strike-arena-caption {
+  margin: auto 0 32px;
+  padding-top: 280px;
+  text-align: center;
+  text-shadow: 0 2px 15px #000;
 }
-.strike-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.strike-arena-caption > span {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: #d4b3f2;
+}
+.strike-arena-caption strong {
   display: block;
+  font-size: clamp(18px, 2vw, 32px);
+  font-weight: 800;
+  margin: 10px 0;
 }
-.strike-preview figcaption {
-  position: absolute;
-  inset: 45% 0 0;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  background: linear-gradient(transparent, #090710ee);
-}
-.strike-preview figcaption > span {
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  color: #dcc3f1;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.strike-preview i {
-  width: 5px;
-  height: 5px;
-  background: #bd80f5;
-  border-radius: 50%;
-}
-.strike-preview strong {
-  font-size: 22px;
-  letter-spacing: 0.08em;
-  margin: 5px 0;
-}
-.strike-preview small {
-  font-size: 11px;
-  color: #bfb6cb;
+.strike-arena-caption p {
+  font-size: 12px;
+  color: #ede4f5;
 }
 .strike-showcase-bottom {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  margin-top: 16px;
-  color: #a89bb8;
   font-size: 10px;
+  color: #eddbff;
+  text-shadow: 0 1px 8px #000;
 }
 .strike-showcase-bottom span {
   display: flex;
@@ -621,91 +630,176 @@
 .strike-open-seat strong {
   color: #c3b3d2;
 }
-@media (min-width: 1800px) {
-  .strike-stage-body {
-    grid-template-columns: 230px minmax(0, 1fr) 360px;
-    gap: 36px;
-    padding: 36px;
-  }
+
+.strike-games {
+  height: min(760px, calc(100svh - 120px));
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  background: #0d0b15e8;
+  box-shadow: 0 12px 45px #0005;
+  align-self: center;
+}
+.strike-tabs,
+.strike-invitation,
+.strike-resume,
+.strike-games > .strike-notice,
+.strike-games > .strike-error {
+  flex-shrink: 0;
+}
+.strike-panel {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+.strike-room-list {
+  max-height: none;
+}
+.strike-stakes {
+  min-height: 76px;
+  align-content: start;
+}
+.strike-empty {
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.strike-details {
+  max-width: 1600px;
+  margin: auto;
+  padding: 40px 28px;
+}
+.strike-rankings {
+  min-height: 150px;
+}
+.strike-rankings ol {
+  min-height: 100px;
 }
 @media (max-width: 1300px) {
   .strike-stage-body {
-    grid-template-columns: minmax(0, 1fr) 320px;
-    gap: 24px;
-  }
-  .strike-intro {
-    grid-column: 1/-1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    grid-template-columns: 200px minmax(0, 1fr) 310px;
     gap: 20px;
-  }
-  .strike-intro h1 {
-    margin: 0;
-  }
-  .strike-kicker,
-  .strike-intro .strike-lead,
-  .strike-desktop-note {
-    display: none;
-  }
-  .strike-facts {
-    display: none;
-  }
-  .strike-tagline {
-    font-size: 14px;
-    color: #ab99bc;
-  }
-  .strike-showcase {
-    align-self: start;
-  }
-}
-@media (max-width: 820px) {
-  .strike-lobby {
-    padding: 18px 12px 30px;
-  }
-  .strike-stage-body {
-    grid-template-columns: minmax(0, 1fr);
-    padding: 18px;
-    gap: 22px;
-  }
-  .strike-intro {
-    gap: 8px;
-    flex-wrap: wrap;
+    padding: 22px;
   }
   .strike-intro h1 {
     font-size: 27px;
   }
-  .strike-tagline {
-    font-size: 12px;
+  .strike-matchup strong {
+    max-width: 95px;
+  }
+  .strike-showcase-bottom {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .strike-facts span {
+    font-size: 10px;
+  }
+}
+@media (max-width: 1023px) {
+  .strike-stage-body {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 20px;
+  }
+  .strike-intro {
+    grid-column: 1;
+    grid-row: 1;
+    padding-top: 0;
+  }
+  .strike-facts,
+  .strike-lead,
+  .strike-desktop-note {
+    display: none;
+  }
+  .strike-intro h1 {
+    margin: 14px 0 8px;
+  }
+  .strike-showcase {
+    grid-column: 1;
+    grid-row: 2;
+    padding-top: 0;
   }
   .strike-games {
+    grid-column: 2;
+    grid-row: 1/3;
+    height: 720px;
+  }
+  .strike-stage-body {
+    min-height: 780px;
+    grid-template-rows: auto 1fr;
+  }
+  .strike-arena-caption {
+    padding-top: 140px;
+  }
+}
+@media (max-width: 680px) {
+  .strike-stage {
+    min-height: calc(100svh - 3.5rem);
+  }
+  .strike-stage-room {
+    height: calc(100lvh - 3.5rem);
+    bottom: auto;
+  }
+  .strike-stage-shade {
+    background: linear-gradient(0deg, #08070f 0%, #08070fbb 45%, #08070f33 85%);
+  }
+  .strike-stage-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 16px 32px;
+  }
+  .strike-intro {
+    align-self: stretch;
+  }
+  .strike-kicker {
+    font-size: 8px;
+  }
+  .strike-intro h1 {
+    font-size: 30px;
+  }
+  .strike-tagline {
+    font-size: 13px;
+  }
+  .strike-showcase {
     width: 100%;
+    min-height: 300px;
+    padding: 4px 0 12px;
   }
-  .strike-preview figcaption {
-    padding: 16px;
+  .strike-matchup strong {
+    max-width: 95px;
   }
-  .strike-preview strong {
-    font-size: 19px;
+  .strike-arena-caption {
+    padding-top: 80px;
+    margin: auto 0 24px;
   }
-  .strike-preview small {
+  .strike-arena-caption strong {
+    font-size: 20px;
+  }
+  .strike-arena-caption p {
     font-size: 10px;
   }
   .strike-showcase-bottom {
     font-size: 9px;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .strike-games {
+    width: 100%;
+    height: 720px;
+    min-height: 720px;
+  }
+  .strike-details {
+    padding: 28px 20px;
   }
   .strike-rule-grid {
     grid-template-columns: 1fr;
-    gap: 22px;
-  }
-  .strike-details {
-    padding: 28px 6px;
-  }
-  .strike-matchup strong {
-    max-width: 100px;
+    gap: 24px;
   }
   .strike-rankings li {
-    flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
   }
   .strike-rankings li small {
     display: none;
@@ -716,4 +810,20 @@
     animation: none !important;
     transition: none !important;
   }
+}
+
+.strike-matchup {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr);
+}
+.strike-matchup > b {
+  text-align: center;
+}
+.strike-open-seat {
+  justify-content: flex-end;
+}
+
+.strike-entry-status {
+  min-height: 42px;
+  margin-top: 0;
 }

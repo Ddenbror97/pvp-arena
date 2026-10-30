@@ -3053,3 +3053,6 @@ html.pool-noscroll, html.pool-noscroll body { overflow: hidden; overscroll-behav
   .pool-energy { right: 0.45rem; top: 42%; }
   .pool-energy-track, .pool-energy-fill { height: 7.2rem; background-size: 100% 7.2rem; }
 }
+
+/* Reserve the immersive viewport before its route/CSS chunks arrive. */
+.duel-root{position:fixed;inset:0;width:100vw;height:100dvh;overflow:hidden;background:#090910}

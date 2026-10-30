@@ -10,6 +10,8 @@ import { duelMoney, duelQuote, type DuelView } from "@/lib/fps/quote";
 import { supabase } from "@/integrations/supabase/client";
 import type { Input, Seat } from "@/lib/fps/protocol";
 import type { ArenaControls, ArenaFrame } from "@/lib/fps/renderer";
+import { loadArenaRenderer } from "@/lib/fps/renderer-loader";
+import { STRIKE_SHOWCASE } from "@/lib/fps/showcase";
 import "./duel.css";
 
 type Preview = DuelView & { username: string };
@@ -62,13 +64,14 @@ export function DuelMatch({
     [locked, setLocked] = useState(false),
     [connection, setConnection] = useState("Connecting"),
     [error, setError] = useState<string | null>(null),
+    [arenaReady, setArenaReady] = useState(false),
     [renderError, setRenderError] = useState<string | null>(null),
     [muted, setMuted] = useState(false),
     [busy, setBusy] = useState(false),
     [now, setNow] = useState(Date.now()),
     [ready, setReady] = useState(false),
     [seat, setSeat] = useState<Seat | null>(null);
-  const [desktop, setDesktop] = useState(true),
+  const [desktop, setDesktop] = useState<boolean | null>(null),
     [accepted, setAccepted] = useState(false),
     [copied, setCopied] = useState(false);
   const currentFrame = useRef<ArenaFrame | null>(null),
@@ -115,24 +118,32 @@ export function DuelMatch({
   useEffect(() => {
     if (!host.current || !desktop) return;
     let disposed = false;
-    void import("@/lib/fps/renderer").then(({ mountArena }) => {
-      if (disposed || !host.current) return;
-      try {
-        arena.current = mountArena(
-          host.current,
-          (input: Input) => {
-            if (socket.current?.readyState === WebSocket.OPEN)
-              socket.current.send(JSON.stringify(input));
-          },
-          setLocked,
-        );
-        if (currentFrame.current) arena.current.snapshot(currentFrame.current, seatRef.current);
-      } catch {
-        setRenderError(
-          "This browser could not start WebGL. Try a desktop browser with hardware acceleration.",
-        );
-      }
-    });
+    setArenaReady(false);
+    void loadArenaRenderer()
+      .then(({ mountArena }) => {
+        if (disposed || !host.current) return;
+        try {
+          arena.current = mountArena(
+            host.current,
+            (input: Input) => {
+              if (socket.current?.readyState === WebSocket.OPEN)
+                socket.current.send(JSON.stringify(input));
+            },
+            setLocked,
+          );
+          void arena.current.ready.then(() => {
+            if (!disposed) setArenaReady(true);
+          });
+          if (currentFrame.current) arena.current.snapshot(currentFrame.current, seatRef.current);
+        } catch {
+          setRenderError(
+            "This browser could not start WebGL. Try a desktop browser with hardware acceleration.",
+          );
+        }
+      })
+      .catch(() => {
+        if (!disposed) setRenderError("The arena download failed. Reload to retry.");
+      });
     return () => {
       disposed = true;
       arena.current?.dispose();
@@ -300,6 +311,7 @@ export function DuelMatch({
   }, [playable, userId, desktop, matchId, spectate, admission, qc]);
 
   const activate = async () => {
+    if (!arenaReady) return;
     try {
       if (!sound.current) sound.current = new AudioContext();
       await sound.current.resume();
@@ -358,7 +370,19 @@ export function DuelMatch({
     ? Math.max(0, Math.ceil((frame.state.phaseEndsAt - now - serverOffset.current) / 1000))
     : 0;
   return (
-    <div className="duel-game">
+    <div className="duel-game" data-arena-ready={arenaReady}>
+      {!arenaReady && (
+        <div className="duel-loading-backdrop" aria-hidden>
+          <img
+            src={STRIKE_SHOWCASE}
+            alt=""
+            width={1672}
+            height={941}
+            fetchPriority="high"
+            decoding="async"
+          />
+        </div>
+      )}
       <div className="duel-render-host" ref={host} />
       <header className="duel-hud-top">
         <Link to="/fps-duel" className="duel-back">
@@ -375,7 +399,7 @@ export function DuelMatch({
             <strong>
               {phase === "live"
                 ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
-                : "FPS DUEL"}
+                : "PVPSTRIKE"}
             </strong>
           </div>
           <span className={seat === "B" ? "you" : ""}>
@@ -457,7 +481,11 @@ export function DuelMatch({
           {me?.reloadUntil ? <em>RELOADING</em> : null}
         </div>
       </footer>
-      {((!spectate && !locked) || phase !== "live" || renderError || !desktop || terminal) && (
+      {((!spectate && !locked) ||
+        phase !== "live" ||
+        renderError ||
+        desktop === false ||
+        terminal) && (
         <div className="duel-game-overlay">
           <section className="duel-match-card">
             <span className="duel-eyebrow">THE FOUNDRY / PVP ORIGINALS</span>
@@ -606,19 +634,21 @@ export function DuelMatch({
                         : "Both players. Ready up."}
                 </h1>
                 <p>
-                  {spectate
-                    ? "Read-only view · delayed 5 seconds"
-                    : phase === "waiting"
-                      ? ready
-                        ? "Ready. Waiting for your opponent."
-                        : "Click to capture your mouse and confirm readiness."
-                      : "Your match keeps running while the mouse is released. Reconnect within 30 seconds if disconnected."}
+                  {!arenaReady
+                    ? "Loading arena models…"
+                    : spectate
+                      ? "Read-only view · delayed 5 seconds"
+                      : phase === "waiting"
+                        ? ready
+                          ? "Ready. Waiting for your opponent."
+                          : "Click to capture your mouse and confirm readiness."
+                        : "Your match keeps running while the mouse is released. Reconnect within 30 seconds if disconnected."}
                 </p>
                 {!spectate && (
                   <button
                     className="duel-primary"
                     onClick={() => void activate()}
-                    disabled={connection !== "Connected"}
+                    disabled={connection !== "Connected" || !arenaReady}
                   >
                     {active ? "Resume aiming" : "Ready & enter arena"}
                   </button>

@@ -1,6 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { prefetchGamePage } from "@/lib/first-paint";
+import { warmStrikeShowcase } from "@/lib/fps/showcase";
 import { warmSlotStage } from "@/lib/slott/stage";
 import { routeTree } from "./routeTree.gen";
 
@@ -8,8 +9,9 @@ import { routeTree } from "./routeTree.gen";
 // what makes a click instant; `downlink` estimates read low on healthy 4G, so they are not a gate.
 function preloadMode(): "intent" | false {
   if (typeof navigator === "undefined") return "intent";
-  const c = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } })
-    .connection;
+  const c = (
+    navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }
+  ).connection;
   if (c?.saveData || /(^|-)2g$/.test(c?.effectiveType ?? "")) return false;
   return "intent";
 }
@@ -46,6 +48,7 @@ export const getRouter = () => {
         "/poker",
         "/poker/$tableId",
         "/8-ball-pool",
+        "/fps-duel",
         "/pool",
         "/pool/$matchId",
         "/fairness",
@@ -58,6 +61,7 @@ export const getRouter = () => {
         const r = (router.routesByPath as unknown as Record<string, unknown>)[path];
         if (r) void router.loadRouteChunk(r as never)?.catch(() => {});
       }
+      warmStrikeShowcase();
       void import("@/lib/leaderboard/paint").then((m) => m.prefetchPublicList(queryClient));
       prefetchGamePage(queryClient, "/");
       prefetchGamePage(queryClient, "/coinflip");

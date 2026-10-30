@@ -17,6 +17,8 @@ import { useAuth } from "@/lib/auth";
 import { fetchDuelLobby, fetchDuelRankings, duelError } from "@/lib/fps/api";
 import { duelAction } from "@/lib/fps/duel.functions";
 import { duelMoney, duelQuote, type DuelLobbyData } from "@/lib/fps/quote";
+import { STRIKE_SHOWCASE } from "@/lib/fps/showcase";
+import { warmArenaRenderer } from "@/lib/fps/renderer-loader";
 import "./strike-lobby.css";
 
 type OpenRoom = DuelLobbyData["open"][number];
@@ -59,6 +61,7 @@ export function DuelLobby() {
   const lobby = useQuery({
     queryKey: ["fps-lobby", userId],
     queryFn: fetchDuelLobby,
+    staleTime: 5000,
     refetchInterval: 5000,
     retry: 1,
   });
@@ -119,6 +122,7 @@ export function DuelLobby() {
     const token = room ? `join:${room.id}` : `create:${stake}:${format}:${isPrivate}`;
     const key = keys.current.get(token) ?? crypto.randomUUID();
     keys.current.set(token, key);
+    warmArenaRenderer();
     setBusy(true);
     setError(null);
     try {
@@ -143,6 +147,17 @@ export function DuelLobby() {
   return (
     <div className="strike-lobby">
       <section className="strike-stage" aria-labelledby="strike-title">
+        <div className="strike-stage-room" aria-hidden>
+          <img
+            src={STRIKE_SHOWCASE}
+            alt=""
+            width={1672}
+            height={941}
+            fetchPriority="high"
+            decoding="async"
+          />
+        </div>
+        <div className="strike-stage-shade" aria-hidden />
         <div className="strike-stage-body">
           <div className="strike-intro">
             <span className="strike-kicker">PVP ORIGINALS / TACTICAL 1V1</span>
@@ -200,22 +215,11 @@ export function DuelLobby() {
                 </span>
               </div>
             </div>
-            <figure className="strike-preview">
-              <img
-                src="/fps/lobby-gameplay.jpg"
-                alt="In-game view of the PvPStrike Foundry arena and purple AK-47"
-                width="1440"
-                height="900"
-                fetchPriority="high"
-              />
-              <figcaption>
-                <span>
-                  <i /> IN-GAME PREVIEW
-                </span>
-                <strong>THE FOUNDRY</strong>
-                <small>Symmetrical cover. Every angle matters.</small>
-              </figcaption>
-            </figure>
+            <div className="strike-arena-caption">
+              <span>THE FOUNDRY</span>
+              <strong>Your next duel starts here.</strong>
+              <p>Choose an open game or create your own room.</p>
+            </div>
             <div className="strike-showcase-bottom">
               <span>
                 <Crosshair aria-hidden /> AK-47 + pistol
@@ -225,7 +229,16 @@ export function DuelLobby() {
             </div>
           </div>
 
-          <aside className="strike-games" aria-label="PvPStrike lobby">
+          <aside
+            className="strike-games"
+            aria-label="PvPStrike lobby"
+            onMouseEnter={() => {
+              if (userId && desktop) warmArenaRenderer();
+            }}
+            onFocus={() => {
+              if (userId && desktop) warmArenaRenderer();
+            }}
+          >
             <div className="strike-tabs" role="tablist" aria-label="PvPStrike games">
               {(["games", "create"] as const).map((value) => (
                 <button
@@ -387,12 +400,13 @@ export function DuelLobby() {
                       ))}
                     </div>
                   </fieldset>
-                  {!data?.cash_enabled && (
-                    <p className="strike-fineprint">
-                      Cash entries are currently closed. Practice is free and does not affect your
-                      balance or rating.
-                    </p>
-                  )}
+                  <p className="strike-fineprint strike-entry-status">
+                    {lobby.isPending
+                      ? "Loading available entries…"
+                      : data?.cash_enabled
+                        ? "Use your available balance for cash entries. Practice is free."
+                        : "Cash entries are currently closed. Practice is free and does not affect your balance or rating."}
+                  </p>
                   <fieldset className="strike-fieldset">
                     <legend>Match length</legend>
                     <div className="strike-formats">
