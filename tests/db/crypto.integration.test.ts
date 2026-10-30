@@ -6,7 +6,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { coverDepositWager, fundTestTreasury, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
@@ -95,7 +95,7 @@ async function assertInvariants() {
 
 d("crypto money path", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     // Test schema only: keep the retired Base Sepolia rail usable as a sandbox (live DB keeps it disabled).
     await sql.unsafe(`alter table pvp_test.chain_networks disable trigger user;

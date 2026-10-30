@@ -6,7 +6,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { buildWalletMessage, normalizeAddress, signatureMatches } from "../../src/lib/web3/message";
 import { testDatabaseUrl } from "./test-url";
 
@@ -55,7 +55,7 @@ const uname = () => `wal${Date.now().toString(36)}${n++}`.slice(0, 20);
 
 d("wallet identity (isolated schema)", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
   }, 120_000);
   afterAll(async () => {
     await sql.end();

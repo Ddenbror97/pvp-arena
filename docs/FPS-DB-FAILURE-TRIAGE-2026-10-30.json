@@ -1,0 +1,390 @@
+{
+  "scope": "Individual replay mapping plus complete final suite verification",
+  "rows": [
+    {
+      "file": "tests/db/bots.integration.test.ts",
+      "title": "joins a funded slott bot on the committed seed, then sweeps it after the match",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "full lifecycle WAITING -> ACTIVE -> DRAWING -> COMPLETED with correct timer rules",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "timer never exceeds the max duration",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "validation: auth, min/max, insufficient balance, profile, self-exclusion",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "idempotency: repeated request returns the original result and debits once",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "rate limiting per user",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "concurrency: 25 users joining simultaneously never corrupt pot or tickets",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "double spend: parallel entries cannot overdraw a balance",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "join vs close race: entries at/after deadline are rejected, one settlement, invariants hold",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "duplicate workers: 15 concurrent ticks settle a game exactly once",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "failure injection: interrupted settlement is recoverable and never marked paid",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "transaction rollback: an aborted transaction leaves no partial entry or debit",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "repeated payout attempts cannot pay twice; completed records are immutable",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "seed commitment is hidden until completion",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "retired test-credit functions are not executable by browser roles",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "legacy chain-less money overloads are not executable by any API role",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "SQL draw and TypeScript verifier agree on random seeds (incl. rejection sampling)",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/jackpot.integration.test.ts",
+      "title": "a fixed seed forces rejection sampling and SQL returns the same counter",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "SQL and published vectors agree (independent of the TypeScript verifier)",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "create locks the wager and commits the seed hash; join assigns opposite side with exact server timing",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "rejects invalid creates",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "double-click create with the same key creates exactly one game and one debit",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "rejects invalid joins",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "simultaneous joins by many users: exactly one succeeds",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "same user joining repeatedly (same key and different keys) joins once",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "result is hidden until FLIPPING, visible after; seed revealed only at COMPLETED; winner gets the pot less the 5% fee",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "house fee is taken from the per-game snapshot",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "duplicate and concurrent workers settle exactly once",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "the worker cannot settle early; illegal transitions are rejected by the database",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "injected failure before payout: stays SETTLEMENT, nothing moves, next worker recovers",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "injected crash after ledger posting / before completion rolls back fully and recovers once",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "a crashed worker transaction (hard rollback) leaves no trace",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "a delayed worker completes a game whose deadlines passed long ago in one pass",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "WAITING games expire server-side with one idempotent refund; players cannot cancel; join after expiry fails",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "completed games, entries, results, payouts and secrets are immutable",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "Jackpot and Coinflip share one wallet without interfering",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/coinflip.integration.test.ts",
+      "title": "stress: many concurrent games and joins keep every invariant",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "refund vs payout at the expiry boundary: exactly one financial outcome",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "pot ceiling holds under concurrent entries at the boundary",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "public tick is gated (no pile-up, <= 1 run per 250ms); overlapping scheduler ticks collapse to one; duplicates stay single-effect",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "health check and the minute dispatcher do not post ledger rows",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "session lifecycle: logout, expiry, revocation (password reset) and account switch block financial actions",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "online count is server-side: one user = one, repeated heartbeats don't inflate, anonymous rejected",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "sign-up limiter: bursts from one IP / one email are cut off, others unaffected",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "verified sign-up: one finished account per IP each hour",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "verified sign-up: no site-wide cap across different networks",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "avatars: only built-in styles are accepted",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "own account status is readable only for the caller",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "withdrawal codes approve only the withdrawal they were issued for, exactly once",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "integrity monitor detects and records mismatches without changing balances",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "browser roles can execute exactly the allowlisted public functions (deny-by-default)",
+      "currentStatus": "passed",
+      "cause": "Explicit ACL allowlist predated reviewed FPS endpoints; service-only functions remain denied",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "no browser-callable function, trigger or policy reaches pg_net, directly or through other functions",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/security.integration.test.ts",
+      "title": "chat readers see only rendered columns; moderation metadata is private",
+      "currentStatus": "passed",
+      "cause": "Timeout/partial-state cascade during migration/optimizer fixture contention; reserved connection and watcher isolation; assertions unchanged",
+      "finalSuiteStatus": "passed"
+    },
+    {
+      "file": "tests/db/phase2-audit.integration.test.ts",
+      "title": "records latency for queued reads at 100, 250, 500, and 1000 tasks",
+      "currentStatus": "passed",
+      "cause": "Linux-only output path; moved to portable test-results path",
+      "finalSuiteStatus": "passed"
+    }
+  ],
+  "fullSuite": {
+    "passed": 397,
+    "failed": 0,
+    "pending": 0,
+    "originalFailuresMatched": 54,
+    "evidence": "remediation-db-final.json"
+  }
+}

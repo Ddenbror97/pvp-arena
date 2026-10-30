@@ -89,7 +89,7 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [forgot, setForgot] = useState(false);
   const [pending, setPending] = useState<Pending | null>(null);
-  const { userId } = useAuth();
+  const { userId, ready: authReady } = useAuth();
   const navigate = useNavigate();
   const oauthLock = useRef(false);
   const left = useRef(false);
@@ -287,105 +287,107 @@ function AuthPage() {
         </div>
       </div>
       <form onSubmit={submit} className="space-y-4">
-        {mode === "signup" && (
+        <fieldset disabled={!authReady} className="contents">
+          {mode === "signup" && (
+            <div className="space-y-1.5">
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                maxLength={20}
+                className="min-h-11 text-base"
+                required
+              />
+            </div>
+          )}
+          {mode === "signup" && <PromoCodeField id="promo" value={promo} onChange={setPromo} />}
           <div className="space-y-1.5">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              maxLength={20}
-              className="min-h-11 text-base"
-              required
-            />
-          </div>
-        )}
-        {mode === "signup" && <PromoCodeField id="promo" value={promo} onChange={setPromo} />}
-        <div className="space-y-1.5">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            autoComplete="email"
-            autoCapitalize="none"
-            spellCheck={false}
-            className="min-h-11 text-base"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        {mode === "signup" && (
-          <div className="space-y-1.5">
-            <Label htmlFor="email-confirm">Confirm email</Label>
-            <Input
-              id="email-confirm"
+              id="email"
               type="email"
               autoComplete="email"
               autoCapitalize="none"
               spellCheck={false}
               className="min-h-11 text-base"
-              value={emailConfirm}
-              onChange={(e) => setEmailConfirm(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
-        )}
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between gap-3">
-            <Label htmlFor="password">Password</Label>
-            {mode === "signin" ? (
-              <button
-                type="button"
-                onClick={() => setForgot(true)}
-                className="min-h-11 text-sm text-muted-foreground hover:text-foreground"
-              >
-                Forgot password?
-              </button>
-            ) : null}
-          </div>
-          <Input
-            id="password"
-            type="password"
-            autoComplete={mode === "signin" ? "current-password" : "new-password"}
-            minLength={8}
-            className="min-h-11 text-base"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        {mode === "signup" && (
+          {mode === "signup" && (
+            <div className="space-y-1.5">
+              <Label htmlFor="email-confirm">Confirm email</Label>
+              <Input
+                id="email-confirm"
+                type="email"
+                autoComplete="email"
+                autoCapitalize="none"
+                spellCheck={false}
+                className="min-h-11 text-base"
+                value={emailConfirm}
+                onChange={(e) => setEmailConfirm(e.target.value)}
+                required
+              />
+            </div>
+          )}
           <div className="space-y-1.5">
-            <Label htmlFor="password-confirm">Confirm password</Label>
+            <div className="flex items-center justify-between gap-3">
+              <Label htmlFor="password">Password</Label>
+              {mode === "signin" ? (
+                <button
+                  type="button"
+                  onClick={() => setForgot(true)}
+                  className="min-h-11 text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Forgot password?
+                </button>
+              ) : null}
+            </div>
             <Input
-              id="password-confirm"
+              id="password"
               type="password"
-              autoComplete="new-password"
+              autoComplete={mode === "signin" ? "current-password" : "new-password"}
               minLength={8}
               className="min-h-11 text-base"
-              value={passwordConfirm}
-              onChange={(e) => setPasswordConfirm(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-        )}
-        {mode === "signup" && (
-          <div className="flex items-center gap-2">
-            <Checkbox id="age" checked={age} onCheckedChange={(v) => setAge(v === true)} />
-            <Label htmlFor="age" className="text-sm font-normal">
-              I confirm I am 18 or older and accept the terms
-            </Label>
-          </div>
-        )}
-        <Button
-          type="submit"
-          className="min-h-11 w-full font-display"
-          size="lg"
-          disabled={busy || (mode === "signup" && !captchaToken)}
-        >
-          {mode === "signin" ? "Sign in" : "Create account"}
-        </Button>
+          {mode === "signup" && (
+            <div className="space-y-1.5">
+              <Label htmlFor="password-confirm">Confirm password</Label>
+              <Input
+                id="password-confirm"
+                type="password"
+                autoComplete="new-password"
+                minLength={8}
+                className="min-h-11 text-base"
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+                required
+              />
+            </div>
+          )}
+          {mode === "signup" && (
+            <div className="flex items-center gap-2">
+              <Checkbox id="age" checked={age} onCheckedChange={(v) => setAge(v === true)} />
+              <Label htmlFor="age" className="text-sm font-normal">
+                I confirm I am 18 or older and accept the terms
+              </Label>
+            </div>
+          )}
+          <Button
+            type="submit"
+            className="min-h-11 w-full font-display"
+            size="lg"
+            disabled={!authReady || busy || (mode === "signup" && !captchaToken)}
+          >
+            {mode === "signin" ? "Sign in" : "Create account"}
+          </Button>
+        </fieldset>
       </form>
       <button
         type="button"

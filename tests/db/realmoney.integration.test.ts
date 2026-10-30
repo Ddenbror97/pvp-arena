@@ -6,7 +6,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { coverDepositWager, fundTestTreasury, seedSnapshotDeposits, SNAPSHOT_TX, useTestWithdrawalMinimum } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
@@ -83,7 +83,7 @@ d("real-money ledger migration", () => {
   let testBefore = "";
 
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     // Test schema only: keep the retired Base Sepolia rail usable as a sandbox (live DB keeps it disabled).
     await sql.unsafe(`alter table pvp_test.chain_networks disable trigger user;
       update pvp_test.chain_networks set is_enabled = true where chain_id = 84532;

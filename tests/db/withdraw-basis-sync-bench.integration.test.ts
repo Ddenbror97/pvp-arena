@@ -10,7 +10,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { creditUserDeposit, fundTestTreasury, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
@@ -28,7 +28,7 @@ function pct(sorted: number[], p: number): number {
 
 d("withdraw basis sync bench", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     await fundTestTreasury(sql);
     await sql`select pvp_test._withdraw_basis_rebuild_full()`;

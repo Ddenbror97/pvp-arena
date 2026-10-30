@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-30T15:04:24.645Z",
+  "scope": "Hosted zero-stake synthetic match; revoke current Auth session after WebSocket admission",
+  "match": "d310b8e9-8fdf-49a8-98ec-d9144dd3c4d1",
+  "logoutStatus": 204,
+  "revokedHttpStatus": 400,
+  "revokedHttpCode": "SESSION_REVOKED",
+  "revokedSocketInputAccepted": true,
+  "socketState": 1,
+  "releaseGatePassed": false
+}

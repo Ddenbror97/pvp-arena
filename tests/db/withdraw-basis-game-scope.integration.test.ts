@@ -7,7 +7,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
@@ -21,7 +21,7 @@ type Leg = [account: string, amount: number];
 
 d("withdraw basis game scope", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     await sql`select pvp_test._system_account('house_bankroll', 'USD', 'real')`;
     await sql`update pvp_test.wallet_accounts set balance = 100000000

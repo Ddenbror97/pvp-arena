@@ -8,7 +8,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { promoTestIp } from "./promo-client-ip";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { creditUserDeposit, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
@@ -82,7 +82,7 @@ async function settledFlip(
 
 d("partner leaderboard cohort", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
   }, 180_000);
 

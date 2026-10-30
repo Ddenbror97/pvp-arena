@@ -7,7 +7,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { testDatabaseUrl } from "./test-url";
 import {
   otpDigest,
@@ -143,7 +143,7 @@ async function driveToTerminal() {
 
 d("security remediation (isolated schema)", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
   }, 180_000);
   beforeEach(async () => {
     await sql`truncate pvp_test.audit_logs, pvp_test.coinflip_payouts, pvp_test.coinflip_results, pvp_test.coinflip_entries,
@@ -695,6 +695,8 @@ d("live database permissions (read-only catalog checks)", () => {
       "pool_lobby()",
       "pool_record(bigint)",
       "pool_state(bigint)",
+      "fps_lobby()",
+      "fps_stats()",
     ];
     const SIGNED_IN_FNS = [
       ...PUBLIC_FNS,
@@ -785,6 +787,12 @@ d("live database permissions (read-only catalog checks)", () => {
       "pool_nudge(bigint)",
       "pool_prepare_shot(bigint,jsonb,text)",
       "pool_touch(bigint)",
+      "fps_view(uuid)",
+      "fps_invite_preview(uuid,text)",
+      "fps_enter(bigint,integer,text,boolean,text)",
+      "fps_join(uuid,text,text)",
+      "fps_cancel(uuid)",
+      "fps_rematch(uuid,text)",
     ];
     const executable = async (role: string) => {
       const rows = await sql.begin(async (tx) => {

@@ -5,7 +5,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { creditUserDeposit, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
@@ -28,7 +28,7 @@ async function newUser() {
 
 describe("ops hardening (isolated schema)", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     await migrateTestSchemaToReal(sql);
   }, 240_000);
   afterAll(async () => {

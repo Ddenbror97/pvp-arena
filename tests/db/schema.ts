@@ -1,5 +1,16 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import type postgres from "postgres";
+
+/** Explicit BEGIN/COMMIT in migrations must stay on a reserved pool connection. */
+export async function applyTestSchema(sql: postgres.Sql, skip: readonly string[] = []) {
+  const connection = await sql.reserve();
+  try {
+    await connection.unsafe(buildTestSchemaSql(skip));
+  } finally {
+    connection.release();
+  }
+}
 
 /**
  * Builds a copy of the production schema (every migration in order) inside
@@ -17,7 +28,9 @@ export function buildTestSchemaSql(skip: readonly string[] = []): string {
   const files = readdirSync(dir)
     .filter((f) => f.endsWith(".sql") && !superseded.has(f) && !skipped.has(f))
     .sort();
-  let s = files.map((f) => readFileSync(join(dir, f), "utf8")).join("\n");
+  // Historical pg_get_functiondef patches match literal LF snippets. Git's
+  // Windows checkout must not change their semantics in the isolated fixture.
+  let s = files.map((f) => readFileSync(join(dir, f), "utf8").replace(/\r\n/g, "\n")).join("\n");
   s = s.replace(/create extension if not exists pgcrypto with schema extensions;/g, "");
   // The production audit index is built with CONCURRENTLY, which cannot run
   // inside this schema script. The isolated database uses a normal build.
@@ -49,13 +62,13 @@ export function buildTestSchemaSql(skip: readonly string[] = []): string {
   s = s.replace(/n\.nspname = 'public'/g, "n.nspname = 'pvp_test'");
   s = s.replace(/search_path to 'public'/gi, "search_path TO 'pvp_test'");
   s = s.replace(/in schema public/g, "in schema pvp_test");
+  // Never overwrite the real match service's private Auth helper when a hosted
+  // disposable project is used as the test database.
+  s = s.replace(/fps_private/g, "pvp_test_fps_private");
   s = s.replace(/auth\.uid\(\)/g, "pvp_test.test_uid()");
   // Production applies each migration in its own transaction. This script
   // runs them together, and Postgres refuses a new enum value until commit.
-  s = s.replace(
-    /^(alter type\s+\S+\s+add value\s+[^;]+;)/gim,
-    "$1\ncommit;",
-  );
+  s = s.replace(/^(alter type\s+\S+\s+add value\s+[^;]+;)/gim, "$1\ncommit;");
   // The email-code sign-up helpers read auth.users, which the test role
   // cannot access; point them at a local stand-in table.
   s = s.replace(/auth\.users/g, "pvp_test.test_auth_users");
@@ -69,8 +82,12 @@ export function buildTestSchemaSql(skip: readonly string[] = []): string {
   // stops there. The replace still repairs a copy that is missing it.
   s = s.replace(/end \$fn\$(?!\s*;)/gi, "end $fn$;");
   return `drop schema if exists pvp_test cascade;
+drop schema if exists pvp_test_fps_private cascade;
 create schema pvp_test;
-create table pvp_test.test_auth_users (id uuid primary key, email text, email_confirmed_at timestamptz);
+-- Supabase's API roles can resolve public objects; model that namespace access
+-- so permission/RLS tests cannot pass merely because schema access was absent.
+grant usage on schema pvp_test to anon, authenticated, service_role;
+create table pvp_test.test_auth_users (id uuid primary key, email text, email_confirmed_at timestamptz, banned_until timestamptz);
 create table pvp_test.test_auth_sessions (id uuid primary key, user_id uuid not null, not_after timestamptz);
 -- Stand-ins for auth.users and auth.sessions. They are not a client API.
 -- RLS with no policies denies anon and authenticated. The table owner, the

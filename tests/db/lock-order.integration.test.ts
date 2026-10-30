@@ -8,7 +8,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { creditUserDeposit, fundTestTreasury, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
@@ -189,7 +189,7 @@ const referralState = async (id: string) =>
 
 d("canonical lock order", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     await fundTestTreasury(sql);
     for (const k of ["game_escrow", "house_revenue", "house_bankroll"])

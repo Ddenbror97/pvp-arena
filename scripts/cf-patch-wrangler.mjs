@@ -80,6 +80,8 @@ const flags = Array.isArray(cfg.compatibility_flags) ? cfg.compatibility_flags :
 if (!flags.includes("nodejs_compat")) flags.push("nodejs_compat");
 if (!flags.includes("nodejs_compat_populate_process_env"))
   flags.push("nodejs_compat_populate_process_env");
+// The casino calls the separate FPS Worker on the same Cloudflare account.
+if (!flags.includes("global_fetch_strictly_public")) flags.push("global_fetch_strictly_public");
 cfg.compatibility_flags = flags;
 writeFileSync(path, JSON.stringify(cfg, null, 2));
 console.log("Patched", path, "name=", cfg.name);

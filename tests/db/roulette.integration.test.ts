@@ -7,7 +7,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { rouletteSlot } from "../../src/lib/fairness/roulette";
 import { testDatabaseUrl } from "./test-url";
 
@@ -129,7 +129,7 @@ async function assertInvariants() {
 
 d("roulette adversarial audit (isolated schema)", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
   }, 180_000);
   beforeEach(async () => {
     await sql`truncate pvp_test.audit_logs, pvp_test.roulette_payouts, pvp_test.roulette_results, pvp_test.roulette_bets,
@@ -249,12 +249,16 @@ d("roulette adversarial audit (isolated schema)", () => {
   }, 30000);
 
   it("pot cap and round cap hold under 40 simultaneous bets", async () => {
-    await setCfg({ max_pot: 5000, max_bet: 5000, max_bets_per_round: 100, betting_seconds: 10 });
+    // This checks serialized cap enforcement, not the deadline race (covered
+    // separately below). Keep all 40 requests inside the open betting window
+    // even when durable local disk writes contend with other verification.
+    await setCfg({ max_pot: 5000, max_bet: 5000, max_bets_per_round: 100, betting_seconds: 30 });
     const users = await Promise.all(Array.from({ length: 8 }, (_, i) => newUser("p" + i)));
     const res = await Promise.allSettled(Array.from({ length: 40 }, (_, i) => bet(users[i % 8]!, ["RED", "BLACK", "GREEN"][i % 3]!, 150)));
     const ok = res.filter((r) => r.status === "fulfilled").length;
     const gid = Number((await sql`select id from pvp_test.roulette_games order by id desc limit 1`)[0].id);
     const g = await game(gid);
+    expect(Date.now()).toBeLessThan(new Date(g.betting_ends_at).getTime());
     expect(Number(g.pot_amount)).toBeLessThanOrEqual(5000);
     expect(ok).toBe(33); // floor(5000/150)
     expect(g.bet_count).toBe(ok);
@@ -566,7 +570,7 @@ d("roulette adversarial audit (isolated schema)", () => {
 d("roulette live permissions (read-only catalog)", () => {
   beforeAll(async () => {
     const [row] = await sql`select exists(select 1 from pg_namespace where nspname = 'pvp_test') e`;
-    if (!row.e) await sql.unsafe(buildTestSchemaSql());
+    if (!row.e) await applyTestSchema(sql);
   }, 180_000);
 
   it("runs the production lifecycle clock every second without browser sessions", async () => {

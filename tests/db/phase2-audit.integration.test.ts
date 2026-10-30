@@ -5,20 +5,27 @@
  * projects.
  */
 import { randomBytes, randomUUID } from "node:crypto";
-import { writeFileSync } from "node:fs";
+import { writeFileSync, mkdirSync } from "node:fs";
+import { resolve } from "node:path";
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { openAdminStepup, adminClaims } from "./admin-stepup";
 import { migrateTestSchemaToReal, useTestWithdrawalMinimum } from "./money";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { testDatabaseUrl } from "./test-url";
+import {
+  AUTHORIZED_AUDIT_REF,
+  hostedAuditDatabase,
+  assertHostedAuditEnvironment,
+} from "./audit-target";
 
-const APPROVED_REF = "bgbhjfjugjeenuipvnii";
+const APPROVED_REF = AUTHORIZED_AUDIT_REF;
 const FORBIDDEN = ["dkyabirifoixnfbmheay", "gqeaadpdtuussxdlnmof", "fdsovopvmjogjcllmxwj"];
 
 function targetKind(raw: string): "hosted-test" | "local" {
   const parsed = new URL(raw);
-  const hay = `${decodeURIComponent(parsed.username)} ${parsed.hostname} ${parsed.pathname}`.toLowerCase();
+  const hay =
+    `${decodeURIComponent(parsed.username)} ${parsed.hostname} ${parsed.pathname}`.toLowerCase();
   for (const ref of FORBIDDEN) {
     if (hay.includes(ref)) throw new Error("Refusing a forbidden database.");
   }
@@ -41,11 +48,19 @@ const err = async (p: Promise<unknown>) => {
     await p;
     return "";
   } catch (e) {
-    return String((e as { code?: string; message?: string }).code ?? "") + " " + String((e as Error).message);
+    return (
+      String((e as { code?: string; message?: string }).code ?? "") +
+      " " +
+      String((e as Error).message)
+    );
   }
 };
 
-async function as<T>(uid: string | null, fn: (tx: postgres.TransactionSql) => Promise<T>, claims?: string) {
+async function as<T>(
+  uid: string | null,
+  fn: (tx: postgres.TransactionSql) => Promise<T>,
+  claims?: string,
+) {
   return sql.begin(async (tx) => {
     if (claims) {
       await tx`select set_config('test.uid', ${uid ?? ""}, true), set_config('request.jwt.claims', ${claims}, true)`;
@@ -66,79 +81,109 @@ async function user(name: string) {
 const key = () => randomUUID();
 
 describe("phase 2 public boundary (hosted test project)", () => {
-  const hosted = kind === "hosted-test" ? it : it.skip;
+  const remote = process.env.TEST_HOSTED_DATABASE_URL;
+  const sql = remote
+    ? postgres(hostedAuditDatabase(remote), {
+        ssl: "require",
+        max: 2,
+        prepare: false,
+        onnotice: () => {},
+        idle_timeout: 5,
+      })
+    : undefined;
+  const hosted = sql ? it : it.skip;
+  let ownedBefore = 0,
+    topupsBefore = 0;
+  beforeAll(async () => {
+    if (!sql) return;
+    assertHostedAuditEnvironment();
+    ownedBefore = Number(
+      (await sql`select count(*) n from public.wallet_accounts where owner_id is not null`)[0].n,
+    );
+    topupsBefore = Number((await sql`select count(*) n from public.partner_topups`)[0].n);
+  });
 
   afterAll(async () => {
-    if (kind !== "hosted-test") return;
+    await sql?.end();
   });
 
-  hosted("anonymous and synthetic sessions cannot read or write private tables", async () => {
-    const checks = [
-      ["wallets", `select count(*)::int n from public.wallet_accounts`],
-      ["ledger", `select count(*)::int n from public.ledger_transactions`],
-      ["pins", `select count(*)::int n from public.admin_pins`],
-      ["withdrawals", `select count(*)::int n from public.crypto_withdrawals`],
-      ["bearer", `select count(*)::int n from public.crypto_job_bearer`],
-      ["referrals", `select count(*)::int n from public.referrals`],
-      ["topups", `select count(*)::int n from public.partner_topups`],
-      ["excluded", `select self_excluded_until from public.profiles`],
-    ] as const;
-    const synthetic = JSON.stringify({
-      role: "authenticated",
-      sub: "00000000-0000-4000-8000-000000000001",
-      session_id: "00000000-0000-4000-8000-000000000002",
-    });
-    for (const role of ["anon", "authenticated"] as const) {
-      for (const [label, query] of checks) {
-        const seen = await err(
-          sql.begin(async (tx) => {
-            if (role === "authenticated") await tx`select set_config('request.jwt.claims', ${synthetic}, true)`;
-            await tx.unsafe(`set local role ${role}`);
-            await tx.unsafe(query);
-            throw new Error("ROLLBACK");
-          }),
-        );
-        if (role === "authenticated" && (label === "wallets" || label === "ledger")) {
-          expect(seen, label).toContain("ROLLBACK");
-        } else {
-          expect(seen, `${role} ${label}`).toContain("42501");
+  hosted(
+    "anonymous and synthetic sessions cannot read or write private tables",
+    async () => {
+      const checks = [
+        ["wallets", `select count(*)::int n from public.wallet_accounts`],
+        ["ledger", `select count(*)::int n from public.ledger_transactions`],
+        ["pins", `select count(*)::int n from public.admin_pins`],
+        ["withdrawals", `select count(*)::int n from public.crypto_withdrawals`],
+        ["bearer", `select count(*)::int n from public.crypto_job_bearer`],
+        ["referrals", `select count(*)::int n from public.referrals`],
+        ["topups", `select count(*)::int n from public.partner_topups`],
+        ["excluded", `select self_excluded_until from public.profiles`],
+      ] as const;
+      const synthetic = JSON.stringify({
+        role: "authenticated",
+        sub: "00000000-0000-4000-8000-000000000001",
+        session_id: "00000000-0000-4000-8000-000000000002",
+      });
+      for (const role of ["anon", "authenticated"] as const) {
+        for (const [label, query] of checks) {
+          const seen = await err(
+            sql.begin(async (tx) => {
+              if (role === "authenticated")
+                await tx`select set_config('request.jwt.claims', ${synthetic}, true)`;
+              await tx.unsafe(`set local role ${role}`);
+              await tx.unsafe(query);
+              throw new Error("ROLLBACK");
+            }),
+          );
+          if (role === "authenticated" && (label === "wallets" || label === "ledger")) {
+            expect(seen, label).toContain("ROLLBACK");
+          } else {
+            expect(seen, `${role} ${label}`).toContain("42501");
+          }
         }
       }
-    }
-    const names = await sql.begin(async (tx) => {
-      await tx.unsafe(`set local role anon`);
-      const [row] = await tx`select count(*)::int n from (select id, username from public.profiles) s`;
-      return Number(row.n);
-    });
-    expect(names).toBeGreaterThan(0);
-    const [left] = await sql`select count(*)::int n from public.wallet_accounts where owner_id is not null`;
-    expect(Number(left.n)).toBe(0);
-  }, 60_000);
-
-  hosted("a non-admin cannot call a partner credit, and anon cannot call admin overview", async () => {
-    const synthetic = JSON.stringify({
-      role: "authenticated",
-      sub: "00000000-0000-4000-8000-000000000001",
-      session_id: "00000000-0000-4000-8000-000000000002",
-    });
-    const anon = await err(
-      sql.begin(async (tx) => {
+      const names = await sql.begin(async (tx) => {
         await tx.unsafe(`set local role anon`);
-        await tx`select public.admin_overview()`;
-      }),
-    );
-    expect(anon).toContain("42501");
-    const userCall = await err(
-      sql.begin(async (tx) => {
-        await tx`select set_config('request.jwt.claims', ${synthetic}, true)`;
-        await tx.unsafe(`set local role authenticated`);
-        await tx`select public.partner_admin_topup('00000000-0000-4000-8000-000000000003'::uuid, 100, 'x', '00000000-0000-4000-8000-000000000004'::uuid)`;
-      }),
-    );
-    expect(userCall).toContain("FORBIDDEN");
-    const [left] = await sql`select count(*)::int n from public.partner_topups`;
-    expect(Number(left.n)).toBe(0);
-  });
+        const [row] =
+          await tx`select count(*)::int n from (select id, username from public.profiles) s`;
+        return Number(row.n);
+      });
+      expect(names).toBeGreaterThan(0);
+      const [left] =
+        await sql`select count(*)::int n from public.wallet_accounts where owner_id is not null`;
+      expect(Number(left.n)).toBe(ownedBefore);
+    },
+    60_000,
+  );
+
+  hosted(
+    "a non-admin cannot call a partner credit, and anon cannot call admin overview",
+    async () => {
+      const synthetic = JSON.stringify({
+        role: "authenticated",
+        sub: "00000000-0000-4000-8000-000000000001",
+        session_id: "00000000-0000-4000-8000-000000000002",
+      });
+      const anon = await err(
+        sql.begin(async (tx) => {
+          await tx.unsafe(`set local role anon`);
+          await tx`select public.admin_overview()`;
+        }),
+      );
+      expect(anon).toContain("42501");
+      const userCall = await err(
+        sql.begin(async (tx) => {
+          await tx`select set_config('request.jwt.claims', ${synthetic}, true)`;
+          await tx.unsafe(`set local role authenticated`);
+          await tx`select public.partner_admin_topup('00000000-0000-4000-8000-000000000003'::uuid, 100, 'x', '00000000-0000-4000-8000-000000000004'::uuid)`;
+        }),
+      );
+      expect(userCall).toContain("FORBIDDEN");
+      const [left] = await sql`select count(*)::int n from public.partner_topups`;
+      expect(Number(left.n)).toBe(topupsBefore);
+    },
+  );
 
   hosted("authenticated browser RPCs that administer money require step-up", async () => {
     const rows = await sql`
@@ -164,17 +209,17 @@ describe("phase 2 public boundary (hosted test project)", () => {
   hosted("one user cannot read or change another user's wallet", async () => {
     const token = process.env.SUPABASE_ACCESS_TOKEN;
     expect(token, "management token required for the owner rollback probe").toBeTruthy();
+    const a = randomUUID(),
+      b = randomUUID();
     const res = await fetch(`https://api.supabase.com/v1/projects/${APPROVED_REF}/database/query`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         query: `
 do $body$
-declare a uuid; b uuid; visible int; own_sum int; other int; victim int; touched int;
+declare a uuid := '${a}'; b uuid := '${b}'; visible int; own_sum int; other int; victim int; touched int;
 begin
-  select id into a from public.profiles order by created_at limit 1;
-  select id into b from public.profiles where id <> a order by created_at limit 1;
-  if a is null or b is null then raise exception 'PROBE skip'; end if;
+  insert into public.profiles(id,username,age_confirmed_at)values(a,'audit_'||left(replace(a::text,'-',''),12),now()),(b,'audit_'||left(replace(b::text,'-',''),12),now());
   insert into public.wallet_accounts (owner_id, kind, asset, account_type, balance)
   values (a, 'user_available', 'USD', 'real', 111), (b, 'user_available', 'USD', 'real', 222);
   perform set_config('request.jwt.claims', json_build_object('role','authenticated','sub', a)::text, true);
@@ -197,14 +242,16 @@ $body$;`,
     });
     const text = await res.text();
     expect(text).toContain("PROBE visible=1 own_sum=111 other=0 touched=-1 victim=222");
-    const left = await fetch(`https://api.supabase.com/v1/projects/${APPROVED_REF}/database/query`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: `select count(*)::int n from public.wallet_accounts
-          where kind = 'user_available' and asset = 'USD' and account_type = 'real' and balance in (111, 222)`,
-      }),
-    });
+    const left = await fetch(
+      `https://api.supabase.com/v1/projects/${APPROVED_REF}/database/query`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: `select count(*)::int n from public.wallet_accounts where owner_id in ('${a}','${b}')`,
+        }),
+      },
+    );
     const leftText = await left.text();
     expect(left.ok || left.status === 201).toBe(true);
     expect(leftText).toContain('"n":0');
@@ -213,7 +260,7 @@ $body$;`,
 
 describe("phase 2 isolated behavior", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     // Production anon/authenticated have USAGE on public. pvp_test is a copy, so
     // the browser roles need the same schema privilege before RLS can be observed.
     const [roles] = await sql`select
@@ -228,20 +275,37 @@ describe("phase 2 isolated behavior", () => {
   });
 
   it("self-exclusion rejects bad periods, cannot be shortened, and blocks play", async () => {
-    expect(await err(sql`select pvp_test.request_self_exclusion(180)`)).toContain("UNAUTHENTICATED");
+    expect(await err(sql`select pvp_test.request_self_exclusion(180)`)).toContain(
+      "UNAUTHENTICATED",
+    );
     const id = await user("excl");
-    expect(await err(as(id, (tx) => tx`select pvp_test.request_self_exclusion(null)`))).toContain("EXCLUSION_PERIOD");
-    expect(await err(as(id, (tx) => tx`select pvp_test.request_self_exclusion(7)`))).toContain("EXCLUSION_PERIOD");
-    const until = await as(id, async (tx) => (await tx`select pvp_test.request_self_exclusion(180) t`)[0].t as string);
+    expect(await err(as(id, (tx) => tx`select pvp_test.request_self_exclusion(null)`))).toContain(
+      "EXCLUSION_PERIOD",
+    );
+    expect(await err(as(id, (tx) => tx`select pvp_test.request_self_exclusion(7)`))).toContain(
+      "EXCLUSION_PERIOD",
+    );
+    const until = await as(
+      id,
+      async (tx) => (await tx`select pvp_test.request_self_exclusion(180) t`)[0].t as string,
+    );
     const days = (new Date(until).getTime() - Date.now()) / 86_400_000;
     expect(days).toBeGreaterThan(179);
     expect(days).toBeLessThan(181);
     await sql`update pvp_test.profiles set self_excluded_until = clock_timestamp() + interval '400 days' where id = ${id}::uuid`;
-    expect(await err(as(id, (tx) => tx`select pvp_test.request_self_exclusion(180)`))).toContain("EXCLUSION_ALREADY_LONGER");
-    expect(await err(as(id, (tx) => tx`select pvp_test.request_self_exclusion(365)`))).toContain("EXCLUSION_ALREADY_LONGER");
-    const longer = await as(id, async (tx) => (await tx`select pvp_test.request_self_exclusion(1825) t`)[0].t as string);
+    expect(await err(as(id, (tx) => tx`select pvp_test.request_self_exclusion(180)`))).toContain(
+      "EXCLUSION_ALREADY_LONGER",
+    );
+    expect(await err(as(id, (tx) => tx`select pvp_test.request_self_exclusion(365)`))).toContain(
+      "EXCLUSION_ALREADY_LONGER",
+    );
+    const longer = await as(
+      id,
+      async (tx) => (await tx`select pvp_test.request_self_exclusion(1825) t`)[0].t as string,
+    );
     expect(new Date(longer).getTime()).toBeGreaterThan(Date.now() + 1800 * 86_400_000);
-    const [audit] = await sql`select count(*)::int n from pvp_test.audit_logs where actor_id = ${id}::uuid and action = 'self_exclusion'`;
+    const [audit] =
+      await sql`select count(*)::int n from pvp_test.audit_logs where actor_id = ${id}::uuid and action = 'self_exclusion'`;
     expect(Number(audit.n)).toBe(2);
 
     const play = [
@@ -256,10 +320,20 @@ describe("phase 2 isolated behavior", () => {
 
   it("an excluded player cannot call a bot on a game opened before the exclusion", async () => {
     const id = await user("pre");
-    const created = await as(id, async (tx) => (await tx`select pvp_test.coinflip_create(100, 'HEADS'::pvp_test.coin_side, ${key()}) r`)[0].r as { game_id: number });
+    const created = await as(
+      id,
+      async (tx) =>
+        (await tx`select pvp_test.coinflip_create(100, 'HEADS'::pvp_test.coin_side, ${key()}) r`)[0]
+          .r as { game_id: number },
+    );
     await as(id, (tx) => tx`select pvp_test.request_self_exclusion(180)`);
-    expect(await err(as(id, (tx) => tx`select pvp_test.coinflip_call_bot(${created.game_id}, ${key()})`))).toContain("SELF_EXCLUDED");
-    const [game] = await sql`select status, opponent_id from pvp_test.coinflip_games where id = ${created.game_id}`;
+    expect(
+      await err(
+        as(id, (tx) => tx`select pvp_test.coinflip_call_bot(${created.game_id}, ${key()})`),
+      ),
+    ).toContain("SELF_EXCLUDED");
+    const [game] =
+      await sql`select status, opponent_id from pvp_test.coinflip_games where id = ${created.game_id}`;
     expect(game.status).toBe("WAITING");
     expect(game.opponent_id).toBeNull();
   });
@@ -270,13 +344,24 @@ describe("phase 2 isolated behavior", () => {
     expect(fresh.coinflip_enabled).toBe(true);
     await sql`update pvp_test.bot_config set enabled = false, coinflip_enabled = false, poker_enabled = false, slott_enabled = false`;
     const id = await user("kill");
-    const created = await as(id, async (tx) => (await tx`select pvp_test.coinflip_create(100, 'HEADS'::pvp_test.coin_side, ${key()}) r`)[0].r as { game_id: number });
+    const created = await as(
+      id,
+      async (tx) =>
+        (await tx`select pvp_test.coinflip_create(100, 'HEADS'::pvp_test.coin_side, ${key()}) r`)[0]
+          .r as { game_id: number },
+    );
     const idem = key();
-    expect(await err(as(id, (tx) => tx`select pvp_test.coinflip_call_bot(${created.game_id}, ${idem})`))).toContain("BOTS_DISABLED");
-    expect(await err(as(id, (tx) => tx`select pvp_test.coinflip_call_bot(${created.game_id}, ${idem})`))).toContain("BOTS_DISABLED");
-    const [calls] = await sql`select count(*)::int n from pvp_test.bot_calls where user_id = ${id}::uuid`;
+    expect(
+      await err(as(id, (tx) => tx`select pvp_test.coinflip_call_bot(${created.game_id}, ${idem})`)),
+    ).toContain("BOTS_DISABLED");
+    expect(
+      await err(as(id, (tx) => tx`select pvp_test.coinflip_call_bot(${created.game_id}, ${idem})`)),
+    ).toContain("BOTS_DISABLED");
+    const [calls] =
+      await sql`select count(*)::int n from pvp_test.bot_calls where user_id = ${id}::uuid`;
     expect(Number(calls.n)).toBe(0);
-    const [game] = await sql`select opponent_id from pvp_test.coinflip_games where id = ${created.game_id}`;
+    const [game] =
+      await sql`select opponent_id from pvp_test.coinflip_games where id = ${created.game_id}`;
     expect(game.opponent_id).toBeNull();
   });
 
@@ -290,7 +375,14 @@ describe("phase 2 isolated behavior", () => {
     const request = randomUUID();
     const revoked = adminClaims(admin, randomUUID());
     expect(
-      await err(as(admin, (tx) => tx`select pvp_test.partner_admin_topup(${partner}::uuid, 100, 'a', ${request}::uuid)`, revoked)),
+      await err(
+        as(
+          admin,
+          (tx) =>
+            tx`select pvp_test.partner_admin_topup(${partner}::uuid, 100, 'a', ${request}::uuid)`,
+          revoked,
+        ),
+      ),
     ).toContain("SESSION_REVOKED");
     const liveOnly = randomUUID();
     await sql`insert into pvp_test.test_auth_sessions (id, user_id, not_after)
@@ -299,13 +391,20 @@ describe("phase 2 isolated behavior", () => {
       await err(
         as(
           admin,
-          (tx) => tx`select pvp_test.partner_admin_topup(${partner}::uuid, 100, 'a', ${request}::uuid)`,
+          (tx) =>
+            tx`select pvp_test.partner_admin_topup(${partner}::uuid, 100, 'a', ${request}::uuid)`,
           adminClaims(admin, liveOnly),
         ),
       ),
     ).toContain("ADMIN_STEP_UP");
     expect(
-      await err(as(outsider, (tx) => tx`select pvp_test.partner_admin_topup(${partner}::uuid, 100, 'a', ${randomUUID()}::uuid)`)),
+      await err(
+        as(
+          outsider,
+          (tx) =>
+            tx`select pvp_test.partner_admin_topup(${partner}::uuid, 100, 'a', ${randomUUID()}::uuid)`,
+        ),
+      ),
     ).toContain("FORBIDDEN");
 
     const session = await openAdminStepup(sql, admin);
@@ -314,10 +413,13 @@ describe("phase 2 isolated behavior", () => {
       sql`select pvp_test.partner_admin_topup(${partner}::uuid, ${amount}, 'bonus', ${req}::uuid) r
         from (select set_config('test.uid', ${admin}, true), set_config('request.jwt.claims', ${claims}, true)) c`;
     const raced = await Promise.all([topup(100, request), topup(100, request)]);
-    const bodies = raced.map((rows) => rows[0].r as { ok: boolean; duplicate: boolean; amount_cents: number });
+    const bodies = raced.map(
+      (rows) => rows[0].r as { ok: boolean; duplicate: boolean; amount_cents: number },
+    );
     expect(bodies.every((b) => b.ok && b.amount_cents === 100)).toBe(true);
     expect(bodies.filter((b) => b.duplicate).length).toBe(1);
-    const [txCount] = await sql`select count(*)::int n from pvp_test.ledger_transactions where kind = 'partner_credit' and user_id = ${partner}::uuid`;
+    const [txCount] =
+      await sql`select count(*)::int n from pvp_test.ledger_transactions where kind = 'partner_credit' and user_id = ${partner}::uuid`;
     expect(Number(txCount.n)).toBe(1);
     const [bal] = await sql`select balance::int b from pvp_test.wallet_accounts
       where owner_id = ${partner}::uuid and kind = 'user_available'`;
@@ -327,7 +429,8 @@ describe("phase 2 isolated behavior", () => {
     const [balAfter] = await sql`select balance::int b from pvp_test.wallet_accounts
       where owner_id = ${partner}::uuid and kind = 'user_available'`;
     expect(Number(balAfter.b)).toBe(welcome + 100);
-    const [logged] = await sql`select count(*)::int n from pvp_test.audit_logs where action = 'partner_credit_added' and actor_id = ${admin}::uuid`;
+    const [logged] =
+      await sql`select count(*)::int n from pvp_test.audit_logs where action = 'partner_credit_added' and actor_id = ${admin}::uuid`;
     expect(Number(logged.n)).toBe(1);
   });
 
@@ -338,32 +441,74 @@ describe("phase 2 isolated behavior", () => {
     const stale = await user("old");
     const sharedA = await user("sha");
     const sharedB = await user("shb");
-    const invite = await as(inviter, async (tx) => (await tx`select pvp_test.referral_create_invite() r`)[0].r as { ok: boolean; code: string });
+    const invite = await as(
+      inviter,
+      async (tx) =>
+        (await tx`select pvp_test.referral_create_invite() r`)[0].r as {
+          ok: boolean;
+          code: string;
+        },
+    );
     expect(invite.ok).toBe(true);
-    const self = await as(inviter, async (tx) => (await tx`select pvp_test.referral_claim(${invite.code}) r`)[0].r as { ok: boolean; reason: string });
+    const self = await as(
+      inviter,
+      async (tx) =>
+        (await tx`select pvp_test.referral_claim(${invite.code}) r`)[0].r as {
+          ok: boolean;
+          reason: string;
+        },
+    );
     expect(self).toMatchObject({ ok: false, reason: "self" });
-    const claimed = await as(fresh, async (tx) => (await tx`select pvp_test.referral_claim(${invite.code}) r`)[0].r as { ok: boolean; attributed: boolean });
+    const claimed = await as(
+      fresh,
+      async (tx) =>
+        (await tx`select pvp_test.referral_claim(${invite.code}) r`)[0].r as {
+          ok: boolean;
+          attributed: boolean;
+        },
+    );
     expect(claimed).toMatchObject({ ok: true, attributed: true });
-    const kept = await as(fresh, async (tx) => (await tx`select pvp_test.referral_claim(${invite.code}) r`)[0].r as { reason: string });
+    const kept = await as(
+      fresh,
+      async (tx) =>
+        (await tx`select pvp_test.referral_claim(${invite.code}) r`)[0].r as { reason: string },
+    );
     expect(kept.reason).toBe("kept");
     await sql`update pvp_test.profiles set created_at = clock_timestamp() - interval '31 minutes' where id = ${stale}::uuid`;
-    const late = await as(stale, async (tx) => (await tx`select pvp_test.referral_claim(${invite.code}) r`)[0].r as { reason: string });
+    const late = await as(
+      stale,
+      async (tx) =>
+        (await tx`select pvp_test.referral_claim(${invite.code}) r`)[0].r as { reason: string },
+    );
     expect(late.reason).toBe("existing_user");
     const addr = "0x" + "ab".repeat(20);
     await sql`insert into pvp_test.user_wallets (user_id, address, normalized_address)
       values (${sharedA}::uuid, ${addr}, ${addr}), (${sharedB}::uuid, ${addr}, ${addr})`;
-    const own = await as(sharedA, async (tx) => (await tx`select pvp_test.referral_create_invite() r`)[0].r as { code: string });
-    const review = await as(sharedB, async (tx) => (await tx`select pvp_test.referral_claim(${own.code}) r`)[0].r as { ok: boolean; reason: string });
+    const own = await as(
+      sharedA,
+      async (tx) => (await tx`select pvp_test.referral_create_invite() r`)[0].r as { code: string },
+    );
+    const review = await as(
+      sharedB,
+      async (tx) =>
+        (await tx`select pvp_test.referral_claim(${own.code}) r`)[0].r as {
+          ok: boolean;
+          reason: string;
+        },
+    );
     expect(review).toMatchObject({ ok: true, reason: "review" });
-    const [row] = await sql`select status from pvp_test.referrals where referred_user_id = ${sharedB}::uuid`;
+    const [row] =
+      await sql`select status from pvp_test.referrals where referred_user_id = ${sharedB}::uuid`;
     expect(row.status).toBe("FRAUD_REVIEW");
-    const [paid] = await sql`select count(*)::int n from pvp_test.referral_rewards where user_id = ${sharedA}::uuid`;
+    const [paid] =
+      await sql`select count(*)::int n from pvp_test.referral_rewards where user_id = ${sharedA}::uuid`;
     expect(Number(paid.n)).toBe(0);
     expect(
       await err(sql`insert into pvp_test.referrals (inviter_user_id, referred_user_id, invite_id, reward_cents)
         select ${again}::uuid, ${again}::uuid, id, 1000 from pvp_test.referral_invites where inviter_user_id = ${inviter}::uuid`),
     ).toMatch(/23514|referrals_not_self|23503/);
-    const [n] = await sql`select count(*)::int n from pvp_test.referrals where referred_user_id = ${fresh}::uuid`;
+    const [n] =
+      await sql`select count(*)::int n from pvp_test.referrals where referred_user_id = ${fresh}::uuid`;
     expect(Number(n.n)).toBe(1);
   });
 
@@ -380,11 +525,15 @@ describe("phase 2 isolated behavior", () => {
       const cents = Number(row.b);
       const idem = key();
       await sql.begin(async (tx) => {
-        const posted = (await tx`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id)
-          values ('coinflip_refund', ${idem}, ${row.account_type}, ${row.owner_id}::uuid) returning id`)[0].id as string;
-        const avail = (await tx`select id from pvp_test.wallet_accounts
+        const posted = (
+          await tx`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id)
+          values ('coinflip_refund', ${idem}, ${row.account_type}, ${row.owner_id}::uuid) returning id`
+        )[0].id as string;
+        const avail = (
+          await tx`select id from pvp_test.wallet_accounts
           where owner_id is not distinct from ${row.owner_id}::uuid and kind = 'user_available'
-            and asset = ${row.asset} and account_type = ${row.account_type}`)[0].id as string;
+            and asset = ${row.asset} and account_type = ${row.account_type}`
+        )[0].id as string;
         await tx`select pvp_test._post(${posted}::uuid, ${row.id}::uuid, ${-cents}::bigint)`;
         await tx`select pvp_test._post(${posted}::uuid, ${avail}::uuid, ${cents}::bigint)`;
       });
@@ -399,9 +548,12 @@ describe("phase 2 isolated behavior", () => {
         from (select set_config('request.jwt.claims', ${authed}, true)) c`),
     ).toMatch(/42501|SERVER_ONLY/);
     expect(
-      await err(sql`select pvp_test.crypto_request_withdrawal(${id}::uuid, 8453, 'USDC', 1000, null, true, null)`),
+      await err(
+        sql`select pvp_test.crypto_request_withdrawal(${id}::uuid, 8453, 'USDC', 1000, null, true, null)`,
+      ),
     ).toContain("SELF_EXCLUDED");
-    const [rows] = await sql`select count(*)::int n from pvp_test.crypto_withdrawals where user_id = ${id}::uuid`;
+    const [rows] =
+      await sql`select count(*)::int n from pvp_test.crypto_withdrawals where user_id = ${id}::uuid`;
     expect(Number(rows.n)).toBe(0);
   }, 120_000);
 
@@ -411,15 +563,26 @@ describe("phase 2 isolated behavior", () => {
     const player = await user("cply");
     const tiny = await user("ctin");
     await sql`insert into pvp_test.partners (user_id, commission_bps, created_by) values (${partner}::uuid, 150, ${admin}::uuid)`;
-    const promo = (await sql`insert into pvp_test.promo_codes (code, reward_cents, max_claims, created_by, partner_user_id)
-      values ('PHASE2COMM', 100, 10, ${admin}::uuid, ${partner}::uuid) returning id`)[0].id as string;
-    for (const [who, cents] of [[player, 10001], [tiny, 1]] as const) {
-      const tx = (await sql`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id)
-        values ('deposit', ${key()}, 'real', ${who}::uuid) returning id`)[0].id as string;
-      const claimTx = (await sql`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id)
-        values ('promo_reward', ${key()}, 'test_credit', ${who}::uuid) returning id`)[0].id as string;
-      const claim = (await sql`insert into pvp_test.promo_claims (promo_code_id, user_id, reward_cents, required_wager_cents, ledger_tx_id, client_ip)
-        values (${promo}::uuid, ${who}::uuid, 100, 100, ${claimTx}::uuid, ${"2001:db8::" + who.slice(0, 4)}) returning id`)[0].id as string;
+    const promo = (
+      await sql`insert into pvp_test.promo_codes (code, reward_cents, max_claims, created_by, partner_user_id)
+      values ('PHASE2COMM', 100, 10, ${admin}::uuid, ${partner}::uuid) returning id`
+    )[0].id as string;
+    for (const [who, cents] of [
+      [player, 10001],
+      [tiny, 1],
+    ] as const) {
+      const tx = (
+        await sql`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id)
+        values ('deposit', ${key()}, 'real', ${who}::uuid) returning id`
+      )[0].id as string;
+      const claimTx = (
+        await sql`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type, user_id)
+        values ('promo_reward', ${key()}, 'test_credit', ${who}::uuid) returning id`
+      )[0].id as string;
+      const claim = (
+        await sql`insert into pvp_test.promo_claims (promo_code_id, user_id, reward_cents, required_wager_cents, ledger_tx_id, client_ip)
+        values (${promo}::uuid, ${who}::uuid, 100, 100, ${claimTx}::uuid, ${"2001:db8::" + who.slice(0, 4)}) returning id`
+      )[0].id as string;
       await sql`insert into pvp_test.partner_referrals (user_id, partner_user_id, promo_code_id, promo_claim_id)
         values (${who}::uuid, ${partner}::uuid, ${promo}::uuid, ${claim}::uuid)`;
       await sql`alter table pvp_test.crypto_deposits disable trigger user`;
@@ -429,8 +592,14 @@ describe("phase 2 isolated behavior", () => {
           1, ${cents}, ${who}::uuid, 'CREDITED', ${tx}::uuid, clock_timestamp())`;
       await sql`alter table pvp_test.crypto_deposits enable trigger user`;
     }
-    const [window] = await sql`select pvp_test._partner_window(${partner}::uuid, 150, '-infinity', 'infinity') w`;
-    expect(window.w).toMatchObject({ deposit_cents: 10002, deposit_count: 2, depositing_users: 2, commission_cents: 150 });
+    const [window] =
+      await sql`select pvp_test._partner_window(${partner}::uuid, 150, '-infinity', 'infinity') w`;
+    expect(window.w).toMatchObject({
+      deposit_cents: 10002,
+      deposit_count: 2,
+      depositing_users: 2,
+      commission_cents: 150,
+    });
     const [priv] = await sql`select
       has_function_privilege('anon', 'pvp_test._partner_window(uuid,integer,timestamptz,timestamptz)', 'execute') a,
       has_function_privilege('authenticated', 'pvp_test._partner_window(uuid,integer,timestamptz,timestamptz)', 'execute') u`;
@@ -441,19 +610,30 @@ describe("phase 2 isolated behavior", () => {
   it("chat stores hostile text literally, rate-limits floods, and hides blocked messages from anon", async () => {
     const id = await user("chat");
     const hostile = "<script>alert(1)</script>'); drop table pvp_test.profiles;--";
-    const sent = (await sql`select pvp_test.chat_send(${id}::uuid, 'jackpot', ${hostile}, 'LOW', 'ok') r`)[0].r as { ok: boolean; id: string };
+    const sent = (
+      await sql`select pvp_test.chat_send(${id}::uuid, 'jackpot', ${hostile}, 'LOW', 'ok') r`
+    )[0].r as { ok: boolean; id: string };
     expect(sent.ok).toBe(true);
-    const [stored] = await sql`select message from pvp_test.game_chat_messages where id = ${sent.id}::uuid`;
+    const [stored] =
+      await sql`select message from pvp_test.game_chat_messages where id = ${sent.id}::uuid`;
     expect(stored.message).toBe(hostile);
-    const dup = (await sql`select pvp_test.chat_send(${id}::uuid, 'jackpot', ${hostile}, 'LOW', 'ok') r`)[0].r as { code: string };
+    const dup = (
+      await sql`select pvp_test.chat_send(${id}::uuid, 'jackpot', ${hostile}, 'LOW', 'ok') r`
+    )[0].r as { code: string };
     expect(dup.code).toBe("CHAT_RATE_LIMITED");
-    const hidden = (await sql`select pvp_test.chat_send(${id}::uuid, 'coinflip', ${"hide" + key().slice(0, 8)}, 'HIGH', 'abuse') r`)[0].r as { code: string };
+    const hidden = (
+      await sql`select pvp_test.chat_send(${id}::uuid, 'coinflip', ${"hide" + key().slice(0, 8)}, 'HIGH', 'abuse') r`
+    )[0].r as { code: string };
     expect(hidden.code).toBe("CHAT_BLOCKED");
     for (let i = 0; i < 3; i++) {
-      const row = (await sql`select pvp_test.chat_send(${id}::uuid, 'jackpot', ${"m" + i + key().slice(0, 8)}, 'LOW', 'ok') r`)[0].r as { ok: boolean };
+      const row = (
+        await sql`select pvp_test.chat_send(${id}::uuid, 'jackpot', ${"m" + i + key().slice(0, 8)}, 'LOW', 'ok') r`
+      )[0].r as { ok: boolean };
       expect(row.ok).toBe(true);
     }
-    const limited = (await sql`select pvp_test.chat_send(${id}::uuid, 'jackpot', ${"overflow" + key().slice(0, 6)}, 'LOW', 'ok') r`)[0].r as { code: string };
+    const limited = (
+      await sql`select pvp_test.chat_send(${id}::uuid, 'jackpot', ${"overflow" + key().slice(0, 6)}, 'LOW', 'ok') r`
+    )[0].r as { code: string };
     expect(limited.code).toBe("CHAT_RATE_LIMITED");
     const [roles] = await sql`select exists (select 1 from pg_roles where rolname = 'anon') as ok`;
     if (roles.ok) {
@@ -461,12 +641,15 @@ describe("phase 2 isolated behavior", () => {
       const hiddenRead = await err(
         sql.begin(async (tx) => {
           await tx.unsafe(`set local role anon`);
-          const rows = await tx`select count(*)::int n from pvp_test.game_chat_messages where status = 'hidden'`;
+          const rows =
+            await tx`select count(*)::int n from pvp_test.game_chat_messages where status = 'hidden'`;
           hiddenToAnon = Number(rows[0].n);
           throw new Error("ROLLBACK");
         }),
       );
-      expect(hiddenRead.includes("42501") || (hiddenRead.includes("ROLLBACK") && hiddenToAnon === 0)).toBe(true);
+      expect(
+        hiddenRead.includes("42501") || (hiddenRead.includes("ROLLBACK") && hiddenToAnon === 0),
+      ).toBe(true);
       const insert = await err(
         sql.begin(async (tx) => {
           await tx.unsafe(`set local role anon`);
@@ -487,7 +670,9 @@ describe("phase 2 isolated behavior", () => {
     expect(priv.u).toBe(false);
     expect(priv.da).toBe(false);
     expect(Number(priv.bearers)).toBe(0);
-    expect(await err(sql`select pvp_test.crypto_invoke_cron('crypto-withdrawals')`)).toContain("crypto job token missing");
+    expect(await err(sql`select pvp_test.crypto_invoke_cron('crypto-withdrawals')`)).toContain(
+      "crypto job token missing",
+    );
   });
 
   it("records latency for queued reads at 100, 250, 500, and 1000 tasks", async () => {
@@ -509,7 +694,10 @@ describe("phase 2 isolated behavior", () => {
         }),
       );
       samples.sort((a, b) => a - b);
-      const at = (p: number) => (samples.length ? samples[Math.min(samples.length - 1, Math.ceil((p / 100) * samples.length) - 1)] : null);
+      const at = (p: number) =>
+        samples.length
+          ? samples[Math.min(samples.length - 1, Math.ceil((p / 100) * samples.length) - 1)]
+          : null;
       const elapsed = performance.now() - started;
       results.push({
         tasks: n,
@@ -524,7 +712,8 @@ describe("phase 2 isolated behavior", () => {
       });
       if (errors > 0) break;
     }
-    writeFileSync("/tmp/phase2-perf.json", JSON.stringify(results, null, 2));
+    mkdirSync(resolve("test-results"), { recursive: true });
+    writeFileSync(resolve("test-results/phase2-perf.json"), JSON.stringify(results, null, 2));
     expect(results[0].tasks).toBe(100);
     expect(results[0].errors).toBe(0);
     expect(results.at(-1)?.errors).toBe(0);

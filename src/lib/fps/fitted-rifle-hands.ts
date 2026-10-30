@@ -1,0 +1,419 @@
+import * as THREE from "three";
+import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
+
+/** Fit the authored finger bones to a horizontal AK handguard, not the optional vertical grip. */
+export function poseRifleHands(root: THREE.Object3D) {
+  const hand = root.getObjectByName("Hand_L");
+  if (!hand) throw new Error("AK support hand is missing");
+  root.updateWorldMatrix(true, true);
+  const originalHand = hand.matrixWorld.clone();
+  hand.scale.multiplyScalar(0.85);
+  const middle = root.getObjectByName("Bone_L009")!;
+  const wrist = hand.getWorldPosition(new THREE.Vector3());
+  const current = middle.getWorldPosition(new THREE.Vector3()).sub(wrist).normalize();
+  const across = root
+    .getObjectByName("Bone_L017")!
+    .getWorldPosition(new THREE.Vector3())
+    .sub(root.getObjectByName("Bone_L005")!.getWorldPosition(new THREE.Vector3()));
+  across.addScaledVector(current, -across.dot(current)).normalize();
+  const sourceFrame = new THREE.Matrix4().makeBasis(
+    across,
+    current,
+    new THREE.Vector3().crossVectors(across, current),
+  );
+  const desired = new THREE.Vector3(0, Math.sqrt(0.91), -0.3).transformDirection(root.matrixWorld);
+  const desiredAcross = new THREE.Vector3(0, 0.3, Math.sqrt(0.91)).transformDirection(
+    root.matrixWorld,
+  );
+  const targetFrame = new THREE.Matrix4().makeBasis(
+    desiredAcross,
+    desired,
+    new THREE.Vector3().crossVectors(desiredAcross, desired),
+  );
+  const turn = new THREE.Quaternion().setFromRotationMatrix(
+    targetFrame.multiply(sourceFrame.invert()),
+  );
+  const world = hand.getWorldQuaternion(new THREE.Quaternion()).premultiply(turn);
+  hand.quaternion.copy(
+    hand.parent!.getWorldQuaternion(new THREE.Quaternion()).invert().multiply(world),
+  );
+  hand.position.copy(
+    hand.parent!.worldToLocal(root.localToWorld(new THREE.Vector3(-0.06, -0.23, -0.88))),
+  );
+  root.updateWorldMatrix(true, true);
+
+  function aim(joint: THREE.Object3D, child: THREE.Object3D, target: THREE.Vector3) {
+    const origin = joint.getWorldPosition(new THREE.Vector3());
+    const from = child.getWorldPosition(new THREE.Vector3()).sub(origin).normalize();
+    const to = target.clone().sub(origin).normalize();
+    const rotation = joint
+      .getWorldQuaternion(new THREE.Quaternion())
+      .premultiply(new THREE.Quaternion().setFromUnitVectors(from, to));
+    joint.quaternion.copy(
+      joint.parent!.getWorldQuaternion(new THREE.Quaternion()).invert().multiply(rotation),
+    );
+    root.updateWorldMatrix(true, true);
+  }
+  // A pole below the handguard prevents the solver taking a shortcut through the weapon.
+  function wrapSupport(base: number, z: number) {
+    const name = (i: number) => `Bone_L${String(i).padStart(3, "0")}`;
+    const a = root.getObjectByName(name(base))!,
+      b = root.getObjectByName(name(base + 1))!,
+      c = root.getObjectByName(name(base + 2))!,
+      tip = root.getObjectByName(name(base + 2) + "_end")!;
+    const origin = a.getWorldPosition(new THREE.Vector3()),
+      bp = b.getWorldPosition(new THREE.Vector3()),
+      cp = c.getWorldPosition(new THREE.Vector3());
+    const l1 = origin.distanceTo(bp),
+      l2 = bp.distanceTo(cp);
+    const goal = root.localToWorld(new THREE.Vector3(0.04, -0.04, z)),
+      forward = goal.clone().sub(origin).normalize();
+    const distance = THREE.MathUtils.clamp(
+      origin.distanceTo(goal),
+      Math.abs(l1 - l2) + 1e-5,
+      l1 + l2 - 1e-5,
+    );
+    const pole = root.localToWorld(new THREE.Vector3(-0.025, -0.22, z)).sub(origin);
+    pole.addScaledVector(forward, -pole.dot(forward)).normalize();
+    const along = (l1 * l1 - l2 * l2 + distance * distance) / (2 * distance);
+    const bend = Math.sqrt(Math.max(0, l1 * l1 - along * along));
+    const pip = origin.clone().addScaledVector(forward, along).addScaledVector(pole, bend);
+    aim(a, b, pip);
+    aim(b, c, origin.clone().addScaledVector(forward, distance));
+    aim(c, tip, root.localToWorld(new THREE.Vector3(0.045, 0.005, z)));
+  }
+
+  // CCD changes rotations only: authored bone lengths, skin weights and glove detail survive.
+  function fit(names: string[], target: THREE.Vector3) {
+    const chain = names.map((name) => root.getObjectByName(name)!);
+    if (chain.some((b) => !b)) throw new Error(`Incomplete AK finger: ${names[0]}`);
+    const tip = chain.at(-1)!,
+      goal = root.localToWorld(target.clone());
+    const origin = new THREE.Vector3(),
+      from = new THREE.Vector3(),
+      to = new THREE.Vector3();
+    for (let iteration = 0; iteration < 18; iteration++) {
+      for (let j = chain.length - 2; j >= 0; j--) {
+        const joint = chain[j]!;
+        joint.getWorldPosition(origin);
+        from.copy(tip.getWorldPosition(new THREE.Vector3())).sub(origin).normalize();
+        to.copy(goal).sub(origin).normalize();
+        const correction = new THREE.Quaternion().setFromUnitVectors(from, to);
+        const step = new THREE.Quaternion().slerp(correction, 0.65);
+        const rotation = joint.getWorldQuaternion(new THREE.Quaternion()).premultiply(step);
+        joint.quaternion.copy(
+          joint.parent!.getWorldQuaternion(new THREE.Quaternion()).invert().multiply(rotation),
+        );
+        root.updateWorldMatrix(true, true);
+      }
+      if (tip.getWorldPosition(origin).distanceTo(goal) < 0.0005) break;
+    }
+  }
+  for (const [base, z] of [
+    [5, -0.982],
+    [9, -0.955],
+    [13, -0.927],
+    [17, -0.9],
+  ] as const) {
+    wrapSupport(base, z);
+  }
+  fit(
+    ["Bone_L020", "Bone_L021", "Bone_L022", "Bone_L022_end"],
+    new THREE.Vector3(-0.052, 0.052, -0.971),
+  );
+  // Right middle/ring/little fingers curl around the pistol grip. Index retains trigger placement.
+  for (const [base, y] of [
+    [9, -0.163],
+    [13, -0.207],
+    [17, -0.244],
+  ] as const) {
+    const name = (i: number) => `Bone_R${String(i).padStart(3, "0")}`;
+    fit(
+      [name(base), name(base + 1), name(base + 2), `${name(base + 2)}_end`],
+      new THREE.Vector3(-0.045, y, -0.237),
+    );
+  }
+  root.updateWorldMatrix(true, true);
+  return hand.matrixWorld.clone().multiply(originalHand.invert());
+}
+
+type Vertex = { p: THREE.Vector3; n: THREE.Vector3; uv: THREE.Vector2 };
+/** Clip the actual posed glove triangles and extrude skin from their exact edge, without a cover band. */
+export function fitContinuousForearms(
+  arm: THREE.SkinnedMesh,
+  root: THREE.Object3D,
+  supportDelta: THREE.Matrix4,
+) {
+  root.updateWorldMatrix(true, true);
+  arm.updateMatrixWorld(true);
+  arm.skeleton.update();
+  const source = arm.geometry,
+    positions = source.getAttribute("position"),
+    normals = source.getAttribute("normal"),
+    uvs = source.getAttribute("uv"),
+    weights = source.getAttribute("skinWeight"),
+    joints = source.getAttribute("skinIndex");
+  const toRoot = root.matrixWorld.clone().invert().multiply(arm.matrixWorld);
+  const normalMatrix = new THREE.Matrix3().getNormalMatrix(toRoot);
+  const vertices: Vertex[] = [],
+    sides: number[] = [];
+  const skinMatrices = arm.skeleton.bones.map((bone, i) => {
+    const matrix = bone.matrixWorld.clone();
+    if (/^(?:Arm_L|UpArm_L|Forearm_L|BoneTwist.*L)/.test(bone.name))
+      matrix.premultiply(supportDelta);
+    return matrix.multiply(arm.skeleton.boneInverses[i]!);
+  });
+  for (let i = 0; i < positions.count; i++) {
+    const base = new THREE.Vector3().fromBufferAttribute(positions, i).applyMatrix4(arm.bindMatrix);
+    const p = new THREE.Vector3(),
+      n = new THREE.Vector3(),
+      bindNormal = new THREE.Vector3()
+        .fromBufferAttribute(normals, i)
+        .transformDirection(arm.bindMatrix);
+    let side = 0;
+    for (let j = 0; j < 4; j++) {
+      const weight = weights.getComponent(i, j);
+      if (!weight) continue;
+      const index = joints.getComponent(i, j),
+        bone = arm.skeleton.bones[index]!,
+        matrix = skinMatrices[index]!;
+      p.addScaledVector(base.clone().applyMatrix4(matrix), weight);
+      n.addScaledVector(bindNormal.clone().transformDirection(matrix), weight);
+      side += (/L(?:$|\d)|\.L/.test(bone.name) ? 1 : -1) * weight;
+    }
+    p.applyMatrix4(arm.bindMatrixInverse).applyMatrix4(toRoot);
+    n.transformDirection(arm.bindMatrixInverse).applyMatrix3(normalMatrix).normalize();
+    vertices.push({ p, n, uv: new THREE.Vector2(uvs.getX(i), uvs.getY(i)) });
+    sides.push(side);
+  }
+  const glovePositions: number[] = [],
+    gloveNormals: number[] = [],
+    gloveUVs: number[] = [];
+  const skinPositions: number[] = [],
+    skinUVs: number[] = [];
+  const seams: { side: string; points: number; gap: number; loops: number; openEdges: number }[] =
+    [];
+  for (const [side, sign] of [
+    ["L", 1],
+    ["R", -1],
+  ] as const) {
+    const hand = root.getObjectByName(`Hand_${side}`)!;
+    const wrist = root.worldToLocal(hand.getWorldPosition(new THREE.Vector3()));
+    const axis = new THREE.Vector3(0, -1, 0)
+      .transformDirection(hand.matrixWorld)
+      .transformDirection(root.matrixWorld.clone().invert());
+    const plane = wrist.clone().addScaledVector(axis, -0.012);
+    const edges: [THREE.Vector3, THREE.Vector3][] = [];
+    const count = source.index?.count ?? positions.count;
+    const interpolate = (a: Vertex, b: Vertex, t: number): Vertex => ({
+      p: a.p.clone().lerp(b.p, t),
+      n: a.n.clone().lerp(b.n, t).normalize(),
+      uv: a.uv.clone().lerp(b.uv, t),
+    });
+    for (let i = 0; i < count; i += 3) {
+      const ids = [0, 1, 2].map((j) => source.index?.getX(i + j) ?? i + j);
+      if (ids.reduce((s, id) => s + sides[id]!, 0) * sign < 0) continue;
+      const triangle = ids.map((id) => vertices[id]!);
+      const clipped: Vertex[] = [],
+        crossings: THREE.Vector3[] = [];
+      for (let j = 0; j < 3; j++) {
+        const a = triangle[j]!,
+          b = triangle[(j + 1) % 3]!,
+          da = a.p.clone().sub(plane).dot(axis),
+          db = b.p.clone().sub(plane).dot(axis);
+        if (da <= 0) clipped.push(a);
+        if (da <= 0 !== db <= 0) {
+          const v = interpolate(a, b, da / (da - db));
+          clipped.push(v);
+          crossings.push(v.p);
+        }
+      }
+      if (crossings.length === 2) edges.push([crossings[0]!, crossings[1]!]);
+      for (let j = 1; j + 1 < clipped.length; j++)
+        for (const v of [clipped[0]!, clipped[j]!, clipped[j + 1]!]) {
+          glovePositions.push(...v.p.toArray());
+          gloveNormals.push(...v.n.toArray());
+          gloveUVs.push(...v.uv.toArray());
+        }
+    }
+    // Weld UV-split edge vertices by position, then trace the original topology's boundary loops.
+    const key = (p: THREE.Vector3) =>
+      p
+        .toArray()
+        .map((v) => Math.round(v * 1e5))
+        .join(",");
+    const points = new Map<string, THREE.Vector3>(),
+      neighbors = new Map<string, Set<string>>();
+    for (const [a, b] of edges) {
+      const ka = key(a),
+        kb = key(b);
+      if (ka === kb) continue;
+      points.set(ka, a);
+      points.set(kb, b);
+      if (!neighbors.has(ka)) neighbors.set(ka, new Set());
+      if (!neighbors.has(kb)) neighbors.set(kb, new Set());
+      neighbors.get(ka)!.add(kb);
+      neighbors.get(kb)!.add(ka);
+    }
+    const loops: THREE.Vector3[][] = [],
+      used = new Set<string>();
+    for (const start of neighbors.keys()) {
+      if (used.has(start)) continue;
+      const loop: THREE.Vector3[] = [];
+      let current: string | undefined = start,
+        previous: string | undefined;
+      while (current && !used.has(current)) {
+        used.add(current);
+        loop.push(points.get(current)!);
+        const next: string | undefined = [...neighbors.get(current)!].find(
+          (k) => k !== previous && !used.has(k),
+        );
+        previous = current;
+        current = next;
+      }
+      if (loop.length > 5) loops.push(loop);
+    }
+    loops.sort((a, b) => b.length - a.length);
+    const rim = loops[0];
+    if (!rim) throw new Error(`Cannot form continuous ${side} wrist edge`);
+    const center = rim
+      .reduce((v, p) => v.add(p), new THREE.Vector3())
+      .multiplyScalar(1 / rim.length);
+    const elbow = new THREE.Vector3(side === "L" ? -0.42 : 0.38, -0.44, -0.02).divideScalar(0.52);
+    const direction = elbow.clone().sub(center).normalize(),
+      distance = center.distanceTo(elbow);
+    const endRotation = new THREE.Quaternion().setFromUnitVectors(axis, direction);
+    const ringCount = 32,
+      rings: THREE.Vector3[][] = [];
+    const path = new THREE.CubicBezierCurve3(
+      center,
+      center.clone().addScaledVector(axis, distance * 0.28),
+      elbow.clone().addScaledVector(direction, -distance * 0.32),
+      elbow,
+    );
+    const right = new THREE.Vector3(1, 0, 0).addScaledVector(axis, -axis.x).normalize();
+    const up = new THREE.Vector3().crossVectors(axis, right).normalize();
+    const offsets = rim.map((p) => p.clone().sub(center));
+    for (let r = 0; r <= ringCount; r++) {
+      const t = r / ringCount,
+        blend = THREE.MathUtils.smoothstep(t, 0, 0.42),
+        q = new THREE.Quaternion().slerp(endRotation, blend);
+      const c = path.getPoint(t),
+        radius = (0.029 + t * 0.024 + Math.sin(Math.PI * t) * 0.014) / 0.52;
+      const relax = THREE.MathUtils.smoothstep(t, 0, 0.2);
+      rings.push(
+        offsets.map((offset) => {
+          const angle = Math.atan2(offset.dot(up) / 0.82, offset.dot(right));
+          const smooth = right
+            .clone()
+            .multiplyScalar(Math.cos(angle) * radius)
+            .addScaledVector(up, Math.sin(angle) * radius * 0.82);
+          return offset.clone().lerp(smooth, relax).applyQuaternion(q).add(c);
+        }),
+      );
+    }
+    const radial = rim[0]!.clone().sub(center),
+      tangent = rim[1]!.clone().sub(rim[0]!);
+    const outward = new THREE.Vector3().crossVectors(tangent, axis).dot(radial) > 0;
+    for (let r = 0; r < ringCount; r++)
+      for (let j = 0; j < rim.length; j++) {
+        const k = (j + 1) % rim.length,
+          a = rings[r]![j]!,
+          b = rings[r]![k]!,
+          c = rings[r + 1]![j]!,
+          d = rings[r + 1]![k]!;
+        const triangles = outward
+          ? [
+              [a, b, c],
+              [c, b, d],
+            ]
+          : [
+              [a, c, b],
+              [c, d, b],
+            ];
+        const coords = outward
+          ? [
+              [
+                j / rim.length,
+                r / ringCount,
+                k / rim.length,
+                r / ringCount,
+                j / rim.length,
+                (r + 1) / ringCount,
+              ],
+              [
+                j / rim.length,
+                (r + 1) / ringCount,
+                k / rim.length,
+                r / ringCount,
+                k / rim.length,
+                (r + 1) / ringCount,
+              ],
+            ]
+          : [
+              [
+                j / rim.length,
+                r / ringCount,
+                j / rim.length,
+                (r + 1) / ringCount,
+                k / rim.length,
+                r / ringCount,
+              ],
+              [
+                j / rim.length,
+                (r + 1) / ringCount,
+                k / rim.length,
+                (r + 1) / ringCount,
+                k / rim.length,
+                r / ringCount,
+              ],
+            ];
+        triangles.forEach((tri, i) => {
+          for (const p of tri) skinPositions.push(...p.toArray());
+          skinUVs.push(...coords[i]!);
+        });
+      }
+    seams.push({
+      side,
+      loops: loops.length,
+      openEdges: [...neighbors.values()].filter((n) => n.size !== 2).length,
+      points: rim.length,
+      gap: Math.max(...rim.map((p, i) => p.distanceTo(rings[0]![i]!))),
+    });
+  }
+  function geometry(p: number[], uv: number[], n?: number[]) {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(p, 3));
+    g.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+    if (n) g.setAttribute("normal", new THREE.Float32BufferAttribute(n, 3));
+    else {
+      const smooth = mergeVertices(g, 1e-5);
+      g.dispose();
+      smooth.computeVertexNormals();
+      // UV splits must not turn the wrist or arm into visibly separate shaded strips.
+      const p = smooth.getAttribute("position"),
+        n = smooth.getAttribute("normal"),
+        sums = new Map<string, THREE.Vector3>();
+      const key = (i: number) =>
+        [p.getX(i), p.getY(i), p.getZ(i)].map((v) => Math.round(v * 1e5)).join(",");
+      for (let i = 0; i < p.count; i++) {
+        const k = key(i);
+        if (!sums.has(k)) sums.set(k, new THREE.Vector3());
+        sums.get(k)!.add(new THREE.Vector3().fromBufferAttribute(n, i));
+      }
+      for (let i = 0; i < p.count; i++) {
+        const normal = sums.get(key(i))!.clone().normalize();
+        n.setXYZ(i, normal.x, normal.y, normal.z);
+      }
+      smooth.computeBoundingSphere();
+      return smooth;
+    }
+    g.computeBoundingSphere();
+    return g;
+  }
+  return {
+    gloves: geometry(glovePositions, gloveUVs, gloveNormals),
+    skin: geometry(skinPositions, skinUVs),
+    seams,
+  };
+}

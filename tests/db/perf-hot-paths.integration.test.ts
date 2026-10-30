@@ -5,7 +5,7 @@
 import postgres from "postgres";
 import { afterAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { adminClaims, openAdminStepup } from "./admin-stepup";
 import { testDatabaseUrl } from "./test-url";
 
@@ -20,7 +20,7 @@ afterAll(async () => {
 
 d("perf hot paths", () => {
   it("rebuilds, indexes the justified keys, wraps the 28 policies, and keeps admin/integrity", async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
 
     const idx =
       await sql`select indexname from pg_indexes where schemaname = 'pvp_test' and indexname in (

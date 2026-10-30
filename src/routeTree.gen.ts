@@ -17,6 +17,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CoinflipRouteImport } from './routes/coinflip'
 import { Route as EditorialRouteImport } from './routes/editorial'
 import { Route as FairnessRouteImport } from './routes/fairness'
+import { Route as FpsDuelRouteImport } from './routes/fps-duel'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
 import { Route as PokerRouteImport } from './routes/poker'
@@ -32,6 +33,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as CoinflipGameIdRouteImport } from './routes/coinflip.$gameId'
+import { Route as FpsMatchIdRouteImport } from './routes/fps.$matchId'
 import { Route as GamesGameIdRouteImport } from './routes/games.$gameId'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
@@ -97,6 +99,11 @@ const EditorialRoute = EditorialRouteImport.update({
 const FairnessRoute = FairnessRouteImport.update({
   id: '/fairness',
   path: '/fairness',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FpsDuelRoute = FpsDuelRouteImport.update({
+  id: '/fps-duel',
+  path: '/fps-duel',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
@@ -173,6 +180,11 @@ const CoinflipGameIdRoute = CoinflipGameIdRouteImport.update({
   id: '/$gameId',
   path: '/$gameId',
   getParentRoute: () => CoinflipRoute,
+} as any)
+const FpsMatchIdRoute = FpsMatchIdRouteImport.update({
+  id: '/fps/$matchId',
+  path: '/fps/$matchId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const GamesGameIdRoute = GamesGameIdRouteImport.update({
   id: '/games/$gameId',
@@ -328,6 +340,7 @@ export interface FileRoutesByFullPath {
   '/coinflip': typeof CoinflipRouteWithChildren
   '/editorial': typeof EditorialRoute
   '/fairness': typeof FairnessRoute
+  '/fps-duel': typeof FpsDuelRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
   '/poker': typeof PokerRouteWithChildren
@@ -343,6 +356,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/coinflip/$gameId': typeof CoinflipGameIdRoute
+  '/fps/$matchId': typeof FpsMatchIdRoute
   '/games/$gameId': typeof GamesGameIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/invite/$code': typeof InviteCodeRoute
@@ -379,6 +393,7 @@ export interface FileRoutesByTo {
   '/coinflip': typeof CoinflipRouteWithChildren
   '/editorial': typeof EditorialRoute
   '/fairness': typeof FairnessRoute
+  '/fps-duel': typeof FpsDuelRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
   '/poker': typeof PokerRouteWithChildren
@@ -394,6 +409,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/coinflip/$gameId': typeof CoinflipGameIdRoute
+  '/fps/$matchId': typeof FpsMatchIdRoute
   '/games/$gameId': typeof GamesGameIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/invite/$code': typeof InviteCodeRoute
@@ -432,6 +448,7 @@ export interface FileRoutesById {
   '/coinflip': typeof CoinflipRouteWithChildren
   '/editorial': typeof EditorialRoute
   '/fairness': typeof FairnessRoute
+  '/fps-duel': typeof FpsDuelRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
   '/poker': typeof PokerRouteWithChildren
@@ -447,6 +464,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/coinflip/$gameId': typeof CoinflipGameIdRoute
+  '/fps/$matchId': typeof FpsMatchIdRoute
   '/games/$gameId': typeof GamesGameIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/invite/$code': typeof InviteCodeRoute
@@ -485,6 +503,7 @@ export interface FileRouteTypes {
     | '/coinflip'
     | '/editorial'
     | '/fairness'
+    | '/fps-duel'
     | '/how-it-works'
     | '/leaderboards'
     | '/poker'
@@ -500,6 +519,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/wallet'
     | '/coinflip/$gameId'
+    | '/fps/$matchId'
     | '/games/$gameId'
     | '/guides/$slug'
     | '/invite/$code'
@@ -536,6 +556,7 @@ export interface FileRouteTypes {
     | '/coinflip'
     | '/editorial'
     | '/fairness'
+    | '/fps-duel'
     | '/how-it-works'
     | '/leaderboards'
     | '/poker'
@@ -551,6 +572,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/wallet'
     | '/coinflip/$gameId'
+    | '/fps/$matchId'
     | '/games/$gameId'
     | '/guides/$slug'
     | '/invite/$code'
@@ -588,6 +610,7 @@ export interface FileRouteTypes {
     | '/coinflip'
     | '/editorial'
     | '/fairness'
+    | '/fps-duel'
     | '/how-it-works'
     | '/leaderboards'
     | '/poker'
@@ -603,6 +626,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/wallet'
     | '/coinflip/$gameId'
+    | '/fps/$matchId'
     | '/games/$gameId'
     | '/guides/$slug'
     | '/invite/$code'
@@ -641,6 +665,7 @@ export interface RootRouteChildren {
   CoinflipRoute: typeof CoinflipRouteWithChildren
   EditorialRoute: typeof EditorialRoute
   FairnessRoute: typeof FairnessRoute
+  FpsDuelRoute: typeof FpsDuelRoute
   HowItWorksRoute: typeof HowItWorksRoute
   LeaderboardsRoute: typeof LeaderboardsRouteWithChildren
   PokerRoute: typeof PokerRouteWithChildren
@@ -652,6 +677,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SlottRoute: typeof SlottRouteWithChildren
   TermsRoute: typeof TermsRoute
+  FpsMatchIdRoute: typeof FpsMatchIdRoute
   GamesGameIdRoute: typeof GamesGameIdRoute
   GuidesSlugRoute: typeof GuidesSlugRoute
   InviteCodeRoute: typeof InviteCodeRoute
@@ -727,6 +753,13 @@ declare module '@tanstack/react-router' {
       path: '/fairness'
       fullPath: '/fairness'
       preLoaderRoute: typeof FairnessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fps-duel': {
+      id: '/fps-duel'
+      path: '/fps-duel'
+      fullPath: '/fps-duel'
+      preLoaderRoute: typeof FpsDuelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-it-works': {
@@ -833,6 +866,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/coinflip/$gameId'
       preLoaderRoute: typeof CoinflipGameIdRouteImport
       parentRoute: typeof CoinflipRoute
+    }
+    '/fps/$matchId': {
+      id: '/fps/$matchId'
+      path: '/fps/$matchId'
+      fullPath: '/fps/$matchId'
+      preLoaderRoute: typeof FpsMatchIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/games/$gameId': {
       id: '/games/$gameId'
@@ -1116,6 +1156,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoinflipRoute: CoinflipRouteWithChildren,
   EditorialRoute: EditorialRoute,
   FairnessRoute: FairnessRoute,
+  FpsDuelRoute: FpsDuelRoute,
   HowItWorksRoute: HowItWorksRoute,
   LeaderboardsRoute: LeaderboardsRouteWithChildren,
   PokerRoute: PokerRouteWithChildren,
@@ -1127,6 +1168,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SlottRoute: SlottRouteWithChildren,
   TermsRoute: TermsRoute,
+  FpsMatchIdRoute: FpsMatchIdRoute,
   GamesGameIdRoute: GamesGameIdRoute,
   GuidesSlugRoute: GuidesSlugRoute,
   InviteCodeRoute: InviteCodeRoute,

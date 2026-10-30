@@ -6,7 +6,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { drawTicket, verifyGame } from "../../src/lib/jackpot/fairness";
 import { testDatabaseUrl } from "./test-url";
 
@@ -87,7 +87,7 @@ async function setTimer(countdown: number, extension: number, max: number, rate 
 
 d("jackpot engine (isolated schema)", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
   }, 180_000);
   afterAll(async () => {
     await sql`drop schema if exists pvp_test cascade`;
