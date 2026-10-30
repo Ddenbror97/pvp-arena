@@ -18,8 +18,11 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
     ownedTextures: THREE.Texture[] = [],
     ownedMaterials: THREE.Material[] = [];
   const muzzle = new THREE.Vector3(),
+    gripLeft = new THREE.Vector3(),
+    gripRight = new THREE.Vector3(),
     marker = new THREE.Object3D(),
     matrix = new THREE.Matrix4();
+  let magazine: THREE.Object3D | undefined, bolt: THREE.Object3D | undefined;
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = 1024;
   const pen = canvas.getContext("2d")!;
@@ -178,6 +181,21 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
       }
       const tip = instance.root.getObjectByName("MuzzleDeviceTip");
       if (tip) tip.add(marker);
+      root.updateWorldMatrix(true, true);
+      marker.getWorldPosition(muzzle);
+      parent.worldToLocal(muzzle);
+      for (const [name, out] of [
+        ["GripL", gripLeft],
+        ["GripR", gripRight],
+      ] as const) {
+        const grip = instance.root.getObjectByName(name);
+        if (grip) {
+          grip.getWorldPosition(out);
+          root.worldToLocal(out);
+        } else out.set(0, name === "GripL" ? -0.01 : -0.095, name === "GripL" ? -0.8 : -0.172);
+      }
+      magazine = instance.root.getObjectByName("Magazine");
+      bolt = instance.root.getObjectByName("ChargingHandle");
       root.traverse((object) => {
         object.layers.set(firstPerson ? 1 : 0);
         if (object instanceof THREE.Mesh) object.castShadow = !firstPerson;
@@ -196,26 +214,17 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
     update(rifle: boolean, reload: number, kick: number) {
       root.visible = loaded && rifle;
       if (!loaded) return;
-      const magazine = instance?.root.getObjectByName("Magazine");
       if (magazine) {
         magazine.position.y = -0.002 - reload * 0.09;
         magazine.rotation.x = reload * 0.12;
       }
-      const bolt = instance?.root.getObjectByName("ChargingHandle");
       if (bolt) bolt.position.z = -0.4857 + kick * 0.025;
     },
     muzzle() {
-      root.updateWorldMatrix(true, true);
-      marker.getWorldPosition(muzzle);
-      return parent.worldToLocal(muzzle);
+      return muzzle;
     },
     grip(side: "L" | "R", target: THREE.Vector3) {
-      root.updateWorldMatrix(true, true);
-      const grip = instance?.root.getObjectByName(`Grip${side}`);
-      if (grip) return grip.getWorldPosition(target);
-      return root.localToWorld(
-        target.set(0, side === "L" ? -0.01 : -0.095, side === "L" ? -0.8 : -0.172),
-      );
+      return root.localToWorld(target.copy(side === "L" ? gripLeft : gripRight));
     },
     dispose() {
       stopped = true;

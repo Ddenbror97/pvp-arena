@@ -9,7 +9,7 @@ import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handli
 import { createArenaEnvironment } from "./environment";
 import { createImpactEffects } from "./impacts";
 import { createWeaponKit, AK_MUZZLE } from "./weapon";
-import { createWetFloor } from "./floor-polish";
+import { CameraCorrection, RemotePresentation, RenderBudget } from "./presentation";
 import { createViewHands } from "./view-hands";
 import { createMuzzleFlash } from "./muzzle-flash";
 import { createAuthoredViewmodel } from "./authored-viewmodel";
@@ -22,6 +22,13 @@ export type ArenaFrame = {
   settlementPending: boolean;
 };
 export type ArenaControls = {
+  diagnostics: () => {
+    camera: number[];
+    calls: number;
+    triangles: number;
+    frameMs: number;
+    cpuMs: number;
+  };
   ready: Promise<void>;
   snapshot: (frame: ArenaFrame, seat: Seat | null) => void;
   lock: () => Promise<void>;
@@ -42,8 +49,10 @@ export function mountArena(
     antialias: true,
     powerPreference: "high-performance",
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+  const budget = new RenderBudget();
   renderer.shadowMap.enabled = true;
+  renderer.shadowMap.autoUpdate = false;
+  renderer.shadowMap.needsUpdate = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -61,7 +70,7 @@ export function mountArena(
   // Centre the light across the two opposing spawn directions.
   sun.position.set(21, 19, -24);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.set(1024, 1024);
   sun.shadow.camera.near = 1;
   sun.shadow.camera.far = 65;
   sun.shadow.camera.left = -22;
@@ -119,6 +128,11 @@ export function mountArena(
     roughness: 0.65,
   });
   const environment = createArenaEnvironment(scene, branding);
+  // The arena is static. Compose its local transforms once, not every render pass.
+  scene.updateMatrixWorld(true);
+  scene.traverse((object) => {
+    if (object instanceof THREE.Mesh) object.matrixAutoUpdate = false;
+  });
   const impacts = createImpactEffects(scene);
   const blood = createBloodEffects(scene);
   // Capture this arena once for rough metallic reflections, excluding all players.
@@ -133,6 +147,31 @@ export function mountArena(
     B: createCharacter("B", branding, weaponKit),
   };
   scene.add(characters.A.root, characters.B.root);
+  const shadowCanvas = document.createElement("canvas");
+  shadowCanvas.width = shadowCanvas.height = 64;
+  const shadowPen = shadowCanvas.getContext("2d")!,
+    shade = shadowPen.createRadialGradient(32, 32, 2, 32, 32, 32);
+  shade.addColorStop(0, "rgba(0,0,0,.32)");
+  shade.addColorStop(1, "rgba(0,0,0,0)");
+  shadowPen.fillStyle = shade;
+  shadowPen.fillRect(0, 0, 64, 64);
+  const contactTexture = new THREE.CanvasTexture(shadowCanvas);
+  const contactMaterial = new THREE.MeshBasicMaterial({
+    map: contactTexture,
+    transparent: true,
+    depthWrite: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+  });
+  const contactShadows = {} as Record<Seat, THREE.Mesh>;
+  for (const [side, actor] of Object.entries(characters)) {
+    const contact = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), contactMaterial);
+    contact.name = "contact-shadow";
+    contact.rotation.x = -Math.PI / 2;
+    contact.position.y = 0.008;
+    actor.root.add(contact);
+    contactShadows[side as Seat] = contact;
+  }
   characters.A.root.visible = false;
   characters.B.root.visible = false;
   const weaponGroup = new THREE.Group();
@@ -224,14 +263,17 @@ export function mountArena(
     characters.A.ready,
     characters.B.ready,
   ]).then(() => {
+    // Cache static arena shadows; moving characters have inexpensive contact shadows.
+    for (const actor of Object.values(characters))
+      actor.root.traverse((object) => {
+        if (object instanceof THREE.Mesh) object.castShadow = false;
+      });
+    renderer.shadowMap.needsUpdate = true;
     renderer.domElement.dataset["authoredModels"] =
       authoredView.loaded && characters.A.loaded && characters.B.loaded ? "ready" : "fallback";
   });
-  const wetFloor = createWetFloor(scene, environment.floorRoughness, [
-    characters.A.root,
-    characters.B.root,
-    weaponGroup,
-  ]);
+  // Floor PBR/environment reflections stay world anchored. A throttled planar
+  // capture reused a stale projection and made the floor swim during mouse look.
   let recoilPitch = 0,
     recoilYaw = 0,
     kick = 0,
@@ -265,9 +307,27 @@ export function mountArena(
     muzzleUntil = 0,
     stopped = false,
     lastRound = 0;
-  let visibility: Record<Seat, boolean> = { A: true, B: true },
-    remoteWasVisible = true;
+  let visibility: Record<Seat, boolean> = { A: true, B: true };
   const remoteTarget = new THREE.Vector3();
+  const correction = new CameraCorrection();
+  const remoteMotion = new RemotePresentation();
+  const remotePose = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
+  let renderPose: Player | null = null;
+  const previewInput: Input = {
+    v: 1,
+    type: "input",
+    seq: 0,
+    forward: 0,
+    strafe: 0,
+    yaw: 0,
+    pitch: 0,
+    fire: false,
+    reload: false,
+    weapon: "rifle",
+    jump: false,
+    sprint: false,
+    crouch: false,
+  };
   const locked = () => document.pointerLockElement === renderer.domElement;
   const clear = () => {
     keys.clear();
@@ -330,6 +390,7 @@ export function mountArena(
   const resize = () => {
     const w = host.clientWidth,
       h = host.clientHeight;
+    renderer.setPixelRatio(budget.ratio(w, h, window.devicePixelRatio));
     renderer.setSize(w, h);
     camera.aspect = w / Math.max(1, h);
     camera.updateProjectionMatrix();
@@ -348,11 +409,19 @@ export function mountArena(
   document.addEventListener("visibilitychange", hidden);
   window.addEventListener("blur", clear);
   let authorizationSuspended = false;
+  let frameMs = 0,
+    cpuMs = 0;
+  const began = performance.now();
   const frame = (now: number) => {
     if (stopped) return;
+    const cpuStart = performance.now();
+    frameMs = now - previous;
     const dt = frameDelta(now, previous);
     previous = now;
     accumulator += dt;
+    correction.update(dt);
+    if (now - began > 2500 && locked() && state?.phase === "live" && budget.update(frameMs))
+      resize();
     while (accumulator >= inputStepMs) {
       accumulator -= inputStepMs;
       if (seat && state && predicted) {
@@ -411,7 +480,24 @@ export function mountArena(
     turnSway = decay(turnSway, 12, dt);
     landKick = decay(landKick, 14, dt);
     if (predicted && seat) {
-      camera.position.set(predicted.x, predicted.y + eyeHeight(predicted), predicted.z);
+      // Render the unsent fraction of a physics tick immediately. Network input
+      // and authoritative physics still run at their original fixed cadence.
+      renderPose ??= { ...predicted };
+      Object.assign(renderPose, predicted);
+      if (!authorizationSuspended && locked() && state?.phase === "live" && predicted.hp > 0) {
+        previewInput.forward = Number(keys.has("KeyW")) - Number(keys.has("KeyS"));
+        previewInput.strafe = Number(keys.has("KeyD")) - Number(keys.has("KeyA"));
+        previewInput.yaw = yaw;
+        previewInput.jump = jump;
+        previewInput.sprint = keys.has("ShiftLeft");
+        previewInput.crouch = keys.has("ControlLeft") || keys.has("ControlRight");
+        predictMovement(renderPose, previewInput, accumulator);
+      }
+      camera.position.set(
+        renderPose.x + correction.x,
+        renderPose.y + eyeHeight(renderPose) + correction.y,
+        renderPose.z + correction.z,
+      );
       camera.rotation.set(Math.min(1.45, pitch + recoilPitch), yaw + recoilYaw, 0, "YXZ");
     } else if (state) {
       const p = state.players.A;
@@ -426,20 +512,17 @@ export function mountArena(
       const actor = characters[otherSeat];
       const visible = visibility[otherSeat] !== false;
       if (visible) {
-        if (!remoteWasVisible) actor.root.position.copy(remoteTarget);
-        actor.root.position.lerp(remoteTarget, 1 - Math.exp(-dt / 60));
-        const turn = Math.atan2(
-          Math.sin(other.yaw - actor.root.rotation.y),
-          Math.cos(other.yaw - actor.root.rotation.y),
-        );
-        actor.root.rotation.y += turn * (1 - Math.exp(-dt / 55));
-        actor.update(dt, now, other.pitch, other.hp > 0, !!other.crouched, {
+        if (remoteMotion.sample(Date.now() + lastServerOffset - 50, remotePose)) {
+          actor.root.position.set(remotePose.x, remotePose.y, remotePose.z);
+          actor.root.rotation.y = remotePose.yaw;
+        } else actor.root.position.copy(remoteTarget);
+        actor.update(dt, now, remotePose.pitch, other.hp > 0, !!other.crouched, {
           airborne: other.y > 0.01,
           weapon: other.weapon,
           reloading: other.reloadUntil > Date.now() + lastServerOffset,
         });
+        contactShadows[otherSeat].position.y = 0.008 - actor.root.position.y;
       } else actor.root.visible = false;
-      remoteWasVisible = visible;
     }
 
     const renderedWeapon = state && seat ? state.players[seat].weapon : weapon;
@@ -501,8 +584,9 @@ export function mountArena(
     crosshair?.classList.toggle("is-reloading", reloadRemaining > 0);
     impacts.update(dt, now);
     blood.update(dt, now);
-    wetFloor.update(dt);
     camera.layers.set(0);
+    renderer.info.autoReset = false;
+    renderer.info.reset();
     renderer.autoClear = true;
     renderer.render(scene, camera);
     renderer.autoClear = false;
@@ -516,25 +600,43 @@ export function mountArena(
     renderer.render(scene, viewCamera);
     scene.background = background;
     camera.layers.set(0);
+    cpuMs = performance.now() - cpuStart;
     animation = requestAnimationFrame(frame);
   };
   animation = requestAnimationFrame(frame);
   return {
+    diagnostics: () => ({
+      camera: [camera.position.x, camera.position.y, camera.position.z, camera.rotation.y],
+      calls: renderer.info.render.calls,
+      triangles: renderer.info.render.triangles,
+      frameMs,
+      cpuMs,
+    }),
     ready: visualReady,
     suspend(paused) {
       authorizationSuspended = paused;
       if (paused) {
         clear();
         pending = [];
+        correction.reset();
         if (seat && state) predicted = { ...state.players[seat] };
       }
     },
     snapshot(frame, assignedSeat) {
+      const resetPresentation =
+        authorizationSuspended ||
+        seat !== assignedSeat ||
+        lastRound !== frame.state.round ||
+        frame.state.phase !== "live";
       authorizationSuspended = false;
       state = frame.state;
       visibility = frame.visibility ?? { A: true, B: true };
       seat = assignedSeat;
-      lastServerOffset = frame.serverNow - Date.now();
+      const measuredOffset = frame.serverNow - Date.now();
+      lastServerOffset =
+        lastRound === 0
+          ? measuredOffset
+          : lastServerOffset + (measuredOffset - lastServerOffset) * 0.05;
       if (seat) {
         const authoritative = state.players[seat];
         seq = Math.max(seq, authoritative.lastSeq);
@@ -555,9 +657,14 @@ export function mountArena(
           blood.reset();
         }
         lastRound = state.round;
+        const before = predicted;
         predicted = { ...authoritative };
         pending = pending.filter((i) => i.seq > authoritative.lastSeq);
         for (const i of pending) if (state.phase === "live") predictMovement(predicted, i, TICK_MS);
+        if (resetPresentation) {
+          correction.reset();
+          remoteMotion.clear();
+        } else if (before) correction.reconcile(before, predicted);
         for (const e of state.events) {
           if (e.id !== undefined && e.id <= lastEventId) continue;
           if (e.id !== undefined) lastEventId = e.id;
@@ -599,8 +706,11 @@ export function mountArena(
           if (e.type === "impact" && e.impact) impacts.emit(e.impact, performance.now());
           if (e.type === "shot" && e.seat) characters[e.seat].shot(performance.now());
         }
+      lastRound = state.round;
       const other = state.players[seat === "B" ? "A" : "B"];
       remoteTarget.set(other.x, other.y, other.z);
+      if (visibility[seat === "B" ? "A" : "B"] === false) remoteMotion.clear();
+      else remoteMotion.push(other, frame.serverNow);
     },
     async lock() {
       await renderer.domElement.requestPointerLock();
@@ -638,12 +748,12 @@ export function mountArena(
       sun.shadow.map?.dispose();
       artDisposed = true;
       logoTexture.dispose();
+      contactTexture.dispose();
       weave.dispose();
       muzzle.dispose();
       authoredView.dispose();
       weaponKit.dispose();
       environment.dispose();
-      wetFloor.dispose();
       reflections.dispose();
       impacts.dispose();
       blood.dispose();

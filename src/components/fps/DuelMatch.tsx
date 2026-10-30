@@ -42,7 +42,8 @@ export function DuelMatch({
     queryKey: ["fps-view", matchId, userId],
     queryFn: () => fetchDuelView(matchId),
     enabled: !!userId && !invite,
-    refetchInterval: 3000,
+    // Once paired, the authenticated room socket owns live state and settlement.
+    refetchInterval: (query) => (query.state.data?.opponent_id ? false : 3000),
     retry: 1,
   });
   const preview = useQuery({
@@ -110,7 +111,7 @@ export function DuelMatch({
     return () => d.removeEventListener("change", f);
   }, []);
   useEffect(() => {
-    const t = setInterval(() => setNow(Date.now()), 200);
+    const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, []);
   useEffect(() => {
@@ -205,10 +206,27 @@ export function DuelMatch({
             if (data.type !== "snapshot" || !data.state?.players || !data.state.score) return;
             setConnection("Connected");
             serverOffset.current = data.serverNow - Date.now();
+            const previous = currentFrame.current;
+            const important =
+              !previous ||
+              previous.state.phase !== data.state.phase ||
+              previous.state.round !== data.state.round ||
+              previous.settled !== data.settled ||
+              (["A", "B"] as const).some((s) => {
+                const a = previous.state.players[s],
+                  b = data.state.players[s];
+                return (
+                  a.hp !== b.hp ||
+                  a.ammo !== b.ammo ||
+                  a.weapon !== b.weapon ||
+                  a.reloadUntil !== b.reloadUntil
+                );
+              });
             currentFrame.current = data;
             arena.current?.snapshot(data, seatRef.current);
             if (
-              Date.now() - lastHud > 90 ||
+              important ||
+              Date.now() - lastHud > 250 ||
               ["completed", "cancelled"].includes(data.state.phase)
             ) {
               lastHud = Date.now();

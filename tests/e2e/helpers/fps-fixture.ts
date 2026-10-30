@@ -1,7 +1,12 @@
 import { type Page } from "@playwright/test";
 
 /** These fixtures mount the real renderer/controller/simulation; no production mock route exists. */
-export async function fixture(page: Page, seat: "A" | "B" = "A", bestOf: 5 | 9 = 5) {
+export async function fixture(
+  page: Page,
+  seat: "A" | "B" = "A",
+  bestOf: 5 | 9 = 5,
+  snapshotDelay = 0,
+) {
   // Isolate the real renderer from React hydration; this HTML exists only in the test transport.
   await page.route("**/__fps_polish_test__", (route) =>
     route.fulfill({
@@ -11,7 +16,7 @@ export async function fixture(page: Page, seat: "A" | "B" = "A", bestOf: 5 | 9 =
   );
   await page.goto("/__fps_polish_test__");
   await page.evaluate(
-    async ({ seat, bestOf }) => {
+    async ({ seat, bestOf, snapshotDelay }) => {
       const rendererPath = "/src/lib/fps/renderer.ts",
         simulationPath = "/src/lib/fps/simulation.ts";
       const { mountArena } = await import(rendererPath);
@@ -35,6 +40,8 @@ export async function fixture(page: Page, seat: "A" | "B" = "A", bestOf: 5 | 9 =
       const eventLog: Array<{ type: string; impact?: { surface: string; solidId: string } }> = [];
       const queue: Record<string, unknown>[] = [];
       let eventId = 0;
+      let lastDeliveryAt = 0;
+      const deliveries = new Set<ReturnType<typeof setTimeout>>();
       const controls = mountArena(
         host,
         (next: Record<string, unknown>) => {
@@ -74,15 +81,26 @@ export async function fixture(page: Page, seat: "A" | "B" = "A", bestOf: 5 | 9 =
         }
         state.events = events;
         eventLog.push(...state.events);
-        controls.snapshot(
-          {
-            state: structuredClone(state),
-            serverNow: Date.now(),
-            settled: false,
-            settlementPending: false,
-          },
-          seat,
-        );
+        const frame = {
+          state: structuredClone(state),
+          serverNow: Date.now(),
+          settled: false,
+          settlementPending: false,
+        };
+        if (snapshotDelay) {
+          // Ordered variable-delay delivery models a jittery WebSocket; authority
+          // and physics still advance independently of rendering and delivery.
+          const due = Math.max(
+            lastDeliveryAt + 1,
+            now + snapshotDelay + (Math.floor(now / 600) % 2) * 35,
+          );
+          lastDeliveryAt = due;
+          const delivery = setTimeout(() => {
+            deliveries.delete(delivery);
+            controls.snapshot(frame, seat);
+          }, due - now);
+          deliveries.add(delivery);
+        } else controls.snapshot(frame, seat);
       };
       controls.snapshot(
         {
@@ -115,12 +133,13 @@ export async function fixture(page: Page, seat: "A" | "B" = "A", bestOf: 5 | 9 =
           seat,
           dispose: () => {
             clearInterval(timer);
+            for (const timer of deliveries) clearTimeout(timer);
             controls.dispose();
           },
         },
       });
     },
-    { seat, bestOf },
+    { seat, bestOf, snapshotDelay },
   );
   await page.waitForLoadState("networkidle");
   await page.waitForFunction(

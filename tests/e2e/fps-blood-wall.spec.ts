@@ -5,6 +5,8 @@ test("confirmed head hit stains the nearby wall while the opponent moves away", 
 }, info) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await fixture(page);
+  await page.locator("canvas").click();
+  await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
   await page.evaluate(() => {
     const f = Reflect.get(window, "fpsPolishTest");
     Object.assign(f.state.players.A, { x: 9, z: -10, y: 0, yaw: 0, pitch: 0 });
@@ -12,7 +14,14 @@ test("confirmed head hit stains the nearby wall while the opponent moves away", 
     f.state.round++;
     f.resetView();
   });
-  await page.locator("canvas").click();
+  await expect
+    .poll(() =>
+      page.evaluate(() => Reflect.get(window, "fpsPolishTest").controls.diagnostics().camera[0]),
+    )
+    .toBe(9);
+  await expect
+    .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").inputs.at(-1)?.yaw))
+    .toBe(0);
   await page.mouse.down();
   await expect
     .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.B.hp), {
