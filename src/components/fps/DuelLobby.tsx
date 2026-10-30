@@ -128,8 +128,8 @@ export function DuelLobby() {
     try {
       const result = (await action({
         data: room
-          ? { action: "join", matchId: room.id, key }
-          : { action: "create", stake, bestOf: format, private: isPrivate, key },
+          ? { action: "join", combatVersion: 2, matchId: room.id, key }
+          : { action: "create", combatVersion: 2, stake, bestOf: format, private: isPrivate, key },
       })) as { id?: string; match_id?: string };
       const id = result.match_id ?? result.id;
       if (!id) throw Error("DUEL_REQUEST_FAILED");
@@ -620,10 +620,11 @@ export function DuelLobby() {
             </article>
             <article>
               <ShieldCheck />
-              <h3>The server decides</h3>
+              <h3>Control your recoil</h3>
               <p>
-                Movement, ammunition, hits and results are server controlled. The cash winner
-                receives 95% of the combined entries. Practice moves no funds or ratings.
+                AK-47 is full auto: tap or fire short bursts to recover faster. Head hits deal 50
+                damage, chest 34, stomach 30 and legs 20. Two landed headshots eliminate. The server
+                controls ammunition, hits and results.
               </p>
             </article>
             <article>

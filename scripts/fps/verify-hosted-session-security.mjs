@@ -126,13 +126,14 @@ async function attach(room, actor, role = "player") {
       reject(Error("Session socket admission rejected"));
     });
   });
-  if (role === "player") c.ws.send(JSON.stringify({ v: 1, type: "ready" }));
+  if (role === "player") c.ws.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
   return c;
 }
 const input = (seq) =>
   JSON.stringify({
     v: 1,
     type: "input",
+    combatVersion: 2,
     seq,
     forward: 1,
     strafe: 0,

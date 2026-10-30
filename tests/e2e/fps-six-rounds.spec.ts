@@ -56,7 +56,10 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
             );
           const stats = WEAPONS[state.players[attacker].weapon],
             damage = events.reduce(
-              (n, e) => n + stats.damage * (e.type === "headshot" ? stats.headshotMultiplier : 1),
+              (n, e) =>
+                n +
+                (e.hit?.damage ??
+                  stats.damage * (e.type === "headshot" ? stats.headshotMultiplier : 1)),
               0,
             );
           if (state.players[seat].hp < before[seat].hp) {
@@ -114,8 +117,10 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
       dx = b.x - a.x,
       dz = b.z - a.z;
     const target = b.y + (head ? (b.crouched ? 0.95 : 1.6) : b.crouched ? 0.4 : 0.9);
-    const yaw = Math.atan2(-dx, -dz),
-      pitch = Math.atan2(target - (a.y + (a.crouched ? 0.95 : 1.6)), Math.hypot(dx, dz));
+    const yaw = Math.atan2(-dx, -dz) - (a.recoilYaw ?? 0),
+      pitch =
+        Math.atan2(target - (a.y + (a.crouched ? 0.95 : 1.6)), Math.hypot(dx, dz)) -
+        (a.recoilPitch ?? 0);
     const turn = Math.atan2(Math.sin(yaw - a.yaw), Math.cos(yaw - a.yaw));
     mouseX -= turn / 0.002;
     mouseY -= (pitch - a.pitch) / 0.002;

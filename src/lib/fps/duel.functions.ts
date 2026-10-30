@@ -46,6 +46,7 @@ export const duelAction = createServerFn({ method: "POST" })
       .discriminatedUnion("action", [
         z.object({
           action: z.enum(["enter", "create"]),
+          combatVersion: z.literal(2),
           stake: z.number().int().min(0).max(5000),
           bestOf: z.union([z.literal(5), z.literal(9)]),
           private: z.boolean(),
@@ -53,12 +54,18 @@ export const duelAction = createServerFn({ method: "POST" })
         }),
         z.object({
           action: z.literal("join"),
+          combatVersion: z.literal(2),
           matchId: z.string().uuid(),
           key,
           invite: z.string().max(128).optional(),
         }),
         z.object({ action: z.literal("cancel"), matchId: z.string().uuid() }),
-        z.object({ action: z.literal("rematch"), matchId: z.string().uuid(), key }),
+        z.object({
+          action: z.literal("rematch"),
+          combatVersion: z.literal(2),
+          matchId: z.string().uuid(),
+          key,
+        }),
       ])
       .parse(raw),
   )
@@ -67,7 +74,9 @@ export const duelAction = createServerFn({ method: "POST" })
     if (data.action === "cancel") return call(db, "fps_cancel", { p_match: data.matchId });
     const r = await runtime();
     const health = await fetch(`${r.origin}/health`, { signal: AbortSignal.timeout(5000) });
-    if (!health.ok || !((await health.json()) as { configured?: boolean }).configured)
+    if (!health.ok) throw new Error("FPS_RUNTIME_UNAVAILABLE");
+    const capability = (await health.json()) as { configured?: boolean; combatVersion?: number };
+    if (!capability.configured || capability.combatVersion !== 2)
       throw new Error("FPS_RUNTIME_UNAVAILABLE");
     if (data.action === "rematch")
       return call(db, "fps_rematch", { p_match: data.matchId, p_key: data.key });

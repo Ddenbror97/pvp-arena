@@ -108,6 +108,7 @@ const movement = (seq: number) =>
   JSON.stringify({
     v: 1,
     type: "input",
+    combatVersion: 2,
     seq,
     forward: 1,
     strafe: 0,
@@ -140,7 +141,7 @@ async function sessionSocket(
 }
 async function readyLive(a: Socket, b: Socket) {
   const live = until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
-  for (const s of [a, b]) s.send(JSON.stringify({ v: 1, type: "ready" }));
+  for (const s of [a, b]) s.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
   return live;
 }
 function closed(socket: Socket) {
@@ -225,6 +226,20 @@ describe("isolated real Durable Object WebSockets", () => {
     }
     await mf?.dispose();
   });
+  it("requires the updated combat handshake before accepting a new-match client", async () => {
+    const id = await init(),
+      oldReady = await open(id);
+    const readyClosed = closed(oldReady);
+    oldReady.send(JSON.stringify({ v: 1, type: "ready" }));
+    expect(await readyClosed).toBe(1008);
+    const oldInput = await open(id);
+    const inputClosed = closed(oldInput);
+    const payload = JSON.parse(movement(0));
+    delete payload.combatVersion;
+    oldInput.send(JSON.stringify(payload));
+    expect(await inputClosed).toBe(1008);
+  });
+
   it("completes a normal client close before accepting its replacement", async () => {
     const id = await init();
     const first = (await connect(id, await token(id))).webSocket!;
@@ -351,8 +366,8 @@ describe("isolated real Durable Object WebSockets", () => {
       b = await open(id, B);
     const nextA = until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
     const nextB = until(b, (f) => f.type === "snapshot" && f.state.phase === "live");
-    a.send(JSON.stringify({ v: 1, type: "ready" }));
-    b.send(JSON.stringify({ v: 1, type: "ready" }));
+    a.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
+    b.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
     const [frameA, frameB] = await Promise.all([nextA, nextB]);
     expect(frameA.visibility).toEqual({ A: true, B: false });
     expect(frameB.visibility).toEqual({ A: false, B: true });
@@ -393,12 +408,12 @@ describe("isolated real Durable Object WebSockets", () => {
     const id = await init();
     const a = await open(id),
       b = await open(id, B);
-    a.send(JSON.stringify({ v: 1, type: "ready" }));
+    a.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
     await pause(80);
     const waiting = await until(a, (f) => f.type === "snapshot");
     expect(waiting.state.phase).toBe("waiting");
     const live = until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
-    b.send(JSON.stringify({ v: 1, type: "ready" }));
+    b.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
     const frame = await live;
     expect(frame.state.players.A.id).toBe(A);
     expect(frame.state.score).toEqual({ A: 0, B: 0 });
@@ -411,6 +426,7 @@ describe("isolated real Durable Object WebSockets", () => {
       JSON.stringify({
         v: 1,
         type: "input",
+        combatVersion: 2,
         seq: 5000,
         forward: 0,
         strafe: 1,
@@ -443,7 +459,7 @@ describe("isolated real Durable Object WebSockets", () => {
     const specClosed = new Promise<number>((resolve) =>
       spectator.addEventListener("close", (e) => resolve(e.code)),
     );
-    spectator.send(JSON.stringify({ v: 1, type: "ready" }));
+    spectator.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
     expect(await specClosed).toBe(1008);
   });
   it("reserves both player seats when spectator capacity is full", async () => {
@@ -485,8 +501,8 @@ describe("isolated real Durable Object WebSockets", () => {
       (f) => f.type === "snapshot" && f.state.phase === "completed" && f.settled,
       80_000,
     );
-    a.send(JSON.stringify({ v: 1, type: "ready" }));
-    b.send(JSON.stringify({ v: 1, type: "ready" }));
+    a.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
+    b.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
     // Explicit transport test drivers, never production opponents. They send only legal inputs.
     const driver = setInterval(() => {
       if (!latest || latest.phase !== "live") return;
@@ -510,11 +526,12 @@ describe("isolated real Durable Object WebSockets", () => {
         JSON.stringify({
           v: 1,
           type: "input",
+          combatVersion: 2,
           seq: ++seq,
           forward: stage === 1 ? 1 : 0,
           strafe: stage === 0 ? 1 : 0,
-          yaw,
-          pitch: 0,
+          yaw: yaw - (stage === 2 ? (p.recoilYaw ?? 0) : 0),
+          pitch: stage === 2 ? -(p.recoilPitch ?? 0) : 0,
           fire: stage === 2,
           reload: false,
           weapon: "rifle",

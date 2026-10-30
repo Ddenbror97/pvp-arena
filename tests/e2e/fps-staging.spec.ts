@@ -78,11 +78,9 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     await expect(page).toHaveURL(/\/fps\/[a-f0-9-]{36}/);
     matchId = new URL(page.url()).pathname.split("/").at(-1)!;
     await expect(page.getByRole("heading", { name: /Room created/ })).toBeVisible();
-    const room = other
-      .locator(".strike-room-list li")
-      .filter({
-        hasText: (await sql`select username from profiles where id=${users[0].id}`)[0].username,
-      });
+    const room = other.locator(".strike-room-list li").filter({
+      hasText: (await sql`select username from profiles where id=${users[0].id}`)[0].username,
+    });
     await room.getByRole("button", { name: "Join", exact: true }).click();
     const review = other.getByRole("dialog");
     await expect(review.getByText("$1.90", { exact: true })).toBeVisible();
@@ -110,8 +108,8 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
         b = s.players.B,
         dx = b.x - a.x,
         dz = b.z - a.z,
-        yaw = Math.atan2(-dx, -dz),
-        pitch = Math.atan2(b.y + 0.9 - a.y - 1.6, Math.hypot(dx, dz));
+        yaw = Math.atan2(-dx, -dz) - (a.recoilYaw ?? 0),
+        pitch = Math.atan2(b.y + 0.9 - a.y - 1.6, Math.hypot(dx, dz)) - (a.recoilPitch ?? 0);
       mouseX -= Math.atan2(Math.sin(yaw - a.yaw), Math.cos(yaw - a.yaw)) / 0.002;
       mouseY -= (pitch - a.pitch) / 0.002;
       await page.mouse.move(mouseX, mouseY);

@@ -1,3 +1,4 @@
+import { COMBAT_VERSION } from "../../src/lib/fps/combat";
 import {
   createMatch,
   startMatch,
@@ -73,6 +74,7 @@ export default {
       return json({
         service: "fps-duel",
         version: 2,
+        combatVersion: COMBAT_VERSION,
         configured:
           (env.FPS_RUNTIME_SECRET?.length ?? 0) >= 32 &&
           !!env.SUPABASE_URL &&
@@ -345,14 +347,28 @@ export class DuelRoom {
       socket.close(1008, "Read-only spectator");
       return;
     }
-    const data = raw as { v?: unknown; type?: unknown };
-    if (data?.v === 1 && data.type === "ready" && Object.keys(data).length === 2) {
+    const data = raw as { v?: unknown; type?: unknown; combatVersion?: unknown };
+    if (
+      data?.v === 1 &&
+      data.type === "ready" &&
+      (Object.keys(data).length === 2 ||
+        (Object.keys(data).length === 3 && Object.hasOwn(data, "combatVersion")))
+    ) {
+      const required = this.saved?.state.combatVersion ?? 1;
+      if ((data.combatVersion ?? 1) !== required) {
+        socket.close(1008, "Client update required");
+        return;
+      }
       info.ready = true;
       socket.serializeAttachment(info);
       // Readiness is an intent; tick applies it only after fresh session checks.
       return;
     }
     const input = validateInput(raw);
+    if (input && this.saved?.state.combatVersion === 2 && input.combatVersion !== 2) {
+      socket.close(1008, "Client update required");
+      return;
+    }
     if (!input) {
       socket.close(1008, "Invalid input");
       return;

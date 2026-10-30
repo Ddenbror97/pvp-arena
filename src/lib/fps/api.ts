@@ -33,6 +33,8 @@ export async function fetchDuelRankings(): Promise<
   }>;
 }
 export const DUEL_ERRORS: Record<string, string> = {
+  CLIENT_UPDATE_REQUIRED:
+    "Reload PvPStrike to load the updated combat rules before entering a match.",
   STAKE_NOT_ALLOWED:
     "This entry is no longer offered. Refresh the lobby and choose an available entry.",
   MATCH_NOT_OPEN: "Another player joined or this room closed. Choose another open game.",

@@ -158,7 +158,7 @@ async function socket(c, reconnect = false) {
   ws.on("close", (code) => {
     if (!closing && !c.intentional) errors.push("Unexpected WebSocket close " + code);
   });
-  if (!reconnect) ws.send(JSON.stringify({ v: 1, type: "ready" }));
+  if (!reconnect) ws.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
 }
 async function admit(c, reconnect = false) {
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -236,6 +236,7 @@ try {
       const input = {
         v: 1,
         type: "input",
+        combatVersion: 2,
         seq,
         forward: Math.sin(seq / 90) * 0.6,
         strafe: Math.cos(seq / 90) * 0.6,

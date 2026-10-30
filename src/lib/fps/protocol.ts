@@ -2,6 +2,8 @@ export type Seat = "A" | "B";
 export type Weapon = "rifle" | "pistol";
 
 export interface Input {
+  /** Combat input semantics, negotiated independently of the wire envelope. */
+  combatVersion?: 2;
   v: 1;
   type: "input";
   seq: number;
@@ -35,12 +37,19 @@ export interface Player {
   headshots: number;
   /** Server-owned burst length; cosmetic snapshots must never supply this in input. */
   sprayCount?: number;
+  recoilPitch?: number;
+  recoilYaw?: number;
+  recoilUpdatedAt?: number;
+  stepDistance?: number;
+  triggerHeld?: boolean;
   crouched?: boolean;
   /** Server-owned jump velocity, included in snapshots for prediction. y is feet height. */
   velocityY?: number;
 }
 
 export interface MatchState {
+  /** Missing in pre-upgrade checkpoints: retain their original combat rules. */
+  combatVersion?: 1 | 2;
   v: 1;
   phase: "waiting" | "countdown" | "live" | "round-end" | "completed" | "cancelled";
   players: Record<Seat, Player>;
@@ -56,9 +65,27 @@ export interface MatchState {
     text: string;
     id?: number;
     impact?: import("./collision").WorldHit;
+    weapon?: Weapon;
+    hit?: {
+      victim: Seat;
+      zone: import("./combat").HitZone;
+      damage: number;
+      point: import("./collision").Vector;
+      direction: import("./collision").Vector;
+      splatter?: import("./collision").WorldHit;
+    };
+    audio?: {
+      kind: "shot" | "step" | "reload";
+      surface?: import("./map").Surface;
+      position?: import("./collision").Vector;
+      gain?: number;
+      pan?: number;
+      occluded?: boolean;
+      soft?: boolean;
+    };
   }>;
   /** Persist with snapshots on the server; never accept this from a client. */
-  server?: { lastStepAt: number; draws: number };
+  server?: { lastStepAt: number; draws: number; spreadSeed?: number };
 }
 
 const KEYS = [
@@ -82,10 +109,14 @@ const finiteBounded = (x: unknown, limit: number): x is number =>
 export function validateInput(raw: unknown): Input | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const data = raw as Record<string, unknown>;
-  const expected = KEYS.length + (Object.hasOwn(data, "crouch") ? 1 : 0);
+  const expected =
+    KEYS.length +
+    (Object.hasOwn(data, "crouch") ? 1 : 0) +
+    (Object.hasOwn(data, "combatVersion") ? 1 : 0);
   if (
     Object.keys(data).length !== expected ||
     !KEYS.every((key) => Object.hasOwn(data, key)) ||
+    (Object.hasOwn(data, "combatVersion") && data["combatVersion"] !== 2) ||
     (Object.hasOwn(data, "crouch") && typeof data["crouch"] !== "boolean")
   )
     return null;
@@ -108,6 +139,7 @@ export function validateInput(raw: unknown): Input | null {
     v: 1,
     type: "input",
     seq: data["seq"],
+    ...(data["combatVersion"] === 2 ? { combatVersion: 2 as const } : {}),
     forward: data["forward"],
     strafe: data["strafe"],
     yaw: data["yaw"],
