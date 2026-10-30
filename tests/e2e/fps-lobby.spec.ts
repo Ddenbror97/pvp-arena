@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test.use({ baseURL: process.env.FPS_APP_BASE_URL ?? "http://127.0.0.1:4180" });
-test("PvPStrike showcases the actual game with separate creation and clear terms", async ({
+test("PvPStrike shows the supplied full-screen arena with separate creation and clear terms", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -12,7 +12,7 @@ test("PvPStrike showcases the actual game with separate creation and clear terms
     "aria-selected",
     "true",
   );
-  await expect(page.locator(".strike-preview img")).toHaveJSProperty("naturalWidth", 1440);
+  await expect(page.locator(".strike-stage-room img")).toHaveJSProperty("naturalWidth", 1672);
   expect(await page.locator("canvas").count()).toBe(0);
   const nav = page.locator("header nav");
   const links = await nav.getByRole("link").allTextContents();

@@ -20,6 +20,7 @@ export type ArenaFrame = {
   settlementPending: boolean;
 };
 export type ArenaControls = {
+  ready: Promise<void>;
   snapshot: (frame: ArenaFrame, seat: Seat | null) => void;
   lock: () => Promise<void>;
   dispose: () => void;
@@ -41,7 +42,7 @@ export function mountArena(
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
@@ -215,7 +216,11 @@ export function mountArena(
   const hands = createViewHands(glove, sleeve);
   weaponGroup.add(hands.root);
   const authoredView = createAuthoredViewmodel(weaponGroup);
-  void Promise.all([authoredView.ready, characters.A.ready, characters.B.ready]).then(() => {
+  const visualReady = Promise.all([
+    authoredView.ready,
+    characters.A.ready,
+    characters.B.ready,
+  ]).then(() => {
     renderer.domElement.dataset["authoredModels"] =
       authoredView.loaded && characters.A.loaded && characters.B.loaded ? "ready" : "fallback";
   });
@@ -491,6 +496,7 @@ export function mountArena(
   };
   animation = requestAnimationFrame(frame);
   return {
+    ready: visualReady,
     suspend(paused) {
       authorizationSuspended = paused;
       if (paused) {

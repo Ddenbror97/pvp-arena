@@ -22,6 +22,8 @@ import {
 import { arenaLogo } from "@/assets/media";
 import { TokenMark } from "@/components/wallet/TokenMark";
 import { SoundToggle } from "@/components/SoundToggle";
+import { warmStrikeShowcase } from "@/lib/fps/showcase";
+import { fetchDuelLobby, fetchDuelRankings } from "@/lib/fps/api";
 import { cn } from "@/lib/utils";
 
 // Signed-in only, so logged-out visitors never download the balance chip.
@@ -39,6 +41,26 @@ function warmPoolPages(router: AnyRouter) {
     const route = (router.routesByPath as unknown as Record<string, unknown>)[path];
     if (route) void router.loadRouteChunk(route as never)?.catch(() => {});
   }
+}
+
+function warmStrikePages(router: AnyRouter, qc: QueryClient, userId: string | null) {
+  const connection = (
+    navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }
+  ).connection;
+  if (connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType ?? "")) return;
+  warmStrikeShowcase();
+  const route = (router.routesByPath as unknown as Record<string, unknown>)["/fps-duel"];
+  if (route) void router.loadRouteChunk(route as never)?.catch(() => {});
+  void qc.prefetchQuery({
+    queryKey: ["fps-lobby", userId],
+    queryFn: fetchDuelLobby,
+    staleTime: 5000,
+  });
+  void qc.prefetchQuery({
+    queryKey: ["fps-rankings"],
+    queryFn: fetchDuelRankings,
+    staleTime: 60000,
+  });
 }
 
 export function SiteHeader({ className }: { className?: string }) {
@@ -144,7 +166,13 @@ export function SiteHeader({ className }: { className?: string }) {
           >
             8 Pool
           </Link>
-          <Link to="/fps-duel" className={link}>
+          <Link
+            to="/fps-duel"
+            className={link}
+            onMouseEnter={() => warmStrikePages(router, qc, userId)}
+            onFocus={() => warmStrikePages(router, qc, userId)}
+            onTouchStart={() => warmStrikePages(router, qc, userId)}
+          >
             PvPStrike
           </Link>
           <Link to="/fairness" className={link}>
@@ -402,6 +430,7 @@ export function SiteFooter({ className }: { className?: string }) {
 
 /** Phone-only bottom tab bar: primary navigation within thumb reach. */
 export function MobileTabBar({ className }: { className?: string }) {
+  const { userId } = useAuth();
   const qc = useQueryClient();
   const router = useRouter();
   const tab =
@@ -449,7 +478,13 @@ export function MobileTabBar({ className }: { className?: string }) {
       >
         <Circle className="h-5 w-5" />8 Pool
       </Link>
-      <Link to="/fps-duel" className={tab}>
+      <Link
+        to="/fps-duel"
+        className={tab}
+        onMouseEnter={() => warmStrikePages(router, qc, userId)}
+        onFocus={() => warmStrikePages(router, qc, userId)}
+        onTouchStart={() => warmStrikePages(router, qc, userId)}
+      >
         <Crosshair className="h-5 w-5" />
         PvPStrike
       </Link>
