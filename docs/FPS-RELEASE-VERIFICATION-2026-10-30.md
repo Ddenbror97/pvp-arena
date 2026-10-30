@@ -4,8 +4,8 @@ Decision: **GO for controlled desktop practice only.** All required technical
 checks passed on the frozen code candidate. Alert delivery was explicitly waived
 by the user, and restored-copy quarantine of 39 existing Auth claims was approved.
 Public FPS cash, deposits, withdrawals and production financial operations remain
-outside this release authorization. Production rollout and smoke results are
-recorded below when executed; this pre-deployment decision does not claim them.
+outside this release authorization. Production rollout and smoke completed successfully, as recorded below.
+The production rollout remains limited to zero-stake practice.
 
 ## Frozen code and build
 
@@ -117,7 +117,7 @@ Rollback baseline: `49556866-a68b-4f64-96ab-f17d918ddae5`.
 Nine genuine isolated old/candidate/provider-rollback SSR probes passed, and the
 temporary Worker was deleted. The previous version restores its existing FPS 404.
 Migrations remain additive/signature-compatible; rollback disables FPS and retains
-cash disabled. Current production is still the verified baseline before rollout.
+cash disabled. This was the verified baseline before rollout; its provider version remains available.
 
 ## Existing production diagnostics and operational exceptions
 
@@ -136,12 +136,57 @@ not replace that waived requirement. The only other approved exception is the
 
 ## Controlled rollout status
 
-The authorized rollout applies only the five reviewed migrations and production
-runtime/app, then enables practice with `cash_enabled=false`. Existing financial
+The completed rollout applied only the five reviewed migrations and production
+runtime/app, then enabled practice with `cash_enabled=false`. Existing financial
 settings, routes, cron schedules and secrets are preserved. No staging users,
-balances, receipts or runtime checkpoints are transferred. Production smoke must
-verify two real Auth sessions, private zero-stake gameplay/reconnect, revocation,
-recovery and zero financial postings before rollout is reported complete.
+balances, receipts or runtime checkpoints are transferred. Production smoke verified two real Auth sessions, private zero-stake gameplay/
+reconnect, revocation, recovery and zero financial postings.
 
 Private raw evidence, credentials, Auth data and backups remain ignored under
 `test-results/`, `.env.*` and `.wrangler/`; they must not be published.
+
+## Production rollout and smoke — completed
+
+[PR #3](https://github.com/Ddenbror97/pvp-arena/pull/3) merged without rewriting
+history: `8640328a988ba353ae4263b5c97e8ae6d31443c6`. Only the five reviewed
+migrations applied; remote migration count is 298, latest `20261030165225`.
+
+Live app: [FPS practice](https://pvpspinarena.com/fps-duel).
+App deployment: `f6b59b96-0ce1-43bb-a68a-2e019a5431e2`.
+Runtime deployment: `fadedff7-98a8-418e-b253-4bab0f8e527a`.
+Production runtime uses a separate Durable Object namespace. The first immediate
+health probe preceded secret-version propagation; the feature stayed closed.
+Bounded readiness checks then passed before enabling practice.
+
+Both real Auth QA users completed a private **3–0 BO5**, using production
+matchmaking, admission, movement/fire/damage, reload/reconnect and authoritative
+result recording. The browser smoke passed in 1.5 minutes without page errors.
+Balances remained zero and no QA ledger transaction was created. Production
+screenshots are retained privately under `test-results/production-practice-round-*.png`.
+
+A second private practice match verified established-socket logout: close code
+**1008 within 262 ms** including the logout request. Both disconnected seats then
+recovered to a cancelled terminal result. There were no financial postings.
+The two QA accounts were subsequently disabled, all their Auth sessions revoked,
+and zero open QA matches, ledger transactions or nonzero QA balances remained.
+
+Postflight verified practice enabled, **FPS cash disabled**, all 31 existing
+app secrets preserved (one new FPS secret added), all existing public variables,
+both routes and the existing minute cron preserved. Existing financial settings
+and every production money-invariant value exactly match the preflight snapshot,
+including the two explicitly documented historical provider-flow diagnostics.
+No staging balances, receipts, users or checkpoints were copied.
+
+Live-tail monitoring observed 33 app events and 17 runtime events with **zero
+exceptions or HTTP 5xx**. Two runtime socket invocations were cancelled during
+the deliberate logout/disconnect probe; they were WebSocket paths with no
+exceptions. The new production namespace's aggregate analytics query returned
+no rows through 2026-10-30T19:43:59.959Z; **no production CPU/memory or zero-error
+aggregate inference is made**. The detailed capacity/provider figures above are
+from the measured Fresh staging run. Alerts remain explicitly waived.
+
+The rollback baseline still returns HTTP 200 from the provider version API after
+rollout. Rollback remains available and would withdraw FPS while retaining the
+compatible migrations; FPS must be disabled first. Final status: **GO, deployed
+and smoke-verified for controlled practice only**. Public cash and payment
+operations require separate authorization.
