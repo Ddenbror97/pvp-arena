@@ -31,11 +31,13 @@ export function createGameplayBot() {
       const dx = target.x - p.x,
         dz = target.z - p.z,
         distance = Math.hypot(dx, dz);
-      const yaw = Math.atan2(-dx, -dz) + (enabled && round !== 4 ? 0.6 : 0);
-      const pitch = Math.atan2(target.y + 0.9 - (p.y + eyeHeight(p)), distance);
+      const yaw = Math.atan2(-dx, -dz) + (enabled && round !== 4 ? 0.6 : 0) - (p.recoilYaw ?? 0);
+      const pitch =
+        Math.atan2(target.y + 0.9 - (p.y + eyeHeight(p)), distance) - (p.recoilPitch ?? 0);
       return {
         v: 1,
         type: "input",
+        combatVersion: 2,
         seq: ++seq,
         forward: -Math.sin(yaw) * vx - Math.cos(yaw) * vz,
         strafe: Math.cos(yaw) * vx - Math.sin(yaw) * vz,
@@ -43,7 +45,7 @@ export function createGameplayBot() {
         pitch,
         weapon: round === 5 ? "pistol" : "rifle",
         reload: p.ammo === 0,
-        fire: enabled && stage === 2,
+        fire: enabled && stage === 2 && (round !== 5 || now % 360 < 150),
         jump: round === 3 && stage === 2 && now % 1700 < 60,
         sprint: false,
         crouch: round === 2 && stage === 2,

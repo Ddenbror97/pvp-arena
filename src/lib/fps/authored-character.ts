@@ -554,7 +554,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           seconds,
         );
       }
-      gait += distance * 9;
+      gait += (distance * Math.PI) / (crouched ? 1.25 : speed > 6 ? 1.9 : 1.6);
       const stride = Math.min(1, speed / 3);
       for (const [bone, pose] of rest) {
         bone.position.copy(pose.p);
@@ -565,7 +565,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       for (const side of ["Left", "Right"]) {
         const sign = side === "Left" ? -1 : 1,
           phase = gait + (sign === 1 ? Math.PI : 0),
-          swing = Math.sin(phase) * 0.14 * stride,
+          swing = Math.sin(phase) * 0.28 * stride,
           lift = Math.max(0, Math.cos(phase)) * 0.065 * stride;
         target.set(
           sign * 0.105 + swing * travelX * 0.65,

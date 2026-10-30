@@ -158,8 +158,8 @@ try {
       if (data.type === "snapshot") frame = data;
     } catch {}
   });
-  a.send('{"v":1,"type":"ready"}');
-  b.send('{"v":1,"type":"ready"}');
+  a.send('{"v":1,"type":"ready","combatVersion":2}');
+  b.send('{"v":1,"type":"ready","combatVersion":2}');
   await until(() => frame?.state.phase === "live");
   await new Promise((r) => setTimeout(r, 2200));
   a.send(

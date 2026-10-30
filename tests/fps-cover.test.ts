@@ -141,7 +141,7 @@ describe("shared tactical world", () => {
       Object.assign(s.players.B, { x: 2.6, z: 0.6, crouched });
       const pitch = Math.atan2(eyeHeight(s.players.B) - 1.6, 2.9);
       stepMatch(s, { A: { ...idle, fire: true, pitch } }, 3034, TICK_MS);
-      expect(s.players.B.hp).toBe(crouched ? 100 : 0);
+      expect(s.players.B.hp).toBe(crouched ? 100 : 50);
     }
   });
   it("allows peeking from either side of a barrier", () => {
@@ -155,7 +155,7 @@ describe("shared tactical world", () => {
         s.players.B.x = 7.1;
       }
       stepMatch(s, { A: { ...idle, fire: true } }, 3034, TICK_MS);
-      expect(s.players.B.hp).toBe(0);
+      expect(s.players.B.hp).toBe(50);
     }
   });
   it("slides along a wall and clears its edge without getting stuck", () => {

@@ -67,7 +67,7 @@ export default {
     socket.addEventListener("close", (event) => {
       report.closeCode = event.code;
     });
-    socket.send(JSON.stringify({ v: 1, type: "ready" }));
+    socket.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
     timer = setInterval(() => {
       if (socket.readyState !== 1 || !seat) return;
       const n = ++seq;
@@ -76,6 +76,7 @@ export default {
         JSON.stringify({
           v: 1,
           type: "input",
+          combatVersion: 2,
           seq: n,
           forward: Math.sin(n / 50) * 0.5,
           strafe: Math.cos(n / 50) * 0.5,

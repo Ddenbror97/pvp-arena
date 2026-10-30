@@ -119,6 +119,7 @@ try {
         JSON.stringify({
           v: 1,
           type: "input",
+          combatVersion: 2,
           seq: client.seq,
           forward: 0,
           strafe: 0,
@@ -133,7 +134,7 @@ try {
       );
     }
   }, 34);
-  for (const c of clients) c.ws.send(JSON.stringify({ v: 1, type: "ready" }));
+  for (const c of clients) c.ws.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
   await new Promise((resolve) => setTimeout(resolve, 8500));
   if (clients.some((c) => !c.first || !c.last || c.snapshots < 20))
     throw Error("Missing live samples");

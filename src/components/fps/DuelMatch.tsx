@@ -3,6 +3,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Crosshair, Volume2, VolumeX, Maximize, Copy, ShieldCheck } from "lucide-react";
+import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
+import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
 import { useAuth } from "@/lib/auth";
 import { duelAdmission, duelAction } from "@/lib/fps/duel.functions";
 import { fetchDuelView, duelError } from "@/lib/fps/api";
@@ -75,9 +77,7 @@ export function DuelMatch({
     [accepted, setAccepted] = useState(false),
     [copied, setCopied] = useState(false);
   const currentFrame = useRef<ArenaFrame | null>(null),
-    sound = useRef<AudioContext | null>(null),
-    muteRef = useRef(false),
-    lastSound = useRef(0);
+    sound = useRef<CombatAudio | null>(null);
   const requestKey = useRef<string | null>(null);
   const serverOffset = useRef(0);
   const settledMatch = useRef<string | null>(null);
@@ -95,6 +95,14 @@ export function DuelMatch({
     frame?.state.phase === "cancelled" ||
     (!spectate && ["COMPLETED", "CANCELLED", "REFUNDED"].includes(match?.status ?? ""));
   useEffect(() => {
+    const sync = () => setMuted(soundMuted());
+    sync();
+    const unsubscribe = subscribeSound(sync);
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+  useEffect(() => {
     const d = matchMedia("(pointer:fine) and (hover:hover)");
     setDesktop(d.matches);
     const f = () => setDesktop(d.matches);
@@ -106,11 +114,11 @@ export function DuelMatch({
     return () => clearInterval(t);
   }, []);
   useEffect(() => {
-    muteRef.current = muted;
+    sound.current?.setMuted(muted);
   }, [muted]);
   useEffect(
     () => () => {
-      void sound.current?.close();
+      sound.current?.dispose();
     },
     [],
   );
@@ -206,46 +214,7 @@ export function DuelMatch({
               lastHud = Date.now();
               setFrame(data);
             }
-            const own = seatRef.current;
-            if (
-              own &&
-              data.state.tick !== lastSound.current &&
-              data.state.events.some(
-                (e) => e.seat === own && ["shot", "hit", "headshot", "impact"].includes(e.type),
-              )
-            ) {
-              lastSound.current = data.state.tick;
-              if (!muteRef.current && sound.current?.state === "running") {
-                const hit = data.state.events.some(
-                    (e) => e.seat === own && ["hit", "headshot"].includes(e.type),
-                  ),
-                  impact = data.state.events.find(
-                    (e) => e.seat === own && e.type === "impact",
-                  )?.impact,
-                  osc = sound.current.createOscillator(),
-                  gain = sound.current.createGain();
-                osc.type = hit ? "sine" : impact?.surface === "metal" ? "square" : "triangle";
-                osc.frequency.setValueAtTime(
-                  hit
-                    ? 850
-                    : impact?.surface === "metal"
-                      ? 520
-                      : impact?.surface === "wood"
-                        ? 200
-                        : 130,
-                  sound.current.currentTime,
-                );
-                gain.gain.setValueAtTime(
-                  hit ? 0.06 : impact?.surface === "metal" ? 0.02 : 0.04,
-                  sound.current.currentTime,
-                );
-                gain.gain.exponentialRampToValueAtTime(0.001, sound.current.currentTime + 0.08);
-                osc.connect(gain);
-                gain.connect(sound.current.destination);
-                osc.start();
-                osc.stop(sound.current.currentTime + 0.09);
-              }
-            }
+            sound.current?.snapshot(data.state, seatRef.current);
             if (data.settled && settledMatch.current !== matchId) {
               settledMatch.current = matchId;
               void qc.invalidateQueries({ queryKey: ["wallet"] });
@@ -270,6 +239,13 @@ export function DuelMatch({
             return;
           }
           if (event.code === 1008 || event.code === 1009) {
+            if (event.reason === "Client update required") {
+              setConnection("Update required");
+              setError(
+                "Reload PvPStrike to use the current combat rules. Your unstarted match will refund automatically.",
+              );
+              return;
+            }
             if (event.reason === "Session revoked" || event.reason === "Session expired") {
               setConnection("Session ended");
               setError("Your session ended. Sign in again before reconnecting.");
@@ -311,13 +287,20 @@ export function DuelMatch({
   }, [playable, userId, desktop, matchId, spectate, admission, qc]);
 
   const activate = async () => {
-    if (!arenaReady) return;
+    if (!arenaReady || !currentFrame.current) return;
     try {
-      if (!sound.current) sound.current = new AudioContext();
-      await sound.current.resume();
+      if (!sound.current) sound.current = createCombatAudio();
+      sound.current.setMuted(muted);
+      await sound.current.unlock();
       await arena.current?.lock();
       if (socket.current?.readyState === WebSocket.OPEN) {
-        socket.current.send(JSON.stringify({ v: 1, type: "ready" }));
+        socket.current.send(
+          JSON.stringify({
+            v: 1,
+            type: "ready",
+            combatVersion: currentFrame.current?.state.combatVersion ?? 1,
+          }),
+        );
         setReady(true);
       }
     } catch {
@@ -334,8 +317,14 @@ export function DuelMatch({
           kind === "cancel"
             ? { action: kind, matchId }
             : kind === "join"
-              ? { action: kind, matchId, key: requestKey.current, ...(invite ? { invite } : {}) }
-              : { action: kind, matchId, key: requestKey.current },
+              ? {
+                  action: kind,
+                  combatVersion: 2,
+                  matchId,
+                  key: requestKey.current,
+                  ...(invite ? { invite } : {}),
+                }
+              : { action: kind, combatVersion: 2, matchId, key: requestKey.current },
       })) as { match_id?: string; id?: string };
       requestKey.current = null;
       void qc.invalidateQueries({ queryKey: ["wallet"] });
@@ -410,7 +399,7 @@ export function DuelMatch({
           <span className={connection === "Connected" ? "duel-connected" : ""}>{connection}</span>
           <button
             aria-label={muted ? "Enable game audio" : "Mute game audio"}
-            onClick={() => setMuted((v) => !v)}
+            onClick={() => toggleSoundMuted()}
           >
             {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
           </button>
@@ -447,7 +436,7 @@ export function DuelMatch({
         ))}
       <div className="duel-event-feed">
         {frame?.state.events
-          .filter((e) => e.type !== "shot" && e.type !== "impact")
+          .filter((e) => !["shot", "impact", "step"].includes(e.type))
           .slice(-3)
           .map((e, i) => (
             <p key={i}>{e.text}</p>
@@ -473,7 +462,7 @@ export function DuelMatch({
           <span>Release mouse</span>
         </div>
         <div className="duel-ammo">
-          <small>{me?.weapon === "pistol" ? "SIDEARM" : "AK-47 · PVP EDITION"}</small>
+          <small>{me?.weapon === "pistol" ? "PISTOL · SEMI-AUTO" : "AK-47 · FULL AUTO"}</small>
           <strong>
             {me?.ammo ?? 30}
             <span>/ {me?.reserve ?? 90}</span>
@@ -489,6 +478,13 @@ export function DuelMatch({
         <div className="duel-game-overlay">
           <section className="duel-match-card">
             <span className="duel-eyebrow">THE FOUNDRY / PVP ORIGINALS</span>
+            <p className="duel-combat-rules">
+              {frame && (frame.state.combatVersion ?? 1) !== 2
+                ? "Earlier combat rules retained for this match."
+                : "AK-47: full auto · Head 50 · Chest 34 · Stomach 30 · Legs 20"}
+              <br />
+              Tap or burst to reset; pull down, then counter the sideways spray.
+            </p>
             {!userId ? (
               <>
                 <h1>Take your seat.</h1>
@@ -648,7 +644,7 @@ export function DuelMatch({
                   <button
                     className="duel-primary"
                     onClick={() => void activate()}
-                    disabled={connection !== "Connected" || !arenaReady}
+                    disabled={connection !== "Connected" || !arenaReady || !frame}
                   >
                     {active ? "Resume aiming" : "Ready & enter arena"}
                   </button>

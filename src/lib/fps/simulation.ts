@@ -1,5 +1,13 @@
 import { ARENA, BOXES, EYE_HEIGHT, PLAYER_RADIUS, SPAWNS, eyeHeight } from "./map";
-import { playerVolumes } from "./player-volumes";
+import {
+  COMBAT_VERSION,
+  HIT_DAMAGE,
+  recoverCombatRecoil,
+  advanceCombatRecoil,
+  combatSpread,
+  type HitZone,
+} from "./combat";
+import { combatVolumes, playerVolumes } from "./player-volumes";
 import { rayBox, traceWorld, type Vector } from "./collision";
 import { spreadScale } from "./handling";
 import {
@@ -61,11 +69,17 @@ function player(id: string, seat: Seat): Player {
   };
 }
 
-export function createMatch(ids: { A: string; B: string }, bestOf: 5 | 9, now: number): MatchState {
+export function createMatch(
+  ids: { A: string; B: string },
+  bestOf: 5 | 9,
+  now: number,
+  combatVersion: 1 | 2 = COMBAT_VERSION,
+): MatchState {
   if (!Number.isFinite(now) || (bestOf !== 5 && bestOf !== 9))
     throw new Error("Invalid match configuration");
   return {
     v: 1,
+    combatVersion,
     phase: "waiting",
     players: { A: player(ids.A, "A"), B: player(ids.B, "B") },
     score: { A: 0, B: 0 },
@@ -75,13 +89,19 @@ export function createMatch(ids: { A: string; B: string }, bestOf: 5 | 9, now: n
     winner: null,
     tick: 0,
     events: [],
-    server: { lastStepAt: now, draws: 0 },
+    server: {
+      lastStepAt: now,
+      draws: 0,
+      ...(combatVersion === COMBAT_VERSION
+        ? { spreadSeed: crypto.getRandomValues(new Uint32Array(1))[0]! }
+        : {}),
+    },
   };
 }
 
 export function startMatch(state: MatchState, now: number): MatchState {
   if (state.phase !== "waiting" || !Number.isFinite(now)) return state;
-  state.server = { lastStepAt: now, draws: 0 };
+  state.server = { ...state.server, lastStepAt: now, draws: 0 };
   state.phase = "countdown";
   state.phaseEndsAt = now + COUNTDOWN_MS;
   state.events = [{ type: "countdown", text: "Match starts in 3 seconds" }];
@@ -204,22 +224,40 @@ function shoot(
     stats = WEAPONS[p.weapon];
   const start = positions[seat],
     targetStart = positions[other(seat)];
-  if (p.reloadUntil || !p.ammo || now - p.lastShotAt < stats.fireIntervalMs) return;
-  p.sprayCount = now - p.lastShotAt > 300 ? 1 : (p.sprayCount ?? 0) + 1;
-  const spread =
-    stats.recoil *
-    spreadScale(
-      p.sprayCount,
-      Math.hypot(input.forward, input.strafe) > 0.1,
-      (p.velocityY ?? 0) !== 0,
-    ) *
-    (p.crouched ? 0.8 : 1);
+  const modern = state.combatVersion === COMBAT_VERSION;
+  if (
+    p.reloadUntil ||
+    !p.ammo ||
+    now - p.lastShotAt < (modern && p.weapon === "rifle" ? 100 : stats.fireIntervalMs)
+  )
+    return;
+  if (!modern) p.sprayCount = now - p.lastShotAt > 300 ? 1 : (p.sprayCount ?? 0) + 1;
+  const spread = modern
+    ? (p.weapon === "rifle" ? 0.0015 : 0.0025) *
+      combatSpread(
+        (p.sprayCount ?? 0) + 1,
+        Math.hypot(input.forward, input.strafe) > 0.1,
+        (p.velocityY ?? 0) !== 0,
+        !!p.crouched,
+      )
+    : stats.recoil *
+      spreadScale(
+        p.sprayCount ?? 1,
+        Math.hypot(input.forward, input.strafe) > 0.1,
+        (p.velocityY ?? 0) !== 0,
+      ) *
+      (p.crouched ? 0.8 : 1);
   p.ammo--;
   p.lastShotAt = now;
   // Integer hash gives reproducible spread without random state or client-supplied seeds.
-  const hash = (Math.imul(p.lastSeq + 1, 1664525) + Math.imul(state.tick, 1013904223)) >>> 0;
-  const yaw = p.yaw + ((hash % 1001) / 500 - 1) * spread;
-  const pitch = p.pitch + (((hash >>> 10) % 1001) / 500 - 1) * spread;
+  const hash =
+    modern && state.server
+      ? (state.server.spreadSeed =
+          (Math.imul(state.server.spreadSeed ?? 1, 1664525) + 1013904223) >>> 0)
+      : (Math.imul(p.lastSeq + 1, 1664525) + Math.imul(state.tick, 1013904223)) >>> 0;
+  const yaw = p.yaw + (modern ? (p.recoilYaw ?? 0) : 0) + ((hash % 1001) / 500 - 1) * spread;
+  const pitch =
+    p.pitch + (modern ? (p.recoilPitch ?? 0) : 0) + (((hash >>> 10) % 1001) / 500 - 1) * spread;
   const direction = {
     x: -Math.sin(yaw) * Math.cos(pitch),
     y: Math.sin(pitch),
@@ -228,26 +266,66 @@ function shoot(
   const origin = { x: start.x, y: start.y + eyeHeight(start), z: start.z };
   const worldHit = traceWorld(origin, direction),
     wall = worldHit?.distance ?? Infinity;
-  const volumes = playerVolumes(targetStart);
-  const head = rayBox(origin, direction, volumes.head.center, volumes.head.size);
-  const body = rayBox(origin, direction, volumes.body.center, volumes.body.size);
-  state.events.push({ type: "shot", seat, text: `${p.weapon} fired` });
-  if (Math.min(head, body) >= wall || !Number.isFinite(Math.min(head, body))) {
+  const volumes = modern
+    ? combatVolumes(targetStart)
+    : { head: playerVolumes(targetStart).head, chest: playerVolumes(targetStart).body };
+  const hits = Object.entries(volumes)
+    .map(([zone, volume]) => ({
+      zone: zone as HitZone,
+      distance: rayBox(origin, direction, volume.center, volume.size),
+    }))
+    .sort((a, b) => a.distance - b.distance);
+  const contact = hits[0]!;
+  state.events.push({
+    type: "shot",
+    seat,
+    text: p.weapon + " fired",
+    weapon: p.weapon,
+    audio: { kind: "shot", position: origin },
+  });
+  if (modern) advanceCombatRecoil(p);
+  if (contact.distance >= wall || !Number.isFinite(contact.distance)) {
     if (worldHit)
       state.events.push({
         type: "impact",
         seat,
-        text: `${worldHit.surface} impact`,
+        text: worldHit.surface + " impact",
         impact: worldHit,
       });
     return;
   }
-  const headshot = head <= body;
-  target.hp = Math.max(0, target.hp - stats.damage * (headshot ? stats.headshotMultiplier : 1));
+  const headshot = contact.zone === "head";
+  const damage = modern
+    ? HIT_DAMAGE[p.weapon][contact.zone]
+    : stats.damage * (headshot ? stats.headshotMultiplier : 1);
+  target.hp = Math.max(0, target.hp - damage);
+  const point = {
+    x: origin.x + direction.x * contact.distance,
+    y: origin.y + direction.y * contact.distance,
+    z: origin.z + direction.z * contact.distance,
+  };
+  const splatter =
+    traceWorld(
+      {
+        x: point.x + direction.x * 0.015,
+        y: point.y + direction.y * 0.015,
+        z: point.z + direction.z * 0.015,
+      },
+      direction,
+      3.5,
+    ) ?? traceWorld({ x: point.x, y: point.y + 0.02, z: point.z }, { x: 0, y: -1, z: 0 }, 2);
   state.events.push({
     type: headshot ? "headshot" : "hit",
     seat,
-    text: headshot ? "Headshot" : "Body hit",
+    text: headshot ? "Headshot" : contact.zone[0]!.toUpperCase() + contact.zone.slice(1) + " hit",
+    hit: {
+      victim: other(seat),
+      zone: contact.zone,
+      damage,
+      point,
+      direction,
+      ...(splatter ? { splatter } : {}),
+    },
   });
   if (target.hp === 0) {
     p.kills++;
@@ -319,6 +397,7 @@ export function stepMatch(
   for (const seat of SEATS) {
     const p = state.players[seat],
       input = validateInput(inputs[seat]);
+    if (state.combatVersion === COMBAT_VERSION) recoverCombatRecoil(p, now);
     if (p.reloadUntil && now >= p.reloadUntil) {
       const amount = Math.min(WEAPONS[p.weapon].magazine - p.ammo, p.reserve);
       p.ammo += amount;
@@ -339,7 +418,33 @@ export function stepMatch(
       }
       if (input.reload && !p.reloadUntil && p.reserve > 0 && p.ammo < WEAPONS[p.weapon].magazine)
         p.reloadUntil = now + WEAPONS[p.weapon].reloadMs;
+      const before = { x: p.x, y: p.y, z: p.z };
       predictMovement(p, input, TICK_MS);
+      if (
+        state.combatVersion === COMBAT_VERSION &&
+        p.hp > 0 &&
+        p.y === before.y &&
+        !(p.velocityY ?? 0)
+      ) {
+        const distance = Math.hypot(p.x - before.x, p.z - before.z);
+        p.stepDistance = (p.stepDistance ?? 0) + distance;
+        const stride = p.crouched ? 1.25 : input.sprint ? 1.9 : 1.6;
+        if (p.stepDistance >= stride) {
+          p.stepDistance -= stride;
+          const floor = traceWorld({ x: p.x, y: p.y + 0.15, z: p.z }, { x: 0, y: -1, z: 0 }, 0.4);
+          state.events.push({
+            type: "step",
+            seat,
+            text: "Footstep",
+            audio: {
+              kind: "step",
+              position: { x: p.x, y: p.y, z: p.z },
+              surface: floor?.surface ?? "concrete",
+              soft: !!p.crouched,
+            },
+          });
+        }
+      }
     } else {
       predictMovement(p, null, TICK_MS);
     }
@@ -348,8 +453,14 @@ export function stepMatch(
   // Health changes cannot suppress the opponent's shot; adjudicate only afterward.
   for (const seat of SEATS) {
     const input = accepted[seat];
-    if (input?.fire && (!input.sprint || state.players[seat].crouched))
+    const p = state.players[seat];
+    if (
+      input?.fire &&
+      (!input.sprint || p.crouched) &&
+      (state.combatVersion !== COMBAT_VERSION || p.weapon === "rifle" || !p.triggerHeld)
+    )
       shoot(state, seat, now, positions, input);
+    if (input) p.triggerHeld = input.fire;
   }
   if (state.players.A.hp <= 0 || state.players.B.hp <= 0) {
     finishRound(

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { HIT_DAMAGE } from "../src/lib/fps/combat";
 import { ARENA, BOXES, EYE_HEIGHT, PLAYER_RADIUS, SPAWNS } from "../src/lib/fps/map";
 import {
   COUNTDOWN_MS,
@@ -61,7 +62,7 @@ describe("visible character combat envelope", () => {
       B: input({ seq: 1, crouch: crouched, yaw: Math.PI }),
     });
     expect(state.events.some((event) => event.type === "hit" && event.seat === "A")).toBe(true);
-    expect(state.players.B.hp).toBe(100 - WEAPONS.rifle.damage);
+    expect(state.players.B.hp).toBe(100 - HIT_DAMAGE.rifle.legs);
   });
   it("a crouched player's old standing head position is not a hit", () => {
     const state = live();
@@ -188,6 +189,16 @@ describe("combat", () => {
     const state = live();
     lane(state);
     tick(state, { A: input({ fire: true }) });
+    expect(state.players.B.hp).toBe(50);
+    for (let seq = 1; seq <= 4; seq++)
+      tick(state, {
+        A: input({
+          seq,
+          fire: true,
+          pitch: -(state.players.A.recoilPitch ?? 0),
+          yaw: -(state.players.A.recoilYaw ?? 0),
+        }),
+      });
     expect(state.players.B.hp).toBe(0);
     expect(state.players.A.kills).toBe(1);
     expect(state.players.A.headshots).toBe(1);
@@ -197,6 +208,7 @@ describe("combat", () => {
   it("resolves simultaneous lethal shots as a draw regardless of seat", () => {
     const state = live();
     lane(state);
+    state.players.A.hp = state.players.B.hp = 50;
     tick(state, { A: input({ fire: true }), B: input({ fire: true, yaw: Math.PI }) });
     expect(state.players.A.hp).toBe(0);
     expect(state.players.B.hp).toBe(0);
@@ -209,13 +221,14 @@ describe("combat", () => {
     const state = live();
     lane(state);
     tick(state, { A: input({ fire: true, pitch: Math.atan2(-0.8, 6) }) });
-    expect(state.players.B.hp).toBe(100 - WEAPONS.rifle.damage);
+    expect(state.players.B.hp).toBe(100 - HIT_DAMAGE.rifle.stomach);
     expect(state.events.some((e) => e.type === "hit")).toBe(true);
     expect(state.players.A.headshots).toBe(0);
   });
   it("aims both shots against tick-start positions while both players move", () => {
     const state = live();
     lane(state);
+    state.players.A.hp = state.players.B.hp = 50;
     // Without the shared tick-start snapshot, opposite movement would make the
     // narrow head targets miss at this lateral speed.
     tick(state, {
@@ -230,14 +243,15 @@ describe("combat", () => {
     const state = live();
     lane(state);
     tick(state, { A: input({ weapon: "pistol", fire: true, pitch: Math.atan2(-0.8, 6) }) });
-    expect(state.players.B.hp).toBe(75);
+    expect(state.players.B.hp).toBe(78);
     expect(state.players.A.ammo).toBe(11);
     for (let seq = 1; seq <= 7; seq++)
       tick(state, { A: input({ seq, weapon: "pistol", fire: true, yaw: Math.PI / 2 }) });
     expect(state.players.A.ammo).toBe(11);
-    tick(state, { A: input({ seq: 8, weapon: "pistol", fire: true, yaw: Math.PI / 2 }) });
+    tick(state, { A: input({ seq: 8, weapon: "pistol", fire: false, yaw: Math.PI / 2 }) });
+    tick(state, { A: input({ seq: 9, weapon: "pistol", fire: true, yaw: Math.PI / 2 }) });
     expect(state.players.A.ammo).toBe(10);
-    tick(state, { A: input({ seq: 9, weapon: "pistol", reload: true }) });
+    tick(state, { A: input({ seq: 10, weapon: "pistol", reload: true }) });
     expect(state.players.A.reloadUntil - state.server!.lastStepAt).toBeCloseTo(
       WEAPONS.pistol.reloadMs,
     );
@@ -291,6 +305,7 @@ describe("match lifecycle", () => {
     expect(state.players.A.z).toBe(SPAWNS.A.z);
     stepMatch(state, {}, state.phaseEndsAt, TICK_MS);
     lane(state);
+    state.players.B.hp = 50;
     tick(state, { A: input({ seq: 8, fire: true }) });
     const roundEnd = state.phaseEndsAt;
     expect(roundEnd - state.server!.lastStepAt).toBeCloseTo(ROUND_END_MS);
@@ -343,6 +358,7 @@ describe("match lifecycle", () => {
     const state = live();
     for (let draw = 0; draw < MAX_DRAWS; draw++) {
       lane(state);
+      state.players.A.hp = state.players.B.hp = 50;
       tick(state, {
         A: input({ seq: draw, fire: true }),
         B: input({ seq: draw, fire: true, yaw: Math.PI }),

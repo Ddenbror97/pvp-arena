@@ -3,6 +3,8 @@ import { EYE_HEIGHT, SPAWNS, eyeHeight } from "./map";
 import type { Input, MatchState, Player, Seat, Weapon } from "./protocol";
 import { predictMovement, TICK_MS, WEAPONS } from "./simulation";
 import { createCharacter } from "./character";
+import { COMBAT_VERSION, recoveryProfile } from "./combat";
+import { createBloodEffects } from "./blood-effects";
 import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handling";
 import { createArenaEnvironment } from "./environment";
 import { createImpactEffects } from "./impacts";
@@ -118,6 +120,7 @@ export function mountArena(
   });
   const environment = createArenaEnvironment(scene, branding);
   const impacts = createImpactEffects(scene);
+  const blood = createBloodEffects(scene);
   // Capture this arena once for rough metallic reflections, excluding all players.
   const pmrem = new THREE.PMREMGenerator(renderer);
   const reflections = pmrem.fromScene(scene, 0.04, 0.1, 100);
@@ -359,10 +362,17 @@ export function mountArena(
           v: 1,
           type: "input",
           seq: ++seq,
+          ...(state.combatVersion === COMBAT_VERSION ? { combatVersion: COMBAT_VERSION } : {}),
           forward: active ? Number(keys.has("KeyW")) - Number(keys.has("KeyS")) : 0,
           strafe: active ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0,
-          yaw: Math.max(-Math.PI * 2, Math.min(Math.PI * 2, yaw + recoilYaw)),
-          pitch: Math.max(-1.45, Math.min(1.45, pitch + recoilPitch)),
+          yaw: Math.max(
+            -Math.PI * 2,
+            Math.min(Math.PI * 2, yaw + (state.combatVersion === COMBAT_VERSION ? 0 : recoilYaw)),
+          ),
+          pitch: Math.max(
+            -1.45,
+            Math.min(1.45, pitch + (state.combatVersion === COMBAT_VERSION ? 0 : recoilPitch)),
+          ),
           fire: active && fire,
           reload: active && reload,
           weapon,
@@ -380,7 +390,20 @@ export function mountArena(
         jump = false;
       }
     }
-    if (!fire || now - confirmedShot > 220) {
+    if (state?.combatVersion === COMBAT_VERSION && predicted) {
+      const own = state.players[seat ?? "A"],
+        profile = recoveryProfile(own.sprayCount ?? 0),
+        serverNow = Date.now() + lastServerOffset;
+      const age = Math.max(0, serverNow - own.lastShotAt),
+        sinceUpdate = Math.max(
+          0,
+          serverNow - Math.max(own.recoilUpdatedAt ?? serverNow, own.lastShotAt + profile.delayMs),
+        );
+      const factor = age >= profile.resetMs ? 0 : Math.exp((-profile.rate * sinceUpdate) / 1000);
+      const blend = 1 - Math.exp(-dt / 25);
+      recoilPitch += ((own.recoilPitch ?? 0) * factor - recoilPitch) * blend;
+      recoilYaw += ((own.recoilYaw ?? 0) * factor - recoilYaw) * blend;
+    } else if (!fire || now - confirmedShot > 220) {
       recoilPitch = recoverRecoil(recoilPitch, dt);
       recoilYaw = recoverRecoil(recoilYaw, dt);
     }
@@ -477,6 +500,7 @@ export function mountArena(
     );
     crosshair?.classList.toggle("is-reloading", reloadRemaining > 0);
     impacts.update(dt, now);
+    blood.update(dt, now);
     wetFloor.update(dt);
     camera.layers.set(0);
     renderer.autoClear = true;
@@ -528,6 +552,7 @@ export function mountArena(
           muzzleUntil = 0;
           smokeUntil = 0;
           impacts.reset();
+          blood.reset();
         }
         lastRound = state.round;
         predicted = { ...authoritative };
@@ -537,16 +562,21 @@ export function mountArena(
           if (e.id !== undefined && e.id <= lastEventId) continue;
           if (e.id !== undefined) lastEventId = e.id;
           if (e.type === "impact" && e.impact) impacts.emit(e.impact, performance.now());
+          if (e.hit) blood.emit(e.hit, performance.now());
           if (e.type === "shot") {
             if (e.seat === seat) {
               const now = performance.now();
               if (now - confirmedShot > 300) shotIndex = 0;
-              const recoil = shotRecoil(authoritative.weapon, shotIndex++);
-              recoilPitch = Math.min(HANDLING.maxPitch, recoilPitch + recoil.pitch);
-              recoilYaw = Math.max(
-                -HANDLING.maxYaw,
-                Math.min(HANDLING.maxYaw, recoilYaw + recoil.yaw),
-              );
+              if (state.combatVersion !== COMBAT_VERSION) {
+                const recoil = shotRecoil(authoritative.weapon, shotIndex++);
+                recoilPitch = Math.min(HANDLING.maxPitch, recoilPitch + recoil.pitch);
+                recoilYaw = Math.max(
+                  -HANDLING.maxYaw,
+                  Math.min(HANDLING.maxYaw, recoilYaw + recoil.yaw),
+                );
+              } else {
+                shotIndex = authoritative.sprayCount ?? 0;
+              }
               kick = 1;
               confirmedShot = now;
               muzzleUntil = now + 42;
@@ -616,6 +646,7 @@ export function mountArena(
       wetFloor.dispose();
       reflections.dispose();
       impacts.dispose();
+      blood.dispose();
       characters.A.dispose();
       characters.B.dispose();
       renderer.dispose();

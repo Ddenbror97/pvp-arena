@@ -49,7 +49,7 @@ describe("FPS handling polish", () => {
     expect(spreadScale(10, true, false)).toBeGreaterThan(spreadScale(10, false, false));
     expect(spreadScale(10, false, true)).toBeGreaterThan(spreadScale(10, true, false));
   });
-  it("holds full auto at existing authoritative rate, stops on release and reloads once", () => {
+  it("holds full auto at authoritative 600 RPM cap, stops on release and reloads once", () => {
     const state = createMatch({ A: "fixture-a", B: "fixture-b" }, 5, 0);
     startMatch(state, 0);
     stepMatch(state, {}, COUNTDOWN_MS, TICK_MS);
@@ -62,7 +62,7 @@ describe("FPS handling polish", () => {
       now += 34;
       stepMatch(state, { A: { ...idle, seq: ++seq, fire: true } }, now, TICK_MS);
       if (state.events.some((e) => e.type === "shot")) {
-        expect(now - lastShot).toBeGreaterThanOrEqual(WEAPONS.rifle.fireIntervalMs);
+        expect(now - lastShot).toBeGreaterThanOrEqual(100);
         lastShot = now;
         shots++;
       }

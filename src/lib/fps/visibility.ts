@@ -38,13 +38,50 @@ export function canSeeOpponent(state: PublicState, seat: Seat): boolean {
 export function snapshotForPlayer<T extends { state: PublicState }>(frame: T, seat: Seat) {
   const remote = seat === "A" ? "B" : "A",
     visible = canSeeOpponent(frame.state, seat);
-  if (visible) return { ...frame, visibility: { A: true, B: true } };
+  const events = frame.state.events.map((event) => {
+    const { audio, hit, ...rest } = event;
+    let cue = audio;
+    if (audio?.position) {
+      const own = frame.state.players[seat],
+        dx = audio.position.x - own.x,
+        dz = audio.position.z - own.z,
+        distance = Math.hypot(dx, dz);
+      const blocked =
+        distance > 0.2 &&
+        !!traceWorld(
+          { x: own.x, y: own.y + eyeHeight(own), z: own.z },
+          { x: dx / distance, y: 0, z: dz / distance },
+          Math.max(0, distance - 0.1),
+        );
+      const range = audio.kind === "shot" ? 48 : 16,
+        scale =
+          event.seat === seat
+            ? 1
+            : Math.pow(Math.max(0, 1 - distance / range), 1.5) * (blocked ? 0.4 : 1);
+      const pan = distance > 0.1 ? (dx * Math.cos(own.yaw) - dz * Math.sin(own.yaw)) / distance : 0;
+      const { position: _position, ...details } = audio;
+      cue = {
+        ...details,
+        gain: Math.round(scale * 16) / 16,
+        pan: event.seat === seat ? 0 : Math.round(Math.max(-1, Math.min(1, pan)) * 8) / 8,
+        occluded: !!blocked,
+      };
+    }
+    return {
+      ...rest,
+      ...(cue ? { audio: cue } : {}),
+      ...(hit && (visible || hit.victim === seat) ? { hit } : {}),
+    };
+  });
+  if (visible)
+    return { ...frame, state: { ...frame.state, events }, visibility: { A: true, B: true } };
   const enemy = frame.state.players[remote];
   return {
     ...frame,
     visibility: { A: seat === "A", B: seat === "B" },
     state: {
       ...frame.state,
+      events,
       players: {
         ...frame.state.players,
         [remote]: {
@@ -62,6 +99,11 @@ export function snapshotForPlayer<T extends { state: PublicState }>(frame: T, se
           lastShotAt: 0,
           lastSeq: -1,
           sprayCount: 0,
+          recoilPitch: 0,
+          recoilYaw: 0,
+          recoilUpdatedAt: 0,
+          stepDistance: 0,
+          triggerHeld: false,
         },
       },
     },
