@@ -52,8 +52,9 @@ All 14 new cases and the existing 25 wallet cases passed.
 The actual browser SDK bundle also initialized its EVM client/provider and
 cleanly disconnected in Chromium with analytics disabled. No wallet permissions,
 signatures, transactions or external requests were made. That test passed with
-zero page errors. A complete release rerun is required for this updated lockfile;
-previous release evidence remains historical until that rerun completes.
+zero page errors. The updated lockfile then passed the complete 662-case unit,
+397-case database and 19-case browser suites, all six hosted security cases and
+the repeated financial, sustained-load and US gameplay checks.
 
 The exact parent-version selectors deliberately require fresh review when the
 SDK or utils versions change. This resolves the advisory rather than accepting

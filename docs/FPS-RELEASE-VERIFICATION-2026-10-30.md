@@ -1,154 +1,107 @@
 # FPS controlled-release verification — 2026-10-30
 
-Decision: **NO GO while the dependency-fixed candidate completes validation.**
-Source and production artifact scans passed; the frozen commit and build
-identifiers are recorded in the generated release manifest and dashboard. All complete test
-suites below passed. Production remains unchanged. This decision concerns a
-cash-disabled practice release; it never authorizes public cash, deposits,
-withdrawals or other production financial operations.
+Decision: **GO for controlled desktop practice only.** All required technical
+checks passed on the frozen code candidate. Alert delivery was explicitly waived
+by the user, and restored-copy quarantine of 39 existing Auth claims was approved.
+Public FPS cash, deposits, withdrawals and production financial operations remain
+outside this release authorization. Production rollout and smoke results are
+recorded below when executed; this pre-deployment decision does not claim them.
 
-## Dependency remediation update
+## Frozen code and build
 
-The six UUID findings have been fixed with a version-scoped compatibility pin.
-Clean install audit: zero vulnerabilities; 14 new consumer/advisory regression
-cases plus 25 existing wallet cases passed. The actual browser SDK initialized
-and disconnected without external requests. Full release validation is being
-repeated on the new dependency candidate. Counts below describe the preceding
-candidate until this report is refreshed with the new run.
+Verified code commit: `af42d73fb1966632d6eede2c5140c82f86207571` on `codex/fps-duel`.
+Merging current main changed history only; the tested file tree stayed identical.
+Subsequent release-report-only commits do not change application or migration code.
+PR: [FPS controlled release](https://github.com/Ddenbror97/pvp-arena/pull/3).
+GitHub rollout CI [run 40](https://github.com/Ddenbror97/pvp-arena/actions/runs/41113198484) passed on this code.
+
+App entry SHA-256: `66ce94135a127d58358f716121a5ece67c263a6d828c09eaebc46632c614100d`.
+Package lock SHA-256: `fffe015ef1a2105d48fccaba092de5b3f972e53c1546b65193415baa65e37a3a`.
+Complete artifact-file manifest SHA-256: `b44f23d7c956aea1b3a3adfdb4e43e7536e68d7fad5428b2a58216e67f4b4fe0`.
+The ignored release manifest records configuration hashes and later deployment IDs.
+The production build, runtime dry build, app/runtime TypeScript and changed-source
+lint passed. All 2,288 tracked files and 1,731 artifact files were scanned: no
+supplied credentials, and no Fresh project references in production artifacts.
 
 ## Complete verification
 
-- Unit suite: **648 passed, 0 failed, 0 pending** in the isolated final run.
-- Integration/database suite: **397 passed, 0 failed, 0 pending**, 38 files.
-  Every historical hosted case was pointed at the authorized Fresh project;
-  the recording case ran in verification mode without replacing tracked assets.
-- Browser suite: **19 passed**, including real registration/OTP, both roles,
-  movement/aiming/shooting, body/head hits, walking/arms/head models, six complete
-  bot rounds (5–1), a hosted paid synthetic BO5 and both games' settlement checks.
-- Hosted security: **6/6 passed** on the final close-handshake runtime: local
-  logout, global logout, administrative revocation, session not-after expiry,
-  an actual 60-second JWT and an actual authorization-service failure.
-- Fresh staging financial suite: **12/12 passed**: competing joins, immutable
-  result intent, duplicate payout prevention, rematches, cancellation/expiry
-  races, posting rollback/recovery, ranking and balance conservation.
-- Runtime/fault suite: **5/5 passed**, including independent scheduled recovery,
-  private spectators, replay denial, forged health and checkpoint restart refund.
-- Auth/privacy suite: **3/3 passed**, including private capabilities and use of
-  still-unexpired JWTs after real Auth logout.
-- App and runtime TypeScript checks and changed-source lint passed. Production
-  build passed. Exact Git/build hashes are recorded in `test-results/fps-release-manifest.json`
-  and the release-check dashboard.
+- Unit: **662 passed, zero failed or pending**.
+- Database/integration: **397 passed across 38 files, zero failed or pending**.
+- Browser: **19 passed in one complete run**, including real registration/OTP,
+  8-ball gameplay/settlement, both FPS roles and hitboxes, wrists/grips, walking,
+  mouse controls, six bot rounds (5–1), a hosted paid synthetic BO5 and reconnect.
+- Hosted security: **6/6 passed**: local/global logout, administrative revocation,
+  session not-after, actual 60-second JWT expiry and authorization-service failure.
+  Each case refunded once and restored balances exactly.
+- Financial integrity: **12/12** ledger cases; runtime/recovery **5/5**; Auth/privacy
+  **3/3**. Concurrent joins, immutable result intent, duplicate settlement,
+  rematches, expiry races and posting rollback/recovery passed.
+- Dependency audit: **zero vulnerabilities** at every severity. Fourteen new actual
+  consumer/advisory cases and all 25 existing wallet cases passed. The real browser
+  SDK initialized and disconnected with no external requests or page errors.
 
-The original 54 failures are individually mapped to passing cases in
-`FPS-DB-FAILURE-TRIAGE-2026-10-30.json`; all 54 also passed in the final complete
-suite. The complete run has no nonexecuted/skipped cases. Historical migrations
-were not edited to obtain these results.
+All original 54 database failures are individually mapped to passing cases in
+`FPS-DB-FAILURE-TRIAGE-2026-10-30.json`; all passed again in the complete run.
+No historical migration was modified and no case was excluded to obtain a pass.
 
-## Fixes and investigation outcomes
+## Security fixes and dependency decision
 
-Existing sockets now require fresh authoritative session checks, including
-pre-read command watermarks that close the in-flight revocation race. Tickets
-bind session ownership and JWT expiry. Failed authorization pauses input and
-clears queued commands; prolonged failure cancels/refunds through the ordinary
-immutable result flow. Replacement sockets cannot inherit old commands.
+Every established socket requires fresh authoritative Auth session checks.
+Tickets bind session identity and original JWT expiry. Pre-read input watermarks
+prevent commands arriving during a check from inheriting that older decision.
+Authorization failures pause input and clear queued commands; prolonged failure
+cancels through the immutable result/refund flow. Replacement sockets cannot
+inherit older queued inputs. The server reciprocates peer close frames correctly.
 
-The sustained test exposed an incomplete close handshake. The runtime now
-explicitly reciprocates a peer close; tests require a clean normal close before
-replacement. The passing sustained run had four clean handshakes and zero
-unexpected disconnects. An admission 503 is retried with fresh one-use tickets
-and bounded browser-equivalent backoff; the final run required no retries.
+Two exact verified MetaMask utils versions now resolve upstream UUID 11.1.1.
+This narrowly scoped pin is outside their declared ^9 range; CJS/ESM caller,
+v4 compatibility, advisory buffer-boundary and browser SDK tests justify the
+compatibility decision. It is not a blanket forced override. Future parent
+upgrades require re-review. See `FPS-SECURITY-REVIEW-2026-10-30.md`.
 
-Windows fixture failures came from CRLF-dependent historical patch matching,
-unreserved multi-statement migration transactions, Vite watching local database
-files, stale dependency prebundles and Linux-only paths. Fixtures now normalize
-their copies, reserve a connection and isolate caches/watchers. Production
-migration files were retained. The 8-ball fixture uses the actual registration
-flow and synthetic USD ledger. Its clock drives only its own test match because
-historical staging cron/HTTP jobs are disabled. Tests follow current lobby
-controls and absence rules; financial assertions remain intact.
+## Performance and US scope
 
-The complete rerun also found a real poker seat-version bug. A forward-only
-migration makes changed seats publish a new version while preserving no-op
-returns, existing function hardening and ACLs. All 21 poker audit/recording
-regressions passed. The roulette cap fixture now explicitly keeps all concurrent
-requests inside the betting window; cap and exact-deadline assertions remain.
+The final sustained run (2026-10-30T19:21:14.016Z–2026-10-30T19:24:52.673Z) passed **20 matches,
+40 authenticated automated clients and 180 seconds** of gameplay. Four clean
+reconnects, zero admission retries/unexpected disconnects and 20 single refunds
+with restored balances were verified. This is a demonstrated bound, not maximum capacity.
 
-## Performance and concurrency
+Input acknowledgement p50/p95: **185.0/254.5 ms**.
+Snapshot spacing p50/p95: **54.9/77.3 ms**.
+Reconnect p50/p95: **251.2/262.6 ms**.
+Entry creation p50/p95: **1893.2/2028.2 ms**.
+Half the clients delay outgoing messages by 100–200 ms and discard every tenth
+input; acknowledgement timing starts at actual send. This simulates application
+delivery impairment, not measured IP packet loss.
 
-Increasing hosted levels passed at 2, 5, 12 and 20 matches. The sustained final
-bound is **20 matches / 40 automated authenticated identities for 180 seconds**.
-It is a demonstrated target, not maximum capacity or 40 human testers.
+Sampled database connections peaked at **33** with zero lock waits/ungranted locks.
+The load-window session-check executor mean was **0.313 ms** across 89,384 calls.
+Cumulative direct and REST entry/join SELECT means were **140.969/31.500 ms**;
+these exclude network and commit time and do not attribute all entry latency.
+The 2.03-second p95 entry wait remains a measured limitation, not gameplay latency.
+Provider samples peaked at **47,456,268 bytes** memory; aggregate CPU was
+**126,477,052 microseconds** across objects. CPU/memory-limit and fatal-internal
+errors were zero; all sampled invocation outcomes were successful.
 
-- Entry creation p50/p95: **1,252.7 / 1,319.3 ms**.
-- Input acknowledgement p50/p95: **182.2 / 250.8 ms**, 107,883 samples.
-- Snapshot spacing p50/p95: **51.4 / 77.3 ms**, 123,145 samples.
-- Reconnect p50/p95: **271.5 / 288.4 ms**, four samples.
-- Sampled DB connections peaked at **29**; sampled lock-waiting connections
-  peaked at **0**. Samples are not proof of zero waits between observations.
-- Provider namespace/isolate metrics during the load window: maximum sampled
-  memory **40,108,044 bytes**, summed CPU **129,829,942 microseconds** across
-  active objects; zero exceeded-CPU, exceeded-memory or fatal-internal counters.
-  CPU is aggregate across objects, not per-player latency or workstation CPU.
-- All 20 matches refunded exactly once and restored their original balances.
+US placed probes: **remote-IAD: p95 input acknowledgement 125 ms, 900 live snapshots; remote-SEA: p95 input acknowledgement 142 ms, 901 live snapshots**. Both ran authenticated movement/fire for 60 seconds,
+then a single refund restored balances and temporary probes were deleted.
+These are IAD/SEA server probes, not residential/mobile last-mile certification.
+Local browser frame times were **13.9 ms median / 20.9 ms p95** on this workstation.
+No all-device FPS guarantee, latency rewind or independent anti-aimbot/collusion
+certification is claimed. Public cash requires separate competitive review.
 
-Half the load clients inject 100–200 ms send delay and discard every tenth
-application message. Ack timing starts at actual send and excludes that injected
-delay. This does not measure IP packet loss. Entry creation includes public API
-round trips, authorization and serialized financial work; no sampled lock wait
-was observed, so the data does not establish that locks caused its latency.
+## Production backup, migrations and rollback
 
-## US gameplay
+Production API credentials and service connectivity returned HTTP 200. A distinct
+production runtime secret is prepared. Payment credentials were inventoried only.
+The unchanged 33,724,330-byte exported-snapshot archive was checksum-verified and
+restored again in an isolated local database. The user-approved procedure preserves
+all 39 existing orphaned MFA claims in a private restored-only quarantine and
+restores all FKs. Source production Auth records and the archive remain unchanged.
+All original users, financial rows/sums/settings match; all five migrations passed
+again with FPS cash disabled. See `FPS-PRODUCTION-RECOVERY-2026-10-30.md`.
 
-The final 60-second gameplay probes had confirmed **remote-IAD** and
-**remote-SEA** execution placement and matching egress traces. Each received
-1,134 live snapshots while moving/firing through authenticated sockets.
-
-- East acknowledgement p50/p95: **46 / 74 ms**; snapshot p95 **74 ms**.
-- West acknowledgement p50/p95: **104 / 138 ms**; snapshot p95 **73 ms**.
-
-The match refunded once with exact balance restoration. Temporary probe Workers
-were deleted. These are placed automated server clients, not residential/mobile
-last-mile tests or a network packet-loss certificate.
-
-## Security review and approvals
-
-Audit: **0 critical, 0 high, 6 moderate** findings in the inherited MetaMask/UUID
-chain. The reviewed call paths use UUID v4; the advisory affects v3/v5/v6 with
-caller-supplied buffers. No reachable affected call was identified in FPS or the
-inspected wallet paths. Compatible upstream ranges do not remove the whole
-chain; no forced major override was applied. See the separate security review.
-The version-scoped fix and compatibility evidence supersede this earlier risk assessment; see the updated security review.
-
-Server authority, rate bounds, hitboxes, one-use admission, private-room access,
-visibility filtering, result integrity and recovery are tested. Server latency
-rewind, anti-aimbot assurance, collusion detection and all end-user/device/network
-conditions are not certified. These remain public-cash launch limitations.
-
-The user explicitly **waived alert delivery and incident-response setup**.
-Neither structured logs nor configuration inventory is represented as delivered
-alerts. No alert destination or responder was invented.
-
-## Production backup, migration and rollback
-
-Production public/service API credentials verified with HTTP 200. A distinct
-production runtime secret was prepared. Existing third-party payment credential
-names were inventoried only; no payment operation was exercised.
-
-A **33,724,330-byte** read-only exported-snapshot production archive was created.
-The original unmodified restore exposed **39 pre-existing orphaned MFA claims**.
-The user approved preserving those rows in a private quarantine only in the
-restored copy. All original claims remain in Auth or quarantine, all FKs are
-enforced, and all Auth users/financial rows/settings match the snapshot. Source
-production Auth data is unchanged. See the approved recovery report.
-
-All five pending migrations applied successfully to that isolated recovered
-production schema. Existing financial rows, sums and settings remained unchanged;
-money invariants passed and new FPS cash stayed disabled.
-
-Production has 35 recorded historical entries missing from this checkout. The
-private operator workspace was reconstructed from actual recorded remote history
-and the five new source migrations. No remote history repair or historical
-rewrite was performed. The real CLI dry run selects exactly these five:
+Only these five migrations are selected by the real CLI dry run:
 
 - `20261029192715_fps_ledger_matchmaking.sql`
 - `20261029192803_fps_ledger_rpcs.sql`
@@ -156,27 +109,39 @@ rewrite was performed. The real CLI dry run selects exactly these five:
 - `20261030152706_fps_live_session_authorization.sql`
 - `20261030165225_poker_seat_action_version.sql`
 
-Rollback baseline is the currently deployed production version
-`49556866-a68b-4f64-96ab-f17d918ddae5`. Its exact modules were archived, deployed
-to a private temporary Worker against migrated Fresh staging, replaced by the
-candidate modules, and restored through the provider version-deployment API.
-All nine SSR probes passed and the temporary Worker was deleted. The old version
-correctly restores its existing `/fps-duel` 404; rollback withdraws the new feature.
-The migrations are additive or preserve existing function signatures; rollback
-retains them, keeps FPS cash disabled and disables the new feature if needed.
+The private CLI workspace uses actual remote historical statements; 35 recorded
+entries missing from the checkout were not invented or repaired. Historical source
+migrations and remote history stay unchanged.
 
-Prepared Worker configs preserve the two existing production routes, existing
-minute cron and existing financial flags/secrets. The production runtime uses a
-new empty namespace and production-only credentials. No staging users, balances,
-receipts, runtime checkpoints or synthetic data are copied into production.
+Rollback baseline: `49556866-a68b-4f64-96ab-f17d918ddae5`.
+Nine genuine isolated old/candidate/provider-rollback SSR probes passed, and the
+temporary Worker was deleted. The previous version restores its existing FPS 404.
+Migrations remain additive/signature-compatible; rollback disables FPS and retains
+cash disabled. Current production is still the verified baseline before rollout.
+
+## Existing production diagnostics and operational exceptions
+
+Read-only production checks found two October 12 BTCPay withdrawal transactions
+with missing provider payout records (1,304 and 1,303 cents). Both transactions
+have zero-sum postings; the existing reconciliation diagnostic reports two orphaned
+provider flows with net -2,607 cents. They predate FPS, are preserved unchanged,
+and are not represented as zero or repaired by this non-financial release.
+All existing money invariant booleans pass; player-locked and game escrow are zero
+at preflight. This is not certification of every historical payment record.
+
+Alert delivery and incident-response setup were explicitly waived by the user;
+alerts are not tested/delivered and no responder is invented. Structured logs do
+not replace that waived requirement. The only other approved exception is the
+39-row restored-copy Auth quarantine. No dependency waiver is needed.
 
 ## Controlled rollout status
 
-No production migration or deployment has occurred. Once the remaining approval is received, the authorized scope is the five
-reviewed migrations, a new production runtime, the candidate app and practice
-only with `cash_enabled=false`. Production smoke tests must exercise real Auth,
-zero-stake matchmaking, gameplay, sockets, ledger invariants and recovery before
-the rollout is reported complete. Public cash requires separate authorization.
+The authorized rollout applies only the five reviewed migrations and production
+runtime/app, then enables practice with `cash_enabled=false`. Existing financial
+settings, routes, cron schedules and secrets are preserved. No staging users,
+balances, receipts or runtime checkpoints are transferred. Production smoke must
+verify two real Auth sessions, private zero-stake gameplay/reconnect, revocation,
+recovery and zero financial postings before rollout is reported complete.
 
-Raw private evidence remains under ignored `test-results/` and `.wrangler/`.
-Database archives, Auth data, credentials and raw traces must not be published.
+Private raw evidence, credentials, Auth data and backups remain ignored under
+`test-results/`, `.env.*` and `.wrangler/`; they must not be published.
