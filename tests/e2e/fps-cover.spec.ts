@@ -3,6 +3,7 @@ import { writeFile } from "node:fs/promises";
 import { fixture } from "./helpers/fps-fixture";
 
 test("industrial arena renders from both spawns with no WebGL startup errors", async ({ page }) => {
+  await page.setViewportSize({ width: 1673, height: 940 });
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   for (const seat of ["A", "B"] as const) {
@@ -32,6 +33,8 @@ test("actual Ctrl input changes authoritative crouch and restores standing", asy
 test("records local arena frame timing without stalls", async ({ page }, info) => {
   await fixture(page);
   await page.waitForTimeout(300);
+  await page.locator("canvas").click();
+  await page.keyboard.down("KeyD");
   const timings = await page.evaluate(
     () =>
       new Promise<{ medianMs: number; p95Ms: number }>((resolve) => {
@@ -49,6 +52,7 @@ test("records local arena frame timing without stalls", async ({ page }, info) =
         requestAnimationFrame(sample);
       }),
   );
+  await page.keyboard.up("KeyD");
   await info.attach("local-frame-timing", {
     body: JSON.stringify(timings),
     contentType: "application/json",

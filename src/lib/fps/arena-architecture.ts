@@ -24,6 +24,31 @@ export function addArenaArchitecture(scene: THREE.Scene, branding: THREE.Materia
   });
   const led = new THREE.MeshBasicMaterial({ color: 0xb15cff, toneMapped: false });
   const white = new THREE.MeshBasicMaterial({ color: 0xe6e2ff, toneMapped: false });
+  // Soft baked light pools avoid adding dozens of fragment-shader point lights.
+  const glowCanvas = document.createElement("canvas");
+  glowCanvas.width = glowCanvas.height = 128;
+  const glowPen = glowCanvas.getContext("2d")!;
+  const glowGradient = glowPen.createRadialGradient(64, 64, 0, 64, 64, 64);
+  glowGradient.addColorStop(0, "rgba(255,255,255,0.65)");
+  glowGradient.addColorStop(0.35, "rgba(255,255,255,0.22)");
+  glowGradient.addColorStop(1, "rgba(255,255,255,0)");
+  glowPen.fillStyle = glowGradient;
+  glowPen.fillRect(0, 0, 128, 128);
+  const glowMap = new THREE.CanvasTexture(glowCanvas);
+  textures.push(glowMap);
+  const warmGlow = new THREE.MeshBasicMaterial({
+    map: glowMap,
+    color: 0xffbc77,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    opacity: 0.65,
+    toneMapped: false,
+  });
+  const violetGlow = warmGlow.clone();
+  violetGlow.color.setHex(0x9b22ff);
+  violetGlow.opacity = 0.45;
+  const warmLens = new THREE.MeshBasicMaterial({ color: 0xffdfb6, toneMapped: false });
   const bannerMaterial = new THREE.MeshStandardMaterial({
     color: 0x120a23,
     roughness: 0.65,
@@ -50,6 +75,21 @@ export function addArenaArchitecture(scene: THREE.Scene, branding: THREE.Materia
     scene.add(mesh);
     return mesh;
   };
+  for (const side of [-1, 1]) {
+    for (const z of [-12, -6, 0, 6, 12]) {
+      block(side * 11.94, 3.35, z, 0.12, 0.13, 0.62, frame);
+      block(side * 11.86, 3.29, z, 0.025, 0.055, 0.48, warmLens).castShadow = false;
+      const pool = new THREE.Mesh(new THREE.PlaneGeometry(2.5, 2.8), warmGlow);
+      pool.position.set(side * 11.98, 2.55, z);
+      pool.rotation.y = (-side * Math.PI) / 2;
+      scene.add(pool);
+    }
+    const wash = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 31.5), violetGlow);
+    wash.rotation.x = -Math.PI / 2;
+    wash.position.set(side * 11.4, 0.009, 0);
+    scene.add(wash);
+    block(side * 11.96, 0.09, 0, 0.025, 0.035, 31.8, led).castShadow = false;
+  }
   for (const solid of STRUCTURES) {
     const mesh = block(solid.x, solid.y, solid.z, solid.w, solid.h, solid.d);
     mesh.name = solid.id;
@@ -58,6 +98,7 @@ export function addArenaArchitecture(scene: THREE.Scene, branding: THREE.Materia
     if (disposed) logo.dispose();
   });
   logo.colorSpace = THREE.SRGBColorSpace;
+  logo.anisotropy = 8;
   textures.push(logo);
   const logoMaterial = new THREE.MeshStandardMaterial({
     map: logo,
@@ -113,7 +154,7 @@ export function addArenaArchitecture(scene: THREE.Scene, branding: THREE.Materia
       }
     }
     // Exact native brand artwork on the floor, with painted ring and lane markings.
-    const floorLogo = logoPlane(4.3, 2.3, 0, 0.008, side * 8);
+    const floorLogo = logoPlane(8.2, 4.4, 0, 0.008, side * 9);
     floorLogo.rotation.x = -Math.PI / 2;
     floorLogo.rotation.z = side === 1 ? 0 : Math.PI;
     for (const x of [-9.9, 9.9])
@@ -166,7 +207,7 @@ export function addArenaArchitecture(scene: THREE.Scene, branding: THREE.Materia
     }
   }
   // Actual distant terrain supplies the mountain silhouette outside the playable facility.
-  const terrain = new THREE.PlaneGeometry(280, 280, 90, 90);
+  const terrain = new THREE.PlaneGeometry(280, 280, 180, 180);
   terrain.rotateX(-Math.PI / 2);
   const p = terrain.getAttribute("position"),
     colors = new Float32Array(p.count * 3);
@@ -182,21 +223,28 @@ export function addArenaArchitecture(scene: THREE.Scene, branding: THREE.Materia
           Math.sin(z * 0.07) * 8 +
           Math.cos(x * 0.11) * 4 +
           Math.sin(x * 0.23 + z * 0.17) * 4 +
-          Math.cos(x * 0.41 - z * 0.31) * 2) -
+          Math.cos(x * 0.41 - z * 0.31) * 2 +
+          Math.abs(Math.sin(x * 0.79 + z * 0.64)) * 2.7 +
+          Math.sin(x * 1.47 - z * 0.85) * 0.8) -
       5;
     p.setY(i, height);
     const c = new THREE.Color().setHSL(
-      0.09,
-      0.08,
-      THREE.MathUtils.clamp(0.32 + height * 0.002, 0.3, 0.48),
+      0.075 + Math.sin(x * 0.2) * 0.02,
+      0.15,
+      THREE.MathUtils.clamp(0.12 + height * 0.001 + Math.sin(height * 1.1) * 0.025, 0.09, 0.19),
     );
     colors.set([c.r, c.g, c.b], i * 3);
   }
   terrain.setAttribute("color", new THREE.BufferAttribute(colors, 3));
   terrain.computeVertexNormals();
+  const rock = new THREE.TextureLoader().load("/fps/concrete-albedo-v2.webp");
+  rock.colorSpace = THREE.SRGBColorSpace;
+  rock.wrapS = rock.wrapT = THREE.RepeatWrapping;
+  rock.repeat.set(28, 28);
+  textures.push(rock);
   const mountains = new THREE.Mesh(
     terrain,
-    new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1 }),
+    new THREE.MeshStandardMaterial({ map: rock, vertexColors: true, roughness: 1 }),
   );
   mountains.name = "distant-nonplayable-mountains";
   scene.add(mountains);
@@ -208,6 +256,39 @@ export function addArenaArchitecture(scene: THREE.Scene, branding: THREE.Materia
   sky.material.uniforms["sunPosition"]!.value.set(-0.45, 0.82, 0);
   sky.material.uniforms["showSunDisc"]!.value = false;
   scene.add(sky);
+  const sunCanvas = document.createElement("canvas");
+  sunCanvas.width = sunCanvas.height = 128;
+  const sunPen = sunCanvas.getContext("2d")!;
+  const sunGradient = sunPen.createRadialGradient(64, 64, 0, 64, 64, 64);
+  sunGradient.addColorStop(0, "rgba(255,249,233,1)");
+  sunGradient.addColorStop(0.1, "rgba(255,249,233,0.9)");
+  sunGradient.addColorStop(0.25, "rgba(255,242,214,0.18)");
+  sunGradient.addColorStop(1, "rgba(255,242,214,0)");
+  sunPen.fillStyle = sunGradient;
+  sunPen.fillRect(0, 0, 128, 128);
+  const sunMap = new THREE.CanvasTexture(sunCanvas);
+  textures.push(sunMap);
+  const sunDisc = new THREE.Sprite(
+    new THREE.SpriteMaterial({
+      map: sunMap,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.NormalBlending,
+      toneMapped: false,
+      fog: false,
+    }),
+  );
+  sunDisc.position.set(105, 95, -120);
+  sunDisc.scale.set(36, 36, 1);
+  scene.add(sunDisc);
+  const panorama = new THREE.TextureLoader().load("/fps/sky-final.webp", (image) => {
+    if (disposed) return;
+    image.mapping = THREE.EquirectangularReflectionMapping;
+    scene.background = image;
+    sky.visible = false;
+  });
+  panorama.colorSpace = THREE.SRGBColorSpace;
+  textures.push(panorama);
   // Repeated frames, rails and ribs retain their exact transforms in a handful of static draws.
   const batches = new Map<
     string,

@@ -1,5 +1,8 @@
 # Reference field and AK presentation
 
+The later sunny-field pass, real renderer screenshot, asset prompts and updated
+performance observations are documented in [FPS-FINAL-POLISH.md](FPS-FINAL-POLISH.md).
+
 This pass follows the supplied `ingame.png` composition and uses the supplied
 `AK47.png` as actual weapon artwork. Both supplied files were verified as
 byte-identical to the existing `public/fps/arena-reference.png` and

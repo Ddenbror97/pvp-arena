@@ -7,6 +7,7 @@ import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handli
 import { createArenaEnvironment } from "./environment";
 import { createImpactEffects } from "./impacts";
 import { createWeaponKit, AK_MUZZLE } from "./weapon";
+import { createWetFloor } from "./floor-polish";
 
 export type ArenaFrame = {
   state: MatchState;
@@ -28,7 +29,7 @@ export function mountArena(
 ): ArenaControls {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x8bacd0);
-  scene.fog = new THREE.Fog(0x9aadc0, 60, 190);
+  scene.fog = new THREE.Fog(0x94b5d4, 95, 260);
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     powerPreference: "high-performance",
@@ -38,17 +39,17 @@ export function mountArena(
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
+  renderer.toneMappingExposure = 1.0;
   host.appendChild(renderer.domElement);
   const camera = new THREE.PerspectiveCamera(78, 1, 0.06, 260);
   camera.rotation.order = "YXZ";
   camera.position.set(0, EYE_HEIGHT, SPAWNS.A.z);
   scene.add(camera);
-  const hemisphere = new THREE.HemisphereLight(0xc4d3df, 0x4b4238, 1.8);
+  const hemisphere = new THREE.HemisphereLight(0xc4d3ef, 0x353038, 1.35);
   scene.add(hemisphere);
   const sun = new THREE.DirectionalLight(0xffefd8, 3.4);
   // Centre the light across the two opposing spawn directions.
-  sun.position.set(-12, 25, 0);
+  sun.position.set(21, 19, -24);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
   sun.shadow.camera.near = 1;
@@ -128,6 +129,10 @@ export function mountArena(
   camera.add(weaponGroup);
   weaponGroup.position.set(0.24, -0.3, -0.48);
   const rifle = weaponKit.rifle();
+  // The shoulder stock sits behind the eye in a first-person stance.
+  const shoulderStock = rifle.getObjectByName("stock")!;
+  shoulderStock.scale.z = 0.5;
+  shoulderStock.position.z = 0.08;
   weaponGroup.add(rifle);
   const magazine = rifle.getObjectByName("curved-magazine")!,
     chargingHandle = rifle.getObjectByName("charging-handle")!;
@@ -173,15 +178,40 @@ export function mountArena(
   const flashLight = new THREE.PointLight(0xffb35f, 0, 2);
   flashLight.layers.set(1);
   weaponGroup.add(flashLight);
-  const viewLight = new THREE.HemisphereLight(0xe4eaff, 0x392346, 3);
+  const viewLight = new THREE.HemisphereLight(0xe4eaff, 0x392346, 1.8);
   viewLight.layers.set(1);
   scene.add(viewLight);
   const viewSun = new THREE.DirectionalLight(0xffe0c6, 3);
   viewSun.position.set(-1, 3, 2);
   viewSun.layers.set(1);
   scene.add(viewSun);
-  const glove = new THREE.MeshStandardMaterial({ color: 0x25202f, roughness: 0.82 });
-  const sleeve = new THREE.MeshStandardMaterial({ color: 0x182333, roughness: 0.85 });
+  const weaveCanvas = document.createElement("canvas");
+  weaveCanvas.width = weaveCanvas.height = 128;
+  const weavePen = weaveCanvas.getContext("2d")!,
+    weavePixels = weavePen.createImageData(128, 128);
+  for (let y = 0; y < 128; y++)
+    for (let x = 0; x < 128; x++) {
+      const offset = (y * 128 + x) * 4;
+      const value = 105 + ((x + y) % 4 < 2 ? 40 : 0) + Math.sin(x * 0.23 + y * 0.13) * 10;
+      for (let c = 0; c < 3; c++) weavePixels.data[offset + c] = value;
+      weavePixels.data[offset + 3] = 255;
+    }
+  weavePen.putImageData(weavePixels, 0, 0);
+  const weave = new THREE.CanvasTexture(weaveCanvas);
+  weave.wrapS = weave.wrapT = THREE.RepeatWrapping;
+  weave.repeat.set(3, 5);
+  const glove = new THREE.MeshStandardMaterial({
+    color: 0x121218,
+    roughness: 0.82,
+    bumpMap: weave,
+    bumpScale: 0.001,
+  });
+  const sleeve = new THREE.MeshStandardMaterial({
+    color: 0x171922,
+    roughness: 0.91,
+    bumpMap: weave,
+    bumpScale: 0.0018,
+  });
   for (const [x, y, z, rx] of [
     [0.035, -0.115, 0.13, -0.3],
     [-0.05, -0.055, -0.22, -1.1],
@@ -192,16 +222,35 @@ export function mountArena(
     hand.layers.set(1);
     weaponGroup.add(hand);
     const palm = new THREE.Vector3(x!, y!, z!),
-      elbow = new THREE.Vector3(x! > 0 ? 0.16 : -0.08, -0.42, x! > 0 ? 0.4 : 0.18);
+      elbow = new THREE.Vector3(x! > 0 ? 0.24 : -0.33, -0.45, x! > 0 ? 0.35 : 0.22);
     const direction = palm.clone().sub(elbow);
-    const wrist = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.028, 0.045, direction.length(), 10),
-      sleeve,
-    );
+    const cloth = new THREE.CylinderGeometry(0.034, 0.072, direction.length(), 16, 18);
+    const clothPoints = cloth.getAttribute("position");
+    for (let i = 0; i < clothPoints.count; i++) {
+      const y = clothPoints.getY(i),
+        angle = Math.atan2(clothPoints.getZ(i), clothPoints.getX(i));
+      const fold =
+        1 +
+        Math.sin(y * 125 + Math.sin(angle * 3) * 1.5) * 0.055 +
+        Math.cos(angle * 5 + y * 40) * 0.025;
+      clothPoints.setXYZ(i, clothPoints.getX(i) * fold, y, clothPoints.getZ(i) * fold);
+    }
+    cloth.computeVertexNormals();
+    const wrist = new THREE.Mesh(cloth, sleeve);
     wrist.position.copy(palm).add(elbow).multiplyScalar(0.5);
     wrist.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
     wrist.layers.set(1);
     weaponGroup.add(wrist);
+    const cuff = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.038, 0.034, 16), glove);
+    cuff.position.copy(palm).addScaledVector(direction, -0.02);
+    cuff.quaternion.copy(wrist.quaternion);
+    cuff.layers.set(1);
+    weaponGroup.add(cuff);
+    const thumb = new THREE.Mesh(new THREE.CapsuleGeometry(0.011, 0.032, 4, 8), glove);
+    thumb.position.set(x! - 0.018, y! + 0.012, z! - 0.02);
+    thumb.rotation.set(0.3, 0, -0.6);
+    thumb.layers.set(1);
+    weaponGroup.add(thumb);
     for (let finger = 0; finger < 4; finger++) {
       const grip = new THREE.Mesh(new THREE.CapsuleGeometry(0.008, 0.028, 3, 5), glove);
       grip.position.set(x! + 0.012, y! - 0.025 + finger * 0.012, z! - 0.015);
@@ -210,6 +259,11 @@ export function mountArena(
       weaponGroup.add(grip);
     }
   }
+  const wetFloor = createWetFloor(scene, environment.floorRoughness, [
+    characters.A.root,
+    characters.B.root,
+    weaponGroup,
+  ]);
   let recoilPitch = 0,
     recoilYaw = 0,
     kick = 0,
@@ -408,13 +462,13 @@ export function mountArena(
     magazine.rotation.x = reloadTilt * 0.14;
     chargingHandle.position.z = -0.04 + kick * 0.008;
     weaponGroup.position.set(
-      0.2 + turnSway + (moving ? Math.sin(now * 0.008) * 0.003 : 0),
+      0.23 + turnSway + (moving ? Math.sin(now * 0.008) * 0.003 : 0),
       -0.24 +
         (moving ? Math.sin(now * 0.016) * 0.004 : Math.sin(now * 0.0018) * 0.0015) -
         landKick -
         reloadTilt * 0.07 -
         (airborne ? 0.008 : 0),
-      -0.72 + kick * 0.025,
+      -0.62 + kick * 0.025,
     );
     weaponGroup.rotation.set(
       kick * 0.025 + reloadTilt * 0.13,
@@ -430,6 +484,7 @@ export function mountArena(
     );
     crosshair?.classList.toggle("is-reloading", reloadRemaining > 0);
     impacts.update(dt, now);
+    wetFloor.update(dt);
     camera.layers.set(0);
     renderer.autoClear = true;
     renderer.render(scene, camera);
@@ -527,6 +582,7 @@ export function mountArena(
       const geometries = new Set<THREE.BufferGeometry>(),
         materials = new Set<THREE.Material>();
       scene.traverse((o) => {
+        if (o instanceof THREE.Sprite) materials.add(o.material);
         if (
           o instanceof THREE.Mesh ||
           o instanceof THREE.LineSegments ||
@@ -543,8 +599,10 @@ export function mountArena(
       sun.shadow.map?.dispose();
       artDisposed = true;
       logoTexture.dispose();
+      weave.dispose();
       weaponKit.dispose();
       environment.dispose();
+      wetFloor.dispose();
       reflections.dispose();
       impacts.dispose();
       characters.A.dispose();

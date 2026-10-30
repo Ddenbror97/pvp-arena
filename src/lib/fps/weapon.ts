@@ -209,6 +209,17 @@ export function createWeaponKit() {
     cylinder(0.012, 0.37, 0, 0.018, -0.355);
     cylinder(0.017, 0.042, 0, 0.018, -0.534);
     cylinder(0.011, 0.23, 0, 0.06, -0.235);
+    // Rolled steel dust cover and ribs break up the flat side-art extrusion in POV.
+    cylinder(0.034, 0.245, 0, 0.027, 0.025);
+    for (const z of [-0.065, -0.035, -0.005, 0.025, 0.055, 0.085]) {
+      const rib = new THREE.Mesh(new THREE.TorusGeometry(0.0345, 0.0012, 4, 16, Math.PI), steel);
+      rib.position.set(0, 0.027, z);
+      root.add(rib);
+    }
+    const selector = new THREE.Mesh(new THREE.BoxGeometry(0.004, 0.007, 0.08), steel);
+    selector.position.set(0.038, -0.018, 0.05);
+    selector.rotation.x = 0.15;
+    root.add(selector);
     const muzzleHole = new THREE.Mesh(new THREE.CircleGeometry(0.01, 16), rubber);
     muzzleHole.rotation.y = Math.PI;
     muzzleHole.position.set(0, 0.018, -0.556);

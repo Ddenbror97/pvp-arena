@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { ARENA, BOXES, WALLS, FLOOR, type Surface } from "./map";
 import { addArenaArchitecture } from "./arena-architecture";
+import { createFloorDetail } from "./floor-polish";
 
 /** Materials and small inset details decorate the same solid envelopes used by the server. */
 export function createArenaEnvironment(scene: THREE.Scene, branding: THREE.Material) {
@@ -124,12 +125,12 @@ export function createArenaEnvironment(scene: THREE.Scene, branding: THREE.Mater
     details.push(dummy.matrix.clone());
   };
   const floorMat = materials.concrete.clone();
+  const floorDetail = createFloorDetail();
   const concreteImage = new THREE.TextureLoader().load(
     "/fps/concrete-albedo-v2.webp",
     (image) => {
       if (disposed) return;
       materials.concrete.map = image;
-      floorMat.map = image;
       materials.concrete.needsUpdate = true;
       floorMat.needsUpdate = true;
     },
@@ -140,9 +141,22 @@ export function createArenaEnvironment(scene: THREE.Scene, branding: THREE.Mater
   concreteImage.wrapS = concreteImage.wrapT = THREE.RepeatWrapping;
   concreteImage.anisotropy = 4;
   textures.push(concreteImage);
-  floorMat.color.setHex(0x969eab);
-  floorMat.roughness = 0.43;
+  const floorImage = new THREE.TextureLoader().load("/fps/floor-final.webp", (image) => {
+    if (disposed) return;
+    floorMat.map = image;
+    floorMat.needsUpdate = true;
+  });
+  floorImage.colorSpace = THREE.SRGBColorSpace;
+  floorImage.wrapS = floorImage.wrapT = THREE.RepeatWrapping;
+  floorImage.anisotropy = 8;
+  textures.push(floorImage);
+  floorMat.color.setHex(0x737987);
+  floorMat.roughnessMap = floorDetail.roughness;
+  floorMat.bumpMap = floorDetail.relief;
+  floorMat.bumpScale = 0.022;
+  floorMat.roughness = 0.58;
   floorMat.metalness = 0.16;
+  materials.concrete.color.setHex(0xa0a3ac);
   materials.metal.color.setHex(0x666781);
   materials.metal.roughness = 0.43;
   materials.wood.color.setHex(0x786e88);
@@ -230,9 +244,11 @@ export function createArenaEnvironment(scene: THREE.Scene, branding: THREE.Mater
   scene.add(braces);
   const architecture = addArenaArchitecture(scene, branding);
   return {
+    floorRoughness: floorDetail.roughness,
     dispose() {
       disposed = true;
       architecture.dispose();
+      floorDetail.dispose();
       for (const t of textures) t.dispose();
     },
   };
