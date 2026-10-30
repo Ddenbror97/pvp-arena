@@ -5,7 +5,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { adminClaims, openAdminStepup } from "./admin-stepup";
 import { creditUserDeposit, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
@@ -140,7 +140,7 @@ async function coverDepositWager(user: string) {
 
 d("partner leaderboards", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
   }, 180_000);
 
@@ -461,7 +461,7 @@ d("partner leaderboards", () => {
   }, 90_000);
 
   it("requires a live session before a leaderboard prize retry", async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     const admin = randomUUID();
     const partner = randomUUID();
     const player = randomUUID();

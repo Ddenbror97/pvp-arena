@@ -1,40 +1,16 @@
-import { readFileSync, writeFileSync } from "node:fs";
-import postgres from "postgres";
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { resolve } from "node:path";
+import { connect, assertStaging, seedSyntheticUser } from "../../scripts/fps/staging-lib.mjs";
 import { expect, test, type Browser, type BrowserContext, type Page } from "@playwright/test";
 
-const SINK = "/tmp/e2e-mail.jsonl";
-const FORBIDDEN = ["dkyabirifoixnfbmheay", "gqeaadpdtuussxdlnmof", "fdsovopvmjogjcllmxwj"];
-
-function secret(name: string): string {
-  const env = Object.fromEntries(
-    readFileSync("/tmp/secrets/sb-test.env", "utf8")
-      .split("\n")
-      .filter((line) => line.includes("="))
-      .map((line) => {
-        const i = line.indexOf("=");
-        return [line.slice(0, i), line.slice(i + 1)];
-      }),
-  );
-  const value = env[name];
-  if (!value) throw new Error(`missing ${name}`);
-  return value;
-}
-
-function database() {
-  const ref = secret("TEST_PROJECT_REF");
-  if (ref !== "ljpqxsndqywbndnpitja") throw new Error("refusing unexpected test ref");
-  for (const bad of FORBIDDEN) {
-    if (ref.includes(bad)) throw new Error("refusing forbidden ref");
-  }
-  const user = `postgres.${ref}`;
-  const password = secret("TEST_DB_PASSWORD");
-  return postgres(
-    `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@aws-0-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require`,
-    { max: 1, prepare: false, idle_timeout: 5 },
-  );
-}
+const SINK = process.env.AUTH_EMAIL_SINK;
+const APP = process.env.POOL_STAGING_APP_URL ?? "http://127.0.0.1:4180";
+test.use({ baseURL: APP, trace: "off", video: "off" });
+if (APP !== "http://127.0.0.1:4180")
+  throw Error("Registration capture is restricted to the local staging server");
 
 async function codeFor(email: string): Promise<string> {
+  if (!SINK) throw Error("AUTH_EMAIL_SINK must match the local development server");
   const deadline = Date.now() + 20_000;
   while (Date.now() < deadline) {
     const lines = readFileSync(SINK, "utf8").trim().split("\n").filter(Boolean);
@@ -97,10 +73,7 @@ function breakCue(box: { x: number; y: number; width: number; height: number }) 
   const railOfShort = 0.128;
   const fitW = Math.max(1, box.width - 2);
   const fitH = Math.max(1, box.height - 2);
-  const short = Math.min(
-    fitH / (1 + 2 * railOfShort),
-    fitW / (tableW / tableH + 2 * railOfShort),
-  );
+  const short = Math.min(fitH / (1 + 2 * railOfShort), fitW / (tableW / tableH + 2 * railOfShort));
   const innerH = Math.max(1, short);
   const innerW = innerH * (tableW / tableH);
   const rail = railOfShort * innerH;
@@ -112,7 +85,8 @@ function breakCue(box: { x: number; y: number; width: number; height: number }) 
 }
 
 function freshIp(slot: number): string {
-  const file = "/tmp/e2e-ip-counter";
+  mkdirSync(resolve("test-results"), { recursive: true });
+  const file = resolve("test-results/e2e-ip-counter");
   let n = 0;
   try {
     n = Number(readFileSync(file, "utf8")) || 0;
@@ -126,12 +100,15 @@ function freshIp(slot: number): string {
   return `172.${16 + slot}.${third}.${fourth}`;
 }
 
-async function openContext(browser: Browser, ip: string): Promise<{ context: BrowserContext; page: Page }> {
-  const context = await browser.newContext();
+async function openContext(
+  browser: Browser,
+  ip: string,
+): Promise<{ context: BrowserContext; page: Page }> {
+  const context = await browser.newContext({ baseURL: APP });
   const page = await context.newPage();
   // Signup rate limits read these headers on the local server. Sending them on
   // every request makes the browser preflight to Supabase fail CORS.
-  await page.route("http://127.0.0.1:4173/**/_serverFn/**", async (route) => {
+  await page.route(APP + "/**/_serverFn/**", async (route) => {
     const headers = {
       ...route.request().headers(),
       "cf-connecting-ip": ip,
@@ -143,7 +120,8 @@ async function openContext(browser: Browser, ip: string): Promise<{ context: Bro
   page.on("websocket", (socket) => {
     socket.on("framereceived", (frame) => {
       const payload = typeof frame.payload === "string" ? frame.payload : "";
-      if (payload.includes("pool_matches") || payload.includes("postgres_changes")) frames.push(payload);
+      if (payload.includes("pool_matches") || payload.includes("postgres_changes"))
+        frames.push(payload);
     });
   });
   (page as Page & { realtimeFrames?: string[] }).realtimeFrames = frames;
@@ -152,44 +130,61 @@ async function openContext(browser: Browser, ip: string): Promise<{ context: Bro
 
 test("two players register, play, and settle an 8-ball match", async ({ browser }) => {
   test.skip(process.env.E2E_ISOLATED !== "1", "requires the isolated staging server");
-  const sql = database();
+  assertStaging();
+  const sql = connect(2);
   const stamp = Date.now().toString(36);
   const password = `Pool-e2e-${stamp}-A9`;
   const host = {
     username: `e2ea${stamp}`.slice(0, 20),
-    email: `e2ea-${stamp}@example.com`,
+    email: `e2ea-${stamp}@example.invalid`,
     password,
   };
   const guest = {
     username: `e2eb${stamp}`.slice(0, 20),
-    email: `e2eb-${stamp}@example.com`,
+    email: `e2eb-${stamp}@example.invalid`,
     password,
   };
   const hostSession = await openContext(browser, freshIp(0));
   const guestSession = await openContext(browser, freshIp(1));
+  let clock: ReturnType<typeof setInterval> | undefined;
+  let clockError: unknown;
+  let clockBusy = false;
   try {
     await register(hostSession.page, host);
     await register(guestSession.page, guest);
-    // A fresh database is still PRE_MIGRATION. The header chip reads the real
-    // USD account, which stays at zero. Play spends the test-credit grant.
+    // The current isolated project uses the actual USD ledger. No balance
+    // updates or real payment rails: synthetic custody and receipts balance.
     const names = [host.username, guest.username];
+    const profiles = await sql<
+      { id: string }[]
+    >`select id from public.profiles where username=any(${names})`;
+    expect(profiles).toHaveLength(2);
+    for (const p of profiles) await seedSyntheticUser(sql, p.id);
     await expect
-      .poll(async () => {
-        const grants = await sql<{ username: string; account_type: string; balance: string }[]>`
+      .poll(
+        async () => {
+          const grants = await sql<{ username: string; account_type: string; balance: string }[]>`
           select p.username, w.account_type, w.balance::text
           from public.profiles p
           join public.wallet_accounts w on w.owner_id = p.id
           where p.username = any(${names})
             and w.kind = 'user_available'
         `;
-        const grantOf = (name: string, type: string) =>
-          grants.find((row) => row.username === name && row.account_type === type)?.balance;
-        return names.every((name) => grantOf(name, "test_credit") === "100000" && grantOf(name, "real") === "0");
-      }, { timeout: 15_000 })
+          const grantOf = (name: string, type: string) =>
+            grants.find((row) => row.username === name && row.account_type === type)?.balance;
+          return names.every((name) => grantOf(name, "real") === "100000");
+        },
+        { timeout: 15_000 },
+      )
       .toBe(true);
 
     await hostSession.page.goto("/8-ball-pool");
-    const oneDollar = hostSession.page.getByRole("button", { name: "$1", exact: true });
+    await expect(async () => {
+      const create = hostSession.page.getByRole("tab", { name: "Create game", exact: true });
+      await create.click();
+      await expect(create).toHaveAttribute("aria-selected", "true", { timeout: 1000 });
+    }).toPass({ timeout: 15000 });
+    const oneDollar = hostSession.page.getByRole("button", { name: /^\$1(?:\.00)?$/ });
     // The lobby redraws the clock every second. Repeat the click until the
     // pressed stake sticks, then create the table.
     await expect(async () => {
@@ -198,16 +193,33 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
     }).toPass({ timeout: 15_000 });
     await expect(async () => {
       if (!/\/pool\/\d+/.test(hostSession.page.url())) {
-        await hostSession.page.getByRole("button", { name: "Create game" }).click({ timeout: 3_000 });
+        await hostSession.page
+          .getByRole("button", { name: "Create game" })
+          .click({ timeout: 3_000 });
       }
       await expect(hostSession.page).toHaveURL(/\/pool\/\d+/, { timeout: 8_000 });
     }).toPass({ timeout: 40_000 });
     const matchId = Number(new URL(hostSession.page.url()).pathname.split("/").pop());
     expect(matchId).toBeGreaterThan(0);
+    // Fresh staging deliberately has all historical cron jobs disabled. Drive
+    // only this test's normal database clock; never invoke shared payment jobs
+    // or the stand-in HTTP dispatcher, whose historical URL is production.
+    clock = setInterval(async () => {
+      if (clockBusy || clockError) return;
+      clockBusy = true;
+      try {
+        await sql`select public._pool_tick_one(${matchId})`;
+      } catch (error) {
+        clockError = error;
+      } finally {
+        clockBusy = false;
+      }
+    }, 1000);
 
     await guestSession.page.goto("/8-ball-pool");
-    await expect(guestSession.page.getByRole("button", { name: "Join table" })).toBeVisible();
-    await guestSession.page.getByRole("button", { name: "Join table" }).click();
+    const table = guestSession.page.getByRole("listitem").filter({ hasText: host.username });
+    await expect(table.getByRole("button", { name: "Join", exact: true })).toBeVisible();
+    await table.getByRole("button", { name: "Join", exact: true }).click();
     await guestSession.page.waitForURL(new RegExp(`/pool/${matchId}`), { timeout: 30_000 });
 
     for (const page of [hostSession.page, guestSession.page]) {
@@ -262,7 +274,8 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
     }
     expect(made).toBe(true);
 
-    const guestFrames = (guestSession.page as Page & { realtimeFrames?: string[] }).realtimeFrames ?? [];
+    const guestFrames =
+      (guestSession.page as Page & { realtimeFrames?: string[] }).realtimeFrames ?? [];
     await expect.poll(() => guestFrames.length, { timeout: 15_000 }).toBeGreaterThan(0);
 
     await hostSession.page.reload();
@@ -284,16 +297,24 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
     const away = turn[0]?.seat === "A" ? hostSession : guestSession;
     const stay = away === hostSession ? guestSession : hostSession;
     await away.context.close();
+    // A present player may hold their turn under the current rules. Both
+    // players must be absent to exercise the documented post-break forfeit.
+    await stay.context.setOffline(true);
     await expect
-      .poll(async () => {
-        const rows = await sql<{ status: string }[]>`
+      .poll(
+        async () => {
+          if (clockError) throw clockError;
+          const rows = await sql<{ status: string }[]>`
           select status from public.pool_matches where id = ${matchId}
         `;
-        return rows[0]?.status ?? "";
-      }, { timeout: 240_000 })
+          return rows[0]?.status ?? "";
+        },
+        { timeout: 240_000 },
+      )
       .toBe("COMPLETED");
+    await stay.context.setOffline(false);
     await stay.page.reload();
-    await expect(stay.page.getByText(/You won \$1\.90|You lost|Match over/)).toBeVisible();
+    await expect(stay.page.getByText(/^(You won|You lost|Match over)$/)).toBeVisible();
     await expect(stay.page.getByText("Winner receives $1.90. Fee $0.10.")).toBeVisible();
 
     const balances = await sql<{ username: string; account_type: string; balance: string }[]>`
@@ -306,11 +327,11 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
     `;
     const byName = Object.fromEntries(
       balances
-        .filter((row) => row.account_type === "test_credit")
+        .filter((row) => row.account_type === "real")
         .map((row) => [row.username, Number(row.balance)]),
     );
     for (const row of balances) {
-      if (row.account_type === "real") expect(Number(row.balance)).toBe(0);
+      if (row.account_type === "test_credit") expect(Number(row.balance)).toBe(0);
     }
     const [won] = await sql<{ username: string }[]>`
       select p.username
@@ -330,9 +351,25 @@ test("two players register, play, and settle an 8-ball match", async ({ browser 
     expect(Number(wins[0]?.n ?? 0)).toBe(1);
     if (!stay.page.isClosed()) {
       await stay.page.reload();
-      await expect(stay.page.getByRole("link", { name: /Wallet, \$0\.00 USDC/ })).toBeVisible();
+      await expect(stay.page.getByRole("link", { name: /Wallet,/ })).toBeVisible();
+      expect(
+        (await sql`select public.money_real_invariants() r`)[0].r.ok_custody_equals_liabilities,
+      ).toBe(true);
     }
+  } catch (error) {
+    await hostSession.page
+      .screenshot({ path: "test-results/pool-registration-failure.png" })
+      .catch(() => {});
+    writeFileSync(
+      "test-results/pool-registration-failure-dom.txt",
+      await hostSession.page
+        .locator("body")
+        .innerText()
+        .catch(() => "page unavailable"),
+    );
+    throw error;
   } finally {
+    clearInterval(clock);
     await sql.end();
     await hostSession.context.close().catch(() => {});
     await guestSession.context.close().catch(() => {});

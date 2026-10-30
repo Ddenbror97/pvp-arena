@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
-import { anatomicalForearm } from "./anatomical-forearm";
+import { poseRifleHands, fitContinuousForearms } from "./fitted-rifle-hands";
 
 /** Real authored AK and skinned hands. Existing controller still owns every input and shot. */
 export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = true) {
@@ -60,6 +60,7 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
   skinMap.colorSpace = THREE.SRGBColorSpace;
   skinMap.wrapS = skinMap.wrapT = THREE.RepeatWrapping;
   skinMap.anisotropy = 8;
+  skinMap.repeat.set(2, 3);
   ownedTextures.push(skinMap);
   const skin = new THREE.MeshStandardMaterial({
     map: skinMap,
@@ -92,108 +93,24 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
       instance = cloneAuthoredModel(gltf.scene);
       root.add(instance.root);
       if (!firstPerson) instance.root.getObjectByName("FPRig")?.removeFromParent();
-      // Apply the authored closed-hand pose before fitting continuous forearms.
+      // Fit the original hand rig to this rifle before baking the connected wrist surfaces.
       instance.root.getObjectByName("SpareMagazine")?.removeFromParent();
       const arm = instance.root.getObjectByName("FPArms") as THREE.SkinnedMesh | undefined;
       if (firstPerson && arm?.isSkinnedMesh) {
-        const clip = gltf.animations[0];
-        if (clip) {
-          const fingers = clip.clone();
-          const mixer = new THREE.AnimationMixer(instance.root);
-          mixer.clipAction(fingers).play();
-          mixer.update(0);
-        }
-        const geometry = arm.geometry.clone(),
-          indices = geometry.index,
-          weights = geometry.getAttribute("skinWeight"),
-          joints = geometry.getAttribute("skinIndex");
-        const gloveIndices: number[] = [];
-        root.updateWorldMatrix(true, true);
-        arm.updateMatrixWorld(true);
-        const wrists = ["L", "R"].map((side) => {
-          const hand = instance!.root.getObjectByName(`Hand_${side}`)!;
-          const wrist = root.worldToLocal(hand.getWorldPosition(new THREE.Vector3()));
-          const axis = new THREE.Vector3(side === "L" ? -0.42 : 0.38, -0.44, -0.02)
-            .divideScalar(0.52)
-            .sub(wrist)
-            .normalize();
-          return { wrist, axis };
-        });
-        const center = new THREE.Vector3(),
-          posed = new THREE.Vector3(),
-          relative = new THREE.Vector3();
-        const posedPositions = new Float32Array(geometry.getAttribute("position").count * 3);
-        for (let v = 0; v < geometry.getAttribute("position").count; v++) {
-          posed.fromBufferAttribute(geometry.getAttribute("position"), v);
-          arm.applyBoneTransform(v, posed);
-          arm.localToWorld(posed);
-          root.worldToLocal(posed);
-          posed.toArray(posedPositions, v * 3);
-        }
-        const score = (v: number) => {
-          let value = 0;
-          for (let i = 0; i < 4; i++) {
-            const bone = arm.skeleton.bones[joints.getComponent(v, i)];
-            if (bone && /Forearm|UpArm|BoneTwist|^Arm_/.test(bone.name))
-              value += weights.getComponent(v, i);
-          }
-          return value;
-        };
-        for (let i = 0; i < (indices?.count ?? geometry.getAttribute("position").count); i += 3) {
-          const a = indices?.getX(i) ?? i,
-            b = indices?.getX(i + 1) ?? i + 1,
-            c = indices?.getX(i + 2) ?? i + 2;
-          if (score(a) + score(b) + score(c) > 2.1) continue;
-          center
-            .fromArray(posedPositions, a * 3)
-            .add(posed.fromArray(posedPositions, b * 3))
-            .add(posed.fromArray(posedPositions, c * 3))
-            .multiplyScalar(1 / 3);
-          const wrist =
-            center.distanceToSquared(wrists[0]!.wrist) < center.distanceToSquared(wrists[1]!.wrist)
-              ? wrists[0]!
-              : wrists[1]!;
-          // Remove the source's open dangling sleeve/strap behind the fitted wrist band.
-          if (relative.copy(center).sub(wrist.wrist).dot(wrist.axis) > 0.005 / 0.52) continue;
-          gloveIndices.push(a, b, c);
-        }
-        geometry.setIndex(gloveIndices);
-        geometry.clearGroups();
-        geometry.addGroup(0, gloveIndices.length, 0);
-        ownedGeometry.push(geometry);
-        arm.geometry = geometry;
-        const gloveMaterial = Array.isArray(arm.material) ? arm.material[0]! : arm.material;
-        (gloveMaterial as THREE.MeshStandardMaterial).color.setHex(0x777b85);
-        arm.material = [gloveMaterial, skin];
-        root.updateWorldMatrix(true, true);
-        for (const side of ["L", "R"]) {
-          const hand = instance.root.getObjectByName(`Hand_${side}`);
-          if (!hand) continue;
-          const wrist = root.worldToLocal(hand.getWorldPosition(new THREE.Vector3()));
-          const elbow = new THREE.Vector3(side === "L" ? -0.42 : 0.38, -0.44, -0.02).divideScalar(
-            0.52,
-          );
-          const geometry = anatomicalForearm(wrist, elbow, 1 / 0.52);
-          const forearm = new THREE.Mesh(geometry, skin);
-          forearm.name = `anatomical-forearm-${side}`;
-          root.add(forearm);
-          ownedGeometry.push(geometry);
-          const axis = elbow.clone().sub(wrist).normalize();
-          const cuffGeometry = new THREE.CylinderGeometry(
-            0.032 / 0.52,
-            0.034 / 0.52,
-            0.024 / 0.52,
-            24,
-            2,
-            true,
-          );
-          const cuff = new THREE.Mesh(cuffGeometry, gloveMaterial);
-          cuff.name = `closed-wrist-cuff-${side}`;
-          cuff.position.copy(wrist).addScaledVector(axis, 0.012 / 0.52);
-          cuff.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), axis);
-          root.add(cuff);
-          ownedGeometry.push(cuffGeometry);
-        }
+        const supportDelta = poseRifleHands(instance.root);
+        const fitted = fitContinuousForearms(arm, root, supportDelta);
+        const material = (
+          Array.isArray(arm.material) ? arm.material[0]! : arm.material
+        ) as THREE.MeshStandardMaterial;
+        material.color.setHex(0x777b85);
+        const gloves = new THREE.Mesh(fitted.gloves, material);
+        gloves.name = "fitted-rifle-gloves";
+        const forearms = new THREE.Mesh(fitted.skin, skin);
+        forearms.name = "continuous-rifle-forearms";
+        root.add(gloves, forearms);
+        root.userData["wristSeams"] = fitted.seams;
+        ownedGeometry.push(fitted.gloves, fitted.skin);
+        arm.visible = false;
       }
       instance.root.traverse((object) => {
         if (object instanceof THREE.Mesh && !(object instanceof THREE.SkinnedMesh))

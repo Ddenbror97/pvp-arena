@@ -14,6 +14,7 @@ import { createAuthoredViewmodel } from "./authored-viewmodel";
 
 export type ArenaFrame = {
   state: MatchState;
+  visibility?: Record<Seat, boolean>;
   serverNow: number;
   settled: boolean;
   settlementPending: boolean;
@@ -22,6 +23,7 @@ export type ArenaControls = {
   snapshot: (frame: ArenaFrame, seat: Seat | null) => void;
   lock: () => Promise<void>;
   dispose: () => void;
+  suspend: (paused: boolean) => void;
 };
 
 /** Rendering is disposable and cosmetic. Only validated server snapshots determine damage and results. */
@@ -255,6 +257,8 @@ export function mountArena(
     muzzleUntil = 0,
     stopped = false,
     lastRound = 0;
+  let visibility: Record<Seat, boolean> = { A: true, B: true },
+    remoteWasVisible = true;
   const remoteTarget = new THREE.Vector3();
   const locked = () => document.pointerLockElement === renderer.domElement;
   const clear = () => {
@@ -335,6 +339,7 @@ export function mountArena(
   document.addEventListener("pointerlockchange", pointer);
   document.addEventListener("visibilitychange", hidden);
   window.addEventListener("blur", clear);
+  let authorizationSuspended = false;
   const frame = (now: number) => {
     if (stopped) return;
     const dt = frameDelta(now, previous);
@@ -343,7 +348,8 @@ export function mountArena(
     while (accumulator >= inputStepMs) {
       accumulator -= inputStepMs;
       if (seat && state && predicted) {
-        const active = locked() && state.phase === "live" && predicted.hp > 0;
+        const active =
+          !authorizationSuspended && locked() && state.phase === "live" && predicted.hp > 0;
         const input: Input = {
           v: 1,
           type: "input",
@@ -359,7 +365,7 @@ export function mountArena(
           sprint: active && keys.has("ShiftLeft"),
           crouch: active && (keys.has("ControlLeft") || keys.has("ControlRight")),
         };
-        if (state.phase === "live") {
+        if (state.phase === "live" && !authorizationSuspended) {
           predictMovement(predicted, input, TICK_MS);
           pending.push(input);
           if (pending.length > 60) pending.shift();
@@ -390,17 +396,22 @@ export function mountArena(
         other = state.players[otherSeat];
       characters[otherSeat === "A" ? "B" : "A"].root.visible = false;
       const actor = characters[otherSeat];
-      actor.root.position.lerp(remoteTarget, 1 - Math.exp(-dt / 60));
-      const turn = Math.atan2(
-        Math.sin(other.yaw - actor.root.rotation.y),
-        Math.cos(other.yaw - actor.root.rotation.y),
-      );
-      actor.root.rotation.y += turn * (1 - Math.exp(-dt / 55));
-      actor.update(dt, now, other.pitch, other.hp > 0, !!other.crouched, {
-        airborne: other.y > 0.01,
-        weapon: other.weapon,
-        reloading: other.reloadUntil > Date.now() + lastServerOffset,
-      });
+      const visible = visibility[otherSeat] !== false;
+      if (visible) {
+        if (!remoteWasVisible) actor.root.position.copy(remoteTarget);
+        actor.root.position.lerp(remoteTarget, 1 - Math.exp(-dt / 60));
+        const turn = Math.atan2(
+          Math.sin(other.yaw - actor.root.rotation.y),
+          Math.cos(other.yaw - actor.root.rotation.y),
+        );
+        actor.root.rotation.y += turn * (1 - Math.exp(-dt / 55));
+        actor.update(dt, now, other.pitch, other.hp > 0, !!other.crouched, {
+          airborne: other.y > 0.01,
+          weapon: other.weapon,
+          reloading: other.reloadUntil > Date.now() + lastServerOffset,
+        });
+      } else actor.root.visible = false;
+      remoteWasVisible = visible;
     }
 
     const renderedWeapon = state && seat ? state.players[seat].weapon : weapon;
@@ -480,8 +491,18 @@ export function mountArena(
   };
   animation = requestAnimationFrame(frame);
   return {
+    suspend(paused) {
+      authorizationSuspended = paused;
+      if (paused) {
+        clear();
+        pending = [];
+        if (seat && state) predicted = { ...state.players[seat] };
+      }
+    },
     snapshot(frame, assignedSeat) {
+      authorizationSuspended = false;
       state = frame.state;
+      visibility = frame.visibility ?? { A: true, B: true };
       seat = assignedSeat;
       lastServerOffset = frame.serverNow - Date.now();
       if (seat) {
@@ -489,6 +510,8 @@ export function mountArena(
         seq = Math.max(seq, authoritative.lastSeq);
         if (lastRound !== state.round) {
           pending = [];
+          // The server resets the loadout at respawn; do not replay last round's pistol choice.
+          weapon = authoritative.weapon;
           yaw = authoritative.yaw;
           pitch = authoritative.pitch;
           clear();

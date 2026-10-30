@@ -1,11 +1,13 @@
 export type Admission = {
-  v: 1;
+  v: 2;
   aud: "fps-duel";
   matchId: string;
   sub: string;
   role: "player" | "spectator";
   nonce: string;
   exp: number;
+  sessionId: string;
+  authExpiresAt: number;
 };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -53,11 +55,15 @@ export async function verifyAdmission(
       return null;
     const c = JSON.parse(new TextDecoder().decode(decode(parts[0]))) as Admission;
     if (
-      c.v !== 1 ||
+      c.v !== 2 ||
       c.aud !== "fps-duel" ||
       !UUID.test(c.matchId) ||
       !UUID.test(c.sub) ||
       !UUID.test(c.nonce) ||
+      !UUID.test(c.sessionId) ||
+      !Number.isSafeInteger(c.authExpiresAt) ||
+      c.authExpiresAt <= now ||
+      c.exp > c.authExpiresAt ||
       !["player", "spectator"].includes(c.role) ||
       !Number.isSafeInteger(c.exp) ||
       c.exp <= now ||

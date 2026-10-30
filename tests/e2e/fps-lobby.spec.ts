@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
 
+test.use({
+  baseURL: process.env.FPS_APP_BASE_URL ?? process.env.E2E_BASE_URL ?? "http://127.0.0.1:4173",
+});
+
 test("FPS lobby preserves identity, terms and truthful unavailable state", async ({ page }) => {
   await page.goto("/fps-duel");
   await expect(page.getByRole("heading", { name: "ONE ARENA. ONE WINNER." })).toBeVisible();

@@ -137,9 +137,38 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
             ? object.material
             : [object.material])
             if (material instanceof THREE.MeshStandardMaterial && material.name.endsWith(".body")) {
-              material.color.setHex(0xd7b392);
+              material.color.setHex(0xffffff);
               material.roughness = 0.72;
             }
+      });
+      headInstance.root.traverse((object) => {
+        if (object instanceof THREE.Mesh)
+          for (const m of Array.isArray(object.material) ? object.material : [object.material])
+            if (m instanceof THREE.MeshStandardMaterial && m.alphaTest > 0)
+              m.alphaToCoverage = true;
+      });
+      // The extracted source includes shoulder fragments; taper these into the uniform's neck opening.
+      headInstance.root.traverse((object) => {
+        if (!(object instanceof THREE.Mesh)) return;
+        const materials = Array.isArray(object.material) ? object.material : [object.material];
+        if (!materials.some((m) => m.name.endsWith(".body"))) return;
+        const geometry = object.geometry.clone(),
+          p = geometry.getAttribute("position");
+        for (let i = 0; i < p.count; i++) {
+          const y = p.getY(i),
+            blend = THREE.MathUtils.smoothstep(-y, 0.08, 0.16),
+            x = p.getX(i),
+            z = p.getZ(i);
+          p.setXYZ(
+            i,
+            THREE.MathUtils.lerp(x, THREE.MathUtils.clamp(x, -0.068, 0.068), blend),
+            y - THREE.MathUtils.smoothstep(-y, 0.12, 0.18) * 0.05,
+            THREE.MathUtils.lerp(z, THREE.MathUtils.clamp(z, -0.062, 0.074), blend),
+          );
+        }
+        geometry.computeVertexNormals();
+        object.geometry = geometry;
+        ownedGeometry.push(geometry);
       });
       // Authored face remains visible; fitted accessories provide the requested identity.
       const metal = new THREE.MeshStandardMaterial({
@@ -148,9 +177,13 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           roughness: 0.22,
         }),
         glass = new THREE.MeshStandardMaterial({
-          color: police ? 0x17374d : 0x111316,
-          metalness: 0.8,
-          roughness: 0.12,
+          color: police ? 0x294556 : 0x38342b,
+          metalness: 0.05,
+          roughness: 0.23,
+          transparent: true,
+          opacity: 0.86,
+          depthWrite: false,
+          side: THREE.DoubleSide,
         });
       ownedMaterials.push(metal, glass);
       const part = (
@@ -168,36 +201,69 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
         ownedGeometry.push(g);
         return mesh;
       };
+      // Fit aviators to the authored eye sockets; the previous ellipsoids were wider than the face.
+      const eyes = headInstance.root.getObjectByName("low-poly") as THREE.Mesh;
+      eyes.geometry.computeBoundingBox();
+      const eyeBox = eyes.geometry.boundingBox!,
+        eyeCenter = eyeBox.getCenter(new THREE.Vector3());
+      const lens = new THREE.Shape();
+      lens.moveTo(-0.025, 0.012);
+      lens.bezierCurveTo(-0.017, 0.022, 0.018, 0.021, 0.026, 0.011);
+      lens.bezierCurveTo(0.029, -0.004, 0.008, -0.026, -0.004, -0.021);
+      lens.bezierCurveTo(-0.019, -0.019, -0.029, -0.001, -0.025, 0.012);
+      const lensGeometry = new THREE.ShapeGeometry(lens, 20);
+      const frameShape = new THREE.Shape(
+        lens.getPoints(20).map((p) => p.clone().multiplyScalar(1.08)),
+      );
+      frameShape.holes.push(new THREE.Path(lens.getPoints(20)));
+      const frameGeometry = new THREE.ShapeGeometry(frameShape, 20);
       for (const side of [-1, 1]) {
-        part(
-          new THREE.SphereGeometry(1, 16, 10),
-          metal,
-          side * 0.061,
-          0.04,
-          -0.132,
-          [0.055, 0.036, 0.011],
-        );
-        part(
-          new THREE.SphereGeometry(1, 16, 10),
-          glass,
-          side * 0.061,
-          0.04,
-          -0.142,
-          [0.049, 0.031, 0.007],
-        );
+        const x = eyeCenter.x + side * 0.033,
+          y = eyeCenter.y,
+          z = eyeBox.min.z - 0.012;
+        const frame = part(frameGeometry.clone(), metal, x, y, z);
+        frame.rotation.y = Math.PI;
+        const pane = part(lensGeometry.clone(), glass, x, y, z - 0.001);
+        pane.rotation.y = Math.PI;
+        pane.name = side < 0 ? "fitted-aviator-L" : "fitted-aviator-R";
+        const arm = new THREE.CatmullRomCurve3([
+          new THREE.Vector3(x + side * 0.028, y + 0.004, z),
+          new THREE.Vector3(side * 0.09, y + 0.009, -0.025),
+          new THREE.Vector3(side * 0.09, y - 0.004, 0.014),
+        ]);
+        part(new THREE.TubeGeometry(arm, 12, 0.0012, 5, false), metal, 0, 0, 0);
       }
-      part(new THREE.BoxGeometry(0.03, 0.004, 0.007), metal, 0, 0.05, -0.144);
+      lensGeometry.dispose();
+      frameGeometry.dispose();
+      const bridge = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.011, eyeCenter.y + 0.008, eyeBox.min.z - 0.013),
+        new THREE.Vector3(eyeCenter.x, eyeCenter.y + 0.013, -0.128),
+        new THREE.Vector3(0.006, eyeCenter.y + 0.008, eyeBox.min.z - 0.013),
+      ]);
+      part(new THREE.TubeGeometry(bridge, 12, 0.001, 5, false), metal, 0, 0, 0);
       if (police) {
         const cap = new THREE.MeshStandardMaterial({ color: 0x111d30, roughness: 0.88 });
         ownedMaterials.push(cap);
-        part(
-          new THREE.SphereGeometry(0.151, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2),
-          cap,
-          0,
-          0.09,
-          0,
-          [1, 0.7, 1],
-        );
+        const hair = headInstance.root.getObjectByName("short02") as THREE.Mesh;
+        if (hair) {
+          const geometry = hair.geometry.clone(),
+            p = geometry.getAttribute("position"),
+            faces: number[] = [],
+            index = geometry.index;
+          for (let i = 0; i < (index?.count ?? p.count); i += 3) {
+            const ids = [0, 1, 2].map((j) => index?.getX(i + j) ?? i + j);
+            if (ids.every((v) => p.getY(v) < 0.075)) faces.push(...ids);
+          }
+          geometry.setIndex(faces);
+          hair.geometry = geometry;
+          ownedGeometry.push(geometry);
+        }
+        const crown = new THREE.SphereGeometry(1, 40, 24, 0, Math.PI * 2, 0, 1.5);
+        const cp = crown.getAttribute("position");
+        for (let i = 0; i < cp.count; i++)
+          cp.setXYZ(i, cp.getX(i) * 0.111, cp.getY(i) * 0.14 + 0.065, cp.getZ(i) * 0.134);
+        crown.computeVertexNormals();
+        part(crown, cap, 0, 0, 0).name = "fitted-police-cap";
         const brim = new THREE.Shape();
         brim.moveTo(-0.13, 0);
         brim.bezierCurveTo(-0.16, -0.18, -0.11, -0.23, 0, -0.23);
@@ -219,19 +285,32 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           -0.025,
         );
         bill.rotation.x = Math.PI / 2;
+        bill.scale.set(0.82, 0.82, 1);
       }
       if (!police) {
         const canvas = document.createElement("canvas");
         canvas.width = canvas.height = 512;
         const pen = canvas.getContext("2d")!;
-        pen.fillStyle = "#aaa390";
+        pen.fillStyle = "#a09880";
         pen.fillRect(0, 0, 512, 512);
-        pen.fillStyle = "#242425";
-        for (let y = 0; y < 512; y += 20)
-          for (let x = 0; x < 512; x += 20) {
-            pen.fillRect(x, y, 10, 10);
-            pen.fillRect(x + 10, y + 10, 10, 10);
-            pen.fillRect(x + 5, y + 5, 10, 4);
+        pen.fillStyle = "#37362f";
+        for (let y = -32; y < 544; y += 32)
+          for (let x = -32; x < 544; x += 32) {
+            pen.beginPath();
+            pen.moveTo(x, y);
+            pen.lineTo(x + 12, y);
+            pen.lineTo(x + 20, y + 8);
+            pen.lineTo(x + 28, y);
+            pen.lineTo(x + 28, y + 12);
+            pen.lineTo(x + 20, y + 20);
+            pen.lineTo(x + 28, y + 28);
+            pen.lineTo(x + 16, y + 28);
+            pen.lineTo(x + 8, y + 20);
+            pen.lineTo(x, y + 28);
+            pen.lineTo(x, y + 16);
+            pen.lineTo(x + 8, y + 8);
+            pen.closePath();
+            pen.fill();
           }
         pen.globalAlpha = 0.15;
         for (let i = 0; i < 512; i += 2) {
@@ -242,60 +321,89 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
         const texture = new THREE.CanvasTexture(canvas);
         texture.colorSpace = THREE.SRGBColorSpace;
         texture.anisotropy = 8;
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
         ownedTextures.push(texture);
         const scarf = new THREE.MeshStandardMaterial({
           map: texture,
-          bumpMap: texture,
-          bumpScale: 0.001,
+          bumpScale: 0,
           roughness: 0.95,
         });
         ownedMaterials.push(scarf);
-        headInstance.root.traverse((object) => {
-          if (!(object instanceof THREE.Mesh)) return;
-          if (object.name === "short02") object.visible = false;
-          const materials = Array.isArray(object.material) ? object.material : [object.material];
-          if (!materials.some((material) => material.name.endsWith(".body"))) return;
-          for (const hood of [false, true]) {
-            const geometry = object.geometry.clone(),
-              positions = geometry.getAttribute("position"),
-              index = geometry.index,
-              faces: number[] = [],
-              uv: number[] = [];
-            for (let i = 0; i < (index?.count ?? positions.count); i += 3) {
-              const a = index?.getX(i) ?? i,
-                b = index?.getX(i + 1) ?? i + 1,
-                c = index?.getX(i + 2) ?? i + 2;
-              if (
-                [a, b, c].every((v) =>
-                  hood
-                    ? positions.getY(v) > 0.065
-                    : positions.getY(v) < 0.018 && positions.getY(v) > -0.145,
-                )
-              )
-                faces.push(a, b, c);
+        headInstance.root.getObjectByName("short02")!.visible = false;
+        // Cloth has its own smooth surface: it must bridge lips and nose, not copy their creases.
+        const hoodGeometry = new THREE.SphereGeometry(1, 48, 24, 0, Math.PI * 2, 0, 1.27);
+        const hp = hoodGeometry.getAttribute("position");
+        for (let i = 0; i < hp.count; i++) {
+          const x = hp.getX(i),
+            y = hp.getY(i),
+            z = hp.getZ(i),
+            fold = 1 + Math.sin(Math.atan2(z, x) * 12 + y * 4) * 0.008;
+          hp.setXYZ(i, x * 0.107 * fold, y * 0.124 + 0.044, z * 0.132 * fold);
+        }
+        hoodGeometry.computeVertexNormals();
+        part(hoodGeometry, scarf, 0, 0, 0).name = "fitted-scarf-hood";
+        const maskP: number[] = [],
+          maskUV: number[] = [],
+          maskIndices: number[] = [],
+          maskSides = 64,
+          maskRings = 14;
+        for (let r = 0; r <= maskRings; r++)
+          for (let j = 0; j <= maskSides; j++) {
+            const t = r / maskRings,
+              angle = (j / maskSides) * Math.PI * 2;
+            const fold = Math.sin(angle * 9 + t * 8) * 0.0015 * Math.sin(Math.PI * t);
+            maskP.push(
+              Math.cos(angle) * (THREE.MathUtils.lerp(0.1, 0.073, t) + fold),
+              0.006 - t * 0.147,
+              Math.sin(angle) *
+                (THREE.MathUtils.lerp(0.15, 0.095, THREE.MathUtils.smoothstep(t, 0.65, 1)) + fold) +
+                0.005,
+            );
+            maskUV.push(j / maskSides, t * 0.45);
+            if (r < maskRings && j < maskSides) {
+              const a = r * (maskSides + 1) + j,
+                b = a + maskSides + 1;
+              maskIndices.push(a, a + 1, b, b, a + 1, b + 1);
             }
-            for (let i = 0; i < positions.count; i++) {
-              uv.push(
-                Math.atan2(positions.getZ(i), positions.getX(i)) / Math.PI + 1,
-                (positions.getY(i) + 0.18) / 0.18,
-              );
-              positions.setXYZ(
-                i,
-                positions.getX(i) * 1.025,
-                positions.getY(i) * 1.025,
-                positions.getZ(i) * 1.025,
-              );
-            }
-            geometry.setIndex(faces);
-            geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
-            geometry.computeVertexNormals();
-            const wrap = part(geometry, scarf, 0, 0, 0);
-            wrap.name = hood ? "fitted-scarf-hood" : "fitted-scarf-mask";
           }
-        });
-        const drape = part(new THREE.ConeGeometry(0.18, 0.22, 7), scarf, 0, -0.2, -0.01);
-        drape.rotation.z = Math.PI;
-        drape.scale.z = 0.6;
+        const mask = new THREE.BufferGeometry();
+        mask.setAttribute("position", new THREE.Float32BufferAttribute(maskP, 3));
+        mask.setAttribute("uv", new THREE.Float32BufferAttribute(maskUV, 2));
+        mask.setIndex(maskIndices);
+        mask.computeVertexNormals();
+        part(mask, scarf, 0, 0, 0).name = "fitted-scarf-mask";
+        // A soft folded cowl follows the neck and drapes over the chest instead of a rigid cone.
+        const p: number[] = [],
+          uv: number[] = [],
+          indices: number[] = [],
+          sides = 64,
+          rings = 16;
+        for (let r = 0; r <= rings; r++)
+          for (let j = 0; j <= sides; j++) {
+            const t = r / rings,
+              angle = (j / sides) * Math.PI * 2;
+            const radius =
+              THREE.MathUtils.lerp(0.088, 0.155, t) +
+              Math.sin(angle * 9 + t * 5) * 0.004 * Math.sin(Math.PI * t);
+            p.push(
+              Math.cos(angle) * radius,
+              -0.09 - t * 0.15 - Math.max(0, -Math.sin(angle)) * 0.045 * t,
+              Math.sin(angle) * radius * 0.8 + 0.01,
+            );
+            uv.push(j / sides, t * 0.45);
+            if (r < rings && j < sides) {
+              const a = r * (sides + 1) + j,
+                b = a + sides + 1;
+              indices.push(a, a + 1, b, b, a + 1, b + 1);
+            }
+          }
+        const cowl = new THREE.BufferGeometry();
+        cowl.setAttribute("position", new THREE.Float32BufferAttribute(p, 3));
+        cowl.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+        cowl.setIndex(indices);
+        cowl.computeVertexNormals();
+        const drape = part(cowl, scarf, 0, 0, 0);
+        drape.name = "folded-neck-scarf";
       }
       const badgeCanvas = document.createElement("canvas");
       badgeCanvas.width = 512;
@@ -319,11 +427,24 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       root.add(badge);
       ownedGeometry.push(badge.geometry);
       if (police) {
-        const capBadge = new THREE.Mesh(new THREE.PlaneGeometry(0.13, 0.042), badgeMaterial);
-        capBadge.position.set(0, 0.135, -0.144);
-        capBadge.rotation.y = Math.PI;
+        const capPatch = new THREE.PlaneGeometry(0.082, 0.027, 12, 3),
+          pp = capPatch.getAttribute("position");
+        for (let i = 0; i < pp.count; i++) {
+          const x = -pp.getX(i),
+            y = pp.getY(i) + 0.13;
+          pp.setXYZ(
+            i,
+            x,
+            y,
+            -0.134 * Math.sqrt(Math.max(0.02, 1 - (x / 0.111) ** 2 - ((y - 0.065) / 0.14) ** 2)) -
+              0.0015,
+          );
+        }
+        capPatch.computeVertexNormals();
+        const capBadge = new THREE.Mesh(capPatch, badgeMaterial);
+        capBadge.name = "curved-cap-badge";
         accessories.add(capBadge);
-        ownedGeometry.push(capBadge.geometry);
+        ownedGeometry.push(capPatch);
       }
       fallback.root.removeFromParent();
       fallback.dispose();

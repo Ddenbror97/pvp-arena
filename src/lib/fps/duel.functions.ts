@@ -94,6 +94,14 @@ export const duelAdmission = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const r = await runtime();
+    const sessionId = context.claims.session_id;
+    const authExpiresAt = Number(context.claims.exp) * 1000;
+    if (
+      typeof sessionId !== "string" ||
+      !Number.isSafeInteger(authExpiresAt) ||
+      authExpiresAt <= Date.now()
+    )
+      throw new Error("SESSION_REVOKED");
     const db = context.supabase as unknown as Rpc;
     const match = await call<DuelView | null>(db, "fps_view", { p_match: data.matchId });
     if (!match || !match.opponent_id || !["FUNDED", "STARTING", "PLAYING"].includes(match.status))
@@ -121,13 +129,15 @@ export const duelAdmission = createServerFn({ method: "POST" })
     const { signAdmission } = await import("./ticket");
     const ticket = await signAdmission(
       {
-        v: 1,
+        v: 2,
         aud: "fps-duel",
         matchId: match.id,
         sub: context.userId,
+        sessionId,
+        authExpiresAt,
         role: data.spectate ? "spectator" : "player",
         nonce: crypto.randomUUID(),
-        exp: Date.now() + 60_000,
+        exp: Math.min(Date.now() + 60_000, authExpiresAt),
       },
       r.secret,
     );

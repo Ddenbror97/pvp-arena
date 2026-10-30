@@ -8,6 +8,8 @@ import {
 import type { Input, MatchState, Seat } from "../../src/lib/fps/protocol";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { maintainMatches } from "./maintenance";
+import { snapshotForPlayer } from "../../src/lib/fps/visibility";
+import { liveSessions, sessionKey, type SessionIdentity } from "./session-auth";
 
 export interface Env {
   DUELS: DurableObjectNamespace;
@@ -15,6 +17,7 @@ export interface Env {
   SUPABASE_URL: string;
   SUPABASE_SERVICE_ROLE_KEY: string;
   ALLOWED_ORIGIN: string;
+  FPS_ROOM_REGION?: "enam" | "wnam";
 }
 type Config = {
   id: string;
@@ -25,7 +28,7 @@ type Config = {
   private: boolean;
   expiresAt: number;
 };
-type SocketInfo = {
+type SocketInfo = SessionIdentity & {
   sub: string;
   seat: Seat | null;
   role: "player" | "spectator";
@@ -33,6 +36,7 @@ type SocketInfo = {
   window: number;
   count: number;
   seq: number;
+  connectionId: string;
 };
 type Result = { winner: string | null; scoreA: number; scoreB: number; reason: string };
 type Saved = {
@@ -68,7 +72,7 @@ export default {
     if (url.pathname === "/health")
       return json({
         service: "fps-duel",
-        version: 1,
+        version: 2,
         configured:
           (env.FPS_RUNTIME_SECRET?.length ?? 0) >= 32 &&
           !!env.SUPABASE_URL &&
@@ -95,7 +99,10 @@ export default {
       if (request.headers.get("Origin") !== env.ALLOWED_ORIGIN)
         return json({ error: "ORIGIN_DENIED" }, 403);
     }
-    return env.DUELS.get(env.DUELS.idFromName(m[2]!)).fetch(request);
+    return env.DUELS.get(
+      env.DUELS.idFromName(m[2]!),
+      env.FPS_ROOM_REGION ? { locationHint: env.FPS_ROOM_REGION } : undefined,
+    ).fetch(request);
   },
 };
 
@@ -103,7 +110,11 @@ export default {
 export class DuelRoom {
   private saved: Saved | null = null;
   private timer: ReturnType<typeof setInterval> | null = null;
-  private inputs: Record<Seat, Array<{ input: Input; at: number }>> = { A: [], B: [] };
+  private inputs: Record<Seat, Array<{ input: Input; at: number; connectionId: string }>> = {
+    A: [],
+    B: [],
+  };
+  private authorizationFailureAt: number | null = null;
   private absent: Record<Seat, number | null> = { A: null, B: null };
   private history: Array<{ at: number; snapshot: string }> = [];
   private lastSnapshot = 0;
@@ -113,6 +124,42 @@ export class DuelRoom {
   private settledAt = 0;
   private eventId = 0;
   private events: MatchState["events"] = [];
+
+  private async authorizedSockets() {
+    const sockets = this.ctx.getWebSockets().filter((s) => s.readyState === WebSocket.OPEN);
+    const current = sockets.filter((socket) => {
+      const info = socket.deserializeAttachment() as SocketInfo;
+      if (info.sessionId && info.authExpiresAt > Date.now()) return true;
+      socket.close(1008, "Session expired");
+      this.webSocketClose(socket);
+      return false;
+    });
+    // Freeze command watermarks before the asynchronous read. A command arriving
+    // afterward must await another check; an earlier in-flight positive result
+    // cannot authorize a command received after logout completed.
+    const captured = current.map((socket) => ({
+      socket,
+      info: socket.deserializeAttachment() as SocketInfo,
+    }));
+    const active = await liveSessions(
+      this.env,
+      captured.map((s) => s.info),
+    );
+    return captured.flatMap(({ socket, info }) => {
+      if (socket.readyState !== WebSocket.OPEN) return [];
+      if (active.has(sessionKey(info)) && info.authExpiresAt > Date.now()) return [info];
+      console.warn(
+        JSON.stringify({
+          event: "fps_session_revoked",
+          matchId: this.saved?.config.id,
+          seat: info.seat,
+        }),
+      );
+      socket.close(1008, "Session revoked");
+      this.webSocketClose(socket);
+      return [];
+    });
+  }
 
   constructor(
     private ctx: DurableObjectState,
@@ -208,6 +255,12 @@ export class DuelRoom {
           ? "B"
           : null;
     if (claims.role === "player" && seat === null) return json({ error: "NOT_A_PLAYER" }, 403);
+    try {
+      if (!(await liveSessions(this.env, [claims])).has(sessionKey(claims)))
+        return json({ error: "SESSION_REVOKED" }, 403);
+    } catch {
+      return json({ error: "SESSION_CHECK_UNAVAILABLE" }, 503);
+    }
     if (
       claims.role === "spectator" &&
       this.ctx.getWebSockets().filter((s) => {
@@ -233,6 +286,9 @@ export class DuelRoom {
     const actualSeat = claims.role === "player" ? seat : null;
     server.serializeAttachment({
       sub: claims.sub,
+      sessionId: claims.sessionId,
+      authExpiresAt: claims.authExpiresAt,
+      connectionId: claims.nonce,
       seat: actualSeat,
       role: claims.role,
       ready: saved.state.phase !== "waiting",
@@ -240,7 +296,10 @@ export class DuelRoom {
       count: 0,
       seq: actualSeat ? saved.state.players[actualSeat].lastSeq : -1,
     } satisfies SocketInfo);
-    if (actualSeat) this.absent[actualSeat] = null;
+    if (actualSeat) {
+      this.absent[actualSeat] = null;
+      this.inputs[actualSeat] = [];
+    }
     this.send(server, {
       v: 1,
       type: "welcome",
@@ -248,7 +307,8 @@ export class DuelRoom {
       matchId: saved.config.id,
       delayMs: claims.role === "spectator" ? 5000 : 0,
     });
-    if (claims.role === "player") this.send(server, this.snapshot());
+    if (claims.role === "player" && actualSeat)
+      this.send(server, snapshotForPlayer(this.snapshot()!, actualSeat));
     if (!saved.settled) this.run();
     return new Response(null, { status: 101, webSocket: client });
   }
@@ -260,6 +320,11 @@ export class DuelRoom {
     }
     const info = socket.deserializeAttachment() as SocketInfo;
     const now = Date.now();
+    if (socket.readyState !== WebSocket.OPEN || !info.sessionId || info.authExpiresAt <= now) {
+      socket.close(1008, "Session expired");
+      this.webSocketClose(socket);
+      return;
+    }
     if (now - info.window >= 1000) {
       info.window = now;
       info.count = 0;
@@ -284,14 +349,7 @@ export class DuelRoom {
     if (data?.v === 1 && data.type === "ready" && Object.keys(data).length === 2) {
       info.ready = true;
       socket.serializeAttachment(info);
-      const players = this.ctx.getWebSockets().map((s) => s.deserializeAttachment() as SocketInfo);
-      if (
-        this.saved.state.phase === "waiting" &&
-        ["A", "B"].every((seat) => players.some((p) => p.seat === seat && p.ready))
-      ) {
-        startMatch(this.saved.state, now);
-        this.ctx.waitUntil(this.persist());
-      }
+      // Readiness is an intent; tick applies it only after fresh session checks.
       return;
     }
     const input = validateInput(raw);
@@ -303,17 +361,33 @@ export class DuelRoom {
     info.seq = input.seq;
     socket.serializeAttachment(info);
     const queue = this.inputs[info.seat];
-    queue.push({ input, at: now });
+    queue.push({ input, at: now, connectionId: info.connectionId });
     if (queue.length > 8) queue.shift();
   }
 
-  webSocketClose(socket: WebSocket) {
+  webSocketClose(socket: WebSocket, code?: number) {
+    // Reciprocate a peer close even when an edge/proxy delays automatic close
+    // replies. Manual calls after our own close omit the code and must retain
+    // the original policy/error reason. Reserved sentinel codes cannot be sent.
+    if (code !== undefined && socket.readyState !== WebSocket.CLOSED) {
+      const reply =
+        [1000, 1001, 1002, 1003, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014].includes(code) ||
+        (code >= 3000 && code <= 4999)
+          ? code
+          : 1000;
+      socket.close(reply, "Connection closed");
+    }
     const info = socket.deserializeAttachment() as SocketInfo;
     if (
       info.seat &&
       !this.ctx
         .getWebSockets()
-        .some((s) => s !== socket && (s.deserializeAttachment() as SocketInfo).seat === info.seat)
+        .some(
+          (s) =>
+            s !== socket &&
+            s.readyState === WebSocket.OPEN &&
+            (s.deserializeAttachment() as SocketInfo).seat === info.seat,
+        )
     ) {
       this.absent[info.seat] = Date.now();
       this.inputs[info.seat] = [];
@@ -326,6 +400,8 @@ export class DuelRoom {
 
   private send(socket: WebSocket, value: unknown) {
     try {
+      const info = socket.deserializeAttachment() as SocketInfo;
+      if (socket.readyState !== WebSocket.OPEN || info.authExpiresAt <= Date.now()) return;
       socket.send(typeof value === "string" ? value : JSON.stringify(value));
     } catch {
       socket.close(1011, "Connection lost");
@@ -354,9 +430,45 @@ export class DuelRoom {
     if (this.busy || !this.saved) return;
     this.busy = true;
     try {
+      const saved = this.saved;
+      let authorized: SocketInfo[] = [];
+      const authorizationStarted = Date.now();
+      try {
+        authorized = await this.authorizedSockets();
+        if (this.authorizationFailureAt !== null) {
+          // Never catch up physics using time for which authority was unavailable.
+          saved.state.phaseEndsAt += Date.now() - this.authorizationFailureAt;
+          if (saved.state.server) saved.state.server.lastStepAt = Date.now() - TICK_MS;
+          this.authorizationFailureAt = null;
+        }
+      } catch {
+        this.inputs = { A: [], B: [] };
+        if (this.authorizationFailureAt === null)
+          console.error(
+            JSON.stringify({ event: "fps_session_check_unavailable", matchId: saved.config.id }),
+          );
+        this.authorizationFailureAt ??= authorizationStarted;
+        for (const socket of this.ctx.getWebSockets())
+          this.send(socket, { v: 1, type: "authorization", paused: true });
+        if (Date.now() - this.authorizationFailureAt < 5000) return;
+        if (!saved.result) {
+          saved.state.phase = "cancelled";
+          this.reason = "RUNTIME_ERROR";
+        }
+        for (const socket of this.ctx.getWebSockets()) {
+          socket.close(1013, "Authorization service unavailable");
+          this.webSocketClose(socket);
+        }
+      }
       const now = Date.now(),
-        saved = this.saved,
         phase = saved.state.phase;
+      if (
+        phase === "waiting" &&
+        ["A", "B"].every((seat) => authorized.some((s) => s.seat === seat && s.ready))
+      ) {
+        startMatch(saved.state, now);
+        await this.persist();
+      }
       if (
         (now - saved.createdAt > 20 * 60_000 || now >= saved.config.expiresAt - 5000) &&
         !saved.result
@@ -370,9 +482,8 @@ export class DuelRoom {
       }
       if (saved.state.phase !== "cancelled" && ["live", "countdown", "round-end"].includes(phase)) {
         for (const seat of ["A", "B"] as const) {
-          const connected = this.ctx
-            .getWebSockets()
-            .some((s) => (s.deserializeAttachment() as SocketInfo).seat === seat);
+          const connected = authorized.some((s) => s.seat === seat);
+          if (connected) this.absent[seat] = null;
           if (!connected && this.absent[seat] === null) this.absent[seat] = now;
         }
         const gone = (seat: Seat) =>
@@ -400,8 +511,17 @@ export class DuelRoom {
         const fresh: Partial<Record<Seat, Input>> = {};
         for (const seat of ["A", "B"] as const) {
           const queue = this.inputs[seat];
-          while (queue.length && now - queue[0]!.at >= 200) queue.shift();
-          const next = queue.shift();
+          const authority = authorized.find((s) => s.seat === seat);
+          const connection = authority?.connectionId;
+          while (
+            queue.length &&
+            (now - queue[0]!.at >= 200 || queue[0]!.connectionId !== connection)
+          )
+            queue.shift();
+          const next =
+            authority && queue[0] && queue[0].input.seq <= authority.seq
+              ? queue.shift()
+              : undefined;
           if (next) fresh[seat] = next.input;
         }
         // After a long stall discard elapsed simulation work, retaining deadlines.
@@ -433,13 +553,17 @@ export class DuelRoom {
         const current = this.snapshot()!;
         current.state.events = this.events;
         const snap = JSON.stringify(current);
+        const playerSnapshots = {
+          A: JSON.stringify(snapshotForPlayer(current, "A")),
+          B: JSON.stringify(snapshotForPlayer(current, "B")),
+        };
         this.events = [];
         this.history.push({ at: now, snapshot: snap });
         while (this.history.length > 125) this.history.shift();
         const delayed = this.history.find((h) => h.at >= now - 5200 && h.at <= now - 5000);
         for (const socket of this.ctx.getWebSockets()) {
           const info = socket.deserializeAttachment() as SocketInfo;
-          if (info.role === "player") this.send(socket, snap);
+          if (info.role === "player" && info.seat) this.send(socket, playerSnapshots[info.seat]);
           else if (delayed) this.send(socket, delayed.snapshot);
         }
       }

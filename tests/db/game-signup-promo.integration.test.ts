@@ -7,7 +7,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { migrateTestSchemaToReal } from "./money";
 import { promoTestIp } from "./promo-client-ip";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { testDatabaseUrl } from "./test-url";
 
 const url = testDatabaseUrl();
@@ -94,7 +94,7 @@ d("game signup promo impressions (isolated schema)", () => {
   let actor = "";
 
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     await migrateTestSchemaToReal(sql, { realPlay: true });
     await sql`select pvp_test._system_account('house_bankroll', 'USD', 'real')`;
     await sql`update pvp_test.wallet_accounts set balance = balance + 100000

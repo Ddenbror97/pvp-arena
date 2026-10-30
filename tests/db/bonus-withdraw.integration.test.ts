@@ -5,7 +5,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { fundTestTreasury, migrateTestSchemaToReal } from "./money";
 import { BTC_QUOTE_RATE, quoteExpiry, quotedSats } from "./btc-quote";
 import { testDatabaseUrl } from "./test-url";
@@ -22,7 +22,7 @@ const PRICE = 2_500_000_000;
 
 d("bonus withdrawal floor", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     const mins = await sql`select
       (select min_withdrawal_cents from pvp_test.crypto_settings) as settings,
       (select min_withdrawal_cents from pvp_test.chain_networks where chain_id = 8453) as chain`;

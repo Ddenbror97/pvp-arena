@@ -5,6 +5,7 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { emitGuideAssets } from "./scripts/emit-guide-assets";
 
@@ -13,6 +14,15 @@ let serving = false;
 
 export default defineConfig({
   vite: {
+    // This repo also has historical Bun locks. Tie npm's development optimizer
+    // to the lockfile used by npm ci so stale Router exports cannot survive updates.
+    cacheDir:
+      ".wrangler/vite-" +
+      createHash("sha256")
+        .update(readFileSync(new URL("./package-lock.json", import.meta.url)))
+        .digest("hex")
+        .slice(0, 12),
+    server: { watch: { ignored: ["**/.wrangler/**", "**/test-results/**", "**/.output/**"] } },
     plugins: [
       {
         name: "guide-bodies",

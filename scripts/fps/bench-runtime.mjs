@@ -29,7 +29,19 @@ const runtime = new Miniflare(
       SUPABASE_SERVICE_ROLE_KEY: "test-only",
       ALLOWED_ORIGIN: origin,
     },
-    outboundService: () => Response.json({ ok: true }),
+    outboundService: async (request) => {
+      if (new URL(request.url).pathname.endsWith("fps_check_sessions")) {
+        const body = await request.json();
+        return Response.json(
+          body.p_sessions.map((s) => ({
+            sessionId: s.session_id,
+            userId: s.user_id,
+            active: true,
+          })),
+        );
+      }
+      return Response.json({ ok: true });
+    },
   }),
 );
 const clients = [],
@@ -57,10 +69,12 @@ try {
     for (const sub of ids) {
       const body = Buffer.from(
         JSON.stringify({
-          v: 1,
+          v: 2,
           aud: "fps-duel",
           matchId: id,
           sub,
+          sessionId: sub,
+          authExpiresAt: Date.now() + 3600000,
           role: "player",
           nonce: randomUUID(),
           exp: Date.now() + 60000,

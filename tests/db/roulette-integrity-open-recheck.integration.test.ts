@@ -10,7 +10,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { testDatabaseUrl } from "./test-url";
 
 const url = testDatabaseUrl();
@@ -137,7 +137,7 @@ d("roulette integrity: open incidents stay visible after 48 hours", () => {
   const incident = async (fp: string) => (await incidents()).find((i) => i.fingerprint === fp);
 
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql([MIGRATION]));
+    await applyTestSchema(sql, [MIGRATION]);
     await sql`update pvp_test.roulette_config set betting_seconds = 1, lock_ms = 100, spin_ms = 200,
       max_bet = 1000000, max_pot = 100000000, max_bets_per_user = 10, max_bets_per_round = 500`;
     const a = await newUser("ica", 100_000);

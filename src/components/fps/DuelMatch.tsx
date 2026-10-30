@@ -170,14 +170,21 @@ export function DuelMatch({
               type: string;
               seat?: Seat | null;
               v?: number;
+              paused?: boolean;
             };
             if (data.v !== 1) return;
+            if (data.type === "authorization" && data.paused) {
+              arena.current?.suspend(true);
+              setConnection("Authorization paused");
+              return;
+            }
             if (data.type === "welcome") {
               seatRef.current = data.seat ?? null;
               setSeat(data.seat ?? null);
               return;
             }
             if (data.type !== "snapshot" || !data.state?.players || !data.state.score) return;
+            setConnection("Connected");
             serverOffset.current = data.serverNow - Date.now();
             currentFrame.current = data;
             arena.current?.snapshot(data, seatRef.current);
@@ -241,6 +248,7 @@ export function DuelMatch({
         ws.onerror = () => setConnection("Connection interrupted");
         ws.onclose = (event) => {
           if (stopped) return;
+          arena.current?.suspend(true);
           setLocked(false);
           if (document.pointerLockElement) document.exitPointerLock();
           if (event.code === 4001) {
@@ -251,6 +259,11 @@ export function DuelMatch({
             return;
           }
           if (event.code === 1008 || event.code === 1009) {
+            if (event.reason === "Session revoked" || event.reason === "Session expired") {
+              setConnection("Session ended");
+              setError("Your session ended. Sign in again before reconnecting.");
+              return;
+            }
             setConnection("Input rejected");
             setError("The server rejected this connection. Return to the lobby.");
             return;
@@ -416,7 +429,9 @@ export function DuelMatch({
             <p key={i}>{e.text}</p>
           ))}
       </div>
-      {active && other && <div className="duel-opponent-state">Opponent · {other.hp} HP</div>}
+      {active && other && frame?.visibility?.[seat === "A" ? "B" : "A"] !== false && (
+        <div className="duel-opponent-state">Opponent · {other.hp} HP</div>
+      )}
       <footer className="duel-hud-bottom">
         <div className="duel-health">
           <small>HEALTH</small>

@@ -19,11 +19,24 @@ They do not establish authenticated production multiplayer readiness.
 
 ## Presentation
 
-`authored-viewmodel.ts` retains the authored glove/finger skinning and AK geometry,
-adds PVP paint/branding, and replaces the source sleeves with continuous anatomical
-forearm surfaces. `anatomical-forearm.ts` sweeps elliptical wrist/flexor/elbow
-sections with subtle vein relief, using the generated skin albedo. Closed wrist
-cuffs cover the glove transition. Normal-mapped glove detail remains intact.
+`authored-viewmodel.ts` retains the authored AK and normal-mapped glove detail.
+`fitted-rifle-hands.ts` poses the original finger bones for the horizontal
+handguard and pistol grip; the asset's optional `grip_vgrip` pose is not used.
+The support palm sits beside the handguard, with a pole-constrained finger bend
+underneath it. The right index retains the source trigger placement.
+
+The wrist's forearm-weighted vertices follow the hand's pose correction before
+baking, avoiding the previous stretch between independent hand/forearm controls.
+Glove triangles are clipped at the natural wrist and the forearm starts at the
+same boundary vertices, preserving UVs and normals. There is no added wrist band,
+cover cylinder or fragment-discard mask. Forearms use the existing skin albedo
+and smooth normals across UV splits. Pose fitting and geometry baking happen
+once at load; recoil and movement carry the hands and rifle together.
+
+Current captures: [gameplay](screenshots/fps-grip-pov.png),
+[wrist close-up](screenshots/fps-wrist-fixed.png), and
+[reverse view showing the fingers](screenshots/fps-grip-reverse.png).
+These show the actual rendered meshes, not a generated reference.
 
 The existing input, recoil, magazine reload and shot events remain in control.
 A separate 60-degree viewmodel camera shares the world camera transform while
@@ -106,3 +119,15 @@ The fixture waits for the arena canvas's authored-model readiness signal, so
 captures and controller checks exercise loaded replacements rather than the
 temporary loading fallback. The scarf mask/hood use fitted head geometry, and
 the curved magazine uses a surface-clipped decal.
+
+## Wrist and grip correction checks
+
+Five focused Chrome checks passed: authored asset delivery, both spawn views,
+movement frame sample, actual mesh wrist boundaries and grip stability, and
+pointer lock/strafe/full-auto release/jump/reload. The boundary test compares the
+visible glove and skin mesh edges independently and checks that fingers cross
+from the support palm to the other side of the handguard. No cover-band meshes
+are allowed. The local 1280 × 800 movement sample measured 20.8 ms median and
+21.1 ms p95. This is a local fixture measurement, not a production FPS guarantee.
+TypeScript, targeted ESLint and production build pass. No deployment is part of
+this correction.

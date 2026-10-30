@@ -2,6 +2,7 @@
 // LOVABLE_API_KEY is set, otherwise the Resend API directly.
 import { appendFileSync } from "node:fs";
 import { workerEnv } from "@/lib/worker-env";
+import { developmentEmailSink } from "./email-sink.server";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 const DEFAULT_FROM = "PVPspinArena <noreply@pvpspinarena.com>";
@@ -34,10 +35,10 @@ export async function sendAuthEmail(input: {
   text: string;
 }): Promise<{ ok: true } | { ok: false; error: string }> {
   // Local browser tests have no Resend project. A development process can
-  // append the message under /tmp and treat the send as successful. Production
-  // never has NODE_ENV=development, and any other path still uses Resend.
-  const sink = process.env["NODE_ENV"] === "development" ? workerEnv("AUTH_EMAIL_SINK") : undefined;
-  if (sink && sink.startsWith("/tmp/")) {
+  // capture mail only in its dedicated OS temp directory. Production always
+  // uses the configured delivery service, even if a sink variable is present.
+  const sink = developmentEmailSink(workerEnv("AUTH_EMAIL_SINK"), process.env["NODE_ENV"]);
+  if (sink) {
     appendFileSync(
       sink,
       `${JSON.stringify({ to: input.to, subject: input.subject, text: input.text })}\n`,

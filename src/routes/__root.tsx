@@ -74,7 +74,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: { error: unknown; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -113,8 +113,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: ({ matches, match }) =>
     rootHead(
-      match.globalNotFound === true ||
-        matches.some((item) => item.status === "notFound" || item.globalNotFound === true),
+      match._notFound === true ||
+        matches.some((item) => item.status === "notFound" || item._notFound === true),
       appCss,
       SLOT_STAGE,
     ),

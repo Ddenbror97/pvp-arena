@@ -9,7 +9,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { randomBytes, randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { migrateTestSchemaToReal } from "./money";
 import { slottOutcome, verifySlott } from "../../src/lib/fairness/slott";
 import { BOMB, SYMBOLS, WEIGHT_TOTAL, hasBomb, scoreGrid } from "../../src/lib/slott/paytable";
@@ -235,7 +235,7 @@ async function assertInvariants() {
 d("P2P Slott engine (isolated schema)", { timeout: LONG }, () => {
   let START = 0;
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     // Tests exercise expiry in seconds; production keeps its 60s floor.
     await sql`alter table pvp_test.slot_config drop constraint slot_config_waiting_timeout_seconds_check`;
     await sql`grant usage on schema pvp_test to anon, authenticated`;

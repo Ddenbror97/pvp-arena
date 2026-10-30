@@ -10,6 +10,11 @@ test("industrial arena renders from both spawns with no WebGL startup errors", a
     await fixture(page, seat);
     await page.waitForTimeout(400);
     await page.screenshot({ path: `test-results/fps-aim-map-${seat}.png` });
+    if (seat === "A")
+      await page.screenshot({
+        path: "test-results/fps-wrist-fixed.png",
+        clip: { x: 725, y: 575, width: 310, height: 285 },
+      });
     await page.evaluate(() => Reflect.get(window, "fpsPolishTest").dispose());
   }
   expect(errors).toEqual([]);

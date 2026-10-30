@@ -6,7 +6,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createHash, randomBytes, randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { creditUserDeposit, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
@@ -70,7 +70,7 @@ const sit = (p: P, table: number) =>
 
 d("poker throughput", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     for (const k of ["game_escrow", "house_revenue", "house_bankroll"])
       await sql`select pvp_test._system_account(${k}::pvp_test.account_kind, 'USD', 'real')`;

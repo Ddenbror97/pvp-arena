@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { fixture } from "./helpers/fps-fixture";
 
-test("authored viewmodel loads its skin, skinned gloves and clipped PVP branding", async ({
+test("authored viewmodel loads its fitted hand geometry, skin and clipped PVP branding", async ({
   page,
 }) => {
   const failed: string[] = [];
@@ -36,7 +36,7 @@ test("authored viewmodel loads its skin, skinned gloves and clipped PVP branding
     return result;
   });
   expect(result.loaded).toBe(true);
-  expect(result.meshes.some((mesh) => mesh.name === "anatomical-forearm-L")).toBe(true);
+  expect(result.meshes.some((mesh) => mesh.name === "continuous-rifle-forearms")).toBe(true);
   expect(
     result.meshes
       .filter((mesh) => mesh.name === "pvp-receiver-decal")

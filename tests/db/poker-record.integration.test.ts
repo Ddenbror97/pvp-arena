@@ -10,15 +10,16 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { writeFileSync } from "node:fs";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { creditUserDeposit, migrateTestSchemaToReal } from "./money";
 import { testDatabaseUrl } from "./test-url";
 import { buildChain, randomSecret } from "../../src/lib/fairness/poker";
 
 const url = testDatabaseUrl();
-const d = url && process.env["RECORD_POKER_FIXTURE"] === "1" ? describe : describe.skip;
+const recording = process.env["RECORD_POKER_FIXTURE"] === "1";
+const d = url && (recording || process.env["VERIFY_POKER_FIXTURE"] === "1") ? describe : describe.skip;
 const sql = url ? postgres(url, { max: 4, prepare: false, onnotice: () => {} }) : (null as never);
-const OUT = "src/lib/poker/replay/recorded-hands.json";
+const OUT = recording ? "src/lib/poker/replay/recorded-hands.json" : "test-results/poker-recorded-hands.json";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- jsonb comes back untyped
 type Row = Record<string, any>;
@@ -33,7 +34,7 @@ const as = <T,>(uid: string | null, fn: (tx: postgres.TransactionSql) => Promise
 
 d("record poker presentation fixture", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
     for (const k of ["game_escrow", "house_revenue", "house_bankroll"])
       await sql`select pvp_test._system_account(${k}::pvp_test.account_kind, 'USD', 'real')`;

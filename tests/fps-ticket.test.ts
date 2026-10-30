@@ -4,13 +4,15 @@ import { duelQuote } from "@/lib/fps/quote";
 
 const secret = "a".repeat(64);
 const claims: Admission = {
-  v: 1,
+  v: 2,
   aud: "fps-duel",
   matchId: crypto.randomUUID(),
   sub: crypto.randomUUID(),
   nonce: crypto.randomUUID(),
   role: "player",
   exp: 61_000,
+  sessionId: crypto.randomUUID(),
+  authExpiresAt: 3_600_000,
 };
 describe("FPS admission", () => {
   it("requires a signed, current, short-lived audience-scoped ticket", async () => {
@@ -28,5 +30,18 @@ describe("FPS admission", () => {
     expect(duelQuote(101).payout).toBe(192);
     expect(() => duelQuote(1.1)).toThrow();
     expect(() => duelQuote(-1)).toThrow();
+  });
+  it("rejects legacy tickets and missing or expired Auth bindings even with valid signatures", async () => {
+    for (const changes of [
+      { v: 1 },
+      { sessionId: undefined },
+      { sessionId: "invalid" },
+      { authExpiresAt: undefined },
+      { authExpiresAt: 1000 },
+      { authExpiresAt: 60000 },
+    ]) {
+      const ticket = await signAdmission({ ...claims, ...changes } as Admission, secret);
+      expect(await verifyAdmission(ticket, secret, 1000)).toBeNull();
+    }
   });
 });

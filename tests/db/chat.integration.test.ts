@@ -3,7 +3,7 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { testDatabaseUrl } from "./test-url";
 
 const url = testDatabaseUrl();
@@ -33,7 +33,7 @@ async function readAs(_u: string, room: string) {
 
 d("game chat (isolated schema)", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
   }, 120_000);
   afterAll(async () => {
     await sql.end();

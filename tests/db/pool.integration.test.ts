@@ -5,7 +5,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { testDatabaseUrl } from "./test-url";
 import { playShot } from "../../src/lib/pool/play";
 import { PHYSICS_V7, PHYSICS_V8, POCKETS, TABLE_H, TABLE_W } from "../../src/lib/pool/physics";
@@ -67,7 +67,7 @@ async function sit(uid: string, matchId: number, key = randomUUID()) {
 
 d("pool ledger (isolated schema)", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
   }, 180_000);
 
   afterAll(async () => {

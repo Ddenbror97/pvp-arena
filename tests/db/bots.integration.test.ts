@@ -6,7 +6,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { testDatabaseUrl } from "./test-url";
 import { buildChain, randomSecret } from "../../src/lib/fairness/poker";
 import { botRoll, chooseBotAction, type BotStyle, type BotView } from "../../src/lib/poker/bot";
@@ -108,7 +108,7 @@ async function enableBots(exposure: number) {
 
 d("house bots", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
   }, LONG);
 
   afterAll(async () => {

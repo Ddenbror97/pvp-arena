@@ -6,7 +6,7 @@
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
-import { buildTestSchemaSql } from "./schema";
+import { applyTestSchema } from "./schema";
 import { testDatabaseUrl } from "./test-url";
 import { freshTable } from "../../src/lib/pool/rules";
 import { bytesFromHex } from "../../src/lib/pool/verify";
@@ -178,7 +178,7 @@ async function wave(count: number) {
 
 d("pool matches stay isolated under concurrency", () => {
   beforeAll(async () => {
-    await sql.unsafe(buildTestSchemaSql());
+    await applyTestSchema(sql);
   }, 180_000);
 
   afterAll(async () => {

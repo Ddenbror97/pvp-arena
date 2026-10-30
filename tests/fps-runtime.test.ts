@@ -13,24 +13,37 @@ type Socket = NonNullable<Awaited<ReturnType<Miniflare["dispatchFetch"]>>["webSo
 const sockets: Socket[] = [];
 type RuntimeFrame = {
   type: string;
+  visibility?: Record<"A" | "B", boolean>;
   state: MatchState;
   settled: boolean;
   settlementPending: boolean;
 };
 const callbacks: Array<{ path: string; body: Record<string, unknown> }> = [];
+const revokedSessions = new Set<string>();
+let unavailableSession = "",
+  delayedSession = "";
+let authReadObserved: (() => void) | undefined;
 let failOnceId = "";
 let refundedId = "";
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-async function token(id: string, sub = A, role: "player" | "spectator" = "player") {
+async function token(
+  id: string,
+  sub = A,
+  role: "player" | "spectator" = "player",
+  overrides: { sessionId?: string; authExpiresAt?: number; exp?: number } = {},
+) {
   return signAdmission(
     {
-      v: 1,
+      v: 2,
       aud: "fps-duel",
       matchId: id,
       sub,
+      sessionId: sub,
+      authExpiresAt: Date.now() + 3600000,
       role,
       nonce: crypto.randomUUID(),
       exp: Date.now() + 60_000,
+      ...overrides,
     },
     secret,
   );
@@ -90,6 +103,59 @@ function until(
     socket.addEventListener("message", listener);
   });
 }
+
+const movement = (seq: number) =>
+  JSON.stringify({
+    v: 1,
+    type: "input",
+    seq,
+    forward: 1,
+    strafe: 0,
+    yaw: 0,
+    pitch: 0,
+    fire: true,
+    reload: false,
+    weapon: "rifle",
+    jump: false,
+    sprint: false,
+  });
+async function sessionSocket(
+  id: string,
+  sid: string,
+  sub = A,
+  authExpiresAt = Date.now() + 3600000,
+) {
+  const response = await connect(
+    id,
+    await token(id, sub, "player", {
+      sessionId: sid,
+      authExpiresAt,
+      exp: Math.min(Date.now() + 60000, authExpiresAt),
+    }),
+  );
+  expect(response.status).toBe(101);
+  response.webSocket!.accept();
+  sockets.push(response.webSocket!);
+  return response.webSocket!;
+}
+async function readyLive(a: Socket, b: Socket) {
+  const live = until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
+  for (const s of [a, b]) s.send(JSON.stringify({ v: 1, type: "ready" }));
+  return live;
+}
+function closed(socket: Socket) {
+  return new Promise<number>((resolve, reject) => {
+    const timer = setTimeout(() => reject(Error("Session socket not closed")), 8000);
+    socket.addEventListener(
+      "close",
+      (e) => {
+        clearTimeout(timer);
+        resolve(e.code);
+      },
+      { once: true },
+    );
+  });
+}
 describe("isolated real Durable Object WebSockets", () => {
   beforeAll(async () => {
     const bundled = await build({
@@ -116,6 +182,22 @@ describe("isolated real Durable Object WebSockets", () => {
         outboundService: async (request) => {
           const body = (await request.json()) as Record<string, unknown>;
           const path = new URL(request.url).pathname;
+          if (path.endsWith("fps_check_sessions")) {
+            const requested = body["p_sessions"] as Array<{ session_id: string; user_id: string }>;
+            if (requested.some((s) => s.session_id === unavailableSession))
+              return Response.json({ error: "outage" }, { status: 503 });
+            const rows = requested.map((s) => ({
+              sessionId: s.session_id,
+              userId: s.user_id,
+              active: !revokedSessions.has(s.session_id),
+            }));
+            if (requested.some((s) => s.session_id === delayedSession)) {
+              authReadObserved?.();
+              authReadObserved = undefined;
+              await pause(120);
+            }
+            return Response.json(rows);
+          }
           callbacks.push({ path, body });
           if (body["p_match"] === refundedId) {
             if (path.endsWith("fps_record_result"))
@@ -143,6 +225,144 @@ describe("isolated real Durable Object WebSockets", () => {
     }
     await mf?.dispose();
   });
+  it("completes a normal client close before accepting its replacement", async () => {
+    const id = await init();
+    const first = (await connect(id, await token(id))).webSocket!;
+    first.accept();
+    const closure = closed(first);
+    first.close(1000, "Reconnecting");
+    expect(await closure).toBe(1000);
+    const replacement = await connect(id, await token(id));
+    expect(replacement.status).toBe(101);
+    replacement.webSocket!.accept();
+    sockets.push(replacement.webSocket!);
+  });
+  it("revoking an established session rejects queued movement and fire, including reconnect admission", async () => {
+    const id = await init(),
+      sid = crypto.randomUUID(),
+      a = await sessionSocket(id, sid),
+      b = await open(id, B);
+    const before = await readyLive(a, b),
+      end = closed(a);
+    revokedSessions.add(sid);
+    try {
+      a.send(movement(9000));
+      expect(await end).toBe(1008);
+      expect((await connect(id, await token(id, A, "player", { sessionId: sid }))).status).toBe(
+        403,
+      );
+      const replacement = await sessionSocket(id, crypto.randomUUID());
+      const after = await until(
+        replacement,
+        (f) => f.type === "snapshot" && f.state.phase === "live",
+      );
+      expect(after.state.players.A.lastSeq).toBe(before.state.players.A.lastSeq);
+      expect(after.state.players.A.ammo).toBe(before.state.players.A.ammo);
+      expect(after.state.players.A.z).toBe(before.state.players.A.z);
+    } finally {
+      revokedSessions.delete(sid);
+    }
+  });
+  it("an in-flight positive read cannot authorize a command received after revocation", async () => {
+    const id = await init(),
+      sid = crypto.randomUUID(),
+      a = await sessionSocket(id, sid),
+      b = await open(id, B);
+    const before = await readyLive(a, b);
+    try {
+      const observed = new Promise<void>((resolve) => (authReadObserved = resolve));
+      delayedSession = sid;
+      await observed;
+      revokedSessions.add(sid);
+      const end = closed(a);
+      a.send(movement(9900));
+      expect(await end).toBe(1008);
+      const replacement = await sessionSocket(id, crypto.randomUUID());
+      const after = await until(
+        replacement,
+        (f) => f.type === "snapshot" && f.state.phase === "live",
+      );
+      expect(after.state.players.A.lastSeq).toBe(before.state.players.A.lastSeq);
+      expect(after.state.players.A.ammo).toBe(before.state.players.A.ammo);
+    } finally {
+      delayedSession = "";
+      authReadObserved = undefined;
+      revokedSessions.delete(sid);
+    }
+  });
+  it("the original JWT expiry closes an existing session even when the database row remains live", async () => {
+    const id = await init(),
+      sid = crypto.randomUUID(),
+      a = await sessionSocket(id, sid, A, Date.now() + 4300),
+      b = await open(id, B);
+    const end = closed(a);
+    await readyLive(a, b);
+    expect(await end).toBe(1008);
+  });
+  it("a transient session-check outage never applies buffered commands when validation recovers", async () => {
+    const id = await init(),
+      sid = crypto.randomUUID(),
+      a = await sessionSocket(id, sid),
+      b = await open(id, B);
+    const before = await readyLive(a, b);
+    try {
+      unavailableSession = sid;
+      const paused = until(a, (f) => f.type === "authorization");
+      a.send(movement(7000));
+      await paused;
+      await pause(120);
+      unavailableSession = "";
+      const resumed = await until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
+      expect(resumed.state.players.A.lastSeq).toBe(before.state.players.A.lastSeq);
+      expect(resumed.state.players.A.ammo).toBe(before.state.players.A.ammo);
+      const moved = until(a, (f) => f.type === "snapshot" && f.state.players.A.lastSeq === 7001);
+      a.send(movement(7001));
+      await moved;
+    } finally {
+      unavailableSession = "";
+    }
+  });
+  it("a prolonged authorization outage cancels without awarding an unverified winner", async () => {
+    const id = await init(),
+      sid = crypto.randomUUID(),
+      a = await sessionSocket(id, sid),
+      b = await open(id, B);
+    await readyLive(a, b);
+    try {
+      const end = closed(a);
+      unavailableSession = sid;
+      a.send(movement(8000));
+      expect(await end).toBe(1013);
+      unavailableSession = "";
+      const observer = await sessionSocket(id, crypto.randomUUID());
+      const terminal = await until(
+        observer,
+        (f) => f.type === "snapshot" && f.state.phase === "cancelled",
+      );
+      expect(terminal.state.winner).toBeNull();
+      expect(terminal.state.players.A.lastSeq).not.toBe(8000);
+    } finally {
+      unavailableSession = "";
+    }
+  }, 15000);
+  it("redacts occluded enemy poses separately for both player sockets", async () => {
+    const id = await init(),
+      a = await open(id, A),
+      b = await open(id, B);
+    const nextA = until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
+    const nextB = until(b, (f) => f.type === "snapshot" && f.state.phase === "live");
+    a.send(JSON.stringify({ v: 1, type: "ready" }));
+    b.send(JSON.stringify({ v: 1, type: "ready" }));
+    const [frameA, frameB] = await Promise.all([nextA, nextB]);
+    expect(frameA.visibility).toEqual({ A: true, B: false });
+    expect(frameB.visibility).toEqual({ A: false, B: true });
+    expect(frameA.state.players.A.z).toBe(13);
+    expect(frameB.state.players.B.z).toBe(-13);
+    expect(frameA.state.players.B.z).toBe(0);
+    expect(frameB.state.players.A.z).toBe(0);
+    expect(frameA.state).not.toHaveProperty("server");
+  });
+
   it("requires internal authorization, matching room identity and exact browser origin", async () => {
     const id = await init();
     expect(
