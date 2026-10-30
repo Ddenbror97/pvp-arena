@@ -1,4 +1,5 @@
-import { ARENA, BOXES, EYE_HEIGHT, PLAYER_RADIUS, SPAWNS } from "./map";
+import { ARENA, BOXES, EYE_HEIGHT, PLAYER_RADIUS, SPAWNS, eyeHeight } from "./map";
+import { rayBox, traceWorld, type Vector } from "./collision";
 import { spreadScale } from "./handling";
 import {
   validateInput,
@@ -108,7 +109,7 @@ function finishRound(state: MatchState, winner: Seat | null, now: number): void 
   }
 }
 
-function blocked(x: number, y: number, z: number): boolean {
+function blocked(x: number, y: number, z: number, crouched = false): boolean {
   if (
     Math.abs(x) > ARENA.width / 2 - PLAYER_RADIUS ||
     Math.abs(z) > ARENA.depth / 2 - PLAYER_RADIUS
@@ -116,62 +117,85 @@ function blocked(x: number, y: number, z: number): boolean {
     return true;
   return BOXES.some(
     (b) =>
-      y < b.y + b.h / 2 &&
-      y + EYE_HEIGHT + 0.2 > b.y - b.h / 2 &&
-      Math.abs(x - b.x) < b.w / 2 + PLAYER_RADIUS &&
-      Math.abs(z - b.z) < b.d / 2 + PLAYER_RADIUS,
+      y < b.y + b.h / 2 - 1e-7 &&
+      y + eyeHeight({ crouched }) + 0.2 > b.y - b.h / 2 &&
+      Math.abs(x - b.x) < b.w / 2 + PLAYER_RADIUS - 1e-7 &&
+      Math.abs(z - b.z) < b.d / 2 + PLAYER_RADIUS - 1e-7,
   );
 }
 
-type Vector = { x: number; y: number; z: number };
+type Pose = Vector & { crouched?: boolean };
 /** dt is milliseconds and capped at one tick; callers predict once per fixed tick. */
 export function predictMovement(p: Player, input: Input | null, dt: number): void {
   if (!Number.isFinite(dt) || dt <= 0) return;
   const seconds = Math.min(dt, TICK_MS) / 1000;
   if (input) {
-    if (input.jump && p.y === 0 && (p.velocityY ?? 0) === 0) p.velocityY = 5;
+    p.crouched = !!input.crouch || blocked(p.x, p.y, p.z, false);
+    const supported =
+      p.y === 0 ||
+      BOXES.some(
+        (b) =>
+          Math.abs(p.y - (b.y + b.h / 2)) < 1e-6 &&
+          Math.abs(p.x - b.x) < b.w / 2 + PLAYER_RADIUS &&
+          Math.abs(p.z - b.z) < b.d / 2 + PLAYER_RADIUS,
+      );
+    if (input.jump && supported && (p.velocityY ?? 0) === 0) p.velocityY = 5;
     const length = Math.max(1, Math.hypot(input.forward, input.strafe));
-    const speed = (MOVE_SPEED * (input.sprint ? 1.5 : 1) * seconds) / length;
+    const speed = (MOVE_SPEED * (p.crouched ? 0.48 : input.sprint ? 1.5 : 1) * seconds) / length;
     const dx = (-Math.sin(input.yaw) * input.forward + Math.cos(input.yaw) * input.strafe) * speed;
     const dz = (-Math.cos(input.yaw) * input.forward - Math.sin(input.yaw) * input.strafe) * speed;
-    if (!blocked(p.x + dx, p.y, p.z)) p.x += dx;
-    if (!blocked(p.x, p.y, p.z + dz)) p.z += dz;
+    for (const [axis, delta, other] of [
+      ["x", dx, "z"],
+      ["z", dz, "x"],
+    ] as const) {
+      let next = Math.max(
+        -(axis === "x" ? ARENA.width : ARENA.depth) / 2 + PLAYER_RADIUS,
+        Math.min((axis === "x" ? ARENA.width : ARENA.depth) / 2 - PLAYER_RADIUS, p[axis] + delta),
+      );
+      for (const b of BOXES) {
+        if (
+          p.y >= b.y + b.h / 2 ||
+          p.y + eyeHeight(p) + 0.2 <= b.y - b.h / 2 ||
+          Math.abs(p[other] - b[other]) >= (other === "x" ? b.w : b.d) / 2 + PLAYER_RADIUS
+        )
+          continue;
+        const lo = b[axis] - (axis === "x" ? b.w : b.d) / 2 - PLAYER_RADIUS,
+          hi = b[axis] + (axis === "x" ? b.w : b.d) / 2 + PLAYER_RADIUS;
+        if (delta > 0 && p[axis] <= lo) next = Math.min(next, lo);
+        if (delta < 0 && p[axis] >= hi) next = Math.max(next, hi);
+      }
+      p[axis] = next;
+    }
   }
   const previousY = p.y;
   p.velocityY = (p.velocityY ?? 0) - 14 * seconds;
-  p.y = Math.max(0, p.y + p.velocityY * seconds);
-  if (blocked(p.x, p.y, p.z)) {
+  let nextY = Math.max(0, p.y + p.velocityY * seconds);
+  if (p.velocityY <= 0)
+    for (const b of BOXES) {
+      const top = b.y + b.h / 2;
+      if (
+        previousY >= top - 1e-6 &&
+        nextY <= top &&
+        Math.abs(p.x - b.x) < b.w / 2 + PLAYER_RADIUS &&
+        Math.abs(p.z - b.z) < b.d / 2 + PLAYER_RADIUS
+      ) {
+        nextY = Math.max(nextY, top);
+        p.velocityY = 0;
+      }
+    }
+  p.y = nextY;
+  if (blocked(p.x, p.y, p.z, !!p.crouched)) {
     p.y = previousY;
     p.velocityY = 0;
   }
   if (p.y === 0) p.velocityY = 0;
 }
 
-/** Slab intersection, including parallel rays and origins inside a box. */
-function rayBox(origin: Vector, direction: Vector, center: Vector, size: Vector): number {
-  let near = 0,
-    far = Infinity;
-  for (const axis of ["x", "y", "z"] as const) {
-    const lo = center[axis] - size[axis] / 2,
-      hi = center[axis] + size[axis] / 2;
-    if (Math.abs(direction[axis]) < 1e-10) {
-      if (origin[axis] < lo || origin[axis] > hi) return Infinity;
-    } else {
-      const a = (lo - origin[axis]) / direction[axis],
-        b = (hi - origin[axis]) / direction[axis];
-      near = Math.max(near, Math.min(a, b));
-      far = Math.min(far, Math.max(a, b));
-      if (near > far) return Infinity;
-    }
-  }
-  return near;
-}
-
 function shoot(
   state: MatchState,
   seat: Seat,
   now: number,
-  positions: Record<Seat, Vector>,
+  positions: Record<Seat, Pose>,
   input: Input,
 ): void {
   const p = state.players[seat],
@@ -183,7 +207,12 @@ function shoot(
   p.sprayCount = now - p.lastShotAt > 300 ? 1 : (p.sprayCount ?? 0) + 1;
   const spread =
     stats.recoil *
-    spreadScale(p.sprayCount, Math.hypot(input.forward, input.strafe) > 0.1, p.y > 0.01);
+    spreadScale(
+      p.sprayCount,
+      Math.hypot(input.forward, input.strafe) > 0.1,
+      (p.velocityY ?? 0) !== 0,
+    ) *
+    (p.crouched ? 0.8 : 1);
   p.ammo--;
   p.lastShotAt = now;
   // Integer hash gives reproducible spread without random state or client-supplied seeds.
@@ -195,24 +224,32 @@ function shoot(
     y: Math.sin(pitch),
     z: -Math.cos(yaw) * Math.cos(pitch),
   };
-  const origin = { x: start.x, y: start.y + EYE_HEIGHT, z: start.z };
-  let wall = Infinity;
-  for (const b of BOXES)
-    wall = Math.min(wall, rayBox(origin, direction, b, { x: b.w, y: b.h, z: b.d }));
+  const origin = { x: start.x, y: start.y + eyeHeight(start), z: start.z };
+  const worldHit = traceWorld(origin, direction),
+    wall = worldHit?.distance ?? Infinity;
   const head = rayBox(
     origin,
     direction,
-    { x: targetStart.x, y: targetStart.y + EYE_HEIGHT, z: targetStart.z },
+    { x: targetStart.x, y: targetStart.y + eyeHeight(targetStart), z: targetStart.z },
     { x: 0.4, y: 0.4, z: 0.4 },
   );
   const body = rayBox(
     origin,
     direction,
-    { x: targetStart.x, y: targetStart.y + 0.8, z: targetStart.z },
-    { x: 0.7, y: 1.2, z: 0.7 },
+    { x: targetStart.x, y: targetStart.y + (targetStart.crouched ? 0.475 : 0.8), z: targetStart.z },
+    { x: 0.7, y: targetStart.crouched ? 0.65 : 1.2, z: 0.7 },
   );
   state.events.push({ type: "shot", seat, text: `${p.weapon} fired` });
-  if (Math.min(head, body) >= wall || !Number.isFinite(Math.min(head, body))) return;
+  if (Math.min(head, body) >= wall || !Number.isFinite(Math.min(head, body))) {
+    if (worldHit)
+      state.events.push({
+        type: "impact",
+        seat,
+        text: `${worldHit.surface} impact`,
+        impact: worldHit,
+      });
+    return;
+  }
   const headshot = head <= body;
   target.hp = Math.max(0, target.hp - stats.damage * (headshot ? stats.headshotMultiplier : 1));
   state.events.push({
@@ -273,9 +310,19 @@ export function stepMatch(
   }
   const accepted: Partial<Record<Seat, Input>> = {};
   // Capture tick-start positions before either seat moves (same temporal basis).
-  const positions: Record<Seat, Vector> = {
-    A: { x: state.players.A.x, y: state.players.A.y, z: state.players.A.z },
-    B: { x: state.players.B.x, y: state.players.B.y, z: state.players.B.z },
+  const positions: Record<Seat, Pose> = {
+    A: {
+      x: state.players.A.x,
+      y: state.players.A.y,
+      z: state.players.A.z,
+      crouched: !!state.players.A.crouched,
+    },
+    B: {
+      x: state.players.B.x,
+      y: state.players.B.y,
+      z: state.players.B.z,
+      crouched: !!state.players.B.crouched,
+    },
   };
   for (const seat of SEATS) {
     const p = state.players[seat],
@@ -309,7 +356,8 @@ export function stepMatch(
   // Health changes cannot suppress the opponent's shot; adjudicate only afterward.
   for (const seat of SEATS) {
     const input = accepted[seat];
-    if (input?.fire && !input.sprint) shoot(state, seat, now, positions, input);
+    if (input?.fire && (!input.sprint || state.players[seat].crouched))
+      shoot(state, seat, now, positions, input);
   }
   if (state.players.A.hp <= 0 || state.players.B.hp <= 0) {
     finishRound(

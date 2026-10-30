@@ -201,6 +201,7 @@ describe("isolated real Durable Object WebSockets", () => {
         weapon: "rifle",
         jump: false,
         sprint: false,
+        crouch: true,
       }),
     );
     const moved = await until(
@@ -208,6 +209,7 @@ describe("isolated real Durable Object WebSockets", () => {
       (f) => f.type === "snapshot" && f.state.players.A.lastSeq === 5000,
     );
     expect(moved.state.players.A.x).toBeGreaterThan(0);
+    expect(moved.state.players.A.crouched).toBe(true);
   });
   it("rejects client-authored damage and enforces read-only spectators", async () => {
     const id = await init();

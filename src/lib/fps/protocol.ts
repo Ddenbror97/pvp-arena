@@ -14,6 +14,7 @@ export interface Input {
   weapon: Weapon;
   jump: boolean;
   sprint: boolean;
+  crouch?: boolean;
 }
 
 export interface Player {
@@ -34,6 +35,7 @@ export interface Player {
   headshots: number;
   /** Server-owned burst length; cosmetic snapshots must never supply this in input. */
   sprayCount?: number;
+  crouched?: boolean;
   /** Server-owned jump velocity, included in snapshots for prediction. y is feet height. */
   velocityY?: number;
 }
@@ -48,7 +50,13 @@ export interface MatchState {
   phaseEndsAt: number;
   winner: Seat | null;
   tick: number;
-  events: Array<{ type: string; seat?: Seat; text: string; id?: number }>;
+  events: Array<{
+    type: string;
+    seat?: Seat;
+    text: string;
+    id?: number;
+    impact?: import("./collision").WorldHit;
+  }>;
   /** Persist with snapshots on the server; never accept this from a client. */
   server?: { lastStepAt: number; draws: number };
 }
@@ -74,7 +82,12 @@ const finiteBounded = (x: unknown, limit: number): x is number =>
 export function validateInput(raw: unknown): Input | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const data = raw as Record<string, unknown>;
-  if (Object.keys(data).length !== KEYS.length || !KEYS.every((key) => Object.hasOwn(data, key)))
+  const expected = KEYS.length + (Object.hasOwn(data, "crouch") ? 1 : 0);
+  if (
+    Object.keys(data).length !== expected ||
+    !KEYS.every((key) => Object.hasOwn(data, key)) ||
+    (Object.hasOwn(data, "crouch") && typeof data["crouch"] !== "boolean")
+  )
     return null;
   if (
     data["v"] !== 1 ||
@@ -104,5 +117,6 @@ export function validateInput(raw: unknown): Input | null {
     reload: data["reload"] as boolean,
     jump: data["jump"] as boolean,
     sprint: data["sprint"] as boolean,
+    ...(typeof data["crouch"] === "boolean" ? { crouch: data["crouch"] } : {}),
   };
 }
