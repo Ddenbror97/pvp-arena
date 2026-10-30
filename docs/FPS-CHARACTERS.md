@@ -1,5 +1,8 @@
 # Reference-based opponent characters
 
+The later [authored model integration](FPS-AUTHORED-ASSETS.md) supersedes the
+primitive geometry below; this rig remains the loading/failure fallback.
+
 The two supplied portraits guide the existing seat roles: A is the navy-clad
 police officer with cap, aviators, radio and dark armor; B is the masked fighter
 with woven scarf, dark clothing and tan webbing. These are procedural 3D meshes

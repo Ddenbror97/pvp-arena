@@ -438,7 +438,10 @@ export function DuelLobby() {
         </div>
         <p className="duel-hint">
           Spectators of public matches see a delayed view. Private rooms cannot be spectated. Cash
-          rules and availability are subject to release verification. Adults only.
+          rules and availability are subject to release verification. Adults only.{" "}
+          <a href="/fps/models/ATTRIBUTION.md" target="_blank" rel="noreferrer">
+            3D asset credits
+          </a>
         </p>
       </section>
     </div>

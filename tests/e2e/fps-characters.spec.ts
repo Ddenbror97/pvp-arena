@@ -15,8 +15,10 @@ test("both rigs keep their combat head at the shared standing, crouched and jump
     const kit = createWeaponKit(),
       results = [];
     for (const seat of ["A", "B"]) {
-      const actor = createCharacter(seat, null, kit),
-        head = actor.root.getObjectByName("combat-head");
+      const actor = createCharacter(seat, null, kit);
+      await actor.ready;
+      if (!actor.loaded) throw new Error("The authored character did not load");
+      const head = actor.root.getObjectByName("combat-head");
       for (const crouched of [false, true])
         for (const y of [0, 0.5]) {
           actor.root.position.set(1, y, 2);
@@ -31,20 +33,19 @@ test("both rigs keep their combat head at the shared standing, crouched and jump
             crouched,
             y,
             actual: head.matrixWorld.elements[13],
+            rendered: actor.root.getObjectByName("reference-headgear").matrixWorld.elements[13],
             expected: playerVolumes({ x: 1, y, z: 2, crouched }).head.center.y,
             finite,
           });
         }
       actor.dispose();
-      actor.root.traverse((object: { geometry?: { dispose: () => void } }) =>
-        object.geometry?.dispose(),
-      );
     }
     kit.dispose();
     return results;
   });
   for (const pose of poses) {
     expect(pose.actual).toBeCloseTo(pose.expected, 6);
+    expect(pose.rendered).toBeCloseTo(pose.expected, 5);
     expect(pose.finite).toBe(true);
   }
   await page.evaluate(() => Reflect.get(window, "fpsPolishTest").dispose());

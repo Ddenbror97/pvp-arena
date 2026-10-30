@@ -104,4 +104,9 @@ export async function fixture(page: Page, seat: "A" | "B" = "A") {
     });
   }, seat);
   await page.waitForLoadState("networkidle");
+  await page.waitForFunction(
+    () => document.querySelector("canvas")?.dataset["authoredModels"] === "ready",
+    {},
+    { timeout: 30000 },
+  );
 }

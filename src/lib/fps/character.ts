@@ -1,1 +1,1 @@
-export { createCharacter } from "./character-rig";
+export { createCharacter } from "./authored-character";

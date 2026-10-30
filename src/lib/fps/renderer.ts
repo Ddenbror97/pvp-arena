@@ -10,6 +10,7 @@ import { createWeaponKit, AK_MUZZLE } from "./weapon";
 import { createWetFloor } from "./floor-polish";
 import { createViewHands } from "./view-hands";
 import { createMuzzleFlash } from "./muzzle-flash";
+import { createAuthoredViewmodel } from "./authored-viewmodel";
 
 export type ArenaFrame = {
   state: MatchState;
@@ -44,6 +45,8 @@ export function mountArena(
   renderer.toneMappingExposure = 1.0;
   host.appendChild(renderer.domElement);
   const camera = new THREE.PerspectiveCamera(78, 1, 0.06, 260);
+  const viewCamera = new THREE.PerspectiveCamera(60, 1, 0.03, 8);
+  viewCamera.layers.set(1);
   camera.rotation.order = "YXZ";
   camera.position.set(0, EYE_HEIGHT, SPAWNS.A.z);
   scene.add(camera);
@@ -209,6 +212,11 @@ export function mountArena(
   });
   const hands = createViewHands(glove, sleeve);
   weaponGroup.add(hands.root);
+  const authoredView = createAuthoredViewmodel(weaponGroup);
+  void Promise.all([authoredView.ready, characters.A.ready, characters.B.ready]).then(() => {
+    renderer.domElement.dataset["authoredModels"] =
+      authoredView.loaded && characters.A.loaded && characters.B.loaded ? "ready" : "fallback";
+  });
   const wetFloor = createWetFloor(scene, environment.floorRoughness, [
     characters.A.root,
     characters.B.root,
@@ -313,6 +321,8 @@ export function mountArena(
     renderer.setSize(w, h);
     camera.aspect = w / Math.max(1, h);
     camera.updateProjectionMatrix();
+    viewCamera.aspect = camera.aspect;
+    viewCamera.updateProjectionMatrix();
   };
   const observer = new ResizeObserver(resize);
   observer.observe(host);
@@ -394,9 +404,12 @@ export function mountArena(
     }
 
     const renderedWeapon = state && seat ? state.players[seat].weapon : weapon;
-    const barrel = renderedWeapon === "rifle" ? AK_MUZZLE.z : -0.225;
-    const barrelY = renderedWeapon === "rifle" ? AK_MUZZLE.y : 0;
+    const authoredTip =
+      renderedWeapon === "rifle" && authoredView.loaded ? authoredView.muzzle() : null;
+    const barrel = authoredTip?.z ?? (renderedWeapon === "rifle" ? AK_MUZZLE.z : -0.225);
+    const barrelY = authoredTip?.y ?? (renderedWeapon === "rifle" ? AK_MUZZLE.y : 0);
     muzzle.update(muzzleUntil - now, barrel, barrelY, shotIndex);
+    muzzle.root.position.x = authoredTip?.x ?? 0;
     flashLight.position.set(0, barrelY, barrel - 0.02);
     flashLight.intensity = muzzle.root.visible ? 2.5 : 0;
     smoke.visible = now < smokeUntil;
@@ -418,17 +431,21 @@ export function mountArena(
       : 0;
     const reloadTilt = reloadRemaining ? Math.sin(reloadProgress * Math.PI) : 0;
     hands.update(renderedWeapon === "pistol", reloadTilt);
+    hands.root.visible = renderedWeapon === "pistol" || !authoredView.loaded;
+    authoredView.update(renderedWeapon === "rifle", reloadTilt, kick);
     magazine.position.y = -reloadTilt * 0.08;
     magazine.rotation.x = reloadTilt * 0.14;
     chargingHandle.position.z = -0.04 + kick * 0.008;
     weaponGroup.position.set(
-      0.23 + turnSway + (moving ? Math.sin(now * 0.008) * 0.003 : 0),
-      -0.24 +
+      (authoredView.loaded && renderedWeapon === "rifle" ? 0.16 : 0.23) +
+        turnSway +
+        (moving ? Math.sin(now * 0.008) * 0.003 : 0),
+      (authoredView.loaded && renderedWeapon === "rifle" ? -0.1 : -0.24) +
         (moving ? Math.sin(now * 0.016) * 0.004 : Math.sin(now * 0.0018) * 0.0015) -
         landKick -
         reloadTilt * 0.07 -
         (airborne ? 0.008 : 0),
-      -0.62 + kick * 0.025,
+      (authoredView.loaded && renderedWeapon === "rifle" ? -0.28 : -0.62) + kick * 0.025,
     );
     weaponGroup.rotation.set(
       kick * 0.025 + reloadTilt * 0.13,
@@ -437,7 +454,7 @@ export function mountArena(
     );
     weaponGroup.scale.setScalar(renderedWeapon === "pistol" ? 0.72 : 1);
     pistolPart.visible = renderedWeapon === "pistol";
-    rifle.visible = renderedWeapon === "rifle";
+    rifle.visible = renderedWeapon === "rifle" && !authoredView.loaded;
     crosshair?.style.setProperty(
       "--duel-spread",
       `${(moving ? 3 : 0) + (airborne ? 4 : 0) + Math.min(5, recoilPitch * 45)}px`,
@@ -453,7 +470,10 @@ export function mountArena(
     camera.layers.set(1);
     const background = scene.background;
     scene.background = null;
-    renderer.render(scene, camera);
+    viewCamera.position.copy(camera.position);
+    viewCamera.quaternion.copy(camera.quaternion);
+    viewCamera.updateMatrixWorld();
+    renderer.render(scene, viewCamera);
     scene.background = background;
     camera.layers.set(0);
     animation = requestAnimationFrame(frame);
@@ -561,6 +581,7 @@ export function mountArena(
       logoTexture.dispose();
       weave.dispose();
       muzzle.dispose();
+      authoredView.dispose();
       weaponKit.dispose();
       environment.dispose();
       wetFloor.dispose();
