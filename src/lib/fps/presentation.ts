@@ -71,7 +71,10 @@ export class RenderBudget {
   private slow = 0;
   private fastWindows = 0;
   update(ms: number) {
-    if (ms <= 0 || ms > 100) return false;
+    if (ms <= 0 || ms > 1000) return false;
+    // Sustained single-digit FPS must still trigger adaptation. Cap individual
+    // stalls so one shader compilation or scheduler pause cannot dominate it.
+    ms = Math.min(ms, 100);
     this.elapsed += ms;
     if (ms > 19) this.slow += ms;
     if (this.elapsed < 1500) return false;

@@ -80,6 +80,9 @@ describe("render presentation independent of server physics", () => {
   });
   it("bounds high DPI framebuffer size and adapts only after sustained slow frames", () => {
     const b = new RenderBudget();
+    const stalled = new RenderBudget();
+    for (let i = 0; i < 30; i++) stalled.update(200);
+    expect(stalled.scale).toBeLessThan(1);
     expect(3840 * 2160 * b.ratio(3840, 2160, 2) ** 2).toBeLessThanOrEqual(1500001);
     b.update(80);
     expect(b.scale).toBe(1);
