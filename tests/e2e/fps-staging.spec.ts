@@ -58,7 +58,7 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
       throw e;
     }
     await p.goto("/fps-duel");
-    await expect(p.getByRole("button", { name: "Find a duel", exact: true })).toBeVisible();
+    await expect(p.getByRole("tab", { name: "Create game", exact: true })).toBeVisible();
   }
   const amount = async (id: string) =>
     Number(
@@ -71,15 +71,24 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     const before = [await amount(users[0].id), await amount(users[1].id)];
     await login(page, users[0]);
     await login(other, users[1]);
+    await page.getByRole("tab", { name: "Create game", exact: true }).click();
     await page.getByRole("button", { name: "$1.00", exact: true }).click();
     await page.getByLabel("I accept this entry", { exact: false }).check();
-    await page.getByRole("button", { name: "Find a duel", exact: true }).click();
+    await page.getByRole("button", { name: "Create game", exact: true }).click();
     await expect(page).toHaveURL(/\/fps\/[a-f0-9-]{36}/);
     matchId = new URL(page.url()).pathname.split("/").at(-1)!;
     await expect(page.getByRole("heading", { name: /Room created/ })).toBeVisible();
-    await other.getByRole("button", { name: "$1.00", exact: true }).click();
-    await other.getByLabel("I accept this entry", { exact: false }).check();
-    await other.getByRole("button", { name: "Find a duel", exact: true }).click();
+    const room = other
+      .locator(".strike-room-list li")
+      .filter({
+        hasText: (await sql`select username from profiles where id=${users[0].id}`)[0].username,
+      });
+    await room.getByRole("button", { name: "Join", exact: true }).click();
+    const review = other.getByRole("dialog");
+    await expect(review.getByText("$1.90", { exact: true })).toBeVisible();
+    await expect(review.getByRole("button", { name: "Join for $1.00" })).toBeDisabled();
+    await review.getByLabel("I accept this room’s entry", { exact: false }).check();
+    await review.getByRole("button", { name: "Join for $1.00" }).click();
     await expect(other).toHaveURL(new RegExp("/fps/" + matchId));
     for (const p of [other, page]) {
       const ready = p.getByRole("button", { name: "Ready & enter arena", exact: true });

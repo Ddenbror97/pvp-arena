@@ -9,7 +9,16 @@ import { Button } from "@/components/ui/button";
 import { WalletGroupPlaceholder } from "@/components/wallet/HeaderWalletFrame";
 import { PlayerPrestigeIdentity } from "@/components/prestige/PlayerPrestigeIdentity";
 import { equippedAssets, usePrestige } from "@/components/prestige/PrestigeProvider";
-import { Dices, Coins, CircleDot, Cherry, Spade, ShieldCheck, Circle } from "lucide-react";
+import {
+  Dices,
+  Coins,
+  CircleDot,
+  Cherry,
+  Spade,
+  ShieldCheck,
+  Circle,
+  Crosshair,
+} from "lucide-react";
 import { arenaLogo } from "@/assets/media";
 import { TokenMark } from "@/components/wallet/TokenMark";
 import { SoundToggle } from "@/components/SoundToggle";
@@ -81,9 +90,6 @@ export function SiteHeader({ className }: { className?: string }) {
           >
             Jackpot
           </Link>
-          <Link to="/fps-duel" className={link}>
-            FPS Duel
-          </Link>
           <Link
             to="/coinflip"
             className={link}
@@ -137,6 +143,9 @@ export function SiteHeader({ className }: { className?: string }) {
             }}
           >
             8 Pool
+          </Link>
+          <Link to="/fps-duel" className={link}>
+            PvPStrike
           </Link>
           <Link to="/fairness" className={link}>
             Fairness
@@ -396,7 +405,7 @@ export function MobileTabBar({ className }: { className?: string }) {
   const qc = useQueryClient();
   const router = useRouter();
   const tab =
-    "flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors [&.active]:text-primary";
+    "flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[9px] font-semibold tracking-normal text-muted-foreground transition-colors [&.active]:text-primary";
   return (
     <nav
       aria-label="Main"
@@ -439,6 +448,10 @@ export function MobileTabBar({ className }: { className?: string }) {
         }}
       >
         <Circle className="h-5 w-5" />8 Pool
+      </Link>
+      <Link to="/fps-duel" className={tab}>
+        <Crosshair className="h-5 w-5" />
+        PvPStrike
       </Link>
       <Link to="/fairness" className={tab}>
         <ShieldCheck className="h-5 w-5" />

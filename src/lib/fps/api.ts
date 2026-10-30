@@ -33,9 +33,15 @@ export async function fetchDuelRankings(): Promise<
   }>;
 }
 export const DUEL_ERRORS: Record<string, string> = {
-  FPS_NOT_CONFIGURED: "FPS Duel is awaiting its database and match-server setup.",
+  STAKE_NOT_ALLOWED:
+    "This entry is no longer offered. Refresh the lobby and choose an available entry.",
+  MATCH_NOT_OPEN: "Another player joined or this room closed. Choose another open game.",
+  TERMS_CHANGED: "The room terms changed. Return to the lobby to review them again.",
+  RATE_LIMITED: "Too many rooms created. Please wait before creating another.",
+  PRACTICE_DISABLED: "Practice is temporarily unavailable.",
+  FPS_NOT_CONFIGURED: "PvPStrike is awaiting its database and match-server setup.",
   FPS_RUNTIME_UNAVAILABLE: "The match server is unavailable. Please retry shortly.",
-  FPS_DISABLED: "FPS Duel is closed while deployment checks finish.",
+  FPS_DISABLED: "PvPStrike is closed while deployment checks finish.",
   CASH_DISABLED: "Cash duels are not enabled yet.",
   INSUFFICIENT_BALANCE: "Your available cash balance is too low for this entry.",
   ALREADY_IN_MATCH: "Finish or cancel your existing duel first.",
