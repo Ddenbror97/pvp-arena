@@ -34,6 +34,7 @@ import {
 } from "./eth-price";
 import { workerEnv } from "@/lib/worker-env";
 import { logCryptoOps } from "./ops-log";
+import { rpcFailure } from "./rpc-failure";
 import { freshWithdrawalNonce, inflightWithdrawalKeepsStoredRaw } from "./payout-nonce";
 import {
   ANKR_MAX_BATCH,
@@ -261,7 +262,8 @@ export async function loadChainEnv(
   let liveChain: number;
   try {
     liveChain = await client.getChainId();
-  } catch {
+  } catch (error) {
+    logCryptoOps("crypto_rpc_probe_failed", { chainId, provider: "primary", ...rpcFailure(error) });
     return { ok: false, reason: "RPC_UNREACHABLE" };
   }
   if (liveChain !== chainId) return fail("RPC_CHAIN_MISMATCH");
