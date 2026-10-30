@@ -27,6 +27,19 @@ describe("FPS service-only authoritative Auth session status", () => {
       ).rejects.toMatchObject({ code: "42501" });
     }
   });
+  it("keeps explicit creation behind the authenticated wrapper and its owner-only core", async () => {
+    const [permissions] = await sql`select
+      has_function_privilege('authenticated','pvp_test.fps_create(bigint,integer,text,boolean)','execute') authenticated,
+      has_function_privilege('anon','pvp_test.fps_create(bigint,integer,text,boolean)','execute') anonymous,
+      has_function_privilege('service_role','pvp_test.fps_create(bigint,integer,text,boolean)','execute') service,
+      has_function_privilege('authenticated','pvp_test_fps_private.open_match(bigint,integer,text,boolean,text,boolean)','execute') private_core`;
+    expect(permissions).toEqual({
+      authenticated: true,
+      anonymous: false,
+      service: false,
+      private_core: false,
+    });
+  });
   it("checks ownership, expiration, bans and deletion on every service call", async () => {
     const user = randomUUID(),
       session = randomUUID(),

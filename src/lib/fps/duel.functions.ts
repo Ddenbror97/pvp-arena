@@ -45,7 +45,7 @@ export const duelAction = createServerFn({ method: "POST" })
     z
       .discriminatedUnion("action", [
         z.object({
-          action: z.literal("enter"),
+          action: z.enum(["enter", "create"]),
           stake: z.number().int().min(0).max(5000),
           bestOf: z.union([z.literal(5), z.literal(9)]),
           private: z.boolean(),
@@ -71,14 +71,15 @@ export const duelAction = createServerFn({ method: "POST" })
       throw new Error("FPS_RUNTIME_UNAVAILABLE");
     if (data.action === "rematch")
       return call(db, "fps_rematch", { p_match: data.matchId, p_key: data.key });
-    if (data.action === "enter")
-      return call(db, "fps_enter", {
+    if (data.action === "enter" || data.action === "create")
+      return call(db, data.action === "create" ? "fps_create" : "fps_enter", {
         p_stake: data.stake,
         p_best_of: data.bestOf,
         p_key: data.key,
         p_private: data.private,
-        p_invite: null,
+        ...(data.action === "enter" ? { p_invite: null } : {}),
       });
+    if (data.action !== "join") throw new Error("DUEL_REQUEST_FAILED");
     return call(db, "fps_join", {
       p_match: data.matchId,
       p_key: data.key,

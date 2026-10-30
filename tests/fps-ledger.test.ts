@@ -166,6 +166,7 @@ describe("FPS isolated ledger and RPCs", () => {
         for each row when (new.account_type='real') execute function _withdraw_basis_apply_trg();`);
     await db.exec(read("20261029192715_fps_ledger_matchmaking.sql"));
     await db.exec(read("20261029192803_fps_ledger_rpcs.sql"));
+    await db.exec(read("20261030195714_pvpstrike_explicit_create.sql"));
     expect((await db.query("select enabled,cash_enabled from fps_config")).rows).toEqual([
       { enabled: false, cash_enabled: false },
     ]);
@@ -177,7 +178,7 @@ describe("FPS isolated ledger and RPCs", () => {
     await admin(`truncate fps_audit,fps_invite_secrets,fps_entries,fps_ratings,fps_matches,ledger_postings,
       ledger_transactions,withdraw_basis_bucket,withdraw_basis_stake,withdraw_basis_ledger_stake,
       withdraw_basis_applied,withdraw_basis_hold,wallet_accounts,profiles,auth.sessions,test_restrictions cascade;
-      update fps_config set enabled=true,cash_enabled=true,practice_allowed=true;
+      update fps_config set enabled=true,cash_enabled=true,practice_allowed=true,stakes=array[100,200,500,1000,2500,5000]::bigint[];
       update money_domain_config set asset='USD',account_type='real',open=true;
       insert into profiles(id,username) values('${A}','alice'),('${B}','bob'),('${C}','eve'),('${D}','dave');
       insert into auth.sessions select id,id,null from profiles;
@@ -190,6 +191,65 @@ describe("FPS isolated ledger and RPCs", () => {
         end loop;
       end $$;`);
     await claims(A);
+  });
+
+  it("explicit creation leaves matching public rooms separate and joins only the selected room", async () => {
+    const a = await rpc("fps_create", [100, 5, "explicit-create-a", false]);
+    await claims(B);
+    const b = await rpc("fps_create", [100, 5, "explicit-create-b", false]);
+    expect(b.id).not.toBe(a.id);
+    expect(b.status).toBe("WAITING");
+    await claims(C);
+    const joined = await rpc("fps_join", [a.id, "explicit-join-c", null]);
+    expect(joined.id).toBe(a.id);
+    expect(joined.status).toBe("FUNDED");
+    expect(await balance(A)).toBe(9900);
+    expect(await balance(B)).toBe(9900);
+    expect(await balance(C)).toBe(9900);
+    await claims(D);
+    const legacy = await enter(100, 5, "legacy-queue-key");
+    expect(legacy.id).toBe(b.id);
+  });
+
+  it("explicit create is idempotent and cannot change accepted terms", async () => {
+    const a = await rpc("fps_create", [100, 5, "explicit-replay-a", false]);
+    expect((await rpc("fps_create", [100, 5, "explicit-replay-a", false])).id).toBe(a.id);
+    await expect(rpc("fps_create", [200, 5, "explicit-replay-a", false])).rejects.toThrow(
+      "IDEMPOTENCY_CONFLICT",
+    );
+    await expect(rpc("fps_create", [100, 9, "explicit-second-a", false])).rejects.toThrow(
+      "ALREADY_IN_MATCH",
+    );
+    expect(await balance(A)).toBe(9900);
+  });
+
+  it("rejects unadvertised cash tiers before debiting", async () => {
+    await expect(rpc("fps_create", [150, 5, "invalid-tier-key", false])).rejects.toThrow(
+      "STAKE_NOT_ALLOWED",
+    );
+    expect(await balance(A)).toBe(10000);
+  });
+
+  it("private creation stays unlisted and requires its invite", async () => {
+    const a = await rpc("fps_create", [100, 5, "explicit-private", true]);
+    expect(a.invite).toHaveLength(64);
+    await claims(B);
+    expect((await rpc<LobbyResult>("fps_lobby")).open).toHaveLength(0);
+    await expect(rpc("fps_join", [a.id, "private-join-no", null])).rejects.toThrow();
+    expect((await rpc("fps_join", [a.id, "private-join-yes", a.invite])).id).toBe(a.id);
+  });
+
+  it("does not expose the private core or creation to anonymous/service clients", async () => {
+    for (const role of ["anon", "service_role"]) {
+      await claims(null, role);
+      await expect(rpc("fps_create", [100, 5, "unauthorized-key", false])).rejects.toThrow(
+        "permission denied",
+      );
+    }
+    await claims(A);
+    await expect(
+      db.query("select fps_private.open_match(100,5,'internal-key',false,null,false)"),
+    ).rejects.toThrow("permission denied");
   });
 
   it("defaults disabled and advertises practice independently", async () => {
@@ -223,23 +283,23 @@ describe("FPS isolated ledger and RPCs", () => {
   });
 
   it("reserves exact cents, matches only equal selected terms, conserves pot and applies Elo once", async () => {
-    const g = await enter(101);
-    expect(g).toMatchObject({ status: "WAITING", runtime_id: g.id, stake: 101, best_of: 5 });
-    expect(await balance(A)).toBe(9899);
+    const g = await enter(100);
+    expect(g).toMatchObject({ status: "WAITING", runtime_id: g.id, stake: 100, best_of: 5 });
+    expect(await balance(A)).toBe(9900);
     await claims(B);
-    const joined = await enter(101, 5, "second-entry-key");
+    const joined = await enter(100, 5, "second-entry-key");
     expect(joined).toMatchObject({ id: g.id, status: "FUNDED", opponent_id: B });
     const won = await finish(joined);
     expect(won).toMatchObject({
       status: "COMPLETED",
-      payout_amount: 192,
+      payout_amount: 190,
       fee_amount: 10,
       score_a: 3,
       score_b: 1,
     });
     await finish(joined);
-    expect(await balance(A)).toBe(10091);
-    expect(await balance(B)).toBe(9899);
+    expect(await balance(A)).toBe(10090);
+    expect(await balance(B)).toBe(9900);
     expect(await balance(A, "user_locked")).toBe(0);
     const { rows } = await db.query(
       `select sum(p.amount)::int net from ledger_postings p join ledger_transactions t on t.id=p.tx_id where t.kind::text like 'fps_%'`,
@@ -249,7 +309,7 @@ describe("FPS isolated ledger and RPCs", () => {
       `select eligible::int eligible,bonus::int bonus from withdraw_basis_bucket where user_id=$1`,
       [A],
     );
-    expect(bucket.rows[0]).toEqual({ eligible: 10091, bonus: 0 });
+    expect(bucket.rows[0]).toEqual({ eligible: 10090, bonus: 0 });
     await claims(null, "anon");
     expect(await rpc("fps_stats")).toEqual([
       { id: A, username: "alice", rating: 1012, played: 1, wins: 1 },
