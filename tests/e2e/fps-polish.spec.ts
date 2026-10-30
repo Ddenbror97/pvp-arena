@@ -16,6 +16,7 @@ test("both reference-inspired 3D opponents render in the existing arena", async 
         pitch: 0,
       });
       state.round++; // same reset path used by real new rounds, not another camera controller
+      Reflect.get(window, "fpsPolishTest").resetView();
     });
     await page.waitForTimeout(500);
     await page.screenshot({
@@ -41,16 +42,16 @@ test("real pointer lock, movement, full-auto release, jump and reload remain res
   expect(
     await page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.x),
   ).toBeGreaterThan(0.4);
-  await page.mouse.move(650, 390);
-  await page.waitForTimeout(100);
-  expect(
-    Math.abs(await page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.yaw)),
-  ).toBeGreaterThan(0.001);
+  await page.mouse.move(680, 380, { steps: 4 });
+  await expect
+    .poll(() =>
+      page.evaluate(() => Math.abs(Reflect.get(window, "fpsPolishTest").state.players.A.yaw)),
+    )
+    .toBeGreaterThan(0.001);
   await page.keyboard.press("Space");
-  await page.waitForTimeout(160);
-  expect(
-    await page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.y),
-  ).toBeGreaterThan(0);
+  await expect
+    .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.y))
+    .toBeGreaterThan(0);
   await page.waitForTimeout(900);
   await page.mouse.down();
   await page.waitForTimeout(850);

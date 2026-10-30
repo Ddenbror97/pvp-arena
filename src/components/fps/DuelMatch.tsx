@@ -434,7 +434,7 @@ export function DuelMatch({
           <span>Release mouse</span>
         </div>
         <div className="duel-ammo">
-          <small>{me?.weapon?.toUpperCase() ?? "RIFLE"}</small>
+          <small>{me?.weapon === "pistol" ? "SIDEARM" : "AK-47 · PVP EDITION"}</small>
           <strong>
             {me?.ammo ?? 30}
             <span>/ {me?.reserve ?? 90}</span>

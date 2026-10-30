@@ -1,4 +1,8 @@
 import type { Weapon } from "./protocol";
+/** The first rAF timestamp can precede expensive scene initialization. Never extrapolate backwards. */
+export function frameDelta(now: number, previous: number) {
+  return Math.max(0, Math.min(100, now - previous));
+}
 
 export const HANDLING = {
   sensitivity: 0.002,

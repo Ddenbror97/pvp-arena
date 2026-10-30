@@ -3,9 +3,10 @@ import { EYE_HEIGHT, SPAWNS, eyeHeight } from "./map";
 import type { Input, MatchState, Player, Seat, Weapon } from "./protocol";
 import { predictMovement, TICK_MS, WEAPONS } from "./simulation";
 import { createCharacter } from "./character";
-import { HANDLING, decay, recoverRecoil, shotRecoil } from "./handling";
+import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handling";
 import { createArenaEnvironment } from "./environment";
 import { createImpactEffects } from "./impacts";
+import { createWeaponKit, AK_MUZZLE } from "./weapon";
 
 export type ArenaFrame = {
   state: MatchState;
@@ -26,8 +27,8 @@ export function mountArena(
   onLock: (locked: boolean) => void,
 ): ArenaControls {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x68717d);
-  scene.fog = new THREE.Fog(0x77808a, 40, 90);
+  scene.background = new THREE.Color(0x8bacd0);
+  scene.fog = new THREE.Fog(0x9aadc0, 60, 190);
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     powerPreference: "high-performance",
@@ -39,7 +40,7 @@ export function mountArena(
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.15;
   host.appendChild(renderer.domElement);
-  const camera = new THREE.PerspectiveCamera(78, 1, 0.06, 110);
+  const camera = new THREE.PerspectiveCamera(78, 1, 0.06, 260);
   camera.rotation.order = "YXZ";
   camera.position.set(0, EYE_HEIGHT, SPAWNS.A.z);
   scene.add(camera);
@@ -58,17 +59,6 @@ export function mountArena(
   sun.shadow.camera.bottom = -22;
   sun.shadow.normalBias = 0.03;
   scene.add(sun);
-  const metal = new THREE.MeshStandardMaterial({
-    color: 0x171620,
-    metalness: 0.6,
-    roughness: 0.45,
-  });
-  const trim = new THREE.MeshStandardMaterial({
-    color: 0x822aff,
-    emissive: 0x7422ff,
-    emissiveIntensity: 3,
-  });
-  const pale = new THREE.MeshStandardMaterial({ color: 0xe9d8ff, metalness: 0.3, roughness: 0.4 });
   const logoCanvas = document.createElement("canvas");
   logoCanvas.width = 1024;
   logoCanvas.height = 384;
@@ -91,6 +81,25 @@ export function mountArena(
   logo.fillText("spinArena", 512, 285);
   const logoTexture = new THREE.CanvasTexture(logoCanvas);
   logoTexture.colorSpace = THREE.SRGBColorSpace;
+  let artDisposed = false;
+  new THREE.ImageLoader().load("/brand/arena-logo-email.png", (image) => {
+    if (artDisposed) return;
+    logo.fillStyle = "#0c0818";
+    logo.fillRect(0, 0, 1024, 384);
+    const gradient = logo.createLinearGradient(0, 384, 1024, 0);
+    gradient.addColorStop(0, "#5424a0");
+    gradient.addColorStop(0.5, "#170c31");
+    gradient.addColorStop(1, "#271044");
+    logo.fillStyle = gradient;
+    logo.beginPath();
+    logo.moveTo(0, 384);
+    logo.lineTo(250, 0);
+    logo.lineTo(310, 0);
+    logo.lineTo(60, 384);
+    logo.fill();
+    logo.drawImage(image, 200, 24, 624, 332);
+    logoTexture.needsUpdate = true;
+  });
   const branding = new THREE.MeshStandardMaterial({
     map: logoTexture,
     emissive: 0x442066,
@@ -106,7 +115,11 @@ export function mountArena(
   scene.environment = reflections.texture;
   scene.environmentIntensity = 0.45;
   pmrem.dispose();
-  const characters = { A: createCharacter("A", branding), B: createCharacter("B", branding) };
+  const weaponKit = createWeaponKit();
+  const characters = {
+    A: createCharacter("A", branding, weaponKit),
+    B: createCharacter("B", branding, weaponKit),
+  };
   scene.add(characters.A.root, characters.B.root);
   characters.A.root.visible = false;
   characters.B.root.visible = false;
@@ -114,61 +127,40 @@ export function mountArena(
   weaponGroup.name = "first-person-weapon";
   camera.add(weaponGroup);
   weaponGroup.position.set(0.24, -0.3, -0.48);
-  const rifleParts: THREE.Mesh[] = [];
-  const gunMetal = metal.clone();
-  gunMetal.color.setHex(0x454052);
-  gunMetal.metalness = 0.3;
-  gunMetal.roughness = 0.5;
-  const gunTrim = trim.clone();
-  gunTrim.emissiveIntensity = 0.35;
-  gunTrim.color.setHex(0x7434bc);
-  const weaponPart = (
-    x: number,
-    y: number,
-    z: number,
-    w: number,
-    h: number,
-    d: number,
-    material: THREE.Material,
-  ) => {
-    const m = new THREE.Mesh(
-      new THREE.BoxGeometry(w, h, d),
-      material === metal ? gunMetal : material === trim ? gunTrim : material,
-    );
-    m.position.set(x, y, z);
-    weaponGroup.add(m);
-    rifleParts.push(m);
-    // A dedicated viewmodel render pass keeps the held weapon out of arena walls.
-    m.layers.set(1);
-    m.castShadow = false;
-    return m;
-  };
-  weaponPart(0, 0, -0.04, 0.1, 0.13, 0.4, metal);
-  weaponPart(0, -0.035, -0.05, 0.104, 0.035, 0.3, trim);
-  weaponPart(0, -0.13, 0.06, 0.065, 0.22, 0.09, metal).rotation.x = -0.25;
-  weaponPart(0, -0.13, -0.13, 0.075, 0.23, 0.12, metal).rotation.x = 0.25;
-  weaponPart(0, 0.015, -0.37, 0.035, 0.035, 0.34, metal);
-  weaponPart(0, 0.075, -0.26, 0.05, 0.06, 0.04, pale);
-  weaponPart(0, 0, 0.23, 0.09, 0.13, 0.25, metal);
-  weaponPart(0, 0.04, -0.25, 0.11, 0.08, 0.22, metal);
-  for (let i = 0; i < 4; i++) weaponPart(0, 0.085, -0.25 + i * 0.045, 0.065, 0.012, 0.012, trim);
-  for (let i = 0; i < 4; i++)
-    weaponPart(0, -0.13 - i * 0.045, -0.13 + i * 0.022, 0.078, 0.06, 0.105, metal).rotation.x =
-      0.12 + i * 0.1;
-  const receiverLogo = weaponPart(-0.053, 0, -0.04, 0.003, 0.09, 0.27, branding);
-  receiverLogo.name = "pvp-receiver-branding";
+  const rifle = weaponKit.rifle();
+  weaponGroup.add(rifle);
+  const magazine = rifle.getObjectByName("curved-magazine")!,
+    chargingHandle = rifle.getObjectByName("charging-handle")!;
+  rifle.traverse((object) => {
+    object.layers.set(1);
+    if (object instanceof THREE.Mesh) object.castShadow = false;
+  });
+  const pistolPart = new THREE.Group();
+  pistolPart.name = "pistol-viewmodel";
+  weaponGroup.add(pistolPart);
+  const pistolSteel = new THREE.MeshStandardMaterial({
+    color: 0x292631,
+    roughness: 0.4,
+    metalness: 0.6,
+  });
+  for (const [y, z, w, h, d] of [
+    [0, -0.13, 0.045, 0.052, 0.19],
+    [-0.075, -0.065, 0.04, 0.13, 0.055],
+  ]) {
+    const part = new THREE.Mesh(new THREE.BoxGeometry(w!, h!, d!), pistolSteel);
+    part.position.set(0, y!, z!);
+    part.layers.set(1);
+    pistolPart.add(part);
+  }
   const muzzle = new THREE.Mesh(
-    new THREE.ConeGeometry(0.06, 0.18, 6),
-    new THREE.MeshBasicMaterial({ color: 0xffd098 }),
+    new THREE.ConeGeometry(0.035, 0.12, 6),
+    new THREE.MeshBasicMaterial({ color: 0xffcf88 }),
   );
   muzzle.rotation.x = -Math.PI / 2;
-  muzzle.position.set(0, 0.015, -0.62);
-  weaponGroup.add(muzzle);
+  muzzle.position.set(0, 0.018, -0.58);
   muzzle.layers.set(1);
+  weaponGroup.add(muzzle);
   muzzle.visible = false;
-  const pistolPart = weaponPart(0, 0, -0.1, 0.08, 0.08, 0.18, pale);
-  rifleParts.pop();
-  pistolPart.visible = false;
   const smokeMaterial = new THREE.MeshBasicMaterial({
     color: 0xbcb3cb,
     transparent: true,
@@ -189,15 +181,34 @@ export function mountArena(
   viewSun.layers.set(1);
   scene.add(viewSun);
   const glove = new THREE.MeshStandardMaterial({ color: 0x25202f, roughness: 0.82 });
+  const sleeve = new THREE.MeshStandardMaterial({ color: 0x182333, roughness: 0.85 });
   for (const [x, y, z, rx] of [
-    [0.035, -0.2, 0.09, -0.3],
-    [-0.08, -0.09, -0.24, -1.1],
+    [0.035, -0.115, 0.13, -0.3],
+    [-0.05, -0.055, -0.22, -1.1],
   ]) {
-    const hand = new THREE.Mesh(new THREE.CapsuleGeometry(0.045, 0.1, 4, 7), glove);
+    const hand = new THREE.Mesh(new THREE.CapsuleGeometry(0.028, 0.045, 4, 8), glove);
     hand.position.set(x!, y!, z!);
     hand.rotation.x = rx!;
     hand.layers.set(1);
     weaponGroup.add(hand);
+    const palm = new THREE.Vector3(x!, y!, z!),
+      elbow = new THREE.Vector3(x! > 0 ? 0.16 : -0.08, -0.42, x! > 0 ? 0.4 : 0.18);
+    const direction = palm.clone().sub(elbow);
+    const wrist = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.028, 0.045, direction.length(), 10),
+      sleeve,
+    );
+    wrist.position.copy(palm).add(elbow).multiplyScalar(0.5);
+    wrist.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
+    wrist.layers.set(1);
+    weaponGroup.add(wrist);
+    for (let finger = 0; finger < 4; finger++) {
+      const grip = new THREE.Mesh(new THREE.CapsuleGeometry(0.008, 0.028, 3, 5), glove);
+      grip.position.set(x! + 0.012, y! - 0.025 + finger * 0.012, z! - 0.015);
+      grip.rotation.z = Math.PI / 2;
+      grip.layers.set(1);
+      weaponGroup.add(grip);
+    }
   }
   let recoilPitch = 0,
     recoilYaw = 0,
@@ -312,7 +323,7 @@ export function mountArena(
   window.addEventListener("blur", clear);
   const frame = (now: number) => {
     if (stopped) return;
-    const dt = Math.min(100, now - previous);
+    const dt = frameDelta(now, previous);
     previous = now;
     accumulator += dt;
     while (accumulator >= inputStepMs) {
@@ -371,8 +382,8 @@ export function mountArena(
     }
     muzzle.visible = now < muzzleUntil;
     const renderedWeapon = state && seat ? state.players[seat].weapon : weapon;
-    const barrel = renderedWeapon === "rifle" ? -0.62 : -0.25;
-    muzzle.position.z = barrel;
+    const barrel = renderedWeapon === "rifle" ? AK_MUZZLE.z : -0.225;
+    muzzle.position.z = barrel - 0.06;
     flashLight.position.set(0, 0.015, barrel);
     flashLight.intensity = muzzle.visible ? 2.5 : 0;
     smoke.visible = now < smokeUntil;
@@ -393,23 +404,26 @@ export function mountArena(
       ? Math.min(1, reloadRemaining / WEAPONS[renderedWeapon].reloadMs)
       : 0;
     const reloadTilt = reloadRemaining ? Math.sin(reloadProgress * Math.PI) : 0;
+    magazine.position.y = -reloadTilt * 0.08;
+    magazine.rotation.x = reloadTilt * 0.14;
+    chargingHandle.position.z = -0.04 + kick * 0.008;
     weaponGroup.position.set(
-      0.235 + turnSway + (moving ? Math.sin(now * 0.008) * 0.003 : 0),
-      -0.29 +
+      0.2 + turnSway + (moving ? Math.sin(now * 0.008) * 0.003 : 0),
+      -0.24 +
         (moving ? Math.sin(now * 0.016) * 0.004 : Math.sin(now * 0.0018) * 0.0015) -
         landKick -
         reloadTilt * 0.07 -
         (airborne ? 0.008 : 0),
-      -0.46 + kick * 0.025,
+      -0.72 + kick * 0.025,
     );
     weaponGroup.rotation.set(
       kick * 0.025 + reloadTilt * 0.13,
-      -0.025 - turnSway,
+      0.18 - turnSway,
       -0.02 - reloadTilt * 0.55,
     );
     weaponGroup.scale.setScalar(renderedWeapon === "pistol" ? 0.72 : 1);
     pistolPart.visible = renderedWeapon === "pistol";
-    for (const part of rifleParts) part.visible = renderedWeapon === "rifle";
+    rifle.visible = renderedWeapon === "rifle";
     crosshair?.style.setProperty(
       "--duel-spread",
       `${(moving ? 3 : 0) + (airborne ? 4 : 0) + Math.min(5, recoilPitch * 45)}px`,
@@ -527,7 +541,9 @@ export function mountArena(
       for (const g of geometries) g.dispose();
       for (const m of materials) m.dispose();
       sun.shadow.map?.dispose();
+      artDisposed = true;
       logoTexture.dispose();
+      weaponKit.dispose();
       environment.dispose();
       reflections.dispose();
       impacts.dispose();

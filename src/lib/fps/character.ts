@@ -1,8 +1,9 @@
 import * as THREE from "three";
 import type { Seat } from "./protocol";
+import { AK_MUZZLE, type WeaponKit } from "./weapon";
 
 /** Reference-inspired, fully three-dimensional cosmetics. Hit volumes stay in simulation.ts. */
-export function createCharacter(seat: Seat, branding: THREE.Material) {
+export function createCharacter(seat: Seat, branding: THREE.Material, weaponKit: WeaponKit) {
   const police = seat === "A",
     root = new THREE.Group();
   root.name = police ? "officer" : "masked-fighter";
@@ -163,21 +164,17 @@ export function createCharacter(seat: Seat, branding: THREE.Material) {
     arm.rotation.x = -0.22;
     arm.rotation.z = side * 0.12;
   }
-  const rifle = new THREE.Group();
+  const rifle = weaponKit.rifle();
+  rifle.scale.setScalar(0.75);
   rifle.position.set(0.12, 1.05, -0.35);
   root.add(rifle);
-  box(rifle, 0, 0, -0.06, 0.075, 0.11, 0.34, rubber);
-  box(rifle, 0, 0.015, -0.37, 0.026, 0.026, 0.36, rubber);
-  box(rifle, 0, -0.12, -0.11, 0.055, 0.18, 0.08, webbing).rotation.x = 0.3;
-  box(rifle, 0, 0, 0.2, 0.07, 0.1, 0.21, rubber);
-  box(rifle, 0.04, 0, -0.05, 0.008, 0.075, 0.24, branding);
   const flash = mesh(
     rifle,
     new THREE.ConeGeometry(0.045, 0.13, 5),
     new THREE.MeshBasicMaterial({ color: 0xffc471 }),
     0,
     0.015,
-    -0.59,
+    AK_MUZZLE.z - 0.065,
   );
   flash.rotation.x = -Math.PI / 2;
   flash.visible = false;

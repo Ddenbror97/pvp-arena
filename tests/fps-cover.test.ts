@@ -1,5 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { BOXES, WORLD_SOLIDS, SPAWNS, PLAYER_RADIUS, eyeHeight } from "../src/lib/fps/map";
+import {
+  BOXES,
+  WORLD_SOLIDS,
+  SPAWNS,
+  PLAYER_RADIUS,
+  eyeHeight,
+  STRUCTURES,
+  ARENA,
+} from "../src/lib/fps/map";
 import { rayBox, traceWorld } from "../src/lib/fps/collision";
 import {
   createMatch,
@@ -39,6 +47,16 @@ function shoot(surface: "metal" | "wood" | "concrete") {
   return s;
 }
 describe("shared tactical world", () => {
+  it("keeps upper structures outside the playable floor and blocks rays against the overhead beam", () => {
+    for (const b of STRUCTURES)
+      expect(
+        Math.abs(b.x) - b.w / 2 >= ARENA.width / 2 - 1e-7 ||
+          Math.abs(b.z) - b.d / 2 >= ARENA.depth / 2 - 1e-7,
+      ).toBe(true);
+    const hit = traceWorld({ x: 0, y: 8.2, z: 13 }, { x: 0, y: 0, z: -1 });
+    expect(hit?.solidId).toBe("end-beam--1");
+    expect(hit?.surface).toBe("metal");
+  });
   it("has symmetric solid envelopes and safe opposing spawns", () => {
     for (const b of BOXES) {
       expect(

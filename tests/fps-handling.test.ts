@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { recoverRecoil, shotRecoil, spreadScale } from "../src/lib/fps/handling";
+import { recoverRecoil, shotRecoil, spreadScale, frameDelta } from "../src/lib/fps/handling";
 import {
   createMatch,
   startMatch,
@@ -24,6 +24,14 @@ const idle: Input = {
   sprint: false,
 };
 describe("FPS handling polish", () => {
+  it("never runs negative-time interpolation on the first frame after a slow scene load", () => {
+    expect(frameDelta(100, 800)).toBe(0);
+    expect(frameDelta(116, 100)).toBe(16);
+    expect(frameDelta(3000, 100)).toBe(100);
+    const blend = 1 - Math.exp(-frameDelta(100, 800) / 60);
+    expect(blend).toBeGreaterThanOrEqual(0);
+    expect(blend).toBeLessThanOrEqual(1);
+  });
   it("recovers identically at 30, 60 and 144 rendering FPS", () => {
     const results = [30, 60, 144].map((fps) => {
       let value = 0.1;

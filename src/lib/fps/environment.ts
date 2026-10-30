@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { ARENA, BOXES, WALLS, FLOOR, type Surface } from "./map";
+import { addArenaArchitecture } from "./arena-architecture";
 
 /** Materials and small inset details decorate the same solid envelopes used by the server. */
 export function createArenaEnvironment(scene: THREE.Scene, branding: THREE.Material) {
@@ -123,18 +124,28 @@ export function createArenaEnvironment(scene: THREE.Scene, branding: THREE.Mater
     details.push(dummy.matrix.clone());
   };
   const floorMat = materials.concrete.clone();
-  new THREE.ImageLoader().load(
+  const concreteImage = new THREE.TextureLoader().load(
     "/fps/concrete-albedo-v2.webp",
     (image) => {
       if (disposed) return;
-      materials.concrete.map!.image = image;
-      materials.concrete.map!.needsUpdate = true;
+      materials.concrete.map = image;
+      floorMat.map = image;
+      materials.concrete.needsUpdate = true;
+      floorMat.needsUpdate = true;
     },
     undefined,
     () => console.warn("FPS concrete image unavailable; retaining the procedural material."),
   );
-  floorMat.color.setHex(0xc4c5c0);
-  floorMat.roughness = 0.96;
+  concreteImage.colorSpace = THREE.SRGBColorSpace;
+  concreteImage.wrapS = concreteImage.wrapT = THREE.RepeatWrapping;
+  concreteImage.anisotropy = 4;
+  textures.push(concreteImage);
+  floorMat.color.setHex(0x969eab);
+  floorMat.roughness = 0.43;
+  floorMat.metalness = 0.16;
+  materials.metal.color.setHex(0x666781);
+  materials.metal.roughness = 0.43;
+  materials.wood.color.setHex(0x786e88);
   mesh(FLOOR.x, FLOOR.y, FLOOR.z, FLOOR.w, FLOOR.h, FLOOR.d, floorMat).castShadow = false;
   for (const wall of WALLS) {
     const m = mesh(wall.x, wall.y, wall.z, wall.w, wall.h, wall.d, materials.concrete);
@@ -217,9 +228,11 @@ export function createArenaEnvironment(scene: THREE.Scene, branding: THREE.Mater
   braces.castShadow = true;
   braces.receiveShadow = true;
   scene.add(braces);
+  const architecture = addArenaArchitecture(scene, branding);
   return {
     dispose() {
       disposed = true;
+      architecture.dispose();
       for (const t of textures) t.dispose();
     },
   };

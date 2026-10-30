@@ -104,7 +104,104 @@ export const FLOOR: Solid = {
   d: 32,
   surface: "concrete",
 };
-export const WORLD_SOLIDS: readonly Solid[] = [...BOXES, ...WALLS, FLOOR];
+/** Non-walkable upper factory structures still participate in authoritative bullet occlusion. */
+export const STRUCTURES: Solid[] = [
+  ...[-1, 1].flatMap((side) => [
+    {
+      id: `upper-deck-${side}`,
+      x: side * 14,
+      y: 6.25,
+      z: 0,
+      w: 4,
+      h: 0.3,
+      d: 33.6,
+      surface: "metal" as const,
+    },
+    {
+      id: `upper-fascia-${side}`,
+      x: side * 12.3,
+      y: 6.95,
+      z: 0,
+      w: 0.6,
+      h: 1.1,
+      d: 33.6,
+      surface: "metal" as const,
+    },
+    {
+      id: `roof-rail-${side}`,
+      x: side * 15.7,
+      y: 7.7,
+      z: 0,
+      w: 0.12,
+      h: 0.12,
+      d: 33.6,
+      surface: "metal" as const,
+    },
+    ...[-14, -7, 0, 7, 14].map((z) => ({
+      id: `deck-post-${side}-${z}`,
+      x: side * 15.7,
+      y: 7,
+      z,
+      w: 0.16,
+      h: 1.4,
+      d: 0.16,
+      surface: "metal" as const,
+    })),
+    {
+      id: `end-beam-${side}`,
+      x: 0,
+      y: 8.2,
+      z: side * 16.5,
+      w: 24,
+      h: 0.35,
+      d: 0.4,
+      surface: "metal" as const,
+    },
+    {
+      id: `inner-rail-${side}`,
+      x: side * 12.3,
+      y: 8,
+      z: 0,
+      w: 0.12,
+      h: 0.12,
+      d: 33.6,
+      surface: "metal" as const,
+    },
+    ...[-14, -10, -6, -2, 2, 6, 10, 14].map((z) => ({
+      id: `inner-post-${side}-${z}`,
+      x: side * 12.3,
+      y: 7.65,
+      z,
+      w: 0.12,
+      h: 0.7,
+      d: 0.12,
+      surface: "metal" as const,
+    })),
+    ...[-1, 1].flatMap((x) => [
+      {
+        id: `sign-tower-${side}-${x}`,
+        x: x * 7,
+        y: 5.4,
+        z: side * 16.8,
+        w: 1.85,
+        h: 7.8,
+        d: 1,
+        surface: "metal" as const,
+      },
+      {
+        id: `floodlight-rig-${side}-${x}`,
+        x: x * 7,
+        y: 9.5,
+        z: side * 16.8,
+        w: 2.2,
+        h: 0.2,
+        d: 0.5,
+        surface: "metal" as const,
+      },
+    ]),
+  ]),
+];
+export const WORLD_SOLIDS: readonly Solid[] = [...BOXES, ...WALLS, ...STRUCTURES, FLOOR];
 export const eyeHeight = (player: { crouched?: boolean }) =>
   player.crouched ? CROUCH_EYE_HEIGHT : EYE_HEIGHT;
 export const SPAWNS = {

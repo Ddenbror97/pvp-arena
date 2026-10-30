@@ -40,11 +40,22 @@ export async function fixture(page: Page, seat: "A" | "B" = "A") {
       () => {},
     );
     host.addEventListener("click", () => void controls.lock());
+    state.server.lastStepAt = Date.now();
+    state.phaseEndsAt = Date.now() + 60000;
     const send = () => {
-      if (Date.now() - state.server.lastStepAt < 34) return;
-      const input = queue.shift();
-      stepMatch(state, input ? { [seat]: input } : {}, state.server.lastStepAt + 34, TICK_MS);
-      state.events = state.events.map((e: object) => ({ ...e, id: ++eventId }));
+      const now = Date.now(),
+        events: object[] = [];
+      for (let step = 0; step < 3 && now - state.server.lastStepAt >= 34; step++) {
+        const input = queue.shift();
+        stepMatch(
+          state,
+          input ? { [seat]: input } : {},
+          Math.max(state.server.lastStepAt + 34, now - 68),
+          TICK_MS,
+        );
+        events.push(...state.events.map((e: object) => ({ ...e, id: ++eventId })));
+      }
+      state.events = events;
       eventLog.push(...state.events);
       controls.snapshot(
         {
@@ -92,4 +103,5 @@ export async function fixture(page: Page, seat: "A" | "B" = "A") {
       },
     });
   }, seat);
+  await page.waitForLoadState("networkidle");
 }
