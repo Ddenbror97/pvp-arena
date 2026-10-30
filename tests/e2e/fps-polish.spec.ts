@@ -11,7 +11,7 @@ test("both reference-inspired 3D opponents render in the existing arena", async 
       Object.assign(state.players[seat], { x: 2.5, z: 13, yaw: 0, pitch: 0 });
       Object.assign(state.players[seat === "A" ? "B" : "A"], {
         x: 2.5,
-        z: 7,
+        z: 10,
         yaw: Math.PI,
         pitch: 0,
       });

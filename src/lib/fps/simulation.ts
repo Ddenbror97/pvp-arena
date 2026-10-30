@@ -1,4 +1,5 @@
 import { ARENA, BOXES, EYE_HEIGHT, PLAYER_RADIUS, SPAWNS, eyeHeight } from "./map";
+import { playerVolumes } from "./player-volumes";
 import { rayBox, traceWorld, type Vector } from "./collision";
 import { spreadScale } from "./handling";
 import {
@@ -227,18 +228,9 @@ function shoot(
   const origin = { x: start.x, y: start.y + eyeHeight(start), z: start.z };
   const worldHit = traceWorld(origin, direction),
     wall = worldHit?.distance ?? Infinity;
-  const head = rayBox(
-    origin,
-    direction,
-    { x: targetStart.x, y: targetStart.y + eyeHeight(targetStart), z: targetStart.z },
-    { x: 0.4, y: 0.4, z: 0.4 },
-  );
-  const body = rayBox(
-    origin,
-    direction,
-    { x: targetStart.x, y: targetStart.y + (targetStart.crouched ? 0.475 : 0.8), z: targetStart.z },
-    { x: 0.7, y: targetStart.crouched ? 0.65 : 1.2, z: 0.7 },
-  );
+  const volumes = playerVolumes(targetStart);
+  const head = rayBox(origin, direction, volumes.head.center, volumes.head.size);
+  const body = rayBox(origin, direction, volumes.body.center, volumes.body.size);
   state.events.push({ type: "shot", seat, text: `${p.weapon} fired` });
   if (Math.min(head, body) >= wall || !Number.isFinite(Math.min(head, body))) {
     if (worldHit)

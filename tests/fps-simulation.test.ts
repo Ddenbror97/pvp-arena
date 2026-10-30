@@ -50,6 +50,31 @@ function nextRound(state: MatchState): void {
   stepMatch(state, {}, state.phaseEndsAt, TICK_MS);
 }
 
+describe("visible character combat envelope", () => {
+  it.each([false, true])("registers boot hits down to the floor, crouched=%s", (crouched) => {
+    const state = live();
+    lane(state);
+    const pitch = Math.atan2(0.07 - EYE_HEIGHT, 6);
+    tick(state, { B: input({ crouch: crouched, yaw: Math.PI }) });
+    tick(state, {
+      A: input({ seq: 1, fire: true, pitch }),
+      B: input({ seq: 1, crouch: crouched, yaw: Math.PI }),
+    });
+    expect(state.events.some((event) => event.type === "hit" && event.seat === "A")).toBe(true);
+    expect(state.players.B.hp).toBe(100 - WEAPONS.rifle.damage);
+  });
+  it("a crouched player's old standing head position is not a hit", () => {
+    const state = live();
+    lane(state);
+    tick(state, { B: input({ crouch: true, yaw: Math.PI }) });
+    tick(state, {
+      A: input({ seq: 1, fire: true, pitch: 0 }),
+      B: input({ seq: 1, crouch: true, yaw: Math.PI }),
+    });
+    expect(state.players.B.hp).toBe(100);
+  });
+});
+
 describe("FPS protocol", () => {
   it("validates and copies the exact complete input shape", () => {
     const raw = input();

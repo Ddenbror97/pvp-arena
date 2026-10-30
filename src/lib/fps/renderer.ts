@@ -381,8 +381,16 @@ export function mountArena(
       characters[otherSeat === "A" ? "B" : "A"].root.visible = false;
       const actor = characters[otherSeat];
       actor.root.position.lerp(remoteTarget, 1 - Math.exp(-dt / 60));
-      actor.root.rotation.y = other.yaw;
-      actor.update(dt, now, other.pitch, other.hp > 0, !!other.crouched);
+      const turn = Math.atan2(
+        Math.sin(other.yaw - actor.root.rotation.y),
+        Math.cos(other.yaw - actor.root.rotation.y),
+      );
+      actor.root.rotation.y += turn * (1 - Math.exp(-dt / 55));
+      actor.update(dt, now, other.pitch, other.hp > 0, !!other.crouched, {
+        airborne: other.y > 0.01,
+        weapon: other.weapon,
+        reloading: other.reloadUntil > Date.now() + lastServerOffset,
+      });
     }
 
     const renderedWeapon = state && seat ? state.players[seat].weapon : weapon;
