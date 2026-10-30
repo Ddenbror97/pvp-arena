@@ -22,6 +22,12 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
   await expect(page.getByText("Platform fee · 5%", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Best of 9" }).click();
   await expect(page.getByText("First to 5", { exact: true })).toBeVisible();
+  const actionVisible = await page.locator(".strike-panel .strike-primary").evaluate((element) => {
+    const button = element.getBoundingClientRect(),
+      panel = element.closest(".strike-panel")!.getBoundingClientRect();
+    return button.top >= panel.top && button.bottom <= panel.bottom;
+  });
+  expect(actionVisible).toBe(true);
   await page.screenshot({ path: "test-results/strike-lobby-desktop.png", fullPage: true });
   for (const width of [390, 320]) {
     await page.setViewportSize({ width, height: 844 });
