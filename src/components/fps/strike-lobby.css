@@ -874,3 +874,4 @@
     min-height: 720px;
   }
 }
+.strike-join-dialog .strike-check{min-height:48px;align-items:center;padding:8px 10px;background:#ffffff06;border-radius:8px}.strike-join-dialog .strike-check input{width:20px;height:20px;flex-shrink:0;margin:0}.strike-join-dialog .strike-primary{min-height:48px}

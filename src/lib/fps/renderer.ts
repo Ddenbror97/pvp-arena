@@ -713,7 +713,31 @@ export function mountArena(
       else remoteMotion.push(other, frame.serverNow);
     },
     async lock() {
-      await renderer.domElement.requestPointerLock();
+      if (locked()) return;
+      // Some browsers return void. The event, rather than the return type,
+      // determines whether the mouse was actually captured before Ready.
+      await new Promise<void>((resolve, reject) => {
+        const finish = (error?: Error) => {
+          clearTimeout(timeout);
+          document.removeEventListener("pointerlockchange", changed);
+          document.removeEventListener("pointerlockerror", failed);
+          if (error) reject(error);
+          else resolve();
+        };
+        const changed = () => {
+          if (locked()) finish();
+        };
+        const failed = () => finish(new Error("Mouse capture was not granted"));
+        const timeout = setTimeout(failed, 8000);
+        document.addEventListener("pointerlockchange", changed);
+        document.addEventListener("pointerlockerror", failed);
+        try {
+          const requested = renderer.domElement.requestPointerLock();
+          if (requested && typeof requested.catch === "function") void requested.catch(failed);
+        } catch {
+          failed();
+        }
+      });
     },
     dispose() {
       stopped = true;

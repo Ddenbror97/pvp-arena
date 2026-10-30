@@ -25,7 +25,7 @@ export const TICK_MS = 33.333;
 export const SNAPSHOT_MS = 50;
 export const COUNTDOWN_MS = 3000;
 export const ROUND_MS = 60000;
-export const ROUND_END_MS = 2500;
+export const ROUND_END_MS = 3000;
 export const MAX_DRAWS = 3;
 export const MOVE_SPEED = 5;
 export const WEAPONS = {
@@ -50,6 +50,10 @@ export const WEAPONS = {
 } as const;
 const SEATS: readonly Seat[] = ["A", "B"];
 const other = (seat: Seat): Seat => (seat === "A" ? "B" : "A");
+const emptyRoundStats = () => ({
+  A: { shots: 0, hits: 0, headHits: 0, damage: 0, health: 100 },
+  B: { shots: 0, hits: 0, headHits: 0, damage: 0, health: 100 },
+});
 
 function player(id: string, seat: Seat): Player {
   return {
@@ -109,6 +113,15 @@ export function startMatch(state: MatchState, now: number): MatchState {
 }
 
 function finishRound(state: MatchState, winner: Seat | null, now: number): void {
+  const counters = state.server?.roundStats ?? emptyRoundStats();
+  state.lastRound = {
+    round: state.round,
+    winner,
+    players: {
+      A: { ...counters.A, health: state.players.A.hp },
+      B: { ...counters.B, health: state.players.B.hp },
+    },
+  };
   if (winner) state.score[winner]++;
   else if (state.server) state.server.draws++;
   state.events.push(
@@ -248,6 +261,8 @@ function shoot(
       ) *
       (p.crouched ? 0.8 : 1);
   p.ammo--;
+  const counters = state.server ? (state.server.roundStats ??= emptyRoundStats())[seat] : null;
+  if (counters) counters.shots++;
   p.lastShotAt = now;
   // Integer hash gives reproducible spread without random state or client-supplied seeds.
   const hash =
@@ -298,6 +313,11 @@ function shoot(
   const damage = modern
     ? HIT_DAMAGE[p.weapon][contact.zone]
     : stats.damage * (headshot ? stats.headshotMultiplier : 1);
+  if (counters) {
+    counters.hits++;
+    counters.headHits += Number(headshot);
+    counters.damage += Math.min(target.hp, damage);
+  }
   target.hp = Math.max(0, target.hp - damage);
   const point = {
     x: origin.x + direction.x * contact.distance,
@@ -363,8 +383,9 @@ export function stepMatch(
         lastSeq: old.lastSeq,
       };
     }
-    state.phase = "countdown";
-    state.phaseEndsAt = now + COUNTDOWN_MS;
+    server.roundStats = emptyRoundStats();
+    state.phase = "live";
+    state.phaseEndsAt = now + ROUND_MS;
     return state;
   }
   if (state.phase === "countdown" && now >= state.phaseEndsAt) {

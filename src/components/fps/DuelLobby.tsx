@@ -18,7 +18,7 @@ import { fetchDuelLobby, fetchDuelRankings, duelError } from "@/lib/fps/api";
 import { duelAction } from "@/lib/fps/duel.functions";
 import { duelMoney, duelQuote, type DuelLobbyData } from "@/lib/fps/quote";
 import { STRIKE_SHOWCASE } from "@/lib/fps/showcase";
-import { warmArenaRenderer } from "@/lib/fps/renderer-loader";
+import { warmArenaAssets, warmArenaRenderer } from "@/lib/fps/renderer-loader";
 import "./strike-lobby.css";
 
 type OpenRoom = DuelLobbyData["open"][number];
@@ -122,7 +122,7 @@ export function DuelLobby() {
     const token = room ? `join:${room.id}` : `create:${stake}:${format}:${isPrivate}`;
     const key = keys.current.get(token) ?? crypto.randomUUID();
     keys.current.set(token, key);
-    warmArenaRenderer();
+    warmArenaAssets();
     setBusy(true);
     setError(null);
     try {
@@ -130,9 +130,13 @@ export function DuelLobby() {
         data: room
           ? { action: "join", combatVersion: 2, matchId: room.id, key }
           : { action: "create", combatVersion: 2, stake, bestOf: format, private: isPrivate, key },
-      })) as { id?: string; match_id?: string };
+      })) as DuelLobbyData["mine"] & { match_id?: string };
+      if (!result) throw Error("DUEL_REQUEST_FAILED");
       const id = result.match_id ?? result.id;
       if (!id) throw Error("DUEL_REQUEST_FAILED");
+      if (result.id && result.status && result.creator_id)
+        qc.setQueryData(["fps-view", id, userId], result);
+      if (room) setSelected(null);
       await navigate({ to: "/fps/$matchId", params: { matchId: id } });
       keys.current.delete(token);
     } catch (e) {
@@ -251,6 +255,7 @@ export function DuelLobby() {
                   aria-selected={panel === value}
                   onClick={() => {
                     setPanel(value);
+                    if (value === "create" && userId && desktop) warmArenaAssets();
                     setError(null);
                   }}
                 >
@@ -351,6 +356,7 @@ export function DuelLobby() {
                               }
                               onClick={() => {
                                 setSelected(room);
+                                warmArenaAssets();
                                 setJoinAccepted(false);
                                 setError(null);
                               }}
@@ -455,6 +461,12 @@ export function DuelLobby() {
                   {userId ? (
                     <button
                       type="submit"
+                      onPointerEnter={() => {
+                        if (userId && desktop) warmArenaAssets();
+                      }}
+                      onFocus={() => {
+                        if (userId && desktop) warmArenaAssets();
+                      }}
                       className="strike-primary"
                       disabled={
                         busy || !accepted || desktop !== true || !allowed(stake) || !!data?.mine
