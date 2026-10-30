@@ -190,3 +190,10 @@ rollout. Rollback remains available and would withdraw FPS while retaining the
 compatible migrations; FPS must be disabled first. Final status: **GO, deployed
 and smoke-verified for controlled practice only**. Public cash and payment
 operations require separate authorization.
+
+## Subsequent PvPStrike cash authorization
+
+The later explicit user request authorized cash after fixing and deploying the
+lobby. See [PvPStrike cash release](PVPSTRIKE-CASH-RELEASE-2026-10-30.md) for that
+separate rollout, its verification and the current cash-enabled state. This report
+above records the earlier practice-only rollout.
