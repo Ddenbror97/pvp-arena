@@ -186,12 +186,15 @@ export function createCharacter(seat: Seat, branding: THREE.Material) {
     lastZ = 0,
     initialized = false,
     flashUntil = 0;
+  const upper = root.children
+    .filter((object) => !legs.includes(object as THREE.Group))
+    .map((object) => ({ object, y: object.position.y }));
   return {
     root,
     shot(now: number) {
       flashUntil = now + 45;
     },
-    update(dt: number, now: number, pitch: number, alive: boolean) {
+    update(dt: number, now: number, pitch: number, alive: boolean, crouched = false) {
       const distance = initialized
         ? Math.hypot(root.position.x - lastX, root.position.z - lastZ)
         : 0;
@@ -202,6 +205,12 @@ export function createCharacter(seat: Seat, branding: THREE.Material) {
       const stride = Math.min(1, (distance / Math.max(0.001, dt)) * 150);
       legs[0]!.rotation.x = Math.sin(gait) * 0.48 * stride;
       legs[1]!.rotation.x = -Math.sin(gait) * 0.48 * stride;
+      for (const pose of upper) pose.object.position.y = pose.y - (crouched ? 0.65 : 0);
+      for (const leg of legs) {
+        leg.position.y = crouched ? 0.43 : 0.83;
+        leg.scale.y = crouched ? 0.6 : 1;
+        if (crouched) leg.rotation.x += 0.6;
+      }
       head.rotation.x = pitch * 0.5;
       rifle.rotation.x = pitch;
       arms[0]!.rotation.x = -0.22 + pitch * 0.6;

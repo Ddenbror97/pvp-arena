@@ -193,17 +193,34 @@ export function DuelMatch({
               own &&
               data.state.tick !== lastSound.current &&
               data.state.events.some(
-                (e) => e.seat === own && ["shot", "hit", "headshot"].includes(e.type),
+                (e) => e.seat === own && ["shot", "hit", "headshot", "impact"].includes(e.type),
               )
             ) {
               lastSound.current = data.state.tick;
               if (!muteRef.current && sound.current?.state === "running") {
-                const hit = data.state.events.some((e) => e.seat === own && e.type !== "shot"),
+                const hit = data.state.events.some(
+                    (e) => e.seat === own && ["hit", "headshot"].includes(e.type),
+                  ),
+                  impact = data.state.events.find(
+                    (e) => e.seat === own && e.type === "impact",
+                  )?.impact,
                   osc = sound.current.createOscillator(),
                   gain = sound.current.createGain();
-                osc.type = hit ? "sine" : "triangle";
-                osc.frequency.setValueAtTime(hit ? 850 : 130, sound.current.currentTime);
-                gain.gain.setValueAtTime(hit ? 0.06 : 0.04, sound.current.currentTime);
+                osc.type = hit ? "sine" : impact?.surface === "metal" ? "square" : "triangle";
+                osc.frequency.setValueAtTime(
+                  hit
+                    ? 850
+                    : impact?.surface === "metal"
+                      ? 520
+                      : impact?.surface === "wood"
+                        ? 200
+                        : 130,
+                  sound.current.currentTime,
+                );
+                gain.gain.setValueAtTime(
+                  hit ? 0.06 : impact?.surface === "metal" ? 0.02 : 0.04,
+                  sound.current.currentTime,
+                );
                 gain.gain.exponentialRampToValueAtTime(0.001, sound.current.currentTime + 0.08);
                 osc.connect(gain);
                 gain.connect(sound.current.destination);
@@ -393,7 +410,7 @@ export function DuelMatch({
         ))}
       <div className="duel-event-feed">
         {frame?.state.events
-          .filter((e) => e.type !== "shot")
+          .filter((e) => e.type !== "shot" && e.type !== "impact")
           .slice(-3)
           .map((e, i) => (
             <p key={i}>{e.text}</p>
@@ -413,7 +430,8 @@ export function DuelMatch({
         </div>
         <div className="duel-controls-hint">
           W A S D <span>Move</span> · R <span>Reload</span> · 1 / 2 <span>Weapon</span> · SHIFT{" "}
-          <span>Sprint</span> · ESC <span>Release mouse</span>
+          <span>Sprint</span> · SPACE <span>Jump</span> · CTRL <span>Crouch</span> · ESC{" "}
+          <span>Release mouse</span>
         </div>
         <div className="duel-ammo">
           <small>{me?.weapon?.toUpperCase() ?? "RIFLE"}</small>

@@ -1,9 +1,11 @@
 import * as THREE from "three";
-import { ARENA, BOXES, EYE_HEIGHT, SPAWNS } from "./map";
+import { EYE_HEIGHT, SPAWNS, eyeHeight } from "./map";
 import type { Input, MatchState, Player, Seat, Weapon } from "./protocol";
 import { predictMovement, TICK_MS, WEAPONS } from "./simulation";
 import { createCharacter } from "./character";
 import { HANDLING, decay, recoverRecoil, shotRecoil } from "./handling";
+import { createArenaEnvironment } from "./environment";
+import { createImpactEffects } from "./impacts";
 
 export type ArenaFrame = {
   state: MatchState;
@@ -24,8 +26,8 @@ export function mountArena(
   onLock: (locked: boolean) => void,
 ): ArenaControls {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x90b7d3);
-  scene.fog = new THREE.Fog(0x8eabc1, 32, 95);
+  scene.background = new THREE.Color(0x68717d);
+  scene.fog = new THREE.Fog(0x77808a, 40, 90);
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     powerPreference: "high-performance",
@@ -41,19 +43,21 @@ export function mountArena(
   camera.rotation.order = "YXZ";
   camera.position.set(0, EYE_HEIGHT, SPAWNS.A.z);
   scene.add(camera);
-  const hemisphere = new THREE.HemisphereLight(0xbbe1ff, 0x2b1637, 2.8);
+  const hemisphere = new THREE.HemisphereLight(0xc4d3df, 0x4b4238, 1.8);
   scene.add(hemisphere);
   const sun = new THREE.DirectionalLight(0xffefd8, 3.4);
-  sun.position.set(-12, 25, 12);
+  // Centre the light across the two opposing spawn directions.
+  sun.position.set(-12, 25, 0);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.camera.near = 1;
+  sun.shadow.camera.far = 65;
   sun.shadow.camera.left = -22;
   sun.shadow.camera.right = 22;
   sun.shadow.camera.top = 22;
   sun.shadow.camera.bottom = -22;
   sun.shadow.normalBias = 0.03;
   scene.add(sun);
-  const concrete = new THREE.MeshStandardMaterial({ color: 0x565663, roughness: 0.82 });
   const metal = new THREE.MeshStandardMaterial({
     color: 0x171620,
     metalness: 0.6,
@@ -65,22 +69,6 @@ export function mountArena(
     emissiveIntensity: 3,
   });
   const pale = new THREE.MeshStandardMaterial({ color: 0xe9d8ff, metalness: 0.3, roughness: 0.4 });
-  const box = (
-    x: number,
-    y: number,
-    z: number,
-    w: number,
-    h: number,
-    d: number,
-    material: THREE.Material = concrete,
-  ) => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
-    m.position.set(x, y, z);
-    m.receiveShadow = true;
-    m.castShadow = true;
-    scene.add(m);
-    return m;
-  };
   const logoCanvas = document.createElement("canvas");
   logoCanvas.width = 1024;
   logoCanvas.height = 384;
@@ -110,57 +98,14 @@ export function mountArena(
     emissiveIntensity: 0.7,
     roughness: 0.65,
   });
-  box(0, -0.2, 0, ARENA.width, 0.4, ARENA.depth);
-  for (const sign of [-1, 1]) {
-    box(sign * (ARENA.width / 2 + 0.4), 3, 0, 0.8, 6, ARENA.depth + 1);
-    box(0, 3, sign * (ARENA.depth / 2 + 0.4), ARENA.width + 1, 6, 0.8);
-    box(sign * (ARENA.width / 2 - 0.05), 0.13, 0, 0.09, 0.08, ARENA.depth, trim);
-    box(0, 0.13, sign * (ARENA.depth / 2 - 0.05), ARENA.width, 0.08, 0.09, trim);
-    box(sign * (ARENA.width / 2 - 0.05), 5, 0, 0.09, 0.09, ARENA.depth, trim);
-    box(0, 5.5, sign * (ARENA.depth / 2 - 0.05), ARENA.width, 0.1, 0.08, trim);
-    for (const z of [-12, -6, 0, 6, 12]) {
-      box(sign * (ARENA.width / 2 - 0.03), 3, z, 0.08, 6, 0.08, metal);
-      box(sign * (ARENA.width / 2 + 0.4), 6.2, z, 0.3, 1, 0.3, metal);
-    }
-    box(sign * (ARENA.width / 2 + 0.4), 6.6, 0, 0.2, 0.15, ARENA.depth + 1, metal);
-    const board = new THREE.Mesh(new THREE.PlaneGeometry(9, 3.4), branding);
-    board.position.set(0, 4, sign * (ARENA.depth / 2 - 0.06));
-    if (sign === 1) board.rotation.y = Math.PI;
-    scene.add(board);
-    for (const x of [-8, 8]) {
-      box(x, 3, sign * 16, 1.2, 6, 1, metal);
-      box(x, 4.5, sign * 15.4, 0.1, 2.4, 0.06, trim);
-    }
-    // Decorative upper deck remains beyond the server-enforced playable boundary.
-    box(sign * 13, 2.1, 0, 2, 0.3, 32, metal);
-    for (const z of [-7, 7]) {
-      const light = new THREE.PointLight(0x983cff, 12, 9, 2);
-      light.position.set(sign * 10, 2.5, z);
-      scene.add(light);
-    }
-  }
-  for (const b of BOXES) {
-    box(b.x, b.y, b.z, b.w, b.h, b.d, metal);
-    box(b.x, b.y + b.h / 2 + 0.02, b.z, b.w, 0.04, b.d, concrete);
-    box(b.x, b.y, b.z + b.d / 2 + 0.01, b.w, 0.07, 0.03, trim);
-    const edges = new THREE.LineSegments(
-      new THREE.EdgesGeometry(new THREE.BoxGeometry(b.w + 0.01, b.h + 0.01, b.d + 0.01)),
-      new THREE.LineBasicMaterial({ color: 0x716878 }),
-    );
-    edges.position.set(b.x, b.y, b.z);
-    scene.add(edges);
-  }
-  const ring = new THREE.Mesh(
-    new THREE.RingGeometry(3.65, 3.72, 80),
-    new THREE.MeshBasicMaterial({ color: 0x9a3cff, side: THREE.DoubleSide }),
-  );
-  ring.rotation.x = -Math.PI / 2;
-  ring.position.y = 0.015;
-  scene.add(ring);
-  const floorMark = new THREE.Mesh(new THREE.PlaneGeometry(5.5, 2.1), branding);
-  floorMark.rotation.x = -Math.PI / 2;
-  floorMark.position.set(0, 0.02, 10);
-  scene.add(floorMark);
+  const environment = createArenaEnvironment(scene, branding);
+  const impacts = createImpactEffects(scene);
+  // Capture this arena once for rough metallic reflections, excluding all players.
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const reflections = pmrem.fromScene(scene, 0.04, 0.1, 100);
+  scene.environment = reflections.texture;
+  scene.environmentIntensity = 0.45;
+  pmrem.dispose();
   const characters = { A: createCharacter("A", branding), B: createCharacter("B", branding) };
   scene.add(characters.A.root, characters.B.root);
   characters.A.root.visible = false;
@@ -309,7 +254,20 @@ export function mountArena(
       document.exitPointerLock();
       return;
     }
-    if (["Space", "KeyW", "KeyS", "KeyA", "KeyD", "KeyR", "Digit1", "Digit2"].includes(e.code))
+    if (
+      [
+        "Space",
+        "KeyW",
+        "KeyS",
+        "KeyA",
+        "KeyD",
+        "KeyR",
+        "Digit1",
+        "Digit2",
+        "ControlLeft",
+        "ControlRight",
+      ].includes(e.code)
+    )
       e.preventDefault();
     keys.add(e.code);
     if (e.code === "KeyR") reload = true;
@@ -374,6 +332,7 @@ export function mountArena(
           weapon,
           jump: active && jump,
           sprint: active && keys.has("ShiftLeft"),
+          crouch: active && (keys.has("ControlLeft") || keys.has("ControlRight")),
         };
         if (state.phase === "live") {
           predictMovement(predicted, input, TICK_MS);
@@ -393,11 +352,11 @@ export function mountArena(
     turnSway = decay(turnSway, 12, dt);
     landKick = decay(landKick, 14, dt);
     if (predicted && seat) {
-      camera.position.set(predicted.x, predicted.y + EYE_HEIGHT, predicted.z);
+      camera.position.set(predicted.x, predicted.y + eyeHeight(predicted), predicted.z);
       camera.rotation.set(Math.min(1.45, pitch + recoilPitch), yaw + recoilYaw, 0, "YXZ");
     } else if (state) {
       const p = state.players.A;
-      camera.position.set(p.x, p.y + EYE_HEIGHT, p.z);
+      camera.position.set(p.x, p.y + eyeHeight(p), p.z);
       camera.rotation.set(p.pitch, p.yaw, 0, "YXZ");
     }
     // Server uses positive pitch upward; Three camera rotation uses positive pitch upward too.
@@ -408,7 +367,7 @@ export function mountArena(
       const actor = characters[otherSeat];
       actor.root.position.lerp(remoteTarget, 1 - Math.exp(-dt / 60));
       actor.root.rotation.y = other.yaw;
-      actor.update(dt, now, other.pitch, other.hp > 0);
+      actor.update(dt, now, other.pitch, other.hp > 0, !!other.crouched);
     }
     muzzle.visible = now < muzzleUntil;
     const renderedWeapon = state && seat ? state.players[seat].weapon : weapon;
@@ -456,6 +415,7 @@ export function mountArena(
       `${(moving ? 3 : 0) + (airborne ? 4 : 0) + Math.min(5, recoilPitch * 45)}px`,
     );
     crosshair?.classList.toggle("is-reloading", reloadRemaining > 0);
+    impacts.update(dt, now);
     camera.layers.set(0);
     renderer.autoClear = true;
     renderer.render(scene, camera);
@@ -489,6 +449,7 @@ export function mountArena(
           shotIndex = 0;
           muzzleUntil = 0;
           smokeUntil = 0;
+          impacts.reset();
         }
         lastRound = state.round;
         predicted = { ...authoritative };
@@ -497,6 +458,7 @@ export function mountArena(
         for (const e of state.events) {
           if (e.id !== undefined && e.id <= lastEventId) continue;
           if (e.id !== undefined) lastEventId = e.id;
+          if (e.type === "impact" && e.impact) impacts.emit(e.impact, performance.now());
           if (e.type === "shot") {
             if (e.seat === seat) {
               const now = performance.now();
@@ -526,6 +488,7 @@ export function mountArena(
         for (const e of state.events) {
           if (e.id !== undefined && e.id <= lastEventId) continue;
           if (e.id !== undefined) lastEventId = e.id;
+          if (e.type === "impact" && e.impact) impacts.emit(e.impact, performance.now());
           if (e.type === "shot" && e.seat) characters[e.seat].shot(performance.now());
         }
       const other = state.players[seat === "B" ? "A" : "B"];
@@ -547,14 +510,27 @@ export function mountArena(
       document.removeEventListener("pointerlockchange", pointer);
       document.removeEventListener("visibilitychange", hidden);
       window.removeEventListener("blur", clear);
+      const geometries = new Set<THREE.BufferGeometry>(),
+        materials = new Set<THREE.Material>();
       scene.traverse((o) => {
-        if (o instanceof THREE.Mesh || o instanceof THREE.LineSegments) {
-          o.geometry.dispose();
+        if (
+          o instanceof THREE.Mesh ||
+          o instanceof THREE.LineSegments ||
+          o instanceof THREE.Points
+        ) {
+          geometries.add(o.geometry);
           const mats = Array.isArray(o.material) ? o.material : [o.material];
-          for (const m of mats) m.dispose();
+          for (const m of mats) materials.add(m);
+          if (o instanceof THREE.InstancedMesh) o.dispose();
         }
       });
+      for (const g of geometries) g.dispose();
+      for (const m of materials) m.dispose();
+      sun.shadow.map?.dispose();
       logoTexture.dispose();
+      environment.dispose();
+      reflections.dispose();
+      impacts.dispose();
       characters.A.dispose();
       characters.B.dispose();
       renderer.dispose();
