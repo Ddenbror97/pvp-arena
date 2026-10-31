@@ -151,6 +151,6 @@ export async function fixture(
   await page.waitForFunction(
     () => document.querySelector("canvas")?.dataset["authoredModels"] === "ready",
     {},
-    { timeout: 30000 },
+    { timeout: Number(process.env["FPS_READY_TIMEOUT"] ?? 30000) },
   );
 }

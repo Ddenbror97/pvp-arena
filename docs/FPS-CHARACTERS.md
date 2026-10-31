@@ -60,3 +60,18 @@ also checked. Existing financial release gates still apply.
 - [Masked fighter in the actual arena](screenshots/fps-character-fighter.png)
 
 This pass is local and is not deployed.
+
+## Character polish (2026-10-31)
+
+- Masked fighter head-wear rebuilt as layered cloth grown from the head mesh
+  (`head-wrap.ts`): a charcoal knit balaclava with an eye slit, and a worn tan shemagh
+  over nose, mouth and neck with a natural wrap line and rolled hem. Cloth drapes (angular
+  dilation of the skull envelope) instead of shrink-wrapping lips, sockets and ears, and is
+  always at least one fabric thickness outside the face. Replaces the cut-sphere hood, tube
+  mask and loud pattern. [Head](screenshots/fps-character-fighter-head.png),
+  [police head](screenshots/fps-character-officer-head.png).
+- Opponents read larger: world FOV is now 70° vertical (≈102° horizontal at 16:9, between
+  CS:GO and COD; was 78° ≈ 110°), about 13% more screen size at any range. Bodies are 6%
+  broader for a heavier operator silhouette; height is unchanged so the visible head stays
+  on the server head hitbox. [In game](screenshots/fps-character-ingame.png).
+- The opponents' rifles use the same realistic AKM finish as the viewmodel.

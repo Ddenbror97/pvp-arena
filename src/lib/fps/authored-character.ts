@@ -4,12 +4,16 @@ import type { WeaponKit } from "./weapon";
 import { createCharacter as createFallback } from "./character-rig";
 import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
 import { createAuthoredViewmodel } from "./authored-viewmodel";
+import { buildHeadWrap, createKnitTexture, createShemaghTextures } from "./head-wrap";
 import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 import { createMuzzleFlash } from "./muzzle-flash";
 import { ARENA_MODELS } from "./model-assets";
 
 type Motion = { airborne?: boolean; weapon?: Weapon; reloading?: boolean };
 /** Authored skinned bodies, bone-space IK and reference-specific clothing. */
+/** Horizontal build factor for both opponents (height is fixed by the head hitbox). */
+const BODY_BREADTH = 1.06;
+
 export function createCharacter(seat: Seat, branding: THREE.Material, kit: WeaponKit) {
   const police = seat === "A",
     root = new THREE.Group();
@@ -119,8 +123,11 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           .lerp(top.getWorldPosition(new THREE.Vector3()), 0.5),
         bounds = new THREE.Box3().setFromObject(body);
       const scale = 1.6 / (center.y - bounds.min.y);
-      body.scale.setScalar(scale);
-      body.position.set(-center.x * scale, -bounds.min.y * scale, -center.z * scale);
+      // Same height (eyes stay on the server head hitbox), slightly broader build and kit,
+      // which reads as a heavier COD/CS operator silhouette at range.
+      const girth = scale * BODY_BREADTH;
+      body.scale.set(girth, scale, girth);
+      body.position.set(-center.x * girth, -bounds.min.y * scale, -center.z * girth);
       baseY = body.position.y;
       root.add(body);
       body.updateMatrixWorld(true);
@@ -291,90 +298,37 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
         bill.scale.set(0.82, 0.82, 1);
       }
       if (!police) {
-        const canvas = document.createElement("canvas");
-        canvas.width = canvas.height = 512;
-        const pen = canvas.getContext("2d")!;
-        pen.fillStyle = "#a09880";
-        pen.fillRect(0, 0, 512, 512);
-        pen.fillStyle = "#37362f";
-        for (let y = -32; y < 544; y += 32)
-          for (let x = -32; x < 544; x += 32) {
-            pen.beginPath();
-            pen.moveTo(x, y);
-            pen.lineTo(x + 12, y);
-            pen.lineTo(x + 20, y + 8);
-            pen.lineTo(x + 28, y);
-            pen.lineTo(x + 28, y + 12);
-            pen.lineTo(x + 20, y + 20);
-            pen.lineTo(x + 28, y + 28);
-            pen.lineTo(x + 16, y + 28);
-            pen.lineTo(x + 8, y + 20);
-            pen.lineTo(x, y + 28);
-            pen.lineTo(x, y + 16);
-            pen.lineTo(x + 8, y + 8);
-            pen.closePath();
-            pen.fill();
-          }
-        pen.globalAlpha = 0.15;
-        for (let i = 0; i < 512; i += 2) {
-          pen.fillStyle = i % 4 ? "#fff" : "#000";
-          pen.fillRect(i, 0, 1, 512);
-          pen.fillRect(0, i, 512, 1);
-        }
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.colorSpace = THREE.SRGBColorSpace;
-        texture.anisotropy = 8;
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-        ownedTextures.push(texture);
+        // Fitted shemagh: one cloth layer grown from the head mesh itself, with an eye slit.
+        const shemagh = createShemaghTextures();
+        ownedTextures.push(shemagh.map, shemagh.bump);
         const scarf = new THREE.MeshStandardMaterial({
-          map: texture,
-          bumpScale: 0,
-          roughness: 0.95,
+          map: shemagh.map,
+          bumpMap: shemagh.bump,
+          bumpScale: 0.25,
+          roughness: 0.93,
+          side: THREE.DoubleSide,
         });
         ownedMaterials.push(scarf);
         headInstance.root.getObjectByName("short02")!.visible = false;
-        // Cloth has its own smooth surface: it must bridge lips and nose, not copy their creases.
-        const hoodGeometry = new THREE.SphereGeometry(1, 48, 24, 0, Math.PI * 2, 0, 1.27);
-        const hp = hoodGeometry.getAttribute("position");
-        for (let i = 0; i < hp.count; i++) {
-          const x = hp.getX(i),
-            y = hp.getY(i),
-            z = hp.getZ(i),
-            fold = 1 + Math.sin(Math.atan2(z, x) * 12 + y * 4) * 0.008;
-          hp.setXYZ(i, x * 0.107 * fold, y * 0.124 + 0.044, z * 0.132 * fold);
-        }
-        hoodGeometry.computeVertexNormals();
-        part(hoodGeometry, scarf, 0, 0, 0).name = "fitted-scarf-hood";
-        const maskP: number[] = [],
-          maskUV: number[] = [],
-          maskIndices: number[] = [],
-          maskSides = 64,
-          maskRings = 14;
-        for (let r = 0; r <= maskRings; r++)
-          for (let j = 0; j <= maskSides; j++) {
-            const t = r / maskRings,
-              angle = (j / maskSides) * Math.PI * 2;
-            const fold = Math.sin(angle * 9 + t * 8) * 0.0015 * Math.sin(Math.PI * t);
-            maskP.push(
-              Math.cos(angle) * (THREE.MathUtils.lerp(0.1, 0.073, t) + fold),
-              0.006 - t * 0.147,
-              Math.sin(angle) *
-                (THREE.MathUtils.lerp(0.15, 0.095, THREE.MathUtils.smoothstep(t, 0.65, 1)) + fold) +
-                0.005,
-            );
-            maskUV.push(j / maskSides, t * 0.45);
-            if (r < maskRings && j < maskSides) {
-              const a = r * (maskSides + 1) + j,
-                b = a + maskSides + 1;
-              maskIndices.push(a, a + 1, b, b, a + 1, b + 1);
-            }
-          }
-        const mask = new THREE.BufferGeometry();
-        mask.setAttribute("position", new THREE.Float32BufferAttribute(maskP, 3));
-        mask.setAttribute("uv", new THREE.Float32BufferAttribute(maskUV, 2));
-        mask.setIndex(maskIndices);
-        mask.computeVertexNormals();
-        part(mask, scarf, 0, 0, 0).name = "fitted-scarf-mask";
+        let skinGeometry: THREE.BufferGeometry | undefined;
+        headInstance.root.traverse((object) => {
+          if (!(object instanceof THREE.Mesh) || skinGeometry) return;
+          const materials = Array.isArray(object.material) ? object.material : [object.material];
+          if (materials.some((m) => m.name.endsWith(".body"))) skinGeometry = object.geometry;
+        });
+        const wrap = buildHeadWrap(skinGeometry!, { eyeCenter });
+        const knit = createKnitTexture();
+        ownedTextures.push(knit);
+        const balaclavaMaterial = new THREE.MeshStandardMaterial({
+          map: knit,
+          bumpMap: knit,
+          bumpScale: 0.4,
+          roughness: 0.97,
+          side: THREE.DoubleSide,
+        });
+        ownedMaterials.push(balaclavaMaterial);
+        part(wrap.balaclava, balaclavaMaterial, 0, 0, 0).name = "fitted-balaclava";
+        part(wrap.scarf, scarf, 0, 0, 0).name = "fitted-shemagh-wrap";
         // A soft folded cowl follows the neck and drapes over the chest instead of a rigid cone.
         const p: number[] = [],
           uv: number[] = [],

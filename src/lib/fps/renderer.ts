@@ -24,6 +24,11 @@ import { createMuzzleFlash } from "./muzzle-flash";
 import { createAuthoredViewmodel } from "./authored-viewmodel";
 import { REMOTE_DELAY_MS } from "./network";
 
+/**
+ * World camera vertical FOV. 70° ≈ 102° horizontal at 16:9 — between CS:GO (≈106°) and COD
+ * (≈96–100°); opponents read ~13% larger than at the previous 78° without changing hitboxes.
+ */
+export const WORLD_FOV = 70;
 /** Authored AK rest framing in the 60° viewmodel camera: right-hand pivot, chunky receiver. */
 export const VIEWMODEL_REST = { x: 0.14, y: -0.12, z: -0.2, pitch: 0.08, yaw: 0.24, roll: -0.05 };
 
@@ -96,7 +101,7 @@ export function mountArena(
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
   host.appendChild(renderer.domElement);
-  const camera = new THREE.PerspectiveCamera(78, 1, 0.06, 260);
+  const camera = new THREE.PerspectiveCamera(WORLD_FOV, 1, 0.06, 260);
   const viewCamera = new THREE.PerspectiveCamera(60, 1, 0.03, 8);
   viewCamera.layers.set(1);
   camera.rotation.order = "YXZ";

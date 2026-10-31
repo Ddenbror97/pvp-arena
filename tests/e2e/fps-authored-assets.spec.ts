@@ -22,7 +22,7 @@ test("authored viewmodel loads fitted hands, skin and the realistic AK finish", 
     model.root.traverse(
       (object: { material?: { name: string; customProgramCacheKey: () => string } }) => {
         const key = object.material?.customProgramCacheKey?.();
-        if (key?.startsWith("ak-finish")) finishes.add(object.material!.name);
+        if (key === "ak-finish") finishes.add(object.material!.name);
       },
     );
     model.root.traverse(

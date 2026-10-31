@@ -242,8 +242,9 @@ function applyFinish(material: THREE.MeshStandardMaterial, finish: Finish, scale
   material.roughness = 1;
   if (finish.color !== undefined) material.color.setHex(finish.color);
   else material.color.setHex(0xffffff);
+  // Clearcoat is always enabled (≥ 0.02) so every finish compiles to one shader program.
   if (material instanceof THREE.MeshPhysicalMaterial) {
-    material.clearcoat = finish.clearcoat ?? 0;
+    material.clearcoat = Math.max(0.02, finish.clearcoat ?? 0);
     material.clearcoatRoughness = finish.clearcoatRoughness ?? 0.3;
   }
   // The authored base colour is a flat dark swatch; the procedural finish drives the look.
@@ -253,6 +254,7 @@ function applyFinish(material: THREE.MeshStandardMaterial, finish: Finish, scale
     uFinishMap: { value: map },
     uFinishScale: { value: scale.clone().multiplyScalar(finish.density) },
     uFinishRough: { value: new THREE.Vector2(...finish.roughness) },
+    uFinishReplace: { value: finish.mode === "replace" ? 1 : 0 },
   };
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms);
@@ -272,6 +274,7 @@ function applyFinish(material: THREE.MeshStandardMaterial, finish: Finish, scale
 uniform sampler2D uFinishMap;
 uniform vec3 uFinishScale;
 uniform vec2 uFinishRough;
+uniform float uFinishReplace;
 varying vec3 vFinishPos;
 varying vec3 vFinishNormal;`,
       )
@@ -285,11 +288,7 @@ varying vec3 vFinishNormal;`,
       vec4 finish = texture2D( uFinishMap, finishP.zy ) * finishW.x
         + texture2D( uFinishMap, finishP.zx + 0.37 ) * finishW.y
         + texture2D( uFinishMap, finishP.xy + 0.71 ) * finishW.z;
-      ${
-        finish.mode === "replace"
-          ? "diffuseColor.rgb = finish.rgb * diffuse;"
-          : "diffuseColor.rgb *= finish.rgb * 2.0;"
-      }`,
+      diffuseColor.rgb = mix( diffuseColor.rgb * finish.rgb * 2.0, finish.rgb * diffuse, uFinishReplace );`,
       )
       .replace(
         "#include <roughnessmap_fragment>",
@@ -297,7 +296,7 @@ varying vec3 vFinishNormal;`,
       roughnessFactor = mix( uFinishRough.x, uFinishRough.y, finish.a );`,
       );
   };
-  material.customProgramCacheKey = () => `ak-finish-${finish.mode}`;
+  material.customProgramCacheKey = () => "ak-finish";
   material.needsUpdate = true;
 }
 

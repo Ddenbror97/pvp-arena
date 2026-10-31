@@ -63,9 +63,10 @@ test("both authored heads keep skin detail and fitted eyewear", async ({ page })
       });
       const glasses = actor.root.getObjectByName("fitted-aviator-L");
       const bounds = new T.Box3().setFromObject(glasses);
-      const scarf = actor.root.getObjectByName("fitted-scarf-hood") as Mesh | undefined;
+      const scarf = actor.root.getObjectByName("fitted-shemagh-wrap") as Mesh | undefined;
+      const balaclava = actor.root.getObjectByName("fitted-balaclava") as Mesh | undefined;
       actor.root.updateWorldMatrix(true, true);
-      const mask = actor.root.getObjectByName("fitted-scarf-mask"),
+      const mask = actor.root.getObjectByName("fitted-shemagh-wrap"),
         head = actor.root.getObjectByName("reference-headgear");
       const maskClearance = mask
         ? [-0.02, -0.06, -0.1].map((y) => {
@@ -85,6 +86,9 @@ test("both authored heads keep skin detail and fitted eyewear", async ({ page })
         skinMap: !!skin?.map,
         maskClearance,
         glassWidth: bounds.max.x - bounds.min.x,
+        // The balaclava covers the crown and ears; the eye slit keeps the eyes visible.
+        covered:
+          seat === "B" ? !!balaclava && !actor.root.getObjectByName("fitted-scarf-hood") : true,
         scarfRepeats: scarf
           ? (scarf.material as MeshStandardMaterial).map?.wrapS === T.RepeatWrapping
           : true,
@@ -110,6 +114,7 @@ test("both authored heads keep skin detail and fitted eyewear", async ({ page })
     expect(r.skinMap).toBe(true);
     expect(r.glassWidth).toBeLessThan(0.07);
     expect(r.scarfRepeats).toBe(true);
+    expect(r.covered).toBe(true);
   }
   await page.evaluate(() => {
     const g = Reflect.get(window, "headGallery");
