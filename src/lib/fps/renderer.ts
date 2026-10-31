@@ -346,7 +346,7 @@ export function mountArena(
     wasAirborne = false,
     lookX = 0,
     lookY = 0;
-  const motion = createViewmodelMotion();
+  const viewmodelMotion = createViewmodelMotion();
   let lastServerOffset = 0;
   const crosshair = host.parentElement?.querySelector<HTMLElement>(".duel-crosshair");
   const hitMarker = host.parentElement?.querySelector<HTMLElement>(".duel-hit-marker");
@@ -741,7 +741,7 @@ export function mountArena(
     magazine.rotation.x = reloadTilt * 0.14;
     chargingHandle.position.z = -0.04 + kick * 0.008;
     // Breathing, look sway, stride bob, sprint tuck and recoil roll (viewmodel-motion.ts).
-    const sway = motion.update({
+    const sway = viewmodelMotion.update({
       dt,
       lookX,
       lookY,
