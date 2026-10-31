@@ -76,11 +76,11 @@ function player(id: string, seat: Seat): Player {
 
 export function createMatch(
   ids: { A: string; B: string },
-  bestOf: 5 | 9,
+  bestOf: 5 | 9 | 13,
   now: number,
   combatVersion: 1 | 2 = COMBAT_VERSION,
 ): MatchState {
-  if (!Number.isFinite(now) || (bestOf !== 5 && bestOf !== 9))
+  if (!Number.isFinite(now) || ![5, 9, 13].includes(bestOf))
     throw new Error("Invalid match configuration");
   return {
     v: 1,

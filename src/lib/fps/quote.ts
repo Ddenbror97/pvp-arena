@@ -15,7 +15,8 @@ export type DuelView = {
   creator_id: string;
   opponent_id: string | null;
   stake: number;
-  best_of: 5 | 9;
+  best_of: 5 | 9 | 13;
+  practice?: boolean;
   private: boolean;
   expires_at: string;
   invite?: string | null;

@@ -887,4 +887,57 @@ describe("FPS isolated ledger and RPCs", () => {
     expect(await balance(C)).toBe(9950);
     expect(await balance(C, "user_locked")).toBe(50);
   });
+
+  it("isolates solo BO13 from wallets, ranks, other users and human matchmaking", async () => {
+    await admin(
+      "create function extensions.gen_random_uuid() returns uuid language sql as $$ select gen_random_uuid() $$;",
+    );
+    await db.exec(read("20261031135055_fps_solo_practice.sql"));
+    await claims(A);
+    const g = await rpc("fps_practice_start", ["solo-start-test-1"]);
+    expect(g).toMatchObject({
+      stake: 0,
+      best_of: 13,
+      practice: true,
+      status: "FUNDED",
+      private: true,
+    });
+    expect((await rpc("fps_practice_start", ["solo-start-test-1"])).id).toBe(g.id);
+    expect((await rpc<LobbyResult>("fps_lobby")).mine?.id).toBe(g.id);
+    expect(await rpc("fps_view", [g.id])).toMatchObject({ practice: true });
+    await expect(enter(100)).rejects.toThrow("ALREADY_IN_MATCH");
+    await expect(enter(0)).rejects.toThrow("PRACTICE_SOLO_ONLY");
+    await expect(rpc("fps_practice_finish", [g.id, A, 7, 0, "ROUNDS", g.id])).rejects.toThrow(
+      /permission denied/,
+    );
+    await claims(B);
+    await expect(rpc("fps_view", [g.id])).rejects.toThrow("MATCH_NOT_FOUND");
+    await expect(rpc("fps_join", [g.id, "no-human-join-1", null])).rejects.toThrow(
+      "MATCH_NOT_OPEN",
+    );
+    await claims(null, "service_role");
+    await expect(rpc("fps_practice_finish", [g.id, A, 6, 0, "ROUNDS", g.id])).rejects.toThrow(
+      "INVALID_RESULT",
+    );
+    expect(await rpc("fps_practice_finish", [g.id, A, 7, 2, "ROUNDS", g.id])).toMatchObject({
+      status: "COMPLETED",
+      score_a: 7,
+      score_b: 2,
+    });
+    await rpc("fps_practice_finish", [g.id, A, 7, 2, "ROUNDS", g.id]);
+    await db.exec("reset role");
+    expect(
+      (
+        await db.query(
+          "select count(*)::int n from ledger_transactions where kind::text like 'fps_%'",
+        )
+      ).rows[0].n,
+    ).toBe(0);
+    expect((await db.query("select count(*)::int n from fps_ratings")).rows[0].n).toBe(0);
+    expect(await balance(A)).toBe(10000);
+    await claims(A);
+    const fresh = await rpc("fps_practice_start", ["solo-new-test-1"]);
+    await rpc("fps_cancel", [fresh.id]);
+    expect((await enter(100)).stake).toBe(100);
+  });
 });

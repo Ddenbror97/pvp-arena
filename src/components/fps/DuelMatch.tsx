@@ -106,7 +106,8 @@ export function DuelMatch({
     (id, index) =>
       profiles.data?.find((p) => p.id === id) ?? {
         id: id ?? String(index),
-        username: `Player ${index === 0 ? "A" : "B"}`,
+        username:
+          match?.practice && index === 1 ? "Arena Bot" : `Player ${index === 0 ? "A" : "B"}`,
         avatar_url: null,
       },
   );
@@ -408,7 +409,9 @@ export function DuelMatch({
                   key: requestKey.current,
                   ...(invite ? { invite } : {}),
                 }
-              : { action: kind, combatVersion: 2, matchId, key: requestKey.current },
+              : match?.practice
+                ? { action: "practice", combatVersion: 2, key: requestKey.current }
+                : { action: kind, combatVersion: 2, matchId, key: requestKey.current },
       })) as { match_id?: string; id?: string };
       if ("status" in r && "creator_id" in r && r.id)
         qc.setQueryData(["fps-view", r.id, userId], r);
@@ -667,7 +670,9 @@ export function DuelMatch({
                   {frame?.state.score.B ?? match?.score_b ?? 0}
                   <br />
                   {frame?.settled || ["COMPLETED", "CANCELLED"].includes(match?.status ?? "")
-                    ? "Result recorded. Your wallet reflects the server's settlement."
+                    ? match?.practice
+                      ? "Practice complete. No wager or rating changes."
+                      : "Result recorded. Your wallet reflects the server's settlement."
                     : "Settlement pending. The server is retrying safely; no client payout is required."}
                 </p>
                 <button
@@ -677,9 +682,11 @@ export function DuelMatch({
                     spectate ||
                     !(frame?.settled || ["COMPLETED", "CANCELLED"].includes(match?.status ?? ""))
                   }
-                  onClick={() => setRematchReview(true)}
+                  onClick={() =>
+                    match?.practice ? void perform("rematch") : setRematchReview(true)
+                  }
                 >
-                  Accept fresh rematch
+                  {match?.practice ? "Practice again" : "Accept fresh rematch"}
                 </button>
                 {rematchReview && (
                   <div className="duel-rematch-review">
@@ -755,7 +762,9 @@ export function DuelMatch({
                       ? "Reset. Read the next angle."
                       : active
                         ? "Back into the duel."
-                        : "Both players. Ready up."}
+                        : match?.practice
+                          ? "Your bot is ready."
+                          : "Both players. Ready up."}
                 </h1>
                 <p>
                   {!arenaReady

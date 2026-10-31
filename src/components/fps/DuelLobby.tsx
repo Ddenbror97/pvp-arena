@@ -72,7 +72,7 @@ export function DuelLobby() {
     retry: false,
   });
   const [panel, setPanel] = useState<"games" | "create">("games");
-  const [stake, setStake] = useState(0),
+  const [stake, setStake] = useState(100),
     [format, setFormat] = useState<5 | 9>(5);
   const [isPrivate, setPrivate] = useState(false),
     [accepted, setAccepted] = useState(false);
@@ -103,7 +103,7 @@ export function DuelLobby() {
     !!data?.enabled &&
     (amount === 0 ? data.practice_allowed : data.cash_enabled && data.stakes.includes(amount));
   const rooms = (data?.open ?? []).filter(
-    (room) => Date.parse(room.expires_at) > now && (room.stake === 0 || data?.cash_enabled),
+    (room) => Date.parse(room.expires_at) > now && room.stake > 0 && data?.cash_enabled,
   );
   const featured = rooms.find((room) => room.creator_id !== userId);
   const selectedStake = panel === "games" ? (featured?.stake ?? stake) : stake;
@@ -148,6 +148,31 @@ export function DuelLobby() {
     }
   }
 
+  async function practice() {
+    if (!userId) {
+      await navigate({ to: "/auth" });
+      return;
+    }
+    if (busy || !desktop || !data?.enabled || !data.practice_allowed || data.mine) return;
+    const key = keys.current.get("practice") ?? crypto.randomUUID();
+    keys.current.set("practice", key);
+    setBusy(true);
+    setError(null);
+    warmArenaAssets();
+    try {
+      const result = (await action({
+        data: { action: "practice", combatVersion: 2, key },
+      })) as NonNullable<DuelLobbyData["mine"]>;
+      qc.setQueryData(["fps-view", result.id, userId], result);
+      await navigate({ to: "/fps/$matchId", params: { matchId: result.id } });
+      keys.current.delete("practice");
+    } catch (e) {
+      setError(duelError(e));
+    } finally {
+      setBusy(false);
+      void qc.invalidateQueries({ queryKey: ["fps-lobby"] });
+    }
+  }
   return (
     <div className="strike-lobby">
       <section className="strike-stage" aria-labelledby="strike-title">
@@ -243,6 +268,36 @@ export function DuelLobby() {
               if (userId && desktop) warmArenaRenderer();
             }}
           >
+            <div className="strike-practice">
+              <h2>Solo Practice</h2>
+              <p>
+                Face the arena bot. First to seven wins · Best of 13.
+                <br />
+                Free · No wager or rating changes.
+              </p>
+              <button
+                type="button"
+                className="strike-primary"
+                disabled={
+                  busy ||
+                  desktop !== true ||
+                  !data?.enabled ||
+                  !data.practice_allowed ||
+                  !!data.mine
+                }
+                onPointerEnter={() => {
+                  if (userId && desktop) warmArenaAssets();
+                }}
+                onClick={() => void practice()}
+              >
+                Practice vs bot <Crosshair size={16} />
+              </button>
+              {error && (
+                <p className="strike-error" role="alert">
+                  {error}
+                </p>
+              )}
+            </div>
             <div className="strike-tabs" role="tablist" aria-label="PvPStrike games">
               {(["games", "create"] as const).map((value) => (
                 <button
@@ -388,10 +443,7 @@ export function DuelLobby() {
                       Entry per player <span>USD</span>
                     </legend>
                     <div className="strike-stakes">
-                      {[
-                        ...(data?.practice_allowed !== false ? [0] : []),
-                        ...(data?.cash_enabled ? data.stakes : []),
-                      ].map((amount) => (
+                      {[...(data?.cash_enabled ? data.stakes : [])].map((amount) => (
                         <button
                           key={amount}
                           type="button"
