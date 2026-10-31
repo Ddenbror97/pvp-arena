@@ -57,7 +57,7 @@ export function buildTestSchemaSql(skip: readonly string[] = []): string {
   );
   s = s
     .replace(/public\./g, "pvp_test.")
-    .replace(/search_path = public/g, "search_path = pvp_test");
+    .replace(/\bsearch_path\s*=\s*public\b/gi, "search_path = pvp_test");
   // In-place function patch helpers look functions up by schema name.
   s = s.replace(/n\.nspname = 'public'/g, "n.nspname = 'pvp_test'");
   s = s.replace(/search_path to 'public'/gi, "search_path TO 'pvp_test'");
