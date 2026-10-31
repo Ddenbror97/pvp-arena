@@ -3,6 +3,7 @@ import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
 import { poseRifleHands, fitContinuousForearms, SHORT_FOREARMS } from "./fitted-rifle-hands";
 import { ARENA_MODELS } from "./model-assets";
+import { applyVeinTint, createForearmDetailTexture } from "./forearm-detail";
 import {
   BOLT_TRAVEL,
   MAG_POSITION,
@@ -15,6 +16,9 @@ import {
   sampleVec,
   type SupportAnchor,
 } from "./reload-animation";
+
+/** Relief depth of the forearm detail map, in viewmodel-root units per unit of height. */
+const FOREARM_BUMP_SCALE = 0.065;
 
 /** Real authored AK and skinned hands. Existing controller still owns every input and shot. */
 export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = true) {
@@ -105,12 +109,20 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
   skinMap.anisotropy = 8;
   skinMap.repeat.set(2, 3);
   ownedTextures.push(skinMap);
-  const skin = new THREE.MeshStandardMaterial({
-    map: skinMap,
-    color: 0xffffff,
-    roughness: 0.62,
-    metalness: 0,
-  });
+  // Veins, wrist tendons and muscle separation as relief plus a cool vein tint.
+  const skinDetail = createForearmDetailTexture();
+  ownedTextures.push(skinDetail);
+  const skin = applyVeinTint(
+    new THREE.MeshStandardMaterial({
+      map: skinMap,
+      color: 0xffffff,
+      roughness: 0.56,
+      metalness: 0,
+      bumpMap: skinDetail,
+      bumpScale: FOREARM_BUMP_SCALE,
+    }),
+    1,
+  );
   ownedMaterials.push(skin);
   const logo = new THREE.TextureLoader().load("/brand/arena-logo-email.png");
   logo.colorSpace = THREE.SRGBColorSpace;
