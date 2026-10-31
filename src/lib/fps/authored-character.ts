@@ -6,6 +6,7 @@ import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
 import { createAuthoredViewmodel } from "./authored-viewmodel";
 import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 import { createMuzzleFlash } from "./muzzle-flash";
+import { ARENA_MODELS } from "./model-assets";
 
 type Motion = { airborne?: boolean; weapon?: Weapon; reloading?: boolean };
 /** Authored skinned bodies, bone-space IK and reference-specific clothing. */
@@ -45,8 +46,8 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
     pistol.add(mesh);
   }
   weapon.root.visible = false;
-  const asset = retainAuthoredAsset("/fps/models/tactical-body.glb");
-  const headAsset = retainAuthoredAsset("/fps/models/reference-head-webp.glb");
+  const asset = retainAuthoredAsset(ARENA_MODELS.body);
+  const headAsset = retainAuthoredAsset(ARENA_MODELS.head);
   const ownedMaterials: THREE.Material[] = [],
     ownedTextures: THREE.Texture[] = [],
     ownedGeometry: THREE.BufferGeometry[] = [];

@@ -32,7 +32,7 @@ export async function fetchDuelRankings(): Promise<
     wins: number;
   }>;
 }
-export const DUEL_ERRORS: Record<string, string> = {
+const DUEL_ERRORS: Record<string, string> = {
   CLIENT_UPDATE_REQUIRED:
     "Reload PvPStrike to load the updated combat rules before entering a match.",
   STAKE_NOT_ALLOWED:

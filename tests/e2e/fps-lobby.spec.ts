@@ -22,6 +22,9 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
   await expect(page.getByText("Platform fee · 5%", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Best of 9" }).click();
   await expect(page.getByText("First to 5", { exact: true })).toBeVisible();
+  // The creation panel deliberately scrolls on laptop-height screens. Verify
+  // the action is reachable inside it after choosing a format.
+  await page.locator(".strike-panel .strike-primary").scrollIntoViewIfNeeded();
   const actionVisible = await page.locator(".strike-panel .strike-primary").evaluate((element) => {
     const button = element.getBoundingClientRect(),
       panel = element.closest(".strike-panel")!.getBoundingClientRect();

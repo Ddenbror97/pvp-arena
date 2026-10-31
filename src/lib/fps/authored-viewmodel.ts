@@ -2,10 +2,11 @@ import * as THREE from "three";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
 import { poseRifleHands, fitContinuousForearms } from "./fitted-rifle-hands";
+import { ARENA_MODELS } from "./model-assets";
 
 /** Real authored AK and skinned hands. Existing controller still owns every input and shot. */
 export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = true) {
-  const asset = retainAuthoredAsset("/fps/models/ak47-authored.glb");
+  const asset = retainAuthoredAsset(ARENA_MODELS.rifle);
   const root = new THREE.Group();
   root.name = "authored-first-person";
   root.scale.setScalar(0.52);
