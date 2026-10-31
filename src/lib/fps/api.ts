@@ -50,7 +50,8 @@ const DUEL_ERRORS: Record<string, string> = {
   INSUFFICIENT_BALANCE: "Your available cash balance is too low for this entry.",
   ALREADY_IN_MATCH: "Finish or cancel your existing duel first.",
   FORBIDDEN: "You do not have access to this room.",
-  RESTRICTED_FUNDS: "This entry requires unrestricted cash. Bonus balances cannot fund FPS duels.",
+  RESTRICTED_FUNDS:
+    "Some of your balance is still on hold. Use available funds or try again after the hold clears.",
   MATCH_NOT_FOUND: "This room is no longer available.",
   MATCH_EXPIRED: "This room has expired. Return to the lobby.",
   MATCH_NOT_READY: "The opponent has not joined yet.",
