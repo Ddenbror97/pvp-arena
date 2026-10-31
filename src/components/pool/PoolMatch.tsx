@@ -26,14 +26,8 @@ import {
 } from "@/lib/pool/stand-in-show";
 import { rollStandIn, warmStandIn } from "@/lib/pool/stand-in-roll";
 import { MAX_PULL_POWER } from "@/lib/pool/aim-gesture";
-import { recordShot } from "@/lib/pool/play";
-import {
-  PHYSICS_V5,
-  cushionLimit,
-  simulate,
-  type Ball,
-  type ShotInput,
-} from "@/lib/pool/physics";
+import { recordAcceptedShot, recordShot } from "@/lib/pool/play";
+import { PHYSICS_V5, cushionLimit, simulate, type Ball, type ShotInput } from "@/lib/pool/physics";
 import {
   applyPlayedShot,
   calledPocketChoice,
@@ -554,10 +548,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
     const last = shots[shots.length - 1];
     if (!last || last.kind !== "shot") {
       if (previewKey.current && last?.kind !== "timeout" && last?.kind !== "forfeit") return;
-      if (
-        (last?.kind === "timeout" || last?.kind === "forfeit") &&
-        showShot.current != null
-      ) {
+      if ((last?.kind === "timeout" || last?.kind === "forfeit") && showShot.current != null) {
         abortStandIn.current();
         return;
       }
@@ -650,16 +641,37 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         const seedKey = `${liveId ?? 0}:${serverSeed}:${physicsId}`;
         let rolled = resumeReplay(seedBytes, seedKey, prior, physicsId, replayCursor.current);
         if (!rolled.ok) rolled = resumeReplay(seedBytes, seedKey, prior, physicsId, null);
-        if (!rolled.ok || cancel) return;
-        const carried = resumeReplay(seedBytes, seedKey, [...prior, input], physicsId, rolled.cursor);
+        if (cancel) return;
+        if (!rolled.ok) {
+          replayCursor.current = null;
+          abortStandIn.current();
+          return;
+        }
+        const carried = resumeReplay(
+          seedBytes,
+          seedKey,
+          [...prior, input],
+          physicsId,
+          rolled.cursor,
+        );
         replayCursor.current = carried.ok ? carried.cursor : rolled.cursor;
-        const played = recordShot(rolled.state, input.input, physicsId);
-        if (!played || cancel || (tableShot && framesRef.current)) return;
+        const played = recordAcceptedShot(rolled.state, input.input, input.hash, physicsId);
+        if (cancel || (tableShot && framesRef.current)) return;
+        if (!carried.ok || !played) {
+          // The authoritative rack is already in `state`. Discard an invalid
+          // local picture instead of leaving input blocked by a held replay.
+          abortStandIn.current();
+          return;
+        }
         const seenPull = tableShot && pullFinished.current;
         previewKey.current = storedKey;
         previewHash.current = played.hash;
         previewTable.current = played.state;
         previewFrames.current = played.sequence;
+        // This replay came FROM the committed server event. Waiting for a
+        // second acknowledgement leaves the opponent's finished replay held
+        // forever when subsequent polls return the same state hash.
+        serverReady.current = true;
         if (tableShot) {
           released.current = true;
           framesShot.current = showShot.current;
@@ -685,6 +697,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         cueSound(input.input.power);
       } catch (error) {
         console.error(error);
+        if (!cancel) abortStandIn.current();
       }
     }, 0);
     return () => {
@@ -739,14 +752,7 @@ export function PoolMatch({ matchId }: { matchId: number }) {
       abortStandIn.current();
       return;
     }
-    if (
-      !serverSeed ||
-      !state ||
-      reduce ||
-      !physicsId ||
-      state.winner ||
-      !standInShouldAim(live)
-    ) {
+    if (!serverSeed || !state || reduce || !physicsId || state.winner || !standInShouldAim(live)) {
       if (showShot.current == null) setSystemShot(null);
       return;
     }
