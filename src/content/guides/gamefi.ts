@@ -144,21 +144,7 @@ If you still want a wallet session that you can explain to another adult, prefer
     {
       id: "worked",
       title: "A worked example: one wallet, two products",
-      body: `On Monday you buy a $300 character NFT because the patch notes say the next season will “rebalance earn.” You play ten hours and receive 4,000 reward tokens. The token’s bid is $0.04, so the sheet says $160 before the guild’s 30% cut. You net $112 of a coin you still have to sell into a thin pool.
-
-On Tuesday the same wallet opens a GameFi “tavern.” You stake 1,000 of those tokens on a crash chart. The tavern is a casino. It does not care about your scholarship ratio. You lose the 1,000 tokens. Your Monday grind just funded a house game that was never in the white paper’s wage story.
-
-On Wednesday the reward token is $0.02. The NFT floor is $90. You still have a fun character if the combat is fun. You do not have a job. You have a collectible, an inflationary leftover and a losing wager.
-
-| Monday story | Tuesday product | Wednesday fact |
-| --- | --- | --- |
-| “I earned $160” | Crash in the tavern | Token bid $0.02 |
-| Guild split | House game | NFT floor $90 |
-| Season hype | Same wallet | Two losses, one hobby |
-
-The fix is labelling. Put GameFi speculation in a size you can mark to zero. Put casino stakes in a dollar cap on a site that publishes the draw. Do not let a tavern inside the map spend the wage you have not even sold yet.
-
-A token that also acts as a chip is the overlap with gambling. [NFT gambling](/guides/nft-gambling) is that overlap when the picture itself is the stake.`,
+      body: "On Monday you buy a $300 character NFT because the patch notes say the next season will “rebalance earn.” You play ten hours and receive 4,000 reward tokens. The token’s bid is $0.04, so the sheet says $160 before the guild’s 30% cut. You net $112 of a coin you still have to sell into a thin pool.\n\nOn Tuesday the same wallet opens a GameFi “tavern.” You stake 1,000 of those tokens on a crash chart. The tavern is a casino. It does not care about your scholarship ratio. You lose the 1,000 tokens. Your Monday grind just funded a house game that was never in the white paper’s wage story.\n\nOn Wednesday the reward token is $0.02. The NFT floor is $90. You still have a fun character if the combat is fun. You do not have a job. You have a collectible, an inflationary leftover and a losing wager.\n\n| Monday story | Tuesday product | Wednesday fact |\n| --- | --- | --- |\n| “I earned $160” | Crash in the tavern | Token bid $0.02 |\n| Guild split | House game | NFT floor $90 |\n| Season hype | Same wallet | Two losses, one hobby |\n\nThe fix is labelling. Put GameFi speculation in a size you can mark to zero. Put casino stakes in a dollar cap on a site that publishes the draw. Do not let a tavern inside the map spend the wage you have not even sold yet.\n\nA token that also acts as a chip is the overlap with gambling. [NFT gambling](/guides/nft-gambling) is that overlap when the picture itself is the stake.\n\nA [crypto shooter game](/guides/crypto-fps-game) may use crypto only for payment; that does not imply a token-emission economy. Keep entry-funded competition separate from the reward-token and asset models discussed here.",
     },
   ],
   faqs: [
@@ -202,6 +188,7 @@ A token that also acts as a chip is the overlap with gambling. [NFT gambling](/g
     "play-to-earn-games",
     "web3-casino",
     "are-online-casinos-rigged",
+    "crypto-fps-game",
   ],
-  updated: "2026-09-26",
+  updated: "2026-10-31",
 };

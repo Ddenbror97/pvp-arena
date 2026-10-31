@@ -5,6 +5,13 @@ import { GuideBody, GuideInline, GuideLinkTargets } from "@/components/guides/Gu
 import { GuideScrollCta } from "@/components/guides/GuideScrollCta";
 import { GuideWidget } from "@/components/guides/GuideWidgets";
 import { GameDataSnapshot } from "@/components/guides/GameDataSnapshot";
+import { FpsGameData, FpsMechanicsData } from "@/components/guides/FpsGameData";
+import {
+  FPS_ACTIVITY_GUIDES,
+  FPS_MECHANICS_GUIDES,
+  type FpsSeoSnapshot,
+} from "@/lib/fps/seo-snapshot";
+import { getFpsSeoSnapshot } from "@/lib/fps/seo-snapshot.functions";
 import { EeatNote, PublishedBy } from "@/components/seo/EeatNote";
 import { publisherNode } from "@/lib/seo/publisher";
 import { SeoFaq, SeoCta } from "@/components/seo/SeoPage";
@@ -22,6 +29,8 @@ const SNAPSHOT_WAIT_MS = 400;
 
 /** Visible widget headings. Calculator pages add a WebApplication node for these. */
 const WIDGET_APPLICATION: Record<string, string> = {
+  edpi: "eDPI calculator",
+  "kd-ratio": "K/D ratio calculator",
   "cs2-trade-up": "CS2 trade up calculator",
   "cs2-inventory": "CS2 / CSGO inventory value",
   "cs2-case-odds": "CS2 case odds",
@@ -50,12 +59,13 @@ function gameSnapshot(slug: string): Promise<GameSnapshotView | null> {
 
 export const Route = createFileRoute("/guides/$slug")({
   loader: async ({ params }) => {
-    const [page, snapshot] = await Promise.all([
+    const [page, snapshot, fpsSnapshot] = await Promise.all([
       getGuidePage({ data: params.slug }),
       gameSnapshot(params.slug),
+      FPS_ACTIVITY_GUIDES.has(params.slug) ? getFpsSeoSnapshot() : Promise.resolve(null),
     ]);
     if (!page) throw notFound();
-    return { page, snapshot };
+    return { page, snapshot, fpsSnapshot };
   },
   head: ({ loaderData }) => {
     if (!loaderData)
@@ -165,10 +175,10 @@ export const Route = createFileRoute("/guides/$slug")({
 });
 
 function GuidePage() {
-  const { page, snapshot } = Route.useLoaderData();
+  const { page, snapshot, fpsSnapshot } = Route.useLoaderData();
   return (
     <GuideLinkTargets links={page.links}>
-      <GuideArticle page={page} snapshot={snapshot} />
+      <GuideArticle page={page} snapshot={snapshot} fpsSnapshot={fpsSnapshot} />
     </GuideLinkTargets>
   );
 }
@@ -176,9 +186,11 @@ function GuidePage() {
 function GuideArticle({
   page,
   snapshot,
+  fpsSnapshot,
 }: {
   page: GuidePageData;
   snapshot: GameSnapshotView | null;
+  fpsSnapshot: FpsSeoSnapshot | null;
 }) {
   const { guide: g, minutes, related, topic, family, familyName, pillar, snapshotLinks } = page;
   const updated = new Date(g.updated + "T00:00:00Z").toLocaleDateString("en-US", {
@@ -277,6 +289,8 @@ function GuideArticle({
             </section>
           ))}
 
+          {FPS_ACTIVITY_GUIDES.has(g.slug) && <FpsGameData view={fpsSnapshot} />}
+          {FPS_MECHANICS_GUIDES.has(g.slug) && <FpsMechanicsData />}
           <LiveGameData
             initial={snapshot}
             game={GUIDE_GAME_DATA[g.slug] ?? null}
@@ -333,6 +347,20 @@ function GuideArticle({
               On this page
             </p>
             <ol className="mt-3 space-y-2 text-sm">
+              {FPS_ACTIVITY_GUIDES.has(g.slug) && (
+                <li>
+                  <a href="#fps-activity" className="text-muted-foreground hover:text-primary">
+                    Recent FPS results
+                  </a>
+                </li>
+              )}
+              {FPS_MECHANICS_GUIDES.has(g.slug) && (
+                <li>
+                  <a href="#fps-mechanics" className="text-muted-foreground hover:text-primary">
+                    PvPStrike combat data
+                  </a>
+                </li>
+              )}
               {g.widget && (
                 <li>
                   <a href="#calculator" className="text-muted-foreground hover:text-primary">

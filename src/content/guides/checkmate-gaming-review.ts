@@ -115,15 +115,7 @@ The [skill wagers topic](/guides/topics/skill-wagers) groups these lobby explain
     {
       id: "settled-block",
       title: "A pot you can recompute is a separate choice",
-      body: `Checkmate Gaming pays a played result. Coinflip and Jackpot pay a draw. Mixing them up is how a bad series turns into a worse hour.
-
-Open [Coinflip](/coinflip) when you want two stakes, a 5% fee on the pot, and a result you can check after it settles. Jackpot uses that same 5% of the pot and gives each entry a chance equal to its share. You will not climb a rank. You will not “deserve” the next flip because the last map was close. The fee is the price of the draw, and the draw does not remember your scoreboard.
-
-When this page shows a live block, that block is loaded from settled rounds rather than written into the article. Those amounts are finished rounds. They are not an example stake from the tables above, and they are not a forecast.
-
-If the match is the thing you enjoy, play it at a stake that survives a 50% night plus the fee. If gambling has stopped being a choice, step away and use a cool-off or someone who can hold you to it. Eighteen plus. A review of wagers, fees, and payouts is not a plan to fund a week.
-
-The line to keep from this Checkmate Gaming review: the card you accept is the whole price, the split, and the dispute rule. Everything after the score is too late to negotiate.`,
+      body: "Checkmate Gaming pays a played result. Coinflip and Jackpot pay a draw. Mixing them up is how a bad series turns into a worse hour.\n\nOpen [Coinflip](/coinflip) when you want two stakes, a 5% fee on the pot, and a result you can check after it settles. Jackpot uses that same 5% of the pot and gives each entry a chance equal to its share. You will not climb a rank. You will not “deserve” the next flip because the last map was close. The fee is the price of the draw, and the draw does not remember your scoreboard.\n\nWhen this page shows a live block, that block is loaded from settled rounds rather than written into the article. Those amounts are finished rounds. They are not an example stake from the tables above, and they are not a forecast.\n\nIf the match is the thing you enjoy, play it at a stake that survives a 50% night plus the fee. If gambling has stopped being a choice, step away and use a cool-off or someone who can hold you to it. Eighteen plus. A review of wagers, fees, and payouts is not a plan to fund a week.\n\nThe line to keep from this Checkmate Gaming review: the card you accept is the whole price, the split, and the dispute rule. Everything after the score is too late to negotiate.\n\nFor a concrete format comparison, see [native CS2 versus browser duels](/guides/cs2-1v1-for-money) and the [tournament entry checklist](/guides/cs2-tournaments-for-money). Those pages distinguish an organizer-run competition from a direct duel; they do not apply PvPStrike’s fee to CMG.",
     },
   ],
   faqs: [
@@ -157,6 +149,8 @@ The line to keep from this Checkmate Gaming review: the card you accept is the w
     "gamersaloon-review",
     "challengermode-review",
     "cod-wagers",
+    "cs2-1v1-for-money",
+    "cs2-tournaments-for-money",
   ],
-  updated: "2026-10-07",
+  updated: "2026-10-31",
 };

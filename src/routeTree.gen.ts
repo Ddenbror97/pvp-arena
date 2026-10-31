@@ -17,6 +17,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CoinflipRouteImport } from './routes/coinflip'
 import { Route as EditorialRouteImport } from './routes/editorial'
 import { Route as FairnessRouteImport } from './routes/fairness'
+import { Route as Fps1v1RouteImport } from './routes/fps-1v1'
 import { Route as FpsDuelRouteImport } from './routes/fps-duel'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
@@ -99,6 +100,11 @@ const EditorialRoute = EditorialRouteImport.update({
 const FairnessRoute = FairnessRouteImport.update({
   id: '/fairness',
   path: '/fairness',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Fps1v1Route = Fps1v1RouteImport.update({
+  id: '/fps-1v1',
+  path: '/fps-1v1',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FpsDuelRoute = FpsDuelRouteImport.update({
@@ -340,6 +346,7 @@ export interface FileRoutesByFullPath {
   '/coinflip': typeof CoinflipRouteWithChildren
   '/editorial': typeof EditorialRoute
   '/fairness': typeof FairnessRoute
+  '/fps-1v1': typeof Fps1v1Route
   '/fps-duel': typeof FpsDuelRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
@@ -393,6 +400,7 @@ export interface FileRoutesByTo {
   '/coinflip': typeof CoinflipRouteWithChildren
   '/editorial': typeof EditorialRoute
   '/fairness': typeof FairnessRoute
+  '/fps-1v1': typeof Fps1v1Route
   '/fps-duel': typeof FpsDuelRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
@@ -448,6 +456,7 @@ export interface FileRoutesById {
   '/coinflip': typeof CoinflipRouteWithChildren
   '/editorial': typeof EditorialRoute
   '/fairness': typeof FairnessRoute
+  '/fps-1v1': typeof Fps1v1Route
   '/fps-duel': typeof FpsDuelRoute
   '/how-it-works': typeof HowItWorksRoute
   '/leaderboards': typeof LeaderboardsRouteWithChildren
@@ -503,6 +512,7 @@ export interface FileRouteTypes {
     | '/coinflip'
     | '/editorial'
     | '/fairness'
+    | '/fps-1v1'
     | '/fps-duel'
     | '/how-it-works'
     | '/leaderboards'
@@ -556,6 +566,7 @@ export interface FileRouteTypes {
     | '/coinflip'
     | '/editorial'
     | '/fairness'
+    | '/fps-1v1'
     | '/fps-duel'
     | '/how-it-works'
     | '/leaderboards'
@@ -610,6 +621,7 @@ export interface FileRouteTypes {
     | '/coinflip'
     | '/editorial'
     | '/fairness'
+    | '/fps-1v1'
     | '/fps-duel'
     | '/how-it-works'
     | '/leaderboards'
@@ -665,6 +677,7 @@ export interface RootRouteChildren {
   CoinflipRoute: typeof CoinflipRouteWithChildren
   EditorialRoute: typeof EditorialRoute
   FairnessRoute: typeof FairnessRoute
+  Fps1v1Route: typeof Fps1v1Route
   FpsDuelRoute: typeof FpsDuelRoute
   HowItWorksRoute: typeof HowItWorksRoute
   LeaderboardsRoute: typeof LeaderboardsRouteWithChildren
@@ -753,6 +766,13 @@ declare module '@tanstack/react-router' {
       path: '/fairness'
       fullPath: '/fairness'
       preLoaderRoute: typeof FairnessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fps-1v1': {
+      id: '/fps-1v1'
+      path: '/fps-1v1'
+      fullPath: '/fps-1v1'
+      preLoaderRoute: typeof Fps1v1RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fps-duel': {
@@ -1156,6 +1176,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoinflipRoute: CoinflipRouteWithChildren,
   EditorialRoute: EditorialRoute,
   FairnessRoute: FairnessRoute,
+  Fps1v1Route: Fps1v1Route,
   FpsDuelRoute: FpsDuelRoute,
   HowItWorksRoute: HowItWorksRoute,
   LeaderboardsRoute: LeaderboardsRouteWithChildren,

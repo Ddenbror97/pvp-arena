@@ -103,13 +103,7 @@ If the only Wagr you can find is a paragraph in a 2023 press release, the first 
     {
       id: "coinflip-close",
       title: "Coinflip is two players and a draw, with no game to argue",
-      body: `A Wagr-style challenge still needs a sport. Someone has to win the game, the stat has to be graded, and friends can argue the settlement source. Coinflip skips the sport. Two players fund a pot. A committed draw picks a side. The winner receives 95% because 5% is kept at settlement. There is no spread to dispute.
-
-Balances are US dollars, funded with Bitcoin or with USDC or ETH on Base. After the round, the seed is public and you recompute it on [fairness](/fairness). That check is about the draw. It does not settle a football prop, and a social sports app does not publish that seed.
-
-Jackpot is the same 5% rule with a crowd and tickets. Roulette is the 33-slot wheel in the table. Slott is the 1v1 that keeps 10% when a player wins, unless a bomb ends it and the house keeps both stakes. PVPspinArena does not operate the Wagr app and does not know whether Yahoo still shows a challenge button. If you wanted a friend and a game, use whatever current product actually offers that, and read its ticket. If you wanted two stakes and a draw, the on-site product is Coinflip.
-
-Open [Coinflip](/coinflip) for that two-player pot: the live activity block, when present, is fetched from settled rounds, not typed into the article.`,
+      body: "A Wagr-style challenge still needs a sport. Someone has to win the game, the stat has to be graded, and friends can argue the settlement source. Coinflip skips the sport. Two players fund a pot. A committed draw picks a side. The winner receives 95% because 5% is kept at settlement. There is no spread to dispute.\n\nBalances are US dollars, funded with Bitcoin or with USDC or ETH on Base. After the round, the seed is public and you recompute it on [fairness](/fairness). That check is about the draw. It does not settle a football prop, and a social sports app does not publish that seed.\n\nJackpot is the same 5% rule with a crowd and tickets. Roulette is the 33-slot wheel in the table. Slott is the 1v1 that keeps 10% when a player wins, unless a bomb ends it and the house keeps both stakes. PVPspinArena does not operate the Wagr app and does not know whether Yahoo still shows a challenge button. If you wanted a friend and a game, use whatever current product actually offers that, and read its ticket. If you wanted two stakes and a draw, the on-site product is Coinflip.\n\nOpen [Coinflip](/coinflip) for that two-player pot: the live activity block, when present, is fetched from settled rounds, not typed into the article.\n\nA friend wager on a sports outcome is different from paying to enter your own shooter duel. The [FPS cash-match guide](/guides/fps-for-money-hub) covers that separate structure without treating Wagr as an FPS host.",
     },
   ],
   faqs: [
@@ -150,6 +144,7 @@ Open [Coinflip](/coinflip) for that two-player pot: the live activity block, whe
     "fantasy-football-payouts",
     "bet-with-friends-online",
     "peer-to-peer-sports-betting",
+    "fps-for-money-hub",
   ],
-  updated: "2026-10-07",
+  updated: "2026-10-31",
 };

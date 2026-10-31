@@ -115,9 +115,7 @@ Do not use a skill label to justify underage play. Adults 18+ only on this site.
     {
       id: "harm",
       title: "Harm looks the same when money is at risk",
-      body: `Skill does not immunise anyone from addiction patterns. Hiding losses, borrowing to play, and irritability when interrupted are warning signs in poker rooms and coinflip lobbies alike. [Gambling addiction signs](/guides/gambling-addiction-signs) lists them. [Fake casino sites](/guides/fake-casino-sites) remains relevant if a “skill arena” is actually a phishing page.
-
-If you need a break, take one before the next deposit.`,
+      body: "Skill does not immunise anyone from addiction patterns. Hiding losses, borrowing to play, and irritability when interrupted are warning signs in poker rooms and coinflip lobbies alike. [Gambling addiction signs](/guides/gambling-addiction-signs) lists them. [Fake casino sites](/guides/fake-casino-sites) remains relevant if a “skill arena” is actually a phishing page.\n\nIf you need a break, take one before the next deposit.\n\nFor a concrete skill-match example, the [FPS money hub](/guides/fps-for-money-hub) separates opponent-funded pots from income. The [FPS integrity guide](/guides/cs2-anti-cheat) explains why server authority and a random-result fairness proof answer different questions.",
     },
   ],
   faqs: [
@@ -159,6 +157,8 @@ If you need a break, take one before the next deposit.`,
     "pvp-gambling",
     "21-blitz-review",
     "dominoes-gold-review",
+    "fps-for-money-hub",
+    "cs2-anti-cheat",
   ],
-  updated: "2026-10-21",
+  updated: "2026-10-31",
 };

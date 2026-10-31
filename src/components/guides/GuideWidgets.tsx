@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import type { Guide } from "@/content/guides/types";
 import { Cs2TradeUpCalculator } from "./Cs2TradeUpCalculator";
@@ -453,11 +453,19 @@ function LotteryWidget() {
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-xs font-semibold text-muted-foreground">
           Published cash option $
-          <input className={`mt-1 ${field}`} value={cash} onChange={(e) => setCash(e.target.value)} />
+          <input
+            className={`mt-1 ${field}`}
+            value={cash}
+            onChange={(e) => setCash(e.target.value)}
+          />
         </label>
         <label className="text-xs font-semibold text-muted-foreground">
           Combination count
-          <select className={`mt-1 ${field}`} value={game} onChange={(e) => setGame(e.target.value)}>
+          <select
+            className={`mt-1 ${field}`}
+            value={game}
+            onChange={(e) => setGame(e.target.value)}
+          >
             <option value="292201338">Powerball, 292,201,338</option>
             <option value="290472336">Mega Millions, 290,472,336</option>
           </select>
@@ -468,7 +476,11 @@ function LotteryWidget() {
         </label>
         <label className="text-xs font-semibold text-muted-foreground">
           Example state rate %
-          <input className={`mt-1 ${field}`} value={state} onChange={(e) => setState(e.target.value)} />
+          <input
+            className={`mt-1 ${field}`}
+            value={state}
+            onChange={(e) => setState(e.target.value)}
+          />
         </label>
       </div>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -477,15 +489,21 @@ function LotteryWidget() {
           <p className="mt-1 font-display text-xl">{money(withhold, 0)}</p>
         </div>
         <div className={box}>
-          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Example state line</p>
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            Example state line
+          </p>
           <p className="mt-1 font-display text-xl">{money(stateTax, 0)}</p>
         </div>
         <div className={box}>
-          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Cash left, illustration</p>
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            Cash left, illustration
+          </p>
           <p className="mt-1 font-display text-xl">{money(left, 0)}</p>
         </div>
         <div className={box}>
-          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Jackpot-only value of one line</p>
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            Jackpot-only value of one line
+          </p>
           <p className="mt-1 font-display text-xl">{money(ev)}</p>
         </div>
       </div>
@@ -513,15 +531,27 @@ function HedgeWidget() {
       <div className="grid gap-3 sm:grid-cols-3">
         <label className="text-xs font-semibold text-muted-foreground">
           Original stake $
-          <input className={`mt-1 ${field}`} value={stake} onChange={(e) => setStake(e.target.value)} />
+          <input
+            className={`mt-1 ${field}`}
+            value={stake}
+            onChange={(e) => setStake(e.target.value)}
+          />
         </label>
         <label className="text-xs font-semibold text-muted-foreground">
           Original American odds
-          <input className={`mt-1 ${field}`} value={original} onChange={(e) => setOriginal(e.target.value)} />
+          <input
+            className={`mt-1 ${field}`}
+            value={original}
+            onChange={(e) => setOriginal(e.target.value)}
+          />
         </label>
         <label className="text-xs font-semibold text-muted-foreground">
           Hedge American odds
-          <input className={`mt-1 ${field}`} value={hedge} onChange={(e) => setHedge(e.target.value)} />
+          <input
+            className={`mt-1 ${field}`}
+            value={hedge}
+            onChange={(e) => setHedge(e.target.value)}
+          />
         </label>
       </div>
       {ready ? (
@@ -535,7 +565,9 @@ function HedgeWidget() {
             <p className="mt-1 font-display text-xl">{money(locked)}</p>
           </div>
           <div className={box}>
-            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">If the hedge wins</p>
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              If the hedge wins
+            </p>
             <p className="mt-1 font-display text-xl">{money(hedgeWin - s0)}</p>
           </div>
         </div>
@@ -578,7 +610,11 @@ function ArbitrageWidget() {
         </label>
         <label className="text-xs font-semibold text-muted-foreground">
           Total stake $
-          <input className={`mt-1 ${field}`} value={total} onChange={(e) => setTotal(e.target.value)} />
+          <input
+            className={`mt-1 ${field}`}
+            value={total}
+            onChange={(e) => setTotal(e.target.value)}
+          />
         </label>
       </div>
       {ready ? (
@@ -629,15 +665,27 @@ function GamblingTaxWidget() {
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-xs font-semibold text-muted-foreground">
           Wins $
-          <input className={`mt-1 ${field}`} value={wins} onChange={(e) => setWins(e.target.value)} />
+          <input
+            className={`mt-1 ${field}`}
+            value={wins}
+            onChange={(e) => setWins(e.target.value)}
+          />
         </label>
         <label className="text-xs font-semibold text-muted-foreground">
           Losses $
-          <input className={`mt-1 ${field}`} value={losses} onChange={(e) => setLosses(e.target.value)} />
+          <input
+            className={`mt-1 ${field}`}
+            value={losses}
+            onChange={(e) => setLosses(e.target.value)}
+          />
         </label>
         <label className="text-xs font-semibold text-muted-foreground">
           Flat rate %
-          <input className={`mt-1 ${field}`} value={rate} onChange={(e) => setRate(e.target.value)} />
+          <input
+            className={`mt-1 ${field}`}
+            value={rate}
+            onChange={(e) => setRate(e.target.value)}
+          />
         </label>
         <label className="text-xs font-semibold text-muted-foreground">
           Loss cap %
@@ -646,15 +694,21 @@ function GamblingTaxWidget() {
       </div>
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <div className={box}>
-          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Losses allowed</p>
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            Losses allowed
+          </p>
           <p className="mt-1 font-display text-xl">{money(allowed)}</p>
         </div>
         <div className={box}>
-          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Net in the example</p>
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            Net in the example
+          </p>
           <p className="mt-1 font-display text-xl">{money(net)}</p>
         </div>
         <div className={box}>
-          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Tax at the flat rate</p>
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            Tax at the flat rate
+          </p>
           <p className="mt-1 font-display text-xl">{money(tax)}</p>
         </div>
       </div>
@@ -666,9 +720,12 @@ function RouletteSimWidget() {
   const [wheel, setWheel] = useState<"eu" | "us">("eu");
   const [stake, setStake] = useState("1");
   const [spins, setSpins] = useState("1000");
-  const [result, setResult] = useState<{ end: number; expected: number; wins: number; n: number } | null>(
-    null,
-  );
+  const [result, setResult] = useState<{
+    end: number;
+    expected: number;
+    wins: number;
+    n: number;
+  } | null>(null);
   function run() {
     const n = Math.min(5000, Math.max(1, Math.floor(Number(spins) || 1000)));
     const s = Math.max(0, Number(stake) || 0);
@@ -703,11 +760,19 @@ function RouletteSimWidget() {
         </label>
         <label className="text-xs font-semibold text-muted-foreground">
           Stake per spin $
-          <input className={`mt-1 ${field}`} value={stake} onChange={(e) => setStake(e.target.value)} />
+          <input
+            className={`mt-1 ${field}`}
+            value={stake}
+            onChange={(e) => setStake(e.target.value)}
+          />
         </label>
         <label className="text-xs font-semibold text-muted-foreground">
           Spins, up to 5,000
-          <input className={`mt-1 ${field}`} value={spins} onChange={(e) => setSpins(e.target.value)} />
+          <input
+            className={`mt-1 ${field}`}
+            value={spins}
+            onChange={(e) => setSpins(e.target.value)}
+          />
         </label>
       </div>
       <button
@@ -724,7 +789,9 @@ function RouletteSimWidget() {
             <p className="mt-1 font-display text-xl">{money(result.end)}</p>
           </div>
           <div className={box}>
-            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Expected loss</p>
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              Expected loss
+            </p>
             <p className="mt-1 font-display text-xl">{money(Math.abs(result.expected))}</p>
           </div>
           <div className={box}>
@@ -747,7 +814,8 @@ function BetTrackerWidget() {
   const parsed = rows.map((r) => {
     const stake = Math.max(0, Number(r.stake) || 0);
     const net = netFromAmerican(Number(r.odds));
-    const profit = r.result === "push" || net == null ? 0 : r.result === "win" ? stake * net : -stake;
+    const profit =
+      r.result === "push" || net == null ? 0 : r.result === "win" ? stake * net : -stake;
     return { stake, profit, ok: net != null || r.result === "push" };
   });
   const staked = parsed.reduce((s, r) => s + r.stake, 0);
@@ -817,7 +885,75 @@ function BetTrackerWidget() {
   );
 }
 
+function FpsStatWidget({ kind }: { kind: "edpi" | "kd-ratio" }) {
+  const [interactive, setInteractive] = useState(false);
+  useEffect(() => setInteractive(true), []);
+  const [first, setFirst] = useState(kind === "edpi" ? "800" : "24"),
+    [second, setSecond] = useState(kind === "edpi" ? "1.25" : "12");
+  const a = Number(first),
+    b = Number(second),
+    valid =
+      first.trim() !== "" &&
+      second.trim() !== "" &&
+      Number.isFinite(a) &&
+      Number.isFinite(b) &&
+      a >= 0 &&
+      b >= 0 &&
+      (kind !== "edpi" || (a > 0 && b > 0)) &&
+      (kind !== "kd-ratio" || (Number.isInteger(a) && Number.isInteger(b)));
+  const result = !valid
+    ? "Enter valid non-negative values."
+    : kind === "edpi"
+      ? `${(a * b).toLocaleString("en-US", { maximumFractionDigits: 4 })} eDPI`
+      : b === 0
+        ? a === 0
+          ? "No kills or deaths recorded."
+          : "Undefined ratio: zero deaths."
+        : `${(a / b).toFixed(2)} K/D`;
+  return (
+    <Shell
+      title={kind === "edpi" ? "eDPI calculator" : "K/D ratio calculator"}
+      text={
+        kind === "edpi"
+          ? "Multiply mouse DPI by in-game sensitivity. Compare within the same game; this does not convert yaw scales between games."
+          : "Kills divided by deaths. Zero deaths has no finite ratio; this calculator does not invent one."
+      }
+    >
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="text-sm">
+          {kind === "edpi" ? "Mouse DPI" : "Kills"}
+          <input
+            className={field}
+            type="number"
+            min="0"
+            step={kind === "edpi" ? "any" : "1"}
+            value={first}
+            disabled={!interactive}
+            onChange={(e) => setFirst(e.target.value)}
+          />
+        </label>
+        <label className="text-sm">
+          {kind === "edpi" ? "In-game sensitivity" : "Deaths"}
+          <input
+            className={field}
+            type="number"
+            min="0"
+            step={kind === "edpi" ? "any" : "1"}
+            value={second}
+            disabled={!interactive}
+            onChange={(e) => setSecond(e.target.value)}
+          />
+        </label>
+      </div>
+      <output className="mt-4 block text-xl tabular-nums" aria-live="polite">
+        {result}
+      </output>
+    </Shell>
+  );
+}
+
 export function GuideWidget({ type }: { type: NonNullable<Guide["widget"]> }) {
+  if (type === "edpi" || type === "kd-ratio") return <FpsStatWidget kind={type} />;
   if (type === "cs2-trade-up") return <Cs2TradeUpCalculator />;
   if (type === "cs2-inventory") return <Cs2InventoryWidget />;
   if (type === "cs2-case-odds") return <Cs2CaseOddsWidget />;

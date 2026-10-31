@@ -140,19 +140,7 @@ PVPspinArena still does not take either product. A hashed pot is not a third tit
     {
       id: "safer",
       title: "Watching VCT without lying to yourself",
-      body: `Most recreational Valorant tickets lose over a season because of the margin. If you bet as a fan, set a budget before the series, prefer markets you can say in one sentence, and convert the price before you click.
-
-- Stick to series winners on matches you would watch anyway.
-- Read overtime and remake rules before round totals.
-- Treat pistol spam as a spending accelerator.
-- Stop when the budget is gone.
-- Do not "study" every Challengers cup because the coupon is open.
-
-Watching a Masters final with no money on it is still allowed. If the slip is the only reason the veto is interesting, that is a warning sign. A long VCT Saturday is how a $40 plan becomes a dozen 1.30 favourites. One series you would watch anyway is enough. Close the app between broadcasts.
-
-Keep a one-line record: date, market, implied percent, stake, result. After a stage you will see whether you were shopping stories. The record is a mirror, not a system.
-
-If betting is already taking more time or money than you planned, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A VCT calendar is not a reason to skip those tools.`,
+      body: 'Most recreational Valorant tickets lose over a season because of the margin. If you bet as a fan, set a budget before the series, prefer markets you can say in one sentence, and convert the price before you click.\n\n- Stick to series winners on matches you would watch anyway.\n- Read overtime and remake rules before round totals.\n- Treat pistol spam as a spending accelerator.\n- Stop when the budget is gone.\n- Do not "study" every Challengers cup because the coupon is open.\n\nWatching a Masters final with no money on it is still allowed. If the slip is the only reason the veto is interesting, that is a warning sign. A long VCT Saturday is how a $40 plan becomes a dozen 1.30 favourites. One series you would watch anyway is enough. Close the app between broadcasts.\n\nKeep a one-line record: date, market, implied percent, stake, result. After a stage you will see whether you were shopping stories. The record is a mirror, not a system.\n\nIf betting is already taking more time or money than you planned, use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A VCT calendar is not a reason to skip those tools.\n\nFor playing rather than betting on a team, see [Valorant 1v1 setup](/guides/valorant-1v1). [CS2 versus Valorant](/guides/cs2-vs-valorant) compares mechanics; neither page treats a custom lobby as an authorized cash-wager service.',
     },
   ],
   faqs: [
@@ -196,8 +184,10 @@ If betting is already taking more time or money than you planned, use [how to st
     "csgo-betting-odds",
     "esports-odds-explained",
     "how-to-bet-on-esports",
+    "valorant-1v1",
+    "cs2-vs-valorant",
   ],
-  updated: "2026-10-21",
+  updated: "2026-10-31",
   cta: {
     title: "This site is not a book",
     text: "PVPspinArena runs hashed PvP Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. It does not take Valorant bets.",

@@ -119,15 +119,7 @@ Save the challenge screen. Later memory edits fees. The screen does not.`,
     {
       id: "live-block",
       title: "Jackpot, when you wanted a draw instead of a match",
-      body: `Stay on GamerSaloon if the match is the point and the fee is a price you accept. Switch products only when you want a different kind of result, not when you want the last loss to feel smaller.
-
-Jackpot on this site takes 5% of the pot. Your chance follows your share of that pot. [Coinflip](/coinflip) is the two-player version of the same fee. You are not betting your rank, your shot timing, or your deck. You are buying a share of a draw. The appeal is that a settled round can be recomputed. The cost is that practice does not help.
-
-When this page shows a live block, that block is loaded from settled rounds rather than written into the article. It is a feed of rounds that already finished. The suppose stakes higher up are textbook arithmetic. The block is not those stakes, and the article does not type the block’s numbers by hand.
-
-Eighteen plus. If you cannot leave a session, the right move is to stop, not to find a lobby with a kinder banner. A GamerSaloon review can show you the hold, the fee, and the three questions. It cannot play the match, and it cannot make a 50% record profitable.
-
-Bet on your own skill only after you can say the fee in dollars and name the opponents. If either sentence is missing, you are betting on a mood.`,
+      body: "Stay on GamerSaloon if the match is the point and the fee is a price you accept. Switch products only when you want a different kind of result, not when you want the last loss to feel smaller.\n\nJackpot on this site takes 5% of the pot. Your chance follows your share of that pot. [Coinflip](/coinflip) is the two-player version of the same fee. You are not betting your rank, your shot timing, or your deck. You are buying a share of a draw. The appeal is that a settled round can be recomputed. The cost is that practice does not help.\n\nWhen this page shows a live block, that block is loaded from settled rounds rather than written into the article. It is a feed of rounds that already finished. The suppose stakes higher up are textbook arithmetic. The block is not those stakes, and the article does not type the block’s numbers by hand.\n\nEighteen plus. If you cannot leave a session, the right move is to stop, not to find a lobby with a kinder banner. A GamerSaloon review can show you the hold, the fee, and the three questions. It cannot play the match, and it cannot make a 50% record profitable.\n\nBet on your own skill only after you can say the fee in dollars and name the opponents. If either sentence is missing, you are betting on a mood.\n\nUse the [esports tournament checklist](/guides/cs2-tournaments-for-money) to compare event entry, evidence and prize allocation. The [FPS money guide](/guides/fps-for-money-hub) separately explains why a winner credit includes the original stake and is not a salary.",
     },
   ],
   faqs: [
@@ -165,6 +157,8 @@ Bet on your own skill only after you can say the fee in dollars and name the opp
     "checkmate-gaming-review",
     "challengermode-review",
     "8-ball-pool-for-money",
+    "cs2-tournaments-for-money",
+    "fps-for-money-hub",
   ],
-  updated: "2026-10-07",
+  updated: "2026-10-31",
 };

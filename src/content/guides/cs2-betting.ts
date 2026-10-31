@@ -248,16 +248,7 @@ Our [crypto casino withdrawals guide](/guides/crypto-casino-withdrawals) explain
     {
       id: "checklist",
       title: "CS2 betting site checklist",
-      body: `Before depositing on any CS2 betting site, check:
-
-- Licence and regulator, and whether it covers where you live.
-- Clear odds and margins on the markets you want.
-- Withdrawal times, limits and fees.
-- Age and identity checks, which a legitimate site should have.
-- Responsible gambling tools such as deposit limits and self-exclusion.
-- Independent reviews and complaint history.
-
-More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).`,
+      body: "Before depositing on any CS2 betting site, check:\n\n- Licence and regulator, and whether it covers where you live.\n- Clear odds and margins on the markets you want.\n- Withdrawal times, limits and fees.\n- Age and identity checks, which a legitimate site should have.\n- Responsible gambling tools such as deposit limits and self-exclusion.\n- Independent reviews and complaint history.\n\nMore cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).\n\nIf you mean playing a duel yourself rather than betting on a professional match, use [CS2 1v1 versus browser cash duels](/guides/cs2-1v1-for-money). [CS2 Major rules](/guides/cs2-major) and [CS2 ranks](/guides/cs2-ranks) cover event and player context without turning either into an odds forecast.",
     },
   ],
   faqs: [
@@ -300,6 +291,9 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     "csgo-coinflip-sites",
     "csgo-case-battle-sites",
     "esports-betting",
+    "cs2-1v1-for-money",
+    "cs2-major",
+    "cs2-ranks",
   ],
-  updated: "2026-09-25",
+  updated: "2026-10-31",
 };
