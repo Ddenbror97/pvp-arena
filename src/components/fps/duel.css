@@ -406,6 +406,74 @@
 .duel-crosshair.is-reloading {
   opacity: 0.35;
 }
+.duel-death-feedback {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.duel-death-blood {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 4% 24%, #9c1524a0 0 3%, transparent 13%),
+    radial-gradient(ellipse at 93% 72%, #8e0c1b90 0 4%, transparent 15%),
+    radial-gradient(ellipse at 12% 87%, #ad203570 0 2%, transparent 10%),
+    radial-gradient(ellipse at 84% 9%, #a31a2d70 0 2%, transparent 12%),
+    radial-gradient(ellipse at center, transparent 40%, #5c081875 100%);
+  opacity: 0;
+  animation: duel-death-blood 3.8s ease-out both;
+}
+.duel-death-label {
+  position: absolute;
+  inset: auto 12px 23%;
+  text-align: center;
+  color: #f7dfe4;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 10px #000;
+  animation: duel-death-label 3.8s ease-out both;
+}
+@keyframes duel-death-blood {
+  0% {
+    opacity: 0;
+    transform: scale(1.025);
+  }
+  8% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  35% {
+    opacity: 0.32;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.01);
+  }
+}
+@keyframes duel-death-label {
+  0% {
+    opacity: 0;
+  }
+  12%,
+  65% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .duel-death-blood {
+    animation: none;
+    opacity: 0.18;
+    transform: none;
+  }
+  .duel-death-label {
+    animation: none;
+  }
+}
 .duel-hit-marker {
   position: absolute;
   left: 50%;

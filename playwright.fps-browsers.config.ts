@@ -4,6 +4,7 @@ export default defineConfig({
   testMatch: [
     "fps-motion-continuity.spec.ts",
     "fps-close-opponent.spec.ts",
+    "fps-death-feedback.spec.ts",
     "fps-vertical-motion.spec.ts",
     "fps-browser-input.spec.ts",
     "fps-pointer-lock.spec.ts",

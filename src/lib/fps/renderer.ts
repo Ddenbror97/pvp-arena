@@ -25,6 +25,7 @@ import { createMuzzleFlash } from "./muzzle-flash";
 import { createAuthoredViewmodel } from "./authored-viewmodel";
 import { REMOTE_DELAY_MS } from "./network";
 import { createViewmodelMotion } from "./viewmodel-motion";
+import { deathPose, deathSupport } from "./death-presentation";
 
 /**
  * World camera vertical FOV. 70° ≈ 102° horizontal at 16:9 — between CS:GO (≈106°) and COD
@@ -215,6 +216,11 @@ export function mountArena(
     polygonOffsetFactor: -1,
   });
   const contactShadows = {} as Record<Seat, THREE.Mesh>;
+  const shadowRotation = new THREE.Quaternion().setFromAxisAngle(
+    new THREE.Vector3(1, 0, 0),
+    -Math.PI / 2,
+  );
+  const shadowPosition = new THREE.Vector3();
   for (const [side, actor] of Object.entries(characters)) {
     const contact = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), contactMaterial);
     contact.name = "contact-shadow";
@@ -509,9 +515,16 @@ export function mountArena(
   const opponentFrustum = new THREE.Frustum(),
     viewProjection = new THREE.Matrix4(),
     opponentBounds = new THREE.Sphere(new THREE.Vector3(), 1.65),
-    actorMotion = { airborne: false, weapon: "rifle" as Weapon, reloading: false };
+    actorMotion = {
+      airborne: false,
+      weapon: "rifle" as Weapon,
+      reloading: false,
+      death: undefined as number | undefined,
+    };
   let actorElapsed = 0;
   let opponentDeathAt: number | null = null;
+  let deathFeetY = 0,
+    deathFloorY = 0;
   let lastSpread = -1,
     lastReloading = false;
   let lastDraw = 0,
@@ -660,42 +673,63 @@ export function mountArena(
       characters[otherSeat === "A" ? "B" : "A"].root.visible = false;
       const actor = characters[otherSeat];
       if (other.hp > 0) opponentDeathAt = null;
-      else opponentDeathAt ??= now;
-      const deathProgress =
-        opponentDeathAt === null ? 0 : Math.min(1, (now - opponentDeathAt) / 450);
+      else if (opponentDeathAt === null) {
+        opponentDeathAt = now;
+        deathFeetY = other.y;
+        deathFloorY = deathSupport(other.x, other.y, other.z);
+      }
+      const collapse =
+        opponentDeathAt === null ? null : deathPose(now - opponentDeathAt, deathFeetY, deathFloorY);
       const visible = visibility[otherSeat] !== false;
       if (visible) {
         if (remoteMotion.sample(Date.now() + lastServerOffset - REMOTE_DELAY_MS, remotePose, dt)) {
           actor.root.position.set(remotePose.x, remotePose.y, remotePose.z);
           actor.root.rotation.y = remotePose.yaw;
         } else actor.root.position.copy(remoteTarget);
+        actor.root.rotation.x = collapse?.pitch ?? 0;
+        actor.root.rotation.z = collapse?.roll ?? 0;
+        if (collapse) {
+          actor.root.position.y = collapse.height;
+          actor.root.position.x += Math.sin(actor.root.rotation.y) * collapse.backward;
+          actor.root.position.z += Math.cos(actor.root.rotation.y) * collapse.backward;
+        }
+        actor.root.updateWorldMatrix(true, false);
         viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
         opponentFrustum.setFromProjectionMatrix(viewProjection);
         // Conservative whole-rig bounds include the weapon and crouch. This is
         // cosmetic culling only; server visibility and hitboxes are unchanged.
-        opponentBounds.center.copy(actor.root.position).y += 0.9;
+        opponentBounds.center.set(0, 0.85, 0).applyMatrix4(actor.root.matrixWorld);
         actorElapsed += dt;
         const inView = opponentFrustum.intersectsSphere(opponentBounds);
         if (inView) {
           actorMotion.airborne = other.y > 0.01;
           actorMotion.weapon = other.weapon;
           actorMotion.reloading = other.reloadUntil > Date.now() + lastServerOffset;
+          actorMotion.death = collapse?.progress;
           actor.update(
             Math.min(actorElapsed, 250),
             now,
             remotePose.pitch,
-            true,
+            other.hp > 0,
             !!other.crouched,
             actorMotion,
           );
           actorElapsed = 0;
-          // Keep the defeated opponent readable through the round break rather
-          // than removing the model on the same frame as the lethal hit.
-          actor.root.rotation.z =
-            (-Math.PI / 2) * (deathProgress * deathProgress * (3 - 2 * deathProgress));
-          actor.root.position.y += 0.12 * deathProgress;
         } else actor.root.visible = false;
-        contactShadows[otherSeat].position.y = 0.008 - actor.root.position.y;
+        const shadow = contactShadows[otherSeat];
+        shadow.quaternion.copy(actor.root.quaternion).invert().multiply(shadowRotation);
+        shadowPosition.set(
+          actor.root.position.x +
+            Math.sin(actor.root.rotation.y) * (collapse?.progress ?? 0) * 0.65,
+          (collapse
+            ? deathFloorY
+            : deathSupport(actor.root.position.x, other.y, actor.root.position.z)) + 0.008,
+          actor.root.position.z +
+            Math.cos(actor.root.rotation.y) * (collapse?.progress ?? 0) * 0.65,
+        );
+        actor.root.worldToLocal(shadowPosition);
+        shadow.position.copy(shadowPosition);
+        shadow.scale.set(1, 1 + (collapse?.progress ?? 0), 1);
         if (actor.root.visible) actor.root.updateMatrixWorld();
       } else actor.root.visible = false;
     }
@@ -837,7 +871,7 @@ export function mountArena(
         authorizationSuspended ||
         seat !== assignedSeat ||
         lastRound !== frame.state.round ||
-        frame.state.phase !== "live";
+        (state?.phase !== frame.state.phase && frame.state.phase !== "live");
       authorizationSuspended = false;
       state = frame.state;
       visibility = frame.visibility ?? { A: true, B: true };
