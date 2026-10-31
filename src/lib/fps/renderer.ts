@@ -28,6 +28,11 @@ export type ArenaControls = {
     triangles: number;
     frameMs: number;
     cpuMs: number;
+    geometries: number;
+    textures: number;
+    programs: number;
+    pixelRatio: number;
+    opponentVisible: boolean;
   };
   ready: Promise<void>;
   snapshot: (frame: ArenaFrame, seat: Seat | null) => void;
@@ -43,6 +48,9 @@ export function mountArena(
   onLock: (locked: boolean) => void,
 ): ArenaControls {
   const scene = new THREE.Scene();
+  // The weapon pass needs only its rig and lights. Re-traversing the entire
+  // arena for this second pass wastes matrix, skeleton and light setup work.
+  const viewScene = new THREE.Scene();
   scene.background = new THREE.Color(0x8bacd0);
   scene.fog = new THREE.Fog(0x94b5d4, 95, 260);
   const renderer = new THREE.WebGLRenderer({
@@ -140,6 +148,9 @@ export function mountArena(
   const reflections = pmrem.fromScene(scene, 0.04, 0.1, 100);
   scene.environment = reflections.texture;
   scene.environmentIntensity = 0.45;
+  viewScene.environment = scene.environment;
+  viewScene.environmentIntensity = scene.environmentIntensity;
+  viewScene.fog = scene.fog;
   pmrem.dispose();
   const weaponKit = createWeaponKit();
   const characters = {
@@ -176,7 +187,8 @@ export function mountArena(
   characters.B.root.visible = false;
   const weaponGroup = new THREE.Group();
   weaponGroup.name = "first-person-weapon";
-  camera.add(weaponGroup);
+  viewCamera.add(weaponGroup);
+  viewScene.add(viewCamera);
   weaponGroup.position.set(0.24, -0.3, -0.48);
   const rifle = weaponKit.rifle();
   // The shoulder stock sits behind the eye in a first-person stance.
@@ -223,11 +235,11 @@ export function mountArena(
   weaponGroup.add(flashLight);
   const viewLight = new THREE.HemisphereLight(0xe4eaff, 0x392346, 1.8);
   viewLight.layers.set(1);
-  scene.add(viewLight);
+  viewScene.add(viewLight);
   const viewSun = new THREE.DirectionalLight(0xffe0c6, 3);
   viewSun.position.set(-1, 3, 2);
   viewSun.layers.set(1);
-  scene.add(viewSun);
+  viewScene.add(viewSun);
   const weaveCanvas = document.createElement("canvas");
   weaveCanvas.width = weaveCanvas.height = 128;
   const weavePen = weaveCanvas.getContext("2d")!,
@@ -262,13 +274,20 @@ export function mountArena(
     authoredView.ready,
     characters.A.ready,
     characters.B.ready,
-  ]).then(() => {
+  ]).then(async () => {
+    if (stopped) return;
     // Cache static arena shadows; moving characters have inexpensive contact shadows.
     for (const actor of Object.values(characters))
       actor.root.traverse((object) => {
         if (object instanceof THREE.Mesh) object.castShadow = false;
       });
     renderer.shadowMap.needsUpdate = true;
+    // Prepare hidden combat effects and both lighting variants before Ready.
+    // compileAsync uses parallel shader compilation where the driver supports it.
+    await renderer.compileAsync(scene, camera);
+    if (stopped) return;
+    await renderer.compileAsync(viewScene, viewCamera);
+    if (stopped) return;
     renderer.domElement.dataset["authoredModels"] =
       authoredView.loaded && characters.A.loaded && characters.B.loaded ? "ready" : "fallback";
   });
@@ -411,6 +430,13 @@ export function mountArena(
   let authorizationSuspended = false;
   let frameMs = 0,
     cpuMs = 0;
+  const opponentFrustum = new THREE.Frustum(),
+    viewProjection = new THREE.Matrix4(),
+    opponentBounds = new THREE.Sphere(new THREE.Vector3(), 1.65),
+    actorMotion = { airborne: false, weapon: "rifle" as Weapon, reloading: false };
+  let actorElapsed = 0;
+  let lastSpread = -1,
+    lastReloading = false;
   const began = performance.now();
   const frame = (now: number) => {
     if (stopped) return;
@@ -516,11 +542,28 @@ export function mountArena(
           actor.root.position.set(remotePose.x, remotePose.y, remotePose.z);
           actor.root.rotation.y = remotePose.yaw;
         } else actor.root.position.copy(remoteTarget);
-        actor.update(dt, now, remotePose.pitch, other.hp > 0, !!other.crouched, {
-          airborne: other.y > 0.01,
-          weapon: other.weapon,
-          reloading: other.reloadUntil > Date.now() + lastServerOffset,
-        });
+        camera.updateMatrixWorld();
+        viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+        opponentFrustum.setFromProjectionMatrix(viewProjection);
+        // Conservative whole-rig bounds include the weapon and crouch. This is
+        // cosmetic culling only; server visibility and hitboxes are unchanged.
+        opponentBounds.center.copy(actor.root.position).y += 0.9;
+        actorElapsed += dt;
+        const inView = opponentFrustum.intersectsSphere(opponentBounds);
+        if (inView) {
+          actorMotion.airborne = other.y > 0.01;
+          actorMotion.weapon = other.weapon;
+          actorMotion.reloading = other.reloadUntil > Date.now() + lastServerOffset;
+          actor.update(
+            Math.min(actorElapsed, 250),
+            now,
+            remotePose.pitch,
+            other.hp > 0,
+            !!other.crouched,
+            actorMotion,
+          );
+          actorElapsed = 0;
+        } else actor.root.visible = false;
         contactShadows[otherSeat].position.y = 0.008 - actor.root.position.y;
       } else actor.root.visible = false;
     }
@@ -577,11 +620,17 @@ export function mountArena(
     weaponGroup.scale.setScalar(renderedWeapon === "pistol" ? 0.72 : 1);
     pistolPart.visible = renderedWeapon === "pistol";
     rifle.visible = renderedWeapon === "rifle" && !authoredView.loaded;
-    crosshair?.style.setProperty(
-      "--duel-spread",
-      `${(moving ? 3 : 0) + (airborne ? 4 : 0) + Math.min(5, recoilPitch * 45)}px`,
-    );
-    crosshair?.classList.toggle("is-reloading", reloadRemaining > 0);
+    const spread =
+      Math.round(((moving ? 3 : 0) + (airborne ? 4 : 0) + Math.min(5, recoilPitch * 45)) * 100) /
+      100;
+    if (spread !== lastSpread) {
+      crosshair?.style.setProperty("--duel-spread", `${spread}px`);
+      lastSpread = spread;
+    }
+    if (lastReloading !== reloadRemaining > 0) {
+      lastReloading = reloadRemaining > 0;
+      crosshair?.classList.toggle("is-reloading", lastReloading);
+    }
     impacts.update(dt, now);
     blood.update(dt, now);
     camera.layers.set(0);
@@ -592,13 +641,10 @@ export function mountArena(
     renderer.autoClear = false;
     renderer.clearDepth();
     camera.layers.set(1);
-    const background = scene.background;
-    scene.background = null;
     viewCamera.position.copy(camera.position);
     viewCamera.quaternion.copy(camera.quaternion);
     viewCamera.updateMatrixWorld();
-    renderer.render(scene, viewCamera);
-    scene.background = background;
+    renderer.render(viewScene, viewCamera);
     camera.layers.set(0);
     cpuMs = performance.now() - cpuStart;
     animation = requestAnimationFrame(frame);
@@ -611,6 +657,11 @@ export function mountArena(
       triangles: renderer.info.render.triangles,
       frameMs,
       cpuMs,
+      geometries: renderer.info.memory.geometries,
+      textures: renderer.info.memory.textures,
+      programs: renderer.info.programs?.length ?? 0,
+      pixelRatio: renderer.getPixelRatio(),
+      opponentVisible: characters[seat === "B" ? "A" : "B"].root.visible,
     }),
     ready: visualReady,
     suspend(paused) {
@@ -646,7 +697,11 @@ export function mountArena(
           weapon = authoritative.weapon;
           yaw = authoritative.yaw;
           pitch = authoritative.pitch;
-          clear();
+          // Physical movement keys can remain held through the winner card.
+          // Clearing them here loses a keydown arriving with the respawn packet
+          // and makes movement stop until the player presses the key again.
+          if (lastRound === 0 || !locked()) clear();
+          else fire = reload = jump = false;
           recoilPitch = 0;
           recoilYaw = 0;
           kick = 0;
@@ -754,7 +809,7 @@ export function mountArena(
       window.removeEventListener("blur", clear);
       const geometries = new Set<THREE.BufferGeometry>(),
         materials = new Set<THREE.Material>();
-      scene.traverse((o) => {
+      const collect = (o: THREE.Object3D) => {
         if (o instanceof THREE.Sprite) materials.add(o.material);
         if (
           o instanceof THREE.Mesh ||
@@ -766,7 +821,9 @@ export function mountArena(
           for (const m of mats) materials.add(m);
           if (o instanceof THREE.InstancedMesh) o.dispose();
         }
-      });
+      };
+      scene.traverse(collect);
+      viewScene.traverse(collect);
       for (const g of geometries) g.dispose();
       for (const m of materials) m.dispose();
       sun.shadow.map?.dispose();

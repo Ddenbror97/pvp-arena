@@ -84,12 +84,16 @@ export function createImpactEffects(scene: THREE.Scene) {
   lines.frustumCulled = false;
   scene.add(lines);
   let markIndex = 0,
-    particleIndex = 0;
+    particleIndex = 0,
+    activeUntil = 0;
+  dust.visible = lines.visible = false;
   const dummy = new THREE.Object3D(),
     axis = new THREE.Vector3(0, 0, 1),
     normal = new THREE.Vector3();
   return {
     emit(hit: WorldHit, now: number) {
+      activeUntil = Math.max(activeUntil, now + 350);
+      dust.visible = lines.visible = true;
       normal.set(hit.normal.x, hit.normal.y, hit.normal.z);
       dummy.position.set(
         hit.point.x + normal.x * 0.008,
@@ -129,6 +133,11 @@ export function createImpactEffects(scene: THREE.Scene) {
       linesGeometry.getAttribute("color").needsUpdate = true;
     },
     update(dt: number, now: number) {
+      if (!dust.visible) return;
+      if (now >= activeUntil) {
+        dust.visible = lines.visible = false;
+        return;
+      }
       const seconds = Math.min(dt, 50) / 1000;
       for (let i = 0; i < PARTICLES; i++) {
         const j = i * 3,
@@ -153,6 +162,8 @@ export function createImpactEffects(scene: THREE.Scene) {
       marks.count = 0;
       markIndex = 0;
       birth.fill(0);
+      activeUntil = 0;
+      dust.visible = lines.visible = false;
       positions.fill(100000);
       tails.fill(100000);
     },

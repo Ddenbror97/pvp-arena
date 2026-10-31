@@ -25,30 +25,40 @@ export class CameraCorrection {
 type Pose = Pick<Player, "x" | "y" | "z" | "yaw" | "pitch"> & { at: number };
 /** Interpolate only received, visible poses. No prediction of hidden opponents. */
 export class RemotePresentation {
-  private poses: Pose[] = [];
+  private readonly poses: Pose[] = Array.from({ length: 8 }, () => ({
+    x: 0,
+    y: 0,
+    z: 0,
+    yaw: 0,
+    pitch: 0,
+    at: 0,
+  }));
+  private start = 0;
+  private count = 0;
   clear() {
-    this.poses.length = 0;
+    this.start = this.count = 0;
   }
   push(player: Player, at: number) {
-    const last = this.poses.at(-1);
+    const last = this.count ? this.poses[(this.start + this.count - 1) % 8] : undefined;
     if (last && at <= last.at) return;
     if (last && Math.hypot(player.x - last.x, player.y - last.y, player.z - last.z) > 3)
       this.clear();
-    this.poses.push({
-      x: player.x,
-      y: player.y,
-      z: player.z,
-      yaw: player.yaw,
-      pitch: player.pitch,
-      at,
-    });
-    if (this.poses.length > 8) this.poses.shift();
+    const pose = this.poses[(this.start + this.count) % 8]!;
+    pose.x = player.x;
+    pose.y = player.y;
+    pose.z = player.z;
+    pose.yaw = player.yaw;
+    pose.pitch = player.pitch;
+    pose.at = at;
+    if (this.count < 8) this.count++;
+    else this.start = (this.start + 1) % 8;
   }
   sample(at: number, out: Pose) {
-    if (!this.poses.length) return false;
-    let a = this.poses[0]!,
+    if (!this.count) return false;
+    let a = this.poses[this.start]!,
       b = a;
-    for (const pose of this.poses) {
+    for (let i = 0; i < this.count; i++) {
+      const pose = this.poses[(this.start + i) % 8]!;
       b = pose;
       if (pose.at >= at) break;
       a = pose;
