@@ -2,6 +2,27 @@ import type { Input, Player } from "./protocol";
 import { isMovementBlocked, predictMovement, TICK_MS } from "./simulation";
 import { eyeHeight } from "./map";
 
+/** Interpolate feet height on the fixed simulation clock, including landing.
+ * Partial physics previews use a different gravity step and can anticipate a
+ * queued jump. Keep those previews out of the vertical camera timeline. */
+export class JumpPresentation {
+  private from: number | null = null;
+  private to = 0;
+  reset() {
+    this.from = null;
+  }
+  advance(before: number, after: number) {
+    this.from = before;
+    this.to = after;
+  }
+  sample(current: number, fraction: number) {
+    if (this.from === null) return current;
+    // Reconciliation moves both endpoints together; CameraCorrection absorbs
+    // the corresponding server correction without rewinding jump progress.
+    return current + (this.from - this.to) * (1 - Math.max(0, Math.min(1, fraction)));
+  }
+}
+
 /** Camera stance only. Feet/jump physics and authoritative hit volumes stay exact. */
 export class CameraStance {
   private height: number | null = null;

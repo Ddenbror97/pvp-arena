@@ -88,10 +88,46 @@ test("recorded combat audio plays once per confirmed event, supports mute and bo
     ];
     audio.snapshot(s, "A");
     const confirmed = audio.diagnostics.shots;
+    s.tick++;
+    s.events = [
+      {
+        id: 105,
+        type: "hit",
+        seat: "B",
+        text: "Hit",
+        hit: {
+          victim: "A",
+          zone: "chest",
+          point: { x: 0, y: 1, z: 0 },
+          direction: { x: 0, y: 0, z: 1 },
+          damage: 26,
+        },
+      },
+    ];
+    audio.snapshot(s, "A");
+    audio.snapshot(s, "A");
+    const hurt = audio.diagnostics.hits;
+    s.tick++;
+    s.events = [{ id: 106, type: "round-end", seat: "B", text: "Round victory" }];
+    audio.snapshot(s, "A");
+    const roundVoices = audio.diagnostics.voices;
+    audio.snapshot(s, "A");
+    const repeatedRoundVoices = audio.diagnostics.voices;
     audio.dispose();
-    return { single, repeat, muted, step, bounded, predicted, confirmed };
+    return {
+      single,
+      repeat,
+      muted,
+      step,
+      bounded,
+      predicted,
+      confirmed,
+      hurt,
+      roundVoices,
+      repeatedRoundVoices,
+    };
   });
-  expect(stats.single.decoded).toBe(7);
+  expect(stats.single.decoded).toBe(9);
   expect(stats.single.shots).toBe(1);
   expect(stats.single.voices).toBe(1);
   expect(stats.repeat.shots).toBe(1);
@@ -100,6 +136,8 @@ test("recorded combat audio plays once per confirmed event, supports mute and bo
   expect(stats.bounded.voices).toBeLessThanOrEqual(24);
   expect(stats.predicted).toBe(stats.bounded.shots + 1);
   expect(stats.confirmed).toBe(stats.predicted);
+  expect(stats.hurt).toBe(1);
+  expect(stats.repeatedRoundVoices).toBe(stats.roundVoices);
   await info.attach("combat-audio", {
     body: JSON.stringify(stats),
     contentType: "application/json",

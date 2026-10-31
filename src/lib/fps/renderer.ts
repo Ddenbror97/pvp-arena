@@ -14,6 +14,7 @@ import {
   CameraStance,
   CameraVertical,
   FrameMotion,
+  JumpPresentation,
   RemotePresentation,
   RenderBudget,
 } from "./presentation";
@@ -359,6 +360,7 @@ export function mountArena(
   const remoteTarget = new THREE.Vector3();
   const correction = new CameraCorrection();
   const frameMotion = new FrameMotion();
+  const jumpPresentation = new JumpPresentation();
   const triggerFeedback = new TriggerFeedback();
   const remoteMotion = new RemotePresentation();
   const remotePose = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
@@ -418,7 +420,7 @@ export function mountArena(
       e.preventDefault();
     keys.add(e.code);
     if (e.code === "KeyR") reload = true;
-    if (e.code === "Space") jump = true;
+    if (e.code === "Space" && !e.repeat) jump = true;
     if (e.code === "Digit1") weapon = "rifle";
     if (e.code === "Digit2") weapon = "pistol";
   };
@@ -489,6 +491,7 @@ export function mountArena(
     opponentBounds = new THREE.Sphere(new THREE.Vector3(), 1.65),
     actorMotion = { airborne: false, weapon: "rifle" as Weapon, reloading: false };
   let actorElapsed = 0;
+  let opponentDeathAt: number | null = null;
   let lastSpread = -1,
     lastReloading = false;
   let lastDraw = 0,
@@ -545,7 +548,9 @@ export function mountArena(
           crouch: active && (keys.has("ControlLeft") || keys.has("ControlRight")),
         };
         if (state.phase === "live" && !authorizationSuspended) {
+          const beforeY = predicted.y;
           predictMovement(predicted, input, TICK_MS);
+          jumpPresentation.advance(beforeY, predicted.y);
           pending.push(input);
           if (pending.length > 60) pending.shift();
         }
@@ -615,7 +620,9 @@ export function mountArena(
       camera.position.set(
         motion.x,
         cameraVertical.sample(
-          renderPose.y + cameraStance.sample(renderPose, dt) + correction.y,
+          jumpPresentation.sample(predicted.y, accumulator / inputStepMs) +
+            cameraStance.sample(renderPose, dt) +
+            correction.y,
           dt,
         ),
         motion.z,
@@ -633,6 +640,10 @@ export function mountArena(
         other = state.players[otherSeat];
       characters[otherSeat === "A" ? "B" : "A"].root.visible = false;
       const actor = characters[otherSeat];
+      if (other.hp > 0) opponentDeathAt = null;
+      else opponentDeathAt ??= now;
+      const deathProgress =
+        opponentDeathAt === null ? 0 : Math.min(1, (now - opponentDeathAt) / 450);
       const visible = visibility[otherSeat] !== false;
       if (visible) {
         if (remoteMotion.sample(Date.now() + lastServerOffset - REMOTE_DELAY_MS, remotePose)) {
@@ -654,11 +665,16 @@ export function mountArena(
             Math.min(actorElapsed, 250),
             now,
             remotePose.pitch,
-            other.hp > 0,
+            true,
             !!other.crouched,
             actorMotion,
           );
           actorElapsed = 0;
+          // Keep the defeated opponent readable through the round break rather
+          // than removing the model on the same frame as the lethal hit.
+          actor.root.rotation.z =
+            (-Math.PI / 2) * (deathProgress * deathProgress * (3 - 2 * deathProgress));
+          actor.root.position.y += 0.12 * deathProgress;
         } else actor.root.visible = false;
         contactShadows[otherSeat].position.y = 0.008 - actor.root.position.y;
         if (actor.root.visible) actor.root.updateMatrixWorld();
@@ -826,9 +842,11 @@ export function mountArena(
         if (resetPresentation) {
           cameraStance.reset();
           cameraVertical.reset();
+          jumpPresentation.reset();
           correction.reset();
           frameMotion.reset();
           remoteMotion.clear();
+          opponentDeathAt = null;
         } else if (before) correction.reconcile(before, predicted);
         for (const e of state.events) {
           if (e.id !== undefined && e.id <= lastEventId) continue;

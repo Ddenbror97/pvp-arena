@@ -9,7 +9,7 @@ const SAMPLES = {
   step2: "step-2-v1.wav",
   step3: "step-3-v1.wav",
 } as const;
-type Sample = keyof typeof SAMPLES;
+type Sample = keyof typeof SAMPLES | "hurt" | "elimination";
 export type CombatAudio = ReturnType<typeof createCombatAudio>;
 /** Recorded, normalized samples; one shared decode per sample and a bounded voice budget. */
 export function createCombatAudio() {
@@ -38,6 +38,26 @@ export function createCombatAudio() {
     voices = new Set<AudioBufferSourceNode>(),
     played = { shots: 0, steps: 0, hits: 0 };
   const predicted = new Map<number, number>();
+  // Short, quiet body-impact and elimination cues, generated once per context.
+  // Use the same bounded voice pool and mute controls as recorded samples.
+  for (const name of ["hurt", "elimination"] as const) {
+    const duration = name === "hurt" ? 0.12 : 0.3;
+    const buffer = context.createBuffer(
+      1,
+      Math.ceil(context.sampleRate * duration),
+      context.sampleRate,
+    );
+    const samples = buffer.getChannelData(0);
+    for (let i = 0; i < samples.length; i++) {
+      const t = i / context.sampleRate;
+      const envelope = Math.min(1, t / 0.004) * Math.exp(-t * (name === "hurt" ? 38 : 15));
+      samples[i] =
+        envelope *
+        (0.7 * Math.sin(2 * Math.PI * (name === "hurt" ? 125 : 330) * t) +
+          0.3 * (Math.random() * 2 - 1));
+    }
+    buffers.set(name, buffer);
+  }
   const shot = (weapon: Weapon, gain = 0.62, pan = 0, occluded = false) => {
     played.shots++;
     play(
@@ -163,7 +183,10 @@ export function createCombatAudio() {
           );
         } else if (event.hit?.victim === seat) {
           played.hits++;
-          play("step0", 0.12, 0, true, 0.7);
+          play("hurt", 0.25, 0, false);
+        }
+        if (event.type === "round-end" || event.type === "draw") {
+          play("elimination", 0.2, 0, false);
         }
       }
     },

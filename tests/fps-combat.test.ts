@@ -63,14 +63,18 @@ function spray(compensate = false) {
   return { s, ys };
 }
 describe("PvPStrike authoritative combat v2", () => {
-  it.each(["rifle", "pistol"] as const)("requires exactly two landed %s headshots", (weapon) => {
+  it.each(["rifle", "pistol"] as const)("requires exactly three landed %s headshots", (weapon) => {
     const s = live();
     lane(s);
     tick(s, 1, { fire: true, weapon });
-    expect(s.players.B.hp).toBe(50);
+    expect(s.players.B.hp).toBe(66);
     expect(s.score.A).toBe(0);
     for (let n = 2; n <= 11; n++) tick(s, n, { weapon });
     tick(s, 12, { fire: true, weapon });
+    expect(s.players.B.hp).toBe(32);
+    expect(s.score.A).toBe(0);
+    for (let n = 13; n <= 23; n++) tick(s, n, { weapon });
+    tick(s, 24, { fire: true, weapon });
     expect(s.players.B.hp).toBe(0);
     expect(s.score.A).toBe(1);
     expect(s.players.A.headshots).toBe(1);
@@ -118,7 +122,7 @@ describe("PvPStrike authoritative combat v2", () => {
     const p = live().players.B;
     expect(applyVestDamage(p, "rifle", "chest")).toBe(26);
     expect(applyVestDamage(p, "rifle", "stomach")).toBe(23);
-    expect(applyVestDamage(p, "rifle", "head")).toBe(50);
+    expect(applyVestDamage(p, "rifle", "head")).toBe(34);
     expect(applyVestDamage(p, "rifle", "legs")).toBe(20);
     p.armor = 1;
     expect(applyVestDamage(p, "rifle", "chest")).toBe(32);

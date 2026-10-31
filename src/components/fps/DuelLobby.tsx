@@ -686,9 +686,9 @@ export function DuelLobby() {
               <ShieldCheck />
               <h3>Control your recoil</h3>
               <p>
-                AK-47 is full auto: tap or fire short bursts to recover faster. Head hits deal 50
-                damage, chest 34, stomach 30 and legs 20. Two landed headshots eliminate. The server
-                controls ammunition, hits and results.
+                AK-47 is full auto: tap or fire short bursts to recover faster. Head hits deal 34
+                damage, chest 34, stomach 30 and legs 20. Three landed headshots eliminate at full
+                health. The server controls ammunition, hits and results.
               </p>
             </article>
             <article>

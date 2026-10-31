@@ -524,15 +524,14 @@
   place-items: center;
   padding: 80px 20px 100px;
   pointer-events: none;
-  background: linear-gradient(180deg, #08061430, #08061480);
+  text-shadow: 0 2px 12px #000;
 }
 .duel-round-card {
-  background: linear-gradient(145deg, #171021f5, #090a13f5);
-  border: 1px solid #7441a5;
-  border-radius: 18px;
   padding: 26px 30px;
-  box-shadow: 0 18px 70px #0008;
   text-align: center;
+}
+.duel-round-result {
+  animation: duel-win-arrive 0.35s 0.8s both;
 }
 .duel-round-card h2 {
   color: #f4edff;
@@ -546,10 +545,7 @@
 }
 .duel-round-players article {
   min-width: 0;
-  border: 1px solid #332a43;
-  border-radius: 12px;
   padding: 18px;
-  background: #0d0b16;
 }
 .duel-round-avatar {
   margin-bottom: 12px;
@@ -591,7 +587,6 @@
   align-items: center;
   gap: 14px;
   margin-top: 22px;
-  border-top: 1px solid #392b49;
   padding-top: 18px;
   color: #e7dcf4;
   text-align: left;
@@ -669,10 +664,6 @@
   grid-template-columns: 1fr;
   z-index: 1;
 }
-.duel-round-players article.is-winner {
-  background: linear-gradient(150deg, #291240cc, #100d19cc);
-  border-color: #a66ae0;
-}
 .duel-round-players dl {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -746,8 +737,19 @@
   .duel-victory-halo {
     animation: none;
   }
+  .duel-round-result {
+    animation: duel-result-reveal 0s 0.8s both;
+  }
   .duel-victory-halo {
     display: none;
+  }
+}
+@keyframes duel-result-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 @media (max-height: 720px) {
