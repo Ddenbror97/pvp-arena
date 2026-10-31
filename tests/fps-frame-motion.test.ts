@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   FrameMotion,
+  JumpPresentation,
   CameraCorrection,
   CameraStance,
   CameraVertical,
@@ -23,6 +24,42 @@ const input: Input = {
   sprint: true,
 };
 describe("continuous camera movement", () => {
+  it.each([30, 60, 144])("keeps takeoff and landing continuous at %i Hz", (hz) => {
+    const p = createMatch({ A: "a", B: "b" }, 5, 1).players.A;
+    Object.assign(p, { x: 9, z: 12, y: 0, velocityY: 0 });
+    const visual = new JumpPresentation();
+    let accumulator = 0,
+      previous = 0,
+      jumped = false,
+      peak = 0;
+    const dt = 1000 / hz;
+    for (let frame = 0; frame < hz * 2; frame++) {
+      accumulator += dt;
+      while (accumulator >= 34) {
+        accumulator -= 34;
+        const before = p.y;
+        predictMovement(p, { ...input, forward: 0, jump: !jumped }, 1000 / 30);
+        jumped = true;
+        visual.advance(before, p.y);
+      }
+      const y = visual.sample(p.y, accumulator / 34);
+      expect(y).toBeGreaterThanOrEqual(0);
+      expect(Math.abs(y - previous)).toBeLessThanOrEqual((5 * dt) / 1000);
+      peak = Math.max(peak, y);
+      previous = y;
+    }
+    expect(peak).toBeGreaterThan(0.7);
+    expect(previous).toBe(0);
+  });
+
+  it("preserves the jump interpolation phase through reconciliation and resets respawns", () => {
+    const visual = new JumpPresentation();
+    visual.advance(0, 0.15);
+    expect(visual.sample(0.15, 0.5)).toBeCloseTo(0.075);
+    expect(visual.sample(0.17, 0.5) - 0.02).toBeCloseTo(0.075);
+    visual.reset();
+    expect(visual.sample(3, 0.5)).toBe(3);
+  });
   it("does not turn a one-tick direction change into a 15 cm camera teleport", () => {
     const p = createMatch({ A: "a", B: "b" }, 5, 1).players.A;
     Object.assign(p, { x: 9, z: 12 });
