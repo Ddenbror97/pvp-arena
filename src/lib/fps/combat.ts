@@ -5,6 +5,15 @@ export const HIT_DAMAGE = {
   rifle: { head: 50, chest: 34, stomach: 30, legs: 20 },
   pistol: { head: 50, chest: 25, stomach: 22, legs: 15 },
 } as const;
+/** CS-style vest penetration, applied to this game's existing damage tuning.
+ * Headshots deliberately retain the game's two-hit rule; legs bypass the vest. */
+export function applyVestDamage(target: Player, weapon: Weapon, zone: HitZone): number {
+  const base = HIT_DAMAGE[weapon][zone];
+  if (zone === "head" || zone === "legs" || !(target.armor! > 0)) return base;
+  const blocked = Math.min(base * (1 - 0.775), target.armor! * 2);
+  target.armor = Math.max(0, target.armor! - blocked / 2);
+  return Math.floor(base - blocked);
+}
 /** Original, learnable angular pattern: initial climb, then alternating lateral sweeps.
  * Inspired by CS:GO's tap/burst/spray distinction; these are this game's tuning values. */
 const AK_PATTERN = [

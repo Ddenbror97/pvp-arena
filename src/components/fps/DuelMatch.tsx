@@ -171,6 +171,7 @@ export function DuelMatch({
                 socket.current.send(JSON.stringify(input));
             },
             setLocked,
+            (weapon, seq) => sound.current?.localShot(weapon, seq),
           );
           void arena.current.ready.then(() => {
             if (!disposed) setArenaReady(true);
@@ -537,6 +538,7 @@ export function DuelMatch({
       <footer className="duel-hud-bottom">
         <div className="duel-health">
           <small>HEALTH</small>
+          {me?.armor !== undefined && <small>KEVLAR {Math.ceil(me.armor)}</small>}
           <strong>
             {me?.hp ?? 100}
             <span>/100</span>
@@ -574,7 +576,9 @@ export function DuelMatch({
             <p className="duel-combat-rules">
               {frame && (frame.state.combatVersion ?? 1) !== 2
                 ? "Earlier combat rules retained for this match."
-                : "AK-47: full auto · Head 50 · Chest 34 · Stomach 30 · Legs 20"}
+                : frame?.state.armorVersion === 1
+                  ? "AK-47 · Full auto · Kevlar: Chest 26 · Stomach 23 · Head 50 · Legs 20"
+                  : "AK-47: full auto · Head 50 · Chest 34 · Stomach 30 · Legs 20"}
               <br />
               Tap or burst to reset; pull down, then counter the sideways spray.
             </p>

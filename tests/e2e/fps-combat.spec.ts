@@ -80,8 +80,16 @@ test("recorded combat audio plays once per confirmed event, supports mute and bo
       audio.snapshot(s, "A");
     }
     const bounded = audio.diagnostics;
+    audio.localShot("rifle", 201);
+    const predicted = audio.diagnostics.shots;
+    s.tick++;
+    s.events = [
+      { id: 104, type: "shot", seat: "A", text: "rifle fired", weapon: "rifle", shotSeq: 201 },
+    ];
+    audio.snapshot(s, "A");
+    const confirmed = audio.diagnostics.shots;
     audio.dispose();
-    return { single, repeat, muted, step, bounded };
+    return { single, repeat, muted, step, bounded, predicted, confirmed };
   });
   expect(stats.single.decoded).toBe(7);
   expect(stats.single.shots).toBe(1);
@@ -90,6 +98,8 @@ test("recorded combat audio plays once per confirmed event, supports mute and bo
   expect(stats.muted.voices).toBe(stats.single.voices);
   expect(stats.step.steps).toBe(1);
   expect(stats.bounded.voices).toBeLessThanOrEqual(24);
+  expect(stats.predicted).toBe(stats.bounded.shots + 1);
+  expect(stats.confirmed).toBe(stats.predicted);
   await info.attach("combat-audio", {
     body: JSON.stringify(stats),
     contentType: "application/json",

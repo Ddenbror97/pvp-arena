@@ -2,6 +2,7 @@ import { ARENA, BOXES, EYE_HEIGHT, PLAYER_RADIUS, SPAWNS, eyeHeight } from "./ma
 import {
   COMBAT_VERSION,
   HIT_DAMAGE,
+  applyVestDamage,
   recoverCombatRecoil,
   advanceCombatRecoil,
   combatSpread,
@@ -84,8 +85,12 @@ export function createMatch(
   return {
     v: 1,
     combatVersion,
+    ...(combatVersion === COMBAT_VERSION ? { armorVersion: 1 as const } : {}),
     phase: "waiting",
-    players: { A: player(ids.A, "A"), B: player(ids.B, "B") },
+    players: {
+      A: { ...player(ids.A, "A"), ...(combatVersion === COMBAT_VERSION ? { armor: 100 } : {}) },
+      B: { ...player(ids.B, "B"), ...(combatVersion === COMBAT_VERSION ? { armor: 100 } : {}) },
+    },
     score: { A: 0, B: 0 },
     bestOf,
     round: 1,
@@ -159,6 +164,8 @@ function blocked(x: number, y: number, z: number, crouched = false): boolean {
 }
 
 type Pose = Vector & { crouched?: boolean };
+// The cosmetic camera uses exactly the same occupancy test as movement.
+export { blocked as isMovementBlocked };
 /** dt is milliseconds and capped at one tick; callers predict once per fixed tick. */
 export function predictMovement(p: Player, input: Input | null, dt: number): void {
   if (!Number.isFinite(dt) || dt <= 0) return;
@@ -293,6 +300,7 @@ function shoot(
   const contact = hits[0]!;
   state.events.push({
     type: "shot",
+    shotSeq: input.seq,
     seat,
     text: p.weapon + " fired",
     weapon: p.weapon,
@@ -311,7 +319,9 @@ function shoot(
   }
   const headshot = contact.zone === "head";
   const damage = modern
-    ? HIT_DAMAGE[p.weapon][contact.zone]
+    ? state.armorVersion === 1
+      ? applyVestDamage(target, p.weapon, contact.zone)
+      : HIT_DAMAGE[p.weapon][contact.zone]
     : stats.damage * (headshot ? stats.headshotMultiplier : 1);
   if (counters) {
     counters.hits++;
@@ -378,6 +388,7 @@ export function stepMatch(
       const old = state.players[seat];
       state.players[seat] = {
         ...player(old.id, state.round % 2 ? seat : other(seat)),
+        ...(state.armorVersion === 1 ? { armor: 100 } : {}),
         kills: old.kills,
         headshots: old.headshots,
         lastSeq: old.lastSeq,
