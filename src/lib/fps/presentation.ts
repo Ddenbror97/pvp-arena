@@ -61,16 +61,25 @@ export class FrameMotion {
     const tx = reference.x + correction.x,
       tz = reference.z + correction.z;
     const distance = Math.hypot(tx - pose.x, tz - pose.z);
-    const blend = distance > 0.15 ? 1 : 1 - Math.exp(-Math.max(0, ms) / 250);
-    const nextX = pose.x + (tx - pose.x) * blend,
-      nextZ = pose.z + (tz - pose.z) * blend;
-    // Reconciliation must never move the view through a wall or crate corner.
-    if (isMovementBlocked(nextX, reference.y, nextZ, !!reference.crouched)) {
+    // Direction changes can legitimately differ by a whole 34 ms input tick.
+    // The old 15 cm threshold converted that small timing error into a teleport.
+    // Integrate current controls immediately, then repay positional error with a
+    // continuous, bounded correction. Only actual teleports reset presentation.
+    if (distance > 3 || isMovementBlocked(pose.x, reference.y, pose.z, !!reference.crouched)) {
       pose.x = reference.x;
       pose.z = reference.z;
     } else {
-      pose.x = nextX;
-      pose.z = nextZ;
+      const elapsedMs = Math.max(0, Math.min(100, ms));
+      const blend = 1 - Math.exp(-elapsedMs / 65),
+        limit = elapsedMs * 0.002;
+      // Resolve each axis separately. Normalizing the error vector lets a
+      // blocked X correction starve the Z clearance needed to leave a corner.
+      const nextX = pose.x + Math.max(-limit, Math.min(limit, (tx - pose.x) * blend)),
+        nextZ = pose.z + Math.max(-limit, Math.min(limit, (tz - pose.z) * blend));
+      // Slide corrections along cover instead of snapping to the reference
+      // when one axis intersects a corner. Movement uses the same occupancy.
+      if (!isMovementBlocked(nextX, reference.y, pose.z, !!reference.crouched)) pose.x = nextX;
+      if (!isMovementBlocked(pose.x, reference.y, nextZ, !!reference.crouched)) pose.z = nextZ;
     }
     return pose;
   }

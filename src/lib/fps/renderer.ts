@@ -749,6 +749,10 @@ export function mountArena(
   return {
     diagnostics: () => ({
       camera: [camera.position.x, camera.position.y, camera.position.z, camera.rotation.y],
+      prediction: predicted ? [predicted.x, predicted.y, predicted.z] : null,
+      correction: [correction.x, correction.y, correction.z],
+      pendingInputs: pending.length,
+      accumulator,
       calls: renderer.info.render.calls,
       triangles: renderer.info.render.triangles,
       frameMs,

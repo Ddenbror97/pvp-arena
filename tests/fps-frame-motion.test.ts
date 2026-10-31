@@ -23,6 +23,38 @@ const input: Input = {
   sprint: true,
 };
 describe("continuous camera movement", () => {
+  it("does not turn a one-tick direction change into a 15 cm camera teleport", () => {
+    const p = createMatch({ A: "a", B: "b" }, 5, 1).players.A;
+    Object.assign(p, { x: 9, z: 12 });
+    const motion = new FrameMotion(),
+      correction = new CameraCorrection();
+    motion.sample(p, null, 0, correction);
+    p.z -= 0.2;
+    let previous = 12;
+    for (let i = 0; i < 40; i++) {
+      const next = motion.sample(p, null, 7, correction).z;
+      expect(Math.abs(next - previous)).toBeLessThanOrEqual(0.017501);
+      previous = next;
+    }
+    expect(previous).toBeCloseTo(p.z, 2);
+  });
+  it("clears a crate corner without starving the free correction axis or snapping", () => {
+    const p = createMatch({ A: "a", B: "b" }, 5, 1).players.A;
+    Object.assign(p, { x: 5.65, z: 7.9 });
+    const motion = new FrameMotion(),
+      correction = new CameraCorrection();
+    let previous = { ...motion.sample(p, null, 0, correction) };
+    Object.assign(p, { x: 5.85, z: 7.64 });
+    const right = { ...input, forward: 0, strafe: 1, sprint: false };
+    for (let i = 0; i < 140; i++) {
+      predictMovement(p, right, (7 * (1000 / 30)) / 34);
+      const next = motion.sample(p, right, 7, correction);
+      expect(Math.hypot(next.x - previous.x, next.z - previous.z)).toBeLessThan(0.055);
+      expect(isMovementBlocked(next.x, next.y, next.z, !!next.crouched)).toBe(false);
+      previous = { ...next };
+    }
+    expect(Math.hypot(previous.x - p.x, previous.z - p.z)).toBeLessThan(0.12);
+  });
   it("follows ordinary jump speed immediately but bounds a discontinuous landing correction", () => {
     const camera = new CameraVertical();
     expect(camera.sample(1.6, 0)).toBe(1.6);
