@@ -270,6 +270,11 @@ export function mountArena(
   viewSun.position.set(-1, 3, 2);
   viewSun.layers.set(1);
   viewScene.add(viewSun);
+  // Cool rim light from behind-right separates gloves, forearm and steel edges from the map.
+  const viewRim = new THREE.DirectionalLight(0xbfd6ff, 1.6);
+  viewRim.position.set(2, 1.4, -2.5);
+  viewRim.layers.set(1);
+  viewScene.add(viewRim);
   const weaveCanvas = document.createElement("canvas");
   weaveCanvas.width = weaveCanvas.height = 128;
   const weavePen = weaveCanvas.getContext("2d")!,

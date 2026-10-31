@@ -157,7 +157,10 @@ export function createForearmDetailTexture(seed = 1337) {
 }
 
 /** Cool and slightly darken skin over veins; reads the green channel of the bump map. */
-export function applyVeinTint(material: THREE.MeshStandardMaterial, strength = 0.5) {
+export function applyVeinTint<M extends THREE.MeshStandardMaterial>(
+  material: M,
+  strength = 0.5,
+): M {
   material.onBeforeCompile = (shader) => {
     shader.fragmentShader = shader.fragmentShader.replace(
       "#include <map_fragment>",

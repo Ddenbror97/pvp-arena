@@ -1,9 +1,14 @@
 import * as THREE from "three";
-import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
-import { poseRifleHands, fitContinuousForearms, SHORT_FOREARMS } from "./fitted-rifle-hands";
+import {
+  poseRifleHands,
+  fitContinuousForearms,
+  magazineGrip as magazineGripFrame,
+  SHORT_FOREARMS,
+} from "./fitted-rifle-hands";
 import { ARENA_MODELS } from "./model-assets";
 import { applyVeinTint, createForearmDetailTexture } from "./forearm-detail";
+import { upgradeRifleMaterials } from "./rifle-materials";
 import {
   BOLT_TRAVEL,
   MAG_POSITION,
@@ -19,6 +24,11 @@ import {
 
 /** Relief depth of the forearm detail map, in viewmodel-root units per unit of height. */
 const FOREARM_BUMP_SCALE = 0.065;
+
+/** Magazine grip, in rifle-local units: wrap axis just ahead of the authored grip marker. */
+const MAG_GRIP_OFFSET = new THREE.Vector3(0, -0.035, -0.035);
+const MAG_EDGE_DOWN = new THREE.Vector3(0, -0.9, -0.43);
+const MAG_TO_WRIST = new THREE.Vector3(-0.6, 0, 0.8);
 
 /** Real authored AK and skinned hands. Existing controller still owns every input and shot. */
 export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = true) {
@@ -55,6 +65,12 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
     magazineGrip: THREE.Object3D | undefined;
   const magazineRest = { position: new THREE.Vector3(), rotation: new THREE.Euler() };
   let boltRest = 0;
+  // Support hand baked a second time gripping the magazine; it rides on the magazine itself.
+  const magazineHand = new THREE.Group(),
+    magazineHold = new THREE.Matrix4(),
+    magazineRestMatrix = new THREE.Matrix4(),
+    magazineNow = new THREE.Matrix4();
+  magazineHand.name = "magazine-grip-hand";
   const supportWrist = new THREE.Vector3(),
     supportGuard = new THREE.Vector3(),
     rigReady = { value: false };
@@ -64,45 +80,12 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
     qa: new THREE.Quaternion(),
     qb: new THREE.Quaternion(),
     c: new THREE.Vector3(),
+    q: new THREE.Quaternion(),
+    m: new THREE.Matrix4(),
+    m2: new THREE.Matrix4(),
     euler: new THREE.Euler(),
     inverse: new THREE.Matrix4(),
   };
-  const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = 1024;
-  const pen = canvas.getContext("2d")!;
-  pen.fillStyle = "#292632";
-  pen.fillRect(0, 0, 1024, 1024);
-  let seed = 971;
-  const random = () => {
-    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-    return seed / 4294967296;
-  };
-  for (let i = -4; i < 9; i++) {
-    pen.fillStyle = i % 2 ? "#6714a4" : "#931ded";
-    pen.beginPath();
-    pen.moveTo(i * 220, 0);
-    pen.lineTo(i * 220 + 45, 0);
-    pen.lineTo(i * 220 - 700, 1024);
-    pen.lineTo(i * 220 - 745, 1024);
-    pen.fill();
-  }
-  pen.globalAlpha = 0.2;
-  for (let i = 0; i < 3600; i++) {
-    pen.strokeStyle = i % 3 ? "#a9a3b2" : "#020207";
-    const x = random() * 1024,
-      y = random() * 1024;
-    pen.beginPath();
-    pen.moveTo(x, y);
-    pen.lineTo(x + random() * 26, y + random() * 2);
-    pen.stroke();
-  }
-  pen.globalAlpha = 1;
-  const paint = new THREE.CanvasTexture(canvas);
-  paint.colorSpace = THREE.SRGBColorSpace;
-  paint.wrapS = paint.wrapT = THREE.RepeatWrapping;
-  paint.anisotropy = 8;
-  paint.repeat.set(0.2, 0.2);
-  ownedTextures.push(paint);
   const skinMap = new THREE.TextureLoader().load("/fps/forearm-skin-v1.webp");
   skinMap.colorSpace = THREE.SRGBColorSpace;
   skinMap.wrapS = skinMap.wrapT = THREE.RepeatWrapping;
@@ -113,35 +96,21 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
   const skinDetail = createForearmDetailTexture();
   ownedTextures.push(skinDetail);
   const skin = applyVeinTint(
-    new THREE.MeshStandardMaterial({
+    new THREE.MeshPhysicalMaterial({
       map: skinMap,
       color: 0xffffff,
       roughness: 0.56,
       metalness: 0,
       bumpMap: skinDetail,
       bumpScale: FOREARM_BUMP_SCALE,
+      // Warm grazing-angle sheen stands in for subsurface scattering on the forearm's edges.
+      sheen: 0.35,
+      sheenColor: new THREE.Color(0xff9c80),
+      sheenRoughness: 0.55,
     }),
     1,
   );
   ownedMaterials.push(skin);
-  const logo = new THREE.TextureLoader().load("/brand/arena-logo-email.png");
-  logo.colorSpace = THREE.SRGBColorSpace;
-  logo.anisotropy = 8;
-  ownedTextures.push(logo);
-  const logoMaterial = new THREE.MeshStandardMaterial({
-    map: logo,
-    transparent: true,
-    alphaTest: 0.06,
-    depthWrite: false,
-    polygonOffset: true,
-    polygonOffsetFactor: -3,
-    roughness: 0.48,
-    metalness: 0.12,
-    emissive: 0x777777,
-    emissiveMap: logo,
-    emissiveIntensity: 0.25,
-  });
-  ownedMaterials.push(logoMaterial);
   const ready = asset.ready
     .then((gltf) => {
       if (stopped) return;
@@ -152,14 +121,32 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
       instance.root.getObjectByName("SpareMagazine")?.removeFromParent();
       const arm = instance.root.getObjectByName("FPArms") as THREE.SkinnedMesh | undefined;
       if (firstPerson && arm?.isSkinnedMesh) {
+        // Bone states are snapshotted so a second grip (on the magazine) can be fitted and
+        // baked from the authored pose, then the handguard pose restored for everything else.
+        const rig = instance.root.getObjectByName("FPRig")!,
+          joints: THREE.Object3D[] = [];
+        rig.traverse((o) => joints.push(o));
+        const snapshot = () =>
+          joints.map((o) => [o.position.clone(), o.quaternion.clone(), o.scale.clone()] as const);
+        const restore = (state: ReturnType<typeof snapshot>) => {
+          joints.forEach((o, i) => {
+            o.position.copy(state[i]![0]);
+            o.quaternion.copy(state[i]![1]);
+            o.scale.copy(state[i]![2]);
+          });
+          instance!.root.updateWorldMatrix(true, true);
+        };
+        const authored = snapshot();
         const supportDelta = poseRifleHands(instance.root);
         const fitted = fitContinuousForearms(arm, root, supportDelta);
         const material = (
           Array.isArray(arm.material) ? arm.material[0]! : arm.material
         ) as THREE.MeshStandardMaterial;
-        // Black tactical gloves, identical for police and terrorist.
-        material.color.setHex(0x2e2f35);
-        material.roughness = 0.78;
+        // Matte black tactical gloves (synthetic leather), identical for police and terrorist.
+        material.color.setHex(0x34353a);
+        material.roughness = 0.9;
+        material.metalness = 0;
+        material.envMapIntensity = 0.55;
         for (const side of ["L", "R"] as const) {
           const gloves = new THREE.Mesh(fitted[side].gloves, material);
           gloves.name = `fitted-rifle-gloves-${side}`;
@@ -170,83 +157,50 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
         }
         root.userData["wristSeams"] = fitted.seams;
         arm.visible = false;
-        instance.root
-          .getObjectByName("Hand_L")!
-          .getWorldPosition(supportWrist)
-          .applyMatrix4(scratch.inverse.copy(root.matrixWorld).invert());
+        const handNode = instance.root.getObjectByName("Hand_L")!;
+        const rootInverse = new THREE.Matrix4().copy(root.matrixWorld).invert();
+        handNode.getWorldPosition(supportWrist).applyMatrix4(rootInverse);
+        const handOnGuard = rootInverse.clone().multiply(handNode.matrixWorld);
+        const guardState = snapshot();
+
+        // Magazine grip: palm on the magazine's left face, fingers round its front edge.
+        restore(authored);
+        const magNode = instance.root.getObjectByName("Magazine")!,
+          magGripNode = instance.root.getObjectByName("MagazineGrip")!;
+        const toInstance = new THREE.Matrix4().copy(instance.root.matrixWorld).invert();
+        const axisPoint = magGripNode
+          .getWorldPosition(new THREE.Vector3())
+          .applyMatrix4(toInstance)
+          .add(MAG_GRIP_OFFSET);
+        const frame = magazineGripFrame(axisPoint, MAG_EDGE_DOWN, MAG_TO_WRIST);
+        const magDelta = poseRifleHands(instance.root, frame);
+        const magFitted = fitContinuousForearms(arm, root, magDelta, {
+          ...SHORT_FOREARMS,
+          elbow: { L: frame.direction(SHORT_FOREARMS.elbow.L), R: SHORT_FOREARMS.elbow.R },
+        });
+        const handOnMag = rootInverse.clone().multiply(handNode.matrixWorld);
+        restore(guardState);
+        root.updateWorldMatrix(true, true);
+        magazineHold.copy(handOnMag).multiply(handOnGuard.invert());
+        magazineRestMatrix.copy(rootInverse).multiply(magNode.matrixWorld);
+        const intoMagazine = new THREE.Matrix4()
+          .copy(magNode.matrixWorld)
+          .invert()
+          .multiply(root.matrixWorld);
+        magFitted.L.gloves.applyMatrix4(intoMagazine);
+        magFitted.L.skin.applyMatrix4(intoMagazine);
+        const heldGloves = new THREE.Mesh(magFitted.L.gloves, material),
+          heldForearm = new THREE.Mesh(magFitted.L.skin, skin);
+        heldGloves.name = "magazine-grip-gloves";
+        heldForearm.name = "magazine-grip-forearm";
+        magazineHand.add(heldGloves, heldForearm);
+        magazineHand.visible = false;
+        magNode.add(magazineHand);
+        ownedGeometry.push(magFitted.L.gloves, magFitted.L.skin);
+        magFitted.R.gloves.dispose();
+        magFitted.R.skin.dispose();
       }
-      instance.root.traverse((object) => {
-        if (object instanceof THREE.Mesh && !(object instanceof THREE.SkinnedMesh))
-          for (const material of Array.isArray(object.material)
-            ? object.material
-            : [object.material]) {
-            if (
-              material instanceof THREE.MeshStandardMaterial &&
-              /Receiver|Wood|Bakelite/.test(material.name)
-            ) {
-              material.map = paint;
-              material.color.setHex(0xffffff);
-              material.metalness = 0.6;
-              material.roughness = 0.42;
-              material.needsUpdate = true;
-            }
-          }
-      });
-      // Thin paint overlays on the authored flat receiver/furniture panels.
-      instance.root.updateMatrixWorld(true);
-      for (const name of ["ReceiverGeometry", "StockWoodGeometry", "MagazineGeometry"]) {
-        const receiver = instance.root.getObjectByName(name) as THREE.Mesh | undefined;
-        if (receiver?.isMesh) {
-          receiver.geometry.computeBoundingBox();
-          matrix.copy(root.matrixWorld).invert().multiply(receiver.matrixWorld);
-          const bounds = receiver.geometry.boundingBox!.clone().applyMatrix4(matrix),
-            center = bounds.getCenter(new THREE.Vector3());
-          for (const side of [-1, 1]) {
-            const position = center.clone();
-            position.x = side < 0 ? bounds.min.x - 0.012 : bounds.max.x + 0.012;
-            const geometry = new THREE.PlaneGeometry(
-              Math.min(0.32, (bounds.max.z - bounds.min.z) * 0.65),
-              Math.min(0.13, (bounds.max.y - bounds.min.y) * 0.6),
-            );
-            if (name === "MagazineGeometry") {
-              const surface = receiver.geometry.clone().applyMatrix4(matrix);
-              const proxy = new THREE.Mesh(surface, logoMaterial);
-              proxy.updateMatrixWorld(true);
-              const clipped = new DecalGeometry(
-                proxy,
-                position,
-                new THREE.Euler(0, (side * Math.PI) / 2, 0),
-                new THREE.Vector3(
-                  Math.min(0.32, (bounds.max.z - bounds.min.z) * 0.65),
-                  Math.min(0.13, (bounds.max.y - bounds.min.y) * 0.6),
-                  0.06,
-                ),
-              );
-              // Parent to the magazine itself so the branding leaves with it on reload.
-              const magazineNode = instance.root.getObjectByName("Magazine")!;
-              clipped.applyMatrix4(
-                new THREE.Matrix4()
-                  .copy(magazineNode.matrixWorld)
-                  .invert()
-                  .multiply(root.matrixWorld),
-              );
-              const decal = new THREE.Mesh(clipped, logoMaterial);
-              decal.name = "pvp-receiver-decal";
-              magazineNode.add(decal);
-              ownedGeometry.push(clipped);
-              surface.dispose();
-              geometry.dispose();
-              continue;
-            }
-            const decal = new THREE.Mesh(geometry, logoMaterial);
-            decal.position.copy(position);
-            decal.rotation.y = (side * Math.PI) / 2;
-            decal.name = "pvp-receiver-decal";
-            weaponContent.add(decal);
-            ownedGeometry.push(geometry);
-          }
-        }
-      }
+      upgradeRifleMaterials(instance.root, ownedMaterials);
       const tip = instance.root.getObjectByName("MuzzleDeviceTip");
       if (tip) tip.add(marker);
       root.updateWorldMatrix(true, true);
@@ -309,27 +263,41 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
     weapon.updateMatrixWorld(true);
     inverse.copy(root.matrixWorld).invert();
     // Resolve both bracketing keys against the live rig, then blend: the hand tracks moving parts.
+    // The magazine anchor is the exact rigid transform that puts the handguard hand where the
+    // magazine-grip hand is, so swapping between the two baked hands never pops.
+    magazineNow.copy(inverse).multiply(magazine!.matrixWorld);
+    const hold = scratch.m.copy(magazineNow).multiply(scratch.m2.copy(magazineRestMatrix).invert());
+    hold.multiply(magazineHold);
     const anchor = (
       key: { anchor: SupportAnchor; offset: readonly number[]; rotation: readonly number[] },
       out: THREE.Vector3,
       rotation: THREE.Quaternion,
     ) => {
-      if (key.anchor === "guard")
-        out.copy(supportGuard).applyQuaternion(weapon.quaternion).add(weapon.position);
-      else
-        (key.anchor === "mag" ? magazineGrip! : bolt!).getWorldPosition(out).applyMatrix4(inverse);
+      const extra = scratch.q.setFromEuler(
+        euler.set(key.rotation[0]!, key.rotation[1]!, key.rotation[2]!),
+      );
+      if (key.anchor === "mag") {
+        out.copy(supportWrist).applyMatrix4(hold);
+        rotation.setFromRotationMatrix(hold).multiply(extra);
+      } else {
+        if (key.anchor === "guard")
+          out.copy(supportGuard).applyQuaternion(weapon.quaternion).add(weapon.position);
+        else bolt!.getWorldPosition(out).applyMatrix4(inverse);
+        rotation.copy(extra).premultiply(weapon.quaternion);
+      }
       out.add(
         a.set(key.offset[0]!, key.offset[1]!, key.offset[2]!).applyQuaternion(weapon.quaternion),
       );
-      rotation
-        .setFromEuler(euler.set(key.rotation[0]!, key.rotation[1]!, key.rotation[2]!))
-        .premultiply(weapon.quaternion);
     };
     const segment = sampleSegment(SUPPORT, p);
     anchor(segment.a, c, qa);
     anchor(segment.b, b, qb);
     support.position.copy(c.lerp(b, segment.k));
     support.quaternion.copy(qa.slerp(qb, segment.k));
+    // While the magazine is in hand, the magazine-grip hand (fingers round the mag) is shown.
+    const held = segment.a.anchor === "mag" && segment.b.anchor === "mag";
+    magazineHand.visible = held;
+    support.visible = !held;
   }
   return {
     root,

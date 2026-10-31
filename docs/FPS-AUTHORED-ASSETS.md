@@ -150,3 +150,17 @@ this correction.
 - The renderer passes reload progress to the authored rifle and no longer tilts the
   whole weapon group for it; pistol/fallback keep the previous tilt cue. World 78° and
   viewmodel 60° cameras are unchanged.
+
+## Viewmodel polish: anatomy, realistic AKM, magazine grip (2026-10-31)
+
+- Forearms use superellipse cross-sections from adult-male girths (≈17.5 cm wrist,
+  ≈27 cm belly), a flat tendinous wrist, radial muscle mass and a supination twist;
+  `forearm-detail.ts` adds veins, tendons and a muscle groove as bump + vein tint.
+  `tests/fps-forearm-anatomy.test.ts` keeps the proportions in range.
+- The glove now ends ~3 cm past the wrist joint as a cuff (`GLOVE_CUFF`); gloves are matte.
+- `rifle-materials.ts` replaces the PVP paint: varnished laminated wood, blued receiver,
+  parkerized parts and a stamped-steel magazine, projected in each part's own space.
+- Reload: the support hand is fitted and baked a second time gripping the magazine
+  (`magazineGrip` frame in `fitted-rifle-hands.ts`) and parented to the magazine, so hand
+  and magazine cannot separate; the handguard hand lands exactly on that pose at contact.
+- A cool rim light on the viewmodel layer separates arm and steel edges from the map.

@@ -124,21 +124,15 @@ export type SupportAnchor = "guard" | "mag" | "handle";
  */
 export const SUPPORT: Key<{ anchor: SupportAnchor; offset: Vec; rotation: Vec }>[] = [
   { t: 0, v: { anchor: "guard", offset: R, rotation: R } },
+  // Release the handguard and drop toward the magazine.
   { t: 0.04, v: { anchor: "guard", offset: [-0.02, -0.08, 0.04], rotation: [0, 0, 0.15] } },
-  {
-    t: 0.12,
-    v: { anchor: "mag", offset: [-0.07, -0.27, 0.05], rotation: [0.45, 0.25, 0.25] },
-    ease: EASE.out,
-  },
-  { t: 0.3, v: { anchor: "mag", offset: [-0.07, -0.27, 0.05], rotation: [0.45, 0.25, 0.25] } },
-  { t: 0.38, v: { anchor: "mag", offset: [-0.07, -0.27, 0.05], rotation: [0.45, 0.25, 0.25] } },
-  { t: 0.545, v: { anchor: "mag", offset: [-0.07, -0.27, 0.05], rotation: [0.45, 0.25, 0.25] } },
-  // Thumb the magazine home, then dive under the receiver toward the handle.
-  {
-    t: 0.6,
-    v: { anchor: "mag", offset: [-0.07, -0.32, 0.08], rotation: [0.45, 0.25, 0.25] },
-    ease: EASE.out,
-  },
+  // Contact: the handguard hand lands exactly on the magazine-grip pose, then the baked
+  // magazine-grip hand takes over and rides the magazine out, through the swap and back in.
+  { t: 0.12, v: { anchor: "mag", offset: R, rotation: R }, ease: EASE.out },
+  { t: 0.3, v: { anchor: "mag", offset: R, rotation: R } },
+  { t: 0.38, v: { anchor: "mag", offset: R, rotation: R } },
+  { t: 0.545, v: { anchor: "mag", offset: R, rotation: R } },
+  { t: 0.59, v: { anchor: "mag", offset: R, rotation: R } },
   {
     t: 0.68,
     v: { anchor: "handle", offset: [-0.07, -0.21, 0.02], rotation: [0.35, 0.3, 0.2] },

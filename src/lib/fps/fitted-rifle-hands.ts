@@ -6,8 +6,60 @@ export const SUPPORT_GRIP_SHIFT = 0.09;
 /** Radians the support hand leans toward the lower-left, in line with the forearm. */
 export const SUPPORT_HAND_LEAN = 0.5;
 
-/** Fit the authored finger bones to a horizontal AK handguard, not the optional vertical grip. */
-export function poseRifleHands(root: THREE.Object3D) {
+/**
+ * Where the support hand grips, expressed as a map from handguard-local coordinates (the frame
+ * the finger targets were authored in) into rifle-root coordinates. The handguard grip is the
+ * identity; other grips (the magazine) reuse the same finger wrap re-oriented onto their part.
+ */
+export type GripFrame = {
+  point: (v: THREE.Vector3) => THREE.Vector3;
+  direction: (v: THREE.Vector3) => THREE.Vector3;
+  /** Also pose the right hand on the pistol grip (only needed once). */
+  rightHand: boolean;
+};
+export const HANDGUARD_GRIP: GripFrame = {
+  point: (v) => v.clone(),
+  direction: (v) => v.clone(),
+  rightHand: true,
+};
+/** Handguard axis point at the centre of the support grip, in handguard-local coordinates. */
+const HANDGUARD_AXIS = new THREE.Vector3(0, -0.011, -0.851);
+/**
+ * Re-orient the handguard wrap onto a magazine: the wrap axis follows the magazine's front edge
+ * (pointing down it), the wrist sits behind-left of the magazine and the finger circle is
+ * squeezed to the magazine's thickness so the palm and fingers meet its faces.
+ */
+export function magazineGrip(
+  axisPoint: THREE.Vector3,
+  edgeDown: THREE.Vector3,
+  toWrist: THREE.Vector3,
+  squeeze = 0.72,
+): GripFrame {
+  const b1 = edgeDown.clone().normalize();
+  const b2 = toWrist.clone().addScaledVector(b1, -toWrist.dot(b1)).normalize();
+  const b3 = new THREE.Vector3().crossVectors(b1, b2);
+  const a1 = new THREE.Vector3(0, 0, 1);
+  const a2 = new THREE.Vector3(-0.173, -0.19, 0).normalize();
+  const a3 = new THREE.Vector3().crossVectors(a1, a2);
+  const rotation = new THREE.Matrix4()
+    .makeBasis(b1, b2, b3)
+    .multiply(new THREE.Matrix4().makeBasis(a1, a2, a3).transpose());
+  const squeezeMatrix = new THREE.Matrix4().makeScale(squeeze, squeeze, 1);
+  return {
+    point: (v) =>
+      v
+        .clone()
+        .sub(HANDGUARD_AXIS)
+        .applyMatrix4(squeezeMatrix)
+        .applyMatrix4(rotation)
+        .add(axisPoint),
+    direction: (v) => v.clone().transformDirection(rotation),
+    rightHand: false,
+  };
+}
+
+/** Fit the authored finger bones to a grip (by default the horizontal AK handguard). */
+export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD_GRIP) {
   const hand = root.getObjectByName("Hand_L");
   if (!hand) throw new Error("AK support hand is missing");
   root.updateWorldMatrix(true, true);
@@ -29,16 +81,12 @@ export function poseRifleHands(root: THREE.Object3D) {
   // Lean the hand about the handguard so wrist and forearm share one lower-left diagonal.
   const lean = Math.sin(SUPPORT_HAND_LEAN),
     upright = Math.cos(SUPPORT_HAND_LEAN);
-  const desired = new THREE.Vector3(
-    lean * Math.sqrt(0.91),
-    upright * Math.sqrt(0.91),
-    -0.3,
-  ).transformDirection(root.matrixWorld);
-  const desiredAcross = new THREE.Vector3(
-    lean * 0.3,
-    upright * 0.3,
-    Math.sqrt(0.91),
-  ).transformDirection(root.matrixWorld);
+  const desired = grip
+    .direction(new THREE.Vector3(lean * Math.sqrt(0.91), upright * Math.sqrt(0.91), -0.3))
+    .transformDirection(root.matrixWorld);
+  const desiredAcross = grip
+    .direction(new THREE.Vector3(lean * 0.3, upright * 0.3, Math.sqrt(0.91)))
+    .transformDirection(root.matrixWorld);
   const targetFrame = new THREE.Matrix4().makeBasis(
     desiredAcross,
     desired,
@@ -54,10 +102,12 @@ export function poseRifleHands(root: THREE.Object3D) {
   hand.position.copy(
     hand.parent!.worldToLocal(
       root.localToWorld(
-        new THREE.Vector3(
-          -0.06 - 0.235 * Math.sin(SUPPORT_HAND_LEAN),
-          -0.23 + 0.235 * (1 - Math.cos(SUPPORT_HAND_LEAN)),
-          -0.88 + SUPPORT_GRIP_SHIFT,
+        grip.point(
+          new THREE.Vector3(
+            -0.06 - 0.235 * Math.sin(SUPPORT_HAND_LEAN),
+            -0.23 + 0.235 * (1 - Math.cos(SUPPORT_HAND_LEAN)),
+            -0.88 + SUPPORT_GRIP_SHIFT,
+          ),
         ),
       ),
     ),
@@ -88,21 +138,21 @@ export function poseRifleHands(root: THREE.Object3D) {
       cp = c.getWorldPosition(new THREE.Vector3());
     const l1 = origin.distanceTo(bp),
       l2 = bp.distanceTo(cp);
-    const goal = root.localToWorld(new THREE.Vector3(0.04, -0.04, z)),
+    const goal = root.localToWorld(grip.point(new THREE.Vector3(0.04, -0.04, z))),
       forward = goal.clone().sub(origin).normalize();
     const distance = THREE.MathUtils.clamp(
       origin.distanceTo(goal),
       Math.abs(l1 - l2) + 1e-5,
       l1 + l2 - 1e-5,
     );
-    const pole = root.localToWorld(new THREE.Vector3(-0.025, -0.22, z)).sub(origin);
+    const pole = root.localToWorld(grip.point(new THREE.Vector3(-0.025, -0.22, z))).sub(origin);
     pole.addScaledVector(forward, -pole.dot(forward)).normalize();
     const along = (l1 * l1 - l2 * l2 + distance * distance) / (2 * distance);
     const bend = Math.sqrt(Math.max(0, l1 * l1 - along * along));
     const pip = origin.clone().addScaledVector(forward, along).addScaledVector(pole, bend);
     aim(a, b, pip);
     aim(b, c, origin.clone().addScaledVector(forward, distance));
-    aim(c, tip, root.localToWorld(new THREE.Vector3(0.045, 0.005, z)));
+    aim(c, tip, root.localToWorld(grip.point(new THREE.Vector3(0.045, 0.005, z))));
   }
 
   // CCD changes rotations only: authored bone lengths, skin weights and glove detail survive.
@@ -141,20 +191,21 @@ export function poseRifleHands(root: THREE.Object3D) {
   }
   fit(
     ["Bone_L020", "Bone_L021", "Bone_L022", "Bone_L022_end"],
-    new THREE.Vector3(-0.052, 0.052, -0.971 + SUPPORT_GRIP_SHIFT),
+    grip.point(new THREE.Vector3(-0.052, 0.052, -0.971 + SUPPORT_GRIP_SHIFT)),
   );
   // Right middle/ring/little fingers curl around the pistol grip. Index retains trigger placement.
-  for (const [base, y] of [
-    [9, -0.163],
-    [13, -0.207],
-    [17, -0.244],
-  ] as const) {
-    const name = (i: number) => `Bone_R${String(i).padStart(3, "0")}`;
-    fit(
-      [name(base), name(base + 1), name(base + 2), `${name(base + 2)}_end`],
-      new THREE.Vector3(-0.045, y, -0.237),
-    );
-  }
+  if (grip.rightHand)
+    for (const [base, y] of [
+      [9, -0.163],
+      [13, -0.207],
+      [17, -0.244],
+    ] as const) {
+      const name = (i: number) => `Bone_R${String(i).padStart(3, "0")}`;
+      fit(
+        [name(base), name(base + 1), name(base + 2), `${name(base + 2)}_end`],
+        new THREE.Vector3(-0.045, y, -0.237),
+      );
+    }
   root.updateWorldMatrix(true, true);
   return hand.matrixWorld.clone().multiply(originalHand.invert());
 }
@@ -185,6 +236,8 @@ export type ForearmShape = {
   /** Viewmodel root scale, so measurements stay in real metres. */
   scale: number;
 };
+/** How far the glove reaches past the wrist joint, in viewmodel-root units (~3 cm real). */
+export const GLOVE_CUFF = 0.05;
 /** Fewest sides around a forearm cross-section before the extrusion is subdivided. */
 const MIN_FOREARM_SIDES = 160;
 /** Short, anatomically proportioned forearms entering from the lower screen edge. */
@@ -275,7 +328,8 @@ export function fitContinuousForearms(
     const axis = new THREE.Vector3(0, -1, 0)
       .transformDirection(hand.matrixWorld)
       .transformDirection(root.matrixWorld.clone().invert());
-    const plane = wrist.clone().addScaledVector(axis, -0.012);
+    // The glove cuff covers the wrist joint and ends on the forearm, like a tactical glove.
+    const plane = wrist.clone().addScaledVector(axis, GLOVE_CUFF);
     const glovePositions: number[] = [],
       gloveNormals: number[] = [],
       gloveUVs: number[] = [];

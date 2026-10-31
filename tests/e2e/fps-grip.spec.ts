@@ -69,6 +69,16 @@ test("actual AK has welded wrists and a stable wrap grip through recoil and relo
     const stable = geometries.every((g, j) =>
       originals[j]!.every((v, i) => v === g.getAttribute("position").array[i]),
     );
+    // The magazine-grip hand rides on the magazine and is only shown while the mag is in hand.
+    const held = model.root.getObjectByName("magazine-grip-hand"),
+      supportArm = model.root.getObjectByName("support-arm");
+    const magazineHand = {
+      parent: held?.parent?.name,
+      rest: (model.update(true, 0, 0), [held?.visible, supportArm?.visible]),
+      reloading: (model.update(true, 0.3, 0), [held?.visible, supportArm?.visible]),
+      chambering: (model.update(true, 0.72, 0), [held?.visible, supportArm?.visible]),
+    };
+    model.update(true, 0, 0);
     const seams = model.root.userData.wristSeams;
     const finite = geometries.every((g) =>
       ["position", "normal", "uv"].every((a) =>
@@ -88,6 +98,7 @@ test("actual AK has welded wrists and a stable wrap grip through recoil and relo
       stable,
       finite,
       covers,
+      magazineHand,
     };
     model.dispose();
     return data;
@@ -96,6 +107,12 @@ test("actual AK has welded wrists and a stable wrap grip through recoil and relo
   expect(result.covers).toEqual([]);
   expect(result.finite).toBe(true);
   expect(result.stable).toBe(true);
+  expect(result.magazineHand).toEqual({
+    parent: "Magazine",
+    rest: [false, true],
+    reloading: [true, false],
+    chambering: [false, true],
+  });
   expect(result.seams).toHaveLength(2);
   for (const seam of result.seams) {
     expect(seam.loops).toBe(1);
