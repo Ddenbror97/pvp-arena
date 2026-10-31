@@ -9,7 +9,12 @@ import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 import { createMuzzleFlash } from "./muzzle-flash";
 import { ARENA_MODELS } from "./model-assets";
 
-type Motion = { airborne?: boolean; weapon?: Weapon; reloading?: boolean };
+type Motion = {
+  airborne?: boolean;
+  weapon?: Weapon;
+  reloading?: boolean;
+  death?: number | undefined;
+};
 /** Authored skinned bodies, bone-space IK and reference-specific clothing. */
 /** Horizontal build factor for both opponents (height is fixed by the head hitbox). */
 const BODY_BREADTH = 1.06;
@@ -18,6 +23,8 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
   const police = seat === "A",
     root = new THREE.Group();
   root.name = police ? "officer" : "masked-fighter";
+  // Falling is local to the character's facing direction, not the world's X axis.
+  root.rotation.order = "YXZ";
   const fallback = createFallback(seat, branding, kit);
   root.add(fallback.root);
   const anchor = new THREE.Group();
@@ -490,10 +497,10 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       crouched = false,
       motion: Motion = {},
     ) {
-      root.visible = alive;
+      root.visible = alive || motion.death !== undefined;
       anchor.position.y = crouched ? CROUCH_EYE_HEIGHT : EYE_HEIGHT;
       if (!loaded) {
-        fallback.update(dt, now, pitch, alive, crouched, motion);
+        fallback.update(dt, now, pitch, root.visible, crouched, motion);
         return;
       }
       const dx = initialized ? root.position.x - lastX : 0,
@@ -502,7 +509,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       lastX = root.position.x;
       lastZ = root.position.z;
       const rawDistance = Math.hypot(dx, dz),
-        distance = Math.min(0.3, rawDistance),
+        distance = alive ? Math.min(0.3, rawDistance) : 0,
         seconds = Math.max(0.001, dt / 1000);
       speed = THREE.MathUtils.damp(speed, Math.min(7, distance / seconds), 12, seconds);
       if (rawDistance > 0.0001) {
@@ -582,6 +589,18 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           target,
           bend,
         );
+      }
+      if (motion.death !== undefined) {
+        const collapse = motion.death;
+        // Layer relaxed, asymmetric limbs over the fitted pose. The weapon and
+        // hands remain attached while the body collapses and settles.
+        bones.get("LeftUpLeg")!.rotation.x += collapse * 0.22;
+        bones.get("LeftLeg")!.rotation.x -= collapse * 0.42;
+        bones.get("RightUpLeg")!.rotation.x += collapse * 0.1;
+        bones.get("RightLeg")!.rotation.x -= collapse * 0.2;
+        bones.get("LeftArm")!.rotation.z += collapse * 0.14;
+        bones.get("RightArm")!.rotation.z -= collapse * 0.08;
+        root.updateWorldMatrix(true, true);
       }
       headCenter.setFromMatrixPosition(bones.get("Head")!.matrixWorld);
       topCenter.setFromMatrixPosition(bones.get("HeadTop_End")!.matrixWorld);

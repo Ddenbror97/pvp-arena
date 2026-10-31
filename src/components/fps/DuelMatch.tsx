@@ -16,6 +16,8 @@ import type { ArenaControls, ArenaFrame } from "@/lib/fps/renderer";
 import { loadArenaRenderer } from "@/lib/fps/renderer-loader";
 import { STRIKE_SHOWCASE } from "@/lib/fps/showcase";
 import { RoundBreak, type DuelProfile } from "./RoundBreak";
+import { DeathFeedback } from "./DeathFeedback";
+import { isDefeatedView } from "@/lib/fps/death-presentation";
 import "./duel.css";
 
 type Preview = DuelView & { username: string };
@@ -573,6 +575,9 @@ export function DuelMatch({
           </button>
         </div>
       </header>
+      {frame && isDefeatedView(frame.state, seat, spectate) && (
+        <DeathFeedback key={`${matchId}-${frame.state.round}`} round={frame.state.round} />
+      )}
       <div className="duel-crosshair" aria-hidden>
         <i />
         <i />
