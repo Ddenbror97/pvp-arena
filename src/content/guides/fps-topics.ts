@@ -1,4 +1,82 @@
 /** One intent owner per new URL; reuses existing wager/review/skin pages. */
+const FPS_WAVE2_GROUPS = [
+  {
+    name: "Specific browser shooters and permitted access",
+    slugs: [
+      "counter-strike-unblocked",
+      "krunker-unblocked",
+      "deadshot-io",
+      "bullet-force",
+      "venge-io",
+      "war-brokers",
+      "shooting-games-unblocked",
+      "best-browser-games",
+    ],
+  },
+  {
+    name: "Choosing an FPS by format and mechanics",
+    slugs: [
+      "games-like-csgo",
+      "games-like-valorant",
+      "tactical-shooter-games",
+      "best-fps-games",
+      "best-mobile-fps",
+      "cs-1-6-online",
+    ],
+  },
+  {
+    name: "Crypto shooter projects, assets and payouts",
+    slugs: [
+      "off-the-grid-game",
+      "shrapnel-game",
+      "nft-shooter-games",
+      "earn-crypto-playing-games",
+      "best-crypto-games",
+      "skill-games-real-money",
+    ],
+  },
+  {
+    name: "Mouse hardware, displays and local response",
+    slugs: [
+      "mouse-dpi",
+      "polling-rate",
+      "input-lag",
+      "240hz-vs-144hz",
+      "mouse-accuracy-test",
+      "crosshair-overlay",
+      "valorant-aim-trainer",
+    ],
+  },
+  {
+    name: "Weapon choices, utility and cosmetic selection",
+    slugs: [
+      "cs2-weapon-tier-list",
+      "cs2-pistols",
+      "usp-vs-p2000",
+      "m4a4-vs-m4a1-s",
+      "cs2-awp-guide",
+      "awp-skins",
+      "ak-47-skins",
+      "cheap-cs2-skins",
+      "cs2-grenades",
+    ],
+  },
+  {
+    name: "More callouts, community content and troubleshooting",
+    slugs: [
+      "nuke-callouts",
+      "overpass-callouts",
+      "inferno-callouts",
+      "anubis-ancient-callouts",
+      "cs2-surf",
+      "cs2-binds",
+      "cs2-stuttering-fix",
+      "cs2-on-mac",
+      "cs2-workshop-maps",
+    ],
+  },
+];
+
 export const FPS_GROUPS = [
   {
     name: "Browser duels and cash-match decisions",
@@ -51,6 +129,7 @@ export const FPS_GROUPS = [
       "is-cs2-free",
     ],
   },
+  ...FPS_WAVE2_GROUPS,
 ];
 export const FPS_GUIDE_SLUGS = FPS_GROUPS.flatMap((g) => g.slugs);
 

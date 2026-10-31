@@ -132,6 +132,10 @@ export const FPS_ACTIVITY_GUIDES = new Set([
   "crypto-fps-game",
   "browser-fps-games",
   "cs2-tournaments-for-money",
+  "earn-crypto-playing-games",
+  "best-crypto-games",
+  "skill-games-real-money",
+  "nft-shooter-games",
 ]);
 export const FPS_MECHANICS_GUIDES = new Set([
   "fps-1v1-strategy",

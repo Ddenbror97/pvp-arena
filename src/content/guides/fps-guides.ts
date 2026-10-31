@@ -1,4 +1,5 @@
 import type { Guide } from "./types";
+import { FPS_WAVE2_CONTEXT } from "./fps-wave2-context";
 
 const valve = {
   label: "Valve: Counter-Strike 2",
@@ -2317,7 +2318,7 @@ An aim advantage is more useful when the engagement is predictable. [Counter-str
       ],
       [
         "Aim where the game rewards it",
-        `PvPStrike deliberately uses a two-head-hit rule at full health. A vest reduces chest and stomach damage, while legs deal lower base damage and bypass the vest. Mixed hit locations change the number of required bullets, so a single “shots to kill” claim without an armor condition is misleading.
+        `PvPStrike uses a three-head-hit rule at full health: each valid head hit deals 34 damage. A vest reduces chest and stomach damage, while legs deal lower base damage and bypass the vest. Mixed hit locations change the number of required bullets, so a single “shots to kill” claim without an armor condition is misleading.
 
 The table below states its fresh-vest assumption. Do not use Valve weapon tables as a substitute for this browser game’s rules.`,
       ],
@@ -2335,7 +2336,7 @@ The [K/D and hit-rate guide](/guides/k-d-ratio) clarifies denominators. Try [PvP
       },
       {
         q: "Should I always aim at the body for easier hits?",
-        a: "Not automatically. Hit location and armor affect damage. In PvPStrike two valid head hits eliminate a full-health target.",
+        a: "Not automatically. Hit location and armor affect damage. In PvPStrike three valid head hits eliminate a full-health target.",
       },
       {
         q: "Should I spray until the opponent dies?",
@@ -2355,4 +2356,7 @@ The [K/D and hit-rate guide](/guides/k-d-ratio) clarifies denominators. Try [PvP
       "fps-for-money-hub",
     ],
   }),
-];
+].map((guide) => {
+  const context = FPS_WAVE2_CONTEXT[guide.slug];
+  return context ? { ...guide, sections: [...guide.sections, context] } : guide;
+});

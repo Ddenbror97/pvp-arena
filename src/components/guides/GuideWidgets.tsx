@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import type { Guide } from "@/content/guides/types";
 import { Cs2TradeUpCalculator } from "./Cs2TradeUpCalculator";
 import { WEAR_RANGE, wearOf } from "@/lib/cs2-tradeup";
+import { MouseAccuracyDrill } from "./MouseAccuracyDrill";
 
 const field =
   "h-9 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground";
@@ -953,6 +954,7 @@ function FpsStatWidget({ kind }: { kind: "edpi" | "kd-ratio" }) {
 }
 
 export function GuideWidget({ type }: { type: NonNullable<Guide["widget"]> }) {
+  if (type === "mouse-accuracy") return <MouseAccuracyDrill />;
   if (type === "edpi" || type === "kd-ratio") return <FpsStatWidget kind={type} />;
   if (type === "cs2-trade-up") return <Cs2TradeUpCalculator />;
   if (type === "cs2-inventory") return <Cs2InventoryWidget />;
