@@ -5,6 +5,7 @@ import { playShot } from "../../src/lib/pool/play";
 import { planStandInShot } from "../../src/lib/pool/stand-in";
 import {
   defaultCueSpot,
+  legalPlacement,
   groupOf,
   seatGroup,
   stateHash,
@@ -119,7 +120,10 @@ test("Chrome versus Firefox plays a full rack through settlement and replay", as
     );
     await expect(p.getByText("Balls moving", { exact: true })).not.toBeVisible({ timeout: 20000 });
     if (state.ballInHand && shot.placeX != null && shot.placeY != null) {
-      const cue = state.balls.find((b) => b.id === 0 && !b.pocketed) ?? defaultCueSpot(state)!;
+      const current = state.balls.find((b) => b.id === 0 && !b.pocketed);
+      // The UI moves an illegal resting cue to its default legal placement.
+      const cue =
+        current && legalPlacement(state, current.x, current.y) ? current : defaultCueSpot(state)!;
       const from = await point(p, cue.x, cue.y),
         to = await point(p, shot.placeX, shot.placeY);
       await p.mouse.move(from.x, from.y);

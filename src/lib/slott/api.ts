@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { boundedRead } from "@/lib/read-deadline";
 import { supabase } from "@/integrations/supabase/client";
 import { listenTopic, markChannel, noteChannelEvent } from "@/lib/live-channel";
 import { slotFeedTargets } from "@/lib/slott/poll";
@@ -125,7 +126,9 @@ const GAME_NUM: (keyof SlotGameView)[] = [
 const toGame = (r: SlotGameView) => num(r, GAME_NUM);
 
 export async function fetchSlotGame(id: number): Promise<SlotGameView | null> {
-  const { data, error } = await db.from("slot_games").select(SELECT).eq("id", id).maybeSingle();
+  const { data, error } = await boundedRead(
+    db.from("slot_games").select(SELECT).eq("id", id).maybeSingle(),
+  );
   if (error) throw error;
   return data ? toGame(data) : null;
 }
@@ -134,17 +137,15 @@ export async function fetchSlotGame(id: number): Promise<SlotGameView | null> {
 export async function fetchSlotSpins(id: number, afterSpinNo = 0): Promise<SlotSpin[]> {
   let query = db.from("slot_spins").select(SPIN_COLS).eq("game_id", id).order("spin_no");
   if (afterSpinNo > 0) query = query.gt("spin_no", afterSpinNo);
-  const { data, error } = await query;
+  const { data, error } = await boundedRead(query);
   if (error) throw error;
   return ((data ?? []) as SlotSpin[]).map((s) => num(s, ["game_id", "bonus_cents"]));
 }
 
 export async function fetchSlotBonuses(id: number): Promise<SlotBonusEvent[]> {
-  const { data, error } = await db
-    .from("slot_bonus_events")
-    .select(EVENT_COLS)
-    .eq("game_id", id)
-    .order("spin_no");
+  const { data, error } = await boundedRead(
+    db.from("slot_bonus_events").select(EVENT_COLS).eq("game_id", id).order("spin_no"),
+  );
   if (error) throw error;
   return ((data ?? []) as SlotBonusEvent[]).map((e) =>
     num(e, ["game_id", "requested_cents", "awarded_cents", "pool_before", "pool_after"]),

@@ -35,6 +35,7 @@ import { verifySlott, type SlottCheck } from "@/lib/fairness/slott";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Reels } from "./Reels";
+import { LatestStatus } from "./LatestStatus";
 import { SpinFx } from "./SpinFx";
 import { hitCells, NO_HITS, spinReveal, winLevel } from "./hits";
 import { admitSpin, reuseSpinKey } from "./spin-guard";
@@ -490,7 +491,17 @@ export function SlottMatch({ id }: { id: number }) {
   const spinning =
     (!!latest && !latestLanded) ||
     (!!kick.current && (!latest || latest.spin_no < kick.current.spinNo));
-  const event = describeLatest(latest, latestLanded, bonuses, g, turn, me, deadline);
+  const event = (
+    <LatestStatus
+      latest={latest}
+      landed={latestLanded}
+      bonuses={bonuses}
+      game={g}
+      turn={turn}
+      me={me}
+      countdown={deadline == null ? null : <LiveSeconds deadline={deadline} />}
+    />
+  );
 
   // The challenger's deciding spin (even spin numbers from base_spins on) becomes a target chase.
   const deciding = (n: number) => n % 2 === 0 && n >= g.base_spins;
@@ -814,7 +825,7 @@ function LiveSeconds({ deadline }: { deadline: number }) {
     return () => clearInterval(id);
   }, [deadline]);
   const left = Math.max(0, Math.ceil((deadline - serverNow()) / 100) / 10);
-  return <>{fmtLeft(left)}s</>;
+  return <span translate="no">{`${fmtLeft(left)}s`}</span>;
 }
 
 function SeatStatus({
@@ -840,12 +851,12 @@ function SeatStatus({
         className="slott-turn rounded-xl py-2.5 text-[11px] font-semibold tracking-wider text-primary-soft"
         data-seat={seat}
       >
-        YOUR TURN
+        <span>YOUR TURN</span>
         {deadline != null ? (
-          <>
+          <span translate="no">
             {" "}
             · <LiveSeconds deadline={deadline} />
-          </>
+          </span>
         ) : null}
       </div>
     );
@@ -853,12 +864,12 @@ function SeatStatus({
   const text =
     g.status === "ACTIVE" && active ? (
       <>
-        SPINNING
+        <span>SPINNING</span>
         {deadline != null ? (
-          <>
+          <span translate="no">
             {" "}
             · <LiveSeconds deadline={deadline} />
-          </>
+          </span>
         ) : null}
       </>
     ) : won ? (
@@ -900,67 +911,6 @@ function SeatStatus({
 function whoName(g: SlotGameView, seat: "A" | "B") {
   const p = seat === "A" ? g.creator : g.opponent;
   return p?.username ?? (seat === "A" ? "Host" : "Challenger");
-}
-
-function describeLatest(
-  latest: SlotSpin | null,
-  landed: boolean,
-  bonuses: SlotBonusEvent[],
-  g: SlotGameView,
-  turn: "A" | "B" | null,
-  me: "A" | "B" | null,
-  deadline: number | null,
-) {
-  if (g.status === "WAITING") return "";
-  if (g.status === "COMPLETED")
-    return g.outcome === "DRAW"
-      ? "It's a draw — both stakes refunded."
-      : g.outcome === "BOMB"
-        ? "Bomb — the house took both stakes."
-        : `Match over · ${g.score_a} – ${g.score_b}`;
-  if (!latest)
-    return turn
-      ? `${turn === me ? "Your" : `${whoName(g, turn)}'s`} turn — spin 1 of ${g.base_spins / 2}.`
-      : "Match starting…";
-  if (!landed)
-    return <span className="text-primary-soft">{whoName(g, latest.seat)} is spinning…</span>;
-  if (hasBomb(latest.grid))
-    return `${whoName(g, latest.seat)} hit the bomb. Both stakes go to the house.`;
-  const b = bonuses.find((x) => x.spin_no === latest.spin_no);
-  const next = turn ? (
-    <>
-      {" "}
-      · {turn === me ? "your turn" : `${whoName(g, turn)} next`}
-      {deadline != null ? (
-        <>
-          {" "}
-          (<LiveSeconds deadline={deadline} />)
-        </>
-      ) : null}
-    </>
-  ) : (
-    ""
-  );
-  if (Number(latest.bonus_cents) > 0)
-    return (
-      <>
-        {whoName(g, latest.seat)} hit a {tierLabel(b?.tier ?? "WILD")}!{" "}
-        <span className="font-semibold text-gold">
-          +{formatUsd(Number(latest.bonus_cents))} bonus
-        </span>{" "}
-        added to the pot{next}
-      </>
-    );
-  const lines = latest.lines.length
-    ? ` · ${latest.lines.length} line win${latest.lines.length > 1 ? "s" : ""}`
-    : "";
-  return (
-    <>
-      {whoName(g, latest.seat)} scored {latest.score}
-      {lines}
-      {next}
-    </>
-  );
 }
 
 /** Same stake, same opponent: accept their rematch if they opened one, otherwise open ours. */
