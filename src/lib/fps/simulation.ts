@@ -238,12 +238,13 @@ function shoot(
   now: number,
   positions: Record<Seat, Pose>,
   input: Input,
+  historicalTarget?: Pose,
 ): void {
   const p = state.players[seat],
     target = state.players[other(seat)],
     stats = WEAPONS[p.weapon];
   const start = positions[seat],
-    targetStart = positions[other(seat)];
+    targetStart = historicalTarget ?? positions[other(seat)];
   const modern = state.combatVersion === COMBAT_VERSION;
   if (
     p.reloadUntil ||
@@ -369,6 +370,7 @@ export function stepMatch(
   inputs: Partial<Record<Seat, Input>>,
   now: number,
   _dt: number,
+  historicalTargets?: Partial<Record<Seat, Pose>>,
 ): MatchState {
   if (
     !Number.isFinite(now) ||
@@ -491,7 +493,7 @@ export function stepMatch(
       (!input.sprint || p.crouched) &&
       (state.combatVersion !== COMBAT_VERSION || p.weapon === "rifle" || !p.triggerHeld)
     )
-      shoot(state, seat, now, positions, input);
+      shoot(state, seat, now, positions, input, historicalTargets?.[seat]);
     if (input) p.triggerHeld = input.fire;
   }
   if (state.players.A.hp <= 0 || state.players.B.hp <= 0) {

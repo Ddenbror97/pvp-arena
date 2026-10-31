@@ -604,4 +604,46 @@ describe("isolated real Durable Object WebSockets", () => {
     expect(bad.status).toBe(400);
     human.close();
   }, 20000);
+
+  it("reports actual socket round trips and keeps server timing independent of claimed clocks", async () => {
+    const id = await init(),
+      a = await open(id),
+      b = await open(id, B);
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    for (const socket of [a, b])
+      socket.addEventListener("message", (event) => {
+        const f = JSON.parse(String(event.data));
+        if (f.type !== "ping") return;
+        socket.send(JSON.stringify({ v: 1, type: "pong", id: "forged-nonce" }));
+        const timer = setTimeout(
+          () => {
+            timers.delete(timer);
+            try {
+              socket.send(JSON.stringify({ v: 1, type: "pong", id: f.id }));
+            } catch {
+              /* test room closed */
+            }
+          },
+          socket === a ? 120 : 10,
+        );
+        timers.add(timer);
+      });
+    try {
+      await readyLive(a, b);
+      const report = await until(
+        a,
+        (f) =>
+          f.type === "network" &&
+          (f as unknown as { report: { rttMs: number; tickHz: number } }).report.tickHz > 15,
+      );
+      const timing = (report as unknown as { report: { rttMs: number; authMs: number } }).report;
+      expect(timing.rttMs).toBeGreaterThanOrEqual(100);
+      expect(timing.rttMs).toBeLessThan(500);
+      expect(timing.authMs).toBeLessThan(1200);
+    } finally {
+      for (const timer of timers) clearTimeout(timer);
+      a.close();
+      b.close();
+    }
+  }, 15000);
 });
