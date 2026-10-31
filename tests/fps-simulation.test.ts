@@ -188,8 +188,8 @@ describe("combat", () => {
     const state = live();
     lane(state);
     tick(state, { A: input({ fire: true }) });
-    expect(state.players.B.hp).toBe(50);
-    for (let seq = 1; seq <= 4; seq++)
+    expect(state.players.B.hp).toBe(66);
+    for (let seq = 1; seq <= 8; seq++)
       tick(state, {
         A: input({
           seq,
@@ -207,7 +207,7 @@ describe("combat", () => {
   it("resolves simultaneous lethal shots as a draw regardless of seat", () => {
     const state = live();
     lane(state);
-    state.players.A.hp = state.players.B.hp = 50;
+    state.players.A.hp = state.players.B.hp = 34;
     tick(state, { A: input({ fire: true }), B: input({ fire: true, yaw: Math.PI }) });
     expect(state.players.A.hp).toBe(0);
     expect(state.players.B.hp).toBe(0);
@@ -227,7 +227,7 @@ describe("combat", () => {
   it("aims both shots against tick-start positions while both players move", () => {
     const state = live();
     lane(state);
-    state.players.A.hp = state.players.B.hp = 50;
+    state.players.A.hp = state.players.B.hp = 34;
     // Without the shared tick-start snapshot, opposite movement would make the
     // narrow head targets miss at this lateral speed.
     tick(state, {
@@ -304,7 +304,7 @@ describe("match lifecycle", () => {
     expect(state.players.A.z).toBe(SPAWNS.A.z);
     stepMatch(state, {}, state.phaseEndsAt, TICK_MS);
     lane(state);
-    state.players.B.hp = 50;
+    state.players.B.hp = 34;
     tick(state, { A: input({ seq: 8, fire: true }) });
     const roundEnd = state.phaseEndsAt;
     expect(roundEnd - state.server!.lastStepAt).toBeCloseTo(ROUND_END_MS);
@@ -357,7 +357,7 @@ describe("match lifecycle", () => {
     const state = live();
     for (let draw = 0; draw < MAX_DRAWS; draw++) {
       lane(state);
-      state.players.A.hp = state.players.B.hp = 50;
+      state.players.A.hp = state.players.B.hp = 34;
       tick(state, {
         A: input({ seq: draw, fire: true }),
         B: input({ seq: draw, fire: true, yaw: Math.PI }),
@@ -379,7 +379,7 @@ describe("match lifecycle", () => {
   });
 });
 describe("round recap and automatic three-second break", () => {
-  it("counts actual fired bullets and confirmed hits, including both head hits and capped damage", () => {
+  it("counts actual fired bullets and all three head hits with damage capped at remaining health", () => {
     const state = live();
     lane(state);
     tick(state, { A: input({ fire: true }) });
@@ -388,7 +388,7 @@ describe("round recap and automatic three-second break", () => {
       shots: 1,
       hits: 1,
       headHits: 1,
-      damage: 50,
+      damage: 34,
     });
     const a = state.players.A;
     stepMatch(
@@ -397,11 +397,18 @@ describe("round recap and automatic three-second break", () => {
       state.server!.lastStepAt + 140,
       TICK_MS,
     );
+    expect(state.lastRound).toBeUndefined();
+    stepMatch(
+      state,
+      { A: input({ seq: 2, fire: true, yaw: -(a.recoilYaw ?? 0), pitch: -(a.recoilPitch ?? 0) }) },
+      state.server!.lastStepAt + 140,
+      TICK_MS,
+    );
     expect(state.lastRound).toMatchObject({
       round: 1,
       winner: "A",
       players: {
-        A: { shots: 2, hits: 2, headHits: 2, damage: 100, health: 100 },
+        A: { shots: 3, hits: 3, headHits: 3, damage: 100, health: 100 },
         B: { shots: 0, hits: 0, health: 0 },
       },
     });
@@ -416,7 +423,7 @@ describe("round recap and automatic three-second break", () => {
     stepMatch(state, {}, state.phaseEndsAt, TICK_MS);
     expect(state.lastRound?.players.A).toMatchObject({ shots: 1, hits: 0, damage: 0 });
   });
-  it("freezes actions for three seconds then resets once and starts automatically with no second countdown", () => {
+  it("holds the elimination and winner presentation then resets once with no second countdown", () => {
     const state = live();
     state.players.B.hp = 50;
     stepMatch(state, {}, state.phaseEndsAt, TICK_MS);
@@ -425,7 +432,7 @@ describe("round recap and automatic three-second break", () => {
       position = state.players.A.z,
       ammo = state.players.A.ammo,
       recap = structuredClone(state.lastRound);
-    expect(deadline - ended).toBe(3000);
+    expect(deadline - ended).toBe(3800);
     stepMatch(state, { A: input({ fire: true, forward: 1 }) }, deadline - 50, TICK_MS);
     expect(state.phase).toBe("round-end");
     expect(state.players.A.z).toBe(position);

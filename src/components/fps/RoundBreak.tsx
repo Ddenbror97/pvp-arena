@@ -20,7 +20,11 @@ export function RoundBreak({
   const name = profile?.username ?? `Player ${winner}`;
   const accuracy = stats?.shots ? `${Math.round((stats.hits / stats.shots) * 100)}%` : "—";
   return (
-    <div className="duel-round-break" role="status" aria-live="polite">
+    <div
+      className={`duel-round-break${countdown ? "" : " duel-round-result"}`}
+      role="status"
+      aria-live="polite"
+    >
       <section
         key={`${countdown ? "start" : recap?.round}`}
         className={`duel-round-card ${winner ? "is-victory" : ""}`}

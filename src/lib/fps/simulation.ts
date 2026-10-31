@@ -18,7 +18,8 @@ export type { Input, MatchState, Player, Seat, Weapon } from "./protocol";
 export const TICK_MS = 33.333;
 export const COUNTDOWN_MS = 3000;
 export const ROUND_MS = 60000;
-export const ROUND_END_MS = 3000;
+// Let the elimination register before the three-second winner presentation.
+export const ROUND_END_MS = 3800;
 export const MAX_DRAWS = 3;
 export const MOVE_SPEED = 5;
 export const WEAPONS = {
