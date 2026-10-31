@@ -9,6 +9,7 @@ import {
 } from "../src/lib/fps/simulation";
 import {
   HIT_DAMAGE,
+  applyVestDamage,
   recoveryProfile,
   sprayOffset,
   recoverCombatRecoil,
@@ -82,10 +83,11 @@ describe("PvPStrike authoritative combat v2", () => {
         s.players.B.crouched = crouched;
         const target = combatVolumes(s.players.B)[zone];
         tick(s, 1, { fire: true, pitch: Math.atan2(target.center.y - 1.6, 6) });
-        expect(s.players.B.hp).toBe(100 - HIT_DAMAGE.rifle[zone]);
+        const damage = applyVestDamage({ ...s.players.B, armor: 100 }, "rifle", zone);
+        expect(s.players.B.hp).toBe(100 - damage);
         expect(s.events.find((e) => e.hit)?.hit).toMatchObject({
           zone,
-          damage: HIT_DAMAGE.rifle[zone],
+          damage,
           victim: "B",
         });
       });
@@ -95,6 +97,33 @@ describe("PvPStrike authoritative combat v2", () => {
     lane(s);
     tick(s, 1, { fire: true });
     expect(s.players.B.hp).toBe(0);
+  });
+  it("retains unarmored v2 checkpoints and restores new-match vests on respawn", () => {
+    const s = live();
+    delete s.armorVersion;
+    delete s.players.B.armor;
+    lane(s);
+    const volume = combatVolumes(s.players.B).chest;
+    tick(s, 1, { fire: true, pitch: Math.atan2(volume.center.y - 1.6, 6) });
+    expect(s.players.B.hp).toBe(100 - HIT_DAMAGE.rifle.chest);
+    const modern = live();
+    modern.players.A.armor = 2;
+    modern.phase = "round-end";
+    modern.phaseEndsAt = 0;
+    tick(modern, 1);
+    expect(modern.players.A.armor).toBe(100);
+    expect(modern.players.B.armor).toBe(100);
+  });
+  it("reduces torso damage, consumes finite kevlar, and leaves head and legs unprotected", () => {
+    const p = live().players.B;
+    expect(applyVestDamage(p, "rifle", "chest")).toBe(26);
+    expect(applyVestDamage(p, "rifle", "stomach")).toBe(23);
+    expect(applyVestDamage(p, "rifle", "head")).toBe(50);
+    expect(applyVestDamage(p, "rifle", "legs")).toBe(20);
+    p.armor = 1;
+    expect(applyVestDamage(p, "rifle", "chest")).toBe(32);
+    expect(p.armor).toBe(0);
+    expect(applyVestDamage(p, "rifle", "chest")).toBe(34);
   });
   it("sprays a learnable rising and alternating horizontal pattern", () => {
     const pattern = Array.from({ length: 30 }, (_, n) => sprayOffset("rifle", n + 1));

@@ -138,9 +138,12 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
         { timeout: 20000 },
       )
       .toBe(`${round}:live`);
-    expect((await state()).players.A.weapon, `round ${round} should spawn with a rifle`).toBe(
-      "rifle",
-    );
+    await expect
+      .poll(async () => (await state()).players.A.weapon, {
+        message: `round ${round} should acknowledge its rifle loadout`,
+        timeout: 1500,
+      })
+      .toBe("rifle");
     await arm(false);
     if (round === 1 || round === 5) {
       if (round === 5) {
@@ -163,8 +166,9 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
         expect(after.ammo + after.reserve).toBe(before.ammo + before.reserve);
       }
     }
-    const spawn = (await state()).players.A;
-    const lateral = Math.cos(spawn.yaw) > 0 ? "KeyD" : "KeyA";
+    // The authority can consume a pre-respawn queued command before the new
+    // yaw is acknowledged. Choose the lane from the round's spawn orientation.
+    const lateral = round % 2 ? "KeyD" : "KeyA";
     await page.keyboard.down(lateral);
     await expect
       .poll(async () => (await state()).players.A.x, { timeout: 8000, intervals: [50] })

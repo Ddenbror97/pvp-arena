@@ -37,6 +37,7 @@ export async function fixture(
       document.body.replaceChildren(container);
       const host = container.querySelector<HTMLElement>(".duel-render-host")!;
       const inputs: unknown[] = [];
+      const localShots: Array<{ weapon: string; seq: number; at: number }> = [];
       const eventLog: Array<{ type: string; impact?: { surface: string; solidId: string } }> = [];
       const queue: Record<string, unknown>[] = [];
       let eventId = 0;
@@ -50,6 +51,7 @@ export async function fixture(
           if (queue.length > 8) queue.shift();
         },
         () => {},
+        (weapon: string, seq: number) => localShots.push({ weapon, seq, at: performance.now() }),
       );
       host.addEventListener("click", () => void controls.lock());
       state.server.lastStepAt = Date.now();
@@ -116,6 +118,7 @@ export async function fixture(
         fpsPolishTest: {
           state,
           inputs,
+          localShots,
           eventLog,
           resetView: () => {
             queue.length = 0;

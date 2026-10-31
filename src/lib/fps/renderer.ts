@@ -9,7 +9,9 @@ import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handli
 import { createArenaEnvironment } from "./environment";
 import { createImpactEffects } from "./impacts";
 import { createWeaponKit, AK_MUZZLE } from "./weapon";
-import { CameraCorrection, RemotePresentation, RenderBudget } from "./presentation";
+import { CameraCorrection, FrameMotion, RemotePresentation, RenderBudget } from "./presentation";
+import { capturePointer } from "./pointer-capture";
+import { TriggerFeedback } from "./trigger-feedback";
 import { createViewHands } from "./view-hands";
 import { createMuzzleFlash } from "./muzzle-flash";
 import { createAuthoredViewmodel } from "./authored-viewmodel";
@@ -33,6 +35,8 @@ export type ArenaControls = {
     programs: number;
     pixelRatio: number;
     opponentVisible: boolean;
+    renderFrames: number;
+    renderIntervalMs: number;
   };
   ready: Promise<void>;
   snapshot: (frame: ArenaFrame, seat: Seat | null) => void;
@@ -46,6 +50,7 @@ export function mountArena(
   host: HTMLElement,
   send: (input: Input) => void,
   onLock: (locked: boolean) => void,
+  onLocalShot?: (weapon: Weapon, seq: number) => void,
 ): ArenaControls {
   const scene = new THREE.Scene();
   // The weapon pass needs only its rig and lights. Re-traversing the entire
@@ -53,7 +58,19 @@ export function mountArena(
   const viewScene = new THREE.Scene();
   scene.background = new THREE.Color(0x8bacd0);
   scene.fog = new THREE.Fog(0x94b5d4, 95, 260);
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("webgl2", {
+    alpha: true,
+    antialias: true,
+    depth: true,
+    stencil: false,
+    powerPreference: "high-performance",
+    desynchronized: true,
+  });
+  if (!context) throw new Error("WebGL 2 is unavailable in this browser");
   const renderer = new THREE.WebGLRenderer({
+    canvas,
+    context,
     antialias: true,
     powerPreference: "high-performance",
   });
@@ -315,6 +332,7 @@ export function mountArena(
     pitch = 0,
     weapon: Weapon = "rifle",
     fire = false,
+    fireLatched = false,
     reload = false,
     jump = false;
   const keys = new Set<string>();
@@ -329,6 +347,8 @@ export function mountArena(
   let visibility: Record<Seat, boolean> = { A: true, B: true };
   const remoteTarget = new THREE.Vector3();
   const correction = new CameraCorrection();
+  const frameMotion = new FrameMotion();
+  const triggerFeedback = new TriggerFeedback();
   const remoteMotion = new RemotePresentation();
   const remotePose = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
   let renderPose: Player | null = null;
@@ -351,6 +371,7 @@ export function mountArena(
   const clear = () => {
     keys.clear();
     fire = false;
+    fireLatched = false;
     reload = false;
     jump = false;
   };
@@ -391,7 +412,24 @@ export function mountArena(
   };
   const up = (e: KeyboardEvent) => keys.delete(e.code);
   const mousedown = (e: MouseEvent) => {
-    if (locked() && e.button === 0) fire = true;
+    if (!locked() || e.button !== 0) return;
+    fire = true;
+    fireLatched = true;
+    if (authorizationSuspended || !document.hasFocus() || state?.phase !== "live" || !seat) return;
+    const own = state.players[seat],
+      now = performance.now();
+    const interval =
+      state.combatVersion === COMBAT_VERSION && weapon === "rifle"
+        ? 100
+        : WEAPONS[weapon].fireIntervalMs;
+    if (
+      triggerFeedback.request(own, weapon, seq + 1, now, Date.now() + lastServerOffset, interval)
+    ) {
+      kick = 1;
+      muzzleUntil = now + 42;
+      smokeUntil = now + 240;
+      onLocalShot?.(weapon, seq + 1);
+    }
   };
   const mouseup = () => {
     fire = false;
@@ -437,22 +475,37 @@ export function mountArena(
   let actorElapsed = 0;
   let lastSpread = -1,
     lastReloading = false;
+  let lastDraw = 0,
+    renderFrames = 0,
+    renderIntervalMs = 0,
+    hadFocus = document.hasFocus();
   const began = performance.now();
+  scene.updateMatrixWorld(true);
+  viewScene.updateMatrixWorld(true);
+  scene.matrixWorldAutoUpdate = false;
+  viewScene.matrixWorldAutoUpdate = false;
   const frame = (now: number) => {
     if (stopped) return;
     const cpuStart = performance.now();
     frameMs = now - previous;
-    const dt = frameDelta(now, previous);
+    const tickDt = frameDelta(now, previous);
+    const focused = !document.hidden && document.hasFocus();
+    if (focused !== hadFocus) {
+      if (!focused) clear();
+      else frameMotion.reset();
+      hadFocus = focused;
+    }
+    const controlled = focused && locked();
     previous = now;
-    accumulator += dt;
-    correction.update(dt);
-    if (now - began > 2500 && locked() && state?.phase === "live" && budget.update(frameMs))
+    accumulator += tickDt;
+    correction.update(tickDt);
+    if (now - began > 2500 && controlled && state?.phase === "live" && budget.update(frameMs))
       resize();
     while (accumulator >= inputStepMs) {
       accumulator -= inputStepMs;
       if (seat && state && predicted) {
         const active =
-          !authorizationSuspended && locked() && state.phase === "live" && predicted.hp > 0;
+          !authorizationSuspended && controlled && state.phase === "live" && predicted.hp > 0;
         const input: Input = {
           v: 1,
           type: "input",
@@ -468,7 +521,7 @@ export function mountArena(
             -1.45,
             Math.min(1.45, pitch + (state.combatVersion === COMBAT_VERSION ? 0 : recoilPitch)),
           ),
-          fire: active && fire,
+          fire: active && (fire || fireLatched),
           reload: active && reload,
           weapon,
           jump: active && jump,
@@ -481,10 +534,20 @@ export function mountArena(
           if (pending.length > 60) pending.shift();
         }
         send(input);
+        fireLatched = false;
         reload = false;
         jump = false;
       }
     }
+    // Only drawing is throttled. Fixed input/network work stays above this gate.
+    if (!focused && now - lastDraw < 1000 / 15) {
+      animation = requestAnimationFrame(frame);
+      return;
+    }
+    renderIntervalMs = lastDraw ? now - lastDraw : 0;
+    const dt = frameDelta(now, lastDraw || now - tickDt);
+    lastDraw = now;
+    renderFrames++;
     if (state?.combatVersion === COMBAT_VERSION && predicted) {
       const own = state.players[seat ?? "A"],
         profile = recoveryProfile(own.sprayCount ?? 0),
@@ -510,7 +573,7 @@ export function mountArena(
       // and authoritative physics still run at their original fixed cadence.
       renderPose ??= { ...predicted };
       Object.assign(renderPose, predicted);
-      if (!authorizationSuspended && locked() && state?.phase === "live" && predicted.hp > 0) {
+      if (!authorizationSuspended && controlled && state?.phase === "live" && predicted.hp > 0) {
         previewInput.forward = Number(keys.has("KeyW")) - Number(keys.has("KeyS"));
         previewInput.strafe = Number(keys.has("KeyD")) - Number(keys.has("KeyA"));
         previewInput.yaw = yaw;
@@ -519,11 +582,15 @@ export function mountArena(
         previewInput.crouch = keys.has("ControlLeft") || keys.has("ControlRight");
         predictMovement(renderPose, previewInput, accumulator);
       }
-      camera.position.set(
-        renderPose.x + correction.x,
-        renderPose.y + eyeHeight(renderPose) + correction.y,
-        renderPose.z + correction.z,
+      const active =
+        !authorizationSuspended && controlled && state?.phase === "live" && predicted.hp > 0;
+      const motion = frameMotion.sample(
+        renderPose,
+        active ? previewInput : null,
+        tickDt,
+        correction,
       );
+      camera.position.set(motion.x, renderPose.y + eyeHeight(renderPose) + correction.y, motion.z);
       camera.rotation.set(Math.min(1.45, pitch + recoilPitch), yaw + recoilYaw, 0, "YXZ");
     } else if (state) {
       const p = state.players.A;
@@ -531,6 +598,7 @@ export function mountArena(
       camera.rotation.set(p.pitch, p.yaw, 0, "YXZ");
     }
     // Server uses positive pitch upward; Three camera rotation uses positive pitch upward too.
+    camera.updateMatrixWorld();
     if (state) {
       const otherSeat = seat === "B" ? "A" : "B",
         other = state.players[otherSeat];
@@ -542,7 +610,6 @@ export function mountArena(
           actor.root.position.set(remotePose.x, remotePose.y, remotePose.z);
           actor.root.rotation.y = remotePose.yaw;
         } else actor.root.position.copy(remoteTarget);
-        camera.updateMatrixWorld();
         viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
         opponentFrustum.setFromProjectionMatrix(viewProjection);
         // Conservative whole-rig bounds include the weapon and crouch. This is
@@ -565,6 +632,7 @@ export function mountArena(
           actorElapsed = 0;
         } else actor.root.visible = false;
         contactShadows[otherSeat].position.y = 0.008 - actor.root.position.y;
+        if (actor.root.visible) actor.root.updateMatrixWorld();
       } else actor.root.visible = false;
     }
 
@@ -662,6 +730,8 @@ export function mountArena(
       programs: renderer.info.programs?.length ?? 0,
       pixelRatio: renderer.getPixelRatio(),
       opponentVisible: characters[seat === "B" ? "A" : "B"].root.visible,
+      renderFrames,
+      renderIntervalMs,
     }),
     ready: visualReady,
     suspend(paused) {
@@ -670,6 +740,7 @@ export function mountArena(
         clear();
         pending = [];
         correction.reset();
+        frameMotion.reset();
         if (seat && state) predicted = { ...state.players[seat] };
       }
     },
@@ -706,6 +777,8 @@ export function mountArena(
           recoilYaw = 0;
           kick = 0;
           shotIndex = 0;
+          triggerFeedback.reset();
+          fireLatched = false;
           muzzleUntil = 0;
           smokeUntil = 0;
           impacts.reset();
@@ -718,6 +791,7 @@ export function mountArena(
         for (const i of pending) if (state.phase === "live") predictMovement(predicted, i, TICK_MS);
         if (resetPresentation) {
           correction.reset();
+          frameMotion.reset();
           remoteMotion.clear();
         } else if (before) correction.reconcile(before, predicted);
         for (const e of state.events) {
@@ -739,10 +813,13 @@ export function mountArena(
               } else {
                 shotIndex = authoritative.sprayCount ?? 0;
               }
-              kick = 1;
+              const alreadyPresented = triggerFeedback.confirm(e.shotSeq);
+              if (!alreadyPresented) {
+                kick = 1;
+                muzzleUntil = now + 42;
+                smokeUntil = now + 240;
+              }
               confirmedShot = now;
-              muzzleUntil = now + 42;
-              smokeUntil = now + 240;
             } else if (e.seat) characters[e.seat].shot(performance.now());
           }
           if (e.seat === seat && (e.type === "hit" || e.type === "headshot")) {
@@ -767,33 +844,7 @@ export function mountArena(
       if (visibility[seat === "B" ? "A" : "B"] === false) remoteMotion.clear();
       else remoteMotion.push(other, frame.serverNow);
     },
-    async lock() {
-      if (locked()) return;
-      // Some browsers return void. The event, rather than the return type,
-      // determines whether the mouse was actually captured before Ready.
-      await new Promise<void>((resolve, reject) => {
-        const finish = (error?: Error) => {
-          clearTimeout(timeout);
-          document.removeEventListener("pointerlockchange", changed);
-          document.removeEventListener("pointerlockerror", failed);
-          if (error) reject(error);
-          else resolve();
-        };
-        const changed = () => {
-          if (locked()) finish();
-        };
-        const failed = () => finish(new Error("Mouse capture was not granted"));
-        const timeout = setTimeout(failed, 8000);
-        document.addEventListener("pointerlockchange", changed);
-        document.addEventListener("pointerlockerror", failed);
-        try {
-          const requested = renderer.domElement.requestPointerLock();
-          if (requested && typeof requested.catch === "function") void requested.catch(failed);
-        } catch {
-          failed();
-        }
-      });
-    },
+    lock: () => capturePointer(renderer.domElement),
     dispose() {
       stopped = true;
       cancelAnimationFrame(animation);

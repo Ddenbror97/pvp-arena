@@ -35,6 +35,8 @@ export interface Player {
   yaw: number;
   pitch: number;
   hp: number;
+  /** Server-owned vest durability. Head and legs are unprotected. */
+  armor?: number;
   ammo: number;
   reserve: number;
   weapon: Weapon;
@@ -59,6 +61,8 @@ export interface MatchState {
   lastRound?: RoundRecap;
   /** Missing in pre-upgrade checkpoints: retain their original combat rules. */
   combatVersion?: 1 | 2;
+  /** Absent in older checkpoints; their damage rules remain unchanged. */
+  armorVersion?: 1;
   v: 1;
   phase: "waiting" | "countdown" | "live" | "round-end" | "completed" | "cancelled";
   players: Record<Seat, Player>;
@@ -75,6 +79,7 @@ export interface MatchState {
     id?: number;
     impact?: import("./collision").WorldHit;
     weapon?: Weapon;
+    shotSeq?: number;
     hit?: {
       victim: Seat;
       zone: import("./combat").HitZone;

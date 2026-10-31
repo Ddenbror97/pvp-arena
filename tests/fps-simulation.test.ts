@@ -220,7 +220,7 @@ describe("combat", () => {
     const state = live();
     lane(state);
     tick(state, { A: input({ fire: true, pitch: Math.atan2(-0.8, 6) }) });
-    expect(state.players.B.hp).toBe(100 - HIT_DAMAGE.rifle.stomach);
+    expect(state.players.B.hp).toBe(77);
     expect(state.events.some((e) => e.type === "hit")).toBe(true);
     expect(state.players.A.headshots).toBe(0);
   });
@@ -242,7 +242,7 @@ describe("combat", () => {
     const state = live();
     lane(state);
     tick(state, { A: input({ weapon: "pistol", fire: true, pitch: Math.atan2(-0.8, 6) }) });
-    expect(state.players.B.hp).toBe(78);
+    expect(state.players.B.hp).toBe(83);
     expect(state.players.A.ammo).toBe(11);
     for (let seq = 1; seq <= 7; seq++)
       tick(state, { A: input({ seq, weapon: "pistol", fire: true, yaw: Math.PI / 2 }) });

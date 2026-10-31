@@ -1,4 +1,4 @@
-import type { MatchState, Seat } from "./protocol";
+import type { MatchState, Seat, Weapon } from "./protocol";
 const SAMPLES = {
   rifleA: "ak47-a-v1.wav",
   rifleB: "ak47-b-v1.wav",
@@ -36,6 +36,17 @@ export function createCombatAudio() {
   const buffers = new Map<Sample, AudioBuffer>(),
     voices = new Set<AudioBufferSourceNode>(),
     played = { shots: 0, steps: 0, hits: 0 };
+  const predicted = new Map<number, number>();
+  const shot = (weapon: Weapon, gain = 0.62, pan = 0, occluded = false) => {
+    played.shots++;
+    play(
+      weapon === "rifle" ? (played.shots % 2 ? "rifleA" : "rifleB") : "pistol",
+      gain,
+      pan,
+      occluded,
+      0.985 + (played.shots % 3) * 0.015,
+    );
+  };
   let loading: Promise<void> | undefined,
     muted = false,
     disposed = false,
@@ -100,6 +111,11 @@ export function createCombatAudio() {
     source.start();
   }
   return {
+    localShot(weapon: Weapon, seq: number) {
+      for (const [key, at] of predicted) if (performance.now() - at > 2000) predicted.delete(key);
+      predicted.set(seq, performance.now());
+      shot(weapon);
+    },
     async unlock() {
       if (disposed) return;
       await context.resume();
@@ -114,6 +130,7 @@ export function createCombatAudio() {
     snapshot(state: MatchState, seat: Seat | null) {
       if (state.round !== lastRound) {
         lastRound = state.round;
+        predicted.clear();
         lastTick = -1;
       }
       if (state.tick === lastTick) return;
@@ -128,15 +145,9 @@ export function createCombatAudio() {
           gain = cue?.gain ?? (own ? 1 : 0.35),
           pan = cue?.pan ?? 0;
         if (event.type === "shot") {
-          played.shots++;
+          if (own && event.shotSeq !== undefined && predicted.delete(event.shotSeq)) continue;
           const weapon = event.weapon ?? (event.seat ? state.players[event.seat].weapon : "rifle");
-          play(
-            weapon === "rifle" ? (played.shots % 2 ? "rifleA" : "rifleB") : "pistol",
-            gain * (own ? 0.62 : 0.48),
-            pan,
-            !!cue?.occluded,
-            0.985 + (played.shots % 3) * 0.015,
-          );
+          shot(weapon, gain * (own ? 0.62 : 0.48), pan, !!cue?.occluded);
         } else if (event.type === "step" && cue) {
           played.steps++;
           const sample = ("step" + (played.steps % 4)) as Sample;

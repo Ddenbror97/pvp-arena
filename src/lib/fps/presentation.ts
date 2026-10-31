@@ -1,4 +1,49 @@
-import type { Player } from "./protocol";
+import type { Input, Player } from "./protocol";
+import { isMovementBlocked, predictMovement, TICK_MS } from "./simulation";
+
+/** Camera-only horizontal integration; network prediction remains fixed-step. */
+export class FrameMotion {
+  private pose: Player | null = null;
+  reset() {
+    this.pose = null;
+  }
+  sample(reference: Player, input: Input | null, ms: number, correction: CameraCorrection) {
+    if (!this.pose) return (this.pose = { ...reference });
+    const pose = this.pose,
+      x = pose.x,
+      z = pose.z;
+    Object.assign(pose, reference);
+    pose.x = x;
+    pose.z = z;
+    // A network command advances TICK_MS physics once every ceil(TICK_MS).
+    // Keep the cosmetic velocity on that same clock, including slower frames.
+    let elapsed = (Math.max(0, Math.min(100, ms)) * TICK_MS) / Math.ceil(TICK_MS);
+    if (input)
+      while (elapsed > 0) {
+        const step = Math.min(TICK_MS, elapsed);
+        predictMovement(pose, input, step);
+        elapsed -= step;
+      }
+    pose.y = reference.y;
+    if (reference.velocityY === undefined) delete pose.velocityY;
+    else pose.velocityY = reference.velocityY;
+    const tx = reference.x + correction.x,
+      tz = reference.z + correction.z;
+    const distance = Math.hypot(tx - pose.x, tz - pose.z);
+    const blend = distance > 0.15 ? 1 : 1 - Math.exp(-Math.max(0, ms) / 250);
+    const nextX = pose.x + (tx - pose.x) * blend,
+      nextZ = pose.z + (tz - pose.z) * blend;
+    // Reconciliation must never move the view through a wall or crate corner.
+    if (isMovementBlocked(nextX, reference.y, nextZ, !!reference.crouched)) {
+      pose.x = reference.x;
+      pose.z = reference.z;
+    } else {
+      pose.x = nextX;
+      pose.z = nextZ;
+    }
+    return pose;
+  }
+}
 
 /** Presentation only: never changes the authoritative or replayed physics pose. */
 export class CameraCorrection {
@@ -79,6 +124,7 @@ export class RenderBudget {
   scale = 1;
   private elapsed = 0;
   private slow = 0;
+  private frames = 0;
   private fastWindows = 0;
   update(ms: number) {
     if (ms <= 0 || ms > 1000) return false;
@@ -86,12 +132,13 @@ export class RenderBudget {
     // stalls so one shader compilation or scheduler pause cannot dominate it.
     ms = Math.min(ms, 100);
     this.elapsed += ms;
-    if (ms > 19) this.slow += ms;
+    this.frames++;
+    if (ms > 18.5) this.slow++;
     if (this.elapsed < 1500) return false;
-    const ratio = this.slow / this.elapsed,
+    const ratio = this.slow / this.frames,
       before = this.scale;
-    this.elapsed = this.slow = 0;
-    if (ratio > 0.25) {
+    this.elapsed = this.slow = this.frames = 0;
+    if (ratio > 0.05) {
       this.scale = Math.max(0.6, this.scale - 0.1);
       this.fastWindows = 0;
     } else if (ratio < 0.02) {
