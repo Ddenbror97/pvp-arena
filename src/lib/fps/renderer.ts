@@ -9,7 +9,14 @@ import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handli
 import { createArenaEnvironment } from "./environment";
 import { createImpactEffects } from "./impacts";
 import { createWeaponKit, AK_MUZZLE } from "./weapon";
-import { CameraCorrection, FrameMotion, RemotePresentation, RenderBudget } from "./presentation";
+import {
+  CameraCorrection,
+  CameraStance,
+  CameraVertical,
+  FrameMotion,
+  RemotePresentation,
+  RenderBudget,
+} from "./presentation";
 import { capturePointer } from "./pointer-capture";
 import { TriggerFeedback } from "./trigger-feedback";
 import { createViewHands } from "./view-hands";
@@ -75,6 +82,8 @@ export function mountArena(
     powerPreference: "high-performance",
   });
   const budget = new RenderBudget();
+  const cameraStance = new CameraStance();
+  const cameraVertical = new CameraVertical();
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.autoUpdate = false;
   renderer.shadowMap.needsUpdate = true;
@@ -602,7 +611,14 @@ export function mountArena(
         tickDt,
         correction,
       );
-      camera.position.set(motion.x, renderPose.y + eyeHeight(renderPose) + correction.y, motion.z);
+      camera.position.set(
+        motion.x,
+        cameraVertical.sample(
+          renderPose.y + cameraStance.sample(renderPose, dt) + correction.y,
+          dt,
+        ),
+        motion.z,
+      );
       camera.rotation.set(Math.min(1.45, pitch + recoilPitch), yaw + recoilYaw, 0, "YXZ");
     } else if (state) {
       const p = state.players.A;
@@ -803,6 +819,8 @@ export function mountArena(
         pending = pending.filter((i) => i.seq > authoritative.lastSeq);
         for (const i of pending) if (state.phase === "live") predictMovement(predicted, i, TICK_MS);
         if (resetPresentation) {
+          cameraStance.reset();
+          cameraVertical.reset();
           correction.reset();
           frameMotion.reset();
           remoteMotion.clear();

@@ -23,6 +23,7 @@ test("wall trim and container layers have distinct visible depth planes", async 
     const meshes = scene.children.filter((m): m is Mesh => m instanceof THREE.Mesh),
       wallClearances: number[] = [],
       containerLayers: number[][] = [],
+      capClearances: number[][] = [],
       skinClearances: number[] = [];
     const trim = scene.children.find(
       (m) => m instanceof THREE.InstancedMesh,
@@ -76,9 +77,22 @@ test("wall trim and container layers have distinct visible depth planes", async 
         );
       }
     }
+    for (const side of [-1, 1]) {
+      const wall = scene.getObjectByName(`wall-x-${side}`) as Mesh;
+      const cap = meshes.find(
+        (m) =>
+          Math.abs(m.position.x - side * 13.988) < 1e-4 &&
+          Math.abs(m.position.y - 6.25) < 1e-4 &&
+          Math.abs(m.scale.y - 0.3) < 1e-4,
+      )!;
+      if (!cap) throw Error("Upper cap is missing");
+      const wallBounds = new THREE.Box3().setFromObject(wall);
+      const front = side * cap.position.x - cap.scale.x / 2;
+      capClearances.push([6.1 - wallBounds.max.y, 12 - front, 11.988 - front]);
+    }
     env.dispose();
     branding.dispose();
-    return { wallClearances, containerLayers, skinClearances };
+    return { wallClearances, containerLayers, skinClearances, capClearances };
   });
   expect(result.wallClearances.length).toBe(16);
   for (const gap of result.wallClearances) expect(gap).toBeGreaterThan(0.01);
@@ -88,6 +102,12 @@ test("wall trim and container layers have distinct visible depth planes", async 
     expect(layers[1]! - layers[0]!).toBeGreaterThan(0.005);
   }
   for (const gap of result.skinClearances) expect(gap).toBeGreaterThan(0.009);
+  expect(result.capClearances).toHaveLength(2);
+  for (const [vertical, wall, rib] of result.capClearances) {
+    expect(vertical!).toBeGreaterThan(-1e-5);
+    expect(wall!).toBeGreaterThan(0.023);
+    expect(rib!).toBeGreaterThan(0.011);
+  }
   await info.attach("surface-depth", {
     body: JSON.stringify(result),
     contentType: "application/json",
@@ -101,10 +121,16 @@ test("inspect the wall and container while returning to the same camera pose", a
   for (const view of [
     { name: "container", x: 5, z: 5.5, yaw: 0 },
     { name: "wall", x: 9, z: 2, yaw: -Math.PI / 2 },
+    { name: "wall-top", x: 6, z: 4, yaw: -Math.PI / 2, pitch: 0.55 },
   ]) {
     await page.evaluate((view) => {
       const f = Reflect.get(window, "fpsPolishTest");
-      Object.assign(f.state.players.A, { x: view.x, z: view.z, yaw: view.yaw, pitch: 0 });
+      Object.assign(f.state.players.A, {
+        x: view.x,
+        z: view.z,
+        yaw: view.yaw,
+        pitch: view.pitch ?? 0,
+      });
       f.state.round++;
       f.resetView();
     }, view);

@@ -1,5 +1,36 @@
 import type { Input, Player } from "./protocol";
 import { isMovementBlocked, predictMovement, TICK_MS } from "./simulation";
+import { eyeHeight } from "./map";
+
+/** Camera stance only. Feet/jump physics and authoritative hit volumes stay exact. */
+export class CameraStance {
+  private height: number | null = null;
+  reset() {
+    this.height = null;
+  }
+  sample(player: { crouched?: boolean }, ms: number) {
+    const target = eyeHeight(player);
+    if (this.height === null) return (this.height = target);
+    const maxStep = Math.max(0, Math.min(100, ms)) * 0.01;
+    this.height += Math.max(-maxStep, Math.min(maxStep, target - this.height));
+    return this.height;
+  }
+}
+
+/** Rate-limit only discontinuous vertical corrections. Ordinary jump velocity
+ * fits inside this bound, so the physics trajectory is followed immediately. */
+export class CameraVertical {
+  private y: number | null = null;
+  reset() {
+    this.y = null;
+  }
+  sample(target: number, ms: number) {
+    if (this.y === null) return (this.y = target);
+    const step = Math.max(0, Math.min(100, ms)) * 0.012;
+    this.y += Math.max(-step, Math.min(step, target - this.y));
+    return this.y;
+  }
+}
 
 /** Camera-only horizontal integration; network prediction remains fixed-step. */
 export class FrameMotion {

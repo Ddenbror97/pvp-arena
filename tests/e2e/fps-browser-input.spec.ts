@@ -230,7 +230,14 @@ test("automatic fire has no server-roundtrip pause after its first shot", async 
   await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
   await page.evaluate(() => Reflect.get(window, "fpsTestAudio")?.unlock());
   await page.mouse.down();
-  await page.waitForTimeout(260);
+  // Observe a complete three-shot sequence instead of releasing a few
+  // milliseconds before its last input tick on a jittery browser scheduler.
+  await expect
+    .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").localShots.length), {
+      timeout: 1000,
+      intervals: [5],
+    })
+    .toBeGreaterThanOrEqual(3);
   await page.mouse.up();
   const shots: Array<{ at: number }> = await page.evaluate(
     () => Reflect.get(window, "fpsPolishTest").localShots,
@@ -246,6 +253,22 @@ test("automatic fire has no server-roundtrip pause after its first shot", async 
   );
   expect(actual).toBe(shots.length);
   const starts: number[] = await page.evaluate(() => Reflect.get(window, "fpsShotAudioStarts"));
+  fs.writeFileSync(
+    info.outputPath("shot-reconciliation.json"),
+    JSON.stringify(
+      await page.evaluate(() => {
+        const f = Reflect.get(window, "fpsPolishTest");
+        return {
+          local: f.localShots,
+          events: f.eventLog.filter((e: { type: string }) => e.type === "shot"),
+          inputs: f.inputs,
+          starts: Reflect.get(window, "fpsShotAudioStarts"),
+        };
+      }),
+      null,
+      2,
+    ),
+  );
   expect(starts.length).toBe(actual);
   for (let i = 1; i < starts.length; i++) expect(starts[i]! - starts[i - 1]!).toBeLessThan(145);
   await page.evaluate(() => Reflect.get(window, "fpsTestAudio").dispose());

@@ -162,7 +162,19 @@ export function createArenaEnvironment(scene: THREE.Scene, branding: THREE.Mater
   materials.wood.color.setHex(0x786e88);
   mesh(FLOOR.x, FLOOR.y, FLOOR.z, FLOOR.w, FLOOR.h, FLOOR.d, floorMat).castShadow = false;
   for (const wall of WALLS) {
-    const m = mesh(wall.x, wall.y, wall.z, wall.w, wall.h, wall.d, materials.concrete);
+    // The upper deck cap starts at 6.1 m. Keeping concrete up to 6.4 m
+    // rendered two different materials on the same inward-facing plane.
+    const capped = wall.id.startsWith("wall-x-");
+    const height = capped ? 6.1 : wall.h;
+    const m = mesh(
+      wall.x,
+      capped ? height / 2 : wall.y,
+      wall.z,
+      wall.w,
+      height,
+      wall.d,
+      materials.concrete,
+    );
     m.name = wall.id;
   }
   for (const b of BOXES) {
