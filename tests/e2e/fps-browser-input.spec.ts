@@ -196,3 +196,58 @@ test("a brief tap starts feedback immediately and survives the next input tick",
   expect(await page.evaluate(() => Reflect.get(window, "fpsPolishTest").localShots.length)).toBe(1);
   await page.evaluate(() => Reflect.get(window, "fpsPolishTest").dispose());
 });
+
+test("automatic fire has no server-roundtrip pause after its first shot", async ({
+  page,
+}, info) => {
+  test.skip(info.project.name === "webkit", "Windows WebKit cannot capture the mouse.");
+  await fixture(page, "A", 5, 180);
+  await page.evaluate(async () => {
+    const path = "/src/lib/fps/audio.ts",
+      { createCombatAudio } = await import(path),
+      audio = createCombatAudio();
+    await audio.ready();
+    Reflect.set(window, "fpsTestAudio", audio);
+    const f = Reflect.get(window, "fpsPolishTest"),
+      snapshot = f.controls.snapshot;
+    f.controls.snapshot = (
+      frame: { state: import("../../src/lib/fps/protocol").MatchState },
+      seat: "A" | "B" | null,
+    ) => {
+      snapshot(frame, seat);
+      audio.snapshot(frame.state, seat);
+    };
+    document.querySelector("canvas")!.addEventListener("click", () => void audio.unlock());
+    const starts: number[] = [];
+    Reflect.set(window, "fpsShotAudioStarts", starts);
+    const start = AudioBufferSourceNode.prototype.start;
+    AudioBufferSourceNode.prototype.start = function (...args: Parameters<typeof start>) {
+      starts.push(performance.now());
+      return start.apply(this, args);
+    };
+  });
+  await page.locator("canvas").click();
+  await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
+  await page.evaluate(() => Reflect.get(window, "fpsTestAudio")?.unlock());
+  await page.mouse.down();
+  await page.waitForTimeout(260);
+  await page.mouse.up();
+  const shots: Array<{ at: number }> = await page.evaluate(
+    () => Reflect.get(window, "fpsPolishTest").localShots,
+  );
+  expect(shots.length).toBeGreaterThanOrEqual(3);
+  for (let i = 1; i < shots.length; i++) expect(shots[i]!.at - shots[i - 1]!.at).toBeLessThan(145);
+  await page.waitForTimeout(500);
+  const actual = await page.evaluate(
+    () =>
+      Reflect.get(window, "fpsPolishTest").eventLog.filter(
+        (e: { type: string }) => e.type === "shot",
+      ).length,
+  );
+  expect(actual).toBe(shots.length);
+  const starts: number[] = await page.evaluate(() => Reflect.get(window, "fpsShotAudioStarts"));
+  expect(starts.length).toBe(actual);
+  for (let i = 1; i < starts.length; i++) expect(starts[i]! - starts[i - 1]!).toBeLessThan(145);
+  await page.evaluate(() => Reflect.get(window, "fpsTestAudio").dispose());
+  await page.evaluate(() => Reflect.get(window, "fpsPolishTest").dispose());
+});

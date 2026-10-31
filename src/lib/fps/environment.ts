@@ -166,7 +166,9 @@ export function createArenaEnvironment(scene: THREE.Scene, branding: THREE.Mater
     m.name = wall.id;
   }
   for (const b of BOXES) {
-    const m = mesh(b.x, b.y, b.z, b.w - 0.002, b.h, b.d - 0.002, materials[b.surface]);
+    // Recess the skin beneath trim. Its top previously shared the corner-post
+    // plane, so camera motion made the depth buffer alternate materials.
+    const m = mesh(b.x, b.y, b.z, b.w - 0.02, b.h - 0.02, b.d - 0.02, materials[b.surface]);
     m.name = b.id;
     const bottom = b.y - b.h / 2;
     if (b.surface === "metal") {
@@ -220,8 +222,8 @@ export function createArenaEnvironment(scene: THREE.Scene, branding: THREE.Mater
   }
   for (const side of [-1, 1]) {
     for (let z = -14; z <= 14; z += 4)
-      detail(side * (ARENA.width / 2 + 0.12), 3.2, z, 0.24, 6.4, 0.16);
-    detail(side * (ARENA.width / 2 + 0.04), 5.9, 0, 0.08, 0.18, 32);
+      detail(side * (ARENA.width / 2 + 0.108), 3.2, z, 0.24, 6.4, 0.16);
+    detail(side * (ARENA.width / 2 + 0.028), 5.9, 0, 0.08, 0.18, 32);
     const banner = new THREE.Mesh(new THREE.PlaneGeometry(8, 2.5), branding);
     banner.position.set(0, 4.45, side * 15.995);
     if (side === 1) banner.rotation.y = Math.PI;

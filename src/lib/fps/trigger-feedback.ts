@@ -1,5 +1,14 @@
 import type { Player, Weapon } from "./protocol";
 
+/** The server may fire on a later command than the local presentation clock.
+ * Consume the closest eligible prediction, never a future command. */
+export function consumeShotPrediction(pending: Map<number, number>, seq: number | undefined) {
+  if (seq === undefined) return false;
+  let matched = -Infinity;
+  for (const key of pending.keys()) if (key <= seq && key > matched) matched = key;
+  return pending.delete(matched);
+}
+
 /** Cosmetic first-shot prediction; never mutates ammunition, recoil or damage. */
 export class TriggerFeedback {
   private last = -Infinity;
@@ -19,11 +28,12 @@ export class TriggerFeedback {
     for (const [key, at] of this.pending) if (now - at > 2000) this.pending.delete(key);
     if (
       weapon !== player.weapon ||
+      this.pending.has(seq) ||
       player.hp <= 0 ||
       player.reloadUntil ||
       player.ammo <= this.pending.size ||
       now - this.last < interval ||
-      serverNow - player.lastShotAt < interval
+      (this.last === -Infinity && serverNow - player.lastShotAt < interval)
     )
       return false;
     this.last = now;
@@ -31,6 +41,6 @@ export class TriggerFeedback {
     return true;
   }
   confirm(seq: number | undefined) {
-    return seq !== undefined && this.pending.delete(seq);
+    return consumeShotPrediction(this.pending, seq);
   }
 }

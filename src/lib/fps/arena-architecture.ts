@@ -183,9 +183,9 @@ export function addArenaArchitecture(scene: THREE.Scene, branding: THREE.Materia
         block(
           b.x,
           b.y + level * (b.h / 2 - 0.045),
-          b.z + side * (b.d / 2 - 0.012),
+          b.z + side * (b.d / 2),
           b.w,
-          0.09,
+          0.086,
           0.024,
           frame,
         );
@@ -193,24 +193,34 @@ export function addArenaArchitecture(scene: THREE.Scene, branding: THREE.Materia
         block(
           b.x + edge * (b.w / 2 - 0.035),
           b.y,
-          b.z + side * (b.d / 2 - 0.012),
+          b.z + side * (b.d / 2),
           0.07,
-          b.h,
+          b.h - 0.008,
           0.024,
           frame,
         );
       const length = Math.hypot(b.w * 0.65, b.h * 0.65);
       for (const diagonal of [-1, 1]) {
-        const brace = block(b.x, b.y, b.z + side * (b.d / 2 - 0.009), 0.035, length, 0.018, steel);
+        // Both diagonal faces used to be coplanar with one another and the
+        // frame. Separate actual geometry, including the crossing joint.
+        const brace = block(
+          b.x,
+          b.y,
+          b.z + side * (b.d / 2 + (diagonal === 1 ? 0.017 : 0.011)),
+          0.035,
+          length,
+          0.018,
+          steel,
+        );
         brace.rotation.z = diagonal * Math.atan2(b.w, b.h);
       }
-      block(b.x, b.y - b.h * 0.3, b.z + side * (b.d / 2 - 0.006), b.w * 0.95, 0.025, 0.012, paint);
+      block(b.x, b.y - b.h * 0.3, b.z + side * (b.d / 2 + 0.026), b.w * 0.95, 0.025, 0.012, paint);
       if (b.w > 1.5) {
         const sign = new THREE.Mesh(
           new THREE.PlaneGeometry(Math.min(1.1, b.w * 0.5), Math.min(0.6, b.h * 0.4)),
           branding,
         );
-        sign.position.set(b.x, b.y, b.z + side * (b.d / 2 + 0.002));
+        sign.position.set(b.x, b.y, b.z + side * (b.d / 2 + 0.038));
         if (side === -1) sign.rotation.y = Math.PI;
         scene.add(sign);
       }

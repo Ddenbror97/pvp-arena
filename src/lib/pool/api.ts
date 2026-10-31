@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { boundedRead } from "@/lib/read-deadline";
 import { supabase } from "@/integrations/supabase/client";
 import type { TableState } from "./rules";
 
@@ -151,7 +152,7 @@ export async function fetchMyPool(uid: string): Promise<MyPool | null> {
 }
 
 export async function fetchPoolState(id: number): Promise<PoolView> {
-  const { data, error } = await db.rpc("pool_state", { p_match: id });
+  const { data, error } = await boundedRead(db.rpc("pool_state", { p_match: id }));
   return unwrap<PoolView>(data, error);
 }
 

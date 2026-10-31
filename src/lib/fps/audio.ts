@@ -1,4 +1,5 @@
 import type { MatchState, Seat, Weapon } from "./protocol";
+import { consumeShotPrediction } from "./trigger-feedback";
 const SAMPLES = {
   rifleA: "ak47-a-v1.wav",
   rifleB: "ak47-b-v1.wav",
@@ -129,8 +130,10 @@ export function createCombatAudio() {
     },
     snapshot(state: MatchState, seat: Seat | null) {
       if (state.round !== lastRound) {
+        // Audio may be created after the initial game snapshot. Preserve a
+        // trigger already presented before audio receives its first frame.
+        if (lastRound !== 0) predicted.clear();
         lastRound = state.round;
-        predicted.clear();
         lastTick = -1;
       }
       if (state.tick === lastTick) return;
@@ -145,7 +148,7 @@ export function createCombatAudio() {
           gain = cue?.gain ?? (own ? 1 : 0.35),
           pan = cue?.pan ?? 0;
         if (event.type === "shot") {
-          if (own && event.shotSeq !== undefined && predicted.delete(event.shotSeq)) continue;
+          if (own && consumeShotPrediction(predicted, event.shotSeq)) continue;
           const weapon = event.weapon ?? (event.seat ? state.players[event.seat].weapon : "rifle");
           shot(weapon, gain * (own ? 0.62 : 0.48), pan, !!cue?.occluded);
         } else if (event.type === "step" && cue) {

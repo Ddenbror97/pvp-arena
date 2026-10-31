@@ -445,7 +445,7 @@ export function PokerTable({ id }: { id: number }) {
         ) : (
           <Pause className="h-3.5 w-3.5" aria-hidden />
         )}
-        {seat.state === "SITTING_OUT" ? "I'm back" : "Sit out"}
+        <span>{seat.state === "SITTING_OUT" ? "I'm back" : "Sit out"}</span>
       </button>
       {openSeat && bots.isSuccess ? (
         <>
@@ -456,7 +456,7 @@ export function PokerTable({ id }: { id: number }) {
             onClick={() => void callBot()}
           >
             {callingBot ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-            Call Bot
+            <span>Call Bot</span>
           </button>
           <p className="poker-bot-note">
             {bots.data?.poker
@@ -476,7 +476,9 @@ export function PokerTable({ id }: { id: number }) {
         ) : (
           <LogOut className="h-3.5 w-3.5" aria-hidden />
         )}
-        {seat.leaving ? "Leaving…" : confirmLeave && inLiveHand ? "Fold & leave" : "Leave table"}
+        <span>
+          {seat.leaving ? "Leaving…" : confirmLeave && inLiveHand ? "Fold & leave" : "Leave table"}
+        </span>
       </button>
     </div>
   ) : null;

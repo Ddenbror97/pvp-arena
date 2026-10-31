@@ -170,7 +170,7 @@ export function ActionBar({
           ) : (
             <Coins className="h-4 w-4" aria-hidden />
           )}
-          {legal.can_check ? "Check" : `Call ${money(legal.call_amount)}`}
+          <span>{legal.can_check ? "Check" : `Call ${money(legal.call_amount)}`}</span>
         </button>
         {legal.can_raise ? (
           <button
@@ -181,7 +181,9 @@ export function ActionBar({
             aria-keyshortcuts="R"
           >
             <ArrowUp className="h-4 w-4" aria-hidden />
-            {allIn ? `All-in ${money(max)}` : `${isBet ? "Bet" : "Raise to"} ${money(value)}`}
+            <span>
+              {allIn ? `All-in ${money(max)}` : `${isBet ? "Bet" : "Raise to"} ${money(value)}`}
+            </span>
           </button>
         ) : null}
       </div>

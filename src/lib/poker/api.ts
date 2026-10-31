@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { boundedRead } from "@/lib/read-deadline";
 import { supabase } from "@/integrations/supabase/client";
 import { channelFresh, listenTopic, markChannel, noteChannelEvent } from "@/lib/live-channel";
 import { rememberCommitment } from "./commitments";
@@ -249,7 +250,7 @@ export async function fetchLobby(): Promise<Lobby> {
 }
 
 export async function fetchTableState(id: number): Promise<TableState | null> {
-  const { data, error } = await db.rpc("poker_table_state", { p_table: id });
+  const { data, error } = await boundedRead(db.rpc("poker_table_state", { p_table: id }));
   if (missingRpc(error)) return null;
   if (error) throw error;
   return (data as TableState | null) ?? null;

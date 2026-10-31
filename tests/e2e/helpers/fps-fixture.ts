@@ -51,7 +51,10 @@ export async function fixture(
           if (queue.length > 8) queue.shift();
         },
         () => {},
-        (weapon: string, seq: number) => localShots.push({ weapon, seq, at: performance.now() }),
+        (weapon: string, seq: number) => {
+          localShots.push({ weapon, seq, at: performance.now() });
+          Reflect.get(window, "fpsTestAudio")?.localShot(weapon, seq);
+        },
       );
       host.addEventListener("click", () => void controls.lock());
       state.server.lastStepAt = Date.now();

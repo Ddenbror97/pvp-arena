@@ -7,7 +7,11 @@ const server = await createServer({
   // Renderer tests import production modules directly; they do not require
   // TanStack's SSR middleware or the casino's route dependency scanner.
   configFile: false,
-  optimizeDeps: { noDiscovery: true, include: [] },
+  optimizeDeps: {
+    entries: ["tests/e2e/helpers/translation-fixture.tsx"],
+    include: ["react", "react-dom/client", "react/jsx-runtime", "react/jsx-dev-runtime"],
+    exclude: ["three"],
+  },
   resolve: {
     alias: { "@": new URL("../../src/", import.meta.url).pathname.replace(/^\/([A-Z]:)/, "$1") },
   },
