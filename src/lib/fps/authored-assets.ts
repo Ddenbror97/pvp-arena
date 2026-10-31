@@ -3,7 +3,8 @@ import { GLTFLoader, type GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { clone } from "three/addons/utils/SkeletonUtils.js";
 
-const entries = new Map<string, { refs: number; ready: Promise<GLTF> }>();
+type AssetEntry = { refs: number; ready: Promise<GLTF>; source?: GLTF };
+const entries = new Map<string, AssetEntry>();
 function disposeSource(root: THREE.Object3D) {
   const geometries = new Set<THREE.BufferGeometry>(),
     materials = new Set<THREE.Material>(),
@@ -28,7 +29,12 @@ export function retainAuthoredAsset(url: string) {
   if (!entry) {
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
-    entry = { refs: 0, ready: loader.loadAsync(url) };
+    const created: AssetEntry = { refs: 0, ready: loader.loadAsync(url) };
+    created.ready = created.ready.then((source) => {
+      created.source = source;
+      return source;
+    });
+    entry = created;
     entries.set(url, entry);
   }
   entry.refs++;
@@ -40,28 +46,38 @@ export function retainAuthoredAsset(url: string) {
       released = true;
       if (--entry.refs === 0) {
         entries.delete(url);
-        void entry.ready.then(
-          (gltf) => disposeSource(gltf.scene),
-          () => {},
-        );
+        // Loaded textures must be released before WebGLRenderer.dispose clears
+        // its texture properties. Deferring this to a microtask loses those GL
+        // handles and leaks allocations when the arena is remounted in an SPA.
+        if (entry.source) disposeSource(entry.source.scene);
+        else
+          void entry.ready.then(
+            (gltf) => disposeSource(gltf.scene),
+            () => {},
+          );
       }
     },
   };
 }
 export function cloneAuthoredModel(source: THREE.Object3D) {
   const root = clone(source),
-    materials: THREE.Material[] = [],
+    materials = new Map<THREE.Material, THREE.Material>(),
     skeletons = new Set<THREE.Skeleton>();
+  // Preserve source sharing within this instance, while keeping different rigs
+  // independently tintable. Cloning per mesh multiplies program/material work.
+  const copy = (m: THREE.Material) => {
+    let instance = materials.get(m);
+    if (!instance) {
+      instance = m.clone();
+      materials.set(m, instance);
+    }
+    return instance;
+  };
   root.traverse((object) => {
     if (object instanceof THREE.Mesh) {
       if (object instanceof THREE.SkinnedMesh) skeletons.add(object.skeleton);
       object.frustumCulled = false;
       object.castShadow = object.receiveShadow = true;
-      const copy = (m: THREE.Material) => {
-        const instance = m.clone();
-        materials.push(instance);
-        return instance;
-      };
       object.material = Array.isArray(object.material)
         ? object.material.map(copy)
         : copy(object.material);
@@ -70,7 +86,7 @@ export function cloneAuthoredModel(source: THREE.Object3D) {
   return {
     root,
     dispose() {
-      for (const material of materials) material.dispose();
+      for (const material of materials.values()) material.dispose();
       for (const skeleton of skeletons) skeleton.dispose();
     },
   };

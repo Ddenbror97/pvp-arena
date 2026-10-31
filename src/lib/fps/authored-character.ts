@@ -4,7 +4,7 @@ import type { WeaponKit } from "./weapon";
 import { createCharacter as createFallback } from "./character-rig";
 import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
 import { createAuthoredViewmodel } from "./authored-viewmodel";
-import { playerVolumes } from "./player-volumes";
+import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 import { createMuzzleFlash } from "./muzzle-flash";
 
 type Motion = { airborne?: boolean; weapon?: Weapon; reloading?: boolean };
@@ -52,7 +52,9 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
     ownedGeometry: THREE.BufferGeometry[] = [];
   const bones = new Map<string, THREE.Bone>(),
     footOrientations = new Map<string, THREE.Quaternion>(),
-    rest = new Map<THREE.Bone, { p: THREE.Vector3; q: THREE.Quaternion }>();
+    rest: { bone: THREE.Bone; p: THREE.Vector3; q: THREE.Quaternion }[] = [];
+  const sides = ["Left", "Right"] as const;
+  let badge: THREE.Object3D | undefined;
   let instance: ReturnType<typeof cloneAuthoredModel> | undefined,
     headInstance: ReturnType<typeof cloneAuthoredModel> | undefined,
     loaded = false,
@@ -80,7 +82,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
         if (object instanceof THREE.Bone) {
           const name = object.name.replace(/^mixamorig:?/, "").replace(/_\d+$/, "");
           bones.set(name, object);
-          rest.set(object, { p: object.position.clone(), q: object.quaternion.clone() });
+          rest.push({ bone: object, p: object.position.clone(), q: object.quaternion.clone() });
         }
         if (object instanceof THREE.Mesh) {
           const materials = Array.isArray(object.material) ? object.material : [object.material];
@@ -421,11 +423,12 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       ownedTextures.push(badgeTexture);
       const badgeMaterial = new THREE.MeshStandardMaterial({ map: badgeTexture, roughness: 0.9 });
       ownedMaterials.push(badgeMaterial);
-      const badge = new THREE.Mesh(new THREE.PlaneGeometry(0.29, 0.1), badgeMaterial);
+      const badgeMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.29, 0.1), badgeMaterial);
+      badge = badgeMesh;
       badge.name = "chest-badge";
       badge.rotation.y = Math.PI;
       root.add(badge);
-      ownedGeometry.push(badge.geometry);
+      ownedGeometry.push(badgeMesh.geometry);
       if (police) {
         const capPatch = new THREE.PlaneGeometry(0.082, 0.027, 12, 3),
           pp = capPatch.getAttribute("position");
@@ -466,16 +469,24 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
   const parentQ = new THREE.Quaternion(),
     deltaQ = new THREE.Quaternion(),
     worldQ = new THREE.Quaternion();
+  const matrixPosition = new THREE.Vector3(),
+    matrixScale = new THREE.Vector3();
+  const rotation = (object: THREE.Object3D, out: THREE.Quaternion) => {
+    object.matrixWorld.decompose(matrixPosition, out, matrixScale);
+    return out;
+  };
   const aim = (bone: THREE.Bone, child: THREE.Bone, target: THREE.Vector3) => {
-    bone.getWorldPosition(av);
-    child.getWorldPosition(bv);
+    av.setFromMatrixPosition(bone.matrixWorld);
+    bv.setFromMatrixPosition(child.matrixWorld);
     bv.sub(av).normalize();
     cv.copy(target).sub(av).normalize();
     deltaQ.setFromUnitVectors(bv, cv);
-    bone.parent!.getWorldQuaternion(parentQ);
+    rotation(bone.parent!, parentQ);
     worldQ.copy(parentQ).invert().multiply(deltaQ).multiply(parentQ);
     bone.quaternion.premultiply(worldQ);
-    bone.updateWorldMatrix(true, true);
+    // The root was composed once before IK; ancestors are already current.
+    // Refresh only this changed subtree instead of walking back to the scene.
+    bone.updateWorldMatrix(false, true);
   };
   const limb = (
     upper: THREE.Bone,
@@ -484,9 +495,9 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
     target: THREE.Vector3,
     bend: THREE.Vector3,
   ) => {
-    upper.getWorldPosition(av);
-    lower.getWorldPosition(bv);
-    end.getWorldPosition(cv);
+    av.setFromMatrixPosition(upper.matrixWorld);
+    bv.setFromMatrixPosition(lower.matrixWorld);
+    cv.setFromMatrixPosition(end.matrixWorld);
     const l1 = av.distanceTo(bv),
       l2 = bv.distanceTo(cv);
     dv.copy(target).sub(av);
@@ -525,7 +536,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       motion: Motion = {},
     ) {
       root.visible = alive;
-      anchor.position.y = playerVolumes({ x: 0, y: 0, z: 0, crouched }).head.center.y;
+      anchor.position.y = crouched ? CROUCH_EYE_HEIGHT : EYE_HEIGHT;
       if (!loaded) {
         fallback.update(dt, now, pitch, alive, crouched, motion);
         return;
@@ -556,13 +567,16 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       }
       gait += (distance * Math.PI) / (crouched ? 1.25 : speed > 6 ? 1.9 : 1.6);
       const stride = Math.min(1, speed / 3);
-      for (const [bone, pose] of rest) {
-        bone.position.copy(pose.p);
-        bone.quaternion.copy(pose.q);
+      for (let i = 0; i < rest.length; i++) {
+        const pose = rest[i]!;
+        pose.bone.position.copy(pose.p);
+        pose.bone.quaternion.copy(pose.q);
       }
-      body.position.y = baseY + (crouched ? -0.65 : 0);
+      // Let the hips settle into the stride. At full extension the previous
+      // pelvis height exceeded the leg's IK reach and lifted the planted foot.
+      body.position.y = baseY + (crouched ? -0.65 : 0) - stride * 0.04;
       root.updateWorldMatrix(true, true);
-      for (const side of ["Left", "Right"]) {
+      for (const side of sides) {
         const sign = side === "Left" ? -1 : 1,
           phase = gait + (sign === 1 ? Math.PI : 0),
           swing = Math.sin(phase) * 0.28 * stride,
@@ -582,11 +596,11 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           bend,
         );
         const foot = bones.get(side + "Foot")!;
-        foot.parent!.getWorldQuaternion(parentQ).invert();
-        root.getWorldQuaternion(worldQ);
+        rotation(foot.parent!, parentQ).invert();
+        rotation(root, worldQ);
         worldQ.multiply(footOrientations.get(side)!);
         foot.quaternion.copy(parentQ.multiply(worldQ));
-        foot.updateWorldMatrix(true, true);
+        foot.updateWorldMatrix(false, true);
       }
       const recoil = Math.max(0, (flashUntil - now) / 42) * 0.025;
       weaponPivot.position.y = 1.25 + (crouched ? -0.65 : 0);
@@ -594,7 +608,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       weaponPivot.rotation.z = motion.reloading ? -0.25 : 0;
       weapon.update(motion.weapon !== "pistol", motion.reloading ? 0.4 : 0, recoil);
       pistol.visible = motion.weapon === "pistol";
-      for (const side of ["Left", "Right"]) {
+      for (const side of sides) {
         const sign = side === "Left" ? -1 : 1;
         weapon.grip(side === "Left" ? "L" : "R", target);
         if (pistol.visible)
@@ -614,13 +628,12 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           bend,
         );
       }
-      bones.get("Head")!.getWorldPosition(headCenter);
-      bones.get("HeadTop_End")!.getWorldPosition(topCenter);
+      headCenter.setFromMatrixPosition(bones.get("Head")!.matrixWorld);
+      topCenter.setFromMatrixPosition(bones.get("HeadTop_End")!.matrixWorld);
       headCenter.lerp(topCenter, 0.5);
       root.worldToLocal(headCenter);
       accessories.position.copy(headCenter);
       accessories.rotation.x = pitch * 0.2;
-      const badge = root.getObjectByName("chest-badge");
       if (badge) badge.position.set(0, 1.25 + (crouched ? -0.65 : 0), -0.205);
       const tip = weapon.muzzle();
       flash.update(

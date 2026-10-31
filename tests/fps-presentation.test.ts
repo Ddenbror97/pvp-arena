@@ -78,6 +78,21 @@ describe("render presentation independent of server physics", () => {
     m.sample(125, out);
     expect(out.x).toBe(10);
   });
+  it("keeps ordered interpolation through repeated buffer wraparound and clear", () => {
+    const p = player(),
+      m = new RemotePresentation(),
+      out = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
+    for (let i = 0; i < 100; i++) m.push({ ...p, x: i * 0.01 }, i * 50);
+    m.push({ ...p, x: 9 }, 4900); // delayed old snapshot must not replace newest
+    expect(m.sample(4925, out)).toBe(true);
+    expect(out.x).toBeCloseTo(0.985);
+    m.sample(0, out);
+    expect(out.x).toBeCloseTo(0.92); // oldest retained pose
+    m.clear();
+    m.push({ ...p, x: 2 }, 20);
+    m.sample(10, out);
+    expect(out.x).toBe(2);
+  });
   it("bounds high DPI framebuffer size and adapts only after sustained slow frames", () => {
     const b = new RenderBudget();
     const stalled = new RenderBudget();

@@ -72,9 +72,13 @@ export function createBloodEffects(scene: THREE.Scene) {
     axis = new THREE.Vector3(0, 0, 1),
     normal = new THREE.Vector3();
   let mark = 0,
-    drop = 0;
+    drop = 0,
+    activeUntil = 0;
+  particles.visible = false;
   return {
     emit(hit: Hit, now: number) {
+      activeUntil = now + 230;
+      particles.visible = true;
       if (hit.splatter) {
         const surface = hit.splatter;
         normal.set(surface.normal.x, surface.normal.y, surface.normal.z);
@@ -129,6 +133,11 @@ export function createBloodEffects(scene: THREE.Scene) {
       }
     },
     update(dt: number, now: number) {
+      if (!particles.visible) return;
+      if (now >= activeUntil) {
+        particles.visible = false;
+        return;
+      }
       const seconds = Math.min(50, dt) / 1000;
       for (let i = 0; i < DROPS; i++) {
         const j = i * 3;
@@ -146,6 +155,8 @@ export function createBloodEffects(scene: THREE.Scene) {
       marks.count = 0;
       mark = 0;
       born.fill(0);
+      activeUntil = 0;
+      particles.visible = false;
       positions.fill(100000);
       geometry.getAttribute("position").needsUpdate = true;
     },
