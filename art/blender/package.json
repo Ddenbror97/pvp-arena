@@ -1,0 +1,21 @@
+{
+  "name": "pvp-arena-art-pipeline",
+  "private": true,
+  "description": "Asset pipeline for the AK-47 viewmodel. See README.md in this folder.",
+  "type": "module",
+  "scripts": {
+    "decompress": "gltf-transform copy ../../public/fps/models/ak47-authored.glb build/ak-source.glb",
+    "merge": "node merge_ak_viewmodel.mjs",
+    "validate": "node validate_ak_viewmodel.mjs ../../public/fps/models/ak47-authored.glb",
+    "check-rig": "node check_rig_unchanged.mjs build/ak-source.glb ../../public/fps/models/ak47-authored.glb"
+  },
+  "devDependencies": {
+    "@gltf-transform/cli": "4.1.1",
+    "@gltf-transform/core": "4.1.1",
+    "@gltf-transform/extensions": "4.1.1",
+    "@gltf-transform/functions": "4.1.1",
+    "meshoptimizer": "0.22.0",
+    "sharp": "0.33.5",
+    "gl-matrix": "3.4.3"
+  }
+}

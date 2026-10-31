@@ -23,6 +23,7 @@ import { createViewHands } from "./view-hands";
 import { createMuzzleFlash } from "./muzzle-flash";
 import { createAuthoredViewmodel } from "./authored-viewmodel";
 import { REMOTE_DELAY_MS } from "./network";
+import { createViewmodelMotion } from "./viewmodel-motion";
 
 /**
  * World camera vertical FOV. 70° ≈ 102° horizontal at 16:9 — between CS:GO (≈106°) and COD
@@ -342,7 +343,9 @@ export function mountArena(
   let smokeUntil = 0,
     landKick = 0,
     wasAirborne = false,
-    turnSway = 0;
+    lookX = 0,
+    lookY = 0;
+  const motion = createViewmodelMotion();
   let lastServerOffset = 0;
   const crosshair = host.parentElement?.querySelector<HTMLElement>(".duel-crosshair");
   const hitMarker = host.parentElement?.querySelector<HTMLElement>(".duel-hit-marker");
@@ -404,7 +407,8 @@ export function mountArena(
     if (!locked()) return;
     yaw -= e.movementX * HANDLING.sensitivity;
     pitch = Math.max(-1.45, Math.min(1.45, pitch - e.movementY * HANDLING.sensitivity));
-    turnSway = Math.max(-0.025, Math.min(0.025, turnSway + e.movementX * 0.00003));
+    lookX += e.movementX;
+    lookY += e.movementY;
     yaw = ((((yaw + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) - Math.PI;
   };
   const down = (e: KeyboardEvent) => {
@@ -601,7 +605,6 @@ export function mountArena(
       recoilYaw = recoverRecoil(recoilYaw, dt);
     }
     kick = decay(kick, HANDLING.kickDecay, dt);
-    turnSway = decay(turnSway, 12, dt);
     landKick = decay(landKick, 14, dt);
     if (predicted && seat) {
       // Render the unsent fraction of a physics tick immediately. Network input
@@ -709,26 +712,40 @@ export function mountArena(
     const reloadTilt = reloadRemaining && !authoredRifle ? Math.sin(reloadProgress * Math.PI) : 0;
     hands.update(renderedWeapon === "pistol", reloadTilt);
     hands.root.visible = renderedWeapon === "pistol" || !authoredView.loaded;
-    authoredView.update(renderedWeapon === "rifle", reloadRemaining ? 1 - reloadProgress : 0, kick);
+    // An empty AK has no bolt hold-open: that reload chambers a round with the charging handle.
+    // Ammo only changes when the server completes the reload, so this holds for its whole window.
+    const reloadKind = state && seat && state.players[seat].ammo === 0 ? "empty" : "tactical";
+    authoredView.update(
+      renderedWeapon === "rifle",
+      reloadRemaining ? 1 - reloadProgress : 0,
+      kick,
+      reloadKind,
+    );
     magazine.position.y = -reloadTilt * 0.08;
     magazine.rotation.x = reloadTilt * 0.14;
     chargingHandle.position.z = -0.04 + kick * 0.008;
-    const bob = moving ? Math.sin(now * 0.016) * 0.004 : Math.sin(now * 0.0018) * 0.0015;
+    // Breathing, look sway, stride bob, sprint tuck and recoil roll (viewmodel-motion.ts).
+    const sway = motion.update({
+      dt,
+      lookX,
+      lookY,
+      moving,
+      sprinting: keys.has("ShiftLeft") && !predicted?.crouched,
+      airborne,
+      reloading: reloadRemaining > 0,
+      kick,
+      shot: shotIndex,
+    });
+    lookX = lookY = 0;
     weaponGroup.position.set(
-      (authoredRifle ? VIEWMODEL_REST.x : 0.23) +
-        turnSway +
-        (moving ? Math.sin(now * 0.008) * 0.003 : 0),
-      (authoredRifle ? VIEWMODEL_REST.y : -0.24) +
-        bob -
-        landKick -
-        reloadTilt * 0.07 -
-        (airborne ? 0.008 : 0),
-      (authoredRifle ? VIEWMODEL_REST.z : -0.62) + kick * 0.025,
+      (authoredRifle ? VIEWMODEL_REST.x : 0.23) + sway.x,
+      (authoredRifle ? VIEWMODEL_REST.y : -0.24) + sway.y - landKick - reloadTilt * 0.07,
+      (authoredRifle ? VIEWMODEL_REST.z : -0.62) + sway.z,
     );
     weaponGroup.rotation.set(
-      (authoredRifle ? VIEWMODEL_REST.pitch : 0) + kick * 0.025 + reloadTilt * 0.13,
-      (authoredRifle ? VIEWMODEL_REST.yaw : 0.18) - turnSway,
-      (authoredRifle ? VIEWMODEL_REST.roll : -0.02) - reloadTilt * 0.55,
+      (authoredRifle ? VIEWMODEL_REST.pitch : 0) + sway.pitch + reloadTilt * 0.13,
+      (authoredRifle ? VIEWMODEL_REST.yaw : 0.18) + sway.yaw,
+      (authoredRifle ? VIEWMODEL_REST.roll : -0.02) + sway.roll - reloadTilt * 0.55,
     );
     weaponGroup.scale.setScalar(renderedWeapon === "pistol" ? 0.72 : 1);
     pistolPart.visible = renderedWeapon === "pistol";
