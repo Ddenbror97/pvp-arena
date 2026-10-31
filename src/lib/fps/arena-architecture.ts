@@ -91,7 +91,16 @@ export function addArenaArchitecture(scene: THREE.Scene, branding: THREE.Materia
     block(side * 11.96, 0.09, 0, 0.025, 0.035, 31.8, led).castShadow = false;
   }
   for (const solid of STRUCTURES) {
-    const mesh = block(solid.x, solid.y, solid.z, solid.w, solid.h, solid.d);
+    const deck = solid.id.startsWith("upper-deck-");
+    // A 24 mm lip separates the cap from both concrete and the 12 mm ribs.
+    const mesh = block(
+      deck ? solid.x - Math.sign(solid.x) * 0.012 : solid.x,
+      solid.y,
+      solid.z,
+      deck ? solid.w + 0.024 : solid.w,
+      solid.h,
+      solid.d,
+    );
     mesh.name = solid.id;
   }
   const logo = new THREE.TextureLoader().load("/brand/arena-logo-email.png", () => {

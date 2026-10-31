@@ -104,8 +104,6 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
   });
   await page.locator("canvas").click();
   await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
-  let mouseX = 640,
-    mouseY = 400;
   const state = () =>
     page.evaluate(() =>
       structuredClone(Reflect.get(window, "fpsPolishTest").state),
@@ -122,9 +120,13 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
         Math.atan2(target - (a.y + (a.crouched ? 0.95 : 1.6)), Math.hypot(dx, dz)) -
         (a.recoilPitch ?? 0);
     const turn = Math.atan2(Math.sin(yaw - a.yaw), Math.cos(yaw - a.yaw));
-    mouseX -= turn / 0.002;
-    mouseY -= (pitch - a.pitch) / 0.002;
-    await page.mouse.move(mouseX, mouseY);
+    // Deliver relative pointer deltas through the production handler. Absolute
+    // WebDriver positions outside the viewport lose deltas under pointer lock.
+    await page.evaluate(
+      ({ x, y }) =>
+        document.dispatchEvent(new MouseEvent("mousemove", { movementX: x, movementY: y })),
+      { x: -turn / 0.002, y: -(pitch - a.pitch) / 0.002 },
+    );
   };
   const arm = (enabled: boolean) =>
     page.evaluate((enabled) => Reflect.get(window, "fpsGameplayBot").arm(enabled), enabled);
@@ -166,8 +168,24 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
         expect(after.ammo + after.reserve).toBe(before.ammo + before.reserve);
       }
     }
-    // The authority can consume a pre-respawn queued command before the new
-    // yaw is acknowledged. Choose the lane from the round's spawn orientation.
+    const firstSeq = (await state()).players.A.lastSeq;
+    await expect.poll(async () => (await state()).players.A.lastSeq).toBeGreaterThan(firstSeq + 3);
+    const spawnYaw = round % 2 ? 0 : Math.PI;
+    await expect
+      .poll(async () => {
+        await page.evaluate((target) => {
+          const f = Reflect.get(window, "fpsPolishTest"),
+            yaw = f.controls.diagnostics().camera[3];
+          const turn = Math.atan2(Math.sin(target - yaw), Math.cos(target - yaw));
+          if (Math.abs(turn) > 0.001)
+            document.dispatchEvent(
+              new MouseEvent("mousemove", { movementX: -turn / 0.002, movementY: 0 }),
+            );
+        }, spawnYaw);
+        const yaw = (await state()).players.A.yaw;
+        return Math.abs(Math.atan2(Math.sin(spawnYaw - yaw), Math.cos(spawnYaw - yaw)));
+      })
+      .toBeLessThan(0.02);
     const lateral = round % 2 ? "KeyD" : "KeyA";
     await page.keyboard.down(lateral);
     await expect

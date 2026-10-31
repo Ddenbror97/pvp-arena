@@ -2,6 +2,7 @@ import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "tests/e2e",
   testMatch: [
+    "fps-vertical-motion.spec.ts",
     "fps-browser-input.spec.ts",
     "fps-pointer-lock.spec.ts",
     "fps-six-rounds.spec.ts",

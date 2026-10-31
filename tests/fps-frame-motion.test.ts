@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { FrameMotion, CameraCorrection, RenderBudget } from "../src/lib/fps/presentation";
+import {
+  FrameMotion,
+  CameraCorrection,
+  CameraStance,
+  CameraVertical,
+  RenderBudget,
+} from "../src/lib/fps/presentation";
 import { createMatch, isMovementBlocked, predictMovement } from "../src/lib/fps/simulation";
 import type { Input } from "../src/lib/fps/protocol";
 const input: Input = {
@@ -17,6 +23,27 @@ const input: Input = {
   sprint: true,
 };
 describe("continuous camera movement", () => {
+  it("follows ordinary jump speed immediately but bounds a discontinuous landing correction", () => {
+    const camera = new CameraVertical();
+    expect(camera.sample(1.6, 0)).toBe(1.6);
+    expect(camera.sample(1.65, 10)).toBe(1.65);
+    expect(camera.sample(0.95, 7)).toBeCloseTo(1.566);
+    camera.reset();
+    expect(camera.sample(4, 7)).toBe(4);
+  });
+  it("transitions camera stance across frames, resets respawns, and never edits the player", () => {
+    const camera = new CameraStance(),
+      p = { crouched: false };
+    expect(camera.sample(p, 0)).toBe(1.6);
+    p.crouched = true;
+    expect(camera.sample(p, 7)).toBeCloseTo(1.53);
+    for (let i = 0; i < 10; i++) camera.sample(p, 7);
+    expect(camera.sample(p, 7)).toBe(0.95);
+    expect(p).toEqual({ crouched: true });
+    camera.reset();
+    p.crouched = false;
+    expect(camera.sample(p, 7)).toBe(1.6);
+  });
   it("responds between network ticks without mutating authority or smoothing mouse yaw", () => {
     const p = createMatch({ A: "a", B: "b" }, 5, 1).players.A;
     Object.assign(p, { x: 9, z: 12 });

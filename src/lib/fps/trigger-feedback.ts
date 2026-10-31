@@ -1,11 +1,19 @@
 import type { Player, Weapon } from "./protocol";
 
-/** The server may fire on a later command than the local presentation clock.
- * Consume the closest eligible prediction, never a future command. */
+/** Server and presentation cadence can differ by one input command. Every
+ * map entry has already been presented; permit that bounded phase lead, but
+ * never swallow an unrelated later prediction or change accepted fire. */
 export function consumeShotPrediction(pending: Map<number, number>, seq: number | undefined) {
   if (seq === undefined) return false;
   let matched = -Infinity;
-  for (const key of pending.keys()) if (key <= seq && key > matched) matched = key;
+  let distance = Infinity;
+  for (const key of pending.keys()) {
+    const gap = Math.abs(seq - key);
+    if (key <= seq + 1 && gap < distance) {
+      matched = key;
+      distance = gap;
+    }
+  }
   return pending.delete(matched);
 }
 

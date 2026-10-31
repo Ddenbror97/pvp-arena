@@ -11,7 +11,7 @@ it("starts first-shot feedback without waiting for authority and deduplicates it
   expect(f.confirm(1)).toBe(true);
   expect(f.confirm(1)).toBe(false);
 });
-it("matches delayed server fire to the closest earlier prediction without consuming future commands", () => {
+it("matches delayed server fire with at most one command of presentation lead", () => {
   const pending = new Map([
     [1, 0],
     [3, 102],
@@ -21,8 +21,18 @@ it("matches delayed server fire to the closest earlier prediction without consum
   expect(consumeShotPrediction(pending, 1)).toBe(false);
   expect(consumeShotPrediction(pending, 4)).toBe(true);
   expect([...pending.keys()]).toEqual([6]);
+  expect(consumeShotPrediction(pending, 4)).toBe(false);
+  expect(consumeShotPrediction(pending, 5)).toBe(true);
   expect(consumeShotPrediction(pending, 5)).toBe(false);
-  expect(consumeShotPrediction(pending, 7)).toBe(true);
+});
+it("deduplicates the captured 24/28/31 local cadence against 24/27/30 authority", () => {
+  const pending = new Map([
+    [24, 0],
+    [28, 110],
+    [31, 213],
+  ]);
+  for (const ack of [24, 27, 30]) expect(consumeShotPrediction(pending, ack)).toBe(true);
+  expect(pending.size).toBe(0);
 });
 it("continues local automatic cadence while its previous server acknowledgement is still recent", () => {
   const p = createMatch({ A: "a", B: "b" }, 5, 0).players.A,
