@@ -1142,8 +1142,10 @@ import { guide as w3CashTornadoSlotsReview } from "./cash-tornado-slots-review";
 import { guide as w3DoubleChanceBet } from "./double-chance-bet";
 import { guide as w3Lucky15Bet } from "./lucky-15-bet";
 import { FPS_GUIDES } from "./fps-guides";
+import { FPS_WAVE2_GUIDES } from "./fps-wave2";
 export const GUIDES: Guide[] = [
   ...FPS_GUIDES,
+  ...FPS_WAVE2_GUIDES,
   whatIsACryptoCasino,
   provablyFairCasino,
   pvpGambling,

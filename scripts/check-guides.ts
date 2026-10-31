@@ -3,6 +3,7 @@ import { GUIDES, getGuide, publishedTopics, wordCount } from "../src/content/gui
 import { criticalQualityFailures } from "../src/lib/guides/quality";
 import { NEW_GUIDES } from "./new-guides-plan";
 import { FPS_GUIDE_SLUGS } from "../src/content/guides/fps-topics";
+import { FPS_WAVE2_SLUGS } from "./fps-wave2-plan";
 
 const STATIC = new Set([
   "/",
@@ -446,6 +447,7 @@ const PLANNED = new Set([
 
 for (const g of NEW_GUIDES) PLANNED.add(g.slug);
 for (const slug of FPS_GUIDE_SLUGS) PLANNED.add(slug);
+for (const slug of FPS_WAVE2_SLUGS) PLANNED.add(slug);
 
 let fail = 0;
 let unsourced = 0;

@@ -53,6 +53,7 @@ export type Guide = {
   /** Optional interactive widget rendered on the guide page. */
   widget?:
     | "edpi"
+    | "mouse-accuracy"
     | "kd-ratio"
     | "cs2-trade-up"
     | "cs2-inventory"
