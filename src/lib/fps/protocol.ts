@@ -67,7 +67,7 @@ export interface MatchState {
   phase: "waiting" | "countdown" | "live" | "round-end" | "completed" | "cancelled";
   players: Record<Seat, Player>;
   score: Record<Seat, number>;
-  bestOf: 5 | 9;
+  bestOf: 5 | 9 | 13;
   round: number;
   phaseEndsAt: number;
   winner: Seat | null;

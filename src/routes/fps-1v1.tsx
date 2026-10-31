@@ -20,7 +20,7 @@ const FAQS = [
   },
   {
     q: "Can I practise before entering a cash match?",
-    a: "Practice is a separate zero-stake mode when available. Test movement, mouse capture and audio before choosing any cash entry.",
+    a: "Practice is a free solo match against the arena bot: first to seven wins (best of 13). Test movement, mouse capture and audio before choosing a cash match against another player.",
   },
   {
     q: "Is an FPS result provably fair like a random draw?",

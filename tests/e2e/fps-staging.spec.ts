@@ -22,6 +22,7 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     sql = connect(2);
   const contextB = await browser.newContext({ baseURL, viewport: { width: 1280, height: 800 } }),
     other = await contextB.newPage();
+  const commands = new Map<Page, { yaw: number; pitch: number; seq: number }>();
   const latest = new Map<Page, MatchState>(),
     seats = new Map<Page, string>(),
     errors: string[] = [];
@@ -47,7 +48,15 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
       };
     });
     p.on("pageerror", (e) => errors.push(e.message));
-    p.on("websocket", (ws) =>
+    p.on("websocket", (ws) => {
+      ws.on("framesent", ({ payload }) => {
+        try {
+          const c = JSON.parse(payload.toString());
+          if (c.type === "input") commands.set(p, c);
+        } catch {
+          /* non-input */
+        }
+      });
       ws.on("framereceived", ({ payload }) => {
         try {
           const data = JSON.parse(payload.toString());
@@ -60,8 +69,8 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
         } catch {
           /* not a JSON state frame */
         }
-      }),
-    );
+      });
+    });
   }
   async function login(p: Page, user: { email: string; password: string }) {
     await p.goto("/auth");
@@ -136,8 +145,6 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     await page.bringToFront();
     const resume = page.getByRole("button", { name: "Resume aiming", exact: true });
     if (await resume.isVisible()) await resume.click();
-    let mouseX = 640,
-      mouseY = 400;
     const own = () => latest.get(page)!.players.A;
     const aim = async () => {
       const s = latest.get(page)!,
@@ -147,9 +154,15 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
         dz = b.z - a.z,
         yaw = Math.atan2(-dx, -dz) - (a.recoilYaw ?? 0),
         pitch = Math.atan2(b.y + 0.9 - a.y - 1.6, Math.hypot(dx, dz)) - (a.recoilPitch ?? 0);
-      mouseX -= Math.atan2(Math.sin(yaw - a.yaw), Math.cos(yaw - a.yaw)) / 0.002;
-      mouseY -= (pitch - a.pitch) / 0.002;
-      await page.mouse.move(mouseX, mouseY);
+      const current = commands.get(page) ?? a;
+      await page.evaluate(
+        ({ x, y }) =>
+          document.dispatchEvent(new MouseEvent("mousemove", { movementX: x, movementY: y })),
+        {
+          x: -Math.atan2(Math.sin(yaw - current.yaw), Math.cos(yaw - current.yaw)) / 0.002,
+          y: -(pitch - current.pitch) / 0.002,
+        },
+      );
     };
     for (let round = 1; round <= 3; round++) {
       await expect
@@ -160,7 +173,30 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
         await expect(other.locator(".duel-connected")).toBeVisible({ timeout: 20000 });
         await page.bringToFront();
       }
-      const yaw = own().yaw,
+      const spawnYaw = round % 2 ? 0 : Math.PI;
+      const initialSeq = own().lastSeq;
+      await expect.poll(() => own().lastSeq).toBeGreaterThan(initialSeq + 3);
+      await expect
+        .poll(
+          async () => {
+            const current = commands.get(page)?.yaw ?? own().yaw;
+            const turn = Math.atan2(Math.sin(spawnYaw - current), Math.cos(spawnYaw - current));
+            if (Math.abs(turn) > 0.001)
+              await page.evaluate(
+                (x) =>
+                  document.dispatchEvent(
+                    new MouseEvent("mousemove", { movementX: x, movementY: 0 }),
+                  ),
+                -turn / 0.002,
+              );
+            return Math.abs(
+              Math.atan2(Math.sin(spawnYaw - own().yaw), Math.cos(spawnYaw - own().yaw)),
+            );
+          },
+          { timeout: 8000, intervals: [150] },
+        )
+        .toBeLessThan(0.02);
+      const yaw = spawnYaw,
         lateral = Math.cos(yaw) > 0 ? "KeyD" : "KeyA";
       await page.keyboard.down(lateral);
       await expect.poll(() => own().x, { timeout: 9000, intervals: [50] }).toBeGreaterThan(9.2);

@@ -1,6 +1,12 @@
 import { test, expect } from "@playwright/test";
 import { fixture } from "./helpers/fps-fixture";
 import fs from "node:fs";
+test.beforeEach(({ browserName }) => {
+  test.skip(
+    browserName === "webkit",
+    "Windows MiniBrowser rejects pointer lock; native Safari needs macOS validation.",
+  );
+});
 test("multiple full turns keep the camera and accepted movement heading aligned", async ({
   page,
 }, info) => {

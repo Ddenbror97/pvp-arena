@@ -40,6 +40,8 @@ export const DUEL_ERRORS: Record<string, string> = {
   MATCH_NOT_OPEN: "Another player joined or this room closed. Choose another open game.",
   TERMS_CHANGED: "The room terms changed. Return to the lobby to review them again.",
   RATE_LIMITED: "Too many rooms created. Please wait before creating another.",
+  PRACTICE_SOLO_ONLY:
+    "Practice is now solo against the arena bot. Return to the lobby and choose Practice vs bot.",
   PRACTICE_DISABLED: "Practice is temporarily unavailable.",
   FPS_NOT_CONFIGURED: "PvPStrike is awaiting its database and match-server setup.",
   FPS_RUNTIME_UNAVAILABLE: "The match server is unavailable. Please retry shortly.",

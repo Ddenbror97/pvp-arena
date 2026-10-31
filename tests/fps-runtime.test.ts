@@ -561,4 +561,47 @@ describe("isolated real Durable Object WebSockets", () => {
       clearInterval(driver);
     }
   }, 90_000);
+
+  it("starts a private solo bot room with only the human ready and rejects bot/spectator tickets", async () => {
+    const id = crypto.randomUUID(),
+      bot = "00000000-0000-4000-8000-000000000013";
+    const config = {
+      id,
+      creator_id: A,
+      opponent_id: bot,
+      best_of: 13,
+      stake: 0,
+      private: true,
+      practice: true,
+      expiresAt: Date.now() + 1200000,
+    };
+    const boot = await mf.dispatchFetch("https://runtime.test/internal/matches/" + id, {
+      method: "POST",
+      headers: { Authorization: "Bearer " + secret },
+      body: JSON.stringify(config),
+    });
+    expect(boot.status).toBe(200);
+    expect((await connect(id, await token(id, bot))).status).toBe(403);
+    expect((await connect(id, await token(id, B, "spectator"))).status).toBe(403);
+    const human = await open(id),
+      live = until(human, (f) => f.type === "snapshot" && f.state.phase === "live");
+    human.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
+    expect((await live).state.bestOf).toBe(13);
+    const walking = await until(
+      human,
+      (f) => f.type === "snapshot" && !!f.visibility?.B && f.state.players.B.lastSeq > 0,
+      12000,
+    );
+    expect(walking.state.players.B.lastSeq).toBeGreaterThan(0);
+    const bad = await mf.dispatchFetch(
+      "https://runtime.test/internal/matches/" + crypto.randomUUID(),
+      {
+        method: "POST",
+        headers: { Authorization: "Bearer " + secret },
+        body: JSON.stringify({ ...config, stake: 100 }),
+      },
+    );
+    expect(bad.status).toBe(400);
+    human.close();
+  }, 20000);
 });

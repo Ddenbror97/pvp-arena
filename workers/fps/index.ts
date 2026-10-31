@@ -1,3 +1,5 @@
+import { createPracticeBot } from "../../src/lib/fps/practice-bot";
+import { PRACTICE_BOT_ID } from "../../src/lib/fps/practice";
 import { COMBAT_VERSION } from "../../src/lib/fps/combat";
 import {
   createMatch,
@@ -24,7 +26,8 @@ type Config = {
   id: string;
   creator_id: string;
   opponent_id: string;
-  best_of: 5 | 9;
+  best_of: 5 | 9 | 13;
+  practice?: boolean;
   stake: number;
   private: boolean;
   expiresAt: number;
@@ -110,6 +113,7 @@ export default {
 
 /** One named object is the only simulation and result authority for a match. */
 export class DuelRoom {
+  private bot = createPracticeBot();
   private saved: Saved | null = null;
   private timer: ReturnType<typeof setInterval> | null = null;
   private inputs: Record<Seat, Array<{ input: Input; at: number; connectionId: string }>> = {
@@ -207,7 +211,10 @@ export class DuelRoom {
         !UUID.test(c.creator_id) ||
         !UUID.test(c.opponent_id) ||
         c.creator_id === c.opponent_id ||
-        ![5, 9].includes(c.best_of) ||
+        !(c.practice === true
+          ? c.best_of === 13 && c.stake === 0 && c.private && c.opponent_id === PRACTICE_BOT_ID
+          : [5, 9].includes(c.best_of)) ||
+        (c.practice !== undefined && typeof c.practice !== "boolean") ||
         !Number.isSafeInteger(c.stake) ||
         c.stake < 0 ||
         c.stake > 5000 ||
@@ -225,6 +232,7 @@ export class DuelRoom {
           old.stake !== c.stake ||
           old.best_of !== c.best_of ||
           old.private !== c.private ||
+          !!old.practice !== !!c.practice ||
           old.expiresAt !== c.expiresAt
         )
           return json({ error: "CONFIG_CONFLICT" }, 409);
@@ -256,6 +264,8 @@ export class DuelRoom {
         : claims.sub === saved.config.opponent_id
           ? "B"
           : null;
+    if (saved.config.practice && (seat !== "A" || claims.role !== "player"))
+      return json({ error: "PRIVATE_MATCH" }, 403);
     if (claims.role === "player" && seat === null) return json({ error: "NOT_A_PLAYER" }, 403);
     try {
       if (!(await liveSessions(this.env, [claims])).has(sessionKey(claims)))
@@ -480,7 +490,11 @@ export class DuelRoom {
         phase = saved.state.phase;
       if (
         phase === "waiting" &&
-        ["A", "B"].every((seat) => authorized.some((s) => s.seat === seat && s.ready))
+        ["A", "B"].every(
+          (seat) =>
+            (saved.config.practice && seat === "B") ||
+            authorized.some((s) => s.seat === seat && s.ready),
+        )
       ) {
         startMatch(saved.state, now);
         await this.persist();
@@ -498,7 +512,8 @@ export class DuelRoom {
       }
       if (saved.state.phase !== "cancelled" && ["live", "countdown", "round-end"].includes(phase)) {
         for (const seat of ["A", "B"] as const) {
-          const connected = authorized.some((s) => s.seat === seat);
+          const connected =
+            (saved.config.practice && seat === "B") || authorized.some((s) => s.seat === seat);
           if (connected) this.absent[seat] = null;
           if (!connected && this.absent[seat] === null) this.absent[seat] = now;
         }
@@ -543,6 +558,7 @@ export class DuelRoom {
         // After a long stall discard elapsed simulation work, retaining deadlines.
         const stepAt = Math.max(last + Math.ceil(TICK_MS), now - 2 * Math.ceil(TICK_MS));
         const previousTick = saved.state.tick;
+        if (saved.config.practice) fresh.B = this.bot.input(saved.state, stepAt);
         stepMatch(saved.state, fresh, stepAt, TICK_MS);
         if (!saved.result && saved.state.tick !== previousTick)
           this.events.push(...saved.state.events.map((e) => ({ ...e, id: ++this.eventId })));
@@ -649,29 +665,42 @@ export class DuelRoom {
         body: payload,
         signal: AbortSignal.timeout(10_000),
       };
-      const recorded = await fetch(`${this.env.SUPABASE_URL}/rest/v1/rpc/fps_record_result`, init);
-      if (!recorded.ok) {
-        // Expiry can commit a refund before the first result intent reaches SQL.
-        // Preserve the original durable result as evidence and acknowledge only
-        // a database-confirmed cancellation, never invent another payout.
-        const view = await fetch(`${this.env.SUPABASE_URL}/rest/v1/rpc/fps_view`, {
-          ...init,
-          body: JSON.stringify({ p_match: saved.config.id }),
-          signal: AbortSignal.timeout(10_000),
-        });
-        const outcome = view.ok ? ((await view.json()) as { id?: string; status?: string }) : null;
-        if (outcome?.id !== saved.config.id || outcome.status !== "CANCELLED")
-          throw new Error(`HTTP_${recorded.status}`);
-        saved.state.phase = "cancelled";
-        saved.state.winner = null;
-        saved.state.score = { A: 0, B: 0 };
-        console.warn(JSON.stringify({ event: "fps_result_refunded", matchId: saved.config.id }));
-      } else {
-        const response = await fetch(`${this.env.SUPABASE_URL}/rest/v1/rpc/fps_finish`, {
-          ...init,
-          signal: AbortSignal.timeout(10_000),
-        });
+      if (saved.config.practice) {
+        const response = await fetch(
+          `${this.env.SUPABASE_URL}/rest/v1/rpc/fps_practice_finish`,
+          init,
+        );
         if (!response.ok) throw new Error(`HTTP_${response.status}`);
+      } else {
+        const recorded = await fetch(
+          `${this.env.SUPABASE_URL}/rest/v1/rpc/fps_record_result`,
+          init,
+        );
+        if (!recorded.ok) {
+          // Expiry can commit a refund before the first result intent reaches SQL.
+          // Preserve the original durable result as evidence and acknowledge only
+          // a database-confirmed cancellation, never invent another payout.
+          const view = await fetch(`${this.env.SUPABASE_URL}/rest/v1/rpc/fps_view`, {
+            ...init,
+            body: JSON.stringify({ p_match: saved.config.id }),
+            signal: AbortSignal.timeout(10_000),
+          });
+          const outcome = view.ok
+            ? ((await view.json()) as { id?: string; status?: string })
+            : null;
+          if (outcome?.id !== saved.config.id || outcome.status !== "CANCELLED")
+            throw new Error(`HTTP_${recorded.status}`);
+          saved.state.phase = "cancelled";
+          saved.state.winner = null;
+          saved.state.score = { A: 0, B: 0 };
+          console.warn(JSON.stringify({ event: "fps_result_refunded", matchId: saved.config.id }));
+        } else {
+          const response = await fetch(`${this.env.SUPABASE_URL}/rest/v1/rpc/fps_finish`, {
+            ...init,
+            signal: AbortSignal.timeout(10_000),
+          });
+          if (!response.ok) throw new Error(`HTTP_${response.status}`);
+        }
       }
       saved.settled = true;
       this.settledAt = Date.now();

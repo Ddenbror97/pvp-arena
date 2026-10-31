@@ -44,6 +44,7 @@ export const duelAction = createServerFn({ method: "POST" })
   .validator((raw: unknown) =>
     z
       .discriminatedUnion("action", [
+        z.object({ action: z.literal("practice"), combatVersion: z.literal(2), key }),
         z.object({
           action: z.enum(["enter", "create"]),
           combatVersion: z.literal(2),
@@ -78,6 +79,7 @@ export const duelAction = createServerFn({ method: "POST" })
     const capability = (await health.json()) as { configured?: boolean; combatVersion?: number };
     if (!capability.configured || capability.combatVersion !== 2)
       throw new Error("FPS_RUNTIME_UNAVAILABLE");
+    if (data.action === "practice") return call(db, "fps_practice_start", { p_key: data.key });
     if (data.action === "rematch")
       return call(db, "fps_rematch", { p_match: data.matchId, p_key: data.key });
     if (data.action === "enter" || data.action === "create")
@@ -130,6 +132,7 @@ export const duelAdmission = createServerFn({ method: "POST" })
         opponent_id: match.opponent_id,
         stake: match.stake,
         best_of: match.best_of,
+        practice: match.practice === true,
         private: match.private,
         expiresAt,
       }),
