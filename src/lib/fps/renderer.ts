@@ -841,6 +841,9 @@ export function mountArena(
       characters.A.dispose();
       characters.B.dispose();
       renderer.dispose();
+      // Each mount owns its context. Release the native drawing buffers on SPA
+      // navigation rather than waiting for the browser's context/GC limit.
+      renderer.forceContextLoss();
       renderer.domElement.remove();
     },
   };

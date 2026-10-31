@@ -8,6 +8,9 @@ runtime. The changes target work repeated during normal gameplay:
   the arena, opponent rigs and world lights a second time.
 - Preserve shared materials within each authored model instance. Different
   players still own separate material instances and can use different uniforms.
+- Release loaded shared-asset textures synchronously before disposing the
+  renderer's GL tracking. A deferred release lost those handles during SPA
+  navigation. Explicitly release the mount-owned context on teardown as well.
 - Cull an opponent's whole presentation rig outside a conservative camera
   frustum. This does not change server visibility, collision volumes or damage.
 - Compose the rig before IK, then refresh changed bone subtrees instead of
@@ -66,6 +69,29 @@ cash toggle is required. Validate hosted staging gameplay and its synthetic
 ledger settlement before production. Preserve current app bindings, secrets,
 routes and cron configuration. After deployment, run a private zero-stake match
 and verify that the QA accounts generated no financial postings.
+
+## Validation on 2026-10-30
+
+The full unit suite passed 705 tests across 81 files, with TypeScript and targeted
+ESLint checks passing. The real-renderer bot test completed six rounds, including
+damage, headshots, reloads, respawns and a 5–1 final result.
+
+The 1,800.8-second rendering soak used Intel UHD (ANGLE/D3D11), six five-minute
+arena sessions, movement, firing, reloads and weapon switches. Frame p95 stayed
+around 14 ms; geometry counts ranged from 190–195, textures 69–71 and shader
+programs stayed at 67. No context losses occurred. The original soak's GPU timer
+included idle frame gaps, so its GPU-time figures were discarded. A separate
+draw-scoped timer check measured 106 valid samples with GPU p95 of 6.6 ms.
+
+The subsequent same-page lifecycle check exposed and verified the texture
+release-order fix. Across eight mounts, input-listener counts stayed at 30;
+disposed renderer texture and geometry counts each returned to one fixed
+internal allocation. This cleanup follow-up is separate from the rendering soak.
+
+At 1920×1080 CSS pixels and device scale factor 2, the capped framebuffer had
+frame p95 of 14.1 ms normally and 20.8 ms under 4x CPU throttling. Delayed-snapshot
+movement also passed without repeated stationary camera frames. These are
+workstation measurements, not a guarantee for every browser or computer.
 
 Three.js shader preparation API:
 https://threejs.org/docs/pages/WebGLRenderer.html#compileAsync

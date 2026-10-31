@@ -14,6 +14,9 @@ test("repeated SPA arena mounts release resources and input listeners", async ({
     f.dispose();
     Reflect.deleteProperty(window, "fpsPolishTest");
   });
+  // Warm Playwright's locator/injected utility context before counting its
+  // own DOM listeners; otherwise the first assertion looks like a game leak.
+  await expect(page.locator("canvas")).toHaveCount(0);
   await cdp.send("HeapProfiler.collectGarbage");
   const before = await cdp.send("Runtime.getHeapUsage");
   const initialDom = await cdp.send("Memory.getDOMCounters");
@@ -40,11 +43,19 @@ test("repeated SPA arena mounts release resources and input listeners", async ({
       await new Promise((resolve) => setTimeout(resolve, 300));
       const live = controls.diagnostics();
       controls.dispose();
+      // Shared asset leases release their decoded source in ready.then(...).
+      // Observe cleanup after that microtask, not midway through disposal.
+      await Promise.resolve();
       return { live, disposed: controls.diagnostics() };
     });
+    await page.waitForLoadState("networkidle");
     await cdp.send("HeapProfiler.collectGarbage");
     const dom = await cdp.send("Memory.getDOMCounters");
     rows.push({ cycle, ...result, dom, heap: await cdp.send("Runtime.getHeapUsage") });
+    fs.writeFileSync(
+      info.outputPath("lifecycle-progress.json"),
+      JSON.stringify({ before, initialDom, rows }, null, 2),
+    );
     await expect(page.locator("canvas")).toHaveCount(0);
     expect(dom.jsEventListeners).toBeLessThanOrEqual(initialDom.jsEventListeners + 2);
     expect(result.disposed.textures).toBeLessThanOrEqual(2);
