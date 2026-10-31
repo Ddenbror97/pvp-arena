@@ -14,12 +14,12 @@ export const CLUSTERS: ClusterInfo[] = [
   {
     name: "FPS & aim",
     slug: "fps-and-aim",
-    blurb: "Browser duels, CS2 practice, map routes and competitive measurements.",
-    title: "FPS and Aim Guides: CS2 Practice and Browser Duels",
+    blurb: "Browser shooters, aim drills, hardware, CS2 maps, weapons and cash-match decisions.",
+    title: "FPS and Aim Guides: Games, Hardware and CS2 Practice",
     description:
-      "Focused FPS guides for aim, movement, CS2 settings, maps, ranks and cash-match decisions. Keep native CS2 mechanics separate from PvPStrike browser duels.",
+      "Find FPS guides by task: browser games, aim drills, mouse settings, CS2 maps, weapons and cash duels. Separate native CS2 rules from PvPStrike mechanics.",
     intro:
-      "Start with the task: improve a first shot, choose a practice map, understand a rating or price a duel. These guides distinguish Valve’s CS2 from our separate browser game. Entry fees belong on match pages; recoil drills and map routes stay focused on practice.",
+      "Choose the task before the game: compare browser shooters, practise a first shot, diagnose input delay, learn callouts or choose a weapon. Dedicated groups separate hardware, community maps, cosmetics and crypto-game payouts. Valve’s CS2 and our independent PvPStrike browser game have different rules; cash-match decisions stay separate from free practice.",
   },
   {
     name: "Foundations",

@@ -6,6 +6,7 @@ export async function fixture(
   seat: "A" | "B" = "A",
   bestOf: 5 | 9 = 5,
   snapshotDelay = 0,
+  snapshotCadence = 34,
 ) {
   // Isolate the real renderer from React hydration; this HTML exists only in the test transport.
   await page.route("**/__fps_polish_test__", (route) =>
@@ -16,7 +17,7 @@ export async function fixture(
   );
   await page.goto("/__fps_polish_test__");
   await page.evaluate(
-    async ({ seat, bestOf, snapshotDelay }) => {
+    async ({ seat, bestOf, snapshotDelay, snapshotCadence }) => {
       const rendererPath = "/src/lib/fps/renderer.ts",
         simulationPath = "/src/lib/fps/simulation.ts";
       const { mountArena } = await import(rendererPath);
@@ -42,6 +43,7 @@ export async function fixture(
       const queue: Record<string, unknown>[] = [];
       let eventId = 0;
       let lastDeliveryAt = 0;
+      let lastSnapshotAt = 0;
       const deliveries = new Set<ReturnType<typeof setTimeout>>();
       const controls = mountArena(
         host,
@@ -86,6 +88,8 @@ export async function fixture(
         }
         state.events = events;
         eventLog.push(...state.events);
+        if (snapshotCadence > 34 && now - lastSnapshotAt < snapshotCadence) return;
+        lastSnapshotAt = now;
         const frame = {
           state: structuredClone(state),
           serverNow: Date.now(),
@@ -145,7 +149,7 @@ export async function fixture(
         },
       });
     },
-    { seat, bestOf, snapshotDelay },
+    { seat, bestOf, snapshotDelay, snapshotCadence },
   );
   await page.waitForLoadState("networkidle");
   await page.waitForFunction(

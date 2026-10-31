@@ -30,6 +30,8 @@ This guide sits in the [CS:GO heritage cluster](/guides/topics/csgo-heritage) be
 
 Trophy screenshots of Souvenir Dragon Lores and record Howls are not a price method for a Field-Tested playskin. A knife category, a full inventory sum and Valve's market cut are separate jobs. This page stays on how a single item is quoted.
 
+For finish selection rather than a valuation method, compare [AWP skins](/guides/awp-skins) and [AK-47 skins](/guides/ak-47-skins). [Cheap CS2 skins](/guides/cheap-cs2-skins) considers a fixed cosmetic budget; it does not turn an old example price into a current listing.
+
 PVPspinArena does not price, buy or accept CS2 skins. The rest of this page teaches you how the market works so you can check a listing like an adult, then explains why that listing is a poor unit to bet with.`,
     },
     {

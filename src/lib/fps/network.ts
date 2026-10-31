@@ -1,5 +1,8 @@
 /** Shared presentation delay, included in the server's bounded shot lookback. */
-export const REMOTE_DELAY_MS = 50;
+// The 20 Hz snapshot deadline is serviced by a 30 Hz simulation: normal gaps
+// alternate between ~34 and ~67 ms. Cover the longer delivery interval so rendering
+// does not exhaust its next pose every other packet. Shot rewind shares this.
+export const REMOTE_DELAY_MS = 75;
 export const MAX_REWIND_MS = 200;
 export type NetworkReport = {
   rttMs: number;

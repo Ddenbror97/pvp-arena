@@ -28,7 +28,7 @@ Once an item is a token, someone will price it, lend it, fractionalise it or bui
 
 This explainer lives under [foundations](/guides/topics/foundations) next to [play to earn games](/guides/play-to-earn-games) and [what a crypto casino is](/guides/what-is-a-crypto-casino). Read those if you want the reward-loop maths or the casino definitions in isolation. Here the job is the category: tokens, guilds, where casinos sneak in, and where they should stay out.
 
-PVPspinArena does not ship a game client, a land NFT or a studio token. It is a site where adults stake USDC or ETH on short chance games. Keep that contrast parked; we will use it after the category is clear.`,
+PVPspinArena does not issue a land NFT or a studio token. Its independent browser FPS is an entry-funded competition rather than a token-emission economy. For the narrower ownership question, read [NFT shooter games](/guides/nft-shooter-games); [best crypto games](/guides/best-crypto-games) compares selection criteria, and the [Off The Grid guide](/guides/off-the-grid-game) examines a named project's access and asset model. Keep those product decisions separate from this category definition.`,
     },
     {
       id: "tokens",

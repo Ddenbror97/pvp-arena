@@ -141,8 +141,10 @@ export class RemotePresentation {
   }));
   private start = 0;
   private count = 0;
+  private playbackAt: number | null = null;
   clear() {
     this.start = this.count = 0;
+    this.playbackAt = null;
   }
   push(player: Player, at: number) {
     const last = this.count ? this.poses[(this.start + this.count - 1) % 8] : undefined;
@@ -159,8 +161,18 @@ export class RemotePresentation {
     if (this.count < 8) this.count++;
     else this.start = (this.start + 1) % 8;
   }
-  sample(at: number, out: Pose) {
+  sample(at: number, out: Pose, elapsedMs?: number) {
     if (!this.count) return false;
+    if (elapsedMs !== undefined) {
+      const elapsed = Math.max(0, Math.min(100, elapsedMs));
+      if (this.playbackAt !== null && Math.abs(at - this.playbackAt) < 1000) {
+        const next = this.playbackAt + elapsed;
+        // Network clock estimates change when packets arrive. Repay that phase
+        // error gradually; never play an approaching enemy backward for a frame.
+        at = next + Math.max(-elapsed * 0.05, Math.min(elapsed * 0.05, at - next));
+      }
+      this.playbackAt = at;
+    }
     let a = this.poses[this.start]!,
       b = a;
     for (let i = 0; i < this.count; i++) {

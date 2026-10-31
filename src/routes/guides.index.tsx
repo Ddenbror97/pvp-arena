@@ -6,9 +6,9 @@ import { EeatNote } from "@/components/seo/EeatNote";
 import { publisherNode } from "@/lib/seo/publisher";
 import { OG_SITE_URL, ogImageMeta } from "@/lib/og";
 
-const TITLE = "Gambling Guides: Odds, Poker, Crypto and Fairness";
+const TITLE = "Gambling Guides: FPS, Poker, Crypto and Fairness";
 const DESC =
-  "Free guides to casino odds, card and dice rules, poker, crypto deposits, provably fair checks, sports betting and lottery maths, grouped by topic.";
+  "Guides to FPS aim, browser shooters, casino odds, poker, crypto payments and provably fair play, grouped by task with clear internal links.";
 
 export const Route = createFileRoute("/guides/")({
   loader: () => getGuidesHub(),
@@ -131,12 +131,12 @@ function GuidesHub() {
           Guide library
         </p>
         <h1 className="mt-3 max-w-3xl font-display text-3xl leading-tight sm:text-5xl">
-          Gambling guides: casino games, odds and crypto
+          Game guides: FPS, casino games, odds and crypto
         </h1>
         <p className="mt-5 max-w-2xl leading-relaxed text-muted-foreground">
-          {guides.length} guides in {clusters.length} topics. Open a topic, then a guide. Skill
-          wagers, lottery, horse racing, prediction markets, and sports bets sit beside the crypto
-          casino topics, and every article stays linked here and on its topic page.
+          {guides.length} guides in {clusters.length} topics. Open a topic, then choose your task.
+          FPS aim, browser shooters and hardware sit alongside casino games, poker, crypto, sports
+          betting and lottery maths. Every article stays linked here and on its topic page.
         </p>
         <EeatNote className="mt-5 max-w-2xl" />
         <label className="mt-6 block max-w-md text-sm">

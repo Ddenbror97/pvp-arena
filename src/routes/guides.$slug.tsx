@@ -29,6 +29,7 @@ const SNAPSHOT_WAIT_MS = 400;
 
 /** Visible widget headings. Calculator pages add a WebApplication node for these. */
 const WIDGET_APPLICATION: Record<string, string> = {
+  "mouse-accuracy": "Mouse accuracy drill: 15 targets",
   edpi: "eDPI calculator",
   "kd-ratio": "K/D ratio calculator",
   "cs2-trade-up": "CS2 trade up calculator",
@@ -313,6 +314,18 @@ function GuideArticle({
               </Link>
               .
             </p>
+            {g.cluster === "FPS & aim" && (
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                <strong className="text-foreground">State and location eligibility:</strong>{" "}
+                Cash-entry rules can differ by country and US state. A game involving skill does not
+                establish that a paid match is permitted where you are. Check current local
+                requirements and the{" "}
+                <Link to="/terms" className="text-primary hover:underline">
+                  entry terms
+                </Link>{" "}
+                before funding a match. This guide does not declare any state eligible.
+              </p>
+            )}
           </aside>
 
           {g.sources.length > 0 && (

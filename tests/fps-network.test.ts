@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { ConnectionTiming, NetworkObservations, readNetworkReport } from "../src/lib/fps/network";
+import {
+  ConnectionTiming,
+  NetworkObservations,
+  readNetworkReport,
+  REMOTE_DELAY_MS,
+} from "../src/lib/fps/network";
 
 describe("measured game connection timing", () => {
   it("accepts only a current single-use server challenge", () => {
@@ -19,7 +24,7 @@ describe("measured game connection timing", () => {
       expect(t.pong(p.id, i * 1000 + rtt)).toBe(true);
     }
     expect(t.report()).toMatchObject({ rttMs: rtt, jitterMs: 0 });
-    expect(t.lookbackMs).toBe(Math.min(200, rtt + 50));
+    expect(t.lookbackMs).toBe(Math.min(200, rtt + REMOTE_DELAY_MS));
   });
   it("uses the lowest recent RTT and caps rewind even when all pongs are delayed", () => {
     const t = new ConnectionTiming();
@@ -27,7 +32,7 @@ describe("measured game connection timing", () => {
       const p = t.challenge(i * 2000)!;
       t.pong(p.id, i * 2000 + rtt);
     }
-    expect(t.lookbackMs).toBe(130);
+    expect(t.lookbackMs).toBe(80 + REMOTE_DELAY_MS);
     for (let i = 4; i < 22; i++) {
       const p = t.challenge(i * 2000)!;
       t.pong(p.id, i * 2000 + 1800);
