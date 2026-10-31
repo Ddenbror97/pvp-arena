@@ -210,7 +210,6 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
   return hand.matrixWorld.clone().multiply(originalHand.invert());
 }
 
-type Vertex = { p: THREE.Vector3; n: THREE.Vector3; uv: THREE.Vector2 };
 /**
  * Anatomical forearm cross-section along its length (t = 0 wrist → 1 elbow), in metres.
  * `width` is the half-width across the radius/ulna (thumb↔little-finger) axis, `depth` the
@@ -218,15 +217,15 @@ type Vertex = { p: THREE.Vector3; n: THREE.Vector3; uv: THREE.Vector2 };
  * in the upper third, slightly less at the elbow. The distal half is flat and tendinous.
  */
 export const FOREARM_PROFILE: readonly { t: number; width: number; depth: number }[] = [
-  { t: 0, width: 0.03, depth: 0.0195 },
-  { t: 0.18, width: 0.031, depth: 0.0205 },
-  { t: 0.42, width: 0.037, depth: 0.026 },
-  { t: 0.68, width: 0.0445, depth: 0.033 },
-  { t: 0.86, width: 0.0465, depth: 0.0355 },
-  { t: 1, width: 0.0435, depth: 0.037 },
+  { t: 0, width: 0.0318, depth: 0.0207 },
+  { t: 0.18, width: 0.0329, depth: 0.0217 },
+  { t: 0.42, width: 0.0392, depth: 0.0276 },
+  { t: 0.68, width: 0.0472, depth: 0.035 },
+  { t: 0.86, width: 0.0493, depth: 0.0376 },
+  { t: 1, width: 0.0461, depth: 0.0392 },
 ];
 export type ForearmShape = {
-  /** Elbow position relative to the wrist edge centre, in viewmodel-root units. */
+  /** Elbow position relative to the wrist joint, in viewmodel-root units. */
   elbow: Record<"L" | "R", THREE.Vector3>;
   profile: typeof FOREARM_PROFILE;
   /** Brachioradialis/extensor mass on the thumb side of the upper forearm (metres). */
@@ -236,10 +235,14 @@ export type ForearmShape = {
   /** Viewmodel root scale, so measurements stay in real metres. */
   scale: number;
 };
-/** How far the glove reaches past the wrist joint, in viewmodel-root units (~3 cm real). */
-export const GLOVE_CUFF = 0.05;
-/** Fewest sides around a forearm cross-section before the extrusion is subdivided. */
-const MIN_FOREARM_SIDES = 160;
+/**
+ * The glove cuff reaches this far past the wrist joint toward the elbow (metres). Mirrors
+ * CUFF_LENGTH in art/blender/arms/glove_sdf.py; the forearm starts inside it, so the glove
+ * edge overlaps bare skin like a real cuff instead of being welded to it.
+ */
+export const GLOVE_CUFF_LENGTH = 0.06;
+const FOREARM_SIDES = 160,
+  FOREARM_RINGS = 44;
 /** Short, anatomically proportioned forearms entering from the lower screen edge. */
 export const SHORT_FOREARMS: ForearmShape = {
   elbow: {
@@ -264,7 +267,269 @@ export function sampleForearmProfile(t: number, profile = FOREARM_PROFILE) {
   const last = profile.at(-1)!;
   return { width: last.width, depth: last.depth };
 }
-/** Clip the actual posed glove triangles and extrude skin from their exact edge, without a cover band. */
+/** Slight supination toward the elbow keeps the flat wrist from reading as a tube (radians). */
+export const forearmTwist = (t: number) => -0.32 * THREE.MathUtils.smoothstep(t, 0.15, 1);
+/** Angle of the radial (brachioradialis) mass, from the thumb side toward the back of the arm. */
+const RADIAL_MASS = 0.35;
+/**
+ * Forearm surface radius (metres) at length fraction t and angle θ, measured in the arm's
+ * anatomical frame: θ = 0 points to the thumb side, θ = π/2 to the back of the arm (dorsal).
+ * art/blender/arms/forearm.py implements the same function to author the sleeve and watch.
+ */
+export function forearmRadius(t: number, theta: number, shape: ForearmShape = SHORT_FOREARMS) {
+  const { width, depth } = sampleForearmProfile(t, shape.profile);
+  const local = theta - forearmTwist(t),
+    cos = Math.cos(local),
+    sin = Math.sin(local);
+  // Superellipse (n ≈ 2.4) gives flatter sides than an ellipse: bones, not a sausage.
+  const r = 1 / ((Math.abs(cos) / width) ** 2.4 + (Math.abs(sin) / depth) ** 2.4) ** (1 / 2.4);
+  const bulge =
+    shape.radialBulge *
+    Math.exp(-(((t - 0.74) / 0.2) ** 2)) *
+    Math.max(0, Math.cos(theta - RADIAL_MASS)) ** 3;
+  const groove =
+    0.0018 * Math.max(0, Math.cos(theta - Math.PI)) ** 6 * THREE.MathUtils.smoothstep(t, 0.2, 0.6);
+  return r + bulge - groove;
+}
+
+/**
+ * A posed forearm: wrist → elbow centre line with rotation-minimising anatomical frames.
+ * Canonical arm space (metres) is x → thumb side, y → back of the arm, z → toward the hand
+ * (so the elbow is at z = -length); accessories authored in it wrap onto the arm exactly.
+ */
+export type ForearmPath = {
+  side: "L" | "R";
+  /** Wrist joint → elbow, metres. */
+  length: number;
+  /** +1 when the posed frame has the canonical handedness, -1 when it is mirrored. */
+  handedness: number;
+  /** Canonical metres → viewmodel-root position. */
+  point: (x: number, y: number, z: number, out: THREE.Vector3) => THREE.Vector3;
+  /** Canonical direction at canonical length `along` (metres from the wrist) → root direction. */
+  direction: (along: number, v: THREE.Vector3, out: THREE.Vector3) => THREE.Vector3;
+};
+
+function forearmPath(
+  side: "L" | "R",
+  wrist: THREE.Vector3,
+  axis: THREE.Vector3,
+  thumb: THREE.Vector3,
+  dorsal: THREE.Vector3,
+  elbow: THREE.Vector3,
+  scale: number,
+): ForearmPath {
+  // Straight inside the glove cuff (the cuff is rigid with the hand), then a smooth bend to
+  // the elbow.
+  const cuffEnd = wrist.clone().addScaledVector(axis, GLOVE_CUFF_LENGTH / scale);
+  const distance = cuffEnd.distanceTo(elbow),
+    direction = elbow.clone().sub(cuffEnd).normalize();
+  const curve = new THREE.CurvePath<THREE.Vector3>();
+  curve.add(new THREE.LineCurve3(wrist.clone(), cuffEnd.clone()));
+  curve.add(
+    new THREE.CubicBezierCurve3(
+      cuffEnd.clone(),
+      cuffEnd.clone().addScaledVector(axis, distance * 0.24),
+      elbow.clone().addScaledVector(direction, -distance * 0.32),
+      elbow.clone(),
+    ),
+  );
+  const samples = 240,
+    centres: THREE.Vector3[] = [],
+    tangents: THREE.Vector3[] = [],
+    thumbs: THREE.Vector3[] = [],
+    dorsals: THREE.Vector3[] = [],
+    lengths: number[] = [0];
+  for (let i = 0; i <= samples; i++) {
+    centres.push(curve.getPointAt(i / samples));
+    tangents.push(curve.getTangentAt(i / samples).normalize());
+    if (i) lengths.push(lengths[i - 1]! + centres[i]!.distanceTo(centres[i - 1]!) * scale);
+  }
+  // Parallel transport: the cross-section frame turns only as much as the centre line bends.
+  const t0 = tangents[0]!;
+  const x0 = thumb.clone().addScaledVector(t0, -thumb.dot(t0)).normalize();
+  const y0 = dorsal
+    .clone()
+    .addScaledVector(t0, -dorsal.dot(t0))
+    .addScaledVector(x0, -dorsal.dot(x0))
+    .normalize();
+  thumbs.push(x0);
+  dorsals.push(y0);
+  const turn = new THREE.Quaternion();
+  for (let i = 1; i <= samples; i++) {
+    turn.setFromUnitVectors(tangents[i - 1]!, tangents[i]!);
+    thumbs.push(thumbs[i - 1]!.clone().applyQuaternion(turn));
+    dorsals.push(dorsals[i - 1]!.clone().applyQuaternion(turn));
+  }
+  const length = lengths[samples]!;
+  // Canonical z points from the elbow toward the hand: thumb × back = toward the hand.
+  const handedness = Math.sign(new THREE.Vector3().crossVectors(x0, y0).dot(t0)) < 0 ? 1 : -1;
+  const frame = {
+    c: new THREE.Vector3(),
+    x: new THREE.Vector3(),
+    y: new THREE.Vector3(),
+    t: new THREE.Vector3(),
+  };
+  const locate = (along: number) => {
+    const s = THREE.MathUtils.clamp(along, 0, length);
+    let lo = 0,
+      hi = samples;
+    while (hi - lo > 1) {
+      const mid = (lo + hi) >> 1;
+      if (lengths[mid]! <= s) lo = mid;
+      else hi = mid;
+    }
+    const k = (s - lengths[lo]!) / Math.max(1e-9, lengths[hi]! - lengths[lo]!);
+    frame.c.lerpVectors(centres[lo]!, centres[hi]!, k);
+    frame.x.lerpVectors(thumbs[lo]!, thumbs[hi]!, k).normalize();
+    frame.y.lerpVectors(dorsals[lo]!, dorsals[hi]!, k).normalize();
+    frame.t.lerpVectors(tangents[lo]!, tangents[hi]!, k).normalize();
+    // Past either end the arm continues straight (into the cuff, or up past the elbow).
+    frame.c.addScaledVector(frame.t, (along - s) / scale);
+    return frame;
+  };
+  return {
+    side,
+    length,
+    handedness,
+    point(x, y, z, out) {
+      const f = locate(-z);
+      return out
+        .copy(f.c)
+        .addScaledVector(f.x, x / scale)
+        .addScaledVector(f.y, y / scale);
+    },
+    direction(along, v, out) {
+      const f = locate(along);
+      return out
+        .set(0, 0, 0)
+        .addScaledVector(f.x, v.x)
+        .addScaledVector(f.y, v.y)
+        .addScaledVector(f.t, -v.z)
+        .normalize();
+    },
+  };
+}
+
+/** Build the bare forearm surface on a posed path: wrist (inside the cuff) to elbow. */
+function forearmSkin(path: ForearmPath, shape: ForearmShape, viewer: THREE.Vector3) {
+  // u = 0.5 faces the camera, so veins/tendons sit on the visible side of each arm.
+  const wrist = path.point(0, 0, 0, new THREE.Vector3());
+  const toViewer = viewer.clone().sub(wrist);
+  const thumb = path.direction(0, new THREE.Vector3(1, 0, 0), new THREE.Vector3()),
+    back = path.direction(0, new THREE.Vector3(0, 1, 0), new THREE.Vector3());
+  const viewAngle = Math.atan2(toViewer.dot(back), toViewer.dot(thumb));
+  const columns = FOREARM_SIDES + 1,
+    positions = new Float32Array((FOREARM_RINGS + 1) * columns * 3),
+    uvs = new Float32Array((FOREARM_RINGS + 1) * columns * 2),
+    point = new THREE.Vector3();
+  for (let r = 0; r <= FOREARM_RINGS; r++) {
+    const t = r / FOREARM_RINGS,
+      along = t * path.length;
+    for (let j = 0; j < columns; j++) {
+      const theta = viewAngle - Math.PI + (2 * Math.PI * j) / FOREARM_SIDES;
+      const radius = forearmRadius(t, theta, shape);
+      path.point(Math.cos(theta) * radius, Math.sin(theta) * radius, -along, point);
+      point.toArray(positions, (r * columns + j) * 3);
+      uvs[(r * columns + j) * 2] = j / FOREARM_SIDES;
+      uvs[(r * columns + j) * 2 + 1] = t;
+    }
+  }
+  const index: number[] = [];
+  for (let r = 0; r < FOREARM_RINGS; r++)
+    for (let j = 0; j < FOREARM_SIDES; j++) {
+      const a = r * columns + j,
+        b = a + 1,
+        c = a + columns,
+        d = c + 1;
+      // Angle runs thumb → back; face outward whichever way the posed frame is mirrored.
+      if (path.handedness > 0) index.push(a, c, b, b, c, d);
+      else index.push(a, b, c, b, d, c);
+    }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
+  geometry.setIndex(index);
+  geometry.computeVertexNormals();
+  // The UV seam column is duplicated: give both copies the same normal.
+  const n = geometry.getAttribute("normal") as THREE.BufferAttribute;
+  for (let r = 0; r <= FOREARM_RINGS; r++) {
+    const a = r * columns,
+      b = a + FOREARM_SIDES;
+    const avg = new THREE.Vector3()
+      .fromBufferAttribute(n, a)
+      .add(new THREE.Vector3().fromBufferAttribute(n, b))
+      .normalize();
+    n.setXYZ(a, avg.x, avg.y, avg.z);
+    n.setXYZ(b, avg.x, avg.y, avg.z);
+  }
+  geometry.computeBoundingSphere();
+  return geometry;
+}
+
+/**
+ * Wrap a canonical-arm-space accessory (sleeve, watch) onto a posed forearm. Positions, normals
+ * and tangents follow the arm's centre line and frames; mirrored arms flip the winding.
+ */
+/** Wrist→elbow length (m) of the canonical arm the accessories are authored on (forearm.py). */
+export const CANONICAL_FOREARM_LENGTH = 0.335;
+export function wrapOntoForearm(
+  source: THREE.BufferGeometry,
+  path: ForearmPath,
+  shape: ForearmShape = SHORT_FOREARMS,
+) {
+  const geometry = source.clone();
+  const p = geometry.getAttribute("position") as THREE.BufferAttribute,
+    n = geometry.getAttribute("normal") as THREE.BufferAttribute | undefined,
+    t = geometry.getAttribute("tangent") as THREE.BufferAttribute | undefined;
+  const v = new THREE.Vector3(),
+    out = new THREE.Vector3();
+  const positions = new Float32Array(p.count * 3),
+    normals = n ? new Float32Array(n.count * 3) : undefined,
+    tangents = t ? new Float32Array(t.count * 4) : undefined;
+  for (let i = 0; i < p.count; i++) {
+    const along = -p.getZ(i);
+    // Keep each point's height above the skin: the posed arm is longer or shorter than the
+    // canonical one, so its cross-section at the same distance from the wrist differs slightly.
+    const x = p.getX(i),
+      y = p.getY(i),
+      theta = Math.atan2(y, x),
+      rho = Math.hypot(x, y);
+    const lift =
+      rho -
+      forearmRadius(along / CANONICAL_FOREARM_LENGTH, theta, shape) +
+      forearmRadius(along / path.length, theta, shape);
+    path
+      .point(Math.cos(theta) * lift, Math.sin(theta) * lift, p.getZ(i), out)
+      .toArray(positions, i * 3);
+    if (n && normals)
+      path.direction(along, v.fromBufferAttribute(n, i), out).toArray(normals, i * 3);
+    if (t && tangents) {
+      path.direction(along, v.set(t.getX(i), t.getY(i), t.getZ(i)), out).toArray(tangents, i * 4);
+      tangents[i * 4 + 3] = t.getW(i) * path.handedness;
+    }
+  }
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  if (normals) geometry.setAttribute("normal", new THREE.BufferAttribute(normals, 3));
+  if (tangents) geometry.setAttribute("tangent", new THREE.BufferAttribute(tangents, 4));
+  if (path.handedness < 0 && geometry.index) {
+    const index = geometry.index.array;
+    for (let i = 0; i < index.length; i += 3) {
+      const swap = index[i + 1]!;
+      index[i + 1] = index[i + 2]!;
+      index[i + 2] = swap;
+    }
+  }
+  // The clone carried the canonical bounds; recompute them for the wrapped surface.
+  geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
+  return geometry;
+}
+
+/**
+ * Bake the posed gloves (CPU skinning of the authored glove mesh) and build each forearm from
+ * the wrist joint, inside the glove cuff, to the elbow. Returns the forearm paths so sleeves and
+ * the watch can be wrapped onto exactly the same surface.
+ */
 export function fitContinuousForearms(
   arm: THREE.SkinnedMesh,
   root: THREE.Object3D,
@@ -277,359 +542,149 @@ export function fitContinuousForearms(
   const source = arm.geometry,
     positions = source.getAttribute("position"),
     normals = source.getAttribute("normal"),
+    tangents = source.getAttribute("tangent"),
     uvs = source.getAttribute("uv"),
     weights = source.getAttribute("skinWeight"),
     joints = source.getAttribute("skinIndex");
   const toRoot = root.matrixWorld.clone().invert().multiply(arm.matrixWorld);
   const normalMatrix = new THREE.Matrix3().getNormalMatrix(toRoot);
-  const vertices: Vertex[] = [],
-    sides: number[] = [];
   const skinMatrices = arm.skeleton.bones.map((bone, i) => {
     const matrix = bone.matrixWorld.clone();
     if (/^(?:Arm_L|UpArm_L|Forearm_L|BoneTwist.*L)/.test(bone.name))
       matrix.premultiply(supportDelta);
     return matrix.multiply(arm.skeleton.boneInverses[i]!);
   });
-  for (let i = 0; i < positions.count; i++) {
-    const base = new THREE.Vector3().fromBufferAttribute(positions, i).applyMatrix4(arm.bindMatrix);
-    const p = new THREE.Vector3(),
-      n = new THREE.Vector3(),
-      bindNormal = new THREE.Vector3()
-        .fromBufferAttribute(normals, i)
+  // Attributes may be quantised (meshopt): read through the accessor, not the raw array.
+  const plainUVs = new Float32Array(uvs.count * 2);
+  for (let i = 0; i < uvs.count; i++) {
+    plainUVs[i * 2] = uvs.getX(i);
+    plainUVs[i * 2 + 1] = uvs.getY(i);
+  }
+  const count = positions.count,
+    posed = new Float32Array(count * 3),
+    posedNormals = new Float32Array(count * 3),
+    posedTangents = tangents ? new Float32Array(count * 4) : undefined,
+    sides = new Float32Array(count);
+  const base = new THREE.Vector3(),
+    p = new THREE.Vector3(),
+    n = new THREE.Vector3(),
+    tn = new THREE.Vector3(),
+    bindNormal = new THREE.Vector3(),
+    bindTangent = new THREE.Vector3();
+  for (let i = 0; i < count; i++) {
+    base.fromBufferAttribute(positions, i).applyMatrix4(arm.bindMatrix);
+    bindNormal.fromBufferAttribute(normals, i).transformDirection(arm.bindMatrix);
+    if (tangents)
+      bindTangent
+        .set(tangents.getX(i), tangents.getY(i), tangents.getZ(i))
         .transformDirection(arm.bindMatrix);
+    p.set(0, 0, 0);
+    n.set(0, 0, 0);
+    tn.set(0, 0, 0);
     let side = 0;
     for (let j = 0; j < 4; j++) {
       const weight = weights.getComponent(i, j);
       if (!weight) continue;
       const index = joints.getComponent(i, j),
-        bone = arm.skeleton.bones[index]!,
         matrix = skinMatrices[index]!;
       p.addScaledVector(base.clone().applyMatrix4(matrix), weight);
       n.addScaledVector(bindNormal.clone().transformDirection(matrix), weight);
-      side += (/L(?:$|\d)|\.L/.test(bone.name) ? 1 : -1) * weight;
+      if (tangents) tn.addScaledVector(bindTangent.clone().transformDirection(matrix), weight);
+      side += (/L(?:$|\d)|\.L/.test(arm.skeleton.bones[index]!.name) ? 1 : -1) * weight;
     }
-    p.applyMatrix4(arm.bindMatrixInverse).applyMatrix4(toRoot);
-    n.transformDirection(arm.bindMatrixInverse).applyMatrix3(normalMatrix).normalize();
-    vertices.push({ p, n, uv: new THREE.Vector2(uvs.getX(i), uvs.getY(i)) });
-    sides.push(side);
+    p.applyMatrix4(arm.bindMatrixInverse)
+      .applyMatrix4(toRoot)
+      .toArray(posed, i * 3);
+    n.transformDirection(arm.bindMatrixInverse)
+      .applyMatrix3(normalMatrix)
+      .normalize()
+      .toArray(posedNormals, i * 3);
+    if (tangents && posedTangents) {
+      tn.transformDirection(arm.bindMatrixInverse)
+        .applyMatrix3(normalMatrix)
+        .normalize()
+        .toArray(posedTangents, i * 4);
+      posedTangents[i * 4 + 3] = tangents.getW(i);
+    }
+    sides[i] = side;
   }
   const built = {} as Record<
     "L" | "R",
-    { gloves: THREE.BufferGeometry; skin: THREE.BufferGeometry }
+    { gloves: THREE.BufferGeometry; skin: THREE.BufferGeometry; path: ForearmPath }
   >;
-  const seams: { side: string; points: number; gap: number; loops: number; openEdges: number }[] =
-    [];
+  const cuffs: { side: string; clearance: number; overlap: number }[] = [];
+  const triangles = source.index?.count ?? count;
   for (const [side, sign] of [
     ["L", 1],
     ["R", -1],
   ] as const) {
-    const hand = root.getObjectByName(`Hand_${side}`)!;
-    const wrist = root.worldToLocal(hand.getWorldPosition(new THREE.Vector3()));
-    const axis = new THREE.Vector3(0, -1, 0)
-      .transformDirection(hand.matrixWorld)
-      .transformDirection(root.matrixWorld.clone().invert());
-    // The glove cuff covers the wrist joint and ends on the forearm, like a tactical glove.
-    const plane = wrist.clone().addScaledVector(axis, GLOVE_CUFF);
-    const glovePositions: number[] = [],
-      gloveNormals: number[] = [],
-      gloveUVs: number[] = [];
-    const skinPositions: number[] = [],
-      skinUVs: number[] = [];
-    const edges: [THREE.Vector3, THREE.Vector3][] = [];
-    const count = source.index?.count ?? positions.count;
-    const interpolate = (a: Vertex, b: Vertex, t: number): Vertex => ({
-      p: a.p.clone().lerp(b.p, t),
-      n: a.n.clone().lerp(b.n, t).normalize(),
-      uv: a.uv.clone().lerp(b.uv, t),
-    });
-    for (let i = 0; i < count; i += 3) {
+    // Gloves: this hand's triangles, compacted to the vertices they use.
+    const remap = new Map<number, number>(),
+      index: number[] = [];
+    for (let i = 0; i < triangles; i += 3) {
       const ids = [0, 1, 2].map((j) => source.index?.getX(i + j) ?? i + j);
       if (ids.reduce((s, id) => s + sides[id]!, 0) * sign < 0) continue;
-      const triangle = ids.map((id) => vertices[id]!);
-      const clipped: Vertex[] = [],
-        crossings: THREE.Vector3[] = [];
-      for (let j = 0; j < 3; j++) {
-        const a = triangle[j]!,
-          b = triangle[(j + 1) % 3]!,
-          da = a.p.clone().sub(plane).dot(axis),
-          db = b.p.clone().sub(plane).dot(axis);
-        if (da <= 0) clipped.push(a);
-        if (da <= 0 !== db <= 0) {
-          const v = interpolate(a, b, da / (da - db));
-          clipped.push(v);
-          crossings.push(v.p);
-        }
-      }
-      if (crossings.length === 2) edges.push([crossings[0]!, crossings[1]!]);
-      for (let j = 1; j + 1 < clipped.length; j++)
-        for (const v of [clipped[0]!, clipped[j]!, clipped[j + 1]!]) {
-          glovePositions.push(...v.p.toArray());
-          gloveNormals.push(...v.n.toArray());
-          gloveUVs.push(...v.uv.toArray());
-        }
-    }
-    // Weld UV-split edge vertices by position, then trace the original topology's boundary loops.
-    const key = (p: THREE.Vector3) =>
-      p
-        .toArray()
-        .map((v) => Math.round(v * 1e5))
-        .join(",");
-    const points = new Map<string, THREE.Vector3>(),
-      neighbors = new Map<string, Set<string>>();
-    for (const [a, b] of edges) {
-      const ka = key(a),
-        kb = key(b);
-      if (ka === kb) continue;
-      points.set(ka, a);
-      points.set(kb, b);
-      if (!neighbors.has(ka)) neighbors.set(ka, new Set());
-      if (!neighbors.has(kb)) neighbors.set(kb, new Set());
-      neighbors.get(ka)!.add(kb);
-      neighbors.get(kb)!.add(ka);
-    }
-    const loops: THREE.Vector3[][] = [],
-      used = new Set<string>();
-    for (const start of neighbors.keys()) {
-      if (used.has(start)) continue;
-      const loop: THREE.Vector3[] = [];
-      let current: string | undefined = start,
-        previous: string | undefined;
-      while (current && !used.has(current)) {
-        used.add(current);
-        loop.push(points.get(current)!);
-        const next: string | undefined = [...neighbors.get(current)!].find(
-          (k) => k !== previous && !used.has(k),
-        );
-        previous = current;
-        current = next;
-      }
-      if (loop.length > 5) loops.push(loop);
-    }
-    loops.sort((a, b) => b.length - a.length);
-    const coarseRim = loops[0];
-    if (!coarseRim) throw new Error(`Cannot form continuous ${side} wrist edge`);
-    // Subdivide sparse glove edges along their own straight segments: the seam stays exact,
-    // and the forearm gets enough sides to shade as a smooth limb rather than flat strips.
-    const split = Math.max(1, Math.ceil(MIN_FOREARM_SIDES / coarseRim.length));
-    const rim = coarseRim.flatMap((p, i) => {
-      const next = coarseRim[(i + 1) % coarseRim.length]!;
-      return Array.from({ length: split }, (_, k) => p.clone().lerp(next, k / split));
-    });
-    if (split > 1) {
-      // Split the glove triangles on the wrist edge identically, so the seam stays welded.
-      const inserts = new Map<string, number>();
-      coarseRim.forEach((p, i) => {
-        const q = coarseRim[(i + 1) % coarseRim.length]!;
-        inserts.set(`${key(p)}|${key(q)}`, 1);
-        inserts.set(`${key(q)}|${key(p)}`, 1);
-      });
-      const P = glovePositions.splice(0),
-        N = gloveNormals.splice(0),
-        U = gloveUVs.splice(0);
-      const vertex = (i: number) => ({
-        p: new THREE.Vector3(P[i * 3], P[i * 3 + 1], P[i * 3 + 2]),
-        n: new THREE.Vector3(N[i * 3], N[i * 3 + 1], N[i * 3 + 2]),
-        uv: new THREE.Vector2(U[i * 2], U[i * 2 + 1]),
-      });
-      const push = (v: Vertex) => {
-        glovePositions.push(...v.p.toArray());
-        gloveNormals.push(...v.n.toArray());
-        gloveUVs.push(...v.uv.toArray());
-      };
-      for (let t = 0; t < P.length / 9; t++) {
-        const tri = [0, 1, 2].map((j) => vertex(t * 3 + j));
-        const edge = [0, 1, 2].find((j) =>
-          inserts.has(`${key(tri[j]!.p)}|${key(tri[(j + 1) % 3]!.p)}`),
-        );
-        if (edge === undefined) {
-          tri.forEach(push);
-          continue;
-        }
-        const a = tri[edge]!,
-          b = tri[(edge + 1) % 3]!,
-          c = tri[(edge + 2) % 3]!;
-        for (let k = 0; k < split; k++) {
-          push(interpolate(a, b, k / split));
-          push(k + 1 === split ? b : interpolate(a, b, (k + 1) / split));
-          push(c);
-        }
+      for (const id of ids) {
+        if (!remap.has(id)) remap.set(id, remap.size);
+        index.push(remap.get(id)!);
       }
     }
-    const center = rim
-      .reduce((v, p) => v.add(p), new THREE.Vector3())
-      .multiplyScalar(1 / rim.length);
-    const elbow = center.clone().add(shape.elbow[side]);
-    const direction = elbow.clone().sub(center).normalize(),
-      distance = center.distanceTo(elbow);
-    const endRotation = new THREE.Quaternion().setFromUnitVectors(axis, direction);
-    const ringCount = 32,
-      rings: THREE.Vector3[][] = [];
-    const path = new THREE.CubicBezierCurve3(
-      center,
-      center.clone().addScaledVector(axis, distance * 0.28),
-      elbow.clone().addScaledVector(direction, -distance * 0.32),
-      elbow,
-    );
-    // Cross-section frame at the wrist: `across` runs thumb → little finger (radius/ulna axis).
-    const project = (p: THREE.Vector3) => {
-      const v = p.clone().sub(center);
-      return v.addScaledVector(axis, -v.dot(axis));
+    const take = (from: ArrayLike<number>, size: number) => {
+      const out = new Float32Array(remap.size * size);
+      for (const [from_, to] of remap)
+        for (let k = 0; k < size; k++) out[to * size + k] = from[from_ * size + k]!;
+      return out;
     };
-    const bone = (n: number) =>
-      root.worldToLocal(
+    const gloves = new THREE.BufferGeometry();
+    gloves.setAttribute("position", new THREE.BufferAttribute(take(posed, 3), 3));
+    gloves.setAttribute("normal", new THREE.BufferAttribute(take(posedNormals, 3), 3));
+    gloves.setAttribute("uv", new THREE.BufferAttribute(take(plainUVs, 2), 2));
+    if (posedTangents)
+      gloves.setAttribute("tangent", new THREE.BufferAttribute(take(posedTangents, 4), 4));
+    gloves.setIndex(index);
+    gloves.computeBoundingSphere();
+
+    // Forearm frame at the wrist, from the hand bone: it runs along the hand's -Y, the thumb
+    // side is across the knuckles (little → index) and the back of the hand is the dorsal side.
+    const hand = root.getObjectByName(`Hand_${side}`)!;
+    const wrist = root.worldToLocal(hand.getWorldPosition(new THREE.Vector3()));
+    const toRootDirection = (v: THREE.Vector3) =>
+      v.transformDirection(hand.matrixWorld).transformDirection(root.matrixWorld.clone().invert());
+    const axis = toRootDirection(new THREE.Vector3(0, -1, 0));
+    const knuckle = (n: number) =>
+      hand.worldToLocal(
         root
           .getObjectByName(`Bone_${side}${String(n).padStart(3, "0")}`)!
           .getWorldPosition(new THREE.Vector3()),
       );
-    const across = project(bone(5)).sub(project(bone(17)));
-    if (across.lengthSq() < 1e-10) across.set(1, 0, 0).addScaledVector(axis, -axis.x);
-    across.normalize();
-    const thumbSide = project(bone(20)).dot(across) >= 0 ? 1 : -1;
-    const palmar = new THREE.Vector3().crossVectors(axis, across).normalize();
-    // Unwrapped angle of every rim vertex, so the skin UVs run continuously round the arm.
-    const angles: number[] = [];
-    for (const p of rim) {
-      const v = project(p),
-        angle = Math.atan2(v.dot(palmar), v.dot(across));
-      const previous = angles.at(-1);
-      angles.push(
-        previous === undefined
-          ? angle
-          : previous + Math.atan2(Math.sin(angle - previous), Math.cos(angle - previous)),
-      );
+    const across = knuckle(5).sub(knuckle(17)).setY(0).normalize();
+    const palmar = new THREE.Vector3(0, 1, 0).cross(across).multiplyScalar(side === "L" ? 1 : -1);
+    const thumb = toRootDirection(across.clone()),
+      dorsal = toRootDirection(palmar.clone().negate());
+    const elbow = wrist.clone().add(shape.elbow[side]);
+    const path = forearmPath(side, wrist, axis, thumb, dorsal, elbow, shape.scale);
+    const skin = forearmSkin(path, shape, shape.viewer);
+    built[side] = { gloves, skin, path };
+
+    // Cuff check: halfway along the cuff the glove must enclose the skin with a thin wall.
+    const along = GLOVE_CUFF_LENGTH * 0.6,
+      centre = path.point(0, 0, -along, new THREE.Vector3());
+    const x = path.direction(along, new THREE.Vector3(1, 0, 0), new THREE.Vector3()),
+      y = path.direction(along, new THREE.Vector3(0, 1, 0), new THREE.Vector3()),
+      tangent = path.direction(along, new THREE.Vector3(0, 0, -1), new THREE.Vector3());
+    const bins = new Array<number>(24).fill(Infinity);
+    const gp = gloves.getAttribute("position");
+    for (let i = 0; i < gp.count; i++) {
+      const d = new THREE.Vector3().fromBufferAttribute(gp, i).sub(centre);
+      if (Math.abs(d.dot(tangent)) * shape.scale > 0.008) continue;
+      const theta = Math.atan2(d.dot(y), d.dot(x)),
+        bin = Math.floor(((theta + Math.PI) / (2 * Math.PI)) * 24) % 24;
+      const r =
+        Math.hypot(d.dot(x), d.dot(y)) * shape.scale -
+        forearmRadius(along / path.length, theta, shape);
+      bins[bin] = Math.min(bins[bin]!, r);
     }
-    const turn =
-      angles.at(-1)! -
-      angles[0]! +
-      Math.atan2(Math.sin(angles[0]! - angles.at(-1)!), Math.cos(angles[0]! - angles.at(-1)!));
-    const toViewer = project(shape.viewer);
-    const viewAngle = Math.atan2(toViewer.dot(palmar), toViewer.dot(across));
-    // u = 0.5 faces the camera, so veins/tendons sit on the visible side of each arm.
-    const uOf = (angle: number) => 0.5 + (angle - viewAngle) / (2 * Math.PI);
-    const uvU = [...angles.map(uOf), uOf(angles[0]! + turn)];
-    const offsets = rim.map((p) => p.clone().sub(center));
-    const thumbAngle = thumbSide > 0 ? 0 : Math.PI;
-    for (let r = 0; r <= ringCount; r++) {
-      const t = r / ringCount,
-        blend = THREE.MathUtils.smoothstep(t, 0, 0.42),
-        q = new THREE.Quaternion().slerp(endRotation, blend);
-      const c = path.getPoint(t),
-        { width, depth } = sampleForearmProfile(t, shape.profile);
-      // Slight supination twist toward the elbow keeps the flat wrist from reading as a tube.
-      const twist = thumbSide * 0.32 * THREE.MathUtils.smoothstep(t, 0.15, 1);
-      const bulge = shape.radialBulge * Math.exp(-(((t - 0.74) / 0.2) ** 2));
-      const relax = THREE.MathUtils.smoothstep(t, 0, 0.16);
-      rings.push(
-        offsets.map((offset, j) => {
-          const angle = angles[j]!,
-            local = angle - twist;
-          // Superellipse (n ≈ 2.4) gives flatter sides than an ellipse: bones, not a sausage.
-          const cos = Math.cos(local),
-            sin = Math.sin(local);
-          const shapeR =
-            1 / ((Math.abs(cos) / width) ** 2.4 + (Math.abs(sin) / depth) ** 2.4) ** (1 / 2.4);
-          const lobe =
-            bulge * Math.max(0, Math.cos(angle - thumbAngle - 0.55 * thumbSide)) ** 3 -
-            0.0018 *
-              Math.max(0, Math.cos(angle - thumbAngle - Math.PI)) ** 6 *
-              THREE.MathUtils.smoothstep(t, 0.2, 0.6);
-          const radius = (shapeR + lobe) / shape.scale;
-          const smooth = across
-            .clone()
-            .multiplyScalar(Math.cos(angle) * radius)
-            .addScaledVector(palmar, Math.sin(angle) * radius);
-          return offset.clone().lerp(smooth, relax).applyQuaternion(q).add(c);
-        }),
-      );
-    }
-    const radial = rim[0]!.clone().sub(center),
-      tangent = rim[1]!.clone().sub(rim[0]!);
-    const outward = new THREE.Vector3().crossVectors(tangent, axis).dot(radial) > 0;
-    for (let r = 0; r < ringCount; r++)
-      for (let j = 0; j < rim.length; j++) {
-        const k = (j + 1) % rim.length,
-          a = rings[r]![j]!,
-          b = rings[r]![k]!,
-          c = rings[r + 1]![j]!,
-          d = rings[r + 1]![k]!;
-        const triangles = outward
-          ? [
-              [a, b, c],
-              [c, b, d],
-            ]
-          : [
-              [a, c, b],
-              [c, d, b],
-            ];
-        const coords = outward
-          ? [
-              [uvU[j]!, r / ringCount, uvU[j + 1]!, r / ringCount, uvU[j]!, (r + 1) / ringCount],
-              [
-                uvU[j]!,
-                (r + 1) / ringCount,
-                uvU[j + 1]!,
-                r / ringCount,
-                uvU[j + 1]!,
-                (r + 1) / ringCount,
-              ],
-            ]
-          : [
-              [uvU[j]!, r / ringCount, uvU[j]!, (r + 1) / ringCount, uvU[j + 1]!, r / ringCount],
-              [
-                uvU[j]!,
-                (r + 1) / ringCount,
-                uvU[j + 1]!,
-                (r + 1) / ringCount,
-                uvU[j + 1]!,
-                r / ringCount,
-              ],
-            ];
-        triangles.forEach((tri, i) => {
-          for (const p of tri) skinPositions.push(...p.toArray());
-          skinUVs.push(...coords[i]!);
-        });
-      }
-    seams.push({
-      side,
-      loops: loops.length,
-      openEdges: [...neighbors.values()].filter((n) => n.size !== 2).length,
-      points: rim.length,
-      gap: Math.max(...rim.map((p, i) => p.distanceTo(rings[0]![i]!))),
-    });
-    built[side] = {
-      gloves: geometry(glovePositions, gloveUVs, gloveNormals),
-      skin: geometry(skinPositions, skinUVs),
-    };
+    cuffs.push({ side, clearance: Math.min(...bins), overlap: Math.max(...bins) });
   }
-  function geometry(p: number[], uv: number[], n?: number[]) {
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.Float32BufferAttribute(p, 3));
-    g.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
-    if (n) g.setAttribute("normal", new THREE.Float32BufferAttribute(n, 3));
-    else {
-      const smooth = mergeVertices(g, 1e-5);
-      g.dispose();
-      smooth.computeVertexNormals();
-      // UV splits must not turn the wrist or arm into visibly separate shaded strips.
-      const p = smooth.getAttribute("position"),
-        n = smooth.getAttribute("normal"),
-        sums = new Map<string, THREE.Vector3>();
-      const key = (i: number) =>
-        [p.getX(i), p.getY(i), p.getZ(i)].map((v) => Math.round(v * 1e5)).join(",");
-      for (let i = 0; i < p.count; i++) {
-        const k = key(i);
-        if (!sums.has(k)) sums.set(k, new THREE.Vector3());
-        sums.get(k)!.add(new THREE.Vector3().fromBufferAttribute(n, i));
-      }
-      for (let i = 0; i < p.count; i++) {
-        const normal = sums.get(key(i))!.clone().normalize();
-        n.setXYZ(i, normal.x, normal.y, normal.z);
-      }
-      smooth.computeBoundingSphere();
-      return smooth;
-    }
-    g.computeBoundingSphere();
-    return g;
-  }
-  return { L: built.L, R: built.R, seams };
+  return { L: built.L, R: built.R, cuffs };
 }

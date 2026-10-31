@@ -5,6 +5,8 @@ import {
   fitContinuousForearms,
   magazineGrip as magazineGripFrame,
   SHORT_FOREARMS,
+  wrapOntoForearm,
+  type ForearmPath,
 } from "./fitted-rifle-hands";
 import { ARENA_MODELS } from "./model-assets";
 import { applyVeinTint, createForearmDetailTexture } from "./forearm-detail";
@@ -110,7 +112,7 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
     handle: new THREE.Matrix4(),
     racked: new THREE.Matrix4(),
   };
-  const skinMap = new THREE.TextureLoader().load("/fps/forearm-skin-v1.webp");
+  const skinMap = new THREE.TextureLoader().load("/fps/forearm-skin-v2.webp");
   skinMap.colorSpace = THREE.SRGBColorSpace;
   skinMap.wrapS = skinMap.wrapT = THREE.RepeatWrapping;
   skinMap.anisotropy = 8;
@@ -163,23 +165,83 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
         const authored = snapshot();
         const supportDelta = poseRifleHands(instance.root);
         const fitted = fitContinuousForearms(arm, root, supportDelta);
-        const material = (
-          Array.isArray(arm.material) ? arm.material[0]! : arm.material
-        ) as THREE.MeshStandardMaterial;
-        // Matte black tactical gloves (synthetic leather), identical for police and terrorist.
-        material.color.setHex(0x34353a);
-        material.roughness = 0.9;
-        material.metalness = 0;
-        material.envMapIntensity = 0.55;
-        for (const side of ["L", "R"] as const) {
-          const gloves = new THREE.Mesh(fitted[side].gloves, material);
-          gloves.name = `fitted-rifle-gloves-${side}`;
-          const forearms = new THREE.Mesh(fitted[side].skin, skin);
-          forearms.name = `continuous-rifle-forearms-${side}`;
-          (side === "L" ? supportContent : weaponContent).add(gloves, forearms);
-          ownedGeometry.push(fitted[side].gloves, fitted[side].skin);
-        }
-        root.userData["wristSeams"] = fitted.seams;
+        const material = createGloveMaterial(
+          (Array.isArray(arm.material)
+            ? arm.material[0]!
+            : arm.material) as THREE.MeshStandardMaterial,
+        );
+        ownedMaterials.push(material);
+        // Sleeves and the watch are authored on the canonical forearm and wrapped onto each one.
+        const accessories = instance.root.getObjectByName("FPAccessories");
+        accessories?.removeFromParent();
+        // Accessory geometry in canonical arm space: node transforms (meshopt quantisation
+        // stores positions scaled and offset) are baked relative to the accessories root.
+        accessories?.updateWorldMatrix(true, true);
+        const accessoryRoot = new THREE.Matrix4()
+          .copy(accessories?.matrixWorld ?? new THREE.Matrix4())
+          .invert();
+        const meshesOf = (name: string) => {
+          const found: {
+            geometry: THREE.BufferGeometry;
+            material: THREE.Material | THREE.Material[];
+          }[] = [];
+          accessories?.getObjectByName(name)?.traverse((o) => {
+            if (!(o instanceof THREE.Mesh)) return;
+            const geometry = o.geometry
+              .clone()
+              .applyMatrix4(new THREE.Matrix4().multiplyMatrices(accessoryRoot, o.matrixWorld));
+            ownedGeometry.push(geometry);
+            found.push({ geometry, material: o.material });
+          });
+          return found;
+        };
+        const sleeveParts = meshesOf("ArmSleeve"),
+          watchParts = meshesOf("ArmWatch");
+        /** Gloves, bare forearm, pushed-up sleeve and (left wrist) watch for one fitted arm. */
+        const dress = (
+          built: { gloves: THREE.BufferGeometry; skin: THREE.BufferGeometry; path: ForearmPath },
+          names: { gloves: string; forearm: string; prefix: string },
+          into?: THREE.Matrix4,
+        ) => {
+          const meshes: THREE.Mesh[] = [];
+          const add = (
+            geometry: THREE.BufferGeometry,
+            mat: THREE.Material | THREE.Material[],
+            name: string,
+          ) => {
+            if (into) geometry.applyMatrix4(into);
+            ownedGeometry.push(geometry);
+            const mesh = new THREE.Mesh(geometry, mat);
+            mesh.name = name;
+            meshes.push(mesh);
+          };
+          add(built.gloves, material, names.gloves);
+          add(built.skin, skin, names.forearm);
+          for (const part of sleeveParts)
+            add(
+              wrapOntoForearm(part.geometry, built.path),
+              part.material,
+              `${names.prefix}-sleeve`,
+            );
+          if (built.path.side === "L")
+            watchParts.forEach((part, i) =>
+              add(
+                wrapOntoForearm(part.geometry, built.path),
+                part.material,
+                `${names.prefix}-watch-${i}`,
+              ),
+            );
+          return meshes;
+        };
+        for (const side of ["L", "R"] as const)
+          (side === "L" ? supportContent : weaponContent).add(
+            ...dress(fitted[side], {
+              gloves: `fitted-rifle-gloves-${side}`,
+              forearm: `continuous-rifle-forearms-${side}`,
+              prefix: `rifle-arm-${side}`,
+            }),
+          );
+        root.userData["wristCuffs"] = fitted.cuffs;
         arm.visible = false;
         const handNode = instance.root.getObjectByName("Hand_L")!;
         const rootInverse = new THREE.Matrix4().copy(root.matrixWorld).invert();
@@ -224,16 +286,19 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
           .copy(boltNode.matrixWorld)
           .invert()
           .multiply(root.matrixWorld);
-        handleFitted.L.gloves.applyMatrix4(intoBolt);
-        handleFitted.L.skin.applyMatrix4(intoBolt);
-        const handleGloves = new THREE.Mesh(handleFitted.L.gloves, material),
-          handleForearm = new THREE.Mesh(handleFitted.L.skin, skin);
-        handleGloves.name = "charging-handle-gloves";
-        handleForearm.name = "charging-handle-forearm";
-        handleHand.add(handleGloves, handleForearm);
+        handleHand.add(
+          ...dress(
+            handleFitted.L,
+            {
+              gloves: "charging-handle-gloves",
+              forearm: "charging-handle-forearm",
+              prefix: "charging-handle",
+            },
+            intoBolt,
+          ),
+        );
         handleHand.visible = false;
         boltNode.add(handleHand);
-        ownedGeometry.push(handleFitted.L.gloves, handleFitted.L.skin);
         handleFitted.R.gloves.dispose();
         handleFitted.R.skin.dispose();
 
@@ -243,16 +308,19 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
           .copy(magNode.matrixWorld)
           .invert()
           .multiply(root.matrixWorld);
-        magFitted.L.gloves.applyMatrix4(intoMagazine);
-        magFitted.L.skin.applyMatrix4(intoMagazine);
-        const heldGloves = new THREE.Mesh(magFitted.L.gloves, material),
-          heldForearm = new THREE.Mesh(magFitted.L.skin, skin);
-        heldGloves.name = "magazine-grip-gloves";
-        heldForearm.name = "magazine-grip-forearm";
-        magazineHand.add(heldGloves, heldForearm);
+        magazineHand.add(
+          ...dress(
+            magFitted.L,
+            {
+              gloves: "magazine-grip-gloves",
+              forearm: "magazine-grip-forearm",
+              prefix: "magazine-grip",
+            },
+            intoMagazine,
+          ),
+        );
         magazineHand.visible = false;
         magNode.add(magazineHand);
-        ownedGeometry.push(magFitted.L.gloves, magFitted.L.skin);
         magFitted.R.gloves.dispose();
         magFitted.R.skin.dispose();
       }
@@ -464,4 +532,27 @@ function frontLug(magazine: THREE.Object3D, out: THREE.Vector3) {
   const lip = points.filter((p) => p.y > top - 0.03);
   const front = Math.min(...lip.map((p) => p.z));
   return out.set(0, top - 0.015, front);
+}
+
+/**
+ * Tactical glove material from the authored PBR set (base colour, tangent-space normals,
+ * occlusion/roughness). Physical sheen gives the suede and knit their soft grazing highlight.
+ */
+function createGloveMaterial(source: THREE.MeshStandardMaterial) {
+  const textured = !!source.map;
+  return new THREE.MeshPhysicalMaterial({
+    name: "tactical-gloves",
+    color: textured ? 0xffffff : 0x34353a,
+    map: source.map,
+    normalMap: source.normalMap,
+    normalScale: source.normalScale.clone(),
+    aoMap: source.aoMap,
+    roughnessMap: source.roughnessMap,
+    roughness: textured ? 1 : 0.9,
+    metalness: 0,
+    sheen: 0.22,
+    sheenColor: new THREE.Color(0x2c2d31),
+    sheenRoughness: 0.6,
+    envMapIntensity: 0.7,
+  });
 }

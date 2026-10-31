@@ -2,7 +2,7 @@ import type { Mesh } from "three";
 import { test, expect } from "@playwright/test";
 import { fixture } from "./helpers/fps-fixture";
 
-test("actual AK has welded wrists and a stable wrap grip through recoil and reload", async ({
+test("actual AK gloves cover the wrists and keep a stable wrap grip through recoil and reload", async ({
   page,
 }) => {
   await fixture(page);
@@ -20,7 +20,8 @@ test("actual AK has welded wrists and a stable wrap grip through recoil and relo
     }));
     if (sides.some((s) => !s.gloves || !s.skin))
       throw new Error("Fitted hand geometry did not load");
-    const boundary = (mesh: Mesh) => {
+    // Gloves: whole, closed hands (no open edges where the forearm used to be welded on).
+    const openEdges = (mesh: Mesh) => {
       const g = mesh.geometry,
         p = g.getAttribute("position"),
         counts = new Map<string, number>();
@@ -36,16 +37,19 @@ test("actual AK has welded wrists and a stable wrap grip through recoil and relo
           counts.set(edge, (counts.get(edge) ?? 0) + 1);
         }
       }
-      return new Set([...counts].filter(([, n]) => n === 1).map(([key]) => key));
+      return [...counts.values()].filter((n) => n === 1).length;
     };
-    let joined = 0,
-      gloveEdgeCount = 0;
-    for (const side of sides) {
-      const gloveEdges = boundary(side.gloves as Mesh),
-        skinEdges = boundary(side.skin as Mesh);
-      gloveEdgeCount += gloveEdges.size;
-      joined += [...gloveEdges].filter((e) => skinEdges.has(e)).length;
-    }
+    const gloveOpenEdges = sides.map((s) => openEdges(s.gloves as Mesh));
+    const accessories = {
+      sleeves: ["rifle-arm-L-sleeve", "rifle-arm-R-sleeve"].map(
+        (n) => !!model.root.getObjectByName(n),
+      ),
+      watch: !!model.root.getObjectByName("rifle-arm-L-watch-0"),
+      watchOnRight: !!model.root.getObjectByName("rifle-arm-R-watch-0"),
+      heldWatch: ["magazine-grip-watch-0", "charging-handle-watch-0"].map(
+        (n) => !!model.root.getObjectByName(n),
+      ),
+    };
     const positions = (name: string) =>
       model.root
         .worldToLocal(model.root.getObjectByName(name)!.getWorldPosition(new T.Vector3()))
@@ -89,7 +93,7 @@ test("actual AK has welded wrists and a stable wrap grip through recoil and relo
       returning: shown(0.85, "empty"),
     };
     model.update(true, 0, 0);
-    const seams = model.root.userData.wristSeams;
+    const cuffs = model.root.userData.wristCuffs;
     const finite = geometries.every((g) =>
       ["position", "normal", "uv"].every((a) =>
         Array.from(g.getAttribute(a).array).every(Number.isFinite),
@@ -101,9 +105,9 @@ test("actual AK has welded wrists and a stable wrap grip through recoil and relo
     });
     const data = {
       loaded: model.loaded,
-      seams,
-      joined,
-      gloveEdges: gloveEdgeCount,
+      cuffs,
+      gloveOpenEdges,
+      accessories,
       fingers,
       stable,
       finite,
@@ -126,15 +130,21 @@ test("actual AK has welded wrists and a stable wrap grip through recoil and relo
     tacticalReturn: [false, false, true],
     returning: [false, false, true],
   });
-  expect(result.seams).toHaveLength(2);
-  for (const seam of result.seams) {
-    expect(seam.loops).toBe(1);
-    expect(seam.openEdges).toBe(0);
-    expect(seam.gap).toBeLessThan(1e-6);
+  // The glove cuff overlaps the bare forearm all the way round: skin never shows through the
+  // cuff wall (clearance > 0) and the cuff never stands off the arm (< 15 mm, at the moulded
+  // closure tab; the neoprene wall itself is ~3 mm).
+  expect(result.cuffs).toHaveLength(2);
+  for (const cuff of result.cuffs) {
+    expect(cuff.clearance).toBeGreaterThan(0);
+    expect(cuff.overlap).toBeLessThan(0.015);
   }
-  // Compare independently extracted visible mesh boundaries, not just the fitting metadata.
-  expect(result.joined).toBeGreaterThan(100);
-  expect(result.joined).toBeGreaterThanOrEqual(result.gloveEdges - 4);
+  expect(result.gloveOpenEdges).toEqual([0, 0]);
+  expect(result.accessories).toEqual({
+    sleeves: [true, true],
+    watch: true,
+    watchOnRight: false,
+    heldWatch: [true, true],
+  });
   for (const finger of result.fingers) {
     expect(finger.knuckle[0]).toBeLessThan(-0.035);
     expect(finger.middle[1]).toBeLessThan(-0.03);
