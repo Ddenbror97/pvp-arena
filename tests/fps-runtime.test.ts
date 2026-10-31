@@ -13,6 +13,7 @@ type Socket = NonNullable<Awaited<ReturnType<Miniflare["dispatchFetch"]>>["webSo
 const sockets: Socket[] = [];
 type RuntimeFrame = {
   type: string;
+  serverNow: number;
   visibility?: Record<"A" | "B", boolean>;
   state: MatchState;
   settled: boolean;
@@ -303,6 +304,53 @@ describe("isolated real Durable Object WebSockets", () => {
       delayedSession = "";
       authReadObserved = undefined;
       revokedSessions.delete(sid);
+    }
+  });
+  it("keeps the simulation clock near 30 Hz while session reads take 120 ms", async () => {
+    const id = await init(),
+      sid = crypto.randomUUID(),
+      a = await sessionSocket(id, sid),
+      b = await open(id, B);
+    delayedSession = sid;
+    let timer: ReturnType<typeof setInterval> | undefined;
+    try {
+      await readyLive(a, b);
+      let seq = 0;
+      timer = setInterval(() => {
+        a.send(
+          JSON.stringify({ ...JSON.parse(movement(++seq)), forward: 0, strafe: 1, fire: false }),
+        );
+      }, 34);
+      await pause(400);
+      const poses: Array<{ at: number; x: number }> = [];
+      a.addEventListener("message", (event) => {
+        const frame = JSON.parse(String(event.data)) as RuntimeFrame;
+        if (frame.type === "snapshot")
+          poses.push({ at: frame.serverNow, x: frame.state.players.A.x });
+      });
+      const first = await until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
+      const started = Date.now();
+      const last = await until(a, (f) => f.type === "snapshot" && Date.now() - started >= 1600);
+      const hz = ((last.state.tick - first.state.tick) * 1000) / (Date.now() - started);
+      expect(hz).toBeGreaterThan(27);
+      expect(hz).toBeLessThan(32);
+      const gaps = poses.slice(1).map((pose, i) => pose.at - poses[i]!.at);
+      const moving = poses.slice(1).filter((pose, i) => pose.x > poses[i]!.x).length;
+      expect(Math.max(...gaps)).toBeLessThan(110);
+      expect(moving / gaps.length).toBeGreaterThan(0.85);
+      console.log(
+        JSON.stringify({
+          event: "slow_auth_clock_test",
+          hz,
+          maxSnapshotGapMs: Math.max(...gaps),
+          movingShare: moving / gaps.length,
+        }),
+      );
+    } finally {
+      clearInterval(timer);
+      delayedSession = "";
+      a.close();
+      b.close();
     }
   });
   it("the original JWT expiry closes an existing session even when the database row remains live", async () => {

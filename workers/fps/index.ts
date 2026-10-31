@@ -132,6 +132,9 @@ export class DuelRoom {
     B: [],
   };
   private authorizationFailureAt: number | null = null;
+  private authorizationRead: Promise<Array<SocketInfo & { checkedAt: number }>> | null = null;
+  private authorizedWatermarks: Array<SocketInfo & { checkedAt: number }> | null = null;
+  private authorizationError: unknown = null;
   private absent: Record<Seat, number | null> = { A: null, B: null };
   private history: Array<{ at: number; snapshot: string }> = [];
   private lastSnapshot = 0;
@@ -176,6 +179,49 @@ export class DuelRoom {
       this.webSocketClose(socket);
       return [];
     });
+  }
+
+  private async authorizedForTick() {
+    if (!this.authorizationRead) {
+      const started = Date.now();
+      this.authorizationRead = this.authorizedSockets()
+        .then((identities) => {
+          this.authorizedWatermarks = identities.map((info) => ({ ...info, checkedAt: started }));
+          this.authorizationError = null;
+          return this.authorizedWatermarks;
+        })
+        .catch((error: unknown) => {
+          this.authorizedWatermarks = null;
+          this.authorizationError = error;
+          this.inputs = { A: [], B: [] };
+          throw error;
+        })
+        .finally(() => {
+          this.authMs = Date.now() - started;
+          this.authorizationRead = null;
+          // A slow read already spans several clock ticks. Start its successor
+          // immediately, rather than adding another timer interval to every
+          // command batch. Fast reads remain limited to one per clock tick.
+          if (this.authMs >= Math.ceil(TICK_MS) && this.timer && !this.saved?.result)
+            void this.authorizedForTick().catch(() => {});
+        });
+      // A refresh runs beside the clock, including when no tick awaits it.
+      void this.authorizationRead.catch(() => {});
+    }
+    if (this.authorizationError) throw this.authorizationError;
+    // These are command watermarks, not session leases: later commands still
+    // require a new database read. Let the fixed clock consume already checked
+    // commands while that read is in flight instead of batching physics after it.
+    const authorized = this.authorizedWatermarks ?? (await this.authorizationRead);
+    const connected = new Set(
+      this.ctx
+        .getWebSockets()
+        .filter((socket) => socket.readyState === WebSocket.OPEN)
+        .map((socket) => (socket.deserializeAttachment() as SocketInfo).connectionId),
+    );
+    return authorized.filter(
+      (info) => info.authExpiresAt > Date.now() && connected.has(info.connectionId),
+    );
   }
 
   constructor(
@@ -479,10 +525,10 @@ export class DuelRoom {
     const processingStarted = Date.now();
     try {
       const saved = this.saved;
-      let authorized: SocketInfo[] = [];
+      let authorized: Array<SocketInfo & { checkedAt: number }> = [];
       const authorizationStarted = Date.now();
       try {
-        authorized = await this.authorizedSockets();
+        authorized = await this.authorizedForTick();
         if (this.authorizationFailureAt !== null) {
           // Never catch up physics using time for which authority was unavailable.
           saved.state.phaseEndsAt += Date.now() - this.authorizationFailureAt;
@@ -508,7 +554,6 @@ export class DuelRoom {
           this.webSocketClose(socket);
         }
       }
-      this.authMs = Date.now() - authorizationStarted;
       const now = Date.now(),
         phase = saved.state.phase;
       if (
@@ -568,13 +613,20 @@ export class DuelRoom {
           const queue = this.inputs[seat];
           const authority = authorized.find((s) => s.seat === seat);
           const connection = authority?.connectionId;
+          // Enforce freshness when validation began. Its network wait must not
+          // expire an otherwise fresh command before the clock can consume it.
+          // The RPC has a 1200 ms timeout; retain a hard wall-clock bound too.
+          const staleBefore = Math.max(authority?.checkedAt ?? now, now - 1200) - 200;
           while (
             queue.length &&
-            (now - queue[0]!.at >= 200 || queue[0]!.connectionId !== connection)
+            (queue[0]!.at <= staleBefore ||
+              (connection !== undefined && queue[0]!.connectionId !== connection))
           )
             queue.shift();
           const next =
-            authority && queue[0] && queue[0].input.seq <= authority.seq
+            authority &&
+            queue[0]?.connectionId === connection &&
+            queue[0].input.seq <= authority.seq
               ? queue.shift()
               : undefined;
           if (next) {
