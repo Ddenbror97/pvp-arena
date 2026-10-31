@@ -1,3 +1,4 @@
+import { NetworkObservations, readNetworkReport, type NetworkReport } from "@/lib/fps/network";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -79,6 +80,8 @@ export function DuelMatch({
   const [desktop, setDesktop] = useState<boolean | null>(null),
     [accepted, setAccepted] = useState(false),
     [copied, setCopied] = useState(false);
+  const [network, setNetwork] = useState<NetworkReport | null>(null);
+  const observations = useRef(new NetworkObservations());
   const currentFrame = useRef<ArenaFrame | null>(null),
     sound = useRef<CombatAudio | null>(null);
   const requestKey = useRef<string | null>(null);
@@ -172,7 +175,10 @@ export function DuelMatch({
                 socket.current.send(JSON.stringify(input));
             },
             setLocked,
-            (weapon, seq) => sound.current?.localShot(weapon, seq),
+            (weapon, seq) => {
+              observations.current.shot(seq, performance.now());
+              sound.current?.localShot(weapon, seq);
+            },
           );
           void arena.current.ready.then(() => {
             if (!disposed) {
@@ -214,6 +220,8 @@ export function DuelMatch({
     const connect = async () => {
       if (stopped) return;
       setConnection(attempt ? "Reconnecting" : "Connecting");
+      setNetwork(null);
+      observations.current.reset();
       setError(null);
       try {
         const ticket = await admission({ data: { matchId, spectate } });
@@ -236,8 +244,24 @@ export function DuelMatch({
               seat?: Seat | null;
               v?: number;
               paused?: boolean;
+              id?: unknown;
+              report?: unknown;
             };
             if (data.v !== 1) return;
+            if (data.type === "ping") {
+              if (
+                typeof data.id === "string" &&
+                data.id.length <= 64 &&
+                ws.readyState === WebSocket.OPEN
+              )
+                ws.send(JSON.stringify({ v: 1, type: "pong", id: data.id }));
+              return;
+            }
+            if (data.type === "network") {
+              const report = readNetworkReport(data.report);
+              if (report) setNetwork(report);
+              return;
+            }
             if (data.type === "authorization" && data.paused) {
               arena.current?.suspend(true);
               setConnection("Authorization paused");
@@ -249,6 +273,14 @@ export function DuelMatch({
               return;
             }
             if (data.type !== "snapshot" || !data.state?.players || !data.state.score) return;
+            observations.current.snapshot(performance.now());
+            for (const event of data.state.events)
+              if (
+                event.type === "shot" &&
+                event.seat === seatRef.current &&
+                event.shotSeq !== undefined
+              )
+                observations.current.acknowledge(event.shotSeq, performance.now());
             setConnection("Connected");
             serverOffset.current = data.serverNow - Date.now();
             const previous = currentFrame.current;
@@ -444,6 +476,11 @@ export function DuelMatch({
     }
   };
   const phase = frame?.state.phase ?? "waiting";
+  const networkSummary = observations.current.summary();
+  const shotAckText =
+    networkSummary.shotAckP50 === null
+      ? "not measured"
+      : `${Math.round(networkSummary.shotAckP50)} ms`;
   const seconds = frame
     ? Math.max(0, Math.ceil((frame.state.phaseEndsAt - now - serverOffset.current) / 1000))
     : 0;
@@ -500,7 +537,24 @@ export function DuelMatch({
           </span>
         </div>
         <div className="duel-hud-actions">
-          <span className={connection === "Connected" ? "duel-connected" : ""}>{connection}</span>
+          <span
+            className={connection === "Connected" ? "duel-connected duel-network-status" : ""}
+            data-quality={
+              network && network.rttP95Ms > 180
+                ? "delayed"
+                : network && network.jitterMs > 25
+                  ? "unstable"
+                  : "stable"
+            }
+            title={
+              network
+                ? `Round trip: ${Math.round(network.rttMs)} ms median / ${Math.round(network.rttP95Ms)} ms p95 · Jitter: ${Math.round(network.jitterMs)} ms · Snapshots: ${Math.round(networkSummary.snapshotHz)}/s · Server: ${network.tickHz.toFixed(1)} ticks/s · Session check: ${Math.round(network.authMs)} ms · Shot acknowledgement: ${shotAckText}`
+                : undefined
+            }
+          >
+            {connection}
+            {network && connection === "Connected" && <small>{Math.round(network.rttMs)} ms</small>}
+          </span>
           <button
             aria-label={muted ? "Enable game audio" : "Mute game audio"}
             onClick={() => toggleSoundMuted()}

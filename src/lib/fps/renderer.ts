@@ -22,6 +22,7 @@ import { TriggerFeedback } from "./trigger-feedback";
 import { createViewHands } from "./view-hands";
 import { createMuzzleFlash } from "./muzzle-flash";
 import { createAuthoredViewmodel } from "./authored-viewmodel";
+import { REMOTE_DELAY_MS } from "./network";
 
 export type ArenaFrame = {
   state: MatchState;
@@ -634,7 +635,7 @@ export function mountArena(
       const actor = characters[otherSeat];
       const visible = visibility[otherSeat] !== false;
       if (visible) {
-        if (remoteMotion.sample(Date.now() + lastServerOffset - 50, remotePose)) {
+        if (remoteMotion.sample(Date.now() + lastServerOffset - REMOTE_DELAY_MS, remotePose)) {
           actor.root.position.set(remotePose.x, remotePose.y, remotePose.z);
           actor.root.rotation.y = remotePose.yaw;
         } else actor.root.position.copy(remoteTarget);

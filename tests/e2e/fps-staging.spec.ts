@@ -1,3 +1,5 @@
+import { delayRoomSocket } from "./helpers/fps-network-delay";
+import type { NetworkReport } from "../../src/lib/fps/network";
 import { test, expect, type Page } from "@playwright/test";
 import fs from "node:fs";
 import type { MatchState } from "../../src/lib/fps/protocol";
@@ -20,6 +22,12 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
   test.setTimeout(360000);
   const users = JSON.parse(fs.readFileSync(".env.fps-staging-users.json", "utf8")).slice(12, 14),
     sql = connect(2);
+  const addedRtt = Number(process.env["FPS_ADDED_RTT_MS"] ?? 0);
+  const stopDelay = await delayRoomSocket(page, addedRtt, addedRtt ? 15 : 0);
+  const networks: NetworkReport[] = [];
+  const commandTimes = new Map<number, number>();
+  const shotAcknowledgements: number[] = [];
+  const acknowledgedShots = new Set<number>();
   const contextB = await browser.newContext({ baseURL, viewport: { width: 1280, height: 800 } }),
     other = await contextB.newPage();
   const commands = new Map<Page, { yaw: number; pitch: number; seq: number }>();
@@ -52,7 +60,10 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
       ws.on("framesent", ({ payload }) => {
         try {
           const c = JSON.parse(payload.toString());
-          if (c.type === "input") commands.set(p, c);
+          if (c.type === "input") {
+            commands.set(p, c);
+            if (p === page) commandTimes.set(c.seq, performance.now());
+          }
         } catch {
           /* non-input */
         }
@@ -60,7 +71,19 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
       ws.on("framereceived", ({ payload }) => {
         try {
           const data = JSON.parse(payload.toString());
+          if (p === page && data.type === "network") networks.push(data.report);
           if (data.type === "snapshot") {
+            if (p === page)
+              for (const e of data.state.events)
+                if (
+                  e.type === "shot" &&
+                  e.seat === "A" &&
+                  commandTimes.has(e.shotSeq) &&
+                  !acknowledgedShots.has(e.shotSeq)
+                ) {
+                  acknowledgedShots.add(e.shotSeq);
+                  shotAcknowledgements.push(performance.now() - commandTimes.get(e.shotSeq)!);
+                }
             latest.set(p, data.state);
             if (p === page && data.state.phase === "round-end" && !breaks.has(data.state.round))
               breaks.set(data.state.round, data.state.phaseEndsAt - data.serverNow);
@@ -142,6 +165,8 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     await expect.poll(() => latest.get(page)?.phase).toBe("live");
     expect(seats.get(page)).toBe("A");
     expect(seats.get(other)).toBe("B");
+    await expect.poll(() => networks.length, { timeout: 15000 }).toBeGreaterThanOrEqual(3);
+    await expect(page.locator(".duel-network-status small")).toContainText("ms");
     await page.bringToFront();
     const resume = page.getByRole("button", { name: "Resume aiming", exact: true });
     if (await resume.isVisible()) await resume.click();
@@ -293,11 +318,46 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
       page.getByRole("button", { name: "Confirm new entry", exact: true }),
     ).toBeVisible();
     await page.getByRole("button", { name: "Keep result", exact: true }).click();
+    const pct = (values: number[], q: number) =>
+      values.length
+        ? [...values].sort((a, b) => a - b)[Math.max(0, Math.ceil(values.length * q) - 1)]!
+        : null;
+    const networkSummary = {
+      addedRttMs: addedRtt,
+      measuredRttP50: pct(
+        networks.map((n) => n.rttMs),
+        0.5,
+      ),
+      measuredRttP95: pct(
+        networks.map((n) => n.rttP95Ms),
+        0.95,
+      ),
+      authMsP95: pct(
+        networks.map((n) => n.authMs),
+        0.95,
+      ),
+      tickHzP50: pct(
+        networks.map((n) => n.tickHz),
+        0.5,
+      ),
+      commandToShotAckP50: pct(shotAcknowledgements, 0.5),
+      commandToShotAckP95: pct(shotAcknowledgements, 0.95),
+    };
+    fs.writeFileSync(
+      info.outputPath("network-measurements.json"),
+      JSON.stringify({ networkSummary, networks, shotAcknowledgements }, null, 2),
+    );
+    console.log(JSON.stringify(networkSummary));
+    await info.attach("game-socket-network", {
+      body: JSON.stringify({ networkSummary, networks, shotAcknowledgements }),
+      contentType: "application/json",
+    });
     await info.attach("room-entry-timings", {
       body: JSON.stringify({ ...timings, requests }),
       contentType: "application/json",
     });
   } finally {
+    stopDelay();
     await contextB.close();
     await sql.end({ timeout: 2 });
   }

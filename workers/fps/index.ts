@@ -1,3 +1,5 @@
+import { ConnectionTiming } from "../../src/lib/fps/network";
+import { ShotHistory, type CombatPose } from "./lag-compensation";
 import { createPracticeBot } from "../../src/lib/fps/practice-bot";
 import { PRACTICE_BOT_ID } from "../../src/lib/fps/practice";
 import { COMBAT_VERSION } from "../../src/lib/fps/combat";
@@ -78,6 +80,7 @@ export default {
         service: "fps-duel",
         version: 2,
         combatVersion: COMBAT_VERSION,
+        networkVersion: 1,
         configured:
           (env.FPS_RUNTIME_SECRET?.length ?? 0) >= 32 &&
           !!env.SUPABASE_URL &&
@@ -114,6 +117,14 @@ export default {
 /** One named object is the only simulation and result authority for a match. */
 export class DuelRoom {
   private bot = createPracticeBot();
+  private shotHistory = new ShotHistory();
+  private timings = new Map<string, ConnectionTiming>();
+  private networkAt = 0;
+  private networkTick = 0;
+  private tickHz = 0;
+  private authMs = 0;
+  private processingMs = 0;
+  private telemetryAt = 0;
   private saved: Saved | null = null;
   private timer: ReturnType<typeof setInterval> | null = null;
   private inputs: Record<Seat, Array<{ input: Input; at: number; connectionId: string }>> = {
@@ -357,7 +368,17 @@ export class DuelRoom {
       socket.close(1008, "Read-only spectator");
       return;
     }
-    const data = raw as { v?: unknown; type?: unknown; combatVersion?: unknown };
+    const data = raw as { v?: unknown; type?: unknown; combatVersion?: unknown; id?: unknown };
+    if (
+      data?.v === 1 &&
+      data.type === "pong" &&
+      Object.keys(data).length === 3 &&
+      typeof data.id === "string" &&
+      data.id.length <= 64
+    ) {
+      this.timings.get(info.connectionId)?.pong(data.id, now);
+      return;
+    }
     if (
       data?.v === 1 &&
       data.type === "ready" &&
@@ -435,12 +456,12 @@ export class DuelRoom {
   }
   private snapshot() {
     if (!this.saved) return null;
-    const { server: _private, ...state } = this.saved.state;
+    const { server: _private, events: _events, ...state } = this.saved.state;
     return {
       v: 1,
       type: "snapshot",
       serverNow: Date.now(),
-      state,
+      state: { ...state, events: this.events },
       settled: this.saved.settled,
       settlementPending: !!this.saved.result && !this.saved.settled,
     };
@@ -455,6 +476,7 @@ export class DuelRoom {
   private async tick() {
     if (this.busy || !this.saved) return;
     this.busy = true;
+    const processingStarted = Date.now();
     try {
       const saved = this.saved;
       let authorized: SocketInfo[] = [];
@@ -486,6 +508,7 @@ export class DuelRoom {
           this.webSocketClose(socket);
         }
       }
+      this.authMs = Date.now() - authorizationStarted;
       const now = Date.now(),
         phase = saved.state.phase;
       if (
@@ -540,6 +563,7 @@ export class DuelRoom {
         const last = saved.state.server!.lastStepAt;
         if (now - last < Math.ceil(TICK_MS)) break;
         const fresh: Partial<Record<Seat, Input>> = {};
+        const receivedAt: Partial<Record<Seat, number>> = {};
         for (const seat of ["A", "B"] as const) {
           const queue = this.inputs[seat];
           const authority = authorized.find((s) => s.seat === seat);
@@ -553,13 +577,26 @@ export class DuelRoom {
             authority && queue[0] && queue[0].input.seq <= authority.seq
               ? queue.shift()
               : undefined;
-          if (next) fresh[seat] = next.input;
+          if (next) {
+            fresh[seat] = next.input;
+            receivedAt[seat] = next.at;
+          }
         }
         // After a long stall discard elapsed simulation work, retaining deadlines.
         const stepAt = Math.max(last + Math.ceil(TICK_MS), now - 2 * Math.ceil(TICK_MS));
         const previousTick = saved.state.tick;
         if (saved.config.practice) fresh.B = this.bot.input(saved.state, stepAt);
-        stepMatch(saved.state, fresh, stepAt, TICK_MS);
+        const targets: Partial<Record<Seat, CombatPose>> = {};
+        for (const shooter of ["A", "B"] as const) {
+          if (!fresh[shooter]?.fire || receivedAt[shooter] === undefined) continue;
+          const identity = authorized.find((s) => s.seat === shooter);
+          const timing = identity && this.timings.get(identity.connectionId);
+          if (!timing?.calibrated) continue;
+          // Arrival time is server-owned; queued work cannot invent an earlier shot.
+          const lookback = Math.max(0, now - (receivedAt[shooter]! - timing.lookbackMs));
+          targets[shooter] = this.shotHistory.target(shooter === "A" ? "B" : "A", now, lookback);
+        }
+        stepMatch(saved.state, fresh, stepAt, TICK_MS, targets);
         if (!saved.result && saved.state.tick !== previousTick)
           this.events.push(...saved.state.events.map((e) => ({ ...e, id: ++this.eventId })));
       }
@@ -580,23 +617,85 @@ export class DuelRoom {
         await this.persist();
         await this.ctx.storage.setAlarm(now + 1000);
       }
-      if (now - this.lastSnapshot >= 50) {
-        this.lastSnapshot = this.lastSnapshot ? Math.max(this.lastSnapshot + 50, now - 50) : now;
+      const urgent =
+        saved.state.phase !== phase ||
+        this.events.some((e) => ["shot", "hit", "headshot", "round-end"].includes(e.type));
+      if (now - this.lastSnapshot >= 50 || urgent) {
+        // An urgent combat frame must not restart or slow the 20 Hz movement
+        // deadline. Keep its original fractional-tick cadence independently.
+        if (now - this.lastSnapshot >= 50)
+          this.lastSnapshot = this.lastSnapshot ? Math.max(this.lastSnapshot + 50, now - 50) : now;
         const current = this.snapshot()!;
+        // Match the poses and timestamps actually sent to renderers; a pre-step
+        // physics pose must not be labelled with the subsequent step's time.
+        this.shotHistory.record(saved.state, current.serverNow);
         current.state.events = this.events;
-        const snap = JSON.stringify(current);
-        const playerSnapshots = {
-          A: JSON.stringify(snapshotForPlayer(current, "A")),
-          B: JSON.stringify(snapshotForPlayer(current, "B")),
-        };
+        const playerSnapshots: Partial<Record<Seat, string>> = {};
         this.events = [];
-        this.history.push({ at: now, snapshot: snap });
-        while (this.history.length > 125) this.history.shift();
+        if (!saved.config.private)
+          this.history.push({ at: now, snapshot: JSON.stringify(current) });
+        while (this.history.length > 256 || (this.history[0] && this.history[0].at < now - 6500))
+          this.history.shift();
         const delayed = this.history.find((h) => h.at >= now - 5200 && h.at <= now - 5000);
         for (const socket of this.ctx.getWebSockets()) {
           const info = socket.deserializeAttachment() as SocketInfo;
-          if (info.role === "player" && info.seat) this.send(socket, playerSnapshots[info.seat]);
-          else if (delayed) this.send(socket, delayed.snapshot);
+          if (info.role === "player" && info.seat) {
+            playerSnapshots[info.seat] ??= JSON.stringify(snapshotForPlayer(current, info.seat));
+            this.send(socket, playerSnapshots[info.seat]);
+          } else if (delayed) this.send(socket, delayed.snapshot);
+        }
+      }
+      if (now - this.networkAt >= 1000) {
+        if (this.networkAt)
+          this.tickHz = ((saved.state.tick - this.networkTick) * 1000) / (now - this.networkAt);
+        this.networkTick = saved.state.tick;
+        this.networkAt = now;
+        const activeIds = new Set(authorized.map((s) => s.connectionId));
+        for (const id of this.timings.keys()) if (!activeIds.has(id)) this.timings.delete(id);
+        for (const socket of this.ctx.getWebSockets()) {
+          const info = socket.deserializeAttachment() as SocketInfo;
+          if (!info.seat || !activeIds.has(info.connectionId)) continue;
+          let timing = this.timings.get(info.connectionId);
+          if (!timing) {
+            timing = new ConnectionTiming();
+            this.timings.set(info.connectionId, timing);
+          }
+          const challenge = timing.challenge(now);
+          if (challenge) this.send(socket, { v: 1, type: "ping", id: challenge.id });
+          const report = timing.report();
+          if (report)
+            this.send(socket, {
+              v: 1,
+              type: "network",
+              report: {
+                ...report,
+                tickHz: this.tickHz,
+                authMs: this.authMs,
+                processingMs: this.processingMs,
+              },
+            });
+        }
+        if (now - this.telemetryAt >= 30_000) {
+          const players = authorized
+            .filter((s) => s.seat)
+            .flatMap((s) => {
+              const report = this.timings.get(s.connectionId)?.report();
+              return report ? [{ seat: s.seat, ...report }] : [];
+            });
+          if (players.length) {
+            this.telemetryAt = now;
+            console.log(
+              JSON.stringify({
+                event: "fps_network_sample",
+                matchId: saved.config.id,
+                phase: saved.state.phase,
+                tickHz: this.tickHz,
+                authMs: this.authMs,
+                processingMs: this.processingMs,
+                players,
+              }),
+            );
+          }
         }
       }
       if (now - this.checkpoint >= 2000) {
@@ -623,6 +722,7 @@ export class DuelRoom {
       await this.persist();
       await this.ctx.storage.setAlarm(Date.now() + 1000);
     } finally {
+      this.processingMs = Date.now() - processingStarted;
       this.busy = false;
     }
   }
