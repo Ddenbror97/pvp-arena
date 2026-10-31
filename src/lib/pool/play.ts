@@ -45,6 +45,17 @@ export function recordShot(
   return { sequence, cue, state: applied.state, hash: stateHash(applied.state) };
 }
 
+/** A received event is already committed; animate it only if its hash agrees. */
+export function recordAcceptedShot(
+  state: TableState,
+  input: ShotInput,
+  acceptedHash: string,
+  physicsId: string = state.physics,
+) {
+  const played = recordShot(state, input, physicsId);
+  return played?.hash === acceptedHash ? played : null;
+}
+
 /**
  * The paid winner has to be the winner this replay derives. A server process
  * that names someone else must not settle.
