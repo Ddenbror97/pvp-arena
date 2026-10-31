@@ -1,4 +1,4 @@
-import { ARENA, BOXES, EYE_HEIGHT, PLAYER_RADIUS, SPAWNS, eyeHeight } from "./map";
+import { ARENA, BOXES, PLAYER_RADIUS, SPAWNS, eyeHeight } from "./map";
 import {
   COMBAT_VERSION,
   HIT_DAMAGE,
@@ -11,19 +11,11 @@ import {
 import { combatVolumes, playerVolumes } from "./player-volumes";
 import { rayBox, traceWorld, type Vector } from "./collision";
 import { spreadScale } from "./handling";
-import {
-  validateInput,
-  type Input,
-  type MatchState,
-  type Player,
-  type Seat,
-  type Weapon,
-} from "./protocol";
+import { validateInput, type Input, type MatchState, type Player, type Seat } from "./protocol";
 export { validateInput } from "./protocol";
 export type { Input, MatchState, Player, Seat, Weapon } from "./protocol";
 
 export const TICK_MS = 33.333;
-export const SNAPSHOT_MS = 50;
 export const COUNTDOWN_MS = 3000;
 export const ROUND_MS = 60000;
 export const ROUND_END_MS = 3000;

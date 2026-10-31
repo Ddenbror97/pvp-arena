@@ -1,3 +1,5 @@
+import { ARENA_MODELS } from "./model-assets";
+
 let renderer: Promise<typeof import("./renderer")> | undefined;
 /** Download/parse on match intent, instantiate WebGL only inside the match. */
 export function loadArenaRenderer() {
@@ -14,8 +16,8 @@ let assets: Promise<unknown> | undefined;
 export function warmArenaAssets() {
   warmArenaRenderer();
   assets ??= Promise.all(
-    ["ak47-authored.glb", "tactical-body.glb", "reference-head-webp.glb"].map(async (name) => {
-      const response = await fetch(`/fps/models/${name}`, { cache: "force-cache" });
+    Object.values(ARENA_MODELS).map(async (url) => {
+      const response = await fetch(url, { cache: "force-cache" });
       if (!response.ok) throw Error("Arena asset unavailable");
       await response.arrayBuffer();
     }),
