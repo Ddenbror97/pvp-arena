@@ -9,6 +9,7 @@ import {
 } from "../src/lib/fps/simulation";
 import type { Input } from "../src/lib/fps/protocol";
 import { RemotePresentation } from "../src/lib/fps/presentation";
+import { REMOTE_DELAY_MS } from "../src/lib/fps/network";
 const command = (seq: number, extra: Partial<Input> = {}): Input => ({
   v: 1,
   type: "input",
@@ -68,7 +69,7 @@ describe("bounded authoritative shot rewind", () => {
           view.push(packet.pose, packet.sent);
         }
         if (now === clientFireAt) {
-          expect(view.sample(now - rtt / 2 - 50, eye)).toBe(true);
+          expect(view.sample(now - rtt / 2 - REMOTE_DELAY_MS, eye)).toBe(true);
           const dx = eye.x - s.players.A.x,
             dz = eye.z - s.players.A.z;
           shot = command(1, {

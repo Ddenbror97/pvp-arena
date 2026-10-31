@@ -2,6 +2,41 @@ import type { GuideSection } from "./types";
 
 /** Contextual links from established intent owners into the more specific guides. */
 export const FPS_WAVE2_CONTEXT: Record<string, GuideSection> = {
+  "is-cs2-free": {
+    id: "classic-and-modern-access",
+    title: "Classic Counter-Strike is a separate access question",
+    body: `For the older installed game, read [CS 1.6 online](/guides/cs-1-6-online). It separates legacy server access from CS2's free-to-play listing and from unrelated browser editions. If the modern client does not suit your session, compare [games like CS:GO](/guides/games-like-csgo) by mechanics and access requirements rather than assuming every alternative is a Valve game.`,
+  },
+  "mirage-callouts": {
+    id: "other-map-vocabulary",
+    title: "Reset the route vocabulary when the map changes",
+    body: `The same clearing discipline applies on other maps, but the routes differ. [Nuke callouts](/guides/nuke-callouts) adds upper/lower-floor information; [Anubis and Ancient callouts](/guides/anubis-ancient-callouts) keeps two distinct route systems separate. Do not carry Mirage's location names into a different layout.`,
+  },
+  "mirage-smokes": {
+    id: "utility-on-other-maps",
+    title: "Transfer the coverage check, not the lineup",
+    body: `Use [Inferno callouts](/guides/inferno-callouts) to identify banana, the sites and the routes a smoke is meant to cover. Mirage coordinates do not transfer. The [CS2 grenade guide](/guides/cs2-grenades) explains how a smoke, flash or incendiary serves a round decision before you memorize its throw.`,
+  },
+  "cs2-crosshair-codes": {
+    id: "native-sight-and-overlay",
+    title: "A native crosshair code is different from an overlay",
+    body: `An imported code changes the game's own sight. A [crosshair overlay](/guides/crosshair-overlay) adds another layer and raises separate game, platform and competition-rule questions. For the surrounding control setup, [CS2 binds](/guides/cs2-binds) covers key assignments without treating a crosshair code as an automation script.`,
+  },
+  "valorant-1v1": {
+    id: "practice-between-duels",
+    title: "Choose a drill between custom duels",
+    body: `[Valorant aim training](/guides/valorant-aim-trainer) separates isolated mouse drills from learning an opponent's movement and ability choices. If you want a different game rather than another practice routine, use [games like Valorant](/guides/games-like-valorant).`,
+  },
+  "cs2-aim-maps": {
+    id: "loading-and-movement-maps",
+    title: "Load the map before judging the drill",
+    body: `For subscription, loading and community-server checks, use [CS2 Workshop maps](/guides/cs2-workshop-maps). [Surf, bhop and KZ](/guides/cs2-surf) covers movement-oriented community practice. Those modes train different tasks from a first-shot aim map and can use different server settings.`,
+  },
+  "cs2-subtick": {
+    id: "timing-stage-diagnosis",
+    title: "Identify which timing stage is slow",
+    body: `[Input lag](/guides/input-lag) follows the local action-to-display path; [polling rate](/guides/polling-rate) concerns mouse reports before the game processes them. If the picture advances unevenly, [CS2 stuttering](/guides/cs2-stuttering-fix) separates frame delivery from delayed network updates. A server timing label does not diagnose all three.`,
+  },
   "browser-fps-games": {
     id: "specific-browser-games",
     title: "Choose a specific game or access task",

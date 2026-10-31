@@ -32,7 +32,9 @@ import { createViewmodelMotion } from "./viewmodel-motion";
  */
 export const WORLD_FOV = 70;
 /** Authored AK rest framing in the 60° viewmodel camera: right-hand pivot, chunky receiver. */
-export const VIEWMODEL_REST = { x: 0.14, y: -0.12, z: -0.2, pitch: 0.08, yaw: 0.24, roll: -0.05 };
+// Hip-fire bore converges on the centered aim ray at 10 m. The old 0.24 rad
+// yaw pointed past the reticle to its left after the authored rifle changed.
+export const VIEWMODEL_REST = { x: 0.14, y: -0.12, z: -0.2, pitch: 0.012, yaw: 0.014, roll: -0.05 };
 
 export type ArenaFrame = {
   state: MatchState;
@@ -53,6 +55,7 @@ export type ArenaControls = {
     programs: number;
     pixelRatio: number;
     opponentVisible: boolean;
+    opponentPosition: number[] | null;
     renderFrames: number;
     renderIntervalMs: number;
   };
@@ -662,7 +665,7 @@ export function mountArena(
         opponentDeathAt === null ? 0 : Math.min(1, (now - opponentDeathAt) / 450);
       const visible = visibility[otherSeat] !== false;
       if (visible) {
-        if (remoteMotion.sample(Date.now() + lastServerOffset - REMOTE_DELAY_MS, remotePose)) {
+        if (remoteMotion.sample(Date.now() + lastServerOffset - REMOTE_DELAY_MS, remotePose, dt)) {
           actor.root.position.set(remotePose.x, remotePose.y, remotePose.z);
           actor.root.rotation.y = remotePose.yaw;
         } else actor.root.position.copy(remoteTarget);
@@ -812,6 +815,9 @@ export function mountArena(
       programs: renderer.info.programs?.length ?? 0,
       pixelRatio: renderer.getPixelRatio(),
       opponentVisible: characters[seat === "B" ? "A" : "B"].root.visible,
+      opponentPosition: characters[seat === "B" ? "A" : "B"].root.visible
+        ? characters[seat === "B" ? "A" : "B"].root.position.toArray()
+        : null,
       renderFrames,
       renderIntervalMs,
     }),

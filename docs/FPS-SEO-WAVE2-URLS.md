@@ -1,6 +1,6 @@
 # FPS Wave 2 URLs
 
-Prepared draft URLs only: these pages are not deployed or ready to submit for indexing yet.
+URLs for the combined Wave 2 release in PR #25. Submit for indexing only after the production deployment is confirmed.
 
 ## browser
 

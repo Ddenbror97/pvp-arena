@@ -24,6 +24,8 @@ export const guide: Guide = {
       title: "What “where to buy” actually asks",
       body: `People type **where to buy CS2 skins** when they want a loadout, a gift or a flip. The useful answer is which *exit* you want and which *risks* you will accept. It is not a top-ten of Discord shops.
 
+If you have not chosen an item yet, compare [AWP finishes](/guides/awp-skins), [AK-47 finishes](/guides/ak-47-skins) or a [fixed-budget CS2 loadout](/guides/cheap-cs2-skins) first. Those guides help choose the cosmetic; this page checks the purchase channel and delivery process.
+
 This guide sits in the [CS:GO heritage](/guides/topics/csgo-heritage) cluster. It is for adults aged 18 or over. PVPspinArena is cash player-versus-player gaming — [Jackpot](/), Coinflip, Roulette — with USDC and ETH on Base. It is not a skin storefront and it will not take a Steam trade.
 
 Two honest rails exist for most buyers:

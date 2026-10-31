@@ -2,7 +2,7 @@
 
 Prepared from the supplied Semrush US plan dated 2026-10-31. Search volumes and difficulty are planning estimates, not independently verified traffic forecasts. This is a semantic ownership review; new pages have no Search Console performance yet, so it cannot guarantee that Google will never rank two URLs for one query.
 
-The full batch is prepared before publication. No production deploy is authorized by this task. Use the plan's 5–10-per-week schedule after editorial review rather than an invented automatic schedule.
+The full batch was prepared before publication. The user subsequently authorized merging and deploying the guide updates together with the final nearby-opponent and AK-47 aiming fixes. No recurring publication schedule is created.
 
 ## Ownership decisions
 
@@ -71,10 +71,20 @@ Run `bun scripts/check-fps-wave2.ts` for the batch contract and `bun scripts/che
 - All 45 drafts pass the batch contract with zero failures or duplicate-paragraph warnings.
 - 112,254 reader-visible words: 2,401–2,718 per guide; six FAQs each, 270 total.
 - 91 distinct primary-source URLs are recorded across the batch.
-- Each guide has 6–10 distinct contextual internal targets. Existing guides link back into all 45; the FPS hub groups preserve the established overview groups before the detailed additions.
+- Each guide has 6–10 distinct contextual internal targets. Existing guides link back into all 45; each FPS guide belongs to exactly one task group under the established topic and pillar.
 - All 1,212 locally registered guides pass the repository's guide checks. The baseline's 220 unsourced older guides were not given invented citations.
 - The sitemap and topic-hub browser checks confirm all 45 URLs. Representative articles render one H1, correct canonicals and six FAQ schema entries.
 - The mouse drill counts misses, completes its 15-target sequence and resets. Its Start control waits for hydration, avoiding lost early clicks.
 - Guide quality, public SEO and FPS snapshot checks pass (17 tests). TypeScript and the production build pass.
 
-This batch remains local and unpublished. The separately requested AK-47 deployment uses an isolated checkout of `dbbb603ed32264711920895adca9f5d75881fadd` and excludes these drafts. Verified author/rank attribution, personal testing screenshots and a named human editorial pass remain outstanding; no such evidence is manufactured.
+This batch is included in the user-authorized combined release in PR #25, based on the previously deployed AK-47 commit `dbbb603ed32264711920895adca9f5d75881fadd`. Verified author/rank attribution, personal testing screenshots and a named human editorial pass remain documented gaps; publisher attribution is retained and no such evidence is manufactured.
+
+### Final internal-link audit
+
+`bun scripts/check-fps-links.ts` validates section-body links, rather than counting related cards or navigation as editorial backlinks.
+
+- Before the final pass, all 45 guides had an older referring guide, but CS 1.6, Nuke and Inferno lacked a reciprocal contextual pair. Relevant links from the free-CS2, Mirage-callout and Mirage-smoke guides close those gaps without adding generic links to the new articles.
+- After the pass, 20 older guides provide 68 contextual links into the batch. The 45 new guides provide 289 contextual links to older guides, including 65 reciprocal old/new pairs. Every new guide participates in at least one such pair.
+- All 77 FPS guides appear exactly once across 11 task groups. Map routes and utility, community content, weapon choices, cosmetics and hardware now have coherent separate groups; the same group definitions feed the main library and the FPS topic hub.
+- The established `fps-for-money-hub` remains the sole FPS pillar. No additional thin topic pages, URL changes or competing pillar were introduced.
+- Root-library and FPS-topic descriptions now cover the expanded content. The audit checks broken guide targets, self-links, new-guide section fragments, missing reciprocal pairs and duplicate or omitted group membership.

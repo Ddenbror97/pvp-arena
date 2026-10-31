@@ -28,6 +28,8 @@ The pitch from 2020–2022 was straightforward: play is work, work should pay, a
 
 This page is part of our [foundations cluster](/guides/topics/foundations). The neighbouring [GameFi guide](/guides/gamefi) covers the wider category. Here the job is narrower: how the reward loop works, why it so often inflates, and why a [crypto casino](/guides/what-is-a-crypto-casino) balance is a different product even when both use a wallet.
 
+For the actual payout trail rather than the emission model, use [earn crypto playing games](/guides/earn-crypto-playing-games). The [crypto-game selection guide](/guides/best-crypto-games) separates reward tokens, asset trading and entry-funded competitions before comparing products.
+
 PVPspinArena does not pay you for grinding. It does not have a guild, a scholarship or a governance token. If you deposit USDC, you have a dollar balance you can stake on [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette). That is entertainment with a cost, not a job.`,
     },
     {

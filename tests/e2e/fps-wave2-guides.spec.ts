@@ -10,6 +10,31 @@ test("all Wave 2 URLs appear in the sitemap and FPS topic hub", async ({ page, r
     expect(xml).toContain(`/guides/${slug}</loc>`);
     await expect(page.locator(`a[href="/guides/${slug}"]`).first()).toBeAttached();
   }
+  await expect(
+    page.getByRole("heading", { name: "Hardware, settings and performance", exact: true }),
+  ).toBeAttached();
+  await expect(
+    page.getByRole("heading", { name: "Map callouts and utility", exact: true }),
+  ).toBeAttached();
+  await page.goto("/guides");
+  const fpsList = page.locator("#topic-fps-and-aim");
+  for (const slug of FPS_WAVE2_SLUGS)
+    await expect(fpsList.locator(`a[href="/guides/${slug}"]`)).toHaveCount(1);
+});
+
+test("previously missing reciprocal paths render as contextual article links", async ({ page }) => {
+  for (const [oldSlug, newSlug] of [
+    ["is-cs2-free", "cs-1-6-online"],
+    ["mirage-callouts", "nuke-callouts"],
+    ["mirage-smokes", "inferno-callouts"],
+    ["play-to-earn-games", "earn-crypto-playing-games"],
+    ["where-to-buy-cs2-skins", "awp-skins"],
+  ]) {
+    await page.goto(`/guides/${oldSlug}`);
+    await expect(page.locator(`section a[href="/guides/${newSlug}"]`).first()).toBeAttached();
+    await page.goto(`/guides/${newSlug}`);
+    await expect(page.locator(`section a[href="/guides/${oldSlug}"]`).first()).toBeAttached();
+  }
 });
 
 test("Wave 2 articles render their intent, contents and six FAQ schema entries", async ({

@@ -2,8 +2,49 @@ import { describe, it, expect } from "vitest";
 import { CameraCorrection, RemotePresentation, RenderBudget } from "../src/lib/fps/presentation";
 import { createMatch, predictMovement, TICK_MS } from "../src/lib/fps/simulation";
 import type { Input } from "../src/lib/fps/protocol";
+import { REMOTE_DELAY_MS } from "../src/lib/fps/network";
 const player = () => createMatch({ A: "a", B: "b" }, 5, 1).players.A;
 describe("render presentation independent of server physics", () => {
+  it.each([60, 144])(
+    "keeps approaching opponents moving between quantized 20 Hz snapshots at %i Hz",
+    (hz) => {
+      const remote = new RemotePresentation(),
+        p = player();
+      const out = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
+      let nextTick = 0,
+        lastSent = -50,
+        previous = 0,
+        stalls = 0;
+      for (let now = 0; now < 2000; now += 1000 / hz) {
+        while (nextTick <= now) {
+          if (nextTick - lastSent >= 50) {
+            remote.push({ ...p, x: nextTick / 1000, z: 0 }, nextTick);
+            lastSent += 50;
+          }
+          nextTick += 34;
+        }
+        remote.sample(now - REMOTE_DELAY_MS, out, 1000 / hz);
+        if (now > 200 && out.x - previous < 0.00001) stalls++;
+        previous = out.x;
+      }
+      expect(stalls).toBe(0);
+    },
+  );
+  it("does not reverse the visible opponent when a packet updates the clock estimate", () => {
+    const remote = new RemotePresentation(),
+      p = player();
+    const out = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
+    for (let at = 0; at <= 300; at += 34) remote.push({ ...p, x: at / 1000 }, at);
+    remote.sample(150, out, 7);
+    const before = out.x;
+    remote.sample(140, out, 7);
+    expect(out.x).toBeGreaterThan(before);
+    expect(out.at).toBeCloseTo(156.65);
+    remote.clear();
+    remote.push({ ...p, x: 10 }, 1000);
+    remote.sample(1000, out, 7);
+    expect(out.x).toBe(10);
+  });
   it("moves between network ticks without altering the predicted authority pose", () => {
     const authority = player();
     authority.x = 9;
