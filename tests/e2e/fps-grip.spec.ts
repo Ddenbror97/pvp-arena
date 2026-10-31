@@ -64,19 +64,29 @@ test("actual AK has welded wrists and a stable wrap grip through recoil and relo
       ]),
       originals = geometries.map((g) => Array.from(g.getAttribute("position").array));
     // Sweep the whole keyed reload with bolt kick: rigs move, baked geometry never changes.
-    for (let i = 0; i < 60; i++) model.update(true, i / 60, (i % 6) / 6);
+    for (const kind of ["tactical", "empty"])
+      for (let i = 0; i < 60; i++) model.update(true, i / 60, (i % 6) / 6, kind);
     model.update(true, 0, 0);
     const stable = geometries.every((g, j) =>
       originals[j]!.every((v, i) => v === g.getAttribute("position").array[i]),
     );
-    // The magazine-grip hand rides on the magazine and is only shown while the mag is in hand.
+    // Baked grips ride their part (magazine / charging handle) and show only while held:
+    // [magazine hand, handle hand, handguard support arm].
     const held = model.root.getObjectByName("magazine-grip-hand"),
+      racking = model.root.getObjectByName("charging-handle-hand"),
       supportArm = model.root.getObjectByName("support-arm");
+    const shown = (p: number, kind: string) => (
+      model.update(true, p, 0, kind),
+      [held?.visible, racking?.visible, supportArm?.visible]
+    );
     const magazineHand = {
       parent: held?.parent?.name,
-      rest: (model.update(true, 0, 0), [held?.visible, supportArm?.visible]),
-      reloading: (model.update(true, 0.3, 0), [held?.visible, supportArm?.visible]),
-      chambering: (model.update(true, 0.72, 0), [held?.visible, supportArm?.visible]),
+      handleParent: racking?.parent?.name,
+      rest: shown(0, "empty"),
+      reloading: shown(0.3, "empty"),
+      chambering: shown(0.72, "empty"),
+      tacticalReturn: shown(0.72, "tactical"),
+      returning: shown(0.85, "empty"),
     };
     model.update(true, 0, 0);
     const seams = model.root.userData.wristSeams;
@@ -109,9 +119,12 @@ test("actual AK has welded wrists and a stable wrap grip through recoil and relo
   expect(result.stable).toBe(true);
   expect(result.magazineHand).toEqual({
     parent: "Magazine",
-    rest: [false, true],
-    reloading: [true, false],
-    chambering: [false, true],
+    handleParent: "ChargingHandle",
+    rest: [false, false, true],
+    reloading: [true, false, false],
+    chambering: [false, true, false],
+    tacticalReturn: [false, false, true],
+    returning: [false, false, true],
   });
   expect(result.seams).toHaveLength(2);
   for (const seam of result.seams) {

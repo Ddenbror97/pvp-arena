@@ -192,12 +192,12 @@ export const EMPTY_RELOAD: ReloadClip = {
     { t: 0.545, v: at("mag") },
     { t: 0.59, v: at("mag") },
     // Up and over the dust cover to the knob...
-    { t: 0.645, v: at("handle", [-0.02, 0.06, -0.05], [0, 0, 0.75]), ease: EASE.out },
+    { t: 0.645, v: at("handle", [-0.02, 0.06, -0.05], [0, 0, 1.05]), ease: EASE.out },
     { t: 0.68, v: at("handle"), ease: EASE.inOut },
     // ...rack it fully back (the baked handle grip rides the bolt)...
     { t: 0.755, v: at("handle") },
     // ...and let go: the hand stays back and lifts off while the carrier flies forward.
-    { t: 0.79, v: at("racked", [-0.03, 0.05, 0.05], [0, 0, 0.75]), ease: EASE.out },
+    { t: 0.79, v: at("racked", [-0.03, 0.05, 0.05], [0, 0, 1.05]), ease: EASE.out },
     { t: 0.92, v: at("guard", [0, -0.015, 0.01], [0, 0, -0.04]), ease: EASE.back },
     { t: 1, v: at("guard") },
   ],

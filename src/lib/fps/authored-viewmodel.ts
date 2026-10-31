@@ -38,8 +38,8 @@ const HANDLE_GRIP_OFFSET = new THREE.Vector3(-0.036, 0.022, 0.004);
 const HANDLE_AXIS = new THREE.Vector3(0, 0, 1);
 const HANDLE_TO_WRIST = new THREE.Vector3(-1, 0.3, 0.2);
 const HANDLE_SQUEEZE = 0.75;
-/** Wrist → elbow for the rack: back and out to the left from a low elbow, just under level. */
-const HANDLE_ELBOW = new THREE.Vector3(-0.45, -0.12, 0.3);
+/** Wrist → elbow for the rack: back, out to the left and down, so the arm covers little of the view. */
+const HANDLE_ELBOW = new THREE.Vector3(-0.42, -0.3, 0.3);
 
 /** Real authored AK and skinned hands. Existing controller still owns every input and shot. */
 export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = true) {

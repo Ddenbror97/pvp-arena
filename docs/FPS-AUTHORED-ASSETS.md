@@ -164,3 +164,43 @@ this correction.
   (`magazineGrip` frame in `fitted-rifle-hands.ts`) and parented to the magazine, so hand
   and magazine cannot separate; the handguard hand lands exactly on that pose at contact.
 - A cool rim light on the viewmodel layer separates arm and steel edges from the map.
+
+## AK-47 viewmodel upgrade: Blender pipeline, tactical/empty reloads, POV motion (2026-10-31)
+
+[Before/after](screenshots/fps-viewmodel-before-after.png) ·
+[Empty reload](screenshots/fps-viewmodel-reload-empty.png) ·
+[Tactical reload](screenshots/fps-viewmodel-reload-tactical.png) ·
+[Grip close-ups](screenshots/fps-viewmodel-grips.png)
+
+- **Asset pipeline** (`art/blender/`, see its README): the shipped AK mesh is kept (a
+  procedural remodel would be lower quality) and processed in Blender — welded, re-shaded with
+  smooth-by-angle + weighted normals, given a wear UV atlas and Cycles-baked (per-part AO, edge
+  convexity, cavity → `ak47-wear.webp`). The merge step swaps only the rifle meshes back into
+  the GLB; `check_rig_unchanged.mjs` proves the arm rig is bit-identical. The editable source is
+  `art/blender/ak47_viewmodel.blend`.
+- **Materials**: `rifle-materials.ts` reads the bake — edges chip to bare steel / raw wood, AO
+  and cavity grime ground every part. The authored occlusion maps (which read `TEXCOORD_1`) are
+  replaced by the bake.
+- **Reloads** (`reload-animation.ts`): two clips on the unchanged server window
+  (`WEAPONS.rifle.reloadMs`). *Tactical* (rounds left): thumb the paddle, rock the magazine
+  forward about its front lug, strip it, hook the new one's lug, rock it back to seat, tug-check,
+  return. *Empty* (`ammo === 0` — the AK has no bolt hold-open): the same change, then an
+  overhand rack: the support hand comes over the dust cover, closes on the right-side knob
+  (a third baked grip, `charging-handle-hand`, riding the bolt), racks, lets the carrier fly home
+  and returns to the handguard. Magazine rotations pivot on the front lug computed from the
+  magazine mesh. All poses are rest-relative and reset at p = 0, so cancellation (death, round
+  end) cannot leave a detached magazine or a held pose; weapon switching is already blocked by the
+  sim while reloading.
+- **POV motion** (`viewmodel-motion.ts`): frame-rate-independent critically damped look sway
+  (both axes), stride-locked figure-eight bob, sprint tuck (the sim blocks firing while
+  sprinting; it blends out in ~0.15 s), two-frequency breathing, alternating per-shot recoil
+  roll, all damped during reloads. Replaces the previous time-based bob and X-only turn sway.
+- **Tests**: `tests/fps-reload-animation.test.ts` (both clips: rest at both ends, monotonic
+  keys, rock-out before strip, lug hooked before seating, magazine always in hand, handle only
+  on empty), `tests/fps-viewmodel-motion.test.ts` (rest anchoring, 30 vs 240 Hz equivalence,
+  no sway overshoot, sprint timing), `tests/e2e/fps-grip.spec.ts` (baked grips visible only while
+  held, geometry stable through both clips). Manual capture: `fps-viewmodel-capture.spec.ts`
+  (in-game) and `fps-viewmodel-closeup.spec.ts` (studio close-ups), both gated on `CAPTURE_DIR`.
+- **Known limits**: fingers swap between baked grips at contact rather than animating
+  continuously; the trigger finger stays on the trigger at idle (the player can fire on any
+  frame). See `art/blender/README.md`.
