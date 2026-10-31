@@ -8,6 +8,7 @@ export default defineConfig({
     "fps-culling.spec.ts",
     "fps-lifecycle.spec.ts",
     "fps-combat.spec.ts",
+    "fps-surface-depth.spec.ts",
   ],
   timeout: 180000,
   expect: { timeout: 15000 },

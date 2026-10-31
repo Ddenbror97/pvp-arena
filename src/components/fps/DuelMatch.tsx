@@ -174,7 +174,18 @@ export function DuelMatch({
             (weapon, seq) => sound.current?.localShot(weapon, seq),
           );
           void arena.current.ready.then(() => {
-            if (!disposed) setArenaReady(true);
+            if (!disposed) {
+              // Decode before the first trigger pull; resume stays in Ready's
+              // user gesture so browser autoplay rules remain respected.
+              try {
+                sound.current ??= createCombatAudio();
+                sound.current.setMuted(soundMuted());
+                void sound.current.ready();
+              } catch {
+                /* Audio availability must never block mouse capture. */
+              }
+              setArenaReady(true);
+            }
           });
           if (currentFrame.current) arena.current.snapshot(currentFrame.current, seatRef.current);
         } catch {

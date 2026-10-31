@@ -333,6 +333,7 @@ export function mountArena(
     weapon: Weapon = "rifle",
     fire = false,
     fireLatched = false,
+    flashPending = false,
     reload = false,
     jump = false;
   const keys = new Set<string>();
@@ -372,6 +373,7 @@ export function mountArena(
     keys.clear();
     fire = false;
     fireLatched = false;
+    flashPending = false;
     reload = false;
     jump = false;
   };
@@ -411,10 +413,7 @@ export function mountArena(
     if (e.code === "Digit2") weapon = "pistol";
   };
   const up = (e: KeyboardEvent) => keys.delete(e.code);
-  const mousedown = (e: MouseEvent) => {
-    if (!locked() || e.button !== 0) return;
-    fire = true;
-    fireLatched = true;
+  const presentLocalShot = (commandSeq: number) => {
     if (authorizationSuspended || !document.hasFocus() || state?.phase !== "live" || !seat) return;
     const own = state.players[seat],
       now = performance.now();
@@ -423,13 +422,20 @@ export function mountArena(
         ? 100
         : WEAPONS[weapon].fireIntervalMs;
     if (
-      triggerFeedback.request(own, weapon, seq + 1, now, Date.now() + lastServerOffset, interval)
+      triggerFeedback.request(own, weapon, commandSeq, now, Date.now() + lastServerOffset, interval)
     ) {
       kick = 1;
       muzzleUntil = now + 42;
       smokeUntil = now + 240;
-      onLocalShot?.(weapon, seq + 1);
+      flashPending = true;
+      onLocalShot?.(weapon, commandSeq);
     }
+  };
+  const mousedown = (e: MouseEvent) => {
+    if (!locked() || e.button !== 0) return;
+    fire = true;
+    fireLatched = true;
+    presentLocalShot(seq + 1);
   };
   const mouseup = () => {
     fire = false;
@@ -533,6 +539,7 @@ export function mountArena(
           pending.push(input);
           if (pending.length > 60) pending.shift();
         }
+        if (input.fire && input.weapon === "rifle") presentLocalShot(input.seq);
         send(input);
         fireLatched = false;
         reload = false;
@@ -548,6 +555,11 @@ export function mountArena(
     const dt = frameDelta(now, lastDraw || now - tickDt);
     lastDraw = now;
     renderFrames++;
+    // A slow frame must not expire the entire first muzzle flash unseen.
+    if (flashPending) {
+      muzzleUntil = now + 42;
+      flashPending = false;
+    }
     if (state?.combatVersion === COMBAT_VERSION && predicted) {
       const own = state.players[seat ?? "A"],
         profile = recoveryProfile(own.sprayCount ?? 0),
@@ -779,6 +791,7 @@ export function mountArena(
           shotIndex = 0;
           triggerFeedback.reset();
           fireLatched = false;
+          flashPending = false;
           muzzleUntil = 0;
           smokeUntil = 0;
           impacts.reset();
