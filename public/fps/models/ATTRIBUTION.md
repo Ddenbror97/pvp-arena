@@ -4,7 +4,11 @@ The following models are adapted for use within this game. Modifications include
 material/UV changes, PVP finish and decals, skin/forearm adaptation, fitted headgear,
 geometry extraction, scale normalization and runtime skeletal posing.
 
-## Authored AK and gloved hands (ak47-authored.glb, arms textures)
+## Authored AK and gloved hands (ak47-authored.glb, ak47-wear.webp)
+
+The rifle meshes were re-shaded (welded, smooth-by-angle + weighted normals), given a wear UV
+set and baked (ambient occlusion, edge and cavity masks → ak47-wear.webp) in Blender; see
+art/blender/README.md. The arm textures are now embedded in the GLB.
 
 - **Fps arms**, DJMaesen (bumstrum):
   https://sketchfab.com/3d-models/fps-arms-9452ce4cddde4110a4fd73e555a8e412
