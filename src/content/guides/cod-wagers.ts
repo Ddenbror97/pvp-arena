@@ -105,13 +105,7 @@ Play for a stake you can lose on the next lobby. If the appeal is a fast even-mo
     {
       id: "where-this-site-fits",
       title: "Where a casino pot fits, and where it does not",
-      body: `A player-funded pot is the family resemblance between a COD wager and a PvP casino game. Both can lock two stakes and pay one winner minus a fee. The resemblance ends at the result. Call of Duty is a video game with rules, ping, and cheaters. A coinflip is a bit. A jackpot is a ticket share. You do not get better at a bit by warming up, and you do not prove a bit by arguing about recoil.
-
-Use COD wagers only when you want the match itself. Use a chance pot only when you want a result that does not depend on a lobby. Mixing the language — “it’s the same as a coinflip, I’m just better” — is how people skip the fee math in the previous section.
-
-If you play with friends rather than strangers, you still need the rules card. Friendship is not escrow. [Bet with friends online](/guides/bet-with-friends-online) covers private wagers without pretending a group chat is a cashier. Read it before you stake a roommate.
-
-Stop when it stops being a match you would have played for free. The moment the stake is the only reason to queue, you are no longer practicing. You are paying a fee for a mood. Adults only, and only money you can lose in one evening.`,
+      body: "A player-funded pot is the family resemblance between a COD wager and a PvP casino game. Both can lock two stakes and pay one winner minus a fee. The resemblance ends at the result. Call of Duty is a video game with rules, ping, and cheaters. A coinflip is a bit. A jackpot is a ticket share. You do not get better at a bit by warming up, and you do not prove a bit by arguing about recoil.\n\nUse COD wagers only when you want the match itself. Use a chance pot only when you want a result that does not depend on a lobby. Mixing the language — “it’s the same as a coinflip, I’m just better” — is how people skip the fee math in the previous section.\n\nIf you play with friends rather than strangers, you still need the rules card. Friendship is not escrow. [Bet with friends online](/guides/bet-with-friends-online) covers private wagers without pretending a group chat is a cashier. Read it before you stake a roommate.\n\nStop when it stops being a match you would have played for free. The moment the stake is the only reason to queue, you are no longer practicing. You are paying a fee for a mood. Adults only, and only money you can lose in one evening.\n\nThe [FPS money hub](/guides/fps-for-money-hub) shows the difference between pot, fee and net gain in a direct duel. The [tournament checklist](/guides/cs2-tournaments-for-money) covers bracket rules and evidence; those are separate questions from a Call of Duty loadout.",
     },
   ],
   faqs: [
@@ -143,6 +137,13 @@ Stop when it stops being a match you would have played for free. The moment the 
       url: "https://en.wikipedia.org/wiki/Escrow",
     },
   ],
-  related: ["skill-based-gambling", "head-to-head-betting", "esports-betting-legal", "fortnite-gambling"],
-  updated: "2026-10-06",
+  related: [
+    "skill-based-gambling",
+    "head-to-head-betting",
+    "esports-betting-legal",
+    "fortnite-gambling",
+    "fps-for-money-hub",
+    "cs2-tournaments-for-money",
+  ],
+  updated: "2026-10-31",
 };

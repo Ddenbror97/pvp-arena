@@ -2,6 +2,7 @@
 import { GUIDES, getGuide, publishedTopics, wordCount } from "../src/content/guides";
 import { criticalQualityFailures } from "../src/lib/guides/quality";
 import { NEW_GUIDES } from "./new-guides-plan";
+import { FPS_GUIDE_SLUGS } from "../src/content/guides/fps-topics";
 
 const STATIC = new Set([
   "/",
@@ -10,6 +11,7 @@ const STATIC = new Set([
   "/slott",
   "/poker",
   "/8-ball-pool",
+  "/fps-1v1",
   "/fairness",
   "/about",
   "/how-it-works",
@@ -443,6 +445,7 @@ const PLANNED = new Set([
 ]);
 
 for (const g of NEW_GUIDES) PLANNED.add(g.slug);
+for (const slug of FPS_GUIDE_SLUGS) PLANNED.add(slug);
 
 let fail = 0;
 let unsourced = 0;

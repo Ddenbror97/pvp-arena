@@ -11,6 +11,7 @@ export const STATIC_PATHS = [
   "/slott",
   "/poker",
   "/8-ball-pool",
+  "/fps-1v1",
   "/fairness",
   "/about",
   "/how-it-works",

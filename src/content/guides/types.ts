@@ -1,4 +1,5 @@
 export type GuideCluster =
+  | "FPS & aim"
   | "Foundations"
   | "Provably fair"
   | "CS:GO heritage"
@@ -51,6 +52,8 @@ export type Guide = {
   howTo?: boolean;
   /** Optional interactive widget rendered on the guide page. */
   widget?:
+    | "edpi"
+    | "kd-ratio"
     | "cs2-trade-up"
     | "cs2-inventory"
     | "cs2-case-odds"

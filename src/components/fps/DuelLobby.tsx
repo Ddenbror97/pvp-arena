@@ -673,6 +673,10 @@ export function DuelLobby() {
           )}
         </section>
         <p className="strike-fineprint">
+          <a href="/fps-1v1">PvPStrike rules, fees and public results</a> ·{" "}
+          <a href="/guides/topics/fps-and-aim">FPS and aim guides</a>
+        </p>
+        <p className="strike-fineprint">
           Adults only. Desktop mouse and keyboard required.{" "}
           <a href="/fps/models/ATTRIBUTION.md" target="_blank" rel="noreferrer">
             3D asset credits

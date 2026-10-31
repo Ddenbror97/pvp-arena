@@ -137,13 +137,7 @@ Earn-by-clicking apps are not a casino bankroll. [Coin Hunt walks](/guides/coin-
     {
       id: "adult",
       title: "Age, law and what this site will not do",
-      body: `Play to earn games marketed at teenagers with “make money after school” thumbnails are a red flag even when the token is real. This article assumes adults 18 or older. A scholarship Discord that onboards minors is not a cute growth hack. Leave it.
-
-Law is local. Some countries treat certain reward tokens, paid loot boxes or wagering modules as gambling or as securities. This page is not legal advice and not a list of which titles are allowed on your street. If you cannot legally buy the token or stake it where you live, do not.
-
-PVPspinArena will not run a P2E season, will not lend you an NFT, and will not pay you for watching [Roulette](/roulette). Jackpot and Coinflip are other players’ money in a pot. The unit is USDC or ETH on Base. The result is a chance game you can check. That is a different product from a faucet that needs a buyer tomorrow.
-
-If a friend forwards a “new Axie” with a higher advertised daily dollar, run the same five questions. New art does not reset inflation. New guilds do not reset custody risk. A new casino skin on the same wallet does not turn a grind into a salary.`,
+      body: "Play to earn games marketed at teenagers with “make money after school” thumbnails are a red flag even when the token is real. This article assumes adults 18 or older. A scholarship Discord that onboards minors is not a cute growth hack. Leave it.\n\nLaw is local. Some countries treat certain reward tokens, paid loot boxes or wagering modules as gambling or as securities. This page is not legal advice and not a list of which titles are allowed on your street. If you cannot legally buy the token or stake it where you live, do not.\n\nPVPspinArena will not run a P2E season, will not lend you an NFT, and will not pay you for watching [Roulette](/roulette). Jackpot and Coinflip are other players’ money in a pot. The unit is USDC or ETH on Base. The result is a chance game you can check. That is a different product from a faucet that needs a buyer tomorrow.\n\nIf a friend forwards a “new Axie” with a higher advertised daily dollar, run the same five questions. New art does not reset inflation. New guilds do not reset custody risk. A new casino skin on the same wallet does not turn a grind into a salary.\n\nCompare token rewards with the [crypto shooter payment model](/guides/crypto-fps-game). An opponent-funded cash duel has a possible entry loss and a fee, not passive reward issuance.",
     },
   ],
   faqs: [
@@ -189,6 +183,7 @@ If a friend forwards a “new Axie” with a higher advertised daily dollar, run
     "are-online-casinos-rigged",
     "coin-hunt-world-review",
     "rollercoin-review",
+    "crypto-fps-game",
   ],
-  updated: "2026-10-21",
+  updated: "2026-10-31",
 };

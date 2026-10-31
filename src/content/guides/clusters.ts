@@ -1,4 +1,5 @@
 import type { GuideCluster } from "./types";
+import { FPS_GROUPS } from "./fps-topics";
 
 export type ClusterInfo = {
   name: GuideCluster;
@@ -10,6 +11,16 @@ export type ClusterInfo = {
 };
 
 export const CLUSTERS: ClusterInfo[] = [
+  {
+    name: "FPS & aim",
+    slug: "fps-and-aim",
+    blurb: "Browser duels, CS2 practice, map routes and competitive measurements.",
+    title: "FPS and Aim Guides: CS2 Practice and Browser Duels",
+    description:
+      "Focused FPS guides for aim, movement, CS2 settings, maps, ranks and cash-match decisions. Keep native CS2 mechanics separate from PvPStrike browser duels.",
+    intro:
+      "Start with the task: improve a first shot, choose a practice map, understand a rating or price a duel. These guides distinguish Valve’s CS2 from our separate browser game. Entry fees belong on match pages; recoil drills and map routes stay focused on practice.",
+  },
   {
     name: "Foundations",
     slug: "foundations",
@@ -216,6 +227,7 @@ export type ClusterGroup = { name: string; slugs: string[] };
 
 /** Google-style subclusters. Only published slugs render on the topic hub. */
 export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
+  "FPS & aim": FPS_GROUPS,
   Foundations: [
     {
       name: "Start here",

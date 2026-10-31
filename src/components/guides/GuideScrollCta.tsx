@@ -4,9 +4,14 @@ import { X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import type { GuideCluster } from "@/content/guides/types";
 
-type Game = { to: "/" | "/coinflip" | "/roulette"; name: string; hook: string };
+type Game = { to: "/" | "/coinflip" | "/roulette" | "/fps-1v1"; name: string; hook: string };
 
 const GAMES: Record<GuideCluster, Game> = {
+  "FPS & aim": {
+    to: "/fps-1v1",
+    name: "PvPStrike",
+    hook: "A separate browser aim duel. Practise before choosing a cash entry.",
+  },
   Foundations: { to: "/", name: "Jackpot", hook: "Players are filling the pot right now." },
   "Provably fair": {
     to: "/roulette",
@@ -103,18 +108,18 @@ export function GuideScrollCta({ cluster }: { cluster: GuideCluster }) {
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-primary">
-            Live · {game.name}
+            {cluster === "FPS & aim" ? game.name : `Live · ${game.name}`}
           </p>
           <p className="truncate text-xs leading-snug text-foreground sm:text-sm">
             {soft ? "Play only with a plan." : game.hook}
           </p>
         </div>
         <Link
-          to={userId ? game.to : "/auth"}
+          to={cluster === "FPS & aim" || userId ? game.to : "/auth"}
           onClick={close}
           className="inline-flex h-8 w-[4.25rem] shrink-0 items-center justify-center rounded-lg bg-primary text-xs font-semibold text-primary-foreground hover:opacity-90"
         >
-          {soft ? "Watch" : "Play"}
+          {cluster === "FPS & aim" ? "Explore" : soft ? "Watch" : "Play"}
         </Link>
         <button
           type="button"

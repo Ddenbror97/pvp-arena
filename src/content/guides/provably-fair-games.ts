@@ -149,17 +149,7 @@ Changing your client seed does not change your odds. It simply removes one more 
     {
       id: "example",
       title: "Worked example: verifying a PVPspinArena round",
-      body: `Here is how you would check a Roulette round on PVPspinArena:
-
-1. **Note the round number.** Recent rounds are listed under the wheel, for example #389.
-2. **Open the Fairness page** and choose the Roulette tab.
-3. **Enter the round number.** You can type it with or without the # sign.
-4. **Read the result.** The verifier fetches the revealed seed, confirms it matches the published hash, recomputes the slot in your browser and shows the colour.
-5. **Compare.** The slot should match what the wheel showed and what was paid.
-
-Jackpot and Coinflip work the same way from their own tabs. If you prefer to do the maths yourself, our [provably fair calculator guide](/guides/provably-fair-calculator) shows each step with the same formula.
-
-More provably fair reading lives in our [Provably fair guides](/guides/topics/provably-fair).`,
+      body: "Here is how you would check a Roulette round on PVPspinArena:\n\n1. **Note the round number.** Recent rounds are listed under the wheel, for example #389.\n2. **Open the Fairness page** and choose the Roulette tab.\n3. **Enter the round number.** You can type it with or without the # sign.\n4. **Read the result.** The verifier fetches the revealed seed, confirms it matches the published hash, recomputes the slot in your browser and shows the colour.\n5. **Compare.** The slot should match what the wheel showed and what was paid.\n\nJackpot and Coinflip work the same way from their own tabs. If you prefer to do the maths yourself, our [provably fair calculator guide](/guides/provably-fair-calculator) shows each step with the same formula.\n\nMore provably fair reading lives in our [Provably fair guides](/guides/topics/provably-fair).\n\nA skill match needs a different integrity explanation. The [FPS anti-cheat guide](/guides/cs2-anti-cheat) separates server-authoritative actions from commit-reveal randomness; a verified random draw does not certify a shooter opponent’s inputs.",
     },
   ],
   faqs: [
@@ -203,8 +193,9 @@ More provably fair reading lives in our [Provably fair guides](/guides/topics/pr
     "commit-reveal-scheme",
     "server-seed-client-seed",
     "hmac-sha256-provably-fair",
+    "cs2-anti-cheat",
   ],
-  updated: "2026-10-21",
+  updated: "2026-10-31",
   cta: {
     title: "Verify a round yourself",
     text: "Create a free account to play Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip, and check any round on the Fairness page.",

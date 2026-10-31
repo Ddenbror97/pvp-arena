@@ -22,6 +22,7 @@ const SITE = new Set([
   "/slott",
   "/poker",
   "/8-ball-pool",
+  "/fps-1v1",
   "/prestige",
   "/fairness",
   "/about",
@@ -42,6 +43,7 @@ type SitePath =
   | "/slott"
   | "/poker"
   | "/8-ball-pool"
+  | "/fps-1v1"
   | "/prestige"
   | "/fairness"
   | "/about"
