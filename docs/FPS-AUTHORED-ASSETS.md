@@ -131,3 +131,22 @@ are allowed. The local 1280 × 800 movement sample measured 20.8 ms median and
 21.1 ms p95. This is a local fixture measurement, not a production FPS guarantee.
 TypeScript, targeted ESLint and production build pass. No deployment is part of
 this correction.
+
+## Viewmodel rig and key-posed reload (2026-10-31)
+
+[Idle](screenshots/fps-viewmodel-idle.png) · [reload: strip, insert, rack](screenshots/fps-viewmodel-reload.png)
+
+- Forearms are ~0.3 m (previously ~0.67 m), thicker, and enter from the lower-left
+  screen edge. The support hand sits mid-handguard and leans 0.5 rad so wrist and
+  forearm share one diagonal; gloves are black for both roles.
+- `authored-viewmodel.ts` now builds two rigs: `Weapon_Master` (pivot at the right-hand
+  grip, carrying rifle, magazine, bolt and trigger arm) and `support-arm` (pivot at the
+  left wrist). Baked hand geometry is split per side and never changes per frame.
+- `reload-animation.ts` holds the timeline as pure key data over the server's
+  `reloadMs`: Break 0–0.30 (cant, strip and drop the mag), Insert 0.30–0.60 (rock-in,
+  slam jolt, settle), Chamber 0.60–1.00 (rack, sharp release, overshoot settle). The
+  support hand resolves its anchor (handguard, magazine grip or charging handle) on the
+  live rig every frame, so the magazine never drifts from the hand.
+- The renderer passes reload progress to the authored rifle and no longer tilts the
+  whole weapon group for it; pistol/fallback keep the previous tilt cue. World 78° and
+  viewmodel 60° cameras are unchanged.

@@ -1,6 +1,11 @@
 import * as THREE from "three";
 import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
 
+/** Support hand sits mid-handguard rather than at the front sight (rifle-local units). */
+export const SUPPORT_GRIP_SHIFT = 0.09;
+/** Radians the support hand leans toward the lower-left, in line with the forearm. */
+export const SUPPORT_HAND_LEAN = 0.5;
+
 /** Fit the authored finger bones to a horizontal AK handguard, not the optional vertical grip. */
 export function poseRifleHands(root: THREE.Object3D) {
   const hand = root.getObjectByName("Hand_L");
@@ -21,10 +26,19 @@ export function poseRifleHands(root: THREE.Object3D) {
     current,
     new THREE.Vector3().crossVectors(across, current),
   );
-  const desired = new THREE.Vector3(0, Math.sqrt(0.91), -0.3).transformDirection(root.matrixWorld);
-  const desiredAcross = new THREE.Vector3(0, 0.3, Math.sqrt(0.91)).transformDirection(
-    root.matrixWorld,
-  );
+  // Lean the hand about the handguard so wrist and forearm share one lower-left diagonal.
+  const lean = Math.sin(SUPPORT_HAND_LEAN),
+    upright = Math.cos(SUPPORT_HAND_LEAN);
+  const desired = new THREE.Vector3(
+    lean * Math.sqrt(0.91),
+    upright * Math.sqrt(0.91),
+    -0.3,
+  ).transformDirection(root.matrixWorld);
+  const desiredAcross = new THREE.Vector3(
+    lean * 0.3,
+    upright * 0.3,
+    Math.sqrt(0.91),
+  ).transformDirection(root.matrixWorld);
   const targetFrame = new THREE.Matrix4().makeBasis(
     desiredAcross,
     desired,
@@ -38,7 +52,15 @@ export function poseRifleHands(root: THREE.Object3D) {
     hand.parent!.getWorldQuaternion(new THREE.Quaternion()).invert().multiply(world),
   );
   hand.position.copy(
-    hand.parent!.worldToLocal(root.localToWorld(new THREE.Vector3(-0.06, -0.23, -0.88))),
+    hand.parent!.worldToLocal(
+      root.localToWorld(
+        new THREE.Vector3(
+          -0.06 - 0.235 * Math.sin(SUPPORT_HAND_LEAN),
+          -0.23 + 0.235 * (1 - Math.cos(SUPPORT_HAND_LEAN)),
+          -0.88 + SUPPORT_GRIP_SHIFT,
+        ),
+      ),
+    ),
   );
   root.updateWorldMatrix(true, true);
 
@@ -115,11 +137,11 @@ export function poseRifleHands(root: THREE.Object3D) {
     [13, -0.927],
     [17, -0.9],
   ] as const) {
-    wrapSupport(base, z);
+    wrapSupport(base, z + SUPPORT_GRIP_SHIFT);
   }
   fit(
     ["Bone_L020", "Bone_L021", "Bone_L022", "Bone_L022_end"],
-    new THREE.Vector3(-0.052, 0.052, -0.971),
+    new THREE.Vector3(-0.052, 0.052, -0.971 + SUPPORT_GRIP_SHIFT),
   );
   // Right middle/ring/little fingers curl around the pistol grip. Index retains trigger placement.
   for (const [base, y] of [
@@ -138,11 +160,33 @@ export function poseRifleHands(root: THREE.Object3D) {
 }
 
 type Vertex = { p: THREE.Vector3; n: THREE.Vector3; uv: THREE.Vector2 };
+export type ForearmShape = {
+  /** Elbow position relative to the wrist edge centre, in viewmodel-root units. */
+  elbow: Record<"L" | "R", THREE.Vector3>;
+  /** Wrist/elbow radii and mid-forearm muscle bulge, in metres before the root scale. */
+  wrist: number;
+  elbowRadius: number;
+  bulge: number;
+  /** Viewmodel root scale, so radii stay in real metres. */
+  scale: number;
+};
+/** Short, muscular forearms entering from the lower screen edge (CS/COD viewmodel proportions). */
+export const SHORT_FOREARMS: ForearmShape = {
+  elbow: {
+    L: new THREE.Vector3(-0.38, -0.42, 0.24),
+    R: new THREE.Vector3(0.3, -0.42, 0.26),
+  },
+  wrist: 0.031,
+  elbowRadius: 0.058,
+  bulge: 0.017,
+  scale: 0.52,
+};
 /** Clip the actual posed glove triangles and extrude skin from their exact edge, without a cover band. */
 export function fitContinuousForearms(
   arm: THREE.SkinnedMesh,
   root: THREE.Object3D,
   supportDelta: THREE.Matrix4,
+  shape: ForearmShape = SHORT_FOREARMS,
 ) {
   root.updateWorldMatrix(true, true);
   arm.updateMatrixWorld(true);
@@ -186,11 +230,10 @@ export function fitContinuousForearms(
     vertices.push({ p, n, uv: new THREE.Vector2(uvs.getX(i), uvs.getY(i)) });
     sides.push(side);
   }
-  const glovePositions: number[] = [],
-    gloveNormals: number[] = [],
-    gloveUVs: number[] = [];
-  const skinPositions: number[] = [],
-    skinUVs: number[] = [];
+  const built = {} as Record<
+    "L" | "R",
+    { gloves: THREE.BufferGeometry; skin: THREE.BufferGeometry }
+  >;
   const seams: { side: string; points: number; gap: number; loops: number; openEdges: number }[] =
     [];
   for (const [side, sign] of [
@@ -203,6 +246,11 @@ export function fitContinuousForearms(
       .transformDirection(hand.matrixWorld)
       .transformDirection(root.matrixWorld.clone().invert());
     const plane = wrist.clone().addScaledVector(axis, -0.012);
+    const glovePositions: number[] = [],
+      gloveNormals: number[] = [],
+      gloveUVs: number[] = [];
+    const skinPositions: number[] = [],
+      skinUVs: number[] = [];
     const edges: [THREE.Vector3, THREE.Vector3][] = [];
     const count = source.index?.count ?? positions.count;
     const interpolate = (a: Vertex, b: Vertex, t: number): Vertex => ({
@@ -279,7 +327,7 @@ export function fitContinuousForearms(
     const center = rim
       .reduce((v, p) => v.add(p), new THREE.Vector3())
       .multiplyScalar(1 / rim.length);
-    const elbow = new THREE.Vector3(side === "L" ? -0.42 : 0.38, -0.44, -0.02).divideScalar(0.52);
+    const elbow = center.clone().add(shape.elbow[side]);
     const direction = elbow.clone().sub(center).normalize(),
       distance = center.distanceTo(elbow);
     const endRotation = new THREE.Quaternion().setFromUnitVectors(axis, direction);
@@ -299,7 +347,11 @@ export function fitContinuousForearms(
         blend = THREE.MathUtils.smoothstep(t, 0, 0.42),
         q = new THREE.Quaternion().slerp(endRotation, blend);
       const c = path.getPoint(t),
-        radius = (0.029 + t * 0.024 + Math.sin(Math.PI * t) * 0.014) / 0.52;
+        radius =
+          (shape.wrist +
+            t * (shape.elbowRadius - shape.wrist) +
+            Math.sin(Math.PI * Math.min(1, t * 1.25)) * shape.bulge) /
+          shape.scale;
       const relax = THREE.MathUtils.smoothstep(t, 0, 0.2);
       rings.push(
         offsets.map((offset) => {
@@ -380,6 +432,10 @@ export function fitContinuousForearms(
       points: rim.length,
       gap: Math.max(...rim.map((p, i) => p.distanceTo(rings[0]![i]!))),
     });
+    built[side] = {
+      gloves: geometry(glovePositions, gloveUVs, gloveNormals),
+      skin: geometry(skinPositions, skinUVs),
+    };
   }
   function geometry(p: number[], uv: number[], n?: number[]) {
     const g = new THREE.BufferGeometry();
@@ -411,9 +467,5 @@ export function fitContinuousForearms(
     g.computeBoundingSphere();
     return g;
   }
-  return {
-    gloves: geometry(glovePositions, gloveUVs, gloveNormals),
-    skin: geometry(skinPositions, skinUVs),
-    seams,
-  };
+  return { L: built.L, R: built.R, seams };
 }

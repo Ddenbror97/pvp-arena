@@ -36,7 +36,7 @@ test("authored viewmodel loads its fitted hand geometry, skin and clipped PVP br
     return result;
   });
   expect(result.loaded).toBe(true);
-  expect(result.meshes.some((mesh) => mesh.name === "continuous-rifle-forearms")).toBe(true);
+  expect(result.meshes.some((mesh) => mesh.name === "continuous-rifle-forearms-L")).toBe(true);
   expect(
     result.meshes
       .filter((mesh) => mesh.name === "pvp-receiver-decal")

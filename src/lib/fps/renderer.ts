@@ -24,6 +24,9 @@ import { createMuzzleFlash } from "./muzzle-flash";
 import { createAuthoredViewmodel } from "./authored-viewmodel";
 import { REMOTE_DELAY_MS } from "./network";
 
+/** Authored AK rest framing in the 60° viewmodel camera: right-hand pivot, chunky receiver. */
+export const VIEWMODEL_REST = { x: 0.14, y: -0.12, z: -0.2, pitch: 0.08, yaw: 0.24, roll: -0.05 };
+
 export type ArenaFrame = {
   state: MatchState;
   visibility?: Record<Seat, boolean>;
@@ -691,28 +694,31 @@ export function mountArena(
     const reloadProgress = reloadRemaining
       ? Math.min(1, reloadRemaining / WEAPONS[renderedWeapon].reloadMs)
       : 0;
-    const reloadTilt = reloadRemaining ? Math.sin(reloadProgress * Math.PI) : 0;
+    const authoredRifle = authoredView.loaded && renderedWeapon === "rifle";
+    // The authored rifle animates the reload on its own rig; the fallback/pistol keep the tilt cue.
+    const reloadTilt = reloadRemaining && !authoredRifle ? Math.sin(reloadProgress * Math.PI) : 0;
     hands.update(renderedWeapon === "pistol", reloadTilt);
     hands.root.visible = renderedWeapon === "pistol" || !authoredView.loaded;
-    authoredView.update(renderedWeapon === "rifle", reloadTilt, kick);
+    authoredView.update(renderedWeapon === "rifle", reloadRemaining ? 1 - reloadProgress : 0, kick);
     magazine.position.y = -reloadTilt * 0.08;
     magazine.rotation.x = reloadTilt * 0.14;
     chargingHandle.position.z = -0.04 + kick * 0.008;
+    const bob = moving ? Math.sin(now * 0.016) * 0.004 : Math.sin(now * 0.0018) * 0.0015;
     weaponGroup.position.set(
-      (authoredView.loaded && renderedWeapon === "rifle" ? 0.16 : 0.23) +
+      (authoredRifle ? VIEWMODEL_REST.x : 0.23) +
         turnSway +
         (moving ? Math.sin(now * 0.008) * 0.003 : 0),
-      (authoredView.loaded && renderedWeapon === "rifle" ? -0.1 : -0.24) +
-        (moving ? Math.sin(now * 0.016) * 0.004 : Math.sin(now * 0.0018) * 0.0015) -
+      (authoredRifle ? VIEWMODEL_REST.y : -0.24) +
+        bob -
         landKick -
         reloadTilt * 0.07 -
         (airborne ? 0.008 : 0),
-      (authoredView.loaded && renderedWeapon === "rifle" ? -0.28 : -0.62) + kick * 0.025,
+      (authoredRifle ? VIEWMODEL_REST.z : -0.62) + kick * 0.025,
     );
     weaponGroup.rotation.set(
-      kick * 0.025 + reloadTilt * 0.13,
-      0.18 - turnSway,
-      -0.02 - reloadTilt * 0.55,
+      (authoredRifle ? VIEWMODEL_REST.pitch : 0) + kick * 0.025 + reloadTilt * 0.13,
+      (authoredRifle ? VIEWMODEL_REST.yaw : 0.18) - turnSway,
+      (authoredRifle ? VIEWMODEL_REST.roll : -0.02) - reloadTilt * 0.55,
     );
     weaponGroup.scale.setScalar(renderedWeapon === "pistol" ? 0.72 : 1);
     pistolPart.visible = renderedWeapon === "pistol";
