@@ -34,6 +34,8 @@ Run the frame-pacing, culling, round-input, six-round, walking, character, grip,
 pointer-lock and blood-wall Playwright specs. Use a unique `--output` directory;
 Playwright clears its selected output directory before each run. The pacing
 spec exercises normal CPU speed, 4x CPU throttling and delayed snapshots.
+The lifecycle spec repeatedly mounts and disposes the arena within one page,
+checking GPU resource release, listener cleanup and garbage-collected heap.
 
 For the sustained test, set `FPS_SOAK_MINUTES=30` and run
 `tests/e2e/fps-soak.spec.ts` by itself. Other browser tests can compete for OS
@@ -47,6 +49,8 @@ heap usage, DOM/listener counts and context-loss events to its output directory.
 It records progress approximately every 30 seconds and writes a final result
 only after the requested duration. Fixture-only input/event logs are bounded.
 GPU queries are test instrumentation, not a production per-frame polling cost.
+Their scope starts at the first actual draw and ends after that frame's render
+passes; starting at the previous animation callback would include idle time.
 
 Treat renderer resource counts as leak indicators, not a measurement of total
 GPU VRAM. CPU throttling models a CPU constraint; it does not emulate every
