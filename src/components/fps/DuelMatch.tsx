@@ -574,11 +574,6 @@ export function DuelMatch({
     }
   };
   const phase = frame?.state.phase ?? "waiting";
-  const networkSummary = observations.current.summary();
-  const shotAckText =
-    networkSummary.shotAckP50 === null
-      ? "not measured"
-      : `${Math.round(networkSummary.shotAckP50)} ms`;
   const seconds = frame
     ? Math.max(0, Math.ceil((frame.state.phaseEndsAt - now - serverOffset.current) / 1000))
     : 0;
@@ -676,14 +671,8 @@ export function DuelMatch({
                   ? "unstable"
                   : "stable"
             }
-            title={
-              network
-                ? `Round trip: ${Math.round(network.rttMs)} ms median / ${Math.round(network.rttP95Ms)} ms p95 · Jitter: ${Math.round(network.jitterMs)} ms · Snapshots: ${Math.round(networkSummary.snapshotHz)}/s · Server: ${network.tickHz.toFixed(1)} ticks/s · Session check: ${Math.round(network.authMs)} ms · Shot acknowledgement: ${shotAckText}`
-                : undefined
-            }
           >
             {connection}
-            {network && connection === "Connected" && <small>{Math.round(network.rttMs)} ms</small>}
           </span>
           <button
             aria-label={muted ? "Enable game audio" : "Mute game audio"}

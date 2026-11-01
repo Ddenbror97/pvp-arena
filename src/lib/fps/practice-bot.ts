@@ -70,19 +70,49 @@ function path(from: Point, to: Point): Point[] {
  * enemy lane and spawn exit (so a camping player is found), the enemy spawn alley, then the
  * upper (north) and lower (south) routes through their arches.
  */
-const PATROL = [
-  { x: 7, z: -0.6 },
-  { x: -7, z: -0.6 },
-  { x: -14.9, z: 2.5 },
-  { x: -17.2, z: -8 },
-  { x: -8, z: -12.4 },
-  { x: 8, z: -12.4 },
-  { x: 8, z: 12.4 },
-  { x: -8, z: 12.4 },
-];
+export type PracticeStyle = "push" | "slow" | "lurk";
+type Opening = "center" | "north" | "south";
+const STYLES: readonly PracticeStyle[] = ["push", "slow", "lurk"];
+const OPENINGS: readonly Opening[] = ["center", "north", "south"];
+const OPENING_POINTS: Record<Opening, Point[]> = {
+  center: [
+    { x: 14.9, z: 2.5 },
+    { x: 7, z: -0.6 },
+    { x: -7, z: -0.6 },
+  ],
+  north: [
+    { x: 14.9, z: -2.5 },
+    { x: 8, z: -12.4 },
+    { x: -8, z: -12.4 },
+  ],
+  south: [
+    { x: 14.9, z: 2.5 },
+    { x: 8, z: 12.4 },
+    { x: -8, z: 12.4 },
+  ],
+};
 
 /** One moderate difficulty. Emits ordinary inputs; never changes simulation state. */
 export function createPracticeBot(random: () => number = Math.random) {
+  const styles: PracticeStyle[] = [],
+    openings: Opening[] = [];
+  function draw<T>(bag: T[], choices: readonly T[], previous: T | null): T {
+    if (!bag.length) {
+      bag.push(...choices);
+      for (let i = bag.length - 1; i > 0; i--) {
+        const j = Math.min(i, Math.floor(random() * (i + 1)));
+        [bag[i], bag[j]] = [bag[j]!, bag[i]!];
+      }
+      if (bag.at(-1) === previous) [bag[0], bag[bag.length - 1]] = [bag.at(-1)!, bag[0]!];
+    }
+    return bag.pop()!;
+  }
+  let style: PracticeStyle = "push",
+    opening: Opening = "center";
+  let itinerary: Point[] = [],
+    holdUntil = 0,
+    progressAt = 0,
+    progress: Point = { x: 0, z: 0 };
   let round = 0,
     seq = 0,
     waypoint = 0,
@@ -99,6 +129,8 @@ export function createPracticeBot(random: () => number = Math.random) {
     restEnd = 0,
     lastAt = 0;
   return {
+    /** Read-only diagnostic plan; no difficulty or mode selector is exposed. */
+    plan: () => ({ round, style, opening, waypoints: itinerary.map((p) => ({ ...p })) }),
     input(state: MatchState, now: number): Input {
       const own = state.players.B,
         enemy = state.players.A;
@@ -108,8 +140,23 @@ export function createPracticeBot(random: () => number = Math.random) {
         nextPlan = 0;
         seenAt = null;
         lastSeen = null;
-        // Head first for the courtyard lane on this spawn's side.
+        style = draw(styles, STYLES, round === 1 ? null : style);
+        opening = draw(openings, OPENINGS, round === 1 ? null : opening);
         side = own.x > 0 ? 1 : -1;
+        // Different initial approaches, then search both the enemy spawn and the
+        // opposite flank. All legs use the same collision-inflated ground graph.
+        const oppositeZ = opening === "south" ? -12.4 : 12.4;
+        itinerary = [
+          ...OPENING_POINTS[opening],
+          { x: -14.9, z: 2.5 },
+          { x: -17.2, z: -8 },
+          { x: -8, z: oppositeZ },
+          { x: 8, z: oppositeZ },
+          { x: 7, z: -0.6 },
+        ].map((p) => ({ x: p.x * side, z: p.z }));
+        holdUntil = 0;
+        progressAt = now;
+        progress = { x: own.x, z: own.z };
         waypoint = 0;
         nextAim = 0;
         burstEnd = 0;
@@ -142,12 +189,35 @@ export function createPracticeBot(random: () => number = Math.random) {
           ((random() - 0.5) * 0.035) / PRACTICE_SKILL;
         nextAim = now + 125 / PRACTICE_SKILL;
       }
-      const patrol = { x: PATROL[waypoint]!.x * side, z: PATROL[waypoint]!.z };
-      const chasing = !!lastSeen && now - lastSeenAt < 3000;
+      const chasing =
+        !!lastSeen &&
+        now - lastSeenAt < 3000 &&
+        (style === "push" || (!visible && now - lastSeenAt > (style === "lurk" ? 900 : 400)));
+      if (state.phase !== "live" || Math.hypot(own.x - progress.x, own.z - progress.z) > 0.25) {
+        progress = { x: own.x, z: own.z };
+        progressAt = now;
+      }
+      const reached =
+        Math.hypot(own.x - itinerary[waypoint]!.x, own.z - itinerary[waypoint]!.z) < 1.2;
+      const stuck =
+        state.phase === "live" && !visible && now >= holdUntil && now - progressAt > 5000;
+      if ((!chasing && reached) || stuck) {
+        waypoint = (waypoint + 1) % itinerary.length;
+        route = [];
+        nextPlan = now;
+        progressAt = now;
+        holdUntil =
+          now +
+          (stuck || style === "push" || waypoint % 2 !== 0
+            ? 0
+            : style === "lurk"
+              ? 1400 + random() * 1200
+              : 450 + random() * 650);
+      }
+      const patrol = itinerary[waypoint]!;
+      const holding = !visible && !chasing && now < holdUntil;
       const destination = chasing ? lastSeen! : patrol;
-      if (!chasing && Math.hypot(own.x - patrol.x, own.z - patrol.z) < 1.2)
-        waypoint = (waypoint + 1) % PATROL.length;
-      if (now >= nextPlan) {
+      if (!holding && now >= nextPlan) {
         route = path(own, destination);
         nextPlan = now + 800;
       }
@@ -158,7 +228,11 @@ export function createPracticeBot(random: () => number = Math.random) {
       const length = Math.hypot(vx, vz) || 1;
       vx /= length;
       vz /= length;
-      if (reacted && now < burstEnd) {
+      if (
+        holding ||
+        (reacted && now < burstEnd) ||
+        (visible && style === "lurk" && Math.hypot(enemy.x - own.x, enemy.z - own.z) < 12)
+      ) {
         vx = 0;
         vz = 0;
       }
@@ -182,7 +256,12 @@ export function createPracticeBot(random: () => number = Math.random) {
         fire: reacted && now < burstEnd && Math.abs(wrap(aimYaw - yaw)) < 0.16,
         reload: own.ammo === 0 || (!visible && own.ammo < 10),
         jump: false,
-        sprint: !visible,
+        sprint: !visible && !holding && style === "push",
+        walk:
+          !visible &&
+          !holding &&
+          style !== "push" &&
+          Math.hypot(own.x - destination.x, own.z - destination.z) < 4,
         crouch: false,
       };
     },
