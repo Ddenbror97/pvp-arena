@@ -56,6 +56,11 @@ export type MapDefinition = {
   readonly id: string;
   /** Display name. */
   readonly name: string;
+  /**
+   * In the random rotation: matches created without an explicit map pick uniformly among these.
+   * Keep a map out until its art and validation are accepted.
+   */
+  readonly rotation: boolean;
   /** Movement rectangle centred on the origin (metres). */
   readonly arena: { readonly width: number; readonly depth: number };
   /** Block movement and bullets. */

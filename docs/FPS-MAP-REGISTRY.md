@@ -11,6 +11,7 @@ browser, the match Worker and tests share it:
 | Field | Used by |
 | --- | --- |
 | `id`, `name` | Match config and state (`mapId`), loading screen. **Ids are permanent.** |
+| `rotation` | In the random rotation for new matches (keep a map out until it's accepted) |
 | `arena` | Movement rectangle (centred on the origin), bot grid extent, floor |
 | `boxes` | Movement **and** bullets/sight (cover, walls, trunks, stairs, platforms) |
 | `structures` | Bullets/sight only (e.g. lintels above head height) |
@@ -27,18 +28,27 @@ browser, the match Worker and tests share it:
 
 ## How every system resolves the same map
 
-- The app sends `map_id` in the runtime config (from the match row, `DuelView.map_id`). Absent
-  means Dustfront.
+- **Random map per match.** The lobby is unchanged. When the match Worker creates a match
+  (practice or PvP, on the first admission) without an explicit `map_id`, it draws a map
+  uniformly from the rotation with the platform CSPRNG and fixes it in the match state.
+  Rematches are new matches, so they draw again.
+- An explicit `map_id` in the runtime config (from the match row, `DuelView.map_id`, if a
+  future column sets one) always wins.
 - The Worker rejects unknown ids (`400 BAD_CONFIG`) and treats a different map for an existing
-  room as `409 CONFIG_CONFLICT`. `/health` lists the maps the runtime can simulate (`maps`).
+  room as `409 CONFIG_CONFLICT`. `/health` lists the maps the runtime can simulate (`maps`)
+  and the rotation (`rotation`).
+- Every init response returns the room's `mapId`. `duelAdmission` hands it to the client with
+  the socket ticket, so the match page loads that scene and shows that map's loading screen
+  before connecting. A player's page never loads a guessed map: it waits for the ticket or
+  the first snapshot.
 - `createMatch(…, mapId)` stores `mapId` in the authoritative `MatchState`. Dustfront matches
   leave it absent, so legacy checkpoints and snapshots are byte-for-byte the same shape.
 - Server movement, shots, footsteps, anti-wallhack reveal (`revealsOpponent`, `RevealGate`,
   `canSeeOpponent`, trail steps), audio occlusion and the practice bot all call
   `mapOf(state)`. The bot builds one navigation grid per map, lazily, and caches it.
 - Snapshots carry `state.mapId` to every client, including after a reconnect. `DuelMatch`
-  mounts the arena on `frame.state.mapId ?? view.map_id ?? "dustfront"` and remounts if the
-  authoritative id differs from what it loaded. The renderer ignores snapshots for another map.
+  mounts the arena on `frame.state.mapId ?? ticket.mapId` (finished or open matches: the match
+  row, else Dustfront) and remounts if the authoritative id differs from what it loaded. The renderer ignores snapshots for another map.
   Unknown ids show "Reload to update" and never fall back to another map.
 - Client prediction, camera motion, opponent bridging, death poses and blood decals take the
   mounted `GameMap`. Low-level helpers (`predictMovement`, `isMovementBlocked`, `traceWorld`,
@@ -67,14 +77,19 @@ Branch from `fps-map-registry` (or from `main` once it is merged).
    - Write bot routes whose points sit on open ground.
 3. **Register it.** Add one import and one entry to `src/lib/fps/maps/catalog.ts`. This line
    is the only shared edit, so FROSTLINE and LOST TRAIL merge trivially.
-4. **Optional:** add a custom environment factory in `maps/environments.ts` for animated
+4. **Loading screen.** Add the map's art as a 1672 × 941 WebP in `src/assets/fps/` and one line
+   in `src/lib/fps/maps/loading-screens.ts`. It is shown exactly like Dustfront's: the art, the
+   map name and the loading bar. All rotation maps' art is preloaded on match intent.
+5. **Optional:** add a custom environment factory in `maps/environments.ts` for animated
    effects.
-5. **Test it.**
+6. **Rotation.** Set `rotation: false` while the map is in progress; set it to `true` once
+   accepted. With it `true`, practice and PvP matches can draw it.
+7. **Test it.**
    - Add a layout test like `tests/fps-arena-layout.test.ts`, passing your map explicitly.
    - Run `tests/fps-map-registry.test.ts`, `tests/fps-map-runtime.test.ts` and
      `tests/fps-map-dustfront-parity.test.ts`.
-   - The parity test asserts that `MAP_IDS` is `["dustfront"]`. Update that line to the new
-     shipped list when you add your map.
+   - The parity test asserts that `MAP_IDS` and `ROTATION_MAP_IDS` are `["dustfront"]`. Update
+     those lines when you add your map.
 
 Constraints the engine imposes (unchanged):
 
@@ -86,22 +101,24 @@ Constraints the engine imposes (unchanged):
 - Impact surfaces are `concrete | metal | wood`. A new surface (snow, ice, dirt) is an engine
   change: impacts, audio and protocol validation. Coordinate it in one branch.
 
-## Selecting a map (not part of this branch)
+## Choosing a map
 
-This branch carries the map from the match row to every system. It does **not** add:
-
-- **A `map_id` column** on the FPS match table, and returning it from `fps_view`. This is a
-  Supabase migration, so it needs explicit authorization.
-- **Lobby/create UI** to pick a map. The app should only offer maps listed by the runtime's
-  `/health` `maps`.
-
-Until both exist, every match is Dustfront.
+New matches draw from the rotation (above), so no lobby or database change is needed. A
+player-chosen map would need a `map_id` column on the match table (a Supabase migration) plus
+a lobby picker. Both are deliberately not built.
 
 ## Deploying
 
-Deploy the match Worker before or together with the app. An app that offers a map the
-deployed Worker doesn't know gets `BAD_CONFIG`, never a mismatched match. Dustfront-only
-deploys of this branch change no gameplay.
+Deploy the match Worker and the app together. The Worker decides the map, so:
+
+- **New Worker, old app:** the old app loads Dustfront's scene. That is only safe while the
+  rotation is Dustfront-only.
+- **New app, old Worker:** the old Worker reports no map, so the app plays Dustfront, which
+  matches.
+- **Unknown map:** an app that doesn't know a drawn map asks the player to reload. It never
+  plays a different map.
+
+Deploys where Dustfront is the only rotation map change no gameplay.
 
 ## Verification (this branch)
 

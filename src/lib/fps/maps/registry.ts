@@ -68,6 +68,19 @@ const MAPS: ReadonlyMap<string, GameMap> = new Map(
 if (MAPS.size !== DEFINITIONS.length) throw new Error("Duplicate map id in the registry");
 
 export const MAP_IDS: readonly MapId[] = DEFINITIONS.map((d) => d.id as MapId);
+/** Maps a new match is randomly drawn from (catalog order). */
+export const ROTATION_MAP_IDS: readonly MapId[] = DEFINITIONS.filter((d) => d.rotation).map(
+  (d) => d.id as MapId,
+);
+if (!ROTATION_MAP_IDS.length) throw new Error("The map rotation is empty");
+/**
+ * Draw a rotation map uniformly. `random` returns [0, 1); the match runtime passes a
+ * crypto-backed source. Only the server draws: clients learn the result from the match.
+ */
+export function pickRotationMap(random: () => number = Math.random): MapId {
+  const i = Math.floor(random() * ROTATION_MAP_IDS.length);
+  return ROTATION_MAP_IDS[Math.min(ROTATION_MAP_IDS.length - 1, Math.max(0, i))]!;
+}
 export const isMapId = (value: unknown): value is MapId =>
   typeof value === "string" && MAPS.has(value);
 /** The compiled default map (Dustfront). */

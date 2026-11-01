@@ -9,6 +9,7 @@ import type { MapDefinition } from "../../src/lib/fps/maps/types";
 export const TEST_GRID: MapDefinition = {
   id: "test-grid",
   name: "Test Grid",
+  rotation: true,
   arena: { width: 30, depth: 20 },
   boxes: [
     { id: "test-wall", x: 0, y: 1.5, z: 0, w: 1, h: 3, d: 6, surface: "metal" },

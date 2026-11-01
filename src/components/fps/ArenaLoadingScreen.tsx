@@ -6,12 +6,15 @@ export function ArenaLoadingScreen({
   label,
   error,
   mapName = "Dustfront",
+  image = STRIKE_LOADING_IMAGE,
 }: {
   progress: number;
   label: string;
   error: string | null;
   /** The match map's display name. */
   mapName?: string;
+  /** The match map's loading art (maps/loading-screens.ts); null while the map is unknown. */
+  image?: string | null;
 }) {
   const percent = Math.max(0, Math.min(100, progress));
   return (
@@ -20,15 +23,17 @@ export function ArenaLoadingScreen({
       aria-label="Preparing PvPStrike match"
       aria-busy={percent < 100}
     >
-      <img
-        className="duel-loading-image"
-        src={STRIKE_LOADING_IMAGE}
-        width={1672}
-        height={941}
-        alt=""
-        fetchPriority="high"
-        decoding="async"
-      />
+      {image && (
+        <img
+          className="duel-loading-image"
+          src={image}
+          width={1672}
+          height={941}
+          alt=""
+          fetchPriority="high"
+          decoding="async"
+        />
+      )}
       <div className="duel-loading-shade" aria-hidden />
       <Link className="duel-loading-back" to="/fps-duel">
         ← Lobby

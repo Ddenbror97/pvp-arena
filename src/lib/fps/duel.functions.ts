@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { requireLiveSession } from "@/integrations/supabase/live-session";
 import type { DuelView } from "./quote";
+import { DEFAULT_MAP_ID } from "./maps/registry";
 
 type Rpc = {
   rpc: (
@@ -141,6 +142,12 @@ export const duelAdmission = createServerFn({ method: "POST" })
       signal: AbortSignal.timeout(10_000),
     });
     if (!initialized.ok) throw new Error("FPS_RUNTIME_UNAVAILABLE");
+    // The runtime fixed the match's map (explicit or drawn from the rotation). The client loads
+    // that scene and loading screen before connecting; snapshots remain authoritative.
+    const room = (await initialized.json().catch(() => null)) as { mapId?: unknown } | null;
+    // Passed through even if this app build doesn't know it: the match page then asks the player
+    // to reload rather than loading another map.
+    const mapId = typeof room?.mapId === "string" ? room.mapId : DEFAULT_MAP_ID;
     const { signAdmission } = await import("./ticket");
     const ticket = await signAdmission(
       {
@@ -159,5 +166,6 @@ export const duelAdmission = createServerFn({ method: "POST" })
     return {
       url: `${r.origin.replace(/^http/, "ws")}/matches/${match.id}/socket?ticket=${encodeURIComponent(ticket)}`,
       expiresAt: Date.now() + 60_000,
+      mapId,
     };
   });

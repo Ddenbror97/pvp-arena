@@ -16,6 +16,7 @@ import type { MapDefinition } from "./types";
 export const DUSTFRONT: MapDefinition = {
   id: "dustfront",
   name: "Dustfront",
+  rotation: true,
   arena: ARENA_LAYOUT_SIZE,
   boxes: LAYOUT_BOXES,
   structures: LAYOUT_STRUCTURES,

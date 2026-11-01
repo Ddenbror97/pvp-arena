@@ -170,6 +170,10 @@ describe("map registry in the real match Worker", () => {
       maps: string[];
     };
     expect(health.maps).toEqual(["dustfront", "test-grid"]);
+    expect((health as unknown as { rotation: string[] }).rotation).toEqual([
+      "dustfront",
+      "test-grid",
+    ]);
     const id = crypto.randomUUID();
     expect((await post(id, config(id, { map_id: "frostline" }))).status).toBe(400);
     expect((await post(id, config(id, { map_id: 7 }))).status).toBe(400);
@@ -178,10 +182,31 @@ describe("map registry in the real match Worker", () => {
     expect((await post(id, config(id, { map_id: "test-grid" }))).status).toBe(200);
     expect((await post(id, config(id))).status).toBe(409);
     expect((await post(id, config(id, { map_id: "dustfront" }))).status).toBe(409);
-    // A legacy config (no map) is Dustfront and still re-initialises with an explicit id.
-    const legacy = crypto.randomUUID();
-    expect((await post(legacy, config(legacy))).status).toBe(200);
-    expect((await post(legacy, config(legacy, { map_id: "dustfront" }))).status).toBe(200);
+  });
+
+  it("draws a random rotation map for each new match and reports it on every init", async () => {
+    const drawn = new Set<string>();
+    for (let i = 0; i < 24; i++) {
+      const id = crypto.randomUUID();
+      const first = (await (await post(id, config(id))).json()) as { mapId: string };
+      expect(["dustfront", "test-grid"]).toContain(first.mapId);
+      // Re-initialising (every admission does) reports the same fixed map.
+      const again = (await (await post(id, config(id))).json()) as { mapId: string };
+      expect(again.mapId).toBe(first.mapId);
+      drawn.add(first.mapId);
+      if (i === 0) {
+        const socket = await open(id);
+        const frame = await until(socket, (f) => f.type === "snapshot");
+        expect(frame.state.mapId ?? "dustfront").toBe(first.mapId);
+        socket.close();
+      }
+    }
+    // 24 fair draws from two maps: both appear (failure odds 2 × 2^-24).
+    expect([...drawn].sort()).toEqual(["dustfront", "test-grid"]);
+    // An explicit map always wins over the rotation.
+    const id = crypto.randomUUID();
+    const explicit = await post(id, config(id, { map_id: "test-grid" }));
+    expect(((await explicit.json()) as { mapId: string }).mapId).toBe("test-grid");
   });
 
   it("sends the map to both players and a reconnect, and collides with its solids", async () => {

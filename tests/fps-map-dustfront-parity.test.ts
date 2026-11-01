@@ -8,7 +8,7 @@ import {
 } from "../src/lib/fps/arena-layout";
 import { ARENA_LIGHTING } from "../src/lib/fps/arena-lighting";
 import { ARENA, BOXES, FLOOR, SPAWNS, STRUCTURES, WALLS, WORLD_SOLIDS } from "../src/lib/fps/map";
-import { DEFAULT_MAP, MAP_IDS, getMap } from "../src/lib/fps/maps/registry";
+import { DEFAULT_MAP, MAP_IDS, ROTATION_MAP_IDS, getMap } from "../src/lib/fps/maps/registry";
 import { botItinerary } from "../src/lib/fps/practice-bot";
 import { createMatch } from "../src/lib/fps/simulation";
 
@@ -22,6 +22,8 @@ describe("Dustfront through the map registry", () => {
 
   it("is the default and the only shipped map", () => {
     expect(MAP_IDS).toEqual(["dustfront"]);
+    // With Dustfront alone in the rotation, every new match is still Dustfront.
+    expect(ROTATION_MAP_IDS).toEqual(["dustfront"]);
     expect(DEFAULT_MAP).toBe(map);
     expect(map.name).toBe("Dustfront");
   });

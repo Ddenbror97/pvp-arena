@@ -3,7 +3,15 @@ import { describe, expect, it, vi } from "vitest";
 // Register the test map next to Dustfront (the shipped catalog contains Dustfront only).
 vi.mock("../src/lib/fps/maps/catalog", async () => await import("./fixtures/test-map-catalog"));
 
-import { DEFAULT_MAP_ID, MAP_IDS, getMap, isMapId, mapOf } from "../src/lib/fps/maps/registry";
+import {
+  DEFAULT_MAP_ID,
+  MAP_IDS,
+  ROTATION_MAP_IDS,
+  getMap,
+  isMapId,
+  mapOf,
+  pickRotationMap,
+} from "../src/lib/fps/maps/registry";
 import {
   createMatch,
   isMovementBlocked,
@@ -74,6 +82,24 @@ describe("map registry", () => {
     expect(isMapId(42)).toBe(false);
     expect(() => getMap("frostline")).toThrow("UNKNOWN_MAP:frostline");
     expect(() => createMatch({ A: "a", B: "b" }, 5, 0, 2, "frostline")).toThrow();
+  });
+
+  it("draws new matches uniformly from the rotation", () => {
+    expect(ROTATION_MAP_IDS).toEqual(["dustfront", "test-grid"]);
+    expect(pickRotationMap(() => 0)).toBe("dustfront");
+    expect(pickRotationMap(() => 0.4999)).toBe("dustfront");
+    expect(pickRotationMap(() => 0.5)).toBe("test-grid");
+    expect(pickRotationMap(() => 0.999999)).toBe("test-grid");
+    // Out-of-range sources are clamped, never undefined.
+    expect(pickRotationMap(() => 1)).toBe("test-grid");
+    expect(pickRotationMap(() => -0.1)).toBe("dustfront");
+    const counts: Record<string, number> = {};
+    for (let i = 0; i < 2000; i++) {
+      const id = pickRotationMap();
+      counts[id] = (counts[id] ?? 0) + 1;
+    }
+    expect(counts["dustfront"]).toBeGreaterThan(850);
+    expect(counts["test-grid"]).toBeGreaterThan(850);
   });
 
   it("derives bullet, movement and visibility sets per map", () => {
