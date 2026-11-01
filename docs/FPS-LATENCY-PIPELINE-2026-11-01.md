@@ -58,3 +58,11 @@ clients, but the new client requires the combat-only input path. Revert app firs
 before reverting the runtime if rollback is needed. Runtime health advertises
 latencyVersion=2 and fps_region_latency includes an immediate-trigger counter.
 Actual improvements on regional player connections require post-release samples.
+
+Claude's opponent continuity update from main is included in this release. Its
+latency-aware reveal window uses the same bounded effective playback delay as
+shot rewind, and includes the arrival wait for immediate triggers. Its gait reset
+and cover-edge reveal behavior are preserved.
+The combined unit run passes 221 tests (one skip), plus five targeted runtime
+checks. Snapshot sending is keyed to a new simulation tick rather than a second
+wall-clock deadline, avoiding skipped updates when timer callbacks jitter.

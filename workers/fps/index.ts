@@ -177,9 +177,11 @@ export class DuelRoom {
   private lastReveal: Record<Seat, boolean> = { A: true, B: true };
   /** Server-side wait (arrival → applied) of each seat's latest command. */
   private commandWait: Record<Seat, number> = { A: 0, B: 0 };
+  private playbackMs: Partial<Record<Seat, number>> = {};
   private absent: Record<Seat, number | null> = { A: null, B: null };
   private history: Array<{ at: number; snapshot: string }> = [];
   private lastSnapshot = 0;
+  private lastSnapshotTick = -1;
   private checkpoint = 0;
   private busy = false;
   private reason = "ROUNDS";
@@ -720,6 +722,8 @@ export class DuelRoom {
             if (!triggers[seat] && ready(0) && queue[0]!.input.combatOnly) {
               const action = queue.shift()!;
               triggers[seat] = action.input;
+              this.commandWait[seat] = now - action.at;
+              this.playbackMs[seat] = action.input.playbackMs;
               this.immediateTriggers++;
               triggerAt[seat] = action.at;
               this.latency.command(authority?.continent, now - action.at);
@@ -753,6 +757,7 @@ export class DuelRoom {
             fresh[seat] = next.input;
             receivedAt[seat] = next.at;
             this.commandWait[seat] = now - next.at;
+            this.playbackMs[seat] = next.input.playbackMs;
             // Arrival → applied: session gate + queue + clock alignment (server-side delay).
             this.latency.command(authority?.continent, now - next.at);
           }
@@ -795,7 +800,9 @@ export class DuelRoom {
             motion[viewer] = {
               vx: before && dt > 0 ? (own.x - before.x) / dt : 0,
               vz: before && dt > 0 ? (own.z - before.z) / dt : 0,
-              aheadMs: (timing?.calibrated ? timing.lookbackMs : 250) + this.commandWait[viewer],
+              aheadMs:
+                (timing?.calibrated ? timing.lookbackFor(this.playbackMs[viewer]) : 250) +
+                this.commandWait[viewer],
             };
           }
           this.lastReveal = this.reveal.update(saved.state, stepAt, motion);
@@ -823,9 +830,14 @@ export class DuelRoom {
       const urgent =
         saved.state.phase !== phase ||
         this.events.some((e) => ["shot", "hit", "headshot", "round-end"].includes(e.type));
-      if (now - this.lastSnapshot >= SNAPSHOT_INTERVAL_MS || urgent) {
+      if (
+        saved.state.tick !== this.lastSnapshotTick ||
+        urgent ||
+        (saved.result && now - this.lastSnapshot >= SNAPSHOT_INTERVAL_MS)
+      ) {
         // Every physics tick has a fresh snapshot; urgent combat can send sooner.
-        if (now - this.lastSnapshot >= SNAPSHOT_INTERVAL_MS) this.lastSnapshot = now;
+        this.lastSnapshot = now;
+        this.lastSnapshotTick = saved.state.tick;
         const current = this.snapshot()!;
         // poseAt follows the physics clock; serverNow follows the send clock.
         // Both renderer playback and rewind use the same physics timeline.

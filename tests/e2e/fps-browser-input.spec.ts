@@ -25,6 +25,9 @@ test("walking and mouse look share a smooth render timeline", async ({ page, bro
   const scenarios = [];
   for (const mode of ["look", "run", "run-look"]) {
     await page.bringToFront();
+    await page.locator("canvas").click();
+    await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
+    await expect.poll(() => page.evaluate(() => document.hasFocus())).toBe(true);
     await page.evaluate(() => {
       const f = Reflect.get(window, "fpsPolishTest");
       // Keep the path in Dustfront's west perimeter alley; x=9 hits the south building.
@@ -32,9 +35,6 @@ test("walking and mouse look share a smooth render timeline", async ({ page, bro
       f.state.round++;
       f.resetView();
     });
-    await page.locator("canvas").click();
-    await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
-    await expect.poll(() => page.evaluate(() => document.hasFocus())).toBe(true);
     // Drain deliberately delayed snapshots from the preceding fixture teleport.
     // Real rounds never rewind, but this test resets authority in-place.
     await page.waitForTimeout(250);
