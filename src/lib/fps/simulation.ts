@@ -1,4 +1,5 @@
 import { ARENA, BOXES, PLAYER_RADIUS, SPAWNS, STEP_HEIGHT, eyeHeight } from "./map";
+import { spawnSide, halftimeRound } from "./sides";
 import {
   COMBAT_VERSION,
   HIT_DAMAGE,
@@ -20,6 +21,7 @@ export const COUNTDOWN_MS = 3000;
 export const ROUND_MS = 60000;
 // Let the elimination register before the three-second winner presentation.
 export const ROUND_END_MS = 3800;
+export const HALFTIME_MS = 5000;
 export const MAX_DRAWS = 3;
 export const MOVE_SPEED = 5;
 export const WALK_SPEED_SCALE = 0.45;
@@ -78,6 +80,7 @@ export function createMatch(
     throw new Error("Invalid match configuration");
   return {
     v: 1,
+    sideVersion: 1,
     combatVersion,
     ...(combatVersion === COMBAT_VERSION ? { armorVersion: 1 as const } : {}),
     phase: "waiting",
@@ -138,7 +141,11 @@ function finishRound(state: MatchState, winner: Seat | null, now: number): void 
     state.events.push({ type: "cancelled", text: "Draw limit reached" });
   } else {
     state.phase = "round-end";
-    state.phaseEndsAt = now + ROUND_END_MS;
+    state.phaseEndsAt =
+      now +
+      (state.sideVersion === 1 && state.round === halftimeRound(state)
+        ? HALFTIME_MS
+        : ROUND_END_MS);
   }
 }
 
@@ -406,7 +413,14 @@ export function applyQueuedMovement(
   if (state.phase !== "live") return false;
   const input = validateInput(raw),
     p = state.players[seat];
-  if (!input || input.combatOnly || input.seq <= p.lastSeq || p.hp <= 0) return false;
+  if (
+    !input ||
+    (input.round !== undefined && input.round !== state.round) ||
+    input.combatOnly ||
+    input.seq <= p.lastSeq ||
+    p.hp <= 0
+  )
+    return false;
   if (input.reload || input.weapon !== p.weapon) return false;
   if (input.fire) {
     const next = validateInput(nextRaw);
@@ -465,7 +479,7 @@ export function stepMatch(
     for (const seat of SEATS) {
       const old = state.players[seat];
       state.players[seat] = {
-        ...player(old.id, state.round % 2 ? seat : other(seat)),
+        ...player(old.id, spawnSide(state, seat)),
         ...(state.armorVersion === 1 ? { armor: 100 } : {}),
         kills: old.kills,
         headshots: old.headshots,
@@ -473,6 +487,8 @@ export function stepMatch(
       };
     }
     server.roundStats = emptyRoundStats();
+    if (state.sideVersion === 1 && state.round === halftimeRound(state) + 1)
+      state.events.push({ type: "halftime", text: "Second half · sides switched" });
     state.phase = "live";
     state.phaseEndsAt = now + ROUND_MS;
     return state;
@@ -493,7 +509,13 @@ export function stepMatch(
   for (const seat of SEATS) {
     const action = validateInput(triggers[seat]),
       p = state.players[seat];
-    if (action?.combatOnly && action.seq > p.lastSeq && action.weapon === p.weapon && p.hp > 0)
+    if (
+      action?.combatOnly &&
+      (action.round === undefined || action.round === state.round) &&
+      action.seq > p.lastSeq &&
+      action.weapon === p.weapon &&
+      p.hp > 0
+    )
       combatInputs[seat] = action;
   }
   // Capture tick-start positions before either seat moves (same temporal basis).
@@ -514,7 +536,10 @@ export function stepMatch(
   for (const seat of SEATS) {
     const p = state.players[seat],
       candidate = validateInput(inputs[seat]),
-      input = candidate?.combatOnly ? null : candidate;
+      input =
+        candidate?.combatOnly || (candidate?.round !== undefined && candidate.round !== state.round)
+          ? null
+          : candidate;
     if (state.combatVersion === COMBAT_VERSION) recoverCombatRecoil(p, now);
     if (p.reloadUntil && now >= p.reloadUntil) {
       const amount = Math.min(WEAPONS[p.weapon].magazine - p.ammo, p.reserve);
