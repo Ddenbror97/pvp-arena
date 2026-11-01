@@ -127,7 +127,7 @@ test("recorded combat audio plays once per confirmed event, supports mute and bo
       repeatedRoundVoices,
     };
   });
-  expect(stats.single.decoded).toBe(9);
+  expect(stats.single.decoded).toBe(11);
   expect(stats.single.shots).toBe(1);
   expect(stats.single.voices).toBe(1);
   expect(stats.repeat.shots).toBe(1);
@@ -142,6 +142,63 @@ test("recorded combat audio plays once per confirmed event, supports mute and bo
     body: JSON.stringify(stats),
     contentType: "application/json",
   });
+});
+
+test("AK reload audio joins the server timeline once and stops on death", async ({ page }) => {
+  await page.route("**/__reload_audio__", (r) =>
+    r.fulfill({ contentType: "text/html", body: '<button id="start">Enable audio</button>' }),
+  );
+  await page.goto("/__reload_audio__");
+  await page.evaluate(async () => {
+    const { createCombatAudio } = await import("/src/lib/fps/audio.ts" as string);
+    const { createMatch } = await import("/src/lib/fps/simulation.ts" as string);
+    const audio = createCombatAudio();
+    await audio.ready();
+    Reflect.set(window, "reloadTest", { audio, state: createMatch({ A: "a", B: "b" }, 5, 0) });
+    document.querySelector("button")!.addEventListener("click", () => void audio.unlock());
+  });
+  await page.locator("button").click();
+  const result = await page.evaluate(async () => {
+    const { audio, state } = Reflect.get(window, "reloadTest");
+    await audio.unlock();
+    const offsets: number[] = [];
+    const original = AudioBufferSourceNode.prototype.start;
+    AudioBufferSourceNode.prototype.start = function (when = 0, offset = 0) {
+      offsets.push(offset);
+      original.call(this, when, offset);
+    };
+    try {
+      state.phase = "live";
+      state.players.A.ammo = 0;
+      state.players.A.reloadUntil = 2300;
+      state.tick = 1;
+      audio.snapshot(state, "A", 1000);
+      audio.snapshot(state, "A", 1000);
+      state.tick++;
+      audio.snapshot(state, "A", 1100);
+      const active = audio.diagnostics;
+      state.players.A.hp = 0;
+      state.tick++;
+      audio.snapshot(state, "A", 1200);
+      await new Promise((r) => setTimeout(r, 30));
+      const stopped = audio.diagnostics.voices;
+      state.round++;
+      state.tick++;
+      state.players.A.hp = 100;
+      state.players.A.ammo = 15;
+      state.players.A.reloadUntil = 3800;
+      audio.snapshot(state, "A", 2000);
+      return { offsets, active, stopped, reloads: audio.diagnostics.reloads };
+    } finally {
+      AudioBufferSourceNode.prototype.start = original;
+      audio.dispose();
+    }
+  });
+  expect(result.offsets).toEqual([0.5, 0]);
+  expect(result.active.reloads).toBe(1);
+  expect(result.active.voices).toBe(1);
+  expect(result.stopped).toBe(0);
+  expect(result.reloads).toBe(2);
 });
 test("blood marks and droplets have bounded pools and reset each round", async ({ page }) => {
   await page.route("**/__combat_blood__", (r) =>

@@ -340,7 +340,7 @@ export function DuelMatch({
               lastHud = Date.now();
               setFrame(data);
             }
-            sound.current?.snapshot(data.state, seatRef.current);
+            sound.current?.snapshot(data.state, seatRef.current, data.serverNow);
             if (data.settled && settledMatch.current !== matchId) {
               settledMatch.current = matchId;
               void qc.invalidateQueries({ queryKey: ["wallet"] });
