@@ -8,7 +8,7 @@ ROOT="$(cd "$HERE/../../.." && pwd)"
 PY="${BLENDER_PY:-/root/bpyenv/bin/python}"
 GT="$ROOT/art/blender/node_modules/.bin/gltf-transform"
 cd "$HERE"
-python3 layout.py
+python3 layout.py && (cd "$ROOT" && npx prettier --write src/lib/fps/arena-layout.ts >/dev/null)
 if [[ "${1:-}" == "--blockout" ]]; then
   "$PY" build_arena.py -- build/aim-arena-blockout.glb --blockout
   "$GT" meshopt build/aim-arena-blockout.glb "$ROOT/public/fps/models/aim-arena.glb"
