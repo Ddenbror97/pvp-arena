@@ -44,7 +44,8 @@ runtime.account_id = account;
 runtime.name = "pvpspinarena-fps";
 runtime.main = path.resolve("workers/fps/index.ts");
 runtime.workers_dev = true;
-runtime.compatibility_flags = ["global_fetch_strictly_public"];
+runtime.compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"];
+runtime.hyperdrive = [{ binding: "HYPERDRIVE", id: "c8cfc572b3014d6da467d75faa305c1d" }];
 runtime.vars = {
   ALLOWED_ORIGIN: "https://pvpspinarena.com",
   SUPABASE_URL: process.env.SUPABASE_URL,
