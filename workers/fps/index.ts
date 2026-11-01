@@ -21,7 +21,7 @@ import {
   trailStep,
   type TrailStep,
 } from "../../src/lib/fps/visibility";
-import { liveSessions, sessionKey, type SessionIdentity } from "./session-auth";
+import { sessionReader, sessionKey, type SessionIdentity } from "./session-auth";
 import { continentOf, LatencyTelemetry } from "./latency";
 
 /** Strict session reads overlap: at most this many in flight, started this far apart. */
@@ -33,6 +33,7 @@ export interface Env {
   FPS_RUNTIME_SECRET: string;
   SUPABASE_URL: string;
   SUPABASE_SERVICE_ROLE_KEY: string;
+  HYPERDRIVE?: { connectionString: string };
   ALLOWED_ORIGIN: string;
   FPS_ROOM_REGION?: "enam" | "wnam";
 }
@@ -130,6 +131,7 @@ export default {
 
 /** One named object is the only simulation and result authority for a match. */
 export class DuelRoom {
+  private readSessions: ReturnType<typeof sessionReader>;
   private bot = createPracticeBot();
   private shotHistory = new ShotHistory();
   private timings = new Map<string, ConnectionTiming>();
@@ -187,10 +189,7 @@ export class DuelRoom {
       socket,
       info: socket.deserializeAttachment() as SocketInfo,
     }));
-    const active = await liveSessions(
-      this.env,
-      captured.map((s) => s.info),
-    );
+    const active = await this.readSessions(captured.map((s) => s.info));
     return captured.flatMap(({ socket, info }) => {
       if (socket.readyState !== WebSocket.OPEN) return [];
       if (active.has(sessionKey(info)) && info.authExpiresAt > Date.now()) return [info];
@@ -279,6 +278,7 @@ export class DuelRoom {
     private ctx: DurableObjectState,
     private env: Env,
   ) {
+    this.readSessions = sessionReader(env);
     ctx.blockConcurrencyWhile(async () => {
       this.saved = (await ctx.storage.get<Saved>("match")) ?? null;
       if (!this.saved) return;
@@ -376,7 +376,7 @@ export class DuelRoom {
       return json({ error: "PRIVATE_MATCH" }, 403);
     if (claims.role === "player" && seat === null) return json({ error: "NOT_A_PLAYER" }, 403);
     try {
-      if (!(await liveSessions(this.env, [claims])).has(sessionKey(claims)))
+      if (!(await this.readSessions([claims])).has(sessionKey(claims)))
         return json({ error: "SESSION_REVOKED" }, 403);
     } catch {
       return json({ error: "SESSION_CHECK_UNAVAILABLE" }, 503);

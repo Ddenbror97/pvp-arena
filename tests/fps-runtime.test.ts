@@ -182,7 +182,7 @@ describe("isolated real Durable Object WebSockets", () => {
       bundle: true,
       write: false,
       format: "esm",
-      platform: "browser",
+      platform: "node",
       target: "es2022",
     });
     mf = new Miniflare(
@@ -190,6 +190,7 @@ describe("isolated real Durable Object WebSockets", () => {
         modules: true,
         script: bundled.outputFiles[0]!.text,
         compatibilityDate: "2026-10-26",
+        compatibilityFlags: ["nodejs_compat"],
         durableObjects: { DUELS: { className: "DuelRoom", useSQLite: true } },
         bindings: {
           FPS_RUNTIME_SECRET: secret,
