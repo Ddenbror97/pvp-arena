@@ -195,6 +195,21 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       flashUntil = now + 42;
       fallback.shot(now);
     },
+    /**
+     * The drawn pose jumped (reappearing after redaction, or re-entering the view): start
+     * the gait from the opponent's current speed and heading instead of reading the jump
+     * as one huge stride (a sprint pop, legs snapping toward the jump).
+     */
+    resetMotion(speedMs = 0, localX = 0, localZ = -1) {
+      fallback.resetMotion(speedMs, localX, localZ);
+      initialized = false;
+      speed = Math.max(0, Math.min(7, speedMs));
+      const length = Math.hypot(localX, localZ);
+      if (length > 1e-4) {
+        travelX = localX / length;
+        travelZ = localZ / length;
+      }
+    },
     update(
       dt: number,
       now: number,

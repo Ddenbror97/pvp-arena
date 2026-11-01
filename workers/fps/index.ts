@@ -16,10 +16,12 @@ import type { Input, MatchState, Seat } from "../../src/lib/fps/protocol";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { maintainMatches } from "./maintenance";
 import {
+  RevealGate,
   snapshotForPlayer,
   trailForPlayer,
   trailStep,
   type TrailStep,
+  type ViewerMotion,
 } from "../../src/lib/fps/visibility";
 import {
   sessionReader,
@@ -168,6 +170,11 @@ export class DuelRoom {
   /** Recent physics steps' public poses, bundled into snapshots as a redacted trail. */
   private steps: TrailStep[] = [];
   private lastTrailAt = -Infinity;
+  /** Latency-aware opponent reveal (see RevealGate); the latest decision per recipient. */
+  private reveal = new RevealGate();
+  private lastReveal: Record<Seat, boolean> = { A: true, B: true };
+  /** Server-side wait (arrival → applied) of each seat's latest command. */
+  private commandWait: Record<Seat, number> = { A: 0, B: 0 };
   private absent: Record<Seat, number | null> = { A: null, B: null };
   private history: Array<{ at: number; snapshot: string }> = [];
   private lastSnapshot = 0;
@@ -723,6 +730,7 @@ export class DuelRoom {
           if (next) {
             fresh[seat] = next.input;
             receivedAt[seat] = next.at;
+            this.commandWait[seat] = now - next.at;
             // Arrival → applied: session gate + queue + clock alignment (server-side delay).
             this.latency.command(authority?.continent, now - next.at);
           }
@@ -750,7 +758,24 @@ export class DuelRoom {
         if (!saved.result && saved.state.tick !== previousTick) {
           this.events.push(...saved.state.events.map((e) => ({ ...e, id: ++this.eventId })));
           this.shotHistory.record(saved.state, stepAt);
-          this.steps.push(trailStep(saved.state, stepAt));
+          // Each recipient's client draws this step about one RTT + REMOTE_DELAY_MS + the
+          // server's command wait later, with its own camera that far ahead.
+          const motion: Partial<Record<Seat, ViewerMotion>> = {};
+          const earlier = this.steps.at(-3);
+          for (const viewer of ["A", "B"] as const) {
+            const identity = authorized.find((s) => s.seat === viewer);
+            const timing = identity && this.timings.get(identity.connectionId);
+            const own = saved.state.players[viewer],
+              before = earlier?.players[viewer],
+              dt = earlier ? stepAt - earlier.at : 0;
+            motion[viewer] = {
+              vx: before && dt > 0 ? (own.x - before.x) / dt : 0,
+              vz: before && dt > 0 ? (own.z - before.z) / dt : 0,
+              aheadMs: (timing?.calibrated ? timing.lookbackMs : 250) + this.commandWait[viewer],
+            };
+          }
+          this.lastReveal = this.reveal.update(saved.state, stepAt, motion);
+          this.steps.push(trailStep(saved.state, stepAt, this.lastReveal));
           if (this.steps.length > 6) this.steps.shift();
         }
       }
@@ -794,7 +819,11 @@ export class DuelRoom {
           const info = socket.deserializeAttachment() as SocketInfo;
           if (info.role === "player" && info.seat) {
             playerSnapshots[info.seat] ??= JSON.stringify({
-              ...snapshotForPlayer(current, info.seat),
+              ...snapshotForPlayer(
+                current,
+                info.seat,
+                current.state.phase === "live" ? this.lastReveal[info.seat] : undefined,
+              ),
               trail: trailForPlayer(this.steps, info.seat, this.lastTrailAt, current.poseAt),
             });
             this.send(socket, playerSnapshots[info.seat]);
