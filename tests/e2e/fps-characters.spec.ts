@@ -64,20 +64,25 @@ test("shooting the rendered opponent registers body hits and headshots", async (
         pitch: headshot ? 0 : Math.atan2(1 - 1.6, 6),
       });
       Object.assign(f.state.players.B, { x: -16, z: -6, yaw: Math.PI, pitch: 0 });
+      // The fixture's 60 s round can expire during a slow (software-rendered) start.
+      f.state.phaseEndsAt = Date.now() + 600_000;
       f.state.round++;
       f.resetView();
     }, headshot);
     await page.locator("canvas").click();
     await page.mouse.down();
     await expect
-      .poll(() =>
-        page.evaluate(
-          (type) =>
-            Reflect.get(window, "fpsPolishTest").eventLog.some(
-              (event: { type: string; seat: string }) => event.type === type && event.seat === "A",
-            ),
-          headshot ? "headshot" : "hit",
-        ),
+      .poll(
+        () =>
+          page.evaluate(
+            (type) =>
+              Reflect.get(window, "fpsPolishTest").eventLog.some(
+                (event: { type: string; seat: string }) =>
+                  event.type === type && event.seat === "A",
+              ),
+            headshot ? "headshot" : "hit",
+          ),
+        { timeout: 120_000 }, // software-rendered CI frames can take several seconds each
       )
       .toBe(true);
     await page.mouse.up();
