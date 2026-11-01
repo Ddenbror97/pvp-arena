@@ -27,7 +27,30 @@ Blender for this project (art/blender/arms/README.md); only the arm skeleton bel
   Asset derivative released there under CC BY 4.0 unless otherwise specified.
   No application code from that project is included.
 
-## Tactical clothing/body (tactical-body.glb)
+## Police character (police-swat.glb)
+
+This work is based on "Game Ready Swat Character"
+(https://sketchfab.com/3d-models/game-ready-swat-character-15e16f4b988f4dd1b0e71eeff4362e5c)
+by dolon56 (https://sketchfab.com/dolon56), licensed under CC BY 4.0
+(http://creativecommons.org/licenses/by/4.0/). Modified: skeleton renamed and refitted,
+materials converted to metal/rough PBR, textures resized, animation removed
+(art/blender/chars/fit_sourced.py).
+
+## Terrorist character (terrorist-fighter.glb)
+
+This work is based on "Terrorist 1 Rig"
+(https://sketchfab.com/3d-models/terrorist-1-rig-dac4e93003804d23b8fc8927435b34e8)
+by fake gman (https://sketchfab.com/tricky_modeler), listed under CC BY 4.0. Modified as above.
+Note: the uploader states the mesh is not their own work ("all credits goes to the people who
+made counter strike"); the listed license may therefore not be valid. Review before public
+release.
+
+## Script-built operator characters (police-operator.glb, terrorist-insurgent.glb)
+
+Original work built in Blender for this project from scripts in art/blender/chars (body,
+clothing, gear, textures and skeleton). They use the anatomical head below for the face.
+
+## Tactical clothing/body (tactical-body.glb, legacy, kept for rollback)
 
 **Military tactical suit (LowPolyGameReady)**, DanlyVostok (1799danly):
 https://sketchfab.com/3d-models/military-tactical-suit-lowpolygameready-ef698ce36b1545a78ce592dd3db4c7ed

@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { fixture } from "./helpers/fps-fixture";
 import type { Mesh, MeshStandardMaterial } from "three";
 
-test("both authored heads keep skin detail and fitted eyewear", async ({ page }) => {
+test("both authored heads keep skin detail and their team headgear", async ({ page }) => {
   await fixture(page);
   await page.setViewportSize({ width: 1000, height: 900 });
   await page.evaluate(() => {
@@ -22,6 +22,7 @@ test("both authored heads keep skin detail and fitted eyewear", async ({ page })
     const c = "/src/lib/fps/character.ts",
       w = "/src/lib/fps/weapon.ts",
       t = "/node_modules/three/build/three.module.js";
+    const { CHARACTER_SET } = await import("/src/lib/fps/model-assets.ts" as string);
     const { createCharacter } = await import(c),
       { createWeaponKit } = await import(w),
       T = await import(t);
@@ -61,8 +62,13 @@ test("both authored heads keep skin detail and fitted eyewear", async ({ page })
             }
         }
       });
-      const glasses = actor.root.getObjectByName("fitted-aviator-L");
-      const bounds = new T.Box3().setFromObject(glasses);
+      // Police: authored helmet, headset and wrap eyewear ride on the fitted head.
+      const glasses = actor.root.getObjectByName("eyewear-lens");
+      const bounds = glasses ? new T.Box3().setFromObject(glasses) : undefined;
+      let underHead = false;
+      glasses?.traverseAncestors((o: { name: string }) => {
+        if (o.name === "reference-headgear") underHead = true;
+      });
       const scarf = actor.root.getObjectByName("fitted-shemagh-wrap") as Mesh | undefined;
       const balaclava = actor.root.getObjectByName("fitted-balaclava") as Mesh | undefined;
       actor.root.updateWorldMatrix(true, true);
@@ -85,7 +91,19 @@ test("both authored heads keep skin detail and fitted eyewear", async ({ page })
         loaded: actor.loaded,
         skinMap: !!skin?.map,
         maskClearance,
-        glassWidth: bounds.max.x - bounds.min.x,
+        glassWidth: bounds ? bounds.max.x - bounds.min.x : 0,
+        underHead,
+        helmet: !!actor.root.getObjectByName("helmet"),
+        legacyCap: !!actor.root.getObjectByName("fitted-police-cap"),
+        set: CHARACTER_SET as string,
+        // Sourced characters carry their own sculpted head; the shared head is hidden.
+        sharedHeadVisible:
+          !!faceMesh &&
+          (() => {
+            let v = true;
+            (faceMesh as Mesh).traverseAncestors((o: { visible: boolean }) => (v &&= o.visible));
+            return v && faceMesh!.visible;
+          })(),
         // The balaclava covers the crown and ears; the eye slit keeps the eyes visible.
         covered:
           seat === "B" ? !!balaclava && !actor.root.getObjectByName("fitted-scarf-hood") : true,
@@ -112,7 +130,21 @@ test("both authored heads keep skin detail and fitted eyewear", async ({ page })
     for (const clearance of r.maskClearance)
       expect(clearance, "cloth must sit outside the nose, lips and chin").toBeGreaterThan(0.001);
     expect(r.skinMap).toBe(true);
-    expect(r.glassWidth).toBeLessThan(0.07);
+    expect(r.legacyCap).toBe(false);
+    if (r.set === "sourced") {
+      expect(r.sharedHeadVisible).toBe(false);
+      continue;
+    }
+    if (r.seat === "A") {
+      expect(r.helmet).toBe(true);
+      expect(r.underHead, "eyewear follows the fitted head").toBe(true);
+      // Wraps the face: wider than the eye pair, narrower than the head.
+      expect(r.glassWidth).toBeGreaterThan(0.14);
+      expect(r.glassWidth).toBeLessThan(0.21);
+    } else {
+      expect(r.helmet).toBe(false);
+      expect(r.glassWidth).toBe(0);
+    }
     expect(r.scarfRepeats).toBe(true);
     expect(r.covered).toBe(true);
   }

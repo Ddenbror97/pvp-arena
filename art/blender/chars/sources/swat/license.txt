@@ -1,0 +1,11 @@
+Model Information:
+* title:	Game Ready Swat Character
+* source:	https://sketchfab.com/3d-models/game-ready-swat-character-15e16f4b988f4dd1b0e71eeff4362e5c
+* author:	dolon56 (https://sketchfab.com/dolon56)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Game Ready Swat Character" (https://sketchfab.com/3d-models/game-ready-swat-character-15e16f4b988f4dd1b0e71eeff4362e5c) by dolon56 (https://sketchfab.com/dolon56) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

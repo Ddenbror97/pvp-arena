@@ -1,0 +1,11 @@
+Model Information:
+* title:	Terrorist 1 Rig
+* source:	https://sketchfab.com/3d-models/terrorist-1-rig-dac4e93003804d23b8fc8927435b34e8
+* author:	fake gman (https://sketchfab.com/tricky_modeler)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Terrorist 1 Rig" (https://sketchfab.com/3d-models/terrorist-1-rig-dac4e93003804d23b8fc8927435b34e8) by fake gman (https://sketchfab.com/tricky_modeler) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
