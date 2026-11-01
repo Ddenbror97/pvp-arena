@@ -388,23 +388,46 @@ function shoot(
 /** Commands a player may be behind real time before catch-up stops (≈100 ms). */
 export const MAX_COMMAND_CREDIT = 3;
 /**
- * Bounded command catch-up (Source-style usercmd budget). Applies one queued movement-only
+ * Bounded command catch-up (Source-style usercmd budget). Applies one queued movement
  * command for a seat before the regular step, so a backlog formed by a network burst or a
  * slow authorization read drains instead of adding permanent delay. The caller enforces
  * the time budget: a seat earns one credit per tick (capped at MAX_COMMAND_CREDIT) and
  * every applied command spends one, so average movement never exceeds real time.
- * Commands that fire, reload or switch weapons are never folded; they take the normal
- * combat path in stepMatch. Returns false when the command is not eligible.
+ * A repeated rifle hold may fold only when a newer authorized hold remains for the
+ * normal combat step. Tap/release edges, reloads and weapon changes remain barriers.
+ * Returns false when the command is not eligible.
  */
-export function applyQueuedMovement(state: MatchState, seat: Seat, raw: Input): boolean {
+export function applyQueuedMovement(
+  state: MatchState,
+  seat: Seat,
+  raw: Input,
+  nextRaw?: Input,
+): boolean {
   if (state.phase !== "live") return false;
   const input = validateInput(raw),
     p = state.players[seat];
   if (!input || input.seq <= p.lastSeq || p.hp <= 0) return false;
-  if (input.fire || input.reload || input.weapon !== p.weapon) return false;
+  if (input.reload || input.weapon !== p.weapon) return false;
+  if (input.fire) {
+    const next = validateInput(nextRaw);
+    // A continuous automatic-rifle hold is still represented by the next command.
+    // Only the normal combat tick may fire; never fold a tap/release, reload,
+    // weapon change, or semi-automatic trigger edge into movement catch-up.
+    if (
+      state.combatVersion !== COMBAT_VERSION ||
+      input.weapon !== "rifle" ||
+      !next ||
+      next.seq <= input.seq ||
+      !next.fire ||
+      next.reload ||
+      next.weapon !== "rifle"
+    )
+      return false;
+  }
   p.lastSeq = input.seq;
   p.yaw = input.yaw;
   p.pitch = input.pitch;
+  p.triggerHeld = input.fire;
   const before = { x: p.x, z: p.z, y: p.y };
   predictMovement(p, input, TICK_MS);
   // Same footstep accounting as stepMatch: Shift-walking stays silent.

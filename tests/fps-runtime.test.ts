@@ -393,6 +393,49 @@ describe("isolated real Durable Object WebSockets", () => {
       b.close();
     }
   });
+  it("drains a packet burst during continuous rifle fire with fast session checks", async () => {
+    const id = await init(),
+      a = await sessionSocket(id, crypto.randomUUID()),
+      b = await open(id, B);
+    let timer: ReturnType<typeof setInterval> | undefined;
+    try {
+      await readyLive(a, b);
+      sessionReadDelayMs = 18;
+      let seq = 40000,
+        lastInputAt = Date.now();
+      const sent = new Map<number, number>(),
+        latency: number[] = [];
+      const began = Date.now();
+      a.addEventListener("message", (event) => {
+        const f = JSON.parse(String(event.data)) as RuntimeFrame;
+        if (f.type !== "snapshot" || Date.now() - began < 700) return;
+        const at = sent.get(f.state.players.A.lastSeq);
+        if (at !== undefined) latency.push(Date.now() - at);
+      });
+      const send = () => {
+        sent.set(++seq, Date.now());
+        a.send(JSON.stringify({ ...JSON.parse(movement(seq)), forward: 0, fire: true }));
+      };
+      for (let i = 0; i < 4; i++) send();
+      timer = setInterval(() => {
+        const now = Date.now();
+        for (let i = 0; i < 3 && now - lastInputAt >= 34; i++) {
+          lastInputAt = Math.max(lastInputAt + 34, now - 68);
+          send();
+        }
+      }, 34);
+      await pause(2200);
+      latency.sort((a, b) => a - b);
+      expect(latency.length).toBeGreaterThan(10);
+      // The serial firing backlog reproduced 176 ms median with this burst.
+      expect(latency[Math.floor(latency.length / 2)]).toBeLessThan(140);
+    } finally {
+      clearInterval(timer);
+      sessionReadDelayMs = 0;
+      a.close();
+      b.close();
+    }
+  });
   for (const readMs of [72, 150])
     it(`strict session gate: command-to-applied latency with ${readMs} ms session reads`, async () => {
       const id = await init(),
