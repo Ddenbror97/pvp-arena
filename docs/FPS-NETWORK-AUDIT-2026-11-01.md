@@ -1,5 +1,10 @@
 # PvPStrike pre-merge audit: opponent sync, movement and performance (2026-11-01)
 
+> **Superseded values.** After review the buffer is 110 ms with a per-snapshot physics-step
+> trail, and the rewind bounds are 280 ms (shooter view) plus 200 ms (server wait). The claim
+> that the remaining backward frames were unavoidable at 20 Hz was wrong. See
+> `docs/FPS-CROSS-REGION-2026-11-01.md` section 7.
+
 Branch `fps-netaudit`, built on `fps-cleanup`. **Not merged and not deployed.**
 
 ## A. Root-cause analysis

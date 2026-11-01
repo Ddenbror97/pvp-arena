@@ -223,6 +223,19 @@ export class RemotePresentation {
     // one frame, and each must recompute the correction against the last drawn pose.
     if (!this.projectionAllowed) this.correctionX = this.correctionZ = 0;
   }
+  /** Apply one snapshot: its bundled intermediate physics poses first, then its own pose. */
+  pushFrame(
+    player: Player,
+    poseAt: number,
+    visible: boolean,
+    trail?: ReadonlyArray<{ poseAt: number; pose?: Partial<Player> }>,
+  ) {
+    if (trail)
+      for (const entry of [...trail].sort((a, b) => a.poseAt - b.poseAt))
+        if (entry.poseAt < poseAt)
+          this.push({ ...player, ...(entry.pose ?? {}) } as Player, entry.poseAt, !!entry.pose);
+    this.push(player, poseAt, visible);
+  }
   sample(at: number, out: Pose, elapsedMs?: number) {
     if (!this.count) return false;
     if (elapsedMs !== undefined) {

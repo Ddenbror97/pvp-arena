@@ -11,7 +11,7 @@ no grace window.
 | --- | --- | --- |
 | Edge routing | Players connect to the nearest Cloudflare PoP over WebSocket. Traffic then rides Cloudflare's backbone to the match Durable Object. | This is the same idea as Riot Direct: one private backbone instead of the public internet. Already in place. |
 | Server placement | One Durable Object per match, `locationHint: "enam"` (Virginia, about 10–12 ms from the Ohio database). | Correct for a US-based server. Cloudflare has no South American DO region: `sam` spawns in Eastern North America. So US East is also the latency midpoint for EU ↔ LatAm. |
-| Simulation | 30 Hz fixed step and 20 Hz snapshots. The client draws opponents 100 ms in the past. Server-side lag compensation rewinds up to 250 ms. | In line with industry practice for this tick rate (see the 2026-11-01 network audit). |
+| Simulation | 30 Hz fixed step and 20 Hz snapshots, each carrying the physics steps since the previous one. The client draws opponents 110 ms in the past. Lag compensation rewinds the shooter's view (≤ 280 ms) plus the server-measured command wait (≤ 200 ms). | Revised after review; see section 7. |
 | Command authority | Every movement and shot command waits for a database session check that **starts after the command arrived** (strict revocation). | **The largest server-side delay; see section 2.** |
 | Transport | WebSocket over TCP. | Durable Objects offer no UDP or WebTransport, so TCP head-of-line blocking on loss cannot be removed. No change. |
 
@@ -117,3 +117,80 @@ telemetry.
 - [Game Backend Deep Dive: VALORANT (Edgegap)](https://edgegap.com/blog/game-backend-deep-dive-valorant-riot-games)
 - [Cloudflare WebSockets with Workers and Durable Objects](https://websocket.org/guides/infrastructure/cloudflare/)
 - [Valve Source SDK lag compensation](https://github.com/ValveSoftware/source-sdk-2013/blob/master/src/game/server/player_lagcompensation.cpp)
+
+## 7. Review follow-up (two challenged conclusions)
+
+### 7.1 "The remaining backward frames are unavoidable at 20 Hz": wrong, now fixed
+
+The harness now classifies every backward frame by cause:
+
+- **reversal:** the authoritative path turned within one snapshot gap;
+- **correction:** the late-packet bridge or its correction was active;
+- **unexplained:** neither.
+
+Result: **all** remaining backward frames were *correction*. None were reversal, and none were
+unexplained. They weren't interpolation corner-cutting. The cause:
+
+- Snapshots carried only the latest physics step. With a 50 ms send deadline and 34 ms
+  physics, every other snapshot skipped a step.
+- The newest pose could also lag its send time by up to one step.
+- Playback therefore briefly passed the newest received pose. The bridge extrapolated a few
+  ms, overshot a reversal by up to 3.4 cm, and pulled back.
+
+Fix (no extra messages):
+
+- **Trail.** Each snapshot bundles the physics steps since the previous one: one opponent
+  pose (~70 B) on average. Each bundled step is redacted with the same sight-line rule
+  (`trailForPlayer`), so no hidden pose leaves the server.
+- **`REMOTE_DELAY_MS` 100 → 110.** That covers send interval + step lag (90 ms) + typical
+  jitter.
+
+| Counter-strafe, 10 ms jitter | Backward frames | Freeze frames | Max drawn error |
+| --- | --- | --- | --- |
+| 100 ms, no trail | 2 | 17 | 0.161 m |
+| **110 ms + trail** | **0** | **0** | **0.000–0.002 m** |
+
+- At 10 ms jitter, every scenario is now exact: corners, counter-strafing, jump/crouch, RTT
+  50–200, 30–240 FPS.
+- At 30 ms jitter, counter-strafing still shows 3–4 bridge pull-backs of at most 3.4 cm. These
+  are bounded and asserted.
+- The test fails on any *unexplained* or *reversal* backward frame.
+
+### 7.2 Hit registration at higher ping: a real bug, fixed
+
+The runtime passed `(now − arrival) + (minRTT + REMOTE_DELAY_MS)` as a single lookback,
+capped at 250 ms in total. That mixed two different quantities:
+
+- the server's own wait (session gate, queue, tick alignment), which the server measures
+  itself;
+- the shooter's view delay.
+
+With a 90–180 ms server wait, the cap cut the rewind short at 100 ms RTT and above.
+
+`tests/fps-hitreg-latency.test.ts` runs the real client pipeline, network, `ConnectionTiming`
+and `ShotHistory` at **50 / 100 / 150 / 180 ms RTT × 0 / 90 / 180 ms server wait**. It checks
+that:
+
+- aiming at the opponent as drawn hits (no unfair rejection);
+- aiming 0.6 m beside the drawn opponent misses (no unfair acceptance);
+- at 100 ms RTT and above, aiming at the server's *current* pose misses (no double
+  compensation).
+
+| Formula | Passed |
+| --- | --- |
+| Previous (one combined cap) | **15 / 33**: drawn targets missed (e.g. 150 ms RTT + 90 ms wait), and shots beside the target or at its current pose accepted |
+| Fixed | **33 / 33** |
+
+The fix in `ShotHistory.target(seat, now, viewLookbackMs, serverDelayMs)` bounds each part
+separately:
+
+- shooter view ≤ `MAX_REWIND_MS` = 280 ms;
+- server-measured wait ≤ `MAX_SERVER_DELAY_MS` = 200 ms.
+
+The shot's reference time is the server-recorded command arrival, not a client timestamp.
+Historical hitboxes interpolate between recorded physics steps (including crouch). History
+retention covers both bounds.
+
+**Deploy note:** `REMOTE_DELAY_MS` and the rewind bounds are shared by the client and the match
+Worker. Deploy both together, after rooms drain.
+

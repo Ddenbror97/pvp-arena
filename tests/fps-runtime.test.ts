@@ -350,12 +350,14 @@ describe("isolated real Durable Object WebSockets", () => {
       }, 34);
       await pause(400);
       const poses: Array<{ at: number; z: number }> = [];
+      const frames: Array<RuntimeFrame & { trail?: Array<{ poseAt: number }> }> = [];
       a.addEventListener("message", (event) => {
         const frame = JSON.parse(String(event.data)) as RuntimeFrame;
         if (frame.type === "snapshot") {
           expect(frame.poseAt).toBeLessThanOrEqual(frame.serverNow);
           expect(frame.serverNow - frame.poseAt).toBeLessThan(100);
           poses.push({ at: frame.serverNow, z: frame.state.players.A.z });
+          frames.push(frame as RuntimeFrame & { trail?: Array<{ poseAt: number }> });
         }
       });
       const first = await until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
@@ -368,6 +370,13 @@ describe("isolated real Durable Object WebSockets", () => {
       const moving = poses.slice(1).filter((pose, i) => pose.z < poses[i]!.z).length;
       expect(Math.max(...gaps)).toBeLessThan(110);
       expect(moving / gaps.length).toBeGreaterThan(0.85);
+      // Snapshots plus their trails deliver every physics step (no ~67 ms holes).
+      const timeline = [
+        ...new Set(frames.flatMap((f) => [...(f.trail ?? []).map((t) => t.poseAt), f.poseAt])),
+      ].sort((x, y) => x - y);
+      const stepGaps = timeline.slice(1).map((t, i) => t - timeline[i]!);
+      expect(frames.some((f) => (f.trail?.length ?? 0) > 0)).toBe(true);
+      expect(Math.max(...stepGaps)).toBeLessThan(60);
       console.log(
         JSON.stringify({
           event: "slow_auth_clock_test",
@@ -427,8 +436,9 @@ describe("isolated real Durable Object WebSockets", () => {
         const summary = { readMs, n: latency.length, p50: q(0.5), p95: q(0.95), p99: q(0.99) };
         console.log(JSON.stringify({ event: "strict_gate_latency", ...summary }));
         expect(latency.length).toBeGreaterThan(40);
-        // Read + at most one read spacing + clock/snapshot alignment (local, no network).
-        expect(summary.p95).toBeLessThan(readMs + 130);
+        // Read + read spacing + catch-up + clock/snapshot alignment (local, no network).
+        // The previous serial-read runtime measured 263 / 346 ms p95 here (72 / 150 ms reads).
+        expect(summary.p95).toBeLessThan(readMs + 160);
       } finally {
         clearInterval(timer);
         sessionReadDelayMs = 0;

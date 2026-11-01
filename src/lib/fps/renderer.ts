@@ -43,6 +43,8 @@ export type ArenaFrame = {
   visibility?: Record<Seat, boolean>;
   serverNow: number;
   poseAt?: number;
+  /** Opponent poses from physics steps since the previous snapshot (redacted when hidden). */
+  trail?: Array<{ poseAt: number; pose?: Partial<Player> }>;
   settled: boolean;
   settlementPending: boolean;
 };
@@ -1015,10 +1017,11 @@ export function mountArena(
         }
       lastRound = state.round;
       const other = state.players[seat === "B" ? "A" : "B"];
-      remoteMotion.push(
+      remoteMotion.pushFrame(
         other,
         frame.poseAt ?? frame.serverNow,
         visibility[seat === "B" ? "A" : "B"] !== false,
+        Array.isArray(frame.trail) ? frame.trail.slice(0, 6) : undefined,
       );
     },
     lock: () => capturePointer(renderer.domElement),

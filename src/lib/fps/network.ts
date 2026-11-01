@@ -1,14 +1,16 @@
 /** Shared presentation delay, included in the server's bounded shot lookback. */
-// The 20 Hz snapshot deadline is serviced by a 30 Hz simulation: gaps alternate between
-// ~34 and ~67 ms, and platform timer jitter stretches the long gap to ~80 ms. Buffer two
-// snapshot intervals (the cl_interp_ratio 2 rule). At 75 ms playback regularly ran past the
-// newest pose; the late-packet bridge then extrapolated through counter-strafe reversals,
-// overshot by up to 0.29 m and pulled back (tests/fps-remote-sync.test.ts). Shot rewind
+// Snapshots carry every physics step since the previous send (trail), so a pose for time t
+// arrives at most one 50 ms send interval (+ timer jitter) after t, and the newest pose can
+// lag its send time by up to one 34 ms physics step: 56 + 34 = 90 ms, plus network jitter.
+// 110 ms keeps playback inside received poses at ~10 ms jitter: zero extrapolation, zero
+// backward frames, drawn error 0.002 m in tests/fps-remote-sync.test.ts (75 ms without the
+// trail: overshoot and pull-back of up to 0.29 m at counter-strafe reversals). Shot rewind
 // shares this constant, so hit registration stays aligned with what is drawn.
-export const REMOTE_DELAY_MS = 100;
-/** Rewind cap: minimum RTT + REMOTE_DELAY_MS is fully compensated up to 150 ms RTT, and a
- * moving target still registers at 180 ms RTT (tests/fps-lag-compensation.test.ts). */
-export const MAX_REWIND_MS = 250;
+export const REMOTE_DELAY_MS = 110;
+/** Cap on the shooter's view lookback (minimum RTT + REMOTE_DELAY_MS): fully compensated up
+ * to 170 ms RTT; tests/fps-hitreg-latency.test.ts checks 50–180 ms RTT. The server-measured
+ * command wait is bounded separately (MAX_SERVER_DELAY_MS in lag-compensation.ts). */
+export const MAX_REWIND_MS = 280;
 /** Map monotonic local time to the least-delayed recent snapshot clock.
  * A burst of old packets after a frame stall must not add permanent playback lag. */
 export class SnapshotClock {

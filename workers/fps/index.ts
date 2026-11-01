@@ -15,7 +15,12 @@ import {
 import type { Input, MatchState, Seat } from "../../src/lib/fps/protocol";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { maintainMatches } from "./maintenance";
-import { snapshotForPlayer } from "../../src/lib/fps/visibility";
+import {
+  snapshotForPlayer,
+  trailForPlayer,
+  trailStep,
+  type TrailStep,
+} from "../../src/lib/fps/visibility";
 import { liveSessions, sessionKey, type SessionIdentity } from "./session-auth";
 import { continentOf, LatencyTelemetry } from "./latency";
 
@@ -153,6 +158,9 @@ export class DuelRoom {
   private latency = new LatencyTelemetry();
   /** Per-seat command time budget for bounded catch-up (one credit per tick). */
   private commandCredit: Record<Seat, number> = { A: 1, B: 1 };
+  /** Recent physics steps' public poses, bundled into snapshots as a redacted trail. */
+  private steps: TrailStep[] = [];
+  private lastTrailAt = -Infinity;
   private absent: Record<Seat, number | null> = { A: null, B: null };
   private history: Array<{ at: number; snapshot: string }> = [];
   private lastSnapshot = 0;
@@ -725,13 +733,20 @@ export class DuelRoom {
           const timing = identity && this.timings.get(identity.connectionId);
           if (!timing?.calibrated) continue;
           // Arrival time is server-owned; queued work cannot invent an earlier shot.
-          const lookback = Math.max(0, now - (receivedAt[shooter]! - timing.lookbackMs));
-          targets[shooter] = this.shotHistory.target(shooter === "A" ? "B" : "A", now, lookback);
+          // Shooter's view lookback (bounded) plus the server-measured wait since arrival.
+          targets[shooter] = this.shotHistory.target(
+            shooter === "A" ? "B" : "A",
+            now,
+            timing.lookbackMs,
+            now - receivedAt[shooter]!,
+          );
         }
         stepMatch(saved.state, fresh, stepAt, TICK_MS, targets);
         if (!saved.result && saved.state.tick !== previousTick) {
           this.events.push(...saved.state.events.map((e) => ({ ...e, id: ++this.eventId })));
           this.shotHistory.record(saved.state, stepAt);
+          this.steps.push(trailStep(saved.state, stepAt));
+          if (this.steps.length > 6) this.steps.shift();
         }
       }
       if (["completed", "cancelled"].includes(saved.state.phase) && !saved.result) {
@@ -773,10 +788,14 @@ export class DuelRoom {
         for (const socket of this.ctx.getWebSockets()) {
           const info = socket.deserializeAttachment() as SocketInfo;
           if (info.role === "player" && info.seat) {
-            playerSnapshots[info.seat] ??= JSON.stringify(snapshotForPlayer(current, info.seat));
+            playerSnapshots[info.seat] ??= JSON.stringify({
+              ...snapshotForPlayer(current, info.seat),
+              trail: trailForPlayer(this.steps, info.seat, this.lastTrailAt, current.poseAt),
+            });
             this.send(socket, playerSnapshots[info.seat]);
           } else if (delayed) this.send(socket, delayed.snapshot);
         }
+        this.lastTrailAt = current.poseAt;
       }
       if (now - this.networkAt >= 1000) {
         if (this.networkAt)
