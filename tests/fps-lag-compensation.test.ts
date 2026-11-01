@@ -9,7 +9,8 @@ import {
 } from "../src/lib/fps/simulation";
 import type { Input } from "../src/lib/fps/protocol";
 import { RemotePresentation } from "../src/lib/fps/presentation";
-import { REMOTE_DELAY_MS } from "../src/lib/fps/network";
+import { REMOTE_DELAY_MS, SnapshotClock } from "../src/lib/fps/network";
+import { playerVolumes } from "../src/lib/fps/player-volumes";
 const command = (seq: number, extra: Partial<Input> = {}): Input => ({
   v: 1,
   type: "input",
@@ -44,18 +45,32 @@ function movingTarget() {
   return { s, h, now };
 }
 describe("bounded authoritative shot rewind", () => {
+  it("keeps rewound head height aligned with the rendered crouch transition", () => {
+    const s = createMatch({ A: "a", B: "b" }, 5, 0),
+      h = new ShotHistory();
+    s.phase = "live";
+    s.players.B.crouched = false;
+    h.record(s, 100);
+    s.players.B.crouched = true;
+    h.record(s, 134);
+    const pose = h.target("B", 167, 50)!;
+    expect(pose.stance).toBeCloseTo(0.5);
+    expect(playerVolumes(pose).head.center.y).toBeCloseTo(1.275);
+  });
   it.each([30, 100, 180])(
     "accounts for snapshot travel AND return input travel at %i ms RTT",
     (rtt) => {
       const s = createMatch({ A: "a", B: "b" }, 5, 0),
         history = new ShotHistory(),
-        view = new RemotePresentation();
+        view = new RemotePresentation(),
+        clock = new SnapshotClock();
       startMatch(s, 0);
       stepMatch(s, {}, 3000, TICK_MS);
       Object.assign(s.players.A, { x: 9, z: 3, y: 0 });
       Object.assign(s.players.B, { x: 7.5, z: -3, y: 0 });
       s.server!.spreadSeed = 12345;
-      const packets: Array<{ at: number; pose: typeof s.players.B; sent: number }> = [];
+      const packets: Array<{ at: number; pose: typeof s.players.B; sent: number; poseAt: number }> =
+        [];
       const eye = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
       let shot: Input | undefined,
         seq = 0,
@@ -66,10 +81,11 @@ describe("bounded authoritative shot rewind", () => {
       for (let now = 3001; now <= executeAt; now++) {
         while (packets[0] && packets[0].at <= now) {
           const packet = packets.shift()!;
-          view.push(packet.pose, packet.sent);
+          clock.observe(packet.sent, now);
+          view.push(packet.pose, packet.poseAt);
         }
         if (now === clientFireAt) {
-          expect(view.sample(now - rtt / 2 - REMOTE_DELAY_MS, eye)).toBe(true);
+          expect(view.sample(clock.now(now) - REMOTE_DELAY_MS, eye)).toBe(true);
           const dx = eye.x - s.players.A.x,
             dz = eye.z - s.players.A.z;
           shot = command(1, {
@@ -93,10 +109,15 @@ describe("bounded authoritative shot rewind", () => {
               ? history.target("B", now, now - (arrival - Math.min(200, rtt + 50)))
               : undefined;
           stepMatch(s, inputs, now, TICK_MS, past ? { A: past } : undefined);
+          history.record(s, now);
         }
         if ((now - 3000) % 50 === 0) {
-          history.record(s, now);
-          packets.push({ at: now + rtt / 2, pose: { ...s.players.B }, sent: now });
+          packets.push({
+            at: now + rtt / 2,
+            pose: { ...s.players.B },
+            sent: now,
+            poseAt: s.server!.lastStepAt,
+          });
         }
       }
       expect(s.players.B.hp).toBeLessThan(100);
@@ -151,7 +172,7 @@ describe("bounded authoritative shot rewind", () => {
     expect(s.events.some((e) => e.type === "impact")).toBe(true);
   });
   it("does not accept client claims of time, ping or historical hitboxes", () => {
-    for (const key of ["shotAt", "rewindMs", "ping", "historicalTargets"])
+    for (const key of ["shotAt", "rewindMs", "ping", "historicalTargets", "stance", "poseAt"])
       expect(validateInput({ ...command(1), [key]: 150 })).toBeNull();
   });
 });

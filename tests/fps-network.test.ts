@@ -4,9 +4,22 @@ import {
   NetworkObservations,
   readNetworkReport,
   REMOTE_DELAY_MS,
+  SnapshotClock,
 } from "../src/lib/fps/network";
 
 describe("measured game connection timing", () => {
+  it("does not drag playback backward when old packets arrive in a burst", () => {
+    const clock = new SnapshotClock();
+    clock.observe(1000, 100);
+    clock.observe(1050, 550);
+    clock.observe(1100, 551);
+    expect(clock.now(600)).toBe(1500);
+    clock.observe(1510, 610);
+    expect(clock.now(620)).toBe(1520);
+    clock.clear();
+    clock.observe(1800, 1000);
+    expect(clock.now(1010)).toBe(1810);
+  });
   it("accepts only a current single-use server challenge", () => {
     const t = new ConnectionTiming(),
       p = t.challenge(1000)!;

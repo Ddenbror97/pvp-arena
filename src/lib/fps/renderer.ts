@@ -23,7 +23,7 @@ import { TriggerFeedback } from "./trigger-feedback";
 import { createViewHands } from "./view-hands";
 import { createMuzzleFlash } from "./muzzle-flash";
 import { createAuthoredViewmodel } from "./authored-viewmodel";
-import { REMOTE_DELAY_MS } from "./network";
+import { REMOTE_DELAY_MS, SnapshotClock } from "./network";
 import { createViewmodelMotion } from "./viewmodel-motion";
 import { deathPose, deathSupport } from "./death-presentation";
 
@@ -41,6 +41,7 @@ export type ArenaFrame = {
   state: MatchState;
   visibility?: Record<Seat, boolean>;
   serverNow: number;
+  poseAt?: number;
   settled: boolean;
   settlementPending: boolean;
 };
@@ -56,6 +57,9 @@ export type ArenaControls = {
     programs: number;
     pixelRatio: number;
     opponentVisible: boolean;
+    opponentPoseAt: number;
+    opponentStance: number;
+    opponentPlaybackErrorMs: number;
     opponentPosition: number[] | null;
     renderFrames: number;
     renderIntervalMs: number;
@@ -389,7 +393,8 @@ export function mountArena(
   const jumpPresentation = new JumpPresentation();
   const triggerFeedback = new TriggerFeedback();
   const remoteMotion = new RemotePresentation();
-  const remotePose = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
+  const remoteClock = new SnapshotClock();
+  const remotePose = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0, crouch: 0 };
   let renderPose: Player | null = null;
   const previewInput: Input = {
     v: 1,
@@ -521,6 +526,7 @@ export function mountArena(
     viewProjection = new THREE.Matrix4(),
     opponentBounds = new THREE.Sphere(new THREE.Vector3(), 1.65),
     actorMotion = {
+      stance: 0,
       airborne: false,
       weapon: "rifle" as Weapon,
       reloading: false,
@@ -687,7 +693,9 @@ export function mountArena(
         opponentDeathAt === null ? null : deathPose(now - opponentDeathAt, deathFeetY, deathFloorY);
       const visible = visibility[otherSeat] !== false;
       if (visible) {
-        if (remoteMotion.sample(Date.now() + lastServerOffset - REMOTE_DELAY_MS, remotePose, dt)) {
+        if (
+          remoteMotion.sample(remoteClock.now(now) - REMOTE_DELAY_MS, remotePose, renderIntervalMs)
+        ) {
           actor.root.position.set(remotePose.x, remotePose.y, remotePose.z);
           actor.root.rotation.y = remotePose.yaw;
         } else actor.root.position.copy(remoteTarget);
@@ -707,7 +715,8 @@ export function mountArena(
         actorElapsed += dt;
         const inView = opponentFrustum.intersectsSphere(opponentBounds);
         if (inView) {
-          actorMotion.airborne = other.y > 0.01;
+          actorMotion.stance = remotePose.crouch;
+          actorMotion.airborne = remotePose.y > 0.01;
           actorMotion.weapon = other.weapon;
           actorMotion.reloading = other.reloadUntil > Date.now() + lastServerOffset;
           actorMotion.death = collapse?.progress;
@@ -857,6 +866,9 @@ export function mountArena(
       programs: renderer.info.programs?.length ?? 0,
       pixelRatio: renderer.getPixelRatio(),
       opponentVisible: characters[seat === "B" ? "A" : "B"].root.visible,
+      opponentPoseAt: remotePose.at,
+      opponentStance: remotePose.crouch,
+      opponentPlaybackErrorMs: remoteClock.now(performance.now()) - REMOTE_DELAY_MS - remotePose.at,
       opponentPosition: characters[seat === "B" ? "A" : "B"].root.visible
         ? characters[seat === "B" ? "A" : "B"].root.position.toArray()
         : null,
@@ -875,6 +887,8 @@ export function mountArena(
       }
     },
     snapshot(frame, assignedSeat) {
+      if (authorizationSuspended) remoteClock.clear();
+      remoteClock.observe(frame.serverNow, performance.now());
       const resetPresentation =
         authorizationSuspended ||
         seat !== assignedSeat ||
@@ -977,7 +991,7 @@ export function mountArena(
       const other = state.players[seat === "B" ? "A" : "B"];
       remoteTarget.set(other.x, other.y, other.z);
       if (visibility[seat === "B" ? "A" : "B"] === false) remoteMotion.clear();
-      else remoteMotion.push(other, frame.serverNow);
+      else remoteMotion.push(other, frame.poseAt ?? frame.serverNow);
     },
     lock: () => capturePointer(renderer.domElement),
     dispose() {
