@@ -1,6 +1,6 @@
 import type { MatchState, Player, Seat } from "../../src/lib/fps/protocol";
 import { MAX_REWIND_MS } from "../../src/lib/fps/network";
-export type CombatPose = Pick<Player, "x" | "y" | "z" | "crouched">;
+export type CombatPose = Pick<Player, "x" | "y" | "z" | "crouched"> & { stance?: number };
 type Frame = { at: number; players: Record<Seat, CombatPose> };
 /** Private authoritative history; never serialised to a player or supplied by one. */
 export class ShotHistory {
@@ -35,6 +35,7 @@ export class ShotHistory {
       y: p.y + (q.y - p.y) * t,
       z: p.z + (q.z - p.z) * t,
       crouched: t < 1 ? p.crouched : q.crouched,
+      stance: (p.crouched ? 1 : 0) * (1 - t) + (q.crouched ? 1 : 0) * t,
     };
   }
 }

@@ -202,8 +202,17 @@ export const STRUCTURES: Solid[] = [
   ]),
 ];
 export const WORLD_SOLIDS: readonly Solid[] = [...BOXES, ...WALLS, ...STRUCTURES, FLOOR];
-export const eyeHeight = (player: { crouched?: boolean }) =>
-  player.crouched ? CROUCH_EYE_HEIGHT : EYE_HEIGHT;
+/** Fraction exists only on server-owned rewind poses, never client input. */
+export const stanceAmount = (player: { crouched?: boolean; stance?: number }) =>
+  Number.isFinite(player.stance)
+    ? Math.max(0, Math.min(1, player.stance!))
+    : player.crouched
+      ? 1
+      : 0;
+export const eyeHeight = (player: { crouched?: boolean; stance?: number }) => {
+  const stance = stanceAmount(player);
+  return EYE_HEIGHT * (1 - stance) + CROUCH_EYE_HEIGHT * stance;
+};
 export const SPAWNS = {
   A: { x: 0, z: 13, yaw: 0 },
   B: { x: 0, z: -13, yaw: Math.PI },

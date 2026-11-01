@@ -128,7 +128,7 @@ export class CameraCorrection {
   }
 }
 
-type Pose = Pick<Player, "x" | "y" | "z" | "yaw" | "pitch"> & { at: number };
+type Pose = Pick<Player, "x" | "y" | "z" | "yaw" | "pitch"> & { at: number; crouch?: number };
 /** Visible opponent playback, with a bounded horizontal bridge for late packets. */
 export class RemotePresentation {
   private readonly poses: Pose[] = Array.from({ length: 8 }, () => ({
@@ -167,6 +167,7 @@ export class RemotePresentation {
     pose.z = player.z;
     pose.yaw = player.yaw;
     pose.pitch = player.pitch;
+    pose.crouch = player.crouched ? 1 : 0;
     pose.at = at;
     if (this.count < 8) this.count++;
     else this.start = (this.start + 1) % 8;
@@ -185,7 +186,9 @@ export class RemotePresentation {
   sample(at: number, out: Pose, elapsedMs?: number) {
     if (!this.count) return false;
     if (elapsedMs !== undefined) {
-      const elapsed = Math.max(0, Math.min(100, elapsedMs));
+      // Playback is a clock, not a physics integration step. Capping a 400 ms
+      // render stall to 100 ms leaves opponents 300 ms behind for many seconds.
+      const elapsed = Math.max(0, Math.min(1000, elapsedMs));
       if (this.playbackAt !== null && Math.abs(at - this.playbackAt) < 1000) {
         const next = this.playbackAt + elapsed;
         // Network clock estimates change when packets arrive. Repay that phase
@@ -208,6 +211,7 @@ export class RemotePresentation {
     out.z = a.z + (b.z - a.z) * t;
     out.yaw = a.yaw + Math.atan2(Math.sin(b.yaw - a.yaw), Math.cos(b.yaw - a.yaw)) * t;
     out.pitch = a.pitch + (b.pitch - a.pitch) * t;
+    out.crouch = (a.crouch ?? 0) + ((b.crouch ?? 0) - (a.crouch ?? 0)) * t;
     out.at = at;
     if (elapsedMs !== undefined) {
       const newest = this.poses[(this.start + this.count - 1) % 8]!;

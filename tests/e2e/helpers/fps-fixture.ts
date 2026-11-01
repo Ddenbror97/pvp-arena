@@ -61,6 +61,23 @@ export async function fixture(
       host.addEventListener("click", () => void controls.lock());
       state.server.lastStepAt = Date.now();
       state.phaseEndsAt = Date.now() + 60000;
+      const deliver = (frame: Parameters<typeof controls.snapshot>[0]) => {
+        const now = Date.now();
+        if (!snapshotDelay) {
+          controls.snapshot(frame, seat);
+          return;
+        }
+        const due = Math.max(
+          lastDeliveryAt + 1,
+          now + snapshotDelay + (Math.floor(now / 600) % 2) * 35,
+        );
+        lastDeliveryAt = due;
+        const delivery = setTimeout(() => {
+          deliveries.delete(delivery);
+          controls.snapshot(frame, seat);
+        }, due - now);
+        deliveries.add(delivery);
+      };
       const send = () => {
         const now = Date.now(),
           events: object[] = [];
@@ -93,33 +110,18 @@ export async function fixture(
         const frame = {
           state: structuredClone(state),
           serverNow: Date.now(),
+          poseAt: state.server.lastStepAt,
           settled: false,
           settlementPending: false,
         };
-        if (snapshotDelay) {
-          // Ordered variable-delay delivery models a jittery WebSocket; authority
-          // and physics still advance independently of rendering and delivery.
-          const due = Math.max(
-            lastDeliveryAt + 1,
-            now + snapshotDelay + (Math.floor(now / 600) % 2) * 35,
-          );
-          lastDeliveryAt = due;
-          const delivery = setTimeout(() => {
-            deliveries.delete(delivery);
-            controls.snapshot(frame, seat);
-          }, due - now);
-          deliveries.add(delivery);
-        } else controls.snapshot(frame, seat);
+        deliver(frame);
       };
-      controls.snapshot(
-        {
-          state: structuredClone(state),
-          serverNow: Date.now(),
-          settled: false,
-          settlementPending: false,
-        },
-        seat,
-      );
+      deliver({
+        state: structuredClone(state),
+        serverNow: Date.now(),
+        settled: false,
+        settlementPending: false,
+      });
       const timer = setInterval(send, 34);
       Object.assign(window, {
         fpsPolishTest: {
@@ -129,15 +131,17 @@ export async function fixture(
           eventLog,
           resetView: () => {
             queue.length = 0;
-            controls.snapshot(
-              {
-                state: structuredClone(state),
-                serverNow: Date.now(),
-                settled: false,
-                settlementPending: false,
-              },
-              seat,
-            );
+            // A test reset replaces the room timeline. Never deliver an old
+            // delayed frame after this synchronous reset (a WebSocket cannot).
+            for (const timer of deliveries) clearTimeout(timer);
+            deliveries.clear();
+            lastDeliveryAt = 0;
+            deliver({
+              state: structuredClone(state),
+              serverNow: Date.now(),
+              settled: false,
+              settlementPending: false,
+            });
           },
           controls,
           seat,

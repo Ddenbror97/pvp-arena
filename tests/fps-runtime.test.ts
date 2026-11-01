@@ -14,6 +14,7 @@ const sockets: Socket[] = [];
 type RuntimeFrame = {
   type: string;
   serverNow: number;
+  poseAt: number;
   visibility?: Record<"A" | "B", boolean>;
   state: MatchState;
   settled: boolean;
@@ -315,18 +316,29 @@ describe("isolated real Durable Object WebSockets", () => {
     let timer: ReturnType<typeof setInterval> | undefined;
     try {
       await readyLive(a, b);
-      let seq = 0;
+      let seq = 0,
+        lastInputAt = Date.now();
       timer = setInterval(() => {
-        a.send(
-          JSON.stringify({ ...JSON.parse(movement(++seq)), forward: 0, strafe: 1, fire: false }),
-        );
+        const now = Date.now();
+        // Match the browser's fixed input accumulator, including bounded catch-up.
+        // One command per timer callback silently slows this test's producer
+        // under host CPU contention, unlike the production renderer.
+        for (let step = 0; step < 3 && now - lastInputAt >= 34; step++) {
+          lastInputAt = Math.max(lastInputAt + 34, now - 68);
+          a.send(
+            JSON.stringify({ ...JSON.parse(movement(++seq)), forward: 0, strafe: 1, fire: false }),
+          );
+        }
       }, 34);
       await pause(400);
       const poses: Array<{ at: number; x: number }> = [];
       a.addEventListener("message", (event) => {
         const frame = JSON.parse(String(event.data)) as RuntimeFrame;
-        if (frame.type === "snapshot")
+        if (frame.type === "snapshot") {
+          expect(frame.poseAt).toBeLessThanOrEqual(frame.serverNow);
+          expect(frame.serverNow - frame.poseAt).toBeLessThan(100);
           poses.push({ at: frame.serverNow, x: frame.state.players.A.x });
+        }
       });
       const first = await until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
       const started = Date.now();

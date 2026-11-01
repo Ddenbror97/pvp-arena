@@ -4,6 +4,34 @@
 // does not exhaust its next pose every other packet. Shot rewind shares this.
 export const REMOTE_DELAY_MS = 75;
 export const MAX_REWIND_MS = 200;
+/** Map monotonic local time to the least-delayed recent snapshot clock.
+ * A burst of old packets after a frame stall must not add permanent playback lag. */
+export class SnapshotClock {
+  private readonly samples = Array.from({ length: 160 }, () => ({
+    at: -Infinity,
+    offset: -Infinity,
+  }));
+  private next = 0;
+  private offset = 0;
+  observe(serverNow: number, receivedAt: number) {
+    if (!Number.isFinite(serverNow) || !Number.isFinite(receivedAt)) return;
+    const sample = this.samples[this.next]!;
+    sample.at = receivedAt;
+    sample.offset = serverNow - receivedAt;
+    this.next = (this.next + 1) % this.samples.length;
+  }
+  now(localNow: number) {
+    let offset = -Infinity;
+    for (const sample of this.samples)
+      if (localNow - sample.at <= 5000) offset = Math.max(offset, sample.offset);
+    if (Number.isFinite(offset)) this.offset = offset;
+    return localNow + this.offset;
+  }
+  clear() {
+    for (const sample of this.samples) sample.at = sample.offset = -Infinity;
+    this.next = this.offset = 0;
+  }
+}
 export type NetworkReport = {
   rttMs: number;
   rttP95Ms: number;

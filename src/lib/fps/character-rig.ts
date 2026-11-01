@@ -3,9 +3,9 @@ import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import type { Seat, Weapon } from "./protocol";
 import type { WeaponKit } from "./weapon";
 import { createMuzzleFlash } from "./muzzle-flash";
-import { playerVolumes } from "./player-volumes";
+import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 
-type Motion = { airborne?: boolean; weapon?: Weapon; reloading?: boolean };
+type Motion = { airborne?: boolean; weapon?: Weapon; reloading?: boolean; stance?: number };
 
 /** Articulated cosmetic rig. The server shares head/body envelopes, never client mesh hits. */
 export function createCharacter(seat: Seat, _branding: THREE.Material, weaponKit: WeaponKit) {
@@ -183,7 +183,7 @@ export function createCharacter(seat: Seat, _branding: THREE.Material, weaponKit
   }
   const head = new THREE.Group();
   head.name = "combat-head";
-  head.position.y = playerVolumes({ x: 0, y: 0, z: 0 }).head.center.y;
+  head.position.y = EYE_HEIGHT;
   upper.add(head);
   oval(head, 0, 0, 0, 0.142, 0.184, 0.137, skin);
   oval(head, 0, -0.08, -0.029, 0.12, 0.097, 0.106, skin);
@@ -502,7 +502,8 @@ export function createCharacter(seat: Seat, _branding: THREE.Material, weaponKit
       }
       gait += distance * 9;
       const stride = Math.min(1, speed / 3);
-      upper.position.y = playerVolumes({ x: 0, y: 0, z: 0, crouched }).head.center.y - 1.6;
+      const stance = motion.stance ?? (crouched ? 1 : 0);
+      upper.position.y = THREE.MathUtils.lerp(EYE_HEIGHT, CROUCH_EYE_HEIGHT, stance) - 1.6;
       head.rotation.x = pitch * 0.25;
       reloadBlend = THREE.MathUtils.damp(reloadBlend, motion.reloading ? 1 : 0, 10, seconds);
       weaponPivot.rotation.set(
@@ -518,14 +519,14 @@ export function createCharacter(seat: Seat, _branding: THREE.Material, weaponKit
         const side = i === 0 ? -1 : 1,
           phase = gait + i * Math.PI,
           leg = legs[i]!,
-          swing = Math.sin(phase) * 0.16 * stride * (crouched ? 0.55 : 1),
+          swing = Math.sin(phase) * 0.16 * stride * (1 - stance * 0.45),
           lift = Math.max(0, Math.cos(phase)) * 0.075 * stride;
         leg.foot.position.set(
           side * 0.125 + swing * travelX * 0.65,
           lift + (motion.airborne ? 0.08 : 0),
           swing * travelZ,
         );
-        a.set(side * 0.125, crouched ? 0.39 : 0.84, 0);
+        a.set(side * 0.125, 0.84 - stance * 0.45, 0);
         b.copy(leg.foot.position);
         b.y += 0.11;
         pole.set(0, 0, -1);

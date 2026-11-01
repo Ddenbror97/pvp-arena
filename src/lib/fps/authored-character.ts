@@ -10,6 +10,7 @@ import { createMuzzleFlash } from "./muzzle-flash";
 import { ARENA_MODELS } from "./model-assets";
 
 type Motion = {
+  stance?: number;
   airborne?: boolean;
   weapon?: Weapon;
   reloading?: boolean;
@@ -498,7 +499,9 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       motion: Motion = {},
     ) {
       root.visible = alive || motion.death !== undefined;
-      anchor.position.y = crouched ? CROUCH_EYE_HEIGHT : EYE_HEIGHT;
+      const stance = motion.stance ?? (crouched ? 1 : 0);
+      const crouchOffset = stance * 0.65;
+      anchor.position.y = THREE.MathUtils.lerp(EYE_HEIGHT, CROUCH_EYE_HEIGHT, stance);
       if (!loaded) {
         fallback.update(dt, now, pitch, root.visible, crouched, motion);
         return;
@@ -527,7 +530,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           seconds,
         );
       }
-      gait += (distance * Math.PI) / (crouched ? 1.25 : speed > 6 ? 1.9 : 1.6);
+      gait += (distance * Math.PI) / ((speed > 6 ? 1.9 : 1.6) * (1 - stance) + 1.25 * stance);
       const stride = Math.min(1, speed / 3);
       for (let i = 0; i < rest.length; i++) {
         const pose = rest[i]!;
@@ -536,7 +539,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       }
       // Let the hips settle into the stride. At full extension the previous
       // pelvis height exceeded the leg's IK reach and lifted the planted foot.
-      body.position.y = baseY + (crouched ? -0.65 : 0) - stride * 0.04;
+      body.position.y = baseY - crouchOffset - stride * 0.04;
       root.updateWorldMatrix(true, true);
       for (const side of sides) {
         const sign = side === "Left" ? -1 : 1,
@@ -565,7 +568,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
         foot.updateWorldMatrix(false, true);
       }
       const recoil = Math.max(0, (flashUntil - now) / 42) * 0.025;
-      weaponPivot.position.y = 1.25 + (crouched ? -0.65 : 0);
+      weaponPivot.position.y = 1.25 - crouchOffset;
       weaponPivot.rotation.x = pitch + recoil;
       weaponPivot.rotation.z = motion.reloading ? -0.25 : 0;
       weapon.update(motion.weapon !== "pistol", motion.reloading ? 0.4 : 0, recoil);
@@ -577,7 +580,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           root.localToWorld(
             target.set(
               side === "Right" ? 0.07 : -0.24,
-              side === "Right" ? 1.18 + (crouched ? -0.65 : 0) : 0.95 + (crouched ? -0.5 : 0),
+              side === "Right" ? 1.18 - crouchOffset : 0.95 - stance * 0.5,
               -0.12,
             ),
           );
@@ -608,7 +611,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       root.worldToLocal(headCenter);
       accessories.position.copy(headCenter);
       accessories.rotation.x = pitch * 0.2;
-      if (badge) badge.position.set(0, 1.25 + (crouched ? -0.65 : 0), -0.205);
+      if (badge) badge.position.set(0, 1.25 - crouchOffset, -0.205);
       const tip = weapon.muzzle();
       flash.update(
         alive ? flashUntil - now : 0,

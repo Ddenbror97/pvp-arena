@@ -5,6 +5,69 @@ import type { Input } from "../src/lib/fps/protocol";
 import { REMOTE_DELAY_MS } from "../src/lib/fps/network";
 const player = () => createMatch({ A: "a", B: "b" }, 5, 1).players.A;
 describe("render presentation independent of server physics", () => {
+  it("does not retain artificial playback delay after a long rendering stall", () => {
+    const remote = new RemotePresentation(),
+      p = player();
+    const out = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
+    for (let at = 0; at <= 500; at += 100) remote.push({ ...p, x: 9, z: 13 - at * 0.002 }, at);
+    remote.sample(100, out, 16);
+    remote.sample(500, out, 400);
+    expect(out.at).toBe(500);
+    expect(out.z).toBeCloseTo(12);
+    remote.sample(516, out, 16);
+    expect(out.at).toBe(516);
+  });
+  it.each([60, 144])(
+    "keeps walking speed stable on the physics timeline despite irregular send times at %i Hz",
+    (hz) => {
+      const trace = (physicsTime: boolean) => {
+        const remote = new RemotePresentation(),
+          p = player();
+        const out = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
+        const packets = Array.from({ length: 90 }, (_, i) => {
+          const poseAt = i * 34;
+          const sent = poseAt + [0, 22, 8, 29, 3][i % 5]!;
+          return { poseAt, sent, received: sent + 35 };
+        });
+        let next = 0,
+          previous = 13;
+        const speeds: number[] = [];
+        for (let now = 0; now < 2900; now += 1000 / hz) {
+          while (packets[next] && packets[next]!.received <= now) {
+            const packet = packets[next++]!;
+            remote.push(
+              { ...p, x: 9, z: 13 - packet.poseAt * 0.002 },
+              physicsTime ? packet.poseAt : packet.sent,
+            );
+          }
+          remote.sample(now - 35 - REMOTE_DELAY_MS, out, 1000 / hz);
+          if (now > 300) speeds.push((previous - out.z) * hz);
+          previous = out.z;
+        }
+        return Math.max(...speeds) - Math.min(...speeds);
+      };
+      const previousRange = trace(false),
+        correctedRange = trace(true);
+      expect(previousRange).toBeGreaterThan(1);
+      expect(correctedRange).toBeLessThan(0.01);
+      console.log(
+        JSON.stringify({
+          hz,
+          sendClockSpeedRange: previousRange,
+          physicsClockSpeedRange: correctedRange,
+        }),
+      );
+    },
+  );
+  it("samples crouch on the same timeline as feet and head rotation", () => {
+    const remote = new RemotePresentation(),
+      p = player();
+    const out = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0, crouch: 0 };
+    remote.push({ ...p, x: 9, crouched: false }, 100);
+    remote.push({ ...p, x: 9, crouched: true }, 134);
+    remote.sample(117, out);
+    expect(out.crouch).toBeCloseTo(0.5);
+  });
   it.each([60, 144])(
     "does not freeze walking playback during 100 ms snapshot gaps at %i Hz",
     (hz) => {

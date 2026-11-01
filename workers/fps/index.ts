@@ -503,10 +503,12 @@ export class DuelRoom {
   private snapshot() {
     if (!this.saved) return null;
     const { server: _private, events: _events, ...state } = this.saved.state;
+    const now = Date.now();
     return {
       v: 1,
       type: "snapshot",
-      serverNow: Date.now(),
+      serverNow: now,
+      poseAt: _private?.lastStepAt ?? now,
       state: { ...state, events: this.events },
       settled: this.saved.settled,
       settlementPending: !!this.saved.result && !this.saved.settled,
@@ -649,8 +651,10 @@ export class DuelRoom {
           targets[shooter] = this.shotHistory.target(shooter === "A" ? "B" : "A", now, lookback);
         }
         stepMatch(saved.state, fresh, stepAt, TICK_MS, targets);
-        if (!saved.result && saved.state.tick !== previousTick)
+        if (!saved.result && saved.state.tick !== previousTick) {
           this.events.push(...saved.state.events.map((e) => ({ ...e, id: ++this.eventId })));
+          this.shotHistory.record(saved.state, stepAt);
+        }
       }
       if (["completed", "cancelled"].includes(saved.state.phase) && !saved.result) {
         const winner =
@@ -678,9 +682,8 @@ export class DuelRoom {
         if (now - this.lastSnapshot >= 50)
           this.lastSnapshot = this.lastSnapshot ? Math.max(this.lastSnapshot + 50, now - 50) : now;
         const current = this.snapshot()!;
-        // Match the poses and timestamps actually sent to renderers; a pre-step
-        // physics pose must not be labelled with the subsequent step's time.
-        this.shotHistory.record(saved.state, current.serverNow);
+        // poseAt follows the physics clock; serverNow follows the send clock.
+        // Both renderer playback and rewind use the same physics timeline.
         current.state.events = this.events;
         const playerSnapshots: Partial<Record<Seat, string>> = {};
         this.events = [];
