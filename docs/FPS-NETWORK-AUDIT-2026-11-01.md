@@ -112,3 +112,119 @@ snapshot rate.
   at 180 ms RTT, the same as the previously tested coverage.
 - **Deploy the frontend and the match Worker together**, after rooms drain. A mismatched
   pair would rewind 25 ms off for one side.
+
+## C. Performance measurements
+
+These were measured with `fps-map-baseline`, comparing `fps-cleanup` (before) with this branch
+(after), on the same machine and in the same session.
+
+| Metric | Before | After |
+| --- | --- | --- |
+| Draw calls | 94 | 94 |
+| Triangles | 186,419 | 186,419 |
+| Shader programs | 63 | 63 |
+| Per-frame CPU, p50 (idle / run-turn / look-360) | 5.9 / 3.6 / 4.7 ms | 4.5 / 2.8 / 4.8 ms |
+| Per-frame CPU, p95 | 20.3 / 16.3 / 11.1 ms | 9.0 / 14.0 / 13.7 ms |
+| Lifecycle (4 remounts): textures / geometries / programs after dispose | 32 / 59 / 62 | 32 / 59 / 62 |
+| JS heap across remounts | 86–99 MB | 83–100 MB |
+| Match Worker bundle | — | 74.2 KiB (19.4 KiB gzip) |
+
+- The render workload is identical. The sync changes are O(1) per frame and add no allocations.
+- CPU differences are within run-to-run noise.
+- This environment renders with SwiftShader, a CPU rasteriser, at 3–8 s per frame. Its
+  wall-clock frame times, FPS and 1% lows say nothing about a player's GPU, so they are not
+  reported as FPS.
+- **Real GPU frame pacing, 120/144 Hz, and Chrome/Firefox/Edge on Windows were not measured
+  here.**
+- The arena's earlier GPU baselines in `docs/fps-map/` stand, and the render workload has not
+  changed since.
+
+Network:
+
+- Snapshot payload: 954 B; 20 Hz send rate; about 19 KB/s per player.
+- Message rate is unchanged.
+- The interpolation delay is 100 ms, up from 75.
+
+## D. Regression results
+
+### Passed
+
+- Unit and integration: 895 tests in 98 files. This includes the new sync harness (44 cases)
+  and the real Durable Object runtime tests.
+- The one failing file, `architecture-opt`, is a pre-existing missing generated guide
+  catalogue that also fails on `main`.
+- TypeScript is clean (apart from that missing catalogue), as is `--noUnusedLocals` on the FPS
+  code.
+- ESLint passes on all changed files.
+- `npm run build` succeeds, and so does `wrangler deploy --dry-run` for the match Worker.
+- Browser specs:
+  - `fps-character-models`
+  - `fps-characters`: head height, body hits and headshots
+  - `fps-combat`
+  - `fps-authored-assets`
+  - `fps-motion-continuity`
+  - `fps-map-baseline` (before and after)
+
+### Fixed test defects
+
+`fps-characters` and `fps-blood-wall` were broken by the map change: B stood inside cover. On a
+software-rendered start, the fixture's 60 s round also expired and respawned both players.
+Probes confirmed that positioning and hit registration work.
+
+### Not executable here
+
+These need real GPU frame times. SwiftShader gives about 0.2–0.4 FPS, so the specs fail on
+frame counts or frame-time assertions whatever the code does:
+
+- `fps-opponent-timeline`
+- `fps-close-opponent`
+- `fps-culling`
+- `fps-death-feedback`
+- the p95 frame-time assertion in `fps-blood-wall`
+- `fps-frame-pacing`
+
+`fps-lobby` and `fps-loading` need the `:4180` app server.
+
+The P0 behaviour these specs observe is covered deterministically by
+`tests/fps-remote-sync.test.ts`.
+
+Also not executed:
+
+- Firefox and Edge;
+- real two-client play over a real network;
+- tab backgrounding and window resizing on real hardware.
+
+## E. Remaining issues
+
+- **20 Hz interpolation corner-cutting.** Each direction reversal is drawn up to about 0.2 m
+  inside the true path. The fix is a higher snapshot rate, which costs bandwidth and Durable
+  Object CPU. Revisit only if players notice.
+- **Heavy jitter.** At 30 ms or more, the 50 ms bridge still overshoots some reversals: about
+  10 backward frames in 6 s of continuous counter-strafing, down from 50. Removing the bridge
+  trades this for visible freezes.
+- **Edge flicker.** Server visibility redaction uses nine sight-line points on a 0.9 ×
+  radius silhouette. An opponent whose rifle or elbow pokes past cover is still redacted, by
+  design. If players report enemies "blinking" at corner edges, widen the silhouette or add a
+  short redaction hysteresis. Both trade a little wallhack resistance.
+- **Real-hardware verification** of frame pacing at 120/144 Hz, Firefox and Edge, and a two-PC
+  match with network throttling (Chrome DevTools: 100 ms RTT plus jitter).
+
+## F. Merge decision: **GO to merge; deploy after a short real-hardware check**
+
+Evidence:
+
+- The reproduced defects (counter-strafe overshoot and pull-back, early disappearance at
+  cover, teleport after stalls) are fixed in the code the game runs. They are verified
+  frame-by-frame against the authoritative server history, across 50–200 ms RTT, 10–30 ms
+  jitter and 30–240 FPS.
+- Server authority, anti-wallhack redaction, input validation and the bounded rewind are
+  intact. Lag compensation moves with the interpolation delay.
+- The render workload and resource lifecycle are unchanged.
+
+Before deploying:
+
+- Deploy the **frontend and the match Worker together**, after rooms drain:
+  `npm run deploy` and `npx wrangler deploy --config workers/fps/wrangler.jsonc`.
+- Play one two-PC match on real hardware: strafe, peek corners and shoot.
+- If the enemy "disappearing" you saw is still reproducible after that, it is not one of the
+  causes found here. Report the map location, and the client diagnostics will help trace it.
