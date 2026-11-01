@@ -39,7 +39,6 @@ test("walking and mouse look share a smooth render timeline", async ({ page, bro
     await page.waitForTimeout(250);
     if (mode !== "look") {
       await page.keyboard.down("KeyW");
-      await page.keyboard.down("ShiftLeft");
     }
     await page.waitForTimeout(400);
     const result = await page.evaluate(async (mode) => {
@@ -112,7 +111,6 @@ test("walking and mouse look share a smooth render timeline", async ({ page, bro
     }, mode);
     if (mode !== "look") {
       await page.keyboard.up("KeyW");
-      await page.keyboard.up("ShiftLeft");
     }
     scenarios.push({ mode, ...result });
     fs.writeFileSync(

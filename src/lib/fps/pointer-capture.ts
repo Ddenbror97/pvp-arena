@@ -1,5 +1,5 @@
 /** Prefer raw deltas; only retry when the browser cannot provide raw input. */
-export function capturePointer(canvas: HTMLCanvasElement, doc: Document = document): Promise<void> {
+export function capturePointer(canvas: HTMLElement, doc: Document = document): Promise<void> {
   if (doc.pointerLockElement === canvas) return Promise.resolve();
   return new Promise((resolve, reject) => {
     let settled = false,

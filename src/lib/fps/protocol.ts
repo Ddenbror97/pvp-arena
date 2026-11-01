@@ -24,6 +24,8 @@ export interface Input {
   weapon: Weapon;
   jump: boolean;
   sprint: boolean;
+  /** Slow movement with server-suppressed footsteps; optional for cached clients. */
+  walk?: boolean;
   crouch?: boolean;
 }
 
@@ -131,12 +133,14 @@ export function validateInput(raw: unknown): Input | null {
   const expected =
     KEYS.length +
     (Object.hasOwn(data, "crouch") ? 1 : 0) +
+    (Object.hasOwn(data, "walk") ? 1 : 0) +
     (Object.hasOwn(data, "combatVersion") ? 1 : 0);
   if (
     Object.keys(data).length !== expected ||
     !KEYS.every((key) => Object.hasOwn(data, key)) ||
     (Object.hasOwn(data, "combatVersion") && data["combatVersion"] !== 2) ||
-    (Object.hasOwn(data, "crouch") && typeof data["crouch"] !== "boolean")
+    (Object.hasOwn(data, "crouch") && typeof data["crouch"] !== "boolean") ||
+    (Object.hasOwn(data, "walk") && typeof data["walk"] !== "boolean")
   )
     return null;
   if (
@@ -168,6 +172,7 @@ export function validateInput(raw: unknown): Input | null {
     reload: data["reload"] as boolean,
     jump: data["jump"] as boolean,
     sprint: data["sprint"] as boolean,
+    ...(typeof data["walk"] === "boolean" ? { walk: data["walk"] } : {}),
     ...(typeof data["crouch"] === "boolean" ? { crouch: data["crouch"] } : {}),
   };
 }

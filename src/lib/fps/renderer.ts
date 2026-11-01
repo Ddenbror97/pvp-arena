@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import type { ArenaLoadProgress } from "./loading";
 import { EYE_HEIGHT, SPAWNS, eyeHeight } from "./map";
 import type { Input, MatchState, Player, Seat, Weapon } from "./protocol";
 import { predictMovement, TICK_MS, WEAPONS } from "./simulation";
@@ -79,7 +80,9 @@ export function mountArena(
   send: (input: Input) => void,
   onLock: (locked: boolean) => void,
   onLocalShot?: (weapon: Weapon, seq: number) => void,
+  onLoadProgress?: (progress: ArenaLoadProgress) => void,
 ): ArenaControls {
+  onLoadProgress?.({ value: 10, label: "Preparing graphics" });
   const scene = new THREE.Scene();
   // The weapon pass needs only its rig and lights. Re-traversing the entire
   // arena for this second pass wastes matrix, skeleton and light setup work.
@@ -347,12 +350,18 @@ export function mountArena(
   const hands = createViewHands(glove, sleeve);
   weaponGroup.add(hands.root);
   const authoredView = createAuthoredViewmodel(weaponGroup);
-  const visualReady = Promise.all([
-    authoredView.ready,
-    characters.A.ready,
-    characters.B.ready,
-    environment.ready,
-  ]).then(async () => {
+  let preparedAssets = 0;
+  const visualReady = Promise.all(
+    [authoredView.ready, characters.A.ready, characters.B.ready, environment.ready].map((asset) =>
+      asset.then(() => {
+        if (!stopped)
+          onLoadProgress?.({
+            value: 15 + ++preparedAssets * 15,
+            label: "Preparing map, operators and weapons",
+          });
+      }),
+    ),
+  ).then(async () => {
     if (stopped) return;
     // The authored map is static: compose its transforms once, then reflect and shadow it.
     scene.updateMatrixWorld(true);
@@ -363,14 +372,17 @@ export function mountArena(
         if (object instanceof THREE.Mesh) object.castShadow = false;
       });
     renderer.shadowMap.needsUpdate = true;
+    onLoadProgress?.({ value: 80, label: "Compiling arena graphics" });
     // Prepare hidden combat effects and both lighting variants before Ready.
     // compileAsync uses parallel shader compilation where the driver supports it.
     await renderer.compileAsync(scene, camera);
     if (stopped) return;
+    onLoadProgress?.({ value: 90, label: "Preparing weapon graphics" });
     await renderer.compileAsync(viewScene, viewCamera);
     if (stopped) return;
     renderer.domElement.dataset["authoredModels"] =
       authoredView.loaded && characters.A.loaded && characters.B.loaded ? "ready" : "fallback";
+    onLoadProgress?.({ value: 100, label: "Arena ready" });
   });
   // Floor PBR/environment reflections stay world anchored. A throttled planar
   // capture reused a stale projection and made the floor swim during mouse look.
@@ -612,7 +624,8 @@ export function mountArena(
           reload: active && reload,
           weapon,
           jump: active && jump,
-          sprint: active && keys.has("ShiftLeft"),
+          sprint: false,
+          walk: active && (keys.has("ShiftLeft") || keys.has("ShiftRight")),
           crouch: active && (keys.has("ControlLeft") || keys.has("ControlRight")),
         };
         if (state.phase === "live" && !authorizationSuspended) {
@@ -672,7 +685,8 @@ export function mountArena(
         previewInput.strafe = Number(keys.has("KeyD")) - Number(keys.has("KeyA"));
         previewInput.yaw = yaw;
         previewInput.jump = jump;
-        previewInput.sprint = keys.has("ShiftLeft");
+        previewInput.sprint = false;
+        previewInput.walk = keys.has("ShiftLeft") || keys.has("ShiftRight");
         previewInput.crouch = keys.has("ControlLeft") || keys.has("ControlRight");
         predictMovement(renderPose, previewInput, accumulator);
       }
@@ -823,7 +837,7 @@ export function mountArena(
       lookX,
       lookY,
       moving,
-      sprinting: keys.has("ShiftLeft") && !predicted?.crouched,
+      sprinting: false,
       airborne,
       reloading: reloadRemaining > 0,
       kick,

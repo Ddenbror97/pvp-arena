@@ -22,6 +22,7 @@ export const ROUND_MS = 60000;
 export const ROUND_END_MS = 3800;
 export const MAX_DRAWS = 3;
 export const MOVE_SPEED = 5;
+export const WALK_SPEED_SCALE = 0.45;
 export const WEAPONS = {
   rifle: {
     damage: 34,
@@ -178,7 +179,11 @@ export function predictMovement(p: Player, input: Input | null, dt: number): voi
     const grounded = supported && (p.velocityY ?? 0) === 0;
     if (input.jump && grounded) p.velocityY = 5;
     const length = Math.max(1, Math.hypot(input.forward, input.strafe));
-    const speed = (MOVE_SPEED * (p.crouched ? 0.48 : input.sprint ? 1.5 : 1) * seconds) / length;
+    const speed =
+      (MOVE_SPEED *
+        (input.walk ? WALK_SPEED_SCALE : p.crouched ? 0.48 : input.sprint ? 1.5 : 1) *
+        seconds) /
+      length;
     const dx = (-Math.sin(input.yaw) * input.forward + Math.cos(input.yaw) * input.strafe) * speed;
     const dz = (-Math.cos(input.yaw) * input.forward - Math.sin(input.yaw) * input.strafe) * speed;
     for (const [axis, delta, other] of [
@@ -469,8 +474,10 @@ export function stepMatch(
         p.reloadUntil = now + WEAPONS[p.weapon].reloadMs;
       const before = { x: p.x, y: p.y, z: p.z };
       predictMovement(p, input, TICK_MS);
+      if (input.walk) p.stepDistance = 0;
       if (
         state.combatVersion === COMBAT_VERSION &&
+        !input.walk &&
         p.hp > 0 &&
         p.y === before.y &&
         !(p.velocityY ?? 0)
