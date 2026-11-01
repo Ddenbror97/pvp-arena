@@ -263,7 +263,7 @@ export function DuelLobby() {
               </div>
             </div>
             <div className="strike-arena-caption">
-              <span>THE FOUNDRY</span>
+              <span>AIM ARENA</span>
               <strong>Your next duel starts here.</strong>
               <p>Choose an open game or create your own room.</p>
             </div>

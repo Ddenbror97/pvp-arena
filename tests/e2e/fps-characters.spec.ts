@@ -33,7 +33,7 @@ test("both rigs keep their combat head at the shared standing, crouched and jump
             crouched,
             y,
             actual: head.matrixWorld.elements[13],
-            rendered: actor.root.getObjectByName("reference-headgear").matrixWorld.elements[13],
+            rendered: actor.root.getObjectByName("head-center").matrixWorld.elements[13],
             expected: playerVolumes({ x: 1, y, z: 2, crouched }).head.center.y,
             finite,
           });
