@@ -1018,14 +1018,3 @@
     height: 64px;
   }
 }
-
-.duel-network-status small {
-  display: block;
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-  color: #a8a1b7;
-}
-.duel-network-status[data-quality="delayed"] small,
-.duel-network-status[data-quality="unstable"] small {
-  color: #f7bf78;
-}

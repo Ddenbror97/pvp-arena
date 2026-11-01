@@ -97,6 +97,8 @@ test("Practice and both human seats load the supplied WebP and enter without the
       .poll(() => page.evaluate(() => document.pointerLockElement instanceof HTMLCanvasElement))
       .toBe(true);
     await expect.poll(() => state?.phase).toBe("live");
+    await expect(page.locator(".duel-network-status small")).toHaveCount(0);
+    await expect(page.locator(".duel-network-status")).not.toHaveAttribute("title");
     const start = { x: state!.players.A.x, z: state!.players.A.z };
     walking = true;
     await page.keyboard.down("ShiftLeft");
