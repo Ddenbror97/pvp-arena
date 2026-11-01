@@ -4,15 +4,20 @@ import {
   poseRifleHands,
   fitContinuousForearms,
   magazineGrip as magazineGripFrame,
+  HANDGUARD_GRIP,
   SHORT_FOREARMS,
   wrapOntoForearm,
   type ForearmPath,
+  type ForearmShape,
+  type GripFrame,
 } from "./fitted-rifle-hands";
 import { ARENA_MODELS } from "./model-assets";
 import { applyVeinTint, createForearmDetailTexture } from "./forearm-detail";
+import { policeGuardGrip } from "./police-arms";
 import { upgradeRifleMaterials } from "./rifle-materials";
 import {
   BOLT_RACK,
+  M4_RELOAD_CLIPS,
   RELOAD_CLIPS,
   sampleNumber,
   sampleSegment,
@@ -45,9 +50,82 @@ const HANDLE_SQUEEZE = 0.75;
 /** Wrist → elbow for the rack: back, out to the left and down, so the arm covers little of the view. */
 const HANDLE_ELBOW = new THREE.Vector3(-0.42, -0.3, 0.3);
 
-/** Real authored AK and skinned hands. Existing controller still owns every input and shot. */
-export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = true) {
-  const asset = retainAuthoredAsset(ARENA_MODELS.rifle);
+/**
+ * One first-person weapon: its GLB (rifle + the shared arm rig), reload clips, how the support
+ * hand grips it, and how the arms are dressed. The Terrorist AK is the original configuration;
+ * every AK value below is the constant it always used, so the AK is unchanged.
+ */
+export type ViewmodelVariant = {
+  id: "ak" | "m4";
+  asset: string;
+  clips: Record<ReloadKind, ReloadClip>;
+  /** Support-hand grip on the handguard (identity for the AK handguard the rig was tuned on). */
+  guard: GripFrame;
+  magazine: {
+    offset: THREE.Vector3;
+    edgeDown: THREE.Vector3;
+    toWrist: THREE.Vector3;
+    squeeze: number;
+    /** AK magazines rock about the front lug; AR magazines drop straight (pivot at the top). */
+    rock: "lug" | "straight";
+  };
+  /** Bake a charging-handle grip (AK rack). The M4 reloads use the bolt catch instead. */
+  chargingHandle: boolean;
+  /** Charging-handle kick per shot (AK reciprocating handle; the AR handle stays put). */
+  boltKick: number;
+  forearms: ForearmShape;
+  /**
+   * Arm dress. "jacket": the white duty-jacket sleeve (Terrorist / AK). "bare": bare forearm
+   * with the rolled olive sleeve and field watch (Police / M4A1).
+   */
+  arms: "jacket" | "bare";
+};
+export const AK_VIEWMODEL: ViewmodelVariant = {
+  id: "ak",
+  asset: ARENA_MODELS.rifle,
+  clips: RELOAD_CLIPS,
+  guard: HANDGUARD_GRIP,
+  magazine: {
+    offset: MAG_GRIP_OFFSET,
+    edgeDown: MAG_EDGE_DOWN,
+    toWrist: MAG_TO_WRIST,
+    squeeze: MAG_SQUEEZE,
+    rock: "lug",
+  },
+  chargingHandle: true,
+  boltKick: 0.025,
+  forearms: SHORT_FOREARMS,
+  arms: "jacket",
+};
+/** Police M4A1: suppressed, carry handle, quad-rail handguard; bare forearms with the watch. */
+export const M4_VIEWMODEL: ViewmodelVariant = {
+  id: "m4",
+  asset: ARENA_MODELS.m4,
+  clips: M4_RELOAD_CLIPS,
+  guard: policeGuardGrip(),
+  magazine: {
+    offset: new THREE.Vector3(0, -0.03, -0.03),
+    edgeDown: new THREE.Vector3(0, -0.94, -0.33),
+    toWrist: MAG_TO_WRIST,
+    squeeze: 0.95,
+    rock: "straight",
+  },
+  chargingHandle: false,
+  boltKick: 0,
+  forearms: SHORT_FOREARMS,
+  arms: "bare",
+};
+
+/** M4 bolt-catch strike: wrist offset from the magazine-grip wrist, beyond the paddle shift. */
+const BOLT_CATCH_PALM = new THREE.Vector3(-0.012, -0.012, 0.018);
+
+/** Real authored rifle and skinned hands. Existing controller still owns every input and shot. */
+export function createAuthoredViewmodel(
+  parent: THREE.Object3D,
+  firstPerson = true,
+  variant: ViewmodelVariant = AK_VIEWMODEL,
+) {
+  const asset = retainAuthoredAsset(variant.asset);
   const root = new THREE.Group();
   root.name = "authored-first-person";
   root.scale.setScalar(SHORT_FOREARMS.scale);
@@ -76,7 +154,11 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
     marker = new THREE.Object3D();
   let magazine: THREE.Object3D | undefined,
     bolt: THREE.Object3D | undefined,
-    magazineGrip: THREE.Object3D | undefined;
+    magazineGrip: THREE.Object3D | undefined,
+    ejectionPort: THREE.Object3D | undefined;
+  /** M4: the magazine-grip hand moved onto the bolt catch (root space, rest pose). */
+  const catchShift = new THREE.Matrix4(),
+    catchHold = new THREE.Matrix4();
   const magazineRest = {
     position: new THREE.Vector3(),
     quaternion: new THREE.Quaternion(),
@@ -164,8 +246,8 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
           instance!.root.updateWorldMatrix(true, true);
         };
         const authored = snapshot();
-        const supportDelta = poseRifleHands(instance.root);
-        const fitted = fitContinuousForearms(arm, root, supportDelta);
+        const supportDelta = poseRifleHands(instance.root, variant.guard);
+        const fitted = fitContinuousForearms(arm, root, supportDelta, variant.forearms);
         const material = createGloveMaterial(
           (Array.isArray(arm.material)
             ? arm.material[0]!
@@ -198,6 +280,12 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
         };
         const sleeveParts = meshesOf("ArmSleeve"),
           watchParts = meshesOf("ArmWatch");
+        const jacketParts = meshesOf("JacketSleeve");
+        // Terrorist: the Blender-built white duty-jacket sleeve covers the whole forearm (no
+        // rolled olive sleeve, no watch). Police: bare forearm, olive sleeve and field watch.
+        const jacket = variant.arms === "jacket" && jacketParts.length > 0;
+        if (jacket) sleeveParts.splice(0, sleeveParts.length, ...jacketParts);
+        if (jacket) watchParts.length = 0;
         /** Gloves, bare forearm, pushed-up sleeve and (left wrist) watch for one fitted arm. */
         const dress = (
           built: { gloves: THREE.BufferGeometry; skin: THREE.BufferGeometry; path: ForearmPath },
@@ -217,10 +305,12 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
             meshes.push(mesh);
           };
           add(built.gloves, material, names.gloves);
-          add(built.skin, skin, names.forearm);
+          // Under the jacket sleeve the bare forearm is never visible: skip it.
+          if (jacket) built.skin.dispose();
+          else add(built.skin, skin, names.forearm);
           for (const part of sleeveParts)
             add(
-              wrapOntoForearm(part.geometry, built.path),
+              wrapOntoForearm(part.geometry, built.path, variant.forearms),
               part.material,
               `${names.prefix}-sleeve`,
             );
@@ -258,53 +348,75 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
         const axisPoint = magGripNode
           .getWorldPosition(new THREE.Vector3())
           .applyMatrix4(toInstance)
-          .add(MAG_GRIP_OFFSET);
-        const frame = magazineGripFrame(axisPoint, MAG_EDGE_DOWN, MAG_TO_WRIST, MAG_SQUEEZE);
+          .add(variant.magazine.offset);
+        const frame = magazineGripFrame(
+          axisPoint,
+          variant.magazine.edgeDown,
+          variant.magazine.toWrist,
+          variant.magazine.squeeze,
+        );
         const magDelta = poseRifleHands(instance.root, frame);
         const magFitted = fitContinuousForearms(arm, root, magDelta, {
-          ...SHORT_FOREARMS,
-          elbow: { L: frame.direction(SHORT_FOREARMS.elbow.L), R: SHORT_FOREARMS.elbow.R },
+          ...variant.forearms,
+          elbow: {
+            L: frame.direction(variant.forearms.elbow.L),
+            R: variant.forearms.elbow.R,
+          },
         });
         const handOnMag = rootInverse.clone().multiply(handNode.matrixWorld);
         const guardInverse = handOnGuard.clone().invert();
 
-        // Charging-handle grip: fist closed on the right-side knob, wrist over the receiver.
-        restore(authored);
         const boltNode = instance.root.getObjectByName("ChargingHandle")!;
-        const knob = knobCentre(boltNode, toInstance).add(HANDLE_GRIP_OFFSET);
-        const handleFrame = magazineGripFrame(knob, HANDLE_AXIS, HANDLE_TO_WRIST, HANDLE_SQUEEZE);
-        const handleDelta = poseRifleHands(instance.root, handleFrame);
-        const handleFitted = fitContinuousForearms(arm, root, handleDelta, {
-          ...SHORT_FOREARMS,
-          elbow: { L: HANDLE_ELBOW, R: SHORT_FOREARMS.elbow.R },
-        });
-        const handOnHandle = rootInverse.clone().multiply(handNode.matrixWorld);
-        restore(guardState);
-        root.updateWorldMatrix(true, true);
-        handleHold.copy(handOnHandle).multiply(guardInverse);
-        boltRestMatrix.copy(rootInverse).multiply(boltNode.matrixWorld);
-        const intoBolt = new THREE.Matrix4()
-          .copy(boltNode.matrixWorld)
-          .invert()
-          .multiply(root.matrixWorld);
-        handleHand.add(
-          ...dress(
-            handleFitted.L,
-            {
-              gloves: "charging-handle-gloves",
-              forearm: "charging-handle-forearm",
-              prefix: "charging-handle",
-            },
-            intoBolt,
-          ),
-        );
-        handleHand.visible = false;
-        boltNode.add(handleHand);
-        handleFitted.R.gloves.dispose();
-        handleFitted.R.skin.dispose();
+        if (variant.chargingHandle) {
+          // Charging-handle grip: fist closed on the right-side knob, wrist over the receiver.
+          restore(authored);
+          const knob = knobCentre(boltNode, toInstance).add(HANDLE_GRIP_OFFSET);
+          const handleFrame = magazineGripFrame(knob, HANDLE_AXIS, HANDLE_TO_WRIST, HANDLE_SQUEEZE);
+          const handleDelta = poseRifleHands(instance.root, handleFrame);
+          const handleFitted = fitContinuousForearms(arm, root, handleDelta, {
+            ...SHORT_FOREARMS,
+            elbow: { L: HANDLE_ELBOW, R: SHORT_FOREARMS.elbow.R },
+          });
+          const handOnHandle = rootInverse.clone().multiply(handNode.matrixWorld);
+          restore(guardState);
+          root.updateWorldMatrix(true, true);
+          handleHold.copy(handOnHandle).multiply(guardInverse);
+          boltRestMatrix.copy(rootInverse).multiply(boltNode.matrixWorld);
+          const intoBolt = new THREE.Matrix4()
+            .copy(boltNode.matrixWorld)
+            .invert()
+            .multiply(root.matrixWorld);
+          handleHand.add(
+            ...dress(
+              handleFitted.L,
+              {
+                gloves: "charging-handle-gloves",
+                forearm: "charging-handle-forearm",
+                prefix: "charging-handle",
+              },
+              intoBolt,
+            ),
+          );
+          handleHand.visible = false;
+          boltNode.add(handleHand);
+          handleFitted.R.gloves.dispose();
+          handleFitted.R.skin.dispose();
+        } else {
+          restore(guardState);
+          root.updateWorldMatrix(true, true);
+          boltRestMatrix.copy(rootInverse).multiply(boltNode.matrixWorld);
+        }
 
         magazineHold.copy(handOnMag).multiply(guardInverse);
         magazineRestMatrix.copy(rootInverse).multiply(magNode.matrixWorld);
+        const catchNode = instance.root.getObjectByName("BoltCatch");
+        if (catchNode) {
+          // Bolt catch strike: the magazine-grip wrist shifted so the palm heel (about where the
+          // magazine grip's palm sat) lands on the paddle above the magwell.
+          const paddle = catchNode.getWorldPosition(new THREE.Vector3()).applyMatrix4(rootInverse);
+          const palm = magGripNode.getWorldPosition(new THREE.Vector3()).applyMatrix4(rootInverse);
+          catchShift.makeTranslation(paddle.sub(palm).add(BOLT_CATCH_PALM));
+        }
         const intoMagazine = new THREE.Matrix4()
           .copy(magNode.matrixWorld)
           .invert()
@@ -326,6 +438,7 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
         magFitted.R.skin.dispose();
       }
       upgradeRifleMaterials(instance.root, ownedMaterials);
+      if (variant.id === "m4") toneM4Materials(instance.root);
       const tip = instance.root.getObjectByName("MuzzleDeviceTip");
       if (tip) tip.add(marker);
       root.updateWorldMatrix(true, true);
@@ -342,12 +455,13 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
         } else out.set(0, name === "GripL" ? -0.01 : -0.095, name === "GripL" ? -0.8 : -0.172);
       }
       magazine = instance.root.getObjectByName("Magazine");
+      ejectionPort = instance.root.getObjectByName("EjectionPort");
       magazineGrip = instance.root.getObjectByName("MagazineGrip");
       bolt = instance.root.getObjectByName("ChargingHandle");
       if (magazine) {
         magazineRest.position.copy(magazine.position);
         magazineRest.quaternion.copy(magazine.quaternion);
-        frontLug(magazine, magazineRest.lug);
+        if (variant.magazine.rock === "lug") frontLug(magazine, magazineRest.lug);
       }
       boltRest = bolt?.position.z ?? 0;
       // Re-centre both rigs on their pivots without moving anything at rest.
@@ -357,6 +471,7 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
       supportContent.position.copy(supportWrist).negate();
       supportGuard.copy(supportWrist).sub(gripRight);
       rigReady.value = firstPerson && !!magazine && !!bolt && !!magazineGrip;
+      if (firstPerson) instance.root.getObjectByName("FPAccessories")?.removeFromParent();
       root.traverse((object) => {
         object.layers.set(firstPerson ? 1 : 0);
         if (object instanceof THREE.Mesh) object.castShadow = !firstPerson;
@@ -364,7 +479,7 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
       loaded = true;
     })
     .catch((error) =>
-      console.warn("Authored AK unavailable; retaining the existing weapon.", error),
+      console.warn(`Authored ${variant.id} unavailable; retaining the existing weapon.`, error),
     );
   /** Apply a key-posed reload clip (and bolt kick) to the weapon, magazine and support rigs. */
   function pose(clip: ReloadClip, p: number, kick: number) {
@@ -386,7 +501,7 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
     magazine!.position.y += mp[1];
     magazine!.position.z += mp[2];
     const travel = sampleNumber(clip.boltTravel, p);
-    bolt!.position.z = boltRest + travel + kick * 0.025;
+    bolt!.position.z = boltRest + travel + kick * variant.boltKick;
     weapon.updateMatrixWorld(true);
     inverse.copy(root.matrixWorld).invert();
     // Resolve both bracketing keys against the live rig, then blend: the hand tracks moving parts.
@@ -423,7 +538,13 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
             ? handleNow
             : key.anchor === "racked"
               ? racked
-              : undefined;
+              : key.anchor === "catch"
+                ? catchHold
+                    .copy(weapon.matrix)
+                    .multiply(scratch.m2.makeTranslation(-gripRight.x, -gripRight.y, -gripRight.z))
+                    .multiply(catchShift)
+                    .multiply(magazineHold)
+                : undefined;
       if (hold) {
         out.copy(supportWrist).applyMatrix4(hold);
         rotation.setFromRotationMatrix(hold).multiply(extra);
@@ -465,13 +586,13 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
       if (!loaded) return;
       if (!rigReady.value) {
         if (magazine) {
-          magazine.position.y = -0.002 - reload * 0.09;
+          magazine.position.y = magazineRest.position.y - reload * 0.09;
           magazine.rotation.x = reload * 0.12;
         }
-        if (bolt) bolt.position.z = -0.4857 + kick * 0.025;
+        if (bolt) bolt.position.z = boltRest + kick * variant.boltKick;
         return;
       }
-      pose(RELOAD_CLIPS[kind], reload > 0 && reload < 1 ? reload : 0, kick);
+      pose(variant.clips[kind], reload > 0 && reload < 1 ? reload : 0, kick);
     },
     muzzle() {
       // Live, so flashes stay on the muzzle however the rig is posed.
@@ -482,6 +603,13 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
       }
       return muzzle;
     },
+    /** Ejection port in `parent` space (shell casings), or null before load / without one. */
+    ejectionPort(target: THREE.Vector3) {
+      if (!loaded || !ejectionPort) return null;
+      ejectionPort.updateWorldMatrix(true, false);
+      return parent.worldToLocal(ejectionPort.getWorldPosition(target));
+    },
+    variant: variant.id,
     grip(side: "L" | "R", target: THREE.Vector3) {
       return root.localToWorld(target.copy(side === "L" ? gripLeft : gripRight));
     },
@@ -555,5 +683,27 @@ function createGloveMaterial(source: THREE.MeshStandardMaterial) {
     sheenColor: new THREE.Color(0x2c2d31),
     sheenRoughness: 0.6,
     envMapIntensity: 0.7,
+  });
+}
+
+/**
+ * M4A1 finish under the arena's sky light: anodised aluminium and phosphate steel read as dark
+ * satin, not chrome. The source maps are kept; only the scalar factors are adjusted.
+ */
+function toneM4Materials(root: THREE.Object3D) {
+  root.traverse((object) => {
+    if (!(object instanceof THREE.Mesh) || object instanceof THREE.SkinnedMesh) return;
+    for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+      if (!(material instanceof THREE.MeshStandardMaterial)) continue;
+      if (material.name === "M4Finish") {
+        material.metalness = 0.82;
+        material.envMapIntensity = 0.55;
+        material.color.setScalar(0.92);
+      } else if (material.name === "SuppressorFinish" || material.name === "CarryHandleFinish") {
+        material.envMapIntensity = 0.5;
+      } else if (material.name === "PVPAccent") {
+        material.envMapIntensity = 0.7;
+      }
+    }
   });
 }

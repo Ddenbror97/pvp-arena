@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Volume2, VolumeX, Maximize, Copy, ShieldCheck } from "lucide-react";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
+import { SEAT_RIFLE } from "@/lib/fps/combat";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
 import { useAuth } from "@/lib/auth";
 import { duelAdmission, duelAction } from "@/lib/fps/duel.functions";
@@ -759,7 +760,11 @@ export function DuelMatch({
           <span>Release mouse</span>
         </div>
         <div className="duel-ammo">
-          <small>{me?.weapon === "pistol" ? "PISTOL · SEMI-AUTO" : "AK-47 · FULL AUTO"}</small>
+          <small>
+            {me?.weapon === "pistol"
+              ? "PISTOL · SEMI-AUTO"
+              : `${SEAT_RIFLE[seat ?? "B"]} · FULL AUTO`}
+          </small>
           <strong>
             {me?.ammo ?? 30}
             <span>/ {me?.reserve ?? 90}</span>
@@ -783,8 +788,8 @@ export function DuelMatch({
               {frame && (frame.state.combatVersion ?? 1) !== 2
                 ? "Earlier combat rules retained for this match."
                 : frame?.state.armorVersion === 1
-                  ? "AK-47 · Full auto · Kevlar: Chest 26 · Stomach 23 · Head 50 · Legs 20"
-                  : "AK-47: full auto · Head 50 · Chest 34 · Stomach 30 · Legs 20"}
+                  ? `${SEAT_RIFLE[seat ?? "B"]} · Full auto · Kevlar: Chest 26 · Stomach 23 · Head 34 · Legs 20`
+                  : `${SEAT_RIFLE[seat ?? "B"]}: full auto · Head 34 · Chest 34 · Stomach 30 · Legs 20`}
               <br />
               Tap or burst to reset; pull down, then counter the sideways spray.
             </p>

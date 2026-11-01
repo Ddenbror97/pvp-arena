@@ -3,7 +3,7 @@ import type { Seat, Weapon } from "./protocol";
 import type { WeaponKit } from "./weapon";
 import { createCharacter as createFallback } from "./character-rig";
 import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
-import { createAuthoredViewmodel } from "./authored-viewmodel";
+import { AK_VIEWMODEL, createAuthoredViewmodel, M4_VIEWMODEL } from "./authored-viewmodel";
 import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 import { createMuzzleFlash } from "./muzzle-flash";
 import { CHARACTER_MODELS } from "./model-assets";
@@ -36,7 +36,12 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
   const weaponPivot = new THREE.Group();
   weaponPivot.position.set(0.07, 1.25, 0);
   root.add(weaponPivot);
-  const weapon = createAuthoredViewmodel(weaponPivot, false);
+  // Police carry the suppressed M4A1, the Terrorist the AK (same as their first-person view).
+  const weapon = createAuthoredViewmodel(
+    weaponPivot,
+    false,
+    seat === "A" ? M4_VIEWMODEL : AK_VIEWMODEL,
+  );
   const flash = createMuzzleFlash();
   flash.root.traverse((object) => object.layers.set(0));
   weaponPivot.add(flash.root);
@@ -338,6 +343,8 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
         Math.floor(flashUntil),
       );
       flash.root.position.x = pistol.visible ? 0 : tip.x;
+      // The Police M4A1 is suppressed: a much smaller flash at the can.
+      if (police && !pistol.visible) flash.root.scale.multiplyScalar(0.42);
     },
     dispose() {
       stopped = true;

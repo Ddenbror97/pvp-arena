@@ -71,9 +71,10 @@ const R: Vec = [0, 0, 0];
  *   mag     the baked magazine grip, riding the magazine
  *   handle  the baked charging-handle grip, riding the bolt
  *   racked  that same grip with the bolt held fully to the rear (after the hand lets go)
+ *   catch   (M4) the magazine grip moved onto the bolt catch: the palm heel strikes the paddle
  * Offsets are in viewmodel-root units, rotated with the weapon; rotations add on top.
  */
-export type SupportAnchor = "guard" | "mag" | "handle" | "racked";
+export type SupportAnchor = "guard" | "mag" | "handle" | "racked" | "catch";
 export type SupportKey = { anchor: SupportAnchor; offset: Vec; rotation: Vec };
 const at = (anchor: SupportAnchor, offset: Vec = R, rotation: Vec = R): SupportKey => ({
   anchor,
@@ -272,4 +273,196 @@ export const RELOAD_PHASES = EMPTY_RELOAD.phases as {
   break: readonly [number, number];
   insert: readonly [number, number];
   chamber: readonly [number, number];
+};
+
+/**
+ * Police M4A1 reloads. Same server window and phase structure as the AK, but AR mechanics:
+ * the magazine drops straight out of the magwell when the release is pressed (no rock about a
+ * lug) and seats straight up; the bolt locks open on an empty magazine, so the empty reload
+ * ends with the support hand's palm striking the bolt catch (no charging-handle rack).
+ *
+ * Tactical (round chambered): the support hand strips the magazine and keeps it (retention),
+ *   brings the fresh one up, seats it, tugs to confirm and returns to the handguard.
+ * Empty (bolt locked back): the empty magazine falls free under gravity while the hand is
+ *   already fetching the fresh one; seat, then slap the bolt catch: the carrier runs home and
+ *   the rifle jolts forward.
+ */
+const M4_OFF: Vec = [-0.12, -0.8, 0.1];
+export const M4_TACTICAL_RELOAD: ReloadClip = {
+  kind: "tactical",
+  weaponPosition: [
+    { t: 0, v: R },
+    { t: 0.12, v: [-0.01, 0.08, 0.03], ease: EASE.out },
+    { t: 0.55, v: [-0.005, 0.09, 0.03] },
+    // Seat: the rifle is pushed up as the magazine locks.
+    { t: 0.6, v: [-0.01, 0.125, 0.025], ease: EASE.out },
+    { t: 0.66, v: [-0.01, 0.07, 0.03], ease: EASE.out },
+    { t: 0.72, v: [-0.015, 0.085, 0.03], ease: EASE.out },
+    { t: 0.88, v: [0, -0.006, 0], ease: EASE.back },
+    { t: 1, v: R },
+  ],
+  weaponRotation: [
+    { t: 0, v: R },
+    // Cant right and lift the muzzle so the magwell faces the support hand and camera.
+    { t: 0.12, v: [0.189, 0.145, -0.554], ease: EASE.out },
+    { t: 0.55, v: [0.23, 0.174, -0.607] },
+    { t: 0.6, v: [0.311, 0.16, -0.554], ease: EASE.out },
+    { t: 0.66, v: [0.176, 0.145, -0.528], ease: EASE.out },
+    { t: 0.72, v: [0.149, 0.116, -0.436], ease: EASE.out },
+    { t: 0.88, v: [-0.02, -0.014, -0.04], ease: EASE.back },
+    { t: 1, v: R },
+  ],
+  magPosition: [
+    { t: 0, v: R },
+    { t: 0.15, v: R },
+    // Release: the magazine drops a few centimetres onto the waiting hand...
+    { t: 0.19, v: [0, -0.06, 0], ease: EASE.in },
+    // ...which strips it down and back to the pouch (retained).
+    { t: 0.33, v: M4_OFF, ease: EASE.in },
+    { t: 0.42, v: M4_OFF },
+    // Fresh magazine: up under the well, aligned, then pushed straight in.
+    { t: 0.51, v: [0, -0.07, 0.006], ease: EASE.out },
+    { t: 0.6, v: R, ease: EASE.in },
+    { t: 0.66, v: [0, -0.01, 0], ease: EASE.out },
+    { t: 0.7, v: R, ease: EASE.out },
+    { t: 1, v: R },
+  ],
+  magRotation: [
+    { t: 0, v: R },
+    { t: 0.19, v: R },
+    { t: 0.33, v: [0.6, 0.2, 0.35], ease: EASE.in },
+    { t: 0.42, v: [0.6, 0.2, 0.35] },
+    { t: 0.51, v: [0.06, 0.02, 0.02], ease: EASE.out },
+    { t: 0.6, v: R, ease: EASE.in },
+    { t: 1, v: R },
+  ],
+  boltTravel: [
+    { t: 0, v: 0 },
+    { t: 1, v: 0 },
+  ],
+  support: [
+    { t: 0, v: at("guard") },
+    { t: 0.05, v: at("guard", [-0.02, -0.08, 0.04], [0, 0, 0.15]) },
+    { t: 0.15, v: at("mag"), ease: EASE.out },
+    { t: 0.33, v: at("mag") },
+    { t: 0.42, v: at("mag") },
+    { t: 0.6, v: at("mag") },
+    { t: 0.7, v: at("mag") },
+    { t: 0.84, v: at("guard", [0, -0.015, 0.01], [0, 0, -0.04]), ease: EASE.back },
+    { t: 1, v: at("guard") },
+  ],
+  phases: { break: [0, 0.33], insert: [0.33, 0.64], return: [0.64, 1] },
+};
+
+export const M4_EMPTY_RELOAD: ReloadClip = {
+  kind: "empty",
+  weaponPosition: [
+    { t: 0, v: R },
+    { t: 0.1, v: [-0.01, 0.08, 0.03], ease: EASE.out },
+    { t: 0.5, v: [-0.005, 0.09, 0.03] },
+    { t: 0.545, v: [-0.01, 0.13, 0.025], ease: EASE.out },
+    { t: 0.6, v: [-0.02, 0.085, 0.03], ease: EASE.out },
+    // Bolt catch struck: the carrier slams home and throws the rifle forward a touch.
+    { t: 0.7, v: [-0.025, 0.09, 0.035] },
+    { t: 0.73, v: [-0.03, 0.08, -0.002], ease: EASE.out },
+    { t: 0.8, v: [-0.035, 0.065, 0.02], ease: EASE.out },
+    { t: 0.92, v: [0, -0.006, 0], ease: EASE.back },
+    { t: 1, v: R },
+  ],
+  weaponRotation: [
+    { t: 0, v: R },
+    { t: 0.1, v: [0.203, 0.16, -0.607], ease: EASE.out },
+    { t: 0.5, v: [0.243, 0.189, -0.66] },
+    { t: 0.545, v: [0.338, 0.174, -0.607], ease: EASE.out },
+    { t: 0.6, v: [0.216, 0.145, -0.528], ease: EASE.out },
+    // Roll the receiver's left side toward the hand for the bolt catch.
+    { t: 0.7, v: [0.162, 0.116, -0.396] },
+    { t: 0.73, v: [0.095, 0.102, -0.356], ease: EASE.out },
+    { t: 0.8, v: [0.068, 0.058, -0.198], ease: EASE.out },
+    { t: 0.92, v: [-0.02, -0.014, -0.04], ease: EASE.back },
+    { t: 1, v: R },
+  ],
+  magPosition: [
+    { t: 0, v: R },
+    { t: 0.1, v: R },
+    // Released and falls free: gravity, no hand.
+    { t: 0.13, v: [0, -0.05, 0], ease: EASE.in },
+    { t: 0.24, v: [-0.03, -0.9, 0.04], ease: EASE.in },
+    { t: 0.38, v: [-0.03, -0.9, 0.04] },
+    // The fresh one comes up in the hand, aligns and is seated.
+    { t: 0.47, v: [0, -0.07, 0.006], ease: EASE.out },
+    { t: 0.545, v: R, ease: EASE.in },
+    { t: 1, v: R },
+  ],
+  magRotation: [
+    { t: 0, v: R },
+    { t: 0.13, v: R },
+    { t: 0.24, v: [0.35, 0.1, 0.25], ease: EASE.in },
+    { t: 0.38, v: [0.5, 0.2, 0.35] },
+    { t: 0.47, v: [0.06, 0.02, 0.02], ease: EASE.out },
+    { t: 0.545, v: R, ease: EASE.in },
+    { t: 1, v: R },
+  ],
+  boltTravel: [
+    { t: 0, v: 0 },
+    { t: 1, v: 0 },
+  ],
+  support: [
+    { t: 0, v: at("guard") },
+    // The hand leaves the handguard straight for the pouch; the magazine drops on its own.
+    // (Offsets are in the canted weapon's frame: these drop the hand down and out of view.)
+    { t: 0.06, v: at("guard", [0.003, -0.1, 0.06], [0, 0, 0.2]) },
+    { t: 0.22, v: at("guard", [0.19, -0.56, 0.3], [0.3, 0, 0.4]), ease: EASE.in },
+    // Fresh magazine in hand (the baked magazine grip) from just off-screen.
+    { t: 0.38, v: at("mag") },
+    { t: 0.545, v: at("mag") },
+    { t: 0.6, v: at("mag") },
+    // Up to the bolt catch and strike it with the palm heel...
+    { t: 0.67, v: at("catch", [-0.01, -0.02, 0.02]), ease: EASE.out },
+    { t: 0.71, v: at("catch"), ease: EASE.in },
+    // ...then back to the handguard.
+    { t: 0.76, v: at("catch", [-0.02, -0.03, 0.03]), ease: EASE.out },
+    { t: 0.92, v: at("guard", [0, -0.015, 0.01], [0, 0, -0.04]), ease: EASE.back },
+    { t: 1, v: at("guard") },
+  ],
+  phases: { break: [0, 0.3], insert: [0.3, 0.6], release: [0.6, 1] },
+};
+
+export const M4_RELOAD_CLIPS: Record<ReloadKind, ReloadClip> = {
+  tactical: M4_TACTICAL_RELOAD,
+  empty: M4_EMPTY_RELOAD,
+};
+/** Progress at which the struck bolt catch releases the carrier (audio and jolt sync). */
+export const M4_BOLT_RELEASE_AT = 0.71;
+
+/**
+ * Police M4A1 inspection (client-only; never touches ammunition or weapon state). Offsets are
+ * applied to the whole viewmodel (rifle and both hands together) relative to the stable camera.
+ *   0.00–0.16  bring it in and swing the muzzle left: the left side broadside, suppressor in view
+ *   0.16–0.44  hold, slight drift
+ *   0.44–0.60  roll it right: top, carry handle and the violet charging-handle latch
+ *   0.60–0.80  hold
+ *   0.80–1.00  back to rest
+ */
+export const INSPECT_MS = 3400;
+export type InspectClip = { position: Key<Vec>[]; rotation: Key<Vec>[] };
+export const M4_INSPECT: InspectClip = {
+  position: [
+    { t: 0, v: R },
+    { t: 0.16, v: [-0.06, 0.03, 0.05], ease: EASE.out },
+    { t: 0.44, v: [-0.065, 0.035, 0.055] },
+    { t: 0.6, v: [-0.035, 0.05, 0.045], ease: EASE.inOut },
+    { t: 0.8, v: [-0.033, 0.052, 0.047] },
+    { t: 1, v: R, ease: EASE.inOut },
+  ],
+  rotation: [
+    { t: 0, v: R },
+    // Muzzle swings left: the left side, carry handle and suppressor broadside to the camera.
+    { t: 0.16, v: [0.08, 0.42, 0.14], ease: EASE.out },
+    { t: 0.44, v: [0.1, 0.46, 0.16] },
+    // Rolled right: the top and the violet charging-handle latch toward the camera.
+    { t: 0.6, v: [0.12, 0.16, -0.5], ease: EASE.inOut },
+    { t: 0.8, v: [0.13, 0.14, -0.54] },
+    { t: 1, v: R, ease: EASE.inOut },
+  ],
 };

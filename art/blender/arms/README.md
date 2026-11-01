@@ -10,10 +10,12 @@ untouched. Everything here is scripted so it rebuilds deterministically.
 | `glove_textures.py` | High-poly normal/AO bakes, then per-texel panels and relief computed on the 3D glove: suede palm with a quilted padded patch, stretch-knit back, finger gussets, fingertip caps, TPR knuckle guard (knurl + flex channels), raised finger strips, perforated thumb crotch, bound cuff, lock-stitch seams, joint wrinkles, dust. |
 | `forearm.py` | Python port of the runtime forearm surface (`forearmRadius` in `fitted-rifle-hands.ts`). |
 | `build_accessories.py` | Olive ripstop sleeve (rolled band, compression folds, drape, inner hem lip) and a 40 mm field watch (case, 60-click knurled bezel with printed insert, domed crystal, Arabic 1–12 / 13–24 dial, hands at 10:09, crown, lugs, spring bars, NATO strap, buckle, keepers). |
+| `build_jacket_sleeve.py` | White duty-jacket sleeve for the Terrorist (AK) arms: turned hem, double cuff band with a hook-and-loop strap, compression folds, drape, underarm sag, articulation panel seam, retro-reflective band; Cycles AO bake; ripstop, twill, pinch creases, flat-felled seams and lock stitching, grime and wear in numpy. Added to the AK GLB by `../add_jacket_to_ak.mjs`. The Police (M4) arms keep the olive sleeve and watch. |
 | `skin_texture.py` | Forearm skin with arm hair (`public/fps/forearm-skin-v2.webp`) from `forearm-skin-source.webp`. |
 | `merge_arms.mjs` | Swaps the FPArms mesh and its textures into the shipped GLB and adds the accessories under `FPAccessories`; rig and rifle untouched. |
 | `dump_rig.mjs` | Exports the rig's joint matrices and bind space for the scripts. |
 | `gloves.blend`, `accessories.blend` | Editable sources (game meshes with UVs, weights, materials). |
+| `jacket_sleeve.blend` | Editable jacket sleeve (mesh, UVs, material); its baked textures are rebuilt by `build_jacket_sleeve.py` (not packed, to keep the repo small). |
 
 ## Rebuild
 
@@ -22,9 +24,13 @@ cd art/blender
 node arms/dump_rig.mjs ../../public/fps/models/ak47-authored.glb build/rig.json
 python arms/build_gloves.py -- build/rig.json build/gloves --lp-voxel 0.0011 --textures --size 2048   # ~15 min CPU
 python arms/build_accessories.py -- build/acc --size 1024 [--preview]
+python3.11 arms/build_jacket_sleeve.py -- build/jacket --size 2048 [--preview]        # ~4 min CPU
 git show HEAD:public/fps/models/ak47-authored.glb > build/ak-shipped.glb   # the GLB before this merge
 node arms/merge_arms.mjs build/ak-shipped.glb build/gloves ../../public/fps/models/ak47-authored.glb build/acc/accessories.glb
 node validate_ak_viewmodel.mjs ../../public/fps/models/ak47-authored.glb
+npx gltf-transform copy ../../public/fps/models/ak47-authored.glb build/ak-src.glb
+node add_jacket_to_ak.mjs build/ak-src.glb build/jacket/jacket-sleeve.glb ../../public/fps/models/ak47-authored.glb
+node check_rig_unchanged.mjs build/ak-src.glb ../../public/fps/models/ak47-authored.glb
 ```
 `--reuse-bakes` re-runs only the texture authoring on cached bakes (seconds, not minutes).
 

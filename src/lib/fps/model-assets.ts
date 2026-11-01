@@ -7,5 +7,7 @@ export const CHARACTER_MODELS = {
 /** Shared by intent preloading and model loaders so their cache URLs cannot drift. */
 export const ARENA_MODELS = {
   rifle: "/fps/models/ak47-authored.glb",
+  /** Police M4A1 (art/blender/m4): suppressed, carry handle, on the shared arm rig. */
+  m4: "/fps/models/m4a1-authored.glb",
   ...CHARACTER_MODELS,
 } as const;

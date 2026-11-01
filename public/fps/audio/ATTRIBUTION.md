@@ -38,3 +38,14 @@ to mono for positional playback, trims/fades boundaries and normalizes level.
 Reload components are placed on the existing 1.8-second animation timeline.
 No new license is asserted for the supplied reference. Rebuild with
 `node scripts/fps/extract-reference-ak-audio.mjs <reference-path>`.
+
+## Police M4A1 (seat A)
+
+`m4a1-suppressed-v1.wav` is the single shot isolated from the M4 recording the project/user
+supplied (`M4_sound.wav`, 2026-11-01), at their request: onset-aligned, short fade boundaries,
+mono, 48 kHz, normalised. No new license is asserted for the supplied recording.
+`m4-reload-tactical-v1.wav` and `m4-reload-empty-v1.wav` are original deterministic procedural
+effects (release button, magazine out of the well, pouch, insertion and seating; empty: the
+dropped magazine and the bolt-catch release) on the 1.8-second M4 reload clips. The brass
+casing landing is synthesised at runtime. Rebuild with
+`node scripts/fps/build-m4-audio.mjs <M4 recording.wav>`.

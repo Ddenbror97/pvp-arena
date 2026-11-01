@@ -5,6 +5,21 @@ export const HIT_DAMAGE = {
   rifle: { head: 34, chest: 34, stomach: 30, legs: 20 },
   pistol: { head: 34, chest: 25, stomach: 22, legs: 15 },
 } as const;
+/**
+ * Seat rifles: Police (A) carry the suppressed M4A1-S, Terrorists (B) the AK-47. Both use the
+ * one `rifle` damage table, fire rate, magazine, recoil pattern and vest rule above.
+ *
+ * Balance (2026-11-01): in CS2 the AK-47 (36 dmg, 77.5% armour penetration, ×4 head, 30
+ * rounds) and M4A1-S (38 dmg, 70% penetration, ×3.475 head, 20 rounds, more accurate, quieter)
+ * trade per-bullet numbers so armoured body shots-to-kill come out equal (4 / 5 / 6 at
+ * 100 / 125 / 150 HP); CS balances the rest through price, side and map. A 1v1 duel with fixed
+ * seats has none of those levers: porting CS's per-bullet ratios to this table (36/36/32/21 at
+ * 70%) changes the hits-to-kill of 154 of 1,064 hit sequences, almost all in the M4's favour
+ * (tests/fps-weapon-balance.test.ts). So the M4 is identical in damage, and only its
+ * presentation (model, suppressed report, casings, reloads) differs.
+ */
+export const SEAT_RIFLE = { A: "M4A1-S", B: "AK-47" } as const;
+
 /** CS-style vest penetration, applied to this game's existing damage tuning.
  * Headshots take three hits at full health; legs bypass the vest. */
 export function applyVestDamage(target: Player, weapon: Weapon, zone: HitZone): number {
