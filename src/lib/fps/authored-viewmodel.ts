@@ -29,6 +29,8 @@ const FOREARM_BUMP_SCALE = 0.065;
 const MAG_GRIP_OFFSET = new THREE.Vector3(0, -0.035, -0.035);
 const MAG_EDGE_DOWN = new THREE.Vector3(0, -0.9, -0.43);
 const MAG_TO_WRIST = new THREE.Vector3(-0.6, 0, 0.8);
+/** Finger wrap round the magazine: the gloved fingers close on its faces, not through them. */
+const MAG_SQUEEZE = 0.84;
 /**
  * Charging-handle grip, in rifle-local units: an overhand rack. The wrist comes in from the left
  * at receiver height, the palm rides the top of the receiver and the fingers wrap down its right
@@ -258,7 +260,7 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
           .getWorldPosition(new THREE.Vector3())
           .applyMatrix4(toInstance)
           .add(MAG_GRIP_OFFSET);
-        const frame = magazineGripFrame(axisPoint, MAG_EDGE_DOWN, MAG_TO_WRIST);
+        const frame = magazineGripFrame(axisPoint, MAG_EDGE_DOWN, MAG_TO_WRIST, MAG_SQUEEZE);
         const magDelta = poseRifleHands(instance.root, frame);
         const magFitted = fitContinuousForearms(arm, root, magDelta, {
           ...SHORT_FOREARMS,

@@ -12,7 +12,7 @@ import numpy as np
 PROFILE = [(0, 0.0318, 0.0207), (0.18, 0.0329, 0.0217), (0.42, 0.0392, 0.0276), (0.68, 0.0472, 0.035), (0.86, 0.0493, 0.0376), (1, 0.0461, 0.0392)]
 RADIAL_BULGE = 0.0055
 RADIAL_MASS = 0.35
-GLOVE_CUFF_LENGTH = 0.045
+GLOVE_CUFF_LENGTH = 0.024
 # Typical posed wrist→elbow path length (m); t = along / LENGTH.
 LENGTH = 0.335
 

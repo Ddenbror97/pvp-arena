@@ -213,13 +213,13 @@ timing, grips and rig are unchanged.
 - **Gloves**: new skinned mesh (2 × 7.5k tris) sculpted around the existing hand bones, 2048 PBR
   set (base colour, tangent-space normals, AO/roughness): suede palm with quilted padding,
   stretch-knit back, finger gussets and fingertip caps, moulded knuckle guard, raised finger
-  strips, perforated thumb crotch, neoprene cuff with strap and pull tab, stitched seams.
+  strips, perforated thumb crotch, short snug cuff ending just past the wrist, stitched seams.
 - **Forearms**: parametric anatomical surface from the wrist joint (inside the cuff) to the
   elbow, 6% fuller than before, with an arm-hair skin texture.
 - **Sleeves**: olive ripstop combat-shirt sleeves pushed up the forearm with a rolled band and
   compression folds, wrapped onto every posed arm.
-- **Watch**: real 3D field watch on the left wrist (inside of the wrist), visible at idle and
-  through the reloads.
+- **Watch**: real 3D field watch on the back of the left wrist, visible at idle and through the
+  reloads.
 
 Captures: [before/after, same cameras](screenshots/fps-arms-before-after.png),
 [details](screenshots/fps-arms-details.png), [in game](screenshots/fps-viewmodel-idle.png).

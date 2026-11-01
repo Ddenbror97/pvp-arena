@@ -21,12 +21,12 @@ HAND_SCALE = 0.52 * 0.85  # metres per scene unit for anything under Hand_<side>
 FINGERS = {"index": 5, "middle": 9, "ring": 13, "little": 17}
 THUMB = 20
 # Gloved radii (m) at MCP, PIP, DIP, tip for the middle finger; others are scaled.
-FINGER_RADII = np.array([0.0103, 0.0099, 0.0091, 0.0083])
+FINGER_RADII = np.array([0.0096, 0.0092, 0.0085, 0.0077])  # slim enough to sit on the AK without clipping
 FINGER_SCALE = {"index": 0.98, "middle": 1.0, "ring": 0.95, "little": 0.84}
 # Neoprene cuff: superellipse matching the runtime forearm (n = 2.4), plus wall and clearance.
-CUFF_HALF_WIDTH = 0.0343
-CUFF_HALF_DEPTH = 0.0249
-CUFF_LENGTH = 0.045  # past the wrist joint, towards the elbow
+CUFF_HALF_WIDTH = 0.0338
+CUFF_HALF_DEPTH = 0.0236
+CUFF_LENGTH = 0.024  # past the wrist joint, towards the elbow
 CUFF_START = 0.010  # towards the fingers, where the cuff blends into the hand
 
 
@@ -209,7 +209,7 @@ def build_parts(h: HandFrame):
     # --- Thumb ---------------------------------------------------------------------------
     t = h.joints["thumb"]
     thumb_tip = t[3] - _norm(t[3] - t[2]) * 0.0098 * 0.55
-    for k, (a, b, ra, rb) in enumerate([(t[0], t[1], 0.0136, 0.0116), (t[1], t[2], 0.0114, 0.0106), (t[2], thumb_tip, 0.0104, 0.0093)]):
+    for k, (a, b, ra, rb) in enumerate([(t[0], t[1], 0.0130, 0.0110), (t[1], t[2], 0.0107, 0.0099), (t[2], thumb_tip, 0.0097, 0.0087)]):
         axis = _norm(b - a)
 
         def dist(p, a=a, b=b, ra=ra, rb=rb, axis=axis):
@@ -259,7 +259,7 @@ def build_parts(h: HandFrame):
     def thenar(p):
         return round_cone(p, c0, c1, 0.0165, 0.0115)
 
-    parts.append(Part("thenar", {hand_bone: 0.5, h.bone(THUMB): 0.5}, "thumb", thenar))
+    parts.append(Part("thenar", {hand_bone: 0.8, h.bone(THUMB): 0.2}, "thumb", thenar))
 
     # Hypothenar: the pad along the little-finger edge of the palm.
     hy0 = A * (a_lo + 0.006) + Y * 0.012 + P * 0.008
@@ -278,7 +278,7 @@ def build_parts(h: HandFrame):
         # A membrane, not a tube: thin palm-to-back, it only fills the crotch of the thumb.
         return round_cone(squash(p, w0, _norm(w1 - w0), P, 1.7), w0, w1, 0.0064, 0.0074)
 
-    parts.append(Part("web", {hand_bone: 0.6, h.bone(THUMB): 0.4}, "thumb", web))
+    parts.append(Part("web", {hand_bone: 0.7, h.bone(THUMB): 0.3}, "thumb", web))
 
     # --- Neoprene cuff: superellipse tube along -Y from the wrist ----------------------------
     def cuff(p):
@@ -286,10 +286,10 @@ def build_parts(h: HandFrame):
         a, y, pp = l[..., 0], l[..., 1], l[..., 2]
         # Gentle taper into the wrist, a hair of flare at the open end.
         s = np.clip((CUFF_START - y) / (CUFF_START + CUFF_LENGTH), 0, 1)
-        grow = 1.0 + 0.015 * s
+        grow = 1.0 - 0.035 * s ** 2  # the edge hugs the wrist instead of standing off it
         d = superellipse(a, pp - 0.001, CUFF_HALF_WIDTH * grow, CUFF_HALF_DEPTH * grow)
         dy = np.maximum(y - CUFF_START, -y - CUFF_LENGTH)
-        rr = 0.003
+        rr = 0.0018
         return np.minimum(np.maximum(d, dy + rr), 0) + np.linalg.norm(np.stack([np.maximum(d + rr, 0), np.maximum(dy + rr, 0)], -1), axis=-1) - rr
 
     parts.append(Part("cuff", {hand_bone: 1.0}, "palm", cuff))
@@ -368,18 +368,7 @@ def glove_features(h: HandFrame, info, p, body, palm, d_parts, tips):
     guard = smax(smax(shell, outline, 0.0035), dorsal, 0.004)
     guard = np.maximum(guard, (guard - tips + FINGER_GAP) * 0.5)
     d = smin(body, guard, 0.0012)
-    # Cuff closure: a strap wrapping the dorsal / little-finger side, its end a raised tab.
-    ang = np.arctan2(pp, a)  # 0 = thumb side, -pi/2 = dorsal (palmar is +), +-pi = little side
-    strap_y = np.abs(y + 0.026) - 0.014
-    dorsal_side = -np.sin(ang)  # 1 on the back of the wrist
-    strap_region = np.maximum(strap_y, -(dorsal_side + 0.35))
-    strap = smax(d_parts["cuff"] - 0.0011, strap_region, 0.002)
-    d = smin(d, strap, 0.0008)
-    # Pull tab: thicker rubber end on the little-finger side, proud of the strap.
-    tab_centre = np.stack([-CUFF_HALF_WIDTH * 0.62, -0.026, -CUFF_HALF_DEPTH * 0.68], -1)
-    tab = np.linalg.norm((l - tab_centre) / np.array([0.009, 0.013, 0.009]), axis=-1) - 1.0
-    tab = smax(d_parts["cuff"] - 0.0019, tab * 0.009, 0.0015)
-    d = smin(d, tab, 0.0008)
+    # Short, snug cuff with no strap: the glove simply ends just past the wrist.
     return d
 
 
@@ -413,7 +402,11 @@ def bone_weights(h: HandFrame, parts, d_parts, tau=0.0035, max_influences=4):
     near = nearest
     allowed |= (base[near][:, None] & palm[None, :]) | (palm[near][:, None] & base[None, :])
     dmin = D[np.arange(len(D)), nearest]
-    W = np.where(allowed, np.exp(-(D - dmin[:, None]) / tau), 0.0)
+    # The thumb swings far from its bind pose: spread its blend over the thenar and web so the
+    # skin stretches evenly instead of tearing at one row of triangles.
+    thumbish = np.isin(chains[nearest], ["thumb"]) | np.isin(np.array(names)[nearest], ["palm", "hypothenar"])
+    t = np.where(thumbish, tau * 2.6, tau)[:, None]
+    W = np.where(allowed, np.exp(-(D - dmin[:, None]) / t), 0.0)
     # Raised construction (knuckle guard, cuff strap and tab) rides the hand bone only.
     if "body" in d_parts:
         on_feature = d_parts["body"] - d_parts["total"] > 0.0008

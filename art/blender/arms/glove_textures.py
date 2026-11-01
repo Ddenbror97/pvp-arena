@@ -272,13 +272,13 @@ def classify(h, parts, info, P, N, seed):
     s.zone[cuff] = CUFF
     ch = np.zeros(n, np.float32)
     end = -G.CUFF_LENGTH
-    binding = cuff & (y < end + 0.0045)
+    binding = cuff & (y < end + 0.004)
     s.zone[binding] = BINDING
     s.add_seam(cuff, np.abs(y - (end + 0.0052)), arcc.astype(np.float32))
     ch += np.where(binding, 0.00006 * np.sin(2 * np.pi * arcc / 0.0009), 0)
     # Strap and tab are separate moulded layers in the field: find where they are the surface.
     l_cuff = d_parts["cuff"]
-    strap = cuff & (d_total < l_cuff - 0.0007)
+    strap = cuff & False
     tab_centre = np.array([-G.CUFF_HALF_WIDTH * 0.62, -0.026, -G.CUFF_HALF_DEPTH * 0.68])
     tab_e = np.linalg.norm((l - tab_centre) / np.array([0.009, 0.013, 0.009]), axis=-1)
     tab = strap & (tab_e < 1.05)

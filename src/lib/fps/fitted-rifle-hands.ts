@@ -240,7 +240,7 @@ export type ForearmShape = {
  * CUFF_LENGTH in art/blender/arms/glove_sdf.py; the forearm starts inside it, so the glove
  * edge overlaps bare skin like a real cuff instead of being welded to it.
  */
-export const GLOVE_CUFF_LENGTH = 0.045;
+export const GLOVE_CUFF_LENGTH = 0.024;
 const FOREARM_SIDES = 160,
   FOREARM_RINGS = 44;
 /** Short, anatomically proportioned forearms entering from the lower screen edge. */

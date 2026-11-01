@@ -131,7 +131,7 @@ test("close-up captures of the first-person AK", async ({ page }) => {
               .add(
                 new T.Vector3(Math.cos(a), 0.35, Math.sin(a))
                   .normalize()
-                  .multiplyScalar(radius * 0.9),
+                  .multiplyScalar(radius * (orbit[1] === "ring" ? 1.7 : 0.9)),
               );
             eye.lookAt(centre);
             eye.updateMatrixWorld(true);

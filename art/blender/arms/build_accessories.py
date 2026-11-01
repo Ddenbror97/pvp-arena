@@ -300,7 +300,7 @@ def canonical_arm(name, along0=0.0, along1=0.45):
 # elbow, +Z up off the back of the wrist; 3 o'clock / the crown point at the hand, -Y)
 # =========================================================================================
 MM = 0.001
-WATCH_ALONG = 0.0745
+WATCH_ALONG = 0.058
 CASE_R = 20.0
 
 

@@ -5,9 +5,9 @@ untouched. Everything here is scripted so it rebuilds deterministically.
 
 | File | Purpose |
 | --- | --- |
-| `glove_sdf.py` | The glove volume: anatomical signed-distance sculpt around the rig's hand bones (tapered phalanges, arched palm, thenar/hypothenar, thumb web), plus the glove build (neoprene cuff, moulded knuckle guard, closure strap and pull tab). Also the skin weights. |
+| `glove_sdf.py` | The glove volume: anatomical signed-distance sculpt around the rig's hand bones (tapered phalanges, arched palm, thenar/hypothenar, thumb web), plus the glove build (short snug cuff, moulded knuckle guard). Also the skin weights. |
 | `build_gloves.py` | Blender: marching cubes → decimated game mesh (7.5k tris/hand) → weights → shared UV atlas → (with `--textures`) bakes and PBR maps → `gloves.json/bin` in the skin's bind space. |
-| `glove_textures.py` | High-poly normal/AO bakes, then per-texel panels and relief computed on the 3D glove: suede palm with a quilted padded patch, stretch-knit back, finger gussets, fingertip caps, TPR knuckle guard (knurl + flex channels), raised finger strips, perforated thumb crotch, bound cuff, elastic strap, moulded tab, lock-stitch seams, joint wrinkles, dust. |
+| `glove_textures.py` | High-poly normal/AO bakes, then per-texel panels and relief computed on the 3D glove: suede palm with a quilted padded patch, stretch-knit back, finger gussets, fingertip caps, TPR knuckle guard (knurl + flex channels), raised finger strips, perforated thumb crotch, bound cuff, lock-stitch seams, joint wrinkles, dust. |
 | `forearm.py` | Python port of the runtime forearm surface (`forearmRadius` in `fitted-rifle-hands.ts`). |
 | `build_accessories.py` | Olive ripstop sleeve (rolled band, compression folds, drape, inner hem lip) and a 40 mm field watch (case, 60-click knurled bezel with printed insert, domed crystal, Arabic 1–12 / 13–24 dial, hands at 10:09, crown, lugs, spring bars, NATO strap, buckle, keepers). |
 | `skin_texture.py` | Forearm skin with arm hair (`public/fps/forearm-skin-v2.webp`) from `forearm-skin-source.webp`. |
@@ -40,9 +40,10 @@ node validate_ak_viewmodel.mjs ../../public/fps/models/ak47-authored.glb
   follows a straight segment through it, so the cuff overlaps bare skin like a real glove.
 - **Accessories** are authored in canonical arm space (x thumb, y back of the arm, z toward the
   hand) and `wrapOntoForearm` bends them onto every posed forearm (handguard, magazine and
-  charging-handle grips), keeping each point's height above the skin. The watch is worn
-  tactical-style, face on the inside of the wrist: readable with the support hand palm-up under
-  the handguard. The left arm's frame is mirrored, so the watch is authored mirrored.
+  charging-handle grips), keeping each point's height above the skin. The watch sits on the
+  back of the left wrist, crown toward the hand.
+- **Palm side** is -(fingers × thumb side) on both hands, checked against the posed grips:
+  the bind pose's left fingers are bent backwards, so it cannot be used to tell.
 
 ## Limitations
 
