@@ -90,6 +90,9 @@ export class ConnectionTiming {
   get calibrated() {
     return this.samples.length >= 3;
   }
+  get latestRttMs() {
+    return this.samples.at(-1) ?? NaN;
+  }
   /** The lowest recent RTT resists transient jitter and selectively delayed pongs. */
   get lookbackMs() {
     return this.calibrated
