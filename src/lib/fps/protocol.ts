@@ -16,6 +16,8 @@ export interface Input {
   v: 1;
   type: "input";
   seq: number;
+  /** Respawn epoch: late packets from the previous round cannot affect the new one. */
+  round?: number;
   forward: number;
   strafe: number;
   yaw: number;
@@ -68,6 +70,8 @@ export interface Player {
 }
 
 export interface MatchState {
+  /** Missing on legacy checkpoints, which retain their original spawn rules. */
+  sideVersion?: 1;
   lastRound?: RoundRecap;
   /** Missing in pre-upgrade checkpoints: retain their original combat rules. */
   combatVersion?: 1 | 2;
@@ -144,6 +148,7 @@ export function validateInput(raw: unknown): Input | null {
     (Object.hasOwn(data, "walk") ? 1 : 0) +
     (Object.hasOwn(data, "playbackMs") ? 1 : 0) +
     (Object.hasOwn(data, "combatOnly") ? 1 : 0) +
+    (Object.hasOwn(data, "round") ? 1 : 0) +
     (Object.hasOwn(data, "combatVersion") ? 1 : 0);
   if (
     Object.keys(data).length !== expected ||
@@ -152,6 +157,10 @@ export function validateInput(raw: unknown): Input | null {
     (Object.hasOwn(data, "crouch") && typeof data["crouch"] !== "boolean") ||
     (Object.hasOwn(data, "walk") && typeof data["walk"] !== "boolean") ||
     (Object.hasOwn(data, "combatOnly") && data["combatOnly"] !== true) ||
+    (Object.hasOwn(data, "round") &&
+      (typeof data["round"] !== "number" ||
+        !Number.isSafeInteger(data["round"]) ||
+        data["round"] < 1)) ||
     (Object.hasOwn(data, "playbackMs") &&
       (typeof data["playbackMs"] !== "number" ||
         !Number.isFinite(data["playbackMs"]) ||
@@ -189,6 +198,7 @@ export function validateInput(raw: unknown): Input | null {
     v: 1,
     type: "input",
     seq: data["seq"],
+    ...(typeof data["round"] === "number" ? { round: data["round"] } : {}),
     ...(data["combatOnly"] === true ? { combatOnly: true as const } : {}),
     ...(data["combatVersion"] === 2 ? { combatVersion: 2 as const } : {}),
     forward: data["forward"],

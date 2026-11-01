@@ -4,6 +4,7 @@ import { EYE_HEIGHT, SPAWNS, eyeHeight } from "./map";
 import type { Input, MatchState, Player, Seat, Weapon } from "./protocol";
 import { predictMovement, TICK_MS, WEAPONS } from "./simulation";
 import { createCharacter } from "./character";
+import { characterSide } from "./sides";
 import { COMBAT_VERSION, recoveryProfile } from "./combat";
 import { createBloodEffects } from "./blood-effects";
 import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handling";
@@ -61,6 +62,7 @@ export type ArenaControls = {
     programs: number;
     pixelRatio: number;
     opponentVisible: boolean;
+    opponentModel: string;
     opponentPoseAt: number;
     opponentStance: number;
     opponentPlaybackErrorMs: number;
@@ -227,6 +229,7 @@ export function mountArena(
     A: createCharacter("A", branding, weaponKit),
     B: createCharacter("B", branding, weaponKit),
   };
+  const actorFor = (player: Seat) => characters[state ? characterSide(state, player) : player];
   scene.add(characters.A.root, characters.B.root);
   captureReflections();
   scene.environmentIntensity = ARENA_LIGHTING.environmentIntensity;
@@ -379,7 +382,19 @@ export function mountArena(
     onLoadProgress?.({ value: 80, label: "Compiling arena graphics" });
     // Prepare hidden combat effects and both lighting variants before Ready.
     // compileAsync uses parallel shader compilation where the driver supports it.
-    await renderer.compileAsync(scene, camera);
+    // Both team models must be ready for halftime, even if one is hidden in POV.
+    const actors = Object.values(characters).map((actor) => ({
+      root: actor.root,
+      visible: actor.root.visible,
+    }));
+    let compiled: ReturnType<THREE.WebGLRenderer["compileAsync"]>;
+    try {
+      for (const actor of actors) actor.root.visible = true;
+      compiled = renderer.compileAsync(scene, camera);
+    } finally {
+      for (const actor of actors) actor.root.visible = actor.visible;
+    }
+    await compiled;
     if (stopped) return;
     onLoadProgress?.({ value: 90, label: "Preparing weapon graphics" });
     await renderer.compileAsync(viewScene, viewCamera);
@@ -533,6 +548,7 @@ export function mountArena(
         type: "input",
         combatVersion: 2,
         seq: ++seq,
+        round: state.round,
         combatOnly: true,
         forward: 0,
         strafe: 0,
@@ -621,6 +637,7 @@ export function mountArena(
         v: 1,
         type: "input",
         seq: ++seq,
+        round: state.round,
         playbackMs: drawnPlaybackMs,
         ...(state.combatVersion === COMBAT_VERSION ? { combatVersion: COMBAT_VERSION } : {}),
         forward: active ? Number(keys.has("KeyW")) - Number(keys.has("KeyS")) : 0,
@@ -754,8 +771,9 @@ export function mountArena(
     if (state) {
       const otherSeat = seat === "B" ? "A" : "B",
         other = state.players[otherSeat];
-      characters[otherSeat === "A" ? "B" : "A"].root.visible = false;
-      const actor = characters[otherSeat];
+      const model = characterSide(state, otherSeat);
+      characters[model === "A" ? "B" : "A"].root.visible = false;
+      const actor = characters[model];
       if (other.hp > 0) opponentDeathAt = null;
       else if (opponentDeathAt === null) {
         opponentDeathAt = now;
@@ -960,14 +978,15 @@ export function mountArena(
       textures: renderer.info.memory.textures,
       programs: renderer.info.programs?.length ?? 0,
       pixelRatio: renderer.getPixelRatio(),
-      opponentVisible: characters[seat === "B" ? "A" : "B"].root.visible,
+      opponentVisible: actorFor(seat === "B" ? "A" : "B").root.visible,
+      opponentModel: actorFor(seat === "B" ? "A" : "B").root.name,
       opponentPoseAt: remotePose.at,
       opponentStance: remotePose.crouch,
       opponentPlaybackErrorMs: remoteClock.now(performance.now()) - playbackMs - remotePose.at,
       playbackMs,
       drawnPlaybackMs,
-      opponentPosition: characters[seat === "B" ? "A" : "B"].root.visible
-        ? characters[seat === "B" ? "A" : "B"].root.position.toArray()
+      opponentPosition: actorFor(seat === "B" ? "A" : "B").root.visible
+        ? actorFor(seat === "B" ? "A" : "B").root.position.toArray()
         : null,
       renderFrames,
       renderIntervalMs,
@@ -1037,6 +1056,7 @@ export function mountArena(
         pending = pending.filter((i) => i.seq > authoritative.lastSeq);
         for (const i of pending) if (state.phase === "live") predictMovement(predicted, i, TICK_MS);
         if (resetPresentation) {
+          opponentAnimated = false;
           cameraStance.reset();
           cameraVertical.reset();
           jumpPresentation.reset();
@@ -1071,7 +1091,7 @@ export function mountArena(
                 smokeUntil = now + 240;
               }
               confirmedShot = now;
-            } else if (e.seat) characters[e.seat].shot(performance.now());
+            } else if (e.seat) actorFor(e.seat).shot(performance.now());
           }
           if (e.seat === seat && (e.type === "hit" || e.type === "headshot")) {
             hitMarker?.getAnimations().forEach((a) => a.cancel());
@@ -1087,7 +1107,7 @@ export function mountArena(
           if (e.id !== undefined && e.id <= lastEventId) continue;
           if (e.id !== undefined) lastEventId = e.id;
           if (e.type === "impact" && e.impact) impacts.emit(e.impact, performance.now());
-          if (e.type === "shot" && e.seat) characters[e.seat].shot(performance.now());
+          if (e.type === "shot" && e.seat) actorFor(e.seat).shot(performance.now());
         }
       lastRound = state.round;
       const other = state.players[seat === "B" ? "A" : "B"];

@@ -278,10 +278,16 @@ describe("isolated real Durable Object WebSockets", () => {
       a = await sessionSocket(id, sid),
       b = await open(id, B);
     const initial = await readyLive(a, b);
+    const staleFrame = until(a, (f) => f.type === "snapshot" && f.serverNow > initial.serverNow);
+    a.send(JSON.stringify({ ...JSON.parse(movement(8000)), round: initial.state.round + 1 }));
+    const ignored = await staleFrame;
+    expect(ignored.state.players.A.lastSeq).toBe(initial.state.players.A.lastSeq);
+    expect(ignored.state.players.A.ammo).toBe(initial.state.players.A.ammo);
     const frame = until(a, (f) => f.type === "snapshot" && f.state.players.A.lastSeq === 8000);
     a.send(
       JSON.stringify({
         ...JSON.parse(movement(8000)),
+        round: initial.state.round,
         combatOnly: true,
         forward: 0,
         strafe: 0,
@@ -661,11 +667,13 @@ describe("isolated real Durable Object WebSockets", () => {
   });
   it("starts only when both clients are ready, advances on server time and replaces a reconnect", async () => {
     const id = await init();
-    const a = await open(id),
-      b = await open(id, B);
+    const a = await open(id);
+    // Waiting rooms send their initial state, rather than repeating an unchanged tick.
+    const waitingFrame = until(a, (f) => f.type === "snapshot");
+    const b = await open(id, B);
     a.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
     await pause(80);
-    const waiting = await until(a, (f) => f.type === "snapshot");
+    const waiting = await waitingFrame;
     expect(waiting.state.phase).toBe("waiting");
     const live = until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
     b.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));

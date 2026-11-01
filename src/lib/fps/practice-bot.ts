@@ -248,6 +248,7 @@ export function createPracticeBot(random: () => number = Math.random) {
         type: "input",
         combatVersion: 2,
         seq: ++seq,
+        round: state.round,
         forward: clamp(-Math.sin(yaw) * vx - Math.cos(yaw) * vz, 1),
         strafe: clamp(Math.cos(yaw) * vx - Math.sin(yaw) * vz, 1),
         yaw,

@@ -730,7 +730,12 @@
   flex-shrink: 0;
 }
 .duel-score > span {
-  min-width: 42px;
+  min-width: 110px;
+}
+.duel-halftime-detail {
+  color: #d7b5ff;
+  margin: -10px 0 20px;
+  font-size: 13px;
 }
 .duel-health strong,
 .duel-ammo strong {

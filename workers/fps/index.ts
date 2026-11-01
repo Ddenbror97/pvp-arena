@@ -519,6 +519,7 @@ export class DuelRoom {
       socket.close(1008, "Invalid input");
       return;
     }
+    if (input.round !== undefined && input.round !== this.saved.state.round) return;
     if (input.seq <= info.seq) return;
     info.seq = input.seq;
     socket.serializeAttachment(info);
@@ -711,6 +712,8 @@ export class DuelRoom {
           while (
             queue.length &&
             (queue[0]!.at <= staleBefore ||
+              (queue[0]!.input.round !== undefined &&
+                queue[0]!.input.round !== saved.state.round) ||
               (connection !== undefined && queue[0]!.connectionId !== connection))
           )
             queue.shift();

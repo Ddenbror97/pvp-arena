@@ -24,6 +24,7 @@ import {
 import { RoundBreak, type DuelProfile } from "./RoundBreak";
 import { DeathFeedback } from "./DeathFeedback";
 import { isDefeatedView } from "@/lib/fps/death-presentation";
+import { isHalftime, sideName } from "@/lib/fps/sides";
 import "./duel.css";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
 import { FpsReadyAction } from "./FpsQueueNotice";
@@ -645,7 +646,8 @@ export function DuelMatch({
         </Link>
         <div className="duel-score">
           <span className={seat === "A" ? "you" : ""}>
-            A <b>{frame?.state.score.A ?? match?.score_a ?? 0}</b>
+            {frame ? sideName(frame.state, "A") : "Police"}{" "}
+            <b>{frame?.state.score.A ?? match?.score_a ?? 0}</b>
           </span>
           <div>
             <small>
@@ -654,11 +656,14 @@ export function DuelMatch({
             <strong>
               {phase === "live"
                 ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
-                : "PVPSTRIKE"}
+                : frame && isHalftime(frame.state)
+                  ? "HALFTIME"
+                  : "PVPSTRIKE"}
             </strong>
           </div>
           <span className={seat === "B" ? "you" : ""}>
-            <b>{frame?.state.score.B ?? match?.score_b ?? 0}</b> B
+            <b>{frame?.state.score.B ?? match?.score_b ?? 0}</b>{" "}
+            {frame ? sideName(frame.state, "B") : "Terrorist"}
           </span>
         </div>
         <div className="duel-hud-actions">
@@ -762,6 +767,7 @@ export function DuelMatch({
           seconds={seconds}
           profiles={players}
           countdown={phase === "countdown"}
+          halftime={!!frame && isHalftime(frame.state)}
         />
       )}
       {!showLoading && needsInteraction && (
