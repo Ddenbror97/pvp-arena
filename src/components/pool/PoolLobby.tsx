@@ -19,6 +19,7 @@ import {
 import { formatCents, parseStakeDollars, stakeDraft, stakeQuote } from "@/lib/pool/copy";
 import { enterPool } from "@/lib/pool/pool.functions";
 import { SHOWCASE_AIM, SHOWCASE_BALLS, SHOWCASE_POWER } from "@/lib/pool/showcase";
+import "./practice.css";
 
 const BALLS = [
   { n: "1", pip: "#f0c410" },
@@ -229,6 +230,9 @@ export function PoolLobby() {
             <span className="pool-stage-word">Pool</span>
           </h1>
           <p className="pool-stage-sub">Real players. Real skills. Real wins.</p>
+          <Link to="/pool/practice" preload="intent" className="pool-practice-link">
+            <Target size={18} aria-hidden /> Practice vs bot · Free
+          </Link>
           <ul className="pool-stage-facts">
             {FACTS.map((fact) => {
               const Icon = fact.icon;

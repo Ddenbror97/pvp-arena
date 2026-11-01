@@ -121,8 +121,8 @@ function HowItWorksPage() {
       >
         <p>
           Choose PvPStrike FPS, 8-ball pool, poker, Jackpot, Coinflip, Roulette or P2P Slott. Cash
-          games use one US-dollar balance funded with digital assets. Free FPS Practice lets you
-          play a bot without a deposit or cash stake.
+          games use one US-dollar balance funded with digital assets. Free FPS and pool Practice let
+          you play a bot without a deposit or cash stake.
         </p>
         <p>
           Review the rules and fee before entering. Random games use seed verification; pool follows
@@ -254,7 +254,7 @@ function HowItWorksPage() {
             to="/8-ball-pool"
             tag="1v1 · shot-based rules"
           >
-            Aim, control power and clear your group before legally pocketing the 8.
+            Clear your group before legally pocketing the 8. Free bot Practice needs no stake.
           </GameTile>
           <GameTile
             icon={<Swords className="h-5 w-5" />}
@@ -473,6 +473,10 @@ function HowItWorksPage() {
           <SeoCard icon={<Target className="h-5 w-5" />} title="8-ball">
             <ol className="list-decimal space-y-1 pl-5">
               <li>
+                <strong>Practice:</strong> play a dedicated bot for free, with no deposit, stake,
+                fee, payout or shot clock. The same shot rules and physics apply.
+              </li>
+              <li>
                 <strong>Stake:</strong> both players put in the same amount, from $1 to $50. Join an
                 open table to play that opponent, or play to take the oldest open table at the stake
                 you picked.
@@ -500,6 +504,7 @@ function HowItWorksPage() {
               </li>
             </ol>
             <SeoLink to="/8-ball-pool">Open the 8-ball lobby</SeoLink>
+            <SeoLink to="/pool/practice">Practise pool against a bot</SeoLink>
           </SeoCard>
           <SeoCard icon={<Swords className="h-5 w-5" />} title="PvPStrike FPS">
             <ol className="list-decimal space-y-1 pl-5">

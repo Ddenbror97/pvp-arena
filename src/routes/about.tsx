@@ -339,7 +339,8 @@ function AboutPage() {
             cta="Play 8-ball"
           >
             A 1v1 match from $1 to $50. The winner is whoever the rules name after the shots. The
-            rack seed only places the balls. The fee is 5% of the pot when someone wins.
+            rack seed only places the balls. Cash wins have a 5% pot fee. Free Practice is against a
+            dedicated bot, with no stake or payout.
           </GameCard>
           <GameCard
             icon={<Swords className="h-5 w-5" />}

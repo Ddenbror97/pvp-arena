@@ -45,6 +45,7 @@ import { Route as PokerTableIdRouteImport } from './routes/poker.$tableId'
 import { Route as PokerDealerRouteImport } from './routes/poker.dealer'
 import { Route as PokerReplayRouteImport } from './routes/poker.replay'
 import { Route as PoolMatchIdRouteImport } from './routes/pool.$matchId'
+import { Route as PoolPracticeRouteImport } from './routes/pool.practice'
 import { Route as SlottGameIdRouteImport } from './routes/slott.$gameId'
 import { Route as AuthenticatedPartnerLeaderboardsRouteImport } from './routes/_authenticated/partner.leaderboards'
 import { Route as AuthenticatedProfileSecurityRouteImport } from './routes/_authenticated/profile_.security'
@@ -242,6 +243,11 @@ const PoolMatchIdRoute = PoolMatchIdRouteImport.update({
   path: '/$matchId',
   getParentRoute: () => PoolRoute,
 } as any)
+const PoolPracticeRoute = PoolPracticeRouteImport.update({
+  id: '/practice',
+  path: '/practice',
+  getParentRoute: () => PoolRoute,
+} as any)
 const SlottGameIdRoute = SlottGameIdRouteImport.update({
   id: '/$gameId',
   path: '/$gameId',
@@ -373,6 +379,7 @@ export interface FileRoutesByFullPath {
   '/poker/dealer': typeof PokerDealerRoute
   '/poker/replay': typeof PokerReplayRoute
   '/pool/$matchId': typeof PoolMatchIdRoute
+  '/pool/practice': typeof PoolPracticeRoute
   '/slott/$gameId': typeof SlottGameIdRoute
   '/guides/': typeof GuidesIndexRoute
   '/partner/leaderboards': typeof AuthenticatedPartnerLeaderboardsRoute
@@ -427,6 +434,7 @@ export interface FileRoutesByTo {
   '/poker/dealer': typeof PokerDealerRoute
   '/poker/replay': typeof PokerReplayRoute
   '/pool/$matchId': typeof PoolMatchIdRoute
+  '/pool/practice': typeof PoolPracticeRoute
   '/slott/$gameId': typeof SlottGameIdRoute
   '/guides': typeof GuidesIndexRoute
   '/partner/leaderboards': typeof AuthenticatedPartnerLeaderboardsRoute
@@ -483,6 +491,7 @@ export interface FileRoutesById {
   '/poker/dealer': typeof PokerDealerRoute
   '/poker/replay': typeof PokerReplayRoute
   '/pool/$matchId': typeof PoolMatchIdRoute
+  '/pool/practice': typeof PoolPracticeRoute
   '/slott/$gameId': typeof SlottGameIdRoute
   '/guides/': typeof GuidesIndexRoute
   '/_authenticated/partner/leaderboards': typeof AuthenticatedPartnerLeaderboardsRoute
@@ -539,6 +548,7 @@ export interface FileRouteTypes {
     | '/poker/dealer'
     | '/poker/replay'
     | '/pool/$matchId'
+    | '/pool/practice'
     | '/slott/$gameId'
     | '/guides/'
     | '/partner/leaderboards'
@@ -593,6 +603,7 @@ export interface FileRouteTypes {
     | '/poker/dealer'
     | '/poker/replay'
     | '/pool/$matchId'
+    | '/pool/practice'
     | '/slott/$gameId'
     | '/guides'
     | '/partner/leaderboards'
@@ -648,6 +659,7 @@ export interface FileRouteTypes {
     | '/poker/dealer'
     | '/poker/replay'
     | '/pool/$matchId'
+    | '/pool/practice'
     | '/slott/$gameId'
     | '/guides/'
     | '/_authenticated/partner/leaderboards'
@@ -964,6 +976,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoolMatchIdRouteImport
       parentRoute: typeof PoolRoute
     }
+    '/pool/practice': {
+      id: '/pool/practice'
+      path: '/practice'
+      fullPath: '/pool/practice'
+      preLoaderRoute: typeof PoolPracticeRouteImport
+      parentRoute: typeof PoolRoute
+    }
     '/slott/$gameId': {
       id: '/slott/$gameId'
       path: '/$gameId'
@@ -1149,10 +1168,12 @@ const PokerRouteWithChildren = PokerRoute._addFileChildren(PokerRouteChildren)
 
 interface PoolRouteChildren {
   PoolMatchIdRoute: typeof PoolMatchIdRoute
+  PoolPracticeRoute: typeof PoolPracticeRoute
 }
 
 const PoolRouteChildren: PoolRouteChildren = {
   PoolMatchIdRoute: PoolMatchIdRoute,
+  PoolPracticeRoute: PoolPracticeRoute,
 }
 
 const PoolRouteWithChildren = PoolRoute._addFileChildren(PoolRouteChildren)

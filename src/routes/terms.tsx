@@ -29,7 +29,8 @@ function TermsPage() {
       <p>
         PVPspinArena offers seven games: Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit
         Texas Hold&apos;em poker, 1v1 8-ball pool and PvPStrike browser FPS. PvPStrike also offers
-        free solo Practice against a bot, with no stake or payout.
+        free solo Practice against a bot, with no stake or payout. 8-ball also has free bot
+        Practice, separate from cash matches.
       </p>
       <p>
         Your playable balance is maintained as a US-dollar ledger, counted in cents. Bitcoin, and
@@ -135,6 +136,12 @@ function TermsPage() {
       </p>
 
       <h3>8-ball</h3>
+      <p>
+        <Link to="/pool/practice">Free pool Practice</Link> runs in your browser against a dedicated
+        bot using the same table physics and shot rules, without a shot clock. It requires no
+        deposit and has no stake, fee or payout. Practice results do not settle a cash game. The
+        cash-match terms below apply when you choose a staked table instead.
+      </p>
       <p>
         8-ball is a 1v1 match. Both players stake the same amount. The winner is the player the
         published rules name after the shots, a forfeit, or three shot-clock timeouts. The rack seed

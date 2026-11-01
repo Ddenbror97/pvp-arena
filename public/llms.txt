@@ -16,6 +16,8 @@ Jackpot, Coinflip, P2P Slott, poker, 8-ball and PvPStrike cash matches use playe
 
 ## How the site works
 
+Free [8-ball Practice](https://pvpspinarena.com/pool/practice) runs locally against a dedicated bot. It uses the cash table's physics and shot rules, without a shot clock, deposit, stake, fee or payout. The unfinished rack is saved in the browser tab's session storage. Practice does not enter cash game history or move wallet funds.
+
 - [How it works](https://pvpspinarena.com/how-it-works): account, wallet, deposits, each game, and verification
 - [Fairness](https://pvpspinarena.com/fairness): draw protocols, pool replay and the limits of FPS server validation
 - [About](https://pvpspinarena.com/about): what the platform is and is not

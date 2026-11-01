@@ -73,7 +73,7 @@ function PrivacyPage() {
       </ul>
       <h2>Real-Time Gameplay and Connection Data</h2>
       <p>
-        To operate pool and PvPStrike, servers process the actions sent by your browser and the
+        To operate cash pool and PvPStrike, servers process the actions sent by your browser and the
         state needed to run the match. FPS actions include movement, aim, firing and reloading; pool
         actions include aiming, shot power and ball placement. Authentication and session checks
         control who may play a seat.
@@ -91,6 +91,12 @@ function PrivacyPage() {
       </p>
 
       <h2>Browser Preferences</h2>
+      <p>
+        Free 8-ball Practice runs locally in your browser. Its unfinished rack is saved in the tab's
+        session storage so refreshing can resume it. New rack replaces that saved game; closing the
+        tab normally clears it. These local Practice shots are not sent to the cash pool settlement
+        service or published as cash results.
+      </p>
       <p>
         FPS mouse sensitivity, sound volume and crosshair preferences are saved in your browser's
         local storage so they can be reused on that browser. These preferences are not a public
