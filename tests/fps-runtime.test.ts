@@ -272,6 +272,45 @@ describe("isolated real Durable Object WebSockets", () => {
     replacement.webSocket!.accept();
     sockets.push(replacement.webSocket!);
   });
+  it("immediate trigger shares session authority, fires without movement and uses 30 Hz snapshots", async () => {
+    const id = await init(),
+      sid = crypto.randomUUID(),
+      a = await sessionSocket(id, sid),
+      b = await open(id, B);
+    const initial = await readyLive(a, b);
+    const frame = until(a, (f) => f.type === "snapshot" && f.state.players.A.lastSeq === 8000);
+    a.send(
+      JSON.stringify({
+        ...JSON.parse(movement(8000)),
+        combatOnly: true,
+        forward: 0,
+        strafe: 0,
+        playbackMs: 65,
+      }),
+    );
+    const fired = await frame;
+    expect(fired.state.players.A.ammo).toBe(initial.state.players.A.ammo - 1);
+    expect(fired.state.players.A.z).toBe(initial.state.players.A.z);
+    const stamps: number[] = [];
+    a.addEventListener("message", (e) => {
+      const f = JSON.parse(String(e.data));
+      if (f.type === "snapshot") stamps.push(f.serverNow);
+    });
+    await pause(1100);
+    expect(stamps.length).toBeGreaterThanOrEqual(25);
+    const end = closed(a);
+    revokedSessions.add(sid);
+    try {
+      a.send(
+        JSON.stringify({ ...JSON.parse(movement(8001)), combatOnly: true, forward: 0, strafe: 0 }),
+      );
+      expect(await end).toBe(1008);
+    } finally {
+      revokedSessions.delete(sid);
+      a.close();
+      b.close();
+    }
+  });
   it("revoking an established session rejects queued movement and fire, including reconnect admission", async () => {
     const id = await init(),
       sid = crypto.randomUUID(),

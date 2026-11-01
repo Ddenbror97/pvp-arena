@@ -25,7 +25,7 @@ import { TriggerFeedback } from "./trigger-feedback";
 import { createViewHands } from "./view-hands";
 import { createMuzzleFlash } from "./muzzle-flash";
 import { createAuthoredViewmodel } from "./authored-viewmodel";
-import { REMOTE_DELAY_MS, SnapshotClock } from "./network";
+import { REMOTE_DELAY_MS, SnapshotClock, PlaybackDelay, boundedPlaybackMs } from "./network";
 import { createViewmodelMotion } from "./viewmodel-motion";
 import { deathPose, deathSupport } from "./death-presentation";
 
@@ -64,6 +64,8 @@ export type ArenaControls = {
     opponentPoseAt: number;
     opponentStance: number;
     opponentPlaybackErrorMs: number;
+    playbackMs: number;
+    drawnPlaybackMs: number;
     opponentPosition: number[] | null;
     renderFrames: number;
     renderIntervalMs: number;
@@ -432,6 +434,9 @@ export function mountArena(
   const triggerFeedback = new TriggerFeedback();
   const remoteMotion = new RemotePresentation();
   const remoteClock = new SnapshotClock();
+  const playbackDelay = new PlaybackDelay();
+  let playbackMs = REMOTE_DELAY_MS;
+  let drawnPlaybackMs = REMOTE_DELAY_MS;
   const remotePose = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0, crouch: 0 };
   let renderPose: Player | null = null;
   const previewInput: Input = {
@@ -522,6 +527,26 @@ export function mountArena(
     fire = true;
     fireLatched = true;
     presentLocalShot(seq + 1);
+    if (!authorizationSuspended && state?.phase === "live" && predicted && predicted.hp > 0) {
+      send({
+        v: 1,
+        type: "input",
+        combatVersion: 2,
+        seq: ++seq,
+        combatOnly: true,
+        forward: 0,
+        strafe: 0,
+        yaw,
+        pitch,
+        fire: true,
+        reload: false,
+        weapon,
+        jump: false,
+        sprint: false,
+        playbackMs: drawnPlaybackMs,
+      });
+      fireLatched = false;
+    }
   };
   const mouseup = () => {
     fire = false;
@@ -587,6 +612,49 @@ export function mountArena(
   viewScene.updateMatrixWorld(true);
   scene.matrixWorldAutoUpdate = false;
   viewScene.matrixWorldAutoUpdate = false;
+  const emitInput = () => {
+    const controlled = !document.hidden && document.hasFocus() && locked();
+    if (seat && state && predicted) {
+      const active =
+        !authorizationSuspended && controlled && state.phase === "live" && predicted.hp > 0;
+      const input: Input = {
+        v: 1,
+        type: "input",
+        seq: ++seq,
+        playbackMs: drawnPlaybackMs,
+        ...(state.combatVersion === COMBAT_VERSION ? { combatVersion: COMBAT_VERSION } : {}),
+        forward: active ? Number(keys.has("KeyW")) - Number(keys.has("KeyS")) : 0,
+        strafe: active ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0,
+        yaw: Math.max(
+          -Math.PI * 2,
+          Math.min(Math.PI * 2, yaw + (state.combatVersion === COMBAT_VERSION ? 0 : recoilYaw)),
+        ),
+        pitch: Math.max(
+          -1.45,
+          Math.min(1.45, pitch + (state.combatVersion === COMBAT_VERSION ? 0 : recoilPitch)),
+        ),
+        fire: active && (fire || fireLatched),
+        reload: active && reload,
+        weapon,
+        jump: active && jump,
+        sprint: false,
+        walk: active && (keys.has("ShiftLeft") || keys.has("ShiftRight")),
+        crouch: active && (keys.has("ControlLeft") || keys.has("ControlRight")),
+      };
+      if (state.phase === "live" && !authorizationSuspended) {
+        const beforeY = predicted.y;
+        predictMovement(predicted, input, TICK_MS);
+        jumpPresentation.advance(beforeY, predicted.y);
+        pending.push(input);
+        if (pending.length > 60) pending.shift();
+      }
+      if (input.fire && input.weapon === "rifle") presentLocalShot(input.seq);
+      send(input);
+      fireLatched = false;
+      reload = false;
+      jump = false;
+    }
+  };
   const frame = (now: number) => {
     if (stopped) return;
     const cpuStart = performance.now();
@@ -601,57 +669,20 @@ export function mountArena(
     const controlled = focused && locked();
     previous = now;
     accumulator += tickDt;
+    while (accumulator >= inputStepMs) {
+      accumulator -= inputStepMs;
+      emitInput();
+    }
     correction.update(tickDt);
     if (now - began > 2500 && controlled && state?.phase === "live" && budget.update(frameMs))
       resize();
-    while (accumulator >= inputStepMs) {
-      accumulator -= inputStepMs;
-      if (seat && state && predicted) {
-        const active =
-          !authorizationSuspended && controlled && state.phase === "live" && predicted.hp > 0;
-        const input: Input = {
-          v: 1,
-          type: "input",
-          seq: ++seq,
-          ...(state.combatVersion === COMBAT_VERSION ? { combatVersion: COMBAT_VERSION } : {}),
-          forward: active ? Number(keys.has("KeyW")) - Number(keys.has("KeyS")) : 0,
-          strafe: active ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0,
-          yaw: Math.max(
-            -Math.PI * 2,
-            Math.min(Math.PI * 2, yaw + (state.combatVersion === COMBAT_VERSION ? 0 : recoilYaw)),
-          ),
-          pitch: Math.max(
-            -1.45,
-            Math.min(1.45, pitch + (state.combatVersion === COMBAT_VERSION ? 0 : recoilPitch)),
-          ),
-          fire: active && (fire || fireLatched),
-          reload: active && reload,
-          weapon,
-          jump: active && jump,
-          sprint: false,
-          walk: active && (keys.has("ShiftLeft") || keys.has("ShiftRight")),
-          crouch: active && (keys.has("ControlLeft") || keys.has("ControlRight")),
-        };
-        if (state.phase === "live" && !authorizationSuspended) {
-          const beforeY = predicted.y;
-          predictMovement(predicted, input, TICK_MS);
-          jumpPresentation.advance(beforeY, predicted.y);
-          pending.push(input);
-          if (pending.length > 60) pending.shift();
-        }
-        if (input.fire && input.weapon === "rifle") presentLocalShot(input.seq);
-        send(input);
-        fireLatched = false;
-        reload = false;
-        jump = false;
-      }
-    }
     // Only drawing is throttled. Fixed input/network work stays above this gate.
     if (!focused && now - lastDraw < 1000 / 15) {
       animation = requestAnimationFrame(frame);
       return;
     }
     renderIntervalMs = lastDraw ? now - lastDraw : 0;
+    playbackMs = playbackDelay.sample(renderIntervalMs);
     const dt = frameDelta(now, lastDraw || now - tickDt);
     lastDraw = now;
     renderFrames++;
@@ -736,11 +767,12 @@ export function mountArena(
       // Server visibility is applied on the playback timeline (RemotePresentation), so the
       // opponent disappears when the drawn pose reaches cover, not when the packet arrives.
       const visible = remoteMotion.sample(
-        remoteClock.now(now) - REMOTE_DELAY_MS,
+        remoteClock.now(now) - playbackMs,
         remotePose,
         renderIntervalMs,
       );
       if (visible) {
+        drawnPlaybackMs = boundedPlaybackMs(remoteClock.now(now) - remotePose.at);
         actor.root.position.set(remotePose.x, remotePose.y, remotePose.z);
         actor.root.rotation.y = remotePose.yaw;
         actor.root.rotation.x = collapse?.pitch ?? 0;
@@ -931,7 +963,9 @@ export function mountArena(
       opponentVisible: characters[seat === "B" ? "A" : "B"].root.visible,
       opponentPoseAt: remotePose.at,
       opponentStance: remotePose.crouch,
-      opponentPlaybackErrorMs: remoteClock.now(performance.now()) - REMOTE_DELAY_MS - remotePose.at,
+      opponentPlaybackErrorMs: remoteClock.now(performance.now()) - playbackMs - remotePose.at,
+      playbackMs,
+      drawnPlaybackMs,
       opponentPosition: characters[seat === "B" ? "A" : "B"].root.visible
         ? characters[seat === "B" ? "A" : "B"].root.position.toArray()
         : null,
@@ -959,6 +993,11 @@ export function mountArena(
         (state?.phase !== frame.state.phase && frame.state.phase !== "live");
       authorizationSuspended = false;
       state = frame.state;
+      if (resetPresentation) playbackDelay.reset();
+      playbackDelay.observe(
+        performance.now(),
+        Math.max(0, frame.serverNow - (frame.poseAt ?? frame.serverNow)),
+      );
       visibility = frame.visibility ?? { A: true, B: true };
       seat = assignedSeat;
       const measuredOffset = frame.serverNow - Date.now();

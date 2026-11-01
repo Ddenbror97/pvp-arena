@@ -88,7 +88,8 @@ export async function fixture(
           now - state.server.lastStepAt >= 34;
           step++
         ) {
-          const input = queue.shift();
+          const trigger = queue[0]?.combatOnly ? queue.shift() : undefined;
+          const input = queue[0]?.combatOnly ? undefined : queue.shift();
           const opponent = Reflect.get(window, "fpsTestOpponent")?.(state, now);
           const before = structuredClone(state.players);
           stepMatch(
@@ -99,6 +100,8 @@ export async function fixture(
             },
             Math.max(state.server.lastStepAt + 34, now - 68),
             TICK_MS,
+            undefined,
+            trigger ? { [seat]: trigger } : undefined,
           );
           Reflect.get(window, "fpsTestAfterStep")?.(state, before, now);
           events.push(...state.events.map((e: object) => ({ ...e, id: ++eventId })));

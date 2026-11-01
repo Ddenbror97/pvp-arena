@@ -1,3 +1,4 @@
+import { MIN_PLAYBACK_MS, REMOTE_DELAY_MS } from "./network";
 export type Seat = "A" | "B";
 export type Weapon = "rifle" | "pistol";
 export type RoundStats = {
@@ -26,6 +27,10 @@ export interface Input {
   sprint: boolean;
   /** Slow movement with server-suppressed footsteps; optional for cached clients. */
   walk?: boolean;
+  /** Actual drawn opponent delay; server bounds this independently of RTT. */
+  playbackMs?: number;
+  /** A trigger edge carries no movement time. */
+  combatOnly?: true;
   crouch?: boolean;
 }
 
@@ -54,6 +59,9 @@ export interface Player {
   recoilUpdatedAt?: number;
   stepDistance?: number;
   triggerHeld?: boolean;
+  /** Last authoritative movement intent, used by zero-time combat inputs. */
+  moving?: boolean;
+  sprinting?: boolean;
   crouched?: boolean;
   /** Server-owned jump velocity, included in snapshots for prediction. y is feet height. */
   velocityY?: number;
@@ -134,13 +142,21 @@ export function validateInput(raw: unknown): Input | null {
     KEYS.length +
     (Object.hasOwn(data, "crouch") ? 1 : 0) +
     (Object.hasOwn(data, "walk") ? 1 : 0) +
+    (Object.hasOwn(data, "playbackMs") ? 1 : 0) +
+    (Object.hasOwn(data, "combatOnly") ? 1 : 0) +
     (Object.hasOwn(data, "combatVersion") ? 1 : 0);
   if (
     Object.keys(data).length !== expected ||
     !KEYS.every((key) => Object.hasOwn(data, key)) ||
     (Object.hasOwn(data, "combatVersion") && data["combatVersion"] !== 2) ||
     (Object.hasOwn(data, "crouch") && typeof data["crouch"] !== "boolean") ||
-    (Object.hasOwn(data, "walk") && typeof data["walk"] !== "boolean")
+    (Object.hasOwn(data, "walk") && typeof data["walk"] !== "boolean") ||
+    (Object.hasOwn(data, "combatOnly") && data["combatOnly"] !== true) ||
+    (Object.hasOwn(data, "playbackMs") &&
+      (typeof data["playbackMs"] !== "number" ||
+        !Number.isFinite(data["playbackMs"]) ||
+        data["playbackMs"] < MIN_PLAYBACK_MS ||
+        data["playbackMs"] > REMOTE_DELAY_MS))
   )
     return null;
   if (
@@ -158,10 +174,22 @@ export function validateInput(raw: unknown): Input | null {
   )
     return null;
   // Copy whitelisted primitives; retain no reference to an untrusted payload.
+  if (
+    data["combatOnly"] &&
+    (data["fire"] !== true ||
+      data["forward"] !== 0 ||
+      data["strafe"] !== 0 ||
+      data["jump"] ||
+      data["reload"] ||
+      data["sprint"] ||
+      data["walk"])
+  )
+    return null;
   return {
     v: 1,
     type: "input",
     seq: data["seq"],
+    ...(data["combatOnly"] === true ? { combatOnly: true as const } : {}),
     ...(data["combatVersion"] === 2 ? { combatVersion: 2 as const } : {}),
     forward: data["forward"],
     strafe: data["strafe"],
@@ -173,6 +201,7 @@ export function validateInput(raw: unknown): Input | null {
     jump: data["jump"] as boolean,
     sprint: data["sprint"] as boolean,
     ...(typeof data["walk"] === "boolean" ? { walk: data["walk"] } : {}),
+    ...(typeof data["playbackMs"] === "number" ? { playbackMs: data["playbackMs"] } : {}),
     ...(typeof data["crouch"] === "boolean" ? { crouch: data["crouch"] } : {}),
   };
 }
