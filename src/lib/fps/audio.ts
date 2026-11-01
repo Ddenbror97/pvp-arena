@@ -1,10 +1,9 @@
 import type { MatchState, Seat, Weapon } from "./protocol";
 import { consumeShotPrediction } from "./trigger-feedback";
 const SAMPLES = {
-  rifleA: "ak47-a-v2.wav",
-  rifleB: "ak47-b-v2.wav",
-  reloadEmpty: "ak-reload-empty-v1.wav",
-  reloadTactical: "ak-reload-tactical-v1.wav",
+  rifleA: "ak47-reference-v1.wav",
+  reloadEmpty: "ak-reload-reference-empty-v1.wav",
+  reloadTactical: "ak-reload-reference-tactical-v1.wav",
   pistol: "pistol-v1.wav",
   step0: "step-0-v1.wav",
   step1: "step-1-v1.wav",
@@ -65,11 +64,11 @@ export function createCombatAudio() {
   const shot = (weapon: Weapon, gain = 0.62, pan = 0, occluded = false) => {
     played.shots++;
     play(
-      weapon === "rifle" ? (played.shots % 2 ? "rifleA" : "rifleB") : "pistol",
+      weapon === "rifle" ? "rifleA" : "pistol",
       gain,
       pan,
       occluded,
-      0.985 + (played.shots % 3) * 0.015,
+      weapon === "rifle" ? 1 : 0.985 + (played.shots % 3) * 0.015,
     );
   };
   let loading: Promise<void> | undefined,
@@ -126,7 +125,8 @@ export function createCombatAudio() {
     filter.connect(level);
     level.connect(panner);
     panner.connect(master);
-    if (name.startsWith("rifle") || name === "pistol") panner.connect(echo);
+    // The reference rifle already includes its recorded report and decay.
+    if (name === "pistol") panner.connect(echo);
     voices.add(source);
     source.onended = () => {
       voices.delete(source);

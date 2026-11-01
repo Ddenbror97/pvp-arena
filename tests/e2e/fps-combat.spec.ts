@@ -127,7 +127,7 @@ test("recorded combat audio plays once per confirmed event, supports mute and bo
       repeatedRoundVoices,
     };
   });
-  expect(stats.single.decoded).toBe(11);
+  expect(stats.single.decoded).toBe(10);
   expect(stats.single.shots).toBe(1);
   expect(stats.single.voices).toBe(1);
   expect(stats.repeat.shots).toBe(1);
