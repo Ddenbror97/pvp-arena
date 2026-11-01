@@ -24,7 +24,7 @@ test("guest can practise, watch the bot, resume and restart without a cash match
       writes.push(r.url());
   });
   await page.goto("/8-ball-pool");
-  await page.getByRole("link", { name: "Practice vs bot · Free" }).click();
+  await page.getByRole("link", { name: "Practice", exact: true }).click();
   await expect(page).toHaveURL(/\/pool\/practice$/);
   await expect(page.locator(".pool-practice")).toHaveAttribute("data-phase", "idle");
   await expect(page.locator("canvas.pool-canvas")).toBeVisible();

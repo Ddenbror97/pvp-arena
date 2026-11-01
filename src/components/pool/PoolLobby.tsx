@@ -231,7 +231,7 @@ export function PoolLobby() {
           </h1>
           <p className="pool-stage-sub">Real players. Real skills. Real wins.</p>
           <Link to="/pool/practice" preload="intent" className="pool-practice-link">
-            <Target size={18} aria-hidden /> Practice vs bot · Free
+            <Target size={18} aria-hidden /> Practice
           </Link>
           <ul className="pool-stage-facts">
             {FACTS.map((fact) => {
