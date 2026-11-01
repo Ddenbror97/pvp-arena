@@ -7,7 +7,7 @@ import { createAuthoredViewmodel } from "./authored-viewmodel";
 import { buildHeadWrap, createKnitTexture, createShemaghTextures } from "./head-wrap";
 import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 import { createMuzzleFlash } from "./muzzle-flash";
-import { ARENA_MODELS } from "./model-assets";
+import { ARENA_MODELS, CHARACTER_MODELS, CHARACTER_SET } from "./model-assets";
 
 type Motion = {
   stance?: number;
@@ -58,7 +58,12 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
     pistol.add(mesh);
   }
   weapon.root.visible = false;
-  const asset = retainAuthoredAsset(ARENA_MODELS.body);
+  // Operators: the Blender-built Police (A) / Terrorist (B) bodies carry their own clothing,
+  // gear and PBR materials; only the legacy shared body is tinted and dressed at runtime.
+  const operators = CHARACTER_SET === "operators";
+  const asset = retainAuthoredAsset(
+    operators ? CHARACTER_MODELS[police ? "police" : "terrorist"] : CHARACTER_MODELS.legacy,
+  );
   const headAsset = retainAuthoredAsset(ARENA_MODELS.head);
   const ownedMaterials: THREE.Material[] = [],
     ownedTextures: THREE.Texture[] = [],
@@ -91,13 +96,16 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       body.add(instance.root);
       body.rotation.y = Math.PI;
       const remove: THREE.Object3D[] = [];
+      // Helmet/headset/eyewear are authored around the head centre and follow the fitted head.
+      const headKit = instance.root.getObjectByName("head-kit");
+      headKit?.removeFromParent();
       instance.root.traverse((object) => {
         if (object instanceof THREE.Bone) {
           const name = object.name.replace(/^mixamorig:?/, "").replace(/_\d+$/, "");
           bones.set(name, object);
           rest.push({ bone: object, p: object.position.clone(), q: object.quaternion.clone() });
         }
-        if (object instanceof THREE.Mesh) {
+        if (object instanceof THREE.Mesh && !operators) {
           const materials = Array.isArray(object.material) ? object.material : [object.material];
           for (const m of materials)
             if (m instanceof THREE.MeshStandardMaterial) {
@@ -149,6 +157,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
         );
       headInstance = cloneAuthoredModel(headGltf.scene);
       accessories.add(headInstance.root);
+      if (headKit) accessories.add(headKit);
       headInstance.root.traverse((object) => {
         if (object instanceof THREE.Mesh)
           for (const material of Array.isArray(object.material)
@@ -221,6 +230,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       };
       // Fit aviators to the authored eye sockets; the previous ellipsoids were wider than the face.
       const eyes = headInstance.root.getObjectByName("low-poly") as THREE.Mesh;
+      const legacyKit = !operators;
       eyes.geometry.computeBoundingBox();
       const eyeBox = eyes.geometry.boundingBox!,
         eyeCenter = eyeBox.getCenter(new THREE.Vector3());
@@ -235,7 +245,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       );
       frameShape.holes.push(new THREE.Path(lens.getPoints(20)));
       const frameGeometry = new THREE.ShapeGeometry(frameShape, 20);
-      for (const side of [-1, 1]) {
+      for (const side of legacyKit ? [-1, 1] : []) {
         const x = eyeCenter.x + side * 0.033,
           y = eyeCenter.y,
           z = eyeBox.min.z - 0.012;
@@ -253,15 +263,16 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       }
       lensGeometry.dispose();
       frameGeometry.dispose();
-      const bridge = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.011, eyeCenter.y + 0.008, eyeBox.min.z - 0.013),
-        new THREE.Vector3(eyeCenter.x, eyeCenter.y + 0.013, -0.128),
-        new THREE.Vector3(0.006, eyeCenter.y + 0.008, eyeBox.min.z - 0.013),
-      ]);
-      part(new THREE.TubeGeometry(bridge, 12, 0.001, 5, false), metal, 0, 0, 0);
+      if (legacyKit) {
+        const bridge = new THREE.CatmullRomCurve3([
+          new THREE.Vector3(-0.011, eyeCenter.y + 0.008, eyeBox.min.z - 0.013),
+          new THREE.Vector3(eyeCenter.x, eyeCenter.y + 0.013, -0.128),
+          new THREE.Vector3(0.006, eyeCenter.y + 0.008, eyeBox.min.z - 0.013),
+        ]);
+        part(new THREE.TubeGeometry(bridge, 12, 0.001, 5, false), metal, 0, 0, 0);
+      }
       if (police) {
-        const cap = new THREE.MeshStandardMaterial({ color: 0x111d30, roughness: 0.88 });
-        ownedMaterials.push(cap);
+        // Hair above the cap/helmet line would poke through the shell.
         const hair = headInstance.root.getObjectByName("short02") as THREE.Mesh;
         if (hair) {
           const geometry = hair.geometry.clone(),
@@ -276,6 +287,10 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           hair.geometry = geometry;
           ownedGeometry.push(geometry);
         }
+      }
+      if (police && legacyKit) {
+        const cap = new THREE.MeshStandardMaterial({ color: 0x111d30, roughness: 0.88 });
+        ownedMaterials.push(cap);
         const crown = new THREE.SphereGeometry(1, 40, 24, 0, Math.PI * 2, 0, 1.5);
         const cp = crown.getAttribute("position");
         for (let i = 0; i < cp.count; i++)
@@ -370,47 +385,50 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
         const drape = part(cowl, scarf, 0, 0, 0);
         drape.name = "folded-neck-scarf";
       }
-      const badgeCanvas = document.createElement("canvas");
-      badgeCanvas.width = 512;
-      badgeCanvas.height = 192;
-      const pen = badgeCanvas.getContext("2d")!;
-      pen.fillStyle = police ? "#0d1622" : "#3c3326";
-      pen.fillRect(0, 0, 512, 192);
-      pen.textAlign = "center";
-      pen.fillStyle = "#eee";
-      pen.font = "900 110px sans-serif";
-      pen.fillText(police ? "POLICE" : "PVP", 256, 140);
-      const badgeTexture = new THREE.CanvasTexture(badgeCanvas);
-      badgeTexture.colorSpace = THREE.SRGBColorSpace;
-      badgeTexture.anisotropy = 8;
-      ownedTextures.push(badgeTexture);
-      const badgeMaterial = new THREE.MeshStandardMaterial({ map: badgeTexture, roughness: 0.9 });
-      ownedMaterials.push(badgeMaterial);
-      const badgeMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.29, 0.1), badgeMaterial);
-      badge = badgeMesh;
-      badge.name = "chest-badge";
-      badge.rotation.y = Math.PI;
-      root.add(badge);
-      ownedGeometry.push(badgeMesh.geometry);
-      if (police) {
-        const capPatch = new THREE.PlaneGeometry(0.082, 0.027, 12, 3),
-          pp = capPatch.getAttribute("position");
-        for (let i = 0; i < pp.count; i++) {
-          const x = -pp.getX(i),
-            y = pp.getY(i) + 0.13;
-          pp.setXYZ(
-            i,
-            x,
-            y,
-            -0.134 * Math.sqrt(Math.max(0.02, 1 - (x / 0.111) ** 2 - ((y - 0.065) / 0.14) ** 2)) -
-              0.0015,
-          );
+      // The operator models carry printed POLICE patches on the plate carrier.
+      if (legacyKit) {
+        const badgeCanvas = document.createElement("canvas");
+        badgeCanvas.width = 512;
+        badgeCanvas.height = 192;
+        const pen = badgeCanvas.getContext("2d")!;
+        pen.fillStyle = police ? "#0d1622" : "#3c3326";
+        pen.fillRect(0, 0, 512, 192);
+        pen.textAlign = "center";
+        pen.fillStyle = "#eee";
+        pen.font = "900 110px sans-serif";
+        pen.fillText(police ? "POLICE" : "PVP", 256, 140);
+        const badgeTexture = new THREE.CanvasTexture(badgeCanvas);
+        badgeTexture.colorSpace = THREE.SRGBColorSpace;
+        badgeTexture.anisotropy = 8;
+        ownedTextures.push(badgeTexture);
+        const badgeMaterial = new THREE.MeshStandardMaterial({ map: badgeTexture, roughness: 0.9 });
+        ownedMaterials.push(badgeMaterial);
+        const badgeMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.29, 0.1), badgeMaterial);
+        badge = badgeMesh;
+        badge.name = "chest-badge";
+        badge.rotation.y = Math.PI;
+        root.add(badge);
+        ownedGeometry.push(badgeMesh.geometry);
+        if (police) {
+          const capPatch = new THREE.PlaneGeometry(0.082, 0.027, 12, 3),
+            pp = capPatch.getAttribute("position");
+          for (let i = 0; i < pp.count; i++) {
+            const x = -pp.getX(i),
+              y = pp.getY(i) + 0.13;
+            pp.setXYZ(
+              i,
+              x,
+              y,
+              -0.134 * Math.sqrt(Math.max(0.02, 1 - (x / 0.111) ** 2 - ((y - 0.065) / 0.14) ** 2)) -
+                0.0015,
+            );
+          }
+          capPatch.computeVertexNormals();
+          const capBadge = new THREE.Mesh(capPatch, badgeMaterial);
+          capBadge.name = "curved-cap-badge";
+          accessories.add(capBadge);
+          ownedGeometry.push(capPatch);
         }
-        capPatch.computeVertexNormals();
-        const capBadge = new THREE.Mesh(capPatch, badgeMaterial);
-        capBadge.name = "curved-cap-badge";
-        accessories.add(capBadge);
-        ownedGeometry.push(capPatch);
       }
       fallback.root.removeFromParent();
       fallback.dispose();

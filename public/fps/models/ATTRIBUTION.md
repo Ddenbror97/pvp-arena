@@ -27,7 +27,12 @@ Blender for this project (art/blender/arms/README.md); only the arm skeleton bel
   Asset derivative released there under CC BY 4.0 unless otherwise specified.
   No application code from that project is included.
 
-## Tactical clothing/body (tactical-body.glb)
+## Police and Terrorist characters (police-operator.glb, terrorist-insurgent.glb)
+
+Original work built in Blender for this project from scripts in art/blender/chars (body,
+clothing, gear, textures and skeleton). They use the anatomical head below for the face.
+
+## Tactical clothing/body (tactical-body.glb, legacy, kept for rollback)
 
 **Military tactical suit (LowPolyGameReady)**, DanlyVostok (1799danly):
 https://sketchfab.com/3d-models/military-tactical-suit-lowpolygameready-ef698ce36b1545a78ce592dd3db4c7ed
