@@ -707,13 +707,13 @@ export class DuelRoom {
             queue[i]!.input.seq <= authority.seq;
           // One credit per tick, capped; each applied command spends one.
           this.commandCredit[seat] = Math.min(MAX_COMMAND_CREDIT, this.commandCredit[seat] + 1);
-          // Bounded catch-up: fold the oldest authorized movement-only command into this
-          // tick while a newer authorized command is waiting and budget remains.
+          // Fold movement and redundant automatic-rifle holds while a newer
+          // authorized command remains. Combat still runs once at the normal tick.
           while (
             this.commandCredit[seat] > 1 &&
             ready(0) &&
             ready(1) &&
-            applyQueuedMovement(saved.state, seat, queue[0]!.input)
+            applyQueuedMovement(saved.state, seat, queue[0]!.input, queue[1]!.input)
           ) {
             this.latency.command(authority?.continent, now - queue.shift()!.at);
             this.commandCredit[seat]--;

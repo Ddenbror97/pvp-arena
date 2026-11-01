@@ -687,12 +687,61 @@ describe("bounded command catch-up (applyQueuedMovement)", () => {
     expect(applyQueuedMovement(walker, "A", input(1, { strafe: 1, walk: true }))).toBe(true);
     expect(walker.players.A.stepDistance).toBe(0);
   });
-  it("never folds fire, reload, weapon switches or stale commands", () => {
+  it("never folds isolated fire, reload, weapon switches or stale commands", () => {
     const s = live();
     expect(applyQueuedMovement(s, "A", input(1, { fire: true }))).toBe(false);
     expect(applyQueuedMovement(s, "A", input(1, { reload: true }))).toBe(false);
     expect(applyQueuedMovement(s, "A", input(1, { weapon: "pistol" }))).toBe(false);
     expect(applyQueuedMovement(s, "A", input(2, {}))).toBe(true);
     expect(applyQueuedMovement(s, "A", input(2, {}))).toBe(false);
+  });
+  it("catches up held rifle inputs without minting bullets or speeding up cadence", () => {
+    const s = live(),
+      p = s.players.A;
+    s.phaseEndsAt = 100000;
+    const ammo = p.ammo;
+    expect(applyQueuedMovement(s, "A", input(1, { fire: true }), input(2, { fire: true }))).toBe(
+      true,
+    );
+    expect(p.ammo).toBe(ammo);
+    expect(s.events.some((event) => event.type === "shot")).toBe(false);
+    stepMatch(s, { A: input(2, { fire: true }) }, 3100, TICK_MS);
+    expect(p.ammo).toBe(ammo - 1);
+    expect(applyQueuedMovement(s, "A", input(3, { fire: true }), input(4, { fire: true }))).toBe(
+      true,
+    );
+    stepMatch(s, { A: input(4, { fire: true }) }, 3134, TICK_MS);
+    expect(p.ammo).toBe(ammo - 1);
+  });
+  it("preserves tap releases, reloads and pistol trigger edges", () => {
+    for (const next of [
+      { fire: false },
+      { fire: true, reload: true },
+      { fire: true, weapon: "pistol" as const },
+    ]) {
+      const s = live();
+      expect(applyQueuedMovement(s, "A", input(1, { fire: true }), input(2, next))).toBe(false);
+      expect(s.players.A.lastSeq).toBe(-1);
+    }
+    const s = live();
+    s.players.A.weapon = "pistol";
+    s.players.A.triggerHeld = true;
+    expect(
+      applyQueuedMovement(
+        s,
+        "A",
+        input(1, { weapon: "pistol", fire: true }),
+        input(2, { weapon: "pistol", fire: true }),
+      ),
+    ).toBe(false);
+    expect(
+      applyQueuedMovement(
+        s,
+        "A",
+        input(1, { weapon: "pistol", fire: false }),
+        input(2, { weapon: "pistol", fire: true }),
+      ),
+    ).toBe(true);
+    expect(s.players.A.triggerHeld).toBe(false);
   });
 });
