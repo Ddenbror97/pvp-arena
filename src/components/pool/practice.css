@@ -1,133 +1,3 @@
-.pool-practice {
-  --pool-felt-left: 5%;
-  --pool-felt-right: 5%;
-}
-.pool-practice .pool-felt {
-  top: 8rem;
-  bottom: 5.8rem;
-}
-.practice-header {
-  position: absolute;
-  z-index: 4;
-  inset: 0.75rem 1rem auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-.practice-header h1 {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-}
-.practice-header p {
-  margin: 0.2rem 0;
-  color: #ddd4f8;
-  font-size: 0.75rem;
-  text-align: center;
-}
-.practice-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-.practice-actions button,
-.practice-status button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.6rem;
-  border: 1px solid #ffffff30;
-  border-radius: 0.65rem;
-  background: #160d2ddd;
-  color: white;
-  cursor: pointer;
-}
-.practice-seats {
-  position: absolute;
-  z-index: 3;
-  top: 4.4rem;
-  left: 50%;
-  translate: -50% 0;
-  width: min(36rem, 90%);
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-}
-.practice-seats > div {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  border-bottom: 2px solid transparent;
-  padding: 0.25rem 1rem;
-}
-.practice-seats > div:last-child {
-  text-align: right;
-}
-.practice-seats .is-active {
-  border-color: #c084fc;
-}
-.practice-seats span {
-  font-size: 0.75rem;
-  color: #ddd4f8;
-}
-.practice-status {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  translate: -50% 0;
-  z-index: 4;
-  width: min(42rem, 94%);
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  gap: 0.25rem;
-  text-align: center;
-}
-.practice-status span {
-  font-size: 0.8rem;
-  color: #ddd4f8;
-}
-.practice-settings {
-  position: absolute;
-  z-index: 5;
-  right: 1rem;
-  top: 4.5rem;
-  font-size: 0.75rem;
-}
-.practice-settings summary {
-  cursor: pointer;
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.5rem;
-  background: #160d2de8;
-}
-.practice-settings > div {
-  position: absolute;
-  right: 0;
-  top: 2rem;
-  display: grid;
-  gap: 0.6rem;
-  width: min(17rem, 85vw);
-  padding: 1rem;
-  border: 1px solid #ffffff30;
-  border-radius: 0.7rem;
-  background: #160d2df5;
-}
-.practice-settings label {
-  display: grid;
-  gap: 0.3rem;
-}
-.practice-settings input {
-  width: 100%;
-  accent-color: #c084fc;
-}
-.practice-settings button {
-  padding: 0.4rem;
-  border: 1px solid #ffffff30;
-  border-radius: 0.4rem;
-}
-.practice-settings p {
-  color: #ddd4f8;
-}
 .pool-practice-link {
   display: inline-flex;
   align-items: center;
@@ -144,33 +14,29 @@
 .pool-practice-link:hover {
   background: #7e22ce;
 }
-@media (max-width: 600px) {
-  .practice-header {
-    inset: 0.5rem 0.5rem auto;
-    gap: 0.3rem;
+.pool-practice-label {
+  position: absolute;
+  z-index: 3;
+  top: 0.85rem;
+  left: 0.85rem;
+  display: grid;
+  gap: 0.15rem;
+  color: #f6f3ff;
+}
+.pool-practice-label strong {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+}
+.pool-practice-label span {
+  font-size: 0.65rem;
+  color: #ddd4f8;
+}
+@media (max-width: 860px) {
+  .pool-practice-label {
+    top: 0.6rem;
+    left: 0.5rem;
   }
-  .practice-header h1 {
-    font-size: 1rem;
-  }
-  .practice-settings {
-    top: 7.75rem;
-    right: 0.5rem;
-  }
-  .practice-header .pool-leave {
-    font-size: 0.75rem;
-    padding: 0.4rem;
-  }
-  .practice-actions span {
+  .pool-practice-label span {
     display: none;
-  }
-  .practice-seats {
-    top: 4.3rem;
-  }
-  .pool-practice .pool-felt {
-    top: 7.5rem;
-    bottom: 6.5rem;
-  }
-  .practice-status strong {
-    font-size: 0.85rem;
   }
 }

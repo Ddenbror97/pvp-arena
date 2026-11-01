@@ -21,7 +21,7 @@ export function recordShot(
   state: TableState,
   input: ShotInput,
   physicsId: string = state.physics,
-): { sequence: Ball[][]; cue: Ball; state: TableState; hash: string } | null {
+): { sequence: Ball[][]; cue: Ball; state: TableState; hash: string; event: ShotEvent } | null {
   const placed = structuredClone(state);
   if (placeCue(placed, input)) return null;
   const opening = placed.balls.map((ball) => ({ ...ball }));
@@ -42,7 +42,13 @@ export function recordShot(
   if (!alreadyRest) sequence.push(rest);
   const applied = applyPlayedShot(placed, sim, input.calledPocket);
   if (applied.event.reason === "CALL_POCKET") return null;
-  return { sequence, cue, state: applied.state, hash: stateHash(applied.state) };
+  return {
+    sequence,
+    cue,
+    state: applied.state,
+    hash: stateHash(applied.state),
+    event: applied.event,
+  };
 }
 
 /** A received event is already committed; animate it only if its hash agrees. */

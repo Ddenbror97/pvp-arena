@@ -474,7 +474,8 @@ function HowItWorksPage() {
             <ol className="list-decimal space-y-1 pl-5">
               <li>
                 <strong>Practice:</strong> play a dedicated bot for free, with no deposit, stake,
-                fee, payout or shot clock. The same shot rules and physics apply.
+                fee or payout. The real-match layout, chat, shot rules, physics and presence-aware
+                30-second clock apply.
               </li>
               <li>
                 <strong>Stake:</strong> both players put in the same amount, from $1 to $50. Join an

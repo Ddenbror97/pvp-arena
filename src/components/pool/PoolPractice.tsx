@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { RotateCcw, Volume2, VolumeX } from "lucide-react";
-import room from "@/assets/pool/room.webp";
+import { CircleHelp, RotateCcw, Settings, Volume2, VolumeX } from "lucide-react";
 import { PoolTable, type WatchedAim } from "./PoolTable";
 import { createPracticeClient } from "@/lib/pool/practice-client";
 import type { PracticeRoll } from "@/lib/pool/practice.worker";
@@ -12,11 +11,22 @@ import {
   groupClear,
   legalPlacement,
   seatGroup,
+  applyTimeout,
+  type ShotEvent,
   type TableState,
 } from "@/lib/pool/rules";
 import { PHYSICS_VERSION, type Ball, type ShotInput } from "@/lib/pool/physics";
-import { cueSound, pocketSound, ballSound } from "@/lib/pool/sfx";
+import { cueSound, pocketSound, ballSound, cushionSound } from "@/lib/pool/sfx";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
+import { useAuth } from "@/lib/auth";
+import { PoolShell, SeatCard, SpinPad } from "./PoolMatchView";
+import { ballRack, ballsAhead, impactOf } from "@/lib/pool/presentation";
+import { matchNotice, POOL_RULES, spinSentence, winSentence } from "@/lib/pool/copy";
+import {
+  startPracticeClock,
+  tickPracticeClock,
+  type PracticeClock,
+} from "@/lib/pool/practice-clock";
 import "./practice.css";
 
 const SAVE = "pool-free-practice-v1";
@@ -32,6 +42,10 @@ function restore(): TableState | null {
       ![null, "A", "B"].includes(state.winner) ||
       ![null, "solids", "stripes"].includes(state.groupA) ||
       !Number.isSafeInteger(state.shot) ||
+      !state.timeouts ||
+      ![state.timeouts.A, state.timeouts.B].every(
+        (value) => Number.isInteger(value) && value >= 0 && value <= 3,
+      ) ||
       state.shot < 0 ||
       state.shot > 1000 ||
       ![state.open, state.ballInHand, state.kitchenOnly, state.breakShot].every(
@@ -66,6 +80,7 @@ type Phase = "idle" | "thinking" | "aiming" | "stroke" | "rolling";
 
 /** Free local table: this component has no cash-match, wallet or settlement API. */
 export function PoolPractice() {
+  const { profile } = useAuth();
   const [table, setTable] = useState<TableState | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [angle, setAngle] = useState(0),
@@ -88,6 +103,10 @@ export function PoolPractice() {
   const [note, setNote] = useState(""),
     [error, setError] = useState("");
   const [muted, setMuted] = useState(false);
+  const [sheet, setSheet] = useState(false),
+    [rulesOpen, setRulesOpen] = useState(false);
+  const [lastEvent, setLastEvent] = useState<ShotEvent | null>(null);
+  const [deadline, setDeadline] = useState<string | null>(null);
   const client = useRef<ReturnType<typeof createPracticeClient> | null>(null);
   const generation = useRef(0),
     locked = useRef(false);
@@ -123,6 +142,13 @@ export function PoolPractice() {
     setPower(1);
     setNote("");
     setError("");
+    setLastEvent(null);
+    setDeadline(null);
+    try {
+      sessionStorage.removeItem(`${SAVE}-clock`);
+    } catch {
+      /* Storage may be disabled. */
+    }
     setTable(rack());
   }, []);
   useEffect(() => {
@@ -151,6 +177,59 @@ export function PoolPractice() {
       }
     }
   }, [table]);
+  useEffect(() => {
+    if (!table || table.winner || phase === "rolling" || phase === "stroke" || error) {
+      setDeadline(null);
+      return;
+    }
+    const key = `${table.shot}:${table.turn}`;
+    let clock: PracticeClock = startPracticeClock(Date.now()),
+      persisted = 0;
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(`${SAVE}-clock`) ?? "null");
+      if (
+        saved?.key === key &&
+        Number.isFinite(saved.deadline) &&
+        Math.abs(saved.deadline - Date.now()) < 86400000 &&
+        Number.isFinite(saved.lastSeen) &&
+        typeof saved.graceUsed === "boolean"
+      )
+        clock = { deadline: saved.deadline, lastSeen: saved.lastSeen, graceUsed: saved.graceUsed };
+    } catch {
+      /* A malformed saved clock starts a fresh window. */
+    }
+    setDeadline(new Date(clock.deadline).toISOString());
+    const tick = () => {
+      if (locked.current) return;
+      const now = Date.now();
+      const result = tickPracticeClock(
+        clock,
+        now,
+        table.turn === "B" || document.visibilityState === "visible",
+      );
+      if (result.clock.deadline !== clock.deadline)
+        setDeadline(new Date(result.clock.deadline).toISOString());
+      clock = result.clock;
+      if (now - persisted >= 4000) {
+        try {
+          sessionStorage.setItem(`${SAVE}-clock`, JSON.stringify({ ...clock, key }));
+        } catch {
+          /* Optional local storage. */
+        }
+        persisted = now;
+      }
+      if (result.timeout) {
+        clearInterval(id);
+        setPlace(null);
+        setCalled(null);
+        setNote("Shot clock expired. Ball in hand to the other player.");
+        setTable(applyTimeout(table));
+      }
+    };
+    const id = setInterval(tick, 250);
+    tick();
+    return () => clearInterval(id);
+  }, [table, phase, error]);
   const begin = useCallback(async (current: TableState, shot?: ShotInput) => {
     if (locked.current || !client.current || current.winner) return;
     locked.current = true;
@@ -212,20 +291,14 @@ export function PoolPractice() {
     pending.current = null;
     locked.current = false;
     setTable(result.played.state);
+    setLastEvent(result.played.event);
     setFrames(null);
     setStroke(null);
     setPhase("idle");
     setPlace(null);
     setCalled(null);
     setPower(1);
-    const working = result.played.state;
-    setNote(
-      working.ballInHand
-        ? "Foul · ball in hand."
-        : result.shot.calledPocket !== null
-          ? "The 8-ball pocket was called."
-          : "",
-    );
+    setNote("");
   }, []);
   const mine =
     !!table && !table.winner && table.turn === "A" && phase === "idle" && !locked.current;
@@ -306,99 +379,113 @@ export function PoolPractice() {
                         ? "Your break · place the cue ball behind the line"
                         : "Your turn · ball in hand"
                       : "Your turn · drag to aim, pull back and release");
+  const otherGroup = table ? seatGroup(table, "B") : null;
+  const shooterGroup = table ? seatGroup(table, table.turn) : null;
+  const shootingEight =
+    !!table && shooterGroup !== null && groupClear(table.balls, shooterGroup) && !table.breakShot;
+  const matchLine = table
+    ? matchNotice({
+        status: "PLAYING",
+        youWon: false,
+        youLost: false,
+        payout: "",
+        winReason: table.reason,
+        fouled: !!lastEvent?.foul && table.ballInHand,
+        foulReason: lastEvent?.foulReason ?? null,
+        ballInHand: table.ballInHand,
+        kitchenOnly: table.kitchenOnly,
+        shootingEight,
+        pocketChosen: called !== null,
+        decided: false,
+        mine,
+        group,
+        breakShot: table.breakShot,
+        busy: phase === "thinking" && table.turn === "A",
+        rolling: phase === "rolling",
+        offline: false,
+        reconnecting: false,
+        seat: "A",
+      })
+    : status;
+  const banner =
+    error ||
+    (phase === "aiming" || (phase === "thinking" && table?.turn === "B")
+      ? status
+      : note || matchLine);
   return (
-    <div
-      className="pool-screen pool-practice"
+    <PoolShell
+      className="pool-practice"
       data-phase={phase}
       data-turn={table?.turn}
       data-shot={table?.shot}
     >
-      <div className="pool-room" style={{ backgroundImage: `url(${room})` }} aria-hidden />
-      <header className="practice-header">
+      <h1 className="sr-only">8-ball Practice</h1>
+      <div className="pool-practice-label">
+        <strong>Practice</strong>
+        <span>Free · no stake · no payout</span>
+      </div>
+      <div className="pool-vs" aria-label="Players">
+        <SeatCard
+          name={profile?.username ?? "You"}
+          avatar={profile?.avatar_url}
+          stake={0}
+          stakeLabel="Free Practice"
+          rack={ballRack(table?.balls ?? [], group)}
+          group={group}
+          ahead={ballsAhead(table?.balls ?? [], group, otherGroup)}
+          present
+          active={table?.turn === "A" && !table.winner}
+          hand={!!table?.ballInHand && table.turn === "A"}
+          deadline={table?.turn === "A" ? deadline : null}
+          serverNow={undefined}
+        />
+        <span className="pool-vs-mark">VS</span>
+        <SeatCard
+          name="Practice bot"
+          stake={0}
+          stakeLabel="Free Practice"
+          rack={ballRack(table?.balls ?? [], otherGroup)}
+          group={otherGroup}
+          ahead={ballsAhead(table?.balls ?? [], otherGroup, group)}
+          present
+          active={table?.turn === "B" && !table.winner}
+          hand={!!table?.ballInHand && table.turn === "B"}
+          deadline={table?.turn === "B" ? deadline : null}
+          serverNow={undefined}
+          align="end"
+        />
+      </div>
+      <div className="pool-tools">
         <Link to="/8-ball-pool" className="pool-leave">
-          ← Pool lobby
+          Back to lobby
         </Link>
-        <div>
-          <h1>8-ball Practice</h1>
-          <p>Free · no stake · no payout</p>
-        </div>
-        <div className="practice-actions">
-          <button type="button" onClick={reset} aria-label="Start new rack">
-            <RotateCcw size={18} />
-            <span>New rack</span>
-          </button>
-          <button
-            type="button"
-            onClick={toggleSoundMuted}
-            aria-label={muted ? "Enable sound" : "Mute sound"}
-          >
-            {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-          </button>
-        </div>
-      </header>
-      <details className="practice-settings">
-        <summary>Spin & controls</summary>
-        <div>
-          <label>
-            Side spin{" "}
-            <input
-              type="range"
-              min={-1000}
-              max={1000}
-              step={20}
-              value={spinX}
-              disabled={!mine}
-              onChange={(event) => setSpinX(Number(event.target.value))}
-            />
-          </label>
-          <label>
-            Top / backspin{" "}
-            <input
-              type="range"
-              min={-1000}
-              max={1000}
-              step={20}
-              value={spinY}
-              disabled={!mine}
-              onChange={(event) => setSpinY(Number(event.target.value))}
-            />
-          </label>
-          <button
-            type="button"
-            disabled={!mine}
-            onClick={() => {
-              setSpinX(0);
-              setSpinY(0);
-            }}
-          >
-            Centre strike
-          </button>
-          <p>
-            Drag to aim, pull back and release. Arrow keys aim and change power; Shift gives fine
-            aim. Enter shoots. Call a pocket for the 8.
-          </p>
-        </div>
-      </details>
-      <div className="practice-seats" aria-label="Players">
-        {(["A", "B"] as const).map((seat) => {
-          const g = table ? seatGroup(table, seat) : null;
-          const left =
-            table && g
-              ? table.balls.filter(
-                  (b) =>
-                    !b.pocketed &&
-                    b.id !== 8 &&
-                    b.id !== 0 &&
-                    (g === "solids" ? b.id < 8 : b.id > 8),
-                ).length
-              : null;
-          return (
-            <div key={seat} className={table?.turn === seat && !table.winner ? "is-active" : ""}>
-              <strong>{seat === "A" ? "You" : "Practice bot"}</strong>
-              <span>{g ? `${g} · ${left} left` : "Open table"}</span>
-            </div>
-          );
-        })}
+        <button
+          type="button"
+          className="pool-gear"
+          onClick={reset}
+          disabled={!table}
+          aria-label="Start new rack"
+        >
+          <RotateCcw className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          className="pool-gear"
+          aria-expanded={sheet}
+          aria-label="Shot settings"
+          onClick={() => setSheet((value) => !value)}
+        >
+          <Settings className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          className="pool-gear"
+          aria-expanded={rulesOpen}
+          aria-label="Rules"
+          onClick={() => setRulesOpen((value) => !value)}
+        >
+          <CircleHelp className="h-4 w-4" />
+        </button>
       </div>
       <div className="pool-felt">
         <div className="pool-felt-frame">
@@ -419,7 +506,10 @@ export function PoolPractice() {
               watch={watch}
               replay={frames}
               stroke={stroke}
-              onAim={setAngle}
+              onAim={(value) => {
+                setAngle(value);
+                setNote("");
+              }}
               onPower={setPower}
               onShoot={shoot}
               onPlace={(x, y) => {
@@ -430,39 +520,100 @@ export function PoolPractice() {
               onReplayDone={finish}
               onAimHint={setNote}
               onSample={(before, after) => {
-                if (after.some((b, i) => b.pocketed && !before[i]?.pocketed)) pocketSound();
-                else if (
-                  performance.now() - soundsAt.current > 70 &&
-                  after.some(
-                    (b, i) =>
-                      Math.abs(b.vx - (before[i]?.vx ?? b.vx)) +
-                        Math.abs(b.vy - (before[i]?.vy ?? b.vy)) >
-                      1000,
-                  )
-                ) {
-                  ballSound(0.35);
-                  soundsAt.current = performance.now();
+                const impact = impactOf(before, after, table.physics),
+                  now = performance.now();
+                if (impact.pocket) pocketSound();
+                else if (now - soundsAt.current > 32) {
+                  if (impact.ball > 700) {
+                    ballSound(Math.min(1, impact.ball / 9000));
+                    soundsAt.current = now;
+                  } else if (impact.rail > 700) {
+                    cushionSound(Math.min(1, impact.rail / 9000));
+                    soundsAt.current = now;
+                  }
                 }
               }}
             />
           )}
         </div>
       </div>
-      <div className="practice-status" role="status" aria-live="polite">
-        <strong>{status}</strong>
-        <span>
-          {note || "Same table and rules as cash pool. Take your time: there is no shot clock."}
-        </span>
-        {error && (
-          <button type="button" onClick={reset}>
-            Start a fresh rack
+      {mine && power > 1 && (
+        <div
+          className="pool-energy"
+          role="meter"
+          aria-label="Shot power"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(power / 100)}
+        >
+          <div className="pool-energy-track">
+            <div className="pool-energy-fill" style={{ height: `${power / 100}%` }} />
+          </div>
+          <span>{Math.round(power / 100)}</span>
+        </div>
+      )}
+      {banner && !table?.winner && (
+        <p className="pool-banner practice-status" role="status" aria-live="polite">
+          {banner}
+          {error && (
+            <button type="button" onClick={reset}>
+              Start a fresh rack
+            </button>
+          )}
+        </p>
+      )}
+      {sheet && (
+        <div className="pool-sheet">
+          <SpinPad
+            spinX={spinX}
+            spinY={spinY}
+            disabled={!mine}
+            onChange={(x, y) => {
+              setSpinX(x);
+              setSpinY(y);
+            }}
+          />
+          <p className="pool-spin-read">{spinSentence(spinX, spinY)}</p>
+          <p>
+            Drag to aim, pull back and release. Shift gives fine aim. Arrow keys aim and change
+            power; Enter shoots.
+          </p>
+          <button type="button" onClick={() => toggleSoundMuted()}>
+            {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+            {muted ? "Unmute" : "Mute"}
           </button>
-        )}
-      </div>
+          <p>
+            Same PvP shot rules and presence-aware 30-second clock. Practice has no cash stake or
+            payout.
+          </p>
+        </div>
+      )}
+      {rulesOpen && (
+        <div className="pool-rules-pop" role="dialog" aria-label="Rules">
+          <ul>
+            {POOL_RULES.filter(
+              (rule) => !["Waiting", "Disconnect", "Money"].includes(rule.title),
+            ).map((rule) => (
+              <li key={rule.title}>
+                <strong>{rule.title}. </strong>
+                {rule.body}
+              </li>
+            ))}
+          </ul>
+          <p>
+            Practice is free. Leaving returns to the lobby; New rack restarts. No payout or cash
+            result is created.
+          </p>
+          <button type="button" onClick={() => setRulesOpen(false)}>
+            Close
+          </button>
+        </div>
+      )}
       {table?.winner && (
         <div className="pool-result" role="status">
           <div className="pool-result-card">
             <strong>{table.winner === "A" ? "You won!" : "Bot wins"}</strong>
+            <p>{winSentence(table.reason)}</p>
             <p>Practice complete. No money was wagered or awarded.</p>
             <button type="button" onClick={reset}>
               Play again
@@ -471,6 +622,6 @@ export function PoolPractice() {
           </div>
         </div>
       )}
-    </div>
+    </PoolShell>
   );
 }
