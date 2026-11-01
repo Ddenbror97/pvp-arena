@@ -104,6 +104,8 @@ export function snapshotForPlayer<T extends { state: PublicState }>(frame: T, se
           recoilUpdatedAt: 0,
           stepDistance: 0,
           triggerHeld: false,
+          moving: false,
+          sprinting: false,
         },
       },
     },

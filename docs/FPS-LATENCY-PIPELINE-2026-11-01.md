@@ -11,7 +11,10 @@ reload, sprint or walk. It shares the connection's sequence watermark and fresh
 session validation. The runtime extracts one authorized trigger per seat per
 combat tick without spending or creating movement credits. Weapon and reload
 changes remain ordered behind it. Normal movement and triggers share one combat
-step and cooldown; duplicates cannot mint bullets. Aim and rewind use the original
+step and cooldown; duplicates cannot mint bullets. Moving spread and sprint-fire
+restrictions use the last server-authorized movement intent, so zero axes cannot
+grant stationary accuracy. Those intent flags are redacted for hidden opponents.
+Aim and rewind use the original
 trigger input and its server-recorded arrival, even if a later movement input turns
 the camera. Legacy clients retain their regular-input firing path.
 
@@ -35,7 +38,7 @@ more baseline snapshot messages (30 rather than 20 per second).
 
 ## Verification
 
-- 197 unit tests passed, one existing skip, covering adaptive playback under
+- 198 unit tests passed, one existing skip, covering adaptive playback under
   10/30/80 ms jitter, movement, combat and hit registration across 50–180 ms RTT.
 - Five targeted real Durable Object tests passed: immediate trigger, strict
   revocation, in-flight authority, movement flooding and held-fire burst recovery.

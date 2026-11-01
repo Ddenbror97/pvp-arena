@@ -277,14 +277,14 @@ function shoot(
     ? (p.weapon === "rifle" ? 0.0015 : 0.0025) *
       combatSpread(
         (p.sprayCount ?? 0) + 1,
-        Math.hypot(input.forward, input.strafe) > 0.1,
+        input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
         (p.velocityY ?? 0) !== 0,
         !!p.crouched,
       )
     : stats.recoil *
       spreadScale(
         p.sprayCount ?? 1,
-        Math.hypot(input.forward, input.strafe) > 0.1,
+        input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
         (p.velocityY ?? 0) !== 0,
       ) *
       (p.crouched ? 0.8 : 1);
@@ -429,6 +429,8 @@ export function applyQueuedMovement(
   p.yaw = input.yaw;
   p.pitch = input.pitch;
   p.triggerHeld = input.fire;
+  p.moving = Math.hypot(input.forward, input.strafe) > 0.1;
+  p.sprinting = input.sprint;
   const before = { x: p.x, z: p.z, y: p.y };
   predictMovement(p, input, TICK_MS);
   // Same footstep accounting as stepMatch: Shift-walking stays silent.
@@ -522,6 +524,8 @@ export function stepMatch(
     }
     if (input && input.seq > p.lastSeq) {
       accepted[seat] = input;
+      p.moving = Math.hypot(input.forward, input.strafe) > 0.1;
+      p.sprinting = input.sprint;
       p.lastSeq = input.seq;
       p.yaw = input.yaw;
       p.pitch = input.pitch;
@@ -575,7 +579,8 @@ export function stepMatch(
     if (combatInputs[seat]) p.lastSeq = Math.max(p.lastSeq, combatInputs[seat]!.seq);
     if (
       input?.fire &&
-      (!input.sprint || p.crouched) &&
+      (!input.combatOnly || input.weapon === p.weapon) &&
+      (!(input.combatOnly ? p.sprinting : input.sprint) || p.crouched) &&
       (state.combatVersion !== COMBAT_VERSION || p.weapon === "rifle" || !p.triggerHeld)
     )
       shoot(state, seat, now, positions, input, historicalTargets?.[seat]);

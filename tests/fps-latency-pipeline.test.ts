@@ -74,6 +74,7 @@ describe("zero-time trigger input", () => {
     expect(s.players.A.x).toBe(reference.players.A.x);
     expect(s.players.A.z).toBe(reference.players.A.z);
     expect(s.players.A.ammo).toBe(reference.players.A.ammo);
+    expect(s.events.filter((e) => e.impact)).toEqual(reference.events.filter((e) => e.impact));
   });
   it("a trigger flood cannot exceed AK cadence or advance the movement clock", () => {
     const s = live(),
@@ -91,6 +92,12 @@ describe("zero-time trigger input", () => {
     expect(s.players.A.ammo).toBe(30);
     stepMatch(s, {}, 3068, TICK_MS, undefined, { A: { ...trigger(2), weapon: "pistol" } });
     expect(s.players.A.weapon).toBe("rifle");
+    expect(s.players.A.ammo).toBe(30);
+  });
+  it("does not bypass the authoritative sprint fire restriction", () => {
+    const s = live();
+    stepMatch(s, { A: input(1, { forward: 1, sprint: true }) }, 3034, TICK_MS);
+    stepMatch(s, {}, 3068, TICK_MS, undefined, { A: trigger(2) });
     expect(s.players.A.ammo).toBe(30);
   });
 });

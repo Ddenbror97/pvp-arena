@@ -59,6 +59,9 @@ export interface Player {
   recoilUpdatedAt?: number;
   stepDistance?: number;
   triggerHeld?: boolean;
+  /** Last authoritative movement intent, used by zero-time combat inputs. */
+  moving?: boolean;
+  sprinting?: boolean;
   crouched?: boolean;
   /** Server-owned jump velocity, included in snapshots for prediction. y is feet height. */
   velocityY?: number;
