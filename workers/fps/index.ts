@@ -7,14 +7,26 @@ import {
   createMatch,
   startMatch,
   stepMatch,
+  applyQueuedMovement,
+  MAX_COMMAND_CREDIT,
   TICK_MS,
   validateInput,
 } from "../../src/lib/fps/simulation";
 import type { Input, MatchState, Seat } from "../../src/lib/fps/protocol";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { maintainMatches } from "./maintenance";
-import { snapshotForPlayer } from "../../src/lib/fps/visibility";
+import {
+  snapshotForPlayer,
+  trailForPlayer,
+  trailStep,
+  type TrailStep,
+} from "../../src/lib/fps/visibility";
 import { liveSessions, sessionKey, type SessionIdentity } from "./session-auth";
+import { continentOf, LatencyTelemetry } from "./latency";
+
+/** Strict session reads overlap: at most this many in flight, started this far apart. */
+const MAX_SESSION_READS = 4;
+const SESSION_READ_SPACING_MS = 25;
 
 export interface Env {
   DUELS: DurableObjectNamespace;
@@ -43,6 +55,8 @@ type SocketInfo = SessionIdentity & {
   count: number;
   seq: number;
   connectionId: string;
+  /** Cloudflare edge continent at connection time (latency telemetry only). */
+  continent?: string;
 };
 type Result = { winner: string | null; scoreA: number; scoreB: number; reason: string };
 type Saved = {
@@ -135,6 +149,18 @@ export class DuelRoom {
   private authorizationRead: Promise<Array<SocketInfo & { checkedAt: number }>> | null = null;
   private authorizedWatermarks: Array<SocketInfo & { checkedAt: number }> | null = null;
   private authorizationError: unknown = null;
+  /** Pipelined strict session checks (see startAuthorizationRead). */
+  private readsInFlight = 0;
+  private lastReadStartedAt = -Infinity;
+  private newestAuthorizedStart = -Infinity;
+  private newestFailedStart = -Infinity;
+  /** Latency telemetry: per-continent command gate waits and RTT, per-room session reads. */
+  private latency = new LatencyTelemetry();
+  /** Per-seat command time budget for bounded catch-up (one credit per tick). */
+  private commandCredit: Record<Seat, number> = { A: 1, B: 1 };
+  /** Recent physics steps' public poses, bundled into snapshots as a redacted trail. */
+  private steps: TrailStep[] = [];
+  private lastTrailAt = -Infinity;
   private absent: Record<Seat, number | null> = { A: null, B: null };
   private history: Array<{ at: number; snapshot: string }> = [];
   private lastSnapshot = 0;
@@ -181,38 +207,63 @@ export class DuelRoom {
     });
   }
 
+  /**
+   * Strict session validation, pipelined. Every read captures each connection's command
+   * watermark when it starts; only commands at or below a completed positive read's
+   * watermark are applied, so a positive result can never authorize a command received
+   * after that read began (no revocation grace window). Reads overlap instead of running
+   * back to back: a command no longer waits for an in-flight read to finish before its own
+   * read can start. Newer completed reads supersede older ones; any failure pauses input.
+   */
+  private startAuthorizationRead(now = Date.now()) {
+    if (
+      this.readsInFlight >= MAX_SESSION_READS ||
+      now - this.lastReadStartedAt < SESSION_READ_SPACING_MS
+    )
+      return this.authorizationRead;
+    this.lastReadStartedAt = now;
+    this.readsInFlight++;
+    const started = now;
+    const read = this.authorizedSockets()
+      .then((identities) => {
+        const watermarks = identities.map((info) => ({ ...info, checkedAt: started }));
+        if (started > this.newestAuthorizedStart) {
+          this.newestAuthorizedStart = started;
+          this.authorizedWatermarks = watermarks;
+        }
+        if (started > this.newestFailedStart) this.authorizationError = null;
+        return this.authorizedWatermarks ?? watermarks;
+      })
+      .catch((error: unknown) => {
+        this.newestFailedStart = Math.max(this.newestFailedStart, started);
+        this.authorizedWatermarks = null;
+        this.newestAuthorizedStart = -Infinity;
+        this.authorizationError = error;
+        this.inputs = { A: [], B: [] };
+        throw error;
+      })
+      .finally(() => {
+        this.readsInFlight--;
+        this.authMs = Date.now() - started;
+        this.latency.sessionRead(this.authMs);
+        if (this.authorizationRead === read) this.authorizationRead = null;
+      });
+    void read.catch(() => {});
+    this.authorizationRead = read;
+    return read;
+  }
+
   private async authorizedForTick() {
-    if (!this.authorizationRead) {
-      const started = Date.now();
-      this.authorizationRead = this.authorizedSockets()
-        .then((identities) => {
-          this.authorizedWatermarks = identities.map((info) => ({ ...info, checkedAt: started }));
-          this.authorizationError = null;
-          return this.authorizedWatermarks;
-        })
-        .catch((error: unknown) => {
-          this.authorizedWatermarks = null;
-          this.authorizationError = error;
-          this.inputs = { A: [], B: [] };
-          throw error;
-        })
-        .finally(() => {
-          this.authMs = Date.now() - started;
-          this.authorizationRead = null;
-          // A slow read already spans several clock ticks. Start its successor
-          // immediately, rather than adding another timer interval to every
-          // command batch. Fast reads remain limited to one per clock tick.
-          if (this.authMs >= Math.ceil(TICK_MS) && this.timer && !this.saved?.result)
-            void this.authorizedForTick().catch(() => {});
-        });
-      // A refresh runs beside the clock, including when no tick awaits it.
-      void this.authorizationRead.catch(() => {});
-    }
+    this.startAuthorizationRead();
     if (this.authorizationError) throw this.authorizationError;
     // These are command watermarks, not session leases: later commands still
-    // require a new database read. Let the fixed clock consume already checked
-    // commands while that read is in flight instead of batching physics after it.
-    const authorized = this.authorizedWatermarks ?? (await this.authorizationRead);
+    // require a newer database read. Let the fixed clock consume already checked
+    // commands while reads are in flight instead of batching physics after them.
+    const authorized =
+      this.authorizedWatermarks ??
+      (await (this.authorizationRead ??
+        this.startAuthorizationRead(Date.now() + SESSION_READ_SPACING_MS)));
+    if (!authorized) return [];
     const connected = new Set(
       this.ctx
         .getWebSockets()
@@ -364,6 +415,7 @@ export class DuelRoom {
       window: Date.now(),
       count: 0,
       seq: actualSeat ? saved.state.players[actualSeat].lastSeq : -1,
+      continent: continentOf(request),
     } satisfies SocketInfo);
     if (actualSeat) {
       this.absent[actualSeat] = null;
@@ -422,7 +474,8 @@ export class DuelRoom {
       typeof data.id === "string" &&
       data.id.length <= 64
     ) {
-      this.timings.get(info.connectionId)?.pong(data.id, now);
+      const timing = this.timings.get(info.connectionId);
+      if (timing?.pong(data.id, now)) this.latency.rtt(info.continent, timing.latestRttMs);
       return;
     }
     if (
@@ -456,6 +509,8 @@ export class DuelRoom {
     const queue = this.inputs[info.seat];
     queue.push({ input, at: now, connectionId: info.connectionId });
     if (queue.length > 8) queue.shift();
+    // Start this command's session check now instead of at the next clock tick.
+    if (this.timer && !this.authorizationError) this.startAuthorizationRead(now);
   }
 
   webSocketClose(socket: WebSocket, code?: number) {
@@ -641,15 +696,30 @@ export class DuelRoom {
               (connection !== undefined && queue[0]!.connectionId !== connection))
           )
             queue.shift();
-          const next =
-            authority &&
-            queue[0]?.connectionId === connection &&
-            queue[0].input.seq <= authority.seq
-              ? queue.shift()
-              : undefined;
+          const ready = (i: number) =>
+            !!authority &&
+            queue[i]?.connectionId === connection &&
+            queue[i]!.input.seq <= authority.seq;
+          // One credit per tick, capped; each applied command spends one.
+          this.commandCredit[seat] = Math.min(MAX_COMMAND_CREDIT, this.commandCredit[seat] + 1);
+          // Bounded catch-up: fold the oldest authorized movement-only command into this
+          // tick while a newer authorized command is waiting and budget remains.
+          while (
+            this.commandCredit[seat] > 1 &&
+            ready(0) &&
+            ready(1) &&
+            applyQueuedMovement(saved.state, seat, queue[0]!.input)
+          ) {
+            this.latency.command(authority?.continent, now - queue.shift()!.at);
+            this.commandCredit[seat]--;
+          }
+          const next = ready(0) ? queue.shift() : undefined;
+          if (next) this.commandCredit[seat]--;
           if (next) {
             fresh[seat] = next.input;
             receivedAt[seat] = next.at;
+            // Arrival → applied: session gate + queue + clock alignment (server-side delay).
+            this.latency.command(authority?.continent, now - next.at);
           }
         }
         // After a long stall discard elapsed simulation work, retaining deadlines.
@@ -663,13 +733,20 @@ export class DuelRoom {
           const timing = identity && this.timings.get(identity.connectionId);
           if (!timing?.calibrated) continue;
           // Arrival time is server-owned; queued work cannot invent an earlier shot.
-          const lookback = Math.max(0, now - (receivedAt[shooter]! - timing.lookbackMs));
-          targets[shooter] = this.shotHistory.target(shooter === "A" ? "B" : "A", now, lookback);
+          // Shooter's view lookback (bounded) plus the server-measured wait since arrival.
+          targets[shooter] = this.shotHistory.target(
+            shooter === "A" ? "B" : "A",
+            now,
+            timing.lookbackMs,
+            now - receivedAt[shooter]!,
+          );
         }
         stepMatch(saved.state, fresh, stepAt, TICK_MS, targets);
         if (!saved.result && saved.state.tick !== previousTick) {
           this.events.push(...saved.state.events.map((e) => ({ ...e, id: ++this.eventId })));
           this.shotHistory.record(saved.state, stepAt);
+          this.steps.push(trailStep(saved.state, stepAt));
+          if (this.steps.length > 6) this.steps.shift();
         }
       }
       if (["completed", "cancelled"].includes(saved.state.phase) && !saved.result) {
@@ -711,10 +788,14 @@ export class DuelRoom {
         for (const socket of this.ctx.getWebSockets()) {
           const info = socket.deserializeAttachment() as SocketInfo;
           if (info.role === "player" && info.seat) {
-            playerSnapshots[info.seat] ??= JSON.stringify(snapshotForPlayer(current, info.seat));
+            playerSnapshots[info.seat] ??= JSON.stringify({
+              ...snapshotForPlayer(current, info.seat),
+              trail: trailForPlayer(this.steps, info.seat, this.lastTrailAt, current.poseAt),
+            });
             this.send(socket, playerSnapshots[info.seat]);
           } else if (delayed) this.send(socket, delayed.snapshot);
         }
+        this.lastTrailAt = current.poseAt;
       }
       if (now - this.networkAt >= 1000) {
         if (this.networkAt)
@@ -747,6 +828,19 @@ export class DuelRoom {
             });
         }
         if (now - this.telemetryAt >= 30_000) {
+          // Per-continent p50/p95/p99 (US/EU/LatAm split), no user identifiers.
+          const regions = this.latency.report();
+          if (regions.rows.length || regions.sessionReadMs)
+            console.log(
+              JSON.stringify({
+                event: "fps_region_latency",
+                matchId: saved.config.id,
+                practice: saved.config.practice,
+                tickHz: Math.round(this.tickHz * 10) / 10,
+                sessionReadMs: regions.sessionReadMs,
+                regions: regions.rows,
+              }),
+            );
           const players = authorized
             .filter((s) => s.seat)
             .flatMap((s) => {

@@ -1,5 +1,13 @@
 import type { MatchState, Player, Seat } from "../../src/lib/fps/protocol";
 import { MAX_REWIND_MS } from "../../src/lib/fps/network";
+/**
+ * Server-owned command delay (session gate + queue + clock alignment) is added on top of
+ * the shooter's view lookback, with its own cap. It is measured by the server from the
+ * command's arrival time, so a client cannot inflate it; capping it together with the
+ * client lookback made every shot under-rewound by the server's own wait once
+ * RTT + REMOTE_DELAY_MS approached MAX_REWIND_MS.
+ */
+export const MAX_SERVER_DELAY_MS = 200;
 export type CombatPose = Pick<Player, "x" | "y" | "z" | "crouched"> & { stance?: number };
 type Frame = { at: number; players: Record<Seat, CombatPose> };
 /** Private authoritative history; never serialised to a player or supplied by one. */
@@ -14,14 +22,22 @@ export class ShotHistory {
     this.frames.push({ at, players: { A: pose(state.players.A), B: pose(state.players.B) } });
     // Keep one physics step beyond the rewind cap so a maximal lookback still interpolates.
     while (
-      this.frames.length > 16 ||
-      (this.frames[0] && this.frames[0].at < at - MAX_REWIND_MS - 2 * 34)
+      this.frames.length > 24 ||
+      (this.frames[0] && this.frames[0].at < at - MAX_REWIND_MS - MAX_SERVER_DELAY_MS - 2 * 34)
     )
       this.frames.shift();
   }
-  target(seat: Seat, now: number, lookbackMs: number): CombatPose | undefined {
+  /**
+   * The target's pose at the physics time the shooter saw: `now` minus the server-measured
+   * delay since the command arrived, minus the shooter's view lookback (minimum RTT +
+   * REMOTE_DELAY_MS). Each part has its own bound.
+   */
+  target(seat: Seat, now: number, lookbackMs: number, serverDelayMs = 0): CombatPose | undefined {
     if (!Number.isFinite(lookbackMs) || lookbackMs <= 0 || !this.frames.length) return;
-    const at = now - Math.min(MAX_REWIND_MS, lookbackMs);
+    const delay = Number.isFinite(serverDelayMs)
+      ? Math.max(0, Math.min(MAX_SERVER_DELAY_MS, serverDelayMs))
+      : 0;
+    const at = now - delay - Math.min(MAX_REWIND_MS, lookbackMs);
     if (at < this.frames[0]!.at) return;
     let a = this.frames[0]!,
       b = a;

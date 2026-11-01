@@ -109,3 +109,61 @@ export function snapshotForPlayer<T extends { state: PublicState }>(frame: T, se
     },
   };
 }
+
+/** A physics step's public poses, recorded by the runtime after each simulation step. */
+export type TrailStep = {
+  at: number;
+  phase: MatchState["phase"];
+  players: Record<
+    Seat,
+    Pick<
+      MatchState["players"]["A"],
+      "x" | "y" | "z" | "yaw" | "pitch" | "crouched" | "hp" | "velocityY"
+    >
+  >;
+};
+/** One opponent pose from an intermediate physics step; `pose` is absent when redacted. */
+export type TrailEntry = { poseAt: number; pose?: TrailStep["players"]["A"] };
+
+/**
+ * Intermediate physics poses since the previous snapshot. Snapshots go out on a 20 Hz
+ * deadline while physics runs at ~30 Hz, so every other snapshot skipped a step; the
+ * client then lacked the pose after its drawn time and extrapolated (overshoot + pull-back
+ * at direction changes). Bundling the skipped steps adds no messages. Each step is
+ * redacted with the same sight-line rule as the snapshot itself, using that step's poses.
+ */
+export function trailForPlayer(
+  steps: readonly TrailStep[],
+  seat: Seat,
+  afterAt: number,
+  beforeAt: number,
+): TrailEntry[] {
+  const remote = seat === "A" ? "B" : "A";
+  return steps
+    .filter((step) => step.at > afterAt && step.at < beforeAt)
+    .map((step) => {
+      const visible = canSeeOpponent(
+        { phase: step.phase, players: step.players, events: [] } as unknown as PublicState,
+        seat,
+      );
+      return visible ? { poseAt: step.at, pose: { ...step.players[remote] } } : { poseAt: step.at };
+    });
+}
+
+export function trailStep(state: Pick<MatchState, "phase" | "players">, at: number): TrailStep {
+  const pick = (p: MatchState["players"]["A"]) => ({
+    x: p.x,
+    y: p.y,
+    z: p.z,
+    yaw: p.yaw,
+    pitch: p.pitch,
+    crouched: !!p.crouched,
+    hp: p.hp,
+    velocityY: p.velocityY ?? 0,
+  });
+  return {
+    at,
+    phase: state.phase,
+    players: { A: pick(state.players.A), B: pick(state.players.B) },
+  };
+}

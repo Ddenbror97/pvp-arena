@@ -385,6 +385,35 @@ function shoot(
 }
 
 /** Call from the trusted server scheduler. dt is intentionally ignored (milliseconds). */
+/** Commands a player may be behind real time before catch-up stops (≈100 ms). */
+export const MAX_COMMAND_CREDIT = 3;
+/**
+ * Bounded command catch-up (Source-style usercmd budget). Applies one queued movement-only
+ * command for a seat before the regular step, so a backlog formed by a network burst or a
+ * slow authorization read drains instead of adding permanent delay. The caller enforces
+ * the time budget: a seat earns one credit per tick (capped at MAX_COMMAND_CREDIT) and
+ * every applied command spends one, so average movement never exceeds real time.
+ * Commands that fire, reload or switch weapons are never folded; they take the normal
+ * combat path in stepMatch. Returns false when the command is not eligible.
+ */
+export function applyQueuedMovement(state: MatchState, seat: Seat, raw: Input): boolean {
+  if (state.phase !== "live") return false;
+  const input = validateInput(raw),
+    p = state.players[seat];
+  if (!input || input.seq <= p.lastSeq || p.hp <= 0) return false;
+  if (input.fire || input.reload || input.weapon !== p.weapon) return false;
+  p.lastSeq = input.seq;
+  p.yaw = input.yaw;
+  p.pitch = input.pitch;
+  const before = { x: p.x, z: p.z, y: p.y };
+  predictMovement(p, input, TICK_MS);
+  // Same footstep accounting as stepMatch: Shift-walking stays silent.
+  if (input.walk) p.stepDistance = 0;
+  else if (p.y === before.y && !(p.velocityY ?? 0))
+    p.stepDistance = (p.stepDistance ?? 0) + Math.hypot(p.x - before.x, p.z - before.z);
+  return true;
+}
+
 export function stepMatch(
   state: MatchState,
   inputs: Partial<Record<Seat, Input>>,

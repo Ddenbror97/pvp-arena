@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyQueuedMovement,
   createMatch,
   predictMovement,
   startMatch,
@@ -8,7 +9,14 @@ import {
   type Input,
   type MatchState,
 } from "../src/lib/fps/simulation";
-import { canSeeOpponent, snapshotForPlayer } from "../src/lib/fps/visibility";
+import {
+  canSeeOpponent,
+  snapshotForPlayer,
+  trailForPlayer,
+  trailStep,
+  type TrailEntry,
+  type TrailStep,
+} from "../src/lib/fps/visibility";
 import { RemotePresentation } from "../src/lib/fps/presentation";
 import { REMOTE_DELAY_MS, SnapshotClock } from "../src/lib/fps/network";
 
@@ -25,7 +33,7 @@ type Script = (t: number) => Partial<Input>;
 type Net = { rtt: number; jitter: number; stalls?: [number, number][] };
 type Frame = ReturnType<
   typeof snapshotForPlayer<{ state: MatchState; serverNow: number; poseAt: number }>
->;
+> & { trail?: TrailEntry[] };
 
 function rng(seed: number) {
   return () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
@@ -71,7 +79,12 @@ function legacyClient() {
   };
 }
 /** Current renderer path: visibility is part of the playback timeline. */
-function timelineClient(delay = REMOTE_DELAY_MS, project = true, bridgeMs?: number) {
+function timelineClient(
+  delay = REMOTE_DELAY_MS,
+  project = true,
+  bridgeMs?: number,
+  useTrail = true,
+) {
   const clock = new SnapshotClock(),
     motion = new RemotePresentation();
   if (bridgeMs !== undefined) motion.bridgeMs = bridgeMs;
@@ -79,12 +92,28 @@ function timelineClient(delay = REMOTE_DELAY_MS, project = true, bridgeMs?: numb
   return {
     receive(f: Frame, at: number) {
       clock.observe(f.serverNow, at);
-      motion.push(f.state.players.B, f.poseAt, f.visibility?.B !== false);
+      motion.pushFrame(
+        f.state.players.B,
+        f.poseAt,
+        f.visibility?.B !== false,
+        useTrail ? f.trail : undefined,
+      );
       if (!project) Reflect.set(motion, "projectionAllowed", false);
     },
     draw(now: number, elapsed: number, out: Pose) {
       out.at = clock.now(now) - delay;
-      return motion.sample(out.at, out, elapsed);
+      const shown = motion.sample(out.at, out, elapsed);
+      return shown;
+    },
+    /** Presentation internals for classifying anomalies (bridge / correction active). */
+    debug() {
+      return {
+        bridged: !!Reflect.get(motion, "projected"),
+        correction: Math.hypot(
+          Number(Reflect.get(motion, "correctionX")),
+          Number(Reflect.get(motion, "correctionZ")),
+        ),
+      };
     },
   };
 }
@@ -129,6 +158,8 @@ function run(opts: {
     });
   record();
   const inFlight: { at: number; frame: Frame }[] = [];
+  const steps: TrailStep[] = [];
+  let lastTrailAt = -Infinity;
   let lastDelivery = 0,
     lastSnapshot = 0,
     seq = 0;
@@ -140,7 +171,15 @@ function run(opts: {
   const frameMs = 1000 / opts.fps;
   let clientNow = T0 + 300;
   const out: Pose = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
-  const frames: { at: number; shown: boolean; x: number; z: number; now: number }[] = [];
+  const frames: {
+    at: number;
+    shown: boolean;
+    x: number;
+    z: number;
+    now: number;
+    bridged: boolean;
+    correction: number;
+  }[] = [];
   const end = T0 + opts.durationMs;
   let lastFrame = clientNow;
   while (clientNow < end) {
@@ -153,18 +192,26 @@ function run(opts: {
         const stepAt = Math.max(last + Math.ceil(TICK_MS), now - 2 * Math.ceil(TICK_MS));
         stepMatch(state, { B: input(++seq, opts.script(stepAt - T0)) }, stepAt, TICK_MS);
         record();
+        steps.push(trailStep(state, state.server!.lastStepAt));
+        if (steps.length > 6) steps.shift();
       }
       const every = opts.snapshotMs ?? 50;
       if (now - lastSnapshot >= every) {
         lastSnapshot = lastSnapshot ? Math.max(lastSnapshot + every, now - every) : now;
-        const frame = snapshotForPlayer(
-          {
-            state: structuredClone({ ...state, server: undefined }) as MatchState,
-            serverNow: now,
-            poseAt: state.server!.lastStepAt,
-          },
-          "A",
-        );
+        const poseAt = state.server!.lastStepAt;
+        const frame: Frame = {
+          ...snapshotForPlayer(
+            {
+              state: structuredClone({ ...state, server: undefined }) as MatchState,
+              serverNow: now,
+              poseAt,
+            },
+            "A",
+          ),
+          // Same bundling as the runtime: intermediate physics steps since the last send.
+          trail: trailForPlayer(steps, "A", lastTrailAt, poseAt),
+        };
+        lastTrailAt = poseAt;
         let at = now + oneWay + random() * opts.net.jitter;
         for (const [s, d] of opts.net.stalls ?? [])
           if (now >= T0 + s && now < T0 + s + d) at = Math.max(at, T0 + s + d + oneWay);
@@ -179,7 +226,16 @@ function run(opts: {
       client.receive(inFlight.shift()!.frame, inFlight.length >= 0 ? clientNow + clientOffset : 0);
     const shown = client.draw(clientNow + clientOffset, clientNow - lastFrame, out);
     lastFrame = clientNow;
-    frames.push({ at: out.at, shown, x: out.x, z: out.z, now: clientNow });
+    const dbg = (client as { debug?: () => { bridged: boolean; correction: number } }).debug?.();
+    frames.push({
+      at: out.at,
+      shown,
+      x: out.x,
+      z: out.z,
+      now: clientNow,
+      bridged: !!dbg?.bridged,
+      correction: dbg?.correction ?? 0,
+    });
     clientNow += frameMs;
   }
 
@@ -200,6 +256,8 @@ function run(opts: {
     };
   };
   const settled = frames.filter((f) => f.now > T0 + 800);
+  const causes = { reversal: 0, correction: 0, unexplained: 0 };
+  let maxBackward = 0;
   let disappeared = 0,
     leaked = 0,
     backward = 0,
@@ -226,11 +284,33 @@ function run(opts: {
       vx = truthPose.x - t0.x,
       vz = truthPose.z - t0.z;
     const truthStep = Math.hypot(vx, vz);
-    if (truthStep > 0.002 && (dx * vx + dz * vz) / truthStep < -0.01) backward++;
+    if (truthStep > 0.002 && (dx * vx + dz * vz) / truthStep < -0.01) {
+      backward++;
+      maxBackward = Math.max(maxBackward, -(dx * vx + dz * vz) / truthStep);
+      // Classify: did the authoritative path reverse within one snapshot gap of the
+      // drawn interval, was a bridge/correction active, or neither (a bug)?
+      const window = truth.filter((p) => p.at >= prev.at - 70 && p.at <= f.at + 70);
+      let reversal = false;
+      for (let k = 2; k < window.length; k++) {
+        const ax = window[k - 1]!.x - window[k - 2]!.x,
+          az = window[k - 1]!.z - window[k - 2]!.z,
+          bx = window[k]!.x - window[k - 1]!.x,
+          bz = window[k]!.z - window[k - 1]!.z;
+        if (ax * bx + az * bz < 0) reversal = true;
+      }
+      const cause =
+        f.bridged || prev.bridged || f.correction > 0.001 || prev.correction > 0.001
+          ? "correction"
+          : reversal
+            ? "reversal"
+            : "unexplained";
+      causes[cause]++;
+    }
     if (truthStep > 0.02 && Math.hypot(dx, dz) < truthStep * 0.1) frozen++;
     if (Math.hypot(dx, dz) > 0.6) {
       teleports++;
-      if (process.env["TRACE"]) console.log("TELE", Math.round(f.now - T0), Math.hypot(dx, dz).toFixed(2));
+      if (process.env["TRACE"])
+        console.log("TELE", Math.round(f.now - T0), Math.hypot(dx, dz).toFixed(2));
     }
   }
   if (process.env["TRACE3"])
@@ -296,6 +376,8 @@ function run(opts: {
     backward,
     teleports,
     frozen,
+    causes,
+    maxBackwardCm: +(maxBackward * 100).toFixed(1),
     maxError: +maxError.toFixed(3),
   };
 }
@@ -318,10 +400,9 @@ const jumpCrouch: Script = (t) => ({
 describe.skipIf(!process.env["SWEEP"])("jitter sweep", () => {
   it("sweep", () => {
     const variants: [string, () => ReturnType<typeof legacyClient>, number][] = [
-      ["100ms bridge50", () => timelineClient(100, true, 50), 50],
-      ["100ms bridge34", () => timelineClient(100, true, 34), 50],
-      ["100ms bridge20", () => timelineClient(100, true, 20), 50],
-      ["100ms bridge0", () => timelineClient(100, true, 0), 50],
+      ["100ms no trail", () => timelineClient(100, true, 50, false), 50],
+      ["100ms + trail", () => timelineClient(100, true, 50, true), 50],
+      ["110ms + trail", () => timelineClient(110, true, 50, true), 50],
     ];
     for (const [name, client, snapshotMs] of variants)
       for (const jitter of [10, 30, 50]) {
@@ -403,10 +484,11 @@ describe("remote opponent synchronisation (server step → network → client pl
           expect(r.disappeared).toBe(0);
           expect(r.leaked).toBe(0);
           expect(r.teleports).toBe(0);
-          // At most one frame per direction reversal (5 in 8 s), where linear 20 Hz
-          // interpolation cuts the reversal corner by up to ~0.2 m.
-          expect(r.backward).toBeLessThanOrEqual(6);
-          expect(r.maxError).toBeLessThan(0.25);
+          // Every physics step is delivered (trail), so playback stays inside received
+          // poses: no extrapolation at typical jitter, nothing unexplained at any jitter.
+          expect(r.causes.unexplained).toBe(0);
+          expect(r.backward).toBeLessThanOrEqual(jitter > 10 ? 3 : 0);
+          expect(r.maxError).toBeLessThan(jitter > 10 ? 0.05 : 0.01);
         });
 
   for (const [name, script] of [
@@ -428,11 +510,14 @@ describe("remote opponent synchronisation (server step → network → client pl
           console.log(`ROW ${name} rtt${rtt} j${jitter} ` + JSON.stringify(r));
           expect(r.disappeared).toBe(0);
           expect(r.teleports).toBe(0);
-          // One reversal-corner frame per direction change (21 / 7 in 6 s); under 30 ms
-          // jitter the bounded 50 ms bridge may overshoot a few reversals as well.
-          const reversals = name === "counter-strafing" ? 21 : 7;
-          expect(r.backward).toBeLessThanOrEqual(jitter > 10 ? 12 : Math.min(reversals, 6));
-          expect(r.maxError).toBeLessThan(jitter > 10 ? 0.32 : 0.25);
+          // Typical jitter: drawn poses equal the authoritative path. Under 30 ms jitter the
+          // late-packet bridge may extrapolate a few ms past the newest pose; the resulting
+          // pull-back is bounded to a few centimetres. Nothing is ever unexplained.
+          expect(r.causes.unexplained).toBe(0);
+          expect(r.causes.reversal).toBe(0);
+          expect(r.backward).toBeLessThanOrEqual(jitter > 10 ? 6 : 0);
+          expect(r.maxBackwardCm).toBeLessThan(jitter > 10 ? 5 : 0.1);
+          expect(r.maxError).toBeLessThan(jitter > 10 ? 0.25 : 0.01);
         });
 
   it("a 400 ms delivery stall freezes, then resumes forward without rewinding", () => {
@@ -449,6 +534,31 @@ describe("remote opponent synchronisation (server step → network → client pl
     expect(r.backward).toBeLessThanOrEqual(3); // reversal corners only
     expect(r.teleports).toBe(0); // the backlog is repaid as a forward glide, not a jump
     expect(r.disappeared).toBe(0);
+  });
+});
+
+describe("snapshot trail (intermediate physics poses)", () => {
+  const step = (at: number, bx: number, bz: number): TrailStep => ({
+    at,
+    phase: "live",
+    players: {
+      A: { x: -4, y: 0, z: 0, yaw: 0, pitch: 0, crouched: false, hp: 100, velocityY: 0 },
+      B: { x: bx, y: 0, z: bz, yaw: 0, pitch: 0, crouched: false, hp: 100, velocityY: 0 },
+    },
+  });
+  it("includes only steps between the previous and current snapshot", () => {
+    const steps = [step(10, -6, -9.5), step(44, -6.1, -9.5), step(78, -6.2, -9.5)];
+    expect(trailForPlayer(steps, "A", 10, 78).map((e) => e.poseAt)).toEqual([44]);
+  });
+  it("never carries a pose the recipient could not see at that step", () => {
+    // B at (-9.6, -5) is behind cover from A at (-4, 0); (-6.5, -9.5) is in the open.
+    const steps = [step(10, -6.5, -9.5), step(44, -9.6, -5)];
+    const trail = trailForPlayer(steps, "A", 0, 100);
+    expect(trail[0]!.pose).toBeDefined();
+    expect(trail[1]).toEqual({ poseAt: 44 });
+    expect(
+      canSeeOpponent({ phase: "live", players: steps[1]!.players, events: [] } as never, "A"),
+    ).toBe(false);
   });
 });
 
@@ -555,4 +665,34 @@ describe("fixed-step movement is independent of render rate", () => {
       expect(r.z).toBeCloseTo(reference.z, 6);
       expect(r.maxY).toBeCloseTo(reference.maxY, 6);
     });
+});
+
+describe("bounded command catch-up (applyQueuedMovement)", () => {
+  const live = () => {
+    const s = createMatch({ A: "a", B: "b" }, 5, 0);
+    startMatch(s, 0);
+    s.phase = "live";
+    Object.assign(s.players.A, { x: -6.5, z: -9.5, y: 0 });
+    return s;
+  };
+  it("moves exactly like the regular step and keeps Shift-walking silent", () => {
+    const folded = live(),
+      stepped = live();
+    expect(applyQueuedMovement(folded, "A", input(1, { strafe: 1 }))).toBe(true);
+    predictMovement(stepped.players.A, input(1, { strafe: 1 }), TICK_MS);
+    expect(folded.players.A.x).toBeCloseTo(stepped.players.A.x, 9);
+    expect(folded.players.A.lastSeq).toBe(1);
+    const walker = live();
+    walker.players.A.stepDistance = 1.5;
+    expect(applyQueuedMovement(walker, "A", input(1, { strafe: 1, walk: true }))).toBe(true);
+    expect(walker.players.A.stepDistance).toBe(0);
+  });
+  it("never folds fire, reload, weapon switches or stale commands", () => {
+    const s = live();
+    expect(applyQueuedMovement(s, "A", input(1, { fire: true }))).toBe(false);
+    expect(applyQueuedMovement(s, "A", input(1, { reload: true }))).toBe(false);
+    expect(applyQueuedMovement(s, "A", input(1, { weapon: "pistol" }))).toBe(false);
+    expect(applyQueuedMovement(s, "A", input(2, {}))).toBe(true);
+    expect(applyQueuedMovement(s, "A", input(2, {}))).toBe(false);
+  });
 });

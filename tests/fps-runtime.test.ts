@@ -3,6 +3,7 @@ import { build } from "esbuild";
 import { Miniflare, convertV4MiniflareOptions } from "miniflare";
 import { signAdmission } from "../src/lib/fps/ticket";
 import type { MatchState } from "../src/lib/fps/protocol";
+import { MAX_COMMAND_CREDIT } from "../src/lib/fps/simulation";
 
 const secret = "isolated-runtime-test-".repeat(3);
 const origin = "https://casino.test";
@@ -23,7 +24,9 @@ type RuntimeFrame = {
 const callbacks: Array<{ path: string; body: Record<string, unknown> }> = [];
 const revokedSessions = new Set<string>();
 let unavailableSession = "",
-  delayedSession = "";
+  delayedSession = "",
+  /** Applied to every session read when non-zero (latency measurement). */
+  sessionReadDelayMs = 0;
 let authReadObserved: (() => void) | undefined;
 let failOnceId = "";
 let refundedId = "";
@@ -212,6 +215,7 @@ describe("isolated real Durable Object WebSockets", () => {
               authReadObserved = undefined;
               await pause(120);
             }
+            if (sessionReadDelayMs) await pause(sessionReadDelayMs);
             return Response.json(rows);
           }
           callbacks.push({ path, body });
@@ -346,12 +350,14 @@ describe("isolated real Durable Object WebSockets", () => {
       }, 34);
       await pause(400);
       const poses: Array<{ at: number; z: number }> = [];
+      const frames: Array<RuntimeFrame & { trail?: Array<{ poseAt: number }> }> = [];
       a.addEventListener("message", (event) => {
         const frame = JSON.parse(String(event.data)) as RuntimeFrame;
         if (frame.type === "snapshot") {
           expect(frame.poseAt).toBeLessThanOrEqual(frame.serverNow);
           expect(frame.serverNow - frame.poseAt).toBeLessThan(100);
           poses.push({ at: frame.serverNow, z: frame.state.players.A.z });
+          frames.push(frame as RuntimeFrame & { trail?: Array<{ poseAt: number }> });
         }
       });
       const first = await until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
@@ -364,6 +370,13 @@ describe("isolated real Durable Object WebSockets", () => {
       const moving = poses.slice(1).filter((pose, i) => pose.z < poses[i]!.z).length;
       expect(Math.max(...gaps)).toBeLessThan(110);
       expect(moving / gaps.length).toBeGreaterThan(0.85);
+      // Snapshots plus their trails deliver every physics step (no ~67 ms holes).
+      const timeline = [
+        ...new Set(frames.flatMap((f) => [...(f.trail ?? []).map((t) => t.poseAt), f.poseAt])),
+      ].sort((x, y) => x - y);
+      const stepGaps = timeline.slice(1).map((t, i) => t - timeline[i]!);
+      expect(frames.some((f) => (f.trail?.length ?? 0) > 0)).toBe(true);
+      expect(Math.max(...stepGaps)).toBeLessThan(60);
       console.log(
         JSON.stringify({
           event: "slow_auth_clock_test",
@@ -375,6 +388,91 @@ describe("isolated real Durable Object WebSockets", () => {
     } finally {
       clearInterval(timer);
       delayedSession = "";
+      a.close();
+      b.close();
+    }
+  });
+  for (const readMs of [72, 150])
+    it(`strict session gate: command-to-applied latency with ${readMs} ms session reads`, async () => {
+      const id = await init(),
+        a = await sessionSocket(id, crypto.randomUUID()),
+        b = await open(id, B);
+      let timer: ReturnType<typeof setInterval> | undefined;
+      try {
+        await readyLive(a, b);
+        sessionReadDelayMs = readMs;
+        const sentAt = new Map<number, number>(),
+          latency: number[] = [];
+        let applied = -1;
+        a.addEventListener("message", (event) => {
+          const frame = JSON.parse(String(event.data)) as RuntimeFrame;
+          if (frame.type !== "snapshot") return;
+          const now = Date.now();
+          for (let s = applied + 1; s <= frame.state.players.A.lastSeq; s++) {
+            const at = sentAt.get(s);
+            if (at !== undefined) latency.push(now - at);
+          }
+          applied = Math.max(applied, frame.state.players.A.lastSeq);
+        });
+        let seq = 20_000,
+          lastInputAt = Date.now();
+        await pause(300);
+        timer = setInterval(() => {
+          const now = Date.now();
+          for (let step = 0; step < 3 && now - lastInputAt >= 34; step++) {
+            lastInputAt = Math.max(lastInputAt + 34, now - 68);
+            sentAt.set(++seq, Date.now());
+            a.send(
+              JSON.stringify({ ...JSON.parse(movement(seq)), forward: 1, strafe: 0, fire: false }),
+            );
+          }
+        }, 34);
+        await pause(2500);
+        clearInterval(timer);
+        await pause(readMs * 2 + 200);
+        latency.sort((x, y) => x - y);
+        const q = (p: number) =>
+          latency[Math.min(latency.length - 1, Math.ceil(latency.length * p) - 1)]!;
+        const summary = { readMs, n: latency.length, p50: q(0.5), p95: q(0.95), p99: q(0.99) };
+        console.log(JSON.stringify({ event: "strict_gate_latency", ...summary }));
+        expect(latency.length).toBeGreaterThan(40);
+        // Read + read spacing + catch-up + clock/snapshot alignment (local, no network).
+        // The previous serial-read runtime measured 263 / 346 ms p95 here (72 / 150 ms reads).
+        expect(summary.p95).toBeLessThan(readMs + 160);
+      } finally {
+        clearInterval(timer);
+        sessionReadDelayMs = 0;
+        a.close();
+        b.close();
+      }
+    });
+  it("a command flood cannot move a player faster than real time (bounded catch-up)", async () => {
+    const id = await init(),
+      a = await sessionSocket(id, crypto.randomUUID()),
+      b = await open(id, B);
+    let timer: ReturnType<typeof setInterval> | undefined;
+    try {
+      const start = await readyLive(a, b);
+      const z0 = start.state.players.A.z;
+      let seq = 30_000;
+      const began = Date.now();
+      // ~65 commands per second: under the 70/s rate limit, ~2.2x the 29.4/s tick rate.
+      timer = setInterval(() => {
+        for (let i = 0; i < 2; i++)
+          a.send(
+            JSON.stringify({ ...JSON.parse(movement(++seq)), forward: 1, strafe: 0, fire: false }),
+          );
+      }, 31);
+      await pause(2000);
+      clearInterval(timer);
+      const elapsed = (Date.now() - began) / 1000;
+      const end = await until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
+      const travelled = Math.abs(end.state.players.A.z - z0);
+      console.log(JSON.stringify({ event: "flood_test", elapsed, travelled }));
+      // Walking speed for the elapsed real time plus at most the 3-command catch-up burst.
+      expect(travelled).toBeLessThan(5 * elapsed + 5 * 0.034 * MAX_COMMAND_CREDIT + 0.05);
+    } finally {
+      clearInterval(timer);
       a.close();
       b.close();
     }
