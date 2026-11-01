@@ -20,6 +20,7 @@ import { duelMoney, duelQuote, type DuelLobbyData } from "@/lib/fps/quote";
 import { STRIKE_SHOWCASE } from "@/lib/fps/showcase";
 import { warmArenaAssets, warmArenaRenderer } from "@/lib/fps/renderer-loader";
 import { useFpsQueue } from "@/lib/fps/queue";
+import { reserveArenaPointer, releaseArenaPointer } from "@/lib/fps/entry-capture";
 import "./strike-lobby.css";
 
 type OpenRoom = DuelLobbyData["open"][number];
@@ -130,6 +131,7 @@ export function DuelLobby() {
     const key = keys.current.get(token) ?? crypto.randomUUID();
     keys.current.set(token, key);
     warmArenaAssets();
+    if (room) reserveArenaPointer(room.id);
     setBusy(true);
     setError(null);
     try {
@@ -149,6 +151,7 @@ export function DuelLobby() {
       else setPanel("games");
       keys.current.delete(token);
     } catch (e) {
+      releaseArenaPointer();
       setError(duelError(e));
     } finally {
       setBusy(false);
@@ -176,6 +179,7 @@ export function DuelLobby() {
     setBusy(true);
     setError(null);
     warmArenaAssets();
+    reserveArenaPointer();
     try {
       const result = (await action({
         data: { action: "practice", combatVersion: 2, key },
@@ -184,6 +188,7 @@ export function DuelLobby() {
       await navigate({ to: "/fps/$matchId", params: { matchId: result.id } });
       keys.current.delete("practice");
     } catch (e) {
+      releaseArenaPointer();
       setError(duelError(e));
     } finally {
       setBusy(false);

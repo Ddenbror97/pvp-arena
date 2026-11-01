@@ -217,7 +217,7 @@ export function createCombatAudio() {
           const sample = ("step" + (played.steps % 4)) as Sample;
           play(
             sample,
-            gain * (cue.soft ? 0.1 : own ? 0.34 : 0.48),
+            gain * 0.75 * (cue.soft ? 0.1 : own ? 0.34 : 0.48),
             pan,
             !!cue.occluded,
             cue.surface === "metal" ? 1.16 : 1,

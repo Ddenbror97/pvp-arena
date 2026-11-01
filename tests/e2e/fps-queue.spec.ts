@@ -51,7 +51,7 @@ test("a hosting human can warm up against a free bot and accept the human join i
     const practice = new URL(page.url()).pathname.split("/").at(-1)!;
     expect(practice).not.toBe(cash);
     await page.bringToFront();
-    await page.getByRole("button", { name: "Ready & enter arena", exact: true }).click();
+    await expect(page.locator(".duel-loading-screen")).toHaveCount(0, { timeout: 60000 });
     await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
     const username = (await sql`select username from profiles where id=${users[0].id}`)[0].username;
     const room = other.locator(".strike-room-list li").filter({ hasText: username });

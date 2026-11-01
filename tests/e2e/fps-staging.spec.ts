@@ -155,9 +155,10 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     await expect(page).toHaveURL(new RegExp("/fps/" + matchId));
     timings.joinToRoomMs = Date.now() - joinAt;
     for (const p of [other, page]) {
-      const ready = p.getByRole("button", { name: "Ready & enter arena", exact: true });
-      await expect(ready).toBeEnabled({ timeout: 45000 });
-      await ready.click();
+      await expect(p.locator(".duel-game")).toHaveAttribute("data-arena-ready", "true", {
+        timeout: 60000,
+      });
+      await expect(p.locator(".duel-loading-screen")).toHaveCount(0);
       await expect
         .poll(() => p.evaluate(() => !!document.pointerLockElement), {
           timeout: 1000,
@@ -174,7 +175,7 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     await expect.poll(() => networks.length, { timeout: 15000 }).toBeGreaterThanOrEqual(3);
     await expect(page.locator(".duel-network-status small")).toContainText("ms");
     await page.bringToFront();
-    const resume = page.getByRole("button", { name: "Resume aiming", exact: true });
+    const resume = page.getByRole("button", { name: "Resume game", exact: true });
     if (await resume.isVisible()) await resume.click();
     const own = () => latest.get(page)!.players.A;
     const aim = async () => {

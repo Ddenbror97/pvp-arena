@@ -101,6 +101,7 @@ describe("FPS protocol", () => {
       { ...input(), seq: Number.MAX_SAFE_INTEGER + 1 },
       { ...input(), jump: undefined },
       { ...input(), sprint: 1 },
+      { ...input(), walk: "silent" },
       { ...input(), weapon: "rocket" },
       { ...input(), v: 2 },
       { ...input(), type: "input".repeat(10000) },

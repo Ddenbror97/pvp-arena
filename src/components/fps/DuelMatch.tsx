@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Crosshair, Volume2, VolumeX, Maximize, Copy, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Volume2, VolumeX, Maximize, Copy, ShieldCheck } from "lucide-react";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
 import { useAuth } from "@/lib/auth";
@@ -16,6 +16,11 @@ import type { ArenaControls, ArenaFrame } from "@/lib/fps/renderer";
 import { loadArenaRenderer } from "@/lib/fps/renderer-loader";
 import { STRIKE_LOADING_IMAGE, matchLoadProgress, type ArenaLoadProgress } from "@/lib/fps/loading";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
+import {
+  reserveArenaPointer,
+  releaseArenaPointer,
+  claimArenaPointer,
+} from "@/lib/fps/entry-capture";
 import { RoundBreak, type DuelProfile } from "./RoundBreak";
 import { DeathFeedback } from "./DeathFeedback";
 import { isDefeatedView } from "@/lib/fps/death-presentation";
@@ -102,6 +107,7 @@ export function DuelMatch({
   const serverOffset = useRef(0);
   const settledMatch = useRef<string | null>(null);
   const capturePending = useRef(false);
+  const hadCapturedMouse = useRef(false);
   const [capturing, setCapturing] = useState(false);
   const [rematchReview, setRematchReview] = useState(false);
   const [settings, setSettings] = useState(DEFAULT_STRIKE_SETTINGS);
@@ -175,12 +181,30 @@ export function DuelMatch({
   useEffect(() => {
     sound.current?.setMuted(muted);
   }, [muted]);
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    if (!arenaReady) return;
+    const remove = () => {
+      document.removeEventListener("pointerdown", unlock, true);
+      document.removeEventListener("keydown", unlock, true);
+    };
+    const unlock = () => {
+      // Automatic entry must retain sound on browsers that gate audio separately.
+      void sound.current
+        ?.unlock()
+        .then(remove)
+        .catch(() => {});
+    };
+    document.addEventListener("pointerdown", unlock, true);
+    document.addEventListener("keydown", unlock, true);
+    return remove;
+  }, [arenaReady]);
+  useEffect(() => {
+    claimArenaPointer(matchId);
+    return () => {
       sound.current?.dispose();
-    },
-    [],
-  );
+      releaseArenaPointer(matchId);
+    };
+  }, [matchId]);
 
   useEffect(() => {
     if (!host.current || !needsArena) return;
@@ -203,8 +227,10 @@ export function DuelMatch({
             },
             (value) => {
               setLocked(value);
-              if (!value) setSettingsOpen(true);
-              else setSettingsOpen(false);
+              if (value) {
+                hadCapturedMouse.current = true;
+                setSettingsOpen(false);
+              } else if (hadCapturedMouse.current) setSettingsOpen(true);
             },
             (weapon, seq) => {
               observations.current.shot(seq, performance.now());
@@ -371,6 +397,7 @@ export function DuelMatch({
           if (stopped) return;
           arena.current?.suspend(true);
           setLocked(false);
+          setReady(false);
           if (document.pointerLockElement) document.exitPointerLock();
           if (event.code === 4001) {
             setConnection("Opened in another tab");
@@ -427,7 +454,7 @@ export function DuelMatch({
     };
   }, [playable, userId, desktop, matchId, spectate, admission, qc]);
 
-  const activate = async () => {
+  const activate = async (automatic = false) => {
     if (
       !arenaReady ||
       !currentFrame.current ||
@@ -437,6 +464,22 @@ export function DuelMatch({
       return;
     capturePending.current = true;
     setCapturing(true);
+    let capturedMouse = false;
+    const confirmReady = () => {
+      if (socket.current?.readyState !== WebSocket.OPEN) return;
+      socket.current.send(
+        JSON.stringify({
+          v: 1,
+          type: "ready",
+          combatVersion: currentFrame.current?.state.combatVersion ?? 1,
+        }),
+      );
+      setReady(true);
+    };
+    if (automatic) {
+      setSettingsOpen(false);
+      confirmReady();
+    }
     try {
       // Capture in the original click gesture; never wait for asynchronous audio.
       const captured = arena.current?.lock();
@@ -449,27 +492,39 @@ export function DuelMatch({
         /* Audio availability must not prevent entering an authenticated match. */
       }
       await captured;
-      if (socket.current?.readyState === WebSocket.OPEN) {
-        socket.current.send(
-          JSON.stringify({
-            v: 1,
-            type: "ready",
-            combatVersion: currentFrame.current?.state.combatVersion ?? 1,
-          }),
-        );
-        setReady(true);
-      }
+      capturedMouse = true;
+      setError(null);
     } catch {
-      setError("Click the arena to allow mouse capture. Press Esc to release it.");
+      if (automatic) releaseArenaPointer(matchId);
+      else setError("Click the arena to allow mouse capture. Press Esc to release it.");
     } finally {
+      // Readiness is automatic. Mouse permission is cosmetic and must not create
+      // another acceptance step or leave a fully loaded match behind a popup.
+      if (!automatic && capturedMouse) confirmReady();
       capturePending.current = false;
       setCapturing(false);
     }
   };
+  const activateRef = useRef(activate);
+  activateRef.current = activate;
+  useEffect(() => {
+    if (
+      !spectate &&
+      !terminal &&
+      !ready &&
+      !capturing &&
+      arenaReady &&
+      frame &&
+      connection === "Connected"
+    )
+      void activateRef.current(true);
+  }, [spectate, terminal, ready, capturing, arenaReady, frame, connection]);
   const perform = async (kind: "cancel" | "join" | "rematch") => {
     setBusy(true);
     setError(null);
     requestKey.current ??= crypto.randomUUID();
+    if (kind === "join") reserveArenaPointer(matchId);
+    else if (kind === "rematch" && match?.practice) reserveArenaPointer();
     try {
       const r = (await action({
         data:
@@ -500,6 +555,7 @@ export function DuelMatch({
           replace: true,
         });
     } catch (e) {
+      releaseArenaPointer();
       setError(duelError(e));
     } finally {
       setBusy(false);
@@ -534,13 +590,7 @@ export function DuelMatch({
     !renderError &&
     desktop;
   const needsInteraction =
-    !userId ||
-    !desktop ||
-    !!renderError ||
-    !!invite ||
-    terminal ||
-    !playable ||
-    (!spectate && !locked);
+    !userId || !desktop || !!renderError || !!invite || terminal || !playable;
   const showLoading =
     !invite &&
     !terminal &&
@@ -550,11 +600,7 @@ export function DuelMatch({
         !!userId &&
         (view.isPending ||
           (playable &&
-            (!arenaReady ||
-              !frame ||
-              connection !== "Connected" ||
-              (!spectate && (!ready || phase === "waiting")))))));
-  const canEnter = arenaReady && !!frame && connection === "Connected" && !spectate;
+            (!arenaReady || !frame || connection !== "Connected" || (!spectate && !ready))))));
   const waitingForOpponent = ready && phase === "waiting" && connection === "Connected";
   const loadLabel = !arenaReady
     ? visualProgress.label
@@ -564,10 +610,10 @@ export function DuelMatch({
         ? "Synchronizing match"
         : waitingForOpponent
           ? "Waiting for opponent"
-          : "Ready to enter";
+          : "Entering Dustfront";
   return (
     <div className="duel-game" data-arena-ready={arenaReady}>
-      {!arenaReady && (
+      {!arenaReady && !showLoading && (
         <div className="duel-loading-backdrop" aria-hidden>
           <img
             src={STRIKE_LOADING_IMAGE}
@@ -579,18 +625,24 @@ export function DuelMatch({
           />
         </div>
       )}
-      <div className="duel-render-host" ref={host} />
+      <div
+        className="duel-render-host"
+        ref={host}
+        onClick={() => {
+          if (ready && !locked && !spectate && !terminal) void activate();
+        }}
+      />
       {showLoading && (
         <ArenaLoadingScreen
           progress={matchLoadProgress(visualProgress.value, connection === "Connected", !!frame)}
           label={loadLabel}
-          practice={!!match?.practice}
-          canEnter={canEnter}
-          capturing={capturing}
-          waiting={waitingForOpponent}
           error={error}
-          onEnter={() => void activate()}
         />
+      )}
+      {ready && !locked && !spectate && !terminal && !settingsOpen && !showLoading && (
+        <div className="duel-capture-hint" role="status">
+          Click the arena to enable mouse control
+        </div>
       )}
       <header className="duel-hud-top">
         <Link to="/fps-duel" className="duel-back">
@@ -703,7 +755,7 @@ export function DuelMatch({
         </div>
         <div className="duel-controls-hint">
           W A S D <span>Move</span> · R <span>Reload</span> · 1 / 2 <span>Weapon</span> · SHIFT{" "}
-          <span>Sprint</span> · SPACE <span>Jump</span> · CTRL <span>Crouch</span> · ESC{" "}
+          <span>Silent walk</span> · SPACE <span>Jump</span> · CTRL <span>Crouch</span> · ESC{" "}
           <span>Release mouse</span>
         </div>
         <div className="duel-ammo">
@@ -723,7 +775,7 @@ export function DuelMatch({
           countdown={phase === "countdown"}
         />
       )}
-      {!showLoading && (needsInteraction || (!roundBreak && phase === "waiting")) && (
+      {!showLoading && needsInteraction && (
         <div className={`duel-game-overlay ${locked ? "duel-game-overlay-passive" : ""}`}>
           <section className="duel-match-card">
             <span className="duel-eyebrow">AIM ARENA / PVP ORIGINALS</span>
@@ -895,42 +947,7 @@ export function DuelMatch({
                 )}
                 {view.isError && <p className="duel-error">{duelError(view.error)}</p>}
               </>
-            ) : (
-              <>
-                <Crosshair size={32} />
-                <h1>
-                  {phase === "countdown"
-                    ? `Round starts in ${seconds}`
-                    : phase === "round-end"
-                      ? "Reset. Read the next angle."
-                      : active
-                        ? "Back into the duel."
-                        : match?.practice
-                          ? "Your bot is ready."
-                          : "Both players. Ready up."}
-                </h1>
-                <p>
-                  {!arenaReady
-                    ? "Loading arena models…"
-                    : spectate
-                      ? "Read-only view · delayed 5 seconds"
-                      : phase === "waiting"
-                        ? ready
-                          ? "Ready. Waiting for your opponent."
-                          : "Click to capture your mouse and confirm readiness."
-                        : "Your match keeps running while the mouse is released. Reconnect within 30 seconds if disconnected."}
-                </p>
-                {!spectate && !locked && (
-                  <button
-                    className="duel-primary"
-                    onClick={() => void activate()}
-                    disabled={connection !== "Connected" || !arenaReady || !frame || capturing}
-                  >
-                    {active ? "Resume aiming" : "Ready & enter arena"}
-                  </button>
-                )}
-              </>
-            )}
+            ) : null}
             {error && (
               <p className="duel-error" role="alert">
                 {error}

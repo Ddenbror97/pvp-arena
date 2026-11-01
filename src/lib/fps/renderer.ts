@@ -624,7 +624,8 @@ export function mountArena(
           reload: active && reload,
           weapon,
           jump: active && jump,
-          sprint: active && keys.has("ShiftLeft"),
+          sprint: false,
+          walk: active && (keys.has("ShiftLeft") || keys.has("ShiftRight")),
           crouch: active && (keys.has("ControlLeft") || keys.has("ControlRight")),
         };
         if (state.phase === "live" && !authorizationSuspended) {
@@ -684,7 +685,8 @@ export function mountArena(
         previewInput.strafe = Number(keys.has("KeyD")) - Number(keys.has("KeyA"));
         previewInput.yaw = yaw;
         previewInput.jump = jump;
-        previewInput.sprint = keys.has("ShiftLeft");
+        previewInput.sprint = false;
+        previewInput.walk = keys.has("ShiftLeft") || keys.has("ShiftRight");
         previewInput.crouch = keys.has("ControlLeft") || keys.has("ControlRight");
         predictMovement(renderPose, previewInput, accumulator);
       }
@@ -835,7 +837,7 @@ export function mountArena(
       lookX,
       lookY,
       moving,
-      sprinting: keys.has("ShiftLeft") && !predicted?.crouched,
+      sprinting: false,
       airborne,
       reloading: reloadRemaining > 0,
       kick,

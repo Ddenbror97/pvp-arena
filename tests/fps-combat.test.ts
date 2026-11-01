@@ -211,6 +211,28 @@ describe("PvPStrike authoritative combat v2", () => {
       expect(s.events.some((e) => e.type === "step")).toBe(false);
     }
   });
+  it("slow walk is slower, remains silent on the server and can still fire", () => {
+    const walking = live(),
+      running = live();
+    const start = walking.players.A.z;
+    let walkingSteps = 0,
+      runningSteps = 0;
+    for (let n = 1; n <= 25; n++) {
+      tick(walking, n, { forward: 1, walk: true });
+      tick(running, n, { forward: 1 });
+      walkingSteps += walking.events.filter((e) => e.type === "step").length;
+      runningSteps += running.events.filter((e) => e.type === "step").length;
+    }
+    expect(Math.abs(walking.players.A.z - start)).toBeLessThan(
+      Math.abs(running.players.A.z - start),
+    );
+    expect(walkingSteps).toBe(0);
+    expect(runningSteps).toBeGreaterThan(0);
+    const ammo = walking.players.A.ammo;
+    tick(walking, 26, { forward: 1, walk: true, fire: true });
+    expect(walking.players.A.ammo).toBe(ammo - 1);
+    expect(walking.events.some((e) => e.type === "step")).toBe(false);
+  });
   it("hides raw sound positions and blood coordinates for unseen enemies", () => {
     const s = live();
     s.events = [
