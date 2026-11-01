@@ -1,5 +1,7 @@
 import postgres from "postgres";
 
+export const SESSION_READ_CONCURRENCY = 4;
+
 export type SessionIdentity = { sub: string; sessionId: string; authExpiresAt: number };
 type SessionEnvironment = {
   SUPABASE_URL: string;
@@ -13,7 +15,7 @@ export const sessionKey = (s: Pick<SessionIdentity, "sub" | "sessionId">) =>
 export function sessionReader(env: SessionEnvironment) {
   const sql = env.HYPERDRIVE
     ? postgres(env.HYPERDRIVE.connectionString, {
-        max: 1,
+        max: SESSION_READ_CONCURRENCY,
         fetch_types: false,
         prepare: true,
         connect_timeout: 1,

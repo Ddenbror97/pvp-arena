@@ -21,11 +21,16 @@ import {
   trailStep,
   type TrailStep,
 } from "../../src/lib/fps/visibility";
-import { sessionReader, sessionKey, type SessionIdentity } from "./session-auth";
+import {
+  sessionReader,
+  sessionKey,
+  SESSION_READ_CONCURRENCY,
+  type SessionIdentity,
+} from "./session-auth";
 import { continentOf, LatencyTelemetry } from "./latency";
 
 /** Strict session reads overlap: at most this many in flight, started this far apart. */
-const MAX_SESSION_READS = 4;
+const MAX_SESSION_READS = SESSION_READ_CONCURRENCY;
 const SESSION_READ_SPACING_MS = 25;
 
 export interface Env {
