@@ -10,7 +10,10 @@ The rifle meshes were re-shaded (welded, smooth-by-angle + weighted normals), gi
 set and baked (ambient occlusion, edge and cavity masks → ak47-wear.webp) in Blender; see
 art/blender/README.md. The arm textures are now embedded in the GLB.
 
-- **Fps arms**, DJMaesen (bumstrum):
+The first-person gloves, forearm skin, sleeves and wristwatch are original work built in
+Blender for this project (art/blender/arms/README.md); only the arm skeleton below is reused.
+
+- **Fps arms** (arm skeleton / bind pose), DJMaesen (bumstrum):
   https://sketchfab.com/3d-models/fps-arms-9452ce4cddde4110a4fd73e555a8e412
   CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
 - **FPS AK-74m animations**, Cransh (ccransh) — arm rig/grip template:
