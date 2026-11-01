@@ -7,7 +7,12 @@ import {
   CameraVertical,
   RenderBudget,
 } from "../src/lib/fps/presentation";
-import { createMatch, isMovementBlocked, predictMovement } from "../src/lib/fps/simulation";
+import {
+  createMatch,
+  JUMP_SPEED,
+  isMovementBlocked,
+  predictMovement,
+} from "../src/lib/fps/simulation";
 import type { Input } from "../src/lib/fps/protocol";
 const input: Input = {
   v: 1,
@@ -44,11 +49,12 @@ describe("continuous camera movement", () => {
       }
       const y = visual.sample(p.y, accumulator / 34);
       expect(y).toBeGreaterThanOrEqual(0);
-      expect(Math.abs(y - previous)).toBeLessThanOrEqual((5 * dt) / 1000);
+      expect(Math.abs(y - previous)).toBeLessThanOrEqual((JUMP_SPEED * dt) / 1000);
       peak = Math.max(peak, y);
       previous = y;
     }
-    expect(peak).toBeGreaterThan(0.7);
+    expect(peak).toBeGreaterThan(1.45);
+    expect(peak).toBeLessThan(1.7);
     expect(previous).toBe(0);
   });
 

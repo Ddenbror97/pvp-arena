@@ -1,4 +1,5 @@
 import type { MatchState, Seat, Weapon } from "./protocol";
+import { footstepPan, materialFootstep } from "./footsteps";
 import { characterSide } from "./sides";
 import { consumeShotPrediction } from "./trigger-feedback";
 const SAMPLES = {
@@ -15,11 +16,14 @@ const SAMPLES = {
   step2: "step-2-v1.wav",
   step3: "step-3-v1.wav",
 } as const;
-type Sample = keyof typeof SAMPLES | "hurt" | "elimination" | "casing";
+type Sample =
+  keyof typeof SAMPLES | `step${number}-${"wood" | "metal"}` | "hurt" | "elimination" | "casing";
 type Sides = Pick<MatchState, "round" | "bestOf" | "sideVersion">;
 export type CombatAudio = ReturnType<typeof createCombatAudio>;
 /** Recorded, normalized samples; one shared decode per sample and a bounded voice budget. */
-export function createCombatAudio() {
+export function createCombatAudio(
+  presentation?: () => { yaw: number; poseAt: number } | undefined,
+) {
   const context = new AudioContext({ latencyHint: "interactive" }),
     master = context.createGain(),
     compressor = context.createDynamicsCompressor();
@@ -44,6 +48,52 @@ export function createCombatAudio() {
   const buffers = new Map<Sample, AudioBuffer>(),
     voices = new Set<AudioBufferSourceNode>(),
     played = { shots: 0, steps: 0, hits: 0, reloads: 0 };
+  const pendingSteps: Array<{
+    at: number;
+    queued: number;
+    sample: Sample;
+    gain: number;
+    pan: number;
+    bearing?: number | undefined;
+    occluded: boolean;
+  }> = [];
+  const spatialVoices = new Map<
+    AudioBufferSourceNode,
+    { panner: StereoPannerNode; bearing: number }
+  >();
+  let stepAnimation = 0;
+  function updateSteps() {
+    stepAnimation = 0;
+    if (disposed) return;
+    const view = presentation?.(),
+      now = performance.now();
+    for (let i = 0; i < pendingSteps.length;) {
+      const step = pendingSteps[i]!;
+      // Never play a reconnect/background backlog as a burst of footsteps.
+      if (now - step.queued > 300 || (view && view.poseAt - step.at > 250)) {
+        pendingSteps.splice(i, 1);
+        continue;
+      }
+      if (view && view.poseAt > 0 && step.at > view.poseAt) {
+        i++;
+        continue;
+      }
+      pendingSteps.splice(i, 1);
+      play(step.sample, step.gain, step.pan, step.occluded, 1, 0, 0, step.bearing);
+    }
+    if (view)
+      for (const voice of spatialVoices.values())
+        voice.panner.pan.setTargetAtTime(
+          footstepPan(voice.bearing, view.yaw),
+          context.currentTime,
+          0.01,
+        );
+    if (pendingSteps.length || spatialVoices.size)
+      stepAnimation = requestAnimationFrame(updateSteps);
+  }
+  function scheduleSteps() {
+    if (!stepAnimation) stepAnimation = requestAnimationFrame(updateSteps);
+  }
   let reloadVoice: AudioBufferSourceNode | undefined;
   let reloadEnd = 0;
   const predicted = new Map<number, number>();
@@ -138,7 +188,20 @@ export function createCombatAudio() {
           }
         }),
     )
-      .then(() => {})
+      .then(() => {
+        for (let n = 0; n < 4; n++)
+          for (const surface of ["wood", "metal"] as const) {
+            const key = ("step" + n + "-" + surface) as Sample;
+            const source = buffers.get(("step" + n) as Sample);
+            if (!source || buffers.has(key) || disposed) continue;
+            const buffer = context.createBuffer(1, source.length, source.sampleRate);
+            buffer.copyToChannel(
+              materialFootstep(source.getChannelData(0), source.sampleRate, surface),
+              0,
+            );
+            buffers.set(key, buffer);
+          }
+      })
       .finally(() => {
         loading = undefined;
       });
@@ -152,6 +215,7 @@ export function createCombatAudio() {
     rate = 1,
     offset = 0,
     delay = 0,
+    bearing?: number,
   ) {
     if (disposed || muted || context.state !== "running" || gain <= 0) return;
     const buffer = buffers.get(name);
@@ -169,7 +233,15 @@ export function createCombatAudio() {
     source.buffer = buffer;
     source.playbackRate.value = rate;
     level.gain.value = Math.min(0.85, gain);
-    panner.pan.value = Math.max(-1, Math.min(1, pan));
+    const view = presentation?.();
+    panner.pan.value =
+      bearing !== undefined && view
+        ? footstepPan(bearing, view.yaw)
+        : Math.max(-1, Math.min(1, pan));
+    if (bearing !== undefined) {
+      spatialVoices.set(source, { panner, bearing });
+      scheduleSteps();
+    }
     filter.type = "lowpass";
     filter.frequency.value = occluded ? 1600 : 18000;
     source.connect(filter);
@@ -181,6 +253,7 @@ export function createCombatAudio() {
     voices.add(source);
     source.onended = () => {
       voices.delete(source);
+      spatialVoices.delete(source);
       source.disconnect();
       filter.disconnect();
       level.disconnect();
@@ -218,6 +291,9 @@ export function createCombatAudio() {
         ...(state.sideVersion === undefined ? {} : { sideVersion: state.sideVersion }),
       };
       if (state.round !== lastRound) {
+        pendingSteps.length = 0;
+        for (const source of spatialVoices.keys()) source.stop();
+        spatialVoices.clear();
         reloadVoice?.stop();
         reloadVoice = undefined;
         reloadEnd = 0;
@@ -277,14 +353,24 @@ export function createCombatAudio() {
           shot(weapon, gain * (own ? 0.62 : 0.48), pan, !!cue?.occluded, event.seat);
         } else if (event.type === "step" && cue) {
           played.steps++;
-          const sample = ("step" + (played.steps % 4)) as Sample;
-          play(
-            sample,
-            gain * 0.75 * (cue.soft ? 0.1 : own ? 0.34 : 0.48),
-            pan,
-            !!cue.occluded,
-            cue.surface === "metal" ? 1.16 : 1,
-          );
+          const surface =
+            cue.surface === "wood" || cue.surface === "metal" ? "-" + cue.surface : "";
+          const sample = ("step" + (played.steps % 4) + surface) as Sample;
+          const level = gain * 0.75 * (cue.soft ? 0.1 : own ? 0.34 : 0.62);
+          if (own || !event.at || !presentation) play(sample, level, pan, !!cue.occluded);
+          else {
+            if (pendingSteps.length >= 12) pendingSteps.shift();
+            pendingSteps.push({
+              at: event.at,
+              queued: performance.now(),
+              sample,
+              gain: level,
+              pan,
+              bearing: cue.bearing,
+              occluded: !!cue.occluded,
+            });
+            scheduleSteps();
+          }
         } else if (event.hit?.victim === seat) {
           played.hits++;
           play("hurt", 0.25, 0, false);
@@ -302,6 +388,9 @@ export function createCombatAudio() {
     },
     dispose() {
       disposed = true;
+      cancelAnimationFrame(stepAnimation);
+      pendingSteps.length = 0;
+      spatialVoices.clear();
       for (const source of voices) source.stop();
       voices.clear();
       buffers.clear();

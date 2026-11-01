@@ -59,7 +59,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "How does PvPStrike FPS work?",
-    a: "PvPStrike is a desktop browser shooter on Dustfront. Cash matches are human-only: best of five is first to three wins, and best of nine is first to five. Police and Terrorist sides switch after round two or four. Free bot Practice is first to seven, with a side switch after round six. Halftime lasts five seconds. A cash winner receives the combined pot after a 5% fee; Practice has no stake or payout.",
+    a: "PvPStrike is a desktop browser shooter on Dustfront. Cash matches are human-only: best of thirteen is first to seven wins. Police and Terrorist sides switch after round six. Free bot Practice is first to seven, with a side switch after round six. Halftime lasts five seconds. A cash winner receives the combined pot after a 5% fee; Practice has no stake or payout.",
   },
   {
     q: "How are game outcomes determined?",
@@ -513,7 +513,7 @@ function HowItWorksPage() {
                 <strong>Practice:</strong> free bot match, first to seven round wins.
               </li>
               <li>
-                <strong>Cash:</strong> two humans match entries; best of five or best of nine.
+                <strong>Cash:</strong> two humans match entries; best of thirteen.
               </li>
               <li>
                 <strong>Play:</strong> desktop mouse and keyboard, on the Dustfront map. Police
@@ -525,8 +525,7 @@ function HowItWorksPage() {
               </li>
               <li>
                 <strong>Halftime:</strong> a five-second break, then sides and spawn positions
-                switch. Cash swaps after round two or four; Practice after round six. Scores stay
-                with each player.
+                switch. Both modes swap after round six. Scores stay with each player.
               </li>
               <li>
                 <strong>Settlement:</strong> cash winner receives the pot after a 5% fee. Practice

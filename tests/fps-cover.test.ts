@@ -237,7 +237,7 @@ describe("shared tactical world", () => {
       if (Math.abs(p.y - 1.5) < 1e-6 && (p.velocityY ?? 0) === 0) landed = true;
     }
     expect(landed).toBe(true);
-    // The west edge is open to the spawn alley; a 1 m low wall cannot be jumped from the ground.
+    // The west edge is open to the spawn alley; the 1 m low wall is now within jump clearance.
     for (let n = 0; n < 90; n++) predictMovement(p, { ...idle, strafe: -1 }, TICK_MS);
     expect(p.y).toBe(0);
     expect(p.x).toBeLessThan(-16);
@@ -245,6 +245,6 @@ describe("shared tactical world", () => {
     Object.assign(q, { x: -8.3, y: 0, z: -7.3 + PLAYER_RADIUS + 0.1 });
     for (let n = 0; n < 40; n++)
       predictMovement(q, { ...idle, seq: n, jump: true, forward: 1 }, TICK_MS);
-    expect(q.z).toBeGreaterThanOrEqual(-7.3 + PLAYER_RADIUS - 1e-8);
+    expect(q.z).toBeLessThan(-7.3 - PLAYER_RADIUS);
   });
 });

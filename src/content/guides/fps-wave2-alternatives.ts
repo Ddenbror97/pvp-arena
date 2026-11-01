@@ -159,7 +159,7 @@ A small alternative is most valuable when you can name what it isolates. You mig
       ],
       [
         "Optional cash play belongs to a separate adult decision",
-        `Our [PvPStrike browser duel](/fps-1v1) is an independent CS-style game. It does not run Valorant, import Riot agents or award Riot rank. Local bot practice is first to seven, up to thirteen rounds; real-cash series are best of five or nine. The server validates inputs, hits and results, which should not be described as immunity from cheating. Read [fairness](/fairness) in the appropriate product context.
+        `Our [PvPStrike browser duel](/fps-1v1) is an independent CS-style game. It does not run Valorant, import Riot agents or award Riot rank. Local bot practice is first to seven, up to thirteen rounds; real-cash series are best of thirteen. The server validates inputs, hits and results, which should not be described as immunity from cheating. Read [fairness](/fairness) in the appropriate product context.
 
 Hypothetical USD example A: two $1 entries form a $2 pot. The confirmed FPS fee is 5% of the combined pot, leaving $1.90 winner credit and $0.90 net against the winner's own $1 entry. Hypothetical USD example B: two $5 entries form $10; after a $0.50 fee the credit is $9.50 and net is $4.50. A loss costs the entry. The published minimum is $1; actual available entries must be checked in the lobby.
 
@@ -297,7 +297,7 @@ After the checklist, resist changing every control in response to one bad round.
       ],
       [
         "What a CS-style cash duel does and does not mean",
-        `Our [PvPStrike arena](/fps-1v1) is a separate CS-style browser game, not Valve CS2 or a CS:GO server. Local bot practice is first to seven, with a best-of-thirteen ceiling. Real-cash series use best of five or nine. Those are different formats, so a practice result is not a settled cash result. Cash participation is for eligible adults aged 18 or over where permitted; a skill label does not establish US state availability.
+        `Our [PvPStrike arena](/fps-1v1) is a separate CS-style browser game, not Valve CS2 or a CS:GO server. Local bot practice is first to seven, with a best-of-thirteen ceiling. Real-cash series use best of thirteen. Those are different formats, so a practice result is not a settled cash result. Cash participation is for eligible adults aged 18 or over where permitted; a skill label does not establish US state availability.
 
 Hypothetical USD example A: at $1 each, the combined pot is $2. The confirmed FPS fee is 5% of that pot, or $0.10. The winner receives $1.90 credit, which is $0.90 net relative to their own entry. Hypothetical USD example B: at $5 each, the $10 pot has a $0.50 fee; $9.50 credit is $4.50 net. Losing costs the entry. The published minimum is $1, but consult the lobby for available entries.
 
@@ -453,7 +453,7 @@ It also changes incentives. You cannot practice supporting a teammate if there i
 
 Choose a bounded question before the drill. “Can I stop repeating the same immediate re-peek?” is testable. “Will this make me good at tactical shooters?” is too broad. After a session, return to the native team game and look for the specific habit under realistic conditions. If it disappears when communication and utility return, the next practice step must include those demands.
 
-That is the right scope for our independent [PvPStrike arena](/fps-1v1): a small rifle contest with its own mechanics. Bot practice is first to seven with a best-of-thirteen ceiling; paid series use best of five or nine. It is not a Valve or Riot training certification, and its results are not native CS2 or VALORANT rank.`,
+That is the right scope for our independent [PvPStrike arena](/fps-1v1): a small rifle contest with its own mechanics. Bot practice is first to seven with a best-of-thirteen ceiling; paid series use best of thirteen. It is not a Valve or Riot training certification, and its results are not native CS2 or VALORANT rank.`,
       ],
       [
         "Keep optional stakes outside the definition of tactical play",
@@ -602,7 +602,7 @@ For a shared group decision, ask everyone to name one essential feature before v
         "Where browser duels fit in a broad FPS shortlist",
         `Browser access is useful when the desired session is small and the device and network owner permit it. It does not automatically imply touch support, low hardware demand or a stable connection. The published [browser FPS guide](/guides/browser-fps-games) owns the broader browser category; this page keeps its focus on choosing among FPS experiences.
 
-Our [PvPStrike arena](/fps-1v1) is an independent CS-style desktop-browser game rather than Valve CS2. Local practice against the bot is first to seven with at most thirteen rounds. Real-cash series use best of five or nine. A practice win and a settled cash match are different records. Inputs, hits and results are server-validated; [fairness](/fairness) should not be read as a promise that cheating is impossible.
+Our [PvPStrike arena](/fps-1v1) is an independent CS-style desktop-browser game rather than Valve CS2. Local practice against the bot is first to seven with at most thirteen rounds. Real-cash series use best of thirteen. A practice win and a settled cash match are different records. Inputs, hits and results are server-validated; [fairness](/fairness) should not be read as a promise that cheating is impossible.
 
 Optional stakes are a separate decision for eligible adults aged 18 or over where permitted, without a universal US state legality claim. Hypothetical USD example A: $1 each makes a $2 pot; the confirmed FPS fee is 5% of that combined pot, leaving $1.90 winner credit and $0.90 net against the winner's entry. Hypothetical USD example B: $5 each makes $10; $9.50 credit is $4.50 net after the $0.50 fee. A loss costs the entry.
 
@@ -783,7 +783,7 @@ If money is the real question, start with the [FPS money hub](/guides/fps-for-mo
       ],
       [
         "Our desktop duel is a separate product, not the mobile recommendation",
-        `Our [PvPStrike arena](/fps-1v1) is a separate CS-style desktop-browser game. This page does not claim that touch controls reproduce a supported mobile client. Local bot practice is first to seven, up to thirteen rounds; cash series use best of five or nine. Server validation covers inputs, hits and results without a cheating-immunity guarantee; consult [fairness](/fairness).
+        `Our [PvPStrike arena](/fps-1v1) is a separate CS-style desktop-browser game. This page does not claim that touch controls reproduce a supported mobile client. Local bot practice is first to seven, up to thirteen rounds; cash series use best of thirteen. Server validation covers inputs, hits and results without a cheating-immunity guarantee; consult [fairness](/fairness).
 
 For eligible adults aged 18 or over where permitted, the published minimum cash entry is $1, with actual available entries shown in the lobby. Hypothetical USD example A: $1 each creates a $2 pot; the confirmed 5% combined-pot FPS fee leaves $1.90 winner credit and $0.90 net against the winner's entry. Hypothetical USD example B: $5 each creates $10; the $0.50 fee leaves $9.50 credit and $4.50 net. Losing costs the entry, and credit is distinct from withdrawal. These examples are not earnings forecasts or US state legality claims.
 
@@ -957,7 +957,7 @@ If one friend cannot connect, avoid making everyone change their installation im
       ],
       [
         "Independent browser duels and optional adult entries",
-        `Our [PvPStrike game](/fps-1v1) is not CS 1.6 online. It is a separate CS-style desktop-browser arena with its own weapons and rules. Bot practice is first to seven with a best-of-thirteen ceiling; real-cash series are best of five or nine. Server validation of inputs, hits and results is described through [fairness](/fairness), without promising cheating immunity.
+        `Our [PvPStrike game](/fps-1v1) is not CS 1.6 online. It is a separate CS-style desktop-browser arena with its own weapons and rules. Bot practice is first to seven with a best-of-thirteen ceiling; real-cash series are best of thirteen. Server validation of inputs, hits and results is described through [fairness](/fairness), without promising cheating immunity.
 
 Cash participation is only for eligible adults aged 18 or over where permitted; no universal US state legality is asserted. The published minimum is $1, but check the lobby's actual entries. Hypothetical USD example A: two $1 entries create $2; the confirmed 5% combined-pot FPS fee leaves $1.90 winner credit and $0.90 net relative to the winner's entry. Hypothetical USD example B: two $5 entries create $10; a $0.50 fee leaves $9.50 credit and $4.50 net. Losing costs the entry, and credit is distinct from external withdrawal.
 

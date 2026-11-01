@@ -146,7 +146,7 @@ This guide does not claim a current Premier selection or event veto list. A map 
 
 Hypothetical USD example A: $1 from each player makes a $2 combined pot. PvPStrike's 5% fee is $0.10; winner credit is $1.90, including the winner's entry, for a +$0.90 net change. Hypothetical USD example B: $5 each makes $10; the fee is $0.50, credit $9.50 and net change +$4.50. The loser loses their entry in either example. These are arithmetic examples, not earnings claims.
 
-Practice is first to seven against a local bot; cash series are best of five or nine. The published minimum entry is $1, with actual available entries shown in the lobby. Cash requires age 18+ and permitted access; no blanket US state legality is claimed. Read the [FPS money guide](/guides/fps-for-money-hub) and [fairness explanation](/fairness). Server validation of inputs, hits and results does not make cheating impossible.`,
+Practice is first to seven against a local bot; cash series are best of thirteen. The published minimum entry is $1, with actual available entries shown in the lobby. Cash requires age 18+ and permitted access; no blanket US state legality is claimed. Read the [FPS money guide](/guides/fps-for-money-hub) and [fairness explanation](/fairness). Server validation of inputs, hits and results does not make cheating impossible.`,
       ],
     ],
     faqs: [
@@ -286,7 +286,7 @@ Keep map access separate from map learning. This guide does not promise that Ove
 
 Hypothetical USD example A: two $1 entries create a $2 pot. With PvPStrike's published 5% combined-pot fee, $0.10 is deducted and the winner receives $1.90 credit, a +$0.90 net change. Hypothetical USD example B: two $5 entries create $10; $0.50 fee leaves $9.50 credit and +$4.50 net. The losing entry is lost. These calculations describe no actual result and imply no earnings.
 
-Local bot practice is first to seven; cash matches are best of five or nine. A $1 minimum is published, but consult the lobby for available entries. Cash play is only for adults 18+ where permitted; map skill creates no blanket state legality. The [FPS money hub](/guides/fps-for-money-hub) covers entry decisions. Our [fairness page](/fairness) explains relevant boundaries: validating inputs, hits and match results does not guarantee immunity from cheating.`,
+Local bot practice is first to seven; cash matches are best of thirteen. A $1 minimum is published, but consult the lobby for available entries. Cash play is only for adults 18+ where permitted; map skill creates no blanket state legality. The [FPS money hub](/guides/fps-for-money-hub) covers entry decisions. Our [fairness page](/fairness) explains relevant boundaries: validating inputs, hits and match results does not guarantee immunity from cheating.`,
       ],
     ],
     faqs: [
@@ -426,7 +426,7 @@ For long-term recall, begin the next session without the written list. Walk Bana
 
 Hypothetical USD example A: $1 each creates $2; a 5% combined-pot FPS fee deducts $0.10, leaving $1.90 winner credit and +$0.90 net. Hypothetical USD example B: $5 each creates $10; $0.50 is deducted, leaving $9.50 credit and +$4.50 net. A loser loses the entry. These are calculations, not income projections or published match outcomes.
 
-PvPStrike's local practice bot plays first to seven; cash series are best of five or nine. The published minimum entry is $1; actual entries depend on the lobby. Cash is 18+ where permitted, without a blanket US legality claim. Read the [FPS money hub](/guides/fps-for-money-hub) before entering and [fairness](/fairness) for the distinction between server validation and a promise of cheating immunity. A successful utility drill never establishes an earnings edge.`,
+PvPStrike's local practice bot plays first to seven; cash series are best of thirteen. The published minimum entry is $1; actual entries depend on the lobby. Cash is 18+ where permitted, without a blanket US legality claim. Read the [FPS money hub](/guides/fps-for-money-hub) before entering and [fairness](/fairness) for the distinction between server validation and a promise of cheating immunity. A successful utility drill never establishes an earnings edge.`,
       ],
     ],
     faqs: [
@@ -566,7 +566,7 @@ Review one wrong call by drawing the route the speaker intended and the route th
 
 Hypothetical USD example A: $1 per player gives a $2 pot; the published 5% combined-pot FPS fee is $0.10, so winner credit is $1.90 and net change +$0.90. Hypothetical USD example B: $5 per player gives $10; the fee is $0.50, winner credit $9.50 and net change +$4.50. Losing costs the entry; neither example describes earnings or a settled match.
 
-PvPStrike practice is first to seven against a local bot; cash series are best of five or nine. The published $1 minimum does not guarantee a lobby entry is available. Cash requires age 18+ and permitted access, with no blanket US state legality claim. Use the [FPS money hub](/guides/fps-for-money-hub) for that decision and [fairness](/fairness) for validation boundaries. An authoritative server checks inputs, hits and results; it does not guarantee cheat-free play.`,
+PvPStrike practice is first to seven against a local bot; cash series are best of thirteen. The published $1 minimum does not guarantee a lobby entry is available. Cash requires age 18+ and permitted access, with no blanket US state legality claim. Use the [FPS money hub](/guides/fps-for-money-hub) for that decision and [fairness](/fairness) for validation boundaries. An authoritative server checks inputs, hits and results; it does not guarantee cheat-free play.`,
       ],
     ],
     faqs: [
@@ -706,7 +706,7 @@ Use a separate combat warm-up when returning to ordinary matches. Surf inputs an
 
 Hypothetical USD example A: a $1 entry from each player makes $2; PvPStrike's 5% combined-pot fee is $0.10, winner credit $1.90 and winner net change +$0.90. Hypothetical USD example B: $5 each makes $10; fee $0.50, credit $9.50 and net change +$4.50. The loser loses the entry, and these examples promise no earnings.
 
-Local practice against a bot is first to seven; cash series are best of five or nine. The published minimum stake is $1, but check the lobby for available entries. Cash requires age 18+ where permitted, not merely movement skill or access to a browser. Read the [FPS money hub](/guides/fps-for-money-hub) and [fairness explanation](/fairness). Server checks on inputs, hits and results do not guarantee immunity from cheating, and a surf record establishes no cash-match advantage.`,
+Local practice against a bot is first to seven; cash series are best of thirteen. The published minimum stake is $1, but check the lobby for available entries. Cash requires age 18+ where permitted, not merely movement skill or access to a browser. Read the [FPS money hub](/guides/fps-for-money-hub) and [fairness explanation](/fairness). Server checks on inputs, hits and results do not guarantee immunity from cheating, and a surf record establishes no cash-match advantage.`,
       ],
     ],
     faqs: [
@@ -861,7 +861,7 @@ Give a useful change time to become familiar, but do not endure pain or persiste
 
 Hypothetical USD example A: $1 each makes a $2 pot; PvPStrike's 5% combined-pot fee is $0.10, leaving $1.90 credit and +$0.90 net for the winner. Hypothetical USD example B: $5 each makes $10; the $0.50 fee leaves $9.50 credit and +$4.50 net. Losing costs the entry. Neither arithmetic example is evidence of earnings.
 
-Local bot practice is first to seven; cash series are best of five or nine. The published minimum is $1, while available entries must be checked in the lobby. Cash requires age 18+ where permitted, without a universal US state legality claim. Use the [FPS money hub](/guides/fps-for-money-hub) and [fairness explanation](/fairness) before accepting an entry. Server validation of inputs, hits and results does not guarantee cheating immunity, and a convenient bind establishes no financial advantage.`,
+Local bot practice is first to seven; cash series are best of thirteen. The published minimum is $1, while available entries must be checked in the lobby. Cash requires age 18+ where permitted, without a universal US state legality claim. Use the [FPS money hub](/guides/fps-for-money-hub) and [fairness explanation](/fairness) before accepting an entry. Server validation of inputs, hits and results does not guarantee cheating immunity, and a convenient bind establishes no financial advantage.`,
       ],
     ],
     faqs: [
@@ -1006,7 +1006,7 @@ Be skeptical of large startup-command lists. Some commands may be outdated, igno
 
 Hypothetical USD example A: two $1 entries produce $2; a 5% combined-pot FPS fee takes $0.10, leaving $1.90 winner credit and +$0.90 net. Hypothetical USD example B: two $5 entries produce $10; $0.50 is deducted, leaving $9.50 credit and +$4.50 net. Losing costs the entry. These are fee examples, not earnings or a reason to test an unstable machine with money.
 
-PvPStrike's local bot practice is first to seven; cash series are best of five or nine. The published minimum is $1, with actual entries shown in the lobby. Cash is 18+ where permitted; no universal US state legality is asserted. Consult the [FPS money hub](/guides/fps-for-money-hub) and [fairness](/fairness). Inputs, hits and results are server-validated, but that is not a guarantee against cheating or connection problems.`,
+PvPStrike's local bot practice is first to seven; cash series are best of thirteen. The published minimum is $1, with actual entries shown in the lobby. Cash is 18+ where permitted; no universal US state legality is asserted. Consult the [FPS money hub](/guides/fps-for-money-hub) and [fairness](/fairness). Inputs, hits and results are server-validated, but that is not a guarantee against cheating or connection problems.`,
       ],
     ],
     faqs: [
@@ -1154,7 +1154,7 @@ Respect managed-network and device rules. Get the owner's approval before instal
       ],
       [
         "If the separate browser choice includes an entry",
-        `[PvPStrike](/fps-1v1) is our independent CS-style browser shooter, not Valve CS2. It offers local bot practice first to seven and cash series best of five or nine. The [CS2 1v1 comparison](/guides/cs2-1v1-for-money) explains the product boundary, while [crypto FPS games](/guides/crypto-fps-game) distinguishes payment rails from token rewards.
+        `[PvPStrike](/fps-1v1) is our independent CS-style browser shooter, not Valve CS2. It offers local bot practice first to seven and cash series best of thirteen. The [CS2 1v1 comparison](/guides/cs2-1v1-for-money) explains the product boundary, while [crypto FPS games](/guides/crypto-fps-game) distinguishes payment rails from token rewards.
 
 Hypothetical USD example A: $1 each creates a $2 pot; the 5% combined-pot FPS fee takes $0.10, winner credit is $1.90 and net change +$0.90. Hypothetical USD example B: $5 each creates $10; fee $0.50, winner credit $9.50 and net change +$4.50. Losing costs the entry. These are arithmetic examples, not earnings or verified results.
 
@@ -1314,7 +1314,7 @@ Clean up after a session by identifying content you no longer need, not by remov
 
 Hypothetical USD example A: $1 from each player creates $2; PvPStrike's 5% combined-pot FPS fee is $0.10, winner credit $1.90 and net change +$0.90. Hypothetical USD example B: $5 each creates $10; fee $0.50, credit $9.50 and net change +$4.50. A loser loses the entry. These calculations describe no earnings or actual settled match.
 
-PvPStrike practice is first to seven against a local bot; cash matches are best of five or nine. The published minimum is $1, but the lobby determines available entries. Cash requires age 18+ where permitted; no blanket US state legality is claimed. Consult the [FPS money hub](/guides/fps-for-money-hub) and [fairness](/fairness). Server validation of inputs, hits and results does not guarantee immunity from cheating, and a custom-server score proves no cash-game advantage.`,
+PvPStrike practice is first to seven against a local bot; cash matches are best of thirteen. The published minimum is $1, but the lobby determines available entries. Cash requires age 18+ where permitted; no blanket US state legality is claimed. Consult the [FPS money hub](/guides/fps-for-money-hub) and [fairness](/fairness). Server validation of inputs, hits and results does not guarantee immunity from cheating, and a custom-server score proves no cash-game advantage.`,
       ],
     ],
     faqs: [

@@ -107,9 +107,9 @@ function Page() {
             1v1 FPS for real money, with the fee clear before you play
           </h1>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-foreground/85">
-            Face one opponent in a best-of-five or best-of-nine aim duel. Win the series to receive
-            the combined pot after the 5% fee. Start in practice and test the controls before
-            choosing a cash entry.
+            Face one opponent in a best-of-thirteen aim duel. Win the series to receive the combined
+            pot after the 5% fee. Start in practice and test the controls before choosing a cash
+            entry.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
@@ -137,7 +137,7 @@ function Page() {
         {[
           [
             "One opponent, one series",
-            "Best-of-five needs three round wins; best-of-nine needs five. Police and Terrorist sides switch after round two or four during a five-second halftime break. Scores stay with each player. Police carry an M4A1-S; Terrorists carry an AK-47.",
+            "Best-of-thirteen needs seven round wins. Police and Terrorist sides switch after round six during a five-second halftime break. Scores stay with each player. Police carry an M4A1-S; Terrorists carry an AK-47.",
           ],
           [
             "Entries locked before play",

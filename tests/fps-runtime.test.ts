@@ -57,6 +57,7 @@ async function init(
   id = crypto.randomUUID(),
   isPrivate = false,
   expiresAt = Date.now() + 20 * 60_000,
+  bestOf: 5 | 9 | 13 = 5,
 ) {
   const response = await mf.dispatchFetch(`https://runtime.test/internal/matches/${id}`, {
     method: "POST",
@@ -65,7 +66,7 @@ async function init(
       id,
       creator_id: A,
       opponent_id: B,
-      best_of: 5,
+      best_of: bestOf,
       stake: 0,
       private: isPrivate,
       expiresAt,
@@ -271,6 +272,21 @@ describe("isolated real Durable Object WebSockets", () => {
     expect(replacement.status).toBe(101);
     replacement.webSocket!.accept();
     sockets.push(replacement.webSocket!);
+  });
+  it("starts a human BO13 series with a seven-win target", async () => {
+    const id = await init(crypto.randomUUID(), false, Date.now() + 1200000, 13);
+    const a = await open(id),
+      b = await open(id, B);
+    try {
+      const frame = await readyLive(a, b);
+      expect(frame.state.bestOf).toBe(13);
+      expect(frame.state.sideVersion).toBe(1);
+      expect(frame.state.players.A.id).toBe(A);
+      expect(frame.state.players.B.id).toBe(B);
+    } finally {
+      a.close();
+      b.close();
+    }
   });
   it("immediate trigger shares session authority, fires without movement and uses 30 Hz snapshots", async () => {
     const id = await init(),
@@ -858,10 +874,15 @@ describe("isolated real Durable Object WebSockets", () => {
     expect((await live).state.bestOf).toBe(13);
     const walking = await until(
       human,
-      (f) => f.type === "snapshot" && !!f.visibility?.B && f.state.players.B.lastSeq > 0,
+      (f) =>
+        f.type === "snapshot" && f.state.events.some((e) => e.type === "step" && e.seat === "B"),
       12000,
     );
-    expect(walking.state.players.B.lastSeq).toBeGreaterThan(0);
+    // Randomized lurk/push routes need not enter the idle player's line of sight.
+    // Server footsteps prove autonomous movement without defeating visibility redaction.
+    const step = walking.state.events.find((e) => e.type === "step" && e.seat === "B")!;
+    expect(step.at).toBeGreaterThan(0);
+    expect(step.audio).not.toHaveProperty("position");
     const bad = await mf.dispatchFetch(
       "https://runtime.test/internal/matches/" + crypto.randomUUID(),
       {

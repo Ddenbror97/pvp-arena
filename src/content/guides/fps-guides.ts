@@ -81,7 +81,7 @@ export const FPS_GUIDES: Guide[] = [
     answer:
       "FPS games for money include entry-funded duels, tournaments and paid work around games. A wagered win is not a salary: the opponent funds the pot, the platform deducts its fee, and a loss costs your entry. PvPStrike is our separate browser shooter, not a CS2 server or a Valve product.",
     facts: [
-      "PvPStrike offers best-of-five or best-of-nine series; a round win alone does not settle the match.",
+      "PvPStrike offers best-of-thirteen series; a round win alone does not settle the match.",
       "The published fee is 5% of the combined pot, not 5% of profit.",
       "A wallet credit and a blockchain withdrawal are different events.",
       "Recent public cash results appear below only when real eligible matches exist.",
@@ -201,7 +201,7 @@ The [FPS money hub](/guides/fps-for-money-hub) explains pot versus profit. Compa
       },
       {
         q: "What decides a PvPStrike match?",
-        a: "A best-of-five or best-of-nine series, with the majority of round wins deciding the result under the match terms.",
+        a: "A best-of-thirteen series, with the majority of round wins deciding the result under the match terms.",
       },
       {
         q: "Can I use CS2 damage tables for the browser game?",

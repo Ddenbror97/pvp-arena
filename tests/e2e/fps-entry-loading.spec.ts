@@ -147,6 +147,10 @@ test("Practice and both human seats load the supplied WebP and enter without the
     await page.screenshot({ path: "test-results/fps-loading-pvp-ready.png" });
     await expect(page.locator(".duel-loading-screen")).toHaveCount(0, { timeout: 60000 });
     await expect(other.locator(".duel-loading-screen")).toHaveCount(0);
+    expect(state?.bestOf).toBe(13);
+    const series =
+      await sql`select best_of from fps_matches where creator_id=${users[0].id} order by created_at desc limit 1`;
+    expect(series[0]?.best_of).toBe(13);
     expect(errors).toEqual([]);
     await cleanup();
     expect(await balances()).toEqual(before);

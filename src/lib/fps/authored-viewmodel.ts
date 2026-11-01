@@ -225,7 +225,12 @@ export function createAuthoredViewmodel(
       if (stopped) return;
       instance = cloneAuthoredModel(gltf.scene);
       weaponContent.add(instance.root);
-      if (!firstPerson) instance.root.getObjectByName("FPRig")?.removeFromParent();
+      if (!firstPerson) {
+        // POV sleeves/watch are siblings of FPRig. Remove the whole presentation
+        // rig and its loose accessories from the world rifle.
+        for (const name of ["FPArms", "FPAccessories", "FPRig"])
+          instance.root.getObjectByName(name)?.removeFromParent();
+      }
       // Fit the original hand rig to this rifle before baking the connected wrist surfaces.
       instance.root.getObjectByName("SpareMagazine")?.removeFromParent();
       const arm = instance.root.getObjectByName("FPArms") as THREE.SkinnedMesh | undefined;

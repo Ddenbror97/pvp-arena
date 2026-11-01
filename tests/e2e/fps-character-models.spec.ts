@@ -113,6 +113,9 @@ test("police and terrorist load per seat and fit the rig, hitboxes and grip", as
       }
       out.push({
         seat,
+        detachedPovMeshes: ["FPArms", "FPAccessories", "FPRig"].filter(
+          (name) => !!actor.root.getObjectByName(name),
+        ),
         loaded: actor.loaded,
         materials: [...materials],
         skinned,
@@ -131,6 +134,7 @@ test("police and terrorist load per seat and fit the rig, hitboxes and grip", as
   });
   for (const r of results) {
     expect(r.loaded).toBe(true);
+    expect(r.detachedPovMeshes).toEqual([]);
     expect(r.skinned).toBeGreaterThan(0);
     // Every Mixamo bone the runtime drives exists (the rigs add finger/twist bones).
     expect(r.bones).toBeGreaterThanOrEqual(25);

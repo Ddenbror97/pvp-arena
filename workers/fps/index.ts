@@ -337,7 +337,7 @@ export class DuelRoom {
         c.creator_id === c.opponent_id ||
         !(c.practice === true
           ? c.best_of === 13 && c.stake === 0 && c.private && c.opponent_id === PRACTICE_BOT_ID
-          : [5, 9].includes(c.best_of)) ||
+          : [5, 9, 13].includes(c.best_of)) ||
         (c.practice !== undefined && typeof c.practice !== "boolean") ||
         !Number.isSafeInteger(c.stake) ||
         c.stake < 0 ||
@@ -788,7 +788,9 @@ export class DuelRoom {
         }
         stepMatch(saved.state, fresh, stepAt, TICK_MS, targets, triggers);
         if (!saved.result && saved.state.tick !== previousTick) {
-          this.events.push(...saved.state.events.map((e) => ({ ...e, id: ++this.eventId })));
+          this.events.push(
+            ...saved.state.events.map((e) => ({ ...e, at: stepAt, id: ++this.eventId })),
+          );
           this.shotHistory.record(saved.state, stepAt);
           // Each recipient's client draws this step about one RTT + REMOTE_DELAY_MS + the
           // server's command wait later, with its own camera that far ahead.

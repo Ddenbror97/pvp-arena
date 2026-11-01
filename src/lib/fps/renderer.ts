@@ -89,6 +89,7 @@ export type ArenaControls = {
     renderFrames: number;
     renderIntervalMs: number;
   };
+  audioPresentation: () => { yaw: number; poseAt: number };
   ready: Promise<void>;
   setSensitivity: (value: number) => void;
   snapshot: (frame: ArenaFrame, seat: Seat | null) => void;
@@ -1074,6 +1075,7 @@ export function mountArena(
       renderFrames,
       renderIntervalMs,
     }),
+    audioPresentation: () => ({ yaw: camera.rotation.y, poseAt: remotePose.at }),
     ready: visualReady,
     suspend(paused) {
       authorizationSuspended = paused;

@@ -264,6 +264,7 @@ export function PoolLobby() {
           </div>
           <div className="pool-stage-felt" aria-hidden>
             <PoolTable
+              interactive={false}
               balls={SHOWCASE_BALLS}
               angleMilli={SHOWCASE_AIM}
               power={SHOWCASE_POWER}

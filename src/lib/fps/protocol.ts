@@ -91,6 +91,8 @@ export interface MatchState {
     seat?: Seat;
     text: string;
     id?: number;
+    /** Server simulation time, used to align footsteps with opponent playback. */
+    at?: number;
     impact?: import("./collision").WorldHit;
     weapon?: Weapon;
     shotSeq?: number;
@@ -108,6 +110,8 @@ export interface MatchState {
       position?: import("./collision").Vector;
       gain?: number;
       pan?: number;
+      /** Coarse audible direction only; never an opponent world position. */
+      bearing?: number;
       occluded?: boolean;
       soft?: boolean;
     };

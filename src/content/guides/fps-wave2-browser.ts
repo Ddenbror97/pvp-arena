@@ -141,7 +141,7 @@ For actual Counter-Strike practice, stay in the native game and use its own lear
 
 Consider a hypothetical player who wins several fast respawn fights and then enters a short elimination series. Charging immediately may have been harmless in the first environment because another attempt followed at once. In the second, the same habit can surrender an entire round. The lesson is about the cost of an attempt, not about one title being inherently more skillful.
 
-Separate local practice from real opponents as well. PvPStrike's local bot practice is first to seven, a best-of-thirteen format. Its real-cash series are best of five or nine. A practice result neither settles a cash match nor proves you will win a shorter human series. The opponent can adapt and the stakes can change your decisions.
+Separate local practice from real opponents as well. PvPStrike's local bot practice is first to seven, a best-of-thirteen format. Its real-cash series are best of thirteen. A practice result neither settles a cash match nor proves you will win a shorter human series. The opponent can adapt and the stakes can change your decisions.
 
 Use the [native CS2 versus browser comparison](/guides/cs2-1v1-for-money) when an organizer's label is ambiguous. If they cannot identify the game, host, scoring rules and dispute process, the conditions are not sufficiently clear to accept a paid challenge.`,
       ),
@@ -320,7 +320,7 @@ Someone who wants a Counter-Strike duel should also read [CS2 versus browser mat
       ),
       section(
         "A separate adult alternative, with the arithmetic visible",
-        `[PvPStrike](/fps-1v1) is a separate CS-style browser game. Local bot practice is first to seven, best of thirteen; cash series are best of five or nine. Cash play is 18+ where permitted, with a published $1 minimum and actual available entries shown in the lobby. It is not a paid version of Krunker.
+        `[PvPStrike](/fps-1v1) is a separate CS-style browser game. Local bot practice is first to seven, best of thirteen; cash series are best of thirteen. Cash play is 18+ where permitted, with a published $1 minimum and actual available entries shown in the lobby. It is not a paid version of Krunker.
 
 Hypothetical USD example A: two $1 entries make a $2 pot. The 5% combined-pot FPS fee is $0.10, leaving $1.90 winner credit and +$0.90 net after the winner's own entry.
 
@@ -478,7 +478,7 @@ The [FPS & aim topic](/guides/topics/fps-and-aim) collects adjacent practice mat
       ),
       section(
         "Paid duels belong to a different adult product",
-        `[PvPStrike](/fps-1v1) is our separate CS-style browser shooter, not Deadshot. Its local bot match is first to seven, best of thirteen; real-cash play uses best-of-five or best-of-nine series. Cash is 18+ where permitted, with a published $1 minimum; consult the lobby for actual available entries.
+        `[PvPStrike](/fps-1v1) is our separate CS-style browser shooter, not Deadshot. Its local bot match is first to seven, best of thirteen; real-cash play uses best-of-thirteen series. Cash is 18+ where permitted, with a published $1 minimum; consult the lobby for actual available entries.
 
 Hypothetical USD example A: $1 each makes a $2 combined pot. A 5% FPS fee removes $0.10, leaving $1.90 winner credit and +$0.90 winner net. The other player loses $1.
 
@@ -642,7 +642,7 @@ If money is your actual reason for comparing games, use the [FPS money guide](/g
       ),
       section(
         "The separate PvPStrike option in two examples",
-        `[PvPStrike](/fps-1v1) is our separate CS-style browser shooter. Local practice against a bot is first to seven, best of thirteen; real-cash series are best of five or nine. Cash play is 18+ where permitted. Its published minimum is $1, with actual available entries shown in the lobby.
+        `[PvPStrike](/fps-1v1) is our separate CS-style browser shooter. Local practice against a bot is first to seven, best of thirteen; real-cash series are best of thirteen. Cash play is 18+ where permitted. Its published minimum is $1, with actual available entries shown in the lobby.
 
 Hypothetical USD example A: $1 each forms a $2 pot. The 5% combined-pot FPS fee is $0.10. Winner credit is $1.90 and winner net is +$0.90 after their own entry.
 
@@ -801,7 +801,7 @@ For a competition offered by someone else, verify that organizer separately. Ask
       ),
       section(
         "A brief separate-product cash explanation",
-        `[PvPStrike](/fps-1v1) is our CS-style browser duel, not Venge. Its local bot practice is first to seven, best of thirteen. Cash series are best of five or nine, for adults 18+ where permitted. Published minimum stake is $1; consult the lobby for actual available entries.
+        `[PvPStrike](/fps-1v1) is our CS-style browser duel, not Venge. Its local bot practice is first to seven, best of thirteen. Cash series are best of thirteen, for adults 18+ where permitted. Published minimum stake is $1; consult the lobby for actual available entries.
 
 Hypothetical USD example A: $1 each creates a $2 pot. The 5% combined-pot FPS fee is $0.10; winner credit is $1.90 and winner net is +$0.90.
 
@@ -961,7 +961,7 @@ If someone offers a separate paid event, verify the organizer and the actual ter
       ),
       section(
         "Keep the separate cash decision brief and explicit",
-        `[PvPStrike](/fps-1v1) is our separate CS-style browser shooter. Practice against a local bot is first to seven, best of thirteen; real-cash series are best of five or nine. Cash is for adults 18+ where permitted. Published minimum is $1, but consult the lobby for actual available entries.
+        `[PvPStrike](/fps-1v1) is our separate CS-style browser shooter. Practice against a local bot is first to seven, best of thirteen; real-cash series are best of thirteen. Cash is for adults 18+ where permitted. Published minimum is $1, but consult the lobby for actual available entries.
 
 Hypothetical USD example A: $1 each makes a $2 combined pot. A 5% FPS fee takes $0.10, leaving $1.90 winner credit and +$0.90 winner net.
 
@@ -1120,7 +1120,7 @@ If you are an eligible adult investigating entry-funded competition, use the [FP
       ),
       section(
         "A separate adult cash option, not a school alternative",
-        `[PvPStrike](/fps-1v1) is a separate CS-style browser game. Local bot practice is first to seven, best of thirteen; real-cash series are best of five or nine. Cash is restricted to adults 18+ where permitted. Published minimum is $1, while the lobby determines actual available entries.
+        `[PvPStrike](/fps-1v1) is a separate CS-style browser game. Local bot practice is first to seven, best of thirteen; real-cash series are best of thirteen. Cash is restricted to adults 18+ where permitted. Published minimum is $1, while the lobby determines actual available entries.
 
 Hypothetical USD example A: $1 each makes $2. The 5% combined-pot FPS fee is $0.10; winner credit is $1.90 and winner net is +$0.90.
 
@@ -1299,7 +1299,7 @@ The [crypto FPS guide](/guides/crypto-fps-game) separates payment methods from t
       ),
       section(
         "One separate adult cash option, without an income claim",
-        `[PvPStrike](/fps-1v1) is our separate CS-style browser duel. Local bot practice is first to seven, best of thirteen; cash series are best of five or nine. Cash is 18+ where permitted. Published minimum is $1; consult the lobby for actual available entries.
+        `[PvPStrike](/fps-1v1) is our separate CS-style browser duel. Local bot practice is first to seven, best of thirteen; cash series are best of thirteen. Cash is 18+ where permitted. Published minimum is $1; consult the lobby for actual available entries.
 
 Hypothetical USD example A: $1 each forms $2. The 5% combined-pot FPS fee is $0.10, winner credit is $1.90 and winner net is +$0.90.
 
