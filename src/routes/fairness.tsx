@@ -27,7 +27,7 @@ export const Route = createFileRoute("/fairness")({
       path: "/fairness",
       title: "Fairness — Provably Fair Games | PVPspinArena",
       description:
-        "Check a draw from its committed seed, a poker shuffle from the players' secrets, or an 8-ball match by replaying the shots. The rack seed does not pick the winner.",
+        "Verify seeded draws, poker shuffles and 8-ball shot replays. Learn why PvPStrike uses server-validated gameplay rather than a random-seed winner.",
       crumb: "Fairness",
     }),
   component: FairnessPage,
@@ -92,6 +92,29 @@ function FairnessPage() {
         only racks the balls, and you replay the shots through the published rules. A paid winner
         that disagrees with that replay is not a verified result.
       </p>
+      <section
+        className="mt-5 rounded-xl border border-border bg-card p-4"
+        aria-labelledby="fps-fairness"
+      >
+        <h2 id="fps-fairness" className="font-display text-lg">
+          PvPStrike: server-validated gameplay
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          PvPStrike is a competitive FPS, not a random draw. Its match server validates movement,
+          ammunition, hits and damage and records the round scores and match winner. No committed
+          seed chooses that winner. The calculators below do not verify FPS matches, and a recorded
+          result is not proof that every player input was unaided.
+        </p>
+        <p className="mt-2 text-sm">
+          <Link to="/fps-1v1" className="text-primary hover:underline">
+            FPS rules, fees and public results
+          </Link>
+          {" · "}
+          <Link to="/how-it-works" hash="games" className="text-primary hover:underline">
+            How the games work
+          </Link>
+        </p>
+      </section>
 
       <div
         className="mt-5 grid grid-cols-3 gap-1.5 sm:grid-cols-6 rounded-xl border border-border bg-card p-1.5"

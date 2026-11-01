@@ -38,7 +38,7 @@ function EditorialPage() {
   return (
     <LegalPage title="Editorial policy">
       <p>
-        <strong>Last updated October 20, 2026.</strong>
+        <strong>Last updated November 1, 2026.</strong>
       </p>
       <p>
         This page says who is responsible for the writing on PVPspinArena and what that writing is
@@ -94,15 +94,21 @@ function EditorialPage() {
 
       <h2>Game rules on this site</h2>
       <p>
-        Statements about Jackpot, Coinflip, Roulette, P2P Slott, and Poker should match the{" "}
-        <Link to="/terms">Terms</Link> and <Link to="/how-it-works">How it works</Link>. The fee
-        figures in those pages are the public rules. A guide that still says this site has no poker,
-        or that it has only four games, is wrong and should be reported.
+        Statements about Jackpot, Coinflip, Roulette, P2P Slott, poker, 8-ball and PvPStrike should
+        match the <Link to="/terms">Terms</Link> and <Link to="/how-it-works">How it works</Link>.
+        The fee figures in those pages are the public rules. A guide that omits pool or FPS from a
+        complete game list, or describes FPS Practice as a cash game, should be corrected.
       </p>
       <p>
         Provably fair, on this site, means a committed seed can be recomputed after the round on the{" "}
         <Link to="/fairness">Fairness</Link> page. It does not mean a result is favourable, that
         funds are insured, or that a wallet cannot be compromised.
+      </p>
+      <p>
+        Pool verification replays shots from its committed rack. PvPStrike uses authoritative
+        gameplay validation, not a random-seed winner or a public FPS replay verifier. Guides must
+        keep those distinctions clear. Public match samples must state their scope and exclude
+        Practice and private FPS rooms when describing public cash results.
       </p>
 
       <h2>What these pages do not claim</h2>

@@ -1,8 +1,8 @@
 # PVPspinArena
 
-> PVPspinArena (https://pvpspinarena.com) is a player-vs-player crypto gaming site with six games: Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit Texas Hold'em, and 1v1 8-ball. Balances are shown in US dollars and funded with Bitcoin, or with USDC or ETH on Base. Draws publish a SHA-256 seed hash before the round and reveal the seed after settlement. 8-ball's seed only racks the balls; the winner is a replay of the shots. Adults 18+ only. Play only with money you can afford to lose.
+> PVPspinArena (https://pvpspinarena.com) has seven games: Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit Texas Hold'em, 1v1 8-ball pool and PvPStrike browser FPS. Cash games share one US-dollar balance funded with Bitcoin, or USDC or ETH on Base. Random draws commit a seed; pool follows the shots and rules; FPS follows server-validated gameplay. Free FPS Practice is against a bot, with no stake or payout. Adults 18+ only. Play only with money you can afford to lose.
 
-Jackpot, Coinflip, P2P Slott, Poker and 8-ball are player versus player: the pot is the players' wagers, and the winner receives it minus the fee for that game. Roulette is a shared house-banked wheel, not a pot. The browser animation does not decide the result. A committed seed lets you recompute a published draw. An 8-ball replay lets you recompute the winner from the shots. Neither check insures a balance, protects a wallet, or removes the fee. PVPspinArena is not affiliated with Valve, Counter-Strike, or Steam. No gambling licence number, audit firm, or company registration is published on the site.
+Jackpot, Coinflip, P2P Slott, poker, 8-ball and PvPStrike cash matches use player-funded pots. Roulette is a shared house-banked wheel, not a pot. Browser animation does not settle money. A committed seed lets you recompute a published draw. An 8-ball replay lets you recompute the winner from the shots; the rack seed does not pick the winner. PvPStrike is not a seed-based provably fair draw and has no public FPS replay verifier. None of these mechanisms insures a balance, protects a wallet, removes the fee or guarantees a profit. PVPspinArena is not affiliated with Valve, Counter-Strike or Steam. No gambling licence number, audit firm or company registration is published on the site.
 
 ## Games
 
@@ -11,15 +11,18 @@ Jackpot, Coinflip, P2P Slott, Poker and 8-ball are player versus player: the pot
 - [Roulette](https://pvpspinarena.com/roulette): timed rounds on a 33-slot wheel; 16 Purple and 16 Silver pay 2x, 1 Green pays 14x. Fee: 5% of each winning payout. After that fee, Purple or Silver returns about 92.12% (about a 7.88% house edge) and Green returns about 40.30% (about a 59.70% house edge).
 - [P2P Slott](https://pvpspinarena.com/slott): two players, equal stakes, six spins each, higher score wins. Fee: 10% of the players' pot on a win. A draw refunds both stakes. A bomb ends the match and the house keeps both stakes.
 - [Poker](https://pvpspinarena.com/poker): six-max No-Limit Hold'em, blinds from $0.02/$0.05 to $5/$10. Fee: 5% of a pot only when a flop is dealt. Preflop hands pay no fee.
-- [8-ball](https://pvpspinarena.com/8-ball-pool): 1v1, stakes $1, $2, $5, $10, $25, and $50. The winner is whoever the published rules name after the shots. The rack seed does not pick the winner. Fee: 5% of the pot when a player wins. A cancel before the break refunds both stakes.
+- [8-ball pool](https://pvpspinarena.com/8-ball-pool): 1v1, stakes $1, $2, $5, $10, $25 and $50. Shots, timeouts and forfeits determine the winner; the rack seed does not pick the winner. Fee: 5% of the pot on a win. An unjoined table refunds after 24 hours; there is no manual waiting-table cancellation. If both players leave before the break, stakes are refunded. A live-table exit forfeits the seat.
+- [PvPStrike FPS](https://pvpspinarena.com/fps-duel): independent desktop browser shooter on Dustfront. Human-only cash matches are best of five or nine, with a 5% pot fee on a win. Free bot Practice is first to seven. Sides switch after round two, four or six respectively during a five-second halftime break. Police carry an M4A1-S; Terrorists carry an AK-47. Scores stay with each player. [FPS rules and public results](https://pvpspinarena.com/fps-1v1) distinguish recorded cash results from random-draw verification.
 
 ## How the site works
 
 - [How it works](https://pvpspinarena.com/how-it-works): account, wallet, deposits, each game, and verification
-- [Fairness](https://pvpspinarena.com/fairness): the commit-reveal protocol and an in-browser verifier
+- [Fairness](https://pvpspinarena.com/fairness): draw protocols, pool replay and the limits of FPS server validation
 - [About](https://pvpspinarena.com/about): what the platform is and is not
 - [Editorial policy](https://pvpspinarena.com/editorial): no named author, what dates and sources mean, how to send a correction
 - [Responsible gambling](https://pvpspinarena.com/responsible-gambling): limits and self-exclusion
+- [Terms](https://pvpspinarena.com/terms): game-specific fees, waiting and disconnect rules, and eligibility
+- [Privacy](https://pvpspinarena.com/privacy): account, wallet, gameplay and connection data, and public-result visibility
 
 ## Guides
 
@@ -35,6 +38,7 @@ Educational guides live at [Guides](https://pvpspinarena.com/guides). The comple
 - [Poker](https://pvpspinarena.com/guides/topics/poker)
 - [Esports betting](https://pvpspinarena.com/guides/topics/esports-betting)
 - [Skill wagers](https://pvpspinarena.com/guides/topics/skill-wagers)
+- [FPS and aim](https://pvpspinarena.com/guides/topics/fps-and-aim)
 - [Casino games](https://pvpspinarena.com/guides/topics/casino-games)
 - [Sports betting](https://pvpspinarena.com/guides/topics/sports-betting)
 - [Blackjack](https://pvpspinarena.com/guides/topics/blackjack)

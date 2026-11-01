@@ -35,7 +35,7 @@ import { LINE_MULT, PAYLINES, REELS, SYMBOLS, type Rarity } from "@/lib/slott/pa
 const FAQS: Faq[] = [
   {
     q: "How does a PVP casino work?",
-    a: "In a player-vs-player casino you compete with other players instead of betting against fixed odds set by the operator. On PVPspinArena, Jackpot, Coinflip, P2P Slott, Poker and 8-ball pots are made up of the players' wagers, and the winner receives the pot minus the fee taken when the round settles. Jackpot, Coinflip, Roulette and P2P Slott publish a committed seed for the draw. Poker mixes each player's secret into the shuffle. 8-ball pays the seat the rules name after the shots. The rack seed does not pick that winner.",
+    a: "Player-vs-player games use player-funded pots. On PVPspinArena this includes Jackpot, Coinflip, P2P Slott, poker, 8-ball and PvPStrike cash matches. Roulette uses fixed multipliers instead. Draws use committed seeds, poker mixes player secrets into the shuffle, pool follows the shots and rules, and PvPStrike uses an authoritative match server.",
   },
   {
     q: "How does PVPspinArena Coinflip work?",
@@ -58,12 +58,16 @@ const FAQS: Faq[] = [
     a: "Provably fair means you can check a result yourself instead of trusting the operator. Before a round, the server publishes the SHA-256 hash of a secret seed. After the round, it reveals the seed. For a draw, you hash the seed and recompute the published formula. For 8-ball, that seed only racks the balls. You then replay every shot, timeout and forfeit. If the replay names the paid winner, the result was not swapped.",
   },
   {
+    q: "How does PvPStrike FPS work?",
+    a: "PvPStrike is a desktop browser shooter on Dustfront. Cash matches are human-only: best of five is first to three wins, and best of nine is first to five. Police and Terrorist sides switch after round two or four. Free bot Practice is first to seven, with a side switch after round six. Halftime lasts five seconds. A cash winner receives the combined pot after a 5% fee; Practice has no stake or payout.",
+  },
+  {
     q: "How are game outcomes determined?",
-    a: "A draw is computed on the server, never in your browser. Jackpot, Coinflip, Roulette and P2P Slott use HMAC-SHA256 with the round's secret seed. Jackpot maps the output to a ticket with rejection sampling, Coinflip uses one bit, and Roulette maps the output to one of 33 slots. 8-ball is not a draw: the server runs the published rules on the shots you sent and pays the seat those rules name. The animation only shows that stored result.",
+    a: "Jackpot, Coinflip, Roulette and P2P Slott use the committed seed for their random outcomes. Poker follows the shuffled cards and players' decisions. Pool follows its shots, timeouts and forfeits. PvPStrike validates movement, ammunition, hits and damage on the match server and settles the series winner. Neither pool nor FPS selects a winner from a random seed.",
   },
   {
     q: "Can I verify a completed game?",
-    a: "Yes. Once a game is settled its seed is published alongside the original hash. Open the Fairness page, choose Jackpot, Coinflip, Roulette, P2P Slott or 8-ball, and enter the game details. Poker hands are verified from the Hands tab at the table. 8-ball replays the shot list. The verifier runs in your browser and shows whether it matches the recorded outcome.",
+    a: "The Fairness page verifies Jackpot, Coinflip, Roulette and P2P Slott seeds and replays 8-ball shots. Poker hands are checked from the table's Hands tab. PvPStrike has server-validated match results, not a seed-based replay verifier. Review its recorded score and settlement separately; they do not prove that every input was unaided.",
   },
   {
     q: "Can you play slots against other players?",
@@ -75,13 +79,13 @@ const FAQS: Faq[] = [
   },
   {
     q: "What is the house fee?",
-    a: "Jackpot, Coinflip and Roulette take 5% when the round settles. On P2P Slott the fee is 10% of the players' pot, taken when the match ends and shown on the result; promotional WILD bonuses are paid in full, a draw refunds both stakes, and a bomb ends the match with the house keeping both stakes. Poker takes 5% of each pot only when a flop is dealt, with no fee on hands that end preflop. 8-ball takes 5% of the pot when a player wins the match. An empty table refunds the stake after 24 hours. A player cannot cancel a waiting table.",
+    a: "Jackpot and Coinflip take 5% of the settled pot; Roulette takes 5% of each winning payout. P2P Slott takes 10% of the players' pot on a win; a draw refunds stakes, while a bomb ends the match with both stakes kept by the house. Poker takes 5% only when a flop is dealt. Pool and PvPStrike take 5% of a winning cash-match pot. FPS Practice is free. Refund and waiting-room rules differ by game; check Terms before entering.",
   },
 ];
 
 const TITLE = "How PVPspinArena Works | PVP Crypto Casino Games";
 const DESC =
-  "How PVPspinArena works: Jackpot, Coinflip, Roulette, a 1v1 slot duel, six-max Hold'em and 8-ball, all on one USD balance with verifiable results.";
+  "Learn how PvPStrike FPS, 8-ball pool, poker and casino-style games work on PVPspinArena: cash entries, free bot Practice, fees, settlement and verification.";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () =>
@@ -98,11 +102,11 @@ export const Route = createFileRoute("/how-it-works")({
 const JOURNEY = [
   ["Access your account", "Sign in with a 6-digit email code."],
   ["Fund your wallet", "Deposit Bitcoin, or USDC or ETH on Base."],
-  ["Choose a game", "Jackpot, Coinflip, Roulette, P2P Slott, Poker or 8-ball."],
+  ["Choose a game", "PvPStrike, 8-ball, poker, Jackpot, Coinflip, Roulette or Slott."],
   ["Review the rules", "Wager, chance, multipliers and any fee."],
   ["Create or join", "Enter a pot, match a flip, bet or take a seat."],
   ["Game resolves", "A draw, the cards, or the shots settle the round."],
-  ["Verify", "Check the revealed seed against the result."],
+  ["Review", "Check the game's verification or recorded match result."],
 ];
 
 function HowItWorksPage() {
@@ -116,16 +120,14 @@ function HowItWorksPage() {
         secondary={{ to: "/about", label: "About PVPspinArena" }}
       >
         <p>
-          PVPspinArena runs fast player-vs-player rounds with a single US-dollar balance. You fund
-          your wallet with digital assets, pick a game, and check the result after it settles.
-          Jackpot, Coinflip, Roulette and P2P Slott commit a seed before the round. Poker mixes each
-          player's secret into the shuffle. 8-ball pays the winner the rules name after the shots;
-          its seed only racks the balls. P2P Slott is a 1 vs 1 slot duel. The higher score takes the
-          pot, unless a bomb ends the match and the house keeps both stakes. Poker is six-max
-          No-Limit Hold'em against other players.
+          Choose PvPStrike FPS, 8-ball pool, poker, Jackpot, Coinflip, Roulette or P2P Slott. Cash
+          games use one US-dollar balance funded with digital assets. Free FPS Practice lets you
+          play a bot without a deposit or cash stake.
         </p>
         <p>
-          Here is the whole journey, from your first sign-in to checking a finished game yourself.
+          Review the rules and fee before entering. Random games use seed verification; pool follows
+          the shots and rules; PvPStrike uses server-validated gameplay. This page explains the
+          journey from sign-in to settlement and the checks available for each game.
         </p>
       </SeoHero>
 
@@ -146,8 +148,8 @@ function HowItWorksPage() {
         </ol>
         <p className="mt-4 max-w-3xl text-sm text-muted-foreground">
           The steps are the same for every game, but the mechanics in step five differ: Jackpot,
-          Coinflip, P2P Slott, Poker and 8-ball are player-vs-player, while Roulette is a shared round
-          with fixed multipliers.
+          Coinflip, P2P Slott, poker, 8-ball and PvPStrike cash matches use player-funded pots,
+          while Roulette pays fixed multipliers. FPS Practice needs no deposit and pays no prize.
         </p>
       </section>
 
@@ -202,7 +204,7 @@ function HowItWorksPage() {
         eyebrow="Step 03"
         title="Choose a game"
         intro={
-          <p>Each game uses the same balance and fairness protocol, but plays very differently.</p>
+          <p>Cash games share one USD balance. Their gameplay and verification methods differ.</p>
         }
       >
         <SeoGrid cols={3}>
@@ -246,6 +248,22 @@ function HowItWorksPage() {
           >
             No-Limit Texas Hold'em cash tables. Fee only when a flop is dealt.
           </GameTile>
+          <GameTile
+            icon={<Target className="h-5 w-5" />}
+            name="8-ball pool"
+            to="/8-ball-pool"
+            tag="1v1 · shot-based rules"
+          >
+            Aim, control power and clear your group before legally pocketing the 8.
+          </GameTile>
+          <GameTile
+            icon={<Swords className="h-5 w-5" />}
+            name="PvPStrike FPS"
+            to="/fps-duel"
+            tag="1v1 · cash or free Practice"
+          >
+            Human cash series or a free first-to-seven bot match on Dustfront.
+          </GameTile>
         </SeoGrid>
       </SeoSection>
 
@@ -264,7 +282,7 @@ function HowItWorksPage() {
           <li>
             <strong>Possible outcomes:</strong> your share of the Jackpot pot, the 50/50 Coinflip,
             Roulette multipliers, the P2P Slott score race, or the blinds and buy-in range at a
-            poker table.
+            poker table, the pool shot rules, or the FPS series format.
           </li>
           <li>
             <strong>Fees:</strong> the pot fee is taken when the round settles and shown on the
@@ -272,8 +290,8 @@ function HowItWorksPage() {
           </li>
         </ul>
         <p>
-          The committed seed hash for the round is visible before you join, so you can record it if
-          you plan to verify later.
+          Random games publish a seed commitment for later verification. Pool commits its rack;
+          PvPStrike uses server-validated gameplay instead of a seeded winner.
         </p>
       </Step>
 
@@ -292,13 +310,19 @@ function HowItWorksPage() {
           the deal.
         </p>
         <p>
+          <strong>Pool and FPS.</strong> Pool follows alternating shots and foul rules. PvPStrike
+          follows real-time movement and shooting, with rounds won by elimination or higher health
+          at timeout. Cash games require matching entries. Free FPS Practice uses a bot and does not
+          change your wallet balance.
+        </p>
+        <p>
           <strong>Shared-round game.</strong> Roulette is not PVP in the same sense. Many players
           bet in the same round, but each bet is paid independently at a fixed multiplier. Other
           players' bets do not change your payout.
         </p>
         <p>
-          All rounds are live: every screen watching the same game counts down, spins and shows the
-          winner at the same moment.
+          Live clients follow the server's game state. Network and device performance can affect
+          when an update reaches your screen; local animation does not settle money.
         </p>
       </Step>
 
@@ -307,7 +331,7 @@ function HowItWorksPage() {
         eyebrow="Step 06"
         title="Game resolution"
         intro={
-          <p>When a round ends, it goes through the same five stages regardless of the game.</p>
+          <p>Each game has its own result rules, followed by server-side settlement and history.</p>
         }
       >
         <SeoFlow
@@ -318,31 +342,31 @@ function HowItWorksPage() {
             },
             {
               label: "Server logic",
-              text: "The server runs the published formula on the committed seed.",
+              text: "The server applies the game's draw formula, card rules or validated gameplay.",
             },
             {
               label: "Outcome",
-              text: "The winning ticket, side or slot is stored on the game record.",
+              text: "The draw, hand or match result is recorded.",
             },
             {
               label: "Settlement",
               text: "Balances move in one atomic, balanced ledger transaction.",
             },
-            { label: "History", text: "The seed is revealed and the game appears in history." },
+            { label: "History", text: "Review the result and the game's available verification." },
           ]}
         />
       </SeoSection>
 
       <Step n="07" id="verify" title="Verify" icon={<ShieldCheck className="h-5 w-5" />}>
         <p>
-          Every game can be checked after it finishes. Take the revealed seed, hash it with SHA-256
-          and compare it to the hash that was published before the round. If they match, the seed
-          was fixed in advance. Then run the published HMAC-SHA256 formula to recompute the winner,
-          side or slot.
+          For random-draw games, take the revealed seed, hash it with SHA-256 and compare it to the
+          hash that was published before the round. If they match, the seed was fixed in advance.
+          Then run the published HMAC-SHA256 formula to recompute the winner, side or slot.
         </p>
         <p>
-          The Fairness page includes the full protocol and a verifier that runs entirely in your
-          browser.
+          The Fairness page includes the draw protocols and an 8-ball shot-replay verifier. Poker
+          verification is in the table's Hands tab. PvPStrike has recorded server-validated results,
+          not a seed-based winner calculator.
         </p>
         <div className="pt-2">
           <SeoLink to="/fairness">Learn about game fairness</SeoLink>
@@ -449,9 +473,9 @@ function HowItWorksPage() {
           <SeoCard icon={<Target className="h-5 w-5" />} title="8-ball">
             <ol className="list-decimal space-y-1 pl-5">
               <li>
-                <strong>Stake:</strong> both players put in the same amount, from $1 to $50. Join
-                an open table to play that opponent, or play to take the oldest open table at the
-                stake you picked.
+                <strong>Stake:</strong> both players put in the same amount, from $1 to $50. Join an
+                open table to play that opponent, or play to take the oldest open table at the stake
+                you picked.
               </li>
               <li>
                 <strong>Rack:</strong> a committed seed shuffles the balls. It does not pick a
@@ -476,6 +500,39 @@ function HowItWorksPage() {
               </li>
             </ol>
             <SeoLink to="/8-ball-pool">Open the 8-ball lobby</SeoLink>
+          </SeoCard>
+          <SeoCard icon={<Swords className="h-5 w-5" />} title="PvPStrike FPS">
+            <ol className="list-decimal space-y-1 pl-5">
+              <li>
+                <strong>Practice:</strong> free bot match, first to seven round wins.
+              </li>
+              <li>
+                <strong>Cash:</strong> two humans match entries; best of five or best of nine.
+              </li>
+              <li>
+                <strong>Play:</strong> desktop mouse and keyboard, on the Dustfront map. Police
+                carry an M4A1-S; Terrorists carry an AK-47.
+              </li>
+              <li>
+                <strong>Rounds:</strong> eliminate the opponent or have more health when the
+                60-second clock ends. Three drawn rounds cancel the match.
+              </li>
+              <li>
+                <strong>Halftime:</strong> a five-second break, then sides and spawn positions
+                switch. Cash swaps after round two or four; Practice after round six. Scores stay
+                with each player.
+              </li>
+              <li>
+                <strong>Settlement:</strong> cash winner receives the pot after a 5% fee. Practice
+                has no stake, fee or payout.
+              </li>
+              <li>
+                <strong>Waiting:</strong> browse the site while waiting for a human and use the Join
+                now alert when matched. Offline waiting rooms are cancelled and refunded.
+              </li>
+            </ol>
+            <SeoLink to="/fps-duel">Open PvPStrike and Practice</SeoLink>
+            <SeoLink to="/fps-1v1">FPS rules, fees and public results</SeoLink>
           </SeoCard>
         </SeoGrid>
       </SeoSection>
@@ -709,8 +766,8 @@ function HowItWorksPage() {
         <SeoGrid cols={3}>
           <SeoCard title="Server seed">
             <p>
-              A random 32-byte secret created for each round before anyone can join. It is the key
-              that decides the result, and it stays hidden until the round is settled.
+              A random secret committed before a seeded game. It determines a draw or shuffle, or
+              the opening pool rack. It does not decide the winner of a pool or FPS match.
             </p>
           </SeoCard>
           <SeoCard title="Seed hash (commitment)" accent="gold">
@@ -753,8 +810,7 @@ function HowItWorksPage() {
             <p>
               In a PVP game your winnings come from the other players in the round. Jackpot,
               Coinflip, P2P Slott, Poker and 8-ball work that way. In a house-banked game such as
-              Roulette,
-              bets are paid at fixed multipliers regardless of what anyone else bets.
+              Roulette, bets are paid at fixed multipliers regardless of what anyone else bets.
             </p>
           </SeoCallout>
           <SeoCallout title="What your browser does — and doesn't do">

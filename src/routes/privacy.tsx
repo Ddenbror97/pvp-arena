@@ -8,7 +8,7 @@ export const Route = createFileRoute("/privacy")({
       path: "/privacy",
       title: "Privacy Policy: What PVPspinArena Collects and Shows",
       description:
-        "Privacy policy for PVPspinArena, including Discord sign-in, account data, wallet records, and what other players can see.",
+        "PVPspinArena privacy: sign-in, wallet and game records, pool shots, FPS gameplay and connection data, public match results and leaderboard visibility.",
       crumb: "Privacy",
     }),
   component: PrivacyPage,
@@ -18,15 +18,18 @@ function PrivacyPage() {
   return (
     <LegalPage title="Privacy">
       <p>
-        <strong>Last updated October 7, 2026.</strong>
+        <strong>Last updated November 1, 2026.</strong>
       </p>
       <p>
         This policy describes what PVPspinArena (pvpspinarena.com) collects, why we use it, and what
         other players can see.
       </p>
 
-      <h2>Discord sign-in</h2>
-      <p>You can create and access an account using Discord.</p>
+      <h2>Sign-in</h2>
+      <p>
+        Email sign-in uses your email address and a verification code. When Discord sign-in is
+        offered and you choose it, Discord supplies the account information described below.
+      </p>
       <p>
         When you use Discord, Discord provides the account id, username, avatar, and email needed to
         authenticate your PVPspinArena account and recognize you when you sign in again.
@@ -62,16 +65,37 @@ function PrivacyPage() {
         <li>Jackpot entries</li>
         <li>Coinflip games</li>
         <li>Roulette bets</li>
+        <li>P2P Slott matches and spins, and poker hands and seating records</li>
+        <li>8-ball matches, shot commands, table states, timeouts and results</li>
+        <li>PvPStrike cash and Practice match records, round scores and game statistics</li>
         <li>game amounts and results</li>
         <li>chat messages you send</li>
       </ul>
+      <h2>Real-Time Gameplay and Connection Data</h2>
+      <p>
+        To operate pool and PvPStrike, servers process the actions sent by your browser and the
+        state needed to run the match. FPS actions include movement, aim, firing and reloading; pool
+        actions include aiming, shot power and ball placement. Authentication and session checks
+        control who may play a seat.
+      </p>
+      <p>
+        Connection and performance measurements, such as round-trip timing, regional connection
+        information and server processing times, help diagnose lag and service failures. Game
+        records and operational logs support result settlement, security and dispute investigation.
+        This does not mean a complete replay of every FPS match is published or retained.
+      </p>
       <p>
         Deposits and withdrawals on Bitcoin and on the Base blockchain are public blockchain
-        transactions.
-        Blockchain transactions may be visible to anyone on the network and cannot be removed by
-        PVPspinArena.
+        transactions. Blockchain transactions may be visible to anyone on the network and cannot be
+        removed by PVPspinArena.
       </p>
 
+      <h2>Browser Preferences</h2>
+      <p>
+        FPS mouse sensitivity, sound volume and crosshair preferences are saved in your browser's
+        local storage so they can be reused on that browser. These preferences are not a public
+        profile field.
+      </p>
       <h2>What Other Players Can See</h2>
       <p>Other players may see:</p>
       <ul>
@@ -79,10 +103,17 @@ function PrivacyPage() {
         <li>your chosen avatar</li>
         <li>your chat messages</li>
         <li>your stake in a live game or round</li>
+        <li>
+          public match results, scores, entry amounts, fees and winner credits where displayed
+        </li>
+        <li>public PvPStrike ladder information, including rating, matches played and wins</li>
       </ul>
       <p>
-        Other players cannot see your private account information, authentication credentials,
-        account balance, transaction history, or other information that PVPspinArena keeps private.
+        Other players cannot see your private account information, authentication credentials, full
+        account balance or private wallet ledger. Public game history is separate from that private
+        ledger. Eligible public cash results and aggregate game activity may also appear on
+        game-information and guide pages. Private FPS rooms and Practice do not enter the public
+        cash ladder or its public-results sample.
       </p>
 
       <h2>How We Use Information</h2>
