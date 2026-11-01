@@ -73,8 +73,7 @@ export function createAuthoredViewmodel(parent: THREE.Object3D, firstPerson = tr
   const muzzle = new THREE.Vector3(),
     gripLeft = new THREE.Vector3(),
     gripRight = new THREE.Vector3(),
-    marker = new THREE.Object3D(),
-    matrix = new THREE.Matrix4();
+    marker = new THREE.Object3D();
   let magazine: THREE.Object3D | undefined,
     bolt: THREE.Object3D | undefined,
     magazineGrip: THREE.Object3D | undefined;

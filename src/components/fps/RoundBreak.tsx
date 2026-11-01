@@ -31,7 +31,7 @@ export function RoundBreak({
       >
         {winner && <span className="duel-victory-halo" aria-hidden />}
         <span className="duel-eyebrow">
-          {countdown ? "THE FOUNDRY / READY TO DUEL" : `ROUND ${recap?.round ?? ""} COMPLETE`}
+          {countdown ? "AIM ARENA / READY TO DUEL" : `ROUND ${recap?.round ?? ""} COMPLETE`}
         </span>
         <h2>{countdown ? "Get ready." : winner ? "Round victory." : "Round drawn."}</h2>
         {winner && (

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   ConnectionTiming,
   NetworkObservations,
+  MAX_REWIND_MS,
   readNetworkReport,
   REMOTE_DELAY_MS,
   SnapshotClock,
@@ -37,7 +38,7 @@ describe("measured game connection timing", () => {
       expect(t.pong(p.id, i * 1000 + rtt)).toBe(true);
     }
     expect(t.report()).toMatchObject({ rttMs: rtt, jitterMs: 0 });
-    expect(t.lookbackMs).toBe(Math.min(200, rtt + REMOTE_DELAY_MS));
+    expect(t.lookbackMs).toBe(Math.min(MAX_REWIND_MS, rtt + REMOTE_DELAY_MS));
   });
   it("uses the lowest recent RTT and caps rewind even when all pongs are delayed", () => {
     const t = new ConnectionTiming();
@@ -50,7 +51,7 @@ describe("measured game connection timing", () => {
       const p = t.challenge(i * 2000)!;
       t.pong(p.id, i * 2000 + 1800);
     }
-    expect(t.lookbackMs).toBe(200);
+    expect(t.lookbackMs).toBe(MAX_REWIND_MS);
     const p = t.challenge(46000)!;
     expect(t.pong(p.id, 50000)).toBe(false);
   });

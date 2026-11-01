@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
 
 /** Support hand sits mid-handguard rather than at the front sight (rifle-local units). */
 export const SUPPORT_GRIP_SHIFT = 0.09;

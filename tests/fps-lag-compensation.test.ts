@@ -9,7 +9,7 @@ import {
 } from "../src/lib/fps/simulation";
 import type { Input } from "../src/lib/fps/protocol";
 import { RemotePresentation } from "../src/lib/fps/presentation";
-import { REMOTE_DELAY_MS, SnapshotClock } from "../src/lib/fps/network";
+import { MAX_REWIND_MS, REMOTE_DELAY_MS, SnapshotClock } from "../src/lib/fps/network";
 import { playerVolumes } from "../src/lib/fps/player-volumes";
 const command = (seq: number, extra: Partial<Input> = {}): Input => ({
   v: 1,
@@ -106,7 +106,11 @@ describe("bounded authoritative shot rewind", () => {
           }
           const past =
             now === executeAt
-              ? history.target("B", now, now - (arrival - Math.min(200, rtt + 50)))
+              ? history.target(
+                  "B",
+                  now,
+                  now - (arrival - Math.min(MAX_REWIND_MS, rtt + REMOTE_DELAY_MS)),
+                )
               : undefined;
           stepMatch(s, inputs, now, TICK_MS, past ? { A: past } : undefined);
           history.record(s, now);
@@ -141,9 +145,9 @@ describe("bounded authoritative shot rewind", () => {
     expect(s.players.A.ammo).toBe(29);
     if (rtt === 180) expect(without.players.B.hp).toBe(100);
   });
-  it("caps lookback at 200 ms and discards another round's history", () => {
+  it("caps lookback at MAX_REWIND_MS and discards another round's history", () => {
     const { s, h, now } = movingTarget();
-    expect(h.target("B", now, 5000)).toEqual(h.target("B", now, 200));
+    expect(h.target("B", now, 5000)).toEqual(h.target("B", now, MAX_REWIND_MS));
     expect(h.target("B", now, NaN)).toBeUndefined();
     s.round++;
     h.record(s, now + 34);

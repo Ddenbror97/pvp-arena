@@ -676,7 +676,7 @@ export function DuelMatch({
       {(needsInteraction || (!roundBreak && phase === "waiting")) && (
         <div className={`duel-game-overlay ${locked ? "duel-game-overlay-passive" : ""}`}>
           <section className="duel-match-card">
-            <span className="duel-eyebrow">THE FOUNDRY / PVP ORIGINALS</span>
+            <span className="duel-eyebrow">AIM ARENA / PVP ORIGINALS</span>
             <p className="duel-combat-rules">
               {frame && (frame.state.combatVersion ?? 1) !== 2
                 ? "Earlier combat rules retained for this match."

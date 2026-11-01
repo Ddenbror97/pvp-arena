@@ -412,7 +412,6 @@ export function mountArena(
     stopped = false,
     lastRound = 0;
   let visibility: Record<Seat, boolean> = { A: true, B: true };
-  const remoteTarget = new THREE.Vector3();
   const correction = new CameraCorrection();
   const frameMotion = new FrameMotion();
   const jumpPresentation = new JumpPresentation();
@@ -716,14 +715,16 @@ export function mountArena(
       }
       const collapse =
         opponentDeathAt === null ? null : deathPose(now - opponentDeathAt, deathFeetY, deathFloorY);
-      const visible = visibility[otherSeat] !== false;
+      // Server visibility is applied on the playback timeline (RemotePresentation), so the
+      // opponent disappears when the drawn pose reaches cover, not when the packet arrives.
+      const visible = remoteMotion.sample(
+        remoteClock.now(now) - REMOTE_DELAY_MS,
+        remotePose,
+        renderIntervalMs,
+      );
       if (visible) {
-        if (
-          remoteMotion.sample(remoteClock.now(now) - REMOTE_DELAY_MS, remotePose, renderIntervalMs)
-        ) {
-          actor.root.position.set(remotePose.x, remotePose.y, remotePose.z);
-          actor.root.rotation.y = remotePose.yaw;
-        } else actor.root.position.copy(remoteTarget);
+        actor.root.position.set(remotePose.x, remotePose.y, remotePose.z);
+        actor.root.rotation.y = remotePose.yaw;
         actor.root.rotation.x = collapse?.pitch ?? 0;
         actor.root.rotation.z = collapse?.roll ?? 0;
         if (collapse) {
@@ -1014,9 +1015,11 @@ export function mountArena(
         }
       lastRound = state.round;
       const other = state.players[seat === "B" ? "A" : "B"];
-      remoteTarget.set(other.x, other.y, other.z);
-      if (visibility[seat === "B" ? "A" : "B"] === false) remoteMotion.clear();
-      else remoteMotion.push(other, frame.poseAt ?? frame.serverNow);
+      remoteMotion.push(
+        other,
+        frame.poseAt ?? frame.serverNow,
+        visibility[seat === "B" ? "A" : "B"] !== false,
+      );
     },
     lock: () => capturePointer(renderer.domElement),
     dispose() {

@@ -2,21 +2,18 @@ import { test, expect } from "@playwright/test";
 import { fixture } from "./helpers/fps-fixture";
 
 /**
- * The Blender-built operator characters: Police on seat A, Terrorist on seat B. Each loads its
- * own GLB, keeps its authored PBR materials (no runtime tint or chest badge), stands at a
- * CS-like height fitted to the shared head hitbox, keeps both hands on the rifle through the
- * IK and stays inside the server body volume while moving, crouching and dying.
+ * Police (seat A) and Terrorist (seat B) are complete authored characters fitted in Blender.
+ * Each loads its own GLB with its own head and PBR materials, stands at a CS-like height with
+ * the head centre on the 1.6 m head hitbox, keeps both hands on the rifle through the IK and
+ * stays inside the server body volume while moving, crouching and dying.
  */
-test("police and terrorist operators load per seat and fit the rig, hitboxes and grip", async ({
-  page,
-}) => {
+test("police and terrorist load per seat and fit the rig, hitboxes and grip", async ({ page }) => {
   await fixture(page);
   const results = await page.evaluate(async () => {
     Reflect.get(window, "fpsPolishTest").dispose();
     const { createCharacter } = await import("/src/lib/fps/character.ts" as string),
       { createWeaponKit } = await import("/src/lib/fps/weapon.ts" as string),
       { playerVolumes } = await import("/src/lib/fps/player-volumes.ts" as string),
-      { CHARACTER_SET } = await import("/src/lib/fps/model-assets.ts" as string),
       T = await import("/node_modules/three/build/three.module.js" as string);
     const kit = createWeaponKit(),
       out = [];
@@ -27,20 +24,18 @@ test("police and terrorist operators load per seat and fit the rig, hitboxes and
       actor.update(16, 1000, 0, true);
       actor.root.updateMatrixWorld(true);
       const materials = new Set<string>();
-      let tinted = false,
-        skinned = 0;
+      let skinned = 0;
       const body = actor.root.getObjectByName("authored-tactical-body");
       body.traverse((o: { isSkinnedMesh?: boolean; material?: unknown }) => {
         if (o.isSkinnedMesh) skinned++;
         if (!o.material) return;
-        for (const m of [o.material].flat() as { name: string; onBeforeCompile: () => void }[]) {
-          materials.add(m.name);
-          if (m.onBeforeCompile.toString().includes("clothLuma")) tinted = true;
-        }
+        for (const m of [o.material].flat() as { name: string }[]) materials.add(m.name);
       });
-      // Standing silhouette (head + helmet included) against the CS-like target height.
-      const box = new T.Box3().setFromObject(actor.root.getObjectByName("reference-headgear"));
-      const crown = box.max.y;
+      // Standing silhouette (posed skinned bounds, helmet included) and the head centre.
+      const crown = new T.Box3().setFromObject(body, true).max.y;
+      const headCenter = actor.root
+        .getObjectByName("head-center")
+        .getWorldPosition(new T.Vector3()).y;
       // Hands on the rifle: limb() lands the hand exactly on the weapon grip unless the
       // target is out of reach, which would show as a fully straightened arm.
       const reach: number[] = [];
@@ -79,7 +74,6 @@ test("police and terrorist operators load per seat and fit the rig, hitboxes and
             hand = at(side + "Hand");
           reach.push(arm.distanceTo(hand) / (arm.distanceTo(fore) + fore.distanceTo(hand)));
         }
-        const vol = playerVolumes({ x: actor.root.position.x, y: 0, z: 0, crouched }).body;
         let lowest = "",
           farthest = "",
           maxReach = 0,
@@ -107,7 +101,6 @@ test("police and terrorist operators load per seat and fit the rig, hitboxes and
           farthest,
           lowest,
         });
-        void vol;
       }
       // Death collapse keeps every transform finite.
       let finite = true;
@@ -120,15 +113,13 @@ test("police and terrorist operators load per seat and fit the rig, hitboxes and
       }
       out.push({
         seat,
-        set: CHARACTER_SET,
         loaded: actor.loaded,
         materials: [...materials],
-        tinted,
         skinned,
         bones,
         crown,
-        badge: !!actor.root.getObjectByName("chest-badge"),
-        helmet: !!actor.root.getObjectByName("helmet"),
+        headCenter,
+        headHitbox: playerVolumes({ x: 0, y: 0, z: 0, crouched: false }).head.center.y,
         samples,
         finite,
         reach,
@@ -139,27 +130,22 @@ test("police and terrorist operators load per seat and fit the rig, hitboxes and
     return out;
   });
   for (const r of results) {
-    expect(["sourced", "operators"]).toContain(r.set);
     expect(r.loaded).toBe(true);
-    expect(r.tinted, "operators keep their authored PBR colours").toBe(false);
-    expect(r.badge, "POLICE is printed on the carrier, not a floating badge").toBe(false);
     expect(r.skinned).toBeGreaterThan(0);
-    // Every Mixamo bone the runtime drives exists (sourced rigs add fingers/twist bones).
+    // Every Mixamo bone the runtime drives exists (the rigs add finger/twist bones).
     expect(r.bones).toBeGreaterThanOrEqual(25);
     const prefix = r.seat === "A" ? "police-" : "terrorist-";
-    expect(
-      r.materials.every((m) => m.startsWith(prefix) || /\.body|eye|hair|short|low/i.test(m)),
-    ).toBe(true);
-    // CS:GO-like: eyes on the 1.6 m head hitbox, crown 1.72-1.82 m (helmet adds a few cm).
-    expect(r.crown).toBeGreaterThan(1.72);
-    expect(r.crown).toBeLessThan(1.82);
-    if (r.set === "operators") expect(r.helmet).toBe(r.seat === "A");
+    expect(r.materials.every((m) => m.startsWith(prefix))).toBe(true);
+    // CS:GO-like: head centre on the 1.6 m head hitbox, crown about 1.7 m.
+    expect(r.headCenter).toBeCloseTo(r.headHitbox, 5);
+    expect(r.crown, JSON.stringify(r)).toBeGreaterThan(1.66);
+    expect(r.crown, JSON.stringify(r)).toBeLessThan(1.82);
     for (const s of r.samples) {
       // Torso and legs stay inside the server body volume (hands/rifle may lead it).
-      // Crouched knees jut forward of the 0.7 m box by a few cm, as the legacy rig did (0.40 m).
+      // Crouched knees jut forward of the 0.7 m box by a few cm, as the previous rig did (0.40 m).
       expect(s.maxReach, JSON.stringify(s)).toBeLessThan(s.stance ? 0.45 : 0.36);
-      // Mid-stride the toes may dip a few cm, as the legacy rig did (-0.043 m).
-      // Crouch is a kneel: the knee joint rests on the floor (legacy rig: -0.69 m).
+      // Mid-stride the toes may dip a few cm, as the previous rig did (-0.043 m).
+      // Crouch is a kneel: the knee joint rests on the floor (previous rig: -0.69 m).
       expect(s.minY, JSON.stringify(s)).toBeGreaterThan(s.stance ? -0.08 : -0.045);
     }
     expect(r.finite).toBe(true);
