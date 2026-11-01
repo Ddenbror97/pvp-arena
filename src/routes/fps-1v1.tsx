@@ -137,7 +137,7 @@ function Page() {
         {[
           [
             "One opponent, one series",
-            "Each round tests positioning, rifle control and cover. Best-of-five needs three round wins; best-of-nine needs five. A winner recap separates rounds for three seconds.",
+            "Best-of-five needs three round wins; best-of-nine needs five. Police and Terrorist sides switch after round two or four during a five-second halftime break. Scores stay with each player. Police carry an M4A1-S; Terrorists carry an AK-47.",
           ],
           [
             "Entries locked before play",

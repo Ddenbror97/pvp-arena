@@ -8,7 +8,7 @@ export const Route = createFileRoute("/terms")({
       path: "/terms",
       title: "Terms of Service: Fees, Deposits and Rules | PVPspinArena",
       description:
-        "Terms for PVPspinArena: eligibility, fees on Jackpot, Coinflip, Roulette, P2P Slott, poker and 8-ball, Bitcoin and Base deposits, and account rules.",
+        "PVPspinArena terms for PvPStrike FPS, 8-ball pool and casino-style games: cash entries, fees, free Practice, account rules, deposits and withdrawals.",
       crumb: "Terms",
     }),
   component: TermsPage,
@@ -18,7 +18,7 @@ function TermsPage() {
   return (
     <LegalPage title="Terms">
       <p>
-        <strong>Last updated October 21, 2026.</strong>
+        <strong>Last updated November 1, 2026.</strong>
       </p>
       <p>
         These terms are the rules for using PVPspinArena at pvpspinarena.com. By creating an account
@@ -27,8 +27,9 @@ function TermsPage() {
 
       <h2>The Service</h2>
       <p>
-        PVPspinArena offers six games: Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit
-        Texas Hold&apos;em poker, and 1v1 8-ball.
+        PVPspinArena offers seven games: Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit
+        Texas Hold&apos;em poker, 1v1 8-ball pool and PvPStrike browser FPS. PvPStrike also offers
+        free solo Practice against a bot, with no stake or payout.
       </p>
       <p>
         Your playable balance is maintained as a US-dollar ledger, counted in cents. Bitcoin, and
@@ -50,7 +51,7 @@ function TermsPage() {
       <h2>Your Account</h2>
       <p>
         You may create and access an account using the authentication methods provided on the site,
-        including Discord.
+        including email verification codes and Discord where offered.
       </p>
       <p>
         You choose your username and avatar. These are the identifying details displayed to other
@@ -75,7 +76,8 @@ function TermsPage() {
         P2P Slott charges a <strong>10% fee</strong> on the players&apos; pot when a player wins. If
         either player lands a bomb, the match ends and the house keeps both stakes. Poker charges a{" "}
         <strong>5% fee</strong> on a pot only when a flop is dealt. 8-ball charges a{" "}
-        <strong>5% fee</strong> on the pot when a match is won.
+        <strong>5% fee</strong> on the pot when a match is won. PvPStrike charges a{" "}
+        <strong>5% fee</strong> on a winning cash-match pot. FPS Practice has no entry fee.
       </p>
 
       <h3>Jackpot</h3>
@@ -99,9 +101,9 @@ function TermsPage() {
       </p>
       <p>
         The game fee is not charged again when depositing or withdrawing. It is taken from the
-        Jackpot, Coinflip, P2P Slott, poker, or 8-ball pot, or from a Roulette winning payout, at
-        settlement. Poker takes its fee only after a flop. 8-ball takes its fee only when a player
-        wins the match.
+        Jackpot, Coinflip, P2P Slott, poker, 8-ball or PvPStrike pot, or from a Roulette winning
+        payout, at settlement. Poker takes its fee only after a flop. 8-ball takes its fee only when
+        a player wins the match. PvPStrike charges its fee only when a cash match has a winner.
       </p>
       <p>If a round is cancelled, the affected stakes are refunded without the game fee.</p>
 
@@ -161,6 +163,44 @@ function TermsPage() {
         match to the other player.
       </p>
 
+      <h3 id="pvpstrike">PvPStrike FPS</h3>
+      <p>
+        PvPStrike is an independent desktop browser shooter on Dustfront. Cash matches are
+        human-only: both players enter the same stake and play best of five (first to three wins) or
+        best of nine (first to five). Free Practice is a bot match, first to seven wins, and does
+        not award money or affect the cash ladder.
+      </p>
+      <p>
+        Each round lasts up to 60 seconds. Elimination wins the round; at timeout the player with
+        more health wins, or equal health draws. Three drawn rounds cancel the match. Police and
+        Terrorist sides and spawn positions switch after round two in best-of-five, round four in
+        best-of-nine, or round six in Practice. Halftime lasts five seconds. Player identities and
+        scores do not swap.
+      </p>
+      <p>
+        The match server validates movement, ammunition, hits, damage and the final result. Local
+        visuals or audio do not establish a hit or payout. FPS results are not chosen by a committed
+        random seed and cannot be verified with the random-draw calculator.
+      </p>
+      <p>
+        On a cash win, 5% of the combined pot is retained and 95% is credited to the winner,
+        including their original stake. Two $10 entries form a $20 pot: the fee is $1, the winner
+        credit is $19, and net match profit is $9. Promotional and partner credit may fund entries
+        under the applicable credit restrictions; a match payout does not remove withdrawal rules.
+      </p>
+      <p>
+        You can browse the site while waiting for a human opponent and return through the Join now
+        alert. A waiting creator can cancel; an offline waiting room is cancelled and its stake
+        refunded. Once matched, enter within the readiness window shown. During play, a disconnect
+        allows 30 seconds to reconnect before a forfeit. If both players remain absent, or the
+        server cancels an interrupted match, stakes are refunded without a game fee.
+      </p>
+      <p>
+        Review the <Link to="/fps-1v1">FPS rules and public results</Link>, or open the{" "}
+        <Link to="/fps-duel">PvPStrike lobby and free Practice</Link>. These FPS waiting and
+        disconnect rules are separate from the 8-ball rules above.
+      </p>
+
       <h3>Roulette</h3>
       <p>Roulette uses a 33-slot wheel:</p>
       <ul>
@@ -187,14 +227,17 @@ function TermsPage() {
       <h2>How Results Are Decided</h2>
       <p>Game results are determined by the server.</p>
       <p>
-        Before a round begins, PVPspinArena publishes the SHA-256 hash of a secret seed. After the
-        round, the seed is revealed.
+        Random-draw games publish a SHA-256 commitment to a secret seed and reveal it after the
+        round. Poker also mixes players' secrets into the shuffle. Pool commits the rack, then
+        follows the shot rules. PvPStrike follows validated gameplay and series scores.
       </p>
       <p>
         You can use the <Link to="/fairness">Fairness</Link> page to verify the published hash and
-        recompute the result.
+        recompute supported draws or replay pool shots. Poker verification is in the table's Hands
+        tab. The Fairness page does not provide an FPS replay or prove that player inputs were
+        unaided.
       </p>
-      <p>The game animation displays the stored result. It does not determine the outcome.</p>
+      <p>Client animation does not determine balances or settlement.</p>
 
       <h2>Deposits and Withdrawals</h2>
       <p>
@@ -232,10 +275,12 @@ function TermsPage() {
         <li>your chosen avatar</li>
         <li>your chat messages</li>
         <li>your stake in a live round</li>
+        <li>public game results, match scores and leaderboard statistics where available</li>
       </ul>
       <p>
         Private account information, authentication information, your dollar balance, transaction
-        history, and wallet information are not displayed to other players.
+        history, and wallet information are not displayed as public profile details. Public game
+        records can show stakes, winnings and fees; on-chain transfers remain publicly visible.
       </p>
       <p>
         Chat is plain text. Do not post private keys, seed phrases, passwords, or another
@@ -263,8 +308,8 @@ function TermsPage() {
       <h2>Responsible Play</h2>
       <p>Only use money you can afford to lose.</p>
       <p>
-        Jackpot, Coinflip, Roulette, P2P Slott, and Poker involve real money and can result in
-        losses.
+        Jackpot, Coinflip, Roulette, P2P Slott, poker, 8-ball and PvPStrike cash matches involve
+        real money and can result in losses. Skill in pool or FPS does not guarantee a profit.
       </p>
       <p>
         The <Link to="/responsible-gambling">Responsible Gambling</Link> page provides information

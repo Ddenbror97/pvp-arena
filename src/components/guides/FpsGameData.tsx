@@ -96,7 +96,7 @@ export function FpsMechanicsData() {
       aria-labelledby="fps-mechanics-title"
     >
       <h2 id="fps-mechanics-title" className="font-display text-2xl">
-        PvPStrike's actual AK-47 tuning
+        PvPStrike's actual rifle tuning
       </h2>
       <p className="mt-3 text-sm text-muted-foreground">
         Generated from the current game's damage and recoil functions. These are PvPStrike values,
@@ -135,7 +135,8 @@ export function FpsMechanicsData() {
       <p className="mt-3 text-sm">
         Recoil sequence reset after a three-shot burst: {Math.round(recoveryProfile(3).resetMs)} ms.
         After a long spray: {Math.round(recoveryProfile(15).resetMs)} ms. Releasing fire does not
-        immediately erase recoil; the AK remains automatic when held.
+        immediately erase recoil; both the Police M4A1-S and Terrorist AK-47 remain automatic when
+        held and use the same damage values.
       </p>
       <p className="mt-2 text-xs text-muted-foreground">
         Mixed hit locations and depleted armor change the result. Use the winner recap to compare

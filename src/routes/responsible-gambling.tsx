@@ -14,7 +14,7 @@ export const Route = createFileRoute("/responsible-gambling")({
       path: "/responsible-gambling",
       title: "Responsible Gambling: Budgets, Self-Exclusion and Help",
       description:
-        "Responsible gambling on PVPspinArena: what Jackpot, Coinflip, Roulette, Slott and poker cost, how to budget or self-exclude, and where to get help.",
+        "Responsible play for PvPStrike, 8-ball pool and casino-style games: cash-match fees, loss risks, free FPS Practice, spending limits and self-exclusion.",
       crumb: "Responsible gambling",
     }),
   component: ResponsiblePage,
@@ -24,11 +24,12 @@ function ResponsiblePage() {
   return (
     <LegalPage title="Responsible Gambling">
       <p>
-        <strong>Last updated October 20, 2026.</strong>
+        <strong>Last updated November 1, 2026.</strong>
       </p>
       <p>
-        Jackpot, Coinflip, Roulette, P2P Slott, and Poker are real-money games. They are not a way
-        to make money or recover financial losses.
+        Jackpot, Coinflip, Roulette, P2P Slott, poker, 8-ball and PvPStrike cash matches involve
+        real money. They are not a way to solve financial problems or recover losses. Skill in pool
+        or FPS does not guarantee a win or profit.
       </p>
       <p>
         Only play with money you can afford to lose, and stop if gambling stops feeling like
@@ -54,6 +55,18 @@ function ResponsiblePage() {
         Poker is six-max No-Limit Hold&apos;em. The fee is <strong>5% of each pot</strong>, and only
         when a flop is dealt. A hand that ends before the flop pays no fee. Folding, calling, or
         raising does not remove that fee, and no betting pattern guarantees a profit.
+      </p>
+      <p>
+        Pool and PvPStrike charge <strong>5% of the combined cash-match pot</strong> on a win. With
+        $10 per player, the $20 pot returns $19 to the winner, including their own $10 entry; net
+        profit is $9, and the losing player loses their $10. Repeated matches can lose money even
+        when you win some of them.
+      </p>
+      <p>
+        <Link to="/fps-duel">PvPStrike Practice</Link> is a free first-to-seven match against a bot
+        with no cash payout. Use it to try the controls without a stake. Beating the bot does not
+        predict results against human opponents. Pause between sessions and avoid chasing losses
+        with rematches or higher entries.
       </p>
       <p>
         The <Link to="/terms">Terms</Link> explain the game rules and fees in more detail.

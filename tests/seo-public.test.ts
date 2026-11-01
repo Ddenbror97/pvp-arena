@@ -20,8 +20,11 @@ describe("public SEO facts", () => {
     }
   });
 
-  it("describes six games and the 33-slot wheel", () => {
-    expect(llms).toContain("six games");
+  it("describes seven games, free FPS Practice and the 33-slot wheel", () => {
+    expect(llms).toContain("seven games");
+    expect(llms).toContain("PvPStrike");
+    expect(llms).toContain("Human-only cash");
+    expect(llms).toContain("no public FPS replay verifier");
     expect(llms).toContain("8-ball");
     expect(llms).toContain("33-slot");
     expect(llms).toContain("P2P Slott");
@@ -29,6 +32,7 @@ describe("public SEO facts", () => {
     expect(llms).toContain("5% of a pot only when a flop is dealt");
     expect(llms).toContain("rack seed does not pick the winner");
     expect(llms).not.toContain("five games");
+    expect(llms).not.toContain("six games");
     expect(llms).not.toContain("three games");
     expect(llms).not.toContain("15-slot");
   });

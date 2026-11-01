@@ -32,19 +32,19 @@ import { seoHead, type Faq } from "@/components/seo/seo-head";
 const FAQS: Faq[] = [
   {
     q: "What is PVPspinArena?",
-    a: "PVPspinArena is a player-vs-player crypto gaming platform with six games: Jackpot, Coinflip, Roulette, P2P Slott, six-max Texas Hold'em poker and 1v1 8-ball. Balances are held in US dollars and funded with Bitcoin, or with USDC or ETH on the Base network. Draws publish a committed seed and reveal it so anyone can recompute them. 8-ball pays the seat the rules name after the shots. That rack seed does not pick the winner.",
+    a: "PVPspinArena has seven games: Jackpot, Coinflip, Roulette, P2P Slott, six-max Texas Hold'em poker, 1v1 8-ball pool and PvPStrike, our browser FPS. Cash games use one US-dollar balance funded with Bitcoin, or USDC or ETH on Base. Random draws use committed seeds; pool follows the shots and rules; PvPStrike is decided by an authoritative match server. Free FPS Practice is against a bot.",
   },
   {
     q: "What does PVP mean on PVPspinArena?",
-    a: "PVP stands for player vs player. In Jackpot, Coinflip, P2P Slott and Poker you compete against other players rather than against the house: the wagers from every participant form the pot, and the winner of the round receives it, minus the fee taken when the round settles. Roulette is different — it is a shared round where each bet is paid at a fixed multiplier — and we describe it separately so the two models are never confused.",
+    a: "PVP stands for player vs player. Jackpot, Coinflip, P2P Slott, poker, 8-ball and PvPStrike use player-funded pots. PvPStrike cash matches are human-only; its free Practice mode uses a bot. Roulette is a shared round with fixed payout multipliers. Each format has its own rules and fee.",
   },
   {
     q: "Is PVPspinArena a crypto casino?",
-    a: "PVPspinArena offers real-value casino-style games funded with digital assets, so it can be described as a crypto casino. Its focus is different from a typical house-banked casino: the main formats are player-vs-player, results are provably fair, and all balances are tracked in US dollars inside a double-entry ledger. Please check the laws where you live before playing, and only use funds you can afford to lose.",
+    a: "PVPspinArena offers real-value casino-style games and competitive pool and FPS matches funded with digital assets. The main formats use player-funded pots, and balances are tracked in US dollars in a double-entry ledger. Seed verification applies to the random games; it does not decide a PvPStrike winner. Check the laws where you live and only use funds you can afford to lose.",
   },
   {
     q: "What games are available?",
-    a: "Six games are live today. Jackpot is a shared pot where every cent you add is one ticket in the draw. Coinflip is a one-on-one match decided by one random bit. Roulette is a continuous round with Purple and Silver paying 2x and Green paying 14x. P2P Slott is a 1 vs 1 slot duel where the higher score takes the pot. Poker is six-max No-Limit Texas Hold'em, from $0.02/$0.05 to $5/$10 blinds, with a 5% fee only on hands that reach the flop. 8-ball is a 1v1 match: the winner is whoever the rules name after the shots, and the fee is 5% of the pot.",
+    a: "Seven games are available: Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit Texas Hold'em, 1v1 8-ball pool and PvPStrike. Pool follows the published shot rules. PvPStrike offers best-of-five or best-of-nine human cash matches and free first-to-seven bot Practice. Both pool and FPS charge 5% of a winning cash-match pot; Practice has no stake or payout.",
   },
   {
     q: "How is PVPspinArena inspired by the CS:GO betting era?",
@@ -52,7 +52,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "How does PVPspinArena approach game fairness?",
-    a: "Before a round opens, the server generates a secret seed and publishes its SHA-256 hash. The result is later computed from that seed with HMAC-SHA256, using rejection sampling where needed so there is no modulo bias. After settlement the seed is revealed. Because the hash was public first, you can check that the seed was not changed and recompute the result yourself.",
+    a: "Random games commit a seed before play and reveal it for verification. Poker also mixes players' secrets into the shuffle. In 8-ball the seed fixes the rack, while shots, timeouts and forfeits determine the winner. PvPStrike validates movement, ammunition, hits and results on the match server; it is not a seed-based provably fair draw or a guarantee against cheating.",
   },
   {
     q: "Where can I learn how PVPspinArena works?",
@@ -60,9 +60,9 @@ const FAQS: Faq[] = [
   },
 ];
 
-const TITLE = "About PVPspinArena: Provably Fair PvP Crypto Games";
+const TITLE = "About PVPspinArena: FPS, Pool and Crypto Games";
 const DESC =
-  "PVPspinArena runs player-vs-player Jackpot, Coinflip, Slott duels and Hold'em poker plus Roulette, on one USD balance with provably fair results.";
+  "Meet PVPspinArena: PvPStrike browser FPS, 8-ball pool, poker, Jackpot, Coinflip, Roulette and Slott. Learn the game formats, fees and fairness differences.";
 
 export const Route = createFileRoute("/about")({
   head: () =>
@@ -81,9 +81,9 @@ function AboutPage() {
         secondary={{ to: "/how-it-works", label: "Learn how it works" }}
       >
         <p>
-          PVPspinArena is a player-vs-player gaming platform built around five competitive games —
-          Jackpot, Coinflip, Roulette, P2P Slott and six-max Hold'em poker. Results are decided on
-          the server, and every outcome can be checked after the game.
+          PVPspinArena brings together seven games: PvPStrike browser FPS, 1v1 8-ball pool, six-max
+          Hold'em poker, Jackpot, Coinflip, Roulette and P2P Slott. Try free FPS Practice against a
+          bot, or review the rules and fee before choosing a cash game.
         </p>
         <p>
           Balances are shown in US dollars and funded with Bitcoin, or with USDC or ETH on the Base
@@ -100,35 +100,34 @@ function AboutPage() {
             <p>
               PVPspinArena is a crypto gaming platform where the main opponent is another player,
               not the house. When you join a Jackpot, a Coinflip, a Slott duel or a poker table, the
-              money in play comes from the players there, and the winner receives the pot. That is
-              what we mean by a PVP casino: the games are about competing with people, in a format
+              money in play comes from the players there. The same applies to 8-ball and human
+              PvPStrike cash matches. Winners receive the pot after the applicable fee. That is what
+              we mean by a PVP casino: the games are about competing with people, in a format
               everyone in the room can watch resolve at the same moment.
             </p>
             <p>
               Everything that matters happens on the server. Your browser shows the wheel and the
               coin, but it never decides a result, a balance or a payout. Game logic, wallet
-              balances and settlement live in the database, where every movement of money is written
-              as a balanced ledger entry. This keeps the experience quick on screen while the
-              accounting stays strict behind it.
+              balances and settlement are handled by server-side systems. PvPStrike runs on a
+              dedicated authoritative match server, and every movement of money is written as a
+              balanced ledger entry. This keeps the experience quick on screen while the accounting
+              stays strict behind it.
             </p>
             <p>
-              We keep the product deliberately small. There are six games, one wallet and one balance
-              in US dollars. Draws use a commit-and-reveal seed. 8-ball publishes the rack, then
-              pays the winner the rules name. A narrow scope means each part can be built carefully,
-              explained clearly and verified by anyone who wants to look.
+              Cash games share one wallet and one balance in US dollars. Draws use a
+              commit-and-reveal seed. Pool follows its shot rules. PvPStrike follows validated
+              gameplay and round scores, with a Police/Terrorist side switch at halftime.
             </p>
           </>
         }
       >
         <SeoGrid cols={3}>
           <SeoCard icon={<Swords className="h-5 w-5" />} title="Players, not the house">
-            <p>Jackpot, Coinflip, Slott, poker and 8-ball pots are formed by the players in the game.</p>
+            <p>
+              Jackpot, Coinflip, Slott, poker, 8-ball and PvPStrike cash pots are player funded.
+            </p>
           </SeoCard>
-          <SeoCard
-            icon={<ShieldCheck className="h-5 w-5" />}
-            title="Published rules"
-            accent="gold"
-          >
+          <SeoCard icon={<ShieldCheck className="h-5 w-5" />} title="Published rules" accent="gold">
             <p>The browser shows the result. It does not file the winner or the payout.</p>
           </SeoCard>
           <SeoCard icon={<Wallet className="h-5 w-5" />} title="One USD balance" accent="rival">
@@ -145,7 +144,7 @@ function AboutPage() {
           <p>
             Player vs player games work differently from house-banked games. Instead of betting
             against fixed odds set by the operator, you are matched with other people, and the size
-            of your stake decides your share of the outcome. Four principles shape every game on the
+            of the pot and the game's rules determine the payout. Four principles shape play on the
             platform.
           </p>
         }
@@ -174,8 +173,8 @@ function AboutPage() {
           </SeoCard>
           <SeoCard icon={<ShieldCheck className="h-5 w-5" />} title="Fairness">
             <p>
-              Every result comes from a seed committed before the round and revealed after it, so a
-              finished game can be recomputed independently.
+              Random draws have seed verification. Pool has a shot replay. PvPStrike validates
+              gameplay on the match server and records the series result.
             </p>
           </SeoCard>
         </SeoGrid>
@@ -199,7 +198,7 @@ function AboutPage() {
               during the early CS:GO betting era — the shared pot, the head-to-head flip and the
               feeling of a room watching the same spin. What we changed is everything underneath:
               balances in US dollars instead of items, digital-asset deposits on a public network,
-              and a published fairness protocol for every game.
+              and separate explanations of random-draw verification and gameplay-based results.
             </p>
           </>
         }
@@ -226,7 +225,8 @@ function AboutPage() {
             <p>
               PVPspinArena is an independent platform. It is not affiliated with, endorsed by or
               connected to Valve, Counter-Strike, Steam, or any historical CS:GO betting website. We
-              do not accept or use game items, and we do not use third-party game assets or logos.
+              do not accept Counter-Strike skins as stakes. Game-asset credits are available from
+              the PvPStrike lobby.
             </p>
             <p>
               The reference is about format and pace only — a piece of gaming history that shaped
@@ -273,8 +273,8 @@ function AboutPage() {
               {[
                 "USD balances funded with Bitcoin, or USDC or ETH on Base",
                 "Wallet verification and a double-entry ledger",
-                "PVP Jackpot, Coinflip, Roulette, Slott duels and Hold'em poker",
-                "Commit/reveal fairness verification",
+                "PvPStrike, 8-ball pool, poker and casino-style games",
+                "Seed verification for draws; server-validated competitive play",
                 "Live, synchronized game interfaces",
               ].map((x) => (
                 <li key={x}>— {x}</li>
@@ -287,11 +287,11 @@ function AboutPage() {
       <SeoSection
         id="games"
         eyebrow="The games"
-        title="Six games, one balance"
+        title="Seven games, one balance"
         intro={
           <p>
-            All six games use the same wallet balance. Draws commit a seed. 8-ball commits the rack
-            and pays the winner the shots produce.
+            Cash games use the same wallet balance. Draws commit a seed, pool follows the shots, and
+            PvPStrike follows the round scores. FPS Practice is free and pays no prize.
           </p>
         }
       >
@@ -332,9 +332,24 @@ function AboutPage() {
             Six-max No-Limit Texas Hold'em cash tables from $0.02/$0.05 to $5/$10. Every player
             dealt in helps shuffle the deck, and the 5% fee applies only to hands that see a flop.
           </GameCard>
-          <GameCard icon={<Circle className="h-5 w-5" />} name="8-ball" to="/8-ball-pool" cta="Play 8-ball">
+          <GameCard
+            icon={<Circle className="h-5 w-5" />}
+            name="8-ball"
+            to="/8-ball-pool"
+            cta="Play 8-ball"
+          >
             A 1v1 match from $1 to $50. The winner is whoever the rules name after the shots. The
             rack seed only places the balls. The fee is 5% of the pot when someone wins.
+          </GameCard>
+          <GameCard
+            icon={<Swords className="h-5 w-5" />}
+            name="PvPStrike FPS"
+            to="/fps-duel"
+            cta="Open PvPStrike"
+          >
+            A desktop browser shooter on Dustfront. Play best-of-five or best-of-nine cash duels
+            against another person, or free first-to-seven Practice against a bot. Cash wins pay the
+            combined pot after a 5% fee.
           </GameCard>
         </SeoGrid>
       </SeoSection>
@@ -347,8 +362,9 @@ function AboutPage() {
           <>
             <p>
               Fairness on PVPspinArena is something you can check, not something you have to take on
-              trust. Before a round opens, the server creates a random secret seed and publishes its
-              SHA-256 hash. That hash is a commitment: it fixes the seed without revealing it.
+              trust. Before a random-draw round opens, the server creates a secret seed and
+              publishes its SHA-256 hash. That hash is a commitment: it fixes the seed without
+              revealing it.
             </p>
             <p>
               When a draw resolves, the result is computed from the seed with HMAC-SHA256. For
@@ -357,16 +373,25 @@ function AboutPage() {
               commitment, and recompute the winner. 8-ball uses the same commitment for the rack
               only. The winner is a replay of the shots, timeouts and forfeits.
             </p>
+            <p>
+              PvPStrike is different: an authoritative match server validates actions and determines
+              the winner. Its results cannot be verified by entering a seed in the draw calculator.
+              See the{" "}
+              <Link to="/fps-1v1" className="text-primary hover:underline">
+                FPS rules and public results
+              </Link>
+              .
+            </p>
           </>
         }
       >
         <SeoFlow
           steps={[
-            { label: "Commit", text: "A seed hash is published before entries open." },
+            { label: "Commit", text: "Random games publish a seed hash before entries open." },
             { label: "Play", text: "Players join; the server validates every entry." },
-            { label: "Outcome", text: "The result is computed from the committed seed." },
+            { label: "Outcome", text: "Draws use the seed; competitive games follow gameplay." },
             { label: "Settle", text: "The pot is paid in one balanced ledger transaction." },
-            { label: "Verify", text: "The seed is revealed so anyone can recompute." },
+            { label: "Review", text: "Check the game's available verification or match record." },
           ]}
         />
         <div className="mt-6">
@@ -467,11 +492,11 @@ function AboutPage() {
           </SeoCard>
         </SeoGrid>
         <p className="mt-6 max-w-3xl leading-relaxed text-muted-foreground">
-          None of this changes the basic nature of the games: they are games of chance, and any
-          wager can be lost. What it does mean is that the rules are fixed before you join, the
-          numbers add up afterwards, and the outcome can be checked by you rather than taken on
-          trust. That combination — player competition, fast rounds and verifiable results — is what
-          PVPspinArena is built to deliver.
+          Random games depend on chance; pool and PvPStrike also depend on gameplay. Any cash entry
+          can be lost, and skill does not guarantee a profit. The rules are shown before you join,
+          the figures are recorded afterwards, and the available verification depends on the game.
+          Player competition, clear rules and accountable settlement are what PVPspinArena is built
+          to deliver.
         </p>
       </SeoSection>
 

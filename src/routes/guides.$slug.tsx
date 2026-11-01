@@ -470,9 +470,9 @@ function GuideArticle({
         <SeoCta
           {...(g.cta ?? {
             title: "See it on a live round",
-            text: "Watch Jackpot, Coinflip, Roulette, and P2P Slott rounds as they happen, and check any result on the Fairness page.",
+            text: "Explore PvPStrike, 8-ball pool, poker and casino-style games. Read how each game decides its result and which verification is available.",
             primary: { to: "/", label: "Jackpot" },
-            secondary: { to: "/fairness", label: "Fairness" },
+            secondary: { to: "/how-it-works", label: "How the games work" },
           })}
         />
       </div>
