@@ -376,7 +376,7 @@
   transition: opacity 0.12s;
 }
 .duel-crosshair i {
-  background: #ecf8f3;
+  background: var(--crosshair-color, #ecf8f3);
   box-shadow: 0 0 2px #080b0f;
 }
 .duel-crosshair i:nth-child(1) {
@@ -405,6 +405,74 @@
 }
 .duel-crosshair.is-reloading {
   opacity: 0.35;
+}
+.duel-crosshair b {
+  display: none;
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  left: 7px;
+  top: 7px;
+  border-radius: 50%;
+  background: var(--crosshair-color, white);
+  box-shadow: 0 0 2px black;
+}
+.crosshair-1 i,
+.crosshair-2 i {
+  display: none;
+}
+.crosshair-1 b,
+.crosshair-3 b {
+  display: block;
+}
+.crosshair-2 {
+  border: 2px solid var(--crosshair-color, white);
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+.crosshair-3,
+.crosshair-4 {
+  --duel-spread: 0px !important;
+}
+.strike-settings {
+  color: #f1edf9;
+  background: #14101f;
+  max-height: 90dvh;
+  overflow-y: auto;
+}
+.strike-settings label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.strike-settings input[type="range"] {
+  width: 100%;
+  accent-color: #bc75ff;
+}
+.strike-crosshair-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.strike-crosshair-options button {
+  position: relative;
+  width: 82px;
+  min-height: 80px;
+  padding: 46px 5px 8px;
+  border: 1px solid #63536f;
+  border-radius: 8px;
+  font-size: 11px;
+}
+.strike-crosshair-options button[aria-pressed="true"] {
+  border-color: #ca8cff;
+  background: #38224c;
+}
+.crosshair-preview {
+  top: 24px;
+  --duel-spread: 0px;
 }
 .duel-death-feedback {
   position: absolute;
