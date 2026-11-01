@@ -9,16 +9,21 @@ test("confirmed head hit stains the nearby wall while the opponent moves away", 
   await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
   await page.evaluate(() => {
     const f = Reflect.get(window, "fpsPolishTest");
-    Object.assign(f.state.players.A, { x: 9, z: -10, y: 0, yaw: 0, pitch: 0 });
-    Object.assign(f.state.players.B, { x: 9, z: -14.5, y: 0, yaw: Math.PI, pitch: 0 });
+    // Aim Arena: B stands 1 m in front of the north-west wall, A 4.5 m away in the open.
+    Object.assign(f.state.players.A, { x: -17, z: -9, y: 0, yaw: 0, pitch: 0 });
+    Object.assign(f.state.players.B, { x: -17, z: -13.5, y: 0, yaw: Math.PI, pitch: 0 });
+    // The fixture's 60 s round can expire during a slow (software-rendered) start.
+    f.state.phaseEndsAt = Date.now() + 600_000;
     f.state.round++;
     f.resetView();
   });
   await expect
-    .poll(() =>
-      page.evaluate(() => Reflect.get(window, "fpsPolishTest").controls.diagnostics().camera[0]),
+    .poll(
+      () =>
+        page.evaluate(() => Reflect.get(window, "fpsPolishTest").controls.diagnostics().camera[0]),
+      { timeout: 120_000 }, // software-rendered CI frames can take several seconds each
     )
-    .toBe(9);
+    .toBe(-17);
   await expect
     .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").inputs.at(-1)?.yaw))
     .toBe(0);
@@ -26,6 +31,7 @@ test("confirmed head hit stains the nearby wall while the opponent moves away", 
   await expect
     .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.B.hp), {
       intervals: [10],
+      timeout: 120_000,
     })
     .toBe(50);
   await page.mouse.up();

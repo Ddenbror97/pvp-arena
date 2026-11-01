@@ -45,32 +45,6 @@ Note: the uploader states the mesh is not their own work ("all credits goes to t
 made counter strike"); the listed license may therefore not be valid. Review before public
 release.
 
-## Script-built operator characters (police-operator.glb, terrorist-insurgent.glb)
-
-Original work built in Blender for this project from scripts in art/blender/chars (body,
-clothing, gear, textures and skeleton). They use the anatomical head below for the face.
-
-## Tactical clothing/body (tactical-body.glb, legacy, kept for rollback)
-
-**Military tactical suit (LowPolyGameReady)**, DanlyVostok (1799danly):
-https://sketchfab.com/3d-models/military-tactical-suit-lowpolygameready-ef698ce36b1545a78ce592dd3db4c7ed
-
-CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
-
-Web-ready derivative provided by cktang88 / 3d-fps, above. Modified here with
-reference-specific uniforms, replacement head, accessories and skeletal posing.
-
-## Anatomical head (reference-head.glb)
-
-Derived from **Police officer, standing — 3D Person, Emergency services**, Innerscene,
-adapted from MakeHuman CC0 assets:
-https://www.innerscene.com/tools/library/3d-parts/police-officer-standing-3d-person-emergency-services-9fd93114
-
-CC0: https://creativecommons.org/publicdomain/zero/1.0/
-
-Head/neck, eyes, eyebrows, eyelashes, teeth and hair extracted; unused body and
-equipment removed. Rescaled and fitted to the game's existing combat envelope.
-
 ## Project-owned visuals
 
 PVP spinArena branding and reference artwork were supplied by the project/user.

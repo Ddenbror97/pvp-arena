@@ -25,7 +25,6 @@ export type Solid = {
 /**
  * PVPSPINARENA 1v1 aim arena (40 × 32 m). Generated gameplay solids live in arena-layout.ts
  * (source: art/blender/map/layout.py); the Blender-built render meshes dress exactly these boxes.
- * The previous Foundry map is at commit 497bcd5 (docs/fps-map/README.md, Rollback).
  */
 export const BOXES: readonly Solid[] = LAYOUT_BOXES;
 /** Perimeter: bullets only; movement is bounded by the arena rectangle. */
