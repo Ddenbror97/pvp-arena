@@ -21,7 +21,7 @@ describe("Dustfront through the map registry", () => {
   const map = getMap("dustfront");
 
   it("is the default and the only shipped map", () => {
-    expect(MAP_IDS).toEqual(["dustfront"]);
+    expect(MAP_IDS).toEqual(["dustfront", "frostline"]);
     // With Dustfront alone in the rotation, every new match is still Dustfront.
     expect(ROTATION_MAP_IDS).toEqual(["dustfront"]);
     expect(DEFAULT_MAP).toBe(map);
