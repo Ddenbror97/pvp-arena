@@ -1,10 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { CircleHelp, Crown, MessageSquare, Settings, Volume2, VolumeX } from "lucide-react";
-import room from "@/assets/pool/room.webp";
-import { arenaLogo } from "@/assets/media";
+import { CircleHelp, Settings, Volume2, VolumeX } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -27,7 +25,7 @@ import {
 import { rollStandIn, warmStandIn } from "@/lib/pool/stand-in-roll";
 import { MAX_PULL_POWER } from "@/lib/pool/aim-gesture";
 import { recordAcceptedShot, recordShot } from "@/lib/pool/play";
-import { PHYSICS_V5, cushionLimit, simulate, type Ball, type ShotInput } from "@/lib/pool/physics";
+import { simulate, type Ball, type ShotInput } from "@/lib/pool/physics";
 import {
   applyPlayedShot,
   calledPocketChoice,
@@ -72,8 +70,8 @@ import {
 } from "@/lib/pool/copy";
 import { dismissPoolTutorial, poolTutorialDismissed } from "@/lib/pool/prefs";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
-import { GameChat } from "@/components/chat/GameChat";
-import { SHARED_CHAT_ROOM } from "@/lib/chat/config";
+import { PoolShell as Shell, SeatCard, SpinPad } from "./PoolMatchView";
+import { ballRack, ballsAhead, impactOf } from "@/lib/pool/presentation";
 import { PoolTable } from "./PoolTable";
 
 function shotKey(input: ShotInput): string {
@@ -1512,263 +1510,5 @@ export function PoolMatch({ matchId }: { matchId: number }) {
         </div>
       ) : null}
     </Shell>
-  );
-}
-
-function Shell({ children }: { children: ReactNode }) {
-  const [chatOpen, setChatOpen] = useState(false);
-  return (
-    <div className="pool-screen" data-chat={chatOpen ? "open" : "closed"}>
-      <div className="pool-room" style={{ backgroundImage: `url(${room})` }} aria-hidden>
-        <img className="pool-room-logo" src={arenaLogo} alt="" />
-      </div>
-      {children}
-      <GameChat gameType={SHARED_CHAT_ROOM} className="pool-chat" />
-      <button
-        type="button"
-        className="pool-chat-toggle"
-        aria-expanded={chatOpen}
-        onClick={() => setChatOpen((open) => !open)}
-      >
-        <MessageSquare className="h-4 w-4" aria-hidden />
-        {chatOpen ? "Close chat" : "Live chat"}
-      </button>
-    </div>
-  );
-}
-
-function ShotClock({ deadline, serverNow }: { deadline: string; serverNow: string | undefined }) {
-  const [left, setLeft] = useState(30_000);
-  useEffect(() => {
-    if (!serverNow) return;
-    const skew = Date.now() - Date.parse(serverNow);
-    const tick = () => setLeft(Date.parse(deadline) - (Date.now() - skew));
-    tick();
-    const id = window.setInterval(tick, 250);
-    return () => window.clearInterval(id);
-  }, [deadline, serverNow]);
-  const clock = Math.max(0, Math.ceil(left / 1000));
-  return <em aria-label={`Shot clock ${clock} seconds`}>{clock}s</em>;
-}
-
-const PIP = ["#f4d35e", "#3a86ff", "#e63946", "#9b5de5", "#f77f00", "#2a9d8f", "#9b2226"];
-
-function pipColor(id: number): string {
-  const n = id > 8 ? id - 9 : id - 1;
-  return PIP[n] ?? "#cccccc";
-}
-
-type RackBall = { id: number; down: boolean; stripe: boolean };
-
-function ballRack(
-  balls: readonly { id: number; pocketed: boolean }[],
-  group: "solids" | "stripes" | null,
-): RackBall[] {
-  if (!group) return [];
-  const ids = group === "solids" ? [1, 2, 3, 4, 5, 6, 7] : [9, 10, 11, 12, 13, 14, 15];
-  return ids.map((id) => ({
-    id,
-    down: balls.some((ball) => ball.id === id && ball.pocketed),
-    stripe: id > 8,
-  }));
-}
-
-function ballsAhead(
-  balls: readonly { id: number; pocketed: boolean }[],
-  group: "solids" | "stripes" | null,
-  other: "solids" | "stripes" | null,
-): boolean {
-  if (!group || !other) return false;
-  const down = (side: "solids" | "stripes") =>
-    ballRack(balls, side).filter((ball) => ball.down).length;
-  return down(group) > down(other);
-}
-
-function SeatCard({
-  name,
-  avatar,
-  stake,
-  rack,
-  group,
-  ahead,
-  present,
-  away = false,
-  active,
-  hand = false,
-  deadline,
-  serverNow,
-  align = "start",
-}: {
-  name: string;
-  avatar?: string | null | undefined;
-  stake: number;
-  rack: RackBall[];
-  group: "solids" | "stripes" | null;
-  ahead: boolean;
-  present: boolean;
-  away?: boolean;
-  active: boolean;
-  hand?: boolean;
-  deadline: string | null;
-  serverNow: string | undefined;
-  align?: "start" | "end";
-}) {
-  const initial = name.slice(0, 1).toUpperCase();
-  const down = rack.filter((ball) => ball.down).length;
-  const groupLabel = group === "solids" ? "solids" : group === "stripes" ? "stripes" : null;
-  const slots =
-    rack.length > 0
-      ? rack
-      : Array.from({ length: 7 }, (_, index) => ({ id: -(index + 1), down: false, stripe: false }));
-  const rackLabel = groupLabel
-    ? `${down} of 7 ${groupLabel} down`
-    : present
-      ? "Groups not chosen yet"
-      : "Waiting for an opponent";
-  return (
-    <div className={`pool-seat${align === "end" ? " is-end" : ""}`}>
-      {align === "end" ? null : (
-        <Face avatar={avatar} initial={initial} active={active} present={present} />
-      )}
-      <span className="pool-seat-copy">
-        <strong>
-          {ahead ? <Crown className="pool-crown" aria-hidden /> : null}
-          {name}
-          {away ? " · table" : null}
-          {active ? <span className="sr-only">, your turn</span> : null}
-          {deadline ? <ShotClock deadline={deadline} serverNow={serverNow} /> : null}
-        </strong>
-        <small>{formatCents(stake)}</small>
-        <span className="pool-down">
-          {hand ? "Ball in hand" : groupLabel ? `${down} down` : present ? "Open" : "Waiting"}
-        </span>
-        <span className="pool-pips" role="img" aria-label={rackLabel}>
-          {slots.map((ball) => (
-            <i
-              key={ball.id}
-              className={
-                ball.id < 1
-                  ? "is-up"
-                  : `${ball.down ? "is-down" : "is-up"} ${ball.stripe ? "is-stripe" : "is-solid"}`
-              }
-              style={ball.id > 0 ? { ["--pip" as string]: pipColor(ball.id) } : undefined}
-            >
-              {ball.id > 0 ? (
-                <span className={ball.id > 9 ? "is-wide" : undefined}>{ball.id}</span>
-              ) : null}
-            </i>
-          ))}
-        </span>
-      </span>
-      {align === "end" ? (
-        <Face avatar={avatar} initial={initial} active={active} present={present} />
-      ) : null}
-    </div>
-  );
-}
-
-function impactOf(prev: readonly Ball[], next: readonly Ball[], physics: string | null) {
-  let pocket = false;
-  let ball = 0;
-  let rail = 0;
-  for (const nb of next) {
-    const ob = prev.find((item) => item.id === nb.id);
-    if (!ob) continue;
-    if (!ob.pocketed && nb.pocketed) pocket = true;
-    const before = Math.hypot(ob.vx, ob.vy);
-    const after = Math.hypot(nb.vx, nb.vy);
-    const drop = before - after;
-    if (drop < 700 || before < 1200) continue;
-    const wall = cushionLimit(physics ?? PHYSICS_V5);
-    const nearRail =
-      nb.x < wall.minX + 14_000 ||
-      nb.y < wall.minY + 14_000 ||
-      nb.x > wall.maxX - 14_000 ||
-      nb.y > wall.maxY - 14_000;
-    if (nearRail) rail = Math.max(rail, drop);
-    else ball = Math.max(ball, drop);
-  }
-  return { pocket, ball, rail };
-}
-
-function clampSpin(value: number): number {
-  return Math.max(-1000, Math.min(1000, value));
-}
-
-function SpinPad({
-  spinX,
-  spinY,
-  disabled,
-  onChange,
-}: {
-  spinX: number;
-  spinY: number;
-  disabled: boolean;
-  onChange: (spinX: number, spinY: number) => void;
-}) {
-  const pad = useRef<HTMLDivElement>(null);
-  const setFrom = (clientX: number, clientY: number) => {
-    const el = pad.current;
-    if (!el || disabled) return;
-    const rect = el.getBoundingClientRect();
-    const max = rect.width * 0.36;
-    let dx = clientX - (rect.left + rect.width / 2);
-    let dy = clientY - (rect.top + rect.height / 2);
-    const dist = Math.hypot(dx, dy);
-    if (dist > max && dist > 0) {
-      dx = (dx / dist) * max;
-      dy = (dy / dist) * max;
-    }
-    onChange(clampSpin(Math.round((dx / max) * 1000)), clampSpin(Math.round((-dy / max) * 1000)));
-  };
-  return (
-    <div
-      ref={pad}
-      className="pool-spin"
-      role="group"
-      aria-label="Spin. Drag the red dot. Up is follow, down is draw, sideways is side spin."
-      tabIndex={disabled ? -1 : 0}
-      onPointerDown={(event) => {
-        event.currentTarget.setPointerCapture(event.pointerId);
-        setFrom(event.clientX, event.clientY);
-      }}
-      onPointerMove={(event) => {
-        if (event.currentTarget.hasPointerCapture(event.pointerId))
-          setFrom(event.clientX, event.clientY);
-      }}
-      onDoubleClick={() => onChange(0, 0)}
-      onKeyDown={(event) => {
-        const step = event.shiftKey ? 40 : 120;
-        if (event.key === "ArrowLeft") onChange(clampSpin(spinX - step), spinY);
-        else if (event.key === "ArrowRight") onChange(clampSpin(spinX + step), spinY);
-        else if (event.key === "ArrowUp") onChange(spinX, clampSpin(spinY + step));
-        else if (event.key === "ArrowDown") onChange(spinX, clampSpin(spinY - step));
-        else if (event.key === "Home") onChange(0, 0);
-        else return;
-        event.preventDefault();
-        event.stopPropagation();
-      }}
-    >
-      <i style={{ left: `${50 + (spinX / 1000) * 36}%`, top: `${50 - (spinY / 1000) * 36}%` }} />
-    </div>
-  );
-}
-
-function Face({
-  avatar,
-  initial,
-  active,
-  present,
-}: {
-  avatar?: string | null | undefined;
-  initial: string;
-  active: boolean;
-  present: boolean;
-}) {
-  return (
-    <span className={active ? "pool-face is-on" : "pool-face"}>
-      {avatar ? <img src={avatar} alt="" /> : <span>{initial}</span>}
-      {present ? <i className="pool-presence" aria-hidden /> : null}
-    </span>
   );
 }

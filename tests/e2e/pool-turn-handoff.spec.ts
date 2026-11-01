@@ -66,6 +66,14 @@ test("confirmed opponent shots finish and hand control back on both laptops", as
   async function drag(p: Page) {
     await p.bringToFront();
     const state = (await read()).state;
+    // The database may open the rack before this browser receives its next state poll.
+    // Wait for the rendered active seat before attempting a real pointer gesture.
+    await expect(
+      p
+        .locator(".pool-vs .pool-seat")
+        .nth(state.turn === "A" ? 0 : 1)
+        .locator(".pool-face"),
+    ).toHaveClass(/is-on/);
     const existingCue = state.balls.find((b) => b.id === 0 && !b.pocketed);
     const cue = state.ballInHand
       ? existingCue && legalPlacement(state, existingCue.x, existingCue.y)

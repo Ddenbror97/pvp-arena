@@ -30,7 +30,11 @@ test("guest can practise, watch the bot, resume and restart without a cash match
   await expect(page.locator("canvas.pool-canvas")).toBeVisible();
   await expect(page.getByText("Free · no stake · no payout")).toBeVisible();
   // Real keyboard controls send a legal break, not a component-state injection.
-  await page.locator("h1").click();
+  await expect(page.locator(".pool-chat")).toBeVisible();
+  await expect(page.locator(".pool-vs .pool-face")).toHaveCount(2);
+  await expect(page.locator(".pool-vs .pool-pips")).toHaveCount(2);
+  await expect(page.locator('[aria-label^="Shot clock"]')).toBeVisible();
+  await page.locator(".pool-practice-label").click();
   for (let n = 0; n < 19; n++) await page.keyboard.press("ArrowUp");
   await page.keyboard.press("Enter");
   await expect(page.locator(".pool-practice")).toHaveAttribute("data-phase", "rolling");
@@ -58,7 +62,9 @@ test("guest can practise, watch the bot, resume and restart without a cash match
     )
     .toBeGreaterThanOrEqual(2);
   await page.reload();
-  await expect.poll(() => page.locator(".pool-practice").getAttribute("data-shot")).not.toBe("0");
+  await expect
+    .poll(async () => Number(await page.locator(".pool-practice").getAttribute("data-shot")))
+    .toBeGreaterThanOrEqual(2);
   await page.getByRole("button", { name: "Start new rack" }).click();
   await expect(page.locator(".pool-practice")).toHaveAttribute("data-shot", "0");
   await expect(page.locator(".pool-practice")).toHaveAttribute("data-turn", "A");
@@ -88,6 +94,10 @@ test("restart cancels bot work and mobile table fits without overflow", async ({
   await page.waitForTimeout(2500);
   await expect(page.locator(".pool-practice")).toHaveAttribute("data-shot", "0");
   await expect(page.locator(".pool-practice")).toHaveAttribute("data-turn", "A");
+  await page.getByRole("button", { name: "Live chat", exact: true }).click();
+  await expect(page.locator(".pool-chat")).toBeVisible();
+  await page.getByRole("button", { name: "Close chat", exact: true }).click();
+  await expect(page.locator(".pool-chat")).not.toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(
     true,
   );
@@ -120,7 +130,7 @@ test("a legally called 8 ends Practice with a replayable, non-cash result", asyn
     state,
   );
   await page.goto("/pool/practice");
-  await expect(page.locator(".practice-status")).toContainText("Call a pocket");
+  await expect(page.locator(".practice-status")).toContainText("lit pocket");
   const canvas = page.locator("canvas.pool-canvas"),
     box = (await canvas.boundingBox())!;
   const size = await canvas.evaluate((node) => ({ w: node.clientWidth, h: node.clientHeight }));

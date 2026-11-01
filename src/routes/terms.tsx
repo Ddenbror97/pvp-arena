@@ -138,8 +138,8 @@ function TermsPage() {
       <h3>8-ball</h3>
       <p>
         <Link to="/pool/practice">Free pool Practice</Link> runs in your browser against a dedicated
-        bot using the same table physics and shot rules, without a shot clock. It requires no
-        deposit and has no stake, fee or payout. Practice results do not settle a cash game. The
+        bot using the same table physics, shot rules and presence-aware 30-second clock. It requires
+        no deposit and has no stake, fee or payout. Practice results do not settle a cash game. The
         cash-match terms below apply when you choose a staked table instead.
       </p>
       <p>
