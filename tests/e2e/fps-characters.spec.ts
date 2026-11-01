@@ -57,12 +57,13 @@ test("shooting the rendered opponent registers body hits and headshots", async (
     await page.evaluate((headshot) => {
       const f = Reflect.get(window, "fpsPolishTest");
       Object.assign(f.state.players.A, {
-        x: 9,
-        z: 3,
+        // Aim Arena: an open 6 m sight line on the west side.
+        x: -16,
+        z: 0,
         yaw: 0,
         pitch: headshot ? 0 : Math.atan2(1 - 1.6, 6),
       });
-      Object.assign(f.state.players.B, { x: 9, z: -3, yaw: Math.PI, pitch: 0 });
+      Object.assign(f.state.players.B, { x: -16, z: -6, yaw: Math.PI, pitch: 0 });
       f.state.round++;
       f.resetView();
     }, headshot);

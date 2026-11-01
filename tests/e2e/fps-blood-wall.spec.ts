@@ -9,8 +9,9 @@ test("confirmed head hit stains the nearby wall while the opponent moves away", 
   await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
   await page.evaluate(() => {
     const f = Reflect.get(window, "fpsPolishTest");
-    Object.assign(f.state.players.A, { x: 9, z: -10, y: 0, yaw: 0, pitch: 0 });
-    Object.assign(f.state.players.B, { x: 9, z: -14.5, y: 0, yaw: Math.PI, pitch: 0 });
+    // Aim Arena: B stands 1 m in front of the north-west wall, A 4.5 m away in the open.
+    Object.assign(f.state.players.A, { x: -17, z: -9, y: 0, yaw: 0, pitch: 0 });
+    Object.assign(f.state.players.B, { x: -17, z: -13.5, y: 0, yaw: Math.PI, pitch: 0 });
     f.state.round++;
     f.resetView();
   });
@@ -18,7 +19,7 @@ test("confirmed head hit stains the nearby wall while the opponent moves away", 
     .poll(() =>
       page.evaluate(() => Reflect.get(window, "fpsPolishTest").controls.diagnostics().camera[0]),
     )
-    .toBe(9);
+    .toBe(-17);
   await expect
     .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").inputs.at(-1)?.yaw))
     .toBe(0);

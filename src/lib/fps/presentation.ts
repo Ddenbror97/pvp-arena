@@ -129,16 +129,32 @@ export class CameraCorrection {
 }
 
 type Pose = Pick<Player, "x" | "y" | "z" | "yaw" | "pitch"> & { at: number; crouch?: number };
-/** Visible opponent playback, with a bounded horizontal bridge for late packets. */
+type TimedPose = Pose & {
+  /** Physics time of the first redacted snapshot after this pose (Infinity: none). */
+  hiddenFrom: number;
+  /** A redacted interval separates this pose from the previous one. */
+  afterGap: boolean;
+};
+/** Visible opponent playback, with a bounded horizontal bridge for late packets.
+ * Server visibility redaction is part of the same timeline: a hidden snapshot hides the
+ * opponent when playback reaches that snapshot's physics time, not when it arrives.
+ * Applying it on arrival removed the opponent about one interpolation delay plus network
+ * latency early, in the open, before the rendered pose had reached cover. */
 export class RemotePresentation {
-  private readonly poses: Pose[] = Array.from({ length: 8 }, () => ({
+  private readonly poses: TimedPose[] = Array.from({ length: 8 }, () => ({
     x: 0,
     y: 0,
     z: 0,
     yaw: 0,
     pitch: 0,
     at: 0,
+    hiddenFrom: Infinity,
+    afterGap: false,
   }));
+  /** Longest late-packet extrapolation; beyond it the opponent holds its newest pose. */
+  bridgeMs = 50;
+  private latestAt = -Infinity;
+  private hiddenWithoutPose = false;
   private start = 0;
   private count = 0;
   private playbackAt: number | null = null;
@@ -152,16 +168,36 @@ export class RemotePresentation {
   private readonly scratch: Pose = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
   clear() {
     this.start = this.count = 0;
+    this.latestAt = -Infinity;
+    this.hiddenWithoutPose = false;
     this.playbackAt = null;
     this.projected = this.projectionAllowed = false;
     this.correctionX = this.correctionZ = 0;
   }
-  push(player: Player, at: number) {
-    const last = this.count ? this.poses[(this.start + this.count - 1) % 8] : undefined;
-    if (last && at <= last.at) return;
-    if (last && Math.hypot(player.x - last.x, player.y - last.y, player.z - last.z) > 3)
+  push(player: Player, at: number, visible = true) {
+    // Frames apply in physics-time order only; a stale frame never rewinds playback.
+    if (!Number.isFinite(at) || at <= this.latestAt) return;
+    this.latestAt = at;
+    let last = this.count ? this.poses[(this.start + this.count - 1) % 8] : undefined;
+    if (!visible) {
+      // Redacted frames carry no pose. Mark when the opponent left view on the timeline.
+      if (last && last.hiddenFrom === Infinity) last.hiddenFrom = at;
+      if (!last) this.hiddenWithoutPose = true;
+      this.projectionAllowed = false;
+      this.projected = false;
+      this.correctionX = this.correctionZ = 0;
+      return;
+    }
+    const afterGap = (!!last && last.hiddenFrom !== Infinity) || this.hiddenWithoutPose;
+    this.hiddenWithoutPose = false;
+    if (last && Math.hypot(player.x - last.x, player.y - last.y, player.z - last.z) > 3) {
       this.clear();
+      this.latestAt = at;
+      last = undefined;
+    }
     const pose = this.poses[(this.start + this.count) % 8]!;
+    pose.hiddenFrom = Infinity;
+    pose.afterGap = afterGap;
     pose.x = player.x;
     pose.y = player.y;
     pose.z = player.z;
@@ -175,12 +211,16 @@ export class RemotePresentation {
     this.crouched = !!player.crouched;
     if (this.projected && this.playbackAt !== null) {
       // Repay a late packet's correction over frames instead of snapping the
-      // small projected distance back in a single frame.
+      // projected or held distance in a single frame. Beyond 1.5 m (a long outage) the
+      // pose is too stale to glide from; snap to the authoritative timeline instead.
       this.sample(this.playbackAt, this.scratch);
       this.correctionX = this.renderedX - this.scratch.x;
       this.correctionZ = this.renderedZ - this.scratch.z;
+      if (Math.hypot(this.correctionX, this.correctionZ) > 1.5)
+        this.correctionX = this.correctionZ = 0;
     }
-    this.projected = false;
+    // Keep the flag until the next draw: a post-stall burst delivers several packets in
+    // one frame, and each must recompute the correction against the last drawn pose.
     if (!this.projectionAllowed) this.correctionX = this.correctionZ = 0;
   }
   sample(at: number, out: Pose, elapsedMs?: number) {
@@ -205,6 +245,16 @@ export class RemotePresentation {
       if (pose.at >= at) break;
       a = pose;
     }
+    // Redacted on the timeline: before the first pose after a hidden interval, or after
+    // the newest visible pose once playback passes its redaction time.
+    if (at >= b.at) a = b; // exactly on a pose: draw that pose
+    const gap = a !== b && b.afterGap;
+    if ((a === b && at < a.at && a.afterGap) || ((gap || at > a.at) && at >= a.hiddenFrom)) {
+      this.projected = false;
+      return false;
+    }
+    // Never interpolate across a hidden interval (the path behind cover is unknown).
+    if (gap) b = a;
     const t = a.at === b.at ? 0 : Math.max(0, Math.min(1, (at - a.at) / (b.at - a.at)));
     out.x = a.x + (b.x - a.x) * t;
     out.y = a.y + (b.y - a.y) * t;
@@ -217,9 +267,15 @@ export class RemotePresentation {
       const newest = this.poses[(this.start + this.count - 1) % 8]!;
       const previous = this.poses[(this.start + this.count - 2 + 8) % 8]!;
       this.projected = false;
-      if (this.projectionAllowed && this.count > 1 && at > newest.at) {
+      if (
+        this.projectionAllowed &&
+        this.count > 1 &&
+        at > newest.at &&
+        newest.hiddenFrom === Infinity &&
+        !newest.afterGap
+      ) {
         const span = newest.at - previous.at;
-        const ahead = Math.min(50, at - newest.at);
+        const ahead = Math.min(this.bridgeMs, at - newest.at);
         const dx = newest.x - previous.x,
           dz = newest.z - previous.z;
         // Never bridge a teleport, airborne motion, or a stale history window.
@@ -233,6 +289,9 @@ export class RemotePresentation {
           }
         }
       }
+      // Holding the newest pose (beyond the bridge, or no bridge allowed) also needs the
+      // catch-up to be repaid smoothly when delayed packets arrive after a stall.
+      if (at > newest.at && newest.hiddenFrom === Infinity) this.projected = true;
       const decay = Math.exp(-Math.max(0, elapsedMs) / 65);
       this.correctionX *= decay;
       this.correctionZ *= decay;

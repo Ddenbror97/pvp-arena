@@ -12,7 +12,11 @@ export class ShotHistory {
     if (state.phase !== "live") return;
     const pose = (p: Player): CombatPose => ({ x: p.x, y: p.y, z: p.z, crouched: !!p.crouched });
     this.frames.push({ at, players: { A: pose(state.players.A), B: pose(state.players.B) } });
-    while (this.frames.length > 16 || (this.frames[0] && this.frames[0].at < at - 250))
+    // Keep one physics step beyond the rewind cap so a maximal lookback still interpolates.
+    while (
+      this.frames.length > 16 ||
+      (this.frames[0] && this.frames[0].at < at - MAX_REWIND_MS - 2 * 34)
+    )
       this.frames.shift();
   }
   target(seat: Seat, now: number, lookbackMs: number): CombatPose | undefined {
