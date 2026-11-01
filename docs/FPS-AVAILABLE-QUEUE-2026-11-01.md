@@ -65,8 +65,29 @@ refunds. The deployment must drain active matches before replacing the runtime.
 - Staging and production-schema migration rehearsals roll back cleanly with
   financial invariant checks. CLI dry runs preserve recorded remote history and
   select only the two new availability/compatibility migrations.
-- The connected advisory endpoint denied access; direct SQL permission/RLS
-  checks and the schema/financial rehearsals provide the available verification.
+- Staging advisory access was denied. Production security/performance advisors
+  were available and reviewed after deployment. The new tables intentionally
+  use private, default-deny RLS ([linter explanation](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy)).
+  The authenticated security-definer status RPC is intentional and constrained
+  to `_fps_user()` and that caller's seats ([linter explanation](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable)).
+  Direct SQL confirms anonymous execution, user start execution and browser
+  table SELECT are denied. No performance advisor finding targets the new objects.
 - Final unit suite: 803 tests passed across 97 files. The browser BO5 completed
   all three winning rounds, reconnected the rival, and reconciled the cash ledger;
   the separate Practice/menu handoff test passed without browser exceptions.
+
+## Production release
+
+[PR #33](https://github.com/Ddenbror97/pvp-arena/pull/33) merged as
+`eecce9fd060afecea1f91a0842a464213b1e4b38`; GitHub's DB rollout integration job passed.
+Both migrations were applied with the CLI while FPS entries were paused and no
+cash or Practice matches were active. Entry/cash/Practice settings were restored
+and financial invariants passed.
+
+- App version: `9c0657b7-4a10-4ce5-b0b4-aa7babfc6d2e`.
+- Runtime version: `6ed2c498-ebb9-446d-bc59-8eb376074d29`.
+- The live queue JavaScript matches the tested production build by SHA-256.
+- An authenticated production owner-status call passed.
+- Live zero-funded Practice completed seven winning rounds, reconnected and
+  started again without money or rating effects. Temporary QA accounts were
+  disabled afterward; their balances and ledger transaction counts remain zero.
