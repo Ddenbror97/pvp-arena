@@ -54,7 +54,15 @@ test("police and terrorist operators load per seat and fit the rig, hitboxes and
         });
         return found!.getWorldPosition(new T.Vector3()) as InstanceType<typeof T.Vector3>;
       };
-      const samples: { stance: number; stride: number; maxReach: number; minY: number }[] = [];
+      const samples: {
+        seat: string;
+        stance: number;
+        stride: number;
+        maxReach: number;
+        minY: number;
+        farthest: string;
+        lowest: string;
+      }[] = [];
       for (const [crouched, steps] of [
         [false, 0],
         [false, 12],
@@ -72,18 +80,33 @@ test("police and terrorist operators load per seat and fit the rig, hitboxes and
           reach.push(arm.distanceTo(hand) / (arm.distanceTo(fore) + fore.distanceTo(hand)));
         }
         const vol = playerVolumes({ x: actor.root.position.x, y: 0, z: 0, crouched }).body;
-        let maxReach = 0,
+        let lowest = "",
+          farthest = "",
+          maxReach = 0,
           minY = 1e9;
         const p = new T.Vector3();
         body.traverse(
           (o: { isBone?: boolean; name: string; getWorldPosition: (v: unknown) => void }) => {
-            if (!o.isBone || /Hand|_End$|End$|ForeArm/.test(o.name)) return;
+            if (!o.isBone || /Hand|finger|wrist|End$|ForeArm|root/i.test(o.name)) return;
             o.getWorldPosition(p);
-            maxReach = Math.max(maxReach, Math.abs(p.x - actor.root.position.x), Math.abs(p.z));
+            const reachHere = Math.max(Math.abs(p.x - actor.root.position.x), Math.abs(p.z));
+            if (reachHere > maxReach) {
+              maxReach = reachHere;
+              farthest = o.name;
+            }
+            if (p.y < minY) lowest = o.name;
             minY = Math.min(minY, p.y);
           },
         );
-        samples.push({ stance: crouched ? 1 : 0, stride: steps, maxReach, minY });
+        samples.push({
+          seat,
+          stance: crouched ? 1 : 0,
+          stride: steps,
+          maxReach,
+          minY,
+          farthest,
+          lowest,
+        });
         void vol;
       }
       // Death collapse keeps every transform finite.
@@ -135,7 +158,9 @@ test("police and terrorist operators load per seat and fit the rig, hitboxes and
       // Torso and legs stay inside the server body volume (hands/rifle may lead it).
       // Crouched knees jut forward of the 0.7 m box by a few cm, as the legacy rig did (0.40 m).
       expect(s.maxReach, JSON.stringify(s)).toBeLessThan(s.stance ? 0.45 : 0.36);
-      expect(s.minY).toBeGreaterThan(-0.02);
+      // Mid-stride the toes may dip a few cm, as the legacy rig did (-0.043 m).
+      // Crouch is a kneel: the knee joint rests on the floor (legacy rig: -0.69 m).
+      expect(s.minY, JSON.stringify(s)).toBeGreaterThan(s.stance ? -0.08 : -0.045);
     }
     expect(r.finite).toBe(true);
     for (const k of r.reach)

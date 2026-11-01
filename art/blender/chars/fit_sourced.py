@@ -87,6 +87,16 @@ bpy.ops.object.mode_set(mode="EDIT")
 eb = rig.data.edit_bones
 for b in list(eb):
     b.name = clean(b.name)
+# Some exported rigs leave helper/end bones at the origin (thumb roots, *_End leaves):
+# move them back next to their own joint chain so nothing is anchored a metre away.
+for b in eb:
+    if b.parent is None or b.head.length > 0.02 or b.name in ("Hips", "root ground"):
+        continue
+    kids = [c for c in b.children if c.head.length > 0.02]
+    p = b.parent
+    b.head = kids[0].head.lerp(p.head, 0.5) if kids else p.tail.copy()
+    if (b.tail - b.head).length < 0.005:
+        b.tail = b.head + (p.tail - p.head).normalized() * 0.03
 head = eb["Head"]
 near = P[np.abs(P[:, 0]) < 0.06]
 crown = float(near[:, 2].max())
