@@ -1,8 +1,8 @@
 # PvPStrike recorded sound effects
 
-All source recordings below are **CC0**. They were downloaded from the public mirror
+The legacy source recordings listed below are **CC0**. They were downloaded from the public mirror
 https://github.com/petroulacl/fps-asset-kit and their original asset pages were
-independently checked on 2026-10-30. No Counter-Strike/Valve audio is included.
+independently checked on 2026-10-30. These legacy recordings do not include Counter-Strike/Valve audio.
 
 - `ak47-a-v1.wav`: Ben Jaszczak, Brian Nelson, Kevin Heras and Matthew Nanney,
   The Free Firearm Sound Library, `AK-47/C_27P.wav`, final shot of the opening burst.
@@ -26,3 +26,15 @@ original deterministic procedural effects: magazine release, rock-out, insertion
 seating and (empty only) bolt travel/closure. Their 1.8-second timelines follow
 the authored reload clips. No samples from the user's Counter-Strike reference
 are included. Rebuild with `node scripts/fps/build-ak-audio.mjs`.
+
+## User-requested reference extraction
+
+The currently active `ak47-reference-v1.wav`, `ak-reload-reference-empty-v1.wav`
+and `ak-reload-reference-tactical-v1.wav` are edited extracts from the user's
+supplied `AK47 CSGO sound for shooting and reload.wav`, at their explicit request.
+They are not the CC0 recordings or the original synthesized effects described
+above. Processing preserves the reference pitch and 48 kHz sample rate, mixes
+to mono for positional playback, trims/fades boundaries and normalizes level.
+Reload components are placed on the existing 1.8-second animation timeline.
+No new license is asserted for the supplied reference. Rebuild with
+`node scripts/fps/extract-reference-ak-audio.mjs <reference-path>`.
