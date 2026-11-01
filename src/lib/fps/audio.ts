@@ -1,4 +1,5 @@
 import type { MatchState, Seat, Weapon } from "./protocol";
+import { characterSide } from "./sides";
 import { consumeShotPrediction } from "./trigger-feedback";
 const SAMPLES = {
   rifleA: "ak47-reference-v1.wav",
@@ -15,8 +16,7 @@ const SAMPLES = {
   step3: "step-3-v1.wav",
 } as const;
 type Sample = keyof typeof SAMPLES | "hurt" | "elimination" | "casing";
-/** Seat A is the Police side and carries the M4A1; seat B keeps the AK. */
-const m4Seat = (seat: Seat | null | undefined) => seat === "A";
+type Sides = Pick<MatchState, "round" | "bestOf" | "sideVersion">;
 export type CombatAudio = ReturnType<typeof createCombatAudio>;
 /** Recorded, normalized samples; one shared decode per sample and a bounded voice budget. */
 export function createCombatAudio() {
@@ -87,7 +87,11 @@ export function createCombatAudio() {
     }
     buffers.set("casing", buffer);
   }
-  let localSeat: Seat | null = null;
+  let localSeat: Seat | null = null,
+    sides: Sides | null = null;
+  /** The Police side carries the suppressed M4A1 (sides swap at halftime); Terrorists the AK. */
+  const m4Seat = (seat: Seat | null | undefined) =>
+    !!seat && (sides ? characterSide(sides, seat) : seat) === "A";
   const shot = (weapon: Weapon, gain = 0.62, pan = 0, occluded = false, seat?: Seat | null) => {
     played.shots++;
     const m4 = weapon === "rifle" && m4Seat(seat);
@@ -208,6 +212,11 @@ export function createCombatAudio() {
     },
     snapshot(state: MatchState, seat: Seat | null, serverNow = Date.now()) {
       localSeat = seat;
+      sides = {
+        round: state.round,
+        bestOf: state.bestOf,
+        ...(state.sideVersion === undefined ? {} : { sideVersion: state.sideVersion }),
+      };
       if (state.round !== lastRound) {
         reloadVoice?.stop();
         reloadVoice = undefined;

@@ -18,6 +18,8 @@ test("Practice and both human seats load the supplied WebP and enter without the
   const context = await browser.newContext({ baseURL, viewport: { width: 1280, height: 800 } });
   const other = await context.newPage();
   const errors: string[] = [];
+  let snapshotCount = 0,
+    immediateTriggers = 0;
   let state: MatchState | undefined,
     walking = false,
     walkingSteps = 0;
@@ -26,6 +28,7 @@ test("Practice and both human seats load the supplied WebP and enter without the
       try {
         const frame = JSON.parse(payload.toString());
         if (frame.type === "snapshot") {
+          snapshotCount++;
           state = frame.state;
           if (walking)
             walkingSteps += (state?.events ?? []).filter(
@@ -34,6 +37,15 @@ test("Practice and both human seats load the supplied WebP and enter without the
         }
       } catch {
         /* Non-snapshot message. */
+      }
+    }),
+  );
+  page.on("websocket", (ws) =>
+    ws.on("framesent", ({ payload }) => {
+      try {
+        if (JSON.parse(payload.toString()).combatOnly) immediateTriggers++;
+      } catch {
+        /* Envelope only. */
       }
     }),
   );
@@ -85,6 +97,8 @@ test("Practice and both human seats load the supplied WebP and enter without the
       .poll(() => page.evaluate(() => document.pointerLockElement instanceof HTMLCanvasElement))
       .toBe(true);
     await expect.poll(() => state?.phase).toBe("live");
+    await expect(page.locator(".duel-network-status small")).toHaveCount(0);
+    await expect(page.locator(".duel-network-status")).not.toHaveAttribute("title");
     const start = { x: state!.players.A.x, z: state!.players.A.z };
     walking = true;
     await page.keyboard.down("ShiftLeft");
@@ -98,6 +112,14 @@ test("Practice and both human seats load the supplied WebP and enter without the
     expect(travelled).toBeGreaterThan(0.5);
     expect(travelled).toBeLessThan(3.5);
     expect(walkingSteps).toBe(0);
+    const framesBefore = snapshotCount;
+    const ammoBefore = state!.players.A.ammo;
+    await page.mouse.down();
+    await page.mouse.up();
+    await expect.poll(() => immediateTriggers).toBeGreaterThan(0);
+    await expect.poll(() => state!.players.A.ammo).toBeLessThan(ammoBefore);
+    await page.waitForTimeout(1000);
+    expect(snapshotCount - framesBefore).toBeGreaterThanOrEqual(25);
     await cleanup();
     await page.goto("/fps-duel");
     await login(other, users[1]);

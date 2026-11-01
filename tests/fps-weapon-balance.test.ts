@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { createMatch, startMatch, stepMatch, TICK_MS } from "../src/lib/fps/simulation";
-import { HIT_DAMAGE, SEAT_RIFLE, type HitZone } from "../src/lib/fps/combat";
+import { HIT_DAMAGE, SIDE_RIFLE, type HitZone } from "../src/lib/fps/combat";
 import type { Input, Seat } from "../src/lib/fps/protocol";
 
 /**
- * Police M4A1-S vs Terrorist AK-47 balance. Both seats fire the same server `rifle`; these
+ * Police M4A1-S vs Terrorist AK-47 balance. Both sides fire the same server `rifle`; these
  * tests pin that down and record why CS2's per-bullet M4A1-S numbers were not ported.
  */
 const fire = (seq: number, yaw: number, pitch: number): Input => ({
@@ -43,8 +43,8 @@ function shot(shooter: Seat, height: number, armor: number) {
 }
 
 describe("Police M4A1-S and Terrorist AK-47 are balanced", () => {
-  it("names the seat rifles", () => {
-    expect(SEAT_RIFLE).toEqual({ A: "M4A1-S", B: "AK-47" });
+  it("names the side rifles", () => {
+    expect(SIDE_RIFLE).toEqual({ A: "M4A1-S", B: "AK-47" });
   });
 
   it("deals identical damage per hit zone from either seat, with and without a vest", () => {

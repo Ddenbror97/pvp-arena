@@ -272,6 +272,51 @@ describe("isolated real Durable Object WebSockets", () => {
     replacement.webSocket!.accept();
     sockets.push(replacement.webSocket!);
   });
+  it("immediate trigger shares session authority, fires without movement and uses 30 Hz snapshots", async () => {
+    const id = await init(),
+      sid = crypto.randomUUID(),
+      a = await sessionSocket(id, sid),
+      b = await open(id, B);
+    const initial = await readyLive(a, b);
+    const staleFrame = until(a, (f) => f.type === "snapshot" && f.serverNow > initial.serverNow);
+    a.send(JSON.stringify({ ...JSON.parse(movement(8000)), round: initial.state.round + 1 }));
+    const ignored = await staleFrame;
+    expect(ignored.state.players.A.lastSeq).toBe(initial.state.players.A.lastSeq);
+    expect(ignored.state.players.A.ammo).toBe(initial.state.players.A.ammo);
+    const frame = until(a, (f) => f.type === "snapshot" && f.state.players.A.lastSeq === 8000);
+    a.send(
+      JSON.stringify({
+        ...JSON.parse(movement(8000)),
+        round: initial.state.round,
+        combatOnly: true,
+        forward: 0,
+        strafe: 0,
+        playbackMs: 65,
+      }),
+    );
+    const fired = await frame;
+    expect(fired.state.players.A.ammo).toBe(initial.state.players.A.ammo - 1);
+    expect(fired.state.players.A.z).toBe(initial.state.players.A.z);
+    const stamps: number[] = [];
+    a.addEventListener("message", (e) => {
+      const f = JSON.parse(String(e.data));
+      if (f.type === "snapshot") stamps.push(f.serverNow);
+    });
+    await pause(1100);
+    expect(stamps.length).toBeGreaterThanOrEqual(25);
+    const end = closed(a);
+    revokedSessions.add(sid);
+    try {
+      a.send(
+        JSON.stringify({ ...JSON.parse(movement(8001)), combatOnly: true, forward: 0, strafe: 0 }),
+      );
+      expect(await end).toBe(1008);
+    } finally {
+      revokedSessions.delete(sid);
+      a.close();
+      b.close();
+    }
+  });
   it("revoking an established session rejects queued movement and fire, including reconnect admission", async () => {
     const id = await init(),
       sid = crypto.randomUUID(),
@@ -622,11 +667,13 @@ describe("isolated real Durable Object WebSockets", () => {
   });
   it("starts only when both clients are ready, advances on server time and replaces a reconnect", async () => {
     const id = await init();
-    const a = await open(id),
-      b = await open(id, B);
+    const a = await open(id);
+    // Waiting rooms send their initial state, rather than repeating an unchanged tick.
+    const waitingFrame = until(a, (f) => f.type === "snapshot");
+    const b = await open(id, B);
     a.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
     await pause(80);
-    const waiting = await until(a, (f) => f.type === "snapshot");
+    const waiting = await waitingFrame;
     expect(waiting.state.phase).toBe("waiting");
     const live = until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
     b.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));

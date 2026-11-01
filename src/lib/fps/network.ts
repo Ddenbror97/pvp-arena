@@ -1,12 +1,49 @@
-/** Shared presentation delay, included in the server's bounded shot lookback. */
-// Snapshots carry every physics step since the previous send (trail), so a pose for time t
-// arrives at most one 50 ms send interval (+ timer jitter) after t, and the newest pose can
-// lag its send time by up to one 34 ms physics step: 56 + 34 = 90 ms, plus network jitter.
-// 110 ms keeps playback inside received poses at ~10 ms jitter: zero extrapolation, zero
-// backward frames, drawn error 0.002 m in tests/fps-remote-sync.test.ts (75 ms without the
-// trail: overshoot and pull-back of up to 0.29 m at counter-strafe reversals). Shot rewind
-// shares this constant, so hit registration stays aligned with what is drawn.
+/** Conservative bootstrap/fallback for cached clients and jittery connections.
+ * New clients adapt within 65–110 ms from arrival gaps and physics-pose age.
+ * Each input carries its effective drawn delay for bounded server rewind. */
 export const REMOTE_DELAY_MS = 110;
+export const MIN_PLAYBACK_MS = 65;
+export const SNAPSHOT_INTERVAL_MS = 34;
+export function boundedPlaybackMs(value: unknown) {
+  return typeof value === "number" && Number.isFinite(value)
+    ? Math.max(MIN_PLAYBACK_MS, Math.min(REMOTE_DELAY_MS, value))
+    : REMOTE_DELAY_MS;
+}
+
+/** Bounded arrival jitter estimate; raise quickly, repay reduced delay gradually. */
+export class PlaybackDelay {
+  private previous: number | null = null;
+  private samples: number[] = [];
+  private delay = REMOTE_DELAY_MS;
+  private target = REMOTE_DELAY_MS;
+  observe(receivedAt: number, poseAge: number) {
+    if (this.previous !== null) {
+      const gap = receivedAt - this.previous;
+      if (gap > 0) {
+        this.samples.push(Math.max(0, poseAge) + gap + 16);
+        if (this.samples.length > 64) this.samples.shift();
+        if (this.samples.length >= 20) {
+          const sorted = [...this.samples].sort((a, b) => a - b);
+          this.target = boundedPlaybackMs(sorted[Math.ceil(sorted.length * 0.95) - 1]);
+        }
+      }
+    }
+    this.previous = receivedAt;
+  }
+  sample(elapsedMs: number) {
+    this.delay += Math.max(
+      -Math.max(0, elapsedMs) * 0.025,
+      Math.min(Math.max(0, elapsedMs) * 0.1, this.target - this.delay),
+    );
+    return this.delay;
+  }
+  reset() {
+    this.previous = null;
+    this.samples = [];
+    this.delay = REMOTE_DELAY_MS;
+    this.target = REMOTE_DELAY_MS;
+  }
+}
 /** Cap on the shooter's view lookback (minimum RTT + REMOTE_DELAY_MS): fully compensated up
  * to 170 ms RTT; tests/fps-hitreg-latency.test.ts checks 50–180 ms RTT. The server-measured
  * command wait is bounded separately (MAX_SERVER_DELAY_MS in lag-compensation.ts). */
@@ -97,10 +134,13 @@ export class ConnectionTiming {
   }
   /** The lowest recent RTT resists transient jitter and selectively delayed pongs. */
   get lookbackMs() {
+    return this.lookbackFor(REMOTE_DELAY_MS);
+  }
+  lookbackFor(playbackMs: unknown) {
     return this.calibrated
       ? // The target snapshot travels outward and the shot travels back. Include
         // the complete measured trip and the shared interpolation buffer.
-        Math.min(MAX_REWIND_MS, Math.min(...this.samples) + REMOTE_DELAY_MS)
+        Math.min(MAX_REWIND_MS, Math.min(...this.samples) + boundedPlaybackMs(playbackMs))
       : 0;
   }
   report() {

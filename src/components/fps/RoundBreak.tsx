@@ -8,11 +8,13 @@ export function RoundBreak({
   seconds,
   profiles,
   countdown,
+  halftime = false,
 }: {
   recap?: RoundRecap | undefined;
   seconds: number;
   profiles: DuelProfile[];
   countdown: boolean;
+  halftime?: boolean;
 }) {
   const winner = countdown ? null : recap?.winner;
   const profile = winner ? profiles[winner === "A" ? 0 : 1] : undefined;
@@ -31,9 +33,22 @@ export function RoundBreak({
       >
         {winner && <span className="duel-victory-halo" aria-hidden />}
         <span className="duel-eyebrow">
-          {countdown ? "AIM ARENA / READY TO DUEL" : `ROUND ${recap?.round ?? ""} COMPLETE`}
+          {halftime
+            ? "HALFTIME"
+            : countdown
+              ? "AIM ARENA / READY TO DUEL"
+              : `ROUND ${recap?.round ?? ""} COMPLETE`}
         </span>
-        <h2>{countdown ? "Get ready." : winner ? "Round victory." : "Round drawn."}</h2>
+        <h2>
+          {halftime
+            ? "Switching sides."
+            : countdown
+              ? "Get ready."
+              : winner
+                ? "Round victory."
+                : "Round drawn."}
+        </h2>
+        {halftime && <p className="duel-halftime-detail">Police ↔ Terrorist</p>}
         {winner && (
           <div className="duel-round-players">
             <article className="is-winner">
@@ -72,7 +87,7 @@ export function RoundBreak({
         <div className="duel-round-countdown">
           <b>{seconds}</b>
           <span>
-            {countdown ? "Match starts" : "Next round starts"}
+            {halftime ? "Second half starts" : countdown ? "Match starts" : "Next round starts"}
             <small>Automatic start · no confirmation needed</small>
           </span>
         </div>

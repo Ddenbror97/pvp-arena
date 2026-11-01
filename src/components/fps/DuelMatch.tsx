@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Volume2, VolumeX, Maximize, Copy, ShieldCheck } from "lucide-react";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
-import { SEAT_RIFLE } from "@/lib/fps/combat";
+import { SIDE_RIFLE } from "@/lib/fps/combat";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
 import { useAuth } from "@/lib/auth";
 import { duelAdmission, duelAction } from "@/lib/fps/duel.functions";
@@ -25,6 +25,7 @@ import {
 import { RoundBreak, type DuelProfile } from "./RoundBreak";
 import { DeathFeedback } from "./DeathFeedback";
 import { isDefeatedView } from "@/lib/fps/death-presentation";
+import { characterSide, isHalftime, sideName } from "@/lib/fps/sides";
 import "./duel.css";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
 import { FpsReadyAction } from "./FpsQueueNotice";
@@ -153,6 +154,8 @@ export function DuelMatch({
     (["FUNDED", "STARTING", "PLAYING"].includes(match.status) ||
       (spectate && !!frame && !frame.settled));
   const active = frame?.state.phase === "live";
+  // The rifle follows the character side (Police M4A1-S / Terrorist AK-47), which swaps at halftime.
+  const mySide = seat && frame ? characterSide(frame.state, seat) : (seat ?? "B");
   const me = seat && frame?.state.players[seat],
     other = seat && frame?.state.players[seat === "A" ? "B" : "A"];
   const terminal =
@@ -575,11 +578,6 @@ export function DuelMatch({
     }
   };
   const phase = frame?.state.phase ?? "waiting";
-  const networkSummary = observations.current.summary();
-  const shotAckText =
-    networkSummary.shotAckP50 === null
-      ? "not measured"
-      : `${Math.round(networkSummary.shotAckP50)} ms`;
   const seconds = frame
     ? Math.max(0, Math.ceil((frame.state.phaseEndsAt - now - serverOffset.current) / 1000))
     : 0;
@@ -651,7 +649,8 @@ export function DuelMatch({
         </Link>
         <div className="duel-score">
           <span className={seat === "A" ? "you" : ""}>
-            A <b>{frame?.state.score.A ?? match?.score_a ?? 0}</b>
+            {frame ? sideName(frame.state, "A") : "Police"}{" "}
+            <b>{frame?.state.score.A ?? match?.score_a ?? 0}</b>
           </span>
           <div>
             <small>
@@ -660,11 +659,14 @@ export function DuelMatch({
             <strong>
               {phase === "live"
                 ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
-                : "PVPSTRIKE"}
+                : frame && isHalftime(frame.state)
+                  ? "HALFTIME"
+                  : "PVPSTRIKE"}
             </strong>
           </div>
           <span className={seat === "B" ? "you" : ""}>
-            <b>{frame?.state.score.B ?? match?.score_b ?? 0}</b> B
+            <b>{frame?.state.score.B ?? match?.score_b ?? 0}</b>{" "}
+            {frame ? sideName(frame.state, "B") : "Terrorist"}
           </span>
         </div>
         <div className="duel-hud-actions">
@@ -677,14 +679,8 @@ export function DuelMatch({
                   ? "unstable"
                   : "stable"
             }
-            title={
-              network
-                ? `Round trip: ${Math.round(network.rttMs)} ms median / ${Math.round(network.rttP95Ms)} ms p95 · Jitter: ${Math.round(network.jitterMs)} ms · Snapshots: ${Math.round(networkSummary.snapshotHz)}/s · Server: ${network.tickHz.toFixed(1)} ticks/s · Session check: ${Math.round(network.authMs)} ms · Shot acknowledgement: ${shotAckText}`
-                : undefined
-            }
           >
             {connection}
-            {network && connection === "Connected" && <small>{Math.round(network.rttMs)} ms</small>}
           </span>
           <button
             aria-label={muted ? "Enable game audio" : "Mute game audio"}
@@ -761,9 +757,7 @@ export function DuelMatch({
         </div>
         <div className="duel-ammo">
           <small>
-            {me?.weapon === "pistol"
-              ? "PISTOL · SEMI-AUTO"
-              : `${SEAT_RIFLE[seat ?? "B"]} · FULL AUTO`}
+            {me?.weapon === "pistol" ? "PISTOL · SEMI-AUTO" : `${SIDE_RIFLE[mySide]} · FULL AUTO`}
           </small>
           <strong>
             {me?.ammo ?? 30}
@@ -778,6 +772,7 @@ export function DuelMatch({
           seconds={seconds}
           profiles={players}
           countdown={phase === "countdown"}
+          halftime={!!frame && isHalftime(frame.state)}
         />
       )}
       {!showLoading && needsInteraction && (
@@ -788,8 +783,8 @@ export function DuelMatch({
               {frame && (frame.state.combatVersion ?? 1) !== 2
                 ? "Earlier combat rules retained for this match."
                 : frame?.state.armorVersion === 1
-                  ? `${SEAT_RIFLE[seat ?? "B"]} · Full auto · Kevlar: Chest 26 · Stomach 23 · Head 34 · Legs 20`
-                  : `${SEAT_RIFLE[seat ?? "B"]}: full auto · Head 34 · Chest 34 · Stomach 30 · Legs 20`}
+                  ? `${SIDE_RIFLE[mySide]} · Full auto · Kevlar: Chest 26 · Stomach 23 · Head 34 · Legs 20`
+                  : `${SIDE_RIFLE[mySide]}: full auto · Head 34 · Chest 34 · Stomach 30 · Legs 20`}
               <br />
               Tap or burst to reset; pull down, then counter the sideways spray.
             </p>

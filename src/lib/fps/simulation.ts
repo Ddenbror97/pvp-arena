@@ -1,4 +1,5 @@
 import { ARENA, BOXES, PLAYER_RADIUS, SPAWNS, STEP_HEIGHT, eyeHeight } from "./map";
+import { spawnSide, halftimeRound } from "./sides";
 import {
   COMBAT_VERSION,
   HIT_DAMAGE,
@@ -20,6 +21,7 @@ export const COUNTDOWN_MS = 3000;
 export const ROUND_MS = 60000;
 // Let the elimination register before the three-second winner presentation.
 export const ROUND_END_MS = 3800;
+export const HALFTIME_MS = 5000;
 export const MAX_DRAWS = 3;
 export const MOVE_SPEED = 5;
 export const WALK_SPEED_SCALE = 0.45;
@@ -78,6 +80,7 @@ export function createMatch(
     throw new Error("Invalid match configuration");
   return {
     v: 1,
+    sideVersion: 1,
     combatVersion,
     ...(combatVersion === COMBAT_VERSION ? { armorVersion: 1 as const } : {}),
     phase: "waiting",
@@ -138,7 +141,11 @@ function finishRound(state: MatchState, winner: Seat | null, now: number): void 
     state.events.push({ type: "cancelled", text: "Draw limit reached" });
   } else {
     state.phase = "round-end";
-    state.phaseEndsAt = now + ROUND_END_MS;
+    state.phaseEndsAt =
+      now +
+      (state.sideVersion === 1 && state.round === halftimeRound(state)
+        ? HALFTIME_MS
+        : ROUND_END_MS);
   }
 }
 
@@ -277,14 +284,14 @@ function shoot(
     ? (p.weapon === "rifle" ? 0.0015 : 0.0025) *
       combatSpread(
         (p.sprayCount ?? 0) + 1,
-        Math.hypot(input.forward, input.strafe) > 0.1,
+        input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
         (p.velocityY ?? 0) !== 0,
         !!p.crouched,
       )
     : stats.recoil *
       spreadScale(
         p.sprayCount ?? 1,
-        Math.hypot(input.forward, input.strafe) > 0.1,
+        input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
         (p.velocityY ?? 0) !== 0,
       ) *
       (p.crouched ? 0.8 : 1);
@@ -298,9 +305,9 @@ function shoot(
       ? (state.server.spreadSeed =
           (Math.imul(state.server.spreadSeed ?? 1, 1664525) + 1013904223) >>> 0)
       : (Math.imul(p.lastSeq + 1, 1664525) + Math.imul(state.tick, 1013904223)) >>> 0;
-  const yaw = p.yaw + (modern ? (p.recoilYaw ?? 0) : 0) + ((hash % 1001) / 500 - 1) * spread;
+  const yaw = input.yaw + (modern ? (p.recoilYaw ?? 0) : 0) + ((hash % 1001) / 500 - 1) * spread;
   const pitch =
-    p.pitch + (modern ? (p.recoilPitch ?? 0) : 0) + (((hash >>> 10) % 1001) / 500 - 1) * spread;
+    input.pitch + (modern ? (p.recoilPitch ?? 0) : 0) + (((hash >>> 10) % 1001) / 500 - 1) * spread;
   const direction = {
     x: -Math.sin(yaw) * Math.cos(pitch),
     y: Math.sin(pitch),
@@ -406,7 +413,14 @@ export function applyQueuedMovement(
   if (state.phase !== "live") return false;
   const input = validateInput(raw),
     p = state.players[seat];
-  if (!input || input.seq <= p.lastSeq || p.hp <= 0) return false;
+  if (
+    !input ||
+    (input.round !== undefined && input.round !== state.round) ||
+    input.combatOnly ||
+    input.seq <= p.lastSeq ||
+    p.hp <= 0
+  )
+    return false;
   if (input.reload || input.weapon !== p.weapon) return false;
   if (input.fire) {
     const next = validateInput(nextRaw);
@@ -417,6 +431,7 @@ export function applyQueuedMovement(
       state.combatVersion !== COMBAT_VERSION ||
       input.weapon !== "rifle" ||
       !next ||
+      next.combatOnly ||
       next.seq <= input.seq ||
       !next.fire ||
       next.reload ||
@@ -428,6 +443,8 @@ export function applyQueuedMovement(
   p.yaw = input.yaw;
   p.pitch = input.pitch;
   p.triggerHeld = input.fire;
+  p.moving = Math.hypot(input.forward, input.strafe) > 0.1;
+  p.sprinting = input.sprint;
   const before = { x: p.x, z: p.z, y: p.y };
   predictMovement(p, input, TICK_MS);
   // Same footstep accounting as stepMatch: Shift-walking stays silent.
@@ -443,6 +460,7 @@ export function stepMatch(
   now: number,
   _dt: number,
   historicalTargets?: Partial<Record<Seat, Pose>>,
+  triggers: Partial<Record<Seat, Input>> = {},
 ): MatchState {
   if (
     !Number.isFinite(now) ||
@@ -461,7 +479,7 @@ export function stepMatch(
     for (const seat of SEATS) {
       const old = state.players[seat];
       state.players[seat] = {
-        ...player(old.id, state.round % 2 ? seat : other(seat)),
+        ...player(old.id, spawnSide(state, seat)),
         ...(state.armorVersion === 1 ? { armor: 100 } : {}),
         kills: old.kills,
         headshots: old.headshots,
@@ -469,6 +487,8 @@ export function stepMatch(
       };
     }
     server.roundStats = emptyRoundStats();
+    if (state.sideVersion === 1 && state.round === halftimeRound(state) + 1)
+      state.events.push({ type: "halftime", text: "Second half · sides switched" });
     state.phase = "live";
     state.phaseEndsAt = now + ROUND_MS;
     return state;
@@ -485,6 +505,19 @@ export function stepMatch(
     return state;
   }
   const accepted: Partial<Record<Seat, Input>> = {};
+  const combatInputs: Partial<Record<Seat, Input>> = {};
+  for (const seat of SEATS) {
+    const action = validateInput(triggers[seat]),
+      p = state.players[seat];
+    if (
+      action?.combatOnly &&
+      (action.round === undefined || action.round === state.round) &&
+      action.seq > p.lastSeq &&
+      action.weapon === p.weapon &&
+      p.hp > 0
+    )
+      combatInputs[seat] = action;
+  }
   // Capture tick-start positions before either seat moves (same temporal basis).
   const positions: Record<Seat, Pose> = {
     A: {
@@ -502,7 +535,11 @@ export function stepMatch(
   };
   for (const seat of SEATS) {
     const p = state.players[seat],
-      input = validateInput(inputs[seat]);
+      candidate = validateInput(inputs[seat]),
+      input =
+        candidate?.combatOnly || (candidate?.round !== undefined && candidate.round !== state.round)
+          ? null
+          : candidate;
     if (state.combatVersion === COMBAT_VERSION) recoverCombatRecoil(p, now);
     if (p.reloadUntil && now >= p.reloadUntil) {
       const amount = Math.min(WEAPONS[p.weapon].magazine - p.ammo, p.reserve);
@@ -512,6 +549,8 @@ export function stepMatch(
     }
     if (input && input.seq > p.lastSeq) {
       accepted[seat] = input;
+      p.moving = Math.hypot(input.forward, input.strafe) > 0.1;
+      p.sprinting = input.sprint;
       p.lastSeq = input.seq;
       p.yaw = input.yaw;
       p.pitch = input.pitch;
@@ -560,15 +599,17 @@ export function stepMatch(
   // Both shots use tick-start positions, even if the first is lethal.
   // Health changes cannot suppress the opponent's shot; adjudicate only afterward.
   for (const seat of SEATS) {
-    const input = accepted[seat];
+    const input = combatInputs[seat] ?? accepted[seat];
     const p = state.players[seat];
+    if (combatInputs[seat]) p.lastSeq = Math.max(p.lastSeq, combatInputs[seat]!.seq);
     if (
       input?.fire &&
-      (!input.sprint || p.crouched) &&
+      (!input.combatOnly || input.weapon === p.weapon) &&
+      (!(input.combatOnly ? p.sprinting : input.sprint) || p.crouched) &&
       (state.combatVersion !== COMBAT_VERSION || p.weapon === "rifle" || !p.triggerHeld)
     )
       shoot(state, seat, now, positions, input, historicalTargets?.[seat]);
-    if (input) p.triggerHeld = input.fire;
+    if (input) p.triggerHeld = accepted[seat]?.fire ?? input.fire;
   }
   if (state.players.A.hp <= 0 || state.players.B.hp <= 0) {
     finishRound(

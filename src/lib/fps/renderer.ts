@@ -4,6 +4,7 @@ import { EYE_HEIGHT, SPAWNS, eyeHeight } from "./map";
 import type { Input, MatchState, Player, Seat, Weapon } from "./protocol";
 import { predictMovement, TICK_MS, WEAPONS } from "./simulation";
 import { createCharacter } from "./character";
+import { characterSide } from "./sides";
 import { COMBAT_VERSION, recoveryProfile } from "./combat";
 import { createBloodEffects } from "./blood-effects";
 import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handling";
@@ -27,7 +28,7 @@ import { createMuzzleFlash } from "./muzzle-flash";
 import { createAuthoredViewmodel, M4_VIEWMODEL } from "./authored-viewmodel";
 import { createShellCasings } from "./shell-casings";
 import { INSPECT_MS, M4_INSPECT, sampleVec } from "./reload-animation";
-import { REMOTE_DELAY_MS, SnapshotClock } from "./network";
+import { REMOTE_DELAY_MS, SnapshotClock, PlaybackDelay, boundedPlaybackMs } from "./network";
 import { createViewmodelMotion } from "./viewmodel-motion";
 import { deathPose, deathSupport } from "./death-presentation";
 
@@ -78,9 +79,12 @@ export type ArenaControls = {
     programs: number;
     pixelRatio: number;
     opponentVisible: boolean;
+    opponentModel: string;
     opponentPoseAt: number;
     opponentStance: number;
     opponentPlaybackErrorMs: number;
+    playbackMs: number;
+    drawnPlaybackMs: number;
     opponentPosition: number[] | null;
     renderFrames: number;
     renderIntervalMs: number;
@@ -242,6 +246,7 @@ export function mountArena(
     A: createCharacter("A", branding, weaponKit),
     B: createCharacter("B", branding, weaponKit),
   };
+  const actorFor = (player: Seat) => characters[state ? characterSide(state, player) : player];
   scene.add(characters.A.root, characters.B.root);
   captureReflections();
   scene.environmentIntensity = ARENA_LIGHTING.environmentIntensity;
@@ -368,15 +373,16 @@ export function mountArena(
   });
   const hands = createViewHands(glove, sleeve);
   weaponGroup.add(hands.root);
-  // Terrorist (seat B) keeps the AK; Police (seat A) carries the M4A1. Both are prepared before
-  // Ready so switching seats never compiles shaders mid-match.
+  // The Terrorist side keeps the AK; the Police side carries the M4A1. Sides swap at halftime,
+  // so both are prepared before Ready and switching never compiles shaders mid-match.
   const authoredViews = {
     ak: createAuthoredViewmodel(weaponGroup),
     m4: createAuthoredViewmodel(weaponGroup, true, M4_VIEWMODEL),
   };
   let authoredView = authoredViews.ak;
-  const selectViewmodel = (next: Seat | null) => {
-    const chosen = next === "A" ? authoredViews.m4 : authoredViews.ak;
+  /** `side` is the character side (A Police, B Terrorist), which swaps at halftime. */
+  const selectViewmodel = (side: Seat | null) => {
+    const chosen = side === "A" ? authoredViews.m4 : authoredViews.ak;
     if (chosen === authoredView) return;
     authoredView.update(false, 0, 0);
     authoredView = chosen;
@@ -432,7 +438,19 @@ export function mountArena(
     onLoadProgress?.({ value: 80, label: "Compiling arena graphics" });
     // Prepare hidden combat effects and both lighting variants before Ready.
     // compileAsync uses parallel shader compilation where the driver supports it.
-    await renderer.compileAsync(scene, camera);
+    // Both team models must be ready for halftime, even if one is hidden in POV.
+    const actors = Object.values(characters).map((actor) => ({
+      root: actor.root,
+      visible: actor.root.visible,
+    }));
+    let compiled: ReturnType<THREE.WebGLRenderer["compileAsync"]>;
+    try {
+      for (const actor of actors) actor.root.visible = true;
+      compiled = renderer.compileAsync(scene, camera);
+    } finally {
+      for (const actor of actors) actor.root.visible = actor.visible;
+    }
+    await compiled;
     if (stopped) return;
     onLoadProgress?.({ value: 90, label: "Preparing weapon graphics" });
     await renderer.compileAsync(viewScene, viewCamera);
@@ -492,6 +510,9 @@ export function mountArena(
   const triggerFeedback = new TriggerFeedback();
   const remoteMotion = new RemotePresentation();
   const remoteClock = new SnapshotClock();
+  const playbackDelay = new PlaybackDelay();
+  let playbackMs = REMOTE_DELAY_MS;
+  let drawnPlaybackMs = REMOTE_DELAY_MS;
   const remotePose = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0, crouch: 0 };
   let renderPose: Player | null = null;
   const previewInput: Input = {
@@ -590,6 +611,27 @@ export function mountArena(
     fire = true;
     fireLatched = true;
     presentLocalShot(seq + 1);
+    if (!authorizationSuspended && state?.phase === "live" && predicted && predicted.hp > 0) {
+      send({
+        v: 1,
+        type: "input",
+        combatVersion: 2,
+        seq: ++seq,
+        round: state.round,
+        combatOnly: true,
+        forward: 0,
+        strafe: 0,
+        yaw,
+        pitch,
+        fire: true,
+        reload: false,
+        weapon,
+        jump: false,
+        sprint: false,
+        playbackMs: drawnPlaybackMs,
+      });
+      fireLatched = false;
+    }
   };
   const mouseup = () => {
     fire = false;
@@ -655,6 +697,50 @@ export function mountArena(
   viewScene.updateMatrixWorld(true);
   scene.matrixWorldAutoUpdate = false;
   viewScene.matrixWorldAutoUpdate = false;
+  const emitInput = () => {
+    const controlled = !document.hidden && document.hasFocus() && locked();
+    if (seat && state && predicted) {
+      const active =
+        !authorizationSuspended && controlled && state.phase === "live" && predicted.hp > 0;
+      const input: Input = {
+        v: 1,
+        type: "input",
+        seq: ++seq,
+        round: state.round,
+        playbackMs: drawnPlaybackMs,
+        ...(state.combatVersion === COMBAT_VERSION ? { combatVersion: COMBAT_VERSION } : {}),
+        forward: active ? Number(keys.has("KeyW")) - Number(keys.has("KeyS")) : 0,
+        strafe: active ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0,
+        yaw: Math.max(
+          -Math.PI * 2,
+          Math.min(Math.PI * 2, yaw + (state.combatVersion === COMBAT_VERSION ? 0 : recoilYaw)),
+        ),
+        pitch: Math.max(
+          -1.45,
+          Math.min(1.45, pitch + (state.combatVersion === COMBAT_VERSION ? 0 : recoilPitch)),
+        ),
+        fire: active && (fire || fireLatched),
+        reload: active && reload,
+        weapon,
+        jump: active && jump,
+        sprint: false,
+        walk: active && (keys.has("ShiftLeft") || keys.has("ShiftRight")),
+        crouch: active && (keys.has("ControlLeft") || keys.has("ControlRight")),
+      };
+      if (state.phase === "live" && !authorizationSuspended) {
+        const beforeY = predicted.y;
+        predictMovement(predicted, input, TICK_MS);
+        jumpPresentation.advance(beforeY, predicted.y);
+        pending.push(input);
+        if (pending.length > 60) pending.shift();
+      }
+      if (input.fire && input.weapon === "rifle") presentLocalShot(input.seq);
+      send(input);
+      fireLatched = false;
+      reload = false;
+      jump = false;
+    }
+  };
   const frame = (now: number) => {
     if (stopped) return;
     const cpuStart = performance.now();
@@ -669,57 +755,20 @@ export function mountArena(
     const controlled = focused && locked();
     previous = now;
     accumulator += tickDt;
+    while (accumulator >= inputStepMs) {
+      accumulator -= inputStepMs;
+      emitInput();
+    }
     correction.update(tickDt);
     if (now - began > 2500 && controlled && state?.phase === "live" && budget.update(frameMs))
       resize();
-    while (accumulator >= inputStepMs) {
-      accumulator -= inputStepMs;
-      if (seat && state && predicted) {
-        const active =
-          !authorizationSuspended && controlled && state.phase === "live" && predicted.hp > 0;
-        const input: Input = {
-          v: 1,
-          type: "input",
-          seq: ++seq,
-          ...(state.combatVersion === COMBAT_VERSION ? { combatVersion: COMBAT_VERSION } : {}),
-          forward: active ? Number(keys.has("KeyW")) - Number(keys.has("KeyS")) : 0,
-          strafe: active ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0,
-          yaw: Math.max(
-            -Math.PI * 2,
-            Math.min(Math.PI * 2, yaw + (state.combatVersion === COMBAT_VERSION ? 0 : recoilYaw)),
-          ),
-          pitch: Math.max(
-            -1.45,
-            Math.min(1.45, pitch + (state.combatVersion === COMBAT_VERSION ? 0 : recoilPitch)),
-          ),
-          fire: active && (fire || fireLatched),
-          reload: active && reload,
-          weapon,
-          jump: active && jump,
-          sprint: false,
-          walk: active && (keys.has("ShiftLeft") || keys.has("ShiftRight")),
-          crouch: active && (keys.has("ControlLeft") || keys.has("ControlRight")),
-        };
-        if (state.phase === "live" && !authorizationSuspended) {
-          const beforeY = predicted.y;
-          predictMovement(predicted, input, TICK_MS);
-          jumpPresentation.advance(beforeY, predicted.y);
-          pending.push(input);
-          if (pending.length > 60) pending.shift();
-        }
-        if (input.fire && input.weapon === "rifle") presentLocalShot(input.seq);
-        send(input);
-        fireLatched = false;
-        reload = false;
-        jump = false;
-      }
-    }
     // Only drawing is throttled. Fixed input/network work stays above this gate.
     if (!focused && now - lastDraw < 1000 / 15) {
       animation = requestAnimationFrame(frame);
       return;
     }
     renderIntervalMs = lastDraw ? now - lastDraw : 0;
+    playbackMs = playbackDelay.sample(renderIntervalMs);
     const dt = frameDelta(now, lastDraw || now - tickDt);
     lastDraw = now;
     renderFrames++;
@@ -791,8 +840,9 @@ export function mountArena(
     if (state) {
       const otherSeat = seat === "B" ? "A" : "B",
         other = state.players[otherSeat];
-      characters[otherSeat === "A" ? "B" : "A"].root.visible = false;
-      const actor = characters[otherSeat];
+      const model = characterSide(state, otherSeat);
+      characters[model === "A" ? "B" : "A"].root.visible = false;
+      const actor = characters[model];
       if (other.hp > 0) opponentDeathAt = null;
       else if (opponentDeathAt === null) {
         opponentDeathAt = now;
@@ -804,11 +854,12 @@ export function mountArena(
       // Server visibility is applied on the playback timeline (RemotePresentation), so the
       // opponent disappears when the drawn pose reaches cover, not when the packet arrives.
       const visible = remoteMotion.sample(
-        remoteClock.now(now) - REMOTE_DELAY_MS,
+        remoteClock.now(now) - playbackMs,
         remotePose,
         renderIntervalMs,
       );
       if (visible) {
+        drawnPlaybackMs = boundedPlaybackMs(remoteClock.now(now) - remotePose.at);
         actor.root.position.set(remotePose.x, remotePose.y, remotePose.z);
         actor.root.rotation.y = remotePose.yaw;
         actor.root.rotation.x = collapse?.pitch ?? 0;
@@ -1010,12 +1061,15 @@ export function mountArena(
       textures: renderer.info.memory.textures,
       programs: renderer.info.programs?.length ?? 0,
       pixelRatio: renderer.getPixelRatio(),
-      opponentVisible: characters[seat === "B" ? "A" : "B"].root.visible,
+      opponentVisible: actorFor(seat === "B" ? "A" : "B").root.visible,
+      opponentModel: actorFor(seat === "B" ? "A" : "B").root.name,
       opponentPoseAt: remotePose.at,
       opponentStance: remotePose.crouch,
-      opponentPlaybackErrorMs: remoteClock.now(performance.now()) - REMOTE_DELAY_MS - remotePose.at,
-      opponentPosition: characters[seat === "B" ? "A" : "B"].root.visible
-        ? characters[seat === "B" ? "A" : "B"].root.position.toArray()
+      opponentPlaybackErrorMs: remoteClock.now(performance.now()) - playbackMs - remotePose.at,
+      playbackMs,
+      drawnPlaybackMs,
+      opponentPosition: actorFor(seat === "B" ? "A" : "B").root.visible
+        ? actorFor(seat === "B" ? "A" : "B").root.position.toArray()
         : null,
       renderFrames,
       renderIntervalMs,
@@ -1041,9 +1095,14 @@ export function mountArena(
         (state?.phase !== frame.state.phase && frame.state.phase !== "live");
       authorizationSuspended = false;
       state = frame.state;
+      if (resetPresentation) playbackDelay.reset();
+      playbackDelay.observe(
+        performance.now(),
+        Math.max(0, frame.serverNow - (frame.poseAt ?? frame.serverNow)),
+      );
       visibility = frame.visibility ?? { A: true, B: true };
       seat = assignedSeat;
-      selectViewmodel(seat);
+      selectViewmodel(seat ? characterSide(state, seat) : null);
       const measuredOffset = frame.serverNow - Date.now();
       lastServerOffset =
         lastRound === 0
@@ -1081,6 +1140,7 @@ export function mountArena(
         pending = pending.filter((i) => i.seq > authoritative.lastSeq);
         for (const i of pending) if (state.phase === "live") predictMovement(predicted, i, TICK_MS);
         if (resetPresentation) {
+          opponentAnimated = false;
           cameraStance.reset();
           cameraVertical.reset();
           jumpPresentation.reset();
@@ -1116,7 +1176,7 @@ export function mountArena(
                 ejectCase(now);
               }
               confirmedShot = now;
-            } else if (e.seat) characters[e.seat].shot(performance.now());
+            } else if (e.seat) actorFor(e.seat).shot(performance.now());
           }
           if (e.seat === seat && (e.type === "hit" || e.type === "headshot")) {
             hitMarker?.getAnimations().forEach((a) => a.cancel());
@@ -1132,7 +1192,7 @@ export function mountArena(
           if (e.id !== undefined && e.id <= lastEventId) continue;
           if (e.id !== undefined) lastEventId = e.id;
           if (e.type === "impact" && e.impact) impacts.emit(e.impact, performance.now());
-          if (e.type === "shot" && e.seat) characters[e.seat].shot(performance.now());
+          if (e.type === "shot" && e.seat) actorFor(e.seat).shot(performance.now());
         }
       lastRound = state.round;
       const other = state.players[seat === "B" ? "A" : "B"];

@@ -730,7 +730,12 @@
   flex-shrink: 0;
 }
 .duel-score > span {
-  min-width: 42px;
+  min-width: 110px;
+}
+.duel-halftime-detail {
+  color: #d7b5ff;
+  margin: -10px 0 20px;
+  font-size: 13px;
 }
 .duel-health strong,
 .duel-ammo strong {
@@ -1017,15 +1022,4 @@
     width: 64px;
     height: 64px;
   }
-}
-
-.duel-network-status small {
-  display: block;
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-  color: #a8a1b7;
-}
-.duel-network-status[data-quality="delayed"] small,
-.duel-network-status[data-quality="unstable"] small {
-  color: #f7bf78;
 }

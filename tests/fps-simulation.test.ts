@@ -298,8 +298,9 @@ describe("combat", () => {
 });
 
 describe("match lifecycle", () => {
-  it("starts once, freezes waiting/countdown and alternates reset spawns preserving sequence and totals", () => {
+  it("legacy matches retain alternating reset spawns preserving sequence and totals", () => {
     const state = createMatch({ A: "a", B: "b" }, 5, 0);
+    delete state.sideVersion;
     stepMatch(state, { A: input({ forward: 1 }) }, 100, TICK_MS);
     expect(state.tick).toBe(0);
     startMatch(state, 100);
