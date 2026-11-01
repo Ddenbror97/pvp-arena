@@ -27,6 +27,32 @@ Blender for this project (art/blender/arms/README.md); only the arm skeleton bel
   Asset derivative released there under CC BY 4.0 unless otherwise specified.
   No application code from that project is included.
 
+## Police M4A1 (m4a1-authored.glb)
+
+Built in Blender (art/blender/m4): optic and flip-up sight removed, tan furniture recoloured to
+black polymer, metal darkened, magazine and charging handle separated for animation, carry
+handle and suppressor mounted, PVPSPINARENA violet accents, rescaled and placed on the shared
+first-person arm rig above (gloves, forearm, olive sleeve and watch are project work).
+
+- This work is based on "M4A1 Assault Rifle Game Ready"
+  (https://sketchfab.com/3d-models/m4a1-assault-rifle-game-ready-c2a3c7b3ed4844b895a504f1bbe4f931)
+  by polupan.andrew (https://sketchfab.com/polupan.andrew), licensed under CC BY 4.0
+  (http://creativecommons.org/licenses/by/4.0/).
+- This work is based on "M4/AR-15 Carry Handle Sight attachment"
+  (https://sketchfab.com/3d-models/m4ar-15-carry-handle-sight-attachment-912b75802e6648cc904b4b8f57b6cb03)
+  by SSMProductions (https://sketchfab.com/SSMProductions), licensed under CC BY 4.0
+  (http://creativecommons.org/licenses/by/4.0/). Modified: bevelled, rescaled, refinished.
+- "HuxWrx HX-QD 556 Suppressor (4K)"
+  (https://sketchfab.com/3d-models/huxwrx-hx-qd-556-suppressor-4k-556bc7d8294d493386a9f637480de39c)
+  by xylvnking (https://sketchfab.com/xylvnking), Sketchfab Standard license
+  (https://sketchfab.com/licenses): used inside this game, not redistributed as a standalone
+  asset. Modified: decimated, rescaled, refinished, violet front cap.
+
+## Terrorist first-person jacket (in ak47-authored.glb)
+
+The white duty-jacket sleeve on the Terrorist (AK) arms is original work built in Blender
+(art/blender/arms/build_jacket_sleeve.py).
+
 ## Police character (police-swat.glb)
 
 This work is based on "Game Ready Swat Character"

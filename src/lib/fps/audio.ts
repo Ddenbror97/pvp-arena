@@ -1,16 +1,22 @@
 import type { MatchState, Seat, Weapon } from "./protocol";
+import { characterSide } from "./sides";
 import { consumeShotPrediction } from "./trigger-feedback";
 const SAMPLES = {
   rifleA: "ak47-reference-v1.wav",
   reloadEmpty: "ak-reload-reference-empty-v1.wav",
   reloadTactical: "ak-reload-reference-tactical-v1.wav",
+  /** Police (seat A) suppressed M4A1 and its reloads (scripts/fps/build-m4-audio.mjs). */
+  rifleM4: "m4a1-suppressed-v1.wav",
+  m4ReloadEmpty: "m4-reload-empty-v1.wav",
+  m4ReloadTactical: "m4-reload-tactical-v1.wav",
   pistol: "pistol-v1.wav",
   step0: "step-0-v1.wav",
   step1: "step-1-v1.wav",
   step2: "step-2-v1.wav",
   step3: "step-3-v1.wav",
 } as const;
-type Sample = keyof typeof SAMPLES | "hurt" | "elimination";
+type Sample = keyof typeof SAMPLES | "hurt" | "elimination" | "casing";
+type Sides = Pick<MatchState, "round" | "bestOf" | "sideVersion">;
 export type CombatAudio = ReturnType<typeof createCombatAudio>;
 /** Recorded, normalized samples; one shared decode per sample and a bounded voice budget. */
 export function createCombatAudio() {
@@ -61,15 +67,52 @@ export function createCombatAudio() {
     }
     buffers.set(name, buffer);
   }
-  const shot = (weapon: Weapon, gain = 0.62, pan = 0, occluded = false) => {
+  {
+    // Brass casing landing: a short inharmonic tink (5.56 case on a hard floor).
+    const duration = 0.09,
+      buffer = context.createBuffer(
+        1,
+        Math.ceil(context.sampleRate * duration),
+        context.sampleRate,
+      ),
+      samples = buffer.getChannelData(0);
+    for (let i = 0; i < samples.length; i++) {
+      const t = i / context.sampleRate,
+        envelope = Math.min(1, t / 0.0005) * Math.exp(-t * 55);
+      samples[i] =
+        envelope *
+        (0.5 * Math.sin(2 * Math.PI * 3900 * t) +
+          0.3 * Math.sin(2 * Math.PI * 6150 * t) +
+          0.2 * Math.sin(2 * Math.PI * 8800 * t));
+    }
+    buffers.set("casing", buffer);
+  }
+  let localSeat: Seat | null = null,
+    sides: Sides | null = null;
+  /** The Police side carries the suppressed M4A1 (sides swap at halftime); Terrorists the AK. */
+  const m4Seat = (seat: Seat | null | undefined) =>
+    !!seat && (sides ? characterSide(sides, seat) : seat) === "A";
+  const shot = (weapon: Weapon, gain = 0.62, pan = 0, occluded = false, seat?: Seat | null) => {
     played.shots++;
+    const m4 = weapon === "rifle" && m4Seat(seat);
     play(
-      weapon === "rifle" ? "rifleA" : "pistol",
+      weapon === "rifle" ? (m4 ? "rifleM4" : "rifleA") : "pistol",
       gain,
       pan,
       occluded,
       weapon === "rifle" ? 1 : 0.985 + (played.shots % 3) * 0.015,
     );
+    // Own M4 only: the ejected case lands a moment later, just right of the player.
+    if (m4 && seat === localSeat && gain > 0.3)
+      play(
+        "casing",
+        0.05,
+        0.35,
+        false,
+        0.94 + (played.shots % 5) * 0.03,
+        0,
+        0.32 + (played.shots % 4) * 0.05,
+      );
   };
   let loading: Promise<void> | undefined,
     muted = false,
@@ -101,7 +144,15 @@ export function createCombatAudio() {
       });
     return loading;
   };
-  function play(name: Sample, gain: number, pan: number, occluded: boolean, rate = 1, offset = 0) {
+  function play(
+    name: Sample,
+    gain: number,
+    pan: number,
+    occluded: boolean,
+    rate = 1,
+    offset = 0,
+    delay = 0,
+  ) {
     if (disposed || muted || context.state !== "running" || gain <= 0) return;
     const buffer = buffers.get(name);
     if (!buffer) return;
@@ -135,7 +186,7 @@ export function createCombatAudio() {
       level.disconnect();
       panner.disconnect();
     };
-    source.start(0, Math.max(0, offset));
+    source.start(delay > 0 ? context.currentTime + delay : 0, Math.max(0, offset));
     return source;
   }
   return {
@@ -146,7 +197,7 @@ export function createCombatAudio() {
     localShot(weapon: Weapon, seq: number) {
       for (const [key, at] of predicted) if (performance.now() - at > 2000) predicted.delete(key);
       predicted.set(seq, performance.now());
-      shot(weapon);
+      shot(weapon, 0.62, 0, false, localSeat);
     },
     async unlock() {
       if (disposed) return;
@@ -160,6 +211,12 @@ export function createCombatAudio() {
       master.gain.setTargetAtTime(value ? 0 : 0.55 * volume, context.currentTime, 0.015);
     },
     snapshot(state: MatchState, seat: Seat | null, serverNow = Date.now()) {
+      localSeat = seat;
+      sides = {
+        round: state.round,
+        bestOf: state.bestOf,
+        ...(state.sideVersion === undefined ? {} : { sideVersion: state.sideVersion }),
+      };
       if (state.round !== lastRound) {
         reloadVoice?.stop();
         reloadVoice = undefined;
@@ -190,7 +247,13 @@ export function createCombatAudio() {
         // replay the opening clicks over an animation already halfway through.
         const offset = Math.max(0, (serverNow - (reloadEnd - 1800)) / 1000);
         reloadVoice = play(
-          player.ammo === 0 ? "reloadEmpty" : "reloadTactical",
+          m4Seat(seat)
+            ? player.ammo === 0
+              ? "m4ReloadEmpty"
+              : "m4ReloadTactical"
+            : player.ammo === 0
+              ? "reloadEmpty"
+              : "reloadTactical",
           0.48,
           0,
           false,
@@ -211,7 +274,7 @@ export function createCombatAudio() {
         if (event.type === "shot") {
           if (own && consumeShotPrediction(predicted, event.shotSeq)) continue;
           const weapon = event.weapon ?? (event.seat ? state.players[event.seat].weapon : "rifle");
-          shot(weapon, gain * (own ? 0.62 : 0.48), pan, !!cue?.occluded);
+          shot(weapon, gain * (own ? 0.62 : 0.48), pan, !!cue?.occluded, event.seat);
         } else if (event.type === "step" && cue) {
           played.steps++;
           const sample = ("step" + (played.steps % 4)) as Sample;

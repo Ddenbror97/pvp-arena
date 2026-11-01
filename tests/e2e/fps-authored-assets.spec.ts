@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { fixture } from "./helpers/fps-fixture";
 
-test("authored viewmodel loads fitted hands, skin and the realistic AK finish", async ({
+test("authored viewmodel loads fitted hands, the jacket sleeve and the realistic AK finish", async ({
   page,
 }) => {
   const failed: string[] = [];
@@ -48,7 +48,11 @@ test("authored viewmodel loads fitted hands, skin and the realistic AK finish", 
     return result;
   });
   expect(result.loaded).toBe(true);
-  expect(result.meshes.some((mesh) => mesh.name === "continuous-rifle-forearms-L")).toBe(true);
+  // Terrorist arms: the white jacket sleeve covers the forearm (no bare skin, no watch); the
+  // Police M4 keeps the bare forearm, olive sleeve and watch (fps-m4-viewmodel.spec.ts).
+  expect(result.meshes.some((mesh) => mesh.name === "rifle-arm-L-sleeve")).toBe(true);
+  expect(result.meshes.some((mesh) => mesh.name === "continuous-rifle-forearms-L")).toBe(false);
+  expect(result.meshes.some((mesh) => mesh.name.startsWith("rifle-arm-L-watch"))).toBe(false);
   // Realistic AKM: steel, laminated wood and a steel magazine; no arena branding on the rifle.
   expect(result.meshes.some((mesh) => mesh.name === "pvp-receiver-decal")).toBe(false);
   expect(result.finishes).toEqual(

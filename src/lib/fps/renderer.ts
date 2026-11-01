@@ -25,7 +25,9 @@ import { capturePointer } from "./pointer-capture";
 import { TriggerFeedback } from "./trigger-feedback";
 import { createViewHands } from "./view-hands";
 import { createMuzzleFlash } from "./muzzle-flash";
-import { createAuthoredViewmodel } from "./authored-viewmodel";
+import { createAuthoredViewmodel, M4_VIEWMODEL } from "./authored-viewmodel";
+import { createShellCasings } from "./shell-casings";
+import { INSPECT_MS, M4_INSPECT, sampleVec } from "./reload-animation";
 import { REMOTE_DELAY_MS, SnapshotClock, PlaybackDelay, boundedPlaybackMs } from "./network";
 import { createViewmodelMotion } from "./viewmodel-motion";
 import { deathPose, deathSupport } from "./death-presentation";
@@ -39,6 +41,21 @@ export const WORLD_FOV = 70;
 // Hip-fire bore converges on the centered aim ray at 10 m. The old 0.24 rad
 // yaw pointed past the reticle to its left after the authored rifle changed.
 export const VIEWMODEL_REST = { x: 0.14, y: -0.12, z: -0.2, pitch: 0.012, yaw: 0.014, roll: -0.05 };
+/**
+ * Police M4A1 rest framing (its own; the AK's above is unchanged): lower-right, muzzle toward
+ * the screen centre, carry handle below the crosshair, both hands and the white sleeves in
+ * view. Yaw/pitch converge the bore on the aim ray at 10 m like the AK.
+ */
+export const M4_VIEWMODEL_REST = {
+  x: 0.14,
+  y: -0.12,
+  z: -0.2,
+  pitch: 0.012,
+  yaw: 0.014,
+  roll: -0.05,
+};
+/** Suppressed muzzle: a small, dim flash and little smoke (the AK keeps its full flash). */
+const SUPPRESSED_FLASH = { scale: 0.42, light: 0.7, smoke: 0.45 };
 
 export type ArenaFrame = {
   state: MatchState;
@@ -356,10 +373,49 @@ export function mountArena(
   });
   const hands = createViewHands(glove, sleeve);
   weaponGroup.add(hands.root);
-  const authoredView = createAuthoredViewmodel(weaponGroup);
+  // The Terrorist side keeps the AK; the Police side carries the M4A1. Sides swap at halftime,
+  // so both are prepared before Ready and switching never compiles shaders mid-match.
+  const authoredViews = {
+    ak: createAuthoredViewmodel(weaponGroup),
+    m4: createAuthoredViewmodel(weaponGroup, true, M4_VIEWMODEL),
+  };
+  let authoredView = authoredViews.ak;
+  /** `side` is the character side (A Police, B Terrorist), which swaps at halftime. */
+  const selectViewmodel = (side: Seat | null) => {
+    const chosen = side === "A" ? authoredViews.m4 : authoredViews.ak;
+    if (chosen === authoredView) return;
+    authoredView.update(false, 0, 0);
+    authoredView = chosen;
+    inspectStart = -Infinity;
+    casings.clear();
+  };
+  const casings = createShellCasings();
+  viewScene.add(casings.mesh);
+  let inspectStart = -Infinity;
+  const ejectAt = new THREE.Vector3(),
+    ejectRight = new THREE.Vector3(),
+    ejectUp = new THREE.Vector3(),
+    ejectBack = new THREE.Vector3();
+  /** Local M4 shot: eject a case from the port (visual only; AK unchanged). */
+  const ejectCase = (now: number) => {
+    if (authoredView.variant !== "m4" || weapon !== "rifle") return;
+    if (!authoredView.ejectionPort(ejectAt)) return;
+    weaponGroup.updateWorldMatrix(true, false);
+    weaponGroup.localToWorld(ejectAt);
+    ejectRight.set(1, 0, 0).transformDirection(weaponGroup.matrixWorld);
+    ejectUp.set(0, 1, 0).transformDirection(weaponGroup.matrixWorld);
+    ejectBack.set(0, 0, 1).transformDirection(weaponGroup.matrixWorld);
+    casings.emit(ejectAt, ejectRight, ejectUp, ejectBack, now);
+  };
   let preparedAssets = 0;
   const visualReady = Promise.all(
-    [authoredView.ready, characters.A.ready, characters.B.ready, environment.ready].map((asset) =>
+    [
+      authoredViews.ak.ready,
+      authoredViews.m4.ready,
+      characters.A.ready,
+      characters.B.ready,
+      environment.ready,
+    ].map((asset) =>
       asset.then(() => {
         if (!stopped)
           onLoadProgress?.({
@@ -400,7 +456,12 @@ export function mountArena(
     await renderer.compileAsync(viewScene, viewCamera);
     if (stopped) return;
     renderer.domElement.dataset["authoredModels"] =
-      authoredView.loaded && characters.A.loaded && characters.B.loaded ? "ready" : "fallback";
+      authoredViews.ak.loaded &&
+      authoredViews.m4.loaded &&
+      characters.A.loaded &&
+      characters.B.loaded
+        ? "ready"
+        : "fallback";
     onLoadProgress?.({ value: 100, label: "Arena ready" });
   });
   // Floor PBR/environment reflections stay world anchored. A throttled planar
@@ -517,6 +578,12 @@ export function mountArena(
     if (e.code === "Space" && !e.repeat) jump = true;
     if (e.code === "Digit1") weapon = "rifle";
     if (e.code === "Digit2") weapon = "pistol";
+    // Police M4A1 inspection: cosmetic only, cancelled by firing, reloading or switching.
+    if (e.code === "KeyF" && !e.repeat && authoredView.variant === "m4") {
+      const now = performance.now();
+      if (now - inspectStart > INSPECT_MS) inspectStart = now;
+    }
+    if (e.code === "KeyR" || e.code === "Digit1" || e.code === "Digit2") inspectStart = -Infinity;
   };
   const up = (e: KeyboardEvent) => keys.delete(e.code);
   const presentLocalShot = (commandSeq: number) => {
@@ -534,6 +601,8 @@ export function mountArena(
       muzzleUntil = now + 42;
       smokeUntil = now + 240;
       flashPending = true;
+      inspectStart = -Infinity;
+      ejectCase(now);
       onLocalShot?.(weapon, commandSeq);
     }
   };
@@ -868,10 +937,16 @@ export function mountArena(
     const barrelY = authoredTip?.y ?? (renderedWeapon === "rifle" ? AK_MUZZLE.y : 0);
     muzzle.update(muzzleUntil - now, barrel, barrelY, shotIndex);
     muzzle.root.position.x = authoredTip?.x ?? 0;
+    const suppressed = authoredTip !== null && authoredView.variant === "m4";
+    if (suppressed) muzzle.root.scale.multiplyScalar(SUPPRESSED_FLASH.scale);
     flashLight.position.set(0, barrelY, barrel - 0.02);
-    flashLight.intensity = muzzle.root.visible ? 2.5 : 0;
+    flashLight.intensity = muzzle.root.visible
+      ? 2.5 * (suppressed ? SUPPRESSED_FLASH.light : 1)
+      : 0;
     smoke.visible = now < smokeUntil;
-    smokeMaterial.opacity = smoke.visible ? Math.max(0, (smokeUntil - now) / 240) * 0.13 : 0;
+    smokeMaterial.opacity = smoke.visible
+      ? Math.max(0, (smokeUntil - now) / 240) * 0.13 * (suppressed ? SUPPRESSED_FLASH.smoke : 1)
+      : 0;
     smoke.position.set(0, 0.025 + (1 - Math.max(0, (smokeUntil - now) / 240)) * 0.08, barrel);
     smoke.scale.setScalar(1 + (1 - Math.max(0, (smokeUntil - now) / 240)) * 1.3);
     weaponGroup.visible = !!seat && !!state && state.players[seat].hp > 0;
@@ -917,16 +992,24 @@ export function mountArena(
       shot: shotIndex,
     });
     lookX = lookY = 0;
+    const rest = authoredView.variant === "m4" ? M4_VIEWMODEL_REST : VIEWMODEL_REST;
+    // Inspection offsets (M4 only), relative to the stable camera; never during a reload.
+    if (reloadRemaining > 0 || renderedWeapon !== "rifle" || !authoredRifle)
+      inspectStart = -Infinity;
+    const inspect = (now - inspectStart) / INSPECT_MS;
+    const ip = inspect >= 0 && inspect < 1 ? sampleVec(M4_INSPECT.position, inspect) : null,
+      ir = ip ? sampleVec(M4_INSPECT.rotation, inspect) : null;
     weaponGroup.position.set(
-      (authoredRifle ? VIEWMODEL_REST.x : 0.23) + sway.x,
-      (authoredRifle ? VIEWMODEL_REST.y : -0.24) + sway.y - landKick - reloadTilt * 0.07,
-      (authoredRifle ? VIEWMODEL_REST.z : -0.62) + sway.z,
+      (authoredRifle ? rest.x : 0.23) + sway.x + (ip?.[0] ?? 0),
+      (authoredRifle ? rest.y : -0.24) + sway.y - landKick - reloadTilt * 0.07 + (ip?.[1] ?? 0),
+      (authoredRifle ? rest.z : -0.62) + sway.z + (ip?.[2] ?? 0),
     );
     weaponGroup.rotation.set(
-      (authoredRifle ? VIEWMODEL_REST.pitch : 0) + sway.pitch + reloadTilt * 0.13,
-      (authoredRifle ? VIEWMODEL_REST.yaw : 0.18) + sway.yaw,
-      (authoredRifle ? VIEWMODEL_REST.roll : -0.02) + sway.roll - reloadTilt * 0.55,
+      (authoredRifle ? rest.pitch : 0) + sway.pitch + reloadTilt * 0.13 + (ir?.[0] ?? 0),
+      (authoredRifle ? rest.yaw : 0.18) + sway.yaw + (ir?.[1] ?? 0),
+      (authoredRifle ? rest.roll : -0.02) + sway.roll - reloadTilt * 0.55 + (ir?.[2] ?? 0),
     );
+    casings.update(dt, now);
     weaponGroup.scale.setScalar(renderedWeapon === "pistol" ? 0.72 : 1);
     pistolPart.visible = renderedWeapon === "pistol";
     rifle.visible = renderedWeapon === "rifle" && !authoredView.loaded;
@@ -1019,6 +1102,7 @@ export function mountArena(
       );
       visibility = frame.visibility ?? { A: true, B: true };
       seat = assignedSeat;
+      selectViewmodel(seat ? characterSide(state, seat) : null);
       const measuredOffset = frame.serverNow - Date.now();
       lastServerOffset =
         lastRound === 0
@@ -1089,6 +1173,7 @@ export function mountArena(
                 kick = 1;
                 muzzleUntil = now + 42;
                 smokeUntil = now + 240;
+                ejectCase(now);
               }
               confirmedShot = now;
             } else if (e.seat) actorFor(e.seat).shot(performance.now());
@@ -1157,7 +1242,9 @@ export function mountArena(
       contactTexture.dispose();
       weave.dispose();
       muzzle.dispose();
-      authoredView.dispose();
+      authoredViews.ak.dispose();
+      authoredViews.m4.dispose();
+      casings.dispose();
       weaponKit.dispose();
       environment.dispose();
       reflections?.dispose();

@@ -127,9 +127,12 @@ test("recorded combat audio plays once per confirmed event, supports mute and bo
       repeatedRoundVoices,
     };
   });
-  expect(stats.single.decoded).toBe(10);
+  // 8 recorded samples (AK, pistol, steps, AK reloads) + 3 Police M4 (shot, two reloads) + 3
+  // synthesised (hurt, elimination, casing).
+  expect(stats.single.decoded).toBe(14);
   expect(stats.single.shots).toBe(1);
-  expect(stats.single.voices).toBe(1);
+  // Own Police M4 shot: the report plus its ejected case landing a moment later.
+  expect(stats.single.voices).toBe(2);
   expect(stats.repeat.shots).toBe(1);
   expect(stats.muted.voices).toBe(stats.single.voices);
   expect(stats.step.steps).toBe(1);
