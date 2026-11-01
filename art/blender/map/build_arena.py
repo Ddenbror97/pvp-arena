@@ -83,7 +83,7 @@ def join_by_material(collection):
     by_mat = {}
     for o in list(collection.objects):
         if o.type == "MESH" and o.data.users == 1 and not o.get("instance"):
-            by_mat.setdefault(o.data.materials[0].name, []).append(o)
+            by_mat.setdefault((o.data.materials[0].name, bool(o.get("noShadow"))), []).append(o)
     for name, objs in by_mat.items():
         if len(objs) < 2:
             continue
@@ -92,7 +92,7 @@ def join_by_material(collection):
             o.select_set(True)
         bpy.context.view_layer.objects.active = objs[0]
         bpy.ops.object.join()
-        objs[0].name = f"{collection.name}-{name}"
+        objs[0].name = f"{collection.name}-{name[0]}{'-ns' if name[1] else ''}"
 
 
 def export(out):
@@ -107,7 +107,8 @@ def export(out):
                 o.parent = empty
     bpy.ops.export_scene.gltf(filepath=out, export_format="GLB", export_apply=True, export_yup=True,
                               export_texcoords=True, export_normals=True, export_materials="EXPORT",
-                              export_image_format="WEBP", export_extras=True, export_animations=False)
+                              export_image_format="WEBP", export_extras=True, export_animations=False,
+                              export_vertex_color="ACTIVE")
 
 
 root, section = sections()

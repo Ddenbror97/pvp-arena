@@ -7,6 +7,7 @@ import { COMBAT_VERSION, recoveryProfile } from "./combat";
 import { createBloodEffects } from "./blood-effects";
 import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handling";
 import { createArenaEnvironment } from "./arena-environment";
+import { ARENA_LIGHTING } from "./arena-lighting";
 import { createImpactEffects } from "./impacts";
 import { createWeaponKit, AK_MUZZLE } from "./weapon";
 import {
@@ -78,9 +79,13 @@ export function mountArena(
   // The weapon pass needs only its rig and lights. Re-traversing the entire
   // arena for this second pass wastes matrix, skeleton and light setup work.
   const viewScene = new THREE.Scene();
-  scene.background = new THREE.Color(0xa9c3dc);
+  scene.background = new THREE.Color(ARENA_LIGHTING.background);
   // Warm dusty haze for the Mediterranean aim arena; starts beyond the 40 m playable area.
-  scene.fog = new THREE.Fog(0xd9cdb6, 70, 260);
+  scene.fog = new THREE.Fog(
+    ARENA_LIGHTING.fog.color,
+    ARENA_LIGHTING.fog.near,
+    ARENA_LIGHTING.fog.far,
+  );
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("webgl2", {
     alpha: true,
@@ -106,7 +111,7 @@ export function mountArena(
   renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.0;
+  renderer.toneMappingExposure = ARENA_LIGHTING.exposure;
   host.appendChild(renderer.domElement);
   const camera = new THREE.PerspectiveCamera(WORLD_FOV, 1, 0.06, 260);
   const viewCamera = new THREE.PerspectiveCamera(60, 1, 0.03, 8);
@@ -114,11 +119,15 @@ export function mountArena(
   camera.rotation.order = "YXZ";
   camera.position.set(0, EYE_HEIGHT, SPAWNS.A.z);
   scene.add(camera);
-  const hemisphere = new THREE.HemisphereLight(0xc4d3ef, 0x353038, 1.35);
+  const hemisphere = new THREE.HemisphereLight(
+    ARENA_LIGHTING.hemisphere.sky,
+    ARENA_LIGHTING.hemisphere.ground,
+    ARENA_LIGHTING.hemisphere.intensity,
+  );
   scene.add(hemisphere);
-  const sun = new THREE.DirectionalLight(0xffefd8, 3.4);
-  // Centre the light across the two opposing spawn directions.
-  sun.position.set(21, 19, -24);
+  const sun = new THREE.DirectionalLight(ARENA_LIGHTING.sun.color, ARENA_LIGHTING.sun.intensity);
+  // Across the arena diagonal, so neither spawn looks straight into the sun.
+  sun.position.set(...ARENA_LIGHTING.sun.position);
   sun.castShadow = true;
   // Static (rendered once after load), so a 2048 map is a one-off cost: ~2.4 cm per texel.
   sun.shadow.mapSize.set(2048, 2048);
@@ -208,7 +217,7 @@ export function mountArena(
   };
   scene.add(characters.A.root, characters.B.root);
   captureReflections();
-  scene.environmentIntensity = 0.45;
+  scene.environmentIntensity = ARENA_LIGHTING.environmentIntensity;
   viewScene.environmentIntensity = scene.environmentIntensity;
   viewScene.fog = scene.fog;
   const shadowCanvas = document.createElement("canvas");

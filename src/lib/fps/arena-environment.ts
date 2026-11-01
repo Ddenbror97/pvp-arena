@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { Sky } from "three/addons/objects/Sky.js";
 import { ARENA, BOXES, FLOOR, STRUCTURES, WALLS, type Solid } from "./map";
 import { retainAuthoredAsset } from "./authored-assets";
+import { ARENA_LIGHTING } from "./arena-lighting";
 
 /** Blender-built PVPSPINARENA aim arena (art/blender/map); dresses exactly the map.ts solids. */
 export const ARENA_MAP_URL = "/fps/models/aim-arena.glb";
@@ -20,17 +20,47 @@ export function createArenaEnvironment(scene: THREE.Scene) {
     materials: new Set<THREE.Material>(),
     textures: new Set<THREE.Texture>(),
   };
-  // Warm late-afternoon Mediterranean sky; the sun direction matches the renderer's light.
-  const sky = new Sky();
-  sky.scale.setScalar(400);
-  const uniforms = sky.material.uniforms;
-  uniforms["turbidity"]!.value = 6.5;
-  uniforms["rayleigh"]!.value = 1.6;
-  uniforms["mieCoefficient"]!.value = 0.004;
-  uniforms["mieDirectionalG"]!.value = 0.82;
-  uniforms["sunPosition"]!.value.set(21, 15, -24).normalize();
+  // Clear Mediterranean afternoon sky: a cheap gradient dome (zenith blue to warm hazy horizon)
+  // with a soft glow around the sun, in display range so it neither blows out under ACES nor
+  // over-brightens the reflection capture.
+  const sky = new THREE.Mesh(
+    new THREE.SphereGeometry(240, 32, 16),
+    new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      depthWrite: false,
+      fog: false,
+      uniforms: {
+        zenith: { value: new THREE.Color(0x3d74b8) },
+        horizon: { value: new THREE.Color(0xc9d6df) },
+        haze: { value: new THREE.Color(0xe6d6bc) },
+        sunDirection: { value: new THREE.Vector3(...ARENA_LIGHTING.sun.position).normalize() },
+      },
+      vertexShader: /* glsl */ `
+        varying vec3 vDirection;
+        void main() {
+          vDirection = normalize(position);
+          vec4 p = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          gl_Position = p.xyww;
+        }`,
+      fragmentShader: /* glsl */ `
+        uniform vec3 zenith, horizon, haze, sunDirection;
+        varying vec3 vDirection;
+        void main() {
+          vec3 d = normalize(vDirection);
+          float up = clamp(d.y, 0.0, 1.0);
+          vec3 color = mix(horizon, zenith, pow(up, 0.55));
+          color = mix(haze, color, smoothstep(-0.05, 0.12, d.y));
+          float sun = max(dot(d, sunDirection), 0.0);
+          color += vec3(1.0, 0.86, 0.62) * (pow(sun, 600.0) * 1.2 + pow(sun, 12.0) * 0.18);
+          gl_FragColor = vec4(color, 1.0);
+          #include <colorspace_fragment>
+        }`,
+    }),
+  );
   sky.frustumCulled = false;
   sky.castShadow = false;
+  sky.receiveShadow = false;
+  sky.renderOrder = -1;
   sky.name = "sky";
   scene.add(sky);
   owned.geometries.add(sky.geometry);

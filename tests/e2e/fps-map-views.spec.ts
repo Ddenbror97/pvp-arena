@@ -52,12 +52,16 @@ test("map views", async ({ page }) => {
     renderer.shadowMap.type = T.PCFShadowMap;
     document.body.replaceChildren(renderer.domElement);
     const scene = new T.Scene();
-    // The game's world lighting (renderer.ts).
-    scene.background = new T.Color(0xa9c3dc);
-    scene.fog = new T.Fog(0xd9cdb6, 70, 260);
-    scene.add(new T.HemisphereLight(0xc4d3ef, 0x353038, 1.35));
-    const sun = new T.DirectionalLight(0xffefd8, 3.4);
-    sun.position.set(21, 19, -24);
+    // The game's world lighting (arena-lighting.ts, used by renderer.ts).
+    const { ARENA_LIGHTING: Lt } = await import("/src/lib/fps/arena-lighting.ts" as string);
+    renderer.toneMappingExposure = Lt.exposure;
+    scene.background = new T.Color(Lt.background);
+    scene.fog = new T.Fog(Lt.fog.color, Lt.fog.near, Lt.fog.far);
+    scene.add(
+      new T.HemisphereLight(Lt.hemisphere.sky, Lt.hemisphere.ground, Lt.hemisphere.intensity),
+    );
+    const sun = new T.DirectionalLight(Lt.sun.color, Lt.sun.intensity);
+    sun.position.set(...Lt.sun.position);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     Object.assign(sun.shadow.camera, {
@@ -77,7 +81,7 @@ test("map views", async ({ page }) => {
     scene.updateMatrixWorld(true);
     const pmrem = new T.PMREMGenerator(renderer);
     scene.environment = pmrem.fromScene(scene, 0.04, 0.1, 100).texture;
-    scene.environmentIntensity = 0.45;
+    scene.environmentIntensity = Lt.environmentIntensity;
     renderer.shadowMap.needsUpdate = true;
     const info = { calls: 0, triangles: 0 };
     Reflect.set(window, "mapView", { T, renderer, scene, camera, info });
