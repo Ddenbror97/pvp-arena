@@ -1,6 +1,15 @@
 import type { Input, MatchState, Player } from "../../../src/lib/fps/protocol";
 import { eyeHeight } from "../../../src/lib/fps/map";
 
+/** Aim-arena main lane from the west spawn (x mirrored for the east spawn). */
+export const BOT_LANE = [
+  { x: -14.9, z: 2.5 },
+  { x: -12.6, z: 2.5 },
+  { x: -11.8, z: 0.6 },
+  { x: -7, z: -0.6 },
+  { x: -3, z: -2.4 },
+];
+
 /** Test transport only. This bot never writes health, transforms, ammo, score or phase. */
 export function createGameplayBot() {
   let round = 0,
@@ -18,16 +27,24 @@ export function createGameplayBot() {
       if (round !== state.round) {
         round = state.round;
         stage = 0;
-        sign = Math.sign(p.z) || -1;
+        sign = p.x < 0 ? 1 : -1;
         enabled = false;
       }
-      if (stage === 0 && p.x > 9.25) stage = 1;
-      if (stage === 1 && Math.abs(p.z - sign * 3) < 0.25) stage = 2;
+      // Walk the mirrored main lane to the centre corner (stage = waypoint index; the final
+      // stage holds and fights).
+      const lane = BOT_LANE.map((w) => ({ x: w.x * sign, z: w.z }));
+      while (stage < lane.length && Math.hypot(lane[stage]!.x - p.x, lane[stage]!.z - p.z) < 0.25)
+        stage++;
+      const holding = stage >= lane.length;
       let vx = 0,
         vz = 0;
-      if (stage === 0) vx = 1;
-      else if (stage === 1) vz = -sign;
-      else if (round === 6) vx = Math.sign(9.5 + Math.sin(now / 650) * 0.22 - p.x) * 0.28;
+      if (!holding) {
+        const w = lane[stage]!,
+          d = Math.hypot(w.x - p.x, w.z - p.z) || 1;
+        vx = (w.x - p.x) / d;
+        vz = (w.z - p.z) / d;
+      } else if (round === 6)
+        vx = Math.sign(lane.at(-1)!.x + Math.sin(now / 650) * 0.22 - p.x) * 0.28;
       const dx = target.x - p.x,
         dz = target.z - p.z,
         distance = Math.hypot(dx, dz);
@@ -45,10 +62,10 @@ export function createGameplayBot() {
         pitch,
         weapon: round === 5 ? "pistol" : "rifle",
         reload: p.ammo === 0,
-        fire: enabled && stage === 2 && (round !== 5 || now % 360 < 150),
-        jump: round === 3 && stage === 2 && now % 1700 < 60,
+        fire: enabled && holding && (round !== 5 || now % 360 < 150),
+        jump: round === 3 && holding && now % 1700 < 60,
         sprint: false,
-        crouch: round === 2 && stage === 2,
+        crouch: round === 2 && holding,
       };
     },
   };

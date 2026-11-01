@@ -9,12 +9,14 @@ export const SUPPORT_HAND_LEAN = 0.5;
  * Handguard grip only: the palm cradles the handguard (rifle-local units), so the fingers can
  * reach round it and wrap up the far side instead of lying flat underneath it.
  */
-export const HANDGUARD_PALM_SHIFT = new THREE.Vector3(0.036, 0.014, 0);
+export const HANDGUARD_PALM_SHIFT = new THREE.Vector3(0.09, 0.05, 0);
 /** Handguard grip finger targets (handguard-local): middle joint on the far side, tip up it. */
 const HANDGUARD_WRAP = {
-  joint: new THREE.Vector2(0.054, -0.026),
-  tip: new THREE.Vector2(0.056, 0.024),
+  joint: new THREE.Vector2(0.04, -0.02),
+  tip: new THREE.Vector2(-0.01, 0.0),
 };
+/** Handguard grip thumb tip (handguard-local): low on the near side, beside the fingers. */
+const HANDGUARD_THUMB = new THREE.Vector3(-0.05, -0.02, -0.93);
 
 /**
  * Where the support hand grips, expressed as a map from handguard-local coordinates (the frame
@@ -205,9 +207,19 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
   ] as const) {
     wrapSupport(base, z + SUPPORT_GRIP_SHIFT);
   }
+  // Handguard grip: the thumb curls down against the near side of the wood; the magazine grip
+  // keeps its own target.
   fit(
     ["Bone_L020", "Bone_L021", "Bone_L022", "Bone_L022_end"],
-    grip.point(new THREE.Vector3(-0.052, 0.052, -0.971 + SUPPORT_GRIP_SHIFT)),
+    grip.point(
+      cradle
+        ? new THREE.Vector3(
+            HANDGUARD_THUMB.x,
+            HANDGUARD_THUMB.y,
+            HANDGUARD_THUMB.z + SUPPORT_GRIP_SHIFT,
+          )
+        : new THREE.Vector3(-0.052, 0.052, -0.971 + SUPPORT_GRIP_SHIFT),
+    ),
   );
   // Right middle/ring/little fingers curl around the pistol grip. Index retains trigger placement.
   if (grip.rightHand)

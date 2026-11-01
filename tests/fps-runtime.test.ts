@@ -106,6 +106,19 @@ function until(
   });
 }
 
+/** Aim-arena main lane from the west spawn to the east spawn exit (x is mirrored for B's side). */
+const DRIVER_ROUTE = [
+  { x: -14.9, z: 2.5 },
+  { x: -12.6, z: 2.5 },
+  { x: -11.8, z: 0.6 },
+  { x: -7, z: -0.6 },
+  { x: -3, z: -2.4 },
+  { x: 3, z: -2.4 },
+  { x: 7, z: -0.6 },
+  { x: 11.8, z: 0.6 },
+  { x: 12.6, z: 2.5 },
+  { x: 14.9, z: 2.5 },
+];
 const movement = (seq: number) =>
   JSON.stringify({
     v: 1,
@@ -326,18 +339,19 @@ describe("isolated real Durable Object WebSockets", () => {
         for (let step = 0; step < 3 && now - lastInputAt >= 34; step++) {
           lastInputAt = Math.max(lastInputAt + 34, now - 68);
           a.send(
-            JSON.stringify({ ...JSON.parse(movement(++seq)), forward: 0, strafe: 1, fire: false }),
+            // North up the west spawn alley: 14 m of free ground.
+            JSON.stringify({ ...JSON.parse(movement(++seq)), forward: 1, strafe: 0, fire: false }),
           );
         }
       }, 34);
       await pause(400);
-      const poses: Array<{ at: number; x: number }> = [];
+      const poses: Array<{ at: number; z: number }> = [];
       a.addEventListener("message", (event) => {
         const frame = JSON.parse(String(event.data)) as RuntimeFrame;
         if (frame.type === "snapshot") {
           expect(frame.poseAt).toBeLessThanOrEqual(frame.serverNow);
           expect(frame.serverNow - frame.poseAt).toBeLessThan(100);
-          poses.push({ at: frame.serverNow, x: frame.state.players.A.x });
+          poses.push({ at: frame.serverNow, z: frame.state.players.A.z });
         }
       });
       const first = await until(a, (f) => f.type === "snapshot" && f.state.phase === "live");
@@ -347,7 +361,7 @@ describe("isolated real Durable Object WebSockets", () => {
       expect(hz).toBeGreaterThan(27);
       expect(hz).toBeLessThan(32);
       const gaps = poses.slice(1).map((pose, i) => pose.at - poses[i]!.at);
-      const moving = poses.slice(1).filter((pose, i) => pose.x > poses[i]!.x).length;
+      const moving = poses.slice(1).filter((pose, i) => pose.z < poses[i]!.z).length;
       expect(Math.max(...gaps)).toBeLessThan(110);
       expect(moving / gaps.length).toBeGreaterThan(0.85);
       console.log(
@@ -431,10 +445,10 @@ describe("isolated real Durable Object WebSockets", () => {
     const [frameA, frameB] = await Promise.all([nextA, nextB]);
     expect(frameA.visibility).toEqual({ A: true, B: false });
     expect(frameB.visibility).toEqual({ A: false, B: true });
-    expect(frameA.state.players.A.z).toBe(13);
-    expect(frameB.state.players.B.z).toBe(-13);
-    expect(frameA.state.players.B.z).toBe(0);
-    expect(frameB.state.players.A.z).toBe(0);
+    expect(frameA.state.players.A.x).toBe(-18.2);
+    expect(frameB.state.players.B.x).toBe(18.2);
+    expect(frameA.state.players.B.x).toBe(0);
+    expect(frameB.state.players.A.x).toBe(0);
     expect(frameA.state).not.toHaveProperty("server");
   });
 
@@ -504,7 +518,7 @@ describe("isolated real Durable Object WebSockets", () => {
       replacement,
       (f) => f.type === "snapshot" && f.state.players.A.lastSeq === 5000,
     );
-    expect(moved.state.players.A.x).toBeGreaterThan(0);
+    expect(moved.state.players.A.x).toBeGreaterThan(-18.2);
     expect(moved.state.players.A.crouched).toBe(true);
   });
   it("rejects client-authored damage and enforces read-only spectators", async () => {
@@ -551,7 +565,8 @@ describe("isolated real Durable Object WebSockets", () => {
     let latest: MatchState | null = null;
     let seq = 0,
       round = 0,
-      stage = 0;
+      stage = 0,
+      side = 1;
     a.addEventListener("message", (event) => {
       const f = JSON.parse(String(event.data));
       if (f.type === "snapshot") latest = f.state;
@@ -572,31 +587,31 @@ describe("isolated real Durable Object WebSockets", () => {
       }
       const p = latest.players.A,
         target = latest.players.B;
-      if (stage === 0 && p.x >= 9) stage = 1;
-      if (stage === 1 && Math.abs(target.z - p.z) < 0.5) stage = 2;
-      const yaw =
-        stage === 0
-          ? 0
-          : stage === 1
-            ? target.z < p.z
-              ? 0
-              : Math.PI
-            : Math.atan2(-(target.x - p.x), -(target.z - p.z));
+      // Main lane from this round's spawn into the opponent's spawn exit (mirrored per side).
+      if (stage === 0) side = p.x < 0 ? 1 : -1;
+      const route = DRIVER_ROUTE.map((w) => ({ x: w.x * side, z: w.z }));
+      while (stage < route.length && Math.hypot(route[stage]!.x - p.x, route[stage]!.z - p.z) < 0.4)
+        stage++;
+      const goal = route[stage],
+        shooting = !goal;
+      const yaw = shooting
+        ? Math.atan2(-(target.x - p.x), -(target.z - p.z))
+        : Math.atan2(-(goal.x - p.x), -(goal.z - p.z));
       a.send(
         JSON.stringify({
           v: 1,
           type: "input",
           combatVersion: 2,
           seq: ++seq,
-          forward: stage === 1 ? 1 : 0,
-          strafe: stage === 0 ? 1 : 0,
-          yaw: yaw - (stage === 2 ? (p.recoilYaw ?? 0) : 0),
-          pitch: stage === 2 ? -(p.recoilPitch ?? 0) : 0,
-          fire: stage === 2,
+          forward: shooting ? 0 : 1,
+          strafe: 0,
+          yaw: yaw - (shooting ? (p.recoilYaw ?? 0) : 0),
+          pitch: shooting ? -(p.recoilPitch ?? 0) : 0,
+          fire: shooting,
           reload: false,
           weapon: "rifle",
           jump: false,
-          sprint: stage !== 2,
+          sprint: !shooting,
         }),
       );
     }, 34);

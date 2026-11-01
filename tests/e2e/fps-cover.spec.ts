@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
 import { fixture } from "./helpers/fps-fixture";
 
-test("industrial arena renders from both spawns with no WebGL startup errors", async ({ page }) => {
+test("aim arena renders from both spawns with no WebGL startup errors", async ({ page }) => {
   await page.setViewportSize({ width: 1673, height: 940 });
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -25,12 +25,22 @@ test("actual Ctrl input changes authoritative crouch and restores standing", asy
   await page.locator("canvas").click();
   await page.keyboard.down("ControlLeft");
   await expect
-    .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.crouched))
+    .poll(
+      () => page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.crouched),
+      {
+        timeout: 30_000,
+      },
+    )
     .toBe(true);
   await page.screenshot({ path: "test-results/fps-aim-map-crouched.png" });
   await page.keyboard.up("ControlLeft");
   await expect
-    .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.crouched))
+    .poll(
+      () => page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.crouched),
+      {
+        timeout: 30_000,
+      },
+    )
     .toBe(false);
   await page.evaluate(() => Reflect.get(window, "fpsPolishTest").dispose());
 });
@@ -73,10 +83,18 @@ test("held fire produces authoritative impacts on each material and the ground",
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const cases = [
-    { name: "concrete", x: 0, z: 13, pitch: 0, surface: "concrete", id: "blast-wall-1" },
-    { name: "metal", x: 5, z: 4.5, pitch: 0, surface: "metal", id: "container-1" },
-    { name: "wood", x: 7, z: 11, pitch: -0.25, surface: "wood", id: "crate-1-1" },
-    { name: "ground", x: 9, z: 13, pitch: -0.7, surface: "concrete", id: "floor" },
+    // Aim-arena poses facing north (-z): arcade wall, east lane container, centre tarp stack, floor.
+    {
+      name: "concrete",
+      x: -4.05,
+      z: -8.5,
+      pitch: 0,
+      surface: "concrete",
+      id: "north-wall-inner-w",
+    },
+    { name: "metal", x: 8.6, z: 0.5, pitch: 0, surface: "metal", id: "lane-stack-e" },
+    { name: "wood", x: 0, z: 3.5, pitch: -0.25, surface: "wood", id: "tarp-stack" },
+    { name: "ground", x: -8.3, z: 4.5, pitch: -0.7, surface: "concrete", id: "floor" },
   ];
   for (const pose of cases) {
     await fixture(page);
@@ -90,15 +108,18 @@ test("held fire produces authoritative impacts on each material and the ground",
     await page.locator("canvas").click();
     await page.mouse.down();
     await expect
-      .poll(() =>
-        page.evaluate(
-          (id) =>
-            Reflect.get(window, "fpsPolishTest").eventLog.some(
-              (e: { type: string; impact?: { solidId: string } }) =>
-                e.type === "impact" && e.impact?.solidId === id,
-            ),
-          pose.id,
-        ),
+      .poll(
+        () =>
+          page.evaluate(
+            (id) =>
+              Reflect.get(window, "fpsPolishTest").eventLog.some(
+                (e: { type: string; impact?: { solidId: string } }) =>
+                  e.type === "impact" && e.impact?.solidId === id,
+              ),
+            pose.id,
+          ),
+        // Software GL (CI/SwiftShader) renders a frame every few seconds.
+        { timeout: 30_000 },
       )
       .toBe(true);
     await page.mouse.up();

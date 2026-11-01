@@ -22,8 +22,8 @@ describe("authoritative opponent visibility", () => {
   });
   it("reveals standing and crouched targets down an unobstructed lane", () => {
     const s = live();
-    Object.assign(s.players.A, { x: 9, z: 3 });
-    Object.assign(s.players.B, { x: 9, z: -3 });
+    Object.assign(s.players.A, { x: 0, z: -2.4 });
+    Object.assign(s.players.B, { x: 0, z: -8.4 });
     for (const crouched of [false, true]) {
       s.players.B.crouched = crouched;
       expect(canSeeOpponent(s, "A")).toBe(true);
@@ -32,15 +32,17 @@ describe("authoritative opponent visibility", () => {
   });
   it("does not reveal targets on the far side of a container", () => {
     const s = live();
-    Object.assign(s.players.A, { x: 5, z: 5 });
-    Object.assign(s.players.B, { x: 5, z: -5 });
+    // Either side of the central tarp stack.
+    Object.assign(s.players.A, { x: 0, z: 4 });
+    Object.assign(s.players.B, { x: 0, z: -4 });
     expect(canSeeOpponent(s, "A")).toBe(false);
     expect(canSeeOpponent(s, "B")).toBe(false);
   });
   it("allows a head exposed over low cover while hiding a crouched target", () => {
     const s = live();
-    Object.assign(s.players.A, { x: 2.6, z: 4 });
-    Object.assign(s.players.B, { x: 2.6, z: 0 });
+    // Across the 1.05 m courtyard low wall.
+    Object.assign(s.players.A, { x: -8.3, z: -4.5 });
+    Object.assign(s.players.B, { x: -8.3, z: -8.3 });
     expect(canSeeOpponent(s, "A")).toBe(true);
     s.players.B.crouched = true;
     expect(canSeeOpponent(s, "A")).toBe(false);

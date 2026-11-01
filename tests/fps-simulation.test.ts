@@ -43,8 +43,9 @@ function tick(state: MatchState, inputs: Parameters<typeof stepMatch>[1] = {}, d
   stepMatch(state, inputs, (state.server?.lastStepAt ?? 0) + TICK_MS, dt);
 }
 function lane(state: MatchState): void {
-  Object.assign(state.players.A, { x: 9, y: 0, z: 3, yaw: 0 });
-  Object.assign(state.players.B, { x: 9, y: 0, z: -3, yaw: Math.PI });
+  // A 6 m north-courtyard lane between the centre stack and the arcade (aim-arena layout).
+  Object.assign(state.players.A, { x: 0, y: 0, z: -2.4, yaw: 0 });
+  Object.assign(state.players.B, { x: 0, y: 0, z: -8.4, yaw: Math.PI });
 }
 function nextRound(state: MatchState): void {
   stepMatch(state, {}, state.phaseEndsAt, TICK_MS);
@@ -119,12 +120,12 @@ describe("authoritative movement", () => {
     const distance = (MOVE_SPEED * TICK_MS) / 1000;
     expect(straight.players.A.y).toBe(0);
     expect(straight.players.A.z).toBeCloseTo(SPAWNS.A.z - distance);
-    expect(Math.hypot(diagonal.players.A.x, diagonal.players.A.z - SPAWNS.A.z)).toBeCloseTo(
-      distance,
-    );
+    expect(
+      Math.hypot(diagonal.players.A.x - SPAWNS.A.x, diagonal.players.A.z - SPAWNS.A.z),
+    ).toBeCloseTo(distance);
     const turned = live();
     tick(turned, { A: input({ yaw: Math.PI / 2, forward: 1 }) });
-    expect(turned.players.A.x).toBeCloseTo(-distance);
+    expect(turned.players.A.x).toBeCloseTo(SPAWNS.A.x - distance);
   });
   it("rejects fast calls, time reversal, repeated and out-of-order sequences", () => {
     const state = live();
@@ -151,10 +152,11 @@ describe("authoritative movement", () => {
     const state = live();
     for (let seq = 0; seq < 300; seq++)
       tick(state, { A: input({ seq, forward: 1, sprint: true }) });
-    expect(state.players.A.z).toBeGreaterThanOrEqual(6 + PLAYER_RADIUS);
-    Object.assign(state.players.A, { x: 9, z: 0 });
+    // North up the spawn alley until the edge building (its face is at z = -14.5).
+    expect(state.players.A.z).toBeCloseTo(-14.5 + PLAYER_RADIUS);
+    Object.assign(state.players.A, { x: 9, z: 12.4 });
     for (let seq = 300; seq < 600; seq++) tick(state, { A: input({ seq, strafe: 1 }) });
-    expect(state.players.A.x).toBeLessThanOrEqual(ARENA.width / 2 - PLAYER_RADIUS);
+    expect(state.players.A.x).toBeCloseTo(ARENA.width / 2 - PLAYER_RADIUS);
   });
   it("shares prediction and jump gravity, including missing-input landing", () => {
     const state = live(),
@@ -177,7 +179,9 @@ describe("combat", () => {
   it("uses shared symmetric boxes to occlude head and body shots", () => {
     for (const b of BOXES)
       expect(
-        BOXES.some((mirror) => mirror.x === b.x && mirror.z === -b.z && mirror.h === b.h),
+        BOXES.some(
+          (mirror) => Math.abs(mirror.x + b.x) < 1e-9 && mirror.z === b.z && mirror.h === b.h,
+        ),
       ).toBe(true);
     const state = live();
     tick(state, { A: input({ fire: true }) });
@@ -310,12 +314,13 @@ describe("match lifecycle", () => {
     expect(roundEnd - state.server!.lastStepAt).toBeCloseTo(ROUND_END_MS);
     nextRound(state);
     expect(state.round).toBe(2);
-    expect(state.players.A.z).toBe(SPAWNS.B.z);
+    expect(state.players.A.x).toBe(SPAWNS.B.x);
     expect(state.players.A.y).toBe(0);
     expect(state.players.A.lastSeq).toBe(8);
     expect(state.players.A.kills).toBe(1);
     expect(state.players.A.ammo).toBe(30);
     tick(state, { A: input({ seq: 8, forward: 1 }) });
+    expect(state.players.A.x).toBe(SPAWNS.B.x);
     expect(state.players.A.z).toBe(SPAWNS.B.z);
   });
   for (const bestOf of [5, 9] as const)

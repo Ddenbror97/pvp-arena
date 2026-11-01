@@ -40,8 +40,9 @@ function live(version: 1 | 2 = 2) {
   return s;
 }
 function lane(s: MatchState) {
-  Object.assign(s.players.A, { x: 9, z: 3, y: 0, yaw: 0 });
-  Object.assign(s.players.B, { x: 9, z: -3, y: 0, yaw: Math.PI });
+  // A 6 m north-courtyard lane between the centre stack and the arcade (aim-arena layout).
+  Object.assign(s.players.A, { x: 0, z: -2.4, y: 0, yaw: 0 });
+  Object.assign(s.players.B, { x: 0, z: -8.4, y: 0, yaw: Math.PI });
 }
 function tick(s: MatchState, seq: number, extra: Partial<Input> = {}) {
   stepMatch(s, { A: input(seq, extra) }, s.server!.lastStepAt + 34, TICK_MS);
@@ -180,8 +181,9 @@ describe("PvPStrike authoritative combat v2", () => {
   });
   it("attaches blood only to a real surface near the hit", () => {
     const s = live();
-    Object.assign(s.players.A, { x: 9, z: -10 });
-    Object.assign(s.players.B, { x: 9, z: -14.5 });
+    // Through the east arch; the edge building's wall is 0.9 m behind the target.
+    Object.assign(s.players.A, { x: 8.3, z: -9.1 });
+    Object.assign(s.players.B, { x: 8.3, z: -13.6 });
     tick(s, 1, { fire: true });
     const hit = s.events.find((e) => e.hit)?.hit;
     expect(hit?.splatter).toBeDefined();
@@ -201,7 +203,8 @@ describe("PvPStrike authoritative combat v2", () => {
       steps += s.events.filter((e) => e.type === "step").length;
     }
     expect(steps).toBeGreaterThan(0);
-    Object.assign(s.players.A, { x: 11.65, z: 12 });
+    // Pressed against the west house: strafing right (+x) is blocked.
+    Object.assign(s.players.A, { x: -16.35, z: 6 });
     s.players.A.stepDistance = 0;
     for (let n = 51; n <= 70; n++) {
       tick(s, n, { strafe: 1 });

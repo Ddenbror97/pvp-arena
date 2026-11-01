@@ -32,8 +32,8 @@ function movingTarget() {
     h = new ShotHistory();
   startMatch(s, 0);
   stepMatch(s, {}, 3000, TICK_MS);
-  Object.assign(s.players.A, { x: 9, z: 3, y: 0, yaw: 0 });
-  Object.assign(s.players.B, { x: 7.5, z: -3, y: 0 });
+  Object.assign(s.players.A, { x: 0, z: -2.4, y: 0, yaw: 0 });
+  Object.assign(s.players.B, { x: -1.5, z: -8.4, y: 0 });
   s.server!.spreadSeed = 12345;
   for (let i = 1; i <= 12; i++) {
     const at = 3000 + i * 34;
@@ -66,8 +66,8 @@ describe("bounded authoritative shot rewind", () => {
         clock = new SnapshotClock();
       startMatch(s, 0);
       stepMatch(s, {}, 3000, TICK_MS);
-      Object.assign(s.players.A, { x: 9, z: 3, y: 0 });
-      Object.assign(s.players.B, { x: 7.5, z: -3, y: 0 });
+      Object.assign(s.players.A, { x: 0, z: -2.4, y: 0 });
+      Object.assign(s.players.B, { x: -1.5, z: -8.4, y: 0 });
       s.server!.spreadSeed = 12345;
       const packets: Array<{ at: number; pose: typeof s.players.B; sent: number; poseAt: number }> =
         [];

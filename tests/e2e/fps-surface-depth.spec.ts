@@ -1,141 +1,138 @@
 import { test, expect } from "@playwright/test";
-import type { Mesh } from "three";
-import { fixture } from "./helpers/fps-fixture";
 
-test("wall trim and container layers have distinct visible depth planes", async ({
+/**
+ * The shipped aim-arena GLB (meshopt, as the game loads it): no two same-facing triangles share
+ * a plane and overlap (z-fighting), and the rendered surface of every gameplay box sits on its
+ * collision face (no invisible walls, no visual-only cover) — probed by rays at chest height.
+ */
+test("aim arena GLB has no coplanar overlaps and its surfaces sit on the collision faces", async ({
   page,
 }, info) => {
+  test.setTimeout(300_000);
   await page.route("**/__surface_depth__", (r) =>
     r.fulfill({ contentType: "text/html", body: "<!doctype html><body></body>" }),
   );
   await page.goto("/__surface_depth__");
   const result = await page.evaluate(async () => {
-    const threePath = "/node_modules/three/build/three.module.js",
-      envPath = "/src/lib/fps/environment.ts",
-      mapPath = "/src/lib/fps/map.ts";
-    const THREE: typeof import("three") = await import(threePath),
-      { createArenaEnvironment } = await import(envPath),
-      { BOXES, WALLS } = await import(mapPath);
-    const scene = new THREE.Scene(),
-      branding = new THREE.MeshStandardMaterial(),
-      env = createArenaEnvironment(scene, branding);
+    const THREE: typeof import("three") = await import(
+      "/node_modules/three/build/three.module.js" as string
+    );
+    const { createArenaEnvironment } = await import("/src/lib/fps/arena-environment.ts" as string);
+    const { BOXES, ARENA } = await import("/src/lib/fps/map.ts" as string);
+    const scene = new THREE.Scene();
+    const env = createArenaEnvironment(scene);
+    await env.ready;
     scene.updateMatrixWorld(true);
-    const meshes = scene.children.filter((m): m is Mesh => m instanceof THREE.Mesh),
-      wallClearances: number[] = [],
-      containerLayers: number[][] = [],
-      capClearances: number[][] = [],
-      skinClearances: number[] = [];
-    const trim = scene.children.find(
-      (m) => m instanceof THREE.InstancedMesh,
-    ) as import("three").InstancedMesh;
-    const matrix = new THREE.Matrix4();
-    // Production batches architecture into static instance draws. Inspect
-    // those actual transforms rather than the removed construction meshes.
-    for (const batch of scene.children)
-      if (batch instanceof THREE.InstancedMesh) {
-        for (let i = 0; i < batch.count; i++) {
-          batch.getMatrixAt(i, matrix);
-          const mesh = new THREE.Mesh(batch.geometry, batch.material);
-          matrix.decompose(mesh.position, mesh.quaternion, mesh.scale);
-          meshes.push(mesh);
+    const map = scene.getObjectByName("aim-arena");
+    if (!map) return { loaded: false };
+    const meshes: import("three").Mesh[] = [];
+    map.traverse((o: import("three").Object3D) => {
+      if (o instanceof THREE.Mesh && !(o instanceof THREE.InstancedMesh)) meshes.push(o);
+    });
+    // Coplanar same-facing overlap scan (plane buckets, then 2D separating-axis test).
+    type Tri = { p: number[][]; mesh: string };
+    const planes = new Map<string, Tri[]>();
+    const a = new THREE.Vector3(),
+      b = new THREE.Vector3(),
+      c = new THREE.Vector3(),
+      n = new THREE.Vector3();
+    let triangles = 0;
+    for (const mesh of meshes) {
+      const g = mesh.geometry,
+        pos = g.getAttribute("position"),
+        index = g.getIndex();
+      const count = index ? index.count : pos.count;
+      for (let i = 0; i < count; i += 3) {
+        const ia = index ? index.getX(i) : i,
+          ib = index ? index.getX(i + 1) : i + 1,
+          ic = index ? index.getX(i + 2) : i + 2;
+        a.fromBufferAttribute(pos, ia).applyMatrix4(mesh.matrixWorld);
+        b.fromBufferAttribute(pos, ib).applyMatrix4(mesh.matrixWorld);
+        c.fromBufferAttribute(pos, ic).applyMatrix4(mesh.matrixWorld);
+        n.subVectors(b, a).cross(new THREE.Vector3().subVectors(c, a));
+        if (n.length() < 1e-9) continue;
+        n.normalize();
+        triangles++;
+        // Quantized positions round to ~1 mm, so bucket planes at 2 mm.
+        const key =
+          [n.x, n.y, n.z].map((v) => Math.round(v * 200)).join(",") +
+          "|" +
+          Math.round(n.dot(a) * 500);
+        const list = planes.get(key) ?? [];
+        list.push({ p: [a.toArray(), b.toArray(), c.toArray()], mesh: mesh.name });
+        planes.set(key, list);
+      }
+    }
+    const project = (t: Tri, axis: number) => t.p.map((v) => v.filter((_, i) => i !== axis));
+    const separated = (s: number[][], t: number[][]) => {
+      for (const tri of [s, t])
+        for (let i = 0; i < 3; i++) {
+          const p = tri[i]!,
+            q = tri[(i + 1) % 3]!;
+          const ax = [p[1]! - q[1]!, q[0]! - p[0]!];
+          const len = Math.hypot(ax[0]!, ax[1]!);
+          if (len < 1e-12) continue;
+          const proj = (u: number[][]) => u.map((v) => (v[0]! * ax[0]! + v[1]! * ax[1]!) / len);
+          const ps = proj(s),
+            pt = proj(t);
+          if (
+            Math.max(...ps) <= Math.min(...pt) + 2e-3 ||
+            Math.max(...pt) <= Math.min(...ps) + 2e-3
+          )
+            return true;
         }
-      }
-    for (let i = 0; i < trim.count; i++) {
-      trim.getMatrixAt(i, matrix);
-      const size = new THREE.Vector3(),
-        position = new THREE.Vector3(),
-        rotation = new THREE.Quaternion();
-      matrix.decompose(position, rotation, size);
-      if (Math.abs(size.x - 0.24) < 1e-5 && Math.abs(size.y - 6.4) < 1e-5) {
-        const box = new THREE.Box3(
-          new THREE.Vector3(-0.5, -0.5, -0.5),
-          new THREE.Vector3(0.5, 0.5, 0.5),
-        ).applyMatrix4(matrix);
-        const side = Math.sign(position.x),
-          near = side > 0 ? box.min.x : -box.max.x;
-        const wall = WALLS.find((w: { id: string; x: number }) => w.id === `wall-x-${side}`)!;
-        wallClearances.push(Math.abs(wall.x) - wall.w / 2 - near);
-      }
+      return false;
+    };
+    const overlaps: string[] = [];
+    for (const [key, list] of planes) {
+      if (list.length < 2 || list.length > 4000) continue;
+      const normal = key.split("|")[0]!.split(",").map(Number);
+      const mags = normal.map(Math.abs);
+      const axis = mags.indexOf(Math.max(...mags));
+      for (let i = 0; i < list.length; i++)
+        for (let j = i + 1; j < list.length; j++)
+          if (!separated(project(list[i]!, axis), project(list[j]!, axis)))
+            overlaps.push(
+              `${list[i]!.mesh} / ${list[j]!.mesh} @ ${list[i]!.p[0]!.map((v) => v.toFixed(2))}`,
+            );
     }
-    for (const b of BOXES) {
-      const body = scene.getObjectByName(b.id) as Mesh;
-      const bounds = new THREE.Box3().setFromObject(body);
-      skinClearances.push(b.y + b.h / 2 - bounds.max.y);
-      for (const side of [-1, 1]) {
-        const diagonals = meshes.filter(
-          (m) =>
-            Math.abs(m.rotation.z) > 0.1 &&
-            Math.abs(m.scale.z - 0.018) < 1e-6 &&
-            Math.abs(m.position.x - b.x) < 1e-5 &&
-            Math.abs(m.position.y - b.y) < 1e-5 &&
-            Math.abs(m.position.z - (b.z + (side * b.d) / 2)) < 0.05,
-        );
-        containerLayers.push(
-          diagonals
-            .map((m) => side * (m.position.z - b.z) + m.scale.z / 2 - b.d / 2)
-            .sort((a, b) => a - b),
-        );
+    // Visual/collision agreement: rays toward each free face of every gameplay box at 1.0 m.
+    const raycaster = new THREE.Raycaster();
+    const misses: string[] = [];
+    let probes = 0;
+    const { isMovementBlocked } = await import("/src/lib/fps/simulation.ts" as string);
+    for (const box of BOXES) {
+      const top = box.y + box.h / 2;
+      const y = Math.min(1.0, top - 0.15);
+      if (y < 0.2 || box.y - box.h / 2 > y) continue;
+      for (const [nx, nz] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ] as const) {
+        const half = nx ? box.w / 2 : box.d / 2;
+        const ox = box.x + nx * (half + 0.6),
+          oz = box.z + nz * (half + 0.6);
+        if (Math.abs(ox) > ARENA.width / 2 || Math.abs(oz) > ARENA.depth / 2) continue;
+        if (isMovementBlocked(ox, 0, oz)) continue;
+        raycaster.set(new THREE.Vector3(ox, y, oz), new THREE.Vector3(-nx, 0, -nz));
+        raycaster.far = 0.8;
+        const hit = raycaster.intersectObjects(meshes, false)[0];
+        probes++;
+        const offset = hit ? 0.6 - hit.distance : Infinity;
+        if (!(Math.abs(offset) <= 0.065)) misses.push(`${box.id} ${nx},${nz} offset ${offset}`);
       }
-    }
-    for (const side of [-1, 1]) {
-      const wall = scene.getObjectByName(`wall-x-${side}`) as Mesh;
-      const cap = meshes.find(
-        (m) =>
-          Math.abs(m.position.x - side * 13.988) < 1e-4 &&
-          Math.abs(m.position.y - 6.25) < 1e-4 &&
-          Math.abs(m.scale.y - 0.3) < 1e-4,
-      )!;
-      if (!cap) throw Error("Upper cap is missing");
-      const wallBounds = new THREE.Box3().setFromObject(wall);
-      const front = side * cap.position.x - cap.scale.x / 2;
-      capClearances.push([6.1 - wallBounds.max.y, 12 - front, 11.988 - front]);
     }
     env.dispose();
-    branding.dispose();
-    return { wallClearances, containerLayers, skinClearances, capClearances };
+    return { loaded: true, meshes: meshes.length, triangles, overlaps, probes, misses };
   });
-  expect(result.wallClearances.length).toBe(16);
-  for (const gap of result.wallClearances) expect(gap).toBeGreaterThan(0.01);
-  for (const layers of result.containerLayers) {
-    expect(layers.length).toBe(2);
-    expect(layers[0]!).toBeGreaterThan(0.018);
-    expect(layers[1]! - layers[0]!).toBeGreaterThan(0.005);
-  }
-  for (const gap of result.skinClearances) expect(gap).toBeGreaterThan(0.009);
-  expect(result.capClearances).toHaveLength(2);
-  for (const [vertical, wall, rib] of result.capClearances) {
-    expect(vertical!).toBeGreaterThan(-1e-5);
-    expect(wall!).toBeGreaterThan(0.023);
-    expect(rib!).toBeGreaterThan(0.011);
-  }
-  await info.attach("surface-depth", {
-    body: JSON.stringify(result),
+  await info.attach("arena-surface-depth", {
+    body: JSON.stringify(result, null, 2),
     contentType: "application/json",
   });
-});
-
-test("inspect the wall and container while returning to the same camera pose", async ({
-  page,
-}, info) => {
-  await fixture(page);
-  for (const view of [
-    { name: "container", x: 5, z: 5.5, yaw: 0 },
-    { name: "wall", x: 9, z: 2, yaw: -Math.PI / 2 },
-    { name: "wall-top", x: 6, z: 4, yaw: -Math.PI / 2, pitch: 0.55 },
-  ]) {
-    await page.evaluate((view) => {
-      const f = Reflect.get(window, "fpsPolishTest");
-      Object.assign(f.state.players.A, {
-        x: view.x,
-        z: view.z,
-        yaw: view.yaw,
-        pitch: view.pitch ?? 0,
-      });
-      f.state.round++;
-      f.resetView();
-    }, view);
-    await page.waitForTimeout(150);
-    await page.screenshot({ path: info.outputPath(`${view.name}.png`) });
-  }
-  await page.evaluate(() => Reflect.get(window, "fpsPolishTest").dispose());
+  expect(result.loaded).toBe(true);
+  expect(result.overlaps).toEqual([]);
+  expect(result.probes).toBeGreaterThan(100);
+  expect(result.misses).toEqual([]);
 });

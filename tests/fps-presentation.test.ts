@@ -112,8 +112,9 @@ describe("render presentation independent of server physics", () => {
     const remote = new RemotePresentation(),
       p = player();
     const out = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
-    remote.push({ ...p, x: 11.35, z: 13 }, 100);
-    remote.push({ ...p, x: 11.6, z: 13 }, 150);
+    // Running +x into the east house (aim arena): movement stops at x = 11.65.
+    remote.push({ ...p, x: 11.35, z: 6 }, 100);
+    remote.push({ ...p, x: 11.6, z: 6 }, 150);
     remote.sample(200, out, 16);
     expect(out.x).toBe(11.6);
     remote.clear();
