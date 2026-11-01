@@ -1,8 +1,10 @@
 import type { MatchState, Seat, Weapon } from "./protocol";
 import { consumeShotPrediction } from "./trigger-feedback";
 const SAMPLES = {
-  rifleA: "ak47-a-v1.wav",
-  rifleB: "ak47-b-v1.wav",
+  rifleA: "ak47-a-v2.wav",
+  rifleB: "ak47-b-v2.wav",
+  reloadEmpty: "ak-reload-empty-v1.wav",
+  reloadTactical: "ak-reload-tactical-v1.wav",
   pistol: "pistol-v1.wav",
   step0: "step-0-v1.wav",
   step1: "step-1-v1.wav",
@@ -36,7 +38,9 @@ export function createCombatAudio() {
   echoGain.connect(master);
   const buffers = new Map<Sample, AudioBuffer>(),
     voices = new Set<AudioBufferSourceNode>(),
-    played = { shots: 0, steps: 0, hits: 0 };
+    played = { shots: 0, steps: 0, hits: 0, reloads: 0 };
+  let reloadVoice: AudioBufferSourceNode | undefined;
+  let reloadEnd = 0;
   const predicted = new Map<number, number>();
   // Short, quiet body-impact and elimination cues, generated once per context.
   // Use the same bounded voice pool and mute controls as recorded samples.
@@ -98,10 +102,11 @@ export function createCombatAudio() {
       });
     return loading;
   };
-  function play(name: Sample, gain: number, pan: number, occluded: boolean, rate = 1) {
+  function play(name: Sample, gain: number, pan: number, occluded: boolean, rate = 1, offset = 0) {
     if (disposed || muted || context.state !== "running" || gain <= 0) return;
     const buffer = buffers.get(name);
     if (!buffer) return;
+    if (offset >= buffer.duration) return;
     if (voices.size >= 24) {
       const oldest = voices.values().next().value;
       oldest?.stop();
@@ -130,7 +135,8 @@ export function createCombatAudio() {
       level.disconnect();
       panner.disconnect();
     };
-    source.start();
+    source.start(0, Math.max(0, offset));
+    return source;
   }
   return {
     setVolume(value: number) {
@@ -153,8 +159,11 @@ export function createCombatAudio() {
       if (!value && context.state === "running") void load();
       master.gain.setTargetAtTime(value ? 0 : 0.55 * volume, context.currentTime, 0.015);
     },
-    snapshot(state: MatchState, seat: Seat | null) {
+    snapshot(state: MatchState, seat: Seat | null, serverNow = Date.now()) {
       if (state.round !== lastRound) {
+        reloadVoice?.stop();
+        reloadVoice = undefined;
+        reloadEnd = 0;
         // Audio may be created after the initial game snapshot. Preserve a
         // trigger already presented before audio receives its first frame.
         if (lastRound !== 0) predicted.clear();
@@ -163,6 +172,33 @@ export function createCombatAudio() {
       }
       if (state.tick === lastTick) return;
       lastTick = state.tick;
+      const player = seat ? state.players[seat] : null;
+      const reloading =
+        player &&
+        player.hp > 0 &&
+        state.phase === "live" &&
+        player.weapon === "rifle" &&
+        player.reloadUntil > serverNow;
+      if (!reloading) {
+        reloadVoice?.stop();
+        reloadVoice = undefined;
+        reloadEnd = 0;
+      } else if (player.reloadUntil !== reloadEnd) {
+        reloadVoice?.stop();
+        reloadEnd = player.reloadUntil;
+        // Join the confirmed reload timeline, including after reconnect; never
+        // replay the opening clicks over an animation already halfway through.
+        const offset = Math.max(0, (serverNow - (reloadEnd - 1800)) / 1000);
+        reloadVoice = play(
+          player.ammo === 0 ? "reloadEmpty" : "reloadTactical",
+          0.48,
+          0,
+          false,
+          1,
+          offset,
+        );
+        if (reloadVoice) played.reloads++;
+      }
       for (const event of state.events) {
         if (event.id !== undefined) {
           if (event.id <= lastEvent) continue;

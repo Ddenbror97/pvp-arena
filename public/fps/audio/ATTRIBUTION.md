@@ -16,3 +16,13 @@ Processing: isolated shots, short fade boundaries, level normalization, mono mix
 and 24kHz 16-bit PCM WAV conversion. Footsteps converted from the source Ogg files.
 Total audio payload is 196,188 bytes; samples are decoded once per arena audio
 session and played with distance/pan/occlusion filtering and bounded voice counts.
+
+## AK sound design update
+
+`ak47-a-v2.wav` and `ak47-b-v2.wav` are new mixes of the CC0 recordings above,
+with a tighter tail, reinforced low-frequency report and original synthesized
+mechanical layers. `ak-reload-empty-v1.wav` and `ak-reload-tactical-v1.wav` are
+original deterministic procedural effects: magazine release, rock-out, insertion,
+seating and (empty only) bolt travel/closure. Their 1.8-second timelines follow
+the authored reload clips. No samples from the user's Counter-Strike reference
+are included. Rebuild with `node scripts/fps/build-ak-audio.mjs`.
