@@ -236,6 +236,24 @@ export class RemotePresentation {
           this.push({ ...player, ...(entry.pose ?? {}) } as Player, entry.poseAt, !!entry.pose);
     this.push(player, poseAt, visible);
   }
+  /**
+   * Horizontal velocity (m/ms) of the authoritative path around `at`, from the visible
+   * segment containing it (never across a hidden interval). Side-effect free.
+   */
+  velocity(at: number): { x: number; z: number } {
+    let best: { x: number; z: number } | null = null;
+    for (let i = 0; i + 1 < this.count; i++) {
+      const a = this.poses[(this.start + i) % 8]!,
+        b = this.poses[(this.start + i + 1) % 8]!;
+      if (b.at <= a.at || b.afterGap || a.hiddenFrom !== Infinity) {
+        best = null;
+        continue;
+      }
+      best = { x: (b.x - a.x) / (b.at - a.at), z: (b.z - a.z) / (b.at - a.at) };
+      if (b.at >= at) break;
+    }
+    return best ?? { x: 0, z: 0 };
+  }
   sample(at: number, out: Pose, elapsedMs?: number) {
     if (!this.count) return false;
     if (elapsedMs !== undefined) {

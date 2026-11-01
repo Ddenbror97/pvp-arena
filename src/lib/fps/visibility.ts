@@ -1,5 +1,5 @@
-import { traceWorld } from "./collision";
-import { eyeHeight, PLAYER_RADIUS } from "./map";
+import { rayBox, traceWorld, type Vector } from "./collision";
+import { eyeHeight, PLAYER_RADIUS, WORLD_SOLIDS } from "./map";
 import type { MatchState, Seat } from "./protocol";
 
 type PublicState = Omit<MatchState, "server">;
@@ -34,10 +34,167 @@ export function canSeeOpponent(state: PublicState, seat: Seat): boolean {
   return false;
 }
 
+/**
+ * Opponent reveal for redaction (anti-wallhack), tuned so an honest player never sees the
+ * opponent blink out while any part of the drawn operator is on screen.
+ *
+ * `canSeeOpponent` (kept for the practice bot's perception) tests nine body points from
+ * the viewer's current server position. The client, however, draws the opponent about
+ * one RTT + REMOTE_DELAY_MS + the server's command wait *later* than the server step that
+ * produced the pose, with its own camera already that far ahead. Measured on the arena with
+ * roaming players at 135 ms RTT, the old rule hid the opponent in ~18% of the frames where
+ * part of them was drawn on screen (late pop-ins and early vanishes at cover edges). This
+ * rule:
+ *  - samples the rendered envelope: boots to head top, arm width, and the rifle muzzle;
+ *  - tests from the viewer's position extrapolated over that latency window (start, middle,
+ *    end) and from a small lateral peek margin around each, so starting a peek from rest is
+ *    covered too;
+ *  - holds a reveal for REVEAL_HOLD_MS after the last sight line, so a sight line that
+ *    closes for a step or two (thin cover, a turn) does not blink the opponent out.
+ * It reveals early by design (bounded by the window and margin); it never reveals an
+ * opponent that has no line of sight from any of those nearby viewpoints.
+ */
+export const REVEAL_MARGIN_M = 0.4;
+export const REVEAL_HOLD_MS = 200;
+export const MAX_REVEAL_AHEAD_MS = 450;
+const REVEAL_WIDTH_M = 0.38;
+const REVEAL_HEIGHTS = [0.06, 0.3, 0.55, 0.8, 0.94, 1] as const;
+
+/** Viewer horizontal velocity (m/ms) and how far ahead of this step the client draws. */
+export type ViewerMotion = { vx: number; vz: number; aheadMs: number };
+
+const WORLD_BOUNDS = WORLD_SOLIDS.map((b) => ({
+  b,
+  minX: b.x - b.w / 2,
+  maxX: b.x + b.w / 2,
+  minY: b.y - b.h / 2,
+  maxY: b.y + b.h / 2,
+  minZ: b.z - b.d / 2,
+  maxZ: b.z + b.d / 2,
+}));
+/** Segment occlusion with a cheap bounds prefilter (same slab test as traceWorld). */
+function blocked(o: Vector, t: Vector) {
+  const x = t.x - o.x,
+    y = t.y - o.y,
+    z = t.z - o.z,
+    distance = Math.hypot(x, y, z);
+  if (distance < 0.01) return false;
+  const reach = Math.max(0, distance - 0.025),
+    direction = { x: x / distance, y: y / distance, z: z / distance };
+  const loX = Math.min(o.x, t.x),
+    hiX = Math.max(o.x, t.x),
+    loY = Math.min(o.y, t.y),
+    hiY = Math.max(o.y, t.y),
+    loZ = Math.min(o.z, t.z),
+    hiZ = Math.max(o.z, t.z);
+  for (const s of WORLD_BOUNDS) {
+    if (
+      s.maxX < loX ||
+      s.minX > hiX ||
+      s.maxY < loY ||
+      s.minY > hiY ||
+      s.maxZ < loZ ||
+      s.minZ > hiZ
+    )
+      continue;
+    const hit = rayBox(o, direction, s.b, { x: s.b.w, y: s.b.h, z: s.b.d });
+    if (Number.isFinite(hit) && hit <= reach) return true;
+  }
+  return false;
+}
+
+type Body = Pick<MatchState["players"]["A"], "x" | "y" | "z" | "yaw" | "crouched">;
+function envelopeVisible(eye: Vector, enemy: Body) {
+  const dx = enemy.x - eye.x,
+    dz = enemy.z - eye.z,
+    length = Math.hypot(dx, dz) || 1,
+    sideX = dz / length,
+    sideZ = -dx / length,
+    top = eyeHeight(enemy) + 0.1;
+  for (const fraction of REVEAL_HEIGHTS)
+    for (const side of [0, -REVEAL_WIDTH_M, REVEAL_WIDTH_M]) {
+      const target = {
+        x: enemy.x + sideX * side,
+        y: enemy.y + top * fraction,
+        z: enemy.z + sideZ * side,
+      };
+      if (!blocked(eye, target)) return true;
+    }
+  // The rifle reaches ~0.8 m ahead of the chest and is often the first thing around a corner.
+  const muzzle = {
+    x: enemy.x - Math.sin(enemy.yaw) * 0.8,
+    y: enemy.y + top * 0.8,
+    z: enemy.z - Math.cos(enemy.yaw) * 0.8,
+  };
+  return !blocked(eye, muzzle);
+}
+
+/** Latency-aware, conservative line of sight for redaction (no hold; see RevealGate). */
+export function revealsOpponent(
+  state: Pick<PublicState, "phase" | "players">,
+  seat: Seat,
+  motion?: ViewerMotion,
+): boolean {
+  if (state.phase !== "live") return true;
+  const own = state.players[seat],
+    enemy = state.players[seat === "A" ? "B" : "A"];
+  const eyeY = own.y + eyeHeight(own),
+    dx = enemy.x - own.x,
+    dz = enemy.z - own.z,
+    length = Math.hypot(dx, dz) || 1,
+    sideX = dz / length,
+    sideZ = -dx / length;
+  const ahead = motion ? Math.max(0, Math.min(MAX_REVEAL_AHEAD_MS, motion.aheadMs)) : 0,
+    speed = motion ? Math.hypot(motion.vx, motion.vz) : 0,
+    // Never extrapolate faster than a sprint (7.5 m/s) or from a teleport.
+    scale = speed > 0.0076 ? 0.0076 / speed : 1,
+    vx = motion ? motion.vx * scale : 0,
+    vz = motion ? motion.vz * scale : 0;
+  for (const fraction of ahead > 0 && speed > 1e-5 ? [0, 0.5, 1] : [0])
+    for (const side of [0, -REVEAL_MARGIN_M, REVEAL_MARGIN_M]) {
+      const eye = {
+        x: own.x + vx * ahead * fraction + sideX * side,
+        y: eyeY,
+        z: own.z + vz * ahead * fraction + sideZ * side,
+      };
+      if (envelopeVisible(eye, enemy)) return true;
+    }
+  return false;
+}
+
+/** Per-room reveal state: one decision per recipient per physics step, with a short hold. */
+export class RevealGate {
+  private lastSeen: Record<Seat, number> = { A: -Infinity, B: -Infinity };
+  private round = -1;
+  constructor(private readonly holdMs = REVEAL_HOLD_MS) {}
+  update(
+    state: Pick<MatchState, "phase" | "players" | "round">,
+    at: number,
+    motion: Partial<Record<Seat, ViewerMotion>>,
+  ): Record<Seat, boolean> {
+    if (state.round !== this.round) {
+      this.round = state.round;
+      this.lastSeen = { A: -Infinity, B: -Infinity };
+    }
+    const result = { A: true, B: true };
+    for (const seat of ["A", "B"] as const) {
+      if (state.phase !== "live") continue;
+      if (revealsOpponent(state, seat, motion[seat])) this.lastSeen[seat] = at;
+      result[seat] = at - this.lastSeen[seat] <= this.holdMs;
+    }
+    return result;
+  }
+}
+
 /** Pure recipient projection. Never mutate the simulation or the delayed spectator history. */
-export function snapshotForPlayer<T extends { state: PublicState }>(frame: T, seat: Seat) {
+export function snapshotForPlayer<T extends { state: PublicState }>(
+  frame: T,
+  seat: Seat,
+  /** The runtime's RevealGate decision for this frame; defaults to the strict sight test. */
+  reveal?: boolean,
+) {
   const remote = seat === "A" ? "B" : "A",
-    visible = canSeeOpponent(frame.state, seat);
+    visible = reveal ?? canSeeOpponent(frame.state, seat);
   const events = frame.state.events.map((event) => {
     const { audio, hit, ...rest } = event;
     let cue = audio;
@@ -116,6 +273,8 @@ export function snapshotForPlayer<T extends { state: PublicState }>(frame: T, se
 export type TrailStep = {
   at: number;
   phase: MatchState["phase"];
+  /** RevealGate decision per recipient for this step (absent: strict sight test). */
+  reveal?: Record<Seat, boolean>;
   players: Record<
     Seat,
     Pick<
@@ -144,15 +303,21 @@ export function trailForPlayer(
   return steps
     .filter((step) => step.at > afterAt && step.at < beforeAt)
     .map((step) => {
-      const visible = canSeeOpponent(
-        { phase: step.phase, players: step.players, events: [] } as unknown as PublicState,
-        seat,
-      );
+      const visible =
+        step.reveal?.[seat] ??
+        canSeeOpponent(
+          { phase: step.phase, players: step.players, events: [] } as unknown as PublicState,
+          seat,
+        );
       return visible ? { poseAt: step.at, pose: { ...step.players[remote] } } : { poseAt: step.at };
     });
 }
 
-export function trailStep(state: Pick<MatchState, "phase" | "players">, at: number): TrailStep {
+export function trailStep(
+  state: Pick<MatchState, "phase" | "players">,
+  at: number,
+  reveal?: Record<Seat, boolean>,
+): TrailStep {
   const pick = (p: MatchState["players"]["A"]) => ({
     x: p.x,
     y: p.y,
@@ -166,6 +331,7 @@ export function trailStep(state: Pick<MatchState, "phase" | "players">, at: numb
   return {
     at,
     phase: state.phase,
+    ...(reveal ? { reveal: { ...reveal } } : {}),
     players: { A: pick(state.players.A), B: pick(state.players.B) },
   };
 }

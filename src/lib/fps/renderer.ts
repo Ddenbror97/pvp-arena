@@ -596,6 +596,8 @@ export function mountArena(
       death: undefined as number | undefined,
     };
   let actorElapsed = 0;
+  /** False while the opponent is not animated (hidden or off-screen); see resetMotion. */
+  let opponentAnimated = false;
   let opponentDeathAt: number | null = null;
   let deathFeetY = 0,
     deathFloorY = 0;
@@ -789,6 +791,19 @@ export function mountArena(
         actorElapsed += dt;
         const inView = opponentFrustum.intersectsSphere(opponentBounds);
         if (inView) {
+          if (!opponentAnimated) {
+            // Reappearing (after redaction or off-screen): seed the gait from the
+            // opponent's real velocity so the first frame is not read as a stride jump.
+            const v = remoteMotion.velocity(remotePose.at),
+              yaw = actor.root.rotation.y;
+            actor.resetMotion(
+              Math.hypot(v.x, v.z) * 1000,
+              v.x * Math.cos(yaw) - v.z * Math.sin(yaw),
+              v.x * Math.sin(yaw) + v.z * Math.cos(yaw),
+            );
+            actorElapsed = Math.min(actorElapsed, dt);
+          }
+          opponentAnimated = true;
           actorMotion.stance = remotePose.crouch;
           actorMotion.airborne = remotePose.y > 0.01;
           actorMotion.weapon = other.weapon;
@@ -803,7 +818,10 @@ export function mountArena(
             actorMotion,
           );
           actorElapsed = 0;
-        } else actor.root.visible = false;
+        } else {
+          actor.root.visible = false;
+          opponentAnimated = false;
+        }
         const shadow = contactShadows[otherSeat];
         shadow.quaternion.copy(actor.root.quaternion).invert().multiply(shadowRotation);
         shadowPosition.set(
@@ -819,7 +837,10 @@ export function mountArena(
         shadow.position.copy(shadowPosition);
         shadow.scale.set(1, 1 + (collapse?.progress ?? 0), 1);
         if (actor.root.visible) actor.root.updateMatrixWorld();
-      } else actor.root.visible = false;
+      } else {
+        actor.root.visible = false;
+        opponentAnimated = false;
+      }
     }
 
     const renderedWeapon = state && seat ? state.players[seat].weapon : weapon;
