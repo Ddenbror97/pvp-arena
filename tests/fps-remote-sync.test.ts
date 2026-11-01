@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyQueuedMovement,
   createMatch,
   predictMovement,
   startMatch,
@@ -664,4 +665,34 @@ describe("fixed-step movement is independent of render rate", () => {
       expect(r.z).toBeCloseTo(reference.z, 6);
       expect(r.maxY).toBeCloseTo(reference.maxY, 6);
     });
+});
+
+describe("bounded command catch-up (applyQueuedMovement)", () => {
+  const live = () => {
+    const s = createMatch({ A: "a", B: "b" }, 5, 0);
+    startMatch(s, 0);
+    s.phase = "live";
+    Object.assign(s.players.A, { x: -6.5, z: -9.5, y: 0 });
+    return s;
+  };
+  it("moves exactly like the regular step and keeps Shift-walking silent", () => {
+    const folded = live(),
+      stepped = live();
+    expect(applyQueuedMovement(folded, "A", input(1, { strafe: 1 }))).toBe(true);
+    predictMovement(stepped.players.A, input(1, { strafe: 1 }), TICK_MS);
+    expect(folded.players.A.x).toBeCloseTo(stepped.players.A.x, 9);
+    expect(folded.players.A.lastSeq).toBe(1);
+    const walker = live();
+    walker.players.A.stepDistance = 1.5;
+    expect(applyQueuedMovement(walker, "A", input(1, { strafe: 1, walk: true }))).toBe(true);
+    expect(walker.players.A.stepDistance).toBe(0);
+  });
+  it("never folds fire, reload, weapon switches or stale commands", () => {
+    const s = live();
+    expect(applyQueuedMovement(s, "A", input(1, { fire: true }))).toBe(false);
+    expect(applyQueuedMovement(s, "A", input(1, { reload: true }))).toBe(false);
+    expect(applyQueuedMovement(s, "A", input(1, { weapon: "pistol" }))).toBe(false);
+    expect(applyQueuedMovement(s, "A", input(2, {}))).toBe(true);
+    expect(applyQueuedMovement(s, "A", input(2, {}))).toBe(false);
+  });
 });

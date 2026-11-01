@@ -407,7 +407,9 @@ export function applyQueuedMovement(state: MatchState, seat: Seat, raw: Input): 
   p.pitch = input.pitch;
   const before = { x: p.x, z: p.z, y: p.y };
   predictMovement(p, input, TICK_MS);
-  if (p.y === before.y && !(p.velocityY ?? 0))
+  // Same footstep accounting as stepMatch: Shift-walking stays silent.
+  if (input.walk) p.stepDistance = 0;
+  else if (p.y === before.y && !(p.velocityY ?? 0))
     p.stepDistance = (p.stepDistance ?? 0) + Math.hypot(p.x - before.x, p.z - before.z);
   return true;
 }
