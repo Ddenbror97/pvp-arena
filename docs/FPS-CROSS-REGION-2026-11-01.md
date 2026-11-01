@@ -43,7 +43,7 @@ slow tail).
 | --- | --- | --- |
 | **Pipelined strict reads.** Up to 4 overlapping reads, at least 25 ms apart. A read starts as soon as a command arrives, not at the next tick. Each read still freezes command watermarks when it starts, and newer completed reads supersede older ones. A positive result can never authorize a command received after its read began. Any failure pauses input, as before. | `workers/fps/index.ts` | Request pipelining / overlapping I/O |
 | **Bounded command catch-up.** Each player earns one command credit per tick, capped at 3. A backlog of already-authorized movement-only commands is folded into the current tick within that budget. Fire, reload and weapon-switch commands always take the normal combat path. Average movement can never exceed real time. | `src/lib/fps/simulation.ts` (`applyQueuedMovement`), `workers/fps/index.ts` | Source engine usercmd budget (`sv_maxusrcmdprocessticks`); Overwatch's input buffer management |
-| **Index-based session check.** A `LATERAL ... LIMIT 1` lookup on the `sessions(user_id)` and `users(id)` indexes, with constant cost per session. Identical results: 559/559 production cases checked inside the database. | `supabase/migrations/20261101170000_fps_check_sessions_indexed.sql` (**not yet applied**) | — |
+| **Index-based session check.** A `LATERAL ... LIMIT 1` lookup on the `sessions(user_id)` and `users(id)` indexes, with constant cost per session. Identical results: 559/559 production cases checked inside the database. | `supabase/migrations/20261101164510_fps_check_sessions_indexed.sql` (**applied to production 2026-11-01**) | — |
 | **Per-region latency telemetry.** Players are tagged with Cloudflare's edge continent (NA, SA, EU, …) at connect. Every 30 s the room logs `fps_region_latency` with p50/p95/p99/max per continent for server-side command delay and measured RTT, plus room-wide session-read p50/p95/p99. No user identifiers. | `workers/fps/latency.ts`, `workers/fps/index.ts` | — |
 
 ## 4. Results (same test, old vs new runtime code)
@@ -65,7 +65,7 @@ Command sent → applied in a snapshot, local runtime (no network latency):
   rejects queued movement and fire" and "an in-flight positive read cannot authorize a
   command received after revocation".
 - Database reads per room rise from about 12–14/s (back-to-back) to at most about 40/s. Each
-  read is a single indexed lookup once the migration is applied.
+  read is a single indexed lookup (migration applied 2026-11-01).
 
 ## 5. Measuring US / EU / LatAm in production
 
@@ -97,7 +97,7 @@ telemetry.
    - The 2026-10-31 experiment measured a *fresh client per check* (82 ms), not a persistent
      connection, so it doesn't decide this.
    - Validate with this telemetry before promoting.
-2. **Apply the session-check migration**, then rerun the performance advisor.
+2. ~~Apply the session-check migration~~: done 2026-11-01 (`20261101164510`, results verified identical).
 3. **Ping-aware matchmaking display.** Show each room's measured RTT in the lobby, and prefer
    same-continent opponents when both are available. Riot and Valve both use regional queues
    with ping limits.
