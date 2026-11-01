@@ -1,4 +1,4 @@
-import { ConnectionTiming } from "../../src/lib/fps/network";
+import { ConnectionTiming, SNAPSHOT_INTERVAL_MS } from "../../src/lib/fps/network";
 import { ShotHistory, type CombatPose } from "./lag-compensation";
 import { createPracticeBot } from "../../src/lib/fps/practice-bot";
 import { PRACTICE_BOT_ID } from "../../src/lib/fps/practice";
@@ -101,6 +101,7 @@ export default {
         version: 2,
         combatVersion: COMBAT_VERSION,
         networkVersion: 1,
+        latencyVersion: 2,
         configured:
           (env.FPS_RUNTIME_SECRET?.length ?? 0) >= 32 &&
           !!env.SUPABASE_URL &&
@@ -146,6 +147,7 @@ export class DuelRoom {
   private authMs = 0;
   private processingMs = 0;
   private telemetryAt = 0;
+  private immediateTriggers = 0;
   private saved: Saved | null = null;
   private timer: ReturnType<typeof setInterval> | null = null;
   private inputs: Record<Seat, Array<{ input: Input; at: number; connectionId: string }>> = {
@@ -686,6 +688,8 @@ export class DuelRoom {
         const last = saved.state.server!.lastStepAt;
         if (now - last < Math.ceil(TICK_MS)) break;
         const fresh: Partial<Record<Seat, Input>> = {};
+        const triggers: Partial<Record<Seat, Input>> = {};
+        const triggerAt: Partial<Record<Seat, number>> = {};
         const receivedAt: Partial<Record<Seat, number>> = {};
         for (const seat of ["A", "B"] as const) {
           const queue = this.inputs[seat];
@@ -705,6 +709,16 @@ export class DuelRoom {
             !!authority &&
             queue[i]?.connectionId === connection &&
             queue[i]!.input.seq <= authority.seq;
+          const takeTrigger = () => {
+            if (!triggers[seat] && ready(0) && queue[0]!.input.combatOnly) {
+              const action = queue.shift()!;
+              triggers[seat] = action.input;
+              this.immediateTriggers++;
+              triggerAt[seat] = action.at;
+              this.latency.command(authority?.continent, now - action.at);
+            }
+          };
+          takeTrigger();
           // One credit per tick, capped; each applied command spends one.
           this.commandCredit[seat] = Math.min(MAX_COMMAND_CREDIT, this.commandCredit[seat] + 1);
           // Fold movement and redundant automatic-rifle holds while a newer
@@ -717,8 +731,16 @@ export class DuelRoom {
           ) {
             this.latency.command(authority?.continent, now - queue.shift()!.at);
             this.commandCredit[seat]--;
+            takeTrigger();
           }
-          const next = ready(0) ? queue.shift() : undefined;
+          const next =
+            ready(0) &&
+            !queue[0]!.input.combatOnly &&
+            (!triggers[seat] ||
+              (!queue[0]!.input.reload &&
+                queue[0]!.input.weapon === saved.state.players[seat].weapon))
+              ? queue.shift()
+              : undefined;
           if (next) this.commandCredit[seat]--;
           if (next) {
             fresh[seat] = next.input;
@@ -733,7 +755,9 @@ export class DuelRoom {
         if (saved.config.practice) fresh.B = this.bot.input(saved.state, stepAt);
         const targets: Partial<Record<Seat, CombatPose>> = {};
         for (const shooter of ["A", "B"] as const) {
-          if (!fresh[shooter]?.fire || receivedAt[shooter] === undefined) continue;
+          const shot = triggers[shooter] ?? fresh[shooter];
+          const arrival = triggerAt[shooter] ?? receivedAt[shooter];
+          if (!shot?.fire || arrival === undefined) continue;
           const identity = authorized.find((s) => s.seat === shooter);
           const timing = identity && this.timings.get(identity.connectionId);
           if (!timing?.calibrated) continue;
@@ -742,11 +766,11 @@ export class DuelRoom {
           targets[shooter] = this.shotHistory.target(
             shooter === "A" ? "B" : "A",
             now,
-            timing.lookbackMs,
-            now - receivedAt[shooter]!,
+            timing.lookbackFor(shot.playbackMs),
+            now - arrival,
           );
         }
-        stepMatch(saved.state, fresh, stepAt, TICK_MS, targets);
+        stepMatch(saved.state, fresh, stepAt, TICK_MS, targets, triggers);
         if (!saved.result && saved.state.tick !== previousTick) {
           this.events.push(...saved.state.events.map((e) => ({ ...e, id: ++this.eventId })));
           this.shotHistory.record(saved.state, stepAt);
@@ -774,11 +798,9 @@ export class DuelRoom {
       const urgent =
         saved.state.phase !== phase ||
         this.events.some((e) => ["shot", "hit", "headshot", "round-end"].includes(e.type));
-      if (now - this.lastSnapshot >= 50 || urgent) {
-        // An urgent combat frame must not restart or slow the 20 Hz movement
-        // deadline. Keep its original fractional-tick cadence independently.
-        if (now - this.lastSnapshot >= 50)
-          this.lastSnapshot = this.lastSnapshot ? Math.max(this.lastSnapshot + 50, now - 50) : now;
+      if (now - this.lastSnapshot >= SNAPSHOT_INTERVAL_MS || urgent) {
+        // Every physics tick has a fresh snapshot; urgent combat can send sooner.
+        if (now - this.lastSnapshot >= SNAPSHOT_INTERVAL_MS) this.lastSnapshot = now;
         const current = this.snapshot()!;
         // poseAt follows the physics clock; serverNow follows the send clock.
         // Both renderer playback and rewind use the same physics timeline.
@@ -841,6 +863,7 @@ export class DuelRoom {
                 event: "fps_region_latency",
                 matchId: saved.config.id,
                 practice: saved.config.practice,
+                immediateTriggers: this.immediateTriggers,
                 tickHz: Math.round(this.tickHz * 10) / 10,
                 sessionReadMs: regions.sessionReadMs,
                 regions: regions.rows,

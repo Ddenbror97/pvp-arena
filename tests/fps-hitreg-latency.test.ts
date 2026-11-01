@@ -32,7 +32,13 @@ const command = (seq: number, extra: Partial<Input> = {}): Input => ({
 
 type Aim = "drawn" | "beside" | "current";
 
-function duel(rtt: number, serverDelay: number, aim: Aim) {
+function duel(
+  rtt: number,
+  serverDelay: number,
+  aim: Aim,
+  playbackMs = REMOTE_DELAY_MS,
+  snapshotMs = 50,
+) {
   const s = createMatch({ A: "a", B: "b" }, 5, 0),
     history = new ShotHistory(),
     view = new RemotePresentation(),
@@ -62,7 +68,7 @@ function duel(rtt: number, serverDelay: number, aim: Aim) {
       view.push(packet.pose, packet.poseAt);
     }
     if (now === clientFireAt) {
-      expect(view.sample(clock.now(now) - REMOTE_DELAY_MS, eye)).toBe(true);
+      expect(view.sample(clock.now(now) - playbackMs, eye)).toBe(true);
       // Body centre (0.9 m) of the target as drawn; "beside" offsets it 0.6 m sideways,
       // outside the 0.35 m body half-width; "current" uses the server's present pose.
       const tx = aim === "current" ? s.players.B.x : eye.x + (aim === "beside" ? 0.6 : 0),
@@ -82,11 +88,13 @@ function duel(rtt: number, serverDelay: number, aim: Aim) {
       };
       // Runtime formula: shooter's view lookback + server-measured wait since arrival.
       const past =
-        now === executeAt ? history.target("B", now, timing.lookbackMs, now - arrival) : undefined;
+        now === executeAt
+          ? history.target("B", now, timing.lookbackFor(playbackMs), now - arrival)
+          : undefined;
       stepMatch(s, inputs, now, TICK_MS, past ? { A: past } : undefined);
       history.record(s, now);
     }
-    if ((now - 3000) % 50 === 0)
+    if ((now - 3000) % snapshotMs === 0)
       packets.push({
         at: now + rtt / 2,
         pose: { ...s.players.B },
@@ -98,6 +106,14 @@ function duel(rtt: number, serverDelay: number, aim: Aim) {
 }
 
 describe("hit registration is fair across RTT and server-side delay", () => {
+  for (const delay of [65, 80, 110])
+    for (const rtt of [50, 100, 150, 180])
+      for (const wait of [0, 90, 180]) {
+        it(`30 Hz, playback ${delay}, RTT ${rtt}, wait ${wait}: drawn aim hits and 0.6m beside misses`, () => {
+          expect(duel(rtt, wait, "drawn", delay, 34).hit).toBe(true);
+          expect(duel(rtt, wait, "beside", delay, 34).hit).toBe(false);
+        });
+      }
   for (const rtt of [50, 100, 150, 180])
     for (const serverDelay of [0, 90, 180]) {
       it(`${rtt} ms RTT, ${serverDelay} ms server wait: the drawn target is hit`, () => {

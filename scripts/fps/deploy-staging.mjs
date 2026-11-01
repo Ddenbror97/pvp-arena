@@ -34,6 +34,7 @@ const runtimeConfig = path.resolve(".wrangler/fps-staging-hosted/wrangler.json")
 const runtime = JSON.parse(fs.readFileSync(".wrangler/fps-staging-runtime/wrangler.jsonc", "utf8"));
 // Strict session reads are synchronous with simulation; keep new US rooms near Auth's primary.
 runtime.vars.FPS_ROOM_REGION = "enam";
+runtime.compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"];
 if (
   runtime.name !== "pvpspinarena-fps-staging" ||
   runtime.vars.SUPABASE_URL !== process.env.SUPABASE_URL

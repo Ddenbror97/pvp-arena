@@ -18,7 +18,7 @@ import {
   type TrailStep,
 } from "../src/lib/fps/visibility";
 import { RemotePresentation } from "../src/lib/fps/presentation";
-import { REMOTE_DELAY_MS, SnapshotClock } from "../src/lib/fps/network";
+import { REMOTE_DELAY_MS, SnapshotClock, PlaybackDelay } from "../src/lib/fps/network";
 
 /**
  * End-to-end opponent synchronisation harness. It runs the real server step and
@@ -84,7 +84,9 @@ function timelineClient(
   project = true,
   bridgeMs?: number,
   useTrail = true,
+  adaptive = false,
 ) {
+  const playback = new PlaybackDelay();
   const clock = new SnapshotClock(),
     motion = new RemotePresentation();
   if (bridgeMs !== undefined) motion.bridgeMs = bridgeMs;
@@ -92,6 +94,7 @@ function timelineClient(
   return {
     receive(f: Frame, at: number) {
       clock.observe(f.serverNow, at);
+      playback.observe(at, Math.max(0, f.serverNow - f.poseAt));
       motion.pushFrame(
         f.state.players.B,
         f.poseAt,
@@ -101,7 +104,7 @@ function timelineClient(
       if (!project) Reflect.set(motion, "projectionAllowed", false);
     },
     draw(now: number, elapsed: number, out: Pose) {
-      out.at = clock.now(now) - delay;
+      out.at = clock.now(now) - (adaptive ? playback.sample(elapsed) : delay);
       const shown = motion.sample(out.at, out, elapsed);
       return shown;
     },
@@ -535,6 +538,30 @@ describe("remote opponent synchronisation (server step → network → client pl
     expect(r.teleports).toBe(0); // the backlog is repaid as a forward glide, not a jump
     expect(r.disappeared).toBe(0);
   });
+});
+
+describe("adaptive 30 Hz playback", () => {
+  for (const script of [counterStrafe, jumpCrouch])
+    for (const jitter of [10, 30, 80])
+      for (const fps of [60, 144])
+        it(`preserves visibility and motion at ${fps} FPS and ${jitter}ms jitter`, () => {
+          const r = run({
+            a: open.a,
+            b: open.b,
+            script,
+            net: { rtt: 150, jitter },
+            fps,
+            durationMs: 6000,
+            snapshotMs: 34,
+            client: () => timelineClient(110, true, undefined, true, true),
+          });
+          expect(r.disappeared).toBe(0);
+          expect(r.leaked).toBe(0);
+          expect(r.teleports).toBe(0);
+          expect(r.causes.unexplained).toBe(0);
+          expect(r.causes.reversal).toBe(0);
+          expect(r.maxBackwardCm).toBeLessThan(jitter > 30 ? 20 : 5);
+        });
 });
 
 describe("snapshot trail (intermediate physics poses)", () => {

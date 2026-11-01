@@ -27,7 +27,8 @@ test("walking and mouse look share a smooth render timeline", async ({ page, bro
     await page.bringToFront();
     await page.evaluate(() => {
       const f = Reflect.get(window, "fpsPolishTest");
-      Object.assign(f.state.players.A, { x: 9, z: 12, yaw: 0, pitch: 0, velocityY: 0 });
+      // Keep the path in Dustfront's west perimeter alley; x=9 hits the south building.
+      Object.assign(f.state.players.A, { x: -18.2, z: 12, yaw: 0, pitch: 0, velocityY: 0 });
       f.state.round++;
       f.resetView();
     });

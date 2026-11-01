@@ -298,9 +298,9 @@ function shoot(
       ? (state.server.spreadSeed =
           (Math.imul(state.server.spreadSeed ?? 1, 1664525) + 1013904223) >>> 0)
       : (Math.imul(p.lastSeq + 1, 1664525) + Math.imul(state.tick, 1013904223)) >>> 0;
-  const yaw = p.yaw + (modern ? (p.recoilYaw ?? 0) : 0) + ((hash % 1001) / 500 - 1) * spread;
+  const yaw = input.yaw + (modern ? (p.recoilYaw ?? 0) : 0) + ((hash % 1001) / 500 - 1) * spread;
   const pitch =
-    p.pitch + (modern ? (p.recoilPitch ?? 0) : 0) + (((hash >>> 10) % 1001) / 500 - 1) * spread;
+    input.pitch + (modern ? (p.recoilPitch ?? 0) : 0) + (((hash >>> 10) % 1001) / 500 - 1) * spread;
   const direction = {
     x: -Math.sin(yaw) * Math.cos(pitch),
     y: Math.sin(pitch),
@@ -406,7 +406,7 @@ export function applyQueuedMovement(
   if (state.phase !== "live") return false;
   const input = validateInput(raw),
     p = state.players[seat];
-  if (!input || input.seq <= p.lastSeq || p.hp <= 0) return false;
+  if (!input || input.combatOnly || input.seq <= p.lastSeq || p.hp <= 0) return false;
   if (input.reload || input.weapon !== p.weapon) return false;
   if (input.fire) {
     const next = validateInput(nextRaw);
@@ -417,6 +417,7 @@ export function applyQueuedMovement(
       state.combatVersion !== COMBAT_VERSION ||
       input.weapon !== "rifle" ||
       !next ||
+      next.combatOnly ||
       next.seq <= input.seq ||
       !next.fire ||
       next.reload ||
@@ -443,6 +444,7 @@ export function stepMatch(
   now: number,
   _dt: number,
   historicalTargets?: Partial<Record<Seat, Pose>>,
+  triggers: Partial<Record<Seat, Input>> = {},
 ): MatchState {
   if (
     !Number.isFinite(now) ||
@@ -485,6 +487,13 @@ export function stepMatch(
     return state;
   }
   const accepted: Partial<Record<Seat, Input>> = {};
+  const combatInputs: Partial<Record<Seat, Input>> = {};
+  for (const seat of SEATS) {
+    const action = validateInput(triggers[seat]),
+      p = state.players[seat];
+    if (action?.combatOnly && action.seq > p.lastSeq && action.weapon === p.weapon && p.hp > 0)
+      combatInputs[seat] = action;
+  }
   // Capture tick-start positions before either seat moves (same temporal basis).
   const positions: Record<Seat, Pose> = {
     A: {
@@ -502,7 +511,8 @@ export function stepMatch(
   };
   for (const seat of SEATS) {
     const p = state.players[seat],
-      input = validateInput(inputs[seat]);
+      candidate = validateInput(inputs[seat]),
+      input = candidate?.combatOnly ? null : candidate;
     if (state.combatVersion === COMBAT_VERSION) recoverCombatRecoil(p, now);
     if (p.reloadUntil && now >= p.reloadUntil) {
       const amount = Math.min(WEAPONS[p.weapon].magazine - p.ammo, p.reserve);
@@ -560,15 +570,16 @@ export function stepMatch(
   // Both shots use tick-start positions, even if the first is lethal.
   // Health changes cannot suppress the opponent's shot; adjudicate only afterward.
   for (const seat of SEATS) {
-    const input = accepted[seat];
+    const input = combatInputs[seat] ?? accepted[seat];
     const p = state.players[seat];
+    if (combatInputs[seat]) p.lastSeq = Math.max(p.lastSeq, combatInputs[seat]!.seq);
     if (
       input?.fire &&
       (!input.sprint || p.crouched) &&
       (state.combatVersion !== COMBAT_VERSION || p.weapon === "rifle" || !p.triggerHeld)
     )
       shoot(state, seat, now, positions, input, historicalTargets?.[seat]);
-    if (input) p.triggerHeld = input.fire;
+    if (input) p.triggerHeld = accepted[seat]?.fire ?? input.fire;
   }
   if (state.players.A.hp <= 0 || state.players.B.hp <= 0) {
     finishRound(
