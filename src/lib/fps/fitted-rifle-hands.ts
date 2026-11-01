@@ -5,6 +5,16 @@ import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
 export const SUPPORT_GRIP_SHIFT = 0.09;
 /** Radians the support hand leans toward the lower-left, in line with the forearm. */
 export const SUPPORT_HAND_LEAN = 0.5;
+/**
+ * Handguard grip only: the palm cradles the handguard (rifle-local units), so the fingers can
+ * reach round it and wrap up the far side instead of lying flat underneath it.
+ */
+export const HANDGUARD_PALM_SHIFT = new THREE.Vector3(0.036, 0.014, 0);
+/** Handguard grip finger targets (handguard-local): middle joint on the far side, tip up it. */
+const HANDGUARD_WRAP = {
+  joint: new THREE.Vector2(0.054, -0.026),
+  tip: new THREE.Vector2(0.056, 0.024),
+};
 
 /**
  * Where the support hand grips, expressed as a map from handguard-local coordinates (the frame
@@ -62,6 +72,8 @@ export function magazineGrip(
 export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD_GRIP) {
   const hand = root.getObjectByName("Hand_L");
   if (!hand) throw new Error("AK support hand is missing");
+  // The handguard grip (the only one that also poses the right hand) cradles the handguard.
+  const cradle = grip.rightHand;
   root.updateWorldMatrix(true, true);
   const originalHand = hand.matrixWorld.clone();
   hand.scale.multiplyScalar(0.85);
@@ -104,8 +116,10 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
       root.localToWorld(
         grip.point(
           new THREE.Vector3(
-            -0.06 - 0.235 * Math.sin(SUPPORT_HAND_LEAN),
-            -0.23 + 0.235 * (1 - Math.cos(SUPPORT_HAND_LEAN)),
+            -0.06 - 0.235 * Math.sin(SUPPORT_HAND_LEAN) + (cradle ? HANDGUARD_PALM_SHIFT.x : 0),
+            -0.23 +
+              0.235 * (1 - Math.cos(SUPPORT_HAND_LEAN)) +
+              (cradle ? HANDGUARD_PALM_SHIFT.y : 0),
             -0.88 + SUPPORT_GRIP_SHIFT,
           ),
         ),
@@ -138,7 +152,9 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
       cp = c.getWorldPosition(new THREE.Vector3());
     const l1 = origin.distanceTo(bp),
       l2 = bp.distanceTo(cp);
-    const goal = root.localToWorld(grip.point(new THREE.Vector3(0.04, -0.04, z))),
+    const joint = cradle ? HANDGUARD_WRAP.joint : new THREE.Vector2(0.04, -0.04),
+      tipAim = cradle ? HANDGUARD_WRAP.tip : new THREE.Vector2(0.045, 0.005);
+    const goal = root.localToWorld(grip.point(new THREE.Vector3(joint.x, joint.y, z))),
       forward = goal.clone().sub(origin).normalize();
     const distance = THREE.MathUtils.clamp(
       origin.distanceTo(goal),
@@ -152,7 +168,7 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
     const pip = origin.clone().addScaledVector(forward, along).addScaledVector(pole, bend);
     aim(a, b, pip);
     aim(b, c, origin.clone().addScaledVector(forward, distance));
-    aim(c, tip, root.localToWorld(grip.point(new THREE.Vector3(0.045, 0.005, z))));
+    aim(c, tip, root.localToWorld(grip.point(new THREE.Vector3(tipAim.x, tipAim.y, z))));
   }
 
   // CCD changes rotations only: authored bone lengths, skin weights and glove detail survive.

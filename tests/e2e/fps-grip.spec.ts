@@ -145,10 +145,13 @@ test("actual AK gloves cover the wrists and keep a stable wrap grip through reco
     watchOnRight: false,
     heldWatch: [true, true],
   });
+  // Wrap grip: knuckles on the near (left) side of the handguard, middle joints under its far
+  // edge, fingertips round on the far side and rising up it.
   for (const finger of result.fingers) {
     expect(finger.knuckle[0]).toBeLessThan(-0.035);
-    expect(finger.middle[1]).toBeLessThan(-0.03);
-    expect(finger.tip[0]).toBeGreaterThan(0.01);
+    expect(finger.middle[1]).toBeLessThan(-0.02);
+    expect(finger.tip[0]).toBeGreaterThan(0.03);
+    expect(finger.tip[1]).toBeGreaterThan(finger.middle[1]);
   }
   await page.evaluate(() => Reflect.get(window, "fpsPolishTest").dispose());
 });

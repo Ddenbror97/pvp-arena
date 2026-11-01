@@ -97,6 +97,20 @@ test("close-up captures of the first-person AK", async ({ page }) => {
             mag: () => focus("MagazineGeometry"),
             bolt: () => focus("ChargingHandleGeometry"),
           };
+          if (shot === "bore" || shot === "under") {
+            // Down the barrel from the muzzle (bore) or from below the handguard (under).
+            const glove = model.root.getObjectByName("fitted-rifle-gloves-L");
+            const centre = new T.Box3().setFromObject(glove).getCenter(new T.Vector3());
+            const q = model.root.getWorldQuaternion(new T.Quaternion());
+            const dir = new T.Vector3(...(shot === "bore" ? [0, 0.05, -1] : [0.15, -1, -0.1])).normalize().applyQuaternion(q);
+            eye.position.copy(centre).addScaledVector(dir, 0.35);
+            eye.up.set(0, 1, 0).applyQuaternion(q);
+            eye.lookAt(centre);
+            eye.updateMatrixWorld(true);
+            renderer.render(scene, eye);
+            eye.up.set(0, 1, 0);
+            return;
+          }
           const orbit = /^(orbit|ring)([LR])(\d)$/.exec(shot);
           if (orbit) {
             // Isolated glove, orbiting: skinning artefacts with nothing in front of them.
