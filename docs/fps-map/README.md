@@ -1,7 +1,8 @@
 # PVPSPINARENA 1v1 aim arena: map rebuild report
 
-Branch `fps-aim-arena`. **Not deployed.** The previous map (Foundry) is preserved at git tag
-`fps-map-foundry-rollback` (commit `497bcd5`).
+Branch `fps-aim-arena`. **Not deployed.** The previous map (Foundry) is preserved at commit `497bcd5`
+(current `main`; also tagged `fps-map-foundry-rollback` locally — tag pushes are blocked from
+this environment).
 
 The work replaced the map and left the engine alone. Movement, bullets, visibility, netcode,
 hitboxes, the weapon pass, the static shadow map, `compileAsync` and asset lifecycle are the
@@ -140,7 +141,7 @@ tell you real-GPU frame times, behaviour on low-end hardware, or Firefox numbers
 - `map.ts` keeps its exports (`ARENA`, `BOXES`, `WALLS`, `STRUCTURES`, `FLOOR`, `SPAWNS`,
   `WORLD_SOLIDS`). The client and the Worker build against them unchanged.
 - Removed modules: `environment.ts`, `arena-architecture.ts` and `floor-polish.ts`. They are
-  recoverable from the rollback tag.
+  recoverable from `497bcd5`.
 - `arena-environment.ts` is not on the gameplay path. If the GLB fails, the blockout stays and
   the match plays the same.
 
@@ -168,7 +169,7 @@ tell you real-GPU frame times, behaviour on low-end hardware, or Firefox numbers
 ## 10. Rollback
 
 ```
-git checkout fps-map-foundry-rollback -- src/lib/fps tests public/fps/models
+git checkout 497bcd5 -- src/lib/fps tests public/fps/models
 ```
 
 Or revert the branch merge. Deploy both the app and the match Worker so the client and server
