@@ -14,7 +14,8 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Input, Seat } from "@/lib/fps/protocol";
 import type { ArenaControls, ArenaFrame } from "@/lib/fps/renderer";
 import { loadArenaRenderer } from "@/lib/fps/renderer-loader";
-import { STRIKE_SHOWCASE } from "@/lib/fps/showcase";
+import { STRIKE_LOADING_IMAGE, matchLoadProgress, type ArenaLoadProgress } from "@/lib/fps/loading";
+import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
 import { RoundBreak, type DuelProfile } from "./RoundBreak";
 import { DeathFeedback } from "./DeathFeedback";
 import { isDefeatedView } from "@/lib/fps/death-presentation";
@@ -90,6 +91,10 @@ export function DuelMatch({
     [accepted, setAccepted] = useState(false),
     [copied, setCopied] = useState(false);
   const [network, setNetwork] = useState<NetworkReport | null>(null);
+  const [visualProgress, setVisualProgress] = useState<ArenaLoadProgress>({
+    value: 0,
+    label: "Loading arena engine",
+  });
   const observations = useRef(new NetworkObservations());
   const currentFrame = useRef<ArenaFrame | null>(null),
     sound = useRef<CombatAudio | null>(null);
@@ -181,6 +186,7 @@ export function DuelMatch({
     if (!host.current || !needsArena) return;
     let disposed = false;
     setArenaReady(false);
+    setVisualProgress({ value: 0, label: "Loading arena engine" });
     void loadArenaRenderer()
       .then(async ({ mountArena }) => {
         // Paint the room and its loading state before expensive WebGL setup.
@@ -204,23 +210,31 @@ export function DuelMatch({
               observations.current.shot(seq, performance.now());
               sound.current?.localShot(weapon, seq);
             },
+            (progress) => {
+              if (!disposed) setVisualProgress(progress);
+            },
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
-          void arena.current.ready.then(() => {
-            if (!disposed) {
-              // Decode before the first trigger pull; resume stays in Ready's
-              // user gesture so browser autoplay rules remain respected.
-              try {
-                sound.current ??= createCombatAudio();
-                sound.current.setMuted(soundMuted());
-                sound.current.setVolume(settingsRef.current.volume);
-                void sound.current.ready();
-              } catch {
-                /* Audio availability must never block mouse capture. */
+          void arena.current.ready
+            .then(() => {
+              if (!disposed) {
+                // Decode before the first trigger pull; resume stays in Ready's
+                // user gesture so browser autoplay rules remain respected.
+                try {
+                  sound.current ??= createCombatAudio();
+                  sound.current.setMuted(soundMuted());
+                  sound.current.setVolume(settingsRef.current.volume);
+                  void sound.current.ready();
+                } catch {
+                  /* Audio availability must never block mouse capture. */
+                }
+                setArenaReady(true);
               }
-              setArenaReady(true);
-            }
-          });
+            })
+            .catch(() => {
+              if (!disposed)
+                setRenderError("The arena could not finish preparing. Reload to try again.");
+            });
           if (currentFrame.current) arena.current.snapshot(currentFrame.current, seatRef.current);
         } catch {
           setRenderError(
@@ -527,12 +541,36 @@ export function DuelMatch({
     terminal ||
     !playable ||
     (!spectate && !locked);
+  const showLoading =
+    !invite &&
+    !terminal &&
+    !renderError &&
+    (desktop === null ||
+      (!!desktop &&
+        !!userId &&
+        (view.isPending ||
+          (playable &&
+            (!arenaReady ||
+              !frame ||
+              connection !== "Connected" ||
+              (!spectate && (!ready || phase === "waiting")))))));
+  const canEnter = arenaReady && !!frame && connection === "Connected" && !spectate;
+  const waitingForOpponent = ready && phase === "waiting" && connection === "Connected";
+  const loadLabel = !arenaReady
+    ? visualProgress.label
+    : connection !== "Connected"
+      ? connection
+      : !frame
+        ? "Synchronizing match"
+        : waitingForOpponent
+          ? "Waiting for opponent"
+          : "Ready to enter";
   return (
     <div className="duel-game" data-arena-ready={arenaReady}>
       {!arenaReady && (
         <div className="duel-loading-backdrop" aria-hidden>
           <img
-            src={STRIKE_SHOWCASE}
+            src={STRIKE_LOADING_IMAGE}
             alt=""
             width={1672}
             height={941}
@@ -542,6 +580,18 @@ export function DuelMatch({
         </div>
       )}
       <div className="duel-render-host" ref={host} />
+      {showLoading && (
+        <ArenaLoadingScreen
+          progress={matchLoadProgress(visualProgress.value, connection === "Connected", !!frame)}
+          label={loadLabel}
+          practice={!!match?.practice}
+          canEnter={canEnter}
+          capturing={capturing}
+          waiting={waitingForOpponent}
+          error={error}
+          onEnter={() => void activate()}
+        />
+      )}
       <header className="duel-hud-top">
         <Link to="/fps-duel" className="duel-back">
           <ArrowLeft size={17} /> Lobby
@@ -673,7 +723,7 @@ export function DuelMatch({
           countdown={phase === "countdown"}
         />
       )}
-      {(needsInteraction || (!roundBreak && phase === "waiting")) && (
+      {!showLoading && (needsInteraction || (!roundBreak && phase === "waiting")) && (
         <div className={`duel-game-overlay ${locked ? "duel-game-overlay-passive" : ""}`}>
           <section className="duel-match-card">
             <span className="duel-eyebrow">THE FOUNDRY / PVP ORIGINALS</span>
