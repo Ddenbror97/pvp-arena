@@ -17,6 +17,18 @@ function rng() {
   };
 }
 describe("solo Practice bot", () => {
+  it("gives players 600 ms to react and a longer recovery between bursts", () => {
+    const state = createMatch({ A: "human", B: "bot" }, 13, 0),
+      bot = createPracticeBot(() => 0.5);
+    state.phase = "live";
+    Object.assign(state.players.A, { x: 9, z: 12, yaw: 0 });
+    Object.assign(state.players.B, { x: 9, z: 5, yaw: Math.PI });
+    for (let now = 0; now < 600; now += 34) expect(bot.input(state, now).fire).toBe(false);
+    expect(bot.input(state, 600).fire).toBe(true);
+    expect(bot.input(state, 1000).fire).toBe(false);
+    expect(bot.input(state, 1400).fire).toBe(false);
+    expect(bot.input(state, 1750).fire).toBe(true);
+  });
   it("uses valid inputs, waits for perception and never fires through hidden cover", () => {
     const state = createMatch({ A: "human", B: "bot" }, 13, 0),
       bot = createPracticeBot(rng());
