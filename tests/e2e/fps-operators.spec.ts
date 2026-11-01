@@ -77,7 +77,7 @@ test("police and terrorist operators load per seat and fit the rig, hitboxes and
         const p = new T.Vector3();
         body.traverse(
           (o: { isBone?: boolean; name: string; getWorldPosition: (v: unknown) => void }) => {
-            if (!o.isBone || /Hand|HandEnd|Toe_End|ForeArm/.test(o.name)) return;
+            if (!o.isBone || /Hand|_End$|End$|ForeArm/.test(o.name)) return;
             o.getWorldPosition(p);
             maxReach = Math.max(maxReach, Math.abs(p.x - actor.root.position.x), Math.abs(p.z));
             minY = Math.min(minY, p.y);
