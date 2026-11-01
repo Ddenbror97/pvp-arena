@@ -228,6 +228,20 @@ describe("render presentation independent of server physics", () => {
     m.clear();
     expect(m.sample(125, out)).toBe(false);
   });
+  it("reports the opponent's real velocity for a reappearing gait, never across a hidden gap", () => {
+    const p = player(),
+      m = new RemotePresentation();
+    m.push({ ...p, x: 0 }, 100);
+    m.push({ ...p, x: 0.2 }, 150);
+    m.push({ ...p, x: 0.4 }, 200);
+    expect(m.velocity(160).x).toBeCloseTo(0.004);
+    expect(m.velocity(999).x).toBeCloseTo(0.004); // held at the newest segment
+    m.push(p, 250, false); // redacted
+    m.push({ ...p, x: 2.0 }, 300); // reappears elsewhere
+    expect(m.velocity(300).x).toBe(0); // the jump across cover is not a speed
+    m.push({ ...p, x: 2.1 }, 350);
+    expect(m.velocity(320).x).toBeCloseTo(0.002);
+  });
   it("does not interpolate across a respawn", () => {
     const p = player(),
       m = new RemotePresentation(),
