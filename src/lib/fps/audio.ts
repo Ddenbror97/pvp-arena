@@ -70,6 +70,7 @@ export function createCombatAudio() {
   };
   let loading: Promise<void> | undefined,
     muted = false,
+    volume = 1,
     disposed = false,
     lastEvent = -1,
     lastTick = -1,
@@ -132,6 +133,10 @@ export function createCombatAudio() {
     source.start();
   }
   return {
+    setVolume(value: number) {
+      volume = Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 1;
+      master.gain.setTargetAtTime(muted ? 0 : 0.55 * volume, context.currentTime, 0.015);
+    },
     localShot(weapon: Weapon, seq: number) {
       for (const [key, at] of predicted) if (performance.now() - at > 2000) predicted.delete(key);
       predicted.set(seq, performance.now());
@@ -146,7 +151,7 @@ export function createCombatAudio() {
       if (disposed) return;
       muted = value;
       if (!value && context.state === "running") void load();
-      master.gain.setTargetAtTime(value ? 0 : 0.55, context.currentTime, 0.015);
+      master.gain.setTargetAtTime(value ? 0 : 0.55 * volume, context.currentTime, 0.015);
     },
     snapshot(state: MatchState, seat: Seat | null) {
       if (state.round !== lastRound) {

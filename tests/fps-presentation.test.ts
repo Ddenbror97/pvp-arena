@@ -6,6 +6,60 @@ import { REMOTE_DELAY_MS } from "../src/lib/fps/network";
 const player = () => createMatch({ A: "a", B: "b" }, 5, 1).players.A;
 describe("render presentation independent of server physics", () => {
   it.each([60, 144])(
+    "does not freeze walking playback during 100 ms snapshot gaps at %i Hz",
+    (hz) => {
+      const remote = new RemotePresentation(),
+        p = player();
+      const out = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
+      let next = 0,
+        previous = 13;
+      for (let now = 0; now < 2000; now += 1000 / hz) {
+        while (next <= now) {
+          remote.push({ ...p, x: 9, z: 13 - next * 0.002 }, next);
+          next += 100;
+        }
+        remote.sample(now - REMOTE_DELAY_MS, out, 1000 / hz);
+        if (now > 250) expect(out.z).toBeLessThan(previous - 0.00001);
+        previous = out.z;
+      }
+    },
+  );
+  it("bridges a late visible walking packet for at most 50 ms and eases a stop correction", () => {
+    const remote = new RemotePresentation(),
+      p = player();
+    const out = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
+    remote.push({ ...p, x: 9, z: 0 }, 100);
+    remote.push({ ...p, x: 9, z: -0.25 }, 150);
+    remote.sample(175, out, 5);
+    expect(out.z).toBeCloseTo(-0.375);
+    remote.push({ ...p, x: 9, z: -0.25 }, 200);
+    remote.sample(180, out, 5);
+    expect(Math.abs(out.z + 0.375)).toBeLessThan(0.025);
+    for (let at = 185; at <= 1000; at += 5) remote.sample(at, out, 5);
+    expect(out.z).toBeCloseTo(-0.25, 4);
+    remote.clear();
+    remote.push({ ...p, x: 9, z: 0 }, 100);
+    remote.push({ ...p, x: 9, z: -0.25 }, 150);
+    remote.sample(1000, out, 16);
+    expect(out.z).toBeCloseTo(-0.5);
+    remote.clear();
+    expect(remote.sample(1100, out, 16)).toBe(false);
+  });
+  it("never projects a dead opponent or moves projected geometry through a wall", () => {
+    const remote = new RemotePresentation(),
+      p = player();
+    const out = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
+    remote.push({ ...p, x: 11.35, z: 13 }, 100);
+    remote.push({ ...p, x: 11.6, z: 13 }, 150);
+    remote.sample(200, out, 16);
+    expect(out.x).toBe(11.6);
+    remote.clear();
+    remote.push({ ...p, x: 9, z: 0 }, 100);
+    remote.push({ ...p, x: 9, z: -0.25, hp: 0 }, 150);
+    remote.sample(200, out, 16);
+    expect(out.z).toBe(-0.25);
+  });
+  it.each([60, 144])(
     "keeps approaching opponents moving between quantized 20 Hz snapshots at %i Hz",
     (hz) => {
       const remote = new RemotePresentation(),

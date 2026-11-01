@@ -129,7 +129,7 @@ export class CameraCorrection {
 }
 
 type Pose = Pick<Player, "x" | "y" | "z" | "yaw" | "pitch"> & { at: number };
-/** Interpolate only received, visible poses. No prediction of hidden opponents. */
+/** Visible opponent playback, with a bounded horizontal bridge for late packets. */
 export class RemotePresentation {
   private readonly poses: Pose[] = Array.from({ length: 8 }, () => ({
     x: 0,
@@ -142,9 +142,19 @@ export class RemotePresentation {
   private start = 0;
   private count = 0;
   private playbackAt: number | null = null;
+  private projected = false;
+  private projectionAllowed = false;
+  private crouched = false;
+  private correctionX = 0;
+  private correctionZ = 0;
+  private renderedX = 0;
+  private renderedZ = 0;
+  private readonly scratch: Pose = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, at: 0 };
   clear() {
     this.start = this.count = 0;
     this.playbackAt = null;
+    this.projected = this.projectionAllowed = false;
+    this.correctionX = this.correctionZ = 0;
   }
   push(player: Player, at: number) {
     const last = this.count ? this.poses[(this.start + this.count - 1) % 8] : undefined;
@@ -160,6 +170,17 @@ export class RemotePresentation {
     pose.at = at;
     if (this.count < 8) this.count++;
     else this.start = (this.start + 1) % 8;
+    this.projectionAllowed = player.hp > 0 && player.y === 0 && !(player.velocityY ?? 0);
+    this.crouched = !!player.crouched;
+    if (this.projected && this.playbackAt !== null) {
+      // Repay a late packet's correction over frames instead of snapping the
+      // small projected distance back in a single frame.
+      this.sample(this.playbackAt, this.scratch);
+      this.correctionX = this.renderedX - this.scratch.x;
+      this.correctionZ = this.renderedZ - this.scratch.z;
+    }
+    this.projected = false;
+    if (!this.projectionAllowed) this.correctionX = this.correctionZ = 0;
   }
   sample(at: number, out: Pose, elapsedMs?: number) {
     if (!this.count) return false;
@@ -188,6 +209,38 @@ export class RemotePresentation {
     out.yaw = a.yaw + Math.atan2(Math.sin(b.yaw - a.yaw), Math.cos(b.yaw - a.yaw)) * t;
     out.pitch = a.pitch + (b.pitch - a.pitch) * t;
     out.at = at;
+    if (elapsedMs !== undefined) {
+      const newest = this.poses[(this.start + this.count - 1) % 8]!;
+      const previous = this.poses[(this.start + this.count - 2 + 8) % 8]!;
+      this.projected = false;
+      if (this.projectionAllowed && this.count > 1 && at > newest.at) {
+        const span = newest.at - previous.at;
+        const ahead = Math.min(50, at - newest.at);
+        const dx = newest.x - previous.x,
+          dz = newest.z - previous.z;
+        // Never bridge a teleport, airborne motion, or a stale history window.
+        if (span > 0 && span <= 150 && Math.hypot(dx, dz) / span <= 0.0076) {
+          const x = newest.x + (dx * ahead) / span,
+            z = newest.z + (dz * ahead) / span;
+          if (!isMovementBlocked(x, newest.y, z, this.crouched)) {
+            out.x = x;
+            out.z = z;
+            this.projected = true;
+          }
+        }
+      }
+      const decay = Math.exp(-Math.max(0, elapsedMs) / 65);
+      this.correctionX *= decay;
+      this.correctionZ *= decay;
+      if (
+        !isMovementBlocked(out.x + this.correctionX, out.y, out.z + this.correctionZ, this.crouched)
+      ) {
+        out.x += this.correctionX;
+        out.z += this.correctionZ;
+      }
+      this.renderedX = out.x;
+      this.renderedZ = out.z;
+    }
     return true;
   }
 }

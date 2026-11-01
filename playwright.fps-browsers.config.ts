@@ -2,6 +2,7 @@ import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "tests/e2e",
   testMatch: [
+    "fps-settings.spec.ts",
     "fps-motion-continuity.spec.ts",
     "fps-close-opponent.spec.ts",
     "fps-death-feedback.spec.ts",

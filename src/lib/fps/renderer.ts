@@ -61,6 +61,7 @@ export type ArenaControls = {
     renderIntervalMs: number;
   };
   ready: Promise<void>;
+  setSensitivity: (value: number) => void;
   snapshot: (frame: ArenaFrame, seat: Seat | null) => void;
   lock: () => Promise<void>;
   dispose: () => void;
@@ -414,10 +415,14 @@ export function mountArena(
     reload = false;
     jump = false;
   };
+  let sensitivity = 1;
   const mouse = (e: MouseEvent) => {
     if (!locked()) return;
-    yaw -= e.movementX * HANDLING.sensitivity;
-    pitch = Math.max(-1.45, Math.min(1.45, pitch - e.movementY * HANDLING.sensitivity));
+    yaw -= e.movementX * HANDLING.sensitivity * sensitivity;
+    pitch = Math.max(
+      -1.45,
+      Math.min(1.45, pitch - e.movementY * HANDLING.sensitivity * sensitivity),
+    );
     lookX += e.movementX;
     lookY += e.movementY;
     yaw = ((((yaw + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) - Math.PI;
@@ -834,6 +839,9 @@ export function mountArena(
   };
   animation = requestAnimationFrame(frame);
   return {
+    setSensitivity: (value) => {
+      sensitivity = Number.isFinite(value) ? Math.max(0.1, Math.min(3, value)) : 1;
+    },
     diagnostics: () => ({
       camera: [camera.position.x, camera.position.y, camera.position.z, camera.rotation.y],
       prediction: predicted ? [predicted.x, predicted.y, predicted.z] : null,

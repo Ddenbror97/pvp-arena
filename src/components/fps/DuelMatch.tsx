@@ -19,6 +19,12 @@ import { RoundBreak, type DuelProfile } from "./RoundBreak";
 import { DeathFeedback } from "./DeathFeedback";
 import { isDefeatedView } from "@/lib/fps/death-presentation";
 import "./duel.css";
+import { GameSettings, StrikeCrosshair } from "./GameSettings";
+import {
+  DEFAULT_STRIKE_SETTINGS,
+  readStrikeSettings,
+  saveStrikeSettings,
+} from "@/lib/fps/settings";
 
 type Preview = DuelView & { username: string };
 type Rpc = {
@@ -92,6 +98,18 @@ export function DuelMatch({
   const capturePending = useRef(false);
   const [capturing, setCapturing] = useState(false);
   const [rematchReview, setRematchReview] = useState(false);
+  const [settings, setSettings] = useState(DEFAULT_STRIKE_SETTINGS);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
+  useEffect(() => {
+    setSettings(readStrikeSettings());
+  }, []);
+  useEffect(() => {
+    arena.current?.setSensitivity(settings.sensitivity);
+    sound.current?.setVolume(settings.volume);
+    saveStrikeSettings(settings);
+  }, [settings]);
   const match = view.data;
   const profiles = useQuery({
     queryKey: ["fps-players", match?.creator_id, match?.opponent_id],
@@ -176,12 +194,17 @@ export function DuelMatch({
               if (socket.current?.readyState === WebSocket.OPEN)
                 socket.current.send(JSON.stringify(input));
             },
-            setLocked,
+            (value) => {
+              setLocked(value);
+              if (!value) setSettingsOpen(true);
+              else setSettingsOpen(false);
+            },
             (weapon, seq) => {
               observations.current.shot(seq, performance.now());
               sound.current?.localShot(weapon, seq);
             },
           );
+          arena.current.setSensitivity(settingsRef.current.sensitivity);
           void arena.current.ready.then(() => {
             if (!disposed) {
               // Decode before the first trigger pull; resume stays in Ready's
@@ -189,6 +212,7 @@ export function DuelMatch({
               try {
                 sound.current ??= createCombatAudio();
                 sound.current.setMuted(soundMuted());
+                sound.current.setVolume(settingsRef.current.volume);
                 void sound.current.ready();
               } catch {
                 /* Audio availability must never block mouse capture. */
@@ -404,6 +428,7 @@ export function DuelMatch({
       try {
         if (!sound.current) sound.current = createCombatAudio();
         sound.current.setMuted(muted);
+        sound.current.setVolume(settingsRef.current.volume);
         void sound.current.unlock().catch(() => {});
       } catch {
         /* Audio availability must not prevent entering an authenticated match. */
@@ -578,12 +603,16 @@ export function DuelMatch({
       {frame && isDefeatedView(frame.state, seat, spectate) && (
         <DeathFeedback key={`${matchId}-${frame.state.round}`} round={frame.state.round} />
       )}
-      <div className="duel-crosshair" aria-hidden>
-        <i />
-        <i />
-        <i />
-        <i />
-      </div>
+      <StrikeCrosshair settings={settings} />
+      <GameSettings
+        open={settingsOpen && ready && !terminal}
+        onOpenChange={setSettingsOpen}
+        settings={settings}
+        onChange={setSettings}
+        onResume={() => {
+          void activate();
+        }}
+      />
       <div className="duel-hit-marker" aria-hidden>
         <i />
         <i />
