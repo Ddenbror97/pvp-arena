@@ -240,7 +240,7 @@ export type ForearmShape = {
  * CUFF_LENGTH in art/blender/arms/glove_sdf.py; the forearm starts inside it, so the glove
  * edge overlaps bare skin like a real cuff instead of being welded to it.
  */
-export const GLOVE_CUFF_LENGTH = 0.06;
+export const GLOVE_CUFF_LENGTH = 0.045;
 const FOREARM_SIDES = 160,
   FOREARM_RINGS = 44;
 /** Short, anatomically proportioned forearms entering from the lower screen edge. */
@@ -658,7 +658,9 @@ export function fitContinuousForearms(
           .getWorldPosition(new THREE.Vector3()),
       );
     const across = knuckle(5).sub(knuckle(17)).setY(0).normalize();
-    const palmar = new THREE.Vector3(0, 1, 0).cross(across).multiplyScalar(side === "L" ? 1 : -1);
+    // Palm side: -(fingers × thumb side) on both hands, as the posed fingertips confirm (the
+    // bind pose's left fingers are bent backwards, so it cannot be used to tell).
+    const palmar = new THREE.Vector3(0, 1, 0).cross(across).negate();
     const thumb = toRootDirection(across.clone()),
       dorsal = toRootDirection(palmar.clone().negate());
     const elbow = wrist.clone().add(shape.elbow[side]);

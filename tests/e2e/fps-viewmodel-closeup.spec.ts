@@ -97,11 +97,11 @@ test("close-up captures of the first-person AK", async ({ page }) => {
             mag: () => focus("MagazineGeometry"),
             bolt: () => focus("ChargingHandleGeometry"),
           };
-          const orbit = /^orbit([LR])(\d)$/.exec(shot);
+          const orbit = /^(orbit|ring)([LR])(\d)$/.exec(shot);
           if (orbit) {
             // Isolated glove, orbiting: skinning artefacts with nothing in front of them.
             const keep =
-              orbit[1] === "L"
+              orbit[2] === "L"
                 ? ["magazine-grip-gloves", "charging-handle-gloves", "fitted-rifle-gloves-L"]
                 : ["fitted-rifle-gloves-R"];
             let glove: { visible: boolean } | undefined;
@@ -117,7 +117,7 @@ test("close-up captures of the first-person AK", async ({ page }) => {
                 ).traverseAncestors((a) => (shown &&= a.visible));
                 if (shown) return void (glove = o);
               }
-              if (o.visible) {
+              if (o.visible && orbit[1] === "orbit") {
                 hidden.push(o);
                 o.visible = false;
               }
@@ -125,7 +125,7 @@ test("close-up captures of the first-person AK", async ({ page }) => {
             const box = new T.Box3().setFromObject(glove as never);
             const centre = box.getCenter(new T.Vector3()),
               radius = box.getSize(new T.Vector3()).length();
-            const a = (Number(orbit[2]) / 6) * Math.PI * 2;
+            const a = (Number(orbit[3]) / 6) * Math.PI * 2;
             eye.position
               .copy(centre)
               .add(

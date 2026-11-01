@@ -26,7 +26,7 @@ FINGER_SCALE = {"index": 0.98, "middle": 1.0, "ring": 0.95, "little": 0.84}
 # Neoprene cuff: superellipse matching the runtime forearm (n = 2.4), plus wall and clearance.
 CUFF_HALF_WIDTH = 0.0343
 CUFF_HALF_DEPTH = 0.0249
-CUFF_LENGTH = 0.060  # past the wrist joint, towards the elbow
+CUFF_LENGTH = 0.045  # past the wrist joint, towards the elbow
 CUFF_START = 0.010  # towards the fingers, where the cuff blends into the hand
 
 
@@ -109,9 +109,9 @@ class HandFrame:
         mcp = {f: self.joints[f][0] for f in FINGERS}
         across = mcp["index"] - mcp["little"]
         self.across = _norm(across - (across @ self.along) * self.along)  # little -> index (thumb side)
-        palmar = np.cross(self.along, self.across)
-        curl = self.joints["middle"][3] - self.joints["middle"][0]
-        self.palmar = palmar if curl @ palmar > 0 else -palmar
+        # Palm side, checked against the posed grips (fingertips wrap toward it on both hands).
+        # The bind pose cannot be trusted for this: its left fingers are bent backwards.
+        self.palmar = -np.cross(self.along, self.across)
         self.mcp = mcp
         self.bind_joints = {k: [j.copy() for j in v] for k, v in self.joints.items()}
         self.segments = {}  # bone -> (joint in sculpt pose, joint in bind pose, R: sculpt dir -> bind dir)
@@ -286,7 +286,7 @@ def build_parts(h: HandFrame):
         a, y, pp = l[..., 0], l[..., 1], l[..., 2]
         # Gentle taper into the wrist, a hair of flare at the open end.
         s = np.clip((CUFF_START - y) / (CUFF_START + CUFF_LENGTH), 0, 1)
-        grow = 1.0 + 0.04 * s
+        grow = 1.0 + 0.015 * s
         d = superellipse(a, pp - 0.001, CUFF_HALF_WIDTH * grow, CUFF_HALF_DEPTH * grow)
         dy = np.maximum(y - CUFF_START, -y - CUFF_LENGTH)
         rr = 0.003
@@ -370,15 +370,15 @@ def glove_features(h: HandFrame, info, p, body, palm, d_parts, tips):
     d = smin(body, guard, 0.0012)
     # Cuff closure: a strap wrapping the dorsal / little-finger side, its end a raised tab.
     ang = np.arctan2(pp, a)  # 0 = thumb side, -pi/2 = dorsal (palmar is +), +-pi = little side
-    strap_y = np.abs(y + 0.034) - 0.019
+    strap_y = np.abs(y + 0.026) - 0.014
     dorsal_side = -np.sin(ang)  # 1 on the back of the wrist
     strap_region = np.maximum(strap_y, -(dorsal_side + 0.35))
-    strap = smax(d_parts["cuff"] - 0.0018, strap_region, 0.002)
+    strap = smax(d_parts["cuff"] - 0.0011, strap_region, 0.002)
     d = smin(d, strap, 0.0008)
     # Pull tab: thicker rubber end on the little-finger side, proud of the strap.
-    tab_centre = np.stack([-CUFF_HALF_WIDTH * 0.62, -0.034, -CUFF_HALF_DEPTH * 0.68], -1)
-    tab = np.linalg.norm((l - tab_centre) / np.array([0.011, 0.019, 0.011]), axis=-1) - 1.0
-    tab = smax(d_parts["cuff"] - 0.0034, tab * 0.011, 0.002)
+    tab_centre = np.stack([-CUFF_HALF_WIDTH * 0.62, -0.026, -CUFF_HALF_DEPTH * 0.68], -1)
+    tab = np.linalg.norm((l - tab_centre) / np.array([0.009, 0.013, 0.009]), axis=-1) - 1.0
+    tab = smax(d_parts["cuff"] - 0.0019, tab * 0.009, 0.0015)
     d = smin(d, tab, 0.0008)
     return d
 

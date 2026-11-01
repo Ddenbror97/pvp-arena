@@ -278,20 +278,20 @@ def classify(h, parts, info, P, N, seed):
     ch += np.where(binding, 0.00006 * np.sin(2 * np.pi * arcc / 0.0009), 0)
     # Strap and tab are separate moulded layers in the field: find where they are the surface.
     l_cuff = d_parts["cuff"]
-    strap = cuff & (d_total < l_cuff - 0.0011)
-    tab_centre = np.array([-G.CUFF_HALF_WIDTH * 0.62, -0.034, -G.CUFF_HALF_DEPTH * 0.68])
-    tab_e = np.linalg.norm((l - tab_centre) / np.array([0.011, 0.019, 0.011]), axis=-1)
+    strap = cuff & (d_total < l_cuff - 0.0007)
+    tab_centre = np.array([-G.CUFF_HALF_WIDTH * 0.62, -0.026, -G.CUFF_HALF_DEPTH * 0.68])
+    tab_e = np.linalg.norm((l - tab_centre) / np.array([0.009, 0.013, 0.009]), axis=-1)
     tab = strap & (tab_e < 1.05)
     s.zone[strap] = STRAP
     s.zone[tab] = TAB
-    strap_edge = np.abs(np.abs(y + 0.034) - 0.019)
+    strap_edge = np.abs(np.abs(y + 0.026) - 0.014)
     s.add_seam(strap & ~tab, strap_edge + 0.0018, arcc.astype(np.float32))
     s.add_seam(strap & ~tab, np.abs(strap_edge - 0.0035) + 0.0, arcc.astype(np.float32))
     ch += np.where(strap & ~tab, 0.00008 * np.sin(2 * np.pi * y / 0.0012), 0)
     # Tab: raised rim, moulded ridges and a recessed plate.
     ridge = np.sin(2 * np.pi * (y + 0.4 * arcc) / 0.0016)
     tab_rim = smooth(0.80, 0.92, tab_e)
-    plate = round_rect(arcc - (np.median(arcc[tab]) if tab.any() else 0), y + 0.034, 0.005, 0.009, 0.002)
+    plate = round_rect(arcc - (np.median(arcc[tab]) if tab.any() else 0), y + 0.026, 0.004, 0.007, 0.0015)
     ch += np.where(tab, 0.00025 * tab_rim + np.where(plate < 0, -0.0003, 0.00008 * ridge) * (1 - tab_rim), 0)
     s.tab_plate = np.where(tab & (plate < 0), 1.0, 0.0)
     # Neoprene jersey.

@@ -5,15 +5,14 @@ accessories authored here sit exactly on the arm the game builds.
 Authoring frame (Blender, metres): +X thumb side, +Y along the forearm toward the elbow
 (0 = wrist joint), +Z back of the arm (dorsal). glTF export turns that into the runtime's
 canonical arm space (x thumb, y dorsal, z toward the hand), and wrapOntoForearm() bends it onto
-each posed arm. The left arm's posed frame is mirrored relative to that canonical frame, so
-anything with a handedness (the watch dial) is authored mirrored: see build_accessories.py.
+each posed arm (the left arm's posed frame has the canonical handedness; the right is mirrored).
 """
 import numpy as np
 
 PROFILE = [(0, 0.0318, 0.0207), (0.18, 0.0329, 0.0217), (0.42, 0.0392, 0.0276), (0.68, 0.0472, 0.035), (0.86, 0.0493, 0.0376), (1, 0.0461, 0.0392)]
 RADIAL_BULGE = 0.0055
 RADIAL_MASS = 0.35
-GLOVE_CUFF_LENGTH = 0.06
+GLOVE_CUFF_LENGTH = 0.045
 # Typical posed wrist→elbow path length (m); t = along / LENGTH.
 LENGTH = 0.335
 

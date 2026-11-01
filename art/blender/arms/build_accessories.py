@@ -300,7 +300,7 @@ def canonical_arm(name, along0=0.0, along1=0.45):
 # elbow, +Z up off the back of the wrist; 3 o'clock / the crown point at the hand, -Y)
 # =========================================================================================
 MM = 0.001
-WATCH_ALONG = 0.0885
+WATCH_ALONG = 0.0745
 CASE_R = 20.0
 
 
@@ -625,21 +625,16 @@ def build_buckle(mesh, mat, strap_path, arm_top_z):
 
 
 def place_watch(obj, arm_top_z):
-    """Watch frame → canonical arm frame: move onto the wrist, then mirror x (see module doc)."""
+    """Watch frame → canonical arm frame: onto the back of the wrist, just past the glove cuff."""
     me = obj.data
     co = np.zeros(len(me.vertices) * 3)
     me.vertices.foreach_get("co", co)
     co = co.reshape(-1, 3)
     co[:, 1] += WATCH_ALONG
     co[:, 2] += arm_top_z
-    co[:, 0] *= -1  # x toward the little finger → x toward the thumb (mirrors the mesh)
-    # Worn tactical-style, face on the inside of the wrist: readable (and visible in first
-    # person) with the support hand palm-up under the handguard, crystal protected. A half turn
-    # about the arm keeps the crown toward the hand.
-    co[:, 0] *= -1
-    co[:, 2] *= -1
+    # The left arm's posed frame has the canonical handedness, so the watch goes in as built:
+    # face on the back of the wrist, 12 toward the little finger, crown toward the hand.
     me.vertices.foreach_set("co", co.ravel())
-    me.flip_normals()
     me.update()
 
 
