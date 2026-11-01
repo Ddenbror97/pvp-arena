@@ -60,9 +60,15 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
   weapon.root.visible = false;
   // Operators: the Blender-built Police (A) / Terrorist (B) bodies carry their own clothing,
   // gear and PBR materials; only the legacy shared body is tinted and dressed at runtime.
-  const operators = CHARACTER_SET === "operators";
+  const operators = CHARACTER_SET !== "legacy",
+    // Sourced characters bring their own sculpted head; the shared head stays hidden.
+    ownHead = CHARACTER_SET === "sourced";
   const asset = retainAuthoredAsset(
-    operators ? CHARACTER_MODELS[police ? "police" : "terrorist"] : CHARACTER_MODELS.legacy,
+    ownHead
+      ? CHARACTER_MODELS[police ? "policeSourced" : "terroristSourced"]
+      : operators
+        ? CHARACTER_MODELS[police ? "police" : "terrorist"]
+        : CHARACTER_MODELS.legacy,
   );
   const headAsset = retainAuthoredAsset(ARENA_MODELS.head);
   const ownedMaterials: THREE.Material[] = [],
@@ -157,6 +163,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
         );
       headInstance = cloneAuthoredModel(headGltf.scene);
       accessories.add(headInstance.root);
+      headInstance.root.visible = !ownHead;
       if (headKit) accessories.add(headKit);
       headInstance.root.traverse((object) => {
         if (object instanceof THREE.Mesh)
@@ -320,7 +327,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
         bill.rotation.x = Math.PI / 2;
         bill.scale.set(0.82, 0.82, 1);
       }
-      if (!police) {
+      if (!police && !ownHead) {
         // Fitted shemagh: one cloth layer grown from the head mesh itself, with an eye slit.
         const shemagh = createShemaghTextures();
         ownedTextures.push(shemagh.map, shemagh.bump);

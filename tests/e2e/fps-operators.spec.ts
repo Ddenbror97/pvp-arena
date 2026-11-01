@@ -116,12 +116,13 @@ test("police and terrorist operators load per seat and fit the rig, hitboxes and
     return out;
   });
   for (const r of results) {
-    expect(r.set).toBe("operators");
+    expect(["sourced", "operators"]).toContain(r.set);
     expect(r.loaded).toBe(true);
     expect(r.tinted, "operators keep their authored PBR colours").toBe(false);
     expect(r.badge, "POLICE is printed on the carrier, not a floating badge").toBe(false);
     expect(r.skinned).toBeGreaterThan(0);
-    expect(r.bones).toBe(25);
+    // Every Mixamo bone the runtime drives exists (sourced rigs add fingers/twist bones).
+    expect(r.bones).toBeGreaterThanOrEqual(25);
     const prefix = r.seat === "A" ? "police-" : "terrorist-";
     expect(
       r.materials.every((m) => m.startsWith(prefix) || /\.body|eye|hair|short|low/i.test(m)),
@@ -129,7 +130,7 @@ test("police and terrorist operators load per seat and fit the rig, hitboxes and
     // CS:GO-like: eyes on the 1.6 m head hitbox, crown 1.72-1.82 m (helmet adds a few cm).
     expect(r.crown).toBeGreaterThan(1.72);
     expect(r.crown).toBeLessThan(1.82);
-    expect(r.helmet).toBe(r.seat === "A");
+    if (r.set === "operators") expect(r.helmet).toBe(r.seat === "A");
     for (const s of r.samples) {
       // Torso and legs stay inside the server body volume (hands/rifle may lead it).
       // Crouched knees jut forward of the 0.7 m box by a few cm, as the legacy rig did (0.40 m).

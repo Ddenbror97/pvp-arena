@@ -22,6 +22,7 @@ test("both authored heads keep skin detail and their team headgear", async ({ pa
     const c = "/src/lib/fps/character.ts",
       w = "/src/lib/fps/weapon.ts",
       t = "/node_modules/three/build/three.module.js";
+    const { CHARACTER_SET } = await import("/src/lib/fps/model-assets.ts" as string);
     const { createCharacter } = await import(c),
       { createWeaponKit } = await import(w),
       T = await import(t);
@@ -94,6 +95,15 @@ test("both authored heads keep skin detail and their team headgear", async ({ pa
         underHead,
         helmet: !!actor.root.getObjectByName("helmet"),
         legacyCap: !!actor.root.getObjectByName("fitted-police-cap"),
+        set: CHARACTER_SET as string,
+        // Sourced characters carry their own sculpted head; the shared head is hidden.
+        sharedHeadVisible:
+          !!faceMesh &&
+          (() => {
+            let v = true;
+            (faceMesh as Mesh).traverseAncestors((o: { visible: boolean }) => (v &&= o.visible));
+            return v && faceMesh!.visible;
+          })(),
         // The balaclava covers the crown and ears; the eye slit keeps the eyes visible.
         covered:
           seat === "B" ? !!balaclava && !actor.root.getObjectByName("fitted-scarf-hood") : true,
@@ -121,6 +131,10 @@ test("both authored heads keep skin detail and their team headgear", async ({ pa
       expect(clearance, "cloth must sit outside the nose, lips and chin").toBeGreaterThan(0.001);
     expect(r.skinMap).toBe(true);
     expect(r.legacyCap).toBe(false);
+    if (r.set === "sourced") {
+      expect(r.sharedHeadVisible).toBe(false);
+      continue;
+    }
     if (r.seat === "A") {
       expect(r.helmet).toBe(true);
       expect(r.underHead, "eyewear follows the fitted head").toBe(true);
