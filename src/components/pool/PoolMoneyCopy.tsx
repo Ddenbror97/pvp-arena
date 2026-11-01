@@ -5,7 +5,7 @@ export const POOL_PAGE_DESCRIPTION =
 export const POOL_FAQS = [
   {
     q: "Can I practise 8-ball for free against a bot?",
-    a: "Yes. Choose Practice vs bot in the lobby. A dedicated bot evaluates potting routes, shot power and scratches. Practice uses the real-match layout, live chat, physics and shot rules, including the presence-aware 30-second clock. It runs in your browser with no deposit, stake, fee, payout or cash result. The rack resumes after refresh in the same tab; New rack starts again.",
+    a: "Yes. Choose Practice in the lobby. A dedicated bot evaluates potting routes, shot power and scratches. Practice uses the real-match layout, live chat, physics and shot rules, including the presence-aware 30-second clock. It runs in your browser with no deposit, stake, fee, payout or cash result. The rack resumes after refresh in the same tab; New rack starts again.",
   },
   {
     q: "Can you play 8 ball pool for real money?",

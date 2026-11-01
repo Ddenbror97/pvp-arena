@@ -262,11 +262,6 @@ function AuthPage() {
           Create your account to play. You must be 18 or older.
         </p>
       ) : null}
-      {mode === "signup" ? (
-        <div className="mt-4">
-          <TurnstileField resetKey={captchaReset} onToken={setCaptchaToken} />
-        </div>
-      ) : null}
       <Button
         type="button"
         variant="outline"
@@ -378,6 +373,9 @@ function AuthPage() {
                 I confirm I am 18 or older and accept the terms
               </Label>
             </div>
+          )}
+          {mode === "signup" && (
+            <TurnstileField resetKey={captchaReset} onToken={setCaptchaToken} />
           )}
           <Button
             type="submit"
