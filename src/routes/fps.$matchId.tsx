@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { STRIKE_SHOWCASE } from "@/lib/fps/showcase";
+import { STRIKE_LOADING_IMAGE } from "@/lib/fps/loading";
 import { DuelMatch } from "@/components/fps/DuelMatch";
 
 export const Route = createFileRoute("/fps/$matchId")({
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/fps/$matchId")({
       {
         rel: "preload",
         as: "image",
-        href: STRIKE_SHOWCASE,
+        href: STRIKE_LOADING_IMAGE,
         type: "image/webp",
         fetchPriority: "high",
       },

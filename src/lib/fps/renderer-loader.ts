@@ -1,4 +1,5 @@
 import { ARENA_MODELS } from "./model-assets";
+import { warmStrikeLoadingImage } from "./loading";
 
 let renderer: Promise<typeof import("./renderer")> | undefined;
 /** Download/parse on match intent, instantiate WebGL only inside the match. */
@@ -14,6 +15,7 @@ export function warmArenaRenderer() {
 let assets: Promise<unknown> | undefined;
 /** Explicit create/join intent only; keep ordinary site navigation lightweight. */
 export function warmArenaAssets() {
+  warmStrikeLoadingImage();
   warmArenaRenderer();
   assets ??= Promise.all(
     Object.values(ARENA_MODELS).map(async (url) => {

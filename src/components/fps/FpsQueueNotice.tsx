@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { duelError } from "@/lib/fps/api";
 import { duelAction } from "@/lib/fps/duel.functions";
 import { useFpsQueue } from "@/lib/fps/queue";
+import { reserveArenaPointer, releaseArenaPointer } from "@/lib/fps/entry-capture";
 
 function useJoinQueuedMatch() {
   const queue = useFpsQueue();
@@ -22,6 +23,7 @@ function useJoinQueuedMatch() {
       return;
     }
     inFlight.current = true;
+    reserveArenaPointer(cash.id);
     try {
       if (queue.data?.practice) {
         await action({ data: { action: "cancel", matchId: queue.data.practice.id } });
@@ -29,6 +31,7 @@ function useJoinQueuedMatch() {
       await navigate({ to: "/fps/$matchId", params: { matchId: cash.id } });
       void qc.invalidateQueries({ queryKey: ["fps-queue"] });
     } catch (e) {
+      releaseArenaPointer();
       toast.error(duelError(e));
     } finally {
       inFlight.current = false;

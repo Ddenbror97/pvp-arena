@@ -50,16 +50,16 @@ test("solo Practice completes seven rounds, reconnects and starts again without 
     await page.getByRole("button", { name: "Practice vs bot" }).click();
     await expect.poll(() => page.url()).toMatch(/\/fps\/[a-f0-9-]{36}/);
     matchId = page.url().split("/fps/")[1]!.split("?")[0];
-    await expect(page.getByRole("button", { name: "Ready & enter arena" })).toBeEnabled();
-    await page.getByRole("button", { name: "Ready & enter arena" }).click();
+    await expect(page.locator(".duel-game")).toHaveAttribute("data-arena-ready", "true");
+    await expect(page.locator(".duel-loading-screen")).toHaveCount(0);
     await expect.poll(() => state?.phase).toBe("live");
     expect(state?.bestOf).toBe(13);
     await expect.poll(() => state?.round, { timeout: 180000 }).toBeGreaterThanOrEqual(2);
     await page.reload();
-    await expect(
-      page.getByRole("button", { name: /Resume aiming|Ready & enter arena/ }),
-    ).toBeEnabled();
-    await page.getByRole("button", { name: /Resume aiming|Ready & enter arena/ }).click();
+    await expect(page.locator(".duel-game")).toHaveAttribute("data-arena-ready", "true");
+    await expect(page.locator(".duel-loading-screen")).toHaveCount(0);
+    if (!(await page.evaluate(() => !!document.pointerLockElement)))
+      await page.locator("canvas").click();
     await expect.poll(() => state?.phase, { timeout: 300000 }).toBe("completed");
     await expect.poll(() => settled, { timeout: 30000 }).toBe(true);
     expect(state?.score).toEqual({ A: 0, B: 7 });
@@ -76,7 +76,7 @@ test("solo Practice completes seven rounds, reconnects and starts again without 
     expect(result).toEqual({ status: "COMPLETED", score_a: 0, score_b: 7 });
     await page.getByRole("button", { name: "Practice again", exact: true }).click();
     await expect.poll(() => page.url()).not.toContain(matchId!);
-    await expect(page.getByRole("button", { name: "Ready & enter arena" })).toBeEnabled();
+    await expect(page.locator(".duel-game")).toHaveAttribute("data-arena-ready", "true");
     expect(errors).toEqual([]);
     await info.attach("solo-practice-result", {
       body: JSON.stringify({
