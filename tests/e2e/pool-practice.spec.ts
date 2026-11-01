@@ -77,8 +77,13 @@ test("restart cancels bot work and mobile table fits without overflow", async ({
     table,
   );
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/pool/practice");
-  await expect(page.locator(".pool-practice")).toHaveAttribute("data-phase", "aiming");
+  await page.goto("/pool/practice", { waitUntil: "domcontentloaded" });
+  // Image loading can outlast the brief aiming phase; restart any in-flight bot shot.
+  await expect(page.locator(".pool-practice")).toHaveAttribute("data-turn", "B");
+  await expect(page.locator(".pool-practice")).toHaveAttribute(
+    "data-phase",
+    /thinking|aiming|stroke|rolling/,
+  );
   await page.getByRole("button", { name: "Start new rack" }).click();
   await page.waitForTimeout(2500);
   await expect(page.locator(".pool-practice")).toHaveAttribute("data-shot", "0");
