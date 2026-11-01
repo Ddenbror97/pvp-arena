@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import type { StrikeSettings } from "@/lib/fps/settings";
 export const CROSSHAIRS = ["Dynamic cross", "Dot", "Circle", "Cross and dot", "Static cross"];
@@ -29,17 +29,20 @@ export function GameSettings({
   settings,
   onChange,
   onResume,
+  matchNotice,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   settings: StrikeSettings;
   onChange: (value: StrikeSettings) => void;
   onResume: () => void;
+  matchNotice?: ReactNode;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="strike-settings" onCloseAutoFocus={(e) => e.preventDefault()}>
         <DialogTitle>Game settings</DialogTitle>
+        {matchNotice}
         <DialogDescription>
           Changes apply immediately and are saved on this device. The match continues while this
           menu is open.

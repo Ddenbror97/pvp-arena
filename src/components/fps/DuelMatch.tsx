@@ -20,6 +20,7 @@ import { DeathFeedback } from "./DeathFeedback";
 import { isDefeatedView } from "@/lib/fps/death-presentation";
 import "./duel.css";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
+import { FpsReadyAction } from "./FpsQueueNotice";
 import {
   DEFAULT_STRIKE_SETTINGS,
   readStrikeSettings,
@@ -605,6 +606,7 @@ export function DuelMatch({
       )}
       <StrikeCrosshair settings={settings} />
       <GameSettings
+        matchNotice={<FpsReadyAction practiceId={matchId} />}
         open={settingsOpen && ready && !terminal}
         onOpenChange={setSettingsOpen}
         settings={settings}
@@ -819,6 +821,9 @@ export function DuelMatch({
                   <br />
                   Both players confirm readiness before the first round.
                 </p>
+                <Link className="duel-secondary" to="/fps-duel">
+                  Browse or play free Practice while waiting
+                </Link>
                 {match?.private && (
                   <button
                     className="duel-secondary"

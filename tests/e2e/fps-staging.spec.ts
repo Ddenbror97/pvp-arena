@@ -3,6 +3,7 @@ import type { NetworkReport } from "../../src/lib/fps/network";
 import { test, expect, type Page } from "@playwright/test";
 import fs from "node:fs";
 import type { MatchState } from "../../src/lib/fps/protocol";
+import { ROUND_END_MS } from "../../src/lib/fps/simulation";
 import { connect, assertStaging } from "../../scripts/fps/staging-lib.mjs";
 
 const baseURL = process.env["FPS_STAGING_APP_URL"] ?? "http://127.0.0.1:4180";
@@ -132,10 +133,13 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     await page.getByLabel("I accept this entry", { exact: false }).check();
     const createAt = Date.now();
     await page.getByRole("button", { name: "Create game", exact: true }).click();
-    await expect(page).toHaveURL(/\/fps\/[a-f0-9-]{36}/);
-    matchId = new URL(page.url()).pathname.split("/").at(-1)!;
+    await expect(page.getByText("Your human-only cash room is open.")).toBeVisible();
+    await expect(page).toHaveURL(/\/fps-duel$/);
+    matchId = (
+      await sql`select id from fps_matches where creator_id=${users[0].id} and status='WAITING'`
+    )[0].id;
     timings.createToRoomMs = Date.now() - createAt;
-    await expect(page.getByRole("heading", { name: /Room created/ })).toBeVisible();
+    await page.goto("/guides");
     const room = other.locator(".strike-room-list li").filter({
       hasText: (await sql`select username from profiles where id=${users[0].id}`)[0].username,
     });
@@ -147,6 +151,8 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     const joinAt = Date.now();
     await review.getByRole("button", { name: "Join for $1.00" }).click();
     await expect(other).toHaveURL(new RegExp("/fps/" + matchId));
+    await page.getByRole("button", { name: "Join now", exact: true }).click();
+    await expect(page).toHaveURL(new RegExp("/fps/" + matchId));
     timings.joinToRoomMs = Date.now() - joinAt;
     for (const p of [other, page]) {
       const ready = p.getByRole("button", { name: "Ready & enter arena", exact: true });
@@ -272,8 +278,8 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
         );
         await expect(card.getByRole("button")).toHaveCount(0);
         expect(await page.evaluate(() => !!document.pointerLockElement)).toBe(true);
-        expect(breaks.get(round)).toBeGreaterThan(2600);
-        expect(breaks.get(round)).toBeLessThanOrEqual(3000);
+        expect(breaks.get(round)).toBeGreaterThan(ROUND_END_MS - 400);
+        expect(breaks.get(round)).toBeLessThanOrEqual(ROUND_END_MS);
         await expect(card.locator(".duel-victory-halo")).toHaveCount(1);
         await page.screenshot({ path: `test-results/flow-round-recap-${round}.png` });
         await expect

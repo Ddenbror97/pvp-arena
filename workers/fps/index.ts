@@ -566,7 +566,23 @@ export class DuelRoom {
             authorized.some((s) => s.seat === seat && s.ready),
         )
       ) {
-        startMatch(saved.state, now);
+        if (!saved.config.practice) {
+          const response = await fetch(`${this.env.SUPABASE_URL}/rest/v1/rpc/fps_mark_started`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              apikey: this.env.SUPABASE_SERVICE_ROLE_KEY,
+              Authorization: `Bearer ${this.env.SUPABASE_SERVICE_ROLE_KEY}`,
+            },
+            body: JSON.stringify({ p_match: saved.config.id, p_runtime: saved.config.id }),
+            signal: AbortSignal.timeout(5000),
+          });
+          if (!response.ok) {
+            saved.state.phase = "cancelled";
+            this.reason = "NO_SHOW";
+          }
+        }
+        if (saved.state.phase !== "cancelled") startMatch(saved.state, Date.now());
         await this.persist();
       }
       if (

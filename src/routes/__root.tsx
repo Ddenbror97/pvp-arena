@@ -19,6 +19,7 @@ import { SLOT_STAGE } from "@/lib/slott/stage";
 import { rootHead } from "@/lib/seo/root-head";
 import { installGameSounds, setWheelCueEnabled } from "@/lib/sound";
 import { PoolJoinNotice } from "@/components/pool/PoolJoinNotice";
+import { FpsQueueNotice } from "@/components/fps/FpsQueueNotice";
 import { SlotJoinNotice } from "@/components/slott/SlotJoinNotice";
 import { GameSignupPromo } from "@/components/promo/GameSignupPromo";
 
@@ -204,6 +205,7 @@ const RootOverlays = memo(function RootOverlays() {
       ) : null}
       {userId ? <SlotJoinNotice /> : null}
       {userId ? <PoolJoinNotice /> : null}
+      {userId ? <FpsQueueNotice /> : null}
       <Suspense fallback={null}>
         <Toaster position="top-center" />
       </Suspense>
