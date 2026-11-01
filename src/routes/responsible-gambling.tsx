@@ -77,6 +77,11 @@ function ResponsiblePage() {
       </p>
 
       <h2>Before You Play</h2>
+      <p>
+        <Link to="/pool/practice">Free 8-ball Practice</Link> is also available against a bot. There
+        is no stake, fee or payout. Use it to learn aiming and shot power before deciding whether to
+        enter a cash table; practice success does not guarantee cash wins.
+      </p>
       <ul>
         <li>Set a spending limit before you start and stick to it.</li>
         <li>Do not deposit additional money simply to recover losses.</li>

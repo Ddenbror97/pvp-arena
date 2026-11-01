@@ -1,8 +1,12 @@
 export const POOL_PAGE_TITLE = "8 Ball Pool for Real Money: Crypto PvP Matches";
 export const POOL_PAGE_DESCRIPTION =
-  "Play 1v1 8 ball for a cash stake. The winner is the rules replay of the shots. A 5% fee comes off the pot. Stakes run from $1 to $50.";
+  "Play 8-ball pool for $1–$50 cash stakes or practise free against a dedicated bot. Cash wins pay the pot after a 5% fee; Practice has no stake or payout.";
 
 export const POOL_FAQS = [
+  {
+    q: "Can I practise 8-ball for free against a bot?",
+    a: "Yes. Choose Practice vs bot in the lobby. A dedicated bot evaluates potting routes, shot power and scratches using the same table physics and shot rules. Practice runs in your browser with no deposit, stake, fee or payout. It has no shot clock and does not affect cash results. The rack resumes after refresh in the same tab; New rack starts again.",
+  },
   {
     q: "Can you play 8 ball pool for real money?",
     a: "Yes. Two players stake the same amount from a US-dollar balance. The winner is whoever the published 8-ball rules name after the shots. The rack seed does not pick a winner.",
