@@ -5,10 +5,13 @@ export function ArenaLoadingScreen({
   progress,
   label,
   error,
+  mapName = "Dustfront",
 }: {
   progress: number;
   label: string;
   error: string | null;
+  /** The match map's display name. */
+  mapName?: string;
 }) {
   const percent = Math.max(0, Math.min(100, progress));
   return (
@@ -34,7 +37,7 @@ export function ArenaLoadingScreen({
         <div className="duel-loading-heading">
           <div>
             <span className="duel-loading-kicker">PVPSTRIKE</span>
-            <h1>Dustfront</h1>
+            <h1>{mapName}</h1>
           </div>
         </div>
         <div className="duel-loading-status">

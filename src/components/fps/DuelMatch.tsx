@@ -15,6 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Input, Seat } from "@/lib/fps/protocol";
 import type { ArenaControls, ArenaFrame } from "@/lib/fps/renderer";
 import { loadArenaRenderer } from "@/lib/fps/renderer-loader";
+import { DEFAULT_MAP_ID, getMap, isMapId } from "@/lib/fps/maps/registry";
 import { STRIKE_LOADING_IMAGE, matchLoadProgress, type ArenaLoadProgress } from "@/lib/fps/loading";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
 import {
@@ -163,6 +164,11 @@ export function DuelMatch({
     frame?.state.phase === "cancelled" ||
     (!spectate && ["COMPLETED", "CANCELLED", "REFUNDED"].includes(match?.status ?? ""));
   const needsArena = !!desktop && (playable || terminal || !userId);
+  // The authoritative snapshot decides the map; the match view lets the arena start loading the
+  // right scene before the first snapshot. A change (client/server skew) remounts the arena.
+  const mapId = frame?.state.mapId ?? match?.map_id ?? DEFAULT_MAP_ID;
+  const knownMap = isMapId(mapId);
+  const mapName = knownMap ? getMap(mapId).name : "PvPStrike";
   useEffect(() => {
     const sync = () => setMuted(soundMuted());
     sync();
@@ -212,6 +218,10 @@ export function DuelMatch({
 
   useEffect(() => {
     if (!host.current || !needsArena) return;
+    if (!knownMap) {
+      setRenderError("This match uses a map this version doesn't have yet. Reload to update.");
+      return;
+    }
     let disposed = false;
     setArenaReady(false);
     setVisualProgress({ value: 0, label: "Loading arena engine" });
@@ -243,6 +253,7 @@ export function DuelMatch({
             (progress) => {
               if (!disposed) setVisualProgress(progress);
             },
+            { mapId },
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
           void arena.current.ready
@@ -280,7 +291,7 @@ export function DuelMatch({
       arena.current?.dispose();
       arena.current = null;
     };
-  }, [needsArena, matchId]);
+  }, [needsArena, matchId, mapId, knownMap]);
 
   useEffect(() => {
     if (!playable || !userId || !desktop) return;
@@ -609,7 +620,7 @@ export function DuelMatch({
         ? "Synchronizing match"
         : waitingForOpponent
           ? "Waiting for opponent"
-          : "Entering Dustfront";
+          : `Entering ${mapName}`;
   return (
     <div className="duel-game" data-arena-ready={arenaReady}>
       {!arenaReady && !showLoading && (
@@ -636,6 +647,7 @@ export function DuelMatch({
           progress={matchLoadProgress(visualProgress.value, connection === "Connected", !!frame)}
           label={loadLabel}
           error={error}
+          mapName={mapName}
         />
       )}
       {ready && !locked && !spectate && !terminal && !settingsOpen && !showLoading && (

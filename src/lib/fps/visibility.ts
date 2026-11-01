@@ -1,5 +1,6 @@
 import { rayBox, traceWorld, type Vector } from "./collision";
-import { eyeHeight, PLAYER_RADIUS, WORLD_SOLIDS } from "./map";
+import { eyeHeight, PLAYER_RADIUS } from "./map";
+import { mapOf, type GameMap } from "./maps/registry";
 import type { MatchState, Seat } from "./protocol";
 
 type PublicState = Omit<MatchState, "server">;
@@ -14,6 +15,7 @@ export function canSeeOpponent(state: PublicState, seat: Seat): boolean {
     length = Math.hypot(dx, dz) || 1;
   const sideX = (dz / length) * PLAYER_RADIUS * 0.9,
     sideZ = (-dx / length) * PLAYER_RADIUS * 0.9;
+  const map = mapOf(state);
   const heights = [eyeHeight(enemy) + 0.1, eyeHeight(enemy), eyeHeight(enemy) * 0.55];
   for (const height of heights)
     for (const side of [-1, 0, 1]) {
@@ -27,6 +29,7 @@ export function canSeeOpponent(state: PublicState, seat: Seat): boolean {
           origin,
           { x: x / distance, y: y / distance, z: z / distance },
           Math.max(0, distance - 0.025),
+          map,
         )
       )
         return true;
@@ -63,17 +66,8 @@ const REVEAL_HEIGHTS = [0.06, 0.3, 0.55, 0.8, 0.94, 1] as const;
 /** Viewer horizontal velocity (m/ms) and how far ahead of this step the client draws. */
 export type ViewerMotion = { vx: number; vz: number; aheadMs: number };
 
-const WORLD_BOUNDS = WORLD_SOLIDS.map((b) => ({
-  b,
-  minX: b.x - b.w / 2,
-  maxX: b.x + b.w / 2,
-  minY: b.y - b.h / 2,
-  maxY: b.y + b.h / 2,
-  minZ: b.z - b.d / 2,
-  maxZ: b.z + b.d / 2,
-}));
 /** Segment occlusion with a cheap bounds prefilter (same slab test as traceWorld). */
-function blocked(o: Vector, t: Vector) {
+function blocked(o: Vector, t: Vector, map: GameMap) {
   const x = t.x - o.x,
     y = t.y - o.y,
     z = t.z - o.z,
@@ -87,7 +81,7 @@ function blocked(o: Vector, t: Vector) {
     hiY = Math.max(o.y, t.y),
     loZ = Math.min(o.z, t.z),
     hiZ = Math.max(o.z, t.z);
-  for (const s of WORLD_BOUNDS) {
+  for (const s of map.worldBounds) {
     if (
       s.maxX < loX ||
       s.minX > hiX ||
@@ -104,7 +98,7 @@ function blocked(o: Vector, t: Vector) {
 }
 
 type Body = Pick<MatchState["players"]["A"], "x" | "y" | "z" | "yaw" | "crouched">;
-function envelopeVisible(eye: Vector, enemy: Body) {
+function envelopeVisible(eye: Vector, enemy: Body, map: GameMap) {
   const dx = enemy.x - eye.x,
     dz = enemy.z - eye.z,
     length = Math.hypot(dx, dz) || 1,
@@ -118,7 +112,7 @@ function envelopeVisible(eye: Vector, enemy: Body) {
         y: enemy.y + top * fraction,
         z: enemy.z + sideZ * side,
       };
-      if (!blocked(eye, target)) return true;
+      if (!blocked(eye, target, map)) return true;
     }
   // The rifle reaches ~0.8 m ahead of the chest and is often the first thing around a corner.
   const muzzle = {
@@ -126,16 +120,17 @@ function envelopeVisible(eye: Vector, enemy: Body) {
     y: enemy.y + top * 0.8,
     z: enemy.z - Math.cos(enemy.yaw) * 0.8,
   };
-  return !blocked(eye, muzzle);
+  return !blocked(eye, muzzle, map);
 }
 
 /** Latency-aware, conservative line of sight for redaction (no hold; see RevealGate). */
 export function revealsOpponent(
-  state: Pick<PublicState, "phase" | "players">,
+  state: Pick<PublicState, "phase" | "players" | "mapId">,
   seat: Seat,
   motion?: ViewerMotion,
 ): boolean {
   if (state.phase !== "live") return true;
+  const map = mapOf(state);
   const own = state.players[seat],
     enemy = state.players[seat === "A" ? "B" : "A"];
   const eyeY = own.y + eyeHeight(own),
@@ -157,7 +152,7 @@ export function revealsOpponent(
         y: eyeY,
         z: own.z + vz * ahead * fraction + sideZ * side,
       };
-      if (envelopeVisible(eye, enemy)) return true;
+      if (envelopeVisible(eye, enemy, map)) return true;
     }
   return false;
 }
@@ -168,7 +163,7 @@ export class RevealGate {
   private round = -1;
   constructor(private readonly holdMs = REVEAL_HOLD_MS) {}
   update(
-    state: Pick<MatchState, "phase" | "players" | "round">,
+    state: Pick<MatchState, "phase" | "players" | "round" | "mapId">,
     at: number,
     motion: Partial<Record<Seat, ViewerMotion>>,
   ): Record<Seat, boolean> {
@@ -209,6 +204,7 @@ export function snapshotForPlayer<T extends { state: PublicState }>(
           { x: own.x, y: own.y + eyeHeight(own), z: own.z },
           { x: dx / distance, y: 0, z: dz / distance },
           Math.max(0, distance - 0.1),
+          mapOf(frame.state),
         );
       const range = audio.kind === "shot" ? 48 : 16,
         scale =
@@ -273,6 +269,8 @@ export function snapshotForPlayer<T extends { state: PublicState }>(
 export type TrailStep = {
   at: number;
   phase: MatchState["phase"];
+  /** The match's map (absent: Dustfront), for the strict sight-test fallback. */
+  mapId?: string;
   /** RevealGate decision per recipient for this step (absent: strict sight test). */
   reveal?: Record<Seat, boolean>;
   players: Record<
@@ -306,7 +304,12 @@ export function trailForPlayer(
       const visible =
         step.reveal?.[seat] ??
         canSeeOpponent(
-          { phase: step.phase, players: step.players, events: [] } as unknown as PublicState,
+          {
+            phase: step.phase,
+            players: step.players,
+            events: [],
+            ...(step.mapId === undefined ? {} : { mapId: step.mapId }),
+          } as unknown as PublicState,
           seat,
         );
       return visible ? { poseAt: step.at, pose: { ...step.players[remote] } } : { poseAt: step.at };
@@ -314,7 +317,7 @@ export function trailForPlayer(
 }
 
 export function trailStep(
-  state: Pick<MatchState, "phase" | "players">,
+  state: Pick<MatchState, "phase" | "players" | "mapId">,
   at: number,
   reveal?: Record<Seat, boolean>,
 ): TrailStep {
@@ -331,6 +334,7 @@ export function trailStep(
   return {
     at,
     phase: state.phase,
+    ...(state.mapId === undefined ? {} : { mapId: state.mapId }),
     ...(reveal ? { reveal: { ...reveal } } : {}),
     players: { A: pick(state.players.A), B: pick(state.players.B) },
   };

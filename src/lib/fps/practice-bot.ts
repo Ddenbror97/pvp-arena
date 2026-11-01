@@ -1,4 +1,5 @@
-import { ARENA, BOXES, PLAYER_RADIUS, eyeHeight } from "./map";
+import { PLAYER_RADIUS, eyeHeight } from "./map";
+import { mapOf, type BotOpening, type GameMap } from "./maps/registry";
 import { canSeeOpponent } from "./visibility";
 import type { Input, MatchState } from "./protocol";
 
@@ -8,35 +9,48 @@ const clamp = (a: number, n: number) => Math.max(-n, Math.min(n, a));
 // reduce perception, tracking and firing pressure to roughly 60% of the old skill.
 const PRACTICE_SKILL = 0.6;
 type Point = { x: number; z: number };
-const clear = (x: number, z: number) =>
-  !BOXES.some(
-    (b) =>
-      Math.abs(x - b.x) < b.w / 2 + PLAYER_RADIUS + 0.18 &&
-      Math.abs(z - b.z) < b.d / 2 + PLAYER_RADIUS + 0.18,
-  );
-const nodes: Point[] = [];
-// Half-metre ground grid over the whole arena (the aim arena's spawn exits are 1.4 m wide);
-// stairs, platforms and buildings are obstacles.
+// Half-metre ground grid over the whole arena (Dustfront's spawn exits are 1.4 m wide);
+// stairs, platforms, buildings and movement-only barriers are obstacles.
 const CELL = 0.5;
-const spanX = Math.floor((ARENA.width / 2 - 1) / CELL),
-  spanZ = Math.floor((ARENA.depth / 2 - 1) / CELL);
-for (let i = -spanX; i <= spanX; i++)
-  for (let j = -spanZ; j <= spanZ; j++)
-    if (clear(i * CELL, j * CELL)) nodes.push({ x: i * CELL, z: j * CELL });
-const key = (x: number, z: number) => `${Math.round(x / CELL)},${Math.round(z / CELL)}`;
-const byPoint = new Map(nodes.map((p, i) => [key(p.x, p.z), i]));
-const edges = nodes.map((p) =>
-  [
-    [1, 0],
-    [-1, 0],
-    [0, 1],
-    [0, -1],
-  ].flatMap(([x, z]) => {
-    const i = byPoint.get(key(p.x + x! * CELL, p.z + z! * CELL));
-    return i === undefined ? [] : [i];
-  }),
-);
-const nearest = (p: Point) =>
+type NavGraph = {
+  nodes: Point[];
+  edges: number[][];
+};
+/** Built once per map on first use (bounded grid), then shared by every bot on that map. */
+const graphs = new WeakMap<GameMap, NavGraph>();
+function navGraph(map: GameMap): NavGraph {
+  const cached = graphs.get(map);
+  if (cached) return cached;
+  const clear = (x: number, z: number) =>
+    !map.movementSolids.some(
+      (b) =>
+        Math.abs(x - b.x) < b.w / 2 + PLAYER_RADIUS + 0.18 &&
+        Math.abs(z - b.z) < b.d / 2 + PLAYER_RADIUS + 0.18,
+    );
+  const nodes: Point[] = [];
+  const spanX = Math.floor((map.arena.width / 2 - 1) / CELL),
+    spanZ = Math.floor((map.arena.depth / 2 - 1) / CELL);
+  for (let i = -spanX; i <= spanX; i++)
+    for (let j = -spanZ; j <= spanZ; j++)
+      if (clear(i * CELL, j * CELL)) nodes.push({ x: i * CELL, z: j * CELL });
+  const key = (x: number, z: number) => `${Math.round(x / CELL)},${Math.round(z / CELL)}`;
+  const byPoint = new Map(nodes.map((p, i) => [key(p.x, p.z), i]));
+  const edges = nodes.map((p) =>
+    [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+    ].flatMap(([x, z]) => {
+      const i = byPoint.get(key(p.x + x! * CELL, p.z + z! * CELL));
+      return i === undefined ? [] : [i];
+    }),
+  );
+  const graph = { nodes, edges };
+  graphs.set(map, graph);
+  return graph;
+}
+const nearest = (nodes: Point[], p: Point) =>
   nodes.reduce(
     (best, n, i) =>
       Math.hypot(n.x - p.x, n.z - p.z) < Math.hypot(nodes[best]!.x - p.x, nodes[best]!.z - p.z)
@@ -45,9 +59,10 @@ const nearest = (p: Point) =>
     0,
   );
 /** Bounded static-grid BFS. Inflated obstacles keep limbs clear of cover. */
-function path(from: Point, to: Point): Point[] {
-  const start = nearest(from),
-    end = nearest(to),
+function path(map: GameMap, from: Point, to: Point): Point[] {
+  const { nodes, edges } = navGraph(map);
+  const start = nearest(nodes, from),
+    end = nearest(nodes, to),
     queue = [start],
     prev = new Map([[start, -1]]);
   for (let i = 0; i < queue.length && !prev.has(end); i++)
@@ -66,31 +81,24 @@ function path(from: Point, to: Point): Point[] {
   return result.reverse();
 }
 /**
- * Patrol for a bot spawning east (mirrored in x for a west spawn): own courtyard lane, the
- * enemy lane and spawn exit (so a camping player is found), the enemy spawn alley, then the
- * upper (north) and lower (south) routes through their arches.
+ * Patrol for a bot spawning east (mirrored in x for a west spawn), from the map's bot routes:
+ * an opening, the enemy spawn exit (so a camping player is found), the flank opposite the
+ * opening, then a regroup point.
  */
 export type PracticeStyle = "push" | "slow" | "lurk";
-type Opening = "center" | "north" | "south";
+type Opening = BotOpening;
 const STYLES: readonly PracticeStyle[] = ["push", "slow", "lurk"];
 const OPENINGS: readonly Opening[] = ["center", "north", "south"];
-const OPENING_POINTS: Record<Opening, Point[]> = {
-  center: [
-    { x: 14.9, z: 2.5 },
-    { x: 7, z: -0.6 },
-    { x: -7, z: -0.6 },
-  ],
-  north: [
-    { x: 14.9, z: -2.5 },
-    { x: 8, z: -12.4 },
-    { x: -8, z: -12.4 },
-  ],
-  south: [
-    { x: 14.9, z: 2.5 },
-    { x: 8, z: 12.4 },
-    { x: -8, z: 12.4 },
-  ],
-};
+/** The round's patrol in east-spawn coordinates (exported for tests). */
+export function botItinerary(map: GameMap, opening: Opening): Point[] {
+  const { openings, sweep, flanks, regroup } = map.bot;
+  return [
+    ...openings[opening],
+    ...sweep,
+    ...(opening === "south" ? flanks.north : flanks.south),
+    ...regroup,
+  ].map((p) => ({ x: p.x, z: p.z }));
+}
 
 /** One moderate difficulty. Emits ordinary inputs; never changes simulation state. */
 export function createPracticeBot(random: () => number = Math.random) {
@@ -145,15 +153,7 @@ export function createPracticeBot(random: () => number = Math.random) {
         side = own.x > 0 ? 1 : -1;
         // Different initial approaches, then search both the enemy spawn and the
         // opposite flank. All legs use the same collision-inflated ground graph.
-        const oppositeZ = opening === "south" ? -12.4 : 12.4;
-        itinerary = [
-          ...OPENING_POINTS[opening],
-          { x: -14.9, z: 2.5 },
-          { x: -17.2, z: -8 },
-          { x: -8, z: oppositeZ },
-          { x: 8, z: oppositeZ },
-          { x: 7, z: -0.6 },
-        ].map((p) => ({ x: p.x * side, z: p.z }));
+        itinerary = botItinerary(mapOf(state), opening).map((p) => ({ x: p.x * side, z: p.z }));
         holdUntil = 0;
         progressAt = now;
         progress = { x: own.x, z: own.z };
@@ -218,7 +218,7 @@ export function createPracticeBot(random: () => number = Math.random) {
       const holding = !visible && !chasing && now < holdUntil;
       const destination = chasing ? lastSeen! : patrol;
       if (!holding && now >= nextPlan) {
-        route = path(own, destination);
+        route = path(mapOf(state), own, destination);
         nextPlan = now + 800;
       }
       while (route[0] && Math.hypot(route[0].x - own.x, route[0].z - own.z) < 0.3) route.shift();

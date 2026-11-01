@@ -135,6 +135,8 @@ export const duelAdmission = createServerFn({ method: "POST" })
         practice: match.practice === true,
         private: match.private,
         expiresAt,
+        // The runtime rejects ids it cannot simulate; absent means Dustfront.
+        ...(typeof match.map_id === "string" ? { map_id: match.map_id } : {}),
       }),
       signal: AbortSignal.timeout(10_000),
     });

@@ -3,6 +3,7 @@ import { ShotHistory, type CombatPose } from "./lag-compensation";
 import { createPracticeBot } from "../../src/lib/fps/practice-bot";
 import { PRACTICE_BOT_ID } from "../../src/lib/fps/practice";
 import { COMBAT_VERSION } from "../../src/lib/fps/combat";
+import { DEFAULT_MAP_ID, MAP_IDS, isMapId } from "../../src/lib/fps/maps/registry";
 import {
   createMatch,
   startMatch,
@@ -53,6 +54,8 @@ type Config = {
   stake: number;
   private: boolean;
   expiresAt: number;
+  /** Registry map id; absent means Dustfront. Fixed for the match's lifetime. */
+  map_id?: string;
 };
 type SocketInfo = SessionIdentity & {
   sub: string;
@@ -104,6 +107,8 @@ export default {
         combatVersion: COMBAT_VERSION,
         networkVersion: 1,
         latencyVersion: 2,
+        /** Maps this runtime can simulate; the app must not create a match on any other. */
+        maps: MAP_IDS,
         configured:
           (env.FPS_RUNTIME_SECRET?.length ?? 0) >= 32 &&
           !!env.SUPABASE_URL &&
@@ -344,7 +349,8 @@ export class DuelRoom {
         c.stake > 5000 ||
         !Number.isSafeInteger(c.expiresAt) ||
         c.expiresAt <= Date.now() ||
-        typeof c.private !== "boolean"
+        typeof c.private !== "boolean" ||
+        (c.map_id !== undefined && !isMapId(c.map_id))
       )
         return json({ error: "BAD_CONFIG" }, 400);
       if (this.saved) {
@@ -357,14 +363,21 @@ export class DuelRoom {
           old.best_of !== c.best_of ||
           old.private !== c.private ||
           !!old.practice !== !!c.practice ||
-          old.expiresAt !== c.expiresAt
+          old.expiresAt !== c.expiresAt ||
+          (old.map_id ?? DEFAULT_MAP_ID) !== (c.map_id ?? DEFAULT_MAP_ID)
         )
           return json({ error: "CONFIG_CONFLICT" }, 409);
         return json({ ok: true, phase: this.saved.state.phase });
       }
       this.saved = {
         config: c,
-        state: createMatch({ A: c.creator_id, B: c.opponent_id }, c.best_of, Date.now()),
+        state: createMatch(
+          { A: c.creator_id, B: c.opponent_id },
+          c.best_of,
+          Date.now(),
+          COMBAT_VERSION,
+          c.map_id,
+        ),
         result: null,
         settled: false,
         createdAt: Date.now(),
