@@ -19,6 +19,7 @@ import { duelAction } from "@/lib/fps/duel.functions";
 import { duelMoney, duelQuote, type DuelLobbyData } from "@/lib/fps/quote";
 import { STRIKE_SHOWCASE } from "@/lib/fps/showcase";
 import { warmArenaAssets, warmArenaRenderer } from "@/lib/fps/renderer-loader";
+import { useFpsQueue } from "@/lib/fps/queue";
 import "./strike-lobby.css";
 
 type OpenRoom = DuelLobbyData["open"][number];
@@ -86,7 +87,13 @@ export function DuelLobby() {
     [now, setNow] = useState(Date.now);
   const keys = useRef(new Map<string, string>());
   const data = lobby.data;
+  const queue = useFpsQueue();
+  const waiting = queue.data?.cash?.status === "WAITING" ? queue.data.cash : null;
+  const [alertPermission, setAlertPermission] = useState<
+    NotificationPermission | "unsupported" | null
+  >(null);
   useEffect(() => {
+    setAlertPermission("Notification" in window ? Notification.permission : "unsupported");
     const media = matchMedia("(pointer:fine) and (hover:hover)");
     const update = () => setDesktop(media.matches);
     update();
@@ -137,7 +144,9 @@ export function DuelLobby() {
       if (result.id && result.status && result.creator_id)
         qc.setQueryData(["fps-view", id, userId], result);
       if (room) setSelected(null);
-      await navigate({ to: "/fps/$matchId", params: { matchId: id } });
+      if (room || result.status !== "WAITING")
+        await navigate({ to: "/fps/$matchId", params: { matchId: id } });
+      else setPanel("games");
       keys.current.delete(token);
     } catch (e) {
       setError(duelError(e));
@@ -145,6 +154,7 @@ export function DuelLobby() {
       setBusy(false);
       void qc.invalidateQueries({ queryKey: ["wallet"] });
       void qc.invalidateQueries({ queryKey: ["fps-lobby"] });
+      void qc.invalidateQueries({ queryKey: ["fps-queue"] });
     }
   }
 
@@ -153,7 +163,14 @@ export function DuelLobby() {
       await navigate({ to: "/auth" });
       return;
     }
-    if (busy || !desktop || !data?.enabled || !data.practice_allowed || data.mine) return;
+    if (
+      busy ||
+      !desktop ||
+      !data?.enabled ||
+      !data.practice_allowed ||
+      (data.mine && !data.mine.practice && data.mine.status !== "WAITING")
+    )
+      return;
     const key = keys.current.get("practice") ?? crypto.randomUUID();
     keys.current.set("practice", key);
     setBusy(true);
@@ -171,6 +188,7 @@ export function DuelLobby() {
     } finally {
       setBusy(false);
       void qc.invalidateQueries({ queryKey: ["fps-lobby"] });
+      void qc.invalidateQueries({ queryKey: ["fps-queue"] });
     }
   }
   return (
@@ -259,7 +277,7 @@ export function DuelLobby() {
           </div>
 
           <aside
-            className="strike-games"
+            className={`strike-games${waiting ? " strike-queue-active" : ""}`}
             aria-label="PvPStrike lobby"
             onMouseEnter={() => {
               if (userId && desktop) warmArenaRenderer();
@@ -283,14 +301,14 @@ export function DuelLobby() {
                   desktop !== true ||
                   !data?.enabled ||
                   !data.practice_allowed ||
-                  !!data.mine
+                  (!!data.mine && !data.mine.practice && data.mine.status !== "WAITING")
                 }
                 onPointerEnter={() => {
                   if (userId && desktop) warmArenaAssets();
                 }}
                 onClick={() => void practice()}
               >
-                Practice vs bot <Crosshair size={16} />
+                {data?.practice ? "Resume Practice" : "Practice vs bot"} <Crosshair size={16} />
               </button>
               {error && (
                 <p className="strike-error" role="alert">
@@ -318,7 +336,50 @@ export function DuelLobby() {
                 </button>
               ))}
             </div>
-            {data?.mine && (
+            {waiting && (
+              <div className="strike-notice" role="status">
+                <strong>Your human-only cash room is open.</strong>
+                <p>
+                  Browse the site or play free bot Practice. We’ll show “Join now” when an opponent
+                  joins. Keep this site open: after two minutes offline, the room closes and your
+                  entry is refunded. Ready up within 60 seconds of a join.
+                </p>
+                <Link to="/fps/$matchId" params={{ matchId: waiting.id }}>
+                  Room details{waiting.private ? " & private invitation" : ""}
+                </Link>
+                <button
+                  className="strike-join"
+                  disabled={busy}
+                  onClick={() => {
+                    setBusy(true);
+                    void action({ data: { action: "cancel", matchId: waiting.id } })
+                      .then(() => {
+                        void qc.invalidateQueries({ queryKey: ["fps-queue"] });
+                        void qc.invalidateQueries({ queryKey: ["fps-lobby"] });
+                        void qc.invalidateQueries({ queryKey: ["wallet"] });
+                      })
+                      .catch((e) => setError(duelError(e)))
+                      .finally(() => setBusy(false));
+                  }}
+                >
+                  Cancel & refund
+                </button>
+                {alertPermission === "default" && (
+                  <button
+                    className="strike-join"
+                    onClick={() => {
+                      if ("Notification" in window)
+                        void Notification.requestPermission()
+                          .then(setAlertPermission)
+                          .catch(() => setAlertPermission("denied"));
+                    }}
+                  >
+                    Enable desktop alerts
+                  </button>
+                )}
+              </div>
+            )}
+            {data?.mine && !waiting && (
               <Link className="strike-resume" to="/fps/$matchId" params={{ matchId: data.mine.id }}>
                 Return to your {data.mine.status === "WAITING" ? "room" : "match"}
                 <ArrowRight size={16} />
@@ -533,8 +594,9 @@ export function DuelLobby() {
                     </Link>
                   )}
                   <p className="strike-panel-footnote">
-                    A new room at your chosen terms. If nobody joins within 10 minutes, your entry
-                    is refunded.
+                    Human opponents only. Browse or play free Practice while waiting. Keep the site
+                    open; two minutes offline closes the room for a full refund. Online rooms expire
+                    after 24 hours. Both players have 60 seconds to ready up after a join.
                   </p>
                 </form>
               )}

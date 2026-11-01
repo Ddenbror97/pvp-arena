@@ -8,6 +8,17 @@ type Rpc = {
 };
 const db = supabase as unknown as Rpc;
 
+export type FpsQueueStatus = {
+  cash: DuelView | null;
+  practice: DuelView | null;
+  closed: string | null;
+};
+export async function fetchFpsQueueStatus(): Promise<FpsQueueStatus> {
+  const { data, error } = await db.rpc("fps_queue_status");
+  if (error) throw new Error(error.message);
+  return data as FpsQueueStatus;
+}
+
 export async function fetchDuelLobby(): Promise<DuelLobbyData> {
   const { data, error } = await db.rpc("fps_lobby");
   if (error) throw new Error(error.code === "PGRST202" ? "FPS_NOT_CONFIGURED" : error.message);
@@ -33,6 +44,8 @@ export async function fetchDuelRankings(): Promise<
   }>;
 }
 const DUEL_ERRORS: Record<string, string> = {
+  CREATOR_AWAY: "The creator is offline. Your entry was not charged. Choose another room.",
+  READY_WINDOW_EXPIRED: "The ready window expired. Both entries are refunded without a fee.",
   CLIENT_UPDATE_REQUIRED:
     "Reload PvPStrike to load the updated combat rules before entering a match.",
   STAKE_NOT_ALLOWED:

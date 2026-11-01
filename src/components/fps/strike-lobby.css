@@ -895,6 +895,22 @@
   padding: 1.2rem;
   border-bottom: 1px solid #ffffff1f;
 }
+.strike-games.strike-queue-active {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+.strike-queue-active .strike-panel {
+  flex: none;
+  overflow: visible;
+}
+.strike-queue-active > .strike-notice p {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.strike-queue-active > .strike-notice button,
+.strike-queue-active > .strike-notice a {
+  margin: 6px 8px 0 0;
+}
 .strike-practice h2 {
   font-size: 1rem;
   font-weight: 700;

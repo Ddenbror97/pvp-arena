@@ -607,7 +607,12 @@ describe("isolated real Durable Object WebSockets", () => {
       expect(final.settlementPending).toBe(false);
       const delayedFinal = await spectatorFinal;
       expect(delayedFinal.state.score).toEqual({ A: 3, B: 0 });
-      const resultCalls = callbacks.filter((c) => c.body["p_match"] === id);
+      expect(
+        callbacks.filter((c) => c.body["p_match"] === id && c.path.endsWith("fps_mark_started")),
+      ).toHaveLength(1);
+      const resultCalls = callbacks.filter(
+        (c) => c.body["p_match"] === id && !c.path.endsWith("fps_mark_started"),
+      );
       expect(resultCalls.map((c) => c.path.split("/").at(-1))).toEqual([
         "fps_record_result",
         "fps_finish",

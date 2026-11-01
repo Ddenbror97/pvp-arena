@@ -17,6 +17,7 @@ export type DuelView = {
   stake: number;
   best_of: 5 | 9 | 13;
   practice?: boolean;
+  ready_deadline?: string | null;
   private: boolean;
   expires_at: string;
   invite?: string | null;
@@ -36,4 +37,5 @@ export type DuelLobbyData = {
   open: Array<DuelView & { username: string }>;
   live?: Array<DuelView & { username: string }>;
   mine?: DuelView | null;
+  practice?: DuelView | null;
 };

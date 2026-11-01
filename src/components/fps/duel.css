@@ -440,6 +440,18 @@
   max-height: 90dvh;
   overflow-y: auto;
 }
+.duel-queue-ready {
+  padding: 14px;
+  border: 1px solid #c084fc88;
+  border-radius: 10px;
+  background: #a855f715;
+  color: #f0e8ff;
+}
+.duel-queue-ready p {
+  margin: 8px 0 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
 .strike-settings label {
   display: flex;
   flex-wrap: wrap;

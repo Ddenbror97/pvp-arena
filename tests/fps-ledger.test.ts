@@ -940,4 +940,86 @@ describe("FPS isolated ledger and RPCs", () => {
     await rpc("fps_cancel", [fresh.id]);
     expect((await enter(100)).stake).toBe(100);
   });
+  it("leases human waiting seats, supports free warmup, and refunds offline/no-show rooms exactly once", async () => {
+    await admin(read("20261101024925_fps_waiting_availability.sql"));
+    await admin(read("20261101031926_fps_waiting_view_compatibility.sql"));
+    await claims(A);
+    const g = await rpc("fps_create", [100, 5, "available-create-1", false]);
+    expect(
+      Date.parse((g as MatchResult & { expires_at: string }).expires_at) - Date.now(),
+    ).toBeGreaterThan(23 * 3600000);
+    const status = await rpc<{ cash: MatchResult; practice: unknown }>("fps_queue_status");
+    expect(status.cash.id).toBe(g.id);
+    await admin(
+      `update fps_private.waiting_presence set seen_at=clock_timestamp()-interval '100 seconds' where match_id='${g.id}'`,
+    );
+    await claims(A);
+    expect((await rpc("fps_view", [g.id])).status).toBe("WAITING");
+    await db.exec("reset role");
+    expect(
+      (
+        await db.query<{ fresh: boolean }>(
+          `select seen_at>clock_timestamp()-interval '5 seconds' fresh from fps_private.waiting_presence where match_id='${g.id}'`,
+        )
+      ).rows[0].fresh,
+    ).toBe(true);
+    await claims(A);
+    const warmup = await rpc("fps_practice_start", ["available-practice-1"]);
+    expect(await balance(A)).toBe(9900);
+    await claims(B);
+    expect((await rpc("fps_join", [g.id, "available-join-1", null])).status).toBe("FUNDED");
+    await claims(A);
+    expect((await rpc<{ cash: MatchResult }>("fps_queue_status")).cash.id).toBe(g.id);
+    await rpc("fps_cancel", [warmup.id]);
+    await expect(rpc("fps_mark_started", [g.id, g.id])).rejects.toThrow(/permission denied/);
+    await admin(
+      `update fps_private.ready_windows set deadline=clock_timestamp()-interval '1 second' where match_id='${g.id}'`,
+    );
+    await claims(null, "service_role");
+    expect(await rpc("fps_expire", [100])).toEqual({ expired: 1 });
+    expect(await rpc("fps_expire", [100])).toEqual({ expired: 0 });
+    await claims(C);
+    const abandoned = await rpc("fps_create", [100, 5, "available-abandoned-1", false]);
+    await rpc("fps_queue_status");
+    await admin(
+      `update fps_private.waiting_presence set seen_at=clock_timestamp()-interval '121 seconds' where match_id='${abandoned.id}'`,
+    );
+    await claims(D);
+    expect((await rpc<LobbyResult>("fps_lobby")).open.some((r) => r.id === abandoned.id)).toBe(
+      false,
+    );
+    await claims(null, "service_role");
+    expect(await rpc("fps_expire", [100])).toEqual({ expired: 1 });
+    expect(await rpc("fps_expire", [100])).toEqual({ expired: 0 });
+    expect(await balance(C)).toBe(10000);
+    expect(await balance(A)).toBe(10000);
+    expect(await balance(B)).toBe(10000);
+
+    await claims(A);
+    const stale = await rpc("fps_create", [100, 5, "available-stale-1", true]);
+    await rpc("fps_queue_status");
+    await admin(
+      `update fps_private.waiting_presence set seen_at=clock_timestamp()-interval '121 seconds' where match_id='${stale.id}'`,
+    );
+    await claims(B);
+    await expect(
+      rpc("fps_join", [stale.id, "available-stale-join-1", stale.invite]),
+    ).rejects.toThrow("CREATOR_AWAY");
+    expect(await balance(B)).toBe(10000);
+    await claims(A);
+    expect(await rpc("fps_queue_status")).toMatchObject({ cash: null, closed: stale.id });
+    expect(await balance(A)).toBe(10000);
+    await claims(A);
+    const active = await rpc("fps_create", [100, 5, "available-active-1", false]);
+    await claims(B);
+    await rpc("fps_join", [active.id, "available-active-join-1", null]);
+    await claims(null, "service_role");
+    await rpc("fps_mark_started", [active.id, active.id]);
+    await rpc("fps_mark_started", [active.id, active.id]);
+    await admin(
+      `update fps_private.ready_windows set deadline=clock_timestamp()-interval '1 second' where match_id='${active.id}'`,
+    );
+    await claims(null, "service_role");
+    expect(await rpc("fps_expire", [100])).toEqual({ expired: 0 });
+  });
 });
