@@ -1,4 +1,4 @@
-import { ARENA, BOXES, PLAYER_RADIUS, SPAWNS, eyeHeight } from "./map";
+import { ARENA, BOXES, PLAYER_RADIUS, SPAWNS, STEP_HEIGHT, eyeHeight } from "./map";
 import {
   COMBAT_VERSION,
   HIT_DAMAGE,
@@ -173,7 +173,10 @@ export function predictMovement(p: Player, input: Input | null, dt: number): voi
           Math.abs(p.x - b.x) < b.w / 2 + PLAYER_RADIUS &&
           Math.abs(p.z - b.z) < b.d / 2 + PLAYER_RADIUS,
       );
-    if (input.jump && supported && (p.velocityY ?? 0) === 0) p.velocityY = 5;
+    // Stairs are stepped onto only from the ground or a support, never mid-jump (a jump plus a
+    // step would otherwise clear 1.2 m cover).
+    const grounded = supported && (p.velocityY ?? 0) === 0;
+    if (input.jump && grounded) p.velocityY = 5;
     const length = Math.max(1, Math.hypot(input.forward, input.strafe));
     const speed = (MOVE_SPEED * (p.crouched ? 0.48 : input.sprint ? 1.5 : 1) * seconds) / length;
     const dx = (-Math.sin(input.yaw) * input.forward + Math.cos(input.yaw) * input.strafe) * speed;
@@ -187,6 +190,9 @@ export function predictMovement(p: Player, input: Input | null, dt: number): voi
         Math.min((axis === "x" ? ARENA.width : ARENA.depth) / 2 - PLAYER_RADIUS, p[axis] + delta),
       );
       for (const b of BOXES) {
+        const top = b.y + b.h / 2;
+        // A riser no taller than STEP_HEIGHT (stairs) is walked onto instead of blocking.
+        if (grounded && top - p.y <= STEP_HEIGHT + 1e-9) continue;
         if (
           p.y >= b.y + b.h / 2 ||
           p.y + eyeHeight(p) + 0.2 <= b.y - b.h / 2 ||
@@ -199,6 +205,22 @@ export function predictMovement(p: Player, input: Input | null, dt: number): voi
         if (delta < 0 && p[axis] >= hi) next = Math.max(next, hi);
       }
       p[axis] = next;
+    }
+    // Step up onto the highest riser now under the feet (stairs), if there is head room.
+    let stepTop = p.y;
+    for (const b of BOXES) {
+      const top = b.y + b.h / 2;
+      if (
+        top > stepTop &&
+        top - p.y <= STEP_HEIGHT + 1e-9 &&
+        Math.abs(p.x - b.x) < b.w / 2 + PLAYER_RADIUS - 1e-7 &&
+        Math.abs(p.z - b.z) < b.d / 2 + PLAYER_RADIUS - 1e-7
+      )
+        stepTop = top;
+    }
+    if (grounded && stepTop > p.y && !blocked(p.x, stepTop, p.z, !!p.crouched)) {
+      p.y = stepTop;
+      p.velocityY = 0;
     }
   }
   const previousY = p.y;

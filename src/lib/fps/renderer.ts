@@ -6,7 +6,7 @@ import { createCharacter } from "./character";
 import { COMBAT_VERSION, recoveryProfile } from "./combat";
 import { createBloodEffects } from "./blood-effects";
 import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handling";
-import { createArenaEnvironment } from "./environment";
+import { createArenaEnvironment } from "./arena-environment";
 import { createImpactEffects } from "./impacts";
 import { createWeaponKit, AK_MUZZLE } from "./weapon";
 import {
@@ -78,8 +78,9 @@ export function mountArena(
   // The weapon pass needs only its rig and lights. Re-traversing the entire
   // arena for this second pass wastes matrix, skeleton and light setup work.
   const viewScene = new THREE.Scene();
-  scene.background = new THREE.Color(0x8bacd0);
-  scene.fog = new THREE.Fog(0x94b5d4, 95, 260);
+  scene.background = new THREE.Color(0xa9c3dc);
+  // Warm dusty haze for the Mediterranean aim arena; starts beyond the 40 m playable area.
+  scene.fog = new THREE.Fog(0xd9cdb6, 70, 260);
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("webgl2", {
     alpha: true,
@@ -119,13 +120,14 @@ export function mountArena(
   // Centre the light across the two opposing spawn directions.
   sun.position.set(21, 19, -24);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(1024, 1024);
+  // Static (rendered once after load), so a 2048 map is a one-off cost: ~2.4 cm per texel.
+  sun.shadow.mapSize.set(2048, 2048);
   sun.shadow.camera.near = 1;
   sun.shadow.camera.far = 65;
-  sun.shadow.camera.left = -22;
-  sun.shadow.camera.right = 22;
-  sun.shadow.camera.top = 22;
-  sun.shadow.camera.bottom = -22;
+  sun.shadow.camera.left = -26;
+  sun.shadow.camera.right = 26;
+  sun.shadow.camera.top = 26;
+  sun.shadow.camera.bottom = -26;
   sun.shadow.normalBias = 0.03;
   scene.add(sun);
   const logoCanvas = document.createElement("canvas");
@@ -176,7 +178,7 @@ export function mountArena(
     emissiveIntensity: 0.7,
     roughness: 0.65,
   });
-  const environment = createArenaEnvironment(scene, branding);
+  const environment = createArenaEnvironment(scene);
   // The arena is static. Compose its local transforms once, not every render pass.
   scene.updateMatrixWorld(true);
   scene.traverse((object) => {
@@ -184,21 +186,31 @@ export function mountArena(
   });
   const impacts = createImpactEffects(scene);
   const blood = createBloodEffects(scene);
-  // Capture this arena once for rough metallic reflections, excluding all players.
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const reflections = pmrem.fromScene(scene, 0.04, 0.1, 100);
-  scene.environment = reflections.texture;
-  scene.environmentIntensity = 0.45;
-  viewScene.environment = scene.environment;
-  viewScene.environmentIntensity = scene.environmentIntensity;
-  viewScene.fog = scene.fog;
-  pmrem.dispose();
+  // Capture the arena once for rough metallic reflections, excluding all players. Re-captured
+  // once the authored map replaces the blockout (before Ready), never per frame.
+  let reflections: THREE.WebGLRenderTarget | undefined;
+  const captureReflections = () => {
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const hidden = Object.values(characters).map((c) => [c.root, c.root.visible] as const);
+    for (const [root] of hidden) root.visible = false;
+    const next = pmrem.fromScene(scene, 0.04, 0.1, 100);
+    for (const [root, visible] of hidden) root.visible = visible;
+    pmrem.dispose();
+    reflections?.dispose();
+    reflections = next;
+    scene.environment = next.texture;
+    viewScene.environment = scene.environment;
+  };
   const weaponKit = createWeaponKit();
   const characters = {
     A: createCharacter("A", branding, weaponKit),
     B: createCharacter("B", branding, weaponKit),
   };
   scene.add(characters.A.root, characters.B.root);
+  captureReflections();
+  scene.environmentIntensity = 0.45;
+  viewScene.environmentIntensity = scene.environmentIntensity;
+  viewScene.fog = scene.fog;
   const shadowCanvas = document.createElement("canvas");
   shadowCanvas.width = shadowCanvas.height = 64;
   const shadowPen = shadowCanvas.getContext("2d")!,
@@ -325,8 +337,12 @@ export function mountArena(
     authoredView.ready,
     characters.A.ready,
     characters.B.ready,
+    environment.ready,
   ]).then(async () => {
     if (stopped) return;
+    // The authored map is static: compose its transforms once, then reflect and shadow it.
+    scene.updateMatrixWorld(true);
+    captureReflections();
     // Cache static arena shadows; moving characters have inexpensive contact shadows.
     for (const actor of Object.values(characters))
       actor.root.traverse((object) => {
@@ -1013,7 +1029,7 @@ export function mountArena(
       authoredView.dispose();
       weaponKit.dispose();
       environment.dispose();
-      reflections.dispose();
+      reflections?.dispose();
       impacts.dispose();
       blood.dispose();
       characters.A.dispose();

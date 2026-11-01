@@ -1,4 +1,4 @@
-import { BOXES, PLAYER_RADIUS, eyeHeight } from "./map";
+import { ARENA, BOXES, PLAYER_RADIUS, eyeHeight } from "./map";
 import { canSeeOpponent } from "./visibility";
 import type { Input, MatchState } from "./protocol";
 
@@ -12,9 +12,16 @@ const clear = (x: number, z: number) =>
       Math.abs(z - b.z) < b.d / 2 + PLAYER_RADIUS + 0.18,
   );
 const nodes: Point[] = [];
-for (let x = -10; x <= 10; x++)
-  for (let z = -14; z <= 14; z++) if (clear(x, z)) nodes.push({ x, z });
-const byPoint = new Map(nodes.map((p, i) => [`${p.x},${p.z}`, i]));
+// Half-metre ground grid over the whole arena (the aim arena's spawn exits are 1.4 m wide);
+// stairs, platforms and buildings are obstacles.
+const CELL = 0.5;
+const spanX = Math.floor((ARENA.width / 2 - 1) / CELL),
+  spanZ = Math.floor((ARENA.depth / 2 - 1) / CELL);
+for (let i = -spanX; i <= spanX; i++)
+  for (let j = -spanZ; j <= spanZ; j++)
+    if (clear(i * CELL, j * CELL)) nodes.push({ x: i * CELL, z: j * CELL });
+const key = (x: number, z: number) => `${Math.round(x / CELL)},${Math.round(z / CELL)}`;
+const byPoint = new Map(nodes.map((p, i) => [key(p.x, p.z), i]));
 const edges = nodes.map((p) =>
   [
     [1, 0],
@@ -22,7 +29,7 @@ const edges = nodes.map((p) =>
     [0, 1],
     [0, -1],
   ].flatMap(([x, z]) => {
-    const i = byPoint.get(`${p.x + x!},${p.z + z!}`);
+    const i = byPoint.get(key(p.x + x! * CELL, p.z + z! * CELL));
     return i === undefined ? [] : [i];
   }),
 );
@@ -55,11 +62,20 @@ function path(from: Point, to: Point): Point[] {
   }
   return result.reverse();
 }
+/**
+ * Patrol for a bot spawning east (mirrored in x for a west spawn): own courtyard lane, the
+ * enemy lane and spawn exit (so a camping player is found), the enemy spawn alley, then the
+ * upper (north) and lower (south) routes through their arches.
+ */
 const PATROL = [
-  { x: 9, z: 8 },
-  { x: 9, z: -8 },
-  { x: -9, z: -8 },
-  { x: -9, z: 8 },
+  { x: 7, z: -0.6 },
+  { x: -7, z: -0.6 },
+  { x: -14.9, z: 2.5 },
+  { x: -17.2, z: -8 },
+  { x: -8, z: -12.4 },
+  { x: 8, z: -12.4 },
+  { x: 8, z: 12.4 },
+  { x: -8, z: 12.4 },
 ];
 
 /** One moderate difficulty. Emits ordinary inputs; never changes simulation state. */
@@ -67,6 +83,7 @@ export function createPracticeBot(random: () => number = Math.random) {
   let round = 0,
     seq = 0,
     waypoint = 0,
+    side = 1,
     route: Point[] = [],
     nextPlan = 0,
     seenAt: number | null = null,
@@ -88,7 +105,9 @@ export function createPracticeBot(random: () => number = Math.random) {
         nextPlan = 0;
         seenAt = null;
         lastSeen = null;
-        waypoint = own.z > 0 ? 1 : 0;
+        // Head first for the courtyard lane on this spawn's side.
+        side = own.x > 0 ? 1 : -1;
+        waypoint = 0;
         nextAim = 0;
         burstEnd = 0;
         restEnd = 0;
@@ -120,11 +139,10 @@ export function createPracticeBot(random: () => number = Math.random) {
           (random() - 0.5) * 0.035;
         nextAim = now + 125;
       }
-      const destination = lastSeen && now - lastSeenAt < 3000 ? lastSeen : PATROL[waypoint]!;
-      if (
-        Math.hypot(own.x - destination.x, own.z - destination.z) < 1.2 &&
-        destination === PATROL[waypoint]
-      )
+      const patrol = { x: PATROL[waypoint]!.x * side, z: PATROL[waypoint]!.z };
+      const chasing = !!lastSeen && now - lastSeenAt < 3000;
+      const destination = chasing ? lastSeen! : patrol;
+      if (!chasing && Math.hypot(own.x - patrol.x, own.z - patrol.z) < 1.2)
         waypoint = (waypoint + 1) % PATROL.length;
       if (now >= nextPlan) {
         route = path(own, destination);
