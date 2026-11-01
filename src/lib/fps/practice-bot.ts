@@ -4,6 +4,9 @@ import type { Input, MatchState } from "./protocol";
 
 const wrap = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
 const clamp = (a: number, n: number) => Math.max(-n, Math.min(n, a));
+// One approachable practice opponent. Keep movement/weapon rules unchanged;
+// reduce perception, tracking and firing pressure to roughly 60% of the old skill.
+const PRACTICE_SKILL = 0.6;
 type Point = { x: number; z: number };
 const clear = (x: number, z: number) =>
   !BOXES.some(
@@ -102,13 +105,13 @@ export function createPracticeBot(random: () => number = Math.random) {
         lastSeen = { x: enemy.x, z: enemy.z };
         lastSeenAt = now;
       } else seenAt = null;
-      const reacted = visible && seenAt !== null && now - seenAt >= 360;
+      const reacted = visible && seenAt !== null && now - seenAt >= 360 / PRACTICE_SKILL;
       if (visible && now >= nextAim) {
-        // Sample the visible pose at 8 Hz with imperfect body-level aim.
+        // Slower tracking and wider aim error give players room to dodge.
         const dx = enemy.x - own.x,
           dz = enemy.z - own.z,
           distance = Math.hypot(dx, dz);
-        aimYaw = Math.atan2(-dx, -dz) + (random() - 0.5) * 0.085;
+        aimYaw = Math.atan2(-dx, -dz) + ((random() - 0.5) * 0.085) / PRACTICE_SKILL;
         aimPitch =
           Math.atan2(
             enemy.y +
@@ -117,8 +120,8 @@ export function createPracticeBot(random: () => number = Math.random) {
               (own.y + eyeHeight(own)),
             distance,
           ) +
-          (random() - 0.5) * 0.035;
-        nextAim = now + 125;
+          ((random() - 0.5) * 0.035) / PRACTICE_SKILL;
+        nextAim = now + 125 / PRACTICE_SKILL;
       }
       const destination = lastSeen && now - lastSeenAt < 3000 ? lastSeen : PATROL[waypoint]!;
       if (
@@ -146,7 +149,7 @@ export function createPracticeBot(random: () => number = Math.random) {
       const pitch = own.pitch + clamp((visible ? aimPitch : 0) - own.pitch, 2 * dt);
       if (reacted && now >= restEnd) {
         burstEnd = now + 260 + random() * 160;
-        restEnd = burstEnd + 320 + random() * 300;
+        restEnd = burstEnd + (320 + random() * 300) / PRACTICE_SKILL;
       }
       return {
         v: 1,
