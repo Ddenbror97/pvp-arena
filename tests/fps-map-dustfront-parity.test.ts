@@ -20,9 +20,9 @@ import { createMatch } from "../src/lib/fps/simulation";
 describe("Dustfront through the map registry", () => {
   const map = getMap("dustfront");
 
-  it("is the default and the only shipped map", () => {
-    expect(MAP_IDS).toEqual(["dustfront"]);
-    // With Dustfront alone in the rotation, every new match is still Dustfront.
+  it("is the default (first) shipped map", () => {
+    expect(MAP_IDS).toEqual(["dustfront", "lost-trail"]);
+    // LOST TRAIL joins the rotation once its art and validation are accepted.
     expect(ROTATION_MAP_IDS).toEqual(["dustfront"]);
     expect(DEFAULT_MAP).toBe(map);
     expect(map.name).toBe("Dustfront");

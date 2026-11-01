@@ -1,4 +1,5 @@
 import dustfrontLoading from "@/assets/fps/arena-loading.webp";
+import lostTrailLoading from "@/assets/fps/lost-trail-loading.webp";
 import { ROTATION_MAP_IDS } from "./registry";
 
 /**
@@ -8,6 +9,7 @@ import { ROTATION_MAP_IDS } from "./registry";
  */
 const LOADING_IMAGES: Readonly<Record<string, string>> = {
   dustfront: dustfrontLoading,
+  "lost-trail": lostTrailLoading,
 };
 
 export const DEFAULT_LOADING_IMAGE = dustfrontLoading;

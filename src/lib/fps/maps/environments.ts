@@ -1,6 +1,7 @@
 import type * as THREE from "three";
 import { createArenaEnvironment, type MapEnvironment } from "../arena-environment";
 import type { GameMap } from "./types";
+import { createLostTrailEnvironment } from "./lost-trail-environment";
 
 /**
  * Browser-only render scenes per map. Every map gets the shared loader by default (blockout from
@@ -10,7 +11,9 @@ import type { GameMap } from "./types";
  * (frozen matrices, static shadow map, reflections captured once) unless it measures otherwise.
  */
 type EnvironmentFactory = (scene: THREE.Scene, map: GameMap) => MapEnvironment;
-const FACTORIES: Readonly<Record<string, EnvironmentFactory>> = {};
+const FACTORIES: Readonly<Record<string, EnvironmentFactory>> = {
+  "lost-trail": createLostTrailEnvironment,
+};
 
 export function createMapEnvironment(scene: THREE.Scene, map: GameMap): MapEnvironment {
   return (FACTORIES[map.id] ?? createArenaEnvironment)(scene, map);
