@@ -25,12 +25,22 @@ test("actual Ctrl input changes authoritative crouch and restores standing", asy
   await page.locator("canvas").click();
   await page.keyboard.down("ControlLeft");
   await expect
-    .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.crouched))
+    .poll(
+      () => page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.crouched),
+      {
+        timeout: 30_000,
+      },
+    )
     .toBe(true);
   await page.screenshot({ path: "test-results/fps-aim-map-crouched.png" });
   await page.keyboard.up("ControlLeft");
   await expect
-    .poll(() => page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.crouched))
+    .poll(
+      () => page.evaluate(() => Reflect.get(window, "fpsPolishTest").state.players.A.crouched),
+      {
+        timeout: 30_000,
+      },
+    )
     .toBe(false);
   await page.evaluate(() => Reflect.get(window, "fpsPolishTest").dispose());
 });
@@ -98,15 +108,18 @@ test("held fire produces authoritative impacts on each material and the ground",
     await page.locator("canvas").click();
     await page.mouse.down();
     await expect
-      .poll(() =>
-        page.evaluate(
-          (id) =>
-            Reflect.get(window, "fpsPolishTest").eventLog.some(
-              (e: { type: string; impact?: { solidId: string } }) =>
-                e.type === "impact" && e.impact?.solidId === id,
-            ),
-          pose.id,
-        ),
+      .poll(
+        () =>
+          page.evaluate(
+            (id) =>
+              Reflect.get(window, "fpsPolishTest").eventLog.some(
+                (e: { type: string; impact?: { solidId: string } }) =>
+                  e.type === "impact" && e.impact?.solidId === id,
+              ),
+            pose.id,
+          ),
+        // Software GL (CI/SwiftShader) renders a frame every few seconds.
+        { timeout: 30_000 },
       )
       .toBe(true);
     await page.mouse.up();

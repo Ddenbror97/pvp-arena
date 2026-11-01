@@ -305,12 +305,20 @@ def grow(x0, x1, z0, z1, d, touch=None):
     """Extents grown by d on every side that does not abut a neighbour, so trims of adjacent
     pieces meet end to end instead of overlapping (overlaps would be coplanar → z-fighting)."""
     t = TOUCH if touch is None else touch
-    return (x0 - (0 if "-x" in t else d), x1 + (0 if "+x" in t else d),
-            z0 - (0 if "-z" in t else d), z1 + (0 if "+z" in t else d))
+
+    def g(side):
+        # Free side: grow. Fully covered: flush (its faces are dropped). Partly covered (the
+        # body face stays visible there): tuck 1 cm inside so the trim never shares its plane.
+        return d if side not in t else (0 if side in HIDE else -0.01)
+
+    return (x0 - g("-x"), x1 + g("+x"), z0 - g("-z"), z1 + g("+z"))
+
+
+HIDE = set()  # sides fully covered by a neighbour (their faces are never visible)
 
 
 def hidden():
-    return tuple(TOUCH)
+    return tuple(HIDE)
 
 
 def capped(section, mat, cap_mat, x0, x1, y0, y1, z0, z1, cap=0.06, cap_h=0.14, skip=("-y",)):
@@ -422,7 +430,7 @@ def tarp_stack(section, s):
     # Ratchet straps across the top.
     for t in (0.3, 0.7):
         xx = x0 + (x1 - x0) * t
-        box(section, "steel_yellow", xx - 0.03, xx + 0.03, y1 - 0.004, y1 + 0.006, z0 - 0.01, z1 + 0.01)
+        box(section, "steel_yellow", xx - 0.03, xx + 0.03, y1 - 0.004, y1 + 0.008, z0 - 0.02, z1 + 0.02)
 
 
 def sandstone_wall(section, s, theme, cap=True):
@@ -494,7 +502,7 @@ def stair(section, s, theme):
     if theme == "east":
         box(section, "steel", x0, x1, y0, y1 - 0.04, z0, z1, skip=("-y", "+y"))
         box(section, "roof_metal", x0, x1, y1 - 0.04, y1, z0, z1, skip=("-y",))
-        box(section, "steel_yellow", x0 + 0.006, x1 - 0.006, y1 - 0.04, y1 + 0.004, z1 - 0.06, z1 + 0.006, skip=("-y",))
+        box(section, "steel_yellow", x0 + 0.006, x1 - 0.006, y1 - 0.04, y1 + 0.008, z1 - 0.06, z1 + 0.008, skip=("-y",))
     else:
         box(section, "sandstone", x0, x1, y0, y1 - 0.05, z0, z1, skip=("-y", "+y"))
         box(section, "sandstone_dark", x0, x1, y1 - 0.05, y1, z0, z1 + 0.02, skip=("-y",), chamfer=0.015)
@@ -603,10 +611,10 @@ def lamp(section, axis, plane, sign, a, y):
     q = plane + sign * 0.05
     if axis == "z":
         box(section, "steel", a - 0.12, a + 0.12, y, y + 0.3, min(plane, q), max(plane, q), skip=("-z" if sign > 0 else "+z",))
-        quad_on(section, "lamp", "z", q + sign * 0.002, sign, a - 0.08, a + 0.08, y + 0.04, y + 0.2, shadow=False)
+        quad_on(section, "lamp", "z", q + sign * 0.01, sign, a - 0.08, a + 0.08, y + 0.04, y + 0.2, shadow=False)
     else:
         box(section, "steel", min(plane, q), max(plane, q), y, y + 0.3, a - 0.12, a + 0.12, skip=("-x" if sign > 0 else "+x",))
-        quad_on(section, "lamp", "x", q + sign * 0.002, sign, a - 0.08, a + 0.08, y + 0.04, y + 0.2, shadow=False)
+        quad_on(section, "lamp", "x", q + sign * 0.01, sign, a - 0.08, a + 0.08, y + 0.04, y + 0.2, shadow=False)
 
 
 def banner(section, axis, plane, sign, a, y0, w, h):
@@ -711,7 +719,8 @@ def jersey(section, s):
     d = (z1 - z0) if along_x else (x1 - x0)
     h = y1 - y0
     # Profile (half-widths from the centreline by height).
-    prof = [(0.0, d / 2), (0.08, d / 2), (0.3, d * 0.36), (h, d * 0.2)]
+    # A near-vertical precast barrier (chamfered top) so its face stays on the collision box.
+    prof = [(0.0, d / 2), (0.15, d / 2), (0.45, d * 0.42), (h, d * 0.40)]
     c = (z0 + z1) / 2 if along_x else (x0 + x1) / 2
     a0, a1 = (x0, x1) if along_x else (z0, z1)
     left = [(-hw, y) for y, hw in prof]
@@ -736,8 +745,9 @@ def low_wall(section, s, theme):
     capped(section, "sandstone", "sandstone_dark", x0, x1, y0, y1 - 0.12, z0, z1, cap=0.04, cap_h=0.12)
 
 
-def touching(s, others):
-    """Sides of `s` that abut another solid face to face (overlapping in the other axes)."""
+def touching(s, others, full=False):
+    """Sides of `s` that abut another solid face to face (overlapping in the other axes). With
+    `full`, only sides the neighbour covers completely (so the face can be dropped)."""
     x0, x1, y0, y1, z0, z1 = faces_of(s)
     out = set()
     for o in others:
@@ -746,8 +756,14 @@ def touching(s, others):
         a0, a1, b0, b1, c0, c1 = faces_of(o)
         if b1 <= y0 + 1e-6 or b0 >= y1 - 1e-6:
             continue
-        zo = c0 < z1 - 1e-6 and c1 > z0 + 1e-6
-        xo = a0 < x1 - 1e-6 and a1 > x0 + 1e-6
+        if full and (b0 > y0 + 1e-6 or b1 < y1 - 1e-6):
+            continue
+        if full:
+            zo = c0 <= z0 + 1e-6 and c1 >= z1 - 1e-6
+            xo = a0 <= x0 + 1e-6 and a1 >= x1 - 1e-6
+        else:
+            zo = c0 < z1 - 1e-6 and c1 > z0 + 1e-6
+            xo = a0 < x1 - 1e-6 and a1 > x0 + 1e-6
         if zo and abs(a1 - x0) < 1e-6:
             out.add("-x")
         if zo and abs(a0 - x1) < 1e-6:
@@ -760,10 +776,11 @@ def touching(s, others):
 
 
 def dress(L, section_name, s):
-    global TOUCH
+    global TOUCH, HIDE
     kind, theme = s["kind"], s.get("theme") or "centre"
     sec = section_name
     TOUCH = touching(s, L["solids"] + L["walls"])
+    HIDE = touching(s, L["solids"] + L["walls"], full=True)
     if kind == "edge-building":
         facade_band(sec, s, theme, 1 if s["z"] < 0 else -1)
     elif kind == "arcade-wall":
@@ -798,6 +815,9 @@ def dress(L, section_name, s):
     elif kind == "crate":
         x0, x1, y0, y1, z0, z1 = faces_of(s)
         nx = max(1, round((x1 - x0) / 1.3))
+        if nx > 1:
+            # Opaque core behind the seam between crates.
+            box(sec, "wood", x0 + 0.06, x1 - 0.06, y0, y1 - 0.06, z0 + 0.06, z1 - 0.06, skip=("-y",))
         for i in range(nx):
             crate(sec, x0 + (x1 - x0) * i / nx, x0 + (x1 - x0) * (i + 1) / nx, y0, y1, z0, z1)
     elif kind in ("container", "container-short"):
@@ -815,6 +835,7 @@ def dress(L, section_name, s):
     else:
         box(sec, "sandstone", *faces_of(s), skip=("-y",))
     TOUCH = set()
+    HIDE = set()
 
 
 # ------------------------------------------------------------------------------- floor, perimeter

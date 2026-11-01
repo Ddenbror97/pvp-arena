@@ -135,6 +135,8 @@ else:
 
 os.makedirs(os.path.dirname(os.path.abspath(OUT)), exist_ok=True)
 if BLEND:
-    bpy.ops.wm.save_as_mainfile(filepath=BLEND)
+    bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath(BLEND), relative_remap=True)
+    bpy.ops.file.make_paths_relative()
+    bpy.ops.wm.save_mainfile()
 export(OUT)
 print("exported", OUT)

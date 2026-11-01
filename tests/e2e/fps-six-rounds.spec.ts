@@ -14,6 +14,14 @@ test.afterEach(async ({ page }) => {
   if (data) await writeFile("test-results/fps-six-round-audit.json", JSON.stringify(data, null, 2));
 });
 
+/** Aim-arena main lane from the west spawn (x mirrored for the east spawn). */
+const MAIN_LANE: [number, number][] = [
+  [-14.9, 2.5],
+  [-12.6, 2.5],
+  [-11.8, 0.6],
+  [-7, -0.6],
+  [-3, -2.4],
+];
 // Uses real keyboard/mouse controls and real validated bot inputs. No health, spawn or score shortcuts.
 test("six complete bot rounds: controls, damage, roles, reload and respawn", async ({
   page,
@@ -128,6 +136,27 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
       { x: -turn / 0.002, y: -(pitch - a.pitch) / 0.002 },
     );
   };
+  const turnTo = async (yaw: number) => {
+    const a = (await state()).players.A;
+    const turn = Math.atan2(Math.sin(yaw - a.yaw), Math.cos(yaw - a.yaw));
+    if (Math.abs(turn) > 0.001)
+      await page.evaluate(
+        ({ x, y }) =>
+          document.dispatchEvent(new MouseEvent("mousemove", { movementX: x, movementY: y })),
+        { x: -turn / 0.002, y: a.pitch / 0.002 },
+      );
+  };
+  const walkTo = async (x: number, z: number) => {
+    for (let step = 0; step < 400; step++) {
+      const a = (await state()).players.A;
+      if (Math.hypot(x - a.x, z - a.z) < 0.35) return;
+      await turnTo(Math.atan2(-(x - a.x), -(z - a.z)));
+      await page.keyboard.down("KeyW");
+      await page.waitForTimeout(90);
+      await page.keyboard.up("KeyW");
+    }
+    throw new Error(`walkTo(${x}, ${z}) did not arrive`);
+  };
   const arm = (enabled: boolean) =>
     page.evaluate((enabled) => Reflect.get(window, "fpsGameplayBot").arm(enabled), enabled);
   for (let round = 1; round <= 6; round++) {
@@ -170,7 +199,8 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
     }
     const firstSeq = (await state()).players.A.lastSeq;
     await expect.poll(async () => (await state()).players.A.lastSeq).toBeGreaterThan(firstSeq + 3);
-    const spawnYaw = round % 2 ? 0 : Math.PI;
+    // Aim arena: A spawns west facing +x in odd rounds and east facing -x in even rounds.
+    const spawnYaw = round % 2 ? -Math.PI / 2 : Math.PI / 2;
     await expect
       .poll(async () => {
         await page.evaluate((target) => {
@@ -186,21 +216,20 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
         return Math.abs(Math.atan2(Math.sin(spawnYaw - yaw), Math.cos(spawnYaw - yaw)));
       })
       .toBeLessThan(0.02);
-    const lateral = round % 2 ? "KeyD" : "KeyA";
-    await page.keyboard.down(lateral);
+    // Walk the main lane with real mouse turns and W: out of the spawn exit, past the side
+    // stack and lane cover, to the north side of the centre stack (mirrored per side).
+    const side = (await state()).players.A.x < 0 ? 1 : -1;
+    for (const [wx, wz] of MAIN_LANE) await walkTo(wx * side, wz);
+    // The bot takes the mirrored lane to the facing corner, 6 m away across the centre.
     await expect
-      .poll(async () => (await state()).players.A.x, { timeout: 8000, intervals: [50] })
-      .toBeGreaterThan(9.25);
-    await page.keyboard.up(lateral);
-    await page.keyboard.down("KeyW");
-    await expect
-      .poll(async () => Math.abs((await state()).players.A.z), { timeout: 8000 })
-      .toBeLessThan(3.2);
-    await page.keyboard.up("KeyW");
-    await page.waitForTimeout(300);
-    await expect
-      .poll(async () => Math.abs((await state()).players.B.z), { timeout: 8000 })
-      .toBeLessThan(3.3);
+      .poll(
+        async () => {
+          const b = (await state()).players.B;
+          return Math.hypot(b.x + MAIN_LANE.at(-1)![0] * side, b.z - MAIN_LANE.at(-1)![1]);
+        },
+        { timeout: 60_000 },
+      )
+      .toBeLessThan(0.4);
     await aim(round === 3);
     await page.waitForTimeout(300);
     if (round === 6) {

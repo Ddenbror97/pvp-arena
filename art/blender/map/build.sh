@@ -15,7 +15,7 @@ if [[ "${1:-}" == "--blockout" ]]; then
   exit 0
 fi
 python3 textures.py
-"$PY" build_arena.py -- build/aim-arena.glb --blend build/aim-arena.blend | grep -E "VALIDATE|KIT STATS|^    \("
+"$PY" build_arena.py -- build/aim-arena.glb --blend aim-arena.blend | grep -E "VALIDATE|KIT STATS|^    \("
 python3 check_glb.py build/aim-arena.glb --json build/asset-stats.json
 "$GT" instance build/aim-arena.glb build/aim-arena-instanced.glb --min 2
 "$GT" meshopt build/aim-arena-instanced.glb "$ROOT/public/fps/models/aim-arena.glb" --level medium
