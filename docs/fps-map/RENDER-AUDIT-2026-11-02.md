@@ -27,7 +27,7 @@ centre of that map is inside the helicopter wreck):
 | Dustfront  | 43–55      | 21–26 k   | 0.74–1.09 s    | 1×           |
 | FROSTLINE  | 54–67      | 49–58 k   | 0.90–1.45 s    | 1.2–1.3×     |
 | CROSSFIRE  | 61–63      | 52 k      | 1.11–1.44 s    | 1.3×         |
-| LOST TRAIL | 131–188    | 300–387 k | 8.5–11.7 s     | about 11×    |
+| LOST TRAIL | 109–161    | 200–258 k | 2.8–3.7 s      | about 3.5×   |
 
 Full game (perf spec, same harness): Dustfront 84 calls / 159 k triangles, FROSTLINE 103 /
 240 k, CROSSFIRE 91 / 185 k. Most of the triangles are the two operators and the viewmodel,
@@ -68,9 +68,10 @@ about 1% of one core, so not a bottleneck even on a slow laptop.
 
 ## Remaining bottleneck
 
-LOST TRAIL: leaf-card overdraw, about 11× Dustfront's static-scene frame cost in software
-rendering (see `docs/FPS-LOST-TRAIL.md`). FROSTLINE and CROSSFIRE are within 1.2–1.3× of
-Dustfront.
+LOST TRAIL: leaf-card fragments. After its second pass (trimmed cards, baked forest backdrop;
+`docs/FPS-LOST-TRAIL.md`) it is about 3.5× Dustfront's static-scene frame cost in software
+rendering (was about 11× when this audit was written), with 1.7× Dustfront's overdraw.
+FROSTLINE and CROSSFIRE are within 1.2–1.3× of Dustfront.
 
 Still to do: real-GPU timing (Chrome, Safari, Firefox) on a weak laptop and a Mac with the
 perf spec at `MAP_PERF_SCALE=30`.

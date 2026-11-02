@@ -46,11 +46,44 @@ function inBackground(object: THREE.Object3D, root: THREE.Object3D) {
   return false;
 }
 
+/** Name of the baked forest backdrop's material (art/blender/lost-trail/bake). */
+export const BACKDROP_MATERIAL = "forest-backdrop";
+
+/**
+ * The backdrop image is the forest already rendered with this map's lighting, fog and tone
+ * mapping, so it is drawn unlit and as-is: an alpha-tested basic material (no lights, fog or
+ * tone mapping), with the solids, casting no shadow.
+ */
+export function prepareBackdrop(root: THREE.Object3D) {
+  const replaced = new Map<THREE.Material, THREE.MeshBasicMaterial>();
+  root.traverse((object) => {
+    if (!(object instanceof THREE.Mesh) || Array.isArray(object.material)) return;
+    const source = object.material as THREE.MeshStandardMaterial;
+    if (source.name !== BACKDROP_MATERIAL) return;
+    let basic = replaced.get(source);
+    if (!basic) {
+      basic = new THREE.MeshBasicMaterial({
+        name: BACKDROP_MATERIAL,
+        map: source.map,
+        alphaTest: 0.5,
+        toneMapped: false,
+        fog: false,
+      });
+      replaced.set(source, basic);
+    }
+    object.material = basic;
+    object.castShadow = false;
+    object.renderOrder = 0;
+  });
+  return [...replaced.values()];
+}
+
 export function prepareFoliage(root: THREE.Object3D) {
   const done = new Set<THREE.Material>();
   root.traverse((object) => {
     if (!(object instanceof THREE.Mesh)) return;
     const materials = Array.isArray(object.material) ? object.material : [object.material];
+    if (materials.some((m) => m.name === BACKDROP_MATERIAL)) return;
     // Draw order: three sorts opaque draws by material before depth, so leaf cards could go
     // first and be shaded in full behind walls, trunks and the ground. Drawn after every solid
     // (and the near forest before the background), hidden leaf fragments fail the depth test.
@@ -141,10 +174,12 @@ export function createLostTrailEnvironment(scene: THREE.Scene, map: GameMap): Ma
   const base = createArenaEnvironment(scene, map);
   let water: THREE.Texture | null = null;
   let batches: Thinnable[] = [];
+  let backdrop: THREE.Material[] = [];
   let quality: "high" | "low" = "high";
   const ready = base.ready.then(() => {
     const authored = scene.getObjectByName(map.id);
     if (!authored) return;
+    backdrop = prepareBackdrop(authored);
     prepareFoliage(authored);
     water = findWater(authored);
     batches = backgroundBatches(authored);
@@ -157,6 +192,12 @@ export function createLostTrailEnvironment(scene: THREE.Scene, map: GameMap): Ma
       if (next === quality) return;
       quality = next;
       applyQuality(batches, quality);
+    },
+    dispose() {
+      // The basic materials are ours; their image stays the cached model's (released by base).
+      for (const material of backdrop) material.dispose();
+      backdrop = [];
+      base.dispose();
     },
     update(_dt, now) {
       WIND.value = now / 1000;

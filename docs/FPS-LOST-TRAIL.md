@@ -6,15 +6,18 @@ PvP matches draw it at random with Dustfront and FROSTLINE.
 
 ## Pipeline
 
-`art/blender/lost-trail/build.sh` runs the whole build. It is deterministic; every step is
-seeded.
+`art/blender/lost-trail/build.sh` runs the whole build (about 2.5 minutes). Every step is
+seeded; the backdrop bake (software-rendered) can differ by a few texels between runs. The bake needs headless Chromium (`CHROMIUM=/path/to/chrome`, otherwise Playwright's).
 
 | Step           | File                              | Output                                                                                      |
 | -------------- | --------------------------------- | ------------------------------------------------------------------------------------------- |
 | Layout         | `layout.py`                       | `src/lib/fps/lost-trail-layout.ts` (gameplay solids, barriers, spawns), `build/layout.json` |
 | Textures       | `textures.py`                     | `build/tex/*.png` (generated, plus CC0 bark scans and optional scanned overrides)           |
 | Tree skeletons | `trees/generate_trees.mjs`        | EZ-Tree (MIT) OBJ files: five archetypes × near/far                                         |
-| Scene          | `build_trail.py` (+ `scanned.py`) | `build/lost-trail.glb`, `build/lost-trail.blend`                                            |
+| Scene, pass 1  | `build_trail.py` (+ `scanned.py`) | `build/lost-trail-full.glb`: the whole forest, only to bake the backdrop from               |
+| Backdrop bake  | `bake/bake.mjs`, `bake/entry.ts`  | `build/backdrop/`: the forest beyond the walls, rendered by the game's own loader           |
+| Backdrop atlas | `bake/compose.py`                 | `build/tex/forest_backdrop.png` (2048 × 1228)                                               |
+| Scene, pass 2  | `build_trail.py` (backdrop on)    | `build/lost-trail.glb`, `build/lost-trail.blend`                                            |
 | Instancing     | `instance_sections.mjs`           | Per-section `EXT_mesh_gpu_instancing`, shuffled instance order                              |
 | Compression    | `gltf-transform meshopt`          | `public/fps/models/lost-trail.glb`                                                          |
 
@@ -41,33 +44,71 @@ Optional scanned CC0 assets are covered in `art/blender/lost-trail/source/SCANNE
 
 ## Performance
 
-Measured with `capture.mjs` on the headless capture (SwiftShader, 960×540, 4× MSAA). Each view
-renders one warm-up frame, then three measured frames ending in a 1-pixel readback (median).
-Calls and triangles are the map only (no players or viewmodel). The full comparison with the
-other maps is in `docs/fps-map/RENDER-AUDIT-2026-11-02.md`.
+Goal: as smooth as Dustfront. Measured with `capture.mjs` on the headless capture (SwiftShader,
+960×540, 4× MSAA): one warm-up frame per view, then the median of three frames, each ending in
+a 1-pixel readback. Calls and triangles are the map only (no players or viewmodel). The full
+comparison with the other maps is in `docs/fps-map/RENDER-AUDIT-2026-11-02.md`.
 
 Generic views (`compare-40x32.views.json` / `compare-44x36.views.json`: both spawns, both ends,
-mid-arena both ways, overhead). Ranges cover the six player-height views:
+mid-arena both ways). Overdraw is the average number of fragments rasterised per pixel (every
+mesh drawn additively without depth test, alpha ignored) in the B, mid-east and N views.
 
-|                    | Dustfront | FROSTLINE | LOST TRAIL before fixes | LOST TRAIL now |
-| ------------------ | --------- | --------- | ----------------------- | -------------- |
-| Draw calls         | 43–55     | 54–67     | 143–209                 | 131–188        |
-| Triangles          | 21–26 k   | 49–58 k   | 694–863 k               | 300–387 k      |
-| Software frame (s) | 0.7–1.1   | 0.9–1.4   | 14.4–18.6               | 8.5–11.7       |
-| GLB (meshopt)      | 0.91 MB   | 1.48 MB   | 3.46 MB                 | 2.83 MB        |
+|                    | Dustfront | LOST TRAIL as built | After pass 1 | Now (pass 2) |
+| ------------------ | --------- | ------------------- | ------------ | ------------ |
+| Draw calls         | 43–55     | 143–209             | 131–188      | 109–161      |
+| Triangles          | 21–26 k   | 694–863 k           | 300–387 k    | 200–258 k    |
+| Overdraw           | 5.6–7.2   | –                   | 30–34        | 10.5–11.9    |
+| Software frame (s) | 0.7–1.1   | 14.4–18.6           | 8.5–11.7     | 2.8–3.7      |
 
-LOST TRAIL is still about ten times Dustfront's frame cost in software rendering. What it is
-made of (same views, things hidden one at a time): leaf cards are about 80–90% of it (canopy
-crowns about half, broad-leaf midstory a quarter to a third, ferns, bushes and palms under 5%).
-The cost is overdraw of alpha-tested cards, not shading: dropping normal maps, reflections and
-shadow receiving on the leaves saves about 15%.
+Full game (`tests/e2e/fps-frostline-perf.spec.ts`, real renderer with both players and the
+viewmodel, SwiftShader; `docs/fps-map/lost-trail-perf-chromium-lost-trail.json`): the sequence
+now finishes in 10 minutes (before pass 2 it did not finish within the 15-minute limit).
+Median frame 12.6–12.9 s against Dustfront's 5.0–6.5 s on the same harness, 185–189 draw
+calls against 84, 384 k triangles against 159 k, CPU per frame 8.3–9.0 ms against 4.2–8.0 ms.
 
-Fix pass (2026-11-02) changes behind these numbers:
+Where the rest goes (same views): without any leaf card the map renders in 1.1–1.4 s; the
+leaves' vertices cost about 0.2 s of that difference, their fragments the rest. Solids are
+4.6–6.5 layers, like Dustfront's. The remaining leaf layers are the forest edge band
+(2.2–3.0), the real trees between the edge and the backdrop (1.7–2.0) and the backdrop (0.6).
+
+### Pass 2: card trimming and the forest backdrop (2026-11-02)
+
+- **Cards trimmed to their image.** A leaf card's texture is mostly transparent (the canopy
+  cluster fills 23% of its square); the transparent part is still rasterised, tested and
+  discarded for every layer of foliage. Every leaf, frond and reed card is now cut to the
+  rectangle holding its image's opaque texels (`alpha_bbox`, `crop_cards`, `card_quad`), so it
+  covers the same leaves with 34–68% of the area. The image and the card's size on screen are
+  unchanged. Overdraw 30–34 → 17–19.
+- **Forest backdrop.** The forest beyond a square of walls at ±29 m (11 m past the east and
+  west edges, 15 m past the north and south ones) is replaced by one picture of it. Pass 1
+  builds the whole forest. `bake/` renders it through the game's own map loader, lighting, fog
+  and tone mapping, from the arena centre through the four horizontal faces of a cube. A
+  clipping plane keeps only what lies beyond each face's wall. Each wall is parallel to its
+  face's image plane, so the picture maps onto it exactly from the centre. Pass 2 places
+  the four walls and leaves out every plant whose base lies beyond ±33 m, so the crowns of trees
+  just outside the walls still reach in. At runtime the walls are one draw, unlit and as baked
+  (`prepareBackdrop`: alpha-tested basic material, no fog, tone mapping or shadow), with the
+  solids. The game's sky dome shows above the canopy. Gaps up to 3.5° wide between trunks below
+  16° elevation are filled with forest-and-haze colour. Otherwise, from anywhere nearer a wall,
+  the sky behind the whole forest would show between trunks. Wide openings such as the river
+  valley keep their sky.
+- **Thinner near crowns.** Near and giant trees keep 30% of their leaf cards (grown 1.15×; was
+  50% at 1.12×), far trees 50% (was 60%). The near band has no twisted midstory trees.
+- Low quality still draws half of each remaining background batch.
+
+Trade-offs: close to a wall corner the backdrop is seen at an angle and reads flatter, and
+looking straight up near the edge shows a little more sky than before.
+
+Before (as built) and after pass 2:
+
+![spawn B](fps-map/img/lost-trail-pass2-spawnB.jpg)
+![canopy from below](fps-map/img/lost-trail-pass2-canopy.jpg)
+![north edge over the river: the backdrop beyond](fps-map/img/lost-trail-pass2-backdrop-river.jpg)
+
+### Pass 1 (2026-11-02)
 
 - **Leaf cards.** Every tree level drops whole cards and grows the kept ones about their own
-  centres (`thin_leaves`): near and giant trees keep 50% at 1.12×, far trees 60% at 1.1×,
-  background trees 60% of the far level at 1.15×. Card area drops to about 0.6–0.75 of before;
-  the canopy still reads closed from below.
+  centres (`thin_leaves`). The background level is 60% of the far level at 1.15×.
 - **Bark.** Near crowns' twigs 30% kept (was 45%), far crowns' twigs now decimated too (32%);
   trunks below the crown keep every ring. The background level reuses the far bark (a
   whole-mesh decimate there would erase the trunk).
@@ -83,8 +124,8 @@ Fix pass (2026-11-02) changes behind these numbers:
   ground. SwiftShader does not reject those fragments early, so the table above does not show
   this; GPUs with early depth testing do.
 
-Pass 3 (before): near crown bark 45% kept, buttress fins in the trunk's material, single reed and
-wet-rock libraries, welded tubes and boulders.
+Before (art pass 3): near crown bark 45% kept, buttress fins in the trunk's material, single
+reed and wet-rock libraries, welded tubes and boulders.
 
 ### Graphics quality "Low" (Settings → Graphics)
 
@@ -150,7 +191,6 @@ reveal the bot to an idle player within 20 s (6.6–19.1 s), the bound pinned by
   - `--lifecycle=dustfront,lost-trail --cycles=N` mounts and disposes map environments
     repeatedly. GPU geometries and textures must not grow (map-switching / resource-cleanup
     check).
-- `tests/e2e/fps-frostline-perf.spec.ts` (`MAP_PERF_MAPS=lost-trail`) does not finish within its
-  15-minute limit on SwiftShader, before or after the fix pass (Dustfront takes about 5 minutes).
-  Use the capture for map-to-map comparisons on software rendering.
+- `tests/e2e/fps-frostline-perf.spec.ts` (`MAP_PERF_MAPS=lost-trail`) takes about 10 minutes on
+  SwiftShader (Dustfront about 5).
 - Still to do: real-GPU Chrome and Firefox frame timing on a player's machine.
