@@ -30,6 +30,9 @@ export function GameSettings({
   onChange,
   onResume,
   matchNotice,
+  onLeavePractice,
+  leavingPractice = false,
+  leaveError,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -37,6 +40,9 @@ export function GameSettings({
   onChange: (value: StrikeSettings) => void;
   onResume: () => void;
   matchNotice?: ReactNode;
+  onLeavePractice?: (() => void) | undefined;
+  leavingPractice?: boolean;
+  leaveError?: string | null;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -106,9 +112,32 @@ export function GameSettings({
             onChange={(e) => onChange({ ...settings, reducedMotion: e.target.checked })}
           />
         </label>
-        <button type="button" className="duel-primary" onClick={onResume}>
+        <button
+          type="button"
+          className="duel-primary"
+          onClick={onResume}
+          disabled={leavingPractice}
+        >
           Resume game
         </button>
+        {onLeavePractice && (
+          <>
+            <button
+              type="button"
+              className="duel-secondary"
+              onClick={onLeavePractice}
+              disabled={leavingPractice}
+              aria-busy={leavingPractice}
+            >
+              {leavingPractice ? "Leaving practice…" : "Leave practice"}
+            </button>
+            {leaveError && (
+              <p className="duel-error" role="alert">
+                {leaveError}
+              </p>
+            )}
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

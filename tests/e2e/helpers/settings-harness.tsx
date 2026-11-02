@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import { useState } from "react";
 import { GameSettings, StrikeCrosshair } from "../../../src/components/fps/GameSettings";
 import { readStrikeSettings, saveStrikeSettings } from "../../../src/lib/fps/settings";
-function Harness() {
+function Harness({ practice }: { practice: boolean }) {
   const [settings, setSettings] = useState(readStrikeSettings);
   const [open, setOpen] = useState(true);
   return (
@@ -18,10 +18,18 @@ function Harness() {
           saveStrikeSettings(value);
         }}
         onResume={() => setOpen(false)}
+        onLeavePractice={
+          practice
+            ? () => {
+                document.body.dataset.leftPractice = "true";
+                setOpen(false);
+              }
+            : undefined
+        }
       />
     </>
   );
 }
-export function mountSettings(host: Element) {
-  createRoot(host).render(<Harness />);
+export function mountSettings(host: Element, practice = false) {
+  createRoot(host).render(<Harness practice={practice} />);
 }

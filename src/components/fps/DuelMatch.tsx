@@ -611,6 +611,7 @@ export function DuelMatch({
       if ("status" in r && "creator_id" in r && r.id)
         qc.setQueryData(["fps-view", r.id, userId], r);
       void qc.invalidateQueries({ queryKey: ["wallet"] });
+      void qc.invalidateQueries({ queryKey: ["fps-lobby"] });
       if (kind === "cancel") await navigate({ to: "/fps-duel" });
       else
         await navigate({
@@ -794,6 +795,9 @@ export function DuelMatch({
         onOpenChange={setSettingsOpen}
         settings={settings}
         onChange={setSettings}
+        onLeavePractice={match?.practice && !spectate ? () => void perform("cancel") : undefined}
+        leavingPractice={busy}
+        leaveError={error}
         onResume={() => {
           void activate();
         }}
