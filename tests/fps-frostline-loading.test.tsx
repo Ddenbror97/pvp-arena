@@ -42,10 +42,11 @@ describe("FROSTLINE loading screen", () => {
     for (const id of MAP_IDS) expect(loadingImageFor(id)).toBeTruthy();
   });
 
-  it("stays out of the random rotation (and its art out of the intent preload) for now", () => {
-    expect(getMap("frostline").rotation).toBe(false);
-    expect(ROTATION_MAP_IDS).toEqual(["dustfront"]);
-    expect(ROTATION_LOADING_IMAGES).toEqual([DEFAULT_LOADING_IMAGE]);
+  it("is in the random rotation, so its art is warmed with the other rotation maps", () => {
+    expect(getMap("frostline").rotation).toBe(true);
+    expect(ROTATION_MAP_IDS).toContain("frostline");
+    expect(ROTATION_LOADING_IMAGES).toContain(loadingImageFor("frostline"));
+    expect(ROTATION_LOADING_IMAGES).toContain(DEFAULT_LOADING_IMAGE);
   });
 
   it("renders the Dustfront loading screen with FROSTLINE's art and name", () => {

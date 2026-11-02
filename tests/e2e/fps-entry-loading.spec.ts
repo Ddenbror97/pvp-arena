@@ -74,8 +74,15 @@ test("Practice and both human seats load the supplied WebP and enter without the
     const screen = p.getByRole("region", { name: "Preparing PvPStrike match" });
     await expect(screen).toBeVisible();
     await expect(screen.locator("img")).toHaveJSProperty("naturalWidth", 1672);
-    await expect(screen.locator("img")).toHaveAttribute("src", /arena-loading.*\.webp/);
-    await expect(screen.getByRole("heading", { name: "Dustfront" })).toBeVisible();
+    // The match draws a random rotation map; its name and its own art must agree.
+    const art: Record<string, RegExp> = {
+      Dustfront: /arena-loading.*\.webp/,
+      Frostline: /frostline-loading.*\.webp/,
+      "Lost Trail": /lost-trail-loading.*\.webp/,
+    };
+    const name = (await screen.getByRole("heading", { level: 1 }).textContent())?.trim() ?? "";
+    expect(Object.keys(art), `unexpected map "${name}"`).toContain(name);
+    await expect(screen.locator("img")).toHaveAttribute("src", art[name]!);
     await expect(screen.getByRole("button")).toHaveCount(0);
     expect(await p.locator(".duel-game-overlay .duel-match-card").count()).toBe(0);
     const source = await screen.locator("img").getAttribute("src");

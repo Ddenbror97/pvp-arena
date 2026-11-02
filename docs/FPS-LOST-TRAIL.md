@@ -1,22 +1,22 @@
 # LOST TRAIL (jungle 1v1 aim map)
 
 Branch `fps-map-lost-trail`, on top of the shared map registry (`docs/FPS-MAP-REGISTRY.md`).
-The map is registered in the catalog with `rotation: false`, so matches don't draw it until
-it is accepted.
+The map is in the catalog with `rotation: true` (owner's decision, 2026-11-01): new Practice and
+PvP matches draw it at random with Dustfront and FROSTLINE.
 
 ## Pipeline
 
 `art/blender/lost-trail/build.sh` runs the whole build. It is deterministic; every step is
 seeded.
 
-| Step | File | Output |
-| --- | --- | --- |
-| Layout | `layout.py` | `src/lib/fps/lost-trail-layout.ts` (gameplay solids, barriers, spawns), `build/layout.json` |
-| Textures | `textures.py` | `build/tex/*.png` (generated, plus CC0 bark scans and optional scanned overrides) |
-| Tree skeletons | `trees/generate_trees.mjs` | EZ-Tree (MIT) OBJ files: five archetypes × near/far |
-| Scene | `build_trail.py` (+ `scanned.py`) | `build/lost-trail.glb`, `build/lost-trail.blend` |
-| Instancing | `instance_sections.mjs` | Per-section `EXT_mesh_gpu_instancing`, shuffled instance order |
-| Compression | `gltf-transform meshopt` | `public/fps/models/lost-trail.glb` |
+| Step           | File                              | Output                                                                                      |
+| -------------- | --------------------------------- | ------------------------------------------------------------------------------------------- |
+| Layout         | `layout.py`                       | `src/lib/fps/lost-trail-layout.ts` (gameplay solids, barriers, spawns), `build/layout.json` |
+| Textures       | `textures.py`                     | `build/tex/*.png` (generated, plus CC0 bark scans and optional scanned overrides)           |
+| Tree skeletons | `trees/generate_trees.mjs`        | EZ-Tree (MIT) OBJ files: five archetypes × near/far                                         |
+| Scene          | `build_trail.py` (+ `scanned.py`) | `build/lost-trail.glb`, `build/lost-trail.blend`                                            |
+| Instancing     | `instance_sections.mjs`           | Per-section `EXT_mesh_gpu_instancing`, shuffled instance order                              |
+| Compression    | `gltf-transform meshopt`          | `public/fps/models/lost-trail.glb`                                                          |
 
 Optional scanned CC0 assets are covered in `art/blender/lost-trail/source/SCANNED-ASSETS.md`.
 
@@ -29,6 +29,7 @@ Optional scanned CC0 assets are covered in `art/blender/lost-trail/source/SCANNE
 
   Nothing visual taller than ankle height stands in a lane unless it is a solid. The ford
   stones are about 7 cm tall.
+
 - **Decoration out of head height.** On the giant trees, hanging vines and aerial roots end at
   least 5.5 m above the base in tree units (≥ 7.7 m on the in-arena giants, ≥ 4 m on the forest
   edge). Epiphytes sit at 4 m or higher. Strangler roots are only on forest-edge trees outside
@@ -42,11 +43,11 @@ Optional scanned CC0 assets are covered in `art/blender/lost-trail/source/SCANNE
 
 Measured on the headless capture (SwiftShader); see Verification for the method.
 
-| | Art pass 2 | Art pass 3 |
-| --- | --- | --- |
-| Draw calls, everything visible | 216 | 219 |
-| Triangles, everything visible | 1.03 M | 0.87 M |
-| GLB (meshopt) | 3.20 MB | 3.46 MB |
+|                                | Art pass 2 | Art pass 3 |
+| ------------------------------ | ---------- | ---------- |
+| Draw calls, everything visible | 216        | 219        |
+| Triangles, everything visible  | 1.03 M     | 0.87 M     |
+| GLB (meshopt)                  | 3.20 MB    | 3.46 MB    |
 
 Pass 3 changes behind these numbers:
 

@@ -20,9 +20,9 @@ import type { MapDefinition } from "./types";
 export const FROSTLINE: MapDefinition = {
   id: "frostline",
   name: "Frostline",
-  // Out of the random Practice/PvP rotation until the real-GPU Chrome/Firefox checks are done
-  // (docs/fps-map/FROSTLINE.md §6). Setting this to true is the one line that adds it.
-  rotation: false,
+  // In the random Practice/PvP rotation (owner's decision, 2026-11-01). Real-GPU Chrome/Firefox
+  // frame times are still unmeasured (docs/fps-map/FROSTLINE.md §6); false takes it out again.
+  rotation: true,
   arena: FROSTLINE_SIZE,
   boxes: FROSTLINE_BOXES,
   structures: FROSTLINE_STRUCTURES,

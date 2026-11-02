@@ -70,6 +70,9 @@ async function init(
       stake: 0,
       private: isPrivate,
       expiresAt,
+      // These tests use Dustfront's spawns and routes; the random rotation is covered by
+      // tests/fps-map-runtime.test.ts.
+      map_id: "dustfront",
     }),
   });
   expect(response.status).toBe(200);
@@ -859,6 +862,7 @@ describe("isolated real Durable Object WebSockets", () => {
       private: true,
       practice: true,
       expiresAt: Date.now() + 1200000,
+      map_id: "dustfront",
     };
     const boot = await mf.dispatchFetch("https://runtime.test/internal/matches/" + id, {
       method: "POST",

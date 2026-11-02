@@ -10,8 +10,8 @@ import { TEST_GRID } from "./fixtures/test-map";
  * maps are in the catalog: a jungle map with movement-only barriers (like LOST TRAIL) and a map
  * without loading art yet (like CROSSFIRE). Checks
  * that the rotation, the per-map loading art and match creation keep working when they land,
- * that FROSTLINE stays out of the draw while `rotation: false`, and that flipping its flag is
- * the only change needed to add it.
+ * that a map stays out of the draw while `rotation: false` (FROSTLINE as the example), and that
+ * flipping its flag is the only change needed to add it.
  */
 const LOST_TRAIL: MapDefinition = {
   ...TEST_GRID,
@@ -20,6 +20,8 @@ const LOST_TRAIL: MapDefinition = {
   rotation: true,
   arena: { width: 48, depth: 36 },
 };
+/** FROSTLINE as it was before it joined the rotation. */
+const FROSTLINE_OUT: MapDefinition = { ...FROSTLINE, rotation: false };
 const CROSSFIRE: MapDefinition = {
   ...TEST_GRID,
   id: "artless-standin",
@@ -49,7 +51,7 @@ afterEach(() => {
 
 describe("map rotation with FROSTLINE, LOST TRAIL and CROSSFIRE", () => {
   it("draws only rotation maps; FROSTLINE stays out while rotation is false", async () => {
-    const m = await withCatalog([DUSTFRONT, FROSTLINE, LOST_TRAIL, CROSSFIRE]);
+    const m = await withCatalog([DUSTFRONT, FROSTLINE_OUT, LOST_TRAIL, CROSSFIRE]);
     expect(m.MAP_IDS).toEqual(["dustfront", "frostline", "jungle-standin", "artless-standin"]);
     expect(m.ROTATION_MAP_IDS).toEqual(["dustfront", "jungle-standin", "artless-standin"]);
     expect(draws(m.pickRotationMap, 3).sort()).toEqual([
@@ -63,7 +65,7 @@ describe("map rotation with FROSTLINE, LOST TRAIL and CROSSFIRE", () => {
   });
 
   it("gives each map its own art or the default, and preloads only rotation art", async () => {
-    const m = await withCatalog([DUSTFRONT, FROSTLINE, LOST_TRAIL, CROSSFIRE]);
+    const m = await withCatalog([DUSTFRONT, FROSTLINE_OUT, LOST_TRAIL, CROSSFIRE]);
     expect(m.loadingImageFor("frostline")).toMatch(/frostline-loading/);
     expect(m.loadingImageFor("jungle-standin")).toBe(m.DEFAULT_LOADING_IMAGE);
     expect(m.loadingImageFor("artless-standin")).toBe(m.DEFAULT_LOADING_IMAGE);
@@ -72,7 +74,7 @@ describe("map rotation with FROSTLINE, LOST TRAIL and CROSSFIRE", () => {
   });
 
   it("keeps each map's own geometry: movement-only barriers, size and spawns", async () => {
-    const m = await withCatalog([DUSTFRONT, FROSTLINE, LOST_TRAIL, CROSSFIRE]);
+    const m = await withCatalog([DUSTFRONT, FROSTLINE_OUT, LOST_TRAIL, CROSSFIRE]);
     const jungle = m.getMap("jungle-standin"),
       frost = m.getMap("frostline");
     expect(jungle.movementSolids.some((s) => s.id === "test-gorge")).toBe(true);

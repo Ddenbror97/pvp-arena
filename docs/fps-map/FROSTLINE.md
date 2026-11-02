@@ -1,8 +1,10 @@
 # FROSTLINE — Winter AIM ARENA
 
-Branch `fps-frostline`, based on `fps-map-registry` at 87cadb1 (random map rotation and
-per-map loading screens). Pushed for review; **not merged and not deployed**. FROSTLINE is a
-second 1v1 map, registered through the shared map registry (`docs/FPS-MAP-REGISTRY.md`).
+Merged into `main` with LOST TRAIL on 2026-11-01. FROSTLINE is a second 1v1 map, registered
+through the shared map registry (`docs/FPS-MAP-REGISTRY.md`). It is **in the random Practice/PvP
+rotation** with Dustfront and LOST TRAIL (`rotation: true`, owner's decision), although the
+real-GPU checks in §6 have not been run. Set `rotation: false` in `maps/frostline.ts` to take it
+out again.
 
 Shared files touched, each through a documented registry extension point:
 
@@ -286,13 +288,16 @@ Procedure (on that machine, from a checkout of this branch):
 - Neither map drops its render resolution (`pixelRatio`) more than the other.
 - Resources stay constant over the switching cycles.
 
-**To put FROSTLINE into Practice/PvP**
+**Rotation (done, 2026-11-01)**
 
-1. Run the real-GPU procedure above and meet its acceptance criteria.
-2. Set `rotation: true` in `src/lib/fps/maps/frostline.ts`. The registry session's rotation
-   then draws it for new Practice and PvP matches, and its art joins the intent preload.
-3. Update the parity test's `ROTATION_MAP_IDS` line to `["dustfront", "frostline"]`.
-4. Deploy the match Worker before or with the app (`docs/FPS-MAP-REGISTRY.md`, Deploying).
+- FROSTLINE and LOST TRAIL are `rotation: true`: every new Practice and PvP match draws one of
+  the three maps, and all three maps' art is warmed on match intent.
+- The match server decides the map. Deploy the match Worker only after (or together with) an
+  app that knows all three maps (`docs/FPS-MAP-REGISTRY.md`, Deploying).
+- `tests/fps-runtime.test.ts` pins its matches to Dustfront because it uses Dustfront's spawns
+  and routes. The random draw itself is tested in `tests/fps-map-runtime.test.ts`.
+- The real-GPU procedure above is still recommended. If FROSTLINE misses its acceptance
+  criteria, set `rotation: false` again.
 
 **Not done (by decision)**
 
@@ -303,8 +308,7 @@ Procedure (on that machine, from a checkout of this branch):
 
 ## 7. Limitations and risks
 
-- Out of the random rotation (`rotation: false`) until the real-GPU checks pass (§6): no
-  player gets FROSTLINE yet, even after a merge.
+- In the random rotation without the real-GPU checks (§6), by the owner's decision.
 - **Real-GPU Chrome and Firefox frame times are pending.** The SwiftShader numbers in §5 are
   engine-side counts and load times; they are not FPS parity.
 - The match route still preloads only the rotation maps' art. A FROSTLINE match's art loads

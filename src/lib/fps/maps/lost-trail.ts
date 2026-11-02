@@ -17,8 +17,8 @@ import type { MapDefinition } from "./types";
 export const LOST_TRAIL: MapDefinition = {
   id: "lost-trail",
   name: "Lost Trail",
-  // Out of the random rotation until the jungle art and in-browser validation are accepted.
-  rotation: false,
+  // In the random Practice/PvP rotation (owner's decision, 2026-11-01); false takes it out again.
+  rotation: true,
   arena: LOST_TRAIL_SIZE,
   boxes: LOST_TRAIL_BOXES,
   structures: LOST_TRAIL_STRUCTURES,
