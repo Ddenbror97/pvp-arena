@@ -1,5 +1,5 @@
 import { footstepSurface } from "./footstep-surfaces";
-import { PLAYER_RADIUS, STEP_HEIGHT, eyeHeight } from "./map";
+import { PLAYER_RADIUS, STEP_HEIGHT, EYE_HEIGHT, CROUCH_EYE_HEIGHT, eyeHeight } from "./map";
 import { DEFAULT_MAP, getMap, mapOf, type GameMap } from "./maps/registry";
 import { spawnSide, halftimeRound } from "./sides";
 import {
@@ -204,7 +204,6 @@ export function predictMovement(
   if (!Number.isFinite(dt) || dt <= 0) return;
   const seconds = Math.min(dt, TICK_MS) / 1000;
   if (input) {
-    p.crouched = !!input.crouch || blocked(p.x, p.y, p.z, false, map);
     const supported =
       p.y === 0 ||
       map.boxes.some(
@@ -218,6 +217,21 @@ export function predictMovement(
     const grounded = supported && (p.velocityY ?? 0) === 0;
     if (input.jump && grounded) p.velocityY = JUMP_SPEED;
     const canStep = grounded && !input.jump;
+    // Air-duck contracts the hull upward around the head, instead of pushing the
+    // head downward. Only the stance changes: velocity and gravity are untouched.
+    // Keep the offset in snapshots so client prediction cannot apply it twice.
+    const oldTuck = p.airCrouchOffset ?? 0;
+    const wantsCrouch = !!input.crouch;
+    const tuck = wantsCrouch && (!grounded || input.jump) ? EYE_HEIGHT - CROUCH_EYE_HEIGHT : 0;
+    const stanceY = p.y + tuck - oldTuck;
+    if (stanceY >= 0 && !blocked(p.x, stanceY, p.z, wantsCrouch, map)) {
+      p.y = stanceY;
+      p.crouched = wantsCrouch;
+      p.airCrouchOffset = tuck;
+    } else {
+      // Releasing duck against a ledge/ceiling must not expand into a solid.
+      p.crouched = true;
+    }
     const length = Math.max(1, Math.hypot(input.forward, input.strafe));
     const speed =
       (MOVE_SPEED *
@@ -285,6 +299,7 @@ export function predictMovement(
       ) {
         nextY = Math.max(nextY, top);
         p.velocityY = 0;
+        p.airCrouchOffset = 0;
       }
     }
   p.y = nextY;
@@ -292,7 +307,10 @@ export function predictMovement(
     p.y = previousY;
     p.velocityY = 0;
   }
-  if (p.y === 0) p.velocityY = 0;
+  if (p.y === 0) {
+    p.velocityY = 0;
+    p.airCrouchOffset = 0;
+  }
 }
 
 function shoot(

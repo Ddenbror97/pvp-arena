@@ -248,6 +248,7 @@ export function snapshotForPlayer<T extends { state: PublicState }>(
           yaw: 0,
           pitch: 0,
           velocityY: 0,
+          airCrouchOffset: 0,
           crouched: false,
           ammo: 0,
           reserve: 0,

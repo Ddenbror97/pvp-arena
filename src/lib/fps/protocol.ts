@@ -80,6 +80,8 @@ export interface Player {
   crouched?: boolean;
   /** Server-owned jump velocity, included in snapshots for prediction. y is feet height. */
   velocityY?: number;
+  /** Airborne duck raises the feet, not the jump impulse; cleared on landing. */
+  airCrouchOffset?: number;
 }
 
 export interface MatchState {

@@ -790,8 +790,12 @@ export function mountArena(
       };
       if (state.phase === "live" && !authorizationSuspended) {
         const beforeY = predicted.y;
+        const beforeTuck = predicted.airCrouchOffset ?? 0;
         predictMovement(predicted, input, TICK_MS, map);
-        jumpPresentation.advance(beforeY, predicted.y);
+        // Air-duck changes the feet coordinate, not the head's jump trajectory.
+        // Interpolate in the new stance space; landing remains the original path.
+        const tuckDelta = (predicted.airCrouchOffset ?? 0) - beforeTuck;
+        jumpPresentation.advance(beforeY + (predicted.velocityY ? tuckDelta : 0), predicted.y);
         pending.push(input);
         if (pending.length > 60) pending.shift();
       }
@@ -887,7 +891,10 @@ export function mountArena(
         motion.x,
         cameraVertical.sample(
           jumpPresentation.sample(predicted.y, accumulator / inputStepMs) +
-            cameraStance.sample(renderPose, dt) +
+            cameraStance.sample(
+              predicted.airCrouchOffset || renderPose.airCrouchOffset ? predicted : renderPose,
+              dt,
+            ) +
             correction.y,
           dt,
         ),

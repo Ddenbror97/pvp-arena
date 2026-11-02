@@ -29,6 +29,27 @@ const input: Input = {
   sprint: true,
 };
 describe("continuous camera movement", () => {
+  it("air-duck keeps the camera at head height and landing does not replay the tuck", () => {
+    const stance = new CameraStance();
+    expect(stance.sample({ crouched: false }, 16)).toBeCloseTo(1.6);
+    const airDuck = { crouched: true, airCrouchOffset: 0.65, velocityY: 3 };
+    // The physical feet move upward by 0.65; the eye offset compensates exactly.
+    expect(0.65 + stance.sample(airDuck, 16)).toBeCloseTo(1.6);
+    expect(stance.sample(airDuck, 16)).toBeCloseTo(0.95);
+    expect(stance.sample({ crouched: true, airCrouchOffset: 0, velocityY: 0 }, 16)).toBeCloseTo(
+      0.95,
+    );
+    stance.reset();
+    expect(stance.sample({ crouched: false }, 16)).toBeCloseTo(1.6);
+  });
+  it("releasing air-duck preserves the head while lowering the feet", () => {
+    const stance = new CameraStance();
+    stance.sample({ crouched: false }, 16);
+    stance.sample({ crouched: true, airCrouchOffset: 0.65, velocityY: 2 }, 16);
+    expect(
+      -0.65 + stance.sample({ crouched: false, airCrouchOffset: 0, velocityY: 2 }, 16),
+    ).toBeCloseTo(0.95);
+  });
   it.each([30, 60, 144])("keeps takeoff and landing continuous at %i Hz", (hz) => {
     const p = createMatch({ A: "a", B: "b" }, 5, 1).players.A;
     Object.assign(p, { x: 9, z: 12, y: 0, velocityY: 0 });
