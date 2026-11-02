@@ -320,11 +320,13 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     expect(errors).toEqual([]);
     expect(dialogs).toEqual([]);
     await expect.poll(() => page.evaluate(() => document.pointerLockElement === null)).toBe(true);
-    await page.getByRole("button", { name: "Accept fresh rematch", exact: true }).click();
-    await expect(
-      page.getByRole("button", { name: "Confirm new entry", exact: true }),
-    ).toBeVisible();
-    await page.getByRole("button", { name: "Keep result", exact: true }).click();
+    // The single replay button would reserve a new entry. Inspect the displayed
+    // terms without entering another paid match in this settlement test.
+    await expect(page.getByRole("button", { name: "Play again", exact: true })).toBeEnabled();
+    await expect(page.locator(".duel-result-terms")).toContainText("5% fee");
+    await expect(page.getByRole("button", { name: "Confirm new entry", exact: true })).toHaveCount(
+      0,
+    );
     const pct = (values: number[], q: number) =>
       values.length
         ? [...values].sort((a, b) => a - b)[Math.max(0, Math.ceil(values.length * q) - 1)]!

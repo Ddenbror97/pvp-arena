@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Volume2, VolumeX, Maximize, Copy, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Volume2, VolumeX, Maximize, Copy } from "lucide-react";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
 import { SIDE_RIFLE } from "@/lib/fps/combat";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
@@ -25,6 +25,8 @@ import {
   claimArenaPointer,
 } from "@/lib/fps/entry-capture";
 import { RoundBreak, type DuelProfile } from "./RoundBreak";
+import { MatchResult } from "./MatchResult";
+import { walletQuery } from "@/lib/jackpot/api";
 import { DeathFeedback } from "./DeathFeedback";
 import { isDefeatedView } from "@/lib/fps/death-presentation";
 import { characterSide, isHalftime, sideName } from "@/lib/fps/sides";
@@ -116,7 +118,7 @@ export function DuelMatch({
   const capturePending = useRef(false);
   const hadCapturedMouse = useRef(false);
   const [capturing, setCapturing] = useState(false);
-  const [rematchReview, setRematchReview] = useState(false);
+  const actionInFlight = useRef(false);
   const [settings, setSettings] = useState(DEFAULT_STRIKE_SETTINGS);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef(settings);
@@ -173,6 +175,16 @@ export function DuelMatch({
     frame?.state.phase === "completed" ||
     frame?.state.phase === "cancelled" ||
     (!spectate && ["COMPLETED", "CANCELLED", "REFUNDED"].includes(match?.status ?? ""));
+  const resultSettled =
+    !!frame?.settled || ["COMPLETED", "CANCELLED"].includes(match?.status ?? "");
+  const replayWallet = useQuery({
+    ...walletQuery(userId),
+    enabled: !!userId && !!terminal && !spectate && !!match && !match.practice && resultSettled,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+    retry: 1,
+  });
   const needsArena = !!desktop && (playable || terminal || !userId);
   // The runtime fixes each match's map. Snapshots are authoritative; the admission ticket tells a
   // player which map it is before the socket opens, so the scene and loading art start at once.
@@ -260,7 +272,11 @@ export function DuelMatch({
               if (value) {
                 hadCapturedMouse.current = true;
                 setSettingsOpen(false);
-              } else if (hadCapturedMouse.current) setSettingsOpen(true);
+              } else if (
+                hadCapturedMouse.current &&
+                !["completed", "cancelled"].includes(currentFrame.current?.state.phase ?? "")
+              )
+                setSettingsOpen(true);
             },
             (weapon, seq) => {
               observations.current.shot(seq, performance.now());
@@ -555,12 +571,24 @@ export function DuelMatch({
       void activateRef.current(true);
   }, [spectate, terminal, ready, capturing, arenaReady, frame, connection]);
   const perform = async (kind: "cancel" | "join" | "rematch") => {
+    if (actionInFlight.current) return;
+    if (kind === "rematch" && (!match || spectate || !resultSettled)) return;
+    actionInFlight.current = true;
     setBusy(true);
     setError(null);
-    requestKey.current ??= crypto.randomUUID();
     if (kind === "join") reserveArenaPointer(matchId);
-    else if (kind === "rematch" && match?.practice) reserveArenaPointer();
+    else if (kind === "rematch") reserveArenaPointer();
     try {
+      // Preflight improves feedback; the ledger RPC still locks and checks funds
+      // atomically. Preserve an existing key on retries: an earlier request may
+      // already have reserved the entry even if its response was interrupted.
+      if (kind === "rematch" && !match?.practice && !requestKey.current) {
+        const funds = await qc.fetchQuery({ ...walletQuery(userId), staleTime: 0 }).catch(() => {
+          throw new Error("BALANCE_CHECK_FAILED");
+        });
+        if (funds.available < match!.stake) throw new Error("INSUFFICIENT_BALANCE");
+      }
+      requestKey.current ??= crypto.randomUUID();
       const r = (await action({
         data:
           kind === "cancel"
@@ -576,10 +604,12 @@ export function DuelMatch({
               : match?.practice
                 ? { action: "practice", combatVersion: 2, key: requestKey.current }
                 : { action: kind, combatVersion: 2, matchId, key: requestKey.current },
-      })) as { match_id?: string; id?: string };
+      })) as { match_id?: string; id?: string; status?: string };
+      // A first cash replay creates a waiting room; leave its controls clickable.
+      // Joining the opponent's funded replay retains this click's mouse permission.
+      if (kind === "rematch" && !match?.practice && r.status !== "FUNDED") releaseArenaPointer();
       if ("status" in r && "creator_id" in r && r.id)
         qc.setQueryData(["fps-view", r.id, userId], r);
-      requestKey.current = null;
       void qc.invalidateQueries({ queryKey: ["wallet"] });
       if (kind === "cancel") await navigate({ to: "/fps-duel" });
       else
@@ -589,10 +619,12 @@ export function DuelMatch({
           search: {},
           replace: true,
         });
+      requestKey.current = null;
     } catch (e) {
       releaseArenaPointer();
       setError(duelError(e));
     } finally {
+      actionInFlight.current = false;
       setBusy(false);
     }
   };
@@ -621,6 +653,18 @@ export function DuelMatch({
     desktop;
   const needsInteraction =
     !userId || !desktop || !!renderError || !!invite || terminal || !playable;
+  const showResult = !!terminal && !!userId && !!desktop && !renderError && !invite;
+  const cancelledResult =
+    frame?.state.phase === "cancelled" || ["CANCELLED", "REFUNDED"].includes(match?.status ?? "");
+  const winningSeat =
+    frame?.state.winner ??
+    (match?.winner_id && match.winner_id === match.creator_id
+      ? "A"
+      : match?.winner_id && match.winner_id === match.opponent_id
+        ? "B"
+        : null);
+  const resultWinner =
+    !cancelledResult && winningSeat ? players[winningSeat === "A" ? 0 : 1] : undefined;
   const showLoading =
     !invite &&
     !terminal &&
@@ -644,7 +688,10 @@ export function DuelMatch({
           ? "Waiting for opponent"
           : `Entering ${mapName}`;
   return (
-    <div className="duel-game" data-arena-ready={arenaReady}>
+    <div
+      className={`duel-game${showResult ? " duel-show-result" : ""}`}
+      data-arena-ready={arenaReady}
+    >
       {!arenaReady && !showLoading && (
         <div className="duel-loading-backdrop" aria-hidden>
           {loadingImage && (
@@ -737,10 +784,10 @@ export function DuelMatch({
           </button>
         </div>
       </header>
-      {frame && isDefeatedView(frame.state, seat, spectate) && (
+      {!terminal && frame && isDefeatedView(frame.state, seat, spectate) && (
         <DeathFeedback key={`${matchId}-${frame.state.round}`} round={frame.state.round} />
       )}
-      <StrikeCrosshair settings={settings} />
+      {!terminal && <StrikeCrosshair settings={settings} />}
       <GameSettings
         matchNotice={<FpsReadyAction practiceId={matchId} />}
         open={settingsOpen && ready && !terminal}
@@ -820,7 +867,30 @@ export function DuelMatch({
           halftime={!!frame && isHalftime(frame.state)}
         />
       )}
-      {!showLoading && needsInteraction && (
+      {showResult && (
+        <MatchResult
+          winner={resultWinner}
+          score={[
+            frame?.state.score.A ?? match?.score_a ?? 0,
+            frame?.state.score.B ?? match?.score_b ?? 0,
+          ]}
+          mapName={mapName}
+          practice={!!match?.practice}
+          cancelled={cancelledResult}
+          settled={resultSettled}
+          spectate={spectate}
+          stake={match?.stake ?? 0}
+          available={error && requestKey.current ? undefined : replayWallet.data?.available}
+          checkingBalance={!match?.practice && replayWallet.isFetching}
+          balanceError={replayWallet.isError}
+          busy={busy}
+          error={error}
+          onPlayAgain={() => void perform("rematch")}
+          lobbyLink={<Link to="/fps-duel">Back to lobby</Link>}
+          walletLink={<Link to="/wallet">Open wallet</Link>}
+        />
+      )}
+      {!showLoading && needsInteraction && !showResult && (
         <div className={`duel-game-overlay ${locked ? "duel-game-overlay-passive" : ""}`}>
           <section className="duel-match-card">
             <span className="duel-eyebrow">AIM ARENA / PVP ORIGINALS</span>
@@ -891,70 +961,6 @@ export function DuelMatch({
                       : "Loading invitation terms…"}
                   </p>
                 )}
-              </>
-            ) : terminal ? (
-              <>
-                <ShieldCheck size={32} />
-                <h1>
-                  {frame?.state.phase === "cancelled" || match?.status === "CANCELLED"
-                    ? "Match cancelled"
-                    : (seat !== null && frame?.state.winner === seat) || match?.winner_id === userId
-                      ? "Your arena. Your win."
-                      : "Duel complete."}
-                </h1>
-                <p>
-                  {frame?.state.score.A ?? match?.score_a ?? 0} —{" "}
-                  {frame?.state.score.B ?? match?.score_b ?? 0}
-                  <br />
-                  {frame?.settled || ["COMPLETED", "CANCELLED"].includes(match?.status ?? "")
-                    ? match?.practice
-                      ? "Practice complete. No wager or rating changes."
-                      : "Result recorded. Your wallet reflects the server's settlement."
-                    : "Settlement pending. The server is retrying safely; no client payout is required."}
-                </p>
-                <button
-                  className="duel-primary"
-                  disabled={
-                    busy ||
-                    spectate ||
-                    !(frame?.settled || ["COMPLETED", "CANCELLED"].includes(match?.status ?? ""))
-                  }
-                  onClick={() =>
-                    match?.practice ? void perform("rematch") : setRematchReview(true)
-                  }
-                >
-                  {match?.practice ? "Practice again" : "Accept fresh rematch"}
-                </button>
-                {rematchReview && (
-                  <div className="duel-rematch-review">
-                    <p>
-                      New match · Best of 13 · First to seven
-                      <br />
-                      {duelMoney(match?.stake ?? 0)} entry · 5% fee · Winner receives{" "}
-                      {duelMoney(duelQuote(match?.stake ?? 0).payout)}
-                    </p>
-                    <button
-                      className="duel-primary"
-                      disabled={busy}
-                      onClick={() => {
-                        setRematchReview(false);
-                        void perform("rematch");
-                      }}
-                    >
-                      Confirm new entry
-                    </button>
-                    <button
-                      className="duel-secondary"
-                      disabled={busy}
-                      onClick={() => setRematchReview(false)}
-                    >
-                      Keep result
-                    </button>
-                  </div>
-                )}
-                <Link className="duel-secondary" to="/fps-duel">
-                  Return to lobby
-                </Link>
               </>
             ) : !playable ? (
               <>

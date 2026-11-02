@@ -60,7 +60,10 @@ const DUEL_ERRORS: Record<string, string> = {
   FPS_RUNTIME_UNAVAILABLE: "The match server is unavailable. Please retry shortly.",
   FPS_DISABLED: "PvPStrike is closed while deployment checks finish.",
   CASH_DISABLED: "Cash duels are not enabled yet.",
-  INSUFFICIENT_BALANCE: "Your available cash balance is too low for this entry.",
+  INSUFFICIENT_BALANCE: "Your available balance and eligible credits are too low for this entry.",
+  BALANCE_CHECK_FAILED: "We couldn’t check your balance. Please try Play again once more.",
+  REMATCH_NOT_AVAILABLE: "This match is not ready for a rematch yet.",
+  REMATCH_ALREADY_ACCEPTED: "You already accepted this rematch. Open it from the lobby.",
   ALREADY_IN_MATCH: "Finish or cancel your existing duel first.",
   FORBIDDEN: "You do not have access to this room.",
   RESTRICTED_FUNDS:

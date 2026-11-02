@@ -64,7 +64,7 @@ test("solo Practice completes seven rounds, reconnects and starts again without 
     await expect.poll(() => settled, { timeout: 30000 }).toBe(true);
     expect(state?.score).toEqual({ A: 0, B: 7 });
     expect(rounds.size).toBe(7);
-    await expect(page.getByText("Practice complete. No wager or rating changes.")).toBeVisible();
+    await expect(page.getByText("No wager. No rating changes.")).toBeVisible();
     await page.screenshot({ path: info.outputPath("practice-seven-rounds.png") });
     const after = (
       await sql`select (select count(*)::int from ledger_transactions where user_id=${user.id}) tx,(select coalesce(sum(balance),0)::text from wallet_accounts where owner_id=${user.id}) balance,(select row_to_json(r) from fps_ratings r where user_id=${user.id}) rating`
@@ -74,7 +74,7 @@ test("solo Practice completes seven rounds, reconnects and starts again without 
       await sql`select status,score_a,score_b from fps_private.practice_matches where id=${matchId}`
     )[0];
     expect(result).toEqual({ status: "COMPLETED", score_a: 0, score_b: 7 });
-    await page.getByRole("button", { name: "Practice again", exact: true }).click();
+    await page.getByRole("button", { name: "Play again", exact: true }).click();
     await expect.poll(() => page.url()).not.toContain(matchId!);
     await expect(page.locator(".duel-game")).toHaveAttribute("data-arena-ready", "true");
     expect(errors).toEqual([]);
