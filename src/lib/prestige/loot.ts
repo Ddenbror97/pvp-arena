@@ -11,10 +11,6 @@ export function lootTier(cents: number): LootTier {
   return "common";
 }
 
-export function oddsTotal(odds: LootOdd[]): number {
-  return odds.reduce((s, o) => s + o.weight, 0);
-}
-
 /** Exact chance as a percentage with up to two decimals; never rounds a real chance down to 0. */
 export function formatChance(weight: number, total: number): string {
   if (total <= 0 || weight <= 0) return "0%";

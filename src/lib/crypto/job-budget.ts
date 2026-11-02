@@ -10,8 +10,5 @@
  * cadence still settles a broadcast on a following run.
  */
 
-export const CALLER_TIMEOUT_MS = 25_000;
-export const SWEEP_SAFETY_MARGIN_MS = 7_000;
-export const SWEEP_WORK_BUDGET_MS = CALLER_TIMEOUT_MS - SWEEP_SAFETY_MARGIN_MS;
 export const DEPOSIT_GATE_SECONDS = 40;
 export const SWEEP_GATE_SECONDS = 40;

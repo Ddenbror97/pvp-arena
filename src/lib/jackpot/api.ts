@@ -175,10 +175,6 @@ export async function fetchLiveGame(): Promise<Game | null> {
   return preferJackpotRound(openRes.data, settledRes.data);
 }
 
-export async function fetchOpenGame(): Promise<Game | null> {
-  return (await fetchOpenRound()).game;
-}
-
 export async function fetchGame(id: number): Promise<Game | null> {
   const { data, error } = await supabase
     .from("jackpot_games")
