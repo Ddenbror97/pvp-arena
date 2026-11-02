@@ -264,9 +264,7 @@ export const RELOAD_CLIPS: Record<ReloadKind, ReloadClip> = {
 
 // Back-compat names: the empty (full) reload.
 export const WEAPON_POSITION = EMPTY_RELOAD.weaponPosition;
-export const WEAPON_ROTATION = EMPTY_RELOAD.weaponRotation;
 export const MAG_POSITION = EMPTY_RELOAD.magPosition;
-export const MAG_ROTATION = EMPTY_RELOAD.magRotation;
 export const BOLT_TRAVEL = EMPTY_RELOAD.boltTravel;
 export const SUPPORT = EMPTY_RELOAD.support;
 export const RELOAD_PHASES = EMPTY_RELOAD.phases as {

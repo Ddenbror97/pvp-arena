@@ -101,4 +101,3 @@ export function getMap(id?: string | null): GameMap {
 }
 /** The map of a match (its authoritative `mapId`). */
 export const mapOf = (state: { mapId?: string | null }) => getMap(state.mapId);
-export const listMaps = (): readonly GameMap[] => [...MAPS.values()];
