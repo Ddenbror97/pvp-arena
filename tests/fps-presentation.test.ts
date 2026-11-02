@@ -289,6 +289,33 @@ describe("render presentation independent of server physics", () => {
     expect(b.scale).toBeGreaterThan(lower);
     expect(b.scale).toBeLessThanOrEqual(1);
   });
+  it("does not oscillate on a GPU at the boundary between two scale steps", () => {
+    // Deterministic boundary machine: full scale costs 24 ms, cost ∝ pixels (scale²) + 4 ms CPU,
+    // one 10 ms hitch every 100 frames. 0.8× fits a 60 Hz frame, 0.9× does not.
+    const b = new RenderBudget();
+    let t = 0,
+      n = 0,
+      resizes = 0;
+    while (t < 600_000) {
+      const ms = 4 + 20 * b.scale * b.scale + (++n % 100 === 0 ? 10 : 0);
+      t += ms;
+      if (b.update(ms)) resizes++;
+    }
+    // Two steps down, then retries of 0.9× at 12 s, 24 s, 48 s, 96 s, 192 s… (each retry is a
+    // step up and back): 14 resizes in 10 min, later ones 3 min apart. Without hysteresis: ~30,
+    // one every ~20 s for the whole session.
+    expect(b.scale).toBeGreaterThanOrEqual(0.7);
+    expect(b.scale).toBeLessThanOrEqual(0.9);
+    expect(resizes).toBeLessThanOrEqual(16);
+  });
+  it("recovers fully once the load eases", () => {
+    const b = new RenderBudget();
+    for (let i = 0; i < 2000; i++) b.update(30);
+    expect(b.scale).toBe(0.6);
+    // Now every frame is fast: back to 1× within a few minutes, never above.
+    for (let i = 0; i < 60 * 60 * 5; i++) b.update(7);
+    expect(b.scale).toBe(1);
+  });
   it("one render configuration: the framebuffer cap is fixed, only the adaptive scale moves", () => {
     const b = new RenderBudget();
     expect(RENDER_CAP).toEqual({ ratio: 1.25, pixels: 1_500_000 });
