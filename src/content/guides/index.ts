@@ -2304,9 +2304,6 @@ export function publishedTopics(): ClusterInfo[] {
 export function getTopic(slug: string): ClusterInfo | undefined {
   return publishedTopics().find((c) => c.slug === slug);
 }
-export function pillarOf(name: GuideCluster): Guide | undefined {
-  return GUIDES.find((g) => g.cluster === name && g.pillar);
-}
 
 const bySlug = new Map(GUIDES.map((g) => [g.slug, g]));
 export function getGuide(slug: string): Guide | undefined {
@@ -2314,15 +2311,6 @@ export function getGuide(slug: string): Guide | undefined {
 }
 export function isPublishedGuide(slug: string): boolean {
   return bySlug.has(slug);
-}
-
-export function groupsFor(name: GuideCluster): { name: string; guides: Guide[] }[] {
-  return CLUSTER_GROUPS[name]
-    .map((g) => ({
-      name: g.name,
-      guides: g.slugs.map((s) => getGuide(s)).filter((x): x is Guide => !!x),
-    }))
-    .filter((g) => g.guides.length);
 }
 
 export { guideText, wordCount } from "./text";

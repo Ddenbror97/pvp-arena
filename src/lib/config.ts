@@ -24,11 +24,4 @@ export const COMPLIANCE = {
   withdrawalControls: { enabled: false },
 } as const;
 
-export const CRYPTO = {
-  supportedAssets: [] as string[],
-  network: null as string | null,
-  minDeposit: null as number | null,
-  minWithdrawal: null as number | null,
-} as const;
-
 export const QUICK_AMOUNTS = [500, 1000, 2500, 5000] as const;

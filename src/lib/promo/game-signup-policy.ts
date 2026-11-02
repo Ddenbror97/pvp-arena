@@ -4,7 +4,6 @@ export const GAME_SIGNUP_FLAG = "GAME_SIGNUP_PROMO_ENABLED";
 export const GAME_SIGNUP_CAMPAIGN = "game_signup_pvp1_v1";
 export const GAME_SIGNUP_CODE = "PVP1";
 export const GAME_SIGNUP_IDLE_MS = 6000;
-export const GAME_SIGNUP_MODAL_MS = 200;
 export const NEW_ACCOUNT_WINDOW_MS = 15 * 60 * 1000;
 
 export const GAME_SIGNUP_ROUTES = [

@@ -2,7 +2,6 @@
 // Uses Web Crypto only (CSPRNG + HMAC-SHA256). Never import in client UI for generation.
 
 export const OTP_LENGTH = 6;
-export const OTP_TTL_MINUTES = 10;
 export const OTP_PURPOSE = "SIGNUP_EMAIL_VERIFICATION" as const;
 export const PASSWORD_RESET_PURPOSE = "PASSWORD_RESET" as const;
 export const EMAIL_CHANGE_PURPOSE = "EMAIL_CHANGE" as const;

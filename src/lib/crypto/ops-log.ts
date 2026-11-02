@@ -28,13 +28,3 @@ export function redactOpsValue(message: string): string {
   out = out.replace(/0x[0-9a-fA-F]{64}/g, "[redacted]");
   return out.slice(0, 240);
 }
-
-/** Counts of action codes. Addresses and transaction bytes are omitted. */
-export function countActions(actions: readonly { action: string }[]): Record<string, number> {
-  const counts: Record<string, number> = {};
-  for (const row of actions) {
-    const action = row.action.slice(0, 80);
-    counts[action] = (counts[action] ?? 0) + 1;
-  }
-  return counts;
-}

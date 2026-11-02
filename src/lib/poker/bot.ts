@@ -58,24 +58,6 @@ export const BOT_STYLE = {
 const POS: Record<BotPosition, number> = { late: -6, early: 8, middle: 0, blind: 4 };
 const MADE = [18, 48, 66, 76, 84, 88, 94, 97, 99];
 
-/** Late acts more often. Early and the blinds wait for a stronger hand. */
-export function botPosition(
-  seat: number,
-  button: number,
-  sb: number,
-  bb: number,
-  live: readonly number[],
-  maxSeats: number,
-): BotPosition {
-  if (live.length <= 3) return seat === button ? "late" : "blind";
-  if (seat === button) return "late";
-  if (seat === sb || seat === bb) return "blind";
-  const order = clockwise(live, button, maxSeats);
-  const i = order.indexOf(seat);
-  if (i < Math.floor(order.length / 2)) return "early";
-  return "middle";
-}
-
 /** FNV-1a, low 32 bits, then 0..9999. Matches `_poker_bot_roll` in SQL. */
 export function botRoll(handId: number, seat: number, street: string, version: number) {
   let h = 2166136261;
@@ -149,7 +131,10 @@ function drawBonus(hole: readonly [Card, Card], board: readonly Card[]) {
     const window = low === 9 ? (1 << 12) | 0b1111 : 0b11111 << low;
     if (bitCount(mask & window) !== 4) continue;
     if ((holeMask & window) === 0) continue;
-    const run = low === 9 ? false : bitCount(mask & (0b1111 << low)) === 4 || bitCount(mask & (0b1111 << (low + 1))) === 4;
+    const run =
+      low === 9
+        ? false
+        : bitCount(mask & (0b1111 << low)) === 4 || bitCount(mask & (0b1111 << (low + 1))) === 4;
     straight = Math.max(straight, run ? 12 : 5);
   }
   return Math.min(20, flush + straight);
@@ -169,15 +154,13 @@ function fallback(legal: BotLegal): BotDecision {
   return { action: "FOLD", amount: 0 };
 }
 
-function sized(
-  kind: "BET" | "RAISE",
-  view: BotView,
-  shove: boolean,
-): BotDecision {
+function sized(kind: "BET" | "RAISE", view: BotView, shove: boolean): BotDecision {
   const { legal } = view;
   const target = Math.floor((view.pot * 2) / 3);
   const want =
-    kind === "BET" ? Math.max(legal.minRaiseTo, target) : Math.max(legal.minRaiseTo, legal.currentBet + target);
+    kind === "BET"
+      ? Math.max(legal.minRaiseTo, target)
+      : Math.max(legal.minRaiseTo, legal.currentBet + target);
   let to = Math.min(legal.maxRaiseTo, Math.max(legal.minRaiseTo, want));
   if (shove) to = legal.maxRaiseTo;
   if (to >= legal.maxRaiseTo && legal.maxRaiseTo === view.heroStreetBet + view.heroStack) {
@@ -229,11 +212,15 @@ export function chooseBotAction(view: BotView): BotDecision {
     }
   }
 
-  if ((decision.action === "BET" || decision.action === "RAISE" || decision.action === "ALL_IN") && !legal.canRaise) {
+  if (
+    (decision.action === "BET" || decision.action === "RAISE" || decision.action === "ALL_IN") &&
+    !legal.canRaise
+  ) {
     decision = fallback(legal);
   }
   if (decision.action === "CALL" && !legal.canCall) decision = fallback(legal);
-  if (decision.action === "CHECK" && !legal.canCheck) decision = legal.canCall ? { action: "CALL", amount: 0 } : { action: "FOLD", amount: 0 };
+  if (decision.action === "CHECK" && !legal.canCheck)
+    decision = legal.canCall ? { action: "CALL", amount: 0 } : { action: "FOLD", amount: 0 };
   if (decision.action === "FOLD" && legal.canCheck) decision = { action: "CHECK", amount: 0 };
   if (decision.action === "BET" || decision.action === "RAISE") {
     const amount = Math.min(legal.maxRaiseTo, Math.max(legal.minRaiseTo, decision.amount));

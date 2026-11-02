@@ -64,16 +64,6 @@ export function resolveChainEnvAssets<T extends ChainAssetConfig>(
   return { ok: true, usdc, eth };
 }
 
-/** True only when this asset key is an enabled row. The sibling asset is irrelevant. */
-export function depositAssetEnabled(
-  rows: ChainAssetConfig[] | null | undefined,
-  assetKey: string,
-): boolean {
-  const chain = resolveChainEnvAssets(rows);
-  if (!chain.ok) return false;
-  return (rows ?? []).some((asset) => asset.asset_key === assetKey && asset.is_enabled);
-}
-
 export type EnvCheck = { ok: true } | { ok: false; reason: string };
 
 /** Only HTTPS RPC endpoints that are not testnets are accepted. */

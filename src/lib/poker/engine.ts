@@ -77,12 +77,6 @@ export function blindSeats(seats: readonly number[], button: number, maxSeats: n
   return { sbSeat, bbSeat: nextSeat(seats, sbSeat, maxSeats) };
 }
 
-/** Next button: first participant clockwise after the previous button. */
-export function nextButton(seats: readonly number[], prevButton: number | null, maxSeats: number) {
-  if (prevButton === null) return [...seats].sort((a, b) => a - b)[0]!;
-  return nextSeat(seats, prevButton, maxSeats);
-}
-
 function post(p: EnginePlayer, amount: number) {
   const a = Math.min(amount, p.stack);
   p.stack -= a;
@@ -259,12 +253,6 @@ export function act(s: HandState, seat: number, type: ActionType, amount = 0): H
   return s;
 }
 
-/** Timeout: check when free, otherwise fold. */
-export function timeoutAction(s: HandState): ActionType {
-  const la = legalActions(s);
-  return la?.canCheck ? "CHECK" : "FOLD";
-}
-
 /** Close the betting round, move to the next street, or run out to showdown. */
 function advance(s: HandState) {
   while (!s.ended) {
@@ -291,10 +279,6 @@ function advance(s: HandState) {
     if (s.toAct !== null) return;
   }
 }
-
-/** Board cards visible on a street. */
-export const boardCount = (street: Street) =>
-  ({ PREFLOP: 0, FLOP: 3, TURN: 4, RIVER: 5, SHOWDOWN: 5 })[street];
 
 /**
  * Deal positions in a 52-card deck for n participants ordered from the first

@@ -22,15 +22,3 @@ export function formatChance(weight: number, total: number): string {
   const shown = Math.max(Number(pct.toFixed(2)), 0.01);
   return `${shown.toLocaleString("en-US", { maximumFractionDigits: 2 })}%`;
 }
-
-/** "1 in N" for rare outcomes, rounded to the nearest whole draw. */
-export function oneIn(weight: number, total: number): string | null {
-  if (total <= 0 || weight <= 0 || weight / total >= 0.01) return null;
-  return `1 in ${Math.round(total / weight).toLocaleString("en-US")}`;
-}
-
-/** Average payout in cents, rounded. */
-export function averagePayout(odds: LootOdd[]): number {
-  const total = oddsTotal(odds);
-  return total > 0 ? Math.round(odds.reduce((s, o) => s + o.amount * o.weight, 0) / total) : 0;
-}

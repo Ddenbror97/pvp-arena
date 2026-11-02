@@ -15,29 +15,3 @@ export const SWEEP_SAFETY_MARGIN_MS = 7_000;
 export const SWEEP_WORK_BUDGET_MS = CALLER_TIMEOUT_MS - SWEEP_SAFETY_MARGIN_MS;
 export const DEPOSIT_GATE_SECONDS = 40;
 export const SWEEP_GATE_SECONDS = 40;
-/** In-flight rows reconciled before any new sweep. The rest wait one minute. */
-export const MAX_INFLIGHT_RECONCILE_PER_RUN = 8;
-
-export function sweepDeadline(nowMs: number): number {
-  return nowMs + SWEEP_WORK_BUDGET_MS;
-}
-
-export function separateJobOutcome(input: {
-  detectMs: number;
-  creditMs: number;
-  sweepMs: number;
-  callerTimeoutMs?: number;
-}): {
-  depositCompleted: boolean;
-  sweepCompleted: boolean;
-  creditSurvivedSweepTimeout: boolean;
-} {
-  const timeout = input.callerTimeoutMs ?? CALLER_TIMEOUT_MS;
-  const depositMs = input.detectMs + input.creditMs;
-  const depositCompleted = depositMs <= timeout;
-  return {
-    depositCompleted,
-    sweepCompleted: input.sweepMs <= timeout,
-    creditSurvivedSweepTimeout: depositCompleted,
-  };
-}

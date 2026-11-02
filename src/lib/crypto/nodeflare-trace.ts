@@ -15,8 +15,6 @@ export const TRACE_USER_AGENT = "pvpspinarena-deposit/1.0";
 export const TRACE_TIMEOUT_MS = 12_000;
 /** One block filter is enough. Debug is only the fallback, and it is capped. */
 export const TRACE_MAX_DEBUG_CALLS = 6;
-/** Published weight for trace_* and debug_*. Used for quota estimates, not billing. */
-export const TRACE_CALL_CU = 100;
 
 export type TraceProblem =
   "rate_limit" | "quota" | "timeout" | "http" | "unsupported" | "malformed" | "unavailable";
