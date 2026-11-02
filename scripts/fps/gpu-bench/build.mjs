@@ -43,8 +43,8 @@ for (const f of fs.readdirSync(path.join(ROOT, "public/fps/models")))
 fs.writeFileSync(
   path.join(out, "index.html"),
   `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FPS GPU benchmark</title>
-<style>html,body{margin:0;height:100%;background:#111;color:#ddd;font:12px/1.4 ui-monospace,monospace}#host{position:fixed;inset:0}#panel{position:fixed;left:8px;top:8px;right:8px;z-index:2;pointer-events:none}#start{pointer-events:auto;font:inherit;padding:6px 12px;margin-bottom:6px}#log{white-space:pre-wrap;background:rgba(0,0,0,.6);padding:6px;max-height:45vh;overflow:auto;margin:0}</style></head>
-<body><div id="host" class="duel-render-host"></div><div id="panel"><button id="start">Start benchmark (keep this window visible and focused)</button><pre id="log"></pre></div>
+<style>html,body{margin:0;height:100%;background:#111;color:#ddd;font:12px/1.4 ui-monospace,monospace}#host{position:fixed;inset:0}#panel{position:fixed;left:8px;top:8px;right:8px;z-index:2;pointer-events:none}#start{pointer-events:auto;font:inherit;padding:6px 12px;margin-bottom:6px}#results{white-space:pre;overflow-x:auto;background:rgba(0,0,0,.6);padding:6px;margin:0 0 6px;pointer-events:auto}#results:empty{display:none}#log{pointer-events:auto;white-space:pre-wrap;background:rgba(0,0,0,.6);padding:6px;max-height:45vh;overflow:auto;margin:0}</style></head>
+<body><div id="host" class="duel-render-host"></div><div id="panel"><button id="start">Start benchmark (keep this window visible and focused)</button><pre id="results"></pre><pre id="log"></pre></div>
 <script type="module" src="./bench.js"></script></body></html>`,
 );
 const files = [];

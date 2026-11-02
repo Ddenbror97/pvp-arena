@@ -23,7 +23,7 @@ const MAPS = ["dustfront", "frostline", "crossfire", "lost-trail"];
 const params = new URLSearchParams(location.search);
 const SAMPLE_MS = Number(params.get("sample") ?? 20000);
 const WARMUP_MS = 4000;
-const CYCLES = Number(params.get("cycles") ?? 2);
+const CYCLES = Number(params.get("cycles") ?? 3);
 
 // The game serves models from the site root. Here they sit next to the page, either as .glb or
 // (where a host serves only text) as base64 in .glb.txt, tried second. Each is read
@@ -206,6 +206,9 @@ async function runMap(mapId: string, cycle: number): Promise<Row> {
   clearInterval(timer);
   const row: Row = {
     map: mapId,
+    // A hidden or unfocused page is throttled by the browser (and by the game when unfocused):
+    // such a sample is not a measurement.
+    visible: document.visibilityState === "visible" && document.hasFocus(),
     cycle,
     loadMs: Math.round(loadMs),
     ...lows(intervals),
