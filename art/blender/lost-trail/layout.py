@@ -111,15 +111,21 @@ trunk("ridge-tree", -13.2, -12.6, 1.8)
 trunk("plaza-tree", -11.4, -2.6, 2.0)
 pair("plaza-ruin", -12.8, -12.2, 1.0, 3.6, 0, LOW_COVER, "concrete", "ruin-wall")
 pair("plaza-crates", -10.4, -9.0, 1.8, 3.4, 0, 2.2, "wood", "crate-stack")
-pair("plaza-log", -8.6, -5.8, -4.4, -3.8, 0, LOW_COVER, "wood", "log")
-pair("bridgehead-rock-s", -5.2, -4.0, 3.0, 4.2, 0, 1.6, "concrete", "boulder")
-pair("bridgehead-rock-n", -5.2, -4.2, -4.4, -3.0, 0, 1.3, "concrete", "boulder")
+# 0.4 m toward the spawn side of the plaza: the gap to the bridgehead rock fits the practice
+# bot's inflated path grid, so bots reach the north bank and the log crossing.
+pair("plaza-log", -9.0, -6.2, -4.4, -3.8, 0, LOW_COVER, "wood", "log")
+# 0.3 m in from the bridgehead ruin: the gap between rock and ruin fits the practice bot's
+# inflated path grid as well as players, so bots can use the bridge.
+pair("bridgehead-rock-s", -4.9, -3.7, 3.0, 4.2, 0, 1.6, "concrete", "boulder")
+pair("bridgehead-rock-n", -4.9, -3.9, -4.4, -3.0, 0, 1.3, "concrete", "boulder")
 # Bridge: deck at ground level over the gorge, rope rails (visual), log posts at each corner.
 for zs, tag in ((-1, "n"), (1, "s")):
     pair(f"bridge-post-{tag}", -2.95, -2.6, zs * BRIDGE - 0.175 + zs * 0.175, zs * BRIDGE + 0.175 + zs * 0.175, 0, 1.6, "wood", "bridge-post")
 # Supply stack in the middle of the bridge, above head height: the deck becomes two lanes and
 # no long diagonal crosses the river through the bridge.
-centred("bridge-crates", -0.6, 0.6, -0.6, 0.6, 0, 2.2, "wood", "crate-stack")
+# 0.9 m across the deck (z): two 1.25 m lanes, wide enough for players and the practice bot's
+# path grid (which keeps 0.18 m beyond the player radius).
+centred("bridge-crates", -0.6, 0.6, -0.45, 0.45, 0, 2.2, "wood", "crate-stack")
 # An overgrown stone ruin on each bridgehead blocks the bridge axis: the bridge is approached
 # round it (S-bend), so no lane runs from spawn exit to spawn exit through the bridge.
 pair("bridgehead-ruin", -7.4, -6.2, -2.0, 2.0, 0, 2.6, "concrete", "ruin-wall")

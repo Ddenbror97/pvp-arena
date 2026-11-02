@@ -44,7 +44,7 @@ Measured on the headless capture (SwiftShader); see Verification for the method.
 
 | | Art pass 2 | Art pass 3 |
 | --- | --- | --- |
-| Draw calls, everything visible | 216 | 217 |
+| Draw calls, everything visible | 216 | 219 |
 | Triangles, everything visible | 1.03 M | 0.87 M |
 | GLB (meshopt) | 3.20 MB | 3.46 MB |
 
@@ -63,6 +63,20 @@ Pass 3 changes behind these numbers:
 - The forest edge and the arena are untouched, so sight lines are identical on both settings.
 - The cached shadow map is re-rendered once when the setting changes.
 - There is no new shader and no per-frame work.
+
+## Practice bot
+
+The bot's path grid keeps 0.18 m beyond the player radius, so gaps players squeeze through
+(about 0.9–1.0 m) are closed to it. Three small layout adjustments give it the bridge and the
+north bank:
+
+- The bridge crate stack is 0.9 m across the deck, leaving two 1.25 m lanes.
+- The bridgehead rocks sit 0.3 m nearer the gorge.
+- The plaza logs sit 0.4 m nearer the spawns.
+
+Spawn safety, first contact and route times are unchanged. All nine first-round patrols
+reveal the bot to an idle player within 20 s (6.6–19.1 s), the bound pinned by
+`tests/fps-practice-bot-reveal.test.ts` (from the FROSTLINE branch).
 
 ## Verification
 

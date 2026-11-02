@@ -1248,7 +1248,7 @@ def panel(m, centre, normal, tangent, y, w, h, mat, out=0.015, uv=((0, 0), (1, 0
 signs = Mesh()
 for bid, face, along, y, w in (("spawn-gate-w", "+x", 0.0, 1.75, 1.7), ("spawn-gate-e", "-x", 0.0, 1.75, 1.7),
                                ("hut-w", "+z", 0.0, 2.05, 1.5), ("hut-e", "+z", 0.0, 2.05, 1.5),
-                               ("bridge-crates", "-x", 0.0, 1.55, 1.05), ("bridge-crates", "+x", 0.0, 1.55, 1.05)):
+                               ("bridge-crates", "-x", 0.0, 1.55, 0.8), ("bridge-crates", "+x", 0.0, 1.55, 0.8)):
     centre, normal, tangent = face_frame(BOX[bid], face)
     centre = centre + tangent * along
     # Board, its two hanging battens, and the painted face.
