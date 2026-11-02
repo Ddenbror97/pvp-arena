@@ -274,7 +274,7 @@ export function DuelMatch({
                 // Decode before the first trigger pull; resume stays in Ready's
                 // user gesture so browser autoplay rules remain respected.
                 try {
-                  sound.current ??= createCombatAudio();
+                  sound.current ??= createCombatAudio(() => arena.current?.audioPresentation());
                   sound.current.setMuted(soundMuted());
                   sound.current.setVolume(settingsRef.current.volume);
                   void sound.current.ready();
@@ -513,7 +513,8 @@ export function DuelMatch({
       // Capture in the original click gesture; never wait for asynchronous audio.
       const captured = arena.current?.lock();
       try {
-        if (!sound.current) sound.current = createCombatAudio();
+        if (!sound.current)
+          sound.current = createCombatAudio(() => arena.current?.audioPresentation());
         sound.current.setMuted(muted);
         sound.current.setVolume(settingsRef.current.volume);
         void sound.current.unlock().catch(() => {});
@@ -914,7 +915,7 @@ export function DuelMatch({
                 {rematchReview && (
                   <div className="duel-rematch-review">
                     <p>
-                      New match · Best of {match?.best_of ?? 5}
+                      New match · Best of 13 · First to seven
                       <br />
                       {duelMoney(match?.stake ?? 0)} entry · 5% fee · Winner receives{" "}
                       {duelMoney(duelQuote(match?.stake ?? 0).payout)}

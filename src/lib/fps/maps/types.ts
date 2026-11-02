@@ -1,3 +1,4 @@
+import type { MapFootsteps } from "../footstep-surfaces";
 import type { Solid, Surface } from "../map";
 
 /** Plain-data map definition. Shared by the browser, the match Worker and tests (no Three.js). */
@@ -73,6 +74,8 @@ export type MapDefinition = {
   readonly barriers: readonly Solid[];
   /** Ground impact/footstep material (default "concrete"). */
   readonly floorSurface?: Surface;
+  /** Shared footstep sound metadata; never a map-specific audio engine. */
+  readonly footsteps?: MapFootsteps;
   /** Seat spawns before halftime (the sides swap afterwards). */
   readonly spawns: { readonly A: MapSpawn; readonly B: MapSpawn };
   readonly bot: BotRoutes;

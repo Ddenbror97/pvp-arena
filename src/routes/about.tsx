@@ -44,7 +44,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "What games are available?",
-    a: "Seven games are available: Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit Texas Hold'em, 1v1 8-ball pool and PvPStrike. Pool follows the published shot rules. PvPStrike offers best-of-five or best-of-nine human cash matches and free first-to-seven bot Practice. Both pool and FPS charge 5% of a winning cash-match pot; Practice has no stake or payout.",
+    a: "Seven games are available: Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit Texas Hold'em, 1v1 8-ball pool and PvPStrike. Pool follows the published shot rules. PvPStrike offers best-of-thirteen human cash matches and free first-to-seven bot Practice. Both pool and FPS charge 5% of a winning cash-match pot; Practice has no stake or payout.",
   },
   {
     q: "How is PVPspinArena inspired by the CS:GO betting era?",
@@ -348,9 +348,9 @@ function AboutPage() {
             to="/fps-duel"
             cta="Open PvPStrike"
           >
-            A desktop browser shooter on Dustfront. Play best-of-five or best-of-nine cash duels
-            against another person, or free first-to-seven Practice against a bot. Cash wins pay the
-            combined pot after a 5% fee.
+            A desktop browser shooter on Dustfront. Play best-of-thirteen cash duels against another
+            person, or free first-to-seven Practice against a bot. Cash wins pay the combined pot
+            after a 5% fee.
           </GameCard>
         </SeoGrid>
       </SeoSection>

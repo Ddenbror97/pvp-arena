@@ -50,7 +50,7 @@ export const duelAction = createServerFn({ method: "POST" })
           action: z.enum(["enter", "create"]),
           combatVersion: z.literal(2),
           stake: z.number().int().min(0).max(5000),
-          bestOf: z.union([z.literal(5), z.literal(9)]),
+          bestOf: z.literal(13),
           private: z.boolean(),
           key,
         }),

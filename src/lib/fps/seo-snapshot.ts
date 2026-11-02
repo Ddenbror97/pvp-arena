@@ -84,9 +84,9 @@ export function parseFpsSeoSnapshot(v: unknown): FpsSeoSnapshot | null {
       !obj(r) ||
       !integer(r.stake, 5000) ||
       r.stake < 100 ||
-      ![5, 9].includes(Number(r.bestOf)) ||
-      !integer(r.scoreA, 5) ||
-      !integer(r.scoreB, 5) ||
+      ![5, 9, 13].includes(Number(r.bestOf)) ||
+      !integer(r.scoreA, 7) ||
+      !integer(r.scoreB, 7) ||
       !integer(r.payout, 10000) ||
       !integer(r.fee, 10000) ||
       !date(r.completedAt) ||

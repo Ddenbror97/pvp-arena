@@ -173,16 +173,15 @@ function TermsPage() {
       <h3 id="pvpstrike">PvPStrike FPS</h3>
       <p>
         PvPStrike is an independent desktop browser shooter on Dustfront. Cash matches are
-        human-only: both players enter the same stake and play best of five (first to three wins) or
-        best of nine (first to five). Free Practice is a bot match, first to seven wins, and does
-        not award money or affect the cash ladder.
+        human-only: both players enter the same stake and play best of thirteen (first to seven
+        wins). Free Practice is a bot match, first to seven wins, and does not award money or affect
+        the cash ladder.
       </p>
       <p>
         Each round lasts up to 60 seconds. Elimination wins the round; at timeout the player with
         more health wins, or equal health draws. Three drawn rounds cancel the match. Police and
-        Terrorist sides and spawn positions switch after round two in best-of-five, round four in
-        best-of-nine, or round six in Practice. Halftime lasts five seconds. Player identities and
-        scores do not swap.
+        Terrorist sides and spawn positions switch after round six in cash and Practice. Halftime
+        lasts five seconds. Player identities and scores do not swap.
       </p>
       <p>
         The match server validates movement, ammunition, hits, damage and the final result. Local

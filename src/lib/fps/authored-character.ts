@@ -69,6 +69,13 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
     footOrientations = new Map<string, THREE.Quaternion>(),
     rest: { bone: THREE.Bone; p: THREE.Vector3; q: THREE.Quaternion }[] = [];
   const sides = ["Left", "Right"] as const;
+  const gripPoses: Array<{ bone: THREE.Bone; q: THREE.Quaternion }> = [];
+  const wristRotations = {
+    Left: new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI, 0, 0)),
+    Right: new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0)),
+  };
+  const fingerCurl = new THREE.Quaternion(),
+    curlAxis = new THREE.Vector3(0, 0, 1);
   let instance: ReturnType<typeof cloneAuthoredModel> | undefined,
     loaded = false,
     stopped = false,
@@ -95,6 +102,8 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
         if (object instanceof THREE.Bone) {
           const name = object.name.replace(/^mixamorig:?/, "").replace(/_\d+$/, "");
           bones.set(name, object);
+          // GLTFLoader sanitizes spaces in the sourced Valve finger names.
+          if (name.startsWith("arm_")) bones.set(name.replaceAll("_", " "), object);
           rest.push({ bone: object, p: object.position.clone(), q: object.quaternion.clone() });
         }
       });
@@ -127,6 +136,51 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       fallback.root.traverse((object) => {
         if (object instanceof THREE.Mesh) object.geometry.dispose();
       });
+      // Each source rig has a different wrist/finger basis (Mixamo vs Valve).
+      // Solve that basis from its actual knuckles before applying the weapon-space grasp.
+      for (const side of sides) {
+        const valve = "arm " + side.toLowerCase() + " finger ";
+        const middle = bones.get(side + "HandMiddle1") ?? bones.get(valve + "3a");
+        const index = bones.get(side + "HandIndex1") ?? bones.get(valve + "2a");
+        if (middle && index) {
+          const x = middle.position
+            .clone()
+            .normalize()
+            .multiplyScalar(side === "Left" ? 1 : -1);
+          const z = index.position.clone().sub(middle.position).normalize();
+          const y = new THREE.Vector3().crossVectors(z, x).normalize();
+          z.crossVectors(x, y).normalize();
+          const basis = new THREE.Quaternion().setFromRotationMatrix(
+            new THREE.Matrix4().makeBasis(x, y, z),
+          );
+          wristRotations[side].multiply(basis.invert());
+        }
+      }
+      // Sourced bodies have straight bind-pose fingers. Bake a closed grip once;
+      // solve wrist orientation in weapon space after arm IK, not from the elbow.
+      for (const side of sides)
+        for (const finger of ["Index", "Middle", "Ring", "Pinky", "Thumb"]) {
+          for (let joint = 1; joint <= 3; joint++) {
+            const digit =
+              finger === "Thumb" ? 1 : finger === "Index" ? 2 : finger === "Middle" ? 3 : null;
+            const bone =
+              bones.get(side + "Hand" + finger + joint) ??
+              (digit
+                ? bones.get(
+                    "arm " + side.toLowerCase() + " finger " + digit + ["a", "b", "c"][joint - 1],
+                  )
+                : undefined);
+            if (!bone) continue;
+            const angle =
+              finger === "Thumb"
+                ? -0.35
+                : side === "Right" && finger === "Index"
+                  ? -0.35
+                  : -[0.65, 1.05, 0.7][joint - 1]!;
+            fingerCurl.setFromAxisAngle(curlAxis, angle);
+            gripPoses.push({ bone, q: bone.quaternion.clone().multiply(fingerCurl) });
+          }
+        }
       loaded = true;
     })
     .catch((error) =>
@@ -301,6 +355,14 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       for (const side of sides) {
         const sign = side === "Left" ? -1 : 1;
         weapon.grip(side === "Left" ? "L" : "R", target);
+        // Markers describe the grasp centre; the character Hand bone is at the wrist.
+        rotation(weaponPivot, worldQ);
+        cv.set(
+          side === "Left" ? -0.065 : 0.065,
+          side === "Left" ? -0.045 : -0.03,
+          0.025,
+        ).applyQuaternion(worldQ);
+        target.add(cv);
         if (pistol.visible)
           root.localToWorld(
             target.set(
@@ -317,7 +379,15 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           target,
           bend,
         );
+        if (!pistol.visible) {
+          const hand = bones.get(side + "Hand")!;
+          rotation(hand.parent!, parentQ).invert();
+          rotation(weaponPivot, worldQ).multiply(wristRotations[side]);
+          hand.quaternion.copy(parentQ.multiply(worldQ));
+          hand.updateWorldMatrix(false, true);
+        }
       }
+      if (!pistol.visible) for (const pose of gripPoses) pose.bone.quaternion.copy(pose.q);
       if (motion.death !== undefined) {
         const collapse = motion.death;
         // Layer relaxed, asymmetric limbs over the fitted pose. The weapon and

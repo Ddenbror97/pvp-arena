@@ -74,8 +74,8 @@ export function DuelLobby() {
     retry: false,
   });
   const [panel, setPanel] = useState<"games" | "create">("games");
-  const [stake, setStake] = useState(100),
-    [format, setFormat] = useState<5 | 9>(5);
+  const [stake, setStake] = useState(100);
+  const format = 13;
   const [isPrivate, setPrivate] = useState(false),
     [accepted, setAccepted] = useState(false);
   const [selected, setSelected] = useState<OpenRoom | null>(null),
@@ -276,7 +276,7 @@ export function DuelLobby() {
               <span>
                 <Crosshair aria-hidden /> M4A1-S / AK-47 + pistol
               </span>
-              <span>Best of 5 / Best of 9</span>
+              <span>First to seven · Best of 13</span>
               <span>No download</span>
             </div>
           </div>
@@ -531,25 +531,9 @@ export function DuelLobby() {
                         ? "Use your available balance for cash entries. Practice is free."
                         : "Cash entries are currently closed. Practice is free and does not affect your balance or rating."}
                   </p>
-                  <fieldset className="strike-fieldset">
-                    <legend>Match length</legend>
-                    <div className="strike-formats">
-                      {([5, 9] as const).map((best) => (
-                        <button
-                          type="button"
-                          key={best}
-                          aria-pressed={format === best}
-                          onClick={() => {
-                            setFormat(best);
-                            change();
-                          }}
-                        >
-                          Best of {best}
-                          <small>First to {best === 5 ? 3 : 5}</small>
-                        </button>
-                      ))}
-                    </div>
-                  </fieldset>
+                  <p className="strike-fineprint">
+                    Best of 13 · First to seven wins. Switch sides after round six.
+                  </p>
                   <label className="strike-check">
                     <input
                       type="checkbox"
@@ -675,7 +659,7 @@ export function DuelLobby() {
           {selected && (
             <>
               <p className="strike-join-format">
-                Best of {selected.best_of} · First to {selected.best_of === 5 ? 3 : 5} round wins
+                Best of {selected.best_of} · First to {(selected.best_of + 1) / 2} round wins
               </p>
               <Quote stake={selected.stake} />
               <label className="strike-check">
@@ -745,8 +729,8 @@ export function DuelLobby() {
               <Trophy />
               <h3>Win the rounds</h3>
               <p>
-                Best of 5 is first to 3. Best of 9 is first to 5. A round lasts 60 seconds; higher
-                health wins at timeout. Three drawn rounds cancel the match.
+                Best of 13 is first to seven, with sides switching after round six. A round lasts 60
+                seconds; higher health wins at timeout. Three drawn rounds cancel the match.
               </p>
             </article>
             <article>

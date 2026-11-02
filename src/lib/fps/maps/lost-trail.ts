@@ -25,6 +25,7 @@ export const LOST_TRAIL: MapDefinition = {
   walls: LOST_TRAIL_WALLS,
   barriers: LOST_TRAIL_BARRIERS,
   floorSurface: "concrete",
+  footsteps: { floor: "dirt" },
   spawns: LOST_TRAIL_SPAWNS,
   // East-spawn coordinates (mirrored for a west spawn). The bot walks the ground routes: the
   // bridge, the north log crossing and the ford; it never climbs onto the ridge.

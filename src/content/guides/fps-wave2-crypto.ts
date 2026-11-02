@@ -147,7 +147,7 @@ Finally, distinguish ordinary disappointment from a financial recovery goal. Los
       ],
       [
         "A short contrast with entry-funded duels",
-        `In [PvPStrike](/fps-1v1), players enter a separate CS-style browser game; it is not Valve CS2 or Off The Grid. Local practice is first to seven against a bot, a best-of-thirteen format. Cash series use best of five or nine. There is no NFT requirement or reward token. The [CS2 duel guide](/guides/cs2-1v1-for-money) explains the separate native-game distinction.
+        `In [PvPStrike](/fps-1v1), players enter a separate CS-style browser game; it is not Valve CS2 or Off The Grid. Local practice is first to seven against a bot, a best-of-thirteen format. Cash series use best of thirteen. There is no NFT requirement or reward token. The [CS2 duel guide](/guides/cs2-1v1-for-money) explains the separate native-game distinction.
 
 Hypothetical USD example A: two $1 entries form a $2 pot. The confirmed 5% combined-pot FPS fee is $0.10, leaving $1.90 winner credit and +$0.90 net after that winner's own entry. The loser loses $1.
 
@@ -303,7 +303,7 @@ End the session by recording one behavior to repeat and one to change. That smal
       ],
       [
         "Keep the cash-duel comparison short",
-        `If your actual requirement is a defined one-opponent stake, Shrapnel's ownership discussion does not answer it. [PvPStrike](/fps-1v1) is a separate CS-style browser shooter with bot practice first to seven, best of thirteen. Its real-cash series use best of five or nine and a 5% combined-pot FPS fee. The published minimum is $1; the lobby determines available entries. Cash participation is for eligible adults 18+ where permitted.
+        `If your actual requirement is a defined one-opponent stake, Shrapnel's ownership discussion does not answer it. [PvPStrike](/fps-1v1) is a separate CS-style browser shooter with bot practice first to seven, best of thirteen. Its real-cash series use best of thirteen and a 5% combined-pot FPS fee. The published minimum is $1; the lobby determines available entries. Cash participation is for eligible adults 18+ where permitted.
 
 Hypothetical USD example A: $1 per player creates $2. The $0.10 fee leaves $1.90 winner account credit, a +$0.90 net change after the winner's own entry; the loser loses $1.
 
@@ -467,7 +467,7 @@ The [browser FPS guide](/guides/browser-fps-games) covers access choices without
       ],
       [
         "A bounded comparison with a non-NFT cash duel",
-        `A defined cash competition needs no collectible. [PvPStrike](/fps-1v1) is a separate CS-style browser game with no NFT requirement or game token. Bot practice is first to seven, best of thirteen; cash series use best of five or nine. The [CS2 duel comparison](/guides/cs2-1v1-for-money) clarifies that it is not Valve's game.
+        `A defined cash competition needs no collectible. [PvPStrike](/fps-1v1) is a separate CS-style browser game with no NFT requirement or game token. Bot practice is first to seven, best of thirteen; cash series use best of thirteen. The [CS2 duel comparison](/guides/cs2-1v1-for-money) clarifies that it is not Valve's game.
 
 Hypothetical USD example A: $1 each forms a $2 pot. The confirmed 5% combined-pot FPS fee is $0.10; the winner receives $1.90 account credit, +$0.90 net after their entry, while the loser loses $1.
 
@@ -620,7 +620,7 @@ The [browser FPS guide](/guides/browser-fps-games) covers access rather than rew
       ],
       [
         "Two hypothetical duel records in USD",
-        `For a concrete entry-funded comparison, [PvPStrike](/fps-1v1) is a separate CS-style browser shooter with no NFT or reward token. Local bot practice is first to seven, best of thirteen; cash series use best of five or nine. The confirmed FPS fee is 5% of the combined pot. Published minimum entry is $1, but consult the lobby for currently available choices.
+        `For a concrete entry-funded comparison, [PvPStrike](/fps-1v1) is a separate CS-style browser shooter with no NFT or reward token. Local bot practice is first to seven, best of thirteen; cash series use best of thirteen. The confirmed FPS fee is 5% of the combined pot. Published minimum entry is $1, but consult the lobby for currently available choices.
 
 Hypothetical USD example A: a $1 entry from each player creates $2. The fee is $0.10; the winner receives $1.90 credit. Record the winner's own $1 entry too: net change is +$0.90, while the loser loses $1.
 
@@ -782,7 +782,7 @@ The [play-to-earn guide](/guides/play-to-earn-games) covers the broader category
       ],
       [
         "When a defined skill duel is the intended activity",
-        `Some readers want a short competitive match rather than ownership or rewards. [PvPStrike](/fps-1v1) is a separate CS-style browser shooter, not Valve CS2. Practice against a bot is first to seven, best of thirteen; cash series use best of five or nine. There is no NFT requirement or game token. Cash is 18+ where permitted, and the lobby determines available entries despite the published $1 minimum.
+        `Some readers want a short competitive match rather than ownership or rewards. [PvPStrike](/fps-1v1) is a separate CS-style browser shooter, not Valve CS2. Practice against a bot is first to seven, best of thirteen; cash series use best of thirteen. There is no NFT requirement or game token. Cash is 18+ where permitted, and the lobby determines available entries despite the published $1 minimum.
 
 Hypothetical USD example A: $1 each creates a $2 pot. The confirmed 5% combined-pot FPS fee is $0.10, leaving $1.90 winner credit and +$0.90 net after the winner's own entry. The loser loses $1.
 
@@ -915,7 +915,7 @@ Save the applicable rules and match identifier when you accept. A later support 
       ],
       [
         "Understand the specific PvPStrike competition",
-        `[PvPStrike](/fps-1v1) is a separate CS-style desktop browser shooter, not a Valve CS2 server. Its local bot practice is first to seven, a best-of-thirteen structure. Real-cash series use best of five or nine. Do not use a practice score as evidence that you completed a funded series, and do not assume the lobby offers every published entry at every moment.
+        `[PvPStrike](/fps-1v1) is a separate CS-style desktop browser shooter, not a Valve CS2 server. Its local bot practice is first to seven, a best-of-thirteen structure. Real-cash series use best of thirteen. Do not use a practice score as evidence that you completed a funded series, and do not assume the lobby offers every published entry at every moment.
 
 Its AK is full auto, with game-specific damage: head and chest hits are 34 before applicable protection, stomach is 30 and legs are 20. Three 34-damage head hits total 102 against 100 HP; this is not a one-headshot rifle claim. Armor and the specific hit location matter, and these figures must not be imported into native CS2 damage advice.
 

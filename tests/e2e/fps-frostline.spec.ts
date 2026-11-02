@@ -32,9 +32,7 @@ test("FROSTLINE GLB has no coplanar overlaps and its surfaces sit on the collisi
   test.setTimeout(300_000);
   await open(page);
   const result = await page.evaluate(async () => {
-    const THREE: typeof import("three") = await import(
-      "/node_modules/three/build/three.module.js" as string
-    );
+    const THREE: typeof import("three") = await import("/tests/fixtures/three.ts" as string);
     const { GLTFLoader } = await import(
       "/node_modules/three/examples/jsm/loaders/GLTFLoader.js" as string
     );
@@ -199,9 +197,7 @@ test("FROSTLINE environment factory adds bounded snowfall outside the reflection
   test.setTimeout(300_000);
   await open(page);
   const result = await page.evaluate(async () => {
-    const T: typeof import("three") = await import(
-      "/node_modules/three/build/three.module.js" as string
-    );
+    const T: typeof import("three") = await import("/tests/fixtures/three.ts" as string);
     const { getMap } = await import("/src/lib/fps/maps/registry.ts" as string);
     const { createMapEnvironment } = await import("/src/lib/fps/maps/environments.ts" as string);
     const { SNOW_FLAKES } = await import("/src/lib/fps/snowfall.ts" as string);
@@ -399,7 +395,7 @@ test("FROSTLINE visual captures with the game's light rig", async ({ page }) => 
   test.setTimeout(900_000);
   await open(page);
   await page.evaluate(async (snow) => {
-    const T = await import("/node_modules/three/build/three.module.js" as string);
+    const T = await import("/tests/fixtures/three.ts" as string);
     const { getMap } = await import("/src/lib/fps/maps/registry.ts" as string);
     const { createMapEnvironment } = await import("/src/lib/fps/maps/environments.ts" as string);
     const M = getMap("frostline");

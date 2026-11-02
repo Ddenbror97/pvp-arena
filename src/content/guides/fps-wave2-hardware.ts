@@ -141,7 +141,7 @@ Retest the final profile in ordinary use after the controlled blocks. Restore th
       ],
       [
         "Report timing does not establish a cash advantage",
-        `If you later consider PvPStrike cash play, it is 18+ where permitted and uses best-of-five or best-of-nine series. The fee is 5% of the combined pot; the published minimum is $1, but the lobby determines available entries. No polling stage promises earnings.
+        `If you later consider PvPStrike cash play, it is 18+ where permitted and uses best-of-thirteen series. The fee is 5% of the combined pot; the published minimum is $1, but the lobby determines available entries. No polling stage promises earnings.
 
 Hypothetical USD example: $1 each creates $2, with $1.90 winner credit and $0.90 net after the winner's entry. Hypothetical USD example: $5 each creates $10, with $9.50 winner credit and $4.50 net. Losing costs the entry, and a wallet credit is distinct from a withdrawal.
 
@@ -295,7 +295,7 @@ Do not use a paid match to decide whether a profile has loaded. An unpaid repeat
       ],
       [
         "Keep hardware decisions separate from entry decisions",
-        `A successful DPI comparison does not establish readiness for cash matches. PvPStrike cash series use best of five or nine and a 5% fee on the combined pot. Consult the lobby for actual available entries despite the published $1 minimum. Cash access is 18+ where permitted, with no promised earnings.
+        `A successful DPI comparison does not establish readiness for cash matches. PvPStrike cash series use best of thirteen and a 5% fee on the combined pot. Consult the lobby for actual available entries despite the published $1 minimum. Cash access is 18+ where permitted, with no promised earnings.
 
 Hypothetical USD example: $1 from each player creates a $2 pot; the winner receives $1.90 credit and has $0.90 net after their own entry. Hypothetical USD example: $5 each creates a $10 pot; the winner receives $9.50 credit and has $4.50 net. A loss costs the entry; credit is not a completed withdrawal.
 
@@ -452,7 +452,7 @@ If no single change explains the behavior, summarize what remains. A useful supp
 
 Use [CS2 aim training](/guides/cs2-aim-training) to separate a mechanical drill from a performance diagnostic, and the [FPS and aim topic](/guides/topics/fps-and-aim) for related concepts. A drill score can vary with familiarity, concentration and target layout. It should not be used as the sole latency instrument. Keep technical observations and skill observations distinct.
 
-For [PvPStrike](/fps-1v1), local practice is first to seven against a bot, while cash series are best of five or nine. It is a separate CS-style browser game. Server validation of inputs, hits and results does not promise cheating immunity or erase network delay. The [fairness page](/fairness) describes the product boundary rather than a hardware certification.`,
+For [PvPStrike](/fps-1v1), local practice is first to seven against a bot, while cash series are best of thirteen. It is a separate CS-style browser game. Server validation of inputs, hits and results does not promise cheating immunity or erase network delay. The [fairness page](/fairness) describes the product boundary rather than a hardware certification.`,
       ],
       [
         "If the next step involves an entry fee",
@@ -615,7 +615,7 @@ No current product prices or model rankings are supplied here. They change and w
 
 [PvPStrike](/fps-1v1) is an independent CS-style browser game, not Valve CS2. Its local practice is first to seven against a bot. Use it only as a practical control check, not a standardized display benchmark or proof that a new monitor will earn money. Server validation of inputs, hits and results does not guarantee immunity from cheating; see [fairness](/fairness).
 
-Cash play is 18+ where permitted, with best-of-five or best-of-nine series and a 5% combined-pot fee. Check the lobby for entries despite the published $1 minimum. Hypothetical USD example: $1 each yields $1.90 winner credit and $0.90 net. Hypothetical USD example: $5 each yields $9.50 credit and $4.50 net. Net subtracts the winner's own entry; a loss costs the entry, and withdrawal is separate.
+Cash play is 18+ where permitted, with best-of-thirteen series and a 5% combined-pot fee. Check the lobby for entries despite the published $1 minimum. Hypothetical USD example: $1 each yields $1.90 winner credit and $0.90 net. Hypothetical USD example: $5 each yields $9.50 credit and $4.50 net. Net subtracts the winner's own entry; a loss costs the entry, and withdrawal is separate.
 
 Review the [FPS money hub](/guides/fps-for-money-hub), [CS2 cash-duel distinction](/guides/cs2-1v1-for-money) and [crypto FPS context](/guides/crypto-fps-game) before any entry decision. A display purchase does not establish a profitable edge.`,
       ],
@@ -776,7 +776,7 @@ Use [CS2 aim training](/guides/cs2-aim-training) for a native-game practice fram
 
 [Browser FPS games](/guides/browser-fps-games) covers access choices. [PvPStrike](/fps-1v1) is a separate CS-style browser game with local first-to-seven bot practice, not Valve CS2. Use an authorized device and network. Server validation of inputs, hits and results does not imply that every opponent is cheat-free; the [fairness explanation](/fairness) describes that boundary.
 
-PvPStrike cash play is 18+ where permitted, with best-of-five or best-of-nine series and a 5% combined-pot fee. Check actual lobby entries despite the published $1 minimum. Hypothetical USD example: $1 each yields $1.90 winner credit and $0.90 net. Hypothetical USD example: $5 each yields $9.50 credit and $4.50 net. Net subtracts the winner's entry; losses cost the entry, and withdrawal is separate.
+PvPStrike cash play is 18+ where permitted, with best-of-thirteen series and a 5% combined-pot fee. Check actual lobby entries despite the published $1 minimum. Hypothetical USD example: $1 each yields $1.90 winner credit and $0.90 net. Hypothetical USD example: $5 each yields $9.50 credit and $4.50 net. Net subtracts the winner's entry; losses cost the entry, and withdrawal is separate.
 
 Read the [FPS money hub](/guides/fps-for-money-hub), [CS2 cash-duel distinction](/guides/cs2-1v1-for-money) and [crypto FPS guide](/guides/crypto-fps-game) separately. This test does not predict wins or establish an earnings opportunity.`,
       ],
@@ -930,7 +930,7 @@ If the difference is unclear, keep the simpler supported design. A reticle can b
 
 Use the [FPS and aim topic](/guides/topics/fps-and-aim) to connect those skills, and [browser FPS games](/guides/browser-fps-games) for access context. [PvPStrike](/fps-1v1) is a separate CS-style browser game, not Valve CS2. Its local practice is first to seven against a bot. Do not assume another title's crosshair permissions or native settings apply to this independent game.
 
-PvPStrike validates inputs, hits and results on the server without promising cheating immunity; see [fairness](/fairness). Cash play is 18+ where permitted, using best-of-five or best-of-nine series and a 5% combined-pot fee. The published minimum is $1, but check actual lobby entries.
+PvPStrike validates inputs, hits and results on the server without promising cheating immunity; see [fairness](/fairness). Cash play is 18+ where permitted, using best-of-thirteen series and a 5% combined-pot fee. The published minimum is $1, but check actual lobby entries.
 
 Hypothetical USD example: $1 each creates a $2 pot, paying $1.90 winner credit and $0.90 net after the winner's entry. Hypothetical USD example: $5 each creates $10, paying $9.50 credit and $4.50 net. Losses cost the entry; wallet credit and withdrawal are distinct. A reticle does not promise earnings.
 
@@ -1088,7 +1088,7 @@ Browser convenience can be useful, but background tabs, focus and performance sh
       ],
       [
         "Separate practice from cash-entry decisions",
-        `For [browser FPS options](/guides/browser-fps-games), distinguish training from independent games. [PvPStrike](/fps-1v1) is a separate CS-style browser shooter, not Valorant or Valve CS2. Local practice is first to seven against a bot; cash series are best of five or nine. Server validation of inputs, hits and results does not promise cheating immunity; see [fairness](/fairness).
+        `For [browser FPS options](/guides/browser-fps-games), distinguish training from independent games. [PvPStrike](/fps-1v1) is a separate CS-style browser shooter, not Valorant or Valve CS2. Local practice is first to seven against a bot; cash series are best of thirteen. Server validation of inputs, hits and results does not promise cheating immunity; see [fairness](/fairness).
 
 Cash play is 18+ where permitted. The published minimum is $1, but consult actual lobby entries. The fee is 5% of the combined pot. Hypothetical USD example: $1 each yields $1.90 winner credit and $0.90 net after the winner's entry. Hypothetical USD example: $5 each yields $9.50 credit and $4.50 net. A loss costs the entry; credit and withdrawal are separate.
 

@@ -33,6 +33,14 @@ describe("public FPS data boundary", () => {
     expect(fpsSeoCacheKey("https://user:secret@production.supabase.co")).toBe(prod);
     expect(prod).not.toContain("secret");
   });
+  it("accepts completed BO13 series and rejects premature 6-win results", () => {
+    const raw = sample();
+    Object.assign(raw.recent[0]!, { bestOf: 13, scoreA: 7, scoreB: 6 });
+    expect(parseFpsSeoSnapshot(raw)?.recent[0]?.scoreA).toBe(7);
+    raw.recent[0]!.scoreA = 6;
+    raw.recent[0]!.scoreB = 5;
+    expect(parseFpsSeoSnapshot(raw)).toBeNull();
+  });
   it("copies only public primitive fields, dropping identifiers and RPC extras", () => {
     const raw = {
       ...sample(),

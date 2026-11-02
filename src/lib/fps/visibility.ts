@@ -217,6 +217,9 @@ export function snapshotForPlayer<T extends { state: PublicState }>(
         ...details,
         gain: Math.round(scale * 16) / 16,
         pan: event.seat === seat ? 0 : Math.round(Math.max(-1, Math.min(1, pan)) * 8) / 8,
+        ...(event.seat !== seat && Math.round(scale * 16) > 0
+          ? { bearing: (Math.round((Math.atan2(dx, -dz) * 8) / Math.PI) * Math.PI) / 8 }
+          : {}),
         occluded: !!blocked,
       };
     }

@@ -168,7 +168,8 @@ const POCKET_LAMP = [
 function pocketChroma(ctx: CanvasRenderingContext2D, x: number, y: number, spin: number) {
   if (typeof ctx.createConicGradient !== "function") return "hsl(280 100% 64%)";
   const glow = ctx.createConicGradient(spin, x, y);
-  for (let i = 0; i < POCKET_LAMP.length; i++) glow.addColorStop(i / (POCKET_LAMP.length - 1), POCKET_LAMP[i]!);
+  for (let i = 0; i < POCKET_LAMP.length; i++)
+    glow.addColorStop(i / (POCKET_LAMP.length - 1), POCKET_LAMP[i]!);
   return glow;
 }
 
@@ -610,6 +611,8 @@ export type WatchedAim = {
 };
 
 type Props = {
+  /** A decorative preview draws the cue but never installs gesture handlers. */
+  interactive?: boolean;
   balls: readonly Ball[];
   angleMilli: number;
   power: number;
@@ -642,6 +645,7 @@ type Props = {
 
 /** A drag aims or places the cue ball. Dragging back charges power, and releasing shoots. */
 export function PoolTable({
+  interactive = true,
   balls,
   angleMilli,
   power,
@@ -1327,6 +1331,7 @@ export function PoolTable({
   aimAtRef.current = aimAt;
   endRef.current = endGesture;
   useEffect(() => {
+    if (!interactive) return;
     const control = (target: EventTarget | null) =>
       target instanceof Element &&
       Boolean(target.closest("button, a, input, textarea, select, label, [role='button']"));
@@ -1337,7 +1342,15 @@ export function PoolTable({
       const cue = cuePoint();
       if (!canvas || !cue || event.target === canvas) return;
       const point = tablePoint(canvas, event.clientX, event.clientY);
-      if (!hitsCueStick(point, cue, angleRef.current, powerRef.current, CUE_STICK_LEN * stickFit.current))
+      if (
+        !hitsCueStick(
+          point,
+          cue,
+          angleRef.current,
+          powerRef.current,
+          CUE_STICK_LEN * stickFit.current,
+        )
+      )
         return;
       event.preventDefault();
       pointerRef.current = event.pointerId;
@@ -1391,7 +1404,7 @@ export function PoolTable({
       window.removeEventListener("pointerup", up);
       window.removeEventListener("pointercancel", up);
     };
-  }, []);
+  }, [interactive]);
 
   return (
     <>
@@ -1401,6 +1414,7 @@ export function PoolTable({
         className="pool-canvas"
         aria-label="Pool table. Drag to aim. Drag back and release to shoot. On a phone, drag with your finger. Drag the cue ball when it is ball in hand."
         onPointerDown={(event) => {
+          if (!interactive) return;
           if (pointerRef.current != null) return;
           pointerRef.current = event.pointerId;
           try {

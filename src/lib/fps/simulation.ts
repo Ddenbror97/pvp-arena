@@ -1,3 +1,4 @@
+import { footstepSurface } from "./footstep-surfaces";
 import { PLAYER_RADIUS, STEP_HEIGHT, eyeHeight } from "./map";
 import { DEFAULT_MAP, getMap, mapOf, type GameMap } from "./maps/registry";
 import { spawnSide, halftimeRound } from "./sides";
@@ -26,6 +27,9 @@ export const HALFTIME_MS = 5000;
 export const MAX_DRAWS = 3;
 export const MOVE_SPEED = 5;
 export const WALK_SPEED_SCALE = 0.45;
+/** Clears 1.45 m low cover at the fixed tick; 2.2 m cover still blocks. */
+export const JUMP_SPEED = 6.8;
+export const GRAVITY = 14;
 export const WEAPONS = {
   rifle: {
     damage: 34,
@@ -210,7 +214,8 @@ export function predictMovement(
     // Stairs are stepped onto only from the ground or a support, never mid-jump (a jump plus a
     // step would otherwise clear 1.2 m cover).
     const grounded = supported && (p.velocityY ?? 0) === 0;
-    if (input.jump && grounded) p.velocityY = 5;
+    if (input.jump && grounded) p.velocityY = JUMP_SPEED;
+    const canStep = grounded && !input.jump;
     const length = Math.max(1, Math.hypot(input.forward, input.strafe));
     const speed =
       (MOVE_SPEED *
@@ -233,7 +238,7 @@ export function predictMovement(
       for (const b of map.movementSolids) {
         const top = b.y + b.h / 2;
         // A riser no taller than STEP_HEIGHT (stairs) is walked onto instead of blocking.
-        if (grounded && top - p.y <= STEP_HEIGHT + 1e-9) continue;
+        if (canStep && top - p.y <= STEP_HEIGHT + 1e-9) continue;
         if (
           p.y >= b.y + b.h / 2 ||
           p.y + eyeHeight(p) + 0.2 <= b.y - b.h / 2 ||
@@ -259,13 +264,13 @@ export function predictMovement(
       )
         stepTop = top;
     }
-    if (grounded && stepTop > p.y && !blocked(p.x, stepTop, p.z, !!p.crouched, map)) {
+    if (canStep && stepTop > p.y && !blocked(p.x, stepTop, p.z, !!p.crouched, map)) {
       p.y = stepTop;
       p.velocityY = 0;
     }
   }
   const previousY = p.y;
-  p.velocityY = (p.velocityY ?? 0) - 14 * seconds;
+  p.velocityY = (p.velocityY ?? 0) - GRAVITY * seconds;
   let nextY = Math.max(0, p.y + p.velocityY * seconds);
   if (p.velocityY <= 0)
     for (const b of map.boxes) {
@@ -623,7 +628,7 @@ export function stepMatch(
             audio: {
               kind: "step",
               position: { x: p.x, y: p.y, z: p.z },
-              surface: floor?.surface ?? map.floor.surface,
+              surface: footstepSurface(map, p, floor),
               soft: !!p.crouched,
             },
           });
