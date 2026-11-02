@@ -81,11 +81,15 @@ export type ViewmodelVariant = {
    */
   arms: "jacket" | "police" | "bare";
 };
+/** Support-hand twist about its own axis on both rifles (radians); see GripFrame.handTwist. */
+export const SUPPORT_HAND_TWIST = 1.2;
 export const AK_VIEWMODEL: ViewmodelVariant = {
   id: "ak",
   asset: ARENA_MODELS.rifle,
   clips: RELOAD_CLIPS,
-  guard: HANDGUARD_GRIP,
+  // Support hand turned palm-up round the handguard (wrist and forearm unchanged), so the
+  // fingers wrap it instead of gripping it side-on.
+  guard: { ...HANDGUARD_GRIP, handTwist: SUPPORT_HAND_TWIST },
   magazine: {
     offset: MAG_GRIP_OFFSET,
     edgeDown: MAG_EDGE_DOWN,
@@ -103,7 +107,8 @@ export const M4_VIEWMODEL: ViewmodelVariant = {
   id: "m4",
   asset: ARENA_MODELS.m4,
   clips: M4_RELOAD_CLIPS,
-  guard: policeGuardGrip(),
+  // Same palm-round grip as the AK, on the quad rail.
+  guard: { ...policeGuardGrip(), handTwist: SUPPORT_HAND_TWIST },
   magazine: {
     offset: new THREE.Vector3(0, -0.03, -0.03),
     edgeDown: new THREE.Vector3(0, -0.94, -0.33),

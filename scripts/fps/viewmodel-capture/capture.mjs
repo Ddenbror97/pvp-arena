@@ -66,8 +66,17 @@ await page.waitForFunction(() => typeof window.viewmodelCapture === "function");
 // --weapon=rifle renders the team rifle viewmodel (sleeves, watch) instead of the Karambit.
 const rifle = flag("weapon") === "rifle";
 const result = await page.evaluate(
-  ([v, s, w, h, f, r]) => (r ? window.rifleCapture : window.viewmodelCapture)(v, s, w, h, f),
-  [variant, shots, w, h, Number(flag("fov") ?? 60), rifle],
+  ([v, s, w, h, f, r, g]) =>
+    r ? window.rifleCapture(v, s, w, h, f, g ?? undefined) : window.viewmodelCapture(v, s, w, h, f),
+  [
+    variant,
+    shots,
+    w,
+    h,
+    Number(flag("fov") ?? 60),
+    rifle,
+    flag("guard-twist") ? Number(flag("guard-twist")) : null,
+  ],
 );
 const stats = {};
 for (const [name, r] of Object.entries(result)) {
