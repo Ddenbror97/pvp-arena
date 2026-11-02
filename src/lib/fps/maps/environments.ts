@@ -2,6 +2,7 @@ import type * as THREE from "three";
 import { createArenaEnvironment, type MapEnvironment } from "../arena-environment";
 import type { GameMap } from "./types";
 import { createSnowfall } from "../snowfall";
+import { createLostTrailEnvironment } from "./lost-trail-environment";
 
 /**
  * Browser-only render scenes per map. Every map gets the shared loader by default (blockout from
@@ -24,6 +25,7 @@ const FACTORIES: Readonly<Record<string, EnvironmentFactory>> = {
       },
     };
   },
+  "lost-trail": createLostTrailEnvironment,
 };
 
 export function createMapEnvironment(scene: THREE.Scene, map: GameMap): MapEnvironment {

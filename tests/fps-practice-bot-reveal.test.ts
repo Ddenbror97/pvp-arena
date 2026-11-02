@@ -1,19 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { createPracticeBot } from "../src/lib/fps/practice-bot";
-import { DEFAULT_MAP_ID, MAP_IDS } from "../src/lib/fps/maps/registry";
-import { createMatch, ROUND_MS, startMatch, stepMatch, TICK_MS } from "../src/lib/fps/simulation";
+import { MAP_IDS } from "../src/lib/fps/maps/registry";
+import { createMatch, startMatch, stepMatch, TICK_MS } from "../src/lib/fps/simulation";
 import { revealsOpponent } from "../src/lib/fps/visibility";
 
 /**
  * Every first-round patrol (3 styles × 3 openings, drawn at random by the runtime) brings the
  * practice bot into view of a human idling at spawn within a bounded time on every map. The
  * runtime solo-bot test (tests/fps-runtime.test.ts) waits for exactly this reveal on the
- * default map, so its timeout must exceed REVEAL_BOUND_S there. Other maps must reveal the bot
- * before the round ends; larger maps take longer (LOST TRAIL's slowest patrol is ~32 s).
+ * default map, so its timeout must exceed REVEAL_BOUND_S. Every map is held to the same bound
+ * so practice starts promptly everywhere (LOST TRAIL's bot paths were fixed to meet it).
  */
 const REVEAL_BOUND_S = 20;
-/** Every other map: the bot must show up before the round ends (ROUND_MS). */
-const MAP_REVEAL_BOUND_S = ROUND_MS / 1000;
 
 function revealSeconds(mapId: string, seed: number) {
   let n = seed;
@@ -39,7 +37,7 @@ function revealSeconds(mapId: string, seed: number) {
 
 describe("practice bot reveal time for an idle human", () => {
   it.each(MAP_IDS.map((id) => [id]))(
-    "every first-round patrol on %s reveals the bot within its bound",
+    "every first-round patrol on %s reveals the bot within the bound",
     (mapId) => {
       const worst = new Map<string, number>();
       // Seeds until all 9 style × opening patrols have been drawn at least once.
@@ -48,10 +46,8 @@ describe("practice bot reveal time for an idle human", () => {
         worst.set(patrol, Math.max(worst.get(patrol) ?? 0, seconds));
       }
       expect(worst.size).toBe(9);
-      // The runtime solo-bot test runs on the default map and waits 25 s: hold it to 20 s.
-      const bound = mapId === DEFAULT_MAP_ID ? REVEAL_BOUND_S : MAP_REVEAL_BOUND_S;
       for (const [patrol, seconds] of worst)
-        expect(seconds, `${mapId} ${patrol}`).toBeLessThan(bound);
+        expect(seconds, `${mapId} ${patrol}`).toBeLessThan(REVEAL_BOUND_S);
     },
     120_000,
   );

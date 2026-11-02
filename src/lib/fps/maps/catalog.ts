@@ -1,5 +1,6 @@
 import { DUSTFRONT } from "./dustfront";
 import { FROSTLINE } from "./frostline";
+import { LOST_TRAIL } from "./lost-trail";
 import type { MapDefinition } from "./types";
 
 /**
@@ -7,4 +8,8 @@ import type { MapDefinition } from "./types";
  * lives next to dustfront.ts). Order is display order. Ids are permanent: they are stored in
  * match configs and checkpoints.
  */
-export const MAP_DEFINITIONS = [DUSTFRONT, FROSTLINE] as const satisfies readonly MapDefinition[];
+export const MAP_DEFINITIONS = [
+  DUSTFRONT,
+  FROSTLINE,
+  LOST_TRAIL,
+] as const satisfies readonly MapDefinition[];
