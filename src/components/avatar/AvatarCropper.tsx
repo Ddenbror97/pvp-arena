@@ -9,10 +9,10 @@ import {
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Minus, Plus, RotateCcw } from "lucide-react";
 import type { AvatarCrop } from "@/lib/avatar-upload/limits";
+import { clamp } from "@/lib/math";
 import { cn } from "@/lib/utils";
 
 const MAX_ZOOM = 4;
-const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
 type View = { zoom: number; cx: number; cy: number };
 

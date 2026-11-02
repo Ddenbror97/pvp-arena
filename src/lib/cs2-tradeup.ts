@@ -1,5 +1,7 @@
 /** Post-October 2025 CS2 trade-up math used by the on-page calculator. */
 
+import { clamp } from "@/lib/math";
+
 type Wear = "FN" | "MW" | "FT" | "WW" | "BS";
 export type Rarity = "consumer" | "industrial" | "milspec" | "restricted" | "classified" | "covert";
 
@@ -47,10 +49,6 @@ export function wearOf(float: number): Wear {
   if (float < 0.38) return "FT";
   if (float < 0.45) return "WW";
   return "BS";
-}
-
-export function clamp(n: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, n));
 }
 
 /** Normalize a float into 0–1 using that skin's own min/max clip. */

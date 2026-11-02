@@ -1,9 +1,12 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { createSnapshotCache, type SharedStore } from "@/lib/game-snapshot/cache";
+import {
+  createSnapshotCache,
+  edgeCache as edge,
+  type SharedStore,
+} from "@/lib/game-snapshot/cache";
 import { parseFpsSeoSnapshot, fpsSeoCacheKey, type FpsSeoSnapshot } from "./seo-snapshot";
 import { workerEnv } from "@/lib/worker-env";
 const cacheKey = () => fpsSeoCacheKey(workerEnv("SUPABASE_URL") ?? "");
-const edge = () => (globalThis as { caches?: { default?: Cache } }).caches?.default;
 const shared: SharedStore<FpsSeoSnapshot> = {
   async get() {
     const r = await edge()?.match(cacheKey());

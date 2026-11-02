@@ -4,6 +4,9 @@
  * failure loads pause for `retryMs` so an outage never fans out to the DB.
  */
 
+/** Cloudflare's per-colo cache (undefined outside Workers), so isolates in one data centre share a refresh. */
+export const edgeCache = () => (globalThis as { caches?: { default?: Cache } }).caches?.default;
+
 export type SharedStore<T> = {
   get(): Promise<{ value: T; storedAt: number } | null>;
   put(value: T, storedAt: number): Promise<void>;
