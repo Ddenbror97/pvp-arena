@@ -423,8 +423,7 @@ function BtcHotWalletTopup() {
   });
   const view = q.data;
   if (!view) return null;
-  const btc = (sats: string | null) =>
-    sats == null ? "—" : formatCryptoUnits(sats, 8, "BTC");
+  const btc = (sats: string | null) => (sats == null ? "—" : formatCryptoUnits(sats, 8, "BTC"));
   const usd = (cents: number | null) => (cents == null ? "—" : formatUsd(cents));
 
   return (

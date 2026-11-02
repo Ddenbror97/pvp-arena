@@ -13,8 +13,7 @@ export const guide: Guide = {
   description:
     "Mega bonanza casino is a brand search, separate from the Bonanza Megaways slot. A login is not a paytable. An $8 Purple stake and a $47 pot use our fees only.",
   h1: "Mega bonanza casino in 2026: a brand login is not a slot paytable",
-  answer:
-    `Mega bonanza casino is a brand people look up, and it is not the Bonanza Megaways slot. Signing in reaches an account.
+  answer: `Mega bonanza casino is a brand people look up, and it is not the Bonanza Megaways slot. Signing in reaches an account.
 
 It does not reveal symbol pays, a return, or a max win. Those game facts stay off this page.
 

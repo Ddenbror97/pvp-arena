@@ -66,9 +66,7 @@ export const guide: Guide = {
       a: "No. State rules change, and this article does not cite a statute number or a launch date. Use the regulator's current page, and speak with a qualified lawyer if you need advice about your own situation.",
     },
   ],
-  sources: [
-    { label: "Florida Gaming Control Commission", url: "https://www.flgaming.gov/" },
-  ],
+  sources: [{ label: "Florida Gaming Control Commission", url: "https://www.flgaming.gov/" }],
   related: [
     "is-online-casino-legal",
     "online-casino-legal-ohio",

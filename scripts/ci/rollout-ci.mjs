@@ -46,7 +46,9 @@ async function main() {
 
   let runId = null;
   for (let i = 0; i < 30 && !runId; i++) {
-    const list = await api(`/repos/${repo}/actions/workflows/${wf.id}/runs?branch=${encodeURIComponent(ref)}&per_page=5`);
+    const list = await api(
+      `/repos/${repo}/actions/workflows/${wf.id}/runs?branch=${encodeURIComponent(ref)}&per_page=5`,
+    );
     const data = await list.json();
     runId = data.workflow_runs?.[0]?.id ?? null;
     if (!runId) await new Promise((r) => setTimeout(r, 3000));

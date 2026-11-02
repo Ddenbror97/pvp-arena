@@ -45,7 +45,11 @@ function newestSlugs(): Set<string> {
   return slugs;
 }
 
-type LinkHit = { kind: "guide" | "hub" | "site" | "external" | "other"; href: string; anchor: string };
+type LinkHit = {
+  kind: "guide" | "hub" | "site" | "external" | "other";
+  href: string;
+  anchor: string;
+};
 
 function linksIn(text: string): LinkHit[] {
   const out: LinkHit[] = [];
@@ -73,7 +77,13 @@ for (const [cluster, groups] of Object.entries(CLUSTER_GROUPS)) {
   const seen = new Set<string>();
   for (const group of groups) {
     for (const slug of group.slugs) {
-      if (seen.has(slug)) groupProblems.push({ slug, issue: "duplicate-in-cluster-groups", cluster, group: group.name });
+      if (seen.has(slug))
+        groupProblems.push({
+          slug,
+          issue: "duplicate-in-cluster-groups",
+          cluster,
+          group: group.name,
+        });
       seen.add(slug);
       if (groupOf.has(slug)) {
         const prev = groupOf.get(slug)!;
@@ -86,7 +96,12 @@ for (const [cluster, groups] of Object.entries(CLUSTER_GROUPS)) {
       }
       groupOf.set(slug, { cluster, group: group.name });
       if (!published.has(slug)) {
-        groupProblems.push({ slug, issue: "hub-lists-unpublished-slug", cluster, group: group.name });
+        groupProblems.push({
+          slug,
+          issue: "hub-lists-unpublished-slug",
+          cluster,
+          group: group.name,
+        });
       } else {
         const g = bySlug.get(slug)!;
         if (g.cluster !== cluster) {
@@ -137,10 +152,46 @@ for (const g of GUIDES) {
   const file = `src/content/guides/${g.slug}.ts`;
   const titleLen = codePoints(g.title);
   const descLen = codePoints(g.description);
-  if (!g.title.trim()) add({ sourceFile: file, sourceUrl: url, issue: "missing-title", severity: "high", cluster: g.cluster, evidence: "empty title", recommendedFix: "Set a unique title within 60 characters." });
-  if (!g.description.trim()) add({ sourceFile: file, sourceUrl: url, issue: "missing-description", severity: "high", cluster: g.cluster, evidence: "empty description", recommendedFix: "Set a unique description within 160 characters." });
-  if (titleLen > TITLE_MAX) add({ sourceFile: file, sourceUrl: url, issue: "title-over-60", severity: "high", cluster: g.cluster, evidence: `${titleLen} code points: ${g.title}`, recommendedFix: "Shorten the title without dropping the topic." });
-  if (descLen > DESC_MAX) add({ sourceFile: file, sourceUrl: url, issue: "description-over-160", severity: "high", cluster: g.cluster, evidence: `${descLen} code points`, recommendedFix: "Shorten the description." });
+  if (!g.title.trim())
+    add({
+      sourceFile: file,
+      sourceUrl: url,
+      issue: "missing-title",
+      severity: "high",
+      cluster: g.cluster,
+      evidence: "empty title",
+      recommendedFix: "Set a unique title within 60 characters.",
+    });
+  if (!g.description.trim())
+    add({
+      sourceFile: file,
+      sourceUrl: url,
+      issue: "missing-description",
+      severity: "high",
+      cluster: g.cluster,
+      evidence: "empty description",
+      recommendedFix: "Set a unique description within 160 characters.",
+    });
+  if (titleLen > TITLE_MAX)
+    add({
+      sourceFile: file,
+      sourceUrl: url,
+      issue: "title-over-60",
+      severity: "high",
+      cluster: g.cluster,
+      evidence: `${titleLen} code points: ${g.title}`,
+      recommendedFix: "Shorten the title without dropping the topic.",
+    });
+  if (descLen > DESC_MAX)
+    add({
+      sourceFile: file,
+      sourceUrl: url,
+      issue: "description-over-160",
+      severity: "high",
+      cluster: g.cluster,
+      evidence: `${descLen} code points`,
+      recommendedFix: "Shorten the description.",
+    });
   titleOwners.set(g.title, [...(titleOwners.get(g.title) ?? []), g.slug]);
   descOwners.set(g.description, [...(descOwners.get(g.description) ?? []), g.slug]);
 
@@ -150,24 +201,71 @@ for (const g of GUIDES) {
   const bodyLinks = linksIn(body);
   const hubOk = bodyLinks.some((l) => l.kind === "hub" && l.href === hub);
   if (!topics.has(topic.slug)) {
-    add({ sourceFile: file, sourceUrl: url, destinationUrl: hub, issue: "cluster-hub-unpublished", severity: "high", cluster: g.cluster, evidence: `topic ${topic.slug} is below MIN_TOPIC_GUIDES or missing`, recommendedFix: "Do not link an unpublished hub; publish the topic only when it has enough guides." });
+    add({
+      sourceFile: file,
+      sourceUrl: url,
+      destinationUrl: hub,
+      issue: "cluster-hub-unpublished",
+      severity: "high",
+      cluster: g.cluster,
+      evidence: `topic ${topic.slug} is below MIN_TOPIC_GUIDES or missing`,
+      recommendedFix:
+        "Do not link an unpublished hub; publish the topic only when it has enough guides.",
+    });
   } else if (!hubOk) {
     const anyHub = bodyLinks.filter((l) => l.kind === "hub").map((l) => l.href);
-    add({ sourceFile: file, sourceUrl: url, destinationUrl: hub, issue: "missing-or-wrong-hub-link", severity: "medium", cluster: g.cluster, evidence: anyHub.length ? `links ${anyHub.join(", ")} instead of ${hub}` : "no hub link in section bodies", recommendedFix: `Link ${hub} from a section body when the sentence is about this cluster.` });
+    add({
+      sourceFile: file,
+      sourceUrl: url,
+      destinationUrl: hub,
+      issue: "missing-or-wrong-hub-link",
+      severity: "medium",
+      cluster: g.cluster,
+      evidence: anyHub.length
+        ? `links ${anyHub.join(", ")} instead of ${hub}`
+        : "no hub link in section bodies",
+      recommendedFix: `Link ${hub} from a section body when the sentence is about this cluster.`,
+    });
   }
 
   const filed = groupOf.get(g.slug);
   if (!filed) {
-    add({ sourceFile: file, sourceUrl: url, issue: "ungrouped-on-hub", severity: "low", cluster: g.cluster, evidence: "published and listed under More in this topic, not a named subgroup", recommendedFix: "Add the slug to the matching CLUSTER_GROUPS subgroup." });
+    add({
+      sourceFile: file,
+      sourceUrl: url,
+      issue: "ungrouped-on-hub",
+      severity: "low",
+      cluster: g.cluster,
+      evidence: "published and listed under More in this topic, not a named subgroup",
+      recommendedFix: "Add the slug to the matching CLUSTER_GROUPS subgroup.",
+    });
   }
 
   for (const l of bodyLinks) {
     if (l.kind === "guide") {
       const dest = l.href.slice("/guides/".length);
       if (dest === g.slug) {
-        add({ sourceFile: file, sourceUrl: url, destinationUrl: l.href, issue: "self-link", severity: "low", cluster: g.cluster, evidence: `anchor "${l.anchor}"`, recommendedFix: "Remove the self-link." });
+        add({
+          sourceFile: file,
+          sourceUrl: url,
+          destinationUrl: l.href,
+          issue: "self-link",
+          severity: "low",
+          cluster: g.cluster,
+          evidence: `anchor "${l.anchor}"`,
+          recommendedFix: "Remove the self-link.",
+        });
       } else if (!published.has(dest)) {
-        add({ sourceFile: file, sourceUrl: url, destinationUrl: l.href, issue: "broken-guide-link", severity: "high", cluster: g.cluster, evidence: `anchor "${l.anchor}"`, recommendedFix: "Point the link at a published guide." });
+        add({
+          sourceFile: file,
+          sourceUrl: url,
+          destinationUrl: l.href,
+          issue: "broken-guide-link",
+          severity: "high",
+          cluster: g.cluster,
+          evidence: `anchor "${l.anchor}"`,
+          recommendedFix: "Point the link at a published guide.",
+        });
       } else {
         incomingBody.set(dest, (incomingBody.get(dest) ?? 0) + 1);
         outgoingGuideLinks.set(g.slug, (outgoingGuideLinks.get(g.slug) ?? 0) + 1);
@@ -175,28 +273,71 @@ for (const g of GUIDES) {
     } else if (l.kind === "hub") {
       const dest = l.href.slice("/guides/topics/".length);
       if (!topics.has(dest)) {
-        add({ sourceFile: file, sourceUrl: url, destinationUrl: l.href, issue: "broken-hub-link", severity: "high", cluster: g.cluster, evidence: `anchor "${l.anchor}"`, recommendedFix: "Point the link at a published topic." });
+        add({
+          sourceFile: file,
+          sourceUrl: url,
+          destinationUrl: l.href,
+          issue: "broken-hub-link",
+          severity: "high",
+          cluster: g.cluster,
+          evidence: `anchor "${l.anchor}"`,
+          recommendedFix: "Point the link at a published topic.",
+        });
       }
     }
     if (/^click here$/i.test(l.anchor.trim()) || /^here$/i.test(l.anchor.trim())) {
-      add({ sourceFile: file, sourceUrl: url, destinationUrl: l.href, issue: "generic-anchor", severity: "low", cluster: g.cluster, evidence: l.anchor, recommendedFix: "Use an anchor that names the destination." });
+      add({
+        sourceFile: file,
+        sourceUrl: url,
+        destinationUrl: l.href,
+        issue: "generic-anchor",
+        severity: "low",
+        cluster: g.cluster,
+        evidence: l.anchor,
+        recommendedFix: "Use an anchor that names the destination.",
+      });
     }
   }
   for (const r of g.related) {
     if (!published.has(r)) {
-      add({ sourceFile: file, sourceUrl: url, destinationUrl: `/guides/${r}`, issue: "broken-related", severity: "high", cluster: g.cluster, evidence: r, recommendedFix: "Remove or replace the related slug." });
+      add({
+        sourceFile: file,
+        sourceUrl: url,
+        destinationUrl: `/guides/${r}`,
+        issue: "broken-related",
+        severity: "high",
+        cluster: g.cluster,
+        evidence: r,
+        recommendedFix: "Remove or replace the related slug.",
+      });
     } else incomingRelated.set(r, (incomingRelated.get(r) ?? 0) + 1);
   }
 }
 
 for (const [title, slugs] of titleOwners) {
   if (slugs.length > 1) {
-    add({ sourceFile: slugs.map((s) => `src/content/guides/${s}.ts`).join(", "), sourceUrl: slugs.map((s) => `/guides/${s}`).join(", "), issue: "duplicate-title", severity: "medium", cluster: "mixed", evidence: `${codePoints(title)} code points shared by ${slugs.join(", ")}`, recommendedFix: "Give each page its own title." });
+    add({
+      sourceFile: slugs.map((s) => `src/content/guides/${s}.ts`).join(", "),
+      sourceUrl: slugs.map((s) => `/guides/${s}`).join(", "),
+      issue: "duplicate-title",
+      severity: "medium",
+      cluster: "mixed",
+      evidence: `${codePoints(title)} code points shared by ${slugs.join(", ")}`,
+      recommendedFix: "Give each page its own title.",
+    });
   }
 }
 for (const [desc, slugs] of descOwners) {
   if (slugs.length > 1) {
-    add({ sourceFile: slugs.map((s) => `src/content/guides/${s}.ts`).join(", "), sourceUrl: slugs.map((s) => `/guides/${s}`).join(", "), issue: "duplicate-description", severity: "medium", cluster: "mixed", evidence: `${codePoints(desc)} code points shared by ${slugs.length} guides`, recommendedFix: "Give each page its own description." });
+    add({
+      sourceFile: slugs.map((s) => `src/content/guides/${s}.ts`).join(", "),
+      sourceUrl: slugs.map((s) => `/guides/${s}`).join(", "),
+      issue: "duplicate-description",
+      severity: "medium",
+      cluster: "mixed",
+      evidence: `${codePoints(desc)} code points shared by ${slugs.length} guides`,
+      recommendedFix: "Give each page its own description.",
+    });
   }
 }
 
@@ -205,7 +346,10 @@ for (const p of groupProblems) {
     sourceFile: "src/content/guides/index.ts",
     sourceUrl: published.has(p.slug) ? `/guides/${p.slug}` : `/guides/${p.slug}`,
     issue: p.issue,
-    severity: p.issue === "hub-lists-unpublished-slug" || p.issue === "group-cluster-mismatch" ? "high" : "medium",
+    severity:
+      p.issue === "hub-lists-unpublished-slug" || p.issue === "group-cluster-mismatch"
+        ? "high"
+        : "medium",
     cluster: p.cluster ?? "",
     evidence: `${p.slug} in ${p.group ?? ""}`,
     recommendedFix: "Fix CLUSTER_GROUPS so the slug matches a published guide in that cluster.",
@@ -217,10 +361,46 @@ for (const t of CLUSTERS) {
   const descLen = codePoints(t.description);
   const url = `/guides/topics/${t.slug}`;
   const live = topics.has(t.slug);
-  if (titleLen > TITLE_MAX) add({ sourceFile: "src/content/guides/index.ts", sourceUrl: url, issue: "hub-title-over-60", severity: "high", cluster: t.name, evidence: `${titleLen}: ${t.title}`, recommendedFix: "Shorten the hub title." });
-  if (descLen > DESC_MAX) add({ sourceFile: "src/content/guides/index.ts", sourceUrl: url, issue: "hub-description-over-160", severity: "high", cluster: t.name, evidence: `${descLen}`, recommendedFix: "Shorten the hub description." });
-  if (!t.title.trim() || !t.description.trim()) add({ sourceFile: "src/content/guides/index.ts", sourceUrl: url, issue: "hub-missing-meta", severity: "high", cluster: t.name, evidence: "empty hub title or description", recommendedFix: "Set hub metadata." });
-  if (!live) add({ sourceFile: "src/content/guides/index.ts", sourceUrl: url, issue: "hub-not-published", severity: "low", cluster: t.name, evidence: "below MIN_TOPIC_GUIDES", recommendedFix: "Leave unpublished until the cluster has 3 guides. Do not link it." });
+  if (titleLen > TITLE_MAX)
+    add({
+      sourceFile: "src/content/guides/index.ts",
+      sourceUrl: url,
+      issue: "hub-title-over-60",
+      severity: "high",
+      cluster: t.name,
+      evidence: `${titleLen}: ${t.title}`,
+      recommendedFix: "Shorten the hub title.",
+    });
+  if (descLen > DESC_MAX)
+    add({
+      sourceFile: "src/content/guides/index.ts",
+      sourceUrl: url,
+      issue: "hub-description-over-160",
+      severity: "high",
+      cluster: t.name,
+      evidence: `${descLen}`,
+      recommendedFix: "Shorten the hub description.",
+    });
+  if (!t.title.trim() || !t.description.trim())
+    add({
+      sourceFile: "src/content/guides/index.ts",
+      sourceUrl: url,
+      issue: "hub-missing-meta",
+      severity: "high",
+      cluster: t.name,
+      evidence: "empty hub title or description",
+      recommendedFix: "Set hub metadata.",
+    });
+  if (!live)
+    add({
+      sourceFile: "src/content/guides/index.ts",
+      sourceUrl: url,
+      issue: "hub-not-published",
+      severity: "low",
+      cluster: t.name,
+      evidence: "below MIN_TOPIC_GUIDES",
+      recommendedFix: "Leave unpublished until the cluster has 3 guides. Do not link it.",
+    });
 }
 
 const newestGuides = GUIDES.filter((g) => newest.has(g.slug));
@@ -243,7 +423,8 @@ const newAudit = newestGuides.map((g) => {
       severity: "medium",
       cluster: g.cluster,
       evidence: `related incoming ${inRel}; body incoming 0`,
-      recommendedFix: "Add one contextual link from an older guide in the same cluster, with an anchor that is not this page's exact keyword.",
+      recommendedFix:
+        "Add one contextual link from an older guide in the same cluster, with an anchor that is not this page's exact keyword.",
     });
   }
   if (older.length === 0) {
@@ -275,9 +456,7 @@ const orphans = GUIDES.filter((g) => (incomingBody.get(g.slug) ?? 0) === 0).map(
 
 const hubReport = publishedTopics().map((t) => {
   const members = GUIDES.filter((g) => g.cluster === t.name);
-  const grouped = new Set(
-    (CLUSTER_GROUPS[t.name] ?? []).flatMap((g) => g.slugs),
-  );
+  const grouped = new Set((CLUSTER_GROUPS[t.name] ?? []).flatMap((g) => g.slugs));
   const missingFromGroups = members.filter((g) => !grouped.has(g.slug)).map((g) => g.slug);
   const wrong = (CLUSTER_GROUPS[t.name] ?? []).flatMap((g) =>
     g.slugs.filter((s) => {
@@ -307,7 +486,8 @@ const report = {
     characterCount: "Unicode code points via for...of, markup excluded",
     publishedDefinition: "GUIDES array. Draft files on disk that are not imported are excluded.",
     newestDefinition: "git log --diff-filter=A origin/main..HEAD -- src/content/guides",
-    renderedMetadata: "guides.$slug.tsx and guides.topics.$topic.tsx set <title>, meta description, og:title, og:description, and canonical from the same title and description fields. This audit reads those source fields. Production HTML was not fetched.",
+    renderedMetadata:
+      "guides.$slug.tsx and guides.topics.$topic.tsx set <title>, meta description, og:title, og:description, and canonical from the same title and description fields. This audit reads those source fields. Production HTML was not fetched.",
   },
   inventory: {
     publishedGuides: GUIDES.length,
@@ -321,14 +501,24 @@ const report = {
     newestNotInGuides: newestMissingFromRegistry,
     guidesAudited: GUIDES.length,
     coverage: 1,
-    draftsExcluded: "Files on disk that are not imported into GUIDES are not published and are not linked.",
+    draftsExcluded:
+      "Files on disk that are not imported into GUIDES are not published and are not linked.",
     zeroIncomingBodyLinks: GUIDES.filter((g) => (incomingBody.get(g.slug) ?? 0) === 0).length,
-    zeroContextualGuideOutlinks: GUIDES.filter((g) => (outgoingGuideLinks.get(g.slug) ?? 0) === 0).length,
+    zeroContextualGuideOutlinks: GUIDES.filter((g) => (outgoingGuideLinks.get(g.slug) ?? 0) === 0)
+      .length,
     zeroRelatedSlugs: GUIDES.filter((g) => g.related.length === 0).length,
-    clustersWithoutPillar: CLUSTERS.filter((c) => !GUIDES.some((g) => g.cluster === c.name && g.pillar)).map((c) => c.name),
-    brokenGuideLinks: findings.filter((f) => f.issue === "broken-guide-link" || f.issue === "broken-related" || f.issue === "broken-hub-link").length,
+    clustersWithoutPillar: CLUSTERS.filter(
+      (c) => !GUIDES.some((g) => g.cluster === c.name && g.pillar),
+    ).map((c) => c.name),
+    brokenGuideLinks: findings.filter(
+      (f) =>
+        f.issue === "broken-guide-link" ||
+        f.issue === "broken-related" ||
+        f.issue === "broken-hub-link",
+    ).length,
     duplicateSlugs: GUIDES.length - new Set(GUIDES.map((g) => g.slug)).size,
-    guideRedirectRoutes: "None. src/routes has no redirect from /guides. Canonicals are /guides/$slug.",
+    guideRedirectRoutes:
+      "None. src/routes has no redirect from /guides. Canonicals are /guides/$slug.",
   },
   issueCounts: Object.fromEntries([...byIssue.entries()].sort((a, b) => b[1] - a[1])),
   findings,

@@ -41,7 +41,10 @@ export function cashoutMaxCents(
   return Math.min(afterHold, Math.max(0, snap.room_cents));
 }
 
-export function cashoutMaxLabel(snap: WithdrawCashSnapshot | null, maxCents: number): string | null {
+export function cashoutMaxLabel(
+  snap: WithdrawCashSnapshot | null,
+  maxCents: number,
+): string | null {
   if (!snap) return null;
   if (depositWagerShortfall(snap) > 0) return depositWagerBlockedMessage(snap);
   if (snap.room_cents >= maxCents) return null;

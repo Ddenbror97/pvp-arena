@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "sleeper-picks-review",
   cluster: "Sports betting",
   keyword: "sleeper picks",
-  secondary: [
-    "sleeper player picks rules",
-    "sleeper flex contest",
-    "sleeper deposit match",
-  ],
+  secondary: ["sleeper player picks rules", "sleeper flex contest", "sleeper deposit match"],
   title: "Sleeper Picks Review: Match Cap and Cash-Out",
   description:
     "Sleeper Picks prints a 100% match up to $100 with code PLAY. Pool caps, a 5-business-day cash-out line, and a 5% coinflip fee. No affiliate link.",

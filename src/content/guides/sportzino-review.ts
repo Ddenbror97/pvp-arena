@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "sportzino-review",
   cluster: "Sweepstakes",
   keyword: "sportzino",
-  secondary: [
-    "sportzino promo code",
-    "sportzino redeem",
-    "is sportzino legit",
-  ],
+  secondary: ["sportzino promo code", "sportzino redeem", "is sportzino legit"],
   title: "Sportzino Review: 50-Coin Floor and State Maps",
   description:
     "Sportzino prices 100 played Sweeps Coins at $100 and a 50-coin floor. Two state lists disagree. No public code loaded. No account opened.",

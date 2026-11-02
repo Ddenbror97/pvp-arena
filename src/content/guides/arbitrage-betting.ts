@@ -126,12 +126,7 @@ A PvP pot is shared among the players in the pot. There is no second book to arb
       url: "https://www.ncpgambling.org/help-treatment/",
     },
   ],
-  related: [
-    "matched-betting",
-    "betting-exchange-explained",
-    "odds-converter",
-    "house-edge",
-  ],
+  related: ["matched-betting", "betting-exchange-explained", "odds-converter", "house-edge"],
   widget: "arbitrage",
   updated: "2026-10-06",
 };

@@ -50,7 +50,9 @@ function PartnerLeaderboardPage() {
   if (query.error) {
     return (
       <div className="mx-auto mt-8 max-w-3xl px-4">
-        <p className="text-sm">{leaderboardError(query.error, "Unable to load this leaderboard.")}</p>
+        <p className="text-sm">
+          {leaderboardError(query.error, "Unable to load this leaderboard.")}
+        </p>
         <Button className="mt-3" size="sm" variant="secondary" onClick={() => void query.refetch()}>
           Try again
         </Button>

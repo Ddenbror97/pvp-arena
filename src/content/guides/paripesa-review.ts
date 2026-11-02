@@ -205,11 +205,26 @@ Paripesa stays unread as a contract until those pages render in your own browser
     },
   ],
   sources: [
-    { label: "Paripesa English home, US block, opened 20 October 2026", url: "https://paripesa.com/en" },
-    { label: "Paripesa payment path, US block, opened 20 October 2026", url: "https://paripesa.com/en/information/payment" },
-    { label: "Paripesa rules path, US block, opened 20 October 2026", url: "https://paripesa.com/en/information/rules/30" },
-    { label: "Curaçao certificate naming paripesa.com, opened 20 October 2026", url: "https://cert.cga.cw/certificate?id=ZXlKcGRpSTZJa2hSZGpSbFdXTkRiRmcwYURZM1ltdFNlVGRNWjJjOVBTSXNJblpoYkhWbElqb2lNbWN6VFZrMmNEWnVXVE4wYW01amExTlNNV3cxUVQwOUlpd2liV0ZqSWpvaU5EUTJaV1kwT1RNd1lqazBZVFJoTmpNNE1EQmtPR0V6TWpZMFpqQXhNMk14TjJRMk5qUmhNRFV5WkRFeE1qSXlOR0kyTURaa016aGtNV0U1TTJNeE9DSXNJblJoWnlJNklpSjk%3D" },
-    { label: "Curaçao B2C certificate for Optim Development, opened 20 October 2026", url: "https://cert.cga.cw/token?id=601" },
+    {
+      label: "Paripesa English home, US block, opened 20 October 2026",
+      url: "https://paripesa.com/en",
+    },
+    {
+      label: "Paripesa payment path, US block, opened 20 October 2026",
+      url: "https://paripesa.com/en/information/payment",
+    },
+    {
+      label: "Paripesa rules path, US block, opened 20 October 2026",
+      url: "https://paripesa.com/en/information/rules/30",
+    },
+    {
+      label: "Curaçao certificate naming paripesa.com, opened 20 October 2026",
+      url: "https://cert.cga.cw/certificate?id=ZXlKcGRpSTZJa2hSZGpSbFdXTkRiRmcwYURZM1ltdFNlVGRNWjJjOVBTSXNJblpoYkhWbElqb2lNbWN6VFZrMmNEWnVXVE4wYW01amExTlNNV3cxUVQwOUlpd2liV0ZqSWpvaU5EUTJaV1kwT1RNd1lqazBZVFJoTmpNNE1EQmtPR0V6TWpZMFpqQXhNMk14TjJRMk5qUmhNRFV5WkRFeE1qSXlOR0kyTURaa016aGtNV0U1TTJNeE9DSXNJblJoWnlJNklpSjk%3D",
+    },
+    {
+      label: "Curaçao B2C certificate for Optim Development, opened 20 October 2026",
+      url: "https://cert.cga.cw/token?id=601",
+    },
   ],
   related: [
     "betfury-review",

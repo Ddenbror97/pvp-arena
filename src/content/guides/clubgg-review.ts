@@ -149,11 +149,6 @@ If you play, play at stakes the checklist survived. Copy the fee from the table.
     { label: "ClubGG — official site", url: "https://www.clubgg.com/" },
     { label: "Wikipedia — Online poker", url: "https://en.wikipedia.org/wiki/Online_poker" },
   ],
-  related: [
-    "pokerbros-review",
-    "acr-poker-review",
-    "real-money-poker-apps",
-    "crypto-poker",
-  ],
+  related: ["pokerbros-review", "acr-poker-review", "real-money-poker-apps", "crypto-poker"],
   updated: "2026-10-07",
 };

@@ -66,7 +66,7 @@ export const guide: Guide = {
       a: "PVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker settled in USD, and its published deposit rail is USDC and ETH on Base, not USDT on Ethereum or TRON. Use the asset and network the cashier lists, and read the USDT casino guide if you are comparing Tether sites.",
     },
   ],
-    sources: [
+  sources: [
     { label: "EIP-20: Token Standard", url: "https://eips.ethereum.org/EIPS/eip-20" },
     { label: "TRON docs — TRC-20", url: "https://developers.tron.network/docs/trc20" },
   ],

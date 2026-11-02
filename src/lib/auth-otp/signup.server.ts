@@ -158,8 +158,7 @@ function signupSlotError(reason?: string): string {
     return "Too many accounts are being created right now. Try again in a few minutes.";
   if (reason === "IP_LIMIT")
     return "Too many accounts created from this network. Try again in an hour.";
-  if (reason === "IP_BLOCKED")
-    return "Sign-up is not available from this network.";
+  if (reason === "IP_BLOCKED") return "Sign-up is not available from this network.";
   return "Couldn't complete verification. Please try again.";
 }
 

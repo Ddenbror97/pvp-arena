@@ -9,8 +9,7 @@ export const guide: Guide = {
   description:
     "ClubWPT Gold is searched as a poker-flavored sweeps club, not a satellite and not our table. No rake is invented. Our poker fee is whatever the table shows.",
   h1: "ClubWPT Gold review in 2026: a sweeps club, separate from our table",
-  answer:
-    `Clubwpt gold is searched as a poker-flavored sweeps club, not as a World Series satellite and not as the poker table on this site. This review will not invent a rake. Our poker fee is whatever that table shows when you sit.
+  answer: `Clubwpt gold is searched as a poker-flavored sweeps club, not as a World Series satellite and not as the poker table on this site. This review will not invent a rake. Our poker fee is whatever that table shows when you sit.
 
 The worked dollars below are Coinflip and Jackpot, labeled as ours.`,
   facts: [

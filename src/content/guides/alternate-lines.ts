@@ -123,11 +123,6 @@ A PvP pot is shared among the players in the pot. Nobody is laying you an alt sp
     { label: "Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
     { label: "National Football League", url: "https://www.nfl.com" },
   ],
-  related: [
-    "point-spread-explained",
-    "over-under-betting",
-    "odds-converter",
-    "nfl-betting",
-  ],
+  related: ["point-spread-explained", "over-under-betting", "odds-converter", "nfl-betting"],
   updated: "2026-10-06",
 };

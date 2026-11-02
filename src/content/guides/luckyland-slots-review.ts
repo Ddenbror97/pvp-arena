@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "luckyland-slots-review",
   cluster: "Sweepstakes",
   keyword: "luckyland slots",
-  secondary: [
-    "luckyland slots promo code",
-    "luckyland slots redeem",
-    "is luckyland slots legit",
-  ],
+  secondary: ["luckyland slots promo code", "luckyland slots redeem", "is luckyland slots legit"],
   title: "LuckyLand Slots Review: $50 Floor and Age 21",
   description:
     "LuckyLand Slots Sweeps Rules 29.0 set a $50 redeem floor, age 21, and a long state block. Gold Coins are not cash. No public promo code on the pages opened.",

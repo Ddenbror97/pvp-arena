@@ -150,7 +150,7 @@ One sweeps sports product left the promo code and the dollar minimum unpublished
 
 Sweeps Rules 29.0, dated 18 March 2026, left the public promo code and the processing-fee amount unpublished. [That slots rules PDF](/guides/luckyland-slots-review) is not a sports entry.
 
-A brand page asks for the word redeem instead of withdraw. [That wording](/guides/fliff-review) is the prize desk, and the code on the promo page is FLIFFBONUS.`
+A brand page asks for the word redeem instead of withdraw. [That wording](/guides/fliff-review) is the prize desk, and the code on the promo page is FLIFFBONUS.`,
     },
   ],
   faqs: [

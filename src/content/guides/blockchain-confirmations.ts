@@ -66,7 +66,7 @@ export const guide: Guide = {
       a: "No, the fee is what you paid to be included, and the confirmation count is what happens after inclusion. Deposit fee questions belong on the crypto casino deposit fees page, not in the block counter.",
     },
   ],
-    sources: [
+  sources: [
     {
       label: "Bitcoin Developer Guide — Block chain",
       url: "https://developer.bitcoin.org/devguide/block_chain.html",

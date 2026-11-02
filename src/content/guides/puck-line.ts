@@ -146,8 +146,14 @@ Keep the lesson in one sentence: minus 1.5 needs two goals, plus 1.5 survives a 
   ],
   sources: [
     { label: "NHL", url: "https://www.nhl.com" },
-    { label: "Wikipedia: National Hockey League", url: "https://en.wikipedia.org/wiki/National_Hockey_League" },
-    { label: "Wikipedia: Fixed-odds betting", url: "https://en.wikipedia.org/wiki/Fixed-odds_betting" },
+    {
+      label: "Wikipedia: National Hockey League",
+      url: "https://en.wikipedia.org/wiki/National_Hockey_League",
+    },
+    {
+      label: "Wikipedia: Fixed-odds betting",
+      url: "https://en.wikipedia.org/wiki/Fixed-odds_betting",
+    },
   ],
   related: [
     "moneyline-betting-explained",

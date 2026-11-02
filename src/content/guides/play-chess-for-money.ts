@@ -141,9 +141,20 @@ The fair version of a chance pot, if that is what you wanted instead, is a publi
     },
   ],
   sources: [
-    { label: "Wikipedia: Chess rating system", url: "https://en.wikipedia.org/wiki/Chess_rating_system" },
-    { label: "Wikipedia: Cheating in chess", url: "https://en.wikipedia.org/wiki/Cheating_in_chess" },
+    {
+      label: "Wikipedia: Chess rating system",
+      url: "https://en.wikipedia.org/wiki/Chess_rating_system",
+    },
+    {
+      label: "Wikipedia: Cheating in chess",
+      url: "https://en.wikipedia.org/wiki/Cheating_in_chess",
+    },
   ],
-  related: ["skill-based-gambling", "bet-with-friends-online", "peer-to-peer-gambling", "heads-up-poker-strategy"],
+  related: [
+    "skill-based-gambling",
+    "bet-with-friends-online",
+    "peer-to-peer-gambling",
+    "heads-up-poker-strategy",
+  ],
   updated: "2026-10-06",
 };

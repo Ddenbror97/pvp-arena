@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "how-to-play-powerball",
   cluster: "Lottery",
   keyword: "how to play powerball",
-  secondary: [
-    "powerball rules",
-    "powerball drawing time",
-    "power play",
-    "powerball ticket",
-  ],
+  secondary: ["powerball rules", "powerball drawing time", "power play", "powerball ticket"],
   title: "How to Play Powerball: Rules, Prizes and Drawing Times",
   description:
     "Learn how to play Powerball step by step: picking numbers, Power Play, drawing days, prize tiers and how to claim, with a quick-start checklist.",
@@ -131,7 +126,7 @@ Read a finished PvP round on [Fairness](/fairness). The pot is [Jackpot](/). How
 
 Adults 18 and older. If the drawing calendar is becoming a schedule you cannot skip, stop and use [responsible gambling](/responsible-gambling). No version of these steps beats the combination count.
 
-Filling a slip is not the prize row. [The match-count table](/guides/powerball-payout-chart) leaves California's own dollar rows unpublished.`
+Filling a slip is not the prize row. [The match-count table](/guides/powerball-payout-chart) leaves California's own dollar rows unpublished.`,
     },
   ],
   faqs: [

@@ -9,8 +9,7 @@ export const guide: Guide = {
   description:
     "Sloto cash is a casino brand, not a promise that a slot will pay cash. Their fees stay unpublished. A $13 versus $13 coinflip and a $66 pot use our 5% rule.",
   h1: "Sloto cash in 2026: the brand name is not a slot that owes you cash",
-  answer:
-    `Sloto cash is a casino brand search, and the word cash inside it is not a promise that a slot will pay you. A name can sit on a house-banked lobby, a sweeps-style desk, or a lookalike.
+  answer: `Sloto cash is a casino brand search, and the word cash inside it is not a promise that a slot will pay you. A name can sit on a house-banked lobby, a sweeps-style desk, or a lookalike.
 
 This review publishes none of their fees or clocks. It does publish our math: $13 versus $13, and a $66 pot. No bonus code appears.`,
   facts: [

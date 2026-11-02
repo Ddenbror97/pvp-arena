@@ -81,11 +81,28 @@ Country notes that are not this one: [Australian gambling tax](/guides/gambling-
     },
   ],
   sources: [
-    { label: "HMRC Business Income Manual BIM22015", url: "https://www.gov.uk/hmrc-internal-manuals/business-income-manual/bim22015" },
-    { label: "Taxation of Chargeable Gains Act 1992, section 51", url: "https://www.legislation.gov.uk/ukpga/1992/12/section/51" },
-    { label: "Gambling Commission: customer winnings", url: "https://www.gamblingcommission.gov.uk/about-us/freedomofinformation/winnings-from-gambling-for-customers" },
-    { label: "GOV.UK: register for gambling tax", url: "https://www.gov.uk/register-pay-gambling-tax" },
+    {
+      label: "HMRC Business Income Manual BIM22015",
+      url: "https://www.gov.uk/hmrc-internal-manuals/business-income-manual/bim22015",
+    },
+    {
+      label: "Taxation of Chargeable Gains Act 1992, section 51",
+      url: "https://www.legislation.gov.uk/ukpga/1992/12/section/51",
+    },
+    {
+      label: "Gambling Commission: customer winnings",
+      url: "https://www.gamblingcommission.gov.uk/about-us/freedomofinformation/winnings-from-gambling-for-customers",
+    },
+    {
+      label: "GOV.UK: register for gambling tax",
+      url: "https://www.gov.uk/register-pay-gambling-tax",
+    },
   ],
-  related: ["crypto-gambling-taxes", "report-gambling-winnings", "gambling-tax-australia", "gambling-winnings-tax-canada"],
+  related: [
+    "crypto-gambling-taxes",
+    "report-gambling-winnings",
+    "gambling-tax-australia",
+    "gambling-winnings-tax-canada",
+  ],
   updated: "2026-10-21",
 };

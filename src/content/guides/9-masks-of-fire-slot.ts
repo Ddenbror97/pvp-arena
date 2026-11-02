@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "9-masks-of-fire-slot",
   cluster: "Slots",
   keyword: "9 masks of fire",
-  secondary: [
-    "gameburger 9 masks of fire",
-    "9 masks of fire rtp",
-    "9 masks of fire paylines",
-  ],
+  secondary: ["gameburger 9 masks of fire", "9 masks of fire rtp", "9 masks of fire paylines"],
   title: "9 Masks of Fire: GameBurger Sheet, Blank Cells",
   description:
     "GameBurger Studios prints 96.24% RTP, medium volatility, a 5 by 3 reel set, and 20 paylines. Max win, hit rate, stakes, and a buy price are not on that page.",

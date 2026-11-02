@@ -242,7 +242,10 @@ describe("pool physics", () => {
   it("sends a full-power smash farther than the previous roll", () => {
     const seeds = [7, 19, 41];
     const spread = (physics: "pool-phys-v2" | "pool-phys-v3", salt: number) => {
-      const table = freshTable(Uint8Array.from({ length: 32 }, (_, i) => i + salt), physics);
+      const table = freshTable(
+        Uint8Array.from({ length: 32 }, (_, i) => i + salt),
+        physics,
+      );
       const start = new Map(table.balls.map((ball) => [ball.id, { x: ball.x, y: ball.y }]));
       const result = simulate(table.balls, shot({ angleMilli: 0, power: 10_000 }), true, physics);
       const peak = new Map<number, number>();
@@ -280,7 +283,10 @@ describe("pool physics", () => {
   it("runs a full smash slower than v3 and still past the v2 roll", () => {
     const salt = 7;
     const meanOf = (physics: "pool-phys-v2" | "pool-phys-v3" | "pool-phys-v4") => {
-      const table = freshTable(Uint8Array.from({ length: 32 }, (_, i) => i + salt), physics);
+      const table = freshTable(
+        Uint8Array.from({ length: 32 }, (_, i) => i + salt),
+        physics,
+      );
       const start = new Map(table.balls.map((ball) => [ball.id, { x: ball.x, y: ball.y }]));
       const result = simulate(table.balls, shot({ angleMilli: 0, power: 10_000 }), false, physics);
       let sum = 0;

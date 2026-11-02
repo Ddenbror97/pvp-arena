@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "bluffing-in-poker",
   cluster: "Poker",
   keyword: "bluffing in poker",
-  secondary: [
-    "semi-bluff",
-    "pure bluff",
-    "bluff to value ratio",
-    "fold equity",
-  ],
+  secondary: ["semi-bluff", "pure bluff", "bluff to value ratio", "fold equity"],
   title: "Bluffing in Poker: When, How Often and Against Whom",
   description:
     "Learn bluffing in poker: semi-bluffs vs pure bluffs, bluff-to-value ratios, the best boards and opponents to bluff and how to size bluffs.",

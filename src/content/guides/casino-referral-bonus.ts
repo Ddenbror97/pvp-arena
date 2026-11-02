@@ -77,9 +77,17 @@ Tax treatment of a referral credit is not settled by this page. A US reader shou
     },
   ],
   sources: [
-    { label: "UK Gambling Commission LCCP 5.1.1: rewards and bonuses", url: "https://www.gamblingcommission.gov.uk/licensees-and-businesses/lccp/condition/5-1-1-sr-code" },
+    {
+      label: "UK Gambling Commission LCCP 5.1.1: rewards and bonuses",
+      url: "https://www.gamblingcommission.gov.uk/licensees-and-businesses/lccp/condition/5-1-1-sr-code",
+    },
     { label: "PVPspinArena terms", url: "https://pvpspinarena.com/terms" },
   ],
-  related: ["deposit-match-bonus", "crypto-casino-affiliate-program", "casino-wagering-requirements", "gambling-tax-uk"],
+  related: [
+    "deposit-match-bonus",
+    "crypto-casino-affiliate-program",
+    "casino-wagering-requirements",
+    "gambling-tax-uk",
+  ],
   updated: "2026-10-21",
 };

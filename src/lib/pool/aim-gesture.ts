@@ -91,7 +91,9 @@ export function hitsCueStick(
   const side = dx * -dirY + dy * dirX;
   const gap = cueStickGap(power);
   const start = Math.max(CUE_GRAB_R, gap * 0.85);
-  const shaft = Number.isFinite(reach) ? Math.max(0, Math.min(CUE_STICK_LEN, reach)) : CUE_STICK_LEN;
+  const shaft = Number.isFinite(reach)
+    ? Math.max(0, Math.min(CUE_STICK_LEN, reach))
+    : CUE_STICK_LEN;
   const end = gap + shaft + CUE_STICK_PAST;
   if (back < start || back > end) return false;
   return side * side <= CUE_STICK_GRAB * CUE_STICK_GRAB;

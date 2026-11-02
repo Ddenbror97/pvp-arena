@@ -334,9 +334,7 @@ export function sessionFor(
       }
     },
     hasPendingRequest() {
-      return (
-        pendingInjectedConnections.has(provider) || externallyPendingConnections.has(provider)
-      );
+      return pendingInjectedConnections.has(provider) || externallyPendingConnections.has(provider);
     },
     async connect() {
       const attempt = async () => {

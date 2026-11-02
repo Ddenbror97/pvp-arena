@@ -153,11 +153,6 @@ Leave the base stake alone when you cannot describe the gammon price without loo
     { label: "Backgammon (Wikipedia)", url: "https://en.wikipedia.org/wiki/Backgammon" },
     { label: "Doubling cube (Wikipedia)", url: "https://en.wikipedia.org/wiki/Doubling_cube" },
   ],
-  related: [
-    "spades-for-money",
-    "gin-rummy-for-money",
-    "trivia-for-money",
-    "backgammon-rules",
-  ],
+  related: ["spades-for-money", "gin-rummy-for-money", "trivia-for-money", "backgammon-rules"],
   updated: "2026-10-07",
 };

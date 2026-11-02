@@ -147,8 +147,14 @@ Keep one sentence: minus 1.5 needs two runs, plus 1.5 survives a one-run loss, a
   ],
   sources: [
     { label: "MLB", url: "https://www.mlb.com" },
-    { label: "Wikipedia: Major League Baseball", url: "https://en.wikipedia.org/wiki/Major_League_Baseball" },
-    { label: "Wikipedia: Fixed-odds betting", url: "https://en.wikipedia.org/wiki/Fixed-odds_betting" },
+    {
+      label: "Wikipedia: Major League Baseball",
+      url: "https://en.wikipedia.org/wiki/Major_League_Baseball",
+    },
+    {
+      label: "Wikipedia: Fixed-odds betting",
+      url: "https://en.wikipedia.org/wiki/Fixed-odds_betting",
+    },
   ],
   related: [
     "moneyline-betting-explained",

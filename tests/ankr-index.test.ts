@@ -18,10 +18,15 @@ import {
 } from "../src/lib/crypto/ankr-index";
 
 const deposit = "0xe0a1403a2e32c5d52d1620ccce8a5867367ef8fa";
-const page = (transactions: NonNullable<AnkrTxPage["result"]>["transactions"], synced = 52650483): AnkrTxPage => ({
+const page = (
+  transactions: NonNullable<AnkrTxPage["result"]>["transactions"],
+  synced = 52650483,
+): AnkrTxPage => ({
   result: { transactions, syncStatus: { blockNumber: synced } },
 });
-const tx = (o: Partial<{ hash: string; from: string; to: string | null; blockNumber: string; value: string }>) => ({
+const tx = (
+  o: Partial<{ hash: string; from: string; to: string | null; blockNumber: string; value: string }>,
+) => ({
   hash: "0xe8ddb9a5d58e894677cae3f3ca2a629e47c230c52df20878a50ecf3dbf4601fc",
   from: "0x6ebCA496AC079632Ad711646DCe4C806Ee9bBD0d",
   to: deposit,
@@ -39,10 +44,7 @@ describe("ankr index url", () => {
   it("uses Ankr when Chainstack is the other RPC", () => {
     expect(
       ankrIndexFromRpcUrls(
-        [
-          "https://base-mainnet.core.chainstack.com/abc",
-          "https://rpc.ankr.com/base/abc123",
-        ],
+        ["https://base-mainnet.core.chainstack.com/abc", "https://rpc.ankr.com/base/abc123"],
         8453,
       ),
     ).toBe("https://rpc.ankr.com/multichain/abc123");
@@ -74,7 +76,14 @@ describe("ankr native transfers", () => {
     });
   });
   it("matches the address case-insensitively", () => {
-    expect(ankrNativeTransfers(page([tx({ to: deposit.toUpperCase().replace("0X", "0x") })]), deposit, from, to)).toHaveLength(1);
+    expect(
+      ankrNativeTransfers(
+        page([tx({ to: deposit.toUpperCase().replace("0X", "0x") })]),
+        deposit,
+        from,
+        to,
+      ),
+    ).toHaveLength(1);
   });
   it("skips sends from the address, zero value, out-of-range and malformed rows", () => {
     const rows = [
@@ -187,9 +196,27 @@ describe("internal ETH deposits", () => {
       {
         result: {
           transactions: [
-            { hash: "0xaaa", from: "0x" + "ab".repeat(20), to: deposit, blockNumber: "10", value: "100" },
-            { hash: "0xbbb", from: "0x" + "cd".repeat(20), to: deposit, blockNumber: "11", value: "200" },
-            { hash: "0xccc", from: "0x" + "11".repeat(20), to: deposit, blockNumber: "12", value: "0" },
+            {
+              hash: "0xaaa",
+              from: "0x" + "ab".repeat(20),
+              to: deposit,
+              blockNumber: "10",
+              value: "100",
+            },
+            {
+              hash: "0xbbb",
+              from: "0x" + "cd".repeat(20),
+              to: deposit,
+              blockNumber: "11",
+              value: "200",
+            },
+            {
+              hash: "0xccc",
+              from: "0x" + "11".repeat(20),
+              to: deposit,
+              blockNumber: "12",
+              value: "0",
+            },
           ],
         },
       },
@@ -289,7 +316,9 @@ describe("balance jump search", () => {
 describe("ankr indexed-through block", () => {
   it("reads the sync height", () => {
     expect(ankrIndexedThrough(page([], 52650483))).toBe(52650483n);
-    expect(ankrIndexedThrough({ result: { syncStatus: { blockNumber: "52650483" } } })).toBe(52650483n);
+    expect(ankrIndexedThrough({ result: { syncStatus: { blockNumber: "52650483" } } })).toBe(
+      52650483n,
+    );
   });
   it("is unknown when missing or invalid, so the cursor never advances on a guess", () => {
     expect(ankrIndexedThrough({ result: {} })).toBeNull();

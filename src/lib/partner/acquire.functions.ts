@@ -26,7 +26,10 @@ export const openPartnerLink = createServerFn({ method: "GET" })
       rpc: (
         fn: string,
         args?: Record<string, unknown>,
-      ) => Promise<{ data: { ok?: boolean; username?: string } | null; error: { message?: string } | null }>;
+      ) => Promise<{
+        data: { ok?: boolean; username?: string } | null;
+        error: { message?: string } | null;
+      }>;
     };
     const { data: peek, error } = await admin.rpc("partner_acquisition_peek", { p_code: code });
     if (error || !peek?.ok) return { ok: false as const };

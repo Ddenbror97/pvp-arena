@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "casino-jobs",
   cluster: "Casino knowledge",
   keyword: "casino jobs",
-  secondary: [
-    "gambling services workers pay",
-    "nevada gaming employee age",
-    "dealer median wage",
-  ],
+  secondary: ["gambling services workers pay", "nevada gaming employee age", "dealer median wage"],
   title: "Casino jobs: roles, licenses, and BLS wages",
   description:
     "Casino jobs on the BLS page show a May 2025 median of $37,460, with dealers at $34,320. Nevada bars most gaming work under 21. Fee dollars are not published.",

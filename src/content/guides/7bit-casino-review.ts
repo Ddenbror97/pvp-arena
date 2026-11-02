@@ -210,10 +210,19 @@ Do not fund 7bit Casino until those three documents agree. [Signs a lobby is onl
     },
   ],
   sources: [
-    { label: "7bit terms, opened 20 October 2026", url: "https://7bitcasino.com/terms-and-conditions" },
-    { label: "7bit bonus terms, opened 20 October 2026", url: "https://7bitcasino.com/bonus-terms" },
+    {
+      label: "7bit terms, opened 20 October 2026",
+      url: "https://7bitcasino.com/terms-and-conditions",
+    },
+    {
+      label: "7bit bonus terms, opened 20 October 2026",
+      url: "https://7bitcasino.com/bonus-terms",
+    },
     { label: "7bit about page, opened 20 October 2026", url: "https://7bitcasino.com/about-us" },
-    { label: "Curaçao certificate listing 7bitcasino.com, opened 20 October 2026", url: "https://cert.cga.cw/token?id=81" },
+    {
+      label: "Curaçao certificate listing 7bitcasino.com, opened 20 October 2026",
+      url: "https://cert.cga.cw/token?id=81",
+    },
   ],
   related: [
     "mbit-casino-review",

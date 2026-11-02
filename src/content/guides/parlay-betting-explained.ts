@@ -136,7 +136,7 @@ If you still want a parlay after that sum, keep it at two legs you can multiply 
 
 A leg that lands on the number and returns the stake is a [push](/guides/push-in-betting). A parlay does not treat that the same way a single does. Splitting the same legs into every smaller parlay is a [round robin bet](/guides/round-robin-bet).
 
-A pick'em app can also pay a first deposit as promo funds you cannot withdraw. That offer, dated 3 September 2025, is [promo funds that are not cash](/guides/parlayplay-review).`
+A pick'em app can also pay a first deposit as promo funds you cannot withdraw. That offer, dated 3 September 2025, is [promo funds that are not cash](/guides/parlayplay-review).`,
     },
     {
       id: "stop",

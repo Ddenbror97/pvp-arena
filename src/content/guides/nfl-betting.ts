@@ -77,6 +77,11 @@ Key numbers are a reason to look at 3 and 7 before you click, because of the sco
     },
     { label: "NFL rulebook", url: "https://operations.nfl.com/the-rules/nfl-rulebook/" },
   ],
-  related: ["vig-betting", "moneyline-betting-explained", "prop-bets-explained", "what-is-sports-betting"],
+  related: [
+    "vig-betting",
+    "moneyline-betting-explained",
+    "prop-bets-explained",
+    "what-is-sports-betting",
+  ],
   updated: "2026-10-21",
 };

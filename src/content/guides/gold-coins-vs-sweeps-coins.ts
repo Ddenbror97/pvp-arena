@@ -125,7 +125,7 @@ You must be 18 or over. If you are buying Gold Coin packs only to chase a Sweeps
 
 One slots sweeps PDF prints a redeem floor and still no public code. [Those March 2026 rules](/guides/luckyland-slots-review) name the chips. The play subdomain did not load.
 
-One bingo lobby says the mobile app is Gold Coins only and sweepstakes mode is on the website. [That app split](/guides/pulsz-bingo-review) is not a shared floor with every sweeps brand.`
+One bingo lobby says the mobile app is Gold Coins only and sweepstakes mode is on the website. [That app split](/guides/pulsz-bingo-review) is not a shared floor with every sweeps brand.`,
     },
   ],
   faqs: [

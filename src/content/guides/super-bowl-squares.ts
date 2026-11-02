@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "super-bowl-squares",
   cluster: "Sports betting",
   keyword: "super bowl squares",
-  secondary: ["football squares rules", "Super Bowl box pool", "best square numbers", "10 by 10 squares"],
+  secondary: [
+    "football squares rules",
+    "Super Bowl box pool",
+    "best square numbers",
+    "10 by 10 squares",
+  ],
   title: "Super Bowl Squares: Rules, Best Numbers and Odds",
   description:
     "How to run Super Bowl squares: rules, payout setups, the best and worst numbers by historical odds, and how to play squares with friends online.",

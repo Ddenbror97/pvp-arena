@@ -88,9 +88,7 @@ d("withdraw basis incremental parity", () => {
       sql`select pvp_test._withdraw_basis_sync()`,
     ]);
     await sql`select pvp_test._withdraw_basis_assert_rebuild_idempotent()`;
-    const room = (
-      await sql`select (pvp_test._withdraw_basis(${u}::uuid)->>'room')::bigint r`
-    )[0].r;
+    const room = (await sql`select (pvp_test._withdraw_basis(${u}::uuid)->>'room')::bigint r`)[0].r;
     expect(Number(room)).toBe(0);
   });
 
@@ -118,9 +116,8 @@ d("withdraw basis incremental parity", () => {
       await sql`select pvp_test._system_account('external_custody', 'USD', 'real') id`
     )[0].id as string;
     const accountOf = async (id: string) =>
-      (
-        await sql`select pvp_test._user_account(${id}::uuid, 'user_available', 'USD', 'real') id`
-      )[0].id as string;
+      (await sql`select pvp_test._user_account(${id}::uuid, 'user_available', 'USD', 'real') id`)[0]
+        .id as string;
     const avail = await accountOf(u);
     // Committed rows are already applied. Time sync only while a deposit is still pending.
     const timeApply = async (id: string, available: string) =>

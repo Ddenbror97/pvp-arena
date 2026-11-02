@@ -114,7 +114,7 @@ PVPspinArena does not offer Underdog, best ball, or a more-or-less board. Coinfl
 
 On 20 October 2026 the other app's own promo URL and a Playbook article printed two different signup strings. That disagreement is [the operator pages that do not share one string](/guides/prizepicks-promo-code).
 
-A player-pool product caps a regular entry at $500 and prints code PLAY on a match that stops at $100. The rules note is [those pool caps and the match clause](/guides/sleeper-picks-review).`
+A player-pool product caps a regular entry at $500 and prints code PLAY on a match that stops at $100. The rules note is [those pool caps and the match clause](/guides/sleeper-picks-review).`,
     },
   ],
   faqs: [

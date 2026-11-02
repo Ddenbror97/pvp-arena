@@ -134,13 +134,7 @@ A local room is a third product. [What to ask at a bingo hall door](/guides/bing
     },
     { label: "Wikipedia: Bingo", url: "https://en.wikipedia.org/wiki/Bingo" },
   ],
-  related: [
-    "keno-odds",
-    "keno-strategy",
-    "bingo-patterns",
-    "crypto-bingo",
-    "bingo-halls-near-me",
-  ],
+  related: ["keno-odds", "keno-strategy", "bingo-patterns", "crypto-bingo", "bingo-halls-near-me"],
   updated: "2026-09-29",
   howTo: false,
 };

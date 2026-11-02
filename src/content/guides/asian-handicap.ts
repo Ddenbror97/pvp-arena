@@ -144,7 +144,10 @@ Asian handicap is a book product with a margin inside a precise shape. Use it wh
   ],
   sources: [
     { label: "Wikipedia: Asian handicap", url: "https://en.wikipedia.org/wiki/Asian_handicap" },
-    { label: "Wikipedia: Association football", url: "https://en.wikipedia.org/wiki/Association_football" },
+    {
+      label: "Wikipedia: Association football",
+      url: "https://en.wikipedia.org/wiki/Association_football",
+    },
     { label: "FIFA", url: "https://www.fifa.com" },
   ],
   related: ["soccer-betting", "draw-no-bet", "moneyline-betting-explained", "over-under-betting"],

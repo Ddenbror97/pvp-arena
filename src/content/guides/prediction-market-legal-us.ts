@@ -61,9 +61,7 @@ export const guide: Guide = {
       a: "What a crypto prediction market share is, and how it pays, is on the crypto prediction markets page. Whether crypto casino gambling is legal is a separate question on is crypto gambling legal.",
     },
   ],
-  sources: [
-    { label: "U.S. Commodity Futures Trading Commission", url: "https://www.cftc.gov/" },
-  ],
+  sources: [{ label: "U.S. Commodity Futures Trading Commission", url: "https://www.cftc.gov/" }],
   related: ["crypto-prediction-markets", "is-crypto-gambling-legal"],
   updated: "2026-10-21",
 };

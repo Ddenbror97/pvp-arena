@@ -148,9 +148,17 @@ When a refunded draw makes you open a second match at a worse price, stop. The s
   ],
   sources: [
     { label: "Wikipedia: Asian handicap", url: "https://en.wikipedia.org/wiki/Asian_handicap" },
-    { label: "Wikipedia: Association football", url: "https://en.wikipedia.org/wiki/Association_football" },
+    {
+      label: "Wikipedia: Association football",
+      url: "https://en.wikipedia.org/wiki/Association_football",
+    },
     { label: "FIFA", url: "https://www.fifa.com" },
   ],
-  related: ["soccer-betting", "asian-handicap", "moneyline-betting-explained", "implied-probability"],
+  related: [
+    "soccer-betting",
+    "asian-handicap",
+    "moneyline-betting-explained",
+    "implied-probability",
+  ],
   updated: "2026-10-21",
 };

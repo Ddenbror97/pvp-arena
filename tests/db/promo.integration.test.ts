@@ -94,11 +94,7 @@ async function createCode(
   return row;
 }
 
-async function claim(
-  uid: string,
-  code: string,
-  opts?: { ip?: string | null; headers?: string },
-) {
+async function claim(uid: string, code: string, opts?: { ip?: string | null; headers?: string }) {
   const ip = opts && "ip" in opts ? (opts.ip ?? "") : promoTestIp(uid);
   const headers = opts?.headers ?? "";
   const row = (
@@ -486,8 +482,9 @@ d("promo codes (isolated schema)", () => {
     ).rejects.toThrow(/IMMUTABLE/);
     expect(
       Number(
-        (await sql`select count(*)::int n from pvp_test.promo_claims where user_id = ${first}::uuid`)[0]
-          .n,
+        (
+          await sql`select count(*)::int n from pvp_test.promo_claims where user_id = ${first}::uuid`
+        )[0].n,
       ),
     ).toBe(1);
 
@@ -589,7 +586,18 @@ d("promo codes (isolated schema)", () => {
     expect(await rewardTx(u)).toBe(1);
 
     const accounts = await Promise.all(Array.from({ length: 10 }, (_, i) => user("ip" + i)));
-    const codes = ["IPCODE1", "IPCODE2", "IPCODE3", "IPCODE4", "IPCODE5", "IPCODE6", "IPCODE7", "IPCODE8", "IPCODE9", "IPCODE0"];
+    const codes = [
+      "IPCODE1",
+      "IPCODE2",
+      "IPCODE3",
+      "IPCODE4",
+      "IPCODE5",
+      "IPCODE6",
+      "IPCODE7",
+      "IPCODE8",
+      "IPCODE9",
+      "IPCODE0",
+    ];
     for (const code of codes) await createCode(a, code, 100, 5);
     const sameIp = await Promise.all(
       accounts.map((id, i) => claim(id, codes[i], { ip: "2001:db8::50" })),
@@ -647,8 +655,9 @@ d("promo codes (isolated schema)", () => {
       expect(await rewardTx(u)).toBe(0);
       expect(
         Number(
-          (await sql`select count(*)::int n from pvp_test.promo_claims where user_id = ${u}::uuid`)[0]
-            .n,
+          (
+            await sql`select count(*)::int n from pvp_test.promo_claims where user_id = ${u}::uuid`
+          )[0].n,
         ),
       ).toBe(0);
     } finally {
@@ -664,7 +673,11 @@ d("promo codes (isolated schema)", () => {
     const username = ("dep" + id.replace(/-/g, "")).slice(0, 20);
     const w = addr();
     const hash = txh();
-    if (!/^[0-9a-f-]{36}$/i.test(id) || !/^0x[0-9a-f]{40}$/i.test(w) || !/^0x[0-9a-f]{64}$/i.test(hash))
+    if (
+      !/^[0-9a-f-]{36}$/i.test(id) ||
+      !/^0x[0-9a-f]{40}$/i.test(w) ||
+      !/^0x[0-9a-f]{64}$/i.test(hash)
+    )
       throw new Error("bad depositor");
     if (!/^0x[0-9a-f]{40}$/i.test(treasury) || !Number.isSafeInteger(cents) || cents < 0)
       throw new Error("bad depositor");

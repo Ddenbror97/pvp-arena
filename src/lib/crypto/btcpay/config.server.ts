@@ -162,13 +162,15 @@ export function readBtcpaySweepConfig(): BtcpaySweepConfig {
   if (forbidden) return { ok: false, reason: "BTC_KEY_MATERIAL_FORBIDDEN" };
   const apiKey = workerEnv("BTCPAY_SWEEP_API_KEY");
   if (!apiKey) return { ok: true, enabled: false, reason: "SWEEP_KEY_MISSING" };
-  if (workerEnv("BTCPAY_NETWORK") !== "mainnet") return { ok: false, reason: "NETWORK_NOT_MAINNET" };
+  if (workerEnv("BTCPAY_NETWORK") !== "mainnet")
+    return { ok: false, reason: "NETWORK_NOT_MAINNET" };
   const url = workerEnv("BTCPAY_URL")?.replace(/\/$/, "");
   const storeId = workerEnv("BTCPAY_STORE_ID");
   const depositKey = workerEnv("BTCPAY_API_KEY");
   const payoutKey = workerEnv("BTCPAY_PAYOUT_API_KEY");
   if (!url || !storeId) return { ok: false, reason: "BTCPAY_CONFIG_MISSING" };
-  if (apiKey === depositKey || apiKey === payoutKey) return { ok: false, reason: "SWEEP_KEY_NOT_SEPARATE" };
+  if (apiKey === depositKey || apiKey === payoutKey)
+    return { ok: false, reason: "SWEEP_KEY_NOT_SEPARATE" };
   let parsed: URL;
   try {
     parsed = new URL(url);

@@ -54,8 +54,7 @@ d("perf hot paths", () => {
       where n.nspname = 'pvp_test' and c.relname = 'roulette_payouts' and a.attname = 'bet_id'`;
     expect(payoutPk.indisprimary).toBe(true);
 
-    const wrapped =
-      await sql`select policyname from pg_policies
+    const wrapped = await sql`select policyname from pg_policies
       where schemaname = 'pvp_test' and coalesce(qual, '') ilike '%test_uid%'
       order by policyname`;
     expect(wrapped.length).toBeGreaterThanOrEqual(28);

@@ -153,11 +153,6 @@ Pick one on purpose. Then read the table and the cashier, or the host's written 
     { label: "Wikipedia — Poker", url: "https://en.wikipedia.org/wiki/Poker" },
     { label: "Wikipedia — Online poker", url: "https://en.wikipedia.org/wiki/Online_poker" },
   ],
-  related: [
-    "clubgg-review",
-    "pokerbros-review",
-    "acr-poker-review",
-    "crypto-poker",
-  ],
+  related: ["clubgg-review", "pokerbros-review", "acr-poker-review", "crypto-poker"],
   updated: "2026-10-21",
 };

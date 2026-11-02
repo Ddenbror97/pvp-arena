@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "overtime-markets-review",
   cluster: "Sports betting",
   keyword: "overtime markets",
-  secondary: [
-    "overtime markets fees",
-    "overtime markets commission",
-    "overtime markets legit",
-  ],
+  secondary: ["overtime markets fees", "overtime markets commission", "overtime markets legit"],
   title: "Overtime Markets Fees: 2% AMM and Parlay Add-On",
   description:
     "Overtime Markets prints a 2% sports AMM fee, a 3% plus 3% parlay fee, and speed-market LP rates. A licence number is not published. We did not trade.",

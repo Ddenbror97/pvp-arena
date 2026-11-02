@@ -141,11 +141,6 @@ Open [Roulette](/roulette) for the wheel on this site: the live activity block, 
     { label: "About Sporttrade", url: "https://getsporttrade.com/about/" },
     { label: "Betting exchange", url: "https://en.wikipedia.org/wiki/Betting_exchange" },
   ],
-  related: [
-    "novig-review",
-    "prophetx-review",
-    "novig-vs-prophetx",
-    "betting-exchange-explained",
-  ],
+  related: ["novig-review", "prophetx-review", "novig-vs-prophetx", "betting-exchange-explained"],
   updated: "2026-10-07",
 };

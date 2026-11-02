@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "pick-3-strategy",
   cluster: "Lottery",
   keyword: "pick 3 strategy",
-  secondary: [
-    "pick 3 odds",
-    "straight vs box",
-    "pick 4 odds",
-    "pick 3 payout",
-  ],
+  secondary: ["pick 3 odds", "straight vs box", "pick 4 odds", "pick 3 payout"],
   title: "Pick 3 Strategy: Straight vs Box Odds and Smart Plays",
   description:
     "Pick 3 and Pick 4 odds explained, straight vs box vs combo bets, payout math and which pick 3 strategy claims hold up against basic probability.",
@@ -143,7 +138,7 @@ Verify a finished round on [Fairness](/fairness). Play the pot from [Jackpot](/)
 
 If digit games are no longer a small loss you can shrug off, use [responsible gambling](/responsible-gambling). The smart play in the title is knowing the edge and betting less, or not at all.
 
-Pennsylvania's prize page prints straight and box on separate lines. [That pay table](/guides/pick-3-lottery) is not a digit-picking system, and other states' dollars stay unpublished.`
+Pennsylvania's prize page prints straight and box on separate lines. [That pay table](/guides/pick-3-lottery) is not a digit-picking system, and other states' dollars stay unpublished.`,
     },
   ],
   faqs: [
@@ -169,7 +164,10 @@ Pennsylvania's prize page prints straight and box on separate lines. [That pay t
     },
   ],
   sources: [
-    { label: "North American Association of State and Provincial Lotteries", url: "https://www.naspl.org/" },
+    {
+      label: "North American Association of State and Provincial Lotteries",
+      url: "https://www.naspl.org/",
+    },
     { label: "Powerball", url: "https://www.powerball.com/" },
     { label: "Mega Millions", url: "https://www.megamillions.com/" },
   ],

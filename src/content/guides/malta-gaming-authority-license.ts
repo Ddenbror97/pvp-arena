@@ -88,11 +88,25 @@ Do not treat a guide as a licence, a tax opinion, or a list of approved brands. 
     },
   ],
   sources: [
-    { label: "MGA: what types of licences are available", url: "https://www.mga.org.mt/faqs/what-types-of-licences-are-available/" },
-    { label: "MGA: licensable game types", url: "https://www.mga.org.mt/faqs/what-are-the-different-types-of-games-that-are-licensable-by-the-authority/" },
+    {
+      label: "MGA: what types of licences are available",
+      url: "https://www.mga.org.mt/faqs/what-types-of-licences-are-available/",
+    },
+    {
+      label: "MGA: licensable game types",
+      url: "https://www.mga.org.mt/faqs/what-are-the-different-types-of-games-that-are-licensable-by-the-authority/",
+    },
     { label: "MGA licensee hub and register", url: "https://www.mga.org.mt/licensee-hub/" },
-    { label: "Gaming Authorisations Regulations, S.L. 583.05", url: "https://legislation.mt/eli/sl/583.5/eng" },
+    {
+      label: "Gaming Authorisations Regulations, S.L. 583.05",
+      url: "https://legislation.mt/eli/sl/583.5/eng",
+    },
   ],
-  related: ["what-is-a-crypto-casino", "are-online-casinos-safe", "provably-fair-casino", "house-edge"],
+  related: [
+    "what-is-a-crypto-casino",
+    "are-online-casinos-safe",
+    "provably-fair-casino",
+    "house-edge",
+  ],
   updated: "2026-10-21",
 };

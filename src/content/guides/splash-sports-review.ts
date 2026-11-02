@@ -144,11 +144,6 @@ Open [Roulette](/roulette) for that wheel: the live activity block, when present
     },
     { label: "Daily fantasy sports", url: "https://en.wikipedia.org/wiki/Daily_fantasy_sports" },
   ],
-  related: [
-    "wagr-review",
-    "fantasy-football-payouts",
-    "dfs-strategy",
-    "bet-with-friends-online",
-  ],
+  related: ["wagr-review", "fantasy-football-payouts", "dfs-strategy", "bet-with-friends-online"],
   updated: "2026-10-07",
 };

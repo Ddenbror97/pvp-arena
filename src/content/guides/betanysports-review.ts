@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "betanysports-review",
   cluster: "Sports betting",
   keyword: "betanysports",
-  secondary: [
-    "betanysports bonus",
-    "betanysports withdrawal time",
-    "is betanysports legit",
-  ],
+  secondary: ["betanysports bonus", "betanysports withdrawal time", "is betanysports legit"],
   title: "BetAnySports Review: Bonus, Cashier, Legit",
   description:
     "Is BetAnySports legit? On 20 October 2026 the public rules did not load, so the bonus, payout clock, and licence number stay unpublished.",

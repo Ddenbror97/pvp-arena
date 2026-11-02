@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "gambling-superstitions",
   cluster: "Casino knowledge",
   keyword: "gambling superstitions",
-  secondary: [
-    "lucky charms gambling",
-    "casino rituals",
-    "lucky numbers",
-    "illusion of control",
-  ],
+  secondary: ["lucky charms gambling", "casino rituals", "lucky numbers", "illusion of control"],
   title: "Gambling Superstitions: Lucky Charms and Casino Myths",
   description:
     "The most common gambling superstitions and lucky charms around the world, where they came from and what probability says about each ritual.",

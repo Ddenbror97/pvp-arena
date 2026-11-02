@@ -9,8 +9,7 @@ export const guide: Guide = {
   description:
     "Zula casino draws heavy search traffic. Volume is not a trust signal. The same cashier tests apply to a famous name and an unknown one. No fee is invented.",
   h1: "Zula casino review in 2026: a famous query still needs a cashier",
-  answer:
-    `Zula casino draws heavy search traffic, and high search volume is not a trust signal. The cashier tests on this page are the same tests you would use on an unknown name: company, redeem screen, and a fee you can quote. Their fee is not published.
+  answer: `Zula casino draws heavy search traffic, and high search volume is not a trust signal. The cashier tests on this page are the same tests you would use on an unknown name: company, redeem screen, and a fee you can quote. Their fee is not published.
 
 The dollar examples use ours.`,
   facts: [

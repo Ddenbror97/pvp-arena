@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "pineapple-poker",
   cluster: "Poker",
   keyword: "pineapple poker",
-  secondary: [
-    "crazy pineapple",
-    "three hole cards",
-    "discard before the flop",
-    "pineapple hi-lo",
-  ],
+  secondary: ["crazy pineapple", "three hole cards", "discard before the flop", "pineapple hi-lo"],
   title: "Pineapple Poker: Three Cards, Then a Discard",
   description:
     "Pineapple poker deals three hole cards. Plain play discards one before the flop. Crazy Pineapple discards one after it. Pagat prints no rake.",

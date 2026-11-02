@@ -66,9 +66,7 @@ export const guide: Guide = {
       a: "This guide does not treat PVPspinArena as an eCOGRA-certified casino, and the site's published fairness tools are a different kind of evidence from a lab seal. Jackpot, coinflip, and roulette there settle in USD, and a missing seal is not something you should replace with a guess.",
     },
   ],
-    sources: [
-    { label: "eCOGRA — testing and certification services", url: "https://ecogra.org/" },
-  ],
+  sources: [{ label: "eCOGRA — testing and certification services", url: "https://ecogra.org/" }],
   related: ["casino-fairness-audits", "are-online-casinos-rigged"],
   updated: "2026-10-21",
 };

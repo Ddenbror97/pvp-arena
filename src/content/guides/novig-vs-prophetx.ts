@@ -146,11 +146,6 @@ Open [Jackpot](/) for the shared pot on this site: the live activity block, when
     { label: "Novig about page", url: "https://www.novig.us/about" },
     { label: "ProphetX about page", url: "https://www.prophetx.co/lobby/about-us" },
   ],
-  related: [
-    "novig-review",
-    "prophetx-review",
-    "sporttrade-review",
-    "betting-exchange-explained",
-  ],
+  related: ["novig-review", "prophetx-review", "sporttrade-review", "betting-exchange-explained"],
   updated: "2026-10-07",
 };

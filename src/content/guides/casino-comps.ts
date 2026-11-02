@@ -83,6 +83,11 @@ Adults only. [Responsible gambling](/responsible-gambling) applies when a host i
     },
     { label: "PVPspinArena terms", url: "https://pvpspinarena.com/terms" },
   ],
-  related: ["house-edge", "expected-value-gambling", "are-online-casinos-safe", "what-is-a-crypto-casino"],
+  related: [
+    "house-edge",
+    "expected-value-gambling",
+    "are-online-casinos-safe",
+    "what-is-a-crypto-casino",
+  ],
   updated: "2026-10-21",
 };

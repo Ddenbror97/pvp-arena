@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "sports-betting-scandals",
   cluster: "Casino knowledge",
   keyword: "sports betting scandal",
-  secondary: [
-    "Black Sox scandal",
-    "Pete Rose betting",
-    "Tim Donaghy",
-    "sports integrity",
-  ],
+  secondary: ["Black Sox scandal", "Pete Rose betting", "Tim Donaghy", "sports integrity"],
   title: "Sports Betting Scandals: The Biggest Cases in History",
   description:
     "The biggest sports betting scandals, from the Black Sox to modern NBA and MLB cases, how they were caught and what changed for bettors after.",
@@ -152,6 +147,11 @@ The history is lurid because the games were important. Your ticket is not import
       url: "https://www.justice.gov/",
     },
   ],
-  related: ["history-of-gambling", "esports-match-fixing", "billy-walters", "what-is-sports-betting"],
+  related: [
+    "history-of-gambling",
+    "esports-match-fixing",
+    "billy-walters",
+    "what-is-sports-betting",
+  ],
   updated: "2026-10-06",
 };

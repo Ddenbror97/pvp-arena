@@ -66,9 +66,7 @@ export const guide: Guide = {
       a: "It is one offshore-style interactive permit that some remote operators display, with its own commission and its own history. The crypto casino license guide compares what any such paper proves and what it never proves.",
     },
   ],
-  sources: [
-    { label: "Kahnawà:ke Gaming Commission", url: "https://gamingcommission.ca/" },
-  ],
+  sources: [{ label: "Kahnawà:ke Gaming Commission", url: "https://gamingcommission.ca/" }],
   related: ["crypto-casino-license"],
   updated: "2026-10-21",
 };

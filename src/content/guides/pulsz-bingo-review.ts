@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "pulsz-bingo-review",
   cluster: "Sweepstakes",
   keyword: "pulsz bingo",
-  secondary: [
-    "pulsz bingo promo code",
-    "pulsz bingo redeem",
-    "is pulsz bingo legit",
-  ],
+  secondary: ["pulsz bingo promo code", "pulsz bingo redeem", "is pulsz bingo legit"],
   title: "Pulsz Bingo Review: Clocks, States, No Code",
   description:
     "Pulsz Bingo terms dated September 2026 are not real-money play. Help text prints 48 hours, then 3 to 5 bank days. Floor and promo code are not published.",

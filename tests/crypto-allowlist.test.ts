@@ -9,14 +9,26 @@ import {
   weiToCents,
 } from "@/lib/crypto/allowlist";
 
-const good = { chainId: 8453, networkMode: "mainnet", usdc: BASE_MAINNET.usdc, usdcDecimals: 6, feed: BASE_MAINNET.ethUsdFeed };
+const good = {
+  chainId: 8453,
+  networkMode: "mainnet",
+  usdc: BASE_MAINNET.usdc,
+  usdcDecimals: 6,
+  feed: BASE_MAINNET.ethUsdFeed,
+};
 
 describe("mainnet-only guards", () => {
   it("accepts the Base Mainnet registry", () => expect(checkMainnetRegistry(good).ok).toBe(true));
-  it("rejects testnet mode", () => expect(checkMainnetRegistry({ ...good, networkMode: "testnet" }).ok).toBe(false));
-  it("rejects Base Sepolia chain", () => expect(checkMainnetRegistry({ ...good, chainId: 84532 }).ok).toBe(false));
-  it("rejects wrong USDC", () => expect(checkMainnetRegistry({ ...good, usdc: "0x036cbd53842c5426634e7929541ec2318f3dcf7e" }).ok).toBe(false));
-  it("rejects wrong feed", () => expect(checkMainnetRegistry({ ...good, feed: "0x" + "1".repeat(40) }).ok).toBe(false));
+  it("rejects testnet mode", () =>
+    expect(checkMainnetRegistry({ ...good, networkMode: "testnet" }).ok).toBe(false));
+  it("rejects Base Sepolia chain", () =>
+    expect(checkMainnetRegistry({ ...good, chainId: 84532 }).ok).toBe(false));
+  it("rejects wrong USDC", () =>
+    expect(
+      checkMainnetRegistry({ ...good, usdc: "0x036cbd53842c5426634e7929541ec2318f3dcf7e" }).ok,
+    ).toBe(false));
+  it("rejects wrong feed", () =>
+    expect(checkMainnetRegistry({ ...good, feed: "0x" + "1".repeat(40) }).ok).toBe(false));
   it("rejects testnet and non-HTTPS RPCs", () => {
     expect(checkRpcUrl("https://sepolia.base.org").ok).toBe(false);
     expect(checkRpcUrl("http://mainnet.base.org").ok).toBe(false);

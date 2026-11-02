@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "betonline-review",
   cluster: "Sports betting",
   keyword: "betonline",
-  secondary: [
-    "betonline bonus",
-    "betonline withdrawal time",
-    "is betonline legit",
-  ],
+  secondary: ["betonline bonus", "betonline withdrawal time", "is betonline legit"],
   title: "BetOnline Review: Bonus, Payout, Legit Check",
   description:
     "Is BetOnline legit? Panama rules, a $1 online minimum, Bitcoin within 24 hours, and no printed welcome percent. No affiliate link.",

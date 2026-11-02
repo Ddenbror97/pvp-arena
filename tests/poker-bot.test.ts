@@ -98,17 +98,18 @@ describe("poker bot decisions", () => {
 
   it("plays the same cards differently across the three styles", () => {
     const board = cards("Kd 9c 2s");
-    const actions = (["casual", "standard", "competitive"] as const).map((style) =>
-      chooseBotAction(
-        view({
-          style,
-          hole: hole("Kh 8d"),
-          board,
-          pot: 80,
-          position: "middle",
-          roll: 5000,
-        }),
-      ).action,
+    const actions = (["casual", "standard", "competitive"] as const).map(
+      (style) =>
+        chooseBotAction(
+          view({
+            style,
+            hole: hole("Kh 8d"),
+            board,
+            pot: 80,
+            position: "middle",
+            roll: 5000,
+          }),
+        ).action,
     );
     expect(actions[0]).toBe("CHECK");
     expect(actions[2]).toBe("BET");

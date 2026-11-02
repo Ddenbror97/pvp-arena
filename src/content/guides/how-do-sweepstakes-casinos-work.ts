@@ -144,7 +144,7 @@ The two-coin loop is not a brand. [One sweeps cashier](/guides/moonspin-review) 
 
 A bingo operator's terms are v3.2, dated 1 September 2026. The homepage and the sweeps-rules URL did not load. [That help desk](/guides/pulsz-bingo-review) left the redeem minimum unpublished.
 
-One sweeps sports product prices Prize Tickets and left the dollar per ticket unpublished. [Those official sweeps rules](/guides/thrillzz-review) also left the public code blank.`
+One sweeps sports product prices Prize Tickets and left the dollar per ticket unpublished. [Those official sweeps rules](/guides/thrillzz-review) also left the public code blank.`,
     },
   ],
   faqs: [

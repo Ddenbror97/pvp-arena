@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "bad-beat-jackpot",
   cluster: "Poker",
   keyword: "bad beat jackpot",
-  secondary: [
-    "bad beat qualifier",
-    "jackpot drop",
-    "aces full beaten",
-    "poker jackpot rake",
-  ],
+  secondary: ["bad beat qualifier", "jackpot drop", "aces full beaten", "poker jackpot rake"],
   title: "Bad Beat Jackpot: How the Drop Is Funded",
   description:
     "A bad beat jackpot pays a loser who held a very strong hand. A glossary says the money comes out with the rake. A live pool total is not printed.",

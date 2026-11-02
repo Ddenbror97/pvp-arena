@@ -141,6 +141,11 @@ If you want a two-person pot that is already a product, with a fee shown first a
     { label: "Wikipedia: Escrow", url: "https://en.wikipedia.org/wiki/Escrow" },
     { label: "Wikipedia: Smart contract", url: "https://en.wikipedia.org/wiki/Smart_contract" },
   ],
-  related: ["smart-contract-casino", "peer-to-peer-gambling", "commit-reveal-scheme", "bet-with-friends-online"],
+  related: [
+    "smart-contract-casino",
+    "peer-to-peer-gambling",
+    "commit-reveal-scheme",
+    "bet-with-friends-online",
+  ],
   updated: "2026-10-06",
 };

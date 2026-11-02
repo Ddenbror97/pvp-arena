@@ -166,8 +166,7 @@ d("bonus withdrawal floor", () => {
       await db`select pvp_test._post(${id}::uuid, ${escrow}::uuid, ${pot}::bigint)`;
       await db`select pvp_test._post(${id}::uuid, ${escrow}::uuid, ${-pot}::bigint)`;
       await db`select pvp_test._post(${id}::uuid, ${won}::uuid, ${payout}::bigint)`;
-      if (fee !== 0)
-        await db`select pvp_test._post(${id}::uuid, ${house}::uuid, ${fee}::bigint)`;
+      if (fee !== 0) await db`select pvp_test._post(${id}::uuid, ${house}::uuid, ${fee}::bigint)`;
     });
   }
 

@@ -1,4 +1,12 @@
-import { memo, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import {
+  memo,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import { DEALER_IMAGE, DEALER_RIG, DEALER_SIZE } from "@/lib/poker/assets";
 import {
   DEALER_CLIPS,
@@ -156,11 +164,14 @@ export const Dealer = memo(function Dealer({
         !document.hidden &&
         window.innerWidth >= 720;
       if (!quiet) return;
-      timer = window.setTimeout(() => {
-        if (dead || document.hidden || window.innerWidth < 720) return;
-        runner.nudge("wink", performance.now());
-        pump();
-      }, 9000 + Math.random() * 5000);
+      timer = window.setTimeout(
+        () => {
+          if (dead || document.hidden || window.innerWidth < 720) return;
+          runner.nudge("wink", performance.now());
+          pump();
+        },
+        9000 + Math.random() * 5000,
+      );
     };
     pump();
     const onVis = () => {

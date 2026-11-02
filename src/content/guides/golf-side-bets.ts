@@ -166,11 +166,6 @@ PVPspinArena does not run these golf side bets, does not hold a snake, and does 
     { label: "Wikipedia: Golf", url: "https://en.wikipedia.org/wiki/Golf" },
     { label: "Wikipedia: Match play", url: "https://en.wikipedia.org/wiki/Match_play" },
   ],
-  related: [
-    "nassau-bet",
-    "skins-game-golf",
-    "wolf-golf-game",
-    "bingo-bango-bongo-golf",
-  ],
+  related: ["nassau-bet", "skins-game-golf", "wolf-golf-game", "bingo-bango-bongo-golf"],
   updated: "2026-10-07",
 };

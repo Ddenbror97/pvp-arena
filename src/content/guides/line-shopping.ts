@@ -128,11 +128,6 @@ A PvP pot is shared among the players in the pot. There is no second sportsbook 
     { label: "Vigorish", url: "https://en.wikipedia.org/wiki/Vigorish" },
     { label: "Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
   ],
-  related: [
-    "odds-converter",
-    "implied-probability",
-    "house-edge",
-    "moneyline-betting-explained",
-  ],
+  related: ["odds-converter", "implied-probability", "house-edge", "moneyline-betting-explained"],
   updated: "2026-10-06",
 };

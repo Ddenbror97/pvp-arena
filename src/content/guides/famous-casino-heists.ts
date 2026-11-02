@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "famous-casino-heists",
   cluster: "Casino knowledge",
   keyword: "casino heist",
-  secondary: [
-    "casino robbery",
-    "casino skim",
-    "Bellagio robbery",
-    "casino cyberattack",
-  ],
+  secondary: ["casino robbery", "casino skim", "Bellagio robbery", "casino cyberattack"],
   title: "Famous Casino Heists: 10 Real Robberies and Scams",
   description:
     "The most famous real casino heists and scams, how they worked, how most were caught and what they reveal about modern casino security systems.",
@@ -143,6 +138,12 @@ Worked example 2, again as a guest observation. If your hotel key and the slot f
       url: "https://www.justice.gov/",
     },
   ],
-  related: ["casino-surveillance", "past-posting", "marked-cards", "stardust-casino", "history-of-gambling"],
+  related: [
+    "casino-surveillance",
+    "past-posting",
+    "marked-cards",
+    "stardust-casino",
+    "history-of-gambling",
+  ],
   updated: "2026-10-06",
 };

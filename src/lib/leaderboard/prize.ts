@@ -3,7 +3,10 @@
 export const LEADERBOARD_PRIZE_MIN_CENTS = 100;
 export const LEADERBOARD_PRIZE_MAX_CENTS = 150_000;
 
-export function prizePoolAllowed(pool: number | null, capCents = LEADERBOARD_PRIZE_MAX_CENTS): boolean {
+export function prizePoolAllowed(
+  pool: number | null,
+  capCents = LEADERBOARD_PRIZE_MAX_CENTS,
+): boolean {
   if (pool == null) return false;
   const cap = Math.min(capCents, LEADERBOARD_PRIZE_MAX_CENTS);
   return pool >= LEADERBOARD_PRIZE_MIN_CENTS && pool <= cap;

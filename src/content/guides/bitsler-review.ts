@@ -212,9 +212,18 @@ Not for bonus hunters, and not for anyone using the domain as a wallet. [Flush's
   ],
   sources: [
     { label: "Bitsler closure notice, opened 20 October 2026", url: "https://www.bitsler.com/" },
-    { label: "Bitsler terms path, same notice, opened 20 October 2026", url: "https://www.bitsler.com/en/tos" },
-    { label: "Bitsler support path, same notice, opened 20 October 2026", url: "https://www.bitsler.com/en/support" },
-    { label: "Bitsler provably fair path, same notice, opened 20 October 2026", url: "https://www.bitsler.com/en/provably-fair" },
+    {
+      label: "Bitsler terms path, same notice, opened 20 October 2026",
+      url: "https://www.bitsler.com/en/tos",
+    },
+    {
+      label: "Bitsler support path, same notice, opened 20 October 2026",
+      url: "https://www.bitsler.com/en/support",
+    },
+    {
+      label: "Bitsler provably fair path, same notice, opened 20 October 2026",
+      url: "https://www.bitsler.com/en/provably-fair",
+    },
   ],
   related: [
     "wolfbet-review",

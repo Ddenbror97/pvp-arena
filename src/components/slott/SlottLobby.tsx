@@ -912,7 +912,8 @@ function YourMatch({ g, started }: { g: SlotGameView; started: boolean }) {
   );
 }
 
-const chip = "tabular rounded-lg border py-1.5 text-xs font-semibold transition active:scale-95 disabled:opacity-50";
+const chip =
+  "tabular rounded-lg border py-1.5 text-xs font-semibold transition active:scale-95 disabled:opacity-50";
 
 function StakeField({
   id,

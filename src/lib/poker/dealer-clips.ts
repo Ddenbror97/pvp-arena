@@ -170,7 +170,8 @@ export class DealerClipRunner {
   pose(pose: DealerPose, now: number, reduced: boolean): number {
     if (this.dead) return this.token;
     const next = clipForPose(pose);
-    if (next === this.clipId && reduced === this.reduced && pose === this.poseName) return this.token;
+    if (next === this.clipId && reduced === this.reduced && pose === this.poseName)
+      return this.token;
     this.poseName = pose;
     this.reduced = reduced;
     this.pausedAt = null;

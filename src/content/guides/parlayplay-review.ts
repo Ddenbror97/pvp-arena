@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "parlayplay-review",
   cluster: "Sports betting",
   keyword: "parlayplay",
-  secondary: [
-    "parlayplay promo code",
-    "parlayplay legal states",
-    "parlayplay payout",
-  ],
+  secondary: ["parlayplay promo code", "parlayplay legal states", "parlayplay payout"],
   title: "ParlayPlay Review: Promo Funds, Payout, States",
   description:
     "Is ParlayPlay legal where you live? The help center prints a 100% match up to $100 in promo funds that you cannot withdraw. No affiliate link.",

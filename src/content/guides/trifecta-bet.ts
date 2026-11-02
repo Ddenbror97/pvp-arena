@@ -137,6 +137,11 @@ Dead heats and scratches are the messy endings. A dead heat for third can split 
     { label: "Parimutuel betting", url: "https://en.wikipedia.org/wiki/Parimutuel_betting" },
     { label: "Equibase", url: "https://www.equibase.com/" },
   ],
-  related: ["exacta-bet", "superfecta-bet", "how-to-bet-on-horse-racing", "horse-racing-odds-explained"],
+  related: [
+    "exacta-bet",
+    "superfecta-bet",
+    "how-to-bet-on-horse-racing",
+    "horse-racing-odds-explained",
+  ],
   updated: "2026-10-06",
 };

@@ -211,10 +211,19 @@ This page is education. It is not a review of a session, not a buy-in, and not f
     },
   ],
   sources: [
-    { label: "Hustler Casino, Hustler Casino Live project page", url: "https://www.hustlercasino.com/project/hustler-casino-live/" },
+    {
+      label: "Hustler Casino, Hustler Casino Live project page",
+      url: "https://www.hustlercasino.com/project/hustler-casino-live/",
+    },
     { label: "Hustler Casino homepage", url: "https://www.hustlercasino.com/" },
-    { label: "IRS Topic 419, Gambling income and losses", url: "https://www.irs.gov/taxtopics/tc419" },
-    { label: "National Council on Problem Gambling, help by state", url: "https://www.ncpgambling.org/help-treatment/help-by-state/" },
+    {
+      label: "IRS Topic 419, Gambling income and losses",
+      url: "https://www.irs.gov/taxtopics/tc419",
+    },
+    {
+      label: "National Council on Problem Gambling, help by state",
+      url: "https://www.ncpgambling.org/help-treatment/help-by-state/",
+    },
   ],
   related: [
     "texas-holdem-rules",

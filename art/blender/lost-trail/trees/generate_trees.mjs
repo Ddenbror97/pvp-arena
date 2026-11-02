@@ -110,8 +110,10 @@ const ARCHETYPES = {
 /** Detail levels: fewer ring segments/sections and fewer, larger leaf cards with distance. */
 function detailLevel(o, detail) {
   const f = { near: [0.8, 0.8, 0.62, 1.2], far: [0.5, 0.55, 0.36, 1.55] }[detail];
-  for (const k of Object.keys(o.branch.segments)) o.branch.segments[k] = Math.max(3, Math.round(o.branch.segments[k] * f[0]));
-  for (const k of Object.keys(o.branch.sections)) o.branch.sections[k] = Math.max(3, Math.round(o.branch.sections[k] * f[1]));
+  for (const k of Object.keys(o.branch.segments))
+    o.branch.segments[k] = Math.max(3, Math.round(o.branch.segments[k] * f[0]));
+  for (const k of Object.keys(o.branch.sections))
+    o.branch.sections[k] = Math.max(3, Math.round(o.branch.sections[k] * f[1]));
   o.leaves.count = Math.max(2, Math.round(o.leaves.count * f[2]));
   o.leaves.size *= f[3];
   if (detail === "far") {
@@ -147,13 +149,17 @@ for (const [name, spec] of Object.entries(ARCHETYPES))
       tree.traverse((o) => {
         if (!o.isMesh) return;
         o.name = o.material?.map === undefined && o.geometry.attributes.uv ? o.name : o.name;
-        tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3;
+        tris +=
+          (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3;
       });
       // Name the two meshes so Blender can assign bark vs leaf materials.
       const meshes = [];
       tree.traverse((o) => o.isMesh && meshes.push(o));
-      meshes.sort((a, b) => b.geometry.attributes.position.count - a.geometry.attributes.position.count);
-      for (const m of meshes) m.name = m.material.alphaTest > 0 || m.material.transparent ? "leaves" : "bark";
+      meshes.sort(
+        (a, b) => b.geometry.attributes.position.count - a.geometry.attributes.position.count,
+      );
+      for (const m of meshes)
+        m.name = m.material.alphaTest > 0 || m.material.transparent ? "leaves" : "bark";
       tree.updateMatrixWorld(true);
       const file = path.join(OUT, `${name}-${seed}-${detail}.obj`);
       fs.writeFileSync(file, exporter.parse(tree));

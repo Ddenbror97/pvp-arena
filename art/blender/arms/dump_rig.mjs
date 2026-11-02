@@ -11,7 +11,9 @@ import { mat4 } from "gl-matrix";
 
 const [file, out] = process.argv.slice(2);
 await MeshoptDecoder.ready;
-const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ "meshopt.decoder": MeshoptDecoder });
+const io = new NodeIO()
+  .registerExtensions(ALL_EXTENSIONS)
+  .registerDependencies({ "meshopt.decoder": MeshoptDecoder });
 const doc = await io.read(file);
 const skin = doc.getRoot().listSkins()[0];
 const joints = skin.listJoints();
@@ -32,7 +34,10 @@ joints.forEach((joint, i) => {
   worst = Math.max(worst, ...m.map((v, k) => Math.abs(v - result.bindSpace[k])));
 });
 result.bindSpaceConsistency = worst;
-const arms = doc.getRoot().listNodes().find((n) => n.getName() === "FPArms");
+const arms = doc
+  .getRoot()
+  .listNodes()
+  .find((n) => n.getName() === "FPArms");
 result.armsNodeWorld = Array.from(arms.getWorldMatrix());
 writeFileSync(out, JSON.stringify(result));
 console.log("joints", joints.length, "bind-space consistency", worst);

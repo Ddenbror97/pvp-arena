@@ -223,13 +223,34 @@ Read Stake poker caps on the card-room page before you buy in. If a later row is
     },
   ],
   sources: [
-    { label: "Stake poker card-room rules, opened 20 October 2026", url: "https://stake.com/policies/card-room-rules" },
-    { label: "Stake terms, opened 20 October 2026; direct request returned 403 on 21 October 2026", url: "https://stake.com/policies/terms" },
-    { label: "Stake help: crypto wager requirement, updated 24 August 2026", url: "https://help.stake.com/en/articles/4929043-what-is-a-wager-requirement-for-crypto" },
-    { label: "Stake help: fiat clause 8.5, updated 24 August 2026", url: "https://help.stake.com/en/articles/8226254-is-there-a-wager-requirement-for-local-currencies" },
-    { label: "Curaçao certificate naming stake.com, opened 20 October 2026", url: "https://cert.cga.cw/certificate?id=ZXlKcGRpSTZJbkJtT0dKb04zWTRhbmc1VERsd1RXTTRRMjVHZDNjOVBTSXNJblpoYkhWbElqb2lSVEJwU2t0emJYSm9LMUkzYm04NVVqSkZRMnRXZHowOUlpd2liV0ZqSWpvaVpEWm1NV0kwT1dNeE9XVmpaVFkyTnpFd01HVmpPV1V4WmpWaU5qRm1NVEprWXpjd05tTTJaamczWkdNM1pHSXdaVEl6T1RFeVlUSXlOell6TnpJNVpTSXNJblJoWnlJNklpSjk%3D" },
-    { label: "Stake rakeback help, opened 20 October 2026", url: "https://help.stake.com/en/articles/4821738-what-is-rakeback" },
-    { label: "Stake poker help collection, opened 20 October 2026", url: "https://help.stake.com/en/collections/13814894-poker" },
+    {
+      label: "Stake poker card-room rules, opened 20 October 2026",
+      url: "https://stake.com/policies/card-room-rules",
+    },
+    {
+      label: "Stake terms, opened 20 October 2026; direct request returned 403 on 21 October 2026",
+      url: "https://stake.com/policies/terms",
+    },
+    {
+      label: "Stake help: crypto wager requirement, updated 24 August 2026",
+      url: "https://help.stake.com/en/articles/4929043-what-is-a-wager-requirement-for-crypto",
+    },
+    {
+      label: "Stake help: fiat clause 8.5, updated 24 August 2026",
+      url: "https://help.stake.com/en/articles/8226254-is-there-a-wager-requirement-for-local-currencies",
+    },
+    {
+      label: "Curaçao certificate naming stake.com, opened 20 October 2026",
+      url: "https://cert.cga.cw/certificate?id=ZXlKcGRpSTZJbkJtT0dKb04zWTRhbmc1VERsd1RXTTRRMjVHZDNjOVBTSXNJblpoYkhWbElqb2lSVEJwU2t0emJYSm9LMUkzYm04NVVqSkZRMnRXZHowOUlpd2liV0ZqSWpvaVpEWm1NV0kwT1dNeE9XVmpaVFkyTnpFd01HVmpPV1V4WmpWaU5qRm1NVEprWXpjd05tTTJaamczWkdNM1pHSXdaVEl6T1RFeVlUSXlOell6TnpJNVpTSXNJblJoWnlJNklpSjk%3D",
+    },
+    {
+      label: "Stake rakeback help, opened 20 October 2026",
+      url: "https://help.stake.com/en/articles/4821738-what-is-rakeback",
+    },
+    {
+      label: "Stake poker help collection, opened 20 October 2026",
+      url: "https://help.stake.com/en/collections/13814894-poker",
+    },
   ],
   related: [
     "gto-poker-strategy",

@@ -74,6 +74,11 @@ A missed weight can change the bout, the purse, or whether the bout happens. It 
       url: "https://www.abcboxing.com/wp-content/uploads/2025/08/Unified-Rules-of-MMA-8.2025.pdf",
     },
   ],
-  related: ["moneyline-betting-explained", "prop-bets-explained", "vig-betting", "what-is-sports-betting"],
+  related: [
+    "moneyline-betting-explained",
+    "prop-bets-explained",
+    "vig-betting",
+    "what-is-sports-betting",
+  ],
   updated: "2026-10-21",
 };

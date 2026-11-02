@@ -40,7 +40,10 @@ const err = async (p: Promise<unknown>) => {
 let n = 0;
 async function player(dep = 100_000) {
   const id = randomUUID();
-  await as(id, (tx) => tx`select pvp_test.ensure_profile(${`lo${++n}${id.slice(0, 8)}`.slice(0, 20)}, true)`);
+  await as(
+    id,
+    (tx) => tx`select pvp_test.ensure_profile(${`lo${++n}${id.slice(0, 8)}`.slice(0, 20)}, true)`,
+  );
   for (const k of ["user_available", "user_locked"])
     await sql`insert into pvp_test.wallet_accounts (owner_id, kind, asset, account_type)
       select ${id}::uuid, ${k}::pvp_test.account_kind, 'USD', 'real'
@@ -54,13 +57,17 @@ async function player(dep = 100_000) {
  * Another money path in canonical order, paused between its locks: wallets of `users`
  * (sorted, one at a time), then `then` (a statement run after the pause), then commit.
  */
-function canonical(users: string[], then: (tx: postgres.TransactionSql) => Promise<unknown>, pauseMs = 400) {
+function canonical(
+  users: string[],
+  then: (tx: postgres.TransactionSql) => Promise<unknown>,
+  pauseMs = 400,
+) {
   let ready!: () => void;
   const opened = new Promise<void>((r) => (ready = r));
   const done = sql.begin(async (tx) => {
-    const sorted = (
-      await tx`select u::text id from unnest(${users}::uuid[]) u order by u`
-    ).map((r) => r.id as string);
+    const sorted = (await tx`select u::text id from unnest(${users}::uuid[]) u order by u`).map(
+      (r) => r.id as string,
+    );
     for (const u of sorted)
       await tx`select pvp_test._coinflip_lock_wallets(array[${u}]::uuid[], 'USD', 'real')`;
     ready();
@@ -94,7 +101,8 @@ async function invariants() {
 
 // ---------- jackpot ----------
 async function jackpotRound(users: string[], amount = 1000) {
-  for (const u of users) await as(u, (tx) => tx`select pvp_test.jackpot_join(${amount}, ${randomUUID()})`);
+  for (const u of users)
+    await as(u, (tx) => tx`select pvp_test.jackpot_join(${amount}, ${randomUUID()})`);
   const [g] =
     await sql`select id from pvp_test.jackpot_games where status in ('WAITING','ACTIVE') order by id desc limit 1`;
   await sql`update pvp_test.jackpot_games set scheduled_end_at = clock_timestamp() - interval '1 second'
@@ -111,7 +119,8 @@ async function jackpotWinner(g: number) {
     where jg.id = ${g}`;
   return w!.w as string;
 }
-const settleJackpot = (g: number) => as(null, (tx) => tx`select pvp_test.jackpot_settle(${g}::bigint) r`);
+const settleJackpot = (g: number) =>
+  as(null, (tx) => tx`select pvp_test.jackpot_settle(${g}::bigint) r`);
 const jackpotState = async (g: number) =>
   (
     await sql`select g.status, p.last_error, p.attempts from pvp_test.jackpot_games g
@@ -166,14 +175,16 @@ async function qualifiedReferral(inviter: string, referred: string) {
     await sql`select id from pvp_test.ledger_transactions where user_id = ${referred}::uuid and kind = 'deposit' limit 1`
   )[0]!.id as string;
   await sql`alter table pvp_test.crypto_deposits disable trigger user`;
-  const [dep] = await sql`insert into pvp_test.crypto_deposits (chain_id, asset_key, tx_hash, block_number,
+  const [dep] =
+    await sql`insert into pvp_test.crypto_deposits (chain_id, asset_key, tx_hash, block_number,
       from_address, to_address, units, usd_cents, user_id, status, ledger_tx_id, credited_at)
     values (8453, 'ETH', ${"0x" + randomUUID().replace(/-/g, "").padEnd(64, "0")}, 1,
       '0x1111111111111111111111111111111111111111', '0x2222222222222222222222222222222222222222',
       1, 10000, ${referred}::uuid, 'CREDITED', ${ledger}::uuid, now()) returning id`;
   await sql`alter table pvp_test.crypto_deposits enable trigger user`;
   await sql`alter table pvp_test.referrals disable trigger referral_status_guard`;
-  const [r] = await sql`insert into pvp_test.referrals (inviter_user_id, referred_user_id, invite_id, status,
+  const [r] =
+    await sql`insert into pvp_test.referrals (inviter_user_id, referred_user_id, invite_id, status,
       qualifying_deposit_id, qualifying_deposit_cents, qualifying_play_cents, reward_cents, qualified_at)
     values (${inviter}::uuid, ${referred}::uuid, ${inv!.id}, 'QUALIFIED', ${dep!.id}, 10000, 10000, 1000, now())
     returning id`;
@@ -196,10 +207,15 @@ d("canonical lock order", () => {
       await sql`select pvp_test._system_account(${k}::pvp_test.account_kind, 'USD', 'real')`;
     await sql`update pvp_test.jackpot_config set entry_rate_limit = 100000`;
     // The house funds prizes and rewards from its bankroll.
-    const bank = (await sql`select pvp_test._system_account('house_bankroll', 'USD', 'real') id`)[0]!.id;
-    const ext = (await sql`select pvp_test._system_account('external_custody', 'USD', 'real') id`)[0]!.id;
+    const bank = (
+      await sql`select pvp_test._system_account('house_bankroll', 'USD', 'real') id`
+    )[0]!.id;
+    const ext = (
+      await sql`select pvp_test._system_account('external_custody', 'USD', 'real') id`
+    )[0]!.id;
     await sql.begin(async (tx) => {
-      const [t] = await tx`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type)
+      const [t] =
+        await tx`insert into pvp_test.ledger_transactions (kind, idempotency_key, account_type)
         values ('deposit', ${randomUUID()}, 'real') returning id`;
       await tx`select pvp_test._post(${t!.id}::uuid, ${ext}::uuid, -100000000)`;
       await tx`select pvp_test._post(${t!.id}::uuid, ${bank}::uuid, 100000000)`;
@@ -207,8 +223,9 @@ d("canonical lock order", () => {
     const admin = await player(0);
     partner = await player(0);
     await sql`insert into pvp_test.partners (user_id, created_by, leaderboard) values (${partner}::uuid, ${admin}::uuid, true)`;
-    template = (await sql`select id from pvp_test.leaderboard_templates where status = 'active' limit 1`)[0]!
-      .id as string;
+    template = (
+      await sql`select id from pvp_test.leaderboard_templates where status = 'active' limit 1`
+    )[0]!.id as string;
   }, 600_000);
   afterAll(async () => {
     await sql`drop schema if exists pvp_test cascade`;
@@ -234,8 +251,9 @@ d("canonical lock order", () => {
         forced++;
         // A canonical path holds the loser, pauses, then wants the winner. The old
         // settle took the winner first (ledger trigger), then waited on the loser.
-        const other = canonical([lo.id as string], (tx) =>
-          tx`select pvp_test._coinflip_lock_wallets(array[${w}]::uuid[], 'USD', 'real')`,
+        const other = canonical(
+          [lo.id as string],
+          (tx) => tx`select pvp_test._coinflip_lock_wallets(array[${w}]::uuid[], 'USD', 'real')`,
         );
         await other.opened;
         const [settled, held] = await Promise.all([err(settleJackpot(g)), err(other.done)]);
@@ -281,8 +299,10 @@ d("canonical lock order", () => {
         const c = await campaignWithAwards([a, b]);
         // A canonical path holds the rank-2 winner, pauses, then takes the bankroll.
         // The old payout paid rank 1 (wallet, bankroll) and then waited on rank 2.
-        const other = canonical([b], (tx) =>
-          tx`select pvp_test._lock_system_accounts(array['house_bankroll']::pvp_test.account_kind[], 'USD', 'real')`,
+        const other = canonical(
+          [b],
+          (tx) =>
+            tx`select pvp_test._lock_system_accounts(array['house_bankroll']::pvp_test.account_kind[], 'USD', 'real')`,
         );
         await other.opened;
         const [paid, held] = await Promise.all([err(payCampaign(c)), err(other.done)]);
@@ -367,7 +387,9 @@ d("canonical lock order", () => {
       expect(deferred!.c).toBeGreaterThan(0);
       await other.done;
       // Retried by the next progress call; concurrent retries still pay exactly once.
-      const r = await Promise.all([1, 2, 3].map(() => err(sql`select pvp_test.referral_progress(${referred}::uuid)`)));
+      const r = await Promise.all(
+        [1, 2, 3].map(() => err(sql`select pvp_test.referral_progress(${referred}::uuid)`)),
+      );
       expect(r).toEqual(["", "", ""]);
       expect(await referralState(id)).toEqual({ status: "REWARDED", paid_txs: 1 });
       await invariants();
@@ -385,7 +407,10 @@ d("canonical lock order", () => {
       const src = f.prosrc as string;
       const wallets = src.search(/_coinflip_lock_wallets|order by w\.owner_id, w\.kind/);
       const system = src.search(/_lock_system_accounts\(|id = bank for update|_post\(/);
-      expect({ f: f.proname, ok: wallets >= 0 && wallets < system }).toEqual({ f: f.proname, ok: true });
+      expect({ f: f.proname, ok: wallets >= 0 && wallets < system }).toEqual({
+        f: f.proname,
+        ok: true,
+      });
     }
     const [ref] = await sql`select prosrc from pg_proc where pronamespace = 'pvp_test'::regnamespace
       and proname = 'referral_try_pay'`;

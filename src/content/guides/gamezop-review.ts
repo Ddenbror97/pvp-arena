@@ -9,8 +9,7 @@ export const guide: Guide = {
   description:
     "Gamezop is a skill-game catalog. US real-money play is not published here, and no country list is invented. A $12 coinflip and a $22 pot use our fees.",
   h1: "Gamezop in 2026: a skill catalog, with US cash play unpublished",
-  answer:
-    `Gamezop is a skill-game catalog search. A catalog lists games you can open.
+  answer: `Gamezop is a skill-game catalog search. A catalog lists games you can open.
 
 It does not, by itself, tell you whether real-money matches are available where you live. US availability is not published in this file, and no country list is invented to decorate the gap.
 

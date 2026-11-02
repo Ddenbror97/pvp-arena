@@ -144,6 +144,11 @@ If the stake would hurt, do not match it. The app will still be there. The other
     { label: "Wikipedia: Betting exchange", url: "https://en.wikipedia.org/wiki/Betting_exchange" },
     { label: "Wikipedia: Bookmaker", url: "https://en.wikipedia.org/wiki/Bookmaker" },
   ],
-  related: ["peer-to-peer-sports-betting", "betting-exchange-explained", "crypto-betting-app", "peer-to-peer-gambling"],
+  related: [
+    "peer-to-peer-sports-betting",
+    "betting-exchange-explained",
+    "crypto-betting-app",
+    "peer-to-peer-gambling",
+  ],
   updated: "2026-10-06",
 };

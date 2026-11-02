@@ -212,7 +212,7 @@ If an outbound link is added later, count it as advertising. The draft has no af
 
 One sweeps app left the dollar value of 1 RCH unpublished. [Those fantasy terms](/guides/rebet-review) also left the public code and the redeem dollar floor blank.
 
-A refer-a-friend clause is not a cash-out clock. [The prize-ticket FAQ](/guides/thrillzz-review) does not print a ticket redemption speed.`
+A refer-a-friend clause is not a cash-out clock. [The prize-ticket FAQ](/guides/thrillzz-review) does not print a ticket redemption speed.`,
     },
   ],
   faqs: [

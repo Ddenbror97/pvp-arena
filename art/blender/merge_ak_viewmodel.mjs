@@ -17,7 +17,9 @@ import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
 import sharp from "sharp";
 const [shipped, processed, wearPng, outGlb, outWear] = process.argv.slice(2);
 if (!outWear) {
-  console.error("usage: merge_ak_viewmodel.mjs <shipped.glb> <rifle.glb> <wear.png> <out.glb> <out.webp>");
+  console.error(
+    "usage: merge_ak_viewmodel.mjs <shipped.glb> <rifle.glb> <wear.png> <out.glb> <out.webp>",
+  );
   process.exit(2);
 }
 await MeshoptDecoder.ready;
@@ -60,7 +62,11 @@ for (const accessor of root.listAccessors()) accessor.setBuffer(mainBuffer);
 for (const buffer of extraBuffers) buffer.dispose();
 // Keep marker empties (GripL/R, MagazineGrip, MuzzleDeviceTip…) and the wear UV, which no
 // glTF material references (only the runtime finish shader reads it).
-await target.transform(prune({ keepLeaves: true, keepAttributes: true }), dedup(), meshopt({ encoder: MeshoptEncoder, level: "medium" }));
+await target.transform(
+  prune({ keepLeaves: true, keepAttributes: true }),
+  dedup(),
+  meshopt({ encoder: MeshoptEncoder, level: "medium" }),
+);
 // Self-contained GLB: the arm textures that used to sit beside it are embedded.
 await io.write(outGlb, target);
 

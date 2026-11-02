@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "blockchain-poker-review",
   cluster: "Poker",
   keyword: "blockchain poker",
-  secondary: [
-    "blockchain poker review",
-    "blockchain poker rakeback",
-    "is blockchain poker legit",
-  ],
+  secondary: ["blockchain poker review", "blockchain poker rakeback", "is blockchain poker legit"],
   title: "Blockchain Poker Review: Rakeback and the Room",
   description:
     "Blockchain Poker publishes rakeback up to 100% and a 200% match up to $10,000. A cash-game rake percent is not in the files we saved. We did not deposit.",

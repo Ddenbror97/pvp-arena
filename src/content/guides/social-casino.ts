@@ -131,7 +131,7 @@ Social lobbies still need their own cashier note. [Lotsa Slots as a chip lobby](
 
 A sweeps sportsbook, terms v2.2 dated 24 June 2026, left the public code unpublished because the promo URLs were blocked. [That sports-entry PDF](/guides/sportzino-review) is not a points lobby.
 
-One social sportsbook's promo page did print FLIFFBONUS. [That promo page](/guides/fliff-review) still left the handling-fee amount unpublished. It is not a state-licensed book.`
+One social sportsbook's promo page did print FLIFFBONUS. [That promo page](/guides/fliff-review) still left the handling-fee amount unpublished. It is not a state-licensed book.`,
     },
   ],
   faqs: [

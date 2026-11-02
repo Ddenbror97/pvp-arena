@@ -4,7 +4,11 @@ export const guide: Guide = {
   slug: "golden-hearts-casino-review",
   cluster: "Sweepstakes",
   keyword: "golden hearts casino",
-  secondary: ["is golden hearts casino legit", "golden hearts casino login", "golden hearts sweeps"],
+  secondary: [
+    "is golden hearts casino legit",
+    "golden hearts casino login",
+    "golden hearts sweeps",
+  ],
   title: "Golden Hearts Casino: A Suit Name, Not Poker",
   description:
     "Golden hearts casino puts a suit in the name. That joke is not a video-poker paytable. This review does not teach jacks-or-better. Brand fees stay unpublished.",

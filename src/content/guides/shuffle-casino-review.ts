@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "shuffle-casino-review",
   cluster: "Foundations",
   keyword: "shuffle casino",
-  secondary: [
-    "shuffle casino promo code",
-    "is shuffle casino legit",
-    "shuffle casino withdrawal",
-  ],
+  secondary: ["shuffle casino promo code", "is shuffle casino legit", "shuffle casino withdrawal"],
   title: "Shuffle Casino Review: A Shuffle Is Not a Seed",
   description:
     "A Shuffle Casino review separates a dealer shuffle from a committed seed. The brand is a cashier. Whether it publishes a seed is not published here.",

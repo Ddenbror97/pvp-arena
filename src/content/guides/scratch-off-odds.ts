@@ -156,7 +156,10 @@ If scratching is a habit you hide, the next page is [responsible gambling](/resp
     },
   ],
   sources: [
-    { label: "North American Association of State and Provincial Lotteries", url: "https://www.naspl.org/" },
+    {
+      label: "North American Association of State and Provincial Lotteries",
+      url: "https://www.naspl.org/",
+    },
     { label: "Mega Millions", url: "https://www.megamillions.com/" },
     { label: "Powerball", url: "https://www.powerball.com/" },
   ],

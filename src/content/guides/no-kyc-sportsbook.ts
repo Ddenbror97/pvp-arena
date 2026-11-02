@@ -144,7 +144,7 @@ A .co book prints a $1 online minimum and welcome code 5017, and still no licenc
 
 A Panama help center, terms dated 2 March 2026, left the licence number and the welcome percent unpublished. [That help center](/guides/betonline-review) is not the other Panama book.
 
-The about page and the ID page were opened, and neither printed a US state licence. [Those .lv pages](/guides/bovada-review) also left the sports minimum bet unpublished.`
+The about page and the ID page were opened, and neither printed a US state licence. [Those .lv pages](/guides/bovada-review) also left the sports minimum bet unpublished.`,
     },
   ],
   faqs: [

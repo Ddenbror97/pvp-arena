@@ -66,9 +66,7 @@ export const guide: Guide = {
       a: "Brand differences belong on the Ledger versus Trezor page. Whether to connect a hardware device to a gambling site belongs on the cold wallet versus hot wallet page.",
     },
   ],
-    sources: [
-    { label: "ethereum.org — Ethereum wallets", url: "https://ethereum.org/en/wallets/" },
-  ],
+  sources: [{ label: "ethereum.org — Ethereum wallets", url: "https://ethereum.org/en/wallets/" }],
   related: ["cold-wallet-vs-hot-wallet", "ledger-vs-trezor"],
   updated: "2026-10-21",
 };

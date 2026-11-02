@@ -80,6 +80,11 @@ A bet "to qualify" includes whatever the competition uses to break the tie. A be
       url: "https://www.theifab.com/laws/latest/determining-the-outcome-of-a-match/",
     },
   ],
-  related: ["what-is-sports-betting", "vig-betting", "moneyline-betting-explained", "prop-bets-explained"],
+  related: [
+    "what-is-sports-betting",
+    "vig-betting",
+    "moneyline-betting-explained",
+    "prop-bets-explained",
+  ],
   updated: "2026-10-21",
 };

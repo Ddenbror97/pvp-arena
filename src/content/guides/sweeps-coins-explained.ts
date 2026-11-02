@@ -138,7 +138,7 @@ You must be 18 or over. If you are buying bundles to finish an SC meter you no l
 
 One sports sweeps brand publishes both a coin that dies in the lobby and a coin that might redeem. [The June 2026 eligibility file](/guides/sportzino-review) does not print one nationwide age.
 
-A five-day prize lock is not a cash withdrawal we timed. [The RCH rules](/guides/rebet-review) do not print a guaranteed payout clock.`
+A five-day prize lock is not a cash withdrawal we timed. [The RCH rules](/guides/rebet-review) do not print a guaranteed payout clock.`,
     },
   ],
   faqs: [

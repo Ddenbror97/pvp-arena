@@ -200,7 +200,8 @@ d("game chat (isolated schema)", () => {
         }
     expect(privs).toEqual([]);
     // Reads are column-scoped: moderation fields stay server-only.
-    const cols = await sql`select grantee, privilege_type, column_name from information_schema.column_privileges
+    const cols =
+      await sql`select grantee, privilege_type, column_name from information_schema.column_privileges
       where table_schema = 'pvp_test' and table_name like 'game_chat%' and grantee in ('anon', 'authenticated')
       order by grantee, column_name`;
     const readable = ["created_at", "game_type", "id", "message", "status", "user_id"];
@@ -228,7 +229,9 @@ d("game chat (isolated schema)", () => {
       "utf8",
     );
     expect(rooms).toContain('create policy "chat rooms receive anon"');
-    expect(rooms).toMatch(/create policy "chat rooms receive anon" on realtime\.messages\s+for select/i);
+    expect(rooms).toMatch(
+      /create policy "chat rooms receive anon" on realtime\.messages\s+for select/i,
+    );
     expect(receive).toContain('create policy "chat rooms receive" on realtime.messages for select');
   });
 });

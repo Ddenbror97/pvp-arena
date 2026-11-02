@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "betr-picks-review",
   cluster: "Sports betting",
   keyword: "betr picks",
-  secondary: [
-    "betr flex play",
-    "betr no sweat token",
-    "betr fantasy withdrawal",
-  ],
+  secondary: ["betr flex play", "betr no sweat token", "betr fantasy withdrawal"],
   title: "Betr Picks Review: Flex Table and Cash-Out",
   description:
     "Betr Picks prints flex multiples from 2x to 200x and a $50 no-sweat cap through 31 October 2026. Cash-out approval can take 72 hours. No affiliate link.",

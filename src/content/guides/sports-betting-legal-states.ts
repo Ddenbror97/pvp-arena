@@ -114,7 +114,7 @@ One public rulebook names Costa Rica law and still prints no licence number. The
 
 A second offshore page says Anjouan is not a state commission and still offers a -105 price on major markets. See [the reduced-juice licence page](/guides/bet105-review).
 
-A US pick'em help article dated 13 July 2026 splits states, and rules version 1.29 prices an all-in ticket as a return on the dollar. That read is [the state split and the pay table](/guides/dabble-review).`
+A US pick'em help article dated 13 July 2026 splits states, and rules version 1.29 prices an all-in ticket as a return on the dollar. That read is [the state split and the pay table](/guides/dabble-review).`,
     },
     {
       id: "check",

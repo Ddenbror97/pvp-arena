@@ -57,7 +57,8 @@ for (const section of doc.getRoot().listNodes()) {
       r.set(n.getRotation(), i * 4);
       s.set(n.getScale(), i * 3);
     });
-    const acc = (array, type) => doc.createAccessor().setType(type).setArray(array).setBuffer(buffer);
+    const acc = (array, type) =>
+      doc.createAccessor().setType(type).setArray(array).setBuffer(buffer);
     const batch = doc
       .createNode(`${section.getName()}-${mesh.getName()}`)
       .setMesh(mesh)

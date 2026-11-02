@@ -154,11 +154,6 @@ If you cannot explain the deal without the phrase "you know what I mean," you do
     { label: "Wikipedia — Poker staking", url: "https://en.wikipedia.org/wiki/Poker_staking" },
     { label: "Wikipedia — Poker", url: "https://en.wikipedia.org/wiki/Poker" },
   ],
-  related: [
-    "sit-and-go-poker",
-    "spin-and-go",
-    "cash-game-poker",
-    "poker-bankroll-management",
-  ],
+  related: ["sit-and-go-poker", "spin-and-go", "cash-game-poker", "poker-bankroll-management"],
   updated: "2026-10-07",
 };

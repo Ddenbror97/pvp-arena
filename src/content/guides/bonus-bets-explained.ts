@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "bonus-bets-explained",
   cluster: "Sports betting",
   keyword: "bonus bet",
-  secondary: ["free bet payout", "stake not returned", "bonus bet conversion", "sportsbook free bet"],
+  secondary: [
+    "free bet payout",
+    "stake not returned",
+    "bonus bet conversion",
+    "sportsbook free bet",
+  ],
   title: "Bonus Bets Explained: How Free Bets Really Pay Out",
   description:
     "How sportsbook bonus bets and free bets work, why stake is not returned, conversion math and the best way to turn bonus bets into real cash.",
@@ -140,6 +145,11 @@ If the token's terms are opaque, skip the offer. Opaque is expensive. Adults 18+
     { label: "Wikipedia: Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
     { label: "GambleAware", url: "https://www.gambleaware.org/" },
   ],
-  related: ["matched-betting", "casino-bonuses-explained", "gambling-budget", "implied-probability"],
+  related: [
+    "matched-betting",
+    "casino-bonuses-explained",
+    "gambling-budget",
+    "implied-probability",
+  ],
   updated: "2026-10-21",
 };

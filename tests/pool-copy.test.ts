@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { leaveTake, matchNotice, parseStakeDollars, spinSentence, stakeDraft, stakeQuote, winSentence } from "../src/lib/pool/copy";
+import {
+  leaveTake,
+  matchNotice,
+  parseStakeDollars,
+  spinSentence,
+  stakeDraft,
+  stakeQuote,
+  winSentence,
+} from "../src/lib/pool/copy";
 
 const STAKES = [100, 200, 500, 1000, 2500, 5000];
 
@@ -76,9 +84,9 @@ describe("match notice", () => {
     expect(matchNotice({ ...base, status: "STARTING", seat: "B", opensIn: null })).toBe(
       "Opponent breaks. The rack opens in 60 seconds.",
     );
-    expect(
-      matchNotice({ ...base, mine: false, standIn: "theirs", status: "PLAYING" }),
-    ).toBe("Opponent is away. The table is playing their shots.");
+    expect(matchNotice({ ...base, mine: false, standIn: "theirs", status: "PLAYING" })).toBe(
+      "Opponent is away. The table is playing their shots.",
+    );
     expect(matchNotice({ ...base, status: "CANCELLED", cancelReason: "WAITING_EXPIRED" })).toBe(
       "No opponent joined in 24 hours. Your stake was refunded.",
     );
@@ -86,13 +94,25 @@ describe("match notice", () => {
       "Match cancelled. Both stakes were refunded.",
     );
     expect(
-      matchNotice({ ...base, status: "CANCELLED", cancelReason: "PLAYER_LEFT", youLeft: true, stakeCents: 500 }),
+      matchNotice({
+        ...base,
+        status: "CANCELLED",
+        cancelReason: "PLAYER_LEFT",
+        youLeft: true,
+        stakeCents: 500,
+      }),
     ).toBe("You left this table. $0.50 stayed with the site. $4.50 is back in your balance.");
     expect(
       matchNotice({ ...base, status: "CANCELLED", cancelReason: "PLAYER_LEFT", stakeCents: 500 }),
     ).toBe("The other player left. Your $5.00 is back. This table is closed.");
     expect(
-      matchNotice({ ...base, status: "CANCELLED", cancelReason: "PLAYER_LEFT", seat: null, stakeCents: 500 }),
+      matchNotice({
+        ...base,
+        status: "CANCELLED",
+        cancelReason: "PLAYER_LEFT",
+        seat: null,
+        stakeCents: 500,
+      }),
     ).toBe("A player left. This table is closed.");
     expect(matchNotice({ ...base, fouled: true, ballInHand: true })).toBe(
       "Foul. Ball in hand — place the cue ball.",
@@ -107,7 +127,13 @@ describe("match notice", () => {
       matchNotice({ ...base, shootingEight: true, ballInHand: true, pocketChosen: false }),
     ).toBe("Place the cue ball, then click a lit pocket for the 8-ball. That call stays.");
     expect(
-      matchNotice({ ...base, shootingEight: true, ballInHand: true, fouled: true, pocketChosen: false }),
+      matchNotice({
+        ...base,
+        shootingEight: true,
+        ballInHand: true,
+        fouled: true,
+        pocketChosen: false,
+      }),
     ).toBe("Foul. Place the cue ball, then click a lit pocket for the 8-ball. That call stays.");
     expect(
       matchNotice({
@@ -118,16 +144,18 @@ describe("match notice", () => {
         mine: false,
       }),
     ).toBe("Foul. That ball stays down. Opponent has ball in hand.");
-    expect(
-      matchNotice({ ...base, fouled: true, ballInHand: true, foulReason: "WRONG_BALL" }),
-    ).toBe("Foul. That ball stays down. Place the cue ball.");
+    expect(matchNotice({ ...base, fouled: true, ballInHand: true, foulReason: "WRONG_BALL" })).toBe(
+      "Foul. That ball stays down. Place the cue ball.",
+    );
     expect(matchNotice({ ...base, shootingEight: true, mine: false, ballInHand: true })).toBe(
       "Opponent has ball in hand and is shooting the 8-ball.",
     );
     expect(matchNotice({ ...base, shootingEight: true, mine: false, ballInHand: false })).toBe(
       "Opponent is shooting the 8-ball.",
     );
-    expect(matchNotice({ ...base, mine: false, ballInHand: true })).toBe("Opponent has ball in hand.");
+    expect(matchNotice({ ...base, mine: false, ballInHand: true })).toBe(
+      "Opponent has ball in hand.",
+    );
     expect(
       matchNotice({
         ...base,

@@ -117,7 +117,7 @@ Keep the template small so you will actually fill it. Six columns beat a dashboa
   faqs: [
     {
       q: "What columns should a bet tracker include?",
-      a: "Date, sport, odds, stake, result, and closing line. Date is when you bet. Odds are the price you took. Result is win, loss, push, or void. The closing line is the last price on that same side. Notes can hold the book and the market. Leave the close as \"no close\" if the market never had one. Do not invent it.",
+      a: 'Date, sport, odds, stake, result, and closing line. Date is when you bet. Odds are the price you took. Result is win, loss, push, or void. The closing line is the last price on that same side. Notes can hold the book and the market. Leave the close as "no close" if the market never had one. Do not invent it.',
     },
     {
       q: "How do you calculate betting ROI?",
@@ -137,11 +137,22 @@ Keep the template small so you will actually fill it. Six columns beat a dashboa
     },
   ],
   sources: [
-    { label: "Wikipedia: Return on investment", url: "https://en.wikipedia.org/wiki/Return_on_investment" },
+    {
+      label: "Wikipedia: Return on investment",
+      url: "https://en.wikipedia.org/wiki/Return_on_investment",
+    },
     { label: "Wikipedia: Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
-    { label: "Wikipedia: Fixed-odds betting", url: "https://en.wikipedia.org/wiki/Fixed-odds_betting" },
+    {
+      label: "Wikipedia: Fixed-odds betting",
+      url: "https://en.wikipedia.org/wiki/Fixed-odds_betting",
+    },
   ],
-  related: ["closing-line-value", "gambling-budget", "implied-probability", "moneyline-betting-explained"],
+  related: [
+    "closing-line-value",
+    "gambling-budget",
+    "implied-probability",
+    "moneyline-betting-explained",
+  ],
   widget: "bet-tracker",
   updated: "2026-10-21",
 };

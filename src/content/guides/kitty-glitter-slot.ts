@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "kitty-glitter-slot",
   cluster: "Slots",
   keyword: "kitty glitter",
-  secondary: [
-    "igt playdigital grand launch",
-    "29 september 2025 release",
-    "cat tile glass check",
-  ],
+  secondary: ["igt playdigital grand launch", "29 september 2025 release", "cat tile glass check"],
   title: "Kitty Glitter: IGT Names Grand, RTP Unprinted",
   description:
     "Kitty glitter appears in an IGT release dated 29 September 2025 as a Grand launch. That note prints no RTP, paylines, grid, volatility, or max win.",

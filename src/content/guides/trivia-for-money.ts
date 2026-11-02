@@ -152,11 +152,6 @@ The standard worth keeping is plain. Trivia for money pays you when you beat oth
     { label: "Trivia (Wikipedia)", url: "https://en.wikipedia.org/wiki/Trivia" },
     { label: "HQ Trivia (Wikipedia)", url: "https://en.wikipedia.org/wiki/HQ_Trivia" },
   ],
-  related: [
-    "solitaire-for-money",
-    "spades-for-money",
-    "backgammon-for-money",
-    "skillz-review",
-  ],
+  related: ["solitaire-for-money", "spades-for-money", "backgammon-for-money", "skillz-review"],
   updated: "2026-10-07",
 };

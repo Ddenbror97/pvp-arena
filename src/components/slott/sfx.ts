@@ -461,7 +461,20 @@ export function playBombSfx({ volume = 1 }: Opts = {}) {
     const b = bus(ctx, out, scaled(volume));
     boom(ctx, b, t);
     boom(ctx, b, t + 0.18);
-    burst(ctx, b, t + 0.02, { dur: 0.7, peak: 0.14, filter: "bandpass", freq: 1400, freqTo: 180, q: 0.6 });
-    tone(ctx, b, t + 0.08, 90, { type: "sawtooth", peak: 0.07, decay: 1.1, glideTo: 28, lowpass: 320 });
+    burst(ctx, b, t + 0.02, {
+      dur: 0.7,
+      peak: 0.14,
+      filter: "bandpass",
+      freq: 1400,
+      freqTo: 180,
+      q: 0.6,
+    });
+    tone(ctx, b, t + 0.08, 90, {
+      type: "sawtooth",
+      peak: 0.07,
+      decay: 1.1,
+      glideTo: 28,
+      lowpass: 320,
+    });
   });
 }

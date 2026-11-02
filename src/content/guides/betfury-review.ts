@@ -209,10 +209,22 @@ We did not time a cash-out. BetFury is the wrong room if you need the bonus and 
     },
   ],
   sources: [
-    { label: "BetFury terms, opened 20 October 2026", url: "https://docs.betfury.com/betfury/terms-of-services/terms-and-conditions" },
-    { label: "BetFury welcome-pack terms, opened 20 October 2026", url: "https://docs.betfury.com/betfury/bonus-system/welcome-pack-terms-and-conditions" },
-    { label: "BetFury deposit-bonus docs, opened 20 October 2026", url: "https://docs.betfury.com/betfury/bonus-system/deposit-bonuses-and-free-spins" },
-    { label: "Curaçao certificate naming betfury.io, opened 20 October 2026", url: "https://cert.cga.cw/certificate?id=ZXlKcGRpSTZJbGRCV1ZSRU1YZHlSbHBqVGxkNVEwVlZTREUzWmtFOVBTSXNJblpoYkhWbElqb2lVMDFhT0ZOWFIyaEdLemxtYlVoelRIWlFRVkpsVVQwOUlpd2liV0ZqSWpvaVptRmpOREl3TXpNME9ESTFNVFk1WlRrME9UVTJOVGcyWlRkbVlUVXdNelk1T0dSak1qTmpPRGRrT1RKbE9XRmpNalkyWldFeVpUQTNOamczTlRZeE9TSXNJblJoWnlJNklpSjk%3D" },
+    {
+      label: "BetFury terms, opened 20 October 2026",
+      url: "https://docs.betfury.com/betfury/terms-of-services/terms-and-conditions",
+    },
+    {
+      label: "BetFury welcome-pack terms, opened 20 October 2026",
+      url: "https://docs.betfury.com/betfury/bonus-system/welcome-pack-terms-and-conditions",
+    },
+    {
+      label: "BetFury deposit-bonus docs, opened 20 October 2026",
+      url: "https://docs.betfury.com/betfury/bonus-system/deposit-bonuses-and-free-spins",
+    },
+    {
+      label: "Curaçao certificate naming betfury.io, opened 20 October 2026",
+      url: "https://cert.cga.cw/certificate?id=ZXlKcGRpSTZJbGRCV1ZSRU1YZHlSbHBqVGxkNVEwVlZTREUzWmtFOVBTSXNJblpoYkhWbElqb2lVMDFhT0ZOWFIyaEdLemxtYlVoelRIWlFRVkpsVVQwOUlpd2liV0ZqSWpvaVptRmpOREl3TXpNME9ESTFNVFk1WlRrME9UVTJOVGcyWlRkbVlUVXdNelk1T0dSak1qTmpPRGRrT1RKbE9XRmpNalkyWldFeVpUQTNOamczTlRZeE9TSXNJblJoWnlJNklpSjk%3D",
+    },
   ],
   related: [
     "cloudbet-review",

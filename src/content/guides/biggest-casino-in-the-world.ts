@@ -207,7 +207,7 @@ The page is editorial. It does not sell a room and it does not sell a bonus. Any
     },
     {
       q: "Why mention a $1 roulette spin in a size article?",
-      a: "So \"biggest\" is not confused with \"loosest.\" On Purple or Silver, the edge after the 5% fee is about 7.88%, or about 7.88 cents of expected loss on $1. The room's size is not in that formula.",
+      a: 'So "biggest" is not confused with "loosest." On Purple or Silver, the edge after the 5% fee is about 7.88%, or about 7.88 cents of expected loss on $1. The room\'s size is not in that formula.',
     },
     {
       q: "What is the $36 pot example?",

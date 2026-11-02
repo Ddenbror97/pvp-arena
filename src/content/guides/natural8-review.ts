@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "natural8-review",
   cluster: "Poker",
   keyword: "natural8",
-  secondary: [
-    "natural8 withdrawal time",
-    "natural8 licence",
-    "natural8 rake",
-    "Run Good N.V.",
-  ],
+  secondary: ["natural8 withdrawal time", "natural8 licence", "natural8 rake", "Run Good N.V."],
   title: "Natural8 Review: Holds, Fees, and Licence Gaps",
   description:
     "Natural8 terms name Run Good N.V. in Curacao, a 72-hour poker hold, and no cash-rake percent. The licence number is not published.",

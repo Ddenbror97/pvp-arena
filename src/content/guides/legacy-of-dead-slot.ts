@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "legacy-of-dead-slot",
   cluster: "Slots",
   keyword: "legacy of dead",
-  secondary: [
-    "play'n go tomb slot",
-    "tomb scatter free spins",
-    "250000 coin line",
-  ],
+  secondary: ["play'n go tomb slot", "tomb scatter free spins", "250000 coin line"],
   title: "Legacy of Dead: Play'n GO Page Omits RTP",
   description:
     "Legacy of dead on the Play'n GO page shows a 2 January 2020 release and a free-spin line of 250000 coins. RTP, grid, lines, and volatility are not printed.",

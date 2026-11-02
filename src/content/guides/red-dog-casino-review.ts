@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "red-dog-casino-review",
   cluster: "Foundations",
   keyword: "red dog casino",
-  secondary: [
-    "red dog casino promo code",
-    "is red dog casino legit",
-    "red dog casino withdrawal",
-  ],
+  secondary: ["red dog casino promo code", "is red dog casino legit", "red dog casino withdrawal"],
   title: "Red Dog Casino Review: Brand Search, Not Cards",
   description:
     "Red Dog Casino is a brand search. The spread card game is a different query. License, bonus, and cashout speed are not published on this page.",

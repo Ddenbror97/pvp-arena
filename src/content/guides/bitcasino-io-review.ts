@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "bitcasino-io-review",
   cluster: "Foundations",
   keyword: "bitcasino io",
-  secondary: [
-    "bitcasino licence",
-    "bitcasino withdrawal minimum",
-    "bitcasino reward terms",
-  ],
+  secondary: ["bitcasino licence", "bitcasino withdrawal minimum", "bitcasino reward terms"],
   title: "Bitcasino Io Review: Two Minimums, One Licence",
   description:
     "Bitcasino io help pages disagree on cash-out minimums and on reward wagering. The Anjouan licence line is printed. We did not time a withdrawal.",

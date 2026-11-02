@@ -1,5 +1,14 @@
 export default function cryptoCronPlugin(nitroApp: {
-  hooks: { hook: (name: string, fn: (event: { env?: unknown; waitUntil?: (work: Promise<unknown>) => void; req?: { waitUntil?: (work: Promise<unknown>) => void } }) => void | Promise<void>) => void };
+  hooks: {
+    hook: (
+      name: string,
+      fn: (event: {
+        env?: unknown;
+        waitUntil?: (work: Promise<unknown>) => void;
+        req?: { waitUntil?: (work: Promise<unknown>) => void };
+      }) => void | Promise<void>,
+    ) => void;
+  };
 }) {
   nitroApp.hooks.hook("request", (event) => {
     const waitUntil =

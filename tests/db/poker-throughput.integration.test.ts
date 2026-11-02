@@ -64,7 +64,9 @@ async function newTable(): Promise<number> {
 const sit = (p: P, table: number) =>
   as(
     p.id,
-    (tx) => tx`select pvp_test.poker_sit(${table}::bigint, null::smallint, null::smallint, 500::bigint,
+    (
+      tx,
+    ) => tx`select pvp_test.poker_sit(${table}::bigint, null::smallint, null::smallint, 500::bigint,
       ${p.links[0]!}, ${randomUUID()}) r`,
   );
 
@@ -86,7 +88,8 @@ d("poker throughput", () => {
   it("raises the per-tick table cap and only broadcasts a version change", async () => {
     const [cfg] = await sql`select tick_tables from pvp_test.poker_config`;
     expect(Number(cfg!.tick_tables)).toBe(100);
-    const [worker] = await sql`select prosrc from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    const [worker] =
+      await sql`select prosrc from pg_proc p join pg_namespace n on n.oid = p.pronamespace
       where n.nspname = 'pvp_test' and p.proname = 'slot_tick_worker'`;
     expect(String(worker!.prosrc)).toContain("tick_tables");
     expect(String(worker!.prosrc)).toContain("400 milliseconds");
@@ -104,7 +107,9 @@ d("poker throughput", () => {
     await sit(a, table);
     await sit(b, table);
     const version = async () =>
-      Number((await sql`select version from pvp_test.poker_tables where id = ${table}`)[0]!.version);
+      Number(
+        (await sql`select version from pvp_test.poker_tables where id = ${table}`)[0]!.version,
+      );
     const v0 = await version();
     const hand = (
       await sql`select status from pvp_test.poker_hands where table_id = ${table} order by id desc limit 1`
@@ -117,12 +122,14 @@ d("poker throughput", () => {
     expect(await version()).toBe(v0);
 
     const state = async () =>
-      (await as(a.id, (tx) => tx`select pvp_test.poker_table_state(${table}::bigint) r`))[0]!.r as Row;
+      (await as(a.id, (tx) => tx`select pvp_test.poker_table_state(${table}::bigint) r`))[0]!
+        .r as Row;
     const first = await state();
     expect(first.me.seat_no).toEqual(expect.any(Number));
     expect(first.hand.status).toBe("COMMIT");
     expect(first.hand.street).not.toBe("RIVER");
-    const [cached] = await sql`select version from pvp_test.poker_state_cache where table_id = ${table}`;
+    const [cached] =
+      await sql`select version from pvp_test.poker_state_cache where table_id = ${table}`;
     expect(Number(cached!.version)).toBe(v0);
     await sql`update pvp_test.poker_state_cache set body = jsonb_set(body, '{hand,street}', '"RIVER"')
       where table_id = ${table}`;

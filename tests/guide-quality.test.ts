@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { GUIDES } from "@/content/guides";
-import {
-  QUALITY_SCORE_CAP_WHEN_CRITICAL,
-  criticalQualityFailures,
-} from "@/lib/guides/quality";
+import { QUALITY_SCORE_CAP_WHEN_CRITICAL, criticalQualityFailures } from "@/lib/guides/quality";
 
 const REMEDIATED = [
   "deposit-match-bonus",
@@ -44,9 +41,9 @@ describe("critical guide quality", () => {
   it("flags a fee closer pasted twice", () => {
     const line =
       "Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike.";
-    expect(criticalQualityFailures(`${line}\n\n${line}`).some((f) => f.includes("fee closer"))).toBe(
-      true,
-    );
+    expect(
+      criticalQualityFailures(`${line}\n\n${line}`).some((f) => f.includes("fee closer")),
+    ).toBe(true);
     expect(criticalQualityFailures(line)).toEqual([]);
   });
 
@@ -54,7 +51,9 @@ describe("critical guide quality", () => {
     for (const slug of REMEDIATED) {
       const guide = GUIDES.find((g) => g.slug === slug);
       expect(guide, slug).toBeTruthy();
-      const text = [guide!.answer, ...guide!.facts, ...guide!.sections.map((s) => s.body)].join("\n\n");
+      const text = [guide!.answer, ...guide!.facts, ...guide!.sections.map((s) => s.body)].join(
+        "\n\n",
+      );
       expect(criticalQualityFailures(text), slug).toEqual([]);
       expect(guide!.sources.length, slug).toBeGreaterThan(0);
     }

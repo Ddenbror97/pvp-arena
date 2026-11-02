@@ -9,8 +9,7 @@ export const guide: Guide = {
   description:
     "Bingo bash is a social bingo app. Free chips are not cash. A rig cannot be proved here; the test is a redeem line on the prize screen. Our $10 pot is separate.",
   h1: "Bingo bash in 2026: free chips are not cash, and rigged is unproven here",
-  answer:
-    `Bingo bash is a social bingo app search. Free chips are play pieces, not cash, unless a prize screen states a redeem you can read.
+  answer: `Bingo bash is a social bingo app search. Free chips are play pieces, not cash, unless a prize screen states a redeem you can read.
 
 Whether the draw is rigged is not something this page can prove. The test it will teach is narrower: does the prize screen state a redeem.
 

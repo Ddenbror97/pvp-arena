@@ -155,7 +155,10 @@ The agreement template above is for a state draw. It does not beat that draw. If
   sources: [
     { label: "Powerball", url: "https://www.powerball.com/" },
     { label: "Mega Millions", url: "https://www.megamillions.com/" },
-    { label: "IRS Topic 419, Gambling Income and Losses", url: "https://www.irs.gov/taxtopics/tc419" },
+    {
+      label: "IRS Topic 419, Gambling Income and Losses",
+      url: "https://www.irs.gov/taxtopics/tc419",
+    },
   ],
   related: [
     "quick-pick-lottery",

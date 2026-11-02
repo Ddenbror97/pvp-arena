@@ -190,11 +190,20 @@ Not for anyone who needs the rent back on a schedule, anyone in a barred country
     },
   ],
   sources: [
-    { label: "WolfBet terms of service, opened 20 October 2026", url: "https://wolfbet.com/help/terms-of-service" },
+    {
+      label: "WolfBet terms of service, opened 20 October 2026",
+      url: "https://wolfbet.com/help/terms-of-service",
+    },
     { label: "WolfBet FAQ, opened 20 October 2026", url: "https://wolfbet.com/faq" },
     { label: "WolfBet homepage, opened 20 October 2026", url: "https://wolfbet.com/" },
-    { label: "WolfBet provably fair route, opened 20 October 2026", url: "https://wolfbet.com/provably-fair" },
-    { label: "WolfBet promotions route, opened 20 October 2026", url: "https://wolfbet.com/promotions" },
+    {
+      label: "WolfBet provably fair route, opened 20 October 2026",
+      url: "https://wolfbet.com/provably-fair",
+    },
+    {
+      label: "WolfBet promotions route, opened 20 October 2026",
+      url: "https://wolfbet.com/promotions",
+    },
   ],
   related: [
     "bitsler-review",

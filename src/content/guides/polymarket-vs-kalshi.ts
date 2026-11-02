@@ -81,11 +81,28 @@ Do not copy a fee, a geo-block, or a list of allowed contracts from a screenshot
     },
   ],
   sources: [
-    { label: "CFTC DCM filing: Kalshi", url: "https://www.cftc.gov/IndustryOversight/IndustryFilings/TradingOrganizations/42993" },
-    { label: "CFTC amended order of designation, KalshiEX LLC, 17 January 2025", url: "https://www.cftc.gov/filings/documents/2025/orgdcmkexkalshiamord250117.pdf" },
-    { label: "CFTC DCM filing: QCX LLC d/b/a Polymarket US", url: "https://www.cftc.gov/IndustryOversight/IndustryFilings/TradingOrganizations/49571" },
-    { label: "Congressional Research Service, IF13187", url: "https://www.congress.gov/crs-product/IF13187" },
+    {
+      label: "CFTC DCM filing: Kalshi",
+      url: "https://www.cftc.gov/IndustryOversight/IndustryFilings/TradingOrganizations/42993",
+    },
+    {
+      label: "CFTC amended order of designation, KalshiEX LLC, 17 January 2025",
+      url: "https://www.cftc.gov/filings/documents/2025/orgdcmkexkalshiamord250117.pdf",
+    },
+    {
+      label: "CFTC DCM filing: QCX LLC d/b/a Polymarket US",
+      url: "https://www.cftc.gov/IndustryOversight/IndustryFilings/TradingOrganizations/49571",
+    },
+    {
+      label: "Congressional Research Service, IF13187",
+      url: "https://www.congress.gov/crs-product/IF13187",
+    },
   ],
-  related: ["is-kalshi-gambling", "how-does-polymarket-work", "expected-value-gambling", "what-is-a-crypto-casino"],
+  related: [
+    "is-kalshi-gambling",
+    "how-does-polymarket-work",
+    "expected-value-gambling",
+    "what-is-a-crypto-casino",
+  ],
   updated: "2026-10-21",
 };

@@ -142,14 +142,12 @@ If the table of multipliers is not on your screen, you are not ready to pay. Wai
     },
   ],
   sources: [
-    { label: "Wikipedia — Poker tournament", url: "https://en.wikipedia.org/wiki/Poker_tournament" },
+    {
+      label: "Wikipedia — Poker tournament",
+      url: "https://en.wikipedia.org/wiki/Poker_tournament",
+    },
     { label: "Wikipedia — Poker", url: "https://en.wikipedia.org/wiki/Poker" },
   ],
-  related: [
-    "sit-and-go-poker",
-    "cash-game-poker",
-    "poker-staking",
-    "heads-up-poker-strategy",
-  ],
+  related: ["sit-and-go-poker", "cash-game-poker", "poker-staking", "heads-up-poker-strategy"],
   updated: "2026-10-07",
 };

@@ -13,8 +13,7 @@ export const guide: Guide = {
   description:
     "Lucky block casino is a brand search. The word block is not a blockchain audit. Their fees stay unpublished. A $15 coinflip and a $1 Green stake use our rules.",
   h1: "Lucky block casino in 2026: a brand name is not a chain audit",
-  answer:
-    `Lucky block casino is a brand search, and the word block is not a blockchain audit. A login proves you have an account, if the form accepts you.
+  answer: `Lucky block casino is a brand search, and the word block is not a blockchain audit. A login proves you have an account, if the form accepts you.
 
 It does not prove anyone recomputed a seed or traced a treasury. Their fees stay unpublished.
 

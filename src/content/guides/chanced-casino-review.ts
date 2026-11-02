@@ -9,8 +9,7 @@ export const guide: Guide = {
   description:
     "Chanced casino is a brand, not a lesson in the word chance. A published 5% beats a mood. Their percent is not published. No code and no invented clock.",
   h1: "Chanced casino review in 2026: publish the percent or leave it blank",
-  answer:
-    `Chanced casino is a brand, and the word inside it is not a math lesson about chance. A published percent still beats a vibe. PVPspinArena states 5% on the games in the examples, and the brand's percent is not published.
+  answer: `Chanced casino is a brand, and the word inside it is not a math lesson about chance. A published percent still beats a vibe. PVPspinArena states 5% on the games in the examples, and the brand's percent is not published.
 
 This file invents no coupon and does not lend our fee to their row.`,
   facts: [

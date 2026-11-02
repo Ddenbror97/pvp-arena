@@ -192,11 +192,26 @@ This page is education. It is not a recommendation to play, to stake, or to trea
   ],
   sources: [
     { label: "WSOP player page", url: "https://www.wsop.com/players/653419452/daniel-negreanu/" },
-    { label: "WSOP Poker Hall of Fame class of 2014", url: "https://www.wsop.com/news/poker-hall-of-fame-announces-class-of-2014/" },
-    { label: "Global Poker Index, Negreanu and Humble Beginnings (27 May 2014)", url: "https://www.globalpokerindex.com/negreanu-and-humble-beginnings/" },
-    { label: "WSOP 2026 schedule announcement (16 February 2026)", url: "https://www.wsop.com/news/the-world-series-of-poker-reveals-full-summer-2026-series-schedule/" },
-    { label: "IRS Topic 419, Gambling income and losses", url: "https://www.irs.gov/taxtopics/tc419" },
-    { label: "National Council on Problem Gambling, help by state", url: "https://www.ncpgambling.org/help-treatment/help-by-state/" },
+    {
+      label: "WSOP Poker Hall of Fame class of 2014",
+      url: "https://www.wsop.com/news/poker-hall-of-fame-announces-class-of-2014/",
+    },
+    {
+      label: "Global Poker Index, Negreanu and Humble Beginnings (27 May 2014)",
+      url: "https://www.globalpokerindex.com/negreanu-and-humble-beginnings/",
+    },
+    {
+      label: "WSOP 2026 schedule announcement (16 February 2026)",
+      url: "https://www.wsop.com/news/the-world-series-of-poker-reveals-full-summer-2026-series-schedule/",
+    },
+    {
+      label: "IRS Topic 419, Gambling income and losses",
+      url: "https://www.irs.gov/taxtopics/tc419",
+    },
+    {
+      label: "National Council on Problem Gambling, help by state",
+      url: "https://www.ncpgambling.org/help-treatment/help-by-state/",
+    },
   ],
   related: [
     "famous-gamblers",

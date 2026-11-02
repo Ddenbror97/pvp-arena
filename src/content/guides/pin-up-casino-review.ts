@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "pin-up-casino-review",
   cluster: "Foundations",
   keyword: "pin up casino",
-  secondary: [
-    "pin up casino licence",
-    "is pin up casino legit",
-    "pin-up.casino review",
-  ],
+  secondary: ["pin up casino licence", "is pin up casino legit", "pin-up.casino review"],
   title: "Pin Up Casino Review: Licence on the Certificate",
   description:
     "Pin up casino on the Curacao certificate is Carletta N.V., licence OGL/2024/580/0570. The lobby did not load. Fees and bonus terms stay unpublished.",
