@@ -39,8 +39,8 @@ ARENA = {"width": 48.0, "depth": 40.0}
 STEP = 0.3            # stair riser; simulation STEP_HEIGHT is 0.35
 TERRACE = 3.0         # roof terrace deck
 LOW = 1.15            # hides a crouched player (head top 1.05 m)
-CRATE = 1.3           # jumpable crate (shared jump clears ~1.54 m)
-SILL = 0.95           # window sill (below the jump-tested 1.0 m range)
+CRATE = 1.3           # crate cover (the original jump clears ~0.81 m: not reachable from the ground)
+SILL = 0.95           # window sill
 WALL = 0.3            # interior building wall thickness
 CEIL = 3.4            # ground-floor ceiling (bullet-only above)
 

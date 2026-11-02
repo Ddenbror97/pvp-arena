@@ -69,19 +69,19 @@ The one exception is the wreck's nose and rear (§3), fitted to the model.
 `tests/fps-crossfire-layout.test.ts` runs `simulation.ts`, `collision.ts`, `visibility.ts` and
 `practice-bot.ts` against `getMap("crossfire")`.
 
-| Check                                                    | Result                                                                            |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Spawn pad ↔ spawn pad line of sight (13,689 pairs)       | **0 visible**                                                                     |
-| Route lengths (gate / alley / interior / terrace)        | 20.2 / 27.6 / 20.8 / 24.7 m, identical for both spawns                            |
-| Walk time to route end (5 m/s)                           | 4.0 / 5.4 / 4.1 / 4.9 s                                                           |
-| **First contact**                                        | **2.9–8.0 s walking**, 2.0–5.4 s sprinting, over every pairing of the four routes |
-| Longest standing sightline                               | 37.5 m (a diagonal from yard A's gate); no spawn-to-spawn lane                    |
-| Terrace reach                                            | sees 71% of the square, 69% of the square sees it back; sees neither spawn        |
-| Terrace stairs, wreck cabin                              | climbed by walking (0.3 m risers); in through one door, out through the other     |
-| Bot routes                                               | every itinerary point reachable for both spawns (2,918 grid nodes, all reachable) |
-| Practice bot reveal                                      | every first-round patrol reveals itself to an idle human within 20 s              |
-| Shared contract (prediction/server parity, crate jumps…) | pass                                                                              |
-| Server redaction                                         | players either side of the wreck are hidden                                       |
+| Check                                                     | Result                                                                            |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Spawn pad ↔ spawn pad line of sight (13,689 pairs)        | **0 visible**                                                                     |
+| Route lengths (gate / alley / interior / terrace)         | 20.2 / 27.6 / 20.8 / 24.7 m, identical for both spawns                            |
+| Walk time to route end (5 m/s)                            | 4.0 / 5.4 / 4.1 / 4.9 s                                                           |
+| **First contact**                                         | **2.9–8.0 s walking**, 2.0–5.4 s sprinting, over every pairing of the four routes |
+| Longest standing sightline                                | 37.5 m (a diagonal from yard A's gate); no spawn-to-spawn lane                    |
+| Terrace reach                                             | sees 71% of the square, 69% of the square sees it back; sees neither spawn        |
+| Terrace stairs, wreck cabin                               | climbed by walking (0.3 m risers); in through one door, out through the other     |
+| Bot routes                                                | every itinerary point reachable for both spawns (2,918 grid nodes, all reachable) |
+| Practice bot reveal                                       | every first-round patrol reveals itself to an idle human within 20 s              |
+| Shared contract (prediction/server parity, jump fixtures) | pass with the restored original jump (0.81 m clearance)                           |
+| Server redaction                                          | players either side of the wreck are hidden                                       |
 
 ## 3. Blender construction
 
