@@ -61,6 +61,14 @@ page.on(
   (m) => (m.type() === "error" || m.type() === "warning") && console.error("page:", m.text()),
 );
 page.on("pageerror", (e) => console.error("pageerror:", e.message));
+// --fist=<0..1> previews the Karambit fist tightness (karambit-viewmodel FIST_TIGHTEN).
+// --arm=x,y,z previews the Karambit idle stance's arm direction (camera space).
+if (flag("arm"))
+  await page.addInitScript((v) => (globalThis.__arm = v), flag("arm").split(",").map(Number));
+if (flag("carry-share"))
+  await page.addInitScript((v) => (globalThis.__carryShare = v), Number(flag("carry-share")));
+if (flag("fist"))
+  await page.addInitScript((v) => (globalThis.__fistTighten = v), Number(flag("fist")));
 await page.goto(`http://127.0.0.1:${server.address().port}/`);
 await page.waitForFunction(() => typeof window.viewmodelCapture === "function");
 // --weapon=rifle renders the team rifle viewmodel (sleeves, watch) instead of the Karambit.

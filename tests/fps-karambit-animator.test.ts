@@ -137,31 +137,28 @@ describe("Karambit animation state machine", () => {
     expect(normal).toBeCloseTo(0.04, 4);
     expect(reduced).toBeCloseTo(0.01, 4);
   });
-  it("running eases into the carry pose; walking, stopping and attacks ease out of it", () => {
+  it("idle holds the carry stance whether standing, walking or running; actions ease out of it", () => {
     const { root, clips } = rig();
     const a = new KarambitAnimator(root, clips, {});
-    run(a, 1);
-    const idle = a.update({ ...still }).handRotation.clone();
-    run(a, 0.6, { moving: 1 });
-    expect(a.runPose).toBeGreaterThan(0.95);
-    const carried = a.update({ ...still, moving: 1 }).handRotation.clone();
-    expect(carried.angleTo(idle)).toBeGreaterThan(1);
+    run(a, 1.2);
     expect(a.state).toBe("idle");
-    // Shift-walking is not running.
+    expect(a.runPose).toBeGreaterThan(0.95);
     run(a, 0.5, { moving: 1, walking: true });
-    expect(a.runPose).toBeLessThan(0.05);
-    run(a, 0.6, { moving: 1 });
-    run(a, 0.5);
-    expect(a.runPose).toBeLessThan(0.05);
-    // A swing while running starts from the authored pose: the carry drops out quickly.
-    run(a, 0.6, { moving: 1 });
+    expect(a.runPose).toBeGreaterThan(0.95);
+    run(a, 0.5, { moving: 1 });
+    expect(a.runPose).toBeGreaterThan(0.95);
+    // A swing starts from the authored pose: the stance drops out quickly.
     a.attack("slash");
     run(a, 0.25, { moving: 1 });
     expect(a.state).toBe("slash");
     expect(a.runPose).toBeLessThan(0.05);
-    // Back to the carry once the swing has finished.
-    run(a, 1, { moving: 1 });
+    // Back into the stance once the swing has finished.
+    run(a, 1);
     expect(a.state).toBe("idle");
     expect(a.runPose).toBeGreaterThan(0.9);
+    // Inspect plays from its own pose too.
+    a.inspect();
+    run(a, 0.4);
+    expect(a.runPose).toBeLessThan(0.05);
   });
 });

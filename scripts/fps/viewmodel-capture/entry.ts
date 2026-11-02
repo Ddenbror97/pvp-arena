@@ -111,6 +111,7 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
       c.handRotation.setFromEuler(new THREE.Euler(rx, ry, rz));
       if (knife !== undefined) c.knifeRotation.setFromAxisAngle(new THREE.Vector3(1, 0, 0), knife);
     }
+
     if (shot.run) vm.animator!.applyRunPose(c, shot.run);
     vm.pose(c);
     group.position.set(
@@ -125,6 +126,19 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
       group.rotation.set(pitch, yaw, roll);
     } else group.rotation.set(rest.pitch, rest.yaw, rest.roll);
     camera.updateMatrixWorld(true);
+    if (shot.run) {
+      // Report where the knife points on screen (camera space) in this pose.
+      const ring = vm.root.getObjectByName("karambit-ring")!;
+      ring.updateWorldMatrix(true, false);
+      const qk = ring
+        .getWorldQuaternion(new THREE.Quaternion())
+        .premultiply(camera.getWorldQuaternion(new THREE.Quaternion()).invert());
+      const axes = [
+        ...new THREE.Vector3(0, -1, 0).applyQuaternion(qk).toArray(),
+        ...new THREE.Vector3(0, 0, 1).applyQuaternion(qk).toArray(),
+      ].map((n) => +n.toFixed(3));
+      console.warn(`KNIFE ${shot.name} ${JSON.stringify(axes)}`);
+    }
     renderer.info.reset();
     renderer.render(scene, camera);
     out[shot.name] = {
