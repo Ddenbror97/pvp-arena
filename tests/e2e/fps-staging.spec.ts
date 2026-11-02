@@ -143,11 +143,10 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     const room = other.locator(".strike-room-list li").filter({
       hasText: (await sql`select username from profiles where id=${users[0].id}`)[0].username,
     });
-    await room.getByRole("button", { name: "Join", exact: true }).click();
+    await room.getByRole("button", { name: /Review game with/ }).click();
     const review = other.getByRole("dialog");
     await expect(review.getByText("$1.90", { exact: true })).toBeVisible();
-    await expect(review.getByRole("button", { name: "Join for $1.00" })).toBeDisabled();
-    await review.getByLabel("I accept this room’s entry", { exact: false }).check();
+    await expect(review.getByRole("button", { name: "Join for $1.00" })).toBeEnabled();
     const joinAt = Date.now();
     await review.getByRole("button", { name: "Join for $1.00" }).click();
     await expect(other).toHaveURL(new RegExp("/fps/" + matchId));

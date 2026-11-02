@@ -143,10 +143,9 @@ test("Practice and both human seats load the supplied WebP and enter without the
     await other
       .locator(".strike-room-list li")
       .filter({ hasText: username })
-      .getByRole("button", { name: "Join", exact: true })
+      .getByRole("button", { name: /Review game with/ })
       .click();
     const review = other.getByRole("dialog");
-    await review.getByLabel("I accept this room’s entry", { exact: false }).check();
     await review.getByRole("button", { name: "Join for $1.00" }).click();
     await expectReady(other);
     await expect(other.locator(".duel-loading-screen")).toHaveCount(0, { timeout: 60000 });
