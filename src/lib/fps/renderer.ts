@@ -555,6 +555,7 @@ export function mountArena(
     crouch: false,
   };
   const locked = () => document.pointerLockElement === renderer.domElement;
+  let lastWheelSwitch = -Infinity;
   const clear = () => {
     keys.clear();
     fire = false;
@@ -564,6 +565,7 @@ export function mountArena(
     flashPending = false;
     reload = false;
     jump = false;
+    lastWheelSwitch = -Infinity;
   };
   let sensitivity = 1;
   const mouse = (e: MouseEvent) => {
@@ -614,6 +616,17 @@ export function mountArena(
     if (e.code === "KeyR" || e.code === "Digit1" || e.code === "Digit2") inspectStart = -Infinity;
   };
   const up = (e: KeyboardEvent) => keys.delete(e.code);
+  const wheel = (e: WheelEvent) => {
+    if (!locked() || !Number.isFinite(e.deltaY) || e.deltaY === 0) return;
+    e.preventDefault();
+    // Both directions cycle the two slots. Bound high-frequency wheel/trackpad
+    // bursts so one gesture doesn't flicker repeatedly between viewmodels.
+    const now = performance.now();
+    if (now - lastWheelSwitch < 150) return;
+    lastWheelSwitch = now;
+    weapon = weapon === "rifle" ? "knife" : "rifle";
+    inspectStart = -Infinity;
+  };
   const presentLocalShot = (commandSeq: number) => {
     if (authorizationSuspended || !document.hasFocus() || state?.phase !== "live" || !seat) return;
     const own = state.players[seat],
@@ -721,6 +734,7 @@ export function mountArena(
   document.addEventListener("mousemove", mouse);
   document.addEventListener("keydown", down);
   document.addEventListener("keyup", up);
+  document.addEventListener("wheel", wheel, { passive: false });
   document.addEventListener("mousedown", mousedown);
   document.addEventListener("contextmenu", contextmenu);
   document.addEventListener("mouseup", mouseup);
@@ -1356,6 +1370,7 @@ export function mountArena(
       document.removeEventListener("mousemove", mouse);
       document.removeEventListener("keydown", down);
       document.removeEventListener("keyup", up);
+      document.removeEventListener("wheel", wheel);
       document.removeEventListener("mousedown", mousedown);
       document.removeEventListener("contextmenu", contextmenu);
       document.removeEventListener("mouseup", mouseup);
