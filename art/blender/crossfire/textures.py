@@ -19,7 +19,9 @@ MT = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(MT)
 MT.OUT = OUT
 noise, normal_from_height, blocks, tint = MT.noise, MT.normal_from_height, MT.blocks, MT.tint
-MT.HALF.update({"brick_r", "asphalt_r", "tiles_r", "rust_n", "rust_r"})
+# Normal maps and the far-background facades at half resolution (texture memory budget).
+MT.HALF.update({"brick_r", "asphalt_r", "tiles_r", "rust_n", "rust_r", "brick_n", "asphalt_n", "tiles_n", "paving_n",
+                "sandstone_n", "facade", "facade_ind"})
 
 
 def save(name, arr, mode="RGB"):
@@ -142,9 +144,109 @@ def mi8():
     save("mi8_r", 0.62 + 0.25 * soot[..., 0] + 0.1 * fine)
 
 
+def decals():
+    """Decal atlas, RGBA, 4 x 2 cells of 256 x 256 (alpha-tested): 0 scorch, 1 oil stain,
+    2 road paint stripe, 3 road arrow, 4 graffiti tag, 5 torn poster, 6 bullet holes, 7 cracks."""
+    C = 256
+    out = np.zeros((2 * C, 4 * C, 4))
+    y, x = np.mgrid[0:C, 0:C] / C
+    r = np.hypot(x - 0.5, y - 0.5) * 2
+    rng = np.random.default_rng(81)
+
+    def put(i, rgb, a):
+        r0, c0 = (i // 4) * C, (i % 4) * C
+        out[r0:r0 + C, c0:c0 + C, :3] = rgb
+        out[r0:r0 + C, c0:c0 + C, 3] = np.clip(a, 0, 1)
+
+    n1, n2 = noise(C, 5, 4, seed=82), noise(C, 4, 16, seed=83)
+    # 0 scorch: soot, darker in the middle, ragged edge.
+    a = np.clip((1 - r) * 1.6 + (n1 - 0.5) * 1.2, 0, 1)
+    put(0, np.dstack([0.05 + 0.04 * n2] * 3), (a > 0.35) * 1.0)
+    # 1 oil / water stain.
+    a = np.clip((0.8 - r) * 2 + (n1 - 0.5) * 1.5, 0, 1)
+    put(1, np.dstack([0.07 + 0.03 * n2, 0.065 + 0.03 * n2, 0.06 + 0.02 * n2]), (a > 0.5) * 1.0)
+    # 2 worn road paint stripe (fills the cell; worn patches drop out).
+    wear = noise(C, 5, 12, seed=84)
+    put(2, np.dstack([0.86 * np.ones((C, C)), 0.84 * np.ones((C, C)), 0.76 * np.ones((C, C))]),
+        ((wear > 0.32) & (np.abs(x - 0.5) < 0.46)) * 1.0)
+    # 3 arrow.
+    arrow = ((np.abs(x - 0.5) < 0.12) & (y > 0.35) & (y < 0.95)) | ((y < 0.4) & (y > 0.05) & (np.abs(x - 0.5) < (0.4 - y) * 1.1))
+    put(3, np.dstack([0.86 * np.ones((C, C)), 0.84 * np.ones((C, C)), 0.76 * np.ones((C, C))]), (arrow & (wear > 0.3)) * 1.0)
+    # 4 graffiti tag: spray strokes (purple core, white outline) spelling an abstract tag.
+    img = Image.new("RGBA", (C, C), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    try:
+        f = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 92)
+    except OSError:
+        f = ImageFont.load_default()
+    for dx, dy in ((-5, 0), (5, 0), (0, -5), (0, 5), (-4, -4), (4, 4)):
+        d.text((26 + dx, 70 + dy), "PVP", fill=(240, 240, 235, 255), font=f)
+    d.text((26, 70), "PVP", fill=(140, 50, 220, 255), font=f)
+    for k in range(9):  # drips
+        xx = 40 + k * 22 + int(rng.integers(0, 10))
+        d.line([(xx, 150), (xx, 150 + int(rng.integers(10, 60)))], fill=(140, 50, 220, 255), width=3)
+    g = np.asarray(img).astype(float) / 255
+    put(4, g[..., :3], (g[..., 3] > 0.5) * (n2 > 0.2))
+    # 5 torn poster: paper with a logo block and lines of text, ragged torn edge.
+    paper = np.dstack([0.86 * np.ones((C, C)), 0.82 * np.ones((C, C)), 0.72 * np.ones((C, C))]) * (0.8 + 0.2 * n2[..., None])
+    block = (np.abs(x - 0.5) < 0.36) & (y > 0.1) & (y < 0.45)
+    paper[block] = np.array([0.32, 0.12, 0.55])
+    for ty in (0.55, 0.64, 0.73, 0.82):
+        paper[(np.abs(y - ty) < 0.018) & (np.abs(x - 0.5) < 0.34 - 0.12 * (ty > 0.7))] = 0.12
+    torn = (np.abs(x - 0.5) < 0.42 + 0.05 * (n1 - 0.5)) & (y > 0.04) & (y < 0.96 - 0.25 * np.clip(x - 0.55, 0, 1) - 0.08 * n1)
+    put(5, paper, torn * 1.0)
+    # 6 bullet holes: dark cores with chipped light rings.
+    rgb = np.zeros((C, C, 3))
+    a = np.zeros((C, C))
+    for _ in range(14):
+        cx, cy = rng.uniform(0.1, 0.9, 2)
+        rr = np.hypot(x - cx, y - cy)
+        ring = (rr < 0.045) & (rr >= 0.018)
+        core = rr < 0.018
+        rgb[ring] = 0.75
+        a[ring] = (n2[ring] > 0.3)
+        rgb[core] = 0.03
+        a[core] = 1
+    put(6, rgb, a)
+    # 7 cracks: thin dark ridges.
+    ridge = 1 - np.abs(noise(C, 4, 6, seed=85) - 0.5) * 2
+    put(7, np.dstack([0.08 * np.ones((C, C))] * 3), ((ridge > 0.955) & (r < 0.95)) * 1.0)
+    Image.fromarray((np.clip(out, 0, 1) * 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "decals.png"))
+
+
+def facade():
+    """Distant city blocks: a plaster wall with a 4 x 4 window grid (one texture tile = 4 bays
+    x 4 storeys, 3.2 m each); a few windows have shutters closed or AC units."""
+    n = 1024
+    y, x = np.mgrid[0:n, 0:n] / n
+    m1, m2 = noise(n, 5, 4, seed=121), noise(n, 4, 32, seed=122)
+    wall = tint(m1, (0.70, 0.62, 0.50), (0.82, 0.74, 0.60)) * (0.88 + 0.16 * m2[..., None])
+    gx, gy = (x * 4) % 1, (y * 4) % 1
+    win = (np.abs(gx - 0.5) < 0.2) & (gy > 0.3) & (gy < 0.8)
+    frame = (np.abs(gx - 0.5) < 0.23) & (gy > 0.27) & (gy < 0.83) & ~win
+    cell = (np.floor(x * 4) + 4 * np.floor(y * 4)).astype(int)
+    rnd = np.random.default_rng(123).random(16)[cell]
+    glass = np.dstack([0.06 + 0.05 * m2, 0.07 + 0.05 * m2, 0.08 + 0.05 * m2])
+    shutter = np.dstack([0.32 + 0.1 * m2, 0.42 + 0.1 * m2, 0.40 + 0.1 * m2])
+    pane = np.where((rnd > 0.7)[..., None], shutter, glass)
+    wall = np.where(win[..., None], pane, wall)
+    wall = np.where(frame[..., None], wall * 0.7, wall)
+    sill = (np.abs(gx - 0.5) < 0.25) & (np.abs(gy - 0.84) < 0.015)
+    wall[sill] = wall[sill] * 1.15
+    stain = np.clip((noise(n, 5, 8, seed=124) - 0.6) * 2, 0, 1)
+    wall = wall * (1 - 0.3 * stain[..., None])
+    save("facade", wall)
+    # Industrial: corrugated panels with a strip-window band.
+    ind = tint(m1, (0.50, 0.53, 0.54), (0.62, 0.64, 0.64)) * (0.9 + 0.1 * np.sin(x * np.pi * 2 * 48)[..., None])
+    band = (gy > 0.55) & (gy < 0.72)
+    ind[band] = glass[band]
+    ind = ind * (1 - 0.35 * stain[..., None])
+    save("facade_ind", ind)
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for f in (MT.sandstone, MT.plaster, MT.paving, MT.concrete, MT.corrugated, MT.wood, MT.canvas,
-              MT.roof_tiles, MT.palm, MT.banner, MT.stencil, brick, asphalt, tiles, rust, signs, mi8):
+              MT.roof_tiles, MT.palm, MT.banner, MT.stencil, brick, asphalt, tiles, rust, signs, mi8, decals, facade):
         f()
         print("wrote", f.__name__)

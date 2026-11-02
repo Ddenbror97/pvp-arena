@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 /**
  * CROSSFIRE competitive validation with the real movement, collision, visibility and
  * practice-bot code, run against getMap("crossfire") exactly as a CROSSFIRE match runs them.
- * The layout is point-symmetric (every solid has a twin rotated 180° about the origin), so
- * spawn B walks the 180° twin of every spawn-A route. Checks: point symmetry, spawn safety,
+ * The layout is point-symmetric (every solid has a twin rotated 180° about the origin, except
+ * the wreck's model-fitted nose and rear), so spawn B walks the 180° twin of every spawn-A route. Checks: point symmetry, spawn safety,
  * routes and timings, first contact, terrace stairs and the terrace's reach, the enterable
  * helicopter cabin, openings, the longest sightline, bot routes and server redaction. Metrics
  * are printed for the report (CROSSFIRE METRICS).
@@ -164,7 +164,19 @@ describe("CROSSFIRE urban aim arena layout", () => {
 
   it("is point-symmetric: every solid has an identical twin rotated 180°", () => {
     const all = [...M.boxes, ...M.structures];
-    for (const b of all)
+    // The wreck's nose and closed rear are fitted to the Mi-8 model (fit_heli.py), which is not
+    // symmetric end to end: those boxes are exempt, but the two ends must stay comparable.
+    const fitted = /^heli-(nose|rear)-/;
+    const end = (prefix: string) => all.filter((b) => b.id.startsWith(prefix));
+    const volume = (bs: typeof all) => bs.reduce((v, b) => v + b.w * b.d * b.h, 0);
+    const reach = (bs: typeof all) => Math.max(...bs.map((b) => Math.abs(b.x) + b.w / 2));
+    const nose = end("heli-nose-"),
+      rear = end("heli-rear-");
+    expect(nose.length).toBeGreaterThan(4);
+    expect(rear.length).toBeGreaterThan(4);
+    expect(Math.abs(volume(nose) - volume(rear)) / volume(nose)).toBeLessThan(0.3);
+    expect(Math.abs(reach(nose) - reach(rear))).toBeLessThan(0.5);
+    for (const b of all.filter((b) => !fitted.test(b.id)))
       expect(
         all.some(
           (m) =>
