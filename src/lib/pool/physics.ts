@@ -431,10 +431,6 @@ function damp(b: Ball, physics: string) {
   b.spin = Math.trunc((b.spin * 985) / 1000);
 }
 
-export function moving(balls: readonly Ball[]): boolean {
-  return balls.some((b) => !b.pocketed && (b.vx !== 0 || b.vy !== 0));
-}
-
 /** Same launch `simulate` applies. Returns follow so the contact impulse can use it. */
 function launchCue(cue: Ball, shot: ShotInput, physics: string): number {
   const power = Math.max(1, Math.min(10_000, shot.power | 0));

@@ -10,11 +10,3 @@ export function lootTier(cents: number): LootTier {
   if (cents >= 200) return "uncommon";
   return "common";
 }
-
-/** Exact chance as a percentage with up to two decimals; never rounds a real chance down to 0. */
-export function formatChance(weight: number, total: number): string {
-  if (total <= 0 || weight <= 0) return "0%";
-  const pct = (weight / total) * 100;
-  const shown = Math.max(Number(pct.toFixed(2)), 0.01);
-  return `${shown.toLocaleString("en-US", { maximumFractionDigits: 2 })}%`;
-}

@@ -2307,8 +2307,5 @@ const bySlug = new Map(GUIDES.map((g) => [g.slug, g]));
 export function getGuide(slug: string): Guide | undefined {
   return bySlug.get(slug);
 }
-export function isPublishedGuide(slug: string): boolean {
-  return bySlug.has(slug);
-}
 
 export { guideText, wordCount } from "./text";
