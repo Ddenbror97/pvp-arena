@@ -561,6 +561,55 @@ export function wrapOntoForearm(
 }
 
 /**
+ * Make a glove shell face outward. The authored glove mesh is wound (and its normals point)
+ * inward: with single-sided rendering that showed the inside of the far wall instead of the near
+ * one, so whatever the hand holds showed through the back of it. Detected from the shell's signed
+ * volume (negative = inside out; the open cuff barely affects it), so a correctly authored mesh
+ * is left alone. Flips the winding, the normals and the tangents' handedness together, so lighting
+ * and the normal map keep their look.
+ */
+export function outsideOut(geometry: THREE.BufferGeometry) {
+  const position = geometry.getAttribute("position");
+  const index = geometry.index;
+  if (!index) return false;
+  const a = new THREE.Vector3(),
+    b = new THREE.Vector3(),
+    c = new THREE.Vector3(),
+    centre = new THREE.Vector3();
+  for (let i = 0; i < position.count; i++) centre.add(a.fromBufferAttribute(position, i));
+  centre.multiplyScalar(1 / Math.max(1, position.count));
+  let volume = 0;
+  for (let t = 0; t < index.count; t += 3) {
+    a.fromBufferAttribute(position, index.getX(t)).sub(centre);
+    b.fromBufferAttribute(position, index.getX(t + 1)).sub(centre);
+    c.fromBufferAttribute(position, index.getX(t + 2)).sub(centre);
+    volume += a.dot(b.cross(c));
+  }
+  if (volume >= 0) return false;
+  const ids = index.array;
+  for (let t = 0; t < ids.length; t += 3) {
+    const swap = ids[t + 1]!;
+    ids[t + 1] = ids[t + 2]!;
+    ids[t + 2] = swap;
+  }
+  index.needsUpdate = true;
+  const normal = geometry.getAttribute("normal");
+  if (normal) {
+    for (let i = 0; i < normal.count; i++)
+      normal.setXYZ(i, -normal.getX(i), -normal.getY(i), -normal.getZ(i));
+    normal.needsUpdate = true;
+  }
+  // Tangent frames: the bitangent is (normal × tangent) · w, so negating the normal and w keeps
+  // the bitangent where the normal map expects it.
+  const tangent = geometry.getAttribute("tangent");
+  if (tangent) {
+    for (let i = 0; i < tangent.count; i++) tangent.setW(i, -tangent.getW(i));
+    tangent.needsUpdate = true;
+  }
+  return true;
+}
+
+/**
  * Bake the posed gloves (CPU skinning of the authored glove mesh) and build each forearm from
  * the wrist joint, inside the glove cuff, to the elbow. Returns the forearm paths so sleeves and
  * the watch can be wrapped onto exactly the same surface.
@@ -677,6 +726,7 @@ export function fitContinuousForearms(
     if (posedTangents)
       gloves.setAttribute("tangent", new THREE.BufferAttribute(take(posedTangents, 4), 4));
     gloves.setIndex(index);
+    outsideOut(gloves);
     gloves.computeBoundingSphere();
 
     // Forearm frame at the wrist, from the hand bone: it runs along the hand's -Y, the thumb

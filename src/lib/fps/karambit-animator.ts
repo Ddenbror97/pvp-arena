@@ -20,24 +20,27 @@ export const KARAMBIT_TRICKS = [
 /** Idle tricks start after this long (seconds) without relevant input, randomised. */
 export const TRICK_DELAY = { min: 8, max: 15 } as const;
 /**
- * Idle carry stance: the arm held out with the wrist straight and the forearm turned about its
- * own axis so the palm faces the floor; the closed fist and the karambit (lying flat across it)
- * turn with it. Applied on top of the idle clip whenever the base state is idle (standing,
- * walking or running); attacks, inspect, tricks and the equip ease out of it to play from their
- * authored pose.
+ * Idle carry stance, as seen in first person: the fist is held low and reaches forward into the
+ * scene, palm down, with the back of the hand to the camera and the forearm coming up from the
+ * lower right. The karambit's ring sits at the front of the fist (index finger) and the blade
+ * leaves the little-finger side, curving up above the sleeve. Applied on top of the idle clip
+ * whenever the base state is idle (standing, walking or running). Attacks, inspect, tricks and
+ * the equip ease out of it to play from their authored pose.
  *
- * The viewmodel solves the hand and forearm rotations from its rig (karambit-viewmodel
- * setCarryStance): forearm along `arm`, hand straight in line with it, palm to the floor, so the
- * wrist never bends and the glove cuff stays inside the sleeve. `rotation` is the fallback
- * before a viewmodel has set it (tests).
+ * The viewmodel solves the hand rotation from its rig (karambit-viewmodel setCarryStance). The
+ * hand axis runs along `arm` and the palm faces `palm`. The forearm turns with the hand, so the
+ * glove cuff stays seated in the sleeve. `rotation` is the fallback until a viewmodel has set it
+ * (tests). The `__…` globals are preview-tool overrides.
  */
 export const KARAMBIT_RUN_POSE = {
   /** Wrist offset (viewmodel metres). */
-  position: [-0.015, 0.045, 0] as const,
+  position: (globalThis as { __carryPos?: number[] }).__carryPos ?? ([-0.07, -0.06, 0] as const),
   /** Fallback wrist rotation (Euler XYZ, radians). */
   rotation: [1.1, 0.2, 1.3] as const,
   /** Forearm direction toward the hand, camera space (x right, y up, z toward the viewer). */
-  arm: (globalThis as { __arm?: number[] }).__arm ?? ([-0.6, 0.3, -1] as const),
+  arm: (globalThis as { __arm?: number[] }).__arm ?? ([-0.35, 0.35, -1] as const),
+  /** Which way the palm faces, camera space (made square to the arm). */
+  palm: (globalThis as { __palm?: number[] }).__palm ?? ([0.3, -1, -0.6] as const),
   /** Ease rate (1/s) toward the target weight. */
   rate: 9,
 };
@@ -334,6 +337,22 @@ export class KarambitAnimator {
     controls.handRotation.multiply(this.scratch.q.identity().slerp(this.carry.rotation, smooth));
     controls.knifeRotation.multiply(this.scratch.q.identity().slerp(this.carry.knife, smooth));
     return controls;
+  }
+
+  /**
+   * The idle clip's first-frame wrist and knife rotations, read from its tracks (no playback,
+   * no state change): the base the carry stance is solved on top of.
+   */
+  idleRest() {
+    const clip = this.base.get("karambit_idle")?.getClip();
+    const sample = (node: THREE.Object3D) => {
+      const track = clip?.tracks.find((t) => t.name === `${node.name}.quaternion`);
+      const out = new THREE.Quaternion();
+      if (track) out.fromArray(track.values, 0);
+      else out.copy(node.quaternion);
+      return out;
+    };
+    return { hand: sample(this.nodes.hand), knife: sample(this.nodes.knife) };
   }
 
   /** Set the running carry's wrist rotation (solved by the viewmodel from the fist fit). */

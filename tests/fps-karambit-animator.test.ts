@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 import {
+  KARAMBIT_RUN_POSE,
   KARAMBIT_TRICKS,
   KarambitAnimator,
   TRICK_DELAY,
@@ -136,6 +137,25 @@ describe("Karambit animation state machine", () => {
     const reduced = a.update({ ...still, reducedMotion: true }).viewPosition.x;
     expect(normal).toBeCloseTo(0.04, 4);
     expect(reduced).toBeCloseTo(0.01, 4);
+  });
+  it("reads the idle clip's rest rotations without starting playback", () => {
+    const { root, clips } = rig();
+    const a = new KarambitAnimator(root, clips, {});
+    const rest = a.idleRest();
+    expect(rest.knife.equals(new THREE.Quaternion())).toBe(true);
+    expect(rest.hand.equals(new THREE.Quaternion())).toBe(true);
+    expect(a.state).toBe("hidden");
+  });
+  it("the idle stance holds the fist low, palm down and reaching into the scene", () => {
+    const arm = new THREE.Vector3(...KARAMBIT_RUN_POSE.arm).normalize();
+    const palm = new THREE.Vector3(...KARAMBIT_RUN_POSE.palm).normalize();
+    // Hand axis forward (into the screen) and a little left; palm to the floor, tipped away from
+    // the camera so the back of the hand faces it; wrist below eye level.
+    expect(arm.z).toBeLessThan(-0.8);
+    expect(arm.x).toBeLessThan(0);
+    expect(palm.y).toBeLessThan(-0.6);
+    expect(palm.z).toBeLessThan(0);
+    expect(KARAMBIT_RUN_POSE.position[1]).toBeLessThan(0);
   });
   it("idle holds the carry stance whether standing, walking or running; actions ease out of it", () => {
     const { root, clips } = rig();
