@@ -63,6 +63,24 @@ K.MATS.update({
     "ceiling_light": ((None, None, None), 1, (1.0, 0.95, 0.85), 0.4, 0.0, {"emit": 2.2}),
     "interior_dark": ((None, None, None), 1, (0.05, 0.045, 0.04), 0.9, 0.0, {}),
 })
+# Tint families: variants that differ only by colour share one material (one draw call per
+# section instead of one per colour); the colour rides on the vertex colour with the baked AO
+# (as FROSTLINE). UVs keep each variant's own tile size (baked when the face is added).
+K.MATS.update({
+    "corrugated": (T("corrugated"), 2.4, (1, 1, 1), 0.55, 0.45, {}),
+    "canvas": (("canvas", "canvas_n", None), 1.5, (1, 1, 1), 0.95, 0.0, {"double": True}),
+    "paint": ((None, None, None), 1, (1, 1, 1), 0.5, 0.2, {}),
+})
+TINT_FAMILY = {
+    **{m: "plaster" for m in ("plaster_ochre", "plaster_rose", "plaster_teal", "plaster_white")},
+    "brick_soot": "brick", "sandstone_dark": "sandstone", "concrete_wall": "concrete", "wood_blue": "wood",
+    **{m: "corrugated" for m in ("shutter", "shutter_green", "cladding", "roof_metal", "container_red",
+                                 "container_blue", "container_green")},
+    **{m: "canvas" for m in ("canvas_olive", "canvas_terracotta", "canvas_sand", "canvas_blue", "canvas_green", "fabric")},
+    **{m: "paint" for m in ("paint_white", "car_red", "car_white", "car_sand", "rubber", "plastic_black",
+                            "interior_dark", "steel_yellow")},
+}
+FACE_TINT = {}  # bucket key -> per-face RGB multiplier
 # The Dustfront kit pieces reused here keep their names (sandstone, plaster, concrete_wall,
 # steel, wood_blue, canvas_*, glass, lamp, banner...).
 WIRE_COLOURS = ("canvas_terracotta", "canvas_sand", "canvas_blue", "canvas_green", "fabric")
@@ -288,8 +306,19 @@ def faces6(sec, x0, x1, y0, y1, z0, z1, mat_of, skip=()):
 def window_on(sec, axis, plane, sign, a, y, w, h, style):
     """Windows by style: 'west' (frame + open shutters), 'east' (steel frame), 'broken' (dark
     hole, shattered frame), 'curtain' (terminal glazing with mullions)."""
-    if style in ("west", "east"):
+    if style == "east":
         K.window(sec, axis, plane, sign, a, y, w, h, style)
+        return
+    if style == "west":
+        # The Dustfront window, with the open shutters 1 cm short of the frame's top and bottom
+        # (their caps would otherwise meet the frame's in one plane once quantized).
+        atlas_quad(sec, "glass", axis, plane, sign, a - w / 2, a + w / 2, y, y + h, 0, 1, 1, off=0.012)
+        fr = 0.07
+        for (a0, a1, y0, y1) in ((a - w / 2 - fr, a + w / 2 + fr, y - fr, y), (a - w / 2 - fr, a + w / 2 + fr, y + h, y + h + fr),
+                                 (a - w / 2 - fr, a - w / 2, y, y + h), (a + w / 2, a + w / 2 + fr, y, y + h)):
+            proud(sec, "sandstone_dark", axis, plane, sign, a0, a1, y0, y1, 0.035)
+        for a0, a1 in ((a - w - fr - 0.01, a - w / 2 - fr - 0.01), (a + w / 2 + fr + 0.01, a + w + fr + 0.01)):
+            proud(sec, "wood_blue", axis, plane, sign, a0, a1, y + 0.01, y + h - 0.01, 0.025)
         return
     if style == "broken":
         atlas_quad(sec, "interior_dark", axis, plane, sign, a - w / 2, a + w / 2, y, y + h, 0, 1, 1, off=0.008)
@@ -820,7 +849,7 @@ def terrace(sec, s):
         if a1 - a0 > 4 and free_at(ax, plane, sg, mid, 1.0):
             atlas_quad(sec, "shutter" if sd == "a" else "shutter_green", ax, plane, sg, mid - 1.4, mid + 1.4, 0.4, 2.5, 0, 1, 1, off=0.012)
             proud(sec, "steel", ax, plane, sg, mid - 1.5, mid + 1.5, 2.5, 2.7, 0.05)
-            wall_decal(sec, ax, plane, sg, mid - 0.3, 0.8, 1.7, 0.9, 4 if sd == "a" else 5, off=0.016)
+            wall_decal(sec, ax, plane, sg, mid - 0.3, 0.8, 1.7, 0.9, 4 if sd == "a" else 5, off=0.022)
     # Deck: drain grates and a painted hazard edge along the stair gap (flat).
     for i in range(2):
         cx, cz = x0 + 1.2 + i * (x1 - x0 - 2.4), z0 + 1.2
@@ -1494,11 +1523,32 @@ def validate(L):
     return bad
 
 
-def emit(name, b, mat, to_blender):
+def merge_tint_families():
+    """Fold each tint family's buckets into its base material's bucket, per section."""
+    merged = {}
+    for (sec, mat, sh), b in list(K.BUCKETS.items()):
+        base = TINT_FAMILY.get(mat, mat)
+        tint = K.MATS[mat][2] if mat in TINT_FAMILY else (1, 1, 1)
+        key = (sec, base, sh)
+        d = merged.setdefault(key, K.Bucket())
+        start = len(d.verts)
+        d.verts.extend(b.verts)
+        d.faces.extend(tuple(i + start for i in f) for f in b.faces)
+        d.uvs.extend(b.uvs)
+        FACE_TINT.setdefault(key, []).extend([tint] * len(b.faces))
+    K.BUCKETS.clear()
+    K.BUCKETS.update(merged)
+
+
+def emit(name, b, mat, to_blender, tints=None):
     me = K.emit_bucket(name, b, mat, to_blender)
-    if mat in NO_AO:
-        for c in me.color_attributes["Color"].data:
-            c.color = (1.0, 1.0, 1.0, 1.0)
+    col = me.color_attributes["Color"]
+    flat = mat in NO_AO
+    for pi, poly in enumerate(me.polygons):
+        tr, tg, tb = tints[pi] if tints else (1, 1, 1)
+        for li in poly.loop_indices:
+            a = 1.0 if flat else col.data[li].color[0]
+            col.data[li].color = (a * tr, a * tg, a * tb, 1.0)
     return me
 
 
@@ -1527,21 +1577,26 @@ def build(L, section, to_blender):
             print("   ", k, len(v), v[:4])
     else:
         print("VALIDATE: dressing matches collision within 6 cm below 2.9 m (ground detail excepted)")
-    # Small per-section buckets: fold into one map-wide "details" mesh per material.
+    FACE_TINT.clear()
+    merge_tint_families()
+    # Small per-section buckets: fold into one map-wide "details" mesh per material (a draw call
+    # each saved; the details mesh is never culled, but it is small).
     for key in [k for k in K.BUCKETS if k[0] not in ("ground", "background", "perimeter")]:
         b = K.BUCKETS[key]
-        if sum(len(f) - 2 for f in b.faces) < 400:
-            d = K.BUCKETS.setdefault(("details", key[1], key[2]), K.Bucket())
+        if sum(len(f) - 2 for f in b.faces) < 600:
+            dkey = ("details", key[1], key[2])
+            d = K.BUCKETS.setdefault(dkey, K.Bucket())
             base = len(d.verts)
             d.verts.extend(b.verts)
             d.faces.extend(tuple(i + base for i in f) for f in b.faces)
             d.uvs.extend(b.uvs)
+            FACE_TINT.setdefault(dkey, []).extend(FACE_TINT.pop(key, [(1, 1, 1)] * len(b.faces)))
             del K.BUCKETS[key]
     stats = {"triangles": 0, "meshes": 0}
     for (sec, mat, _shadow), b in list(K.BUCKETS.items()):
-        me = emit(f"{sec}-{mat}", b, mat, to_blender)
+        me = emit(f"{sec}-{mat}", b, mat, to_blender, FACE_TINT.get((sec, mat, _shadow)))
         o = bpy.data.objects.new(me.name, me)
-        if sec == "background" or mat in ("decals", "wire", "ceiling_light", "lamp", "glass", "interior_dark"):
+        if sec == "background" or mat in ("decals", "wire", "ceiling_light", "lamp", "glass"):
             o["noShadow"] = True
         section(sec).objects.link(o)
         stats["triangles"] += sum(len(f) - 2 for f in b.faces)
