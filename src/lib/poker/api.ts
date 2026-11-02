@@ -409,18 +409,6 @@ export function useTableState(id: number, userId: string | null) {
   return q;
 }
 
-/** Hand being shown: the live hand, else the last finished one until the next opens. */
-export const shownHand = (s: TableState | null | undefined): PokerHand | null =>
-  s?.hand ?? s?.last_hand ?? null;
-
-export const potTotal = (h: PokerHand | null) =>
-  h
-    ? h.players.reduce(
-        (sum, p) => sum + p.total_bet - (h.status === "COMPLETED" ? 0 : p.street_bet),
-        0,
-      )
-    : 0;
-
 export function money(cents: number | null | undefined) {
   const v = Number(cents ?? 0) / 100;
   return `$${v.toLocaleString("en-US", { minimumFractionDigits: v % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;

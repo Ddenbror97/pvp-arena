@@ -32,11 +32,6 @@ export function isCard(c: unknown): c is Card {
   return typeof c === "number" && Number.isInteger(c) && c >= 0 && c < 52;
 }
 
-export function cardCode(c: Card): string {
-  if (!isCard(c)) throw new Error(`Invalid card ${String(c)}`);
-  return RANKS[rankOf(c)]! + SUITS[suitOf(c)]!;
-}
-
 export function parseCard(code: string): Card {
   const r = RANKS.indexOf(code[0]?.toUpperCase() as (typeof RANKS)[number]);
   const s = SUITS.indexOf(code[1]?.toLowerCase() as (typeof SUITS)[number]);

@@ -1,32 +1,3 @@
-/**
- * User-facing cashout words. A timeout is not a broadcast, and "sent" is only
- * for a payout the ledger has settled.
- */
-export function btcRequestNotice(status: string): string {
-  switch (status) {
-    case "BROADCAST":
-      return "Bitcoin cashout broadcast.";
-    case "PROCESSING":
-    case "QUEUED":
-      return "Your cashout is being processed. The amount stays reserved.";
-    case "AWAITING_APPROVAL":
-      return "Bitcoin cashout is waiting for approval. The amount stays reserved.";
-    default:
-      return "Withdrawal request accepted. The amount stays reserved.";
-  }
-}
-
-export function evmRequestNotice(status: string): string {
-  switch (status) {
-    case "LIQUIDITY_PENDING":
-      return "Your cashout is being processed. The amount stays reserved.";
-    case "PENDING":
-      return "Withdrawal request accepted. It is waiting for review.";
-    default:
-      return "Withdrawal request accepted. The amount stays reserved.";
-  }
-}
-
 const STATUS: Record<string, string> = {
   DETECTED: "Detected",
   CONFIRMED: "Confirming",

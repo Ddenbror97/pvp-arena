@@ -9,7 +9,6 @@ export type RlGame = Database["public"]["Tables"]["roulette_games"]["Row"];
 export type RlBet = Database["public"]["Tables"]["roulette_bets"]["Row"] & {
   player: { username: string; avatar_url: string | null } | null;
 };
-export const COLORS: RlColor[] = ["RED", "BLACK", "YELLOW", "GREEN"];
 
 const IN_FLIGHT: readonly string[] = ["LOCKED", "SPINNING", "SETTLEMENT"];
 

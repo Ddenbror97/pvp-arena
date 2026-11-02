@@ -12,8 +12,6 @@
  *   rejecting draws >= floor(2^32 / (i + 1)) * (i + 1).
  */
 import { bytesToHex, hexToBytes, hmacKey, hmacSha256, sha256Hex } from "./core";
-
-export const POKER_PROTOCOL = "v1";
 const MAX_COUNTER = 1000;
 
 export type EntropyReveal = { seat: number; value: string };

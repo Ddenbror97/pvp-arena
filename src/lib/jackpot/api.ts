@@ -106,11 +106,6 @@ export async function peekOpenRound(): Promise<{ game: Game | null; players: Pla
   return splitOpenRound(data as OpenRoundRow | null);
 }
 
-/** Read the open round without settling it. Page HTML uses this; the browser still calls `fetchOpenGame`. */
-export async function peekOpenGame(): Promise<Game | null> {
-  return (await peekOpenRound()).game;
-}
-
 /** Latest settled round that may still be on the wheel. Does not settle anything. */
 async function peekSettledRound(): Promise<{ game: Game | null; players: PlayerRow[] }> {
   const since = new Date(Date.now() - JACKPOT_SPIN_MS - JACKPOT_WINNER_MS - 5_000).toISOString();
@@ -180,10 +175,6 @@ export async function fetchLiveGame(): Promise<Game | null> {
   return preferJackpotRound(openRes.data, settledRes.data);
 }
 
-export async function fetchOpenGame(): Promise<Game | null> {
-  return (await fetchOpenRound()).game;
-}
-
 export async function fetchGame(id: number): Promise<Game | null> {
   const { data, error } = await supabase
     .from("jackpot_games")
@@ -230,8 +221,6 @@ export async function fetchRecentGames(limit = 12, offset = 0) {
     winner: g.winner_id ? (profiles.get(g.winner_id) ?? null) : null,
   }));
 }
-
-export const recentGamesQuery = { queryKey: ["recent-games"], queryFn: () => fetchRecentGames() };
 
 /**
  * Live jackpot: current game + players, kept fresh with realtime. When the

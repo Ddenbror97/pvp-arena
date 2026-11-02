@@ -164,17 +164,6 @@ export async function fetchOpenSlots(): Promise<SlotGameView[]> {
   return ((data ?? []) as SlotGameView[]).map(toGame);
 }
 
-export async function fetchLiveSlots(): Promise<SlotGameView[]> {
-  const { data, error } = await db
-    .from("slot_games")
-    .select(SELECT)
-    .in("status", ["ACTIVE", "SETTLEMENT"])
-    .order("id", { ascending: false })
-    .limit(12);
-  if (error) throw error;
-  return ((data ?? []) as SlotGameView[]).map(toGame);
-}
-
 /** The viewer's own match that is still open or in progress. */
 export async function fetchMySlot(uid: string): Promise<SlotGameView | null> {
   const { data, error } = await db
@@ -271,7 +260,6 @@ export const slotJoin = (id: number, key: string) =>
   db.rpc("slot_join", { p_game_id: id, p_idempotency_key: key });
 export const slotSpin = (id: number, spinNo: number, key: string) =>
   db.rpc("slot_spin", { p_game_id: id, p_spin_no: spinNo, p_idempotency_key: key });
-export const slotCancel = (id: number) => db.rpc("slot_cancel", { p_game_id: id });
 
 export async function slotCallBot(gameId: number, key: string) {
   const { data, error } = await db.rpc("slot_call_bot", {

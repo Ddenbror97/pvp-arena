@@ -3,9 +3,6 @@ import type { Solid } from "./map";
 import { retainAuthoredAsset } from "./authored-assets";
 import { DEFAULT_MAP, type GameMap } from "./maps/registry";
 
-/** Dustfront's Blender-built render scene (art/blender/map); dresses exactly its solids. */
-export const ARENA_MAP_URL = DEFAULT_MAP.presentation.modelUrl;
-
 /** What the renderer needs from a map's render scene. */
 export type MapEnvironment = {
   /** Resolves once the authored scene replaced the blockout (or failed and kept it). */

@@ -41,17 +41,3 @@ export function zonedLocalToUtc(local: string, timeZone: string): Date | null {
     return null;
   }
 }
-
-export const CAMPAIGN_TIMEZONES = [
-  "UTC",
-  "America/New_York",
-  "America/Chicago",
-  "America/Denver",
-  "America/Los_Angeles",
-  "America/Sao_Paulo",
-  "Europe/London",
-  "Europe/Berlin",
-  "Europe/Paris",
-  "Asia/Tokyo",
-  "Australia/Sydney",
-] as const;

@@ -171,14 +171,3 @@ export function scoreGrid(grid: number[]): SpinScore {
   const lineScore = lines.reduce((a, l) => a + l.score, 0);
   return { wilds, base, lineScore, score: base + lineScore, lines };
 }
-
-/** Cells that belong to a winning line, for highlighting. */
-export function winningCells(lines: { line: number; count: number }[]): Set<number> {
-  const out = new Set<number>();
-  for (const l of lines) {
-    const rows = PAYLINES[l.line - 1];
-    if (!rows) continue;
-    for (let reel = 0; reel < l.count; reel++) out.add(reel * ROWS + rows[reel]!);
-  }
-  return out;
-}

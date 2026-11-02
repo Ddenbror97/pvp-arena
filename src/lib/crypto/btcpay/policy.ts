@@ -1,13 +1,3 @@
-/**
- * Native Bitcoin deposits and cashouts through BTCPay. This module decides
- * when an invoice may credit the USD ledger and when a cashout matches its
- * quote. It never sees a seed, xprv, or signing key.
- *
- * Cashouts are automatic only after the returned bitcoin amount matches the
- * satoshi quote. A missing amount or currency fails closed.
- */
-export const BTC_WITHDRAWAL_APPROVAL = "automatic" as const;
-
 /** Below this, a cashout is dust and is not quoted. */
 export const BTC_DUST_SATS = 546n;
 /** $1,000 per BTC. A rate under this is refused. */
@@ -197,13 +187,6 @@ export function satsToUsdCents(sats: bigint, rateMicro: bigint): number | null {
   return Number(cents);
 }
 
-/** Total wallet balance, including Bitcoin that has been sent but is not confirmed yet. */
-export function readWalletTotalSats(body: unknown): bigint | null {
-  if (!body || typeof body !== "object") return null;
-  const row = body as Record<string, unknown>;
-  return decimalToUnits(row["balance"] ?? row["confirmedBalance"], 8);
-}
-
 /**
  * 5% of Bitcoin that reached the deposit wallet and is still there or was moved
  * to the payout wallet by a recorded top-up. Fees already paid are not added back.
@@ -227,24 +210,6 @@ export function payoutFloatTargetCents(pendingCents: number, demandCents: number
     SWEEP_DAILY_MAX_CENTS,
     Math.max(saneCents(pendingCents), saneCents(demandCents), SWEEP_TARGET_FLOOR_CENTS),
   );
-}
-
-/**
- * Player USD that would be uncovered after the payout wallet reaches its target
- * and the ETH and USDC wallets are counted. That amount stays in the deposit wallet.
- */
-export function uncoveredLiabilityCents(
-  owedCents: number,
-  otherCoverCents: number,
-  targetCents: number,
-): number {
-  return Math.max(0, saneCents(owedCents) - saneCents(otherCoverCents) - saneCents(targetCents));
-}
-
-/** Satoshis that must stay for the uncovered liability. Too large or unquotable blocks a send. */
-export function liabilityKeepSats(uncoveredCents: number, rateMicro: bigint): bigint | null {
-  if (uncoveredCents < 100) return 0n;
-  return satsForUsdCents(uncoveredCents, rateMicro);
 }
 
 /** Confirmed coins that can move without spending the larger of the 5% floor and the liability. */
@@ -272,17 +237,6 @@ export function sweepWithinBalance(
     sendSats >= BTC_DUST_SATS &&
     sendSats <= spendableDepositSats(confirmedSats, sweptSats, liabilitySats)
   );
-}
-
-/**
- * Dollars still needed to reach the target. A gap under $10 still sends $10.
- * One send stops at $1,000 even when the target is higher.
- */
-export function autoTopUpCents(payoutCents: number, targetCents: number): number | null {
-  if (!Number.isSafeInteger(payoutCents) || payoutCents < 0) return null;
-  if (!Number.isSafeInteger(targetCents) || targetCents < SWEEP_MIN_CENTS) return null;
-  if (payoutCents >= targetCents) return null;
-  return Math.min(SWEEP_MAX_CENTS, Math.max(targetCents - payoutCents, SWEEP_MIN_CENTS));
 }
 
 /**
@@ -676,10 +630,12 @@ export function payoutMatchesQuote(
     return { ok: false, reason: "DESTINATION" };
   }
   if (view.payoutCurrency !== "BTC") return { ok: false, reason: "CURRENCY" };
-  if (view.originalCurrency && view.originalCurrency !== "BTC") return { ok: false, reason: "CURRENCY" };
+  if (view.originalCurrency && view.originalCurrency !== "BTC")
+    return { ok: false, reason: "CURRENCY" };
   if (view.payoutSats == null) return { ok: false, reason: "AMOUNT_MISSING" };
   if (view.payoutSats !== quote.sats) return { ok: false, reason: "AMOUNT" };
-  if (view.originalSats != null && view.originalSats !== quote.sats) return { ok: false, reason: "AMOUNT" };
+  if (view.originalSats != null && view.originalSats !== quote.sats)
+    return { ok: false, reason: "AMOUNT" };
   return { ok: true, sats: view.payoutSats };
 }
 

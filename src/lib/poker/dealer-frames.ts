@@ -88,7 +88,3 @@ export const DEALER_CORE_FRAMES = [
 export function preloadDealerFrames(ids: readonly string[] = DEALER_CORE_FRAMES): Promise<void> {
   return Promise.all(ids.map((id) => loadDealerFrame(id).catch(() => idleUrl))).then(() => {});
 }
-
-export function dealerFrameIds(): string[] {
-  return manifest.frames.map((frame: { id: string }) => frame.id);
-}

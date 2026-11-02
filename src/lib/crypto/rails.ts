@@ -99,59 +99,8 @@ type HeldMovement = {
   at: string;
 };
 
-/**
- * Token shown beside the playable balance.
- * Credited deposits minus completed cashouts; the larger remainder wins.
- * A tie uses the later movement. Partner credits and other dollar-only
- * balances have no deposit, so they show as USDC.
- */
-export function inferHeldAsset(input: {
-  deposits: readonly HeldMovement[];
-  withdrawals: readonly HeldMovement[];
-  bitcoinDeposits?: readonly { usd_cents: number; status: string; at: string }[];
-  bitcoinPayouts?: readonly { usd_cents: number; status: string; at: string }[];
-}): HeldAsset {
-  const net = new Map<HeldAsset, { cents: number; latest: string }>();
-  const add = (asset: string, cents: number, at: string, sign: 1 | -1) => {
-    if (!isHeldAsset(asset) || !Number.isSafeInteger(cents) || cents <= 0) return;
-    const row = net.get(asset) ?? { cents: 0, latest: "" };
-    row.cents += sign * cents;
-    if (at > row.latest) row.latest = at;
-    net.set(asset, row);
-  };
-  for (const row of input.deposits) {
-    if (row.status === "CREDITED") add(row.asset_key, row.usd_cents, row.at, 1);
-  }
-  for (const row of input.withdrawals) {
-    if (row.status === "CONFIRMED") add(row.asset_key, row.usd_cents, row.at, -1);
-  }
-  for (const row of input.bitcoinDeposits ?? []) {
-    if (row.status === "CREDITED") add("BTC", row.usd_cents, row.at, 1);
-  }
-  for (const row of input.bitcoinPayouts ?? []) {
-    if (row.status === "COMPLETED") add("BTC", row.usd_cents, row.at, -1);
-  }
-  let best: { asset: HeldAsset; cents: number; latest: string } | null = null;
-  for (const [asset, row] of net) {
-    if (row.cents <= 0) continue;
-    if (
-      !best ||
-      row.cents > best.cents ||
-      (row.cents === best.cents && row.latest > best.latest)
-    ) {
-      best = { asset, cents: row.cents, latest: row.latest };
-    }
-  }
-  return best?.asset ?? "USDC";
-}
-
 function isHeldAsset(asset: string): asset is HeldAsset {
   return (HELD_ASSETS as readonly string[]).includes(asset);
-}
-
-export function balanceTriggerLabel(usd: string, rail: string | null): string {
-  if (rail) return `Playable balance ${usd}. Funding rail ${rail}. Choose a funding rail.`;
-  return `Playable balance ${usd}. No funding rail selected. Choose a funding rail.`;
 }
 
 /** Whole-token amount at a micro-USD price. Decimals 18 matches the ETH display helper. */
@@ -174,49 +123,6 @@ export function formatPricedEquivalent(
     .slice(0, fracLen)
     .replace(/0+$/, "");
   return frac ? `${whole.toString()}.${frac}` : whole.toString();
-}
-
-/** Short accounting display. Extra fractional digits stay exact in the ledger, not in this label. */
-export function formatDepositUnits(units: string, decimals: number, assetKey: string): string {
-  const full = formatCryptoUnits(units, decimals, assetKey);
-  const space = full.lastIndexOf(" ");
-  const amount = space >= 0 ? full.slice(0, space) : full;
-  const suffix = space >= 0 ? full.slice(space) : "";
-  const [whole, frac] = amount.split(".");
-  if (!frac) return full;
-  const short = frac.slice(0, 6).replace(/0+$/, "");
-  return `${whole}${short ? `.${short}` : ""}${suffix}`;
-}
-
-/**
- * Today's server-price value of units that were already deposited.
- * This is not a balance and not the USD credited at the time.
- */
-export function depositTodayCents(
-  units: string,
-  decimals: number,
-  settlementKind: "native" | "erc20",
-  priceMicroUsd: number | null,
-): number | null {
-  const whole = (units.split(".")[0] ?? "0").replace(/[^0-9]/g, "") || "0";
-  let amount: bigint;
-  try {
-    amount = BigInt(whole);
-  } catch {
-    return null;
-  }
-  if (amount <= 0n || !Number.isInteger(decimals) || decimals < 0 || decimals > 18) return null;
-  const scale = 10n ** BigInt(decimals);
-  const micro =
-    settlementKind === "erc20"
-      ? (amount * 1_000_000n) / scale
-      : priceMicroUsd && Number.isSafeInteger(priceMicroUsd) && priceMicroUsd > 0
-        ? (amount * BigInt(priceMicroUsd)) / scale
-        : null;
-  if (micro == null) return null;
-  const cents = micro / 10_000n;
-  const value = Number(cents);
-  return Number.isSafeInteger(value) ? value : null;
 }
 
 /** Pegged rail expression of a USD-cent amount. It is not a second balance. */
@@ -306,28 +212,6 @@ function numberOr(value: unknown, fallback: number): number {
   return Number.isInteger(n) && n >= 0 ? n : fallback;
 }
 
-/** One row per asset key. Mainnet wins when the same key is enabled on two networks. */
-export function listHeaderRails(chains: readonly FundingChain[]): FundingAssetRow[] {
-  const ranked = [...chains].sort((a, b) => {
-    const mode = Number(a.network_mode !== "mainnet") - Number(b.network_mode !== "mainnet");
-    return mode || a.chain_id - b.chain_id;
-  });
-  const seen = new Set<string>();
-  const rows: FundingAssetRow[] = [];
-  for (const chain of ranked) {
-    for (const asset of chain.assets) {
-      if (seen.has(asset.asset_key)) continue;
-      seen.add(asset.asset_key);
-      rows.push(attachChain(asset, chain));
-    }
-  }
-  return rows;
-}
-
-export function listFundingRows(chains: readonly FundingChain[]): FundingAssetRow[] {
-  return chains.flatMap((chain) => chain.assets.map((asset) => attachChain(asset, chain)));
-}
-
 function attachChain(asset: FundingAsset, chain: FundingChain): FundingAssetRow {
   return {
     ...asset,
@@ -337,27 +221,5 @@ function attachChain(asset: FundingAsset, chain: FundingChain): FundingAssetRow 
     min_deposit_cents: chain.min_deposit_cents,
     min_withdrawal_cents: chain.min_withdrawal_cents,
     credit_confirmations: chain.credit_confirmations,
-  };
-}
-
-export function fundingFacts(input: {
-  asset: Pick<FundingAsset, "asset_key" | "settlement_kind" | "decimals" | "price_micro_usd">;
-  availableCents: number;
-  deposits: readonly RailMovement[];
-  withdrawals: readonly RailMovement[];
-}) {
-  const mine = (rows: readonly RailMovement[]) =>
-    rows.filter((row) => row.asset_key === input.asset.asset_key);
-  const deposits = mine(input.deposits);
-  const withdrawals = mine(input.withdrawals);
-  const lastCredited =
-    deposits.filter((row) => row.status === "CREDITED").sort((a, b) => (a.at < b.at ? 1 : -1))[0] ??
-    null;
-  return {
-    availableCents: input.availableCents,
-    estimate: railEquivalent(input.asset, input.availableCents),
-    lastCredited,
-    pendingDeposits: deposits.filter((row) => PENDING_DEPOSIT.has(row.status)),
-    pendingWithdrawals: withdrawals.filter((row) => PENDING_WITHDRAWAL.has(row.status)),
   };
 }

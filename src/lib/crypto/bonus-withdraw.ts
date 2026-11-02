@@ -19,7 +19,11 @@ export function parseWithdrawCashSnapshot(raw: unknown): WithdrawCashSnapshot | 
   const floor = Number(row["deposit_floor_cents"] ?? 2000);
   const wagered = Number(row["wagered_cents"] ?? 0);
   const wagerRequired = Number(row["wager_required_cents"] ?? 0);
-  if (![room, bonus, deposits, floor, wagered, wagerRequired].every((n) => Number.isFinite(n) && n >= 0))
+  if (
+    ![room, bonus, deposits, floor, wagered, wagerRequired].every(
+      (n) => Number.isFinite(n) && n >= 0,
+    )
+  )
     return null;
   return {
     room_cents: Math.floor(room),
@@ -60,6 +64,3 @@ export function bonusWithdrawBlockedMessage(
   }
   return `Bonus credit cannot be withdrawn until you have deposited at least ${formatUsd(floor)} with crypto. Your playable balance is unchanged.`;
 }
-
-export const BONUS_NOT_WITHDRAWABLE_SHORT =
-  "Bonus credit needs a crypto deposit before cashout. See the note under Withdraw for details.";
