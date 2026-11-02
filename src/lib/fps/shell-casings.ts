@@ -1,32 +1,78 @@
 import * as THREE from "three";
 
 /**
- * Ejected brass for the first-person M4A1: a bounded pool drawn as one InstancedMesh in the
+ * Ejected cases for the first-person rifles: a bounded pool drawn as one InstancedMesh in the
  * weapon pass. Purely visual: positions are integrated per frame with gravity and spin, no
  * collision; each case lives LIFETIME_MS then its slot is reused (oldest first). The pool never
  * grows and nothing is allocated per shot or per frame.
  *
- * Units are the viewmodel scene's (≈ metres); a 5.56×45 case is 57 mm long, 9.6 mm across.
+ * Units are the viewmodel scene's (≈ metres), drawn at the viewmodel's scale (×0.8).
  */
 export const CASING_POOL = 16;
 export const CASING_LIFETIME_MS = 900;
 const GRAVITY = -9.8;
 
-export function createShellCasings(layer = 1) {
-  const geometry = new THREE.CylinderGeometry(0.0046, 0.0048, 0.045, 10, 1);
-  // Bottle neck: taper the top ring of vertices.
+export type CasingSpec = {
+  name: string;
+  /** Base and body-top radius, length (scene units). */
+  radius: number;
+  topRadius: number;
+  length: number;
+  /** Shoulder: height (fraction of length) where the neck starts, and its radius scale. */
+  shoulder: number;
+  neck: number;
+  color: number;
+  metalness: number;
+  roughness: number;
+  /** Ejection speeds (m/s): out to the right, up, and backward (negative: forward). */
+  speed: { out: number; up: number; back: number };
+};
+/** M4A1: 5.56×45 brass, 57 mm long, 9.6 mm across; up, right and a little rearward. */
+export const M4_CASING: CasingSpec = {
+  name: "brass",
+  radius: 0.0048,
+  topRadius: 0.0046,
+  length: 0.045,
+  shoulder: 0.94,
+  neck: 0.62,
+  color: 0xc9a254,
+  metalness: 0.9,
+  roughness: 0.32,
+  speed: { out: 2.1, up: 1.3, back: 0.55 },
+};
+/**
+ * AK-47: 7.62×39 lacquered steel, 39 mm long and 11.3 mm at the base with a strong taper and a
+ * short neck; the AK throws its cases hard to the right and slightly forward.
+ */
+export const AK_CASING: CasingSpec = {
+  name: "lacquered-steel",
+  radius: 0.0057,
+  topRadius: 0.0049,
+  length: 0.031,
+  shoulder: 0.84,
+  neck: 0.7,
+  color: 0x5f5640,
+  metalness: 0.7,
+  roughness: 0.42,
+  speed: { out: 2.6, up: 1.1, back: -0.25 },
+};
+
+export function createShellCasings(layer = 1, spec: CasingSpec = M4_CASING) {
+  const geometry = new THREE.CylinderGeometry(spec.topRadius, spec.radius, spec.length, 10, 4);
+  // Bottle neck: taper the rings above the shoulder.
   const position = geometry.getAttribute("position") as THREE.BufferAttribute;
+  const shoulderY = spec.length * (spec.shoulder - 0.5);
   for (let i = 0; i < position.count; i++)
-    if (position.getY(i) > 0.02) {
-      position.setX(i, position.getX(i) * 0.62);
-      position.setZ(i, position.getZ(i) * 0.62);
+    if (position.getY(i) > shoulderY - 1e-6) {
+      position.setX(i, position.getX(i) * spec.neck);
+      position.setZ(i, position.getZ(i) * spec.neck);
     }
   geometry.computeVertexNormals();
   const material = new THREE.MeshStandardMaterial({
-    name: "brass",
-    color: 0xc9a254,
-    metalness: 0.9,
-    roughness: 0.32,
+    name: spec.name,
+    color: spec.color,
+    metalness: spec.metalness,
+    roughness: spec.roughness,
   });
   const mesh = new THREE.InstancedMesh(geometry, material, CASING_POOL);
   mesh.name = "shell-casings";
@@ -67,9 +113,9 @@ export function createShellCasings(layer = 1) {
       const jitter = ((shots * 7919) % 100) / 100 - 0.5;
       born[i] = now;
       p.set([origin.x, origin.y, origin.z], i * 3);
-      const speedOut = 2.1 + jitter * 0.4,
-        speedUp = 1.3 + jitter * 0.3,
-        speedBack = 0.55;
+      const speedOut = spec.speed.out + jitter * 0.4,
+        speedUp = spec.speed.up + jitter * 0.3,
+        speedBack = spec.speed.back;
       for (let k = 0; k < 3; k++) {
         const axis = k === 0 ? "x" : k === 1 ? "y" : "z";
         v[i * 3 + k] = right[axis] * speedOut + up[axis] * speedUp + back[axis] * speedBack;
