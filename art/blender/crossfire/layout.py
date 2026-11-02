@@ -126,21 +126,41 @@ twin("alley-crates", 6.2, 7.4, 14.6, 16.0, 0, CRATE, "wood", "crate")
 twin("alley-shutter-box", -14.0, -12.4, 11.5, 12.9, 0, 2.2, "metal", "kiosk", kind_b="generator")
 
 # ------------------------------------------------------------------ crash square
-# Helicopter wreck: cabin along x, 13 m long, 3 m wide, 2.4 m cabin roof (walkway below 2.4).
-HX, HZ, HTOP = 6.5, 1.5, 2.4
-centred("heli-roof", -HX + 1.0, HX - 1.0, -HZ, HZ, 2.4, 2.75, "metal", "heli-roof")
-twin("heli-nose", -HX, -HX + 1.0, -HZ, HZ, 0, 2.2, "metal", "heli-nose", kind_b="heli-rear")
-# Flank walls with a door (north door x 1..2.6 on A's... the twin puts the south door at -2.6..-1)
-# and window slits (sill 1.05, open to 1.55).
-twin("heli-wall-n1", -HX + 1.0, -2.2, -HZ, -HZ + 0.25, 0, 1.05, "metal", "heli-wall")
-twin("heli-wall-n1u", -HX + 1.0, -2.2, -HZ, -HZ + 0.25, 1.55, HTOP, "metal", "heli-wall")
-twin("heli-wall-n2", -2.2, 1.0, -HZ, -HZ + 0.25, 0, HTOP, "metal", "heli-wall")
-twin("heli-wall-n3", 2.6, HX - 1.0, -HZ, -HZ + 0.25, 0, HTOP, "metal", "heli-wall")
-# Cargo bulkhead at the cabin centre: the two doors are twins, so they always line up through the
-# origin; this blocks that line and leaves 0.9 m to pass on each side.
-centred("heli-bulkhead", -0.5, 0.5, -0.35, 0.35, 0, HTOP, "metal", "heli-bulkhead")
-# Broken tail boom and the engine pod torn off in the crash.
-twin("heli-tail", 8.3, 11.3, 4.4, 5.4, 0, 1.3, "metal", "heli-tail", kind_b="heli-engine")
+# Helicopter wreck: the Mi-8 model (art/blender/crossfire/source/mi8, fitted by heli.py) lying on
+# its belly along x, nose west. At 3x model scale the fuselage is 11 m long and 3.1 m wide; its
+# flanks lean inward above shoulder height, so each flank is three stacked layers that follow the
+# hull (lower wall, shoulder, upper shoulder) under a roof block. Enterable cabin: a side door on
+# each flank (twins), window slits, a centre bulkhead. Cabin interior: |x| < 3.5, |z| < 1.0.
+HX, HZ, CAB, HTOP = 5.5, 1.55, 3.5, 2.6
+LOWER = (0.0, 1.4, 1.28, HZ)  # (y0, y1, |z| inner, |z| outer)
+SHOULDER = (1.4, 2.1, 1.0, 1.45)
+UPPER = (2.1, HTOP, 0.75, 1.22)
+centred("heli-roof", -CAB, CAB, -0.85, 0.85, HTOP, 3.3, "metal", "heli-roof")
+twin("heli-chin", -5.95, -HX, -0.8, 0.8, 0, 1.2, "metal", "heli-nose", kind_b="heli-rear")
+twin("heli-nose", -HX, -4.6, -1.2, 1.2, 0, 3.0, "metal", "heli-nose", kind_b="heli-rear")
+twin("heli-nose-root", -4.6, -CAB, -HZ, HZ, 0, 3.0, "metal", "heli-nose", kind_b="heli-rear")
+twin("heli-upper", -CAB, CAB, -UPPER[3], -UPPER[2], UPPER[0], UPPER[1], "metal", "heli-wall")
+# The cabin ceiling drops towards the cockpit and the clamshell doors.
+twin("heli-hood", -CAB, -2.5, -UPPER[2], UPPER[2], UPPER[0], UPPER[1], "metal", "heli-roof")
+
+
+def flank(name, x0, x1, layers):
+    for i, (y0, y1, zi, zo) in enumerate(layers):
+        twin(f"heli-{name}-{i}", x0, x1, -zo, -zi, y0, y1, "metal", "heli-wall")
+
+
+# North flank, west to east (the south flank is its twin): wall, window slit (sill 1.1, open to
+# 1.6), wall, door (x 1.2..3.2, lintel 2.1), wall.
+SLIT = ((0.0, 1.1, LOWER[2], LOWER[3]), (1.6, SHOULDER[1], SHOULDER[2], SHOULDER[3]))
+flank("wall-n1", -CAB, -3.2, (LOWER, SHOULDER))
+flank("slit-n", -3.2, -2.0, SLIT)
+flank("wall-n2", -2.0, 1.2, (LOWER, SHOULDER))
+flank("wall-n3", 3.2, CAB, (LOWER, SHOULDER))
+# Cargo bulkhead at the cabin centre: the doors are twins, so they always line up through the
+# origin; this blocks that line and leaves a passage on each side.
+centred("heli-bulkhead", -0.5, 0.5, -0.2, 0.2, 0, HTOP, "metal", "heli-bulkhead")
+# The broken tail boom, in two pieces thrown clear in the crash.
+twin("heli-tail", 8.3, 11.3, 4.4, 5.4, 0, 1.3, "metal", "heli-tail", kind_b="heli-tail")
 # The main rotor mast and hub torn off beside the fuselage (breaks the lanes along its flanks).
 twin("rotor-debris", -0.2, 1.6, 1.7, 2.6, 0, 1.2, "metal", "rotor-hub")
 # Abandoned pickup and supply crates.

@@ -222,18 +222,18 @@ describe("CROSSFIRE urban aim arena layout", () => {
 
   it("the helicopter cabin is enterable: in through one door, out through the other", () => {
     const track = walk(
-      { ...match.players.A, x: 1.8, z: -4 } as Player,
+      { ...match.players.A, x: 2.2, z: -4 } as Player,
       [
-        { x: 1.8, z: -2.2 },
-        { x: 1.8, z: -0.85 },
-        { x: -1.8, z: -0.85 },
-        { x: -1.8, z: 2.4 },
-        { x: -1.8, z: 4 },
+        { x: 2.2, z: -2.2 },
+        { x: 2.2, z: -0.6 },
+        { x: -2.2, z: -0.6 },
+        { x: -2.2, z: 2.4 },
+        { x: -2.2, z: 4 },
       ],
       false,
       300,
     );
-    expect(Math.hypot(track.at(-1)!.x + 1.8, track.at(-1)!.z - 4)).toBeLessThan(0.3);
+    expect(Math.hypot(track.at(-1)!.x + 2.2, track.at(-1)!.z - 4)).toBeLessThan(0.3);
     expect(Math.max(...track.map((p) => p.y))).toBe(0);
   });
 
