@@ -2,6 +2,7 @@ import { CROSSFIRE } from "./crossfire";
 import { DUSTFRONT } from "./dustfront";
 import { FROSTLINE } from "./frostline";
 import { LOST_TRAIL } from "./lost-trail";
+import { SUBURBIA } from "./suburbia";
 import type { MapDefinition } from "./types";
 
 /**
@@ -14,4 +15,5 @@ export const MAP_DEFINITIONS = [
   FROSTLINE,
   LOST_TRAIL,
   CROSSFIRE,
+  SUBURBIA,
 ] as const satisfies readonly MapDefinition[];
