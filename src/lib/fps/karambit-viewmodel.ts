@@ -13,8 +13,8 @@ import { ARENA_MODELS } from "./model-assets";
 import { KarambitAnimator, type KarambitControls } from "./karambit-animator";
 
 /**
- * First-person Karambit on a team's existing arms (Police: bare forearm, olive sleeve and watch;
- * Terrorist: white duty-jacket sleeve). Nothing about the arms is replaced: the same rig, gloves,
+ * First-person Karambit on a team's existing arms (Police: steel-blue duty-shirt sleeve;
+ * Terrorist: white duty-jacket sleeve; the watch is on the left wrist, out of this view). Nothing about the arms is replaced: the same rig, gloves,
  * forearm builder and sleeves the rifles use are fitted to the knife here.
  *
  * - Grip: the right hand's middle, ring and little fingers keep the rifle pistol-grip wrap (a
@@ -153,13 +153,14 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
       gloves.morphTargetInfluences = [0];
       const parts: THREE.Mesh[] = [gloves],
         armParts: THREE.Mesh[] = [];
-      const jacket = variant.arms === "jacket";
-      if (!jacket) {
+      const sleeves = sleeveParts(instance.root, variant.arms, owned.geometry);
+      // A full-length duty sleeve covers the forearm; only the rolled olive sleeve shows skin.
+      if (!sleeves.duty) {
         const skin = createSkinMaterial(owned);
         owned.geometry.push(closed.R.skin);
         armParts.push(new THREE.Mesh(closed.R.skin, skin));
       } else closed.R.skin.dispose();
-      for (const part of sleeveParts(instance.root, jacket, owned.geometry))
+      for (const part of sleeves.parts)
         armParts.push(sleeveMesh(part, closed.R.path, variant, owned.geometry));
       // Everything rides the wrist pivot.
       wrist.position.copy(wristRest);
@@ -385,18 +386,21 @@ function createSkinMaterial(owned: { materials: THREE.Material[]; textures: THRE
   return skin;
 }
 
-/** Sleeve meshes in canonical arm space (jacket for the Terrorist, olive roll-up for Police). */
+/**
+ * Sleeve meshes in canonical arm space: the team's full-length duty sleeve (white jacket for the
+ * Terrorist, blue shirt for Police), else the rolled olive sleeve (`duty` false: skin shows).
+ */
 function sleeveParts(
   instance: THREE.Object3D,
-  jacket: boolean,
+  arms: ViewmodelVariant["arms"],
   geometries: THREE.BufferGeometry[],
 ) {
-  const accessories = instance.getObjectByName("FPAccessories");
-  if (!accessories) return [];
-  accessories.updateWorldMatrix(true, true);
-  const toRoot = new THREE.Matrix4().copy(accessories.matrixWorld).invert();
   const found: { geometry: THREE.BufferGeometry; material: THREE.Material | THREE.Material[] }[] =
     [];
+  const accessories = instance.getObjectByName("FPAccessories");
+  if (!accessories) return { parts: found, duty: false };
+  accessories.updateWorldMatrix(true, true);
+  const toRoot = new THREE.Matrix4().copy(accessories.matrixWorld).invert();
   const take = (name: string) =>
     accessories.getObjectByName(name)?.traverse((o) => {
       if (!(o instanceof THREE.Mesh)) return;
@@ -406,9 +410,11 @@ function sleeveParts(
       geometries.push(geometry);
       found.push({ geometry, material: o.material });
     });
-  if (jacket) take("JacketSleeve");
-  if (!found.length) take("ArmSleeve");
-  return found;
+  if (arms === "jacket") take("JacketSleeve");
+  else if (arms === "police") take("PoliceSleeve");
+  const duty = found.length > 0;
+  if (!duty) take("ArmSleeve");
+  return { parts: found, duty };
 }
 function sleeveMesh(
   part: { geometry: THREE.BufferGeometry; material: THREE.Material | THREE.Material[] },

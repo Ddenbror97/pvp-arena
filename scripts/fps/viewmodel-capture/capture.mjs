@@ -1,6 +1,6 @@
 /**
  * Render the first-person Karambit at chosen clip times in headless Chromium.
- *   node scripts/fps/viewmodel-capture/capture.mjs <ak|m4> <outDir> <shots.json> [--chromium=/path] [--size=960x540] [--fov=60]
+ *   node scripts/fps/viewmodel-capture/capture.mjs <ak|m4> <outDir> <shots.json> [--chromium=/path] [--size=960x540] [--fov=60] [--weapon=rifle]
  * shots.json: [{ "clip": "karambit_idle", "t": 0.5, "name": "idle" }, ...]
  */
 import { build } from "esbuild";
@@ -63,9 +63,11 @@ page.on(
 page.on("pageerror", (e) => console.error("pageerror:", e.message));
 await page.goto(`http://127.0.0.1:${server.address().port}/`);
 await page.waitForFunction(() => typeof window.viewmodelCapture === "function");
+// --weapon=rifle renders the team rifle viewmodel (sleeves, watch) instead of the Karambit.
+const rifle = flag("weapon") === "rifle";
 const result = await page.evaluate(
-  ([v, s, w, h, f]) => window.viewmodelCapture(v, s, w, h, f),
-  [variant, shots, w, h, Number(flag("fov") ?? 60)],
+  ([v, s, w, h, f, r]) => (r ? window.rifleCapture : window.viewmodelCapture)(v, s, w, h, f),
+  [variant, shots, w, h, Number(flag("fov") ?? 60), rifle],
 );
 const stats = {};
 for (const [name, r] of Object.entries(result)) {

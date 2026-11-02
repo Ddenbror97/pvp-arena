@@ -1,7 +1,15 @@
 """
-White duty-jacket sleeve for the Terrorist first-person arms (AK-47) (Blender, headless).
+Duty-jacket sleeves for the first-person arms (Blender, headless).
 
-  python build_jacket_sleeve.py -- <outdir> [--size 2048] [--preview]
+  python build_jacket_sleeve.py -- <outdir> [--size 2048] [--preview]                    # Terrorist
+  python build_jacket_sleeve.py -- <outdir> --variant police [--watch <jacket-watch.glb>] [--preview]
+
+Police variant (`PoliceSleeve`, police-sleeve.glb): the Police character's steel-blue duty shirt
+(sampled from police-swat.glb: sRGB ~84,112,128) in cotton twill with light topstitching, a
+buttoned shirt cuff (placket and a real four-hole button) instead of the hook-and-loop strap, no
+reflective band. The field watch (build_accessories.py --watch-only) is worn over the sleeve
+just above the cuff: the fabric is cinched flat under the strap (WATCH_LIFT) and bunches on
+either side of it. `--watch` adds the watch to the preview renders only.
 
 A white technical (ripstop softshell) duty-jacket sleeve authored on the runtime forearm
 (forearm.py) in the canonical arm frame (+X thumb, +Y toward the elbow, +Z back of the arm),
@@ -33,6 +41,10 @@ argv = sys.argv[sys.argv.index("--") + 1 :]
 outdir = argv[0]
 SIZE = int(argv[argv.index("--size") + 1]) if "--size" in argv else 2048
 PREVIEW = "--preview" in argv
+POLICE = "--variant" in argv and argv[argv.index("--variant") + 1] == "police"
+WATCH_GLB = argv[argv.index("--watch") + 1] if "--watch" in argv else None
+NAME = "PoliceSleeve" if POLICE else "JacketSleeve"
+STEM = "police_sleeve" if POLICE else "jacket_sleeve"
 os.makedirs(outdir, exist_ok=True)
 for o in list(bpy.data.objects):
     bpy.data.objects.remove(o)
@@ -48,6 +60,12 @@ STRAP_THETA = 0.95  # hook-and-loop cuff strap: thumb/back side, where the camer
 STRAP_HALF = 0.20  # radians either side
 BAND_ALONG = (0.152, 0.177)  # retro-reflective band round the forearm (duty jacket marking)
 CUFF_OFF = 0.0088  # cuff band height above the skin (two layers over the glove gauntlet)
+# Police: the watch over the sleeve (build_accessories.py WATCH_ALONG, strap 20 mm wide).
+WATCH_ALONG = 0.058
+WATCH_HALF = 0.0112  # half the cinched width along the arm (strap + a little give)
+WATCH_LIFT = 0.0068  # fabric height under the strap; the watch is built on exactly this
+BUTTON_THETA = 2.25  # cuff button: back of the wrist toward the little finger, in view
+BUTTON_ALONG = 0.022
 
 
 def smooth(x, a, b):
@@ -70,13 +88,21 @@ def offset(along, theta):
     strap_m = np.exp(-((wrap(theta - STRAP_THETA) / STRAP_HALF) ** 12)) * (
         smooth(z, HEM + 0.007, HEM + 0.0085) * (1 - smooth(z, CUFF - 0.0075, CUFF - 0.006))
     )
-    cuff = cuff + 0.0026 * strap_m
+    cuff = cuff + 0.0026 * strap_m * (not POLICE)
+    if POLICE:
+        # Shirt cuff: placket overlap under the button (a second layer of cloth).
+        cuff = cuff + 0.0007 * np.exp(-((wrap(theta - BUTTON_THETA - 0.1) / 0.32) ** 6))
     # Sleeve body: compression folds bunching above the cuff...
     body = 0.0095 + 0.0045 * smooth(z, 0.08, 0.36)
     fold = np.zeros(np.broadcast(z, theta).shape)
     rings = [(0.050, 0.0038, 0.0075), (0.064, 0.0046, 0.0070), (0.079, 0.0034, 0.0080),
              (0.095, 0.0040, 0.0085), (0.113, 0.0028, 0.0095), (0.134, 0.0022, 0.0110),
              (0.158, 0.0016, 0.0125)]
+    if POLICE:
+        # The strap holds the cloth flat round the wrist: one soft fold between cuff and watch,
+        # the rest pushed up the arm where they stack tighter just above the strap.
+        rings = [(0.0435, 0.0016, 0.0045), (0.080, 0.0050, 0.0068), (0.093, 0.0044, 0.0075),
+                 (0.108, 0.0034, 0.0085), (0.126, 0.0026, 0.0100), (0.148, 0.0018, 0.0115)]
     for c, amp, w in rings:
         p1, p2, p3 = rng.random(3) * 2 * np.pi
         k = rng.integers(1, 3)
@@ -93,11 +119,19 @@ def offset(along, theta):
     sag = 0.0032 * np.maximum(0, -np.sin(theta)) ** 2 * smooth(z, 0.1, 0.3)
     # Reflective band: heat-sealed tape, slightly stiffer (flattens the folds under it).
     tape = smooth(z, BAND_ALONG[0], BAND_ALONG[0] + 0.0015) * (1 - smooth(z, BAND_ALONG[1] - 0.0015, BAND_ALONG[1]))
+    if POLICE:
+        tape = tape * 0  # no reflective band on the Police shirt
     sleeve = body + (fold + drape) * (1 - 0.6 * tape) + sag + 0.0004 * tape
     # Blend cuff → sleeve with a small crease where the sleeve overhangs the band.
     k = smooth(z, CUFF - 0.002, CUFF + 0.006)
     off = cuff * (1 - k) + sleeve * k
     off -= 0.0012 * np.exp(-(((z - CUFF - 0.002) / 0.0018) ** 2))
+    if POLICE:
+        # Cinched flat under the watch strap, with the cloth bulging out at both strap edges.
+        c = np.exp(-(((z - WATCH_ALONG) / WATCH_HALF) ** 8))
+        off = off * (1 - c) + WATCH_LIFT * c
+        off += 0.0013 * np.exp(-(((z - WATCH_ALONG - WATCH_HALF - 0.0035) / 0.0032) ** 2))
+        off += 0.0009 * np.exp(-(((z - WATCH_ALONG + WATCH_HALF + 0.0028) / 0.0026) ** 2))
     return off
 
 
@@ -106,7 +140,8 @@ def build():
     # Hem: inside lip → round the edge → outside.
     lip = [(HEM + 0.012, 0.0052), (HEM + 0.006, 0.0054), (HEM + 0.0016, 0.0060),
            (HEM + 0.0002, 0.0072), (HEM + 0.0008, 0.0084), (HEM + 0.0022, CUFF_OFF)]
-    rows = np.concatenate([np.arange(HEM + 0.003, 0.18, 0.0022), np.arange(0.18, END, 0.0065), [END]])
+    step = 0.0015 if POLICE else 0.0022  # finer through the watch cinch
+    rows = np.concatenate([np.arange(HEM + 0.003, 0.18, step), np.arange(0.18, END, 0.0065), [END]])
     P = [F.surface_point(np.full_like(theta, a), theta, o) for a, o in lip]
     P += [F.surface_point(np.full_like(theta, a), theta, offset(np.full_like(theta, a), theta)) for a in rows]
     P = np.stack(P)
@@ -226,6 +261,11 @@ def textures(obj, size, v_scale):
     rip = np.maximum(np.exp(-((gx - grid / 2) / 0.0002) ** 2), np.exp(-((gy - grid / 2) / 0.0002) ** 2))
     weave = 0.5 * np.sin(2 * np.pi * x / 0.00055) * np.sin(2 * np.pi * y / 0.00055)
     height = 0.00009 * rip + 0.00004 * weave
+    if POLICE:
+        # Cotton twill (BDU shirt): diagonal ribs, no ripstop grid.
+        rip = rip * 0
+        weave = np.sin(2 * np.pi * (x + y) / 0.0009)
+        height = 0.00006 * weave + 0.00002 * np.sin(2 * np.pi * (x - y) / 0.0004)
     # Secondary wrinkles: short pinch creases running round the arm, densest near the cuff.
     w1 = fbm((size, size), size / 64, 31, 3)
     w2 = fbm((size, size), size / 24, 37, 2)
@@ -242,8 +282,9 @@ def textures(obj, size, v_scale):
     dorsal = wrap(th - np.pi / 2)
     panel_y = 0.21 + 0.035 * np.cos(dorsal * 1.4)
     panel = np.abs(y - panel_y) * (np.abs(dorsal) < 1.3)
-    height -= 0.00022 * np.exp(-(panel / 0.0006) ** 2) * (np.abs(dorsal) < 1.3)
-    stitch.append((np.where(np.abs(dorsal) < 1.3, np.abs(panel - 0.0016), 1), x))
+    if not POLICE:
+        height -= 0.00022 * np.exp(-(panel / 0.0006) ** 2) * (np.abs(dorsal) < 1.3)
+        stitch.append((np.where(np.abs(dorsal) < 1.3, np.abs(panel - 0.0016), 1), x))
     # Cuff: topstitching along the band; hem edge binding.
     z = along - HEM
     stitch.append((np.abs(z - 0.0035), x))
@@ -251,15 +292,30 @@ def textures(obj, size, v_scale):
     # Strap: border stitching and hook-and-loop field.
     s_ang = wrap(th - STRAP_THETA)
     in_strap = (np.abs(s_ang) < STRAP_HALF * 0.92) & (along > HEM + 0.009) & (along < CUFF - 0.006)
+    in_strap = in_strap & (not POLICE)
     s_edge = np.minimum(np.abs(np.abs(s_ang) - STRAP_HALF * 0.78) * r_mean,
                         np.minimum(np.abs(along - HEM - 0.011), np.abs(along - CUFF + 0.008)))
     stitch.append((np.where(in_strap, s_edge, 1), x + y))
+    if POLICE:
+        # Cuff placket: the overlap edge runs from the hem to the cuff top, stitched, beside the
+        # button; strap pinch creases fan out from both watch-strap edges.
+        b_ang = wrap(th - BUTTON_THETA - 0.21)
+        placket = np.abs(b_ang) * r_mean
+        in_cuff = (along > HEM) & (along < CUFF - 0.002)
+        height -= np.where(in_cuff, 0.00035 * np.exp(-(placket / 0.0005) ** 2), 0)
+        stitch.append((np.where(in_cuff, np.abs(placket - 0.0022), 1), y))
+        for edge, sign in ((WATCH_ALONG + WATCH_HALF, 1), (WATCH_ALONG - WATCH_HALF, -1)):
+            d = (along - edge) * sign
+            near = (d > 0) & (d < 0.012)
+            fan = np.abs(np.sin(th * 9 + 3 * w2)) ** 8 * np.exp(-d / 0.004)
+            height -= np.where(near, 0.00025 * fan, 0)
     # Retro-reflective band: glass-bead tape (micro-prism dots), silver-grey, edge-sealed.
-    in_band = (along > BAND_ALONG[0] + 0.001) & (along < BAND_ALONG[1] - 0.001)
+    in_band = (along > BAND_ALONG[0] + 0.001) & (along < BAND_ALONG[1] - 0.001) & (not POLICE)
     bead = (np.sin(2 * np.pi * x / 0.0008) * np.sin(2 * np.pi * y / 0.0008) > 0.2).astype(float)
     height += np.where(in_band, 0.00003 * bead + 0.00012, 0)
     band_edge = np.minimum(np.abs(along - BAND_ALONG[0] - 0.0015), np.abs(along - BAND_ALONG[1] + 0.0015))
-    stitch.append((np.where(np.abs(along - (BAND_ALONG[0] + BAND_ALONG[1]) / 2) < 0.02, band_edge, 1), x))
+    if not POLICE:
+        stitch.append((np.where(np.abs(along - (BAND_ALONG[0] + BAND_ALONG[1]) / 2) < 0.02, band_edge, 1), x))
     thread = np.zeros_like(x)
     for dist, phase in stitch:
         lane = np.exp(-(dist / 0.00026) ** 2)
@@ -284,7 +340,25 @@ def textures(obj, size, v_scale):
     col = col * (1 - thread[..., None]) + np.array([0.70, 0.71, 0.72]) * thread[..., None]
     col *= (1 - 0.06 * crease * wrinkle_amt)[..., None]
     col *= (0.5 + 0.5 * ao)[..., None]
+    if POLICE:
+        # Steel-blue duty shirt (the character's sleeve, sRGB ~84,112,128), slightly washed:
+        # fold peaks and the cuff edge fade lighter, creases and grime go navy-grey, light
+        # blue-grey topstitching like the character's seams.
+        blue = np.array([0.090, 0.165, 0.218])
+        col = blue[None, None] * (0.93 + 0.12 * var)[..., None]
+        col *= (1 + 0.05 * weave)[..., None]
+        fade = np.clip((fbm((size, size), size / 30, 17) - 0.5) * 2.5, 0, 1) * (ao > 0.9)
+        col = col * (1 - 0.25 * fade[..., None]) + np.array([0.16, 0.25, 0.31]) * 0.25 * fade[..., None]
+        edge_wear = np.exp(-((along - HEM) / 0.004) ** 2) * (along > HEM - 0.002)
+        col = col * (1 - 0.35 * edge_wear[..., None]) + np.array([0.20, 0.29, 0.34]) * 0.35 * edge_wear[..., None]
+        col = np.where(((along > HEM) & (along < CUFF))[..., None], col * 0.94, col)
+        col = col * (1 - 0.5 * grime[..., None]) + np.array([0.035, 0.055, 0.07]) * 0.5 * grime[..., None]
+        col = col * (1 - 0.8 * thread[..., None]) + np.array([0.33, 0.42, 0.47]) * 0.8 * thread[..., None]
+        col *= (1 - 0.08 * crease * wrinkle_amt)[..., None]
+        col *= (0.45 + 0.55 * ao)[..., None]
     rough = np.clip(0.82 + 0.06 * (var - 0.5) + 0.06 * in_strap - 0.08 * thread, 0, 1)
+    if POLICE:
+        rough = np.clip(0.86 + 0.05 * (var - 0.5) - 0.1 * thread, 0, 1)
     rough = np.where(in_band, 0.38 + 0.08 * bead, rough)
     metal = np.where(in_band, 0.35, 0.0)
 
@@ -297,12 +371,12 @@ def textures(obj, size, v_scale):
     n /= np.linalg.norm(n, axis=-1, keepdims=True)
     normal = n * 0.5 + 0.5
     orm = np.stack([ao ** 0.75, rough, metal], -1)
-    return (image(col, "jacket_sleeve_basecolor", True), image(normal, "jacket_sleeve_normal", False),
-            image(orm, "jacket_sleeve_orm", False))
+    return (image(col, f"{STEM}_basecolor", True), image(normal, f"{STEM}_normal", False),
+            image(orm, f"{STEM}_orm", False))
 
 
 def material(base, normal, orm):
-    m = bpy.data.materials.new("jacket_sleeve")
+    m = bpy.data.materials.new(STEM)
     m.use_nodes = True
     nt = m.node_tree
     b = nt.nodes["Principled BSDF"]
@@ -323,27 +397,61 @@ def material(base, normal, orm):
     return m
 
 
+def button():
+    """Shirt button on the cuff placket (dark blue-grey resin, dished face), its own small mesh."""
+    from mesh_util import lathe
+
+    MM = 0.001
+    # Profile (radius, height) in mm: rim, dished centre.
+    prof = [(0.0, 1.0), (1.6, 1.05), (3.2, 1.35), (4.6, 1.75), (5.4, 1.55), (5.6, 0.9), (5.3, 0.0), (0.0, 0.0)]
+    P, th = lathe(prof, 32)
+    n = np.array([math.cos(BUTTON_THETA), 0.0, math.sin(BUTTON_THETA)])
+    up = np.array([0.0, 1.0, 0.0])
+    side = np.cross(up, n)
+    base = F.surface_point(np.array([BUTTON_ALONG]), np.array([BUTTON_THETA]),
+                           offset(np.array([BUTTON_ALONG]), np.array([BUTTON_THETA])))[0]
+    local = P * MM
+    world = base + local[..., 0:1] * side + local[..., 1:2] * up + local[..., 2:3] * n - 0.0003 * n
+    m = MeshData().grid(world, np.full(world.shape[:2] + (2,), 0.5))
+    obj = m.to_object(NAME + "Button")
+    mat = bpy.data.materials.new(f"{STEM}_button")
+    mat.use_nodes = True
+    b = mat.node_tree.nodes["Principled BSDF"]
+    b.inputs["Base Color"].default_value = (0.055, 0.07, 0.08, 1)
+    b.inputs["Roughness"].default_value = 0.38
+    obj.data.materials.append(mat)
+    obj.data.shade_smooth()
+    return obj
+
+
 mesh, v_scale, lip_rows = build()
-sleeve = mesh.to_object("JacketSleeve")
+sleeve = mesh.to_object(NAME)
 sleeve.data.shade_smooth()
 base, normal, orm = textures(sleeve, SIZE, v_scale)
 sleeve.data.materials.clear()
 sleeve.data.materials.append(material(base, normal, orm))
-print("REPORT jacket sleeve", len(sleeve.data.polygons), "faces")
+if POLICE:
+    btn = button()
+    btn.parent = sleeve
+print("REPORT", NAME, len(sleeve.data.polygons), "faces")
 
 bpy.ops.object.select_all(action="DESELECT")
 sleeve.select_set(True)
-bpy.ops.export_scene.gltf(filepath=os.path.join(outdir, "jacket-sleeve.glb"), export_format="GLB",
+for child in sleeve.children:
+    child.select_set(True)
+bpy.ops.export_scene.gltf(filepath=os.path.join(outdir, f"{STEM.replace('_', '-')}.glb"), export_format="GLB",
                           use_selection=True, export_apply=True, export_texcoords=True,
                           export_normals=True, export_tangents=True, export_materials="EXPORT",
                           export_image_format="WEBP", export_yup=True, export_animations=False,
                           export_skins=False)
-bpy.ops.wm.save_as_mainfile(filepath=os.path.join(outdir, "jacket_sleeve.blend"))
+bpy.ops.wm.save_as_mainfile(filepath=os.path.join(outdir, f"{STEM}.blend"))
 
 if PREVIEW:
     import mathutils
 
     arm = canonical_arm("preview-arm", -0.01, 0.42)
+    if WATCH_GLB:
+        bpy.ops.import_scene.gltf(filepath=WATCH_GLB)
     sc.render.engine = "CYCLES"
     sc.cycles.samples = 48
     sc.render.resolution_x, sc.render.resolution_y = 1200, 800
@@ -369,3 +477,6 @@ if PREVIEW:
 
     shot("sleeve", (0.16, 0.12, 0.16), (0.0, 0.14, 0.0), 40)
     shot("cuff", (0.07, -0.05, 0.1), (0.0, 0.03, 0.01), 55)
+    if POLICE:
+        shot("watch", (0.0, 0.06, 0.17), (0.0, 0.06, 0.03), 55)
+        shot("button", (-0.09, 0.0, 0.1), (-0.02, 0.025, 0.03), 60)
