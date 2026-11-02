@@ -741,11 +741,8 @@ function toneM4Materials(root: THREE.Object3D) {
     if (!(object instanceof THREE.Mesh) || object instanceof THREE.SkinnedMesh) return;
     for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
       if (!(material instanceof THREE.MeshStandardMaterial)) continue;
-      if (material.name === "M4Finish") {
-        material.metalness = 0.82;
-        material.envMapIntensity = 0.55;
-        material.color.setScalar(0.92);
-      } else if (material.name === "SuppressorFinish" || material.name === "CarryHandleFinish") {
+      // M4Finish and CarryHandleFinish get their anodized finish in rifle-materials.
+      if (material.name === "SuppressorFinish") {
         material.envMapIntensity = 0.5;
       } else if (material.name === "PVPAccent") {
         material.envMapIntensity = 0.7;

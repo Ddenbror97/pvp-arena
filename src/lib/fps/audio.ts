@@ -187,7 +187,7 @@ export function createCombatAudio(
     const m4 = weapon === "rifle" && m4Seat(seat);
     play(m4 ? "rifleM4" : "rifleA", gain, pan, occluded, 1);
     // Own rifle: the ejected case lands a moment later, just right of the player (the AK's
-    // lacquered steel case rings duller and lower than the M4's brass).
+    // bigger 7.62×39 case rings lower than the M4's 5.56).
     if (weapon === "rifle" && seat === localSeat && gain > 0.3)
       play(
         "casing",
