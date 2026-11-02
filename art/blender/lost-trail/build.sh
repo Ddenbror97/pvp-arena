@@ -22,7 +22,7 @@ else
   node bake/bake.mjs build/lost-trail-full-instanced.glb build/backdrop ${CHROMIUM:+--chromium=$CHROMIUM}
   python3 bake/compose.py build/backdrop build/tex/forest_backdrop.png
   # Pass 2: the shipped scene, the forest beyond the walls replaced by the baked backdrop.
-  LOST_TRAIL_BACKDROP=build/backdrop/backdrop.json "$PY" build_trail.py -- build/lost-trail.glb --blend build/lost-trail.blend 2>&1 | grep -E "PLACED|RIVERBANKS|DETAIL|CROP|exported|Error|Traceback" || true
+  LOST_TRAIL_BACKDROP=build/backdrop/backdrop.json "$PY" build_trail.py -- build/lost-trail.glb --blend build/lost-trail.blend 2>&1 | grep -E "HEDGE|PLACED|RIVERBANKS|DETAIL|CROP|exported|Error|Traceback" || true
 fi
 if [[ "${1:-}" == "--blockout" ]]; then
   "$GT" instance build/lost-trail.glb build/lost-trail-instanced.glb --min 2 >/dev/null
