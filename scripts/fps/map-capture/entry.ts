@@ -153,19 +153,29 @@ window.capture = async (mapId, views, w, h, players = [], quality = "high") => {
     camera.rotation.set(pitch, yaw, 0);
     camera.updateMatrixWorld(true);
     renderer.info.autoReset = false;
-    // One untimed frame first (program compiles, the one-off shadow-map render), then the
-    // measured frame: calls, triangles and GPU-finished time of a steady-state frame.
-    renderer.render(scene, camera);
-    renderer.getContext().finish();
+    // One untimed frame first (program compiles, texture uploads, the one-off shadow-map
+    // render), then the measured frames: calls, triangles and the median time of three
+    // steady-state frames. gl.finish() does not wait under ANGLE/SwiftShader, so each frame
+    // ends with a 1-pixel readback, which does.
+    const gl = renderer.getContext();
+    const pixel = new Uint8Array(4);
+    const frame = () => {
+      const s = performance.now();
+      renderer.render(scene, camera);
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      return performance.now() - s;
+    };
+    frame();
     renderer.info.reset();
-    const s = performance.now();
-    renderer.render(scene, camera);
-    renderer.getContext().finish();
+    const first = frame();
+    const calls = renderer.info.render.calls,
+      triangles = renderer.info.render.triangles;
+    const ms = [first, frame(), frame()].sort((a, b) => a - b)[1] ?? first;
     out[name] = {
       image: renderer.domElement.toDataURL("image/jpeg", 0.88),
-      calls: renderer.info.render.calls,
-      triangles: renderer.info.render.triangles,
-      ms: Math.round(performance.now() - s),
+      calls,
+      triangles,
+      ms: Math.round(ms),
     };
   }
   return {

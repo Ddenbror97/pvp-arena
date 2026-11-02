@@ -284,4 +284,17 @@ describe("render presentation independent of server physics", () => {
     expect(b.scale).toBeGreaterThan(lower);
     expect(b.scale).toBeLessThanOrEqual(1);
   });
+  it("low graphics lowers the framebuffer cap on every map", () => {
+    const high = new RenderBudget(),
+      low = Object.assign(new RenderBudget(), { quality: "low" as const });
+    // 1440p laptop at 2× DPI: High is pixel-bound at 1.5 MP, Low at 1 MP.
+    expect(2560 * 1440 * high.ratio(2560, 1440, 2) ** 2).toBeCloseTo(1_500_000, -3);
+    expect(2560 * 1440 * low.ratio(2560, 1440, 2) ** 2).toBeCloseTo(1_000_000, -3);
+    // Small window on a Retina screen: High allows 1.25×, Low draws at most 1×.
+    expect(high.ratio(800, 500, 2)).toBe(1.25);
+    expect(low.ratio(800, 500, 2)).toBe(1);
+    // The adaptive scale still applies on top.
+    for (let i = 0; i < 250; i++) low.update(30);
+    expect(low.ratio(800, 500, 2)).toBeLessThan(1);
+  });
 });

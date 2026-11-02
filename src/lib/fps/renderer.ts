@@ -1164,8 +1164,14 @@ export function mountArena(
       reducedMotion = !!reduced;
     },
     setGraphicsQuality: (quality) => {
+      const next = quality === "low" ? "low" : "high";
+      // Every map: the framebuffer cap (see RENDER_CAPS).
+      if (budget.quality !== next) {
+        budget.quality = next;
+        resize();
+      }
       if (!environment.setQuality) return;
-      environment.setQuality(quality === "low" ? "low" : "high");
+      environment.setQuality(next);
       // Scenery that casts into the cached shadow map changed: re-render it once.
       renderer.shadowMap.needsUpdate = true;
     },

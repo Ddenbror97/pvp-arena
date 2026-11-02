@@ -107,7 +107,7 @@ export function GameSettings({
                 aria-pressed={settings.graphics === quality}
                 onClick={() => onChange({ ...settings, graphics: quality })}
               >
-                <span>{quality === "high" ? "High" : "Low (lighter scenery)"}</span>
+                <span>{quality === "high" ? "High" : "Low (lighter rendering)"}</span>
               </button>
             ))}
           </div>
