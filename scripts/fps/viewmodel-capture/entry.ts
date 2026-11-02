@@ -11,6 +11,7 @@ import {
   createAuthoredViewmodel,
 } from "../../../src/lib/fps/authored-viewmodel";
 import { M4_INSPECT, sampleVec } from "../../../src/lib/fps/reload-animation";
+import { AK_CASING, createShellCasings, M4_CASING } from "../../../src/lib/fps/shell-casings";
 import {
   createKarambitViewmodel,
   KARAMBIT_VIEWMODEL_REST,
@@ -155,7 +156,14 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
  * the renderer's rest framing. Shots: { name, reload?: 0–1 progress, kind?, inspect?: 0–1 (M4
  * inspect clip progress) }.
  */
-type RifleShot = { name: string; reload?: number; kind?: "tactical" | "empty"; inspect?: number };
+type RifleShot = {
+  name: string;
+  reload?: number;
+  kind?: "tactical" | "empty";
+  inspect?: number;
+  /** Eject a case from the port and show it this many ms into its flight. */
+  casing?: number;
+};
 declare global {
   interface Window {
     rifleCapture: (
@@ -202,6 +210,8 @@ window.rifleCapture = async (variantId, shots, w, h, fov = 60, guardTwist) => {
   const vm = createAuthoredViewmodel(group, true, variant);
   await vm.ready;
   const out: Record<string, { image: string; calls: number; triangles: number }> = {};
+  const casings = createShellCasings(0, variantId === "m4" ? M4_CASING : AK_CASING);
+  scene.add(casings.mesh);
   for (const shot of shots) {
     vm.update(true, shot.reload ?? 0, 0, shot.kind ?? "tactical");
     const ip = shot.inspect !== undefined ? sampleVec(M4_INSPECT.position, shot.inspect) : null,
@@ -217,6 +227,19 @@ window.rifleCapture = async (variantId, shots, w, h, fov = 60, guardTwist) => {
       RIFLE_REST.roll + (ir?.[2] ?? 0),
     );
     camera.updateMatrixWorld(true);
+    casings.clear();
+    if (shot.casing !== undefined) {
+      // As the renderer does: port and weapon axes into scene space, then advance the flight.
+      const at = new THREE.Vector3();
+      if (vm.ejectionPort(at)) {
+        group.updateWorldMatrix(true, false);
+        group.localToWorld(at);
+        const axis = (x: number, y: number, z: number) =>
+          new THREE.Vector3(x, y, z).transformDirection(group.matrixWorld);
+        casings.emit(at, axis(1, 0, 0), axis(0, 1, 0), axis(0, 0, 1), 0);
+        for (let t = 16; t <= shot.casing; t += 16) casings.update(16, t);
+      }
+    }
     renderer.info.reset();
     renderer.render(scene, camera);
     out[shot.name] = {

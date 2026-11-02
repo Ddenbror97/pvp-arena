@@ -32,7 +32,7 @@ import {
   karambitRestX,
 } from "./karambit-viewmodel";
 import type { KarambitControls } from "./karambit-animator";
-import { createShellCasings } from "./shell-casings";
+import { AK_CASING, createShellCasings, M4_CASING } from "./shell-casings";
 import { INSPECT_MS, M4_INSPECT, sampleVec } from "./reload-animation";
 import { REMOTE_DELAY_MS, SnapshotClock, PlaybackDelay, boundedPlaybackMs } from "./network";
 import { createViewmodelMotion } from "./viewmodel-motion";
@@ -404,25 +404,35 @@ export function mountArena(
     authoredView.update(false, 0, 0);
     authoredView = chosen;
     inspectStart = -Infinity;
-    casings.clear();
+    for (const pool of Object.values(casingPools)) pool.clear();
   };
-  const casings = createShellCasings();
-  viewScene.add(casings.mesh);
+  /** Ejected cases per rifle: 5.56 brass for the M4, 7.62×39 lacquered steel for the AK. */
+  const casingPools = {
+    m4: createShellCasings(1, M4_CASING),
+    ak: createShellCasings(1, AK_CASING),
+  };
+  for (const pool of Object.values(casingPools)) viewScene.add(pool.mesh);
   let inspectStart = -Infinity;
   const ejectAt = new THREE.Vector3(),
     ejectRight = new THREE.Vector3(),
     ejectUp = new THREE.Vector3(),
     ejectBack = new THREE.Vector3();
-  /** Local M4 shot: eject a case from the port (visual only; AK unchanged). */
+  /** Local rifle shot: eject a case from the port (visual only). */
   const ejectCase = (now: number) => {
-    if (authoredView.variant !== "m4" || weapon !== "rifle") return;
+    if (weapon !== "rifle") return;
     if (!authoredView.ejectionPort(ejectAt)) return;
     weaponGroup.updateWorldMatrix(true, false);
     weaponGroup.localToWorld(ejectAt);
     ejectRight.set(1, 0, 0).transformDirection(weaponGroup.matrixWorld);
     ejectUp.set(0, 1, 0).transformDirection(weaponGroup.matrixWorld);
     ejectBack.set(0, 0, 1).transformDirection(weaponGroup.matrixWorld);
-    casings.emit(ejectAt, ejectRight, ejectUp, ejectBack, now);
+    casingPools[authoredView.variant === "m4" ? "m4" : "ak"].emit(
+      ejectAt,
+      ejectRight,
+      ejectUp,
+      ejectBack,
+      now,
+    );
   };
   let preparedAssets = 0;
   const visualReady = Promise.all(
@@ -1135,7 +1145,7 @@ export function mountArena(
       (framed ? rest.yaw : 0.18) + sway.yaw + (ir?.[1] ?? 0),
       (framed ? rest.roll : -0.02) + sway.roll - reloadTilt * 0.55 + (ir?.[2] ?? 0),
     );
-    casings.update(dt, now);
+    for (const pool of Object.values(casingPools)) pool.update(dt, now);
     rifle.visible = renderedWeapon === "rifle" && !authoredView.loaded;
     const spread =
       Math.round(((moving ? 3 : 0) + (airborne ? 4 : 0) + Math.min(5, recoilPitch * 45)) * 100) /
@@ -1406,7 +1416,7 @@ export function mountArena(
       authoredViews.m4.dispose();
       knifeViews.ak.dispose();
       knifeViews.m4.dispose();
-      casings.dispose();
+      for (const pool of Object.values(casingPools)) pool.dispose();
       weaponKit.dispose();
       environment.dispose();
       reflections?.dispose();
