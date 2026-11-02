@@ -1,4 +1,4 @@
-# Pool preview and FPS gameplay polish — pending release
+# Pool preview and FPS gameplay polish
 
 Status: the user authorized merging and deploying these fixes together with the maps on 2026-11-01. Combined branch: codex/fps-match-audio-movement-polish, incorporating main d3c6149. Rotation remains Dustfront-only until a separately authorized/pushed rotation update.
 
@@ -19,7 +19,7 @@ Status: the user authorized merging and deploying these fixes together with the 
 - All 24 isolated Durable Object WebSocket tests pass. Checks cover BO13 human admission, solo bot autonomy, strict-session behavior and event timestamps. A bot need not enter an idle human's line of sight within twelve seconds: the autonomy check now uses server-generated, coordinate-redacted footsteps.
 - Browser checks cover read-only lobby gestures (including outside-table cue dragging), playable Pool Practice on desktop/mobile, audio timeline/panning, original first-person assets, both character rigs, and both rifles at close range. Wrist-to-grasp separation is checked through crouch, pitch and reload states. Screenshots are under test-results/fps-close-world-A.png and fps-close-world-B.png.
 - Supabase staging rehearsal rolls back all synthetic entries, result intents and payouts. Checks cover legacy retries/join/settlement, new-room restrictions, BO13 create/rematch, rejection of six-win finals, exactly-once 7–6 settlement, unchanged 5% fee, ACLs and financial invariants.
-- The migration was temporarily applied to the isolated test project before the release hold, then removed/restored to match its currently deployed app. The final rehearsal is transaction-only. Production database and deployments were not changed.
+- The migration was temporarily applied to the isolated test project before the release hold, then removed/restored to match its currently deployed app. The final rehearsal is transaction-only. Production was unchanged during that rehearsal. The authorized production migration was subsequently applied on 2026-11-01 at 22:54 BRT, with entries paused and no active matches; the database release log records the successful baseline, privilege and financial checks.
 - TypeScript, edited-file lint, local production build and the guide validator pass. All 1,212 guides validate; existing missing-source warnings remain recorded rather than filled with invented citations.
 
 - Hosted two-user acceptance passed on staging for the combined map/polish build; the entry test asserts BO13 from both the live snapshot and stored room.
