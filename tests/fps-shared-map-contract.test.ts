@@ -63,46 +63,52 @@ describe("all maps inherit the shared FPS engine", () => {
         }
       },
     );
-    it(id + ": reachable low crates use the shared jump, without changing the map solids", () => {
-      const map = getMap(id),
-        before = JSON.stringify(map.boxes);
-      let checked = 0;
-      for (const b of map.boxes.filter(
-        (b) => b.h >= 1 && b.h <= 1.45 && Math.abs(b.y - b.h / 2) < 1e-6,
-      )) {
-        const top = b.y + b.h / 2;
-        if (isMovementBlocked(b.x, top, b.z, false, map)) continue;
-        let approach = false,
-          landed = false;
-        for (const [nx, nz, yaw] of [
-          [0, 1, 0],
-          [0, -1, Math.PI],
-          [1, 0, Math.PI / 2],
-          [-1, 0, -Math.PI / 2],
-        ]) {
-          const p = {
-            ...live(id).players.A,
-            x: b.x + nx! * ((nx ? b.w : b.d) / 2 + PLAYER_RADIUS + 0.35),
-            y: 0,
-            z: b.z + nz! * ((nx ? b.w : b.d) / 2 + PLAYER_RADIUS + 0.35),
-            velocityY: 0,
-          };
-          if (isMovementBlocked(p.x, 0, p.z, false, map)) continue;
-          approach = true;
-          for (let n = 0; n < 45; n++) {
-            const forward = (p.x - b.x) * nx! + (p.z - b.z) * nz! > 0.1 ? 1 : 0;
-            predictMovement(p, command(n + 1, { yaw: yaw!, forward, jump: n === 0 }), TICK_MS, map);
-            if (Math.abs(p.y - top) < 1e-6 && p.velocityY === 0) landed = true;
-          }
-          if (landed) break;
+    it(id + ": the original jump lands on reachable boxes and walls without extra lift", () => {
+      const original = getMap(id),
+        before = JSON.stringify(original.boxes);
+      for (const d of [0.4, 1.4]) {
+        const box = {
+          id: "reachable-cover",
+          x: 0,
+          y: 0.4,
+          z: 0,
+          w: 3,
+          h: 0.8,
+          d,
+          surface: "wood" as const,
+        };
+        const map = compileMap({
+          ...original,
+          boxes: [box],
+          barriers: [],
+          walls: [],
+          structures: [],
+          footsteps: { floor: "concrete" },
+        });
+        const p = {
+          ...live(id).players.A,
+          x: 0,
+          y: 0,
+          z: d / 2 + PLAYER_RADIUS + 0.35,
+          velocityY: 0,
+        };
+        let landed = false,
+          peak = 0;
+        for (let n = 0; n < 40; n++) {
+          predictMovement(
+            p,
+            command(n + 1, { forward: p.z > 0.1 ? 1 : 0, jump: n === 0 }),
+            TICK_MS,
+            map,
+          );
+          peak = Math.max(peak, p.y);
+          if (Math.abs(p.y - 0.8) < 1e-6 && p.velocityY === 0) landed = true;
         }
-        if (approach) {
-          expect(landed, id + ":" + b.id).toBe(true);
-          checked++;
-        }
+        expect(landed).toBe(true);
+        expect(peak).toBeLessThan(0.85);
+        expect(p.y).toBeCloseTo(0.8);
       }
-      expect(checked).toBeGreaterThan(0);
-      expect(JSON.stringify(map.boxes)).toBe(before);
+      expect(JSON.stringify(original.boxes)).toBe(before);
     });
     it(id + ": server footsteps follow authored ground and Shift walking stays silent", () => {
       const map = getMap(id),

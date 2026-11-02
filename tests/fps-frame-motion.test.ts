@@ -53,8 +53,8 @@ describe("continuous camera movement", () => {
       peak = Math.max(peak, y);
       previous = y;
     }
-    expect(peak).toBeGreaterThan(1.45);
-    expect(peak).toBeLessThan(1.7);
+    expect(peak).toBeGreaterThan(0.7);
+    expect(peak).toBeLessThan(0.85);
     expect(previous).toBe(0);
   });
 
