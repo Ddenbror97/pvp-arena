@@ -71,6 +71,19 @@ Note: the uploader states the mesh is not their own work ("all credits goes to t
 made counter strike"); the listed license may therefore not be valid. Review before public
 release.
 
+## CROSSFIRE helicopter wreck (in crossfire.glb)
+
+This work is based on "helicopter mi-8"
+(https://sketchfab.com/3d-models/helicopter-mi-8-aaa58674609e40feafe816909de65ff9)
+by mamont nikita (https://sketchfab.com/mamontnikita62), licensed under CC BY 4.0
+(http://creativecommons.org/licenses/by/4.0/). Modified: landing gear, weapon pylons and rotor
+blades removed, rescaled, cabin doors and window slits cut open, inner skin added, rear closed,
+tail boom broken into pieces, paint weathered (art/blender/crossfire/heli.py).
+Note: the file's internal names match Call of Duty asset naming, so the uploader's right to
+license it is uncertain. Review before public release.
+
+All other CROSSFIRE geometry and textures are project work (art/blender/crossfire).
+
 ## Project-owned visuals
 
 PVP spinArena branding and reference artwork were supplied by the project/user.

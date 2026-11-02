@@ -1,4 +1,5 @@
 import dustfrontLoading from "@/assets/fps/arena-loading.webp";
+import crossfireLoading from "@/assets/fps/crossfire-loading.webp";
 import frostlineLoading from "@/assets/fps/frostline-loading.webp";
 import lostTrailLoading from "@/assets/fps/lost-trail-loading.webp";
 import { ROTATION_MAP_IDS } from "./registry";
@@ -12,6 +13,7 @@ const LOADING_IMAGES: Readonly<Record<string, string>> = {
   dustfront: dustfrontLoading,
   frostline: frostlineLoading,
   "lost-trail": lostTrailLoading,
+  crossfire: crossfireLoading,
 };
 
 export const DEFAULT_LOADING_IMAGE = dustfrontLoading;

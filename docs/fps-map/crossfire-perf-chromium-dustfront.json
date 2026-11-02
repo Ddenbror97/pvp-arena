@@ -1,0 +1,82 @@
+{
+  "map": "dustfront",
+  "scale": 1,
+  "heapMB": 71.6,
+  "browser": "chromium",
+  "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "mountMs": 1568,
+  "readyMs": 27976,
+  "phases": {
+    "idle": {
+      "frames": 10,
+      "frameP50": 2466.4,
+      "frameP95": 7583,
+      "frameP99": 7583,
+      "avgFps": 0.4,
+      "low1Fps": 0.1,
+      "cpuP50": 6.3,
+      "cpuP95": 15.7,
+      "calls": 84,
+      "triangles": 158618,
+      "programs": 66,
+      "textures": 63,
+      "geometries": 124
+    },
+    "run-turn": {
+      "frames": 16,
+      "frameP50": 4766.5,
+      "frameP95": 6366.3,
+      "frameP99": 6366.3,
+      "avgFps": 0.4,
+      "low1Fps": 0.2,
+      "cpuP50": 5.5,
+      "cpuP95": 16.6,
+      "calls": 84,
+      "triangles": 158618,
+      "programs": 66,
+      "textures": 63,
+      "geometries": 124
+    },
+    "look-360": {
+      "frames": 18,
+      "frameP50": 5633.1,
+      "frameP95": 7183,
+      "frameP99": 7183,
+      "avgFps": 0.3,
+      "low1Fps": 0.1,
+      "cpuP50": 4,
+      "cpuP95": 10.4,
+      "calls": 83,
+      "triangles": 158616,
+      "programs": 66,
+      "textures": 63,
+      "geometries": 124
+    }
+  },
+  "lifecycle": [
+    {
+      "heapMB": 110.1,
+      "geometries": 60,
+      "textures": 32,
+      "readyMs": 12526
+    },
+    {
+      "heapMB": 115,
+      "geometries": 60,
+      "textures": 32,
+      "readyMs": 12567
+    },
+    {
+      "heapMB": 130.3,
+      "geometries": 60,
+      "textures": 32,
+      "readyMs": 12917
+    },
+    {
+      "heapMB": 130,
+      "geometries": 60,
+      "textures": 32,
+      "readyMs": 13619
+    }
+  ]
+}
