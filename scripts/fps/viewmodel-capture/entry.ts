@@ -3,6 +3,7 @@
  * the renderer's view-scene lighting, rendered at chosen clip times.
  */
 import * as THREE from "three";
+import type { KarambitControls } from "../../../src/lib/fps/karambit-animator";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { AK_VIEWMODEL, M4_VIEWMODEL } from "../../../src/lib/fps/authored-viewmodel";
 import {
@@ -16,6 +17,13 @@ type Shot = {
   t: number;
   name: string;
   rest?: [number, number, number, number, number, number];
+  /** Running carry pose weight (0–1) blended on top, as in game. */
+  run?: number;
+  /**
+   * Play the state machine instead of seeking a clip: draw, then each [seconds, moving]
+   * segment at 60 fps (moving 1 = running), and capture the last frame.
+   */
+  timeline?: Array<[number, number]>;
   /** Override the hand control: position (m) and Euler XYZ (rad), plus knife angle. */
   hand?: [number, number, number, number, number, number, number?];
 };
@@ -75,13 +83,30 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
   for (let waited = 0; unloaded() > 0 && waited < 5000; waited += 50)
     await new Promise((done) => setTimeout(done, 50));
   for (const shot of shots) {
-    const c = vm.animator!.seek(shot.clip, shot.t)!;
+    const frame = {
+      dt: 1 / 60,
+      equipped: true,
+      moving: 0,
+      walking: false,
+      backward: false,
+      strafe: 0,
+      airborne: false,
+      reducedMotion: false,
+    };
+    let c: KarambitControls;
+    if (shot.timeline) {
+      vm.animator!.update({ ...frame, equipped: false });
+      c = vm.animator!.update(frame);
+      for (const [seconds, moving] of shot.timeline)
+        for (let t = 0; t < seconds; t += 1 / 60) c = vm.animator!.update({ ...frame, moving });
+    } else c = vm.animator!.seek(shot.clip, shot.t)!;
     if (shot.hand) {
       const [x, y, z, rx, ry, rz, knife] = shot.hand;
       c.handPosition.set(x, y, z);
       c.handRotation.setFromEuler(new THREE.Euler(rx, ry, rz));
       if (knife !== undefined) c.knifeRotation.setFromAxisAngle(new THREE.Vector3(1, 0, 0), knife);
     }
+    if (shot.run) vm.animator!.applyRunPose(c, shot.run);
     vm.pose(c);
     group.position.set(
       rest.x + c.viewPosition.x,
