@@ -1,6 +1,6 @@
 # Pool preview and FPS gameplay polish — pending release
 
-Status: local branch codex/fps-match-audio-movement-polish. Do not merge or deploy until the user explicitly releases the hold.
+Status: the user authorized merging and deploying these fixes together with the maps on 2026-11-01. Combined branch: codex/fps-match-audio-movement-polish, incorporating main d3c6149. Rotation remains Dustfront-only until a separately authorized/pushed rotation update.
 
 ## Changes
 
@@ -22,8 +22,14 @@ Status: local branch codex/fps-match-audio-movement-polish. Do not merge or depl
 - The migration was temporarily applied to the isolated test project before the release hold, then removed/restored to match its currently deployed app. The final rehearsal is transaction-only. Production database and deployments were not changed.
 - TypeScript, edited-file lint, local production build and the guide validator pass. All 1,212 guides validate; existing missing-source warnings remain recorded rather than filled with invented citations.
 
-- Hosted two-user acceptance is held with deployment; it has not been claimed as completed for this branch. The release entry test now asserts BO13 from both the live snapshot and stored room.
+- Hosted two-user acceptance passed on staging for the combined map/polish build; the entry test asserts BO13 from both the live snapshot and stored room.
 
-## Eventual release
+## Combined map release
 
-The migration, website and match server must ship together, after existing matches finish. The migration is backward-compatible with historical rooms but new clients must not reach the old BO5/BO9 runtime/database. Use the repository's protected production configuration preparation and verification workflow; preserve financial flags and restricted session access. This note is not authorization to deploy.
+FROSTLINE and LOST TRAIL are included through the shared registry. The shared movement, opponent presentation, timing and sound contract is documented in [FPS-SHARED-MAP-PACK.md](FPS-SHARED-MAP-PACK.md). New metadata selects snow/dirt ground, cleared concrete, snow-covered tops and uncovered wood/metal without changing collision or hit materials. Per-map tests cover prediction/server agreement and every accessible low crate.
+
+Combined validation: 523 existing FPS unit tests passed (one pre-existing skip); the new shared-map contract adds 12 passing tests. Both runtime suites checked 28 tests: one timing-sensitive check failed under concurrent host load, then passed in isolation without changing thresholds. The staged hosted browser test passed for Practice and both human seats, confirming BO13 and no duplicate funding. FROSTLINE browser checks pass using the same Vite-resolved Three instance as the game; the opt-in screenshot-only case is skipped.
+
+## Release order
+
+The migration, website and match server must ship together, after existing matches finish. The migration is backward-compatible with historical rooms but new clients must not reach the old BO5/BO9 runtime/database. Use the repository's protected production configuration preparation and verification workflow; preserve financial flags and restricted session access. The user has authorized the combined release; the map rotation still follows the committed flags.

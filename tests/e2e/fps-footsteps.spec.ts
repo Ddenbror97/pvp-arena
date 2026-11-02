@@ -29,6 +29,9 @@ test("remote footsteps follow the displayed pose and live listener orientation",
     document.querySelector("canvas")!.addEventListener("click", () => void audio.unlock());
     Reflect.set(window, "stepTest", { view, audio, state, starts, pans });
   });
+  expect(
+    await page.evaluate(() => Reflect.get(window, "stepTest").audio.diagnostics.decoded),
+  ).toBeGreaterThanOrEqual(30);
   await page.locator("canvas").click();
   await page.waitForTimeout(100);
   await page.evaluate(() => {

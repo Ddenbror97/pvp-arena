@@ -1,3 +1,4 @@
+import { STEP_VARIANTS } from "./footstep-surfaces";
 import type { MatchState, Seat, Weapon } from "./protocol";
 import { footstepPan, materialFootstep } from "./footsteps";
 import { characterSide } from "./sides";
@@ -17,7 +18,11 @@ const SAMPLES = {
   step3: "step-3-v1.wav",
 } as const;
 type Sample =
-  keyof typeof SAMPLES | `step${number}-${"wood" | "metal"}` | "hurt" | "elimination" | "casing";
+  | keyof typeof SAMPLES
+  | `step${number}-${(typeof STEP_VARIANTS)[number]}`
+  | "hurt"
+  | "elimination"
+  | "casing";
 type Sides = Pick<MatchState, "round" | "bestOf" | "sideVersion">;
 export type CombatAudio = ReturnType<typeof createCombatAudio>;
 /** Recorded, normalized samples; one shared decode per sample and a bounded voice budget. */
@@ -190,7 +195,7 @@ export function createCombatAudio(
     )
       .then(() => {
         for (let n = 0; n < 4; n++)
-          for (const surface of ["wood", "metal"] as const) {
+          for (const surface of STEP_VARIANTS) {
             const key = ("step" + n + "-" + surface) as Sample;
             const source = buffers.get(("step" + n) as Sample);
             if (!source || buffers.has(key) || disposed) continue;
@@ -354,7 +359,9 @@ export function createCombatAudio(
         } else if (event.type === "step" && cue) {
           played.steps++;
           const surface =
-            cue.surface === "wood" || cue.surface === "metal" ? "-" + cue.surface : "";
+            cue.surface && STEP_VARIANTS.some((surface) => surface === cue.surface)
+              ? "-" + cue.surface
+              : "";
           const sample = ("step" + (played.steps % 4) + surface) as Sample;
           const level = gain * 0.75 * (cue.soft ? 0.1 : own ? 0.34 : 0.62);
           if (own || !event.at || !presentation) play(sample, level, pan, !!cue.occluded);

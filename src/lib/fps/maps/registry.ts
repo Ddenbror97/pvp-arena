@@ -1,3 +1,4 @@
+import { validateFootsteps } from "../footstep-surfaces";
 import type { Solid } from "../map";
 import { MAP_DEFINITIONS } from "./catalog";
 import type { GameMap, MapDefinition } from "./types";
@@ -37,6 +38,7 @@ const bounds = (b: Solid) => ({
 
 /** Derive the collision sets once per map (module load), never per tick. */
 export function compileMap(definition: MapDefinition): GameMap {
+  validateFootsteps(definition);
   const floor: Solid = {
     id: "floor",
     x: 0,

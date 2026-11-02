@@ -30,6 +30,15 @@ export const FROSTLINE: MapDefinition = {
   barriers: [],
   // Trodden snow over concrete: the existing concrete impacts and footsteps.
   floorSurface: "concrete",
+  footsteps: {
+    floor: "snow",
+    // Exterior crate/container roofs are capped with snow in frost_kit.py.
+    tops: Object.fromEntries(
+      FROSTLINE_BOXES.filter((b) => !b.id.startsWith("bay-")).map((b) => [b.id, "snow" as const]),
+    ),
+    // The covered loading bay has a cleared concrete floor and uncovered wood pallets.
+    regions: [{ x: 0, z: 14.75, w: 14, d: 2.5, surface: "concrete" }],
+  },
   spawns: FROSTLINE_SPAWNS,
   bot: {
     openings: {

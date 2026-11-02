@@ -111,7 +111,7 @@ export interface MatchState {
     };
     audio?: {
       kind: "shot" | "step" | "reload";
-      surface?: import("./map").Surface;
+      surface?: import("./footstep-surfaces").FootstepSurface;
       position?: import("./collision").Vector;
       gain?: number;
       pan?: number;

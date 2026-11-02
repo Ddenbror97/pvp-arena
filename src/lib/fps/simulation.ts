@@ -1,3 +1,4 @@
+import { footstepSurface } from "./footstep-surfaces";
 import { PLAYER_RADIUS, STEP_HEIGHT, eyeHeight } from "./map";
 import { DEFAULT_MAP, getMap, mapOf, type GameMap } from "./maps/registry";
 import { spawnSide, halftimeRound } from "./sides";
@@ -627,7 +628,7 @@ export function stepMatch(
             audio: {
               kind: "step",
               position: { x: p.x, y: p.y, z: p.z },
-              surface: floor?.surface ?? map.floor.surface,
+              surface: footstepSurface(map, p, floor),
               soft: !!p.crouched,
             },
           });
