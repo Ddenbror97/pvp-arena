@@ -70,7 +70,7 @@ export const guide: Guide = {
       a: "A self-custody wallet has no company vault that can claw funds back. Once someone spends from the key, the transfer is a normal blockchain transaction.",
     },
   ],
-    sources: [
+  sources: [
     {
       label: "MetaMask Help Center — Export an account private key",
       url: "https://support.metamask.io/configure/accounts/how-to-export-an-accounts-private-key/",

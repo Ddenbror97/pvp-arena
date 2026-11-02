@@ -162,7 +162,7 @@ Picking more spots does not invent an edge. [Keno strategy](/guides/keno-strateg
 
 The same paytables appear as [crypto keno](/guides/crypto-keno) when the cashier is a wallet.
 
-A three-digit draw is 1,000 straight outcomes, not a keno spot card. [The Pennsylvania chart](/guides/pick-3-lottery) does not print a hold percent.`
+A three-digit draw is 1,000 straight outcomes, not a keno spot card. [The Pennsylvania chart](/guides/pick-3-lottery) does not print a hold percent.`,
     },
   ],
   faqs: [

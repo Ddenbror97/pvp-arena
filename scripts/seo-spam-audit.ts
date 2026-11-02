@@ -102,10 +102,45 @@ function shingles(text: string): Set<number> {
 }
 
 const GENERIC_ENTITY = new Set([
-  "casino", "betting", "guide", "online", "play", "game", "games", "slot", "slots", "rules",
-  "review", "crypto", "poker", "odds", "explained", "strategy", "system", "bonus", "machine",
-  "real", "money", "best", "free", "live", "versus", "legal", "gambling", "with", "from",
-  "your", "that", "this", "what", "when", "where", "which", "into", "about", "than",
+  "casino",
+  "betting",
+  "guide",
+  "online",
+  "play",
+  "game",
+  "games",
+  "slot",
+  "slots",
+  "rules",
+  "review",
+  "crypto",
+  "poker",
+  "odds",
+  "explained",
+  "strategy",
+  "system",
+  "bonus",
+  "machine",
+  "real",
+  "money",
+  "best",
+  "free",
+  "live",
+  "versus",
+  "legal",
+  "gambling",
+  "with",
+  "from",
+  "your",
+  "that",
+  "this",
+  "what",
+  "when",
+  "where",
+  "which",
+  "into",
+  "about",
+  "than",
 ]);
 
 function entityTokensOf(g: Guide): Set<string> {
@@ -128,10 +163,28 @@ function jaccard(a: Set<number>, b: Set<number>): number {
 
 function keywordTokens(g: Guide): Set<string> {
   const stop = new Set([
-    "a", "an", "the", "of", "to", "and", "or", "for", "in", "on", "how", "what", "is", "are",
-    "with", "your", "you", "vs",
+    "a",
+    "an",
+    "the",
+    "of",
+    "to",
+    "and",
+    "or",
+    "for",
+    "in",
+    "on",
+    "how",
+    "what",
+    "is",
+    "are",
+    "with",
+    "your",
+    "you",
+    "vs",
   ]);
-  return new Set(tokens(`${g.keyword} ${g.slug.replace(/-/g, " ")}`).filter((t) => !stop.has(t) && t.length > 2));
+  return new Set(
+    tokens(`${g.keyword} ${g.slug.replace(/-/g, " ")}`).filter((t) => !stop.has(t) && t.length > 2),
+  );
 }
 
 function kwJaccard(a: Set<string>, b: Set<string>): number {
@@ -200,7 +253,9 @@ function clamp(n: number, lo: number, hi: number) {
 mkdirSync(OUT, { recursive: true });
 
 const publishedSlugs = new Set(GUIDES.map((g) => g.slug));
-const files = readdirSync("src/content/guides").filter((f) => f.endsWith(".ts") && f !== "index.ts" && f !== "types.ts");
+const files = readdirSync("src/content/guides").filter(
+  (f) => f.endsWith(".ts") && f !== "index.ts" && f !== "types.ts",
+);
 const unpublished = files
   .map((f) => f.replace(/\.ts$/, ""))
   .filter((slug) => !publishedSlugs.has(slug));
@@ -267,9 +322,17 @@ const prepared: Prepared[] = GUIDES.map((g, i) => {
     if (disclaimer) disclaimerWords += wc;
     if (!isRepeated && !plug && !disclaimer) kept.push(p);
   }
-  const substantive = [g.answer, ...g.facts, ...kept, ...g.faqs.flatMap((f) => [f.q, f.a])].join("\n\n");
+  const substantive = [g.answer, ...g.facts, ...kept, ...g.faqs.flatMap((f) => [f.q, f.a])].join(
+    "\n\n",
+  );
   const entity = entityTokensOf(g);
-  const raw = [g.h1, g.answer, ...g.facts, ...g.sections.flatMap((s) => [s.title, s.body]), ...g.faqs.flatMap((f) => [f.q, f.a])].join("\n\n");
+  const raw = [
+    g.h1,
+    g.answer,
+    ...g.facts,
+    ...g.sections.flatMap((s) => [s.title, s.body]),
+    ...g.faqs.flatMap((f) => [f.q, f.a]),
+  ].join("\n\n");
   return {
     g,
     own,
@@ -315,8 +378,14 @@ for (const idxs of byCluster.values()) {
       if (sim >= 0.28 || entitySim >= 0.6 || kw >= 0.6) edges.push([i, j, sim, kw, entitySim]);
       if (sim > nearest[i]!.j) nearest[i] = { ...nearest[i]!, j: sim, idx: j, kw };
       if (sim > nearest[j]!.j) nearest[j] = { ...nearest[j]!, j: sim, idx: i, kw };
-      if (entitySim > nearest[i]!.entityJ) nearest[i]!.entityJ = entitySim, nearest[i]!.entityIdx = j;
-      if (entitySim > nearest[j]!.entityJ) nearest[j]!.entityJ = entitySim, nearest[j]!.entityIdx = i;
+      if (entitySim > nearest[i]!.entityJ) {
+        nearest[i]!.entityJ = entitySim;
+        nearest[i]!.entityIdx = j;
+      }
+      if (entitySim > nearest[j]!.entityJ) {
+        nearest[j]!.entityJ = entitySim;
+        nearest[j]!.entityIdx = i;
+      }
     }
   }
 }
@@ -491,7 +560,8 @@ function scoreGuide(p: Prepared, i: number): Scored {
   else if (near.j < 0.15 && near.entityJ < 0.45 && p.disclaimerShare < 0.06) originality = 5;
 
   let factual = sources >= 3 ? 4 : sources >= 1 ? 3 : 2;
-  if (sources >= 3 && /gov|statute|regulator|commission|wiki|official/i.test(p.external.join(" "))) factual = 5;
+  if (sources >= 3 && /gov|statute|regulator|commission|wiki|official/i.test(p.external.join(" ")))
+    factual = 5;
   if (p.profit) factual = Math.min(factual, 2);
   if (p.intent.startsWith("commercial") && sources < 2) factual = Math.min(factual, 3);
 
@@ -515,7 +585,8 @@ function scoreGuide(p: Prepared, i: number): Scored {
   const titleLen = p.g.title.length;
   const descLen = p.g.description.length;
   let editorial = 4;
-  if (titleLen >= 40 && titleLen <= 59 && descLen >= 120 && descLen <= 159 && sections >= 5) editorial = 5;
+  if (titleLen >= 40 && titleLen <= 59 && descLen >= 120 && descLen <= 159 && sections >= 5)
+    editorial = 5;
   else if (titleLen < 30 || descLen < 90 || sections < 4) editorial = 3;
   const density = tokens(p.g.keyword).filter((t) => t.length > 3);
   const hay = tokens(p.raw);
@@ -526,13 +597,27 @@ function scoreGuide(p: Prepared, i: number): Scored {
 
   let examples = p.worked ? 4 : 2;
   if (p.table && p.worked) examples = 5;
-  if (!p.worked && (p.intent === "informational: odds and math" || p.g.cluster === "Slots")) examples = 2;
+  if (!p.worked && (p.intent === "informational: odds and math" || p.g.cluster === "Slots"))
+    examples = 2;
 
   const technical = /^\d{4}-\d{2}-\d{2}$/.test(p.g.updated) ? 5 : 3;
 
-  const scores = { intent, originality, factual, practical, trust, uniqueness, editorial, examples, technical };
+  const scores = {
+    intent,
+    originality,
+    factual,
+    practical,
+    trust,
+    uniqueness,
+    editorial,
+    examples,
+    technical,
+  };
   const quality = Math.round(
-    Object.entries(WEIGHTS).reduce((sum, [k, w]) => sum + (scores[k as keyof typeof scores] / 5) * w, 0),
+    Object.entries(WEIGHTS).reduce(
+      (sum, [k, w]) => sum + (scores[k as keyof typeof scores] / 5) * w,
+      0,
+    ),
   );
 
   const thirdPartyReview = p.intent === "commercial investigation: review";
@@ -547,12 +632,21 @@ function scoreGuide(p: Prepared, i: number): Scored {
   if (policy === "human_review") action = "Policy investigation";
   else if (near.j >= 0.42 && near.kw >= 0.4) action = "Consolidate";
   else if (near.entityJ >= 0.68 && near.j >= 0.28) action = "Rewrite";
-  else if (legalThinSources || (thirdPartyReview && sources < 1) || p.disclaimerShare >= 0.1 || near.j >= 0.28)
+  else if (
+    legalThinSources ||
+    (thirdPartyReview && sources < 1) ||
+    p.disclaimerShare >= 0.1 ||
+    near.j >= 0.28
+  )
     action = "Improve";
 
   const enhancements: string[] = [];
   const gameFit = gameFitOf(p);
-  if (!p.table && (p.intent === "informational: odds and math" || /vs|alternatives|compare|paytable|payment/.test(p.g.slug)))
+  if (
+    !p.table &&
+    (p.intent === "informational: odds and math" ||
+      /vs|alternatives|compare|paytable|payment/.test(p.g.slug))
+  )
     enhancements.push("Add original comparison table");
   if (
     p.bullets < 6 &&
@@ -561,9 +655,13 @@ function scoreGuide(p: Prepared, i: number): Scored {
       /checklist|security|withdrawal|wagering|responsible/.test(p.g.slug))
   )
     enhancements.push("Add checklist");
-  if (!p.worked && (p.intent === "informational: odds and math" || p.intent === "informational: how-to or rules"))
+  if (
+    !p.worked &&
+    (p.intent === "informational: odds and math" || p.intent === "informational: how-to or rules")
+  )
     enhancements.push("Add practical example");
-  if (gameFit === "direct" || gameFit === "illustration") enhancements.push("Add verified real game data");
+  if (gameFit === "direct" || gameFit === "illustration")
+    enhancements.push("Add verified real game data");
   if (enhancements.length === 0) enhancements.push("No additional element needed");
 
   let priority = "P4";
@@ -583,13 +681,19 @@ function scoreGuide(p: Prepared, i: number): Scored {
     `${p.words} words, ${sections} sections, ${faqs} FAQs, ${sources} sources`,
     p.table ? "has a pipe table" : "no pipe table",
     p.worked ? "contains a numeric or worked example" : "no worked numeric example detected",
-    p.profit ? "affirmative profit-promise phrasing matched" : "no affirmative profit-promise phrasing matched",
+    p.profit
+      ? "affirmative profit-promise phrasing matched"
+      : "no affirmative profit-promise phrasing matched",
   ].join("; ");
 
   const ymyl = [
     "No named author; Article schema uses the organization, matching /editorial.",
-    p.intent === "informational: legality" ? "Jurisdiction page: statutes can change; sources required before relying on it." : "",
-    thirdPartyReview ? "Third-party review: bonuses, licences, and RTP are not in the site game database." : "",
+    p.intent === "informational: legality"
+      ? "Jurisdiction page: statutes can change; sources required before relying on it."
+      : "",
+    thirdPartyReview
+      ? "Third-party review: bonuses, licences, and RTP are not in the site game database."
+      : "",
     p.profit ? "Possible misleading outcome language." : "",
   ]
     .filter(Boolean)
@@ -626,9 +730,12 @@ function scoreGuide(p: Prepared, i: number): Scored {
 }
 
 function gameFitOf(p: Prepared): "direct" | "illustration" | "none" {
-  if (p.own || p.g.cluster === "Provably fair" || p.g.cluster === "Games & odds") return p.own ? "direct" : "illustration";
-  if (/payline|volatility|rtp|house-edge|provably|fairness|bankroll|variance/.test(p.g.slug)) return "illustration";
-  if (p.g.cluster === "Poker" && /holdem|rake|blind|position|pot-odds|hand-ranking/.test(p.g.slug)) return "illustration";
+  if (p.own || p.g.cluster === "Provably fair" || p.g.cluster === "Games & odds")
+    return p.own ? "direct" : "illustration";
+  if (/payline|volatility|rtp|house-edge|provably|fairness|bankroll|variance/.test(p.g.slug))
+    return "illustration";
+  if (p.g.cluster === "Poker" && /holdem|rake|blind|position|pot-odds|hand-ranking/.test(p.g.slug))
+    return "illustration";
   return "none";
 }
 
@@ -703,10 +810,10 @@ const inventoryHeaders = [
   "http_status",
   "in_sitemap",
   "similarity_cluster",
-    "max_substantive_jaccard",
-    "nearest_slug",
-    "entity_normalized_jaccard",
-    "entity_nearest_slug",
+  "max_substantive_jaccard",
+  "nearest_slug",
+  "entity_normalized_jaccard",
+  "entity_nearest_slug",
   "keyword_overlap",
   "boilerplate_paragraph_share",
   "house_plug_share",
@@ -876,7 +983,9 @@ dupGroups.forEach((group, n) => {
     "5-gram Jaccard after removing repeated paragraphs and off-topic house-game closers",
     "Pages still share a large fraction of wording after template removal",
     "Readers looking for a specific entity may land on a page that repeats a sibling guide",
-    stats.max >= 0.55 ? "Consolidate after a human read of the pair" : "Differentiate the overlapping sections; do not merge on the score alone",
+    stats.max >= 0.55
+      ? "Consolidate after a human read of the pair"
+      : "Differentiate the overlapping sections; do not merge on the score alone",
     "medium",
   ]);
 });
@@ -930,8 +1039,12 @@ for (const p of scored) {
       p.own
         ? "Compare the five live games on entry, draw, fee, and what fairness does not change"
         : "Restructure the comparison already implied by the headings. Leave unknown cells blank.",
-      p.own ? "GAME_FACT_PAGES in src/lib/seo/game-facts.ts" : "No internal dataset. Cite the guide's existing sources or mark unverified.",
-      p.own ? "none for the published rules" : "Third-party RTP, volatility, and bonus terms are not in the repo",
+      p.own
+        ? "GAME_FACT_PAGES in src/lib/seo/game-facts.ts"
+        : "No internal dataset. Cite the guide's existing sources or mark unverified.",
+      p.own
+        ? "none for the published rules"
+        : "Third-party RTP, volatility, and bonus terms are not in the repo",
       "A table lets the reader compare one decision at a time instead of rereading prose",
       p.priority,
       "medium",
@@ -960,7 +1073,9 @@ for (const p of scored) {
       p.g.cluster,
       p.intent,
       "One hypothetical with the stake, the rule, and the result labeled as hypothetical",
-      p.own ? "src/lib/seo/game-facts.ts and src/lib/slott/paytable.ts where the example is our game" : "The guide's own definitions. Do not invent a session result.",
+      p.own
+        ? "src/lib/seo/game-facts.ts and src/lib/slott/paytable.ts where the example is our game"
+        : "The guide's own definitions. Do not invent a session result.",
       "No player-level outcome logs are in the repo",
       "Shows the rule operating on a number the reader can recompute",
       p.priority,
@@ -1209,7 +1324,15 @@ writeCsv(
 
 writeCsv(
   "template-families.csv",
-  ["family_id", "url", "cluster", "automated_action", "policy_risk", "quality_score", "fingerprint"],
+  [
+    "family_id",
+    "url",
+    "cluster",
+    "automated_action",
+    "policy_risk",
+    "quality_score",
+    "fingerprint",
+  ],
   [...families.entries()].flatMap(([i, ids]) =>
     ids.map((id) => [
       id,
@@ -1225,7 +1348,9 @@ writeCsv(
 
 const plugRanked = [...scored].sort((a, b) => b.plugShare - a.plugShare).slice(0, 25);
 const simRanked = [...scored].sort((a, b) => b.nearestJ - a.nearestJ).slice(0, 25);
-const lowSourcesLegal = scored.filter((p) => p.intent === "informational: legality" && p.g.sources.length < 2);
+const lowSourcesLegal = scored.filter(
+  (p) => p.intent === "informational: legality" && p.g.sources.length < 2,
+);
 
 const actionCounts: Record<string, number> = {};
 const policyCounts: Record<string, number> = {};
@@ -1270,7 +1395,8 @@ const summary = {
   game_data_opps: gameOpp.length,
   keyword_skeleton: scored.filter((_, i) => families.get(i)?.includes("keyword-skeleton")).length,
   shared_disclaimer: scored.filter((_, i) => families.get(i)?.includes("shared-disclaimer")).length,
-  repeated_fee_block: scored.filter((_, i) => families.get(i)?.includes("repeated-fee-block")).length,
+  repeated_fee_block: scored.filter((_, i) => families.get(i)?.includes("repeated-fee-block"))
+    .length,
   low_source_legal: lowSourcesLegal.length,
   orphanish: scored.filter((p) => (inlinkCount.get(p.g.slug) ?? 0) <= 1).length,
   top_plug: plugRanked.map((p) => ({
@@ -1299,21 +1425,27 @@ const summary = {
 };
 
 writeFileSync(join(OUT, "summary.json"), JSON.stringify(summary, null, 2));
-console.log(JSON.stringify({
-  published: summary.guides_published,
-  unpublished: unpublished.length,
-  actions: actionCounts,
-  policy: policyCounts,
-  dup: dupGroups.length,
-  intent: intentGroups.length,
-  quality_mean: summary.quality_mean,
-  jaccard_over_0_38: summary.jaccard_over_0_38,
-  entity_over_0_72: summary.entity_jaccard_over_0_72,
-  disclaimer_over_0_12: summary.disclaimer_over_0_12,
-  plug_over_0_12: summary.plug_share_over_0_12,
-  tables: summary.table_opps,
-  checks: summary.checklist_opps,
-  examples: summary.example_opps,
-  game_opps: summary.game_data_opps,
-  zero_sources: summary.zero_sources,
-}, null, 2));
+console.log(
+  JSON.stringify(
+    {
+      published: summary.guides_published,
+      unpublished: unpublished.length,
+      actions: actionCounts,
+      policy: policyCounts,
+      dup: dupGroups.length,
+      intent: intentGroups.length,
+      quality_mean: summary.quality_mean,
+      jaccard_over_0_38: summary.jaccard_over_0_38,
+      entity_over_0_72: summary.entity_jaccard_over_0_72,
+      disclaimer_over_0_12: summary.disclaimer_over_0_12,
+      plug_over_0_12: summary.plug_share_over_0_12,
+      tables: summary.table_opps,
+      checks: summary.checklist_opps,
+      examples: summary.example_opps,
+      game_opps: summary.game_data_opps,
+      zero_sources: summary.zero_sources,
+    },
+    null,
+    2,
+  ),
+);

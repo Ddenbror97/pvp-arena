@@ -158,7 +158,10 @@ Open the pot from [Jackpot](/) only if a player pot is what you meant to play. I
   sources: [
     { label: "Powerball", url: "https://www.powerball.com/" },
     { label: "Mega Millions", url: "https://www.megamillions.com/" },
-    { label: "IRS Topic 419, Gambling Income and Losses", url: "https://www.irs.gov/taxtopics/tc419" },
+    {
+      label: "IRS Topic 419, Gambling Income and Losses",
+      url: "https://www.irs.gov/taxtopics/tc419",
+    },
   ],
   related: [
     "what-to-do-if-you-win-the-lottery",

@@ -1,6 +1,6 @@
 /** Label and fill for the roulette countdown. One clock, so the bar cannot say a round is waiting while it is already counting. */
 
-export type CountdownRound = {
+type CountdownRound = {
   status: string;
   created_at?: string | null;
   betting_seconds?: number | null;

@@ -210,13 +210,34 @@ Use the checklist on Metaspins before you fund it. A forum code is not a page th
   ],
   sources: [
     { label: "Metaspins homepage, opened 20 October 2026", url: "https://metaspins.com/" },
-    { label: "Metaspins terms, last update 29 July 2026", url: "https://metaspins.com/info/terms-and-conditions/" },
-    { label: "Metaspins KYC policy, opened 20 October 2026", url: "https://metaspins.com/info/kyc-policy/" },
-    { label: "Metaspins complaints policy, opened 20 October 2026", url: "https://metaspins.com/info/complaints-policy/" },
-    { label: "Metaspins sportsbook rules, opened 20 October 2026", url: "https://metaspins.com/info/sports-rules/" },
-    { label: "Metaspins welcome bonus URL, HTTP 403 on 20 October 2026", url: "https://metaspins.com/promotions/casino-welcome-bonus/" },
-    { label: "Metaspins casino URL, HTTP 403 on 20 October 2026", url: "https://metaspins.com/casino/" },
-    { label: "Metaspins zero-fees URL, HTTP 403 on 20 October 2026", url: "https://metaspins.com/promotions/zero-fees/" },
+    {
+      label: "Metaspins terms, last update 29 July 2026",
+      url: "https://metaspins.com/info/terms-and-conditions/",
+    },
+    {
+      label: "Metaspins KYC policy, opened 20 October 2026",
+      url: "https://metaspins.com/info/kyc-policy/",
+    },
+    {
+      label: "Metaspins complaints policy, opened 20 October 2026",
+      url: "https://metaspins.com/info/complaints-policy/",
+    },
+    {
+      label: "Metaspins sportsbook rules, opened 20 October 2026",
+      url: "https://metaspins.com/info/sports-rules/",
+    },
+    {
+      label: "Metaspins welcome bonus URL, HTTP 403 on 20 October 2026",
+      url: "https://metaspins.com/promotions/casino-welcome-bonus/",
+    },
+    {
+      label: "Metaspins casino URL, HTTP 403 on 20 October 2026",
+      url: "https://metaspins.com/casino/",
+    },
+    {
+      label: "Metaspins zero-fees URL, HTTP 403 on 20 October 2026",
+      url: "https://metaspins.com/promotions/zero-fees/",
+    },
   ],
   related: [
     "gamba-casino-review",

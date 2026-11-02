@@ -19,7 +19,8 @@ const env = Object.fromEntries(
 );
 const ref = env.TEST_PROJECT_REF;
 if (ref !== "ljpqxsndqywbndnpitja") throw new Error("unexpected test ref");
-for (const bad of FORBIDDEN) if (`${env.TEST_SUPABASE_URL} ${ref}`.includes(bad)) throw new Error("forbidden ref");
+for (const bad of FORBIDDEN)
+  if (`${env.TEST_SUPABASE_URL} ${ref}`.includes(bad)) throw new Error("forbidden ref");
 
 const source = readFileSync("src/integrations/supabase/client.ts", "utf8");
 if (!source.includes('headers.delete("Authorization")')) {
@@ -32,9 +33,14 @@ function isNewSupabaseApiKey(value) {
 
 function createSupabaseFetch(supabaseKey) {
   return (input, init) => {
-    const headers = new Headers(typeof Request !== "undefined" && input instanceof Request ? input.headers : undefined);
+    const headers = new Headers(
+      typeof Request !== "undefined" && input instanceof Request ? input.headers : undefined,
+    );
     if (init?.headers) new Headers(init.headers).forEach((value, key) => headers.set(key, value));
-    if (isNewSupabaseApiKey(supabaseKey) && headers.get("Authorization") === `Bearer ${supabaseKey}`) {
+    if (
+      isNewSupabaseApiKey(supabaseKey) &&
+      headers.get("Authorization") === `Bearer ${supabaseKey}`
+    ) {
       headers.delete("Authorization");
     }
     headers.set("apikey", supabaseKey);
@@ -45,7 +51,9 @@ function createSupabaseFetch(supabaseKey) {
 const url = env.TEST_SUPABASE_URL;
 const publishable = env.TEST_PUBLISHABLE_KEY;
 const raw = createClient(url, publishable);
-const wrapped = createClient(url, publishable, { global: { fetch: createSupabaseFetch(publishable) } });
+const wrapped = createClient(url, publishable, {
+  global: { fetch: createSupabaseFetch(publishable) },
+});
 const authed = createClient(url, env.TEST_ANON_JWT);
 
 const sql = postgres(
@@ -79,15 +87,27 @@ const results = [];
 const wallets = await fetch(`${url}/rest/v1/wallet_accounts?select=owner_id,balance`, {
   headers: { apikey: publishable, authorization: `Bearer ${publishable}` },
 });
-results.push({ check: "anon wallet select", status: wallets.status, body: (await wallets.text()).slice(0, 80) });
+results.push({
+  check: "anon wallet select",
+  status: wallets.status,
+  body: (await wallets.text()).slice(0, 80),
+});
 const secrets = await fetch(`${url}/rest/v1/pool_secrets?select=match_id`, {
   headers: { apikey: publishable, authorization: `Bearer ${publishable}` },
 });
-results.push({ check: "anon pool_secrets", status: secrets.status, body: (await secrets.text()).slice(0, 80) });
+results.push({
+  check: "anon pool_secrets",
+  status: secrets.status,
+  body: (await secrets.text()).slice(0, 80),
+});
 const ledger = await fetch(`${url}/rest/v1/ledger_postings?select=id`, {
   headers: { apikey: env.TEST_ANON_JWT, authorization: `Bearer ${env.TEST_ANON_JWT}` },
 });
-results.push({ check: "anon jwt ledger", status: ledger.status, body: (await ledger.text()).slice(0, 80) });
+results.push({
+  check: "anon jwt ledger",
+  status: ledger.status,
+  body: (await ledger.text()).slice(0, 80),
+});
 
 const PRIVATE_KEY = /^(server_seed|balance|ledger_tx_id|idempotency_key|owner_id)$/;
 
@@ -139,7 +159,12 @@ results.push({
 
 const rawListen = listen(raw, `raw-${matchId}`, "pool_matches", `id=eq.${matchId}`);
 const wrappedListen = listen(wrapped, `wrap-${matchId}`, "pool_matches", `id=eq.${matchId}`);
-const rawSecretListen = listen(raw, `raw-secret-${matchId}`, "pool_secrets", `match_id=eq.${matchId}`);
+const rawSecretListen = listen(
+  raw,
+  `raw-secret-${matchId}`,
+  "pool_secrets",
+  `match_id=eq.${matchId}`,
+);
 const rawWalletListen = listen(raw, `raw-wallet-${matchId}`, "wallet_accounts");
 const walletListen = listen(authed, `wallet-${matchId}`, "wallet_accounts");
 await new Promise((resolve) => setTimeout(resolve, 2500));
@@ -153,13 +178,8 @@ await sql`
     limit 1
   )
 `;
-const [rawResult, wrappedResult, rawSecretResult, rawWalletResult, walletResult] = await Promise.all([
-  rawListen,
-  wrappedListen,
-  rawSecretListen,
-  rawWalletListen,
-  walletListen,
-]);
+const [rawResult, wrappedResult, rawSecretResult, rawWalletResult, walletResult] =
+  await Promise.all([rawListen, wrappedListen, rawSecretListen, rawWalletListen, walletListen]);
 const rawRows = rowEvents(rawResult.events);
 const wrappedRows = rowEvents(wrappedResult.events);
 const rawKeys = columnKeys(rawResult.events);
@@ -209,16 +229,38 @@ await sql.end();
 console.log(JSON.stringify(results, null, 2));
 const walletDenied = results.find((row) => row.check === "anon wallet select")?.status === 401;
 const secretsDenied = results.find((row) => row.check === "anon pool_secrets")?.status === 401;
-const ledgerDenied = [401, 403].includes(results.find((row) => row.check === "anon jwt ledger")?.status);
+const ledgerDenied = [401, 403].includes(
+  results.find((row) => row.check === "anon jwt ledger")?.status,
+);
 const rawPublic = results.find((row) => row.check === "raw publishable pool update");
 const wrappedPublic = results.find((row) => row.check === "frontend wrapper pool update");
-const rawSawPublic = rawPublic?.events > 0 && rawPublic.seedPresent === false && rawPublic.privateKey === false;
-const wrappedSaw = wrappedPublic?.events > 0 && wrappedPublic.seedPresent === false && wrappedPublic.privateKey === false;
+const rawSawPublic =
+  rawPublic?.events > 0 && rawPublic.seedPresent === false && rawPublic.privateKey === false;
+const wrappedSaw =
+  wrappedPublic?.events > 0 &&
+  wrappedPublic.seedPresent === false &&
+  wrappedPublic.privateKey === false;
 const publishedTables = results.find((row) => row.check === "realtime publication")?.tables ?? [];
-const secretsUnpublished = publishedTables.includes("pool_matches") && !publishedTables.includes("pool_secrets") && !publishedTables.includes("pool_entries");
-const secretsHidden = results.find((row) => row.check === "raw publishable pool_secrets payloads")?.payloads === 0 && secretsUnpublished;
-const rawWalletHidden = results.find((row) => row.check === "raw publishable wallet payloads")?.payloads === 0;
-const walletHidden = results.find((row) => row.check === "anon wallet realtime payloads")?.payloads === 0;
-if (!walletDenied || !secretsDenied || !ledgerDenied || !rawSawPublic || !wrappedSaw || !secretsHidden || !rawWalletHidden || !walletHidden) {
+const secretsUnpublished =
+  publishedTables.includes("pool_matches") &&
+  !publishedTables.includes("pool_secrets") &&
+  !publishedTables.includes("pool_entries");
+const secretsHidden =
+  results.find((row) => row.check === "raw publishable pool_secrets payloads")?.payloads === 0 &&
+  secretsUnpublished;
+const rawWalletHidden =
+  results.find((row) => row.check === "raw publishable wallet payloads")?.payloads === 0;
+const walletHidden =
+  results.find((row) => row.check === "anon wallet realtime payloads")?.payloads === 0;
+if (
+  !walletDenied ||
+  !secretsDenied ||
+  !ledgerDenied ||
+  !rawSawPublic ||
+  !wrappedSaw ||
+  !secretsHidden ||
+  !rawWalletHidden ||
+  !walletHidden
+) {
   process.exitCode = 1;
 }

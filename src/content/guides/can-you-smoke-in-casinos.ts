@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "can-you-smoke-in-casinos",
   cluster: "Casino knowledge",
   keyword: "can you smoke in casinos",
-  secondary: [
-    "nevada clean indoor air act",
-    "casino smoking exception",
-    "nonsmoking section",
-  ],
+  secondary: ["nevada clean indoor air act", "casino smoking exception", "nonsmoking section"],
   title: "Can you smoke in casinos? Nevada prints an exception",
   description:
     "Can you smoke in casinos is not one national yes. Nevada's indoor-air statute excepts some casino areas and still lets a property go smoke-free.",

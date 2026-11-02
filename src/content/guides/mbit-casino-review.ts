@@ -219,11 +219,26 @@ Use this page before you fund mBit Casino, and ignore a forum code. [Signs a lob
     },
   ],
   sources: [
-    { label: "mBit player terms, opened 20 October 2026", url: "https://www.mbitcasino.io/terms/player-terms" },
-    { label: "mBit bonus terms, opened 20 October 2026", url: "https://www.mbitcasino.io/terms/bonus-terms" },
-    { label: "mBit withdrawal help, opened 20 October 2026", url: "https://help.mbitcasino.io/en/articles/8123829-how-to-request-a-withdrawal" },
-    { label: "mBit gaming-licence heading, opened 20 October 2026", url: "https://www.mbitcasino.io/about/gaming-license" },
-    { label: "Curaçao certificate listing mbitcasino.io, opened 20 October 2026", url: "https://cert.cga.cw/token?id=748" },
+    {
+      label: "mBit player terms, opened 20 October 2026",
+      url: "https://www.mbitcasino.io/terms/player-terms",
+    },
+    {
+      label: "mBit bonus terms, opened 20 October 2026",
+      url: "https://www.mbitcasino.io/terms/bonus-terms",
+    },
+    {
+      label: "mBit withdrawal help, opened 20 October 2026",
+      url: "https://help.mbitcasino.io/en/articles/8123829-how-to-request-a-withdrawal",
+    },
+    {
+      label: "mBit gaming-licence heading, opened 20 October 2026",
+      url: "https://www.mbitcasino.io/about/gaming-license",
+    },
+    {
+      label: "Curaçao certificate listing mbitcasino.io, opened 20 October 2026",
+      url: "https://cert.cga.cw/token?id=748",
+    },
   ],
   related: [
     "7bit-casino-review",

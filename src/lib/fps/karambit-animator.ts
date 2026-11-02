@@ -9,7 +9,7 @@ import * as THREE from "three";
  * slash, stab) cross-fade on one layer; walking, running, strafing and landing are additive
  * layers on top. Purely cosmetic: attacks here are local presentation; the server decides hits.
  */
-export type KarambitState = "hidden" | "equip" | "idle" | "trick" | "inspect" | "slash" | "stab";
+type KarambitState = "hidden" | "equip" | "idle" | "trick" | "inspect" | "slash" | "stab";
 export const KARAMBIT_TRICKS = [
   "karambit_idle_spin",
   "karambit_reverse_grip",

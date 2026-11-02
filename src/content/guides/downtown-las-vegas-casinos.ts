@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "downtown-las-vegas-casinos",
   cluster: "Casino knowledge",
   keyword: "downtown las vegas casinos",
-  secondary: [
-    "fremont street experience",
-    "circa las vegas address",
-    "golden nugget fremont",
-  ],
+  secondary: ["fremont street experience", "circa las vegas address", "golden nugget fremont"],
   title: "Downtown Las Vegas casinos: Fremont, not a ranking",
   description:
     "Downtown Las Vegas casinos on Fremont Street, from pages that print addresses and a five-block canopy. No hotel count and no invented star score.",

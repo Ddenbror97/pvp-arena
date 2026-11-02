@@ -85,7 +85,7 @@ function path(map: GameMap, from: Point, to: Point): Point[] {
  * an opening, the enemy spawn exit (so a camping player is found), the flank opposite the
  * opening, then a regroup point.
  */
-export type PracticeStyle = "push" | "slow" | "lurk";
+type PracticeStyle = "push" | "slow" | "lurk";
 type Opening = BotOpening;
 const STYLES: readonly PracticeStyle[] = ["push", "slow", "lurk"];
 const OPENINGS: readonly Opening[] = ["center", "north", "south"];

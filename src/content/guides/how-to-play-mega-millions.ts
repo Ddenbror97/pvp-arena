@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "how-to-play-mega-millions",
   cluster: "Lottery",
   keyword: "how to play mega millions",
-  secondary: [
-    "mega millions rules",
-    "mega millions drawing",
-    "megaplier",
-    "mega ball",
-  ],
+  secondary: ["mega millions rules", "mega millions drawing", "megaplier", "mega ball"],
   title: "How to Play Mega Millions: Rules, Odds and Prize Tiers",
   description:
     "How to play Mega Millions in plain English: picking numbers, the Megaplier, drawing days, every prize tier and the true odds of winning the jackpot.",
@@ -141,7 +136,7 @@ Finished PvP rounds are checked on [Fairness](/fairness). The pot is [Jackpot](/
 
 Adults 18 and older. If two drawings a week have become a bill you hide, the right next page is [responsible gambling](/responsible-gambling), not another matrix.
 
-Four digits are 10,000 straight outcomes on the Pennsylvania chart. [That four-digit table](/guides/pick-4-lottery) is not this matrix, and the four-of-a-kind box prize stays unpublished.`
+Four digits are 10,000 straight outcomes on the Pennsylvania chart. [That four-digit table](/guides/pick-4-lottery) is not this matrix, and the four-of-a-kind box prize stays unpublished.`,
     },
   ],
   faqs: [

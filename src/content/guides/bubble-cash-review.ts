@@ -9,8 +9,7 @@ export const guide: Guide = {
   description:
     "Bubble cash is a skill-match app search, separate from a craps machine. Dice rules stay off this page. Suppose a $24 prize on $32 of entries. Our pot is $39.",
   h1: "Bubble cash in 2026: a skill-match search, not a craps table",
-  answer:
-    `Bubble cash is a skill-match app search, and it is a different query from a bubble craps machine. Dice rules live on another page and are not repeated here.
+  answer: `Bubble cash is a skill-match app search, and it is a different query from a bubble craps machine. Dice rules live on another page and are not repeated here.
 
 A prize screen can show a purse that is smaller than the entries. Suppose eight players pay $4 and the shown prize is $24.
 

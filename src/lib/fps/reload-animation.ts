@@ -18,7 +18,7 @@
  * which is what produces the AK's characteristic rock-out / rock-in instead of a straight drop.
  */
 
-export type Ease = (t: number) => number;
+type Ease = (t: number) => number;
 export const EASE = {
   linear: (t: number) => t,
   inOut: (t: number) => t * t * (3 - 2 * t),
@@ -443,7 +443,7 @@ export const M4_BOLT_RELEASE_AT = 0.71;
  *   0.80–1.00  back to rest
  */
 export const INSPECT_MS = 3400;
-export type InspectClip = { position: Key<Vec>[]; rotation: Key<Vec>[] };
+type InspectClip = { position: Key<Vec>[]; rotation: Key<Vec>[] };
 export const M4_INSPECT: InspectClip = {
   position: [
     { t: 0, v: R },

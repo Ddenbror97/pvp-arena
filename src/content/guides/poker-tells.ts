@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "poker-tells",
   cluster: "Poker",
   keyword: "poker tells",
-  secondary: [
-    "live poker tells",
-    "online poker tells",
-    "betting tells",
-    "hiding your tells",
-  ],
+  secondary: ["live poker tells", "online poker tells", "betting tells", "hiding your tells"],
   title: "Poker Tells: 15 Live and Online Tells That Really Work",
   description:
     "The most reliable poker tells for live and online games, from timing and bet sizing to physical cues, plus how to hide your own tells at the table.",

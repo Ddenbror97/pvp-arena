@@ -149,11 +149,6 @@ Suppose you already know you will not keep the notebook. Then the honest product
       url: "https://faq.blitzwincash.com/en/articles/1796226",
     },
   ],
-  related: [
-    "pocket7games-review",
-    "avia-games-review",
-    "papaya-games-review",
-    "skillz-review",
-  ],
+  related: ["pocket7games-review", "avia-games-review", "papaya-games-review", "skillz-review"],
   updated: "2026-10-07",
 };

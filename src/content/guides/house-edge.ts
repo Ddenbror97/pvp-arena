@@ -217,7 +217,7 @@ The [law of large numbers](/guides/law-of-large-numbers-gambling) is why that lo
 
 An indexed sports perk calls -108 a 20% discount. The save versus -110 is about $2 per $100 of profit. The arithmetic is [that -108 claim, dated](/guides/heritage-sports-review).
 
-A blocked rules page is not a house edge. [The US block, dated](/guides/paripesa-review) left RTP unpublished because no game help loaded.`
+A blocked rules page is not a house edge. [The US block, dated](/guides/paripesa-review) left RTP unpublished because no game help loaded.`,
     },
   ],
   faqs: [

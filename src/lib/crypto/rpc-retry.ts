@@ -1,4 +1,4 @@
-export type RpcFailure = { code?: string | null | undefined; status?: number | null | undefined };
+type RpcFailure = { code?: string | null | undefined; status?: number | null | undefined };
 
 // Failures a second identical call can succeed past: connection loss, gateway/server
 // restarts, serialization or deadlock aborts. Anything else (read-only transaction 405,

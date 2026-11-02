@@ -152,14 +152,12 @@ Keep the cards if you like the cards. Pay the gap with money that can go to zero
     },
   ],
   sources: [
-    { label: "Klondike solitaire (Wikipedia)", url: "https://en.wikipedia.org/wiki/Klondike_(solitaire)" },
+    {
+      label: "Klondike solitaire (Wikipedia)",
+      url: "https://en.wikipedia.org/wiki/Klondike_(solitaire)",
+    },
     { label: "Game of skill (Wikipedia)", url: "https://en.wikipedia.org/wiki/Game_of_skill" },
   ],
-  related: [
-    "spades-for-money",
-    "gin-rummy-for-money",
-    "trivia-for-money",
-    "solitaire-cash-review",
-  ],
+  related: ["spades-for-money", "gin-rummy-for-money", "trivia-for-money", "solitaire-cash-review"],
   updated: "2026-10-07",
 };

@@ -115,7 +115,9 @@ d("withdraw basis sync bench", () => {
     };
     const emptyStats = summarize(empty);
     const appliedStats = summarize(applied);
-    console.log(JSON.stringify({ withdraw_basis_sync_bench: { empty: emptyStats, applied: appliedStats } }));
+    console.log(
+      JSON.stringify({ withdraw_basis_sync_bench: { empty: emptyStats, applied: appliedStats } }),
+    );
 
     expect(emptyStats.p99_ms).toBeLessThan(1000);
     const limit = Number(process.env.WITHDRAW_BASIS_SYNC_P99_MS ?? "8000");

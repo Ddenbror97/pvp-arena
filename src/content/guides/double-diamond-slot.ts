@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "double-diamond-slot",
   cluster: "Slots",
   keyword: "double diamond slot",
-  secondary: [
-    "double diamond slot rtp",
-    "double diamond slot max win",
-    "double diamond slot demo",
-  ],
+  secondary: ["double diamond slot rtp", "double diamond slot max win", "double diamond slot demo"],
   title: "Double Diamond Slot: RTP, Max Win, and Demo",
   description:
     "IGT's 2010 Double Diamond slot release prints the 2x and 4x diamond rule. RTP, max win, reels, and paylines stayed unpublished on the pages opened.",

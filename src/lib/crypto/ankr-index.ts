@@ -66,7 +66,13 @@ export type AnkrTxPage = {
   };
 };
 
-export type NativeTransfer = { hash: string; from: string; to: string; blockNumber: bigint; value: bigint };
+type NativeTransfer = {
+  hash: string;
+  from: string;
+  to: string;
+  blockNumber: bigint;
+  value: bigint;
+};
 
 /** Positive-value transactions sent to `target` within [from, to]; skips malformed rows. */
 export function ankrNativeTransfers(
@@ -127,7 +133,7 @@ export function activeTargets(targets: string[], replies: RpcReply[]): string[] 
   });
 }
 
-export type AnkrInternalTx = {
+type AnkrInternalTx = {
   transactionHash?: string;
   fromAddress?: string;
   toAddress?: string | null;
@@ -140,7 +146,7 @@ export type AnkrInternalTx = {
   transactionIndex?: number | null;
 };
 
-export type AnkrInternalPage = {
+type AnkrInternalPage = {
   error?: { message?: string };
   result?: {
     internalTransactions?: AnkrInternalTx[] | null;
@@ -159,7 +165,8 @@ export function internalLogIndex(tx: AnkrInternalTx, fallback: number): number {
   const stack = (tx.callStack ?? []).filter((n) => Number.isInteger(n) && n >= 0);
   let n: number;
   if (stack.length === 1) n = stack[0]!;
-  else if (stack.length > 1) n = stack.reduce((acc, part) => (Math.imul(acc, 131) + part + 1) >>> 0, 0);
+  else if (stack.length > 1)
+    n = stack.reduce((acc, part) => (Math.imul(acc, 131) + part + 1) >>> 0, 0);
   else {
     const fromPath = tx.callPath?.match(/(\d+)\s*$/);
     n = fromPath ? Number(fromPath[1]) : (tx.transactionIndex ?? 0) * 1_000 + fallback;

@@ -35,12 +35,18 @@ describe("USDC logs", () => {
   const log = {
     address: usdc,
     topics: [topic, word(from), word(dest)],
-    data: "0x" + (1_000_000n).toString(16),
+    data: "0x" + 1_000_000n.toString(16),
   };
 
   it("matches the allowlisted token, recipient, and amount", () => {
     expect(
-      erc20LogMatches(log, { token: usdc, from, to: dest, units: 1_000_000n, transferTopic: topic }),
+      erc20LogMatches(log, {
+        token: usdc,
+        from,
+        to: dest,
+        units: 1_000_000n,
+        transferTopic: topic,
+      }),
     ).toBe(true);
   });
 
@@ -69,7 +75,9 @@ describe("internal transfer confirmation", () => {
   });
 
   it("rejects two providers that disagree and two identical values in one trace", () => {
-    expect(internalTransferConfirmed([[hit], [{ ...hit, value: 2n }]], hash, dest, hit.value)).toBe(false);
+    expect(internalTransferConfirmed([[hit], [{ ...hit, value: 2n }]], hash, dest, hit.value)).toBe(
+      false,
+    );
     expect(internalTransferConfirmed([[hit, { ...hit }]], hash, dest, hit.value)).toBe(false);
   });
 });

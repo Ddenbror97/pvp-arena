@@ -32,9 +32,9 @@ describe("stand-in picture", () => {
   it("keeps the aimed rack when the server commits that stand-in shot", () => {
     expect(standInRackAction(null, live())).toBe("idle");
     expect(standInRackAction(4, live())).toBe("keep");
-    expect(
-      standInRackAction(4, live({ shot: 5, lastKind: "shot", lastStandIn: true })),
-    ).toBe("keep");
+    expect(standInRackAction(4, live({ shot: 5, lastKind: "shot", lastStandIn: true }))).toBe(
+      "keep",
+    );
     expect(
       standInRackAction(
         4,
@@ -67,7 +67,10 @@ describe("stand-in picture", () => {
   });
 
   it("holds the match rack until the stand-in shot is watched", () => {
-    const match = readFileSync(new URL("../src/components/pool/PoolMatch.tsx", import.meta.url), "utf8");
+    const match = readFileSync(
+      new URL("../src/components/pool/PoolMatch.tsx", import.meta.url),
+      "utf8",
+    );
     const roll = match.indexOf("void rollStandIn");
     const pulled = match.indexOf("const onCuePulled");
     const between = match.slice(roll, pulled);

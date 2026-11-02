@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "poker-positions",
   cluster: "Poker",
   keyword: "poker positions",
-  secondary: [
-    "UTG poker",
-    "button poker",
-    "hijack cutoff blinds",
-    "opening ranges by seat",
-  ],
+  secondary: ["UTG poker", "button poker", "hijack cutoff blinds", "opening ranges by seat"],
   title: "Poker Positions Explained: From UTG to the Button",
   description:
     "Poker positions explained with a table map: UTG, hijack, cutoff, button and blinds, why position wins money and opening ranges for each seat.",

@@ -144,7 +144,10 @@ Adults 18+ only. Not tax advice, legal advice, or financial advice.`,
     },
   ],
   sources: [
-    { label: "IRS Topic 419, Gambling income and losses", url: "https://www.irs.gov/taxtopics/tc419" },
+    {
+      label: "IRS Topic 419, Gambling income and losses",
+      url: "https://www.irs.gov/taxtopics/tc419",
+    },
     { label: "IRS Publication 525", url: "https://www.irs.gov/publications/p525" },
     { label: "IRS Publication 529", url: "https://www.irs.gov/publications/p529" },
     { label: "IRS Publication 505", url: "https://www.irs.gov/publications/p505" },

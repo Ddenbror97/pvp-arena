@@ -147,11 +147,6 @@ One app pools player entries against other users and caps a regular fee at $500.
     },
     { label: "Daily fantasy sports", url: "https://en.wikipedia.org/wiki/Daily_fantasy_sports" },
   ],
-  related: [
-    "splash-sports-review",
-    "wagr-review",
-    "dfs-strategy",
-    "underdog-fantasy-review",
-  ],
+  related: ["splash-sports-review", "wagr-review", "dfs-strategy", "underdog-fantasy-review"],
   updated: "2026-10-07",
 };

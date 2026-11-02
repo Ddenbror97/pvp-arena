@@ -155,7 +155,10 @@ Common mistakes, collected: equating BTTS with the total, parlaying them by refl
     },
   ],
   sources: [
-    { label: "Wikipedia: Association football", url: "https://en.wikipedia.org/wiki/Association_football" },
+    {
+      label: "Wikipedia: Association football",
+      url: "https://en.wikipedia.org/wiki/Association_football",
+    },
     { label: "Wikipedia: Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
     { label: "FIFA", url: "https://www.fifa.com" },
   ],

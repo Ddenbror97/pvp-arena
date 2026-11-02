@@ -15,7 +15,7 @@ import { emitSound } from "@/lib/sound";
 
 const useIso = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
-export interface SpinTarget {
+interface SpinTarget {
   winnerId: string;
   winningTicket: number;
   /** Server-clock ms when the spin begins. Every viewer derives the same position from it. */

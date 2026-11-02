@@ -4,7 +4,12 @@ export const guide: Guide = {
   slug: "march-madness-betting",
   cluster: "Sports betting",
   keyword: "march madness betting",
-  secondary: ["NCAA tournament odds", "seed upset history", "bracket versus sportsbook", "college basketball futures"],
+  secondary: [
+    "NCAA tournament odds",
+    "seed upset history",
+    "bracket versus sportsbook",
+    "college basketball futures",
+  ],
   title: "March Madness Betting: Seed Stats and Smart Bet Types",
   description:
     "March Madness betting guide: seed-by-seed upset history, spreads vs moneylines, futures, live betting tips and how bracket pools differ from sportsbooks.",
@@ -143,10 +148,18 @@ March Madness betting, if you do it, belongs at a book you are allowed to use or
     },
   ],
   sources: [
-    { label: "Wikipedia: NCAA Division I men's basketball tournament", url: "https://en.wikipedia.org/wiki/NCAA_Division_I_men%27s_basketball_tournament" },
+    {
+      label: "Wikipedia: NCAA Division I men's basketball tournament",
+      url: "https://en.wikipedia.org/wiki/NCAA_Division_I_men%27s_basketball_tournament",
+    },
     { label: "NCAA", url: "https://www.ncaa.com" },
     { label: "Wikipedia: Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
   ],
-  related: ["bracket-pool", "point-spread-explained", "moneyline-betting-explained", "over-under-betting"],
+  related: [
+    "bracket-pool",
+    "point-spread-explained",
+    "moneyline-betting-explained",
+    "over-under-betting",
+  ],
   updated: "2026-10-21",
 };

@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { CHAT_CONFIG, CHAT_EVENTS, chatTopic, type ChatRoom } from "./config";
 
 import { compareMessages, mergeMessages, parseBroadcast, type ChatMessage } from "./messages";
-export { compareMessages, mergeMessages, parseBroadcast, type ChatMessage };
+export { compareMessages, mergeMessages, parseBroadcast };
 
 type Row = {
   id: string;

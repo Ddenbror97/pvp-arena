@@ -139,7 +139,9 @@ export function SlotCabinet({
       ref={frame}
       className={cn(
         "slott-frame slott-cabinet mx-auto p-2 sm:p-3",
-        bleed ? "slott-bleed lg:mx-0 lg:flex lg:h-full lg:w-full lg:max-w-none lg:flex-col lg:overflow-hidden lg:rounded-none lg:px-3 lg:py-2" : "lg:p-2.5",
+        bleed
+          ? "slott-bleed lg:mx-0 lg:flex lg:h-full lg:w-full lg:max-w-none lg:flex-col lg:overflow-hidden lg:rounded-none lg:px-3 lg:py-2"
+          : "lg:p-2.5",
         edge && "slott-edge",
         className,
       )}
@@ -150,7 +152,14 @@ export function SlotCabinet({
         <div className="mt-2 grid grid-cols-2 gap-1.5 short:mt-1.5 sm:gap-2 lg:hidden">{seats}</div>
       ) : null}
       {duel ? (
-        <div className={cn("mt-2 short:mt-1.5", !top && !seats && "mt-0", aside && "lg:mt-0", bleed && "lg:shrink-0")}>
+        <div
+          className={cn(
+            "mt-2 short:mt-1.5",
+            !top && !seats && "mt-0",
+            aside && "lg:mt-0",
+            bleed && "lg:shrink-0",
+          )}
+        >
           {duel}
         </div>
       ) : null}

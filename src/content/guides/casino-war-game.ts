@@ -74,9 +74,7 @@ More table games are grouped under [casino games](/guides/topics/casino-games). 
       a: "No. The tie bet is an optional side wager on the first two cards matching. Going to war is what you may do with the main bet after they match.",
     },
   ],
-  sources: [
-    { label: "Wikipedia: Casino War", url: "https://en.wikipedia.org/wiki/Casino_War" },
-  ],
+  sources: [{ label: "Wikipedia: Casino War", url: "https://en.wikipedia.org/wiki/Casino_War" }],
   related: ["house-edge", "baccarat-rules", "sic-bo-online", "expected-value-gambling"],
   updated: "2026-10-21",
 };

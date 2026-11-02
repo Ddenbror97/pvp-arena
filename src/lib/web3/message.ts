@@ -17,7 +17,7 @@ export function shortAddress(a: string) {
   return `${a.slice(0, 6)}...${a.slice(-4)}`;
 }
 
-export interface ChallengeFields {
+interface ChallengeFields {
   address: string;
   nonce: string;
   issuedAt: string;

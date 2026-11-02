@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "pick-em-pool",
   cluster: "Sports betting",
   keyword: "pick em pool",
-  secondary: [
-    "pick em pool promo code",
-    "pick em pool legal states",
-    "pick em pool payout",
-  ],
+  secondary: ["pick em pool promo code", "pick em pool legal states", "pick em pool payout"],
   title: "Pick Em Pool: Survivor, Confidence, and the Fee",
   description:
     "A pick em pool is a friends or office sheet. Survivor eliminates you. Confidence keeps you in. The written rules set the fee, and no public code exists.",
@@ -211,8 +207,14 @@ This page is education. It is not an invitation to organize a book, and it is no
     },
   ],
   sources: [
-    { label: "IRS Topic 419, Gambling income and losses", url: "https://www.irs.gov/taxtopics/tc419" },
-    { label: "National Council on Problem Gambling, help by state", url: "https://www.ncpgambling.org/help-treatment/help-by-state/" },
+    {
+      label: "IRS Topic 419, Gambling income and losses",
+      url: "https://www.irs.gov/taxtopics/tc419",
+    },
+    {
+      label: "National Council on Problem Gambling, help by state",
+      url: "https://www.ncpgambling.org/help-treatment/help-by-state/",
+    },
   ],
   related: [
     "bet-with-friends-online",

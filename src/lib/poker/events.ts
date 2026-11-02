@@ -39,8 +39,6 @@ export type TableEvent =
   | (Base & { type: "hand_completed"; contested: boolean })
   | (Base & { type: "hand_voided"; reason: string | null });
 
-export type TableEventType = TableEvent["type"];
-
 export interface EventCursor {
   /** Highest action seq processed, per hand. */
   seq: Record<number, number>;

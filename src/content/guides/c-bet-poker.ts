@@ -4,12 +4,7 @@ export const guide: Guide = {
   slug: "c-bet-poker",
   cluster: "Poker",
   keyword: "c bet poker",
-  secondary: [
-    "continuation bet",
-    "flop texture",
-    "dry board",
-    "half pot bet",
-  ],
+  secondary: ["continuation bet", "flop texture", "dry board", "half pot bet"],
   title: "C Bet Poker: Flop Textures and Pot Dollars",
   description:
     "C bet poker is the preflop raiser's flop bet. A glossary defines rainbow and ragged boards. A half-pot picture is arithmetic, not a profit promise.",

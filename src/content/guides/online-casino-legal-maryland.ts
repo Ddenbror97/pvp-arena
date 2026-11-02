@@ -66,9 +66,7 @@ export const guide: Guide = {
       a: "No. State rules change. This article does not cite a statute number or a launch date, and it does not claim a calendar year settled the question. Use the agency's current page, and talk to a qualified lawyer if you need advice about your own situation.",
     },
   ],
-  sources: [
-    { label: "Maryland Lottery and Gaming", url: "https://www.mdgaming.com/" },
-  ],
+  sources: [{ label: "Maryland Lottery and Gaming", url: "https://www.mdgaming.com/" }],
   related: [
     "is-online-casino-legal",
     "online-casino-legal-ohio",

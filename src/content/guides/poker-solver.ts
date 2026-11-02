@@ -177,11 +177,23 @@ Who should stay away: minors, anyone who wants a winning script, anyone who will
   ],
   sources: [
     { label: "PioSOLVER quick start", url: "https://piosolver.com/docs/" },
-    { label: "PioSOLVER FAQ (ranges, strategy, frequency, EV)", url: "https://piofiles.com/faq/flat.html" },
-    { label: "PioSOLVER viewer manual (ranges)", url: "https://piofiles.com/docs/viewer_manual/flat.html" },
+    {
+      label: "PioSOLVER FAQ (ranges, strategy, frequency, EV)",
+      url: "https://piofiles.com/faq/flat.html",
+    },
+    {
+      label: "PioSOLVER viewer manual (ranges)",
+      url: "https://piofiles.com/docs/viewer_manual/flat.html",
+    },
     { label: "GTO Wizard, How Solvers Work", url: "https://blog.gtowizard.com/how-solvers-work/" },
-    { label: "GTO Wizard Study Mode help (EV definition)", url: "https://help.gtowizard.com/study-mode/" },
-    { label: "Simple Postflop product page", url: "https://simplepoker.com/en/Solutions/Simple_Postflop" },
+    {
+      label: "GTO Wizard Study Mode help (EV definition)",
+      url: "https://help.gtowizard.com/study-mode/",
+    },
+    {
+      label: "Simple Postflop product page",
+      url: "https://simplepoker.com/en/Solutions/Simple_Postflop",
+    },
   ],
   related: [
     "gto-poker-strategy",

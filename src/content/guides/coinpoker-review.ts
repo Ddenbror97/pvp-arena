@@ -232,8 +232,14 @@ Our tables are a separate six-max game with a 5% fee after a flop. The shared th
     },
   ],
   sources: [
-    { label: "Stake help: crypto wager requirement, updated 24 August 2026", url: "https://help.stake.com/en/articles/4929043-what-is-a-wager-requirement-for-crypto" },
-    { label: "Stake help: fiat clause 8.5, updated 24 August 2026", url: "https://help.stake.com/en/articles/8226254-is-there-a-wager-requirement-for-local-currencies" },
+    {
+      label: "Stake help: crypto wager requirement, updated 24 August 2026",
+      url: "https://help.stake.com/en/articles/4929043-what-is-a-wager-requirement-for-crypto",
+    },
+    {
+      label: "Stake help: fiat clause 8.5, updated 24 August 2026",
+      url: "https://help.stake.com/en/articles/8226254-is-there-a-wager-requirement-for-local-currencies",
+    },
   ],
   related: [
     "crypto-poker",

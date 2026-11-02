@@ -82,6 +82,11 @@ A point spread is an odd fit. Boxing is not scored as a running margin you cover
       url: "http://www.abcboxing.com/wp-content/uploads/2016/10/unified_rules_boxing_rev_august2016.pdf",
     },
   ],
-  related: ["moneyline-betting-explained", "prop-bets-explained", "vig-betting", "what-is-sports-betting"],
+  related: [
+    "moneyline-betting-explained",
+    "prop-bets-explained",
+    "vig-betting",
+    "what-is-sports-betting",
+  ],
   updated: "2026-10-21",
 };

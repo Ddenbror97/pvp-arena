@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "onyx-odds-review",
   cluster: "Sports betting",
   keyword: "onyx odds",
-  secondary: [
-    "onyx odds promo code",
-    "onyx odds legal states",
-    "onyx odds payout",
-  ],
+  secondary: ["onyx odds promo code", "onyx odds legal states", "onyx odds payout"],
   title: "Onyx Odds Review: Rules, States, Redemption",
   description:
     "Onyx Odds review from the sweepstakes rules opened 20 October 2026: no public promo code, excluded states, and redemptions that may take 30 days.",
@@ -204,12 +200,21 @@ A finished list is not an edge. This review is not a recommendation to play, and
     },
   ],
   sources: [
-    { label: "Onyx Odds sweepstakes rules, version 2.1.2", url: "https://onyxodds.com/sweepstakes-rules/" },
+    {
+      label: "Onyx Odds sweepstakes rules, version 2.1.2",
+      url: "https://onyxodds.com/sweepstakes-rules/",
+    },
     { label: "Onyx Odds terms of use", url: "https://onyxodds.com/terms-of-use/" },
     { label: "Onyx Odds general sports rules", url: "https://onyxodds.com/general-sports-rules/" },
     { label: "Onyx Odds homepage", url: "https://onyxodds.com/" },
-    { label: "IRS Topic 419, Gambling income and losses", url: "https://www.irs.gov/taxtopics/tc419" },
-    { label: "National Council on Problem Gambling, help by state", url: "https://www.ncpgambling.org/help-treatment/help-by-state/" },
+    {
+      label: "IRS Topic 419, Gambling income and losses",
+      url: "https://www.irs.gov/taxtopics/tc419",
+    },
+    {
+      label: "National Council on Problem Gambling, help by state",
+      url: "https://www.ncpgambling.org/help-treatment/help-by-state/",
+    },
   ],
   related: [
     "how-does-prizepicks-work",

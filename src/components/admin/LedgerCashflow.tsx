@@ -17,7 +17,7 @@ type WalletRow = {
   observed_at: string | null;
 };
 
-export type LedgerCashflowData = {
+type LedgerCashflowData = {
   balances: {
     player_available: number;
     player_locked: number;

@@ -72,9 +72,12 @@ More blackjack pages are under [blackjack](/guides/topics/blackjack). The [terms
       a: "No.",
     },
   ],
-  sources: [
-    { label: "Wikipedia: Blackjack", url: "https://en.wikipedia.org/wiki/Blackjack" },
+  sources: [{ label: "Wikipedia: Blackjack", url: "https://en.wikipedia.org/wiki/Blackjack" }],
+  related: [
+    "how-to-play-blackjack",
+    "blackjack-basic-strategy",
+    "expected-value-gambling",
+    "house-edge",
   ],
-  related: ["how-to-play-blackjack", "blackjack-basic-strategy", "expected-value-gambling", "house-edge"],
   updated: "2026-10-21",
 };

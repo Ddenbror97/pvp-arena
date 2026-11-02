@@ -165,11 +165,6 @@ PVPspinArena does not book a wolf golf game and does not pay a best ball. Adults
     { label: "Wikipedia: Golf", url: "https://en.wikipedia.org/wiki/Golf" },
     { label: "Wikipedia: Match play", url: "https://en.wikipedia.org/wiki/Match_play" },
   ],
-  related: [
-    "skins-game-golf",
-    "nassau-bet",
-    "golf-side-bets",
-    "bingo-bango-bongo-golf",
-  ],
+  related: ["skins-game-golf", "nassau-bet", "golf-side-bets", "bingo-bango-bongo-golf"],
   updated: "2026-10-07",
 };

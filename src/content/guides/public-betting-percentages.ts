@@ -217,8 +217,14 @@ IRS Topic 419 taxes gambling winnings. [How a US person reports a win](/guides/r
       label: "Vermont Joint Fiscal Office, sports wagering study (handle and hold glossary)",
       url: "https://legislature.vermont.gov/assets/Legislative-Reports/2021-2022-OLCJFO-Sports-Wagering-Study-.pdf",
     },
-    { label: "IRS Topic 419, Gambling income and losses", url: "https://www.irs.gov/taxtopics/tc419" },
-    { label: "National Council on Problem Gambling, help by state", url: "https://www.ncpgambling.org/help-treatment/help-by-state/" },
+    {
+      label: "IRS Topic 419, Gambling income and losses",
+      url: "https://www.irs.gov/taxtopics/tc419",
+    },
+    {
+      label: "National Council on Problem Gambling, help by state",
+      url: "https://www.ncpgambling.org/help-treatment/help-by-state/",
+    },
   ],
   related: [
     "vig-betting",

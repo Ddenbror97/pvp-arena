@@ -26,7 +26,7 @@ export interface ChainlinkRound {
   answeredInRound: bigint;
 }
 
-export type OracleFailure =
+type OracleFailure =
   | "MALFORMED"
   | "DECIMALS"
   | "ZERO"
@@ -37,7 +37,7 @@ export type OracleFailure =
   | "SEQUENCER_DOWN"
   | "SEQUENCER_GRACE";
 
-export type OracleDecision =
+type OracleDecision =
   | { ok: true; priceMicro: bigint; roundId: bigint; updatedAt: bigint }
   | { ok: false; reason: OracleFailure };
 

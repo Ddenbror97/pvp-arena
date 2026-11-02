@@ -166,11 +166,6 @@ Play only if those three documents are acceptable on the day you deposit. If one
     { label: "ACR Poker — official site", url: "https://www.acrpoker.eu/" },
     { label: "Wikipedia — Online poker", url: "https://en.wikipedia.org/wiki/Online_poker" },
   ],
-  related: [
-    "clubgg-review",
-    "pokerbros-review",
-    "real-money-poker-apps",
-    "crypto-poker",
-  ],
+  related: ["clubgg-review", "pokerbros-review", "real-money-poker-apps", "crypto-poker"],
   updated: "2026-10-21",
 };

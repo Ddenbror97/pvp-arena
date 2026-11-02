@@ -56,9 +56,9 @@ export type InviteStore = {
   remove(key: string): void;
 };
 
-export type InviteDecision = "unknown" | "open" | "closed";
+type InviteDecision = "unknown" | "open" | "closed";
 
-export type AuthSearch = {
+type AuthSearch = {
   mode?: "signup";
   next?: GamePath;
   code?: typeof GAME_SIGNUP_CODE;
@@ -157,7 +157,7 @@ export function gameSignupReserveAllowed(input: {
   return { ok: true, ip, game: input.game };
 }
 
-export type IdleState = { idleMs: number; lastNow: number };
+type IdleState = { idleMs: number; lastNow: number };
 
 export function createIdleState(now: number): IdleState {
   return { idleMs: 0, lastNow: now };
@@ -261,14 +261,14 @@ export function promoClaimAnalyticsEvent(result: {
   return null;
 }
 
-export type InviteUi =
+type InviteUi =
   | { phase: "wait" }
   | { phase: "asking" }
   | { phase: "granted" }
   | { phase: "open" }
   | { phase: "off" };
 
-export type InviteUiEvent =
+type InviteUiEvent =
   | { type: "eligible" }
   | { type: "answer"; show: boolean }
   | { type: "surface"; clear: boolean }

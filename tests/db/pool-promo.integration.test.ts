@@ -41,14 +41,12 @@ d("pool promo and partner credit", () => {
   });
 
   const house = async () =>
-    (
-      await sql`select pvp_test._system_account('house_bankroll', 'USD', 'real') id`
-    )[0]!.id as string;
+    (await sql`select pvp_test._system_account('house_bankroll', 'USD', 'real') id`)[0]!
+      .id as string;
 
   const acct = async (uid: string) =>
-    (
-      await sql`select pvp_test._user_account(${uid}::uuid, 'user_available', 'USD', 'real') id`
-    )[0]!.id as string;
+    (await sql`select pvp_test._user_account(${uid}::uuid, 'user_available', 'USD', 'real') id`)[0]!
+      .id as string;
 
   async function user(name: string) {
     const id = randomUUID();

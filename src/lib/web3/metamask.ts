@@ -280,7 +280,7 @@ function permissionsUnsupported(error: unknown) {
  * Ask the wallet to show its account list. eth_requestAccounts returns the
  * current account without a picker once this site is already permitted.
  */
-export type AccountChoice = ConnectedAccount & { picker: "shown" | "unavailable" };
+type AccountChoice = ConnectedAccount & { picker: "shown" | "unavailable" };
 
 export async function chooseInjectedAccount(provider: Eip1193): Promise<AccountChoice> {
   if (pendingInjectedConnections.has(provider) || externallyPendingConnections.has(provider)) {
@@ -334,9 +334,7 @@ export function sessionFor(
       }
     },
     hasPendingRequest() {
-      return (
-        pendingInjectedConnections.has(provider) || externallyPendingConnections.has(provider)
-      );
+      return pendingInjectedConnections.has(provider) || externallyPendingConnections.has(provider);
     },
     async connect() {
       const attempt = async () => {

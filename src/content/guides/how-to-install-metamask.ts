@@ -66,7 +66,7 @@ export const guide: Guide = {
       a: "PVPspinArena settles six-max poker, jackpot, coinflip, roulette, and P2P Slott in USD and does not require MetaMask. Install a wallet only if you have your own reason to hold EVM assets.",
     },
   ],
-    sources: [
+  sources: [
     {
       label: "MetaMask Help Center — Getting started, checked 20 October 2026",
       url: "https://support.metamask.io/start/getting-started-with-metamask/",

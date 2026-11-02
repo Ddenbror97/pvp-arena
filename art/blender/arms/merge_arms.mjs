@@ -38,7 +38,12 @@ const view = (name) => {
   const m = meta[name];
   const Type = typed[m.dtype];
   const count = m.shape.reduce((a, b) => a * b, 1);
-  return new Type(bin.buffer.slice(bin.byteOffset + m.offset, bin.byteOffset + m.offset + count * Type.BYTES_PER_ELEMENT));
+  return new Type(
+    bin.buffer.slice(
+      bin.byteOffset + m.offset,
+      bin.byteOffset + m.offset + count * Type.BYTES_PER_ELEMENT,
+    ),
+  );
 };
 const types = { 1: "SCALAR", 2: "VEC2", 3: "VEC3", 4: "VEC4" };
 const accessor = (name, semantic) =>
@@ -55,14 +60,18 @@ for (const semantic of primitive.listSemantics()) primitive.setAttribute(semanti
 for (const semantic of ["POSITION", "NORMAL", "TANGENT", "TEXCOORD_0", "JOINTS_0", "WEIGHTS_0"])
   primitive.setAttribute(semantic, accessor(semantic, semantic));
 const indices = view("indices");
-primitive.setIndices(doc.createAccessor("indices").setBuffer(buffer).setType("SCALAR").setArray(indices));
+primitive.setIndices(
+  doc.createAccessor("indices").setBuffer(buffer).setType("SCALAR").setArray(indices),
+);
 
 // Glove textures: base colour (sRGB), tangent-space normal, occlusion/roughness/metal.
 const material = primitive.getMaterial();
 const texture = async (file, name, mime = "image/webp") => {
   const path = join(glovesDir, file);
   if (!existsSync(path)) return null;
-  const image = await sharp(path).webp({ quality: name === "normal" ? 95 : 90, effort: 6 }).toBuffer();
+  const image = await sharp(path)
+    .webp({ quality: name === "normal" ? 95 : 90, effort: 6 })
+    .toBuffer();
   return doc.createTexture(`glove_${name}`).setImage(image).setMimeType(mime);
 };
 const base = await texture("glove_basecolor.png", "basecolor");
@@ -79,7 +88,12 @@ if (base) {
     .setMetallicRoughnessTexture(orm)
     .setRoughnessFactor(1)
     .setMetallicFactor(1);
-  for (const info of [material.getBaseColorTextureInfo(), material.getNormalTextureInfo(), material.getOcclusionTextureInfo(), material.getMetallicRoughnessTextureInfo()])
+  for (const info of [
+    material.getBaseColorTextureInfo(),
+    material.getNormalTextureInfo(),
+    material.getOcclusionTextureInfo(),
+    material.getMetallicRoughnessTextureInfo(),
+  ])
     info.setTexCoord(0);
 }
 
@@ -97,6 +111,10 @@ if (accessories) {
 const [mainBuffer, ...extraBuffers] = root.listBuffers();
 for (const a of root.listAccessors()) a.setBuffer(mainBuffer);
 for (const b of extraBuffers) b.dispose();
-await doc.transform(prune({ keepLeaves: true, keepAttributes: true }), dedup(), meshopt({ encoder: MeshoptEncoder, level: "medium" }));
+await doc.transform(
+  prune({ keepLeaves: true, keepAttributes: true }),
+  dedup(),
+  meshopt({ encoder: MeshoptEncoder, level: "medium" }),
+);
 await io.write(outGlb, doc);
 console.log(`FPArms: ${meta.POSITION.count} vertices, ${indices.length / 3} triangles → ${outGlb}`);

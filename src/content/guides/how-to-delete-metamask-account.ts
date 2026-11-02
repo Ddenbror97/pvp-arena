@@ -66,7 +66,7 @@ export const guide: Guide = {
       a: "PVPspinArena settles six-max poker, jackpot, coinflip, roulette, and P2P Slott in USD and does not require MetaMask. Closing a site profile does not remove keys from your device or erase balances on a chain.",
     },
   ],
-    sources: [
+  sources: [
     {
       label: "MetaMask Help Center — Getting started, checked 20 October 2026",
       url: "https://support.metamask.io/start/getting-started-with-metamask/",

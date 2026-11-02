@@ -13,7 +13,12 @@ import { admitSpin, reuseSpinKey } from "@/components/slott/spin-guard";
 import { presentSpinStart, spinArrivedLive } from "@/components/slott/timing";
 import { BOMB, hasBomb, SYMBOLS, WEIGHT_TOTAL } from "@/lib/slott/paytable";
 import { slotFeedTargets } from "@/lib/slott/poll";
-import { mergeSlotSpins, preferNewerSlotGame, reconcileAfter, slotSpinCursor } from "@/lib/slott/reconcile";
+import {
+  mergeSlotSpins,
+  preferNewerSlotGame,
+  reconcileAfter,
+  slotSpinCursor,
+} from "@/lib/slott/reconcile";
 import { slotSpinDecision } from "@/lib/slott/spin-decision";
 
 const line = (symbol: number, count: number, score: number, n = 1) => ({
@@ -162,20 +167,18 @@ describe("slot state reconciliation", () => {
   });
 
   it("does not refresh the lobby while a match is spinning", () => {
-    expect(
-      slotFeedTargets({ id: 4, status: "ACTIVE", next_spin: 6, ends_at: null }),
-    ).toEqual({
+    expect(slotFeedTargets({ id: 4, status: "ACTIVE", next_spin: 6, ends_at: null })).toEqual({
       open: false,
       live: false,
       recent: false,
       mine: false,
     });
-    expect(
-      slotFeedTargets({ id: 4, status: "ACTIVE", next_spin: 1, ends_at: null }).open,
-    ).toBe(true);
-    expect(
-      slotFeedTargets({ id: 4, status: "WAITING", next_spin: 1, ends_at: null }).open,
-    ).toBe(true);
+    expect(slotFeedTargets({ id: 4, status: "ACTIVE", next_spin: 1, ends_at: null }).open).toBe(
+      true,
+    );
+    expect(slotFeedTargets({ id: 4, status: "WAITING", next_spin: 1, ends_at: null }).open).toBe(
+      true,
+    );
     expect(
       slotFeedTargets({
         id: 4,

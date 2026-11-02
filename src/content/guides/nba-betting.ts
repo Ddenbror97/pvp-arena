@@ -76,6 +76,11 @@ PVPspinArena does not offer NBA betting. Adults only. [Responsible gambling](/re
       url: "https://official.nba.com/rule-no-5-scoring-and-timing/",
     },
   ],
-  related: ["moneyline-betting-explained", "vig-betting", "what-is-sports-betting", "prop-bets-explained"],
+  related: [
+    "moneyline-betting-explained",
+    "vig-betting",
+    "what-is-sports-betting",
+    "prop-bets-explained",
+  ],
   updated: "2026-10-21",
 };

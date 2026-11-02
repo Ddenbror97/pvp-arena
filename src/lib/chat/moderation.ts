@@ -4,7 +4,7 @@
  */
 import { CHAT_CONFIG } from "./config";
 
-export type Severity = "LOW" | "MEDIUM" | "HIGH";
+type Severity = "LOW" | "MEDIUM" | "HIGH";
 export interface Verdict {
   severity: Severity;
   score: number;
@@ -220,8 +220,7 @@ export function classifyMessage(text: string): Verdict {
 
 export const rulesProvider: ModerationProvider = { name: "rules", classify: classifyMessage };
 
-export type Validation =
-  { ok: true; text: string } | { ok: false; code: "CHAT_EMPTY" | "CHAT_TOO_LONG" };
+type Validation = { ok: true; text: string } | { ok: false; code: "CHAT_EMPTY" | "CHAT_TOO_LONG" };
 export function validateMessage(raw: string): Validation {
   const text = normalizeMessage(raw);
   if (!text) return { ok: false, code: "CHAT_EMPTY" };

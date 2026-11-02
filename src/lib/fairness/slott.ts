@@ -35,7 +35,8 @@ export function slottMessage(
   const id = BigInt(gameId);
   if (id < 1n || !Number.isInteger(spinNo) || spinNo < 1 || cell < 0 || cell >= CELLS)
     throw new Error("Invalid spin");
-  if (protocol !== "v1" && protocol !== "v2" && protocol !== "v3") throw new Error("Invalid protocol");
+  if (protocol !== "v1" && protocol !== "v2" && protocol !== "v3")
+    throw new Error("Invalid protocol");
   return `PVPCasino:slott:${protocol}:${id.toString()}:${spinNo}:${cell}`;
 }
 

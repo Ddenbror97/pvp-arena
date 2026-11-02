@@ -186,7 +186,7 @@ For how PVPspinArena handles balances and payouts in general, read [how it works
 
 A sports welcome page prints the rollover and never prints a coin or a wait. That gap is [a bonus page with no cash-out clock](/guides/lucky-rebel-review).
 
-[Papers required when any withdrawal is requested](/guides/flush-casino-review) is one operator's file. It is not a universal cash-out clock.`
+[Papers required when any withdrawal is requested](/guides/flush-casino-review) is one operator's file. It is not a universal cash-out clock.`,
     },
     {
       id: "plan",

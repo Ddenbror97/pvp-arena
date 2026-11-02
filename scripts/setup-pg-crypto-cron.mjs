@@ -66,6 +66,7 @@ await sql`select cron.schedule('pvp-crypto-deposits', '* * * * *', $cmd$)select 
 await sql`select cron.schedule('pvp-crypto-withdrawals', '* * * * *', $cmd$)select public.crypto_invoke_cron('crypto-withdrawals')$cmd$)`;
 await sql`select cron.schedule('pvp-crypto-reconcile', '*/15 * * * *', $cmd$)select public.crypto_invoke_cron('crypto-reconcile')$cmd$)`;
 
-const jobs = await sql`select jobname, schedule from cron.job where jobname like 'pvp-%' order by 1`;
+const jobs =
+  await sql`select jobname, schedule from cron.job where jobname like 'pvp-%' order by 1`;
 console.log(JSON.stringify(jobs, null, 2));
 await sql.end();

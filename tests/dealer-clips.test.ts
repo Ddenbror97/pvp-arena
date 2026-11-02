@@ -165,7 +165,16 @@ describe("dealer clips", () => {
       "fan-b2",
       "blow-kiss",
     ];
-    for (const id of ["idle", "wink", "intro", "shuffle", "deal", "reveal", "wait", "celebrate"] as const) {
+    for (const id of [
+      "idle",
+      "wink",
+      "intro",
+      "shuffle",
+      "deal",
+      "reveal",
+      "wait",
+      "celebrate",
+    ] as const) {
       for (const frame of clipFrames(id)) expect(overlap).not.toContain(frame);
     }
   });

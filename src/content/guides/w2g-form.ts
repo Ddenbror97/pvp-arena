@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "w2g-form",
   cluster: "Foundations",
   keyword: "w2g form",
-  secondary: [
-    "form w-2g instructions",
-    "gambling withholding rate",
-    "topic 419 gambling income",
-  ],
+  secondary: ["form w-2g instructions", "gambling withholding rate", "topic 419 gambling income"],
   title: "The w2g form: figures the IRS page prints",
   description:
     "The w2g form instructions opened in October 2026 print a $2,000 minimum for 2026, 24% withholding, and a $5,000 test. No $1,200 slot line. Not tax advice.",

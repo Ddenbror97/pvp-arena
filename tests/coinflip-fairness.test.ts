@@ -32,13 +32,17 @@ describe("coinflip v1 protocol details", () => {
   });
   it("is domain-separated from the jackpot protocol", async () => {
     const seed = "ab".repeat(32);
-    const jp = createHmac("sha256", Buffer.from(seed, "hex")).update("PVPCasino:jackpot:v1:5:1:0").digest("hex");
+    const jp = createHmac("sha256", Buffer.from(seed, "hex"))
+      .update("PVPCasino:jackpot:v1:5:1:0")
+      .digest("hex");
     expect((await coinflipOutcome(seed, 5, 1)).hmacHex).not.toBe(jp);
   });
   it("matches Node's crypto for random seeds (HMAC key/data order, UTF-8, first-byte bit)", async () => {
     for (let i = 0; i < 300; i++) {
       const seed = Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString("hex");
-      const h = createHmac("sha256", Buffer.from(seed, "hex")).update(`PVPCasino:coinflip:v1:${i}:1`, "utf8").digest();
+      const h = createHmac("sha256", Buffer.from(seed, "hex"))
+        .update(`PVPCasino:coinflip:v1:${i}:1`, "utf8")
+        .digest();
       const o = await coinflipOutcome(seed, i, 1);
       expect(o.hmacHex).toBe(h.toString("hex"));
       expect(o.side).toBe((h[0]! & 1) === 0 ? "HEADS" : "TAILS");
@@ -47,7 +51,8 @@ describe("coinflip v1 protocol details", () => {
   it("is close to 50/50 over many games (binomial 4-sigma bound)", async () => {
     let heads = 0;
     const n = 4000;
-    for (let i = 0; i < n; i++) if ((await coinflipOutcome("11".repeat(32), i, 1)).side === "HEADS") heads++;
+    for (let i = 0; i < n; i++)
+      if ((await coinflipOutcome("11".repeat(32), i, 1)).side === "HEADS") heads++;
     expect(Math.abs(heads - n / 2)).toBeLessThan(4 * Math.sqrt(n / 4));
   });
   it("rejects seeds that are not 32 bytes", async () => {
@@ -55,10 +60,25 @@ describe("coinflip v1 protocol details", () => {
   });
   it("verifyCoinflip accepts a correct record and rejects tampering", async () => {
     const v = VECTORS[0]!;
-    const good = { id: v.game_id, draw_version: 1, server_seed_hash: v.server_seed_hash, server_seed: v.server_seed, winning_side: v.side as "HEADS" | "TAILS" };
+    const good = {
+      id: v.game_id,
+      draw_version: 1,
+      server_seed_hash: v.server_seed_hash,
+      server_seed: v.server_seed,
+      winning_side: v.side as "HEADS" | "TAILS",
+    };
     expect((await verifyCoinflip(good)).ok).toBe(true);
-    expect((await verifyCoinflip({ ...good, winning_side: v.side === "HEADS" ? "TAILS" : "HEADS" })).ok).toBe(false);
-    expect((await verifyCoinflip({ ...good, server_seed_hash: createHash("sha256").update("x").digest("hex") })).ok).toBe(false);
+    expect(
+      (await verifyCoinflip({ ...good, winning_side: v.side === "HEADS" ? "TAILS" : "HEADS" })).ok,
+    ).toBe(false);
+    expect(
+      (
+        await verifyCoinflip({
+          ...good,
+          server_seed_hash: createHash("sha256").update("x").digest("hex"),
+        })
+      ).ok,
+    ).toBe(false);
     expect((await verifyCoinflip({ ...good, server_seed: null })).ok).toBe(false);
   });
 });

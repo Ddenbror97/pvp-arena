@@ -131,7 +131,7 @@ Check a finished round on [Fairness](/fairness) if the win you are staring at is
 
 Adults 18 and older. Knowing the 24 percent line is not a reason to buy more combinations.
 
-A state digit game's prizes page does not print a withholding rate. [The Pennsylvania four-digit chart](/guides/pick-4-lottery) still points at IRS Topic 419 for the win.`
+A state digit game's prizes page does not print a withholding rate. [The Pennsylvania four-digit chart](/guides/pick-4-lottery) still points at IRS Topic 419 for the win.`,
     },
   ],
   faqs: [

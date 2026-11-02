@@ -163,11 +163,6 @@ PVPspinArena does not run a skins game, does not carry a tie, and does not pay a
     { label: "Wikipedia: Golf", url: "https://en.wikipedia.org/wiki/Golf" },
     { label: "Wikipedia: Match play", url: "https://en.wikipedia.org/wiki/Match_play" },
   ],
-  related: [
-    "wolf-golf-game",
-    "nassau-bet",
-    "golf-side-bets",
-    "bingo-bango-bongo-golf",
-  ],
+  related: ["wolf-golf-game", "nassau-bet", "golf-side-bets", "bingo-bango-bongo-golf"],
   updated: "2026-10-07",
 };

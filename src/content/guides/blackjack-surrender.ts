@@ -4,7 +4,11 @@ export const guide: Guide = {
   slug: "blackjack-surrender",
   cluster: "Blackjack",
   keyword: "blackjack surrender",
-  secondary: ["blackjack surrender rules", "blackjack surrender odds", "blackjack surrender payout"],
+  secondary: [
+    "blackjack surrender rules",
+    "blackjack surrender odds",
+    "blackjack surrender payout",
+  ],
   title: "Blackjack Surrender: NJ Rules, Half Back, Late Timing",
   description:
     "Blackjack surrender under New Jersey 13:69F-2.8: when half the wager returns, how dealer ace and ten checks work, and what the payout does to bad totals.",
@@ -185,11 +189,13 @@ We did not open an account here. We did not time a withdrawal. Minimum bet on th
   ],
   sources: [
     {
-      label: "New Jersey Division of Gaming Enforcement, Chapter 69F rules of the games (blackjack, N.J.A.C. 13:69F-2.8 surrender)",
+      label:
+        "New Jersey Division of Gaming Enforcement, Chapter 69F rules of the games (blackjack, N.J.A.C. 13:69F-2.8 surrender)",
       url: "https://www.nj.gov/lps/ge/docs/Regulations/CHAPTER69F.pdf",
     },
     {
-      label: "Nevada Gaming Control Board, IGT Dynasty Live Blackjack rules of play (surrender wording)",
+      label:
+        "Nevada Gaming Control Board, IGT Dynasty Live Blackjack rules of play (surrender wording)",
       url: "https://www.gaming.nv.gov/siteassets/content/divisions/enforcement/rules-of-play/IGT_Dynasty_Live_Blackjack.pdf",
     },
     {

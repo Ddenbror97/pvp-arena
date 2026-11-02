@@ -4,7 +4,11 @@ export const guide: Guide = {
   slug: "online-gambling-legal-kentucky",
   cluster: "Foundations",
   keyword: "is online gambling legal in kentucky",
-  secondary: ["kentucky sports betting question", "kentucky online casino question", "statute over a blog"],
+  secondary: [
+    "kentucky sports betting question",
+    "kentucky online casino question",
+    "statute over a blog",
+  ],
   title: "Is Online Gambling Legal in Kentucky? Read the Statute",
   description:
     "Is online gambling legal in Kentucky? This page does not answer yes or no. Sportsbooks and online casinos are separate questions. The statute beats a blog.",
@@ -182,6 +186,10 @@ Leave without a verdict. That finish is the correct one.`,
     },
   ],
   sources: [],
-  related: ["is-online-casino-legal", "online-gambling-legal-south-carolina", "kentucky-derby-betting"],
+  related: [
+    "is-online-casino-legal",
+    "online-gambling-legal-south-carolina",
+    "kentucky-derby-betting",
+  ],
   updated: "2026-10-20",
 };

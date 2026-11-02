@@ -142,7 +142,10 @@ This is not betting advice. Losing the stake is a normal outcome, close to half 
     },
   ],
   sources: [
-    { label: "Wikipedia: Standard 52-card deck", url: "https://en.wikipedia.org/wiki/Standard_52-card_deck" },
+    {
+      label: "Wikipedia: Standard 52-card deck",
+      url: "https://en.wikipedia.org/wiki/Standard_52-card_deck",
+    },
     { label: "Wikipedia: War (card game)", url: "https://en.wikipedia.org/wiki/War_(card_game)" },
   ],
   related: ["war-card-game-rules", "casino-war-game", "coin-flip-odds", "52-card-deck"],

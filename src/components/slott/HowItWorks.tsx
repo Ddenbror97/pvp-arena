@@ -197,8 +197,8 @@ export function HowItWorks({
             How P2P Slott works
           </DialogTitle>
           <DialogDescription className="text-xs leading-snug">
-            You play one other player. Same stake, 6 spins each. Highest score takes the pot. A
-            bomb on either side ends the match and the house keeps both stakes.
+            You play one other player. Same stake, 6 spins each. Highest score takes the pot. A bomb
+            on either side ends the match and the house keeps both stakes.
           </DialogDescription>
         </DialogHeader>
 

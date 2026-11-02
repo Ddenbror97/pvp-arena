@@ -11,7 +11,7 @@
  *    leftover cents go one each to winners in seat order starting left of the button.
  */
 
-export type PotPlayer = {
+type PotPlayer = {
   seat: number;
   contributed: number;
   folded: boolean;

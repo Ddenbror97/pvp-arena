@@ -193,12 +193,18 @@ Not for anyone who needs the deposit back this week, anyone in a barred country,
   ],
   sources: [
     { label: "Flush bonus terms, opened 20 October 2026", url: "https://flush.com/bonus-terms/" },
-    { label: "Flush withdrawal FAQ, opened 20 October 2026", url: "https://flush.com/faq/withdrawals/" },
+    {
+      label: "Flush withdrawal FAQ, opened 20 October 2026",
+      url: "https://flush.com/faq/withdrawals/",
+    },
     { label: "Flush AML policy, opened 20 October 2026", url: "https://flush.com/aml-policy/" },
     { label: "Flush about FAQ, opened 20 October 2026", url: "https://flush.com/faq/about/" },
     { label: "Flush security FAQ, opened 20 October 2026", url: "https://flush.com/faq/security/" },
     { label: "Flush account FAQ, opened 20 October 2026", url: "https://flush.com/faq/account/" },
-    { label: "Flush terms URL, body not published, opened 20 October 2026", url: "https://flush.com/terms-of-service/" },
+    {
+      label: "Flush terms URL, body not published, opened 20 October 2026",
+      url: "https://flush.com/terms-of-service/",
+    },
   ],
   related: [
     "wolfbet-review",

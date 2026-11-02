@@ -211,16 +211,43 @@ The promotions index still showed ended campaigns. Dust under a coin floor is no
   ],
   sources: [
     { label: "Gamba terms, opened 20 October 2026", url: "https://gamba.com/policies/terms" },
-    { label: "Gamba licence page, opened 20 October 2026", url: "https://gamba.com/policies/license" },
-    { label: "Gamba promotions index, opened 20 October 2026", url: "https://gamba.com/promotions" },
+    {
+      label: "Gamba licence page, opened 20 October 2026",
+      url: "https://gamba.com/policies/license",
+    },
+    {
+      label: "Gamba promotions index, opened 20 October 2026",
+      url: "https://gamba.com/promotions",
+    },
     { label: "Gamba fairness library, opened 20 October 2026", url: "https://fairness.gamba.com/" },
-    { label: "Gamba withdrawal help, dated 16 March 2026", url: "https://help.gamba.com/en/articles/8271522-how-to-make-a-withdrawal" },
-    { label: "Gamba deposit and withdrawal limits, dated 16 March 2026", url: "https://help.gamba.com/en/articles/8271519-minimum-deposit-withdrawal-limits" },
-    { label: "Gamba deposit bonuses article, opened 20 October 2026", url: "https://help.gamba.com/en/articles/14075964-deposit-bonuses-on-gamba" },
-    { label: "Gamba promo-code help, dated 25 March 2026", url: "https://help.gamba.com/en/articles/8271539-how-to-redeem-promotion-codes-on-gamba" },
-    { label: "Gamba provably fair help, dated 16 March 2026", url: "https://help.gamba.com/en/articles/8271626-how-to-verify-provably-fair-bets-on-gamba" },
-    { label: "Gamba geo restrictions, dated 16 March 2026", url: "https://help.gamba.com/en/articles/8271491-geo-restrictions-licensed-operation" },
-    { label: "Gamba KYC levels, dated 26 March 2026", url: "https://help.gamba.com/en/articles/14277353-kyc-verification-on-gamba" },
+    {
+      label: "Gamba withdrawal help, dated 16 March 2026",
+      url: "https://help.gamba.com/en/articles/8271522-how-to-make-a-withdrawal",
+    },
+    {
+      label: "Gamba deposit and withdrawal limits, dated 16 March 2026",
+      url: "https://help.gamba.com/en/articles/8271519-minimum-deposit-withdrawal-limits",
+    },
+    {
+      label: "Gamba deposit bonuses article, opened 20 October 2026",
+      url: "https://help.gamba.com/en/articles/14075964-deposit-bonuses-on-gamba",
+    },
+    {
+      label: "Gamba promo-code help, dated 25 March 2026",
+      url: "https://help.gamba.com/en/articles/8271539-how-to-redeem-promotion-codes-on-gamba",
+    },
+    {
+      label: "Gamba provably fair help, dated 16 March 2026",
+      url: "https://help.gamba.com/en/articles/8271626-how-to-verify-provably-fair-bets-on-gamba",
+    },
+    {
+      label: "Gamba geo restrictions, dated 16 March 2026",
+      url: "https://help.gamba.com/en/articles/8271491-geo-restrictions-licensed-operation",
+    },
+    {
+      label: "Gamba KYC levels, dated 26 March 2026",
+      url: "https://help.gamba.com/en/articles/14277353-kyc-verification-on-gamba",
+    },
   ],
   related: [
     "metaspins-review",

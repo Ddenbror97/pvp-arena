@@ -70,7 +70,7 @@ export const guide: Guide = {
       a: "Pick a wallet that matches the network you will actually use, which the crypto wallet for gambling guide walks through. PVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD, so an XRP balance is a separate decision from funding those games.",
     },
   ],
-    sources: [
+  sources: [
     {
       label: "MetaMask Help Center — Getting started, checked 20 October 2026",
       url: "https://support.metamask.io/start/getting-started-with-metamask/",

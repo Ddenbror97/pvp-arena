@@ -121,7 +121,12 @@ describe("zero-value parent with an internal ETH payout", () => {
 
   it("records only the successful internal transfer to the deposit address", () => {
     expect(found).toHaveLength(1);
-    expect(found[0]).toMatchObject({ hash: parent, to: deposit, value: payout, blockNumber: block });
+    expect(found[0]).toMatchObject({
+      hash: parent,
+      to: deposit,
+      value: payout,
+      blockNumber: block,
+    });
     expect(traceFilterDeposits(traces, other, block)).toHaveLength(1);
     expect(traceFilterDeposits(traces, other, block)[0]?.to.toLowerCase()).toBe(other);
   });
@@ -175,7 +180,12 @@ describe("zero-value parent with an internal ETH payout", () => {
       transfers: [],
       status: "open",
     });
-    expect(mergeTraceAttempts([{ transfers: [], status: "open" }, { transfers: [], status: "open" }])).toEqual({
+    expect(
+      mergeTraceAttempts([
+        { transfers: [], status: "open" },
+        { transfers: [], status: "open" },
+      ]),
+    ).toEqual({
       transfers: [],
       status: "open",
     });

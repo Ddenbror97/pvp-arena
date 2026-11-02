@@ -8,7 +8,7 @@ type Rpc = {
 };
 const db = supabase as unknown as Rpc;
 
-export type FpsQueueStatus = {
+type FpsQueueStatus = {
   cash: DuelView | null;
   practice: DuelView | null;
   closed: string | null;

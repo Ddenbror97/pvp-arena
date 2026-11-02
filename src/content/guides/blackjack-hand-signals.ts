@@ -194,11 +194,13 @@ We did not test a live pit on twenty October twenty twenty-six. Minimum bets on 
       url: "https://www.mgmresorts.com/en/gamesense/guide-to-blackjack.html",
     },
     {
-      label: "New Jersey Division of Gaming Enforcement, Chapter 69F rules of the games (dealing and decisions, N.J.A.C. 13:69F-2.6)",
+      label:
+        "New Jersey Division of Gaming Enforcement, Chapter 69F rules of the games (dealing and decisions, N.J.A.C. 13:69F-2.6)",
       url: "https://www.nj.gov/lps/ge/docs/Regulations/CHAPTER69F.pdf",
     },
     {
-      label: "New Jersey Division of Gaming Enforcement, Chapter 69F surrender (N.J.A.C. 13:69F-2.8)",
+      label:
+        "New Jersey Division of Gaming Enforcement, Chapter 69F surrender (N.J.A.C. 13:69F-2.8)",
       url: "https://www.nj.gov/lps/ge/docs/Regulations/CHAPTER69F.pdf",
     },
   ],

@@ -213,7 +213,8 @@ You do not have to fund them.`,
   ],
   sources: [
     {
-      label: "Gilovich, Vallone, and Tversky, Cognitive Psychology 17 (1985), University of Texas copy",
+      label:
+        "Gilovich, Vallone, and Tversky, Cognitive Psychology 17 (1985), University of Texas copy",
       url: "https://labs.la.utexas.edu/gilden/files/2016/04/Gilo.Vallone.Tversky.pdf",
     },
   ],

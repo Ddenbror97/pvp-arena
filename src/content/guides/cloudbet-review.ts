@@ -211,9 +211,15 @@ Game RTP is not published. The United States is barred. There is no public code.
     },
   ],
   sources: [
-    { label: "Cloudbet terms, opened 20 October 2026", url: "https://www.cloudbet.com/en/help/terms" },
+    {
+      label: "Cloudbet terms, opened 20 October 2026",
+      url: "https://www.cloudbet.com/en/help/terms",
+    },
     { label: "Cloudbet homepage, opened 20 October 2026", url: "https://www.cloudbet.com/en" },
-    { label: "Curaçao certificate naming cloudbet.com, opened 20 October 2026", url: "https://cert.cga.cw/certificate?id=ZXlKcGRpSTZJalkxUlhWNGNHcERjRlIyWm5ReFVuUmFlblZ0TVZFOVBTSXNJblpoYkhWbElqb2lZV2hEZEVoeFEwdG9iWFE0WWt0UVUyaHFPWFZ5TXpNdlJqbHRORzVYVlZaUk1UVjBSbWRSTUZwTVFUMGlMQ0p0WVdNaU9pSmhPR0ZsTkRCallXTm1OakJrT1dOaE9EVTJNemhsTjJVME1HTmtaVGM0WkRFMU1EYzFNMlJqWmpRek9HVTBNelE1Tm1Vek5HTm1Zams0TmpNMVlUSmtJaXdpZEdGbklqb2lJbjA9" },
+    {
+      label: "Curaçao certificate naming cloudbet.com, opened 20 October 2026",
+      url: "https://cert.cga.cw/certificate?id=ZXlKcGRpSTZJalkxUlhWNGNHcERjRlIyWm5ReFVuUmFlblZ0TVZFOVBTSXNJblpoYkhWbElqb2lZV2hEZEVoeFEwdG9iWFE0WWt0UVUyaHFPWFZ5TXpNdlJqbHRORzVYVlZaUk1UVjBSbWRSTUZwTVFUMGlMQ0p0WVdNaU9pSmhPR0ZsTkRCallXTm1OakJrT1dOaE9EVTJNemhsTjJVME1HTmtaVGM0WkRFMU1EYzFNMlJqWmpRek9HVTBNelE1Tm1Vek5HTm1Zams0TmpNMVlUSmtJaXdpZEdGbklqb2lJbjA9",
+    },
   ],
   related: [
     "mbit-casino-review",

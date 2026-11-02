@@ -24,7 +24,7 @@ export type MatchStep =
   | { kind: "timeout"; hash: string }
   | { kind: "forfeit"; seat: Seat; hash: string };
 
-export type Replay = {
+type Replay = {
   ok: boolean;
   engine: typeof ENGINE_VERSION;
   rules: typeof RULES_VERSION;

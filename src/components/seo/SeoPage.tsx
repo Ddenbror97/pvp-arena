@@ -11,8 +11,6 @@ import {
 import { cn } from "@/lib/utils";
 import type { Faq } from "./seo-head";
 
-export type { Faq };
-
 export function SeoPage({ children }: { children: ReactNode }) {
   return (
     <article className="mx-auto w-full max-w-6xl space-y-16 pb-8 sm:space-y-24">{children}</article>

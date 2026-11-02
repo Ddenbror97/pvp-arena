@@ -9,8 +9,7 @@ export const guide: Guide = {
   description:
     "Rolla casino sounds like a dice roll. This review stays on the brand cashier and leaves dice rules elsewhere. No code, fee, or cashout clock is invented.",
   h1: "Rolla casino review in 2026: the cashier, once the dice sound fades",
-  answer:
-    `Rolla casino is a brand that sounds like a dice roll, and this page stays on the cashier anyway. The job is to see what the screen will redeem and what it leaves unpublished. Dice rules already have their own guide.
+  answer: `Rolla casino is a brand that sounds like a dice roll, and this page stays on the cashier anyway. The job is to see what the screen will redeem and what it leaves unpublished. Dice rules already have their own guide.
 
 The dollar examples below use our Coinflip and our Jackpot.`,
   facts: [

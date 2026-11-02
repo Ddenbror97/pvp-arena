@@ -64,7 +64,7 @@ export function resolveChainEnvAssets<T extends ChainAssetConfig>(
   return { ok: true, usdc, eth };
 }
 
-export type EnvCheck = { ok: true } | { ok: false; reason: string };
+type EnvCheck = { ok: true } | { ok: false; reason: string };
 
 /** Only HTTPS RPC endpoints that are not testnets are accepted. */
 export function checkRpcUrl(url: string | undefined): EnvCheck {

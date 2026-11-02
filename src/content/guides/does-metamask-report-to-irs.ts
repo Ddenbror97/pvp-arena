@@ -70,9 +70,7 @@ export const guide: Guide = {
       a: "This is not tax advice, and it is only a general description of what a self-custody wallet company does and does not file. Your facts, your state, and current law decide your return.",
     },
   ],
-  sources: [
-    { label: "IRS: digital assets", url: "https://www.irs.gov/filing/digital-assets" },
-  ],
+  sources: [{ label: "IRS: digital assets", url: "https://www.irs.gov/filing/digital-assets" }],
   related: ["crypto-gambling-taxes", "report-gambling-winnings"],
   updated: "2026-10-21",
 };

@@ -175,7 +175,7 @@ Lower rows on the old chart stay not published in this file on purpose. If your 
 
 A life annuity that has stopped selling is not a second draw for a dead ticket. [Entering a losing ticket in a later draw](/guides/second-chance-lottery) is that other product.
 
-A different life-annuity game is still selling. Connecticut's rules PDF and North Dakota's page were opened on 20 October 2026. [That rules table](/guides/lucky-for-life-lottery) is not the game Georgia and Missouri closed. The cash-option dollar amount stays unpublished.`
+A different life-annuity game is still selling. Connecticut's rules PDF and North Dakota's page were opened on 20 October 2026. [That rules table](/guides/lucky-for-life-lottery) is not the game Georgia and Missouri closed. The cash-option dollar amount stays unpublished.`,
     },
   ],
   faqs: [

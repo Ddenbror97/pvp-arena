@@ -107,7 +107,7 @@ export type ShotInput = {
   calledPocket: number | null;
 };
 
-export type Pocket = { id: number; x: number; y: number; r: number };
+type Pocket = { id: number; x: number; y: number; r: number };
 
 export const POCKETS: readonly Pocket[] = [
   { id: 0, x: 48_000, y: 48_000, r: 54_000 },
@@ -429,10 +429,6 @@ function damp(b: Ball, physics: string) {
     }
   }
   b.spin = Math.trunc((b.spin * 985) / 1000);
-}
-
-export function moving(balls: readonly Ball[]): boolean {
-  return balls.some((b) => !b.pocketed && (b.vx !== 0 || b.vy !== 0));
 }
 
 /** Same launch `simulate` applies. Returns follow so the contact impulse can use it. */

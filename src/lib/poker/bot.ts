@@ -13,9 +13,8 @@ import { clockwise } from "./engine";
 import { categoryOf, evaluate } from "./evaluator";
 
 export type BotStyle = "casual" | "standard" | "competitive";
-export type BotStreet = "PREFLOP" | "FLOP" | "TURN" | "RIVER";
 export type BotPosition = "blind" | "early" | "middle" | "late";
-export type BotAction = "FOLD" | "CHECK" | "CALL" | "BET" | "RAISE" | "ALL_IN";
+type BotAction = "FOLD" | "CHECK" | "CALL" | "BET" | "RAISE" | "ALL_IN";
 
 export type BotLegal = {
   toCall: number;
@@ -46,7 +45,7 @@ export type BotView = {
   legal: BotLegal;
 };
 
-export type BotDecision = { action: BotAction; amount: number };
+type BotDecision = { action: BotAction; amount: number };
 
 /** Thresholds. Higher fold/bet numbers play tighter. bluff is a roll ceiling. */
 export const BOT_STYLE = {

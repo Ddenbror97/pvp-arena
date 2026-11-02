@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Dollar results scale with the stake. A 3% edge on a $100 spin costs more dollars than a 3% edge on a $1 spin. The 3% is an illustration, not a measured high-limit return.",
     "A game can print one return at every stake, or a different return at a higher stake. Only its rules say which.",
     "Bankroll has to survive the unit you picked. A high ceiling does not shrink the number of losing spins.",
-    "Calling a high-limit sign \"looser\" is a claim about return. It needs the rules screen, not the sign.",
+    'Calling a high-limit sign "looser" is a claim about return. It needs the rules screen, not the sign.',
   ],
   sections: [
     {

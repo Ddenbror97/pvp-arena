@@ -23,7 +23,7 @@ const AIRBORNE = 0.4;
 /** Launch speed, degrees per ms. Matches the ease-out derivative at t = 0. */
 const FAST_DEG_PER_MS = (EASE_N * BASE_TURNS * 360) / ANIMATION_MS;
 
-export type Side = "HEADS" | "TAILS";
+type Side = "HEADS" | "TAILS";
 
 function easeOut(u: number) {
   if (u <= 0) return 0;
@@ -42,7 +42,7 @@ function spinningAngle(elapsedMs: number) {
   return Math.max(0, elapsedMs) * FAST_DEG_PER_MS;
 }
 
-export interface CoinMotion {
+interface CoinMotion {
   start: number;
   side: Side | null;
   /** Client time the side arrived, when this client had already seen the flip without it. */

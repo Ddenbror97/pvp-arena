@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export type BotPublicConfig = { coinflip: boolean; poker: boolean; slott: boolean };
+type BotPublicConfig = { coinflip: boolean; poker: boolean; slott: boolean };
 
 /** Public flags only. Stake still comes from the house bot bankroll, which is funded separately. */
 export function useBotConfig() {

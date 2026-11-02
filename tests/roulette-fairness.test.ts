@@ -17,7 +17,13 @@ describe("roulette fairness verifier", () => {
     expect(a.slot).toBeLessThan(15);
   });
   it("detects a wrong commitment", async () => {
-    const r = await verifyRoulette({ id: 1, server_seed: "22".repeat(32), server_seed_hash: "00".repeat(32), draw_version: 1, layout: Array(15).fill("RED") });
+    const r = await verifyRoulette({
+      id: 1,
+      server_seed: "22".repeat(32),
+      server_seed_hash: "00".repeat(32),
+      draw_version: 1,
+      layout: Array(15).fill("RED"),
+    });
     expect(r.hashOk).toBe(false);
   });
 });

@@ -169,11 +169,6 @@ PVPspinArena does not run bingo bango bongo, does not score a green, and does no
     { label: "Wikipedia: Golf", url: "https://en.wikipedia.org/wiki/Golf" },
     { label: "Wikipedia: Match play", url: "https://en.wikipedia.org/wiki/Match_play" },
   ],
-  related: [
-    "wolf-golf-game",
-    "skins-game-golf",
-    "nassau-bet",
-    "golf-side-bets",
-  ],
+  related: ["wolf-golf-game", "skins-game-golf", "nassau-bet", "golf-side-bets"],
   updated: "2026-10-07",
 };

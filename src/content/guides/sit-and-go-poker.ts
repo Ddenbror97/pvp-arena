@@ -152,13 +152,11 @@ Read the table. Then register, or do not. The seats will fill without you if the
   ],
   sources: [
     { label: "Wikipedia — Sit and go", url: "https://en.wikipedia.org/wiki/Sit_and_go" },
-    { label: "Wikipedia — Poker tournament", url: "https://en.wikipedia.org/wiki/Poker_tournament" },
+    {
+      label: "Wikipedia — Poker tournament",
+      url: "https://en.wikipedia.org/wiki/Poker_tournament",
+    },
   ],
-  related: [
-    "spin-and-go",
-    "cash-game-poker",
-    "poker-staking",
-    "texas-holdem-rules",
-  ],
+  related: ["spin-and-go", "cash-game-poker", "poker-staking", "texas-holdem-rules"],
   updated: "2026-10-07",
 };

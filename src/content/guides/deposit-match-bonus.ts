@@ -82,9 +82,17 @@ PVPspinArena does not attach a deposit match to Jackpot, Coinflip, Roulette, P2P
     },
   ],
   sources: [
-    { label: "UK Gambling Commission LCCP 5.1.1: rewards and bonuses", url: "https://www.gamblingcommission.gov.uk/licensees-and-businesses/lccp/condition/5-1-1-sr-code" },
+    {
+      label: "UK Gambling Commission LCCP 5.1.1: rewards and bonuses",
+      url: "https://www.gamblingcommission.gov.uk/licensees-and-businesses/lccp/condition/5-1-1-sr-code",
+    },
     { label: "PVPspinArena terms", url: "https://pvpspinarena.com/terms" },
   ],
-  related: ["casino-wagering-requirements", "reload-bonus-casino", "house-edge", "what-is-a-crypto-casino"],
+  related: [
+    "casino-wagering-requirements",
+    "reload-bonus-casino",
+    "house-edge",
+    "what-is-a-crypto-casino",
+  ],
   updated: "2026-10-21",
 };

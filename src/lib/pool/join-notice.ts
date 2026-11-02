@@ -1,4 +1,4 @@
-export type PoolJoinSnap = {
+type PoolJoinSnap = {
   id: number;
   status: string;
   creatorId: string;

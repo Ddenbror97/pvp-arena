@@ -136,7 +136,7 @@ Prefer one small matched betting test over many open tabs. Stake the cashier's m
 
 Play only the games this site actually offers after you close the tab. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker settle in US dollars, adults 18+ only. Another matched betting account is not a reset of the last one.
 
-One indexed perk prices major sides at -108 and calls it 20% off. The dollars are about $2 of juice, not 20% of the stake. See [the -108 wording, and the page that failed to load](/guides/heritage-sports-review).`
+One indexed perk prices major sides at -108 and calls it 20% off. The dollars are about $2 of juice, not 20% of the stake. See [the -108 wording, and the page that failed to load](/guides/heritage-sports-review).`,
     },
   ],
   faqs: [

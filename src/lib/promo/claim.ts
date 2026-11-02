@@ -5,9 +5,9 @@ import { promoClaimSucceeded } from "@/lib/promo/game-signup-policy";
 
 const KEY = "pvp-signup-promo";
 
-export type PromoClaimResult = { ok?: boolean; reason?: string; reward_cents?: number };
+type PromoClaimResult = { ok?: boolean; reason?: string; reward_cents?: number };
 
-export type SignupAccount = { id: string; email?: string | null };
+type SignupAccount = { id: string; email?: string | null };
 
 type PromoBind =
   { kind: "email"; email: string } | { kind: "discord" } | { kind: "account"; accountId: string };
@@ -187,7 +187,7 @@ export function openPromoClaim(code: string): { announce: () => boolean; release
   };
 }
 
-export type RememberedPromoClaim =
+type RememberedPromoClaim =
   { status: "none" } | { status: "retry" } | { status: "done"; ok: boolean; reason?: string };
 
 /** Claim the code typed at signup. A rejected code still leaves the account in place. */

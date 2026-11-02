@@ -164,11 +164,6 @@ The line to leave with: Solitaire Clash is legit in the narrow sense only when y
     { label: "AviaGames: Solitaire Clash", url: "https://www.aviagames.com/games/solitaire-clash" },
     { label: "Wikipedia: Solitaire", url: "https://en.wikipedia.org/wiki/Solitaire" },
   ],
-  related: [
-    "avia-games-review",
-    "pocket7games-review",
-    "bingo-cash-review",
-    "solitaire-rules",
-  ],
+  related: ["avia-games-review", "pocket7games-review", "bingo-cash-review", "solitaire-rules"],
   updated: "2026-10-20",
 };

@@ -66,9 +66,7 @@ export const guide: Guide = {
       a: "Not always, so read the address on the cashier at the moment you send, and follow the steps in how to send crypto. Deposit and payout wallets are separate, so the address that pays you can differ from the address you deposited to.",
     },
   ],
-    sources: [
-    { label: "ethereum.org — Ethereum wallets", url: "https://ethereum.org/en/wallets/" },
-  ],
+  sources: [{ label: "ethereum.org — Ethereum wallets", url: "https://ethereum.org/en/wallets/" }],
   related: ["how-to-send-crypto", "crypto-casino-payment-methods"],
   updated: "2026-10-21",
 };

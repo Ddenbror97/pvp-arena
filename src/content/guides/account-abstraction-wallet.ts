@@ -79,9 +79,17 @@ Adults only. A smoother login is not a reason to deposit rent money. [Responsibl
     },
   ],
   sources: [
-    { label: "ERC-4337: Account Abstraction Using Alt Mempool", url: "https://eips.ethereum.org/EIPS/eip-4337" },
+    {
+      label: "ERC-4337: Account Abstraction Using Alt Mempool",
+      url: "https://eips.ethereum.org/EIPS/eip-4337",
+    },
     { label: "PVPspinArena terms: balances and networks", url: "https://pvpspinarena.com/terms" },
   ],
-  related: ["gasless-transactions", "how-to-create-a-crypto-wallet", "wallet-security-checklist", "base-vs-ethereum"],
+  related: [
+    "gasless-transactions",
+    "how-to-create-a-crypto-wallet",
+    "wallet-security-checklist",
+    "base-vs-ethereum",
+  ],
   updated: "2026-10-21",
 };

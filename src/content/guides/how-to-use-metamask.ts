@@ -71,7 +71,7 @@ export const guide: Guide = {
       a: "PVPspinArena settles six-max poker, jackpot, coinflip, roulette, and P2P Slott in USD and does not require MetaMask. If you connect any wallet, never type the Secret Recovery Phrase into the site.",
     },
   ],
-    sources: [
+  sources: [
     {
       label: "MetaMask Help Center — Getting started, checked 20 October 2026",
       url: "https://support.metamask.io/start/getting-started-with-metamask/",

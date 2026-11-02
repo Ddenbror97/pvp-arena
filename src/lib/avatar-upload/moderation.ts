@@ -15,7 +15,7 @@
  */
 import type { Pixels } from "./codecs";
 
-export type ModerationResult = { ok: true } | { ok: false; reason: "explicit" | "graphic" };
+type ModerationResult = { ok: true } | { ok: false; reason: "explicit" | "graphic" };
 
 export const MODERATION_RULES = {
   /** Below this share of skin the image always passes. */

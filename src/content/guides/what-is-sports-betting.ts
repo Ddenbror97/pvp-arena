@@ -119,7 +119,7 @@ If you opened this pillar because a search mixed “sports betting” with this 
 
 The idea of a bet is not a brand. [One crypto-facing book](/guides/sportsbet-io-review) does not get a bonus figure here.
 
-A different help center treats the wager as Panamanian law and still prints no welcome percent. The dated note is [rules that name Panama, not a bonus percent](/guides/sportsbetting-ag-review).`
+A different help center treats the wager as Panamanian law and still prints no welcome percent. The dated note is [rules that name Panama, not a bonus percent](/guides/sportsbetting-ag-review).`,
     },
     {
       id: "cluster",

@@ -77,7 +77,7 @@ export function nextTimer(
   return { ...state, playerCount };
 }
 
-export interface PlayerSlice {
+interface PlayerSlice {
   user_id: string;
   total_amount: number;
 }

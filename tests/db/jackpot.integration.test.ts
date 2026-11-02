@@ -12,12 +12,18 @@ import { testDatabaseUrl } from "./test-url";
 
 const url = testDatabaseUrl();
 const d = url ? describe : describe.skip;
-const sql = url ? postgres(url, { max: 10, prepare: false, onnotice: () => {}, idle_timeout: 5 }) : (null as never);
+const sql = url
+  ? postgres(url, { max: 10, prepare: false, onnotice: () => {}, idle_timeout: 5 })
+  : (null as never);
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const START = 100000; // welcome grant, cents
 
-async function as<T>(uid: string | null, fn: (tx: postgres.TransactionSql) => Promise<T>, fail = false): Promise<T> {
+async function as<T>(
+  uid: string | null,
+  fn: (tx: postgres.TransactionSql) => Promise<T>,
+  fail = false,
+): Promise<T> {
   return sql.begin(async (tx) => {
     await tx`select set_config('test.uid', ${uid ?? ""}, true)`;
     if (fail) await tx`select set_config('pvp.fail_settlement', 'on', true)`;
@@ -32,14 +38,21 @@ async function newUser(name: string) {
 }
 const join = (uid: string | null, amount: number, key = randomUUID()) =>
   as(uid, async (tx) => (await tx`select pvp_test.jackpot_join(${amount}, ${key}) as r`)[0].r);
-const tick = (fail = false) => as(null, async (tx) => (await tx`select pvp_test.jackpot_tick() as r`)[0].r, fail);
+const tick = (fail = false) =>
+  as(null, async (tx) => (await tx`select pvp_test.jackpot_tick() as r`)[0].r, fail);
 /** A failed payout backs off for seconds; end the wait so the next worker retries now. */
 const retryNow = (id: number) =>
   sql`update pvp_test.jackpot_payouts set next_retry_at = clock_timestamp() where game_id = ${id}`;
-const openGame = async () => (await sql`select * from pvp_test.jackpot_games where status in ('WAITING','ACTIVE')`)[0];
-const game = async (id: number) => (await sql`select * from pvp_test.jackpot_games where id = ${id}`)[0];
+const openGame = async () =>
+  (await sql`select * from pvp_test.jackpot_games where status in ('WAITING','ACTIVE')`)[0];
+const game = async (id: number) =>
+  (await sql`select * from pvp_test.jackpot_games where id = ${id}`)[0];
 const bal = async (uid: string, kind = "user_available") =>
-  Number((await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind} and account_type = 'test_credit'`)[0].balance);
+  Number(
+    (
+      await sql`select balance from pvp_test.wallet_accounts where owner_id = ${uid} and kind = ${kind} and account_type = 'test_credit'`
+    )[0].balance,
+  );
 
 async function expectErr(p: Promise<unknown>, code: string) {
   await expect(p).rejects.toThrow(code);
@@ -49,32 +62,48 @@ async function assertInvariants() {
   // Double-entry: all balances sum to zero; each cached balance equals its postings.
   const [s] = await sql`select coalesce(sum(balance),0)::bigint as s from pvp_test.wallet_accounts`;
   expect(Number(s.s)).toBe(0);
-  const mism = await sql`select a.id from pvp_test.wallet_accounts a left join pvp_test.ledger_postings p on p.account_id = a.id
+  const mism =
+    await sql`select a.id from pvp_test.wallet_accounts a left join pvp_test.ledger_postings p on p.account_id = a.id
     group by a.id, a.balance having a.balance <> coalesce(sum(p.amount),0)`;
   expect(mism.length).toBe(0);
-  const unbalanced = await sql`select tx_id from pvp_test.ledger_postings group by tx_id having sum(amount) <> 0`;
+  const unbalanced =
+    await sql`select tx_id from pvp_test.ledger_postings group by tx_id having sum(amount) <> 0`;
   expect(unbalanced.length).toBe(0);
   // Locked funds equal open pots; escrow is empty.
-  const [l] = await sql`select coalesce(sum(balance),0)::bigint v from pvp_test.wallet_accounts where kind='user_locked'`;
-  const [o] = await sql`select coalesce(sum(pot_amount),0)::bigint v from pvp_test.jackpot_games where status in ('WAITING','ACTIVE','DRAWING')`;
+  const [l] =
+    await sql`select coalesce(sum(balance),0)::bigint v from pvp_test.wallet_accounts where kind='user_locked'`;
+  const [o] =
+    await sql`select coalesce(sum(pot_amount),0)::bigint v from pvp_test.jackpot_games where status in ('WAITING','ACTIVE','DRAWING')`;
   expect(Number(l.v)).toBe(Number(o.v));
-  const [e] = await sql`select coalesce(sum(balance),0)::bigint v from pvp_test.wallet_accounts where kind='game_escrow'`;
+  const [e] =
+    await sql`select coalesce(sum(balance),0)::bigint v from pvp_test.wallet_accounts where kind='game_escrow'`;
   expect(Number(e.v)).toBe(0);
   // Per-game ticket and pot invariants.
   for (const g of await sql`select * from pvp_test.jackpot_games`) {
-    const ents = await sql`select * from pvp_test.jackpot_entries where game_id = ${g.id} order by ticket_start`;
+    const ents =
+      await sql`select * from pvp_test.jackpot_entries where game_id = ${g.id} order by ticket_start`;
     let cur = 0;
-    for (const en of ents) { expect(Number(en.ticket_start)).toBe(cur); cur = Number(en.ticket_end); }
+    for (const en of ents) {
+      expect(Number(en.ticket_start)).toBe(cur);
+      cur = Number(en.ticket_end);
+    }
     expect(cur).toBe(Number(g.pot_amount));
     expect(ents.length).toBe(g.entry_count);
-    const debits = await sql`select count(*)::int c from pvp_test.ledger_transactions where game_id = ${g.id} and kind = 'jackpot_entry'`;
+    const debits =
+      await sql`select count(*)::int c from pvp_test.ledger_transactions where game_id = ${g.id} and kind = 'jackpot_entry'`;
     expect(debits[0].c).toBe(ents.length);
-    const settles = await sql`select count(*)::int c from pvp_test.ledger_transactions where game_id = ${g.id} and kind = 'jackpot_settlement'`;
+    const settles =
+      await sql`select count(*)::int c from pvp_test.ledger_transactions where game_id = ${g.id} and kind = 'jackpot_settlement'`;
     expect(settles[0].c).toBe(g.status === "COMPLETED" ? 1 : 0);
     if (g.status === "COMPLETED") {
-      const owner = ents.find((x) => Number(x.ticket_start) <= Number(g.winning_ticket) && Number(g.winning_ticket) < Number(x.ticket_end));
+      const owner = ents.find(
+        (x) =>
+          Number(x.ticket_start) <= Number(g.winning_ticket) &&
+          Number(g.winning_ticket) < Number(x.ticket_end),
+      );
       expect(owner?.user_id).toBe(g.winner_id);
-      const [wt] = await sql`select total_amount from pvp_test.jackpot_players where game_id=${g.id} and user_id=${g.winner_id}`;
+      const [wt] =
+        await sql`select total_amount from pvp_test.jackpot_players where game_id=${g.id} and user_id=${g.winner_id}`;
       expect(Number(wt.total_amount)).toBe(Number(g.winner_total));
     }
   }
@@ -101,7 +130,12 @@ d("jackpot engine (isolated schema)", () => {
   });
 
   it("full lifecycle WAITING -> ACTIVE -> DRAWING -> COMPLETED with correct timer rules", async () => {
-    const [a, b, c, dd] = [await newUser("alice"), await newUser("bob"), await newUser("carol"), await newUser("dave")];
+    const [a, b, c, dd] = [
+      await newUser("alice"),
+      await newUser("bob"),
+      await newUser("carol"),
+      await newUser("dave"),
+    ];
     await join(a, 2500);
     let g = await openGame();
     expect(g.status).toBe("WAITING");
@@ -122,7 +156,8 @@ d("jackpot engine (isolated schema)", () => {
     await sql`update pvp_test.jackpot_games set scheduled_end_at = clock_timestamp() + interval '30 seconds' where id = ${g.id}`;
     await join(dd, 500);
     g = await openGame();
-    const [left] = await sql`select extract(epoch from scheduled_end_at - clock_timestamp())::float8 s from pvp_test.jackpot_games where id = ${g.id}`;
+    const [left] =
+      await sql`select extract(epoch from scheduled_end_at - clock_timestamp())::float8 s from pvp_test.jackpot_games where id = ${g.id}`;
     expect(left.s).toBeGreaterThan(36);
     expect(left.s).toBeLessThanOrEqual(40);
     expect(g.player_count).toBe(4);
@@ -144,16 +179,31 @@ d("jackpot engine (isolated schema)", () => {
     expect(Number(done.rake_amount)).toBe(500); // 5% house rake
     expect(Number(done.payout_amount)).toBe(9500);
     expect(done.server_seed).toMatch(/^[0-9a-f]{64}$/);
-    const winnerStart = { [a]: START - 3500, [b]: START - 5000, [c]: START - 1000, [dd]: START - 500 }[done.winner_id];
+    const winnerStart = {
+      [a]: START - 3500,
+      [b]: START - 5000,
+      [c]: START - 1000,
+      [dd]: START - 500,
+    }[done.winner_id];
     expect(await bal(done.winner_id)).toBe(winnerStart + 9500);
     for (const u of [a, b, c, dd]) expect(await bal(u, "user_locked")).toBe(0);
 
     // A fresh game opens and the record is independently verifiable
     expect((await openGame()).id).not.toBe(g.id);
-    const ents = await sql`select user_id, ticket_start, ticket_end from pvp_test.jackpot_entries where game_id=${g.id}`;
+    const ents =
+      await sql`select user_id, ticket_start, ticket_end from pvp_test.jackpot_entries where game_id=${g.id}`;
     const v = await verifyGame(
-      { ...done, id: Number(done.id), pot_amount: Number(done.pot_amount), winning_ticket: Number(done.winning_ticket) },
-      ents.map((e) => ({ user_id: e.user_id, ticket_start: Number(e.ticket_start), ticket_end: Number(e.ticket_end) })),
+      {
+        ...done,
+        id: Number(done.id),
+        pot_amount: Number(done.pot_amount),
+        winning_ticket: Number(done.winning_ticket),
+      },
+      ents.map((e) => ({
+        user_id: e.user_id,
+        ticket_start: Number(e.ticket_start),
+        ticket_end: Number(e.ticket_end),
+      })),
     );
     expect(v.ok).toBe(true);
     await assertInvariants();
@@ -194,7 +244,9 @@ d("jackpot engine (isolated schema)", () => {
     const key = randomUUID();
     const r1 = await join(a, 700, key);
     const r2 = await join(a, 700, key);
-    const r3 = await Promise.all(Array.from({ length: 8 }, () => join(a, 700, key).catch((e) => e)));
+    const r3 = await Promise.all(
+      Array.from({ length: 8 }, () => join(a, 700, key).catch((e) => e)),
+    );
     expect(r1.duplicate).toBe(false);
     expect(r2.duplicate).toBe(true);
     expect(r2.entry_id).toBe(r1.entry_id);
@@ -239,7 +291,11 @@ d("jackpot engine (isolated schema)", () => {
     const deadline = +g0.scheduled_end_at;
     await sleep(Math.max(0, deadline - Date.now() - 150));
     const ops = [
-      ...users.slice(2).map((u) => join(u, 500).then((r) => ({ r })).catch((e: Error) => ({ e: e.message }))),
+      ...users.slice(2).map((u) =>
+        join(u, 500)
+          .then((r) => ({ r }))
+          .catch((e: Error) => ({ e: e.message })),
+      ),
       ...Array.from({ length: 10 }, (_, i) => sleep(i * 30).then(() => tick())),
     ];
     const out = await Promise.all(ops);
@@ -247,8 +303,10 @@ d("jackpot engine (isolated schema)", () => {
     await tick();
     const g = await game(g0.id);
     expect(g.status).toBe("COMPLETED");
-    for (const x of out as { e?: string }[]) if (x && "e" in x && x.e) expect(x.e).toMatch(/GAME_CLOSED/);
-    const late = await sql`select count(*)::int c from pvp_test.jackpot_entries where game_id=${g.id} and created_at >= ${g.scheduled_end_at}`;
+    for (const x of out as { e?: string }[])
+      if (x && "e" in x && x.e) expect(x.e).toMatch(/GAME_CLOSED/);
+    const late =
+      await sql`select count(*)::int c from pvp_test.jackpot_entries where game_id=${g.id} and created_at >= ${g.scheduled_end_at}`;
     expect(late[0].c).toBe(0);
     // Late joiners that succeeded went into the next game, not the closed one
     await assertInvariants();
@@ -324,14 +382,23 @@ d("jackpot engine (isolated schema)", () => {
     const g = await openGame();
     await sql`update pvp_test.jackpot_games set scheduled_end_at = clock_timestamp() - interval '1 second' where id = ${g.id}`;
     await tick();
-    for (let i = 0; i < 5; i++) expect(await as(null, async (tx) => (await tx`select pvp_test.jackpot_settle(${g.id}) r`)[0].r)).toBe("noop");
-    await expect(sql`update pvp_test.jackpot_games set winner_id = ${a} where id = ${g.id}`).rejects.toThrow(/IMMUTABLE/);
-    await expect(sql`update pvp_test.jackpot_entries set amount = 1 where game_id = ${g.id}`).rejects.toThrow(/IMMUTABLE/);
+    for (let i = 0; i < 5; i++)
+      expect(
+        await as(null, async (tx) => (await tx`select pvp_test.jackpot_settle(${g.id}) r`)[0].r),
+      ).toBe("noop");
+    await expect(
+      sql`update pvp_test.jackpot_games set winner_id = ${a} where id = ${g.id}`,
+    ).rejects.toThrow(/IMMUTABLE/);
+    await expect(
+      sql`update pvp_test.jackpot_entries set amount = 1 where game_id = ${g.id}`,
+    ).rejects.toThrow(/IMMUTABLE/);
     await expect(sql`delete from pvp_test.ledger_postings`).rejects.toThrow(/IMMUTABLE/);
     await expect(
       sql.begin(async (tx) => {
-        const [t] = await tx`insert into pvp_test.ledger_transactions (kind, idempotency_key) values ('refund', ${randomUUID()}) returning id`;
-        const [acc] = await tx`select id from pvp_test.wallet_accounts where owner_id = ${a} and kind='user_available' and account_type='test_credit'`;
+        const [t] =
+          await tx`insert into pvp_test.ledger_transactions (kind, idempotency_key) values ('refund', ${randomUUID()}) returning id`;
+        const [acc] =
+          await tx`select id from pvp_test.wallet_accounts where owner_id = ${a} and kind='user_available' and account_type='test_credit'`;
         await tx`select pvp_test._post(${t.id}, ${acc.id}, 999999)`; // unbalanced single-sided posting
       }),
     ).rejects.toThrow(/LEDGER_UNBALANCED/);
@@ -344,7 +411,9 @@ d("jackpot engine (isolated schema)", () => {
     const g = await openGame();
     expect(g.server_seed).toBeNull();
     expect(g.server_seed_hash).toMatch(/^[0-9a-f]{64}$/);
-    await expect(sql`update pvp_test.jackpot_games set server_seed = 'x' where id = ${g.id}`).rejects.toThrow();
+    await expect(
+      sql`update pvp_test.jackpot_games set server_seed = 'x' where id = ${g.id}`,
+    ).rejects.toThrow();
     await join(b, 1000);
   });
 
@@ -356,7 +425,12 @@ d("jackpot engine (isolated schema)", () => {
         from pg_proc p where p.pronamespace = ${schema}::regnamespace
           and p.proname in ('claim_test_credits', 'reset_test_credits')`;
       expect(rows.length).toBe(3);
-      for (const r of rows) expect({ f: r.f, anon: r.anon, auth: r.auth }).toEqual({ f: r.f, anon: false, auth: false });
+      for (const r of rows)
+        expect({ f: r.f, anon: r.anon, auth: r.auth }).toEqual({
+          f: r.f,
+          anon: false,
+          auth: false,
+        });
     }
   });
 
@@ -384,7 +458,8 @@ d("jackpot engine (isolated schema)", () => {
     for (let i = 0; i < 80; i++) {
       const seed = randomUUID().replace(/-/g, "") + randomUUID().replace(/-/g, "");
       const n = ns[i % ns.length];
-      const [row] = await sql`select (t).ticket::text, (t).counter from (select pvp_test.jackpot_draw_ticket(decode(${seed},'hex'), ${i}, 1, ${n.toString()}::bigint) t) x`;
+      const [row] =
+        await sql`select (t).ticket::text, (t).counter from (select pvp_test.jackpot_draw_ticket(decode(${seed},'hex'), ${i}, 1, ${n.toString()}::bigint) t) x`;
       const ts = await drawTicket(seed, i, 1, n);
       expect(ts.ticket.toString()).toBe(row.ticket);
       expect(ts.counter).toBe(row.counter);
@@ -404,7 +479,8 @@ d("jackpot engine (isolated schema)", () => {
       }
     }
     expect(found).toBeDefined();
-    const [row] = await sql`select (t).ticket::text, (t).counter from (select pvp_test.jackpot_draw_ticket(decode(${found!.seed},'hex'), ${gameId}, 1, ${n.toString()}::bigint) t) x`;
+    const [row] =
+      await sql`select (t).ticket::text, (t).counter from (select pvp_test.jackpot_draw_ticket(decode(${found!.seed},'hex'), ${gameId}, 1, ${n.toString()}::bigint) t) x`;
     expect(row.ticket).toBe(found!.ticket.toString());
     expect(row.counter).toBe(found!.counter);
     expect(found!.counter).toBeGreaterThan(0);

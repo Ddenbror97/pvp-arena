@@ -9,8 +9,7 @@ export const guide: Guide = {
   description:
     "Tapjoy is an offer wall inside other apps. A missing credit is a tracking note you document, not a rate this page knows. A $7 coinflip pays the winner $13.30.",
   h1: "Tapjoy in 2026: an offer wall, and a missing credit is a tracking note",
-  answer:
-    `Tapjoy is an offer wall that lives inside other apps, and an offer that does not credit is a tracking problem you document with screenshots. This page cannot know that offer's true rate, the advertiser's rule, or why a balance stayed at zero.
+  answer: `Tapjoy is an offer wall that lives inside other apps, and an offer that does not credit is a tracking problem you document with screenshots. This page cannot know that offer's true rate, the advertiser's rule, or why a balance stayed at zero.
 
 Suppose a listing says $3 and credits $0. Our own coinflip is a different object: $7 versus $7. No code is printed.`,
   facts: [

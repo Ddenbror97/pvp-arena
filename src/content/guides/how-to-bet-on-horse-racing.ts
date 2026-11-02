@@ -120,7 +120,7 @@ Watch the field size. A five-horse race and a twelve-horse race are different pr
 
 Leave with the tickets you cashed and the ones you did not. The uncashed ones are the tuition. The pool will be there tomorrow, still minus takeout, still indifferent to the story you told about the horse.
 
-The 2026 horsemen guide and the Keeneland wagering menu were opened. [Those championship notes](/guides/breeders-cup-betting) leave a fixed win payoff unpublished until the pools close.`
+The 2026 horsemen guide and the Keeneland wagering menu were opened. [Those championship notes](/guides/breeders-cup-betting) leave a fixed win payoff unpublished until the pools close.`,
     },
   ],
   faqs: [

@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "davinci-diamonds-slot",
   cluster: "Slots",
   keyword: "davinci diamonds slot",
-  secondary: [
-    "igt tumbling reels",
-    "rembrandt riches clone sheet",
-    "high five games agreement",
-  ],
+  secondary: ["igt tumbling reels", "rembrandt riches clone sheet", "high five games agreement"],
   title: "Davinci Diamonds Slot: IGT Leaves RTP Blank",
   description:
     "Davinci diamonds slot has no RTP on the IGT pages opened 20 October 2026. A 2008 Rembrandt Riches sheet clones the name and prints its own 88% to 98% band.",

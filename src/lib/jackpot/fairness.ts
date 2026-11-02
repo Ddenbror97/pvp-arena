@@ -43,13 +43,13 @@ export async function drawTicket(
   throw new Error("DRAW_EXHAUSTED");
 }
 
-export interface VerifiableEntry {
+interface VerifiableEntry {
   user_id: string;
   ticket_start: number | bigint;
   ticket_end: number | bigint;
 }
 
-export interface VerifiableGame {
+interface VerifiableGame {
   id: number;
   draw_version: number;
   pot_amount: number | bigint;

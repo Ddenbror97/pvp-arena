@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "jazz-sports-review",
   cluster: "Sports betting",
   keyword: "jazz sports",
-  secondary: [
-    "jazz sports bonus",
-    "jazz sports withdrawal time",
-    "is jazz sports legit",
-  ],
+  secondary: ["jazz sports bonus", "jazz sports withdrawal time", "is jazz sports legit"],
   title: "Jazz Sports Review: Bonus Rules and Crypto Cashier",
   description:
     "Jazz Sports caps a card bonus at 10% and limits anonymous accounts to crypto. Rollover math is printed. A payout clock is not published. We did not deposit.",
@@ -202,7 +198,8 @@ Who should stay out: anyone under 21, anyone where internet wagering is barred, 
   ],
   sources: [
     {
-      label: "Jazz Sports conditions of use (direct request returned Cloudflare 522; bonus text retrieved the same day)",
+      label:
+        "Jazz Sports conditions of use (direct request returned Cloudflare 522; bonus text retrieved the same day)",
       url: "https://adsrv.jazzsports.ag/en/info/conditions-of-use",
     },
     {

@@ -208,10 +208,22 @@ This page is education. It is not a seating assignment, a satellite, or financia
   sources: [
     { label: "WSOP 2026 Event 82 results", url: "https://www.wsop.com/tournaments/result/619/" },
     { label: "WSOP 2026 series hub", url: "https://www.wsop.com/news/2026-world-series-of-poker/" },
-    { label: "WSOP 2026 schedule announcement (16 February 2026)", url: "https://www.wsop.com/news/the-world-series-of-poker-reveals-full-summer-2026-series-schedule/" },
-    { label: "WSOP winner article (6 August 2026)", url: "https://www.wsop.com/news/22-year-old-lucas-jumalon-wins-the-2026-wsop-main-event/" },
-    { label: "IRS Topic 419, Gambling income and losses", url: "https://www.irs.gov/taxtopics/tc419" },
-    { label: "National Council on Problem Gambling, help by state", url: "https://www.ncpgambling.org/help-treatment/help-by-state/" },
+    {
+      label: "WSOP 2026 schedule announcement (16 February 2026)",
+      url: "https://www.wsop.com/news/the-world-series-of-poker-reveals-full-summer-2026-series-schedule/",
+    },
+    {
+      label: "WSOP winner article (6 August 2026)",
+      url: "https://www.wsop.com/news/22-year-old-lucas-jumalon-wins-the-2026-wsop-main-event/",
+    },
+    {
+      label: "IRS Topic 419, Gambling income and losses",
+      url: "https://www.irs.gov/taxtopics/tc419",
+    },
+    {
+      label: "National Council on Problem Gambling, help by state",
+      url: "https://www.ncpgambling.org/help-treatment/help-by-state/",
+    },
   ],
   related: [
     "texas-holdem-rules",

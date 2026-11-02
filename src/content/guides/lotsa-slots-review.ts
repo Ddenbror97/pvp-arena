@@ -9,8 +9,7 @@ export const guide: Guide = {
   description:
     "Lotsa slots is a social slots app search. A longer game list is not a higher return. Chip rates stay unpublished. Our $5 coinflip and $90 pot use our 5% fee.",
   h1: "Lotsa slots in 2026: more games in the lobby is not a higher return",
-  answer:
-    `Lotsa slots is a social slots app search, and a crowded lobby is a menu, not a higher return. Free chips are not dollars until a prize screen states a redeem you can read.
+  answer: `Lotsa slots is a social slots app search, and a crowded lobby is a menu, not a higher return. Free chips are not dollars until a prize screen states a redeem you can read.
 
 This page leaves their chip rate, fees, and cashout rules unpublished. Our own math is a $5 versus $5 coinflip and a $90 pot. No code is offered.`,
   facts: [

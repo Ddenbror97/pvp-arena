@@ -17,16 +17,19 @@ import { buildChain, randomSecret } from "../../src/lib/fairness/poker";
 
 const url = testDatabaseUrl();
 const recording = process.env["RECORD_POKER_FIXTURE"] === "1";
-const d = url && (recording || process.env["VERIFY_POKER_FIXTURE"] === "1") ? describe : describe.skip;
+const d =
+  url && (recording || process.env["VERIFY_POKER_FIXTURE"] === "1") ? describe : describe.skip;
 const sql = url ? postgres(url, { max: 4, prepare: false, onnotice: () => {} }) : (null as never);
-const OUT = recording ? "src/lib/poker/replay/recorded-hands.json" : "test-results/poker-recorded-hands.json";
+const OUT = recording
+  ? "src/lib/poker/replay/recorded-hands.json"
+  : "test-results/poker-recorded-hands.json";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- jsonb comes back untyped
 type Row = Record<string, any>;
 type P = { id: string; name: string; links: string[] };
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-const as = <T,>(uid: string | null, fn: (tx: postgres.TransactionSql) => Promise<T>) =>
+const as = <T>(uid: string | null, fn: (tx: postgres.TransactionSql) => Promise<T>) =>
   sql.begin(async (tx) => {
     await tx`select set_config('test.uid', ${uid ?? ""}, true)`;
     return fn(tx);
@@ -63,24 +66,37 @@ d("record poker presentation fixture", () => {
     const frames: Row[] = [];
     let table = 0;
     const snap = async (label: string) => {
-      const s = (await as(hero.id, (tx) => tx`select pvp_test.poker_table_state(${table}::bigint) r`))[0]!.r as Row;
+      const s = (
+        await as(hero.id, (tx) => tx`select pvp_test.poker_table_state(${table}::bigint) r`)
+      )[0]!.r as Row;
       delete s.recent;
       frames.push({ label, state: s });
     };
     const sit = async (p: P, seat: number, buyIn: number) => {
       const r = (
-        await as(p.id, (tx) => tx`select pvp_test.poker_sit(${table || null}::bigint, 4::smallint, ${seat}::smallint,
-          ${buyIn}::bigint, ${p.links[0]!}, ${randomUUID()}) r`)
+        await as(
+          p.id,
+          (
+            tx,
+          ) => tx`select pvp_test.poker_sit(${table || null}::bigint, 4::smallint, ${seat}::smallint,
+          ${buyIn}::bigint, ${p.links[0]!}, ${randomUUID()}) r`,
+        )
       )[0]!.r as Row;
       table = r.table_id;
     };
     const latest = async () =>
-      (await sql`select * from pvp_test.poker_hands where table_id = ${table} order by id desc limit 1`)[0] as Row;
+      (
+        await sql`select * from pvp_test.poker_hands where table_id = ${table} order by id desc limit 1`
+      )[0] as Row;
     const reveal = async () => {
       const h = await latest();
       for (const r of await sql`select user_id, link from pvp_test.poker_hand_players where hand_id = ${h.id} and reveal is null`) {
         const p = ps.find((x) => x.id === r.user_id)!;
-        await as(p.id, (tx) => tx`select pvp_test.poker_reveal(${h.id}::bigint, ${p.links[p.links.indexOf(r.link) + 1]!})`);
+        await as(
+          p.id,
+          (tx) =>
+            tx`select pvp_test.poker_reveal(${h.id}::bigint, ${p.links[p.links.indexOf(r.link) + 1]!})`,
+        );
         await snap(`reveal ${p.name}`);
       }
     };
@@ -90,11 +106,19 @@ d("record poker presentation fixture", () => {
       for (let i = 0; i < 60; i++) {
         const h = await latest();
         if (h.status !== "BETTING") break;
-        const who = (await sql`select user_id from pvp_test.poker_hand_players where hand_id = ${h.id} and seat_no = ${h.to_act}`)[0]!;
+        const who = (
+          await sql`select user_id from pvp_test.poker_hand_players where hand_id = ${h.id} and seat_no = ${h.to_act}`
+        )[0]!;
         const p = ps.find((x) => x.id === who.user_id)!;
-        const st = (await as(p.id, (tx) => tx`select pvp_test.poker_table_state(${table}::bigint) r`))[0]!.r as Row;
+        const st = (
+          await as(p.id, (tx) => tx`select pvp_test.poker_table_state(${table}::bigint) r`)
+        )[0]!.r as Row;
         const [a, amt] = plan(p.name, st.me.legal, h);
-        await as(p.id, (tx) => tx`select pvp_test.poker_act(${h.id}::bigint, ${st.hand.version}::int, ${a}, ${amt ?? 0}::bigint, ${randomUUID()})`);
+        await as(
+          p.id,
+          (tx) =>
+            tx`select pvp_test.poker_act(${h.id}::bigint, ${st.hand.version}::int, ${a}, ${amt ?? 0}::bigint, ${randomUUID()})`,
+        );
         await snap(`${p.name} ${a}${amt ? ` ${amt}` : ""}`);
       }
       const done = await latest();
@@ -139,7 +163,14 @@ d("record poker presentation fixture", () => {
     });
     await next();
 
-    writeFileSync(OUT, JSON.stringify({ recordedAt: new Date().toISOString(), heroName: "AcePilot", frames }, null, 0) + "\n");
+    writeFileSync(
+      OUT,
+      JSON.stringify(
+        { recordedAt: new Date().toISOString(), heroName: "AcePilot", frames },
+        null,
+        0,
+      ) + "\n",
+    );
     expect(frames.length).toBeGreaterThan(20);
   }, 300_000);
 });

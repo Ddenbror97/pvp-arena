@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "howl-casino-review",
   cluster: "Foundations",
   keyword: "howl casino",
-  secondary: [
-    "howl.gg review",
-    "howl casino withdrawal",
-    "howl provably fair",
-  ],
+  secondary: ["howl.gg review", "howl casino withdrawal", "howl provably fair"],
   title: "Howl Casino Review: A Seed Note and a 100% Bet",
   description:
     "Howl casino help pages describe a seed check and a 100% deposit playthrough. The terms body did not render. US players are on the blocked list.",

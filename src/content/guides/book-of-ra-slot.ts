@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "book-of-ra-slot",
   cluster: "Slots",
   keyword: "book of ra",
-  secondary: [
-    "novomatic 10 line sheet",
-    "greentube egypt slot",
-    "volatility digit 5",
-  ],
+  secondary: ["novomatic 10 line sheet", "greentube egypt slot", "volatility digit 5"],
   title: "Book of Ra: Novomatic Sheet, RTP Unpublished",
   description:
     "Book of ra on the Novomatic page is a 10-line, 5-reel video slot with volatility 5. RTP, rows, hit rate, and max win are not printed. Sequels are other builds.",

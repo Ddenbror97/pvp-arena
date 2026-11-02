@@ -6,7 +6,7 @@ export const FAR = 1;
 /** Rail thickness as a fraction of the playing surface's short side. */
 export const RAIL_OF_SHORT = 0.128;
 
-export type View = {
+type View = {
   /** Cloth points. tableX is clamped to the playing surface. */
   project: (tableX: number, tableY: number) => { x: number; y: number; scale: number };
   /** Same camera, including points past the rails. Used for the cue. */

@@ -1,4 +1,4 @@
-export type SlotJoinSnap = {
+type SlotJoinSnap = {
   id: number;
   status: string;
   creatorId: string;

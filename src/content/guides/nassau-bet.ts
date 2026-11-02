@@ -166,11 +166,6 @@ PVPspinArena does not offer a Nassau, does not press a nine, and does not hold t
     { label: "Wikipedia: Golf", url: "https://en.wikipedia.org/wiki/Golf" },
     { label: "Wikipedia: Match play", url: "https://en.wikipedia.org/wiki/Match_play" },
   ],
-  related: [
-    "wolf-golf-game",
-    "skins-game-golf",
-    "golf-side-bets",
-    "bingo-bango-bongo-golf",
-  ],
+  related: ["wolf-golf-game", "skins-game-golf", "golf-side-bets", "bingo-bango-bongo-golf"],
   updated: "2026-10-07",
 };

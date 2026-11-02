@@ -71,7 +71,7 @@ export const guide: Guide = {
       a: "PVPspinArena settles six-max poker, jackpot, coinflip, roulette, and P2P Slott in USD and does not require MetaMask. It is not a Solana deposit product, so SOL in any wallet is not how those games are settled.",
     },
   ],
-    sources: [
+  sources: [
     {
       label: "MetaMask Help Center — Getting started, checked 20 October 2026",
       url: "https://support.metamask.io/start/getting-started-with-metamask/",

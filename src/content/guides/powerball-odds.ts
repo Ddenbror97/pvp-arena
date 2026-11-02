@@ -149,7 +149,7 @@ Check the reveal on [Fairness](/fairness). Open the pot on [Jackpot](/). The nat
 
 Adults 18 and older. Lottery math is not a plan to get ahead. If spending on draws is no longer optional, use [responsible gambling](/responsible-gambling).
 
-The prize chart is the dollars by match count. [That chart](/guides/powerball-payout-chart) leaves the standing lump-sum jackpot dollar unpublished. The 19 October 2026 drawing report was opened separately.`
+The prize chart is the dollars by match count. [That chart](/guides/powerball-payout-chart) leaves the standing lump-sum jackpot dollar unpublished. The 19 October 2026 drawing report was opened separately.`,
     },
   ],
   faqs: [

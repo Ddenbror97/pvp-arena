@@ -78,6 +78,11 @@ Head-to-head markets are the ones people misread. If one driver is not classifie
       url: "https://www.fia.com/system/files/documents/fia_2026_f1_regulations_-_section_b_sporting_-_iss_09_-_2026-10-01.pdf",
     },
   ],
-  related: ["prop-bets-explained", "what-is-sports-betting", "vig-betting", "moneyline-betting-explained"],
+  related: [
+    "prop-bets-explained",
+    "what-is-sports-betting",
+    "vig-betting",
+    "moneyline-betting-explained",
+  ],
   updated: "2026-10-21",
 };

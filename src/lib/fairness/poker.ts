@@ -14,7 +14,7 @@
 import { bytesToHex, hexToBytes, hmacKey, hmacSha256, sha256Hex } from "./core";
 const MAX_COUNTER = 1000;
 
-export type EntropyReveal = { seat: number; value: string };
+type EntropyReveal = { seat: number; value: string };
 
 export function entropyMessage(handId: number | string, reveals: readonly EntropyReveal[]) {
   const parts = [...reveals]
@@ -82,7 +82,7 @@ export function randomSecret(): string {
   return bytesToHex(b);
 }
 
-export type PokerHandProof = {
+type PokerHandProof = {
   id: number | string;
   server_seed: string;
   server_seed_hash: string;

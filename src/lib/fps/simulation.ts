@@ -26,7 +26,7 @@ import {
   type Seat,
 } from "./protocol";
 export { validateInput } from "./protocol";
-export type { Input, KnifeAttack, MatchState, Player, Seat, Weapon } from "./protocol";
+export type { Input, MatchState, Player } from "./protocol";
 
 export const TICK_MS = 33.333;
 export const COUNTDOWN_MS = 3000;

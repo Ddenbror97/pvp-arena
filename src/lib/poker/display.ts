@@ -22,9 +22,9 @@ export function bestFive(cards: readonly number[]): number[] {
   return pick;
 }
 
-export type Point = { x: number; y: number };
+type Point = { x: number; y: number };
 
-export type SlotLayout = { seat: Point; bet: Point };
+type SlotLayout = { seat: Point; bet: Point };
 
 /**
  * Seat centers and bet spots (percent of the stage) by display slot, slot 0 being the

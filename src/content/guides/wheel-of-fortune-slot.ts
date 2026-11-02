@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "wheel-of-fortune-slot",
   cluster: "Slots",
   keyword: "wheel of fortune slot",
-  secondary: [
-    "igt 30th anniversary cabinets",
-    "76 inch trio wheel",
-    "cash link wap reset",
-  ],
+  secondary: ["igt 30th anniversary cabinets", "76 inch trio wheel", "cash link wap reset"],
   title: "Wheel of Fortune Slot: IGT Page Omits RTP",
   description:
     "The IGT wheel of fortune slot page is a 30th-anniversary family, not one paytable. It prints sizes and credit bets. RTP, lines, and volatility are absent.",

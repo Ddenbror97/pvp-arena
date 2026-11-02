@@ -9,8 +9,7 @@ export const guide: Guide = {
   description:
     "Bitkingz is a crypto-casino brand, not a bitcoin balance. This page prints no wallet address. A $100 pot pays $95 under our fee, and a $9 Silver win is ours.",
   h1: "Bitkingz in 2026: the name is not a bitcoin balance",
-  answer:
-    `Bitkingz is a crypto-casino brand search, and the name does not create a bitcoin balance. Coins move only when you send them on a rail you chose.
+  answer: `Bitkingz is a crypto-casino brand search, and the name does not create a bitcoin balance. Coins move only when you send them on a rail you chose.
 
 This page prints no wallet address, no brand fee, and no bonus code. Our examples are a $100 pot, fee $5, winner $95, and a $9 Silver stake on our wheel.`,
   facts: [

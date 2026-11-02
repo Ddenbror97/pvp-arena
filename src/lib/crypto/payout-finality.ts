@@ -24,7 +24,7 @@ export interface FinalityClient {
   getTransactionReceipt(a: { hash: Hex }): Promise<ReceiptLike>;
   getBlock(a: { blockNumber: bigint }): Promise<BlockLike>;
 }
-export type PayoutDecision =
+type PayoutDecision =
   | { action: "no_receipt" }
   | { action: "wait_unsafe"; block: bigint }
   | { action: "wait_agreement"; block: bigint; outcome: "success" | "reverted" }

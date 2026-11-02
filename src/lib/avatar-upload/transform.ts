@@ -1,6 +1,5 @@
+import { clamp } from "@/lib/math";
 import type { AvatarCrop } from "./limits";
-
-const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
 /** Crop square in source pixels. Out-of-range or missing values fall back to a centred square. */
 export function cropRect(width: number, height: number, crop: AvatarCrop | null | undefined) {

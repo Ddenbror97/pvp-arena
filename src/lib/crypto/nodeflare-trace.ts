@@ -35,7 +35,7 @@ const COOLDOWN_MS: Record<TraceHold, number> = {
   proved: 10 * 60_000,
 };
 
-export type TracedTransfer = InternalTrace & { from: string; blockNumber: bigint };
+type TracedTransfer = InternalTrace & { from: string; blockNumber: bigint };
 
 export function checkTraceUrl(
   url: string | undefined,
@@ -214,7 +214,7 @@ export function callTracerOutcome(
   return { settled: settleInternalTransfers([found]) };
 }
 
-export type TraceBlockResult = {
+type TraceBlockResult = {
   settled: TraceSettlement<TracedTransfer>;
   problem?: TraceProblem | "incomplete";
   calls: number;

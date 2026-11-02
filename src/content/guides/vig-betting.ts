@@ -103,7 +103,7 @@ One help center prints a $1 online minimum and Panama law, and still no single j
 
 A flex table treats a $5 fee at 3x as a $15 prize that does not include the fee. The ladder is [that printed flex table](/guides/betr-picks-review).
 
-A bar that shows how many tickets sit on one side is not the hold. [Ticket counts, not an edge](/guides/public-betting-percentages) keeps those two numbers apart.`
+A bar that shows how many tickets sit on one side is not the hold. [Ticket counts, not an edge](/guides/public-betting-percentages) keeps those two numbers apart.`,
     },
   ],
   faqs: [

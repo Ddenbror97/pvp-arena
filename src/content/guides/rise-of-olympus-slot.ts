@@ -4,11 +4,7 @@ export const guide: Guide = {
   slug: "rise-of-olympus-slot",
   cluster: "Slots",
   keyword: "rise of olympus",
-  secondary: [
-    "play'n go grid slot",
-    "hand of god feature",
-    "clear the grid x100",
-  ],
+  secondary: ["play'n go grid slot", "hand of god feature", "clear the grid x100"],
   title: "Rise of Olympus: Play'n GO Page Omits RTP",
   description:
     "Rise of olympus on the Play'n GO page is a grid slot from 22 August 2018. A free-spin clear pays x100 the bet. RTP, grid size, and volatility are not printed.",

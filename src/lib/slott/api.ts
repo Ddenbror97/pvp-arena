@@ -11,7 +11,7 @@ const db = supabase as any;
 
 type Prof = { username: string; avatar_url: string | null; is_bot?: boolean } | null;
 
-export type SlotStatus = "WAITING" | "ACTIVE" | "SETTLEMENT" | "COMPLETED" | "CANCELLED";
+type SlotStatus = "WAITING" | "ACTIVE" | "SETTLEMENT" | "COMPLETED" | "CANCELLED";
 
 export interface SlotGame {
   id: number;
@@ -84,7 +84,7 @@ export interface SlotBonusEvent {
   created_at: string;
 }
 
-export interface SlotConfig {
+interface SlotConfig {
   stakes: number[];
   fee_bps: number;
   base_spins: number;

@@ -163,11 +163,6 @@ If you cannot finish the list, do not pay. Play the free chips, or play nothing.
     { label: "PokerBros — official site", url: "https://www.pokerbros.net/" },
     { label: "Wikipedia — Online poker", url: "https://en.wikipedia.org/wiki/Online_poker" },
   ],
-  related: [
-    "clubgg-review",
-    "acr-poker-review",
-    "real-money-poker-apps",
-    "crypto-poker",
-  ],
+  related: ["clubgg-review", "acr-poker-review", "real-money-poker-apps", "crypto-poker"],
   updated: "2026-10-21",
 };

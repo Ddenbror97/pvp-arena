@@ -201,7 +201,8 @@ If it stops being entertainment, stop and call 1-800-GAMBLER. Use our [responsib
       url: "https://www.gaming.nv.gov/siteassets/content/divisions/enforcement/rules-of-play/Crapless_Craps.pdf",
     },
     {
-      label: "New Jersey Division of Gaming Enforcement, Chapter 69F rules of the games (craps, N.J.A.C. 13:69F-1)",
+      label:
+        "New Jersey Division of Gaming Enforcement, Chapter 69F rules of the games (craps, N.J.A.C. 13:69F-1)",
       url: "https://www.nj.gov/oag/ge/docs/Regulations/CHAPTER69F.pdf",
     },
     {

@@ -180,7 +180,7 @@ A different certificate names VAVADA.COM under OGL/2024/252/0153. The domain che
 
 One domain appears on two registers under two companies: Rivolo Limited, ALSI-202602025-FI1, and Asobi NV, ALSI-152312009-FI3. The dated note is [those two numbers for one lobby](/guides/metawin-review).
 
-Token 81 and the about page do not have to name the same company until you check. [The about page versus the token](/guides/7bit-casino-review) is that pair.`
+Token 81 and the about page do not have to name the same company until you check. [The about page versus the token](/guides/7bit-casino-review) is that pair.`,
     },
   ],
   faqs: [

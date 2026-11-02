@@ -202,11 +202,13 @@ This site does not offer the title. If play stops being a bounded spend, call 1-
   ],
   sources: [
     {
-      label: "South Dakota Legislature, Administrative Rule 48:02:08:07, software requirements for video keno",
+      label:
+        "South Dakota Legislature, Administrative Rule 48:02:08:07, software requirements for video keno",
       url: "https://sdlegislature.gov/Rules/Administrative/48:02:08:07",
     },
     {
-      label: "Montana Department of Justice, Gambling Control Division, video gambling device requirements version 2.6 (19 March 2026), section 4.10",
+      label:
+        "Montana Department of Justice, Gambling Control Division, video gambling device requirements version 2.6 (19 March 2026), section 4.10",
       url: "https://dojmt.gov/wp-content/uploads/2026/04/VGM-Modification-Requirements-v2.6.pdf",
     },
     {

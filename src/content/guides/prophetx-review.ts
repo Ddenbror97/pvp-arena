@@ -139,11 +139,6 @@ Open [Coinflip](/coinflip) for that two-player pot: the live activity block, whe
     { label: "ProphetX about page", url: "https://www.prophetx.co/lobby/about-us" },
     { label: "Betting exchange", url: "https://en.wikipedia.org/wiki/Betting_exchange" },
   ],
-  related: [
-    "novig-review",
-    "sporttrade-review",
-    "novig-vs-prophetx",
-    "betting-exchange-explained",
-  ],
+  related: ["novig-review", "sporttrade-review", "novig-vs-prophetx", "betting-exchange-explained"],
   updated: "2026-10-07",
 };

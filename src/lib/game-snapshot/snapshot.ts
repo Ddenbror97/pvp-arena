@@ -82,14 +82,14 @@ export const GAME_GUIDE_LINKS: Readonly<
 export const MIN_ROUNDS_FOR_AVERAGE = 5;
 export const MIN_ROUNDS_FOR_DISTRIBUTION = 30;
 
-export type WindowTotals = {
+type WindowTotals = {
   rounds: number;
   wagered: string;
   avgPot: string | null;
   largestPot: string | null;
 };
 
-export type AllTimeTotals = WindowTotals & { since: string | null };
+type AllTimeTotals = WindowTotals & { since: string | null };
 
 export type RecentRound = {
   id: number;
@@ -103,7 +103,7 @@ export type RecentRound = {
   blinds: { small: string; big: string } | null;
 };
 
-export type Outcome = { label: string; count: number; expectedBps: number };
+type Outcome = { label: string; count: number; expectedBps: number };
 
 export type GameStats = {
   window: WindowTotals;

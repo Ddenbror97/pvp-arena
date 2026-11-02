@@ -1,15 +1,17 @@
 /** Post-October 2025 CS2 trade-up math used by the on-page calculator. */
 
-export type Wear = "FN" | "MW" | "FT" | "WW" | "BS";
+import { clamp } from "@/lib/math";
+
+type Wear = "FN" | "MW" | "FT" | "WW" | "BS";
 export type Rarity = "consumer" | "industrial" | "milspec" | "restricted" | "classified" | "covert";
 
-export type CatalogSkin = {
+type CatalogSkin = {
   name: string;
   min: number;
   max: number;
 };
 
-export type CatalogCollection = {
+type CatalogCollection = {
   id: string;
   name: string;
   skins: Record<Rarity, CatalogSkin[]>;
@@ -49,10 +51,6 @@ export function wearOf(float: number): Wear {
   return "BS";
 }
 
-export function clamp(n: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, n));
-}
-
 /** Normalize a float into 0–1 using that skin's own min/max clip. */
 export function normalizeFloat(float: number, min: number, max: number): number {
   const span = max - min;
@@ -72,7 +70,7 @@ export type TradeInput = {
   cost?: number;
 };
 
-export type TradeOutcome = {
+type TradeOutcome = {
   collectionId: string;
   collectionName: string;
   name: string;

@@ -52,7 +52,7 @@ export async function fetchRoundBets(gameId: number): Promise<RlBet[]> {
   return ((data as unknown) ?? []) as RlBet[];
 }
 
-export type RlHistoryRound = Pick<RlGame, "id" | "winning_color">;
+type RlHistoryRound = Pick<RlGame, "id" | "winning_color">;
 
 export async function fetchHistory(limit = 12): Promise<RlHistoryRound[]> {
   const { data, error } = await supabase
@@ -65,7 +65,7 @@ export async function fetchHistory(limit = 12): Promise<RlHistoryRound[]> {
   return data ?? [];
 }
 
-export type RlRecentRound = Pick<
+type RlRecentRound = Pick<
   RlGame,
   | "id"
   | "winning_color"

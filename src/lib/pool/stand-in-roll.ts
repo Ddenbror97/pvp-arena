@@ -4,7 +4,7 @@ import type { Ball, ShotInput } from "./physics";
 import type { TableState } from "./rules";
 import type { StandInRoll } from "./stand-in.worker";
 
-export type RolledStandIn = {
+type RolledStandIn = {
   shot: ShotInput;
   sequence: Ball[][];
   cue: { x: number; y: number };

@@ -76,6 +76,11 @@ A walkover that happens before the first serve is even less like a played match.
       url: "https://www.itftennis.com/media/7221/2026-rules-of-tennis-english.pdf",
     },
   ],
-  related: ["prop-bets-explained", "vig-betting", "what-is-sports-betting", "moneyline-betting-explained"],
+  related: [
+    "prop-bets-explained",
+    "vig-betting",
+    "what-is-sports-betting",
+    "moneyline-betting-explained",
+  ],
   updated: "2026-10-21",
 };

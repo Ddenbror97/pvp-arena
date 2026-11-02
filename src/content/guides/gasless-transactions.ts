@@ -83,9 +83,17 @@ Adults only. A missing gas prompt is not a reason to deposit money you need. [Re
     },
   ],
   sources: [
-    { label: "ERC-4337: Account Abstraction Using Alt Mempool", url: "https://eips.ethereum.org/EIPS/eip-4337" },
+    {
+      label: "ERC-4337: Account Abstraction Using Alt Mempool",
+      url: "https://eips.ethereum.org/EIPS/eip-4337",
+    },
     { label: "PVPspinArena terms: networks and fees", url: "https://pvpspinarena.com/terms" },
   ],
-  related: ["gas-fees-explained", "account-abstraction-wallet", "base-vs-ethereum", "wallet-security-checklist"],
+  related: [
+    "gas-fees-explained",
+    "account-abstraction-wallet",
+    "base-vs-ethereum",
+    "wallet-security-checklist",
+  ],
   updated: "2026-10-21",
 };

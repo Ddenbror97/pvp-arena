@@ -161,7 +161,7 @@ Check a finished round on [Fairness](/fairness). Open the pot itself from [Jackp
 
 Adults 18 and older. If lottery play stops being entertainment, use the limits on [responsible gambling](/responsible-gambling).
 
-One annuity game's matrix is not the Powerball count. [The Connecticut rules PDF](/guides/lucky-for-life-lottery) leaves a single national claim deadline unpublished.`
+One annuity game's matrix is not the Powerball count. [The Connecticut rules PDF](/guides/lucky-for-life-lottery) leaves a single national claim deadline unpublished.`,
     },
   ],
   faqs: [

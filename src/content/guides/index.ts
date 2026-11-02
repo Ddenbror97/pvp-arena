@@ -988,7 +988,7 @@ import { guide as lostSugarRush1000Slot } from "./sugar-rush-1000-slot";
 import { guide as lostTapjoyReview } from "./tapjoy-review";
 import { guide as lostTf2Keys } from "./tf2-keys";
 
-export type { Guide, GuideCluster } from "./types";
+export type { Guide } from "./types";
 
 /** Published guides. Add each new guide here once it passes scripts/check-guides.ts. */
 import { guide as w227TripleDraw } from "./2-7-triple-draw";
@@ -2282,8 +2282,6 @@ export const GUIDES: Guide[] = [
   w3DoubleChanceBet,
   w3Lucky15Bet,
 ];
-
-export type { ClusterGroup, ClusterInfo } from "./clusters";
 export {
   CLUSTERS,
   CLUSTER_GROUPS,
@@ -2308,9 +2306,6 @@ export function getTopic(slug: string): ClusterInfo | undefined {
 const bySlug = new Map(GUIDES.map((g) => [g.slug, g]));
 export function getGuide(slug: string): Guide | undefined {
   return bySlug.get(slug);
-}
-export function isPublishedGuide(slug: string): boolean {
-  return bySlug.has(slug);
 }
 
 export { guideText, wordCount } from "./text";
