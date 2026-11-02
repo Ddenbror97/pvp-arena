@@ -347,6 +347,34 @@ test("switching maps (Dustfront ↔ FROSTLINE) in one page leaves no residue", a
   expect(glbRequests["aim-arena"]).toBe(3);
 });
 
+test("FROSTLINE loading art resolves and decodes at full size; Dustfront keeps its art", async ({
+  page,
+}) => {
+  await open(page);
+  const result = await page.evaluate(async () => {
+    const { loadingImageFor, DEFAULT_LOADING_IMAGE } = await import(
+      "/src/lib/fps/maps/loading-screens.ts" as string
+    );
+    const decode = async (src: string) => {
+      const img = new Image();
+      img.src = src;
+      await img.decode();
+      return { src, w: img.naturalWidth, h: img.naturalHeight };
+    };
+    return {
+      frost: await decode(loadingImageFor("frostline")),
+      dust: await decode(loadingImageFor("dustfront")),
+      unknown: loadingImageFor("not-a-map"),
+      fallback: DEFAULT_LOADING_IMAGE,
+    };
+  });
+  expect(result.frost.src).toMatch(/frostline-loading/);
+  expect([result.frost.w, result.frost.h]).toEqual([1672, 941]);
+  expect(result.dust.src).toMatch(/arena-loading/);
+  expect([result.dust.w, result.dust.h]).toEqual([1672, 941]);
+  expect(result.unknown).toBe(result.fallback);
+});
+
 // [x, y, z, yaw (radians, 0 = looking toward -z), pitch]
 const VIEWS: Record<string, [number, number, number, number, number]> = {
   overhead: [0, 36, 24, 0, -1.0],

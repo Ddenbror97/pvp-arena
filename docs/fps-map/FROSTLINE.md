@@ -184,8 +184,8 @@ CPU time compare.
 Counts are flat across the run, the turn and the full 360° look, so nothing is allocated per
 frame. Snowfall adds one draw call. Resources are constant over remounts on both maps, so
 FROSTLINE adds no leak. The 7-texture residual after dispose exists on `main` too.
-**Real-GPU Chrome and Firefox frame times are still to be measured on hardware.** This
-container has no GPU and no Firefox.
+**Real-GPU Chrome and Firefox frame times are still to be measured** (procedure and acceptance
+criteria in §6).
 
 ## 6. Integration status and instructions
 
@@ -204,24 +204,88 @@ container has no GPU and no Firefox.
   - No canvas is left behind.
   - Each GLB is fetched again on every mount, so the shared asset cache released it.
 
-**Verification on this branch (87cadb1 + FROSTLINE)**
+**Verification on this branch (87cadb1 + FROSTLINE), 2026-11-01**
 
-| Check                                                                       | Result                                                                                                                                                                                                                                                    |
-| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Unit suite (`vitest --project unit`)                                        | 1,075 / 1,076 pass. The one failure is the `fps-runtime` solo-bot test: it failed 1 of 2 runs on untouched 87cadb1 and 1 of 3 here (known flake, `docs/FPS-MAP-REGISTRY.md`).                                                                             |
-| FROSTLINE layout, loading, registry, runtime, parity                        | all pass                                                                                                                                                                                                                                                  |
-| Type-check (`tsc --noEmit`)                                                 | pass                                                                                                                                                                                                                                                      |
-| ESLint + Prettier on every changed or new file                              | clean                                                                                                                                                                                                                                                     |
-| App build (`vite build`)                                                    | pass; `frostline-loading-*.webp` is emitted as a hashed asset                                                                                                                                                                                             |
-| Match Worker (`wrangler deploy --dry-run`)                                  | pass, 193 KiB; includes `frostline`, bundles no images                                                                                                                                                                                                    |
-| `fps-frostline.spec.ts` (GLB, snowfall, map switching)                      | 3 / 3 pass (captures skipped by default)                                                                                                                                                                                                                  |
-| Dustfront browser specs `fps-surface-depth`, `fps-lifecycle`, `fps-culling` | Fail **identically on untouched 87cadb1**. The surface-depth spec looks for the scene named `aim-arena`, but the registry names it `dustfront`. The 7-texture lifecycle residual exists on `main`. Not caused by FROSTLINE; left to the registry session. |
+| Check                                                                              | Result                                                                                                            |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Unit suite (`vitest --project unit`)                                               | 1,079 pass, 1 skipped, 0 failed. The `fps-runtime` solo-bot test is a known flake (below); it passed in this run. |
+| FROSTLINE: layout, loading art, rotation compatibility, registry, runtime, parity  | all pass                                                                                                          |
+| Type-check (`tsc --noEmit`)                                                        | pass                                                                                                              |
+| ESLint + Prettier on every changed or new file                                     | clean                                                                                                             |
+| App build (`vite build`)                                                           | pass; `frostline-loading-*.webp` is emitted as a hashed asset                                                     |
+| Match Worker (`wrangler deploy --dry-run`)                                         | pass, 193 KiB; includes `frostline`, bundles no images                                                            |
+| `fps-frostline.spec.ts` (GLB, snowfall cleanup, map switching, loading art decode) | 4 / 4 pass (captures skipped by default)                                                                          |
+| Dustfront browser specs `fps-surface-depth`, `fps-lifecycle`, `fps-culling`        | Fail identically on untouched 87cadb1; root causes below, none caused by FROSTLINE                                |
+
+**Root causes of the shared test failures** (fixes handed to the registry session in the
+project doc `claude/fps-registry-handoff.md`; not committed here because they are not
+FROSTLINE code):
+
+- **`fps-surface-depth` (outdated assumption):** it looks for the scene named `aim-arena`, but
+  the registry names the authored scene after the map id (`dustfront`). With the lookup
+  fixed, Dustfront passes: 0 coplanar overlaps, 154 / 154 collision probes.
+- **`fps-lifecycle` (outdated threshold, not a leak):** the 7 textures left after dispose are:
+  - three.js's shared `DFG_LUT`;
+  - the 6 rifle finish textures in `rifle-materials.ts`'s module-level cache (added after the
+    threshold was set).
+
+  Over 8 mount/dispose cycles that count stays at exactly 7, geometries stay at 0, listeners
+  stay constant, and heap grows 2.5 MB of the allowed 12 MB.
+
+- **`fps-culling` (software-rendering timing):** under SwiftShader a frame takes about 4 s,
+  against a 5 s poll. The spec passes as intended with a longer poll; the repo's GPU config
+  allows 15 s.
+- **`fps-runtime` solo-bot test (flaky by construction):** it waits 12 s for the bot to come
+  into view of an idle human. The bot's first-round patrol is random, and 3 of 9 patrols
+  (plus some `slow/center` draws) take 12.5–15.3 s on Dustfront. The handoff patch waits 25 s
+  and pins the bound with a deterministic test of all 9 patrols on every map. Verified 6 / 6
+  passes; no gameplay change.
+
+**Rotation compatibility** (`tests/fps-map-rotation-compat.test.ts`): a catalog with Dustfront,
+FROSTLINE and stand-ins shaped like LOST TRAIL (jungle, movement-only barriers, 48 × 36 m) and
+CROSSFIRE (no art yet). The test checks that:
+
+- only rotation maps are drawn, and FROSTLINE stays out while `rotation: false` but remains a
+  valid explicit map;
+- maps without art fall back to Dustfront's art, and only rotation art is preloaded, without
+  duplicates;
+- each map keeps its own size, spawns and barriers;
+- flipping FROSTLINE's flag alone adds it to the draw and the preload.
+
+**Real-GPU performance: pending (skipped for now)**
+
+Nothing in this document claims FPS parity. The checks that remain, on one machine with a real
+GPU (ideally an integrated GPU, the lowest target), each map run twice:
+
+| Metric                                                | Source (`tests/e2e/fps-frostline-perf.spec.ts`)                           |
+| ----------------------------------------------------- | ------------------------------------------------------------------------- |
+| Average FPS, 1% low, frame time p50 / p95 / p99       | per phase: idle, run + turn, 360° look                                    |
+| Draw calls, triangles, programs, textures, geometries | renderer diagnostics, max per phase                                       |
+| JS heap while live; ready time                        | `heapMB` (Chromium), `readyMs`                                            |
+| Map switching                                         | 4 mount/dispose cycles per map: ready time, resources after dispose, heap |
+
+Procedure (on that machine, from a checkout of this branch):
+
+1. Start the fixture server: `node scripts/fps/serve-fixtures.mjs`, which serves
+   `http://127.0.0.1:4173`.
+2. Chrome:
+   `MAP_PERF_DIR=perf-out MAP_PERF_SCALE=30 npx playwright test tests/e2e/fps-frostline-perf.spec.ts --headed`.
+   Headed, so Chrome uses the GPU; `MAP_PERF_SCALE=30` samples about 1,300 frames per map.
+3. Firefox: `npx playwright install firefox`, then the same command with a config whose `use`
+   sets `browserName: "firefox"` (the default config pins `channel: "chrome"`).
+4. Compare `perf-out/<browser>-dustfront.json` with `perf-out/<browser>-frostline.json`. Check
+   that the `gpu` field names the real GPU, not SwiftShader.
+
+**Acceptance criteria to enter rotation:**
+
+- In both browsers, FROSTLINE's p95 frame time is within 10% of Dustfront's, and its 1% low
+  is within 15%, on the same machine and window size.
+- Neither map drops its render resolution (`pixelRatio`) more than the other.
+- Resources stay constant over the switching cycles.
 
 **To put FROSTLINE into Practice/PvP**
 
-1. Measure both maps on real hardware with `tests/e2e/fps-frostline-perf.spec.ts`: Chrome and
-   Firefox, an integrated GPU, `MAP_PERF_DIR=out`. Accept if FROSTLINE's p95 frame time stays
-   within the render budget that Dustfront meets on the same machine.
+1. Run the real-GPU procedure above and meet its acceptance criteria.
 2. Set `rotation: true` in `src/lib/fps/maps/frostline.ts`. The registry session's rotation
    then draws it for new Practice and PvP matches, and its art joins the intent preload.
 3. Update the parity test's `ROTATION_MAP_IDS` line to `["dustfront", "frostline"]`.

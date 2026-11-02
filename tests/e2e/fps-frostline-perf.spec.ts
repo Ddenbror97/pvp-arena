@@ -15,6 +15,9 @@ import type { ArenaControls } from "../../src/lib/fps/renderer";
 type Sample = ReturnType<ArenaControls["diagnostics"]>;
 const dir = process.env["MAP_PERF_DIR"];
 const maps = (process.env["MAP_PERF_MAPS"] ?? "dustfront,frostline").split(",");
+// Frames per phase = base × MAP_PERF_SCALE. 1 suits software rendering (seconds per frame); on a
+// real GPU use 30+ (≈ 1,300 frames) so p99 and the 1% low rest on enough frames.
+const scale = Math.max(1, Number(process.env["MAP_PERF_SCALE"] ?? 1));
 test.skip(!dir, "map performance capture only runs with MAP_PERF_DIR");
 
 for (const mapId of maps)
@@ -125,11 +128,11 @@ for (const mapId of maps)
         { frames, turn },
       );
     const phases: Record<string, Sample[]> = {};
-    phases["idle"] = await sample(10);
+    phases["idle"] = await sample(10 * scale);
     await page.keyboard.down("KeyW");
-    phases["run-turn"] = await sample(16, 0.06);
+    phases["run-turn"] = await sample(16 * scale, 0.06 / scale);
     await page.keyboard.up("KeyW");
-    phases["look-360"] = await sample(18, (Math.PI * 2) / 18);
+    phases["look-360"] = await sample(18 * scale, (Math.PI * 2) / (18 * scale));
     const stats = (rows: Sample[]) => {
       const pick = (k: "frameMs" | "cpuMs") => rows.map((r) => r[k]).sort((a, b) => a - b);
       const q = (k: "frameMs" | "cpuMs", p: number) =>
@@ -142,7 +145,14 @@ for (const mapId of maps)
         frames: rows.length,
         frameP50: q("frameMs", 0.5),
         frameP95: q("frameMs", 0.95),
+        frameP99: q("frameMs", 0.99),
         avgFps: +(1000 / avgFrame).toFixed(1),
+        // Mean of the slowest 1% of frames, as frames per second.
+        low1Fps: +(
+          1000 /
+          (frame.slice(Math.floor(frame.length * 0.99)).reduce((a, b) => a + b, 0) /
+            Math.max(1, frame.length - Math.floor(frame.length * 0.99)))
+        ).toFixed(1),
         cpuP50: q("cpuMs", 0.5),
         cpuP95: q("cpuMs", 0.95),
         calls: max("calls"),
@@ -152,6 +162,14 @@ for (const mapId of maps)
         geometries: max("geometries"),
       };
     };
+    // JS heap while the map is live (Chromium only; 0 elsewhere).
+    const heapMB = await page.evaluate(
+      () =>
+        +(
+          ((performance as unknown as { memory?: { usedJSHeapSize: number } }).memory
+            ?.usedJSHeapSize ?? 0) / 1048576
+        ).toFixed(1),
+    );
     const gpu = await page.evaluate(() => {
       const gl = document.querySelector("canvas")!.getContext("webgl2")!;
       const info = gl.getExtension("WEBGL_debug_renderer_info");
@@ -201,6 +219,8 @@ for (const mapId of maps)
     }, mapId);
     const report = {
       map: mapId,
+      scale,
+      heapMB,
       browser: browserName,
       gpu,
       mountMs,
