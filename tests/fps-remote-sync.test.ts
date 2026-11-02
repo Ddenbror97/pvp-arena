@@ -718,7 +718,7 @@ describe("bounded command catch-up (applyQueuedMovement)", () => {
     const s = live();
     expect(applyQueuedMovement(s, "A", input(1, { fire: true }))).toBe(false);
     expect(applyQueuedMovement(s, "A", input(1, { reload: true }))).toBe(false);
-    expect(applyQueuedMovement(s, "A", input(1, { weapon: "pistol" }))).toBe(false);
+    expect(applyQueuedMovement(s, "A", input(1, { weapon: "knife" }))).toBe(false);
     expect(applyQueuedMovement(s, "A", input(2, {}))).toBe(true);
     expect(applyQueuedMovement(s, "A", input(2, {}))).toBe(false);
   });
@@ -740,33 +740,33 @@ describe("bounded command catch-up (applyQueuedMovement)", () => {
     stepMatch(s, { A: input(4, { fire: true }) }, 3134, TICK_MS);
     expect(p.ammo).toBe(ammo - 1);
   });
-  it("preserves tap releases, reloads and pistol trigger edges", () => {
+  it("preserves tap releases, reloads and knife swings", () => {
     for (const next of [
       { fire: false },
       { fire: true, reload: true },
-      { fire: true, weapon: "pistol" as const },
+      { fire: true, weapon: "knife" as const },
     ]) {
       const s = live();
       expect(applyQueuedMovement(s, "A", input(1, { fire: true }), input(2, next))).toBe(false);
       expect(s.players.A.lastSeq).toBe(-1);
     }
+    // A knife swing is never folded into movement catch-up (only the combat tick swings).
     const s = live();
-    s.players.A.weapon = "pistol";
-    s.players.A.triggerHeld = true;
+    s.players.A.weapon = "knife";
     expect(
       applyQueuedMovement(
         s,
         "A",
-        input(1, { weapon: "pistol", fire: true }),
-        input(2, { weapon: "pistol", fire: true }),
+        input(1, { weapon: "knife", fire: true }),
+        input(2, { weapon: "knife", fire: true }),
       ),
     ).toBe(false);
     expect(
       applyQueuedMovement(
         s,
         "A",
-        input(1, { weapon: "pistol", fire: false }),
-        input(2, { weapon: "pistol", fire: true }),
+        input(1, { weapon: "knife", fire: false }),
+        input(2, { weapon: "knife", fire: true }),
       ),
     ).toBe(true);
     expect(s.players.A.triggerHeld).toBe(false);

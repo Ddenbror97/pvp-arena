@@ -5,7 +5,10 @@ import { spawnSide, halftimeRound } from "./sides";
 import {
   COMBAT_VERSION,
   HIT_DAMAGE,
+  KNIFE,
   applyVestDamage,
+  isBackstab,
+  knifeDamage,
   recoverCombatRecoil,
   advanceCombatRecoil,
   combatSpread,
@@ -14,9 +17,16 @@ import {
 import { combatVolumes, playerVolumes } from "./player-volumes";
 import { rayBox, traceWorld, type Vector } from "./collision";
 import { spreadScale } from "./handling";
-import { validateInput, type Input, type MatchState, type Player, type Seat } from "./protocol";
+import {
+  validateInput,
+  type Input,
+  type KnifeAttack,
+  type MatchState,
+  type Player,
+  type Seat,
+} from "./protocol";
 export { validateInput } from "./protocol";
-export type { Input, MatchState, Player, Seat, Weapon } from "./protocol";
+export type { Input, KnifeAttack, MatchState, Player, Seat, Weapon } from "./protocol";
 
 export const TICK_MS = 33.333;
 export const COUNTDOWN_MS = 3000;
@@ -40,16 +50,8 @@ export const WEAPONS = {
     reloadMs: 1800,
     recoil: 0.004,
   },
-  pistol: {
-    damage: 25,
-    headshotMultiplier: 4,
-    magazine: 12,
-    reserve: 48,
-    fireIntervalMs: 260,
-    reloadMs: 1200,
-    recoil: 0.002,
-  },
 } as const;
+export { KNIFE } from "./combat";
 const SEATS: readonly Seat[] = ["A", "B"];
 const other = (seat: Seat): Seat => (seat === "A" ? "B" : "A");
 const emptyRoundStats = () => ({
@@ -303,19 +305,15 @@ function shoot(
 ): void {
   const p = state.players[seat],
     target = state.players[other(seat)],
-    stats = WEAPONS[p.weapon];
+    stats = WEAPONS.rifle;
   const start = positions[seat],
     targetStart = historicalTarget ?? positions[other(seat)];
   const modern = state.combatVersion === COMBAT_VERSION;
-  if (
-    p.reloadUntil ||
-    !p.ammo ||
-    now - p.lastShotAt < (modern && p.weapon === "rifle" ? 100 : stats.fireIntervalMs)
-  )
+  if (p.reloadUntil || !p.ammo || now - p.lastShotAt < (modern ? 100 : stats.fireIntervalMs))
     return;
   if (!modern) p.sprayCount = now - p.lastShotAt > 300 ? 1 : (p.sprayCount ?? 0) + 1;
   const spread = modern
-    ? (p.weapon === "rifle" ? 0.0015 : 0.0025) *
+    ? 0.0015 *
       combatSpread(
         (p.sprayCount ?? 0) + 1,
         input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
@@ -365,8 +363,8 @@ function shoot(
     type: "shot",
     shotSeq: input.seq,
     seat,
-    text: p.weapon + " fired",
-    weapon: p.weapon,
+    text: "rifle fired",
+    weapon: "rifle",
     audio: { kind: "shot", position: origin },
   });
   if (modern) advanceCombatRecoil(p);
@@ -383,8 +381,8 @@ function shoot(
   const headshot = contact.zone === "head";
   const damage = modern
     ? state.armorVersion === 1
-      ? applyVestDamage(target, p.weapon, contact.zone)
-      : HIT_DAMAGE[p.weapon][contact.zone]
+      ? applyVestDamage(target, "rifle", contact.zone)
+      : HIT_DAMAGE.rifle[contact.zone]
     : stats.damage * (headshot ? stats.headshotMultiplier : 1);
   if (counters) {
     counters.hits++;
@@ -425,6 +423,110 @@ function shoot(
     p.kills++;
     if (headshot) p.headshots++;
   }
+}
+
+/**
+ * One knife swing (slash or stab), resolved entirely on the server: draw time and cooldown gate
+ * it, a short fan of traces from the eye finds the target's nearest hit volume within reach
+ * (lag-compensated like a shot) and world geometry in front of it blocks the blade.
+ */
+function knifeAttack(
+  state: MatchState,
+  seat: Seat,
+  now: number,
+  positions: Record<Seat, Pose>,
+  input: Input,
+  attack: KnifeAttack,
+  historicalTarget?: Pose,
+): void {
+  const p = state.players[seat],
+    victimSeat = other(seat),
+    target = state.players[victimSeat],
+    spec = KNIFE[attack];
+  if (now < (p.weaponReadyAt ?? 0) || now < (p.nextAttackAt ?? 0)) return;
+  p.nextAttackAt = now + spec.cooldownMs;
+  const start = positions[seat],
+    targetStart = historicalTarget ?? positions[victimSeat];
+  const origin = { x: start.x, y: start.y + eyeHeight(start), z: start.z };
+  const map = mapOf(state);
+  const counters = state.server ? (state.server.roundStats ??= emptyRoundStats())[seat] : null;
+  if (counters) counters.shots++;
+  state.events.push({
+    type: "shot",
+    shotSeq: input.seq,
+    seat,
+    text: `knife ${attack}`,
+    weapon: "knife",
+    attack,
+    audio: { kind: "knife", position: origin },
+  });
+  const volumes = combatVolumes(targetStart);
+  let best: { zone: HitZone; distance: number; direction: Vector } | null = null;
+  for (const [dyaw, dpitch] of spec.fan) {
+    const yaw = input.yaw + dyaw,
+      pitch = input.pitch + dpitch;
+    const direction = {
+      x: -Math.sin(yaw) * Math.cos(pitch),
+      y: Math.sin(pitch),
+      z: -Math.cos(yaw) * Math.cos(pitch),
+    };
+    const wall = traceWorld(origin, direction, spec.range, map)?.distance ?? Infinity;
+    for (const [zone, volume] of Object.entries(volumes)) {
+      const distance = rayBox(origin, direction, volume.center, volume.size);
+      if (distance <= spec.range && distance < wall && (!best || distance < best.distance))
+        best = { zone: zone as HitZone, distance, direction };
+    }
+  }
+  if (!best) {
+    // A miss that strikes a wall within reach still sparks on it.
+    const direction = {
+      x: -Math.sin(input.yaw) * Math.cos(input.pitch),
+      y: Math.sin(input.pitch),
+      z: -Math.cos(input.yaw) * Math.cos(input.pitch),
+    };
+    const wall = traceWorld(origin, direction, spec.range, map);
+    if (wall)
+      state.events.push({
+        type: "impact",
+        seat,
+        text: wall.surface + " impact",
+        weapon: "knife",
+        impact: wall,
+      });
+    return;
+  }
+  const backstab = isBackstab(start, { x: targetStart.x, z: targetStart.z, yaw: target.yaw });
+  const damage = knifeDamage(target, attack, backstab);
+  if (counters) {
+    counters.hits++;
+    counters.damage += Math.min(target.hp, damage);
+  }
+  target.hp = Math.max(0, target.hp - damage);
+  const point = {
+    x: origin.x + best.direction.x * best.distance,
+    y: origin.y + best.direction.y * best.distance,
+    z: origin.z + best.direction.z * best.distance,
+  };
+  const splatter =
+    traceWorld(point, best.direction, 2, map) ??
+    traceWorld({ x: point.x, y: point.y + 0.02, z: point.z }, { x: 0, y: -1, z: 0 }, 2, map);
+  state.events.push({
+    type: "hit",
+    seat,
+    text: backstab ? "Backstab" : `Knife ${attack}`,
+    weapon: "knife",
+    attack,
+    ...(backstab ? { backstab: true } : {}),
+    hit: {
+      victim: victimSeat,
+      zone: best.zone,
+      damage,
+      point,
+      direction: best.direction,
+      ...(splatter ? { splatter } : {}),
+    },
+  });
+  if (target.hp === 0) p.kills++;
 }
 
 /** Call from the trusted server scheduler. dt is intentionally ignored (milliseconds). */
@@ -579,7 +681,7 @@ export function stepMatch(
           : candidate;
     if (state.combatVersion === COMBAT_VERSION) recoverCombatRecoil(p, now);
     if (p.reloadUntil && now >= p.reloadUntil) {
-      const amount = Math.min(WEAPONS[p.weapon].magazine - p.ammo, p.reserve);
+      const amount = Math.min(WEAPONS.rifle.magazine - p.ammo, p.reserve);
       p.ammo += amount;
       p.reserve -= amount;
       p.reloadUntil = 0;
@@ -591,15 +693,22 @@ export function stepMatch(
       p.lastSeq = input.seq;
       p.yaw = input.yaw;
       p.pitch = input.pitch;
-      // A single shared ammo pool prevents weapon toggling from minting ammunition.
+      // The knife carries no ammunition: the rifle's magazine and reserve are kept as they are.
+      // Drawing the knife takes KNIFE.drawMs before it can swing (server clock, not the
+      // first-person equip animation); the rifle draws instantly, as before.
       if (p.weapon !== input.weapon && !p.reloadUntil) {
         p.weapon = input.weapon;
-        const excess = Math.max(0, p.ammo - WEAPONS[p.weapon].magazine);
-        p.ammo -= excess;
-        p.reserve += excess;
+        if (p.weapon === "knife") p.weaponReadyAt = now + KNIFE.drawMs;
+        else delete p.weaponReadyAt;
       }
-      if (input.reload && !p.reloadUntil && p.reserve > 0 && p.ammo < WEAPONS[p.weapon].magazine)
-        p.reloadUntil = now + WEAPONS[p.weapon].reloadMs;
+      if (
+        input.reload &&
+        p.weapon === "rifle" &&
+        !p.reloadUntil &&
+        p.reserve > 0 &&
+        p.ammo < WEAPONS.rifle.magazine
+      )
+        p.reloadUntil = now + WEAPONS.rifle.reloadMs;
       const before = { x: p.x, y: p.y, z: p.z };
       predictMovement(p, input, TICK_MS, map);
       if (input.walk) p.stepDistance = 0;
@@ -644,6 +753,21 @@ export function stepMatch(
     const input = combatInputs[seat] ?? accepted[seat];
     const p = state.players[seat];
     if (combatInputs[seat]) p.lastSeq = Math.max(p.lastSeq, combatInputs[seat]!.seq);
+    if (p.weapon === "knife") {
+      // Melee swings are allowed while moving; holding the button repeats at the cooldown.
+      if (input && (input.fire || input.alt) && (!input.combatOnly || input.weapon === p.weapon))
+        knifeAttack(
+          state,
+          seat,
+          now,
+          positions,
+          input,
+          input.alt ? "stab" : "slash",
+          historicalTargets?.[seat],
+        );
+      if (input) p.triggerHeld = accepted[seat]?.fire ?? input.fire;
+      continue;
+    }
     if (
       input?.fire &&
       (!input.combatOnly || input.weapon === p.weapon) &&

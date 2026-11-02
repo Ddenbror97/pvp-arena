@@ -7,7 +7,7 @@ import type { Input, MatchState, Player, Seat, Weapon } from "./protocol";
 import { predictMovement, TICK_MS, WEAPONS } from "./simulation";
 import { createCharacter } from "./character";
 import { characterSide } from "./sides";
-import { COMBAT_VERSION, recoveryProfile } from "./combat";
+import { COMBAT_VERSION, KNIFE, recoveryProfile } from "./combat";
 import { createBloodEffects } from "./blood-effects";
 import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handling";
 import { createImpactEffects } from "./impacts";
@@ -25,7 +25,13 @@ import { capturePointer } from "./pointer-capture";
 import { TriggerFeedback } from "./trigger-feedback";
 import { createViewHands } from "./view-hands";
 import { createMuzzleFlash } from "./muzzle-flash";
-import { createAuthoredViewmodel, M4_VIEWMODEL } from "./authored-viewmodel";
+import { AK_VIEWMODEL, createAuthoredViewmodel, M4_VIEWMODEL } from "./authored-viewmodel";
+import {
+  createKarambitViewmodel,
+  KARAMBIT_VIEWMODEL_REST,
+  karambitRestX,
+} from "./karambit-viewmodel";
+import type { KarambitControls } from "./karambit-animator";
 import { createShellCasings } from "./shell-casings";
 import { INSPECT_MS, M4_INSPECT, sampleVec } from "./reload-animation";
 import { REMOTE_DELAY_MS, SnapshotClock, PlaybackDelay, boundedPlaybackMs } from "./network";
@@ -94,6 +100,8 @@ export type ArenaControls = {
   setSensitivity: (value: number) => void;
   /** Scenery quality for maps that support it (distant vegetation density). */
   setGraphicsQuality: (quality: "high" | "low") => void;
+  /** Reduced motion: smaller viewmodel camera choreography and movement layers. */
+  setReducedMotion: (reduced: boolean) => void;
   snapshot: (frame: ArenaFrame, seat: Seat | null) => void;
   lock: () => Promise<void>;
   dispose: () => void;
@@ -108,7 +116,11 @@ export function mountArena(
   onLocalShot?: (weapon: Weapon, seq: number) => void,
   onLoadProgress?: (progress: ArenaLoadProgress) => void,
   /** The match's map (registry id; absent means Dustfront). Unknown ids throw. */
-  options: { mapId?: string | null } = {},
+  options: {
+    mapId?: string | null;
+    /** First-person Karambit animation sound cues (equip, flip, spin, catch, slash, stab…). */
+    onKnifeCue?: (cue: string) => void;
+  } = {},
 ): ArenaControls {
   const map = getMap(options.mapId);
   const lighting = map.presentation.lighting;
@@ -306,23 +318,6 @@ export function mountArena(
     object.layers.set(1);
     if (object instanceof THREE.Mesh) object.castShadow = false;
   });
-  const pistolPart = new THREE.Group();
-  pistolPart.name = "pistol-viewmodel";
-  weaponGroup.add(pistolPart);
-  const pistolSteel = new THREE.MeshStandardMaterial({
-    color: 0x292631,
-    roughness: 0.4,
-    metalness: 0.6,
-  });
-  for (const [y, z, w, h, d] of [
-    [0, -0.13, 0.045, 0.052, 0.19],
-    [-0.075, -0.065, 0.04, 0.13, 0.055],
-  ]) {
-    const part = new THREE.Mesh(new THREE.BoxGeometry(w!, h!, d!), pistolSteel);
-    part.position.set(0, y!, z!);
-    part.layers.set(1);
-    pistolPart.add(part);
-  }
   const muzzle = createMuzzleFlash();
   weaponGroup.add(muzzle.root);
   const smokeMaterial = new THREE.MeshBasicMaterial({
@@ -385,9 +380,26 @@ export function mountArena(
     m4: createAuthoredViewmodel(weaponGroup, true, M4_VIEWMODEL),
   };
   let authoredView = authoredViews.ak;
+  // The Karambit (secondary slot) on each team's own arms: Police bare forearm and watch sleeve,
+  // Terrorist white jacket sleeve. Same Blender clips on both.
+  const knifeViews = {
+    ak: createKarambitViewmodel(weaponGroup, AK_VIEWMODEL),
+    m4: createKarambitViewmodel(weaponGroup, M4_VIEWMODEL),
+  };
+  let knifeView = knifeViews.ak;
+  for (const view of Object.values(knifeViews))
+    void view.ready.then(() => {
+      if (view.animator) view.animator.onCue = (cue) => options.onKnifeCue?.(cue);
+    });
+  /** Local knife swing presentation, gated like the server (draw time, shared cooldown). */
+  let knifeReadyAt = 0,
+    knifeDrawnAt = 0,
+    lastKnifeEquipped = false;
   /** `side` is the character side (A Police, B Terrorist), which swaps at halftime. */
   const selectViewmodel = (side: Seat | null) => {
     const chosen = side === "A" ? authoredViews.m4 : authoredViews.ak;
+    knifeView = side === "A" ? knifeViews.m4 : knifeViews.ak;
+    for (const view of Object.values(knifeViews)) if (view !== knifeView) view.root.visible = false;
     if (chosen === authoredView) return;
     authoredView.update(false, 0, 0);
     authoredView = chosen;
@@ -417,6 +429,8 @@ export function mountArena(
     [
       authoredViews.ak.ready,
       authoredViews.m4.ready,
+      knifeViews.ak.ready,
+      knifeViews.m4.ready,
       characters.A.ready,
       characters.B.ready,
       environment.ready,
@@ -496,6 +510,11 @@ export function mountArena(
     weapon: Weapon = "rifle",
     fire = false,
     fireLatched = false,
+    /** Right mouse held: the knife's secondary attack (stab). */
+    alt = false,
+    altLatched = false,
+    reducedMotion =
+      typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches,
     flashPending = false,
     reload = false,
     jump = false;
@@ -540,6 +559,8 @@ export function mountArena(
     keys.clear();
     fire = false;
     fireLatched = false;
+    alt = false;
+    altLatched = false;
     flashPending = false;
     reload = false;
     jump = false;
@@ -582,9 +603,11 @@ export function mountArena(
     if (e.code === "KeyR") reload = true;
     if (e.code === "Space" && !e.repeat) jump = true;
     if (e.code === "Digit1") weapon = "rifle";
-    if (e.code === "Digit2") weapon = "pistol";
+    if (e.code === "Digit2") weapon = "knife";
+    // Karambit inspect (F): cosmetic only; attacks and weapon switches interrupt it.
+    if (e.code === "KeyF" && !e.repeat && weapon === "knife") knifeView.animator?.inspect();
     // Police M4A1 inspection: cosmetic only, cancelled by firing, reloading or switching.
-    if (e.code === "KeyF" && !e.repeat && authoredView.variant === "m4") {
+    if (e.code === "KeyF" && !e.repeat && weapon === "rifle" && authoredView.variant === "m4") {
       const now = performance.now();
       if (now - inspectStart > INSPECT_MS) inspectStart = now;
     }
@@ -595,10 +618,8 @@ export function mountArena(
     if (authorizationSuspended || !document.hasFocus() || state?.phase !== "live" || !seat) return;
     const own = state.players[seat],
       now = performance.now();
-    const interval =
-      state.combatVersion === COMBAT_VERSION && weapon === "rifle"
-        ? 100
-        : WEAPONS[weapon].fireIntervalMs;
+    if (weapon !== "rifle") return;
+    const interval = state.combatVersion === COMBAT_VERSION ? 100 : WEAPONS.rifle.fireIntervalMs;
     if (
       triggerFeedback.request(own, weapon, commandSeq, now, Date.now() + lastServerOffset, interval)
     ) {
@@ -611,11 +632,41 @@ export function mountArena(
       onLocalShot?.(weapon, commandSeq);
     }
   };
+  /**
+   * Local knife swing: plays the first-person attack only when the server would also accept it
+   * (drawn, cooldown elapsed, alive, live). The server resolves the hit on its own clock.
+   */
+  const presentLocalAttack = (kind: "slash" | "stab") => {
+    if (
+      authorizationSuspended ||
+      state?.phase !== "live" ||
+      !seat ||
+      !predicted ||
+      predicted.hp <= 0
+    )
+      return;
+    const now = performance.now();
+    if (now < knifeReadyAt || now < knifeDrawnAt) return;
+    knifeReadyAt = now + KNIFE[kind].cooldownMs;
+    knifeView.animator?.attack(kind);
+    inspectStart = -Infinity;
+  };
+  const contextmenu = (e: Event) => {
+    if (locked()) e.preventDefault();
+  };
   const mousedown = (e: MouseEvent) => {
-    if (!locked() || e.button !== 0) return;
-    fire = true;
-    fireLatched = true;
-    presentLocalShot(seq + 1);
+    if (!locked() || (e.button !== 0 && e.button !== 2)) return;
+    const stab = e.button === 2;
+    if (stab && weapon !== "knife") return;
+    if (stab) {
+      alt = true;
+      altLatched = true;
+    } else {
+      fire = true;
+      fireLatched = true;
+    }
+    if (weapon === "knife") presentLocalAttack(stab ? "stab" : "slash");
+    else presentLocalShot(seq + 1);
     if (!authorizationSuspended && state?.phase === "live" && predicted && predicted.hp > 0) {
       send({
         v: 1,
@@ -629,6 +680,7 @@ export function mountArena(
         yaw,
         pitch,
         fire: true,
+        ...(stab ? { alt: true } : {}),
         reload: false,
         weapon,
         jump: false,
@@ -636,10 +688,12 @@ export function mountArena(
         playbackMs: drawnPlaybackMs,
       });
       fireLatched = false;
+      altLatched = false;
     }
   };
-  const mouseup = () => {
-    fire = false;
+  const mouseup = (e: MouseEvent) => {
+    if (e.button === 2) alt = false;
+    else fire = false;
   };
   const pointer = () => {
     if (!locked()) clear();
@@ -668,6 +722,7 @@ export function mountArena(
   document.addEventListener("keydown", down);
   document.addEventListener("keyup", up);
   document.addEventListener("mousedown", mousedown);
+  document.addEventListener("contextmenu", contextmenu);
   document.addEventListener("mouseup", mouseup);
   document.addEventListener("pointerlockchange", pointer);
   document.addEventListener("visibilitychange", hidden);
@@ -724,7 +779,8 @@ export function mountArena(
           -1.45,
           Math.min(1.45, pitch + (state.combatVersion === COMBAT_VERSION ? 0 : recoilPitch)),
         ),
-        fire: active && (fire || fireLatched),
+        fire: active && (fire || fireLatched || (weapon === "knife" && (alt || altLatched))),
+        ...(active && weapon === "knife" && (alt || altLatched) ? { alt: true } : {}),
         reload: active && reload,
         weapon,
         jump: active && jump,
@@ -740,8 +796,11 @@ export function mountArena(
         if (pending.length > 60) pending.shift();
       }
       if (input.fire && input.weapon === "rifle") presentLocalShot(input.seq);
+      // Held knife buttons repeat at the server's cooldown; present each accepted swing.
+      if (input.fire && input.weapon === "knife") presentLocalAttack(input.alt ? "stab" : "slash");
       send(input);
       fireLatched = false;
+      altLatched = false;
       reload = false;
       jump = false;
     }
@@ -965,13 +1024,14 @@ export function mountArena(
         ? Math.max(0, state.players[seat].reloadUntil - (Date.now() + lastServerOffset))
         : 0;
     const reloadProgress = reloadRemaining
-      ? Math.min(1, reloadRemaining / WEAPONS[renderedWeapon].reloadMs)
+      ? Math.min(1, reloadRemaining / WEAPONS.rifle.reloadMs)
       : 0;
     const authoredRifle = authoredView.loaded && renderedWeapon === "rifle";
     // The authored rifle animates the reload on its own rig; the fallback/pistol keep the tilt cue.
     const reloadTilt = reloadRemaining && !authoredRifle ? Math.sin(reloadProgress * Math.PI) : 0;
-    hands.update(renderedWeapon === "pistol", reloadTilt);
-    hands.root.visible = renderedWeapon === "pistol" || !authoredView.loaded;
+    // Procedural fallback hands only while the authored rifle has not loaded.
+    hands.update(false, reloadTilt);
+    hands.root.visible = renderedWeapon === "rifle" && !authoredView.loaded;
     // An empty AK has no bolt hold-open: that reload chambers a round with the charging handle.
     // Ammo only changes when the server completes the reload, so this holds for its whole window.
     const reloadKind = state && seat && state.players[seat].ammo === 0 ? "empty" : "tactical";
@@ -989,7 +1049,8 @@ export function mountArena(
       dt,
       lookX,
       lookY,
-      moving,
+      // The Karambit's walk/run clips carry their own stride; keep look sway and breathing.
+      moving: moving && renderedWeapon !== "knife",
       sprinting: false,
       airborne,
       reloading: reloadRemaining > 0,
@@ -997,26 +1058,63 @@ export function mountArena(
       shot: shotIndex,
     });
     lookX = lookY = 0;
-    const rest = authoredView.variant === "m4" ? M4_VIEWMODEL_REST : VIEWMODEL_REST;
+    const knife = renderedWeapon === "knife" && knifeView.loaded;
+    const alive = !!seat && !!state && state.players[seat].hp > 0;
+    // Karambit: state machine over the Blender clips, then the controls drive the team's arms.
+    if (knife !== lastKnifeEquipped) {
+      lastKnifeEquipped = knife;
+      if (knife) knifeDrawnAt = now + KNIFE.drawMs;
+    }
+    let knifePose: KarambitControls | null = null;
+    for (const view of Object.values(knifeViews)) view.root.visible = false;
+    if (knifeView.animator) {
+      const strafeKeys = Number(keys.has("KeyD")) - Number(keys.has("KeyA")),
+        forwardKeys = Number(keys.has("KeyW")) - Number(keys.has("KeyS"));
+      knifePose = knifeView.animator.update({
+        dt: dt / 1000,
+        equipped: knife && alive,
+        moving: locked() && moving ? 1 : 0,
+        walking: keys.has("ShiftLeft") || keys.has("ShiftRight"),
+        backward: forwardKeys < 0,
+        strafe: locked() ? strafeKeys : 0,
+        airborne,
+        reducedMotion,
+      });
+      if (knife && alive) {
+        knifeView.pose(knifePose);
+        knifeView.root.visible = true;
+      }
+    }
+    const rest = knife
+      ? { ...KARAMBIT_VIEWMODEL_REST, x: karambitRestX(viewCamera.aspect) }
+      : authoredView.variant === "m4"
+        ? M4_VIEWMODEL_REST
+        : VIEWMODEL_REST;
     // Inspection offsets (M4 only), relative to the stable camera; never during a reload.
     if (reloadRemaining > 0 || renderedWeapon !== "rifle" || !authoredRifle)
       inspectStart = -Infinity;
     const inspect = (now - inspectStart) / INSPECT_MS;
     const ip = inspect >= 0 && inspect < 1 ? sampleVec(M4_INSPECT.position, inspect) : null,
       ir = ip ? sampleVec(M4_INSPECT.rotation, inspect) : null;
+    const framed = authoredRifle || knife;
+    // Knife clips may frame the blade toward screen centre (viewmodel only; aim never moves).
+    const vp = knife && knifePose ? knifePose.viewPosition : null;
     weaponGroup.position.set(
-      (authoredRifle ? rest.x : 0.23) + sway.x + (ip?.[0] ?? 0),
-      (authoredRifle ? rest.y : -0.24) + sway.y - landKick - reloadTilt * 0.07 + (ip?.[1] ?? 0),
-      (authoredRifle ? rest.z : -0.62) + sway.z + (ip?.[2] ?? 0),
+      (framed ? rest.x : 0.23) + sway.x + (ip?.[0] ?? 0) + (vp?.x ?? 0),
+      (framed ? rest.y : -0.24) +
+        sway.y -
+        landKick -
+        reloadTilt * 0.07 +
+        (ip?.[1] ?? 0) +
+        (vp?.y ?? 0),
+      (framed ? rest.z : -0.62) + sway.z + (ip?.[2] ?? 0) + (vp?.z ?? 0),
     );
     weaponGroup.rotation.set(
-      (authoredRifle ? rest.pitch : 0) + sway.pitch + reloadTilt * 0.13 + (ir?.[0] ?? 0),
-      (authoredRifle ? rest.yaw : 0.18) + sway.yaw + (ir?.[1] ?? 0),
-      (authoredRifle ? rest.roll : -0.02) + sway.roll - reloadTilt * 0.55 + (ir?.[2] ?? 0),
+      (framed ? rest.pitch : 0) + sway.pitch + reloadTilt * 0.13 + (ir?.[0] ?? 0),
+      (framed ? rest.yaw : 0.18) + sway.yaw + (ir?.[1] ?? 0),
+      (framed ? rest.roll : -0.02) + sway.roll - reloadTilt * 0.55 + (ir?.[2] ?? 0),
     );
     casings.update(dt, now);
-    weaponGroup.scale.setScalar(renderedWeapon === "pistol" ? 0.72 : 1);
-    pistolPart.visible = renderedWeapon === "pistol";
     rifle.visible = renderedWeapon === "rifle" && !authoredView.loaded;
     const spread =
       Math.round(((moving ? 3 : 0) + (airborne ? 4 : 0) + Math.min(5, recoilPitch * 45)) * 100) /
@@ -1042,6 +1140,8 @@ export function mountArena(
     camera.layers.set(1);
     viewCamera.position.copy(camera.position);
     viewCamera.quaternion.copy(camera.quaternion);
+    // Knife camera choreography: a small local tilt/roll of the viewmodel camera only.
+    if (knife && knifePose) viewCamera.quaternion.multiply(knifePose.viewRotation);
     viewCamera.updateMatrixWorld();
     renderer.render(viewScene, viewCamera);
     camera.layers.set(0);
@@ -1052,6 +1152,9 @@ export function mountArena(
   return {
     setSensitivity: (value) => {
       sensitivity = Number.isFinite(value) ? Math.max(0.1, Math.min(3, value)) : 1;
+    },
+    setReducedMotion: (reduced) => {
+      reducedMotion = !!reduced;
     },
     setGraphicsQuality: (quality) => {
       if (!environment.setQuality) return;
@@ -1169,9 +1272,15 @@ export function mountArena(
         for (const e of state.events) {
           if (e.id !== undefined && e.id <= lastEventId) continue;
           if (e.id !== undefined) lastEventId = e.id;
-          if (e.type === "impact" && e.impact) impacts.emit(e.impact, performance.now());
+          // A knife striking a wall leaves no bullet hole (its sound is in the audio layer).
+          if (e.type === "impact" && e.impact && e.weapon !== "knife")
+            impacts.emit(e.impact, performance.now());
           if (e.hit) blood.emit(e.hit, performance.now());
-          if (e.type === "shot") {
+          if (e.type === "shot" && e.weapon === "knife") {
+            // Own swings were presented by the first-person animation; the opponent swings.
+            if (e.seat && e.seat !== seat)
+              actorFor(e.seat).shot(performance.now(), e.attack ?? "slash");
+          } else if (e.type === "shot") {
             if (e.seat === seat) {
               const now = performance.now();
               if (now - confirmedShot > 300) shotIndex = 0;
@@ -1208,8 +1317,13 @@ export function mountArena(
         for (const e of state.events) {
           if (e.id !== undefined && e.id <= lastEventId) continue;
           if (e.id !== undefined) lastEventId = e.id;
-          if (e.type === "impact" && e.impact) impacts.emit(e.impact, performance.now());
-          if (e.type === "shot" && e.seat) actorFor(e.seat).shot(performance.now());
+          if (e.type === "impact" && e.impact && e.weapon !== "knife")
+            impacts.emit(e.impact, performance.now());
+          if (e.type === "shot" && e.seat)
+            actorFor(e.seat).shot(
+              performance.now(),
+              e.weapon === "knife" ? (e.attack ?? "slash") : undefined,
+            );
         }
       lastRound = state.round;
       const other = state.players[seat === "B" ? "A" : "B"];
@@ -1230,6 +1344,7 @@ export function mountArena(
       document.removeEventListener("keydown", down);
       document.removeEventListener("keyup", up);
       document.removeEventListener("mousedown", mousedown);
+      document.removeEventListener("contextmenu", contextmenu);
       document.removeEventListener("mouseup", mouseup);
       document.removeEventListener("pointerlockchange", pointer);
       document.removeEventListener("visibilitychange", hidden);
@@ -1261,6 +1376,8 @@ export function mountArena(
       muzzle.dispose();
       authoredViews.ak.dispose();
       authoredViews.m4.dispose();
+      knifeViews.ak.dispose();
+      knifeViews.m4.dispose();
       casings.dispose();
       weaponKit.dispose();
       environment.dispose();

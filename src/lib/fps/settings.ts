@@ -6,6 +6,8 @@ export type StrikeSettings = {
   crosshair: number;
   color: string;
   graphics: GraphicsQuality;
+  /** Smaller viewmodel camera choreography and weapon bob (also follows the OS setting). */
+  reducedMotion: boolean;
 };
 export const DEFAULT_STRIKE_SETTINGS: StrikeSettings = {
   sensitivity: 1,
@@ -13,6 +15,7 @@ export const DEFAULT_STRIKE_SETTINGS: StrikeSettings = {
   crosshair: 0,
   color: "#ffffff",
   graphics: "high",
+  reducedMotion: false,
 };
 export function readStrikeSettings(): StrikeSettings {
   try {
@@ -28,6 +31,7 @@ export function readStrikeSettings(): StrikeSettings {
           : 0,
       color: /^#[0-9a-f]{6}$/i.test(value?.color) ? value.color : "#ffffff",
       graphics: value?.graphics === "low" ? "low" : "high",
+      reducedMotion: value?.reducedMotion === true,
     };
   } catch {
     return { ...DEFAULT_STRIKE_SETTINGS };

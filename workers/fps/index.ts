@@ -21,7 +21,12 @@ import {
   TICK_MS,
   validateInput,
 } from "../../src/lib/fps/simulation";
-import type { Input, MatchState, Seat } from "../../src/lib/fps/protocol";
+import {
+  normalizeLegacyWeapons,
+  type Input,
+  type MatchState,
+  type Seat,
+} from "../../src/lib/fps/protocol";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { maintainMatches } from "./maintenance";
 import {
@@ -314,6 +319,8 @@ export class DuelRoom {
     ctx.blockConcurrencyWhile(async () => {
       this.saved = (await ctx.storage.get<Saved>("match")) ?? null;
       if (!this.saved) return;
+      // Matches saved before the pistol was replaced by the karambit.
+      normalizeLegacyWeapons(this.saved.state);
       if (["countdown", "live", "round-end"].includes(this.saved.state.phase)) {
         this.saved.state.phase = "cancelled";
         this.saved.result = { winner: null, scoreA: 0, scoreB: 0, reason: "SERVER_RESTART" };

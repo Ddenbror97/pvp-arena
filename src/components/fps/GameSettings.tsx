@@ -112,6 +112,15 @@ export function GameSettings({
             ))}
           </div>
         </fieldset>
+        <label>
+          Reduced motion (calmer knife animations){" "}
+          <input
+            aria-label="Reduced motion"
+            type="checkbox"
+            checked={settings.reducedMotion}
+            onChange={(e) => onChange({ ...settings, reducedMotion: e.target.checked })}
+          />
+        </label>
         <button type="button" className="duel-primary" onClick={onResume}>
           Resume game
         </button>

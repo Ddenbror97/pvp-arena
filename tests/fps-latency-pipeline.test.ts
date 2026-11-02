@@ -90,7 +90,7 @@ describe("zero-time trigger input", () => {
     s.players.A.reloadUntil = 5000;
     stepMatch(s, {}, 3034, TICK_MS, undefined, { A: trigger(1) });
     expect(s.players.A.ammo).toBe(30);
-    stepMatch(s, {}, 3068, TICK_MS, undefined, { A: { ...trigger(2), weapon: "pistol" } });
+    stepMatch(s, {}, 3068, TICK_MS, undefined, { A: { ...trigger(2), weapon: "knife" } });
     expect(s.players.A.weapon).toBe("rifle");
     expect(s.players.A.ammo).toBe(30);
   });
