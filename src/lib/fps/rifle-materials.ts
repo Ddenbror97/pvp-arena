@@ -9,6 +9,11 @@ import * as THREE from "three";
  * Wear comes from a Blender bake (art/blender/build_ak_viewmodel.py) on the rifle's second UV
  * set: R = ambient occlusion, G = edge convexity, B = cavity. Edges wear through to bare steel or
  * raw wood, broken up by the finish noise so it reads as chipping rather than an outline.
+ *
+ * Every finish also adds micro relief (wood pores, the orange peel of blued or anodized metal)
+ * as a derivative bump from its texture, so highlights break up the way real metal and wood do.
+ * The M4 keeps its authored maps and only gets that micro layer (overlay), plus a proper finish
+ * for its untextured carry handle.
  */
 
 /** Baked AO/edge/cavity atlas for the authored rifle (TEXCOORD_1). */
@@ -34,15 +39,25 @@ const BARE_STEEL: Wear = {
 type Finish = {
   /** RGB albedo (replace) or colour modulation (multiply around 0.5 grey); A = roughness. */
   texture: () => THREE.Texture;
-  mode: "replace" | "multiply";
+  /**
+   * replace: the texture is the albedo. multiply: it modulates a flat colour. overlay: the part
+   * keeps its authored maps and the texture only adds micro tone, roughness and relief on top.
+   */
+  mode: "replace" | "multiply" | "overlay";
   /** Texture repeats per metre of real gun. */
   density: number;
   color?: number;
   metalness: number;
-  /** Roughness = mix(min, max, texture alpha). */
+  /** Roughness = mix(min, max, texture alpha); overlay: a multiplier on the authored roughness. */
   roughness: [number, number];
+  /** Micro relief from the finish (pores, orange peel, machining), as a height range in metres. */
+  bump: number;
+  /** Overlay only: how strongly the finish tone modulates the authored colour, 0–1. */
+  tone?: number;
   clearcoat?: number;
   clearcoatRoughness?: number;
+  envMapIntensity?: number;
+  /** Baked edge wear / AO (the AK's second UV set); parts without it get none. */
   wear: Wear;
 };
 
@@ -153,17 +168,23 @@ function woodTexture() {
     (x, y) => {
       const i = y * W + x;
       // Laminate: thin parallel layers, slightly wavy, with figure from the grain noise.
-      const band = Math.sin(((y / H) * 46 + warp[i]! * 5.5) * Math.PI * 2) * 0.5 + 0.5;
+      // Flat plies: straight, parallel layers with only a gentle wander (not contour-like figure).
+      const band = Math.sin(((y / H) * 52 + warp[i]! * 2.2) * Math.PI * 2) * 0.5 + 0.5;
       const ring = Math.pow(band, 3);
-      const figure = grain[i]! * 0.65 + ring * 0.35;
+      // Thin dark glue/latewood lines between the laminate plies.
+      const line = Math.pow(1 - band, 7);
+      const figure = grain[i]! * 0.55 + ring * 0.4;
       const stain = blotch[i]!;
-      const dark = poreMap[i]! * 0.35;
-      // Linear-ish sRGB stops: deep oxblood → warm amber, as on varnished AKM furniture.
-      const t = Math.min(1, Math.max(0, figure * 0.85 + stain * 0.35 - 0.1)) * (1 - dark);
-      const r = mix(58, 150, t),
-        g = mix(20, 70, t),
-        b = mix(10, 30, t);
-      const rough = 0.25 + ring * 0.2 + dark * 0.4 + (1 - stain) * 0.15;
+      const dark = poreMap[i]! * 0.4;
+      // sRGB stops: deep oxblood → warm reddish amber, as on shellacked AKM furniture.
+      const t =
+        Math.min(1, Math.max(0, figure * 0.95 + stain * 0.35 - 0.16)) *
+        (1 - dark) *
+        (1 - line * 0.45);
+      const r = mix(44, 124, t),
+        g = mix(17, 57, t),
+        b = mix(10, 29, t);
+      const rough = 0.3 + ring * 0.12 + dark * 0.4 + line * 0.15 + (1 - stain) * 0.12;
       return [clamp(r), clamp(g), clamp(b), clamp(rough * 255)];
     },
     true,
@@ -199,16 +220,28 @@ function steelTexture(seed: number) {
     H = 512;
   const smudge = fractal(W, H, seed, 4, 4, 4),
     brushed = fractal(W, H, seed + 7, 2, 96, 3),
-    pits = fractal(W, H, seed + 13, 48, 48, 2);
+    pits = fractal(W, H, seed + 13, 48, 48, 2),
+    // Fine "orange peel" of a stamped, blued or parkerized surface; drives the micro relief.
+    peel = fractal(W, H, seed + 19, 96, 96, 2);
   return toTexture(W, H, (x, y) => {
     const i = y * W + x;
     const tone =
-      128 + (smudge[i]! - 0.5) * 34 + (brushed[i]! - 0.5) * 14 - (pits[i]! > 0.8 ? 10 : 0);
+      128 +
+      (smudge[i]! - 0.5) * 40 +
+      (brushed[i]! - 0.5) * 14 +
+      (peel[i]! - 0.5) * 12 -
+      (pits[i]! > 0.8 ? 12 : 0);
     const rough =
-      0.18 + smudge[i]! * 0.42 + (brushed[i]! - 0.5) * 0.12 + (pits[i]! > 0.8 ? 0.2 : 0);
+      0.18 +
+      smudge[i]! * 0.42 +
+      (brushed[i]! - 0.5) * 0.12 +
+      (peel[i]! - 0.5) * 0.1 +
+      (pits[i]! > 0.8 ? 0.2 : 0);
     return [clamp(tone), clamp(tone), clamp(tone * 1.02), clamp(rough * 255)];
   });
 }
+
+const NO_WEAR: Wear = { color: [0, 0, 0], roughness: 0.5, amount: 0, occlusion: 0 };
 
 const FINISHES: Record<string, Finish> = {
   AK47LaminatedWoodPBR: {
@@ -216,20 +249,23 @@ const FINISHES: Record<string, Finish> = {
     mode: "replace",
     density: 3.2,
     metalness: 0,
-    roughness: [0.18, 0.75],
-    clearcoat: 0.55,
-    clearcoatRoughness: 0.32,
+    // Hand-rubbed shellac: a satin sheen that follows the grain, not a mirror lacquer.
+    roughness: [0.32, 0.74],
+    clearcoat: 0.26,
+    clearcoatRoughness: 0.45,
+    bump: 0.00018,
     // Handled furniture: varnish rubbed off the edges down to lighter, matte raw birch.
-    wear: { color: [0.32, 0.15, 0.06], roughness: 0.78, amount: 0.65, occlusion: 0.7 },
+    wear: { color: [0.32, 0.15, 0.06], roughness: 0.78, amount: 0.7, occlusion: 0.75 },
   },
   /** Stamped-steel AKM magazine: parkerized, slightly worn. */
   AK47BakeliteMagazine: {
     texture: () => memo("magazine", () => steelTexture(401)),
     mode: "multiply",
     density: 4,
-    color: 0x3e4044,
-    metalness: 0.78,
-    roughness: [0.36, 0.74],
+    color: 0x46484c,
+    metalness: 0.58,
+    roughness: [0.46, 0.8],
+    bump: 0.00008,
     wear: { ...BARE_STEEL, amount: 0.6 },
   },
   AK47BakeliteMagazineUnused: {
@@ -240,17 +276,23 @@ const FINISHES: Record<string, Finish> = {
     roughness: [0.22, 0.7],
     clearcoat: 0.25,
     clearcoatRoughness: 0.4,
+    bump: 0.00005,
     wear: { color: [0.2, 0.06, 0.03], roughness: 0.45, amount: 0.4, occlusion: 0.7 },
   },
+  /**
+   * Blued stamped receiver: a satin blue-black with a soft, broken-up sheen (no glossy coat;
+   * the old clearcoat read as black plastic).
+   */
   AK47BluedReceiverSteel: {
     texture: () => memo("blued", () => steelTexture(101)),
     mode: "multiply",
     density: 2.5,
-    color: 0x3d424b,
-    metalness: 0.92,
-    roughness: [0.24, 0.58],
-    clearcoat: 0.12,
-    clearcoatRoughness: 0.3,
+    color: 0x40444b,
+    metalness: 0.86,
+    roughness: [0.38, 0.68],
+    clearcoat: 0.02,
+    clearcoatRoughness: 0.4,
+    bump: 0.00006,
     // Bluing wears silver on the receiver's stamped edges and rivet heads first.
     wear: BARE_STEEL,
   },
@@ -258,9 +300,10 @@ const FINISHES: Record<string, Finish> = {
     texture: () => memo("phosphate", () => steelTexture(211)),
     mode: "multiply",
     density: 3,
-    color: 0x45474b,
-    metalness: 0.8,
-    roughness: [0.4, 0.78],
+    color: 0x47494d,
+    metalness: 0.62,
+    roughness: [0.48, 0.84],
+    bump: 0.00008,
     wear: { ...BARE_STEEL, amount: 0.55 },
   },
   AK47WornBoltSteel: {
@@ -269,8 +312,37 @@ const FINISHES: Record<string, Finish> = {
     density: 4,
     color: 0x9a9da2,
     metalness: 1,
-    roughness: [0.16, 0.45],
+    roughness: [0.18, 0.46],
+    bump: 0.00004,
     wear: { ...BARE_STEEL, color: [0.6, 0.61, 0.63], roughness: 0.2, amount: 0.5 },
+  },
+  /**
+   * M4 upper/lower and furniture: keep the authored maps, add hard-anodized micro texture so the
+   * black reads as dark-grey satin aluminium instead of flat black.
+   */
+  M4Finish: {
+    texture: () => memo("anodized", () => steelTexture(503)),
+    mode: "overlay",
+    density: 3,
+    color: 0xffffff,
+    tone: 0.6,
+    metalness: 0.62,
+    roughness: [0.82, 1.22],
+    bump: 0.00005,
+    envMapIntensity: 0.7,
+    wear: NO_WEAR,
+  },
+  /** M4 carry handle: was a flat swatch; same hard-anodized aluminium as the receiver. */
+  CarryHandleFinish: {
+    texture: () => memo("anodized", () => steelTexture(503)),
+    mode: "multiply",
+    density: 3,
+    color: 0x2e2e30,
+    metalness: 0.6,
+    roughness: [0.4, 0.66],
+    bump: 0.00005,
+    envMapIntensity: 0.7,
+    wear: NO_WEAR,
   },
 };
 
@@ -285,28 +357,41 @@ function wearMap() {
   });
 }
 
-function applyFinish(material: THREE.MeshStandardMaterial, finish: Finish, scale: THREE.Vector3) {
+function applyFinish(
+  material: THREE.MeshStandardMaterial,
+  finish: Finish,
+  scale: THREE.Vector3,
+  hasWear: boolean,
+) {
   const map = finish.texture();
+  const overlay = finish.mode === "overlay";
   material.metalness = finish.metalness;
+  // Overlay keeps the authored roughness map (scaled in the shader); the others drive it fully.
   material.roughness = 1;
   if (finish.color !== undefined) material.color.setHex(finish.color);
   else material.color.setHex(0xffffff);
+  if (finish.envMapIntensity !== undefined) material.envMapIntensity = finish.envMapIntensity;
   // Clearcoat is always enabled (≥ 0.02) so every finish compiles to one shader program.
   if (material instanceof THREE.MeshPhysicalMaterial) {
     material.clearcoat = Math.max(0.02, finish.clearcoat ?? 0);
     material.clearcoatRoughness = finish.clearcoatRoughness ?? 0.3;
   }
-  // The authored base colour is a flat dark swatch; the procedural finish drives the look.
-  material.map = null;
-  material.roughnessMap = null;
-  // The authored occlusion maps read TEXCOORD_1, which now carries the wear atlas; the baked
-  // AO in uWearMap replaces them.
-  material.aoMap = null;
+  if (!overlay) {
+    // The authored base colour is a flat dark swatch; the procedural finish drives the look.
+    material.map = null;
+    material.roughnessMap = null;
+    // The authored occlusion maps read TEXCOORD_1, which now carries the wear atlas; the baked
+    // AO in uWearMap replaces them.
+    material.aoMap = null;
+  }
   const uniforms = {
     uFinishMap: { value: map },
     uFinishScale: { value: scale.clone().multiplyScalar(finish.density) },
     uFinishRough: { value: new THREE.Vector2(...finish.roughness) },
     uFinishReplace: { value: finish.mode === "replace" ? 1 : 0 },
+    uFinishOverlay: { value: overlay ? (finish.tone ?? 0.5) : -1 },
+    uFinishBump: { value: finish.bump },
+    uHasWear: { value: hasWear && finish.wear.amount + finish.wear.occlusion > 0 ? 1 : 0 },
     uWearMap: { value: wearMap() },
     uWearColor: { value: new THREE.Vector3(...finish.wear.color) },
     uWear: {
@@ -332,6 +417,9 @@ uniform sampler2D uFinishMap;
 uniform vec3 uFinishScale;
 uniform vec2 uFinishRough;
 uniform float uFinishReplace;
+uniform float uFinishOverlay;
+uniform float uFinishBump;
+uniform float uHasWear;
 uniform sampler2D uWearMap;
 uniform vec3 uWearColor;
 uniform vec3 uWear;
@@ -349,9 +437,13 @@ varying vec3 vFinishNormal;`,
       vec4 finish = texture2D( uFinishMap, finishP.zy ) * finishW.x
         + texture2D( uFinishMap, finishP.zx + 0.37 ) * finishW.y
         + texture2D( uFinishMap, finishP.xy + 0.71 ) * finishW.z;
-      diffuseColor.rgb = mix( diffuseColor.rgb * finish.rgb * 2.0, finish.rgb * diffuse, uFinishReplace );
-      // Baked wear: chipped edge wear (edge mask × finish noise), cavity grime and AO.
-      vec3 wearBake = texture2D( uWearMap, vWearUv ).rgb;
+      if ( uFinishOverlay >= 0.0 )
+        diffuseColor.rgb *= mix( vec3( 1.0 ), finish.rgb * 2.0, uFinishOverlay );
+      else
+        diffuseColor.rgb = mix( diffuseColor.rgb * finish.rgb * 2.0, finish.rgb * diffuse, uFinishReplace );
+      // Baked wear: chipped edge wear (edge mask × finish noise), cavity grime and AO. Parts
+      // without the wear UV set read as unworn, unoccluded.
+      vec3 wearBake = mix( vec3( 1.0, 0.0, 0.0 ), texture2D( uWearMap, vWearUv ).rgb, uHasWear );
       float wearChip = texture2D( uFinishMap, ( finishP.zy + finishP.zx ) * 2.3 + 0.13 ).a;
       float edgeWear = smoothstep( 0.32, 0.78, wearBake.g * ( 0.45 + wearChip * 1.1 ) ) * uWear.x;
       diffuseColor.rgb = mix( diffuseColor.rgb, uWearColor, edgeWear );
@@ -360,8 +452,23 @@ varying vec3 vFinishNormal;`,
       .replace(
         "#include <roughnessmap_fragment>",
         `#include <roughnessmap_fragment>
-      roughnessFactor = mix( uFinishRough.x, uFinishRough.y, finish.a );
+      float finishRough = mix( uFinishRough.x, uFinishRough.y, finish.a );
+      roughnessFactor = uFinishOverlay >= 0.0 ? clamp( roughnessFactor * finishRough, 0.04, 1.0 ) : finishRough;
       roughnessFactor = mix( roughnessFactor, uWear.y, edgeWear ) + wearBake.b * 0.12;`,
+      )
+      .replace(
+        "#include <normal_fragment_maps>",
+        `#include <normal_fragment_maps>
+      {
+        // Micro relief (pores, orange peel) from the finish's tone, as a derivative bump map.
+        float finishH = dot( finish.rgb, vec3( 0.3333 ) );
+        vec2 dH = vec2( dFdx( finishH ), dFdy( finishH ) ) * uFinishBump;
+        vec3 sx = dFdx( - vViewPosition ), sy = dFdy( - vViewPosition );
+        vec3 r1 = cross( sy, normal ), r2 = cross( normal, sx );
+        float det = dot( sx, r1 ) * faceDirection;
+        vec3 grad = sign( det ) * ( dH.x * r1 + dH.y * r2 );
+        normal = normalize( abs( det ) * normal - grad );
+      }`,
       )
       .replace(
         "#include <lights_physical_fragment>",
@@ -392,7 +499,7 @@ export function upgradeRifleMaterials(root: THREE.Object3D, owned: THREE.Materia
       const clone = material.clone();
       // Object-space projection scaled to real size, so every part shares one grain density.
       const scale = object.getWorldScale(new THREE.Vector3()).divide(rootScale);
-      applyFinish(clone, finish, scale);
+      applyFinish(clone, finish, scale, !!object.geometry.getAttribute("wearUv"));
       owned.push(clone);
       return clone;
     });

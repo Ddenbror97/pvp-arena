@@ -163,6 +163,8 @@ type RifleShot = {
   inspect?: number;
   /** Eject a case from the port and show it this many ms into its flight. */
   casing?: number;
+  /** Case close-up: hide the rifle and show three cases (side, head, mouth) in front of the lens. */
+  studio?: boolean;
 };
 declare global {
   interface Window {
@@ -228,7 +230,31 @@ window.rifleCapture = async (variantId, shots, w, h, fov = 60, guardTwist) => {
     );
     camera.updateMatrixWorld(true);
     casings.clear();
-    if (shot.casing !== undefined) {
+    group.visible = !shot.studio;
+    if (shot.studio) {
+      casings.emit(
+        new THREE.Vector3(),
+        new THREE.Vector3(1, 0, 0),
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3(0, 0, 1),
+        0,
+      );
+      const poses: Array<[number, number, number, number, number, number]> = [
+        [-0.018, 0.002, -0.11, 0.25, 0, Math.PI / 2 + 0.15],
+        [0.012, 0.004, -0.11, 1.9, 0.5, 0.2],
+        [0.036, -0.004, -0.11, -1.05, 0.2, -0.35],
+      ];
+      poses.forEach(([x, y, z, rx, ry, rz], i) => {
+        const m = new THREE.Matrix4().compose(
+          new THREE.Vector3(x, y, z).applyMatrix4(camera.matrixWorld),
+          new THREE.Quaternion().setFromEuler(new THREE.Euler(rx, ry, rz)),
+          new THREE.Vector3(1, 1, 1),
+        );
+        casings.mesh.setMatrixAt(i, m);
+      });
+      casings.mesh.count = poses.length;
+      casings.mesh.instanceMatrix.needsUpdate = true;
+    } else if (shot.casing !== undefined) {
       // As the renderer does: port and weapon axes into scene space, then advance the flight.
       const at = new THREE.Vector3();
       if (vm.ejectionPort(at)) {

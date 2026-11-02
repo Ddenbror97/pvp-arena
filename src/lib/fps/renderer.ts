@@ -406,7 +406,7 @@ export function mountArena(
     inspectStart = -Infinity;
     for (const pool of Object.values(casingPools)) pool.clear();
   };
-  /** Ejected cases per rifle: 5.56 brass for the M4, 7.62×39 lacquered steel for the AK. */
+  /** Ejected cases per rifle: 5.56 brass for the M4, 7.62×39 brass for the AK. */
   const casingPools = {
     m4: createShellCasings(1, M4_CASING),
     ak: createShellCasings(1, AK_CASING),
