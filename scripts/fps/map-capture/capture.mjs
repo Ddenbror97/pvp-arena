@@ -2,7 +2,7 @@
  * Render a registry map from first-person viewpoints in headless Chromium (SwiftShader WebGL2)
  * with the game's own map loader and lighting.
  *
- *   node scripts/fps/map-capture/capture.mjs <mapId> <outDir> [views.json] [--chromium=/path] [--quality=low]
+ *   node scripts/fps/map-capture/capture.mjs <mapId> <outDir> [views.json] [--chromium=/path]
  *   node scripts/fps/map-capture/capture.mjs --lifecycle=dustfront,lost-trail --cycles=4 [--chromium=/path]
  *
  * The second form is the map-switching / resource-cleanup check (see entry.ts `lifecycle`).
@@ -18,7 +18,6 @@ import { chromium } from "playwright-core";
 const [mapId, outDir, viewsFile] = process.argv.slice(2).filter((a) => !a.startsWith("--"));
 const flag = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
 const exe = flag("chromium");
-const quality = flag("quality") === "low" ? "low" : "high";
 const lifecycle = flag("lifecycle")?.split(",");
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../..");
 const spec = lifecycle
@@ -104,12 +103,11 @@ if (lifecycle) {
 }
 const [w, h] = [960, 540];
 const result = await page.evaluate(
-  ([id, v, w, h, p, q]) => window.capture(id, v, w, h, p, q),
-  [mapId, views, w, h, players, quality],
+  ([id, v, w, h, p]) => window.capture(id, v, w, h, p),
+  [mapId, views, w, h, players],
 );
 const stats = {
   mapId,
-  quality,
   loadMs: result.loadMs,
   geometries: result.geometries,
   textures: result.textures,

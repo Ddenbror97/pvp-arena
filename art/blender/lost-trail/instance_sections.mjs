@@ -46,8 +46,8 @@ for (const section of doc.getRoot().listNodes()) {
   }
   for (const [mesh, nodes] of groups) {
     if (nodes.length < 2) continue;
-    // Seeded shuffle: any prefix of a batch is a spatially even random subset, so the runtime's
-    // low-quality setting can draw the first N instances (InstancedMesh.count) of a batch.
+    // Seeded shuffle: any prefix of a batch is a spatially even random subset (kept so a
+    // runtime that draws the first N instances of a batch gets an even thinning).
     shuffle(nodes, hash(`${section.getName()}-${mesh.getName()}`));
     const t = new Float32Array(nodes.length * 3),
       r = new Float32Array(nodes.length * 4),

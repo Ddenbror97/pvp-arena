@@ -8,7 +8,7 @@ Every registered map uses the same engine. A fourth map adds data and presentati
 - workers/fps/index.ts uses the same strict session checks, fixed simulation cadence, immediate trigger handling, command timing, hit rewind and redacted snapshots for every map. Hyperdrive and placement belong to the Worker, not a map definition.
 - renderer.ts and presentation.ts supply the same adaptive opponent playback, motion continuity, frame-rate-independent camera, crouch and jump presentation. Each collision/prediction/visibility call receives the match's resolved map. Map factories only dress the environment.
 - All characters, world weapons, wrist/finger grips and hit volumes are shared. Map art must not replace a character controller or install a competing update loop.
-- Environment extensions retain the shared loader, culling, frozen static transforms, one static shadow capture, bounded effects and disposal. Snowfall is GPU animated and kept out of reflection/shadow passes; jungle quality changes only its background batches.
+- Environment extensions retain the shared loader, culling, frozen static transforms, one static shadow capture, bounded effects and disposal. Snowfall is GPU animated and kept out of reflection/shadow passes; the jungle's far forest is a baked backdrop.
 
 ## Box jumping on every map
 

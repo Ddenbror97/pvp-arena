@@ -1,11 +1,12 @@
-/** "low" thins distant scenery on maps that support it (see MapEnvironment.setQuality). */
-export type GraphicsQuality = "high" | "low";
+/**
+ * Player settings. Rendering has one configuration (see RENDER_CAP in presentation.ts); a
+ * stored `graphics` value from the former High/Low choice is ignored.
+ */
 export type StrikeSettings = {
   sensitivity: number;
   volume: number;
   crosshair: number;
   color: string;
-  graphics: GraphicsQuality;
   /** Smaller viewmodel camera choreography and weapon bob (also follows the OS setting). */
   reducedMotion: boolean;
 };
@@ -14,7 +15,6 @@ export const DEFAULT_STRIKE_SETTINGS: StrikeSettings = {
   volume: 1,
   crosshair: 0,
   color: "#ffffff",
-  graphics: "high",
   reducedMotion: false,
 };
 export function readStrikeSettings(): StrikeSettings {
@@ -30,7 +30,6 @@ export function readStrikeSettings(): StrikeSettings {
           ? value.crosshair
           : 0,
       color: /^#[0-9a-f]{6}$/i.test(value?.color) ? value.color : "#ffffff",
-      graphics: value?.graphics === "low" ? "low" : "high",
       reducedMotion: value?.reducedMotion === true,
     };
   } catch {

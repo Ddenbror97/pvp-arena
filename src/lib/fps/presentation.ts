@@ -365,19 +365,18 @@ export class RemotePresentation {
   }
 }
 
-/** Framebuffer caps per graphics setting: device-pixel ratio and pixels drawn per frame. */
-export const RENDER_CAPS = {
-  high: { ratio: 1.25, pixels: 1_500_000 },
-  // Low (any map): at most one framebuffer pixel per CSS pixel and two-thirds of High's pixel
-  // budget, so fill-bound laptops and integrated GPUs start lighter instead of waiting for the
-  // adaptive scale below to catch up.
-  low: { ratio: 1, pixels: 1_000_000 },
-} as const;
+/**
+ * The one render configuration's framebuffer cap: at most 1.25 framebuffer pixels per CSS pixel
+ * and 1.5 MP drawn per frame (a 1080p window renders at about 0.85×, a 1440p Retina window at
+ * about 0.64×; 4× MSAA on top). Below the cap, sustained slow frames lower the scale (to 0.6×)
+ * and sustained fast ones restore it, so weaker GPUs settle where they hold frame rate without
+ * a quality menu.
+ */
+export const RENDER_CAP = { ratio: 1.25, pixels: 1_500_000 } as const;
 
 /** Bounded framebuffer cost; sustained slow frames lower scale, with slow recovery. */
 export class RenderBudget {
   scale = 1;
-  quality: keyof typeof RENDER_CAPS = "high";
   private elapsed = 0;
   private slow = 0;
   private frames = 0;
@@ -406,10 +405,12 @@ export class RenderBudget {
     return Math.abs(before - this.scale) > 0.001;
   }
   ratio(width: number, height: number, deviceRatio: number) {
-    const cap = RENDER_CAPS[this.quality];
     return (
-      Math.min(deviceRatio, cap.ratio, Math.sqrt(cap.pixels / Math.max(1, width * height))) *
-      this.scale
+      Math.min(
+        deviceRatio,
+        RENDER_CAP.ratio,
+        Math.sqrt(RENDER_CAP.pixels / Math.max(1, width * height)),
+      ) * this.scale
     );
   }
 }

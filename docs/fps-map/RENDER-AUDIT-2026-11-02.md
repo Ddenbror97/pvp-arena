@@ -56,13 +56,19 @@ about 1% of one core, so not a bottleneck even on a slow laptop.
 
 ## Changes in this pass
 
-- **Graphics "Low" now does something on every map.** Before, it only thinned LOST TRAIL's
-  background forest and did nothing on Dustfront, FROSTLINE and CROSSFIRE. It now also caps
-  the framebuffer at one pixel per CSS pixel (High allows 1.25×) and at 1.0 MP drawn per frame
-  (High 1.5 MP), on every map (`RENDER_CAPS` in `presentation.ts`). The adaptive scale (down to
-  0.6× after sustained frames over 18.5 ms) still applies on top. Fill-bound laptops and
-  integrated GPUs, including Retina Macs, start lighter instead of waiting for the adaptive
-  scale to catch up.
+- **One render configuration (owner's decision, later the same day).** The Graphics setting
+  (High / Low) is gone from Settings, `StrikeSettings`, the renderer and the map environments;
+  a stored `graphics` value is ignored. The single configuration is what High was:
+  - framebuffer at most 1.25 pixels per CSS pixel and 1.5 MP per frame (`RENDER_CAP` in
+    `presentation.ts`), 4× MSAA: a 1080p window renders at about 0.85×, a 1440p Retina
+    window at about 0.64×;
+  - the adaptive scale on top: after 1.5 s with more than 5% of frames over 18.5 ms the
+    scale drops 0.1 (floor 0.6×); eight consecutive fast windows raise it 0.1. This is not a
+    quality preset: it is automatic, per machine, and the only thing it changes is the
+    framebuffer size;
+  - full scenery on every map (LOST TRAIL's background forest is now its baked backdrop plus
+    the real trees inside ±33 m, so there is no longer a cheaper variant to thin).
+    Earlier the same day Low had briefly been given a 1×/1.0 MP cap; that is gone with it.
 - **Capture timing** fixed (readback instead of `gl.finish()`), median of three frames.
 - `compare-48x40.views.json` for CROSSFIRE-sized arenas.
 

@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { CameraCorrection, RemotePresentation, RenderBudget } from "../src/lib/fps/presentation";
+import {
+  CameraCorrection,
+  RemotePresentation,
+  RENDER_CAP,
+  RenderBudget,
+} from "../src/lib/fps/presentation";
 import { createMatch, predictMovement, TICK_MS } from "../src/lib/fps/simulation";
 import type { Input } from "../src/lib/fps/protocol";
 import { REMOTE_DELAY_MS } from "../src/lib/fps/network";
@@ -284,17 +289,15 @@ describe("render presentation independent of server physics", () => {
     expect(b.scale).toBeGreaterThan(lower);
     expect(b.scale).toBeLessThanOrEqual(1);
   });
-  it("low graphics lowers the framebuffer cap on every map", () => {
-    const high = new RenderBudget(),
-      low = Object.assign(new RenderBudget(), { quality: "low" as const });
-    // 1440p laptop at 2× DPI: High is pixel-bound at 1.5 MP, Low at 1 MP.
-    expect(2560 * 1440 * high.ratio(2560, 1440, 2) ** 2).toBeCloseTo(1_500_000, -3);
-    expect(2560 * 1440 * low.ratio(2560, 1440, 2) ** 2).toBeCloseTo(1_000_000, -3);
-    // Small window on a Retina screen: High allows 1.25×, Low draws at most 1×.
-    expect(high.ratio(800, 500, 2)).toBe(1.25);
-    expect(low.ratio(800, 500, 2)).toBe(1);
-    // The adaptive scale still applies on top.
-    for (let i = 0; i < 250; i++) low.update(30);
-    expect(low.ratio(800, 500, 2)).toBeLessThan(1);
+  it("one render configuration: the framebuffer cap is fixed, only the adaptive scale moves", () => {
+    const b = new RenderBudget();
+    expect(RENDER_CAP).toEqual({ ratio: 1.25, pixels: 1_500_000 });
+    // 1440p laptop at 2× DPI: pixel-bound at 1.5 MP.
+    expect(2560 * 1440 * b.ratio(2560, 1440, 2) ** 2).toBeCloseTo(1_500_000, -3);
+    // Small window on a Retina screen: at most 1.25 framebuffer pixels per CSS pixel.
+    expect(b.ratio(800, 500, 2)).toBe(1.25);
+    // The adaptive scale applies on top, down to 0.6×.
+    for (let i = 0; i < 1000; i++) b.update(30);
+    expect(b.ratio(800, 500, 2)).toBeCloseTo(0.75);
   });
 });

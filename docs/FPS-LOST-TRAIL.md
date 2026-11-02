@@ -94,7 +94,6 @@ leaves' vertices cost about 0.2 s of that difference, their fragments the rest. 
   valley keep their sky.
 - **Thinner near crowns.** Near and giant trees keep 30% of their leaf cards (grown 1.15×; was
   50% at 1.12×), far trees 50% (was 60%). The near band has no twisted midstory trees.
-- Low quality still draws half of each remaining background batch.
 
 Trade-offs: close to a wall corner the backdrop is seen at an angle and reads flatter, and
 looking straight up near the edge shows a little more sky than before.
@@ -127,13 +126,11 @@ Before (as built) and after pass 2:
 Before (art pass 3): near crown bark 45% kept, buttress fins in the trunk's material, single
 reed and wet-rock libraries, welded tubes and boulders.
 
-### Graphics quality "Low" (Settings → Graphics)
+### One render configuration
 
-- Every background-section batch (beyond 6.5 m outside the playable edge) draws a seeded random
-  half of its instances. The kept trees grow 14% so the far canopy still reads as closed.
-- The forest edge and the arena are untouched, so sight lines are identical on both settings.
-- The cached shadow map is re-rendered once when the setting changes.
-- There is no new shader and no per-frame work.
+The former Graphics setting (High / Low, where Low drew half of each background batch) was
+removed on 2026-11-02 with the single render configuration (`docs/fps-map/RENDER-AUDIT-2026-11-02.md`).
+The build still shuffles each batch's instance order, so a prefix of a batch is an even subset.
 
 ## Gorge and river-tree (fix pass)
 
@@ -182,10 +179,10 @@ reveal the bot to an idle player within 20 s (6.6–19.1 s), the bound pinned by
 
 - `tests/fps-lost-trail-layout.test.ts`: layout, spawn safety, reachability, first contact,
   post view and bot patrols on the real movement and visibility code.
-- `tests/fps-lost-trail-quality.test.ts`: low thins only background batches; high restores
-  them exactly.
+- `tests/fps-lost-trail-quality.test.ts`: foliage draw order; the backdrop is drawn unlit, as
+  baked, never as foliage.
 - `scripts/fps/map-capture/capture.mjs`:
-  - `lost-trail <out> [views] [--quality=low]` writes screenshots and per-view draw calls,
+  - `lost-trail <out> [views]` writes screenshots and per-view draw calls,
     triangles and frame time (median of three frames after a warm-up frame; each frame ends
     in a 1-pixel readback, since `gl.finish()` does not wait under SwiftShader).
   - `--lifecycle=dustfront,lost-trail --cycles=N` mounts and disposes map environments
