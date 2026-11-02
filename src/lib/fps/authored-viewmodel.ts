@@ -81,11 +81,15 @@ export type ViewmodelVariant = {
    */
   arms: "jacket" | "police" | "bare";
 };
+/** Terrorist AK support-hand twist about its own axis (radians); see GripFrame.handTwist. */
+export const AK_SUPPORT_HAND_TWIST = 1.2;
 export const AK_VIEWMODEL: ViewmodelVariant = {
   id: "ak",
   asset: ARENA_MODELS.rifle,
   clips: RELOAD_CLIPS,
-  guard: HANDGUARD_GRIP,
+  // Support hand turned palm-up round the handguard (wrist and forearm unchanged), so the
+  // fingers wrap it instead of gripping it side-on.
+  guard: { ...HANDGUARD_GRIP, handTwist: AK_SUPPORT_HAND_TWIST },
   magazine: {
     offset: MAG_GRIP_OFFSET,
     edgeDown: MAG_EDGE_DOWN,
