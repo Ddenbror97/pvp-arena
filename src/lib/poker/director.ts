@@ -57,7 +57,7 @@ export interface Presentation {
   caption: { id: string; text: string } | null;
 }
 
-export interface DirectorSink {
+interface DirectorSink {
   sfx(name: PokerSfx): void;
   voice(line: VoiceLine): void;
   dropVoiceBelow(p: VoicePriority): void;
@@ -65,7 +65,7 @@ export interface DirectorSink {
   cancelFlights(): void;
 }
 
-export interface DirectorOptions {
+interface DirectorOptions {
   fast: () => boolean;
   reduced: () => boolean;
   mySeat: () => number | null;

@@ -8,7 +8,7 @@ import {
   wheelShowsAvatar,
 } from "@/lib/jackpot/wheel-picture";
 
-export interface WheelSlicePaint {
+interface WheelSlicePaint {
   start: number;
   end: number;
   color: string;

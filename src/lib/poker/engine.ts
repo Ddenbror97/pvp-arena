@@ -38,7 +38,7 @@ export type HandState = {
   ended: boolean;
 };
 
-export type LegalActions = {
+type LegalActions = {
   seat: number;
   toCall: number;
   canFold: boolean;
@@ -51,7 +51,7 @@ export type LegalActions = {
   maxRaiseTo: number;
 };
 
-export type HandSeatInput = { seat: number; stack: number; postsBigBlind?: boolean };
+type HandSeatInput = { seat: number; stack: number; postsBigBlind?: boolean };
 
 const dist = (from: number, to: number, n: number) => (to - from + n) % n;
 

@@ -12,7 +12,7 @@ export const WILD = 7;
 
 export type Rarity = "common" | "rare" | "epic" | "legendary" | "wild";
 
-export interface SlotSymbol {
+interface SlotSymbol {
   id: number;
   key: string;
   name: string;

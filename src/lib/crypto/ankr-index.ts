@@ -66,7 +66,7 @@ export type AnkrTxPage = {
   };
 };
 
-export type NativeTransfer = {
+type NativeTransfer = {
   hash: string;
   from: string;
   to: string;
@@ -133,7 +133,7 @@ export function activeTargets(targets: string[], replies: RpcReply[]): string[] 
   });
 }
 
-export type AnkrInternalTx = {
+type AnkrInternalTx = {
   transactionHash?: string;
   fromAddress?: string;
   toAddress?: string | null;
@@ -146,7 +146,7 @@ export type AnkrInternalTx = {
   transactionIndex?: number | null;
 };
 
-export type AnkrInternalPage = {
+type AnkrInternalPage = {
   error?: { message?: string };
   result?: {
     internalTransactions?: AnkrInternalTx[] | null;

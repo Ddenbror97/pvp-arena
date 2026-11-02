@@ -4,7 +4,7 @@ import { moderateAvatarImage } from "./moderation";
 import { AvatarError, readImageHeader, sniffFormat } from "./sniff";
 import { rebuildStillWebp } from "./webp-container";
 
-export type VerifiedAvatar = { webp: Uint8Array; width: number; height: number };
+type VerifiedAvatar = { webp: Uint8Array; width: number; height: number };
 
 /**
  * The browser crops and encodes; nothing it sends is trusted. The upload must

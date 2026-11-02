@@ -1,6 +1,6 @@
 const WALLET_CHANGE_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 
-export type LinkedWallet = {
+type LinkedWallet = {
   address: string;
   becamePrimaryAt?: string | null;
 };

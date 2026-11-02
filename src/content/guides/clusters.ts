@@ -223,7 +223,7 @@ export const CLUSTERS: ClusterInfo[] = [
   },
 ];
 
-export type ClusterGroup = { name: string; slugs: string[] };
+type ClusterGroup = { name: string; slugs: string[] };
 
 /** Google-style subclusters. Only published slugs render on the topic hub. */
 export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {

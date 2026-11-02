@@ -107,7 +107,7 @@ export type ShotInput = {
   calledPocket: number | null;
 };
 
-export type Pocket = { id: number; x: number; y: number; r: number };
+type Pocket = { id: number; x: number; y: number; r: number };
 
 export const POCKETS: readonly Pocket[] = [
   { id: 0, x: 48_000, y: 48_000, r: 54_000 },

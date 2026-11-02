@@ -24,7 +24,7 @@ import {
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-export interface Profile {
+interface Profile {
   id: string;
   username: string;
   avatar_url: string | null;

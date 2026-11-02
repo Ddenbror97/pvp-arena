@@ -4,7 +4,7 @@ import type { WalletKind } from "@/lib/web3/metamask";
 /** How long the buttons stay locked. The extension prompt may stay open longer. */
 export const CONNECT_UI_TIMEOUT_MS = 12_000;
 
-export type KindPhase = "idle" | "requesting" | "prompt" | "ready";
+type KindPhase = "idle" | "requesting" | "prompt" | "ready";
 
 export type KindConnect = {
   phase: KindPhase;

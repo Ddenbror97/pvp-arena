@@ -40,7 +40,7 @@ function sameHex(a: string, b: string): boolean {
   return diff === 0;
 }
 
-export type WebhookHeaders = {
+type WebhookHeaders = {
   signatureV2: string | null;
   signatureSimple: string | null;
   timestamp: string | null;

@@ -1,15 +1,15 @@
 /** Post-October 2025 CS2 trade-up math used by the on-page calculator. */
 
-export type Wear = "FN" | "MW" | "FT" | "WW" | "BS";
+type Wear = "FN" | "MW" | "FT" | "WW" | "BS";
 export type Rarity = "consumer" | "industrial" | "milspec" | "restricted" | "classified" | "covert";
 
-export type CatalogSkin = {
+type CatalogSkin = {
   name: string;
   min: number;
   max: number;
 };
 
-export type CatalogCollection = {
+type CatalogCollection = {
   id: string;
   name: string;
   skins: Record<Rarity, CatalogSkin[]>;
@@ -72,7 +72,7 @@ export type TradeInput = {
   cost?: number;
 };
 
-export type TradeOutcome = {
+type TradeOutcome = {
   collectionId: string;
   collectionName: string;
   name: string;

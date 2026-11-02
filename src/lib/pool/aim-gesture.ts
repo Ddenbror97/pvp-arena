@@ -108,7 +108,7 @@ export function behindCue(point: Point, cue: Point, angleMilli: number): boolean
   return along < 0;
 }
 
-export type StickRect = { minX: number; minY: number; maxX: number; maxY: number };
+type StickRect = { minX: number; minY: number; maxX: number; maxY: number };
 
 /**
  * Pull the butt back along the shaft until it sits inside the screen.

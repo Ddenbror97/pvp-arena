@@ -6,7 +6,7 @@ import { playLandCue, playWheelCue } from "@/lib/sound-cues";
  * `wheel_spin` and `roulette_land` are the only cues that make noise.
  * `spin_start` stays silent here because coinflip uses it for the coin, not the wheel.
  */
-export type SoundEvent =
+type SoundEvent =
   | "entry"
   | "player_join"
   | "spin_start"
@@ -17,7 +17,7 @@ export type SoundEvent =
   | "lose";
 
 const MUTE_KEY = "pvp-sound-muted";
-export type SoundDetail = { elapsedMs?: number };
+type SoundDetail = { elapsedMs?: number };
 
 const handlers = new Set<(e: SoundEvent, detail?: SoundDetail) => void>();
 const muteListeners = new Set<() => void>();

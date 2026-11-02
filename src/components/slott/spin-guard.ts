@@ -1,5 +1,5 @@
 /** Client gate for one Spin press. The server still rejects a second insert. */
-export interface SpinGate {
+interface SpinGate {
   locked: boolean;
   /** Spin number already sent, until the match's next_spin moves past it. */
   held: number | null;

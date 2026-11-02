@@ -9,7 +9,7 @@ export type SharedStore<T> = {
   put(value: T, storedAt: number): Promise<void>;
 };
 
-export type SnapshotCacheOptions<T> = {
+type SnapshotCacheOptions<T> = {
   load: () => Promise<T>;
   ttlMs: number;
   staleMs: number;

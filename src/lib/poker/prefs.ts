@@ -4,7 +4,7 @@ import { useSyncExternalStore } from "react";
  * Poker table preferences, kept in localStorage like the site's theme and mute setting.
  * Master mute is the site-wide sound toggle (`@/lib/sound`).
  */
-export interface PokerPrefs {
+interface PokerPrefs {
   /** Dealer voice. Off until the player turns it on. */
   voice: boolean;
   voiceVolume: number;

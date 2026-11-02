@@ -10,10 +10,10 @@
  * do not take a payout-wallet lease.
  */
 
-export type NoncePurpose = "withdrawal" | "gas_stipend";
-export type NonceLeaseStatus = "reserved" | "used" | "released";
+type NoncePurpose = "withdrawal" | "gas_stipend";
+type NonceLeaseStatus = "reserved" | "used" | "released";
 
-export interface NonceLease {
+interface NonceLease {
   chainId: number;
   payer: string;
   nonce: number;
@@ -23,7 +23,7 @@ export interface NonceLease {
   signed: boolean;
 }
 
-export interface ReserveNonceInput {
+interface ReserveNonceInput {
   chainId: number;
   payer: string;
   purpose: NoncePurpose;

@@ -24,7 +24,7 @@ export type MotionInput = {
   /** Shot counter; alternates the mechanical roll so automatic fire chatters, not drifts. */
   shot: number;
 };
-export type MotionPose = {
+type MotionPose = {
   x: number;
   y: number;
   z: number;

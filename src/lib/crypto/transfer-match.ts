@@ -3,7 +3,7 @@
  * a credit needs the transfer itself, from a transaction, a log, or a trace.
  */
 
-export type NativeTxView = {
+type NativeTxView = {
   from?: string | null;
   to?: string | null;
   value?: bigint | null;
@@ -31,7 +31,7 @@ export function nativeTransfersAgree(
   return a!.from!.toLowerCase() === b!.from!.toLowerCase();
 }
 
-export type Erc20LogView = {
+type Erc20LogView = {
   address?: string | null;
   topics?: readonly string[] | null;
   data?: string | null;

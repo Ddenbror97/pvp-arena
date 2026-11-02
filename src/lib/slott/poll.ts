@@ -2,7 +2,7 @@ export const SLOT_FRESH_MS = 8_000;
 
 const liveStatus = (status: string | undefined) => status === "ACTIVE" || status === "SETTLEMENT";
 
-export type SlotFeedRow = {
+type SlotFeedRow = {
   id?: number;
   status?: string;
   next_spin?: number;

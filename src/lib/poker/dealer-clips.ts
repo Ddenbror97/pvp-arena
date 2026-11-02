@@ -8,13 +8,13 @@
  */
 import type { DealerPose } from "./director";
 
-export interface DealerFrameStep {
+interface DealerFrameStep {
   frame: string;
   /** How long this pose stays up before the next one. The last step of a held clip is ignored. */
   ms: number;
 }
 
-export interface DealerClip {
+interface DealerClip {
   /** Higher clips replace lower ones. Dealing beats shuffle beats a reaction beats waiting. */
   rank: number;
   /** Stay on the last frame until a new clip arrives. */
@@ -147,7 +147,7 @@ function restingFrame(id: DealerClipId): string {
   return DEALER_CLIPS[id].frames[0]?.frame ?? "idle";
 }
 
-export interface DealerSample {
+interface DealerSample {
   frame: string;
   clip: string;
   /** When the next pose should be drawn. Null while holding or paused. */

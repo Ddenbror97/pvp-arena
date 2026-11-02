@@ -7,7 +7,7 @@ import { winLevel, type WinLevel } from "./hits";
  * 75 and 250 are the existing big-win and mega-win bands in `winLevel`.
  * Line hits under 20 stay small (a short common run). Longer runs are medium.
  */
-export type FxTier = "none" | "small" | "medium" | "large" | "exceptional";
+type FxTier = "none" | "small" | "medium" | "large" | "exceptional";
 
 export function fxTier(lineScore: number, bonus: boolean): FxTier {
   const level = winLevel(lineScore, bonus);

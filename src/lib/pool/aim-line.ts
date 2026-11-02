@@ -15,7 +15,7 @@ export const AIM_LINE_GAP = Math.round(BALL_R * 1.28);
  */
 export const AIM_LINE_CLEAR = Math.round(BALL_R * 0.85);
 
-export type AimLine = {
+type AimLine = {
   from: { x: number; y: number };
   to: { x: number; y: number };
 };

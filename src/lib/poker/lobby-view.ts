@@ -106,7 +106,7 @@ function compare(sort: SortKey) {
   };
 }
 
-export interface LobbySection {
+interface LobbySection {
   category: Category;
   types: LobbyType[];
   items: Listing[];

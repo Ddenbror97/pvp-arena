@@ -37,7 +37,7 @@ export function parseUsdCentsEnv(raw: string | undefined, fallback: number): num
   return value;
 }
 
-export type BtcInvoicePhase = "pay" | "confirming" | "crediting" | "credited" | "closed" | "review";
+type BtcInvoicePhase = "pay" | "confirming" | "crediting" | "credited" | "closed" | "review";
 
 /** What the wallet should show. Crediting still waits on the confirmation floor. */
 export function btcInvoicePhase(status: string): BtcInvoicePhase {
@@ -294,7 +294,7 @@ export type BtcPayment = {
   vout?: number | null;
 };
 
-export type DepositOutput = {
+type DepositOutput = {
   txid: string;
   vout: number;
   sats: bigint;
@@ -326,7 +326,7 @@ export type CreditInput = {
   onchainMethod: string;
 };
 
-export type CreditDecision = { credit: true; cents: number } | { credit: false; reason: string };
+type CreditDecision = { credit: true; cents: number } | { credit: false; reason: string };
 
 /** Credit the invoice's USD amount, or refuse. Never prices BTC a second time. */
 export function decideBtcCredit(input: CreditInput): CreditDecision {
@@ -457,7 +457,7 @@ function scalarText(value: unknown): string | null {
   );
 }
 
-export type InvoiceView = {
+type InvoiceView = {
   id: string;
   status: string;
   additionalStatus: string | null;
@@ -613,7 +613,7 @@ export function readPayoutView(body: unknown): PayoutView | null {
   };
 }
 
-export type QuoteCheck = { ok: true; sats: bigint } | { ok: false; reason: string };
+type QuoteCheck = { ok: true; sats: bigint } | { ok: false; reason: string };
 
 /**
  * The payout BTCPay will send must be the quoted satoshis, in BTC, to the

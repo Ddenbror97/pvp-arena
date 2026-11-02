@@ -10,8 +10,8 @@ import {
   type AvatarErrorCode,
 } from "./limits";
 
-export type ImageFormat = "jpeg" | "png" | "webp";
-export type ImageHeader = {
+type ImageFormat = "jpeg" | "png" | "webp";
+type ImageHeader = {
   format: ImageFormat;
   width: number;
   height: number;

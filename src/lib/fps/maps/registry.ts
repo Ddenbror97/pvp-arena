@@ -3,16 +3,7 @@ import type { Solid } from "../map";
 import { MAP_DEFINITIONS } from "./catalog";
 import type { GameMap, MapDefinition } from "./types";
 
-export type {
-  BotOpening,
-  BotRoutes,
-  GameMap,
-  MapDefinition,
-  MapLighting,
-  MapPoint,
-  MapPresentation,
-  MapSpawn,
-} from "./types";
+export type { BotOpening, GameMap } from "./types";
 
 /**
  * The shared map registry. To add a map: write its definition next to dustfront.ts (generated
@@ -22,7 +13,7 @@ export type {
  */
 const DEFINITIONS: readonly MapDefinition[] = MAP_DEFINITIONS;
 
-export type MapId = (typeof MAP_DEFINITIONS)[number]["id"];
+type MapId = (typeof MAP_DEFINITIONS)[number]["id"];
 /** Matches created without a map (all checkpoints before the registry) play Dustfront. */
 export const DEFAULT_MAP_ID: MapId = "dustfront";
 

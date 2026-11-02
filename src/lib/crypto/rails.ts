@@ -35,7 +35,7 @@ export type FundingChain = {
   assets: FundingAsset[];
 };
 
-export type FundingAssetRow = FundingAsset & {
+type FundingAssetRow = FundingAsset & {
   chain_id: number;
   chain_name: string;
   network_mode: string;
@@ -90,7 +90,7 @@ export function resolveRail(stored: string | null, assetKeys: readonly string[])
 
 const HELD_ASSETS = ["BTC", "ETH", "USDC"] as const;
 
-export type HeldAsset = (typeof HELD_ASSETS)[number];
+type HeldAsset = (typeof HELD_ASSETS)[number];
 
 type HeldMovement = {
   asset_key: string;

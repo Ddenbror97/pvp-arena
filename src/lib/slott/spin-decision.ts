@@ -4,7 +4,7 @@
  * primary key (game_id, spin_no) are what make two tabs safe; this is the
  * decision those locks expose to the second transaction.
  */
-export type SlotSpinDecision = "play" | "duplicate" | "stale" | "conflict";
+type SlotSpinDecision = "play" | "duplicate" | "stale" | "conflict";
 
 export function slotSpinDecision(input: {
   existingKey: { gameId: number; spinNo: number } | null;

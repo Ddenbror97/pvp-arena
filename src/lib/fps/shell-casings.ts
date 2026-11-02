@@ -17,7 +17,7 @@ export const CASING_POOL = 16;
 export const CASING_LIFETIME_MS = 900;
 const GRAVITY = -9.8;
 
-export type CasingSpec = {
+type CasingSpec = {
   name: string;
   /** Rim/base radius, body radius at the shoulder, overall length (scene units). */
   radius: number;

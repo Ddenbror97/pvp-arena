@@ -16,7 +16,7 @@ export type StandInTableView = {
   lastStandIn: boolean;
 };
 
-export type StandInRackAction = "keep" | "abort" | "idle";
+type StandInRackAction = "keep" | "abort" | "idle";
 
 function awayTurn(live: StandInTableView): boolean {
   return (

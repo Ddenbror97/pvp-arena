@@ -3,7 +3,7 @@ import type { Solid, Surface } from "../map";
 
 /** Plain-data map definition. Shared by the browser, the match Worker and tests (no Three.js). */
 export type MapSpawn = { readonly x: number; readonly z: number; readonly yaw: number };
-export type MapPoint = { readonly x: number; readonly z: number };
+type MapPoint = { readonly x: number; readonly z: number };
 export type BotOpening = "center" | "north" | "south";
 
 /**
@@ -20,7 +20,7 @@ export type BotRoutes = {
 };
 
 /** World lighting and atmosphere (colours are 0xRRGGBB). */
-export type MapLighting = {
+type MapLighting = {
   readonly background: number;
   readonly fog: { readonly color: number; readonly near: number; readonly far: number };
   readonly hemisphere: {
