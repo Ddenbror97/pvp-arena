@@ -76,13 +76,17 @@ def trunk(id, x, z, d, h=TRUNK_H, mirrored=True, kind="trunk"):
 # ================================================================== playable boundary (movement only)
 barrier("edge-north", -22, 22, -18, NORTH_CROSSING[0], mirrored=False, kind="edge")
 barrier("edge-south", -22, 22, FORD[1], 18, mirrored=False, kind="edge")
-barrier("edge-spawn-n", -22, -17.6, NORTH_CROSSING[0], -5.2, kind="edge")
-barrier("edge-spawn-s", -22, -17.6, 5.2, FORD[1], kind="edge")
+# Behind each spawn the floor is open up to the arena edge (dressed with undergrowth there), north
+# beside the ridge steps and south down to the lower trail. Beside the ridge's west face it stays
+# impassable: from there a standing eye clears the 1.5 m ridge and looks across the whole map.
+barrier("edge-spawn-n", -22, -17.6, NORTH_CROSSING[0], -9.6, kind="edge")
 # River gorge between the three crossings.
 barrier("gorge-north", -GORGE, GORGE, NORTH_CROSSING[1], -BRIDGE, mirrored=False, kind="gorge")
 barrier("gorge-south", -GORGE, GORGE, BRIDGE, FORD[0], mirrored=False, kind="gorge")
-# Dense jungle separating the routes (trunks inside are real cover).
-barrier("jungle-ridge-plaza", -15.6, -8.6, -9.6, -5.2)
+# The pocket north of the plaza is open floor (it was a "jungle" barrier with a few plants in it):
+# the ridge face, its outcrop and the ridge cut close it. Between the plaza and the lower trail the
+# dense jungle stays impassable: standing in it, a slit between the hut and the trail rock would
+# look across the river to the mirrored spot (first contact 2.5 s). Blender plants it densely.
 barrier("jungle-plaza-trail", -15.6, -12.6, 5.2, FORD[0])
 
 # ================================================================== spawn (west; mirrored east)
