@@ -13,7 +13,7 @@ import {
 } from "./fitted-rifle-hands";
 import { ARENA_MODELS } from "./model-assets";
 import { applyVeinTint, createForearmDetailTexture } from "./forearm-detail";
-import { policeGuardGrip } from "./police-arms";
+import { policeGuardGrip, scaledGuardGrip } from "./police-arms";
 import { upgradeRifleMaterials } from "./rifle-materials";
 import {
   BOLT_RACK,
@@ -89,7 +89,8 @@ export const AK_VIEWMODEL: ViewmodelVariant = {
   clips: RELOAD_CLIPS,
   // Support hand turned palm-up round the handguard (wrist and forearm unchanged), so the
   // fingers wrap it instead of gripping it side-on.
-  guard: { ...HANDGUARD_GRIP, handTwist: SUPPORT_HAND_TWIST },
+  // Fingers closed onto the wood (the turned hand's authored wrap left them in the air).
+  guard: { ...scaledGuardGrip(0.72), handTwist: SUPPORT_HAND_TWIST },
   magazine: {
     offset: MAG_GRIP_OFFSET,
     edgeDown: MAG_EDGE_DOWN,
@@ -108,7 +109,7 @@ export const M4_VIEWMODEL: ViewmodelVariant = {
   asset: ARENA_MODELS.m4,
   clips: M4_RELOAD_CLIPS,
   // Same palm-round grip as the AK, on the quad rail.
-  guard: { ...policeGuardGrip(), handTwist: SUPPORT_HAND_TWIST },
+  guard: { ...policeGuardGrip(0.8), handTwist: SUPPORT_HAND_TWIST },
   magazine: {
     offset: new THREE.Vector3(0, -0.03, -0.03),
     edgeDown: new THREE.Vector3(0, -0.94, -0.33),
@@ -124,6 +125,27 @@ export const M4_VIEWMODEL: ViewmodelVariant = {
 
 /** M4 bolt-catch strike: wrist offset from the magazine-grip wrist, beyond the paddle shift. */
 const BOLT_CATCH_PALM = new THREE.Vector3(-0.012, -0.012, 0.018);
+
+/**
+ * Anisotropic filtering for every texture on a first-person model. The glove, sleeve and rifle
+ * maps load from the GLBs at the default (1), which smears fabric weave, stitching and glove
+ * relief at the grazing angles a viewmodel is seen at.
+ */
+export function sharpenViewmodelTextures(root: THREE.Object3D, level = 8) {
+  const slots = ["map", "normalMap", "roughnessMap", "metalnessMap", "aoMap"] as const;
+  root.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+    for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+      for (const slot of slots) {
+        const texture = (material as THREE.MeshStandardMaterial)[slot];
+        if (texture && texture.anisotropy < level) {
+          texture.anisotropy = level;
+          texture.needsUpdate = true;
+        }
+      }
+    }
+  });
+}
 
 /** Real authored rifle and skinned hands. Existing controller still owns every input and shot. */
 export function createAuthoredViewmodel(
@@ -499,6 +521,7 @@ export function createAuthoredViewmodel(
         object.layers.set(firstPerson ? 1 : 0);
         if (object instanceof THREE.Mesh) object.castShadow = !firstPerson;
       });
+      if (firstPerson) sharpenViewmodelTextures(root);
       loaded = true;
     })
     .catch((error) =>
@@ -718,11 +741,8 @@ function toneM4Materials(root: THREE.Object3D) {
     if (!(object instanceof THREE.Mesh) || object instanceof THREE.SkinnedMesh) return;
     for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
       if (!(material instanceof THREE.MeshStandardMaterial)) continue;
-      if (material.name === "M4Finish") {
-        material.metalness = 0.82;
-        material.envMapIntensity = 0.55;
-        material.color.setScalar(0.92);
-      } else if (material.name === "SuppressorFinish" || material.name === "CarryHandleFinish") {
+      // M4Finish and CarryHandleFinish get their anodized finish in rifle-materials.
+      if (material.name === "SuppressorFinish") {
         material.envMapIntensity = 0.5;
       } else if (material.name === "PVPAccent") {
         material.envMapIntensity = 0.7;

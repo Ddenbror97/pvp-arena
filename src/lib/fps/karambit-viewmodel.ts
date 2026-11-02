@@ -1,6 +1,10 @@
 import * as THREE from "three";
 import { cloneAuthoredModel, retainAuthoredAsset } from "./authored-assets";
-import { createGloveMaterial, type ViewmodelVariant } from "./authored-viewmodel";
+import {
+  createGloveMaterial,
+  sharpenViewmodelTextures,
+  type ViewmodelVariant,
+} from "./authored-viewmodel";
 import {
   fitContinuousForearms,
   HANDGUARD_GRIP,
@@ -10,7 +14,7 @@ import {
 } from "./fitted-rifle-hands";
 import { applyVeinTint, createForearmDetailTexture } from "./forearm-detail";
 import { ARENA_MODELS } from "./model-assets";
-import { KarambitAnimator, type KarambitControls } from "./karambit-animator";
+import { KARAMBIT_RUN_POSE, KarambitAnimator, type KarambitControls } from "./karambit-animator";
 
 /**
  * First-person Karambit on a team's existing arms (Police: steel-blue duty-shirt sleeve;
@@ -60,6 +64,13 @@ const INDEX_TIP = new THREE.Vector3(-0.045, -0.112, -0.236);
 /** Thumb tip (instance space): closed over the index finger beside the ring. */
 const THUMB_TIP = new THREE.Vector3(-0.03, -0.125, -0.19);
 
+/**
+ * How far the middle, ring and little fingertips close into their curl (0 = the rifle grip's
+ * curl, 1 = tip at the curl centre): a knife handle is far thinner than a pistol grip, so the
+ * fist closes tight round it instead of standing open.
+ */
+const FIST_TIGHTEN = (globalThis as { __fistTighten?: number }).__fistTighten ?? 1;
+
 type BoneName = string;
 const bone = (side: "R" | "L", n: number) => `Bone_${side}${String(n).padStart(3, "0")}`;
 const FINGERS = { index: 5, middle: 9, ring: 13, little: 17 } as const;
@@ -104,6 +115,10 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
     gloves: THREE.Mesh | null = null,
     animator: KarambitAnimator | null = null;
   const wristRest = new THREE.Vector3();
+  const restHand = new THREE.Vector3(),
+    restPalm = new THREE.Vector3();
+  /** Forearm rotation in the idle carry stance (see setCarryStance). */
+  const armCarry = new THREE.Quaternion();
   let knifeInstance: ReturnType<typeof cloneAuthoredModel> | undefined,
     armsInstance: ReturnType<typeof cloneAuthoredModel> | undefined;
 
@@ -122,8 +137,23 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
       const delta = poseRifleHands(instance.root, HANDGUARD_GRIP);
       fitChain(instance.root, FINGERS.index, INDEX_TIP);
       fitThumb(instance.root, THUMB_TIP);
-      const closed = fitContinuousForearms(arm, root, delta, variant.forearms);
+      // Seat the knife from the rifle-grip curl, then close the fist onto its handle.
       const wraps = fingerWraps(instance.root, root);
+      // Rest anatomy for the idle carry stance: hand axis (wrist → middle knuckle) and the palm
+      // side (toward the fist's hollow), in root space.
+      {
+        const at = (name: string) =>
+          root.worldToLocal(
+            instance.root.getObjectByName(name)!.getWorldPosition(new THREE.Vector3()),
+          );
+        const wristAt = at("Hand_R"),
+          middleKnuckle = at(bone("R", FINGERS.middle));
+        restHand.copy(middleKnuckle).sub(wristAt).normalize();
+        restPalm.copy(wraps.hollow.ring).sub(middleKnuckle);
+        restPalm.addScaledVector(restHand, -restPalm.dot(restHand)).normalize();
+      }
+      tightenFist(instance.root, FIST_TIGHTEN);
+      const closed = fitContinuousForearms(arm, root, delta, variant.forearms);
       // Open hand: index stays hooked through the ring, the others and the thumb straighten.
       openHand(instance.root);
       const open = fitContinuousForearms(arm, root, delta, variant.forearms);
@@ -192,6 +222,7 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
         knifeGltf.animations,
         knifeGltf.scene.userData,
       );
+      setCarryStance(KARAMBIT_RUN_POSE.arm);
       root.traverse((object) => {
         object.layers.set(1);
         if (object instanceof THREE.Mesh) {
@@ -199,12 +230,42 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
           object.frustumCulled = false;
         }
       });
+      sharpenViewmodelTextures(root);
       loaded = true;
     })
     .catch((error) => console.warn("Karambit viewmodel unavailable.", error));
 
   const q = new THREE.Quaternion(),
     v = new THREE.Vector3();
+  /**
+   * The idle carry stance from anatomy: the forearm points along `arm` (camera space: x right,
+   * y up, z toward the viewer), the hand continues straight in the same line (no wrist bend) and
+   * the palm faces the floor. Solves the hand rotation (to the animator) and the forearm's own.
+   */
+  function setCarryStance(arm: readonly number[]) {
+    if (!animator) return;
+    const rest = KARAMBIT_VIEWMODEL_REST;
+    const toRoot = new THREE.Quaternion()
+      .setFromEuler(new THREE.Euler(rest.pitch, rest.yaw, rest.roll))
+      .invert();
+    const direction = new THREE.Vector3(...(arm as [number, number, number]))
+      .normalize()
+      .applyQuaternion(toRoot);
+    const floor = new THREE.Vector3(0, -1, 0).applyQuaternion(toRoot);
+    const basis = (along: THREE.Vector3, side: THREE.Vector3) => {
+      const x = along.clone().normalize();
+      const y = side.clone().addScaledVector(x, -side.dot(x)).normalize();
+      return new THREE.Quaternion().setFromRotationMatrix(
+        new THREE.Matrix4().makeBasis(x, y, new THREE.Vector3().crossVectors(x, y)),
+      );
+    };
+    const target = basis(direction, floor);
+    // Hand: its axis onto the arm direction, palm to the floor.
+    animator.setRunRotation(target.clone().multiply(basis(restHand, restPalm).invert()));
+    // Forearm (wrist → hand direction is minus the wrist → elbow vector): same line, same roll.
+    const restArm = variant.forearms.elbow.R.clone().negate().normalize();
+    armCarry.copy(target).multiply(basis(restArm, restPalm).invert());
+  }
   return {
     root,
     ready,
@@ -221,11 +282,16 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
       wrist.position.copy(wristRest).add(v.copy(controls.handPosition).divideScalar(scale));
       wrist.quaternion.copy(controls.handRotation);
       forearm.position.copy(wrist.position);
-      forearm.quaternion.identity().slerp(controls.handRotation, FOREARM_SHARE);
+      forearm.quaternion
+        .identity()
+        .slerp(controls.handRotation, FOREARM_SHARE)
+        .slerp(armCarry, controls.carry);
       ringPivot.quaternion.copy(ringBase).multiply(q.copy(controls.knifeRotation));
       if (gloves?.morphTargetInfluences)
         gloves.morphTargetInfluences[0] = THREE.MathUtils.clamp(1 - controls.fingers, 0, 1);
     },
+    /** Re-aim the idle carry stance (previews): see setCarryStance. */
+    setCarryStance,
     /** Knife blade tip in `parent` space (for effects), or null before load. */
     bladeTip(target: THREE.Vector3) {
       const tip = knifeHolder.getObjectByName("BladeTip");
@@ -298,6 +364,19 @@ function ccd(root: THREE.Object3D, names: BoneName[], target: THREE.Vector3) {
   }
 }
 
+/** Close the middle, ring and little fingers toward their curl centres (tight fist). */
+function tightenFist(root: THREE.Object3D, amount: number) {
+  if (amount <= 0) return;
+  root.updateWorldMatrix(true, true);
+  const at = (name: string) =>
+    root.worldToLocal(root.getObjectByName(name)!.getWorldPosition(new THREE.Vector3()));
+  for (const base of [FINGERS.middle, FINGERS.ring, FINGERS.little]) {
+    const tip = at(`${bone("R", base + 2)}_end`);
+    const centre = circumcentre(at(bone("R", base)), at(bone("R", base + 1)), tip);
+    fitChain(root, base, tip.lerp(centre, amount));
+  }
+}
+
 /** Straighten the middle, ring and little fingers and the thumb (index keeps the ring). */
 function openHand(root: THREE.Object3D) {
   root.updateWorldMatrix(true, true);
@@ -317,10 +396,31 @@ function openHand(root: THREE.Object3D) {
   fitThumb(root, t.add(new THREE.Vector3(-0.09, 0.015, -0.07)));
 }
 
-type Wraps = Record<keyof typeof FINGERS, THREE.Vector3> & { across: THREE.Vector3 };
+type Wraps = Record<keyof typeof FINGERS, THREE.Vector3> & {
+  across: THREE.Vector3;
+  /** Hollow each curled finger closes round (circle through knuckle, middle joint and tip). */
+  hollow: Record<"middle" | "ring" | "little", THREE.Vector3>;
+};
+/** Centre of the circle through three points (falls back to their mean when collinear). */
+function circumcentre(a: THREE.Vector3, b: THREE.Vector3, c: THREE.Vector3) {
+  const ab = b.clone().sub(a),
+    ac = c.clone().sub(a),
+    n = new THREE.Vector3().crossVectors(ab, ac);
+  const d = 2 * n.lengthSq();
+  if (d < 1e-12)
+    return a
+      .clone()
+      .add(b)
+      .add(c)
+      .multiplyScalar(1 / 3);
+  const t1 = new THREE.Vector3().crossVectors(n, ab).multiplyScalar(ac.lengthSq()),
+    t2 = new THREE.Vector3().crossVectors(ac, n).multiplyScalar(ab.lengthSq());
+  return a.clone().add(t1.add(t2).multiplyScalar(1 / d));
+}
 /**
  * Centre of each curled finger's wrap (root space): the mean of its knuckle, joints and tip
- * approximates the axis it closes round. Also the hand's lateral axis (little → index knuckle).
+ * (on the finger: where the ring sits on the index). Also each finger's curl hollow, the
+ * hand's lateral axis (little → index knuckle).
  */
 function fingerWraps(instance: THREE.Object3D, root: THREE.Object3D): Wraps {
   root.updateWorldMatrix(true, true);
@@ -332,11 +432,18 @@ function fingerWraps(instance: THREE.Object3D, root: THREE.Object3D): Wraps {
       .add(at(bone("R", base + 2)))
       .add(at(`${bone("R", base + 2)}_end`))
       .multiplyScalar(0.25);
+  const curl = (base: number) =>
+    circumcentre(at(bone("R", base)), at(bone("R", base + 1)), at(`${bone("R", base + 2)}_end`));
   return {
     index: wrap(FINGERS.index),
     middle: wrap(FINGERS.middle),
     ring: wrap(FINGERS.ring),
     little: wrap(FINGERS.little),
+    hollow: {
+      middle: curl(FINGERS.middle),
+      ring: curl(FINGERS.ring),
+      little: curl(FINGERS.little),
+    },
     across: at(bone("R", FINGERS.index))
       .sub(at(bone("R", FINGERS.little)))
       .normalize(),
@@ -344,13 +451,15 @@ function fingerWraps(instance: THREE.Object3D, root: THREE.Object3D): Wraps {
 }
 
 /**
- * Knife placement in root space from the finger wraps: the ring centre on the index wrap, the
- * handle (knife -y) down the fist through the middle/ring/little wraps, the ring axis (knife x)
+ * Knife placement in root space from the finger wraps: the ring centre on the index finger, the
+ * handle (knife -y) down the fist through the hollow the middle, ring and little fingers close
+ * round (so the fingers wrap the handle instead of lying across it), the ring axis (knife x)
  * across the knuckles, then KNIFE_TWIST about the handle so the blade curves forward.
  */
 function knifeFrame(w: Wraps) {
   // Knife space: handle along -y from the ring, ring axis x, blade curving toward +z.
-  const handle = w.little.clone().sub(w.index).normalize();
+  const fist = w.hollow.ring.clone().add(w.hollow.little).multiplyScalar(0.5);
+  const handle = fist.sub(w.index).normalize();
   const x = w.across.clone().addScaledVector(handle, -w.across.dot(handle)).normalize();
   const y = handle.clone().negate();
   const z = new THREE.Vector3().crossVectors(x, y);

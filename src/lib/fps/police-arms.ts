@@ -12,6 +12,14 @@ export function policeGuardGrip(
   scale = 1.1,
   shift = new THREE.Vector3(0.008, 0.006, 0),
 ): GripFrame {
+  return scaledGuardGrip(scale, shift);
+}
+/**
+ * The handguard finger wrap scaled about the handguard axis (and shifted). Below 1 the fingers
+ * close tighter onto the handguard: with the support hand turned round it (handTwist) the
+ * authored wrap leaves the fingertips curling in the air above it.
+ */
+export function scaledGuardGrip(scale: number, shift = new THREE.Vector3()): GripFrame {
   return {
     point: (v) =>
       v

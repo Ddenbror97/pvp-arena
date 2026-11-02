@@ -11,6 +11,7 @@ import {
   createAuthoredViewmodel,
 } from "../../../src/lib/fps/authored-viewmodel";
 import { M4_INSPECT, sampleVec } from "../../../src/lib/fps/reload-animation";
+import { AK_CASING, createShellCasings, M4_CASING } from "../../../src/lib/fps/shell-casings";
 import {
   createKarambitViewmodel,
   KARAMBIT_VIEWMODEL_REST,
@@ -111,6 +112,7 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
       c.handRotation.setFromEuler(new THREE.Euler(rx, ry, rz));
       if (knife !== undefined) c.knifeRotation.setFromAxisAngle(new THREE.Vector3(1, 0, 0), knife);
     }
+
     if (shot.run) vm.animator!.applyRunPose(c, shot.run);
     vm.pose(c);
     group.position.set(
@@ -125,6 +127,19 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
       group.rotation.set(pitch, yaw, roll);
     } else group.rotation.set(rest.pitch, rest.yaw, rest.roll);
     camera.updateMatrixWorld(true);
+    if (shot.run) {
+      // Report where the knife points on screen (camera space) in this pose.
+      const ring = vm.root.getObjectByName("karambit-ring")!;
+      ring.updateWorldMatrix(true, false);
+      const qk = ring
+        .getWorldQuaternion(new THREE.Quaternion())
+        .premultiply(camera.getWorldQuaternion(new THREE.Quaternion()).invert());
+      const axes = [
+        ...new THREE.Vector3(0, -1, 0).applyQuaternion(qk).toArray(),
+        ...new THREE.Vector3(0, 0, 1).applyQuaternion(qk).toArray(),
+      ].map((n) => +n.toFixed(3));
+      console.warn(`KNIFE ${shot.name} ${JSON.stringify(axes)}`);
+    }
     renderer.info.reset();
     renderer.render(scene, camera);
     out[shot.name] = {
@@ -141,7 +156,16 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
  * the renderer's rest framing. Shots: { name, reload?: 0–1 progress, kind?, inspect?: 0–1 (M4
  * inspect clip progress) }.
  */
-type RifleShot = { name: string; reload?: number; kind?: "tactical" | "empty"; inspect?: number };
+type RifleShot = {
+  name: string;
+  reload?: number;
+  kind?: "tactical" | "empty";
+  inspect?: number;
+  /** Eject a case from the port and show it this many ms into its flight. */
+  casing?: number;
+  /** Case close-up: hide the rifle and show three cases (side, head, mouth) in front of the lens. */
+  studio?: boolean;
+};
 declare global {
   interface Window {
     rifleCapture: (
@@ -188,6 +212,8 @@ window.rifleCapture = async (variantId, shots, w, h, fov = 60, guardTwist) => {
   const vm = createAuthoredViewmodel(group, true, variant);
   await vm.ready;
   const out: Record<string, { image: string; calls: number; triangles: number }> = {};
+  const casings = createShellCasings(0, variantId === "m4" ? M4_CASING : AK_CASING);
+  scene.add(casings.mesh);
   for (const shot of shots) {
     vm.update(true, shot.reload ?? 0, 0, shot.kind ?? "tactical");
     const ip = shot.inspect !== undefined ? sampleVec(M4_INSPECT.position, shot.inspect) : null,
@@ -203,6 +229,43 @@ window.rifleCapture = async (variantId, shots, w, h, fov = 60, guardTwist) => {
       RIFLE_REST.roll + (ir?.[2] ?? 0),
     );
     camera.updateMatrixWorld(true);
+    casings.clear();
+    group.visible = !shot.studio;
+    if (shot.studio) {
+      casings.emit(
+        new THREE.Vector3(),
+        new THREE.Vector3(1, 0, 0),
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3(0, 0, 1),
+        0,
+      );
+      const poses: Array<[number, number, number, number, number, number]> = [
+        [-0.018, 0.002, -0.11, 0.25, 0, Math.PI / 2 + 0.15],
+        [0.012, 0.004, -0.11, 1.9, 0.5, 0.2],
+        [0.036, -0.004, -0.11, -1.05, 0.2, -0.35],
+      ];
+      poses.forEach(([x, y, z, rx, ry, rz], i) => {
+        const m = new THREE.Matrix4().compose(
+          new THREE.Vector3(x, y, z).applyMatrix4(camera.matrixWorld),
+          new THREE.Quaternion().setFromEuler(new THREE.Euler(rx, ry, rz)),
+          new THREE.Vector3(1, 1, 1),
+        );
+        casings.mesh.setMatrixAt(i, m);
+      });
+      casings.mesh.count = poses.length;
+      casings.mesh.instanceMatrix.needsUpdate = true;
+    } else if (shot.casing !== undefined) {
+      // As the renderer does: port and weapon axes into scene space, then advance the flight.
+      const at = new THREE.Vector3();
+      if (vm.ejectionPort(at)) {
+        group.updateWorldMatrix(true, false);
+        group.localToWorld(at);
+        const axis = (x: number, y: number, z: number) =>
+          new THREE.Vector3(x, y, z).transformDirection(group.matrixWorld);
+        casings.emit(at, axis(1, 0, 0), axis(0, 1, 0), axis(0, 0, 1), 0);
+        for (let t = 16; t <= shot.casing; t += 16) casings.update(16, t);
+      }
+    }
     renderer.info.reset();
     renderer.render(scene, camera);
     out[shot.name] = {
