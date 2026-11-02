@@ -5,10 +5,8 @@
  *
  * - m4a1-suppressed-v1.wav: the single shot isolated from the recording the project supplied
  *   (onset at the first transient, short fade boundaries, mono, 48 kHz, normalised).
- * - m4-reload-tactical-v1.wav / m4-reload-empty-v1.wav: original, deterministic procedural
- *   effects on the 1.8-second reload window, timed to M4_TACTICAL_RELOAD / M4_EMPTY_RELOAD
- *   (src/lib/fps/reload-animation.ts): release button, magazine sliding out of the well, pouch,
- *   insertion and seating, and (empty) the dropped magazine and the bolt-catch release slam.
+ * - Reloads use the AK recording with M4 cue timing and a slightly brighter tone.
+ *   Rebuild just the reloads with: node scripts/fps/build-m4-reload-audio.mjs
  */
 import fs from "node:fs";
 
@@ -97,106 +95,5 @@ if (!source) {
   write("m4a1-suppressed-v1.wav", out, 0.82);
 }
 
-// ---------------------------------------------------------------- reload foley (procedural)
-let seed = 52113;
-const noise = () => {
-  seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-  return seed / 2147483648 - 1;
-};
-const add = (out, at, i, v) => {
-  const n = Math.round(at * rate) + i;
-  if (n >= 0 && n < out.length) out[n] += v;
-};
-/** Metallic impact: inharmonic partials over a filtered noise burst. */
-function clack(out, at, strength, tone, decay = 0.03, body = 0.5) {
-  let low = 0;
-  for (let i = 0; i < rate * decay * 8; i++) {
-    const t = i / rate,
-      env = Math.min(1, t / 0.0006) * Math.exp(-t / decay),
-      white = noise();
-    low += 0.12 * (white - low);
-    const ring =
-      Math.sin(2 * Math.PI * tone * t) * 0.32 +
-      Math.sin(2 * Math.PI * tone * 2.41 * t) * 0.16 +
-      Math.sin(2 * Math.PI * tone * 3.93 * t) * 0.08;
-    const thump = Math.sin(2 * Math.PI * 140 * t) * Math.exp(-t / 0.012) * body;
-    add(out, at, i, strength * (env * (ring + (white - low) * 0.45 + low * 0.5) + thump * 0.6));
-  }
-}
-/** Short polymer/steel tick (release button, latch). */
-const tick = (out, at, strength, tone = 3400) => clack(out, at, strength, tone, 0.006, 0.1);
-/** Friction: band-limited noise with a rising-then-falling envelope (magazine leaving the well). */
-function slide(out, at, duration, strength, brightness = 0.35) {
-  let low = 0,
-    lower = 0;
-  for (let i = 0; i < rate * duration; i++) {
-    const t = i / duration / rate,
-      env = Math.sin(Math.PI * t) ** 0.7 * (0.75 + 0.25 * Math.sin(i * 0.0021)),
-      white = noise();
-    low += brightness * (white - low);
-    lower += 0.03 * (low - lower);
-    add(out, at, i, strength * env * (low - lower));
-  }
-}
-/** Fabric and pouch: soft low-passed noise in grains. */
-function rustle(out, at, duration, strength) {
-  let low = 0;
-  for (let i = 0; i < rate * duration; i++) {
-    const t = i / rate,
-      grain = 0.5 + 0.5 * Math.sin(t * 2 * Math.PI * 23 + Math.sin(t * 41) * 3),
-      env = Math.sin((Math.PI * i) / (rate * duration)) * grain,
-      white = noise();
-    low += 0.05 * (white - low);
-    add(out, at, i, strength * env * low * 2.2);
-  }
-}
-/** Gloved hand landing on the rail: dull low thud. */
-function thud(out, at, strength) {
-  for (let i = 0; i < rate * 0.08; i++) {
-    const t = i / rate;
-    add(
-      out,
-      at,
-      i,
-      strength * Math.exp(-t / 0.018) * (Math.sin(2 * Math.PI * 110 * t) + noise() * 0.25),
-    );
-  }
-}
-/** Bolt carrier released by the catch: slam plus the buffer spring's ring. */
-function boltSlam(out, at, strength) {
-  clack(out, at, strength, 1250, 0.045, 0.9);
-  clack(out, at + 0.004, strength * 0.5, 2950, 0.022, 0);
-  for (let i = 0; i < rate * 0.35; i++) {
-    const t = i / rate,
-      spring = Math.sin(2 * Math.PI * (610 + 40 * Math.sin(t * 90)) * t) * Math.exp(-t / 0.09);
-    add(out, at, i, strength * 0.12 * spring);
-  }
-}
-
-const R = 1.8; // seconds: the server reload window both clips share
-for (const empty of [false, true]) {
-  const out = new Float64Array(Math.round(rate * R));
-  if (!empty) {
-    tick(out, 0.15 * R, 0.4); // magazine release button
-    slide(out, 0.165 * R, 0.09, 0.32); // magazine leaves the well into the hand
-    rustle(out, 0.3 * R, 0.24, 0.22); // stowed in the pouch, fresh one drawn
-    slide(out, 0.535 * R, 0.08, 0.2, 0.5); // lips enter the well
-    clack(out, 0.6 * R, 0.85, 980, 0.03); // seated
-    tick(out, 0.665 * R, 0.25, 2600); // tug check
-    thud(out, 0.84 * R, 0.35); // back on the handguard
-  } else {
-    tick(out, 0.1 * R, 0.42);
-    slide(out, 0.115 * R, 0.08, 0.3);
-    // The empty magazine hits the floor below: two damped polymer bounces.
-    clack(out, 0.33 * R, 0.28, 520, 0.02, 0.6);
-    clack(out, 0.37 * R, 0.12, 610, 0.015, 0.4);
-    rustle(out, 0.2 * R, 0.24, 0.22);
-    slide(out, 0.5 * R, 0.07, 0.2, 0.5);
-    clack(out, 0.545 * R, 0.85, 980, 0.03);
-    // Palm strikes the bolt catch; the carrier slams home.
-    tick(out, 0.705 * R, 0.3, 1900);
-    boltSlam(out, 0.715 * R, 1);
-    thud(out, 0.92 * R, 0.32);
-  }
-  write(empty ? "m4-reload-empty-v1.wav" : "m4-reload-tactical-v1.wav", out);
-}
+// Share the standalone reload builder so a full rebuild cannot restore the old foley.
+await import("./build-m4-reload-audio.mjs");
