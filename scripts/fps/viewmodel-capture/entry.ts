@@ -32,6 +32,11 @@ type Shot = {
   timeline?: Array<[number, number]>;
   /** Override the hand control: position (m) and Euler XYZ (rad), plus knife angle. */
   hand?: [number, number, number, number, number, number, number?];
+  /**
+   * Close-up of the fist: the camera orbits the finger ring at [yaw, pitch] (radians, about the
+   * view's up and right axes) and `distance` metres, looking at it (inspection, not gameplay).
+   */
+  orbit?: [number, number, number];
 };
 declare global {
   interface Window {
@@ -127,7 +132,27 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
       group.rotation.set(pitch, yaw, roll);
     } else group.rotation.set(rest.pitch, rest.yaw, rest.roll);
     camera.updateMatrixWorld(true);
-    if (shot.run) {
+    const eye = { position: camera.position.clone(), quaternion: camera.quaternion.clone() };
+    if (shot.orbit) {
+      const [yaw, pitch, distance] = shot.orbit;
+      const ringAt = vm.root
+        .getObjectByName("karambit-ring")!
+        .getWorldPosition(new THREE.Vector3());
+      const offset = new THREE.Vector3(0, 0, distance)
+        .applyEuler(new THREE.Euler(pitch, yaw, 0, "YXZ"))
+        .applyQuaternion(camera.quaternion);
+      // The rig hangs off the camera: hold it in world space while the camera moves.
+      group.updateWorldMatrix(true, false);
+      const held = group.matrixWorld.clone();
+      camera.position.copy(ringAt).add(offset);
+      camera.up.set(0, 1, 0).applyQuaternion(eye.quaternion);
+      camera.lookAt(ringAt);
+      camera.updateMatrixWorld(true);
+      held.premultiply(camera.matrixWorld.clone().invert());
+      held.decompose(group.position, group.quaternion, group.scale);
+      camera.updateMatrixWorld(true);
+    }
+    if (shot.run || shot.timeline) {
       // Report where the knife points on screen (camera space) in this pose.
       const ring = vm.root.getObjectByName("karambit-ring")!;
       ring.updateWorldMatrix(true, false);
@@ -139,6 +164,18 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
         ...new THREE.Vector3(0, 0, 1).applyQuaternion(qk).toArray(),
       ].map((n) => +n.toFixed(3));
       console.warn(`KNIFE ${shot.name} ${JSON.stringify(axes)}`);
+      // Screen positions (NDC) of the ring and the blade tip.
+      const tip = vm.root.getObjectByName("BladeTip");
+      if (tip) {
+        const ndc = (o: THREE.Object3D) =>
+          o
+            .getWorldPosition(new THREE.Vector3())
+            .project(camera)
+            .toArray()
+            .slice(0, 2)
+            .map((n) => +n.toFixed(2));
+        console.warn(`TIP ${shot.name} ring ${ndc(ring)} tip ${ndc(tip)}`);
+      }
     }
     renderer.info.reset();
     renderer.render(scene, camera);
@@ -147,6 +184,9 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
       calls: renderer.info.render.calls,
       triangles: renderer.info.render.triangles,
     };
+    camera.position.copy(eye.position);
+    camera.quaternion.copy(eye.quaternion);
+    camera.up.set(0, 1, 0);
   }
   return out;
 };
