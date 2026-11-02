@@ -64,6 +64,7 @@ For how something works today, start from the reference doc and the code.
 ### 2026-11-02
 
 - [Post-performance cleanup (2026-11-02)](maintenance/POST-PERFORMANCE-CLEANUP-2026-11-02.md)
+- [npm and local-checkout recovery (2026-11-02)](maintenance/NPM-AND-LOCAL-CHECKOUT-RECOVERY-2026-11-02.md)
 - [Render and frame-cost audit: Dustfront vs FROSTLINE, CROSSFIRE (and LOST TRAIL)](fps-map/RENDER-AUDIT-2026-11-02.md)
 - [FPS map performance: audit and optimisation report (2026-11-02)](fps-map/PERFORMANCE-REPORT-2026-11-02.md)
 - [FPS performance: final validation before merge (2026-11-02)](fps-map/FINAL-VALIDATION-2026-11-02.md)
