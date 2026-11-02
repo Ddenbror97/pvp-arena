@@ -365,23 +365,35 @@ export class RemotePresentation {
   }
 }
 
-/** Framebuffer caps per graphics setting: device-pixel ratio and pixels drawn per frame. */
-export const RENDER_CAPS = {
-  high: { ratio: 1.25, pixels: 1_500_000 },
-  // Low (any map): at most one framebuffer pixel per CSS pixel and two-thirds of High's pixel
-  // budget, so fill-bound laptops and integrated GPUs start lighter instead of waiting for the
-  // adaptive scale below to catch up.
-  low: { ratio: 1, pixels: 1_000_000 },
-} as const;
+/**
+ * The one render configuration's framebuffer cap: at most 1.25 framebuffer pixels per CSS pixel
+ * and 1.5 MP drawn per frame (a 1080p window renders at about 0.85×, a 1440p Retina window at
+ * about 0.64×; 4× MSAA on top). Below the cap, sustained slow frames lower the scale (to 0.6×)
+ * and sustained fast ones restore it, so weaker GPUs settle where they hold frame rate without
+ * a quality menu.
+ */
+export const RENDER_CAP = { ratio: 1.25, pixels: 1_500_000 } as const;
 
-/** Bounded framebuffer cost; sustained slow frames lower scale, with slow recovery. */
+/**
+ * Bounded framebuffer cost; sustained slow frames lower scale, with slow recovery.
+ *
+ * Recovery has hysteresis: a scale that has proved too slow is retried only after a wait that
+ * doubles with every failed retry (12 s, 24 s, 48 s … 3.2 min at most), and the wait resets once
+ * that scale holds for a minute (the load eased). Without it a GPU at the boundary between two
+ * steps would resize every ~13 s, each retry spending 1.5 s in slow frames.
+ */
 export class RenderBudget {
   scale = 1;
-  quality: keyof typeof RENDER_CAPS = "high";
   private elapsed = 0;
   private slow = 0;
   private frames = 0;
   private fastWindows = 0;
+  /** Lowest scale that has been too slow since the last reset (Infinity: none). */
+  private ceiling = Infinity;
+  /** Fast windows (1.5 s each) required before stepping up to `ceiling`. */
+  private retryWindows = 8;
+  /** Consecutive windows without a drop at the current scale. */
+  private heldWindows = 0;
   update(ms: number) {
     if (ms <= 0 || ms > 1000) return false;
     // Sustained single-digit FPS must still trigger adaptation. Cap individual
@@ -395,21 +407,35 @@ export class RenderBudget {
       before = this.scale;
     this.elapsed = this.slow = this.frames = 0;
     if (ratio > 0.05) {
-      this.scale = Math.max(0.6, this.scale - 0.1);
-      this.fastWindows = 0;
-    } else if (ratio < 0.02) {
-      if (++this.fastWindows >= 8) {
-        this.scale = Math.min(1, this.scale + 0.1);
-        this.fastWindows = 0;
+      // A retry of the known-slow scale failed: wait twice as long next time.
+      if (before >= this.ceiling - 1e-6) this.retryWindows = Math.min(128, this.retryWindows * 2);
+      this.ceiling = Math.min(this.ceiling, before);
+      this.scale = Math.max(0.6, Math.round((this.scale - 0.1) * 10) / 10);
+      this.fastWindows = this.heldWindows = 0;
+    } else {
+      if (++this.heldWindows >= 40 && this.scale >= this.ceiling - 1e-6) {
+        // The once-too-slow scale has held for a minute (the load eased): forget the failure.
+        this.ceiling = Infinity;
+        this.retryWindows = 8;
       }
-    } else this.fastWindows = 0;
+      if (ratio < 0.02) {
+        const next = Math.min(1, Math.round((this.scale + 0.1) * 10) / 10);
+        const needed = next >= this.ceiling - 1e-6 ? this.retryWindows : 8;
+        if (++this.fastWindows >= needed && next > this.scale) {
+          this.scale = next;
+          this.fastWindows = this.heldWindows = 0;
+        }
+      } else this.fastWindows = 0;
+    }
     return Math.abs(before - this.scale) > 0.001;
   }
   ratio(width: number, height: number, deviceRatio: number) {
-    const cap = RENDER_CAPS[this.quality];
     return (
-      Math.min(deviceRatio, cap.ratio, Math.sqrt(cap.pixels / Math.max(1, width * height))) *
-      this.scale
+      Math.min(
+        deviceRatio,
+        RENDER_CAP.ratio,
+        Math.sqrt(RENDER_CAP.pixels / Math.max(1, width * height)),
+      ) * this.scale
     );
   }
 }

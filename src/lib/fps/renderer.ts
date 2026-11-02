@@ -98,8 +98,6 @@ export type ArenaControls = {
   audioPresentation: () => { yaw: number; poseAt: number };
   ready: Promise<void>;
   setSensitivity: (value: number) => void;
-  /** Scenery quality for maps that support it (distant vegetation density). */
-  setGraphicsQuality: (quality: "high" | "low") => void;
   /** Reduced motion: smaller viewmodel camera choreography and movement layers. */
   setReducedMotion: (reduced: boolean) => void;
   snapshot: (frame: ArenaFrame, seat: Seat | null) => void;
@@ -1186,18 +1184,6 @@ export function mountArena(
     },
     setReducedMotion: (reduced) => {
       reducedMotion = !!reduced;
-    },
-    setGraphicsQuality: (quality) => {
-      const next = quality === "low" ? "low" : "high";
-      // Every map: the framebuffer cap (see RENDER_CAPS).
-      if (budget.quality !== next) {
-        budget.quality = next;
-        resize();
-      }
-      if (!environment.setQuality) return;
-      environment.setQuality(next);
-      // Scenery that casts into the cached shadow map changed: re-render it once.
-      renderer.shadowMap.needsUpdate = true;
     },
     diagnostics: () => ({
       camera: [camera.position.x, camera.position.y, camera.position.z, camera.rotation.y],

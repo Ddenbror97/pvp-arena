@@ -126,7 +126,6 @@ export function DuelMatch({
   }, []);
   useEffect(() => {
     arena.current?.setSensitivity(settings.sensitivity);
-    arena.current?.setGraphicsQuality(settings.graphics);
     // The OS reduced-motion preference stays on even when this toggle is off.
     if (settings.reducedMotion) arena.current?.setReducedMotion(true);
     else
@@ -273,7 +272,6 @@ export function DuelMatch({
             { mapId, onKnifeCue: (cue) => sound.current?.knifeCue(cue) },
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
-          arena.current.setGraphicsQuality(settingsRef.current.graphics);
           if (settingsRef.current.reducedMotion) arena.current.setReducedMotion(true);
           void arena.current.ready
             .then(() => {

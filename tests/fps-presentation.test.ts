@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { CameraCorrection, RemotePresentation, RenderBudget } from "../src/lib/fps/presentation";
+import {
+  CameraCorrection,
+  RemotePresentation,
+  RENDER_CAP,
+  RenderBudget,
+} from "../src/lib/fps/presentation";
 import { createMatch, predictMovement, TICK_MS } from "../src/lib/fps/simulation";
 import type { Input } from "../src/lib/fps/protocol";
 import { REMOTE_DELAY_MS } from "../src/lib/fps/network";
@@ -284,17 +289,42 @@ describe("render presentation independent of server physics", () => {
     expect(b.scale).toBeGreaterThan(lower);
     expect(b.scale).toBeLessThanOrEqual(1);
   });
-  it("low graphics lowers the framebuffer cap on every map", () => {
-    const high = new RenderBudget(),
-      low = Object.assign(new RenderBudget(), { quality: "low" as const });
-    // 1440p laptop at 2× DPI: High is pixel-bound at 1.5 MP, Low at 1 MP.
-    expect(2560 * 1440 * high.ratio(2560, 1440, 2) ** 2).toBeCloseTo(1_500_000, -3);
-    expect(2560 * 1440 * low.ratio(2560, 1440, 2) ** 2).toBeCloseTo(1_000_000, -3);
-    // Small window on a Retina screen: High allows 1.25×, Low draws at most 1×.
-    expect(high.ratio(800, 500, 2)).toBe(1.25);
-    expect(low.ratio(800, 500, 2)).toBe(1);
-    // The adaptive scale still applies on top.
-    for (let i = 0; i < 250; i++) low.update(30);
-    expect(low.ratio(800, 500, 2)).toBeLessThan(1);
+  it("does not oscillate on a GPU at the boundary between two scale steps", () => {
+    // Deterministic boundary machine: full scale costs 24 ms, cost ∝ pixels (scale²) + 4 ms CPU,
+    // one 10 ms hitch every 100 frames. 0.8× fits a 60 Hz frame, 0.9× does not.
+    const b = new RenderBudget();
+    let t = 0,
+      n = 0,
+      resizes = 0;
+    while (t < 600_000) {
+      const ms = 4 + 20 * b.scale * b.scale + (++n % 100 === 0 ? 10 : 0);
+      t += ms;
+      if (b.update(ms)) resizes++;
+    }
+    // Two steps down, then retries of 0.9× at 12 s, 24 s, 48 s, 96 s, 192 s… (each retry is a
+    // step up and back): 14 resizes in 10 min, later ones 3 min apart. Without hysteresis: ~30,
+    // one every ~20 s for the whole session.
+    expect(b.scale).toBeGreaterThanOrEqual(0.7);
+    expect(b.scale).toBeLessThanOrEqual(0.9);
+    expect(resizes).toBeLessThanOrEqual(16);
+  });
+  it("recovers fully once the load eases", () => {
+    const b = new RenderBudget();
+    for (let i = 0; i < 2000; i++) b.update(30);
+    expect(b.scale).toBe(0.6);
+    // Now every frame is fast: back to 1× within a few minutes, never above.
+    for (let i = 0; i < 60 * 60 * 5; i++) b.update(7);
+    expect(b.scale).toBe(1);
+  });
+  it("one render configuration: the framebuffer cap is fixed, only the adaptive scale moves", () => {
+    const b = new RenderBudget();
+    expect(RENDER_CAP).toEqual({ ratio: 1.25, pixels: 1_500_000 });
+    // 1440p laptop at 2× DPI: pixel-bound at 1.5 MP.
+    expect(2560 * 1440 * b.ratio(2560, 1440, 2) ** 2).toBeCloseTo(1_500_000, -3);
+    // Small window on a Retina screen: at most 1.25 framebuffer pixels per CSS pixel.
+    expect(b.ratio(800, 500, 2)).toBe(1.25);
+    // The adaptive scale applies on top, down to 0.6×.
+    for (let i = 0; i < 1000; i++) b.update(30);
+    expect(b.ratio(800, 500, 2)).toBeCloseTo(0.75);
   });
 });

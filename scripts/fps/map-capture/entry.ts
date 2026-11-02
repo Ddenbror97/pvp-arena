@@ -20,7 +20,6 @@ declare global {
       w: number,
       h: number,
       players?: Array<[string, number, number, number]>,
-      quality?: "high" | "low",
     ) => Promise<unknown>;
     lifecycle: (mapIds: string[], cycles: number) => Promise<unknown>;
   }
@@ -49,8 +48,6 @@ window.lifecycle = async (mapIds, cycles) => {
       const scene = new THREE.Scene();
       const env = createMapEnvironment(scene, getMap(id));
       await env.ready;
-      env.setQuality?.("low");
-      env.setQuality?.("high");
       env.update?.(0.016, 1000);
       renderer.render(scene, camera);
       const mounted = { ...renderer.info.memory };
@@ -75,7 +72,7 @@ window.lifecycle = async (mapIds, cycles) => {
   return { base, log };
 };
 
-window.capture = async (mapId, views, w, h, players = [], quality = "high") => {
+window.capture = async (mapId, views, w, h, players = []) => {
   const map = getMap(mapId);
   const lighting = map.presentation.lighting;
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
@@ -120,7 +117,6 @@ window.capture = async (mapId, views, w, h, players = [], quality = "high") => {
   const env = createMapEnvironment(scene, map);
   await env.ready;
   const loadMs = performance.now() - t0;
-  env.setQuality?.(quality);
   // Optional stand-ins: the game's character models (bind pose) at [model url, x, z, yaw].
   const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
   for (const [url, x, z, yaw] of players) {
