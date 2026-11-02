@@ -134,10 +134,14 @@ for i in range(1, 11):
     twin(f"house-stair-{i:02d}", x0, x0 + 0.55, SW_Z0, SW_Z1, 0, STEP * i, "wood", "stair")
 # Stairwell balustrade on the upper floor (a solid half-wall), open where the stairs arrive.
 twin("house-balustrade", SW_X0, SW_X1 - 1.2, SW_Z1, SW_Z1 + 0.15, FLOOR2, FLOOR2 + 1.0, "wood", "balustrade")
-# Roof: flat deck over the upper walls, then the gable as stepped bullet-only slabs (pitch along z).
-twin("house-roof", X0 - 0.4, X1 + 0.4, Z0 - 0.4, Z1 + 0.4, TOP, TOP + 0.3, "concrete", "roof", layer="bullet")
-for i, (inset, h0, h1) in enumerate(((1.6, 6.0, 6.7), (3.3, 6.7, 7.4), (4.9, 7.4, 8.0))):
-    twin(f"house-gable-{i}", X0 - 0.4, X1 + 0.4, Z0 - 0.4 + inset, Z1 + 0.4 - inset, h0, h1, "concrete", "gable", layer="bullet")
+# Roof: deck over the upper walls (eaves 0.4 m out), then the pitched roof (ridge along x, pitch
+# ROOF_PITCH rise per metre from the eaves at 6.0 m) as bullet-only steps inscribed in its slopes.
+ROOF_PITCH, EAVE = 0.42, 0.4
+twin("house-roof", X0 - EAVE, X1 + EAVE, Z0 - EAVE, Z1 + EAVE, TOP, TOP + 0.3, "concrete", "roof", layer="bullet")
+for i in range(5):
+    h0, h1 = TOP + 0.3 + 0.45 * i, TOP + 0.3 + 0.45 * (i + 1)
+    half = (Z1 + EAVE) - (h1 - TOP - 0.3) / ROOF_PITCH
+    twin(f"house-gable-{i}", X0 - EAVE, X1 + EAVE, -half, half, h0, h1, "concrete", "gable", layer="bullet")
 # Ground floor: the kitchen (back, with the stairs) and the living room (front) are split by a
 # full-height wall whose one doorway (z 3.9..5.1) is offset so that no straight line runs from a
 # back opening through the house and out of a front opening (no spawn-to-street sightline).
@@ -197,9 +201,9 @@ twin("shrubs-s", X1, X1 + 0.7, 3.0, 5.6, 0, 0.8, "wood", "shrub-bed")
 # ================================================================== side yard A (south)
 twin("yard-fence-w", -25.1, -24.9, 9.5, HZ, 0, FENCE, "wood", "picket-fence")   # backyard gate z 6..9.5
 twin("yard-fence-front", -9.2, -9.0, 9.5, 14.5, 0, 2.0, "wood", "privacy-fence")   # the side yards and the street don't see across
-# Worn Shed by donnichols (x0.75): eaves at 2.0 m over the whole roof footprint, the ridge above.
-twin("yard-shed", -23.4, -18.57, 15.2, 18.45, 0, 2.0, "wood", "shed")
-twin("yard-shed-ridge", -22.25, -19.72, 15.2, 18.45, 2.0, 2.66, "wood", "shed-ridge")
+# Worn Shed by donnichols (x0.75): walls and eaves to 2.25 m over the roof footprint, the ridge above.
+twin("yard-shed", -23.4, -18.57, 15.2, 18.45, 0, 2.25, "wood", "shed")
+twin("yard-shed-ridge", -22.585, -19.385, 15.2, 18.45, 2.25, 2.66, "wood", "shed-ridge")
 twin("yard-planter", -17.2, -15.0, 10.4, 11.4, 0, 0.8, "wood", "planter")
 twin("yard-tree-1", -15.4, -14.9, 17.0, 17.5, 0, 4.0, "wood", "tree")
 twin("yard-tree-2", -11.9, -11.4, 20.2, 20.7, 0, 4.0, "wood", "tree")
@@ -221,8 +225,8 @@ twin("passage-bins", -18.16, -17.0, -15.55, -14.91, 0, 1.12, "metal", "wheelie-b
 twin("passage-woodpile", -23.6, -22.2, -14.2, GZ0, 0, 1.9, "wood", "woodpile")
 twin("passage-gate", -13.4, -13.2, -15.9, -14.2, 0, 2.0, "wood", "privacy-fence")
 twin("lane-dumpster", -22.0, -19.66, -21.73, -20.27, 0, 1.46, "metal", "dumpster")   # MadeByYeshe big bin, x1.1
-twin("lane-shed", -31.0, -27.75, -22.9, -18.07, 0, 2.0, "wood", "shed")
-twin("lane-shed-ridge", -31.0, -27.75, -21.75, -19.22, 2.0, 2.66, "wood", "shed-ridge")
+twin("lane-shed", -31.0, -27.75, -22.9, -18.07, 0, 2.25, "wood", "shed")
+twin("lane-shed-ridge", -31.0, -27.75, -22.085, -18.885, 2.25, 2.66, "wood", "shed-ridge")
 twin("lane-pole", -12.25, -11.85, -16.95, -16.55, 0, 7.0, "wood", "utility-pole")   # SLASH / RENDAR, x1.54
 # Billboard tower (Gunnar Correa's radio tower, x1.2, with the PVPSPINARENA board on top).
 centred("tower-base", -0.9, 0.9, -21.3, -19.5, 0, 2.9, "metal", "tower-base")
@@ -266,11 +270,14 @@ centred("road-barricade", -2.6, 2.6, 19.4, 19.9, 0, 1.1, "wood", "barricade")
 # PVPSPINARENA monument sign at the end of the exit road (brick base, logo panel).
 centred("sign-base", -3.2, 3.2, 21.9, 22.5, 0, 2.4, "concrete", "monument-sign")
 
+# Perimeter: the neighbours' 2.4 m board fences round the whole block (bullets only; movement is
+# bounded by the arena rectangle). The render draws exactly these fences.
+PF = 2.4
 walls = [
-    {"id": "wall-west", "x": -HX - 0.4, "y": 4.5, "z": 0, "w": 0.8, "h": 9.0, "d": ARENA["depth"] + 1.6, "surface": "concrete"},
-    {"id": "wall-east", "x": HX + 0.4, "y": 4.5, "z": 0, "w": 0.8, "h": 9.0, "d": ARENA["depth"] + 1.6, "surface": "concrete"},
-    {"id": "wall-north", "x": 0, "y": 4.5, "z": -HZ - 0.4, "w": ARENA["width"], "h": 9.0, "d": 0.8, "surface": "concrete"},
-    {"id": "wall-south", "x": 0, "y": 4.5, "z": HZ + 0.4, "w": ARENA["width"], "h": 9.0, "d": 0.8, "surface": "concrete"},
+    {"id": "wall-west", "x": -HX - 0.1, "y": PF / 2, "z": 0, "w": 0.2, "h": PF, "d": ARENA["depth"] + 0.4, "surface": "wood"},
+    {"id": "wall-east", "x": HX + 0.1, "y": PF / 2, "z": 0, "w": 0.2, "h": PF, "d": ARENA["depth"] + 0.4, "surface": "wood"},
+    {"id": "wall-north", "x": 0, "y": PF / 2, "z": -HZ - 0.1, "w": ARENA["width"], "h": PF, "d": 0.2, "surface": "wood"},
+    {"id": "wall-south", "x": 0, "y": PF / 2, "z": HZ + 0.1, "w": ARENA["width"], "h": PF, "d": 0.2, "surface": "wood"},
 ]
 spawns = {"A": {"x": -29.5, "z": -2.0, "yaw": -1.5707963267948966}, "B": {"x": 29.5, "z": -2.0, "yaw": 1.5707963267948966}}
 
@@ -304,7 +311,7 @@ def emit():
         "export const SUBURBIA_STRUCTURES: Solid[] = [",
         *[row(s) for s in bullets],
         "];",
-        "/** Perimeter: bullets (movement is bounded by the arena rectangle). */",
+        "/** Perimeter fences: bullets only (movement is bounded by the arena rectangle). */",
         "export const SUBURBIA_WALLS: Solid[] = [",
         *[row(s) for s in walls],
         "];",

@@ -102,3 +102,31 @@ held by each team's existing first-person and third-person arms.
   (https://sketchfab.com/3d-models/karambit-dfd7606f189a413681305a39b8841ce8)
   by Diamonddogkz (https://sketchfab.com/Diamonddogkz), licensed under CC BY 4.0
   (http://creativecommons.org/licenses/by/4.0/).
+
+## SUBURBAN SHOWDOWN (suburbia.glb)
+
+The houses, garages, fences, the delivery truck's cargo box, the storage container, the trailer,
+the street, the perimeter and the neighbourhood are project work (art/blender/suburbia). The
+following Sketchfab models are used, modified as listed in art/blender/suburbia/source/README.md
+(parts removed, decimated, rescaled, textures reduced, PVPSPINARENA wraps added). All are licensed
+under CC BY 4.0 (http://creativecommons.org/licenses/by/4.0/).
+
+- "School Bus" (https://sketchfab.com/3d-models/school-bus-a959ee8ce17d434f9fdbc93cad199a21) by Macaroni (https://sketchfab.com/Macaroniii)
+- "Box Truck [Game Asset]" (https://sketchfab.com/3d-models/box-truck-game-asset-959e25ad21014bcf9066d3f6f7e7ecb2) by Jen S Abbott (https://sketchfab.com/jsabbott)
+- "Duke '69 - Low Poly Model" (https://sketchfab.com/3d-models/duke-69-low-poly-model-46fed79f600c4fc69e060991f9e3e4f9) by Daniel Zhabotinsky (https://sketchfab.com/DanielZhabotinsky)
+- "Negotiator '80 - Low poly model" (https://sketchfab.com/3d-models/negotiator-80-low-poly-model-892b2684fb37442299bfad9222cf331c) by Daniel Zhabotinsky (https://sketchfab.com/DanielZhabotinsky)
+- "Fairheaven SW '84 - Low poly model" (https://sketchfab.com/3d-models/fairheaven-sw-84-low-poly-model-aa0becb6e854422596cac6b21bf79787) by Daniel Zhabotinsky (https://sketchfab.com/DanielZhabotinsky)
+- "Green & white picket fence" (https://sketchfab.com/3d-models/green-white-picket-fence-35858549c7e947e9859cd335f671f586) by Shuckwaffles (https://sketchfab.com/shuckwaffles14)
+- "Worn Shed PBR Game-Ready" (https://sketchfab.com/3d-models/worn-shed-pbr-game-ready-be6edd62e55a4f9a99da940fc164a5b9) by donnichols (https://sketchfab.com/donnichols)
+- "Utility Pole (PBR)" (https://sketchfab.com/3d-models/utility-pole-pbr-92f4d3b0ef38472d8c1c62a28fe15135) by SLASH / RENDAR (https://sketchfab.com/SLASH-RENDAR)
+- "Old US mailbox" (https://sketchfab.com/3d-models/old-us-mailbox-6cf41ee1a60143efb983b74c0d69a9a4) by PXBR (https://sketchfab.com/pixabar)
+- "Picnic Table - Low Poly" (https://sketchfab.com/3d-models/picnic-table-low-poly-fe35acda3a5245da8459d1a062e28190) by Derek Flanagan (https://sketchfab.com/derek_flanagan)
+- "Radio tower" (https://sketchfab.com/3d-models/radio-tower-4b3c733d8bfd4ee2b91dcbcd02670686) by Gunnar Correa (https://sketchfab.com/gunnarcorrea)
+- "Oak Tree | Game Ready" (https://sketchfab.com/3d-models/oak-tree-game-ready-2f4ae6b907fd4741abda5d1b71c83b10) by Maple (https://sketchfab.com/aaloktrolllol)
+- "Bush pack - Game Ready 3d plants (FBX,OBJ,GLB)" (https://sketchfab.com/3d-models/bush-pack-game-ready-3d-plants-fbxobjglb-673f15f2511345c8992d7b9517a9f224) by Rudransh_3d (https://sketchfab.com/Rudransh_3d)
+- "PBR Street Props Pack (Game Ready)" (https://sketchfab.com/3d-models/pbr-street-props-pack-game-ready-8013d8e6af4645d1a7c3d5b24054bfc8) by MadeByYeshe (https://sketchfab.com/MadeByYeshe)
+- "Street Asset Pack" (https://sketchfab.com/3d-models/street-asset-pack-f3eb47d02e2e4ab290e66752fa354b48) by vmatthew (https://sketchfab.com/vmatthew)
+- "Low Poly Furnitures Full Bundle" (https://sketchfab.com/3d-models/low-poly-furnitures-full-bundle-05d29572fef94794803365bdbfd7afa9) by Taha Kaya (https://sketchfab.com/tkaya.ist)
+
+The SUBURBAN SHOWDOWN loading art (src/assets/fps/suburbia-loading.webp) was supplied by the
+project owner. Third-party attribution does not imply creator endorsement.

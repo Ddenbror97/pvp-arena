@@ -23,7 +23,13 @@ describe("Dustfront through the map registry", () => {
   it("is the default (first) shipped map", () => {
     expect(MAP_IDS).toEqual(["dustfront", "frostline", "lost-trail", "crossfire", "suburbia"]);
     // Every shipped map is in the random Practice/PvP rotation; Dustfront stays the default.
-    expect(ROTATION_MAP_IDS).toEqual(["dustfront", "frostline", "lost-trail", "crossfire", "suburbia"]);
+    expect(ROTATION_MAP_IDS).toEqual([
+      "dustfront",
+      "frostline",
+      "lost-trail",
+      "crossfire",
+      "suburbia",
+    ]);
     expect(DEFAULT_MAP).toBe(map);
     expect(map.name).toBe("Dustfront");
   });
