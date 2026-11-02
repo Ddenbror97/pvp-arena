@@ -153,6 +153,10 @@ window.capture = async (mapId, views, w, h, players = [], quality = "high") => {
     camera.rotation.set(pitch, yaw, 0);
     camera.updateMatrixWorld(true);
     renderer.info.autoReset = false;
+    // One untimed frame first (program compiles, the one-off shadow-map render), then the
+    // measured frame: calls, triangles and GPU-finished time of a steady-state frame.
+    renderer.render(scene, camera);
+    renderer.getContext().finish();
     renderer.info.reset();
     const s = performance.now();
     renderer.render(scene, camera);
