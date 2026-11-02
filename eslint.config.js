@@ -6,7 +6,20 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", ".output", ".vinxi"] },
+  {
+    // Build output, dev caches and generated files. Without the cache and the guide catalog in
+    // this list `eslint .` spent most of its time on 3 MB of pre-bundled Vite deps.
+    ignores: [
+      "dist",
+      ".output",
+      ".vinxi",
+      ".wrangler",
+      ".nitro",
+      ".tanstack",
+      "public/guide-bodies",
+      "src/content/guides/catalog.generated.ts",
+    ],
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
