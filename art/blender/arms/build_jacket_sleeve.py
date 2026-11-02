@@ -4,6 +4,11 @@ Duty-jacket sleeves for the first-person arms (Blender, headless).
   python build_jacket_sleeve.py -- <outdir> [--size 2048] [--preview]                    # Terrorist
   python build_jacket_sleeve.py -- <outdir> --variant police [--watch <jacket-watch.glb>] [--preview]
 
+Terrorist (default, `JacketSleeve`): the character's snow-camouflage smock (terrorist-fighter.glb):
+three-tone print (off-white base, light-grey and dark-grey blotches at the character's scale,
+seamless round the arm), cotton windproof weave, a camo cuff tab closed with a dark button like
+the smock's front buttons. (Earlier: plain white ripstop with hook-and-loop and a reflective band.)
+
 Police variant (`PoliceSleeve`, police-sleeve.glb): the Police character's steel-blue duty shirt
 (sampled from police-swat.glb: sRGB ~84,112,128) in cotton twill with light topstitching, a
 buttoned shirt cuff (placket and a real four-hole button) instead of the hook-and-loop strap, no
@@ -43,6 +48,7 @@ SIZE = int(argv[argv.index("--size") + 1]) if "--size" in argv else 2048
 PREVIEW = "--preview" in argv
 POLICE = "--variant" in argv and argv[argv.index("--variant") + 1] == "police"
 WATCH_GLB = argv[argv.index("--watch") + 1] if "--watch" in argv else None
+CAMO = not POLICE  # Terrorist snow-camo smock
 NAME = "PoliceSleeve" if POLICE else "JacketSleeve"
 STEM = "police_sleeve" if POLICE else "jacket_sleeve"
 os.makedirs(outdir, exist_ok=True)
@@ -64,8 +70,10 @@ CUFF_OFF = 0.0088  # cuff band height above the skin (two layers over the glove 
 WATCH_ALONG = 0.058
 WATCH_HALF = 0.0112  # half the cinched width along the arm (strap + a little give)
 WATCH_LIFT = 0.0068  # fabric height under the strap; the watch is built on exactly this
-BUTTON_THETA = 2.25  # cuff button: back of the wrist toward the little finger, in view
-BUTTON_ALONG = 0.022
+# Cuff button. Police: on the shirt-cuff placket, back of the wrist toward the little finger.
+# Terrorist: on the cuff tab (the raised strap, STRAP_THETA), like the smock's front buttons.
+BUTTON_THETA = 2.25 if POLICE else 0.95
+BUTTON_ALONG = 0.022 if POLICE else 0.0275
 
 
 def smooth(x, a, b):
@@ -119,8 +127,7 @@ def offset(along, theta):
     sag = 0.0032 * np.maximum(0, -np.sin(theta)) ** 2 * smooth(z, 0.1, 0.3)
     # Reflective band: heat-sealed tape, slightly stiffer (flattens the folds under it).
     tape = smooth(z, BAND_ALONG[0], BAND_ALONG[0] + 0.0015) * (1 - smooth(z, BAND_ALONG[1] - 0.0015, BAND_ALONG[1]))
-    if POLICE:
-        tape = tape * 0  # no reflective band on the Police shirt
+    tape = tape * 0  # neither character wears a reflective band
     sleeve = body + (fold + drape) * (1 - 0.6 * tape) + sag + 0.0004 * tape
     # Blend cuff → sleeve with a small crease where the sleeve overhangs the band.
     k = smooth(z, CUFF - 0.002, CUFF + 0.006)
@@ -184,6 +191,31 @@ def fbm(shape, scale, seed, octaves=4):
         norm += amp
         amp *= 0.5
     return t / norm
+
+
+def noise3(P, scale, seed, octaves=3, stretch=(1.0, 1.0, 1.0)):
+    """Smooth 3D value-noise fBm at points P (..., 3) metres; seamless round the arm when P
+    is the fabric's position on a cylinder."""
+    r = np.random.default_rng(seed)
+    n = 48
+    lattice = r.random((n, n, n))
+    total, amp, norm = 0.0, 1.0, 0.0
+    for o in range(octaves):
+        q = P / (scale / 2 ** o) / np.asarray(stretch)
+        q = q + 17.3 * (o + 1)
+        i = np.floor(q).astype(int)
+        f = q - i
+        f = f * f * (3 - 2 * f)
+        acc = 0.0
+        for dx in (0, 1):
+            for dy in (0, 1):
+                for dz in (0, 1):
+                    w = (f[..., 0] if dx else 1 - f[..., 0]) * (f[..., 1] if dy else 1 - f[..., 1]) * (f[..., 2] if dz else 1 - f[..., 2])
+                    acc = acc + w * lattice[(i[..., 0] + dx) % n, (i[..., 1] + dy) % n, (i[..., 2] + dz) % n]
+        total = total + amp * acc
+        norm += amp
+        amp *= 0.5
+    return total / norm
 
 
 def image(rgb, name, srgb):
@@ -261,6 +293,12 @@ def textures(obj, size, v_scale):
     rip = np.maximum(np.exp(-((gx - grid / 2) / 0.0002) ** 2), np.exp(-((gy - grid / 2) / 0.0002) ** 2))
     weave = 0.5 * np.sin(2 * np.pi * x / 0.00055) * np.sin(2 * np.pi * y / 0.00055)
     height = 0.00009 * rip + 0.00004 * weave
+    if CAMO:
+        # Cotton windproof smock fabric: dense plain weave with slubs, no ripstop grid.
+        rip = rip * 0
+        slub = fbm((size, size), size / 160, 41, 2)
+        weave = 0.5 * np.sin(2 * np.pi * x / 0.00045) * np.sin(2 * np.pi * y / 0.00045)
+        height = 0.000035 * weave + 0.00004 * (slub - 0.5)
     if POLICE:
         # Cotton twill (BDU shirt): diagonal ribs, no ripstop grid.
         rip = rip * 0
@@ -293,6 +331,7 @@ def textures(obj, size, v_scale):
     s_ang = wrap(th - STRAP_THETA)
     in_strap = (np.abs(s_ang) < STRAP_HALF * 0.92) & (along > HEM + 0.009) & (along < CUFF - 0.006)
     in_strap = in_strap & (not POLICE)
+    hook = in_strap & (not CAMO)  # hook-and-loop field (the old white jacket only)
     s_edge = np.minimum(np.abs(np.abs(s_ang) - STRAP_HALF * 0.78) * r_mean,
                         np.minimum(np.abs(along - HEM - 0.011), np.abs(along - CUFF + 0.008)))
     stitch.append((np.where(in_strap, s_edge, 1), x + y))
@@ -310,11 +349,12 @@ def textures(obj, size, v_scale):
             fan = np.abs(np.sin(th * 9 + 3 * w2)) ** 8 * np.exp(-d / 0.004)
             height -= np.where(near, 0.00025 * fan, 0)
     # Retro-reflective band: glass-bead tape (micro-prism dots), silver-grey, edge-sealed.
-    in_band = (along > BAND_ALONG[0] + 0.001) & (along < BAND_ALONG[1] - 0.001) & (not POLICE)
+    # Retired with the plain white jacket: neither character wears a reflective band.
+    in_band = (along > BAND_ALONG[0] + 0.001) & (along < BAND_ALONG[1] - 0.001) & False
     bead = (np.sin(2 * np.pi * x / 0.0008) * np.sin(2 * np.pi * y / 0.0008) > 0.2).astype(float)
     height += np.where(in_band, 0.00003 * bead + 0.00012, 0)
     band_edge = np.minimum(np.abs(along - BAND_ALONG[0] - 0.0015), np.abs(along - BAND_ALONG[1] + 0.0015))
-    if not POLICE:
+    if in_band.any():
         stitch.append((np.where(np.abs(along - (BAND_ALONG[0] + BAND_ALONG[1]) / 2) < 0.02, band_edge, 1), x))
     thread = np.zeros_like(x)
     for dist, phase in stitch:
@@ -324,7 +364,7 @@ def textures(obj, size, v_scale):
         thread = np.maximum(thread, lane * dash)
     height += 0.0002 * thread
     loop = fbm((size, size), 3, 21, 2)
-    height += np.where(in_strap, 0.00006 * (loop - 0.5), 0)
+    height += np.where(hook, 0.00006 * (loop - 0.5), 0)
 
     # Colour: white duty fabric, slightly cool; folds collect grey grime, raised areas stay clean.
     var = fbm((size, size), size / 8, 5)
@@ -356,7 +396,41 @@ def textures(obj, size, v_scale):
         col = col * (1 - 0.8 * thread[..., None]) + np.array([0.33, 0.42, 0.47]) * 0.8 * thread[..., None]
         col *= (1 - 0.08 * crease * wrinkle_amt)[..., None]
         col *= (0.45 + 0.55 * ao)[..., None]
-    rough = np.clip(0.82 + 0.06 * (var - 0.5) + 0.06 * in_strap - 0.08 * thread, 0, 1)
+    if CAMO:
+        # Snow-camo print matched to the character: blotch coverage from its texture (k-means:
+        # ~38% off-white ground, ~35% light-grey, ~27% dark-grey; blotches 2-6 cm), tones set so
+        # the sleeve renders at the character's brightness under the same lights (sRGB ~188
+        # ground, ~149 light-grey, ~93 dark-grey). Soft printed edges, slight misregistration,
+        # cool off-white cotton; grime in the folds, fading on the cuff edge.
+        P3 = np.stack([np.cos(th) * r_mean, along, np.sin(th) * r_mean], -1)
+        P3 = np.where(valid[..., None], P3, 0)
+        light_n = noise3(P3, 0.034, 51, 3, (1.0, 1.6, 1.0))
+        dark_n = noise3(P3 + 0.004, 0.026, 77, 3, (1.0, 1.5, 1.0))
+        mottle = fbm((size, size), size / 300, 61, 2)
+        edge = 0.012 + 0.01 * mottle
+        t_light = np.quantile(light_n[valid], 1 - 0.62)  # light-grey layer covers ~62%
+        light_m = smooth(light_n, t_light - edge, t_light + edge)
+        gate = smooth(light_n, t_light - 0.08, t_light + 0.02)  # dark blotches sit in the grey
+        t_dark = np.quantile(dark_n[valid & (gate > 0.5)], 1 - 0.27 / 0.62)
+        dark_m = smooth(dark_n, t_dark - edge, t_dark + edge) * gate
+        print("REPORT camo coverage light", round(float(light_m[valid].mean()), 3),
+              "dark", round(float(dark_m[valid].mean()), 3))
+        base_c = np.array([0.50, 0.505, 0.52])
+        light_c = np.array([0.295, 0.298, 0.31])
+        dark_c = np.array([0.108, 0.108, 0.112])
+        col = base_c[None, None] * (1 - light_m[..., None]) + light_c[None, None] * light_m[..., None]
+        col = col * (1 - dark_m[..., None]) + dark_c[None, None] * dark_m[..., None]
+        col *= (0.95 + 0.07 * var + 0.05 * (mottle - 0.5))[..., None]
+        col *= (1 + 0.03 * weave)[..., None]
+        col = col * (1 - 0.45 * grime[..., None]) + np.array([0.20, 0.19, 0.17]) * 0.45 * grime[..., None]
+        edge_wear = np.exp(-((along - HEM) / 0.004) ** 2) * (along > HEM - 0.002)
+        col = col * (1 - 0.3 * edge_wear[..., None]) + np.array([0.42, 0.41, 0.39]) * 0.3 * edge_wear[..., None]
+        col = col * (1 - 0.75 * thread[..., None]) + np.array([0.50, 0.50, 0.50]) * 0.75 * thread[..., None]
+        col *= (1 - 0.07 * crease * wrinkle_amt)[..., None]
+        col *= (0.5 + 0.5 * ao)[..., None]
+    rough = np.clip(0.82 + 0.06 * (var - 0.5) + 0.06 * hook - 0.08 * thread, 0, 1)
+    if CAMO:
+        rough = np.clip(0.84 + 0.05 * (var - 0.5) - 0.08 * thread - 0.04 * dark_m, 0, 1)
     if POLICE:
         rough = np.clip(0.86 + 0.05 * (var - 0.5) - 0.1 * thread, 0, 1)
     rough = np.where(in_band, 0.38 + 0.08 * bead, rough)
@@ -411,13 +485,15 @@ def button():
     base = F.surface_point(np.array([BUTTON_ALONG]), np.array([BUTTON_THETA]),
                            offset(np.array([BUTTON_ALONG]), np.array([BUTTON_THETA])))[0]
     local = P * MM
-    world = base + local[..., 0:1] * side + local[..., 1:2] * up + local[..., 2:3] * n - 0.0003 * n
+    # Seated into the cloth (the shank and thread hold it down; no gap under the rim).
+    world = base + local[..., 0:1] * side + local[..., 1:2] * up + local[..., 2:3] * n - 0.0011 * n
     m = MeshData().grid(world, np.full(world.shape[:2] + (2,), 0.5))
     obj = m.to_object(NAME + "Button")
     mat = bpy.data.materials.new(f"{STEM}_button")
     mat.use_nodes = True
     b = mat.node_tree.nodes["Principled BSDF"]
-    b.inputs["Base Color"].default_value = (0.055, 0.07, 0.08, 1)
+    # Police: blue-grey resin. Terrorist: the smock's dark brown-grey buttons.
+    b.inputs["Base Color"].default_value = (0.055, 0.07, 0.08, 1) if POLICE else (0.035, 0.032, 0.03, 1)
     b.inputs["Roughness"].default_value = 0.38
     obj.data.materials.append(mat)
     obj.data.shade_smooth()
@@ -430,9 +506,8 @@ sleeve.data.shade_smooth()
 base, normal, orm = textures(sleeve, SIZE, v_scale)
 sleeve.data.materials.clear()
 sleeve.data.materials.append(material(base, normal, orm))
-if POLICE:
-    btn = button()
-    btn.parent = sleeve
+btn = button()
+btn.parent = sleeve
 print("REPORT", NAME, len(sleeve.data.polygons), "faces")
 
 bpy.ops.object.select_all(action="DESELECT")
@@ -480,3 +555,5 @@ if PREVIEW:
     if POLICE:
         shot("watch", (0.0, 0.06, 0.17), (0.0, 0.06, 0.03), 55)
         shot("button", (-0.09, 0.0, 0.1), (-0.02, 0.025, 0.03), 60)
+    else:
+        shot("tab", (0.1, 0.0, 0.1), (0.03, 0.03, 0.04), 60)

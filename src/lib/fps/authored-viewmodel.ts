@@ -75,7 +75,7 @@ export type ViewmodelVariant = {
   boltKick: number;
   forearms: ForearmShape;
   /**
-   * Arm dress. "jacket": the white duty-jacket sleeve (Terrorist / AK). "police": the steel-blue
+   * Arm dress. "jacket": the snow-camo smock sleeve (Terrorist / AK). "police": the steel-blue
    * duty-shirt sleeve with the field watch strapped over it (Police / M4A1). "bare": bare
    * forearm with the rolled olive sleeve and the watch on the skin (fallback / older GLBs).
    */
@@ -287,7 +287,7 @@ export function createAuthoredViewmodel(
         const sleeveParts = meshesOf("ArmSleeve"),
           watchParts = meshesOf("ArmWatch");
         // Full-length duty sleeves (art/blender/arms/build_jacket_sleeve.py) cover the forearm,
-        // so the rolled olive sleeve and the bare skin go. Terrorist: white jacket, no watch.
+        // so the rolled olive sleeve and the bare skin go. Terrorist: snow-camo smock, no watch.
         // Police: steel-blue shirt matching the character, the watch strapped over the sleeve.
         const dutySleeve =
           variant.arms === "jacket"

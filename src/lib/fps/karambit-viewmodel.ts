@@ -14,7 +14,7 @@ import { KarambitAnimator, type KarambitControls } from "./karambit-animator";
 
 /**
  * First-person Karambit on a team's existing arms (Police: steel-blue duty-shirt sleeve;
- * Terrorist: white duty-jacket sleeve; the watch is on the left wrist, out of this view). Nothing about the arms is replaced: the same rig, gloves,
+ * Terrorist: snow-camo smock sleeve; the watch is on the left wrist, out of this view). Nothing about the arms is replaced: the same rig, gloves,
  * forearm builder and sleeves the rifles use are fitted to the knife here.
  *
  * - Grip: the right hand's middle, ring and little fingers keep the rifle pistol-grip wrap (a
@@ -387,7 +387,7 @@ function createSkinMaterial(owned: { materials: THREE.Material[]; textures: THRE
 }
 
 /**
- * Sleeve meshes in canonical arm space: the team's full-length duty sleeve (white jacket for the
+ * Sleeve meshes in canonical arm space: the team's full-length duty sleeve (snow-camo smock for the
  * Terrorist, blue shirt for Police), else the rolled olive sleeve (`duty` false: skin shows).
  */
 function sleeveParts(

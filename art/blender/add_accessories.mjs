@@ -51,12 +51,13 @@ for (const part of parts) {
     old.dispose();
   }
   const doc = await io.read(file);
-  // Textures the target already has (the watch's, shared with the bare-arm watch) are left as
-  // they are so dedup() merges them instead of shipping a second copy.
-  const existing = new Set(root.listTextures().map((t) => t.getName()));
+  // Textures the target already has byte for byte (the watch's, shared with the bare-arm
+  // watch) are left as they are so dedup() merges them instead of shipping a second copy.
+  const key = (t) => Buffer.from(t.getImage()).toString("base64");
+  const existing = new Set(root.listTextures().map(key));
   if (maxSize || quality)
     for (const texture of doc.getRoot().listTextures()) {
-      if (existing.has(texture.getName())) continue;
+      if (existing.has(key(texture))) continue;
       const [w, h] = texture.getSize() ?? [0, 0];
       let image = sharp(Buffer.from(texture.getImage()));
       if (maxSize && Math.max(w, h) > maxSize)

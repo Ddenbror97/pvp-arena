@@ -380,8 +380,8 @@ export function mountArena(
     m4: createAuthoredViewmodel(weaponGroup, true, M4_VIEWMODEL),
   };
   let authoredView = authoredViews.ak;
-  // The Karambit (secondary slot) on each team's own arms: Police bare forearm and watch sleeve,
-  // Terrorist white jacket sleeve. Same Blender clips on both.
+  // The Karambit (secondary slot) on each team's own arms: Police steel-blue duty sleeve,
+  // Terrorist snow-camo smock sleeve. Same Blender clips on both.
   const knifeViews = {
     ak: createKarambitViewmodel(weaponGroup, AK_VIEWMODEL),
     m4: createKarambitViewmodel(weaponGroup, M4_VIEWMODEL),
