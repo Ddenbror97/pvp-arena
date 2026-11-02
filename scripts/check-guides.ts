@@ -1,4 +1,4 @@
-// Run: bun scripts/check-guides.ts
+// Run: npm run check:guides
 import { GUIDES, getGuide, publishedTopics, wordCount } from "../src/content/guides";
 import { criticalQualityFailures } from "../src/lib/guides/quality";
 import { NEW_GUIDES } from "./new-guides-plan";

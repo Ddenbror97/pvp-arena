@@ -1,5 +1,17 @@
 # Database release log
 
+## Historical file recovery — 2026-11-02
+
+Restored `20261017060000_drop_pvp_test_schema.sql` from archived commit
+`4520c14aa10b656eb95de5ddee0c29f335709529` in the old laptop checkout. Production
+already records version `20261017060000`, and `pvp_test` is absent. This is a
+repository-history repair only: no SQL was applied or rerun. The restored Git blob
+matches the archived file exactly. Production's migration record has no saved
+`statements`, so its original SQL cannot be compared against that record.
+
+The file retains its original version and `prod-only` markers. Do not create a
+second DROP migration or apply this historical file again to production.
+
 Supabase migrations are ordered by the **14-digit prefix** on each file (`YYYYMMDDHHMMSS_name.sql`). That timestamp is the **authoring/version id** (typically UTC when the file was created), not a guarantee that production applied it on that calendar day in every timezone. **Never rename** a migration that already appears in `supabase_migrations.schema_migrations`.
 
 Apply production changes with:
