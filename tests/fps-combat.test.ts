@@ -1,3 +1,4 @@
+import { KNIFE } from "../src/lib/fps/combat";
 import { describe, it, expect } from "vitest";
 import {
   createMatch,
@@ -64,7 +65,7 @@ function spray(compensate = false) {
   return { s, ys };
 }
 describe("PvPStrike authoritative combat v2", () => {
-  it.each(["rifle", "pistol"] as const)("requires exactly three landed %s headshots", (weapon) => {
+  it.each(["rifle"] as const)("requires exactly three landed %s headshots", (weapon) => {
     const s = live();
     lane(s);
     tick(s, 1, { fire: true, weapon });
@@ -262,12 +263,13 @@ describe("PvPStrike authoritative combat v2", () => {
     expect(result.state.events[1]).not.toHaveProperty("hit");
     expect(result.state).not.toHaveProperty("server");
   });
-  it("holding the pistol trigger cannot fire automatically", () => {
-    const s = live();
-    for (let n = 1; n <= 40; n++) tick(s, n, { weapon: "pistol", fire: true });
-    expect(s.players.A.ammo).toBe(11);
-    tick(s, 41, { weapon: "pistol", fire: false });
-    tick(s, 42, { weapon: "pistol", fire: true });
-    expect(s.players.A.ammo).toBe(10);
+  it("holding the knife button swings only at the server cooldown, never spending ammo", () => {
+    const s = live(),
+      ammo = s.players.A.ammo;
+    for (let n = 1; n <= 40; n++) tick(s, n, { weapon: "knife", fire: true });
+    expect(s.players.A.ammo).toBe(ammo);
+    // 40 ticks ≈ 1.33 s: drawn after KNIFE.drawMs (450), then one swing per 420 ms → 2 swings.
+    expect(KNIFE.drawMs + KNIFE.slash.cooldownMs).toBeLessThan(40 * 34);
+    expect(s.server!.roundStats!.A.shots).toBe(2);
   });
 });

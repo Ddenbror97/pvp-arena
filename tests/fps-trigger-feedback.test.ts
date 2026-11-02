@@ -49,7 +49,7 @@ it("does not predict empty, reloading, dead, cooling-down or mismatched weapons"
     );
   }
   const f = new TriggerFeedback();
-  expect(f.request(p, "pistol", 1, 0, 0, 100)).toBe(false);
+  expect(f.request(p, "knife", 1, 0, 0, 100)).toBe(false);
   expect(f.request({ ...p, ammo: 1 }, "rifle", 1, 0, 0, 100)).toBe(true);
   expect(f.request({ ...p, ammo: 1 }, "rifle", 2, 150, 150, 100)).toBe(false);
   f.reset();

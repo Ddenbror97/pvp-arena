@@ -1,6 +1,13 @@
 import { MIN_PLAYBACK_MS, REMOTE_DELAY_MS } from "./network";
 export type Seat = "A" | "B";
-export type Weapon = "rifle" | "pistol";
+/**
+ * The secondary slot is the Karambit (melee). It replaced the pistol: inputs from cached clients
+ * that still send "pistol" are read as the knife (see validateInput), and states saved before the
+ * change are normalised on load (normalizeLegacyWeapons).
+ */
+export type Weapon = "rifle" | "knife";
+/** Knife attack: primary slash (fire) or secondary stab (fire + alt). */
+export type KnifeAttack = "slash" | "stab";
 export type RoundStats = {
   shots: number;
   hits: number;
@@ -23,6 +30,8 @@ export interface Input {
   yaw: number;
   pitch: number;
   fire: boolean;
+  /** Secondary attack (knife stab). Optional for cached clients; ignored with the rifle. */
+  alt?: boolean;
   reload: boolean;
   weapon: Weapon;
   jump: boolean;
@@ -49,6 +58,10 @@ export interface Player {
   ammo: number;
   reserve: number;
   weapon: Weapon;
+  /** Server-owned: attacks are refused until the drawn weapon is ready (knife deploy). */
+  weaponReadyAt?: number;
+  /** Server-owned knife cooldown (slash and stab share one swing clock). */
+  nextAttackAt?: number;
   reloadUntil: number;
   lastShotAt: number;
   lastSeq: number;
@@ -100,6 +113,10 @@ export interface MatchState {
     at?: number;
     impact?: import("./collision").WorldHit;
     weapon?: Weapon;
+    /** Knife events: which attack was swung. */
+    attack?: KnifeAttack;
+    /** Knife hit from behind (stronger damage table). */
+    backstab?: boolean;
     shotSeq?: number;
     hit?: {
       victim: Seat;
@@ -110,7 +127,7 @@ export interface MatchState {
       splatter?: import("./collision").WorldHit;
     };
     audio?: {
-      kind: "shot" | "step" | "reload";
+      kind: "shot" | "step" | "reload" | "knife";
       surface?: import("./footstep-surfaces").FootstepSurface;
       position?: import("./collision").Vector;
       gain?: number;
@@ -158,12 +175,14 @@ export function validateInput(raw: unknown): Input | null {
     (Object.hasOwn(data, "playbackMs") ? 1 : 0) +
     (Object.hasOwn(data, "combatOnly") ? 1 : 0) +
     (Object.hasOwn(data, "round") ? 1 : 0) +
-    (Object.hasOwn(data, "combatVersion") ? 1 : 0);
+    (Object.hasOwn(data, "combatVersion") ? 1 : 0) +
+    (Object.hasOwn(data, "alt") ? 1 : 0);
   if (
     Object.keys(data).length !== expected ||
     !KEYS.every((key) => Object.hasOwn(data, key)) ||
     (Object.hasOwn(data, "combatVersion") && data["combatVersion"] !== 2) ||
     (Object.hasOwn(data, "crouch") && typeof data["crouch"] !== "boolean") ||
+    (Object.hasOwn(data, "alt") && typeof data["alt"] !== "boolean") ||
     (Object.hasOwn(data, "walk") && typeof data["walk"] !== "boolean") ||
     (Object.hasOwn(data, "combatOnly") && data["combatOnly"] !== true) ||
     (Object.hasOwn(data, "round") &&
@@ -187,7 +206,7 @@ export function validateInput(raw: unknown): Input | null {
     !finiteBounded(data["strafe"], 1) ||
     !finiteBounded(data["yaw"], Math.PI * 2) ||
     !finiteBounded(data["pitch"], Math.PI / 2) ||
-    (data["weapon"] !== "rifle" && data["weapon"] !== "pistol") ||
+    !["rifle", "knife", "pistol"].includes(data["weapon"] as string) ||
     !["fire", "reload", "jump", "sprint"].every((key) => typeof data[key] === "boolean")
   )
     return null;
@@ -214,8 +233,10 @@ export function validateInput(raw: unknown): Input | null {
     strafe: data["strafe"],
     yaw: data["yaw"],
     pitch: data["pitch"],
-    weapon: data["weapon"],
+    // "pistol" is what clients from before the Karambit send for the secondary slot.
+    weapon: data["weapon"] === "rifle" ? "rifle" : "knife",
     fire: data["fire"] as boolean,
+    ...(data["alt"] === true ? { alt: true } : {}),
     reload: data["reload"] as boolean,
     jump: data["jump"] as boolean,
     sprint: data["sprint"] as boolean,
@@ -223,4 +244,16 @@ export function validateInput(raw: unknown): Input | null {
     ...(typeof data["playbackMs"] === "number" ? { playbackMs: data["playbackMs"] } : {}),
     ...(typeof data["crouch"] === "boolean" ? { crouch: data["crouch"] } : {}),
   };
+}
+
+/**
+ * States saved before the Karambit can carry the retired "pistol" weapon. Map it to the knife
+ * in place (the rifle's ammunition is untouched). Returns the same state for chaining.
+ */
+export function normalizeLegacyWeapons<T extends Pick<MatchState, "players">>(state: T): T {
+  for (const seat of ["A", "B"] as const) {
+    const player = state.players[seat] as Player & { weapon: string };
+    if (player && player.weapon !== "rifle" && player.weapon !== "knife") player.weapon = "knife";
+  }
+  return state;
 }

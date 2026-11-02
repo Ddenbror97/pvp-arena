@@ -850,6 +850,100 @@ describe("isolated real Durable Object WebSockets", () => {
     }
   }, 90_000);
 
+  it("syncs the karambit and resolves close-range swings on the server only", async () => {
+    const id = await init();
+    const a = await open(id),
+      b = await open(id, B);
+    let latest: MatchState | null = null;
+    let seq = 0,
+      stage = 0,
+      side = 1,
+      bSeq = 0;
+    const seenByB: Array<MatchState["events"][number]> = [];
+    const inputsFromA: Array<Record<string, unknown>> = [];
+    a.addEventListener("message", (event) => {
+      const f = JSON.parse(String(event.data));
+      if (f.type === "snapshot") latest = f.state;
+    });
+    b.addEventListener("message", (event) => {
+      const f = JSON.parse(String(event.data));
+      if (f.type === "snapshot") seenByB.push(...f.state.events);
+    });
+    const initial = await readyLive(a, b);
+    const ammo = initial.state.players.A.ammo;
+    // B draws its karambit once and stands still; A must see it.
+    b.send(
+      JSON.stringify({
+        ...JSON.parse(movement(++bSeq)),
+        forward: 0,
+        fire: false,
+        weapon: "knife",
+        round: initial.state.round,
+      }),
+    );
+    const bKnife = until(a, (f) => f.type === "snapshot" && f.state.players.B.weapon === "knife");
+    const won = until(a, (f) => f.type === "snapshot" && f.state.score.A === 1, 40_000);
+    const driver = setInterval(() => {
+      if (!latest || latest.phase !== "live") return;
+      const p = latest.players.A,
+        target = latest.players.B;
+      if (stage === 0) side = p.x < 0 ? 1 : -1;
+      const route = DRIVER_ROUTE.map((w) => ({ x: w.x * side, z: w.z }));
+      while (stage < route.length && Math.hypot(route[stage]!.x - p.x, route[stage]!.z - p.z) < 0.4)
+        stage++;
+      const goal = route[stage] ?? target,
+        distance = Math.hypot(target.x - p.x, target.z - p.z),
+        close = !route[stage] && distance < 1.0;
+      const input = {
+        v: 1,
+        type: "input",
+        combatVersion: 2,
+        seq: ++seq,
+        forward: close ? 0 : 1,
+        strafe: 0,
+        yaw: Math.atan2(-(goal.x - p.x), -(goal.z - p.z)),
+        pitch: 0,
+        // Alternate slash and stab; holding repeats at the server's cooldown.
+        fire: close,
+        alt: close && seq % 60 < 30,
+        reload: false,
+        weapon: "knife",
+        jump: false,
+        sprint: !close,
+      };
+      inputsFromA.push(input);
+      a.send(JSON.stringify(input));
+    }, 34);
+    try {
+      expect((await bKnife).state.players.B.weapon).toBe("knife");
+      const final = await won;
+      // The knife never spends rifle ammo.
+      expect(final.state.players.A.ammo).toBe(ammo);
+      const swings = seenByB.filter((e) => e.type === "shot" && e.seat === "A");
+      const hits = seenByB.filter((e) => e.type === "hit" && e.seat === "A");
+      expect(swings.length).toBeGreaterThan(0);
+      expect(
+        swings.every((e) => e.weapon === "knife" && (e.attack === "slash" || e.attack === "stab")),
+      ).toBe(true);
+      expect(
+        swings.every((e) => e.audio?.kind === "knife" && !("position" in (e.audio ?? {}))),
+      ).toBe(true);
+      expect(hits.length).toBeGreaterThan(0);
+      expect(hits.every((e) => e.weapon === "knife" && e.hit?.victim === "B")).toBe(true);
+      // Damage is decided by the server; the client only ever sent its aim and buttons.
+      expect(inputsFromA.every((i) => !("hit" in i) && !("damage" in i) && !("target" in i))).toBe(
+        true,
+      );
+      // Swings are paced by the server cooldown, not by how often the client asked.
+      const swingTimes = swings.map((e) => e.shotSeq ?? 0);
+      expect(new Set(swingTimes).size).toBe(swingTimes.length);
+    } finally {
+      clearInterval(driver);
+      a.close();
+      b.close();
+    }
+  }, 60_000);
+
   it("starts a private solo bot room with only the human ready and rejects bot/spectator tickets", async () => {
     const id = crypto.randomUUID(),
       bot = "00000000-0000-4000-8000-000000000013";

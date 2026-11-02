@@ -37,6 +37,7 @@ it("saves and restores all five crosshairs and custom colors", () => {
       crosshair,
       color: "#12abcd",
       graphics: crosshair % 2 ? ("low" as const) : ("high" as const),
+      reducedMotion: crosshair === 3,
     };
     saveStrikeSettings(value);
     expect(readStrikeSettings()).toEqual(value);

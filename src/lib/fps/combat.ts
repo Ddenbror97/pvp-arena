@@ -1,10 +1,81 @@
-import type { Player, Weapon } from "./protocol";
+import type { KnifeAttack, Player, Weapon } from "./protocol";
 export const COMBAT_VERSION = 2 as const;
 export type HitZone = "head" | "chest" | "stomach" | "legs";
 export const HIT_DAMAGE = {
   rifle: { head: 34, chest: 34, stomach: 30, legs: 20 },
-  pistol: { head: 34, chest: 25, stomach: 22, legs: 15 },
 } as const;
+
+/**
+ * Karambit (secondary slot; it replaced the pistol). Server-authoritative: the server alone
+ * decides when a swing is allowed (draw time, cooldown), what it reaches and what it does; the
+ * first-person animation never sets the clock. Values follow CS2's knife table (slash 40 /
+ * backstab 90, stab 65 / backstab 180; no hit-zone multiplier; vests absorb 15%).
+ *
+ * Reach is measured from the eye to the target's hit volume; each attack sweeps a small fan of
+ * traces (yaw, pitch offsets in radians) so a swing does not need pixel aim, and world geometry
+ * in front of the volume blocks it.
+ */
+export const KNIFE = {
+  /** Draw time after switching to the knife before the first swing. */
+  drawMs: 450,
+  slash: {
+    range: 1.6,
+    cooldownMs: 420,
+    damage: 40,
+    backstab: 90,
+    fan: [
+      [0, 0],
+      [-0.14, 0],
+      [0.14, 0],
+      [-0.28, 0.03],
+      [0.28, -0.03],
+      [0, 0.08],
+      [0, -0.08],
+    ],
+  },
+  stab: {
+    range: 1.3,
+    cooldownMs: 1000,
+    damage: 65,
+    backstab: 180,
+    fan: [
+      [0, 0],
+      [-0.08, 0],
+      [0.08, 0],
+      [0, 0.05],
+      [0, -0.05],
+    ],
+  },
+  /** Share of the damage a vest stops (CS2 knife armour ratio 0.85). */
+  vestBlock: 0.15,
+  /** cos of the half-angle behind the victim that counts as a backstab (~±60°). */
+  backstabCos: 0.5,
+} as const satisfies Record<string, unknown>;
+
+/** Damage of one knife hit after the vest; wears the vest like a bullet does. */
+export function knifeDamage(target: Player, attack: KnifeAttack, backstab: boolean): number {
+  const base = backstab ? KNIFE[attack].backstab : KNIFE[attack].damage;
+  if (!(target.armor! > 0)) return base;
+  const blocked = Math.min(base * KNIFE.vestBlock, target.armor! * 2);
+  target.armor = Math.max(0, target.armor! - blocked / 2);
+  return Math.floor(base - blocked);
+}
+
+/**
+ * Backstab: the attacker stands behind the victim, judged from the victim's facing (yaw 0 faces
+ * -z) and the horizontal line from the victim to the attacker.
+ */
+export function isBackstab(
+  attacker: { x: number; z: number },
+  victim: { x: number; z: number; yaw: number },
+): boolean {
+  const dx = attacker.x - victim.x,
+    dz = attacker.z - victim.z,
+    length = Math.hypot(dx, dz);
+  if (length < 1e-6) return false;
+  const facing = -Math.sin(victim.yaw) * dx - Math.cos(victim.yaw) * dz;
+  return facing / length < -KNIFE.backstabCos;
+}
 /**
  * Side rifles: the Police side (A) carries the suppressed M4A1-S, the Terrorist side (B) the
  * AK-47 (sides swap at halftime; see sides.ts). Both use the
@@ -23,7 +94,7 @@ export const SIDE_RIFLE = { A: "M4A1-S", B: "AK-47" } as const;
 
 /** CS-style vest penetration, applied to this game's existing damage tuning.
  * Headshots take three hits at full health; legs bypass the vest. */
-export function applyVestDamage(target: Player, weapon: Weapon, zone: HitZone): number {
+export function applyVestDamage(target: Player, weapon: "rifle", zone: HitZone): number {
   const base = HIT_DAMAGE[weapon][zone];
   if (zone === "head" || zone === "legs" || !(target.armor! > 0)) return base;
   const blocked = Math.min(base * (1 - 0.775), target.armor! * 2);

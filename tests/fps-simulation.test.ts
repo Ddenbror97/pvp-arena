@@ -243,24 +243,19 @@ describe("combat", () => {
     expect(state.players.B.hp).toBe(0);
     expect(state.score).toEqual({ A: 0, B: 0 });
   });
-  it("enforces pistol damage and its independent fire and reload timings", () => {
-    const state = live();
-    lane(state);
-    tick(state, { A: input({ weapon: "pistol", fire: true, pitch: Math.atan2(-0.8, 6) }) });
-    expect(state.players.B.hp).toBe(83);
-    expect(state.players.A.ammo).toBe(11);
-    for (let seq = 1; seq <= 7; seq++)
-      tick(state, { A: input({ seq, weapon: "pistol", fire: true, yaw: Math.PI / 2 }) });
-    expect(state.players.A.ammo).toBe(11);
-    tick(state, { A: input({ seq: 8, weapon: "pistol", fire: false, yaw: Math.PI / 2 }) });
-    tick(state, { A: input({ seq: 9, weapon: "pistol", fire: true, yaw: Math.PI / 2 }) });
-    expect(state.players.A.ammo).toBe(10);
-    tick(state, { A: input({ seq: 10, weapon: "pistol", reload: true }) });
-    expect(state.players.A.reloadUntil - state.server!.lastStepAt).toBeCloseTo(
-      WEAPONS.pistol.reloadMs,
-    );
-    stepMatch(state, {}, state.players.A.reloadUntil, TICK_MS);
-    expect(state.players.A.ammo).toBe(12);
+  it("the knife spends no ammunition, ignores reloads and keeps the rifle's magazine", () => {
+    const state = live(),
+      { ammo, reserve } = state.players.A;
+    tick(state, { A: input({ weapon: "knife", fire: true, reload: true }) });
+    expect(state.players.A.weapon).toBe("knife");
+    expect(state.players.A.reloadUntil).toBe(0);
+    for (let seq = 1; seq <= 30; seq++)
+      tick(state, { A: input({ seq, weapon: "knife", fire: true }) });
+    expect(state.players.A.ammo).toBe(ammo);
+    expect(state.players.A.reserve).toBe(reserve);
+    tick(state, { A: input({ seq: 31, weapon: "rifle" }) });
+    expect(state.players.A.weapon).toBe("rifle");
+    expect(state.players.A.ammo).toBe(ammo);
   });
   it("enforces fire cadence, empty magazine, reload delay and finite reserves", () => {
     const state = live();
@@ -284,14 +279,15 @@ describe("combat", () => {
     expect(state.players.A.reloadUntil).toBe(0);
   });
   it("weapon switching cannot create ammo or bypass reload, sprint prevents firing", () => {
-    const state = live(),
-      total = state.players.A.ammo + state.players.A.reserve;
-    tick(state, { A: input({ weapon: "pistol", fire: true, sprint: true }) });
-    expect(state.players.A.ammo).toBe(WEAPONS.pistol.magazine);
+    const state = live();
+    state.players.A.ammo = 20;
+    const total = state.players.A.ammo + state.players.A.reserve;
+    tick(state, { A: input({ fire: true, sprint: true }) });
     expect(state.players.A.ammo + state.players.A.reserve).toBe(total);
     tick(state, { A: input({ seq: 1, weapon: "rifle", reload: true }) });
     expect(state.players.A.reloadUntil).toBeGreaterThan(0);
-    tick(state, { A: input({ seq: 2, weapon: "pistol", fire: true }) });
+    // No switching to the knife mid-reload: the reload finishes on the rifle.
+    tick(state, { A: input({ seq: 2, weapon: "knife", fire: true }) });
     expect(state.players.A.weapon).toBe("rifle");
     expect(state.players.A.ammo + state.players.A.reserve).toBe(total);
   });
