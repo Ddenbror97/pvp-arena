@@ -150,12 +150,13 @@ declare global {
       w: number,
       h: number,
       fov?: number,
+      guardTwist?: number,
     ) => Promise<unknown>;
   }
 }
 /** renderer.ts VIEWMODEL_REST / M4_VIEWMODEL_REST (identical framing). */
 const RIFLE_REST = { x: 0.14, y: -0.12, z: -0.2, pitch: 0.012, yaw: 0.014, roll: -0.05 };
-window.rifleCapture = async (variantId, shots, w, h, fov = 60) => {
+window.rifleCapture = async (variantId, shots, w, h, fov = 60, guardTwist) => {
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(1);
   renderer.setSize(w, h);
@@ -180,7 +181,11 @@ window.rifleCapture = async (variantId, shots, w, h, fov = 60) => {
   scene.add(new THREE.HemisphereLight(0xe4eaff, 0x392346, 1.8), sun, rim);
   const group = new THREE.Group();
   camera.add(group);
-  const vm = createAuthoredViewmodel(group, true, variantId === "m4" ? M4_VIEWMODEL : AK_VIEWMODEL);
+  const base = variantId === "m4" ? M4_VIEWMODEL : AK_VIEWMODEL;
+  // --guard-twist=<rad>: preview the support hand turned about its own axis (wrist fixed).
+  const variant =
+    guardTwist === undefined ? base : { ...base, guard: { ...base.guard, handTwist: guardTwist } };
+  const vm = createAuthoredViewmodel(group, true, variant);
   await vm.ready;
   const out: Record<string, { image: string; calls: number; triangles: number }> = {};
   for (const shot of shots) {
