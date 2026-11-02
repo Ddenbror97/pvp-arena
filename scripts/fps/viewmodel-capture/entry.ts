@@ -127,7 +127,7 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
       group.rotation.set(pitch, yaw, roll);
     } else group.rotation.set(rest.pitch, rest.yaw, rest.roll);
     camera.updateMatrixWorld(true);
-    if (shot.run) {
+    if (shot.run || shot.timeline) {
       // Report where the knife points on screen (camera space) in this pose.
       const ring = vm.root.getObjectByName("karambit-ring")!;
       ring.updateWorldMatrix(true, false);
@@ -139,6 +139,18 @@ window.viewmodelCapture = async (variantId, shots, w, h, fov = 60) => {
         ...new THREE.Vector3(0, 0, 1).applyQuaternion(qk).toArray(),
       ].map((n) => +n.toFixed(3));
       console.warn(`KNIFE ${shot.name} ${JSON.stringify(axes)}`);
+      // Screen positions (NDC) of the ring and the blade tip.
+      const tip = vm.root.getObjectByName("BladeTip");
+      if (tip) {
+        const ndc = (o: THREE.Object3D) =>
+          o
+            .getWorldPosition(new THREE.Vector3())
+            .project(camera)
+            .toArray()
+            .slice(0, 2)
+            .map((n) => +n.toFixed(2));
+        console.warn(`TIP ${shot.name} ring ${ndc(ring)} tip ${ndc(tip)}`);
+      }
     }
     renderer.info.reset();
     renderer.render(scene, camera);

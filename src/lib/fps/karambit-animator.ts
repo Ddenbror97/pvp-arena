@@ -20,24 +20,41 @@ export const KARAMBIT_TRICKS = [
 /** Idle tricks start after this long (seconds) without relevant input, randomised. */
 export const TRICK_DELAY = { min: 8, max: 15 } as const;
 /**
- * Idle carry stance: the arm held out with the wrist straight and the forearm turned about its
- * own axis so the palm faces the floor; the closed fist and the karambit (lying flat across it)
- * turn with it. Applied on top of the idle clip whenever the base state is idle (standing,
- * walking or running); attacks, inspect, tricks and the equip ease out of it to play from their
- * authored pose.
+ * Idle carry stance: the arm held out with the wrist straight, the fist turned so its back faces
+ * the camera and the karambit's blade rises out of the top of the fist and curves up (blade
+ * pointing out, not hanging below the hand). Applied on top of the idle clip whenever the base
+ * state is idle (standing, walking or running); attacks, inspect, tricks and the equip ease out
+ * of it to play from their authored pose.
  *
  * The viewmodel solves the hand and forearm rotations from its rig (karambit-viewmodel
- * setCarryStance): forearm along `arm`, hand straight in line with it, palm to the floor, so the
- * wrist never bends and the glove cuff stays inside the sleeve. `rotation` is the fallback
- * before a viewmodel has set it (tests).
+ * setCarryStance): forearm along `arm`, hand straight in line with it, palm toward `palm`, so
+ * the wrist never bends and the glove cuff stays inside the sleeve. `rotation` is the fallback
+ * before a viewmodel has set it (tests). The `__…` globals are preview-tool overrides.
  */
+type PreviewOverrides = {
+  __carryPos?: number[];
+  __arm?: number[];
+  __palm?: number[];
+  __knifeCarry?: number;
+};
+const preview = globalThis as PreviewOverrides;
 export const KARAMBIT_RUN_POSE = {
-  /** Wrist offset (viewmodel metres). */
-  position: [-0.015, 0.045, 0] as const,
+  /** Wrist offset (viewmodel metres): in and down a little so the raised blade stays in view. */
+  position: preview.__carryPos ?? ([-0.05, 0.01, 0] as const),
   /** Fallback wrist rotation (Euler XYZ, radians). */
   rotation: [1.1, 0.2, 1.3] as const,
   /** Forearm direction toward the hand, camera space (x right, y up, z toward the viewer). */
-  arm: (globalThis as { __arm?: number[] }).__arm ?? ([-0.6, 0.3, -1] as const),
+  arm: preview.__arm ?? ([-0.6, 0.3, -1] as const),
+  /**
+   * Which way the palm faces, camera space (made square to the arm): out to the right and away,
+   * so the back of the fist faces the camera and the blade leaves the top of the fist.
+   */
+  palm: preview.__palm ?? ([0.85, 0.331, -0.41] as const),
+  /**
+   * Knife twisted about its handle in the fist (radians, knife y axis), so the blade's curve
+   * faces the camera instead of being seen edge-on.
+   */
+  knife: preview.__knifeCarry ?? -Math.PI / 2,
   /** Ease rate (1/s) toward the target weight. */
   rate: 9,
 };
@@ -110,7 +127,10 @@ export class KarambitAnimator {
   private readonly scratch = { q: new THREE.Quaternion(), e: new THREE.Euler() };
   private readonly carry = {
     rotation: new THREE.Quaternion().setFromEuler(new THREE.Euler(...KARAMBIT_RUN_POSE.rotation)),
-    knife: new THREE.Quaternion(),
+    knife: new THREE.Quaternion().setFromAxisAngle(
+      new THREE.Vector3(0, 1, 0),
+      KARAMBIT_RUN_POSE.knife,
+    ),
     position: new THREE.Vector3(...KARAMBIT_RUN_POSE.position),
   };
 

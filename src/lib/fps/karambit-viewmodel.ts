@@ -222,7 +222,7 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
         knifeGltf.animations,
         knifeGltf.scene.userData,
       );
-      setCarryStance(KARAMBIT_RUN_POSE.arm);
+      setCarryStance(KARAMBIT_RUN_POSE.arm, KARAMBIT_RUN_POSE.palm);
       root.traverse((object) => {
         object.layers.set(1);
         if (object instanceof THREE.Mesh) {
@@ -240,9 +240,12 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
   /**
    * The idle carry stance from anatomy: the forearm points along `arm` (camera space: x right,
    * y up, z toward the viewer), the hand continues straight in the same line (no wrist bend) and
-   * the palm faces the floor. Solves the hand rotation (to the animator) and the forearm's own.
+   * the palm faces `palm`. Solves the hand rotation (to the animator) and the forearm's own.
    */
-  function setCarryStance(arm: readonly number[]) {
+  function setCarryStance(
+    arm: readonly number[],
+    palm: readonly number[] = KARAMBIT_RUN_POSE.palm,
+  ) {
     if (!animator) return;
     const rest = KARAMBIT_VIEWMODEL_REST;
     const toRoot = new THREE.Quaternion()
@@ -251,7 +254,7 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
     const direction = new THREE.Vector3(...(arm as [number, number, number]))
       .normalize()
       .applyQuaternion(toRoot);
-    const floor = new THREE.Vector3(0, -1, 0).applyQuaternion(toRoot);
+    const floor = new THREE.Vector3(...(palm as [number, number, number])).applyQuaternion(toRoot);
     const basis = (along: THREE.Vector3, side: THREE.Vector3) => {
       const x = along.clone().normalize();
       const y = side.clone().addScaledVector(x, -side.dot(x)).normalize();

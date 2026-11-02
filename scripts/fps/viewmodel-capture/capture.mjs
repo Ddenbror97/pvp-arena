@@ -62,9 +62,19 @@ page.on(
 );
 page.on("pageerror", (e) => console.error("pageerror:", e.message));
 // --fist=<0..1> previews the Karambit fist tightness (karambit-viewmodel FIST_TIGHTEN).
-// --arm=x,y,z previews the Karambit idle stance's arm direction (camera space).
+// --arm=x,y,z / --palm=x,y,z (camera space), --carry-pos=x,y,z (m) and --knife-carry=<rad>
+// preview the Karambit idle stance (karambit-animator KARAMBIT_RUN_POSE).
 if (flag("arm"))
   await page.addInitScript((v) => (globalThis.__arm = v), flag("arm").split(",").map(Number));
+if (flag("knife-carry"))
+  await page.addInitScript((v) => (globalThis.__knifeCarry = v), Number(flag("knife-carry")));
+if (flag("carry-pos"))
+  await page.addInitScript(
+    (v) => (globalThis.__carryPos = v),
+    flag("carry-pos").split(",").map(Number),
+  );
+if (flag("palm"))
+  await page.addInitScript((v) => (globalThis.__palm = v), flag("palm").split(",").map(Number));
 if (flag("carry-share"))
   await page.addInitScript((v) => (globalThis.__carryShare = v), Number(flag("carry-share")));
 if (flag("fist"))
