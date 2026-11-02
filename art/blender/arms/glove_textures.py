@@ -83,7 +83,7 @@ ALBEDO = {KNIT: (0.021, 0.021, 0.023), GUSSET: (0.017, 0.017, 0.019), SUEDE: (0.
           LEATHER: (0.040, 0.040, 0.042), PAD: (0.034, 0.034, 0.036), GRIP: (0.011, 0.011, 0.012),
           BACKPAD: (0.030, 0.030, 0.032)}
 ROUGH = {KNIT: 0.78, GUSSET: 0.72, SUEDE: 0.92, PATCH: 0.9, GUARD: 0.5, STRIP: 0.44, PERF: 0.9,
-         CUFF: 0.84, BINDING: 0.62, STRAP: 0.7, TAB: 0.55, LEATHER: 0.6, PAD: 0.66, GRIP: 0.3, BACKPAD: 0.74}
+         CUFF: 0.84, BINDING: 0.62, STRAP: 0.7, TAB: 0.55, LEATHER: 0.6, PAD: 0.66, GRIP: 0.42, BACKPAD: 0.74}
 # v2: a touch lighter so the palm stitching reads at the new angle.
 THREAD = np.array([0.075, 0.075, 0.078]) if PALM_V2 else np.array([0.04, 0.04, 0.042])
 
@@ -393,7 +393,8 @@ def shade(s, P, N, ao, seed):
     dust = np.clip((dust_n - 0.45) * 2.2, 0, 1) * (0.35 + 0.65 * ao) * (0.4 + 0.6 * convex)
     lint = (value_noise(P, 0.00045, seed + 13) > 0.94) * (value_noise(P, 0.003, seed + 17) > 0.55)
     dust = np.clip(dust * 0.4 + lint * 0.35, 0, 1)
-    dust_col = np.array([0.1, 0.097, 0.092], np.float32)
+    # Neutral grey dust: a warm tint turned the near-black cuff and pads brown under warm light.
+    dust_col = np.array([0.094, 0.095, 0.097], np.float32) if PALM_V2 else np.array([0.1, 0.097, 0.092], np.float32)
     albedo = albedo * (1 - 0.25 * dust[:, None]) + dust_col * 0.25 * dust[:, None]
     rough = np.clip(rough + 0.12 * dust, 0.3, 1.0)
     # Contact shadow in crevices (AO also goes to the ORM map; albedo gets a hint for cavities).
