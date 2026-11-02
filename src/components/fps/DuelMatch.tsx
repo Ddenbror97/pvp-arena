@@ -127,6 +127,12 @@ export function DuelMatch({
   useEffect(() => {
     arena.current?.setSensitivity(settings.sensitivity);
     arena.current?.setGraphicsQuality(settings.graphics);
+    // The OS reduced-motion preference stays on even when this toggle is off.
+    if (settings.reducedMotion) arena.current?.setReducedMotion(true);
+    else
+      arena.current?.setReducedMotion(
+        typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches,
+      );
     sound.current?.setVolume(settings.volume);
     saveStrikeSettings(settings);
   }, [settings]);
@@ -264,10 +270,11 @@ export function DuelMatch({
             (progress) => {
               if (!disposed) setVisualProgress(progress);
             },
-            { mapId },
+            { mapId, onKnifeCue: (cue) => sound.current?.knifeCue(cue) },
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
           arena.current.setGraphicsQuality(settingsRef.current.graphics);
+          if (settingsRef.current.reducedMotion) arena.current.setReducedMotion(true);
           void arena.current.ready
             .then(() => {
               if (!disposed) {
@@ -783,18 +790,26 @@ export function DuelMatch({
           </div>
         </div>
         <div className="duel-controls-hint">
-          W A S D <span>Move</span> · R <span>Reload</span> · 1 / 2 <span>Weapon</span> · SHIFT{" "}
-          <span>Silent walk</span> · SPACE <span>Jump</span> · CTRL <span>Crouch</span> · ESC{" "}
-          <span>Release mouse</span>
+          W A S D <span>Move</span> · R <span>Reload</span> · 1 / 2 <span>Rifle / Karambit</span> ·
+          F <span>Inspect</span> · SHIFT <span>Silent walk</span> · SPACE <span>Jump</span> · CTRL{" "}
+          <span>Crouch</span> · ESC <span>Release mouse</span>
         </div>
         <div className="duel-ammo">
           <small>
-            {me?.weapon === "pistol" ? "PISTOL · SEMI-AUTO" : `${SIDE_RIFLE[mySide]} · FULL AUTO`}
+            {me?.weapon === "knife"
+              ? "KARAMBIT · SLASH / RMB STAB"
+              : `${SIDE_RIFLE[mySide]} · FULL AUTO`}
           </small>
-          <strong>
-            {me?.ammo ?? 30}
-            <span>/ {me?.reserve ?? 90}</span>
-          </strong>
+          {me?.weapon === "knife" ? (
+            <strong>
+              —<span>/ —</span>
+            </strong>
+          ) : (
+            <strong>
+              {me?.ammo ?? 30}
+              <span>/ {me?.reserve ?? 90}</span>
+            </strong>
+          )}
           {me?.reloadUntil ? <em>RELOADING</em> : null}
         </div>
       </footer>

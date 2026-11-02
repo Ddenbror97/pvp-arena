@@ -127,9 +127,10 @@ test("recorded combat audio plays once per confirmed event, supports mute and bo
       repeatedRoundVoices,
     };
   });
-  // 8 recorded samples (AK, pistol, steps, AK reloads) + 3 Police M4 (shot, two reloads) + 3
-  // synthesised (hurt, elimination, casing).
-  expect(stats.single.decoded).toBe(14);
+  // 7 recorded samples (AK, steps, AK reloads) + 3 Police M4 (shot, two reloads) + 10 Karambit
+  // + 16 surface footstep variants (4 steps x 4 surfaces) + 3 synthesised (hurt, elimination,
+  // casing).
+  expect(stats.single.decoded).toBe(39);
   expect(stats.single.shots).toBe(1);
   // Own Police M4 shot: the report plus its ejected case landing a moment later.
   expect(stats.single.voices).toBe(2);

@@ -36,7 +36,7 @@ uses the shared loader as Dustfront does.
 | `public/fps/models/crossfire.glb`          | Shipped render asset.                                                                                            |
 | `src/lib/fps/crossfire-layout.ts`          | Generated solids and spawns.                                                                                     |
 | `src/lib/fps/maps/crossfire.ts`            | The `MapDefinition`: solids, spawns, bot routes, footsteps, lighting, fog, sky, shadow extent, blockout tints.   |
-| `src/assets/fps/crossfire-loading.webp`    | Loading art: the owner's reference image (1672 × 941).                                                           |
+| `src/assets/fps/crossfire-loading.webp`    | Loading art: the owner's updated sunset/helicopter image (1671 × 941, WebP quality 94).                                                           |
 | `tests/fps-crossfire-layout.test.ts`       | Competitive validation with the real movement, collision, visibility and bot code.                               |
 | `tests/e2e/fps-crossfire.spec.ts`          | Browser checks: shipped GLB (z-fighting, surface/collision probes), map switching, loading art, captures.        |
 

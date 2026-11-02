@@ -6,7 +6,9 @@ import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
 import { AK_VIEWMODEL, createAuthoredViewmodel, M4_VIEWMODEL } from "./authored-viewmodel";
 import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 import { createMuzzleFlash } from "./muzzle-flash";
-import { CHARACTER_MODELS } from "./model-assets";
+import { ARENA_MODELS, CHARACTER_MODELS } from "./model-assets";
+import { KARAMBIT_SCALE } from "./karambit-viewmodel";
+import type { KnifeAttack } from "./protocol";
 
 type Motion = {
   stance?: number;
@@ -45,22 +47,35 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
   const flash = createMuzzleFlash();
   flash.root.traverse((object) => object.layers.set(0));
   weaponPivot.add(flash.root);
-  const pistol = new THREE.Group();
-  weaponPivot.add(pistol);
-  pistol.name = "opponent-pistol";
-  const pistolMaterial = new THREE.MeshStandardMaterial({
-    color: 0x27282d,
-    metalness: 0.7,
-    roughness: 0.35,
-  });
-  for (const [y, z, w, h, d] of [
-    [0, -0.1, 0.045, 0.055, 0.21],
-    [-0.07, -0.04, 0.04, 0.12, 0.06],
-  ]) {
-    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w!, h!, d!), pistolMaterial);
-    mesh.position.set(0, y!, z!);
-    pistol.add(mesh);
-  }
+  // Karambit (secondary): the same knife GLB as first person, held low in the right fist.
+  const knife = new THREE.Group();
+  knife.name = "opponent-karambit";
+  knife.visible = false;
+  root.add(knife);
+  const knifeAsset = retainAuthoredAsset(ARENA_MODELS.karambit);
+  let knifeInstance: ReturnType<typeof cloneAuthoredModel> | undefined;
+  void knifeAsset.ready
+    .then((gltf) => {
+      if (stopped) return;
+      knifeInstance = cloneAuthoredModel(gltf.scene);
+      const mesh = knifeInstance.root.getObjectByName("Karambit");
+      if (!mesh) return;
+      mesh.removeFromParent();
+      // Knife space: ring at the origin, handle down -y, blade curving toward +z. Turned so
+      // the blade curls forward (-z, the way the character faces) below the fist.
+      const holder = new THREE.Group();
+      holder.rotation.y = Math.PI;
+      holder.scale.setScalar(KARAMBIT_SCALE);
+      holder.add(mesh);
+      knife.add(holder);
+      mesh.traverse((o) => {
+        if (o instanceof THREE.Mesh) o.castShadow = true;
+      });
+    })
+    .catch(() => {});
+  /** Last opponent swing: drives a short arm/knife sweep (presentation of server events). */
+  let swingAt = -Infinity,
+    swingKind: KnifeAttack = "slash";
   weapon.root.visible = false;
   // Police (A) and Terrorist (B) are complete authored characters (body, gear and head),
   // fitted in Blender to the Mixamo bone names driven below (art/blender/chars).
@@ -250,7 +265,13 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
     get loaded() {
       return loaded;
     },
-    shot(now: number) {
+    shot(now: number, attack?: KnifeAttack) {
+      if (attack) {
+        swingAt = now;
+        swingKind = attack;
+        fallback.shot(now, attack);
+        return;
+      }
       flashUntil = now + 42;
       fallback.shot(now);
     },
@@ -350,8 +371,20 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       weaponPivot.position.y = 1.25 - crouchOffset;
       weaponPivot.rotation.x = pitch + recoil;
       weaponPivot.rotation.z = motion.reloading ? -0.25 : 0;
-      weapon.update(motion.weapon !== "pistol", motion.reloading ? 0.4 : 0, recoil);
-      pistol.visible = motion.weapon === "pistol";
+      const holdingKnife = motion.weapon === "knife";
+      weapon.update(!holdingKnife, motion.reloading ? 0.4 : 0, recoil);
+      knife.visible = holdingKnife && alive;
+      // Swing: slash sweeps right → left and down, stab thrusts forward (≈0.3 s).
+      const swingT = (now - swingAt) / (swingKind === "stab" ? 320 : 260),
+        swing = swingT >= 0 && swingT < 1 ? Math.sin(Math.PI * swingT) : 0,
+        sweep = swingT >= 0 && swingT < 1 ? swingT * 2 - 1 : 0;
+      const knifeAt = target.set(
+        0.1 + (swingKind === "slash" ? -sweep * 0.22 * swing : 0),
+        1.1 - crouchOffset + (swingKind === "slash" ? -sweep * 0.1 * swing : 0.06 * swing),
+        -0.24 - (swingKind === "stab" ? 0.3 : 0.12) * swing,
+      );
+      knife.position.copy(knifeAt);
+      knife.rotation.set(pitch * 0.5 + (swingKind === "stab" ? 1.1 : 0.4) * swing, 0, 0);
       for (const side of sides) {
         const sign = side === "Left" ? -1 : 1;
         weapon.grip(side === "Left" ? "L" : "R", target);
@@ -363,13 +396,11 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           0.025,
         ).applyQuaternion(worldQ);
         target.add(cv);
-        if (pistol.visible)
+        if (holdingKnife)
           root.localToWorld(
-            target.set(
-              side === "Right" ? 0.07 : -0.24,
-              side === "Right" ? 1.18 - crouchOffset : 0.95 - stance * 0.5,
-              -0.12,
-            ),
+            side === "Right"
+              ? target.copy(knife.position).add(cv.set(-0.01, 0.06, 0.07))
+              : target.set(-0.24, 0.95 - stance * 0.5, -0.12),
           );
         bend.set(sign, -0.6, -0.3).transformDirection(root.matrixWorld);
         limb(
@@ -379,7 +410,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           target,
           bend,
         );
-        if (!pistol.visible) {
+        if (!holdingKnife) {
           const hand = bones.get(side + "Hand")!;
           rotation(hand.parent!, parentQ).invert();
           rotation(weaponPivot, worldQ).multiply(wristRotations[side]);
@@ -387,7 +418,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
           hand.updateWorldMatrix(false, true);
         }
       }
-      if (!pistol.visible) for (const pose of gripPoses) pose.bone.quaternion.copy(pose.q);
+      if (!holdingKnife) for (const pose of gripPoses) pose.bone.quaternion.copy(pose.q);
       if (motion.death !== undefined) {
         const collapse = motion.death;
         // Layer relaxed, asymmetric limbs over the fitted pose. The weapon and
@@ -407,14 +438,14 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       headCenterMarker.position.copy(headCenter);
       const tip = weapon.muzzle();
       flash.update(
-        alive ? flashUntil - now : 0,
-        pistol.visible ? -0.205 : tip.z,
-        pistol.visible ? 0 : tip.y,
+        alive && !holdingKnife ? flashUntil - now : 0,
+        tip.z,
+        tip.y,
         Math.floor(flashUntil),
       );
-      flash.root.position.x = pistol.visible ? 0 : tip.x;
+      flash.root.position.x = tip.x;
       // The Police M4A1 is suppressed: a much smaller flash at the can.
-      if (police && !pistol.visible) flash.root.scale.multiplyScalar(0.42);
+      if (police) flash.root.scale.multiplyScalar(0.42);
     },
     dispose() {
       stopped = true;
@@ -422,10 +453,8 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       instance?.dispose();
       weapon.dispose();
       flash.dispose();
-      pistolMaterial.dispose();
-      pistol.traverse((object) => {
-        if (object instanceof THREE.Mesh) object.geometry.dispose();
-      });
+      knifeInstance?.dispose();
+      knifeAsset.release();
       asset.release();
     },
   };

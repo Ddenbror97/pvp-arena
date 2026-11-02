@@ -60,7 +60,7 @@ export function createGameplayBot() {
         strafe: Math.cos(yaw) * vx - Math.sin(yaw) * vz,
         yaw,
         pitch,
-        weapon: round === 5 ? "pistol" : "rifle",
+        weapon: round === 5 ? "knife" : "rifle",
         reload: p.ammo === 0,
         fire: enabled && holding && (round !== 5 || now % 360 < 150),
         jump: round === 3 && holding && now % 1700 < 60,

@@ -90,3 +90,15 @@ PVP spinArena branding and reference artwork were supplied by the project/user.
 The forearm skin surface texture was generated for this project with imagegen.
 The new anatomical forearm geometry, fitting, material work and runtime integration
 are project work. Third-party attribution does not imply creator endorsement.
+
+## Karambit (karambit.glb)
+
+Rebuilt in Blender (art/blender/karambit): meshes joined, scaled to 19 cm, origin moved to the
+finger-ring centre, textures reduced to 1K WebP, ring/handle/guard/tip markers and the
+first-person animation clips (control rig, project work) added. It replaces the pistol and is
+held by each team's existing first-person and third-person arms.
+
+- This work is based on "Karambit"
+  (https://sketchfab.com/3d-models/karambit-dfd7606f189a413681305a39b8841ce8)
+  by Diamonddogkz (https://sketchfab.com/Diamonddogkz), licensed under CC BY 4.0
+  (http://creativecommons.org/licenses/by/4.0/).

@@ -345,11 +345,12 @@ export function createCharacter(seat: Seat, _branding: THREE.Material, weaponKit
   rifle.position.set(0.06, -0.15, -0.25);
   rifle.scale.setScalar(0.75);
   weaponPivot.add(rifle);
-  const pistol = new THREE.Group();
-  pistol.position.copy(rifle.position);
-  weaponPivot.add(pistol);
-  box(pistol, 0, 0, -0.1, 0.045, 0.055, 0.21, metal);
-  box(pistol, 0, -0.07, -0.04, 0.04, 0.12, 0.06, glove);
+  // Placeholder Karambit while the authored character loads: dark handle, steel blade.
+  const knife = new THREE.Group();
+  knife.position.set(0.06, -0.2, -0.29);
+  weaponPivot.add(knife);
+  box(knife, 0, -0.04, 0, 0.022, 0.1, 0.03, glove);
+  box(knife, 0, -0.12, -0.02, 0.006, 0.07, 0.03, metal);
   const hands = [-1, 1].map((side) => {
     const hand = new THREE.Group();
     hand.name = side < 0 ? "support-grip" : "firing-grip";
@@ -382,9 +383,7 @@ export function createCharacter(seat: Seat, _branding: THREE.Material, weaponKit
   const flash = createMuzzleFlash();
   flash.root.traverse((o) => o.layers.set(0));
   rifle.add(flash.root);
-  const pistolFlash = createMuzzleFlash();
-  pistolFlash.root.traverse((o) => o.layers.set(0));
-  pistol.add(pistolFlash.root);
+
   // Bake fixed details per joint/material; articulation never rebuilds geometry.
   const groups: THREE.Group[] = [];
   root.traverse((o) => {
@@ -397,8 +396,7 @@ export function createCharacter(seat: Seat, _branding: THREE.Material, weaponKit
         child instanceof THREE.Mesh &&
         !Array.isArray(child.material) &&
         !child.userData["articulated"] &&
-        group !== flash.root &&
-        group !== pistolFlash.root
+        group !== flash.root
       ) {
         const parts = batches.get(child.material) ?? [];
         parts.push(child);
@@ -466,8 +464,8 @@ export function createCharacter(seat: Seat, _branding: THREE.Material, weaponKit
     travelZ = -1;
   return {
     root,
-    shot(now: number) {
-      flashUntil = now + 42;
+    shot(now: number, attack?: "slash" | "stab") {
+      if (!attack) flashUntil = now + 42;
     },
     /**
      * The drawn pose jumped (reappearing after redaction, or re-entering the view): start
@@ -526,9 +524,9 @@ export function createCharacter(seat: Seat, _branding: THREE.Material, weaponKit
         -reloadBlend * 0.28,
       );
       weaponPivot.position.y = 1.25 + Math.sin(now * 0.0019) * 0.002 - reloadBlend * 0.06;
-      const isPistol = motion.weapon === "pistol";
-      rifle.visible = !isPistol;
-      pistol.visible = isPistol;
+      const isKnife = motion.weapon === "knife";
+      rifle.visible = !isKnife;
+      knife.visible = isKnife;
       for (let i = 0; i < 2; i++) {
         const side = i === 0 ? -1 : 1,
           phase = gait + i * Math.PI,
@@ -548,9 +546,9 @@ export function createCharacter(seat: Seat, _branding: THREE.Material, weaponKit
         leg.knee.position.copy(joint);
         leg.foot.rotation.x = motion.airborne ? -0.2 : Math.max(0, Math.sin(phase)) * 0.12 * stride;
         const hand = hands[i]!;
-        hand.visible = !isPistol || side === 1;
+        hand.visible = !isKnife || side === 1;
         b.set(side < 0 ? 0.032 : 0.09, side < 0 ? -0.17 : -0.225, side < 0 ? -0.455 : -0.15);
-        if (isPistol) b.set(0.06, -0.21, -0.29);
+        if (isKnife) b.set(0.06, -0.21, -0.29);
         b.applyEuler(weaponPivot.rotation).add(weaponPivot.position);
         hand.position.copy(b);
         hand.rotation.copy(weaponPivot.rotation);
@@ -560,14 +558,12 @@ export function createCharacter(seat: Seat, _branding: THREE.Material, weaponKit
         arms[i]!.elbow.position.copy(joint);
       }
       flash.update(alive ? flashUntil - now : 0, -0.556, 0.018, Math.floor(flashUntil));
-      pistolFlash.update(alive ? flashUntil - now : 0, -0.205, 0, Math.floor(flashUntil));
       root.visible = alive;
     },
     dispose() {
       for (const t of textures) t.dispose();
       for (const m of materials) m.dispose();
       flash.dispose();
-      pistolFlash.dispose();
     },
   };
 }

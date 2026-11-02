@@ -672,7 +672,7 @@ function frontLug(magazine: THREE.Object3D, out: THREE.Vector3) {
  * Tactical glove material from the authored PBR set (base colour, tangent-space normals,
  * occlusion/roughness). Physical sheen gives the suede and knit their soft grazing highlight.
  */
-function createGloveMaterial(source: THREE.MeshStandardMaterial) {
+export function createGloveMaterial(source: THREE.MeshStandardMaterial) {
   const textured = !!source.map;
   return new THREE.MeshPhysicalMaterial({
     name: "tactical-gloves",

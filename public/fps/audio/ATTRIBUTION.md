@@ -49,3 +49,21 @@ effects (release button, magazine out of the well, pouch, insertion and seating;
 dropped magazine and the bolt-catch release) on the 1.8-second M4 reload clips. The brass
 casing landing is synthesised at runtime. Rebuild with
 `node scripts/fps/build-m4-audio.mjs <M4 recording.wav>`.
+
+The active `m4-reload-tactical-v2.wav` and `m4-reload-empty-v2.wav` replace that
+procedural foley with the user-supplied AK reference reload components described
+above. Each mechanical cue is raised one semitone with a subtle high-frequency
+emphasis and retimed for the M4 magazine release, seating and empty-only bolt
+release. Both clips remain mono, 48 kHz PCM16 and 1.8 seconds long. No new license
+is asserted for these derivatives. Rebuild independently with
+`node scripts/fps/build-m4-reload-audio.mjs`; the full M4 builder runs it too.
+The old v1 reload files remain available for cached clients.
+
+## Karambit (secondary slot)
+
+`knife-equip-v1`, `knife-flip-v1`, `knife-spin-v1`, `knife-catch-v1`, `knife-catch-soft-v1`,
+`knife-cloth-v1`, `knife-slash-v1`, `knife-stab-v1`, `knife-hit-v1` and `knife-wall-v1` are
+original deterministic procedural effects (no recordings). Idle tricks, the inspect and the
+equip play them at cue times authored in the knife's Blender clips. Rebuild with
+`node scripts/fps/build-knife-audio.mjs`. `pistol-v1.wav` is no longer played; it is kept for
+one release so clients cached from before the Karambit do not request a missing file.

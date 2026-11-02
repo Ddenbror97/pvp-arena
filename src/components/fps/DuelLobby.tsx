@@ -274,7 +274,7 @@ export function DuelLobby() {
             </div>
             <div className="strike-showcase-bottom">
               <span>
-                <Crosshair aria-hidden /> M4A1-S / AK-47 + pistol
+                <Crosshair aria-hidden /> M4A1-S / AK-47 + karambit
               </span>
               <span>First to seven · Best of 13</span>
               <span>No download</span>

@@ -1,5 +1,19 @@
 import { STEP_VARIANTS } from "./footstep-surfaces";
-import type { MatchState, Seat, Weapon } from "./protocol";
+import type { KnifeAttack, MatchState, Seat, Weapon } from "./protocol";
+/**
+ * First-person Karambit animation cues (art/blender/karambit) → sample and level. Passive idle
+ * flourishes stay quiet; the swings are the loud ones.
+ */
+const KNIFE_CUES: Record<string, { sample: Sample; gain: number }> = {
+  equip: { sample: "knifeEquip", gain: 0.3 },
+  flip: { sample: "knifeFlip", gain: 0.12 },
+  spin: { sample: "knifeSpin", gain: 0.13 },
+  catch: { sample: "knifeCatch", gain: 0.16 },
+  "catch-soft": { sample: "knifeCatchSoft", gain: 0.1 },
+  cloth: { sample: "knifeCloth", gain: 0.08 },
+  slash: { sample: "knifeSlash", gain: 0.42 },
+  stab: { sample: "knifeStab", gain: 0.46 },
+};
 import { footstepPan, materialFootstep } from "./footsteps";
 import { characterSide } from "./sides";
 import { consumeShotPrediction } from "./trigger-feedback";
@@ -9,9 +23,19 @@ const SAMPLES = {
   reloadTactical: "ak-reload-reference-tactical-v1.wav",
   /** Police (seat A) suppressed M4A1 and its reloads (scripts/fps/build-m4-audio.mjs). */
   rifleM4: "m4a1-suppressed-v1.wav",
-  m4ReloadEmpty: "m4-reload-empty-v1.wav",
-  m4ReloadTactical: "m4-reload-tactical-v1.wav",
-  pistol: "pistol-v1.wav",
+  m4ReloadEmpty: "m4-reload-empty-v2.wav",
+  m4ReloadTactical: "m4-reload-tactical-v2.wav",
+  /** Karambit (scripts/fps/build-knife-audio.mjs): original procedural effects. */
+  knifeEquip: "knife-equip-v1.wav",
+  knifeFlip: "knife-flip-v1.wav",
+  knifeSpin: "knife-spin-v1.wav",
+  knifeCatch: "knife-catch-v1.wav",
+  knifeCatchSoft: "knife-catch-soft-v1.wav",
+  knifeCloth: "knife-cloth-v1.wav",
+  knifeSlash: "knife-slash-v1.wav",
+  knifeStab: "knife-stab-v1.wav",
+  knifeHit: "knife-hit-v1.wav",
+  knifeWall: "knife-wall-v1.wav",
   step0: "step-0-v1.wav",
   step1: "step-1-v1.wav",
   step2: "step-2-v1.wav",
@@ -147,16 +171,21 @@ export function createCombatAudio(
   /** The Police side carries the suppressed M4A1 (sides swap at halftime); Terrorists the AK. */
   const m4Seat = (seat: Seat | null | undefined) =>
     !!seat && (sides ? characterSide(sides, seat) : seat) === "A";
-  const shot = (weapon: Weapon, gain = 0.62, pan = 0, occluded = false, seat?: Seat | null) => {
+  const shot = (
+    weapon: Weapon,
+    gain = 0.62,
+    pan = 0,
+    occluded = false,
+    seat?: Seat | null,
+    attack?: KnifeAttack,
+  ) => {
     played.shots++;
+    if (weapon === "knife") {
+      play(attack === "stab" ? "knifeStab" : "knifeSlash", gain * 0.6, pan, occluded);
+      return;
+    }
     const m4 = weapon === "rifle" && m4Seat(seat);
-    play(
-      weapon === "rifle" ? (m4 ? "rifleM4" : "rifleA") : "pistol",
-      gain,
-      pan,
-      occluded,
-      weapon === "rifle" ? 1 : 0.985 + (played.shots % 3) * 0.015,
-    );
+    play(m4 ? "rifleM4" : "rifleA", gain, pan, occluded, 1);
     // Own M4 only: the ejected case lands a moment later, just right of the player.
     if (m4 && seat === localSeat && gain > 0.3)
       play(
@@ -253,8 +282,6 @@ export function createCombatAudio(
     filter.connect(level);
     level.connect(panner);
     panner.connect(master);
-    // The reference rifle already includes its recorded report and decay.
-    if (name === "pistol") panner.connect(echo);
     voices.add(source);
     source.onended = () => {
       voices.delete(source);
@@ -271,6 +298,11 @@ export function createCombatAudio(
     setVolume(value: number) {
       volume = Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 1;
       master.gain.setTargetAtTime(muted ? 0 : 0.55 * volume, context.currentTime, 0.015);
+    },
+    /** A first-person Karambit animation cue (equip, flip, spin, catch, slash, stab, …). */
+    knifeCue(name: string) {
+      const cue = KNIFE_CUES[name];
+      if (cue) play(cue.sample, cue.gain, 0.12, false, 0.97 + Math.random() * 0.06);
     },
     localShot(weapon: Weapon, seq: number) {
       for (const [key, at] of predicted) if (performance.now() - at > 2000) predicted.delete(key);
@@ -353,9 +385,13 @@ export function createCombatAudio(
           gain = cue?.gain ?? (own ? 1 : 0.35),
           pan = cue?.pan ?? 0;
         if (event.type === "shot") {
-          if (own && consumeShotPrediction(predicted, event.shotSeq)) continue;
           const weapon = event.weapon ?? (event.seat ? state.players[event.seat].weapon : "rifle");
-          shot(weapon, gain * (own ? 0.62 : 0.48), pan, !!cue?.occluded, event.seat);
+          // Own swings are voiced by the first-person animation's cues.
+          if (own && weapon === "knife") continue;
+          if (own && consumeShotPrediction(predicted, event.shotSeq)) continue;
+          shot(weapon, gain * (own ? 0.62 : 0.48), pan, !!cue?.occluded, event.seat, event.attack);
+        } else if (event.type === "impact" && event.weapon === "knife") {
+          play("knifeWall", (own ? 0.3 : 0.2) * gain, pan, !!cue?.occluded);
         } else if (event.type === "step" && cue) {
           played.steps++;
           const surface =
@@ -381,6 +417,11 @@ export function createCombatAudio(
         } else if (event.hit?.victim === seat) {
           played.hits++;
           play("hurt", 0.25, 0, false);
+          if (event.weapon === "knife") play("knifeHit", 0.32, 0, false);
+        } else if (event.hit && own && event.weapon === "knife") {
+          // Hit confirmation for a landed swing.
+          played.hits++;
+          play("knifeHit", 0.4, 0, false);
         }
         if (event.type === "round-end" || event.type === "draw") {
           play("elimination", 0.2, 0, false);

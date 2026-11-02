@@ -179,7 +179,7 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
     if (round === 1 || round === 5) {
       if (round === 5) {
         await page.keyboard.press("Digit2");
-        await expect.poll(async () => (await state()).players.A.weapon).toBe("pistol");
+        await expect.poll(async () => (await state()).players.A.weapon).toBe("knife");
       }
       const hp = (await state()).players.B.hp;
       await page.mouse.down();
@@ -188,13 +188,16 @@ test("six complete bot rounds: controls, damage, roles, reload and respawn", asy
       await page.waitForTimeout(350);
       expect((await state()).players.B.hp, "cover blocks spawn shots").toBe(hp);
       if (round === 5) {
+        // The Karambit has no magazine: R does nothing and the rifle's ammo is untouched.
         const before = (await state()).players.A;
         await page.keyboard.press("KeyR");
-        await expect.poll(async () => (await state()).players.A.reloadUntil).toBeGreaterThan(0);
-        await expect.poll(async () => (await state()).players.A.reloadUntil).toBe(0);
+        await page.waitForTimeout(300);
         const after = (await state()).players.A;
-        expect(after.ammo).toBe(12);
-        expect(after.ammo + after.reserve).toBe(before.ammo + before.reserve);
+        expect(after.reloadUntil).toBe(0);
+        expect([after.ammo, after.reserve]).toEqual([before.ammo, before.reserve]);
+        // Back to the rifle for this round's fight across the centre.
+        await page.keyboard.press("Digit1");
+        await expect.poll(async () => (await state()).players.A.weapon).toBe("rifle");
       }
     }
     const firstSeq = (await state()).players.A.lastSeq;
