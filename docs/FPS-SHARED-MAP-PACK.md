@@ -12,9 +12,9 @@ Every registered map uses the same engine. A fourth map adds data and presentati
 
 ## Box jumping on every map
 
-The one predictMovement implementation is used by client prediction and the match server. JUMP_SPEED=6.8 m/s and GRAVITY=14 m/s² clear approximately 1.54 m at the fixed tick. Ground-level cover of 1.3–1.45 m is reachable with an open approach and headroom. A 2.2 m box cannot be jumped directly from the ground. STEP_HEIGHT remains 0.35 m, and a takeoff cannot gain an extra stair boost. Never implement map-specific jump impulses or camera gravity.
+The one predictMovement implementation is used by client prediction and the match server. Preserve the original JUMP_SPEED=5 m/s and GRAVITY=14 m/s²: approximately 0.81 m clearance and 0.7 seconds until landing at the fixed tick. A reachable wall or box can be landed on with an open approach and headroom. A 1.3–1.45 m crate requires a raised starting surface; it is not reachable directly from ground level. STEP_HEIGHT remains 0.35 m, and a takeoff cannot gain an extra stair boost. Never increase the jump impulse, add a mantle/snap, or change map geometry to make unreachable cover appear reachable.
 
-Gameplay box extents must match the render surfaces. Keep a free approach and a clear standing space above any crate meant to be climbable. The shared contract test attempts every accessible ground-level low crate on every registered map.
+Gameplay box extents must match the render surfaces. Keep a free approach and a clear standing space above any crate meant to be climbable. The shared contract tests exercise reachable 0.8 m box and thin-wall fixtures through every map's shared movement implementation, and verify that authored map solids are not modified. Dedicated trajectory tests pin the original impulse, gravity, apex, airtime and landing from raised supports.
 
 ## Author sound materials as map data
 
