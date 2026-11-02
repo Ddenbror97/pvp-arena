@@ -204,23 +204,64 @@ Resources:
 - Verified by `fps-lifecycle.spec.ts` and the four-map lifecycle capture (0 leaks, GPU
   geometries/textures back to baseline after every dispose).
 
-## Remaining technical debt (preserved, reported)
+## Remaining technical debt
 
-- **`npm run lint` fails on main** with 1,276 pre-existing prettier errors, 195 of them in
-  `src/content/guides/*`, 25 in `src/components`, 18 in `tests/db`, 9 in `art/blender`. All
-  are auto-fixable (`eslint --fix`) but touching 250 files is outside this cleanup. The files
-  changed on this branch lint clean.
-- **`@tanstack/router-plugin`** is a direct dependency that nothing imports; `@lovable.dev/
-vite-tanstack-config` registers the router plugin itself and peer-requires
-  `@tanstack/router-generator`, which is hoisted from this package. Removing it would change
-  how that peer resolves in a Lovable-managed install; left in place.
-- **75 unused exported types** (knip): types used only inside their own module but exported.
-  Harmless; left.
+### Fixed in the follow-up (branch `lint-cleanup`)
+
+- **`npm run lint` now passes** (0 errors; previously 1,276 prettier errors plus 7 others).
+  - Prettier was run on exactly the 260 files it flagged. Each file minifies to identical
+    code before and after (esbuild transform), and `bun scripts/check-guides.ts` passes for all
+    1,212 guides.
+  - The 7 other errors are fixed: comma-expression statements in `scripts/seo-spam-audit.ts`;
+    `any` in `tests/db` replaced by `postgres.Row` or a field type; `useTestWithdrawalMinimum`
+    renamed `applyTestWithdrawalMinimum` (a plain DB helper the hooks rule mistook for a
+    React hook).
+  - Full lint takes about 50 s.
+- **`@tanstack/router-plugin` replaced by `@tanstack/router-generator@1.167.21`**, the package
+  it was only there to hoist: an optional peer of `@lovable.dev/vite-tanstack-config`
+  (resolved at build time for the route manifest). `package-lock.json` changes only by that
+  root entry (`react-start` keeps its nested copy) and esbuild's platform binaries becoming
+  `dev`, as `vite` already is.
+- **Unused exported types**: knip now reports none outside the generated Supabase file.
+  - 109 types used only in their own module lost `export`, 2 used nowhere were deleted, and
+    14 unused re-exports were dropped.
+  - All 74 files compile to identical JavaScript (esbuild, whitespace and syntax minify).
+- **Duplicate helpers**:
+  - `clamp(v, lo, hi)`, defined identically in three files, now lives in `src/lib/math.ts`.
+  - The Cloudflare edge-cache getter, copied in two server modules, is exported from
+    `game-snapshot/cache.ts`.
+  - The other `clamp`s have different semantics (±n, 0–255 bytes, progress) and stay local.
+- **Three more dead functions**, found once knip ignored exports used in their own file:
+  `isPublishedGuide` in `content/guides/index.ts` (a copy of the one in
+  `lib/guides/catalog.ts`), pool physics `moving()`, and prestige `formatChance()`. Jackpot
+  has its own `formatChance()`, which is the one in use.
+- **`knip.jsonc`** is committed as the audit config (`npx knip@5`). It records why
+  `@tanstack/router-generator` stays despite having no importers.
+- **Docs**: `docs/README.md` indexes every document, separating the kept-current reference
+  docs from the dated reports. Nothing was deleted.
+- **Build check**: main and the branch were built with the same `node_modules`.
+  - 1,857 output files are identical once hashes are stripped.
+  - The 15 that differ are the modules importing the shared `clamp` and edge-cache getter,
+    the new 56 B (client) and 221 B (server) `math` chunks, and the manifests referencing
+    them: +980 B of 65.8 MB.
+- **Checks**: type check clean; unit suite 1201 passed, 1 skipped.
+
+### Still open (reported, not changed)
+
+- **51 lint warnings.** Of these, 11 are `react-hooks/exhaustive-deps`. Adding the missing
+  dependencies changes when those effects re-run (pool match, wallet, chat), so each needs a
+  behavioural review rather than an auto-fix. The other 40 are `react-refresh` fast-refresh
+  hints.
+- **`bun.lock` is out of date with `package.json`.** It still lists `react-start@1.168.32`
+  and `react-router@1.170.18`, and has no `three`. It was not regenerated: that would rewrite
+  it in bun's newer lockfile format (v1 to v3), and which lockfile Lovable installs from is
+  its call. `package-lock.json` is current.
+- `tests/metamask-uuid.test.ts` imports `uuid` and
+  `@metamask/mobile-wallet-protocol-dapp-client`, which are installed only transitively.
+- `sharedRifleTextureCount` looks unused to knip, but the lifecycle e2e test imports it in the
+  browser. Kept.
 - **`tests/db/*` integration tests** need `TEST_DATABASE_URL`; they fail identically on main in
   an environment without it.
-- **Seven local `clamp`/`wrap` helpers** across unrelated modules (see §6).
-- **64 documents under `docs/`**, many of them dated reports. None were deleted: they are the
-  project's history and nothing in the brief makes them obsolete.
 - The `db` vitest project and the e2e suites are not run by `npm test` in CI-less setups.
 
 ## Deliberately preserved
