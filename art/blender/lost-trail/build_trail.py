@@ -1351,6 +1351,70 @@ for s in BARRIERS:
             instance(rng.choice(ROCKS), px, y - 0.15, pz, yaw=rng.uniform(0, math.tau), scale=rng.uniform(0.4, 0.8))
             placed["rock"] += 1
 
+
+# Stop hedge: wherever a player is stopped by something that is not a solid (an edge or jungle
+# barrier, or the arena edge), a continuous row of dense bushes stands just behind the stop line,
+# so the limit is always visible. Its own RNG: the rest of the forest is unchanged.
+HEDGE = random.Random(9090)
+BUSH_R = 1.05  # bush footprint radius at scale 1 (cards 1.5 × 1.15 m wide, offset up to 0.3)
+STOP_LINE_GAP = 0.05  # leaf tips stay this far behind the line
+
+
+def stand_y(x, z):
+    """Floor height a player stands on at (x, z), or None where nobody can stand."""
+    if not in_arena(x, z, 0.35) or any(inside(s, x, z) for s in BARRIERS):
+        return None
+    tops = [b["y"] + b["h"] / 2 for b in BOXES if inside(b, x, z)]
+    if not tops:
+        return 0.0
+    return max(tops) if max(tops) <= 1.6 else None  # ridge top and steps are walkable
+
+
+def blocked_floor(x, z):
+    """Visual-only ground behind a stop: inside a non-gorge barrier or beyond the arena edge."""
+    if any(inside(b, x, z) for b in BOXES) or abs(x - river_x(z)) < 3.4:
+        return False
+    return not in_arena(x, z) or any(inside(s, x, z) for s in BARRIERS if s["kind"] != "gorge")
+
+
+stop_faces = []  # (x0, z0, x1, z1, nx, nz): n points from the walkable side into the stop
+for s in BARRIERS:
+    if s["kind"] == "gorge":
+        continue
+    x0, x1, z0, z1 = s["x"] - s["w"] / 2, s["x"] + s["w"] / 2, s["z"] - s["d"] / 2, s["z"] + s["d"] / 2
+    stop_faces += [(x0, z0, x1, z0, 0, 1), (x0, z1, x1, z1, 0, -1), (x0, z0, x0, z1, 1, 0), (x1, z0, x1, z1, -1, 0)]
+stop_faces += [(-W / 2, -D / 2, -W / 2, D / 2, -1, 0), (W / 2, -D / 2, W / 2, D / 2, 1, 0)]
+hedge = {"bush": 0, "fern": 0, "rock": 0}
+for (x0, z0, x1, z1, nx, nz) in stop_faces:
+    length = math.hypot(x1 - x0, z1 - z0)
+    steps = max(1, int(length / 0.8))
+    for k in range(steps):
+        t = (k + HEDGE.uniform(0.25, 0.75)) / steps
+        lx, lz = x0 + (x1 - x0) * t, z0 + (z1 - z0) * t
+        floor = stand_y(lx - nx * 0.6, lz - nz * 0.6)
+        if floor is None:
+            continue  # nobody stands in front of this stretch (a solid, another barrier, the river)
+        tall = floor > 0.5  # on the ridge top: the hedge must show above it
+        s_ = HEDGE.uniform(1.45, 1.75) if tall else HEDGE.uniform(0.95, 1.3)
+        # One row: bushes overlap along the line (0.8 m apart, ~2.2 m wide), and a second row
+        # behind it cost overdraw for no visible gain.
+        px, pz = lx + nx * (BUSH_R * s_ + STOP_LINE_GAP), lz + nz * (BUSH_R * s_ + STOP_LINE_GAP)
+        if blocked_floor(px, pz):
+            instance(BUSHES[0], px, ground_h(px, pz), pz, yaw=HEDGE.uniform(0, math.tau), scale=s_)
+            hedge["bush"] += 1
+        r_ = HEDGE.random()
+        if r_ < 0.35 and not tall:
+            fx, fz = lx + nx * (1.25 + STOP_LINE_GAP), lz + nz * (1.25 + STOP_LINE_GAP)  # fern radius ≈ 1.2 m
+            if blocked_floor(fx, fz):
+                instance(FERNS[0], fx, ground_h(fx, fz), fz, yaw=HEDGE.uniform(0, math.tau), scale=HEDGE.uniform(0.9, 1.1))
+                hedge["fern"] += 1
+        elif r_ < 0.45:
+            rx, rz = lx + nx * 1.9 * s_, lz + nz * 1.9 * s_
+            if blocked_floor(rx, rz):
+                instance(ROCKS[0], rx, ground_h(rx, rz) - 0.15, rz, yaw=HEDGE.uniform(0, math.tau), scale=HEDGE.uniform(0.5, 0.85))
+                hedge["rock"] += 1
+print("HEDGE", hedge)
+
 # Low ferns tucked against the bases of rock walls, ruins and boulders (never on the bridge or
 # in the bridgehead duel areas), so the floor is never bare.
 for b in BOXES:

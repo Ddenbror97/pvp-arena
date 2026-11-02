@@ -33,6 +33,30 @@ Optional scanned CC0 assets are covered in `art/blender/lost-trail/source/SCANNE
   Nothing visual taller than ankle height stands in a lane unless it is a solid. The ford
   stones are about 7 cm tall.
 
+- **Every movement limit is visible** (2026-11-02). Players reported invisible walls: several
+  movement-only barriers stood on open floor with a few plants, and the arena edge behind the
+  spawns had nothing at it.
+  - **Opened** (now walkable, both sides): the pocket north of the plaza (was
+    `jungle-ridge-plaza`), the floor behind each spawn beside the ridge steps
+    (`edge-spawn-n` now covers only z −15.4 to −9.6), and the floor from the spawn down to the
+    lower trail (`edge-spawn-s` removed).
+  - **Kept impassable**, because opening them made long sightlines:
+    - `jungle-plaza-trail`: a slit between the hut and the trail rock sees across the river
+      (first contact 2.5 s).
+    - The strip beside the ridge's west face: a standing eye clears the 1.5 m ridge and sees
+      40 m across the map.
+  - **Stop hedge** (`build_trail.py`): one continuous row of bushes stands just behind every
+    stop that is not a solid (edge and jungle barrier faces, the arena edge), with ferns and the
+    odd rock. On the ridge top the bushes are larger, so they show above it. The gorge stays
+    as is: its stop is the water. Wherever the floor in front is walkable, a bush stands every
+    0.8 m.
+  - **Checked**:
+    - Layout tests pass. First contact is still 2.85 s, spawn-to-spawn sightlines are 0, and
+      the post's view is unchanged.
+    - Every enemy-side cell the new floor sees was already visible from old floor, and its
+      longest sightline is 33.8 m (the longest that already existed was 34.1 m).
+    - Software capture: draw calls ±1, triangles +2%, frame time +4% over all views. Views
+      facing the edge cost more: boundary +35%, river trail +20%.
 - **Decoration out of head height.** On the giant trees, hanging vines and aerial roots end at
   least 5.5 m above the base in tree units (≥ 7.7 m on the in-arena giants, ≥ 4 m on the forest
   edge). Epiphytes sit at 4 m or higher. Strangler roots are only on forest-edge trees outside
