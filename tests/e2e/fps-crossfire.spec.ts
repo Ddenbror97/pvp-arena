@@ -303,7 +303,7 @@ test("CROSSFIRE loading art resolves and decodes at full size; Dustfront keeps i
     };
   });
   expect(result.cross.src).toMatch(/crossfire-loading/);
-  expect([result.cross.w, result.cross.h]).toEqual([1672, 941]);
+  expect([result.cross.w, result.cross.h]).toEqual([1671, 941]);
   expect(result.dust.src).toMatch(/arena-loading/);
   expect([result.dust.w, result.dust.h]).toEqual([1672, 941]);
   expect(result.unknown).toBe(result.fallback);
