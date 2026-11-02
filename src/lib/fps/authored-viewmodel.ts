@@ -13,7 +13,7 @@ import {
 } from "./fitted-rifle-hands";
 import { ARENA_MODELS } from "./model-assets";
 import { applyVeinTint, createForearmDetailTexture } from "./forearm-detail";
-import { policeGuardGrip } from "./police-arms";
+import { policeGuardGrip, scaledGuardGrip } from "./police-arms";
 import { upgradeRifleMaterials } from "./rifle-materials";
 import {
   BOLT_RACK,
@@ -89,7 +89,8 @@ export const AK_VIEWMODEL: ViewmodelVariant = {
   clips: RELOAD_CLIPS,
   // Support hand turned palm-up round the handguard (wrist and forearm unchanged), so the
   // fingers wrap it instead of gripping it side-on.
-  guard: { ...HANDGUARD_GRIP, handTwist: SUPPORT_HAND_TWIST },
+  // Fingers closed onto the wood (the turned hand's authored wrap left them in the air).
+  guard: { ...scaledGuardGrip(0.72), handTwist: SUPPORT_HAND_TWIST },
   magazine: {
     offset: MAG_GRIP_OFFSET,
     edgeDown: MAG_EDGE_DOWN,
@@ -108,7 +109,7 @@ export const M4_VIEWMODEL: ViewmodelVariant = {
   asset: ARENA_MODELS.m4,
   clips: M4_RELOAD_CLIPS,
   // Same palm-round grip as the AK, on the quad rail.
-  guard: { ...policeGuardGrip(), handTwist: SUPPORT_HAND_TWIST },
+  guard: { ...policeGuardGrip(0.8), handTwist: SUPPORT_HAND_TWIST },
   magazine: {
     offset: new THREE.Vector3(0, -0.03, -0.03),
     edgeDown: new THREE.Vector3(0, -0.94, -0.33),
