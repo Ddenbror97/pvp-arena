@@ -65,13 +65,16 @@ describe("FPS handling polish", () => {
         expect(now - lastShot).toBeGreaterThanOrEqual(100);
         lastShot = now;
         shots++;
+        if (shots === 30) break;
       }
     }
     expect(shots).toBe(30);
     expect(state.players.A.ammo).toBe(0);
+    const reloadUntil = now + WEAPONS.rifle.reloadMs;
+    expect(state.players.A.reloadUntil).toBe(reloadUntil);
     now += 34;
     stepMatch(state, { A: { ...idle, seq: ++seq, reload: true } }, now, TICK_MS);
-    expect(state.players.A.reloadUntil).toBe(now + WEAPONS.rifle.reloadMs);
+    expect(state.players.A.reloadUntil).toBe(reloadUntil);
     now += WEAPONS.rifle.reloadMs + 34;
     stepMatch(state, { A: { ...idle, seq: ++seq } }, now, TICK_MS);
     expect(state.players.A.ammo).toBe(30);
@@ -84,5 +87,44 @@ describe("FPS handling polish", () => {
     now += 170;
     stepMatch(state, { A: { ...idle, seq: ++seq } }, now, TICK_MS);
     expect(state.players.A.ammo).toBe(ammo);
+  });
+  it.each(["A", "B"] as const)("automatically reloads seat %s without another input", (seat) => {
+    const state = createMatch({ A: "a", B: "b" }, 5, 0);
+    startMatch(state, 0);
+    stepMatch(state, {}, COUNTDOWN_MS, TICK_MS);
+    const player = state.players[seat];
+    player.ammo = 0;
+    player.reserve = 7;
+    const now = COUNTDOWN_MS + 34;
+    stepMatch(state, {}, now, TICK_MS);
+    expect(player.reloadUntil).toBe(now + WEAPONS.rifle.reloadMs);
+    stepMatch(state, {}, player.reloadUntil - TICK_MS, TICK_MS);
+    expect(player.ammo).toBe(0);
+    stepMatch(state, {}, player.reloadUntil, TICK_MS);
+    expect(player.ammo).toBe(7);
+    expect(player.reserve).toBe(0);
+    expect(player.reloadUntil).toBe(0);
+  });
+  it.each(["no reserve", "knife", "dead"])("does not auto-reload with %s", (reason) => {
+    const state = createMatch({ A: "a", B: "b" }, 5, 0);
+    startMatch(state, 0);
+    stepMatch(state, {}, COUNTDOWN_MS, TICK_MS);
+    const player = state.players.A;
+    player.ammo = 0;
+    if (reason === "no reserve") player.reserve = 0;
+    if (reason === "knife") player.weapon = "knife";
+    if (reason === "dead") player.hp = 0;
+    stepMatch(state, {}, COUNTDOWN_MS + 34, TICK_MS);
+    expect(player.reloadUntil).toBe(0);
+  });
+  it("leaves partial magazines alone and allows manual reload", () => {
+    const state = createMatch({ A: "a", B: "b" }, 5, 0);
+    startMatch(state, 0);
+    stepMatch(state, {}, COUNTDOWN_MS, TICK_MS);
+    state.players.A.ammo = 12;
+    stepMatch(state, {}, COUNTDOWN_MS + 34, TICK_MS);
+    expect(state.players.A.reloadUntil).toBe(0);
+    stepMatch(state, { A: { ...idle, seq: 1, reload: true } }, COUNTDOWN_MS + 68, TICK_MS);
+    expect(state.players.A.reloadUntil).toBe(COUNTDOWN_MS + 68 + WEAPONS.rifle.reloadMs);
   });
 });

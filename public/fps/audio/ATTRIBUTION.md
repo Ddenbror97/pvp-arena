@@ -50,6 +50,15 @@ dropped magazine and the bolt-catch release) on the 1.8-second M4 reload clips. 
 casing landing is synthesised at runtime. Rebuild with
 `node scripts/fps/build-m4-audio.mjs <M4 recording.wav>`.
 
+The active `m4-reload-tactical-v2.wav` and `m4-reload-empty-v2.wav` replace that
+procedural foley with the user-supplied AK reference reload components described
+above. Each mechanical cue is raised one semitone with a subtle high-frequency
+emphasis and retimed for the M4 magazine release, seating and empty-only bolt
+release. Both clips remain mono, 48 kHz PCM16 and 1.8 seconds long. No new license
+is asserted for these derivatives. Rebuild independently with
+`node scripts/fps/build-m4-reload-audio.mjs`; the full M4 builder runs it too.
+The old v1 reload files remain available for cached clients.
+
 ## Karambit (secondary slot)
 
 `knife-equip-v1`, `knife-flip-v1`, `knife-spin-v1`, `knife-catch-v1`, `knife-catch-soft-v1`,

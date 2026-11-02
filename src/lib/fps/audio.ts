@@ -23,8 +23,8 @@ const SAMPLES = {
   reloadTactical: "ak-reload-reference-tactical-v1.wav",
   /** Police (seat A) suppressed M4A1 and its reloads (scripts/fps/build-m4-audio.mjs). */
   rifleM4: "m4a1-suppressed-v1.wav",
-  m4ReloadEmpty: "m4-reload-empty-v1.wav",
-  m4ReloadTactical: "m4-reload-tactical-v1.wav",
+  m4ReloadEmpty: "m4-reload-empty-v2.wav",
+  m4ReloadTactical: "m4-reload-tactical-v2.wav",
   /** Karambit (scripts/fps/build-knife-audio.mjs): original procedural effects. */
   knifeEquip: "knife-equip-v1.wav",
   knifeFlip: "knife-flip-v1.wav",

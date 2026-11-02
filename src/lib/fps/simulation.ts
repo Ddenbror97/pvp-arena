@@ -788,5 +788,14 @@ export function stepMatch(
       now,
     );
   }
+  // Both side rifles share this authoritative reload clock. Start after combat so
+  // the last round fires normally, even if no further input arrives. A round-ending
+  // kill must keep its death/result presentation instead of starting a reload.
+  if (state.phase === "live")
+    for (const seat of SEATS) {
+      const p = state.players[seat];
+      if (p.hp > 0 && p.weapon === "rifle" && p.ammo === 0 && p.reserve > 0 && !p.reloadUntil)
+        p.reloadUntil = now + WEAPONS.rifle.reloadMs;
+    }
   return state;
 }
