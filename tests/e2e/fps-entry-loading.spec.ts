@@ -73,7 +73,6 @@ test("Practice and both human seats load the supplied WebP and enter without the
   async function expectReady(p: Page) {
     const screen = p.getByRole("region", { name: "Preparing PvPStrike match" });
     await expect(screen).toBeVisible();
-    await expect(screen.locator("img")).toHaveJSProperty("naturalWidth", 1672);
     // The match draws a random rotation map; its name and its own art must agree.
     const art: Record<string, RegExp> = {
       Dustfront: /arena-loading.*\.webp/,
@@ -83,6 +82,11 @@ test("Practice and both human seats load the supplied WebP and enter without the
     };
     const name = (await screen.getByRole("heading", { level: 1 }).textContent())?.trim() ?? "";
     expect(Object.keys(art), `unexpected map "${name}"`).toContain(name);
+    await expect(screen.locator("img")).toHaveJSProperty(
+      "naturalWidth",
+      name === "Crossfire" ? 1671 : 1672,
+    );
+    await expect(screen.locator("img")).toHaveJSProperty("naturalHeight", 941);
     await expect(screen.locator("img")).toHaveAttribute("src", art[name]!);
     await expect(screen.getByRole("button")).toHaveCount(0);
     expect(await p.locator(".duel-game-overlay .duel-match-card").count()).toBe(0);

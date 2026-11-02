@@ -5,7 +5,7 @@ import lostTrailLoading from "@/assets/fps/lost-trail-loading.webp";
 import { ROTATION_MAP_IDS } from "./registry";
 
 /**
- * Browser-only loading-screen art per map (1672 × 941 WebP in src/assets/fps). Kept out of the
+ * Browser-only native-resolution WebP loading art per map in src/assets/fps. Kept out of the
  * shared map definitions so the match Worker never bundles images. A map without its own art
  * uses Dustfront's.
  */
