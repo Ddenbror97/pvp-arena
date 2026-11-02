@@ -856,10 +856,13 @@ describe("isolated real Durable Object WebSockets", () => {
       live = until(human, (f) => f.type === "snapshot" && f.state.phase === "live");
     human.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
     expect((await live).state.bestOf).toBe(13);
+    // The hidden bot is redacted (lastSeq -1) until it comes into view of the idle human. Its
+    // first-round patrol is a random style × opening; the slowest (lurk/south) reveals ~15.3 s
+    // after live (bound pinned by tests/fps-practice-bot-reveal.test.ts), so wait 25 s.
     const walking = await until(
       human,
       (f) => f.type === "snapshot" && !!f.visibility?.B && f.state.players.B.lastSeq > 0,
-      12000,
+      25000,
     );
     expect(walking.state.players.B.lastSeq).toBeGreaterThan(0);
     const bad = await mf.dispatchFetch(
@@ -872,7 +875,7 @@ describe("isolated real Durable Object WebSockets", () => {
     );
     expect(bad.status).toBe(400);
     human.close();
-  }, 20000);
+  }, 40000);
 
   it("reports actual socket round trips and keeps server timing independent of claimed clocks", async () => {
     const id = await init(),

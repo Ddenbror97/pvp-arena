@@ -1,28 +1,46 @@
 import * as THREE from "three";
-import { ARENA, BOXES, FLOOR, STRUCTURES, WALLS, type Solid } from "./map";
+import type { Solid } from "./map";
 import { retainAuthoredAsset } from "./authored-assets";
-import { ARENA_LIGHTING } from "./arena-lighting";
+import { DEFAULT_MAP, type GameMap } from "./maps/registry";
 
-/** Blender-built PVPSPINARENA aim arena (art/blender/map); dresses exactly the map.ts solids. */
-export const ARENA_MAP_URL = "/fps/models/aim-arena.glb";
+/** Dustfront's Blender-built render scene (art/blender/map); dresses exactly its solids. */
+export const ARENA_MAP_URL = DEFAULT_MAP.presentation.modelUrl;
+
+/** What the renderer needs from a map's render scene. */
+export type MapEnvironment = {
+  /** Resolves once the authored scene replaced the blockout (or failed and kept it). */
+  ready: Promise<void>;
+  /** Bounds of the playable rectangle, for shadow framing. */
+  bounds: { width: number; depth: number };
+  /**
+   * Optional per-drawn-frame update for animated scenery (water, wind), with the same arguments
+   * as the impact pools: frame delta (ms, capped at 100) and the frame timestamp (ms). Prefer shader uniforms:
+   * the world scene does not auto-update matrices. Omit it for static maps (no idle work).
+   */
+  update?: (dt: number, now: number) => void;
+  dispose: () => void;
+};
 
 /**
- * The 1v1 aim arena's render scene. A plain blockout built from the shared gameplay solids is
- * visible at once (and remains as the fallback if the GLB cannot load); the authored map replaces
- * it when `ready` resolves. Gameplay never reads these meshes: movement, bullets and visibility
- * use map.ts. Static: the renderer freezes matrices, captures reflections and renders the
+ * A map's render scene. A plain blockout built from the map's gameplay solids is visible at once
+ * (and remains as the fallback if the GLB cannot load); the authored scene replaces it when
+ * `ready` resolves. Gameplay never reads these meshes: movement, bullets and visibility use the
+ * map's solids. Static: the renderer freezes matrices, captures reflections and renders the
  * shadow map once after `ready`.
  */
-export function createArenaEnvironment(scene: THREE.Scene) {
+export function createArenaEnvironment(
+  scene: THREE.Scene,
+  map: GameMap = DEFAULT_MAP,
+): MapEnvironment {
+  const { lighting, sky: skyColours, blockout: tints } = map.presentation;
   let disposed = false;
   const owned = {
     geometries: new Set<THREE.BufferGeometry>(),
     materials: new Set<THREE.Material>(),
     textures: new Set<THREE.Texture>(),
   };
-  // Clear Mediterranean afternoon sky: a cheap gradient dome (zenith blue to warm hazy horizon)
-  // with a soft glow around the sun, in display range so it neither blows out under ACES nor
-  // over-brightens the reflection capture.
+  // A cheap gradient dome (zenith to hazy horizon) with a soft glow around the sun, in display
+  // range so it neither blows out under ACES nor over-brightens the reflection capture.
   const sky = new THREE.Mesh(
     new THREE.SphereGeometry(240, 32, 16),
     new THREE.ShaderMaterial({
@@ -30,10 +48,10 @@ export function createArenaEnvironment(scene: THREE.Scene) {
       depthWrite: false,
       fog: false,
       uniforms: {
-        zenith: { value: new THREE.Color(0x3d74b8) },
-        horizon: { value: new THREE.Color(0xc9d6df) },
-        haze: { value: new THREE.Color(0xe6d6bc) },
-        sunDirection: { value: new THREE.Vector3(...ARENA_LIGHTING.sun.position).normalize() },
+        zenith: { value: new THREE.Color(skyColours.zenith) },
+        horizon: { value: new THREE.Color(skyColours.horizon) },
+        haze: { value: new THREE.Color(skyColours.haze) },
+        sunDirection: { value: new THREE.Vector3(...lighting.sun.position).normalize() },
       },
       vertexShader: /* glsl */ `
         varying vec3 vDirection;
@@ -69,15 +87,13 @@ export function createArenaEnvironment(scene: THREE.Scene) {
   // Blockout: one merged mesh per surface, from the same solids the server simulates.
   const blockout = new THREE.Group();
   blockout.name = "arena-blockout";
-  const tint: Record<Solid["surface"], number> = {
-    concrete: 0xc9b38f,
-    metal: 0x7d8a8c,
-    wood: 0x9a7448,
-  };
+  const tint: Record<Solid["surface"], number> = tints;
   const unit = new THREE.BoxGeometry(1, 1, 1);
   owned.geometries.add(unit);
   for (const surface of ["concrete", "metal", "wood"] as const) {
-    const solids = [...BOXES, ...STRUCTURES, ...WALLS].filter((s) => s.surface === surface);
+    const solids = [...map.boxes, ...map.structures, ...map.walls].filter(
+      (s) => s.surface === surface,
+    );
     const material = new THREE.MeshStandardMaterial({ color: tint[surface], roughness: 0.85 });
     owned.materials.add(material);
     const mesh = new THREE.InstancedMesh(unit, material, solids.length);
@@ -96,25 +112,25 @@ export function createArenaEnvironment(scene: THREE.Scene) {
     mesh.name = `blockout-${surface}`;
     blockout.add(mesh);
   }
-  const floorMaterial = new THREE.MeshStandardMaterial({ color: 0xb59f7c, roughness: 0.9 });
+  const floorMaterial = new THREE.MeshStandardMaterial({ color: tints.floor, roughness: 0.9 });
   owned.materials.add(floorMaterial);
   const floor = new THREE.Mesh(unit, floorMaterial);
-  floor.position.set(FLOOR.x, FLOOR.y, FLOOR.z);
-  floor.scale.set(FLOOR.w + 12, FLOOR.h, FLOOR.d + 12);
+  floor.position.set(map.floor.x, map.floor.y, map.floor.z);
+  floor.scale.set(map.floor.w + 12, map.floor.h, map.floor.d + 12);
   floor.receiveShadow = true;
   blockout.add(floor);
   scene.add(blockout);
 
-  const asset = retainAuthoredAsset(ARENA_MAP_URL);
-  let map: THREE.Object3D | undefined;
+  const asset = retainAuthoredAsset(map.presentation.modelUrl);
+  let authored: THREE.Object3D | undefined;
   const ready = asset.ready
     .then((gltf) => {
       if (disposed) return;
       // Clone the node tree only: geometry, materials and textures stay shared with the cached
       // source (released by `asset.release()`), and frustum culling stays on per section.
-      map = gltf.scene.clone(true);
-      map.name = "aim-arena";
-      map.traverse((object) => {
+      authored = gltf.scene.clone(true);
+      authored.name = map.id;
+      authored.traverse((object) => {
         if (!(object instanceof THREE.Mesh)) return;
         const extras = object.userData as { castShadow?: boolean; noShadow?: boolean };
         object.receiveShadow = true;
@@ -122,18 +138,18 @@ export function createArenaEnvironment(scene: THREE.Scene) {
         object.castShadow = !extras.noShadow;
         object.matrixAutoUpdate = false;
       });
-      scene.add(map);
+      scene.add(authored);
       blockout.removeFromParent();
     })
-    .catch((error) => console.warn("Aim arena map unavailable; keeping the blockout.", error));
+    .catch((error) => console.warn(`${map.name} scene unavailable; keeping the blockout.`, error));
 
   return {
     ready,
     /** Bounds of the playable rectangle, for shadow framing. */
-    bounds: { width: ARENA.width, depth: ARENA.depth },
+    bounds: { width: map.arena.width, depth: map.arena.depth },
     dispose() {
       disposed = true;
-      map?.removeFromParent();
+      authored?.removeFromParent();
       blockout.removeFromParent();
       sky.removeFromParent();
       for (const g of owned.geometries) g.dispose();

@@ -1,4 +1,5 @@
-import { ARENA, BOXES, PLAYER_RADIUS, SPAWNS, STEP_HEIGHT, eyeHeight } from "./map";
+import { PLAYER_RADIUS, STEP_HEIGHT, eyeHeight } from "./map";
+import { DEFAULT_MAP, getMap, mapOf, type GameMap } from "./maps/registry";
 import { spawnSide, halftimeRound } from "./sides";
 import {
   COMBAT_VERSION,
@@ -52,10 +53,10 @@ const emptyRoundStats = () => ({
   B: { shots: 0, hits: 0, headHits: 0, damage: 0, health: 100 },
 });
 
-function player(id: string, seat: Seat): Player {
+function player(id: string, seat: Seat, map: GameMap): Player {
   return {
     id,
-    ...SPAWNS[seat],
+    ...map.spawns[seat],
     y: 0,
     pitch: 0,
     hp: 100,
@@ -75,18 +76,28 @@ export function createMatch(
   bestOf: 5 | 9 | 13,
   now: number,
   combatVersion: 1 | 2 = COMBAT_VERSION,
+  mapId?: string,
 ): MatchState {
   if (!Number.isFinite(now) || ![5, 9, 13].includes(bestOf))
     throw new Error("Invalid match configuration");
+  // Throws on an unknown id. Dustfront matches keep the field absent, exactly as before.
+  const map = getMap(mapId);
   return {
     v: 1,
+    ...(map === DEFAULT_MAP ? {} : { mapId: map.id }),
     sideVersion: 1,
     combatVersion,
     ...(combatVersion === COMBAT_VERSION ? { armorVersion: 1 as const } : {}),
     phase: "waiting",
     players: {
-      A: { ...player(ids.A, "A"), ...(combatVersion === COMBAT_VERSION ? { armor: 100 } : {}) },
-      B: { ...player(ids.B, "B"), ...(combatVersion === COMBAT_VERSION ? { armor: 100 } : {}) },
+      A: {
+        ...player(ids.A, "A", map),
+        ...(combatVersion === COMBAT_VERSION ? { armor: 100 } : {}),
+      },
+      B: {
+        ...player(ids.B, "B", map),
+        ...(combatVersion === COMBAT_VERSION ? { armor: 100 } : {}),
+      },
     },
     score: { A: 0, B: 0 },
     bestOf,
@@ -149,13 +160,20 @@ function finishRound(state: MatchState, winner: Seat | null, now: number): void 
   }
 }
 
-function blocked(x: number, y: number, z: number, crouched = false): boolean {
+function blocked(
+  x: number,
+  y: number,
+  z: number,
+  crouched = false,
+  map: GameMap = DEFAULT_MAP,
+): boolean {
   if (
-    Math.abs(x) > ARENA.width / 2 - PLAYER_RADIUS ||
-    Math.abs(z) > ARENA.depth / 2 - PLAYER_RADIUS
+    Math.abs(x) > map.arena.width / 2 - PLAYER_RADIUS ||
+    Math.abs(z) > map.arena.depth / 2 - PLAYER_RADIUS
   )
     return true;
-  return BOXES.some(
+  // Cover and movement-only barriers (gorges, undergrowth, organic edges).
+  return map.movementSolids.some(
     (b) =>
       y < b.y + b.h / 2 - 1e-7 &&
       y + eyeHeight({ crouched }) + 0.2 > b.y - b.h / 2 &&
@@ -165,17 +183,25 @@ function blocked(x: number, y: number, z: number, crouched = false): boolean {
 }
 
 type Pose = Vector & { crouched?: boolean };
-// The cosmetic camera uses exactly the same occupancy test as movement.
+// The cosmetic camera uses exactly the same occupancy test as movement (pass the match's map).
 export { blocked as isMovementBlocked };
-/** dt is milliseconds and capped at one tick; callers predict once per fixed tick. */
-export function predictMovement(p: Player, input: Input | null, dt: number): void {
+/**
+ * dt is milliseconds and capped at one tick; callers predict once per fixed tick. `map` is the
+ * match's map: the server, the client prediction and the bot must all pass the same one.
+ */
+export function predictMovement(
+  p: Player,
+  input: Input | null,
+  dt: number,
+  map: GameMap = DEFAULT_MAP,
+): void {
   if (!Number.isFinite(dt) || dt <= 0) return;
   const seconds = Math.min(dt, TICK_MS) / 1000;
   if (input) {
-    p.crouched = !!input.crouch || blocked(p.x, p.y, p.z, false);
+    p.crouched = !!input.crouch || blocked(p.x, p.y, p.z, false, map);
     const supported =
       p.y === 0 ||
-      BOXES.some(
+      map.boxes.some(
         (b) =>
           Math.abs(p.y - (b.y + b.h / 2)) < 1e-6 &&
           Math.abs(p.x - b.x) < b.w / 2 + PLAYER_RADIUS &&
@@ -198,10 +224,13 @@ export function predictMovement(p: Player, input: Input | null, dt: number): voi
       ["z", dz, "x"],
     ] as const) {
       let next = Math.max(
-        -(axis === "x" ? ARENA.width : ARENA.depth) / 2 + PLAYER_RADIUS,
-        Math.min((axis === "x" ? ARENA.width : ARENA.depth) / 2 - PLAYER_RADIUS, p[axis] + delta),
+        -(axis === "x" ? map.arena.width : map.arena.depth) / 2 + PLAYER_RADIUS,
+        Math.min(
+          (axis === "x" ? map.arena.width : map.arena.depth) / 2 - PLAYER_RADIUS,
+          p[axis] + delta,
+        ),
       );
-      for (const b of BOXES) {
+      for (const b of map.movementSolids) {
         const top = b.y + b.h / 2;
         // A riser no taller than STEP_HEIGHT (stairs) is walked onto instead of blocking.
         if (grounded && top - p.y <= STEP_HEIGHT + 1e-9) continue;
@@ -220,7 +249,7 @@ export function predictMovement(p: Player, input: Input | null, dt: number): voi
     }
     // Step up onto the highest riser now under the feet (stairs), if there is head room.
     let stepTop = p.y;
-    for (const b of BOXES) {
+    for (const b of map.boxes) {
       const top = b.y + b.h / 2;
       if (
         top > stepTop &&
@@ -230,7 +259,7 @@ export function predictMovement(p: Player, input: Input | null, dt: number): voi
       )
         stepTop = top;
     }
-    if (grounded && stepTop > p.y && !blocked(p.x, stepTop, p.z, !!p.crouched)) {
+    if (grounded && stepTop > p.y && !blocked(p.x, stepTop, p.z, !!p.crouched, map)) {
       p.y = stepTop;
       p.velocityY = 0;
     }
@@ -239,7 +268,7 @@ export function predictMovement(p: Player, input: Input | null, dt: number): voi
   p.velocityY = (p.velocityY ?? 0) - 14 * seconds;
   let nextY = Math.max(0, p.y + p.velocityY * seconds);
   if (p.velocityY <= 0)
-    for (const b of BOXES) {
+    for (const b of map.boxes) {
       const top = b.y + b.h / 2;
       if (
         previousY >= top - 1e-6 &&
@@ -252,7 +281,7 @@ export function predictMovement(p: Player, input: Input | null, dt: number): voi
       }
     }
   p.y = nextY;
-  if (blocked(p.x, p.y, p.z, !!p.crouched)) {
+  if (blocked(p.x, p.y, p.z, !!p.crouched, map)) {
     p.y = previousY;
     p.velocityY = 0;
   }
@@ -314,7 +343,8 @@ function shoot(
     z: -Math.cos(yaw) * Math.cos(pitch),
   };
   const origin = { x: start.x, y: start.y + eyeHeight(start), z: start.z };
-  const worldHit = traceWorld(origin, direction),
+  const map = mapOf(state);
+  const worldHit = traceWorld(origin, direction, 100, map),
     wall = worldHit?.distance ?? Infinity;
   const volumes = modern
     ? combatVolumes(targetStart)
@@ -371,7 +401,8 @@ function shoot(
       },
       direction,
       3.5,
-    ) ?? traceWorld({ x: point.x, y: point.y + 0.02, z: point.z }, { x: 0, y: -1, z: 0 }, 2);
+      map,
+    ) ?? traceWorld({ x: point.x, y: point.y + 0.02, z: point.z }, { x: 0, y: -1, z: 0 }, 2, map);
   state.events.push({
     type: headshot ? "headshot" : "hit",
     seat,
@@ -446,7 +477,7 @@ export function applyQueuedMovement(
   p.moving = Math.hypot(input.forward, input.strafe) > 0.1;
   p.sprinting = input.sprint;
   const before = { x: p.x, z: p.z, y: p.y };
-  predictMovement(p, input, TICK_MS);
+  predictMovement(p, input, TICK_MS, mapOf(state));
   // Same footstep accounting as stepMatch: Shift-walking stays silent.
   if (input.walk) p.stepDistance = 0;
   else if (p.y === before.y && !(p.velocityY ?? 0))
@@ -471,6 +502,7 @@ export function stepMatch(
     return state;
   const server = state.server ?? (state.server = { lastStepAt: now - TICK_MS, draws: 0 });
   if (now - server.lastStepAt < TICK_MS - 1e-6) return state;
+  const map = mapOf(state);
   server.lastStepAt = now;
   state.tick++;
   state.events = [];
@@ -479,7 +511,7 @@ export function stepMatch(
     for (const seat of SEATS) {
       const old = state.players[seat];
       state.players[seat] = {
-        ...player(old.id, spawnSide(state, seat)),
+        ...player(old.id, spawnSide(state, seat), map),
         ...(state.armorVersion === 1 ? { armor: 100 } : {}),
         kills: old.kills,
         headshots: old.headshots,
@@ -564,7 +596,7 @@ export function stepMatch(
       if (input.reload && !p.reloadUntil && p.reserve > 0 && p.ammo < WEAPONS[p.weapon].magazine)
         p.reloadUntil = now + WEAPONS[p.weapon].reloadMs;
       const before = { x: p.x, y: p.y, z: p.z };
-      predictMovement(p, input, TICK_MS);
+      predictMovement(p, input, TICK_MS, map);
       if (input.walk) p.stepDistance = 0;
       if (
         state.combatVersion === COMBAT_VERSION &&
@@ -578,7 +610,12 @@ export function stepMatch(
         const stride = p.crouched ? 1.25 : input.sprint ? 1.9 : 1.6;
         if (p.stepDistance >= stride) {
           p.stepDistance -= stride;
-          const floor = traceWorld({ x: p.x, y: p.y + 0.15, z: p.z }, { x: 0, y: -1, z: 0 }, 0.4);
+          const floor = traceWorld(
+            { x: p.x, y: p.y + 0.15, z: p.z },
+            { x: 0, y: -1, z: 0 },
+            0.4,
+            map,
+          );
           state.events.push({
             type: "step",
             seat,
@@ -586,14 +623,14 @@ export function stepMatch(
             audio: {
               kind: "step",
               position: { x: p.x, y: p.y, z: p.z },
-              surface: floor?.surface ?? "concrete",
+              surface: floor?.surface ?? map.floor.surface,
               soft: !!p.crouched,
             },
           });
         }
       }
     } else {
-      predictMovement(p, null, TICK_MS);
+      predictMovement(p, null, TICK_MS, map);
     }
   }
   // Both shots use tick-start positions, even if the first is lethal.

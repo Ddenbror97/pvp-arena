@@ -70,6 +70,11 @@ export interface Player {
 }
 
 export interface MatchState {
+  /**
+   * Registry map id (maps/registry.ts), fixed when the match is created and carried to every
+   * client in snapshots. Absent means Dustfront (all matches created before the registry).
+   */
+  mapId?: string;
   /** Missing on legacy checkpoints, which retain their original spawn rules. */
   sideVersion?: 1;
   lastRound?: RoundRecap;

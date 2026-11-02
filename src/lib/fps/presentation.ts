@@ -1,6 +1,7 @@
 import type { Input, Player } from "./protocol";
 import { isMovementBlocked, predictMovement, TICK_MS } from "./simulation";
 import { eyeHeight } from "./map";
+import { DEFAULT_MAP, type GameMap } from "./maps/registry";
 
 /** Interpolate feet height on the fixed simulation clock, including landing.
  * Partial physics previews use a different gravity step and can anticipate a
@@ -56,6 +57,8 @@ export class CameraVertical {
 /** Camera-only horizontal integration; network prediction remains fixed-step. */
 export class FrameMotion {
   private pose: Player | null = null;
+  /** The match's map: camera motion collides exactly like movement. */
+  constructor(private readonly map: GameMap = DEFAULT_MAP) {}
   reset() {
     this.pose = null;
   }
@@ -73,7 +76,7 @@ export class FrameMotion {
     if (input)
       while (elapsed > 0) {
         const step = Math.min(TICK_MS, elapsed);
-        predictMovement(pose, input, step);
+        predictMovement(pose, input, step, this.map);
         elapsed -= step;
       }
     pose.y = reference.y;
@@ -86,7 +89,10 @@ export class FrameMotion {
     // The old 15 cm threshold converted that small timing error into a teleport.
     // Integrate current controls immediately, then repay positional error with a
     // continuous, bounded correction. Only actual teleports reset presentation.
-    if (distance > 3 || isMovementBlocked(pose.x, reference.y, pose.z, !!reference.crouched)) {
+    if (
+      distance > 3 ||
+      isMovementBlocked(pose.x, reference.y, pose.z, !!reference.crouched, this.map)
+    ) {
       pose.x = reference.x;
       pose.z = reference.z;
     } else {
@@ -99,8 +105,10 @@ export class FrameMotion {
         nextZ = pose.z + Math.max(-limit, Math.min(limit, (tz - pose.z) * blend));
       // Slide corrections along cover instead of snapping to the reference
       // when one axis intersects a corner. Movement uses the same occupancy.
-      if (!isMovementBlocked(nextX, reference.y, pose.z, !!reference.crouched)) pose.x = nextX;
-      if (!isMovementBlocked(pose.x, reference.y, nextZ, !!reference.crouched)) pose.z = nextZ;
+      if (!isMovementBlocked(nextX, reference.y, pose.z, !!reference.crouched, this.map))
+        pose.x = nextX;
+      if (!isMovementBlocked(pose.x, reference.y, nextZ, !!reference.crouched, this.map))
+        pose.z = nextZ;
     }
     return pose;
   }
@@ -141,6 +149,8 @@ type TimedPose = Pose & {
  * Applying it on arrival removed the opponent about one interpolation delay plus network
  * latency early, in the open, before the rendered pose had reached cover. */
 export class RemotePresentation {
+  /** The match's map: late-packet bridging never extrapolates into its solids. */
+  constructor(private readonly map: GameMap = DEFAULT_MAP) {}
   private readonly poses: TimedPose[] = Array.from({ length: 8 }, () => ({
     x: 0,
     y: 0,
@@ -313,7 +323,7 @@ export class RemotePresentation {
         if (span > 0 && span <= 150 && Math.hypot(dx, dz) / span <= 0.0076) {
           const x = newest.x + (dx * ahead) / span,
             z = newest.z + (dz * ahead) / span;
-          if (!isMovementBlocked(x, newest.y, z, this.crouched)) {
+          if (!isMovementBlocked(x, newest.y, z, this.crouched, this.map)) {
             out.x = x;
             out.z = z;
             this.projected = true;
@@ -327,7 +337,13 @@ export class RemotePresentation {
       this.correctionX *= decay;
       this.correctionZ *= decay;
       if (
-        !isMovementBlocked(out.x + this.correctionX, out.y, out.z + this.correctionZ, this.crouched)
+        !isMovementBlocked(
+          out.x + this.correctionX,
+          out.y,
+          out.z + this.correctionZ,
+          this.crouched,
+          this.map,
+        )
       ) {
         out.x += this.correctionX;
         out.z += this.correctionZ;

@@ -15,7 +15,9 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Input, Seat } from "@/lib/fps/protocol";
 import type { ArenaControls, ArenaFrame } from "@/lib/fps/renderer";
 import { loadArenaRenderer } from "@/lib/fps/renderer-loader";
-import { STRIKE_LOADING_IMAGE, matchLoadProgress, type ArenaLoadProgress } from "@/lib/fps/loading";
+import { DEFAULT_MAP_ID, getMap, isMapId } from "@/lib/fps/maps/registry";
+import { loadingImageFor } from "@/lib/fps/maps/loading-screens";
+import { matchLoadProgress, type ArenaLoadProgress } from "@/lib/fps/loading";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
 import {
   reserveArenaPointer,
@@ -89,6 +91,9 @@ export function DuelMatch({
     [error, setError] = useState<string | null>(null),
     [arenaReady, setArenaReady] = useState(false),
     [renderError, setRenderError] = useState<string | null>(null),
+    // The map the runtime fixed for this match (explicit or drawn from the rotation), returned
+    // with the admission ticket so the right scene starts loading before the socket connects.
+    [admittedMapId, setAdmittedMapId] = useState<string | null>(null),
     [muted, setMuted] = useState(false),
     [busy, setBusy] = useState(false),
     [now, setNow] = useState(Date.now()),
@@ -163,6 +168,17 @@ export function DuelMatch({
     frame?.state.phase === "cancelled" ||
     (!spectate && ["COMPLETED", "CANCELLED", "REFUNDED"].includes(match?.status ?? ""));
   const needsArena = !!desktop && (playable || terminal || !userId);
+  // The runtime fixes each match's map. Snapshots are authoritative; the admission ticket tells a
+  // player which map it is before the socket opens, so the scene and loading art start at once.
+  // Players wait for it (never load a guessed map); viewers of finished or open matches fall back
+  // to the match row or Dustfront. A changed id (client/server skew) remounts the arena.
+  const awaitingMap = playable && !!userId && !frame && !admittedMapId;
+  const mapId: string | null = awaitingMap
+    ? null
+    : (frame?.state.mapId ?? admittedMapId ?? match?.map_id ?? DEFAULT_MAP_ID);
+  const knownMap = mapId !== null && isMapId(mapId);
+  const mapName = knownMap ? getMap(mapId).name : "PvPStrike";
+  const loadingImage = knownMap ? loadingImageFor(mapId) : null;
   useEffect(() => {
     const sync = () => setMuted(soundMuted());
     sync();
@@ -211,7 +227,11 @@ export function DuelMatch({
   }, [matchId]);
 
   useEffect(() => {
-    if (!host.current || !needsArena) return;
+    if (!host.current || !needsArena || mapId === null) return;
+    if (!knownMap) {
+      setRenderError("This match uses a map this version doesn't have yet. Reload to update.");
+      return;
+    }
     let disposed = false;
     setArenaReady(false);
     setVisualProgress({ value: 0, label: "Loading arena engine" });
@@ -243,6 +263,7 @@ export function DuelMatch({
             (progress) => {
               if (!disposed) setVisualProgress(progress);
             },
+            { mapId },
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
           void arena.current.ready
@@ -280,7 +301,7 @@ export function DuelMatch({
       arena.current?.dispose();
       arena.current = null;
     };
-  }, [needsArena, matchId]);
+  }, [needsArena, matchId, mapId, knownMap]);
 
   useEffect(() => {
     if (!playable || !userId || !desktop) return;
@@ -297,6 +318,8 @@ export function DuelMatch({
       try {
         const ticket = await admission({ data: { matchId, spectate } });
         if (stopped) return;
+        // Older runtimes and fixtures don't report a map: they play Dustfront.
+        setAdmittedMapId(ticket.mapId ?? DEFAULT_MAP_ID);
         const ws = new WebSocket(ticket.url);
         socket.current = ws;
         ws.onopen = () => {
@@ -602,26 +625,30 @@ export function DuelMatch({
             (!arenaReady || !frame || connection !== "Connected" || (!spectate && !ready))))));
   const waitingForOpponent = ready && phase === "waiting" && connection === "Connected";
   const loadLabel = !arenaReady
-    ? visualProgress.label
+    ? mapId === null
+      ? "Choosing map"
+      : visualProgress.label
     : connection !== "Connected"
       ? connection
       : !frame
         ? "Synchronizing match"
         : waitingForOpponent
           ? "Waiting for opponent"
-          : "Entering Dustfront";
+          : `Entering ${mapName}`;
   return (
     <div className="duel-game" data-arena-ready={arenaReady}>
       {!arenaReady && !showLoading && (
         <div className="duel-loading-backdrop" aria-hidden>
-          <img
-            src={STRIKE_LOADING_IMAGE}
-            alt=""
-            width={1672}
-            height={941}
-            fetchPriority="high"
-            decoding="async"
-          />
+          {loadingImage && (
+            <img
+              src={loadingImage}
+              alt=""
+              width={1672}
+              height={941}
+              fetchPriority="high"
+              decoding="async"
+            />
+          )}
         </div>
       )}
       <div
@@ -636,6 +663,8 @@ export function DuelMatch({
           progress={matchLoadProgress(visualProgress.value, connection === "Connected", !!frame)}
           label={loadLabel}
           error={error}
+          mapName={mapName}
+          image={loadingImage}
         />
       )}
       {ready && !locked && !spectate && !terminal && !settingsOpen && !showLoading && (

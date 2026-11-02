@@ -19,11 +19,13 @@ test("aim arena GLB has no coplanar overlaps and its surfaces sit on the collisi
     );
     const { createArenaEnvironment } = await import("/src/lib/fps/arena-environment.ts" as string);
     const { BOXES, ARENA } = await import("/src/lib/fps/map.ts" as string);
+    const { DEFAULT_MAP_ID } = await import("/src/lib/fps/maps/registry.ts" as string);
     const scene = new THREE.Scene();
     const env = createArenaEnvironment(scene);
     await env.ready;
     scene.updateMatrixWorld(true);
-    const map = scene.getObjectByName("aim-arena");
+    // The registry names the authored scene after the map id (arena-environment.ts).
+    const map = scene.getObjectByName(DEFAULT_MAP_ID);
     if (!map) return { loaded: false };
     const meshes: import("three").Mesh[] = [];
     map.traverse((o: import("three").Object3D) => {

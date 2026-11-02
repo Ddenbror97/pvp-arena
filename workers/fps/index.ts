@@ -4,6 +4,15 @@ import { createPracticeBot } from "../../src/lib/fps/practice-bot";
 import { PRACTICE_BOT_ID } from "../../src/lib/fps/practice";
 import { COMBAT_VERSION } from "../../src/lib/fps/combat";
 import {
+  DEFAULT_MAP_ID,
+  MAP_IDS,
+  ROTATION_MAP_IDS,
+  isMapId,
+  pickRotationMap,
+} from "../../src/lib/fps/maps/registry";
+/** Uniform [0, 1) from the platform CSPRNG (map draws must not be predictable or biased). */
+const secureUnit = () => crypto.getRandomValues(new Uint32Array(1))[0]! / 2 ** 32;
+import {
   createMatch,
   startMatch,
   stepMatch,
@@ -53,6 +62,9 @@ type Config = {
   stake: number;
   private: boolean;
   expiresAt: number;
+  /** Registry map id. Absent: the runtime draws one from the rotation when it creates the
+   * match; it is then fixed for the match's lifetime (state.mapId). */
+  map_id?: string;
 };
 type SocketInfo = SessionIdentity & {
   sub: string;
@@ -104,6 +116,10 @@ export default {
         combatVersion: COMBAT_VERSION,
         networkVersion: 1,
         latencyVersion: 2,
+        /** Maps this runtime can simulate; the app must not create a match on any other. */
+        maps: MAP_IDS,
+        /** Maps a match without an explicit map_id is drawn from. */
+        rotation: ROTATION_MAP_IDS,
         configured:
           (env.FPS_RUNTIME_SECRET?.length ?? 0) >= 32 &&
           !!env.SUPABASE_URL &&
@@ -344,7 +360,8 @@ export class DuelRoom {
         c.stake > 5000 ||
         !Number.isSafeInteger(c.expiresAt) ||
         c.expiresAt <= Date.now() ||
-        typeof c.private !== "boolean"
+        typeof c.private !== "boolean" ||
+        (c.map_id !== undefined && !isMapId(c.map_id))
       )
         return json({ error: "BAD_CONFIG" }, 400);
       if (this.saved) {
@@ -357,21 +374,37 @@ export class DuelRoom {
           old.best_of !== c.best_of ||
           old.private !== c.private ||
           !!old.practice !== !!c.practice ||
-          old.expiresAt !== c.expiresAt
+          old.expiresAt !== c.expiresAt ||
+          (old.map_id ?? DEFAULT_MAP_ID) !== (c.map_id ?? DEFAULT_MAP_ID)
         )
           return json({ error: "CONFIG_CONFLICT" }, 409);
-        return json({ ok: true, phase: this.saved.state.phase });
+        return json({
+          ok: true,
+          phase: this.saved.state.phase,
+          mapId: this.saved.state.mapId ?? DEFAULT_MAP_ID,
+        });
       }
       this.saved = {
         config: c,
-        state: createMatch({ A: c.creator_id, B: c.opponent_id }, c.best_of, Date.now()),
+        // Practice and PvP alike: an explicit map, otherwise a random rotation map.
+        state: createMatch(
+          { A: c.creator_id, B: c.opponent_id },
+          c.best_of,
+          Date.now(),
+          COMBAT_VERSION,
+          c.map_id ?? pickRotationMap(secureUnit),
+        ),
         result: null,
         settled: false,
         createdAt: Date.now(),
       };
       await this.ctx.storage.put("match", this.saved);
       await this.ctx.storage.setAlarm(Date.now() + 60_000);
-      return json({ ok: true, phase: "waiting" });
+      return json({
+        ok: true,
+        phase: "waiting",
+        mapId: this.saved.state.mapId ?? DEFAULT_MAP_ID,
+      });
     }
     const claims = await verifyAdmission(
       url.searchParams.get("ticket") ?? "",
