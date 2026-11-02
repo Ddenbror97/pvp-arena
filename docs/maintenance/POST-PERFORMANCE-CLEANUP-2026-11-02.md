@@ -124,8 +124,11 @@ between consecutive builds, not the cleanup; treat the two as equal.
   pre-existing repo-wide prettier errors).
 - Production build: succeeds.
 - e2e: `fps-settings` (settings UI, persistence) pass; `fps-combat` (combat audio, reload
-  audio timeline, blood pools reset each round) 3/3 pass; `fps-cover` 3/4 pass, see §13 for
-  the fourth; `fps-lifecycle` (repeated arena mounts release resources and listeners) passed
+  audio timeline, blood pools reset each round) 3/3 pass; `fps-cover` 3/4 pass: the fourth,
+  "records local arena frame timing without stalls", asserts a p95 frame under 100 ms,
+  which the software renderer of this container cannot meet on any branch (it measured
+  8.1 s); it is a real-hardware assertion, and the real-hardware run in §13 is the
+  equivalent check; `fps-lifecycle` (repeated arena mounts release resources and listeners) passed
   on the previous branch, from which no runtime code changed here beyond the dead-export
   removals.
 - Map layout, reachability, first contact, collision, hit detection and match lifecycle are
