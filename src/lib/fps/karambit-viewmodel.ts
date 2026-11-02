@@ -1,6 +1,10 @@
 import * as THREE from "three";
 import { cloneAuthoredModel, retainAuthoredAsset } from "./authored-assets";
-import { createGloveMaterial, type ViewmodelVariant } from "./authored-viewmodel";
+import {
+  createGloveMaterial,
+  sharpenViewmodelTextures,
+  type ViewmodelVariant,
+} from "./authored-viewmodel";
 import {
   fitContinuousForearms,
   HANDGUARD_GRIP,
@@ -226,6 +230,7 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
           object.frustumCulled = false;
         }
       });
+      sharpenViewmodelTextures(root);
       loaded = true;
     })
     .catch((error) => console.warn("Karambit viewmodel unavailable.", error));

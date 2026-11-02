@@ -125,6 +125,27 @@ export const M4_VIEWMODEL: ViewmodelVariant = {
 /** M4 bolt-catch strike: wrist offset from the magazine-grip wrist, beyond the paddle shift. */
 const BOLT_CATCH_PALM = new THREE.Vector3(-0.012, -0.012, 0.018);
 
+/**
+ * Anisotropic filtering for every texture on a first-person model. The glove, sleeve and rifle
+ * maps load from the GLBs at the default (1), which smears fabric weave, stitching and glove
+ * relief at the grazing angles a viewmodel is seen at.
+ */
+export function sharpenViewmodelTextures(root: THREE.Object3D, level = 8) {
+  const slots = ["map", "normalMap", "roughnessMap", "metalnessMap", "aoMap"] as const;
+  root.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+    for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+      for (const slot of slots) {
+        const texture = (material as THREE.MeshStandardMaterial)[slot];
+        if (texture && texture.anisotropy < level) {
+          texture.anisotropy = level;
+          texture.needsUpdate = true;
+        }
+      }
+    }
+  });
+}
+
 /** Real authored rifle and skinned hands. Existing controller still owns every input and shot. */
 export function createAuthoredViewmodel(
   parent: THREE.Object3D,
@@ -499,6 +520,7 @@ export function createAuthoredViewmodel(
         object.layers.set(firstPerson ? 1 : 0);
         if (object instanceof THREE.Mesh) object.castShadow = !firstPerson;
       });
+      if (firstPerson) sharpenViewmodelTextures(root);
       loaded = true;
     })
     .catch((error) =>
