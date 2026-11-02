@@ -19,6 +19,21 @@ export const KARAMBIT_TRICKS = [
 ] as const;
 /** Idle tricks start after this long (seconds) without relevant input, randomised. */
 export const TRICK_DELAY = { min: 8, max: 15 } as const;
+/**
+ * Running carry: the fist turned palm-down and tipped forward so the blade curls up over the
+ * knuckles with the ring showing on the left (the knife reads clearly while running). Applied
+ * on top of the idle, eased in while running and out for walking, standing, attacks and inspect.
+ */
+export const KARAMBIT_RUN_POSE = {
+  /** Wrist offset (viewmodel metres): toward the screen centre and a little further away. */
+  position: [-0.03, 0, -0.03] as const,
+  /** Wrist rotation (Euler XYZ, radians). */
+  rotation: [1.1, 0.2, 1.3] as const,
+  /** Knife about its ring (radians). */
+  knife: 0.12,
+  /** Ease rate (1/s) toward the target weight. */
+  rate: 9,
+};
 
 export type KarambitControls = {
   handPosition: THREE.Vector3;
@@ -79,10 +94,18 @@ export class KarambitAnimator {
   private lastTrick: string | null = null;
   private trickBag: string[] = [];
   private lastAirborne = false;
-  private weights = { walk: 0, run: 0 };
+  private weights = { walk: 0, run: 0, carry: 0 };
   private strafe = 0;
   private cueTime = 0;
   private readonly scratch = { q: new THREE.Quaternion(), e: new THREE.Euler() };
+  private readonly carry = {
+    rotation: new THREE.Quaternion().setFromEuler(new THREE.Euler(...KARAMBIT_RUN_POSE.rotation)),
+    knife: new THREE.Quaternion().setFromAxisAngle(
+      new THREE.Vector3(1, 0, 0),
+      KARAMBIT_RUN_POSE.knife,
+    ),
+    position: new THREE.Vector3(...KARAMBIT_RUN_POSE.position),
+  };
 
   constructor(
     private readonly rig: THREE.Object3D,
@@ -182,7 +205,7 @@ export class KarambitAnimator {
           layer?.play();
           layer?.setEffectiveWeight(0);
         }
-        this.weights.walk = this.weights.run = 0;
+        this.weights.walk = this.weights.run = this.weights.carry = 0;
         this.current = null;
         this.play("karambit_equip", 0, "equip");
       } else {
@@ -241,6 +264,13 @@ export class KarambitAnimator {
     }
     this.lastAirborne = frame.airborne;
     this.strafe += (frame.strafe * calm - this.strafe) * k;
+    // Running carry pose: only over the plain idle, so attacks, inspect and the equip start
+    // from their authored pose (it eases out quickly when one begins).
+    const running =
+      this.currentState === "idle" && !frame.walking && !frame.airborne && frame.moving > 0.35;
+    this.weights.carry +=
+      ((running ? 1 : 0) - this.weights.carry) *
+      (1 - Math.exp(-dt * (running ? KARAMBIT_RUN_POSE.rate : KARAMBIT_RUN_POSE.rate * 1.8)));
 
     const before = this.current?.time ?? 0;
     this.mixer.update(dt);
@@ -258,6 +288,7 @@ export class KarambitAnimator {
       );
     }
     c.knifeRotation.copy(this.nodes.knife.quaternion);
+    this.applyRunPose(c, this.weights.carry);
     c.fingers = this.nodes.fingers.position.x;
     const view = frame.reducedMotion ? 0.25 : 1;
     c.viewPosition.copy(this.nodes.view.position).multiplyScalar(view);
@@ -284,6 +315,22 @@ export class KarambitAnimator {
     c.viewPosition.copy(this.nodes.view.position);
     c.viewRotation.copy(this.nodes.view.quaternion);
     return c;
+  }
+
+  /** Blend the running carry pose onto `controls` (0 = idle, 1 = full carry). */
+  applyRunPose(controls: KarambitControls, weight: number) {
+    const w = THREE.MathUtils.clamp(weight, 0, 1);
+    if (w <= 1e-4) return controls;
+    const smooth = w * w * (3 - 2 * w);
+    controls.handPosition.addScaledVector(this.carry.position, smooth);
+    controls.handRotation.multiply(this.scratch.q.identity().slerp(this.carry.rotation, smooth));
+    controls.knifeRotation.multiply(this.scratch.q.identity().slerp(this.carry.knife, smooth));
+    return controls;
+  }
+
+  /** Current running-carry weight (0 → 1). */
+  get runPose() {
+    return this.weights.carry;
   }
 
   clipNames() {
