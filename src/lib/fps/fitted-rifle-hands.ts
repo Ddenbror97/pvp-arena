@@ -27,6 +27,12 @@ export type GripFrame = {
   direction: (v: THREE.Vector3) => THREE.Vector3;
   /** Also pose the right hand on the pistol grip (only needed once). */
   rightHand: boolean;
+  /**
+   * Turn the support hand about its own long axis (wrist → middle knuckle), radians, keeping the
+   * wrist and forearm where they are. Supinating it brings the palm round under the handguard so
+   * the fingers wrap the far side, like a real support grip, instead of gripping it side-on.
+   */
+  handTwist?: number;
 };
 export const HANDGUARD_GRIP: GripFrame = {
   point: (v) => v.clone(),
@@ -108,6 +114,8 @@ export function poseRifleHands(root: THREE.Object3D, grip: GripFrame = HANDGUARD
   const turn = new THREE.Quaternion().setFromRotationMatrix(
     targetFrame.multiply(sourceFrame.invert()),
   );
+  if (grip.handTwist)
+    turn.premultiply(new THREE.Quaternion().setFromAxisAngle(desired, grip.handTwist));
   const world = hand.getWorldQuaternion(new THREE.Quaternion()).premultiply(turn);
   hand.quaternion.copy(
     hand.parent!.getWorldQuaternion(new THREE.Quaternion()).invert().multiply(world),
