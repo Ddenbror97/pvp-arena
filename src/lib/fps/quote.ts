@@ -17,6 +17,8 @@ export type DuelView = {
   stake: number;
   best_of: 5 | 9 | 13;
   practice?: boolean;
+  /** Registry map id (maps/registry.ts); absent or null means Dustfront. */
+  map_id?: string | null;
   ready_deadline?: string | null;
   private: boolean;
   expires_at: string;

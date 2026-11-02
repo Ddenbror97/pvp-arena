@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { STRIKE_LOADING_IMAGE } from "@/lib/fps/loading";
+import { ROTATION_LOADING_IMAGES } from "@/lib/fps/maps/loading-screens";
 import { DuelMatch } from "@/components/fps/DuelMatch";
 
 export const Route = createFileRoute("/fps/$matchId")({
@@ -10,15 +10,13 @@ export const Route = createFileRoute("/fps/$matchId")({
     ...(raw["spectate"] === true || raw["spectate"] === "true" ? { spectate: true } : {}),
   }),
   head: () => ({
-    links: [
-      {
-        rel: "preload",
-        as: "image",
-        href: STRIKE_LOADING_IMAGE,
-        type: "image/webp",
-        fetchPriority: "high",
-      },
-    ],
+    links: ROTATION_LOADING_IMAGES.map((href) => ({
+      rel: "preload",
+      as: "image",
+      href,
+      type: "image/webp",
+      fetchPriority: "high" as const,
+    })),
     meta: [
       { title: "PvPStrike Arena | PVPspinArena" },
       { name: "robots", content: "noindex, nofollow" },

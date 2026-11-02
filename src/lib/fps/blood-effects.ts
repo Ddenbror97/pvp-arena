@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { WORLD_SOLIDS } from "./map";
+import { DEFAULT_MAP, type GameMap } from "./maps/registry";
 import type { MatchState } from "./protocol";
 type Hit = NonNullable<MatchState["events"][number]["hit"]>;
 const MARKS = 48,
   DROPS = 96;
 /** A bounded cosmetic pool. Server hit records choose the surface; no client damage calculation. */
-export function createBloodEffects(scene: THREE.Scene) {
+export function createBloodEffects(scene: THREE.Scene, map: GameMap = DEFAULT_MAP) {
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = 128;
   const pen = canvas.getContext("2d")!;
@@ -89,7 +89,7 @@ export function createBloodEffects(scene: THREE.Scene) {
         );
         dummy.quaternion.setFromUnitVectors(axis, normal);
         dummy.rotateZ(random() * Math.PI * 2);
-        const solid = WORLD_SOLIDS.find((s) => s.id === surface.solidId);
+        const solid = map.worldSolids.find((s) => s.id === surface.solidId);
         const axes =
           Math.abs(normal.y) > 0.5
             ? ([

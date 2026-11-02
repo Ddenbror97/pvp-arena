@@ -97,6 +97,21 @@ export function GameSettings({
             onChange={(e) => onChange({ ...settings, color: e.target.value })}
           />
         </label>
+        <fieldset>
+          <legend>Graphics</legend>
+          <div className="strike-crosshair-options">
+            {(["high", "low"] as const).map((quality) => (
+              <button
+                type="button"
+                key={quality}
+                aria-pressed={settings.graphics === quality}
+                onClick={() => onChange({ ...settings, graphics: quality })}
+              >
+                <span>{quality === "high" ? "High" : "Low (lighter scenery)"}</span>
+              </button>
+            ))}
+          </div>
+        </fieldset>
         <button type="button" className="duel-primary" onClick={onResume}>
           Resume game
         </button>

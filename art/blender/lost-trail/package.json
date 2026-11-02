@@ -1,0 +1,13 @@
+{
+  "name": "lost-trail-art-pipeline",
+  "private": true,
+  "description": "LOST TRAIL asset pipeline (EZ-Tree skeletons, per-section GPU instancing). See build.sh.",
+  "type": "module",
+  "devDependencies": {
+    "@dgreenheck/ez-tree": "1.1.0",
+    "@gltf-transform/core": "4.1.1",
+    "@gltf-transform/extensions": "4.1.1",
+    "meshoptimizer": "0.22.0",
+    "three": "0.186.1"
+  }
+}

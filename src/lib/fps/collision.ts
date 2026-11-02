@@ -1,4 +1,6 @@
-import { WORLD_SOLIDS, type Solid, type Surface } from "./map";
+import type { Solid, Surface } from "./map";
+import { DEFAULT_MAP } from "./maps/registry";
+import type { GameMap } from "./maps/types";
 export type Vector = { x: number; y: number; z: number };
 export type WorldHit = {
   distance: number;
@@ -26,10 +28,16 @@ export function rayBox(origin: Vector, direction: Vector, center: Vector, size: 
   }
   return far < 0 ? Infinity : near;
 }
-export function traceWorld(origin: Vector, direction: Vector, maxDistance = 100): WorldHit | null {
+/** Nearest bullet/sight solid of `map` along the ray (pass the match's map). */
+export function traceWorld(
+  origin: Vector,
+  direction: Vector,
+  maxDistance = 100,
+  map: GameMap = DEFAULT_MAP,
+): WorldHit | null {
   let distance = maxDistance,
     solid: Solid | null = null;
-  for (const candidate of WORLD_SOLIDS) {
+  for (const candidate of map.worldSolids) {
     const hit = rayBox(origin, direction, candidate, {
       x: candidate.w,
       y: candidate.h,

@@ -1,4 +1,4 @@
-import { BOXES } from "./map";
+import { DEFAULT_MAP, type GameMap } from "./maps/registry";
 import type { MatchState, Seat } from "./protocol";
 
 export function isDefeatedView(state: MatchState, seat: Seat | null, spectate: boolean) {
@@ -11,9 +11,9 @@ export function isDefeatedView(state: MatchState, seat: Seat | null, spectate: b
 }
 
 /** Cosmetic only: the authoritative eliminated player remains unchanged. */
-export function deathSupport(x: number, feetY: number, z: number) {
+export function deathSupport(x: number, feetY: number, z: number, map: GameMap = DEFAULT_MAP) {
   let floor = 0;
-  for (const box of BOXES) {
+  for (const box of map.boxes) {
     const top = box.y + box.h / 2;
     if (top <= feetY + 0.01 && Math.abs(x - box.x) < box.w / 2 && Math.abs(z - box.z) < box.d / 2)
       floor = Math.max(floor, top);

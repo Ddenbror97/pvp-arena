@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import type { ArenaLoadProgress } from "./loading";
-import { EYE_HEIGHT, SPAWNS, eyeHeight } from "./map";
+import { EYE_HEIGHT, eyeHeight } from "./map";
+import { DEFAULT_MAP_ID, getMap } from "./maps/registry";
+import { createMapEnvironment } from "./maps/environments";
 import type { Input, MatchState, Player, Seat, Weapon } from "./protocol";
 import { predictMovement, TICK_MS, WEAPONS } from "./simulation";
 import { createCharacter } from "./character";
@@ -8,8 +10,6 @@ import { characterSide } from "./sides";
 import { COMBAT_VERSION, recoveryProfile } from "./combat";
 import { createBloodEffects } from "./blood-effects";
 import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handling";
-import { createArenaEnvironment } from "./arena-environment";
-import { ARENA_LIGHTING } from "./arena-lighting";
 import { createImpactEffects } from "./impacts";
 import { createWeaponKit, AK_MUZZLE } from "./weapon";
 import {
@@ -92,6 +92,8 @@ export type ArenaControls = {
   audioPresentation: () => { yaw: number; poseAt: number };
   ready: Promise<void>;
   setSensitivity: (value: number) => void;
+  /** Scenery quality for maps that support it (distant vegetation density). */
+  setGraphicsQuality: (quality: "high" | "low") => void;
   snapshot: (frame: ArenaFrame, seat: Seat | null) => void;
   lock: () => Promise<void>;
   dispose: () => void;
@@ -105,19 +107,19 @@ export function mountArena(
   onLock: (locked: boolean) => void,
   onLocalShot?: (weapon: Weapon, seq: number) => void,
   onLoadProgress?: (progress: ArenaLoadProgress) => void,
+  /** The match's map (registry id; absent means Dustfront). Unknown ids throw. */
+  options: { mapId?: string | null } = {},
 ): ArenaControls {
+  const map = getMap(options.mapId);
+  const lighting = map.presentation.lighting;
   onLoadProgress?.({ value: 10, label: "Preparing graphics" });
   const scene = new THREE.Scene();
   // The weapon pass needs only its rig and lights. Re-traversing the entire
   // arena for this second pass wastes matrix, skeleton and light setup work.
   const viewScene = new THREE.Scene();
-  scene.background = new THREE.Color(ARENA_LIGHTING.background);
-  // Warm dusty haze for the Mediterranean aim arena; starts beyond the 40 m playable area.
-  scene.fog = new THREE.Fog(
-    ARENA_LIGHTING.fog.color,
-    ARENA_LIGHTING.fog.near,
-    ARENA_LIGHTING.fog.far,
-  );
+  scene.background = new THREE.Color(lighting.background);
+  // The map's haze (Dustfront: warm and dusty, starting beyond the 40 m playable area).
+  scene.fog = new THREE.Fog(lighting.fog.color, lighting.fog.near, lighting.fog.far);
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("webgl2", {
     alpha: true,
@@ -143,32 +145,34 @@ export function mountArena(
   renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = ARENA_LIGHTING.exposure;
+  renderer.toneMappingExposure = lighting.exposure;
   host.appendChild(renderer.domElement);
-  const camera = new THREE.PerspectiveCamera(WORLD_FOV, 1, 0.06, 260);
+  const camera = new THREE.PerspectiveCamera(WORLD_FOV, 1, 0.06, map.presentation.viewDistance);
   const viewCamera = new THREE.PerspectiveCamera(60, 1, 0.03, 8);
   viewCamera.layers.set(1);
   camera.rotation.order = "YXZ";
-  camera.position.set(0, EYE_HEIGHT, SPAWNS.A.z);
+  camera.position.set(0, EYE_HEIGHT, map.spawns.A.z);
   scene.add(camera);
   const hemisphere = new THREE.HemisphereLight(
-    ARENA_LIGHTING.hemisphere.sky,
-    ARENA_LIGHTING.hemisphere.ground,
-    ARENA_LIGHTING.hemisphere.intensity,
+    lighting.hemisphere.sky,
+    lighting.hemisphere.ground,
+    lighting.hemisphere.intensity,
   );
   scene.add(hemisphere);
-  const sun = new THREE.DirectionalLight(ARENA_LIGHTING.sun.color, ARENA_LIGHTING.sun.intensity);
+  const sun = new THREE.DirectionalLight(lighting.sun.color, lighting.sun.intensity);
   // Across the arena diagonal, so neither spawn looks straight into the sun.
-  sun.position.set(...ARENA_LIGHTING.sun.position);
+  sun.position.set(...lighting.sun.position);
   sun.castShadow = true;
-  // Static (rendered once after load), so a 2048 map is a one-off cost: ~2.4 cm per texel.
-  sun.shadow.mapSize.set(2048, 2048);
+  // Static (rendered once after load), so the shadow map is a one-off cost (Dustfront: 2048
+  // texels over ±26 m, ~2.4 cm per texel).
+  const shadow = map.presentation.shadow;
+  sun.shadow.mapSize.set(shadow.mapSize, shadow.mapSize);
   sun.shadow.camera.near = 1;
-  sun.shadow.camera.far = 65;
-  sun.shadow.camera.left = -26;
-  sun.shadow.camera.right = 26;
-  sun.shadow.camera.top = 26;
-  sun.shadow.camera.bottom = -26;
+  sun.shadow.camera.far = shadow.far;
+  sun.shadow.camera.left = -shadow.extent;
+  sun.shadow.camera.right = shadow.extent;
+  sun.shadow.camera.top = shadow.extent;
+  sun.shadow.camera.bottom = -shadow.extent;
   sun.shadow.normalBias = 0.03;
   scene.add(sun);
   const logoCanvas = document.createElement("canvas");
@@ -219,14 +223,14 @@ export function mountArena(
     emissiveIntensity: 0.7,
     roughness: 0.65,
   });
-  const environment = createArenaEnvironment(scene);
+  const environment = createMapEnvironment(scene, map);
   // The arena is static. Compose its local transforms once, not every render pass.
   scene.updateMatrixWorld(true);
   scene.traverse((object) => {
     if (object instanceof THREE.Mesh) object.matrixAutoUpdate = false;
   });
   const impacts = createImpactEffects(scene);
-  const blood = createBloodEffects(scene);
+  const blood = createBloodEffects(scene, map);
   // Capture the arena once for rough metallic reflections, excluding all players. Re-captured
   // once the authored map replaces the blockout (before Ready), never per frame.
   let reflections: THREE.WebGLRenderTarget | undefined;
@@ -250,7 +254,7 @@ export function mountArena(
   const actorFor = (player: Seat) => characters[state ? characterSide(state, player) : player];
   scene.add(characters.A.root, characters.B.root);
   captureReflections();
-  scene.environmentIntensity = ARENA_LIGHTING.environmentIntensity;
+  scene.environmentIntensity = lighting.environmentIntensity;
   viewScene.environmentIntensity = scene.environmentIntensity;
   viewScene.fog = scene.fog;
   const shadowCanvas = document.createElement("canvas");
@@ -506,10 +510,10 @@ export function mountArena(
     lastRound = 0;
   let visibility: Record<Seat, boolean> = { A: true, B: true };
   const correction = new CameraCorrection();
-  const frameMotion = new FrameMotion();
+  const frameMotion = new FrameMotion(map);
   const jumpPresentation = new JumpPresentation();
   const triggerFeedback = new TriggerFeedback();
-  const remoteMotion = new RemotePresentation();
+  const remoteMotion = new RemotePresentation(map);
   const remoteClock = new SnapshotClock();
   const playbackDelay = new PlaybackDelay();
   let playbackMs = REMOTE_DELAY_MS;
@@ -730,7 +734,7 @@ export function mountArena(
       };
       if (state.phase === "live" && !authorizationSuspended) {
         const beforeY = predicted.y;
-        predictMovement(predicted, input, TICK_MS);
+        predictMovement(predicted, input, TICK_MS, map);
         jumpPresentation.advance(beforeY, predicted.y);
         pending.push(input);
         if (pending.length > 60) pending.shift();
@@ -810,7 +814,7 @@ export function mountArena(
         previewInput.sprint = false;
         previewInput.walk = keys.has("ShiftLeft") || keys.has("ShiftRight");
         previewInput.crouch = keys.has("ControlLeft") || keys.has("ControlRight");
-        predictMovement(renderPose, previewInput, accumulator);
+        predictMovement(renderPose, previewInput, accumulator, map);
       }
       const active =
         !authorizationSuspended && controlled && state?.phase === "live" && predicted.hp > 0;
@@ -848,7 +852,7 @@ export function mountArena(
       else if (opponentDeathAt === null) {
         opponentDeathAt = now;
         deathFeetY = other.y;
-        deathFloorY = deathSupport(other.x, other.y, other.z);
+        deathFloorY = deathSupport(other.x, other.y, other.z, map);
       }
       const collapse =
         opponentDeathAt === null ? null : deathPose(now - opponentDeathAt, deathFeetY, deathFloorY);
@@ -917,7 +921,7 @@ export function mountArena(
             Math.sin(actor.root.rotation.y) * (collapse?.progress ?? 0) * 0.65,
           (collapse
             ? deathFloorY
-            : deathSupport(actor.root.position.x, other.y, actor.root.position.z)) + 0.008,
+            : deathSupport(actor.root.position.x, other.y, actor.root.position.z, map)) + 0.008,
           actor.root.position.z +
             Math.cos(actor.root.rotation.y) * (collapse?.progress ?? 0) * 0.65,
         );
@@ -1027,6 +1031,7 @@ export function mountArena(
     }
     impacts.update(dt, now);
     blood.update(dt, now);
+    environment.update?.(dt, now);
     camera.layers.set(0);
     renderer.info.autoReset = false;
     renderer.info.reset();
@@ -1047,6 +1052,12 @@ export function mountArena(
   return {
     setSensitivity: (value) => {
       sensitivity = Number.isFinite(value) ? Math.max(0.1, Math.min(3, value)) : 1;
+    },
+    setGraphicsQuality: (quality) => {
+      if (!environment.setQuality) return;
+      environment.setQuality(quality === "low" ? "low" : "high");
+      // Scenery that casts into the cached shadow map changed: re-render it once.
+      renderer.shadowMap.needsUpdate = true;
     },
     diagnostics: () => ({
       camera: [camera.position.x, camera.position.y, camera.position.z, camera.rotation.y],
@@ -1088,6 +1099,9 @@ export function mountArena(
       }
     },
     snapshot(frame, assignedSeat) {
+      // This scene simulates one map. A snapshot from another map is never applied: the host
+      // remounts on the authoritative map id instead (it changes only on a client/server skew).
+      if ((frame.state.mapId ?? DEFAULT_MAP_ID) !== map.id) return;
       if (authorizationSuspended) remoteClock.clear();
       remoteClock.observe(frame.serverNow, performance.now());
       const resetPresentation =
@@ -1140,7 +1154,8 @@ export function mountArena(
         const before = predicted;
         predicted = { ...authoritative };
         pending = pending.filter((i) => i.seq > authoritative.lastSeq);
-        for (const i of pending) if (state.phase === "live") predictMovement(predicted, i, TICK_MS);
+        for (const i of pending)
+          if (state.phase === "live") predictMovement(predicted, i, TICK_MS, map);
         if (resetPresentation) {
           opponentAnimated = false;
           cameraStance.reset();

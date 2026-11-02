@@ -870,19 +870,27 @@ describe("isolated real Durable Object WebSockets", () => {
     expect((await connect(id, await token(id, B, "spectator"))).status).toBe(403);
     const human = await open(id),
       live = until(human, (f) => f.type === "snapshot" && f.state.phase === "live");
+    let botStep: MatchState["events"][number] | undefined;
+    human.addEventListener("message", (event) => {
+      const frame = JSON.parse(String(event.data));
+      if (frame.type === "snapshot")
+        botStep ??= frame.state.events.find(
+          (e: MatchState["events"][number]) => e.type === "step" && e.seat === "B",
+        );
+    });
     human.send(JSON.stringify({ v: 1, type: "ready", combatVersion: 2 }));
     expect((await live).state.bestOf).toBe(13);
+    // The hidden bot is redacted (lastSeq -1) until it comes into view of the idle human. Its
+    // first-round patrol is a random style × opening; the slowest (lurk/south) reveals ~15.3 s
+    // after live (bound pinned by tests/fps-practice-bot-reveal.test.ts), so wait 25 s.
     const walking = await until(
       human,
-      (f) =>
-        f.type === "snapshot" && f.state.events.some((e) => e.type === "step" && e.seat === "B"),
-      12000,
+      (f) => f.type === "snapshot" && !!f.visibility?.B && f.state.players.B.lastSeq > 0,
+      25000,
     );
-    // Randomized lurk/push routes need not enter the idle player's line of sight.
-    // Server footsteps prove autonomous movement without defeating visibility redaction.
-    const step = walking.state.events.find((e) => e.type === "step" && e.seat === "B")!;
-    expect(step.at).toBeGreaterThan(0);
-    expect(step.audio).not.toHaveProperty("position");
+    expect(walking.state.players.B.lastSeq).toBeGreaterThan(0);
+    expect(botStep?.at).toBeGreaterThan(0);
+    expect(botStep?.audio).not.toHaveProperty("position");
     const bad = await mf.dispatchFetch(
       "https://runtime.test/internal/matches/" + crypto.randomUUID(),
       {
@@ -893,7 +901,7 @@ describe("isolated real Durable Object WebSockets", () => {
     );
     expect(bad.status).toBe(400);
     human.close();
-  }, 20000);
+  }, 40000);
 
   it("reports actual socket round trips and keeps server timing independent of claimed clocks", async () => {
     const id = await init(),
