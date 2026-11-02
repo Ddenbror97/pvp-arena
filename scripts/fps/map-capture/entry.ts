@@ -20,10 +20,62 @@ declare global {
       w: number,
       h: number,
       players?: Array<[string, number, number, number]>,
+      quality?: "high" | "low",
     ) => Promise<unknown>;
+    lifecycle: (mapIds: string[], cycles: number) => Promise<unknown>;
   }
 }
-window.capture = async (mapId, views, w, h, players = []) => {
+
+/**
+ * Map-switching / resource-cleanup check: mount each map's environment on one renderer, render
+ * a frame, dispose it, repeat. GPU geometries/textures (renderer.info.memory) and programs must
+ * return to the empty-scene baseline after every dispose and must not grow across cycles.
+ */
+window.lifecycle = async (mapIds, cycles) => {
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(320, 180);
+  document.body.replaceChildren(renderer.domElement);
+  const camera = new THREE.PerspectiveCamera(78, 16 / 9, 0.06, 300);
+  camera.position.set(0, 1.6, 6);
+  const heap = () =>
+    (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0;
+  const gc = () => (window as unknown as { gc?: () => void }).gc?.();
+  const empty = new THREE.Scene();
+  renderer.render(empty, camera);
+  const base = { ...renderer.info.memory };
+  const log: Array<Record<string, unknown>> = [];
+  for (let c = 0; c < cycles; c++) {
+    for (const id of mapIds) {
+      const scene = new THREE.Scene();
+      const env = createMapEnvironment(scene, getMap(id));
+      await env.ready;
+      env.setQuality?.("low");
+      env.setQuality?.("high");
+      env.update?.(0.016, 1000);
+      renderer.render(scene, camera);
+      const mounted = { ...renderer.info.memory };
+      env.dispose();
+      scene.clear();
+      renderer.renderLists.dispose();
+      renderer.render(empty, camera);
+      gc();
+      await new Promise((r) => setTimeout(r, 50));
+      gc();
+      log.push({
+        cycle: c,
+        map: id,
+        mounted,
+        afterDispose: { ...renderer.info.memory },
+        programs: renderer.info.programs?.length ?? 0,
+        heapMB: Math.round(heap() / 1e5) / 10,
+      });
+    }
+  }
+  renderer.dispose();
+  return { base, log };
+};
+
+window.capture = async (mapId, views, w, h, players = [], quality = "high") => {
   const map = getMap(mapId);
   const lighting = map.presentation.lighting;
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
@@ -68,6 +120,7 @@ window.capture = async (mapId, views, w, h, players = []) => {
   const env = createMapEnvironment(scene, map);
   await env.ready;
   const loadMs = performance.now() - t0;
+  env.setQuality?.(quality);
   // Optional stand-ins: the game's character models (bind pose) at [model url, x, z, yaw].
   const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
   for (const [url, x, z, yaw] of players) {

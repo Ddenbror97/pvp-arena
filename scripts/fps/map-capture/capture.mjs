@@ -2,7 +2,10 @@
  * Render a registry map from first-person viewpoints in headless Chromium (SwiftShader WebGL2)
  * with the game's own map loader and lighting.
  *
- *   node scripts/fps/map-capture/capture.mjs <mapId> <outDir> [views.json] [--chromium=/path]
+ *   node scripts/fps/map-capture/capture.mjs <mapId> <outDir> [views.json] [--chromium=/path] [--quality=low]
+ *   node scripts/fps/map-capture/capture.mjs --lifecycle=dustfront,lost-trail --cycles=4 [--chromium=/path]
+ *
+ * The second form is the map-switching / resource-cleanup check (see entry.ts `lifecycle`).
  *
  * Chromium: Playwright's, or any binary via --chromium (e.g. @sparticuz/chromium).
  */
@@ -13,17 +16,22 @@ import path from "node:path";
 import { chromium } from "playwright-core";
 
 const [mapId, outDir, viewsFile] = process.argv.slice(2).filter((a) => !a.startsWith("--"));
-const exe = process.argv.find((a) => a.startsWith("--chromium="))?.slice(11);
+const flag = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
+const exe = flag("chromium");
+const quality = flag("quality") === "low" ? "low" : "high";
+const lifecycle = flag("lifecycle")?.split(",");
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../..");
-const spec = JSON.parse(
-  fs.readFileSync(
-    viewsFile ?? path.join(ROOT, "scripts/fps/map-capture", `${mapId}.views.json`),
-    "utf8",
-  ),
-);
+const spec = lifecycle
+  ? {}
+  : JSON.parse(
+      fs.readFileSync(
+        viewsFile ?? path.join(ROOT, "scripts/fps/map-capture", `${mapId}.views.json`),
+        "utf8",
+      ),
+    );
 const players = spec.players ?? [];
 const views = spec.views ?? spec;
-fs.mkdirSync(outDir, { recursive: true });
+if (!lifecycle) fs.mkdirSync(outDir, { recursive: true });
 const bundle = await build({
   entryPoints: [path.join(ROOT, "scripts/fps/map-capture/entry.ts")],
   bundle: true,
@@ -60,19 +68,48 @@ const browser = await chromium.launch({
     "--ignore-gpu-blocklist",
     "--no-sandbox",
     "--disable-dev-shm-usage",
+    "--js-flags=--expose-gc",
+    "--enable-precise-memory-info",
   ],
 });
 const page = await browser.newPage();
 page.on("console", (m) => m.type() === "error" && console.error("page:", m.text()));
 await page.goto(`http://127.0.0.1:${server.address().port}/`);
 await page.waitForFunction(() => typeof window.capture === "function");
+if (lifecycle) {
+  const cycles = Number(flag("cycles") ?? 3);
+  const result = await page.evaluate(([ids, n]) => window.lifecycle(ids, n), [lifecycle, cycles]);
+  // A leak is anything left behind that grows with each mount: after every dispose, GPU
+  // geometries/textures must equal what was left after the first one (renderer-owned resources
+  // such as three's BRDF lookup texture stay resident once created and are not per-map).
+  const first = result.log[0].afterDispose;
+  const leaks = result.log.filter(
+    (e) => e.afterDispose.geometries > first.geometries || e.afterDispose.textures > first.textures,
+  );
+  const heap = {};
+  for (const id of lifecycle) {
+    const runs = result.log.filter((e) => e.map === id);
+    heap[id] = { firstMB: runs[1]?.heapMB ?? runs[0].heapMB, lastMB: runs.at(-1).heapMB };
+  }
+  console.log(
+    JSON.stringify(
+      { ...result, residualAfterFirstDispose: first, leaks: leaks.length, heap },
+      null,
+      1,
+    ),
+  );
+  await browser.close();
+  server.close();
+  process.exit(leaks.length ? 1 : 0);
+}
 const [w, h] = [960, 540];
 const result = await page.evaluate(
-  ([id, v, w, h, p]) => window.capture(id, v, w, h, p),
-  [mapId, views, w, h, players],
+  ([id, v, w, h, p, q]) => window.capture(id, v, w, h, p, q),
+  [mapId, views, w, h, players, quality],
 );
 const stats = {
   mapId,
+  quality,
   loadMs: result.loadMs,
   geometries: result.geometries,
   textures: result.textures,

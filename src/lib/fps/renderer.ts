@@ -91,6 +91,8 @@ export type ArenaControls = {
   };
   ready: Promise<void>;
   setSensitivity: (value: number) => void;
+  /** Scenery quality for maps that support it (distant vegetation density). */
+  setGraphicsQuality: (quality: "high" | "low") => void;
   snapshot: (frame: ArenaFrame, seat: Seat | null) => void;
   lock: () => Promise<void>;
   dispose: () => void;
@@ -1049,6 +1051,12 @@ export function mountArena(
   return {
     setSensitivity: (value) => {
       sensitivity = Number.isFinite(value) ? Math.max(0.1, Math.min(3, value)) : 1;
+    },
+    setGraphicsQuality: (quality) => {
+      if (!environment.setQuality) return;
+      environment.setQuality(quality === "low" ? "low" : "high");
+      // Scenery that casts into the cached shadow map changed: re-render it once.
+      renderer.shadowMap.needsUpdate = true;
     },
     diagnostics: () => ({
       camera: [camera.position.x, camera.position.y, camera.position.z, camera.rotation.y],

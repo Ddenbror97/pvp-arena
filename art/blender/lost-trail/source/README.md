@@ -7,3 +7,7 @@
 | Tree skeletons (`trees/generate_trees.mjs`) | Generated with EZ-Tree 1.1.0 by Daniel Greenheck (https://github.com/dgreenheck/ez-tree) | MIT (library); generated geometry is ours |
 
 All other LOST TRAIL textures are generated procedurally by `textures.py`.
+
+Optional scanned CC0 replacements (textures and decorative meshes) go in `source/scanned/`;
+see [SCANNED-ASSETS.md](SCANNED-ASSETS.md) for the exact files, folder layout and import steps.
+Record every scanned asset you add in the table above.

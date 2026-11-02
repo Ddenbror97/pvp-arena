@@ -15,7 +15,7 @@ if [[ "${1:-}" == "--blockout" ]]; then
 else
   python3 textures.py
   (cd trees && node generate_trees.mjs ../build/trees >/dev/null)
-  "$PY" build_trail.py -- build/lost-trail.glb --blend build/lost-trail.blend 2>&1 | grep -E "PLACED|exported|Error|Traceback" || true
+  "$PY" build_trail.py -- build/lost-trail.glb --blend build/lost-trail.blend 2>&1 | grep -E "PLACED|RIVERBANKS|DETAIL|exported|Error|Traceback" || true
 fi
 if [[ "${1:-}" == "--blockout" ]]; then
   "$GT" instance build/lost-trail.glb build/lost-trail-instanced.glb --min 2 >/dev/null

@@ -18,6 +18,11 @@ export type MapEnvironment = {
    * the world scene does not auto-update matrices. Omit it for static maps (no idle work).
    */
   update?: (dt: number, now: number) => void;
+  /**
+   * Optional scenery quality. "low" may thin distant decoration (never gameplay solids or
+   * anything that changes what players can see of each other); maps without it ignore it.
+   */
+  setQuality?: (quality: "high" | "low") => void;
   dispose: () => void;
 };
 

@@ -232,18 +232,145 @@ def trail_mud():
     save("trail_mud_r", np.clip(0.9 - wet * 0.65, 0.15, 1), 512)
 
 
+def _smear(a, k, axis=1):
+    """Box blur along one axis (tileable): stretches noise into bedding-parallel streaks."""
+    out = np.zeros_like(a)
+    for i in range(-k, k + 1, max(1, k // 6)):
+        out += np.roll(a, i, axis=axis)
+    return out / len(range(-k, k + 1, max(1, k // 6)))
+
+
+def _strata(n, seed, bands=7):
+    """Layered sedimentary rock (tileable): warped beds of uneven thickness that bulge between
+    rough partings, staggered vertical joints, spalled (broken-out) patches, and streaks."""
+    r = np.random.default_rng(seed)
+    y, x = np.mgrid[0:n, 0:n] / n
+    t = r.uniform(0.5, 1.8, bands)
+    edges = np.concatenate([[0], np.cumsum(t / t.sum())])
+    warp = (noise(n, 3, 2, seed=seed + 1) - 0.5) * 0.16 + (noise(n, 4, 16, seed=seed + 2) - 0.5) * 0.014
+    s = (y + warp) % 1.0
+    bed = np.clip(np.searchsorted(edges, s, side="right") - 1, 0, bands - 1)
+    lo, hi = edges[bed], edges[bed + 1]
+    f = (s - lo) / (hi - lo)
+    th = (hi - lo) * n
+    edge_px = np.minimum(f, 1 - f) * th
+    # Each bed bulges (rounded, weathered edges) and sits proud or recessed as a whole.
+    proud = r.uniform(-1, 1, bands)[bed]
+    bulge = np.sqrt(np.clip(edge_px / 16.0, 0, 1))
+    parting = np.clip(1 - edge_px / (1.5 + 5.0 * noise(n, 3, 8, seed=seed + 8)), 0, 1)
+    lip = np.clip(1 - f * th / 18.0, 0, 1) * (proud > -0.3)
+    joints = np.zeros((n, n))
+    jn = noise(n, 4, 16, seed=seed + 10)
+    for b in range(bands):
+        m = bed == b
+        for _ in range(int(r.integers(1, 4))):
+            jx, slant, width = r.uniform(0, 1), r.uniform(-0.06, 0.06), r.uniform(1.5, 3.5)
+            xx = (x - jx - slant * f + (jn - 0.5) * 0.02 + 0.5) % 1.0 - 0.5
+            stop = r.uniform(0.0, 0.5)  # some joints die out part-way through the bed
+            joints = np.maximum(joints, m * np.clip(1 - np.abs(xx) * n / width, 0, 1) * (f > stop))
+    spall_n = noise(n, 4, 8, seed=seed + 6)
+    spall = np.clip((spall_n - 0.74) * 25, 0, 1)
+    spall_edge = np.clip(1 - np.abs(spall_n - 0.74) * 90, 0, 1)
+    hair = np.clip(1 - np.abs(noise(n, 3, 8, seed=seed + 3) - 0.5) * 70, 0, 1) * (noise(n, 2, 4, seed=seed + 4) > 0.62)
+    # Partings come and go along each bed (weathered open in places, tight elsewhere).
+    open_ = np.clip((noise(n, 3, 4, seed=seed + 9) - 0.35) * 2.5, 0, 1)
+    cracks = np.clip(joints * 0.8 + parting * 0.3 * open_ + hair * 0.4 + spall_edge * 0.35, 0, 1)
+    stain = cracks.copy()
+    for k in range(2, 60, 3):
+        stain = np.maximum(stain, np.roll(cracks, k, axis=0) * (1 - k / 60) * 0.8)
+    stain = _smear(stain, 3)
+    tone = r.uniform(0, 1, bands)[bed]
+    grain = noise(n, 6, 8, seed=seed + 5)
+    streak = _smear(noise(n, 5, 16, seed=seed + 7), 24)  # bedding-parallel lamination streaks
+    grit = noise(n, 3, 128, seed=seed + 11) * 0.6 + noise(n, 2, 256, seed=seed + 12) * 0.4
+    pits = np.clip((noise(n, 2, 64, seed=seed + 13) - 0.78) * 10, 0, 1)
+    mid = noise(n, 4, 32, seed=seed + 14)
+    h = (0.45 + proud * 0.06 + bulge * 0.18 + grain * 0.1 + mid * 0.08 + streak * 0.06 + grit * 0.05
+         - cracks * 0.3 - spall * 0.1 - pits * 0.04)
+    return dict(grit=grit, pits=pits, mid=mid, bed=bed, f=f, tone=tone, grain=grain, streak=streak, cracks=cracks, stain=stain, lip=lip,
+                spall=spall, h=h, bulge=bulge)
+
+
 def mossy_rock():
+    """Layered, cracked jungle rock: grey-brown beds, moss on ledges and in partings."""
     n = 1024
-    h = noise(n, 7, 3, seed=321)
-    cracks = np.clip(1 - np.abs(noise(n, 5, 6, seed=322) - 0.5) * 30, 0, 1)
-    rock = tint(h * 0.7 + noise(n, 4, 32, seed=323) * 0.3, (0.21, 0.21, 0.19), (0.36, 0.35, 0.31))
-    rock *= (1 - cracks * 0.18)[..., None]
-    moss = np.clip((noise(n, 5, 4, seed=324) - 0.45) * 4.5, 0, 1)
-    mcol = tint(noise(n, 4, 48, seed=325), (0.15, 0.24, 0.07), (0.31, 0.40, 0.12))
-    col = rock * (1 - moss[..., None]) + mcol * moss[..., None]
+    S = _strata(n, 321)
+    base_ = tint(S["tone"] * 0.45 + S["grain"] * 0.3 + S["streak"] * 0.25, (0.19, 0.18, 0.155), (0.37, 0.345, 0.29))
+    rock = base_ * (1 - S["spall"][..., None] * 0.15)  # spalled patches: recessed, in shade
+    rock *= (0.84 + 0.22 * S["grit"] + 0.1 * S["mid"])[..., None] * (1 - S["pits"] * 0.12)[..., None]
+    rock *= (0.82 + 0.18 * S["bulge"])[..., None] * (1 + S["lip"] * 0.1)[..., None]
+    iron = np.clip((noise(n, 3, 4, seed=329) - 0.55) * 3, 0, 1)[..., None] * S["stain"][..., None]
+    rock = rock * (1 - S["cracks"] * 0.42)[..., None] * (1 - S["stain"] * 0.16)[..., None]
+    # Dark vertical seep streaks down the face (tropical rain), independent of the beds.
+    seep = _smear(noise(n, 4, 16, seed=331), 40, axis=0)
+    rock *= (1 - np.clip((seep - 0.5) * 2.2, 0, 1) * 0.3)[..., None]
+    # Large-scale tone drift so repeats don't line up.
+    rock *= (0.88 + 0.24 * noise(n, 3, 2, seed=330))[..., None]
+    rock = rock * (1 - iron * 0.5) + np.array([0.30, 0.18, 0.09])[None, None] * iron * 0.5
+    # Moss grows on ledges (bed tops), in partings and in damp low-frequency patches.
+    patches = np.clip((noise(n, 5, 4, seed=324) - 0.42) * 3.2, 0, 1)
+    moss = np.clip(patches * 0.8 + S["lip"] * patches.clip(0.25, 1) * 0.7 + S["cracks"] * 0.35 * patches.clip(0.3, 1), 0, 1)
+    moss *= noise(n, 3, 64, seed=327) * 0.5 + 0.6
+    moss = np.clip(moss, 0, 1)
+    mcol = tint(noise(n, 4, 48, seed=325), (0.13, 0.21, 0.06), (0.29, 0.38, 0.11))
+    lichen = np.clip((noise(n, 3, 48, seed=328) - 0.78) * 4, 0, 1)[..., None] * 0.07 * (1 - moss[..., None])
+    col = rock * (1 - moss[..., None]) + mcol * moss[..., None] + lichen * np.array([0.8, 0.82, 0.7])[None, None]
     save("rock_moss", col)
-    save("rock_moss_n", normal_from_height(h - cracks * 0.3 + moss * 0.15 * noise(n, 3, 64, seed=326), 5.0), 512)
-    save("rock_moss_r", np.clip(0.78 + moss * 0.15 - cracks * 0.2, 0, 1), 512)
+    save("rock_moss_n", normal_from_height(S["h"] + moss * 0.06 * noise(n, 3, 64, seed=326), 9.0), 512)
+    save("rock_moss_r", np.clip(0.8 + moss * 0.12 - S["cracks"] * 0.25 - S["stain"] * 0.12, 0, 1), 512)
+
+
+def wet_rock():
+    """River rock: the same layered stone (it shares rock_moss_n), dark and glossy, with algae."""
+    n = 1024
+    S = _strata(n, 321)
+    rock = tint(S["tone"] * 0.5 + S["grain"] * 0.5, (0.085, 0.085, 0.075), (0.19, 0.18, 0.15))
+    rock *= (1 - S["cracks"] * 0.55)[..., None] * (0.8 + 0.2 * S["bulge"])[..., None] * (0.82 + 0.26 * S["grit"])[..., None]
+    algae = np.clip((noise(n, 5, 4, seed=382) - 0.42) * 3.0, 0, 1) * (0.5 + 0.5 * S["f"])  # more low in each bed
+    acol = tint(noise(n, 4, 32, seed=383), (0.05, 0.08, 0.035), (0.10, 0.15, 0.05))
+    col = rock * (1 - algae[..., None] * 0.8) + acol * algae[..., None] * 0.8
+    save("rock_wet", col)
+    save("rock_wet_r", np.clip(0.32 + S["cracks"] * 0.25 + algae * 0.12 + noise(n, 3, 16, seed=384) * 0.12, 0.18, 1), 512)
+
+
+def reeds():
+    """Reed and sedge blades (RGBA, alpha-tested): tall tapering blades with seed heads."""
+    w, h = 512, 1024
+    rng = np.random.default_rng(391)
+    img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    for i in range(34):
+        x0 = rng.uniform(40, w - 40)
+        tall = rng.uniform(0.55, 0.98) * h
+        bend = rng.uniform(-90, 90) * (tall / h)
+        width = rng.uniform(9, 16)
+        g = rng.uniform(0.75, 1.15)
+        dry = rng.random() < 0.25
+        base_c = np.array((92, 104, 46) if dry else (52, 86, 30)) * g
+        tip_c = np.array((150, 138, 80) if dry else (98, 124, 48)) * g
+        pts_l, pts_r = [], []
+        for k in range(21):
+            t = k / 20
+            cx = x0 + bend * t * t
+            cy = h - 2 - tall * t
+            ww = width * (1 - t) ** 0.7 + 0.6
+            pts_l.append((cx - ww / 2, cy))
+            pts_r.append((cx + ww / 2, cy))
+        for k in range(20):
+            t = k / 20
+            c = tuple(int(v) for v in base_c * (1 - t) + tip_c * t) + (255,)
+            poly = [pts_l[k], pts_r[k], pts_r[k + 1], pts_l[k + 1]]
+            d.polygon(poly, fill=c)
+        d.line([((pts_l[k][0] + pts_r[k][0]) / 2, pts_l[k][1]) for k in range(21)], fill=tuple(int(v * 0.8) for v in base_c) + (255,), width=1)
+        if rng.random() < 0.3:  # cattail / seed head near the top
+            tx, ty = (pts_l[16][0] + pts_r[16][0]) / 2, pts_l[16][1]
+            d.ellipse([tx - 5, ty - 34, tx + 5, ty], fill=(78, 52, 30, 255))
+    arr = np.asarray(img).astype(float) / 255
+    # Darken toward the root (ambient occlusion in the clump).
+    yy = np.linspace(0, 1, h)[:, None]
+    arr[..., :3] *= (0.55 + 0.45 * (1 - yy ** 3))[..., None]
+    # Thin blades: no normal map (it would add a texture and nothing visible at this size).
+    Image.fromarray((np.clip(arr, 0, 1) * 255 + 0.5).astype(np.uint8), "RGBA").resize((256, 512), Image.LANCZOS).save(os.path.join(OUT, "reeds.png"))
 
 
 def ruin_stone():
@@ -326,6 +453,30 @@ def sign_logo():
     Image.fromarray((np.clip(out, 0, 1) * 255).astype(np.uint8), "RGB").save(os.path.join(OUT, "sign_logo.png"))
 
 
+def apply_scanned_overrides():
+    """Scanned CC0 maps in source/scanned/textures/<name>.(png|jpg) replace the generated map of
+    the same name (see source/SCANNED-ASSETS.md). Albedo/atlases are capped at 1024 px, normal
+    and roughness maps at 512 px, the same GPU budget as the generated set."""
+    folder = os.environ.get("LOST_TRAIL_SCANNED_TEX", os.path.join(HERE, "source", "scanned", "textures"))
+    if not os.path.isdir(folder):
+        return []
+    done = []
+    for f in sorted(os.listdir(folder)):
+        name, ext = os.path.splitext(f)
+        if ext.lower() not in (".png", ".jpg", ".jpeg") or not os.path.exists(os.path.join(OUT, name + ".png")):
+            continue  # only maps the build already uses can be replaced
+        img = Image.open(os.path.join(folder, f))
+        old = Image.open(os.path.join(OUT, name + ".png"))
+        img = img.convert(old.mode if old.mode in ("RGB", "RGBA", "L") else "RGB")
+        cap = 512 if name.endswith(("_n", "_r")) else 1024
+        if max(img.size) > cap:
+            k = cap / max(img.size)
+            img = img.resize((max(1, int(img.width * k)), max(1, int(img.height * k))), Image.LANCZOS)
+        img.save(os.path.join(OUT, name + ".png"))
+        done.append(name)
+    return done
+
+
 if __name__ == "__main__":
     bark()
     leaf_cluster("leaves_broad", 15, 0.36, 0.34, seed=401)
@@ -336,9 +487,12 @@ if __name__ == "__main__":
     forest_floor()
     trail_mud()
     mossy_rock()
+    wet_rock()
+    reeds()
     ruin_stone()
     wet_planks()
     water()
     hut_tin()
     sign_logo()
-    print("textures:", len(os.listdir(OUT)))
+    over = apply_scanned_overrides()
+    print("textures:", len(os.listdir(OUT)), "scanned overrides:", over)

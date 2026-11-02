@@ -109,6 +109,9 @@ M = {
     "floor": material("forest-floor", "forest_floor", "forest_floor_n", "forest_floor_r"),
     "mud": material("trail-mud", "trail_mud", "trail_mud_n", "trail_mud_r"),
     "rock": material("rock-moss", "rock_moss", "rock_moss_n", "rock_moss_r"),
+    # River rock shares the layered-rock normal map (same strata), dark and glossy.
+    "rock-wet": material("rock-wet", "rock_wet", "rock_moss_n", "rock_wet_r"),
+    "reeds": material("reeds", "reeds", None, None, roughness=0.7, alpha=True, double=True),
     "ruin": material("ruin-stone", "ruin_stone", "ruin_stone_n", "ruin_stone_r"),
     "planks": material("planks-wet", "planks_wet", "planks_wet_n", "planks_wet_r"),
     "crate": material("crate-wood", "planks_wet", "planks_wet_n", "planks_wet_r", color=(1.25, 1.1, 0.85)),
@@ -128,20 +131,29 @@ class Mesh:
 
     def __init__(self):
         self.v, self.f, self.uv, self.mi, self.mats = [], [], [], [], []
+        self.col = None  # optional per-corner RGB (exported as COLOR_0, multiplies the albedo)
 
     def slot(self, mat):
         if mat not in self.mats:
             self.mats.append(mat)
         return self.mats.index(mat)
 
-    def poly(self, pts, uvs, mat):
+    def poly(self, pts, uvs, mat, cols=None):
         base = len(self.v)
         self.v.extend(pts)
         self.f.append(list(range(base, base + len(pts))))
         self.uv.append(uvs)
         self.mi.append(self.slot(mat))
+        if cols is not None:
+            if self.col is None:
+                self.col = [[(1, 1, 1)] * len(f) for f in self.f[:-1]]
+            self.col.append(cols)
+        elif self.col is not None:
+            self.col.append([(1, 1, 1)] * len(pts))
 
-    def obj(self, name, coll, shadow=True):
+    def obj(self, name, coll, shadow=True, weld=False, sharp=None):
+        """`weld` shares coincident vertices and shades smooth (tubes, boulders: smaller and
+        rounder); `sharp` (degrees) keeps creases above that angle crisp."""
         me = bpy.data.meshes.new(name)
         me.from_pydata([tuple(p) for p in self.v], [], self.f)
         uvl = me.uv_layers.new(name="UVMap")
@@ -149,12 +161,27 @@ class Mesh:
         for poly, uvs in zip(me.polygons, self.uv):
             for li, uv in zip(poly.loop_indices, uvs):
                 uvl.data[li].uv = uv
+        if self.col is not None:
+            ca = me.color_attributes.new("Color", "FLOAT_COLOR", "CORNER")
+            for poly, cols in zip(me.polygons, self.col):
+                for li, c in zip(poly.loop_indices, cols):
+                    ca.data[li].color = (*c, 1.0)
         for m in self.mats:
             me.materials.append(m)
         for poly, mi in zip(me.polygons, self.mi):
             poly.material_index = mi
             poly.use_smooth = False
         me.validate()
+        if weld:
+            bm = bmesh.new()
+            bm.from_mesh(me)
+            bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
+            bm.to_mesh(me)
+            bm.free()
+            for poly in me.polygons:
+                poly.use_smooth = True
+            if sharp:
+                me.set_sharp_from_angle(angle=math.radians(sharp))
         o = bpy.data.objects.new(name, me)
         if not shadow:
             o["noShadow"] = True
@@ -180,7 +207,7 @@ def quad(mesh, pts, mat, tile):
     mesh.poly(pts, [world_uv(p, n, tile) for p in pts], mat)
 
 
-def box_faces(mesh, x0, x1, y0, y1, z0, z1, mat, tile, skip=(), top_mat=None, top_tile=None, wobble=0.0, seed=0):
+def box_faces(mesh, x0, x1, y0, y1, z0, z1, mat, tile, skip=(), top_mat=None, top_tile=None, wobble=0.0, seed=0, flat_top=False):
     """Axis-aligned box in game coords (x, y up, z). `wobble` displaces subdivided faces inward."""
     c = [B(x, y, z) for x in (x0, x1) for y in (y0, y1) for z in (z0, z1)]
     # corner index: (xi * 2 + yi) * 2 + zi
@@ -193,7 +220,7 @@ def box_faces(mesh, x0, x1, y0, y1, z0, z1, mat, tile, skip=(), top_mat=None, to
             continue
         pts = [c[i] for i in idx]
         m, t = (top_mat or mat, top_tile or tile) if key == "+y" else (mat, tile)
-        if wobble and key != "-y":
+        if wobble and key != "-y" and not (flat_top and key == "+y"):
             subdivided(mesh, pts, m, t, wobble, seed)
         else:
             quad(mesh, pts, m, t)
@@ -203,19 +230,19 @@ def subdivided(mesh, pts, mat, tile, wobble, seed, cells=None):
     """Face split into a grid; interior vertices pushed inward by noise (never outward)."""
     a, b, c, d = pts
     n = (b - a).cross(c - a).normalized()
-    size = max((b - a).length, (d - a).length)
-    k = cells or max(2, min(8, int(size / 0.6)))
-    grid = [[None] * (k + 1) for _ in range(k + 1)]
-    for i in range(k + 1):
-        for j in range(k + 1):
-            u, v = i / k, j / k
+    ku = cells or max(2, min(10, int((b - a).length / 0.5)))
+    kv = cells or max(2, min(8, int((d - a).length / 0.5)))
+    grid = [[None] * (kv + 1) for _ in range(ku + 1)]
+    for i in range(ku + 1):
+        for j in range(kv + 1):
+            u, v = i / ku, j / kv
             p = a.lerp(b, u).lerp(d.lerp(c, u), v)
-            edge = min(u, 1 - u, v, 1 - v)
-            amp = wobble * min(1.0, edge * k)  # zero on the face border: no cracks between faces
-            h = mnoise.noise(p * 0.9 + Vector((seed, seed * 0.3, 0)))
+            # Zero on the face border (no cracks between faces), full one cell in.
+            amp = wobble * min(1.0, min(u, 1 - u) * ku, min(v, 1 - v) * kv)
+            h = mnoise.noise(p * 0.9 + Vector((seed, seed * 0.3, 0))) * 0.7 + mnoise.noise(p * 2.7 + Vector((seed, 0, 5))) * 0.3
             grid[i][j] = p - n * (abs(h) * amp)
-    for i in range(k):
-        for j in range(k):
+    for i in range(ku):
+        for j in range(kv):
             q = [grid[i][j], grid[i + 1][j], grid[i + 1][j + 1], grid[i][j + 1]]
             mesh.poly(q, [world_uv(p, n, tile) for p in q], mat)
 
@@ -243,6 +270,127 @@ def cylinder(mesh, x, z, y0, y1, r0, r1, mat, tile=1.0, n=12, axis="y", caps=Tru
         for k, ring in enumerate(rings):
             pts = ring if k else list(reversed(ring))
             mesh.poly(pts, [(0.5 + 0.5 * math.cos(2 * math.pi * i / n), 0.5 + 0.5 * math.sin(2 * math.pi * i / n)) for i in range(n)], mat)
+
+
+def tube(mesh, pts, radii, mat, sides=5, v_scale=1.0):
+    """A tube through Blender-space points (lianas, roots). Rotation-minimising frames."""
+    if len(pts) < 2:
+        return
+    t0 = (pts[1] - pts[0]).normalized()
+    ref = Vector((0, 0, 1)) if abs(t0.z) < 0.9 else Vector((1, 0, 0))
+    nrm = t0.cross(ref).normalized()
+    rings, dist = [], 0.0
+    for k, p in enumerate(pts):
+        t = (pts[min(k + 1, len(pts) - 1)] - pts[max(k - 1, 0)]).normalized()
+        nrm = (nrm - t * nrm.dot(t)).normalized()
+        bin_ = t.cross(nrm)
+        r = radii[k]
+        rings.append([p + (nrm * math.cos(2 * math.pi * i / sides) + bin_ * math.sin(2 * math.pi * i / sides)) * r for i in range(sides)])
+    vs = [0.0]
+    for k in range(1, len(pts)):
+        dist += (pts[k] - pts[k - 1]).length
+        vs.append(dist * v_scale)
+    for k in range(len(pts) - 1):
+        for i in range(sides):
+            j = (i + 1) % sides
+            mesh.poly([rings[k][i], rings[k][j], rings[k + 1][j], rings[k + 1][i]],
+                      [(i / sides * 0.5, vs[k]), ((i + 1) / sides * 0.5, vs[k]), ((i + 1) / sides * 0.5, vs[k + 1]), (i / sides * 0.5, vs[k + 1])], mat)
+
+
+def octagon_layer(mesh, x0, x1, y0, y1, z0, z1, chamfer, mat, tile, wobble, seed, top=True, bottom=False,
+                  top_mat=None, top_tile=None):
+    """One rock bed: an octagonal slab (box with chamfered vertical edges), game coords.
+    Long faces get inward noise; never leaves its box."""
+    c = min(chamfer, (x1 - x0) * 0.3, (z1 - z0) * 0.3)
+    ring = [(x0 + c, z0), (x1 - c, z0), (x1, z0 + c), (x1, z1 - c), (x1 - c, z1), (x0 + c, z1), (x0, z1 - c), (x0, z0 + c)]
+    for i in range(8):
+        (ax, az), (bx, bz) = ring[i], ring[(i + 1) % 8]
+        pts = [B(ax, y0, az), B(bx, y0, bz), B(bx, y1, bz), B(ax, y1, az)]
+        # Outward-facing order (ring runs clockwise seen from +y in game coords → reverse).
+        pts = [pts[1], pts[0], pts[3], pts[2]]
+        if i % 2 == 0 and wobble:
+            subdivided(mesh, pts, mat, tile, wobble, seed + i)
+        else:
+            quad(mesh, pts, mat, tile)
+    if top:
+        quad(mesh, [B(x, y1, z) for x, z in ring][::-1], top_mat or mat, top_tile or tile)
+    if bottom:
+        quad(mesh, [B(x, y0, z) for x, z in ring], mat, tile)
+
+
+def strata_block(mesh, x0, x1, y0, y1, z0, z1, mat, tile, seed, top_mat=None, top_tile=None, max_inset=0.1,
+                 top_inset=0.1, ground=True):
+    """Layered rock filling (never exceeding) a collision box: beds 0.22–0.55 m thick, each set
+    back by its own amount with chamfered corners, so ledges, overhangs and partings read in
+    silhouette. Bed partings line up with the texture's (same bed scale)."""
+    r = random.Random(seed)
+    ys = [y0]
+    while y1 - ys[-1] > 0.6:
+        ys.append(ys[-1] + r.uniform(0.22, 0.55))
+    ys.append(y1)
+    lim = min(max_inset, (x1 - x0) * 0.18, (z1 - z0) * 0.18)
+    along_x = (x1 - x0) >= (z1 - z0)
+    length = (x1 - x0) if along_x else (z1 - z0)
+    for i in range(len(ys) - 1):
+        last = i == len(ys) - 2
+        cap = top_inset if last else (0.03 if i == 0 and ground else lim)
+        # Jointed blocks: each bed breaks into 0.9–2.4 m blocks, each set back on its own.
+        cuts_ = [0.0]
+        while length - cuts_[-1] > 2.6:
+            cuts_.append(cuts_[-1] + r.uniform(0.9, 2.4))
+        cuts_.append(length)
+        for a0, a1 in zip(cuts_, cuts_[1:]):
+            ins = [r.uniform(0.0, min(lim, cap)) for _ in range(4)]
+            if along_x:
+                bx0, bx1, bz0, bz1 = x0 + a0, x0 + a1, z0, z1
+                bx0 += ins[0] if a0 == 0 else 0.0
+                bx1 -= ins[1] if a1 == length else 0.0
+                bz0, bz1 = bz0 + ins[2], bz1 - ins[3]
+            else:
+                bx0, bx1, bz0, bz1 = x0, x1, z0 + a0, z0 + a1
+                bz0 += ins[2] if a0 == 0 else 0.0
+                bz1 -= ins[3] if a1 == length else 0.0
+                bx0, bx1 = bx0 + ins[0], bx1 - ins[1]
+            octagon_layer(mesh, bx0, bx1, ys[i], ys[i + 1], bz0, bz1, r.uniform(0.04, 0.16), mat, tile,
+                          wobble=min(0.08, lim * 0.8), seed=seed * 7 + i * 13 + int(a0 * 10),
+                          top=True, bottom=i > 0, top_mat=top_mat if last else None, top_tile=top_tile if last else None)
+
+
+def boulder(mesh, centre, half, seed, mat, tile, subdiv=3, cuts=6, flat_bottom=True, clamp=False, beds=True):
+    """Natural boulder (Blender coords): noisy ellipsoid, flattened facets where it split along
+    joints (random planes, vertices only ever pulled inward), faint bedding ledges. With
+    `clamp`, every vertex stays inside the box `centre ± half` (gameplay boulders)."""
+    r = random.Random(seed)
+    bm = bmesh.new()
+    bmesh.ops.create_icosphere(bm, subdivisions=subdiv, radius=1.0)
+    hx, hy, hz = half
+    planes = []
+    for _ in range(cuts):
+        d = Vector((r.uniform(-1, 1), r.uniform(-1, 1), r.uniform(-0.4, 1.0))).normalized()
+        planes.append((d, r.uniform(0.55, 0.82)))
+    for v in bm.verts:
+        p = v.co.copy()
+        n = mnoise.noise(p * 1.3 + Vector((seed * 1.7, 0, 0))) * 0.6 + mnoise.noise(p * 3.1 + Vector((0, seed, 0))) * 0.25
+        p *= (1.1 if clamp else 1.0) + 0.16 * n
+        for d, off in planes:  # joint facets
+            e = p.dot(d) - off
+            if e > 0:
+                p -= d * e * 0.92
+        if beds:  # bedding: faint terraces up the height
+            z = p.z
+            p.z = z - 0.018 * math.sin(z * 7.0 + seed) ** 2
+        q = Vector((p.x * hx, p.y * hz, p.z * hy))
+        if flat_bottom and q.z < -hy * 0.6:
+            q.z = -hy * 0.6 - (q.z + hy * 0.6) * 0.15
+        if clamp:
+            q = Vector((max(-hx, min(hx, q.x)), max(-hz, min(hz, q.y)), max(-hy, min(hy, q.z))))
+        v.co = q + centre
+    bm.normal_update()
+    for f in bm.faces:
+        pts = [v.co.copy() for v in f.verts]
+        nrm = f.normal
+        mesh.poly(pts, [world_uv(p, nrm, tile) for p in pts], mat)
+    bm.free()
 
 
 # =============================================================================== collections
@@ -295,6 +443,35 @@ def instance(lib_obj, x, y, z, yaw=0.0, scale=1.0, sx=None, coll=None, name=None
 ARCH_SCALE = {"emergent": 0.66, "hardwood": 0.72, "broad": 0.66, "slender": 0.85, "twisted": 0.8}
 
 
+def trunk_profile(me, bark_slots, crown_base):
+    """Trunk centre and radius by height (lib/Blender coords) from the bark vertices."""
+    zs_ = {}
+    for poly in me.polygons:
+        if poly.material_index not in bark_slots:
+            continue
+        for vi in poly.vertices:
+            co = me.vertices[vi].co
+            zs_.setdefault(int(co.z / 0.5), []).append(co)
+    prof, centre, rad = {}, Vector((0, 0)), None
+    for b in range(2, int(crown_base / 0.5) + 1):
+        pts = zs_.get(b, [])
+        lim = (rad * 2.2 + 0.4) if rad else 2.5
+        near = [p for p in pts if (Vector((p.x, p.y)) - centre).length < lim]
+        if len(near) < 4:
+            continue
+        c = sum((Vector((p.x, p.y)) for p in near), Vector((0, 0))) / len(near)
+        ds = sorted((Vector((p.x, p.y)) - c).length for p in near)
+        rad = ds[int(len(ds) * 0.8)]
+        centre = c
+        prof[b] = (c, rad)
+    keys = sorted(prof)
+
+    def at(z):
+        b = min(keys, key=lambda k: abs(k * 0.5 + 0.25 - z))
+        return prof[b]
+    return at
+
+
 def import_tree(arch, seed, detail):
     path = os.path.join(TREES, f"{arch}-{seed}-{detail}.obj")
     before = set(bpy.data.objects)
@@ -322,12 +499,42 @@ def import_tree(arch, seed, detail):
         bpy.ops.object.join()
     bark.name = f"lib-{arch}-{seed}-{detail}"
     bark.data.name = bark.name
+    if detail == "near":
+        thin_bark(bark, 0.45)
     return bark
 
 
+def thin_bark(obj, ratio):
+    """Collapse-decimate only the bark (vertex group), leaving leaf cards intact. Most bark
+    triangles are crown twigs 20–30 m up whose ring detail never reads; the quadric error
+    metric removes those first, so trunk and limb silhouettes hold."""
+    me = obj.data
+    slots = {i for i, mt in enumerate(me.materials) if mt.name.startswith("bark")}
+    leaf_slot = next(i for i, mt in enumerate(me.materials) if mt.name.startswith("leaves"))
+    leaf_z = sorted(me.vertices[vi].co.z for poly in me.polygons if poly.material_index == leaf_slot for vi in poly.vertices[:1])
+    crown_base = leaf_z[int(len(leaf_z) * 0.06)]
+    at = trunk_profile(me, slots, crown_base)
+    keep_trunk = set()
+    for v in me.vertices:  # the trunk below the crown keeps every ring (UVs stay unstretched)
+        if v.co.z <= crown_base:
+            c, rad = at(v.co.z) if v.co.z > 1.0 else at(1.0)
+            if (Vector((v.co.x, v.co.y)) - c).length < rad * 1.6 + 0.15:
+                keep_trunk.add(v.index)
+    vg = obj.vertex_groups.new(name="bark")
+    vg.add(sorted({vi for poly in me.polygons if poly.material_index in slots for vi in poly.vertices} - keep_trunk), 1.0, "REPLACE")
+    mod = obj.modifiers.new("thin", "DECIMATE")
+    mod.ratio = ratio
+    mod.vertex_group = "bark"
+    with bpy.context.temp_override(object=obj, active_object=obj):
+        bpy.ops.object.modifier_apply(modifier="thin")
+    obj.vertex_groups.remove(obj.vertex_groups["bark"])
+
+
 def add_buttress(obj, base_r, fins=5, height=2.6, reach=1.25, seed=0):
-    """Buttress-root fins: thin flared plates radiating from the trunk base, joined into obj."""
+    """Buttress-root fins: thin flared plates radiating from the trunk base, joined into obj
+    (in the trunk's own bark material, so the fins add no draw call)."""
     r = random.Random(seed)
+    bark_mat = obj.data.materials[0]
     m = Mesh()
     for i in range(fins):
         a = 2 * math.pi * (i + r.uniform(-0.15, 0.15)) / fins
@@ -340,13 +547,13 @@ def add_buttress(obj, base_r, fins=5, height=2.6, reach=1.25, seed=0):
             px, pz = -sa * th * side, ca * th * side
             pts = [Vector((ca * d + px, -(sa * d + pz), y)) for d, y in prof]
             uvs = [(d / 1.5, y / 1.5) for d, y in prof]
-            m.poly(pts if side > 0 else list(reversed(pts)), uvs if side > 0 else list(reversed(uvs)), M["bark"])
+            m.poly(pts if side > 0 else list(reversed(pts)), uvs if side > 0 else list(reversed(uvs)), bark_mat)
         # Top edge strip closing the fin.
         for k in range(len(prof) - 1):
             (d0, y0), (d1, y1) = prof[k], prof[k + 1]
             q = [Vector((ca * d0 - sa * th, -(sa * d0 + ca * th), y0)), Vector((ca * d1 - sa * th, -(sa * d1 + ca * th), y1)),
                  Vector((ca * d1 + sa * th, -(sa * d1 - ca * th), y1)), Vector((ca * d0 + sa * th, -(sa * d0 - ca * th), y0))]
-            m.poly(q, [(0, 0), (1, 0), (1, 0.1), (0, 0.1)], M["bark"])
+            m.poly(q, [(0, 0), (1, 0), (1, 0.1), (0, 0.1)], bark_mat)
     tmp = m.obj("tmp-fins", library)
     with bpy.context.temp_override(active_object=obj, selected_editable_objects=[obj, tmp]):
         bpy.ops.object.join()
@@ -406,6 +613,105 @@ for arch in ("emergent", "hardwood", "broad", "slender", "twisted"):
                              reach=1.4 if arch == "emergent" else 0.9, seed=seed)
             LIB[(arch, seed, detail)] = o
         LIB[(arch, seed, "bg")] = background_level(LIB[(arch, seed, "far")])
+
+
+# ------------------------------------------------------------------ giant-tree dressing
+def decorate_tree(src, name, seed, roots=False, lianas=3, vines=10, epiphytes=6, min_hang=5.5):
+    """Copy of a tree with lianas spiralling the trunk and looping into the crown, hanging vines
+    and aerial roots under the crown (bottoms ≥ min_hang above the base, so nothing reaches into
+    head height), epiphyte clumps on the trunk and in forks and, with `roots`, strangler roots
+    netting the trunk down to the ground. Uses the tree's own bark and leaf materials, so it
+    adds triangles but no draw calls."""
+    r = random.Random(seed)
+    o = src.copy()
+    o.data = src.data.copy()
+    o.name = o.data.name = name
+    library.objects.link(o)
+    me = o.data
+    bark_slots = {i for i, mt in enumerate(me.materials) if mt.name.startswith("bark")}
+    leaf_slot = next(i for i, mt in enumerate(me.materials) if mt.name.startswith("leaves"))
+    bark_mat, leaf_mat = me.materials[min(bark_slots)], me.materials[leaf_slot]
+    leaf_pts = [me.vertices[vi].co.copy() for poly in me.polygons if poly.material_index == leaf_slot for vi in poly.vertices[:1]]
+    leaf_pts.sort(key=lambda p: p.z)
+    crown_base = leaf_pts[int(len(leaf_pts) * 0.06)].z
+    at = trunk_profile(me, bark_slots, crown_base)
+    m = Mesh()
+
+    def on_trunk(z, a, out=0.04):
+        c, rad = at(z)
+        return Vector((c.x + math.cos(a) * (rad + out), c.y + math.sin(a) * (rad + out), z))
+
+    under = [p for p in leaf_pts if crown_base <= p.z < crown_base + 4.0 and Vector((p.x, p.y)).length > 1.6]
+    # Lianas: spiral up the trunk, then sag across to a limb in the crown.
+    for k in range(lianas):
+        a0, turns = r.uniform(0, math.tau), r.uniform(0.8, 1.8) * r.choice((-1, 1))
+        z0, z1 = 0.3, crown_base * r.uniform(0.85, 0.98)
+        rad0 = r.uniform(0.045, 0.075)
+        pts = [on_trunk(z0 + (z1 - z0) * t, a0 + turns * math.tau * t, rad0 + 0.01) for t in [i / 28 for i in range(29)]]
+        if under:
+            end = r.choice(under)
+            a, b = pts[-1], end
+            sag = min(r.uniform(1.5, 4.0), max(0.0, min(a.z, b.z) - min_hang))
+            pts += [a.lerp(b, t) - Vector((0, 0, sag * 4 * t * (1 - t))) for t in [i / 10 for i in range(1, 11)]]
+        tube(m, pts, [rad0 * (1 - 0.35 * i / len(pts)) for i in range(len(pts))], bark_mat, sides=5, v_scale=0.5)
+    # Hanging vines (leafy) and aerial roots (bare, thin) under the crown.
+    for k in range(vines):
+        if not under:
+            break
+        top = r.choice(under)
+        length = min(r.uniform(3.0, 9.0), top.z - min_hang)
+        if length < 1.2:
+            continue
+        leafy = k % 2 == 0
+        sway = Vector((r.uniform(-1, 1), r.uniform(-1, 1), 0)) * 0.25
+        n_ = max(3, int(length / 0.9))
+        pts = [top + Vector((0, 0, -length * t)) + sway * math.sin(t * 3.0 + k) * t for t in [i / n_ for i in range(n_ + 1)]]
+        tube(m, pts, [0.03 if leafy else 0.022] * len(pts), bark_mat, sides=3, v_scale=0.5)
+        if leafy:
+            for i, p in enumerate(pts[1:], 1):
+                d = Vector((math.cos(i * 2.3 + k), math.sin(i * 2.3 + k), 0))
+                card_quad(m, p, d.cross(Vector((0, 0, 1))), (d + Vector((0, 0, -0.5))).normalized(), 0.55, 0.6, leaf_mat)
+        else:  # aerial-root tip curling slightly
+            tip = pts[-1]
+            tube(m, [tip, tip + Vector((0.08, 0.05, -0.25)), tip + Vector((0.18, 0.02, -0.4))], [0.02, 0.015, 0.008], bark_mat, sides=3)
+    # Epiphytes: leafy clumps on the trunk (above head height) and in the forks of limbs.
+    spots = []
+    for k in range(epiphytes):
+        z = r.uniform(4.0, max(4.5, crown_base * 0.92))
+        a = r.uniform(0, math.tau)
+        spots.append((on_trunk(z, a, 0.02), Vector((math.cos(a), math.sin(a), 0))))
+    limbs = [me.vertices[vi].co.copy() for poly in me.polygons if poly.material_index in bark_slots
+             for vi in poly.vertices[:1] if crown_base < me.vertices[vi].co.z < crown_base + 6
+             and 1.5 < Vector((me.vertices[vi].co.x, me.vertices[vi].co.y)).length < 5]
+    for _ in range(min(4, len(limbs))):
+        p = r.choice(limbs)
+        spots.append((p, Vector((p.x, p.y, 0)).normalized()))
+    for p, out in spots:
+        axis = (out * 0.55 + Vector((0, 0, 1))).normalized()
+        side = axis.cross(Vector((0, 0, 1)) if abs(axis.z) < 0.99 else Vector((1, 0, 0))).normalized()
+        for i in range(6):
+            a = math.tau * i / 6 + r.uniform(-0.3, 0.3)
+            d = (side * math.cos(a) + axis.cross(side) * math.sin(a))
+            up = (d * 0.75 + axis * 0.65).normalized()
+            card_quad(m, p, up.cross(d).normalized() if up.cross(d).length > 1e-3 else side, up, 0.42, r.uniform(0.55, 0.85), leaf_mat, bend=0.25, segs=2)
+    # Strangler roots: down the trunk from 3–8 m, flaring out over the buttresses to the ground.
+    if roots:
+        for k in range(r.randint(6, 9)):
+            a = r.uniform(0, math.tau)
+            ztop = r.uniform(3.0, min(8.0, crown_base * 0.7))
+            drift = r.uniform(-0.6, 0.6)
+            pts = []
+            for i in range(19):
+                t = i / 18
+                z = ztop * (1 - t)
+                flare = 0.0 if z > 1.2 else (1.2 - z) * r.uniform(0.35, 0.7)
+                pts.append(on_trunk(max(z, 0.3), a + drift * t, 0.03 + flare) if z > 0.3 else on_trunk(0.3, a + drift * t, 0.03 + flare) + Vector((0, 0, z - 0.3)))
+            pts[-1].z = -0.15
+            tube(m, pts, [0.05 + 0.06 * (i / 18) for i in range(19)], bark_mat, sides=5, v_scale=0.5)
+    tmp = m.obj("tmp-deco", library, weld=True, sharp=60)
+    with bpy.context.temp_override(active_object=o, selected_editable_objects=[o, tmp]):
+        bpy.ops.object.join()
+    return o
 
 
 def card_quad(m, center, right, up, w, h, mat, bend=0.0, segs=1):
@@ -496,35 +802,36 @@ def lib_vine(seed):
     return o
 
 
-def lib_rock(seed, size=1.0):
-    bm = bmesh.new()
-    bmesh.ops.create_icosphere(bm, subdivisions=3, radius=1.0)
-    for v in bm.verts:
-        n = mnoise.noise(v.co * 1.6 + Vector((seed, 0, 0)))
-        v.co *= 1 + 0.28 * n
-        v.co.z *= 0.62
-    bmesh.ops.translate(bm, verts=bm.verts, vec=(0, 0, 0.25))
-    for v in bm.verts:
-        v.co *= size
-    me = bpy.data.meshes.new(f"lib-rock-{seed}")
-    bm.to_mesh(me)
-    bm.free()
-    uvl = me.uv_layers.new()
-    for poly in me.polygons:
-        for li in poly.loop_indices:
-            co = me.vertices[me.loops[li].vertex_index].co
-            uvl.data[li].uv = world_uv(co, poly.normal, TILE["rock"])
-    me.materials.append(M["rock"])
-    o = bpy.data.objects.new(me.name, me)
-    library.objects.link(o)
+def lib_rock(seed, size=1.0, mat=None):
+    """Instanced rock: a faceted, bedded boulder sitting on (and sunk into) the ground."""
+    m = Mesh()
+    boulder(m, Vector((0, 0, 0.32 * size)), (size, 0.62 * size, size * 0.85), seed, mat or M["rock"], TILE["rock"], subdiv=3, cuts=5)
+    o = m.obj(f"lib-rock-{seed}", library, weld=True, sharp=38)
     return o
 
 
-PALMS = [lib_palm(s) for s in (1, 2)]
-FERNS = [lib_fern(s, sz) for s, sz in ((4, 1.0), (6, 0.8))]
-BUSHES = [lib_bush(s, sz) for s, sz in ((7, 1.0), (8, 1.3))]
+# Decorated near-edge trees (the forest wall players see) and the in-arena giants.
+DECO = {
+    "emergent": decorate_tree(LIB[("emergent", 11, "near")], "lib-emergent-11-deco", 501, roots=True),
+    "hardwood": decorate_tree(LIB[("hardwood", 11, "near")], "lib-hardwood-11-deco", 502, roots=True, lianas=2, vines=8),
+}
+HERO = {
+    "emergent": decorate_tree(LIB[("emergent", 23, "near")], "lib-emergent-23-hero", 503, lianas=4, vines=12, epiphytes=8),
+    "hardwood": decorate_tree(LIB[("hardwood", 23, "near")], "lib-hardwood-23-hero", 504, lianas=3, vines=10, epiphytes=7),
+}
+
+
+# Scanned CC0 replacements (source/scanned/<slot>/, see source/SCANNED-ASSETS.md) take over a
+# slot when present; otherwise the procedural library below is used.
+sys.path.insert(0, HERE)
+from scanned import scanned_library  # noqa: E402
+
+SCANNED = os.environ.get("LOST_TRAIL_SCANNED", os.path.join(HERE, "source", "scanned"))
+PALMS = scanned_library("palm", SCANNED, library) or [lib_palm(s) for s in (1, 2)]
+FERNS = scanned_library("fern", SCANNED, library) or [lib_fern(s, sz) for s, sz in ((4, 1.0), (6, 0.8))]
+BUSHES = scanned_library("bush", SCANNED, library) or [lib_bush(s, sz) for s, sz in ((7, 1.0), (8, 1.3))]
 VINES = [lib_vine(9)]
-ROCKS = [lib_rock(s, sz) for s, sz in ((11, 1.0), (13, 0.7))]
+ROCKS = scanned_library("rock", SCANNED, library) or [lib_rock(s, sz) for s, sz in ((11, 1.0), (13, 0.7))]
 
 
 # =============================================================================== playable-area tests
@@ -559,27 +866,11 @@ def lane_clear(x, z, r):
 
 # =============================================================================== gameplay dressing
 def rock_in_box(s, seed):
-    """A rounded boulder that fills its collision box (vertices clamped to the box)."""
-    bm = bmesh.new()
-    bmesh.ops.create_icosphere(bm, subdivisions=3, radius=1.0)
-    hx, hy, hz = s["w"] / 2, s["h"] / 2, s["d"] / 2
-    for v in bm.verts:
-        n = mnoise.noise(v.co * 1.4 + Vector((seed * 1.7, 0, 0)))
-        p = v.co * (1.25 + 0.18 * n)
-        # Blender (x, y=-z, z=y): clamp to the box, keep the bottom flat on the ground.
-        v.co = Vector((max(-hx, min(hx, p.x * hx)), max(-hz, min(hz, p.y * hz)), max(-hy, min(hy, p.z * hy))))
-    c = B(s["x"], s["y"], s["z"])
-    bmesh.ops.translate(bm, verts=bm.verts, vec=c)
-    me = bpy.data.meshes.new(s["id"])
-    bm.to_mesh(me)
-    bm.free()
-    uvl = me.uv_layers.new()
-    for poly in me.polygons:
-        for li in poly.loop_indices:
-            uvl.data[li].uv = world_uv(me.vertices[me.loops[li].vertex_index].co, poly.normal, TILE["rock"])
-    me.materials.append(M["rock"])
-    o = bpy.data.objects.new(s["id"], me)
-    section(section_of(s["x"], s["z"])).objects.link(o)
+    """A faceted boulder that fills its collision box (every vertex clamped inside the box)."""
+    m = Mesh()
+    boulder(m, B(s["x"], s["y"], s["z"]), (s["w"] / 2, s["h"] / 2, s["d"] / 2), seed, M["rock"], TILE["rock"],
+            subdiv=3, cuts=9, flat_bottom=False, clamp=True, beds=False)
+    m.obj(s["id"], section(section_of(s["x"], s["z"])), weld=True, sharp=38)
 
 
 def extent(s):
@@ -595,7 +886,10 @@ def crate(m, x0, x1, y0, y1, z0, z1):
 
 
 dressed_trees = set()
-hero = [LIB[("emergent", 23, "near")], LIB[("emergent", 11, "near")]]
+# Each mirrored pair uses the same giant (sides read identically); species vary by position.
+HERO_FOR = {"river-tree": "emergent", "plaza-tree": "hardwood", "trail-tree": "emergent", "ridge-tree": "hardwood",
+            "bank-tree-n": "emergent"}
+HERO_BASE_R = {"emergent": 1.15 * ARCH_SCALE["emergent"], "hardwood": 0.8 * ARCH_SCALE["hardwood"]}
 for s in BOXES:
     k = s["kind"]
     x0, x1, y0, y1, z0, z1 = extent(s)
@@ -608,17 +902,23 @@ for s in BOXES:
             continue
         dressed_trees.add(key)
         d = s["diameter"]
-        lib = hero[len(dressed_trees) % 2]
-        sc_ = (d / 2) / (1.15 * ARCH_SCALE["emergent"]) * 1.02
-        instance(lib, s["x"], 0, s["z"], yaw=seed * 0.37, scale=sc_, name=f"hero-{key}")
+        arch = HERO_FOR.get(s["tree"], "emergent")
+        # Trunk girth matches the collision; height is capped so the giants stay ~40–48 m.
+        sc_ = (d / 2) / HERO_BASE_R[arch] * 1.02
+        tseed = sum(map(ord, s["tree"])) % 97
+        yaw = tseed * 0.37 if s["side"] != "east" else math.pi - tseed * 0.37
+        instance(HERO[arch], s["x"], 0, s["z"], yaw=yaw, sx=(sc_, sc_, min(sc_, 1.4 if arch == "emergent" else 1.55)),
+                 name=f"hero-{key}")
         continue
     if k == "boulder":
         rock_in_box(s, seed)
         continue
     if k == "ridge":
-        box_faces(m, x0, x1, y0, y1, z0, z1, M["rock"], TILE["rock"], skip=("-y",), top_mat=M["floor"], top_tile=TILE["floor"], wobble=0.0)
+        # Walkable top: the top bed stays flush with the collision top and edges (players stand on it).
+        strata_block(m, x0, x1, y0, y1, z0, z1, M["rock"], TILE["rock"], seed, top_mat=M["floor"], top_tile=TILE["floor"],
+                     max_inset=0.1, top_inset=0.0)
     elif k == "rock-wall":
-        box_faces(m, x0, x1, y0, y1, z0, z1, M["rock"], TILE["rock"], skip=("-y",), wobble=0.14, seed=seed)
+        strata_block(m, x0, x1, y0, y1, z0, z1, M["rock"], TILE["rock"], seed, max_inset=0.1, top_inset=0.06)
     elif k in ("ruin-wall",):
         box_faces(m, x0, x1, y0, y1, z0, z1, M["ruin"], TILE["ruin"], skip=("-y",), wobble=0.05, seed=seed)
     elif k == "stone-step":
@@ -698,6 +998,16 @@ def ground_h(x, z):
     return hill * (1 - valley) + (-0.25) * valley
 
 
+def wetness(x, z):
+    """Albedo multiplier for the ground: dark, cool, mud-brown soil fading in toward the water
+    (river banks beyond the edge, the gorge lips and the fords inside the arena)."""
+    out = max(abs(x) - W / 2, abs(z) - D / 2)
+    dist = abs(x - river_x(z)) - (2.8 if out > 0 else 2.6)
+    w = smooth(3.2, 0.0, dist) * (0.85 + 0.15 * mnoise.noise(Vector((x * 0.5, z * 0.5, 7))))
+    w = max(0.0, min(1.0, w))
+    return (1 - 0.42 * w, 1 - 0.45 * w, 1 - 0.5 * w)
+
+
 ground = Mesh()
 EXT = 62.0
 step_in, step_out = 1.0, 3.0
@@ -714,8 +1024,10 @@ for i in range(len(xs) - 1):
         cx, cz = (xa + xb) / 2, (za + zb) / 2
         if abs(cx) < 2.6 and any(z0 < cz < z1 for z0, z1 in GORGES):
             continue  # the gorge (its walls and bed are built separately)
-        pts = [B(xa, H[(xa, za)], za), B(xb, H[(xb, za)], za), B(xb, H[(xb, zb)], zb), B(xa, H[(xa, zb)], zb)]
-        ground.poly(list(reversed(pts)), [world_uv(p, Vector((0, 0, 1)), TILE["floor"]) for p in reversed(pts)], M["floor"])
+        corners = [(xa, za), (xb, za), (xb, zb), (xa, zb)]
+        pts = [B(x_, H[(x_, z_)], z_) for x_, z_ in corners]
+        ground.poly(list(reversed(pts)), [world_uv(p, Vector((0, 0, 1)), TILE["floor"]) for p in reversed(pts)], M["floor"],
+                    cols=[wetness(x_, z_) for x_, z_ in reversed(corners)])
 ground.obj("ground", section("ground"))
 
 # Gorge: rock walls down to a stony bed, deep still water.
@@ -723,10 +1035,11 @@ gm = Mesh()
 for z0, z1 in GORGES:
     for side in (-1, 1):
         x = side * 2.6
-        pts = [B(x, 0.0, z0), B(x, 0.0, z1), B(x, -2.4, z1), B(x, -2.4, z0)]
-        if side < 0:
-            pts = list(reversed(pts))
-        subdivided(gm, pts, M["rock"], TILE["rock"], -0.25, 17 + side)  # bulge into the gorge
+        for ya, yb, mat in ((0.0, -1.15, M["rock"]), (-1.15, -2.4, M["rock-wet"])):  # wet below high water
+            pts = [B(x, ya, z0), B(x, ya, z1), B(x, yb, z1), B(x, yb, z0)]
+            if side < 0:
+                pts = list(reversed(pts))
+            subdivided(gm, pts, mat, TILE["rock"], -0.25, 17 + side)  # bulge into the gorge
     quad(gm, [B(-2.6, -2.3, z0), B(2.6, -2.3, z0), B(2.6, -2.3, z1), B(-2.6, -2.3, z1)][::-1], M["mud"], TILE["mud"])
 # Close both sides of every gorge face (walls are seen from the bridge and both banks).
 for k in range(len(gm.f)):
@@ -803,10 +1116,15 @@ ARCHES = ["emergent", "hardwood", "broad", "twisted"]
 VARIANTS = {"near": ["emergent", "hardwood", "broad", "twisted"], "far": ["emergent", "hardwood", "broad"], "bg": ["emergent", "broad"]}
 
 
+PROPORTION = random.Random(31)
+
+
 def tree_at(x, z, detail, arch=None):
     arch = arch or rng.choice(VARIANTS[detail])
-    lib = LIB[(arch, 11, detail)]
-    instance(lib, x, ground_h(x, z), z, yaw=rng.uniform(0, math.tau), scale=rng.uniform(0.82, 1.18))
+    lib = DECO[arch] if detail == "near" and arch in DECO else LIB[(arch, 11, detail)]
+    # Per-tree proportions: girth and height vary independently (own RNG: placement unchanged).
+    yaw, s_ = rng.uniform(0, math.tau), rng.uniform(0.82, 1.18)
+    instance(lib, x, ground_h(x, z), z, yaw=yaw, sx=(s_, s_, s_ * PROPORTION.uniform(0.88, 1.12)))
     placed[detail] += 1
 
 
@@ -888,7 +1206,7 @@ for b in BOXES:
             px = b["x"] + rng.uniform(-b["w"] / 2, b["w"] / 2)
             pz = b["z"] + rng.choice((-1, 1)) * (b["d"] / 2 + 0.25)
         if in_arena(px, pz, 0.3):
-            instance(FERNS[1], px, 0.0, pz, yaw=rng.uniform(0, math.tau), scale=rng.uniform(0.6, 0.85))
+            instance(FERNS[-1], px, 0.0, pz, yaw=rng.uniform(0, math.tau), scale=rng.uniform(0.6, 0.85))
             placed["fern"] += 1
 
 # Lianas hanging from the canopy over the edges of the lanes (bottom ends stay above 4 m).
@@ -1047,6 +1365,123 @@ pud.obj("puddles", section("ground"), shadow=False)
 print("DETAIL logs", placed_logs, "ivy", len(ivy.f), "roots", len(roots.f))
 
 
+# =============================================================================== riverbanks
+# All river dressing lives in the "river" section, merged per material (wet rock, reeds, roots):
+# three draws for the whole river. Inside the arena it stays below ground level in the gorge,
+# inside impassable zones, or ankle-high in the fords, so sight lines are unchanged.
+wet, reed, broots = Mesh(), Mesh(), Mesh()
+rr = random.Random(777)
+counts = {"wet": 0, "reed": 0, "root": 0, "stone": 0}
+
+
+def lib_reeds(seed):
+    """A 1 m reed clump (instanced and scaled per placement)."""
+    r = random.Random(seed)
+    m = Mesh()
+    for i in range(5):
+        a = math.tau * i / 5 + r.uniform(-0.4, 0.4)
+        d = Vector((math.cos(a), math.sin(a), 0))
+        up = (Vector((0, 0, 1)) + d * r.uniform(0.05, 0.25)).normalized()
+        card_quad(m, d * r.uniform(0.0, 0.15), d.cross(Vector((0, 0, 1))), up, 0.5, r.uniform(0.85, 1.1), M["reeds"], bend=0.08, segs=2)
+    o = m.obj(f"lib-reeds-{seed}", library, shadow=False)
+    o["noShadow"] = True
+    return o
+
+
+REEDS = scanned_library("reeds", SCANNED, library)[:1] or [lib_reeds(31)]  # one clump, varied by yaw/scale (one draw)
+WET_ROCKS = [lib_rock(41, 1.0, M["rock-wet"])]
+for o_ in WET_ROCKS:
+    o_.name = o_.data.name = o_.name.replace("lib-rock", "lib-wetrock")
+RIVER = section("river")
+
+
+def reed_clump(_m, x, y, z, height, seed):
+    instance(REEDS[seed % len(REEDS)], x, y, z, yaw=(seed % 628) / 100, sx=(height * 0.9, height * 0.9, height), coll=RIVER)
+
+
+def wet_rock(x, y, z, size, flat, seed):
+    """Instanced river rock: `size` across, `flat` × size tall (the lib rock is ~1.1 m tall)."""
+    instance(WET_ROCKS[seed % len(WET_ROCKS)], x, y, z, yaw=(seed % 628) / 100, sx=(size, size * 0.85, flat * size / 0.62), coll=RIVER)
+
+
+def bank_root(m, x0, z0, x1, z1, seed):
+    """A root snaking down a bank from (x0, z0) into the water at (x1, z1), half-buried."""
+    r = random.Random(seed)
+    pts = []
+    for i in range(9):
+        t = i / 8
+        x = x0 + (x1 - x0) * t + math.sin(t * 5 + seed) * 0.2
+        z = z0 + (z1 - z0) * t + math.cos(t * 4 + seed) * 0.2
+        pts.append(B(x, ground_h(x, z) + 0.04 - 0.1 * t, z))
+    tube(m, pts, [r.uniform(0.07, 0.12) * (1 - 0.6 * i / 8) for i in range(9)], M["bark"], sides=5, v_scale=0.5)
+
+
+# Beyond the edge: boulders and reeds along both banks, roots running down into the water.
+for zsign in (-1, 1):
+    z = zsign * (D / 2 + 0.6)
+    while abs(z) < D / 2 + 46:
+        rx = river_x(z)
+        for side in (-1, 1):
+            if rr.random() < 0.55:
+                size = rr.uniform(0.35, 1.2)
+                bx = rx + side * rr.uniform(2.2, 3.6)
+                wet_rock(bx, ground_h(bx, z) - 0.2 * size, z, size, 0.6, rr.randint(0, 9999))
+                counts["wet"] += 1
+            for _ in range(rr.randint(1, 3)):
+                rx_ = rx + side * rr.uniform(2.4, 4.2)
+                rz_ = z + rr.uniform(-1.2, 1.2)
+                reed_clump(reed, rx_, ground_h(rx_, rz_) - 0.05, rz_, rr.uniform(0.9, 1.6), rr.randint(0, 9999))
+                counts["reed"] += 1
+            if rr.random() < 0.3:
+                bank_root(broots, rx + side * rr.uniform(4.5, 6.0), z + rr.uniform(-1, 1), rx + side * 2.5, z + rr.uniform(-1, 1), rr.randint(0, 999))
+                counts["root"] += 1
+        z += zsign * rr.uniform(1.8, 2.8)
+
+# In the gorge: wet boulders breaking the water (tops well below ground level), reeds and
+# roots along the wall foot, roots draping over the lips.
+for z0, z1 in GORGES:
+    for _ in range(int((z1 - z0) * 1.3)):
+        size = rr.uniform(0.35, 0.8)
+        bx, bz = rr.uniform(-2.1, 2.1), rr.uniform(z0 + 0.4, z1 - 0.4)
+        wet_rock(bx, -2.05, bz, size, min(1.0, 0.75 / size) * 0.9, rr.randint(0, 9999))
+        counts["wet"] += 1
+    for side in (-1, 1):
+        zz = z0 + 0.3
+        while zz < z1 - 0.3:
+            reed_clump(reed, side * rr.uniform(2.25, 2.45), -1.6, zz, rr.uniform(0.7, 1.1), rr.randint(0, 9999))
+            counts["reed"] += 1
+            zz += rr.uniform(0.6, 1.4)
+        for _ in range(int((z1 - z0) / 2.2)):
+            zz = rr.uniform(z0 + 0.3, z1 - 0.3)
+            x = side * 2.5
+            pts = [B(x + side * 0.12, 0.03, zz)]
+            for i in range(1, 8):
+                pts.append(B(x - side * (0.02 + 0.03 * math.sin(i)), -0.2 * i, zz + math.sin(i * 0.9 + zz) * 0.15))
+            tube(broots, pts, [0.06 - 0.005 * i for i in range(8)], M["bark"], sides=4, v_scale=0.5)
+            counts["root"] += 1
+
+# Fords: flat wet stones in the shallows, ankle-high at most (players wade through them).
+for z0, z1 in CROSSINGS:
+    for _ in range(9):
+        size = rr.uniform(0.2, 0.45)
+        bx, bz = rr.choice((-1, 1)) * rr.uniform(1.4, 2.5), rr.uniform(z0 + 0.3, z1 - 0.3)
+        wet_rock(bx, -0.13, bz, size, 0.32 / size * 0.62 * 0.62, rr.randint(0, 9999))
+        counts["stone"] += 1
+
+# Reeds where the river leaves the arena, inside the impassable edge zones only.
+for zsign in (-1, 1):
+    for _ in range(26):
+        x, z = rr.uniform(-4.2, 4.2), zsign * rr.uniform(D / 2 - 2.6, D / 2)
+        if abs(x) < 2.75 and abs(z) <= D / 2:
+            continue  # the water channel itself
+        if lane_clear(x, z, 0.6) and in_arena(x, z):
+            reed_clump(reed, x, 0.0, z, rr.uniform(0.9, 1.4), rr.randint(0, 9999))
+            counts["reed"] += 1
+
+broots.obj("bank-roots", section("river"), weld=True)
+print("RIVERBANKS", json.dumps(counts))
+
+
 # =============================================================================== merge + export
 def join_static(coll):
     """Merge non-instanced meshes per material inside a section (fewer draw calls)."""
@@ -1076,6 +1511,7 @@ def export(out):
     bpy.ops.export_scene.gltf(filepath=out, export_format="GLB", export_apply=True, export_yup=True,
                               export_texcoords=True, export_normals=True, export_materials="EXPORT",
                               export_image_format="WEBP", export_extras=True, export_animations=False,
+                              export_vertex_color="ACTIVE", export_all_vertex_colors=False,
                               use_active_scene=True)
 
 

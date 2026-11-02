@@ -1,14 +1,18 @@
+/** "low" thins distant scenery on maps that support it (see MapEnvironment.setQuality). */
+export type GraphicsQuality = "high" | "low";
 export type StrikeSettings = {
   sensitivity: number;
   volume: number;
   crosshair: number;
   color: string;
+  graphics: GraphicsQuality;
 };
 export const DEFAULT_STRIKE_SETTINGS: StrikeSettings = {
   sensitivity: 1,
   volume: 1,
   crosshair: 0,
   color: "#ffffff",
+  graphics: "high",
 };
 export function readStrikeSettings(): StrikeSettings {
   try {
@@ -23,6 +27,7 @@ export function readStrikeSettings(): StrikeSettings {
           ? value.crosshair
           : 0,
       color: /^#[0-9a-f]{6}$/i.test(value?.color) ? value.color : "#ffffff",
+      graphics: value?.graphics === "low" ? "low" : "high",
     };
   } catch {
     return { ...DEFAULT_STRIKE_SETTINGS };

@@ -31,8 +31,26 @@ it("saves and restores all five crosshairs and custom colors", () => {
     },
   });
   for (let crosshair = 0; crosshair < 5; crosshair++) {
-    const value = { sensitivity: 1.45, volume: 0.35, crosshair, color: "#12abcd" };
+    const value = {
+      sensitivity: 1.45,
+      volume: 0.35,
+      crosshair,
+      color: "#12abcd",
+      graphics: crosshair % 2 ? ("low" as const) : ("high" as const),
+    };
     saveStrikeSettings(value);
     expect(readStrikeSettings()).toEqual(value);
   }
+});
+it("keeps the graphics quality choice and defaults unknown values to high", () => {
+  let stored = JSON.stringify({ graphics: "ultra" });
+  vi.stubGlobal("localStorage", {
+    getItem: () => stored,
+    setItem: (_key: string, value: string) => {
+      stored = value;
+    },
+  });
+  expect(readStrikeSettings().graphics).toBe("high");
+  saveStrikeSettings({ ...DEFAULT_STRIKE_SETTINGS, graphics: "low" });
+  expect(readStrikeSettings().graphics).toBe("low");
 });

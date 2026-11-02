@@ -14,6 +14,11 @@ import type { GameMap } from "./types";
  *
  * - Flowing water: the river's normal map scrolls (one texture-matrix update per frame).
  *
+ * - Graphics quality "low": the background forest (sections beyond the playable edge, built as
+ *   GPU-instanced batches whose instance order the build shuffles) draws a random half of each
+ *   batch, with the kept trees grown slightly so the far canopy still reads as closed. The
+ *   forest edge and everything near the lanes are untouched, so sight lines are identical.
+ *
  * Gameplay never reads these meshes (collision is the map's solids).
  */
 const WIND = { value: 0 };
@@ -65,18 +70,75 @@ function findWater(root: THREE.Object3D) {
   return normal as THREE.Texture | null;
 }
 
+/** Fraction of each background batch drawn on "low", and how much the kept trees grow. */
+const LOW_KEEP = 0.5;
+const LOW_GROW = 1.14;
+
+type Thinnable = { mesh: THREE.InstancedMesh; full: number; matrices: Float32Array };
+
+export function backgroundBatches(root: THREE.Object3D) {
+  const out: Thinnable[] = [];
+  root.traverse((object) => {
+    if (!(object instanceof THREE.InstancedMesh)) return;
+    for (let p: THREE.Object3D | null = object.parent; p && p !== root; p = p.parent) {
+      if (p.name.startsWith("section-bg-")) {
+        out.push({
+          mesh: object,
+          full: object.count,
+          matrices: object.instanceMatrix.array.slice() as Float32Array,
+        });
+        break;
+      }
+    }
+  });
+  return out;
+}
+
+export function applyQuality(batches: Thinnable[], quality: "high" | "low") {
+  const scratch = new THREE.Matrix4();
+  const grow = new THREE.Matrix4();
+  for (const b of batches) {
+    const attr = b.mesh.instanceMatrix;
+    (attr.array as Float32Array).set(b.matrices);
+    if (quality === "low") {
+      b.mesh.count = Math.max(1, Math.ceil(b.full * LOW_KEEP));
+      for (let i = 0; i < b.mesh.count; i++) {
+        scratch.fromArray(b.matrices, i * 16);
+        // Grow about the instance's own base (scale in its local frame, after its transform).
+        grow.makeScale(LOW_GROW, 1 + (LOW_GROW - 1) * 0.5, LOW_GROW);
+        scratch.multiply(grow).toArray(attr.array as Float32Array, i * 16);
+      }
+    } else {
+      b.mesh.count = b.full;
+    }
+    attr.needsUpdate = true;
+    // Culling bounds follow the drawn instances (recomputed lazily on the next frame).
+    b.mesh.boundingSphere = null;
+    b.mesh.boundingBox = null;
+  }
+}
+
 export function createLostTrailEnvironment(scene: THREE.Scene, map: GameMap): MapEnvironment {
   const base = createArenaEnvironment(scene, map);
   let water: THREE.Texture | null = null;
+  let batches: Thinnable[] = [];
+  let quality: "high" | "low" = "high";
   const ready = base.ready.then(() => {
     const authored = scene.getObjectByName(map.id);
     if (!authored) return;
     prepareFoliage(authored);
     water = findWater(authored);
+    batches = backgroundBatches(authored);
+    if (quality === "low") applyQuality(batches, quality);
   });
   return {
     ...base,
     ready,
+    setQuality(next) {
+      if (next === quality) return;
+      quality = next;
+      applyQuality(batches, quality);
+    },
     update(_dt, now) {
       WIND.value = now / 1000;
       // The river runs north → south (+z, which is -v in the water's world-projected UVs).

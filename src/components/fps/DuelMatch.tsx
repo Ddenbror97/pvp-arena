@@ -126,6 +126,7 @@ export function DuelMatch({
   }, []);
   useEffect(() => {
     arena.current?.setSensitivity(settings.sensitivity);
+    arena.current?.setGraphicsQuality(settings.graphics);
     sound.current?.setVolume(settings.volume);
     saveStrikeSettings(settings);
   }, [settings]);
@@ -266,6 +267,7 @@ export function DuelMatch({
             { mapId },
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
+          arena.current.setGraphicsQuality(settingsRef.current.graphics);
           void arena.current.ready
             .then(() => {
               if (!disposed) {
