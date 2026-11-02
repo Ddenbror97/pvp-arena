@@ -499,9 +499,52 @@ def import_tree(arch, seed, detail):
         bpy.ops.object.join()
     bark.name = f"lib-{arch}-{seed}-{detail}"
     bark.data.name = bark.name
+    # Triangle budget (the forest is most of the frame): crown twigs decimated, leaf cards
+    # thinned by whole cards and grown to keep the crown's coverage.
     if detail == "near":
-        thin_bark(bark, 0.45)
+        thin_bark(bark, NEAR_BARK)
+        thin_leaves(bark, *NEAR_LEAVES, seed=seed)
+    else:
+        thin_bark(bark, FAR_BARK)
+        thin_leaves(bark, *FAR_LEAVES, seed=seed)
     return bark
+
+
+NEAR_BARK, NEAR_LEAVES = 0.3, (0.5, 1.12)
+FAR_BARK, FAR_LEAVES = 0.32, (0.6, 1.1)
+
+
+def thin_leaves(obj, keep, grow, seed=7):
+    """Drop leaf cards by whole island (a card is 2 triangles) and scale the kept ones up about
+    their own centres, so the crown keeps its silhouette and coverage with fewer cards."""
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    leaf_slot = next(i for i, m in enumerate(obj.data.materials) if m.name.startswith("leaves"))
+    r = random.Random(seed)
+    bm.faces.ensure_lookup_table()
+    drop, seen = [], set()
+    for f in bm.faces:
+        if f.material_index != leaf_slot or f in seen:
+            continue
+        island = {f}
+        stack = [f]
+        while stack:
+            g = stack.pop()
+            for e in g.edges:
+                for h in e.link_faces:
+                    if h not in island:
+                        island.add(h)
+                        stack.append(h)
+        seen |= island
+        if r.random() > keep:
+            drop.extend(island)
+        else:
+            c = sum((v.co for g in island for v in g.verts), Vector()) / sum(len(g.verts) for g in island)
+            for v in {v for g in island for v in g.verts}:
+                v.co = c + (v.co - c) * grow
+    bmesh.ops.delete(bm, geom=list(set(drop)), context="FACES")
+    bm.to_mesh(obj.data)
+    bm.free()
 
 
 def thin_bark(obj, ratio):
@@ -559,46 +602,15 @@ def add_buttress(obj, base_r, fins=5, height=2.6, reach=1.25, seed=0):
         bpy.ops.object.join()
 
 
-def background_level(src, keep=0.45, grow=1.35):
-    """'bg' detail: decimated bark, fewer and larger leaf cards (whole cards kept)."""
+def background_level(src, keep=0.6, grow=1.15):
+    """'bg' detail (from the already thinned far level): the far bark, fewer and larger leaf cards
+    (whole cards kept)."""
     o = src.copy()
     o.data = src.data.copy()
     o.name = src.name.replace("-far", "-bg")
     o.data.name = o.name
     library.objects.link(o)
-    bm = bmesh.new()
-    bm.from_mesh(o.data)
-    leaf_slot = next(i for i, m in enumerate(o.data.materials) if m.name.startswith("leaves"))
-    r = random.Random(7)
-    # Leaf cards are separate islands of 2 triangles / 1 quad: drop by island.
-    bm.faces.ensure_lookup_table()
-    drop, seen = [], set()
-    for f in bm.faces:
-        if f.material_index != leaf_slot or f in seen:
-            continue
-        island = {f}
-        stack = [f]
-        while stack:
-            g = stack.pop()
-            for e in g.edges:
-                for h in e.link_faces:
-                    if h not in island:
-                        island.add(h)
-                        stack.append(h)
-        seen |= island
-        if r.random() > keep:
-            drop.extend(island)
-        else:
-            c = sum((v.co for g in island for v in g.verts), Vector()) / sum(len(g.verts) for g in island)
-            for v in {v for g in island for v in g.verts}:
-                v.co = c + (v.co - c) * grow
-    bmesh.ops.delete(bm, geom=list(set(drop)), context="FACES")
-    bm.to_mesh(o.data)
-    bm.free()
-    mod = o.modifiers.new("dec", "DECIMATE")
-    mod.ratio = 0.4
-    with bpy.context.temp_override(object=o, active_object=o):
-        bpy.ops.object.modifier_apply(modifier="dec")
+    thin_leaves(o, keep, grow)  # the bark is already the far level's (a whole-mesh decimate would erase the trunk)
     return o
 
 
@@ -653,7 +665,7 @@ def decorate_tree(src, name, seed, roots=False, lianas=3, vines=10, epiphytes=6,
             a, b = pts[-1], end
             sag = min(r.uniform(1.5, 4.0), max(0.0, min(a.z, b.z) - min_hang))
             pts += [a.lerp(b, t) - Vector((0, 0, sag * 4 * t * (1 - t))) for t in [i / 10 for i in range(1, 11)]]
-        tube(m, pts, [rad0 * (1 - 0.35 * i / len(pts)) for i in range(len(pts))], bark_mat, sides=5, v_scale=0.5)
+        tube(m, pts, [rad0 * (1 - 0.35 * i / len(pts)) for i in range(len(pts))], bark_mat, sides=4, v_scale=0.5)
     # Hanging vines (leafy) and aerial roots (bare, thin) under the crown.
     for k in range(vines):
         if not under:
@@ -693,10 +705,10 @@ def decorate_tree(src, name, seed, roots=False, lianas=3, vines=10, epiphytes=6,
             a = math.tau * i / 6 + r.uniform(-0.3, 0.3)
             d = (side * math.cos(a) + axis.cross(side) * math.sin(a))
             up = (d * 0.75 + axis * 0.65).normalized()
-            card_quad(m, p, up.cross(d).normalized() if up.cross(d).length > 1e-3 else side, up, 0.42, r.uniform(0.55, 0.85), leaf_mat, bend=0.25, segs=2)
+            card_quad(m, p, up.cross(d).normalized() if up.cross(d).length > 1e-3 else side, up, 0.42, r.uniform(0.55, 0.85), leaf_mat, bend=0.25, segs=1)
     # Strangler roots: down the trunk from 3–8 m, flaring out over the buttresses to the ground.
     if roots:
-        for k in range(r.randint(6, 9)):
+        for k in range(r.randint(5, 7)):
             a = r.uniform(0, math.tau)
             ztop = r.uniform(3.0, min(8.0, crown_base * 0.7))
             drift = r.uniform(-0.6, 0.6)
@@ -707,7 +719,7 @@ def decorate_tree(src, name, seed, roots=False, lianas=3, vines=10, epiphytes=6,
                 flare = 0.0 if z > 1.2 else (1.2 - z) * r.uniform(0.35, 0.7)
                 pts.append(on_trunk(max(z, 0.3), a + drift * t, 0.03 + flare) if z > 0.3 else on_trunk(0.3, a + drift * t, 0.03 + flare) + Vector((0, 0, z - 0.3)))
             pts[-1].z = -0.15
-            tube(m, pts, [0.05 + 0.06 * (i / 18) for i in range(19)], bark_mat, sides=5, v_scale=0.5)
+            tube(m, pts, [0.05 + 0.06 * (i / 18) for i in range(19)], bark_mat, sides=4, v_scale=0.5)
     tmp = m.obj("tmp-deco", library, weld=True, sharp=60)
     with bpy.context.temp_override(active_object=o, selected_editable_objects=[o, tmp]):
         bpy.ops.object.join()
@@ -805,7 +817,7 @@ def lib_vine(seed):
 def lib_rock(seed, size=1.0, mat=None):
     """Instanced rock: a faceted, bedded boulder sitting on (and sunk into) the ground."""
     m = Mesh()
-    boulder(m, Vector((0, 0, 0.32 * size)), (size, 0.62 * size, size * 0.85), seed, mat or M["rock"], TILE["rock"], subdiv=3, cuts=5)
+    boulder(m, Vector((0, 0, 0.32 * size)), (size, 0.62 * size, size * 0.85), seed, mat or M["rock"], TILE["rock"], subdiv=2, cuts=5)
     o = m.obj(f"lib-rock-{seed}", library, weld=True, sharp=38)
     return o
 
@@ -827,11 +839,13 @@ sys.path.insert(0, HERE)
 from scanned import scanned_library  # noqa: E402
 
 SCANNED = os.environ.get("LOST_TRAIL_SCANNED", os.path.join(HERE, "source", "scanned"))
-PALMS = scanned_library("palm", SCANNED, library) or [lib_palm(s) for s in (1, 2)]
-FERNS = scanned_library("fern", SCANNED, library) or [lib_fern(s, sz) for s, sz in ((4, 1.0), (6, 0.8))]
-BUSHES = scanned_library("bush", SCANNED, library) or [lib_bush(s, sz) for s, sz in ((7, 1.0), (8, 1.3))]
+# One variant per small plant (yaw and scale vary it): every extra variant is another draw in
+# every culling section.
+PALMS = (scanned_library("palm", SCANNED, library) or [lib_palm(1)])[:1]
+FERNS = (scanned_library("fern", SCANNED, library) or [lib_fern(4, 1.0)])[:1]
+BUSHES = (scanned_library("bush", SCANNED, library) or [lib_bush(7, 1.15)])[:1]
 VINES = [lib_vine(9)]
-ROCKS = scanned_library("rock", SCANNED, library) or [lib_rock(s, sz) for s, sz in ((11, 1.0), (13, 0.7))]
+ROCKS = (scanned_library("rock", SCANNED, library) or [lib_rock(11, 1.0)])[:1]
 
 
 # =============================================================================== playable-area tests
@@ -971,6 +985,16 @@ def smooth(e0, e1, x):
 
 GORGES = [(-12.6, -1.7), (1.7, 9.4)]
 CROSSINGS = [(-15.4, -12.6), (9.4, 15.2)]
+# The channel is one continuous cut from the north crossing to the ford (it runs on under the
+# bridge deck); the giant river-tree stands on a rock outcrop filling its north end.
+GORGE_SPAN = (GORGES[0][0], GORGES[-1][1])
+OUTCROP = (-2.6, 2.6, GORGE_SPAN[0], -6.9)  # x0, x1, z0, z1: under the river-tree's buttresses
+OUTCROP_TOP = 0.25  # the trunk and buttress fins grow out of the rock
+
+
+def deep_gorge(x, z, margin=0.0):
+    """Over the open water of the gorge (not the outcrop): nothing may rest at ground level here."""
+    return abs(x) < 2.6 - margin and max(OUTCROP[3], GORGE_SPAN[0]) + margin < z < GORGE_SPAN[1] - margin
 
 
 def river_x(z):
@@ -1011,19 +1035,27 @@ def wetness(x, z):
 ground = Mesh()
 EXT = 62.0
 step_in, step_out = 1.0, 3.0
+# Grid lines on the exact gorge rims, gorge ends, crossing edges and bridge deck, so the ground
+# meets the gorge walls and end walls edge to edge (no slivers of sky between them).
+BRIDGE_DECK = (2.95, 1.72)
 xs = [x for x in [-W / 2 - EXT + i * step_out for i in range(int(EXT / step_out))]] + \
      [-W / 2 + i * step_in for i in range(int(W / step_in) + 1)] + \
-     [W / 2 + (i + 1) * step_out for i in range(int(EXT / step_out))]
+     [W / 2 + (i + 1) * step_out for i in range(int(EXT / step_out))] + [-2.6, 2.6, -BRIDGE_DECK[0], BRIDGE_DECK[0]]
 zs = [z for z in [-D / 2 - EXT + i * step_out for i in range(int(EXT / step_out))]] + \
      [-D / 2 + i * step_in for i in range(int(D / step_in) + 1)] + \
-     [D / 2 + (i + 1) * step_out for i in range(int(EXT / step_out))]
+     [D / 2 + (i + 1) * step_out for i in range(int(EXT / step_out))] + \
+     [v for zz in CROSSINGS for v in zz] + [-BRIDGE_DECK[1], BRIDGE_DECK[1]]
+xs = sorted({round(v, 4) for v in xs})
+zs = sorted({round(v, 4) for v in zs})
 H = {(x, z): ground_h(x, z) for x in xs for z in zs}
 for i in range(len(xs) - 1):
     for j in range(len(zs) - 1):
         xa, xb, za, zb = xs[i], xs[i + 1], zs[j], zs[j + 1]
         cx, cz = (xa + xb) / 2, (za + zb) / 2
-        if abs(cx) < 2.6 and any(z0 < cz < z1 for z0, z1 in GORGES):
+        if abs(cx) < 2.6 and GORGE_SPAN[0] < cz < GORGE_SPAN[1]:
             continue  # the gorge (its walls and bed are built separately)
+        if abs(cx) < BRIDGE_DECK[0] and abs(cz) < BRIDGE_DECK[1]:
+            continue  # under the bridge deck's bank ends (the deck top is the ground there)
         corners = [(xa, za), (xb, za), (xb, zb), (xa, zb)]
         pts = [B(x_, H[(x_, z_)], z_) for x_, z_ in corners]
         ground.poly(list(reversed(pts)), [world_uv(p, Vector((0, 0, 1)), TILE["floor"]) for p in reversed(pts)], M["floor"],
@@ -1032,7 +1064,7 @@ ground.obj("ground", section("ground"))
 
 # Gorge: rock walls down to a stony bed, deep still water.
 gm = Mesh()
-for z0, z1 in GORGES:
+for z0, z1 in (GORGE_SPAN,):
     for side in (-1, 1):
         x = side * 2.6
         for ya, yb, mat in ((0.0, -1.15, M["rock"]), (-1.15, -2.4, M["rock-wet"])):  # wet below high water
@@ -1041,6 +1073,14 @@ for z0, z1 in GORGES:
                 pts = list(reversed(pts))
             subdivided(gm, pts, mat, TILE["rock"], -0.25, 17 + side)  # bulge into the gorge
     quad(gm, [B(-2.6, -2.3, z0), B(2.6, -2.3, z0), B(2.6, -2.3, z1), B(-2.6, -2.3, z1)][::-1], M["mud"], TILE["mud"])
+    # End walls under the crossings' lips: rock from the ground edge down past the bed, following
+    # the ground's own edge heights so the seam is closed.
+    for zend in (z0, z1):
+        ex = [x for x in xs if -2.6 <= x <= 2.6]
+        for xa, xb in zip(ex, ex[1:]):
+            ha, hb = H[(xa, zend)], H[(xb, zend)]
+            for (ta, tb), yb, mat in (((ha, hb), -1.15, M["rock"]), ((-1.15, -1.15), -2.4, M["rock-wet"])):
+                quad(gm, [B(xa, ta, zend), B(xb, tb, zend), B(xb, yb, zend), B(xa, yb, zend)], mat, TILE["rock"])
 # Close both sides of every gorge face (walls are seen from the bridge and both banks).
 for k in range(len(gm.f)):
     face = gm.f[k]
@@ -1050,8 +1090,14 @@ for k in range(len(gm.f)):
     gm.uv.append(list(reversed(gm.uv[k])))
     gm.mi.append(gm.mi[k])
 gm.obj("gorge", section("river"))
+# The outcrop under the river-tree: layered rock filling the gorge's north end, the trunk and its
+# buttress fins rooted in it (they used to stand on nothing over the water).
+om = Mesh()
+strata_block(om, OUTCROP[0], OUTCROP[1], -2.4, OUTCROP_TOP, OUTCROP[2], OUTCROP[3], M["rock"], TILE["rock"], 913,
+             max_inset=0.22, top_inset=0.12, ground=False)
+om.obj("river-outcrop", section("river"))
 water = Mesh()
-for z0, z1 in GORGES:
+for z0, z1 in (GORGE_SPAN,):
     quad(water, [B(-2.6, -1.55, z0), B(2.6, -1.55, z0), B(2.6, -1.55, z1), B(-2.6, -1.55, z1)][::-1], M["water"], 4.0)
 for z0, z1 in CROSSINGS:
     quad(water, [B(-2.62, 0.04, z0), B(2.62, 0.04, z0), B(2.62, 0.04, z1), B(-2.62, 0.04, z1)][::-1], M["water"], 4.0)
@@ -1113,7 +1159,7 @@ ARCHES = ["emergent", "hardwood", "broad", "twisted"]
 
 # Variants by distance: every archetype near the arena, fewer (one seed) further out, where
 # rotation and scale variation hide repetition.
-VARIANTS = {"near": ["emergent", "hardwood", "broad", "twisted"], "far": ["emergent", "hardwood", "broad"], "bg": ["emergent", "broad"]}
+VARIANTS = {"near": ["emergent", "hardwood", "twisted"], "far": ["emergent", "hardwood", "broad"], "bg": ["emergent", "broad"]}
 
 
 PROPORTION = random.Random(31)
@@ -1133,7 +1179,7 @@ def edge_distance(x, z):
 
 
 # Upper canopy and background: Poisson-ish jittered grid beyond the edge, detail by distance.
-for band, (e0, e1, spacing, detail) in enumerate([(1.2, 6.5, 4.6, "near"), (6.5, 22.0, 6.0, "far"), (22.0, 52.0, 8.0, "bg")]):
+for band, (e0, e1, spacing, detail) in enumerate([(1.2, 6.5, 4.6, "near"), (6.5, 22.0, 6.6, "far"), (22.0, 52.0, 9.5, "bg")]):
     x = -W / 2 - e1
     while x <= W / 2 + e1:
         z = -D / 2 - e1
@@ -1157,7 +1203,7 @@ for _ in range(520):
         continue
     r_ = rng.random()
     if r_ < 0.12:
-        instance(LIB[("slender", 11, "far" if e > 4 else "near")], px, ground_h(px, pz), pz, yaw=rng.uniform(0, math.tau), scale=rng.uniform(0.8, 1.2))
+        instance(LIB[("slender", 11, "far")], px, ground_h(px, pz), pz, yaw=rng.uniform(0, math.tau), scale=rng.uniform(0.8, 1.2))
         placed["mid"] += 1
     elif r_ < 0.6:
         instance(rng.choice(FERNS), px, ground_h(px, pz), pz, yaw=rng.uniform(0, math.tau), scale=rng.uniform(0.9, 1.5))
@@ -1177,7 +1223,7 @@ for s in BARRIERS:
         r_ = rng.random()
         y = ground_h(px, pz)
         if r_ < 0.12 and inside(s, px, pz, 1.0):
-            instance(LIB[("slender", 11, "near")], px, y, pz, yaw=rng.uniform(0, math.tau), scale=rng.uniform(0.75, 1.05))
+            instance(LIB[("slender", 11, "far")], px, y, pz, yaw=rng.uniform(0, math.tau), scale=rng.uniform(0.75, 1.05))
             placed["mid"] += 1
         elif r_ < 0.2 and inside(s, px, pz, 1.0):
             instance(rng.choice(PALMS), px, y, pz, yaw=rng.uniform(0, math.tau), scale=rng.uniform(0.7, 0.95))
@@ -1206,7 +1252,7 @@ for b in BOXES:
             px = b["x"] + rng.uniform(-b["w"] / 2, b["w"] / 2)
             pz = b["z"] + rng.choice((-1, 1)) * (b["d"] / 2 + 0.25)
         if in_arena(px, pz, 0.3):
-            instance(FERNS[-1], px, 0.0, pz, yaw=rng.uniform(0, math.tau), scale=rng.uniform(0.6, 0.85))
+            instance(FERNS[-1], px, 0.0, pz, yaw=rng.uniform(0, math.tau), scale=rng.uniform(0.5, 0.7))
             placed["fern"] += 1
 
 # Lianas hanging from the canopy over the edges of the lanes (bottom ends stay above 4 m).
@@ -1297,6 +1343,9 @@ for s_ in BOXES:
             rr = d / 2 * 0.9 + length * t
             wob = math.sin(t * 5 + k) * 0.25 * t
             pts.append((s_["x"] + math.cos(a + wob) * rr, s_["z"] + math.sin(a + wob) * rr, r0 * (1 - 0.8 * t)))
+        # A root reaching the gorge stops at its lip (nothing lies on air over the water).
+        cut = next((i for i, (px_, pz_, _) in enumerate(pts) if deep_gorge(px_, pz_, -0.3)), len(pts))
+        pts = pts[:cut]
         for i in range(len(pts) - 1):
             (xa, za, ra), (xb, zb, rb) = pts[i], pts[i + 1]
             dx, dz = xb - xa, zb - za
@@ -1439,7 +1488,7 @@ for zsign in (-1, 1):
 
 # In the gorge: wet boulders breaking the water (tops well below ground level), reeds and
 # roots along the wall foot, roots draping over the lips.
-for z0, z1 in GORGES:
+for z0, z1 in [(max(z0_, OUTCROP[3]), z1_) for z0_, z1_ in GORGES]:
     for _ in range(int((z1 - z0) * 1.3)):
         size = rr.uniform(0.35, 0.8)
         bx, bz = rr.uniform(-2.1, 2.1), rr.uniform(z0 + 0.4, z1 - 0.4)

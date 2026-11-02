@@ -118,7 +118,7 @@ const stats = {
 };
 for (const [name, v] of Object.entries(result.views)) {
   fs.writeFileSync(path.join(outDir, `${name}.jpg`), Buffer.from(v.image.split(",")[1], "base64"));
-  stats.views[name] = { calls: v.calls, triangles: v.triangles };
+  stats.views[name] = { calls: v.calls, triangles: v.triangles, ms: v.ms };
 }
 fs.writeFileSync(path.join(outDir, "stats.json"), JSON.stringify(stats, null, 1));
 console.log(JSON.stringify(stats));

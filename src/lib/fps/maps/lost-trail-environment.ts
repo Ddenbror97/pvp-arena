@@ -8,6 +8,8 @@ import type { GameMap } from "./types";
  *
  * - Alpha-to-coverage on alpha-tested foliage cards. The world pass already renders with MSAA,
  *   so leaf edges are anti-aliased without blending or sorting (no extra draws).
+ * - Foliage draws after the solids, the near forest before the background (render order only),
+ *   so leaf fragments hidden behind walls, trunks or nearer crowns are rejected by depth.
  * - Subtle wind: leaves and fronds sway in the vertex shader from one shared time uniform. No
  *   per-plant CPU work; all foliage materials share one program variant (same cache key).
  *   Displacement grows with height in the plant's own space, so trunks and roots stay put.
@@ -35,11 +37,28 @@ const WIND_CHUNK = /* glsl */ `
   transformed += windOffset;
 `;
 
-function prepareFoliage(root: THREE.Object3D) {
+/** Foliage after solids, near before far: see `prepareFoliage`. */
+export const FOLIAGE_ORDER = { near: 1, background: 2 } as const;
+
+function inBackground(object: THREE.Object3D, root: THREE.Object3D) {
+  for (let p: THREE.Object3D | null = object.parent; p && p !== root; p = p.parent)
+    if (p.name.startsWith("section-bg-")) return true;
+  return false;
+}
+
+export function prepareFoliage(root: THREE.Object3D) {
   const done = new Set<THREE.Material>();
   root.traverse((object) => {
     if (!(object instanceof THREE.Mesh)) return;
-    for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    // Draw order: three sorts opaque draws by material before depth, so leaf cards could go
+    // first and be shaded in full behind walls, trunks and the ground. Drawn after every solid
+    // (and the near forest before the background), hidden leaf fragments fail the depth test.
+    if (materials.some((m) => m.alphaTest > 0))
+      object.renderOrder = inBackground(object, root)
+        ? FOLIAGE_ORDER.background
+        : FOLIAGE_ORDER.near;
+    for (const material of materials) {
       if (done.has(material) || !(material.alphaTest > 0)) continue;
       done.add(material);
       material.alphaToCoverage = true;
