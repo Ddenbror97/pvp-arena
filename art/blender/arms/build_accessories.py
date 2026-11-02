@@ -2,6 +2,11 @@
 Sleeve and wristwatch for the first-person arms (Blender, headless).
 
   python build_accessories.py -- <outdir> [--size 1024] [--preview]
+  python build_accessories.py -- <outdir> --watch-only --watch-lift 0.0068   # JacketWatch
+
+`--watch-only` builds just the watch, worn over a sleeve: every radius the watch is fitted to
+(case seat, strap, buckle) is the arm plus `--watch-lift` metres of cinched fabric. It exports
+`JacketWatch` to jacket-watch.glb (Police duty-jacket arms, see build_jacket_sleeve.py).
 
 Both are authored on the runtime forearm (forearm.py) in the canonical arm frame
 (+X thumb, +Y toward the elbow, +Z back of the arm) and exported to accessories.glb:
@@ -29,6 +34,9 @@ argv = sys.argv[sys.argv.index("--") + 1:]
 outdir = argv[0]
 SIZE = int(argv[argv.index("--size") + 1]) if "--size" in argv else 1024
 PREVIEW = "--preview" in argv
+WATCH_ONLY = "--watch-only" in argv
+# Fabric under the strap when the watch is worn over a sleeve (0: on the bare wrist).
+WATCH_LIFT = float(argv[argv.index("--watch-lift") + 1]) if "--watch-lift" in argv else 0.0
 os.makedirs(outdir, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene
@@ -301,6 +309,11 @@ def canonical_arm(name, along0=0.0, along1=0.45):
 # =========================================================================================
 MM = 0.001
 WATCH_ALONG = 0.058
+
+
+def wrist_radius(t, theta):
+    """Radius the watch is fitted to: the arm, plus the cinched sleeve when worn over one."""
+    return F.radius(t, theta) + WATCH_LIFT
 CASE_R = 20.0
 
 
@@ -534,7 +547,7 @@ def build_watch(arm_top_z):
     t = WATCH_ALONG / F.LENGTH
 
     def arm_pt(theta, off):
-        r = F.radius(t, theta) + off
+        r = wrist_radius(t, theta) + off
         # Arm frame (x thumb, z dorsal) → watch frame (x toward the little finger, z from case base).
         return -math.cos(theta) * r / MM, math.sin(theta) * r / MM - arm_top_z / MM
 
@@ -588,7 +601,7 @@ def build_buckle(mesh, mat, strap_path, arm_top_z):
     """Blackened steel buckle and two keepers on the thumb side of the strap."""
     t = WATCH_ALONG / F.LENGTH
     theta = 2 * math.pi - 0.25  # thumb side, a little toward the palm
-    r = F.radius(t, theta)
+    r = wrist_radius(t, theta)
     target = np.array([-math.cos(theta) * r / MM, 0.0, math.sin(theta) * r / MM - arm_top_z / MM])
     i = int(np.argmin(np.linalg.norm(strap_path - target, axis=-1)))
     p = strap_path[i]
@@ -649,17 +662,18 @@ def export(objects, path):
 
 
 # ----------------------------------------------------------------------------------------- run
-sleeve_mesh, sleeve_P, sleeve_theta, v_scale = build_sleeve()
-sleeve = sleeve_mesh.to_object("ArmSleeve")
-sleeve["v_scale"] = v_scale
-sleeve.data.shade_smooth()
-base, normal, orm = sleeve_textures(sleeve, SIZE)
-sleeve_mat = textured(material("arm_sleeve", rough=0.88), base, normal, orm)
-sleeve.data.materials.clear()
-sleeve.data.materials.append(sleeve_mat)
-print("sleeve", len(sleeve.data.polygons), "faces")
+if not WATCH_ONLY:
+    sleeve_mesh, sleeve_P, sleeve_theta, v_scale = build_sleeve()
+    sleeve = sleeve_mesh.to_object("ArmSleeve")
+    sleeve["v_scale"] = v_scale
+    sleeve.data.shade_smooth()
+    base, normal, orm = sleeve_textures(sleeve, SIZE)
+    sleeve_mat = textured(material("arm_sleeve", rough=0.88), base, normal, orm)
+    sleeve.data.materials.clear()
+    sleeve.data.materials.append(sleeve_mat)
+    print("sleeve", len(sleeve.data.polygons), "faces")
 
-arm_top = float(F.radius(WATCH_ALONG / F.LENGTH, np.pi / 2)) + 1.15 * MM
+arm_top = float(wrist_radius(WATCH_ALONG / F.LENGTH, np.pi / 2)) + 1.15 * MM
 watch_mesh, strap_path = build_watch(arm_top)
 from PIL import Image  # noqa: E402
 
@@ -670,10 +684,14 @@ mats = [material("watch_metal", (0.028, 0.028, 0.03), 1.0, 0.34),
         textured(material("watch_strap", rough=0.72), sb, sn, so),
         material("watch_glass", (0.0, 0.0, 0.0), 0.0, 0.04, alpha=0.12)]
 build_buckle(watch_mesh, 0, strap_path, arm_top)
-watch = watch_mesh.to_object("ArmWatch", mats)
+watch = watch_mesh.to_object("JacketWatch" if WATCH_ONLY else "ArmWatch", mats)
 place_watch(watch, arm_top)
-print("watch", len(watch.data.polygons), "faces")
+print("watch", len(watch.data.polygons), "faces", "lift", WATCH_LIFT)
 
+if WATCH_ONLY:
+    export([watch], os.path.join(outdir, "jacket-watch.glb"))
+    bpy.ops.wm.save_as_mainfile(filepath=os.path.join(outdir, "jacket_watch.blend"))
+    sys.exit(0)
 export([sleeve, watch], os.path.join(outdir, "accessories.glb"))
 bpy.ops.wm.save_as_mainfile(filepath=os.path.join(outdir, "accessories.blend"))
 

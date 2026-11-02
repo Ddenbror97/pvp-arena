@@ -9,9 +9,10 @@ untouched. Everything here is scripted so it rebuilds deterministically.
 | `build_gloves.py` | Blender: marching cubes → decimated game mesh (7.5k tris/hand) → weights → shared UV atlas → (with `--textures`) bakes and PBR maps → `gloves.json/bin` in the skin's bind space. |
 | `glove_textures.py` | High-poly normal/AO bakes, then per-texel panels and relief computed on the 3D glove: suede palm with a quilted padded patch, stretch-knit back, finger gussets, fingertip caps, TPR knuckle guard (knurl + flex channels), raised finger strips, perforated thumb crotch, bound cuff, lock-stitch seams, joint wrinkles, dust. |
 | `forearm.py` | Python port of the runtime forearm surface (`forearmRadius` in `fitted-rifle-hands.ts`). |
-| `build_accessories.py` | Olive ripstop sleeve (rolled band, compression folds, drape, inner hem lip) and a 40 mm field watch (case, 60-click knurled bezel with printed insert, domed crystal, Arabic 1–12 / 13–24 dial, hands at 10:09, crown, lugs, spring bars, NATO strap, buckle, keepers). |
-| `build_jacket_sleeve.py` | White duty-jacket sleeve for the Terrorist (AK) arms: turned hem, double cuff band with a hook-and-loop strap, compression folds, drape, underarm sag, articulation panel seam, retro-reflective band; Cycles AO bake; ripstop, twill, pinch creases, flat-felled seams and lock stitching, grime and wear in numpy. Added to the AK GLB by `../add_jacket_to_ak.mjs`. The Police (M4) arms keep the olive sleeve and watch. |
+| `build_accessories.py` | Olive ripstop sleeve (rolled band, compression folds, drape, inner hem lip) and a 40 mm field watch (case, 60-click knurled bezel with printed insert, domed crystal, Arabic 1–12 / 13–24 dial, hands at 10:09, crown, lugs, spring bars, NATO strap, buckle, keepers). `--watch-only --watch-lift <m>` rebuilds the watch over a sleeve (`JacketWatch`, Police). |
+| `build_jacket_sleeve.py` | Full-length duty sleeves, one per team, matched to the third-person characters. Terrorist (default, `JacketSleeve`): the snow-camo smock of `terrorist-fighter.glb` — three-tone print (coverage and tones measured from the character's texture and its render), cotton windproof weave, camo cuff tab with a dark button. Police (`--variant police`, `PoliceSleeve`): the steel-blue duty shirt of `police-swat.glb` — cotton twill, light topstitching, buttoned shirt cuff, cloth cinched flat under the watch strap and bunched either side. Both: turned hem, double cuff band, compression folds, drape, underarm sag; Cycles AO bake; textures in numpy. |
 | `skin_texture.py` | Forearm skin with arm hair (`public/fps/forearm-skin-v2.webp`) from `forearm-skin-source.webp`. |
+| `../add_accessories.mjs` | Adds Blender-built accessories to a viewmodel GLB under `FPAccessories` (replacing same-named nodes), optionally re-encoding their new textures (`--max-size 1024 --webp-quality 90`). Used for both duty sleeves and the Police watch. |
 | `merge_arms.mjs` | Swaps the FPArms mesh and its textures into the shipped GLB and adds the accessories under `FPAccessories`; rig and rifle untouched. |
 | `dump_rig.mjs` | Exports the rig's joint matrices and bind space for the scripts. |
 | `gloves.blend`, `accessories.blend` | Editable sources (game meshes with UVs, weights, materials). |
@@ -32,6 +33,24 @@ npx gltf-transform copy ../../public/fps/models/ak47-authored.glb build/ak-src.g
 node add_jacket_to_ak.mjs build/ak-src.glb build/jacket/jacket-sleeve.glb ../../public/fps/models/ak47-authored.glb
 node check_rig_unchanged.mjs build/ak-src.glb ../../public/fps/models/ak47-authored.glb
 ```
+
+Duty sleeves and the Police watch (current; Blender 5.2 via `bpy`, ~7 min per sleeve):
+
+```bash
+cd art/blender
+python arms/build_jacket_sleeve.py -- build/terror --size 2048 [--preview]                  # Terrorist
+python arms/build_accessories.py -- build/police --watch-only --watch-lift 0.0068          # watch over the sleeve
+python arms/build_jacket_sleeve.py -- build/police --variant police --size 2048 \
+  [--watch build/police/jacket-watch.glb --preview]                                         # Police
+node add_accessories.mjs <ak-before.glb> ../../public/fps/models/ak47-authored.glb \
+  build/terror/jacket-sleeve.glb:JacketSleeve --max-size 1024 --webp-quality 90
+node add_accessories.mjs <m4-before.glb> ../../public/fps/models/m4a1-authored.glb \
+  build/police/police-sleeve.glb:PoliceSleeve build/police/jacket-watch.glb:JacketWatch \
+  --max-size 1024 --webp-quality 90
+node check_rig_unchanged.mjs <before.glb> <after.glb>   # must print zero shifts
+```
+
+Preview in the game's viewmodel lighting: `node scripts/fps/viewmodel-capture/capture.mjs <ak|m4> <out> <shots.json> --weapon=rifle` (rifle) or without `--weapon` (Karambit).
 `--reuse-bakes` re-runs only the texture authoring on cached bakes (seconds, not minutes).
 
 ## How it fits the rig

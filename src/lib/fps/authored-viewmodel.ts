@@ -75,10 +75,11 @@ export type ViewmodelVariant = {
   boltKick: number;
   forearms: ForearmShape;
   /**
-   * Arm dress. "jacket": the white duty-jacket sleeve (Terrorist / AK). "bare": bare forearm
-   * with the rolled olive sleeve and field watch (Police / M4A1).
+   * Arm dress. "jacket": the snow-camo smock sleeve (Terrorist / AK). "police": the steel-blue
+   * duty-shirt sleeve with the field watch strapped over it (Police / M4A1). "bare": bare
+   * forearm with the rolled olive sleeve and the watch on the skin (fallback / older GLBs).
    */
-  arms: "jacket" | "bare";
+  arms: "jacket" | "police" | "bare";
 };
 export const AK_VIEWMODEL: ViewmodelVariant = {
   id: "ak",
@@ -97,7 +98,7 @@ export const AK_VIEWMODEL: ViewmodelVariant = {
   forearms: SHORT_FOREARMS,
   arms: "jacket",
 };
-/** Police M4A1: suppressed, carry handle, quad-rail handguard; bare forearms with the watch. */
+/** Police M4A1: suppressed, carry handle, quad-rail handguard; blue duty sleeves, watch over the cuff. */
 export const M4_VIEWMODEL: ViewmodelVariant = {
   id: "m4",
   asset: ARENA_MODELS.m4,
@@ -113,7 +114,7 @@ export const M4_VIEWMODEL: ViewmodelVariant = {
   chargingHandle: false,
   boltKick: 0,
   forearms: SHORT_FOREARMS,
-  arms: "bare",
+  arms: "police",
 };
 
 /** M4 bolt-catch strike: wrist offset from the magazine-grip wrist, beyond the paddle shift. */
@@ -285,12 +286,24 @@ export function createAuthoredViewmodel(
         };
         const sleeveParts = meshesOf("ArmSleeve"),
           watchParts = meshesOf("ArmWatch");
-        const jacketParts = meshesOf("JacketSleeve");
-        // Terrorist: the Blender-built white duty-jacket sleeve covers the whole forearm (no
-        // rolled olive sleeve, no watch). Police: bare forearm, olive sleeve and field watch.
-        const jacket = variant.arms === "jacket" && jacketParts.length > 0;
-        if (jacket) sleeveParts.splice(0, sleeveParts.length, ...jacketParts);
-        if (jacket) watchParts.length = 0;
+        // Full-length duty sleeves (art/blender/arms/build_jacket_sleeve.py) cover the forearm,
+        // so the rolled olive sleeve and the bare skin go. Terrorist: snow-camo smock, no watch.
+        // Police: steel-blue shirt matching the character, the watch strapped over the sleeve.
+        const dutySleeve =
+          variant.arms === "jacket"
+            ? meshesOf("JacketSleeve")
+            : variant.arms === "police"
+              ? meshesOf("PoliceSleeve")
+              : [];
+        const jacket = dutySleeve.length > 0;
+        if (jacket) {
+          sleeveParts.splice(0, sleeveParts.length, ...dutySleeve);
+          watchParts.splice(
+            0,
+            watchParts.length,
+            ...(variant.arms === "police" ? meshesOf("JacketWatch") : []),
+          );
+        }
         /** Gloves, bare forearm, pushed-up sleeve and (left wrist) watch for one fitted arm. */
         const dress = (
           built: { gloves: THREE.BufferGeometry; skin: THREE.BufferGeometry; path: ForearmPath },

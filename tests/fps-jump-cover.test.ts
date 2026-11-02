@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { getMap, compileMap } from "../src/lib/fps/maps/registry";
-import { PLAYER_RADIUS } from "../src/lib/fps/map";
+import { PLAYER_RADIUS, eyeHeight } from "../src/lib/fps/map";
 import {
   createMatch,
   predictMovement,
@@ -51,6 +51,97 @@ const player = () => ({
   velocityY: 0,
 });
 describe("original jump and reachable cover", () => {
+  it.each([0, 3, 6])("crouch-jumps onto 1.3 m cover with duck at tick %s", (duckAt) => {
+    const b = cover(1.3),
+      map = mapFor([b]),
+      p = player();
+    p.z = b.d / 2 + PLAYER_RADIUS + 0.2;
+    let landed = false;
+    for (let n = 0; n < 50; n++) {
+      predictMovement(
+        p,
+        { ...input(p.z > 0.1 ? 1 : 0, n === 0), crouch: n >= duckAt },
+        TICK_MS,
+        map,
+      );
+      if (p.y === 1.3 && p.velocityY === 0) landed = true;
+    }
+    expect(landed).toBe(true);
+    expect(p.y).toBeCloseTo(1.3);
+    expect(p.airCrouchOffset).toBe(0);
+    predictMovement(p, input(), TICK_MS, map);
+    expect(p.crouched).toBe(false);
+    expect(p.y).toBeCloseTo(1.3);
+  });
+  it("air duck raises the feet without boosting velocity or head height", () => {
+    const standing = player(),
+      ducked = player(),
+      map = mapFor();
+    for (let n = 0; n < 10; n++) {
+      predictMovement(standing, input(0, n === 0), TICK_MS, map);
+      predictMovement(ducked, { ...input(0, n === 0), crouch: n >= 3 }, TICK_MS, map);
+      expect(ducked.velocityY).toBe(standing.velocityY);
+      expect(ducked.y + eyeHeight(ducked)).toBeCloseTo(standing.y + eyeHeight(standing), 8);
+    }
+  });
+  it("repeated air duck cannot accumulate extra height", () => {
+    const p = player(),
+      map = mapFor();
+    const dt = TICK_MS / 1000;
+    for (let n = 1; n <= 15; n++) {
+      predictMovement(p, { ...input(0, n === 1), crouch: n % 2 === 0 }, TICK_MS, map);
+      const ballistic = n * 5 * dt - (14 * dt * dt * n * (n + 1)) / 2;
+      expect(p.y - (p.airCrouchOffset ?? 0)).toBeCloseTo(ballistic, 8);
+    }
+  });
+  it("does not duck-jump onto cover above tucked-foot reach", () => {
+    const b = cover(1.6),
+      map = mapFor([b]),
+      p = player();
+    p.z = b.d / 2 + PLAYER_RADIUS + 0.2;
+    for (let n = 0; n < 40; n++)
+      predictMovement(p, { ...input(1, n === 0), crouch: true }, TICK_MS, map);
+    expect(p.y).toBe(0);
+    expect(p.z).toBeGreaterThanOrEqual(b.d / 2 + PLAYER_RADIUS - 1e-6);
+  });
+  it("supports crouching just before takeoff", () => {
+    const b = cover(1.3),
+      map = mapFor([b]),
+      p = player();
+    p.z = b.d / 2 + PLAYER_RADIUS + 0.2;
+    predictMovement(p, { ...input(), crouch: true }, TICK_MS, map);
+    expect(p.y).toBe(0);
+    for (let n = 0; n < 50; n++)
+      predictMovement(p, { ...input(p.z > 0.1 ? 1 : 0, n === 0), crouch: true }, TICK_MS, map);
+    expect(p.y).toBeCloseTo(1.3);
+    expect(p.velocityY).toBe(0);
+  });
+  it("keeps duck held when standing would expand into the ledge", () => {
+    const b = cover(1.3),
+      map = mapFor([b]),
+      p = player();
+    p.z = b.d / 2 + PLAYER_RADIUS + 0.2;
+    for (let n = 0; n < 12; n++)
+      predictMovement(p, { ...input(1, n === 0), crouch: true }, TICK_MS, map);
+    expect(p.z).toBeLessThan(b.d / 2 + PLAYER_RADIUS);
+    expect(p.y).toBeGreaterThan(1.3);
+    predictMovement(p, input(), TICK_MS, map);
+    expect(p.crouched).toBe(true);
+    expect(p.airCrouchOffset).toBeCloseTo(0.65);
+    for (let n = 0; n < 25; n++) predictMovement(p, input(), TICK_MS, map);
+    expect(p.y).toBeCloseTo(1.3);
+    expect(p.crouched).toBe(false);
+  });
+  it("cannot expand the tucked hull through a low ceiling", () => {
+    const ceiling = { ...cover(0.25, 5), id: "ceiling", w: 5, y: 1.5 };
+    const map = mapFor([ceiling]),
+      p = player();
+    p.z = 0;
+    p.crouched = true;
+    predictMovement(p, { ...input(0, true), crouch: true }, TICK_MS, map);
+    expect(p.airCrouchOffset ?? 0).toBe(0);
+    expect(p.y + eyeHeight(p) + 0.2).toBeLessThan(1.375);
+  });
   it("matches the original impulse, gravity, full trajectory and landing time", () => {
     expect(JUMP_SPEED).toBe(5);
     expect(GRAVITY).toBe(14);

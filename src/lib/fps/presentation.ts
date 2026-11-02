@@ -27,15 +27,23 @@ export class JumpPresentation {
 /** Camera stance only. Feet/jump physics and authoritative hit volumes stay exact. */
 export class CameraStance {
   private height: number | null = null;
+  private tuck = 0;
   reset() {
     this.height = null;
+    this.tuck = 0;
   }
-  sample(player: { crouched?: boolean }, ms: number) {
-    const target = eyeHeight(player);
-    if (this.height === null) return (this.height = target);
+  sample(player: { crouched?: boolean; airCrouchOffset?: number; velocityY?: number }, ms: number) {
+    const tuck = player.airCrouchOffset ?? 0;
+    // Landing commits the tucked feet to the support. Remove that coordinate
+    // offset from the camera too, rather than playing a second stance transition.
+    if (this.height !== null && this.tuck && !tuck && player.crouched && !player.velocityY)
+      this.height -= this.tuck;
+    this.tuck = tuck;
+    const target = eyeHeight(player) + tuck;
+    if (this.height === null) this.height = target;
     const maxStep = Math.max(0, Math.min(100, ms)) * 0.01;
     this.height += Math.max(-maxStep, Math.min(maxStep, target - this.height));
-    return this.height;
+    return this.height - tuck;
   }
 }
 
@@ -82,6 +90,8 @@ export class FrameMotion {
     pose.y = reference.y;
     if (reference.velocityY === undefined) delete pose.velocityY;
     else pose.velocityY = reference.velocityY;
+    if (reference.airCrouchOffset === undefined) delete pose.airCrouchOffset;
+    else pose.airCrouchOffset = reference.airCrouchOffset;
     const tx = reference.x + correction.x,
       tz = reference.z + correction.z;
     const distance = Math.hypot(tx - pose.x, tz - pose.z);
