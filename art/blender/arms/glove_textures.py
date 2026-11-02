@@ -70,15 +70,21 @@ def round_rect(u, v, hu, hv, r):
 
 # ------------------------------------------------------------------------------------ panels
 KNIT, GUSSET, SUEDE, PATCH, GUARD, STRIP, PERF, CUFF, BINDING, STRAP, TAB = range(11)
+# Palm v2 (the supinated support grip shows the palm to the camera): synthetic-leather palm
+# overlay, padded palm-heel pad, silicone grip dots. GLOVE_PALM_V1=1 rebuilds the original palm.
+LEATHER, PAD, GRIP = range(11, 14)
+PALM_V2 = os.environ.get("GLOVE_PALM_V1") is None
 # Linear albedo, roughness per panel. Everything is black; the panels read by sheen, roughness
 # and relief, as on a real glove.
 ALBEDO = {KNIT: (0.021, 0.021, 0.023), GUSSET: (0.017, 0.017, 0.019), SUEDE: (0.029, 0.029, 0.030),
           PATCH: (0.026, 0.026, 0.027), GUARD: (0.028, 0.028, 0.030), STRIP: (0.085, 0.085, 0.09),
           PERF: (0.026, 0.026, 0.027), CUFF: (0.019, 0.019, 0.021), BINDING: (0.014, 0.014, 0.015),
-          STRAP: (0.020, 0.020, 0.022), TAB: (0.033, 0.033, 0.035)}
+          STRAP: (0.020, 0.020, 0.022), TAB: (0.033, 0.033, 0.035),
+          LEATHER: (0.040, 0.040, 0.042), PAD: (0.034, 0.034, 0.036), GRIP: (0.011, 0.011, 0.012)}
 ROUGH = {KNIT: 0.78, GUSSET: 0.72, SUEDE: 0.92, PATCH: 0.9, GUARD: 0.5, STRIP: 0.44, PERF: 0.9,
-         CUFF: 0.84, BINDING: 0.62, STRAP: 0.7, TAB: 0.55}
-THREAD = np.array([0.04, 0.04, 0.042])
+         CUFF: 0.84, BINDING: 0.62, STRAP: 0.7, TAB: 0.55, LEATHER: 0.6, PAD: 0.66, GRIP: 0.3}
+# v2: a touch lighter so the palm stitching reads at the new angle.
+THREAD = np.array([0.075, 0.075, 0.078]) if PALM_V2 else np.array([0.04, 0.04, 0.042])
 
 
 class Surface:
@@ -241,7 +247,7 @@ def classify(h, parts, info, P, N, seed):
     patch_d = round_rect(a - centre_a, y - (0.024 + mcp_y - 0.016) / 2, (a_hi - a_lo) / 2 - 0.004, (mcp_y - 0.016 - 0.024) / 2, 0.006)
     patch = body & ~back & (patch_d < 0) & (dorsal_n < -0.4)
     s.zone[patch] = PATCH
-    gh += np.where(patch, 0.0006 * smooth(0.0, -0.0025, patch_d), 0)
+    gh += np.where(patch, (0.0009 if PALM_V2 else 0.0006) * smooth(0.0, -0.0025, patch_d), 0)
     for off in (0.0019, 0.0042):
         s.add_seam(patch | (body & ~back & (patch_d < 0.004) & (dorsal_n < -0.3)), np.abs(patch_d + off), (a + y).astype(np.float32))
     quilt = np.minimum(np.abs(((a + y) / 0.012) % 1 - 0.5), np.abs(((a - y) / 0.012) % 1 - 0.5)) * 0.012
@@ -259,6 +265,32 @@ def classify(h, parts, info, P, N, seed):
     gh -= np.where(perf, 0.0004 * hole, 0)
     s.perf_hole = np.where(perf, hole, 0)
     s.add_seam(body & ~back & ~perf & (dorsal_n < -0.1), np.abs(dorsal_n + 0.15) * 0.012 + 1.0 * ~np.isin(nearest, ["thenar", "web"]), (a - y).astype(np.float32))
+    if PALM_V2:
+        palm_side = body & ~back
+        # Synthetic-leather overlay: the palm side outside the patch and perforations, fine
+        # pebble grain, a little sheen (reads against the matte suede and knit).
+        leather = palm_side & (s.zone == SUEDE)
+        s.zone[leather] = LEATHER
+        pebble = value_noise(P, 0.00045, seed + 5)
+        gh += np.where(leather, 0.00005 * (pebble - 0.5), 0)
+        # Palm-heel pad over the hypothenar: padded, its own double-stitched border.
+        heel = palm_side & (nearest == "hypothenar") & (dorsal_n < -0.25)
+        s.zone[heel & (s.zone != PATCH)] = PAD
+        gh += np.where(heel, 0.0008 * smooth(-0.25, -0.65, dorsal_n), 0)
+        border = palm_side & (nearest == "hypothenar") & (dorsal_n < -0.1)
+        for off in (0.0, 0.0024):
+            s.add_seam(border, np.abs(dorsal_n + 0.27) * 0.012 + off, y.astype(np.float32))
+        # Silicone grip print: raised glossy dots on the padded palm and the finger/thumb pads.
+        pitch = 0.0032
+        gx, gy = a / pitch, y / (pitch * 0.866)
+        grow_ = np.floor(gy)
+        gx = gx + 0.5 * (grow_ % 2)
+        gcell = np.hypot((gx - np.round(gx)) * pitch, (gy - np.round(gy)) * pitch * 0.866)
+        dot = smooth(0.00095, 0.00072, gcell)
+        pads = finger_mask & (s.zone == SUEDE) & (dorsal_n < -0.35)
+        printed = (patch | heel | pads) & (dot > 0.5)
+        s.zone[printed] = GRIP
+        gh += np.where(patch | heel | pads, 0.00028 * dot, 0)
     # Knit on the back of the hand.
     rib = 0.5 * (np.sin(2 * np.pi * (a + y) / 0.0011) + np.sin(2 * np.pi * (a - y) / 0.0011))
     gh += np.where(body & (s.zone == KNIT), 0.00006 * rib, 0)
