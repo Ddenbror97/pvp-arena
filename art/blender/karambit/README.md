@@ -24,19 +24,22 @@ committed. Credit lives in `public/fps/models/ATTRIBUTION.md`.
 `build.sh` then resizes the textures to 1K, converts them to WebP (q88), applies meshopt and writes
 `public/fps/models/karambit.glb` (about 0.5 MB, including about 0.1 MB of animation).
 
+In game the knife is drawn at `KARAMBIT_SCALE` (1.2, `src/lib/fps/karambit-viewmodel.ts`) about its
+ring, in first and third person. The size is cosmetic; reach is set on the server.
+
 ## Clips
 
-| Clip | Length | Use |
-| --- | --- | --- |
-| `karambit_equip` | 0.6 s | draw (server draw time 450 ms) |
-| `karambit_idle` | 4.0 s loop | breathing idle |
+| Clip                                                                                                                  | Length     | Use                                                                       |
+| --------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------- |
+| `karambit_equip`                                                                                                      | 0.6 s      | draw (server draw time 450 ms)                                            |
+| `karambit_idle`                                                                                                       | 4.0 s loop | breathing idle                                                            |
 | `karambit_idle_spin`, `karambit_reverse_grip`, `karambit_double_flip`, `karambit_inspect_blade`, `karambit_freestyle` | 1.15–3.4 s | random idle tricks every 8–15 s while still, never the same twice running |
-| `karambit_inspect` | 5.6 s | F |
-| `karambit_walk`, `karambit_strafe`, `karambit_sprint` | loops | additive movement layers |
-| `karambit_land` | 0.38 s | additive landing |
-| `karambit_slash` | 0.4 s | left mouse (server cooldown 420 ms) |
-| `karambit_stab` | 0.72 s | right mouse (server cooldown 1000 ms) |
-| `karambit_unequip` | 0.25 s | additive reference pose |
+| `karambit_inspect`                                                                                                    | 5.6 s      | F                                                                         |
+| `karambit_walk`, `karambit_strafe`, `karambit_sprint`                                                                 | loops      | additive movement layers                                                  |
+| `karambit_land`                                                                                                       | 0.38 s     | additive landing                                                          |
+| `karambit_slash`                                                                                                      | 0.4 s      | left mouse (server cooldown 420 ms)                                       |
+| `karambit_stab`                                                                                                       | 0.72 s     | right mouse (server cooldown 1000 ms)                                     |
+| `karambit_unequip`                                                                                                    | 0.25 s     | additive reference pose                                                   |
 
 Animation is cosmetic. Hits, damage, draw time and cooldowns are decided by the server
 (`src/lib/fps/simulation.ts` `knifeAttack`, `src/lib/fps/combat.ts` `KNIFE`). Idle tricks and
