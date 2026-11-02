@@ -7,6 +7,7 @@ import { AK_VIEWMODEL, createAuthoredViewmodel, M4_VIEWMODEL } from "./authored-
 import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 import { createMuzzleFlash } from "./muzzle-flash";
 import { ARENA_MODELS, CHARACTER_MODELS } from "./model-assets";
+import { KARAMBIT_SCALE } from "./karambit-viewmodel";
 import type { KnifeAttack } from "./protocol";
 
 type Motion = {
@@ -64,6 +65,7 @@ export function createCharacter(seat: Seat, branding: THREE.Material, kit: Weapo
       // the blade curls forward (-z, the way the character faces) below the fist.
       const holder = new THREE.Group();
       holder.rotation.y = Math.PI;
+      holder.scale.setScalar(KARAMBIT_SCALE);
       holder.add(mesh);
       knife.add(holder);
       mesh.traverse((o) => {

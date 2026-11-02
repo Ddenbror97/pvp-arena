@@ -46,6 +46,11 @@ export const KARAMBIT_VIEWMODEL_REST = {
 export function karambitRestX(aspect: number) {
   return KARAMBIT_VIEWMODEL_REST.x * Math.min(1, Math.max(0.5, aspect / (16 / 9)));
 }
+/**
+ * Display size of the Karambit relative to the 19 cm model, about its finger ring so the ring
+ * stays on the index finger. Cosmetic only: reach and hits are the server's (combat.ts KNIFE).
+ */
+export const KARAMBIT_SCALE = 1.2;
 /** Share of the wrist's rotation the forearm follows (the rest reads as wrist flex). */
 const FOREARM_SHARE = 0.6;
 /** Knife orientation about its handle axis in the fist (radians): blade curving forward. */
@@ -171,7 +176,7 @@ export function createKarambitViewmodel(parent: THREE.Object3D, variant: Viewmod
       knifeMesh.removeFromParent();
       // Knife space is metres; the viewmodel root is scaled.
       knifeHolder.add(knifeMesh);
-      knifeHolder.scale.setScalar(1 / scale);
+      knifeHolder.scale.setScalar(KARAMBIT_SCALE / scale);
       const frame = knifeFrame(wraps);
       ringPivot.position.copy(frame.ring);
       ringBase.copy(frame.rotation);
