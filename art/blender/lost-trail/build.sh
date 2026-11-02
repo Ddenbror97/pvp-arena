@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # LOST TRAIL pipeline: layout → textures → EZ-Tree skeletons → Blender (.blend + .glb) →
 # GPU instancing + meshopt → public/fps/models/lost-trail.glb.
-#   BLENDER_PY=/path/to/python-with-bpy art/blender/lost-trail/build.sh [--blockout]
+#   BLENDER_PY=/path/to/python-with-bpy [CHROMIUM=/path/to/chrome] art/blender/lost-trail/build.sh [--blockout]
+# The backdrop bake renders in headless Chromium (SwiftShader); CHROMIUM picks the binary.
 # Node dependencies (EZ-Tree, gltf-transform): `npm ci` in this folder first.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -15,7 +16,13 @@ if [[ "${1:-}" == "--blockout" ]]; then
 else
   python3 textures.py
   (cd trees && node generate_trees.mjs ../build/trees >/dev/null)
-  "$PY" build_trail.py -- build/lost-trail.glb --blend build/lost-trail.blend 2>&1 | grep -E "PLACED|RIVERBANKS|DETAIL|exported|Error|Traceback" || true
+  # Pass 1: the full forest, only to bake the backdrop from (see bake/).
+  "$PY" build_trail.py -- build/lost-trail-full.glb 2>&1 | grep -E "Error|Traceback" || true
+  node instance_sections.mjs build/lost-trail-full.glb build/lost-trail-full-instanced.glb >/dev/null
+  node bake/bake.mjs build/lost-trail-full-instanced.glb build/backdrop ${CHROMIUM:+--chromium=$CHROMIUM}
+  python3 bake/compose.py build/backdrop build/tex/forest_backdrop.png
+  # Pass 2: the shipped scene, the forest beyond the walls replaced by the baked backdrop.
+  LOST_TRAIL_BACKDROP=build/backdrop/backdrop.json "$PY" build_trail.py -- build/lost-trail.glb --blend build/lost-trail.blend 2>&1 | grep -E "PLACED|RIVERBANKS|DETAIL|CROP|exported|Error|Traceback" || true
 fi
 if [[ "${1:-}" == "--blockout" ]]; then
   "$GT" instance build/lost-trail.glb build/lost-trail-instanced.glb --min 2 >/dev/null

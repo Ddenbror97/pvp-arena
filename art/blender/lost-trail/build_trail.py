@@ -120,6 +120,92 @@ M = {
     "water": material("river-water", None, "water_n", None, color=(0.025, 0.055, 0.045), roughness=0.28),
     "rope": material("rope", None, None, None, color=(0.45, 0.36, 0.22), roughness=0.95),
 }
+
+
+def alpha_bbox(name, threshold=0.25, margin=0.015):
+    """UV rectangle (u0, u1, v0, v1) holding every texel of `name` with alpha ≥ threshold, plus a
+    margin. Leaf and frond cards are trimmed to it: the transparent rest of a card is still
+    rasterised (and discarded) for every layer of foliage, which is most of the map's GPU cost."""
+    import numpy as np
+    img = image(name)
+    w, h = img.size
+    a = np.array(img.pixels[:], dtype=np.float32).reshape(h, w, 4)[..., 3] >= threshold
+    ys, xs = np.nonzero(a)  # pixel rows run bottom-up, as Blender UVs do
+    u0, u1 = xs.min() / w - margin, (xs.max() + 1) / w + margin
+    v0, v1 = ys.min() / h - margin, (ys.max() + 1) / h + margin
+    return (max(0.0, u0), min(1.0, u1), max(0.0, v0), min(1.0, v1))
+
+
+CROP = {M[k].name: alpha_bbox(tex) for k, tex in (("leaves-canopy", "leaves_canopy"), ("leaves-broad", "leaves_broad"),
+                                                   ("leaves-under", "leaves_understory"), ("frond-palm", "frond_palm"),
+                                                   ("frond-fern", "frond_fern"), ("reeds", "reeds"))}
+print("CROP", json.dumps({k: [round(x, 3) for x in v] for k, v in CROP.items()}))
+
+
+def crop_cards(obj):
+    """Trim every single-quad card of `obj` whose material is in CROP (an island of faces with
+    exactly the four UV corners (0,0), (1,0), (1,1), (0,1)) to its texture's opaque rectangle:
+    corners move along the card's own bilinear surface, UVs follow, the image is unchanged."""
+    me = obj.data
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    uvl = bm.loops.layers.uv.active
+    bm.faces.ensure_lookup_table()
+    seen, trimmed = set(), 0
+    for f in bm.faces:
+        if f in seen:
+            continue
+        mat = me.materials[f.material_index] if f.material_index < len(me.materials) else None
+        island = {f}
+        stack = [f]
+        while stack:
+            g = stack.pop()
+            for e in g.edges:
+                for h in e.link_faces:
+                    if h not in island:
+                        island.add(h)
+                        stack.append(h)
+        seen |= island
+        if not mat or mat.name not in CROP:
+            continue
+        corner = {}
+        for g in island:
+            for loop in g.loops:
+                uv = loop[uvl].uv
+                key = (round(uv.x, 4), round(uv.y, 4))
+                corner.setdefault(key, loop.vert)
+        if set(corner) != {(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)} or len({v for g in island for v in g.verts}) != 4:
+            continue
+        c00, c10, c11, c01 = (corner[k].co.copy() for k in ((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)))
+        u0, u1, v0, v1 = CROP[mat.name]
+
+        def at(u, v):
+            return c00.lerp(c10, u).lerp(c01.lerp(c11, u), v)
+        new = {}
+        for (u, v), vert in corner.items():
+            nu, nv = (u1 if u else u0), (v1 if v else v0)
+            new[vert] = (at(nu, nv), (nu, nv))
+        for vert, (co, _) in new.items():
+            vert.co = co
+        for g in island:
+            for loop in g.loops:
+                loop[uvl].uv = new[loop.vert][1]
+        trimmed += 1
+    bm.to_mesh(me)
+    bm.free()
+    return trimmed
+
+
+# Forest backdrop (second build pass, see build.sh and bake/): a baked image of the forest beyond
+# a square of walls at ±BACKDROP["half"] replaces every plant whose base lies beyond KEEP_HALF.
+BACKDROP = json.load(open(os.environ["LOST_TRAIL_BACKDROP"])) if os.environ.get("LOST_TRAIL_BACKDROP") else None
+# Trees just outside the walls stay real, so crowns reaching inside the walls are not cut off.
+KEEP_HALF = BACKDROP["half"] + 4.0 if BACKDROP else math.inf
+BAKED = [0]
+if BACKDROP:
+    M["backdrop"] = material("forest-backdrop", "forest_backdrop", None, None, roughness=1.0, alpha=True)
+
+
 # World-space texture tile sizes (metres per repeat).
 TILE = {"floor": 2.6, "mud": 3.0, "rock": 2.2, "ruin": 2.4, "planks": 1.6, "crate": 1.2, "sandbag": 0.8,
         "tin": 1.4, "bark": 2.0}
@@ -425,6 +511,9 @@ def veg_section(x, z):
 
 
 def instance(lib_obj, x, y, z, yaw=0.0, scale=1.0, sx=None, coll=None, name=None):
+    if max(abs(x), abs(z)) > KEEP_HALF:
+        BAKED[0] += 1
+        return None  # in the baked backdrop
     o = bpy.data.objects.new(name or lib_obj.name.replace("lib-", "i-"), lib_obj.data)
     o.location = B(x, y, z)
     o.rotation_euler = (0, 0, yaw)
@@ -499,6 +588,7 @@ def import_tree(arch, seed, detail):
         bpy.ops.object.join()
     bark.name = f"lib-{arch}-{seed}-{detail}"
     bark.data.name = bark.name
+    crop_cards(bark)
     # Triangle budget (the forest is most of the frame): crown twigs decimated, leaf cards
     # thinned by whole cards and grown to keep the crown's coverage.
     if detail == "near":
@@ -510,8 +600,8 @@ def import_tree(arch, seed, detail):
     return bark
 
 
-NEAR_BARK, NEAR_LEAVES = 0.3, (0.5, 1.12)
-FAR_BARK, FAR_LEAVES = 0.32, (0.6, 1.1)
+NEAR_BARK, NEAR_LEAVES = 0.3, (0.3, 1.15)
+FAR_BARK, FAR_LEAVES = 0.32, (0.5, 1.1)
 
 
 def thin_leaves(obj, keep, grow, seed=7):
@@ -728,15 +818,18 @@ def decorate_tree(src, name, seed, roots=False, lianas=3, vines=10, epiphytes=6,
 
 def card_quad(m, center, right, up, w, h, mat, bend=0.0, segs=1):
     """A (bent) card from its base centre: `up` is the card's length direction."""
-    pts_l, pts_r = [], []
+    # Only the texture's opaque rectangle is built (see alpha_bbox); the card keeps its size.
+    u0, u1, v0, v1 = CROP.get(mat.name, (0.0, 1.0, 0.0, 1.0))
+    pts_l, pts_r, vs = [], [], []
     for k in range(segs + 1):
-        t = k / segs
+        t = v0 + (v1 - v0) * k / segs
         p = center + up * (h * t) - Vector((0, 0, bend * h * t * t))
-        pts_l.append(p - right * (w / 2))
-        pts_r.append(p + right * (w / 2))
+        pts_l.append(p + right * (w * (u0 - 0.5)))
+        pts_r.append(p + right * (w * (u1 - 0.5)))
+        vs.append(t)
     for k in range(segs):
         q = [pts_l[k], pts_r[k], pts_r[k + 1], pts_l[k + 1]]
-        m.poly(q, [(0, k / segs), (1, k / segs), (1, (k + 1) / segs), (0, (k + 1) / segs)], mat)
+        m.poly(q, [(u0, vs[k]), (u1, vs[k]), (u1, vs[k + 1]), (u0, vs[k + 1])], mat)
 
 
 def lib_palm(seed):
@@ -1111,6 +1204,26 @@ for zs_ in ((-D / 2 - EXT, -D / 2 + 2.6), (D / 2 - 2.8, D / 2 + EXT)):
         za = zb
 water.obj("river", section("river"), shadow=False)
 
+if BACKDROP:
+    # Four walls facing the centre; each shows its cube face of the bake (affine: the wall is
+    # parallel to that face's image plane). Unlit at runtime (lost-trail-environment.ts).
+    SLOT = {"px": (0, 0), "nx": (1, 0), "pz": (0, 1), "nz": (1, 1)}
+    keep = BACKDROP["keepTop"]
+    bd = Mesh()
+    for face in BACKDROP["faces"]:
+        col, row = SLOT[face["name"]]
+        pts, uvs = [], []
+        for x, y, z, u, v in face["corners"]:
+            vf = (v - (1 - keep)) / keep
+            pts.append(B(x, y, z))
+            uvs.append(((col + u) / 2, 1 - row * 0.5 - (1 - vf) * 0.5))
+        n = (pts[1] - pts[0]).cross(pts[2] - pts[0])
+        if n.dot(B(0, 1.6, 0) - pts[0]) < 0:
+            pts, uvs = pts[::-1], uvs[::-1]
+        bd.poly(pts, uvs, M["backdrop"])
+    bd_obj = bd.obj("forest-backdrop", section("backdrop"), shadow=False)
+    bd_obj["noShadow"] = True
+
 # Bridge: deck at the walking height, under-beams, rope rails between the corner posts.
 bm_ = Mesh()
 box_faces(bm_, -2.95, 2.95, -0.16, 0.0, -1.72, 1.72, M["planks"], TILE["planks"])
@@ -1159,7 +1272,7 @@ ARCHES = ["emergent", "hardwood", "broad", "twisted"]
 
 # Variants by distance: every archetype near the arena, fewer (one seed) further out, where
 # rotation and scale variation hide repetition.
-VARIANTS = {"near": ["emergent", "hardwood", "twisted"], "far": ["emergent", "hardwood", "broad"], "bg": ["emergent", "broad"]}
+VARIANTS = {"near": ["emergent", "hardwood"], "far": ["emergent", "hardwood", "broad"], "bg": ["emergent", "broad"]}
 
 
 PROPORTION = random.Random(31)
@@ -1260,7 +1373,7 @@ for _ in range(36):
     px, pz = rng.uniform(-W / 2, W / 2), rng.uniform(-D / 2, D / 2)
     instance(rng.choice(VINES), px, rng.uniform(15.5, 18.0), pz, yaw=rng.uniform(0, math.tau), scale=1.0)
     placed["vine"] += 1
-print("PLACED", json.dumps(placed))
+print("PLACED", json.dumps(placed), "in backdrop:", BAKED[0])
 
 
 # =============================================================================== detail dressing
@@ -1327,6 +1440,7 @@ for b in BOXES:
             q = [B(p.x, max(0.01, p.y + y), p.z) for p in pts]
             ivy.poly(q, [(0, 0), (1, 0), (1, 1), (0, 1)], M["leaves-broad"])
 ivy_obj = ivy.obj("ivy", section("centre-mid"), shadow=False)
+crop_cards(ivy_obj)
 
 # Surface roots spreading from the giant trees (low, half-buried; no collision, players step over).
 roots = Mesh()
