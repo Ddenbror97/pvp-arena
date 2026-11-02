@@ -17,12 +17,15 @@ test("off-camera opponents stop rendering and return immediately when looking ba
     page.evaluate(
       () => Reflect.get(window, "fpsPolishTest").controls.diagnostics().opponentVisible,
     );
+  // Visibility changes on the next drawn frame: milliseconds on a GPU, seconds under a
+  // software rasteriser (CI without a GPU), so the poll allows for slow frames.
+  const frames = { timeout: 60_000 };
   await turn(0);
-  await expect.poll(visible).toBe(true);
+  await expect.poll(visible, frames).toBe(true);
   await turn(Math.PI);
-  await expect.poll(visible).toBe(false);
+  await expect.poll(visible, frames).toBe(false);
   await turn(0);
-  await expect.poll(visible).toBe(true);
+  await expect.poll(visible, frames).toBe(true);
   await page.screenshot({ path: "test-results/stability-ii-ingame.png" });
   await page.evaluate(() => Reflect.get(window, "fpsPolishTest").dispose());
 });

@@ -206,40 +206,43 @@ criteria in §6).
 
 **Verification on this branch (87cadb1 + FROSTLINE), 2026-11-01**
 
-| Check                                                                              | Result                                                                                                            |
-| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Unit suite (`vitest --project unit`)                                               | 1,079 pass, 1 skipped, 0 failed. The `fps-runtime` solo-bot test is a known flake (below); it passed in this run. |
-| FROSTLINE: layout, loading art, rotation compatibility, registry, runtime, parity  | all pass                                                                                                          |
-| Type-check (`tsc --noEmit`)                                                        | pass                                                                                                              |
-| ESLint + Prettier on every changed or new file                                     | clean                                                                                                             |
-| App build (`vite build`)                                                           | pass; `frostline-loading-*.webp` is emitted as a hashed asset                                                     |
-| Match Worker (`wrangler deploy --dry-run`)                                         | pass, 193 KiB; includes `frostline`, bundles no images                                                            |
-| `fps-frostline.spec.ts` (GLB, snowfall cleanup, map switching, loading art decode) | 4 / 4 pass (captures skipped by default)                                                                          |
-| Dustfront browser specs `fps-surface-depth`, `fps-lifecycle`, `fps-culling`        | Fail identically on untouched 87cadb1; root causes below, none caused by FROSTLINE                                |
+| Check                                                                              | Result                                                                                   |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Unit suite (`vitest --project unit`)                                               | 1,081 pass, 1 skipped, 0 failed; the fixed `fps-runtime` solo-bot test passes 9 / 9 runs |
+| FROSTLINE: layout, loading art, rotation compatibility, registry, runtime, parity  | all pass                                                                                 |
+| Type-check (`tsc --noEmit`)                                                        | pass                                                                                     |
+| ESLint + Prettier on every changed or new file                                     | clean                                                                                    |
+| App build (`vite build`)                                                           | pass; `frostline-loading-*.webp` is emitted as a hashed asset                            |
+| Match Worker (`wrangler deploy --dry-run`)                                         | pass, 193 KiB; includes `frostline`, bundles no images                                   |
+| `fps-frostline.spec.ts` (GLB, snowfall cleanup, map switching, loading art decode) | 4 / 4 pass (captures skipped by default)                                                 |
+| Dustfront browser specs `fps-surface-depth`, `fps-lifecycle`, `fps-culling`        | 3 / 3 pass after the test fixes below (they failed identically on untouched 87cadb1)     |
 
-**Root causes of the shared test failures** (fixes handed to the registry session in the
-project doc `claude/fps-registry-handoff.md`; not committed here because they are not
-FROSTLINE code):
+**Shared test failures: root causes and fixes** (applied on this branch at the owner's request;
+also listed in the project doc `claude/fps-registry-handoff.md` so the registry session doesn't
+duplicate them):
 
-- **`fps-surface-depth` (outdated assumption):** it looks for the scene named `aim-arena`, but
-  the registry names the authored scene after the map id (`dustfront`). With the lookup
-  fixed, Dustfront passes: 0 coplanar overlaps, 154 / 154 collision probes.
+- **`fps-surface-depth` (outdated assumption):** it looked for the scene named `aim-arena`, but
+  the registry names the authored scene after the map id. It now looks up `DEFAULT_MAP_ID`.
+  Dustfront passes: 0 coplanar overlaps, 154 / 154 collision probes.
 - **`fps-lifecycle` (outdated threshold, not a leak):** the 7 textures left after dispose are:
   - three.js's shared `DFG_LUT`;
-  - the 6 rifle finish textures in `rifle-materials.ts`'s module-level cache (added after the
-    threshold was set).
+  - the 6 rifle finish textures in `rifle-materials.ts`'s page-wide cache, shared by every
+    renderer by design and added after the threshold was set.
 
   Over 8 mount/dispose cycles that count stays at exactly 7, geometries stay at 0, listeners
-  stay constant, and heap grows 2.5 MB of the allowed 12 MB.
+  stay constant, and heap grows 2.5 MB of the allowed 12 MB. The test now allows at most two
+  textures of the arena's own beyond the shared rifle set, counted by the new read-only
+  `sharedRifleTextureCount()`. It also requires the count to stay the same on every cycle, so
+  a per-mount leak still fails.
 
-- **`fps-culling` (software-rendering timing):** under SwiftShader a frame takes about 4 s,
-  against a 5 s poll. The spec passes as intended with a longer poll; the repo's GPU config
-  allows 15 s.
-- **`fps-runtime` solo-bot test (flaky by construction):** it waits 12 s for the bot to come
-  into view of an idle human. The bot's first-round patrol is random, and 3 of 9 patrols
-  (plus some `slow/center` draws) take 12.5–15.3 s on Dustfront. The handoff patch waits 25 s
-  and pins the bound with a deterministic test of all 9 patrols on every map. Verified 6 / 6
-  passes; no gameplay change.
+- **`fps-culling` (software-rendering timing):** visibility changes on the next drawn frame,
+  and under SwiftShader a frame takes about 4 s. The polls now allow 60 s; the assertions are
+  unchanged.
+- **`fps-runtime` solo-bot test (flaky by construction):** it waited 12 s for the bot to come
+  into view of an idle human. The bot's first-round patrol is random, and 3 of 9 patrols (plus
+  some `slow/center` draws) take 12.5–15.3 s on Dustfront. It now waits 25 s, and the new
+  `tests/fps-practice-bot-reveal.test.ts` pins every patrol under 20 s on every map. Verified
+  6 / 6 passes; no gameplay change.
 
 **Rotation compatibility** (`tests/fps-map-rotation-compat.test.ts`): a catalog with Dustfront,
 FROSTLINE and stand-ins shaped like LOST TRAIL (jungle, movement-only barriers, 48 × 36 m) and

@@ -47,6 +47,11 @@ type Finish = {
 };
 
 let cache: Map<string, THREE.Texture> | undefined;
+/**
+ * Finish textures generated so far. They are shared by every rifle on the page (all renderers)
+ * and intentionally outlive any one arena; lifecycle tests account for them.
+ */
+export const sharedRifleTextureCount = () => cache?.size ?? 0;
 function memo(name: string, make: () => THREE.Texture) {
   cache ??= new Map();
   let texture = cache.get(name);

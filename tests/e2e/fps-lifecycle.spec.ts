@@ -46,7 +46,10 @@ test("repeated SPA arena mounts release resources and input listeners", async ({
       // Shared asset leases release their decoded source in ready.then(...).
       // Observe cleanup after that microtask, not midway through disposal.
       await Promise.resolve();
-      return { live, disposed: controls.diagnostics() };
+      // Rifle finish textures are a page-wide cache shared by every renderer
+      // (rifle-materials.ts); they are expected to outlive the arena.
+      const { sharedRifleTextureCount } = await import("/src/lib/fps/rifle-materials.ts");
+      return { live, disposed: controls.diagnostics(), sharedRifle: sharedRifleTextureCount() };
     });
     await page.waitForLoadState("networkidle");
     await cdp.send("HeapProfiler.collectGarbage");
@@ -58,7 +61,10 @@ test("repeated SPA arena mounts release resources and input listeners", async ({
     );
     await expect(page.locator("canvas")).toHaveCount(0);
     expect(dom.jsEventListeners).toBeLessThanOrEqual(initialDom.jsEventListeners + 2);
-    expect(result.disposed.textures).toBeLessThanOrEqual(2);
+    // At most two textures of our own may outlive the arena besides the shared rifle
+    // finishes, and nothing may accumulate from one mount to the next.
+    expect(result.disposed.textures).toBeLessThanOrEqual(2 + result.sharedRifle);
+    expect(result.disposed.textures).toBe(rows[0]!.disposed.textures);
     expect(result.disposed.geometries).toBeLessThanOrEqual(2);
   }
   const after = await cdp.send("Runtime.getHeapUsage");
