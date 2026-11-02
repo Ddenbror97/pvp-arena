@@ -10,7 +10,7 @@ import { resolve } from "node:path";
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { openAdminStepup, adminClaims } from "./admin-stepup";
-import { migrateTestSchemaToReal, useTestWithdrawalMinimum } from "./money";
+import { migrateTestSchemaToReal, applyTestWithdrawalMinimum } from "./money";
 import { applyTestSchema } from "./schema";
 import { testDatabaseUrl } from "./test-url";
 import {
@@ -539,7 +539,7 @@ describe("phase 2 isolated behavior", () => {
       });
     }
     await migrateTestSchemaToReal(sql, { realPlay: true, live: true });
-    await useTestWithdrawalMinimum(sql);
+    await applyTestWithdrawalMinimum(sql);
     const id = await user("wd");
     await as(id, (tx) => tx`select pvp_test.request_self_exclusion(180)`);
     const authed = JSON.stringify({ role: "authenticated", sub: id });

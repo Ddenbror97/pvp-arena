@@ -378,10 +378,14 @@ for (const idxs of byCluster.values()) {
       if (sim >= 0.28 || entitySim >= 0.6 || kw >= 0.6) edges.push([i, j, sim, kw, entitySim]);
       if (sim > nearest[i]!.j) nearest[i] = { ...nearest[i]!, j: sim, idx: j, kw };
       if (sim > nearest[j]!.j) nearest[j] = { ...nearest[j]!, j: sim, idx: i, kw };
-      if (entitySim > nearest[i]!.entityJ)
-        ((nearest[i]!.entityJ = entitySim), (nearest[i]!.entityIdx = j));
-      if (entitySim > nearest[j]!.entityJ)
-        ((nearest[j]!.entityJ = entitySim), (nearest[j]!.entityIdx = i));
+      if (entitySim > nearest[i]!.entityJ) {
+        nearest[i]!.entityJ = entitySim;
+        nearest[i]!.entityIdx = j;
+      }
+      if (entitySim > nearest[j]!.entityJ) {
+        nearest[j]!.entityJ = entitySim;
+        nearest[j]!.entityIdx = i;
+      }
     }
   }
 }

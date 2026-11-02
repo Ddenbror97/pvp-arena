@@ -58,7 +58,7 @@ export async function migrateTestSchemaToReal(
   if (opts.realPlay) await sql`update pvp_test.crypto_settings set real_play_enabled = true`;
   if (opts.live)
     await sql`update pvp_test.crypto_settings set watch_only = false, deposits_enabled = true, withdrawals_enabled = true`;
-  await useTestWithdrawalMinimum(sql);
+  await applyTestWithdrawalMinimum(sql);
   return { m, f };
 }
 
@@ -66,7 +66,7 @@ export async function migrateTestSchemaToReal(
  * Suites that are not about the cashout floor use $10 so their amounts still
  * clear the $20 production minimum.
  */
-export async function useTestWithdrawalMinimum(sql: postgres.Sql) {
+export async function applyTestWithdrawalMinimum(sql: postgres.Sql) {
   await sql`update pvp_test.crypto_settings set min_withdrawal_cents = 1000`;
   await sql`alter table pvp_test.chain_networks disable trigger user`;
   await sql`update pvp_test.chain_networks set min_withdrawal_cents = 1000`;

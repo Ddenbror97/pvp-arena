@@ -12,7 +12,7 @@ import {
   fundTestTreasury,
   seedSnapshotDeposits,
   SNAPSHOT_TX,
-  useTestWithdrawalMinimum,
+  applyTestWithdrawalMinimum,
 } from "./money";
 import { testDatabaseUrl } from "./test-url";
 
@@ -28,7 +28,7 @@ afterAll(async () => {
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const addr = () => "0x" + randomBytes(20).toString("hex");
 const txh = () => "0x" + randomBytes(32).toString("hex");
-const one = async (q: Promise<any>) => (await q)[0]?.r;
+const one = async (q: Promise<readonly postgres.Row[]>) => (await q)[0]?.r;
 const err = async (p: Promise<unknown>) => {
   try {
     await p;
@@ -127,7 +127,7 @@ d("real-money ledger migration", () => {
     await sql`update pvp_test.jackpot_config set entry_rate_limit = 100000, countdown_seconds = 4`;
     await sql`update pvp_test.coinflip_config set pre_delay_ms = 50, animation_ms = 50, create_rate_limit = 100000, fee_bps = 500`;
     await sql`update pvp_test.crypto_settings set watch_only = true, withdrawals_enabled = false, real_play_enabled = false, daily_limit_cents = 10000000, daily_global_limit_cents = 100000000, auto_approve_cents = 10000000`;
-    await useTestWithdrawalMinimum(sql);
+    await applyTestWithdrawalMinimum(sql);
     // A pre-migration player with test credits, and the two snapshot deposits.
     testUser = randomUUID();
     await as(
@@ -207,7 +207,7 @@ d("real-money ledger migration", () => {
     );
     const r1 = (await sql`select pvp_test._money_migrate_v1() r`)[0].r;
     expect(r1.status).toBe("MIGRATED");
-    expect(r1.cancelled.some((c: any) => c.game === "jackpot")).toBe(true);
+    expect(r1.cancelled.some((c: { game: string }) => c.game === "jackpot")).toBe(true);
     expect((await sql`select pvp_test._money_migrate_v1() r`)[0].r.status).toBe("ALREADY_APPLIED");
     expect(await state()).toBe("MIGRATED");
     const noReal =

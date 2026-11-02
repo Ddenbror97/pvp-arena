@@ -26,7 +26,7 @@ const REAL_DEPOSIT = 10_000;
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 type Flags = { fail?: boolean; failBeforeComplete?: boolean };
-type Row = Record<string, any>;
+type Row = postgres.Row;
 
 async function as<T>(
   uid: string | null,

@@ -32,7 +32,7 @@ async function as<T>(
     return fn(tx);
   }) as Promise<T>;
 }
-const one = async (q: Promise<any>) => (await q)[0]?.r;
+const one = async (q: Promise<readonly postgres.Row[]>) => (await q)[0]?.r;
 const addr = () => "0x" + randomBytes(20).toString("hex");
 const txh = () => "0x" + randomBytes(32).toString("hex");
 const settled = <T>(ps: Promise<T>[]) => Promise.allSettled(ps);
