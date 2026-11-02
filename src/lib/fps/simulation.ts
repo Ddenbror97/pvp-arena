@@ -27,8 +27,8 @@ export const HALFTIME_MS = 5000;
 export const MAX_DRAWS = 3;
 export const MOVE_SPEED = 5;
 export const WALK_SPEED_SCALE = 0.45;
-/** Clears 1.45 m low cover at the fixed tick; 2.2 m cover still blocks. */
-export const JUMP_SPEED = 6.8;
+/** Original takeoff impulse: preserve the established jump height and airtime. */
+export const JUMP_SPEED = 5;
 export const GRAVITY = 14;
 export const WEAPONS = {
   rifle: {
