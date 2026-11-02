@@ -37,7 +37,7 @@ describe("FROSTLINE loading screen", () => {
   });
 
   it("falls back to the default art for a missing, unknown or art-less map", () => {
-    for (const id of [undefined, null, "", "lost-trail", "FROSTLINE"])
+    for (const id of [undefined, null, "", "not-a-map", "FROSTLINE"])
       expect(loadingImageFor(id)).toBe(DEFAULT_LOADING_IMAGE);
     for (const id of MAP_IDS) expect(loadingImageFor(id)).toBeTruthy();
   });
