@@ -72,7 +72,7 @@ def round_rect(u, v, hu, hv, r):
 KNIT, GUSSET, SUEDE, PATCH, GUARD, STRIP, PERF, CUFF, BINDING, STRAP, TAB = range(11)
 # Palm v2 (the supinated support grip shows the palm to the camera): synthetic-leather palm
 # overlay, padded palm-heel pad, silicone grip dots. GLOVE_PALM_V1=1 rebuilds the original palm.
-LEATHER, PAD, GRIP = range(11, 14)
+LEATHER, PAD, GRIP, BACKPAD = range(11, 15)
 PALM_V2 = os.environ.get("GLOVE_PALM_V1") is None
 # Linear albedo, roughness per panel. Everything is black; the panels read by sheen, roughness
 # and relief, as on a real glove.
@@ -80,9 +80,10 @@ ALBEDO = {KNIT: (0.021, 0.021, 0.023), GUSSET: (0.017, 0.017, 0.019), SUEDE: (0.
           PATCH: (0.026, 0.026, 0.027), GUARD: (0.028, 0.028, 0.030), STRIP: (0.085, 0.085, 0.09),
           PERF: (0.026, 0.026, 0.027), CUFF: (0.019, 0.019, 0.021), BINDING: (0.014, 0.014, 0.015),
           STRAP: (0.020, 0.020, 0.022), TAB: (0.033, 0.033, 0.035),
-          LEATHER: (0.040, 0.040, 0.042), PAD: (0.034, 0.034, 0.036), GRIP: (0.011, 0.011, 0.012)}
+          LEATHER: (0.040, 0.040, 0.042), PAD: (0.034, 0.034, 0.036), GRIP: (0.011, 0.011, 0.012),
+          BACKPAD: (0.030, 0.030, 0.032)}
 ROUGH = {KNIT: 0.78, GUSSET: 0.72, SUEDE: 0.92, PATCH: 0.9, GUARD: 0.5, STRIP: 0.44, PERF: 0.9,
-         CUFF: 0.84, BINDING: 0.62, STRAP: 0.7, TAB: 0.55, LEATHER: 0.6, PAD: 0.66, GRIP: 0.3}
+         CUFF: 0.84, BINDING: 0.62, STRAP: 0.7, TAB: 0.55, LEATHER: 0.6, PAD: 0.66, GRIP: 0.3, BACKPAD: 0.74}
 # v2: a touch lighter so the palm stitching reads at the new angle.
 THREAD = np.array([0.075, 0.075, 0.078]) if PALM_V2 else np.array([0.04, 0.04, 0.042])
 
@@ -291,6 +292,21 @@ def classify(h, parts, info, P, N, seed):
         printed = (patch | heel | pads) & (dot > 0.5)
         s.zone[printed] = GRIP
         gh += np.where(patch | heel | pads, 0.00028 * dot, 0)
+        # Back-of-hand panel (faces the camera in the turned support grip): padded moulded
+        # plate between the wrist and the knuckle guard, chevroned flex channels, double-stitched
+        # border; matte black rubber (semi-gloss read as metal under the arena light).
+        y0, y1 = 0.016, mcp_y - 0.013  # up to the knuckle guard (which keeps its own zone)
+        bp_d = round_rect(a - centre_a, y - (y0 + y1) / 2, (a_hi - a_lo) / 2 - 0.003, (y1 - y0) / 2, 0.009)
+        bpad = body & back & (s.zone == KNIT) & (bp_d < 0)
+        s.zone[bpad] = BACKPAD
+        gh += np.where(bpad, 0.0008 * smooth(0.0, -0.003, bp_d), 0)
+        chev = y + 0.35 * np.abs(a - centre_a)
+        lane = np.abs(((chev / 0.0062) % 1) - 0.5) * 0.0062
+        channel = np.exp(-((lane / 0.0006) ** 2)) * smooth(-0.002, -0.004, bp_d)
+        gh -= np.where(bpad, 0.0006 * channel, 0)
+        near_bp = body & back & (bp_d < 0.004)
+        for off in (0.0018, 0.0041):
+            s.add_seam(near_bp, np.abs(bp_d + off), (a + y).astype(np.float32))
     # Knit on the back of the hand.
     rib = 0.5 * (np.sin(2 * np.pi * (a + y) / 0.0011) + np.sin(2 * np.pi * (a - y) / 0.0011))
     gh += np.where(body & (s.zone == KNIT), 0.00006 * rib, 0)
@@ -548,6 +564,13 @@ def _finish(hands, outdir, size, data, macro, ao_full, from_blender):
         stitches(s, P)
         ao = np.clip(ao_full[m], 0, 1)
         a_, r_ = shade(s, P, N, ao, seed=31 + k)
+        if os.environ.get("GLOVE_ZONE_DEBUG"):
+            # Debug: flat colour per panel (see the palette below) to find what the camera sees.
+            palette = np.array([[0.0, 0.0, 0.8], [0.0, 0.6, 0.6], [0.0, 0.8, 0.0], [0.8, 0.8, 0.0],
+                                [0.8, 0.0, 0.8], [1, 1, 1], [0.9, 0.4, 0.0], [0.8, 0.0, 0.0],
+                                [0.3, 0.0, 0.0], [0.5, 0.5, 0.5], [0.2, 0.2, 0.2], [0.4, 1.0, 0.4],
+                                [1.0, 0.6, 0.8], [0.0, 0.0, 0.0], [1.0, 1.0, 0.6]], np.float32)
+            a_ = palette[s.zone.astype(int)]
         albedo[m] = a_
         rough[m] = r_
         height[m] = s.height
