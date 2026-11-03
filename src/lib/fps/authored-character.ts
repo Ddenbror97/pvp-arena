@@ -22,8 +22,13 @@ type Motion = {
   weapon?: Weapon;
   reloading?: boolean;
   death?: number | undefined;
-  /** The primary in the rifle slot: the AWP swaps in its third-person model. */
-  primary?: "rifle" | "awp" | undefined;
+  /**
+   * The primary in the rifle slot: the AWP swaps in its third-person model. With the
+   * `bothRifles` option "ak47"/"m4" pick that rifle whatever the character; "none": empty hands.
+   */
+  primary?: "rifle" | "awp" | "ak47" | "m4" | "none" | undefined;
+  /** Overrides the flash size (the Police M4A1 is otherwise drawn suppressed). */
+  silenced?: boolean | undefined;
   /** With weapon "grenade": the type in the hand, and the wind-up while the button is held. */
   nade?: GrenadeType | undefined;
   nadeHold?: ThrowKind | undefined;
@@ -53,8 +58,11 @@ export function createCharacter(
   seat: Seat,
   branding: THREE.Material,
   kit: WeaponKit,
-  /** worldRifle: the lightweight third-person rifle (many operators on screen). */
-  options: { worldRifle?: boolean } = {},
+  /**
+   * worldRifle: the lightweight third-person rifle (many operators on screen).
+   * bothRifles: also load the other side's rifle, so any character can carry either (BR loot).
+   */
+  options: { worldRifle?: boolean; bothRifles?: boolean } = {},
 ) {
   const police = seat === "A",
     root = new THREE.Group();
@@ -87,6 +95,20 @@ export function createCharacter(
     asset: WORLD_RIFLES.awp,
   });
   awp.root.visible = false;
+  const altVariant = variant.id === "m4" ? AK_VIEWMODEL : M4_VIEWMODEL;
+  const alt = options.bothRifles
+    ? createAuthoredViewmodel(
+        weaponPivot,
+        false,
+        options.worldRifle
+          ? { ...altVariant, asset: WORLD_RIFLES[altVariant.id === "m4" ? "m4" : "ak"] }
+          : altVariant,
+      )
+    : null;
+  if (alt) alt.root.visible = false;
+  const ownRifle = variant.id === "m4" ? "m4" : "ak47";
+  /** The gun drawn this frame (attachments mount on it). */
+  let heldGun: { id: "ak47" | "m4" | "awp"; view: typeof weapon } | null = null;
   const flash = createMuzzleFlash();
   flash.root.traverse((object) => object.layers.set(0));
   weaponPivot.add(flash.root);
@@ -182,7 +204,7 @@ export function createCharacter(
   const headCenterMarker = new THREE.Group();
   headCenterMarker.name = "head-center";
   root.add(headCenterMarker);
-  const ready = Promise.all([asset.ready, weapon.ready, awp.ready])
+  const ready = Promise.all([asset.ready, weapon.ready, awp.ready, alt?.ready])
     .then(([gltf]) => {
       if (stopped) return;
       instance = cloneAuthoredModel(gltf.scene);
@@ -340,6 +362,12 @@ export function createCharacter(
     get loaded() {
       return loaded;
     },
+    /** The gun in the hands after the last update (null: knife, grenade or empty hands). */
+    heldWeapon() {
+      if (!heldGun || !heldGun.view.loaded) return null;
+      const master = heldGun.view.root.getObjectByName("Weapon_Master");
+      return master ? { id: heldGun.id, view: heldGun.view, master, pivot: weaponPivot } : null;
+    },
     /** A grenade left this player's hand (server event): the throw plays from the wind-up. */
     throw(now: number, kind: ThrowKind, type: GrenadeType) {
       throwAt = now;
@@ -458,9 +486,29 @@ export function createCharacter(
       if (!throwing && (!holdingNade || (motion.nade && motion.nade !== releasedGrenade)))
         releasedGrenade = null;
       const holdingKnife = motion.weapon === "knife" && !holdingNade;
-      const held = motion.primary === "awp" && awp.loaded ? awp : weapon;
-      (held === awp ? weapon : awp).update(false, 0, 0);
-      held.update(!holdingKnife && !holdingNade, motion.reloading ? 0.4 : 0, recoil);
+      const wantsAlt =
+        !!alt &&
+        alt.loaded &&
+        (motion.primary === "ak47" || motion.primary === "m4") &&
+        motion.primary !== ownRifle;
+      const held = motion.primary === "awp" && awp.loaded ? awp : wantsAlt ? alt! : weapon;
+      const empty = motion.primary === "none";
+      for (const v of [weapon, awp, alt]) if (v && v !== held) v.update(false, 0, 0);
+      held.update(!empty && !holdingKnife && !holdingNade, motion.reloading ? 0.4 : 0, recoil);
+      heldGun =
+        empty || holdingKnife || holdingNade
+          ? null
+          : {
+              id:
+                held === awp
+                  ? "awp"
+                  : held === weapon
+                    ? ownRifle
+                    : ownRifle === "m4"
+                      ? "ak47"
+                      : "m4",
+              view: held,
+            };
       knife.visible = holdingKnife && alive;
       // Grenade in the fist: carried, wound up while held, thrown (the hand empties at release).
       if (holdingNade) {
@@ -559,14 +607,14 @@ export function createCharacter(
       headCenterMarker.position.copy(headCenter);
       const tip = held.muzzle();
       flash.update(
-        alive && !holdingKnife && !holdingNade ? flashUntil - now : 0,
+        alive && !empty && !holdingKnife && !holdingNade ? flashUntil - now : 0,
         tip.z,
         tip.y,
         Math.floor(flashUntil),
       );
       flash.root.position.x = tip.x;
       // The Police M4A1 is suppressed: a much smaller flash at the can.
-      if (police && held === weapon) flash.root.scale.multiplyScalar(0.42);
+      if (motion.silenced ?? (police && held === weapon)) flash.root.scale.multiplyScalar(0.42);
     },
     dispose() {
       stopped = true;
@@ -574,6 +622,7 @@ export function createCharacter(
       instance?.dispose();
       weapon.dispose();
       awp.dispose();
+      alt?.dispose();
       flash.dispose();
       knifeInstance?.dispose();
       knifeAsset.release();

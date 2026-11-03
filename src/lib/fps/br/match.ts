@@ -1125,6 +1125,10 @@ export function brViewFor(
       gun ? itemCode(gun.item) : -1,
       b.crouched ? 1 : 0,
       s.vehicle ?? -1,
+      // Attachments are visible on other players' guns (a scope or a silencer is information
+      // everyone gets the same way).
+      gun?.optic ? itemCode(gun.optic) : -1,
+      gun?.muzzle ? itemCode(gun.muzzle) : -1,
     ]);
   }
   const seen = new Set(rows.map((r) => r[0]));

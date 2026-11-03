@@ -218,6 +218,19 @@ describe("battle royale combat", () => {
     expect(v3.kit!.plates[0]).toEqual({ item: "plate-2", durability: 75 });
     expect(v3.combat.some((e) => e.type === "act" && e.ok)).toBe(true);
   });
+
+  it("shows other players' gun and attachments in their row", () => {
+    const { state } = duel();
+    const them = state.seats[1]!;
+    pickUp(them.kit, { item: "ak47", qty: 1, mag: 30, optic: "scope-4x", muzzle: "silencer" });
+    const row = brViewFor(state, world, new BrSight(), 0, t).players.find((r) => r[0] === 1)!;
+    expect([6, 9, 10].map((i) => itemFromCode(row[i]!))).toEqual(["ak47", "scope-4x", "silencer"]);
+    pickUp(them.kit, { item: "awp", qty: 1, mag: 5, optic: null, muzzle: null });
+    them.kit.active = 1;
+    const bare = brViewFor(state, world, new BrSight(), 0, t).players.find((r) => r[0] === 1)!;
+    expect(itemFromCode(bare[6]!)).toBe("awp");
+    expect([bare[9], bare[10]]).toEqual([-1, -1]);
+  });
 });
 
 describe("grenades on the island", () => {

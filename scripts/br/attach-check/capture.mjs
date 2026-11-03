@@ -65,6 +65,33 @@ for (const [name, gun, aim, side] of cases) {
   await page.evaluate(([g, a, s]) => window.show(g, a, s), [gun, aim, side]);
   await page.screenshot({ path: path.join(outDir, `${name}.png`) });
 }
+// Third person (`--third`): other players' guns with attachments.
+if (process.argv.includes("--third")) {
+  await page.evaluate(() => window.thirdReady);
+  const third = [
+    ["tp-police-ak-red-sil", 0, { item: "ak47", mag: 30, optic: "sight-red", muzzle: "silencer" }],
+    ["tp-police-m4-bare", 0, { item: "m4", mag: 30, optic: null, muzzle: null }],
+    ["tp-police-m4-4x-sil", 0, { item: "m4", mag: 30, optic: "scope-4x", muzzle: "silencer" }],
+    [
+      "tp-masked-m4-holo-comp",
+      1,
+      { item: "m4", mag: 30, optic: "sight-holo", muzzle: "compensator" },
+    ],
+    ["tp-masked-ak-bare", 1, { item: "ak47", mag: 30, optic: null, muzzle: null }],
+    [
+      "tp-masked-awp-6x-flash",
+      1,
+      { item: "awp", mag: 5, optic: "scope-6x", muzzle: "flash-hider" },
+    ],
+    ["tp-masked-empty", 1, null],
+  ];
+  for (const [name, seat, gun] of third) {
+    await page.evaluate(([s, g]) => window.third(s, g), [seat, gun]);
+    await page.screenshot({ path: path.join(outDir, `${name}.png`) });
+    await page.evaluate(([s, g]) => window.third(s, g, "close"), [seat, gun]);
+    await page.screenshot({ path: path.join(outDir, `${name}-close.png`) });
+  }
+}
 await browser.close();
 server.close();
 console.log("wrote", outDir);

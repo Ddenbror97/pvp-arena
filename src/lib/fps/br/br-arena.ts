@@ -25,6 +25,7 @@ import { spec, stepVehicle, VEHICLES, type Vehicle } from "./vehicles";
 import type { NadeEvent } from "./match";
 import type { LootRow } from "./loot-world";
 import { itemFromCode } from "./loot-world";
+import { fitCharacterGun, loadAttachmentParts, type AttachmentParts } from "./attachment-fit";
 import { PHASE_CODES, type BrKitView, type BrPhase, type BrZoneView } from "./match";
 import { WORLD_HALF } from "./world";
 import { createCharacter } from "../character";
@@ -64,7 +65,10 @@ export type BrView = {
     seq: number;
   };
   aboard: number;
-  /** [seat, x, y, z, phase code (5: eliminated), yaw, gun item code or −1, crouched]. */
+  /**
+   * [seat, x, y, z, phase code (5: eliminated), yaw, gun item code or −1, crouched, vehicle or −1,
+   * optic code or −1, muzzle code or −1].
+   */
   players: number[][];
   events: Array<{ seat: number; phase: DropPhase }>;
   now?: number;
@@ -283,6 +287,8 @@ export function createBrArena(
   let island: IslandScene | null = null;
   let loot: LootClient | null = null;
   let viewmodel: ReturnType<typeof createBrViewmodel> | null = null;
+  /** The attachment pack (other players' guns; the viewmodel loads the same file). */
+  let attachmentParts: AttachmentParts | null = null;
   let vehiclesFx: ReturnType<typeof createVehicleRenderer> | null = null;
   /** The vehicle you drive, predicted like your body (vehicles.ts runs here too). */
   let car: Vehicle | null = null;
@@ -352,7 +358,10 @@ export function createBrArena(
   const weaponKit = createWeaponKit();
   const plain = new THREE.MeshStandardMaterial({ color: 0x3a3833, roughness: 0.8 });
   const actors = Array.from({ length: CHARACTERS }, (_, i) => {
-    const a = createCharacter(i % 2 ? "B" : "A", plain, weaponKit, { worldRifle: true });
+    const a = createCharacter(i % 2 ? "B" : "A", plain, weaponKit, {
+      worldRifle: true,
+      bothRifles: true,
+    });
     a.root.visible = false;
     scene.add(a.root);
     return { actor: a, seat: -1, deadAt: 0 };
@@ -422,6 +431,12 @@ export function createBrArena(
     vehiclesFx = createVehicleRenderer(scene, island.loader, island.manifest);
     mapUrl = drawMap(island);
     viewmodel = createBrViewmodel(renderer, island.loader, base);
+    void loadAttachmentParts(
+      island.loader,
+      new URL("fps/br/models/attachments.glb", base).href,
+    ).then((p) => {
+      attachmentParts = p;
+    });
     const model = async (id: string) => {
       const m = island!.manifest.models[id];
       if (!m) return null;
@@ -816,7 +831,6 @@ export function createBrArena(
     one = new THREE.Vector3(1, 1, 1),
     eye = new THREE.Vector3(),
     forward = new THREE.Vector3();
-  const suppressorsHidden = new WeakSet<object>();
   function frame(now: number) {
     if (disposed) return;
     requestAnimationFrame(frame);
@@ -896,6 +910,8 @@ export function createBrArena(
       yaw: number;
       gun: number;
       crouched: boolean;
+      optic: number;
+      muzzle: number;
       d: number;
     }> = [];
     if (a && b) {
@@ -918,6 +934,8 @@ export function createBrArena(
           yaw: ya + dy * k,
           gun: rb[6] ?? -1,
           crouched: rb[7] === 1,
+          optic: rb[9] ?? -1,
+          muzzle: rb[10] ?? -1,
           d: pos.distanceToSquared(camera.position),
         });
       }
@@ -953,23 +971,22 @@ export function createBrArena(
         root.visible = true;
         root.position.copy(o.pos);
         root.rotation.set(o.phase === "freefall" ? -Math.PI / 2.2 : 0, o.yaw, 0);
-        // The M4 is unsuppressed in the battle royale (attachments are not sent for others).
-        if (!suppressorsHidden.has(root)) {
-          const sup = root.getObjectByName("SuppressorGeometry");
-          if (sup) {
-            sup.visible = false;
-            suppressorsHidden.add(root);
-          }
-        }
         const gun = itemFromCode(o.gun);
         const dead = o.phase === "dead";
         if (dead && !deathAt.has(o.seat)) deathAt.set(o.seat, now - 5000);
         if (!dead) deathAt.delete(o.seat);
         slot.actor.update(dtMs, now, 0, !dead, o.crouched, {
           airborne: o.phase === "freefall" || o.phase === "parachute",
-          primary: gun === "awp" ? "awp" : "rifle",
+          primary: gun === "awp" || gun === "ak47" || gun === "m4" ? gun : "none",
+          silenced: o.muzzle >= 0 && itemFromCode(o.muzzle) === "silencer",
           ...(dead ? { death: deathAt.get(o.seat) } : {}),
         });
+        fitCharacterGun(
+          slot.actor,
+          attachmentParts,
+          itemFromCode(o.optic) ?? null,
+          itemFromCode(o.muzzle) ?? null,
+        );
         continue;
       }
       if (ground < MAX_PLAYERS) {

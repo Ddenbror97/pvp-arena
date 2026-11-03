@@ -3,6 +3,13 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { createBrViewmodel } from "@/lib/fps/br/br-viewmodel";
 import type { Gun } from "@/lib/fps/br/inventory";
+import {
+  fitCharacterGun,
+  loadAttachmentParts,
+  type AttachmentParts,
+} from "@/lib/fps/br/attachment-fit";
+import { createCharacter } from "@/lib/fps/authored-character";
+import { createWeaponKit } from "@/lib/fps/weapon";
 
 /** Viewmodel + attachment check: renders one gun/attachment combination per call. */
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -49,5 +56,48 @@ w.show = (gun: Gun, aiming: boolean, side = false) => {
   }
   renderer.render(scene, camera);
   vm.render(camera, false);
+  return true;
+};
+
+// Third person: other players' guns (the BR character, either rifle, attachments from the
+// same fitting code the match uses).
+const third = new THREE.Scene();
+third.background = new THREE.Color(0x8fa7bd);
+third.add(new THREE.HemisphereLight(0xe4eaff, 0x40382c, 2));
+const sun = new THREE.DirectionalLight(0xfff0d8, 1.8);
+sun.position.set(2, 4, 3);
+third.add(sun);
+const kit = createWeaponKit();
+const plain = new THREE.MeshStandardMaterial({ color: 0x3a3833, roughness: 0.8 });
+const chars = (["A", "B"] as const).map((seat) => {
+  const c = createCharacter(seat, plain, kit, { worldRifle: true, bothRifles: true });
+  third.add(c.root);
+  return c;
+});
+let parts: AttachmentParts | null = null;
+w.thirdReady = Promise.all([
+  ...chars.map((c) => c.ready),
+  loadAttachmentParts(loader, location.origin + "/fps/br/models/attachments.glb").then((p) => {
+    parts = p;
+  }),
+]).then(() => true);
+w.third = (seat: 0 | 1, gun: Gun | null, view: "side" | "front" | "close" = "side") => {
+  const c = chars[seat]!;
+  for (const o of chars) o.root.visible = o === c;
+  c.root.position.set(0, 0, 0);
+  c.root.rotation.set(0, 0, 0);
+  for (let i = 0; i < 30; i++) {
+    c.update(16, 10_000 + i * 16, 0, true, false, {
+      primary: gun ? (gun.item as "ak47" | "m4" | "awp") : "none",
+      silenced: gun?.muzzle === "silencer",
+    });
+    fitCharacterGun(c, parts, gun?.optic ?? null, gun?.muzzle ?? null);
+  }
+  const cam = new THREE.PerspectiveCamera(30, 960 / 540, 0.05, 50);
+  if (view === "side") cam.position.set(2.1, 1.35, -0.25);
+  else if (view === "close") cam.position.set(0.95, 1.45, -0.45);
+  else cam.position.set(0.6, 1.5, -2.2);
+  cam.lookAt(0.05, 1.27, view === "close" ? -0.3 : -0.35);
+  renderer.render(third, cam);
   return true;
 };
