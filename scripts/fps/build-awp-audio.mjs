@@ -1,15 +1,16 @@
 /**
- * AWP sound effects: original, deterministic procedural synthesis (no recordings).
+ * AWP sound effects: original, deterministic procedural synthesis (no recordings). The shot
+ * (awp-shot-v2.wav) is the owner-supplied recording, not built here.
  *
  *   node scripts/fps/build-awp-audio.mjs
  *
  * Timing follows src/lib/fps/awp-timeline.ts (copied below; a unit test checks they agree), so
  * every click lands on its animation frame:
  *
- *   awp-shot-v1          .338 report: supersonic crack, deep chest thump, rolling tail and echo
  *   awp-bolt-v1          the bolt cycle after a shot (lift, rearward slide, forward, lock)
- *   awp-reload-v1        magazine change with a round chambered (release, out, insert, tap)
- *   awp-reload-empty-v1  magazine change and the bolt worked to chamber a round
+ *   awp-reload-v2        magazine change with a round chambered (release, out, insert, tap), with
+ *                        ringing steel on the release, the magazine leaving the well and seating
+ *   awp-reload-empty-v2  the same, the empty magazine clanking on the floor, then the bolt
  *   awp-zoom-in-v1       scope ring click, soft
  *   awp-zoom-out-v1      lighter click
  *   awp-draw-v1          sling rustle and the rifle settling in the shoulder
@@ -163,42 +164,34 @@ function rustle(seed, ms, gain = 1) {
   return lowpass(highpass(out, 600), 4200);
 }
 
-// ------------------------------------------------------------------ the shot
-{
-  const out = buffer(2.4),
-    n = rng(338);
-  // Supersonic crack: a very short broadband spike, emphasised in the upper mids.
-  const crack = buffer(0.03).map((_, i) => n() * Math.exp(-i / (rate * 0.0025)));
-  mix(out, highpass(Float32Array.from(crack), 900), 0, 1.0);
-  mix(out, bandpass(Float32Array.from(crack), 2400, 1.5), 0, 1.6);
-  // Chest thump: a falling sine from 110 Hz to 38 Hz, long decay (the .338's weight).
-  const thump = buffer(0.9);
-  let phase = 0;
-  for (let i = 0; i < thump.length; i++) {
-    const t = i / rate,
-      f = 38 + 72 * Math.exp(-t / 0.06);
-    phase += (2 * Math.PI * f) / rate;
-    thump[i] = Math.sin(phase) * Math.exp(-t / 0.22) * Math.min(1, t / 0.0015);
+/**
+ * Struck steel: a short noise strike exciting inharmonic plate/bar modes (ratios of a free steel
+ * bar), each ringing with its own decay — the metallic "clank" of a magazine against a receiver.
+ */
+function clank(seed, { base = 1150, decay = 0.11, gain = 1, bright = 1 } = {}) {
+  const n = rng(seed),
+    out = buffer(decay * 4 + 0.02);
+  const modes = [
+    [1, 1, 1],
+    [2.756, 0.7, 0.8],
+    [5.404, 0.45 * bright, 0.55],
+    [8.933, 0.3 * bright, 0.4],
+    [13.34, 0.18 * bright, 0.3],
+  ];
+  for (const [ratio, amp, life] of modes) {
+    const f = base * ratio * (1 + n() * 0.004),
+      tau = decay * life,
+      phase0 = Math.abs(n()) * Math.PI;
+    if (f > rate / 2.2) continue;
+    for (let i = 0; i < out.length; i++) {
+      const t = i / rate;
+      out[i] += Math.sin(2 * Math.PI * f * t + phase0) * amp * Math.exp(-t / tau);
+    }
   }
-  mix(out, thump, 0.001, 0.32);
-  // Body: mid-band noise blast.
-  const body = buffer(0.35).map((_, i) => n() * Math.exp(-i / (rate * 0.06)));
-  mix(out, bandpass(Float32Array.from(body), 260, 0.8), 0.002, 2.6);
-  mix(out, bandpass(Float32Array.from(body), 700, 0.9), 0.002, 1.6);
-  mix(out, bandpass(Float32Array.from(body), 1600, 1.1), 0.001, 0.8);
-  // Rolling tail: low-passed noise, slow decay, with a slapback echo off the walls.
-  const tail = buffer(2.2).map(
-    (_, i) => n() * Math.exp(-i / (rate * 0.55)) * Math.min(1, i / (rate * 0.03)),
-  );
-  lowpass(tail, 900);
-  mix(out, tail, 0.02, 0.8);
-  const echo = Float32Array.from(out.subarray(0, Math.round(rate * 0.6)));
-  lowpass(echo, 1400);
-  mix(out, echo, 0.16, 0.28);
-  mix(out, echo, 0.41, 0.12);
-  // Fade the very end.
-  for (let i = 0; i < out.length; i++) out[i] *= Math.min(1, (out.length - i) / (rate * 0.3));
-  write("awp-shot-v1", out, 0.95);
+  // The strike itself: a 2 ms broadband tick.
+  for (let i = 0; i < rate * 0.004; i++) out[i] += n() * Math.exp(-i / (rate * 0.0007)) * 0.9;
+  for (let i = 0; i < out.length; i++) out[i] *= gain * Math.min(1, i / (rate * 0.0003));
+  return out;
 }
 
 // ------------------------------------------------------------------ the bolt cycle
@@ -238,25 +231,47 @@ function magazineChange(out, times, seed) {
   const s = (ms) => ms / 1000;
   mix(out, rustle(seed, 260, 0.3), s(times.release - 280));
   mix(out, click(seed + 1, { freqs: [2800, 4600], body: 0 }), s(times.release), 0.8); // release
+  // Steel: the release latch snaps and the magazine's lips ring as it leaves the well.
+  mix(out, clank(seed + 11, { base: 1850, decay: 0.06 }), s(times.release + 4), 0.28);
+  mix(out, clank(seed + 12, { base: 1320, decay: 0.09, bright: 0.8 }), s(times.magOut + 60), 0.3);
   mix(out, slide(seed + 2, 220, { from: 900, to: 1300, gain: 0.8 }), s(times.magOut + 30), 0.7);
   mix(out, rustle(seed + 3, 500, 0.35), s(times.magOut + 450)); // to the pouch
   mix(out, slide(seed + 4, 180, { from: 1200, to: 900 }), s(times.seat - 200), 0.6);
+  // Fresh magazine knocks the well's edge going in, then seats with a ringing steel clank.
+  mix(out, clank(seed + 13, { base: 1500, decay: 0.05, bright: 0.7 }), s(times.seat - 110), 0.35);
   mix(out, click(seed + 5, { freqs: [1500, 3100], q: 5, body: 120 }), s(times.seat), 1.2); // seated
+  mix(out, clank(seed + 14, { base: 980, decay: 0.14 }), s(times.seat + 30), 0.45);
 }
 {
   const t = TIMES.tactical,
     out = buffer(t.length / 1000);
   magazineChange(out, t, 600);
   mix(out, click(612, { freqs: [1300, 2600], q: 4, body: 90 }), t.tap / 1000, 0.6); // palm tap
+  mix(out, clank(614, { base: 1180, decay: 0.07, bright: 0.6 }), t.tap / 1000 + 0.002, 0.3);
   mix(out, rustle(613, 300, 0.25), t.guard / 1000);
-  write("awp-reload-v1", out, 0.8);
+  write("awp-reload-v2", out, 0.8);
 }
 {
   const t = TIMES.empty,
     out = buffer(t.length / 1000);
   magazineChange(out, t, 700);
+  // The empty magazine hits the floor: two dull steel bounces, further away.
+  mix(
+    out,
+    lowpass(clank(730, { base: 720, decay: 0.08, bright: 0.5 }), 3500),
+    (t.magOut + 330) / 1000,
+    0.45,
+  );
+  mix(
+    out,
+    lowpass(clank(731, { base: 760, decay: 0.06, bright: 0.4 }), 3000),
+    (t.magOut + 470) / 1000,
+    0.25,
+  );
   boltSequence(out, 0, t, 720);
-  write("awp-reload-empty-v1", out, 0.8);
+  // The bolt slams home on a fresh round: a bright steel ring under the lock click.
+  mix(out, clank(732, { base: 1650, decay: 0.08 }), (t.lower - 18) / 1000, 0.4);
+  write("awp-reload-empty-v2", out, 0.8);
 }
 
 // ------------------------------------------------------------------ zoom and draw

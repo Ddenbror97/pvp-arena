@@ -41,11 +41,11 @@ const SAMPLES = {
   step1: "step-1-v1.wav",
   step2: "step-2-v1.wav",
   step3: "step-3-v1.wav",
-  /** AWP (scripts/fps/build-awp-audio.mjs): original procedural effects on the AWP timeline. */
-  awpShot: "awp-shot-v1.wav",
+  /** AWP: the owner-supplied shot; the rest procedural (scripts/fps/build-awp-audio.mjs). */
+  awpShot: "awp-shot-v2.wav",
   awpBolt: "awp-bolt-v1.wav",
-  awpReload: "awp-reload-v1.wav",
-  awpReloadEmpty: "awp-reload-empty-v1.wav",
+  awpReload: "awp-reload-v2.wav",
+  awpReloadEmpty: "awp-reload-empty-v2.wav",
   awpZoomIn: "awp-zoom-in-v1.wav",
   awpZoomOut: "awp-zoom-out-v1.wav",
   awpDraw: "awp-draw-v1.wav",
@@ -302,7 +302,9 @@ export function createCombatAudio(
     }
     if (primary === "awp") {
       // The report, then the bolt cycle on the same timeline (heard only up close).
-      play("awpShot", Math.min(0.85, gain * 1.2), pan, occluded, 0.98 + (played.shots % 3) * 0.02);
+      // The supplied recording is ~4 dB louder (LUFS) than the AK reference: about 2 dB over
+      // the AK at the same gain, played as recorded (no pitch variation).
+      play("awpShot", Math.min(0.75, gain * 1.08), pan, occluded, 1);
       if (seat === localSeat || gain > 0.3)
         play("awpBolt", gain * (seat === localSeat ? 0.75 : 0.4), pan, occluded);
       return;
@@ -617,7 +619,7 @@ export function createCombatAudio(
         far = !options.own && gain < 0.5;
       if (kind === "shot" && options.awp) {
         played.shots++;
-        play("awpShot", options.own ? 0.75 : 0.62 * gain, 0, far, 1, 0, 0, options.bearing);
+        play("awpShot", options.own ? 0.67 : 0.56 * gain, 0, far, 1, 0, 0, options.bearing);
         if (options.own || gain > 0.6)
           play("awpBolt", options.own ? 0.55 : 0.3 * gain, 0, far, 1, 0, 0, options.bearing);
       } else if (kind === "shot") {

@@ -86,14 +86,17 @@ to the spoken line, mixed to mono, 70 Hz high-pass, 20/70 ms fades, loudness-mat
 
 ## AWP
 
-Original, deterministic procedural synthesis (no recordings), built by
+`awp-shot-v2.wav`: the owner-supplied `Sniper_shoot_sound.mp3`. Its 1.5 s of leading silence was
+trimmed, it was downmixed to mono (for in-game panning), the last 0.45 s faded and the level set
+to −16.5 LUFS; nothing else was changed (no EQ, pitch or effects).
+
+The rest is original, deterministic procedural synthesis (no recordings), built by
 `scripts/fps/build-awp-audio.mjs` on the AWP animation timeline (`src/lib/fps/awp-timeline.ts`).
 
 | File | Sound |
 | --- | --- |
-| `awp-shot-v1.wav` | .338 report: crack, chest thump, mid body, rolling tail with slapback |
 | `awp-bolt-v1.wav` | bolt cycle after a shot: handle up, rearward slide, case, forward, lock |
-| `awp-reload-v1.wav` | magazine change with a round chambered |
-| `awp-reload-empty-v1.wav` | magazine change, then the bolt worked to chamber a round |
+| `awp-reload-v2.wav` | magazine change with a round chambered, with ringing steel on the release, the magazine leaving the well and seating |
+| `awp-reload-empty-v2.wav` | the same, the empty magazine clanking on the floor, then the bolt slamming home |
 | `awp-zoom-in-v1.wav`, `awp-zoom-out-v1.wav` | scope clicks |
 | `awp-draw-v1.wav` | sling rustle and the rifle settling into the shoulder |
