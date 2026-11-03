@@ -10,6 +10,7 @@ import {
 import { canSee } from "./visibility";
 import { publicGrenadeWorld, type PublicGrenadeWorld } from "../grenades/world";
 import { throwKindOf, type GrenadeType, type ThrowKind } from "../grenades/rules";
+import { spectatorPov, type SpectatorPov } from "./spectator";
 
 /** Hearing ranges for enemy sounds (metres): shots carry far, footsteps much less. */
 const HEARING = { shot: 70, step: 25, reload: 12, bomb: 200, knife: 12 } as const;
@@ -48,6 +49,7 @@ export type BombView = {
   self: Omit<BombPlayer, "damageTo">;
   /** Dead recipients: the living teammate whose view is shown (null: no living teammates). */
   spectating: number | null;
+  pov?: SpectatorPov;
   spectateTargets: number[];
   phase: BombMatchState["phase"];
   phaseEndsAt: number;
@@ -298,6 +300,7 @@ export function bombViewFor(
     you: slot,
     self: (({ damageTo: _d, ...own }) => own)(me),
     spectating,
+    ...(spectating !== null ? { pov: spectatorPov(state.players[spectating]!) } : {}),
     spectateTargets: me.hp > 0 ? [] : spectateTargets(state, slot),
     phase: state.phase,
     phaseEndsAt: state.phaseEndsAt,

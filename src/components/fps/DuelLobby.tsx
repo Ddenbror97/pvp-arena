@@ -393,7 +393,7 @@ export function DuelLobby() {
             <div className="strike-practice">
               <h2>Practice · Bomb Defusal</h2>
               <p>
-                5v5 on Sandgate: plant or defuse · MR15, first to 16.
+                5v5 on Sandgate · Best of 13, first to 7. Sides switch after round 6.
                 <br />
                 Bots fill empty slots · Free · No wager or rating changes.
               </p>

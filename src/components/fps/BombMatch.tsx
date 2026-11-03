@@ -8,6 +8,7 @@ import { GrenadeHud } from "./GrenadeHud";
 import { BombScoreboard } from "./BombScoreboard";
 import { WeaponIcon, type FeedWeapon } from "./WeaponIcon";
 import { GRENADE_NAMES } from "@/lib/fps/grenades/rules";
+import { BOMB_RULES } from "@/lib/fps/bomb/rules";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
 import { bombAdmission } from "@/lib/fps/bomb/bomb.functions";
 import type { BombArenaControls } from "@/lib/fps/bomb/bomb-renderer";
@@ -263,6 +264,10 @@ export function BombMatch() {
               },
               onLocalShot: (m4, awp) => sound.current?.cue("shot", { own: true, m4, awp: !!awp }),
               onKnifeCue: (cue) => sound.current?.knifeCue(cue),
+              onPovReload: (reload) => {
+                if (reload) sound.current?.cue("reload", { ...reload, own: true });
+                else sound.current?.cancelReload();
+              },
               onScope: (entering) => sound.current?.zoom(entering),
               onGrenadeSound: (cue, o) => sound.current?.grenade(cue, o),
               onC4Cue: (name) => {
@@ -449,9 +454,21 @@ export function BombMatch() {
           bearing = Math.atan2(dx, -dz);
         }
         const actor = ev.slot !== undefined ? v.players[ev.slot] : undefined;
-        if (ev.type === "shot" && ev.weapon === "knife" && !own && gain > 0)
+        if (
+          ev.type === "shot" &&
+          ev.weapon === "knife" &&
+          !own &&
+          gain > 0 &&
+          !(v.self.hp <= 0 && ev.slot === v.spectating && v.pov)
+        )
           sound.current?.cue("knife", { gain, bearing, attack: ev.attack ?? "slash" });
-        if (ev.type === "shot" && ev.weapon !== "knife" && !own && gain > 0)
+        if (
+          ev.type === "shot" &&
+          ev.weapon !== "knife" &&
+          !own &&
+          gain > 0 &&
+          !(v.self.hp <= 0 && ev.slot === v.spectating && v.pov)
+        )
           sound.current?.cue("shot", {
             gain,
             bearing,
@@ -628,6 +645,9 @@ export function BombMatch() {
   const showBoard = view && (tab || view.phase === "halftime" || view.phase === "completed");
   const mineGroup = view ? myGroup(view) : "alpha";
   const watched = view?.spectating !== null && view ? view.players[view.spectating] : null;
+  const hudSelf = self && self.hp <= 0 && view?.pov ? view.pov : self;
+  const hudPlayer = view && hudSelf ? view.players[hudSelf.slot] : me;
+  const hudPrimary: Primary = hudSelf ? primaryOf(hudSelf) : "rifle";
   const buyStatus = view && self ? buyBlocked(bombBuyWindow(view, self, serverNow)) : null;
   const myPrimary: Primary = self ? primaryOf(self) : "rifle";
   return (
@@ -656,7 +676,9 @@ export function BombMatch() {
               <b className={`team-${me.team}`}>{view.score[mineGroup]}</b>
               <div>
                 <small>
-                  ROUND {Math.min(view.round, 30)} · {view.half === 1 ? "1ST" : "2ND"} HALF
+                  BEST OF {BOMB_RULES.maxRounds} · ROUND{" "}
+                  {Math.min(view.round, BOMB_RULES.maxRounds)} · {view.half === 1 ? "1ST" : "2ND"}{" "}
+                  HALF
                 </small>
                 <strong className={view.bomb.state === "planted" ? "bomb-planted" : ""}>
                   {clockText(view, serverNow)}
@@ -684,7 +706,7 @@ export function BombMatch() {
           </button>
         </div>
       </header>
-      {view && self && self.hp > 0 && view.phase !== "completed" && (
+      {view && hudSelf && hudSelf.hp > 0 && view.phase !== "completed" && (
         <StrikeCrosshair settings={settings} />
       )}
       <div className="awp-scope" aria-hidden>
@@ -772,40 +794,40 @@ export function BombMatch() {
           )}
         </div>
       )}
-      {view && me && self && (
+      {view && hudPlayer && hudSelf && (
         <footer className="duel-hud-bottom">
           <div className="duel-health">
             <small>HEALTH</small>
-            {self.armor !== undefined && <small>KEVLAR {Math.ceil(self.armor)}</small>}
+            {hudSelf.armor !== undefined && <small>KEVLAR {Math.ceil(hudSelf.armor)}</small>}
 
             <strong>
-              {Math.max(0, self.hp)}
+              {Math.max(0, hudSelf.hp)}
               <span>/100</span>
             </strong>
             <div>
-              <i style={{ width: `${Math.max(0, self.hp)}%` }} />
+              <i style={{ width: `${Math.max(0, hudSelf.hp)}%` }} />
             </div>
           </div>
           <div className="duel-ammo">
             <GrenadeHud
-              inventory={self.grenades}
-              drawn={self.weapon === "grenade" ? (self.nade ?? null) : null}
+              inventory={hudSelf.grenades}
+              drawn={hudSelf.weapon === "grenade" ? (hudSelf.nade ?? null) : null}
             />
             <small>
-              {self.weapon === "grenade" && self.nade
-                ? GRENADE_NAMES[self.nade].toUpperCase()
-                : self.weapon === "knife"
+              {hudSelf.weapon === "grenade" && hudSelf.nade
+                ? GRENADE_NAMES[hudSelf.nade].toUpperCase()
+                : hudSelf.weapon === "knife"
                   ? "KARAMBIT"
-                  : myPrimary === "awp"
+                  : hudPrimary === "awp"
                     ? "AWP"
-                    : me.team === "police"
+                    : hudPlayer.team === "police"
                       ? "M4A1-S"
                       : "AK-47"}{" "}
-              · {teamLabel(me.team).toUpperCase()}
-              {me.carrier ? " · BOMB" : ""}
+              · {teamLabel(hudPlayer.team).toUpperCase()}
+              {hudPlayer.carrier ? " · BOMB" : ""}
             </small>
             <div className="bomb-ammo-row">
-              {self.defuseKit && me.team === "police" && (
+              {hudSelf.defuseKit && hudPlayer.team === "police" && (
                 <span
                   className="bomb-kit-icon"
                   role="img"
@@ -816,11 +838,11 @@ export function BombMatch() {
                 </span>
               )}
               <strong>
-                {self.weapon === "knife" ? "∞" : self.ammo}
-                {self.weapon !== "knife" && <span>/ {self.reserve}</span>}
+                {hudSelf.weapon === "knife" ? "∞" : hudSelf.ammo}
+                {hudSelf.weapon !== "knife" && <span>/ {hudSelf.reserve}</span>}
               </strong>
             </div>
-            {self.reloadUntil ? <em>RELOADING</em> : null}
+            {hudSelf.reloadUntil ? <em>RELOADING</em> : null}
           </div>
         </footer>
       )}

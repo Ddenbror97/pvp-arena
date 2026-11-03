@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ShieldCheck, Skull } from "lucide-react";
 import type { BombView } from "@/lib/fps/bomb/snapshot";
+import { BOMB_RULES } from "@/lib/fps/bomb/rules";
 import { matchResult, myGroup, otherGroup, scoreboard, teamLabel } from "@/lib/fps/bomb/hud";
 
 export function BombScoreboard({ view }: { view: BombView }) {
@@ -14,13 +15,14 @@ export function BombScoreboard({ view }: { view: BombView }) {
           <h2>Halftime · teams switch sides</h2>
         ) : result ? (
           <h2 className={`result-${result}`}>
-            {result === "victory" ? "Victory" : result === "defeat" ? "Defeat" : "Draw · 15–15"}
+            {result === "victory" ? "Victory" : result === "defeat" ? "Defeat" : "Draw"}
           </h2>
         ) : (
           <h2>Sandgate · Bomb Defusal</h2>
         )}
         <small>
-          Round {Math.min(view.round, 30)} of 30 · {view.half === 1 ? "First" : "Second"} half
+          Round {Math.min(view.round, BOMB_RULES.maxRounds)} of {BOMB_RULES.maxRounds} ·{" "}
+          {view.half === 1 ? "First" : "Second"} half
           {view.firstHalf
             ? ` · First half ${view.firstHalf[mineGroup]}–${view.firstHalf[otherGroup(mineGroup)]}`
             : ""}

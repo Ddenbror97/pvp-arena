@@ -53,6 +53,7 @@ import { deathPose, deathSupport } from "../death-presentation";
 import { BOMB_RULES, SLOT_COUNT, type BombInput, type Team } from "./rules";
 import { SANDGATE } from "./sandgate";
 import type { BombView, PublicPlayer } from "./snapshot";
+import { SpectatorPlayback, spectatorGrenade } from "./spectator";
 import { AWP, primaryOf } from "../primary";
 import { AwpScope } from "../awp-scope";
 import { createGrenadeClient } from "../grenades/grenade-client";
@@ -122,6 +123,9 @@ export function mountBombArena(
     /** AWP zoom edges (true: zooming in), for the scope sounds. */
     onScope?: (entering: boolean) => void;
     onKnifeCue?: (cue: string) => void;
+    onPovReload?: (
+      reload: { m4: boolean; awp: boolean; empty: boolean; offset: number } | null,
+    ) => void;
     /** First-person C4 plant cues ("press:7", "armed", "grab", "place", "release", "cancel"). */
     onC4Cue?: (name: string) => void;
     /** Grenade sounds (own handling centred; world sounds with a bearing and a gain). */
@@ -540,6 +544,9 @@ export function mountBombArena(
     remoteClock = new SnapshotClock(),
     playbackDelay = new PlaybackDelay();
   let playbackMs = REMOTE_DELAY_MS;
+  const spectatorPlayback = new SpectatorPlayback();
+  let presentationSlot = -1,
+    spectatorReload = 0;
   const previewInput: Input = {
     v: 1,
     type: "input",
@@ -917,15 +924,84 @@ export function mountBombArena(
     const dt = frameDelta(now, lastDraw || now - tickDt);
     lastDraw = now;
     renderFrames++;
-    const own = me();
     const serverNow = Date.now() + serverOffset;
+    const alive = !!predicted && predicted.hp > 0;
+    const spectating = latest && !alive ? latest.spectating : null;
+    const playbackAt = remoteClock.now(now) - playbackMs;
+    const watched = spectating !== null ? spectatorPlayback.sample(playbackAt) : null;
+    const own = watched ?? me();
+    const povNow = watched ? playbackAt : serverNow;
+    const heldWeapon = watched?.weapon ?? weapon;
+    if (own && latest) {
+      const police = latest.players[own.slot]?.team === "police";
+      view =
+        primaryOf(own) === "awp"
+          ? police
+            ? views.awpP
+            : views.awpT
+          : police
+            ? views.m4
+            : views.ak;
+      knifeView = police ? knifeViews.police : knifeViews.terrorist;
+      grenades.setTeam(police ? "police" : "terrorist");
+      if (presentationSlot !== own.slot) {
+        presentationSlot = own.slot;
+        scope.reset();
+        if (watched) scope.progress = watched.scoped ? 1 : 0;
+        muzzleUntil = 0;
+        kick = 0;
+        recoilPitch = recoilYaw = 0;
+        awpShotAt = -Infinity;
+        awpEjected = true;
+        lastAwpDrawn = !!watched && primaryOf(watched) === "awp" && heldWeapon === "rifle";
+        drawStart = now - AWP_TIMELINE.equipMs;
+        lastKnifeEquipped = false;
+        viewmodelMotion.reset();
+        hooks.onPovReload?.(null);
+        spectatorReload = 0;
+      }
+    }
+    if (watched) {
+      for (const event of spectatorPlayback.shots(playbackAt)) {
+        if (event.weapon === "knife") knifeView.animator?.attack(event.attack ?? "slash");
+        else {
+          const age = Math.max(0, playbackAt - event.at!);
+          shotIndex++;
+          kick = 1;
+          muzzleUntil = now + Math.max(0, 42 - age);
+          if (event.primary === "awp") {
+            scope.shot(now - age);
+            awpShotAt = now - age;
+            awpEjected = false;
+          } else ejectCase(now);
+          hooks.onLocalShot?.(view.variant === "m4", event.primary === "awp");
+        }
+      }
+      const reload = watched.reloadUntil > povNow ? watched.reloadUntil : 0;
+      if (reload !== spectatorReload) {
+        spectatorReload = reload;
+        hooks.onPovReload?.(
+          reload
+            ? {
+                m4: view.variant === "m4",
+                awp: primaryOf(watched) === "awp",
+                empty: watched.ammo === 0,
+                offset: Math.max(0, (povNow - (reload - primaryStats(watched).reloadMs)) / 1000),
+              }
+            : null,
+        );
+      }
+    } else if (spectatorReload) {
+      hooks.onPovReload?.(null);
+      spectatorReload = 0;
+    }
     // Recoil: the room's spray state (combat v2), recovered on the same profile as the 1v1 view.
     if (own) {
       const profile = recoveryProfile(own.sprayCount ?? 0);
-      const age = Math.max(0, serverNow - own.lastShotAt),
+      const age = Math.max(0, povNow - own.lastShotAt),
         since = Math.max(
           0,
-          serverNow - Math.max(own.recoilUpdatedAt ?? serverNow, own.lastShotAt + profile.delayMs),
+          povNow - Math.max(own.recoilUpdatedAt ?? povNow, own.lastShotAt + profile.delayMs),
         );
       const factor = age >= profile.resetMs ? 0 : Math.exp((-profile.rate * since) / 1000);
       const blend = 1 - Math.exp(-dt / 25);
@@ -934,9 +1010,6 @@ export function mountBombArena(
     }
     kick = decay(kick, HANDLING.kickDecay, dt);
     landKick = decay(landKick, 14, dt);
-    const alive = !!predicted && predicted.hp > 0;
-    const spectating = latest && !alive ? latest.spectating : null;
-    const playbackAt = remoteClock.now(now) - playbackMs;
     // ---------------------------------------------------------------- remote players
     viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
     frustum.setFromProjectionMatrix(viewProjection);
@@ -1080,7 +1153,12 @@ export function mountBombArena(
         r.pose.y + EYE_HEIGHT * (1 - r.pose.crouch) + CROUCH_EYE_HEIGHT * r.pose.crouch,
         r.pose.z,
       );
-      camera.rotation.set(r.pose.pitch, r.pose.yaw, 0, "YXZ");
+      camera.rotation.set(
+        Math.max(-1.45, Math.min(1.45, r.pose.pitch + recoilPitch)),
+        r.pose.yaw + recoilYaw,
+        0,
+        "YXZ",
+      );
     } else if (predicted) {
       // Dead with nobody to watch: a slow overhead view of where the player fell.
       camera.position.set(predicted.x, predicted.y + 6, predicted.z + 4);
@@ -1088,7 +1166,7 @@ export function mountBombArena(
     }
     camera.updateMatrixWorld();
     // ---------------------------------------------------------------- the bomb
-    const b = latest?.bomb;
+    const b = (watched ? spectatorPlayback.bomb(playbackAt) : undefined) ?? latest?.bomb;
     const bombAt =
       b && (b.state === "dropped" || b.state === "planted") && b.x !== undefined
         ? { x: b.x, y: b.y!, z: b.z! }
@@ -1122,16 +1200,16 @@ export function mountBombArena(
       lighting.hemisphere.intensity *
       (1 + (sinceBlast < 1400 ? 2.5 * Math.max(0, 1 - sinceBlast / 1400) : 0));
     // ---------------------------------------------------------------- first-person rifle
-    const showWeapon = alive && !!latest && latest.phase !== "completed";
+    const showWeapon = !!own && own.hp > 0 && !!latest && latest.phase !== "completed";
     // ---------------------------------------------------------------- first-person C4 plant
     // Terrorist carrier planting: the room's plant clock drives the clip; when the room ends the
     // plant (planted or interrupted) the exit clip plays and the rifle comes back up.
     c4 = stepC4(c4, {
       showWeapon,
-      team: latest?.players[latest.you]?.team,
-      you: latest?.you ?? -1,
+      team: latest?.players[own?.slot ?? latest.you]?.team,
+      you: own?.slot ?? -1,
       bomb: b,
-      serverNow,
+      serverNow: povNow,
       now,
     });
     {
@@ -1160,7 +1238,8 @@ export function mountBombArena(
       ? Math.min(1, rifleDown + dt / 180)
       : Math.max(0, rifleDown - dt / 350);
     // AWP zoom: predicted like the room's rule; the lens hides the viewmodel, true 4× camera.
-    const zoomed = scope.update(own && alive ? own : null, dt, now, serverNow);
+    if (watched) scope.wanted = !!watched.scoped;
+    const zoomed = scope.update(showWeapon ? own : null, dt, now, povNow);
     if (zoomed !== scopeOn) {
       scopeOn = zoomed;
       hooks.onScope?.(zoomed);
@@ -1183,7 +1262,9 @@ export function mountBombArena(
     // With a grenade up the rifle hides inside the group (view.update below): the group itself
     // stays, so its muzzle light stays in the view scene and no shader is recompiled for a
     // different light count when the grenade is drawn.
-    weaponGroup.visible = showWeapon && rifleDown < 0.98 && !scope.overlay;
+    // Keep its light in the scene while C4 hands replace the rifle, as with grenades.
+    // Hiding the whole group changes the light count and compiles C4 shaders mid-action.
+    weaponGroup.visible = showWeapon && !scope.overlay;
     // Casings in flight hide with the rifle: drawn without the weapon's muzzle light (the AWP's
     // lens hides it while a case is still falling) they need a second shader variant.
     for (const pool of Object.values(casings)) pool.mesh.visible = weaponGroup.visible;
@@ -1198,12 +1279,14 @@ export function mountBombArena(
     flashLight.intensity = muzzle.root.visible
       ? 2.5 * (suppressed ? SUPPRESSED_FLASH.light : 1)
       : 0;
-    const moving =
-      locked() && (keys.has("KeyW") || keys.has("KeyS") || keys.has("KeyA") || keys.has("KeyD"));
-    const airborne = !!predicted && predicted.y > 0.01;
+    const moving = watched
+      ? !!watched.moving
+      : locked() && (keys.has("KeyW") || keys.has("KeyS") || keys.has("KeyA") || keys.has("KeyD"));
+    const presentationMoving = watched ? moving : moving && canMove();
+    const airborne = watched ? !!watched.velocityY : !!predicted && predicted.y > 0.01;
     if (wasAirborne && !airborne) landKick = 0.018;
     wasAirborne = airborne;
-    const reloadLeft = own?.reloadUntil ? Math.max(0, own.reloadUntil - serverNow) : 0;
+    const reloadLeft = own?.reloadUntil ? Math.max(0, own.reloadUntil - povNow) : 0;
     const reloadMs = own ? primaryStats(own).reloadMs : 1800;
     const reloadProgress = reloadLeft ? Math.min(1, reloadLeft / reloadMs) : 0;
     for (const other of Object.values(views)) if (other !== view) other.update(false, 0, 0);
@@ -1215,7 +1298,7 @@ export function mountBombArena(
       if (reloadLeft > 0) {
         if (reloadKind === "empty") bolt = boltPose((1 - reloadProgress) * reloadMs, RELOAD_BOLT);
       } else {
-        const sinceShot = Math.min(now - awpShotAt, serverNow - own.lastShotAt);
+        const sinceShot = Math.min(now - awpShotAt, povNow - own.lastShotAt);
         if (sinceShot >= 0 && sinceShot < AWP.cycleMs) bolt = boltPose(sinceShot, SHOT_BOLT);
         if (!awpEjected && now - awpShotAt >= AWP_TIMELINE.bolt.eject) {
           awpEjected = true;
@@ -1224,7 +1307,7 @@ export function mountBombArena(
       }
     }
     view.update(
-      showWeapon && weapon === "rifle" && !grenades.up,
+      showWeapon && rifleDown < 0.98 && heldWeapon === "rifle" && (watched ? true : !grenades.up),
       reloadLeft ? 1 - reloadProgress : 0,
       kick,
       reloadKind,
@@ -1232,9 +1315,9 @@ export function mountBombArena(
     );
     const sway = viewmodelMotion.update({
       dt,
-      lookX,
-      lookY,
-      moving: moving && canMove(),
+      lookX: watched ? 0 : lookX,
+      lookY: watched ? 0 : lookY,
+      moving: presentationMoving,
       sprinting: false,
       airborne,
       reloading: reloadLeft > 0,
@@ -1242,7 +1325,7 @@ export function mountBombArena(
       shot: shotIndex,
     });
     lookX = lookY = 0;
-    const knife = weapon === "knife" && knifeView.loaded && showWeapon;
+    const knife = heldWeapon === "knife" && knifeView.loaded && showWeapon && rifleDown < 0.98;
     if (knife !== lastKnifeEquipped) {
       lastKnifeEquipped = knife;
       if (knife) knifeDrawnAt = now + KNIFE.drawMs;
@@ -1253,10 +1336,10 @@ export function mountBombArena(
       knifePose = knifeView.animator.update({
         dt: dt / 1000,
         equipped: knife,
-        moving: moving && canMove() ? 1 : 0,
-        walking: keys.has("ShiftLeft") || keys.has("ShiftRight"),
-        backward: keys.has("KeyS"),
-        strafe: locked() ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0,
+        moving: presentationMoving ? 1 : 0,
+        walking: watched ? !!watched.crouched : keys.has("ShiftLeft") || keys.has("ShiftRight"),
+        backward: !watched && keys.has("KeyS"),
+        strafe: !watched && locked() ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0,
         airborne,
         reducedMotion,
       });
@@ -1274,7 +1357,7 @@ export function mountBombArena(
           : VIEWMODEL_REST;
     const motionScale = reducedMotion ? 0.5 : 1;
     // AWP draw: the rifle swings up from below (bought, or the side swapped).
-    const awpDrawn = view.variant === "awp" && weapon === "rifle" && showWeapon;
+    const awpDrawn = view.variant === "awp" && heldWeapon === "rifle" && showWeapon;
     if (awpDrawn && !lastAwpDrawn) drawStart = now;
     lastAwpDrawn = awpDrawn;
     const drawT = awpDrawn ? Math.min(1, (now - drawStart) / AWP_TIMELINE.equipMs) : 1;
@@ -1320,7 +1403,13 @@ export function mountBombArena(
             : 1
           : 0,
       alive: !!showWeapon,
-      listener: { x: camera.position.x, y: camera.position.y, z: camera.position.z, yaw },
+      ...(watched ? { presentation: spectatorGrenade(watched, povNow) } : {}),
+      listener: {
+        x: camera.position.x,
+        y: camera.position.y,
+        z: camera.position.z,
+        yaw: camera.rotation.y,
+      },
     });
     environment.update?.(dt, now);
     camera.layers.set(0);
@@ -1396,16 +1485,6 @@ export function mountBombArena(
       serverOffset = lastRound === -1 ? measured : serverOffset + (measured - serverOffset) * 0.05;
       const newRound = next.round !== lastRound || next.you !== latest?.you;
       const self = next.self;
-      const police = next.players[next.you]!.team === "police";
-      knifeView = police ? knifeViews.police : knifeViews.terrorist;
-      view =
-        primaryOf(self) === "awp"
-          ? police
-            ? views.awpP
-            : views.awpT
-          : police
-            ? views.m4
-            : views.ak;
       if (primaryOf(self) !== lastPrimary) {
         lastPrimary = primaryOf(self);
         presentedShots = 0;
@@ -1451,6 +1530,7 @@ export function mountBombArena(
       predicted = { ...self } as Player;
       pending = pending.filter((i) => i.seq > self.lastSeq);
       latest = next;
+      spectatorPlayback.push(next);
       if (canMove()) for (const i of pending) predictMovement(predicted, i, TICK_MS, map);
       else pending = [];
       if (before && !newRound) correction.reconcile(before, predicted);

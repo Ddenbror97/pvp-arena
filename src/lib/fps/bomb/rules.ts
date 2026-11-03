@@ -1,14 +1,15 @@
 import type { Input, Player } from "../protocol";
 
 /**
- * Practice Bomb Defusal (5v5) rules: classic MR15, no economy, fixed team rifles (Police
+ * Practice Bomb Defusal (5v5): best of 13, no economy, fixed team rifles (Police
  * M4A1-S, Terrorist AK-47 — combat.ts SIDE_RIFLE), optional free Police equipment during freeze.
  */
 export const BOMB_RULES = {
   teamSize: 5,
-  roundsPerHalf: 15,
-  /** First group to this many round wins takes the match; 15–15 is a draw (no overtime). */
-  winRounds: 16,
+  roundsPerHalf: 6,
+  maxRounds: 13,
+  /** First to seven, with sides switching after the first six completed rounds. */
+  winRounds: 7,
   freezeMs: 15_000,
   roundMs: 115_000,
   bombMs: 40_000,
@@ -124,7 +125,7 @@ export interface BombMatchState {
   mapId: "sandgate";
   phase: "warmup" | "freeze" | "live" | "round-end" | "halftime" | "completed";
   phaseEndsAt: number;
-  /** 1-based; rounds 1–15 are the first half. */
+  /** 1-based; rounds 1–6 are the first half. */
   round: number;
   half: 1 | 2;
   score: Record<Group, number>;

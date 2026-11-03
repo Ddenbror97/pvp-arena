@@ -382,46 +382,46 @@ describe("Bomb Defusal rules (5v5 practice)", () => {
     expect(s.players[1]!.hp).toBe(100);
   });
 
-  it("MR15: halftime after 15 rounds swaps sides and keeps the score; 16 wins; 15–15 is a draw", () => {
+  it("best of 13 switches sides after six and does not end at 6–6", () => {
     const s = match();
     let t = 0;
-    const policeWins = (n: number) => {
-      for (let r = 0; r < n; r++) {
-        t = run(s, t, t + BOMB_RULES.freezeMs + TICK_MS);
-        wipe(s, "terrorist");
-        t = run(s, t, t + TICK_MS * 2);
-        if (s.phase === "round-end") t = run(s, t, s.phaseEndsAt + TICK_MS);
-      }
+    const win = (group: "alpha" | "bravo") => {
+      t = run(s, t, t + BOMB_RULES.freezeMs + TICK_MS);
+      const loser = s.players.find((p) => p.group !== group)!;
+      wipe(s, teamOf(s, loser));
+      t = run(s, t, t + TICK_MS * 2);
+      if (s.phase === "round-end") t = run(s, t, s.phaseEndsAt + TICK_MS);
     };
-    policeWins(15);
+    for (let i = 0; i < 6; i++) win(i % 2 ? "bravo" : "alpha");
     expect(s.phase).toBe("halftime");
-    expect(s.score).toEqual({ alpha: 15, bravo: 0 });
+    expect(s.score).toEqual({ alpha: 3, bravo: 3 });
+    expect(s.firstHalf).toEqual({ alpha: 3, bravo: 3 });
     t = run(s, t, s.phaseEndsAt + TICK_MS);
+    expect(s.round).toBe(7);
     expect(s.half).toBe(2);
-    expect(s.round).toBe(16);
-    expect(team(s, "police").map((p) => p.group)).toEqual([
-      "bravo",
-      "bravo",
-      "bravo",
-      "bravo",
-      "bravo",
-    ]);
+    expect(team(s, "police").every((p) => p.group === "bravo")).toBe(true);
     expect(s.players.every((p) => p.hp === 100 && p.ammo === 30)).toBe(true);
-    policeWins(15);
+    for (let i = 0; i < 6; i++) win(i % 2 ? "bravo" : "alpha");
+    expect(s.score).toEqual({ alpha: 6, bravo: 6 });
+    expect(s.phase).toBe("freeze");
+    expect(s.round).toBe(13);
+    win("alpha");
     expect(s.phase).toBe("completed");
-    expect(s.winner).toBe("draw");
-    const w = match();
-    t = 0;
-    const s2 = w;
-    for (let r = 0; r < 16; r++) {
-      t = run(s2, t, t + BOMB_RULES.freezeMs + TICK_MS);
-      wipe(s2, teamOf(s2, s2.players[0]!) === "police" ? "terrorist" : "police");
-      t = run(s2, t, t + TICK_MS * 2);
-      if (s2.phase === "round-end" || s2.phase === "halftime")
-        t = run(s2, t, s2.phaseEndsAt + TICK_MS);
+    expect(s.winner).toBe("alpha");
+    expect(s.score).toEqual({ alpha: 7, bravo: 6 });
+  });
+  it("ends a sweep at seven wins, preserving the halftime switch", () => {
+    const s = match();
+    let t = 0;
+    for (let i = 0; i < 7; i++) {
+      t = run(s, t, t + BOMB_RULES.freezeMs + TICK_MS);
+      wipe(s, teamOf(s, s.players[5]!));
+      t = run(s, t, t + TICK_MS * 2);
+      if (s.phase === "round-end" || s.phase === "halftime") t = run(s, t, s.phaseEndsAt + TICK_MS);
     }
-    expect(s2.winner).toBe("alpha");
-    expect(s2.score.alpha).toBe(16);
+    expect(s.winner).toBe("alpha");
+    expect(s.score).toEqual({ alpha: 7, bravo: 0 });
+    expect(s.half).toBe(2);
   });
 
   it("a human replacing a bot keeps the slot's life, team, bomb and score", () => {
