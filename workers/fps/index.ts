@@ -17,6 +17,7 @@ import {
   startMatch,
   stepMatch,
   applyQueuedMovement,
+  buyPrimary,
   MAX_COMMAND_CREDIT,
   TICK_MS,
   validateInput,
@@ -28,6 +29,8 @@ import {
   type Seat,
 } from "../../src/lib/fps/protocol";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
+import { validateBuy } from "../../src/lib/fps/buy";
+import type { Primary } from "../../src/lib/fps/primary";
 import { maintainMatches } from "./maintenance";
 import {
   RevealGate,
@@ -210,6 +213,8 @@ export class DuelRoom {
     A: [],
     B: [],
   };
+  /** Pending spawn purchases (B menu), applied by the next authorized tick (buyPrimary). */
+  private buys: Record<Seat, Primary | null> = { A: null, B: null };
   private authorizationFailureAt: number | null = null;
   private authorizationRead: Promise<Array<SocketInfo & { checkedAt: number }>> | null = null;
   private authorizedWatermarks: Array<SocketInfo & { checkedAt: number }> | null = null;
@@ -583,6 +588,11 @@ export class DuelRoom {
       // Readiness is an intent; tick applies it only after fresh session checks.
       return;
     }
+    const buy = validateBuy(raw);
+    if (buy) {
+      this.buys[info.seat] = buy.item;
+      return;
+    }
     const input = validateInput(raw);
     if (input && this.saved?.state.combatVersion === 2 && input.combatVersion !== 2) {
       socket.close(1008, "Client update required");
@@ -760,6 +770,14 @@ export class DuelRoom {
             this.reason = "DISCONNECT";
           }
         }
+      }
+      // Spawn purchases from authorized seats; the rules (window, spawn radius) are the
+      // simulation's, so a client cannot buy outside them.
+      for (const seat of ["A", "B"] as const) {
+        const item = this.buys[seat];
+        if (!item) continue;
+        this.buys[seat] = null;
+        if (authorized.some((s) => s.seat === seat)) buyPrimary(saved.state, seat, item, now);
       }
       // Preserve the clock remainder when platform timers jitter. Bound catch-up
       // and command queues; packet bursts cannot add simulation time or movement.

@@ -17,6 +17,7 @@ const KNIFE_CUES: Record<string, { sample: Sample; gain: number }> = {
 import { footstepPan, materialFootstep } from "./footsteps";
 import { characterSide } from "./sides";
 import { consumeShotPrediction } from "./trigger-feedback";
+import { AWP, primaryOf, type Primary } from "./primary";
 const SAMPLES = {
   rifleA: "ak47-reference-v1.wav",
   reloadEmpty: "ak-reload-reference-empty-v1.wav",
@@ -40,6 +41,14 @@ const SAMPLES = {
   step1: "step-1-v1.wav",
   step2: "step-2-v1.wav",
   step3: "step-3-v1.wav",
+  /** AWP: the owner-supplied shot; the rest procedural (scripts/fps/build-awp-audio.mjs). */
+  awpShot: "awp-shot-v2.wav",
+  awpBolt: "awp-bolt-v1.wav",
+  awpReload: "awp-reload-v2.wav",
+  awpReloadEmpty: "awp-reload-empty-v2.wav",
+  awpZoomIn: "awp-zoom-in-v1.wav",
+  awpZoomOut: "awp-zoom-out-v1.wav",
+  awpDraw: "awp-draw-v1.wav",
 } as const;
 /**
  * Bomb Defusal voice lines (owner-supplied recordings, loudness-matched). Loaded only by the
@@ -284,10 +293,20 @@ export function createCombatAudio(
     occluded = false,
     seat?: Seat | null,
     attack?: KnifeAttack,
+    primary?: Primary,
   ) => {
     played.shots++;
     if (weapon === "knife") {
       play(attack === "stab" ? "knifeStab" : "knifeSlash", gain * 0.6, pan, occluded);
+      return;
+    }
+    if (primary === "awp") {
+      // The report, then the bolt cycle on the same timeline (heard only up close).
+      // The supplied recording is ~4 dB louder (LUFS) than the AK reference: about 2 dB over
+      // the AK at the same gain, played as recorded (no pitch variation).
+      play("awpShot", Math.min(0.75, gain * 1.08), pan, occluded, 1);
+      if (seat === localSeat || gain > 0.3)
+        play("awpBolt", gain * (seat === localSeat ? 0.75 : 0.4), pan, occluded);
       return;
     }
     const m4 = weapon === "rifle" && m4Seat(seat);
@@ -416,10 +435,18 @@ export function createCombatAudio(
       const cue = KNIFE_CUES[name];
       if (cue) play(cue.sample, cue.gain, 0.12, false, 0.97 + Math.random() * 0.06);
     },
-    localShot(weapon: Weapon, seq: number) {
+    localShot(weapon: Weapon, seq: number, primary?: Primary) {
       for (const [key, at] of predicted) if (performance.now() - at > 2000) predicted.delete(key);
       predicted.set(seq, performance.now());
-      shot(weapon, 0.62, 0, false, localSeat);
+      shot(weapon, 0.62, 0, false, localSeat, undefined, primary);
+    },
+    /** AWP zoom in / out click (own, quiet, centred). */
+    zoom(entering: boolean) {
+      play(entering ? "awpZoomIn" : "awpZoomOut", 0.22, 0, false);
+    },
+    /** AWP drawn (bought, or switched back from the knife). */
+    awpDraw() {
+      play("awpDraw", 0.3, 0.1, false);
     },
     async unlock() {
       if (disposed) return;
@@ -470,15 +497,20 @@ export function createCombatAudio(
         reloadEnd = player.reloadUntil;
         // Join the confirmed reload timeline, including after reconnect; never
         // replay the opening clicks over an animation already halfway through.
-        const offset = Math.max(0, (serverNow - (reloadEnd - 1800)) / 1000);
+        const awp = primaryOf(player) === "awp";
+        const offset = Math.max(0, (serverNow - (reloadEnd - (awp ? AWP.reloadMs : 1800))) / 1000);
         reloadVoice = play(
-          m4Seat(seat)
+          awp
             ? player.ammo === 0
-              ? "m4ReloadEmpty"
-              : "m4ReloadTactical"
-            : player.ammo === 0
-              ? "reloadEmpty"
-              : "reloadTactical",
+              ? "awpReloadEmpty"
+              : "awpReload"
+            : m4Seat(seat)
+              ? player.ammo === 0
+                ? "m4ReloadEmpty"
+                : "m4ReloadTactical"
+              : player.ammo === 0
+                ? "reloadEmpty"
+                : "reloadTactical",
           0.48,
           0,
           false,
@@ -501,7 +533,15 @@ export function createCombatAudio(
           // Own swings are voiced by the first-person animation's cues.
           if (own && weapon === "knife") continue;
           if (own && consumeShotPrediction(predicted, event.shotSeq)) continue;
-          shot(weapon, gain * (own ? 0.62 : 0.48), pan, !!cue?.occluded, event.seat, event.attack);
+          shot(
+            weapon,
+            gain * (own ? 0.62 : 0.48),
+            pan,
+            !!cue?.occluded,
+            event.seat,
+            event.attack,
+            event.primary,
+          );
         } else if (event.type === "impact" && event.weapon === "knife") {
           play("knifeWall", (own ? 0.3 : 0.2) * gain, pan, !!cue?.occluded);
         } else if (event.type === "step" && cue) {
@@ -569,6 +609,7 @@ export function createCombatAudio(
         bearing?: number | undefined;
         own?: boolean;
         m4?: boolean;
+        awp?: boolean;
         empty?: boolean;
         surface?: string;
         afterDefused?: boolean;
@@ -576,7 +617,12 @@ export function createCombatAudio(
     ) {
       const gain = Math.max(0, Math.min(1, options.gain ?? 1)),
         far = !options.own && gain < 0.5;
-      if (kind === "shot") {
+      if (kind === "shot" && options.awp) {
+        played.shots++;
+        play("awpShot", options.own ? 0.67 : 0.56 * gain, 0, far, 1, 0, 0, options.bearing);
+        if (options.own || gain > 0.6)
+          play("awpBolt", options.own ? 0.55 : 0.3 * gain, 0, far, 1, 0, 0, options.bearing);
+      } else if (kind === "shot") {
         played.shots++;
         play(
           options.m4 ? "rifleM4" : "rifleA",
@@ -609,13 +655,17 @@ export function createCombatAudio(
       } else if (kind === "reload") {
         reloadVoice?.stop();
         reloadVoice = play(
-          options.m4
+          options.awp
             ? options.empty
-              ? "m4ReloadEmpty"
-              : "m4ReloadTactical"
-            : options.empty
-              ? "reloadEmpty"
-              : "reloadTactical",
+              ? "awpReloadEmpty"
+              : "awpReload"
+            : options.m4
+              ? options.empty
+                ? "m4ReloadEmpty"
+                : "m4ReloadTactical"
+              : options.empty
+                ? "reloadEmpty"
+                : "reloadTactical",
           options.own ? 0.48 : 0.35 * gain,
           0,
           far,

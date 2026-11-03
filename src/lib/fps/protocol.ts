@@ -43,6 +43,8 @@ export interface Input {
   /** A trigger edge carries no movement time. */
   combatOnly?: true;
   crouch?: boolean;
+  /** AWP zoom held (right mouse). The server decides whether the player is actually scoped. */
+  scope?: boolean;
 }
 
 export interface Player {
@@ -82,6 +84,11 @@ export interface Player {
   velocityY?: number;
   /** Airborne duck raises the feet, not the jump impulse; cleared on landing. */
   airCrouchOffset?: number;
+  /** Primary weapon in the "rifle" slot (absent: the side's rifle). Bought at spawn (buy.ts). */
+  primary?: import("./primary").Primary;
+  /** Server-owned AWP zoom state and when it engaged (scoped accuracy needs it to settle). */
+  scoped?: boolean;
+  scopedAt?: number;
 }
 
 export interface MatchState {
@@ -115,6 +122,8 @@ export interface MatchState {
     at?: number;
     impact?: import("./collision").WorldHit;
     weapon?: Weapon;
+    /** Rifle-slot shots: which primary fired (absent: the side's rifle). */
+    primary?: import("./primary").Primary;
     /** Knife events: which attack was swung. */
     attack?: KnifeAttack;
     /** Knife hit from behind (stronger damage table). */
@@ -178,13 +187,15 @@ export function validateInput(raw: unknown): Input | null {
     (Object.hasOwn(data, "combatOnly") ? 1 : 0) +
     (Object.hasOwn(data, "round") ? 1 : 0) +
     (Object.hasOwn(data, "combatVersion") ? 1 : 0) +
-    (Object.hasOwn(data, "alt") ? 1 : 0);
+    (Object.hasOwn(data, "alt") ? 1 : 0) +
+    (Object.hasOwn(data, "scope") ? 1 : 0);
   if (
     Object.keys(data).length !== expected ||
     !KEYS.every((key) => Object.hasOwn(data, key)) ||
     (Object.hasOwn(data, "combatVersion") && data["combatVersion"] !== 2) ||
     (Object.hasOwn(data, "crouch") && typeof data["crouch"] !== "boolean") ||
     (Object.hasOwn(data, "alt") && typeof data["alt"] !== "boolean") ||
+    (Object.hasOwn(data, "scope") && typeof data["scope"] !== "boolean") ||
     (Object.hasOwn(data, "walk") && typeof data["walk"] !== "boolean") ||
     (Object.hasOwn(data, "combatOnly") && data["combatOnly"] !== true) ||
     (Object.hasOwn(data, "round") &&
@@ -245,6 +256,7 @@ export function validateInput(raw: unknown): Input | null {
     ...(typeof data["walk"] === "boolean" ? { walk: data["walk"] } : {}),
     ...(typeof data["playbackMs"] === "number" ? { playbackMs: data["playbackMs"] } : {}),
     ...(typeof data["crouch"] === "boolean" ? { crouch: data["crouch"] } : {}),
+    ...(data["scope"] === true ? { scope: true } : {}),
   };
 }
 

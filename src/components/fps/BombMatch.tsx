@@ -33,6 +33,10 @@ import {
   readStrikeSettings,
   saveStrikeSettings,
 } from "@/lib/fps/settings";
+import { BuyMenu } from "./BuyMenu";
+import { buyBlocked } from "@/lib/fps/buy";
+import { bombBuyWindow } from "@/lib/fps/bomb/match";
+import { primaryOf, type Primary } from "@/lib/fps/primary";
 import "./duel.css";
 import "./bomb.css";
 
@@ -79,6 +83,9 @@ export function BombMatch() {
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
   const hadCaptured = useRef(false);
+  /** Spawn buy menu (B). While it is open, releasing the mouse does not open the settings. */
+  const [buyOpen, setBuyOpen] = useState(false);
+  const buyOpenRef = useRef(false);
 
   useEffect(() => {
     warmBombLoadingImage();
@@ -127,28 +134,6 @@ export function BombMatch() {
     setKitError(null);
     socket.current.send(JSON.stringify({ v: 1, type: "equip-kit" }));
   };
-  useEffect(() => {
-    const down = (event: KeyboardEvent) => {
-      if (
-        event.code !== "KeyB" ||
-        event.repeat ||
-        event.target instanceof HTMLInputElement ||
-        event.target instanceof HTMLTextAreaElement
-      )
-        return;
-      const v = latest.current;
-      if (v?.phase === "freeze" && v.players[v.you]?.team === "police") {
-        event.preventDefault();
-        if (!v.self.defuseKit && v.self.hp > 0 && socket.current?.readyState === WebSocket.OPEN) {
-          setKitPending(true);
-          setKitError(null);
-          socket.current.send(JSON.stringify({ v: 1, type: "equip-kit" }));
-        }
-      }
-    };
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
   useEffect(() => {
     setKitPending(false);
     setKitError(null);
@@ -259,13 +244,14 @@ export function BombMatch() {
               if (value) {
                 hadCaptured.current = true;
                 setSettingsOpen(false);
-              } else if (hadCaptured.current) setSettingsOpen(true);
+              } else if (hadCaptured.current && !buyOpenRef.current) setSettingsOpen(true);
             },
             {
               onLoadProgress: (p) => {
                 if (!disposed) setProgress(p);
               },
-              onLocalShot: (m4) => sound.current?.cue("shot", { own: true, m4 }),
+              onLocalShot: (m4, awp) => sound.current?.cue("shot", { own: true, m4, awp: !!awp }),
+              onScope: (entering) => sound.current?.zoom(entering),
               onC4Cue: (name) => {
                 const kind = name.startsWith("press:")
                   ? "c4-key"
@@ -419,12 +405,13 @@ export function BombMatch() {
           lastEvent = e.id;
         }
         if (e.type === "sound") {
-          const s = e as { kind: string; bearing: number; gain: number };
+          const s = e as { kind: string; bearing: number; gain: number; awp?: true };
           // Room bearings are relative to the listener's view; the audio layer wants a world
           // bearing so the pan follows later turns.
           const bearing = listener ? -(s.bearing + listener.yaw) : undefined;
           const enemyM4 = mine === "terrorist";
-          if (s.kind === "shot") sound.current?.cue("shot", { gain: s.gain, bearing, m4: enemyM4 });
+          if (s.kind === "shot")
+            sound.current?.cue("shot", { gain: s.gain, bearing, m4: enemyM4, awp: !!s.awp });
           else if (s.kind === "step") sound.current?.cue("step", { gain: s.gain, bearing });
           else if (s.kind === "reload")
             sound.current?.cue("reload", { gain: s.gain, bearing, m4: enemyM4 });
@@ -446,7 +433,12 @@ export function BombMatch() {
         }
         const actor = ev.slot !== undefined ? v.players[ev.slot] : undefined;
         if (ev.type === "shot" && !own && gain > 0)
-          sound.current?.cue("shot", { gain, bearing, m4: actor?.team === "police" });
+          sound.current?.cue("shot", {
+            gain,
+            bearing,
+            m4: actor?.team === "police",
+            awp: ev.primary === "awp",
+          });
         if (ev.type === "step" && gain > 0)
           sound.current?.cue("step", {
             gain: bombStepGain(gain, own, actor?.team, mine, ev.audio?.soft),
@@ -496,6 +488,7 @@ export function BombMatch() {
         sound.current?.cue("reload", {
           own: true,
           m4: mine === "police",
+          awp: primaryOf(v.self) === "awp",
           empty: v.self.ammo === 0,
         });
       if (fresh.length) setKills((k) => [...k, ...fresh].slice(-6));
@@ -525,6 +518,39 @@ export function BombMatch() {
     void arena.current?.lock().catch(() => {});
     void sound.current?.unlock().catch(() => {});
   };
+
+  const closeBuy = (relock: boolean) => {
+    buyOpenRef.current = false;
+    setBuyOpen(false);
+    if (relock) activate();
+  };
+  const buy = (item: Primary) => {
+    if (socket.current?.readyState === WebSocket.OPEN)
+      socket.current.send(JSON.stringify({ v: 1, type: "buy", item }));
+    if (item === "awp" && latest.current && primaryOf(latest.current.self) !== "awp")
+      sound.current?.awpDraw();
+    closeBuy(true);
+  };
+  useEffect(() => {
+    const open = (e: KeyboardEvent) => {
+      const v = latest.current;
+      if (e.code !== "KeyB" || e.repeat || buyOpenRef.current || !v || v.self.hp <= 0) return;
+      if (v.phase !== "freeze" && v.phase !== "live") return;
+      if (document.querySelector(".strike-settings")) return;
+      e.preventDefault();
+      buyOpenRef.current = true;
+      setBuyOpen(true);
+      setSettingsOpen(false);
+      if (document.pointerLockElement) document.exitPointerLock();
+    };
+    document.addEventListener("keydown", open);
+    return () => document.removeEventListener("keydown", open);
+  }, []);
+  const buyable = !!view && view.self.hp > 0 && (view.phase === "freeze" || view.phase === "live");
+  useEffect(() => {
+    if (!buyable && buyOpenRef.current) closeBuy(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buyable]);
 
   // ---------------------------------------------------------------- render
   if (desktop === false)
@@ -569,6 +595,8 @@ export function BombMatch() {
       : null;
   const mineGroup = view ? myGroup(view) : "alpha";
   const watched = view?.spectating !== null && view ? view.players[view.spectating] : null;
+  const buyStatus = view && self ? buyBlocked(bombBuyWindow(view, self, serverNow)) : null;
+  const myPrimary: Primary = self ? primaryOf(self) : "rifle";
   return (
     <div className="duel-game bomb-game" data-arena-ready={arenaReady}>
       <div className="duel-render-host" ref={host} onClick={() => !locked && activate()} />
@@ -629,6 +657,35 @@ export function BombMatch() {
       {view && self && self.hp > 0 && view.phase !== "completed" && (
         <StrikeCrosshair settings={settings} />
       )}
+      <div className="awp-scope" aria-hidden>
+        <i className="h" />
+        <i className="v" />
+      </div>
+      {buyable && locked && !buyStatus && me && (
+        <div className="buy-hint" role="status">
+          <kbd>B</kbd> Buy · AWP / {me.team === "police" ? "M4A1-S" : "AK-47"}
+        </div>
+      )}
+      {me && (
+        <BuyMenu
+          open={buyOpen && buyable}
+          side={me.team}
+          current={myPrimary}
+          status={buyStatus}
+          onBuy={buy}
+          onClose={() => closeBuy(true)}
+          kit={
+            me.team === "police" && view?.phase === "freeze"
+              ? {
+                  available: true,
+                  equipped: !!self?.defuseKit,
+                  pending: kitPending,
+                  onEquip: chooseKit,
+                }
+              : null
+          }
+        />
+      )}
       <div className="duel-hit-marker" aria-hidden>
         <i />
         <i />
@@ -648,7 +705,7 @@ export function BombMatch() {
               onClick={chooseKit}
               disabled={kitPending || !!view.self.defuseKit}
             >
-              {kitPending ? "Equipping…" : "Equip defuse kit · B"}
+              {kitPending ? "Equipping…" : "Equip defuse kit · B → 3"}
             </button>
 
             {kitError && <p role="alert">{kitError}</p>}
@@ -712,7 +769,8 @@ export function BombMatch() {
           </div>
           <div className="duel-ammo">
             <small>
-              {me.team === "police" ? "M4A1-S" : "AK-47"} · {teamLabel(me.team).toUpperCase()}
+              {myPrimary === "awp" ? "AWP" : me.team === "police" ? "M4A1-S" : "AK-47"} ·{" "}
+              {teamLabel(me.team).toUpperCase()}
               {me.carrier ? " · BOMB" : ""}
             </small>
             <div className="bomb-ammo-row">

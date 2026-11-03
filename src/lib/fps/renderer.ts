@@ -25,7 +25,22 @@ import { capturePointer } from "./pointer-capture";
 import { TriggerFeedback } from "./trigger-feedback";
 import { createViewHands } from "./view-hands";
 import { createMuzzleFlash } from "./muzzle-flash";
-import { AK_VIEWMODEL, createAuthoredViewmodel, M4_VIEWMODEL } from "./authored-viewmodel";
+import {
+  AK_VIEWMODEL,
+  AWP_POLICE_VIEWMODEL,
+  AWP_TERRORIST_VIEWMODEL,
+  createAuthoredViewmodel,
+  M4_VIEWMODEL,
+} from "./authored-viewmodel";
+import {
+  AWP_VIEWMODEL_REST,
+  boltPose,
+  RELOAD_BOLT,
+  SHOT_BOLT,
+  type BoltPose,
+} from "./awp-animation";
+import { AWP_TIMELINE } from "./awp-timeline";
+import { primaryStats } from "./simulation";
 import {
   createKarambitViewmodel,
   KARAMBIT_VIEWMODEL_REST,
@@ -37,6 +52,8 @@ import { INSPECT_MS, M4_INSPECT, sampleVec } from "./reload-animation";
 import { REMOTE_DELAY_MS, SnapshotClock, PlaybackDelay, boundedPlaybackMs } from "./network";
 import { createViewmodelMotion } from "./viewmodel-motion";
 import { deathPose, deathSupport } from "./death-presentation";
+import { AWP, primaryOf, type Primary } from "./primary";
+import { AwpScope } from "./awp-scope";
 
 /**
  * World camera vertical FOV. 70° ≈ 102° horizontal at 16:9 — between CS:GO (≈106°) and COD
@@ -111,13 +128,15 @@ export function mountArena(
   host: HTMLElement,
   send: (input: Input) => void,
   onLock: (locked: boolean) => void,
-  onLocalShot?: (weapon: Weapon, seq: number) => void,
+  onLocalShot?: (weapon: Weapon, seq: number, primary?: Primary) => void,
   onLoadProgress?: (progress: ArenaLoadProgress) => void,
   /** The match's map (registry id; absent means Dustfront). Unknown ids throw. */
   options: {
     mapId?: string | null;
     /** First-person Karambit animation sound cues (equip, flip, spin, catch, slash, stab…). */
     onKnifeCue?: (cue: string) => void;
+    /** AWP zoom edges (true: zooming in), for the scope sounds. */
+    onScope?: (entering: boolean) => void;
   } = {},
 ): ArenaControls {
   const map = getMap(options.mapId);
@@ -376,6 +395,9 @@ export function mountArena(
   const authoredViews = {
     ak: createAuthoredViewmodel(weaponGroup),
     m4: createAuthoredViewmodel(weaponGroup, true, M4_VIEWMODEL),
+    // The AWP (spawn buy menu) on each team's arms; prepared before Ready like the rifles.
+    awpT: createAuthoredViewmodel(weaponGroup, true, AWP_TERRORIST_VIEWMODEL),
+    awpP: createAuthoredViewmodel(weaponGroup, true, AWP_POLICE_VIEWMODEL),
   };
   let authoredView = authoredViews.ak;
   // The Karambit (secondary slot) on each team's own arms: Police steel-blue duty sleeve,
@@ -394,14 +416,23 @@ export function mountArena(
     knifeDrawnAt = 0,
     lastKnifeEquipped = false;
   /** `side` is the character side (A Police, B Terrorist), which swaps at halftime. */
-  const selectViewmodel = (side: Seat | null) => {
-    const chosen = side === "A" ? authoredViews.m4 : authoredViews.ak;
+  const selectViewmodel = (side: Seat | null, primary: Primary = "rifle") => {
+    const chosen =
+      primary === "awp"
+        ? side === "A"
+          ? authoredViews.awpP
+          : authoredViews.awpT
+        : side === "A"
+          ? authoredViews.m4
+          : authoredViews.ak;
     knifeView = side === "A" ? knifeViews.m4 : knifeViews.ak;
     for (const view of Object.values(knifeViews)) if (view !== knifeView) view.root.visible = false;
     if (chosen === authoredView) return;
     authoredView.update(false, 0, 0);
     authoredView = chosen;
     inspectStart = -Infinity;
+    // Drawing the AWP (bought, or the side swapped): it comes up from below.
+    if (chosen.variant === "awp") drawStart = performance.now();
     for (const pool of Object.values(casingPools)) pool.clear();
   };
   /** Ejected cases per rifle: 5.56 brass for the M4, 7.62×39 brass for the AK. */
@@ -410,7 +441,13 @@ export function mountArena(
     ak: createShellCasings(1, AK_CASING),
   };
   for (const pool of Object.values(casingPools)) viewScene.add(pool.mesh);
-  let inspectStart = -Infinity;
+  let inspectStart = -Infinity,
+    drawStart = -Infinity,
+    /** Client time of the last presented AWP shot (bolt cycle and case ejection). */
+    awpShotAt = -Infinity,
+    awpEjected = true,
+    lastRifleDrawn = false,
+    lastPrimary: Primary | null = null;
   const ejectAt = new THREE.Vector3(),
     ejectRight = new THREE.Vector3(),
     ejectUp = new THREE.Vector3(),
@@ -437,6 +474,8 @@ export function mountArena(
     [
       authoredViews.ak.ready,
       authoredViews.m4.ready,
+      authoredViews.awpT.ready,
+      authoredViews.awpP.ready,
       knifeViews.ak.ready,
       knifeViews.m4.ready,
       characters.A.ready,
@@ -446,7 +485,7 @@ export function mountArena(
       asset.then(() => {
         if (!stopped)
           onLoadProgress?.({
-            value: 15 + ++preparedAssets * 15,
+            value: 15 + ++preparedAssets * 10,
             label: "Preparing map, operators and weapons",
           });
       }),
@@ -514,6 +553,16 @@ export function mountArena(
   let lastServerOffset = 0;
   const crosshair = host.parentElement?.querySelector<HTMLElement>(".duel-crosshair");
   const hitMarker = host.parentElement?.querySelector<HTMLElement>(".duel-hit-marker");
+  /** AWP 4× zoom (right mouse); the lens overlay is a sibling element of the canvas host. */
+  const scope = new AwpScope();
+  const scopeOverlay = host.parentElement?.querySelector<HTMLElement>(".awp-scope");
+  let scopeOn = false,
+    lastOverlay = false,
+    lastFov = WORLD_FOV,
+    lastAwpCrosshair = false;
+  /** The local player's primary (rifle slot): the AWP or the side's rifle. */
+  const ownPrimary = (): Primary => (state && seat ? primaryOf(state.players[seat]) : "rifle");
+  const renderedWeaponFor = (): Weapon => (state && seat ? state.players[seat].weapon : weapon);
   let state: MatchState | null = null,
     seat: Seat | null = "A",
     predicted: Player | null = null;
@@ -584,11 +633,9 @@ export function mountArena(
   let sensitivity = 1;
   const mouse = (e: MouseEvent) => {
     if (!locked()) return;
-    yaw -= e.movementX * HANDLING.sensitivity * sensitivity;
-    pitch = Math.max(
-      -1.45,
-      Math.min(1.45, pitch - e.movementY * HANDLING.sensitivity * sensitivity),
-    );
+    const look = HANDLING.sensitivity * sensitivity * scope.sensitivity();
+    yaw -= e.movementX * look;
+    pitch = Math.max(-1.45, Math.min(1.45, pitch - e.movementY * look));
     lookX += e.movementX;
     lookY += e.movementY;
     yaw = ((((yaw + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) - Math.PI;
@@ -623,7 +670,12 @@ export function mountArena(
     // Karambit inspect (F): cosmetic only; attacks and weapon switches interrupt it.
     if (e.code === "KeyF" && !e.repeat && weapon === "knife") knifeView.animator?.inspect();
     // Police M4A1 inspection: cosmetic only, cancelled by firing, reloading or switching.
-    if (e.code === "KeyF" && !e.repeat && weapon === "rifle" && authoredView.variant === "m4") {
+    if (
+      e.code === "KeyF" &&
+      !e.repeat &&
+      weapon === "rifle" &&
+      (authoredView.variant === "m4" || authoredView.variant === "awp")
+    ) {
       const now = performance.now();
       if (now - inspectStart > INSPECT_MS) inspectStart = now;
     }
@@ -646,17 +698,28 @@ export function mountArena(
     const own = state.players[seat],
       now = performance.now();
     if (weapon !== "rifle") return;
-    const interval = state.combatVersion === COMBAT_VERSION ? 100 : WEAPONS.rifle.fireIntervalMs;
+    const awp = primaryOf(own) === "awp";
+    const interval = awp
+      ? AWP.cycleMs
+      : state.combatVersion === COMBAT_VERSION
+        ? 100
+        : WEAPONS.rifle.fireIntervalMs;
     if (
       triggerFeedback.request(own, weapon, commandSeq, now, Date.now() + lastServerOffset, interval)
     ) {
+      if (awp) {
+        scope.shot(now);
+        awpShotAt = now;
+        awpEjected = false;
+      }
       kick = 1;
       muzzleUntil = now + 42;
       smokeUntil = now + 240;
       flashPending = true;
       inspectStart = -Infinity;
-      ejectCase(now);
-      onLocalShot?.(weapon, commandSeq);
+      // The AWP's case leaves the port when the bolt is drawn back, not at the shot.
+      if (!awp) ejectCase(now);
+      onLocalShot?.(weapon, commandSeq, awp ? "awp" : undefined);
     }
   };
   /**
@@ -684,6 +747,11 @@ export function mountArena(
   const mousedown = (e: MouseEvent) => {
     if (!locked() || (e.button !== 0 && e.button !== 2)) return;
     const stab = e.button === 2;
+    // AWP: right mouse toggles the 4× zoom (the server applies it from input.scope).
+    if (stab && weapon === "rifle" && ownPrimary() === "awp") {
+      if (state?.phase === "live" && predicted && predicted.hp > 0) scope.toggle();
+      return;
+    }
     if (stab && weapon !== "knife") return;
     if (stab) {
       alt = true;
@@ -767,6 +835,7 @@ export function mountArena(
       weapon: "rifle" as Weapon,
       reloading: false,
       death: undefined as number | undefined,
+      primary: "rifle" as Primary,
     };
   let actorElapsed = 0;
   /** False while the opponent is not animated (hidden or off-screen); see resetMotion. */
@@ -815,8 +884,12 @@ export function mountArena(
         sprint: false,
         walk: active && (keys.has("ShiftLeft") || keys.has("ShiftRight")),
         crouch: active && (keys.has("ControlLeft") || keys.has("ControlRight")),
+        ...(active && weapon === "rifle" && scope.wanted ? { scope: true } : {}),
       };
       if (state.phase === "live" && !authorizationSuspended) {
+        // Movement speed follows the predicted zoom (scoped AWP: 100 u/s), as on the server.
+        if (scopeOn) predicted.scoped = true;
+        else delete predicted.scoped;
         const beforeY = predicted.y;
         const beforeTuck = predicted.airCrouchOffset ?? 0;
         predictMovement(predicted, input, TICK_MS, map);
@@ -827,7 +900,9 @@ export function mountArena(
         pending.push(input);
         if (pending.length > 60) pending.shift();
       }
-      if (input.fire && input.weapon === "rifle") presentLocalShot(input.seq);
+      // The AWP is semi-automatic: only the click (mousedown) fires, never a held trigger.
+      if (input.fire && input.weapon === "rifle" && ownPrimary() !== "awp")
+        presentLocalShot(input.seq);
       // Held knife buttons repeat at the server's cooldown; present each accepted swing.
       if (input.fire && input.weapon === "knife") presentLocalAttack(input.alt ? "stab" : "slash");
       send(input);
@@ -993,6 +1068,7 @@ export function mountArena(
           actorMotion.stance = remotePose.crouch;
           actorMotion.airborne = remotePose.y > 0.01;
           actorMotion.weapon = other.weapon;
+          actorMotion.primary = primaryOf(other);
           actorMotion.reloading = other.reloadUntil > Date.now() + lastServerOffset;
           actorMotion.death = collapse?.progress;
           actor.update(
@@ -1048,7 +1124,32 @@ export function mountArena(
       : 0;
     smoke.position.set(0, 0.025 + (1 - Math.max(0, (smokeUntil - now) / 240)) * 0.08, barrel);
     smoke.scale.setScalar(1 + (1 - Math.max(0, (smokeUntil - now) / 240)) * 1.3);
-    weaponGroup.visible = !!seat && !!state && state.players[seat].hp > 0;
+    // AWP zoom: predicted like the server's rule; the lens hides the viewmodel and narrows the
+    // world camera to a true 4×.
+    const serverClock = Date.now() + lastServerOffset;
+    const zoomed = scope.update(state && seat ? state.players[seat] : null, dt, now, serverClock);
+    if (zoomed !== scopeOn) {
+      scopeOn = zoomed;
+      options.onScope?.(zoomed);
+    }
+    if (scope.overlay !== lastOverlay) {
+      lastOverlay = scope.overlay;
+      scopeOverlay?.classList.toggle("is-on", lastOverlay);
+    }
+    const fov = scope.fov(WORLD_FOV);
+    if (fov !== lastFov) {
+      lastFov = fov;
+      camera.fov = fov;
+      camera.updateProjectionMatrix();
+    }
+    const awpCrosshair = ownPrimary() === "awp" && renderedWeaponFor() === "rifle";
+    if (awpCrosshair !== lastAwpCrosshair) {
+      lastAwpCrosshair = awpCrosshair;
+      // Snipers have no hip crosshair (CS); the scope reticle replaces it when zoomed. A data
+      // attribute on the HUD root (React does not own it) hides the crosshair in CSS.
+      if (host.parentElement) host.parentElement.dataset["awp"] = awpCrosshair ? "1" : "";
+    }
+    weaponGroup.visible = !!seat && !!state && state.players[seat].hp > 0 && !scope.overlay;
     // Casings in flight hide with the rifle: drawn without the weapon's muzzle light they need a
     // second shader variant, compiled at the moment of death (render audit 2026-11-03).
     for (const pool of Object.values(casingPools)) pool.mesh.visible = weaponGroup.visible;
@@ -1061,9 +1162,9 @@ export function mountArena(
       state && seat
         ? Math.max(0, state.players[seat].reloadUntil - (Date.now() + lastServerOffset))
         : 0;
-    const reloadProgress = reloadRemaining
-      ? Math.min(1, reloadRemaining / WEAPONS.rifle.reloadMs)
-      : 0;
+    const ownPlayer = state && seat ? state.players[seat] : null;
+    const reloadMs = ownPlayer ? primaryStats(ownPlayer).reloadMs : WEAPONS.rifle.reloadMs;
+    const reloadProgress = reloadRemaining ? Math.min(1, reloadRemaining / reloadMs) : 0;
     const authoredRifle = authoredView.loaded && renderedWeapon === "rifle";
     // The authored rifle animates the reload on its own rig; the fallback/pistol keep the tilt cue.
     const reloadTilt = reloadRemaining && !authoredRifle ? Math.sin(reloadProgress * Math.PI) : 0;
@@ -1073,11 +1174,27 @@ export function mountArena(
     // An empty AK has no bolt hold-open: that reload chambers a round with the charging handle.
     // Ammo only changes when the server completes the reload, so this holds for its whole window.
     const reloadKind = state && seat && state.players[seat].ammo === 0 ? "empty" : "tactical";
+    // AWP bolt: after a shot (local presentation or the server's clock, whichever is newer) and
+    // at the end of an empty reload; the case leaves the port as the bolt reaches the rear.
+    let bolt: BoltPose | null = null;
+    if (authoredView.variant === "awp" && ownPlayer) {
+      if (reloadRemaining > 0) {
+        if (reloadKind === "empty") bolt = boltPose((1 - reloadProgress) * reloadMs, RELOAD_BOLT);
+      } else {
+        const sinceShot = Math.min(now - awpShotAt, serverClock - ownPlayer.lastShotAt);
+        if (sinceShot >= 0 && sinceShot < AWP.cycleMs) bolt = boltPose(sinceShot, SHOT_BOLT);
+        if (!awpEjected && now - awpShotAt >= AWP_TIMELINE.bolt.eject) {
+          awpEjected = true;
+          ejectCase(now);
+        }
+      }
+    }
     authoredView.update(
       renderedWeapon === "rifle",
       reloadRemaining ? 1 - reloadProgress : 0,
       kick,
       reloadKind,
+      bolt,
     );
     magazine.position.y = -reloadTilt * 0.08;
     magazine.rotation.x = reloadTilt * 0.14;
@@ -1125,9 +1242,11 @@ export function mountArena(
     }
     const rest = knife
       ? { ...KARAMBIT_VIEWMODEL_REST, x: karambitRestX(viewCamera.aspect) }
-      : authoredView.variant === "m4"
-        ? M4_VIEWMODEL_REST
-        : VIEWMODEL_REST;
+      : authoredView.variant === "awp"
+        ? AWP_VIEWMODEL_REST
+        : authoredView.variant === "m4"
+          ? M4_VIEWMODEL_REST
+          : VIEWMODEL_REST;
     // Inspection offsets (M4 only), relative to the stable camera; never during a reload.
     if (reloadRemaining > 0 || renderedWeapon !== "rifle" || !authoredRifle)
       inspectStart = -Infinity;
@@ -1135,6 +1254,12 @@ export function mountArena(
     const ip = inspect >= 0 && inspect < 1 ? sampleVec(M4_INSPECT.position, inspect) : null,
       ir = ip ? sampleVec(M4_INSPECT.rotation, inspect) : null;
     const framed = authoredRifle || knife;
+    // AWP draw: the rifle swings up from below (bought, switched to, or the side swapped).
+    const rifleDrawn = authoredRifle && authoredView.variant === "awp";
+    if (rifleDrawn && !lastRifleDrawn) drawStart = now;
+    lastRifleDrawn = rifleDrawn;
+    const drawT = rifleDrawn ? Math.min(1, (now - drawStart) / AWP_TIMELINE.equipMs) : 1;
+    const draw = 1 - drawT * drawT * (3 - 2 * drawT);
     // Knife clips may frame the blade toward screen centre (viewmodel only; aim never moves).
     const vp = knife && knifePose ? knifePose.viewPosition : null;
     weaponGroup.position.set(
@@ -1144,11 +1269,12 @@ export function mountArena(
         landKick -
         reloadTilt * 0.07 +
         (ip?.[1] ?? 0) +
-        (vp?.y ?? 0),
+        (vp?.y ?? 0) -
+        draw * 0.22,
       (framed ? rest.z : -0.62) + sway.z + (ip?.[2] ?? 0) + (vp?.z ?? 0),
     );
     weaponGroup.rotation.set(
-      (framed ? rest.pitch : 0) + sway.pitch + reloadTilt * 0.13 + (ir?.[0] ?? 0),
+      (framed ? rest.pitch : 0) + sway.pitch + reloadTilt * 0.13 + (ir?.[0] ?? 0) - draw * 0.7,
       (framed ? rest.yaw : 0.18) + sway.yaw + (ir?.[1] ?? 0),
       (framed ? rest.roll : -0.02) + sway.roll - reloadTilt * 0.55 + (ir?.[2] ?? 0),
     );
@@ -1253,7 +1379,10 @@ export function mountArena(
       );
       visibility = frame.visibility ?? { A: true, B: true };
       seat = assignedSeat;
-      selectViewmodel(seat ? characterSide(state, seat) : null);
+      selectViewmodel(
+        seat ? characterSide(state, seat) : null,
+        seat ? primaryOf(state.players[seat]) : "rifle",
+      );
       const measuredOffset = frame.serverNow - Date.now();
       lastServerOffset =
         lastRound === 0
@@ -1262,6 +1391,15 @@ export function mountArena(
       if (seat) {
         const authoritative = state.players[seat];
         seq = Math.max(seq, authoritative.lastSeq);
+        // A purchase hands out the new primary drawn (the server switches to the rifle slot).
+        const primaryNow = primaryOf(authoritative);
+        if (primaryNow !== lastPrimary) {
+          if (lastPrimary !== null) weapon = authoritative.weapon;
+          lastPrimary = primaryNow;
+          triggerFeedback.reset();
+          awpShotAt = -Infinity;
+          awpEjected = true;
+        }
         if (lastRound !== state.round) {
           pending = [];
           // The server resets the loadout at respawn; do not replay last round's pistol choice.
@@ -1278,6 +1416,9 @@ export function mountArena(
           kick = 0;
           shotIndex = 0;
           triggerFeedback.reset();
+          scope.reset();
+          awpShotAt = -Infinity;
+          awpEjected = true;
           fireLatched = false;
           flashPending = false;
           muzzleUntil = 0;
@@ -1409,6 +1550,8 @@ export function mountArena(
       muzzle.dispose();
       authoredViews.ak.dispose();
       authoredViews.m4.dispose();
+      authoredViews.awpT.dispose();
+      authoredViews.awpP.dispose();
       knifeViews.ak.dispose();
       knifeViews.m4.dispose();
       for (const pool of Object.values(casingPools)) pool.dispose();

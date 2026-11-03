@@ -6,6 +6,8 @@
 import { mountArena } from "../../../src/lib/fps/renderer";
 import { createMatch, startMatch, stepMatch, TICK_MS } from "../../../src/lib/fps/simulation";
 import { createPracticeBot } from "../../../src/lib/fps/practice-bot";
+import { applyPurchase } from "../../../src/lib/fps/buy";
+import { primaryStats } from "../../../src/lib/fps/simulation";
 
 /** Shader names compiled (three defines SHADER_NAME per program), recorded as they compile. */
 const compiled: string[] = [];
@@ -19,10 +21,10 @@ WebGL2RenderingContext.prototype.shaderSource = function (shader, text) {
 };
 declare global {
   interface Window {
-    check: (mapId: string, playMs: number) => Promise<unknown>;
+    check: (mapId: string, playMs: number, awp?: boolean) => Promise<unknown>;
   }
 }
-window.check = async (mapId, playMs) => {
+window.check = async (mapId, playMs, awp = false) => {
   const host = document.createElement("div");
   host.style.cssText = "position:fixed;inset:0";
   document.body.appendChild(host);
@@ -30,6 +32,10 @@ window.check = async (mapId, playMs) => {
   const state = createMatch({ A: "a", B: "b" }, 5, now0 - 3000, undefined, mapId);
   startMatch(state, now0 - 3000);
   stepMatch(state, {}, now0, TICK_MS);
+  // AWP run: both players carry it (first person, bolt, reloads, zoom; third person).
+  if (awp)
+    for (const seat of ["A", "B"] as const)
+      applyPurchase(state.players[seat], "awp", primaryStats({ primary: "awp" }));
   const controls = mountArena(
     host,
     () => {},
@@ -75,7 +81,9 @@ window.check = async (mapId, playMs) => {
       yaw: a.yaw + 0.06,
       pitch: 0,
       weapon: s % 6 < 4 ? "rifle" : "knife",
-      fire: s % 1.2 < 0.4,
+      // The AWP fires on the trigger edge: one tick every 1.6 s, zoomed half of the time.
+      fire: awp ? s % 1.6 < 0.04 : s % 1.2 < 0.4,
+      ...(awp && s % 6 < 4 && s % 8 < 4 ? { scope: true } : {}),
       reload: a.ammo === 0,
       jump: false,
       sprint: false,

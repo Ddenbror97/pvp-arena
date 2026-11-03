@@ -83,3 +83,20 @@ to the spoken line, mixed to mono, 70 Hz high-pass, 20/70 ms fades, loudness-mat
 `voice-bomb-planted-v1.mp3`: "The bomb has been planted." — owner-supplied `The bomb has been planted.mp3`, copied without re-encoding or voice/pitch changes; played to everyone on the authoritative bomb-planted event. Unlike the three WAV lines above, this file retains its original MP3 encoding.
 
 `voice-terrorist-win-v1.mp3` and `voice-police-win-v1.mp3` are the owner's supplied `Terrorist win.mp3` and `Anti terrorist win.mp3`, copied without re-encoding or voice changes. The matching line plays to everyone on a confirmed Bomb Defusal round end, including halftime and the final round. They are not loaded in 1v1.
+
+## AWP
+
+`awp-shot-v2.wav`: the owner-supplied `Sniper_shoot_sound.mp3`. Its 1.5 s of leading silence was
+trimmed, it was downmixed to mono (for in-game panning), the last 0.45 s faded and the level set
+to −16.5 LUFS; nothing else was changed (no EQ, pitch or effects).
+
+The rest is original, deterministic procedural synthesis (no recordings), built by
+`scripts/fps/build-awp-audio.mjs` on the AWP animation timeline (`src/lib/fps/awp-timeline.ts`).
+
+| File | Sound |
+| --- | --- |
+| `awp-bolt-v1.wav` | bolt cycle after a shot: handle up, rearward slide, case, forward, lock |
+| `awp-reload-v2.wav` | magazine change with a round chambered, with ringing steel on the release, the magazine leaving the well and seating |
+| `awp-reload-empty-v2.wav` | the same, the empty magazine clanking on the floor, then the bolt slamming home |
+| `awp-zoom-in-v1.wav`, `awp-zoom-out-v1.wav` | scope clicks |
+| `awp-draw-v1.wav` | sling rustle and the rifle settling into the shoulder |

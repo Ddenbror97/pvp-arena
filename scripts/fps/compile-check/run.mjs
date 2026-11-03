@@ -1,4 +1,4 @@
-/** node scripts/fps/compile-check/run.mjs [maps] [--chromium=…]  (see entry.ts) */
+/** [AWP=1] node scripts/fps/compile-check/run.mjs [maps] [--chromium=…]  (see entry.ts) */
 import { build } from "esbuild";
 import http from "node:http";
 import fs from "node:fs";
@@ -62,8 +62,8 @@ await page.waitForFunction(() => typeof window.check === "function");
 let bad = 0;
 for (const m of maps) {
   const r = await page.evaluate(
-    ([m, ms]) => window.check(m, ms),
-    [m, Number(process.env.PLAY_MS ?? 60000)],
+    ([m, ms, awp]) => window.check(m, ms, awp),
+    [m, Number(process.env.PLAY_MS ?? 60000), process.env.AWP === "1"],
   );
   console.log(JSON.stringify({ ...r, compiledAfterReady: r.after - r.atReady }));
   if (r.after !== r.atReady) bad++;

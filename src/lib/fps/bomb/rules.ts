@@ -99,6 +99,8 @@ export interface BombEvent {
   zone?: string;
   damage?: number;
   headshot?: boolean;
+  /** Shots fired with the AWP (the sound and tracer differ). */
+  primary?: "awp";
   point?: { x: number; y: number; z: number };
   direction?: { x: number; y: number; z: number };
   impact?: import("../collision").WorldHit;

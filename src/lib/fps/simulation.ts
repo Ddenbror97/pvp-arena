@@ -25,6 +25,18 @@ import {
   type Player,
   type Seat,
 } from "./protocol";
+import {
+  AWP,
+  awpDamage,
+  awpSpeedFraction,
+  awpSpread,
+  primaryOf,
+  scopeSettled,
+  updateScope,
+  weaponMoveScale,
+  type Primary,
+} from "./primary";
+import { applyPurchase, buyWindowOpen, type BuyWindow } from "./buy";
 export { validateInput } from "./protocol";
 export type { Input, MatchState, Player } from "./protocol";
 
@@ -59,15 +71,24 @@ const emptyRoundStats = () => ({
   B: { shots: 0, hits: 0, headHits: 0, damage: 0, health: 100 },
 });
 
-function player(id: string, seat: Seat, map: GameMap): Player {
+/** Magazine, reserve and reload time of the primary a player holds. */
+export function primaryStats(p: Pick<Player, "primary">) {
+  return primaryOf(p) === "awp"
+    ? { magazine: AWP.magazine, reserve: AWP.reserve, reloadMs: AWP.reloadMs }
+    : WEAPONS.rifle;
+}
+
+function player(id: string, seat: Seat, map: GameMap, primary: Primary = "rifle"): Player {
+  const stats = primaryStats({ primary });
   return {
     id,
     ...map.spawns[seat],
     y: 0,
     pitch: 0,
     hp: 100,
-    ammo: WEAPONS.rifle.magazine,
-    reserve: WEAPONS.rifle.reserve,
+    ammo: stats.magazine,
+    reserve: stats.reserve,
+    ...(primary === "awp" ? { primary } : {}),
     weapon: "rifle",
     reloadUntil: 0,
     lastShotAt: -1e12,
@@ -235,6 +256,7 @@ export function predictMovement(
     const length = Math.max(1, Math.hypot(input.forward, input.strafe));
     const speed =
       (MOVE_SPEED *
+        weaponMoveScale(p) *
         (input.walk ? WALK_SPEED_SCALE : p.crouched ? 0.48 : input.sprint ? 1.5 : 1) *
         seconds) /
       length;
@@ -327,24 +349,40 @@ function shoot(
   const start = positions[seat],
     targetStart = historicalTarget ?? positions[other(seat)];
   const modern = state.combatVersion === COMBAT_VERSION;
-  if (p.reloadUntil || !p.ammo || now - p.lastShotAt < (modern ? 100 : stats.fireIntervalMs))
+  const awp = primaryOf(p) === "awp";
+  if (
+    p.reloadUntil ||
+    !p.ammo ||
+    now - p.lastShotAt < (awp ? AWP.cycleMs : modern ? 100 : stats.fireIntervalMs)
+  )
     return;
+  // The AWP's cone is decided by the zoom held when the trigger broke (then the zoom drops).
+  const awpCone = awp
+    ? awpSpread({
+        scoped: scopeSettled(p, now),
+        speedFraction: input.combatOnly ? (p.moving ? 1 : 0) : awpSpeedFraction(input, p),
+        airborne: (p.velocityY ?? 0) !== 0,
+        crouched: !!p.crouched,
+      })
+    : 0;
   if (!modern) p.sprayCount = now - p.lastShotAt > 300 ? 1 : (p.sprayCount ?? 0) + 1;
-  const spread = modern
-    ? 0.0015 *
-      combatSpread(
-        (p.sprayCount ?? 0) + 1,
-        input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
-        (p.velocityY ?? 0) !== 0,
-        !!p.crouched,
-      )
-    : stats.recoil *
-      spreadScale(
-        p.sprayCount ?? 1,
-        input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
-        (p.velocityY ?? 0) !== 0,
-      ) *
-      (p.crouched ? 0.8 : 1);
+  const spread = awp
+    ? awpCone
+    : modern
+      ? 0.0015 *
+        combatSpread(
+          (p.sprayCount ?? 0) + 1,
+          input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
+          (p.velocityY ?? 0) !== 0,
+          !!p.crouched,
+        )
+      : stats.recoil *
+        spreadScale(
+          p.sprayCount ?? 1,
+          input.combatOnly ? !!p.moving : Math.hypot(input.forward, input.strafe) > 0.1,
+          (p.velocityY ?? 0) !== 0,
+        ) *
+        (p.crouched ? 0.8 : 1);
   p.ammo--;
   const counters = state.server ? (state.server.roundStats ??= emptyRoundStats())[seat] : null;
   if (counters) counters.shots++;
@@ -355,6 +393,11 @@ function shoot(
       ? (state.server.spreadSeed =
           (Math.imul(state.server.spreadSeed ?? 1, 1664525) + 1013904223) >>> 0)
       : (Math.imul(p.lastSeq + 1, 1664525) + Math.imul(state.tick, 1013904223)) >>> 0;
+  if (awp) {
+    // Bolt action: no spray pattern (the recoil settles within the cycle); the zoom drops.
+    delete p.scoped;
+    delete p.scopedAt;
+  }
   const yaw = input.yaw + (modern ? (p.recoilYaw ?? 0) : 0) + ((hash % 1001) / 500 - 1) * spread;
   const pitch =
     input.pitch + (modern ? (p.recoilPitch ?? 0) : 0) + (((hash >>> 10) % 1001) / 500 - 1) * spread;
@@ -381,11 +424,12 @@ function shoot(
     type: "shot",
     shotSeq: input.seq,
     seat,
-    text: "rifle fired",
+    text: awp ? "AWP fired" : "rifle fired",
     weapon: "rifle",
+    ...(awp ? { primary: "awp" as const } : {}),
     audio: { kind: "shot", position: origin },
   });
-  if (modern) advanceCombatRecoil(p);
+  if (modern && !awp) advanceCombatRecoil(p);
   if (contact.distance >= wall || !Number.isFinite(contact.distance)) {
     if (worldHit)
       state.events.push({
@@ -397,11 +441,13 @@ function shoot(
     return;
   }
   const headshot = contact.zone === "head";
-  const damage = modern
-    ? state.armorVersion === 1
-      ? applyVestDamage(target, "rifle", contact.zone)
-      : HIT_DAMAGE.rifle[contact.zone]
-    : stats.damage * (headshot ? stats.headshotMultiplier : 1);
+  const damage = awp
+    ? awpDamage(target, contact.zone)
+    : modern
+      ? state.armorVersion === 1
+        ? applyVestDamage(target, "rifle", contact.zone)
+        : HIT_DAMAGE.rifle[contact.zone]
+      : stats.damage * (headshot ? stats.headshotMultiplier : 1);
   if (counters) {
     counters.hits++;
     counters.headHits += Number(headshot);
@@ -586,6 +632,7 @@ export function applyQueuedMovement(
     if (
       state.combatVersion !== COMBAT_VERSION ||
       input.weapon !== "rifle" ||
+      primaryOf(p) === "awp" ||
       !next ||
       next.combatOnly ||
       next.seq <= input.seq ||
@@ -608,6 +655,38 @@ export function applyQueuedMovement(
   else if (p.y === before.y && !(p.velocityY ?? 0))
     p.stepDistance = (p.stepDistance ?? 0) + Math.hypot(p.x - before.x, p.z - before.z);
   return true;
+}
+
+/**
+ * Spawn buy (B) in a 1v1: swap the primary between the side's rifle and the AWP. Allowed in the
+ * countdown and between rounds (applies to the next spawn, which keeps the primary), and in the
+ * first BUY_TIME_MS of a live round near the player's spawn. Returns true when applied.
+ */
+/** The 1v1 buy window for `seat` at server time `now` (also the client's buy-menu hint). */
+export function duelBuyWindow(state: MatchState, seat: Seat, now: number): BuyWindow {
+  const p = state.players[seat];
+  const spawn = mapOf(state).spawns[spawnSide(state, seat)];
+  return {
+    preRound: state.phase === "countdown" || state.phase === "round-end",
+    live: state.phase === "live",
+    sinceLiveMs: now - (state.phaseEndsAt - ROUND_MS),
+    fromSpawn: Math.hypot(p.x - spawn.x, p.z - spawn.z),
+    alive: p.hp > 0 || state.phase === "round-end",
+  };
+}
+
+export function buyPrimary(state: MatchState, seat: Seat, item: Primary, now: number): boolean {
+  const p = state.players[seat];
+  if (!p || state.phase === "completed" || state.phase === "cancelled" || state.phase === "waiting")
+    return false;
+  if (!buyWindowOpen(duelBuyWindow(state, seat, now))) return false;
+  if (state.phase === "round-end") {
+    // The next spawn hands out the new primary with full ammunition.
+    if (item === "awp") p.primary = "awp";
+    else delete p.primary;
+    return true;
+  }
+  return applyPurchase(p, item, primaryStats({ ...(item === "awp" ? { primary: item } : {}) }));
 }
 
 export function stepMatch(
@@ -636,7 +715,8 @@ export function stepMatch(
     for (const seat of SEATS) {
       const old = state.players[seat];
       state.players[seat] = {
-        ...player(old.id, spawnSide(state, seat), map),
+        // The bought primary carries over to the next round (practice: no economy).
+        ...player(old.id, spawnSide(state, seat), map, primaryOf(old)),
         ...(state.armorVersion === 1 ? { armor: 100 } : {}),
         kills: old.kills,
         headshots: old.headshots,
@@ -699,7 +779,7 @@ export function stepMatch(
           : candidate;
     if (state.combatVersion === COMBAT_VERSION) recoverCombatRecoil(p, now);
     if (p.reloadUntil && now >= p.reloadUntil) {
-      const amount = Math.min(WEAPONS.rifle.magazine - p.ammo, p.reserve);
+      const amount = Math.min(primaryStats(p).magazine - p.ammo, p.reserve);
       p.ammo += amount;
       p.reserve -= amount;
       p.reloadUntil = 0;
@@ -724,9 +804,10 @@ export function stepMatch(
         p.weapon === "rifle" &&
         !p.reloadUntil &&
         p.reserve > 0 &&
-        p.ammo < WEAPONS.rifle.magazine
+        p.ammo < primaryStats(p).magazine
       )
-        p.reloadUntil = now + WEAPONS.rifle.reloadMs;
+        p.reloadUntil = now + primaryStats(p).reloadMs;
+      updateScope(p, !!input.scope, now);
       const before = { x: p.x, y: p.y, z: p.z };
       predictMovement(p, input, TICK_MS, map);
       if (input.walk) p.stepDistance = 0;
@@ -790,7 +871,9 @@ export function stepMatch(
       input?.fire &&
       (!input.combatOnly || input.weapon === p.weapon) &&
       (!(input.combatOnly ? p.sprinting : input.sprint) || p.crouched) &&
-      (state.combatVersion !== COMBAT_VERSION || p.weapon === "rifle" || !p.triggerHeld)
+      (state.combatVersion !== COMBAT_VERSION ||
+        (p.weapon === "rifle" && primaryOf(p) !== "awp") ||
+        !p.triggerHeld)
     )
       shoot(state, seat, now, positions, input, historicalTargets?.[seat]);
     if (input) p.triggerHeld = accepted[seat]?.fire ?? input.fire;
@@ -812,8 +895,10 @@ export function stepMatch(
   if (state.phase === "live")
     for (const seat of SEATS) {
       const p = state.players[seat];
-      if (p.hp > 0 && p.weapon === "rifle" && p.ammo === 0 && p.reserve > 0 && !p.reloadUntil)
-        p.reloadUntil = now + WEAPONS.rifle.reloadMs;
+      if (p.hp > 0 && p.weapon === "rifle" && p.ammo === 0 && p.reserve > 0 && !p.reloadUntil) {
+        p.reloadUntil = now + primaryStats(p).reloadMs;
+        updateScope(p, false, now);
+      }
     }
   return state;
 }

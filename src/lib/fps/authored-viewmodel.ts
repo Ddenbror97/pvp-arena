@@ -26,6 +26,7 @@ import {
   type ReloadKind,
   type SupportKey,
 } from "./reload-animation";
+import { AWP_BOLT, AWP_KICK, AWP_RELOAD_CLIPS, BOLT_CANT, type BoltPose } from "./awp-animation";
 
 /** Relief depth of the forearm detail map, in viewmodel-root units per unit of height. */
 const FOREARM_BUMP_SCALE = 0.065;
@@ -56,7 +57,13 @@ const HANDLE_ELBOW = new THREE.Vector3(-0.42, -0.3, 0.3);
  * every AK value below is the constant it always used, so the AK is unchanged.
  */
 export type ViewmodelVariant = {
-  id: "ak" | "m4";
+  id: "ak" | "m4" | "awp";
+  /**
+   * Bolt-action rifle (AWP): the moving part is `Bolt` (child `BoltHandle`, knob `BoltKnob`)
+   * instead of `ChargingHandle`, and the RIGHT arm is a separate rig that leaves the pistol grip
+   * to work the bolt (see awp-animation.ts boltPose).
+   */
+  boltAction?: boolean;
   asset: string;
   clips: Record<ReloadKind, ReloadClip>;
   /** Support-hand grip on the handguard (identity for the AK handguard the rig was tuned on). */
@@ -123,6 +130,52 @@ export const M4_VIEWMODEL: ViewmodelVariant = {
   arms: "police",
 };
 
+/**
+ * AWP (both teams' arms; the GLB is the AWP merged onto that team's rig). Support hand: the AK
+ * handguard wrap opened slightly and moved down onto the fore-end axis (rig Y −0.055).
+ */
+const AWP_BASE = {
+  id: "awp",
+  boltAction: true,
+  clips: AWP_RELOAD_CLIPS,
+  guard: {
+    ...scaledGuardGrip(0.82, new THREE.Vector3(0.004, -0.044, 0)),
+    handTwist: SUPPORT_HAND_TWIST,
+  },
+  magazine: {
+    offset: new THREE.Vector3(0, -0.02, -0.02),
+    edgeDown: new THREE.Vector3(0, -0.97, -0.24),
+    toWrist: MAG_TO_WRIST,
+    squeeze: 0.95,
+    rock: "straight",
+  },
+  chargingHandle: false,
+  boltKick: 0,
+  forearms: SHORT_FOREARMS,
+} as const satisfies Omit<ViewmodelVariant, "asset" | "arms">;
+export const AWP_TERRORIST_VIEWMODEL: ViewmodelVariant = {
+  ...AWP_BASE,
+  asset: ARENA_MODELS.awpTerrorist,
+  arms: "jacket",
+};
+export const AWP_POLICE_VIEWMODEL: ViewmodelVariant = {
+  ...AWP_BASE,
+  asset: ARENA_MODELS.awpPolice,
+  arms: "police",
+};
+
+/**
+ * Right hand on the AWP bolt knob: the fist (centred on the pistol-grip marker) moves onto the
+ * knob ball, offset to the knob's outer side, and turns part of the way from the grip axis to the
+ * knob's shaft so the fingers close round it. Rig units / fraction of the full turn.
+ */
+const KNOB_FIST_OFFSET = new THREE.Vector3(-0.05, 0.015, 0);
+const KNOB_TURN = 0.7;
+/** The hand follows the handle's lift about the bore only partly (the wrist turns the rest). */
+const KNOB_FOLLOW_ROLL = 0.35;
+/** The hand's arc off the grip on the way to the knob (rig units, scaled by sin(πt)). */
+const KNOB_ARC = new THREE.Vector3(0.02, 0.05, 0.03);
+
 /** M4 bolt-catch strike: wrist offset from the magazine-grip wrist, beyond the paddle shift. */
 const BOLT_CATCH_PALM = new THREE.Vector3(-0.012, -0.012, 0.018);
 
@@ -182,6 +235,9 @@ export function createAuthoredViewmodel(
     marker = new THREE.Object3D();
   let magazine: THREE.Object3D | undefined,
     bolt: THREE.Object3D | undefined,
+    boltHandle: THREE.Object3D | undefined,
+    boltKnob: THREE.Object3D | undefined,
+    handleRest = 0,
     magazineGrip: THREE.Object3D | undefined,
     ejectionPort: THREE.Object3D | undefined;
   /** M4: the magazine-grip hand moved onto the bolt catch (root space, rest pose). */
@@ -206,6 +262,14 @@ export function createAuthoredViewmodel(
     boltRestMatrix = new THREE.Matrix4(),
     boltNow = new THREE.Matrix4();
   handleHand.name = "charging-handle-hand";
+  // AWP: the right (trigger) arm as its own rig in weapon-content space, so it can work the bolt.
+  const triggerArm = new THREE.Group();
+  triggerArm.name = "trigger-arm";
+  triggerArm.matrixAutoUpdate = false;
+  const knobRest = new THREE.Vector3(),
+    palmRest = new THREE.Vector3(),
+    knobTurn = new THREE.Quaternion(),
+    knobHold = { position: new THREE.Vector3(), quaternion: new THREE.Quaternion() };
   const supportWrist = new THREE.Vector3(),
     supportGuard = new THREE.Vector3(),
     rigReady = { value: false };
@@ -370,7 +434,7 @@ export function createAuthoredViewmodel(
           return meshes;
         };
         for (const side of ["L", "R"] as const)
-          (side === "L" ? supportContent : weaponContent).add(
+          (side === "L" ? supportContent : variant.boltAction ? triggerArm : weaponContent).add(
             ...dress(fitted[side], {
               gloves: `fitted-rifle-gloves-${side}`,
               forearm: `continuous-rifle-forearms-${side}`,
@@ -411,7 +475,9 @@ export function createAuthoredViewmodel(
         const handOnMag = rootInverse.clone().multiply(handNode.matrixWorld);
         const guardInverse = handOnGuard.clone().invert();
 
-        const boltNode = instance.root.getObjectByName("ChargingHandle")!;
+        const boltNode = instance.root.getObjectByName(
+          variant.boltAction ? "Bolt" : "ChargingHandle",
+        )!;
         if (variant.chargingHandle) {
           // Charging-handle grip: fist closed on the right-side knob, wrist over the receiver.
           restore(authored);
@@ -502,16 +568,42 @@ export function createAuthoredViewmodel(
       magazine = instance.root.getObjectByName("Magazine");
       ejectionPort = instance.root.getObjectByName("EjectionPort");
       magazineGrip = instance.root.getObjectByName("MagazineGrip");
-      bolt = instance.root.getObjectByName("ChargingHandle");
+      bolt = instance.root.getObjectByName(variant.boltAction ? "Bolt" : "ChargingHandle");
+      if (variant.boltAction) {
+        boltHandle = instance.root.getObjectByName("BoltHandle");
+        boltKnob = instance.root.getObjectByName("BoltKnob");
+        handleRest = boltHandle?.rotation.z ?? 0;
+      }
       if (magazine) {
         magazineRest.position.copy(magazine.position);
         magazineRest.quaternion.copy(magazine.quaternion);
         if (variant.magazine.rock === "lug") frontLug(magazine, magazineRest.lug);
       }
       boltRest = bolt?.position.z ?? 0;
+      if (variant.boltAction && boltKnob && boltHandle && firstPerson) {
+        // Bolt hold for the right hand, in rest root space (= weapon-content space).
+        const gripNode = instance.root.getObjectByName("GripR");
+        boltKnob.getWorldPosition(knobRest);
+        root.worldToLocal(knobRest);
+        palmRest.copy(gripRight);
+        const shaft = boltHandle
+          .getWorldPosition(new THREE.Vector3())
+          .applyMatrix4(new THREE.Matrix4().copy(root.matrixWorld).invert());
+        shaft.subVectors(knobRest, shaft).setZ(0).normalize();
+        const gripTurn = new THREE.Quaternion();
+        if (gripNode)
+          gripTurn
+            .copy(root.getWorldQuaternion(new THREE.Quaternion()).invert())
+            .multiply(gripNode.getWorldQuaternion(new THREE.Quaternion()));
+        const gripAxis = new THREE.Vector3(0, -1, 0).applyQuaternion(gripTurn).normalize();
+        knobTurn.setFromUnitVectors(gripAxis, shaft);
+        knobTurn.slerpQuaternions(new THREE.Quaternion(), knobTurn, KNOB_TURN);
+        weapon.add(triggerArm);
+      }
       // Re-centre both rigs on their pivots without moving anything at rest.
       weapon.position.copy(gripRight);
       weaponContent.position.copy(gripRight).negate();
+      triggerArm.matrix.makeTranslation(-gripRight.x, -gripRight.y, -gripRight.z);
       support.position.copy(supportWrist);
       supportContent.position.copy(supportWrist).negate();
       supportGuard.copy(supportWrist).sub(gripRight);
@@ -527,13 +619,67 @@ export function createAuthoredViewmodel(
     .catch((error) =>
       console.warn(`Authored ${variant.id} unavailable; retaining the existing weapon.`, error),
     );
+  const trigger = {
+    knob: new THREE.Vector3(),
+    held: new THREE.Vector3(),
+    q: new THREE.Quaternion(),
+    roll: new THREE.Quaternion(),
+    m: new THREE.Matrix4(),
+    toContent: new THREE.Matrix4(),
+    z: new THREE.Vector3(0, 0, 1),
+    one: new THREE.Vector3(1, 1, 1),
+  };
+  /**
+   * AWP right arm: on the pistol grip at rest; with `boltState.hand` it travels (rigidly, in
+   * weapon-content space) onto the bolt knob and then rides it through the lift and the draw.
+   */
+  function poseTriggerArm(boltState: BoltPose | null) {
+    const hand = boltState?.hand ?? 0;
+    const { knob, held, q, roll, m, toContent, z, one } = trigger;
+    if (hand <= 0 || !boltKnob) {
+      triggerArm.matrix.makeTranslation(-gripRight.x, -gripRight.y, -gripRight.z);
+      triggerArm.updateMatrixWorld(true);
+      return;
+    }
+    // Knob now, in weapon-content space (rest root space).
+    toContent.copy(weaponContent.matrixWorld).invert();
+    boltKnob.getWorldPosition(knob).applyMatrix4(toContent);
+    // Fist centre on the knob, turned toward its shaft and partly rolled with the lift.
+    roll.setFromAxisAngle(z, (boltState?.lift ?? 0) * AWP_BOLT.lift * KNOB_FOLLOW_ROLL);
+    knobHold.quaternion.copy(roll).multiply(knobTurn);
+    knobHold.position.copy(knob).add(held.copy(KNOB_FIST_OFFSET).applyQuaternion(roll));
+    // Blend grip → knob about the palm, with a short arc off the grip on the way.
+    q.identity().slerp(knobHold.quaternion, hand);
+    held
+      .copy(palmRest)
+      .lerp(knobHold.position, hand)
+      .addScaledVector(KNOB_ARC, boltState?.travel ?? 0);
+    // matrix = T(-gripRight) · T(held) · R(q) · T(-palm)
+    m.compose(held, q, one).multiply(
+      scratch.m2.makeTranslation(-palmRest.x, -palmRest.y, -palmRest.z),
+    );
+    triggerArm.matrix.makeTranslation(-gripRight.x, -gripRight.y, -gripRight.z).multiply(m);
+    triggerArm.updateMatrixWorld(true);
+  }
   /** Apply a key-posed reload clip (and bolt kick) to the weapon, magazine and support rigs. */
-  function pose(clip: ReloadClip, p: number, kick: number) {
+  function pose(clip: ReloadClip, p: number, kick: number, boltState: BoltPose | null = null) {
     const { a, b, c, qa, qb, euler, inverse } = scratch;
     const wp = sampleVec(clip.weaponPosition, p),
       wr = sampleVec(clip.weaponRotation, p);
-    weapon.position.set(gripRight.x + wp[0], gripRight.y + wp[1], gripRight.z + wp[2]);
-    weapon.rotation.set(wr[0], wr[1], wr[2]);
+    const cant = boltState?.cant ?? 0;
+    // AWP: a heavy recoil kick (back and muzzle up) on top of the clip, and the roll toward the
+    // camera while the bolt is worked.
+    const awpKick = variant.boltAction ? kick : 0;
+    weapon.position.set(
+      gripRight.x + wp[0],
+      gripRight.y + wp[1] + cant * BOLT_CANT.y,
+      gripRight.z + wp[2] + cant * BOLT_CANT.z + awpKick * AWP_KICK.back,
+    );
+    weapon.rotation.set(
+      wr[0] + cant * BOLT_CANT.pitch + awpKick * AWP_KICK.pitch,
+      wr[1] + cant * BOLT_CANT.yaw,
+      wr[2] + cant * BOLT_CANT.roll,
+    );
     // Magazine: rotate about the front lug (rest-relative), then translate in its parent.
     const mp = sampleVec(clip.magPosition, p),
       mr = sampleVec(clip.magRotation, p);
@@ -547,8 +693,11 @@ export function createAuthoredViewmodel(
     magazine!.position.y += mp[1];
     magazine!.position.z += mp[2];
     const travel = sampleNumber(clip.boltTravel, p);
-    bolt!.position.z = boltRest + travel + kick * variant.boltKick;
+    bolt!.position.z =
+      boltRest + travel + kick * variant.boltKick + (boltState?.back ?? 0) * AWP_BOLT.travel;
+    if (boltHandle) boltHandle.rotation.z = handleRest + (boltState?.lift ?? 0) * AWP_BOLT.lift;
     weapon.updateMatrixWorld(true);
+    if (variant.boltAction) poseTriggerArm(boltState);
     inverse.copy(root.matrixWorld).invert();
     // Resolve both bracketing keys against the live rig, then blend: the hand tracks moving parts.
     // The mag/handle anchors are the exact rigid transforms that put the handguard hand where the
@@ -627,7 +776,14 @@ export function createAuthoredViewmodel(
      * the clip (empty reloads chamber a round with the charging handle).
      * Third person keeps the simple lowered-magazine cue, where `reload` is an amount 0 → 1.
      */
-    update(rifle: boolean, reload: number, kick: number, kind: ReloadKind = "tactical") {
+    update(
+      rifle: boolean,
+      reload: number,
+      kick: number,
+      kind: ReloadKind = "tactical",
+      /** AWP: the bolt and right hand (awp-animation.ts boltPose), or null at rest. */
+      boltState: BoltPose | null = null,
+    ) {
       root.visible = loaded && rifle;
       if (!loaded) return;
       if (!rigReady.value) {
@@ -638,7 +794,7 @@ export function createAuthoredViewmodel(
         if (bolt) bolt.position.z = boltRest + kick * variant.boltKick;
         return;
       }
-      pose(variant.clips[kind], reload > 0 && reload < 1 ? reload : 0, kick);
+      pose(variant.clips[kind], reload > 0 && reload < 1 ? reload : 0, kick, boltState);
     },
     muzzle() {
       // Live, so flashes stay on the muzzle however the rig is posed.

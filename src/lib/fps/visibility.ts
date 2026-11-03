@@ -231,7 +231,8 @@ export function snapshotForPlayer<T extends { state: PublicState }>(
   });
   if (visible)
     return { ...frame, state: { ...frame.state, events }, visibility: { A: true, B: true } };
-  const enemy = frame.state.players[remote];
+  // A hidden enemy's zoom is not revealed (their primary is: the AWP report gives it away).
+  const { scoped: _scoped, scopedAt: _scopedAt, ...enemy } = frame.state.players[remote];
   return {
     ...frame,
     visibility: { A: seat === "A", B: seat === "B" },
