@@ -284,8 +284,8 @@ describe("Bomb Defusal rules (5v5 practice)", () => {
     park(s, c, b.x, b.z);
     t = run(s, t, t + BOMB_RULES.plantMs + 200, () => ({ [c]: input({ use: true }) }));
     const bomb = s.bomb as { x: number; z: number };
-    park(s, 1, bomb.x + 0.5, bomb.z);
-    park(s, 2, bomb.x - 0.5, bomb.z);
+    park(s, 1, bomb.x + 1.3, bomb.z);
+    park(s, 2, bomb.x - 1.3, bomb.z);
     t = run(s, t, t + 4000, () => ({ 1: input({ use: true }), 2: input({ use: true }) }));
     expect(s.bomb).toMatchObject({ state: "planted", defuser: 1 });
     t = run(s, t, t + 200, () => ({ 2: input({ use: true }) })); // 1 lets go, 2 takes over afresh
@@ -295,6 +295,7 @@ describe("Bomb Defusal rules (5v5 practice)", () => {
     t = run(s, t, t + 800, () => ({ 2: input({ use: true }) }));
     expect(s.bomb.state).toBe("defused");
     expect(s.lastRound).toMatchObject({ winner: "police", reason: "defuse" });
+    expect(s.players[2]!.crouched).toBe(false);
   });
 
   it("a defuse kit halves the defuse to 5 s, and the defuser kneels while defusing", () => {
@@ -305,7 +306,7 @@ describe("Bomb Defusal rules (5v5 practice)", () => {
     park(s, c, b.x, b.z);
     t = run(s, t, t + BOMB_RULES.plantMs + 200, () => ({ [c]: input({ use: true }) }));
     const bomb = s.bomb as { x: number; z: number };
-    park(s, 1, bomb.x + 0.5, bomb.z);
+    park(s, 1, bomb.x + 1.3, bomb.z);
     s.players[1]!.defuseKit = true;
     t = run(s, t, t + 300, () => ({ 1: input({ use: true }) }));
     expect(s.bomb).toMatchObject({
@@ -318,6 +319,7 @@ describe("Bomb Defusal rules (5v5 practice)", () => {
     expect(s.bomb.state).toBe("planted");
     t = run(s, t, t + 600, () => ({ 1: input({ use: true }) }));
     expect(s.bomb.state).toBe("defused");
+    expect(s.players[1]!.crouched).toBe(false);
   });
 
   it("Terrorists cannot be the defuser and Police can never pick up the bomb", () => {

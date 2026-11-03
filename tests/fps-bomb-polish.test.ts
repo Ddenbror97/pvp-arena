@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { cycleEquipment } from "../src/lib/fps/equipment-cycle";
 import { compileMap } from "../src/lib/fps/maps/registry";
 import { SANDGATE_DEFINITION } from "../src/lib/fps/bomb/sandgate";
-import { canSee, canReveal } from "../src/lib/fps/bomb/visibility";
+import { canSee } from "../src/lib/fps/bomb/visibility";
+import { revealsBody } from "../src/lib/fps/visibility";
 import { objective } from "../src/lib/fps/bomb/hud";
 import { createBombMatch, startBombMatch } from "../src/lib/fps/bomb/match";
 import { BombReveal, bombViewFor } from "../src/lib/fps/bomb/snapshot";
@@ -41,13 +42,13 @@ describe("Bomb rendered silhouette visibility", () => {
     const viewer = { x: 0, y: 0, z: 0 },
       target = { x: 0, y: 0, z: -4, crouched: true, yaw: 0 };
     expect(canSee(map, viewer, target)).toBe(false);
-    expect(canReveal(map, viewer, target)).toBe(true);
+    expect(revealsBody(map, { ...viewer, yaw: 0 }, target)).toBe(true);
     const wall = compileMap({
       ...SANDGATE_DEFINITION,
       boxes: [{ id: "wall", x: 0, y: 1, z: -2, w: 4, h: 2, d: 0.2 }],
       walls: [],
     });
-    expect(canReveal(wall, viewer, target)).toBe(false);
+    expect(revealsBody(wall, { ...viewer, yaw: 0 }, target)).toBe(false);
   });
 });
 describe("Spectator objective progress", () => {

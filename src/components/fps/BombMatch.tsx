@@ -40,11 +40,10 @@ import { BuyMenu } from "./BuyMenu";
 import { buyBlocked } from "@/lib/fps/buy";
 import { bombBuyWindow } from "@/lib/fps/bomb/match";
 import { primaryOf, type Primary } from "@/lib/fps/primary";
+import { distanceGain, hearingRange } from "@/lib/fps/spatial-audio";
 import "./duel.css";
 import "./bomb.css";
 
-/** Hearing ranges (m), as the room's: friendly events carry positions, enemy ones only bearings. */
-const HEARING = { shot: 70, step: 25, reload: 12, bomb: 200, knife: 12 } as const;
 type Kill = {
   id: number;
   killer: string;
@@ -426,34 +425,43 @@ export function BombMatch() {
           lastEvent = e.id;
         }
         if (e.type === "sound") {
-          const s = e as { kind: string; bearing: number; gain: number; awp?: true };
+          const s = e as Extract<BombView["events"][number], { type: "sound" }>;
           // Room bearings are relative to the listener's view; the audio layer wants a world
           // bearing so the pan follows later turns.
-          const bearing = listener ? -(s.bearing + listener.yaw) : undefined;
+          const bearing = s.worldBearing ?? (listener ? -(s.bearing + listener.yaw) : undefined);
+          const spatial = { gain: s.gain, bearing, distance: s.distance, occluded: s.occluded };
           const enemyM4 = mine === "terrorist";
           if (s.kind === "shot")
-            sound.current?.cue("shot", { gain: s.gain, bearing, m4: enemyM4, awp: !!s.awp });
-          else if (s.kind === "step") sound.current?.cue("step", { gain: s.gain, bearing });
-          else if (s.kind === "reload")
-            sound.current?.cue("reload", { gain: s.gain, bearing, m4: enemyM4 });
+            sound.current?.cue("shot", { ...spatial, m4: enemyM4, awp: !!s.awp });
+          else if (s.kind === "step")
+            sound.current?.cue("step", {
+              ...spatial,
+              gain: s.gain * (s.soft ? 0.15 : 1),
+              ...(s.surface ? { surface: s.surface } : {}),
+              at: s.at,
+            });
+          else if (s.kind === "reload") sound.current?.cue("reload", { ...spatial, m4: enemyM4 });
           else if (s.kind === "bomb") sound.current?.cue("explosion", { gain: s.gain, bearing });
-          else if (s.kind === "knife") sound.current?.cue("knife", { gain: s.gain, bearing });
+          else if (s.kind === "knife") sound.current?.cue("knife", spatial);
           continue;
         }
         const ev = e as Exclude<typeof e, { type: "sound" }>;
         const own = ev.slot === v.you;
         const pos = ev.audio?.position;
         let gain = 1,
+          distance: number | undefined,
           bearing: number | undefined;
+        const actor = ev.slot !== undefined ? v.players[ev.slot] : undefined;
         if (pos && listener && !own) {
           const dx = pos.x - listener.x,
             dz = pos.z - listener.z,
             d = Math.hypot(dx, dz),
-            range = HEARING[ev.audio!.kind as keyof typeof HEARING] ?? 30;
-          gain = Math.max(0, 1 - d / range);
+            range = hearingRange(ev.audio!.kind, ev.primary === "awp", actor?.team === "police");
+          distance = d;
+          gain = distanceGain(d, range, !!ev.audio?.occluded);
           bearing = Math.atan2(dx, -dz);
         }
-        const actor = ev.slot !== undefined ? v.players[ev.slot] : undefined;
+        const spatial = { gain, bearing, distance, occluded: ev.audio?.occluded };
         if (
           ev.type === "shot" &&
           ev.weapon === "knife" &&
@@ -461,7 +469,7 @@ export function BombMatch() {
           gain > 0 &&
           !(v.self.hp <= 0 && ev.slot === v.spectating && v.pov)
         )
-          sound.current?.cue("knife", { gain, bearing, attack: ev.attack ?? "slash" });
+          sound.current?.cue("knife", { ...spatial, attack: ev.attack ?? "slash" });
         if (
           ev.type === "shot" &&
           ev.weapon !== "knife" &&
@@ -470,8 +478,7 @@ export function BombMatch() {
           !(v.self.hp <= 0 && ev.slot === v.spectating && v.pov)
         )
           sound.current?.cue("shot", {
-            gain,
-            bearing,
+            ...spatial,
             m4: actor?.team === "police",
             awp: ev.primary === "awp",
           });
@@ -479,6 +486,9 @@ export function BombMatch() {
           sound.current?.cue("step", {
             gain: bombStepGain(gain, own, actor?.team, mine, ev.audio?.soft),
             bearing,
+            distance,
+            occluded: ev.audio?.occluded,
+            at: ev.at,
             own,
             ...(ev.audio?.surface ? { surface: ev.audio.surface } : {}),
           });
@@ -691,20 +701,6 @@ export function BombMatch() {
             <TeamBar players={teams[me.team === "police" ? "terrorist" : "police"]} side="enemy" />
           </div>
         )}
-        <div className="duel-hud-actions">
-          <button
-            aria-label={muted ? "Enable game audio" : "Mute game audio"}
-            onClick={() => toggleSoundMuted()}
-          >
-            {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
-          </button>
-          <button
-            aria-label="Fullscreen"
-            onClick={() => void host.current?.parentElement?.requestFullscreen().catch(() => {})}
-          >
-            <Maximize size={17} />
-          </button>
-        </div>
       </header>
       {view && hudSelf && hudSelf.hp > 0 && view.phase !== "completed" && (
         <StrikeCrosshair settings={settings} />
@@ -853,6 +849,21 @@ export function BombMatch() {
         settings={settings}
         onChange={setSettings}
         onResume={activate}
+        displayActions={
+          <div className="bomb-settings-actions">
+            <button type="button" className="duel-secondary" onClick={() => toggleSoundMuted()}>
+              {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
+              {muted ? "Enable game audio" : "Mute game audio"}
+            </button>
+            <button
+              type="button"
+              className="duel-secondary"
+              onClick={() => void document.documentElement.requestFullscreen().catch(() => {})}
+            >
+              <Maximize size={17} /> Fullscreen
+            </button>
+          </div>
+        }
         leaveAction={
           <Link to="/fps-duel" className="duel-secondary">
             Leave game

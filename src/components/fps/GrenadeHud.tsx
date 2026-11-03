@@ -22,8 +22,8 @@ export function GrenadeHud({
 }) {
   if (!inventory) return null;
   return (
-    <div className="grenade-hud" aria-label="Grenades (key 4)">
-      <span className="grenade-hud-key">4</span>
+    <div className="grenade-hud" aria-label="Grenades (key 5 or scroll)">
+      <span className="grenade-hud-key">5</span>
       {GRENADE_TYPES.map((type) => (
         <span
           key={type}
@@ -31,6 +31,7 @@ export function GrenadeHud({
             inventory[type] > 0 ? "" : " is-empty"
           }`}
           title={LABEL[type]}
+          aria-label={`${LABEL[type]}${drawn === type ? ", selected" : ""}`}
         >
           <svg viewBox="0 0 26 24" aria-hidden="true">
             <path d={ICON[type]} />

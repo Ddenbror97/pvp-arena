@@ -15,6 +15,7 @@ const KNIFE_CUES: Record<string, { sample: Sample; gain: number }> = {
   stab: { sample: "knifeStab", gain: 0.46 },
 };
 import { footstepPan, materialFootstep } from "./footsteps";
+import { distanceFilter } from "./spatial-audio";
 import { characterSide } from "./sides";
 import { consumeShotPrediction } from "./trigger-feedback";
 import { AWP, primaryOf, type Primary } from "./primary";
@@ -147,6 +148,7 @@ export function createCombatAudio(
     pan: number;
     bearing?: number | undefined;
     occluded: boolean;
+    distance?: number | undefined;
   }> = [];
   const spatialVoices = new Map<
     AudioBufferSourceNode,
@@ -170,7 +172,7 @@ export function createCombatAudio(
         continue;
       }
       pendingSteps.splice(i, 1);
-      play(step.sample, step.gain, step.pan, step.occluded, 1, 0, 0, step.bearing);
+      play(step.sample, step.gain, step.pan, step.occluded, 1, 0, 0, step.bearing, step.distance);
     }
     if (view)
       for (const voice of spatialVoices.values())
@@ -471,23 +473,45 @@ export function createCombatAudio(
     seat?: Seat | null,
     attack?: KnifeAttack,
     primary?: Primary,
+    bearing?: number,
+    distance?: number,
   ) => {
     played.shots++;
     if (weapon === "knife") {
-      play(attack === "stab" ? "knifeStab" : "knifeSlash", gain * 0.6, pan, occluded);
+      play(
+        attack === "stab" ? "knifeStab" : "knifeSlash",
+        gain * 0.6,
+        pan,
+        occluded,
+        1,
+        0,
+        0,
+        bearing,
+        distance,
+      );
       return;
     }
     if (primary === "awp") {
       // The report, then the bolt cycle on the same timeline (heard only up close).
       // The supplied recording is ~4 dB louder (LUFS) than the AK reference: about 2 dB over
       // the AK at the same gain, played as recorded (no pitch variation).
-      play("awpShot", Math.min(0.75, gain * 1.08), pan, occluded, 1);
+      play("awpShot", Math.min(0.75, gain * 1.08), pan, occluded, 1, 0, 0, bearing, distance);
       if (seat === localSeat || gain > 0.3)
-        play("awpBolt", gain * (seat === localSeat ? 0.75 : 0.4), pan, occluded);
+        play(
+          "awpBolt",
+          gain * (seat === localSeat ? 0.75 : 0.4),
+          pan,
+          occluded,
+          1,
+          0,
+          0,
+          bearing,
+          distance,
+        );
       return;
     }
     const m4 = weapon === "rifle" && m4Seat(seat);
-    play(m4 ? "rifleM4" : "rifleA", gain, pan, occluded, 1);
+    play(m4 ? "rifleM4" : "rifleA", gain, pan, occluded, 1, 0, 0, bearing, distance);
     // Own rifle: the ejected case lands a moment later, just right of the player (the AK's
     // bigger 7.62×39 case rings lower than the M4's 5.56).
     if (weapon === "rifle" && seat === localSeat && gain > 0.3)
@@ -558,6 +582,7 @@ export function createCombatAudio(
     offset = 0,
     delay = 0,
     bearing?: number,
+    distance?: number,
   ) {
     if (disposed || muted || context.state !== "running" || gain <= 0) return;
     const buffer = buffers.get(name);
@@ -585,7 +610,8 @@ export function createCombatAudio(
       scheduleSteps();
     }
     filter.type = "lowpass";
-    filter.frequency.value = occluded ? 1600 : 18000;
+    filter.frequency.value =
+      distance === undefined ? (occluded ? 1600 : 18000) : distanceFilter(distance, occluded);
     source.connect(filter);
     filter.connect(level);
     level.connect(panner);
@@ -723,6 +749,8 @@ export function createCombatAudio(
             event.seat,
             event.attack,
             event.primary,
+            own ? undefined : cue?.bearing,
+            own ? undefined : cue?.distance,
           );
         } else if (event.type === "impact" && event.weapon === "knife") {
           play("knifeWall", (own ? 0.3 : 0.2) * gain, pan, !!cue?.occluded);
@@ -734,7 +762,18 @@ export function createCombatAudio(
               : "";
           const sample = ("step" + (played.steps % 4) + surface) as Sample;
           const level = gain * 0.75 * (cue.soft ? 0.1 : own ? 0.34 : 0.62);
-          if (own || !event.at || !presentation) play(sample, level, pan, !!cue.occluded);
+          if (own || !event.at || !presentation)
+            play(
+              sample,
+              level,
+              pan,
+              !!cue.occluded,
+              1,
+              0,
+              0,
+              own ? undefined : cue.bearing,
+              own ? undefined : cue.distance,
+            );
           else {
             if (pendingSteps.length >= 12) pendingSteps.shift();
             pendingSteps.push({
@@ -745,6 +784,7 @@ export function createCombatAudio(
               pan,
               bearing: cue.bearing,
               occluded: !!cue.occluded,
+              distance: cue.distance,
             });
             scheduleSteps();
           }
@@ -798,10 +838,14 @@ export function createCombatAudio(
         afterDefused?: boolean;
         attack?: KnifeAttack;
         offset?: number;
+        distance?: number | undefined;
+        occluded?: boolean | undefined;
+        at?: number | undefined;
       } = {},
     ) {
       const gain = Math.max(0, Math.min(1, options.gain ?? 1)),
-        far = !options.own && gain < 0.5;
+        far =
+          !options.own && (!!options.occluded || (options.distance === undefined && gain < 0.5));
       if (kind === "knife") {
         play(
           options.attack === "stab" ? "knifeStab" : "knifeSlash",
@@ -812,12 +856,33 @@ export function createCombatAudio(
           0,
           0,
           options.bearing,
+          options.distance,
         );
       } else if (kind === "shot" && options.awp) {
         played.shots++;
-        play("awpShot", options.own ? 0.67 : 0.56 * gain, 0, far, 1, 0, 0, options.bearing);
+        play(
+          "awpShot",
+          options.own ? 0.67 : 0.56 * gain,
+          0,
+          far,
+          1,
+          0,
+          0,
+          options.bearing,
+          options.distance,
+        );
         if (options.own || gain > 0.6)
-          play("awpBolt", options.own ? 0.55 : 0.3 * gain, 0, far, 1, 0, 0, options.bearing);
+          play(
+            "awpBolt",
+            options.own ? 0.55 : 0.3 * gain,
+            0,
+            far,
+            1,
+            0,
+            0,
+            options.bearing,
+            options.distance,
+          );
       } else if (kind === "shot") {
         played.shots++;
         play(
@@ -829,6 +894,7 @@ export function createCombatAudio(
           0,
           0,
           options.bearing,
+          options.distance,
         );
         if (options.own)
           play("casing", options.m4 ? 0.05 : 0.045, 0.35, false, options.m4 ? 0.94 : 0.8, 0, 0.34);
@@ -838,16 +904,22 @@ export function createCombatAudio(
           options.surface && STEP_VARIANTS.some((s) => s === options.surface)
             ? "-" + options.surface
             : "";
-        play(
-          ("step" + (played.steps % 4) + surface) as Sample,
-          (options.own ? 0.26 : 0.5) * gain,
-          0,
-          far,
-          1,
-          0,
-          0,
-          options.bearing,
-        );
+        const sample = ("step" + (played.steps % 4) + surface) as Sample;
+        const level = (options.own ? 0.26 : 0.5) * gain;
+        if (!options.own && options.at && presentation) {
+          if (pendingSteps.length >= 24) pendingSteps.shift();
+          pendingSteps.push({
+            at: options.at,
+            queued: performance.now(),
+            sample,
+            gain: level,
+            pan: 0,
+            bearing: options.bearing,
+            occluded: far,
+            distance: options.distance,
+          });
+          scheduleSteps();
+        } else play(sample, level, 0, far, 1, 0, 0, options.bearing, options.distance);
       } else if (kind === "reload") {
         reloadVoice?.stop();
         reloadVoice = play(
@@ -869,6 +941,7 @@ export function createCombatAudio(
           Math.max(0, options.offset ?? 0),
           0,
           options.bearing,
+          options.distance,
         );
         if (reloadVoice) played.reloads++;
       } else if (kind === "hurt") {
@@ -886,6 +959,7 @@ export function createCombatAudio(
           0,
           0,
           options.bearing,
+          options.distance,
         );
       // Own first-person C4 plant: quiet, centred, a little pitch variation per key.
       else if (kind === "c4-key") {

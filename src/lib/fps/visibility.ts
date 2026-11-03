@@ -1,8 +1,11 @@
-import { rayBox, traceWorld, type Vector } from "./collision";
+import { segmentOccluded } from "./visibility-occlusion";
+import { traceWorld, type Vector } from "./collision";
 import { eyeHeight, PLAYER_RADIUS } from "./map";
 import { mapOf, type GameMap } from "./maps/registry";
 import type { MatchState, Seat } from "./protocol";
 import { publicGrenadeWorld, smokeHides, type GrenadeWorld } from "./grenades/world";
+import { hearingRange, distanceGain, soundOccluded } from "./spatial-audio";
+import { characterSide } from "./sides";
 
 type PublicState = Omit<MatchState, "server">;
 /** Send a pose only when some of its combat silhouette has an unobstructed sight line. */
@@ -78,30 +81,10 @@ function blockedByWorld(o: Vector, t: Vector, map: GameMap) {
   const x = t.x - o.x,
     y = t.y - o.y,
     z = t.z - o.z,
-    distance = Math.hypot(x, y, z);
-  if (distance < 0.01) return false;
-  const reach = Math.max(0, distance - 0.025),
-    direction = { x: x / distance, y: y / distance, z: z / distance };
-  const loX = Math.min(o.x, t.x),
-    hiX = Math.max(o.x, t.x),
-    loY = Math.min(o.y, t.y),
-    hiY = Math.max(o.y, t.y),
-    loZ = Math.min(o.z, t.z),
-    hiZ = Math.max(o.z, t.z);
-  for (const s of map.worldBounds) {
-    if (
-      s.maxX < loX ||
-      s.minX > hiX ||
-      s.maxY < loY ||
-      s.minY > hiY ||
-      s.maxZ < loZ ||
-      s.minZ > hiZ
-    )
-      continue;
-    const hit = rayBox(o, direction, s.b, { x: s.b.w, y: s.b.h, z: s.b.d });
-    if (Number.isFinite(hit) && hit <= reach) return true;
-  }
-  return false;
+    d = Math.hypot(x, y, z);
+  return (
+    d >= 0.01 && segmentOccluded(map, o.x, o.y, o.z, x / d, y / d, z / d, Math.max(0, d - 0.025))
+  );
 }
 
 type Body = Pick<MatchState["players"]["A"], "x" | "y" | "z" | "yaw" | "crouched">;
@@ -139,9 +122,23 @@ export function revealsOpponent(
   motion?: ViewerMotion,
 ): boolean {
   if (state.phase !== "live") return true;
-  const map = mapOf(state);
-  const own = state.players[seat],
-    enemy = state.players[seat === "A" ? "B" : "A"];
+  return revealsBody(
+    mapOf(state),
+    state.players[seat],
+    state.players[seat === "A" ? "B" : "A"],
+    state.grenades,
+    motion,
+  );
+}
+
+/** Shared latency-aware snapshot reveal for duels and team modes. Bot aim perception stays separate. */
+export function revealsBody(
+  map: GameMap,
+  own: Body,
+  enemy: Body,
+  smoke?: GrenadeWorld,
+  motion?: ViewerMotion,
+): boolean {
   const eyeY = own.y + eyeHeight(own),
     dx = enemy.x - own.x,
     dz = enemy.z - own.z,
@@ -161,7 +158,7 @@ export function revealsOpponent(
         y: eyeY,
         z: own.z + vz * ahead * fraction + sideZ * side,
       };
-      if (envelopeVisible(eye, enemy, map, state.grenades)) return true;
+      if (envelopeVisible(eye, enemy, map, smoke)) return true;
     }
   return false;
 }
@@ -207,27 +204,26 @@ export function snapshotForPlayer<T extends { state: PublicState }>(
         dx = audio.position.x - own.x,
         dz = audio.position.z - own.z,
         distance = Math.hypot(dx, dz);
-      const blocked =
-        distance > 0.2 &&
-        !!traceWorld(
-          { x: own.x, y: own.y + eyeHeight(own), z: own.z },
-          { x: dx / distance, y: 0, z: dz / distance },
-          Math.max(0, distance - 0.1),
-          mapOf(frame.state),
-        );
-      const range = audio.kind === "shot" ? 48 : 16,
-        scale =
-          event.seat === seat
-            ? 1
-            : Math.pow(Math.max(0, 1 - distance / range), 1.5) * (blocked ? 0.4 : 1);
+      const blocked = soundOccluded(
+        mapOf(frame.state),
+        { x: own.x, y: own.y + eyeHeight(own), z: own.z },
+        audio.position,
+      );
+      const range = hearingRange(
+          audio.kind,
+          event.primary === "awp",
+          !!event.seat && characterSide(frame.state, event.seat) === "A",
+        ),
+        scale = event.seat === seat ? 1 : distanceGain(distance, range, blocked);
       const pan = distance > 0.1 ? (dx * Math.cos(own.yaw) - dz * Math.sin(own.yaw)) / distance : 0;
       const { position: _position, ...details } = audio;
       cue = {
         ...details,
-        gain: Math.round(scale * 16) / 16,
+        gain: Math.round(scale * 64) / 64,
+        distance: Math.round(distance / 2) * 2,
         pan: event.seat === seat ? 0 : Math.round(Math.max(-1, Math.min(1, pan)) * 8) / 8,
-        ...(event.seat !== seat && Math.round(scale * 16) > 0
-          ? { bearing: (Math.round((Math.atan2(dx, -dz) * 8) / Math.PI) * Math.PI) / 8 }
+        ...(event.seat !== seat && Math.round(scale * 64) > 0
+          ? { bearing: (Math.round((Math.atan2(dx, -dz) * 16) / Math.PI) * Math.PI) / 16 }
           : {}),
         occluded: !!blocked,
       };

@@ -18,7 +18,7 @@ import {
   type BombMatchState,
 } from "../../src/lib/fps/bomb/rules";
 import { BombReveal, bombViewFor } from "../../src/lib/fps/bomb/snapshot";
-import { ConnectionTiming, SNAPSHOT_INTERVAL_MS } from "../../src/lib/fps/network";
+import { ConnectionTiming, SNAPSHOT_INTERVAL_MS, REMOTE_DELAY_MS } from "../../src/lib/fps/network";
 import { TICK_MS } from "../../src/lib/fps/simulation";
 import { equalSecret, verifyAdmission } from "../../src/lib/fps/ticket";
 import { PlayerPoseHistory } from "./lag-compensation";
@@ -465,7 +465,9 @@ export class BombRoom {
         state.events = this.unsent.slice(-64);
         for (const s of this.sockets()) {
           const a = s.deserializeAttachment() as Attachment;
-          this.send(s, bombViewFor(state, a.slot, a.spectate, this.reveal, now));
+          const timing = this.timing.get(a.connectionId);
+          const ahead = Math.max(REMOTE_DELAY_MS, timing?.lookbackFor(REMOTE_DELAY_MS) ?? 0);
+          this.send(s, bombViewFor(state, a.slot, a.spectate, this.reveal, now, ahead));
           const challenge = this.timing.get(a.connectionId)?.challenge(now);
           if (challenge) this.send(s, { v: 1, type: "ping", id: challenge.id });
         }
