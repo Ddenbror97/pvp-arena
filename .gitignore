@@ -53,3 +53,4 @@ src/content/guides/catalog.generated.ts
 test-results/
 playwright-report/
 supabase/.temp/
+art/blender/map06/incoming/

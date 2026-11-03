@@ -321,6 +321,23 @@ export function DuelLobby() {
                 </p>
               )}
             </div>
+            <div className="strike-practice">
+              <h2>Practice · Bomb Defusal</h2>
+              <p>
+                5v5 on Sandgate: plant or defuse · MR15, first to 16.
+                <br />
+                Bots fill empty slots · Free · No wager or rating changes.
+              </p>
+              {desktop === true ? (
+                <Link className="strike-primary" to="/fps-bomb">
+                  Play Bomb Defusal <Crosshair size={16} />
+                </Link>
+              ) : (
+                <button type="button" className="strike-primary" disabled>
+                  Play Bomb Defusal <Crosshair size={16} />
+                </button>
+              )}
+            </div>
             <div className="strike-tabs" role="tablist" aria-label="PvPStrike games">
               {(["games", "create"] as const).map((value) => (
                 <button

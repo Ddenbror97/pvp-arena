@@ -184,6 +184,23 @@ describe("Practice Bomb Defusal runtime", () => {
     expect((await connect(matchId, t)).status).toBe(403);
   });
 
+  it("every tick's events reach every player once, in order (snapshots can span two ticks)", async () => {
+    const matchId = crypto.randomUUID();
+    const a = await open(matchId, crypto.randomUUID(), "Watcher");
+    // Bots move and fire once the round is live (15 s freeze), producing step/shot events.
+    await until(a.frames, (f) => f.type === "bomb-snapshot" && f["phase"] === "live", 20_000);
+    await pause(2500);
+    const ids = a.frames
+      .filter((f) => f.type === "bomb-snapshot")
+      .flatMap((f) => (f["events"] as Array<{ id?: number }>).map((e) => e.id));
+    expect(ids.length).toBeGreaterThan(5);
+    const missing = a.frames
+      .filter((f) => f.type === "bomb-snapshot")
+      .flatMap((f) => (f["events"] as Array<{ id?: number }>).filter((e) => e.id === undefined));
+    expect(missing).toEqual([]);
+    for (let i = 1; i < ids.length; i++) expect(ids[i]!).toBeGreaterThan(ids[i - 1]!);
+  }, 40_000);
+
   it("a full room (10 humans) sends the next player to a new, independent match", async () => {
     const matchId = crypto.randomUUID();
     const players = [];

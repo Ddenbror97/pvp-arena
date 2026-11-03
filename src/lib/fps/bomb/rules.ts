@@ -85,6 +85,8 @@ export type BombObjective =
   | { state: "exploded"; x: number; y: number; z: number; site: Bombsite };
 
 export interface BombEvent {
+  /** Room-assigned, increasing (clients present each event once). */
+  id?: number;
   type: string;
   slot?: number;
   text: string;

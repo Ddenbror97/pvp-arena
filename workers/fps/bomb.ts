@@ -9,6 +9,7 @@ import {
 import {
   BOMB_RULES,
   SLOT_COUNT,
+  type BombEvent,
   type BombInput,
   type BombMatchState,
 } from "../../src/lib/fps/bomb/rules";
@@ -125,12 +126,22 @@ type Attachment = SessionIdentity & {
   spectate: number | null;
 };
 
+/** Longest per-player input backlog (≈ 4 ticks). */
+const MAX_INPUT_BACKLOG = 4;
+
 export class BombRoom {
   private state: BombMatchState | null = null;
   private matchId = "";
   private bots = createBombBots();
   private reveal = new BombReveal();
-  private latest = new Map<number, BombInput>();
+  /**
+   * Per-slot input queues. Clients send one input per 34 ms step; the room ticks at 33.3 ms, so a
+   * tick can see zero or two arrivals. One input is applied per tick (bursts cannot add movement
+   * time); a backlog beyond MAX_INPUT_BACKLOG drops the oldest so latency stays bounded.
+   */
+  private queues = new Map<number, BombInput[]>();
+  private unsent: BombEvent[] = [];
+  private eventId = 0;
   private timer: ReturnType<typeof setInterval> | null = null;
   private lastSnapshot = 0;
   private lastSessionCheck = 0;
@@ -232,7 +243,7 @@ export class BombRoom {
       seq: -1,
       spectate: null,
     } satisfies Attachment);
-    this.latest.delete(slot);
+    this.queues.delete(slot);
     this.emptySince = null;
     this.send(server, {
       v: 1,
@@ -242,7 +253,8 @@ export class BombRoom {
       slot,
       map: state.mapId,
     });
-    this.send(server, bombViewFor(state, slot, null, this.reveal, now));
+    // The joining view carries no events: they belong to ticks this player never saw.
+    this.send(server, { ...bombViewFor(state, slot, null, this.reveal, now), events: [] });
     void this.report();
     if (!this.timer) this.timer = setInterval(() => void this.tick(), Math.ceil(TICK_MS));
     return new Response(null, { status: 101, webSocket: client });
@@ -288,7 +300,10 @@ export class BombRoom {
     if (input.seq <= a.seq) return;
     a.seq = input.seq;
     socket.serializeAttachment(a);
-    this.latest.set(a.slot, input);
+    const queue = this.queues.get(a.slot) ?? [];
+    queue.push(input);
+    while (queue.length > MAX_INPUT_BACKLOG) queue.shift();
+    this.queues.set(a.slot, queue);
   }
 
   webSocketClose(socket: WebSocket, code?: number) {
@@ -303,7 +318,7 @@ export class BombRoom {
     );
     if (!still && !this.state.players[a.slot]!.bot) {
       assignSlot(this.state, a.slot, botSlot(a.slot));
-      this.latest.delete(a.slot);
+      this.queues.delete(a.slot);
       this.reveal.forget(a.slot);
     }
     void this.report();
@@ -357,15 +372,27 @@ export class BombRoom {
         }
       }
       const inputs: Record<number, BombInput> = { ...this.bots.inputs(state, now) };
-      for (const [slot, input] of this.latest) if (!state.players[slot]!.bot) inputs[slot] = input;
+      for (const [slot, queue] of this.queues) {
+        const input = queue.shift();
+        if (input && !state.players[slot]!.bot) inputs[slot] = input;
+      }
+      const tick = state.tick;
       stepBombMatch(state, inputs, now);
+      // Events accumulate between snapshots (ticks are 33.3 ms, snapshots 34 ms: a snapshot can
+      // span two ticks), each with an increasing id so clients present it once.
+      if (state.tick !== tick)
+        for (const e of state.events) this.unsent.push({ ...e, id: ++this.eventId });
       // Snapshots: each human gets their own filtered view.
       if (now - this.lastSnapshot >= SNAPSHOT_INTERVAL_MS) {
         this.lastSnapshot = now;
+        const tickEvents = state.events;
+        state.events = this.unsent.slice(-64);
         for (const s of this.sockets()) {
           const a = s.deserializeAttachment() as Attachment;
           this.send(s, bombViewFor(state, a.slot, a.spectate, this.reveal, now));
         }
+        state.events = tickEvents;
+        this.unsent = [];
       }
       // A finished match restarts after a short break for whoever is still here.
       if (state.phase === "completed" && now > state.server!.lastStepAt + BOMB_RULES.halftimeMs) {

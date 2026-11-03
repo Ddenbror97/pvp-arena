@@ -32,6 +32,8 @@ export type BombView = {
   type: "bomb-snapshot";
   serverNow: number;
   you: number;
+  /** The recipient's own full state (prediction, recoil, ammunition). Never another player's. */
+  self: Omit<BombPlayer, "damageTo">;
   /** Dead recipients: the living teammate whose view is shown (null: no living teammates). */
   spectating: number | null;
   spectateTargets: number[];
@@ -61,7 +63,7 @@ export type BombView = {
     | { state: "defused" | "exploded"; site: "A" | "B"; x: number; y: number; z: number };
   events: Array<
     | (BombEvent & { slot?: number })
-    | { type: "sound"; kind: string; bearing: number; gain: number; at?: number }
+    | { type: "sound"; id?: number; kind: string; bearing: number; gain: number; at?: number }
   >;
 };
 
@@ -230,6 +232,7 @@ export function bombViewFor(
       if (d < range)
         events.push({
           type: "sound",
+          ...(e.id !== undefined ? { id: e.id } : {}),
           kind: e.audio!.kind,
           bearing: +bearing(eyes, pos).toFixed(2),
           gain: +(1 - d / range).toFixed(2),
@@ -242,6 +245,7 @@ export function bombViewFor(
     type: "bomb-snapshot",
     serverNow: now,
     you: slot,
+    self: (({ damageTo: _d, ...own }) => own)(me),
     spectating,
     spectateTargets: me.hp > 0 ? [] : spectateTargets(state, slot),
     phase: state.phase,
