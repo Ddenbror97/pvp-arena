@@ -15,6 +15,7 @@ import { useFpsQueue } from "@/lib/fps/queue";
 import { reserveArenaPointer, releaseArenaPointer } from "@/lib/fps/entry-capture";
 import { walletQuery } from "@/lib/jackpot/api";
 import { openGames, sameRoomTerms, lobbyPollMs, LOBBY_FRESH_MS } from "@/lib/fps/open-games";
+import { warmBombLoadingImage } from "@/lib/fps/bomb/loading";
 import { OpenGames } from "./OpenGames";
 import "./strike-lobby.css";
 
@@ -397,12 +398,18 @@ export function DuelLobby() {
                 Bots fill empty slots · Free · No wager or rating changes.
               </p>
               {desktop === true ? (
-                <Link className="strike-primary" to="/fps-bomb">
-                  Play Bomb Defusal <Crosshair size={16} />
+                <Link
+                  className="strike-primary"
+                  to="/fps-bomb"
+                  onPointerEnter={warmBombLoadingImage}
+                  onFocus={warmBombLoadingImage}
+                  onClick={warmBombLoadingImage}
+                >
+                  Practice defuse the bomb <Crosshair size={16} />
                 </Link>
               ) : (
                 <button type="button" className="strike-primary" disabled>
-                  Play Bomb Defusal <Crosshair size={16} />
+                  Practice defuse the bomb <Crosshair size={16} />
                 </button>
               )}
             </div>

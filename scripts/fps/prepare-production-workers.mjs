@@ -53,9 +53,12 @@ runtime.vars = {
 };
 assert(
   runtime.durable_objects.bindings.every(
-    (binding) => binding.class_name === "DuelRoom" && !binding.script_name && !binding.namespace_id,
+    (binding) =>
+      ["DuelRoom", "BombRoom", "BombLobby"].includes(binding.class_name) &&
+      !binding.script_name &&
+      !binding.namespace_id,
   ),
-  "Production must create its own empty runtime namespace",
+  "Production room bindings must stay local to this Worker",
 );
 const app = JSON.parse(fs.readFileSync(".output/server/wrangler.json", "utf8"));
 app.account_id = account;
