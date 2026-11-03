@@ -19,6 +19,11 @@ const GAMEPLAY_ROOTS = [
   "src/lib/fps/bomb/bots.ts",
   "src/lib/fps/br/heightfield.ts",
   "src/lib/fps/br/world.ts",
+  "src/lib/fps/br/layout.ts",
+  "src/lib/fps/br/movement.ts",
+  "src/lib/fps/br/static-world.ts",
+  "src/lib/fps/br/vegetation.ts",
+  "src/lib/fps/br/landcover.ts",
   "workers/fps/index.ts",
   "workers/fps/bomb.ts",
 ];
@@ -26,7 +31,7 @@ const FORBIDDEN = [
   /src\/lib\/fps\/presentation\.ts$/,
   /src\/lib\/fps\/renderer[^/]*\.ts$/,
   /src\/lib\/fps\/settings\.ts$/,
-  /src\/lib\/fps\/br\/(terrain|water)\.ts$/,
+  /src\/lib\/fps\/br\/(terrain|water|vegetation-renderer|props-renderer)\.ts$/,
   /\.tsx$/,
   /^three(\/|$)/,
 ];

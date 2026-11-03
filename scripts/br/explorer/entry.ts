@@ -11,6 +11,13 @@ import { createTerrain } from "../../../src/lib/fps/br/terrain";
 import { vegetationWorld } from "../../../src/lib/fps/br/vegetation";
 import { createVegetation } from "../../../src/lib/fps/br/vegetation-renderer";
 import { createWater } from "../../../src/lib/fps/br/water";
+import { islandLayout } from "../../../src/lib/fps/br/layout";
+import { stepBody, type BrBody } from "../../../src/lib/fps/br/movement";
+import { createProps, type ModelManifest } from "../../../src/lib/fps/br/props-renderer";
+import { StaticWorld, type CollisionData } from "../../../src/lib/fps/br/static-world";
+import { TICK_MS } from "../../../src/lib/fps/simulation";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { WORLD_ASSETS, type WorldMeta } from "../../../src/lib/fps/br/world";
 import { RenderBudget, RENDER_CAP } from "../../../src/lib/fps/presentation";
 
@@ -59,14 +66,20 @@ document.body.appendChild(stats);
 
 let terrain: ReturnType<typeof createTerrain>;
 let vegetation: ReturnType<typeof createVegetation>;
+let props: ReturnType<typeof createProps>;
+let solid: StaticWorld;
+const loader = new GLTFLoader();
+loader.setMeshoptDecoder(MeshoptDecoder);
 let meta: WorldMeta;
 let groundAt = (_x: number, _z: number) => 0;
 const ready = (async () => {
   const t0 = performance.now();
-  const [hfBuf, cover, m] = await Promise.all([
+  const [hfBuf, cover, m, manifest, collision] = await Promise.all([
     asset(WORLD_ASSETS.height).then((r) => r.arrayBuffer()),
     landcover(),
     asset(WORLD_ASSETS.meta).then((r) => r.json() as Promise<WorldMeta>),
+    asset("/fps/br/models/models.json").then((r) => r.json() as Promise<ModelManifest>),
+    asset("/fps/br/models/collision.json").then((r) => r.json() as Promise<CollisionData>),
   ]);
   meta = m;
   const hf = await decodeHeightfield(hfBuf);
@@ -75,8 +88,17 @@ const ready = (async () => {
   scene.add(terrain.root);
   // Sea at y = 0 and the inland lakes at their own levels: one draw call.
   scene.add(createWater(m, terrain.textures.coverB).root);
-  vegetation = createVegetation(vegetationWorld(hf, cover, m));
+  const plants = vegetationWorld(hf, cover, m);
+  vegetation = createVegetation(plants);
   scene.add(vegetation.root);
+  const layout = islandLayout(m);
+  solid = new StaticWorld(hf, layout, collision, plants);
+  props = createProps(layout, manifest, loader, { preload: true });
+  scene.add(props.root);
+  await props.ready;
+  // As in 1v1/5v5: every shader compiled before Ready, so nothing compiles mid-match.
+  props.update(camera);
+  await renderer.compileAsync(scene, camera);
   (window as unknown as { loadMs: number }).loadMs = performance.now() - t0;
 })();
 
@@ -95,6 +117,7 @@ function draw() {
   const a = performance.now();
   terrain.update(camera);
   vegetation.update(camera);
+  props.update(camera);
   const selectMs = performance.now() - a;
   renderer.render(scene, camera);
   const s = terrain.stats();
@@ -104,6 +127,9 @@ function draw() {
     trees: vegetation.stats().trees,
     nearTrees: vegetation.stats().near,
     treeTriangles: vegetation.stats().triangles,
+    props: props.stats().instances,
+    propTriangles: props.stats().triangles,
+    propDraws: props.stats().draws,
     calls: renderer.info.render.calls,
     triangles: renderer.info.render.triangles,
     selectMs: +selectMs.toFixed(3),
@@ -130,20 +156,59 @@ addEventListener("mousemove", (e) => {
   pitch = Math.max(-1.5, Math.min(1.5, pitch - e.movementY * 0.002));
 });
 let interactive = new URLSearchParams(location.search).get("fly") === "1";
+let body: BrBody | null = null;
+let accumulator = 0;
 function loop(now: number) {
   requestAnimationFrame(loop);
   if (!interactive || !terrain) return;
   const dt = Math.min(0.1, (now - last) / 1000);
   last = now;
   if (budget.update(dt * 1000)) resize();
-  const speed = (keys.has("ShiftLeft") ? 400 : walking ? 6 : 80) * dt;
   const f = Number(keys.has("KeyW")) - Number(keys.has("KeyS")),
     r = Number(keys.has("KeyD")) - Number(keys.has("KeyA"));
-  camera.position.x += (-Math.sin(yaw) * f + Math.cos(yaw) * r) * speed;
-  camera.position.z += (-Math.cos(yaw) * f - Math.sin(yaw) * r) * speed;
-  if (!walking) camera.position.y += (Number(keys.has("Space")) - Number(keys.has("KeyC"))) * speed;
+  if (walking) {
+    // The shared BR movement at the fixed 30 Hz step, exactly as the server will run it.
+    if (!body) {
+      const y = solid.supportAt(camera.position.x, camera.position.z, 0.35, camera.position.y);
+      body = {
+        x: camera.position.x,
+        y,
+        z: camera.position.z,
+        velocityY: 0,
+        crouched: false,
+        grounded: false,
+      };
+    }
+    accumulator += dt * 1000;
+    while (accumulator >= TICK_MS) {
+      accumulator -= TICK_MS;
+      stepBody(
+        solid,
+        body,
+        {
+          forward: f,
+          strafe: r,
+          yaw,
+          jump: keys.has("Space"),
+          crouch: keys.has("KeyC"),
+          sprint: keys.has("ShiftLeft"),
+        },
+        TICK_MS,
+      );
+    }
+    camera.position.set(body.x, body.y + (body.crouched ? 0.95 : 1.6), body.z);
+  } else {
+    body = null;
+    const speed = (keys.has("ShiftLeft") ? 400 : 80) * dt;
+    camera.position.x += (-Math.sin(yaw) * f + Math.cos(yaw) * r) * speed;
+    camera.position.z += (-Math.cos(yaw) * f - Math.sin(yaw) * r) * speed;
+    camera.position.y += (Number(keys.has("Space")) - Number(keys.has("KeyC"))) * speed;
+    camera.position.y = Math.max(
+      groundAt(camera.position.x, camera.position.z) + 1.62,
+      camera.position.y,
+    );
+  }
   const ground = groundAt(camera.position.x, camera.position.z);
-  camera.position.y = walking ? ground + 1.62 : Math.max(ground + 1.62, camera.position.y);
   camera.rotation.set(pitch, yaw, 0, "YXZ");
   const s = draw();
   stats.textContent = `${(1000 * dt).toFixed(1)} ms  ${s.calls} calls  ${(s.triangles / 1e6).toFixed(2)} M tris  ${s.patches} patches  pixel ratio ${renderer.getPixelRatio().toFixed(2)}\n${walking ? "walking" : "flying"} (F)  x ${camera.position.x.toFixed(0)} z ${camera.position.z.toFixed(0)}  ground ${ground.toFixed(1)} m`;
@@ -166,6 +231,12 @@ window.explorer = {
     camera.position.set(pos[0]!, pos[1]!, pos[2]!);
     camera.lookAt(look[0]!, look[1]!, look[2]!);
     camera.updateMatrixWorld();
+    // Let nearer LODs stream in before the screenshot (as a player would after a moment).
+    props.update(camera);
+    for (let i = 0; i < 40 && props.stats().loadedFiles < 3 * 34; i++) {
+      await new Promise((r) => setTimeout(r, 50));
+      props.update(camera);
+    }
     return draw();
   },
 };

@@ -99,6 +99,11 @@ const views = await page.evaluate(() => {
     "6-strait-and-west-bridge": at("blackwater-prison", -200, 1700, 25, -350, 3600, 0),
     "7-island-superstore-pad": at("island-superstore", -350, 250, 2, 0, 0, 2),
     "8-main-river-valley": at("crossroads", -300, 900, 6, -2000, 1100, 2),
+    "9-superstore-car-park": at("island-superstore", -60, 130, 1.7, 0, 0, 6),
+    "10-military-base-gate": at("southern-military-base", 30, 230, 1.7, 0, 0, 5),
+    "11-military-base-from-tower": at("southern-military-base", -160, -160, 14, 0, 0, 0),
+    "12-airfield-apron": at("island-airfield", 60, 40, 1.7, -40, -110, 6),
+    "13-superstore-from-air": at("island-superstore", 250, 260, 160, 0, 0, 0),
   };
 });
 const report = { loadMs, views: {} };
