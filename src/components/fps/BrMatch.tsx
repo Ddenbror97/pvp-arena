@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { brAdmission } from "@/lib/fps/br/br.functions";
 import type { BrArenaControls, BrHud, BrView } from "@/lib/fps/br/br-arena";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
-import { BrCentre, BrFeedView, BrInventory, BrStatus, useBrFeed } from "./BrHud";
+import { BrCentre, BrEnd, BrFeedView, BrInventory, BrStatus, BrZone, useBrFeed } from "./BrHud";
 import "./duel.css";
 import "./br.css";
 
@@ -199,6 +199,16 @@ export function BrMatch() {
           <BrCentre hud={hud} hit={feed.hit} />
           <BrStatus hud={hud} />
           <BrFeedView feed={feed} />
+          {hud.myPhase !== "plane" && <BrZone hud={hud} map={arena.current?.mapImage() ?? null} />}
+          <BrEnd
+            hud={hud}
+            out={feed.out}
+            leave={
+              <Link className="duel-primary" to="/fps-duel">
+                Leave
+              </Link>
+            }
+          />
         </>
       )}
       {inventory && hud?.kit && (
@@ -208,19 +218,7 @@ export function BrMatch() {
           close={() => setInventory(false)}
         />
       )}
-      {feed.out && (
-        <div className="duel-game-overlay">
-          <section className="duel-match-card">
-            <h1>Eliminated.</h1>
-            <p>
-              By {feed.out} · {hud?.kit?.kills ?? 0} kill{hud?.kit?.kills === 1 ? "" : "s"}
-            </p>
-            <Link className="duel-primary" to="/fps-duel">
-              Leave
-            </Link>
-          </section>
-        </div>
-      )}
+
       <header className="duel-hud-top">
         <Link to="/fps-duel" className="duel-back">
           <ArrowLeft size={17} /> Leave
@@ -254,7 +252,8 @@ function banner(h: BrHud) {
       ? `Jump! ${Math.ceil(h.countdown ?? 0)} s left · ${h.aboard} aboard`
       : `Doors open in ${Math.ceil(h.countdown ?? 0)}`;
   if (h.phase === "plane") return `${h.aboard} still aboard`;
-  return "Battle royale";
+  if (h.phase === "ending" || h.phase === "completed") return "Match over";
+  return h.alive !== null ? `${h.alive} alive` : "Battle royale";
 }
 
 function hint(h: BrHud) {

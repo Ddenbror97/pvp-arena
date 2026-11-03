@@ -515,3 +515,117 @@ export function BrInventory({
     </div>
   );
 }
+
+// ------------------------------------------------------------------ zone, minimap, end (Phase 3)
+
+const HALF = 5000;
+const toMap = (v: number) => ((v + HALF) / (2 * HALF)) * 256;
+const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+/** Top-right: the island with the circles and you, players left, the zone's timer. */
+export function BrZone({ hud, map }: { hud: BrHud; map: string | null }) {
+  const z = hud.zone;
+  return (
+    <>
+      <div className="br-map" aria-label="Map">
+        {map && <img src={map} alt="" />}
+        <svg viewBox="0 0 256 256">
+          {z && (
+            <>
+              <circle
+                cx={toMap(z.x)}
+                cy={toMap(z.z)}
+                r={(z.r / (2 * HALF)) * 256}
+                className="now"
+              />
+              <circle
+                cx={toMap(z.nx)}
+                cy={toMap(z.nz)}
+                r={(z.nr / (2 * HALF)) * 256}
+                className="next"
+              />
+            </>
+          )}
+          <g
+            transform={`translate(${toMap(hud.me.x)} ${toMap(hud.me.z)}) rotate(${(-hud.me.yaw * 180) / Math.PI})`}
+          >
+            <path d="M0 -6 L4 4 L0 2 L-4 4 Z" className="me" />
+          </g>
+        </svg>
+      </div>
+      <div className="br-zoneinfo">
+        {hud.alive !== null && (
+          <span>
+            <b>{hud.alive}</b> alive
+          </span>
+        )}
+        {z && z.left !== null && (
+          <span className={z.shrinking ? "shrink" : ""}>
+            {z.shrinking ? "Zone closing" : `Phase ${z.phase} · closes in`} {clock(z.left)}
+          </span>
+        )}
+      </div>
+      {z?.outside && (
+        <div className="br-gas" role="alert">
+          Outside the zone · −{z.dps} HP/s
+        </div>
+      )}
+    </>
+  );
+}
+
+/** Eliminated (spectating) and the end of the match. */
+export function BrEnd({
+  hud,
+  out,
+  leave,
+}: {
+  hud: BrHud;
+  out: string | null;
+  leave: React.ReactNode;
+}) {
+  const [hidden, setHidden] = useState(false);
+  const r = hud.result;
+  if (r) {
+    const won = r.place === 1 && !hud.kit?.dead;
+    return (
+      <div className="duel-game-overlay">
+        <section className="duel-match-card br-end">
+          <h1>{won ? "Winner — last one standing" : `#${r.place}`}</h1>
+          <p>
+            {won
+              ? "You won the match."
+              : r.winnerName
+                ? `${r.winnerName} won the match.`
+                : "Nobody survived the zone."}
+          </p>
+          <p>
+            {r.kills} kill{r.kills === 1 ? "" : "s"} · {r.damage} damage
+          </p>
+          {leave}
+        </section>
+      </div>
+    );
+  }
+  if (!out || hidden)
+    return hud.watch ? <div className="br-watch">Watching {hud.watch.name}</div> : null;
+  return (
+    <div className="duel-game-overlay">
+      <section className="duel-match-card br-end">
+        <h1>Eliminated.</h1>
+        <p>
+          By {out} · {hud.kit?.kills ?? 0} kill{hud.kit?.kills === 1 ? "" : "s"}
+          {hud.alive !== null ? ` · ${hud.alive} left` : ""}
+        </p>
+        <div className="br-end-actions">
+          {hud.watch && (
+            <button className="duel-secondary" onClick={() => setHidden(true)}>
+              Watch {hud.watch.name}
+            </button>
+          )}
+          {leave}
+        </div>
+      </section>
+    </div>
+  );
+}

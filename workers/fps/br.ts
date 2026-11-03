@@ -7,6 +7,7 @@ import { decodeLandCover } from "../../src/lib/fps/br/landcover";
 import {
   BrSeatSync,
   BrSight,
+  brResult,
   brViewFor,
   createBrMatch,
   releaseSeat,
@@ -160,6 +161,8 @@ export class BrRoom {
   /** Events since the last snapshot (a snapshot can cover more than one tick). */
   private pendingCombat: Array<ShotEvent | ActEvent> = [];
   private pendingEvents: BrMatchState["events"] = [];
+  /** The result row has been written (once per match). */
+  private recorded = false;
   private timing = new Map<string, ConnectionTiming>();
   /** Seats whose human disconnected, and when (reconnect window). */
   private away = new Map<number, number>();
@@ -209,7 +212,12 @@ export class BrRoom {
       const hf = this.loaded.island.solid.hf;
       const { island, collision, meta } = this.loaded;
       const loot = rollLoot(seed, island.layout, collision, island.solid, meta);
-      this.state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot);
+      // Tests may run the zone faster (never in production: the hooks flag is unset there).
+      const scale = this.env.BR_TEST_HOOKS === "1" ? Number(this.env.BR_TEST_ZONE_SCALE ?? 1) : 1;
+      this.state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot, {
+        zoneTimeScale: scale > 0 && scale <= 1 ? scale : 1,
+      });
+      this.recorded = false;
       this.syncs.clear();
       this.clock = 0;
       this.sight = new BrSight();
@@ -230,6 +238,9 @@ export class BrRoom {
       return json({
         phase: state.phase,
         tick: state.tick,
+        alive: state.seats.filter((s) => !s.dead).length,
+        winner: state.winner,
+        recorded: this.recorded,
         aboard: state.seats.filter((s) => s.body.phase === "plane").length,
         landed: state.seats.filter((s) => s.body.phase === "ground" || s.body.phase === "swim")
           .length,
@@ -406,6 +417,46 @@ export class BrRoom {
     }
   }
 
+  /**
+   * The result rows, once per match (PLAN §11.2): idempotent by match id in the database
+   * (supabase/migrations/…_br_match_results.sql), so a retry after a restart is harmless.
+   */
+  private async record() {
+    if (!this.state || !this.env.SUPABASE_URL || !this.env.SUPABASE_SERVICE_ROLE_KEY) return;
+    const r = brResult(this.state);
+    const winner = r.winner >= 0 ? r.players[r.winner] : undefined;
+    try {
+      await fetch(`${this.env.SUPABASE_URL}/rest/v1/rpc/br_record_result`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: this.env.SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${this.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        },
+        body: JSON.stringify({
+          p_match: this.matchId,
+          p_result: {
+            winnerUser: winner && !winner.bot ? winner.id : null,
+            winnerName: winner?.name ?? null,
+            players: r.players.map((p) => ({
+              seat: p.seat,
+              id: p.bot ? null : p.id,
+              name: p.name,
+              bot: p.bot,
+              place: p.place,
+              kills: p.kills,
+              damage: p.damage,
+              survived_ms: p.survivedMs,
+            })),
+          },
+        }),
+        signal: AbortSignal.timeout(5000),
+      });
+    } catch {
+      // Practice results are best effort; the match itself is unaffected.
+    }
+  }
+
   /** One simulation step: one queued input per human seat (bursts add no movement time). */
   private step() {
     const state = this.state!;
@@ -437,6 +488,10 @@ export class BrRoom {
     if (this.pendingEvents.length > 2000) this.pendingEvents.splice(0, 1000);
     if (before !== state.phase && (before === "starting" || state.phase === "starting"))
       void this.report();
+    if (state.phase === "completed" && !this.recorded) {
+      this.recorded = true;
+      this.ctx.waitUntil(this.record());
+    }
   }
 
   private async tick() {

@@ -38,6 +38,8 @@ const GAMEPLAY_ROOTS = [
   "src/lib/fps/br/combat.ts",
   "src/lib/fps/br/actions.ts",
   "src/lib/fps/br/grenades.ts",
+  "src/lib/fps/br/zone.ts",
+  "src/lib/fps/br/bots.ts",
   "workers/fps/br.ts",
   "workers/fps/index.ts",
   "workers/fps/bomb.ts",

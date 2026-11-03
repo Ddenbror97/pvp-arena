@@ -68,6 +68,8 @@ export interface Env {
   BR_ASSETS_URL?: string;
   /** "1" only in the runtime test: enables the internal tick hook. Never set in production. */
   BR_TEST_HOOKS?: string;
+  /** Test only (with BR_TEST_HOOKS): zone time scale, e.g. 0.02 for a 40-second zone. */
+  BR_TEST_ZONE_SCALE?: string;
   FPS_RUNTIME_SECRET: string;
   SUPABASE_URL: string;
   SUPABASE_SERVICE_ROLE_KEY: string;

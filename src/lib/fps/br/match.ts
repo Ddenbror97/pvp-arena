@@ -21,6 +21,8 @@ import {
   type ShotEvent,
 } from "./combat";
 import { GRENADES } from "../grenades/rules";
+import { botThink, newBotMind, type BotMind } from "./bots";
+import { outside, planZone, zoneAt, type ZonePlan, type ZoneState } from "./zone";
 import {
   brHeDamage,
   brNadeAdvance,
@@ -64,7 +66,7 @@ export const BR_RULES = {
   sightRecheckMs: 100,
 } as const;
 
-export type BrPhase = "waiting" | "starting" | "plane" | "active";
+export type BrPhase = "waiting" | "starting" | "plane" | "active" | "ending" | "completed";
 /** Player rows in a view: [seat, x, y, z, phase code]; phase codes follow PHASE_CODES. */
 export const PHASE_CODES: readonly DropPhase[] = [
   "plane",
@@ -83,6 +85,12 @@ export type BrSeat = Fighter & {
   /** Last look direction (others see where a player faces). */
   yaw: number;
   pitch: number;
+  /** Finishing place (1 = winner), set when eliminated or when the match ends. */
+  place?: number;
+  /** Server time of elimination. */
+  diedAt?: number;
+  /** Whom an eliminated player watches (their eliminator, then whoever is left). */
+  spectate?: number;
 };
 
 export type BrMatchState = {
@@ -106,6 +114,14 @@ export type BrMatchState = {
   nextNade: number;
   /** Seconds each seat has stood in flames (damage ramps up), and when last. */
   burning: Map<number, { since: number; last: number }>;
+  /** The zone (circles and times from the seed) and when it started (the plane's take-off). */
+  zone: ZonePlan;
+  planeAt: number;
+  /** The zone this tick (null before take-off). */
+  zoneNow: ZoneState | null;
+  minds: BotMind[];
+  /** The winner's seat once the match ends (−1: nobody survived). */
+  winner: number;
 };
 export type BrNade = {
   id: number;
@@ -176,6 +192,7 @@ export function createBrMatch(
   seed: number,
   heightAt: (x: number, z: number) => number,
   loot: readonly WorldItem[] = [],
+  options: { zoneTimeScale?: number } = {},
 ): BrMatchState {
   const route = planeRoute(seed);
   return {
@@ -196,6 +213,7 @@ export function createBrMatch(
       dead: false,
       kills: 0,
       kitVersion: 0,
+      damage: 0,
     })),
     bots: planDropBots(meta, route, seed, BR_RULES.seats, heightAt),
     events: [],
@@ -205,6 +223,11 @@ export function createBrMatch(
     nades: [],
     nextNade: 0,
     burning: new Map(),
+    zone: planZone(meta, seed, heightAt, options.zoneTimeScale ?? 1),
+    planeAt: 0,
+    zoneNow: null,
+    minds: Array.from({ length: BR_RULES.seats }, (_, seat) => newBotMind(seat)),
+    winner: -1,
   };
 }
 
@@ -332,15 +355,42 @@ export function stepBrMatch(
     if (now < state.phaseAt) return;
     state.phase = "plane";
     state.phaseAt = now;
+    state.planeAt = now;
   }
-  const planeMs = now - state.phaseAt;
+  if (state.phase === "completed") return;
+  const planeMs = now - state.planeAt;
+  // The zone runs from the take-off (RESEARCH.md: PUBG's first circle 120 s after the start).
+  const zone = (state.zoneNow = zoneAt(state.zone, now - state.planeAt));
+  const botActs = new Map<number, BrAct[]>();
+  const botInputs = new Map<number, BrInput>();
   const heightAt = (x: number, z: number) => world.hf.heightAt(x, z);
   for (const s of state.seats) {
     if (s.dead) continue;
-    const human = s.bot ? undefined : inputs.get(s.seat);
-    let input: DropInput | null = s.bot
-      ? dropBotInput(state.bots[s.seat]!, s.body, state.route, planeMs, heightAt)
-      : (human ?? null);
+    let human = s.bot ? undefined : inputs.get(s.seat);
+    // Landed bots play like everyone else (bots.ts): the same input and actions.
+    if (
+      s.bot &&
+      (s.body.phase === "ground" || s.body.phase === "swim") &&
+      state.bots[s.seat]!.landed
+    ) {
+      const think = botThink(
+        state.minds[s.seat]!,
+        s,
+        state.seats,
+        state.loot,
+        world,
+        zone,
+        !!s.hands.heal,
+        now,
+      );
+      human = { seq: 0, ...think.input };
+      botInputs.set(s.seat, human);
+      if (think.acts.length) botActs.set(s.seat, think.acts);
+    }
+    let input: DropInput | null =
+      s.bot && !human
+        ? dropBotInput(state.bots[s.seat]!, s.body, state.route, planeMs, heightAt)
+        : (human ?? null);
     if (human) {
       s.yaw = human.yaw;
       s.pitch = human.pitch ?? 0;
@@ -351,18 +401,97 @@ export function stepBrMatch(
     if (change) state.events.push({ seat: s.seat, phase: change });
   }
   for (const s of state.seats) {
-    if (s.bot || s.dead) continue;
-    stepHands(state, world, s, inputs.get(s.seat), acts.get(s.seat) ?? [], now);
+    if (s.dead) continue;
+    if (s.bot && !botInputs.has(s.seat)) continue;
+    stepHands(
+      state,
+      world,
+      s,
+      s.bot ? botInputs.get(s.seat) : inputs.get(s.seat),
+      (s.bot ? botActs.get(s.seat) : acts.get(s.seat)) ?? [],
+      now,
+    );
   }
   stepNades(state, world, now);
+  // Gas: outside the circle, the phase's damage per second (armour does not stop it).
+  if (zone.dps > 0)
+    for (const s of state.seats) {
+      if (s.dead || s.body.phase === "plane" || !outside(zone.now, s.body.x, s.body.z)) continue;
+      s.kit.hp = Math.max(0, s.kit.hp - (zone.dps * dtMs) / 1000);
+      s.kitVersion++;
+      if (s.kit.hp <= 0) {
+        s.dead = true;
+        state.combat.push({
+          type: "elim",
+          seat: s.seat,
+          by: s.seat,
+          gun: "gas",
+          name: s.name,
+          byName: "the gas",
+        });
+        dropGear(state, world, s);
+      }
+    }
+  settle(state, now);
   state.history.record(now, state.seats);
-  // Everyone off the plane and down: the match is live (Phase 3 adds the zone from here).
+  // Everyone off the plane and down: the match is live.
   if (
     state.phase === "plane" &&
     planeMs > routeMs(state.route) &&
-    state.seats.every((s) => s.body.phase === "ground" || s.body.phase === "swim")
+    state.seats.every((s) => s.dead || s.body.phase === "ground" || s.body.phase === "swim")
   )
     state.phase = "active";
+}
+
+/** How long the result shows before the room closes the match. */
+export const ENDING_MS = 15_000;
+
+/**
+ * Places for this tick's eliminations (those eliminated together share the place), whom they
+ * watch, and the end: one player (or nobody) left → `ending`, then `completed`.
+ */
+function settle(state: BrMatchState, now: number) {
+  const alive = state.seats.filter((s) => !s.dead);
+  for (const s of state.seats)
+    if (s.dead && s.place === undefined) {
+      s.place = alive.length + 1;
+      s.diedAt = now;
+      // Watch the eliminator if still standing.
+      const by = [...state.combat].reverse().find((e) => e.type === "elim" && e.seat === s.seat);
+      const killer = by && by.type === "elim" ? state.seats[by.by] : undefined;
+      if (killer && !killer.dead) s.spectate = killer.seat;
+    }
+  // Spectators of someone eliminated move on to whoever is still in.
+  for (const s of state.seats)
+    if (s.dead && (s.spectate === undefined || state.seats[s.spectate]!.dead)) {
+      const next = alive.find((a) => !a.bot)?.seat ?? alive[0]?.seat;
+      if (next !== undefined) s.spectate = next;
+      else delete s.spectate;
+    }
+  if ((state.phase === "active" || state.phase === "plane") && alive.length <= 1 && state.planeAt) {
+    state.phase = "ending";
+    state.phaseAt = now;
+    state.winner = alive[0]?.seat ?? -1;
+    if (alive[0]) alive[0].place = 1;
+  } else if (state.phase === "ending" && now - state.phaseAt >= ENDING_MS)
+    state.phase = "completed";
+}
+
+/** The match's result rows (written once by the room when it ends). */
+export function brResult(state: BrMatchState) {
+  return {
+    winner: state.winner,
+    players: state.seats.map((s) => ({
+      seat: s.seat,
+      id: s.id,
+      name: s.name,
+      bot: s.bot,
+      place: s.place ?? 1,
+      kills: s.kills,
+      damage: Math.round(s.damage),
+      survivedMs: Math.max(0, (s.diedAt ?? state.phaseAt) - state.planeAt),
+    })),
+  };
 }
 
 /** Actions, healing, weapon switch, aim, reload and fire for one human seat on foot. */
@@ -629,6 +758,24 @@ export class BrSight {
  * in the plane or in the air (seen against the sky from anywhere). Hidden players never leave
  * the server. Compact rows: [seat, x, y, z, phase].
  */
+/** The zone for the client: the circle now, the next one, and when this step ends (server ms). */
+function zoneView(state: BrMatchState, z: ZoneState) {
+  const r = (v: number) => Math.round(v * 10) / 10;
+  return {
+    phase: z.phase,
+    shrinking: z.shrinking,
+    x: r(z.now.x),
+    z: r(z.now.z),
+    r: r(z.now.r),
+    nx: z.next.x,
+    nz: z.next.z,
+    nr: z.next.r,
+    until: Number.isFinite(z.until) ? state.planeAt + z.until : null,
+    dps: z.dps,
+  };
+}
+export type BrZoneView = ReturnType<typeof zoneView>;
+
 /** What one connection has been sent: loot it knows and the loadout version it has. */
 export class BrSeatSync {
   readonly loot = new LootSync();
@@ -669,16 +816,20 @@ export function brViewFor(
   sync?: BrSeatSync,
 ) {
   const me = state.seats[seat]!;
+  // An eliminated player sees what the player they watch sees (spectating).
+  const watched = me.dead && me.spectate !== undefined ? state.seats[me.spectate]! : me;
+  const eye = watched.body;
   const rows: number[][] = [];
   for (const s of state.seats) {
     if (s.seat === seat) continue;
     const b = s.body;
-    const d = Math.hypot(b.x - me.body.x, b.z - me.body.z);
+    const d = Math.hypot(b.x - eye.x, b.z - eye.z);
     const airborne = b.phase === "plane" || b.phase === "freefall" || b.phase === "parachute";
     const send =
+      s === watched ||
       airborne ||
       d <= BR_RULES.alwaysSendM ||
-      (d <= BR_RULES.sightSendM && sight.visible(world, me.body, b, seat, s.seat, now));
+      (d <= BR_RULES.sightSendM && sight.visible(world, eye, b, watched.seat, s.seat, now));
     // In the plane only the plane matters: aboard players are not drawn individually.
     if (!send || b.phase === "plane") continue;
     const gun = activeGun(s.kit);
@@ -700,28 +851,25 @@ export function brViewFor(
     if (e.type === "hit") return e.seat === seat || e.victim === seat || seen.has(e.victim);
     if (e.type === "hurt") return e.seat === seat || e.victim === seat;
     // Grenades: their flight and effects are public within the interest range.
-    if (e.type === "nade")
-      return Math.hypot(e.o[0] - me.body.x, e.o[2] - me.body.z) <= BR_RULES.sightSendM;
+    if (e.type === "nade") return Math.hypot(e.o[0] - eye.x, e.o[2] - eye.z) <= BR_RULES.sightSendM;
     if (e.type === "boom" || e.type === "area")
-      return Math.hypot(e.x - me.body.x, e.z - me.body.z) <= BR_RULES.sightSendM;
+      return Math.hypot(e.x - eye.x, e.z - eye.z) <= BR_RULES.sightSendM;
     return (
       e.seat === seat ||
-      Math.hypot(e.origin[0] - me.body.x, e.origin[2] - me.body.z) <= e.hearM ||
+      Math.hypot(e.origin[0] - eye.x, e.origin[2] - eye.z) <= e.hearM ||
       seen.has(e.seat)
     );
   });
   const areas = state.nades
     .filter(
       (n) =>
-        n.area &&
-        !n.done &&
-        Math.hypot(n.area.x - me.body.x, n.area.z - me.body.z) <= BR_RULES.sightSendM,
+        n.area && !n.done && Math.hypot(n.area.x - eye.x, n.area.z - eye.z) <= BR_RULES.sightSendM,
     )
     .map((n) => [n.id, n.type === "smoke" ? 0 : 1, n.area!.x, n.area!.y, n.area!.z, n.area!.until]);
   let loot: { add: unknown[]; del: number[] } | undefined;
   let kit: BrKitView | undefined;
   if (sync) {
-    loot = sync.loot.diff(state.loot, me.body.x, me.body.z);
+    loot = sync.loot.diff(state.loot, eye.x, eye.z);
     if (sync.kitVersion !== me.kitVersion) {
       sync.kitVersion = me.kitVersion;
       kit = kitView(me);
@@ -753,6 +901,22 @@ export function brViewFor(
     now,
     combat,
     ...(loot && (loot.add.length || loot.del.length) ? { loot } : {}),
+    alive: state.seats.filter((s) => !s.dead).length,
+    ...(state.zoneNow ? { zone: zoneView(state, state.zoneNow) } : {}),
+    ...(me.dead && me.spectate !== undefined
+      ? { watch: { seat: watched.seat, name: watched.name, kills: watched.kills } }
+      : {}),
+    ...(state.phase === "ending" || state.phase === "completed"
+      ? {
+          result: {
+            winner: state.winner,
+            winnerName: state.winner >= 0 ? state.seats[state.winner]!.name : null,
+            place: me.place ?? 1,
+            kills: me.kills,
+            damage: Math.round(me.damage),
+          },
+        }
+      : {}),
     // Smoke and flames burning now (so a reconnecting player sees them too).
     ...(areas.length ? { areas } : {}),
     ...(kit ? { kit } : {}),

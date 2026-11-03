@@ -30,6 +30,7 @@ import {
   BrFeedView,
   BrInventory,
   BrStatus,
+  BrZone,
   useBrFeed,
 } from "../../../src/components/fps/BrHud";
 
@@ -60,6 +61,7 @@ function Hud() {
       <BrCentre hud={hud} hit={feed.hit} />
       <BrStatus hud={hud} />
       <BrFeedView feed={feed} />
+      <BrZone hud={hud} map={arena.mapImage()} />
       {inv && hud.kit && (
         <div style={{ pointerEvents: "auto" }}>
           <BrInventory
@@ -107,7 +109,8 @@ window.sim.ready = (async () => {
     b.y = world.supportAt(b.x, b.z, 0.35, 1e4);
     Object.assign(b, { phase: "ground", grounded: true, velocityY: 0, vx: 0, vz: 0 });
   };
-  for (const s of state.seats) put(s.seat, 200 + s.seat * 7, 40);
+  // Bots well away (they fight now): this check is about loot, not bots.
+  for (const s of state.seats) put(s.seat, 200 + s.seat * 7, 900);
   put(me, 400);
   put(target, 415);
   state.phase = "active";

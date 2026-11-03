@@ -23,7 +23,8 @@ import { createNadeRenderer } from "./nade-renderer";
 import type { NadeEvent } from "./match";
 import type { LootRow } from "./loot-world";
 import { itemFromCode } from "./loot-world";
-import { PHASE_CODES, type BrKitView, type BrPhase } from "./match";
+import { PHASE_CODES, type BrKitView, type BrPhase, type BrZoneView } from "./match";
+import { WORLD_HALF } from "./world";
 import { createCharacter } from "../character";
 import { RenderBudget } from "../presentation";
 import { createWeaponKit } from "../weapon";
@@ -69,6 +70,17 @@ export type BrView = {
   kit?: BrKitView;
   /** Smoke (0) and flames (1) burning now: [id, kind, x, y, z, until]. */
   areas?: number[][];
+  alive?: number;
+  zone?: BrZoneView;
+  /** Eliminated: the player being watched. */
+  watch?: { seat: number; name: string; kills: number };
+  result?: {
+    winner: number;
+    winnerName: string | null;
+    place: number;
+    kills: number;
+    damage: number;
+  };
 };
 
 export type BrPrompt = {
@@ -105,6 +117,12 @@ export type BrHud = {
   onFoot: boolean;
   /** Grenade in hand (key 4; left mouse overhand, right mouse underhand). */
   nade: "he" | "smoke" | "fire" | null;
+  alive: number | null;
+  zone: (BrZoneView & { left: number | null; outside: boolean }) | null;
+  /** Position and facing for the minimap (world metres; yaw radians). */
+  me: { x: number; z: number; yaw: number };
+  watch: BrView["watch"] | null;
+  result: BrView["result"] | null;
 };
 export type BrFeed =
   | { kind: "toast"; text: string; tone: "ok" | "warn" }
@@ -115,6 +133,8 @@ export type BrFeed =
 
 export type BrArenaControls = {
   ready: Promise<void>;
+  /** A small top-down picture of the island (data URL) for the minimap, once loaded. */
+  mapImage(): string | null;
   snapshot(view: BrView): void;
   setSender(send: ((message: string) => void) | null): void;
   onHud(listener: (hud: BrHud) => void): void;
@@ -156,6 +176,43 @@ function detailOf(item: { item: ItemId; qty: number; durability?: number; mag?: 
     default:
       return d.short;
   }
+}
+
+/** A 256 px top-down map of the island from the heightfield (land shaded by height, water). */
+function drawMap(island: IslandScene) {
+  const N = 256;
+  const c = document.createElement("canvas");
+  c.width = c.height = N;
+  const g = c.getContext("2d")!;
+  const img = g.createImageData(N, N);
+  for (let j = 0; j < N; j++)
+    for (let i = 0; i < N; i++) {
+      const x = -WORLD_HALF + ((i + 0.5) / N) * 2 * WORLD_HALF,
+        zz = -WORLD_HALF + ((j + 0.5) / N) * 2 * WORLD_HALF;
+      const h = island.hf.heightAt(x, zz);
+      const o = (j * N + i) * 4;
+      if (h < 0.5) {
+        img.data.set([38, 72, 98, 255], o);
+      } else {
+        const k = Math.min(1, h / 260);
+        img.data.set([92 + k * 70, 112 + k * 50, 70 + k * 60, 255], o);
+      }
+    }
+  g.putImageData(img, 0, 0);
+  g.strokeStyle = "rgba(220,214,190,0.55)";
+  g.lineWidth = 1;
+  for (const r of island.meta.roads) {
+    if (!r.points.length) continue;
+    g.beginPath();
+    r.points.forEach(([x, zz], i) => {
+      const px = ((x + WORLD_HALF) / (2 * WORLD_HALF)) * N,
+        pz = ((zz + WORLD_HALF) / (2 * WORLD_HALF)) * N;
+      if (i) g.lineTo(px, pz);
+      else g.moveTo(px, pz);
+    });
+    g.stroke();
+  }
+  return c.toDataURL("image/png");
 }
 
 export function createBrArena(
@@ -297,6 +354,34 @@ export function createBrArena(
     tracerLife[i] = now + 70;
     tracerGeo.attributes["position"]!.needsUpdate = true;
   }
+  // The zone: the gas wall at the current circle, a white ring where the next one will be.
+  const wallMat = new THREE.MeshBasicMaterial({
+    color: 0x3d7bd9,
+    transparent: true,
+    opacity: 0.22,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+  });
+  const wall = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 128, 1, true), wallMat);
+  wall.visible = false;
+  wall.frustumCulled = false;
+  scene.add(wall);
+  const ringPts: number[] = [];
+  for (let i = 0; i <= 128; i++) {
+    const a = (i / 128) * Math.PI * 2;
+    ringPts.push(Math.cos(a), 0, Math.sin(a));
+  }
+  const ring = new THREE.Line(
+    new THREE.BufferGeometry().setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(ringPts, 3),
+    ),
+    new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 }),
+  );
+  ring.visible = false;
+  ring.frustumCulled = false;
+  scene.add(ring);
+  let mapUrl: string | null = null;
   /** Facing per seat from the server; death times for the fall animation. */
   const deathAt = new Map<number, number>();
 
@@ -305,6 +390,7 @@ export function createBrArena(
     if (disposed) return;
     scene.add(island.root);
     loot = createLootRenderer(scene, island.loader, base);
+    mapUrl = drawMap(island);
     viewmodel = createBrViewmodel(renderer, island.loader, base);
     const model = async (id: string) => {
       const m = island!.manifest.models[id];
@@ -866,6 +952,30 @@ export function createBrArena(
       camera.rotation.set(pitch, yaw, 0, "YXZ");
     }
     nadeFx.update(island.island.solid, server, now);
+    const z = latest.zone;
+    wall.visible = !!z && z.r < 7000;
+    ring.visible = !!z && z.nr > 0 && (z.nx !== z.x || z.nz !== z.z || z.nr !== z.r);
+    if (z) {
+      wall.position.set(z.x, 300, z.z);
+      wall.scale.set(z.r, 900, z.r);
+      ring.position.set(z.nx, body.y + 1, z.nz);
+      ring.scale.set(z.nr, 1, z.nr);
+    }
+    // Eliminated: follow the player being watched from behind.
+    const watchSeat = kit?.dead ? latest.watch?.seat : undefined;
+    const watched = watchSeat !== undefined ? others.find((o) => o.seat === watchSeat) : undefined;
+    if (watched) {
+      camera.position.set(
+        watched.pos.x + Math.sin(watched.yaw) * 4,
+        watched.pos.y + 2.4,
+        watched.pos.z + Math.cos(watched.yaw) * 4,
+      );
+      camera.lookAt(
+        watched.pos.x - Math.sin(watched.yaw) * 6,
+        watched.pos.y + 1.4,
+        watched.pos.z - Math.cos(watched.yaw) * 6,
+      );
+    }
     // First-person gun, aim and zoom (lowered while a grenade is in hand).
     const gun = onFoot() && !nadeHand ? activeGun() : null;
     const aiming =
@@ -974,8 +1084,24 @@ export function createBrArena(
         reload: reloadLeft > 0 ? { progress: reloadP, left: reloadLeft / 1000 } : null,
         heal,
         prompt,
-        onFoot: onFoot(),
+        onFoot: onFoot() && !kit?.dead,
         nade: nadeHand,
+        alive: latest.alive ?? null,
+        zone: latest.zone
+          ? {
+              ...latest.zone,
+              left:
+                latest.zone.until !== null
+                  ? Math.max(0, (latest.zone.until - server) / 1000)
+                  : null,
+              outside:
+                Math.hypot(body.x - latest.zone.x, body.z - latest.zone.z) > latest.zone.r &&
+                onFoot(),
+            }
+          : null,
+        me: { x: body.x, z: body.z, yaw },
+        watch: latest.watch ?? null,
+        result: latest.result ?? null,
       });
     }
   }
@@ -983,6 +1109,7 @@ export function createBrArena(
 
   return {
     ready,
+    mapImage: () => mapUrl,
     snapshot,
     setSender(fn) {
       send = fn;

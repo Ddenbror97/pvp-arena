@@ -63,6 +63,8 @@ export type Fighter = {
   kills: number;
   /** Bumped whenever the loadout changes, so the room resends it. */
   kitVersion: number;
+  /** Damage dealt to others this match (result row). */
+  damage: number;
 };
 
 /** Ring buffer of every seat's pose per tick, for rewinding targets. */
@@ -123,7 +125,7 @@ export type ShotEvent =
       type: "elim";
       seat: number;
       by: number;
-      gun: WeaponDef["model"] | "he" | "fire";
+      gun: WeaponDef["model"] | "he" | "fire" | "gas";
       /** Display names, filled in by the match (kill feed). */
       name?: string;
       byName?: string;
@@ -279,6 +281,7 @@ export function fire(
   }
   const { t, zone, distance } = best;
   const result = applyBrDamage(t.kit.armour, d, zone);
+  f.damage += Math.min(t.kit.hp, result.damage);
   t.kit.hp = Math.max(0, t.kit.hp - result.damage);
   t.kitVersion++;
   if (t.hands.heal) t.hands.heal = null; // damage interrupts healing

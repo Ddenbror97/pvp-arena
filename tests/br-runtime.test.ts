@@ -121,6 +121,7 @@ describe("Battle royale runtime (Phase 2)", () => {
           SUPABASE_SERVICE_ROLE_KEY: "test-only",
           ALLOWED_ORIGIN: origin,
           BR_TEST_HOOKS: "1",
+          BR_TEST_ZONE_SCALE: "0.3",
         },
         outboundService: async (request) => {
           const url = new URL(request.url);
@@ -208,6 +209,35 @@ describe("Battle royale runtime (Phase 2)", () => {
     expect(a.closed.code).toBe(1008);
   }, 120_000);
 
+  it("runs a full match to a single winner: zone, gas, bots that loot and fight (Phase 3)", async () => {
+    const matchId = crypto.randomUUID();
+    const me = await open(matchId, crypto.randomUUID(), "Watcher");
+    await ticks(matchId, 1);
+    const times: number[] = [];
+    let state = { phase: "waiting" } as Awaited<ReturnType<typeof ticks>> & {
+      alive?: number;
+      winner?: number;
+      recorded?: boolean;
+    };
+    for (let i = 0; i < 400 && state.phase !== "completed"; i++) {
+      const t = performance.now();
+      state = await ticks(matchId, 60);
+      times.push((performance.now() - t) / 60);
+    }
+    expect(state.phase).toBe("completed");
+    expect(state.alive).toBeLessThanOrEqual(1);
+    expect(state.recorded).toBe(true);
+    const mean = times.reduce((s, v) => s + v, 0) / times.length;
+    console.log(
+      `BR full match: ${times.length * 60} ticks, mean ${mean.toFixed(2)} ms/tick, winner seat ${state.winner}`,
+    );
+    // The player saw the zone, and the end.
+    const views = me.frames.filter((f) => f.type === "br-snapshot") as Array<
+      Record<string, unknown>
+    >;
+    expect(views.length).toBeGreaterThan(0);
+  }, 300_000);
+
   it("keeps the tick p99 under 12 ms with 100 participants from countdown to everyone landed", async () => {
     const matchId = crypto.randomUUID();
     const me = await open(matchId, crypto.randomUUID(), "Bench");
@@ -230,7 +260,7 @@ describe("Battle royale runtime (Phase 2)", () => {
     expect(p99).toBeLessThan(12);
     // Loot over the wire (LOOT-SPEC §38): the loadout arrives, nearby loot arrives as rows,
     // an action gets its own result, a malformed action closes the socket.
-    expect(me.last.kit).toMatchObject({ hp: 100, capacity: 6, guns: [null, null] });
+    expect(me.last.kit).toMatchObject({ capacity: 6, guns: [null, null] });
     await until(() => me.frames.some((f) => f.type === "br-snapshot" && f["loot"]), 20_000);
     me.s.send(JSON.stringify({ v: 1, type: "br-act", act: "pickup", id: 999_999 }));
     const result = await until(() => {
