@@ -70,3 +70,17 @@ describe("FROSTLINE loading screen", () => {
     expect(frost).toContain('width="1672" height="941"');
   });
 });
+it("Bomb loading has a map title and smaller mode subtitle without the extra kicker", () => {
+  const html = render({
+    progress: 37,
+    label: "Preparing assets",
+    error: null,
+    mapName: "Sandgate",
+    modeName: "Defuse the bomb",
+  });
+  expect(html).toContain("<h1>Sandgate</h1>");
+  expect(html).toContain('class="duel-loading-mode">Defuse the bomb</p>');
+  expect(html).not.toContain("PVPSTRIKE");
+  expect(html).toContain('aria-valuenow="37"');
+  expect(html).toContain('class="sr-only"');
+});

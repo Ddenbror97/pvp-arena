@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Maximize, Volume2, VolumeX } from "lucide-react";
+import { ArrowLeft, Maximize, Volume2, VolumeX, Wrench } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
@@ -25,6 +25,8 @@ import {
 import { BOMB_LOADING_IMAGE, warmBombLoadingImage } from "@/lib/fps/bomb/loading";
 import type { ArenaLoadProgress } from "@/lib/fps/loading";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
+import { BombMinimap } from "./BombMinimap";
+import { bombStepGain } from "@/lib/fps/bomb/footstep-gain";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
 import {
   DEFAULT_STRIKE_SETTINGS,
@@ -447,7 +449,7 @@ export function BombMatch() {
           sound.current?.cue("shot", { gain, bearing, m4: actor?.team === "police" });
         if (ev.type === "step" && gain > 0)
           sound.current?.cue("step", {
-            gain: ev.audio?.soft ? gain * 0.15 : gain,
+            gain: bombStepGain(gain, own, actor?.team, mine, ev.audio?.soft),
             bearing,
             own,
             ...(ev.audio?.surface ? { surface: ev.audio.surface } : {}),
@@ -466,6 +468,11 @@ export function BombMatch() {
         // "The bomb has been defused." announced to everyone when the room confirms it.
         if (ev.type === "defuse-start" && actor?.team === "police" && mine === "police")
           sound.current?.cue("voice-p-defuse");
+        if (ev.type === "round-end" && v.lastRound)
+          sound.current?.cue(
+            v.lastRound.winner === "terrorist" ? "voice-terrorist-win" : "voice-police-win",
+            { afterDefused: v.lastRound.reason === "defuse" },
+          );
         if (ev.type === "bomb-planted") sound.current?.cue("voice-bomb-planted");
         if (ev.type === "bomb-defused") sound.current?.cue("voice-bomb-defused");
         if (ev.type === "bomb-planted" || ev.type === "bomb-defused") sound.current?.cue("kill");
@@ -570,13 +577,14 @@ export function BombMatch() {
           progress={Math.min(progress.value, view ? 100 : 92)}
           label={view ? progress.label : `${progress.label} · ${connection}`}
           error={error}
-          mapName="Sandgate · Bomb Defusal"
+          mapName="Sandgate"
+          modeName="Defuse the bomb"
           image={BOMB_LOADING_IMAGE}
         />
       )}
       {!showLoading && !locked && !settingsOpen && view?.phase !== "completed" && (
         <div className="duel-capture-hint" role="status">
-          Click to play · Hold TAB for the scoreboard
+          Click to play
         </div>
       )}
       <header className="duel-hud-top">
@@ -604,7 +612,6 @@ export function BombMatch() {
           </div>
         )}
         <div className="duel-hud-actions">
-          <span className={connection === "Connected" ? "duel-connected" : ""}>{connection}</span>
           <button
             aria-label={muted ? "Enable game audio" : "Mute game audio"}
             onClick={() => toggleSoundMuted()}
@@ -631,6 +638,7 @@ export function BombMatch() {
       {view?.phase === "freeze" &&
         view.players[view.you]?.team === "police" &&
         view.self.hp > 0 &&
+        !view.self.defuseKit &&
         !showLoading && (
           <aside className="bomb-equipment" aria-label="Police equipment">
             <strong>Police equipment</strong>
@@ -640,16 +648,13 @@ export function BombMatch() {
               onClick={chooseKit}
               disabled={kitPending || !!view.self.defuseKit}
             >
-              {view.self.defuseKit
-                ? "Kit equipped"
-                : kitPending
-                  ? "Equipping…"
-                  : "Equip defuse kit · B"}
+              {kitPending ? "Equipping…" : "Equip defuse kit · B"}
             </button>
-            <small>5-second defuse · This round only</small>
+
             {kitError && <p role="alert">{kitError}</p>}
           </aside>
         )}
+      {view && !showLoading && <BombMinimap view={view} />}
       <div className="bomb-killfeed" aria-live="polite">
         {kills.map((k) => (
           <p key={k.id} className={k.mine ? "mine" : ""}>
@@ -681,7 +686,6 @@ export function BombMatch() {
               <strong className={`team-${watched.team}`}>
                 {watched.name} · {teamLabel(watched.team)}
               </strong>
-              <span>Left / right click: next / previous teammate</span>
             </>
           ) : (
             <>
@@ -697,7 +701,7 @@ export function BombMatch() {
           <div className="duel-health">
             <small>HEALTH</small>
             {self.armor !== undefined && <small>KEVLAR {Math.ceil(self.armor)}</small>}
-            {self.defuseKit && me.team === "police" && <small>DEFUSE KIT · 5s</small>}
+
             <strong>
               {Math.max(0, self.hp)}
               <span>/100</span>
@@ -706,20 +710,27 @@ export function BombMatch() {
               <i style={{ width: `${Math.max(0, self.hp)}%` }} />
             </div>
           </div>
-          <div className="duel-controls-hint">
-            W A S D <span>Move</span> · E <span>Plant / defuse (hold)</span> · R <span>Reload</span>{" "}
-            · TAB <span>Scoreboard</span> · SHIFT <span>Walk</span> · CTRL <span>Crouch</span> · ESC{" "}
-            <span>Release mouse</span>
-          </div>
           <div className="duel-ammo">
             <small>
               {me.team === "police" ? "M4A1-S" : "AK-47"} · {teamLabel(me.team).toUpperCase()}
               {me.carrier ? " · BOMB" : ""}
             </small>
-            <strong>
-              {self.ammo}
-              <span>/ {self.reserve}</span>
-            </strong>
+            <div className="bomb-ammo-row">
+              {self.defuseKit && me.team === "police" && (
+                <span
+                  className="bomb-kit-icon"
+                  role="img"
+                  aria-label="Defuse kit equipped: five-second defuse"
+                  title="Defuse kit · 5 seconds"
+                >
+                  <Wrench size={18} aria-hidden />
+                </span>
+              )}
+              <strong>
+                {self.ammo}
+                <span>/ {self.reserve}</span>
+              </strong>
+            </div>
             {self.reloadUntil ? <em>RELOADING</em> : null}
           </div>
         </footer>
