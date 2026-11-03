@@ -9,6 +9,9 @@ import {
   BrSeatSync,
   BrSight,
   brResult,
+  checkpointBrMatch,
+  restoreBrMatch,
+  type BrCheckpoint,
   brViewFor,
   createBrMatch,
   releaseSeat,
@@ -191,6 +194,7 @@ export class BrRoom {
   private released: string[] = [];
   /** Rejections per user this match (suspicious-event counter). */
   private rejects = new Map<string, number>();
+  private lastCheckpoint = 0;
   /** The result row has been written (once per match). */
   private recorded = false;
   private timing = new Map<string, ConnectionTiming>();
@@ -243,6 +247,28 @@ export class BrRoom {
 
   private async ensureMatch(matchId: string) {
     this.loaded ??= await loadIsland(this.env);
+    if (!this.state) {
+      // A restarted room resumes its match from the last checkpoint (≤ 5 s old).
+      const saved = await this.ctx.storage.get<{
+        matchId: string;
+        clock: number;
+        data: BrCheckpoint;
+      }>("br:checkpoint");
+      if (saved && saved.matchId === matchId && saved.data.phase !== "completed") {
+        const hf = this.loaded.island.solid.hf;
+        const scale = this.env.BR_TEST_HOOKS === "1" ? Number(this.env.BR_TEST_ZONE_SCALE ?? 1) : 1;
+        this.matchId = matchId;
+        this.state = restoreBrMatch(this.loaded.meta, (x, z) => hf.heightAt(x, z), saved.data, {
+          zoneTimeScale: scale > 0 && scale <= 1 ? scale : 1,
+        });
+        this.clock = saved.clock;
+        this.sight = new BrSight();
+        this.syncs.clear();
+        // Humans are back to their seats when they reconnect; until then their bodies idle.
+        for (const s of this.state.seats) if (!s.bot) this.away.set(s.seat, Date.now());
+        return this.state;
+      }
+    }
     if (!this.state) {
       this.matchId = matchId;
       // Seed from the match id: the route and bot plans are reproducible for a given match.
@@ -548,6 +574,21 @@ export class BrRoom {
     if (state.phase === "completed" && !this.recorded) {
       this.recorded = true;
       this.ctx.waitUntil(this.record());
+      this.ctx.waitUntil(this.ctx.storage.delete("br:checkpoint"));
+    }
+    // Checkpoint every 5 s of match time while the match runs (restart recovery).
+    if (
+      (state.phase === "plane" || state.phase === "active" || state.phase === "ending") &&
+      this.clock - this.lastCheckpoint >= 5000
+    ) {
+      this.lastCheckpoint = this.clock;
+      this.ctx.waitUntil(
+        this.ctx.storage.put("br:checkpoint", {
+          matchId: this.matchId,
+          clock: this.clock,
+          data: checkpointBrMatch(state),
+        }),
+      );
     }
   }
 

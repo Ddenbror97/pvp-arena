@@ -1240,3 +1240,56 @@ export function brViewFor(
     ...(kit ? { kit } : {}),
   };
 }
+
+// ------------------------------------------------------------------ checkpoints (PLAN §11.2)
+
+/**
+ * A checkpoint of a running match for Durable Object storage, so a restarted room resumes the
+ * same match (positions, health, loadouts, loot on the ground, vehicles, zone, drops). What is
+ * derived from the seed (route, zone plan, bot drop plans) is rebuilt, not stored; short-lived
+ * state (grenades in flight, lag-compensation history, bot decisions) starts fresh.
+ */
+export function checkpointBrMatch(state: BrMatchState) {
+  return {
+    v: 1 as const,
+    seed: state.seed,
+    phase: state.phase,
+    phaseAt: state.phaseAt,
+    planeAt: state.planeAt,
+    tick: state.tick,
+    winner: state.winner,
+    seats: state.seats,
+    landed: state.bots.map((b) => b.landed),
+    loot: [...state.loot.items.values()],
+    vehicles: state.vehicles,
+    drops: state.drops,
+    minds: state.minds,
+  };
+}
+export type BrCheckpoint = ReturnType<typeof checkpointBrMatch>;
+
+export function restoreBrMatch(
+  meta: WorldMeta,
+  heightAt: (x: number, z: number) => number,
+  c: BrCheckpoint,
+  options: { zoneTimeScale?: number } = {},
+): BrMatchState {
+  const state = createBrMatch(meta, c.seed, heightAt, c.loot, {
+    ...options,
+    vehicles: c.vehicles,
+  });
+  Object.assign(state, {
+    phase: c.phase,
+    phaseAt: c.phaseAt,
+    planeAt: c.planeAt,
+    tick: c.tick,
+    winner: c.winner,
+    drops: c.drops,
+    minds: c.minds,
+  });
+  c.seats.forEach((s, i) => Object.assign(state.seats[i]!, s));
+  c.landed.forEach((l, i) => {
+    if (state.bots[i]) state.bots[i]!.landed = l;
+  });
+  return state;
+}

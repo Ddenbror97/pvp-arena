@@ -103,3 +103,35 @@ describe("a full match", () => {
     expect(r.players.reduce((n, p) => n + p.kills, 0)).toBe(kills);
   }, 300_000);
 });
+
+describe("checkpoints", () => {
+  it("a restored match carries on exactly where it was (positions, loadouts, loot, zone)", async () => {
+    const { checkpointBrMatch, restoreBrMatch } = await import("@/lib/fps/br/match");
+    const world = island.solid;
+    const loot = rollLoot(5, island.layout, collision, world, meta);
+    const a = createBrMatch(meta, 5, (x, z) => hf.heightAt(x, z), loot, { zoneTimeScale: 0.3 });
+    seatHuman(a, "h1", "Human");
+    let now = 0;
+    // Until everyone has jumped and landed, then a little longer (bots looting).
+    for (let i = 0; i < 40_000 && a.phase !== "active"; i++)
+      stepBrMatch(a, world, meta, new Map(), (now += TICK_MS), TICK_MS);
+    for (let i = 0; i < 600; i++) stepBrMatch(a, world, meta, new Map(), (now += TICK_MS), TICK_MS);
+    expect(a.phase).toBe("active");
+    // Through JSON, as Durable Object storage keeps it.
+    const json = JSON.stringify(checkpointBrMatch(a));
+    // SQLite-backed Durable Object storage takes values up to 2 MB (measured ~354 KiB).
+    expect(json.length).toBeLessThan(1_500_000);
+    const saved = JSON.parse(json);
+    const b = restoreBrMatch(meta, (x, z) => hf.heightAt(x, z), saved, { zoneTimeScale: 0.3 });
+    expect(b.loot.items.size).toBe(a.loot.items.size);
+    expect(b.seats.map((s) => s.kit)).toEqual(a.seats.map((s) => s.kit));
+    const t = now + TICK_MS;
+    stepBrMatch(a, world, meta, new Map(), t, TICK_MS);
+    stepBrMatch(b, world, meta, new Map(), t, TICK_MS);
+    expect(b.zoneNow).toEqual(a.zoneNow);
+    for (let i = 0; i < a.seats.length; i++) {
+      expect(b.seats[i]!.body.x).toBeCloseTo(a.seats[i]!.body.x, 3);
+      expect(b.seats[i]!.body.z).toBeCloseTo(a.seats[i]!.body.z, 3);
+    }
+  }, 300_000);
+});
