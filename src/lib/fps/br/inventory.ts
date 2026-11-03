@@ -150,7 +150,8 @@ export function pickUp(l: Loadout, w: Loose): Outcome {
       return done([looseFromGun(old)]);
     }
     case "ammo":
-    case "heal": {
+    case "heal":
+    case "grenade": {
       const left = addStack(l, w.item, w.qty);
       if (left === w.qty) return fail("Inventory full");
       return done([], left);

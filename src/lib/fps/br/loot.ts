@@ -82,6 +82,7 @@ export const LOOT = {
       backpack: 9,
       optic: 6,
       muzzle: 3,
+      grenade: 6,
     },
     city: {
       weapon: 18,
@@ -93,6 +94,7 @@ export const LOOT = {
       backpack: 9,
       optic: 7,
       muzzle: 3,
+      grenade: 7,
     },
     warehouse: {
       weapon: 22,
@@ -104,6 +106,7 @@ export const LOOT = {
       backpack: 9,
       optic: 5,
       muzzle: 3,
+      grenade: 6,
     },
     military: {
       weapon: 24,
@@ -115,6 +118,7 @@ export const LOOT = {
       backpack: 5,
       optic: 6,
       muzzle: 3,
+      grenade: 9,
     },
     vehicle: {
       weapon: 10,
@@ -126,6 +130,7 @@ export const LOOT = {
       backpack: 10,
       optic: 3,
       muzzle: 1,
+      grenade: 4,
     },
   } satisfies Record<LootClass, Record<Category, number>>,
   /** Rarity weights per location class: higher tiers are rarer, military the best. */
@@ -152,7 +157,7 @@ export const LOOT = {
     silencer: 24,
   } as Partial<Record<ItemId, number>>,
   /** Ammunition laid next to each weapon (LOOT-SPEC §15.1). */
-  companionAmmo: { "ammo-rifle": 30, "ammo-sniper": 10 } as Record<string, number>,
+  companionAmmo: { "ammo-rifle": 30, "ammo-sniper": 30 } as Record<string, number>,
   spacing: 2.5,
 } as const;
 

@@ -1,4 +1,5 @@
 import { HIT_DAMAGE } from "../combat";
+import { GRENADE_NAMES, type GrenadeType } from "../grenades/rules";
 import { AWP } from "../primary";
 import { WEAPONS } from "../simulation";
 
@@ -20,7 +21,16 @@ export const RARITY: Record<Rarity, { label: string; color: string; rank: number
 };
 
 export type Category =
-  "weapon" | "ammo" | "helmet" | "vest" | "plate" | "heal" | "backpack" | "optic" | "muzzle";
+  | "weapon"
+  | "ammo"
+  | "helmet"
+  | "vest"
+  | "plate"
+  | "heal"
+  | "backpack"
+  | "optic"
+  | "muzzle"
+  | "grenade";
 
 export type WeaponId = "ak47" | "m4" | "awp";
 export type AmmoId = "ammo-rifle" | "ammo-sniper";
@@ -78,7 +88,15 @@ export type MuzzleDef = Base & {
   recoilScale: number;
   hideFlash: boolean;
 };
-export type ItemDef = WeaponDef | AmmoDef | ArmorDef | HealDef | BackpackDef | OpticDef | MuzzleDef;
+export type GrenadeDef = Base & {
+  category: "grenade";
+  /** The existing grenade (grenades/rules.ts): throw, fuse and effect rules come from there. */
+  type: GrenadeType;
+  stack: number;
+  pickup: number;
+};
+export type ItemDef =
+  WeaponDef | AmmoDef | ArmorDef | HealDef | BackpackDef | OpticDef | MuzzleDef | GrenadeDef;
 
 const rifle = WEAPONS.rifle;
 /** The modern 1v1/5v5 rifle table (head = chest: three hits to the head at full health). */
@@ -137,6 +155,7 @@ export const ITEMS = {
     category: "ammo",
     rarity: "common",
     stack: 90,
+    /** One box: 30 rounds (owner, 2026-11-03). */
     pickup: 30,
   },
   "ammo-sniper": {
@@ -144,8 +163,8 @@ export const ITEMS = {
     short: "AWP",
     category: "ammo",
     rarity: "uncommon",
-    stack: 20,
-    pickup: 10,
+    stack: 60,
+    pickup: 30,
   },
   "helmet-1": {
     name: "Helmet level 1",
@@ -348,6 +367,33 @@ export const ITEMS = {
     hearScale: 1,
     recoilScale: 0.95,
     hideFlash: true,
+  },
+  "grenade-he": {
+    name: GRENADE_NAMES.he,
+    short: "Explodes after 1.5 s",
+    category: "grenade",
+    rarity: "uncommon",
+    type: "he",
+    stack: 2,
+    pickup: 1,
+  },
+  "grenade-smoke": {
+    name: GRENADE_NAMES.smoke,
+    short: "Smoke screen, blocks sight",
+    category: "grenade",
+    rarity: "common",
+    type: "smoke",
+    stack: 2,
+    pickup: 1,
+  },
+  "grenade-fire": {
+    name: GRENADE_NAMES.fire,
+    short: "Fire on the floor",
+    category: "grenade",
+    rarity: "uncommon",
+    type: "fire",
+    stack: 2,
+    pickup: 1,
   },
 } as const satisfies Record<string, ItemDef>;
 
