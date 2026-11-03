@@ -32,6 +32,14 @@ export const BR_RULES = {
 } as const;
 
 export type BrPhase = "waiting" | "starting" | "plane" | "active";
+/** Player rows in a view: [seat, x, y, z, phase code]; phase codes follow PHASE_CODES. */
+export const PHASE_CODES: readonly DropPhase[] = [
+  "plane",
+  "freefall",
+  "parachute",
+  "swim",
+  "ground",
+];
 
 export type BrSeat = {
   seat: number;
@@ -287,6 +295,10 @@ export function brViewFor(
       y: me.body.y,
       z: me.body.z,
       vy: me.body.velocityY,
+      vx: me.body.vx,
+      vz: me.body.vz,
+      grounded: me.body.grounded,
+      crouched: me.body.crouched,
       phase: me.body.phase,
       seq: me.seq,
     },
