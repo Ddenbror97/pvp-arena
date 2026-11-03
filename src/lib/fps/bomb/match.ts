@@ -10,7 +10,18 @@ import { footstepSurface } from "../footstep-surfaces";
 import { eyeHeight } from "../map";
 import { combatVolumes } from "../player-volumes";
 import { validateInput } from "../protocol";
-import { predictMovement, TICK_MS, WEAPONS } from "../simulation";
+import { predictMovement, primaryStats, TICK_MS } from "../simulation";
+import { applyPurchase, buyWindowOpen } from "../buy";
+import {
+  AWP,
+  awpDamage,
+  awpSpeedFraction,
+  awpSpread,
+  primaryOf,
+  scopeSettled,
+  updateScope,
+  type Primary,
+} from "../primary";
 import { SANDGATE, SANDGATE_SPAWNS, bombsiteAt } from "./sandgate";
 import {
   BOMB_RULES,
@@ -59,6 +70,8 @@ function spawnOf(state: BombMatchState, p: BombPlayer) {
 
 function freshPlayer(state: BombMatchState, base: BombPlayer): BombPlayer {
   const s = spawnOf(state, base);
+  // The bought primary carries over to every round (practice: no economy), with fresh ammunition.
+  const stats = primaryStats(base);
   return {
     id: base.id,
     slot: base.slot,
@@ -77,8 +90,9 @@ function freshPlayer(state: BombMatchState, base: BombPlayer): BombPlayer {
     pitch: 0,
     hp: 100,
     armor: 100,
-    ammo: WEAPONS.rifle.magazine,
-    reserve: WEAPONS.rifle.reserve,
+    ammo: stats.magazine,
+    reserve: stats.reserve,
+    ...(primaryOf(base) === "awp" ? { primary: "awp" as const } : {}),
     weapon: "rifle",
     reloadUntil: 0,
     lastShotAt: -1e12,
@@ -163,6 +177,8 @@ export function assignSlot(
   p.bot = who.bot;
   // Fresh input sequence for the new controller; stats stay with the slot for this match.
   p.lastSeq = -1;
+  // Bots play the side rifle: a bot taking over a human's slot hands back a bought AWP.
+  if (who.bot && primaryOf(p) === "awp") applyPurchase(p, "rifle", primaryStats({}));
 }
 
 function endRound(state: BombMatchState, winner: Team, reason: RoundEndReason, now: number) {
@@ -200,16 +216,35 @@ function shoot(
   poses: Map<number, { x: number; y: number; z: number; crouched: boolean }>,
   targetPose?: BombTargetPose,
 ) {
-  if (shooter.reloadUntil || !shooter.ammo || now - shooter.lastShotAt < 100) return;
+  const awp = primaryOf(shooter) === "awp";
+  if (
+    shooter.reloadUntil ||
+    !shooter.ammo ||
+    now - shooter.lastShotAt < (awp ? AWP.cycleMs : 100) ||
+    // Bolt action: one shot per trigger press.
+    (awp && shooter.triggerHeld)
+  )
+    return;
   const server = state.server!;
-  const spread =
-    0.0015 *
-    combatSpread(
-      (shooter.sprayCount ?? 0) + 1,
-      Math.hypot(input.forward, input.strafe) > 0.1,
-      (shooter.velocityY ?? 0) !== 0,
-      !!shooter.crouched,
-    );
+  const spread = awp
+    ? awpSpread({
+        scoped: scopeSettled(shooter, now),
+        speedFraction: awpSpeedFraction(input, shooter),
+        airborne: (shooter.velocityY ?? 0) !== 0,
+        crouched: !!shooter.crouched,
+      })
+    : 0.0015 *
+      combatSpread(
+        (shooter.sprayCount ?? 0) + 1,
+        Math.hypot(input.forward, input.strafe) > 0.1,
+        (shooter.velocityY ?? 0) !== 0,
+        !!shooter.crouched,
+      );
+  if (awp) {
+    // The zoom drops with the shot; it resumes after the bolt cycle if still held.
+    delete shooter.scoped;
+    delete shooter.scopedAt;
+  }
   shooter.ammo--;
   shooter.lastShotAt = now;
   const hash = (server.spreadSeed = lcg(server.spreadSeed));
@@ -227,10 +262,11 @@ function shoot(
   state.events.push({
     type: "shot",
     slot: shooter.slot,
-    text: "rifle fired",
+    text: awp ? "AWP fired" : "rifle fired",
+    ...(awp ? { primary: "awp" as const } : {}),
     audio: { kind: "shot", position: origin },
   });
-  advanceCombatRecoil(shooter);
+  if (!awp) advanceCombatRecoil(shooter);
   const team = teamOf(state, shooter);
   let best: { victim: BombPlayer; zone: HitZone; distance: number } | null = null;
   for (const victim of state.players) {
@@ -248,7 +284,7 @@ function shoot(
     return;
   }
   const { victim, zone } = best;
-  const damage = applyVestDamage(victim, "rifle", zone);
+  const damage = awp ? awpDamage(victim, zone) : applyVestDamage(victim, "rifle", zone);
   const dealt = Math.min(victim.hp, damage);
   victim.hp = Math.max(0, victim.hp - damage);
   (shooter.damageTo ??= {})[victim.slot] = (shooter.damageTo[victim.slot] ?? 0) + dealt;
@@ -395,7 +431,7 @@ export function stepBombMatch(
     const input = validateBombInput(inputs[p.slot]);
     recoverCombatRecoil(p, now);
     if (p.reloadUntil && now >= p.reloadUntil) {
-      const amount = Math.min(WEAPONS.rifle.magazine - p.ammo, p.reserve);
+      const amount = Math.min(primaryStats(p).magazine - p.ammo, p.reserve);
       p.ammo += amount;
       p.reserve -= amount;
       p.reloadUntil = 0;
@@ -414,13 +450,14 @@ export function stepBombMatch(
     p.pitch = input.pitch;
     p.moving = Math.hypot(input.forward, input.strafe) > 0.1;
     p.sprinting = input.sprint;
-    if (input.reload && !p.reloadUntil && p.reserve > 0 && p.ammo < WEAPONS.rifle.magazine)
-      p.reloadUntil = now + WEAPONS.rifle.reloadMs;
+    if (input.reload && !p.reloadUntil && p.reserve > 0 && p.ammo < primaryStats(p).magazine)
+      p.reloadUntil = now + primaryStats(p).reloadMs;
     // Frozen during freeze time and while planting or defusing (looking around is allowed).
     const b = state.bomb;
     const busy =
       (b.state === "planting" && b.carrier === p.slot) ||
       (b.state === "planted" && b.defuser === p.slot);
+    updateScope(p, !!input.scope && !busy, now);
     if (!live || busy) {
       // A defuser kneels (crouched, no movement): the hands reach the bomb on the ground, and a
       // defuser is the smaller target, as in Counter-Strike.
@@ -492,8 +529,10 @@ export function stepBombMatch(
   else if (!livingTeam("police")) endRound(state, "terrorist", "elimination", now);
   if (state.phase === "live")
     for (const p of state.players)
-      if (alive(p) && p.ammo === 0 && p.reserve > 0 && !p.reloadUntil)
-        p.reloadUntil = now + WEAPONS.rifle.reloadMs;
+      if (alive(p) && p.ammo === 0 && p.reserve > 0 && !p.reloadUntil) {
+        p.reloadUntil = now + primaryStats(p).reloadMs;
+        updateScope(p, false, now);
+      }
   return state;
 }
 
@@ -601,3 +640,30 @@ export function spectateTargets(state: BombMatchState, slot: number): number[] {
 }
 
 export type { Group };
+
+/**
+ * Spawn buy (B): swap a slot's primary between the side's rifle and the AWP. Allowed during
+ * freeze time, and in the first BUY_TIME_MS of the live round within the buy radius of the
+ * player's team spawn. Returns true when applied.
+ */
+export function buyBombPrimary(
+  state: BombMatchState,
+  slot: number,
+  item: Primary,
+  now: number,
+): boolean {
+  const p = state.players[slot];
+  if (!p || (state.phase !== "freeze" && state.phase !== "live")) return false;
+  const s = spawnOf(state, p);
+  if (
+    !buyWindowOpen({
+      preRound: state.phase === "freeze",
+      live: state.phase === "live",
+      sinceLiveMs: now - (state.roundEndsAt - BOMB_RULES.roundMs),
+      fromSpawn: Math.hypot(p.x - s.x, p.z - s.z),
+      alive: alive(p),
+    })
+  )
+    return false;
+  return applyPurchase(p, item, primaryStats(item === "awp" ? { primary: item } : {}));
+}

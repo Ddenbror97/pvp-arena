@@ -1,6 +1,9 @@
 import { createBombBots } from "../../src/lib/fps/bomb/bots";
+import { validateBuy } from "../../src/lib/fps/buy";
+import type { Primary } from "../../src/lib/fps/primary";
 import {
   assignSlot,
+  buyBombPrimary,
   createBombMatch,
   startBombMatch,
   stepBombMatch,
@@ -140,6 +143,8 @@ export class BombRoom {
    * tick can see zero or two arrivals. One input is applied per tick (bursts cannot add movement
    * time); a backlog beyond MAX_INPUT_BACKLOG drops the oldest so latency stays bounded.
    */
+  /** Pending spawn purchases per slot (B menu), applied at the next tick. */
+  private buys = new Map<number, Primary>();
   private queues = new Map<
     number,
     Array<{ input: BombInput; receivedAt: number; connectionId: string }>
@@ -310,6 +315,11 @@ export class BombRoom {
       socket.serializeAttachment(a);
       return;
     }
+    const buy = validateBuy(raw);
+    if (buy) {
+      this.buys.set(a.slot, buy.item);
+      return;
+    }
     const input = validateBombInput(raw);
     if (!input) {
       socket.close(1008, "Invalid input");
@@ -403,6 +413,10 @@ export class BombRoom {
           return;
         }
       }
+      // Spawn purchases (B menu); the window and spawn radius are the simulation's rules.
+      for (const [slot, item] of this.buys)
+        if (!state.players[slot]!.bot) buyBombPrimary(state, slot, item, now);
+      this.buys.clear();
       const inputs: Record<number, BombInput> = { ...this.bots.inputs(state, now) };
       const accepted = new Map<
         number,

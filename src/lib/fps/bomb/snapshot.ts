@@ -17,7 +17,7 @@ export const BOMB_REVEAL_HOLD_MS = 200;
 /** What one recipient may know about one player. */
 export type PublicPlayer = Pick<
   BombPlayer,
-  "slot" | "group" | "name" | "bot" | "kills" | "deaths" | "assists" | "headshots"
+  "slot" | "group" | "name" | "bot" | "kills" | "deaths" | "assists" | "headshots" | "primary"
 > & {
   team: Team;
   alive: boolean;
@@ -134,6 +134,8 @@ export function bombViewFor(
       deaths: p.deaths,
       assists: p.assists,
       headshots: p.headshots,
+      // The primary is visible on the operator (and on the scoreboard), so everyone may know it.
+      ...(p.primary ? { primary: p.primary } : {}),
       team: teamOf(state, p),
       alive: p.hp > 0,
     };
