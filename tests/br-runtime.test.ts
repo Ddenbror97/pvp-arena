@@ -52,9 +52,11 @@ async function open(matchId: string, sub: string, name = "Tester") {
   const s = r.webSocket!;
   const frames: Frame[] = [];
   const closed: { code?: number } = {};
+  const last: { kit?: unknown } = {};
   s.addEventListener("message", (e: { data: unknown }) => {
     const frame = JSON.parse(String(e.data));
     frames.push(frame);
+    if (frame.kit) last.kit = frame.kit;
     if (frames.length > 400) frames.splice(0, frames.length - 200);
     if (frame.type === "ping" && s.readyState === 1)
       s.send(JSON.stringify({ v: 1, type: "pong", id: frame.id }));
@@ -62,7 +64,7 @@ async function open(matchId: string, sub: string, name = "Tester") {
   s.addEventListener("close", (e: { code: number }) => (closed.code = e.code));
   s.accept();
   sockets.push(s);
-  return { s, frames, closed };
+  return { s, frames, closed, last };
 }
 const latest = (frames: Frame[]) =>
   [...frames].reverse().find((f) => f.type === "br-snapshot") as View | undefined;
@@ -208,7 +210,7 @@ describe("Battle royale runtime (Phase 2)", () => {
 
   it("keeps the tick p99 under 12 ms with 100 participants from countdown to everyone landed", async () => {
     const matchId = crypto.randomUUID();
-    await open(matchId, crypto.randomUUID(), "Bench");
+    const me = await open(matchId, crypto.randomUUID(), "Bench");
     await ticks(matchId, 1); // load the island
     const times: number[] = [];
     let state = { phase: "waiting", landed: 0 } as Awaited<ReturnType<typeof ticks>>;
@@ -226,5 +228,20 @@ describe("Battle royale runtime (Phase 2)", () => {
       `BR runtime tick (incl. request overhead): mean ${mean.toFixed(2)} ms, p99 ${p99.toFixed(2)} ms, ${times.length} ticks`,
     );
     expect(p99).toBeLessThan(12);
+    // Loot over the wire (LOOT-SPEC §38): the loadout arrives, nearby loot arrives as rows,
+    // an action gets its own result, a malformed action closes the socket.
+    expect(me.last.kit).toMatchObject({ hp: 100, capacity: 6, guns: [null, null] });
+    await until(() => me.frames.some((f) => f.type === "br-snapshot" && f["loot"]), 20_000);
+    me.s.send(JSON.stringify({ v: 1, type: "br-act", act: "pickup", id: 999_999 }));
+    const result = await until(() => {
+      for (const f of me.frames)
+        for (const e of (f["combat"] as Array<Record<string, unknown>> | undefined) ?? [])
+          if (e["type"] === "act") return e;
+      return false;
+    }, 20_000);
+    expect(result).toMatchObject({ act: "pickup", ok: false, reason: "Gone" });
+    me.s.send(JSON.stringify({ v: 1, type: "br-act", act: "pickup", id: -1 }));
+    await until(() => me.closed.code !== undefined);
+    expect(me.closed.code).toBe(1008);
   }, 300_000);
 });
