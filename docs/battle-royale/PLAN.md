@@ -50,9 +50,9 @@ Reference research: [RESEARCH.md](RESEARCH.md). Concept map: `art/br/concept/pro
 
 | Item | Budget per frame | Phase 1 measured |
 | --- | --- | --- |
-| Draw calls | ≤ 250 typical, ≤ 400 worst (1v1 maps: 83–191) | terrain + all water: **2** |
-| Triangles | ≤ 1.2 M (terrain ≤ 0.25 M) | terrain 44–121 k |
-| Shader programs | ≤ 40, all compiled before Ready | 2 |
+| Draw calls | ≤ 250 typical, ≤ 400 worst (1v1 maps: 83–191) | whole island, 38 explorer views (2026-11-03): 39–116 |
+| Triangles | ≤ 1.2 M (terrain ≤ 0.25 M) | 0.2–0.78 M (worst: thicket close-up in forest, military base from the tower); terrain 44–135 k |
+| Shader programs | ≤ 40, all compiled before Ready | **43: over budget, to fix** (material variants from the kits; merge into shared materials) |
 | GPU memory | ≤ 600 MB | terrain ≈ 30 MB (R16UI heights 13 MB, cover 2×6.5 MB + mips) |
 | CPU per frame (render-side) | ≤ 3 ms on mid-range | patch selection 0.1–1.2 ms (headless SwiftShader) |
 | Download before first frame | ≤ 25 MB, then streamed | 2.2 MB world data |
@@ -240,13 +240,14 @@ Done:
   - **Countryside** (2026-11-03): farms (fields), houses, shacks and mobile homes (grassland), cabins (forest) and rare abandoned compounds every 260–560 m along the map's roads, outside the POIs: about 250 placements, so rotations have cover.
   - **Landmarks** (2026-11-03): Blackwater Prison is an eight-pointed bastion fortress (7 m walls as world data in `walls.ts`, collided and rendered from the same runs; gate on the north side; tested) around three cell blocks; Central Hospital is a campus of large blocks with a helipad and car parks; Iron Peaks has six summit perches flattened by the world builder (`perches` in world.v1.json) with a 60 m radio mast on the top summit and guard towers and sandbag nests on the others.
   - **Natural cover** (2026-11-03): ~14 k rocks and thickets over all land, deterministic per 60 m cell by land cover (grass and fields: cover between POIs; forest: boulders and undergrowth; rock: boulders; sand: coastal stones), kept off pads, roads, runways, bridges, water and buildings, and off slopes too steep for each piece. Rocks (Stone Pack, 0.8 m collision voxels) block movement and bullets and draw to 1.5 km; thickets of young conifers (Coniferous Forest pack) hide a player but have no collision and draw to 600 m, the same for everyone.
+  - **Fences and power lines** (2026-11-03): rail-fence paddocks behind every farm (see-through, no collision: a 1.2 m fence would trap players who jump 0.9 m); ~350 poles every 55 m along the roads with sagging wires in one line draw.
   - **One shared build** (`island.ts` `buildIsland`): layout, then trees kept clear of every building footprint (tested), then collision; about 0.2 s.
   - Worst ground views about 715–735 k triangles and 106–111 draws (superstore car park, military base from the tower); towns and farms 380–520 k.
 
 Next:
 
-1. Fences and power lines along the roads; the missing faint rural roads; the two-tone bridge asphalt.
-2. Fill the faint rural roads the extraction misses; fix the two-tone bridge asphalt.
+1. Shader programs back under 40 (shared kit materials).
+2. The missing faint rural roads; the two-tone bridge asphalt; the black patches on the `house` model.
 3. Dev overlay, stress scene and context-loss recovery.
 4. Phase 2: BrRoom/BrLobby Durable Objects, plane, parachute.
 5. Real-GPU run of the explorer on the owner's machine.

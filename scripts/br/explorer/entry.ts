@@ -12,7 +12,7 @@ import { createVegetation, TREE_MODELS } from "../../../src/lib/fps/br/vegetatio
 import { createWater } from "../../../src/lib/fps/br/water";
 import { buildIsland } from "../../../src/lib/fps/br/island";
 import { bridgeBoxes } from "../../../src/lib/fps/br/bridges";
-import { createStructures } from "../../../src/lib/fps/br/structures-renderer";
+import { createPowerLines, createStructures } from "../../../src/lib/fps/br/structures-renderer";
 import { stepBody, type BrBody } from "../../../src/lib/fps/br/movement";
 import { createProps, type ModelManifest } from "../../../src/lib/fps/br/props-renderer";
 import { StaticWorld, type CollisionData } from "../../../src/lib/fps/br/static-world";
@@ -122,6 +122,7 @@ const ready = (async () => {
   placed = layout;
   solid = island.solid;
   scene.add(createStructures(m, hf).root);
+  scene.add(createPowerLines(layout).root);
   props = createProps(layout, manifest, loader, { preload: true });
   scene.add(props.root);
   await props.ready;

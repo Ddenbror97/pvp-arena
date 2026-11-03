@@ -292,3 +292,70 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield) {
   mesh.name = "br-runways";
   return mesh;
 }
+
+/**
+ * Power-line wires between consecutive poles of the layout (layout.ts powerLines pushes them in
+ * order along each road): two wires from the cross-arm tips, sagging 0.6 m mid-span, in one
+ * line draw. Wires are cosmetic: no collision, and too thin to hide anything.
+ */
+export function createPowerLines(
+  layout: ReadonlyArray<{ model: string; x: number; y: number; z: number; turn: number }>,
+): StructuresControls {
+  const TIPS: Array<[number, number, number]> = [
+    [-0.9, 8.75, 0],
+    [0.9, 8.75, 0],
+  ];
+  const SEGMENTS = 6,
+    SAG = 0.6,
+    MAX_SPAN = 70;
+  const tip = (
+    p: { x: number; y: number; z: number; turn: number },
+    t: [number, number, number],
+  ) => {
+    const a = (p.turn * Math.PI) / 2;
+    // three.js rotation about +y by a: x' = x cos a + z sin a, z' = -x sin a + z cos a.
+    return [
+      p.x + t[0] * Math.cos(a) + t[2] * Math.sin(a),
+      p.y + t[1],
+      p.z - t[0] * Math.sin(a) + t[2] * Math.cos(a),
+    ] as const;
+  };
+  const pos: number[] = [];
+  const poles = layout.filter((p) => p.model === "power-pole");
+  for (let k = 0; k + 1 < poles.length; k++) {
+    const a = poles[k]!,
+      b = poles[k + 1]!;
+    if (Math.hypot(b.x - a.x, b.z - a.z) > MAX_SPAN) continue;
+    for (let w = 0; w < TIPS.length; w++) {
+      // Keep each wire on its own side: pair tips by which side of the line they are on.
+      const ta = tip(a, TIPS[w]!);
+      const tb0 = tip(b, TIPS[0]!),
+        tb1 = tip(b, TIPS[1]!);
+      const tb =
+        Math.hypot(tb0[0] - ta[0], tb0[2] - ta[2]) <= Math.hypot(tb1[0] - ta[0], tb1[2] - ta[2])
+          ? tb0
+          : tb1;
+      for (let s = 0; s < SEGMENTS; s++) {
+        for (const t of [s / SEGMENTS, (s + 1) / SEGMENTS])
+          pos.push(
+            ta[0] + (tb[0] - ta[0]) * t,
+            ta[1] + (tb[1] - ta[1]) * t - SAG * 4 * t * (1 - t),
+            ta[2] + (tb[2] - ta[2]) * t,
+          );
+      }
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  const material = new THREE.LineBasicMaterial({ color: 0x1c1c1c });
+  const lines = new THREE.LineSegments(g, material);
+  lines.name = "br-power-lines";
+  lines.matrixAutoUpdate = false;
+  return {
+    root: lines,
+    dispose() {
+      g.dispose();
+      material.dispose();
+    },
+  };
+}

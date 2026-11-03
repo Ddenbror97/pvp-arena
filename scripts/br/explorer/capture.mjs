@@ -161,6 +161,11 @@ const views = await page.evaluate(() => {
           return {
             ...(rock ? { "36-boulder-cover": near(rock, 22, 18, 1.7, 1.5) } : {}),
             ...(bush ? { "37-bushes": near(bush, 8, 6, 1.7, 0.8) } : {}),
+            ...(() => {
+              const poles = l.filter((p) => p.model === "power-pole");
+              const pole = poles[Math.floor(poles.length / 3)];
+              return pole ? { "38-power-line": near(pole, 35, 30, 1.7, 7) } : {};
+            })(),
           };
         })(),
       };

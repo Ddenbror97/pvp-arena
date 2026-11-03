@@ -99,6 +99,8 @@
     { "id": "bush-tall", "key": "sf:240ce9cf0ad3474f809a59f9446e63cd", "piece": "Coniferous Sapling_4", "class": "bush", "fit": { "y": 2.0 }, "collision": "none", "use": "concealment: dense young conifer, hides a standing player (no collision)" },
     { "id": "bush-medium", "key": "sf:240ce9cf0ad3474f809a59f9446e63cd", "piece": "Coniferous Sapling_4", "class": "bush", "fit": { "y": 1.3 }, "collision": "none", "use": "concealment: hides a crouching player (no collision)" },
     { "id": "bush-small", "key": "sf:62618c3260b142cfb7ef499d75a8d21a", "piece": "Small_bush_1_phong3_0", "class": "bush", "fit": { "y": 0.9 }, "collision": "none", "use": "ground tuft (detail, no collision)" },
+    { "id": "fence-rail", "key": "sf:f2ed9f555ff64eae95b408409cbff602", "piece": "FenceStyle1Long_Gray_T_0", "class": "small", "texture": 256, "fit": { "y": 1.2 }, "collision": "none", "ring": "prop", "use": "farm paddock rail fence (see-through, no collision: a 1.2 m fence would trap players who jump 0.9 m)" },
+    { "id": "power-pole", "key": "sf:f8b3249e56484746b193389914df9331", "class": "small", "texture": 256, "fit": { "y": 9 }, "collision": "voxel", "ring": "structure", "use": "power lines along the roads" },
     { "id": "jersey", "key": "sf:b52246c9611a42a99a03b425535a0237", "class": "small", "use": "roadblocks, bridges" }
   ],
   "skipped": [

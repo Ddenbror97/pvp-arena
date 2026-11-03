@@ -894,7 +894,119 @@ function countryside(out: Placement[], ctx: Context) {
       if (!ok || !parts.length) return false;
       sites.push([cx, cz]);
       out.push(...parts);
+      if (kind === "farm") paddock(out, ctx, cx + nx * 72, cz + nz * 72, nx, nz);
       return true;
+    }
+  }
+}
+
+/** Length of one fence-rail section (m, along its local x). */
+const FENCE = 2.17;
+
+/**
+ * A rail-fence paddock behind a farm: an axis-aligned 44 × 32 m rectangle of fence sections
+ * (quarter turns only), with a 6 m gate in the side facing the farm (direction -nx, -nz).
+ * Sections over water, on a road or against a building are left out.
+ */
+function paddock(out: Placement[], ctx: Context, cx: number, cz: number, nx: number, nz: number) {
+  const hw = 22,
+    hd = 16;
+  // The gate is on the side whose outward normal points back at the farm.
+  const gateSide =
+    Math.abs(nx) > Math.abs(nz) ? (nx > 0 ? "west" : "east") : nz > 0 ? "north" : "south";
+  const sides: Array<[string, number, number, number, number, Placement["turn"]]> = [
+    ["north", -hw, -hd, hw, -hd, 0],
+    ["south", -hw, hd, hw, hd, 0],
+    ["west", -hw, -hd, -hw, hd, 1],
+    ["east", hw, -hd, hw, hd, 1],
+  ];
+  const near = out.slice(-12); // the farm's own buildings were pushed just before
+  for (const [name, x0, z0, x1, z1, turn] of sides) {
+    const len = Math.hypot(x1 - x0, z1 - z0);
+    const n = Math.round(len / FENCE);
+    for (let k = 0; k < n; k++) {
+      const t = (k + 0.5) / n;
+      const x = cx + x0 + (x1 - x0) * t,
+        z = cz + z0 + (z1 - z0) * t;
+      if (name === gateSide && Math.abs(t - 0.5) * len < 3) continue;
+      // The lower end of the section (a fence on a slope never floats).
+      const half = FENCE / 2;
+      const y =
+        turn === 0
+          ? Math.min(ctx.heightAt(x - half, z), ctx.heightAt(x + half, z))
+          : Math.min(ctx.heightAt(x, z - half), ctx.heightAt(x, z + half));
+      if (underwater(ctx.meta, x, z, y) || roadDistance(ctx.meta, x, z, 8) < 6) continue;
+      if (near.some((p) => Math.hypot(p.x - x, p.z - z) < 12)) continue;
+      out.push({
+        model: "fence-rail",
+        x: +x.toFixed(2),
+        y: +y.toFixed(2),
+        z: +z.toFixed(2),
+        turn,
+        poi: "countryside",
+      });
+    }
+  }
+}
+
+/** Spacing of power-line poles (m) and their set-back from the road centreline. */
+export const POWER_LINE = { spacing: 55, offset: 7.5, maxSpan: 70 } as const;
+
+/**
+ * Power lines along every road longer than 300 m (spec §4 "power poles"): a pole every 55 m on one
+ * side, cross-arm across the road. Poles are pushed in order along each line, so consecutive
+ * "power-pole" placements less than POWER_LINE.maxSpan apart are wired (structures-renderer).
+ * Gaps where a pole would stand on a pad, a building, a bridge or in water.
+ */
+function powerLines(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  const buildings = out.filter((p) => p.poi !== "nature");
+  let salt = 5000;
+  for (const road of meta.roads) {
+    let length = 0;
+    for (let k = 0; k + 1 < road.points.length; k++)
+      length += Math.hypot(
+        road.points[k + 1]![0] - road.points[k]![0],
+        road.points[k + 1]![1] - road.points[k]![1],
+      );
+    salt++;
+    if (length < 300) continue;
+    const side = hash(salt, 1) < 0.5 ? 1 : -1;
+    let next = POWER_LINE.spacing / 2,
+      walked = 0;
+    for (let k = 0; k + 1 < road.points.length; k++) {
+      const [ax, az] = road.points[k]!,
+        [bx, bz] = road.points[k + 1]!;
+      const len = Math.hypot(bx - ax, bz - az);
+      while (len > 0 && walked + len >= next) {
+        const t = (next - walked) / len;
+        next += POWER_LINE.spacing;
+        const dx = (bx - ax) / len,
+          dz = (bz - az) / len;
+        const x = ax + (bx - ax) * t - dz * side * POWER_LINE.offset,
+          z = az + (bz - az) * t + dx * side * POWER_LINE.offset;
+        // The lowest ground under the footprint (the shaft is off-centre; never floating).
+        const y = Math.min(
+          ...[-1, 1].flatMap((ox) => [-1, 1].map((oz) => ctx.heightAt(x + ox, z + oz))),
+        );
+        if (underwater(meta, x, z, y) || bridgeDistance(meta, x, z) < 20) continue;
+        if (roadDistance(meta, x, z, 8) < 5) continue; // where another road crosses
+        if (meta.pois.some((p) => p.padRadius && Math.hypot(p.x - x, p.z - z) < p.padRadius + 5))
+          continue;
+        if (buildings.some((p) => Math.abs(p.x - x) < 14 && Math.abs(p.z - z) < 14)) continue;
+        // Cross-arm (local x) across the road.
+        const turn = (((Math.round(Math.atan2(dx, dz) / (Math.PI / 2)) % 4) + 4) %
+          4) as Placement["turn"];
+        out.push({
+          model: "power-pole",
+          x: +x.toFixed(2),
+          y: +y.toFixed(2),
+          z: +z.toFixed(2),
+          turn,
+          poi: "power",
+        });
+      }
+      walked += len;
     }
   }
 }
@@ -1037,6 +1149,7 @@ export function islandLayout(
   const ctx: Context = { meta, heightAt, coverAt };
   for (const poi of meta.pois) LAYOUTS[poi.id]?.(poi, out, ctx);
   countryside(out, ctx);
+  powerLines(out, ctx);
   nature(out, ctx);
   return out;
 }

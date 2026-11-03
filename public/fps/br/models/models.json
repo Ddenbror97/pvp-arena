@@ -1069,6 +1069,60 @@
     }
    ]
   },
+  "fence-rail": {
+   "title": "Fence pack - (low poly, game ready)",
+   "author": "TampaJoey",
+   "source": "https://sketchfab.com/3d-models/fence-pack-low-poly-game-ready-f2ed9f555ff64eae95b408409cbff602",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "prop",
+   "use": "farm paddock rail fence (see-through, no collision: a 1.2 m fence would trap players who jump 0.9 m)",
+   "scale": 1.085071,
+   "sourceTris": 216,
+   "size": [
+    2.17,
+    1.2,
+    0.05
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fence-rail.lod0.glb",
+     "tris": 216,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      2.17,
+      1.2,
+      0.05
+     ]
+    },
+    {
+     "file": "/fps/br/models/fence-rail.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      2.17,
+      1.2,
+      0.05
+     ]
+    },
+    {
+     "file": "/fps/br/models/fence-rail.lod2.glb",
+     "tris": 66,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.17,
+      1.2,
+      0.05
+     ]
+    }
+   ]
+  },
   "fire-station": {
    "title": "Fire Station No. 1",
    "author": "CommonSpence",
@@ -2722,6 +2776,60 @@
       7.5,
       6.68,
       3.72
+     ]
+    }
+   ]
+  },
+  "power-pole": {
+   "title": "Rural Area Old Concrete Electric Utility Pole",
+   "author": "Kuutti Siitonen",
+   "source": "https://sketchfab.com/3d-models/rural-area-old-concrete-electric-utility-pole-f8b3249e56484746b193389914df9331",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "structure",
+   "use": "power lines along the roads",
+   "scale": 1.833488,
+   "sourceTris": 3404,
+   "size": [
+    1.92,
+    9,
+    0.45
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/power-pole.lod0.glb",
+     "tris": 601,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      1.92,
+      9,
+      0.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/power-pole.lod1.glb",
+     "tris": 180,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      1.92,
+      9,
+      0.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/power-pole.lod2.glb",
+     "tris": 57,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.92,
+      9,
+      0.45
      ]
     }
    ]
