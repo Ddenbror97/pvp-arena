@@ -265,7 +265,7 @@ Next:
 3. Phase 3: zone, gas, elimination, winner, result row.
 4. **Vehicles** (`LOOT-SPEC.md` §19 onwards: cars and motorbikes).
 5. Phase 4: hardening.
-2. Real-GPU run of the explorer and the stress scene: package sent 2026-11-03; the owner waived it for now ("should be okay"), so Phase 1's fps acceptance stays unmeasured on a real GPU until a later check.
+6. Real-GPU run of the explorer and the stress scene: package sent 2026-11-03; the owner waived it for now ("should be okay"), so Phase 1's fps acceptance stays unmeasured on a real GPU until a later check.
 
 ## 10. Owner's performance blueprint: how it maps onto this plan
 
