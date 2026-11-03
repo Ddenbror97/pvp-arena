@@ -81,3 +81,5 @@ to the spoken line, mixed to mono, 70 Hz high-pass, 20/70 ms fades, loudness-mat
 | `voice-bomb-defused-v1.wav` | "The bomb has been defused." | `The_bomb_has_been_defused.wav` | everyone, when the bomb is defused                 |
 
 `voice-bomb-planted-v1.mp3`: "The bomb has been planted." — owner-supplied `The bomb has been planted.mp3`, copied without re-encoding or voice/pitch changes; played to everyone on the authoritative bomb-planted event. Unlike the three WAV lines above, this file retains its original MP3 encoding.
+
+`voice-terrorist-win-v1.mp3` and `voice-police-win-v1.mp3` are the owner's supplied `Terrorist win.mp3` and `Anti terrorist win.mp3`, copied without re-encoding or voice changes. The matching line plays to everyone on a confirmed Bomb Defusal round end, including halftime and the final round. They are not loaded in 1v1.

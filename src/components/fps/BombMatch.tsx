@@ -25,6 +25,8 @@ import {
 import { BOMB_LOADING_IMAGE, warmBombLoadingImage } from "@/lib/fps/bomb/loading";
 import type { ArenaLoadProgress } from "@/lib/fps/loading";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
+import { BombMinimap } from "./BombMinimap";
+import { bombStepGain } from "@/lib/fps/bomb/footstep-gain";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
 import {
   DEFAULT_STRIKE_SETTINGS,
@@ -447,7 +449,7 @@ export function BombMatch() {
           sound.current?.cue("shot", { gain, bearing, m4: actor?.team === "police" });
         if (ev.type === "step" && gain > 0)
           sound.current?.cue("step", {
-            gain: ev.audio?.soft ? gain * 0.15 : gain,
+            gain: bombStepGain(gain, own, actor?.team, mine, ev.audio?.soft),
             bearing,
             own,
             ...(ev.audio?.surface ? { surface: ev.audio.surface } : {}),
@@ -466,6 +468,11 @@ export function BombMatch() {
         // "The bomb has been defused." announced to everyone when the room confirms it.
         if (ev.type === "defuse-start" && actor?.team === "police" && mine === "police")
           sound.current?.cue("voice-p-defuse");
+        if (ev.type === "round-end" && v.lastRound)
+          sound.current?.cue(
+            v.lastRound.winner === "terrorist" ? "voice-terrorist-win" : "voice-police-win",
+            { afterDefused: v.lastRound.reason === "defuse" },
+          );
         if (ev.type === "bomb-planted") sound.current?.cue("voice-bomb-planted");
         if (ev.type === "bomb-defused") sound.current?.cue("voice-bomb-defused");
         if (ev.type === "bomb-planted" || ev.type === "bomb-defused") sound.current?.cue("kill");
@@ -650,6 +657,7 @@ export function BombMatch() {
             {kitError && <p role="alert">{kitError}</p>}
           </aside>
         )}
+      {view && !showLoading && <BombMinimap view={view} />}
       <div className="bomb-killfeed" aria-live="polite">
         {kills.map((k) => (
           <p key={k.id} className={k.mine ? "mine" : ""}>

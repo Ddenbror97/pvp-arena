@@ -48,6 +48,8 @@ const SAMPLES = {
 const BOMB_SAMPLES = {
   voiceTPlanting: "voice-t-planting-v1.wav",
   voicePDefuse: "voice-p-defuse-v1.wav",
+  voiceTerroristWin: "voice-terrorist-win-v1.mp3",
+  voicePoliceWin: "voice-police-win-v1.mp3",
   voiceBombPlanted: "voice-bomb-planted-v1.mp3",
   voiceBombDefused: "voice-bomb-defused-v1.wav",
 } as const;
@@ -558,6 +560,8 @@ export function createCombatAudio(
         | "c4-place"
         | "voice-t-planting"
         | "voice-p-defuse"
+        | "voice-terrorist-win"
+        | "voice-police-win"
         | "voice-bomb-planted"
         | "voice-bomb-defused",
       options: {
@@ -567,6 +571,7 @@ export function createCombatAudio(
         m4?: boolean;
         empty?: boolean;
         surface?: string;
+        afterDefused?: boolean;
       } = {},
     ) {
       const gain = Math.max(0, Math.min(1, options.gain ?? 1)),
@@ -636,6 +641,17 @@ export function createCombatAudio(
       else if (kind === "voice-t-planting") play("voiceTPlanting", 0.62, 0, false);
       else if (kind === "voice-p-defuse") play("voicePDefuse", 0.55, 0, false);
       // Round announcement: everyone, centred.
+      else if (kind === "voice-terrorist-win") play("voiceTerroristWin", 0.6, 0, false);
+      else if (kind === "voice-police-win")
+        play(
+          "voicePoliceWin",
+          0.6,
+          0,
+          false,
+          1,
+          0,
+          options.afterDefused ? (buffers.get("voiceBombDefused")?.duration ?? 0) + 0.12 : 0,
+        );
       else if (kind === "voice-bomb-planted") play("voiceBombPlanted", 0.6, 0, false);
       else if (kind === "voice-bomb-defused") play("voiceBombDefused", 0.6, 0, false);
     },
