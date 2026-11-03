@@ -1,0 +1,399 @@
+{
+  "database": {
+    "project": "rymzkgqoekjluzmzstap",
+    "at": "2026-11-03T01:25:54.600Z",
+    "rows": [
+      {
+        "id": "dustfront",
+        "exitCode": 0,
+        "passed": true,
+        "checks": [
+          {
+            "name": "actual scheduled Worker recovers a committed unpaid result through Supabase",
+            "passed": true
+          },
+          {
+            "name": "runtime selects the requested registry map",
+            "passed": true
+          },
+          {
+            "name": "private runtime rejects a validly signed spectator ticket",
+            "passed": true
+          },
+          {
+            "name": "one-time admission ticket cannot be replayed",
+            "passed": true
+          },
+          {
+            "name": "forged health input never changes authoritative health",
+            "passed": true
+          },
+          {
+            "name": "restart of a checkpointed live runtime refunds once through the actual Supabase ledger",
+            "passed": true
+          }
+        ]
+      },
+      {
+        "id": "frostline",
+        "exitCode": 0,
+        "passed": true,
+        "checks": [
+          {
+            "name": "actual scheduled Worker recovers a committed unpaid result through Supabase",
+            "passed": true
+          },
+          {
+            "name": "runtime selects the requested registry map",
+            "passed": true
+          },
+          {
+            "name": "private runtime rejects a validly signed spectator ticket",
+            "passed": true
+          },
+          {
+            "name": "one-time admission ticket cannot be replayed",
+            "passed": true
+          },
+          {
+            "name": "forged health input never changes authoritative health",
+            "passed": true
+          },
+          {
+            "name": "restart of a checkpointed live runtime refunds once through the actual Supabase ledger",
+            "passed": true
+          }
+        ]
+      },
+      {
+        "id": "lost-trail",
+        "exitCode": 0,
+        "passed": true,
+        "checks": [
+          {
+            "name": "actual scheduled Worker recovers a committed unpaid result through Supabase",
+            "passed": true
+          },
+          {
+            "name": "runtime selects the requested registry map",
+            "passed": true
+          },
+          {
+            "name": "private runtime rejects a validly signed spectator ticket",
+            "passed": true
+          },
+          {
+            "name": "one-time admission ticket cannot be replayed",
+            "passed": true
+          },
+          {
+            "name": "forged health input never changes authoritative health",
+            "passed": true
+          },
+          {
+            "name": "restart of a checkpointed live runtime refunds once through the actual Supabase ledger",
+            "passed": true
+          }
+        ]
+      },
+      {
+        "id": "crossfire",
+        "exitCode": 0,
+        "passed": true,
+        "checks": [
+          {
+            "name": "actual scheduled Worker recovers a committed unpaid result through Supabase",
+            "passed": true
+          },
+          {
+            "name": "runtime selects the requested registry map",
+            "passed": true
+          },
+          {
+            "name": "private runtime rejects a validly signed spectator ticket",
+            "passed": true
+          },
+          {
+            "name": "one-time admission ticket cannot be replayed",
+            "passed": true
+          },
+          {
+            "name": "forged health input never changes authoritative health",
+            "passed": true
+          },
+          {
+            "name": "restart of a checkpointed live runtime refunds once through the actual Supabase ledger",
+            "passed": true
+          }
+        ]
+      },
+      {
+        "id": "suburbia",
+        "exitCode": 0,
+        "passed": true,
+        "checks": [
+          {
+            "name": "actual scheduled Worker recovers a committed unpaid result through Supabase",
+            "passed": true
+          },
+          {
+            "name": "runtime selects the requested registry map",
+            "passed": true
+          },
+          {
+            "name": "private runtime rejects a validly signed spectator ticket",
+            "passed": true
+          },
+          {
+            "name": "one-time admission ticket cannot be replayed",
+            "passed": true
+          },
+          {
+            "name": "forged health input never changes authoritative health",
+            "passed": true
+          },
+          {
+            "name": "restart of a checkpointed live runtime refunds once through the actual Supabase ledger",
+            "passed": true
+          }
+        ]
+      }
+    ],
+    "passed": true
+  },
+  "complete-gameplay": {
+    "project": "rymzkgqoekjluzmzstap",
+    "at": "2026-11-03T01:34:38.450Z",
+    "passed": true,
+    "rows": [
+      {
+        "mapId": "dustfront",
+        "passed": true,
+        "rounds": [1, 2, 3, 4, 5, 6, 7],
+        "score": {
+          "A": 0,
+          "B": 7
+        },
+        "botPositions": 39,
+        "ms": 142352,
+        "financialAndRatingUnchanged": true
+      },
+      {
+        "mapId": "frostline",
+        "passed": true,
+        "rounds": [1, 2, 3, 4, 5, 6, 7, 8],
+        "score": {
+          "A": 0,
+          "B": 7
+        },
+        "botPositions": 71,
+        "ms": 241206,
+        "financialAndRatingUnchanged": true
+      },
+      {
+        "mapId": "lost-trail",
+        "passed": true,
+        "rounds": [1, 2, 3, 4, 5, 6, 7],
+        "score": {
+          "A": 0,
+          "B": 7
+        },
+        "botPositions": 39,
+        "ms": 147020,
+        "financialAndRatingUnchanged": true
+      },
+      {
+        "mapId": "crossfire",
+        "passed": true,
+        "rounds": [1, 2, 3, 4, 5, 6, 7],
+        "score": {
+          "A": 0,
+          "B": 7
+        },
+        "botPositions": 26,
+        "ms": 166563,
+        "financialAndRatingUnchanged": true
+      },
+      {
+        "mapId": "suburbia",
+        "passed": true,
+        "rounds": [1, 2, 3, 4, 5, 6, 7],
+        "score": {
+          "A": 0,
+          "B": 7
+        },
+        "botPositions": 68,
+        "ms": 241750,
+        "financialAndRatingUnchanged": true
+      }
+    ]
+  },
+  "cash-gameplay": {
+    "project": "rymzkgqoekjluzmzstap",
+    "at": "2026-11-03T01:39:51.433Z",
+    "passed": true,
+    "rows": [
+      {
+        "mapId": "dustfront",
+        "passed": true,
+        "rounds": [1, 2, 3, 4, 5, 6, 7],
+        "score": {
+          "A": 0,
+          "B": 7
+        },
+        "botPositions": 54,
+        "ms": 326534,
+        "financialAndRatingUnchanged": false,
+        "syntheticCashSettlement": true
+      },
+      {
+        "mapId": "frostline",
+        "passed": true,
+        "rounds": [1, 2, 3, 4, 5, 6, 7],
+        "score": {
+          "A": 0,
+          "B": 7
+        },
+        "botPositions": 64,
+        "ms": 307789,
+        "financialAndRatingUnchanged": false,
+        "syntheticCashSettlement": true
+      },
+      {
+        "mapId": "lost-trail",
+        "passed": true,
+        "rounds": [1, 2, 3, 4, 5, 6, 7],
+        "score": {
+          "A": 0,
+          "B": 7
+        },
+        "botPositions": 47,
+        "ms": 373070,
+        "financialAndRatingUnchanged": false,
+        "syntheticCashSettlement": true
+      },
+      {
+        "mapId": "crossfire",
+        "passed": true,
+        "rounds": [1, 2, 3, 4, 5, 6, 7],
+        "score": {
+          "A": 0,
+          "B": 7
+        },
+        "botPositions": 10,
+        "ms": 384980,
+        "financialAndRatingUnchanged": false,
+        "syntheticCashSettlement": true
+      },
+      {
+        "mapId": "suburbia",
+        "passed": true,
+        "rounds": [1, 2, 3, 4, 5, 6, 7, 8],
+        "score": {
+          "A": 0,
+          "B": 7
+        },
+        "botPositions": 52,
+        "ms": 473166,
+        "financialAndRatingUnchanged": false,
+        "syntheticCashSettlement": true
+      }
+    ]
+  },
+  "assets": {
+    "rows": [
+      {
+        "id": "dustfront",
+        "name": "Dustfront",
+        "rotation": true,
+        "model": "/fps/models/aim-arena.glb",
+        "bytes": 908036,
+        "externalReferences": 0,
+        "passed": true
+      },
+      {
+        "id": "frostline",
+        "name": "Frostline",
+        "rotation": true,
+        "model": "/fps/models/frostline.glb",
+        "bytes": 1484384,
+        "externalReferences": 0,
+        "passed": true
+      },
+      {
+        "id": "lost-trail",
+        "name": "Lost Trail",
+        "rotation": true,
+        "model": "/fps/models/lost-trail.glb",
+        "bytes": 3245748,
+        "externalReferences": 0,
+        "passed": true
+      },
+      {
+        "id": "crossfire",
+        "name": "Crossfire",
+        "rotation": true,
+        "model": "/fps/models/crossfire.glb",
+        "bytes": 1762000,
+        "externalReferences": 0,
+        "passed": true
+      },
+      {
+        "id": "suburbia",
+        "name": "Showdown",
+        "rotation": true,
+        "model": "/fps/models/suburbia.glb",
+        "bytes": 3379936,
+        "externalReferences": 0,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  "security": {
+    "project": "rymzkgqoekjluzmzstap",
+    "passed": true,
+    "checks": [
+      "anonymous and authenticated roles cannot directly forge match scores",
+      "unrelated synthetic player cannot cancel another private match",
+      "private match details hidden from nonparticipant",
+      "incorrect private invitation rejected",
+      "authorized join and identical retry preserve exactly two entries",
+      "third player cannot take a funded seat",
+      "authenticated participant cannot forge service-only result",
+      "RLS remains enabled on matches and entries",
+      "authorized service refunds the test reservation"
+    ]
+  },
+  "ledger": {
+    "passed": true,
+    "source": "completed staging ledger runner log",
+    "checks": [
+      "fresh project, live auth sessions, complete schema and zero active cron jobs",
+      "REST authorization and financial table/RPC ACLs",
+      "three independent join sessions reserve exactly one opposing stake",
+      "parallel result-intent and settlement retries pay once and conserve the pot",
+      "opposite rematch accepts serialize into one child match",
+      "join versus cancel races never strand or duplicate reservations",
+      "entry flood limit rejects without reserving more money",
+      "committed result intent survives expiry and contradictory callbacks",
+      "expiry versus first result recording resolves to one authoritative outcome",
+      "failed posting rolls back fully while independent reconciliation continues",
+      "paid public result updates ranking exactly once",
+      "global ledger conservation and no orphan FPS locked balances"
+    ]
+  },
+  "publicSecretScan": {
+    "project": "rymzkgqoekjluzmzstap",
+    "files": 1595,
+    "serverSecretsAbsent": true
+  },
+  "finalCleanup": {
+    "at": "2026-11-03T01:40:55.196Z",
+    "project": "rymzkgqoekjluzmzstap",
+    "financialInvariantsPass": true,
+    "activeSyntheticCashMatches": 0,
+    "activeSyntheticPracticeMatches": 0,
+    "lockedSyntheticCents": 0
+  }
+}
