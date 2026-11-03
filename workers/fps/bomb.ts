@@ -1,6 +1,7 @@
 import { createBombBots } from "../../src/lib/fps/bomb/bots";
 import {
   assignSlot,
+  equipDefuseKit,
   createBombMatch,
   startBombMatch,
   stepBombMatch,
@@ -308,6 +309,11 @@ export class BombRoom {
     if (data?.v === 1 && data.type === "spectate" && Object.keys(data).length === 3) {
       a.spectate = typeof data.slot === "number" && Number.isInteger(data.slot) ? data.slot : null;
       socket.serializeAttachment(a);
+      return;
+    }
+    if (data?.v === 1 && data.type === "equip-kit" && Object.keys(data).length === 2) {
+      const ok = equipDefuseKit(this.state, a.slot, now);
+      this.send(socket, { v: 1, type: "equipment", ok });
       return;
     }
     const input = validateBombInput(raw);
