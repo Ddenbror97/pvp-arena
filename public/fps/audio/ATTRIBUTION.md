@@ -74,10 +74,10 @@ Supplied by the project owner; no license is asserted here beyond the owner's. E
 to the spoken line, mixed to mono, 70 Hz high-pass, 20/70 ms fades, loudness-matched to about
 -16 LUFS (peak limit -1 dBFS), 48 kHz PCM16.
 
-| File | Line | Source | Played |
-| --- | --- | --- | --- |
-| `voice-t-planting-v1.wav` | "Planting the bomb." | `Terrorist_audio.wav` | Terrorist radio, when a Terrorist starts planting |
-| `voice-p-defuse-v1.wav` | "Defuse the bomb." | `Defuse_the_bomb.wav` | Police radio, when a Police player starts defusing |
-| `voice-bomb-defused-v1.wav` | "The bomb has been defused." | `The_bomb_has_been_defused.wav` | everyone, when the bomb is defused |
+| File                        | Line                         | Source                          | Played                                             |
+| --------------------------- | ---------------------------- | ------------------------------- | -------------------------------------------------- |
+| `voice-t-planting-v1.wav`   | "Planting the bomb."         | `Terrorist_audio.wav`           | Terrorist radio, when a Terrorist starts planting  |
+| `voice-p-defuse-v1.wav`     | "Defuse the bomb."           | `Defuse_the_bomb.wav`           | Police radio, when a Police player starts defusing |
+| `voice-bomb-defused-v1.wav` | "The bomb has been defused." | `The_bomb_has_been_defused.wav` | everyone, when the bomb is defused                 |
 
-The announcement "The bomb has been planted." is not recorded yet.
+`voice-bomb-planted-v1.mp3`: "The bomb has been planted." — owner-supplied `The bomb has been planted.mp3`, copied without re-encoding or voice/pitch changes; played to everyone on the authoritative bomb-planted event. Unlike the three WAV lines above, this file retains its original MP3 encoding.

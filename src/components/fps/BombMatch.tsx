@@ -414,6 +414,7 @@ export function BombMatch() {
         // "The bomb has been defused." announced to everyone when the room confirms it.
         if (ev.type === "defuse-start" && actor?.team === "police" && mine === "police")
           sound.current?.cue("voice-p-defuse");
+        if (ev.type === "bomb-planted") sound.current?.cue("voice-bomb-planted");
         if (ev.type === "bomb-defused") sound.current?.cue("voice-bomb-defused");
         if (ev.type === "bomb-planted" || ev.type === "bomb-defused") sound.current?.cue("kill");
         if (ev.type === "kill" && ev.victim !== undefined) {
