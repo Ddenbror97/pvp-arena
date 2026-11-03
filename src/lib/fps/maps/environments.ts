@@ -3,6 +3,7 @@ import { createArenaEnvironment, type MapEnvironment } from "../arena-environmen
 import type { GameMap } from "./types";
 import { createSnowfall } from "../snowfall";
 import { createLostTrailEnvironment } from "./lost-trail-environment";
+import { createSandgateBranding } from "./sandgate-branding";
 
 /**
  * Browser-only render scenes per map. Every map gets the shared loader by default (blockout from
@@ -13,6 +14,18 @@ import { createLostTrailEnvironment } from "./lost-trail-environment";
  */
 type EnvironmentFactory = (scene: THREE.Scene, map: GameMap) => MapEnvironment;
 const FACTORIES: Readonly<Record<string, EnvironmentFactory>> = {
+  sandgate: (scene, map) => {
+    const base = createArenaEnvironment(scene, map);
+    const branding = createSandgateBranding(scene, base.ready);
+    return {
+      ...base,
+      ready: branding.ready,
+      dispose() {
+        branding.dispose();
+        base.dispose();
+      },
+    };
+  },
   // FROSTLINE: the shared loader plus bounded GPU snowfall (no per-frame CPU work).
   frostline: (scene, map) => {
     const base = createArenaEnvironment(scene, map);
