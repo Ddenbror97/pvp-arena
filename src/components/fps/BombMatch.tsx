@@ -385,7 +385,7 @@ export function BombMatch() {
             lastHud = Date.now();
             setView(data);
           }
-          if (data.phase === "completed" && document.pointerLockElement) document.exitPointerLock();
+          // Keep capture through the scoreboard and the next room. Escape opens the menu.
         };
         ws.onclose = (event) => {
           if (stopped) return;
@@ -848,7 +848,7 @@ export function BombMatch() {
       )}
       {showBoard && view && <BombScoreboard view={view} />}
       <GameSettings
-        open={settingsOpen && arenaReady && view?.phase !== "completed"}
+        open={settingsOpen && arenaReady}
         onOpenChange={setSettingsOpen}
         settings={settings}
         onChange={setSettings}

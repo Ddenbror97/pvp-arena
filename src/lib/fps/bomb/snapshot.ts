@@ -7,7 +7,7 @@ import {
   type BombPlayer,
   type Team,
 } from "./rules";
-import { canSee } from "./visibility";
+import { canSee, canReveal } from "./visibility";
 import { publicGrenadeWorld, type PublicGrenadeWorld } from "../grenades/world";
 import { throwKindOf, type GrenadeType, type ThrowKind } from "../grenades/rules";
 import { spectatorPov, type SpectatorPov } from "./spectator";
@@ -104,7 +104,7 @@ export class BombReveal {
     smoke?: BombMatchState["grenades"],
   ) {
     const k = `${viewer}:${target.slot}`;
-    if (canSee(SANDGATE, viewerBody, target, smoke)) {
+    if (canReveal(SANDGATE, viewerBody, target, smoke)) {
       this.seenAt.set(k, now);
       return true;
     }

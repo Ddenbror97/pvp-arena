@@ -9,6 +9,8 @@ import {
   type Bombsite,
 } from "./rules";
 import { canSee } from "./visibility";
+import { GRENADES, type GrenadeType } from "../grenades/rules";
+import { simStart, simTo, throwStart } from "../grenades/physics";
 
 type Point = { x: number; z: number };
 
@@ -140,8 +142,7 @@ const SKILL = 0.6;
 
 /**
  * Named ground points on Sandgate (all on the bots' ground graph: tests/fps-bomb-bots.test.ts).
- * Bots walk ground routes only (stairs, the A catwalk and the platforms are obstacles on the
- * shared ground graph); humans use every level.
+ * The height-aware grid connects the ground, stairs, catwalk and platforms.
  */
 export const BOT_POINTS = {
   plant: { A: { x: -27, z: -24 }, B: { x: 30, z: -28 } } as Record<Bombsite, Point>,
@@ -197,6 +198,10 @@ export const BOT_POINTS = {
 
 type Plan = { goals: Point[]; holdAt?: Point; lookAt?: Point };
 type Memory = {
+  style: "push" | "lurk" | "support";
+  holdUntil: number;
+  nextUtility: number;
+  utility: { type: GrenadeType; yaw: number; pitch: number; at: number } | null;
   round: number;
   plan: Plan;
   goal: number;
@@ -256,19 +261,25 @@ export function createBombBots(random: () => number = Math.random) {
     targetSite: Bombsite = "A",
     /** Police callout: a site whose approach Police have heard Terrorists on this round. */
     alert: Bombsite | null = null;
+  let roles = [0, 1, 2, 3, 4];
 
   function teamPlan(state: BombMatchState) {
     if (planRound === state.round) return;
     planRound = state.round;
     targetSite = random() < 0.5 ? "A" : "B";
     alert = null;
+    roles = [0, 1, 2, 3, 4];
+    for (let i = roles.length - 1; i > 0; i--) {
+      const j = Math.min(i, Math.floor(random() * (i + 1)));
+      [roles[i], roles[j]] = [roles[j]!, roles[i]!];
+    }
     for (const m of memory.values()) m.round = -1;
   }
 
-  function planFor(state: BombMatchState, p: BombPlayer): Plan {
+  function planFor(state: BombMatchState, p: BombPlayer, style: Memory["style"]): Plan {
     const team = teamOf(state, p);
     const mates = state.players.filter((q) => teamOf(state, q) === team);
-    const k = mates.findIndex((q) => q.slot === p.slot);
+    const k = roles[mates.findIndex((q) => q.slot === p.slot)]!;
     if (team === "police") {
       const hold = [
         BOT_POINTS.holdA[0]!,
@@ -283,12 +294,13 @@ export function createBombBots(random: () => number = Math.random) {
     const main = targetSite === "A" ? BOT_POINTS.approachA : BOT_POINTS.approachB;
     const mid = targetSite === "A" ? BOT_POINTS.midA : BOT_POINTS.midB;
     const plant = BOT_POINTS.plant[targetSite];
-    if (p.slot === carrier) return { goals: [...main, plant], holdAt: plant };
+    if (p.slot === carrier)
+      return { goals: [...(style === "lurk" ? mid : main), plant], holdAt: plant };
     // The others: two with the carrier, one through mid, one lurking mid then joining late.
     const others = mates.filter((q) => q.slot !== carrier);
     const j = others.findIndex((q) => q.slot === p.slot);
-    if (j === 3) return { goals: [BOT_POINTS.lurk, ...mid.slice(2), plant] };
-    if (j === 2) return { goals: [...mid, plant] };
+    if (j === 3 && style === "lurk") return { goals: [BOT_POINTS.lurk, ...mid.slice(2), plant] };
+    if (j === 2 || style === "support") return { goals: [...mid, plant] };
     return { goals: [...main, plant] };
   }
 
@@ -314,7 +326,7 @@ export function createBombBots(random: () => number = Math.random) {
     // Callout: the mid player and one player from the other site rotate; one anchor stays.
     if (team === "police" && alert && b.state !== "planted") {
       const mates = state.players.filter((q) => teamOf(state, q) === "police");
-      const k = mates.findIndex((q) => q.slot === p.slot); // 0,1 hold A; 2 mid; 3,4 hold B
+      const k = roles[mates.findIndex((q) => q.slot === p.slot)]!;
       const rotate = alert === "A" ? k === 2 || k === 3 : k === 2 || k === 1;
       if (rotate) return (alert === "A" ? BOT_POINTS.holdA : BOT_POINTS.holdB)[k % 2]!;
     }
@@ -338,6 +350,10 @@ export function createBombBots(random: () => number = Math.random) {
     let m = memory.get(p.slot);
     if (!m) {
       m = {
+        style: "push",
+        holdUntil: 0,
+        nextUtility: 0,
+        utility: null,
         round: -1,
         plan: { goals: [] },
         goal: 0,
@@ -360,10 +376,14 @@ export function createBombBots(random: () => number = Math.random) {
     }
     if (m.round !== state.round) {
       m.round = state.round;
-      m.plan = planFor(state, p);
+      m.style = (["push", "lurk", "support"] as const)[Math.min(2, Math.floor(random() * 3))]!;
+      m.plan = planFor(state, p, m.style);
+      m.holdUntil = now + BOMB_RULES.freezeMs + 14000 + random() * 12000;
+      m.nextUtility = now + BOMB_RULES.freezeMs + 2500 + p.slot * 370;
+      m.utility = null;
       m.goal = 0;
       m.route = [];
-      m.nextPlan = 0;
+      m.nextPlan = now + p.slot * 35;
       m.target = null;
     }
     const dt = Math.min(0.1, Math.max(0, (now - m.lastAt) / 1000));
@@ -413,6 +433,30 @@ export function createBombBots(random: () => number = Math.random) {
     const reacted = !!enemy && now - m.seenAt >= (m.holdingAngle ? 250 : 360 / SKILL);
     // Destination: objective overrides, else the round plan.
     const override = live ? objectiveGoal(state, p, now) : null;
+    // An unpressured defender changes angle rather than kneeling at one spot all round.
+    if (live && team === "police" && !override && !enemy && now > m.holdUntil) {
+      m.plan = planFor(state, p, m.style);
+      const k =
+        roles[
+          state.players.filter((q) => teamOf(state, q) === team).findIndex((q) => q.slot === p.slot)
+        ]!;
+      const alternatives =
+        k < 2
+          ? BOT_POINTS.holdA
+          : k > 2
+            ? BOT_POINTS.holdB
+            : [BOT_POINTS.holdMid, BOT_POINTS.stage[targetSite]];
+      const at = Math.floor(now / 9000 + p.slot) % alternatives.length;
+      m.plan = {
+        goals: [alternatives[at]!],
+        holdAt: alternatives[at]!,
+        lookAt: BOT_POINTS.watch[k]!,
+      };
+      m.goal = 0;
+      m.route = [];
+      m.nextPlan = now;
+      m.holdUntil = now + 7000 + random() * 7000;
+    }
     let destination: Point | null = override;
     if (!destination && m.plan.goals.length) {
       const g = m.plan.goals[Math.min(m.goal, m.plan.goals.length - 1)]!;
@@ -444,9 +488,9 @@ export function createBombBots(random: () => number = Math.random) {
       team === "police" &&
       Math.hypot(p.x - b.x, p.z - b.z) <= BOMB_RULES.defuseRadius - 0.2 &&
       (b.defuser === undefined || b.defuser === p.slot);
-    if (live && destination && now >= m.nextPlan) {
+    if (destination && now >= m.nextPlan && (live || !m.route.length)) {
       m.route = bombPath(p, destination);
-      m.nextPlan = now + 800;
+      m.nextPlan = now + 650 + p.slot * 31;
     }
     while (m.route[0] && Math.hypot(m.route[0].x - p.x, m.route[0].z - p.z) < 0.3) m.route.shift();
     const next = m.route[0];
@@ -478,18 +522,75 @@ export function createBombBots(random: () => number = Math.random) {
         : holding && m.plan.lookAt
           ? m.plan.lookAt
           : null;
-    const goalYaw = enemy
-      ? m.aimYaw
-      : look
-        ? Math.atan2(-(look.x - p.x), -(look.z - p.z))
-        : next
-          ? Math.atan2(-vx || -(next.x - p.x), -vz || -(next.z - p.z))
-          : p.yaw;
-    const yaw = wrap(p.yaw + clamp(wrap(goalYaw - p.yaw), 3.2 * Math.max(dt, 0.033)));
-    const pitch = p.pitch + clamp((enemy ? m.aimPitch : 0) - p.pitch, 2 * Math.max(dt, 0.033));
+    const goalYaw =
+      defusing && b.state === "planted"
+        ? Math.atan2(-(b.x - p.x), -(b.z - p.z))
+        : enemy
+          ? m.aimYaw
+          : look
+            ? Math.atan2(-(look.x - p.x), -(look.z - p.z))
+            : next
+              ? Math.atan2(-vx || -(next.x - p.x), -vz || -(next.z - p.z))
+              : p.yaw;
+    let yaw = wrap(p.yaw + clamp(wrap(goalYaw - p.yaw), 3.2 * Math.max(dt, 0.033)));
+    const goalPitch =
+      defusing && b.state === "planted"
+        ? Math.atan2(
+            b.y + 0.14 - (p.y + eyeHeight(p)),
+            Math.max(0.15, Math.hypot(b.x - p.x, b.z - p.z)),
+          )
+        : enemy
+          ? m.aimPitch
+          : 0;
+    let pitch = p.pitch + clamp(goalPitch - p.pitch, 2 * Math.max(dt, 0.033));
     if (reacted && now >= m.restEnd) {
       m.burstEnd = now + 260 + random() * 160;
       m.restEnd = m.burstEnd + (320 + random() * 300) / SKILL;
+    }
+    // Utility uses normal equip/hold/release inputs and the server's collision/fuses.
+    // One bounded trajectory check on a staggered cooldown; never scan hidden enemies.
+    if (live && !planting && !defusing && !m.utility && now >= m.nextUtility && !p.reloadUntil) {
+      m.nextUtility = now + 6500 + random() * 4000;
+      const point = enemy ?? (m.style === "support" ? destination : null);
+      const d = point ? Math.hypot(point.x - p.x, point.z - p.z) : 0;
+      const type: GrenadeType = enemy ? (m.style === "lurk" ? "fire" : "he") : "smoke";
+      if (
+        point &&
+        d > 7 &&
+        d < 18 &&
+        (p.grenades?.[type] ?? 0) > 0 &&
+        !(state.grenades?.smokes.length && type === "smoke")
+      ) {
+        const aim = Math.atan2(-(point.x - p.x), -(point.z - p.z));
+        const angle = -0.12;
+        const launch = throwStart(
+          { x: p.x, y: p.y + eyeHeight(p), z: p.z },
+          aim,
+          angle,
+          { x: 0, y: 0, z: 0 },
+          "over",
+          MAP,
+        );
+        const landing = simStart(launch.origin, launch.velocity);
+        simTo(landing, MAP, type === "he" ? GRENADES.he.fuseMs / 1000 : 2.5);
+        const safe = state.players.every(
+          (q) =>
+            q.hp <= 0 ||
+            teamOf(state, q) !== team ||
+            Math.hypot(q.x - landing.x, q.z - landing.z) > (type === "smoke" ? 2 : 6),
+        );
+        if (safe && Math.hypot(landing.x - point.x, landing.z - point.z) < 5)
+          m.utility = { type, yaw: aim, pitch: angle, at: now };
+      }
+    }
+    if (m.utility && !p.nadeHold && !p.nadeThrow && !(p.grenades?.[m.utility.type] ?? 0))
+      m.utility = null;
+    if (m.utility && now - m.utility.at > 5000 && !p.nadeThrow) m.utility = null;
+    const utility = live && !planting && !defusing ? m.utility : null;
+    if (utility) {
+      vx = vz = 0;
+      yaw = wrap(p.yaw + clamp(wrap(utility.yaw - p.yaw), 3.2 * Math.max(dt, 0.033)));
+      pitch = p.pitch + clamp(utility.pitch - p.pitch, 2 * Math.max(dt, 0.033));
     }
     return {
       v: 1,
@@ -501,13 +602,25 @@ export function createBombBots(random: () => number = Math.random) {
       strafe: clamp(Math.cos(yaw) * vx - Math.sin(yaw) * vz, 1),
       yaw,
       pitch,
-      weapon: "rifle",
-      fire: reacted && now < m.burstEnd && Math.abs(wrap(m.aimYaw - yaw)) < 0.16,
-      reload: p.ammo === 0 || (!enemy && p.ammo < 10),
+      weapon: utility ? "grenade" : "rifle",
+      ...(utility ? { nade: utility.type } : {}),
+      fire: utility
+        ? !p.nadeThrow &&
+          (!p.nadeHold ||
+            now - p.nadeHold.since < GRENADES.primeMs + 60 ||
+            Math.abs(wrap(utility.yaw - yaw)) > 0.08)
+        : reacted && now < m.burstEnd && Math.abs(wrap(m.aimYaw - yaw)) < 0.16,
+      reload: !utility && (p.ammo === 0 || (!enemy && p.ammo < 10)),
       jump: false,
       sprint: false,
       // Holding an angle crouched: tighter spread and a smaller target (as players do).
-      crouch: holding && (guarding || !!m.plan.lookAt),
+      crouch: !utility && (defusing || (reacted && holding && now < m.burstEnd)),
+      walk:
+        !enemy &&
+        !utility &&
+        m.style === "lurk" &&
+        !!next &&
+        Math.hypot(p.x - next.x, p.z - next.z) < 12,
       ...(planting || defusing ? { use: true } : {}),
     };
   }

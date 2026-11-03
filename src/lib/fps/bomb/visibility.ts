@@ -128,3 +128,57 @@ export function canSee(
   }
   return false;
 }
+
+/** Snapshot reveal covers the rendered silhouette, not just the bot's aim points.
+ * The cheap perception test stays unchanged; the extra rays only run for occluded targets.
+ * Boots/shoulders may be visible under a ledge or beside cover while all nine aim points hide.
+ */
+export function canReveal(
+  map: GameMap,
+  viewer: Body,
+  target: Body & { yaw?: number },
+  smoke?: Pick<GrenadeWorld, "smokes" | "now">,
+) {
+  if (canSee(map, viewer, target, smoke)) return true;
+  const ox = viewer.x,
+    oy = viewer.y + eyeHeight(viewer),
+    oz = viewer.z;
+  const dx = target.x - ox,
+    dz = target.z - oz,
+    length = Math.hypot(dx, dz) || 1;
+  const sx = dz / length,
+    sz = -dx / length,
+    top = eyeHeight(target) + 0.1;
+  const visible = (x: number, y: number, z: number) => {
+    const vx = x - ox,
+      vy = y - oy,
+      vz = z - oz,
+      distance = Math.hypot(vx, vy, vz);
+    return (
+      distance < 0.01 ||
+      (!occluded(
+        map,
+        ox,
+        oy,
+        oz,
+        vx / distance,
+        vy / distance,
+        vz / distance,
+        Math.max(0, distance - 0.025),
+      ) &&
+        !smokeHides(smoke, { x: ox, y: oy, z: oz }, { x, y, z }))
+    );
+  };
+  for (const fraction of [0.08, 0.3, 0.55, 0.8, 1])
+    for (const side of [-0.38, 0, 0.38])
+      if (visible(target.x + sx * side, target.y + top * fraction, target.z + sz * side))
+        return true;
+  return (
+    target.yaw !== undefined &&
+    visible(
+      target.x - Math.sin(target.yaw) * 0.8,
+      target.y + top * 0.8,
+      target.z - Math.cos(target.yaw) * 0.8,
+    )
+  );
+}

@@ -911,10 +911,10 @@ export function DuelMatch({
           </div>
         </div>
         <div className="duel-controls-hint">
-          W A S D <span>Move</span> · R <span>Reload</span> · 1 / 2 / Scroll{" "}
-          <span>Primary / Karambit</span> · 4 <span>Grenades</span> · B <span>Buy</span> · RMB{" "}
-          <span>AWP zoom</span> · F <span>Inspect</span> · SHIFT <span>Silent walk</span> · SPACE{" "}
-          <span>Jump</span> · CTRL <span>Crouch</span> · ESC <span>Release mouse</span>
+          W A S D <span>Move</span> · R <span>Reload</span> · 1 / 2 <span>Primary / Karambit</span>{" "}
+          · 4 / 5 <span>Grenades</span> · Scroll <span>All equipment</span> · B <span>Buy</span> ·
+          RMB <span>AWP zoom</span> · F <span>Inspect</span> · SHIFT <span>Silent walk</span> ·
+          SPACE <span>Jump</span> · CTRL <span>Crouch</span> · ESC <span>Release mouse</span>
         </div>
         <div className="duel-ammo">
           <GrenadeHud

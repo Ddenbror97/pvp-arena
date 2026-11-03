@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { cycleEquipment } from "./equipment-cycle";
 import type { ArenaLoadProgress } from "./loading";
 import { EYE_HEIGHT, eyeHeight } from "./map";
 import { DEFAULT_MAP_ID, getMap } from "./maps/registry";
@@ -685,6 +686,7 @@ export function mountArena(
         "Digit1",
         "Digit2",
         "Digit4",
+        "Digit5",
         "ControlLeft",
         "ControlRight",
       ].includes(e.code)
@@ -699,7 +701,13 @@ export function mountArena(
       grenades.putAway();
     }
     // 4: draw a grenade; again: the next type carried (HE → smoke → incendiary).
-    if (e.code === "Digit4" && !e.repeat && state && seat && state.players[seat].hp > 0) {
+    if (
+      (e.code === "Digit4" || e.code === "Digit5") &&
+      !e.repeat &&
+      state &&
+      seat &&
+      state.players[seat].hp > 0
+    ) {
       const type = grenades.select(weapon, state.players[seat].grenades, performance.now());
       if (type) {
         weapon = "grenade";
@@ -727,13 +735,26 @@ export function mountArena(
   const wheel = (e: WheelEvent) => {
     if (!locked() || !Number.isFinite(e.deltaY) || e.deltaY === 0) return;
     e.preventDefault();
-    // Both directions cycle the two slots. Bound high-frequency wheel/trackpad
-    // bursts so one gesture doesn't flicker repeatedly between viewmodels.
+    // Bound trackpad bursts; both directions include each carried grenade.
     const now = performance.now();
-    if (now - lastWheelSwitch < 150 || grenades.hands.busy) return;
+    if (
+      now - lastWheelSwitch < 150 ||
+      grenades.hands.busy ||
+      !state ||
+      !seat ||
+      state.players[seat].hp <= 0
+    )
+      return;
     lastWheelSwitch = now;
-    weapon = weapon === "rifle" ? "knife" : "rifle";
-    grenades.putAway();
+    const next = cycleEquipment(weapon, nade, state.players[seat].grenades, e.deltaY);
+    if (next.weapon === "grenade") {
+      if (!grenades.draw(next.nade!, weapon, state.players[seat].grenades, now)) return;
+      nade = next.nade!;
+      scope.reset();
+    } else grenades.putAway();
+    weapon = next.weapon;
+    fire = fireLatched = alt = altLatched = false;
+    scope.reset();
     inspectStart = -Infinity;
   };
   const presentLocalShot = (commandSeq: number) => {
