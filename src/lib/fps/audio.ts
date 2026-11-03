@@ -55,6 +55,10 @@ const SAMPLES = {
  * Bomb Defusal match (`createCombatAudio(…, { bomb: true })`), never by the 1v1.
  */
 const BOMB_SAMPLES = {
+  c4KeyRecorded0: "c4-keypad-0-v1.wav",
+  c4KeyRecorded1: "c4-keypad-1-v1.wav",
+  c4KeyRecorded2: "c4-keypad-2-v1.wav",
+  c4Explosion: "c4-explosion-v1.wav",
   voiceTPlanting: "voice-t-planting-v1.wav",
   voicePDefuse: "voice-p-defuse-v1.wav",
   voiceTerroristWin: "voice-terrorist-win-v1.mp3",
@@ -110,6 +114,7 @@ export function createCombatAudio(
   presentation?: () => { yaw: number; poseAt: number } | undefined,
   options: { bomb?: boolean } = {},
 ) {
+  const bombMode = !!options.bomb;
   const context = new AudioContext({ latencyHint: "interactive" }),
     master = context.createGain(),
     compressor = context.createDynamicsCompressor();
@@ -866,10 +871,22 @@ export function createCombatAudio(
       } else if (kind === "kill") play("elimination", 0.2, 0, false);
       else if (kind === "beep") play("beep", 0.32 * gain, 0, far, 1, 0, 0, options.bearing);
       else if (kind === "explosion")
-        play("explosion", 0.85 * Math.max(0.35, gain), 0, false, 1, 0, 0, options.bearing);
+        play(
+          bombMode && buffers.has("c4Explosion") ? "c4Explosion" : "explosion",
+          (bombMode ? 0.95 : 0.85) * Math.max(0.35, gain),
+          0,
+          false,
+          1,
+          0,
+          0,
+          options.bearing,
+        );
       // Own first-person C4 plant: quiet, centred, a little pitch variation per key.
-      else if (kind === "c4-key") play("c4Key", 0.2, 0, false, 0.94 + Math.random() * 0.12);
-      else if (kind === "c4-confirm") play("c4Confirm", 0.16, 0, false);
+      else if (kind === "c4-key") {
+        const recorded = `c4KeyRecorded${Math.floor(Math.random() * 3)}` as Sample;
+        // One recorded press per animation cue: interruption stops future presses immediately.
+        play(bombMode && buffers.has(recorded) ? recorded : "c4Key", 0.26, 0, false, 1);
+      } else if (kind === "c4-confirm") play("c4Confirm", 0.16, 0, false);
       else if (kind === "c4-handle") play("c4Handle", 0.12, 0, false, 0.9 + Math.random() * 0.2);
       else if (kind === "c4-place") play("c4Place", 0.28, 0, false);
       // Team radio: centred, no distance or occlusion (it is heard over the radio).
