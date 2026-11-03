@@ -5,21 +5,11 @@
  * page for real-GPU checks: WASD + mouse to fly, F toggles walking on the ground.
  */
 import * as THREE from "three";
-import { decodeHeightfield } from "../../../src/lib/fps/br/heightfield";
-import { decodeLandCover } from "../../../src/lib/fps/br/landcover";
-import { createTerrain } from "../../../src/lib/fps/br/terrain";
-import { createVegetation, TREE_MODELS } from "../../../src/lib/fps/br/vegetation-renderer";
-import { createWater } from "../../../src/lib/fps/br/water";
-import { buildIsland } from "../../../src/lib/fps/br/island";
-import { bridgeBoxes } from "../../../src/lib/fps/br/bridges";
-import { createPowerLines, createStructures } from "../../../src/lib/fps/br/structures-renderer";
 import { stepBody, type BrBody } from "../../../src/lib/fps/br/movement";
-import { createProps, type ModelManifest } from "../../../src/lib/fps/br/props-renderer";
-import { StaticWorld, type CollisionData } from "../../../src/lib/fps/br/static-world";
+import type { StaticWorld } from "../../../src/lib/fps/br/static-world";
+import { loadIslandScene, type IslandScene } from "../../../src/lib/fps/br/island-scene";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
-import { WORLD_ASSETS, type WorldMeta } from "../../../src/lib/fps/br/world";
+import type { WorldMeta } from "../../../src/lib/fps/br/world";
 import { RenderBudget, RENDER_CAP } from "../../../src/lib/fps/presentation";
 import { DevOverlay, GpuTimer } from "../../../src/lib/fps/br/dev-overlay";
 import { watchContextLoss } from "../../../src/lib/fps/br/context-loss";
@@ -44,15 +34,6 @@ declare global {
 }
 
 const base = new URL(".", location.href).href;
-const asset = (path: string) =>
-  fetch(new URL(path.replace(/^\//, ""), base)).then((r) => {
-    if (!r.ok) throw new Error(`${path}: ${r.status}`);
-    return r;
-  });
-
-async function landcover() {
-  return decodeLandCover(await (await asset(WORLD_ASSETS.landcover)).arrayBuffer());
-}
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -83,66 +64,23 @@ stats.style.cssText =
   "position:fixed;left:8px;top:8px;margin:0;padding:6px 8px;background:#0009;color:#e6efe8;font:12px/1.4 ui-monospace,monospace;pointer-events:none";
 document.body.appendChild(stats);
 
-let terrain: ReturnType<typeof createTerrain>;
-let vegetation: ReturnType<typeof createVegetation>;
-let props: ReturnType<typeof createProps>;
+let islandScene: IslandScene;
 let solid: StaticWorld;
 let placed: Array<{ model: string; x: number; y: number; z: number; poi: string }> = [];
-const loader = new GLTFLoader();
-loader.setMeshoptDecoder(MeshoptDecoder);
 let meta: WorldMeta;
 let groundAt = (_x: number, _z: number) => 0;
 const ready = (async () => {
   const t0 = performance.now();
-  const [hfBuf, cover, m, manifest, collision] = await Promise.all([
-    asset(WORLD_ASSETS.height).then((r) => r.arrayBuffer()),
-    landcover(),
-    asset(WORLD_ASSETS.meta).then((r) => r.json() as Promise<WorldMeta>),
-    asset("/fps/br/models/models.json").then((r) => r.json() as Promise<ModelManifest>),
-    asset("/fps/br/models/collision.json").then((r) => r.json() as Promise<CollisionData>),
-  ]);
-  meta = m;
-  const hf = await decodeHeightfield(hfBuf);
+  // The same island the match draws and the server collides against (island-scene.ts).
+  islandScene = await loadIslandScene(base);
+  scene.add(islandScene.root);
+  meta = islandScene.meta;
+  const hf = islandScene.hf;
   groundAt = (x, z) => hf.heightAt(x, z);
-  terrain = createTerrain(hf, cover);
-  scene.add(terrain.root);
-  // Sea at y = 0 and the inland lakes at their own levels: one draw call.
-  scene.add(createWater(m, terrain.textures.coverB).root);
-  // One shared build: layout, then trees clear of every building, then collision (island.ts).
-  const island = buildIsland(hf, cover, m, collision);
-  const plants = island.vegetation;
-  // Real tree models near the camera, rendered impostors far away (same placement either way).
-  const treeModels = await Promise.all(
-    TREE_MODELS.map((id) => loader.loadAsync(manifest.models[id]!.lods[0]!.file)),
-  );
-  const textureLoader = new THREE.TextureLoader();
-  const impostors = await Promise.all(
-    TREE_MODELS.map(async (id) => {
-      const info = (
-        manifest.models[id] as unknown as {
-          impostor: { file: string; width: number; height: number };
-        }
-      ).impostor;
-      const texture = await textureLoader.loadAsync(
-        new URL(info.file.replace(/^\//, ""), base).href,
-      );
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.anisotropy = 4;
-      return { texture, width: info.width, height: info.height };
-    }),
-  );
-  vegetation = createVegetation(plants, { models: treeModels, impostors });
-  scene.add(vegetation.root);
-  const layout = island.layout;
-  placed = layout;
-  solid = island.solid;
-  scene.add(createStructures(m, hf).root);
-  scene.add(createPowerLines(layout).root);
-  props = createProps(layout, manifest, loader, { preload: true });
-  scene.add(props.root);
-  await props.ready;
+  placed = islandScene.island.layout;
+  solid = islandScene.island.solid;
   // As in 1v1/5v5: every shader compiled before Ready, so nothing compiles mid-match.
-  props.update(camera);
+  islandScene.update(camera);
   await renderer.compileAsync(scene, camera);
   (window as unknown as { loadMs: number }).loadMs = performance.now() - t0;
 })();
@@ -159,26 +97,12 @@ addEventListener("resize", resize);
 resize();
 
 function draw() {
-  const a = performance.now();
-  terrain.update(camera);
-  vegetation.update(camera);
-  props.update(camera);
-  const selectMs = performance.now() - a;
+  const { selectMs } = islandScene.update(camera);
   gpu.begin();
   renderer.render(scene, camera);
   gpu.end();
-  const s = terrain.stats();
   return {
-    patches: s.patches,
-    terrainTriangles: s.triangles,
-    trees: vegetation.stats().trees,
-    nearTrees: vegetation.stats().near,
-    treeTriangles: vegetation.stats().triangles,
-    farBySpecies: vegetation.stats().farBySpecies.join("/"),
-    props: props.stats().instances,
-    propTriangles: props.stats().triangles,
-    propDraws: props.stats().draws,
-    propTop: JSON.stringify(props.stats().top),
+    ...(islandScene.stats() as Record<string, number>),
     calls: renderer.info.render.calls,
     triangles: renderer.info.render.triangles,
     selectMs: +selectMs.toFixed(3),
@@ -213,7 +137,7 @@ let body: BrBody | null = null;
 let accumulator = 0;
 function loop(now: number) {
   requestAnimationFrame(loop);
-  if (!interactive || !terrain) return;
+  if (!interactive || !islandScene) return;
   const dt = Math.min(0.1, (now - last) / 1000);
   last = now;
   // Lost GPU context: keep simulating, skip rendering until it is restored.
@@ -333,12 +257,8 @@ window.explorer = {
     camera.position.set(pos[0]!, pos[1]!, pos[2]!);
     camera.lookAt(look[0]!, look[1]!, look[2]!);
     camera.updateMatrixWorld();
-    // Let nearer LODs stream in before the screenshot (as a player would after a moment).
-    props.update(camera);
-    for (let i = 0; i < 40 && props.stats().loadedFiles < 3 * 34; i++) {
-      await new Promise((r) => setTimeout(r, 50));
-      props.update(camera);
-    }
+    // Every LOD is preloaded behind the loading screen (island-scene.ts): select and draw.
+    islandScene.update(camera);
     return draw();
   },
 };
