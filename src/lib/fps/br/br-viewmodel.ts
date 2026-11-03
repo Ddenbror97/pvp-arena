@@ -7,6 +7,8 @@ import {
   M4_VIEWMODEL,
 } from "../authored-viewmodel";
 import { AWP_VIEWMODEL_REST, boltPose, RELOAD_BOLT, SHOT_BOLT } from "../awp-animation";
+import { createGrenadeViewmodel } from "../grenades/grenade-viewmodel";
+import type { GrenadeView } from "../grenades/grenade-timeline";
 import { createMuzzleFlash } from "../muzzle-flash";
 import { createViewmodelMotion } from "../viewmodel-motion";
 import {
@@ -71,7 +73,15 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
       parts = p;
     },
   );
-  const ready = Promise.all([...Object.values(views).map((v) => v.ready), attachmentsReady]);
+  // Grenades in hand: the 1v1/5v5 first-person grenade arms and clips (police sleeves, like
+  // the player's own character), driven by the same local handling (LocalGrenadeHands).
+  const nadeHands = createGrenadeViewmodel(viewCamera, M4_VIEWMODEL);
+  let handsUp = false;
+  const ready = Promise.all([
+    ...Object.values(views).map((v) => v.ready),
+    attachmentsReady,
+    nadeHands.ready,
+  ]);
 
   const mounts = new Map<Variant, AttachmentMount>();
   function mountFor(id: Variant): AttachmentMount | null {
@@ -236,8 +246,13 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
       // (a modelled lens cannot be seen through), so the sight body steps aside.
       if (opticMesh) opticMesh.visible = aimT < 0.95;
     },
+    /** The grenade hands this frame (hidden unless a grenade is drawn). */
+    grenade(dt: number, view: GrenadeView) {
+      nadeHands.update(dt / 1000, view);
+      handsUp = view.kind !== "hidden";
+    },
     render(camera: THREE.PerspectiveCamera, hidden: boolean) {
-      if (hidden || !current) return;
+      if (hidden || (!current && !handsUp)) return;
       viewCamera.aspect = camera.aspect;
       viewCamera.updateProjectionMatrix();
       viewCamera.position.copy(camera.position);
@@ -250,6 +265,7 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
     },
     dispose() {
       for (const v of Object.values(views)) v.dispose();
+      nadeHands.dispose();
       flash.dispose();
     },
   };

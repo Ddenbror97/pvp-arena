@@ -134,12 +134,15 @@ await page.evaluate(() => window.sim.tablet(false));
 // Grenades: 4 draws the HE, left mouse throws it toward the target; then the smoke.
 await page.evaluate(() => window.sim.look(window.sim.yaw, 0.25));
 await wait(400);
+// Held like 1v1/5v5: the pin comes out while the button is down, the throw on release.
 await page.keyboard.press("Digit4");
 await wait(800);
+await shot("7a-nade-hand");
 await page.mouse.down({ button: "left" });
-await wait(80);
+await wait(450);
+await shot("7b-nade-pin");
 await page.mouse.up({ button: "left" });
-await wait(1450);
+await wait(2300);
 await shot("7-he-burst");
 await wait(1500);
 await page.keyboard.press("Digit4");

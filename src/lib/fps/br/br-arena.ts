@@ -30,6 +30,7 @@ import { PHASE_CODES, type BrKitView, type BrPhase, type BrZoneView } from "./ma
 import { WORLD_HALF } from "./world";
 import { createCharacter } from "../character";
 import { RenderBudget } from "../presentation";
+import { LocalGrenadeHands } from "../grenades/grenade-timeline";
 import { createWeaponKit } from "../weapon";
 import { TICK_MS } from "../simulation";
 
@@ -319,8 +320,14 @@ export function createBrArena(
   const keys = new Set<string>();
   const edges = new Set<string>();
   /** A click always fires at least once, even if released between two frames. */
-  let throwOver = false,
-    throwUnder = false;
+  // Grenade handling as in 1v1/5v5: hold to pull the pin, release to throw (left overhand,
+  // right underhand, both medium); the throw goes to the server when it leaves the hand.
+  const nadeHands = new LocalGrenadeHands();
+  const nadeButtons = { left: false, right: false, tapLeft: false, tapRight: false };
+  function putAwayNade() {
+    nadeHand = null;
+    nadeHands.clear();
+  }
   let fireTapped = false,
     predictTap = false;
   let fireHeld = false,
@@ -479,7 +486,7 @@ export function createBrArena(
     if (down && !keys.has(e.code)) {
       edges.add(e.code);
       // The hand changes at once (a click right after 4 throws, it never fires the gun).
-      if (e.code === "Digit1" || e.code === "Digit2") nadeHand = null;
+      if ((e.code === "Digit1" || e.code === "Digit2") && !nadeHands.busy) putAwayNade();
       if (e.code === "Digit4") selectNade();
     }
     if (down) keys.add(e.code);
@@ -503,16 +510,16 @@ export function createBrArena(
     if (!locked()) return;
     if (nadeHand) {
       // Grenade in hand: the buttons throw (left overhand, right underhand, both medium).
-      if (e.button === 0) throwOver = true;
-      if (e.button === 2) throwUnder = true;
+      if (e.button === 0) nadeButtons.left = nadeButtons.tapLeft = true;
+      if (e.button === 2) nadeButtons.right = nadeButtons.tapRight = true;
       return;
     }
     if (e.button === 0) fireHeld = fireTapped = predictTap = true;
     if (e.button === 2) aimHeld = true;
   };
   const onUp = (e: MouseEvent) => {
-    if (e.button === 0) fireHeld = false;
-    if (e.button === 2) aimHeld = false;
+    if (e.button === 0) fireHeld = nadeButtons.left = false;
+    if (e.button === 2) aimHeld = nadeButtons.right = false;
   };
   const noMenu = (e: Event) => e.preventDefault();
   const lock = () => {
@@ -546,9 +553,13 @@ export function createBrArena(
     const carried = (["he", "smoke", "fire"] as const).filter((t) =>
       kit?.bag.some((b) => b.item === `grenade-${t}` && b.qty > 0),
     );
+    if (nadeHands.busy) return; // mid-throw: the hand is not free
     const i = nadeHand ? carried.indexOf(nadeHand) : -1;
     nadeHand = carried.length ? carried[(i + 1) % carried.length]! : null;
-    if (nadeHand) fireHeld = aimHeld = false;
+    if (nadeHand) {
+      fireHeld = aimHeld = false;
+      nadeHands.equip(nadeHand, performance.now());
+    } else nadeHands.clear();
     if (!carried.length) feed({ kind: "toast", text: "NO GRENADES", tone: "warn" });
   }
 
@@ -569,17 +580,28 @@ export function createBrArena(
     };
     const space = edge("Space");
     const slot = edge("Digit1") ? 0 : edge("Digit2") ? 1 : undefined;
-    if (nadeHand && (throwOver || throwUnder) && onFoot()) {
-      sendAct({
-        act: "throw",
-        nade: nadeHand,
-        kind: throwOver && throwUnder ? "medium" : throwOver ? "over" : "under",
-      });
-      const left =
+    if (nadeHand) {
+      const carried = () =>
         kit?.bag.reduce((n, b) => n + (b.item === `grenade-${nadeHand}` ? b.qty : 0), 0) ?? 0;
-      if (left <= 1) nadeHand = null;
+      if (!onFoot() || kit?.dead) putAwayNade();
+      else {
+        const t = performance.now();
+        const step = nadeHands.step(
+          nadeButtons.left || nadeButtons.tapLeft,
+          nadeButtons.right || nadeButtons.tapRight,
+          t,
+          !body.grounded,
+        );
+        if (step === "spawn" && nadeHands.throwing)
+          sendAct({ act: "throw", nade: nadeHand, kind: nadeHands.throwing.kind });
+        // The next grenade of the type comes up after the throw, or the hand empties.
+        if (step === "done") {
+          if (carried() > 0) nadeHands.equip(nadeHand, t);
+          else putAwayNade();
+        } else if (!nadeHands.busy && carried() === 0) putAwayNade();
+      }
     }
-    throwOver = throwUnder = false;
+    nadeButtons.tapLeft = nadeButtons.tapRight = false;
     const reload = edge("KeyR");
     // Discrete actions: E picks up what the prompt shows; 3 bandage, 5 medkit (hotbar).
     if (edge("KeyE") && prompt) {
@@ -1110,6 +1132,19 @@ export function createBrArena(
     const reloadP = gunDef && reloadLeft > 0 ? 1 - reloadLeft / gunDef.reloadMs : 0;
     let scopeUp = false;
     if (viewmodel) {
+      viewmodel.grenade(
+        dtMs,
+        nadeHand && onFoot() && !car
+          ? nadeHands.view(
+              performance.now(),
+              keys.has("ShiftLeft")
+                ? 2
+                : ["KeyW", "KeyA", "KeyS", "KeyD"].some((k) => keys.has(k))
+                  ? 1
+                  : 0,
+            )
+          : { kind: "hidden" },
+      );
       viewmodel.setGun(gun);
       viewmodel.update(dtMs, now, {
         gun,
