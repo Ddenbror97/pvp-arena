@@ -87,7 +87,6 @@ export const BombMinimap = memo(function BombMinimap({ view }: { view: BombView 
           />
         )}
       </svg>
-      <small>White: you · Blue: team</small>
     </aside>
   );
 });

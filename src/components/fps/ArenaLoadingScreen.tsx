@@ -6,6 +6,7 @@ export function ArenaLoadingScreen({
   label,
   error,
   mapName = "Dustfront",
+  modeName,
   image = STRIKE_LOADING_IMAGE,
 }: {
   progress: number;
@@ -13,6 +14,7 @@ export function ArenaLoadingScreen({
   error: string | null;
   /** The match map's display name. */
   mapName?: string;
+  modeName?: string;
   /** The match map's loading art (maps/loading-screens.ts); null while the map is unknown. */
   image?: string | null;
 }) {
@@ -41,12 +43,15 @@ export function ArenaLoadingScreen({
       <div className="duel-loading-content">
         <div className="duel-loading-heading">
           <div>
-            <span className="duel-loading-kicker">PVPSTRIKE</span>
+            {!modeName && <span className="duel-loading-kicker">PVPSTRIKE</span>}
             <h1>{mapName}</h1>
+            {modeName && <p className="duel-loading-mode">{modeName}</p>}
           </div>
         </div>
         <div className="duel-loading-status">
-          <span role="status">{label}</span>
+          <span role="status" className={modeName ? "sr-only" : undefined}>
+            {label}
+          </span>
           <span>{percent}%</span>
         </div>
         <div

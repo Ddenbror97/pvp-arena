@@ -376,3 +376,21 @@
     padding: 10px;
   }
 }
+.bomb-game .duel-loading-mode {
+  margin: 8px 0 0;
+  font-size: clamp(16px, 2vw, 23px);
+  font-weight: 500;
+  color: #eee8df;
+  letter-spacing: 0.01em;
+}
+.bomb-ammo-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+.bomb-kit-icon {
+  display: inline-flex;
+  color: var(--bomb-police);
+  align-items: center;
+}
