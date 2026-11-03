@@ -25,7 +25,7 @@ let hf: Heightfield, world: StaticWorld, layout: Placement[];
 beforeAll(async () => {
   hf = await decodeHeightfield(buffer("public/fps/br/height.v1.hf"));
   const cover = await decodeLandCover(buffer("public/fps/br/landcover.v1.lc"));
-  layout = islandLayout(meta);
+  layout = islandLayout(meta, (x, z) => hf.heightAt(x, z));
   world = new StaticWorld(
     hf,
     layout,
@@ -73,9 +73,11 @@ describe("Project Island static world", () => {
         [x0, z1],
         [x1, z1],
       ])
-        expect(Math.abs(hf.heightAt(x!, z!) - poi.padHeight!), `${p.model} @${p.poi}`).toBeLessThan(
-          1.6,
-        );
+        // On a pad: level with the pad. Without one (forest cabins): sits on the ground it chose.
+        expect(
+          Math.abs(hf.heightAt(x!, z!) - (poi.padHeight ?? p.y)),
+          `${p.model} @${p.poi}`,
+        ).toBeLessThan(poi.padHeight === undefined ? 2.5 : 1.6);
     }
   });
 

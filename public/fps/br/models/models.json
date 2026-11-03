@@ -213,6 +213,60 @@
     }
    ]
   },
+  "barn": {
+   "title": "Barn with mini-shop (old age)",
+   "author": "Dorin.Stoica",
+   "source": "https://sketchfab.com/3d-models/barn-with-mini-shop-old-age-5e59322d38d445ada354967ef5932abf",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "farms",
+   "scale": 1,
+   "sourceTris": 10517,
+   "size": [
+    18.83,
+    11.19,
+    18.83
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/barn.lod0.glb",
+     "tris": 10364,
+     "draws": 5,
+     "textureMB": 3,
+     "kB": 479,
+     "size": [
+      18.83,
+      11.19,
+      18.83
+     ]
+    },
+    {
+     "file": "/fps/br/models/barn.lod1.glb",
+     "tris": 3497,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 17,
+     "size": [
+      18.83,
+      11.19,
+      18.83
+     ]
+    },
+    {
+     "file": "/fps/br/models/barn.lod2.glb",
+     "tris": 975,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      18.83,
+      11.19,
+      18.83
+     ]
+    }
+   ]
+  },
   "barracks": {
    "title": "Military Style Building (with animations)",
    "author": "TampaJoey",
@@ -368,6 +422,60 @@
       24.23,
       9.61,
       7.24
+     ]
+    }
+   ]
+  },
+  "cabin": {
+   "title": "Wooden Cabin",
+   "author": "donnichols",
+   "source": "https://sketchfab.com/3d-models/wooden-cabin-c90674a377864ac1b8fd141ad1917ee3",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "Murder Cabins, Pine Ridge",
+   "scale": 0.025494,
+   "sourceTris": 4404,
+   "size": [
+    7.62,
+    8.16,
+    9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cabin.lod0.glb",
+     "tris": 4404,
+     "draws": 1,
+     "textureMB": 4,
+     "kB": 159,
+     "size": [
+      7.62,
+      8.16,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/cabin.lod1.glb",
+     "tris": 3500,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 83,
+     "size": [
+      7.62,
+      8.16,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/cabin.lod2.glb",
+     "tris": 999,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      7.62,
+      8.16,
+      9
      ]
     }
    ]
@@ -1170,6 +1278,60 @@
     }
    ]
   },
+  "hay-bales": {
+   "title": "Hay Bales",
+   "author": "FrodoUndead",
+   "source": "https://sketchfab.com/3d-models/hay-bales-6b775049e57e4d9da87977905493ebfb",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "farms (cover)",
+   "scale": 1,
+   "sourceTris": 3272,
+   "size": [
+    3.55,
+    1.81,
+    2.42
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hay-bales.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 45,
+     "size": [
+      3.55,
+      1.81,
+      2.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/hay-bales.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 17,
+     "size": [
+      3.55,
+      1.81,
+      2.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/hay-bales.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.55,
+      1.81,
+      2.42
+     ]
+    }
+   ]
+  },
   "helipad": {
    "title": "Heliport Helipad air base helicopter",
    "author": "ahmagh2e",
@@ -1378,6 +1540,708 @@
       10.09,
       10.45,
       11
+     ]
+    }
+   ]
+  },
+  "ind-building-1": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "industrial block",
+   "scale": 1,
+   "sourceTris": 1986,
+   "size": [
+    27.02,
+    16.63,
+    47.54
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-building-1.lod0.glb",
+     "tris": 1986,
+     "draws": 2,
+     "textureMB": 5.33,
+     "kB": 139,
+     "size": [
+      27.02,
+      16.63,
+      47.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-building-1.lod1.glb",
+     "tris": 1986,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 64,
+     "size": [
+      27.02,
+      16.63,
+      47.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-building-1.lod2.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      27.02,
+      16.63,
+      47.54
+     ]
+    }
+   ]
+  },
+  "ind-building-10": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "industrial hall",
+   "scale": 1,
+   "sourceTris": 2420,
+   "size": [
+    43.5,
+    25.83,
+    83.27
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-building-10.lod0.glb",
+     "tris": 2420,
+     "draws": 1,
+     "textureMB": 2.67,
+     "kB": 106,
+     "size": [
+      43.5,
+      25.83,
+      83.27
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-building-10.lod1.glb",
+     "tris": 2420,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 68,
+     "size": [
+      43.5,
+      25.83,
+      83.27
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-building-10.lod2.glb",
+     "tris": 961,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      43.5,
+      25.83,
+      83.27
+     ]
+    }
+   ]
+  },
+  "ind-factory": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "factory (Millhaven, East Works)",
+   "scale": 1,
+   "sourceTris": 3647,
+   "size": [
+    46.53,
+    24.73,
+    95.3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-factory.lod0.glb",
+     "tris": 3647,
+     "draws": 2,
+     "textureMB": 5.33,
+     "kB": 199,
+     "size": [
+      46.53,
+      24.73,
+      95.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-factory.lod1.glb",
+     "tris": 3499,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 100,
+     "size": [
+      46.53,
+      24.73,
+      95.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-factory.lod2.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      46.53,
+      24.73,
+      95.3
+     ]
+    }
+   ]
+  },
+  "ind-generic-2": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "industrial block",
+   "scale": 1,
+   "sourceTris": 162,
+   "size": [
+    4.9,
+    3.93,
+    4.62
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-generic-2.lod0.glb",
+     "tris": 162,
+     "draws": 1,
+     "textureMB": 2.67,
+     "kB": 48,
+     "size": [
+      4.9,
+      3.93,
+      4.62
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-generic-2.lod1.glb",
+     "tris": 162,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      4.9,
+      3.93,
+      4.62
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-generic-2.lod2.glb",
+     "tris": 162,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.9,
+      3.93,
+      4.62
+     ]
+    }
+   ]
+  },
+  "ind-hangar": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "industrial hangar",
+   "scale": 1,
+   "sourceTris": 1134,
+   "size": [
+    49.78,
+    12.89,
+    59.96
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-hangar.lod0.glb",
+     "tris": 1134,
+     "draws": 2,
+     "textureMB": 5.33,
+     "kB": 120,
+     "size": [
+      49.78,
+      12.89,
+      59.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-hangar.lod1.glb",
+     "tris": 1134,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 51,
+     "size": [
+      49.78,
+      12.89,
+      59.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-hangar.lod2.glb",
+     "tris": 1000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      49.78,
+      12.89,
+      59.96
+     ]
+    }
+   ]
+  },
+  "ind-office-trailer": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "site office",
+   "scale": 1,
+   "sourceTris": 188,
+   "size": [
+    11.28,
+    3.93,
+    5.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-office-trailer.lod0.glb",
+     "tris": 188,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 75,
+     "size": [
+      11.28,
+      3.93,
+      5.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-office-trailer.lod1.glb",
+     "tris": 188,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 28,
+     "size": [
+      11.28,
+      3.93,
+      5.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-office-trailer.lod2.glb",
+     "tris": 188,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      11.28,
+      3.93,
+      5.8
+     ]
+    }
+   ]
+  },
+  "ind-portal-crane": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "gantry crane (East Works, quarry)",
+   "scale": 1,
+   "sourceTris": 2558,
+   "size": [
+    9.43,
+    18.6,
+    20.95
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-portal-crane.lod0.glb",
+     "tris": 2558,
+     "draws": 2,
+     "textureMB": 2,
+     "kB": 101,
+     "size": [
+      9.43,
+      18.6,
+      20.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-portal-crane.lod1.glb",
+     "tris": 1330,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 46,
+     "size": [
+      9.43,
+      18.6,
+      20.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-portal-crane.lod2.glb",
+     "tris": 453,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      9.43,
+      18.6,
+      20.95
+     ]
+    }
+   ]
+  },
+  "ind-silo": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "silo tank",
+   "scale": 1,
+   "sourceTris": 231,
+   "size": [
+    3.05,
+    8.9,
+    3.19
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-silo.lod0.glb",
+     "tris": 231,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 37,
+     "size": [
+      3.05,
+      8.9,
+      3.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-silo.lod1.glb",
+     "tris": 231,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 15,
+     "size": [
+      3.05,
+      8.9,
+      3.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-silo.lod2.glb",
+     "tris": 231,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.05,
+      8.9,
+      3.19
+     ]
+    }
+   ]
+  },
+  "ind-tank": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "storage tank",
+   "scale": 1,
+   "sourceTris": 404,
+   "size": [
+    17.74,
+    15.22,
+    17.79
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-tank.lod0.glb",
+     "tris": 404,
+     "draws": 2,
+     "textureMB": 2,
+     "kB": 58,
+     "size": [
+      17.74,
+      15.22,
+      17.79
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-tank.lod1.glb",
+     "tris": 404,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 26,
+     "size": [
+      17.74,
+      15.22,
+      17.79
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-tank.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      17.74,
+      15.22,
+      17.79
+     ]
+    }
+   ]
+  },
+  "ind-terminal": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "logistics terminal",
+   "scale": 1,
+   "sourceTris": 844,
+   "size": [
+    53.43,
+    7.88,
+    15.84
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-terminal.lod0.glb",
+     "tris": 844,
+     "draws": 2,
+     "textureMB": 5.33,
+     "kB": 104,
+     "size": [
+      53.43,
+      7.88,
+      15.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-terminal.lod1.glb",
+     "tris": 844,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 41,
+     "size": [
+      53.43,
+      7.88,
+      15.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-terminal.lod2.glb",
+     "tris": 844,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      53.43,
+      7.88,
+      15.84
+     ]
+    }
+   ]
+  },
+  "ind-warehouse-1": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "warehouse",
+   "scale": 1,
+   "sourceTris": 366,
+   "size": [
+    33.83,
+    11.12,
+    13.36
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-warehouse-1.lod0.glb",
+     "tris": 366,
+     "draws": 2,
+     "textureMB": 5.33,
+     "kB": 99,
+     "size": [
+      33.83,
+      11.12,
+      13.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-warehouse-1.lod1.glb",
+     "tris": 366,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 29,
+     "size": [
+      33.83,
+      11.12,
+      13.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-warehouse-1.lod2.glb",
+     "tris": 366,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      33.83,
+      11.12,
+      13.36
+     ]
+    }
+   ]
+  },
+  "ind-warehouse-3": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "warehouse",
+   "scale": 1,
+   "sourceTris": 302,
+   "size": [
+    24.44,
+    12.49,
+    25.22
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-warehouse-3.lod0.glb",
+     "tris": 302,
+     "draws": 2,
+     "textureMB": 5.33,
+     "kB": 79,
+     "size": [
+      24.44,
+      12.49,
+      25.22
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-warehouse-3.lod1.glb",
+     "tris": 302,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 27,
+     "size": [
+      24.44,
+      12.49,
+      25.22
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-warehouse-3.lod2.glb",
+     "tris": 302,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      24.44,
+      12.49,
+      25.22
+     ]
+    }
+   ]
+  },
+  "ind-watertower": {
+   "title": "Industrial Buildings Set - Low poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/industrial-buildings-set-low-poly-models-e0b0d0342be24e6c923319991a2a4d3d",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "water tower (Millhaven landmark)",
+   "scale": 1,
+   "sourceTris": 586,
+   "size": [
+    9.79,
+    24.26,
+    9.75
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ind-watertower.lod0.glb",
+     "tris": 586,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 47,
+     "size": [
+      9.79,
+      24.26,
+      9.75
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-watertower.lod1.glb",
+     "tris": 586,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 23,
+     "size": [
+      9.79,
+      24.26,
+      9.75
+     ]
+    },
+    {
+     "file": "/fps/br/models/ind-watertower.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      9.79,
+      24.26,
+      9.75
      ]
     }
    ]
@@ -1806,6 +2670,546 @@
     }
    ]
   },
+  "rural-diner": {
+   "title": "Rural Buildings Set - Low Poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/rural-buildings-set-low-poly-models-51ab7e74bac347a89725f1d22b928edf",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "roadside diner (towns, Crossroads)",
+   "scale": 1,
+   "sourceTris": 832,
+   "size": [
+    18.3,
+    5.31,
+    8.96
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rural-diner.lod0.glb",
+     "tris": 832,
+     "draws": 2,
+     "textureMB": 5.33,
+     "kB": 86,
+     "size": [
+      18.3,
+      5.31,
+      8.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-diner.lod1.glb",
+     "tris": 832,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 35,
+     "size": [
+      18.3,
+      5.31,
+      8.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-diner.lod2.glb",
+     "tris": 832,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      18.3,
+      5.31,
+      8.96
+     ]
+    }
+   ]
+  },
+  "rural-house": {
+   "title": "Rural Buildings Set - Low Poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/rural-buildings-set-low-poly-models-51ab7e74bac347a89725f1d22b928edf",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "old house (villages, farms)",
+   "scale": 1,
+   "sourceTris": 886,
+   "size": [
+    6.9,
+    4.79,
+    7.82
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rural-house.lod0.glb",
+     "tris": 886,
+     "draws": 1,
+     "textureMB": 2.67,
+     "kB": 71,
+     "size": [
+      6.9,
+      4.79,
+      7.82
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-house.lod1.glb",
+     "tris": 886,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 31,
+     "size": [
+      6.9,
+      4.79,
+      7.82
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-house.lod2.glb",
+     "tris": 886,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      6.9,
+      4.79,
+      7.82
+     ]
+    }
+   ]
+  },
+  "rural-mobile-home": {
+   "title": "Rural Buildings Set - Low Poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/rural-buildings-set-low-poly-models-51ab7e74bac347a89725f1d22b928edf",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "trailer park, cabins",
+   "scale": 1,
+   "sourceTris": 541,
+   "size": [
+    6.64,
+    4.39,
+    11.38
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rural-mobile-home.lod0.glb",
+     "tris": 541,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 68,
+     "size": [
+      6.64,
+      4.39,
+      11.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-mobile-home.lod1.glb",
+     "tris": 541,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 31,
+     "size": [
+      6.64,
+      4.39,
+      11.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-mobile-home.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6.64,
+      4.39,
+      11.38
+     ]
+    }
+   ]
+  },
+  "rural-quonset": {
+   "title": "Rural Buildings Set - Low Poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/rural-buildings-set-low-poly-models-51ab7e74bac347a89725f1d22b928edf",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "farm/industrial hut",
+   "scale": 1,
+   "sourceTris": 278,
+   "size": [
+    9.38,
+    4.81,
+    12.52
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rural-quonset.lod0.glb",
+     "tris": 278,
+     "draws": 1,
+     "textureMB": 2.67,
+     "kB": 46,
+     "size": [
+      9.38,
+      4.81,
+      12.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-quonset.lod1.glb",
+     "tris": 278,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      9.38,
+      4.81,
+      12.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-quonset.lod2.glb",
+     "tris": 278,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      9.38,
+      4.81,
+      12.52
+     ]
+    }
+   ]
+  },
+  "rural-store-1": {
+   "title": "Rural Buildings Set - Low Poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/rural-buildings-set-low-poly-models-51ab7e74bac347a89725f1d22b928edf",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "small store (town streets)",
+   "scale": 1,
+   "sourceTris": 211,
+   "size": [
+    8.32,
+    6.06,
+    12.59
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rural-store-1.lod0.glb",
+     "tris": 211,
+     "draws": 2,
+     "textureMB": 5.33,
+     "kB": 99,
+     "size": [
+      8.32,
+      6.06,
+      12.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-store-1.lod1.glb",
+     "tris": 211,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 29,
+     "size": [
+      8.32,
+      6.06,
+      12.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-store-1.lod2.glb",
+     "tris": 211,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      8.32,
+      6.06,
+      12.59
+     ]
+    }
+   ]
+  },
+  "rural-store-3": {
+   "title": "Rural Buildings Set - Low Poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/rural-buildings-set-low-poly-models-51ab7e74bac347a89725f1d22b928edf",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "small store (town streets)",
+   "scale": 1,
+   "sourceTris": 224,
+   "size": [
+    6.06,
+    3.76,
+    13.59
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rural-store-3.lod0.glb",
+     "tris": 224,
+     "draws": 2,
+     "textureMB": 4,
+     "kB": 62,
+     "size": [
+      6.06,
+      3.76,
+      13.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-store-3.lod1.glb",
+     "tris": 224,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 22,
+     "size": [
+      6.06,
+      3.76,
+      13.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-store-3.lod2.glb",
+     "tris": 224,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      6.06,
+      3.76,
+      13.59
+     ]
+    }
+   ]
+  },
+  "rural-store-5": {
+   "title": "Rural Buildings Set - Low Poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/rural-buildings-set-low-poly-models-51ab7e74bac347a89725f1d22b928edf",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "small store (town streets)",
+   "scale": 1,
+   "sourceTris": 163,
+   "size": [
+    8.38,
+    6.06,
+    20.12
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rural-store-5.lod0.glb",
+     "tris": 163,
+     "draws": 2,
+     "textureMB": 5.33,
+     "kB": 98,
+     "size": [
+      8.38,
+      6.06,
+      20.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-store-5.lod1.glb",
+     "tris": 163,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 28,
+     "size": [
+      8.38,
+      6.06,
+      20.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-store-5.lod2.glb",
+     "tris": 163,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      8.38,
+      6.06,
+      20.12
+     ]
+    }
+   ]
+  },
+  "rural-trailer": {
+   "title": "Rural Buildings Set - Low Poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/rural-buildings-set-low-poly-models-51ab7e74bac347a89725f1d22b928edf",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "trailers",
+   "scale": 1,
+   "sourceTris": 902,
+   "size": [
+    2.83,
+    2.98,
+    9.88
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rural-trailer.lod0.glb",
+     "tris": 902,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 37,
+     "size": [
+      2.83,
+      2.98,
+      9.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-trailer.lod1.glb",
+     "tris": 902,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      2.83,
+      2.98,
+      9.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-trailer.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.83,
+      2.98,
+      9.88
+     ]
+    }
+   ]
+  },
+  "rural-wood-1": {
+   "title": "Rural Buildings Set - Low Poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/rural-buildings-set-low-poly-models-51ab7e74bac347a89725f1d22b928edf",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "wooden building (towns, farms)",
+   "scale": 1,
+   "sourceTris": 1324,
+   "size": [
+    21.07,
+    10.44,
+    17.26
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rural-wood-1.lod0.glb",
+     "tris": 1324,
+     "draws": 2,
+     "textureMB": 2,
+     "kB": 70,
+     "size": [
+      21.07,
+      10.44,
+      17.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-wood-1.lod1.glb",
+     "tris": 1324,
+     "draws": 2,
+     "textureMB": 0.25,
+     "kB": 43,
+     "size": [
+      21.07,
+      10.44,
+      17.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-wood-1.lod2.glb",
+     "tris": 805,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      21.07,
+      10.44,
+      17.26
+     ]
+    }
+   ]
+  },
+  "rural-wood-4": {
+   "title": "Rural Buildings Set - Low Poly models",
+   "author": "Daniel Zhabotinsky",
+   "source": "https://sketchfab.com/3d-models/rural-buildings-set-low-poly-models-51ab7e74bac347a89725f1d22b928edf",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "wooden building (towns, farms)",
+   "scale": 1,
+   "sourceTris": 879,
+   "size": [
+    27.73,
+    7.64,
+    14.49
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rural-wood-4.lod0.glb",
+     "tris": 879,
+     "draws": 3,
+     "textureMB": 4.67,
+     "kB": 102,
+     "size": [
+      27.73,
+      7.64,
+      14.49
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-wood-4.lod1.glb",
+     "tris": 879,
+     "draws": 3,
+     "textureMB": 0.58,
+     "kB": 43,
+     "size": [
+      27.73,
+      7.64,
+      14.49
+     ]
+    },
+    {
+     "file": "/fps/br/models/rural-wood-4.lod2.glb",
+     "tris": 879,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      27.73,
+      7.64,
+      14.49
+     ]
+    }
+   ]
+  },
   "sandbags": {
    "title": "Sandbags",
    "author": "Evan",
@@ -1855,6 +3259,60 @@
       9.1,
       1.22,
       10.18
+     ]
+    }
+   ]
+  },
+  "shed": {
+   "title": "Worn Shed PBR Game-Ready",
+   "author": "donnichols",
+   "source": "https://sketchfab.com/3d-models/worn-shed-pbr-game-ready-be6edd62e55a4f9a99da940fc164a5b9",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "farms, cabins",
+   "scale": 0.009319,
+   "sourceTris": 2086,
+   "size": [
+    6,
+    3.31,
+    4.04
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/shed.lod0.glb",
+     "tris": 2086,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 54,
+     "size": [
+      6,
+      3.31,
+      4.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/shed.lod1.glb",
+     "tris": 1608,
+     "draws": 3,
+     "textureMB": 0.17,
+     "kB": 35,
+     "size": [
+      6,
+      3.31,
+      4.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/shed.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6,
+      3.31,
+      4.04
      ]
     }
    ]

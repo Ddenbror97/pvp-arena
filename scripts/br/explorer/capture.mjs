@@ -106,6 +106,14 @@ const views = await page.evaluate(() => {
     "13-superstore-from-air": at("island-superstore", 250, 330, 190, 0, 0, 0),
     "14-island-village": at("island-village", 60, 70, 1.7, 0, 0, 3),
     "15-airfield-from-air": at("island-airfield", -150, 200, 160, 0, -100, 0),
+    "17-northstar-from-air": at("northstar-town", 220, 260, 170, 0, 0, 0),
+    "18-millhaven-water-tower": at("millhaven", 60, 40, 1.7, 32, -64, 18),
+    "19-crossroads-junction": at("crossroads", 70, 90, 1.7, 0, 0, 3),
+    "20-central-hospital": at("central-hospital", 0, 170, 1.7, 0, 0, 10),
+    "21-blackwater-prison-from-air": at("blackwater-prison", 140, 160, 110, 0, 0, 0),
+    "22-riverwood-street": at("riverwood", -100, 60, 1.7, 100, -40, 2),
+    "23-east-works": at("east-works", 60, 120, 1.7, -30, -40, 6),
+    "24-murder-cabins": at("murder-cabins", 160, 160, 60, 0, 0, 0),
     "16-on-the-west-bridge": (() => {
       const b = m.bridges[0];
       const x = b.a[0] + (b.b[0] - b.a[0]) * 0.3,

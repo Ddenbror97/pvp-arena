@@ -63,6 +63,8 @@ describe("Project Island models", () => {
       (s, m) => s + m.lods.reduce((t, l) => t + l.kB, 0),
       0,
     );
-    expect(total / 1024).toBeLessThan(12); // MB for all models and all LODs
+    // MB for all models and all LODs (the mainland towns added ~30 models in batch 3; models
+    // stream by distance ring, so this is the whole-match total, not the first-frame download).
+    expect(total / 1024).toBeLessThan(14);
   });
 });

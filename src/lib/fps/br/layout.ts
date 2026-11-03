@@ -272,7 +272,287 @@ function airfield(poi: Poi, out: Placement[]) {
   at("car-sedan", -40, -100, 0);
 }
 
-const LAYOUTS: Record<string, (poi: Poi, out: Placement[]) => void> = {
+/** Shared context for layouts that need the world beyond their own POI (roads, ground). */
+type Context = { meta: WorldMeta; heightAt: (x: number, z: number) => number };
+
+/** Distance from a world point to the nearest road centreline. */
+function roadDistance(meta: WorldMeta, x: number, z: number) {
+  let best = Infinity;
+  for (const r of meta.roads)
+    for (let k = 0; k + 1 < r.points.length; k++) {
+      const [ax, az] = r.points[k]!,
+        [bx, bz] = r.points[k + 1]!;
+      if (Math.min(ax, bx) - best > x || Math.max(ax, bx) + best < x) continue;
+      if (Math.min(az, bz) - best > z || Math.max(az, bz) + best < z) continue;
+      const vx = bx - ax,
+        vz = bz - az,
+        len2 = vx * vx + vz * vz || 1;
+      const u = Math.max(0, Math.min(1, ((x - ax) * vx + (z - az) * vz) / len2));
+      best = Math.min(best, Math.hypot(x - ax - vx * u, z - az - vz * u));
+    }
+  return best;
+}
+
+/** Pads are fully flat out to 85% of their radius, then blend into the terrain (build_world.py). */
+const FLAT = 0.86;
+
+/**
+ * A town on a street grid, following the concept map: lots of `lot` metres inside a radius,
+ * every third row and column left open as a street, and no building on a road the map draws.
+ * Buildings come from `palette` (each must fit a lot at any quarter turn); a few cars on the
+ * streets. `landmarks` are placed first at fixed offsets and keep their lots free.
+ */
+function town(
+  poi: Poi,
+  out: Placement[],
+  ctx: Context,
+  o: {
+    /** Defaults to the flat part of the POI's pad. */
+    radius?: number;
+    palette: string[];
+    salt: number;
+    lot?: number;
+    fill?: number;
+    landmarks?: Array<[string, number, number, Placement["turn"], number]>;
+    cars?: number;
+  },
+) {
+  const { at } = builder(poi, out);
+  const lot = o.lot ?? 32;
+  const taken: Array<[number, number, number]> = [];
+  for (const [model, dx, dz, turn, r] of o.landmarks ?? []) {
+    at(model, dx, dz, turn);
+    taken.push([dx, dz, r]);
+  }
+  const flat = (poi.padRadius ?? 0) * FLAT;
+  const radius = Math.min(o.radius ?? flat, flat);
+  const n = Math.ceil(radius / lot);
+  let cars = 0;
+  for (let gz = -n; gz <= n; gz++)
+    for (let gx = -n; gx <= n; gx++) {
+      const dx = gx * lot,
+        dz = gz * lot;
+      // The whole lot (not just its centre) must sit on the flattened pad.
+      if (Math.hypot(Math.abs(dx) + lot / 2, Math.abs(dz) + lot / 2) > radius) continue;
+      const street = gx % 3 === 0 || gz % 3 === 0;
+      if (street) {
+        // Abandoned cars along the streets (cover between blocks).
+        if (
+          cars < (o.cars ?? 8) &&
+          hash(o.salt + 9, gx * 101 + gz) < 0.18 &&
+          gx % 3 === 0 &&
+          gz % 3 !== 0
+        ) {
+          at(hash(o.salt + 10, gx + gz * 7) < 0.5 ? "car-sedan" : "car-pickup", dx + 3, dz, 0);
+          cars++;
+        }
+        continue;
+      }
+      if (taken.some(([tx, tz, r]) => Math.hypot(dx - tx, dz - tz) < r + lot * 0.6)) continue;
+      // Keep the map's roads clear (half a road plus half a house plus a pavement).
+      if (roadDistance(ctx.meta, poi.x + dx, poi.z + dz) < 12) continue;
+      if (hash(o.salt, gx * 31 + gz * 977) > (o.fill ?? 0.88)) continue;
+      const model = o.palette[Math.floor(hash(o.salt + 1, gx * 17 + gz * 13) * o.palette.length)]!;
+      // Face the nearer street.
+      const turn = (
+        Math.abs(gx % 3) === 1 ? (gx > 0 ? 1 : 3) : gz > 0 ? 0 : 2
+      ) as Placement["turn"];
+      at(model, dx, dz, turn);
+    }
+}
+
+/** Buildings scattered on flat-enough ground around a POI without a pad (cabins, forest camps). */
+function hamlet(
+  poi: Poi,
+  out: Placement[],
+  ctx: Context,
+  o: { radius: number; palette: string[]; count: number; salt: number },
+) {
+  const placed: Array<[number, number]> = [];
+  for (let tries = 0; placed.length < o.count && tries < o.count * 40; tries++) {
+    const a = hash(o.salt, tries) * Math.PI * 2,
+      d = Math.sqrt(hash(o.salt + 1, tries)) * o.radius;
+    const x = poi.x + Math.cos(a) * d,
+      z = poi.z + Math.sin(a) * d;
+    if (placed.some(([px, pz]) => Math.hypot(px - x, pz - z) < 28)) continue;
+    // Flat enough: the ground under a 10 m footprint varies by less than 1.2 m, and dry.
+    const hs = [-5, 5].flatMap((ox) => [-5, 5].map((oz) => ctx.heightAt(x + ox, z + oz)));
+    if (Math.max(...hs) - Math.min(...hs) > 1.2 || Math.min(...hs) < 2) continue;
+    if (roadDistance(ctx.meta, x, z) < 12) continue;
+    placed.push([x, z]);
+    out.push({
+      model: o.palette[placed.length % o.palette.length]!,
+      x: +x.toFixed(2),
+      y: +Math.min(...hs).toFixed(2),
+      z: +z.toFixed(2),
+      turn: (Math.floor(hash(o.salt + 2, tries) * 4) % 4) as Placement["turn"],
+      poi: poi.id,
+    });
+  }
+}
+
+/** Northstar Town (B2): the map's large street grid. */
+function northstar(poi: Poi, out: Placement[], ctx: Context) {
+  town(poi, out, ctx, {
+    salt: 601,
+    palette: [
+      "house",
+      "house-shabby",
+      "rural-house",
+      "rural-wood-1",
+      "rural-store-1",
+      "rural-store-3",
+      "rural-store-5",
+      "brick-shop",
+      "abandoned-building",
+      "garage",
+    ],
+    landmarks: [
+      ["fire-station", 0, 0, 0, 22],
+      ["rural-diner", 96, -64, 0, 14],
+    ],
+    cars: 14,
+  });
+}
+
+/** Millhaven (C4): industrial town with the water tower. */
+function millhaven(poi: Poi, out: Placement[], ctx: Context) {
+  town(poi, out, ctx, {
+    salt: 602,
+    palette: [
+      "house",
+      "rural-house",
+      "rural-store-1",
+      "rural-store-5",
+      "ind-office-trailer",
+      "garage",
+      "brick-shop",
+    ],
+    landmarks: [
+      ["ind-watertower", 32, -64, 0, 10],
+      ["ind-factory", -96, 32, 0, 55],
+      ["ind-warehouse-3", 96, 64, 0, 20],
+      ["ind-warehouse-1", -96, -96, 0, 20],
+    ],
+    cars: 10,
+  });
+}
+
+/** Crossroads (F4): commercial strip at the junction. */
+function crossroads(poi: Poi, out: Placement[], ctx: Context) {
+  town(poi, out, ctx, {
+    salt: 603,
+    lot: 30,
+    palette: [
+      "rural-store-1",
+      "rural-store-3",
+      "rural-store-5",
+      "brick-shop",
+      "rural-diner",
+      "garage",
+    ],
+    landmarks: [["warehouse", -60, 60, 0, 25]],
+    cars: 10,
+  });
+}
+
+/** Central Hospital (H4): tall white blocks around a car park. */
+function hospital(poi: Poi, out: Placement[], ctx: Context) {
+  const { at, scatter } = builder(poi, out);
+  at("ind-building-10", -40, -20, 0);
+  at("ind-building-10", 40, -20, 0);
+  at("ind-building-1", 0, 60, 1);
+  at("ind-terminal", 0, -95, 0);
+  at("ind-generic-2", 110, 40, 0);
+  scatter("car-sedan", 10, 0, 120, 120, 40, 604);
+  scatter("car-cruiser", 6, -110, 60, 40, 80, 605);
+  scatter("car-pickup", 6, 110, -60, 40, 60, 606);
+  void ctx;
+}
+
+/** Riverwood (I6): a small town by the river. */
+function riverwood(poi: Poi, out: Placement[], ctx: Context) {
+  town(poi, out, ctx, {
+    salt: 607,
+    palette: [
+      "house",
+      "house-shabby",
+      "rural-house",
+      "rural-wood-4",
+      "rural-store-3",
+      "garage",
+      "rural-mobile-home",
+    ],
+    cars: 8,
+  });
+}
+
+/** Blackwater Prison (E6): walled compound with towers and cell blocks. */
+function prison(poi: Poi, out: Placement[], ctx: Context) {
+  const { at, row } = builder(poi, out);
+  const h = 75;
+  // Perimeter: 2 m barbed fence (blocks movement, not sight), a gate in the north wall.
+  row("barbed-barrier", -h, -h, h, -h, 5, 0, [[0, -h]]);
+  row("barbed-barrier", -h, h, h, h, 5, 0);
+  row("barbed-barrier", -h, -h + 4, -h, h - 4, 5, 1);
+  row("barbed-barrier", h, -h + 4, h, h - 4, 5, 1);
+  for (const [x, z] of [
+    [-h + 5, -h + 5],
+    [h - 5, -h + 5],
+    [-h + 5, h - 5],
+    [h - 5, h - 5],
+  ])
+    at("watchtower", x!, z!, 0);
+  at("ind-building-1", -30, 10, 0);
+  at("ind-building-1", 30, 10, 0);
+  at("ind-warehouse-1", 0, -45, 0);
+  at("checkpoint", 10, -h - 10, 0);
+  void ctx;
+}
+
+/** East Works (J7): tank farm, cranes and sheds. */
+function eastWorks(poi: Poi, out: Placement[], ctx: Context) {
+  const { at, scatter } = builder(poi, out);
+  for (let i = 0; i < 3; i++)
+    for (let j = 0; j < 2; j++) at("ind-tank", -80 + i * 24, -70 + j * 24, 0);
+  for (let i = 0; i < 6; i++) at("ind-silo", 10 + i * 6, -80, 0);
+  at("ind-hangar", 70, 0, 0);
+  at("ind-warehouse-3", -60, 50, 0);
+  at("ind-portal-crane", 10, 60, 0);
+  for (let i = 0; i < 4; i++) at("container-40", 40 + (i % 2) * 14, 50 + Math.floor(i / 2) * 5, 0);
+  at("ind-office-trailer", -10, 20, 0);
+  scatter("pallets", 8, 0, 100, 60, 20, 608);
+  void ctx;
+}
+
+/** Murder Cabins (C7) and Pine Ridge (C3/D3): cabins and sheds in the woods (no pad). */
+function murderCabins(poi: Poi, out: Placement[], ctx: Context) {
+  hamlet(poi, out, ctx, {
+    radius: 260,
+    palette: ["cabin", "shed", "cabin", "rural-mobile-home", "cabin", "barn"],
+    count: 14,
+    salt: 609,
+  });
+}
+function pineRidge(poi: Poi, out: Placement[], ctx: Context) {
+  hamlet(poi, out, ctx, {
+    radius: 220,
+    palette: ["cabin", "shed", "rural-wood-4", "cabin"],
+    count: 8,
+    salt: 610,
+  });
+}
+
+const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void> = {
+  "northstar-town": northstar,
+  millhaven,
+  crossroads,
+  "central-hospital": hospital,
+  riverwood,
+  "blackwater-prison": prison,
+  "east-works": eastWorks,
+  "murder-cabins": murderCabins,
+  "pine-ridge": pineRidge,
   "southern-military-base": militaryBase,
   "island-superstore": superstore,
   "island-village": islandVillage,
@@ -280,9 +560,16 @@ const LAYOUTS: Record<string, (poi: Poi, out: Placement[]) => void> = {
   "island-airfield": airfield,
 };
 
-/** Every placement on the island, in a stable order. */
-export function islandLayout(meta: WorldMeta): Placement[] {
+/**
+ * Every placement on the island, in a stable order. `heightAt` is the shared heightfield's
+ * ground height (towns without a pad sit on the terrain).
+ */
+export function islandLayout(
+  meta: WorldMeta,
+  heightAt: (x: number, z: number) => number,
+): Placement[] {
   const out: Placement[] = [];
-  for (const poi of meta.pois) LAYOUTS[poi.id]?.(poi, out);
+  const ctx: Context = { meta, heightAt };
+  for (const poi of meta.pois) LAYOUTS[poi.id]?.(poi, out, ctx);
   return out;
 }

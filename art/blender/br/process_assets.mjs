@@ -432,7 +432,8 @@ for (const item of work) {
     }
     await doc.transform(prune());
     // Textures: class size, then halve until under the class's memory cap for this LOD.
-    let px = Math.max(64, Math.round(budget.texture * lod.texture));
+    // Per-asset cap (kit pieces share one colour atlas, which needs far fewer pixels).
+    let px = Math.max(64, Math.round(Math.min(budget.texture, item.texture ?? Infinity) * lod.texture));
     const capMB = budget.textureMB * lod.texture * lod.texture;
     await doc.transform(textureCompress({ encoder: sharp, targetFormat: "webp", resize: [px, px], quality: 82 }));
     while (textureMB(doc) > capMB && px > 64) {

@@ -114,7 +114,7 @@ const ready = (async () => {
   );
   vegetation = createVegetation(plants, { models: treeModels, impostors });
   scene.add(vegetation.root);
-  const layout = islandLayout(m);
+  const layout = islandLayout(m, (x, z) => hf.heightAt(x, z));
   solid = new StaticWorld(hf, layout, collision, plants, bridgeBoxes(m, hf));
   scene.add(createStructures(m, hf).root);
   props = createProps(layout, manifest, loader, { preload: true });

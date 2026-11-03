@@ -66,17 +66,17 @@ def world_to_grid(x: float, z: float) -> tuple[float, float]:
 # Positions read off the concept map (image pixels): centre and rough radius of each location.
 # `pad` is the flattened building area (metres), `kind` drives density and future asset kits.
 POIS = [
-    dict(id="northstar-town", name="Northstar Town", px=(222, 180), radius=95, pad=520, kind="town-large"),
+    dict(id="northstar-town", name="Northstar Town", px=(222, 180), radius=95, pad=720, kind="town-large"),
     dict(id="iron-peaks", name="Iron Peaks", px=(545, 95), radius=95, pad=0, kind="mountain"),
     dict(id="pine-ridge", name="Pine Ridge", px=(500, 250), radius=80, pad=0, kind="forest-compounds"),
     dict(id="redstone-quarry", name="Redstone Quarry", px=(1000, 195), radius=118, pad=0, kind="quarry"),
-    dict(id="millhaven", name="Millhaven", px=(318, 382), radius=95, pad=480, kind="town-industrial"),
-    dict(id="crossroads", name="Crossroads", px=(605, 450), radius=55, pad=300, kind="commercial"),
+    dict(id="millhaven", name="Millhaven", px=(318, 382), radius=95, pad=620, kind="town-industrial"),
+    dict(id="crossroads", name="Crossroads", px=(605, 450), radius=55, pad=400, kind="commercial"),
     dict(id="central-hospital", name="Central Hospital", px=(860, 420), radius=80, pad=420, kind="hospital"),
     dict(id="old-dam", name="Old Dam", px=(250, 578), radius=55, pad=0, kind="dam"),
     dict(id="murder-cabins", name="Murder Cabins", px=(262, 805), radius=70, pad=0, kind="cabins"),
     dict(id="blackwater-prison", name="Blackwater Prison", px=(556, 628), radius=55, pad=280, kind="prison"),
-    dict(id="riverwood", name="Riverwood", px=(975, 625), radius=85, pad=420, kind="town"),
+    dict(id="riverwood", name="Riverwood", px=(975, 625), radius=85, pad=540, kind="town"),
     dict(id="southern-military-base", name="Southern Military Base", px=(735, 790), radius=110, pad=560, kind="military"),
     dict(id="east-works", name="East Works", px=(1070, 795), radius=65, pad=340, kind="industrial"),
     dict(id="island-superstore", name="Island Superstore", px=(655, 1055), radius=80, pad=640, kind="superstore"),
@@ -322,7 +322,7 @@ def build() -> dict:
         r = p["pad"] / 2
         gi, gj = world_to_grid(cx, cz)
         target = float(smooth[int(gj), int(gi)])
-        w = 1 - smoothstep(r * 0.75, r * 1.35, d)
+        w = 1 - smoothstep(r * 0.85, r * 1.4, d)
         h = h * (1 - w) + target * w
         p["height"] = round(target, 2)
     for (a, b, width) in RUNWAYS:

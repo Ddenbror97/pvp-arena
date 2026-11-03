@@ -38029,7 +38029,7 @@
    "z": -3567.8,
    "radius": 805.1,
    "padHeight": 16.15,
-   "padRadius": 260.0
+   "padRadius": 360.0
   },
   {
    "id": "iron-peaks",
@@ -38063,7 +38063,7 @@
    "z": -1855.9,
    "radius": 805.1,
    "padHeight": 13.13,
-   "padRadius": 240.0
+   "padRadius": 310.0
   },
   {
    "id": "crossroads",
@@ -38073,7 +38073,7 @@
    "z": -1279.7,
    "radius": 466.1,
    "padHeight": 20.98,
-   "padRadius": 150.0
+   "padRadius": 200.0
   },
   {
    "id": "central-hospital",
@@ -38119,7 +38119,7 @@
    "z": 203.4,
    "radius": 720.3,
    "padHeight": 11.59,
-   "padRadius": 210.0
+   "padRadius": 270.0
   },
   {
    "id": "southern-military-base",
