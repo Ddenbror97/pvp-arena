@@ -497,7 +497,10 @@ export function BombMatch() {
             ...(ev.audio?.surface ? { surface: ev.audio.surface } : {}),
           });
         if ((ev.type === "hit" || ev.type === "headshot") && ev.victim === v.you)
-          sound.current?.cue("hurt");
+          sound.current?.cue("hurt", {
+            hitZone: !ev.nade && ev.weapon !== "knife" ? ev.zone : undefined,
+            armored: (v.self.armor ?? 0) > 0,
+          });
         if (ev.type === "bomb-exploded") sound.current?.cue("explosion", { gain: 1, bearing });
         // Arming and defusing: the bomb's keypad chirps (only events this player may know).
         if (ev.type === "plant-start" || ev.type === "defuse-start")
