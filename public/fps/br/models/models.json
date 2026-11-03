@@ -426,6 +426,168 @@
     }
    ]
   },
+  "bush-medium": {
+   "title": "Coniferous Forest Assets Pack",
+   "author": "Dari",
+   "source": "https://sketchfab.com/3d-models/coniferous-forest-assets-pack-240ce9cf0ad3474f809a59f9446e63cd",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "bush",
+   "use": "concealment: hides a crouching player (no collision)",
+   "scale": 0.381368,
+   "sourceTris": 1106,
+   "size": [
+    0.73,
+    1.3,
+    0.77
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bush-medium.lod0.glb",
+     "tris": 499,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 30,
+     "size": [
+      0.73,
+      1.3,
+      0.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/bush-medium.lod1.glb",
+     "tris": 174,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 14,
+     "size": [
+      0.73,
+      1.3,
+      0.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/bush-medium.lod2.glb",
+     "tris": 120,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 13,
+     "size": [
+      0.73,
+      1.3,
+      0.77
+     ]
+    }
+   ]
+  },
+  "bush-small": {
+   "title": "Real Bush",
+   "author": "Salman Ramezani",
+   "source": "https://sketchfab.com/3d-models/real-bush-62618c3260b142cfb7ef499d75a8d21a",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "bush",
+   "use": "concealment (no collision)",
+   "scale": 0.029984,
+   "sourceTris": 29,
+   "size": [
+    0.94,
+    0.9,
+    0.95
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bush-small.lod0.glb",
+     "tris": 29,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 44,
+     "size": [
+      0.94,
+      0.9,
+      0.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/bush-small.lod1.glb",
+     "tris": 29,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 18,
+     "size": [
+      0.94,
+      0.9,
+      0.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/bush-small.lod2.glb",
+     "tris": 29,
+     "draws": 1,
+     "textureMB": 0.02,
+     "kB": 8,
+     "size": [
+      0.94,
+      0.9,
+      0.95
+     ]
+    }
+   ]
+  },
+  "bush-tall": {
+   "title": "Coniferous Forest Assets Pack",
+   "author": "Dari",
+   "source": "https://sketchfab.com/3d-models/coniferous-forest-assets-pack-240ce9cf0ad3474f809a59f9446e63cd",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "bush",
+   "use": "concealment: dense young conifer, hides a standing player (no collision)",
+   "scale": 0.58672,
+   "sourceTris": 1106,
+   "size": [
+    1.12,
+    2,
+    1.19
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bush-tall.lod0.glb",
+     "tris": 499,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 30,
+     "size": [
+      1.12,
+      2,
+      1.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/bush-tall.lod1.glb",
+     "tris": 174,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 14,
+     "size": [
+      1.12,
+      2,
+      1.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/bush-tall.lod2.glb",
+     "tris": 122,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 13,
+     "size": [
+      1.12,
+      2,
+      1.19
+     ]
+    }
+   ]
+  },
   "cabin": {
    "title": "Wooden Cabin",
    "author": "donnichols",
@@ -2666,6 +2828,276 @@
       11.67,
       60,
       11.8
+     ]
+    }
+   ]
+  },
+  "rock-big-1": {
+   "title": "Stone Pack",
+   "author": "ashkan.fancy",
+   "source": "https://sketchfab.com/3d-models/stone-pack-f3e0a67b9ca243b09119177649f21e17",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "boulder cover (open ground, slopes)",
+   "scale": 0.946554,
+   "sourceTris": 6082,
+   "size": [
+    7,
+    3.81,
+    5.01
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rock-big-1.lod0.glb",
+     "tris": 900,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 27,
+     "size": [
+      7,
+      3.81,
+      5.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-big-1.lod1.glb",
+     "tris": 315,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 12,
+     "size": [
+      7,
+      3.81,
+      5.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-big-1.lod2.glb",
+     "tris": 84,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      7,
+      3.81,
+      5.01
+     ]
+    }
+   ]
+  },
+  "rock-big-2": {
+   "title": "Stone Pack",
+   "author": "ashkan.fancy",
+   "source": "https://sketchfab.com/3d-models/stone-pack-f3e0a67b9ca243b09119177649f21e17",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "large boulder (mountains, quarry, coast)",
+   "scale": 1.811127,
+   "sourceTris": 5844,
+   "size": [
+    8.95,
+    10.25,
+    9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rock-big-2.lod0.glb",
+     "tris": 899,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 27,
+     "size": [
+      8.95,
+      10.25,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-big-2.lod1.glb",
+     "tris": 315,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 12,
+     "size": [
+      8.95,
+      10.25,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-big-2.lod2.glb",
+     "tris": 90,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      8.95,
+      10.25,
+      9
+     ]
+    }
+   ]
+  },
+  "rock-mid-1": {
+   "title": "Stone Pack",
+   "author": "ashkan.fancy",
+   "source": "https://sketchfab.com/3d-models/stone-pack-f3e0a67b9ca243b09119177649f21e17",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "rock cover (fields, forest)",
+   "scale": 0.820411,
+   "sourceTris": 4352,
+   "size": [
+    3.5,
+    3.09,
+    3.27
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rock-mid-1.lod0.glb",
+     "tris": 899,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 24,
+     "size": [
+      3.5,
+      3.09,
+      3.27
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-mid-1.lod1.glb",
+     "tris": 315,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      3.5,
+      3.09,
+      3.27
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-mid-1.lod2.glb",
+     "tris": 89,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.5,
+      3.09,
+      3.27
+     ]
+    }
+   ]
+  },
+  "rock-mid-2": {
+   "title": "Stone Pack",
+   "author": "ashkan.fancy",
+   "source": "https://sketchfab.com/3d-models/stone-pack-f3e0a67b9ca243b09119177649f21e17",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "rock cover (fields, forest)",
+   "scale": 0.725723,
+   "sourceTris": 2814,
+   "size": [
+    3,
+    2.21,
+    2.61
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rock-mid-2.lod0.glb",
+     "tris": 900,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 23,
+     "size": [
+      3,
+      2.21,
+      2.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-mid-2.lod1.glb",
+     "tris": 330,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      3,
+      2.21,
+      2.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-mid-2.lod2.glb",
+     "tris": 90,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      3,
+      2.21,
+      2.61
+     ]
+    }
+   ]
+  },
+  "rock-small": {
+   "title": "Stone Pack",
+   "author": "ashkan.fancy",
+   "source": "https://sketchfab.com/3d-models/stone-pack-f3e0a67b9ca243b09119177649f21e17",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "crouch cover",
+   "scale": 0.807974,
+   "sourceTris": 864,
+   "size": [
+    1.6,
+    1.03,
+    1.17
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rock-small.lod0.glb",
+     "tris": 864,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      1.6,
+      1.03,
+      1.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-small.lod1.glb",
+     "tris": 362,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      1.6,
+      1.03,
+      1.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/rock-small.lod2.glb",
+     "tris": 90,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.6,
+      1.03,
+      1.17
      ]
     }
    ]

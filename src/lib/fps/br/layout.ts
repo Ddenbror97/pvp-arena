@@ -899,6 +899,131 @@ function countryside(out: Placement[], ctx: Context) {
   }
 }
 
+/** Rock clusters and bush clumps per land-cover class: chance per 60 m cell. */
+const NATURE: Record<number, { rocks: number; bushes: number; big: number }> = {
+  1: { rocks: 0.03, bushes: 0, big: 0.4 }, // sand: a few coastal boulders
+  2: { rocks: 0.1, bushes: 0.22, big: 0.15 }, // grass: cover between POIs
+  3: { rocks: 0.05, bushes: 0.12, big: 0.05 }, // fields: field-edge stones and thickets
+  4: { rocks: 0.05, bushes: 0.18, big: 0.15 }, // forest: boulders and undergrowth
+  5: { rocks: 0.25, bushes: 0.03, big: 0.6 }, // rock: mountains, cliffs, quarry walls
+};
+const NATURE_CELL = 60;
+
+/**
+ * Natural cover over all land (spec §2 "natural cover", RESEARCH.md §3 covered traversal):
+ * deterministic per 60 m cell, by land cover. Rocks block movement and bullets; bushes only
+ * conceal (no collision). Kept off pads, roads, runways, bridges, water and buildings.
+ */
+function nature(out: Placement[], ctx: Context) {
+  const { meta } = ctx;
+  // Existing placements, bucketed, to keep cover 15 m clear of buildings.
+  const taken = new Map<number, Array<[number, number]>>();
+  const key = (x: number, z: number) =>
+    Math.floor(z / NATURE_CELL) * 1000 + Math.floor(x / NATURE_CELL);
+  for (const p of out) {
+    const k = key(p.x, p.z);
+    (taken.get(k) ?? taken.set(k, []).get(k)!).push([p.x, p.z]);
+  }
+  const nearBuilding = (x: number, z: number) => {
+    for (let dz = -1; dz <= 1; dz++)
+      for (let dx = -1; dx <= 1; dx++)
+        for (const [px, pz] of taken.get(key(x + dx * NATURE_CELL, z + dz * NATURE_CELL)) ?? [])
+          if (Math.hypot(px - x, pz - z) < 15) return true;
+    return false;
+  };
+  const blocked = (x: number, z: number) =>
+    meta.pois.some((p) => p.padRadius && Math.hypot(p.x - x, p.z - z) < p.padRadius + 10) ||
+    meta.runways.some((r) => {
+      const vx = r.b[0] - r.a[0],
+        vz = r.b[1] - r.a[1];
+      const u = Math.max(
+        0,
+        Math.min(1, ((x - r.a[0]) * vx + (z - r.a[1]) * vz) / (vx * vx + vz * vz)),
+      );
+      return Math.hypot(x - r.a[0] - vx * u, z - r.a[1] - vz * u) < r.width / 2 + 30;
+    }) ||
+    roadDistance(meta, x, z, 10) < 9 ||
+    bridgeDistance(meta, x, z) < 25 ||
+    nearBuilding(x, z);
+  // Half-size and the most ground relief under it each kind tolerates (a rock on a slope
+  // steeper than that would be buried on its uphill side).
+  const FIT: Record<string, [number, number]> = {
+    "rock-big-1": [3.5, 3],
+    "rock-big-2": [4.5, 3.5],
+    "rock-mid-1": [1.75, 1.6],
+    "rock-mid-2": [1.5, 1.4],
+    "rock-small": [0.8, 0.7],
+    "bush-tall": [1, 1.2],
+    "bush-medium": [0.8, 1.2],
+    "bush-small": [0.5, 1],
+  };
+  const place = (model: string, x: number, z: number, sink: number, salt: number) => {
+    const [foot, relief] = FIT[model]!;
+    const hs = [-foot, foot].flatMap((ox) =>
+      [-foot, foot].map((oz) => ctx.heightAt(x + ox, z + oz)),
+    );
+    const low = Math.min(...hs);
+    if (Math.max(...hs) - low > relief || underwater(meta, x, z, low)) return;
+    out.push({
+      model,
+      x: +x.toFixed(2),
+      y: +(low - sink).toFixed(2),
+      z: +z.toFixed(2),
+      turn: (Math.floor(hash(salt, 9) * 4) % 4) as Placement["turn"],
+      poi: "nature",
+    });
+  };
+  const n = Math.floor(4800 / NATURE_CELL);
+  for (let gz = -n; gz < n; gz++)
+    for (let gx = -n; gx < n; gx++) {
+      const salt = 900_000 + (gz + n) * 1000 + (gx + n);
+      const cx = (gx + hash(salt, 1)) * NATURE_CELL,
+        cz = (gz + hash(salt, 2)) * NATURE_CELL;
+      const rule = NATURE[ctx.coverAt(cx, cz)];
+      if (!rule) continue;
+      const roll = hash(salt, 3);
+      if (roll < rule.rocks) {
+        if (blocked(cx, cz)) continue;
+        const big = hash(salt, 4) < rule.big;
+        const main = big
+          ? hash(salt, 5) < 0.75
+            ? "rock-big-1"
+            : "rock-big-2"
+          : hash(salt, 5) < 0.5
+            ? "rock-mid-1"
+            : "rock-mid-2";
+        // Rocks sit a little into the ground (never floating on a slope).
+        place(main, cx, cz, big ? 0.6 : 0.3, salt);
+        const smalls = Math.floor(hash(salt, 6) * 3);
+        for (let k = 0; k < smalls; k++) {
+          const a = hash(salt + k, 7) * Math.PI * 2,
+            d = (big ? 7 : 4) + hash(salt + k, 8) * 4;
+          const x = cx + Math.cos(a) * d,
+            z = cz + Math.sin(a) * d;
+          if (!blocked(x, z)) place("rock-small", x, z, 0.15, salt + k * 31);
+        }
+      } else if (roll < rule.rocks + rule.bushes) {
+        // A thicket: 3–5 young conifers within 2.5 m, wide enough to hide a player, plus a tuft.
+        const count = 3 + Math.floor(hash(salt, 6) * 3);
+        for (let k = 0; k < count; k++) {
+          const a = hash(salt + k, 7) * Math.PI * 2,
+            d = k === 0 ? 0 : 1.2 + hash(salt + k, 8) * 1.3;
+          const x = cx + Math.cos(a) * d,
+            z = cz + Math.sin(a) * d;
+          if (blocked(x, z)) continue;
+          const r = hash(salt + k, 10);
+          place(
+            k === count - 1 ? "bush-small" : r < 0.55 ? "bush-tall" : "bush-medium",
+            x,
+            z,
+            0.05,
+            salt + k * 17,
+          );
+        }
+      }
+    }
+}
+
 /**
  * Every placement on the island, in a stable order: the POIs, then the countryside between them.
  * `heightAt` is the shared heightfield's ground height and `coverAt` the shared land-cover class.
@@ -912,5 +1037,6 @@ export function islandLayout(
   const ctx: Context = { meta, heightAt, coverAt };
   for (const poi of meta.pois) LAYOUTS[poi.id]?.(poi, out, ctx);
   countryside(out, ctx);
+  nature(out, ctx);
   return out;
 }

@@ -31,6 +31,10 @@ const RINGS: Record<string, [number, number, number]> = {
   building: [220, 800, 4000],
   hero: [300, 1100, 6000],
   aircraft: [250, 900, 5000],
+  // Natural cover: rocks block bullets, so they draw far (the same for everyone); bushes only
+  // conceal and draw to 600 m.
+  rock: [60, 250, 1500],
+  bush: [40, 160, 600],
 };
 const RESELECT = 8;
 

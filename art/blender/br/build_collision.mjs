@@ -19,7 +19,10 @@ import { MeshoptDecoder } from "meshoptimizer";
 
 /** 0.3 m: stairs voxelise into risers below the 0.35 m step height, so they stay climbable. */
 const VOXEL = 0.3;
-const DEFAULT_MODE = { hero: "voxel", building: "voxel", aircraft: "voxel", structure: "voxel", prop: "solid", small: "solid", vehicle: "solid", tree: "none" };
+const DEFAULT_VOXEL = VOXEL;
+/** Coarser voxels per class: rocks need their rough shape, not stair precision. */
+const CLASS_VOXEL = { rock: 0.8 };
+const DEFAULT_MODE = { hero: "voxel", building: "voxel", aircraft: "voxel", structure: "voxel", prop: "solid", small: "solid", vehicle: "solid", tree: "none", rock: "voxel", bush: "none" };
 const REPO = process.cwd();
 const kit = JSON.parse(fs.readFileSync("art/br/assets/kit.json", "utf8"));
 const manifest = JSON.parse(fs.readFileSync("public/fps/br/models/models.json", "utf8"));
@@ -56,7 +59,7 @@ async function triangles(file) {
   return out;
 }
 
-function voxelBoxes(tris, size) {
+function voxelBoxes(tris, size, VOXEL = DEFAULT_VOXEL) {
   const min = [Infinity, Infinity, Infinity],
     max = [-Infinity, -Infinity, -Infinity];
   for (const t of tris)
@@ -149,7 +152,7 @@ for (const a of kit.assets) {
   } else
     // Ground-level slabs and kerbs under 0.35 m are dropped: the player walks on the pad itself
     // (voxelised floors would otherwise be a 0.3 m ledge at every doorway).
-    out.models[a.id] = voxelBoxes(tris).filter((b) => b[4] > 0.35);
+    out.models[a.id] = voxelBoxes(tris, undefined, CLASS_VOXEL[a.class] ?? VOXEL).filter((b) => b[4] > 0.35);
   console.log(`${a.id.padEnd(18)} ${mode.padEnd(6)} ${out.models[a.id].length} boxes`);
 }
 fs.writeFileSync("public/fps/br/models/collision.json", JSON.stringify(out));

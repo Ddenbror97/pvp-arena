@@ -8,7 +8,9 @@
     "prop": { "tris": 1500, "texture": 512, "draws": 2, "textureMB": 2, "detailMaps": false },
     "tree": { "tris": 2000, "texture": 512, "draws": 2, "textureMB": 2, "detailMaps": false, "keepTextures": true },
     "vehicle": { "tris": 2500, "texture": 512, "draws": 2, "textureMB": 2, "detailMaps": false },
-    "small": { "tris": 600, "texture": 256, "draws": 1, "textureMB": 0.5, "detailMaps": false }
+    "small": { "tris": 600, "texture": 256, "draws": 1, "textureMB": 0.5, "detailMaps": false },
+    "rock": { "tris": 900, "texture": 512, "draws": 1, "textureMB": 1, "detailMaps": false },
+    "bush": { "tris": 500, "texture": 256, "draws": 2, "textureMB": 0.5, "detailMaps": false, "keepTextures": true }
   },
   "lods": [
     { "ratio": 1, "texture": 1 },
@@ -89,6 +91,14 @@
     { "id": "shed", "key": "sf:be6edd62e55a4f9a99da940fc164a5b9", "class": "structure", "texture": 256, "fit": { "max": 6 }, "use": "farms, cabins" },
     { "id": "barn", "key": "sf:5e59322d38d445ada354967ef5932abf", "class": "building", "texture": 256, "use": "farms" },
     { "id": "hay-bales", "key": "sf:6b775049e57e4d9da87977905493ebfb", "class": "prop", "texture": 256, "use": "farms (cover)" },
+    { "id": "rock-big-1", "key": "sf:f3e0a67b9ca243b09119177649f21e17", "piece": "Big_2_BiG_0", "class": "rock", "fit": { "max": 7 }, "use": "boulder cover (open ground, slopes)" },
+    { "id": "rock-big-2", "key": "sf:f3e0a67b9ca243b09119177649f21e17", "piece": "BIG_1_BiG_0", "class": "rock", "fit": { "max": 9 }, "use": "large boulder (mountains, quarry, coast)" },
+    { "id": "rock-mid-1", "key": "sf:f3e0a67b9ca243b09119177649f21e17", "piece": "Mid_1_MID_0", "class": "rock", "fit": { "max": 3.5 }, "use": "rock cover (fields, forest)" },
+    { "id": "rock-mid-2", "key": "sf:f3e0a67b9ca243b09119177649f21e17", "piece": "Mid_3_MID_0", "class": "rock", "fit": { "max": 3 }, "use": "rock cover (fields, forest)" },
+    { "id": "rock-small", "key": "sf:f3e0a67b9ca243b09119177649f21e17", "piece": "Small_3_SMall_0", "class": "rock", "fit": { "max": 1.6 }, "use": "crouch cover" },
+    { "id": "bush-tall", "key": "sf:240ce9cf0ad3474f809a59f9446e63cd", "piece": "Coniferous Sapling_4", "class": "bush", "fit": { "y": 2.0 }, "collision": "none", "use": "concealment: dense young conifer, hides a standing player (no collision)" },
+    { "id": "bush-medium", "key": "sf:240ce9cf0ad3474f809a59f9446e63cd", "piece": "Coniferous Sapling_4", "class": "bush", "fit": { "y": 1.3 }, "collision": "none", "use": "concealment: hides a crouching player (no collision)" },
+    { "id": "bush-small", "key": "sf:62618c3260b142cfb7ef499d75a8d21a", "piece": "Small_bush_1_phong3_0", "class": "bush", "fit": { "y": 0.9 }, "collision": "none", "use": "ground tuft (detail, no collision)" },
     { "id": "jersey", "key": "sf:b52246c9611a42a99a03b425535a0237", "class": "small", "use": "roadblocks, bridges" }
   ],
   "skipped": [

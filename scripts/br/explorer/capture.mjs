@@ -147,6 +147,22 @@ const views = await page.evaluate(() => {
       return {
         ...(barn ? { "29-farm": near(barn, 45, 50, 6, 4) } : {}),
         ...(ruin ? { "30-abandoned-compound": near(ruin, 50, -40, 3, 3) } : {}),
+        ...(() => {
+          const rock = l.find(
+            (p) =>
+              p.poi === "nature" &&
+              p.model === "rock-big-1" &&
+              Math.abs(p.x) < 3000 &&
+              Math.abs(p.z) < 3000,
+          );
+          const bush = l.find(
+            (p) => p.poi === "nature" && p.model === "bush-tall" && Math.abs(p.x) < 3000,
+          );
+          return {
+            ...(rock ? { "36-boulder-cover": near(rock, 22, 18, 1.7, 1.5) } : {}),
+            ...(bush ? { "37-bushes": near(bush, 8, 6, 1.7, 0.8) } : {}),
+          };
+        })(),
       };
     })(),
     "31-countryside-from-air": [
