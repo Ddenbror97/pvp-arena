@@ -1311,6 +1311,7 @@ export function mountBombArena(
       now,
       serverNow,
       world: latest?.grenades,
+      owner: latest?.you ?? null,
       camera,
       move:
         locked() && (keys.has("KeyW") || keys.has("KeyS") || keys.has("KeyA") || keys.has("KeyD"))

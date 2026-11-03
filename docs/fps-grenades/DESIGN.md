@@ -88,8 +88,11 @@ describes the primary/secondary/combined throws.
   spoon flies off; a spent smoke can stays), two instanced sprite meshes for every effect (soft:
   smoke, dust; glow: flames, flash, sparks), a grey veil when the eye is inside a cloud. All
   created and compiled at load.
-- Own throws are predicted and handed over to the server's flight (offset eased out over ~90 ms);
-  the first 100 ms blend from the hand's release point.
+- Own throws are predicted and handed over at the currently drawn position, without replaying
+  the hand-release blend. Airborne corrections are speed-bounded so late confirmations cannot
+  drag the grenade backwards; resting corrections settle quickly. Snapshot-first confirmations
+  reconcile by owner, and early confirmations cannot create a second predicted grenade.
+  Only the initial flight's first 100 ms blend from the hand's release point.
 - Sounds: synthesized (draw, pin, spoon, throw whoosh, bounces per body, HE blast, smoke pop and
   hiss bed, fire burst and crackle bed, fizzle), spatialized by bearing and distance.
 - Third person: the operator carries the grenade in the right fist, winds up while the pin is

@@ -1388,6 +1388,7 @@ export function mountArena(
       now,
       serverNow: Date.now() + lastServerOffset,
       world: state?.grenades,
+      owner: seat === "A" ? 0 : seat === "B" ? 1 : null,
       camera,
       move: moving ? (keys.has("ShiftLeft") || keys.has("ShiftRight") ? 0.5 : 1) : 0,
       alive,
