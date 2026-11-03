@@ -90,6 +90,9 @@ POIS = [
 RUNWAYS = [((612, 832), (860, 852), 60), ((900, 1102), (1050, 1030), 50)]
 # Bridges to the island (image px endpoints): road decks over the strait.
 BRIDGES = [dict(id="west-bridge", a=(512, 880), b=(522, 975)), dict(id="east-bridge", a=(895, 893), b=(880, 990))]
+# Dams (concept map C5): a solid concrete wall with a road on its crest, holding the upper lake
+# (south, ~62 m) above the lower one (north, ~28 m). Drawn on land, so it does not cut the water mask.
+DAMS = [dict(id="old-dam", a=(198, 563), b=(300, 587), deck=68.0, width=16.0)]
 # Mountains and hills: (image px centre, radius px, height m, ridged?).
 MOUNTAINS = [
     ((545, 95), 120, 290, True),  # Iron Peaks massif
@@ -344,6 +347,9 @@ def build() -> dict:
     for b in BRIDGES:
         pa, pb = px_to_world(*b["a"]), px_to_world(*b["b"])
         bridges.append(dict(id=b["id"], a=[round(pa[0], 1), round(pa[1], 1)], b=[round(pb[0], 1), round(pb[1], 1)], deck=14.0, width=12.0))
+    for d in DAMS:
+        pa, pb = px_to_world(*d["a"]), px_to_world(*d["b"])
+        bridges.append(dict(id=d["id"], a=[round(pa[0], 1), round(pa[1], 1)], b=[round(pb[0], 1), round(pb[1], 1)], deck=d["deck"], width=d["width"], solid=True))
     h = h.astype(np.float32)
 
     # --------------------------------------------------------------------------- land cover
@@ -371,6 +377,10 @@ def build() -> dict:
         core = (d < p["pad"] / 2 * 0.62) & land_c & (cover != ROAD) & (cover != WATER)
         cover[core] = URBAN
         cover[(d < p["pad"] / 2) & (cover == FOREST)] = GRASS
+
+    # Redstone Quarry: the pit and its benches are bare gravel (no trees), as drawn.
+    qx, qz = px_to_world(1000, 195)
+    cover[(np.hypot(cxs - qx, czs - qz) < 118 / IMG_SIZE * WORLD * 0.85) & land_c] = SAND
 
     # Roads are road in the land cover too (shading under the strip; no trees on them).
     cell = WORLD / COVER

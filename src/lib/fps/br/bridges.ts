@@ -2,10 +2,16 @@ import type { Heightfield } from "./heightfield";
 import type { WorldMeta } from "./world";
 
 /**
- * The two strait bridges (concept map: west bridge E8, east bridge H8), shared by the server
- * (collision boxes) and the client (one merged mesh): a deck rising from the ground at each
- * abutment to at least the clearance height mid-span, railings on both edges and piers.
+ * The two strait bridges (concept map: west bridge E8, east bridge H8) and the Old Dam (C5),
+ * shared by the server (collision boxes) and the client (one merged mesh): a deck rising from the
+ * ground at each abutment to at least the clearance height mid-span, railings on both edges and
+ * piers (a dam is solid from its deck down to the ground instead).
  */
+
+/** Bottom of a dam segment: the lowest ground under its four corners, a little below. */
+export function damBase(hf: Heightfield, corners: Array<[number, number]>) {
+  return Math.min(...corners.map(([x, z]) => hf.heightAt(x, z))) - 1;
+}
 export const BRIDGE = {
   /** Sample spacing along the deck (m); also the collision segment length. */
   step: 3,
@@ -19,6 +25,8 @@ export const BRIDGE = {
 export type BridgeSpan = {
   id: string;
   width: number;
+  /** Dam: solid down to the ground, no piers. */
+  solid: boolean;
   /** Deck top centre line, every BRIDGE.step metres: x, y, z. */
   points: Array<[number, number, number]>;
   /** Unit direction a → b on the ground plane, and its left normal. */
@@ -46,7 +54,7 @@ export function bridgeSpans(meta: WorldMeta, hf: Heightfield): BridgeSpan[] {
       const y = ha + (hb - ha) * t + lift * arch;
       points.push([ax + (bx - ax) * t, +y.toFixed(3), az + (bz - az) * t]);
     }
-    return { id: b.id, width: b.width, points, dir, side };
+    return { id: b.id, width: b.width, solid: !!b.solid, points, dir, side };
   });
 }
 
@@ -73,12 +81,14 @@ export function bridgeBoxes(meta: WorldMeta, hf: Heightfield): number[][] {
         x + sx * off,
         z + sz * off,
       ];
-      // Deck slab: walkable top.
-      aabb(
-        [at(x0, z0, half), at(x0, z0, -half), at(x1, z1, half), at(x1, z1, -half)],
-        top - BRIDGE.thickness,
-        top,
-      );
+      // Deck slab: walkable top (a dam: the whole wall under it).
+      const deck: Array<[number, number]> = [
+        at(x0, z0, half),
+        at(x0, z0, -half),
+        at(x1, z1, half),
+        at(x1, z1, -half),
+      ];
+      aabb(deck, span.solid ? damBase(hf, deck) : top - BRIDGE.thickness, top);
       // Railings on both edges.
       for (const edge of [half, -half]) {
         const inner = edge - Math.sign(edge) * BRIDGE.railWidth;
@@ -90,6 +100,7 @@ export function bridgeBoxes(meta: WorldMeta, hf: Heightfield): number[][] {
       }
     }
     // Piers down to the sea floor every pierEvery metres (not under the abutments).
+    if (span.solid) continue;
     const every = Math.round(BRIDGE.pierEvery / BRIDGE.step);
     for (let k = every; k < span.points.length - every / 2; k += every) {
       const [x, y, z] = span.points[k]!;

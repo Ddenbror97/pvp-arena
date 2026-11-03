@@ -95,7 +95,7 @@ describe("Project Island terrain", () => {
   });
 
   it("runs the strait under both island bridges, with land at the ends", () => {
-    for (const b of meta.bridges) {
+    for (const b of meta.bridges.filter((s) => !s.solid)) {
       const mid = hf.heightAt((b.a[0] + b.b[0]) / 2, (b.a[1] + b.b[1]) / 2);
       expect(mid, b.id).toBeLessThan(-3);
       expect(hf.heightAt(b.a[0], b.a[1]), b.id).toBeGreaterThan(0);

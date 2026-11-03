@@ -68,6 +68,8 @@ export type WorldMeta = {
     b: [number, number];
     deck: number;
     width: number;
+    /** A dam: the deck is the top of a solid wall down to the ground (no piers). */
+    solid?: boolean;
   }>;
   runways: Array<{ a: [number, number]; b: [number, number]; width: number }>;
   /** Road centrelines read off the concept map (art/br/build_world.py extract_roads). */

@@ -114,6 +114,26 @@ const views = await page.evaluate(() => {
     "22-riverwood-street": at("riverwood", -100, 60, 1.7, 100, -40, 2),
     "23-east-works": at("east-works", 60, 120, 1.7, -30, -40, 6),
     "24-murder-cabins": at("murder-cabins", 160, 160, 60, 0, 0, 0),
+    "25-redstone-quarry-from-air": at("redstone-quarry", 900, 500, 420, 150, 0, 0),
+    "26-quarry-plant": at("redstone-quarry", 380, 60, 1.7, 560, -40, 8),
+    "27-old-dam-face": (() => {
+      const d = m.bridges.find((b) => b.id === "old-dam");
+      const mx = (d.a[0] + d.b[0]) / 2,
+        mz = (d.a[1] + d.b[1]) / 2;
+      return [
+        [mx - 160, 75, mz - 330],
+        [mx, 50, mz],
+      ];
+    })(),
+    "28-on-the-dam": (() => {
+      const d = m.bridges.find((b) => b.id === "old-dam");
+      const x = d.a[0] + (d.b[0] - d.a[0]) * 0.25,
+        z = d.a[1] + (d.b[1] - d.a[1]) * 0.25;
+      return [
+        [x, 70, z],
+        [d.b[0], 66, d.b[1]],
+      ];
+    })(),
     "16-on-the-west-bridge": (() => {
       const b = m.bridges[0];
       const x = b.a[0] + (b.b[0] - b.a[0]) * 0.3,

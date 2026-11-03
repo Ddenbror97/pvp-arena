@@ -361,34 +361,144 @@ function town(
     }
 }
 
-/** Buildings scattered on flat-enough ground around a POI without a pad (cabins, forest camps). */
+/** Whether ground at height `h` is under a lake or the sea there. */
+function underwater(meta: WorldMeta, x: number, z: number, h: number) {
+  if (h < 2) return true;
+  for (const w of meta.waterBodies) {
+    const [x0, z0, x1, z1] = w.bounds;
+    if (x >= x0 && x <= x1 && z >= z0 && z <= z1 && h < w.level + 0.5) return true;
+  }
+  return false;
+}
+
+/** Distance from a point to the nearest bridge or dam centreline. */
+function bridgeDistance(meta: WorldMeta, x: number, z: number) {
+  let best = Infinity;
+  for (const { a, b } of meta.bridges) {
+    const vx = b[0] - a[0],
+      vz = b[1] - a[1];
+    const u = Math.max(0, Math.min(1, ((x - a[0]) * vx + (z - a[1]) * vz) / (vx * vx + vz * vz)));
+    best = Math.min(best, Math.hypot(x - a[0] - vx * u, z - a[1] - vz * u));
+  }
+  return best;
+}
+
+/**
+ * Buildings scattered on flat-enough ground around a POI without a pad (cabins, forest camps,
+ * quarry benches): each footprint of half-size `foot` must vary by under `flat` metres, be dry,
+ * and keep clear of roads, bridges and the dam.
+ */
 function hamlet(
   poi: Poi,
   out: Placement[],
   ctx: Context,
-  o: { radius: number; palette: string[]; count: number; salt: number },
+  o: {
+    radius: number;
+    palette: string[];
+    count: number;
+    salt: number;
+    /** Centre offset from the POI (m). */
+    at?: [number, number];
+    foot?: number;
+    flat?: number;
+  },
 ) {
+  const foot = o.foot ?? 5;
+  const flat = o.flat ?? 1.2;
+  const [cx, cz] = [poi.x + (o.at?.[0] ?? 0), poi.z + (o.at?.[1] ?? 0)];
   const placed: Array<[number, number]> = [];
-  for (let tries = 0; placed.length < o.count && tries < o.count * 40; tries++) {
+  for (let tries = 0; placed.length < o.count && tries < o.count * 60; tries++) {
     const a = hash(o.salt, tries) * Math.PI * 2,
       d = Math.sqrt(hash(o.salt + 1, tries)) * o.radius;
-    const x = poi.x + Math.cos(a) * d,
-      z = poi.z + Math.sin(a) * d;
-    if (placed.some(([px, pz]) => Math.hypot(px - x, pz - z) < 28)) continue;
-    // Flat enough: the ground under a 10 m footprint varies by less than 1.2 m, and dry.
-    const hs = [-5, 5].flatMap((ox) => [-5, 5].map((oz) => ctx.heightAt(x + ox, z + oz)));
-    if (Math.max(...hs) - Math.min(...hs) > 1.2 || Math.min(...hs) < 2) continue;
-    if (roadDistance(ctx.meta, x, z) < 12) continue;
+    const x = cx + Math.cos(a) * d,
+      z = cz + Math.sin(a) * d;
+    if (placed.some(([px, pz]) => Math.hypot(px - x, pz - z) < Math.max(28, foot * 2 + 8)))
+      continue;
+    const hs = [-foot, 0, foot].flatMap((ox) =>
+      [-foot, 0, foot].map((oz) => ctx.heightAt(x + ox, z + oz)),
+    );
+    const low = Math.min(...hs);
+    if (Math.max(...hs) - low > flat || underwater(ctx.meta, x, z, low)) continue;
+    if (roadDistance(ctx.meta, x, z) < foot + 7) continue;
+    if (bridgeDistance(ctx.meta, x, z) < foot + 14) continue;
     placed.push([x, z]);
     out.push({
       model: o.palette[placed.length % o.palette.length]!,
       x: +x.toFixed(2),
-      y: +Math.min(...hs).toFixed(2),
+      y: +low.toFixed(2),
       z: +z.toFixed(2),
       turn: (Math.floor(hash(o.salt + 2, tries) * 4) % 4) as Placement["turn"],
       poi: poi.id,
     });
   }
+}
+
+/**
+ * Redstone Quarry (I2): the terraced pit is carved by the world builder; the processing plant
+ * sits on the eastern benches and a small works yard on the south-western rim (as drawn).
+ */
+function quarry(poi: Poi, out: Placement[], ctx: Context) {
+  // Landmarks: the processing hall on the flat pit floor, the big shed and factory on the benches.
+  hamlet(poi, out, ctx, {
+    radius: 60,
+    foot: 30,
+    flat: 2,
+    count: 1,
+    salt: 615,
+    palette: ["ind-hangar"],
+  });
+  hamlet(poi, out, ctx, {
+    at: [560, -40],
+    radius: 260,
+    foot: 24,
+    flat: 2.5,
+    count: 2,
+    salt: 616,
+    palette: ["ind-factory", "ind-warehouse-1"],
+  });
+  hamlet(poi, out, ctx, {
+    at: [560, -40],
+    radius: 220,
+    foot: 13,
+    flat: 1.5,
+    count: 9,
+    salt: 611,
+    palette: [
+      "ind-warehouse-3",
+      "ind-tank",
+      "ind-portal-crane",
+      "ind-silo",
+      "ind-office-trailer",
+      "container-40",
+    ],
+  });
+  hamlet(poi, out, ctx, {
+    at: [-520, 420],
+    radius: 180,
+    foot: 7,
+    count: 7,
+    salt: 612,
+    palette: ["ind-office-trailer", "rural-quonset", "ind-generic-2", "garage", "rural-trailer"],
+  });
+}
+
+/** Old Dam (C5): the dam wall is world data (bridges.ts); a power house and sheds by its ends. */
+function oldDam(poi: Poi, out: Placement[], ctx: Context) {
+  const dam = ctx.meta.bridges.find((b) => b.id === "old-dam");
+  if (!dam) return;
+  for (const [end, salt] of [
+    [dam.a, 613],
+    [dam.b, 614],
+  ] as const)
+    hamlet(poi, out, ctx, {
+      at: [end[0] - poi.x, end[1] - poi.z],
+      radius: 160,
+      foot: 9,
+      flat: 1.5,
+      count: 4,
+      salt,
+      palette: ["ind-warehouse-1", "ind-office-trailer", "ind-generic-2", "shed"],
+    });
 }
 
 /** Northstar Town (B2): the map's large street grid. */
@@ -553,6 +663,8 @@ const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void
   "east-works": eastWorks,
   "murder-cabins": murderCabins,
   "pine-ridge": pineRidge,
+  "redstone-quarry": quarry,
+  "old-dam": oldDam,
   "southern-military-base": militaryBase,
   "island-superstore": superstore,
   "island-village": islandVillage,

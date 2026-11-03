@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
-import { bridgeBoxes } from "@/lib/fps/br/bridges";
+import { bridgeBoxes, bridgeSpans } from "@/lib/fps/br/bridges";
 import { islandLayout, type Placement } from "@/lib/fps/br/layout";
 import { stepBody, type BrBody } from "@/lib/fps/br/movement";
 import { StaticWorld, turnBox, type CollisionData } from "@/lib/fps/br/static-world";
@@ -169,6 +169,24 @@ describe("Project Island static world", () => {
       expect(Math.hypot(b.x - bx, b.z - bz), bridge.id).toBeLessThan(25);
       expect(lowest, bridge.id).toBeGreaterThan(2);
     }
+  });
+
+  it("builds the Old Dam as a solid wall: crest above the ground, a face that blocks", () => {
+    const dam = bridgeSpans(meta, hf).find((s) => s.id === "old-dam")!;
+    expect(dam.solid).toBe(true);
+    // Away from the abutments (where the crest meets the ground) the crest clears the ground.
+    const n = dam.points.length;
+    for (const [x, y, z] of dam.points.slice(Math.ceil(n * 0.06), Math.floor(n * 0.94)))
+      expect(y - hf.heightAt(x, z), `${x},${z}`).toBeGreaterThan(0.5);
+    // Walking south into the dam from the lower (north) lake shore stops at its face.
+    const [mx, , mz] = dam.points[Math.floor(dam.points.length / 2)]!;
+    const [sx, sz] = dam.side;
+    const north = sz < 0 ? 1 : -1; // side normal pointing north (−z)
+    const start: [number, number] = [mx + sx * north * 30, mz + sz * north * 30];
+    const b = body(start[0], start[1]);
+    const yaw = Math.atan2(sx * north, sz * north); // walk back towards the centreline
+    walk(b, yaw, 12);
+    expect(Math.hypot(b.x - mx, b.z - mz)).toBeGreaterThan(dam.width / 2);
   });
 
   it("lands on top of a container and climbs nothing taller than a step", () => {

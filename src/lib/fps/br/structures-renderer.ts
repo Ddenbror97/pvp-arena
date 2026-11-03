@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { BRIDGE, bridgeSpans } from "./bridges";
+import { BRIDGE, bridgeSpans, damBase } from "./bridges";
 import type { Heightfield } from "./heightfield";
 import type { WorldMeta } from "./world";
 
@@ -84,17 +84,20 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
         at(x1, z1, off1),
         at(x1, z1, off0),
       ];
-      // Road surface over a concrete slab.
+      // Road surface over a concrete slab (a dam: the wall down to the ground, as collided).
+      const base = span.solid ? damBase(hf, ring(half, -half)) : 0;
       prism(
         pos,
         col,
         ring(half, -half),
-        [
-          y0 - BRIDGE.thickness,
-          y0 - BRIDGE.thickness,
-          y1 - BRIDGE.thickness,
-          y1 - BRIDGE.thickness,
-        ],
+        span.solid
+          ? [base, base, base, base]
+          : [
+              y0 - BRIDGE.thickness,
+              y0 - BRIDGE.thickness,
+              y1 - BRIDGE.thickness,
+              y1 - BRIDGE.thickness,
+            ],
         [y0 - 0.05, y0 - 0.05, y1 - 0.05, y1 - 0.05],
         concrete,
       );
@@ -123,6 +126,7 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
         );
       }
     }
+    if (span.solid) continue;
     const every = Math.round(BRIDGE.pierEvery / BRIDGE.step);
     for (let k = every; k < span.points.length - every / 2; k += every) {
       const [x, y, z] = span.points[k]!;
