@@ -70,7 +70,16 @@ export type BombView = {
     | { state: "defused" | "exploded"; site: "A" | "B"; x: number; y: number; z: number };
   events: Array<
     | (BombEvent & { slot?: number })
-    | { type: "sound"; id?: number; kind: string; bearing: number; gain: number; at?: number }
+    | {
+        type: "sound";
+        id?: number;
+        kind: string;
+        bearing: number;
+        gain: number;
+        at?: number;
+        /** An AWP report (the sound itself gives the weapon away, as in CS; never a position). */
+        awp?: true;
+      }
   >;
 };
 
@@ -250,6 +259,7 @@ export function bombViewFor(
           bearing: +bearing(eyes, pos).toFixed(2),
           gain: +(1 - d / range).toFixed(2),
           ...(e.at !== undefined ? { at: e.at } : {}),
+          ...(e.type === "shot" && e.primary === "awp" ? { awp: true as const } : {}),
         });
     }
   }

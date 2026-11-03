@@ -25,7 +25,7 @@ export const AWP = {
   name: "AWP",
   damage: { head: 459, chest: 115, stomach: 143, legs: 85 } satisfies Record<HitZone, number>,
   armorPenetration: 0.975,
-  magazine: 10,
+  magazine: 5,
   reserve: 30,
   /** Bolt cycle: 60 000 / 41 rpm. No shot, and no zoom, until it completes. */
   cycleMs: 1463,
@@ -98,9 +98,12 @@ export function awpSpeedFraction(
 export function awpDamage(target: Player, zone: HitZone): number {
   const base = AWP.damage[zone];
   if (zone === "head" || zone === "legs" || !(target.armor! > 0)) return base;
-  const blocked = Math.min(base * (1 - AWP.armorPenetration), target.armor! * 2);
+  // CS applies the vest to the unrounded hitbox damage (115 × 1.25 = 143.75 on the stomach), so
+  // the armoured hits are chest 112 and stomach 140, as in CS:GO.
+  const raw = 115 * (zone === "stomach" ? 1.25 : 1);
+  const blocked = Math.min(raw * (1 - AWP.armorPenetration), target.armor! * 2);
   target.armor = Math.max(0, target.armor! - blocked / 2);
-  return Math.floor(base - blocked);
+  return Math.round(raw - blocked);
 }
 
 /**

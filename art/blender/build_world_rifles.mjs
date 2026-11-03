@@ -9,8 +9,9 @@
  * preserved), primitives sharing a material are joined, and textures are capped at 512 px.
  * Node names the runtime looks up (magazine, bolt, charging handle, muzzle markers) are kept.
  *
- *   node art/blender/build_world_rifles.mjs
- * → public/fps/models/ak47-world.glb, m4a1-world.glb (then report triangles/draws/bytes)
+ *   node art/blender/build_world_rifles.mjs [output.glb …]
+ * → public/fps/models/ak47-world.glb, m4a1-world.glb, awp-world.glb (then report
+ *   triangles/draws/bytes); name outputs to build only those.
  */
 import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
@@ -33,10 +34,18 @@ import path from "node:path";
 const HERE = path.dirname(new URL(import.meta.url).pathname);
 const MODELS = path.resolve(HERE, "../../public/fps/models");
 const REMOVE = ["FPArms", "FPAccessories", "FPRig", "SpareMagazine"];
-const RIFLES = [
-  ["ak47-authored.glb", "ak47-world.glb"],
-  ["m4a1-authored.glb", "m4a1-world.glb"],
+/** [first-person source, world output, runtime markers that must survive]. */
+const RIFLE_MARKERS = ["MuzzleDeviceTip", "EjectionPort", "Magazine", "GripL", "GripR"];
+const ALL_RIFLES = [
+  ["ak47-authored.glb", "ak47-world.glb", [...RIFLE_MARKERS, "ChargingHandle"]],
+  ["m4a1-authored.glb", "m4a1-world.glb", [...RIFLE_MARKERS, "ChargingHandle"]],
+  // AWP: from the Police viewmodel (the arms are removed either way); bolt-action parts.
+  ["awp-police.glb", "awp-world.glb", [...RIFLE_MARKERS, "Bolt", "BoltHandle"]],
 ];
+// Optional output names on the command line build only those (e.g. `awp-world.glb`), so adding
+// a rifle does not re-encode the shipped ones.
+const only = process.argv.slice(2);
+const RIFLES = ALL_RIFLES.filter(([, to]) => !only.length || only.includes(to));
 await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready, MeshoptSimplifier.ready]);
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({
   "meshopt.decoder": MeshoptDecoder,
@@ -54,7 +63,7 @@ const stats = (doc) => {
   return { tris, prims, textures: doc.getRoot().listTextures().length };
 };
 
-for (const [from, to] of RIFLES) {
+for (const [from, to, required] of RIFLES) {
   const doc = await io.read(path.join(MODELS, from));
   const before = stats(doc);
   const root = doc.getRoot();
@@ -119,14 +128,7 @@ for (const [from, to] of RIFLES) {
     }
   }
   const after = stats(doc);
-  const lost = [
-    "MuzzleDeviceTip",
-    "EjectionPort",
-    "Magazine",
-    "ChargingHandle",
-    "GripL",
-    "GripR",
-  ].filter((n) => !root.listNodes().some((node) => node.getName() === n));
+  const lost = required.filter((n) => !root.listNodes().some((node) => node.getName() === n));
   if (lost.length) throw new Error(`${to}: runtime markers lost: ${lost.join(", ")}`);
   const out = path.join(MODELS, to);
   await io.write(out, doc);

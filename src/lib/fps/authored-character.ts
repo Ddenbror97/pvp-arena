@@ -3,7 +3,12 @@ import type { Seat, Weapon } from "./protocol";
 import type { WeaponKit } from "./weapon";
 import { createCharacter as createFallback } from "./character-rig";
 import { retainAuthoredAsset, cloneAuthoredModel } from "./authored-assets";
-import { AK_VIEWMODEL, createAuthoredViewmodel, M4_VIEWMODEL } from "./authored-viewmodel";
+import {
+  AK_VIEWMODEL,
+  AWP_POLICE_VIEWMODEL,
+  createAuthoredViewmodel,
+  M4_VIEWMODEL,
+} from "./authored-viewmodel";
 import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from "./map";
 import { createMuzzleFlash } from "./muzzle-flash";
 import { ARENA_MODELS, CHARACTER_MODELS, WORLD_RIFLES } from "./model-assets";
@@ -16,6 +21,8 @@ type Motion = {
   weapon?: Weapon;
   reloading?: boolean;
   death?: number | undefined;
+  /** The primary in the rifle slot: the AWP swaps in its third-person model. */
+  primary?: "rifle" | "awp" | undefined;
 };
 /** Authored skinned bodies, bone-space IK and reference-specific clothing. */
 /** Horizontal build factor for both opponents (height is fixed by the head hitbox). */
@@ -53,6 +60,12 @@ export function createCharacter(
       ? { ...variant, asset: WORLD_RIFLES[variant.id === "m4" ? "m4" : "ak"] }
       : variant,
   );
+  // The AWP (bought from the spawn menu): the lightweight third-person model for everyone.
+  const awp = createAuthoredViewmodel(weaponPivot, false, {
+    ...AWP_POLICE_VIEWMODEL,
+    asset: WORLD_RIFLES.awp,
+  });
+  awp.root.visible = false;
   const flash = createMuzzleFlash();
   flash.root.traverse((object) => object.layers.set(0));
   weaponPivot.add(flash.root);
@@ -116,7 +129,7 @@ export function createCharacter(
   const headCenterMarker = new THREE.Group();
   headCenterMarker.name = "head-center";
   root.add(headCenterMarker);
-  const ready = Promise.all([asset.ready, weapon.ready])
+  const ready = Promise.all([asset.ready, weapon.ready, awp.ready])
     .then(([gltf]) => {
       if (stopped) return;
       instance = cloneAuthoredModel(gltf.scene);
@@ -381,7 +394,9 @@ export function createCharacter(
       weaponPivot.rotation.x = pitch + recoil;
       weaponPivot.rotation.z = motion.reloading ? -0.25 : 0;
       const holdingKnife = motion.weapon === "knife";
-      weapon.update(!holdingKnife, motion.reloading ? 0.4 : 0, recoil);
+      const held = motion.primary === "awp" && awp.loaded ? awp : weapon;
+      (held === awp ? weapon : awp).update(false, 0, 0);
+      held.update(!holdingKnife, motion.reloading ? 0.4 : 0, recoil);
       knife.visible = holdingKnife && alive;
       // Swing: slash sweeps right → left and down, stab thrusts forward (≈0.3 s).
       const swingT = (now - swingAt) / (swingKind === "stab" ? 320 : 260),
@@ -396,7 +411,7 @@ export function createCharacter(
       knife.rotation.set(pitch * 0.5 + (swingKind === "stab" ? 1.1 : 0.4) * swing, 0, 0);
       for (const side of sides) {
         const sign = side === "Left" ? -1 : 1;
-        weapon.grip(side === "Left" ? "L" : "R", target);
+        held.grip(side === "Left" ? "L" : "R", target);
         // Markers describe the grasp centre; the character Hand bone is at the wrist.
         rotation(weaponPivot, worldQ);
         cv.set(
@@ -445,7 +460,7 @@ export function createCharacter(
       headCenter.lerp(topCenter, 0.5);
       root.worldToLocal(headCenter);
       headCenterMarker.position.copy(headCenter);
-      const tip = weapon.muzzle();
+      const tip = held.muzzle();
       flash.update(
         alive && !holdingKnife ? flashUntil - now : 0,
         tip.z,
@@ -454,13 +469,14 @@ export function createCharacter(
       );
       flash.root.position.x = tip.x;
       // The Police M4A1 is suppressed: a much smaller flash at the can.
-      if (police) flash.root.scale.multiplyScalar(0.42);
+      if (police && held === weapon) flash.root.scale.multiplyScalar(0.42);
     },
     dispose() {
       stopped = true;
       if (!loaded) fallback.dispose();
       instance?.dispose();
       weapon.dispose();
+      awp.dispose();
       flash.dispose();
       knifeInstance?.dispose();
       knifeAsset.release();

@@ -33,6 +33,10 @@ import { characterSide, isHalftime, sideName } from "@/lib/fps/sides";
 import "./duel.css";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
 import { FpsReadyAction } from "./FpsQueueNotice";
+import { BuyMenu } from "./BuyMenu";
+import { buyBlocked } from "@/lib/fps/buy";
+import { duelBuyWindow } from "@/lib/fps/simulation";
+import { AWP, primaryOf, type Primary } from "@/lib/fps/primary";
 import {
   DEFAULT_STRIKE_SETTINGS,
   readStrikeSettings,
@@ -121,6 +125,9 @@ export function DuelMatch({
   const actionInFlight = useRef(false);
   const [settings, setSettings] = useState(DEFAULT_STRIKE_SETTINGS);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  /** Spawn buy menu (B). While it is open, releasing the mouse does not open the settings. */
+  const [buyOpen, setBuyOpen] = useState(false);
+  const buyOpenRef = useRef(false);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
   useEffect(() => {
@@ -274,18 +281,23 @@ export function DuelMatch({
                 setSettingsOpen(false);
               } else if (
                 hadCapturedMouse.current &&
+                !buyOpenRef.current &&
                 !["completed", "cancelled"].includes(currentFrame.current?.state.phase ?? "")
               )
                 setSettingsOpen(true);
             },
-            (weapon, seq) => {
+            (weapon, seq, primary) => {
               observations.current.shot(seq, performance.now());
-              sound.current?.localShot(weapon, seq);
+              sound.current?.localShot(weapon, seq, primary);
             },
             (progress) => {
               if (!disposed) setVisualProgress(progress);
             },
-            { mapId, onKnifeCue: (cue) => sound.current?.knifeCue(cue) },
+            {
+              mapId,
+              onKnifeCue: (cue) => sound.current?.knifeCue(cue),
+              onScope: (entering) => sound.current?.zoom(entering),
+            },
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
           if (settingsRef.current.reducedMotion) arena.current.setReducedMotion(true);
@@ -641,6 +653,40 @@ export function DuelMatch({
       setError("Copy the invitation from the room details using your browser.");
     }
   };
+  const canBuy = ready && !spectate && !terminal && !!seat && !!frame;
+  const closeBuy = (relock: boolean) => {
+    buyOpenRef.current = false;
+    setBuyOpen(false);
+    if (relock) void activate();
+  };
+  const buy = (item: Primary) => {
+    if (socket.current?.readyState === WebSocket.OPEN)
+      socket.current.send(JSON.stringify({ v: 1, type: "buy", item }));
+    if (item === "awp" && primaryOf(me || {}) !== "awp") sound.current?.awpDraw();
+    closeBuy(true);
+  };
+  const canBuyRef = useRef(canBuy);
+  canBuyRef.current = canBuy;
+  useEffect(() => {
+    const open = (e: KeyboardEvent) => {
+      if (e.code !== "KeyB" || e.repeat || buyOpenRef.current || !canBuyRef.current) return;
+      if (document.querySelector(".strike-settings")) return;
+      e.preventDefault();
+      buyOpenRef.current = true;
+      setBuyOpen(true);
+      setSettingsOpen(false);
+      if (document.pointerLockElement) document.exitPointerLock();
+    };
+    document.addEventListener("keydown", open);
+    return () => document.removeEventListener("keydown", open);
+  }, []);
+  useEffect(() => {
+    if (!canBuy && buyOpenRef.current) closeBuy(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canBuy]);
+  const buyStatus =
+    frame && seat ? buyBlocked(duelBuyWindow(frame.state, seat, now + serverOffset.current)) : null;
+  const myPrimary: Primary = me ? primaryOf(me) : "rifle";
   const phase = frame?.state.phase ?? "waiting";
   const seconds = frame
     ? Math.max(0, Math.ceil((frame.state.phaseEndsAt - now - serverOffset.current) / 1000))
@@ -789,6 +835,23 @@ export function DuelMatch({
         <DeathFeedback key={`${matchId}-${frame.state.round}`} round={frame.state.round} />
       )}
       {!terminal && <StrikeCrosshair settings={settings} />}
+      <div className="awp-scope" aria-hidden>
+        <i className="h" />
+        <i className="v" />
+      </div>
+      {canBuy && locked && !buyStatus && (
+        <div className="buy-hint" role="status">
+          <kbd>B</kbd> Buy · AWP / {SIDE_RIFLE[mySide]}
+        </div>
+      )}
+      <BuyMenu
+        open={buyOpen && canBuy}
+        side={mySide === "A" ? "police" : "terrorist"}
+        current={myPrimary}
+        status={buyStatus}
+        onBuy={buy}
+        onClose={() => closeBuy(true)}
+      />
       <GameSettings
         matchNotice={<FpsReadyAction practiceId={matchId} />}
         open={settingsOpen && ready && !terminal}
@@ -840,14 +903,17 @@ export function DuelMatch({
         </div>
         <div className="duel-controls-hint">
           W A S D <span>Move</span> · R <span>Reload</span> · 1 / 2 / Scroll{" "}
-          <span>Rifle / Karambit</span> · F <span>Inspect</span> · SHIFT <span>Silent walk</span> ·
-          SPACE <span>Jump</span> · CTRL <span>Crouch</span> · ESC <span>Release mouse</span>
+          <span>Primary / Karambit</span> · B <span>Buy</span> · RMB <span>AWP zoom</span> · F{" "}
+          <span>Inspect</span> · SHIFT <span>Silent walk</span> · SPACE <span>Jump</span> · CTRL{" "}
+          <span>Crouch</span> · ESC <span>Release mouse</span>
         </div>
         <div className="duel-ammo">
           <small>
             {me?.weapon === "knife"
               ? "KARAMBIT · SLASH / RMB STAB"
-              : `${SIDE_RIFLE[mySide]} · FULL AUTO`}
+              : myPrimary === "awp"
+                ? "AWP · SNIPER RIFLE"
+                : `${SIDE_RIFLE[mySide]} · FULL AUTO`}
           </small>
           {me?.weapon === "knife" ? (
             <strong>
@@ -855,8 +921,8 @@ export function DuelMatch({
             </strong>
           ) : (
             <strong>
-              {me?.ammo ?? 30}
-              <span>/ {me?.reserve ?? 90}</span>
+              {me?.ammo ?? (myPrimary === "awp" ? AWP.magazine : 30)}
+              <span>/ {me?.reserve ?? (myPrimary === "awp" ? AWP.reserve : 90)}</span>
             </strong>
           )}
           {me?.reloadUntil ? <em>RELOADING</em> : null}

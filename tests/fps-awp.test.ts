@@ -67,7 +67,7 @@ describe("AWP damage (CS:GO table)", () => {
     expect(awpDamage(body(0), "stomach")).toBe(143);
     expect(awpDamage(body(0), "legs")).toBe(85);
     expect(awpDamage(body(100), "chest")).toBe(112);
-    expect(awpDamage(body(100), "stomach")).toBe(139);
+    expect(awpDamage(body(100), "stomach")).toBe(140);
     expect(awpDamage(body(100), "legs")).toBe(85);
   });
 
@@ -113,7 +113,7 @@ describe("AWP bolt action and fire rate", () => {
     expect(s.players.A.ammo, "inside the cycle").toBe(AWP.magazine - 2);
   });
 
-  it("reloads 10 rounds from 30 in 3.67 s, and keeps the rifle's numbers untouched", () => {
+  it("reloads 5 rounds from 30 in 3.67 s (CS:GO since Nov 2022: 5 / 30), and keeps the rifle's numbers untouched", () => {
     const { s, t } = duel();
     s.players.A.ammo = 3;
     stepMatch(s, { A: input(1, { reload: true }) }, t, TICK_MS);
@@ -121,8 +121,8 @@ describe("AWP bolt action and fire rate", () => {
     let now = t;
     for (let seq = 2; now <= t + AWP.reloadMs + 40; seq++)
       stepMatch(s, { A: input(seq) }, (now += 34), TICK_MS);
-    expect(s.players.A.ammo).toBe(10);
-    expect(s.players.A.reserve).toBe(23);
+    expect(s.players.A.ammo).toBe(5);
+    expect(s.players.A.reserve).toBe(28);
     expect(s.players.B.ammo).toBe(30);
   });
 });
@@ -237,7 +237,7 @@ describe("Spawn buy (B)", () => {
     startMatch(s, 0);
     expect(s.phase).toBe("countdown");
     expect(buyPrimary(s, "A", "awp", 100)).toBe(true);
-    expect(s.players.A).toMatchObject({ primary: "awp", ammo: 10, reserve: 30 });
+    expect(s.players.A).toMatchObject({ primary: "awp", ammo: 5, reserve: 30 });
     stepMatch(s, {}, 3000, TICK_MS);
     expect(buyPrimary(s, "A", "rifle", 3100)).toBe(true);
     expect(s.players.A.primary).toBeUndefined();
@@ -256,7 +256,7 @@ describe("Spawn buy (B)", () => {
     expect(s.phase).toBe("round-end");
     stepMatch(s, {}, s.phaseEndsAt + 1, TICK_MS);
     expect(s.phase).toBe("live");
-    expect(s.players.A).toMatchObject({ primary: "awp", ammo: 10, reserve: 30 });
+    expect(s.players.A).toMatchObject({ primary: "awp", ammo: 5, reserve: 30 });
     expect(s.players.B.primary).toBeUndefined();
   });
 
@@ -266,7 +266,7 @@ describe("Spawn buy (B)", () => {
     startBombMatch(s, 0);
     expect(s.phase).toBe("freeze");
     expect(buyBombPrimary(s, 0, "awp", 10)).toBe(true);
-    expect(s.players[0]).toMatchObject({ primary: "awp", ammo: 10, reserve: 30 });
+    expect(s.players[0]).toMatchObject({ primary: "awp", ammo: 5, reserve: 30 });
     let t = 0;
     while (s.phase !== "live") stepBombMatch(s, {}, (t += TICK_MS));
     // Mid plaza: shooter and target 8 m apart in the open.

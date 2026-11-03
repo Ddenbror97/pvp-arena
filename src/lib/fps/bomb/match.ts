@@ -11,7 +11,7 @@ import { eyeHeight } from "../map";
 import { combatVolumes } from "../player-volumes";
 import { validateInput } from "../protocol";
 import { predictMovement, primaryStats, TICK_MS } from "../simulation";
-import { applyPurchase, buyWindowOpen } from "../buy";
+import { applyPurchase, buyWindowOpen, type BuyWindow } from "../buy";
 import {
   AWP,
   awpDamage,
@@ -63,10 +63,7 @@ export function validateBombInput(raw: unknown): BombInput | null {
   return use ? { ...input, use: true } : input;
 }
 
-function spawnOf(state: BombMatchState, p: BombPlayer) {
-  const list = teamOf(state, p) === "police" ? SANDGATE_SPAWNS.police : SANDGATE_SPAWNS.terrorist;
-  return list[p.slot % BOMB_RULES.teamSize]!;
-}
+const spawnOf = (state: BombMatchState, p: BombPlayer) => bombSpawnOf(state, p);
 
 function freshPlayer(state: BombMatchState, base: BombPlayer): BombPlayer {
   const s = spawnOf(state, base);
@@ -646,6 +643,31 @@ export type { Group };
  * freeze time, and in the first BUY_TIME_MS of the live round within the buy radius of the
  * player's team spawn. Returns true when applied.
  */
+/** Spawn point of a player (by group and slot) for the current half. */
+export function bombSpawnOf(
+  state: Pick<BombMatchState, "half">,
+  p: Pick<BombPlayer, "group" | "slot">,
+) {
+  const list = teamOf(state, p) === "police" ? SANDGATE_SPAWNS.police : SANDGATE_SPAWNS.terrorist;
+  return list[p.slot % BOMB_RULES.teamSize]!;
+}
+
+/** The Bomb Defusal buy window for a player at server time `now` (also the client's hint). */
+export function bombBuyWindow(
+  state: Pick<BombMatchState, "half" | "phase" | "roundEndsAt">,
+  p: Pick<BombPlayer, "group" | "slot" | "x" | "z" | "hp">,
+  now: number,
+): BuyWindow {
+  const s = bombSpawnOf(state, p);
+  return {
+    preRound: state.phase === "freeze",
+    live: state.phase === "live",
+    sinceLiveMs: now - (state.roundEndsAt - BOMB_RULES.roundMs),
+    fromSpawn: Math.hypot(p.x - s.x, p.z - s.z),
+    alive: p.hp > 0,
+  };
+}
+
 export function buyBombPrimary(
   state: BombMatchState,
   slot: number,
@@ -654,16 +676,6 @@ export function buyBombPrimary(
 ): boolean {
   const p = state.players[slot];
   if (!p || (state.phase !== "freeze" && state.phase !== "live")) return false;
-  const s = spawnOf(state, p);
-  if (
-    !buyWindowOpen({
-      preRound: state.phase === "freeze",
-      live: state.phase === "live",
-      sinceLiveMs: now - (state.roundEndsAt - BOMB_RULES.roundMs),
-      fromSpawn: Math.hypot(p.x - s.x, p.z - s.z),
-      alive: alive(p),
-    })
-  )
-    return false;
+  if (!buyWindowOpen(bombBuyWindow(state, p, now))) return false;
   return applyPurchase(p, item, primaryStats(item === "awp" ? { primary: item } : {}));
 }

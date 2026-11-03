@@ -9,6 +9,9 @@ export const ARENA_MODELS = {
   rifle: "/fps/models/ak47-authored.glb",
   /** Police M4A1 (art/blender/m4): suppressed, carry handle, on the shared arm rig. */
   m4: "/fps/models/m4a1-authored.glb",
+  /** AWP (art/blender/awp) merged onto each team's arm rig: Terrorist (AK rig), Police (M4 rig). */
+  awpTerrorist: "/fps/models/awp-terrorist.glb",
+  awpPolice: "/fps/models/awp-police.glb",
   /** Karambit (art/blender/karambit): knife mesh, attachment markers and animation clips. */
   karambit: "/fps/models/karambit.glb",
   ...CHARACTER_MODELS,
@@ -22,6 +25,7 @@ export const ARENA_MODELS = {
 export const WORLD_RIFLES = {
   ak: "/fps/models/ak47-world.glb",
   m4: "/fps/models/m4a1-world.glb",
+  awp: "/fps/models/awp-world.glb",
 } as const;
 
 /** Bomb Defusal only (not preloaded with the duel's arena models). */

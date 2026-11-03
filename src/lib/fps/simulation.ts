@@ -36,7 +36,7 @@ import {
   weaponMoveScale,
   type Primary,
 } from "./primary";
-import { applyPurchase, buyWindowOpen } from "./buy";
+import { applyPurchase, buyWindowOpen, type BuyWindow } from "./buy";
 export { validateInput } from "./protocol";
 export type { Input, MatchState, Player } from "./protocol";
 
@@ -662,22 +662,24 @@ export function applyQueuedMovement(
  * countdown and between rounds (applies to the next spawn, which keeps the primary), and in the
  * first BUY_TIME_MS of a live round near the player's spawn. Returns true when applied.
  */
+/** The 1v1 buy window for `seat` at server time `now` (also the client's buy-menu hint). */
+export function duelBuyWindow(state: MatchState, seat: Seat, now: number): BuyWindow {
+  const p = state.players[seat];
+  const spawn = mapOf(state).spawns[spawnSide(state, seat)];
+  return {
+    preRound: state.phase === "countdown" || state.phase === "round-end",
+    live: state.phase === "live",
+    sinceLiveMs: now - (state.phaseEndsAt - ROUND_MS),
+    fromSpawn: Math.hypot(p.x - spawn.x, p.z - spawn.z),
+    alive: p.hp > 0 || state.phase === "round-end",
+  };
+}
+
 export function buyPrimary(state: MatchState, seat: Seat, item: Primary, now: number): boolean {
   const p = state.players[seat];
   if (!p || state.phase === "completed" || state.phase === "cancelled" || state.phase === "waiting")
     return false;
-  const spawn = mapOf(state).spawns[spawnSide(state, seat)];
-  const live = state.phase === "live";
-  if (
-    !buyWindowOpen({
-      preRound: state.phase === "countdown" || state.phase === "round-end",
-      live,
-      sinceLiveMs: now - (state.phaseEndsAt - ROUND_MS),
-      fromSpawn: Math.hypot(p.x - spawn.x, p.z - spawn.z),
-      alive: p.hp > 0 || state.phase === "round-end",
-    })
-  )
-    return false;
+  if (!buyWindowOpen(duelBuyWindow(state, seat, now))) return false;
   if (state.phase === "round-end") {
     // The next spawn hands out the new primary with full ammunition.
     if (item === "awp") p.primary = "awp";

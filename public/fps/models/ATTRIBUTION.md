@@ -143,3 +143,16 @@ project owner. Third-party attribution does not imply creator endorsement.
   Provenance note: the download's internal names (`v_ied_source2`, `v_weapon.c4`, Bip01 bones)
   suggest it was extracted from a commercial game; the project owner chose to use it as
   licensed on Sketchfab.
+
+## AWP sniper rifle (awp-terrorist.glb, awp-police.glb, awp-world.glb)
+
+- **Sniper**, stevennvh: https://sketchfab.com/3d-models/sniper-f56c13d3653c43eabc44ecd59e5e9d3a
+  (author: https://sketchfab.com/stevennvh)
+  CC BY 4.0: http://creativecommons.org/licenses/by/4.0/
+  This work is based on "Sniper" by stevennvh, licensed under CC BY 4.0.
+  Changes (art/blender/awp): bipod, open lens caps, piggy-back red-dot sight and side-saddle
+  cartridges removed; slab fore-end replaced by a new rounded fore-end with the barrel
+  free-floated above it; pistol grip and barrel section added; magazine enlarged; bolt, bolt
+  handle, magazine and trigger separated for animation; recoloured to an olive-polymer /
+  black-steel / green-scope finish (source textures re-tinted); rescaled and placed on the
+  project's first-person arm rig (credited above); simplified for the third-person model.

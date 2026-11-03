@@ -23,7 +23,7 @@ export function validateBuy(raw: unknown): BuyMessage | null {
     : null;
 }
 
-export function buyWindowOpen(options: {
+export type BuyWindow = {
   /** Before the round's fighting starts (countdown / freeze / between rounds). */
   preRound: boolean;
   live: boolean;
@@ -32,11 +32,20 @@ export function buyWindowOpen(options: {
   /** Metres from the player to their own spawn. */
   fromSpawn: number;
   alive: boolean;
-}) {
-  if (!options.alive) return false;
-  if (options.preRound) return true;
-  return options.live && options.sinceLiveMs <= BUY_TIME_MS && options.fromSpawn <= BUY_RADIUS_M;
+};
+
+/** Why a purchase would be refused right now (null: the buy window is open). */
+export function buyBlocked(o: BuyWindow): string | null {
+  if (!o.alive) return "You can buy again after you respawn.";
+  if (o.preRound) return null;
+  if (!o.live) return "Buying opens at the start of the next round.";
+  if (o.sinceLiveMs > BUY_TIME_MS)
+    return `Buy time is over (the first ${BUY_TIME_MS / 1000} s of a round).`;
+  if (o.fromSpawn > BUY_RADIUS_M) return "Go back to your spawn to buy.";
+  return null;
 }
+
+export const buyWindowOpen = (o: BuyWindow) => buyBlocked(o) === null;
 
 /**
  * Hand the player a fresh `item`: full magazine and reserve, drawn in the primary slot, no
